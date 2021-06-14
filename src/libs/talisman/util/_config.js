@@ -1,0 +1,6 @@
+export const statusOptions = {
+  INITIALIZED: 'INITIALIZED',
+  PROCESSING: 'PROCESSING',
+  READY: 'READY',
+  ERROR: 'ERROR'
+}

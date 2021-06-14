@@ -1,0 +1,2 @@
+export const truncateAddress = (addr, start=6, end=4) => addr ? `${addr.substring(0, start)}...${addr.substring(addr.length - end)}` : null
+export const truncateString = (str='', start=10, end=0) => str && str.length ? (str.length <= (start + end) ? str : `${str.substring(0, start)}...` + (end > 0 ? str.substring(str.length - end) : '')) : null
