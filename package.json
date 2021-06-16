@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@craco/craco": "^6.1.2",
+    "@polkadot/api": "^4.14.1",
     "@polkadot/extension-dapp": "^0.38.4",
     "@polkadot/react-identicon": "^0.80.1",
     "@testing-library/jest-dom": "^5.11.4",

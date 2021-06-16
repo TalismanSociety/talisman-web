@@ -133,18 +133,9 @@ const Reset = createGlobalStyle`
         outline: none;
     }
 
-    @keyframes spin {
-        0% { transform: rotateZ(0deg) } 
-        100% { transform: rotateZ(360deg) } 
-    }
-
     svg{
         width: 1em;
         height: 1em;
-
-        &[data-spin]{
-            animation: spin linear 2s infinite;
-        }
     }
 `
 
@@ -197,6 +188,16 @@ const Theme = createGlobalStyle`
 
     button{
         font: inherit
+    }
+
+
+    @keyframes spin {
+        0% { transform: rotateZ(0deg) } 
+        100% { transform: rotateZ(360deg) } 
+    }
+
+    svg.feather-loader{
+        animation: spin linear 3s infinite;
     }
 `
 

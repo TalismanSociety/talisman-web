@@ -1,0 +1,73 @@
+import { 
+  createContext, 
+  useContext,
+  useState,
+  useReducer,
+  useEffect
+} from 'react'
+import { 
+  useStatus, 
+} from './util/hooks'
+import { useSettings } from '@libs/talisman'
+import { ApiPromise, WsProvider } from '@polkadot/api';
+
+const Context = createContext({});
+
+const useApi = () => useContext(Context)
+
+const Provider = 
+  ({
+    children
+  }) => {
+
+    const [api, setApi] = useState()
+    const { 
+      status,
+      message,
+      setStatus,
+      options
+    } = useStatus()
+
+    const { rpc } = useSettings()
+
+    const connect = async rpc => {
+      // eject if rpc not provided
+      if(!rpc) return
+      
+      setStatus('PROCESSING')
+    	const wsProvider = new WsProvider(rpc);
+			ApiPromise
+			  .create({ provider: wsProvider })
+			  .then(api => {
+          setApi(api)
+          setStatus('READY')
+        })
+        .catch(() => setStatus('ERROR'))
+    }
+
+    // connect on rcp
+    useEffect(() => connect(rpc), [rpc])
+
+    // todo / out loud thinking / maybe-maybenot
+    // if api is not connected or ready, we need to store queries/callbacks until it is.
+    // probably best if we provide something like useQuery('system.account', callback)
+    // or maybe just wrap the required query object?
+    
+    return <Context.Provider 
+      value={{
+        query: api?.query,
+        isReady: status === options.READY,
+        status,
+        message,
+      }}
+      >
+      {children}
+    </Context.Provider>
+  }
+
+const _guardian = {
+  Provider,
+  useApi
+}
+
+export default _guardian

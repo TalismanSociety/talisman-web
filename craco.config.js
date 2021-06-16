@@ -6,9 +6,10 @@ module.exports = {
       '@routes': path.resolve(__dirname, "src/routes/"),
       '@archetypes': path.resolve(__dirname, "src/archetypes/"),
       '@components': path.resolve(__dirname, "src/components/"),
-      '@assets': path.resolve(__dirname, "src/assets/"),
       '@libs': path.resolve(__dirname, "src/libs/"),
-      '@util': path.resolve(__dirname, "src/util/")
+      '@util': path.resolve(__dirname, "src/util/"),
+      '@assets': path.resolve(__dirname, "src/assets/"),
+      '@icons': path.resolve(__dirname, "src/assets/icons"),
     }
   }
 }
