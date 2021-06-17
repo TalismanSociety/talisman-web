@@ -42,7 +42,7 @@ const Dashboard = styled(
 					<h3>Account information</h3>
 					<p>Name: {account?.name}</p>
 					<p>Address: {account?.address}</p>
-					<p>Hydrating: {account?.balance?.hydrating?.toString()} {!account?.balance?.hydrating && <button onClick={account.hydrate}>Hydrate</button>}</p>
+					<p>Hydrating: {account?.balance?.hydrating?.toString()}</p>
 					<p>Total Balance: <Pendor suffix=' DOT'>{account?.balance?.total}</Pendor></p>
 					<p>Reserved: <Pendor suffix=' DOT'>{account?.balance?.reserve}</Pendor></p>
 					<p>Available Balance: <Pendor suffix=' DOT'>{account?.balance?.available}</Pendor></p>
@@ -70,7 +70,7 @@ const Dashboard = styled(
 			display: flex;
 			justify-content: space-between;
 			>*{
-				width: 19%;
+				width: calc(100%/6*.95);
 				display: block;
 				word-wrap: break-word;
 			}

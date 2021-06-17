@@ -33,7 +33,6 @@ const Provider = ({children}) => {
 		const accountIndex = findIndex(accounts, {address: address})
 		if(accountIndex >= 0 && accountIndex !== activeAccountIndex) {
 			setActiveAccountIndex(accountIndex)
-			accounts[accountIndex].hydrate()
 		}
 	}
 

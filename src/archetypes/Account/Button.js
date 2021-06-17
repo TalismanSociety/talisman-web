@@ -46,7 +46,7 @@ export default styled(
                   value={account?.address}
                   theme={'polkadot'}
                 />
-                <div>{truncateString(account?.meta?.name, 8, 0)}</div>
+                <div>{truncateString(account?.name, 8, 0)}</div>
                 <div>{truncateString(account?.address, 4, 4)}</div>
                 <div>x.xx&nbsp;DOT</div>
               </div>

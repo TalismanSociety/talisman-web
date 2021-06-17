@@ -23,27 +23,42 @@ import { useApi } from '@libs/talisman'
 // account store/reducer
 // receive an address and some fields, and update internal state
 // [todo] ensure fields prop is valid obj & confirms to certain shape
-const accountReducer = (state={}, {address, fields={}, callback=()=>{}}) => {
+const accountReducer = (state={}, {type, callback=()=>{}, ...props}) => {
   const newState = {...state}
 
-  // we have this address already? then update
-  if(!!state[address]){
-    
-    newState[address] = {
-      ...newState[address],
-      address: address,
-      ...fields
-    }
-  }
-  // address doesn't exist? insert & update
-  else{
-    newState[address] = {
-      address: address,
-      ...fields
-    }
+  switch (type) {
+    case 'addBatch':
+      // itterate items
+      props.accounts.forEach(({address, meta}) => {
+        // add new item by address
+        if(!newState[address]){
+          newState[address] = {
+            address: address,
+            name: meta?.name,
+            balance: {
+              total: null,
+              reserve: null,
+              available: null,
+              hydrating: true
+            },
+          }
+        }
+      })
+      break
+    case 'update': 
+      // check we have existing item?    
+      if(!!newState[props?.address]){
+        newState[props?.address] = {
+          ...newState[props?.address],
+          ...props,
+          address: props?.address,
+        }
+      }
+      break
+    default: break
   }
 
-  callback && callback(newState[address])
+  callback && callback(newState)
 
   return newState
 }
@@ -78,7 +93,7 @@ const Provider =
     children
   }) => {
     const [injected, setInjected] = useState()
-    const [accounts, updateAccount] = useReducer(accountReducer, {})
+    const [accounts, accountDispatcher] = useReducer(accountReducer, {})
     const [metadata, updateMetadata] = useReducer(metadataReducer, {})
     const [subscriptions, setSubscription] = useReducer(subscriptionReducer, [])
     const api = useApi()
@@ -97,7 +112,6 @@ const Provider =
       }
     })
 
-    
     // methods ---
 
     // init the application
@@ -130,21 +144,11 @@ const Provider =
         setStatus('NOACCOUNT', 'Please create an account/address in the polkadot.js extension to be able to interact with this application')
       }else{        
         // itterate through accounts and insert into state/reducer
-        // need to this this in batch
-        accounts.forEach(account => {
-          updateAccount({
-            address: account.address,
-            fields: {
-              name: account?.meta?.name,
-              balance: {
-                total: null,
-                reserve: null,
-                available: null,
-                hydrating: true
-              },
-              //hydrate: () => hydrateBalance(account.address) // attach a balance rehydration callback
-            },
-          })
+
+        accountDispatcher({
+          type: 'addBatch', 
+          accounts: accounts,
+          callback: () => setStatus('AUTHORIZED', 'The polkadot.js extension is installed and authorized, and accounts have been found')
         })
 
         setStatus('AUTHORIZED', 'The polkadot.js extension is installed and authorized, and accounts have been found')
@@ -160,15 +164,14 @@ const Provider =
           const reserve = 1
           const available = +total - reserve <= 0 ? 0 : +total - reserve
 
-          updateAccount({
+          accountDispatcher({
+            type: 'update',
             address: address,
-            fields: {
-              balance: {
-                total,
-                reserve,
-                available,
-                hydrating: false
-              }
+            balance: {
+              total,
+              reserve,
+              available,
+              hydrating: false
             }
           })
         });
@@ -227,7 +230,7 @@ const Provider =
 
     // step 4 ---
     // hydrate balances once the polkadot API is connected/ready & we have some accounts
-    useEffect(() => !!api.isReady && !!Object.values(accounts).length && initBalanceSubscriptions(), [api.isReady, Object.values(accounts).length]) // eslint-disable-line
+    useEffect(() => !!api.isReady && status === options.AUTHORIZED && initBalanceSubscriptions(), [api.isReady, Object.values(accounts).length]) // eslint-disable-line
 
     
     // cleanup ---

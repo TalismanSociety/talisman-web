@@ -41,7 +41,7 @@ const Provider =
           setApi(api)
           setStatus('READY')
         })
-        .catch(() => setStatus('ERROR'))
+        .catch(error => setStatus('ERROR', error.message))
     }
 
     // connect on rcp

@@ -13,7 +13,7 @@ const Provider =
     children
   }) => {
 
-    const settings = useState({
+    const [settings] = useState({
       rpc: 'wss://rpc.polkadot.io'
     })
 
