@@ -4,7 +4,6 @@ import {
   useState,
   useReducer,
   useEffect,
-  useCallback
 } from 'react'
 import {
   //web3AccountsSubscribe,
@@ -21,8 +20,7 @@ import {
 import { useApi } from '@libs/talisman'
 
 
-
-// account store reducer
+// account store/reducer
 // receive an address and some fields, and update internal state
 // [todo] ensure fields prop is valid obj & confirms to certain shape
 const accountReducer = (state={}, {address, fields={}, callback=()=>{}}) => {
@@ -50,6 +48,27 @@ const accountReducer = (state={}, {address, fields={}, callback=()=>{}}) => {
   return newState
 }
 
+// metadata store
+// [todo] validate data keys and types 
+const metadataReducer = (state={}, data) => {
+  const newState = {
+    ...state,
+    ...data
+  }
+
+  return newState
+}
+
+// subscription store
+// [todo] should abstract away into own lib
+// [todo] should batch subscriptions by key (endpoint), somehow?
+const subscriptionReducer = (state=[], sub) => {
+  return [
+    ...state,
+    sub
+  ]
+}
+
 const Context = createContext({});
 
 const useGuardian = () => useContext(Context)
@@ -59,7 +78,9 @@ const Provider =
     children
   }) => {
     const [injected, setInjected] = useState()
-    const [accounts, update] = useReducer(accountReducer, {})
+    const [accounts, updateAccount] = useReducer(accountReducer, {})
+    const [metadata, updateMetadata] = useReducer(metadataReducer, {})
+    const [subscriptions, setSubscription] = useReducer(subscriptionReducer, [])
     const api = useApi()
     const { 
       status,
@@ -76,28 +97,30 @@ const Provider =
       }
     })
 
-    // as a result of the window?.injectedWeb3 object not always being immediately available
-    // we set up a watcher here to monitor the object value and trigger the init process
-    // once available
-    useAwaitObjectValue(
-      window, // watch the window object
-      'injectedWeb3.polkadot-js', // for this keys' value (dot delimited - ala lodash get)
-      val => init(), // trigger this callback when it's available
-      100 // check interval,
-    )
+    
+    // methods ---
 
-    // init polkadot.js once the plugin has been found
-    const init = async () => {
-      const injected = await web3Enable('Talisman');
+    // init the application
+    const initApplication = async () => {
+      try{
+        const injected = await web3Enable(process.env.REACT_APP_APPLICATION_NAME);
+
+        // do we have the talisman plugin enabled?
+        if (!injected[0]) {
+            setStatus('UNAUTHORIZED', `The polkadot.js extension is not authorized to interact with this application. [...info on how to auth]`)
+        }
+        else{
+          setInjected(injected[0])
+        }
+      } catch ({message}) {
+        setInjected()
+        setStatus('UNAUTHORIZED', message)
+      }
       
-      // do we have the talisman plugin enabled?
-      if (!injected[0]) {
-          setStatus('UNAUTHORIZED', `The polkadot.js extension is not authorized to interact with this application. [...info on how to auth]`)
-          return 
-      }
-      else{
-        setInjected(injected[0])
-      }
+    }
+
+    const hydrateAccounts = async () => {
+      if(!injected) return
 
       // fetch all available user accounts
       const accounts = await web3Accounts();
@@ -105,18 +128,22 @@ const Provider =
       // does the user have accounts configured?
       if(accounts.length <= 0){
         setStatus('NOACCOUNT', 'Please create an account/address in the polkadot.js extension to be able to interact with this application')
-      }else{
-        setStatus('AUTHORIZED', 'The polkadot.js extension is installed and authorized, and accounts have been found')
-        
+      }else{        
         // itterate through accounts and insert into state/reducer
+        // need to this this in batch
         accounts.forEach(account => {
-          update({
+          updateAccount({
             address: account.address,
             fields: {
               name: account?.meta?.name,
-              hydrate: () => hydrateAccount(account.address)
+              balance: {
+                total: null,
+                reserve: null,
+                available: null,
+                hydrating: true
+              },
+              //hydrate: () => hydrateBalance(account.address) // attach a balance rehydration callback
             },
-            callback: () => hydrateAccount(account.address)
           })
         })
 
@@ -124,43 +151,97 @@ const Provider =
       }
     }
 
-    // [todo] hydrate other account information such as balance etc... 
-    // [todo] need to memoize!!
-    const hydrateAccount = useCallback(async address => {
-      //if(!api.isReady) return
+    const initBalanceSubscriptions = async () => {
+      if(!api.isReady || !Object.keys(accounts).length) return
 
-      update({
-        address: address,
-        fields: {
-          balance: {
-            hydrating: true
-          }
-        }
+      Object.keys(accounts).forEach(async address => {
+        const balancesSub = await api.query.system.account(address, ({ data: balance }) => {
+          const total = balance.free.toString()
+          const reserve = 1
+          const available = +total - reserve <= 0 ? 0 : +total - reserve
+
+          updateAccount({
+            address: address,
+            fields: {
+              balance: {
+                total,
+                reserve,
+                available,
+                hydrating: false
+              }
+            }
+          })
+        });
+
+        setSubscription(balancesSub)
       })
+    }
 
-      const { data: balance } = await api.query.system.account(address);
+    // we gather information about the chain and subscribe to
+    // relevant subscriptions
+    const hydrateMetadata = async () => {
+      if(!api.isReady) return
+      
+      // we want the chain name
+      const chain = await api.rpc.system.chain();
+      updateMetadata({chain: chain.toString()})
 
-      const total = balance.free.toString()
-      const reserve = 1
-      const available = total - reserve
+      // we want the latest header info
+      // [todo] handle rejection of multiple subs of the same kind, 
+      // some sort of batching would be better. ok for now
+      const headsSub = await api.rpc.chain.subscribeNewHeads(header => {
+        updateMetadata({
+          blockNumber: header.number.toNumber(),
+          blockHash: header.hash.toString()
+        })
+      });
 
-      update({
-        address: address,
-        fields: {
-          balance: {
-            total,
-            reserve,
-            available,
-            hydrating: false
-          }
-        }
-      })
-    })
+      setSubscription(headsSub)
+    }
+
+    
+    // hooks ---
+    // we need to perform a bunch of things in series, all dependent on certain 
+    // paramaters being set/available. To do this we've set up some hooks to await
+    // required variables, and trigger the appropriate callback when validation
+    // criteria is met
+
+    // step 1 ---
+    // as a result of the window?.injectedWeb3 object not always being immediately available
+    // we set up a watcher here to monitor the object value and trigger the init process
+    // once available
+    useAwaitObjectValue(
+      window, // watch the window object
+      'injectedWeb3.polkadot-js', // for this keys' value (dot delimited - ala lodash get)
+      () => initApplication(), // trigger this callback when it's available
+      100 // check interval,
+    )
+
+    // step 2 ---
+    // hydrate accounts when injected is available
+    useEffect(() => !!injected && hydrateAccounts(), [injected]) // eslint-disable-line
+
+    // step 3 ---
+    // API is ready, we can hydrate metadata
+    useEffect(() => !!api.isReady && hydrateMetadata(), [api.isReady]) // eslint-disable-line
+
+    // step 4 ---
+    // hydrate balances once the polkadot API is connected/ready & we have some accounts
+    useEffect(() => !!api.isReady && !!Object.values(accounts).length && initBalanceSubscriptions(), [api.isReady, Object.values(accounts).length]) // eslint-disable-line
+
+    
+    // cleanup ---
+    // we want to make sure all subscriptions are unsubscribed on unmount
+    // will most likely never be used because this is core to the system and will never unmount
+    // although helps with react hot reloading 
+    useEffect(() => {
+      return () => (subscriptions||[]).map(unsub => unsub && unsub())
+    })  // eslint-disable-line
 
     return <Context.Provider 
       value={{
         accounts: Object.values(accounts),
-        injected: injected,
+        metadata: metadata,
         ready: status === options.AUTHORIZED,
         status: status,
         message: message,

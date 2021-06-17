@@ -25,8 +25,8 @@ const Provider = ({children}) => {
 	// set initial active account if none selected
 	useEffect(
 		() => activeAccountIndex === -1 && accounts.length > 0 && setActiveAccountIndex(0), 
-		[accounts]
-	)
+		[accounts]  // eslint-disable-line
+	) 
 
 	// handle account switching
 	let switchAccount = address => {

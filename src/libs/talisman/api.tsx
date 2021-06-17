@@ -2,7 +2,6 @@ import {
   createContext, 
   useContext,
   useState,
-  useReducer,
   useEffect
 } from 'react'
 import { 
@@ -46,7 +45,7 @@ const Provider =
     }
 
     // connect on rcp
-    useEffect(() => connect(rpc), [rpc])
+    useEffect(() => connect(rpc), [rpc])  // eslint-disable-line
 
     // todo / out loud thinking / maybe-maybenot
     // if api is not connected or ready, we need to store queries/callbacks until it is.
@@ -56,6 +55,7 @@ const Provider =
     return <Context.Provider 
       value={{
         query: api?.query,
+        rpc: api?.rpc,
         isReady: status === options.READY,
         status,
         message,

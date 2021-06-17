@@ -1,14 +1,8 @@
 import { 
   createContext, 
   useContext,
-  useState,
-  useReducer,
-  useEffect
+  useState
 } from 'react'
-import { 
-  useStatus, 
-} from './util/hooks'
-import { ApiPromise, WsProvider } from '@polkadot/api';
 
 const Context = createContext({});
 
@@ -25,7 +19,7 @@ const Provider =
 
     return <Context.Provider 
       value={{
-        rpc: 'wss://rpc.polkadot.io',
+        ...settings,
         /*: (key, val) => {
           if(!!Object.keys(settings)[key]){
             const newState = {...state}
