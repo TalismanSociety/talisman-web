@@ -184,10 +184,21 @@ const Provider =
     // relevant subscriptions
     const hydrateMetadata = async () => {
       if(!api.isReady) return
-      
-      // we want the chain name
-      const chain = await api.rpc.system.chain();
-      updateMetadata({chain: chain.toString()})
+    
+      // fetch/set some relevant information
+      Promise.all([
+        api.rpc.system.chain(),
+        api.rpc.system.name(),
+        api.rpc.system.version()
+      ]).then(
+        ([chain, nodeName, nodeVersion]) => {
+          updateMetadata({
+            chain: chain.toString(),
+            nodeName: nodeName.toString(),
+            nodeVersion: nodeVersion.toString(),
+          })
+        }
+      )
 
       // we want the latest header info
       // [todo] handle rejection of multiple subs of the same kind, 

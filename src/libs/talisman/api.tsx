@@ -27,7 +27,7 @@ const Provider =
       options
     } = useStatus()
 
-    const { rpc } = useSettings()
+    const { chain } = useSettings()
 
     const connect = async rpc => {
       // eject if rpc not provided
@@ -45,12 +45,16 @@ const Provider =
     }
 
     // connect on rcp
-    useEffect(() => connect(rpc), [rpc])  // eslint-disable-line
+    useEffect(() => connect(chain.rpc), [chain.rpc])  // eslint-disable-line
 
     // todo / out loud thinking / maybe-maybenot
     // if api is not connected or ready, we need to store queries/callbacks until it is.
     // probably best if we provide something like useQuery('system.account', callback)
     // or maybe just wrap the required query object?
+    // currently have some backwards checks in other places to make sure api is
+    // ready before querying, but would rather remove those dependencies
+    // ie other functions should not care if the api is ready or not, just fire
+    // the query and await the response
     
     return <Context.Provider 
       value={{

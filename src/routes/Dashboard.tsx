@@ -12,6 +12,8 @@ const Dashboard = styled(
 		const crowdloans = useCrowdloans()
 		const api = useApi()
 
+		//console.log({guardian})
+
 		return <div
 			className={className}
 			>
@@ -33,13 +35,15 @@ const Dashboard = styled(
 					{api?.message && <p dangerouslySetInnerHTML={{__html: `Message: ${api?.message}`}}></p>}
 				</span>
 				<span>
-					<h3>Network</h3>
-					<p>Name: <Pendor>{guardian?.metadata?.chain}</Pendor></p>
+					<h3>Network/Node</h3>
+					<p>Chain: <Pendor>{guardian?.metadata?.chain}</Pendor></p>
+					<p>Node Name: <Pendor>{guardian?.metadata?.nodeName}</Pendor></p>
+					<p>Node Version: <Pendor>{guardian?.metadata?.nodeVersion}</Pendor></p>
 					<p>Latest Block: <Pendor>{guardian?.metadata?.blockNumber}</Pendor></p>
 					<p>Latest Hash: <Pendor>{guardian?.metadata?.blockHash}</Pendor></p>
 				</span>
 				<span>
-					<h3>Account information</h3>
+					<h3>Account</h3>
 					<p>Name: {account?.name}</p>
 					<p>Address: {account?.address}</p>
 					<p>Hydrating: {account?.balance?.hydrating?.toString()}</p>
