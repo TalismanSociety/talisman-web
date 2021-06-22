@@ -68,7 +68,14 @@ const Dashboard = styled(
 							>
 							<option value="-1">Select Item</option>
 							{
-								crowdloans.items.map(({id, name}) => <option value={id}>{name||id}</option>)
+								crowdloans.items.map(({id, name}) => 
+									<option 
+										value={id}
+										key={id}
+										>
+										{name||id}
+									</option>
+								)
 							}
 						</select>
 					}
@@ -88,19 +95,22 @@ const Dashboard = styled(
 				</span>
 				<span>
 					<h3>TODO</h3>
-					<p>🟢 <s>Connect usng polkadot.js lib + extension</s></p>
-					<p>🟢 <s>Derive connection status</s></p>
-					<p>🟢 <s>Get Accounts</s></p>
-					<p>🟢 <s>Create account switcher</s></p>
-					<p>🟢 <s>Fetch detailed account info (balance etc, required rpc endpoint)</s></p>
-					<p>⚪ Fetch crowdloan data from ...</p>
-					<p>⚪ Define & use crowdloan supplementary config </p>
+					<p data-s>🟢 Connect usng polkadot.js lib + extension</p>
+					<p data-s>🟢 Derive connection status</p>
+					<p data-s>🟢 Get Accounts</p>
+					<p data-s>🟢 Create account switcher</p>
+					<p data-s>🟢 Fetch detailed account info (balance etc, required rpc endpoint)</p>
+					<p data-s>🟢 Fetch crowdloan data from ...</p>
+					<p data-s>🟢 Define & use crowdloan supplementary config</p>
+					<p>⚪ Implement routes</p>
+					<p>⚪ Basic layout</p>
+					<p>⚪ Localstorage for quick hydration</p>
+					<p>⚪ Implement designs (pending designs)</p>
 				</span>
 			</div>
 		</div>
 	})
 	`
-
 		.cols{
 			display: flex;
 			justify-content: space-between;
@@ -114,6 +124,14 @@ const Dashboard = styled(
 		h3{
 			margin-top: 2em;
 			font-weight: bold;
+		}
+
+		p{
+			font-size: 14px;
+
+			&[data-s]{
+				text-decoration: line-through
+			}
 		}
 
 		.selectedCrowdLoan{

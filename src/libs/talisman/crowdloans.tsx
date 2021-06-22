@@ -10,12 +10,78 @@ import {
 import { useApi } from '@libs/talisman'
 
 const supplementaryConfig = {
+  2000: {
+    name: 'Karura',
+    url: 'https://acala.network/karura/join-karura',
+    icon: 'https://polkadot.js.org/apps/static/karura.cb78f2cd.svg',
+    image: ''
+  },
+  2001: {
+    name: 'Bitfrost',
+    url: '',
+    icon: '',
+    image: ''
+  },
+  2004: {
+    name: 'Khala Network',
+    url: '',
+    icon: '',
+    image: ''
+  },
+  2006: {
+    name: 'Darwinia Crab Redirect',
+    url: '',
+    icon: '',
+    image: ''
+  },
+  2007: {
+    name: 'Shiden',
+    url: '',
+    icon: '',
+    image: ''
+  },
+  2008: {
+    name: 'Mars',
+    url: '',
+    icon: '',
+    image: ''
+  },
+  2009: {
+    name: 'PolkaSmith by PolkaFoundry',
+    url: '',
+    icon: '',
+    image: ''
+  },
+  2012: {
+    name: 'Crust Shadow',
+    url: '',
+    icon: '',
+    image: ''
+  },
+  2016: {
+    name: 'Sakura',
+    url: '',
+    icon: '',
+    image: ''
+  },
+  2018: {
+    name: 'SubGame Gamma',
+    url: '',
+    icon: '',
+    image: ''
+  },
   2023: {
     name: 'Moonriver',
     url: 'https://moonbeam.foundation/moonriver-crowdloan/',
     icon: 'https://polkadot.js.org/apps/static/moonriver.0d6c0ca2.svg',
-    image: 'https://polkadot.js.org/apps/static/moonriver.0d6c0ca2.svg'
-  }
+    image: ''
+  },
+  2024: {
+    name: 'Genshiro',
+    url: '',
+    icon: '',
+    image: ''
+  },
 }
 
 const Context = createContext({});
