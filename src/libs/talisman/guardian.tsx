@@ -250,7 +250,7 @@ const Provider =
     // although helps with react hot reloading 
     useEffect(() => {
       return () => (subscriptions||[]).map(unsub => unsub && unsub())
-    })  // eslint-disable-line
+    }, [])  // eslint-disable-line
 
     return <Context.Provider 
       value={{

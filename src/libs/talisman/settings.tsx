@@ -1,7 +1,6 @@
 import { 
   createContext, 
   useContext,
-  useState,
   useReducer
 } from 'react'
 
@@ -41,10 +40,6 @@ const Provider =
   ({
     children
   }) => {
-
-    // const [settings, setState] = useState({
-    //   rpc: 'wss://kusama-rpc.polkadot.io'
-    // })
 
     const [ settings, updateSettings] = useReducer(settingsReducer, {
       chain: chainOptions[process.env.REACT_APP_DEFAULT_CHAIN_NAME||'rococo']

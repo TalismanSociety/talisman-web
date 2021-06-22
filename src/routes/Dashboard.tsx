@@ -1,4 +1,6 @@
+import { useState } from 'react'
 import styled from 'styled-components'
+import { find } from 'lodash'
 import { useGuardian, useAccount, useCrowdloans, useApi } from '@libs/talisman'
 import { Pendor } from '@components'
 import { ReactComponent as Loader } from '@icons/loader.svg'
@@ -12,7 +14,9 @@ const Dashboard = styled(
 		const crowdloans = useCrowdloans()
 		const api = useApi()
 
-		//console.log({guardian})
+		const [selectedCrowdLoan, setSelectedCrowdloan] = useState({})
+
+		//console.log({crowdloans})
 
 		return <div
 			className={className}
@@ -53,7 +57,34 @@ const Dashboard = styled(
 				</span>
 				<span>
 					<h3>Crowdloans</h3>
-					<p>TODO: {crowdloans?.name}</p>
+					<p>Status: {crowdloans.status}</p>
+					<p>Message: {crowdloans.message}</p>
+					<p>isReady: {(crowdloans.status === 'READY').toString()}</p>
+					<p>Count: {crowdloans.items.length}</p>
+					{crowdloans.status === 'READY' && 
+						<select
+							value={selectedCrowdLoan.id}
+							onChange={({target}) => setSelectedCrowdloan(find(crowdloans.items, {id: target.value})||{})}
+							>
+							<option value="-1">Select Item</option>
+							{
+								crowdloans.items.map(({id, name}) => <option value={id}>{name||id}</option>)
+							}
+						</select>
+					}
+					{!!selectedCrowdLoan?.id &&
+						<div className="selectedCrowdLoan">
+							<img src={selectedCrowdLoan.icon} alt={selectedCrowdLoan.name}/>
+							{Object.keys(selectedCrowdLoan).map(key => typeof selectedCrowdLoan[key] !== 'object' && 
+								<span 
+									className='small'
+									key={key}
+									>
+									{key}: {selectedCrowdLoan[key]}
+								</span>
+							)}
+						</div>
+					}					
 				</span>
 				<span>
 					<h3>TODO</h3>
@@ -83,6 +114,25 @@ const Dashboard = styled(
 		h3{
 			margin-top: 2em;
 			font-weight: bold;
+		}
+
+		.selectedCrowdLoan{
+			border: 1px solid rgba(0,0,0,0.1);
+			padding: 1rem;
+			img{
+				width: 4rem;
+				height: 4rem
+			}
+
+			span.small{
+				display: block;
+				font-size: 0.8em;
+				opacity: 0.7;
+				line-height: 1.7em;
+				white-space: nowrap;
+				overflow: hidden;
+				text-overflow: ellipsis;
+			}
 		}
 	`
 
