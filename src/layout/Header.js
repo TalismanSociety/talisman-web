@@ -20,7 +20,11 @@ const Header = styled(
       className={className}
       >
       <span>
-        <h1>Talisman</h1>
+        <NavLink
+          to='/'
+          >
+          <h1>Talisman</h1>
+        </NavLink>
       </span>
       <span>
         <Account.Button/>
@@ -28,8 +32,7 @@ const Header = styled(
           onChange={toggle}
         />
         <nav>
-          <NavLink to='/'>Dashboard</NavLink>
-          <NavLink to='/chains'>Chains</NavLink>
+          <NavLink to='/showcase'>Showcase</NavLink>
         </nav>
       </span>
     </header>

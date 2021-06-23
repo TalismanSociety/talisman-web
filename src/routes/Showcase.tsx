@@ -9,14 +9,12 @@ const Dashboard = styled(
 	({
 		className
 	}) => {
-		const guardian = useGuardian()//??
+		const guardian = useGuardian()
 		const account = useAccount()
 		const crowdloans = useCrowdloans()
 		const api = useApi()
 
 		const [selectedCrowdLoan, setSelectedCrowdloan] = useState({})
-
-		//console.log({crowdloans})
 
 		return <div
 			className={className}
@@ -41,6 +39,8 @@ const Dashboard = styled(
 				<span>
 					<h3>Network/Node</h3>
 					<p>Chain: <Pendor>{guardian?.metadata?.chain}</Pendor></p>
+					<p>Token Symbol: <Pendor>{guardian?.metadata?.tokenSymbol}</Pendor></p>
+					<p>Token Decimals: <Pendor>{guardian?.metadata?.tokenDecimals}</Pendor></p>
 					<p>Node Name: <Pendor>{guardian?.metadata?.nodeName}</Pendor></p>
 					<p>Node Version: <Pendor>{guardian?.metadata?.nodeVersion}</Pendor></p>
 					<p>Latest Block: <Pendor>{guardian?.metadata?.blockNumber}</Pendor></p>
@@ -80,8 +80,9 @@ const Dashboard = styled(
 						</select>
 					}
 					{!!selectedCrowdLoan?.id &&
-						<div className="selectedCrowdLoan">
-							<img src={selectedCrowdLoan.icon} alt={selectedCrowdLoan.name}/>
+						<fieldset>
+							<legend>{selectedCrowdLoan.name}</legend>
+							<img src={selectedCrowdLoan.icon} alt='icon'/>
 							{Object.keys(selectedCrowdLoan).map(key => typeof selectedCrowdLoan[key] !== 'object' && 
 								<span 
 									className='small'
@@ -90,8 +91,8 @@ const Dashboard = styled(
 									{key}: {selectedCrowdLoan[key]}
 								</span>
 							)}
-						</div>
-					}					
+						</fieldset>
+					}		
 				</span>
 				<span>
 					<h3>TODO</h3>
@@ -134,9 +135,10 @@ const Dashboard = styled(
 			}
 		}
 
-		.selectedCrowdLoan{
+		fieldset{
 			border: 1px solid rgba(0,0,0,0.1);
-			padding: 1rem;
+			display: block;
+			min-width: 0;
 			img{
 				width: 4rem;
 				height: 4rem

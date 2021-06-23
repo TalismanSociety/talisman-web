@@ -184,18 +184,29 @@ const Provider =
     // relevant subscriptions
     const hydrateMetadata = async () => {
       if(!api.isReady) return
-    
+
+      const props = await api.rpc.system.properties()
+      console.log(111, {props}, props.tokenSymbol.value[0].toString(), props.tokenDecimals)
+
       // fetch/set some relevant information
       Promise.all([
         api.rpc.system.chain(),
         api.rpc.system.name(),
-        api.rpc.system.version()
+        api.rpc.system.version(),
+        api.rpc.system.properties()
       ]).then(
-        ([chain, nodeName, nodeVersion]) => {
+        ([
+          chain, 
+          nodeName, 
+          nodeVersion,
+          properties
+        ]) => {
           updateMetadata({
             chain: chain.toString(),
             nodeName: nodeName.toString(),
             nodeVersion: nodeVersion.toString(),
+            tokenSymbol: properties.tokenSymbol.value[0].toString(),
+            tokenDecimals: properties.tokenDecimals.value[0].toString()
           })
         }
       )
@@ -265,9 +276,9 @@ const Provider =
     </Context.Provider>
   }
 
-const _guardian = {
+const Guardian = {
   Provider,
   useGuardian
 }
 
-export default _guardian
+export default Guardian

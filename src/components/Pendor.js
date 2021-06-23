@@ -7,7 +7,7 @@ const Pendor =
     children
   }) => 
     children !== null && children !== undefined 
-      ? `${prefix}${children}${suffix}`
+      ? <>{prefix}{children}{suffix}</>
       : <Loader/>
   
 

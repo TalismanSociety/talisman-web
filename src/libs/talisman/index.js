@@ -15,6 +15,8 @@ export const useAccount = Account.useAccount;
 
 // crowdloans stuff
 export const useCrowdloans = Crowdloans.useCrowdloans
+export const useCrowdloanBySlug = Crowdloans.useCrowdloanBySlug
+
 
 // api wrap
 export const useApi = Api.useApi

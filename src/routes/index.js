@@ -3,8 +3,9 @@ import {
 	Switch,
 	Redirect
 } from "react-router-dom";
-import Dashboard from './Dashboard.tsx'
-import ChainDetail from './ChainDetail.tsx'
+import Showcase from './Showcase.tsx'
+import CrowdloanIndex from './Crowdloan.Index.tsx'
+import CrowdloanDetail from './Crowdloan.Detail.tsx'
 
 const Routes = () => 
 	<Switch>
@@ -12,13 +13,19 @@ const Routes = () =>
 			exact 
 			path="/"
 			>
-			<Dashboard/>
+			<CrowdloanIndex/>
 		</Route>
 		<Route 
 			exact 
-			path="/chains/"
+			path="/crowdloan/:slug"
 			>
-			<ChainDetail/>
+			<CrowdloanDetail/>
+		</Route>
+		<Route 
+			exact 
+			path="/showcase"
+			>
+			<Showcase/>
 		</Route>
 		<Route 
 			path="*"
