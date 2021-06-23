@@ -116,12 +116,17 @@ const Provider =
         const indexes = await api.query.crowdloan.funds.keys()
         const paraIds = indexes.map(({ args: [paraId] }) => paraId)        
         const campaigns = await api.query.crowdloan.funds.multi(paraIds);
-
+        const blockNumber = await api.query.system.number();
         const _items = {}
-
         paraIds.forEach((paraId, i) => {
           const id = paraId.toString()
-          const info = JSON.parse(campaigns[i])
+          let info = JSON.parse(campaigns[i])
+          info = {...info,
+            deposit: `${(info.deposit / 1e12).toFixed(2)} KSM`,
+            raised: `${(info.raised / 1e12).toFixed(2)} KSM`,
+            cap: `${(info.cap / 1e12).toFixed(2)} KSM`,
+            end: `${((info.end - blockNumber) / 14400).toFixed(0)} days`
+          }
           const supplementaryInfo = supplementaryConfig[id]
 
           _items[id] = {
