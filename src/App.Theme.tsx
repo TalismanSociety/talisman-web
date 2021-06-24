@@ -58,16 +58,16 @@ const fontWeights = {
 // vars
 const Vars = createGlobalStyle`  
   :root {
-    // colors mappings
+    /*colors mappings*/
     ${Object.keys(colors).map(hex => colors[hex].map(status => `--color-${status}: #${hex};`))}
 
-    // fonts size mappings
+    /*fonts size mappings*/
     ${Object.keys(fontSizes).map(name => `--font-size-${name}: ${fontSizes[name]}rem;`)}
 
-    // font weights
+    /*font weights*/
     ${Object.keys(fontWeights).map(name => `--font-weight-${name}: ${fontWeights[name]};`)}
 
-    // misc
+    /*misc*/
     --border: 0.2rem solid var(--color-dark);
     --border-dashed: 0.2rem dashed var(--color-dark);
     --padding: 2.2rem 3rem;
@@ -106,11 +106,7 @@ const Reset = createGlobalStyle`
     }
 
     main{
-        //height: 100%;
-        //max-height: 100vh;
-        //display: initial;
-        //overflow-y: scroll;
-        //min-width: 480px;
+        
     }
 
     strong{
@@ -174,7 +170,7 @@ const Theme = createGlobalStyle`
 
     h3,
     h4,
-    h5,{
+    h5{
         font-size: var(--font-size-large);
     }
 
@@ -216,15 +212,21 @@ declare module "styled-components" {
 
 const light: DefaultTheme = {
   primary: '#000',
-  secondary: 'blue',
+  primaryRGB: '0,0,0',
+  secondary: '#0f0',
+  mid: 'grey',
   invert: '#fff',
+  invertRGB: '255,255,255',
   link: 'blue'
 }
 
 const dark: DefaultTheme = {
   primary: '#fff',
-  secondary: 'red',
+  primaryRGB: '255,255,255',
+  secondary: '#f00',
+  mid: 'grey',
   invert: '#000',
+  invertRGB: '0,0,0',
   link: 'blue'
 }
 

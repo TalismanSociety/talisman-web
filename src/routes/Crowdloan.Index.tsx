@@ -1,38 +1,52 @@
-import { Link } from "react-router-dom";
 import styled from 'styled-components'
 import { useCrowdloans } from '@libs/talisman'
+import { Poster, Pill } from '@components'
+import { Crowdloan } from '@archetypes'
 
 const CrowdloanIndex = styled(
 	({
 		className
 	}) => {
-		const crowdloans = useCrowdloans()
+		const { items, status } = useCrowdloans()
 
 		return <div
 			className={className}
 			>
-			<h1>Crowdloan index</h1>
+			<Poster
+				title="It's time to rebuild the system"
+				subtitle='Get rewarded for contributing to projects and help fund the future of the Polkadot ecosystem'
+				>
+				<Pill>test</Pill>
+				<Pill>test</Pill>
+				<Pill>test</Pill>
+			</Poster>
 
-			<p>Status: {crowdloans.status}</p>
-			<p>Message: {crowdloans.message}</p>
-			<p>isReady: {(crowdloans.status === 'READY').toString()}</p>
-			<p>Count: {crowdloans.items.length}</p>
+			<div 
+				className="filterbar"
+				>
+				<span 
+					className="left"
+					>
+					Explore
+					<Pill>All</Pill>
+					<Pill>DeFi</Pill>
+					<Pill>NFTs</Pill>
+					<Pill>Infra</Pill>
+				</span>
+				<span 
+					className="right"
+					>
+					(SEARCH)
+				</span>
+			</div>
+
 			<div className="items">
-				{crowdloans.status === 'READY' &&
-					crowdloans.items.map(({name, slug, icon}) => 
-						<Link
-							to={`/crowdloan/${slug}`}
-							>
-							<h2>{name}</h2>
-							<img 
-								src={icon} 
-								alt={`mising ${name} icon`}
-								style={{
-									width:'4em',
-									height:'4em'
-								}}
-							/>
-						</Link>
+				{status === 'READY' &&
+					items.map(({id}) => 
+						<Crowdloan.Teaser 
+							key={id} 
+							id={id}
+						/>
 					)
 				}
 			</div>
@@ -40,19 +54,17 @@ const CrowdloanIndex = styled(
 		</div>
 	})
 	`
-		.items{
-			display: flex;
-			flex-wrap: wrap;
-			align-items: stretch;
-			align-content: stretch;
-			>*{
-				width: 20%;
-				display: block;
-				border: 1px solid lightgrey;
-				padding: 1em;
-			}
+		.filterbar{
+			padding: 2.4rem;
 		}
 
+		.items{
+			display: grid;
+			grid-gap: 2.4rem;
+			width: 100%;
+			grid-template-columns: repeat(4, 1fr);
+			padding: 0 2.4rem 2.4rem 2.4rem;
+		}
 	`
 
 export default CrowdloanIndex

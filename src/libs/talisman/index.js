@@ -9,14 +9,15 @@ import Settings from './settings.tsx'
 
 // polkadot guardian
 export const useGuardian = Guardian.useGuardian
+export const useGuardianValue = Guardian.useGuardianValue
 
 // account things
 export const useAccount = Account.useAccount;
 
 // crowdloans stuff
 export const useCrowdloans = Crowdloans.useCrowdloans
+export const useCrowdloan = Crowdloans.useCrowdloan
 export const useCrowdloanBySlug = Crowdloans.useCrowdloanBySlug
-
 
 // api wrap
 export const useApi = Api.useApi

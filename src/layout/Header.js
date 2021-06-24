@@ -42,11 +42,11 @@ const Header = styled(
     justify-content: space-between;
     align-items: center;
     padding: 0.7em 1em;
-    border-bottom: 1px solid ${({ theme }) => theme.invert};
+    //border-bottom: 1px solid ${({ theme }) => theme.invert};
 
-    position: absolute;
-    top: 0;
-    left: 0;
+    //position: absolute;
+    //top: 0;
+    //left: 0;
     width: 100%;
 
     >span{

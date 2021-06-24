@@ -1,24 +1,62 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef, useMemo } from 'react'
 import moment from 'moment'
+
+export const useInterval = (cb=()=>{}, ms=1000)  => {
+  const savedCallback = useRef()
+  const [id, setId] = useState(null)
+
+  useEffect(() => {
+    savedCallback.current = cb
+  }, [cb])
+
+  useEffect(() => {
+    const tick = () => typeof savedCallback?.current !== 'undefined' && savedCallback?.current()
+    const _id = setInterval(tick, ms)
+    setId(_id)
+    return () => clearInterval(_id)
+  }, [ms])
+
+  return id
+}
+
+const useCountdown = (seconds=0) => {
+  const [secondsRemaining, setSecondsRemaining] = useState(seconds)
+
+  useInterval(() => setSecondsRemaining(secondsRemaining - 1))
+  
+  useEffect(() => {
+    setSecondsRemaining(seconds)
+  }, [seconds])
+
+  return useMemo(() => secondsRemaining, [secondsRemaining])
+}
 
 const Countdown = 
   ({
-    seconds,
+    seconds=10,
     onCompletion=()=>{}
   }) => {
-    const [end, setEnd] = useState(moment.duration(seconds, 'seconds'))
-    //const [remaining, setRemaining] = useState()
-
-    // useEffect(() => {
-    //   const interval = setInterval(() => setRemaining(moment().add(seconds, 'seconds').toNow()), 1000)
-    //   return () => clearInterval(interval)
-    // }, [])
+    const [duration, setDuration] = useState({
+      days: 0,
+      hours: 0,
+      minutes: 0,
+      seconds: seconds
+    }) 
+    const remaining = useCountdown(seconds)
 
     useEffect(() => {
-      setEnd(moment.duration(seconds, 'seconds'))
-    }, [seconds])
+      const _duration = moment.duration(remaining, 'seconds')
+      setDuration({
+        days: _duration.days(),
+        hours: _duration.hours(),
+        minutes: _duration.minutes(),
+        seconds: _duration.seconds()
+      })
+    }, [remaining])
 
-    return `${end.days()}d ${end.hours()}h ${end.minutes()}m ${end.seconds()}s [todo: updated every second]`
+    return !!duration 
+      ? `${duration.days}d ${duration.hours}h ${duration.minutes}m ${duration.seconds}s`
+      : null
   }
   
 

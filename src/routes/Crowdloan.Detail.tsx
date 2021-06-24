@@ -2,7 +2,7 @@ import styled from 'styled-components'
 import { useParams } from "react-router-dom";
 import moment from 'moment'
 import { Pendor, Countdown } from '@components'
-import { useCrowdloanBySlug, useGuardian } from '@libs/talisman'
+import { useCrowdloanBySlug, useGuardianValue } from '@libs/talisman'
 
 const CrowdloanDetail = styled(
 	({
@@ -23,13 +23,7 @@ const CrowdloanDetail = styled(
 			url,
 			end
 		} = useCrowdloanBySlug(slug)
-		const {
-			metadata: {
-				blockNumber
-			}
-		} = useGuardian()
-
-		//const endTime = moment.duration((end - blockNumber) * 6, 'seconds')
+		const blockNumber = useGuardianValue('metadata.blockNumber')
 
 		return <div
 			className={className}

@@ -13,6 +13,7 @@ import {
   //web3ListRpcProviders,
   //web3UseRpcProvider
 } from '@polkadot/extension-dapp';
+import { get } from 'lodash'
 import { 
   useStatus, 
   useAwaitObjectValue 
@@ -87,6 +88,12 @@ const subscriptionReducer = (state=[], sub) => {
 const Context = createContext({});
 
 const useGuardian = () => useContext(Context)
+
+// helper hook to extract a key -> value usinf lodash.get dot format
+const useGuardianValue = value => {
+  const context = useContext(Context)
+  return get(context, value)
+}
 
 const Provider = 
   ({
@@ -185,8 +192,7 @@ const Provider =
     const hydrateMetadata = async () => {
       if(!api.isReady) return
 
-      const props = await api.rpc.system.properties()
-      console.log(111, {props}, props.tokenSymbol.value[0].toString(), props.tokenDecimals)
+      //const props = await api.rpc.system.properties()
 
       // fetch/set some relevant information
       Promise.all([
@@ -206,7 +212,8 @@ const Provider =
             nodeName: nodeName.toString(),
             nodeVersion: nodeVersion.toString(),
             tokenSymbol: properties.tokenSymbol.value[0].toString(),
-            tokenDecimals: properties.tokenDecimals.value[0].toString()
+            tokenDecimals: properties.tokenDecimals.value[0].toString(),
+            blockPeriod: 6
           })
         }
       )
@@ -278,7 +285,8 @@ const Provider =
 
 const Guardian = {
   Provider,
-  useGuardian
+  useGuardian,
+  useGuardianValue
 }
 
 export default Guardian

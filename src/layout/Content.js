@@ -20,7 +20,7 @@ const Content = styled(
   )
   `
     display: block;
-    padding: 4em 1em;
+   // padding: 4em 1em;
     min-height: 100vh;
   `
 
