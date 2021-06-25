@@ -24,8 +24,8 @@ const Layout = styled(
     </div>
   )
   `
-    background: ${({ theme }) => theme.primary};
-    color: ${({ theme }) => theme.invert};
+    //background: rgb(${({ theme }) => theme.background});
+    //color: rgb(${({ theme }) => theme.foreground});
   `
 
 export default Layout

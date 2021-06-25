@@ -41,11 +41,11 @@ const Teaser = styled(
   })
   `
     display: block;
-    background: rgba(${({ theme }) => theme.invertRGB}, 0.02);
+    background: rgba(${({ theme }) => theme.foreground}, 0.02);
     border-radius: 2.4rem;
     overflow: hidden;
     border-radius: 1rem;
-    box-shadow: 0 0 1.2rem rgba(${({ theme }) => theme.invertRGB}, 0.1);
+    box-shadow: 0 0 1.2rem rgba(${({ theme }) => theme.foreground}, 0.1);
     position: relative;
 
     >.image{

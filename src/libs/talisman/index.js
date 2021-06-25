@@ -18,6 +18,7 @@ export const useAccount = Account.useAccount;
 export const useCrowdloans = Crowdloans.useCrowdloans
 export const useCrowdloan = Crowdloans.useCrowdloan
 export const useCrowdloanBySlug = Crowdloans.useCrowdloanBySlug
+export const useCrowdloanFilter = Crowdloans.useCrowdloanFilter
 
 // api wrap
 export const useApi = Api.useApi

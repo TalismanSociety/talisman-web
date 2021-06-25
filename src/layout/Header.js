@@ -29,6 +29,8 @@ const Header = styled(
       <span>
         <Account.Button/>
         <Toggle
+          off='🌞'
+          on='🌜'
           onChange={toggle}
         />
         <nav>

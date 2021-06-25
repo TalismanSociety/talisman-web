@@ -6,7 +6,9 @@ import { useBoolean } from '@util/hooks'
 const Toggle = styled(
   ({
     value=false, 
-    onChange=()=>{}, 
+    onChange=()=>{},
+    off,
+    on, 
     className,
     ...rest
   }) => {
@@ -49,6 +51,25 @@ const Toggle = styled(
         top: 0.1em;
         left: calc(100% - 1em - 0.1em);
       }
+    }
+
+    &:before,
+    &:after{
+      position: absolute;
+      top: 50%;
+      font-size: 0.7em;
+      transform: translateY(-50%);
+    }
+
+    &:before{
+      content: '${({on}) => on}';
+      left: 0.2rem;
+    }
+
+    &:after{
+      content: '${({off}) => off}';
+      right: 0.2rem;
+
     }
   `
 

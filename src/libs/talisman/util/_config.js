@@ -12,6 +12,7 @@ export const crowdloanDetails = {
     subtitle: 'Karura subtitle',
     info: 'Karura info text',
     url: 'https://acala.network/karura/join-karura',
+    tags: ['aaa', 'ccc'],
     assets: {
       icon: 'karura.icon.svg',
       poster: 'karura.poster.png',
@@ -29,6 +30,7 @@ export const crowdloanDetails = {
     subtitle: 'Bitfrost subtitle',
     info: 'Bitfrost info text',
     url: '',
+    tags: ['ddd', 'bbb'],
     assets: {
       icon: 'karura.icon.svg',
       poster: 'karura.poster.png',
@@ -46,6 +48,7 @@ export const crowdloanDetails = {
     subtitle: 'Khala Network subtitle',
     info: 'Khala Network info text',
     url: '',
+    tags: ['aaa', 'eee'],
     assets: {
       icon: 'karura.icon.svg',
       poster: 'karura.poster.png',
@@ -63,6 +66,7 @@ export const crowdloanDetails = {
     subtitle: 'Darwinia Crab Redirect subtitle',
     info: 'Darwinia Crab Redirect info text',
     url: '',
+    tags: ['aaa', 'bbb'],
     assets: {
       icon: 'karura.icon.svg',
       poster: 'karura.poster.png',
@@ -80,6 +84,7 @@ export const crowdloanDetails = {
     subtitle: 'Shiden subtitle',
     info: 'Shiden info text',
     url: '',
+    tags: ['aaa', 'bbb'],
     assets: {
       icon: 'karura.icon.svg',
       poster: 'karura.poster.png',
@@ -97,6 +102,7 @@ export const crowdloanDetails = {
     subtitle: 'Mars subtitle',
     info: 'Mars info text',
     url: '',
+    tags: ['aaa', 'bbb'],
     assets: {
       icon: 'karura.icon.svg',
       poster: 'karura.poster.png',
@@ -114,6 +120,7 @@ export const crowdloanDetails = {
     subtitle: 'PolkaSmith by PolkaFoundry subtitle',
     info: 'PolkaSmith by PolkaFoundry info text',
     url: '',
+    tags: ['aaa', 'bbb'],
     assets: {
       icon: 'karura.icon.svg',
       poster: 'karura.poster.png',
@@ -131,6 +138,7 @@ export const crowdloanDetails = {
     subtitle: 'Crust Shadow subtitle',
     info: 'Crust Shadow info text',
     url: '',
+    tags: ['aaa', 'bbb'],
     assets: {
       icon: 'karura.icon.svg',
       poster: 'karura.poster.png',
@@ -148,6 +156,7 @@ export const crowdloanDetails = {
     subtitle: 'Sakura subtitle',
     info: 'Sakura info text',
     url: '',
+    tags: ['aaa', 'bbb'],
     assets: {
       icon: 'karura.icon.svg',
       poster: 'karura.poster.png',
@@ -165,6 +174,7 @@ export const crowdloanDetails = {
     subtitle: 'SubGame Gamma subtitle',
     info: 'SubGame Gamma info text',
     url: '',
+    tags: ['aaa', 'bbb'],
     assets: {
       icon: 'karura.icon.svg',
       poster: 'karura.poster.png',
@@ -182,6 +192,7 @@ export const crowdloanDetails = {
     subtitle: 'Moonriver subtitle',
     info: 'Moonriver info text',
     url: 'https://moonbeam.foundation/moonriver-crowdloan/',
+    tags: ['aaa', 'bbb'],
     assets: {
       icon: 'karura.icon.svg',
       poster: 'karura.poster.png',
@@ -199,6 +210,7 @@ export const crowdloanDetails = {
     subtitle: 'Genshiro subtitle',
     info: 'Genshiro info text',
     url: '',
+    tags: ['aaa', 'bbb'],
     assets: {
       icon: 'karura.icon.svg',
       poster: 'karura.poster.png',

@@ -1,0 +1,78 @@
+import { useEffect } from 'react';
+import styled from 'styled-components'
+import { Pill } from '@components'
+import { useSet } from '@util/hooks'
+
+const Reset = styled(
+  ({
+    className,
+    ...props
+  }) => 
+    <span 
+      className={`${className} reset`}
+      {...props}
+      >
+      [reset]
+    </span>
+  )
+  `
+    cursor: pointer;
+  `
+
+const Filter = styled(
+  ({
+    inital=[],
+    options={},
+    className,
+    onChange=()=>{},
+    ...rest
+  }) => {
+
+    const [selected, { add, remove, reset }] = useSet(inital)
+
+    // fire onchange when tags change
+    useEffect(() => onChange(Array.from(selected)), [selected.length])  // eslint-disable-line
+    
+    return <div
+      className={`filter ${className}`}
+      {...rest}
+      >
+      {Object.keys(options).map(key => 
+        <Pill 
+          key={key} 
+          onClick={() => selected.includes(key) ? remove(key) : add(key)}
+          data-active={selected.includes(key)}
+          >
+          {options[key]}
+        </Pill>
+      )}
+      {selected.length > 0 && <Reset onClick={reset}/>}
+    </div>
+  })
+  `
+    display: block;
+
+    >.pill{
+      //opacity: 0.5;
+      background: rgba(${({theme}) => theme.primary}, 0.2);
+      color: rgb(${({theme}) => theme.primary});
+
+      &:hover,
+      &[data-active="true"],
+      &[data-active="false"]:hover{
+        background: rgb(${({theme}) => theme.primary});
+        color: rgb(${({theme}) => theme.background});
+      }
+
+      & + .pill{
+        margin-left: 0.4em;
+      }
+    }
+
+    >.reset{
+      margin-left: 1em
+    }
+  
+  `
+
+export default Filter

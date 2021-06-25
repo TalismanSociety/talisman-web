@@ -18,20 +18,12 @@ import {
   usage: background: var(--color-primary) or font-size: var(--font-size-large)
 */
 
-// color defs
-const colors = {
-  'FF8A74': ['primary'],
-  'E1FFED': ['secondary'],
-  'FFFFFF': ['light'],
-  'E5E5E5': ['light-grey'],
-  '999999': ['grey'],
-  '737373': ['dark-grey'],
-  '000000': ['dark'],
-  'ead017': ['gold'],
-  '21C91D': ['status-ok', 'status-success', 'status-online', 'green', 'positive', 'success'],
-  'FFCF96': ['status-concern', 'status-warning', 'orange', 'warning'],
-  'D44B23': ['status-failure', 'status-error', 'red', 'negative', 'error'],
-  'B9D9FF': ['status-neutral', 'status-default', 'blue'],
+// status color defs
+const statusColors = {
+  '21C91D': ['ok', 'success', 'online', 'positive'],
+  'FFCF96': ['concern', 'warning'],
+  'D44B23': ['failure', 'error', 'negative'],
+  'B9D9FF': ['neutral', 'default'],
 }
 
 // font size defs
@@ -51,34 +43,33 @@ const fontWeights = {
 }
 
 
+// base style
+const Style = createGlobalStyle`  
+    
+    /*
+        define all options as css variables
+    */
+    :root {
+      /* theme colors as css variables */
+      ${({ theme }) => !!theme && Object.keys(theme).map(name => `--color-${name}-test: rgb(${theme[name]});`)}
 
+      /* status color mappings */
+      ${Object.keys(statusColors).map(hex => statusColors[hex].map(status => `--color-status-${status}: #${hex};`))}
 
-// global styling
+      /* fonts size mappings */
+      ${Object.keys(fontSizes).map(name => `--font-size-${name}: ${fontSizes[name]}rem;`)}
 
-// vars
-const Vars = createGlobalStyle`  
-  :root {
-    /*colors mappings*/
-    ${Object.keys(colors).map(hex => colors[hex].map(status => `--color-${status}: #${hex};`))}
+      /* font weights */
+      ${Object.keys(fontWeights).map(name => `--font-weight-${name}: ${fontWeights[name]};`)}
 
-    /*fonts size mappings*/
-    ${Object.keys(fontSizes).map(name => `--font-size-${name}: ${fontSizes[name]}rem;`)}
+      /* misc */
+      --border: 0.2rem solid var(--color-dark);
+      --border-dashed: 0.2rem dashed var(--color-dark);
+      --padding: 2.2rem 3rem;
+      --padding-large: 4.2rem 4rem;
+      --padding-small: 1.1rem 1.5rem;
+    }
 
-    /*font weights*/
-    ${Object.keys(fontWeights).map(name => `--font-weight-${name}: ${fontWeights[name]};`)}
-
-    /*misc*/
-    --border: 0.2rem solid var(--color-dark);
-    --border-dashed: 0.2rem dashed var(--color-dark);
-    --padding: 2.2rem 3rem;
-    --padding-large: 4.2rem 4rem;
-    --padding-small: 1.1rem 1.5rem;
-
-  }
-`
-
-// base/reset 
-const Reset = createGlobalStyle`  
     *{
         box-sizing: border-box;
         -webkit-font-smoothing: antialiased;
@@ -87,7 +78,8 @@ const Reset = createGlobalStyle`
         line-height: 1.6em;
     }
 
-    html,body {
+    body,html{
+        font-family: 'Space Mono', sans-serif;
         padding: 0;
         margin: 0;
         scroll-behavior: smooth;
@@ -96,51 +88,9 @@ const Reset = createGlobalStyle`
     }
 
     body{
-        color: var(--color-dark);
-        background: var(--color-light);
+        background: rgb(${({ theme }) => theme?.background});
+        color: rgb(${({ theme }) => theme?.foreground});
         font-size: var(--font-size-normal);
-
-        @media (max-width: 560px) { 
-            font-size: var(--font-size-small);
-        }
-    }
-
-    main{
-        
-    }
-
-    strong{
-        font-weight: 600
-    }
-
-    a{
-        text-decoration: none;
-        transition: all 0.15s;
-    }
-    
-    hr{
-        opacity: 0.15;
-        height: 0;
-        border: none;
-        border-bottom: 1px solid currentColor;
-    }
-
-    *:focus{
-        outline: none;
-    }
-
-    svg{
-        width: 1em;
-        height: 1em;
-    }
-`
-
-// theme
-const Theme = createGlobalStyle`  
-    :root{}
-
-    body,html{
-        font-family: 'Space Mono', sans-serif;
     }
 
     h1,h2,h3,h4,h5,p{
@@ -155,7 +105,7 @@ const Theme = createGlobalStyle`
         a{
             line-height: inherit;
             opacity: 0.6;
-            color: ${({ theme }) => theme?.link};
+            color: ${({ theme }) => theme?.primary};
         }
     }
 
@@ -178,14 +128,30 @@ const Theme = createGlobalStyle`
         font-size: var(--font-size-normal);
     }
 
-    .field{
-        font: inherit
+    a{
+        text-decoration: none;
+        transition: all 0.15s;
+    }
+
+    hr{
+        opacity: 0.15;
+        height: 0;
+        border: none;
+        border-bottom: 1px solid currentColor;
     }
 
     button{
         font: inherit
     }
 
+    strong{
+        font-weight: 600
+    }
+
+    svg{
+        width: 1em;
+        height: 1em;
+    }
 
     @keyframes spin {
         0% { transform: rotateZ(0deg) } 
@@ -195,39 +161,41 @@ const Theme = createGlobalStyle`
     svg.feather-loader{
         animation: spin linear 3s infinite;
     }
+
+    *:focus{
+        outline: none;
+    }
 `
 
 
 
 
 /* theming options */
+// declare all theme based colors in rgb
+// when using in component, need to wrap in rgb(...) declaration
+// can also use rgba to define opacity
 
 declare module "styled-components" {
   export interface DefaultTheme {
     primary: string
     secondary: string
-    invert: string 
+    background: string 
+    foreground: string
   }
 }
 
 const light: DefaultTheme = {
-  primary: '#000',
-  primaryRGB: '0,0,0',
-  secondary: '#0f0',
-  mid: 'grey',
-  invert: '#fff',
-  invertRGB: '255,255,255',
-  link: 'blue'
+  primary: '244,101,69',
+  secondary: '0,0,255',
+  background: '0,0,0',
+  foreground: '255,255,255'
 }
 
 const dark: DefaultTheme = {
-  primary: '#fff',
-  primaryRGB: '255,255,255',
-  secondary: '#f00',
-  mid: 'grey',
-  invert: '#000',
-  invertRGB: '0,0,0',
-  link: 'blue'
+  primary: '244,101,69',
+  secondary: '0,0,255',
+  background: '255,255,255',
+  foreground: '0,0,0'
 }
 
 const themes = {
@@ -252,10 +220,8 @@ const Provider = ({children}) => {
       toggle
     }}
     >
-    <Vars/>
-    <Reset/>
-    <Theme/>
     <ThemeProvider theme={themes[theme]}>
+      <Style/>
       {children}
     </ThemeProvider>
   </Context.Provider>

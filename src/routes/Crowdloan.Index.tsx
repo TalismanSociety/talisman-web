@@ -1,56 +1,115 @@
 import styled from 'styled-components'
-import { useCrowdloans } from '@libs/talisman'
-import { Poster, Pill } from '@components'
-import { Crowdloan } from '@archetypes'
+import { useCrowdloanFilter } from '@libs/talisman'
+import { Poster, Pill, Filter } from '@components'
+import CrowdloanTeaser from '@archetypes/Crowdloan/Teaser.tsx'
+
+const Billboard = styled(
+	({
+		className,
+		...rest
+	}) =>
+		<Poster
+			className={`${className} billboard`}
+			{...rest}
+			title="It's time to rebuild the system"
+			subtitle='Get rewarded for contributing to projects and help fund the future of the Polkadot ecosystem'
+			>
+			<Pill>💰 24.86M Raised</Pill>
+			<Pill>👍 148 Projects Funded</Pill>
+			<Pill>😍 2.6K Contributors</Pill>
+		</Poster>
+	)
+	`
+		
+	`
+
+const FilterBar = styled(
+	({
+		search='',
+		order='',
+		setTags=()=>{}, 
+		setSearch=()=>{}, 
+		setOrder=()=>{},
+		orderOptions={},
+		tagOptions={},
+		className,
+		...rest
+	}) => 
+		<div 
+			className={`${className} filterbar`}
+			{...rest}
+			>
+			<span 
+				className="left"
+				>
+				Explore
+				<Filter
+					options={tagOptions}
+					onChange={val => setTags(val)}
+				/>
+				<input 
+					type="text" 
+					onChange={e => setSearch(e?.target?.value)}
+				/>
+			</span>
+			<span 
+				className="right"
+				>
+				<select
+					onChange={e => setOrder(e?.target?.value)}
+					>
+					{Object.keys(orderOptions).map(key => 
+						<option 
+							value={key}
+							>
+							{orderOptions[key]}
+						</option>
+					)}
+				</select>
+			</span>
+		</div>
+	)
+	`
+		display: flex;
+		width: 100%;
+		justify-content: space-between;
+		align-items: center;
+
+		>span{
+			display: flex;
+			align-items: center;
+		}
+	`
 
 const CrowdloanIndex = styled(
 	({
 		className
 	}) => {
-		const { items, status } = useCrowdloans()
+		const { 
+			items, 
+			status,
+			filterProps
+		} = useCrowdloanFilter()
 
 		return <div
 			className={className}
 			>
-			<Poster
-				title="It's time to rebuild the system"
-				subtitle='Get rewarded for contributing to projects and help fund the future of the Polkadot ecosystem'
-				>
-				<Pill>test</Pill>
-				<Pill>test</Pill>
-				<Pill>test</Pill>
-			</Poster>
-
+			<Billboard/>
+			<FilterBar
+				{...filterProps}
+			/>
 			<div 
-				className="filterbar"
+				className="items"
 				>
-				<span 
-					className="left"
-					>
-					Explore
-					<Pill>All</Pill>
-					<Pill>DeFi</Pill>
-					<Pill>NFTs</Pill>
-					<Pill>Infra</Pill>
-				</span>
-				<span 
-					className="right"
-					>
-					(SEARCH)
-				</span>
-			</div>
-
-			<div className="items">
 				{status === 'READY' &&
 					items.map(({id}) => 
-						<Crowdloan.Teaser 
+						<CrowdloanTeaser 
 							key={id} 
 							id={id}
 						/>
 					)
 				}
 			</div>
-
 		</div>
 	})
 	`
