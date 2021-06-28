@@ -12,8 +12,8 @@ const Teaser = styled(
     const { name, slug } = useCrowdloan(id)
 
     return <Link
-     to={`/crowdloan/${slug}`}
-     className={`crowdloan-teaser ${className}`}
+      to={`/crowdloan/${slug}`}
+      className={`crowdloan-teaser ${className}`}
       >
       <Crowdloan.Image 
         thumb 
@@ -28,13 +28,16 @@ const Teaser = styled(
           id={id}
         />
         <h1>{name}</h1>
-        <div className="chart"></div>
+        <Crowdloan.Raised
+          id={id}
+        />
       </div>
       <Pill
         small
         >
         <Crowdloan.Countdown
           id={id}
+          showSeconds={false}
         />
       </Pill>
     </Link>
@@ -71,26 +74,6 @@ const Teaser = styled(
         font-weight: 600;
          margin-top: 1rem;
       }
-
-      .chart{
-        display: block;
-        height: 2rem;
-        margin-top: 2rem;
-        background: rgba(0,0,0,0.1);
-        border-radius: 1rem;
-        position: relative;
-        overflow: hidden;
-
-        &:after{
-          content: '';
-          position: absolute;
-          top: 0;
-          left: 0;
-          height: 2rem;
-          width: 75%;
-          background: rgba(0,0,0,0.1);
-        }
-      }
     }
 
     >.pill{
@@ -100,6 +83,10 @@ const Teaser = styled(
       color: white;
       background: white;
       color: black;
+    }
+
+    .crowdloan-raised{
+      font-size: 0.9em
     }
   `
 

@@ -34,7 +34,8 @@ const useCountdown = (seconds=0) => {
 const Countdown = 
   ({
     seconds=10,
-    onCompletion=()=>{}
+    onCompletion=()=>{},
+    showSeconds=true
   }) => {
     const [duration, setDuration] = useState({
       days: 0,
@@ -55,7 +56,11 @@ const Countdown =
     }, [remaining])
 
     return !!duration 
-      ? `${duration.days}d ${duration.hours}h ${duration.minutes}m ${duration.seconds}s`
+      ? `
+        ${duration.days}d 
+        ${duration.hours}h 
+        ${duration.minutes}m 
+        ${showSeconds === true ? `${duration.seconds}s` : ''}`
       : null
   }
   

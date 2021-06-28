@@ -4,11 +4,16 @@ const Pendor =
   ({
     prefix='',
     suffix='',
+    require,
+    loader,
     children
-  }) => 
-    children !== null && children !== undefined 
-      ? <>{prefix}{children}{suffix}</>
-      : <Loader/>
+  }) => {
+    // undefined not set? await children
+    // require is explicitly set to false
+    return (require === undefined && !children) || require === false 
+        ? loader || <Loader/>
+        : <>{prefix}{children}{suffix}</>
+  }
   
 
 export default Pendor

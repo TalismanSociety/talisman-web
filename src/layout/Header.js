@@ -34,7 +34,11 @@ const Header = styled(
           onChange={toggle}
         />
         <nav>
-          <NavLink to='/showcase'>Showcase</NavLink>
+          <NavLink 
+            to='/showcase'
+            >
+            Showcase
+          </NavLink>
         </nav>
       </span>
     </header>

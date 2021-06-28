@@ -5,9 +5,11 @@ const Image = styled(
     src,
     alt,
     className,
+    ...rest
   }) => 
     <div 
       className={`image ${className}`}
+      {...rest}
       >
       <img 
         src={src||''}

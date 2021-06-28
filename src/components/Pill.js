@@ -4,6 +4,7 @@ const Pill = styled(
   ({
     children,
     className,
+    small,
     ...rest
   }) => 
     <span
@@ -15,7 +16,6 @@ const Pill = styled(
   )
   `
     transition: all 0.2s;
-    //border: 1px solid black;
     line-height: 1em;
     padding: 0.4em 1em;
     display: inline-block;
@@ -23,12 +23,14 @@ const Pill = styled(
     user-select: none;
     background: white;
     color: black;
+    box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.1);
 
     ${({onClick}) => !!onClick && `
       cursor: pointer;
     `}
     
     ${({small}) => small && `
+      font-size: 0.85em;
       padding: 0.4rem 0.5em;
     `}
   `

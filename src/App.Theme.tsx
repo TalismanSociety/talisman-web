@@ -51,7 +51,7 @@ const Style = createGlobalStyle`
     */
     :root {
       /* theme colors as css variables */
-      ${({ theme }) => !!theme && Object.keys(theme).map(name => `--color-${name}-test: rgb(${theme[name]});`)}
+      ${({ theme }) => !!theme && Object.keys(theme).map(name => `--color-${name}: rgb(${theme[name]});`)}
 
       /* status color mappings */
       ${Object.keys(statusColors).map(hex => statusColors[hex].map(status => `--color-status-${status}: #${hex};`))}
@@ -188,14 +188,16 @@ const light: DefaultTheme = {
   primary: '244,101,69',
   secondary: '0,0,255',
   background: '0,0,0',
-  foreground: '255,255,255'
+  foreground: '255,255,255',
+  mid: '150,150,150'
 }
 
 const dark: DefaultTheme = {
   primary: '244,101,69',
   secondary: '0,0,255',
   background: '255,255,255',
-  foreground: '0,0,0'
+  foreground: '0,0,0',
+  mid: '150,150,150'
 }
 
 const themes = {

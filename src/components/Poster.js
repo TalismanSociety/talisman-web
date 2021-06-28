@@ -4,11 +4,13 @@ const Poster = styled(
   ({
     title,
     subtitle,
+    backgroundImage,
     children,
     className
   }) => 
     <section
       className={`${className} poster`}
+      style={{backgroundImage: `url(${backgroundImage})`}}
       >
       <span 
         className="content"

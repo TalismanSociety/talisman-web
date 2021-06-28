@@ -19,6 +19,7 @@ export const useCrowdloans = Crowdloans.useCrowdloans
 export const useCrowdloan = Crowdloans.useCrowdloan
 export const useCrowdloanBySlug = Crowdloans.useCrowdloanBySlug
 export const useCrowdloanFilter = Crowdloans.useCrowdloanFilter
+export const useCrowdloanAggregateStats = Crowdloans.useCrowdloanAggregateStats
 
 // api wrap
 export const useApi = Api.useApi

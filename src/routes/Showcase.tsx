@@ -66,7 +66,7 @@ const Dashboard = styled(
 							value={selectedCrowdLoan.id}
 							onChange={({target}) => setSelectedCrowdloan(find(crowdloans.items, {id: target.value})||{})}
 							>
-							<option value="-1">Select Item</option>
+							<option value="-1" key="-1">Select Item</option>
 							{
 								crowdloans.items.map(({id, name}) => 
 									<option 

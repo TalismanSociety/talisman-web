@@ -14,8 +14,10 @@ import {
 } from 'lodash'
 import { useStatus } from './util/hooks'
 import { useApi } from '@libs/talisman'
-import { crowdloanDetails } from './util/_config'
-
+import { 
+  crowdloanDetails, 
+  TEST_DEV_CROWDLOAN_DETAILS // todo: USED FOR TESTING INSTEAD OF HITTING NETWORK
+} from './util/_config'
 
 const Context = createContext({});
 
@@ -28,7 +30,7 @@ const useCrowdloan = id => {
   useEffect(() => {
     const _item = find(items, {id: id})
     _item && setItem(_item)
-  }, [items])  // eslint-disable-line 
+  }, [items, id])  // eslint-disable-line 
 
   return {
     ...item,
@@ -114,16 +116,22 @@ const useCrowdloanFilter = () => {
       orderOptions,
       tagOptions,
       // todo: allow resetting
-      // hasFilter: tags.length > 0 || search !== '',
-      // reset: () => {
-      //   setTags([])
-      //   setSearch('')
-      // }
+      hasFilter: tags.length > 0 || search !== '',
+      reset: () => {
+        setTags([])
+        setSearch('')
+      }
     }
   }
 }
 
-
+const useCrowdloanAggregateStats = () => {
+  return {
+    raised: 24860000,
+    projects: 148,
+    contributors: 2619,
+  }
+}
 
 
 const Provider = 
@@ -139,8 +147,18 @@ const Provider =
       setStatus,
       options
     } = useStatus({
-      status: 'PROCESSING'
+      status: 'PROCESSING',
     })
+
+    const parseRawCrowdloanFields = fields => {
+      return {
+        ...fields,
+        deposit: (fields.deposit / 1e12),
+        raised: (fields.raised / 1e12),
+        cap: (fields.cap / 1e12),
+        percentRaised: 100 / (fields.cap / 1e12) * (fields.raised / 1e12)
+      }
+    }
 
     const hydrateItems = async () => {
       setStatus(options.PROCESSING, 'Hydrating crowdloans')
@@ -156,13 +174,13 @@ const Provider =
 
         paraIds.forEach((paraId, i) => {
           const id = paraId.toString()
-          const info = JSON.parse(campaigns[i])
+          const fields = JSON.parse(campaigns[i])
           const supplementaryInfo = crowdloanDetails[id]
 
           _items[id] = {
             id: id,
             ...supplementaryInfo,
-            ...info
+            ...parseRawCrowdloanFields(fields)
           }
         })
 
@@ -170,12 +188,30 @@ const Provider =
 
         setStatus(options.READY, `${Object.values(_items).length} crowdloans hydrated`)
       } catch(e) {
-        // statements
-        console.log(e);
+        setStatus(options.ERROR, e.message)
       }
     }
 
-    useEffect(() => !!api.isReady && hydrateItems(), [api.isReady]) // eslint-disable-line
+    //useEffect(() => !!api.isReady && hydrateItems(), [api.isReady]) // eslint-disable-line
+    
+    // TESTING
+    useEffect(() => {
+      const testdata = {}
+      Object.keys(TEST_DEV_CROWDLOAN_DETAILS).forEach((paraId, i) => {
+        const id = paraId.toString()
+        const fields = TEST_DEV_CROWDLOAN_DETAILS[paraId]
+
+        testdata[id] = {
+          id: id,
+          ...parseRawCrowdloanFields(fields)
+        }
+      })
+
+      setItems(testdata)
+      setStatus(options.READY, `${Object.values(TEST_DEV_CROWDLOAN_DETAILS).length} crowdloans hydrated`)
+      return
+    }, [])  // eslint-disable-line 
+    // END TESTING
 
     return <Context.Provider 
       value={{
@@ -193,7 +229,8 @@ const Crowdloan = {
   useCrowdloans,
   useCrowdloan,
   useCrowdloanBySlug,
-  useCrowdloanFilter
+  useCrowdloanFilter,
+  useCrowdloanAggregateStats
 }
 
 export default Crowdloan

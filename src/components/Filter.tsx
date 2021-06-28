@@ -3,35 +3,21 @@ import styled from 'styled-components'
 import { Pill } from '@components'
 import { useSet } from '@util/hooks'
 
-const Reset = styled(
-  ({
-    className,
-    ...props
-  }) => 
-    <span 
-      className={`${className} reset`}
-      {...props}
-      >
-      [reset]
-    </span>
-  )
-  `
-    cursor: pointer;
-  `
-
 const Filter = styled(
   ({
-    inital=[],
+    value=[],
     options={},
     className,
     onChange=()=>{},
     ...rest
   }) => {
 
-    const [selected, { add, remove, reset }] = useSet(inital)
+    const [selected, { add, remove, set }] = useSet()
 
     // fire onchange when tags change
-    useEffect(() => onChange(Array.from(selected)), [selected.length])  // eslint-disable-line
+    useEffect(() => onChange(Array.from(selected)), [selected.length]) // eslint-disable-line
+
+    useEffect(() => set(value), [value])  // eslint-disable-line
     
     return <div
       className={`filter ${className}`}
@@ -46,7 +32,6 @@ const Filter = styled(
           {options[key]}
         </Pill>
       )}
-      {selected.length > 0 && <Reset onClick={reset}/>}
     </div>
   })
   `

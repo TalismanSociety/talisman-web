@@ -1,7 +1,8 @@
 import { 
   useState,
   useCallback,
-  useMemo
+  useMemo,
+  useEffect
 } from 'react'
 
 export const useBoolean = init => {
@@ -28,4 +29,19 @@ export const useSet = (initialSet = []) => {
     Array.from(_set),
     actions
   ]
+}
+
+const parachainAssets = require.context('../assets/parachains', true);
+
+
+export const useParachainAssetFullPath = name => {
+  const [image, setImage] = useState('')
+  useEffect(() => {
+    if(!name) return
+    const _image = (parachainAssets(`./${name}`))?.default
+    _image && setImage(_image)
+  }, [name]) // eslint-disable-line
+
+
+  return image
 }
