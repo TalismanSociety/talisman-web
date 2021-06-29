@@ -11,10 +11,12 @@ const Countdown =
     const blockNumber = useGuardianValue('metadata.blockNumber')
     const blockPeriod = useGuardianValue('metadata.blockPeriod')
 
-    return <Cd 
-      showSeconds={showSeconds}
-      seconds={(end - blockNumber) * blockPeriod}
-    />
+    return <span className="countdown">
+      <Cd 
+        showSeconds={showSeconds}
+        seconds={(end - blockNumber) * blockPeriod}
+      />
+    </span>
   }
 
 export default Countdown

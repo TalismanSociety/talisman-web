@@ -15,11 +15,12 @@ const PanelSection = styled(
     </article>
   })
   `
-    padding: 2.4rem 0;
+    padding: 2.1rem 0;
     h2{
       font-size: var(--font-size-xsmall);
       font-weight: bold;
-      color: var(--color-mid)
+      color: var(--color-mid);
+      margin-bottom: 1.4em;
     }
   `
 
@@ -49,7 +50,7 @@ const Panel = styled(
     }
 
     >.inner{
-      padding: 2.4rem;
+      padding: 2.2rem 2.4rem;
       display: block;
       border-radius: 1.6rem;
       user-select: none;

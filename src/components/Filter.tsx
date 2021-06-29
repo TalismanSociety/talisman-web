@@ -38,7 +38,6 @@ const Filter = styled(
     display: block;
 
     >.pill{
-      //opacity: 0.5;
       background: rgba(${({theme}) => theme.primary}, 0.2);
       color: rgb(${({theme}) => theme.primary});
 

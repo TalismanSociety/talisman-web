@@ -33,7 +33,7 @@ const Teaser = styled(
         />
       </div>
       <Pill
-        small
+        className='countdown'
         >
         <Crowdloan.Countdown
           id={id}
@@ -45,20 +45,20 @@ const Teaser = styled(
   `
     display: block;
     background: rgba(${({ theme }) => theme.foreground}, 0.02);
-    border-radius: 2.4rem;
     overflow: hidden;
-    border-radius: 1rem;
+    border-radius: 2.4rem;
     box-shadow: 0 0 1.2rem rgba(${({ theme }) => theme.foreground}, 0.1);
     position: relative;
+    height: 35.9rem;
 
     >.image{
       width: 100%;
       height: 0;
-      padding-top: 50%;
+      padding-top: 58.4%;
     }
 
     >.content{
-      padding: 0 1em 1em 1em;
+      padding: 0 1.6rem 1rem 1.6rem;
 
       .icon{
         width: 6.4rem;
@@ -72,21 +72,25 @@ const Teaser = styled(
         margin: 0;
         font-size: var(--font-size-large);
         font-weight: 600;
-         margin-top: 1rem;
+        margin-top: 1.2rem;
       }
     }
 
-    >.pill{
+    >.countdown{
       position: absolute;
-      top: 1rem;
-      right: 1rem;
+      top: 1.6rem;
+      right: 1.6rem;
       color: white;
       background: white;
       color: black;
     }
 
     .crowdloan-raised{
-      font-size: 0.9em
+      font-size: 0.9em;
+      position: absolute;
+      bottom: 1.5rem;
+      left: 1.6rem;
+      width: calc(100% - 3.2rem);
     }
   `
 

@@ -2,7 +2,9 @@ import {
   createContext, 
   useContext,
   useState,
+  useEffect
 } from 'react'
+import { useLocation } from "react-router-dom";
 import { 
   DefaultTheme, 
   ThemeProvider,
@@ -28,7 +30,7 @@ const statusColors = {
 
 // font size defs
 const fontSizes = {
-  xxlarge: 3.2,
+  xxlarge: 4,
   xlarge: 2.4,
   large: 1.8,
   normal: 1.6,
@@ -105,7 +107,7 @@ const Style = createGlobalStyle`
         a{
             line-height: inherit;
             opacity: 0.6;
-            color: ${({ theme }) => theme?.primary};
+            color: rgb(${({ theme }) => theme?.primary});
         }
     }
 
@@ -126,6 +128,7 @@ const Style = createGlobalStyle`
 
     p{
         font-size: var(--font-size-normal);
+        line-height: 1.6em;
     }
 
     a{
@@ -187,17 +190,21 @@ declare module "styled-components" {
 const light: DefaultTheme = {
   primary: '244,101,69',
   secondary: '0,0,255',
-  background: '0,0,0',
-  foreground: '255,255,255',
-  mid: '150,150,150'
+  background: '255,255,255',
+  foreground: '0,0,0',
+  mid: '150,150,150',
+  light: '255,255,255',
+  dark: '0,0,0',
 }
 
 const dark: DefaultTheme = {
   primary: '244,101,69',
   secondary: '0,0,255',
-  background: '255,255,255',
-  foreground: '0,0,0',
-  mid: '150,150,150'
+  background: '0,0,0',
+  foreground: '255,255,255',
+  mid: '150,150,150',
+  light: '255,255,255',
+  dark: '0,0,0',
 }
 
 const themes = {
@@ -214,15 +221,26 @@ const Context = createContext({});
 export const useTheme = () => useContext(Context)
 
 const Provider = ({children}) => {
+
+  // theme stuff
   const [theme, setTheme] = useState('light')
   const toggle = () => setTheme(theme === 'dark' ? 'light' : 'dark')
+  const set = mode => setTheme(mode === 'dark' ? 'dark' : 'light')
+
+  // scroll to top on location change
+  const { pathname } = useLocation();
+  useEffect(() =>  window.scrollTo(0, 0), [pathname]);
+
   return <Context.Provider 
     value={{
       theme,
-      toggle
+      toggle,
+      set
     }}
     >
-    <ThemeProvider theme={themes[theme]}>
+    <ThemeProvider 
+      theme={themes[theme]}
+      >
       <Style/>
       {children}
     </ThemeProvider>

@@ -11,6 +11,8 @@ import {
 } from '@components'
 import CrowdloanTeaser from '@archetypes/Crowdloan/Teaser.tsx'
 import { shortNumber } from '@util/helpers'
+import billboardImage from '@assets/parachain_index_billboard.png'
+
 
 const Billboard = styled(
   ({
@@ -28,14 +30,21 @@ const Billboard = styled(
       {...rest}
       title="It's time to rebuild the system"
       subtitle='Get rewarded for contributing to projects and help fund the future of the Polkadot ecosystem'
+      backgroundImage={billboardImage}
       >
-      <Pill>💰 {shortNumber(raised)} Raised</Pill>
-      <Pill>👍 {shortNumber(projects)} Projects Funded</Pill>
-      <Pill>😍 {shortNumber(contributors)} Contributors</Pill>
+      <Pill large>💰 {shortNumber(raised)} Raised</Pill>
+      <Pill large>👍 {shortNumber(projects)} Projects Funded</Pill>
+      <Pill large>😍 {shortNumber(contributors)} Contributors</Pill>
     </Poster>
   })
   `
-    
+    color: var(--color-light);
+    .content{
+
+    }
+    .pill{
+      margin: 0 0.5em;
+    }
   `
 
 const FilterBar = styled(
@@ -103,6 +112,7 @@ const FilterBar = styled(
     width: 100%;
     justify-content: space-between;
     align-items: center;
+    padding: 2.7rem 2.4rem;
 
     >span{
       display: flex;
@@ -159,9 +169,6 @@ const CrowdloanIndex = styled(
     </div>
   })
   `
-    .filterbar{
-      padding: 2.4rem;
-    }
 
     .items{
       display: grid;

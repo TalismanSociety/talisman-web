@@ -6,13 +6,13 @@ import ThemeProvider from "./App.Theme"
 
 const App:React.FC = () =>  
   <TalismanProvider>
-    <ThemeProvider>
-      <Router>    
+    <Router> 
+      <ThemeProvider>
         <Layout>
           <Routes/>
         </Layout>
-      </Router>
-    </ThemeProvider>
+      </ThemeProvider>
+    </Router>
   </TalismanProvider>
 
 export default App;

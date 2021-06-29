@@ -17,7 +17,6 @@ const Poster = styled(
         >
         <h1>{title}</h1>
         <h2>{subtitle}</h2>
-
         <div 
           className="children"
           >
@@ -29,9 +28,15 @@ const Poster = styled(
   `
     display: block;
     width: 100%;
-    height: 40rem;
-    background: rgba(0,0,0,0.1);
+    height: 24vw;
+    min-height: 34rem;
+    max-height: 60rem;
+    background-color: rgba(0,0,0,0.1);
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
     position: relative;
+    padding: 3vw;
 
     .content{
       position: absolute;
@@ -39,6 +44,19 @@ const Poster = styled(
       left: 50%;
       transform: translate(-50%, -50%);
       text-align: center;
+
+      h1{
+        margin: 0;
+      }
+
+      h2{
+        margin: 1.6vw 0 2.9vw;
+        line-height: 1.3em
+      }
+
+      >.children{
+        margin: 0;
+      }
     }
   `
   

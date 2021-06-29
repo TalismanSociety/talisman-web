@@ -3,6 +3,7 @@ import styled from 'styled-components'
 import { useTheme } from '@root/App.Theme'
 import { Toggle } from '@components'
 import { Account } from '@archetypes'
+import { ReactComponent as Logo } from '@assets/logo.svg'
 
 type Props = {
   className: React.ReactNode,
@@ -14,7 +15,7 @@ const Header = styled(
       className
     }: Props
   ) => {
-    const { toggle } = useTheme()
+    const { set } = useTheme()
 
     return <header
       className={className}
@@ -22,16 +23,16 @@ const Header = styled(
       <span>
         <NavLink
           to='/'
+          className='logo'
           >
-          <h1>Talisman</h1>
+          <Logo/>
         </NavLink>
       </span>
       <span>
-        <Account.Button/>
         <Toggle
           off='🌞'
           on='🌜'
-          onChange={toggle}
+          onChange={on => set(!!on ? 'dark' : 'light')}
         />
         <nav>
           <NavLink 
@@ -40,6 +41,7 @@ const Header = styled(
             Showcase
           </NavLink>
         </nav>
+        <Account.Button/>
       </span>
     </header>
   })
@@ -47,12 +49,7 @@ const Header = styled(
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0.7em 1em;
-    //border-bottom: 1px solid ${({ theme }) => theme.invert};
-
-    //position: absolute;
-    //top: 0;
-    //left: 0;
+    padding: 1.6rem 2.4rem;
     width: 100%;
 
     >span{
@@ -67,10 +64,15 @@ const Header = styled(
       }
     }
 
-    h1{
-      margin: 0;
-      font-size: inherit;
-      line-height: inherit;
+    .logo{
+      display: inline-block;
+      width: 14.5rem;
+      height: 2rem;
+      svg{
+        margin: 0;
+        width: 14.5rem;
+        height: 2rem;
+      }
     }
 
     nav{
