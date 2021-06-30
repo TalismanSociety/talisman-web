@@ -1,7 +1,7 @@
 export const truncateAddress = (addr, start=6, end=4) => addr ? `${addr.substring(0, start)}...${addr.substring(addr.length - end)}` : null
 export const truncateString = (str='', start=10, end=0) => str && str.length ? (str.length <= (start + end) ? str : `${str.substring(0, start)}...` + (end > 0 ? str.substring(str.length - end) : '')) : null
-export const shortNumber = (num, decimals=2) => {
-  if (!num) return
+export const shortNumber = (num=0, decimals=2) => {
+  if (typeof num !== 'number') return
   if (num < 1000) return parseFloat(num.toFixed(decimals));
   
   const si = [{v: 1E3, s: "K"},{v: 1E6, s: "M"},{v: 1E9, s: "B"},{v: 1E12, s: "T"},{v: 1E15, s: "P"},{v: 1E18, s: "E"}]

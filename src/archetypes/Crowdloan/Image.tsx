@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 import { useState, useEffect } from 'react'
 import { Image as Img } from '@components'
-import { useCrowdloan } from '@libs/talisman'
+import { useCrowdloanById } from '@libs/talisman'
 
 const images = require.context('../../assets/parachains', true);
 
@@ -12,7 +12,7 @@ const Image = styled(
     icon,
     className
   }) => {
-    const { assets, name } = useCrowdloan(id)
+    const { assets, name } = useCrowdloanById(id)
     const [image, setImage] = useState()
     const [type, setType] = useState()
 

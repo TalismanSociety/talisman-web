@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import styled from 'styled-components'
-import { Pill } from '@components'
-import { useCrowdloan } from '@libs/talisman'
+import { Pill, Pendor } from '@components'
+import { useCrowdloanById } from '@libs/talisman'
 import Crowdloan from './'
 
 const Teaser = styled(
@@ -9,7 +9,9 @@ const Teaser = styled(
     id,
     className
   }) => {
-    const { name, slug } = useCrowdloan(id)
+    const { name, slug, end, ...rest } = useCrowdloanById(id)
+
+    console.log(rest)
 
     return <Link
       to={`/crowdloan/${slug}`}
@@ -32,14 +34,20 @@ const Teaser = styled(
           id={id}
         />
       </div>
+     
       <Pill
         className='countdown'
         >
-        <Crowdloan.Countdown
-          id={id}
-          showSeconds={false}
-        />
+        <Pendor
+          require={!!end}
+          >
+          <Crowdloan.Countdown
+            id={id}
+            showSeconds={false}
+          />
+          </Pendor>
       </Pill>
+     
     </Link>
   })
   `
@@ -73,6 +81,9 @@ const Teaser = styled(
         font-size: var(--font-size-large);
         font-weight: 600;
         margin-top: 1.2rem;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
       }
     }
 

@@ -19,7 +19,8 @@ const Pill = styled(
     transition: all 0.2s;
     line-height: 1em;
     padding: 0.4em 1em;
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
     border-radius: 4rem;
     user-select: none;
     background: rgb(${({ theme }) => theme?.background});

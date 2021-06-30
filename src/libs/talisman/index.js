@@ -1,6 +1,7 @@
 import Guardian from './guardian.tsx'
 import Account from './account.tsx'
-import Crowdloans from './crowdloans.tsx'
+import Parachain from './parachain.tsx'
+import Crowdloan from './crowdloan.tsx'
 import Api from './api.tsx'
 import Settings from './settings.tsx'
 
@@ -14,12 +15,16 @@ export const useGuardianValue = Guardian.useGuardianValue
 // account things
 export const useAccount = Account.useAccount;
 
+// parachain things
+export const useParachains = Parachain.useParachains
+export const useParachainById = Parachain.useParachainById
+export const useParachainBySlug = Parachain.useParachainBySlug
+
 // crowdloans stuff
-export const useCrowdloans = Crowdloans.useCrowdloans
-export const useCrowdloan = Crowdloans.useCrowdloan
-export const useCrowdloanBySlug = Crowdloans.useCrowdloanBySlug
-export const useCrowdloanFilter = Crowdloans.useCrowdloanFilter
-export const useCrowdloanAggregateStats = Crowdloans.useCrowdloanAggregateStats
+export const useCrowdloans = Crowdloan.useCrowdloans
+export const useCrowdloanById = Crowdloan.useCrowdloanById
+export const useCrowdloanBySlug = Crowdloan.useCrowdloanBySlug
+export const useCrowdloanAggregateStats = Crowdloan.useCrowdloanAggregateStats
 
 // api wrap
 export const useApi = Api.useApi
@@ -35,9 +40,11 @@ const Provider = ({children}) =>
 		<Api.Provider>
 			<Guardian.Provider>
 				<Account.Provider>
-					<Crowdloans.Provider>
-						{children}
-					</Crowdloans.Provider>
+					<Parachain.Provider>
+						<Crowdloan.Provider>
+							{children}
+						</Crowdloan.Provider>
+					</Parachain.Provider>
 				</Account.Provider>
 			</Guardian.Provider>
 		</Api.Provider>

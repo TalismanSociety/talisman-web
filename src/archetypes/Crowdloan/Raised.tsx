@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { useCrowdloan } from '@libs/talisman'
+import { useCrowdloanById } from '@libs/talisman'
 import { Pendor, Stat, ProgressBar } from '@components'
 import { shortNumber } from '@util/helpers'
 
@@ -13,7 +13,7 @@ const Countdown = styled(
       percentRaised, 
       raised, 
       cap 
-    } = useCrowdloan(id)
+    } = useCrowdloanById(id)
 
     return <div
       className={`crowdloan-raised ${className}`}

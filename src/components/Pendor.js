@@ -11,7 +11,7 @@ const Pendor =
     // undefined not set? await children
     // require is explicitly set to false
     return (require === undefined && !children) || require === false 
-        ? loader || <Loader/>
+        ? loader || <Loader style={{opacity: 0.4}}/>
         : <>{prefix}{children}{suffix}</>
   }
   

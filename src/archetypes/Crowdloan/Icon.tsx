@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { useCrowdloan } from '@libs/talisman'
+import { useCrowdloanById } from '@libs/talisman'
 import { useParachainAssetFullPath } from '@util/hooks'
 
 const Icon = styled(
@@ -7,7 +7,7 @@ const Icon = styled(
     id,
     className
   }) => {
-    const { name, assets } = useCrowdloan(id)
+    const { name, assets } = useCrowdloanById(id)
 
     const image = useParachainAssetFullPath(assets?.icon)   
 

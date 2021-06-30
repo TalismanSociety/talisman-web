@@ -1,5 +1,5 @@
 import { Countdown as Cd } from '@components'
-import { useCrowdloan, useGuardianValue } from '@libs/talisman'
+import { useCrowdloanById, useGuardianValue } from '@libs/talisman'
 
 const Countdown =
   ({
@@ -7,9 +7,11 @@ const Countdown =
     showSeconds,
     className
   }) => {
-    const { end } = useCrowdloan(id)
+    const { end } = useCrowdloanById(id)
     const blockNumber = useGuardianValue('metadata.blockNumber')
     const blockPeriod = useGuardianValue('metadata.blockPeriod')
+
+    if(!end) return null
 
     return <span className="countdown">
       <Cd 

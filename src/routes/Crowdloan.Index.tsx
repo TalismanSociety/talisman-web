@@ -1,6 +1,5 @@
 import styled from 'styled-components'
 import { 
-  useCrowdloanFilter, 
   useCrowdloanAggregateStats 
 } from '@libs/talisman'
 import { 
@@ -9,10 +8,9 @@ import {
   Filter, 
   Pendor
 } from '@components'
-import CrowdloanTeaser from '@archetypes/Crowdloan/Teaser.tsx'
+import { Crowdloan } from '@archetypes'
 import { shortNumber } from '@util/helpers'
 import billboardImage from '@assets/parachain_index_billboard.png'
-
 
 const Billboard = styled(
   ({
@@ -22,7 +20,8 @@ const Billboard = styled(
     const { 
       raised,
       projects,
-      contributors
+      contributors,
+      status
     } = useCrowdloanAggregateStats()
 
     return <Poster
@@ -32,9 +31,33 @@ const Billboard = styled(
       subtitle='Get rewarded for contributing to projects and help fund the future of the Polkadot ecosystem'
       backgroundImage={billboardImage}
       >
-      <Pill large>💰 {shortNumber(raised)} Raised</Pill>
-      <Pill large>👍 {shortNumber(projects)} Projects Funded</Pill>
-      <Pill large>😍 {shortNumber(contributors)} Contributors</Pill>
+      <Pill large>
+        💰&nbsp;
+        <Pendor
+          require={status === 'READY'}
+          >
+          {shortNumber(raised)}
+        </Pendor>
+        &nbsp;Raised
+      </Pill>
+      <Pill large>
+        👍&nbsp;
+        <Pendor
+          require={!!projects}
+          >
+          {shortNumber(projects)}
+        </Pendor>
+        &nbsp;Projects
+      </Pill>
+      <Pill large>
+        😍&nbsp;
+        <Pendor
+          require={status === 'READY'}
+          >
+          {shortNumber(contributors)}
+        </Pendor>
+        &nbsp;Contributors
+      </Pill>
     </Poster>
   })
   `
@@ -141,31 +164,26 @@ const CrowdloanIndex = styled(
   }) => {
     const { 
       items, 
-      status,
       filterProps
-    } = useCrowdloanFilter()
+    } = Crowdloan.useFilter()
 
     return <div
       className={className}
       >
       <Billboard/>
-      <Pendor
-        require={status === 'READY'}
+      <FilterBar
+        {...filterProps}
+      />
+      <div 
+        className="items"
         >
-        <FilterBar
-          {...filterProps}
-        />
-        <div 
-          className="items"
-          >
-          {items.map(({id}) =>               
-            <CrowdloanTeaser 
-              key={id} 
-              id={id}
-            />
-          )}
-        </div>
-      </Pendor>
+        {items.map(({id}) =>               
+          <Crowdloan.Teaser 
+            key={id} 
+            id={id}
+          />
+        )}
+      </div>
     </div>
   })
   `
@@ -176,6 +194,32 @@ const CrowdloanIndex = styled(
       width: 100%;
       grid-template-columns: repeat(4, 1fr);
       padding: 0 2.4rem 2.4rem 2.4rem;
+
+      .crowdloan-teaser{
+        height: 25vw;
+      }
+
+      @media only screen and (max-width: 1180px) {
+        grid-template-columns: repeat(3, 1fr);
+        .crowdloan-teaser{
+          height: 33vw;
+        }
+      }
+
+      @media only screen and (max-width: 880px) {
+        grid-template-columns: repeat(2, 1fr);
+        .crowdloan-teaser{
+          height: 47vw;
+        }
+      }
+
+      @media only screen and (max-width: 630px) {
+        grid-template-columns: repeat(1, 1fr);
+        .crowdloan-teaser{
+          height: 80vw;
+        }
+      }
+      
     }
   `
 
