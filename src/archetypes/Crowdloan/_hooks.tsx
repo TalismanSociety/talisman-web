@@ -14,12 +14,12 @@ import { useCrowdloans } from '@libs/talisman'
 export const useFilter = () => {
 
   const orderOptions = {
-    name_asc: 'A→Z',
-    name_desc: 'Z←A',
-    ending_desc: 'Ending ↓',
-    ending_asc: 'Ending ↑',
-    raised_desc: 'Raised ↓',
-    raised_asc: 'Raised ↑',
+    name_asc: '↓ A-Z',
+    name_desc: '↑ A-Z',
+    //ending_desc: '↓ Ending',
+    //ending_asc: '↑ Ending',
+    raised_desc: '↓ Raised',
+    raised_asc: '↑ Raised',
   }
 
   const { items, status, message } = useCrowdloans()

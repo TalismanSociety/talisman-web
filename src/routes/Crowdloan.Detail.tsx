@@ -7,9 +7,8 @@ import {
   Poster, 
   Stat 
 } from '@components'
-import { useCrowdloanBySlug } from '@libs/talisman'
+import { useCrowdloanBySlug, useCrowdloanAssets } from '@libs/talisman'
 import { Crowdloan } from '@archetypes'
-import { useParachainAssetFullPath } from '@util/hooks'
 import { formatCommas } from '@util/helpers'
 
 const CrowdloanDetail = styled(
@@ -22,73 +21,44 @@ const CrowdloanDetail = styled(
       name,
       subtitle, 
       info,
-      assets,
       token
     } = useCrowdloanBySlug(slug)
-    const posterUrl = useParachainAssetFullPath(assets?.poster) 
+    const { banner } = useCrowdloanAssets(id)
 
     return <section
       className={className}
       >
       <Poster
-        backgroundImage={posterUrl}
+        backgroundImage={banner}
       />
       <div 
         className="content"
         >
         <article>
-          <Crowdloan.Icon
-            className="icon"
+          <Crowdloan.Asset
             id={id}
+            type='logo'
           />
           <header>
             <h1>{name}</h1>
             <h2>{subtitle}</h2>
-            <div 
-              className="info"
-              >
-              <Pill>👱 240 Participants</Pill>
-              <Pill
-                primary
-                onClick={() => console.log('todo')}
-                >
-                Website
-              </Pill>
-              <Pill
-                primary
-                onClick={() => console.log('todo')}
-                >
-                Twitter
-              </Pill>
-              <Pill
-                primary
-                onClick={() => console.log('todo')}
-                >
-                Discord
-              </Pill>
-            </div>
-            <p>{info}</p>
           </header>
-
-          {/*<Pendor
-            require={status === 'READY'}
+          <div 
+            className="tags"
             >
-            <img src={icon} alt={``}/>
-            <h1>{name}</h1>
-            <h2>{subtitle}</h2>
-            <p>{info}</p>
-            <p>Url: <a href={url} target='_blank' rel="noreferrer">{url}</a></p>
-            <hr/>
-            <p>Cap: {cap}</p>
-            <p>Raised: {raised}</p>
-            <p>Deposit: {deposit}</p>
-            <p>Period: {firstPeriod}-{lastPeriod}</p>
-            <p>End Block: {end}</p>
-            <p>Blocks Until End: {end - blockNumber}</p>
-            <p>Average Block Time: 6s</p>
-            <p>End Time: {moment().add((end - blockNumber) * 6, 'seconds').format('dddd, MMMM Do YYYY, h:mm:ss a')}</p>
-            <p>Countdown: <Countdown seconds={(end - blockNumber) * 6} onCompletion={console.log} /></p>
-          </Pendor>*/}
+            <Pill>👱 240 Participants</Pill>
+            <Crowdloan.Tags
+              id={id}
+            />
+          </div>
+          <p 
+            className='info'
+            >
+            {info}
+          </p>
+          <Crowdloan.Links
+            id={id}
+          />
         </article>
         <aside>
           <Panel>
@@ -104,7 +74,6 @@ const CrowdloanDetail = styled(
                 id={id}
               />
             </Panel.Section>
-              
             <Panel.Section>
               <Button 
                 primary
@@ -152,6 +121,12 @@ const CrowdloanDetail = styled(
         margin-top: -4rem;
         padding-right: 4vw;
         width: 61%;
+        
+        .crowdloan-logo{
+          width: 8rem;
+          height: 8rem;
+        }
+
         header{
           h1{
             margin-top: 0.7rem
@@ -161,13 +136,18 @@ const CrowdloanDetail = styled(
             font-size: var(--font-size-xlarge);
             opacity: 0.5;
           }
+        }
 
-          .info{
-            margin: 3rem 0 4rem;
-            .pill{
-              margin-right: 0.5em
-            }
+        .tags{
+          display: block;
+          >*{
+            display: inline-block;
+            margin-right: 0.5rem
           }
+        }
+
+        .info{
+          margin: 3rem 0 4rem;
         }
       }
 

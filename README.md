@@ -19,5 +19,5 @@ The Talisman Web Application front-end is a MVP UI built in React, using the fol
 2. replace step 4 with: `$: yarn build`
 
 ### Environmental variables
-`REACT_APP_APPLICATION_NAME=MyApplicationName` provide a name for the application, used in configuring the web3 object. Should be unique to the environment.
+`REACT_APP_APPLICATION_NAME=MyApplicationName` provide a name for the application, used in configuring the web3 object. Should be unique to the environment.  
 `REACT_APP_DEFAULT_CHAIN_NAME=kusama` select a chain name for this application to use. options are polkadot|kusama|rococo|westend

@@ -21,9 +21,15 @@ const Image = styled(
     background-image: url(${({src}) => src});
     background-size: cover;
     background-repeat: no-repeat;
+    position: relative;
 
     img{
       opacity: 0;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
     }
   `
   

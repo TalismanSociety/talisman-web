@@ -6,11 +6,13 @@ import {
   Poster, 
   Pill, 
   Filter, 
-  Pendor
+  Pendor,
+  NoResults
 } from '@components'
 import { Crowdloan } from '@archetypes'
 import { shortNumber } from '@util/helpers'
 import billboardImage from '@assets/parachain_index_billboard.png'
+import { ReactComponent as IconClear } from '@assets/icons/x-circle.svg'
 
 const Billboard = styled(
   ({
@@ -28,7 +30,7 @@ const Billboard = styled(
       className={`${className} billboard`}
       {...rest}
       title="It's time to rebuild the system"
-      subtitle='Get rewarded for contributing to projects and help fund the future of the Polkadot ecosystem'
+      subtitle='Get rewarded for contributing to projects and help fund<br/>the future of the Polkadot ecosystem'
       backgroundImage={billboardImage}
       >
       <Pill large>
@@ -108,7 +110,7 @@ const FilterBar = styled(
           data-display={hasFilter}
           onClick={() => reset()}
           >
-          [clear]
+          <IconClear/>
         </span>
         
       </span>
@@ -135,25 +137,38 @@ const FilterBar = styled(
     width: 100%;
     justify-content: space-between;
     align-items: center;
-    padding: 2.7rem 2.4rem;
+    padding: 0 4rem;
+    margin: 2.7rem 0;
+
 
     >span{
       display: flex;
       align-items: center;
+      position: relative;
     }
 
     .reset{
+      position: absolute;
+      top: 50%;
+      right: -1em;
       opacity: 0;
       transition: all 0.2s;
       cursor: pointer;
       pointer-events: none;
-      transform: translateX(-0.4em);
+      transform: translateY(-50%);
       z-index: 0;
       margin-left: 0.5em;
+      width: 1em;
+      height: 1em;
+
+      &:hover{
+        opacity: 0.6;
+      }
+
       &[data-display="true"]{
-        opacity: 1;
+        opacity: 0.4;
         pointer-events: all;
-        transform: translateX(0);
+        right: -1.5em;
       }
     }
   `
@@ -174,16 +189,22 @@ const CrowdloanIndex = styled(
       <FilterBar
         {...filterProps}
       />
-      <div 
-        className="items"
-        >
-        {items.map(({id}) =>               
-          <Crowdloan.Teaser 
-            key={id} 
-            id={id}
-          />
-        )}
-      </div>
+     
+        <NoResults
+          require={!!items.length}
+          >
+          <div 
+            className="items"
+            >
+            {items.map(({id}) =>               
+              <Crowdloan.Teaser 
+                key={id} 
+                id={id}
+              />
+            )}
+          </div>
+        </NoResults>
+      
     </div>
   })
   `
@@ -194,6 +215,7 @@ const CrowdloanIndex = styled(
       width: 100%;
       grid-template-columns: repeat(4, 1fr);
       padding: 0 2.4rem 2.4rem 2.4rem;
+      margin-top: 3rem;
 
       .crowdloan-teaser{
         height: 25vw;

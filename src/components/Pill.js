@@ -42,14 +42,17 @@ const Pill = styled(
       padding: 1.6rem 1.2em;
     `}
 
-    ${({primary, theme}) => !!primary && `
+    ${({primary, theme, onClick}) => !!primary && `
       background: rgba(${theme?.primary}, 0.2);
       color: rgb(${theme?.primary});
       box-shadow: none;
-      &:hover{
-        background: rgb(${theme?.primary});
-        color: rgb(${theme?.background});
-      }
+      ${!!onClick && `
+        &:hover{
+          background: rgb(${theme?.primary});
+          color: rgb(${theme?.background});
+        }
+      `}
+     
     `}
   `
 

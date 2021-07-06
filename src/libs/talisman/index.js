@@ -25,6 +25,7 @@ export const useCrowdloans = Crowdloan.useCrowdloans
 export const useCrowdloanById = Crowdloan.useCrowdloanById
 export const useCrowdloanBySlug = Crowdloan.useCrowdloanBySlug
 export const useCrowdloanAggregateStats = Crowdloan.useCrowdloanAggregateStats
+export const useCrowdloanAssets = Crowdloan.useCrowdloanAssets
 
 // api wrap
 export const useApi = Api.useApi

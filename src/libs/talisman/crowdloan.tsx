@@ -11,6 +11,8 @@ import {
 import { useStatus } from './util/hooks'
 import { useApi, useParachains } from '@libs/talisman'
 
+const assetPath = require.context('./assets', true);
+
 const Context = createContext({});
 
 // blend the crowdloan data with the parachain data
@@ -79,6 +81,32 @@ const useCrowdloanAggregateStats = () => {
     status,
     message
   }
+}
+
+const useCrowdloanAssets = id => {
+  const [assets, setAssets] = useState({})
+  useEffect(() => {
+    if(!id) return
+    let banner = ''
+    let card = ''
+    let logo = ''
+
+    try {
+      banner = (assetPath(`./${id}/banner.png`))?.default
+    } catch(e){}
+    
+    try {
+      card = (assetPath(`./${id}/card.png`))?.default
+    } catch(e){}
+    
+    try {
+      logo = (assetPath(`./${id}/logo.svg`))?.default
+    } catch(e){}
+
+    setAssets({banner, card, logo})
+  }, [id]) // eslint-disable-line
+
+  return assets
 }
 
 const Provider = 
@@ -152,7 +180,8 @@ const Crowdloan = {
   useCrowdloans,
   useCrowdloanById,
   useCrowdloanBySlug,
-  useCrowdloanAggregateStats
+  useCrowdloanAggregateStats,
+  useCrowdloanAssets
 }
 
 export default Crowdloan

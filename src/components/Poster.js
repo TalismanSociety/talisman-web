@@ -16,7 +16,7 @@ const Poster = styled(
         className="content"
         >
         <h1>{title}</h1>
-        <h2>{subtitle}</h2>
+        <h2 dangerouslySetInnerHTML={{__html: subtitle}}/>
         <div 
           className="children"
           >
@@ -44,6 +44,7 @@ const Poster = styled(
       left: 50%;
       transform: translate(-50%, -50%);
       text-align: center;
+      width: 100%;
 
       h1{
         margin: 0;

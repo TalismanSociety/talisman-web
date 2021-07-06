@@ -168,6 +168,22 @@ const Style = createGlobalStyle`
     *:focus{
         outline: none;
     }
+
+    ::placeholder {
+      color: rgba(${({ theme }) => theme?.foreground}, 0.2);
+    }
+
+    input,select{
+      border: 1px solid rgba(${({ theme }) => theme?.foreground}, 0.2);
+    }
+
+    input{
+      padding: 0.6rem 1.5rem;
+    }
+
+    select{
+      padding: 0.8rem 1.5rem;
+    }
 `
 
 

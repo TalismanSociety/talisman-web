@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import styled from 'styled-components'
-import { Pill, Pendor } from '@components'
+import { Pill } from '@components'
 import { useCrowdloanById } from '@libs/talisman'
 import Crowdloan from './'
 
@@ -9,25 +9,25 @@ const Teaser = styled(
     id,
     className
   }) => {
-    const { name, slug, end, ...rest } = useCrowdloanById(id)
-
-    console.log(rest)
+    const { 
+      name, 
+      slug
+    } = useCrowdloanById(id)
 
     return <Link
       to={`/crowdloan/${slug}`}
       className={`crowdloan-teaser ${className}`}
       >
-      <Crowdloan.Image 
-        thumb 
+      <Crowdloan.Asset  
         id={id}
+        type='card'
       />
       <div 
         className="content"
         >
-        <Crowdloan.Image
-          className="icon"
-          icon 
+        <Crowdloan.Asset
           id={id}
+          type='logo'
         />
         <h1>{name}</h1>
         <Crowdloan.Raised
@@ -38,14 +38,10 @@ const Teaser = styled(
       <Pill
         className='countdown'
         >
-        <Pendor
-          require={!!end}
-          >
-          <Crowdloan.Countdown
-            id={id}
-            showSeconds={false}
-          />
-          </Pendor>
+        <Crowdloan.Countdown
+          id={id}
+          showSeconds={false}
+        />
       </Pill>
      
     </Link>
@@ -59,7 +55,7 @@ const Teaser = styled(
     position: relative;
     height: 35.9rem;
 
-    >.image{
+    >.crowdloan-card{
       width: 100%;
       height: 0;
       padding-top: 58.4%;
@@ -68,12 +64,11 @@ const Teaser = styled(
     >.content{
       padding: 0 1.6rem 1rem 1.6rem;
 
-      .icon{
+      .crowdloan-logo{
         width: 6.4rem;
         height: 6.4rem;
         padding-top: 0;
         margin-top: -3.2rem;
-       
       }
 
       h1{
