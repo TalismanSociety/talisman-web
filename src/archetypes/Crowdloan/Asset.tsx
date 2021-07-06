@@ -22,7 +22,6 @@ const Image = styled(
     &[data-type='logo']{
       width: 8rem;
       height: 8rem;
-      border: 1px solid white;
       border-radius: 50%;
       display: block;
     }

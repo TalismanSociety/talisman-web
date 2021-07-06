@@ -29,18 +29,18 @@ const Header = styled(
         </NavLink>
       </span>
       <span>
-        <Toggle
+        {/*<Toggle
           off='🌞'
           on='🌜'
           onChange={on => set(!!on ? 'dark' : 'light')}
-        />
-        <nav>
+        />*/}
+        {/*<nav>
           <NavLink 
             to='/showcase'
             >
             Showcase
           </NavLink>
-        </nav>
+        </nav>*/}
         <Account.Button/>
       </span>
     </header>
