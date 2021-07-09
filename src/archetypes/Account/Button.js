@@ -67,11 +67,13 @@ const Dropdown = styled(
     font-size: 1em;
     max-height: 0;
     overflow: hidden;
+    border-radius: 2rem;
+    box-shadow: 0 0 1.2rem rgba(0, 0, 0, 0.1);
 
     >.account{
       display: flex;
       align-items: center;
-      padding: 1rem;
+      padding: 1.4rem;
       width: 100%;
       cursor: pointer;
       justify-content: space-between;

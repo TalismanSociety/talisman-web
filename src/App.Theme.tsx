@@ -11,9 +11,9 @@ import {
   createGlobalStyle
 } from "styled-components"
 
-
-import SurtLight from './assets/fonts/Surt-Light.woff2'
-import SurtBold from './assets/fonts/Surt-Bold.woff2'
+import SurtRegular from './assets/fonts/Surt-Regular.woff'
+import SurtSemiBold from './assets/fonts/Surt-SemiBold.woff2'
+import SurtSemiBoldExpanded from './assets/fonts/Surt-SemiBoldExp.woff2'
 
 
 /* 
@@ -79,14 +79,23 @@ const Style = createGlobalStyle`
       font-style: light;
       font-weight: 300;
       font-display: auto;
-      src: url(${SurtLight}) format('woff2');
+      src: url(${SurtRegular}) format('woff');
     }
+
     @font-face {
       font-family: 'Surt';
       font-style: bold;
       font-weight: 800;
       font-display: auto;
-      src: url(${SurtBold}) format('woff2');
+      src: url(${SurtSemiBold}) format('woff2');
+    }
+
+    @font-face {
+      font-family: 'SurtExpanded';
+      font-style: bold;
+      font-weight: 800;
+      font-display: auto;
+      src: url(${SurtSemiBoldExpanded}) format('woff2');
     }
 
     *{

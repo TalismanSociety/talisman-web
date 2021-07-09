@@ -32,6 +32,7 @@ const Teaser = styled(
         <h1>{name}</h1>
         <Crowdloan.Raised
           id={id}
+          title='Raised'
         />
       </div>
      
@@ -69,6 +70,7 @@ const Teaser = styled(
         height: 6.4rem;
         padding-top: 0;
         margin-top: -3.2rem;
+        box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.1);
       }
 
       h1{

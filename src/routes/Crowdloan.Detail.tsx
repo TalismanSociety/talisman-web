@@ -124,12 +124,14 @@ const CrowdloanDetail = styled(
 
         header{
           h1{
-            margin-top: 1.5rem
+            margin-top: 1.5rem;
+            font-family: 'SurtExpanded', sans-serif;
           }
           
           h2{
             font-size: var(--font-size-xlarge);
             opacity: 0.5;
+            line-height: 1.4em;
           }
         }
 
@@ -161,6 +163,10 @@ const CrowdloanDetail = styled(
           }
         }
 
+        .panel > h1{
+          font-family: 'SurtExpanded', sans-serif;
+        }
+
         .panel + .panel{
           margin-top: 1.4em;
         }
@@ -170,7 +176,6 @@ const CrowdloanDetail = styled(
           width: 100%;
         }
 
-       
 
         .stat .title{
           font-weight: var(--font-weight-bold);
@@ -179,11 +184,13 @@ const CrowdloanDetail = styled(
         .crowdloan-raised .stat{
           font-weight: var(--font-weight-bold);
           font-size: var(--font-size-xlarge); 
+          font-family: 'SurtExpanded', sans-serif;
         }
 
         .crowdloan-countdown{
           font-weight: var(--font-weight-bold);
           font-size: var(--font-size-xlarge); 
+          font-family: 'SurtExpanded', sans-serif;
         }
       }
     }

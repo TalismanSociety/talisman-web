@@ -4,9 +4,10 @@ import { Pendor, Stat, ProgressBar } from '@components'
 import { shortNumber } from '@util/helpers'
 
 
-const Countdown = styled(
+const Raised = styled(
   ({
     id,
+    title,
     className
   }) => {
     const { 
@@ -18,6 +19,9 @@ const Countdown = styled(
     return <div
       className={`crowdloan-raised ${className}`}
       >
+
+      {title && <h3>{title}</h3>}
+
       <ProgressBar
         percent={percentRaised}
       />
@@ -45,9 +49,15 @@ const Countdown = styled(
     </div>
   })
   `
+    h3{
+      font-size: var(--font-size-small);
+      opacity: 0.4;
+      margin-bottom: 0.5em;
+    }
+
     >.stat{
       margin-top: 0.7rem;
     }
   `
 
-export default Countdown
+export default Raised
