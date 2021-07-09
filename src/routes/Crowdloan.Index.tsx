@@ -5,8 +5,8 @@ import {
 import { 
   Poster, 
   Pill, 
-  Filter, 
   Pendor,
+  Field,
   NoResults
 } from '@components'
 import { Crowdloan } from '@archetypes'
@@ -99,17 +99,17 @@ const FilterBar = styled(
       <span 
         className="left"
         >
-        <input 
-          type="text" 
+        
+        <Field.Search
           value={search}
-          placeholder='// search'
-          onChange={e => setSearch(e?.target?.value)}
+          placeholder='Search Crowdloans'
+          onChange={setSearch}
         />
-        <Filter
+        {/*<Filter
           value={tags}
           options={tagOptions}
           onChange={val => setTags(val)}
-        />
+        />*/}
         <span
           className="reset"
           data-display={hasFilter}
@@ -117,23 +117,18 @@ const FilterBar = styled(
           >
           <IconClear/>
         </span>
-        
       </span>
       <span 
         className="right"
         >
-        <select
-          onChange={e => setOrder(e?.target?.value)}
-          >
-          {Object.keys(orderOptions).map(key => 
-            <option 
-              key={key}
-              value={key}
-              >
-              {orderOptions[key]}
-            </option>
-          )}
-        </select>
+        <Field.Select
+          onChange={setOrder}
+          options={
+            Object
+              .keys(orderOptions)
+              .map(key => ({key: key, value: orderOptions[key]}))
+          }
+        />
       </span>
     </div>
   )
@@ -143,13 +138,23 @@ const FilterBar = styled(
     justify-content: space-between;
     align-items: center;
     padding: 0 4rem;
-    margin: 2.7rem 0;
-
+    margin: 2.4rem 0;
 
     >span{
       display: flex;
       align-items: center;
       position: relative;
+    }
+
+    .field-search input{
+      width: 23vw;  
+    }
+
+
+    .field-select{
+      font-size: 0.9em;
+      box-shadow: none;
+      color: rgb(${({theme}) => theme.primary});
     }
 
     .reset{
@@ -220,7 +225,6 @@ const CrowdloanIndex = styled(
       width: 100%;
       grid-template-columns: repeat(4, 1fr);
       padding: 0 2.4rem 2.4rem 2.4rem;
-      margin-top: 3rem;
 
       .crowdloan-teaser{
         height: 25vw;
