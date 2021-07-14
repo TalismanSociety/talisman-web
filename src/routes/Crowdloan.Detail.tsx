@@ -76,6 +76,7 @@ const CrowdloanDetail = styled(
                 primary
                 onClick={() => window.open(crowdloan?.contributeUrl, "_blank")}
                 target='_blank'
+                disabled={crowdloan?.status === 'COMPLETE'}
                 >
                 Contribute
               </Button>

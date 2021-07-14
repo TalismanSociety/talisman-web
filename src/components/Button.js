@@ -48,7 +48,7 @@ const Button = styled(
       ? <Fragment><IconLoading data-spin='true'/>&nbsp;{loading}</Fragment>
       : React.Children.map(children, child => React.isValidElement(child) ? child : <span>{child}</span>)
 
-    const _props = omit(props, ['loading', 'disabled', 'boxed', 'round', 'primary', 'tight', 'loose'])
+    const _props = omit(props, ['loading', 'boxed', 'round', 'primary', 'tight', 'loose'])
 
     return !!props?.to
       ? !!props?.navlink 
@@ -90,7 +90,11 @@ const Button = styled(
       padding: 1em 1.6em;
     `}
 
-   
+    &[disabled]{
+      opacity: 0.4;
+      filter: grayscale(100%);
+      cursor: not-allowed;
+    }
     
 
   `
