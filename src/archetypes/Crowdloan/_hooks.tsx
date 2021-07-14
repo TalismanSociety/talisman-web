@@ -30,6 +30,7 @@ export const useFilter = () => {
   const [search, setSearch] = useState('')
   const [order, setOrder] = useState(Object.keys(orderOptions)[0])
   const [tagOptions, setTagOptions] = useState({})
+  const [showComplete, setShowComplete] = useState(false)
 
   // derive all unique tags
   useEffect(() => {
@@ -39,14 +40,18 @@ export const useFilter = () => {
     setTagOptions(uniqtags)
   }, [items]) // eslint-disable-line 
 
-  // do searchy stuff here
+  // do searchy/filtery stuff here
   useEffect(() => {
     if(items.length <= 0) return
 
+    const byComplete = !showComplete
+      ? filter(items, ({crowdloan}) => ['ONGOING'].includes(crowdloan?.status)) // filter
+      : items // all
+
     // filter items by selected tags
     const byTags = tags.length > 0
-      ? filter(items, i => !!intersection(i?.tags, tags).length)
-      : items
+      ? filter(byComplete, i => !!intersection(i?.tags, tags).length)
+      : byComplete
 
     // filter by name
     const bySearch = search !== ''
@@ -57,20 +62,27 @@ export const useFilter = () => {
     const orderParams = order.split('_')
     const byOrder = orderBy(bySearch, [orderParams[0]], [orderParams[1]])
 
+
     setFilteredItems(byOrder)
-  }, [items, tags, search, order]) // eslint-disable-line 
+  }, [items, tags, search, order, showComplete]) // eslint-disable-line 
 
   return {
     items: filteredItems,
     status,
     message,
+    count: {
+      total: items.length,
+      filtered: filteredItems.length
+    },
     filterProps: {
       tags,
       search,
       order,
+      showComplete,
       setTags, 
       setSearch, 
       setOrder,
+      setShowComplete,
       orderOptions,
       tagOptions,
       // todo: allow resetting

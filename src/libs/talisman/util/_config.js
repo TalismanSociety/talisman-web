@@ -22,6 +22,7 @@ export const parachains = [
     },
     crowdloan: {
       contributeUrl: 'https://acala.network/karura/join-karura',
+      status: 'COMPLETE',
       rewards: {
         tokens: [
           {
@@ -52,6 +53,7 @@ export const parachains = [
     },
     crowdloan: {
       contributeUrl: 'https://ksm.vtoken.io/?ref=polkadotjs',
+      status: 'ONGOING',
       rewards: {
         tokens: [
           {
@@ -88,6 +90,7 @@ export const parachains = [
     },
     crowdloan: {
       contributeUrl: 'https://crowdloan.phala.network/en/',
+      status: 'COMPLETE',
       rewards: {
         tokens: [
           {
@@ -117,6 +120,7 @@ export const parachains = [
     },
     crowdloan: {
       contributeUrl: 'https://crab.network/plo#crowdloan',
+      status: 'ONGOING',
       rewards: {
         tokens: [
           {
@@ -145,6 +149,7 @@ export const parachains = [
     },
     crowdloan: {
       contributeUrl: 'https://crowdloan.plasmnet.io/',
+      status: 'COMPLETE',
       rewards: {
         tokens: [
           {
@@ -179,6 +184,7 @@ export const parachains = [
     },
     crowdloan: {
       contributeUrl: 'https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Fkusama.api.onfinality.io%2Fpublic-ws#/parachains/crowdloan',
+      status: 'ONGOING',
       rewards: {
         tokens: [
           {
@@ -206,6 +212,7 @@ export const parachains = [
     },
     crowdloan: {
       contributeUrl: 'https://redkite.polkafoundry.com/#/join-polkasmith/',
+      status: 'ONGOING',
       rewards: {
         tokens: [
           {
@@ -248,6 +255,7 @@ export const parachains = [
     },
     crowdloan: {
       contributeUrl: '',
+      status: 'ONGOING',
       rewards: {
         tokens: [
           {
@@ -275,6 +283,7 @@ export const parachains = [
     },
     crowdloan: {
       contributeUrl: 'https://auction.clover.finance/#/',
+      status: 'ONGOING',
       rewards: {
         tokens: [
           {
@@ -300,6 +309,7 @@ export const parachains = [
     },
     crowdloan: {
       contributeUrl: 'https://www.subgame.org/#/contribute',
+      status: 'ONGOING',
       rewards: {
         tokens: [
           {
@@ -334,6 +344,7 @@ export const parachains = [
     },
     crowdloan: {
       contributeUrl: 'https://moonbeam.foundation/moonriver-crowdloan/',
+      status: 'COMPLETE',
       rewards: {
         tokens: [
           {
@@ -377,6 +388,7 @@ export const parachains = [
     },
     crowdloan: {
       contributeUrl: 'https://genshiro.equilibrium.io/en/plo',
+      status: 'ONGOING',
       rewards: {
         tokens: [
           {
@@ -409,6 +421,7 @@ export const parachains = [
     },
     crowdloan: {
       contributeUrl: 'https://robonomics.network/kusama-slot',
+      status: 'ONGOING',
       rewards: {
         tokens: [
           {
@@ -450,6 +463,7 @@ export const parachains = [
     },
     crowdloan: {
       contributeUrl: 'https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Fkusama.api.onfinality.io%2Fpublic-ws#/parachains/crowdloan',
+      status: 'ONGOING',
       rewards: {
         tokens: [
           {
@@ -477,6 +491,7 @@ export const parachains = [
     },
     crowdloan: {
       contributeUrl: 'https://centrifuge.io/altair/crowdloan',
+      status: 'ONGOING',
       rewards: {
         tokens: [
           {
@@ -509,6 +524,7 @@ export const parachains = [
     },
     crowdloan: {
       contributeUrl: 'https://loan.bsx.fi/',
+      status: 'ONGOING',
       rewards: {
         tokens: [
           {

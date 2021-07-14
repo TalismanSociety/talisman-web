@@ -82,13 +82,16 @@ const FilterBar = styled(
     tags=[],
     search='',
     order='',
+    showComplete=false,
     setTags=()=>{}, 
     setSearch=()=>{}, 
     setOrder=()=>{},
+    setShowComplete=()=>{},
     orderOptions={},
     tagOptions={},
     hasFilter=false,
     reset,
+    count,
     className,
     ...rest
   }) => 
@@ -119,8 +122,23 @@ const FilterBar = styled(
         </span>
       </span>
       <span 
+        className="center"
+        >
+        <span
+          className="total"
+          >
+         Showing {count?.filtered} <span className="muted">of {count?.total}</span>
+        </span>
+      </span>
+      <span 
         className="right"
         >
+        <Field.Toggle
+          label={'Show\nCompleted'}
+          value={showComplete}
+          onChange={setShowComplete}
+          inline
+        />
         <Field.Select
           onChange={setOrder}
           options={
@@ -144,6 +162,25 @@ const FilterBar = styled(
       display: flex;
       align-items: center;
       position: relative;
+
+      &.left{ justify-content: flex-start }
+      &.center{ justify-content: center }
+      &.right{ justify-content: flex-end }
+
+      &.right,
+      &.left{
+        width: 40%;
+      }
+
+      &.right{
+        >* + *{
+          margin-left: 1em;
+        }
+
+        .field-toggle[data-on='true'] .toggle:after{
+          background: rgb(${({theme}) => theme.primary});
+        }
+      }
     }
 
     .field-search input{
@@ -151,7 +188,7 @@ const FilterBar = styled(
     }
 
 
-    .field-select{
+    .field-select .children{
       font-size: 0.9em;
       box-shadow: none;
       color: rgb(${({theme}) => theme.primary});
@@ -188,7 +225,8 @@ const CrowdloanIndex = styled(
     className
   }) => {
     const { 
-      items, 
+      items,
+      count,
       filterProps
     } = Crowdloan.useFilter()
 
@@ -198,10 +236,11 @@ const CrowdloanIndex = styled(
       <Billboard/>
       <FilterBar
         {...filterProps}
+        count={count}
       />
      
         <NoResults
-          require={!!items.length}
+          require={count?.filtered > 0}
           >
           <div 
             className="items"

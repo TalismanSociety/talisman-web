@@ -209,6 +209,11 @@ const Style = createGlobalStyle`
     select{
       font-size: var(--font-size-normal);
     }
+
+    .muted{
+      font-size: 0.8em;
+      opacity: 0.4;
+    }
 `
 
 
