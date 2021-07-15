@@ -21,6 +21,8 @@ import {
 import { useApi } from '@libs/talisman'
 
 
+
+
 // account store/reducer
 // receive an address and some fields, and update internal state
 // [todo] ensure fields prop is valid obj & confirms to certain shape
@@ -35,7 +37,7 @@ const accountReducer = (state={}, {type, callback=()=>{}, ...props}) => {
         if(!newState[address]){
           newState[address] = {
             address: address,
-            name: meta?.name,
+            ...meta,
             balance: {
               total: null,
               reserve: null,

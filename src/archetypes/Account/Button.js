@@ -3,10 +3,32 @@ import {
 } from 'react'
 import styled from 'styled-components'
 import Identicon from '@polkadot/react-identicon';
-import { useAccount, useGuardian } from '@libs/talisman'
+import { Keyring } from '@polkadot/keyring';
+import { 
+  useAccount, 
+  useGuardian
+} from '@libs/talisman'
 import { Button, Pendor } from '@components'
 import { truncateString } from '@util/helpers'
 import { ReactComponent as ChevronDown } from '@icons/chevron-down.svg'
+import { useChainByGenesis } from '@libs/talisman'
+
+// format an address based on chain ID, derived from genesis ID
+// as returned from polkadot.js extension API
+const Address = 
+  ({
+    address,
+    genesis,
+    truncate=false
+  }) => {
+    const keyring = new Keyring();
+    const { id } = useChainByGenesis(genesis)
+    const encoded = keyring.encodeAddress(address, id)
+
+    return !!truncate
+      ? truncateString(encoded, truncate[0]||4, truncate[1]||4)
+      : encoded
+  }
 
 const Dropdown = styled(
   ({
@@ -21,7 +43,7 @@ const Dropdown = styled(
       className={`account-picker ${className}`}
       >
       {
-        accounts.map(({address, name, balance}) => 
+        accounts.map(({address, name, genesisHash, balance}) => 
           <div
             className='account'
             onClick={() => {
@@ -43,7 +65,12 @@ const Dropdown = styled(
               <span
                 className='address'
                 >
-                {truncateString(address, 4, 4)}
+                <Address 
+                  address={address}
+                  genesis={genesisHash}
+                  truncate
+                />
+                
               </span>
             </span>
            

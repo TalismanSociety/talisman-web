@@ -1,27 +1,12 @@
 import { 
   createContext, 
   useContext,
-  useReducer
+  useReducer,
+  useState,
+  useEffect
 } from 'react'
 
-const chainOptions = {
-  polkadot: {
-    name: 'Polkadot',
-    rpc: 'wss://rpc.polkadot.io',
-  },
-  kusama: {
-    name: 'Kusama',
-    rpc: 'wss://kusama-rpc.polkadot.io',
-  },
-  rococo: {
-    name: 'Rococo',
-    rpc: 'wss://rococo-rpc.polkadot.io',
-  },
-  westend: {
-    name: 'Westend',
-    rpc: 'wss://westend-rpc.polkadot.io',
-  },
-}
+import { SupportedParachains } from './util/_config'
 
 const settingsReducer = (state={}, data) => {
   const newState = {
@@ -41,22 +26,25 @@ const Provider =
     children
   }) => {
 
-    const [ settings, updateSettings] = useReducer(settingsReducer, {
-      chain: chainOptions[process.env.REACT_APP_DEFAULT_CHAIN_NAME||'rococo']
-    })
-
-    const setChain = name => {
-      if(chainOptions[name]){
-        updateSettings({
-          chain: chainOptions[name]
-        })
-      }
+    const [ settings, updateSettings ] = useReducer(settingsReducer)
+    const [chainId, setChainId] = useState(process.env.REACT_APP_DEFAULT_CHAIN_ID||2)
+    
+    const hydrateChainDetails = id => {
+      updateSettings({
+        chain: {
+          id: id,
+          ...SupportedParachains[id],
+          status: !!SupportedParachains[id] ? 'VALID' : 'INVALID'
+        }
+      })
     }
+
+    useEffect(() => !!chainId && hydrateChainDetails(chainId), [chainId])
 
     return <Context.Provider 
       value={{
         ...settings,
-        setChain
+        setChainId
       }}
       >
       {children}

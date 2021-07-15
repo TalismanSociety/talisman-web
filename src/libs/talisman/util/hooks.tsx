@@ -2,10 +2,15 @@ import {
   useEffect, 
   useState 
 } from 'react'
-import { get } from 'lodash'
+import { 
+  get,
+  find
+} from 'lodash'
 import { 
   statusOptions as baseStatusOptions 
 } from './_config'
+import { SupportedParachains } from './_config'
+
 
 export const useStatus = (props={}) => {
   const {
@@ -55,4 +60,8 @@ export const useAwaitObjectValue = (object, key, cb=()=>{}, timeout=500) => {
     }, timeout)
     return () => clearInterval(_id)
   }, [get(object, key)]) // eslint-disable-line
+}
+
+export const useChainByGenesis = genesisHash => {
+  return find(SupportedParachains, {genesisHash: genesisHash})||{}
 }

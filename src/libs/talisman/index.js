@@ -4,6 +4,7 @@ import Parachain from './parachain.tsx'
 import Crowdloan from './crowdloan.tsx'
 import Api from './api.tsx'
 import Settings from './settings.tsx'
+import { useChainByGenesis as _useChainByGenesis } from './util/hooks.tsx'
 
 
 /* publically exposed hooks */
@@ -32,6 +33,9 @@ export const useApi = Api.useApi
 
 // setting bits
 export const useSettings = Settings.useSettings
+
+// helpers
+export const useChainByGenesis = _useChainByGenesis
 
 
 

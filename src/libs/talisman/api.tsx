@@ -45,7 +45,7 @@ const Provider =
     }
 
     // connect on rcp
-    useEffect(() => connect(chain.rpc), [chain.rpc])  // eslint-disable-line
+    useEffect(() => chain?.rpc && connect(chain?.rpc), [chain?.rpc])  // eslint-disable-line
 
     // todo / out loud thinking / maybe-maybenot
     // if api is not connected or ready, we need to store queries/callbacks until it is.
