@@ -5,9 +5,8 @@ import {
 import { 
   uniq, 
   filter,
-  intersection,
   orderBy,
-  flatten
+  upperFirst
 } from 'lodash'
 import { useCrowdloans } from '@libs/talisman'
 
@@ -24,39 +23,34 @@ export const useFilter = () => {
     //ending_asc: '↑ Ending',
   }
 
-  const { items, status, message } = useCrowdloans()
+  const { items, status: crowdloanStatus, message } = useCrowdloans()
   const [filteredItems, setFilteredItems] = useState([])
-  const [tags, setTags] = useState([])
   const [search, setSearch] = useState('')
   const [order, setOrder] = useState(Object.keys(orderOptions)[0])
-  const [tagOptions, setTagOptions] = useState({})
-  const [showComplete, setShowComplete] = useState(false)
+  const [statusOptions, setStatusOptions] = useState({})
+  const [status, setStatus] = useState('__ALL__')
 
-  // derive all unique tags
+  // derive all unique statuses (stati? who knows? if not, it should be)
   useEffect(() => {
-    // unique tags map->flatten->uniq
-    const uniqtags = {}
-    uniq(flatten(items.map(({tags=[]}) => tags))).forEach(tag => uniqtags[tag.toLowerCase()] = tag)
-    setTagOptions(uniqtags)
+    const uniqstatus = {
+      '__ALL__': 'All'
+    }
+    uniq(items.map(item => item?.crowdloan?.status||'UNKNOWN')).forEach(s => uniqstatus[s.toLowerCase()] = upperFirst(s.toLowerCase()))
+    setStatusOptions(uniqstatus)
   }, [items]) // eslint-disable-line 
 
   // do searchy/filtery stuff here
   useEffect(() => {
     if(items.length <= 0) return
 
-    const byComplete = !showComplete
-      ? filter(items, ({crowdloan}) => ['ONGOING'].includes(crowdloan?.status)) // filter
-      : items // all
-
-    // filter items by selected tags
-    const byTags = tags.length > 0
-      ? filter(byComplete, i => !!intersection(i?.tags, tags).length)
-      : byComplete
+    const byStatus = status === '__ALL__'
+      ? items
+      : filter(items, ({crowdloan}) => crowdloan?.status?.toLowerCase() === status?.toLowerCase()) // filter
 
     // filter by name
     const bySearch = search !== ''
-      ? filter(byTags, ({name}) => name.toLowerCase().includes(search.toLowerCase()))
-      : byTags
+      ? filter(byStatus, ({name}) => name.toLowerCase().includes(search.toLowerCase()))
+      : byStatus
 
     // order by 
     const orderParams = order.split('_')
@@ -64,32 +58,30 @@ export const useFilter = () => {
 
 
     setFilteredItems(byOrder)
-  }, [items, tags, search, order, showComplete]) // eslint-disable-line 
+  }, [items, search, order, status]) // eslint-disable-line 
 
   return {
     items: filteredItems,
-    status,
+    status: crowdloanStatus,
     message,
     count: {
       total: items.length,
       filtered: filteredItems.length
     },
     filterProps: {
-      tags,
       search,
       order,
-      showComplete,
-      setTags, 
+      status,
       setSearch, 
       setOrder,
-      setShowComplete,
+      setStatus,
       orderOptions,
-      tagOptions,
+      statusOptions,
       // todo: allow resetting
-      hasFilter: tags.length > 0 || search !== '',
+      hasFilter: status !== '__ALL__' || search !== '',
       reset: () => {
-        setTags([])
         setSearch('')
+        setStatus('__ALL__')
       }
     }
   }

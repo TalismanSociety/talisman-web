@@ -1,3 +1,4 @@
+import Index from './Indexx.tsx'
 import Teaser from './Teaser.tsx'
 import Asset from './Asset.tsx'
 import Countdown from './Countdown.tsx'
@@ -12,6 +13,7 @@ import {
 
 const Modules = () => {}
 
+Modules.Index = Index
 Modules.Teaser = Teaser
 Modules.Asset = Asset
 Modules.Countdown = Countdown

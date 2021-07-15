@@ -1,10 +1,13 @@
 import { useEffect } from 'react'
 import styled from 'styled-components'
+import { Pill } from '@components'
 import { useBoolean } from '@util/hooks'
 import { ReactComponent as SearchIcon } from  '@icons/search.svg'
 import { ReactComponent as ChevronDown } from '@icons/chevron-down.svg'
+import { ReactComponent as IconClear } from '@assets/icons/x-circle.svg'
 
-const Field = () => null
+
+// framework
 
 const FieldLabel = styled(
   ({
@@ -68,6 +71,7 @@ const FieldWrapper = styled(
       overflow: hidden;
       transition: box-shadow 0.2s ease;
       display: block;
+      width: 100%;
 
       &:hover{
         box-shadow: 0 0 2rem rgba(0, 0, 0, 0.15);
@@ -87,16 +91,17 @@ const FieldWrapper = styled(
         }
       }
 
-      .prefix{ left: 1.5em }
-      .suffix{ right: 1.5em }
+      .prefix{ left: 1em }
+      .suffix{ right: 1em }
 
       input,
       select{
         font-size: inherit;
         border: none;
         padding: 1.1rem 3rem;
-        ${({prefix}) => !!prefix && `padding-left: 5.5rem;`}
-        ${({suffix}) => !!suffix && `padding-right: 5.5rem;`}
+        width: 100%;
+        ${({prefix}) => !!prefix && `padding-left: 5rem;`}
+        ${({suffix}) => !!suffix && `padding-right: 5rem;`}
       }
 
       select{
@@ -112,6 +117,10 @@ const FieldWrapper = styled(
     `};
     
   `
+
+
+
+// field types
 
 const Input = 
   ({
@@ -131,7 +140,7 @@ const Input =
       />
     </FieldWrapper>
 
-const Search =
+const Search = styled(
   ({
     value,
     className,
@@ -141,6 +150,12 @@ const Search =
     <FieldWrapper
       type='search'
       prefix={<SearchIcon/>}
+      suffix={
+        <IconClear 
+          data-display={value !== ''}
+          onClick={() => onChange('')}
+        />
+      }
       className={className}
       >
       <input
@@ -150,6 +165,25 @@ const Search =
         {...rest}
       />
     </FieldWrapper>
+  )
+  `
+    .children{
+      .suffix{
+        svg{
+          transform: translatex(50%);
+          opacity: 0;
+          pointer-events: none;
+          transition: all 0.2s;
+          cursor: pointer;
+          &[data-display="true"]{
+            opacity: 0.4;
+            pointer-events: all;
+            transform: translatex(0);
+          }
+        }
+      }
+    }
+  `
 
 const Select = styled(
   ({
@@ -224,7 +258,6 @@ const Toggle = styled(
       height: 1.6em;
       position: relative;
       overflow: visible;
-      
 
       &:after{
         content: '';
@@ -250,9 +283,52 @@ const Toggle = styled(
     
   `
 
+const RadioGroup = styled(
+  ({
+    value,
+    options={},
+    onChange=()=>{},
+    small,
+    className,
+    ...rest
+  }) =>
+    <FieldWrapper
+      type='radiogroup'
+      className={className}
+      >
+      {Object.keys(options).map(key =>
+        <Pill 
+          onClick={() => onChange(key)}
+          primary
+          active={key === value}
+          small={small}          
+          >
+          {options[key]}
+        </Pill>
+      )}
+    </FieldWrapper>
+  )
+  `
+    .children{
+      display: flex;
+      box-shadow: none;
+      overflow: visible;
+      &:hover{box-shadow: none;}
+
+      .pill + .pill{
+        margin-left: 0.6em;
+      }
+    }
+  `
+
+
+// haupt class
+
+const Field = () => null
 Field.Input = Input
 Field.Search = Search
 Field.Select = Select
 Field.Toggle = Toggle
+Field.RadioGroup = RadioGroup
 
 export default Field

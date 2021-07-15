@@ -18,7 +18,7 @@ const Pill = styled(
   `
     transition: all 0.2s;
     line-height: 1em;
-    padding: 0.4em 1em;
+    padding: 0.6em 1.2em;
     display: inline-flex;
     align-items: center;
     border-radius: 4rem;
@@ -26,7 +26,11 @@ const Pill = styled(
     background: rgb(${({ theme }) => theme?.background});
     color: rgb(${({ theme }) => theme?.foreground});
     box-shadow: 0 0 0.8rem rgba(0, 0, 0, 0.1);
-    font-size: 1.1em;
+    font-size: 1em;
+
+    *{
+      line-height: 1em;
+    }
 
     ${({onClick}) => !!onClick && `
       cursor: pointer;
@@ -34,12 +38,12 @@ const Pill = styled(
     
     ${({small}) => small && `
       font-size: 0.85em;
-      padding: 0.4rem 0.5em;
+      padding: 0.6em 0.9em;
     `}
 
     ${({large}) => large && `
       font-size: 1.1em;
-      padding: 1.6rem 1.2em;
+      padding: 0.6em 1.4em;
     `}
 
     ${({primary, theme, onClick}) => !!primary && `
@@ -52,7 +56,12 @@ const Pill = styled(
           color: rgb(${theme?.background});
         }
       `}
-     
+    `}
+
+    ${({active, theme}) => !!active && `
+      background: rgb(${theme?.primary});
+      color: rgb(${theme?.background});
+      box-shadow: none;
     `}
   `
 
