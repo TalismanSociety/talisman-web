@@ -1,14 +1,19 @@
 import styled from 'styled-components'
-import { Countdown as Cd, Pendor } from '@components'
-import { useCrowdloanById, useGuardianValue } from '@libs/talisman'
+import { 
+  Countdown as Cd, 
+  Pendor 
+} from '@components'
+import { 
+  useCrowdloanById, 
+  useGuardianValue 
+} from '@libs/talisman'
 
 const Ongoing = 
   ({
-    id,
+    end,
     showSeconds,
     className
   }) => {
-    const { end } = useCrowdloanById(id)
     const blockNumber = useGuardianValue('metadata.blockNumber')
     const blockPeriod = useGuardianValue('metadata.blockPeriod')
     return <Pendor
@@ -47,11 +52,11 @@ const Countdown =
     className,
     ...rest
   }) => {
-    const { crowdloan } = useCrowdloanById(id)
+    const { crowdloan, end } = useCrowdloanById(id)
 
     switch (crowdloan?.status) {
       case 'COMPLETE': return <Complete {...rest}/>
-      default: return <Ongoing {...rest}/>
+      default: return <Ongoing {...rest} end={end}/>
     }
   }
 

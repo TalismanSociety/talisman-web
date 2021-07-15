@@ -13,11 +13,13 @@ const Raised = styled(
     const { 
       percentRaised, 
       raised, 
-      cap 
+      cap,
+      crowdloan
     } = useCrowdloanById(id)
 
     return <div
       className={`crowdloan-raised ${className}`}
+      data-status={crowdloan?.status?.toLowerCase()}
       >
 
       {title && <h3>{title}</h3>}
@@ -57,6 +59,10 @@ const Raised = styled(
 
     >.stat{
       margin-top: 0.7rem;
+    }
+
+    &[data-status='complete']{
+      opacity: 0.6;
     }
   `
 
