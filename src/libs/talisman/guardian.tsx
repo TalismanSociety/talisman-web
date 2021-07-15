@@ -32,8 +32,21 @@ const accountReducer = (state={}, {type, callback=()=>{}, ...props}) => {
     case 'addBatch':
       // itterate items
       props.accounts.forEach(({address, meta}) => {
-        // add new item by address
-        if(!newState[address]){
+        // address already exists? update
+        if(newState[address]){
+          newState[address] = {
+            address: address,
+            balance: {
+              total: null,
+              reserve: null,
+              available: null,
+              hydrating: true
+            },
+            ...newState[address],
+            ...meta,
+          }
+        // new address? add
+        }else{
           newState[address] = {
             address: address,
             ...meta,

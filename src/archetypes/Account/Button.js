@@ -58,19 +58,22 @@ const Dropdown = styled(
                 theme={'polkadot'}
               />
               <span
-                className='name'
+                className='name-address'
                 >
-                {truncateString(name, 10, 0)}
-              </span>
-              <span
-                className='address'
-                >
-                <Address 
-                  address={address}
-                  genesis={genesisHash}
-                  truncate
-                />
-                
+                <span
+                  className='name'
+                  >
+                  {truncateString(name, 10, 0)}
+                </span>
+                <span
+                  className='address'
+                  >
+                  <Address 
+                    address={address}
+                    genesis={genesisHash}
+                    truncate
+                  />
+                </span>
               </span>
             </span>
            
@@ -90,20 +93,22 @@ const Dropdown = styled(
   `
     background: rgb(${({ theme }) => theme?.background});
     font-size: 0.8em;
-    width: 34rem;
+    width: 39rem;
     font-size: 1em;
     max-height: 0;
     overflow: hidden;
-    border-radius: 2rem;
+    border-radius: 1.6rem;
     box-shadow: 0 0 1.2rem rgba(0, 0, 0, 0.1);
+
 
     >.account{
       display: flex;
       align-items: center;
-      padding: 1.4rem;
+      padding: 1.6rem 1.6rem;
       width: 100%;
       cursor: pointer;
       justify-content: space-between;
+      transition: all 0.15s;
 
       span{
         display: flex;
@@ -111,19 +116,31 @@ const Dropdown = styled(
       }
 
       .identicon{
-        font-size: 1.6em;
-        
+        font-size: 2.6em;
+      }
+
+      .name-address{
+        display: flex;
+        align-items: flex-end;
+        line-height: 1em;
+        *{
+           line-height: 1em;
+        }
       }
 
       .name{
         margin-left: 0.4em;
+        font-weight: bold;
+        letter-spacing: -0.03em
       }
 
       .address{
-        font-size: 0.8em;
+        font-size: 0.85em;
         opacity: 0.5;
         margin-left: 0.6em;
       }
+
+      
 
       &:hover{
         background: rgba(0,0,0,0.1)
