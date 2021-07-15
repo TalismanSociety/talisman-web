@@ -6,6 +6,7 @@ import {
   uniq, 
   filter,
   orderBy,
+  sortBy,
   upperFirst
 } from 'lodash'
 import { useCrowdloans } from '@libs/talisman'
@@ -35,7 +36,7 @@ export const useFilter = () => {
     const uniqstatus = {
       '__ALL__': 'All'
     }
-    uniq(items.map(item => item?.crowdloan?.status||'UNKNOWN')).forEach(s => uniqstatus[s.toLowerCase()] = upperFirst(s.toLowerCase()))
+    sortBy(uniq(items.map(item => item?.crowdloan?.status||'UNKNOWN')), s => s.toLowerCase()).forEach(s => uniqstatus[s.toLowerCase()] = upperFirst(s.toLowerCase()))
     setStatusOptions(uniqstatus)
   }, [items]) // eslint-disable-line 
 
