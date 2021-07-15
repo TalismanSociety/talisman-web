@@ -61,7 +61,7 @@ const Raised = styled(
       margin-top: 0.7rem;
     }
 
-    &[data-status='complete']{
+    &[data-status='completed']{
       opacity: 0.6;
     }
   `

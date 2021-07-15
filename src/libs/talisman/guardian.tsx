@@ -6,8 +6,7 @@ import {
   useEffect,
 } from 'react'
 import {
-  //web3AccountsSubscribe,
-  web3Accounts,
+  web3AccountsSubscribe,
   web3Enable,
   //web3FromAddress,
   //web3ListRpcProviders,
@@ -139,30 +138,30 @@ const Provider =
       } catch ({message}) {
         setInjected()
         setStatus('UNAUTHORIZED', `The polkadot.js extension is not authorized to interact with this application.`)
-      }
-      
+      }    
     }
 
     const hydrateAccounts = async () => {
       if(!injected) return
 
-      // fetch all available user accounts
-      const accounts = await web3Accounts();
+      // subscribe to account updates
+      const accountSub = await web3AccountsSubscribe( accounts => { 
+        // does the user have accounts configured?
+        if(accounts.length <= 0){
+          setStatus('NOACCOUNT', 'Please create an account/address in the polkadot.js extension to be able to interact with this application')
+        }else{        
+          // add returned accounts
+          accountDispatcher({
+            type: 'addBatch', 
+            accounts: accounts,
+            callback: () => setStatus('AUTHORIZED', 'The polkadot.js extension is installed and authorized, and accounts have been found')
+          })
 
-      // does the user have accounts configured?
-      if(accounts.length <= 0){
-        setStatus('NOACCOUNT', 'Please create an account/address in the polkadot.js extension to be able to interact with this application')
-      }else{        
-        // itterate through accounts and insert into state/reducer
+          setStatus('AUTHORIZED', 'The polkadot.js extension is installed and authorized, and accounts have been found')
+        }
+      });
 
-        accountDispatcher({
-          type: 'addBatch', 
-          accounts: accounts,
-          callback: () => setStatus('AUTHORIZED', 'The polkadot.js extension is installed and authorized, and accounts have been found')
-        })
-
-        setStatus('AUTHORIZED', 'The polkadot.js extension is installed and authorized, and accounts have been found')
-      }
+      setSubscription(accountSub)
     }
 
     const initBalanceSubscriptions = async () => {

@@ -55,7 +55,7 @@ const Countdown =
     const { crowdloan, end } = useCrowdloanById(id)
 
     switch (crowdloan?.status) {
-      case 'COMPLETE': return <Complete {...rest}/>
+      case 'COMPLETED': return <Complete {...rest}/>
       default: return <Ongoing {...rest} end={end}/>
     }
   }
