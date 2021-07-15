@@ -20,8 +20,6 @@ import {
 import { useApi } from '@libs/talisman'
 
 
-
-
 // account store/reducer
 // receive an address and some fields, and update internal state
 // [todo] ensure fields prop is valid obj & confirms to certain shape
@@ -284,6 +282,18 @@ const Provider =
     useEffect(() => {
       return () => (subscriptions||[]).map(unsub => unsub && unsub())
     }, [])  // eslint-disable-line
+
+
+    // START TESTING
+    const testing = async api => {
+      const result = await api.query.parachainsConfiguration.activeConfig()
+      console.log(result.toJSON())
+    }
+    useEffect(() => {
+      if(!api.isReady) return
+      testing(api)
+    }, [api, api.isReady]) // eslint-disable-line
+    // END TESTING
 
     return <Context.Provider 
       value={{
