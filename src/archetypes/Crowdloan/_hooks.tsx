@@ -3,71 +3,92 @@ import {
   useState
 } from 'react'
 import { 
-  uniq, 
   filter,
-  orderBy,
-  sortBy,
-  upperFirst
+  find,
+  orderBy
 } from 'lodash'
 import { useCrowdloans } from '@libs/talisman'
 
-export const useFilter = () => {
-
-  const orderOptions = {
-    raised_desc: 'Raised',
-    //raised_asc: 'Least Raised',
-    id_acs: 'Oldest',
-    id_desc: 'Newest',
-    name_asc: 'A-Z',
-    name_desc: 'Z-A',
-    //ending_desc: '↓ Ending',
-    //ending_asc: '↑ Ending',
+const orderOptions = [
+  {
+    key: 'raised_desc',
+    value: 'Raised',
+    cb: items => orderBy(items, ['raised'], ['desc'])
+  },
+  {
+    key: 'id_acs',
+    value: 'Oldest',
+    cb: items => orderBy(items, ['parachain.id'], ['asc'])
+  },
+  {
+    key: 'id_desc',
+    value: 'Newest',
+    cb: items => orderBy(items, ['parachain.id'], ['desc'])
+  },
+  {
+    key: 'name_acs',
+    value: 'A⇢Z',
+    cb: items => orderBy(items, ['parachain.name'], ['acs'])
+  },
+  {
+    key: 'name_desc',
+    value: 'Z⇢A',
+    cb: items => orderBy(items, ['parachain.name'], ['desc'])
   }
+]
+
+const statusOptions = [
+  {
+    key: 'all',
+    value: 'All',
+    cb: items => items
+  },
+  {
+    key: 'completed',
+    value: 'Completed',
+    cb: items => filter(items, {status: 'Won'})
+  },
+  {
+    key: 'active',
+    value: 'Active',
+    cb: items => filter(items, {status: 'Started'})
+  },
+]
+
+export const useFilter = () => {
 
   const { items, status: crowdloanStatus, message } = useCrowdloans()
   const [filteredItems, setFilteredItems] = useState([])
   const [search, setSearch] = useState('')
-  const [order, setOrder] = useState(Object.keys(orderOptions)[0])
-  const [statusOptions, setStatusOptions] = useState({})
-  const [status, setStatus] = useState('__ALL__')
+  const [order, setOrder] = useState(orderOptions[0].key)
+  const [status, setStatus] = useState(statusOptions[0].key)
 
-  // derive all unique statuses (stati? who knows? if not, it should be)
+  // do searchy/filtery stuff 
   useEffect(() => {
-    const uniqstatus = {
-      '__ALL__': 'All'
-    }
-    sortBy(uniq(items.map(item => item?.crowdloan?.status||'UNKNOWN')), s => s.toLowerCase()).forEach(s => uniqstatus[s.toLowerCase()] = upperFirst(s.toLowerCase()))
-    setStatusOptions(uniqstatus)
-  }, [items]) // eslint-disable-line 
+    if(items?.length <= 0) return
 
-  // do searchy/filtery stuff here
-  useEffect(() => {
-    if(items.length <= 0) return
-
-    const byStatus = status === '__ALL__'
-      ? items
-      : filter(items, ({crowdloan}) => crowdloan?.status?.toLowerCase() === status?.toLowerCase()) // filter
-
-    // filter by name
+    // filter by status
+    const byStatus = find(statusOptions, {key: status})?.cb(items)
+   
+    // searching
     const bySearch = search !== ''
-      ? filter(byStatus, ({name}) => name.toLowerCase().includes(search.toLowerCase()))
+      ? filter(byStatus, ({parachain}) => parachain?.name?.toLowerCase().includes(search.toLowerCase()))
       : byStatus
 
-    // order by 
-    const orderParams = order.split('_')
-    const byOrder = orderBy(bySearch, [orderParams[0]], [orderParams[1]])
-
+    // ordering
+    const orderCallback = find(orderOptions, {key: order})?.cb
+    const byOrder = !!orderCallback ? orderCallback(bySearch) : bySearch
 
     setFilteredItems(byOrder)
-  }, [items, search, order, status]) // eslint-disable-line 
+  }, [items, status, search, order]) // eslint-disable-line 
 
   return {
     items: filteredItems,
     status: crowdloanStatus,
     message,
     count: {
-      total: items.length,
-      filtered: filteredItems.length
+      total: items?.length,
+      filtered: filteredItems?.length
     },
     filterProps: {
       search,
@@ -76,13 +97,12 @@ export const useFilter = () => {
       setSearch, 
       setOrder,
       setStatus,
-      orderOptions,
-      statusOptions,
-      // todo: allow resetting
+      orderOptions: orderOptions.map(({key, value}) => ({key, value})),
+      statusOptions: statusOptions.map(({key, value}) => ({key, value})),
       hasFilter: status !== '__ALL__' || search !== '',
       reset: () => {
         setSearch('')
-        setStatus('__ALL__')
+        setStatus(statusOptions[0].key)
       }
     }
   }

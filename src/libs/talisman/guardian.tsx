@@ -285,14 +285,15 @@ const Provider =
 
 
     // START TESTING
-    const testing = async api => {
-      const result = await api.query.parachainsConfiguration.activeConfig()
-      console.log(result.toJSON())
-    }
-    useEffect(() => {
-      if(!api.isReady) return
-      testing(api)
-    }, [api, api.isReady]) // eslint-disable-line
+    // const testing = async api => {
+    //   const result = await api.query.parachainsConfiguration.activeConfig()
+    //   //console.log(result.toJSON())
+    //   console.log(api.query)
+    // }
+    // useEffect(() => {
+    //   if(!api.isReady) return
+    //   testing(api)
+    // }, [api, api.isReady]) // eslint-disable-line
     // END TESTING
 
     return <Context.Provider 

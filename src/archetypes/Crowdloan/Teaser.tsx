@@ -1,7 +1,8 @@
 import { Link } from "react-router-dom";
 import styled from 'styled-components'
 import { Pill } from '@components'
-import { useCrowdloanById } from '@libs/talisman'
+import { useCrowdloanByParachainId } from '@libs/talisman'
+import { Parachain } from '@archetypes'
 import Crowdloan from './'
 
 const Teaser = styled(
@@ -10,26 +11,25 @@ const Teaser = styled(
     className
   }) => {
     const { 
-      name, 
-      slug
-    } = useCrowdloanById(id)
+      parachain
+    } = useCrowdloanByParachainId(id)
 
     return <Link
-      to={`/${slug}`}
+      to={`/${parachain?.slug}`}
       className={`crowdloan-teaser ${className}`}
       >
-      <Crowdloan.Asset  
+      <Parachain.Asset  
         id={id}
         type='card'
       />
       <div 
         className="content"
         >
-        <Crowdloan.Asset
+        <Parachain.Asset
           id={id}
           type='logo'
         />
-        <h1>{name}</h1>
+        <h1>{parachain?.name}</h1>
         <Crowdloan.Raised
           id={id}
           title='Raised'

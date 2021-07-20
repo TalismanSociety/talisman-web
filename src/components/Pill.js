@@ -6,6 +6,8 @@ const Pill = styled(
     className,
     small,
     large,
+    primary,
+    active,
     ...rest
   }) => 
     <span

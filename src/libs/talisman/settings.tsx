@@ -51,9 +51,9 @@ const Provider =
     </Context.Provider>
   }
 
-const _settings = {
+const Settings = {
   Provider,
   useSettings
 }
 
-export default _settings
+export default Settings

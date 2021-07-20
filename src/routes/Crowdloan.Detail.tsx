@@ -5,8 +5,14 @@ import {
   Panel, 
   Poster
 } from '@components'
-import { useCrowdloanBySlug, useCrowdloanAssets } from '@libs/talisman'
-import { Crowdloan } from '@archetypes'
+import { 
+  useCrowdloanByParachainSlug, 
+  useParachainAssets 
+} from '@libs/talisman'
+import { 
+  Crowdloan,
+  Parachain
+} from '@archetypes'
 
 const CrowdloanDetail = styled(
   ({
@@ -14,13 +20,12 @@ const CrowdloanDetail = styled(
   }) => {
     const { slug } = useParams()
     const {
-      id,
-      name,
-      subtitle, 
-      info,
-      crowdloan,
-    } = useCrowdloanBySlug(slug)
-    const { banner } = useCrowdloanAssets(id)
+      paraId,
+      status,
+      parachain,
+      contributeUrl
+    } = useCrowdloanByParachainSlug(slug)
+    const { banner } = useParachainAssets(paraId)
 
     return <section
       className={className}
@@ -32,29 +37,21 @@ const CrowdloanDetail = styled(
         className="content"
         >
         <article>
-          <Crowdloan.Asset
-            id={id}
+          <Parachain.Asset
+            id={paraId}
             type='logo'
           />
           <header>
-            <h1>{name}</h1>
-            <h2>{subtitle}</h2>
+            <h1>{parachain?.name}</h1>
+            <h2>{parachain?.subtitle}</h2>
           </header>
-          {/*<div 
-            className="tags"
-            >
-            <Pill>👱 240 Participants</Pill>
-            <Crowdloan.Tags
-              id={id}
-            />
-          </div>*/}
           <p 
             className='info'
             >
-            {info}
+            {parachain?.info}
           </p>
-          <Crowdloan.Links
-            id={id}
+          <Parachain.Links
+            id={paraId}
           />
         </article>
         <aside>
@@ -62,21 +59,21 @@ const CrowdloanDetail = styled(
             <Panel.Section
               title='Raised'
               >
-              <Crowdloan.Raised id={id}/>
+              <Crowdloan.Raised id={paraId}/>
             </Panel.Section>
             <Panel.Section
               title='Ends in'
               >
               <Crowdloan.Countdown
-                id={id}
+                id={paraId}
               />
             </Panel.Section>
             <Panel.Section>
               <Button 
                 primary
-                onClick={() => window.open(crowdloan?.contributeUrl, "_blank")}
+                onClick={() => window.open(contributeUrl, "_blank")}
                 target='_blank'
-                disabled={crowdloan?.status === 'COMPLETED'}
+                disabled={status?.toLowerCase() === 'won'}
                 >
                 Contribute
               </Button>
@@ -86,7 +83,7 @@ const CrowdloanDetail = styled(
           <Panel
             title='Rewards'
             >
-            <Crowdloan.Rewards id={id}/>
+            <Crowdloan.Rewards id={paraId}/>
           </Panel>
 
           {/*<Panel

@@ -69,9 +69,9 @@ const Provider =
     </Context.Provider>
   }
 
-const _guardian = {
+const Api = {
   Provider,
   useApi
 }
 
-export default _guardian
+export default Api

@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { useCrowdloanById } from '@libs/talisman'
+import { useCrowdloanByParachainId } from '@libs/talisman'
 import { Stat } from '@components'
 
 const Countdown = styled(
@@ -8,19 +8,22 @@ const Countdown = styled(
     className
   }) => {
     const { 
-      crowdloan
-    } = useCrowdloanById(id)
+      rewards,
+      ...rest
+    } = useCrowdloanByParachainId(id)
+
+    console.log(111, rest)
 
     return <div
       className={`crowdloan-rewards ${className}`}
       >
-      {crowdloan?.rewards?.tokens?.map(({symbol, perKSM}) => <Stat title={`${symbol} per KSM`}>{perKSM}</Stat>)}
-      {crowdloan?.rewards?.custom?.map(({title, value}) => <Stat title={title}>{value}</Stat>)}
+      {rewards?.tokens?.map(({symbol, perKSM}) => <Stat title={`${symbol} per KSM`}>{perKSM}</Stat>)}
+      {rewards?.custom?.map(({title, value}) => <Stat title={title}>{value}</Stat>)}
       
-      {crowdloan?.rewards?.info && 
+      {rewards?.info && 
         <>
           <hr/>
-          <p dangerouslySetInnerHTML={{__html: crowdloan?.rewards?.info}}></p>
+          <p dangerouslySetInnerHTML={{__html: rewards?.info}}></p>
         </>
       }
     </div>

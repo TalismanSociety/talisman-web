@@ -194,6 +194,7 @@ const Style = createGlobalStyle`
     }
 
     svg.feather-loader{
+        opacity: 0.4;
         animation: spin linear 3s infinite;
     }
 

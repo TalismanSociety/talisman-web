@@ -296,14 +296,15 @@ const RadioGroup = styled(
       type='radiogroup'
       className={className}
       >
-      {Object.keys(options).map(key =>
+      {options.map(option =>
         <Pill 
-          onClick={() => onChange(key)}
+          key={option?.key}
+          onClick={() => onChange(option?.key)}
           primary
-          active={key === value}
+          active={option?.key === value}
           small={small}          
           >
-          {options[key]}
+          {option?.value}
         </Pill>
       )}
     </FieldWrapper>

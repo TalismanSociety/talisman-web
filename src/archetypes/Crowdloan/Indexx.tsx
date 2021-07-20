@@ -4,6 +4,7 @@ import {
   NoResults
 } from '@components'
 import { Crowdloan } from '@archetypes'
+import { ReactComponent as Loader } from '@icons/loader.svg'
 
 const FilterBar = styled(
   ({
@@ -45,11 +46,7 @@ const FilterBar = styled(
         >
         <Field.Select
           onChange={setOrder}
-          options={
-            Object
-              .keys(orderOptions)
-              .map(key => ({key: key, value: orderOptions[key]}))
-          }
+          options={orderOptions}
         />
       </span>
     </div>
@@ -105,6 +102,7 @@ const Index = styled(
     const { 
       items,
       count,
+      status,
       filterProps
     } = Crowdloan.useFilter()
 
@@ -117,19 +115,32 @@ const Index = styled(
           count={count}
         />
       }
+      {/*
+        need to either create another wrapper component similar
+        to NoResults which deals with pending loading status etc
+        or replace NoResult with something like <Requires .../>
+      */}
       <NoResults
-        require={count?.filtered > 0}
+        require={status === 'READY'}
+        title={<Loader/>}
         >
-        <div 
-          className="items"
+        <NoResults
+          require={count?.filtered > 0}
+          title='Vamoosh'
+          subtitle='Talisman cannot summon what you wish for.'
+          text='Better luck next time.'
           >
-          {items.map(({id}) =>               
-            <Crowdloan.Teaser 
-              key={id} 
-              id={id}
-            />
-          )}
-        </div>
+          <div 
+            className="items"
+            >
+            {items.map(({paraId}) =>               
+              <Crowdloan.Teaser 
+                key={paraId} 
+                id={paraId}
+              />
+            )}
+          </div>
+        </NoResults>
       </NoResults>
     </div>
   })

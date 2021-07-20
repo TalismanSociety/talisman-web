@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 import { Pill } from '@components'
-import { useCrowdloanById } from '@libs/talisman'
+import { useParachainById } from '@libs/talisman'
 import { ReactComponent as WebsiteIcon } from '@assets/icons/monitor.svg'
 import { ReactComponent as TwitterIcon } from '@assets/icons/twitter.svg'
 import { ReactComponent as TelegramIcon } from '@assets/icons/send.svg'
@@ -27,7 +27,7 @@ const Links = styled(
     id,
     className
   }) => {
-    const { links={} } = useCrowdloanById(id)
+    const { links={} } = useParachainById(id)
 
     return <div 
       className={`crowdloan-links ${className}`}

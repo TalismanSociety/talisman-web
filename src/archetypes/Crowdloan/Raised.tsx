@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { useCrowdloanById } from '@libs/talisman'
+import { useCrowdloanByParachainId } from '@libs/talisman'
 import { Pendor, Stat, ProgressBar } from '@components'
 import { shortNumber } from '@util/helpers'
 
@@ -14,12 +14,12 @@ const Raised = styled(
       percentRaised, 
       raised, 
       cap,
-      crowdloan
-    } = useCrowdloanById(id)
+      status
+    } = useCrowdloanByParachainId(id)
 
     return <div
       className={`crowdloan-raised ${className}`}
-      data-status={crowdloan?.status?.toLowerCase()}
+      data-status={status?.toLowerCase()}
       >
 
       {title && <h3>{title}</h3>}
@@ -61,7 +61,7 @@ const Raised = styled(
       margin-top: 0.7rem;
     }
 
-    &[data-status='completed']{
+    &[data-status='won']{
       opacity: 0.6;
     }
   `

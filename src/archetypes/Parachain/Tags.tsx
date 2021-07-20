@@ -1,13 +1,13 @@
 import styled from 'styled-components'
 import { Pill } from '@components'
-import { useCrowdloanById } from '@libs/talisman'
+import { useCrowdloanByParachainId } from '@libs/talisman'
 
 const Links = styled(
   ({
     id,
     className
   }) => {
-    const { tags=[] } = useCrowdloanById(id)
+    const { tags=[] } = useCrowdloanByParachainId(id)
 
     return <div 
       className={`crowdloan-links ${className}`}

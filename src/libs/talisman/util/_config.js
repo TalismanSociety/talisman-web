@@ -11,18 +11,20 @@ export const SupportedParachains = {
     id: 0,
     name: 'Polkadot',
     rpc: 'wss://rpc.polkadot.io',
-    genesisHash: '0x91b171bb158e2d3848fa23a9f1c25182fb8e20313b2c1eb49219da7a70ce90c3'
+    genesisHash: '0x91b171bb158e2d3848fa23a9f1c25182fb8e20313b2c1eb49219da7a70ce90c3',
+    subqueryEndpoint: 'https://api.subquery.network/sq/subvis-io/kusama-auction'
   },
   2: {
     id: 2,
     name: 'Kusama',
     rpc: 'wss://kusama-rpc.polkadot.io',
-    genesisHash: '0xb0a8d493285c2df73290dfb7e61f870f17b41801197a149ca93654499ea3dafe'
+    genesisHash: '0xb0a8d493285c2df73290dfb7e61f870f17b41801197a149ca93654499ea3dafe',
+    subqueryEndpoint: 'https://api.subquery.network/sq/subvis-io/kusama-auction'
   }
 }
 
-export const parachains = [
-  {
+export const parachainDetails = {
+  2000: {
     id: 2000,
     name: 'Karura',
     slug: 'karura',
@@ -35,24 +37,9 @@ export const parachains = [
       Telegram: 'https://t.me/acalaofficial',
       Discord: 'https://discord.com/invite/6QHVY4X',
       Github: 'https://github.com/AcalaNetwork'
-    },
-    crowdloan: {
-      contributeUrl: 'https://acala.network/karura/join-karura',
-      status: 'COMPLETED',
-      rewards: {
-        tokens: [
-          {
-            symbol: 'KAR',
-            perKSM: 12,
-          }
-        ],
-        custom: [
-        ],
-        info: null
-      }
     }
   },
-  {
+  2001: {
     id: 2001,
     name: 'Bifrost',
     slug: 'bifrost',
@@ -66,30 +53,9 @@ export const parachains = [
       Telegram: 'https://t.me/bifrost_finance',
       Medium: 'https://medium.com/bifrost-finance',
       Github: 'https://github.com/bifrost-finance'
-    },
-    crowdloan: {
-      contributeUrl: 'https://ksm.vtoken.io/?ref=polkadotjs',
-      status: 'ACTIVE',
-      rewards: {
-        tokens: [
-          {
-            symbol: 'Instant BNC',
-            perKSM: 2,
-            supply: null,
-            allocation: null,
-          },
-          {
-            symbol: 'Success BNC',
-            perKSM: 20,
-          }
-        ],
-        custom: [
-        ],
-        info: 'Instant BNS is distributed regardless of win. Success BNC is distributed if bid is won.'
-      }
     }
   },
-  {
+  2004: {
     id: 2004,
     name: 'Khala Network',
     slug: 'khala-network',
@@ -103,24 +69,9 @@ export const parachains = [
       Medium: 'https://medium.com/phala-network',
       Github: 'https://github.com/Phala-Network',
       Discord: 'https://discord.gg/myBmQu5'
-    },
-    crowdloan: {
-      contributeUrl: 'https://crowdloan.phala.network/en/',
-      status: 'COMPLETED',
-      rewards: {
-        tokens: [
-          {
-            symbol: 'PHA',
-            perKSM: 150,
-          }
-        ],
-        custom: [
-        ],
-        info: 'If Phala wins the Slot Auction, rewards will be distributed according to the Phala payment schedule. If a slot is not won, you can unbond your KSM immediately after the Auctions end..'
-      }
     }
   },
-  {
+  2006: {
     id: 2006,
     name: 'Darwinia Crab Redirect',
     slug: 'darwinia-crab-redirect',
@@ -133,24 +84,9 @@ export const parachains = [
       Telegram: 'https://t.me/DarwiniaNetwork',
       Medium: 'https://darwinianetwork.medium.com/',
       Github: 'https://github.com/darwinia-network/darwinia/tree/master/runtime/crab'
-    },
-    crowdloan: {
-      contributeUrl: 'https://crab.network/plo#crowdloan',
-      status: 'ACTIVE',
-      rewards: {
-        tokens: [
-          {
-            symbol: 'CRING',
-            perKSM: 25,
-          }
-        ],
-        custom: [
-        ],
-        info: 'If successful, 240,000,000 CRING and 6,000,000 RING rewards will be distributed to users according to the number of KSM they supported. 30% of them will be unlocked, 70% will vest for 48 weeks.'
-      }
     }
   },
-  {
+  2007: {
     id: 2007,
     name: 'Shiden',
     slug: 'shiden',
@@ -162,28 +98,9 @@ export const parachains = [
       Twitter: 'https://twitter.com/ShidenNetwork',
       Telegram: 'https://t.me/PlasmOfficial',
       Discord: 'https://discord.com/invite/Dnfn5eT'
-    },
-    crowdloan: {
-      contributeUrl: 'https://crowdloan.plasmnet.io/',
-      status: 'COMPLETED',
-      rewards: {
-        tokens: [
-          {
-            symbol: 'SDN',
-            perKSM: '180-340',
-          }
-        ],
-        custom: [
-          {
-            title: 'Total SDN available',
-            value: '3,388,000'
-          }
-        ],
-        info: 'More information: <a href="https://forum.plasmnet.io/t/faq-how-to-estimate-how-many-sdn-you-will-receive-from-crowdloan/1225">crowdloan rewards</a>.'
-      }
     }
   },
-  {
+  2008: {
     id: 2008,
     name: 'Mars',
     slug: 'mars',
@@ -197,21 +114,9 @@ export const parachains = [
       Medium: 'https://aresprotocollab.medium.com/',
       Github: 'https://github.com/aresprotocols',
       Discord: 'https://discord.gg/EsaFRr7xmc'
-    },
-    crowdloan: {
-      contributeUrl: 'https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Fkusama.api.onfinality.io%2Fpublic-ws#/parachains/crowdloan',
-      status: 'ACTIVE',
-      rewards: {
-        tokens: [
-          {
-            symbol: 'Reward',
-            perKSM: '?',
-          }
-        ]
-      }
     }
   },
-  {
+  2009: {
     id: 2009,
     name: 'PolkaSmith by PolkaFoundry',
     slug: 'polkasmith-by-polkafoundry',
@@ -225,36 +130,9 @@ export const parachains = [
       Medium: 'https://medium.com/@polkafoundry',
       Github: '',
       Discord: ''
-    },
-    crowdloan: {
-      contributeUrl: 'https://redkite.polkafoundry.com/#/join-polkasmith/',
-      status: 'ACTIVE',
-      rewards: {
-        tokens: [
-          {
-            symbol: 'PKS',
-            perKSM: '596',
-          }
-        ],
-        custom: [
-          {
-            title: 'Reward pool',
-            value: '10,500,000 PKS'
-          },
-          {
-            title: 'Lock up period (win)',
-            value: '48 Weeks'
-          },
-          {
-            title: 'Lock up period (lose)',
-            value: '6 Weeks'
-          }
-        ],
-        info: 'After KSM contribution, 100% Red Kite point delivered immediately. After PolkaSmith wins, 35% of PKS delivered immediately and 65% PKS vested over 10 months'
-      }
     }
   },
-  {
+  2012: {
     id: 2012,
     name: 'Crust Shadow',
     slug: 'crust-shadow',
@@ -268,22 +146,9 @@ export const parachains = [
       Medium: 'https://crustnetwork.medium.com/',
       Github: 'https://github.com/crustio',
       Discord: 'https://discord.com/invite/Jbw2PAUSCR'
-    },
-    crowdloan: {
-      contributeUrl: '',
-      status: 'ACTIVE',
-      rewards: {
-        tokens: [
-          {
-            symbol: 'Reward',
-            perKSM: '1.5CRU+300CSM',
-          }
-        ],
-        info: '<a href="https://crustnetwork.medium.com/crust-updates-kusama-parachain-slot-auction-rewards-2f6b32c682ec">Medium article</a> with more info on rewards.'
-      }
     }
   },
-  {
+  2016: {
     id: 2016,
     name: 'Sakura',
     slug: 'sakura',
@@ -296,22 +161,9 @@ export const parachains = [
       Telegram: 'https://t.me/clover_en/',
       Medium: 'https://projectclover.medium.com/',
       Discord: 'https://discord.com/invite/z2egJBsBWx/'
-    },
-    crowdloan: {
-      contributeUrl: 'https://auction.clover.finance/#/',
-      status: 'ACTIVE',
-      rewards: {
-        tokens: [
-          {
-            symbol: 'SKU',
-            perKSM: '200',
-          }
-        ],
-        info: 'New Users get up to 20% More bonus SKU. Invite friends to get 5% More bonus SKU.'
-      }
     }
   },
-  {
+  2018: {
     id: 2018,
     name: 'SubGame Gamma',
     slug: 'subgame-gamma',
@@ -322,28 +174,9 @@ export const parachains = [
       Website: 'https://www.subgame.org',
       Twitter: 'https://t.me/subgamenetwork',
       Telegram: 'https://twitter.com/SubgameBase',
-    },
-    crowdloan: {
-      contributeUrl: 'https://www.subgame.org/#/contribute',
-      status: 'ACTIVE',
-      rewards: {
-        tokens: [
-          {
-            symbol: 'GSGB',
-            perKSM: '9-1000',
-          }
-        ],
-        custom: [
-          {
-            title: 'Maximum',
-            value: '34,000,000 GSGB'
-          }
-        ],
-        info: 'Crowdloaned 10 KSM unlocked and returned after Slot Duration finished, otherwise immediatly on unsuccessful slot auction.\n\nGSGB runs on SubGame Gamma. It is a reward token for participating in SubGame Gamma crowd loan activities. It has the same value as the token running on the SubGame mainnet. It can be exchanged 1:1 with SGB through SubGame Bridge'
-      }
     }
   },
-  {
+  2023: {
     id: 2023,
     name: 'Moonriver',
     slug: 'moonriver',
@@ -357,39 +190,9 @@ export const parachains = [
       Medium: 'https://medium.com/moonbeam-network',
       Github: 'https://github.com/PureStake/moonbeam',
       Discord: 'https://discord.gg/PfpUATX'
-    },
-    crowdloan: {
-      contributeUrl: 'https://moonbeam.foundation/moonriver-crowdloan/',
-      status: 'COMPLETED',
-      rewards: {
-        tokens: [
-          {
-            symbol: 'MOVR',
-            perKSM: '14.5677',
-          }
-        ],
-        custom: [
-          {
-            title: 'Reward Pool',
-            value: '3,000,000 MOVR'
-          },
-          {
-            title: 'Initial Distrubution',
-            value: '900,000 MOVR'
-          },
-          {
-            title: 'Vested Distrubution',
-            value: '2,100,000 MOVR'
-          },
-          {
-            title: 'Vesting Period',
-            value: '48 Weeks'
-          }
-        ]
-      }
     }
   },
-  {
+  2024: {
     id: 2024,
     name: 'Genshiro',
     slug: 'genshiro',
@@ -401,27 +204,9 @@ export const parachains = [
       Twitter: 'https://twitter.com/GenshiroDeFi',
       Telegram: 'https://t.me/genshiro_official',
       Github: 'https://github.com/equilibrium-eosdt'
-    },
-    crowdloan: {
-      contributeUrl: 'https://genshiro.equilibrium.io/en/plo',
-      status: 'ACTIVE',
-      rewards: {
-        tokens: [
-          {
-            symbol: 'GENS',
-            perKSM: '2,000',
-          }
-        ],
-        custom: [
-          {
-            title: '>50 KSM contribution',
-            value: '20% Bonus'
-          }
-        ],
-      }
     }
   },
-  {
+  2077: {
     id: 2077,
     name: 'Robonomics',
     slug: 'robonomics',
@@ -434,35 +219,9 @@ export const parachains = [
       Telegram: 'https://t.me/robonomics',
       Medium: 'https://blog.aira.life/',
       Github: 'https://github.com/airalab'
-    },
-    crowdloan: {
-      contributeUrl: 'https://robonomics.network/kusama-slot',
-      status: 'ACTIVE',
-      rewards: {
-        tokens: [
-          {
-            symbol: 'XRT',
-            perKSM: '3.5',
-          }
-        ],
-        custom: [
-          {
-            title: 'First 35,000 KSM',
-            value: '5 XRT'
-          },
-          {
-            title: 'Total Collection Limit',
-            value: '135,000 KSM'
-          },
-          {
-            title: 'Distribution (1 Month Post Launch)',
-            value: '50%'
-          }
-        ]
-      }
     }
   },
-  {
+  2019: {
     id: 2019,
     name: 'Kpron',
     slug: 'kpron',
@@ -476,21 +235,9 @@ export const parachains = [
       Medium: 'https://apron-network.medium.com/',
       Github: 'https://github.com/Apron-Network/',
       Discord: 'https://discord.gg/Bu6HzJP2YY'
-    },
-    crowdloan: {
-      contributeUrl: 'https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Fkusama.api.onfinality.io%2Fpublic-ws#/parachains/crowdloan',
-      status: 'ACTIVE',
-      rewards: {
-        tokens: [
-          {
-            symbol: 'KPN',
-            perKSM: '80',
-          }
-        ]
-      }
     }
   },
-  {
+  2021: {
     id: 2021,
     name: 'Altair',
     slug: 'altair',
@@ -504,27 +251,9 @@ export const parachains = [
       Medium: 'https://medium.com/centrifuge',
       Github: 'https://github.com/centrifuge/',
       Discord: 'https://centrifuge.io/discord'
-    },
-    crowdloan: {
-      contributeUrl: 'https://centrifuge.io/altair/crowdloan',
-      status: 'ACTIVE',
-      rewards: {
-        tokens: [
-          {
-            symbol: 'AIR',
-            perKSM: '400',
-          }
-        ],
-        custom: [
-          {
-            title: 'First 250 participants',
-            value: '10% Bonus'
-          }
-        ]
-      }
     }
   },
-  {
+  2082: {
     id: 2082,
     name: 'Basilisk',
     slug: 'basilisk',
@@ -537,18 +266,294 @@ export const parachains = [
       Telegram: 'https://t.me/bsx_fi',
       Github: 'https://github.com/galacticcouncil',
       Discord: 'https://discord.gg/S8YZj5aXR6'
-    },
-    crowdloan: {
-      contributeUrl: 'https://loan.bsx.fi/',
-      status: 'ACTIVE',
-      rewards: {
-        tokens: [
-          {
-            symbol: 'BSX',
-            perKSM: '75,000',
-          }
-        ]
-      }
+    }
+  }
+}
+
+export const crowdloanDetails = [
+  {
+    paraId: 2000,
+    contributeUrl: 'https://acala.network/karura/join-karura',
+    rewards: {
+      tokens: [
+        {
+          symbol: 'KAR',
+          perKSM: 12,
+        }
+      ],
+      custom: [
+      ],
+      info: null
+    }
+  },
+  {
+    paraId: 2001,
+    contributeUrl: 'https://ksm.vtoken.io/?ref=polkadotjs',
+    rewards: {
+      tokens: [
+        {
+          symbol: 'Instant BNC',
+          perKSM: 2,
+          supply: null,
+          allocation: null,
+        },
+        {
+          symbol: 'Success BNC',
+          perKSM: 20,
+        }
+      ],
+      custom: [
+      ],
+      info: 'Instant BNS is distributed regardless of win. Success BNC is distributed if bid is won.'
+    }
+  },
+  {
+    paraId: 2004,
+    contributeUrl: 'https://crowdloan.phala.network/en/',
+    rewards: {
+      tokens: [
+        {
+          symbol: 'PHA',
+          perKSM: 150,
+        }
+      ],
+      custom: [
+      ],
+      info: 'If Phala wins the Slot Auction, rewards will be distributed according to the Phala payment schedule. If a slot is not won, you can unbond your KSM immediately after the Auctions end..'
+    }
+  },
+  {
+    paraId: 2006,
+    contributeUrl: 'https://crab.network/plo#crowdloan',
+    rewards: {
+      tokens: [
+        {
+          symbol: 'CRING',
+          perKSM: 25,
+        }
+      ],
+      custom: [
+      ],
+      info: 'If successful, 240,000,000 CRING and 6,000,000 RING rewards will be distributed to users according to the number of KSM they supported. 30% of them will be unlocked, 70% will vest for 48 weeks.'
+    }
+  },
+  {
+    paraId: 2007,
+    contributeUrl: 'https://crowdloan.plasmnet.io/',
+    rewards: {
+      tokens: [
+        {
+          symbol: 'SDN',
+          perKSM: '180-340',
+        }
+      ],
+      custom: [
+        {
+          title: 'Total SDN available',
+          value: '3,388,000'
+        }
+      ],
+      info: 'More information: <a href="https://forum.plasmnet.io/t/faq-how-to-estimate-how-many-sdn-you-will-receive-from-crowdloan/1225">crowdloan rewards</a>.'
+    }
+  },
+  {
+    paraId: 2008,
+    contributeUrl: 'https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Fkusama.api.onfinality.io%2Fpublic-ws#/parachains/crowdloan',
+    rewards: {
+      tokens: [
+        {
+          symbol: 'Reward',
+          perKSM: '?',
+        }
+      ]
+    }
+  },
+  {
+    paraId: 2009,
+    contributeUrl: 'https://redkite.polkafoundry.com/#/join-polkasmith/',
+    rewards: {
+      tokens: [
+        {
+          symbol: 'PKS',
+          perKSM: '596',
+        }
+      ],
+      custom: [
+        {
+          title: 'Reward pool',
+          value: '10,500,000 PKS'
+        },
+        {
+          title: 'Lock up period (win)',
+          value: '48 Weeks'
+        },
+        {
+          title: 'Lock up period (lose)',
+          value: '6 Weeks'
+        }
+      ],
+      info: 'After KSM contribution, 100% Red Kite point delivered immediately. After PolkaSmith wins, 35% of PKS delivered immediately and 65% PKS vested over 10 months'
+    }
+  },
+  {
+    paraId: 2012,
+    contributeUrl: '',
+    rewards: {
+      tokens: [
+        {
+          symbol: 'Reward',
+          perKSM: '1.5CRU+300CSM',
+        }
+      ],
+      info: '<a href="https://crustnetwork.medium.com/crust-updates-kusama-parachain-slot-auction-rewards-2f6b32c682ec">Medium article</a> with more info on rewards.'
+    }
+  },
+  {
+    paraId: 2016,
+    contributeUrl: 'https://auction.clover.finance/#/',
+    rewards: {
+      tokens: [
+        {
+          symbol: 'SKU',
+          perKSM: '200',
+        }
+      ],
+      info: 'New Users get up to 20% More bonus SKU. Invite friends to get 5% More bonus SKU.'
+    }
+  },
+  {
+    paraId: 2018,
+    contributeUrl: 'https://www.subgame.org/#/contribute',
+    rewards: {
+      tokens: [
+        {
+          symbol: 'GSGB',
+          perKSM: '9-1000',
+        }
+      ],
+      custom: [
+        {
+          title: 'Maximum',
+          value: '34,000,000 GSGB'
+        }
+      ],
+      info: 'Crowdloaned 10 KSM unlocked and returned after Slot Duration finished, otherwise immediatly on unsuccessful slot auction.\n\nGSGB runs on SubGame Gamma. It is a reward token for participating in SubGame Gamma crowd loan activities. It has the same value as the token running on the SubGame mainnet. It can be exchanged 1:1 with SGB through SubGame Bridge'
+    }
+  },
+  {
+    paraId: 2023,
+    contributeUrl: 'https://moonbeam.foundation/moonriver-crowdloan/',
+    rewards: {
+      tokens: [
+        {
+          symbol: 'MOVR',
+          perKSM: '14.5677',
+        }
+      ],
+      custom: [
+        {
+          title: 'Reward Pool',
+          value: '3,000,000 MOVR'
+        },
+        {
+          title: 'Initial Distrubution',
+          value: '900,000 MOVR'
+        },
+        {
+          title: 'Vested Distrubution',
+          value: '2,100,000 MOVR'
+        },
+        {
+          title: 'Vesting Period',
+          value: '48 Weeks'
+        }
+      ]
+    }
+  },
+  {
+    paraId: 2024,
+    contributeUrl: 'https://genshiro.equilibrium.io/en/plo',
+    rewards: {
+      tokens: [
+        {
+          symbol: 'GENS',
+          perKSM: '2,000',
+        }
+      ],
+      custom: [
+        {
+          title: '>50 KSM contribution',
+          value: '20% Bonus'
+        }
+      ],
+    }
+  },
+  {
+    paraId: 2077,
+    contributeUrl: 'https://robonomics.network/kusama-slot',
+    rewards: {
+      tokens: [
+        {
+          symbol: 'XRT',
+          perKSM: '3.5',
+        }
+      ],
+      custom: [
+        {
+          title: 'First 35,000 KSM',
+          value: '5 XRT'
+        },
+        {
+          title: 'Total Collection Limit',
+          value: '135,000 KSM'
+        },
+        {
+          title: 'Distribution (1 Month Post Launch)',
+          value: '50%'
+        }
+      ]
+    }
+  },
+  {
+    paraId: 2019,
+    contributeUrl: 'https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Fkusama.api.onfinality.io%2Fpublic-ws#/parachains/crowdloan',
+    rewards: {
+      tokens: [
+        {
+          symbol: 'KPN',
+          perKSM: '80',
+        }
+      ]
+    }
+  },
+  {
+    paraId: 2021,
+    contributeUrl: 'https://centrifuge.io/altair/crowdloan',
+    rewards: {
+      tokens: [
+        {
+          symbol: 'AIR',
+          perKSM: '400',
+        }
+      ],
+      custom: [
+        {
+          title: 'First 250 participants',
+          value: '10% Bonus'
+        }
+      ]
+    }
+  },
+  {
+    paraId: 2082,
+    contributeUrl: 'https://loan.bsx.fi/',
+    rewards: {
+      tokens: [
+        {
+          symbol: 'BSX',
+          perKSM: '75,000',
+        }
+      ]
     }
   }
 ]

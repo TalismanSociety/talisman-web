@@ -4,7 +4,7 @@ import {
   Pendor 
 } from '@components'
 import { 
-  useCrowdloanById, 
+  useCrowdloanByParachainId, 
   useGuardianValue 
 } from '@libs/talisman'
 
@@ -52,11 +52,14 @@ const Countdown =
     className,
     ...rest
   }) => {
-    const { crowdloan, end } = useCrowdloanById(id)
+    const { 
+      status, 
+      lockExpiredBlock
+    } = useCrowdloanByParachainId(id)
 
-    switch (crowdloan?.status) {
-      case 'COMPLETED': return <Complete {...rest}/>
-      default: return <Ongoing {...rest} end={end}/>
+    switch (status) {
+      case 'Won': return <Complete {...rest}/>
+      default: return <Ongoing {...rest} end={lockExpiredBlock}/>
     }
   }
 

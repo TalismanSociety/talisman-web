@@ -5,9 +5,20 @@ import {
   useState
 } from 'react'
 import { find } from 'lodash'
-import { useStatus } from './util/hooks'
-//import { useApi } from '@libs/talisman'
-import { parachains } from './util/_config'
+import { useQuery } from './'
+import { parachainDetails } from './util/_config'
+
+const assetPath = require.context('./assets', true);
+
+const AllParachains = `
+  query Parachains {
+    parachains {
+      nodes{
+        paraId
+      }
+    }
+  }
+`;
 
 const Context = createContext({
   items: [],
@@ -38,29 +49,69 @@ const useFindParachain = (key, val) => {
 const useParachainById = val => useFindParachain('id', val) 
 const useParachainBySlug = val => useFindParachain('slug', val) 
 
+const useParachainAssets = id => {
+  const [assets, setAssets] = useState({})
+  useEffect(() => {
+    if(!id) return
+    let banner = ''
+    let card = ''
+    let logo = ''
+
+    try {
+      banner = (assetPath(`./${id}/banner.png`))?.default
+    } catch(e){}
+    
+    try {
+      card = (assetPath(`./${id}/card.png`))?.default
+    } catch(e){}
+    
+    try {
+      logo = (assetPath(`./${id}/logo.svg`))?.default
+    } catch(e){}
+
+    setAssets({banner, card, logo})
+  }, [id]) // eslint-disable-line
+
+  return assets
+}
+
 const Provider = 
   ({
     children
   }) => {
     const [items, setItems] = useState([])
-    const { 
+    const {
+      data,
+      called,
+      loading,
       status,
-      message,
-      setStatus,
-      options
-    } = useStatus({
-      status: 'PROCESSING',
-    })
+      message
+    } = useQuery(AllParachains)
 
     useEffect(() => {
-      setStatus(options.PROCESSING, 'Hydrating parachains')
-      setItems(parachains)
-      setStatus(options.READY, `${parachains.length} crowdloans hydrated`)
-    }, []) // eslint-disable-line
+      if(!!called && !!data.length){
+        setItems(
+          data.map(
+            ({
+              paraId, 
+              ...rest
+            }) => {
+              return !!parachainDetails[paraId]
+                ? {
+                  id: paraId,
+                  ...(parachainDetails[paraId]||{})
+                }
+                : null
+            }
+          ).filter(p=>p)
+        )
+      }
+    }, [data, called])
 
     return <Context.Provider 
       value={{
         items,
+        loading,
         status,
         message
       }}
@@ -74,6 +125,7 @@ const Parachain = {
   useParachains,
   useParachainById,
   useParachainBySlug,
+  useParachainAssets
 }
 
 export default Parachain

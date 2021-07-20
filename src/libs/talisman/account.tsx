@@ -50,9 +50,9 @@ const Provider = ({children}) => {
 	</Context.Provider>
 }
 
-const _account = {
+const Account = {
 	Provider,
 	useAccount
 }
 
-export default _account
+export default Account

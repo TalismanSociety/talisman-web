@@ -3,17 +3,17 @@ import styled from 'styled-components'
 
 const NoResultsMessage = styled(
   ({
-    title='Vamoosh',
-    subtitle='Talisman cannot summon what you wish for.',
-    text='Better luck next time.',
+    title,
+    subtitle,
+    text,
     className
   }) => 
     <div
       className={className}
       >
-      <h1>{title}</h1>
-      <h2>{subtitle}</h2>
-      <p>{text}</p>
+      {title && <h1>{title}</h1>}
+      {subtitle && <h2>{subtitle}</h2>}
+      {text && <p>{text}</p>}
     </div>
   )
   `
@@ -26,12 +26,13 @@ const NoResultsMessage = styled(
 const NoResults = 
   ({
     require,
-    children
+    children,
+    ...props
   }) => {
     // undefined not set? await children
     // require is explicitly set to false
     return (require === undefined && !React.Children.count(children)) || require === false 
-        ? <NoResultsMessage/>
+        ? <NoResultsMessage {...props}/>
         : children
   }
   
