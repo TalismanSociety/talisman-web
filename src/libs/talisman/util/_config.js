@@ -128,8 +128,6 @@ export const parachainDetails = {
       Twitter: 'https://twitter.com/PolkaFoundry',
       Telegram: 'https://t.me/polkafoundry',
       Medium: 'https://medium.com/@polkafoundry',
-      Github: '',
-      Discord: ''
     }
   },
   2012: {
@@ -160,7 +158,7 @@ export const parachainDetails = {
       Twitter: 'https://twitter.com/clover_finance/',
       Telegram: 'https://t.me/clover_en/',
       Medium: 'https://projectclover.medium.com/',
-      Discord: 'https://discord.com/invite/z2egJBsBWx/'
+      //Discord: 'https://discord.com/invite/z2egJBsBWx/'
     }
   },
   2018: {
@@ -172,8 +170,8 @@ export const parachainDetails = {
     info: `It hopes to build a public chain with cross-chain interoperability. In addition to creating game applications, it can also build various types of application scenarios to create a common cross-chain industry. The blockchain infrastructure provides unlimited possibilities for distributed mobile applications.`,
     links: {
       Website: 'https://www.subgame.org',
-      Twitter: 'https://t.me/subgamenetwork',
-      Telegram: 'https://twitter.com/SubgameBase',
+      Twitter: 'https://twitter.com/SubgameBase',
+      Telegram: 'https://t.me/subgamenetwork',
     }
   },
   2023: {
@@ -456,11 +454,11 @@ export const crowdloanDetails = [
           value: '3,000,000 MOVR'
         },
         {
-          title: 'Initial Distrubution',
+          title: 'Initial Distribution',
           value: '900,000 MOVR'
         },
         {
-          title: 'Vested Distrubution',
+          title: 'Vested Distribution',
           value: '2,100,000 MOVR'
         },
         {

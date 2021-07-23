@@ -1,3 +1,7 @@
+import { 
+  useState, 
+  useEffect
+} from 'react'
 import styled from 'styled-components'
 import { 
   Countdown as Cd, 
@@ -14,17 +18,24 @@ const Ongoing =
     showSeconds,
     className
   }) => {
+    const [secondsRemaining, setSecondsRemaining] = useState()
     const blockNumber = useGuardianValue('metadata.blockNumber')
     const blockPeriod = useGuardianValue('metadata.blockPeriod')
+
+    useEffect(() => {
+      if(!end || !blockNumber || !blockPeriod) return
+      setSecondsRemaining((end - blockNumber) * blockPeriod)
+    }, [end, blockNumber, blockPeriod])
+
     return <Pendor
-      require={!!end}
+      require={!!secondsRemaining}
       >
       <div
         className={`crowdloan-countdown ongoing ${className}`}
         >
         <Cd 
           showSeconds={showSeconds}
-          seconds={(end - blockNumber) * blockPeriod}
+          seconds={secondsRemaining}
         />
       </div>
     </Pendor>

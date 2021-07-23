@@ -54,7 +54,7 @@ const Teaser = styled(
     border-radius: 2.4rem;
     box-shadow: 0 0 1.2rem rgba(${({ theme }) => theme.foreground}, 0.1);
     position: relative;
-    height: 35.9rem;
+    //height: 35.9rem;
 
     >.crowdloan-card{
       width: 100%;
@@ -95,10 +95,7 @@ const Teaser = styled(
 
     .crowdloan-raised{
       font-size: 0.9em;
-      position: absolute;
-      bottom: 1.5rem;
-      left: 1.6rem;
-      width: calc(100% - 3.2rem);
+      margin-top: calc(1.5rem + 1.5vw);
     }
   `
 

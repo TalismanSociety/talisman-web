@@ -1,7 +1,9 @@
 import styled from 'styled-components'
 import { 
   Field,
-  NoResults
+  NoResults,
+  Await,
+  Grid
 } from '@components'
 import { Crowdloan } from '@archetypes'
 import { ReactComponent as Loader } from '@icons/loader.svg'
@@ -103,6 +105,7 @@ const Index = styled(
       items,
       count,
       status,
+      loading,
       filterProps
     } = Crowdloan.useFilter()
 
@@ -115,14 +118,8 @@ const Index = styled(
           count={count}
         />
       }
-      {/*
-        need to either create another wrapper component similar
-        to NoResults which deals with pending loading status etc
-        or replace NoResult with something like <Requires .../>
-      */}
-      <NoResults
-        require={status === 'READY'}
-        title={<Loader/>}
+      <Await
+        until={!loading}
         >
         <NoResults
           require={count?.filtered > 0}
@@ -130,54 +127,21 @@ const Index = styled(
           subtitle='Talisman cannot summon what you wish for.'
           text='Better luck next time.'
           >
-          <div 
-            className="items"
-            >
+          <Grid>
             {items.map(({paraId}) =>               
               <Crowdloan.Teaser 
                 key={paraId} 
                 id={paraId}
               />
             )}
-          </div>
+          </Grid>
         </NoResults>
-      </NoResults>
+      </Await>
     </div>
   })
   `
-    .items{
-      display: grid;
-      grid-gap: 2.4rem;
-      width: 100%;
-      grid-template-columns: repeat(4, 1fr);
-      padding: 0 2.4rem;
-      margin: 2.4rem 0;
-
-      .crowdloan-teaser{
-        height: 25vw;
-      }
-
-      @media only screen and (max-width: 1180px) {
-        grid-template-columns: repeat(3, 1fr);
-        .crowdloan-teaser{
-          height: 33vw;
-        }
-      }
-
-      @media only screen and (max-width: 880px) {
-        grid-template-columns: repeat(2, 1fr);
-        .crowdloan-teaser{
-          height: 47vw;
-        }
-      }
-
-      @media only screen and (max-width: 630px) {
-        grid-template-columns: repeat(1, 1fr);
-        .crowdloan-teaser{
-          height: 80vw;
-        }
-      }
-      
+    .await{
+      font-size: var(--font-size-xxlarge)
     }
   `
 

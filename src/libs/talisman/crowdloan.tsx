@@ -132,7 +132,9 @@ const Provider =
         items,
         loading,
         status,
-        message
+        message,
+        called,
+        hydrated: called === true && loading === false
       }}
       >
       {children}

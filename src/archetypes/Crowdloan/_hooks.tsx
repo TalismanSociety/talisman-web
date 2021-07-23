@@ -56,53 +56,59 @@ const statusOptions = [
 ]
 
 export const useFilter = () => {
-
-  const { items, status: crowdloanStatus, message } = useCrowdloans()
+  const { 
+    items, 
+    status, 
+    message, 
+    hydrated
+  } = useCrowdloans()
   const [filteredItems, setFilteredItems] = useState([])
-  const [search, setSearch] = useState('')
-  const [order, setOrder] = useState(orderOptions[0].key)
-  const [status, setStatus] = useState(statusOptions[0].key)
+  const [searchFilter, setSearchFilter] = useState('')
+  const [orderFilter, setOrderFilter] = useState(orderOptions[0].key)
+  const [statusFilter, setStatusFilter] = useState(statusOptions[0].key)
+  const [loading, setLoading] = useState(true)
 
   // do searchy/filtery stuff 
   useEffect(() => {
-    if(items?.length <= 0) return
+    if(!hydrated) return
 
     // filter by status
-    const byStatus = find(statusOptions, {key: status})?.cb(items)
+    const byStatus = find(statusOptions, {key: statusFilter})?.cb(items)
    
     // searching
-    const bySearch = search !== ''
-      ? filter(byStatus, ({parachain}) => parachain?.name?.toLowerCase().includes(search.toLowerCase()))
+    const bySearch = searchFilter !== ''
+      ? filter(byStatus, ({parachain}) => parachain?.name?.toLowerCase().includes(searchFilter.toLowerCase()))
       : byStatus
 
     // ordering
-    const orderCallback = find(orderOptions, {key: order})?.cb
+    const orderCallback = find(orderOptions, {key: orderFilter})?.cb
     const byOrder = !!orderCallback ? orderCallback(bySearch) : bySearch
 
     setFilteredItems(byOrder)
-  }, [items, status, search, order]) // eslint-disable-line 
+    setLoading(false)
+  }, [items, searchFilter, orderFilter, statusFilter, hydrated]) // eslint-disable-line 
 
   return {
     items: filteredItems,
-    status: crowdloanStatus,
+    loading,
     message,
     count: {
       total: items?.length,
       filtered: filteredItems?.length
     },
     filterProps: {
-      search,
-      order,
-      status,
-      setSearch, 
-      setOrder,
-      setStatus,
+      search: searchFilter,
+      order: orderFilter,
+      status: statusFilter,
+      setSearch: setSearchFilter, 
+      setOrder: setOrderFilter,
+      setStatus: setStatusFilter,
       orderOptions: orderOptions.map(({key, value}) => ({key, value})),
       statusOptions: statusOptions.map(({key, value}) => ({key, value})),
-      hasFilter: status !== '__ALL__' || search !== '',
+      hasFilter: statusFilter !== 'all' || searchFilter !== '',
       reset: () => {
-        setSearch('')
-        setStatus(statusOptions[0].key)
+        setSearchFilter('')
+        setStatusFilter(statusOptions[0].key)
       }
     }
   }
