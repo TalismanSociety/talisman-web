@@ -8,7 +8,7 @@ const defaultGap = '2.4rem'
 const defaultBreakpoints = {
   1320: { columns: 3 },
   1020: { columns: 2 },
-  800: { columns: 1 },
+  700: { columns: 1 },
 }
 
 const Grid = styled(

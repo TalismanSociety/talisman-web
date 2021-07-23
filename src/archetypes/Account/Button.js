@@ -93,18 +93,18 @@ const Dropdown = styled(
   `
     background: rgb(${({ theme }) => theme?.background});
     font-size: 0.8em;
-    width: 39rem;
+    width: 26em;
     font-size: 1em;
     max-height: 0;
     overflow: hidden;
-    border-radius: 1.6rem;
+    border-radius: 1.2rem;
     box-shadow: 0 0 1.2rem rgba(0, 0, 0, 0.1);
 
 
     >.account{
       display: flex;
       align-items: center;
-      padding: 1.6rem 1.6rem;
+      padding: 1.2em;
       width: 100%;
       cursor: pointer;
       justify-content: space-between;
@@ -140,15 +140,13 @@ const Dropdown = styled(
         margin-left: 0.6em;
       }
 
-      
-
       &:hover{
         background: rgba(0,0,0,0.1)
       }
     }
 
     ${({open}) => !!open && `
-      max-height: 20rem;
+      max-height: 40rem;
     `}
   `
 
@@ -156,7 +154,8 @@ const Unavailable =
   ({
     className
   }) => {
-    return <Button 
+    return <Button
+      className={`account-button ${className}`}
       small
       primary
       onClick={() => window.open('https://chrome.google.com/webstore/detail/polkadot%7Bjs%7D-extension/mopnmbcafieddcagagdcbnhejhlodfdd', "_blank")}
@@ -170,7 +169,7 @@ const NoAccount = styled(
     className
   }) => {
     return <Button
-      className={className}
+      className={`account-button ${className}`}
       >
       {`Polkadot{.js}`}<br/>
       <span className='subtext'>Requires Configuration</span>
@@ -198,7 +197,7 @@ const Authorized = styled(
     const [open, setOpen] = useState(false)
 
     return <span
-      className={className}
+      className={`account-button ${className}`}
       onMouseLeave={() => setOpen(false)}
       >
       <Identicon
@@ -243,23 +242,23 @@ const Authorized = styled(
     >.identicon{
       margin-right:  0.3em;
       >svg{
-        width: 4rem;
-        height: 4rem;
+        width: 2.5em;
+        height: 2.5em;
       }
     }
 
     >.nav-toggle{
-      margin-left: 1.1rem;
+      margin-left: 0.5em;
     }
 
     >.selected-account{
       display: block;
-      margin-left: 0.4rem;
+      margin-left: 0.4em;
       >div{
         line-height: 1.3em;
         &:first-child{
           font-weight: var(--font-weight-bold);
-          width: 11rem;
+          width: 6.7em;
           text-overflow: ellipsis;
           white-space: nowrap;
           overflow: hidden;

@@ -265,6 +265,22 @@ export const parachainDetails = {
       Github: 'https://github.com/galacticcouncil',
       Discord: 'https://discord.gg/S8YZj5aXR6'
     }
+  },
+  2080: {
+    id: 2080,
+    name: 'Loom Network',
+    slug: 'loom-network',
+    token: 'LOOM',
+    subtitle: 'At Loom Network, we want to enable developers to build dapps that are easily accessible across all major blockchains, and for users to be able to use dapps without wasting time trying to figure out the intricacies of the blockchain each dapp happens to be running on.',
+    info: `To that end we’ve already built integrations with Ethereum, TRON, and Binance Smart Chain.\n\nWe are going to be giving out 100 LOOM tokens for each KSM token contributed to our Crowdloan. If we win a parachain auction, we will start distributing the rewards ASAP, there will be no vesting or lockup periods for these rewards.`,
+    links: {
+      Website: 'https://loomx.io/',
+      Twitter: 'https://twitter.com/loomnetwork',
+      Telegram: 'https://t.me/loomnetwork',
+      Github: 'https://github.com/loomnetwork',
+      Reddit: 'https://www.reddit.com/r/loomnetwork/',
+      Medium: 'https://medium.com/loom-network'
+    }
   }
 }
 
@@ -550,6 +566,18 @@ export const crowdloanDetails = [
         {
           symbol: 'BSX',
           perKSM: '75,000',
+        }
+      ]
+    }
+  },
+  {
+    paraId: 2080,
+    contributeUrl: 'https://loomx.io/',
+    rewards: {
+      tokens: [
+        {
+          symbol: 'LOOM',
+          perKSM: '100',
         }
       ]
     }

@@ -64,6 +64,9 @@ const Billboard = styled(
     background-position: 50% 50%;
     color: var(--color-light);
 
+    min-height: 24rem;
+    height: 24vw;
+
     .content{
       h1,h2{
         display: none;

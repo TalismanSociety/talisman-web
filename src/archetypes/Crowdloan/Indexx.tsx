@@ -67,7 +67,6 @@ const FilterBar = styled(
       position: relative;
 
       &.left{ justify-content: flex-start }
-      &.center{ justify-content: center }
       &.right{ justify-content: flex-end }
 
       &.right{
@@ -94,6 +93,34 @@ const FilterBar = styled(
       box-shadow: none;
       color: rgb(${({theme}) => theme.primary});
     }
+
+    @media only screen and (max-width: 700px) {
+      display: inline-block;
+      margin-bottom: 0;
+      >span{
+        display: inline;
+        width: 100%;
+
+        .field-search{
+          display: block;
+          width: 100%;
+        }
+
+        .field-radiogroup{
+          margin: 0;
+          width: 40%;
+          display: inline-block;
+          margin-top: 1em;
+        }
+
+        .field-select{
+          display: inline-block;
+          margin: 0;
+          float: right;
+          margin-top: 0.5em;
+        }
+      } 
+    };
   `
 
 const Index = styled(

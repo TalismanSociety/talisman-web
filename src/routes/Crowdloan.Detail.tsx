@@ -97,12 +97,13 @@ const CrowdloanDetail = styled(
   })
   `
     >.poster{
-      height: 26.4rem;
-      min-height: 10rem
+      height: 21vw;
+      min-height: 20rem
     }
 
     >.content{
-      width: calc(115.4rem + 10vw);
+      width: 100%;
+      max-width: calc(115.4rem + 10vw);
       margin: 0 auto;
       padding: 0 5vw;
       display: flex;
@@ -189,6 +190,21 @@ const CrowdloanDetail = styled(
           font-weight: var(--font-weight-bold);
           font-size: var(--font-size-xlarge); 
           font-family: 'SurtExpanded', sans-serif;
+        }
+      }
+
+      @media only screen and (max-width: 1000px) {
+        >article,
+        >aside{
+          width: 50%;
+        }
+      }
+
+      @media only screen and (max-width: 800px) {
+        display: block;
+        >article,
+        >aside{
+          width: 100%;
         }
       }
     }

@@ -7,6 +7,7 @@ import { ReactComponent as TelegramIcon } from '@assets/icons/send.svg'
 import { ReactComponent as GithubIcon } from '@assets/icons/github.svg'
 import { ReactComponent as MediumIcon } from '@assets/icons/medium.svg'
 import { ReactComponent as DiscordIcon } from '@assets/icons/discord.svg'
+import { ReactComponent as RedditIcon } from '@assets/icons/reddit.svg'
 
 const Icon = ({type}) => {
   switch (type.toLowerCase()) {
@@ -16,6 +17,7 @@ const Icon = ({type}) => {
     case 'github': return <GithubIcon/>
     case 'medium': return <MediumIcon/>
     case 'discord': return <DiscordIcon/>
+    case 'reddit': return <RedditIcon/>
     default: break
   }
 

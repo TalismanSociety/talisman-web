@@ -28,18 +28,6 @@ const Header = styled(
         </NavLink>
       </span>
       <span>
-        {/*<Toggle
-          off='🌞'
-          on='🌜'
-          onChange={on => set(!!on ? 'dark' : 'light')}
-        />*/}
-        {/*<nav>
-          <NavLink 
-            to='/showcase'
-            >
-            Showcase
-          </NavLink>
-        </nav>*/}
         <Account.Button/>
       </span>
     </header>
@@ -66,12 +54,13 @@ const Header = styled(
 
     .logo{
       display: inline-block;
-      width: 22.7rem;
-      height: 1.8rem;
+      width: 22.7em;
+      height: 1.8em;
+      font-size: 1rem;
       svg{
         margin: 0;
-        width: 22.7rem;
-        height: 1.8rem;
+        width: 100%;
+        height: 100%
       }
     }
 
@@ -84,6 +73,16 @@ const Header = styled(
         margin-left: 1em;
       }
     }
+
+    @media only screen and (max-width: 700px) {
+      .logo{
+        font-size: 0.7rem;
+      }
+
+      .account-button{
+        font-size: 0.8em;
+      }
+    };
   `
 
 export default Header
