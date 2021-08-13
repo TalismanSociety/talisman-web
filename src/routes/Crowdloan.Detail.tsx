@@ -73,7 +73,7 @@ const CrowdloanDetail = styled(
                 primary
                 onClick={() => window.open(contributeUrl, "_blank")}
                 target='_blank'
-                disabled={status?.toLowerCase() === 'won'}
+                disabled={status?.toLowerCase() !== 'active'}
                 >
                 Contribute
               </Button>

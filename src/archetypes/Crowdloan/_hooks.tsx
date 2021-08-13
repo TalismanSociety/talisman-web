@@ -43,15 +43,25 @@ const statusOptions = [
     value: 'All',
     cb: items => items
   },
+  // {
+  //   key: 'completed',
+  //   value: 'Completed',
+  //   cb: items => filter(items, {status: 'Won'})
+  // },
+  // {
+  //   key: 'active',
+  //   value: 'Active',
+  //   cb: items => filter(items, {status: 'Started'})
+  // },
   {
-    key: 'completed',
-    value: 'Completed',
-    cb: items => filter(items, {status: 'Won'})
+    key: 'retiring',
+    value: 'Finished',
+    cb: items => filter(items, {status: 'Retiring'})
   },
   {
-    key: 'active',
-    value: 'Active',
-    cb: items => filter(items, {status: 'Started'})
+    key: 'dissolved',
+    value: 'Dissolved',
+    cb: items => filter(items, {status: 'Dissolved'})
   },
 ]
 

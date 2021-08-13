@@ -56,6 +56,22 @@ const Complete = styled(
     align-items: center;
   `
 
+const Generic = styled(
+  ({
+    text,
+    className
+  }) => 
+    <span
+      className={`crowdloan-countdown finished ${className}`}
+      >
+      {text}
+    </span>
+  )
+  `
+    display: flex;
+    align-items: center;
+  `
+
 const Countdown =
   ({
     id,
@@ -68,8 +84,12 @@ const Countdown =
       lockExpiredBlock
     } = useCrowdloanByParachainId(id)
 
+    console.log(111, status)
+
     switch (status) {
-      case 'Won': return <Complete {...rest}/>
+      case 'Won': return <Complete/>
+      case 'Retiring': return <Generic text='Finished'/>
+      case 'Dissolved': return <Generic text='Dissolved'/>
       default: return <Ongoing {...rest} end={lockExpiredBlock}/>
     }
   }
