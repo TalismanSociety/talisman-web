@@ -112,10 +112,15 @@ const Assets = styled(({ id, className }) => {
   const { balances, status, message } = useBalances(addresses, chainIds, customRpcs)
   const balancesByChain = useMemo(
     () =>
-      (balances || []).reduce(
-        (byChain, balance) => ({ ...byChain, [balance.chainId]: [...(byChain[balance.chainId] || []), balance] }),
-        Object.fromEntries(chainIds.map(chainId => [chainId, []]))
-      ),
+      (balances || [])
+        .filter(balance => typeof balance.chainId === 'string')
+        .reduce(
+          (byChain, balance) => ({
+            ...byChain,
+            [balance.chainId]: [...(byChain[balance.chainId] || []), balance],
+          }),
+          Object.fromEntries(chainIds.map(chainId => [chainId, []]))
+        ),
     [chainIds, balances]
   )
 
