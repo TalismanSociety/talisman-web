@@ -20,8 +20,9 @@ const Image = styled(
   })
   `
     &[data-type='logo']{
-      width: 8rem;
-      height: 8rem;
+      font-size: ${({size=8}) => `${size}rem`};
+      width: 1em;
+      height: 1em;
       border-radius: 50%;
       display: block;
     }

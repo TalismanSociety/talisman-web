@@ -3,9 +3,9 @@ import {
 	Switch,
 	Redirect
 } from "react-router-dom";
-//import Showcase from './Showcase.tsx'
 import CrowdloanIndex from './Crowdloan.Index.tsx'
 import CrowdloanDetail from './Crowdloan.Detail.tsx'
+import Wallet from './Wallet.tsx'
 
 const Routes = () => 
 	<Switch>
@@ -13,20 +13,20 @@ const Routes = () =>
 			exact 
 			path="/"
 			>
+			<Wallet/>
+		</Route>
+		<Route 
+			exact 
+			path="/crowdloans"
+			>
 			<CrowdloanIndex/>
 		</Route>
 		<Route 
 			exact 
-			path="/:slug"
+			path="/crowdloans/:slug"
 			>
 			<CrowdloanDetail/>
 		</Route>
-		{/*<Route 
-			exact 
-			path="/showcase"
-			>
-			<Showcase/>
-		</Route>*/}
 		<Route 
 			path="*"
 			>

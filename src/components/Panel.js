@@ -1,77 +1,71 @@
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 
-const PanelSection = styled(
-  ({
-    title,
-    children,
-    className,
-    ...rest
-  }) => {
-    return <article
-      className={`panel-section ${className}`}
-      >
+const PanelSection = styled(({ title, children, className, ...rest }) => {
+  return (
+    <div className={`panel-section ${className}`}>
       {!!title && <h2>{title}</h2>}
       {children}
-    </article>
-  })
-  `
-    padding: 2.1rem 0;
-    h2{
-      font-size: var(--font-size-xsmall);
-      font-weight: bold;
-      color: var(--color-mid);
-      margin-bottom: 1.4em;
-    }
-  `
-
-const Panel = styled(
-  ({
-    title,
-    children,
-    className,
-    ...rest
-  }) => 
-    <section
-      className={`panel ${className}`}
-      {...rest}
-      >
-      {!!title && <h1>{title}</h1>}
-      <div
-        className="inner"
-        >
-        {children}
-      </div>
-    </section>
+    </div>
   )
-  `
-    >h1{
-      margin-bottom: 0.8em;
-      font-size: var(--font-size-large);
-      font-weight:  var(--font-weight-normal);
+})`
+  display: block;
+  padding: 1.55rem 2rem;
+
+  h2 {
+    font-size: var(--font-size-xsmall);
+    font-weight: bold;
+    color: var(--color-mid);
+    margin-bottom: 1.4em;
+  }
+
+  ${props =>
+    props.comingSoon &&
+    css`
+      padding: 6rem 2rem;
+      color: var(--color-mid);
+      text-align: center;
+    `}
+`
+
+const Panel = styled(({ title, subtitle, children, className, ...rest }) => (
+  <div className={`panel ${className}`} {...rest}>
+    {!!title && (
+      <h1>
+        {title}
+        {!!subtitle && <span>{subtitle}</span>}
+      </h1>
+    )}
+    <div className="inner">{children}</div>
+  </div>
+))`
+  > h1 {
+    display: flex;
+    align-items: baseline;
+    margin-bottom: 0.8em;
+    font-size: var(--font-size-large);
+    font-weight: bold;
+
+    > span {
+      font-size: var(--font-size-normal);
+      margin-left: 0.85em;
+      color: var(--color-primary);
+      font-weight: normal;
     }
+  }
 
-    >.inner{
-      padding: 2.2rem 2.4rem;
-      display: block;
-      border-radius: 1.6rem;
-      user-select: none;
-      background: rgb(${({theme}) => theme.background});
-      color: rgb(${({theme}) => theme.foreground});
-      box-shadow: 0px 0px 2.4rem rgba(${({theme}) => theme.foreground}, 0.1);
+  > .inner {
+    display: block;
+    border-radius: 1.6rem;
+    user-select: none;
+    background: rgb(${({ theme }) => theme.background});
+    color: rgb(${({ theme }) => theme.foreground});
+    box-shadow: 0px 0px 2.4rem rgba(${({ theme }) => theme.foreground}, 0.1);
 
-      .panel-section:first-child{
-        padding-top: 0;
-      }
-
-      .panel-section:last-child{
-        padding-bottom: 0;
-      }
-
-      .panel-section + .panel-section{
-        border-top: 1px solid rgba(${({theme}) => theme.foreground}, 0.1);
-      }
+    .panel-section + .panel-section {
+      border-top: 1px solid rgba(${({ theme }) => theme.foreground}, 0.05);
     }
-  `
+  }
+`
 
 Panel.Section = PanelSection
 

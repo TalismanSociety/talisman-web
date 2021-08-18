@@ -15,7 +15,7 @@ const Teaser = styled(
     } = useCrowdloanByParachainId(id)
 
     return <Link
-      to={`/${parachain?.slug}`}
+      to={`crowdloans/${parachain?.slug}`}
       className={`crowdloan-teaser ${className}`}
       >
       <Parachain.Asset  

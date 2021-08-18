@@ -1,51 +1,63 @@
 import { NavLink } from 'react-router-dom'
 import styled from 'styled-components'
-//import { useTheme } from '@root/App.Theme'
 import { Account } from '@archetypes'
 import { ReactComponent as Logo } from '@assets/logo.svg'
-
-type Props = {
-  className: React.ReactNode,
-}
 
 const Header = styled(
   (
     {
       className
-    }: Props
-  ) => {
-    //const { set } = useTheme()
-
-    return <header
+    }
+  ) => 
+    <header
       className={className}
       >
       <span>
         <NavLink
+          exact
           to='/'
           className='logo'
           >
           <Logo/>
         </NavLink>
       </span>
+      <nav>
+        <NavLink
+          exact
+          to='/'
+          >
+          Wallet
+        </NavLink>
+        <NavLink
+          to='/crowdloans'
+          >
+          Crowdloans
+        </NavLink>
+      </nav>
       <span>
-        <Account.Button/>
+       
       </span>
     </header>
-  })
+  )
   `
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1.6rem 2.4rem;
+    padding: 0 2.4rem;
     width: 100%;
-    height: 7.2rem;
+    box-shadow: 0 0 2.4rem rgba(0, 0, 0, 0.05);
 
-    >span{
+    >*{
       display: flex;
       justify-content: space-between;
       align-items: center;
 
+      &:first-child{
+        width: 20%
+      }
+
       &:last-child{
+         width: 20%;
         >*{
           margin-left: 1em;
         }
@@ -70,7 +82,27 @@ const Header = styled(
       align-items: center;
 
       >*{
-        margin-left: 1em;
+        padding: 2.3rem 2.4rem;
+        position: relative;
+
+        &:after{
+          content: '';
+          position: absolute;
+          bottom: 0;
+          left: 50%;
+          transform: translateX(-50%);
+          width: 0;
+          height: 2px;
+          background: var(--color-primary);
+          transition: width 0.15s ease-in-out;
+        }
+
+        &.active{
+          color: var(--color-primary);
+          &:after{
+            width: 100%;
+          }
+        }
       }
     }
 

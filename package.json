@@ -1,6 +1,6 @@
 {
-  "name": "@talisman/web",
-  "version": "0.1.0",
+  "name": "@talismn/web",
+  "version": "2.0.0",
   "private": true,
   "author": "Daniel Harrison <daniel@flexdapps.com>",
   "repository": "github.com:TalismanSociety/talisman-web",
@@ -9,21 +9,32 @@
   "dependencies": {
     "@apollo/client": "^3.3.21",
     "@craco/craco": "^6.1.2",
-    "@polkadot/api": "^4.14.1",
+    "@polkadot/api": "^5.4.1",
     "@polkadot/extension-dapp": "^0.38.4",
     "@polkadot/keyring": "^7.0.1",
     "@polkadot/react-identicon": "^0.80.1",
+    "@talismn/api-react-hooks": "~0",
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
     "@types/jest": "^26.0.15",
+    "@types/lodash": "^4.14.172",
     "@types/node": "^12.0.0",
     "@types/react": "^17.0.0",
     "@types/react-dom": "^17.0.0",
     "@types/styled-components": "^5.1.10",
+    "babel-plugin-styled-components": "^1.13.2",
+    "bignumber.js": "^9.0.1",
+    "craco-alias": "^3.0.1",
     "graphql": "^15.5.1",
+    "husky": "^6.0.0",
+    "import-sort-style-module": "^6.0.0",
+    "lint-staged": "^11.1.2",
+    "lodash": "^4.17.21",
     "md5": "^2.3.0",
     "moment": "^2.29.1",
+    "prettier": "^2.3.2",
+    "prettier-plugin-import-sort": "^0.0.7",
     "react": "^17.0.2",
     "react-apollo-network-status": "^5.0.1",
     "react-dom": "^17.0.2",
@@ -35,6 +46,8 @@
     "web-vitals": "^1.0.1"
   },
   "scripts": {
+    "prepare": "husky install",
+    "pre-commit": "lint-staged",
     "start": "CI= craco start",
     "build": "CI= GENERATE_SOURCEMAP=false craco build",
     "test": "craco test",
@@ -44,7 +57,26 @@
     "extends": [
       "react-app",
       "react-app/jest"
-    ]
+    ],
+    "rules": {
+      "import/no-cycle": "warn"
+    }
+  },
+  "lint-staged": {
+    "*.{ts,tsx,js,jsx,html,css,scss}": "prettier --write"
+  },
+  "prettier": {
+    "arrowParens": "avoid",
+    "printWidth": 120,
+    "quoteProps": "consistent",
+    "semi": false,
+    "singleQuote": true
+  },
+  "importSort": {
+    ".js, .jsx, .ts, .tsx": {
+      "style": "module",
+      "parser": "typescript"
+    }
   },
   "browserslist": {
     "production": [

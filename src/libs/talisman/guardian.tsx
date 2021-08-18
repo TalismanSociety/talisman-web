@@ -4,6 +4,7 @@ import {
   useState,
   useReducer,
   useEffect,
+  useMemo,
 } from 'react'
 import {
   web3AccountsSubscribe,
@@ -112,7 +113,7 @@ const Provider =
     children
   }) => {
     const [injected, setInjected] = useState()
-    const [accounts, accountDispatcher] = useReducer(accountReducer, {})
+    const [accountsByAddress, accountDispatcher] = useReducer(accountReducer, {})
     const [metadata, updateMetadata] = useReducer(metadataReducer, {})
     const [subscriptions, setSubscription] = useReducer(subscriptionReducer, [])
     const api = useApi()
@@ -178,7 +179,7 @@ const Provider =
     const initBalanceSubscriptions = async () => {
       if(!api.isReady || !Object.keys(accounts).length) return
 
-      Object.keys(accounts).forEach(async address => {
+      Object.keys(accountsByAddress).forEach(async address => {
         const balancesSub = await api.query.system.account(address, ({ data: balance }) => {
           const total = balance.free.toString()
           const reserve = 1
@@ -272,7 +273,7 @@ const Provider =
 
     // step 4 ---
     // hydrate balances once the polkadot API is connected/ready & we have some accounts
-    useEffect(() => !!api.isReady && status === options.AUTHORIZED && initBalanceSubscriptions(), [api.isReady, Object.values(accounts).length]) // eslint-disable-line
+    useEffect(() => !!api.isReady && status === options.AUTHORIZED && initBalanceSubscriptions(), [api.isReady, Object.values(accountsByAddress).length]) // eslint-disable-line
 
     
     // cleanup ---
@@ -296,17 +297,17 @@ const Provider =
     // }, [api, api.isReady]) // eslint-disable-line
     // END TESTING
 
-    return <Context.Provider 
-      value={{
-        accounts: Object.values(accounts),
-        metadata: metadata,
-        ready: status === options.AUTHORIZED,
-        status: status,
-        message: message,
-      }}
-      >
-      {children}
-    </Context.Provider>
+    const accounts = useMemo(() => Object.values(accountsByAddress), [accountsByAddress])
+
+    const value = useMemo(() => ({
+      accounts,
+      metadata: metadata,
+      ready: status === options.AUTHORIZED,
+      status: status,
+      message: message,
+    }), [accounts, metadata, status, options, message])
+
+    return <Context.Provider value={value}>{children}</Context.Provider>
   }
 
 const Guardian = {

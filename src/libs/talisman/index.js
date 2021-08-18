@@ -1,12 +1,11 @@
-import Guardian from './guardian.tsx'
-import Account from './account.tsx'
-import Parachain from './parachain.tsx'
-import Crowdloan from './crowdloan.tsx'
-import Api from './api.tsx'
+import Account from './account'
+import Api from './api'
+import Crowdloan from './crowdloan'
+import Guardian from './guardian'
+import Parachain from './parachain'
+import Settings from './settings'
 import Subquery from './subquery'
-import Settings from './settings.tsx'
-import { useChainByGenesis as _useChainByGenesis } from './util/hooks.tsx'
-
+import { useChainByGenesis as _useChainByGenesis } from './util/hooks'
 
 /* publically exposed hooks */
 
@@ -15,7 +14,8 @@ export const useGuardian = Guardian.useGuardian
 export const useGuardianValue = Guardian.useGuardianValue
 
 // account things
-export const useAccount = Account.useAccount
+export const useActiveAccount = Account.useActiveAccount
+export const useAccountAddresses = Account.useAccountAddresses
 
 // parachain things
 export const useParachains = Parachain.useParachains
@@ -42,26 +42,21 @@ export const useSettings = Settings.useSettings
 // helpers
 export const useChainByGenesis = _useChainByGenesis
 
-
-
 /* publically exposed provider */
-const Provider = ({children}) => 
-	<Settings.Provider>
-		<Api.Provider>
-			<Subquery.Provider
-				uri='https://api.subquery.network/sq/subvis-io/kusama-auction'
-				>
-				<Guardian.Provider>
-					<Account.Provider>
-						<Parachain.Provider>
-							<Crowdloan.Provider>
-								{children}
-							</Crowdloan.Provider>
-						</Parachain.Provider>
-					</Account.Provider>
-				</Guardian.Provider>
-			</Subquery.Provider>
-		</Api.Provider>
-	</Settings.Provider>
+const Provider = ({ children }) => (
+  <Settings.Provider>
+    <Api.Provider>
+      <Subquery.Provider uri="https://api.subquery.network/sq/subvis-io/kusama-auction">
+        <Guardian.Provider>
+          <Account.Provider>
+            <Parachain.Provider>
+              <Crowdloan.Provider>{children}</Crowdloan.Provider>
+            </Parachain.Provider>
+          </Account.Provider>
+        </Guardian.Provider>
+      </Subquery.Provider>
+    </Api.Provider>
+  </Settings.Provider>
+)
 
 export default Provider
