@@ -113,7 +113,7 @@ const Assets = styled(({ id, className }) => {
   const balancesByChain = useMemo(
     () =>
       (balances || []).reduce(
-        (byChain, balance) => ({ ...byChain, [balance.chainId]: [...byChain[balance.chainId], balance] }),
+        (byChain, balance) => ({ ...byChain, [balance.chainId]: [...(byChain[balance.chainId] || []), balance] }),
         Object.fromEntries(chainIds.map(chainId => [chainId, []]))
       ),
     [chainIds, balances]
