@@ -1,6 +1,14 @@
 import useUniqueId from '@util/useUniqueId'
 import { FC, useContext as _useContext, createContext, useCallback, useEffect, useMemo, useState } from 'react'
 
+// TODO: Replace this lib with an @talismn/api wrapper or redesign.
+//       Currently we get balances from the api, then convert and aggregate them all
+//       downstream. This means we have to keep track of all the converted and aggregated
+//       values in order to provide useful summaries to the user (e.g. totalUsd, totalUsdByAddress, etc).
+//
+//       Soon we should just provide methods for these summaries directly via @talismn/api,
+//       which will take care of fetching and updating the underlying balances as appropriate for us.
+
 //
 // Types
 //
@@ -34,16 +42,22 @@ export function usePortfolio(): Portfolio {
   return portfolio
 }
 
-export function useTaggedAmountInPortfolio(tags: Tag[], amount: string | undefined): void {
+export function useTaggedAmountsInPortfolio(amounts: Array<{ tags: Tag[]; amount: string | undefined }>): void {
   const { storeTotal, clearTotal } = useContext()
   const uniqueId = useUniqueId()
 
   useEffect(() => {
-    if (!amount) return
+    amounts.forEach(({ tags, amount }, index) => {
+      if (!amount) return
+      storeTotal(`${uniqueId}--${index}`, tags, amount)
+    })
+    return () => amounts.forEach((_, index) => clearTotal(`${uniqueId}--${index}`))
+  }, [uniqueId, amounts, storeTotal, clearTotal])
+}
 
-    storeTotal(uniqueId, tags, amount)
-    return () => clearTotal(uniqueId)
-  }, [uniqueId, tags, amount, storeTotal, clearTotal])
+export function useTaggedAmountInPortfolio(tags: Tag[], amount: string | undefined): void {
+  const amounts = useMemo(() => [{ tags, amount }], [tags, amount])
+  return useTaggedAmountsInPortfolio(amounts)
 }
 
 //

@@ -1,4 +1,4 @@
-import AllAccountsIcon from '@assets/icons/all-accounts.svg'
+import { ReactComponent as AllAccountsIcon } from '@assets/icons/all-accounts.svg'
 import { Button, Pendor } from '@components'
 import { ReactComponent as ChevronDown } from '@icons/chevron-down.svg'
 import { usePortfolio } from '@libs/portfolio'
@@ -24,10 +24,11 @@ const Address = ({ address, genesis, truncate = false }) => {
 const Dropdown = styled(({ handleClose, className }) => {
   const { switchAccount } = useActiveAccount()
   const { accounts } = useGuardian()
+  const { totalUsd, totalUsdByAddress } = usePortfolio()
 
   return (
     <span className={`account-picker ${className}`}>
-      {accounts.map(({ address, name, genesisHash, balance }, index) => (
+      {[{ name: 'All Accounts' }, ...accounts].map(({ address, name, genesisHash, balance }, index) => (
         <div
           key={index}
           className="account"
@@ -37,19 +38,34 @@ const Dropdown = styled(({ handleClose, className }) => {
           }}
         >
           <span className="left">
-            <Identicon className="identicon" value={address} theme={'polkadot'} />
+            {address ? (
+              <Identicon className="identicon" value={address} theme="polkadot" />
+            ) : (
+              <Identicon
+                Custom={AllAccountsIcon}
+                className="identicon"
+                value="5DHuDfmwzykE9KVmL87DLjAbfSX7P4f4wDW5CKx8QZnQA4FK"
+                theme="polkadot"
+              />
+            )}
             <span className="name-address">
-              <span className="name">{truncateString(name, 10, 0)}</span>
-              <span className="address">
-                <Address address={address} genesis={genesisHash} truncate />
-              </span>
+              <span className="name">{address ? truncateString(name, 10, 0) : name}</span>
+              {address && (
+                <span className="address">
+                  <Address address={address} genesis={genesisHash} truncate />
+                </span>
+              )}
             </span>
           </span>
 
           <span className="right">
-            <Pendor suffix=" KSM" require={!!balance?.total}>
-              {balance?.total}
-            </Pendor>
+            {address ? (
+              <Pendor prefix={!totalUsdByAddress[address] && '-'}>
+                {totalUsdByAddress[address] && formatCurrency(totalUsdByAddress[address])}
+              </Pendor>
+            ) : (
+              <Pendor prefix={!totalUsd && '-'}>{totalUsd && formatCurrency(totalUsd)}</Pendor>
+            )}
           </span>
         </div>
       ))}
@@ -157,29 +173,36 @@ const NoAccount = styled(({ className }) => {
 `
 
 const Authorized = styled(({ className }) => {
-  const { hasActiveAccount, address, name, balance } = useActiveAccount()
-  const { totalUsd } = usePortfolio()
+  const { hasActiveAccount, address, name } = useActiveAccount()
+  const { totalUsd, totalUsdByAddress } = usePortfolio()
   const [open, setOpen] = useState(false)
+
+  const usd = hasActiveAccount ? totalUsdByAddress[address] : totalUsd
 
   return (
     <span className={`account-button ${className}`} onMouseLeave={() => setOpen(false)}>
       {hasActiveAccount ? (
-        <Identicon className="identicon" value={address} theme={'polkadot'} />
+        <Identicon className="identicon" value={address} theme="polkadot" />
       ) : (
-        <img src={AllAccountsIcon} alt="all accounts icon" />
+        <Identicon
+          className="identicon"
+          Custom={AllAccountsIcon}
+          value="5DHuDfmwzykE9KVmL87DLjAbfSX7P4f4wDW5CKx8QZnQA4FK"
+          theme="polkadot"
+        />
       )}
       <span className="selected-account">
         <div>{hasActiveAccount ? name : 'All Accounts'}</div>
         <div>
-          <Pendor prefix={!totalUsd && '-'}>{totalUsd && formatCurrency(totalUsd)}</Pendor>
+          <Pendor prefix={!usd && '-'}>{usd && formatCurrency(usd)}</Pendor>
         </div>
       </span>
 
-      {/* <Button.Icon className="nav-toggle" onMouseEnter={() => setOpen(true)}> */}
-      {/*   <ChevronDown /> */}
-      {/* </Button.Icon> */}
+      <Button.Icon className="nav-toggle" onMouseEnter={() => setOpen(true)}>
+        <ChevronDown />
+      </Button.Icon>
 
-      {/* <Dropdown open={open} handleClose={() => setOpen(false)} /> */}
+      <Dropdown open={open} handleClose={() => setOpen(false)} />
     </span>
   )
 })`
@@ -225,6 +248,7 @@ const Authorized = styled(({ className }) => {
     position: absolute;
     top: 100%;
     right: 0;
+    z-index: 10;
   }
 `
 

@@ -1,5 +1,5 @@
 import { Image, Info, Panel, Pendor } from '@components'
-import { usePortfolio, useTaggedAmountInPortfolio } from '@libs/portfolio'
+import { Tag, usePortfolio, useTaggedAmountsInPortfolio } from '@libs/portfolio'
 import { useAccountAddresses, useGuardian } from '@libs/talisman'
 import { useTokenPrice } from '@libs/tokenprices'
 import { useBalances, useChain } from '@talismn/api-react-hooks'
@@ -8,6 +8,7 @@ import BigNumber from 'bignumber.js'
 import { useMemo } from 'react'
 import styled from 'styled-components'
 
+// TODO: Move these to a global config object
 const customRpcs = {
   '0': [], // ['wss://polkadot.api.onfinality.io/ws?apikey=e1b2f3ea-f003-42f5-adf6-d2e6aa3ecfe4'], // Polkadot Relay
   '2': [], // ['wss://kusama.api.onfinality.io/ws?apikey=e1b2f3ea-f003-42f5-adf6-d2e6aa3ecfe4'], // Kusama Relay
@@ -42,31 +43,33 @@ const AssetItem = styled(({ id, balances, addresses, className }) => {
   const chain = useChain(id)
 
   const { name, nativeToken, tokenDecimals } = chain
-  const freePlanck = useMemo(
-    () =>
-      balances.length > 0
-        ? balances
-            .filter(balance => addresses.includes(balance.address))
-            .map(balance => balance.free)
-            .reduce((freePlanck, balanceFree) => freePlanck.plus(new BigNumber(balanceFree)), new BigNumber(0))
-            .toString()
-        : undefined,
-    [balances, addresses]
-  )
+  const { price: tokenPrice, loading: priceLoading } = useTokenPrice(nativeToken)
 
-  const [freeTokens, tokenSymbol] = usePlanckToTokens(freePlanck, nativeToken, tokenDecimals)
+  const tokenBalances = useFuncMemo(addTokensToBalances, balances, nativeToken ? tokenDecimals : undefined)
+  const pricedTokenBalances = useFuncMemo(addPriceToTokenBalances, tokenBalances, tokenPrice)
 
-  const { price: tokenPrice, loading: priceLoading } = useTokenPrice(tokenSymbol)
-  const totalUsd = useMemo(
-    () => (freeTokens && tokenPrice ? String(Number(freeTokens) * Number(tokenPrice)) : undefined),
-    [freeTokens, tokenPrice]
-  )
+  const portfolioAmounts = useFuncMemo(calculatePortfolioAmounts, pricedTokenBalances)
+  useTaggedAmountsInPortfolio(portfolioAmounts)
 
-  const tags = useMemo(
-    () => ['USD', 'Assets', ...(addresses || []).map((Address: string) => ({ Address }))],
-    [addresses]
+  const tokenSymbol = useFuncMemo(token => token || 'Planck', nativeToken)
+  const tokens = useFuncMemo(
+    (tokenBalances, addresses) =>
+      tokenBalances
+        .filter(balance => addresses.includes(balance.address))
+        .map(balance => balance.tokens)
+        .reduce(addBigNumbers, undefined),
+    tokenBalances,
+    addresses
   )
-  useTaggedAmountInPortfolio(tags, totalUsd)
+  const usd = useFuncMemo(
+    (pricedBalances, addresses) =>
+      pricedBalances
+        .filter(balance => addresses.includes(balance.address))
+        .map(balance => balance.usd)
+        .reduce(addBigNumbers, undefined),
+    pricedTokenBalances,
+    addresses
+  )
 
   return (
     <div className={className}>
@@ -75,11 +78,11 @@ const AssetItem = styled(({ id, balances, addresses, className }) => {
       </span>
       <span className="right">
         <Info
-          title={<Pendor suffix={` ${tokenSymbol}`}>{freeTokens && formatCommas(freeTokens)}</Pendor>}
+          title={<Pendor suffix={` ${tokenSymbol}`}>{tokens && formatCommas(tokens)}</Pendor>}
           subtitle={
-            freeTokens ? (
-              <Pendor prefix={!totalUsd && '-'} require={!priceLoading}>
-                {totalUsd && formatCurrency(totalUsd)}
+            tokens ? (
+              <Pendor prefix={!usd && '-'} require={!priceLoading}>
+                {usd && formatCurrency(usd)}
               </Pendor>
             ) : null
           }
@@ -106,23 +109,11 @@ const Assets = styled(({ id, className }) => {
   const chainIds = useMemo(() => Object.keys(customRpcs), [])
 
   const { accounts } = useGuardian()
-  const addresses = useMemo(() => accounts.map(account => account.address), [accounts])
+  const addresses = useMemo(() => accounts.map((account: any) => account.address), [accounts])
   const accountAddresses = useAccountAddresses()
 
   const { balances, status, message } = useBalances(addresses, chainIds, customRpcs)
-  const balancesByChain = useMemo(
-    () =>
-      (balances || [])
-        .filter(balance => typeof balance.chainId === 'string')
-        .reduce(
-          (byChain, balance) => ({
-            ...byChain,
-            [balance.chainId]: [...(byChain[balance.chainId] || []), balance],
-          }),
-          Object.fromEntries(chainIds.map(chainId => [chainId, []]))
-        ),
-    [chainIds, balances]
-  )
+  const balancesByChain = useFuncMemo(groupBalancesByChain, chainIds, balances)
 
   const { totalAssetsUsd } = usePortfolio()
 
@@ -156,19 +147,101 @@ const Assets = styled(({ id, className }) => {
 
 export default Assets
 
-function usePlanckToTokens(
-  planck: string,
-  token?: string,
-  tokenDecimals?: number
-): [tokens: string, tokenSymbol: string] {
-  return useMemo(() => {
-    if (!planck || !token || typeof tokenDecimals !== 'number') return [planck, 'Planck']
+//
+// useFuncMemo: why type your arguments twice?
+//
+// Tired:
+//
+//   const someData = useSomeData()
+//   const someMoreData = useSomeMoreData()
+//
+//   const result = useMemo(() => {
+//     return processData(someData, someMoreData)
+//   }, [someData, someMoreData])
+//
+// Wired:
+//
+//   const someData = useSomeData()
+//   const someMoreData = useSomeMoreData()
+//
+//   const result = useFuncMemo(processData, someData, someMoreData)
+//
+function useFuncMemo<Args extends any[], Result>(func: (...args: Args) => Result, ...args: Args) {
+  return useMemo(() => func(...args), args) // eslint-disable-line react-hooks/exhaustive-deps
+}
 
-    const base = new BigNumber(10)
-    const exponent = new BigNumber(tokenDecimals).negated()
-    const multiplier = base.pow(exponent)
+// TODO: Move these helper functions and hooks into @talismn/api
 
-    const tokens = new BigNumber(planck).multipliedBy(multiplier).toString()
-    return [tokens, token]
-  }, [planck, token, tokenDecimals])
+function groupBalancesByChain(chainIds: string[], balances: any[]): { [key: string]: any[] } {
+  const byChain = Object.fromEntries(chainIds.map<[string, any[]]>(chainId => [chainId, []]))
+
+  balances
+    .filter(balance => typeof balance.chainId === 'string')
+    .filter(balance => chainIds.includes(balance.chainId))
+    .forEach(balance => {
+      byChain[balance.chainId].push(balance)
+    })
+
+  return byChain
+}
+
+function addTokensToBalances(balances: any[], tokenDecimals?: number): any[] {
+  return balances.map(balance => ({ ...balance, tokens: planckToTokens(balance.free, tokenDecimals) }))
+}
+
+function planckToTokens(planck: string, tokenDecimals?: number): string | undefined {
+  if (!planck || typeof tokenDecimals !== 'number') return
+
+  const base = new BigNumber(10)
+  const exponent = new BigNumber(tokenDecimals).negated()
+  const multiplier = base.pow(exponent)
+
+  return new BigNumber(planck).multipliedBy(multiplier).toString()
+}
+
+function addPriceToTokenBalances(balances: any[], tokenPrice?: string): any[] {
+  if (typeof tokenPrice !== 'number') return balances
+
+  return balances
+    .filter(balance => typeof balance.tokens === 'string')
+    .map(balance => ({
+      ...balance,
+      usd: new BigNumber(balance.tokens).multipliedBy(new BigNumber(tokenPrice || 0)).toString(),
+    }))
+}
+
+function calculatePortfolioAmounts(balances: any[]): Array<{ tags: Tag[]; amount: string | undefined }> {
+  const amounts: Array<{ tags: Tag[]; amount: string | undefined }> = []
+
+  const byAddress = groupBalancesByAddress(balances.filter(balance => typeof balance.usd === 'string'))
+
+  Object.entries(byAddress).forEach(([address, balances]) => {
+    const tags: Tag[] = ['USD', 'Assets', { Address: address }]
+    balances.forEach(balance => amounts.push({ tags, amount: balance.usd }))
+  })
+
+  return amounts
+}
+
+function groupBalancesByAddress(balances: any[]): { [key: string]: any[] } {
+  const byAddress: { [key: string]: any } = {}
+
+  balances
+    .filter(balance => typeof balance.address === 'string')
+    .forEach(balance => {
+      if (!byAddress[balance.address]) byAddress[balance.address] = []
+      byAddress[balance.address].push(balance)
+    })
+
+  return byAddress
+}
+
+// reducers
+
+function addBigNumbers(a?: string, b?: string): string | undefined {
+  if (!a && !b) return undefined
+  if (!a) return b
+  if (!b) return a
+
+  return new BigNumber(a).plus(new BigNumber(b)).toString()
 }
