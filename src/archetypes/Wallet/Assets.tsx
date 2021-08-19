@@ -115,7 +115,15 @@ const Assets = styled(({ id, className }) => {
   const { balances, status, message } = useBalances(addresses, chainIds, customRpcs)
   const balancesByChain = useFuncMemo(groupBalancesByChain, chainIds, balances)
 
-  const { totalAssetsUsd } = usePortfolio()
+  const { totalAssetsUsdByAddress } = usePortfolio()
+  const assetsUsd = useMemo(
+    () =>
+      Object.entries(totalAssetsUsdByAddress || {})
+        .filter(([address]) => accountAddresses && accountAddresses.includes(address))
+        .map(([, assetsUsd]) => assetsUsd)
+        .reduce(addBigNumbers, undefined),
+    [totalAssetsUsdByAddress, accountAddresses]
+  )
 
   return (
     <section className={`wallet-assets ${className}`}>
@@ -126,7 +134,7 @@ const Assets = styled(({ id, className }) => {
           {message}
         </div>
       )}
-      <Panel title="Assets" subtitle={totalAssetsUsd && formatCurrency(totalAssetsUsd)}>
+      <Panel title="Assets" subtitle={assetsUsd && formatCurrency(assetsUsd)}>
         {Object.entries(balancesByChain).map(([chainId, balances]) => (
           <Panel.Section key={chainId}>
             <AssetItem id={chainId} balances={balances} addresses={accountAddresses} />

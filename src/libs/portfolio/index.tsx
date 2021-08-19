@@ -17,8 +17,11 @@ export type Portfolio = {
   totalUsd: string
   totalUsdByAddress: { [key: string]: string }
   totalAssetsUsd: string
+  totalAssetsUsdByAddress: { [key: string]: string }
   totalCrowdloansUsd: string
+  totalCrowdloansUsdByAddress: { [key: string]: string }
   totalStakingUsd: string
+  totalStakingUsdByAddress: { [key: string]: string }
 }
 
 export type AddressTag = { Address: string }
@@ -105,8 +108,11 @@ const Provider: FC<ProviderProps> = ({ children }) => {
     let totalUsd = '0'
     let totalUsdByAddress: { [key: string]: string } = {}
     let totalAssetsUsd = '0'
+    let totalAssetsUsdByAddress: { [key: string]: string } = {}
     let totalCrowdloansUsd = '0'
+    let totalCrowdloansUsdByAddress: { [key: string]: string } = {}
     let totalStakingUsd = '0'
+    let totalStakingUsdByAddress: { [key: string]: string } = {}
 
     Object.values(totalStore).forEach(({ tags, amount }) => {
       if (tags.includes('USD')) {
@@ -118,6 +124,21 @@ const Provider: FC<ProviderProps> = ({ children }) => {
           .forEach(address => {
             if (!totalUsdByAddress[address]) totalUsdByAddress[address] = '0'
             totalUsdByAddress[address] = String(Number(totalUsdByAddress[address]) + Number(amount))
+
+            if (tags.includes('Assets')) {
+              if (!totalAssetsUsdByAddress[address]) totalAssetsUsdByAddress[address] = '0'
+              totalAssetsUsdByAddress[address] = String(Number(totalAssetsUsdByAddress[address]) + Number(amount))
+            }
+            if (tags.includes('Crowdloans')) {
+              if (!totalCrowdloansUsdByAddress[address]) totalCrowdloansUsdByAddress[address] = '0'
+              totalCrowdloansUsdByAddress[address] = String(
+                Number(totalCrowdloansUsdByAddress[address]) + Number(amount)
+              )
+            }
+            if (tags.includes('Staking')) {
+              if (!totalStakingUsdByAddress[address]) totalStakingUsdByAddress[address] = '0'
+              totalStakingUsdByAddress[address] = String(Number(totalStakingUsdByAddress[address]) + Number(amount))
+            }
           })
 
         if (tags.includes('Assets')) totalAssetsUsd = String(Number(totalAssetsUsd) + Number(amount))
@@ -126,7 +147,16 @@ const Provider: FC<ProviderProps> = ({ children }) => {
       }
     })
 
-    return { totalUsd, totalUsdByAddress, totalAssetsUsd, totalCrowdloansUsd, totalStakingUsd }
+    return {
+      totalUsd,
+      totalUsdByAddress,
+      totalAssetsUsd,
+      totalAssetsUsdByAddress,
+      totalCrowdloansUsd,
+      totalCrowdloansUsdByAddress,
+      totalStakingUsd,
+      totalStakingUsdByAddress,
+    }
   }, [totalStore])
 
   const value = useMemo(() => ({ portfolio, storeTotal, clearTotal }), [portfolio, storeTotal, clearTotal])
