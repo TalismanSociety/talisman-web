@@ -4,7 +4,8 @@ import { useCrowdloanByParachainId } from '@libs/talisman'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 
-import Crowdloan from './'
+import Countdown from './Countdown'
+import Raised from './Raised'
 
 const Teaser = styled(({ id, className }) => {
   const { parachain } = useCrowdloanByParachainId(id)
@@ -15,11 +16,11 @@ const Teaser = styled(({ id, className }) => {
       <div className="content">
         <Parachain.Asset id={id} type="logo" />
         <h1>{parachain?.name}</h1>
-        <Crowdloan.Raised id={id} title="Raised" />
+        <Raised id={id} title="Raised" />
       </div>
 
       <Pill className="countdown">
-        <Crowdloan.Countdown id={id} showSeconds={false} />
+        <Countdown id={id} showSeconds={false} />
       </Pill>
     </Link>
   )
