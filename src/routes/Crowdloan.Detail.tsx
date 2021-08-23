@@ -5,7 +5,7 @@ import { useParams } from 'react-router-dom'
 import styled from 'styled-components'
 
 const CrowdloanDetail = styled(({ className }) => {
-  const { slug } = useParams()
+  const { slug }: { slug: string } = useParams()
   const { paraId, status, parachain, contributeUrl } = useCrowdloanByParachainSlug(slug)
   const { banner } = useParachainAssets(paraId)
 
