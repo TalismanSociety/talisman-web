@@ -1,4 +1,4 @@
-import { Image, Info, Panel, Pendor } from '@components'
+import { Image, Info, Panel, PanelSection, Pendor } from '@components'
 import { Tag, usePortfolio, useTaggedAmountsInPortfolio } from '@libs/portfolio'
 import { useAccountAddresses, useGuardian } from '@libs/talisman'
 import { useTokenPrice } from '@libs/tokenprices'
@@ -70,7 +70,6 @@ const AssetItem = styled(({ id, balances, addresses, className }) => {
     pricedTokenBalances,
     addresses
   )
-
   return (
     <div className={className}>
       <span className="left">
@@ -136,9 +135,9 @@ const Assets = styled(({ id, className }) => {
       )}
       <Panel title="Assets" subtitle={assetsUsd && formatCurrency(assetsUsd)}>
         {Object.entries(balancesByChain).map(([chainId, balances]) => (
-          <Panel.Section key={chainId}>
+          <PanelSection key={chainId}>
             <AssetItem id={chainId} balances={balances} addresses={accountAddresses} />
-          </Panel.Section>
+          </PanelSection>
         ))}
       </Panel>
     </section>

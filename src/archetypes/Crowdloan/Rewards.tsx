@@ -3,7 +3,7 @@ import { useCrowdloanByParachainId } from '@libs/talisman'
 import styled from 'styled-components'
 
 const Countdown = styled(({ id, className }) => {
-  const { rewards, ...rest } = useCrowdloanByParachainId(id)
+  const { rewards } = useCrowdloanByParachainId(id)
 
   return (
     <div className={`crowdloan-rewards ${className}`}>

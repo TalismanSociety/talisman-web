@@ -1,13 +1,20 @@
 import styled, { css } from 'styled-components'
 
-const PanelSection = styled(({ title, children, className, ...rest }) => {
+type BasePanelProps = {
+  title: string
+  subtitle: string
+  className: string
+  rest: any[]
+}
+
+export const PanelSection = styled(({ title, children, className }) => {
   return (
     <div className={`panel-section ${className}`}>
       {!!title && <h2>{title}</h2>}
       {children}
     </div>
   )
-})`
+})<BasePanelProps>`
   display: block;
   padding: 1.55rem 2rem;
 
@@ -37,7 +44,7 @@ const Panel = styled(({ title, subtitle, children, className, ...rest }) => (
     )}
     <div className="inner">{children}</div>
   </div>
-))`
+))<BasePanelProps>`
   > h1 {
     display: flex;
     align-items: baseline;
@@ -66,7 +73,5 @@ const Panel = styled(({ title, subtitle, children, className, ...rest }) => (
     }
   }
 `
-
-Panel.Section = PanelSection
 
 export default Panel
