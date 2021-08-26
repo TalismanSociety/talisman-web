@@ -15,9 +15,9 @@ const customRpcs = {
   '1000': [], // ['wss://statemine.api.onfinality.io/ws?apikey=e1b2f3ea-f003-42f5-adf6-d2e6aa3ecfe4'], // Statemine
   '2000': [], // ['wss://karura.api.onfinality.io/ws?apikey=e1b2f3ea-f003-42f5-adf6-d2e6aa3ecfe4'], // Karura
   '2001': [], // ['wss://bifrost-parachain.api.onfinality.io/ws?apikey=e1b2f3ea-f003-42f5-adf6-d2e6aa3ecfe4'], // Bifrost
-  // '2004': [], // ['wss://khala.api.onfinality.io/ws?apikey=e1b2f3ea-f003-42f5-adf6-d2e6aa3ecfe4'], // Khala
+  '2004': [], // ['wss://khala.api.onfinality.io/ws?apikey=e1b2f3ea-f003-42f5-adf6-d2e6aa3ecfe4'], // Khala
   '2007': [], // ['wss://shiden.api.onfinality.io/ws?apikey=e1b2f3ea-f003-42f5-adf6-d2e6aa3ecfe4'], // Shiden
-  // '2023': [], // ['wss://moonriver.api.onfinality.io/ws?apikey=e1b2f3ea-f003-42f5-adf6-d2e6aa3ecfe4'], // Moonriver
+  '2023': [], // ['wss://moonriver.api.onfinality.io/ws?apikey=e1b2f3ea-f003-42f5-adf6-d2e6aa3ecfe4'], // Moonriver
 }
 
 const ChainLogo = styled(({ chain, type, className }) => {
@@ -42,7 +42,7 @@ const ChainLogo = styled(({ chain, type, className }) => {
 const AssetItem = styled(({ id, balances, addresses, className }) => {
   const chain = useChain(id)
 
-  const { name, nativeToken, tokenDecimals } = chain
+  const { name, longName, nativeToken, tokenDecimals } = chain
   const { price: tokenPrice, loading: priceLoading } = useTokenPrice(nativeToken)
 
   const tokenBalances = useFuncMemo(addTokensToBalances, balances, nativeToken ? tokenDecimals : undefined)
@@ -74,7 +74,7 @@ const AssetItem = styled(({ id, balances, addresses, className }) => {
   return (
     <div className={className}>
       <span className="left">
-        <Info title={name} subtitle={name} graphic={<ChainLogo chain={chain} type="logo" size={4} />} />
+        <Info title={name} subtitle={longName || name} graphic={<ChainLogo chain={chain} type="logo" size={4} />} />
       </span>
       <span className="right">
         <Info
