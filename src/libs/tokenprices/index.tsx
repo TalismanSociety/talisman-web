@@ -1,6 +1,9 @@
 import { debounce } from 'lodash'
 import { FC, useContext as _useContext, createContext, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
+// TODO: Cache token USD values locally
+// TODO: Update token USD values in the background
+
 //
 // Constants
 //
@@ -158,7 +161,7 @@ function useContext() {
 
 type ProviderProps = {}
 
-const Provider: FC<ProviderProps> = ({ children }) => {
+export const Provider: FC<ProviderProps> = ({ children }) => {
   const coins = _useCoins()
   const [tokenPrices, addToken] = _useTokenPrices(coins)
 
@@ -166,5 +169,3 @@ const Provider: FC<ProviderProps> = ({ children }) => {
 
   return <Context.Provider value={value}>{children}</Context.Provider>
 }
-
-export default Provider

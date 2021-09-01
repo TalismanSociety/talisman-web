@@ -6,8 +6,18 @@ import styled from 'styled-components'
 
 const CrowdloanDetail = styled(({ className }) => {
   const { slug }: { slug: string } = useParams()
-  const { paraId, status, parachain, contributeUrl } = useCrowdloanByParachainSlug(slug)
-  const { banner } = useParachainAssets(paraId)
+  const {
+    item: { paraId, status, parachain, contributeUrl, wonAuctionId, isFinished },
+  } = useCrowdloanByParachainSlug(slug)
+  const { banner } = useParachainAssets(paraId) || {}
+
+  // TODO: Determine this properly by testing if crowdloan has lease, for example:
+  //       https://github.com/polkadot-js/apps/blob/df798fac838715a9b215be82e6e297d3d3f2bc4c/packages/page-parachains/src/useFunds.ts#L44
+  const isWinner = status === 'winner'
+
+  // TODO: Determine active / ended properly by testing isCapped || isEnded || isWinner and currentPeriod vs firstSlot:
+  //       https://github.com/polkadot-js/apps/blob/df798fac838715a9b215be82e6e297d3d3f2bc4c/packages/page-parachains/src/Crowdloan/Funds.tsx#L30
+  const isEnded = status === 'ended'
 
   return (
     <section className={className}>
@@ -35,7 +45,7 @@ const CrowdloanDetail = styled(({ className }) => {
                 primary
                 onClick={() => window.open(contributeUrl, '_blank')}
                 target="_blank"
-                disabled={status?.toLowerCase() !== 'active'}
+                disabled={isWinner || isEnded}
               >
                 Contribute
               </Button>

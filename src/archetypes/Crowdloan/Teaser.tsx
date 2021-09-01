@@ -8,10 +8,12 @@ import Countdown from './Countdown'
 import Raised from './Raised'
 
 const Teaser = styled(({ id, className }) => {
-  const { parachain } = useCrowdloanByParachainId(id)
+  const {
+    item: { parachain },
+  } = useCrowdloanByParachainId(id)
 
   return (
-    <Link to={`crowdloans/${parachain?.slug}`} className={`crowdloan-teaser ${className}`}>
+    <Link to={`/crowdloans/${parachain?.slug}`} className={`crowdloan-teaser ${className}`}>
       <Parachain.Asset id={id} type="card" />
       <div className="content">
         <Parachain.Asset id={id} type="logo" />

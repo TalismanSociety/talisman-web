@@ -102,6 +102,8 @@ const ImportAliasesPlugin = {
 //     yarn link @talismn/api
 //     # add chaindata-js linked dependency
 //     yarn link @talismn/chaindata-js
+//     # add util linked dependency
+//     yarn link @talismn/util
 //     # change back to parent directory
 //     cd ..
 //
@@ -113,14 +115,18 @@ const ImportAliasesPlugin = {
 //     yarn link @talismn/api
 //     # add chaindata-js linked dependency
 //     yarn link @talismn/chaindata-js
+//     # add util linked dependency
+//     yarn link @talismn/util
 //     # change back to parent directory
 //     cd ..
 //
-// Finally, you must remove the duplicate copy of react from api-react-hooks as having two copies
-// of react in the one workspace breaks react's hooks feature
+// Finally, you must remove the duplicate copies of react from api-react-hooks and util
+// as having two copies of react in the one workspace breaks react's hooks feature
 //
 //     rm -rf api-react-hooks/node_modules/react
 //     ln -s ../../web/node_modules/react api-react-hooks/node_modules/
+//     rm -rf util/node_modules/react
+//     ln -s ../../web/node_modules/react util/node_modules/
 //
 const TalismanLibsFastRefreshPlugin = {
   plugin: {

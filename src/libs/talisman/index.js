@@ -1,8 +1,8 @@
 import Account from './account'
 import Api from './api'
-import Crowdloan from './crowdloan'
+import * as Crowdloan from './crowdloan'
 import Guardian from './guardian'
-import Parachain from './parachain'
+import * as Parachain from './parachain'
 import Settings from './settings'
 import Subquery from './subquery'
 import { useChainByGenesis as _useChainByGenesis } from './util/hooks'
@@ -18,16 +18,15 @@ export const useActiveAccount = Account.useActiveAccount
 export const useAccountAddresses = Account.useAccountAddresses
 
 // parachain things
-export const useParachains = Parachain.useParachains
-export const useParachainById = Parachain.useParachainById
-export const useParachainBySlug = Parachain.useParachainBySlug
-export const useParachainAssets = Parachain.useParachainAssets
+export { useParachains, useParachainById, useParachainBySlug, useParachainAssets } from './parachain'
 
 // crowdloans stuff
-export const useCrowdloans = Crowdloan.useCrowdloans
-export const useCrowdloanByParachainId = Crowdloan.useCrowdloanByParachainId
-export const useCrowdloanByParachainSlug = Crowdloan.useCrowdloanByParachainSlug
-export const useCrowdloanAggregateStats = Crowdloan.useCrowdloanAggregateStats
+export {
+  useCrowdloans,
+  useCrowdloanByParachainId,
+  useCrowdloanByParachainSlug,
+  useCrowdloanAggregateStats,
+} from './crowdloan'
 
 // api wrap
 export const useApi = Api.useApi

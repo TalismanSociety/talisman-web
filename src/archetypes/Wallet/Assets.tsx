@@ -1,10 +1,16 @@
 import { Image, Info, Panel, PanelSection, Pendor } from '@components'
-import { Tag, usePortfolio, useTaggedAmountsInPortfolio } from '@libs/portfolio'
+import { calculatePortfolioAmounts, usePortfolio, useTaggedAmountsInPortfolio } from '@libs/portfolio'
 import { useAccountAddresses, useGuardian } from '@libs/talisman'
 import { useTokenPrice } from '@libs/tokenprices'
-import { useBalances, useChain } from '@talismn/api-react-hooks'
+import {
+  addPriceToTokenBalances,
+  addTokensToBalances,
+  groupBalancesByChain,
+  useBalances,
+  useChain,
+} from '@talismn/api-react-hooks'
+import { addBigNumbers, useFuncMemo } from '@talismn/util'
 import { formatCommas, formatCurrency } from '@util/helpers'
-import BigNumber from 'bignumber.js'
 import { useMemo } from 'react'
 import styled from 'styled-components'
 
@@ -153,102 +159,3 @@ const Assets = styled(({ id, className }) => {
 `
 
 export default Assets
-
-//
-// useFuncMemo: why type your arguments twice?
-//
-// Tired:
-//
-//   const someData = useSomeData()
-//   const someMoreData = useSomeMoreData()
-//
-//   const result = useMemo(() => {
-//     return processData(someData, someMoreData)
-//   }, [someData, someMoreData])
-//
-// Wired:
-//
-//   const someData = useSomeData()
-//   const someMoreData = useSomeMoreData()
-//
-//   const result = useFuncMemo(processData, someData, someMoreData)
-//
-function useFuncMemo<Args extends any[], Result>(func: (...args: Args) => Result, ...args: Args) {
-  return useMemo(() => func(...args), args) // eslint-disable-line react-hooks/exhaustive-deps
-}
-
-// TODO: Move these helper functions and hooks into @talismn/api
-
-function groupBalancesByChain(chainIds: string[], balances: any[]): { [key: string]: any[] } {
-  const byChain = Object.fromEntries(chainIds.map<[string, any[]]>(chainId => [chainId, []]))
-
-  balances
-    .filter(balance => typeof balance.chainId === 'string')
-    .filter(balance => chainIds.includes(balance.chainId))
-    .forEach(balance => {
-      byChain[balance.chainId].push(balance)
-    })
-
-  return byChain
-}
-
-function addTokensToBalances(balances: any[], tokenDecimals?: number): any[] {
-  return balances.map(balance => ({ ...balance, tokens: planckToTokens(balance.free, tokenDecimals) }))
-}
-
-function planckToTokens(planck: string, tokenDecimals?: number): string | undefined {
-  if (!planck || typeof tokenDecimals !== 'number') return
-
-  const base = new BigNumber(10)
-  const exponent = new BigNumber(tokenDecimals).negated()
-  const multiplier = base.pow(exponent)
-
-  return new BigNumber(planck).multipliedBy(multiplier).toString()
-}
-
-function addPriceToTokenBalances(balances: any[], tokenPrice?: string): any[] {
-  if (typeof tokenPrice !== 'number') return balances
-
-  return balances
-    .filter(balance => typeof balance.tokens === 'string')
-    .map(balance => ({
-      ...balance,
-      usd: new BigNumber(balance.tokens).multipliedBy(new BigNumber(tokenPrice || 0)).toString(),
-    }))
-}
-
-function calculatePortfolioAmounts(balances: any[]): Array<{ tags: Tag[]; amount: string | undefined }> {
-  const amounts: Array<{ tags: Tag[]; amount: string | undefined }> = []
-
-  const byAddress = groupBalancesByAddress(balances.filter(balance => typeof balance.usd === 'string'))
-
-  Object.entries(byAddress).forEach(([address, balances]) => {
-    const tags: Tag[] = ['USD', 'Assets', { Address: address }]
-    balances.forEach(balance => amounts.push({ tags, amount: balance.usd }))
-  })
-
-  return amounts
-}
-
-function groupBalancesByAddress(balances: any[]): { [key: string]: any[] } {
-  const byAddress: { [key: string]: any } = {}
-
-  balances
-    .filter(balance => typeof balance.address === 'string')
-    .forEach(balance => {
-      if (!byAddress[balance.address]) byAddress[balance.address] = []
-      byAddress[balance.address].push(balance)
-    })
-
-  return byAddress
-}
-
-// reducers
-
-function addBigNumbers(a?: string, b?: string): string | undefined {
-  if (!a && !b) return undefined
-  if (!a) return b
-  if (!b) return a
-
-  return new BigNumber(a).plus(new BigNumber(b)).toString()
-}

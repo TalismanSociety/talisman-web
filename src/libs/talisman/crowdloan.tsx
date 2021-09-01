@@ -1,16 +1,16 @@
 import { useParachains } from '@libs/talisman'
 import { find, get } from 'lodash'
-import { createContext, useContext, useEffect, useState } from 'react'
+import { FC, useContext as _useContext, createContext, useEffect, useMemo, useState } from 'react'
 
 import { useQuery } from './'
 import { crowdloanDetails } from './util/_config'
 
 const AllCrowdloans = `
   query Parachains {
-    crowdloans{
+    crowdloans {
       totalCount
-      nodes{
-        parachain{
+      nodes {
+        parachain {
           paraId
         }
         cap
@@ -20,33 +20,49 @@ const AllCrowdloans = `
         firstSlot
         lastSlot
         isFinished
-        wonAuctionId,
+        wonAuctionId
         lockExpiredBlock
       }
     }
   }
 `
 
-const Context = createContext({})
+// TODO: Specify this
+type Crowdloan = any
+type CrowdloanMerged = any
 
-const useCrowdloans = () => useContext(Context)
-
-const useFindCrowdloan = (key: string, val) => {
-  const { items } = useCrowdloans()
-  const [item, setItem] = useState({})
-
-  useEffect(() => {
-    const _item = find(items, item => get(item, key) === val)
-    !!_item && setItem(_item || {})
-  }, [items, key, val]) // eslint-disable-line
-
-  return item
+type ContextProps = {
+  items: Crowdloan[]
+  called: boolean
+  loading: boolean
+  status: any
+  message: any
+  hydrated: boolean
 }
 
-const useCrowdloanByParachainId = val => useFindCrowdloan('parachain.id', val)
-const useCrowdloanByParachainSlug = val => useFindCrowdloan('parachain.slug', val)
+const Context = createContext<ContextProps | null>(null)
 
-const useCrowdloanAggregateStats = () => {
+function useContext() {
+  const context = _useContext(Context)
+  if (!context) throw new Error('The crowdloan provider is required in order to use this hook')
+
+  return context
+}
+
+export const useCrowdloans = () => useContext()
+
+const useFindCrowdloan = (key: string, value: any) => {
+  const { items, status, message } = useCrowdloans()
+
+  const item = useMemo(() => find(items, item => get(item, key) === value) || {}, [items, key, value])
+
+  return { item, status, message }
+}
+
+export const useCrowdloanByParachainId = (id: number) => useFindCrowdloan('parachain.id', id)
+export const useCrowdloanByParachainSlug = (slug: string) => useFindCrowdloan('parachain.slug', slug)
+
+export const useCrowdloanAggregateStats = () => {
   const { items, status, message } = useCrowdloans()
   const [raised, setRaised] = useState<number>(0)
   const [projects, setProjects] = useState<number>(0)
@@ -67,49 +83,39 @@ const useCrowdloanAggregateStats = () => {
   }
 }
 
-const Provider = ({ children }) => {
-  const [items, setItems] = useState([])
-  const [crowdloans, setCrowdloans] = useState([])
-  const { items: parachains } = useParachains()
+export const Provider: FC = ({ children }) => {
+  const { parachains } = useParachains()
 
   const { data, called, loading, status, message } = useQuery(AllCrowdloans)
+  const crowdloans = useMemo<Crowdloan[]>(
+    () =>
+      (data || [])
+        .filter(
+          (crowdloan: any) =>
+            crowdloan?.parachain?.paraId && find(crowdloanDetails, { paraId: crowdloan.parachain.paraId })
+        )
+        .map((crowdloan: any) => ({
+          ...crowdloan,
+          paraId: crowdloan.parachain.paraId,
+          raised: crowdloan.raised / 1e12,
+          cap: crowdloan.cap / 1e12,
+          percentRaised: (100 / (crowdloan.cap / 1e12)) * (crowdloan.raised / 1e12),
+          ...find(crowdloanDetails, { paraId: crowdloan.parachain.paraId }),
+        }))
+        // TODO: Derive this correctly from subquery
+        .map(({ overrideStatus, overrideEnd, ...crowdloan }: any) => ({
+          ...crowdloan,
+          status: overrideStatus,
+          lockExpiredBlock: overrideEnd || crowdloan.lockExpiredBlock,
+        }))
+        .filter((crowdloan: any) => !!crowdloan.status),
+    [data]
+  )
 
-  // parse all fetched data
-  useEffect(() => {
-    if (!!called && !!data.length) {
-      setCrowdloans(
-        data
-          .map(cl =>
-            !!find(crowdloanDetails, { paraId: cl?.parachain?.paraId })
-              ? {
-                  ...cl,
-                  paraId: cl.parachain.paraId,
-                  raised: cl.raised / 1e12,
-                  cap: cl.cap / 1e12,
-                  percentRaised: (100 / (cl.cap / 1e12)) * (cl.raised / 1e12),
-                  ...(find(crowdloanDetails, { paraId: cl.parachain.paraId }) || {}),
-                }
-              : null
-          )
-          .filter(p => p)
-      )
-    }
-  }, [data, called])
-
-  // we want to merge the crowdload info
-  // with the parachain info to provide
-  // the full dataset to the app
-  useEffect(() => {
-    const _items = crowdloans.map(cl => {
-      const parachain = find(parachains, { id: cl?.paraId })
-      return {
-        ...cl,
-        parachain,
-      }
-    })
-
-    setItems(_items)
-  }, [crowdloans, parachains])
+  const items = useMemo<CrowdloanMerged[]>(
+    () => crowdloans.map(crowdloan => ({ ...crowdloan, parachain: find(parachains, { id: crowdloan.paraId }) })),
+    [crowdloans, parachains]
+  )
 
   return (
     <Context.Provider
@@ -126,13 +132,3 @@ const Provider = ({ children }) => {
     </Context.Provider>
   )
 }
-
-const Crowdloan = {
-  Provider,
-  useCrowdloans,
-  useCrowdloanByParachainId,
-  useCrowdloanByParachainSlug,
-  useCrowdloanAggregateStats,
-}
-
-export default Crowdloan

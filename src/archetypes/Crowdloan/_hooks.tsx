@@ -6,27 +6,27 @@ const orderOptions = [
   {
     key: 'raised_desc',
     value: 'Raised',
-    cb: items => orderBy(items, ['raised'], ['desc']),
+    cb: (items: any) => orderBy(items, ['raised'], ['desc']),
   },
   {
-    key: 'id_acs',
+    key: 'id_asc',
     value: 'Oldest',
-    cb: items => orderBy(items, ['parachain.id'], ['asc']),
+    cb: (items: any) => orderBy(items, ['parachain.id'], ['asc']),
   },
   {
     key: 'id_desc',
     value: 'Newest',
-    cb: items => orderBy(items, ['parachain.id'], ['desc']),
+    cb: (items: any) => orderBy(items, ['parachain.id'], ['desc']),
   },
   {
-    key: 'name_acs',
+    key: 'name_asc',
     value: 'A⇢Z',
-    cb: items => orderBy(items, ['parachain.name'], ['acs']),
+    cb: (items: any) => orderBy(items, ['parachain.name'], ['asc']),
   },
   {
     key: 'name_desc',
     value: 'Z⇢A',
-    cb: items => orderBy(items, ['parachain.name'], ['desc']),
+    cb: (items: any) => orderBy(items, ['parachain.name'], ['desc']),
   },
 ]
 
@@ -34,7 +34,7 @@ const statusOptions = [
   {
     key: 'all',
     value: 'All',
-    cb: items => items,
+    cb: (items: any) => items,
   },
   // {
   //   key: 'completed',
@@ -46,15 +46,30 @@ const statusOptions = [
   //   value: 'Active',
   //   cb: items => filter(items, {status: 'Started'})
   // },
+  // {
+  //   key: 'retiring',
+  //   value: 'Finished',
+  //   cb: items => filter(items, { status: 'Retiring' }),
+  // },
+  // {
+  //   key: 'dissolved',
+  //   value: 'Dissolved',
+  //   cb: items => filter(items, { status: 'Dissolved' }),
+  // },
   {
-    key: 'retiring',
-    value: 'Finished',
-    cb: items => filter(items, { status: 'Retiring' }),
+    key: 'active',
+    value: 'Active',
+    cb: (items: any) => filter(items, item => item.status === 'active'),
   },
   {
-    key: 'dissolved',
-    value: 'Dissolved',
-    cb: items => filter(items, { status: 'Dissolved' }),
+    key: 'winner',
+    value: '🎉 Winner',
+    cb: (items: any) => filter(items, item => item.status === 'winner'),
+  },
+  {
+    key: 'ended',
+    value: 'Ended',
+    cb: (items: any) => filter(items, item => item.status === 'ended'),
   },
 ]
 
@@ -63,7 +78,7 @@ export const useFilter = () => {
   const [filteredItems, setFilteredItems] = useState([])
   const [searchFilter, setSearchFilter] = useState('')
   const [orderFilter, setOrderFilter] = useState(orderOptions[0].key)
-  const [statusFilter, setStatusFilter] = useState(statusOptions[0].key)
+  const [statusFilter, setStatusFilter] = useState(statusOptions[1].key)
   const [loading, setLoading] = useState(true)
 
   // do searchy/filtery stuff

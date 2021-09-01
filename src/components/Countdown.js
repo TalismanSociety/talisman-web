@@ -1,4 +1,3 @@
-import moment from 'moment'
 import { useEffect, useMemo, useRef, useState } from 'react'
 
 export const useInterval = (cb = () => {}, ms = 1000) => {
@@ -20,48 +19,46 @@ export const useInterval = (cb = () => {}, ms = 1000) => {
 }
 
 const useCountdown = (seconds = 0) => {
-  const [secondsRemaining, setSecondsRemaining] = useState(seconds)
-
-  useInterval(() => setSecondsRemaining(secondsRemaining - 1))
+  const [secondsRemaining, setSecondsRemaining] = useState(Math.max(0, seconds))
 
   useEffect(() => {
-    setSecondsRemaining(seconds)
+    setSecondsRemaining(Math.max(0, seconds))
   }, [seconds])
+
+  useInterval(() => setSecondsRemaining(Math.max(0, secondsRemaining - 1)))
 
   return useMemo(() => secondsRemaining, [secondsRemaining])
 }
 
-const Countdown = ({ seconds = 10, onCompletion = () => {}, showSeconds = true }) => {
-  const [duration, setDuration] = useState({
-    days: 0,
-    hours: 0,
-    minutes: 0,
-    seconds: seconds,
-  })
-  const remaining = useCountdown(seconds)
+const minute = 60
+const hour = 60 * minute
+const day = 24 * hour
+const week = 7 * day
 
-  useEffect(() => {
-    const _duration = moment.duration(remaining, 'seconds')
-    setDuration({
-      days: _duration.days(),
-      hours: _duration.hours(),
-      minutes: _duration.minutes(),
-      seconds: _duration.seconds(),
-    })
-  }, [remaining])
+const Countdown = ({ seconds: countdownSeconds = 10, showSeconds = true }) => {
+  const remaining = useCountdown(countdownSeconds)
 
-  return !!duration ? (
-    <>
-      {`
-        ${duration.days}d 
-        ${duration.hours}h 
-        ${duration.minutes}m 
-        ${showSeconds === true ? `${duration.seconds}s` : ''}
-      `}
-    </>
-  ) : (
-    <></>
-  )
+  const weeks = Math.max(0, Math.floor(remaining / week))
+  const weeksRemainder = remaining % week
+
+  const days = Math.max(0, Math.floor(weeksRemainder / day))
+  const daysRemainder = weeksRemainder % day
+
+  const hours = Math.max(0, Math.floor(daysRemainder / hour))
+  const hoursRemainder = daysRemainder % hour
+
+  const minutes = Math.max(0, Math.floor(hoursRemainder / minute))
+  const seconds = hoursRemainder % minute
+
+  const segments = [
+    weeks > 0 && `${weeks}w`,
+    days > 0 && `${days}d`,
+    `${hours}h`,
+    `${minutes.toString().padStart(2, '0')}m`,
+    showSeconds && seconds > 0 && `${seconds}w`,
+  ].filter(Boolean)
+
+  return <>{segments.join(' ')}</>
 }
 
 export default Countdown

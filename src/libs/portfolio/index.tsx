@@ -1,3 +1,5 @@
+import type { BalanceWithTokensWithPrice } from '@talismn/api-react-hooks'
+import { groupBalancesByAddress } from '@talismn/api-react-hooks'
 import useUniqueId from '@util/useUniqueId'
 import { FC, useContext as _useContext, createContext, useCallback, useEffect, useMemo, useState } from 'react'
 
@@ -8,6 +10,24 @@ import { FC, useContext as _useContext, createContext, useCallback, useEffect, u
 //
 //       Soon we should just provide methods for these summaries directly via @talismn/api,
 //       which will take care of fetching and updating the underlying balances as appropriate for us.
+
+// Helpers (exported)
+export function calculatePortfolioAmounts(
+  balances: BalanceWithTokensWithPrice[]
+): Array<{ tags: Tag[]; amount: string | undefined }> {
+  const amounts: Array<{ tags: Tag[]; amount: string | undefined }> = []
+
+  const byAddress = groupBalancesByAddress(balances.filter(balance => typeof balance.usd === 'string')) as {
+    [key: string]: BalanceWithTokensWithPrice[]
+  }
+
+  Object.entries(byAddress).forEach(([address, balances]) => {
+    const tags: Tag[] = ['USD', 'Assets', { Address: address }]
+    balances.forEach(balance => amounts.push({ tags, amount: balance.usd }))
+  })
+
+  return amounts
+}
 
 //
 // Types
@@ -88,7 +108,7 @@ function useContext() {
 
 type ProviderProps = {}
 
-const Provider: FC<ProviderProps> = ({ children }) => {
+export const Provider: FC<ProviderProps> = ({ children }) => {
   const [totalStore, setTotalStore] = useState<TotalStore>({})
 
   const storeTotal = useCallback(
@@ -163,5 +183,3 @@ const Provider: FC<ProviderProps> = ({ children }) => {
 
   return <Context.Provider value={value}>{children}</Context.Provider>
 }
-
-export default Provider

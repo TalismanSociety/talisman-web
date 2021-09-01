@@ -28,13 +28,6 @@ const Ongoing: React.FC<OngoingProps> = ({ end, showSeconds, className = '' }) =
   )
 }
 
-const Complete = styled(({ className }) => (
-  <span className={`crowdloan-countdown complete ${className}`}>🎉 Complete</span>
-))`
-  display: flex;
-  align-items: center;
-`
-
 const Generic = styled(({ text, className }) => (
   <span className={`crowdloan-countdown finished ${className}`}>{text}</span>
 ))`
@@ -50,18 +43,22 @@ type CountdownProps = {
 }
 
 const Countdown: React.FC<CountdownProps> = ({ id, showSeconds, className, ...rest }) => {
-  const { status, lockExpiredBlock } = useCrowdloanByParachainId(id)
+  const {
+    item: { status, lockExpiredBlock, isFinished, wonAuctionId },
+  } = useCrowdloanByParachainId(id)
 
-  switch (status) {
-    case 'Won':
-      return <Complete />
-    case 'Retiring':
-      return <Generic text="Finished" />
-    case 'Dissolved':
-      return <Generic text="Dissolved" />
-    default:
-      return <Ongoing {...rest} showSeconds={showSeconds} end={lockExpiredBlock} />
-  }
+  // TODO: Determine this properly by testing if crowdloan has lease, for example:
+  //       https://github.com/polkadot-js/apps/blob/df798fac838715a9b215be82e6e297d3d3f2bc4c/packages/page-parachains/src/useFunds.ts#L44
+  const isWinner = status === 'winner'
+
+  // TODO: Determine active / ended properly by testing isCapped || isEnded || isWinner and currentPeriod vs firstSlot:
+  //       https://github.com/polkadot-js/apps/blob/df798fac838715a9b215be82e6e297d3d3f2bc4c/packages/page-parachains/src/Crowdloan/Funds.tsx#L30
+  const isEnded = status === 'ended'
+
+  if (isWinner) return <Generic text="🎉 Winner" />
+  if (isEnded) return <Generic text="Ended" />
+
+  return <Ongoing {...rest} showSeconds={showSeconds} end={lockExpiredBlock} />
 }
 
 export default Countdown

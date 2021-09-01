@@ -1,19 +1,24 @@
 {
   "name": "@talismn/web",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "private": true,
   "author": "Daniel Harrison <daniel@flexdapps.com>",
   "repository": "github.com:TalismanSociety/talisman-web",
   "bugs": "https://github.com/TalismanSociety/talisman-web/issues",
   "homepage": "https://talisman.community",
+  "packageManager": "yarn@3.0.1",
   "dependencies": {
     "@apollo/client": "^3.3.21",
     "@craco/craco": "^6.1.2",
     "@polkadot/api": "^5.4.1",
     "@polkadot/extension-dapp": "^0.38.4",
-    "@polkadot/keyring": "^7.0.1",
+    "@polkadot/keyring": "^7.2.1",
     "@polkadot/react-identicon": "^0.80.1",
+    "@polkadot/util": "^7.2.1",
+    "@polkadot/util-crypto": "^7.2.1",
     "@talismn/api-react-hooks": "~0",
+    "@talismn/util": "~0",
+    "@testing-library/dom": "^8.2.0",
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
@@ -22,7 +27,9 @@
     "@types/node": "^12.0.0",
     "@types/react": "^17.0.0",
     "@types/react-dom": "^17.0.0",
+    "@types/react-router-dom": "^5.1.8",
     "@types/styled-components": "^5.1.10",
+    "@types/webpack-env": "^1.16.2",
     "babel-plugin-styled-components": "^1.13.2",
     "bignumber.js": "^9.0.1",
     "craco-alias": "^3.0.1",
@@ -32,12 +39,12 @@
     "lint-staged": "^11.1.2",
     "lodash": "^4.17.21",
     "md5": "^2.3.0",
-    "moment": "^2.29.1",
     "prettier": "^2.3.2",
     "prettier-plugin-import-sort": "^0.0.7",
     "react": "^17.0.2",
     "react-apollo-network-status": "^5.0.1",
     "react-dom": "^17.0.2",
+    "react-is": "^17.0.2",
     "react-router": "^5.2.0",
     "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.3",
@@ -89,8 +96,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "devDependencies": {
-    "@types/react-router-dom": "^5.1.8"
   }
 }

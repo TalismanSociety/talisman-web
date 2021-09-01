@@ -1,3 +1,5 @@
+import { ReactComponent as DiscordLogo } from '@assets/icons/discord-header.svg'
+import { ReactComponent as GithubLogo } from '@assets/icons/github-header.svg'
 import { ReactComponent as Logo } from '@assets/logo.svg'
 import { NavLink } from 'react-router-dom'
 import styled from 'styled-components'
@@ -11,11 +13,18 @@ const Header = styled(({ className }) => (
     </span>
     <nav>
       <NavLink exact to="/">
-        Wallet
+        Portfolio
       </NavLink>
       <NavLink to="/crowdloans">Crowdloans</NavLink>
     </nav>
-    <span></span>
+    <span>
+      <a href="https://github.com/talismansociety" target="_blank" rel="noreferrer noopener">
+        <GithubLogo />
+      </a>
+      <a href="https://discord.gg/rQgTD9SGtU" target="_blank" rel="noreferrer noopener">
+        <DiscordLogo />
+      </a>
+    </span>
   </header>
 ))`
   display: flex;
@@ -36,8 +45,25 @@ const Header = styled(({ className }) => (
 
     &:last-child {
       width: 20%;
-      > * {
-        margin-left: 1em;
+      justify-content: flex-end;
+
+      > a {
+        font-size: 2.8rem;
+        color: var(--color-primary);
+
+        &:hover {
+          color: var(--color-foreground);
+        }
+        &:active {
+          color: var(--color-primary);
+        }
+        &:not(:first-child) {
+          margin-left: 2.5rem;
+        }
+
+        > svg {
+          display: block;
+        }
       }
     }
   }

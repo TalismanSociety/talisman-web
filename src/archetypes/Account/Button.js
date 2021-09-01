@@ -28,7 +28,7 @@ const Dropdown = styled(({ handleClose, className }) => {
 
   return (
     <span className={`account-picker ${className}`}>
-      {[{ name: 'All Accounts' }, ...accounts].map(({ address, name, genesisHash, balance }, index) => (
+      {[{ name: 'All Accounts' }, ...accounts].map(({ address, name, genesisHash }, index) => (
         <div
           key={index}
           className="account"
@@ -78,8 +78,15 @@ const Dropdown = styled(({ handleClose, className }) => {
   font-size: 1em;
   max-height: 0;
   overflow: hidden;
+  overflow-y: auto;
   border-radius: 1.2rem;
   box-shadow: 0 0 1.2rem rgba(0, 0, 0, 0.1);
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 
   > .account {
     display: flex;
