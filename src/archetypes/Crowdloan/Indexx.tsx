@@ -65,6 +65,10 @@ const FilterBar = styled(
 
   .field-radiogroup {
     margin-left: 2.3rem;
+
+    .pill {
+      white-space: pre;
+    }
   }
 
   .field-select .children {
