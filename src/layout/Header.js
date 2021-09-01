@@ -48,7 +48,7 @@ const Header = styled(({ className }) => (
       justify-content: flex-end;
 
       > a {
-        font-size: 2.8rem;
+        font-size: 2.4rem;
         color: var(--color-primary);
 
         &:hover {
