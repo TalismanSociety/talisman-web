@@ -55,7 +55,7 @@ const Countdown = ({ seconds: countdownSeconds = 10, showSeconds = true }) => {
     days > 0 && `${days}d`,
     `${hours}h`,
     `${minutes.toString().padStart(2, '0')}m`,
-    showSeconds && seconds > 0 && `${seconds}w`,
+    showSeconds && seconds > 0 && `${seconds}s`,
   ].filter(Boolean)
 
   return <>{segments.join(' ')}</>
