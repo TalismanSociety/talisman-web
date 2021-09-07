@@ -18,15 +18,10 @@ export const useActiveAccount = Account.useActiveAccount
 export const useAccountAddresses = Account.useAccountAddresses
 
 // parachain things
-export { useParachains, useParachainById, useParachainBySlug, useParachainAssets } from './parachain'
+export * from './parachain'
 
 // crowdloans stuff
-export {
-  useCrowdloans,
-  useCrowdloanByParachainId,
-  useCrowdloanByParachainSlug,
-  useCrowdloanAggregateStats,
-} from './crowdloan'
+export * from './crowdloan'
 
 // api wrap
 export const useApi = Api.useApi

@@ -1,3 +1,4 @@
+import { gql } from '@apollo/client'
 import { find } from 'lodash'
 import { FC, useContext as _useContext, createContext, useMemo } from 'react'
 
@@ -5,32 +6,74 @@ import { useQuery } from './'
 import { parachainDetails } from './util/_config'
 import type { ParachainDetails } from './util/_config'
 
+export type { ParachainDetails } from './util/_config'
+
 const assetPath = require.context('./assets', true)
 
 //
 // Constants
 //
 
-const AllParachains = `
-  query Parachains {
-    parachains {
+const AllParachains = gql`
+  {
+    parachains(orderBy: ID_ASC) {
+      totalCount
       nodes {
         paraId
+        manager
+        deposit
+        leases {
+          totalCount
+        }
       }
     }
   }
 `
 
+// TODO: Add parachain leases
+// const AllParachainLeases = gql`
+//   {
+//     parachainLeases {
+//       totalCount
+//       nodes {
+//         paraId
+//         leaseRange
+//         firstLease
+//         lastLease
+//         winningAmount
+//         extraAmount
+//         wonBidFrom
+//         numBlockWon
+//         winningResultBlock
+//         hasWon
+//         parachain {
+//           id
+//         }
+//       }
+//     }
+//   }
+// `
+
 //
 // Hooks (exported)
 //
 
-export const useParachains = () => useContext()
+export const useParachainsDetails = () => useContext()
+export const useParachainsDetailsIndexedById = () => {
+  const { parachains, ...rest } = useParachainsDetails()
 
-export const useParachainById = (id: number) => useFindParachain('id', id)
-export const useParachainBySlug = (slug: string) => useFindParachain('slug', slug)
+  return {
+    parachains: useMemo(() => Object.fromEntries(parachains.map(parachain => [parachain.id, parachain])), [parachains]),
+    ...rest,
+  }
+}
 
-export const useParachainAssets = (id: string) =>
+export const useParachainDetailsById = (id?: number) => useFindParachainDetails('id', id)
+export const useParachainDetailsBySlug = (slug?: string) => useFindParachainDetails('slug', slug)
+
+export const useParachainAssets = (
+  id?: number
+): Partial<{ [key: string]: string; banner: string; card: string; logo: string }> =>
   useMemo(() => {
     if (!id) return {}
 
@@ -57,13 +100,16 @@ export const useParachainAssets = (id: string) =>
 // Hooks (internal)
 //
 
-export const useFindParachain = (key: string, value: any) => {
-  const { parachains, status, message } = useParachains()
+export const useFindParachainDetails = (
+  key: string,
+  value: any
+): Partial<{ parachainDetails?: ParachainDetails; status: any; message: any }> => {
+  const { parachains, status, message } = useParachainsDetails()
 
-  const parachain = useMemo(() => find(parachains, { [key]: value }) || {}, [parachains, key, value])
+  const parachainDetails = useMemo(() => find(parachains, { [key]: value }), [parachains, key, value])
 
   return {
-    parachain,
+    parachainDetails,
     status,
     message,
   }
@@ -97,25 +143,23 @@ function useContext() {
 export const Provider: FC = ({ children }) => {
   const { data, called, loading, status, message } = useQuery(AllParachains)
 
+  // TODO: Separate parachainDetails from parachains
+  // parachainDetails should come from chaindata, parachains should come from subquery
   const parachains = useMemo<ParachainDetails[]>(
-    () =>
-      (data || [])
-        .filter(({ paraId: id }: { paraId?: number }) => id && find(parachainDetails, { id }))
-        .map(({ paraId: id, ...parachain }: { paraId: number }) => ({ ...find(parachainDetails, { id }) })),
+    () => (data || []).map(({ paraId: id }: { paraId?: number }) => find(parachainDetails, { id })).filter(Boolean),
     [data]
   )
 
-  return (
-    <Context.Provider
-      value={{
-        parachains,
-        called,
-        loading,
-        status,
-        message,
-      }}
-    >
-      {children}
-    </Context.Provider>
+  const value = useMemo(
+    () => ({
+      parachains,
+      called,
+      loading,
+      status,
+      message,
+    }),
+    [parachains, called, loading, status, message]
   )
+
+  return <Context.Provider value={value}>{children}</Context.Provider>
 }

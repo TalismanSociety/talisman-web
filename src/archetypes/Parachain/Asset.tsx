@@ -1,12 +1,10 @@
 import { Image as Img } from '@components'
-import { useCrowdloanByParachainId, useParachainAssets } from '@libs/talisman'
+import { useParachainAssets, useParachainDetailsById } from '@libs/talisman'
 import styled from 'styled-components'
 
 const Image = styled(({ id, type, className }) => {
   const assets = useParachainAssets(id)
-  const {
-    item: { name },
-  } = useCrowdloanByParachainId(id)
+  const { parachainDetails: { name } = {} } = useParachainDetailsById(id)
 
   return (
     <Img

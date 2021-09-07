@@ -107,7 +107,7 @@ const FilterBar = styled(
 `
 
 const Index = styled(({ withFilter, className }) => {
-  const { items, count, loading, filterProps } = Crowdloan.useFilter()
+  const { crowdloans, count, loading, filterProps } = Crowdloan.useFilter()
 
   return (
     <div className={`crowdloan-index ${className}`}>
@@ -120,8 +120,8 @@ const Index = styled(({ withFilter, className }) => {
           text="Better luck next time."
         >
           <Grid>
-            {items.map(({ paraId }) => (
-              <Crowdloan.Teaser key={paraId} id={paraId} />
+            {crowdloans.map(({ id }) => (
+              <Crowdloan.Teaser key={id} id={id} />
             ))}
           </Grid>
         </NoResults>

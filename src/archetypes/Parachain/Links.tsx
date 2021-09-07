@@ -9,7 +9,7 @@ import { ReactComponent as TelegramIcon } from '@assets/icons/send.svg'
 import { ReactComponent as TwitterIcon } from '@assets/icons/twitter.svg'
 import { ReactComponent as YoutubeIcon } from '@assets/icons/youtube.svg'
 import { Pill } from '@components'
-import { useParachainById } from '@libs/talisman'
+import { useParachainDetailsById } from '@libs/talisman'
 import styled from 'styled-components'
 
 const Icon = ({ type }) => {
@@ -42,9 +42,7 @@ const Icon = ({ type }) => {
 }
 
 const Links = styled(({ id, className }) => {
-  const {
-    parachain: { links = {} },
-  } = useParachainById(id)
+  const { parachainDetails: { links = {} } = {} } = useParachainDetailsById(id)
 
   return (
     <div className={`crowdloan-links ${className}`}>

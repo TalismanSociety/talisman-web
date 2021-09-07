@@ -1,11 +1,10 @@
 import { Stat } from '@components'
-import { useCrowdloanByParachainId } from '@libs/talisman'
+import { useCrowdloanById } from '@libs/talisman'
 import styled from 'styled-components'
 
 const Countdown = styled(({ id, className }) => {
-  const {
-    item: { rewards },
-  } = useCrowdloanByParachainId(id)
+  const { crowdloan } = useCrowdloanById(id)
+  const rewards = crowdloan?.details?.rewards
 
   return (
     <div className={`crowdloan-rewards ${className}`}>

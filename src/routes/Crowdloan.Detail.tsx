@@ -1,51 +1,45 @@
 import { Crowdloan, Parachain } from '@archetypes'
 import { Button, Panel, PanelSection, Poster } from '@components'
-import { useCrowdloanByParachainSlug, useParachainAssets } from '@libs/talisman'
+import { useCrowdloanByParachainId, useParachainAssets, useParachainDetailsBySlug } from '@libs/talisman'
 import { useParams } from 'react-router-dom'
 import styled from 'styled-components'
 
 const CrowdloanDetail = styled(({ className }) => {
   const { slug }: { slug: string } = useParams()
-  const {
-    item: { paraId, status, parachain, contributeUrl, wonAuctionId, isFinished },
-  } = useCrowdloanByParachainSlug(slug)
-  const { banner } = useParachainAssets(paraId) || {}
 
-  // TODO: Determine this properly by testing if crowdloan has lease, for example:
-  //       https://github.com/polkadot-js/apps/blob/df798fac838715a9b215be82e6e297d3d3f2bc4c/packages/page-parachains/src/useFunds.ts#L44
-  const isWinner = status === 'winner'
+  const { parachainDetails } = useParachainDetailsBySlug(slug)
+  const { banner } = useParachainAssets(parachainDetails?.id)
 
-  // TODO: Determine active / ended properly by testing isCapped || isEnded || isWinner and currentPeriod vs firstSlot:
-  //       https://github.com/polkadot-js/apps/blob/df798fac838715a9b215be82e6e297d3d3f2bc4c/packages/page-parachains/src/Crowdloan/Funds.tsx#L30
-  const isEnded = status === 'ended'
+  const { crowdloan: { id, uiStatus, details } = {} } = useCrowdloanByParachainId(parachainDetails?.id)
+  const contributeUrl = details?.contributeUrl
 
   return (
     <section className={className}>
       <Poster backgroundImage={banner} />
       <div className="content">
         <article>
-          <Parachain.Asset id={paraId} type="logo" />
+          <Parachain.Asset id={parachainDetails?.id} type="logo" />
           <header>
-            <h1>{parachain?.name}</h1>
-            <h2>{parachain?.subtitle}</h2>
+            <h1>{parachainDetails?.name}</h1>
+            <h2>{parachainDetails?.subtitle}</h2>
           </header>
-          <p className="info">{parachain?.info}</p>
-          <Parachain.Links id={paraId} />
+          <p className="info">{parachainDetails?.info}</p>
+          <Parachain.Links id={parachainDetails?.id} />
         </article>
         <aside>
           <Panel>
             <PanelSection title="Raised">
-              <Crowdloan.Raised id={paraId} />
+              <Crowdloan.Raised id={id} />
             </PanelSection>
             <PanelSection title="Ends in">
-              <Crowdloan.Countdown id={paraId} />
+              <Crowdloan.Countdown id={id} />
             </PanelSection>
             <PanelSection>
               <Button
                 primary
                 onClick={() => window.open(contributeUrl, '_blank')}
                 target="_blank"
-                disabled={isWinner || isEnded}
+                disabled={uiStatus !== 'active'}
               >
                 Contribute
               </Button>
@@ -53,7 +47,7 @@ const CrowdloanDetail = styled(({ className }) => {
           </Panel>
 
           <Panel title="Rewards">
-            <Crowdloan.Rewards id={paraId} />
+            <Crowdloan.Rewards id={id} />
           </Panel>
 
           {/*<Panel

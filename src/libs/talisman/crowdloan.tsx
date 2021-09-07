@@ -1,38 +1,74 @@
-import { useParachains } from '@libs/talisman'
+import { gql } from '@apollo/client'
 import { find, get } from 'lodash'
 import { FC, useContext as _useContext, createContext, useEffect, useMemo, useState } from 'react'
 
 import { useQuery } from './'
-import { crowdloanDetails } from './util/_config'
+import { CrowdloanDetails, crowdloanDetails } from './util/_config'
 
-const AllCrowdloans = `
-  query Parachains {
-    crowdloans {
+const AllCrowdloans = gql`
+  {
+    # Order by BLOCK_NUM_DESC so that when we do:
+    #   find(allCrowdloans, 'parachain.id', parachainId)
+    # ...we get the most recent crowdloan, not the oldest
+    crowdloans(orderBy: BLOCK_NUM_DESC) {
       totalCount
       nodes {
+        id
+        depositor
+        verifier
+        cap
+        raised
+        lockExpiredBlock
+        blockNum
+        firstSlot
+        lastSlot
+        status
+        leaseExpiredBlock
+        dissolvedBlock
+        isFinished
+        wonAuctionId
         parachain {
           paraId
         }
-        cap
-        raised
-        status
-        verifier
-        firstSlot
-        lastSlot
-        isFinished
-        wonAuctionId
-        lockExpiredBlock
+        contributions {
+          totalCount
+        }
       }
     }
   }
 `
 
-// TODO: Specify this
-type Crowdloan = any
-type CrowdloanMerged = any
+export type Crowdloan = {
+  // graphql fields
+  id: string
+  depositor: string
+  verifier: string | null
+  cap: string
+  raised: string
+  lockExpiredBlock: number
+  blockNum: number
+  firstSlot: number
+  lastSlot: number
+  status: string
+  leaseExpiredBlock: number | null
+  dissolvedBlock: number | null
+  isFinished: boolean
+  wonAuctionId: string | null
+  parachain: {
+    paraId: number
+  }
+  contributions: {
+    totalCount: number
+  }
+
+  // custom fields
+  percentRaised: number
+  details: CrowdloanDetails
+  uiStatus: 'active' | 'capped' | 'winner' | 'ended'
+}
 
 type ContextProps = {
-  items: Crowdloan[]
+  crowdloans: Crowdloan[]
   called: boolean
   loading: boolean
   status: any
@@ -51,28 +87,66 @@ function useContext() {
 
 export const useCrowdloans = () => useContext()
 
-const useFindCrowdloan = (key: string, value: any) => {
-  const { items, status, message } = useCrowdloans()
+const useFindCrowdloan = (
+  key: string,
+  value: any
+): { crowdloan?: Crowdloan; status: any; message: any; hydrated: boolean } => {
+  const { crowdloans, status, message, hydrated } = useCrowdloans()
 
-  const item = useMemo(() => find(items, item => get(item, key) === value) || {}, [items, key, value])
+  const crowdloan = useMemo(
+    () => find(crowdloans, crowdloan => get(crowdloan, key) === value),
+    [crowdloans, key, value]
+  )
 
-  return { item, status, message }
+  return { crowdloan, status, message, hydrated }
 }
 
-export const useCrowdloanByParachainId = (id: number) => useFindCrowdloan('parachain.id', id)
-export const useCrowdloanByParachainSlug = (slug: string) => useFindCrowdloan('parachain.slug', slug)
+const useFindCrowdloans = (
+  key: string,
+  value: any
+): { crowdloans: Crowdloan[]; status: any; message: any; hydrated: boolean } => {
+  const { crowdloans, status, message, hydrated } = useCrowdloans()
+
+  const crowdloansFiltered = useMemo(
+    () => crowdloans.filter(crowdloan => get(crowdloan, key) === value),
+    [crowdloans, key, value]
+  )
+
+  return { crowdloans: crowdloansFiltered, status, message, hydrated }
+}
+
+// only returns one (the most recent) crowdloan per parachain
+export const useLatestCrowdloans = (): { crowdloans: Crowdloan[]; status: any; message: any; hydrated: boolean } => {
+  const { crowdloans, status, message, hydrated } = useCrowdloans()
+
+  const crowdloansFiltered = useMemo(() => {
+    const foundParachainIds: { [key: string]: boolean } = {}
+    return crowdloans.filter(crowdloan => {
+      if (foundParachainIds[crowdloan.parachain.paraId]) return false
+      foundParachainIds[crowdloan.parachain.paraId] = true
+      return true
+    })
+  }, [crowdloans])
+
+  return { crowdloans: crowdloansFiltered, status, message, hydrated }
+}
+
+export const useCrowdloanById = (id?: string) => useFindCrowdloan('id', id)
+// only gets the most recent matching crowdloan
+export const useCrowdloanByParachainId = (id?: number) => useFindCrowdloan('parachain.paraId', id)
+export const useCrowdloansByParachainId = (id?: number) => useFindCrowdloans('parachain.paraId', id)
 
 export const useCrowdloanAggregateStats = () => {
-  const { items, status, message } = useCrowdloans()
+  const { crowdloans, status, message } = useCrowdloans()
   const [raised, setRaised] = useState<number>(0)
   const [projects, setProjects] = useState<number>(0)
-  const [contributors, setContributors] = useState<number>(0)
+  const [contributors /*, setContributors */] = useState<number>(0)
 
   useEffect(() => {
-    setRaised(items.reduce((acc: number, { raised = 0 }) => acc + raised, 0))
-    setProjects(items.length)
-    setContributors(items.reduce((acc: number, { contributors = [] }) => acc + contributors.length, 0))
-  }, [items]) // eslint-disable-line
+    setRaised(crowdloans.reduce((acc: number, { raised = '0' }) => acc + parseInt(raised, 10), 0))
+    setProjects(crowdloans.length)
+    // setContributors(crowdloans.reduce((acc: number, { contributors = [] }) => acc + contributors.length, 0))
+  }, [crowdloans])
 
   return {
     raised,
@@ -84,9 +158,8 @@ export const useCrowdloanAggregateStats = () => {
 }
 
 export const Provider: FC = ({ children }) => {
-  const { parachains } = useParachains()
-
   const { data, called, loading, status, message } = useQuery(AllCrowdloans)
+
   const crowdloans = useMemo<Crowdloan[]>(
     () =>
       (data || [])
@@ -94,41 +167,38 @@ export const Provider: FC = ({ children }) => {
           (crowdloan: any) =>
             crowdloan?.parachain?.paraId && find(crowdloanDetails, { paraId: crowdloan.parachain.paraId })
         )
-        .map((crowdloan: any) => ({
-          ...crowdloan,
-          paraId: crowdloan.parachain.paraId,
-          raised: crowdloan.raised / 1e12,
-          cap: crowdloan.cap / 1e12,
-          percentRaised: (100 / (crowdloan.cap / 1e12)) * (crowdloan.raised / 1e12),
-          ...find(crowdloanDetails, { paraId: crowdloan.parachain.paraId }),
-        }))
-        // TODO: Derive this correctly from subquery
-        .map(({ overrideStatus, overrideEnd, ...crowdloan }: any) => ({
-          ...crowdloan,
-          status: overrideStatus,
-          lockExpiredBlock: overrideEnd || crowdloan.lockExpiredBlock,
-        }))
-        .filter((crowdloan: any) => !!crowdloan.status),
+        .map(
+          (crowdloan: any): Crowdloan => ({
+            ...crowdloan,
+            raised: crowdloan.raised / 1e12,
+            cap: crowdloan.cap / 1e12,
+
+            percentRaised: (100 / (crowdloan.cap / 1e12)) * (crowdloan.raised / 1e12),
+            details: find(crowdloanDetails, { paraId: crowdloan.parachain.paraId }),
+            uiStatus:
+              crowdloan.wonAuctionId !== null
+                ? 'winner'
+                : crowdloan.status === 'Started' && parseInt(crowdloan.cap, 10) <= parseInt(crowdloan.raised, 10)
+                ? 'capped'
+                : crowdloan.status === 'Started'
+                ? 'active'
+                : 'ended',
+          })
+        ),
     [data]
   )
 
-  const items = useMemo<CrowdloanMerged[]>(
-    () => crowdloans.map(crowdloan => ({ ...crowdloan, parachain: find(parachains, { id: crowdloan.paraId }) })),
-    [crowdloans, parachains]
+  const value = useMemo(
+    () => ({
+      crowdloans,
+      loading,
+      status,
+      message,
+      called,
+      hydrated: called === true && loading === false,
+    }),
+    [crowdloans, loading, status, message, called]
   )
 
-  return (
-    <Context.Provider
-      value={{
-        items,
-        loading,
-        status,
-        message,
-        called,
-        hydrated: called === true && loading === false,
-      }}
-    >
-      {children}
-    </Context.Provider>
-  )
+  return <Context.Provider value={value}>{children}</Context.Provider>
 }

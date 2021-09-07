@@ -1,11 +1,9 @@
 import { Pill } from '@components'
-import { useCrowdloanByParachainId } from '@libs/talisman'
+import { useParachainDetailsById } from '@libs/talisman'
 import styled from 'styled-components'
 
 const Links = styled(({ id, className }) => {
-  const {
-    item: { tags = [] },
-  } = useCrowdloanByParachainId(id)
+  const { parachainDetails: { tags = [] } = {} } = useParachainDetailsById(id)
 
   return (
     <div className={`crowdloan-links ${className}`}>

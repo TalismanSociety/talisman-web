@@ -1,5 +1,5 @@
 import { Countdown as Cd, Pendor } from '@components'
-import { useCrowdloanByParachainId, useGuardianValue } from '@libs/talisman'
+import { useCrowdloanById, useGuardianValue } from '@libs/talisman'
 import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 
@@ -36,29 +36,27 @@ const Generic = styled(({ text, className }) => (
 `
 
 type CountdownProps = {
-  id: number
+  id?: string
   end?: number
   showSeconds?: boolean
   className?: string
 }
 
 const Countdown: React.FC<CountdownProps> = ({ id, showSeconds, className, ...rest }) => {
-  const {
-    item: { status, lockExpiredBlock, isFinished, wonAuctionId },
-  } = useCrowdloanByParachainId(id)
+  const { crowdloan } = useCrowdloanById(id)
 
-  // TODO: Determine this properly by testing if crowdloan has lease, for example:
-  //       https://github.com/polkadot-js/apps/blob/df798fac838715a9b215be82e6e297d3d3f2bc4c/packages/page-parachains/src/useFunds.ts#L44
-  const isWinner = status === 'winner'
+  // Pendor
+  if (!crowdloan) return <Ongoing />
 
-  // TODO: Determine active / ended properly by testing isCapped || isEnded || isWinner and currentPeriod vs firstSlot:
-  //       https://github.com/polkadot-js/apps/blob/df798fac838715a9b215be82e6e297d3d3f2bc4c/packages/page-parachains/src/Crowdloan/Funds.tsx#L30
-  const isEnded = status === 'ended'
+  const { uiStatus, lockExpiredBlock } = crowdloan
 
-  if (isWinner) return <Generic text="🎉 Winner" />
-  if (isEnded) return <Generic text="Ended" />
+  if (uiStatus === 'active') return <Ongoing {...rest} showSeconds={showSeconds} end={lockExpiredBlock} />
+  if (uiStatus === 'capped') return <Generic text="Capped" />
+  if (uiStatus === 'winner') return <Generic text="🎉 Winner" />
+  if (uiStatus === 'ended') return <Generic text="Ended" />
 
-  return <Ongoing {...rest} showSeconds={showSeconds} end={lockExpiredBlock} />
+  // Pendor
+  return <Ongoing />
 }
 
 export default Countdown

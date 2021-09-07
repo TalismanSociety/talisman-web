@@ -1,6 +1,6 @@
 import { Parachain } from '@archetypes'
 import { Pill } from '@components'
-import { useCrowdloanByParachainId } from '@libs/talisman'
+import { useCrowdloanById, useParachainDetailsById } from '@libs/talisman'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 
@@ -8,16 +8,16 @@ import Countdown from './Countdown'
 import Raised from './Raised'
 
 const Teaser = styled(({ id, className }) => {
-  const {
-    item: { parachain },
-  } = useCrowdloanByParachainId(id)
+  const { crowdloan } = useCrowdloanById(id)
+  const parachainId = crowdloan?.parachain?.paraId
+  const { parachainDetails } = useParachainDetailsById(parachainId)
 
   return (
-    <Link to={`/crowdloans/${parachain?.slug}`} className={`crowdloan-teaser ${className}`}>
-      <Parachain.Asset id={id} type="card" />
+    <Link to={`/crowdloans/${parachainDetails?.slug}`} className={`crowdloan-teaser ${className}`}>
+      <Parachain.Asset id={parachainId} type="card" />
       <div className="content">
-        <Parachain.Asset id={id} type="logo" />
-        <h1>{parachain?.name}</h1>
+        <Parachain.Asset id={parachainId} type="logo" />
+        <h1>{parachainDetails?.name}</h1>
         <Raised id={id} title="Raised" />
       </div>
 

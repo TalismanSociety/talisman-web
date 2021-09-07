@@ -39,6 +39,7 @@ export type ParachainDetails = {
   subtitle: string
   info: string
   links: { [key: string]: string }
+  tags?: string[]
 }
 
 export const parachainDetails: ParachainDetails[] = [
@@ -457,9 +458,6 @@ export const parachainDetails: ParachainDetails[] = [
   },
 ]
 
-const batchOneEnd = 8467200
-const batchTwoEnd = 9676800
-
 export type CrowdloanDetails = {
   paraId: number
   contributeUrl: string
@@ -468,10 +466,6 @@ export type CrowdloanDetails = {
     custom: Array<{ title: string; value: string }> | null
     info: string | null
   }
-  // TODO: Derive this correctly from subquery
-  overrideStatus?: 'active' | 'winner' | 'ended'
-  // TODO: Derive this correctly from subquery
-  overrideEnd?: number
 }
 
 export const crowdloanDetails: CrowdloanDetails[] = [
@@ -488,8 +482,6 @@ export const crowdloanDetails: CrowdloanDetails[] = [
       custom: [],
       info: null,
     },
-    overrideStatus: 'winner',
-    overrideEnd: batchOneEnd,
   },
   {
     paraId: 2001,
@@ -508,8 +500,6 @@ export const crowdloanDetails: CrowdloanDetails[] = [
       custom: [],
       info: 'Instant BNS is distributed regardless of win. Success BNC is distributed if bid is won.',
     },
-    overrideStatus: 'winner',
-    overrideEnd: batchOneEnd,
   },
   {
     paraId: 2004,
@@ -524,8 +514,6 @@ export const crowdloanDetails: CrowdloanDetails[] = [
       custom: [],
       info: 'If Phala wins the Slot Auction, rewards will be distributed according to the Phala payment schedule. If a slot is not won, you can unbond your KSM immediately after the Auctions end.',
     },
-    overrideStatus: 'winner',
-    overrideEnd: batchOneEnd,
   },
   {
     paraId: 2006,
@@ -559,8 +547,6 @@ export const crowdloanDetails: CrowdloanDetails[] = [
       ],
       info: 'More information: <a href="https://forum.plasmnet.io/t/faq-how-to-estimate-how-many-sdn-you-will-receive-from-crowdloan/1225">crowdloan rewards</a>.',
     },
-    overrideStatus: 'winner',
-    overrideEnd: batchOneEnd,
   },
   {
     paraId: 2008,
@@ -581,8 +567,6 @@ export const crowdloanDetails: CrowdloanDetails[] = [
       ],
       info: 'More information: <a href="https://aresprotocollab.medium.com/ares-protocol-continues-to-participate-in-the-kusama-parachain-slot-auction-3dcda3d8356f">crowdloan rewards</a>.',
     },
-    overrideStatus: 'active',
-    overrideEnd: batchTwoEnd,
   },
   {
     paraId: 2009,
@@ -610,8 +594,6 @@ export const crowdloanDetails: CrowdloanDetails[] = [
       ],
       info: 'After KSM contribution, 100% Red Kite point delivered immediately. After PolkaSmith wins, 35% of PKS delivered immediately and 65% PKS vested over 10 months',
     },
-    overrideStatus: 'active',
-    overrideEnd: batchTwoEnd,
   },
   {
     paraId: 2012,
@@ -626,8 +608,6 @@ export const crowdloanDetails: CrowdloanDetails[] = [
       custom: null,
       info: '<a href="https://crustnetwork.medium.com/crust-updates-kusama-parachain-slot-auction-rewards-2f6b32c682ec">Medium article</a> with more info on rewards.',
     },
-    overrideStatus: 'active',
-    overrideEnd: batchTwoEnd,
   },
   {
     paraId: 2013,
@@ -663,8 +643,6 @@ export const crowdloanDetails: CrowdloanDetails[] = [
       ],
       info: 'KSX has an initial supply of 21 million, increased with 10% additional issuance every year. If you also refer a friend, both of you get a 5% referral bonus reward.',
     },
-    overrideStatus: 'active',
-    overrideEnd: batchTwoEnd,
   },
   {
     paraId: 2015,
@@ -679,8 +657,6 @@ export const crowdloanDetails: CrowdloanDetails[] = [
       ],
       info: '10% of the total Integritee token allocation will be fairly distributed to KSM holders who support us in the Kusama parachain auctions. The quantity of TEER each supporter receives will thereby depend on the amount of KSM they lock-in, relative to the total amount locked-in by all supporters.',
     },
-    overrideStatus: 'active',
-    overrideEnd: batchTwoEnd,
   },
   {
     paraId: 2016,
@@ -695,8 +671,6 @@ export const crowdloanDetails: CrowdloanDetails[] = [
       custom: null,
       info: 'New Users get up to 20% More bonus SKU. Invite friends to get 5% More bonus SKU.',
     },
-    overrideStatus: 'active',
-    overrideEnd: batchTwoEnd,
   },
   {
     paraId: 2018,
@@ -716,8 +690,6 @@ export const crowdloanDetails: CrowdloanDetails[] = [
       ],
       info: 'Crowdloaned 10 KSM unlocked and returned after Slot Duration finished, otherwise immediatly on unsuccessful slot auction.\n\nGSGB runs on SubGame Gamma. It is a reward token for participating in SubGame Gamma crowd loan activities. It has the same value as the token running on the SubGame mainnet. It can be exchanged 1:1 with SGB through SubGame Bridge',
     },
-    overrideStatus: 'active',
-    overrideEnd: batchTwoEnd,
   },
   {
     paraId: 2019,
@@ -733,8 +705,6 @@ export const crowdloanDetails: CrowdloanDetails[] = [
       custom: null,
       info: null,
     },
-    overrideStatus: 'ended',
-    overrideEnd: batchOneEnd,
   },
   // NOTE: Superseded by 2088
   // {
@@ -785,8 +755,6 @@ export const crowdloanDetails: CrowdloanDetails[] = [
       ],
       info: null,
     },
-    overrideStatus: 'winner',
-    overrideEnd: batchOneEnd,
   },
   // NOTE: Superseded by 2089
   // {
@@ -837,8 +805,6 @@ export const crowdloanDetails: CrowdloanDetails[] = [
       ],
       info: null,
     },
-    overrideStatus: 'active',
-    overrideEnd: batchTwoEnd,
   },
   {
     paraId: 2080,
@@ -853,8 +819,6 @@ export const crowdloanDetails: CrowdloanDetails[] = [
       custom: null,
       info: null,
     },
-    overrideStatus: 'ended',
-    overrideEnd: batchOneEnd,
   },
   // NOTE: Superseded by 2090
   // {
@@ -893,8 +857,6 @@ export const crowdloanDetails: CrowdloanDetails[] = [
       ],
       info: null,
     },
-    overrideStatus: 'active',
-    overrideEnd: batchTwoEnd,
   },
   {
     paraId: 2085,
@@ -914,8 +876,6 @@ export const crowdloanDetails: CrowdloanDetails[] = [
       ],
       info: null,
     },
-    overrideStatus: 'active',
-    overrideEnd: batchTwoEnd,
   },
   {
     paraId: 2086,
@@ -930,8 +890,6 @@ export const crowdloanDetails: CrowdloanDetails[] = [
       custom: null,
       info: null,
     },
-    overrideStatus: 'active',
-    overrideEnd: batchTwoEnd,
   },
   {
     paraId: 2087,
@@ -946,8 +904,6 @@ export const crowdloanDetails: CrowdloanDetails[] = [
       custom: null,
       info: null,
     },
-    overrideStatus: 'active',
-    overrideEnd: batchTwoEnd,
   },
   {
     paraId: 2088,
@@ -967,8 +923,6 @@ export const crowdloanDetails: CrowdloanDetails[] = [
       ],
       info: null,
     },
-    overrideStatus: 'active',
-    overrideEnd: batchTwoEnd,
   },
   {
     paraId: 2089,
@@ -992,8 +946,6 @@ export const crowdloanDetails: CrowdloanDetails[] = [
       ],
       info: null,
     },
-    overrideStatus: 'active',
-    overrideEnd: batchTwoEnd,
   },
   {
     paraId: 2090,
@@ -1008,8 +960,6 @@ export const crowdloanDetails: CrowdloanDetails[] = [
       custom: null,
       info: null,
     },
-    overrideStatus: 'active',
-    overrideEnd: batchTwoEnd,
   },
   {
     paraId: 2092,
@@ -1024,7 +974,5 @@ export const crowdloanDetails: CrowdloanDetails[] = [
       custom: null,
       info: null,
     },
-    overrideStatus: 'active',
-    overrideEnd: batchTwoEnd,
   },
 ]

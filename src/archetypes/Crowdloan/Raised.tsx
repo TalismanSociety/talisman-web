@@ -1,12 +1,10 @@
 import { Pendor, ProgressBar, Stat } from '@components'
-import { useCrowdloanByParachainId } from '@libs/talisman'
+import { useCrowdloanById } from '@libs/talisman'
 import { shortNumber } from '@util/helpers'
 import styled from 'styled-components'
 
 const Raised = styled(({ id, title, className }) => {
-  const {
-    item: { percentRaised, raised, cap, status },
-  } = useCrowdloanByParachainId(id)
+  const { crowdloan: { percentRaised, raised, cap, status } = {} } = useCrowdloanById(id)
 
   return (
     <div className={`crowdloan-raised ${className}`} data-status={status?.toLowerCase()}>
