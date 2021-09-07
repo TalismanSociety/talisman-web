@@ -4,11 +4,12 @@ import { shortNumber } from '@util/helpers'
 import styled from 'styled-components'
 
 const Raised = styled(({ id, title, className }) => {
-  const { crowdloan: { percentRaised, raised, cap, status } = {} } = useCrowdloanById(id)
+  const { crowdloan: { percentRaised, raised, cap, uiStatus } = {} } = useCrowdloanById(id)
 
   return (
-    <div className={`crowdloan-raised ${className}`} data-status={status?.toLowerCase()}>
-      {title && <h3>{title}</h3>}
+    <div className={`crowdloan-raised ${className}`} data-status={uiStatus?.toLowerCase()}>
+      {uiStatus === 'capped' && <h3>Success ✓</h3>}
+      {uiStatus !== 'capped' && title && <h3>{title}</h3>}
 
       <ProgressBar percent={percentRaised} />
 
@@ -36,7 +37,15 @@ const Raised = styled(({ id, title, className }) => {
     margin-top: 0.7rem;
   }
 
-  &[data-status='won'] {
+  &[data-status='capped'] h3 {
+    color: var(--color-status-success);
+    opacity: 0.9;
+  }
+  &[data-status='capped'] > .progress-bar {
+    opacity: 0.6;
+  }
+
+  &[data-status='winner'] {
     opacity: 0.6;
   }
 `

@@ -178,7 +178,8 @@ export const Provider: FC = ({ children }) => {
             uiStatus:
               crowdloan.wonAuctionId !== null
                 ? 'winner'
-                : crowdloan.status === 'Started' && parseInt(crowdloan.cap, 10) <= parseInt(crowdloan.raised, 10)
+                : crowdloan.status === 'Started' &&
+                  ((100 / (crowdloan.cap / 1e12)) * (crowdloan.raised / 1e12)).toFixed(2) === '100.00'
                 ? 'capped'
                 : crowdloan.status === 'Started'
                 ? 'active'
