@@ -91,22 +91,22 @@ export const parachainDetails: ParachainDetails[] = [
       Discord: 'https://discord.gg/myBmQu5',
     },
   },
-  {
-    id: 2006,
-    name: 'Darwinia Crab Redirect',
-    slug: 'darwinia-crab-redirect',
-    token: 'CRING',
-    subtitle:
-      'Crab is the canary network of Darwinia, and is the first blockchain in the Kusama ecosystem to natively support cross-chain as well as smart contract and NFT.',
-    info: `Crab Network intends to participate in the Kusama Parachain Slot Auctions.\n\nThe Crab network is a network with long-term value. Some RINGs are allocated to Crab Network as backing assets to make it serve as a canary network having real economic incentives and massive gaming theory testing, not just working a testnet.\n\nThe economic model parameters of the Crab network are the same as those of the Darwinia Mainnet, and use the same staking and inflation models.`,
-    links: {
-      Website: 'https://crab.network/',
-      Twitter: 'https://twitter.com/DarwiniaNetwork',
-      Telegram: 'https://t.me/DarwiniaNetwork',
-      Medium: 'https://darwinianetwork.medium.com/',
-      Github: 'https://github.com/darwinia-network/darwinia/tree/master/runtime/crab',
-    },
-  },
+  // {
+  //   id: 2006,
+  //   name: 'Darwinia Crab Redirect',
+  //   slug: 'darwinia-crab-redirect',
+  //   token: 'CRING',
+  //   subtitle:
+  //     'Crab is the canary network of Darwinia, and is the first blockchain in the Kusama ecosystem to natively support cross-chain as well as smart contract and NFT.',
+  //   info: `Crab Network intends to participate in the Kusama Parachain Slot Auctions.\n\nThe Crab network is a network with long-term value. Some RINGs are allocated to Crab Network as backing assets to make it serve as a canary network having real economic incentives and massive gaming theory testing, not just working a testnet.\n\nThe economic model parameters of the Crab network are the same as those of the Darwinia Mainnet, and use the same staking and inflation models.`,
+  //   links: {
+  //     Website: 'https://crab.network/',
+  //     Twitter: 'https://twitter.com/DarwiniaNetwork',
+  //     Telegram: 'https://t.me/DarwiniaNetwork',
+  //     Medium: 'https://darwinianetwork.medium.com/',
+  //     Github: 'https://github.com/darwinia-network/darwinia/tree/master/runtime/crab',
+  //   },
+  // },
   {
     id: 2007,
     name: 'Shiden',
@@ -246,23 +246,23 @@ export const parachainDetails: ParachainDetails[] = [
       Discord: 'https://discord.gg/Bu6HzJP2YY',
     },
   },
-  {
-    id: 2021,
-    name: 'Altair',
-    slug: 'altair',
-    token: 'AIR',
-    subtitle:
-      'Altair combines the industry-leading infrastructure built by Centrifuge to finance real-world assets (RWA) on Centrifuge Chain, with the newest experimental features — before they go live on Centrifuge Chain.',
-    info: `Altair is built using Substrate, and will have nearly the same codebase as Centrifuge Chain (just like Kusama is to Polkadot!). It is an experimental network for users who want to test the bounds of asset financing. From art NFTs to undiscovered assets — Altair enables users to tokenize their most experimental assets and finance them. It is the next step for anyone looking to unlock financing for their assets.\n\nInteroperability is the key to increasing liquidity in DeFi. Altair will bridge across the Kusama, Polkadot, and Ethereum ecosystems to allow assets to access financing wherever it is available. In the future, Altair can connect more and more projects across these ecosystems — using Kusama to allow anyone to access DeFi liquidity. The more connected chains, protocols, and Dapps are — the greater the flow of liquidity will be.`,
-    links: {
-      Website: 'https://centrifuge.io/altair/',
-      Twitter: 'https://twitter.com/centrifuge',
-      Telegram: 'https://t.me/centrifuge_chat',
-      Medium: 'https://medium.com/centrifuge',
-      Github: 'https://github.com/centrifuge/',
-      Discord: 'https://centrifuge.io/discord',
-    },
-  },
+  // {
+  //   id: 2021,
+  //   name: 'Altair',
+  //   slug: 'altair',
+  //   token: 'AIR',
+  //   subtitle:
+  //     'Altair combines the industry-leading infrastructure built by Centrifuge to finance real-world assets (RWA) on Centrifuge Chain, with the newest experimental features — before they go live on Centrifuge Chain.',
+  //   info: `Altair is built using Substrate, and will have nearly the same codebase as Centrifuge Chain (just like Kusama is to Polkadot!). It is an experimental network for users who want to test the bounds of asset financing. From art NFTs to undiscovered assets — Altair enables users to tokenize their most experimental assets and finance them. It is the next step for anyone looking to unlock financing for their assets.\n\nInteroperability is the key to increasing liquidity in DeFi. Altair will bridge across the Kusama, Polkadot, and Ethereum ecosystems to allow assets to access financing wherever it is available. In the future, Altair can connect more and more projects across these ecosystems — using Kusama to allow anyone to access DeFi liquidity. The more connected chains, protocols, and Dapps are — the greater the flow of liquidity will be.`,
+  //   links: {
+  //     Website: 'https://centrifuge.io/altair/',
+  //     Twitter: 'https://twitter.com/centrifuge',
+  //     Telegram: 'https://t.me/centrifuge_chat',
+  //     Medium: 'https://medium.com/centrifuge',
+  //     Github: 'https://github.com/centrifuge/',
+  //     Discord: 'https://centrifuge.io/discord',
+  //   },
+  // },
   {
     id: 2023,
     name: 'Moonriver',
@@ -279,20 +279,20 @@ export const parachainDetails: ParachainDetails[] = [
       Discord: 'https://discord.gg/PfpUATX',
     },
   },
-  {
-    id: 2024,
-    name: 'Genshiro',
-    slug: 'genshiro',
-    token: 'GENS',
-    subtitle: 'Genshiro is a canary network of equilibrium that shares the experimental spirit of Kusama.',
-    info: `Genshiro is EquilibriumDeFi's DeFi one-stop shop on Kusama that can do all things that existing DeFi primitives do, but with less risk and cross-chain.`,
-    links: {
-      Website: 'https://genshiro.equilibrium.io/en',
-      Twitter: 'https://twitter.com/GenshiroDeFi',
-      Telegram: 'https://t.me/genshiro_official',
-      Github: 'https://github.com/equilibrium-eosdt',
-    },
-  },
+  // {
+  //   id: 2024,
+  //   name: 'Genshiro',
+  //   slug: 'genshiro',
+  //   token: 'GENS',
+  //   subtitle: 'Genshiro is a canary network of equilibrium that shares the experimental spirit of Kusama.',
+  //   info: `Genshiro is EquilibriumDeFi's DeFi one-stop shop on Kusama that can do all things that existing DeFi primitives do, but with less risk and cross-chain.`,
+  //   links: {
+  //     Website: 'https://genshiro.equilibrium.io/en',
+  //     Twitter: 'https://twitter.com/GenshiroDeFi',
+  //     Telegram: 'https://t.me/genshiro_official',
+  //     Github: 'https://github.com/equilibrium-eosdt',
+  //   },
+  // },
   {
     id: 2077,
     name: 'Robonomics',
@@ -398,8 +398,9 @@ export const parachainDetails: ParachainDetails[] = [
     name: 'Altair',
     slug: 'altair',
     token: 'AIR',
-    subtitle: `Altair combines the industry-leading infrastructure built by Centrifuge to finance real-world assets (RWA) on Centrifuge Chain, with the newest experimental features — before they go live on Centrifuge Chain.`,
-    info: `Altair is built using Substrate, and will have nearly the same codebase as Centrifuge Chain (just like Kusama is to Polkadot!). It is an experimental network for users who want to test the bounds of asset financing. From art NFTs to undiscovered assets — Altair enables users to tokenize their most experimental assets and finance them. It is the next step for anyone looking to unlock financing for their assets. Interoperability is the key to increasing liquidity in DeFi. Altair will bridge across the Kusama, Polkadot, and Ethereum ecosystems to allow assets to access financing wherever it is available. In the future, Altair can connect more and more projects across these ecosystems — using Kusama to allow anyone to access DeFi liquidity. The more connected chains, protocols, and Dapps are — the greater the flow of liquidity will be.`,
+    subtitle:
+      'Altair combines the industry-leading infrastructure built by Centrifuge to finance real-world assets (RWA) on Centrifuge Chain, with the newest experimental features — before they go live on Centrifuge Chain.',
+    info: `Altair is built using Substrate, and will have nearly the same codebase as Centrifuge Chain (just like Kusama is to Polkadot!). It is an experimental network for users who want to test the bounds of asset financing. From art NFTs to undiscovered assets — Altair enables users to tokenize their most experimental assets and finance them. It is the next step for anyone looking to unlock financing for their assets.\n\nInteroperability is the key to increasing liquidity in DeFi. Altair will bridge across the Kusama, Polkadot, and Ethereum ecosystems to allow assets to access financing wherever it is available. In the future, Altair can connect more and more projects across these ecosystems — using Kusama to allow anyone to access DeFi liquidity. The more connected chains, protocols, and Dapps are — the greater the flow of liquidity will be.`,
     links: {
       Website: 'https://centrifuge.io/altair',
       Twitter: 'https://twitter.com/centrifuge',
@@ -414,8 +415,8 @@ export const parachainDetails: ParachainDetails[] = [
     name: 'Genshiro',
     slug: 'genshiro',
     token: 'GENS',
-    subtitle: `Altair combines the industry-leading infrastructure built by Centrifuge to finance real-world assets (RWA) on Centrifuge Chain, with the newest experimental features — before they go live on Centrifuge Chain.`,
-    info: `Altair is built using Substrate, and will have nearly the same codebase as Centrifuge Chain (just like Kusama is to Polkadot!). It is an experimental network for users who want to test the bounds of asset financing. From art NFTs to undiscovered assets — Altair enables users to tokenize their most experimental assets and finance them. It is the next step for anyone looking to unlock financing for their assets. Interoperability is the key to increasing liquidity in DeFi. Altair will bridge across the Kusama, Polkadot, and Ethereum ecosystems to allow assets to access financing wherever it is available. In the future, Altair can connect more and more projects across these ecosystems — using Kusama to allow anyone to access DeFi liquidity. The more connected chains, protocols, and Dapps are — the greater the flow of liquidity will be.`,
+    subtitle: 'Genshiro is a canary network of equilibrium that shares the experimental spirit of Kusama.',
+    info: `Genshiro is EquilibriumDeFi's DeFi one-stop shop on Kusama that can do all things that existing DeFi primitives do, but with less risk and cross-chain.`,
     links: {
       Website: 'https://genshiro.equilibrium.io/',
       Twitter: 'https://twitter.com/GenshiroDeFi',
@@ -515,20 +516,20 @@ export const crowdloanDetails: CrowdloanDetails[] = [
       info: 'If Phala wins the Slot Auction, rewards will be distributed according to the Phala payment schedule. If a slot is not won, you can unbond your KSM immediately after the Auctions end.',
     },
   },
-  {
-    paraId: 2006,
-    contributeUrl: 'https://crab.network/plo#crowdloan',
-    rewards: {
-      tokens: [
-        {
-          symbol: 'CRING',
-          perKSM: '25',
-        },
-      ],
-      custom: [],
-      info: 'If successful, 240,000,000 CRING and 6,000,000 RING rewards will be distributed to users according to the number of KSM they supported. 30% of them will be unlocked, 70% will vest for 48 weeks.',
-    },
-  },
+  // {
+  //   paraId: 2006,
+  //   contributeUrl: 'https://crab.network/plo#crowdloan',
+  //   rewards: {
+  //     tokens: [
+  //       {
+  //         symbol: 'CRING',
+  //         perKSM: '25',
+  //       },
+  //     ],
+  //     custom: [],
+  //     info: 'If successful, 240,000,000 CRING and 6,000,000 RING rewards will be distributed to users according to the number of KSM they supported. 30% of them will be unlocked, 70% will vest for 48 weeks.',
+  //   },
+  // },
   {
     paraId: 2007,
     contributeUrl: 'https://crowdloan.plasmnet.io/',
@@ -555,8 +556,8 @@ export const crowdloanDetails: CrowdloanDetails[] = [
     rewards: {
       tokens: [
         {
-          symbol: 'MARS',
-          perKSM: '1000',
+          symbol: 'AMAS',
+          perKSM: '1200',
         },
       ],
       custom: [
@@ -574,8 +575,8 @@ export const crowdloanDetails: CrowdloanDetails[] = [
     rewards: {
       tokens: [
         {
-          symbol: 'PKS',
-          perKSM: '596',
+          symbol: 'Reward',
+          perKSM: '350 PKS + 500 RedKite points',
         },
       ],
       custom: [
@@ -602,7 +603,7 @@ export const crowdloanDetails: CrowdloanDetails[] = [
       tokens: [
         {
           symbol: 'Reward',
-          perKSM: '1.5CRU+300CSM',
+          perKSM: '1 CRU + 1000 CSM',
         },
       ],
       custom: null,
@@ -616,7 +617,7 @@ export const crowdloanDetails: CrowdloanDetails[] = [
       tokens: [
         {
           symbol: 'KSX',
-          perKSM: '10',
+          perKSM: '>15',
         },
       ],
       custom: [
@@ -648,7 +649,12 @@ export const crowdloanDetails: CrowdloanDetails[] = [
     paraId: 2015,
     contributeUrl: 'https://crowdloan.integritee.network/',
     rewards: {
-      tokens: null,
+      tokens: [
+        {
+          symbol: 'TEER',
+          perKSM: '>6.5',
+        },
+      ],
       custom: [
         {
           title: '10% of total token allocation',
@@ -664,8 +670,8 @@ export const crowdloanDetails: CrowdloanDetails[] = [
     rewards: {
       tokens: [
         {
-          symbol: 'SKU',
-          perKSM: '200',
+          symbol: 'Reward',
+          perKSM: '150-210 SKU + 1sKSM LP token',
         },
       ],
       custom: null,
@@ -679,7 +685,7 @@ export const crowdloanDetails: CrowdloanDetails[] = [
       tokens: [
         {
           symbol: 'GSGB',
-          perKSM: '9-1000',
+          perKSM: '28',
         },
       ],
       custom: [
@@ -786,7 +792,7 @@ export const crowdloanDetails: CrowdloanDetails[] = [
       tokens: [
         {
           symbol: 'XRT',
-          perKSM: '3.5',
+          perKSM: '5',
         },
       ],
       custom: [
@@ -865,7 +871,7 @@ export const crowdloanDetails: CrowdloanDetails[] = [
       tokens: [
         {
           symbol: 'HKO',
-          perKSM: 'Minimum 50',
+          perKSM: '>62',
         },
       ],
       custom: [
@@ -884,7 +890,7 @@ export const crowdloanDetails: CrowdloanDetails[] = [
       tokens: [
         {
           symbol: 'KILT',
-          perKSM: 'Minimum 25',
+          perKSM: '>25',
         },
       ],
       custom: null,
@@ -898,7 +904,7 @@ export const crowdloanDetails: CrowdloanDetails[] = [
       tokens: [
         {
           symbol: 'PICA',
-          perKSM: '?',
+          perKSM: '20,000',
         },
       ],
       custom: null,
@@ -931,7 +937,7 @@ export const crowdloanDetails: CrowdloanDetails[] = [
       tokens: [
         {
           symbol: 'GENS',
-          perKSM: 'up to 2,400',
+          perKSM: '>2000',
         },
       ],
       custom: [
@@ -953,8 +959,8 @@ export const crowdloanDetails: CrowdloanDetails[] = [
     rewards: {
       tokens: [
         {
-          symbol: 'BSX',
-          perKSM: '75,000',
+          symbol: 'Reward',
+          perKSM: '>67,500 BSK + % HDX',
         },
       ],
       custom: null,
@@ -963,12 +969,12 @@ export const crowdloanDetails: CrowdloanDetails[] = [
   },
   {
     paraId: 2092,
-    contributeUrl: 'https://loan.bsx.fi/',
+    contributeUrl: 'https://kintsugi.interlay.io/',
     rewards: {
       tokens: [
         {
           symbol: 'KINT',
-          perKSM: '?',
+          perKSM: '>3.75',
         },
       ],
       custom: null,
