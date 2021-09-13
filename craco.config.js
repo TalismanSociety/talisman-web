@@ -53,80 +53,8 @@ const ImportAliasesPlugin = {
 //
 //     TALISMAN_LIBS_FAST_REFRESH=true yarn start
 //
-// In order for this plugin to work correctly, you must first replicate the following directory
-// structure on your local filesystem:
-//
-//     .
-//     ├── api
-//     │   └── package.json
-//     ├── api-react-hooks
-//     │   └── package.json
-//     ├── chaindata-js
-//     │   └── package.json
-//     ├── util
-//     │   └── package.json
-//     └── web
-//         └── package.json
-//
-// Next, you must use `yarn link` to symlink each package into the packages which depend on it:
-// (In the future we might replace this step with something automatic like yarn workspaces or lerna)
-//
-//     # change to chaindata-js directory
-//     cd chaindata-js
-//     # set up chaindata-js so it can be linked to from other packages
-//     yarn link
-//     # change back to parent directory
-//     cd ..
-//
-//     # change to util directory
-//     cd util
-//     # set up util so it can be linked to from other packages
-//     yarn link
-//     # change back to parent directory
-//     cd ..
-//
-//     # change to api directory
-//     cd api
-//     # set up api so it can be linked to from other packages
-//     yarn link
-//     # add chaindata-js linked dependency
-//     yarn link @talismn/chaindata-js
-//     # change back to parent directory
-//     cd ..
-//
-//     # change to api-react-hooks directory
-//     cd api-react-hooks
-//     # set up api-react-hooks so it can be linked to from other packages
-//     yarn link
-//     # add api linked dependency
-//     yarn link @talismn/api
-//     # add chaindata-js linked dependency
-//     yarn link @talismn/chaindata-js
-//     # add util linked dependency
-//     yarn link @talismn/util
-//     # change back to parent directory
-//     cd ..
-//
-//     # change to web directory
-//     cd web
-//     # add api-react-hooks linked dependency
-//     yarn link @talismn/api-react-hooks
-//     # add api linked dependency
-//     yarn link @talismn/api
-//     # add chaindata-js linked dependency
-//     yarn link @talismn/chaindata-js
-//     # add util linked dependency
-//     yarn link @talismn/util
-//     # change back to parent directory
-//     cd ..
-//
-// Finally, you must remove the duplicate copies of react from api-react-hooks and util
-// as having two copies of react in the one workspace breaks react's hooks feature
-//
-//     rm -rf api-react-hooks/node_modules/react
-//     ln -s ../../web/node_modules/react api-react-hooks/node_modules/
-//     rm -rf util/node_modules/react
-//     ln -s ../../web/node_modules/react util/node_modules/
+// In order for this plugin to work correctly, you must first set up and link your talisman workspace.
+// Follow the instructions at https://github.com/TalismanSociety/workspace#readme to get started.
 //
 const TalismanLibsFastRefreshPlugin = {
   plugin: {
@@ -135,6 +63,7 @@ const TalismanLibsFastRefreshPlugin = {
         ? ({ webpackConfig }) => {
             const { isFound, match } = getLoader(webpackConfig, loaderByName('babel-loader'))
 
+            // Add dependencies to babel-loader
             if (isFound) {
               const include = Array.isArray(match.loader.include) ? match.loader.include : [match.loader.include]
 
@@ -147,6 +76,11 @@ const TalismanLibsFastRefreshPlugin = {
 
               match.loader.include = include.concat(packages)
             }
+
+            // Fix react duplicates error: https://reactjs.org/warnings/invalid-hook-call-warning.html#duplicate-react
+            // Solution from: https://github.com/facebook/create-react-app/issues/3547#issuecomment-668842318
+            webpackConfig.resolve.alias['react'] = path.resolve(__dirname, 'node_modules/react')
+            webpackConfig.resolve.alias['react-dom'] = path.resolve(__dirname, 'node_modules/react-dom')
 
             console.info(
               'TalismanLibsFastRefreshPlugin: enabled\nNOTE: In order for this plugin to work correctly, you must follow the instructions in craco.config.js'
