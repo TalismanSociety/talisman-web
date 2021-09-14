@@ -40,7 +40,7 @@ export const useChainByGenesis = _useChainByGenesis
 const Provider = ({ children }) => (
   <Settings.Provider>
     <Api.Provider>
-      <Subquery.Provider uri="https://api.subquery.network/sq/subvis-io/kusama-auction">
+      <Subquery.Provider uri="https://api.subquery.network/sq/TalismanSociety/kusama-crowdloans">
         <Guardian.Provider>
           <Account.Provider>
             <Parachain.Provider>
