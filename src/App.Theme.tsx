@@ -1,22 +1,11 @@
-import { 
-  createContext, 
-  useContext,
-  useState,
-  useEffect
-} from 'react'
-import { useLocation } from "react-router-dom";
-import { 
-  DefaultTheme, 
-  ThemeProvider,
-  createGlobalStyle
-} from "styled-components"
+import SurtRegular from '@assets/fonts/Surt-Regular.woff'
+import SurtSemiBold from '@assets/fonts/Surt-SemiBold.woff2'
+import SurtSemiBoldExpanded from '@assets/fonts/Surt-SemiBoldExp.woff2'
+import { PropsWithChildren, createContext, useContext, useEffect, useState } from 'react'
+import { useLocation } from 'react-router-dom'
+import { DefaultTheme, ThemeProvider, createGlobalStyle, css } from 'styled-components'
 
-import SurtRegular from './assets/fonts/Surt-Regular.woff'
-import SurtSemiBold from './assets/fonts/Surt-SemiBold.woff2'
-import SurtSemiBoldExpanded from './assets/fonts/Surt-SemiBoldExp.woff2'
-
-
-/* 
+/*
   base style definitions
   allow component styling using css variables, defined below
   usage: background: var(--color-primary) or font-size: var(--font-size-large)
@@ -26,7 +15,7 @@ import SurtSemiBoldExpanded from './assets/fonts/Surt-SemiBoldExp.woff2'
 const statusColors = {
   '21C91D': ['ok', 'success', 'online', 'positive'],
   'FFCF96': ['concern', 'warning'],
-  'D44B23': ['failure', 'error', 'negative'],
+  'F34A4A': ['failure', 'error', 'negative'],
   'B9D9FF': ['neutral', 'default'],
 }
 
@@ -46,191 +35,194 @@ const fontWeights = {
   bold: 700,
 }
 
-
 // base style
-const Style = createGlobalStyle`  
-    
-    /*
-        define all options as css variables
-    */
-    :root {
-      /* theme colors as css variables */
-      ${({ theme }) => !!theme && Object.keys(theme).map(name => `--color-${name}: rgb(${theme[name]});`)}
+const Style = createGlobalStyle`
+  /*
+      define all options as css variables
+  */
+  :root {
+    /* theme colors as css variables */
+    ${({ theme }) => !!theme && Object.keys(theme).map(name => css`--color-${name}: rgb(${theme[name]});`)}
 
-      /* status color mappings */
-      ${Object.keys(statusColors).map(hex => statusColors[hex].map(status => `--color-status-${status}: #${hex};`))}
+    /* status color mappings */
+    ${Object.keys(statusColors).map(hex => statusColors[hex].map(status => css`--color-status-${status}: #${hex};`))}
 
-      /* fonts size mappings */
-      ${Object.keys(fontSizes).map(name => `--font-size-${name}: ${fontSizes[name]}rem;`)}
+    /* fonts size mappings */
+    ${Object.keys(fontSizes).map(name => css`--font-size-${name}: ${fontSizes[name]}rem;`)}
 
-      /* font weights */
-      ${Object.keys(fontWeights).map(name => `--font-weight-${name}: ${fontWeights[name]};`)}
+    /* font weights */
+    ${Object.keys(fontWeights).map(name => css`--font-weight-${name}: ${fontWeights[name]};`)}
 
-      /* misc */
-      --border: 0.2rem solid var(--color-dark);
-      --border-dashed: 0.2rem dashed var(--color-dark);
-      --padding: 2.2rem 3rem;
-      --padding-large: 4.2rem 4rem;
-      --padding-small: 1.1rem 1.5rem;
+    /* misc */
+    --border: 0.2rem solid var(--color-dark);
+    --border-dashed: 0.2rem dashed var(--color-dark);
+    --padding: 2.2rem 3rem;
+    --padding-large: 4.2rem 4rem;
+    --padding-small: 1.1rem 1.5rem;
+  }
+
+  @font-face {
+    font-family: 'Surt';
+    font-style: light;
+    font-weight: 300;
+    font-display: auto;
+    src: url(${SurtRegular}) format('woff');
+  }
+
+  @font-face {
+    font-family: 'Surt';
+    font-style: bold;
+    font-weight: 800;
+    font-display: auto;
+    src: url(${SurtSemiBold}) format('woff2');
+  }
+
+  @font-face {
+    font-family: 'SurtExpanded';
+    font-style: bold;
+    font-weight: 800;
+    font-display: auto;
+    src: url(${SurtSemiBoldExpanded}) format('woff2');
+  }
+
+  * {
+    box-sizing: border-box;
+    -webkit-font-smoothing: antialiased;
+    color: inherit;
+    line-height: 1.6em;
+  }
+
+  body,
+  html {
+    font-family: 'Surt', sans-serif;
+    padding: 0;
+    margin: 0;
+    scroll-behavior: smooth;
+    font-size: 10px;
+    min-height: 100%;
+    font-weight: var(--font-weight-regular);
+  }
+
+  body {
+    background: rgb(${({ theme }) => theme?.background});
+    color: rgb(${({ theme }) => theme?.foreground});
+    font-size: var(--font-size-normal);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  p {
+    line-height: 1.2em;
+    margin: 0 0 0.75em;
+    font-weight: var(--font-weight-regular);
+
+    &.-muted {
+      opacity: 0.7;
     }
 
-    @font-face {
-      font-family: 'Surt';
-      font-style: light;
-      font-weight: 300;
-      font-display: auto;
-      src: url(${SurtRegular}) format('woff');
+    a {
+      line-height: inherit;
+      opacity: 0.6;
+      color: rgb(${({ theme }) => theme?.primary});
     }
+  }
 
-    @font-face {
-      font-family: 'Surt';
-      font-style: bold;
-      font-weight: 800;
-      font-display: auto;
-      src: url(${SurtSemiBold}) format('woff2');
+  h1 {
+    font-size: var(--font-size-xxlarge);
+    font-weight: var(--font-weight-bold);
+  }
+
+  h2 {
+    font-size: var(--font-size-xlarge);
+  }
+
+  h3,
+  h4,
+  h5 {
+    font-size: var(--font-size-large);
+  }
+
+  p {
+    font-size: var(--font-size-normal);
+    line-height: 1.6em;
+  }
+
+  a {
+    text-decoration: none;
+    transition: all 0.15s;
+  }
+
+  hr {
+    opacity: 0.15;
+    height: 0;
+    border: none;
+    border-bottom: 1px solid currentColor;
+  }
+
+  button {
+    font: inherit;
+  }
+
+  strong {
+    font-weight: var(--font-weight-bold);
+  }
+
+  svg {
+    width: 1em;
+    height: 1em;
+  }
+
+  @keyframes spin {
+    0% {
+      transform: rotateZ(0deg);
     }
-
-    @font-face {
-      font-family: 'SurtExpanded';
-      font-style: bold;
-      font-weight: 800;
-      font-display: auto;
-      src: url(${SurtSemiBoldExpanded}) format('woff2');
+    100% {
+      transform: rotateZ(360deg);
     }
+  }
 
-    *{
-        box-sizing: border-box;
-        -webkit-font-smoothing: antialiased;
-        color: inherit;
-        line-height: 1.6em;
-    }
+  svg.feather-loader {
+    opacity: 0.4;
+    animation: spin linear 3s infinite;
+  }
 
-    body,
-    html{
-        font-family: 'Surt', sans-serif;
-        padding: 0;
-        margin: 0;
-        scroll-behavior: smooth;
-        font-size: 10px;
-        min-height: 100%;
-        font-weight: var(--font-weight-regular);
-    }
+  *:focus {
+    outline: none;
+  }
 
-    body{
-        background: rgb(${({ theme }) => theme?.background});
-        color: rgb(${({ theme }) => theme?.foreground});
-        font-size: var(--font-size-normal);
-    }
+  ::placeholder {
+    color: rgba(${({ theme }) => theme?.foreground}, 0.2);
+  }
 
-    h1,
-    h2,
-    h3,
-    h4,
-    h5,
-    p{
-        line-height: 1.2em;
-        margin: 0 0 0.75em;
-        font-weight: var(--font-weight-regular);
+  input,
+  select {
+    font-size: var(--font-size-normal);
+  }
 
-        &.-muted{
-            opacity: 0.7
-        }
-
-        a{
-            line-height: inherit;
-            opacity: 0.6;
-            color: rgb(${({ theme }) => theme?.primary});
-        }
-    }
-
-    h1{
-        font-size: var(--font-size-xxlarge);
-        font-weight: var(--font-weight-bold);
-    }
-
-    h2{
-        font-size: var(--font-size-xlarge);
-    }
-
-    h3,
-    h4,
-    h5{
-        font-size: var(--font-size-large);
-    }
-
-    p{
-        font-size: var(--font-size-normal);
-        line-height: 1.6em;
-    }
-
-    a{
-        text-decoration: none;
-        transition: all 0.15s;
-    }
-
-    hr{
-        opacity: 0.15;
-        height: 0;
-        border: none;
-        border-bottom: 1px solid currentColor;
-    }
-
-    button{
-        font: inherit
-    }
-
-    strong{
-        font-weight: var(--font-weight-bold);
-    }
-
-    svg{
-        width: 1em;
-        height: 1em;
-    }
-
-    @keyframes spin {
-        0% { transform: rotateZ(0deg) } 
-        100% { transform: rotateZ(360deg) } 
-    }
-
-    svg.feather-loader{
-        opacity: 0.4;
-        animation: spin linear 3s infinite;
-    }
-
-    *:focus{
-        outline: none;
-    }
-
-    ::placeholder {
-      color: rgba(${({ theme }) => theme?.foreground}, 0.2);
-    }
-
-    input,
-    select{
-      font-size: var(--font-size-normal);
-    }
-
-    .muted{
-      font-size: 0.8em;
-      opacity: 0.4;
-    }
+  .muted {
+    font-size: 0.8em;
+    opacity: 0.4;
+  }
 `
-
-
-
 
 /* theming options */
 // declare all theme based colors in rgb
 // when using in component, need to wrap in rgb(...) declaration
 // can also use rgba to define opacity
 
-declare module "styled-components" {
+declare module 'styled-components' {
   export interface DefaultTheme {
     primary: string
     secondary: string
-    background: string 
+    background: string
     foreground: string
+    mid: string
+    dim: string
+    light: string
+    dark: string
   }
 }
 
@@ -240,6 +232,7 @@ const light: DefaultTheme = {
   background: '255,255,255',
   foreground: '0,0,0',
   mid: '150,150,150',
+  dim: '245,245,245',
   light: '255,255,255',
   dark: '0,0,0',
 }
@@ -250,48 +243,46 @@ const dark: DefaultTheme = {
   background: '0,0,0',
   foreground: '255,255,255',
   mid: '150,150,150',
+  dim: '245,245,245',
   light: '255,255,255',
   dark: '0,0,0',
 }
 
 const themes = {
   light,
-  dark
+  dark,
 }
-
-
 
 /* style context */
 
-const Context = createContext({});
+const Context = createContext({})
 
 export const useTheme = () => useContext(Context)
 
-const Provider = ({children}) => {
-
+const Provider = ({ children }: PropsWithChildren<{}>) => {
   // theme stuff
   const [theme, setTheme] = useState('light')
   const toggle = () => setTheme(theme === 'dark' ? 'light' : 'dark')
-  const set = mode => setTheme(mode === 'dark' ? 'dark' : 'light')
+  const set = (mode: string) => setTheme(mode === 'dark' ? 'dark' : 'light')
 
   // scroll to top on location change
-  const { pathname } = useLocation();
-  useEffect(() =>  window.scrollTo(0, 0), [pathname]);
+  const { pathname } = useLocation()
+  useEffect(() => window.scrollTo(0, 0), [pathname])
 
-  return <Context.Provider 
-    value={{
-      theme,
-      toggle,
-      set
-    }}
+  return (
+    <Context.Provider
+      value={{
+        theme,
+        toggle,
+        set,
+      }}
     >
-    <ThemeProvider 
-      theme={themes[theme]}
-      >
-      <Style/>
-      {children}
-    </ThemeProvider>
-  </Context.Provider>
+      <ThemeProvider theme={themes[theme]}>
+        <Style />
+        {children}
+      </ThemeProvider>
+    </Context.Provider>
+  )
 }
 
 export default Provider

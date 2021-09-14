@@ -1,5 +1,5 @@
 import { Crowdloan, Parachain } from '@archetypes'
-import { Button, Panel, PanelSection, Poster } from '@components'
+import { Button, Panel, PanelSection, Poster, useModal } from '@components'
 import { useCrowdloanByParachainId, useParachainAssets, useParachainDetailsBySlug } from '@libs/talisman'
 import { useParams } from 'react-router-dom'
 import styled from 'styled-components'
@@ -10,8 +10,9 @@ const CrowdloanDetail = styled(({ className }) => {
   const { parachainDetails } = useParachainDetailsBySlug(slug)
   const { banner } = useParachainAssets(parachainDetails?.id)
 
-  const { crowdloan: { id, uiStatus, details } = {} } = useCrowdloanByParachainId(parachainDetails?.id)
-  const contributeUrl = details?.contributeUrl
+  const { crowdloan: { id, uiStatus } = {} } = useCrowdloanByParachainId(parachainDetails?.id)
+
+  const { openModal } = useModal()
 
   return (
     <section className={className}>
@@ -37,8 +38,7 @@ const CrowdloanDetail = styled(({ className }) => {
             <PanelSection>
               <Button
                 primary
-                onClick={() => window.open(contributeUrl, '_blank')}
-                target="_blank"
+                onClick={() => openModal(<Crowdloan.Contribute id={id} />)}
                 disabled={uiStatus !== 'active'}
               >
                 Contribute

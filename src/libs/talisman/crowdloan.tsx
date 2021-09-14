@@ -42,7 +42,7 @@ export type Crowdloan = {
   // graphql fields
   id: string
   depositor: string
-  verifier: string | null
+  verifier: string | null // e.g. {\"sr25519\":\"0x6c79c2c862124697baf6d0562055a50f3b0eac3c895c23bb16e8d1e2da341549\"}"
   cap: string
   raised: string
   lockExpiredBlock: number

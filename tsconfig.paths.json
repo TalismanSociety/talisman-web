@@ -2,8 +2,6 @@
   "compilerOptions": {
     "baseUrl": "./src",
     "paths": {
-      "@root": ["./"],
-      "@root/*": ["./*"],
       "@archetypes": ["./archetypes"],
       "@archetypes/*": ["./archetypes/*"],
       "@assets": ["./assets"],

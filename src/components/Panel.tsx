@@ -7,7 +7,7 @@ type BasePanelProps = {
   rest: any[]
 }
 
-export const PanelSection = styled(({ title, children, className }) => {
+export const Section = styled(({ title, children, className }) => {
   return (
     <div className={`panel-section ${className}`}>
       {!!title && <h2>{title}</h2>}
@@ -34,7 +34,7 @@ export const PanelSection = styled(({ title, children, className }) => {
     `}
 `
 
-const Panel = styled(({ title, subtitle, children, className, ...rest }) => (
+export default styled(({ title, subtitle, children, className, ...rest }) => (
   <div className={`panel ${className}`} {...rest}>
     {!!title && (
       <h1>
@@ -73,5 +73,3 @@ const Panel = styled(({ title, subtitle, children, className, ...rest }) => (
     }
   }
 `
-
-export default Panel

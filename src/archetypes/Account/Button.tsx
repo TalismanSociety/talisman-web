@@ -6,9 +6,10 @@ import { useActiveAccount, useGuardian } from '@libs/talisman'
 import { useChainByGenesis } from '@libs/talisman'
 import { Keyring } from '@polkadot/keyring'
 import Identicon from '@polkadot/react-identicon'
-import { formatCurrency } from '@util/helpers'
-import { truncateString } from '@util/helpers'
-import { useState } from 'react'
+import { addTokensToBalances, groupBalancesByAddress, useBalances, useChain } from '@talismn/api-react-hooks'
+import { addBigNumbers, useFuncMemo } from '@talismn/util'
+import { formatCommas, formatCurrency, truncateString } from '@util/helpers'
+import { useEffect, useMemo, useState } from 'react'
 import styled from 'styled-components'
 
 // format an address based on chain ID, derived from genesis ID
@@ -21,54 +22,67 @@ const Address = ({ address, genesis, truncate = false }) => {
   return !!truncate ? truncateString(encoded, truncate[0] || 4, truncate[1] || 4) : encoded
 }
 
-const Dropdown = styled(({ handleClose, className }) => {
+const Dropdown = styled(({ className, handleClose, allAccounts, nativeToken, ksmBalancesByAddress }) => {
   const { switchAccount } = useActiveAccount()
   const { accounts } = useGuardian()
   const { totalUsd, totalUsdByAddress } = usePortfolio()
 
   return (
     <span className={`account-picker ${className}`}>
-      {[{ name: 'All Accounts' }, ...accounts].map(({ address, name, genesisHash }, index) => (
-        <div
-          key={index}
-          className="account"
-          onClick={() => {
-            switchAccount(address)
-            handleClose()
-          }}
-        >
-          <span className="left">
-            {address ? (
-              <Identicon className="identicon" value={address} theme="polkadot" />
-            ) : (
-              <Identicon
-                Custom={AllAccountsIcon}
-                className="identicon"
-                value="5DHuDfmwzykE9KVmL87DLjAbfSX7P4f4wDW5CKx8QZnQA4FK"
-                theme="polkadot"
-              />
-            )}
-            <span className="name-address">
-              <span className="name">{address ? truncateString(name, 10, 0) : name}</span>
-              {address && (
-                <span className="address">
-                  <Address address={address} genesis={genesisHash} truncate />
-                </span>
+      {(allAccounts ? [{ name: 'All Accounts' }, ...accounts] : accounts).map(
+        ({ address, name, genesisHash }, index) => (
+          <div
+            key={index}
+            className="account"
+            onClick={() => {
+              switchAccount(address)
+              handleClose()
+            }}
+          >
+            <span className="left">
+              {address ? (
+                <Identicon className="identicon" value={address} theme="polkadot" />
+              ) : (
+                <Identicon
+                  Custom={AllAccountsIcon}
+                  className="identicon"
+                  value="5DHuDfmwzykE9KVmL87DLjAbfSX7P4f4wDW5CKx8QZnQA4FK"
+                  theme="polkadot"
+                />
+              )}
+              <span className="name-address">
+                <span className="name">{address ? truncateString(name, 10, 0) : name}</span>
+                {address && (
+                  <span className="address">
+                    <Address address={address} genesis={genesisHash} truncate />
+                  </span>
+                )}
+              </span>
+            </span>
+
+            <span className="right">
+              {address ? (
+                allAccounts ? (
+                  <Pendor prefix={!totalUsdByAddress[address] && '-'}>
+                    {totalUsdByAddress[address] && formatCurrency(totalUsdByAddress[address])}
+                  </Pendor>
+                ) : (
+                  <Pendor suffix={` ${nativeToken}`}>
+                    {ksmBalancesByAddress[address] &&
+                      formatCommas(
+                        ksmBalancesByAddress[address].map(balance => balance?.tokens).reduce(addBigNumbers, undefined)
+                      )}
+                  </Pendor>
+                )
+              ) : (
+                <>
+                  <Pendor prefix={!totalUsd && '-'}>{totalUsd && formatCurrency(totalUsd)}</Pendor>
+                </>
               )}
             </span>
-          </span>
-
-          <span className="right">
-            {address ? (
-              <Pendor prefix={!totalUsdByAddress[address] && '-'}>
-                {totalUsdByAddress[address] && formatCurrency(totalUsdByAddress[address])}
-              </Pendor>
-            ) : (
-              <Pendor prefix={!totalUsd && '-'}>{totalUsd && formatCurrency(totalUsd)}</Pendor>
-            )}
-          </span>
-        </div>
-      ))}
+          </div>
+        )
+      )}
     </span>
   )
 })`
@@ -139,7 +153,7 @@ const Dropdown = styled(({ handleClose, className }) => {
     `}
 `
 
-const Unavailable = ({ className }) => {
+const Unavailable = styled(({ className }) => {
   return (
     <Button
       className={`account-button ${className}`}
@@ -155,7 +169,7 @@ const Unavailable = ({ className }) => {
       Install Polkadot.js Extension
     </Button>
   )
-}
+})``
 
 const NoAccount = styled(({ className }) => {
   return (
@@ -179,15 +193,40 @@ const NoAccount = styled(({ className }) => {
   }
 `
 
-const Authorized = styled(({ className }) => {
+const Authorized = styled(({ className, narrow, allAccounts }) => {
+  const { switchAccount } = useActiveAccount()
+  const { accounts } = useGuardian()
   const { hasActiveAccount, address, name } = useActiveAccount()
   const { totalUsd, totalUsdByAddress } = usePortfolio()
   const [open, setOpen] = useState(false)
 
   const usd = hasActiveAccount ? totalUsdByAddress[address] : totalUsd
+  useEffect(() => {
+    if (allAccounts) return
+    if (hasActiveAccount) return
+    switchAccount(accounts[0].address)
+  }, [accounts, allAccounts, hasActiveAccount, switchAccount])
+
+  // TODO: Currently we show KSM when allAccounts is false
+  // Instead we should maybe have a prop which specifies what
+  // balance (KSM/DOT/Parahain N/USD) should be shown for each account
+
+  const chainId = '2'
+  const chainIds = useMemo(() => [chainId], []) // 2 is kusama
+  const addresses = useMemo(() => accounts.map((account: any) => account.address), [accounts])
+
+  const { nativeToken, tokenDecimals } = useChain(chainId)
+  const { balances } = useBalances(addresses, chainIds)
+
+  const ksmBalances = useFuncMemo(addTokensToBalances, balances, nativeToken ? tokenDecimals : undefined)
+  const ksmBalancesByAddress = useFuncMemo(groupBalancesByAddress, ksmBalances)
 
   return (
-    <span className={`account-button ${className}`} onMouseLeave={() => setOpen(false)}>
+    <span
+      className={`account-button ${className}`}
+      onMouseEnter={() => narrow && setOpen(true)}
+      onMouseLeave={() => setOpen(false)}
+    >
       {hasActiveAccount ? (
         <Identicon className="identicon" value={address} theme="polkadot" />
       ) : (
@@ -199,17 +238,36 @@ const Authorized = styled(({ className }) => {
         />
       )}
       <span className="selected-account">
-        <div>{hasActiveAccount ? name : 'All Accounts'}</div>
+        <div>{hasActiveAccount ? name : allAccounts ? 'All Accounts' : 'Loading...'}</div>
         <div>
-          <Pendor prefix={!usd && '-'}>{usd && formatCurrency(usd)}</Pendor>
+          {allAccounts ? (
+            <Pendor prefix={!usd && '-'}>{usd && formatCurrency(usd)}</Pendor>
+          ) : (
+            <Pendor suffix={` ${nativeToken}`}>
+              {ksmBalancesByAddress[address] &&
+                formatCommas(
+                  ksmBalancesByAddress[address].map(balance => balance?.tokens).reduce(addBigNumbers, undefined)
+                )}
+            </Pendor>
+          )}
         </div>
       </span>
 
-      <Button.Icon className="nav-toggle" onMouseEnter={() => setOpen(true)}>
-        <ChevronDown />
-      </Button.Icon>
+      {narrow ? (
+        <ChevronDown style={{ margin: '0 1rem 0 0.8rem' }} />
+      ) : (
+        <Button.Icon className="nav-toggle" onMouseEnter={() => setOpen(true)}>
+          <ChevronDown />
+        </Button.Icon>
+      )}
 
-      <Dropdown open={open} handleClose={() => setOpen(false)} />
+      <Dropdown
+        open={open}
+        handleClose={() => setOpen(false)}
+        allAccounts={allAccounts}
+        nativeToken={nativeToken}
+        ksmBalancesByAddress={ksmBalancesByAddress}
+      />
     </span>
   )
 })`
@@ -259,15 +317,15 @@ const Authorized = styled(({ className }) => {
   }
 `
 
-const AccountButton = () => {
+const AccountButton = props => {
   const { status } = useActiveAccount()
   switch (status) {
     case 'AUTHORIZED':
-      return <Authorized />
+      return <Authorized {...props} />
     case 'UNAVAILABLE':
-      return <Unavailable />
+      return <Unavailable {...props} />
     case 'NOACCOUNT':
-      return <NoAccount />
+      return <NoAccount {...props} />
     default:
       return null
   }

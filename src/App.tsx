@@ -1,3 +1,4 @@
+import { ModalProvider } from '@components'
 import * as Portfolio from '@libs/portfolio'
 import TalismanProvider from '@libs/talisman'
 import * as Tokenprices from '@libs/tokenprices'
@@ -13,9 +14,11 @@ const App: React.FC = () => (
       <TalismanProvider>
         <Router>
           <ThemeProvider>
-            <Layout>
-              <Routes />
-            </Layout>
+            <ModalProvider>
+              <Layout>
+                <Routes />
+              </Layout>
+            </ModalProvider>
           </ThemeProvider>
         </Router>
       </TalismanProvider>
