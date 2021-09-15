@@ -1,11 +1,11 @@
 import { ApiPromise, WsProvider } from '@polkadot/api'
 import { web3FromAddress } from '@polkadot/extension-dapp'
 import type { BalanceOf } from '@polkadot/types/interfaces'
-import { useChain } from '@talismn/api-react-hooks'
-import { Deferred, planckToTokens, tokensToPlanck } from '@talismn/util'
+import { addTokensToBalances, groupBalancesByAddress, useBalances, useChain } from '@talismn/api-react-hooks'
+import { Deferred, addBigNumbers, planckToTokens, tokensToPlanck, useFuncMemo } from '@talismn/util'
 import BigNumber from 'bignumber.js'
 import { useEffect } from 'react'
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useMemo, useRef, useState } from 'react'
 
 //
 // TODO: Integrate this lib into @talismn/api.
@@ -53,10 +53,39 @@ export function useCrowdloanContribution(
   const chaindata = useChain(kusamaId)
   const hasRpcs = useMemo(() => Array.isArray(chaindata?.rpcs) && chaindata.rpcs.length > 0, [chaindata])
 
+  const [, apiPromise] = useApi(chaindata?.rpcs)
+
+  const chainIds = useMemo(() => [kusamaId], []) // 2 is kusama
+  const addresses = useMemo(() => (account ? [account] : []), [account])
+
+  const { nativeToken, tokenDecimals } = chaindata
+  const { balances } = useBalances(addresses, chainIds)
+
+  const ksmBalances = useFuncMemo(addTokensToBalances, balances, nativeToken ? tokenDecimals : undefined)
+  const ksmBalancesByAddress = useFuncMemo(groupBalancesByAddress, ksmBalances)
+  const ksmBalance = useMemo(() => {
+    if (!account) return undefined
+    return (ksmBalancesByAddress[account] || []).map(balance => balance.tokens).reduce(addBigNumbers, undefined)
+  }, [account, ksmBalancesByAddress])
+
+  // switch from INIT to IDLE once rpcs found
   useEffect(() => {
     if (!hasRpcs) return
     setStatus(status => (status === 'INIT' ? 'IDLE' : status))
   }, [hasRpcs])
+
+  // update error message as user types
+  useEffect(() => {
+    const balanceError = 'Account balance too low'
+    const setBalanceError = () => setError(balanceError)
+    const clearBalanceError = () => setError(error => (error === balanceError ? null : error))
+
+    if (!contributionAmount || contributionAmount === '') return clearBalanceError()
+    if (Number.isNaN(Number(contributionAmount))) return clearBalanceError()
+    if (ksmBalance === undefined) return clearBalanceError()
+    if (new BigNumber(ksmBalance).isLessThan(new BigNumber(contributionAmount))) return setBalanceError()
+    clearBalanceError()
+  }, [contributionAmount, error, ksmBalance])
 
   const contribute = useCallback(async () => {
     if (status !== 'IDLE') return
@@ -69,7 +98,7 @@ export function useCrowdloanContribution(
       setError('Please enter an amount of KSM')
       return
     }
-    if (parseFloat(contributionAmount).toString() !== contributionAmount) {
+    if (Number.isNaN(Number(contributionAmount))) {
       setError('Please enter a valid amount of KSM')
       return
     }
@@ -82,14 +111,18 @@ export function useCrowdloanContribution(
     setExplorerUrl(null)
     setStatus('VALIDATING')
 
-    let api: ApiPromise | undefined = undefined
+    let api = await apiPromise
     let txStatus
     try {
-      api = await ApiPromise.create({ provider: new WsProvider(chaindata.rpcs), throwOnConnect: true })
-
       const minContribution = api.consts.crowdloan.minContribution as BalanceOf
       const { tokenDecimals } = chaindata
       const contributionPlanck = tokensToPlanck(contributionAmount, tokenDecimals)
+
+      if (new BigNumber(ksmBalance).isLessThan(new BigNumber(contributionAmount))) {
+        setStatus('IDLE')
+        setError('Account balance too low')
+        return
+      }
 
       // TODO: Test that contribution is above the minContribution
       // TODO: Test that contribution doesn't go above crowdloan cap
@@ -168,7 +201,6 @@ export function useCrowdloanContribution(
 
       txStatus = await deferred.promise
     } catch (error) {
-      api && api.disconnect()
       setStatus('IDLE')
 
       if (typeof error?.message === 'string' && error.message.startsWith('1010:')) {
@@ -181,9 +213,69 @@ export function useCrowdloanContribution(
       return
     }
 
-    api && api.disconnect()
     setStatus(txStatus)
-  }, [account, chaindata, contributionAmount, parachainId, signature, status])
+  }, [account, apiPromise, chaindata, contributionAmount, ksmBalance, parachainId, signature, status])
 
   return { chaindata, contribute, status, explorerUrl, error }
+}
+
+// api is either null or ApiPromise, the promise variation of the polkadotjs api
+// apiPromise is a Promise<ApiPromise> which can be `await`ed to wait until the ApiPromise has been initialized
+function useApi(rpcs?: string[]): [ApiPromise | null, Promise<ApiPromise>] {
+  const [apiPromise, setApiPromise] = useState<Promise<ApiPromise> | null>(null)
+  const [api, setApi] = useState<ApiPromise | null>(null)
+  const [apiDeferred, setApiDeferred] = useState(Deferred<ApiPromise>())
+  const mountedRef = useMountedRef()
+
+  useEffect(() => {
+    if (!Array.isArray(rpcs) || rpcs.length < 1) return
+
+    setApiPromise(ApiPromise.create({ provider: new WsProvider(rpcs) }))
+  }, [rpcs])
+
+  useEffect(() => {
+    if (!apiPromise) return
+
+    apiPromise.then(api => {
+      if (!mountedRef.current) return
+
+      // check that we are the most recent api promise
+      setApiPromise(currentApiPromise => {
+        if (apiPromise === currentApiPromise) setApi(api)
+        return currentApiPromise
+      })
+    })
+
+    return () => {
+      apiPromise.then(api => api.disconnect())
+    }
+  }, [apiPromise, mountedRef])
+
+  useEffect(() => {
+    if (!api) return
+
+    setApiDeferred(apiDeferred => {
+      // use existing deferred if still pending, otherwise create new deferred
+      const deferred = apiDeferred.isPending() ? apiDeferred : Deferred<ApiPromise>()
+
+      // resolve with api
+      deferred.resolve(api)
+
+      return deferred
+    })
+  }, [api])
+
+  return [api, apiDeferred.promise]
+}
+
+function useMountedRef() {
+  const mountedRef = useRef(true)
+
+  useEffect(() => {
+    return () => {
+      mountedRef.current = false
+    }
+  }, [])
+
+  return mountedRef
 }

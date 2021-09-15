@@ -1,5 +1,6 @@
 import { ReactComponent as IconClose } from '@icons/x.svg'
 import useKeyDown from '@util/useKeyDown'
+import { AnimatePresence, motion } from 'framer-motion'
 import { PropsWithChildren, createContext, useCallback, useContext, useMemo, useState } from 'react'
 import styled from 'styled-components'
 
@@ -45,15 +46,18 @@ export const Modal = styled(function Modal({ className }) {
     useCallback(() => open && closeModal(), [open, closeModal])
   )
 
-  if (!open) return null
   return (
-    <div className={className}>
-      <div className="modal-background" onClick={closeModal} />
-      <div className="modal-content">
-        <IconClose className="close-icon" onClick={closeModal} />
-        {content}
-      </div>
-    </div>
+    <AnimatePresence>
+      {open && (
+        <motion.div className={className} initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+          <div className="modal-background" onClick={closeModal} />
+          <div className="modal-content">
+            <IconClose className="close-icon" onClick={closeModal} />
+            {content}
+          </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   )
 })`
   position: fixed;

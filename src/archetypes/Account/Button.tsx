@@ -9,7 +9,7 @@ import Identicon from '@polkadot/react-identicon'
 import { addTokensToBalances, groupBalancesByAddress, useBalances, useChain } from '@talismn/api-react-hooks'
 import { addBigNumbers, useFuncMemo } from '@talismn/util'
 import { formatCommas, formatCurrency, truncateString } from '@util/helpers'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import styled from 'styled-components'
 
 // format an address based on chain ID, derived from genesis ID
@@ -221,11 +221,21 @@ const Authorized = styled(({ className, narrow, allAccounts }) => {
   const ksmBalances = useFuncMemo(addTokensToBalances, balances, nativeToken ? tokenDecimals : undefined)
   const ksmBalancesByAddress = useFuncMemo(groupBalancesByAddress, ksmBalances)
 
+  const delayRef = useRef<NodeJS.Timeout | null>(null)
+  const openOnDelay = () => {
+    delayRef.current && clearTimeout(delayRef.current)
+    delayRef.current = setTimeout(() => setOpen(true), 150)
+  }
+  const cancelOpen = () => {
+    delayRef.current && clearTimeout(delayRef.current)
+    setOpen(false)
+  }
+
   return (
     <span
       className={`account-button ${className}`}
-      onMouseEnter={() => narrow && setOpen(true)}
-      onMouseLeave={() => setOpen(false)}
+      onMouseEnter={() => narrow && openOnDelay()}
+      onMouseLeave={() => cancelOpen()}
     >
       {hasActiveAccount ? (
         <Identicon className="identicon" value={address} theme="polkadot" />

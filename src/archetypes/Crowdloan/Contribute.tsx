@@ -1,12 +1,13 @@
 import { Account, Parachain } from '@archetypes'
-import { ReactComponent as TalismanLogo } from '@assets/talisman.svg'
-import { Button, Field, Pendor, useModal } from '@components'
+import { ReactComponent as CheckCircle } from '@assets/icons/check-circle.svg'
+import { ReactComponent as XCircle } from '@assets/icons/x-circle.svg'
+import { Button, Field, MaterialLoader, Pendor, useModal } from '@components'
 import { useCrowdloanContribution } from '@libs/crowdloans'
 import { useActiveAccount, useCrowdloanById, useParachainDetailsById } from '@libs/talisman'
 import { useTokenPrice } from '@libs/tokenprices'
 import { multiplyBigNumbers } from '@talismn/util'
 import { formatCurrency } from '@util/helpers'
-import { useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import styled from 'styled-components'
 
 export type ContributeProps = {
@@ -20,7 +21,8 @@ export default function Contribute({ className, id }: ContributeProps) {
   const { crowdloan } = useCrowdloanById(id)
   const { parachainDetails } = useParachainDetailsById(crowdloan?.parachain?.paraId)
 
-  const [contributionAmount, setContributionAmount] = useState()
+  const [contributionAmount, setContributionAmount] = useState('')
+  const updateContributionAmount = useCallback(value => setContributionAmount(value.replace(/[^.\d]/g, '')), [])
   const { address } = useActiveAccount()
   const [verifier, setVerifier] = useState()
 
@@ -46,7 +48,7 @@ export default function Contribute({ className, id }: ContributeProps) {
         parachainDetails,
 
         contributionAmount,
-        setContributionAmount,
+        updateContributionAmount,
         verifier,
         setVerifier,
 
@@ -68,7 +70,7 @@ const ContributeTo = styled(
     parachainDetails,
 
     contributionAmount,
-    setContributionAmount,
+    updateContributionAmount,
     verifier,
     setVerifier,
 
@@ -80,9 +82,7 @@ const ContributeTo = styled(
   }) => {
     const { price: tokenPrice, loading: priceLoading } = useTokenPrice('KSM')
     const usd = useMemo(
-      () =>
-        parseFloat(contributionAmount).toString() === contributionAmount &&
-        multiplyBigNumbers(contributionAmount, tokenPrice),
+      () => !Number.isNaN(Number(contributionAmount)) && multiplyBigNumbers(contributionAmount, tokenPrice),
       [contributionAmount, tokenPrice]
     )
 
@@ -104,12 +104,12 @@ const ContributeTo = styled(
             <div className="amount-input">
               <Field.Input
                 value={contributionAmount}
-                onChange={setContributionAmount}
+                onChange={updateContributionAmount}
                 dim
                 suffix="KSM"
                 disabled={status === 'VALIDATING'}
               />
-              <div className="info-row">
+              <div className="info-row usd-and-error">
                 <Pendor prefix={!usd && '-'} require={!priceLoading}>
                   {usd && formatCurrency(usd)}
                 </Pendor>
@@ -143,7 +143,12 @@ const ContributeTo = styled(
           <Button type="button" onClick={closeModal}>
             Cancel
           </Button>
-          <Button type="submit" primary loading={status === 'VALIDATING'}>
+          <Button
+            type="submit"
+            primary
+            loading={status === 'VALIDATING'}
+            disabled={error === 'Account balance too low'}
+          >
             Contribute
           </Button>
         </footer>
@@ -165,6 +170,7 @@ const ContributeTo = styled(
   > header > .logo {
     font-size: 6.4rem;
     margin-bottom: 1.6rem;
+    user-select: none;
   }
   > header > h3 {
     font-size: 1.8rem;
@@ -214,6 +220,10 @@ const ContributeTo = styled(
         max-width: 75%;
       }
     }
+
+    > .info-row.usd-and-error {
+      min-height: 2.2rem;
+    }
   }
   > main > .row > .account-switcher-pill {
     flex: 0 0 0%;
@@ -256,11 +266,11 @@ const ContributeTo = styled(
   }
 `
 
-const InProgress = styled(({ className, parachainDetails, explorerUrl, closeModal }) => (
+const InProgress = styled(({ className, explorerUrl, closeModal }) => (
   <div className={className}>
     <header>
       <h2>In Progress</h2>
-      <TalismanLogo className="logo" />
+      <MaterialLoader className="logo" />
     </header>
     <main>
       <div>Your transaction is in progress. This may take a few minutes to confirm</div>
@@ -289,71 +299,7 @@ const InProgress = styled(({ className, parachainDetails, explorerUrl, closeModa
   > header > .logo {
     font-size: 6.4rem;
     margin-bottom: 8.2rem;
-  }
-
-  > main {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-bottom: 4rem;
-
-    div:first-child {
-      margin-bottom: 4rem;
-    }
-    a {
-      display: block;
-      color: #f46545;
-      background: #fbe2dc;
-      border-radius: 5.6rem;
-      padding: 0.6rem 1.2rem;
-      cursor: pointer;
-    }
-  }
-
-  > footer {
-    display: flex;
-    justify-content: center;
-
-    button {
-      min-width: 27.8rem;
-    }
-  }
-`
-
-const Success = styled(({ className, parachainDetails, explorerUrl, closeModal }) => (
-  <div className={className}>
-    <header>
-      <h2>Success</h2>
-      <div className="logo">✓</div>
-    </header>
-    <main>
-      <div>Your transaction was successful. Thank you for your contribution</div>
-      {explorerUrl && (
-        <a href={explorerUrl} target="_blank" rel="noopener noreferrer">
-          View on Polkadot.js
-        </a>
-      )}
-    </main>
-    <footer>
-      <Button onClick={closeModal}>Close</Button>
-    </footer>
-  </div>
-))`
-  > header {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  > header > h2 {
-    text-align: center;
-    font-size: 2.4rem;
-    font-weight: 600;
-    margin-bottom: 8.2rem;
-  }
-  > header > .logo {
-    font-size: 6.4rem;
-    margin-bottom: 8.2rem;
-    color: #fbe2dc;
+    color: var(--color-primary);
     user-select: none;
   }
 
@@ -386,11 +332,77 @@ const Success = styled(({ className, parachainDetails, explorerUrl, closeModal }
   }
 `
 
-const Failed = styled(({ className, parachainDetails, explorerUrl, error, closeModal }) => (
+const Success = styled(({ className, explorerUrl, closeModal }) => (
+  <div className={className}>
+    <header>
+      <h2>Success</h2>
+      <CheckCircle className="logo" />
+    </header>
+    <main>
+      <div>Your transaction was successful. Thank you for your contribution</div>
+      {explorerUrl && (
+        <a href={explorerUrl} target="_blank" rel="noopener noreferrer">
+          View on Polkadot.js
+        </a>
+      )}
+    </main>
+    <footer>
+      <Button onClick={closeModal}>Close</Button>
+    </footer>
+  </div>
+))`
+  > header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  > header > h2 {
+    text-align: center;
+    font-size: 2.4rem;
+    font-weight: 600;
+    margin-bottom: 8.2rem;
+  }
+  > header > .logo {
+    font-size: 6.4rem;
+    margin-bottom: 8.2rem;
+    color: var(--color-primary);
+    user-select: none;
+  }
+
+  > main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 4rem;
+
+    div:first-child {
+      margin-bottom: 4rem;
+    }
+    a {
+      display: block;
+      color: #f46545;
+      background: #fbe2dc;
+      border-radius: 5.6rem;
+      padding: 0.6rem 1.2rem;
+      cursor: pointer;
+    }
+  }
+
+  > footer {
+    display: flex;
+    justify-content: center;
+
+    button {
+      min-width: 27.8rem;
+    }
+  }
+`
+
+const Failed = styled(({ className, explorerUrl, error, closeModal }) => (
   <div className={className}>
     <header>
       <h2>Failed</h2>
-      <div className="logo">❌</div>
+      <XCircle className="logo" />
     </header>
     <main>
       <div>
@@ -422,7 +434,7 @@ const Failed = styled(({ className, parachainDetails, explorerUrl, error, closeM
   > header > .logo {
     font-size: 6.4rem;
     margin-bottom: 8.2rem;
-    color: #fbe2dc;
+    color: var(--color-primary);
     user-select: none;
   }
 
