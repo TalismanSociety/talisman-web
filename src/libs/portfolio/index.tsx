@@ -13,11 +13,11 @@ import { FC, useContext as _useContext, createContext, useCallback, useEffect, u
 
 // Helpers (exported)
 export function calculatePortfolioAmounts(
-  balances: BalanceWithTokensWithPrice[]
+  balances: Array<BalanceWithTokensWithPrice | null>
 ): Array<{ tags: Tag[]; amount: string | undefined }> {
   const amounts: Array<{ tags: Tag[]; amount: string | undefined }> = []
 
-  const byAddress = groupBalancesByAddress(balances.filter(balance => typeof balance.usd === 'string')) as {
+  const byAddress = groupBalancesByAddress(balances.filter(balance => balance && typeof balance.usd === 'string')) as {
     [key: string]: BalanceWithTokensWithPrice[]
   }
 

@@ -118,6 +118,11 @@ export function useCrowdloanContribution(
       const { tokenDecimals } = chaindata
       const contributionPlanck = tokensToPlanck(contributionAmount, tokenDecimals)
 
+      if (!ksmBalance) {
+        setStatus('IDLE')
+        setError('Account balance not ready yet')
+        return
+      }
       if (new BigNumber(ksmBalance).isLessThan(new BigNumber(contributionAmount))) {
         setStatus('IDLE')
         setError('Account balance too low')
@@ -130,6 +135,7 @@ export function useCrowdloanContribution(
       // TODO: Test that crowdloan is in a valid lease period
       // TODO: Test that crowdloan has not already won
       // TODO: Validate validator signature
+      // TODO: Test user has enough KSM to not go below the existential deposit
       // https://github.com/paritytech/polkadot/blob/dee1484760aedfd699e764f2b7c7d85855f7b077/runtime/common/src/crowdloan.rs#L432
 
       if (
@@ -172,7 +178,11 @@ export function useCrowdloanContribution(
 
         if (status.isInBlock) {
           console.info(`Transaction included at blockHash ${status.asInBlock}`)
-          setExplorerUrl(`https://polkadot.js.org/apps/#/explorer/query/${status.asInBlock}`)
+          setExplorerUrl(
+            `https://polkadot.js.org/apps/${
+              chaindata.rpcs[0] ? `?rpc=${encodeURIComponent(chaindata.rpcs[0])}` : ''
+            }#/explorer/query/${status.asInBlock}`
+          )
         }
         if (status.isFinalized) {
           console.info(`Transaction finalized at blockHash ${status.asFinalized}`)

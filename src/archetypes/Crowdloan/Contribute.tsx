@@ -22,7 +22,19 @@ export default function Contribute({ className, id }: ContributeProps) {
   const { parachainDetails } = useParachainDetailsById(crowdloan?.parachain?.paraId)
 
   const [contributionAmount, setContributionAmount] = useState('')
-  const updateContributionAmount = useCallback(value => setContributionAmount(value.replace(/[^.\d]/g, '')), [])
+  const updateContributionAmount = useCallback(
+    value =>
+      setContributionAmount(
+        value
+          // remove anything which isn't a number or a decimal point
+          .replace(/[^.\d]/g, '')
+          // remove any decimal points after the first decimal point
+          .replace(/\./g, (match: string, offset: number, string: string) =>
+            match === '.' ? (string.indexOf('.') === offset ? '.' : '') : ''
+          )
+      ),
+    []
+  )
   const { address } = useActiveAccount()
   const [verifier, setVerifier] = useState()
 
@@ -106,6 +118,9 @@ const ContributeTo = styled(
                 value={contributionAmount}
                 onChange={updateContributionAmount}
                 dim
+                type="text"
+                inputmode="numeric"
+                pattern="[.\d]*"
                 suffix="KSM"
                 disabled={status === 'VALIDATING'}
               />

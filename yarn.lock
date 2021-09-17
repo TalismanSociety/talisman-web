@@ -2820,15 +2820,15 @@ __metadata:
   linkType: hard
 
 "@talismn/api-react-hooks@npm:~0":
-  version: 0.0.17
-  resolution: "@talismn/api-react-hooks@npm:0.0.17"
+  version: 0.0.18
+  resolution: "@talismn/api-react-hooks@npm:0.0.18"
   dependencies:
     "@talismn/api": ~0
     "@talismn/chaindata-js": ~0
     "@talismn/util": ~0
   peerDependencies:
     react: ">=17"
-  checksum: 2be76066c842589d7ed0048aa2bed75880165bde028c177482c70631f5958a8cf68626272c392f6ba73dfcb50f117561b283aa129d95c6d2720220cf7e3c1451
+  checksum: 32a6c120b8b9b3e51b4626bad1bec78bd36ba63233ed98694f258a0ea08efaafe780c7130c02f71f84d52089af24820eca977f3870e3e567e176459340e1d35b
   languageName: node
   linkType: hard
 

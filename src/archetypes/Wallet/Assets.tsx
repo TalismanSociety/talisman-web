@@ -3,6 +3,8 @@ import { calculatePortfolioAmounts, usePortfolio, useTaggedAmountsInPortfolio } 
 import { useAccountAddresses, useGuardian } from '@libs/talisman'
 import { useTokenPrice } from '@libs/tokenprices'
 import {
+  BalanceWithTokens,
+  BalanceWithTokensWithPrice,
   addPriceToTokenBalances,
   addTokensToBalances,
   groupBalancesByChain,
@@ -61,6 +63,7 @@ const AssetItem = styled(({ id, balances, addresses, className }) => {
   const tokens = useFuncMemo(
     (tokenBalances, addresses) =>
       tokenBalances
+        .filter((balance): balance is BalanceWithTokens => balance !== null)
         .filter(balance => addresses.includes(balance.address))
         .map(balance => balance.tokens)
         .reduce(addBigNumbers, undefined),
@@ -70,6 +73,7 @@ const AssetItem = styled(({ id, balances, addresses, className }) => {
   const usd = useFuncMemo(
     (pricedBalances, addresses) =>
       pricedBalances
+        .filter((balance): balance is BalanceWithTokensWithPrice => balance !== null)
         .filter(balance => addresses.includes(balance.address))
         .map(balance => balance.usd)
         .reduce(addBigNumbers, undefined),
@@ -117,7 +121,7 @@ const Assets = styled(({ id, className }) => {
   const addresses = useMemo(() => accounts.map((account: any) => account.address), [accounts])
   const accountAddresses = useAccountAddresses()
 
-  const { balances, status, message } = useBalances(addresses, chainIds, customRpcs)
+  const { balances } = useBalances(addresses, chainIds, customRpcs)
   const balancesByChain = useFuncMemo(groupBalancesByChain, chainIds, balances)
 
   const { totalAssetsUsdByAddress } = usePortfolio()
@@ -132,13 +136,6 @@ const Assets = styled(({ id, className }) => {
 
   return (
     <section className={`wallet-assets ${className}`}>
-      {message && (
-        <div className={`message ${status === 'ERROR' && 'is-error'}`}>
-          Failed to fetch account balances
-          <br />
-          {message}
-        </div>
-      )}
       <Panel title="Assets" subtitle={assetsUsd && formatCurrency(assetsUsd)}>
         {Object.entries(balancesByChain).map(([chainId, balances]) => (
           <PanelSection key={chainId}>
