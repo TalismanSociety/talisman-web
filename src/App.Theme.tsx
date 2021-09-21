@@ -229,11 +229,11 @@ declare module 'styled-components' {
 const light: DefaultTheme = {
   primary: '244,101,69',
   secondary: '0,0,255',
-  background: '255,255,255',
+  background: '250,250,250',
   foreground: '0,0,0',
   mid: '150,150,150',
   dim: '245,245,245',
-  light: '255,255,255',
+  light: '250,250,250',
   dark: '0,0,0',
 }
 
