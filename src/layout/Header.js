@@ -1,5 +1,6 @@
 import { ReactComponent as DiscordLogo } from '@assets/icons/discord-header.svg'
 import { ReactComponent as GithubLogo } from '@assets/icons/github-header.svg'
+import { ReactComponent as TwitterLogo } from '@assets/icons/twitter-header.svg'
 import { ReactComponent as Logo } from '@assets/logo.svg'
 import { NavLink } from 'react-router-dom'
 import styled from 'styled-components'
@@ -11,60 +12,51 @@ const Header = styled(({ className }) => (
         <Logo />
       </NavLink>
     </span>
-    <nav>
+    <nav className="main-nav">
       <NavLink exact to="/">
         Portfolio
       </NavLink>
       <NavLink to="/crowdloans">Crowdloans</NavLink>
     </nav>
-    <span>
+    <nav className="external-nav">
+      <a
+        href="https://talisman.canny.io/feature-requests"
+        target="_blank"
+        rel="noreferrer noopener"
+        className="text-pill"
+      >
+        Request Features
+      </a>
       <a href="https://github.com/talismansociety" target="_blank" rel="noreferrer noopener">
         <GithubLogo />
       </a>
       <a href="https://discord.gg/rQgTD9SGtU" target="_blank" rel="noreferrer noopener">
         <DiscordLogo />
       </a>
-    </span>
+      <a href="https://twitter.com/wearetalisman" target="_blank" rel="noreferrer noopener">
+        <TwitterLogo />
+      </a>
+    </nav>
   </header>
 ))`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  display: grid;
+  grid-template: 1fr / 1fr 1fr 1fr;
   padding: 0 2.4rem;
   width: 100%;
   box-shadow: 0 0 2.4rem rgba(0, 0, 0, 0.05);
 
   > * {
     display: flex;
-    justify-content: space-between;
     align-items: center;
 
-    &:first-child {
-      width: 20%;
+    &:nth-child(3n + 1) {
+      justify-self: start;
     }
-
-    &:last-child {
-      width: 20%;
-      justify-content: flex-end;
-
-      > a {
-        font-size: 2.4rem;
-        color: var(--color-primary);
-
-        &:hover {
-          color: var(--color-foreground);
-        }
-        &:active {
-          color: var(--color-primary);
-        }
-        &:not(:first-child) {
-          margin-left: 2.5rem;
-        }
-
-        > svg {
-          display: block;
-        }
-      }
+    &:nth-child(3n + 2) {
+      justify-self: center;
+    }
+    &:nth-child(3n + 3) {
+      justify-self: end;
     }
   }
 
@@ -74,13 +66,13 @@ const Header = styled(({ className }) => (
     height: 1.8em;
     font-size: 1rem;
     svg {
-      margin: 0;
+      display: block;
       width: 100%;
       height: 100%;
     }
   }
 
-  nav {
+  .main-nav {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -110,15 +102,62 @@ const Header = styled(({ className }) => (
     }
   }
 
-  @media only screen and (max-width: 700px) {
+  .external-nav {
+    > a {
+      font-size: 2.4rem;
+      color: var(--color-primary);
+
+      &:hover {
+        color: var(--color-foreground);
+      }
+      &:active {
+        color: var(--color-primary);
+      }
+      &:not(:first-child) {
+        margin-left: 2.5rem;
+      }
+
+      > svg {
+        display: block;
+      }
+    }
+    > a.text-pill {
+      padding: 0.8rem 1.2rem;
+      border-radius: 999999rem;
+      line-height: 1.4rem;
+      font-size: 1.4rem;
+      font-weight: 500;
+      color: rgb(${({ theme }) => theme?.background});
+      background: var(--color-primary);
+      text-align: center;
+
+      &:hover {
+        background: var(--color-foreground);
+      }
+      &:active {
+        background: var(--color-primary);
+      }
+    }
+  }
+
+  @media only screen and (max-width: 913px) {
     .logo {
       font-size: 0.7rem;
+    }
+    .external-nav > a.text-pill {
+      display: none;
+    }
+  }
+
+  @media only screen and (max-width: 700px) {
+    .logo {
+      font-size: 0.4rem;
     }
 
     .account-button {
       font-size: 0.8em;
     }
-  } ;
+  }
 `
 
 export default Header
