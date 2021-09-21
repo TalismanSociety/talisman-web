@@ -8,7 +8,7 @@ const Raised = styled(({ id, title, className }) => {
 
   return (
     <div className={`crowdloan-raised ${className}`} data-status={uiStatus?.toLowerCase()}>
-      {uiStatus === 'capped' && <h3>Success ✓</h3>}
+      {uiStatus === 'capped' && <h3>Goal reached ✓</h3>}
       {uiStatus !== 'capped' && title && <h3>{title}</h3>}
 
       <ProgressBar percent={percentRaised} />

@@ -6,33 +6,64 @@ export const truncateString = (str = '', start = 10, end = 0) =>
       ? str
       : `${str.substring(0, start)}...` + (end > 0 ? str.substring(str.length - end) : '')
     : null
-export const shortNumber = (num = 0, decimals = 2) => {
-  if (typeof num !== 'number') return
-  if (num < 1000) return parseFloat(num.toFixed(decimals))
+export const unitPrefixes = [
+  { multiplier: 1e-24, symbol: 'y' },
+  { multiplier: 1e-21, symbol: 'z' },
+  { multiplier: 1e-18, symbol: 'a' },
+  { multiplier: 1e-15, symbol: 'f' },
+  { multiplier: 1e-12, symbol: 'p' },
+  { multiplier: 1e-9, symbol: 'n' },
+  { multiplier: 1e-6, symbol: 'μ' },
+  { multiplier: 1e-3, symbol: 'm' },
+  { multiplier: 1, symbol: '' },
+  { multiplier: 1e3, symbol: 'k' },
+  { multiplier: 1e6, symbol: 'M' },
+  { multiplier: 1e9, symbol: 'G' },
+  { multiplier: 1e12, symbol: 'T' },
+  { multiplier: 1e15, symbol: 'P' },
+  { multiplier: 1e18, symbol: 'E' },
+  { multiplier: 1e21, symbol: 'Z' },
+  { multiplier: 1e24, symbol: 'Y' },
+]
+export const shortNumber = (num, decimals = 2) => {
+  if (!num) return
 
-  const si = [
-    { v: 1e3, s: 'K' },
-    { v: 1e6, s: 'M' },
-    { v: 1e9, s: 'B' },
-    { v: 1e12, s: 'T' },
-    { v: 1e15, s: 'P' },
-    { v: 1e18, s: 'E' },
-  ]
-  let i
+  const prefix = unitPrefixes
+    .slice()
+    .reverse()
+    .find(({ multiplier }) => multiplier <= num)
 
-  for (i = si.length - 1; i > 0; i--) {
-    if (num >= si[i].v) break
+  if (!prefix) return num.toFixed(decimals)
+
+  return (num / prefix.multiplier).toFixed(decimals).replace(/\.0+$|(\.[0-9]*[1-9])0+$/, '$1') + prefix.symbol
+}
+export const shortCurrency = (val, props) => {
+  const prefix = unitPrefixes
+    .slice()
+    .reverse()
+    .find(({ multiplier }) => multiplier <= val)
+
+  if (!prefix) return formatCurrency(val, props)
+
+  const parts = formatCurrencyToParts(val / prefix.multiplier, props)
+  for (const part of parts) {
+    if (part.type !== 'currency') continue
+    part.value = `${prefix.symbol}${part.value}`
   }
 
-  return (num / si[i].v).toFixed(decimals).replace(/\.0+$|(\.[0-9]*[1-9])0+$/, '$1') + si[i].s
+  return parts.map(({ value }) => value).join('')
 }
 export const formatCurrency = (val, props) =>
+  formatCurrencyToParts(val, props)
+    .map(({ value }) => value)
+    .join('')
+export const formatCurrencyToParts = (val, props) =>
   new Intl.NumberFormat(props?.locale || 'en-US', {
     style: 'currency',
     currency: props?.currency || 'USD',
     currencyDisplay: 'symbol',
-  }).format(val || 0)
+  }).formatToParts(val || 0)
 export const formatCommas = (val, props) =>
   new Intl.NumberFormat(props?.locale || 'en-US', {
-    maximumFractionDigits: 4,
+    maximumFractionDigits: props?.maximumFractionDigits || 4,
   }).format(val)

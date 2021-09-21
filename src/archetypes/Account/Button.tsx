@@ -10,7 +10,7 @@ import { addTokensToBalances, groupBalancesByAddress, useBalances, useChain } fr
 import { addBigNumbers, useFuncMemo } from '@talismn/util'
 import { formatCommas, formatCurrency, truncateString } from '@util/helpers'
 import { useEffect, useMemo, useRef, useState } from 'react'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 
 // format an address based on chain ID, derived from genesis ID
 // as returned from polkadot.js extension API
@@ -215,6 +215,8 @@ const Authorized = styled(({ className, narrow, allAccounts }) => {
   const chainIds = useMemo(() => [chainId], []) // 2 is kusama
   const addresses = useMemo(() => accounts.map((account: any) => account.address), [accounts])
 
+  const hasManyAccounts = addresses && addresses.length > 1
+
   const { nativeToken, tokenDecimals } = useChain(chainId)
   const { balances } = useBalances(addresses, chainIds)
 
@@ -233,8 +235,8 @@ const Authorized = styled(({ className, narrow, allAccounts }) => {
 
   return (
     <span
-      className={`account-button ${className}`}
-      onMouseEnter={() => narrow && openOnDelay()}
+      className={`account-button${hasManyAccounts ? ' has-many-accounts' : ''} ${className}`}
+      onMouseEnter={() => narrow && hasManyAccounts && openOnDelay()}
       onMouseLeave={() => cancelOpen()}
     >
       {hasActiveAccount ? (
@@ -264,7 +266,7 @@ const Authorized = styled(({ className, narrow, allAccounts }) => {
       </span>
 
       {narrow ? (
-        <ChevronDown style={{ margin: '0 1rem 0 0.8rem' }} />
+        <ChevronDown style={{ margin: '0 1rem 0 0.8rem', visibility: hasManyAccounts ? 'visible' : 'hidden' }} />
       ) : (
         <Button.Icon className="nav-toggle" onMouseEnter={() => setOpen(true)}>
           <ChevronDown />
@@ -319,11 +321,23 @@ const Authorized = styled(({ className, narrow, allAccounts }) => {
     }
   }
 
+  .identicon {
+    cursor: inherit;
+  }
+
   .account-picker {
     position: absolute;
     top: 100%;
     right: 0;
     z-index: 10;
+  }
+
+  &.has-many-accounts {
+    ${props =>
+      props.narrow &&
+      css`
+        cursor: pointer;
+      `}
   }
 `
 

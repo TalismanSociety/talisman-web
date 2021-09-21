@@ -1,11 +1,11 @@
 import { ApiPromise, WsProvider } from '@polkadot/api'
 import { web3FromAddress } from '@polkadot/extension-dapp'
 import type { BalanceOf } from '@polkadot/types/interfaces'
+import type { ISubmittableResult } from '@polkadot/types/types'
 import { addTokensToBalances, groupBalancesByAddress, useBalances, useChain } from '@talismn/api-react-hooks'
 import { Deferred, addBigNumbers, planckToTokens, tokensToPlanck, useFuncMemo } from '@talismn/util'
 import BigNumber from 'bignumber.js'
-import { useEffect } from 'react'
-import { useCallback, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 //
 // TODO: Integrate this lib into @talismn/api.
@@ -32,6 +32,7 @@ export type CrowdloanContribution = {
   contribute: () => Promise<void>
   status: string
   explorerUrl: string | null
+  txFee: { fee?: string; loading: boolean } | null
   error: string | null
 }
 
@@ -47,6 +48,8 @@ export function useCrowdloanContribution(
 ): CrowdloanContribution {
   const [status, setStatus] = useState<Status>('INIT')
   const [explorerUrl, setExplorerUrl] = useState<string | null>(null)
+  const [txFee, setTxFee] = useState<{ fee?: string; loading: boolean } | null>(null)
+  const txFeeLoadingRef = useRef(0)
   const [error, setError] = useState<string | null>(null)
 
   const kusamaId = '2'
@@ -87,6 +90,33 @@ export function useCrowdloanContribution(
     clearBalanceError()
   }, [contributionAmount, error, ksmBalance])
 
+  // update tx fee as user types
+  useEffect(() => {
+    ;(async () => {
+      setTxFee({ loading: true })
+
+      const api = await apiPromise
+      if (!api.isReady) return
+      if (!contributionAmount) return setTxFee(null)
+      if (!account) return setTxFee(null)
+
+      txFeeLoadingRef.current += 1
+      const loadId = txFeeLoadingRef.current
+
+      const { tokenDecimals } = chaindata
+      const contributionPlanck = tokensToPlanck(contributionAmount, tokenDecimals)
+      const { partialFee } = await api.tx.crowdloan
+        .contribute(parachainId, contributionPlanck, signature)
+        .paymentInfo(account)
+      const feeTokens = planckToTokens(partialFee.toString(), tokenDecimals)
+
+      // contributionAmount has changed since we started calculating the fee
+      if (loadId !== txFeeLoadingRef.current) return
+
+      setTxFee({ fee: feeTokens, loading: false })
+    })()
+  }, [account, apiPromise, chaindata, contributionAmount, parachainId, signature])
+
   const contribute = useCallback(async () => {
     if (status !== 'IDLE') return
 
@@ -111,7 +141,7 @@ export function useCrowdloanContribution(
     setExplorerUrl(null)
     setStatus('VALIDATING')
 
-    let api = await apiPromise
+    const api = await apiPromise
     let txStatus
     try {
       const minContribution = api.consts.crowdloan.minContribution as BalanceOf
@@ -143,7 +173,8 @@ export function useCrowdloanContribution(
         new BigNumber(contributionPlanck).isLessThan(new BigNumber(minContribution.toString()))
       ) {
         setStatus('IDLE')
-        setError(`A minimum of ${planckToTokens(minContribution.toString(), tokenDecimals)} KSM is required`)
+        const minimum = new BigNumber(planckToTokens(minContribution.toString(), tokenDecimals) || '').toFixed(2)
+        setError(`A minimum of ${minimum} KSM is required`)
         return
       }
 
@@ -161,7 +192,7 @@ export function useCrowdloanContribution(
 
       setStatus('PROCESSING')
 
-      const unsub = await txSigned.send(result => {
+      const unsub = await txSigned.send(async result => {
         const { status, events = [], dispatchError } = result
 
         // TODO: Get transaction hash / unique identifier instead of block hash
@@ -178,11 +209,8 @@ export function useCrowdloanContribution(
 
         if (status.isInBlock) {
           console.info(`Transaction included at blockHash ${status.asInBlock}`)
-          setExplorerUrl(
-            `https://polkadot.js.org/apps/${
-              chaindata.rpcs[0] ? `?rpc=${encodeURIComponent(chaindata.rpcs[0])}` : ''
-            }#/explorer/query/${status.asInBlock}`
-          )
+
+          setExplorerUrl((await deriveExplorerUrl(api, result)) || null)
         }
         if (status.isFinalized) {
           console.info(`Transaction finalized at blockHash ${status.asFinalized}`)
@@ -195,6 +223,8 @@ export function useCrowdloanContribution(
           ) {
             txStatus = 'SUCCESS'
           }
+
+          setExplorerUrl((await deriveExplorerUrl(api, result)) || null)
 
           // https://polkadot.js.org/docs/api/cookbook/tx#how-do-i-get-the-decoded-enum-for-an-extrinsicfailed-event
           if (dispatchError && dispatchError.isModule && api) {
@@ -226,8 +256,12 @@ export function useCrowdloanContribution(
     setStatus(txStatus)
   }, [account, apiPromise, chaindata, contributionAmount, ksmBalance, parachainId, signature, status])
 
-  return { chaindata, contribute, status, explorerUrl, error }
+  return { chaindata, contribute, status, explorerUrl, txFee, error }
 }
+
+//
+// Hooks (internal)
+//
 
 // api is either null or ApiPromise, the promise variation of the polkadotjs api
 // apiPromise is a Promise<ApiPromise> which can be `await`ed to wait until the ApiPromise has been initialized
@@ -235,31 +269,35 @@ function useApi(rpcs?: string[]): [ApiPromise | null, Promise<ApiPromise>] {
   const [apiPromise, setApiPromise] = useState<Promise<ApiPromise> | null>(null)
   const [api, setApi] = useState<ApiPromise | null>(null)
   const [apiDeferred, setApiDeferred] = useState(Deferred<ApiPromise>())
-  const mountedRef = useMountedRef()
 
   useEffect(() => {
     if (!Array.isArray(rpcs) || rpcs.length < 1) return
 
     setApiPromise(ApiPromise.create({ provider: new WsProvider(rpcs) }))
+    return () => {
+      // remove apiPromise
+      setApiPromise(null)
+      // reset deferred so users don't await on a disconnected apiPromise
+      setApiDeferred(Deferred())
+    }
   }, [rpcs])
 
   useEffect(() => {
     if (!apiPromise) return
 
-    apiPromise.then(api => {
-      if (!mountedRef.current) return
-
+    apiPromise.then(api =>
       // check that we are the most recent api promise
       setApiPromise(currentApiPromise => {
+        // set api
         if (apiPromise === currentApiPromise) setApi(api)
         return currentApiPromise
       })
-    })
+    )
 
     return () => {
       apiPromise.then(api => api.disconnect())
     }
-  }, [apiPromise, mountedRef])
+  }, [apiPromise])
 
   useEffect(() => {
     if (!api) return
@@ -273,19 +311,62 @@ function useApi(rpcs?: string[]): [ApiPromise | null, Promise<ApiPromise>] {
 
       return deferred
     })
+
+    return () => setApiDeferred(Deferred())
   }, [api])
 
   return [api, apiDeferred.promise]
 }
 
-function useMountedRef() {
-  const mountedRef = useRef(true)
+//
+// Helpers (internal)
+//
 
-  useEffect(() => {
-    return () => {
-      mountedRef.current = false
-    }
-  }, [])
+async function deriveExplorerUrl(api: ApiPromise, result: ISubmittableResult): Promise<string | undefined> {
+  const { status, events = [] } = result
 
-  return mountedRef
+  //
+  // Step 1: Get block number
+  //
+
+  const blockHash = status.isFinalized
+    ? status.asFinalized.toHex()
+    : status.isInBlock
+    ? status.asInBlock.toHex()
+    : undefined
+
+  // extrinsic has not yet been included in a block, so we cannot yet derive an explorer url
+  if (blockHash === undefined) return
+
+  const { block } = await api.rpc.chain.getBlock(blockHash)
+  const blockNumber = block.header.number.toNumber()
+
+  //
+  // Step 2: Get extrinsic index in block
+  //
+
+  const txStatusEvent = events.find(
+    ({ event: { method, section } }) => section === 'system' && ['ExtrinsicSuccess', 'ExtrinsicFailed'].includes(method)
+  )
+  if (!txStatusEvent)
+    console.error(
+      'Failed to find the extrinsic status event. If you see this error, there is likely a bug in the Talisman codebase. Please report it to the Talisman team for investigation.'
+    )
+
+  const txIndex = txStatusEvent?.phase.isApplyExtrinsic ? txStatusEvent.phase.asApplyExtrinsic : undefined
+  if (txIndex === undefined)
+    console.error(
+      'Failed to derive the extrinsic index. If you see this error, there is likely a bug in the Talisman codebase. Please report it to the Talisman team for investigation.'
+    )
+
+  //
+  // Step 3: Concatenate
+  //
+
+  const txId = blockNumber && txIndex !== undefined ? `${blockNumber}-${txIndex}` : undefined
+  const explorerUrl = txId
+    ? `https://kusama.subscan.io/extrinsic/${txId}`
+    : `https://kusama.subscan.io/block/${blockHash}`
+
+  return explorerUrl
 }

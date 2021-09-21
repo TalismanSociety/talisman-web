@@ -6,7 +6,7 @@ import { useCrowdloanContribution } from '@libs/crowdloans'
 import { useActiveAccount, useCrowdloanById, useParachainDetailsById } from '@libs/talisman'
 import { useTokenPrice } from '@libs/tokenprices'
 import { multiplyBigNumbers } from '@talismn/util'
-import { formatCurrency } from '@util/helpers'
+import { formatCurrency, shortNumber, truncateString } from '@util/helpers'
 import { useCallback, useMemo, useState } from 'react'
 import styled from 'styled-components'
 
@@ -38,7 +38,7 @@ export default function Contribute({ className, id }: ContributeProps) {
   const { address } = useActiveAccount()
   const [verifier, setVerifier] = useState()
 
-  const { contribute, status, explorerUrl, error } = useCrowdloanContribution(
+  const { contribute, status, explorerUrl, txFee, error } = useCrowdloanContribution(
     crowdloan?.parachain?.paraId,
     contributionAmount,
     address
@@ -67,6 +67,7 @@ export default function Contribute({ className, id }: ContributeProps) {
         contribute,
         status,
         explorerUrl,
+        txFee,
         error,
 
         closeModal,
@@ -88,6 +89,7 @@ const ContributeTo = styled(
 
     contribute,
     status,
+    txFee,
     error,
 
     closeModal,
@@ -119,20 +121,27 @@ const ContributeTo = styled(
                 onChange={updateContributionAmount}
                 dim
                 type="text"
-                inputmode="numeric"
+                inputMode="numeric"
                 pattern="[.\d]*"
                 suffix="KSM"
                 disabled={status === 'VALIDATING'}
               />
               <div className="info-row usd-and-error">
                 <Pendor prefix={!usd && '-'} require={!priceLoading}>
-                  {usd && formatCurrency(usd)}
+                  {usd && truncateString(formatCurrency(usd), '$9,999,999,999.99'.length)}
                 </Pendor>
                 {error && <span className="error">{error}</span>}
               </div>
             </div>
-            <div className="account-switcher-pill">
-              <Account.Button narrow />
+            <div className="switcher-column">
+              <div className="account-switcher-pill">
+                <Account.Button narrow />
+              </div>
+              <div className="tx-fee">
+                <Pendor suffix={txFee ? 'KSM' : '-'} require={!txFee?.loading}>
+                  {txFee ? `Fee: ${shortNumber(txFee.fee)}` : null}
+                </Pendor>
+              </div>
             </div>
           </div>
 
@@ -162,7 +171,7 @@ const ContributeTo = styled(
             type="submit"
             primary
             loading={status === 'VALIDATING'}
-            disabled={error === 'Account balance too low'}
+            disabled={error === 'Account balance too low' || !contributionAmount}
           >
             Contribute
           </Button>
@@ -240,17 +249,27 @@ const ContributeTo = styled(
       min-height: 2.2rem;
     }
   }
-  > main > .row > .account-switcher-pill {
-    flex: 0 0 0%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 5.9rem;
-    padding: 0 0.5rem;
-    border-radius: 4rem;
-    background: rgb(${({ theme }) => theme?.background});
-    color: rgb(${({ theme }) => theme?.foreground});
-    box-shadow: 0 0 0.8rem rgba(0, 0, 0, 0.1);
+  > main > .row > .switcher-column {
+    > .account-switcher-pill {
+      flex: 0 0 0%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 5.9rem;
+      padding: 0 0.5rem;
+      border-radius: 4rem;
+      background: rgb(${({ theme }) => theme?.background});
+      color: rgb(${({ theme }) => theme?.foreground});
+      box-shadow: 0 0 0.8rem rgba(0, 0, 0, 0.1);
+    }
+    > .tx-fee {
+      width: 100%;
+      margin-top: 1rem;
+      text-align: right;
+      color: rgb(${({ theme }) => theme?.mid});
+      font-size: var(--font-size-small);
+      min-height: 2.2rem;
+    }
   }
   > main > .row > .verifier-input {
     .field {
@@ -291,7 +310,7 @@ const InProgress = styled(({ className, explorerUrl, closeModal }) => (
       <div>Your transaction is in progress. This may take a few minutes to confirm</div>
       {explorerUrl && (
         <a href={explorerUrl} target="_blank" rel="noopener noreferrer">
-          View on Polkadot.js
+          View on Subscan
         </a>
       )}
     </main>
@@ -357,7 +376,7 @@ const Success = styled(({ className, explorerUrl, closeModal }) => (
       <div>Your transaction was successful. Thank you for your contribution</div>
       {explorerUrl && (
         <a href={explorerUrl} target="_blank" rel="noopener noreferrer">
-          View on Polkadot.js
+          View on Subscan
         </a>
       )}
     </main>
@@ -426,7 +445,7 @@ const Failed = styled(({ className, explorerUrl, error, closeModal }) => (
       </div>
       {explorerUrl && (
         <a href={explorerUrl} target="_blank" rel="noopener noreferrer">
-          View on Polkadot.js
+          View on Subscan
         </a>
       )}
     </main>
