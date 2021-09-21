@@ -193,6 +193,29 @@ const NoAccount = styled(({ className }) => {
   }
 `
 
+const Unauthorized = styled(({ className }) => {
+  return (
+    <Button className={`account-button ${className}`}>
+      {`Polkadot{.js}`}
+      <br />
+      <span className="subtext">Requires Authorization</span>
+    </Button>
+  )
+})`
+  text-align: center;
+  line-height: 1em;
+  display: block;
+  padding: 0.3em;
+  cursor: default;
+  .subtext {
+    font-size: 0.7em;
+    opacity: 0.7;
+    text-transform: uppercase;
+    font-weight: var(--font-weight-regular);
+  }
+`
+
+
 const Authorized = styled(({ className, narrow, allAccounts }) => {
   const { switchAccount } = useActiveAccount()
   const { accounts } = useGuardian()
@@ -351,6 +374,8 @@ const AccountButton = props => {
   switch (status) {
     case 'AUTHORIZED':
       return <Authorized {...props} />
+    case 'UNAUTHORIZED':
+      return <Unauthorized {...props} />
     case 'UNAVAILABLE':
       return <Unavailable {...props} />
     case 'NOACCOUNT':
