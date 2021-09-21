@@ -234,53 +234,58 @@ const Authorized = styled(({ className, narrow, allAccounts }) => {
   }
 
   return (
-    <span
-      className={`account-button${hasManyAccounts ? ' has-many-accounts' : ''} ${className}`}
-      onMouseEnter={() => narrow && hasManyAccounts && openOnDelay()}
-      onMouseLeave={() => cancelOpen()}
-    >
-      {hasActiveAccount ? (
-        <Identicon className="identicon" value={address} theme="polkadot" />
-      ) : (
-        <Identicon
-          className="identicon"
-          Custom={AllAccountsIcon}
-          value="5DHuDfmwzykE9KVmL87DLjAbfSX7P4f4wDW5CKx8QZnQA4FK"
-          theme="polkadot"
+    <div className="account-switcher-pill">
+
+      <span
+        className={`account-button${hasManyAccounts ? ' has-many-accounts' : ''} ${className}`}
+        onMouseEnter={() => narrow && hasManyAccounts && openOnDelay()}
+        onMouseLeave={() => cancelOpen()}
+      >
+        {hasActiveAccount ? (
+          <Identicon className="identicon" value={address} theme="polkadot" />
+        ) : (
+          <Identicon
+            className="identicon"
+            Custom={AllAccountsIcon}
+            value="5DHuDfmwzykE9KVmL87DLjAbfSX7P4f4wDW5CKx8QZnQA4FK"
+            theme="polkadot"
+          />
+        )}
+        <span className="selected-account">
+          <div>{hasActiveAccount ? name : allAccounts ? 'All Accounts' : 'Loading...'}</div>
+          <div>
+            {allAccounts ? (
+              <Pendor prefix={!usd && '-'}>{usd && formatCurrency(usd)}</Pendor>
+            ) : (
+              <Pendor suffix={` ${nativeToken}`}>
+                {ksmBalancesByAddress[address] &&
+                  formatCommas(
+                    ksmBalancesByAddress[address].map(balance => balance?.tokens).reduce(addBigNumbers, undefined)
+                  )}
+              </Pendor>
+            )}
+          </div>
+        </span>
+
+        {narrow ? (
+          <ChevronDown style={{ margin: '0 1rem 0 0.8rem', visibility: hasManyAccounts ? 'visible' : 'hidden' }} />
+        ) : (
+          <Button.Icon className="nav-toggle" onMouseEnter={() => setOpen(true)}>
+            <ChevronDown />
+          </Button.Icon>
+        )}
+
+        <Dropdown
+          open={open}
+          handleClose={() => setOpen(false)}
+          allAccounts={allAccounts}
+          nativeToken={nativeToken}
+          ksmBalancesByAddress={ksmBalancesByAddress}
         />
-      )}
-      <span className="selected-account">
-        <div>{hasActiveAccount ? name : allAccounts ? 'All Accounts' : 'Loading...'}</div>
-        <div>
-          {allAccounts ? (
-            <Pendor prefix={!usd && '-'}>{usd && formatCurrency(usd)}</Pendor>
-          ) : (
-            <Pendor suffix={` ${nativeToken}`}>
-              {ksmBalancesByAddress[address] &&
-                formatCommas(
-                  ksmBalancesByAddress[address].map(balance => balance?.tokens).reduce(addBigNumbers, undefined)
-                )}
-            </Pendor>
-          )}
-        </div>
       </span>
 
-      {narrow ? (
-        <ChevronDown style={{ margin: '0 1rem 0 0.8rem', visibility: hasManyAccounts ? 'visible' : 'hidden' }} />
-      ) : (
-        <Button.Icon className="nav-toggle" onMouseEnter={() => setOpen(true)}>
-          <ChevronDown />
-        </Button.Icon>
-      )}
+    </div>
 
-      <Dropdown
-        open={open}
-        handleClose={() => setOpen(false)}
-        allAccounts={allAccounts}
-        nativeToken={nativeToken}
-        ksmBalancesByAddress={ksmBalancesByAddress}
-      />
-    </span>
   )
 })`
   font-size: inherit;

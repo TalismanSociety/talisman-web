@@ -134,9 +134,7 @@ const ContributeTo = styled(
               </div>
             </div>
             <div className="switcher-column">
-              <div className="account-switcher-pill">
                 <Account.Button narrow />
-              </div>
               <div className="tx-fee">
                 <Pendor suffix={txFee ? 'KSM' : '-'} require={!txFee?.loading}>
                   {txFee ? `Fee: ${shortNumber(txFee.fee)}` : null}
