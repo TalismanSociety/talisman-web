@@ -11,7 +11,7 @@ const useActiveAccount = () => {
 
 const useAccountAddresses = () => {
   const { accounts, activeAccount } = useContext(Context)
-  const [addresses, setAddresses] = useState<string | undefined>()
+  const [addresses, setAddresses] = useState<string[] | undefined>()
 
   useEffect(() => {
     setAddresses(activeAccount ? [activeAccount.address] : accounts.map(account => account.address))

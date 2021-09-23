@@ -1,6 +1,6 @@
 import { Panel, PanelSection } from '@components'
 
-const Staking = ({ id, className }) => (
+const Staking = ({ className }: { className?: string }) => (
   <section className={`wallet-assets ${className}`}>
     <Panel title="Staking">
       <PanelSection comingSoon>🔑 This door will be unlocked soon</PanelSection>

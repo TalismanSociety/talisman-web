@@ -8,7 +8,6 @@ import BigNumber from 'bignumber.js'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 //
-// TODO: Integrate this lib into @talismn/api.
 // TODO: Move tx handling into a generic queue, store queue in react context
 //
 

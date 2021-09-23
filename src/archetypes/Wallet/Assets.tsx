@@ -1,4 +1,4 @@
-import { Image, Info, Panel, PanelSection, Pendor } from '@components'
+import { ChainLogo, Info, Panel, PanelSection, Pendor } from '@components'
 import { calculatePortfolioAmounts, usePortfolio, useTaggedAmountsInPortfolio } from '@libs/portfolio'
 import { useAccountAddresses, useGuardian } from '@libs/talisman'
 import { useTokenPrice } from '@libs/tokenprices'
@@ -26,26 +26,10 @@ const customRpcs = {
   '2004': [], // ['wss://khala.api.onfinality.io/ws?apikey=e1b2f3ea-f003-42f5-adf6-d2e6aa3ecfe4'], // Khala
   '2007': [], // ['wss://shiden.api.onfinality.io/ws?apikey=e1b2f3ea-f003-42f5-adf6-d2e6aa3ecfe4'], // Shiden
   '2023': [], // ['wss://moonriver.api.onfinality.io/ws?apikey=e1b2f3ea-f003-42f5-adf6-d2e6aa3ecfe4'], // Moonriver
+  '2084': [], // Calamari
+  '2086': [], // KILT Spiritnet
+  '2090': [], // Basilisk
 }
-
-const ChainLogo = styled(({ chain, type, className }) => {
-  return (
-    <Image
-      src={chain?.asset?.logo}
-      alt={`${chain?.name} ${type}`}
-      className={`crowdloan-asset crowdloan-${type} ${className}`}
-      data-type={type}
-    />
-  )
-})`
-  &[data-type='logo'] {
-    font-size: ${({ size = 8 }) => `${size}rem`};
-    width: 1em;
-    height: 1em;
-    border-radius: 50%;
-    display: block;
-  }
-`
 
 const AssetItem = styled(({ id, balances, addresses, className }) => {
   const chain = useChain(id)

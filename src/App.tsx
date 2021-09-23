@@ -1,4 +1,5 @@
 import { ModalProvider } from '@components'
+import * as Crowdloans from '@libs/crowdloans'
 import * as Portfolio from '@libs/portfolio'
 import TalismanProvider from '@libs/talisman'
 import * as Tokenprices from '@libs/tokenprices'
@@ -12,15 +13,17 @@ const App: React.FC = () => (
   <Portfolio.Provider>
     <Tokenprices.Provider>
       <TalismanProvider>
-        <Router>
-          <ThemeProvider>
-            <ModalProvider>
-              <Layout>
-                <Routes />
-              </Layout>
-            </ModalProvider>
-          </ThemeProvider>
-        </Router>
+        <Crowdloans.Provider uri="https://api.subquery.network/sq/TalismanSociety/kusama-crowdloans">
+          <Router>
+            <ThemeProvider>
+              <ModalProvider>
+                <Layout>
+                  <Routes />
+                </Layout>
+              </ModalProvider>
+            </ThemeProvider>
+          </Router>
+        </Crowdloans.Provider>
       </TalismanProvider>
     </Tokenprices.Provider>
   </Portfolio.Provider>
