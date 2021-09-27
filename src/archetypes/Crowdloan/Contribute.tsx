@@ -134,7 +134,7 @@ const ContributeTo = styled(
               </div>
             </div>
             <div className="switcher-column">
-                <Account.Button narrow />
+              <Account.Button narrow />
               <div className="tx-fee">
                 <Pendor suffix={txFee ? 'KSM' : '-'} require={!txFee?.loading}>
                   {txFee ? `Fee: ${shortNumber(txFee.fee)}` : null}
@@ -379,7 +379,9 @@ const Success = styled(({ className, explorerUrl, closeModal }) => (
       )}
     </main>
     <footer>
-      <Button onClick={closeModal}>Close</Button>
+      <Button primary to="/" onClick={closeModal}>
+        Go to your portfolio
+      </Button>
     </footer>
   </div>
 ))`
