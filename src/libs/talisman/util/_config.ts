@@ -792,7 +792,7 @@ export const crowdloanDetails: CrowdloanDetails[] = [
       tokens: [
         {
           symbol: 'XRT',
-          perKSM: '5',
+          perKSM: '>3.5',
         },
       ],
       custom: [
@@ -871,7 +871,7 @@ export const crowdloanDetails: CrowdloanDetails[] = [
       tokens: [
         {
           symbol: 'HKO',
-          perKSM: '>62',
+          perKSM: '>200',
         },
       ],
       custom: [
