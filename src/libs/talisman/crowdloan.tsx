@@ -162,30 +162,25 @@ export const Provider: FC = ({ children }) => {
 
   const crowdloans = useMemo<Crowdloan[]>(
     () =>
-      (data || [])
-        .filter(
-          (crowdloan: any) =>
-            crowdloan?.parachain?.paraId && find(crowdloanDetails, { paraId: crowdloan.parachain.paraId })
-        )
-        .map(
-          (crowdloan: any): Crowdloan => ({
-            ...crowdloan,
-            raised: crowdloan.raised / 1e12,
-            cap: crowdloan.cap / 1e12,
+      (data || []).map(
+        (crowdloan: any): Crowdloan => ({
+          ...crowdloan,
+          raised: crowdloan.raised / 1e12,
+          cap: crowdloan.cap / 1e12,
 
-            percentRaised: (100 / (crowdloan.cap / 1e12)) * (crowdloan.raised / 1e12),
-            details: find(crowdloanDetails, { paraId: crowdloan.parachain.paraId }),
-            uiStatus:
-              crowdloan.wonAuctionId !== null
-                ? 'winner'
-                : crowdloan.status === 'Started' &&
-                  ((100 / (crowdloan.cap / 1e12)) * (crowdloan.raised / 1e12)).toFixed(2) === '100.00'
-                ? 'capped'
-                : crowdloan.status === 'Started'
-                ? 'active'
-                : 'ended',
-          })
-        ),
+          percentRaised: (100 / (crowdloan.cap / 1e12)) * (crowdloan.raised / 1e12),
+          details: find(crowdloanDetails, { paraId: crowdloan.parachain.paraId }),
+          uiStatus:
+            crowdloan.wonAuctionId !== null
+              ? 'winner'
+              : crowdloan.status === 'Started' &&
+                ((100 / (crowdloan.cap / 1e12)) * (crowdloan.raised / 1e12)).toFixed(2) === '100.00'
+              ? 'capped'
+              : crowdloan.status === 'Started'
+              ? 'active'
+              : 'ended',
+        })
+      ),
     [data]
   )
 

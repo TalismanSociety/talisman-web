@@ -12,6 +12,7 @@ const CrowdloanFilter = (crowdloans?: string[]) =>
 const Contributions = (accounts?: string[], crowdloans?: string[]) => gql`
   {
     contributions(
+      orderBy: BLOCK_NUM_DESC,
       filter: {
         ${AccountFilter(accounts)}
         ${CrowdloanFilter(crowdloans)}

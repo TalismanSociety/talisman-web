@@ -59,7 +59,10 @@ export const useFilter = () => {
   const { crowdloans, message, hydrated } = useLatestCrowdloans()
   const { parachains } = useParachainsDetailsIndexedById()
   const items = useMemo(
-    () => crowdloans.map(crowdloan => ({ crowdloan, parachainDetails: parachains[crowdloan.parachain.paraId] })),
+    () =>
+      crowdloans
+        .map(crowdloan => ({ crowdloan, parachainDetails: parachains[crowdloan.parachain.paraId] }))
+        .filter(({ parachainDetails }) => !!parachainDetails),
     [crowdloans, parachains]
   )
 
