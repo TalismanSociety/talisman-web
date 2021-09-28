@@ -1,11 +1,12 @@
 import { Account, Parachain } from '@archetypes'
 import { ReactComponent as CheckCircle } from '@assets/icons/check-circle.svg'
 import { ReactComponent as XCircle } from '@assets/icons/x-circle.svg'
-import { Button, Field, MaterialLoader, Pendor, useModal } from '@components'
+import { Button, DesktopRequired, Field, MaterialLoader, Pendor, useModal } from '@components'
 import { useCrowdloanContribution } from '@libs/crowdloans'
 import { useActiveAccount, useCrowdloanById, useParachainDetailsById } from '@libs/talisman'
 import { useTokenPrice } from '@libs/tokenprices'
 import { multiplyBigNumbers } from '@talismn/util'
+import { isMobileBrowser } from '@util/helpers'
 import { formatCurrency, shortNumber, truncateString } from '@util/helpers'
 import { useCallback, useMemo, useState } from 'react'
 import styled from 'styled-components'
@@ -52,6 +53,7 @@ export default function Contribute({ className, id }: ContributeProps) {
   }, [status])
   const ModalComponent = ModalComponents[modalState] || null
 
+  if (isMobileBrowser()) return <DesktopRequired />
   if (!ModalComponent) return null
   return (
     <ModalComponent

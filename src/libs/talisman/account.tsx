@@ -1,16 +1,28 @@
-import { useGuardian } from '@libs/talisman'
-import { FC, createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import { useExtension } from '@libs/talisman'
+import {
+  PropsWithChildren,
+  useContext as _useContext,
+  createContext,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
 
-const Context = createContext({})
+import type { Account, Status } from './extension'
 
-const useActiveAccount = () => {
-  const { activeAccount, status, message, switchAccount } = useContext(Context)
+//
+// Hooks (exported)
+//
 
-  return { ...activeAccount, hasActiveAccount: !!activeAccount, status, message, switchAccount }
+export const useActiveAccount = () => {
+  const { activeAccount, status, switchAccount } = useContext()
+
+  return { ...activeAccount, hasActiveAccount: !!activeAccount, status, switchAccount }
 }
 
-const useAccountAddresses = () => {
-  const { accounts, activeAccount } = useContext(Context)
+export const useAccountAddresses = () => {
+  const { accounts, activeAccount } = useContext()
   const [addresses, setAddresses] = useState<string[] | undefined>()
 
   useEffect(() => {
@@ -20,8 +32,32 @@ const useAccountAddresses = () => {
   return addresses
 }
 
-const Provider: FC = ({ children }) => {
-  const { accounts, status, message } = useGuardian()
+//
+// Context
+//
+
+type ContextProps = {
+  accounts: Account[]
+  activeAccount: Account
+  status: Status
+  switchAccount: (address: string) => void
+}
+
+const Context = createContext<ContextProps | null>(null)
+
+function useContext() {
+  const context = _useContext(Context)
+  if (!context) throw new Error('The talisman account provider is required in order to use this hook')
+
+  return context
+}
+
+//
+// Provider
+//
+
+export const Provider = ({ children }: PropsWithChildren<{}>) => {
+  const { accounts, status } = useExtension()
 
   const [activeAccountIndex, setActiveAccountIndex] = useState(-1)
 
@@ -38,19 +74,10 @@ const Provider: FC = ({ children }) => {
       accounts,
       activeAccount: accounts[activeAccountIndex],
       status,
-      message,
       switchAccount,
     }),
-    [accounts, activeAccountIndex, status, message, switchAccount]
+    [accounts, activeAccountIndex, status, switchAccount]
   )
 
   return <Context.Provider value={value}>{children}</Context.Provider>
 }
-
-const Account = {
-  Provider,
-  useActiveAccount,
-  useAccountAddresses,
-}
-
-export default Account

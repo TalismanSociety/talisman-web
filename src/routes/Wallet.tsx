@@ -1,8 +1,10 @@
 import { Account, Wallet } from '@archetypes'
+import { DesktopRequired } from '@components'
 import styled from 'styled-components'
 
 const _Wallet = styled(({ className }) => (
   <section className={className}>
+    <DesktopRequired />
     <header>
       <Wallet.Total />
       <Account.Button allAccounts />

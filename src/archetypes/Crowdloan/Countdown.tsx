@@ -1,5 +1,5 @@
 import { Countdown as Cd, Pendor } from '@components'
-import { useCrowdloanById, useGuardianValue } from '@libs/talisman'
+import { useChainmetaValue, useCrowdloanById } from '@libs/talisman'
 import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 
@@ -11,8 +11,8 @@ type OngoingProps = {
 
 const Ongoing: React.FC<OngoingProps> = ({ end, showSeconds, className = '' }) => {
   const [secondsRemaining, setSecondsRemaining] = useState<number>()
-  const blockNumber = useGuardianValue('metadata.blockNumber')
-  const blockPeriod = useGuardianValue('metadata.blockPeriod')
+  const blockNumber = useChainmetaValue('blockNumber')
+  const blockPeriod = useChainmetaValue('blockPeriod')
 
   useEffect(() => {
     if (!end || !blockNumber || !blockPeriod) return

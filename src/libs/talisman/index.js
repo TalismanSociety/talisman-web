@@ -1,7 +1,8 @@
-import Account from './account'
+import * as Account from './account'
 import Api from './api'
+import * as Chainmeta from './chainmeta'
 import * as Crowdloan from './crowdloan'
-import Guardian from './guardian'
+import * as Extension from './extension'
 import * as Parachain from './parachain'
 import Settings from './settings'
 import Subquery from './subquery'
@@ -9,13 +10,14 @@ import { useChainByGenesis as _useChainByGenesis } from './util/hooks'
 
 /* publically exposed hooks */
 
-// polkadot guardian
-export const useGuardian = Guardian.useGuardian
-export const useGuardianValue = Guardian.useGuardianValue
-
 // account things
-export const useActiveAccount = Account.useActiveAccount
-export const useAccountAddresses = Account.useAccountAddresses
+export * from './account'
+
+// chainmeta things
+export * from './chainmeta'
+
+// extension things
+export * from './extension'
 
 // parachain things
 export * from './parachain'
@@ -41,13 +43,15 @@ const Provider = ({ children }) => (
   <Settings.Provider>
     <Api.Provider>
       <Subquery.Provider uri="https://api.subquery.network/sq/TalismanSociety/kusama-crowdloans">
-        <Guardian.Provider>
-          <Account.Provider>
-            <Parachain.Provider>
-              <Crowdloan.Provider>{children}</Crowdloan.Provider>
-            </Parachain.Provider>
-          </Account.Provider>
-        </Guardian.Provider>
+        <Extension.Provider>
+          <Chainmeta.Provider>
+            <Account.Provider>
+              <Parachain.Provider>
+                <Crowdloan.Provider>{children}</Crowdloan.Provider>
+              </Parachain.Provider>
+            </Account.Provider>
+          </Chainmeta.Provider>
+        </Extension.Provider>
       </Subquery.Provider>
     </Api.Provider>
   </Settings.Provider>

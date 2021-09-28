@@ -4,10 +4,14 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { PropsWithChildren, createContext, useCallback, useContext, useMemo, useState } from 'react'
 import styled from 'styled-components'
 
+type OpenModalOptions = {
+  closable: boolean
+}
+
 type ContextProps = {
   open: boolean
   content: JSX.Element | null
-  openModal: (content: JSX.Element) => void
+  openModal: (content: JSX.Element, options?: OpenModalOptions) => void
   closeModal: () => void
 }
 const Context = createContext<ContextProps | null>(null)
@@ -21,8 +25,12 @@ export function useModal(): ContextProps {
 type ProviderProps = {}
 export function Provider({ children }: PropsWithChildren<ProviderProps>): JSX.Element {
   const [content, setContent] = useState<JSX.Element | null>(null)
+  const [closable, setClosable] = useState(true)
 
-  const openModal = useCallback((content: JSX.Element) => setContent(content), [])
+  const openModal = useCallback((content: JSX.Element, options?: OpenModalOptions) => {
+    setContent(content)
+    setClosable(options?.closable !== false)
+  }, [])
   const closeModal = useCallback(() => setContent(null), [])
 
   const value = useMemo(
@@ -32,27 +40,27 @@ export function Provider({ children }: PropsWithChildren<ProviderProps>): JSX.El
 
   return (
     <Context.Provider value={value}>
-      <Modal />
+      <Modal closable={closable} />
       {children}
     </Context.Provider>
   )
 }
 
-export const Modal = styled(function Modal({ className }) {
+export const Modal = styled(function Modal({ className, closable }) {
   const { open, content, closeModal } = useModal()
 
   useKeyDown(
     'Escape',
-    useCallback(() => open && closeModal(), [open, closeModal])
+    useCallback(() => open && closable && closeModal(), [open, closable, closeModal])
   )
 
   return (
     <AnimatePresence>
       {open && (
         <motion.div className={className} initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-          <div className="modal-background" onClick={closeModal} />
+          <div className="modal-background" onClick={closable && closeModal} />
           <div className="modal-content">
-            <IconClose className="close-icon" onClick={closeModal} />
+            {closable && <IconClose className="close-icon" onClick={closeModal} />}
             {content}
           </div>
         </motion.div>
@@ -83,6 +91,8 @@ export const Modal = styled(function Modal({ className }) {
     position: relative;
     display: block;
     width: 684px;
+    max-height: 90vh;
+    overflow-y: auto;
     background: rgb(${({ theme }) => theme?.background});
     border-radius: 1.6rem;
     padding: 6.4rem 4.6rem 4.6rem 4.6rem;
@@ -95,6 +105,14 @@ export const Modal = styled(function Modal({ className }) {
       top: 3.2rem;
       right: 3.2rem;
       cursor: pointer;
+    }
+  }
+
+  @media screen and (max-width: 724px) {
+    > .modal-content {
+      position: fixed;
+      width: calc(100% - 40px);
+      overflow: auto;
     }
   }
 `

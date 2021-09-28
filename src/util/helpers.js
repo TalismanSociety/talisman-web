@@ -67,3 +67,6 @@ export const formatCommas = (val, props) =>
   new Intl.NumberFormat(props?.locale || 'en-US', {
     maximumFractionDigits: props?.maximumFractionDigits || 4,
   }).format(val)
+export const isMobileBrowser = () =>
+  // Method taken from https://developer.mozilla.org/en-US/docs/Web/HTTP/Browser_detection_using_the_user_agent#mobile_tablet_or_desktop
+  (navigator.userAgent || navigator.vendor || window.opera).includes('Mobi')

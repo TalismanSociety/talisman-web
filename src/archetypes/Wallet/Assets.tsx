@@ -1,6 +1,6 @@
-import { ChainLogo, Info, Panel, PanelSection, Pendor } from '@components'
+import { Button, ChainLogo, ExtensionStatusGate, Info, Panel, PanelSection, Pendor } from '@components'
 import { calculatePortfolioAmounts, usePortfolio, useTaggedAmountsInPortfolio } from '@libs/portfolio'
-import { useAccountAddresses, useGuardian } from '@libs/talisman'
+import { useAccountAddresses, useExtension } from '@libs/talisman'
 import { useTokenPrice } from '@libs/tokenprices'
 import {
   BalanceWithTokens,
@@ -33,6 +33,11 @@ const customRpcs = {
 
 const AssetItem = styled(({ id, balances, addresses, className }) => {
   const chain = useChain(id)
+
+  const unavailable = [
+    '2004', // phala has private balances
+    '2023', // moonriver accounts can't be imported into polkadot.js
+  ].includes(id)
 
   const { name, longName, nativeToken, tokenDecimals } = chain
   const { price: tokenPrice, loading: priceLoading } = useTokenPrice(nativeToken)
@@ -71,9 +76,13 @@ const AssetItem = styled(({ id, balances, addresses, className }) => {
       </span>
       <span className="right">
         <Info
-          title={<Pendor suffix={` ${tokenSymbol}`}>{tokens && formatCommas(tokens)}</Pendor>}
+          title={
+            unavailable ? 'Unavailable' : <Pendor suffix={` ${tokenSymbol}`}>{tokens && formatCommas(tokens)}</Pendor>
+          }
           subtitle={
-            tokens ? (
+            unavailable ? (
+              'Coming Soon'
+            ) : tokens ? (
               <Pendor prefix={!usd && '-'} require={!priceLoading}>
                 {usd && formatCurrency(usd)}
               </Pendor>
@@ -101,7 +110,7 @@ const AssetItem = styled(({ id, balances, addresses, className }) => {
 const Assets = styled(({ id, className }) => {
   const chainIds = useMemo(() => Object.keys(customRpcs), [])
 
-  const { accounts } = useGuardian()
+  const { accounts } = useExtension()
   const addresses = useMemo(() => accounts.map((account: any) => account.address), [accounts])
   const accountAddresses = useAccountAddresses()
 
@@ -121,11 +130,13 @@ const Assets = styled(({ id, className }) => {
   return (
     <section className={`wallet-assets ${className}`}>
       <Panel title="Assets" subtitle={assetsUsd && formatCurrency(assetsUsd)}>
-        {Object.entries(balancesByChain).map(([chainId, balances]) => (
-          <PanelSection key={chainId}>
-            <AssetItem id={chainId} balances={balances} addresses={accountAddresses} />
-          </PanelSection>
-        ))}
+        <ExtensionStatusGate unavailable={<ExtensionUnavailable />}>
+          {Object.entries(balancesByChain).map(([chainId, balances]) => (
+            <PanelSection key={chainId}>
+              <AssetItem id={chainId} balances={balances} addresses={accountAddresses} />
+            </PanelSection>
+          ))}
+        </ExtensionStatusGate>
       </Panel>
     </section>
   )
@@ -140,3 +151,34 @@ const Assets = styled(({ id, className }) => {
 `
 
 export default Assets
+
+const ExtensionUnavailable = styled(props => (
+  <PanelSection comingSoon {...props}>
+    <h2>Oh no!</h2>
+    <p>It doesn't look like you have a wallet extension installed.</p>
+    <p>
+      Don't worry we're currently building a really nice one,
+      <br />
+      but in the meantime we recommend downloading Polkadot.js
+    </p>
+  </PanelSection>
+))`
+  text-align: center;
+
+  > *:not(:last-child) {
+    margin-bottom: 2rem;
+  }
+  > *:last-child {
+    margin-bottom: 0;
+  }
+
+  h2 {
+    color: black;
+    font-weight: 600;
+    font-size: 1.8rem;
+  }
+  p {
+    color: #999;
+    font-size: 1.6rem;
+  }
+`

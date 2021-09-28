@@ -2,7 +2,7 @@ import { ReactComponent as AllAccountsIcon } from '@assets/icons/all-accounts.sv
 import { Button, Pendor } from '@components'
 import { ReactComponent as ChevronDown } from '@icons/chevron-down.svg'
 import { usePortfolio } from '@libs/portfolio'
-import { useActiveAccount, useGuardian } from '@libs/talisman'
+import { useActiveAccount, useExtension } from '@libs/talisman'
 import { useChainByGenesis } from '@libs/talisman'
 import { Keyring } from '@polkadot/keyring'
 import Identicon from '@polkadot/react-identicon'
@@ -24,7 +24,7 @@ const Address = ({ address, genesis, truncate = false }) => {
 
 const Dropdown = styled(({ className, handleClose, allAccounts, nativeToken, ksmBalancesByAddress }) => {
   const { switchAccount } = useActiveAccount()
-  const { accounts } = useGuardian()
+  const { accounts } = useExtension()
   const { totalUsd, totalUsdByAddress } = usePortfolio()
 
   return (
@@ -149,7 +149,7 @@ const Dropdown = styled(({ className, handleClose, allAccounts, nativeToken, ksm
   ${({ open }) =>
     !!open &&
     `
-      max-height: 40rem;
+      max-height: 36rem;
     `}
 `
 
@@ -215,10 +215,9 @@ const Unauthorized = styled(({ className }) => {
   }
 `
 
-
 const Authorized = styled(({ className, narrow, allAccounts }) => {
   const { switchAccount } = useActiveAccount()
-  const { accounts } = useGuardian()
+  const { accounts } = useExtension()
   const { hasActiveAccount, address, name } = useActiveAccount()
   const { totalUsd, totalUsdByAddress } = usePortfolio()
   const [open, setOpen] = useState(false)
@@ -258,7 +257,6 @@ const Authorized = styled(({ className, narrow, allAccounts }) => {
 
   return (
     <div className="account-switcher-pill">
-
       <span
         className={`account-button${hasManyAccounts ? ' has-many-accounts' : ''} ${className}`}
         onMouseEnter={() => narrow && hasManyAccounts && openOnDelay()}
@@ -306,9 +304,7 @@ const Authorized = styled(({ className, narrow, allAccounts }) => {
           ksmBalancesByAddress={ksmBalancesByAddress}
         />
       </span>
-
     </div>
-
   )
 })`
   font-size: inherit;
@@ -372,7 +368,7 @@ const Authorized = styled(({ className, narrow, allAccounts }) => {
 const AccountButton = props => {
   const { status } = useActiveAccount()
   switch (status) {
-    case 'AUTHORIZED':
+    case 'OK':
       return <Authorized {...props} />
     case 'UNAUTHORIZED':
       return <Unauthorized {...props} />
