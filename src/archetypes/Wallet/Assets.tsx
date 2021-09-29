@@ -35,7 +35,6 @@ const AssetItem = styled(({ id, balances, addresses, className }) => {
   const chain = useChain(id)
 
   const unavailable = [
-    '2004', // phala has private balances
     '2023', // moonriver accounts can't be imported into polkadot.js
   ].includes(id)
 
