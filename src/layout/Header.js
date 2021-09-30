@@ -1,5 +1,6 @@
 import { ReactComponent as DiscordLogo } from '@assets/icons/discord-header.svg'
 import { ReactComponent as GithubLogo } from '@assets/icons/github-header.svg'
+import { ReactComponent as MediumLogo } from '@assets/icons/medium-header.svg'
 import { ReactComponent as TwitterLogo } from '@assets/icons/twitter-header.svg'
 import { ReactComponent as Logo } from '@assets/logo.svg'
 import { NavLink } from 'react-router-dom'
@@ -28,13 +29,16 @@ const Header = styled(({ className }) => (
         Request Features
       </a>
       <a href="https://github.com/talismansociety" target="_blank" rel="noreferrer noopener">
-        <GithubLogo />
+        <GithubLogo alt="GitHub" />
       </a>
       <a href="https://discord.gg/rQgTD9SGtU" target="_blank" rel="noreferrer noopener">
-        <DiscordLogo />
+        <DiscordLogo alt="Discord" />
+      </a>
+      <a href="https://medium.com/we-are-talisman" target="_blank" rel="noreferrer noopener">
+        <MediumLogo alt="Medium" />
       </a>
       <a href="https://twitter.com/wearetalisman" target="_blank" rel="noreferrer noopener">
-        <TwitterLogo />
+        <TwitterLogo alt="Twitter" />
       </a>
     </nav>
   </header>
@@ -114,7 +118,7 @@ const Header = styled(({ className }) => (
         color: var(--color-primary);
       }
       &:not(:first-child) {
-        margin-left: 2.5rem;
+        margin-left: 1.5rem;
       }
 
       > svg {
