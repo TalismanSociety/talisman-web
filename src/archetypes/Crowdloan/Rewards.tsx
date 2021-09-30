@@ -8,11 +8,15 @@ const Countdown = styled(({ id, className }) => {
 
   return (
     <div className={`crowdloan-rewards ${className}`}>
-      {rewards?.tokens?.map(({ symbol, perKSM }) => (
-        <Stat title={`${symbol} per KSM`}>{perKSM}</Stat>
+      {rewards?.tokens?.map(({ symbol, perKSM }, index) => (
+        <Stat key={index} title={`${symbol} per KSM`}>
+          {perKSM}
+        </Stat>
       ))}
-      {rewards?.custom?.map(({ title, value }) => (
-        <Stat title={title}>{value}</Stat>
+      {rewards?.custom?.map(({ title, value }, index) => (
+        <Stat key={index} title={title}>
+          {value}
+        </Stat>
       ))}
 
       {rewards?.info && (

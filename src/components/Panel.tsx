@@ -7,7 +7,7 @@ type BasePanelProps = {
   rest: any[]
 }
 
-export const Section = styled(({ title, children, className, ...rest }) => {
+export const Section = styled(({ title, children, className, comingSoon, ...rest }) => {
   return (
     <div className={`panel-section ${className}`} {...rest}>
       {!!title && <h2>{title}</h2>}

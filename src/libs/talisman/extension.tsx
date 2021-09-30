@@ -89,6 +89,7 @@ export const Provider = ({ children }: PropsWithChildren<{}>) => {
       setSigner(polkadotJs.signer)
 
       unsub = polkadotJs.accounts.subscribe(accounts => {
+        if (cancelled) return
         setAccounts(accounts)
         setStatus(accounts.length < 1 ? 'NOACCOUNT' : 'OK')
       })

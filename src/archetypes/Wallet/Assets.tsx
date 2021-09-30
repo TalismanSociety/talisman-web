@@ -1,4 +1,4 @@
-import { Button, ChainLogo, ExtensionStatusGate, Info, Panel, PanelSection, Pendor } from '@components'
+import { ChainLogo, ExtensionStatusGate, Info, Panel, PanelSection, Pendor } from '@components'
 import { calculatePortfolioAmounts, usePortfolio, useTaggedAmountsInPortfolio } from '@libs/portfolio'
 import { useAccountAddresses, useExtension } from '@libs/talisman'
 import { useTokenPrice } from '@libs/tokenprices'

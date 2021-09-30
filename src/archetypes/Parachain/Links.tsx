@@ -48,7 +48,7 @@ const Links = styled(({ id, className }) => {
     <div className={`crowdloan-links ${className}`}>
       {Object.keys(links).map((name, index) => (
         <a key={index} href={links[name]} target="_blank" rel="noreferrer">
-          <Pill primary onClick>
+          <Pill primary onClick={() => null}>
             <Icon type={name} />
           </Pill>
         </a>

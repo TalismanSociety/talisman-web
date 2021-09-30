@@ -8,7 +8,7 @@ const Links = styled(({ id, className }) => {
   return (
     <div className={`crowdloan-links ${className}`}>
       {tags.map(tag => (
-        <Pill primary small>
+        <Pill key={tag} primary small>
           {tag}
         </Pill>
       ))}
