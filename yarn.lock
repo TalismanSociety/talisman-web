@@ -2820,21 +2820,21 @@ __metadata:
   linkType: hard
 
 "@talismn/api-react-hooks@npm:~0":
-  version: 0.0.18
-  resolution: "@talismn/api-react-hooks@npm:0.0.18"
+  version: 0.0.19
+  resolution: "@talismn/api-react-hooks@npm:0.0.19"
   dependencies:
     "@talismn/api": ~0
     "@talismn/chaindata-js": ~0
     "@talismn/util": ~0
   peerDependencies:
     react: ">=17"
-  checksum: 32a6c120b8b9b3e51b4626bad1bec78bd36ba63233ed98694f258a0ea08efaafe780c7130c02f71f84d52089af24820eca977f3870e3e567e176459340e1d35b
+  checksum: 6b0deb060802f7f6f62782df3948ca9083f081458307b5cd8637dcaa08ec47cafaee7fbd82353b765e84660c9ac24cc1939dfc8b48cf323152efbf71ef7db417
   languageName: node
   linkType: hard
 
 "@talismn/api@npm:~0":
-  version: 0.0.16
-  resolution: "@talismn/api@npm:0.0.16"
+  version: 0.0.17
+  resolution: "@talismn/api@npm:0.0.17"
   dependencies:
     "@polkadot/api": ^5.4.1
     "@polkadot/keyring": ^7.2.1
@@ -2849,7 +2849,7 @@ __metadata:
     lodash: ^4.17.21
     p-map: ^4.0.0
     uuid: ^8.3.2
-  checksum: 953145e91e20ee98987a27eb660a171c450adcbb5e74afe2a7f3730c14ad71a1dd408b27402c58e924b78d70ac721fa57b749b754dc493ff313e4b75924fff43
+  checksum: da04abfd763384519d474cbde50634fa9dfc1b79110fed14b78af1a8825c8b1cd7de2a78c0598a0a07754ac9e64441e2d1a68d42ae6c6cfe47b3db2dab838720
   languageName: node
   linkType: hard
 
