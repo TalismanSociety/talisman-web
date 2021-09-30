@@ -28,7 +28,10 @@ const customRpcs = {
   '2023': [], // ['wss://moonriver.api.onfinality.io/ws?apikey=e1b2f3ea-f003-42f5-adf6-d2e6aa3ecfe4'], // Moonriver
   '2084': [], // Calamari
   '2086': [], // KILT Spiritnet
-  '2090': [], // Basilisk
+  '2090': [
+    'wss://basilisk.api.onfinality.io/ws?apikey=e1b2f3ea-f003-42f5-adf6-d2e6aa3ecfe4',
+    'wss://rpc-01.basilisk.hydradx.io',
+  ], // Basilisk
 }
 
 const AssetItem = styled(({ id, balances, addresses, className }) => {
