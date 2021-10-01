@@ -58,7 +58,7 @@ export const Modal = styled(function Modal({ className, closable }) {
     <AnimatePresence>
       {open && (
         <motion.div className={className} initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-          <div className="modal-background" onClick={closable && closeModal} />
+          <div className="modal-click-to-close-background" onClick={closable && closeModal} />
           <div className="modal-content">
             {closable && <IconClose className="close-icon" onClick={closeModal} />}
             {content}
@@ -76,22 +76,21 @@ export const Modal = styled(function Modal({ className, closable }) {
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 9999;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 9998;
 
-  > .modal-background {
+  > .modal-click-to-close-background {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.4);
     z-index: 9999;
   }
   > .modal-content {
-    position: relative;
-    display: block;
-    width: 684px;
-    max-height: 90vh;
+    width: 100%;
+    max-width: 684px;
+    margin: 2rem;
     overflow-y: auto;
     background: rgb(${({ theme }) => theme?.background});
     border-radius: 1.6rem;
@@ -105,14 +104,6 @@ export const Modal = styled(function Modal({ className, closable }) {
       top: 3.2rem;
       right: 3.2rem;
       cursor: pointer;
-    }
-  }
-
-  @media screen and (max-width: 724px) {
-    > .modal-content {
-      position: fixed;
-      width: calc(100% - 40px);
-      overflow: auto;
     }
   }
 `

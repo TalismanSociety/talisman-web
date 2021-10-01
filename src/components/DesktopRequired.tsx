@@ -21,7 +21,7 @@ const DesktopRequiredModal = styled(props => {
   return (
     <div {...props}>
       <h2>Sorry!</h2>
-      <p>This feature is current only available on desktop, but we're hard at work on a mobile-friendly version.</p>
+      <p>This feature is currently only available on desktop, but we will be launching mobile-friendly version soon.</p>
       <p>In the meantime feel free to check out our Crowdloans dashboard</p>
       <Button primary to="/crowdloans" onClick={closeModal}>
         View Crowdloans
