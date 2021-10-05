@@ -145,7 +145,7 @@ const Header = styled(({ className, isMobile, mobileMenuOpen, dispatch }) => (
 
     svg {
       display: block;
-      width: 100%;
+      width: auto;
       height: 1em;
     }
   }
@@ -243,13 +243,13 @@ const Header = styled(({ className, isMobile, mobileMenuOpen, dispatch }) => (
     box-shadow: 0 0 0.8rem rgba(0, 0, 0, 0.1);
     border-radius: 1.6rem;
 
-    a {
+    > a {
       display: flex;
       justify-content: space-between;
       align-items: center;
       padding: 1rem 0;
 
-      svg {
+      > svg {
         font-size: 2.4rem;
         margin-left: 5rem;
       }
