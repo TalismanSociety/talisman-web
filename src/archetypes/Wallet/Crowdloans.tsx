@@ -6,14 +6,11 @@ import {
 } from '@libs/crowdloans'
 import { useAccountAddresses, useCrowdloanById } from '@libs/talisman'
 import { useTokenPrice } from '@libs/tokenprices'
-import Keyring from '@polkadot/keyring'
 import { useChain } from '@talismn/api-react-hooks'
-import { multiplyBigNumbers, planckToTokens, useFuncMemo } from '@talismn/util'
+import { encodeAnyAddress, multiplyBigNumbers, planckToTokens, useFuncMemo } from '@talismn/util'
 import { formatCommas, formatCurrency } from '@util/helpers'
 import { useMemo } from 'react'
 import styled from 'styled-components'
-
-const keyring = new Keyring()
 
 const CrowdloanItem = styled(({ id, className }) => {
   const { crowdloan } = useCrowdloanById(id)
@@ -27,7 +24,7 @@ const CrowdloanItem = styled(({ id, className }) => {
   const { price: relayTokenPrice, loading: relayPriceLoading } = useTokenPrice(relayNativeToken)
 
   const accounts = useAccountAddresses()
-  const encoded = useMemo(() => accounts?.map(account => keyring.encodeAddress(account, 2)), [accounts])
+  const encoded = useMemo(() => accounts?.map(account => encodeAnyAddress(account, 2)), [accounts])
   const { contributions } = useCrowdloanContributions({ accounts: encoded, crowdloans: id ? [id] : undefined })
   const totalContributions = getTotalContributionForCrowdloan(id, contributions)
 
@@ -75,7 +72,7 @@ const CrowdloanItem = styled(({ id, className }) => {
 
 const Crowdloans = ({ className }: { className?: string }) => {
   const accounts = useAccountAddresses()
-  const encoded = useMemo(() => accounts?.map(account => keyring.encodeAddress(account, 2)), [accounts])
+  const encoded = useMemo(() => accounts?.map(account => encodeAnyAddress(account, 2)), [accounts])
   const { contributions, skipped, loading, error } = useCrowdloanContributions({ accounts: encoded })
   const totalContributions = groupTotalContributionsByCrowdloan(contributions)
 

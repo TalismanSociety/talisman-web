@@ -2,12 +2,10 @@ import { ReactComponent as AllAccountsIcon } from '@assets/icons/all-accounts.sv
 import { Button, Pendor } from '@components'
 import { ReactComponent as ChevronDown } from '@icons/chevron-down.svg'
 import { usePortfolio } from '@libs/portfolio'
-import { useActiveAccount, useExtension } from '@libs/talisman'
-import { useChainByGenesis } from '@libs/talisman'
-import { Keyring } from '@polkadot/keyring'
+import { useActiveAccount, useChainByGenesis, useExtension } from '@libs/talisman'
 import Identicon from '@polkadot/react-identicon'
 import { addTokensToBalances, groupBalancesByAddress, useBalances, useChain } from '@talismn/api-react-hooks'
-import { addBigNumbers, useFuncMemo } from '@talismn/util'
+import { addBigNumbers, encodeAnyAddress, useFuncMemo } from '@talismn/util'
 import { formatCommas, formatCurrency, truncateString } from '@util/helpers'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import styled, { css } from 'styled-components'
@@ -15,9 +13,14 @@ import styled, { css } from 'styled-components'
 // format an address based on chain ID, derived from genesis ID
 // as returned from polkadot.js extension API
 const Address = ({ address, genesis, truncate = false }) => {
-  const keyring = new Keyring()
   const { id } = useChainByGenesis(genesis)
-  const encoded = keyring.encodeAddress(address, id)
+  let encoded: string
+  try {
+    encoded = encodeAnyAddress(address, id)
+  } catch (error) {
+    console.warn('Failed to encode address', address, error)
+    encoded = address
+  }
 
   return !!truncate ? truncateString(encoded, truncate[0] || 4, truncate[1] || 4) : encoded
 }
@@ -30,7 +33,7 @@ const Dropdown = styled(({ className, handleClose, allAccounts, nativeToken, ksm
   return (
     <span className={`account-picker ${className}`}>
       {(allAccounts ? [{ name: 'All Accounts' }, ...accounts] : accounts).map(
-        ({ address, name, genesisHash }, index) => (
+        ({ address, name, type, genesisHash }, index) => (
           <div
             key={index}
             className="account"
@@ -41,7 +44,11 @@ const Dropdown = styled(({ className, handleClose, allAccounts, nativeToken, ksm
           >
             <span className="left">
               {address ? (
-                <Identicon className="identicon" value={address} theme="polkadot" />
+                <Identicon
+                  className="identicon"
+                  value={address}
+                  theme={type === 'ethereum' ? 'ethereum' : 'polkadot'}
+                />
               ) : (
                 <Identicon
                   Custom={AllAccountsIcon}
@@ -118,6 +125,14 @@ const Dropdown = styled(({ className, handleClose, allAccounts, nativeToken, ksm
 
     .identicon {
       font-size: 2.6em;
+      > svg,
+      > img {
+        width: 1em;
+        height: 1em;
+      }
+      img {
+        border-radius: 999999999999rem;
+      }
     }
 
     .name-address {
@@ -218,7 +233,7 @@ const Unauthorized = styled(({ className }) => {
 const Authorized = styled(({ className, narrow, allAccounts }) => {
   const { switchAccount } = useActiveAccount()
   const { accounts } = useExtension()
-  const { hasActiveAccount, address, name } = useActiveAccount()
+  const { hasActiveAccount, address, name, type } = useActiveAccount()
   const { totalUsd, totalUsdByAddress } = usePortfolio()
   const [open, setOpen] = useState(false)
 
@@ -263,7 +278,7 @@ const Authorized = styled(({ className, narrow, allAccounts }) => {
         onMouseLeave={() => cancelOpen()}
       >
         {hasActiveAccount ? (
-          <Identicon className="identicon" value={address} theme="polkadot" />
+          <Identicon className="identicon" value={address} theme={type === 'ethereum' ? 'ethereum' : 'polkadot'} />
         ) : (
           <Identicon
             className="identicon"
@@ -315,9 +330,13 @@ const Authorized = styled(({ className, narrow, allAccounts }) => {
 
   > .identicon {
     margin-right: 0.3em;
-    > svg {
+    > svg,
+    > img {
       width: 2.5em;
       height: 2.5em;
+    }
+    img {
+      border-radius: 999999999999rem;
     }
   }
 

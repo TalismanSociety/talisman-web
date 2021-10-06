@@ -37,9 +37,12 @@ const customRpcs = {
 const AssetItem = styled(({ id, balances, addresses, className }) => {
   const chain = useChain(id)
 
-  const unavailable = [
-    '2023', // moonriver accounts can't be imported into polkadot.js
-  ].includes(id)
+  const { status, accounts } = useExtension()
+  const isMoonriver = id === '2023'
+  const hasNoEthereumAddress = useMemo(
+    () => status === 'OK' && accounts.every(account => account.type !== 'ethereum'),
+    [status, accounts]
+  )
 
   const { name, longName, nativeToken, tokenDecimals } = chain
   const { price: tokenPrice, loading: priceLoading } = useTokenPrice(nativeToken)
@@ -73,39 +76,52 @@ const AssetItem = styled(({ id, balances, addresses, className }) => {
   )
   return (
     <div className={className}>
-      <span className="left">
-        <Info title={name} subtitle={longName || name} graphic={<ChainLogo chain={chain} type="logo" size={4} />} />
-      </span>
-      <span className="right">
-        <Info
-          title={
-            unavailable ? 'Unavailable' : <Pendor suffix={` ${tokenSymbol}`}>{tokens && formatCommas(tokens)}</Pendor>
-          }
-          subtitle={
-            unavailable ? (
-              'Coming Soon'
-            ) : tokens ? (
-              <Pendor prefix={!usd && '-'} require={!priceLoading}>
-                {usd && formatCurrency(usd)}
-              </Pendor>
-            ) : null
-          }
-        />
-      </span>
+      <Info title={name} subtitle={longName || name} graphic={<ChainLogo chain={chain} type="logo" size={4} />} />
+      <Info
+        title={<Pendor suffix={` ${tokenSymbol}`}>{tokens && formatCommas(tokens)}</Pendor>}
+        subtitle={
+          tokens ? (
+            <Pendor prefix={!usd && '-'} require={!priceLoading}>
+              {usd && formatCurrency(usd)}
+            </Pendor>
+          ) : null
+        }
+      />
+      {isMoonriver && hasNoEthereumAddress && <MoonriverWalletInstructions />}
     </div>
   )
 })`
-  display: flex;
+  display: grid;
+  grid-template: auto / 1fr 1fr;
   align-items: center;
-  justify-content: space-between;
 
-  > span {
-    display: flex;
-    align-items: center;
+  > *:nth-child(2n + 1) {
+    justify-self: start;
+  }
+  > *:nth-child(2n + 2) {
+    text-align: right;
+    justify-self: end;
+  }
+`
 
-    &.right {
-      text-align: right;
-    }
+const MoonriverWalletInstructions = styled(({ className }) => (
+  <div className={className}>
+    <p>
+      🌕{' '}
+      <a href="#" target="_blank" rel="noreferrer noopener">
+        Click here
+      </a>{' '}
+      to learn how to add your Moonriver address to your wallet
+    </p>
+  </div>
+))`
+  &&& {
+    grid-column: 1 / -1;
+    justify-self: center;
+    text-align: center;
+
+    padding: 3rem 2rem 1.45rem;
+    color: var(--color-mid);
   }
 `
 

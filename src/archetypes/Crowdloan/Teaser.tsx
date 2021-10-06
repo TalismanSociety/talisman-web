@@ -3,7 +3,7 @@ import { ReactComponent as CheckCircleIcon } from '@assets/icons/check-circle.sv
 import { Pill } from '@components'
 import { getTotalContributionForCrowdloan, useCrowdloanContributions } from '@libs/crowdloans'
 import { useAccountAddresses, useCrowdloanById, useParachainDetailsById } from '@libs/talisman'
-import Keyring from '@polkadot/keyring'
+import { encodeAnyAddress } from '@talismn/util'
 import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
@@ -11,15 +11,13 @@ import styled from 'styled-components'
 import Countdown from './Countdown'
 import Raised from './Raised'
 
-const keyring = new Keyring()
-
 const Teaser = styled(({ id, className }) => {
   const { crowdloan } = useCrowdloanById(id)
   const parachainId = crowdloan?.parachain?.paraId
   const { parachainDetails } = useParachainDetailsById(parachainId)
 
   const accounts = useAccountAddresses()
-  const encoded = useMemo(() => accounts?.map(account => keyring.encodeAddress(account, 2)), [accounts])
+  const encoded = useMemo(() => accounts?.map(account => encodeAnyAddress(account, 2)), [accounts])
   const myContributions = useCrowdloanContributions({ accounts: encoded, crowdloans: id ? [id] : undefined })
   const totalContribution = getTotalContributionForCrowdloan(id, myContributions.contributions)
 
