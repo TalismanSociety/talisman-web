@@ -144,7 +144,7 @@ export const useCrowdloanAggregateStats = () => {
 
   useEffect(() => {
     setRaised(crowdloans.reduce((acc: number, { raised = '0' }) => acc + parseInt(raised, 10), 0))
-    setProjects(crowdloans.length)
+    setProjects(Object.keys(Object.fromEntries(crowdloans.map(crowdloan => [crowdloan.parachain.paraId, true]))).length)
     // setContributors(crowdloans.reduce((acc: number, { contributors = [] }) => acc + contributors.length, 0))
   }, [crowdloans])
 
