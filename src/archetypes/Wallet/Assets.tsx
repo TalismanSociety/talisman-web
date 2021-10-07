@@ -108,12 +108,27 @@ const MoonriverWalletInstructions = styled(({ className }) => (
     className={className}
     title="🌕 Unavailable"
     subtitle={
-      <a href="#" target="_blank" rel="noreferrer noopener">
-        Add Moonriver Balance
+      <a
+        href="https://glib-calendula-bf6.notion.site/How-to-add-your-Moonriver-account-to-the-polkadot-js-extension-543cb2bc3fc447aaae2320c1fab62e92"
+        target="_blank"
+        rel="noreferrer noopener"
+      >
+        <div className="text-vertical-center">
+          <span className="plus-icon">(+)</span> Add Moonriver Balance
+        </div>
       </a>
     }
   />
 ))`
+  .text-vertical-center {
+    display: flex;
+    align-items: center;
+  }
+  .plus-icon {
+    font: 0.75em monospace;
+    letter-spacing: -1px;
+    margin-right: 0.25em;
+  }
   > .text > .subtitle a {
     color: var(--color-primary);
   }
