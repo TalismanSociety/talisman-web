@@ -77,51 +77,45 @@ const AssetItem = styled(({ id, balances, addresses, className }) => {
   return (
     <div className={className}>
       <Info title={name} subtitle={longName || name} graphic={<ChainLogo chain={chain} type="logo" size={4} />} />
-      <Info
-        title={<Pendor suffix={` ${tokenSymbol}`}>{tokens && formatCommas(tokens)}</Pendor>}
-        subtitle={
-          tokens ? (
-            <Pendor prefix={!usd && '-'} require={!priceLoading}>
-              {usd && formatCurrency(usd)}
-            </Pendor>
-          ) : null
-        }
-      />
-      {isMoonriver && hasNoEthereumAddress && <MoonriverWalletInstructions />}
+      {isMoonriver && hasNoEthereumAddress ? (
+        <MoonriverWalletInstructions />
+      ) : (
+        <Info
+          title={<Pendor suffix={` ${tokenSymbol}`}>{tokens && formatCommas(tokens)}</Pendor>}
+          subtitle={
+            tokens ? (
+              <Pendor prefix={!usd && '-'} require={!priceLoading}>
+                {usd && formatCurrency(usd)}
+              </Pendor>
+            ) : null
+          }
+        />
+      )}
     </div>
   )
 })`
-  display: grid;
-  grid-template: auto / 1fr 1fr;
+  display: flex;
+  justify-content: space-between;
   align-items: center;
 
-  > *:nth-child(2n + 1) {
-    justify-self: start;
-  }
-  > *:nth-child(2n + 2) {
+  > *:last-child {
     text-align: right;
-    justify-self: end;
   }
 `
 
 const MoonriverWalletInstructions = styled(({ className }) => (
-  <div className={className}>
-    <p>
-      🌕{' '}
+  <Info
+    className={className}
+    title="🌕 Unavailable"
+    subtitle={
       <a href="#" target="_blank" rel="noreferrer noopener">
-        Click here
-      </a>{' '}
-      to learn how to add your Moonriver address to your wallet
-    </p>
-  </div>
+        Add Moonriver Balance
+      </a>
+    }
+  />
 ))`
-  &&& {
-    grid-column: 1 / -1;
-    justify-self: center;
-    text-align: center;
-
-    padding: 3rem 2rem 1.45rem;
-    color: var(--color-mid);
+  > .text > .subtitle a {
+    color: var(--color-primary);
   }
 `
 
