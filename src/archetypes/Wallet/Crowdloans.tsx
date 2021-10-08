@@ -4,10 +4,11 @@ import {
   groupTotalContributionsByCrowdloan,
   useCrowdloanContributions,
 } from '@libs/crowdloans'
+import { calculateCrowdloanPortfolioAmounts, usePortfolio, useTaggedAmountsInPortfolio } from '@libs/portfolio'
 import { useAccountAddresses, useCrowdloanById } from '@libs/talisman'
 import { useTokenPrice } from '@libs/tokenprices'
 import { useChain } from '@talismn/api-react-hooks'
-import { encodeAnyAddress, multiplyBigNumbers, planckToTokens, useFuncMemo } from '@talismn/util'
+import { addBigNumbers, encodeAnyAddress, multiplyBigNumbers, planckToTokens, useFuncMemo } from '@talismn/util'
 import { formatCommas, formatCurrency } from '@util/helpers'
 import { useMemo } from 'react'
 import styled from 'styled-components'
@@ -31,6 +32,14 @@ const CrowdloanItem = styled(({ id, className }) => {
   const relayTokenSymbol = useFuncMemo(token => token || 'Planck', relayNativeToken)
   const contributedTokens = useFuncMemo(planckToTokens, totalContributions || '', relayTokenDecimals)
   const contributedUsd = multiplyBigNumbers(contributedTokens, relayTokenPrice)
+
+  const portfolioAmounts = useFuncMemo(
+    calculateCrowdloanPortfolioAmounts,
+    contributions,
+    relayTokenDecimals,
+    relayTokenPrice
+  )
+  useTaggedAmountsInPortfolio(portfolioAmounts)
 
   return (
     <div className={className}>
@@ -76,9 +85,19 @@ const Crowdloans = ({ className }: { className?: string }) => {
   const { contributions, skipped, loading, error } = useCrowdloanContributions({ accounts: encoded })
   const totalContributions = groupTotalContributionsByCrowdloan(contributions)
 
+  const { totalCrowdloansUsdByAddress } = usePortfolio()
+  const crowdloansUsd = useMemo(
+    () =>
+      Object.entries(totalCrowdloansUsdByAddress || {})
+        .filter(([address]) => accounts && accounts.includes(address))
+        .map(([, crowdloansUsd]) => crowdloansUsd)
+        .reduce(addBigNumbers, undefined),
+    [totalCrowdloansUsdByAddress, accounts]
+  )
+
   return (
-    <section className={`wallet-assets ${className}`}>
-      <Panel title="Crowdloans">
+    <section className={`wallet-crowdloans ${className}`}>
+      <Panel title="Crowdloans" subtitle={crowdloansUsd && formatCurrency(crowdloansUsd)}>
         {skipped || loading ? (
           <PanelSection comingSoon>
             <div>Summoning Crowdloan Contributions...</div>

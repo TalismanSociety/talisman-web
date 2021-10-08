@@ -1,5 +1,7 @@
+import { CrowdloanContribution } from '@libs/crowdloans'
 import type { BalanceWithTokensWithPrice } from '@talismn/api-react-hooks'
 import { groupBalancesByAddress } from '@talismn/api-react-hooks'
+import { addBigNumbers, encodeAnyAddress, multiplyBigNumbers, planckToTokens } from '@talismn/util'
 import useUniqueId from '@util/useUniqueId'
 import { FC, useContext as _useContext, createContext, useCallback, useEffect, useMemo, useState } from 'react'
 
@@ -12,7 +14,7 @@ import { FC, useContext as _useContext, createContext, useCallback, useEffect, u
 //       which will take care of fetching and updating the underlying balances as appropriate for us.
 
 // Helpers (exported)
-export function calculatePortfolioAmounts(
+export function calculateAssetPortfolioAmounts(
   balances: Array<BalanceWithTokensWithPrice | null>
 ): Array<{ tags: Tag[]; amount: string | undefined }> {
   const amounts: Array<{ tags: Tag[]; amount: string | undefined }> = []
@@ -24,6 +26,32 @@ export function calculatePortfolioAmounts(
   Object.entries(byAddress).forEach(([address, balances]) => {
     const tags: Tag[] = ['USD', 'Assets', { Address: address }]
     balances.forEach(balance => amounts.push({ tags, amount: balance.usd }))
+  })
+
+  return amounts
+}
+
+export function calculateCrowdloanPortfolioAmounts(
+  contributions: CrowdloanContribution[],
+  tokenDecimals?: number,
+  tokenPrice?: string
+): Array<{ tags: Tag[]; amount: string | undefined }> {
+  const amounts: Array<{ tags: Tag[]; amount: string | undefined }> = []
+
+  const byAddress: { [key: string]: CrowdloanContribution[] } = {}
+  contributions.forEach(contribution => {
+    if (!byAddress[encodeAnyAddress(contribution.account, 42)])
+      byAddress[encodeAnyAddress(contribution.account, 42)] = []
+    byAddress[encodeAnyAddress(contribution.account, 42)].push(contribution)
+  })
+
+  Object.entries(byAddress).forEach(([address, contributions]) => {
+    const tags: Tag[] = ['USD', 'Crowdloans', { Address: address }]
+    contributions.forEach(contribution => {
+      const contributionTokens = planckToTokens(contribution.amount, tokenDecimals)
+      const contributionUsd = multiplyBigNumbers(contributionTokens, tokenPrice)
+      amounts.push({ tags, amount: contributionUsd })
+    })
   })
 
   return amounts
@@ -136,34 +164,32 @@ export const Provider: FC<ProviderProps> = ({ children }) => {
 
     Object.values(totalStore).forEach(({ tags, amount }) => {
       if (tags.includes('USD')) {
-        totalUsd = String(Number(totalUsd) + Number(amount)) // TODO: BN.js arithmetic?
+        totalUsd = addBigNumbers(totalUsd, amount)
 
         tags
           .filter((tag): tag is AddressTag => Object.keys(tag).length === 1 && Object.keys(tag)[0] === 'Address')
           .map(tag => tag.Address)
           .forEach(address => {
             if (!totalUsdByAddress[address]) totalUsdByAddress[address] = '0'
-            totalUsdByAddress[address] = String(Number(totalUsdByAddress[address]) + Number(amount))
+            totalUsdByAddress[address] = addBigNumbers(totalUsdByAddress[address], amount)
 
             if (tags.includes('Assets')) {
               if (!totalAssetsUsdByAddress[address]) totalAssetsUsdByAddress[address] = '0'
-              totalAssetsUsdByAddress[address] = String(Number(totalAssetsUsdByAddress[address]) + Number(amount))
+              totalAssetsUsdByAddress[address] = addBigNumbers(totalAssetsUsdByAddress[address], amount)
             }
             if (tags.includes('Crowdloans')) {
               if (!totalCrowdloansUsdByAddress[address]) totalCrowdloansUsdByAddress[address] = '0'
-              totalCrowdloansUsdByAddress[address] = String(
-                Number(totalCrowdloansUsdByAddress[address]) + Number(amount)
-              )
+              totalCrowdloansUsdByAddress[address] = addBigNumbers(totalCrowdloansUsdByAddress[address], amount)
             }
             if (tags.includes('Staking')) {
               if (!totalStakingUsdByAddress[address]) totalStakingUsdByAddress[address] = '0'
-              totalStakingUsdByAddress[address] = String(Number(totalStakingUsdByAddress[address]) + Number(amount))
+              totalStakingUsdByAddress[address] = addBigNumbers(totalStakingUsdByAddress[address], amount)
             }
           })
 
-        if (tags.includes('Assets')) totalAssetsUsd = String(Number(totalAssetsUsd) + Number(amount))
-        if (tags.includes('Crowdloans')) totalCrowdloansUsd = String(Number(totalCrowdloansUsd) + Number(amount))
-        if (tags.includes('Staking')) totalStakingUsd = String(Number(totalStakingUsd) + Number(amount))
+        if (tags.includes('Assets')) totalAssetsUsd = addBigNumbers(totalAssetsUsd, amount)
+        if (tags.includes('Crowdloans')) totalCrowdloansUsd = addBigNumbers(totalCrowdloansUsd, amount)
+        if (tags.includes('Staking')) totalStakingUsd = addBigNumbers(totalStakingUsd, amount)
       }
     })
 

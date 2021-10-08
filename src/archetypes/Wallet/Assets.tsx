@@ -1,5 +1,5 @@
 import { ChainLogo, ExtensionStatusGate, Info, Panel, PanelSection, Pendor } from '@components'
-import { calculatePortfolioAmounts, usePortfolio, useTaggedAmountsInPortfolio } from '@libs/portfolio'
+import { calculateAssetPortfolioAmounts, usePortfolio, useTaggedAmountsInPortfolio } from '@libs/portfolio'
 import { useAccountAddresses, useExtension } from '@libs/talisman'
 import { useTokenPrice } from '@libs/tokenprices'
 import {
@@ -50,7 +50,7 @@ const AssetItem = styled(({ id, balances, addresses, className }) => {
   const tokenBalances = useFuncMemo(addTokensToBalances, balances, nativeToken ? tokenDecimals : undefined)
   const pricedTokenBalances = useFuncMemo(addPriceToTokenBalances, tokenBalances, tokenPrice)
 
-  const portfolioAmounts = useFuncMemo(calculatePortfolioAmounts, pricedTokenBalances)
+  const portfolioAmounts = useFuncMemo(calculateAssetPortfolioAmounts, pricedTokenBalances)
   useTaggedAmountsInPortfolio(portfolioAmounts)
 
   const tokenSymbol = useFuncMemo(token => token || 'Planck', nativeToken)

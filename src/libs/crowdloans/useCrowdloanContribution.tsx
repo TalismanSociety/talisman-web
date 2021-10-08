@@ -17,7 +17,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 export type Status = 'INIT' | 'IDLE' | 'VALIDATING' | 'PROCESSING' | 'SUCCESS' | 'FAILED'
 
-export type CrowdloanContribution = {
+export type CrowdloanContributionMutation = {
   chaindata?: {
     name?: string
     description?: string
@@ -44,7 +44,7 @@ export function useCrowdloanContribution(
   contributionAmount?: string,
   account?: string,
   signature: string | null = null
-): CrowdloanContribution {
+): CrowdloanContributionMutation {
   const [status, setStatus] = useState<Status>('INIT')
   const [explorerUrl, setExplorerUrl] = useState<string | null>(null)
   const [txFee, setTxFee] = useState<{ fee?: string; loading: boolean } | null>(null)

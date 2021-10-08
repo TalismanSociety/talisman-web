@@ -2622,8 +2622,8 @@ __metadata:
   linkType: hard
 
 "@talismn/util@npm:~0":
-  version: 0.0.10
-  resolution: "@talismn/util@npm:0.0.10"
+  version: 0.0.11
+  resolution: "@talismn/util@npm:0.0.11"
   dependencies:
     "@polkadot/extension-inject": ^0.39.3
     "@polkadot/networks": ^7.3.1
@@ -2633,7 +2633,7 @@ __metadata:
     "@polkadot/keyring": "*"
     "@polkadot/util-crypto": "*"
     react: ">=17"
-  checksum: 0b629b143a5e54334de5f6a0d1164b1710921685d5069a415c899cff97cdc1e1fbfd1d3a1ee7e6680aa52be5991ff2a9692eaa8726af3a8e347e259cc173fed4
+  checksum: 24deaa341e48bbd8da6238a8fb9b907f4fc3753022abe39de901f0c36453dc22fabaa05ca1f4de3a355c1554d77747ffb0be7610424d2867f3ac39afa0f874af
   languageName: node
   linkType: hard
 
