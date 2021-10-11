@@ -2677,7 +2677,7 @@ __metadata:
     prettier: ^2.3.2
     prettier-plugin-import-sort: ^0.0.7
     react: ^17.0.2
-    react-apollo-network-status: ^5.0.1
+    react-apollo-network-status: ^5.1.0
     react-dom: ^17.0.2
     react-is: ^17.0.2
     react-router: ^5.2.0
@@ -13305,14 +13305,14 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"react-apollo-network-status@npm:^5.0.1":
-  version: 5.0.1
-  resolution: "react-apollo-network-status@npm:5.0.1"
+"react-apollo-network-status@npm:^5.1.0":
+  version: 5.1.0
+  resolution: "react-apollo-network-status@npm:5.1.0"
   peerDependencies:
     "@apollo/client": ^3.0.0
     graphql: ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0
-    react: ^16.8.0
-  checksum: c8c6fd946806f0d3f29f7500b9aa9a8d24d7e0035b81d823bf604771f21dfc34583135a48fbb1a2e886739d08b28e2498703044a64e3165b6554954e38612a61
+    react: ^16.8.0 || ^17.0.0
+  checksum: 88c186a63121fca5075bbbfd0d89b78fcbedde17235a39117756935e1a7c6dfd0b06682cacd73b111c312bf951e9bbdb56afb4318444b196a545cfb1bfdb136f
   languageName: node
   linkType: hard
 
