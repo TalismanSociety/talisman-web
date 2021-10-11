@@ -109,7 +109,7 @@ const MoonriverWalletInstructions = styled(({ className }) => (
     title="🌕 Unavailable"
     subtitle={
       <a
-        href="https://glib-calendula-bf6.notion.site/How-to-add-your-Moonriver-account-to-the-polkadot-js-extension-543cb2bc3fc447aaae2320c1fab62e92"
+        href="https://medium.com/we-are-talisman/how-to-view-your-moonriver-balance-in-the-talisman-web-app-c37185fb3980"
         target="_blank"
         rel="noreferrer noopener"
       >
