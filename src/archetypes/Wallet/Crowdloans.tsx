@@ -5,7 +5,7 @@ import {
   useCrowdloanContributions,
 } from '@libs/crowdloans'
 import { calculateCrowdloanPortfolioAmounts, usePortfolio, useTaggedAmountsInPortfolio } from '@libs/portfolio'
-import { useAccountAddresses, useCrowdloanById } from '@libs/talisman'
+import { useAccountAddresses, useCrowdloanById, useCrowdloans } from '@libs/talisman'
 import { useTokenPrice } from '@libs/tokenprices'
 import { useChain } from '@talismn/api-react-hooks'
 import { addBigNumbers, encodeAnyAddress, multiplyBigNumbers, planckToTokens, useFuncMemo } from '@talismn/util'
@@ -30,7 +30,7 @@ const CrowdloanItem = styled(({ id, className }) => {
   const totalContributions = getTotalContributionForCrowdloan(id, contributions)
 
   const relayTokenSymbol = useFuncMemo(token => token || 'Planck', relayNativeToken)
-  const contributedTokens = useFuncMemo(planckToTokens, totalContributions || '', relayTokenDecimals)
+  const contributedTokens = useFuncMemo(planckToTokens, totalContributions || undefined, relayTokenDecimals)
   const contributedUsd = multiplyBigNumbers(contributedTokens, relayTokenPrice)
 
   const portfolioAmounts = useFuncMemo(
@@ -85,14 +85,28 @@ const Crowdloans = ({ className }: { className?: string }) => {
   const { contributions, skipped, loading, error } = useCrowdloanContributions({ accounts: encoded })
   const totalContributions = groupTotalContributionsByCrowdloan(contributions)
 
+  const { crowdloans, hydrated } = useCrowdloans()
+  const notDisolvedCrowdloanIds = useMemo(
+    () => crowdloans.filter(crowdloan => crowdloan.dissolvedBlock === null).map(crowdloan => crowdloan.id),
+    [crowdloans]
+  )
+  const totalAliveContributions = useMemo(
+    () =>
+      hydrated
+        ? Object.fromEntries(Object.entries(totalContributions).filter(([id]) => notDisolvedCrowdloanIds.includes(id)))
+        : {},
+    [hydrated, totalContributions, notDisolvedCrowdloanIds]
+  )
+
   const { totalCrowdloansUsdByAddress } = usePortfolio()
+  const genericAccounts = useMemo(() => accounts?.map(account => encodeAnyAddress(account, 42)), [accounts])
   const crowdloansUsd = useMemo(
     () =>
       Object.entries(totalCrowdloansUsdByAddress || {})
-        .filter(([address]) => accounts && accounts.includes(address))
+        .filter(([address]) => genericAccounts && genericAccounts.includes(address))
         .map(([, crowdloansUsd]) => crowdloansUsd)
         .reduce(addBigNumbers, undefined),
-    [totalCrowdloansUsdByAddress, accounts]
+    [totalCrowdloansUsdByAddress, genericAccounts]
   )
 
   return (
@@ -105,10 +119,10 @@ const Crowdloans = ({ className }: { className?: string }) => {
           </PanelSection>
         ) : error ? (
           <PanelSection comingSoon>{String(error)}</PanelSection>
-        ) : Object.keys(totalContributions).length < 1 ? (
+        ) : Object.keys(totalAliveContributions).length < 1 ? (
           <PanelSection comingSoon>No crowdloan contributions found</PanelSection>
         ) : (
-          Object.keys(totalContributions).map(id => (
+          Object.keys(totalAliveContributions).map(id => (
             <PanelSection key={id}>
               <CrowdloanItem id={id} />
             </PanelSection>

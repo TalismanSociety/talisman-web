@@ -70,8 +70,9 @@ const Dropdown = styled(({ className, handleClose, allAccounts, nativeToken, ksm
             <span className="right">
               {address ? (
                 allAccounts ? (
-                  <Pendor prefix={!totalUsdByAddress[address] && '-'}>
-                    {totalUsdByAddress[address] && formatCurrency(totalUsdByAddress[address])}
+                  <Pendor prefix={!totalUsdByAddress[encodeAnyAddress(address, 42)] && '-'}>
+                    {totalUsdByAddress[encodeAnyAddress(address, 42)] &&
+                      formatCurrency(totalUsdByAddress[encodeAnyAddress(address, 42)])}
                   </Pendor>
                 ) : (
                   <Pendor suffix={` ${nativeToken}`}>
@@ -237,7 +238,7 @@ const Authorized = styled(({ className, narrow, allAccounts }) => {
   const { totalUsd, totalUsdByAddress } = usePortfolio()
   const [open, setOpen] = useState(false)
 
-  const usd = hasActiveAccount ? totalUsdByAddress[address] : totalUsd
+  const usd = hasActiveAccount ? totalUsdByAddress[encodeAnyAddress(address, 42)] : totalUsd
   useEffect(() => {
     if (allAccounts) return
     if (hasActiveAccount) return
