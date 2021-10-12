@@ -2,7 +2,7 @@ import { Account, Parachain } from '@archetypes'
 import { ReactComponent as CheckCircle } from '@assets/icons/check-circle.svg'
 import { ReactComponent as XCircle } from '@assets/icons/x-circle.svg'
 import { Button, DesktopRequired, Field, MaterialLoader, Pendor, useModal } from '@components'
-import { useCrowdloanContribution } from '@libs/crowdloans'
+import { useCrowdloanContribute } from '@libs/crowdloans'
 import { useActiveAccount, useCrowdloanById, useParachainDetailsById } from '@libs/talisman'
 import { useTokenPrice } from '@libs/tokenprices'
 import { multiplyBigNumbers } from '@talismn/util'
@@ -39,7 +39,7 @@ export default function Contribute({ className, id }: ContributeProps) {
   const { address } = useActiveAccount()
   const [verifier, setVerifier] = useState()
 
-  const { contribute, status, explorerUrl, txFee, error } = useCrowdloanContribution(
+  const { contribute, status, explorerUrl, txFee, error } = useCrowdloanContribute(
     crowdloan?.parachain?.paraId,
     contributionAmount,
     address
