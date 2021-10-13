@@ -2576,8 +2576,8 @@ __metadata:
   linkType: hard
 
 "@talismn/api-react-hooks@npm:~0":
-  version: 0.0.21
-  resolution: "@talismn/api-react-hooks@npm:0.0.21"
+  version: 0.0.22
+  resolution: "@talismn/api-react-hooks@npm:0.0.22"
   dependencies:
     "@talismn/api": ~0
     "@talismn/chaindata-js": ~0
@@ -2588,13 +2588,13 @@ __metadata:
     "@polkadot/types": "*"
     "@polkadot/util-crypto": "*"
     react: ">=17"
-  checksum: d492d324cc7a9b60ab90bff1ff54fd105c3ff3a56a7c32ff9466014c97989acb5eaa61aa9ab4b5aac8fa6c52c82e0dfe788821569ac65920fa854fa73c0137cb
+  checksum: 15504004d39efde334263d3e42a2583e53e5bb7d1a5f486e22aa11ca63f3c2005b1db0b9634b8ce085287586a49c0748c994fef576eaac119918827de7f6bbb8
   languageName: node
   linkType: hard
 
 "@talismn/api@npm:~0":
-  version: 0.0.19
-  resolution: "@talismn/api@npm:0.0.19"
+  version: 0.0.20
+  resolution: "@talismn/api@npm:0.0.20"
   dependencies:
     "@talismn/chaindata-js": ~0
     "@talismn/util": ~0
@@ -2610,7 +2610,7 @@ __metadata:
     "@polkadot/types": "*"
     "@polkadot/util-crypto": "*"
     react: "*"
-  checksum: bdc63808eebbc7dc416078624a49be2bafd439a1d79b60271529acaa0fb8360d670449e17cea51373979055f4338c4d2adc5cd1ef9f698c96fb68026f6d479c9
+  checksum: 309b37d2de011bb1b29d77888db85a4e6f0b6118e1108afcdc43b79e04b6e4fb896dd23e98b05510fb8f2421da6ad33e9752fcfceddd906b8723f5a5a9bfc217
   languageName: node
   linkType: hard
 
