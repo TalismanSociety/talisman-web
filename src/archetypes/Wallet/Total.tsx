@@ -53,6 +53,7 @@ const Total = styled(({ id, className }) => {
   )
 })`
   color: var(--color-text);
+  width: 100%;
 
   > .title {
     font-size: var(--font-size-xsmall);
