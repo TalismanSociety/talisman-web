@@ -103,9 +103,8 @@ const Teaser = styled(({ id, className }) => {
     position: absolute;
     top: 1.6rem;
     right: 1.6rem;
-    color: white;
-    background: white;
-    color: black;
+    background: var(--color-controlBackground);
+    color: var(--color-mid);
   }
 
   .crowdloan-raised {

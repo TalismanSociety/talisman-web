@@ -132,7 +132,7 @@ export const Search = styled(({ value, className, onChange = () => {}, ...rest }
 ))`
   .children {
     [type='text'] {
-      background: black; /*rgb(${theme => theme.dark});*/
+      background: var(--color-controlBackground);
     }
     .suffix {
       svg {
