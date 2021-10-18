@@ -123,6 +123,7 @@ const Header = styled(({ className, isMobile, mobileMenuOpen, dispatch }) => (
   padding: 0 2.4rem;
   width: 100%;
   box-shadow: 0 0 2.4rem rgba(0, 0, 0, 0.05);
+  background: var(--color-controlBackground);
 
   > * {
     display: flex;
@@ -206,7 +207,7 @@ const Header = styled(({ className, isMobile, mobileMenuOpen, dispatch }) => (
       line-height: 1.4rem;
       font-size: 1.4rem;
       font-weight: 500;
-      color: rgb(${({ theme }) => theme?.text});
+      color: rgb(${({ theme }) => theme?.background});
       background: var(--color-primary);
       text-align: center;
 
