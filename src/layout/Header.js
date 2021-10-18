@@ -91,6 +91,7 @@ const Header = styled(({ className, isMobile, mobileMenuOpen, dispatch }) => (
             Portfolio
           </NavLink>
           <NavLink to="/crowdloans">Crowdloans</NavLink>
+          <NavLink to="/buy">Buy</NavLink>
         </nav>
         <nav className="external-nav">
           <a
