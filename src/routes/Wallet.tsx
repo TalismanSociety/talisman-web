@@ -1,13 +1,16 @@
 import { Account, Wallet } from '@archetypes'
+import { StateBanner } from '@archetypes/StateBanner'
 import { DesktopRequired } from '@components'
+import { device } from '@util/breakpoints'
 import styled from 'styled-components'
 
 const _Wallet = styled(({ className }) => (
   <section className={className}>
     <DesktopRequired />
+    <Account.Button allAccounts />
     <header>
       <Wallet.Total />
-      <Account.Button allAccounts />
+      <StateBanner />
     </header>
     <Wallet.Assets />
     <Wallet.Crowdloans />
@@ -25,11 +28,16 @@ const _Wallet = styled(({ className }) => (
   }
 
   > header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    flex-wrap: wrap;
-    gap: 2rem;
+    > * + * {
+      margin-top: 1rem;
+    }
+    @media ${device.lg} {
+      display: flex;
+      gap: 2rem;
+      > * + * {
+        margin-top: 0;
+      }
+    }
   }
 `
 
