@@ -241,9 +241,9 @@ const Header = styled(({ className, isMobile, mobileMenuOpen, dispatch }) => (
     top: calc(100% + 1rem);
     right: 1rem;
     padding: 1rem 2rem;
-    background: #fff;
     box-shadow: 0 0 0.8rem rgba(0, 0, 0, 0.1);
     border-radius: 1.6rem;
+    background: var(--color-controlBackground);
 
     > a {
       display: flex;
