@@ -103,7 +103,7 @@ const Teaser = styled(({ id, className }) => {
     position: absolute;
     top: 1.6rem;
     right: 1.6rem;
-    background: var(--color-controlBackground);
+    background: var(--color-activeBackground);
     color: var(--color-mid);
   }
 

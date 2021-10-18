@@ -224,6 +224,7 @@ declare module 'styled-components' {
     light: string
     dark: string
     text: string
+    activeBackground: string
     controlBackground: string
   }
 }
@@ -238,6 +239,7 @@ const orangeLight: DefaultTheme = {
   light: '250,250,250',
   dark: '0,0,0',
   text: '0,0,0',
+  activeBackground: '56,56,56',
   controlBackground: '38,38,38',
 }
 
@@ -251,6 +253,7 @@ const orangeDark: DefaultTheme = {
   light: '255,255,255',
   dark: '0,0,0',
   text: '255,255,255',
+  activeBackground: '56,56,56',
   controlBackground: '38,38,38',
 }
 
@@ -270,6 +273,7 @@ const greenLight: DefaultTheme = {
   light: '250,250,250',
   dark: '0,0,0',
   text: '0,0,0',
+  activeBackground: '56,56,56',
   controlBackground: '38,38,38',
 }
 
@@ -283,6 +287,7 @@ const greenDark: DefaultTheme = {
   light: '250,250,250',
   dark: '0,0,0',
   text: '250,250,250',
+  activeBackground: '56,56,56',
   controlBackground: '38,38,38',
 }
 

@@ -228,7 +228,7 @@ const Header = styled(({ className, isMobile, mobileMenuOpen, dispatch }) => (
     line-height: 1em;
     cursor: pointer;
     color: rgb(${({ theme }) => theme?.text});
-    background: rgb(${({ theme }) => theme?.controlBackground});
+    background: rgb(${({ theme }) => theme?.activeBackground});
     border-radius: 9999999rem;
     transition: all 0.15s ease-in-out;
     box-shadow: 0 0 0.8rem rgba(0, 0, 0, 0.1);
