@@ -131,6 +131,9 @@ export const Search = styled(({ value, className, onChange = () => {}, ...rest }
   </FieldWrapper>
 ))`
   .children {
+    [type='text'] {
+      background: black; /*rgb(${theme => theme.dark});*/
+    }
     .suffix {
       svg {
         transform: translatex(50%);

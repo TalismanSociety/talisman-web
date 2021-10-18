@@ -42,7 +42,7 @@ const Teaser = styled(({ id, className }) => {
   )
 })`
   display: block;
-  background: #fff;
+  background: rgb(${theme => theme.dark});
   overflow: hidden;
   border-radius: 2.4rem;
   box-shadow: 0 0 1.2rem rgba(${({ theme }) => theme.foreground}, 0.1);
