@@ -223,13 +223,10 @@ declare module 'styled-components' {
     dim: string
     light: string
     dark: string
-    text: string
-    activeBackground: string
-    controlBackground: string
   }
 }
 
-const orangeLight: DefaultTheme = {
+const light: DefaultTheme = {
   primary: '244,101,69',
   secondary: '0,0,255',
   background: '250,250,250',
@@ -238,12 +235,9 @@ const orangeLight: DefaultTheme = {
   dim: '245,245,245',
   light: '250,250,250',
   dark: '0,0,0',
-  text: '0,0,0',
-  activeBackground: '56,56,56',
-  controlBackground: '38,38,38',
 }
 
-const orangeDark: DefaultTheme = {
+const dark: DefaultTheme = {
   primary: '244,101,69',
   secondary: '0,0,255',
   background: '0,0,0',
@@ -252,52 +246,11 @@ const orangeDark: DefaultTheme = {
   dim: '245,245,245',
   light: '255,255,255',
   dark: '0,0,0',
-  text: '255,255,255',
-  activeBackground: '56,56,56',
-  controlBackground: '38,38,38',
-}
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const orangeTheme = {
-  light: orangeLight,
-  dark: orangeDark,
-}
-
-const greenLight: DefaultTheme = {
-  primary: '213, 255, 92',
-  secondary: '0,0,255',
-  background: '250,250,250',
-  foreground: '0,0,0',
-  mid: '150,150,150',
-  dim: '245,245,245',
-  light: '250,250,250',
-  dark: '0,0,0',
-  text: '0,0,0',
-  activeBackground: '56,56,56',
-  controlBackground: '38,38,38',
-}
-
-const greenDark: DefaultTheme = {
-  primary: '213,255,92',
-  secondary: '0,0,255',
-  background: '27,27,27',
-  foreground: '165,165,165',
-  mid: '150,150,150',
-  dim: '245,245,245',
-  light: '250,250,250',
-  dark: '0,0,0',
-  text: '250,250,250',
-  activeBackground: '56,56,56',
-  controlBackground: '38,38,38',
-}
-
-const greenTheme = {
-  light: greenLight,
-  dark: greenDark,
 }
 
 const themes = {
-  ...greenTheme,
+  light,
+  dark,
 }
 
 /* style context */
@@ -308,7 +261,7 @@ export const useTheme = () => useContext(Context)
 
 const Provider = ({ children }: PropsWithChildren<{}>) => {
   // theme stuff
-  const [theme, setTheme] = useState('dark')
+  const [theme, setTheme] = useState('light')
   const toggle = () => setTheme(theme === 'dark' ? 'light' : 'dark')
   const set = (mode: string) => setTheme(mode === 'dark' ? 'dark' : 'light')
 

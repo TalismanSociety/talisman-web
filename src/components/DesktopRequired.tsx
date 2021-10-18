@@ -36,7 +36,7 @@ const DesktopRequiredModal = styled(props => {
   }
 
   h2 {
-    color: var(--color-text);
+    color: black;
     font-weight: 600;
     font-size: 1.8rem;
   }

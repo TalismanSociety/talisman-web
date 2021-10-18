@@ -27,9 +27,7 @@ const _Wallet = styled(({ className }) => (
   > header {
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
-    flex-wrap: wrap;
-    gap: 2rem;
+    align-items: flex-end;
   }
 `
 

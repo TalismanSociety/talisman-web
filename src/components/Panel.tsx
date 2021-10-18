@@ -51,7 +51,6 @@ export default styled(({ title, subtitle, children, className, ...rest }) => (
     margin-bottom: 0.8em;
     font-size: var(--font-size-large);
     font-weight: bold;
-    color: var(--color-text);
 
     > span {
       font-size: var(--font-size-normal);
@@ -65,8 +64,9 @@ export default styled(({ title, subtitle, children, className, ...rest }) => (
     display: block;
     border-radius: 1.6rem;
     user-select: none;
-    background: rgb(${({ theme }) => theme.controlBackground});
+    background: rgb(${({ theme }) => theme.background});
     color: rgb(${({ theme }) => theme.foreground});
+    box-shadow: 0px 0px 2.4rem rgba(${({ theme }) => theme.foreground}, 0.1);
 
     .panel-section + .panel-section {
       border-top: 1px solid rgba(${({ theme }) => theme.foreground}, 0.05);

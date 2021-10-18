@@ -79,7 +79,6 @@ const CrowdloanDetail = styled(({ className }) => {
       margin-top: -4rem;
       padding-right: 4vw;
       width: 61%;
-      color: var(--color-text);
 
       .crowdloan-logo {
         width: 8rem;
@@ -154,7 +153,6 @@ const CrowdloanDetail = styled(({ className }) => {
         font-weight: var(--font-weight-bold);
         font-size: var(--font-size-xlarge);
         font-family: 'SurtExpanded', sans-serif;
-        color: var(--color-text);
       }
     }
 
