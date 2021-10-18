@@ -154,6 +154,7 @@ const CrowdloanDetail = styled(({ className }) => {
         font-weight: var(--font-weight-bold);
         font-size: var(--font-size-xlarge);
         font-family: 'SurtExpanded', sans-serif;
+        color: var(--color-text);
       }
     }
 
