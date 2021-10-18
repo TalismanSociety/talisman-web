@@ -94,7 +94,7 @@ const Dropdown = styled(({ className, handleClose, allAccounts, nativeToken, ksm
     </span>
   )
 })`
-  background: rgb(${({ theme }) => theme?.background});
+  background: rgb(${({ theme }) => theme?.controlBackground});
   font-size: 0.8em;
   width: 26em;
   font-size: 1em;
@@ -126,6 +126,9 @@ const Dropdown = styled(({ className, handleClose, allAccounts, nativeToken, ksm
 
     .identicon {
       font-size: 2.6em;
+      color: var(--color-primary);
+      background: var(--color-controlBackground);
+      border-radius: 100px;
       > svg,
       > img {
         width: 1em;
@@ -331,6 +334,9 @@ const Authorized = styled(({ className, narrow, allAccounts }) => {
 
   > .identicon {
     margin-right: 0.3em;
+    color: var(--color-primary);
+    background: var(--color-controlBackground);
+    border-radius: 100px;
     > svg,
     > img {
       width: 2.5em;
