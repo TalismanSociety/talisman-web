@@ -252,6 +252,9 @@ const Header = styled(({ className, isMobile, mobileMenuOpen, dispatch }) => (
       padding: 1rem 0;
 
       > svg {
+        border-radius: 100px;
+        background: var(--color-activeBackground);
+        color: var(--color-primary);
         font-size: 2.4rem;
         margin-left: 5rem;
       }
