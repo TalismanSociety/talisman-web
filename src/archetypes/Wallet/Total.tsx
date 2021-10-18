@@ -1,5 +1,6 @@
 import { usePortfolio } from '@libs/portfolio'
 import { useAccountAddresses } from '@libs/talisman'
+import { device } from '@util/breakpoints'
 import { formatCurrency } from '@util/helpers'
 import BigNumber from 'bignumber.js'
 import { useMemo } from 'react'
@@ -25,6 +26,19 @@ const Total = styled(({ id, className }) => {
     </div>
   )
 })`
+  padding: 2rem;
+  border-radius: 1.6rem;
+  background: var(--color-controlBackground);
+  color: var(--color-text);
+
+  @media ${device.md} {
+    width: 100%;
+  }
+
+  @media ${device.lg} {
+    width: auto;
+  }
+
   > .title {
     font-size: var(--font-size-xsmall);
     color: var(--color-mid);
