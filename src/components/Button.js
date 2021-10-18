@@ -84,7 +84,7 @@ const Button = styled(({ loading, children, className, ...props }) => {
     !!primary &&
     css`
       background: rgb(${theme?.primary});
-      color: rgb(${({ theme }) => theme?.light});
+      color: rgb(${({ theme }) => theme?.background});
     `}
 
   ${({ small }) =>
@@ -96,6 +96,7 @@ const Button = styled(({ loading, children, className, ...props }) => {
     &[disabled] {
     opacity: 0.4;
     filter: grayscale(100%);
+    color: var(--color-mid);
     cursor: not-allowed;
   }
 `

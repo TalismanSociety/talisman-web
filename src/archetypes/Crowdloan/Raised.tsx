@@ -34,6 +34,7 @@ const Raised = styled(({ id, title, className }) => {
   }
 
   > .stat {
+    color: var(--color-text);
     margin-top: 0.7rem;
   }
 
