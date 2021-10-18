@@ -30,6 +30,7 @@ const Total = styled(({ id, className }) => {
   border-radius: 1.6rem;
   background: var(--color-controlBackground);
   color: var(--color-text);
+  width: 100%;
 
   @media ${device.md} {
     width: 100%;
