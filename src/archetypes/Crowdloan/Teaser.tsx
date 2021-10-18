@@ -42,12 +42,10 @@ const Teaser = styled(({ id, className }) => {
   )
 })`
   display: block;
-  background: rgb(${theme => theme.dark});
+  background: var(--color-controlBackground);
   overflow: hidden;
   border-radius: 2.4rem;
-  box-shadow: 0 0 1.2rem rgba(${({ theme }) => theme.foreground}, 0.1);
   position: relative;
-  //height: 35.9rem;
 
   > .crowdloan-card {
     width: 100%;

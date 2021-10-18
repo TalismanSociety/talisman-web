@@ -94,7 +94,7 @@ const Dropdown = styled(({ className, handleClose, allAccounts, nativeToken, ksm
     </span>
   )
 })`
-  background: rgb(${({ theme }) => theme?.background});
+  background: rgb(${({ theme }) => theme?.controlBackground});
   font-size: 0.8em;
   width: 26em;
   font-size: 1em;
