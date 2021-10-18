@@ -68,6 +68,7 @@ const Button = styled(({ loading, children, className, ...props }) => {
   border-radius: 0.8em;
   font-weight: bold;
   transition: all 0.15s ease-in-out;
+  white-space: nowrap;
 
   > * {
     margin: 0 0.5rem;
