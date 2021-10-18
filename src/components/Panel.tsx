@@ -51,6 +51,7 @@ export default styled(({ title, subtitle, children, className, ...rest }) => (
     margin-bottom: 0.8em;
     font-size: var(--font-size-large);
     font-weight: bold;
+    color: var(--color-text);
 
     > span {
       font-size: var(--font-size-normal);

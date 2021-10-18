@@ -142,6 +142,7 @@ const Header = styled(({ className, isMobile, mobileMenuOpen, dispatch }) => (
   .logo {
     display: block;
     font-size: 3.2rem;
+    color: var(--color-text);
 
     svg {
       display: block;
@@ -205,7 +206,7 @@ const Header = styled(({ className, isMobile, mobileMenuOpen, dispatch }) => (
       line-height: 1.4rem;
       font-size: 1.4rem;
       font-weight: 500;
-      color: rgb(${({ theme }) => theme?.background});
+      color: rgb(${({ theme }) => theme?.text});
       background: var(--color-primary);
       text-align: center;
 
@@ -225,8 +226,8 @@ const Header = styled(({ className, isMobile, mobileMenuOpen, dispatch }) => (
     margin: 1.6rem 0;
     line-height: 1em;
     cursor: pointer;
-    color: var(--color-primary);
-    background: #fff;
+    color: rgb(${({ theme }) => theme?.text});
+    background: rgb(${({ theme }) => theme?.controlBackground});
     border-radius: 9999999rem;
     transition: all 0.15s ease-in-out;
     box-shadow: 0 0 0.8rem rgba(0, 0, 0, 0.1);

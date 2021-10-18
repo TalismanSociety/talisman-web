@@ -28,6 +28,7 @@ const Info = styled(({ title, subtitle, graphic, className, ...rest }) => (
 
     .title {
       font-weight: bold;
+      color: var(--color-text);
     }
 
     .subtitle {
