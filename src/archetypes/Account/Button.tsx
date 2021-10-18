@@ -450,7 +450,7 @@ const Authorized = styled(
   > .identicon {
     margin-right: 0.3em;
     color: var(--color-primary);
-    background: var(--color-activeBackground);
+    background: var(--color-controlBackground);
     border-radius: 100px;
     > svg,
     > img {
