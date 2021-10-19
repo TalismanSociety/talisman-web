@@ -1,4 +1,3 @@
-import { device } from '@util/breakpoints'
 import styled from 'styled-components'
 
 interface BannerProps {

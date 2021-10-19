@@ -60,6 +60,8 @@ const CrowdloanDetail = styled(({ className }) => {
     </section>
   )
 })`
+  width: 100%;
+
   > .poster {
     height: 21vw;
     min-height: 20rem;
