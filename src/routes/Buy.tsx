@@ -9,10 +9,8 @@ const Buy = styled(({ className }) => {
     </section>
   )
 })`
-  margin: 0 auto;
   width: 100%;
-  max-width: calc(92rem + 6vw);
-  padding: 0 3vw;
+  padding: 0 6vw;
   margin: 6rem auto;
 
   > * {
@@ -23,7 +21,7 @@ const Buy = styled(({ className }) => {
     > * + * {
       margin-top: 1rem;
     }
-    @media ${device.lg} {
+    @media ${device.xl} {
       display: flex;
       gap: 2rem;
       > * + * {
