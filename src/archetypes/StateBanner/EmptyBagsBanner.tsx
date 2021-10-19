@@ -7,11 +7,11 @@ import { NavLink } from 'react-router-dom'
 export const EmptyBagsBanner = () => {
   return (
     <Banner backgroundImage={bannerImage}>
-      <div>
+      <div className="description">
         <H1>Your bags are empty!</H1>
         <p>Buy DOT and KSM with your credit card or crypto</p>
       </div>
-      <div>
+      <div className="cta">
         <NavLink to="/buy">
           <Button primary>Buy</Button>
         </NavLink>

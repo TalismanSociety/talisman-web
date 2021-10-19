@@ -3,12 +3,12 @@ import { Redirect, Route, Switch } from 'react-router-dom'
 import Buy from './Buy'
 import CrowdloanDetail from './Crowdloan.Detail.tsx'
 import CrowdloanIndex from './Crowdloan.Index.tsx'
-import Wallet from './Wallet.tsx'
+import Home from './Home'
 
 const Routes = () => (
   <Switch>
     <Route exact path="/">
-      <Wallet />
+      <Home />
     </Route>
     <Route exact path="/crowdloans">
       <CrowdloanIndex />

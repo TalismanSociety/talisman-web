@@ -17,10 +17,8 @@ const _Wallet = styled(({ className }) => (
     <Wallet.Staking />
   </section>
 ))`
-  margin: 0 auto;
   width: 100%;
-  max-width: calc(92rem + 6vw);
-  padding: 0 3vw;
+  padding: 0 6vw;
   margin: 6rem auto;
 
   > * {
@@ -28,12 +26,16 @@ const _Wallet = styled(({ className }) => (
   }
 
   > header {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap-reverse;
+    margin-bottom: 6rem;
     > * + * {
-      margin-top: 1rem;
+      margin-bottom: 2rem;
     }
-    @media ${device.lg} {
-      display: flex;
+    @media ${device.xxl} {
       gap: 2rem;
+      flex-wrap: nowrap;
       > * + * {
         margin-top: 0;
       }
