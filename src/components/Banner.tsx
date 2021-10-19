@@ -17,7 +17,13 @@ export const Banner = styled.div<BannerProps>`
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
-  @media ${device.xl} {
-    flex-wrap: nowrap;
+  gap: 2rem;
+
+  > .description {
+    flex: 1 0 60%;
+  }
+
+  > .cta {
+    flex: 0 0 30%;
   }
 `

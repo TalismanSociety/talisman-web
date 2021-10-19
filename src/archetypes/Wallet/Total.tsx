@@ -1,3 +1,4 @@
+import { Pill } from '@components'
 import { usePortfolio } from '@libs/portfolio'
 import { useAccountAddresses } from '@libs/talisman'
 import { device } from '@util/breakpoints'
@@ -9,6 +10,8 @@ import styled from 'styled-components'
 const Total = styled(({ id, className }) => {
   const accountAddresses = useAccountAddresses()
   const { totalUsdByAddress } = usePortfolio()
+  // TODO: Price change value
+  const totalUsdChange = null //-1000000
 
   const totalUsd = useMemo(
     () =>
@@ -21,24 +24,19 @@ const Total = styled(({ id, className }) => {
 
   return (
     <div className={`wallet-total ${className}`}>
-      <div className="title">Your portfolio value</div>
+      <div className="title">Portfolio value</div>
       <div className="amount">{totalUsd && formatCurrency(totalUsd)}</div>
+      {totalUsdChange && (
+        <Pill primary small>
+          {formatCurrency(totalUsdChange)}
+        </Pill>
+      )}
     </div>
   )
 })`
-  padding: 2rem;
-  border-radius: 1.6rem;
-  background: var(--color-controlBackground);
   color: var(--color-text);
-  width: 100%;
-
-  @media ${device.md} {
-    width: 100%;
-  }
-
-  @media ${device.lg} {
-    width: auto;
-  }
+  min-width: 33%;
+  flex: 1 0 auto;
 
   > .title {
     font-size: var(--font-size-xsmall);
@@ -47,7 +45,12 @@ const Total = styled(({ id, className }) => {
   }
 
   > .amount {
-    font-size: var(--font-size-xxlarge);
+    @media ${device.md} {
+      font-size: var(--font-size-xlarge);
+    }
+    @media ${device.lg} {
+      font-size: var(--font-size-xxlarge);
+    }
     font-weight: bold;
     color: var(--color-primary);
     margin: 0;

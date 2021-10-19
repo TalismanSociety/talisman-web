@@ -7,13 +7,13 @@ import { NavLink } from 'react-router-dom'
 export const ExploreCrowdloansBanner = () => {
   return (
     <Banner backgroundImage={bannerImage}>
-      <div>
+      <div className="description">
         <H1>Build the Paraverse</H1>
         <p>
           Crowdloans help projects and teams raise funds to participate in Parachain auctions on Polkadot and Kusama.
         </p>
       </div>
-      <div>
+      <div className="cta">
         <NavLink to="/crowdloans">
           <Button primary>Explore Crowdloans</Button>
         </NavLink>
