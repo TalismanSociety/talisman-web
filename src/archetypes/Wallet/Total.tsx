@@ -1,9 +1,9 @@
 import { Pill } from '@components'
 import { usePortfolio } from '@libs/portfolio'
 import { useAccountAddresses } from '@libs/talisman'
+import { addBigNumbers } from '@talismn/util'
 import { device } from '@util/breakpoints'
 import { formatCurrency } from '@util/helpers'
-import BigNumber from 'bignumber.js'
 import { useMemo } from 'react'
 import styled from 'styled-components'
 
@@ -59,13 +59,3 @@ const Total = styled(({ id, className }) => {
 `
 
 export default Total
-
-// TODO: Dedupe with src/archetypes/Wallet/Assets.tsx and move to @utils
-
-function addBigNumbers(a?: string, b?: string): string | undefined {
-  if (!a && !b) return undefined
-  if (!a) return b
-  if (!b) return a
-
-  return new BigNumber(a).plus(new BigNumber(b)).toString()
-}
