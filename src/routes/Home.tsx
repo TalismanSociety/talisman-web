@@ -1,7 +1,6 @@
 import { StyledLoader } from '@components/Await'
 import ExtensionStateGate from '@components/ExtensionStatusGate'
 
-import Wallet from './Wallet'
 import Welcome from './Welcome'
 
 const Home = () => {
@@ -9,10 +8,10 @@ const Home = () => {
     <ExtensionStateGate
       loading={<StyledLoader />}
       unavailable={<Welcome />}
-      noaccount={<Wallet />}
-      unauthorized={<Wallet />}
+      noaccount={<Welcome />}
+      unauthorized={<Welcome />}
     >
-      <Wallet />
+      <Welcome />
     </ExtensionStateGate>
   )
 }

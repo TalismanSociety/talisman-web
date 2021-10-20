@@ -1,13 +1,15 @@
 import { ReactComponent as TalismanWordLogo } from '@assets/talisman-red-black.svg'
 import { Pill } from '@components'
 import { device } from '@util/breakpoints'
+import { cloneElement } from 'react'
+import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 
 interface ConnectWalletItemProps {
   className?: string
   name: string
   src: string
-  url?: string
+  LinkComponent?: React.ReactElement
   featured?: boolean
 }
 
@@ -66,19 +68,21 @@ const ConnectItem = styled((props: ConnectWalletItemProps) => {
   }
 `
 
-const ConnectWalletItem = styled((props: ConnectWalletItemProps) => {
-  const { url } = props
+const ConnectWalletItem = (props: ConnectWalletItemProps) => {
+  const { LinkComponent } = props
 
-  if (!url) {
+  if (!LinkComponent) {
     return <ConnectItem {...props} />
   }
 
   return (
-    <a href={url} target="_blank" rel="noreferrer noopener" style={{ display: 'block' }}>
-      <ConnectItem {...props} />
-    </a>
+    <div>
+      {cloneElement(LinkComponent, {
+        children: <ConnectItem {...props} />,
+      })}
+    </div>
   )
-})``
+}
 
 const NoWallet = styled(({ className = '' }) => {
   return (
@@ -110,7 +114,7 @@ const ConnectWalletSelection = styled(({ className = '' }) => {
         <ConnectWalletItem
           name="Polkadot{js}"
           src={`https://polkadot.js.org/docs/img/logo.svg`}
-          url={`https://polkadot.js.org/extension/`}
+          LinkComponent={<Link to="/portfolio" />}
         />
         <ConnectWalletItem
           name="Wallet Connect"

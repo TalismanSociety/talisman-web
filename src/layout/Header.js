@@ -46,7 +46,7 @@ const Header = styled(({ className, isMobile, mobileMenuOpen, dispatch }) => (
               exit={{ opacity: 0 }}
               onClick={() => dispatch('close')}
             >
-              <NavLink exact to="/">
+              <NavLink exact to="/portfolio">
                 <span>Portfolio</span>
                 <PortfolioLogo alt="Portfolio" />
               </NavLink>
@@ -86,7 +86,7 @@ const Header = styled(({ className, isMobile, mobileMenuOpen, dispatch }) => (
     ) : (
       <>
         <nav className="main-nav">
-          <NavLink exact to="/">
+          <NavLink exact to="/portfolio">
             Portfolio
           </NavLink>
           <NavLink to="/crowdloans">Crowdloans</NavLink>
