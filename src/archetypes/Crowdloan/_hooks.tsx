@@ -69,7 +69,7 @@ export const useFilter = () => {
   const [filteredItems, setFilteredItems] = useState<Item[]>([])
   const [searchFilter, setSearchFilter] = useState('')
   const [orderFilter, setOrderFilter] = useState(orderOptions[0].key)
-  const [statusFilter, setStatusFilter] = useState(statusOptions[1].key)
+  const [statusFilter, setStatusFilter] = useState(statusOptions[2].key)
   const [loading, setLoading] = useState(true)
 
   // do searchy/filtery stuff
