@@ -69,6 +69,7 @@ export type Portfolio = {
   totalStakingUsd: string
   totalStakingUsdByAddress: { [key: string]: string }
 
+  isLoading: boolean
   // only true if we've finished loading all amounts and they're all zero
   hasEmptyBags: boolean
 }
@@ -222,7 +223,8 @@ export const Provider: FC<ProviderProps> = ({ children }) => {
       }
     })
 
-    const hasEmptyBags = Object.keys(loadingList).length < 1 && totalUsd === '0'
+    const isLoading = Object.keys(loadingList).length !== 0
+    const hasEmptyBags = !isLoading && totalUsd === '0'
 
     return {
       totalUsd,
@@ -233,6 +235,7 @@ export const Provider: FC<ProviderProps> = ({ children }) => {
       totalCrowdloansUsdByAddress,
       totalStakingUsd,
       totalStakingUsdByAddress,
+      isLoading,
       hasEmptyBags,
     }
   }, [totalStore, loadingList])
