@@ -1,12 +1,12 @@
 import { StyledLoader } from '@components/Await'
 import ExtensionStateGate from '@components/ExtensionStatusGate'
-import { usePortfolio } from '@libs/portfolio'
+import { usePortfolioHasEmptyBags } from '@libs/portfolio'
 
 import { EmptyBagsBanner } from './EmptyBagsBanner'
 import { ExploreCrowdloansBanner } from './ExploreCrowdloansBanner'
 
 export const StateBanner = () => {
-  const { totalUsd } = usePortfolio()
+  const hasEmptyBags = usePortfolioHasEmptyBags()
   return (
     <ExtensionStateGate
       loading={<StyledLoader />}
@@ -14,7 +14,7 @@ export const StateBanner = () => {
       noaccount={<EmptyBagsBanner />}
       unauthorized={<EmptyBagsBanner />}
     >
-      {+totalUsd > 0 ? <ExploreCrowdloansBanner /> : <EmptyBagsBanner />}
+      {hasEmptyBags ? <EmptyBagsBanner /> : <ExploreCrowdloansBanner />}
     </ExtensionStateGate>
   )
 }
