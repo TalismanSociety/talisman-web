@@ -19,9 +19,7 @@ export function calculateAssetPortfolioAmounts(
 ): Array<{ tags: Tag[]; amount: string | undefined }> {
   const amounts: Array<{ tags: Tag[]; amount: string | undefined }> = []
 
-  const byAddress = groupBalancesByAddress(balances.filter(balance => balance && typeof balance.usd === 'string')) as {
-    [key: string]: BalanceWithTokensWithPrice[]
-  }
+  const byAddress = groupBalancesByAddress(balances)
 
   Object.entries(byAddress).forEach(([address, balances]) => {
     const tags: Tag[] = ['USD', 'Assets', { Address: address }]
@@ -70,6 +68,9 @@ export type Portfolio = {
   totalCrowdloansUsdByAddress: { [key: string]: string }
   totalStakingUsd: string
   totalStakingUsdByAddress: { [key: string]: string }
+
+  // only true if we've finished loading all amounts and they're all zero
+  hasEmptyBags: boolean
 }
 
 export type AddressTag = { Address: string }
@@ -93,17 +94,29 @@ export function usePortfolio(): Portfolio {
   return portfolio
 }
 
+export function usePortfolioHasEmptyBags(): boolean {
+  return useContext().portfolio.hasEmptyBags
+}
+
 export function useTaggedAmountsInPortfolio(amounts: Array<{ tags: Tag[]; amount: string | undefined }>): void {
-  const { storeTotal, clearTotal } = useContext()
+  const { storeTotal, clearTotal, setLoading } = useContext()
   const uniqueId = useUniqueId()
 
   useEffect(() => {
+    if (amounts.length === 0) setLoading(uniqueId, true)
+
     amounts.forEach(({ tags, amount }, index) => {
       if (!amount) return
-      storeTotal(`${uniqueId}--${index}`, tags, amount)
+      storeTotal(`${uniqueId}--${index}`, tags, amount || '0')
     })
-    return () => amounts.forEach((_, index) => clearTotal(`${uniqueId}--${index}`))
-  }, [uniqueId, amounts, storeTotal, clearTotal])
+
+    if (amounts.length !== 0) setLoading(uniqueId, false)
+
+    return () => {
+      amounts.forEach((_, index) => clearTotal(`${uniqueId}--${index}`))
+      setLoading(uniqueId, false)
+    }
+  }, [uniqueId, amounts, storeTotal, clearTotal, setLoading])
 }
 
 export function useTaggedAmountInPortfolio(tags: Tag[], amount: string | undefined): void {
@@ -119,6 +132,7 @@ type ContextProps = {
   portfolio: Portfolio
   storeTotal: (uniqueId: string, tags: Tag[], amount: string) => void
   clearTotal: (uniqueId: string) => void
+  setLoading: (uniqueId: string, loading: boolean) => void
 }
 
 const Context = createContext<ContextProps | null>(null)
@@ -138,6 +152,7 @@ type ProviderProps = {}
 
 export const Provider: FC<ProviderProps> = ({ children }) => {
   const [totalStore, setTotalStore] = useState<TotalStore>({})
+  const [loadingList, setLoadingList] = useState<{ [key: string]: true }>({})
 
   const storeTotal = useCallback(
     (uniqueId, tags, amount) => setTotalStore(totalStore => ({ ...totalStore, [uniqueId]: { tags, amount } })),
@@ -148,6 +163,20 @@ export const Provider: FC<ProviderProps> = ({ children }) => {
       setTotalStore(totalStore => {
         delete totalStore[uniqueId]
         return totalStore
+      }),
+    []
+  )
+  const setLoading = useCallback(
+    (uniqueId, loading) =>
+      setLoadingList(loadingList => {
+        if (loading && loadingList[uniqueId]) return loadingList
+        if (!loading && !loadingList[uniqueId]) return loadingList
+
+        const loadingListMut = { ...loadingList }
+        if (loading) loadingListMut[uniqueId] = true
+        else delete loadingListMut[uniqueId]
+
+        return loadingListMut
       }),
     []
   )
@@ -193,6 +222,8 @@ export const Provider: FC<ProviderProps> = ({ children }) => {
       }
     })
 
+    const hasEmptyBags = Object.keys(loadingList).length < 1 && totalUsd === '0'
+
     return {
       totalUsd,
       totalUsdByAddress,
@@ -202,10 +233,14 @@ export const Provider: FC<ProviderProps> = ({ children }) => {
       totalCrowdloansUsdByAddress,
       totalStakingUsd,
       totalStakingUsdByAddress,
+      hasEmptyBags,
     }
-  }, [totalStore])
+  }, [totalStore, loadingList])
 
-  const value = useMemo(() => ({ portfolio, storeTotal, clearTotal }), [portfolio, storeTotal, clearTotal])
+  const value = useMemo(
+    () => ({ portfolio, storeTotal, clearTotal, setLoading }),
+    [portfolio, storeTotal, clearTotal, setLoading]
+  )
 
   return <Context.Provider value={value}>{children}</Context.Provider>
 }
