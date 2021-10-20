@@ -1,11 +1,13 @@
 import { ReactComponent as TalismanWordLogo } from '@assets/talisman-red-black.svg'
 import { Pill } from '@components'
+import { device } from '@util/breakpoints'
 import styled from 'styled-components'
 
 interface ConnectWalletItemProps {
   className?: string
   name: string
   src: string
+  url?: string
   featured?: boolean
 }
 
@@ -21,7 +23,8 @@ const Badge = styled(({ className, children }) => {
   right: -20px;
 `
 
-const FeaturedConnectWalletItem = styled(({ className = '', src, name }: ConnectWalletItemProps) => {
+const FeaturedConnectWalletItem = styled((props: ConnectWalletItemProps) => {
+  const { className = '', src, name } = props
   return (
     <div className={className}>
       <img height={48} width={48} src={src} alt={name} />
@@ -32,12 +35,15 @@ const FeaturedConnectWalletItem = styled(({ className = '', src, name }: Connect
 })`
   position: relative;
   flex-direction: column;
+  > img {
+    border-radius: 1.5rem;
+  }
   > * + * {
     margin-top: 0.5rem;
   }
 `
 
-const ConnectWalletItem = styled((props: ConnectWalletItemProps) => {
+const ConnectItem = styled((props: ConnectWalletItemProps) => {
   const { className = '', src, name, featured = false } = props
   if (featured) {
     return <FeaturedConnectWalletItem {...props} />
@@ -55,7 +61,24 @@ const ConnectWalletItem = styled((props: ConnectWalletItemProps) => {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  > img {
+    border-radius: 1.5rem;
+  }
 `
+
+const ConnectWalletItem = styled((props: ConnectWalletItemProps) => {
+  const { url } = props
+
+  if (!url) {
+    return <ConnectItem {...props} />
+  }
+
+  return (
+    <a href={url} target="_blank" rel="noreferrer noopener" style={{ display: 'block' }}>
+      <ConnectItem {...props} />
+    </a>
+  )
+})``
 
 const NoWallet = styled(({ className = '' }) => {
   return (
@@ -70,26 +93,36 @@ const NoWallet = styled(({ className = '' }) => {
   )
 })`
   text-decoration: underline;
+  color: var(--color-text);
 `
 
 const ConnectWalletSelection = styled(({ className = '' }) => {
   return (
-    <div className={className}>
+    <aside className={className}>
       <h2>Connect a wallet</h2>
       <section>
         <ConnectWalletItem
           featured
           name="Talisman Wallet"
-          src={`https://www.notion.so/image/https%3A%2F%2Fs3-us-west-2.amazonaws.com%2Fsecure.notion-static.com%2F5e69f0e4-3154-4d1a-ad08-2656d4fa823e%2FDiscord.png?table=block&id=c9f585cb-7605-4983-90fe-286f075e4c4d&spaceId=b391c246-9a9f-48cc-ac17-8026efedda08&width=250&userId=e12dff2a-90cc-4a63-bc1f-99a697210093&cache=v2`}
+          src={`
+          https://pbs.twimg.com/profile_images/1433018747762085891/ZATzx-HG_400x400.jpg`}
         />
-        <ConnectWalletItem name="Polkadot{js}" src={`https://polkadot.js.org/docs/img/logo.svg`} />
-        <ConnectWalletItem name="Wallet Connect" src={`https://walletconnect.org/walletconnect-logo.svg`} />
+        <ConnectWalletItem
+          name="Polkadot{js}"
+          src={`https://polkadot.js.org/docs/img/logo.svg`}
+          url={`https://polkadot.js.org/extension/`}
+        />
+        <ConnectWalletItem
+          name="Wallet Connect"
+          src={`https://pbs.twimg.com/profile_images/998895674522353665/mQFAbUOX_400x400.jpg`}
+        />
       </section>
       <NoWallet />
-    </div>
+    </aside>
   )
 })`
   background: var(--color-controlBackground);
+  color: var(--color-mid);
   padding: 4rem;
   border-radius: 1rem;
   display: flex;
@@ -137,6 +170,11 @@ const Welcome = styled(({ className }) => {
   color: var(--color-text);
   justify-content: space-between;
   flex-wrap: wrap;
+
+  @media ${device.xxl} {
+    padding: 0 18vw;
+    gap: 4rem;
+  }
 
   .description {
     flex: 1 0 40%;

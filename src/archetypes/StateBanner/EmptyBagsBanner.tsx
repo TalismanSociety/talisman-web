@@ -12,7 +12,7 @@ export const EmptyBagsBanner = () => {
       </div>
       <div className="cta">
         <NavLink to="/buy">
-          <Button primary>Buy</Button>
+          <Button primary>Buy DOT / KSM</Button>
         </NavLink>
       </div>
     </Banner>

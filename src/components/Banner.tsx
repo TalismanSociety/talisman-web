@@ -4,7 +4,7 @@ interface BannerProps {
   backgroundImage: string
 }
 
-export const Banner = styled.div<BannerProps>`
+export const Banner = styled.aside<BannerProps>`
   height: auto;
   padding: 3rem;
   border-radius: 1.6rem;

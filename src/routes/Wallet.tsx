@@ -7,9 +7,11 @@ import styled from 'styled-components'
 const _Wallet = styled(({ className }) => (
   <section className={className}>
     <DesktopRequired />
-    <Account.Button allAccounts />
     <header>
-      <Wallet.Total />
+      <div className="account">
+        <Account.Button allAccounts />
+        <Wallet.Total />
+      </div>
       <StateBanner />
     </header>
     <Wallet.Assets />
@@ -23,6 +25,15 @@ const _Wallet = styled(({ className }) => (
 
   > * {
     margin-bottom: 3.25vw;
+  }
+
+  .account {
+    flex: 1 0 auto;
+    min-width: 40%;
+
+    & > * + * {
+      margin-top: 4rem;
+    }
   }
 
   > header {
