@@ -1,11 +1,6 @@
 import styled from 'styled-components'
 
-type ContentProps = {
-  children: React.ReactNode,
-  className: React.ReactNode,
-}
-
-const Content = styled(({ children, className }: ContentProps) => <main className={className}>{children}</main>)`
+const Content = styled(({ children, className }) => <main className={className}>{children}</main>)`
   display: flex;
   min-height: 100%;
 `
