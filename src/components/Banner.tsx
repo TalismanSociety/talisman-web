@@ -16,10 +16,10 @@ export const Banner = styled.aside<BannerProps>`
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
-  gap: 2rem;
+  gap: 8rem;
 
   > .description {
-    flex: 1 0 70%;
+    flex: 1 0 50%;
   }
 
   > .cta {

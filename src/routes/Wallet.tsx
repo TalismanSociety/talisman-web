@@ -29,7 +29,7 @@ const _Wallet = styled(({ className }) => (
 
   .account {
     flex: 1 0 auto;
-    min-width: 40%;
+    min-width: 25%;
 
     & > * + * {
       margin-top: 4rem;
