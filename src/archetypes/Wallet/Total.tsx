@@ -1,4 +1,4 @@
-import { Pill } from '@components'
+import { Pendor, Pill, TextLoader } from '@components'
 import { usePortfolio } from '@libs/portfolio'
 import { useAccountAddresses } from '@libs/talisman'
 import { addBigNumbers } from '@talismn/util'
@@ -9,7 +9,7 @@ import styled from 'styled-components'
 
 const Total = styled(({ id, className }) => {
   const accountAddresses = useAccountAddresses()
-  const { totalUsdByAddress } = usePortfolio()
+  const { isLoading, totalUsdByAddress } = usePortfolio()
   // TODO: Price change value
   const totalUsdChange = null //-1000000
 
@@ -25,12 +25,16 @@ const Total = styled(({ id, className }) => {
   return (
     <div className={`wallet-total ${className}`}>
       <div className="title">Portfolio value</div>
-      <div className="amount">{totalUsd && formatCurrency(totalUsd)}</div>
-      {totalUsdChange && (
-        <Pill primary small>
-          {formatCurrency(totalUsdChange)}
-        </Pill>
-      )}
+      <Pendor loader={<TextLoader className="amount">$</TextLoader>} require={!isLoading && !!totalUsd}>
+        <>
+          <div className="amount">{totalUsd && formatCurrency(totalUsd)}</div>
+          {totalUsdChange && (
+            <Pill primary small>
+              {formatCurrency(totalUsdChange)}
+            </Pill>
+          )}
+        </>
+      </Pendor>
     </div>
   )
 })`
