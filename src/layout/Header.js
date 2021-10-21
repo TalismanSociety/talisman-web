@@ -1,15 +1,13 @@
 import { ReactComponent as TalismanHandLogo } from '@assets/hand-red-black.svg'
 import { ReactComponent as CrowdloansLogo } from '@assets/icons/crowdloans.svg'
-import { ReactComponent as DiscordLogo } from '@assets/icons/discord-header.svg'
 import { ReactComponent as DiscordMobileLogo } from '@assets/icons/discord-mobile.svg'
-import { ReactComponent as GithubLogo } from '@assets/icons/github-header.svg'
 import { ReactComponent as GithubMobileLogo } from '@assets/icons/github-mobile.svg'
-import { ReactComponent as MediumLogo } from '@assets/icons/medium-header.svg'
 import { ReactComponent as MediumMobileLogo } from '@assets/icons/medium-mobile.svg'
+import { ReactComponent as MoreHorizontal } from '@assets/icons/more-horizontal.svg'
 import { ReactComponent as PortfolioLogo } from '@assets/icons/portfolio.svg'
 import { ReactComponent as SwapLogo } from '@assets/icons/swap.svg'
-import { ReactComponent as TwitterLogo } from '@assets/icons/twitter-header.svg'
 import { ReactComponent as TwitterMobileLogo } from '@assets/icons/twitter-mobile.svg'
+import Menu from '@components/Menu'
 import { useMediaQuery } from '@util/hooks'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useReducer } from 'react'
@@ -25,6 +23,32 @@ export default function HeaderState(props) {
   return <Header {...props} isMobile={isMobile} mobileMenuOpen={mobileMenuOpen} dispatch={dispatch} />
 }
 
+const mainRoutes = [
+  { name: 'Portfolio', url: '/portfolio', icon: <PortfolioLogo alt="Portfolio" /> },
+  {
+    name: 'Crowdloans',
+    url: '/crowdloans',
+    icon: <CrowdloansLogo alt="Crowdloans" />,
+  },
+  { name: 'Buy DOT/KSM', url: '/buy', icon: <PortfolioLogo alt="Portfolio" /> },
+]
+
+const subRoutes = [
+  {
+    name: 'Request Features',
+    url: 'https://talisman.canny.io/feature-requests',
+    icon: <SwapLogo alt="Request Features" />,
+  },
+  { name: 'GitHub', url: 'https://github.com/talismansociety', icon: <GithubMobileLogo alt="GitHub" /> },
+  {
+    name: 'Discord',
+    url: 'https://discord.gg/rQgTD9SGtU',
+    icon: <DiscordMobileLogo alt="Discord" />,
+  },
+  { name: 'Twitter', url: 'https://twitter.com/wearetalisman', icon: <TwitterMobileLogo alt="Twitter" /> },
+  { name: 'Medium', url: 'https://medium.com/we-are-talisman', icon: <MediumMobileLogo alt="Medium" /> },
+]
+
 const Header = styled(({ className, isMobile, mobileMenuOpen, dispatch }) => (
   <header className={className}>
     <span>
@@ -32,7 +56,7 @@ const Header = styled(({ className, isMobile, mobileMenuOpen, dispatch }) => (
         <TalismanHandLogo />
       </NavLink>
     </span>
-    {isMobile ? (
+    {/* {isMobile ? (
       <>
         <button className="mobile-nav-button" onClick={() => dispatch('toggle')}>
           Menu
@@ -83,8 +107,9 @@ const Header = styled(({ className, isMobile, mobileMenuOpen, dispatch }) => (
           )}
         </AnimatePresence>
       </>
-    ) : (
-      <>
+    ) : ( */}
+    <>
+      {!isMobile && (
         <nav className="main-nav">
           <NavLink exact to="/portfolio">
             Portfolio
@@ -92,30 +117,45 @@ const Header = styled(({ className, isMobile, mobileMenuOpen, dispatch }) => (
           <NavLink to="/crowdloans">Crowdloans</NavLink>
           <NavLink to="/buy">Buy</NavLink>
         </nav>
-        <nav className="external-nav">
-          <a
-            href="https://talisman.canny.io/feature-requests"
-            target="_blank"
-            rel="noreferrer noopener"
-            className="text-pill"
-          >
-            Request Features
-          </a>
-          <a href="https://github.com/talismansociety" target="_blank" rel="noreferrer noopener">
-            <GithubLogo alt="GitHub" />
-          </a>
-          <a href="https://discord.gg/rQgTD9SGtU" target="_blank" rel="noreferrer noopener">
-            <DiscordLogo alt="Discord" />
-          </a>
-          <a href="https://twitter.com/wearetalisman" target="_blank" rel="noreferrer noopener">
-            <TwitterLogo alt="Twitter" />
-          </a>
-          <a href="https://medium.com/we-are-talisman" target="_blank" rel="noreferrer noopener">
-            <MediumLogo alt="Medium" />
-          </a>
-        </nav>
-      </>
-    )}
+      )}
+      <Menu
+        dropdownAlignment="right"
+        ButtonComponent={
+          <button className="mobile-nav-button">
+            <MoreHorizontal />
+          </button>
+        }
+      >
+        <AnimatePresence>
+          <motion.nav initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+            <ul>
+              {isMobile &&
+                mainRoutes.map(route => {
+                  return (
+                    <li key={route.name}>
+                      <NavLink to={route.url}>
+                        <span>{route.name}</span>
+                        {route.icon}
+                      </NavLink>
+                    </li>
+                  )
+                })}
+              {subRoutes.map(route => {
+                return (
+                  <li key={route.name}>
+                    <a href={route.url} target="_blank" rel="noreferrer noopener">
+                      <span>{route.name}</span>
+                      {route.icon}
+                    </a>
+                  </li>
+                )
+              })}
+            </ul>
+          </motion.nav>
+        </AnimatePresence>
+      </Menu>
+    </>
+    {/* )} */}
   </header>
 ))`
   display: grid;
@@ -221,17 +261,15 @@ const Header = styled(({ className, isMobile, mobileMenuOpen, dispatch }) => (
   }
 
   .mobile-nav-button {
+    display: flex;
+    align-items: center;
     border: none;
-    align-self: center;
-    padding: 1.2rem 2.4rem;
-    margin: 1.6rem 0;
-    line-height: 1em;
     cursor: pointer;
-    color: rgb(${({ theme }) => theme?.text});
-    background: rgb(${({ theme }) => theme?.activeBackground});
-    border-radius: 9999999rem;
+    background: var(--color-activeBackground);
+    padding: 1.25rem;
+    margin: 1.5rem 0;
+    border-radius: 1rem;
     transition: all 0.15s ease-in-out;
-    box-shadow: 0 0 0.8rem rgba(0, 0, 0, 0.1);
   }
   .mobile-nav {
     display: grid;
