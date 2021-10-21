@@ -1,5 +1,6 @@
 import { ReactComponent as TalismanWordLogo } from '@assets/talisman-red-black.svg'
 import { Pill } from '@components'
+import { ReactComponent as ChevronRight } from '@icons/chevron-right.svg'
 import { device } from '@util/breakpoints'
 import { cloneElement } from 'react'
 import { Link } from 'react-router-dom'
@@ -11,6 +12,7 @@ interface ConnectWalletItemProps {
   src: string
   LinkComponent?: React.ReactElement
   featured?: boolean
+  disabled?: boolean
 }
 
 const Badge = styled(({ className, children }) => {
@@ -46,24 +48,46 @@ const FeaturedConnectWalletItem = styled((props: ConnectWalletItemProps) => {
 `
 
 const ConnectItem = styled((props: ConnectWalletItemProps) => {
-  const { className = '', src, name, featured = false } = props
+  const { className = '', src, name, featured = false, disabled } = props
   if (featured) {
     return <FeaturedConnectWalletItem {...props} />
   }
   return (
     <div className={className}>
-      <span>{name}</span>
-      <img height={24} width={24} src={src} alt={name} />
+      <div className="icon-name">
+        <img height={24} width={24} src={src} alt={name} />
+        <span>{name}</span>
+      </div>
+      <ChevronRight />
+      {disabled && <div className="disabled-overlay" />}
     </div>
   )
 })`
-  background: var(--color-activeBackground);
+  position: relative;
+  background: var(--color-background);
   padding: 1.5rem;
   border-radius: 1rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  > img {
+
+  .disabled-overlay {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    background-color: rgba(${({ theme }) => theme.background}, 0.6);
+    width: 100%;
+    height: 100%;
+    border-radius: inherit;
+  }
+
+  .icon-name {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  img {
     border-radius: 1.5rem;
   }
 `
@@ -114,11 +138,13 @@ const ConnectWalletSelection = styled(({ className = '' }) => {
       <section>
         <h3>Coming soon</h3>
         <ConnectWalletItem
+          disabled
           name="Talisman Wallet"
           src={`
           https://pbs.twimg.com/profile_images/1433018747762085891/ZATzx-HG_400x400.jpg`}
         />
         <ConnectWalletItem
+          disabled
           name="Wallet Connect"
           src={`https://pbs.twimg.com/profile_images/998895674522353665/mQFAbUOX_400x400.jpg`}
         />
@@ -135,7 +161,7 @@ const ConnectWalletSelection = styled(({ className = '' }) => {
   flex-direction: column;
   align-items: center;
   margin: 0 auto;
-  min-width: 33%;
+  min-width: 35%;
 
   > * + * {
     margin-top: 3rem;
