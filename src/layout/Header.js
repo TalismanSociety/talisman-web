@@ -141,28 +141,16 @@ const Header = styled(({ className, isMobile, mobileMenuOpen, dispatch }) => (
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 3rem;
 
     > * {
-      padding: 2.3rem 2.4rem;
+      padding: 0.75rem 1rem;
+      border-radius: 1rem;
       position: relative;
 
-      &:after {
-        content: '';
-        position: absolute;
-        bottom: 0;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 0;
-        height: 2px;
-        background: var(--color-primary);
-        transition: width 0.15s ease-in-out;
-      }
-
       &.active {
-        color: var(--color-primary);
-        &:after {
-          width: 100%;
-        }
+        color: var(--color-text);
+        background: var(--color-activeBackground);
       }
     }
   }
