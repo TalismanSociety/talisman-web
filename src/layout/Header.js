@@ -1,15 +1,11 @@
 import { ReactComponent as TalismanHandLogo } from '@assets/hand-red-black.svg'
 import { ReactComponent as CrowdloansLogo } from '@assets/icons/crowdloans.svg'
-import { ReactComponent as DiscordLogo } from '@assets/icons/discord-header.svg'
 import { ReactComponent as DiscordMobileLogo } from '@assets/icons/discord-mobile.svg'
-import { ReactComponent as GithubLogo } from '@assets/icons/github-header.svg'
 import { ReactComponent as GithubMobileLogo } from '@assets/icons/github-mobile.svg'
-import { ReactComponent as MediumLogo } from '@assets/icons/medium-header.svg'
 import { ReactComponent as MediumMobileLogo } from '@assets/icons/medium-mobile.svg'
 import { ReactComponent as MoreHorizontal } from '@assets/icons/more-horizontal.svg'
 import { ReactComponent as PortfolioLogo } from '@assets/icons/portfolio.svg'
 import { ReactComponent as SwapLogo } from '@assets/icons/swap.svg'
-import { ReactComponent as TwitterLogo } from '@assets/icons/twitter-header.svg'
 import { ReactComponent as TwitterMobileLogo } from '@assets/icons/twitter-mobile.svg'
 import Menu from '@components/Menu'
 import { useMediaQuery } from '@util/hooks'
@@ -34,7 +30,7 @@ const mainRoutes = [
     url: '/crowdloans',
     icon: <CrowdloansLogo alt="Crowdloans" />,
   },
-  { name: 'Buy', url: '/buy' },
+  { name: 'Buy DOT/KSM', url: '/buy', icon: <PortfolioLogo alt="Portfolio" /> },
 ]
 
 const subRoutes = [
