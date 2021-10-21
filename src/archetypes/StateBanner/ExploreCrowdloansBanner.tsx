@@ -1,14 +1,13 @@
 import bannerImage from '@assets/build-the-paraverse.png'
 import { Button } from '@components'
 import { Banner } from '@components/Banner'
-import { H1 } from '@components/H1'
 import { NavLink } from 'react-router-dom'
 
 export const ExploreCrowdloansBanner = () => {
   return (
     <Banner backgroundImage={bannerImage}>
       <div className="description">
-        <H1>Build the Paraverse</H1>
+        <h1>Build the Paraverse</h1>
         <p>
           Crowdloans help projects and teams raise funds to participate in Parachain auctions on Polkadot and Kusama.
         </p>
