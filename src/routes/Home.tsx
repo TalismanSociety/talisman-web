@@ -1,7 +1,19 @@
-import Wallet from './Wallet'
+import { StyledLoader } from '@components/Await'
+import ExtensionStateGate from '@components/ExtensionStatusGate'
+
+import Welcome from './Welcome'
 
 const Home = () => {
-  return <Wallet />
+  return (
+    <ExtensionStateGate
+      loading={<StyledLoader />}
+      unavailable={<Welcome />}
+      noaccount={<Welcome />}
+      unauthorized={<Welcome />}
+    >
+      <Welcome />
+    </ExtensionStateGate>
+  )
 }
 
 export default Home

@@ -10,7 +10,6 @@ import { ReactComponent as PortfolioLogo } from '@assets/icons/portfolio.svg'
 import { ReactComponent as SwapLogo } from '@assets/icons/swap.svg'
 import { ReactComponent as TwitterLogo } from '@assets/icons/twitter-header.svg'
 import { ReactComponent as TwitterMobileLogo } from '@assets/icons/twitter-mobile.svg'
-import { ReactComponent as TalismanWordLogo } from '@assets/talisman-red-black.svg'
 import { useMediaQuery } from '@util/hooks'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useReducer } from 'react'
@@ -30,7 +29,7 @@ const Header = styled(({ className, isMobile, mobileMenuOpen, dispatch }) => (
   <header className={className}>
     <span>
       <NavLink exact to="/" className="logo">
-        {isMobile ? <TalismanHandLogo /> : <TalismanWordLogo />}
+        <TalismanHandLogo />
       </NavLink>
     </span>
     {isMobile ? (
@@ -47,7 +46,7 @@ const Header = styled(({ className, isMobile, mobileMenuOpen, dispatch }) => (
               exit={{ opacity: 0 }}
               onClick={() => dispatch('close')}
             >
-              <NavLink exact to="/">
+              <NavLink exact to="/portfolio">
                 <span>Portfolio</span>
                 <PortfolioLogo alt="Portfolio" />
               </NavLink>
@@ -87,7 +86,7 @@ const Header = styled(({ className, isMobile, mobileMenuOpen, dispatch }) => (
     ) : (
       <>
         <nav className="main-nav">
-          <NavLink exact to="/">
+          <NavLink exact to="/portfolio">
             Portfolio
           </NavLink>
           <NavLink to="/crowdloans">Crowdloans</NavLink>

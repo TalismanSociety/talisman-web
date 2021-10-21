@@ -1,13 +1,194 @@
-import { H1 } from '@components/H1'
+import { ReactComponent as TalismanWordLogo } from '@assets/talisman-red-black.svg'
+import { Pill } from '@components'
+import { device } from '@util/breakpoints'
+import { cloneElement } from 'react'
+import { Link } from 'react-router-dom'
+import styled from 'styled-components'
 
-const Welcome = () => {
+interface ConnectWalletItemProps {
+  className?: string
+  name: string
+  src: string
+  LinkComponent?: React.ReactElement
+  featured?: boolean
+}
+
+const Badge = styled(({ className, children }) => {
   return (
-    <>
-      <div>Logo here...</div>
-      <H1>Talisman allows you to explore and invest in crowdloans.</H1>
-      <p>Explore Polkadot {`&`} Kusama with the Talisman wallet and asset dashboard.</p>
-    </>
+    <Pill className={className} small primary>
+      {children}
+    </Pill>
+  )
+})`
+  position: absolute;
+  top: -20px;
+  right: -20px;
+`
+
+const FeaturedConnectWalletItem = styled((props: ConnectWalletItemProps) => {
+  const { className = '', src, name } = props
+  return (
+    <div className={className}>
+      <img height={48} width={48} src={src} alt={name} />
+      <span>{name}</span>
+      <Badge>Coming soon</Badge>
+    </div>
+  )
+})`
+  position: relative;
+  flex-direction: column;
+  > img {
+    border-radius: 1.5rem;
+  }
+  > * + * {
+    margin-top: 0.5rem;
+  }
+`
+
+const ConnectItem = styled((props: ConnectWalletItemProps) => {
+  const { className = '', src, name, featured = false } = props
+  if (featured) {
+    return <FeaturedConnectWalletItem {...props} />
+  }
+  return (
+    <div className={className}>
+      <span>{name}</span>
+      <img height={24} width={24} src={src} alt={name} />
+    </div>
+  )
+})`
+  background: var(--color-activeBackground);
+  padding: 1.5rem;
+  border-radius: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  > img {
+    border-radius: 1.5rem;
+  }
+`
+
+const ConnectWalletItem = (props: ConnectWalletItemProps) => {
+  const { LinkComponent } = props
+
+  if (!LinkComponent) {
+    return <ConnectItem {...props} />
+  }
+
+  return (
+    <div>
+      {cloneElement(LinkComponent, {
+        children: <ConnectItem {...props} />,
+      })}
+    </div>
   )
 }
+
+const NoWallet = styled(({ className = '' }) => {
+  return (
+    <a
+      className={className}
+      href="https://www.youtube.com/watch?v=mT7rUlQh660"
+      target="_blank"
+      rel="noreferrer noopener"
+    >
+      I don’t have a wallet
+    </a>
+  )
+})`
+  text-decoration: underline;
+  color: var(--color-text);
+`
+
+const ConnectWalletSelection = styled(({ className = '' }) => {
+  return (
+    <aside className={className}>
+      <section>
+        <h2>Connect a wallet</h2>
+        <ConnectWalletItem
+          name="Polkadot{js}"
+          src={`https://polkadot.js.org/docs/img/logo.svg`}
+          LinkComponent={<Link to="/portfolio" />}
+        />
+      </section>
+      <section>
+        <h3>Coming soon</h3>
+        <ConnectWalletItem
+          name="Talisman Wallet"
+          src={`
+          https://pbs.twimg.com/profile_images/1433018747762085891/ZATzx-HG_400x400.jpg`}
+        />
+        <ConnectWalletItem
+          name="Wallet Connect"
+          src={`https://pbs.twimg.com/profile_images/998895674522353665/mQFAbUOX_400x400.jpg`}
+        />
+      </section>
+      <NoWallet />
+    </aside>
+  )
+})`
+  background: var(--color-controlBackground);
+  color: var(--color-mid);
+  padding: 4rem;
+  border-radius: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0 auto;
+  min-width: 33%;
+
+  > * + * {
+    margin-top: 3rem;
+  }
+
+  > section {
+    width: 100%;
+    text-align: center;
+  }
+
+  > section > * + * {
+    margin-top: 1rem;
+  }
+`
+
+const TalismanLogo = styled(TalismanWordLogo)`
+  height: 3rem;
+  width: auto;
+`
+
+const Welcome = styled(({ className }) => {
+  return (
+    <section className={className}>
+      <div className="description">
+        <TalismanLogo />
+        <h1>Talisman allows you to explore and invest in crowdloans.</h1>
+        <p>Explore Polkadot {`&`} Kusama with the Talisman wallet and asset dashboard.</p>
+      </div>
+      <ConnectWalletSelection />
+    </section>
+  )
+})`
+  width: 100%;
+  padding: 0 6vw;
+  margin: 12rem auto;
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  color: var(--color-text);
+  justify-content: space-between;
+  flex-wrap: wrap;
+
+  @media ${device.xxl} {
+    padding: 0 18vw;
+    gap: 4rem;
+  }
+
+  .description {
+    flex: 1 0 40%;
+    * + * {
+      margin-top: 4rem;
+    }
+  }
+`
 
 export default Welcome
