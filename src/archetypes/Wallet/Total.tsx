@@ -22,6 +22,10 @@ const Total = styled(({ id, className }) => {
     [totalUsdByAddress, accountAddresses]
   )
 
+  if (totalUsd === undefined) {
+    return null
+  }
+
   return (
     <div className={`wallet-total ${className}`}>
       <div className="title">Portfolio value</div>

@@ -170,7 +170,7 @@ const Welcome = styled(({ className }) => {
 })`
   width: 100%;
   padding: 0 6vw;
-  margin: 6rem auto;
+  margin: 12rem auto;
   display: flex;
   align-items: center;
   gap: 2rem;
