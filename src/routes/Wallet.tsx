@@ -4,25 +4,38 @@ import { DesktopRequired } from '@components'
 import { device } from '@util/breakpoints'
 import styled from 'styled-components'
 
-const _Wallet = styled(({ className }) => (
-  <section className={className}>
-    <DesktopRequired />
-    <Account.Button allAccounts />
-    <header>
-      <Wallet.Total />
-      <StateBanner />
-    </header>
-    <Wallet.Assets />
-    <Wallet.Crowdloans />
-    <Wallet.Staking />
-  </section>
-))`
+const _Wallet = styled(({ className }) => {
+  return (
+    <section className={className}>
+      <DesktopRequired />
+      <header>
+        <div className="account">
+          <Account.Button allAccounts />
+          <Wallet.Total />
+        </div>
+        <StateBanner />
+      </header>
+      <Wallet.Assets />
+      <Wallet.Crowdloans />
+      <Wallet.Staking />
+    </section>
+  )
+})`
   width: 100%;
   padding: 0 6vw;
   margin: 6rem auto;
 
   > * {
     margin-bottom: 3.25vw;
+  }
+
+  .account {
+    flex: 1 0 auto;
+    min-width: 25%;
+
+    & > * + * {
+      margin-top: 4rem;
+    }
   }
 
   > header {
