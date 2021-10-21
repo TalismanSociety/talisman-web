@@ -52,7 +52,6 @@ const Total = styled(({ id, className }) => {
       font-size: var(--font-size-xxlarge);
     }
     font-weight: bold;
-    color: var(--color-primary);
     margin: 0;
     line-height: 1.4em;
   }

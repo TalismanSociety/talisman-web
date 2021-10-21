@@ -103,18 +103,20 @@ const NoWallet = styled(({ className = '' }) => {
 const ConnectWalletSelection = styled(({ className = '' }) => {
   return (
     <aside className={className}>
-      <h2>Connect a wallet</h2>
       <section>
-        <ConnectWalletItem
-          featured
-          name="Talisman Wallet"
-          src={`
-          https://pbs.twimg.com/profile_images/1433018747762085891/ZATzx-HG_400x400.jpg`}
-        />
+        <h2>Connect a wallet</h2>
         <ConnectWalletItem
           name="Polkadot{js}"
           src={`https://polkadot.js.org/docs/img/logo.svg`}
           LinkComponent={<Link to="/portfolio" />}
+        />
+      </section>
+      <section>
+        <h3>Coming soon</h3>
+        <ConnectWalletItem
+          name="Talisman Wallet"
+          src={`
+          https://pbs.twimg.com/profile_images/1433018747762085891/ZATzx-HG_400x400.jpg`}
         />
         <ConnectWalletItem
           name="Wallet Connect"
@@ -141,6 +143,7 @@ const ConnectWalletSelection = styled(({ className = '' }) => {
 
   > section {
     width: 100%;
+    text-align: center;
   }
 
   > section > * + * {
