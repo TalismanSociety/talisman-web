@@ -56,106 +56,51 @@ const Header = styled(({ className, isMobile, mobileMenuOpen, dispatch }) => (
         <TalismanHandLogo />
       </NavLink>
     </span>
-    {/* {isMobile ? (
-      <>
-        <button className="mobile-nav-button" onClick={() => dispatch('toggle')}>
-          Menu
+    {!isMobile && (
+      <nav className="main-nav">
+        <NavLink exact to="/portfolio">
+          Portfolio
+        </NavLink>
+        <NavLink to="/crowdloans">Crowdloans</NavLink>
+        <NavLink to="/buy">Buy</NavLink>
+      </nav>
+    )}
+    <Menu
+      dropdownAlignment="right"
+      ButtonComponent={
+        <button className="mobile-nav-button">
+          <MoreHorizontal />
         </button>
-        <AnimatePresence>
-          {mobileMenuOpen && (
-            <motion.nav
-              className="mobile-nav"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => dispatch('close')}
-            >
-              <NavLink exact to="/portfolio">
-                <span>Portfolio</span>
-                <PortfolioLogo alt="Portfolio" />
-              </NavLink>
-              <NavLink to="/crowdloans">
-                <span>Crowdloans</span>
-                <CrowdloansLogo alt="Crowdloans" />
-              </NavLink>
-              <a
-                href="https://talisman.canny.io/feature-requests"
-                target="_blank"
-                rel="noreferrer noopener"
-                className="text-pill"
-              >
-                <span>Request Features</span>
-                <SwapLogo alt="Request Features" />
-              </a>
-              <a href="https://github.com/talismansociety" target="_blank" rel="noreferrer noopener">
-                <span>GitHub</span>
-                <GithubMobileLogo alt="GitHub" />
-              </a>
-              <a href="https://discord.gg/rQgTD9SGtU" target="_blank" rel="noreferrer noopener">
-                <span>Discord</span>
-                <DiscordMobileLogo alt="Discord" />
-              </a>
-              <a href="https://twitter.com/wearetalisman" target="_blank" rel="noreferrer noopener">
-                <span>Twitter</span>
-                <TwitterMobileLogo alt="Twitter" />
-              </a>
-              <a href="https://medium.com/we-are-talisman" target="_blank" rel="noreferrer noopener">
-                <span>Medium</span>
-                <MediumMobileLogo alt="Medium" />
-              </a>
-            </motion.nav>
-          )}
-        </AnimatePresence>
-      </>
-    ) : ( */}
-    <>
-      {!isMobile && (
-        <nav className="main-nav">
-          <NavLink exact to="/portfolio">
-            Portfolio
-          </NavLink>
-          <NavLink to="/crowdloans">Crowdloans</NavLink>
-          <NavLink to="/buy">Buy</NavLink>
-        </nav>
-      )}
-      <Menu
-        dropdownAlignment="right"
-        ButtonComponent={
-          <button className="mobile-nav-button">
-            <MoreHorizontal />
-          </button>
-        }
-      >
-        <AnimatePresence>
-          <motion.nav initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-            <ul>
-              {isMobile &&
-                mainRoutes.map(route => {
-                  return (
-                    <li key={route.name}>
-                      <NavLink to={route.url}>
-                        <span>{route.name}</span>
-                        {route.icon}
-                      </NavLink>
-                    </li>
-                  )
-                })}
-              {subRoutes.map(route => {
+      }
+    >
+      <AnimatePresence>
+        <motion.nav initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+          <ul>
+            {isMobile &&
+              mainRoutes.map(route => {
                 return (
                   <li key={route.name}>
-                    <a href={route.url} target="_blank" rel="noreferrer noopener">
+                    <NavLink to={route.url}>
                       <span>{route.name}</span>
                       {route.icon}
-                    </a>
+                    </NavLink>
                   </li>
                 )
               })}
-            </ul>
-          </motion.nav>
-        </AnimatePresence>
-      </Menu>
-    </>
-    {/* )} */}
+            {subRoutes.map(route => {
+              return (
+                <li key={route.name}>
+                  <a href={route.url} target="_blank" rel="noreferrer noopener">
+                    <span>{route.name}</span>
+                    {route.icon}
+                  </a>
+                </li>
+              )
+            })}
+          </ul>
+        </motion.nav>
+      </AnimatePresence>
+    </Menu>
   </header>
 ))`
   display: grid;
