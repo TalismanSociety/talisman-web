@@ -24,14 +24,13 @@ const Total = styled(({ id, className }) => {
     [totalUsdByAddress, accountAddresses]
   )
 
-  if (totalUsd === undefined) {
-    return null
-  }
-
   return (
     <div className={`wallet-total ${className}`}>
       <div className="title">{t('Portfolio value')}</div>
-      <Pendor loader={<TextLoader className="amount">$</TextLoader>} require={!isLoading && !!totalUsd}>
+      <Pendor
+        loader={<TextLoader className="amount">{formatCurrency(totalUsd || '0')}</TextLoader>}
+        require={!isLoading && !!totalUsd}
+      >
         <>
           <div className="amount">{totalUsd && formatCurrency(totalUsd)}</div>
           {totalUsdChange && (
