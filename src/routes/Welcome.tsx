@@ -73,6 +73,10 @@ const ConnectItem = styled((props: ConnectWalletItemProps) => {
   align-items: center;
   justify-content: space-between;
 
+  :hover {
+    background: var(--color-activeBackground);
+  }
+
   .disabled-overlay {
     position: absolute;
     top: 0px;
@@ -81,6 +85,10 @@ const ConnectItem = styled((props: ConnectWalletItemProps) => {
     width: 100%;
     height: 100%;
     border-radius: inherit;
+
+    :hover {
+      background-color: rgba(${({ theme }) => theme.background}, 0.5);
+    }
   }
 
   .icon-name {
