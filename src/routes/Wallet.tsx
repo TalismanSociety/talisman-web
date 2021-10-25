@@ -9,7 +9,7 @@ const _Wallet = styled(({ className }) => {
     <section className={className}>
       <DesktopRequired />
       <header>
-        <div className="account">
+        <div className="account-overview">
           <Account.Button allAccounts />
           <Wallet.Total />
         </div>
@@ -29,7 +29,7 @@ const _Wallet = styled(({ className }) => {
     margin-bottom: 3.25vw;
   }
 
-  .account {
+  .account-overview {
     flex: 1 0 auto;
     min-width: 25%;
 
