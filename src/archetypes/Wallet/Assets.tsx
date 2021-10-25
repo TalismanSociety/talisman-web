@@ -14,6 +14,7 @@ import {
 import { addBigNumbers, useFuncMemo } from '@talismn/util'
 import { formatCommas, formatCurrency } from '@util/helpers'
 import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 // TODO: Move these to a global config object
@@ -135,6 +136,7 @@ const MoonriverWalletInstructions = styled(({ className }) => (
 `
 
 const Assets = styled(({ id, className }) => {
+  const { t } = useTranslation()
   const chainIds = useMemo(() => Object.keys(customRpcs), [])
 
   const { accounts } = useExtension()
@@ -156,7 +158,7 @@ const Assets = styled(({ id, className }) => {
 
   return (
     <section className={`wallet-assets ${className}`}>
-      <Panel title="Assets" subtitle={assetsUsd && formatCurrency(assetsUsd)}>
+      <Panel title={t('Assets')} subtitle={assetsUsd && formatCurrency(assetsUsd)}>
         <ExtensionStatusGate unavailable={<ExtensionUnavailable />}>
           {Object.entries(balancesByChain).map(([chainId, balances]) => (
             <PanelSection key={chainId}>

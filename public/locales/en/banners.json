@@ -1,0 +1,17 @@
+{
+  "explore": {
+    "header": "Build the Paraverse",
+    "description": "Crowdloans help projects and teams raise funds to participate in Parachain auctions on Polkadot and Kusama.",
+    "primaryCta": "Explore Crowdloans"
+  },
+  "empty": {
+    "header": "Your bags are empty!",
+    "description": "Buy DOT and KSM with your credit card or crypto",
+    "primaryCta": "Buy DOT / KSM"
+  },
+  "soon": {
+    "header": "Coming soon",
+    "description": "In the meantime, you can check out Crowdloans.",
+    "primaryCta": "Explore Crowdloans"
+  }
+}

@@ -1,6 +1,7 @@
 import { Crowdloan, ParachainDetails, useLatestCrowdloans, useParachainsDetailsIndexedById } from '@libs/talisman'
 import { filter, find, orderBy } from 'lodash'
 import { useEffect, useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 type Item = { crowdloan: Crowdloan; parachainDetails?: ParachainDetails }
 
@@ -56,6 +57,7 @@ const statusOptions = [
 ]
 
 export const useFilter = () => {
+  const { t } = useTranslation('filters')
   const { crowdloans, message, hydrated } = useLatestCrowdloans()
   const { parachains } = useParachainsDetailsIndexedById()
   const items = useMemo(
@@ -110,8 +112,8 @@ export const useFilter = () => {
       setSearch: setSearchFilter,
       setOrder: setOrderFilter,
       setStatus: setStatusFilter,
-      orderOptions: orderOptions.map(({ key, value }) => ({ key, value })),
-      statusOptions: statusOptions.map(({ key, value }) => ({ key, value })),
+      orderOptions: orderOptions.map(({ key, value }) => ({ key, value: t(value) })),
+      statusOptions: statusOptions.map(({ key, value }) => ({ key, value: t(value) })),
       hasFilter: statusFilter !== 'all' || searchFilter !== '',
       reset: () => {
         setSearchFilter('')

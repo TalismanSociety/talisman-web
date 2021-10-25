@@ -5,6 +5,7 @@ import { getTotalContributionForCrowdloan, useCrowdloanContributions } from '@li
 import { useAccountAddresses, useCrowdloanById, useParachainDetailsById } from '@libs/talisman'
 import { encodeAnyAddress } from '@talismn/util'
 import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 
@@ -12,6 +13,7 @@ import Countdown from './Countdown'
 import Raised from './Raised'
 
 const Teaser = styled(({ id, className }) => {
+  const { t } = useTranslation()
   const { crowdloan } = useCrowdloanById(id)
   const parachainId = crowdloan?.parachain?.paraId
   const { parachainDetails } = useParachainDetailsById(parachainId)
@@ -32,7 +34,7 @@ const Teaser = styled(({ id, className }) => {
           </div>
         )}
         <h1>{parachainDetails?.name}</h1>
-        <Raised id={id} title="Raised" />
+        <Raised id={id} title={t('Raised')} />
       </div>
 
       <Pill className="countdown">
