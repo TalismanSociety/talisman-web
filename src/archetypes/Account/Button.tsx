@@ -7,6 +7,7 @@ import Identicon from '@polkadot/react-identicon'
 import { addTokensToBalances, groupBalancesByAddress, useBalances, useChain } from '@talismn/api-react-hooks'
 import { addBigNumbers, encodeAnyAddress, useFuncMemo } from '@talismn/util'
 import { formatCommas, formatCurrency, truncateString } from '@util/helpers'
+import useOnClickOutside from '@util/useOnClickOutside'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
@@ -236,8 +237,9 @@ const Unauthorized = styled(({ className }) => {
   }
 `
 
-const Authorized = styled(({ className, narrow, allAccounts }) => {
+const Authorized = styled(({ className, narrow, allAccounts, showValue = false }) => {
   const { t } = useTranslation()
+  const nodeRef = useRef<HTMLDivElement>(null)
   const { switchAccount } = useActiveAccount()
   const { accounts } = useExtension()
   const { hasActiveAccount, address, name, type } = useActiveAccount()
@@ -267,23 +269,15 @@ const Authorized = styled(({ className, narrow, allAccounts }) => {
   const ksmBalances = useFuncMemo(addTokensToBalances, balances, nativeToken ? tokenDecimals : undefined)
   const ksmBalancesByAddress = useFuncMemo(groupBalancesByAddress, ksmBalances)
 
-  const delayRef = useRef<NodeJS.Timeout | null>(null)
-  const openOnDelay = () => {
-    delayRef.current && clearTimeout(delayRef.current)
-    delayRef.current = setTimeout(() => setOpen(true), 150)
-  }
-  const cancelOpen = () => {
-    delayRef.current && clearTimeout(delayRef.current)
+  const onClickOutside = () => {
     setOpen(false)
   }
 
+  useOnClickOutside(nodeRef, onClickOutside)
+
   return (
     <div className="account-switcher-pill">
-      <span
-        className={`account-button${hasManyAccounts ? ' has-many-accounts' : ''} ${className}`}
-        onMouseEnter={() => narrow && hasManyAccounts && openOnDelay()}
-        onMouseLeave={() => cancelOpen()}
-      >
+      <span className={`account-button${hasManyAccounts ? ' has-many-accounts' : ''} ${className}`}>
         {hasActiveAccount ? (
           <Identicon className="identicon" value={address} theme={type === 'ethereum' ? 'ethereum' : 'polkadot'} />
         ) : (
@@ -296,26 +290,30 @@ const Authorized = styled(({ className, narrow, allAccounts }) => {
         )}
         <span className="selected-account">
           <div>{hasActiveAccount ? name : allAccounts ? t('All Accounts') : 'Loading...'}</div>
-          <div>
-            {allAccounts ? (
-              <Pendor prefix={!usd && '-'}>{usd && formatCurrency(usd)}</Pendor>
-            ) : (
-              <Pendor suffix={` ${nativeToken}`}>
-                {ksmBalancesByAddress[address] &&
-                  formatCommas(
-                    ksmBalancesByAddress[address].map(balance => balance?.tokens).reduce(addBigNumbers, undefined)
-                  )}
-              </Pendor>
-            )}
-          </div>
+          {showValue && (
+            <div>
+              {allAccounts ? (
+                <Pendor prefix={!usd && '-'}>{usd && formatCurrency(usd)}</Pendor>
+              ) : (
+                <Pendor suffix={` ${nativeToken}`}>
+                  {ksmBalancesByAddress[address] &&
+                    formatCommas(
+                      ksmBalancesByAddress[address].map(balance => balance?.tokens).reduce(addBigNumbers, undefined)
+                    )}
+                </Pendor>
+              )}
+            </div>
+          )}
         </span>
 
         {narrow ? (
           <ChevronDown style={{ margin: '0 1rem 0 0.8rem', visibility: hasManyAccounts ? 'visible' : 'hidden' }} />
         ) : (
-          <Button.Icon className="nav-toggle" onMouseEnter={() => setOpen(true)}>
-            <ChevronDown />
-          </Button.Icon>
+          <div ref={nodeRef}>
+            <Button.Icon className="nav-toggle" onClick={() => setOpen(true)}>
+              <ChevronDown />
+            </Button.Icon>
+          </div>
         )}
 
         <Dropdown
