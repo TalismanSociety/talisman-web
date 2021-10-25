@@ -1,18 +1,20 @@
 import bannerImage from '@assets/empty-bags.png'
 import { Button } from '@components'
 import { Banner } from '@components/Banner'
+import { useTranslation } from 'react-i18next'
 import { NavLink } from 'react-router-dom'
 
 export const ComingSoonBanner = () => {
+  const { t } = useTranslation('banners')
   return (
     <Banner backgroundImage={bannerImage}>
-      <div>
-        <h1>Coming soon</h1>
-        <p>In the meantime, you can check out Crowdloans.</p>
+      <div className="description">
+        <h1>{t('soon.header')}</h1>
+        <p>{t('soon.description')}</p>
       </div>
-      <div>
+      <div className="cta">
         <NavLink to="/crowdloans">
-          <Button primary>Explore Crowdloans</Button>
+          <Button primary>{t('soon.primaryCta')}</Button>
         </NavLink>
       </div>
     </Banner>

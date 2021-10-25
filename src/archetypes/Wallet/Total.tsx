@@ -5,9 +5,11 @@ import { addBigNumbers } from '@talismn/util'
 import { device } from '@util/breakpoints'
 import { formatCurrency } from '@util/helpers'
 import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 const Total = styled(({ id, className }) => {
+  const { t } = useTranslation()
   const accountAddresses = useAccountAddresses()
   const { isLoading, totalUsdByAddress } = usePortfolio()
   // TODO: Price change value
@@ -28,7 +30,7 @@ const Total = styled(({ id, className }) => {
 
   return (
     <div className={`wallet-total ${className}`}>
-      <div className="title">Portfolio value</div>
+      <div className="title">{t('Portfolio value')}</div>
       <Pendor loader={<TextLoader className="amount">$</TextLoader>} require={!isLoading && !!totalUsd}>
         <>
           <div className="amount">{totalUsd && formatCurrency(totalUsd)}</div>

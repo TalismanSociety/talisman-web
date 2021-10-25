@@ -3,6 +3,7 @@ import { Pill } from '@components'
 import { ReactComponent as ChevronRight } from '@icons/chevron-right.svg'
 import { device } from '@util/breakpoints'
 import { cloneElement } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 
@@ -28,12 +29,13 @@ const Badge = styled(({ className, children }) => {
 `
 
 const FeaturedConnectWalletItem = styled((props: ConnectWalletItemProps) => {
+  const { t } = useTranslation('connect-wallet')
   const { className = '', src, name } = props
   return (
     <div className={className}>
       <img height={48} width={48} src={src} alt={name} />
       <span>{name}</span>
-      <Badge>Coming soon</Badge>
+      <Badge>{t('Coming soon')}</Badge>
     </div>
   )
 })`
@@ -109,6 +111,7 @@ const ConnectWalletItem = (props: ConnectWalletItemProps) => {
 }
 
 const NoWallet = styled(({ className = '' }) => {
+  const { t } = useTranslation('connect-wallet')
   return (
     <a
       className={className}
@@ -116,7 +119,7 @@ const NoWallet = styled(({ className = '' }) => {
       target="_blank"
       rel="noreferrer noopener"
     >
-      I don’t have a wallet
+      {t('No wallet')}
     </a>
   )
 })`
@@ -125,10 +128,11 @@ const NoWallet = styled(({ className = '' }) => {
 `
 
 const ConnectWalletSelection = styled(({ className = '' }) => {
+  const { t } = useTranslation('connect-wallet')
   return (
     <aside className={className}>
       <section>
-        <h2>Connect a wallet</h2>
+        <h2>{t('Connect a wallet')}</h2>
         <ConnectWalletItem
           name="Polkadot{js}"
           src={`https://polkadot.js.org/docs/img/logo.svg`}
@@ -136,7 +140,7 @@ const ConnectWalletSelection = styled(({ className = '' }) => {
         />
       </section>
       <section>
-        <h3>Coming soon</h3>
+        <h3>{t('Coming soon')}</h3>
         <ConnectWalletItem
           disabled
           name="Talisman Wallet"
@@ -183,12 +187,13 @@ const TalismanLogo = styled(TalismanWordLogo)`
 `
 
 const Welcome = styled(({ className }) => {
+  const { t } = useTranslation('welcome')
   return (
     <section className={className}>
       <div className="description">
         <TalismanLogo />
-        <h1>Talisman allows you to explore and invest in crowdloans.</h1>
-        <p>Explore Polkadot {`&`} Kusama with the Talisman wallet and asset dashboard.</p>
+        <h1>{t('header')}</h1>
+        <p>{t('description')}</p>
       </div>
       <ConnectWalletSelection />
     </section>

@@ -1,10 +1,12 @@
 import { Crowdloan, Parachain } from '@archetypes'
 import { Button, Panel, PanelSection, Poster, useModal } from '@components'
 import { useCrowdloanByParachainId, useParachainAssets, useParachainDetailsBySlug } from '@libs/talisman'
+import { useTranslation } from 'react-i18next'
 import { useParams } from 'react-router-dom'
 import styled from 'styled-components'
 
 const CrowdloanDetail = styled(({ className }) => {
+  const { t } = useTranslation()
   const { slug }: { slug: string } = useParams()
 
   const { parachainDetails } = useParachainDetailsBySlug(slug)
@@ -29,10 +31,10 @@ const CrowdloanDetail = styled(({ className }) => {
         </article>
         <aside>
           <Panel>
-            <PanelSection title="Raised">
+            <PanelSection title={t('Raised')}>
               <Crowdloan.Raised id={id} />
             </PanelSection>
-            <PanelSection title="Ends in">
+            <PanelSection title={t('Ends in')}>
               <Crowdloan.Countdown id={id} />
             </PanelSection>
             <PanelSection>
@@ -46,7 +48,7 @@ const CrowdloanDetail = styled(({ className }) => {
             </PanelSection>
           </Panel>
 
-          <Panel title="Rewards">
+          <Panel title={t('Rewards')}>
             <Crowdloan.Rewards id={id} />
           </Panel>
 
