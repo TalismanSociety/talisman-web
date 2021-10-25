@@ -277,7 +277,7 @@ const Authorized = styled(({ className, narrow, allAccounts, showValue = false }
 
   return (
     <div className="account-switcher-pill">
-      <span ref={nodeRef} className={`account-button${hasManyAccounts ? ' has-many-accounts' : ''} ${className}`}>
+      <span className={`account-button${hasManyAccounts ? ' has-many-accounts' : ''} ${className}`}>
         {hasActiveAccount ? (
           <Identicon className="identicon" value={address} theme={type === 'ethereum' ? 'ethereum' : 'polkadot'} />
         ) : (
@@ -309,9 +309,11 @@ const Authorized = styled(({ className, narrow, allAccounts, showValue = false }
         {narrow ? (
           <ChevronDown style={{ margin: '0 1rem 0 0.8rem', visibility: hasManyAccounts ? 'visible' : 'hidden' }} />
         ) : (
-          <Button.Icon className="nav-toggle" onClick={() => setOpen(true)}>
-            <ChevronDown />
-          </Button.Icon>
+          <div ref={nodeRef}>
+            <Button.Icon className="nav-toggle" onClick={() => setOpen(true)}>
+              <ChevronDown />
+            </Button.Icon>
+          </div>
         )}
 
         <Dropdown
