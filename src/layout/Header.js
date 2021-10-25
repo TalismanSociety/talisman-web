@@ -76,10 +76,12 @@ const Header = styled(({ className, isMobile, mobileMenuOpen, dispatch }) => {
       )}
       <div className="menu-nav">
         <Field.Select
-          options={[
-            { key: 'en', value: 'English' },
-            { key: 'cn', value: 'Chinese' },
-          ]}
+          options={i18n.languages.map(language => {
+            return {
+              key: language,
+              value: t(language),
+            }
+          })}
           onChange={changeLanguage}
         />
         <Menu
