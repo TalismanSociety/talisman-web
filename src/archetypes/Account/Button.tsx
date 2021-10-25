@@ -276,7 +276,7 @@ const Authorized = styled(({ className, narrow, allAccounts, showValue = false }
   useOnClickOutside(nodeRef, onClickOutside)
 
   return (
-    <div className="account-switcher-pill">
+    <div ref={nodeRef} className="account-switcher-pill" style={{ display: 'inline-flex' }}>
       <span className={`account-button${hasManyAccounts ? ' has-many-accounts' : ''} ${className}`}>
         {hasActiveAccount ? (
           <Identicon className="identicon" value={address} theme={type === 'ethereum' ? 'ethereum' : 'polkadot'} />
@@ -309,11 +309,9 @@ const Authorized = styled(({ className, narrow, allAccounts, showValue = false }
         {narrow ? (
           <ChevronDown style={{ margin: '0 1rem 0 0.8rem', visibility: hasManyAccounts ? 'visible' : 'hidden' }} />
         ) : (
-          <div ref={nodeRef}>
-            <Button.Icon className="nav-toggle" onClick={() => setOpen(true)}>
-              <ChevronDown />
-            </Button.Icon>
-          </div>
+          <Button.Icon className="nav-toggle" onClick={() => setOpen(true)}>
+            <ChevronDown />
+          </Button.Icon>
         )}
 
         <Dropdown
