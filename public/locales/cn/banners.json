@@ -1,0 +1,17 @@
+{
+  "explore": {
+    "header": "建造平行宇宙",
+    "description": "众筹 帮助项目和团队筹集资金参与 Polkadot 和 Kusama 上的平行链拍卖。",
+    "primaryCta": "探索众筹"
+  },
+  "empty": {
+    "header": "你的包是空的！",
+    "description": "使用信用卡或加密货币购买 DOT 和 KSM",
+    "primaryCta": "购买 DOT / KSM"
+  },
+  "soon": {
+    "header": "即将推出",
+    "description": "在此期间，您可以查看 Crowdloans。",
+    "primaryCta": "探索众筹"
+  }
+}

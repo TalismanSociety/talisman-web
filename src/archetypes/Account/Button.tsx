@@ -8,6 +8,7 @@ import { addTokensToBalances, groupBalancesByAddress, useBalances, useChain } fr
 import { addBigNumbers, encodeAnyAddress, useFuncMemo } from '@talismn/util'
 import { formatCommas, formatCurrency, truncateString } from '@util/helpers'
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
 // format an address based on chain ID, derived from genesis ID
@@ -26,13 +27,14 @@ const Address = ({ address, genesis, truncate = false }) => {
 }
 
 const Dropdown = styled(({ className, handleClose, allAccounts, nativeToken, ksmBalancesByAddress }) => {
+  const { t } = useTranslation()
   const { switchAccount } = useActiveAccount()
   const { accounts } = useExtension()
   const { totalUsd, totalUsdByAddress } = usePortfolio()
 
   return (
     <span className={`account-picker ${className}`}>
-      {(allAccounts ? [{ name: 'All Accounts' }, ...accounts] : accounts).map(
+      {(allAccounts ? [{ name: t('All Accounts') }, ...accounts] : accounts).map(
         ({ address, name, type, genesisHash }, index) => (
           <div
             key={index}
@@ -235,6 +237,7 @@ const Unauthorized = styled(({ className }) => {
 `
 
 const Authorized = styled(({ className, narrow, allAccounts }) => {
+  const { t } = useTranslation()
   const { switchAccount } = useActiveAccount()
   const { accounts } = useExtension()
   const { hasActiveAccount, address, name, type } = useActiveAccount()
@@ -292,7 +295,7 @@ const Authorized = styled(({ className, narrow, allAccounts }) => {
           />
         )}
         <span className="selected-account">
-          <div>{hasActiveAccount ? name : allAccounts ? 'All Accounts' : 'Loading...'}</div>
+          <div>{hasActiveAccount ? name : allAccounts ? t('All Accounts') : 'Loading...'}</div>
           <div>
             {allAccounts ? (
               <Pendor prefix={!usd && '-'}>{usd && formatCurrency(usd)}</Pendor>

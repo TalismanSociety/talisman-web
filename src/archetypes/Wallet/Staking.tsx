@@ -1,11 +1,15 @@
 import { Panel, PanelSection } from '@components'
+import { useTranslation } from 'react-i18next'
 
-const Staking = ({ className }: { className?: string }) => (
-  <section className={`wallet-assets ${className}`}>
-    <Panel title="Staking">
-      <PanelSection comingSoon>🔑 This door will be unlocked soon</PanelSection>
-    </Panel>
-  </section>
-)
+const Staking = ({ className }: { className?: string }) => {
+  const { t } = useTranslation()
+  return (
+    <section className={`wallet-assets ${className}`}>
+      <Panel title={t('Staking')}>
+        <PanelSection comingSoon>🔑 {t('This door will be unlocked soon')}</PanelSection>
+      </Panel>
+    </section>
+  )
+}
 
 export default Staking

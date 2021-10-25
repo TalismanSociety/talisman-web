@@ -1,5 +1,6 @@
 import { Crowdloan } from '@archetypes'
 import { Await, Field, Grid, NoResults } from '@components'
+import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 const FilterBar = styled(
@@ -17,17 +18,20 @@ const FilterBar = styled(
     count,
     className,
     ...rest
-  }) => (
-    <div className={`${className} filterbar`} {...rest}>
-      <span className="left">
-        <Field.Search value={search} placeholder="Search Crowdloans" onChange={setSearch} />
-        <Field.RadioGroup value={status} onChange={setStatus} options={statusOptions} small />
-      </span>
-      <span className="right">
-        <Field.Select onChange={setOrder} options={orderOptions} />
-      </span>
-    </div>
-  )
+  }) => {
+    const { t } = useTranslation()
+    return (
+      <div className={`${className} filterbar`} {...rest}>
+        <span className="left">
+          <Field.Search value={search} placeholder={t('Search Crowdloans')} onChange={setSearch} />
+          <Field.RadioGroup value={status} onChange={setStatus} options={statusOptions} small />
+        </span>
+        <span className="right">
+          <Field.Select onChange={setOrder} options={orderOptions} />
+        </span>
+      </div>
+    )
+  }
 )`
   display: flex;
   width: 100%;

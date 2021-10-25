@@ -11,6 +11,7 @@ import { useChain } from '@talismn/api-react-hooks'
 import { addBigNumbers, encodeAnyAddress, multiplyBigNumbers, planckToTokens, useFuncMemo } from '@talismn/util'
 import { formatCommas, formatCurrency } from '@util/helpers'
 import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 const CrowdloanItem = styled(({ id, className }) => {
@@ -80,6 +81,7 @@ const CrowdloanItem = styled(({ id, className }) => {
 `
 
 const Crowdloans = ({ className }: { className?: string }) => {
+  const { t } = useTranslation()
   const accounts = useAccountAddresses()
   const encoded = useMemo(() => accounts?.map(account => encodeAnyAddress(account, 2)), [accounts])
   const { contributions, skipped, loading, error } = useCrowdloanContributions({ accounts: encoded })
@@ -111,7 +113,7 @@ const Crowdloans = ({ className }: { className?: string }) => {
 
   return (
     <section className={`wallet-crowdloans ${className}`}>
-      <Panel title="Crowdloans" subtitle={crowdloansUsd && formatCurrency(crowdloansUsd)}>
+      <Panel title={t('Crowdloans')} subtitle={crowdloansUsd && formatCurrency(crowdloansUsd)}>
         {skipped || loading ? (
           <PanelSection comingSoon>
             <div>Summoning Crowdloan Contributions...</div>
@@ -120,7 +122,7 @@ const Crowdloans = ({ className }: { className?: string }) => {
         ) : error ? (
           <PanelSection comingSoon>{String(error)}</PanelSection>
         ) : Object.keys(totalAliveContributions).length < 1 ? (
-          <PanelSection comingSoon>No crowdloan contributions found</PanelSection>
+          <PanelSection comingSoon>{t('No crowdloan contributions found')}</PanelSection>
         ) : (
           Object.keys(totalAliveContributions).map(id => (
             <PanelSection key={id}>

@@ -7,10 +7,12 @@ import { ReactComponent as MoreHorizontal } from '@assets/icons/more-horizontal.
 import { ReactComponent as PortfolioLogo } from '@assets/icons/portfolio.svg'
 import { ReactComponent as SwapLogo } from '@assets/icons/swap.svg'
 import { ReactComponent as TwitterMobileLogo } from '@assets/icons/twitter-mobile.svg'
+import { Field } from '@components'
 import Menu from '@components/Menu'
 import { useMediaQuery } from '@util/hooks'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useReducer } from 'react'
+import { useTranslation } from 'react-i18next'
 import { NavLink } from 'react-router-dom'
 import styled from 'styled-components'
 
@@ -49,60 +51,79 @@ const subRoutes = [
   { name: 'Medium', url: 'https://medium.com/we-are-talisman', icon: <MediumMobileLogo alt="Medium" /> },
 ]
 
-const Header = styled(({ className, isMobile, mobileMenuOpen, dispatch }) => (
-  <header className={className}>
-    <span>
-      <NavLink exact to="/" className="logo">
-        <TalismanHandLogo />
-      </NavLink>
-    </span>
-    {!isMobile && (
-      <nav className="main-nav">
-        <NavLink exact to="/portfolio">
-          Portfolio
+const Header = styled(({ className, isMobile, mobileMenuOpen, dispatch }) => {
+  const { t, i18n } = useTranslation('nav')
+
+  const changeLanguage = language => {
+    i18n.changeLanguage(language)
+  }
+
+  return (
+    <header className={className}>
+      <span>
+        <NavLink exact to="/" className="logo">
+          <TalismanHandLogo />
         </NavLink>
-        <NavLink to="/crowdloans">Crowdloans</NavLink>
-        <NavLink to="/buy">Buy</NavLink>
-      </nav>
-    )}
-    <Menu
-      dropdownAlignment="right"
-      ButtonComponent={
-        <button className="mobile-nav-button">
-          <MoreHorizontal />
-        </button>
-      }
-    >
-      <AnimatePresence>
-        <motion.nav initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-          <ul>
-            {isMobile &&
-              mainRoutes.map(route => {
-                return (
-                  <li key={route.name}>
-                    <NavLink to={route.url}>
-                      <span>{route.name}</span>
-                      {route.icon}
-                    </NavLink>
-                  </li>
-                )
-              })}
-            {subRoutes.map(route => {
-              return (
-                <li key={route.name}>
-                  <a href={route.url} target="_blank" rel="noreferrer noopener">
-                    <span>{route.name}</span>
-                    {route.icon}
-                  </a>
-                </li>
-              )
-            })}
-          </ul>
-        </motion.nav>
-      </AnimatePresence>
-    </Menu>
-  </header>
-))`
+      </span>
+      {!isMobile && (
+        <nav className="main-nav">
+          <NavLink exact to="/portfolio">
+            {t('Portfolio')}
+          </NavLink>
+          <NavLink to="/crowdloans">{t('Crowdloans')}</NavLink>
+          <NavLink to="/buy">{t('Buy')}</NavLink>
+        </nav>
+      )}
+      <div className="menu-nav">
+        <Field.Select
+          options={i18n.languages.map(language => {
+            return {
+              key: language,
+              value: t(language),
+            }
+          })}
+          onChange={changeLanguage}
+        />
+        <Menu
+          dropdownAlignment="right"
+          ButtonComponent={
+            <button className="mobile-nav-button">
+              <MoreHorizontal />
+            </button>
+          }
+        >
+          <AnimatePresence>
+            <motion.nav initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+              <ul>
+                {isMobile &&
+                  mainRoutes.map(route => {
+                    return (
+                      <li key={route.name}>
+                        <NavLink to={route.url}>
+                          <span>{t(route.name)}</span>
+                          {route.icon}
+                        </NavLink>
+                      </li>
+                    )
+                  })}
+                {subRoutes.map(route => {
+                  return (
+                    <li key={route.name}>
+                      <a href={route.url} target="_blank" rel="noreferrer noopener">
+                        <span>{t(route.name)}</span>
+                        {route.icon}
+                      </a>
+                    </li>
+                  )
+                })}
+              </ul>
+            </motion.nav>
+          </AnimatePresence>
+        </Menu>
+      </div>
+    </header>
+  )
+})`
   display: grid;
   grid-template: 1fr / 1fr 1fr 1fr;
   padding: 0 2.4rem;
@@ -153,6 +174,12 @@ const Header = styled(({ className, isMobile, mobileMenuOpen, dispatch }) => (
         background: var(--color-activeBackground);
       }
     }
+  }
+
+  .menu-nav {
+    display: flex;
+    align-items: center;
+    gap: 3rem;
   }
 
   .external-nav {
