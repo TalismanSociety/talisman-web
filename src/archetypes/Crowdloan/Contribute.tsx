@@ -264,6 +264,11 @@ const ContributeTo = styled(
       color: rgb(${({ theme }) => theme?.foreground});
       box-shadow: 0 0 0.8rem rgba(0, 0, 0, 0.1);
     }
+    .account-picker {
+      position: fixed;
+      top: auto;
+      left: auto;
+    }
     > .tx-fee {
       width: 100%;
       margin-top: 1rem;
