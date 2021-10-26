@@ -378,9 +378,9 @@ const Authorized = styled(({ className, narrow, allAccounts, showValue = false }
   }
 
   .account-picker {
-    position: absolute;
-    top: 100%;
-    left: 0;
+    position: fixed;
+    top: auto;
+    left: auto;
     z-index: 10;
   }
 
