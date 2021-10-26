@@ -16,7 +16,11 @@ import type { Account, Status } from './extension'
 //
 
 export const useActiveAccount = () => {
-  const { activeAccount, status, switchAccount } = useContext()
+  const { activeAccount, status, switchAccount, connect } = useContext()
+
+  useEffect(() => {
+    connect()
+  }, [connect])
 
   return { ...activeAccount, hasActiveAccount: !!activeAccount, status, switchAccount }
 }
@@ -41,6 +45,7 @@ type ContextProps = {
   activeAccount: Account
   status: Status
   switchAccount: (address: string) => void
+  connect: () => void
 }
 
 const Context = createContext<ContextProps | null>(null)
@@ -57,7 +62,7 @@ function useContext() {
 //
 
 export const Provider = ({ children }: PropsWithChildren<{}>) => {
-  const { accounts, status } = useExtension()
+  const { accounts, status, connect } = useExtension()
 
   const [activeAccountIndex, setActiveAccountIndex] = useState(-1)
 
@@ -75,8 +80,9 @@ export const Provider = ({ children }: PropsWithChildren<{}>) => {
       activeAccount: accounts[activeAccountIndex],
       status,
       switchAccount,
+      connect,
     }),
-    [accounts, activeAccountIndex, status, switchAccount]
+    [accounts, activeAccountIndex, status, switchAccount, connect]
   )
 
   return <Context.Provider value={value}>{children}</Context.Provider>

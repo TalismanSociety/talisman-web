@@ -5,6 +5,7 @@ import {
   PropsWithChildren,
   useContext as _useContext,
   createContext,
+  useCallback,
   useEffect,
   useMemo,
   useReducer,
@@ -22,19 +23,29 @@ export type Account = {
   address: string
 }
 
-export type Status = 'LOADING' | 'UNAVAILABLE' | 'UNAUTHORIZED' | 'NOACCOUNT' | 'OK'
+export type Status = 'LOADING' | 'DISCONNECTED' | 'UNAVAILABLE' | 'UNAUTHORIZED' | 'NOACCOUNT' | 'OK'
 
 //
 // Hooks (exported)
 //
 
 export const useExtension = () => useContext()
+export const useExtensionAutoConnect = () => {
+  const { connect, ...context } = useContext()
+
+  useEffect(() => {
+    connect()
+  }, [connect])
+
+  return context
+}
 
 //
 // Context
 //
 
 type ContextProps = {
+  connect: () => void
   accounts: Account[]
   status: Status
   provider: InjectedProvider | null
@@ -57,12 +68,24 @@ function useContext() {
 export const Provider = ({ children }: PropsWithChildren<{}>) => {
   const [recheckId, recheck] = useReducer(x => (x + 1) % 16384, 0)
 
+  const [shouldConnect, setShouldConnect] = useState(false)
+
   const [status, setStatus] = useState<Status>('LOADING')
   const [accounts, setAccounts] = useState<Account[]>([])
   const [provider, setProvider] = useState<InjectedProvider | null>(null)
   const [signer, setSigner] = useState<Signer | null>(null)
 
+  const connect = useCallback(() => {
+    setStatus(status => (status === 'DISCONNECTED' ? 'LOADING' : status))
+    setShouldConnect(true)
+  }, [])
+
   useEffect(() => {
+    if (!shouldConnect) {
+      setStatus('DISCONNECTED')
+      return
+    }
+
     if (recheckId) {
       // do nothing
     }
@@ -101,7 +124,7 @@ export const Provider = ({ children }: PropsWithChildren<{}>) => {
       cancelled = true
       unsub && unsub()
     }
-  }, [recheckId])
+  }, [shouldConnect, recheckId])
 
   useEffect(() => {
     const recheckStatuses = ['UNAVAILABLE', 'UNAUTHORIZED']
@@ -111,7 +134,10 @@ export const Provider = ({ children }: PropsWithChildren<{}>) => {
     return () => clearInterval(intervalId)
   }, [status])
 
-  const value = useMemo(() => ({ accounts, status, provider, signer }), [accounts, status, provider, signer])
+  const value = useMemo(
+    () => ({ connect, accounts, status, provider, signer }),
+    [connect, accounts, status, provider, signer]
+  )
 
   return <Context.Provider value={value}>{children}</Context.Provider>
 }

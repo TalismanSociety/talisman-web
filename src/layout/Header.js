@@ -9,6 +9,7 @@ import { ReactComponent as SwapLogo } from '@assets/icons/swap.svg'
 import { ReactComponent as TwitterMobileLogo } from '@assets/icons/twitter-mobile.svg'
 import { Field } from '@components'
 import Menu from '@components/Menu'
+import { useExtension } from '@libs/talisman'
 import { useMediaQuery } from '@util/hooks'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useReducer } from 'react'
@@ -53,6 +54,8 @@ const subRoutes = [
 
 const Header = styled(({ className, isMobile, mobileMenuOpen, dispatch }) => {
   const { t, i18n } = useTranslation('nav')
+  const { status: extensionStatus } = useExtension()
+  const homeRoute = ['LOADING', 'DISCONNECTED'].includes(extensionStatus) ? '/' : '/portfolio'
 
   const changeLanguage = language => {
     i18n.changeLanguage(language)
@@ -61,7 +64,7 @@ const Header = styled(({ className, isMobile, mobileMenuOpen, dispatch }) => {
   return (
     <header className={className}>
       <span>
-        <NavLink exact to="/" className="logo">
+        <NavLink exact to={homeRoute} className="logo">
           <TalismanHandLogo />
         </NavLink>
       </span>
