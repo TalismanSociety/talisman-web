@@ -1,18 +1,20 @@
+import { ExtensionStatusGate } from '@components'
 import { StyledLoader } from '@components/Await'
-import ExtensionStateGate from '@components/ExtensionStatusGate'
+import { Redirect } from 'react-router-dom'
 
 import Welcome from './Welcome'
 
 const Home = () => {
   return (
-    <ExtensionStateGate
+    <ExtensionStatusGate
       loading={<StyledLoader />}
-      unavailable={<Welcome />}
-      noaccount={<Welcome />}
-      unauthorized={<Welcome />}
+      disconnected={<Welcome />}
+      unavailable={<Redirect to="/portfolio" />}
+      noaccount={<Redirect to="/portfolio" />}
+      unauthorized={<Redirect to="/portfolio" />}
     >
-      <Welcome />
-    </ExtensionStateGate>
+      <Redirect to="/portfolio" />
+    </ExtensionStatusGate>
   )
 }
 

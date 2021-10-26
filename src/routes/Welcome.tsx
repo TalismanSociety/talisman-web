@@ -1,10 +1,10 @@
 import { ReactComponent as TalismanWordLogo } from '@assets/talisman-red-black.svg'
 import { Pill } from '@components'
 import { ReactComponent as ChevronRight } from '@icons/chevron-right.svg'
+import { useExtension } from '@libs/talisman'
 import { device } from '@util/breakpoints'
 import { cloneElement } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 
 interface ConnectWalletItemProps {
@@ -14,6 +14,7 @@ interface ConnectWalletItemProps {
   LinkComponent?: React.ReactElement
   featured?: boolean
   disabled?: boolean
+  onClick?: () => void
 }
 
 const Badge = styled(({ className, children }) => {
@@ -30,9 +31,9 @@ const Badge = styled(({ className, children }) => {
 
 const FeaturedConnectWalletItem = styled((props: ConnectWalletItemProps) => {
   const { t } = useTranslation('connect-wallet')
-  const { className = '', src, name } = props
+  const { className = '', src, name, onClick } = props
   return (
-    <div className={className}>
+    <div className={className} onClick={onClick}>
       <img height={48} width={48} src={src} alt={name} />
       <span>{name}</span>
       <Badge>{t('Coming soon')}</Badge>
@@ -50,12 +51,12 @@ const FeaturedConnectWalletItem = styled((props: ConnectWalletItemProps) => {
 `
 
 const ConnectItem = styled((props: ConnectWalletItemProps) => {
-  const { className = '', src, name, featured = false, disabled } = props
+  const { className = '', src, name, featured = false, disabled, onClick } = props
   if (featured) {
     return <FeaturedConnectWalletItem {...props} />
   }
   return (
-    <div className={className}>
+    <div className={className} onClick={onClick}>
       <div className="icon-name">
         <img height={24} width={24} src={src} alt={name} />
         <span>{name}</span>
@@ -137,15 +138,13 @@ const NoWallet = styled(({ className = '' }) => {
 
 const ConnectWalletSelection = styled(({ className = '' }) => {
   const { t } = useTranslation('connect-wallet')
+  const { connect } = useExtension()
+
   return (
     <aside className={className}>
       <section>
         <h2>{t('Connect a wallet')}</h2>
-        <ConnectWalletItem
-          name="Polkadot{js}"
-          src={`https://polkadot.js.org/docs/img/logo.svg`}
-          LinkComponent={<Link to="/portfolio" />}
-        />
+        <ConnectWalletItem name="Polkadot{js}" src={`https://polkadot.js.org/docs/img/logo.svg`} onClick={connect} />
       </section>
       <section>
         <h3>{t('Coming soon')}</h3>

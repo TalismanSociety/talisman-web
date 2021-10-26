@@ -2,7 +2,7 @@ import { ReactComponent as AllAccountsIcon } from '@assets/icons/all-accounts.sv
 import { Button, Pendor } from '@components'
 import { ReactComponent as ChevronDown } from '@icons/chevron-down.svg'
 import { usePortfolio } from '@libs/portfolio'
-import { useActiveAccount, useChainByGenesis, useExtension } from '@libs/talisman'
+import { useActiveAccount, useChainByGenesis, useExtensionAutoConnect } from '@libs/talisman'
 import Identicon from '@polkadot/react-identicon'
 import { addTokensToBalances, groupBalancesByAddress, useBalances, useChain } from '@talismn/api-react-hooks'
 import { addBigNumbers, encodeAnyAddress, useFuncMemo } from '@talismn/util'
@@ -30,7 +30,7 @@ const Address = ({ address, genesis, truncate = false }) => {
 const Dropdown = styled(({ className, handleClose, allAccounts, nativeToken, ksmBalancesByAddress }) => {
   const { t } = useTranslation()
   const { switchAccount } = useActiveAccount()
-  const { accounts } = useExtension()
+  const { accounts } = useExtensionAutoConnect()
   const { totalUsd, totalUsdByAddress } = usePortfolio()
 
   return (
@@ -241,7 +241,7 @@ const Authorized = styled(({ className, narrow, allAccounts, showValue = false }
   const { t } = useTranslation()
   const nodeRef = useRef<HTMLDivElement>(null)
   const { switchAccount } = useActiveAccount()
-  const { accounts } = useExtension()
+  const { accounts } = useExtensionAutoConnect()
   const { hasActiveAccount, address, name, type } = useActiveAccount()
   const { totalUsd, totalUsdByAddress } = usePortfolio()
   const [open, setOpen] = useState(false)

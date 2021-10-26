@@ -1,6 +1,6 @@
 import { ChainLogo, ExtensionStatusGate, Info, Panel, PanelSection, Pendor } from '@components'
 import { calculateAssetPortfolioAmounts, usePortfolio, useTaggedAmountsInPortfolio } from '@libs/portfolio'
-import { useAccountAddresses, useExtension } from '@libs/talisman'
+import { useAccountAddresses, useExtensionAutoConnect } from '@libs/talisman'
 import { useTokenPrice } from '@libs/tokenprices'
 import {
   BalanceWithTokens,
@@ -38,7 +38,7 @@ const customRpcs = {
 const AssetItem = styled(({ id, balances, addresses, className }) => {
   const chain = useChain(id)
 
-  const { status, accounts } = useExtension()
+  const { status, accounts } = useExtensionAutoConnect()
   const isMoonriver = id === '2023'
   const hasNoEthereumAddress = useMemo(
     () => status === 'OK' && accounts.every(account => account.type !== 'ethereum'),
@@ -139,7 +139,7 @@ const Assets = styled(({ id, className }) => {
   const { t } = useTranslation()
   const chainIds = useMemo(() => Object.keys(customRpcs), [])
 
-  const { accounts } = useExtension()
+  const { accounts } = useExtensionAutoConnect()
   const addresses = useMemo(() => accounts.map((account: any) => account.address), [accounts])
   const accountAddresses = useAccountAddresses()
 
