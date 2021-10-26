@@ -307,25 +307,28 @@ const ContributeTo = styled(
   }
 `
 
-const InProgress = styled(({ className, explorerUrl, closeModal }) => (
-  <div className={className}>
-    <header>
-      <h2>In Progress</h2>
-      <MaterialLoader className="logo" />
-    </header>
-    <main>
-      <div>Your transaction is in progress. This may take a few minutes to confirm</div>
-      {explorerUrl && (
-        <a href={explorerUrl} target="_blank" rel="noopener noreferrer">
-          View on Subscan
-        </a>
-      )}
-    </main>
-    <footer>
-      <Button onClick={closeModal}>Close</Button>
-    </footer>
-  </div>
-))`
+const InProgress = styled(({ className, explorerUrl, closeModal }) => {
+  const { t } = useTranslation('crowdloan')
+  return (
+    <div className={className}>
+      <header>
+        <h2>{t('inProgress.header')}</h2>
+        <MaterialLoader className="logo" />
+      </header>
+      <main>
+        <div>{t('inProgress.description')}</div>
+        {explorerUrl && (
+          <a href={explorerUrl} target="_blank" rel="noopener noreferrer">
+            {t('inProgress.primaryCta')}
+          </a>
+        )}
+      </main>
+      <footer>
+        <Button onClick={closeModal}>{t('inProgress.secondaryCta')}</Button>
+      </footer>
+    </div>
+  )
+})`
   > header {
     display: flex;
     flex-direction: column;
@@ -373,27 +376,30 @@ const InProgress = styled(({ className, explorerUrl, closeModal }) => (
   }
 `
 
-const Success = styled(({ className, explorerUrl, closeModal }) => (
-  <div className={className}>
-    <header>
-      <h2>Success</h2>
-      <CheckCircle className="logo" />
-    </header>
-    <main>
-      <div>Your transaction was successful. Thank you for your contribution</div>
-      {explorerUrl && (
-        <a href={explorerUrl} target="_blank" rel="noopener noreferrer">
-          View on Subscan
-        </a>
-      )}
-    </main>
-    <footer>
-      <Button primary to="/" onClick={closeModal}>
-        Go to your portfolio
-      </Button>
-    </footer>
-  </div>
-))`
+const Success = styled(({ className, explorerUrl, closeModal }) => {
+  const { t } = useTranslation('crowdloan')
+  return (
+    <div className={className}>
+      <header>
+        <h2>{t('success.header')}</h2>
+        <CheckCircle className="logo" />
+      </header>
+      <main>
+        <div>{t('success.description')}</div>
+        {explorerUrl && (
+          <a href={explorerUrl} target="_blank" rel="noopener noreferrer">
+            {t('success.primaryCta')}
+          </a>
+        )}
+      </main>
+      <footer>
+        <Button primary to="/" onClick={closeModal}>
+          {t('success.secondaryCta')}
+        </Button>
+      </footer>
+    </div>
+  )
+})`
   > header {
     display: flex;
     flex-direction: column;
@@ -441,28 +447,31 @@ const Success = styled(({ className, explorerUrl, closeModal }) => (
   }
 `
 
-const Failed = styled(({ className, explorerUrl, error, closeModal }) => (
-  <div className={className}>
-    <header>
-      <h2>Failed</h2>
-      <XCircle className="logo" />
-    </header>
-    <main>
-      <div>
-        <div>Your transaction was not successful.</div>
-        {error && <div className="error">{error}</div>}
-      </div>
-      {explorerUrl && (
-        <a href={explorerUrl} target="_blank" rel="noopener noreferrer">
-          View on Subscan
-        </a>
-      )}
-    </main>
-    <footer>
-      <Button onClick={closeModal}>Close</Button>
-    </footer>
-  </div>
-))`
+const Failed = styled(({ className, explorerUrl, error, closeModal }) => {
+  const { t } = useTranslation('crowdloan')
+  return (
+    <div className={className}>
+      <header>
+        <h2>{t('failed.header')}</h2>
+        <XCircle className="logo" />
+      </header>
+      <main>
+        <div>
+          <div>{t('failed.description')}</div>
+          {error && <div className="error">{error}</div>}
+        </div>
+        {explorerUrl && (
+          <a href={explorerUrl} target="_blank" rel="noopener noreferrer">
+            {t('failed.primaryCta')}
+          </a>
+        )}
+      </main>
+      <footer>
+        <Button onClick={closeModal}>{t('failed.secondaryCta')}</Button>
+      </footer>
+    </div>
+  )
+})`
   > header {
     display: flex;
     flex-direction: column;

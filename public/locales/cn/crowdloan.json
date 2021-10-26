@@ -1,0 +1,20 @@
+{
+  "inProgress": {
+    "header": "进行中",
+    "description": "您的交易正在进行中。这可能需要几分钟才能确认",
+    "primaryCta": "查看 Subscan",
+    "secondaryCta": "关闭"
+  },
+  "success": {
+    "header": "成功",
+    "description": "您的交易成功。感谢您的贡献",
+    "primaryCta": "查看 Subscan",
+    "secondaryCta": "转到您的投资组合"
+  },
+  "failed": {
+    "header": "失败的",
+    "description": "您的交易不成功。",
+    "primaryCta": "查看 Subscan",
+    "secondaryCta": "关闭"
+  }
+}

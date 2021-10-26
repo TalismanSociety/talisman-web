@@ -1,0 +1,20 @@
+{
+  "inProgress": {
+    "header": "In Progress",
+    "description": "Your transaction is in progress. This may take a few minutes to confirm",
+    "primaryCta": "View on Subscan",
+    "secondaryCta": "Close"
+  },
+  "success": {
+    "header": "Success",
+    "description": "Your transaction was successful. Thank you for your contribution",
+    "primaryCta": "View on Subscan",
+    "secondaryCta": "Go to your portfolio"
+  },
+  "failed": {
+    "header": "Failed",
+    "description": "Your transaction was not successful.",
+    "primaryCta": "View on Subscan",
+    "secondaryCta": "Close"
+  }
+}
