@@ -22,7 +22,7 @@ export function MenuItem(props: any) {
 }
 
 export const Menu = styled((props: MenuProps) => {
-  const { className = '', dropdownAlignment = 'left', closeOnSelect = true } = props
+  const { className = '', closeOnSelect = true } = props
   const nodeRef = useRef<HTMLDivElement>(null)
   const [showMenu, setShowMenu] = useState(false)
 
@@ -40,8 +40,6 @@ export const Menu = styled((props: MenuProps) => {
 
   useOnClickOutside(nodeRef, onClickOutside)
 
-  const maxWidthStyles = dropdownAlignment === 'right' ? 'max-w-content' : 'max-w-full w-full'
-
   return (
     <div ref={nodeRef} className={`relative inline-block ${className}`} onClick={onClickInside}>
       {React.cloneElement(props.ButtonComponent, {
@@ -54,9 +52,7 @@ export const Menu = styled((props: MenuProps) => {
       })}
       {showMenu && (
         <div className="menu-container">
-          <div className={`menu absolute ${dropdownAlignment}-0 mt-1 ${maxWidthStyles} whitespace-nowrap z-10`}>
-            {props.children}
-          </div>
+          <div className="menu">{props.children}</div>
         </div>
       )}
     </div>
@@ -73,18 +69,8 @@ export const Menu = styled((props: MenuProps) => {
     background: var(--color-activeBackground);
     border-radius: 1rem;
     position: absolute;
-    top: 2rem;
     ${props => (props.dropdownAlignment === 'right' ? 'right' : 'left')}: 0px;
-    ${props => {
-      return props.dropdownAlignment === 'right'
-        ? `
-                max-width: max-content;
-            `
-        : `
-                max-width: 100%;
-                width: 100%;
-            `
-    }}
+    ${props => (props.dropdownAlignment === 'right' ? `max-width: max-content;` : `max-width: 100%; width: 100%;`)}
     white-space: nowrap;
     margin-top: 0.25rem;
     z-index: 10;

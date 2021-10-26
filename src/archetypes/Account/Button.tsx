@@ -385,6 +385,7 @@ const Authorized = styled(({ className, narrow, allAccounts, showValue = false }
     top: 100%;
     left: 0;
     z-index: 10;
+    margin-top: 1rem;
   }
 
   &.has-many-accounts {
