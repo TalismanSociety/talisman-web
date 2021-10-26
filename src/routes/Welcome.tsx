@@ -76,6 +76,7 @@ const ConnectItem = styled((props: ConnectWalletItemProps) => {
 
   :hover {
     background: var(--color-activeBackground);
+    cursor: pointer;
   }
 
   .disabled-overlay {

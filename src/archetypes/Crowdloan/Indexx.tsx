@@ -22,92 +22,42 @@ const FilterBar = styled(
     const { t } = useTranslation()
     return (
       <div className={`${className} filterbar`} {...rest}>
-        <span className="left">
+        <div className="searchbar">
           <Field.Search value={search} placeholder={t('Search Crowdloans')} onChange={setSearch} />
+        </div>
+        <div className="filtergroup">
           <Field.RadioGroup value={status} onChange={setStatus} options={statusOptions} small />
-        </span>
-        <span className="right">
-          <Field.Select onChange={setOrder} options={orderOptions} />
-        </span>
+          <span className="sortby">
+            <label>{t('Sort by')}</label>
+            <Field.Select onChange={setOrder} options={orderOptions} />
+          </span>
+        </div>
       </div>
     )
   }
 )`
-  display: flex;
-  width: 100%;
-  justify-content: space-between;
-  align-items: center;
   padding: 0 2.4rem;
   margin: 2.4rem 0;
 
-  > span {
+  .searchbar {
+    display: inline-block;
+    width: auto;
+  }
+
+  .filtergroup {
+    margin-top: 2rem;
     display: flex;
     align-items: center;
-    position: relative;
-
-    &.left {
-      justify-content: flex-start;
-    }
-    &.right {
-      justify-content: flex-end;
-    }
-
-    &.right {
-      > * + * {
-        margin-left: 1em;
-      }
-
-      .field-toggle[data-on='true'] .toggle:after {
-        background: rgb(${({ theme }) => theme.primary});
-      }
-    }
+    justify-content: space-between;
+    flex-wrap: wrap;
   }
 
-  .field-search {
-    width: 23vw;
+  .sortby {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 1rem 0;
   }
-
-  .field-radiogroup {
-    margin-left: 2.3rem;
-
-    .pill {
-      white-space: pre;
-    }
-  }
-
-  .field-select .children {
-    font-size: 0.9em;
-    box-shadow: none;
-    color: rgb(${({ theme }) => theme.primary});
-  }
-
-  @media only screen and (max-width: 700px) {
-    display: inline-block;
-    margin-bottom: 0;
-    > span {
-      display: inline;
-      width: 100%;
-
-      .field-search {
-        display: block;
-        width: 100%;
-      }
-
-      .field-radiogroup {
-        margin: 0;
-        width: 40%;
-        display: inline-block;
-        margin-top: 1em;
-      }
-
-      .field-select {
-        display: inline-block;
-        margin: 0;
-        float: right;
-        margin-top: 0.5em;
-      }
-    }
-  } ;
 `
 
 const Index = styled(({ withFilter, className }) => {
