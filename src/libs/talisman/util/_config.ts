@@ -279,20 +279,21 @@ export const parachainDetails: ParachainDetails[] = [
       Discord: 'https://discord.gg/PfpUATX',
     },
   },
-  // {
-  //   id: 2024,
-  //   name: 'Genshiro',
-  //   slug: 'genshiro',
-  //   token: 'GENS',
-  //   subtitle: 'Genshiro is a canary network of equilibrium that shares the experimental spirit of Kusama.',
-  //   info: `Genshiro is EquilibriumDeFi's DeFi one-stop shop on Kusama that can do all things that existing DeFi primitives do, but with less risk and cross-chain.`,
-  //   links: {
-  //     Website: 'https://genshiro.equilibrium.io/en',
-  //     Twitter: 'https://twitter.com/GenshiroDeFi',
-  //     Telegram: 'https://t.me/genshiro_official',
-  //     Github: 'https://github.com/equilibrium-eosdt',
-  //   },
-  // },
+  {
+    id: 2024,
+    name: 'Genshiro',
+    slug: 'genshiro',
+    token: 'GENS',
+    subtitle: 'Genshiro is a canary network of equilibrium that shares the experimental spirit of Kusama.',
+    info: `Genshiro is EquilibriumDeFi's DeFi one-stop shop on Kusama that can do all things that existing DeFi primitives do, but with less risk and cross-chain.`,
+    links: {
+      Website: 'https://genshiro.equilibrium.io/',
+      Twitter: 'https://twitter.com/GenshiroDeFi',
+      Telegram: 'https://t.me/genshiro_official',
+      Medium: 'https://medium.com/equilibrium-eosdt',
+      Github: 'https://github.com/equilibrium-eosdt',
+    },
+  },
   {
     id: 2077,
     name: 'Robonomics',
@@ -455,6 +456,22 @@ export const parachainDetails: ParachainDetails[] = [
       Medium: 'https://medium.com/interlay/',
       Github: 'https://github.com/interlay',
       Discord: 'http://discord.gg/KgCYK3MKS',
+    },
+  },
+  {
+    id: 2096,
+    name: 'Bit.Country Pioneer',
+    slug: 'bit-country-pioneer',
+    token: 'NEER',
+    subtitle: `Bit.Country & Metaverse.Network is a platform & blockchain ecosystem for user-created metaverses, games, and dApps.\n\nCommunity owners, influencers, KOLs, and individuals can launch their own metaverses for their members, fans, followers, families, and friends.\n\nAll you need to launch a metaverse is at least one land block plus $NEER token to pay a small gas fee.`,
+    info: `We are disrupting the current creators’ value system built by web2.0, as traditional social platforms are harvesting the value from the community’s time, only distributing a portion of the profits to the creators while members are only being entertained, but not rewarded.\n\nWe are building a future for metaverse owners to have the ability to grow exponentially while letting the members take ownership and earn through a variety of opportunities, benefitting directly from the development of the metaverses they are in.`,
+    links: {
+      Website: 'https://bit.country/',
+      Twitter: 'https://twitter.com/bitdotcountry',
+      Telegram: 'https://t.me/BitCountryOfficialTG',
+      Medium: 'https://bitcountry.medium.com/',
+      Github: 'https://github.com/bit-country',
+      Discord: 'https://discord.gg/PaMAXZZ59N',
     },
   },
 ]
@@ -762,29 +779,29 @@ export const crowdloanDetails: CrowdloanDetails[] = [
       info: null,
     },
   },
-  // NOTE: Superseded by 2089
-  // {
-  //   paraId: 2024,
-  //   contributeUrl: 'https://genshiro.equilibrium.io/en/plo',
-  //   rewards: {
-  //     tokens: [
-  //       {
-  //         symbol: 'GENS',
-  //         perKSM: 'up to 2,400',
-  //       },
-  //     ],
-  //     custom: [
-  //       {
-  //         title: '>50 KSM contribution',
-  //         value: '20% Bonus',
-  //       },
-  //       {
-  //         title: 'Contribute before September 10',
-  //         value: '25% Bonus',
-  //       },
-  //     ],
-  //   },
-  // },
+  {
+    paraId: 2024,
+    contributeUrl: 'https://genshiro.equilibrium.io/en/plo',
+    rewards: {
+      tokens: [
+        {
+          symbol: 'GENS',
+          perKSM: '>2000',
+        },
+      ],
+      custom: [
+        {
+          title: '>50 KSM contribution',
+          value: '20% Bonus',
+        },
+        {
+          title: 'Contribute before September 10',
+          value: '25% Bonus',
+        },
+      ],
+      info: null,
+    },
+  },
   {
     paraId: 2077,
     contributeUrl: 'https://robonomics.network/kusama-slot',
@@ -930,29 +947,30 @@ export const crowdloanDetails: CrowdloanDetails[] = [
       info: null,
     },
   },
-  {
-    paraId: 2089,
-    contributeUrl: 'https://genshiro.equilibrium.io/en/plo',
-    rewards: {
-      tokens: [
-        {
-          symbol: 'GENS',
-          perKSM: '>2000',
-        },
-      ],
-      custom: [
-        {
-          title: '>50 KSM contribution',
-          value: '20% Bonus',
-        },
-        {
-          title: 'Contribute before September 10',
-          value: '25% Bonus',
-        },
-      ],
-      info: null,
-    },
-  },
+  // NOTE: Superseded by 2024
+  // {
+  //   paraId: 2089,
+  //   contributeUrl: 'https://genshiro.equilibrium.io/en/plo',
+  //   rewards: {
+  //     tokens: [
+  //       {
+  //         symbol: 'GENS',
+  //         perKSM: '>2000',
+  //       },
+  //     ],
+  //     custom: [
+  //       {
+  //         title: '>50 KSM contribution',
+  //         value: '20% Bonus',
+  //       },
+  //       {
+  //         title: 'Contribute before September 10',
+  //         value: '25% Bonus',
+  //       },
+  //     ],
+  //     info: null,
+  //   },
+  // },
   {
     paraId: 2090,
     contributeUrl: 'https://loan.bsx.fi/',
@@ -978,6 +996,29 @@ export const crowdloanDetails: CrowdloanDetails[] = [
         },
       ],
       custom: null,
+      info: null,
+    },
+  },
+  {
+    paraId: 2096,
+    contributeUrl: 'https://ksmcrowdloan.bit.country/crowdloan',
+    rewards: {
+      tokens: [
+        {
+          symbol: 'NEER',
+          perKSM: '>68',
+        },
+      ],
+      custom: [
+        {
+          title: 'First 1000 contributors',
+          value: '10% Bonus',
+        },
+        {
+          title: 'Referals',
+          value: '2.5% Bonus',
+        },
+      ],
       info: null,
     },
   },
