@@ -9,6 +9,7 @@ import { multiplyBigNumbers } from '@talismn/util'
 import { isMobileBrowser } from '@util/helpers'
 import { formatCurrency, shortNumber, truncateString } from '@util/helpers'
 import { useCallback, useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 export type ContributeProps = {
@@ -96,6 +97,7 @@ const ContributeTo = styled(
 
     closeModal,
   }) => {
+    const { t } = useTranslation()
     const { price: tokenPrice, loading: priceLoading } = useTokenPrice('KSM')
     const usd = useMemo(
       () => !Number.isNaN(Number(contributionAmount)) && multiplyBigNumbers(contributionAmount, tokenPrice),
@@ -111,7 +113,7 @@ const ContributeTo = styled(
         }}
       >
         <header>
-          <h2>Contribute To</h2>
+          <h2>{t('Contribute To')}</h2>
           <Parachain.Asset className="logo" id={parachainDetails?.id} type="logo" />
           <h3>{parachainDetails?.name}</h3>
         </header>
@@ -165,7 +167,7 @@ const ContributeTo = styled(
         </main>
         <footer>
           <Button type="button" onClick={closeModal}>
-            Cancel
+            {t('Cancel')}
           </Button>
           <Button
             type="submit"
@@ -173,7 +175,7 @@ const ContributeTo = styled(
             loading={status === 'VALIDATING'}
             disabled={error === 'Account balance too low' || !contributionAmount}
           >
-            Contribute
+            {t('Contribute')}
           </Button>
         </footer>
       </form>
