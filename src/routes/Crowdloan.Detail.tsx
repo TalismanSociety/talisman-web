@@ -43,7 +43,7 @@ const CrowdloanDetail = styled(({ className }) => {
                 onClick={() => openModal(<Crowdloan.Contribute id={id} />)}
                 disabled={uiStatus !== 'active'}
               >
-                Contribute
+                {t('Contribute')}
               </Button>
             </PanelSection>
           </Panel>
