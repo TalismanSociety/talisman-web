@@ -4,6 +4,7 @@ import type { BalanceOf } from '@polkadot/types/interfaces'
 import type { ISubmittableResult } from '@polkadot/types/types'
 import { addTokensToBalances, groupBalancesByAddress, useBalances, useChain } from '@talismn/api-react-hooks'
 import { Deferred, addBigNumbers, planckToTokens, tokensToPlanck, useFuncMemo } from '@talismn/util'
+import customRpcs from '@util/customRpcs'
 import BigNumber from 'bignumber.js'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
@@ -61,7 +62,7 @@ export function useCrowdloanContribute(
   const addresses = useMemo(() => (account ? [account] : []), [account])
 
   const { nativeToken, tokenDecimals } = chaindata
-  const { balances } = useBalances(addresses, chainIds)
+  const { balances } = useBalances(addresses, chainIds, customRpcs)
 
   const ksmBalances = useFuncMemo(addTokensToBalances, balances, nativeToken ? tokenDecimals : undefined)
   const ksmBalancesByAddress = useFuncMemo(groupBalancesByAddress, ksmBalances)

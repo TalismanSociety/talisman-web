@@ -6,6 +6,7 @@ import { useActiveAccount, useChainByGenesis, useExtensionAutoConnect } from '@l
 import Identicon from '@polkadot/react-identicon'
 import { addTokensToBalances, groupBalancesByAddress, useBalances, useChain } from '@talismn/api-react-hooks'
 import { addBigNumbers, encodeAnyAddress, useFuncMemo } from '@talismn/util'
+import customRpcs from '@util/customRpcs'
 import { formatCommas, formatCurrency, truncateString } from '@util/helpers'
 import useOnClickOutside from '@util/useOnClickOutside'
 import { useEffect, useMemo, useRef, useState } from 'react'
@@ -264,7 +265,7 @@ const Authorized = styled(({ className, narrow, allAccounts, showValue = false }
   const hasManyAccounts = addresses && addresses.length > 1
 
   const { nativeToken, tokenDecimals } = useChain(chainId)
-  const { balances } = useBalances(addresses, chainIds)
+  const { balances } = useBalances(addresses, chainIds, customRpcs)
 
   const ksmBalances = useFuncMemo(addTokensToBalances, balances, nativeToken ? tokenDecimals : undefined)
   const ksmBalancesByAddress = useFuncMemo(groupBalancesByAddress, ksmBalances)
