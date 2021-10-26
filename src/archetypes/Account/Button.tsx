@@ -307,7 +307,10 @@ const Authorized = styled(({ className, narrow, allAccounts, showValue = false }
         </span>
 
         {narrow ? (
-          <ChevronDown style={{ margin: '0 1rem 0 0.8rem', visibility: hasManyAccounts ? 'visible' : 'hidden' }} />
+          <ChevronDown
+            style={{ margin: '0 1rem 0 0.8rem', visibility: hasManyAccounts ? 'visible' : 'hidden' }}
+            onClick={() => setOpen(true)}
+          />
         ) : (
           <Button.Icon className="nav-toggle" onClick={() => setOpen(true)}>
             <ChevronDown />
