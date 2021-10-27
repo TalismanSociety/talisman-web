@@ -14,5 +14,10 @@
   "Rewards": "奖励",
   "Cancel": "取消",
   "Contribute To": "贡献于",
-  "Sort by": "排序方式"
+  "Sort by": "排序方式",
+  "noResult": {
+    "title": "对不起",
+    "subtitle": "Talisman 不能召唤你想要的东西。",
+    "text": "试试别的。"
+  }
 }
