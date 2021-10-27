@@ -88,6 +88,14 @@ export const Menu = styled((props: MenuProps) => {
       & :hover {
         background: var(--color-controlBackground);
       }
+
+      & :first-child {
+        border-radius: 1rem 1rem 0 0;
+      }
+
+      & :last-child {
+        border-radius: 0 0 1rem 1rem;
+      }
     }
     & li > * {
       display: flex;
