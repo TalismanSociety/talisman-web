@@ -22,8 +22,9 @@ const _Wallet = styled(({ className }) => {
   )
 })`
   width: 100%;
-  padding: 0 6vw;
+  max-width: 1280px;
   margin: 6rem auto;
+  padding: 0 2.4rem;
 
   > * {
     margin-bottom: 3.25vw;
@@ -46,6 +47,7 @@ const _Wallet = styled(({ className }) => {
     > * + * {
       margin-bottom: 2rem;
     }
+    gap: 4rem;
     @media ${device.xxl} {
       gap: 2rem;
       flex-wrap: nowrap;
