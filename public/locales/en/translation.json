@@ -14,5 +14,10 @@
   "Rewards": "Rewards",
   "Cancel": "Cancel",
   "Contribute To": "Contribute To",
-  "Sort by": "Sort by"
+  "Sort by": "Sort by",
+  "noResult": {
+    "title": "Sorry",
+    "subtitle": "Talisman cannot summon what you wish for.",
+    "text": "Try something else."
+  }
 }
