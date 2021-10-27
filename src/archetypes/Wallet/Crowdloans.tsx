@@ -116,7 +116,7 @@ const Crowdloans = ({ className }: { className?: string }) => {
       <Panel title={t('Crowdloans')} subtitle={crowdloansUsd && formatCurrency(crowdloansUsd)}>
         {skipped || loading ? (
           <PanelSection comingSoon>
-            <div>Summoning Crowdloan Contributions...</div>
+            <div>{t('Summoning Crowdloan Contributions...')}</div>
             <Pendor />
           </PanelSection>
         ) : error ? (
