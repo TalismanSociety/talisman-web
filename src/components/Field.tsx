@@ -42,7 +42,7 @@ const FieldWrapper = styled(({ type, prefix, suffix, label, dim, children, class
   > .children {
     border: none;
     box-shadow: 0 0 1.2rem rgba(0, 0, 0, 0.1);
-    border-radius: 2.2em;
+    border-radius: 1rem;
     overflow: hidden;
     transition: box-shadow 0.2s ease;
     display: block;
@@ -79,7 +79,7 @@ const FieldWrapper = styled(({ type, prefix, suffix, label, dim, children, class
       font-family: inherit;
       font-weight: inherit;
       border: none;
-      padding: 1.1rem 3rem;
+      padding: 1.1rem 1.75rem;
       width: 100%;
       ${({ prefix }) => !!prefix && `padding-left: 5rem;`}
       ${({ suffix }) => !!suffix && `padding-right: 5rem;`}
@@ -106,9 +106,13 @@ const FieldWrapper = styled(({ type, prefix, suffix, label, dim, children, class
 
       input,
       select {
-        background: rgb(${({ theme }) => theme.dim});
+        background: var(--color-controlBackground);
       }
     }
+  }
+
+  ::placeholder {
+    color: var(--color-dim);
   }
 `
 
@@ -164,7 +168,7 @@ export const Select = styled(({ value, options, className, onChange = v => {}, .
 ))`
   select {
     appearance: none;
-    background-color: transparent;
+    background-color: var(--color-controlBackground);
     border: none;
   }
 `
