@@ -16,11 +16,12 @@ const Info = styled(({ title, subtitle, graphic, className, ...rest }) => (
 
   .graphic {
     margin-right: 0.5em;
-    background: white;
     border-radius: 100px;
   }
 
   .text {
+    margin-left: 1rem;
+
     > * {
       display: block;
       line-height: 1.3em;
