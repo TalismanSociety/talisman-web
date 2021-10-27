@@ -131,7 +131,7 @@ const Dropdown = styled(({ className, handleClose, allAccounts, nativeToken, ksm
     .identicon {
       font-size: 2.6em;
       color: var(--color-primary);
-      background: var(--color-controlBackground);
+      background: var(--color-activeBackground);
       border-radius: 100px;
       > svg,
       > img {
@@ -150,6 +150,7 @@ const Dropdown = styled(({ className, handleClose, allAccounts, nativeToken, ksm
       * {
         line-height: 1em;
       }
+      margin-left: 1rem;
     }
 
     .name {
@@ -280,7 +281,11 @@ const Authorized = styled(({ className, narrow, allAccounts, showValue = false }
     <div
       ref={nodeRef}
       className="account-switcher-pill"
-      style={{ display: 'inline-flex' }}
+      style={{
+        display: 'inline-flex',
+        background: 'var(--color-controlBackground)',
+        borderRadius: '1rem',
+      }}
       onClick={narrow && !open ? () => setOpen(true) : undefined}
     >
       <span className={`account-button${hasManyAccounts ? ' has-many-accounts' : ''} ${className}`}>
@@ -334,13 +339,13 @@ const Authorized = styled(({ className, narrow, allAccounts, showValue = false }
   font-size: inherit;
   display: flex;
   align-items: center;
-  padding: 0;
+  padding: 1rem;
   position: relative;
 
   > .identicon {
     margin-right: 0.3em;
     color: var(--color-primary);
-    background: var(--color-controlBackground);
+    background: var(--color-activeBackground);
     border-radius: 100px;
     > svg,
     > img {
@@ -354,6 +359,7 @@ const Authorized = styled(({ className, narrow, allAccounts, showValue = false }
 
   > .nav-toggle {
     margin-left: 0.5em;
+    background: inherit;
   }
 
   > .selected-account {
