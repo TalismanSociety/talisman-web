@@ -184,8 +184,8 @@ const ExtensionUnavailable = styled(props => (
     margin-bottom: 0;
   }
 
-  h2 {
-    color: black;
+  > h2 {
+    color: var(--color-text);
     font-weight: 600;
     font-size: 1.8rem;
   }
