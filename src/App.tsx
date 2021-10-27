@@ -1,4 +1,5 @@
 import { ModalProvider } from '@components'
+import { ReactComponent as Loader } from '@icons/loader.svg'
 import * as Crowdloans from '@libs/crowdloans'
 import * as Portfolio from '@libs/portfolio'
 import TalismanProvider from '@libs/talisman'
@@ -10,8 +11,12 @@ import { BrowserRouter as Router } from 'react-router-dom'
 import ThemeProvider from './App.Theme'
 import Layout from './layout'
 
+const LoadingLayout = () => {
+  return <Loader />
+}
+
 const App: React.FC = () => (
-  <Suspense fallback="loading">
+  <Suspense fallback={<LoadingLayout />}>
     <Portfolio.Provider>
       <Tokenprices.Provider>
         <TalismanProvider>
