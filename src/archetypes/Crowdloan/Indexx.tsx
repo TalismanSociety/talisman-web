@@ -71,6 +71,7 @@ const FilterBar = styled(
 `
 
 const Index = styled(({ withFilter, className }) => {
+  const { t } = useTranslation()
   const { crowdloans, count, loading, filterProps } = Crowdloan.useFilter()
 
   return (
@@ -79,9 +80,9 @@ const Index = styled(({ withFilter, className }) => {
       <Await until={!loading}>
         <NoResults
           require={count?.filtered > 0}
-          title="Vamoosh"
-          subtitle="Talisman cannot summon what you wish for."
-          text="Better luck next time."
+          title={t('noResult.title')}
+          subtitle={t('noResult.subtitle')}
+          text={t('noResult.text')}
         >
           <Grid>
             {crowdloans.map(({ id }) => (
