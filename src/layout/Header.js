@@ -79,6 +79,7 @@ const Header = styled(({ className, isMobile, mobileMenuOpen, dispatch }) => {
       )}
       <div className="menu-nav">
         <Field.Select
+          className="lang-select"
           options={i18n.languages.map(language => {
             return {
               key: language,
@@ -128,7 +129,7 @@ const Header = styled(({ className, isMobile, mobileMenuOpen, dispatch }) => {
   )
 })`
   display: grid;
-  grid-template: 1fr / 1fr 1fr 1fr;
+  grid-template: 1fr / 1fr 2fr 1fr;
   padding: 0 2.4rem;
   width: 100%;
   box-shadow: 0 0 2.4rem rgba(0, 0, 0, 0.05);
@@ -182,7 +183,11 @@ const Header = styled(({ className, isMobile, mobileMenuOpen, dispatch }) => {
   .menu-nav {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 1rem;
+
+    > .lang-select > .children > select {
+      background: var(--color-activeBackground);
+    }
   }
 
   .external-nav {
@@ -233,6 +238,8 @@ const Header = styled(({ className, isMobile, mobileMenuOpen, dispatch }) => {
     margin: 1.5rem 0;
     border-radius: 1rem;
     transition: all 0.15s ease-in-out;
+    height: 4.5rem;
+    width: 4.5rem;
   }
   .mobile-nav {
     display: grid;
@@ -269,7 +276,7 @@ const Header = styled(({ className, isMobile, mobileMenuOpen, dispatch }) => {
   }
 
   @media only screen and (max-width: 700px) {
-    grid-template: 1fr / 1fr 1fr;
+    grid-template: 1fr / 1fr 2fr;
 
     > * {
       display: flex;
