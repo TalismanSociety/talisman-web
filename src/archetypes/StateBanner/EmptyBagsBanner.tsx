@@ -1,4 +1,4 @@
-import bannerImage from '@assets/empty-bags.png'
+import bannerImage from '@assets/talisman-hands.png'
 import { Button } from '@components'
 import { Banner } from '@components/Banner'
 import { useTranslation } from 'react-i18next'
