@@ -21,6 +21,7 @@ const statusColors = {
 
 // font size defs
 const fontSizes = {
+  xxxlarge: 5.6,
   xxlarge: 4,
   xlarge: 2.4,
   large: 1.8,
@@ -283,7 +284,7 @@ const greenDark: DefaultTheme = {
   background: '27,27,27',
   foreground: '165,165,165',
   mid: '150,150,150',
-  dim: '245,245,245',
+  dim: '90,90,90',
   light: '250,250,250',
   dark: '0,0,0',
   text: '250,250,250',
