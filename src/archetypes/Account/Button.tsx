@@ -28,74 +28,76 @@ const Address = ({ address, genesis, truncate = false }) => {
   return !!truncate ? truncateString(encoded, truncate[0] || 4, truncate[1] || 4) : encoded
 }
 
-const Dropdown = styled(({ className, handleClose, allAccounts, nativeToken, ksmBalancesByAddress }) => {
+const Dropdown = styled(({ className, open, handleClose, allAccounts, nativeToken, ksmBalancesByAddress }) => {
   const { t } = useTranslation()
   const { switchAccount } = useActiveAccount()
   const { accounts } = useExtensionAutoConnect()
   const { totalUsd, totalUsdByAddress } = usePortfolio()
 
   return (
-    <span className={`account-picker ${className}`}>
-      {(allAccounts ? [{ name: t('All Accounts') }, ...accounts] : accounts).map(
-        ({ address, name, type, genesisHash }, index) => (
-          <div
-            key={index}
-            className="account"
-            onClick={() => {
-              switchAccount(address)
-              handleClose()
-            }}
-          >
-            <span className="left">
-              {address ? (
-                <Identicon
-                  className="identicon"
-                  value={address}
-                  theme={type === 'ethereum' ? 'ethereum' : 'polkadot'}
-                />
-              ) : (
-                <Identicon
-                  Custom={AllAccountsIcon}
-                  className="identicon"
-                  value="5DHuDfmwzykE9KVmL87DLjAbfSX7P4f4wDW5CKx8QZnQA4FK"
-                  theme="polkadot"
-                />
-              )}
-              <span className="name-address">
-                <span className="name">{address ? truncateString(name, 10, 0) : name}</span>
-                {address && (
-                  <span className="address">
-                    <Address address={address} genesis={genesisHash} truncate />
-                  </span>
+    open && (
+      <span className={`account-picker ${className}`}>
+        {(allAccounts ? [{ name: t('All Accounts') }, ...accounts] : accounts).map(
+          ({ address, name, type, genesisHash }, index) => (
+            <div
+              key={index}
+              className="account"
+              onClick={() => {
+                switchAccount(address)
+                handleClose()
+              }}
+            >
+              <span className="left">
+                {address ? (
+                  <Identicon
+                    className="identicon"
+                    value={address}
+                    theme={type === 'ethereum' ? 'ethereum' : 'polkadot'}
+                  />
+                ) : (
+                  <Identicon
+                    Custom={AllAccountsIcon}
+                    className="identicon"
+                    value="5DHuDfmwzykE9KVmL87DLjAbfSX7P4f4wDW5CKx8QZnQA4FK"
+                    theme="polkadot"
+                  />
+                )}
+                <span className="name-address">
+                  <span className="name">{address ? truncateString(name, 10, 0) : name}</span>
+                  {address && (
+                    <span className="address">
+                      <Address address={address} genesis={genesisHash} truncate />
+                    </span>
+                  )}
+                </span>
+              </span>
+
+              <span className="right">
+                {address ? (
+                  allAccounts ? (
+                    <Pendor prefix={!totalUsdByAddress[encodeAnyAddress(address, 42)] && '-'}>
+                      {totalUsdByAddress[encodeAnyAddress(address, 42)] &&
+                        formatCurrency(totalUsdByAddress[encodeAnyAddress(address, 42)])}
+                    </Pendor>
+                  ) : (
+                    <Pendor suffix={` ${nativeToken}`}>
+                      {ksmBalancesByAddress[address] &&
+                        formatCommas(
+                          ksmBalancesByAddress[address].map(balance => balance?.tokens).reduce(addBigNumbers, undefined)
+                        )}
+                    </Pendor>
+                  )
+                ) : (
+                  <>
+                    <Pendor prefix={!totalUsd && '-'}>{totalUsd && formatCurrency(totalUsd)}</Pendor>
+                  </>
                 )}
               </span>
-            </span>
-
-            <span className="right">
-              {address ? (
-                allAccounts ? (
-                  <Pendor prefix={!totalUsdByAddress[encodeAnyAddress(address, 42)] && '-'}>
-                    {totalUsdByAddress[encodeAnyAddress(address, 42)] &&
-                      formatCurrency(totalUsdByAddress[encodeAnyAddress(address, 42)])}
-                  </Pendor>
-                ) : (
-                  <Pendor suffix={` ${nativeToken}`}>
-                    {ksmBalancesByAddress[address] &&
-                      formatCommas(
-                        ksmBalancesByAddress[address].map(balance => balance?.tokens).reduce(addBigNumbers, undefined)
-                      )}
-                  </Pendor>
-                )
-              ) : (
-                <>
-                  <Pendor prefix={!totalUsd && '-'}>{totalUsd && formatCurrency(totalUsd)}</Pendor>
-                </>
-              )}
-            </span>
-          </div>
-        )
-      )}
-    </span>
+            </div>
+          )
+        )}
+      </span>
+    )
   )
 })`
   background: rgb(${({ theme }) => theme?.controlBackground});
@@ -106,6 +108,7 @@ const Dropdown = styled(({ className, handleClose, allAccounts, nativeToken, ksm
   overflow: hidden;
   overflow-y: auto;
   border-radius: 1.2rem;
+  border: solid 1px var(--color-activeBackground);
   box-shadow: 0 0 1.2rem rgba(0, 0, 0, 0.1);
 
   &::-webkit-scrollbar {
@@ -286,7 +289,7 @@ const Authorized = styled(({ className, narrow, allAccounts, showValue = false }
         background: 'var(--color-controlBackground)',
         borderRadius: '1rem',
       }}
-      onClick={narrow && !open ? () => setOpen(true) : undefined}
+      onClick={() => setOpen(!open)}
     >
       <span className={`account-button${hasManyAccounts ? ' has-many-accounts' : ''} ${className}`}>
         {hasActiveAccount ? (
@@ -320,7 +323,13 @@ const Authorized = styled(({ className, narrow, allAccounts, showValue = false }
         {narrow ? (
           <ChevronDown style={{ margin: '0 1rem 0 0.8rem', visibility: hasManyAccounts ? 'visible' : 'hidden' }} />
         ) : (
-          <Button.Icon className="nav-toggle" onClick={() => setOpen(true)}>
+          <Button.Icon
+            className="nav-toggle"
+            onClick={(e: any) => {
+              e.stopPropagation()
+              setOpen(!open)
+            }}
+          >
             <ChevronDown />
           </Button.Icon>
         )}
@@ -341,6 +350,10 @@ const Authorized = styled(({ className, narrow, allAccounts, showValue = false }
   align-items: center;
   padding: 1rem;
   position: relative;
+
+  :hover {
+    cursor: pointer;
+  }
 
   > .identicon {
     margin-right: 0.3em;
