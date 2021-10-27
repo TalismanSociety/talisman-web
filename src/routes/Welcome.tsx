@@ -144,11 +144,11 @@ const ConnectWalletSelection = styled(({ className = '' }) => {
   return (
     <aside className={className}>
       <section>
-        <h2>{t('Connect a wallet')}</h2>
+        <h2 className="connect-headline">{t('Connect a wallet')}</h2>
         <ConnectWalletItem name="Polkadot{js}" src={`https://polkadot.js.org/docs/img/logo.svg`} onClick={connect} />
       </section>
       <section>
-        <h3>{t('Coming soon')}</h3>
+        <h3 className="connect-subheadline">{t('Coming soon')}</h3>
         <ConnectWalletItem
           disabled
           name="Talisman Wallet"
@@ -166,7 +166,7 @@ const ConnectWalletSelection = styled(({ className = '' }) => {
   )
 })`
   background: var(--color-controlBackground);
-  color: var(--color-mid);
+  color: var(--color-text);
   padding: 4rem;
   border-radius: 1rem;
   display: flex;
@@ -174,6 +174,17 @@ const ConnectWalletSelection = styled(({ className = '' }) => {
   align-items: center;
   margin: 0 auto;
   min-width: 35%;
+
+  .connect-headline {
+    font-family: 'SurtExpanded', sans-serif;
+    font-size: var(--font-size-xlarge);
+  }
+
+  .connect-subheadline {
+    font-family: 'SurtExpanded', sans-serif;
+    color: var(--color-dim);
+    font-size: var(--font-size-large);
+  }
 
   > * + * {
     margin-top: 3rem;
@@ -200,8 +211,8 @@ const Welcome = styled(({ className }) => {
     <section className={className}>
       <div className="description">
         <TalismanLogo />
-        <h1>{t('header')}</h1>
-        <p>{t('description')}</p>
+        <h1 className="headline">{t('header')}</h1>
+        <p className="subheading">{t('description')}</p>
       </div>
       <ConnectWalletSelection />
     </section>
@@ -209,13 +220,21 @@ const Welcome = styled(({ className }) => {
 })`
   width: 100%;
   padding: 0 6vw;
-  margin: 12rem auto;
+  margin: 15% auto;
   display: flex;
   align-items: center;
   gap: 2rem;
   color: var(--color-text);
   justify-content: space-between;
   flex-wrap: wrap;
+
+  .headline {
+    font-size: var(--font-size-xxxlarge);
+  }
+
+  .subheading {
+    font-size: var(--font-size-xlarge);
+  }
 
   @media ${device.xxl} {
     padding: 0 18vw;
