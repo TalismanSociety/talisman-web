@@ -1,5 +1,6 @@
 import { Crowdloan } from '@archetypes'
 import { Await, Field, Grid, NoResults } from '@components'
+import { device } from '@util/breakpoints'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
@@ -41,7 +42,11 @@ const FilterBar = styled(
 
   .searchbar {
     display: inline-block;
-    width: auto;
+    width: 100%;
+
+    @media ${device.lg} {
+      width: auto;
+    }
   }
 
   .filtergroup {
@@ -50,12 +55,17 @@ const FilterBar = styled(
     align-items: center;
     justify-content: space-between;
     flex-wrap: wrap;
+
+    > :first-child {
+      border-radius: 1rem;
+    }
   }
 
   .sortby {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    gap: 1.5rem;
     margin: 1rem 0;
   }
 `
