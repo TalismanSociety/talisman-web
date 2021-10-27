@@ -74,6 +74,7 @@ export const Menu = styled((props: MenuProps) => {
     white-space: nowrap;
     margin-top: 0.25rem;
     z-index: 10;
+    min-width: 256px;
 
     & ul {
       padding: 0;
