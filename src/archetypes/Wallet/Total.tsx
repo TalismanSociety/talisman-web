@@ -1,4 +1,5 @@
 import { Pendor, Pill, TextLoader } from '@components'
+import { ReactComponent as Loader } from '@icons/loader.svg'
 import { usePortfolio } from '@libs/portfolio'
 import { useAccountAddresses } from '@libs/talisman'
 import { addBigNumbers } from '@talismn/util'
@@ -27,19 +28,27 @@ const Total = styled(({ id, className }) => {
   return (
     <div className={`wallet-total ${className}`}>
       <div className="title">{t('Portfolio value')}</div>
-      <Pendor
-        loader={<TextLoader className="amount">{formatCurrency(totalUsd || '0')}</TextLoader>}
-        require={!isLoading && !!totalUsd}
-      >
-        <>
-          <div className="amount">{totalUsd && formatCurrency(totalUsd)}</div>
-          {totalUsdChange && (
-            <Pill primary small>
-              {formatCurrency(totalUsdChange)}
-            </Pill>
-          )}
-        </>
-      </Pendor>
+      {isLoading && (
+        <div className="amount">
+          <span>{formatCurrency(totalUsd || '0')}</span>
+          <Loader />
+        </div>
+      )}
+      {!isLoading && (
+        <Pendor
+          loader={<TextLoader className="amount">{formatCurrency(totalUsd || '0')}</TextLoader>}
+          require={!isLoading && !!totalUsd}
+        >
+          <>
+            <div className="amount">{totalUsd && formatCurrency(totalUsd)}</div>
+            {totalUsdChange && (
+              <Pill primary small>
+                {formatCurrency(totalUsdChange)}
+              </Pill>
+            )}
+          </>
+        </Pendor>
+      )}
     </div>
   )
 })`
@@ -54,6 +63,9 @@ const Total = styled(({ id, className }) => {
   }
 
   > .amount {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
     @media ${device.md} {
       font-size: var(--font-size-xlarge);
     }
