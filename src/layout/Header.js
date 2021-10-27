@@ -182,7 +182,7 @@ const Header = styled(({ className, isMobile, mobileMenuOpen, dispatch }) => {
   .menu-nav {
     display: flex;
     align-items: center;
-    gap: 3rem;
+    gap: 0.5rem;
   }
 
   .external-nav {
