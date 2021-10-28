@@ -7,6 +7,7 @@ import { Deferred, addBigNumbers, planckToTokens, tokensToPlanck, useFuncMemo } 
 import customRpcs from '@util/customRpcs'
 import BigNumber from 'bignumber.js'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 //
 // TODO: Move tx handling into a generic queue, store queue in react context
@@ -46,6 +47,9 @@ export function useCrowdloanContribute(
   account?: string,
   signature: string | null = null
 ): CrowdloanContribute {
+  const { t } = useTranslation('errors')
+  const balanceError = t('Account balance too low')
+
   const [status, setStatus] = useState<Status>('INIT')
   const [explorerUrl, setExplorerUrl] = useState<string | null>(null)
   const [txFee, setTxFee] = useState<{ fee?: string; loading: boolean } | null>(null)
@@ -79,7 +83,6 @@ export function useCrowdloanContribute(
 
   // update error message as user types
   useEffect(() => {
-    const balanceError = 'Account balance too low'
     const setBalanceError = () => setError(balanceError)
     const clearBalanceError = () => setError(error => (error === balanceError ? null : error))
 
@@ -88,7 +91,7 @@ export function useCrowdloanContribute(
     if (ksmBalance === undefined) return clearBalanceError()
     if (new BigNumber(ksmBalance).isLessThan(new BigNumber(contributionAmount))) return setBalanceError()
     clearBalanceError()
-  }, [contributionAmount, error, ksmBalance])
+  }, [balanceError, contributionAmount, error, ksmBalance])
 
   // update tx fee as user types
   useEffect(() => {
@@ -121,19 +124,19 @@ export function useCrowdloanContribute(
     if (status !== 'IDLE') return
 
     if (!parachainId) {
-      setError('A parachain must be selected')
+      setError(t('A parachain must be selected'))
       return
     }
     if (!contributionAmount || contributionAmount.length < 1) {
-      setError('Please enter an amount of KSM')
+      setError(t('Please enter an amount of KSM'))
       return
     }
     if (Number.isNaN(Number(contributionAmount))) {
-      setError('Please enter a valid amount of KSM')
+      setError(t('Please enter a valid amount of KSM'))
       return
     }
     if (!account || account.length < 1) {
-      setError('An account must be selected')
+      setError(t('An account must be selected'))
       return
     }
 
@@ -150,12 +153,12 @@ export function useCrowdloanContribute(
 
       if (!ksmBalance) {
         setStatus('IDLE')
-        setError('Account balance not ready yet')
+        setError(t('Account balance not ready yet'))
         return
       }
       if (new BigNumber(ksmBalance).isLessThan(new BigNumber(contributionAmount))) {
         setStatus('IDLE')
-        setError('Account balance too low')
+        setError(t('Account balance too low'))
         return
       }
 
@@ -174,7 +177,7 @@ export function useCrowdloanContribute(
       ) {
         setStatus('IDLE')
         const minimum = new BigNumber(planckToTokens(minContribution.toString(), tokenDecimals) || '').toFixed(2)
-        setError(`A minimum of ${minimum} KSM is required`)
+        setError(t(`A minimum of {minimum} KSM is required`, { minimum }))
         return
       }
 
@@ -244,17 +247,17 @@ export function useCrowdloanContribute(
       setStatus('IDLE')
 
       if (typeof error?.message === 'string' && error.message.startsWith('1010:')) {
-        setError('Failed to submit transaction: account balance too low')
+        setError(t('Failed to submit transaction: account balance too low'))
         return
       }
 
       console.error('Failed to submit transaction', error)
-      setError('Failed to submit transaction')
+      setError(t('Failed to submit transaction'))
       return
     }
 
     setStatus(txStatus)
-  }, [account, apiPromise, chaindata, contributionAmount, ksmBalance, parachainId, signature, status])
+  }, [account, apiPromise, chaindata, contributionAmount, ksmBalance, parachainId, signature, status, t])
 
   return { chaindata, contribute, status, explorerUrl, txFee, error }
 }
