@@ -1,3 +1,5 @@
+import agyleImage from '@assets/agyle.png'
+import hoodImage from '@assets/hood.png'
 import { ReactComponent as TalismanWordLogo } from '@assets/talisman-red-black.svg'
 import { Button } from '@components'
 import { ReactComponent as ChevronRight } from '@icons/chevron-right.svg'
@@ -5,7 +7,6 @@ import { useExtension } from '@libs/talisman'
 import { device } from '@util/breakpoints'
 import { cloneElement } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
-import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 
 interface ConnectWalletItemProps {
@@ -24,17 +25,29 @@ const FeaturedConnectWalletItem = styled((props: ConnectWalletItemProps) => {
   const { className = '', src, name, description, cta, onClick } = props
   return (
     <div className={className} onClick={onClick}>
-      <img height={48} width={48} src={src} alt={name} />
+      <img className="logo" height={48} width={48} src={src} alt={name} />
       <div className="title">{name}</div>
       <div className="description">{description}</div>
       <div className="cta">{cta}</div>
+      <img className="left-character" src={agyleImage} alt="" />
+      <img className="right-character" src={hoodImage} alt="" />
     </div>
   )
 })`
   position: relative;
   flex-direction: column;
-  > img {
+  > .logo {
     border-radius: 1rem;
+  }
+  > .left-character {
+    position: absolute;
+    top: 0;
+    right: 10rem;
+  }
+  > .right-character {
+    position: absolute;
+    top: 0;
+    left: 14rem;
   }
   > * + * {
     margin-top: 0.5rem;
