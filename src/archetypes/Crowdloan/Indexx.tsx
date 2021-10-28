@@ -1,4 +1,5 @@
 import { Crowdloan } from '@archetypes'
+import { UnlockTalismanBanner } from '@archetypes/StateBanner/UnlockTalismanBanner'
 import { Await, Field, Grid, NoResults } from '@components'
 import { device } from '@util/breakpoints'
 import { useTranslation } from 'react-i18next'
@@ -37,7 +38,6 @@ const FilterBar = styled(
     )
   }
 )`
-  padding: 0 2.4rem;
   margin: 2.4rem 0;
 
   .searchbar {
@@ -76,6 +76,7 @@ const Index = styled(({ withFilter, className }) => {
 
   return (
     <div className={`crowdloan-index ${className}`}>
+      <UnlockTalismanBanner />
       {withFilter && <FilterBar {...filterProps} count={count} />}
       <Await until={!loading}>
         <NoResults
@@ -94,6 +95,8 @@ const Index = styled(({ withFilter, className }) => {
     </div>
   )
 })`
+  padding: 2.4rem;
+
   .await {
     font-size: var(--font-size-xxlarge);
   }

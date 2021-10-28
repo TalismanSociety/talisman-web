@@ -18,5 +18,10 @@
     "header": "Acheter des DOT/KSM",
     "description": "Pour obtenir des DOT ou des KSM, simplement et rapidement",
     "primaryCta": "Acheter"
+  },
+  "unlockTalisman": {
+    "header": "Déverrouillez le Talisman",
+    "description": "Contribuez à n'importe quel Crowdloan et recevez une Clé Spirituelle, vous en aurez besoin plus tard...",
+    "primaryCta": "Apprendre encore plus"
   }
 }
