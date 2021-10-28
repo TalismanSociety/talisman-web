@@ -18,5 +18,10 @@
     "header": "Buy DOT/KSM",
     "description": "Show me the money",
     "primaryCta": "Buy"
+  },
+  "unlockTalisman": {
+    "header": "Unlock the Talisman",
+    "description": "Contribute to any Crowdloan and receive a Spirit Key, you’ll need it later...",
+    "primaryCta": "Learn more"
   }
 }
