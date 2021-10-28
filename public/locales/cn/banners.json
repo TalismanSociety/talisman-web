@@ -15,8 +15,8 @@
     "primaryCta": "探索众筹"
   },
   "buy": {
-    "header": "Buy DOT/KSM",
-    "description": "Show me the money",
-    "primaryCta": "Buy"
+    "header": "买 DOT/KSM",
+    "description": "把钱拿出来",
+    "primaryCta": "买"
   }
 }

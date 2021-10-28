@@ -1,14 +1,9 @@
 import { BuyBanner } from '@archetypes/StateBanner/BuyBanner'
 import { device } from '@util/breakpoints'
 import { buyNow } from '@util/fiatOnRamp'
-import { useEffect } from 'react'
 import styled from 'styled-components'
 
 const Buy = styled(({ className }) => {
-  useEffect(() => {
-    buyNow()
-  })
-
   return (
     <section className={className}>
       <BuyBanner onClick={buyNow} />
