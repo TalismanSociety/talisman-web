@@ -2376,6 +2376,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@ramp-network/ramp-instant-sdk@npm:^2.5.0":
+  version: 2.5.0
+  resolution: "@ramp-network/ramp-instant-sdk@npm:2.5.0"
+  dependencies:
+    body-scroll-lock: ^2.6.4
+  checksum: 9f3a8bc29744ae475a2d369c3ac8302227d05e62c27115db99747a8223c41b2cbbb2e21b1a63d5b84e90606faa92153c99e864ef5cc54d9071086cb98f890c86
+  languageName: node
+  linkType: hard
+
 "@rollup/plugin-node-resolve@npm:^7.1.1":
   version: 7.1.3
   resolution: "@rollup/plugin-node-resolve@npm:7.1.3"
@@ -2650,6 +2659,7 @@ __metadata:
     "@polkadot/types": ^6.2.1
     "@polkadot/util": ^7.4.1
     "@polkadot/util-crypto": ^7.4.1
+    "@ramp-network/ramp-instant-sdk": ^2.5.0
     "@talismn/api-react-hooks": ~0
     "@talismn/util": ~0
     "@testing-library/dom": ^8.2.0
@@ -4541,6 +4551,13 @@ __metadata:
     raw-body: 2.4.0
     type-is: ~1.6.17
   checksum: 490231b4c89bbd43112762f7ba8e5342c174a6c9f64284a3b0fcabf63277e332f8316765596f1e5b15e4f3a6cf0422e005f4bb3149ed3a224bb025b7a36b9ac1
+  languageName: node
+  linkType: hard
+
+"body-scroll-lock@npm:^2.6.4":
+  version: 2.7.1
+  resolution: "body-scroll-lock@npm:2.7.1"
+  checksum: 7a6b57b9315dad3639ac5aa781ed25c2275a53b3aa1527a580eaaf17096ca5c93293c99c2d12ffc92a11388ac7004c8aa943ac9c356717a393727c9216e183e6
   languageName: node
   linkType: hard
 
