@@ -87,23 +87,26 @@ const AssetItem = styled(({ id, balances, addresses, className }) => {
   }
 `
 
-const MoonriverWalletInstructions = styled(({ className }) => (
-  <Info
-    className={className}
-    title="🌕 Unavailable"
-    subtitle={
-      <a
-        href="https://medium.com/we-are-talisman/how-to-view-your-moonriver-balance-in-the-talisman-web-app-c37185fb3980"
-        target="_blank"
-        rel="noreferrer noopener"
-      >
-        <div className="text-vertical-center">
-          <span className="plus-icon">(+)</span> Add Moonriver Balance
-        </div>
-      </a>
-    }
-  />
-))`
+const MoonriverWalletInstructions = styled(({ className }) => {
+  const { t } = useTranslation()
+  return (
+    <Info
+      className={className}
+      title={`🌕  ${t('Unavailable')}`}
+      subtitle={
+        <a
+          href="https://medium.com/we-are-talisman/how-to-view-your-moonriver-balance-in-the-talisman-web-app-c37185fb3980"
+          target="_blank"
+          rel="noreferrer noopener"
+        >
+          <div className="text-vertical-center">
+            <span className="plus-icon">(+)</span> {`${t('Add {{asset}} Balance', { asset: 'Moonriver' })}`}
+          </div>
+        </a>
+      }
+    />
+  )
+})`
   .text-vertical-center {
     display: flex;
     align-items: center;
