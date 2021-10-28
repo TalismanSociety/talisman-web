@@ -2,8 +2,8 @@ import { ReactComponent as Loader } from '@icons/loader.svg'
 import { PropsWithChildren, ReactElement } from 'react'
 
 export type PendorProps = {
-  prefix?: string | null | false
-  suffix?: string | null | false
+  prefix?: React.ReactNode
+  suffix?: React.ReactNode
   require?: boolean
   loader?: ReactElement
 }

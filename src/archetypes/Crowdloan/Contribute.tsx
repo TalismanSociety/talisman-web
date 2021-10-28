@@ -138,7 +138,7 @@ const ContributeTo = styled(
               </div>
             </div>
             <div className="switcher-column">
-              <Account.Button narrow />
+              <Account.Button narrow showValue showBuy closeParent={closeModal} />
               <div className="tx-fee">
                 <Pendor suffix={txFee ? 'KSM' : '-'} require={!txFee?.loading}>
                   {txFee ? `Fee: ${shortNumber(txFee.fee)}` : null}

@@ -19,5 +19,7 @@
     "title": "Sorry",
     "subtitle": "Talisman cannot summon what you wish for.",
     "text": "Try something else."
-  }
+  },
+  "You have no": "You have no",
+  "Buy": "Buy"
 }

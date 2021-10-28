@@ -38,6 +38,7 @@ const FieldWrapper = styled(({ type, prefix, suffix, label, dim, children, class
   display: flex;
   flex-direction: column;
   align-items: center;
+  color: var(--color-text);
 
   > .children {
     border: none;
