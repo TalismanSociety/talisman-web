@@ -13,5 +13,10 @@
     "header": "即将推出",
     "description": "在此期间，您可以查看 Crowdloans。",
     "primaryCta": "探索众筹"
+  },
+  "buy": {
+    "header": "买 DOT/KSM",
+    "description": "把钱拿出来",
+    "primaryCta": "买"
   }
 }
