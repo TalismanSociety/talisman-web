@@ -4,7 +4,8 @@ import { ReactComponent as ChevronRight } from '@icons/chevron-right.svg'
 import { useExtension } from '@libs/talisman'
 import { device } from '@util/breakpoints'
 import { cloneElement } from 'react'
-import { useTranslation } from 'react-i18next'
+import { Trans, useTranslation } from 'react-i18next'
+import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 
 interface ConnectWalletItemProps {
@@ -165,6 +166,25 @@ const ComingSoonWallets = styled(() => {
   }
 `
 
+const TermsOfService = styled(({ className }) => {
+  return (
+    <span className={className}>
+      <Trans i18nKey="TOS" ns="connect-wallet">
+        By connecting your wallet you agree to our <a href="/">Terms of Service</a>
+      </Trans>
+    </span>
+  )
+})`
+  color: var(--color-dim);
+  margin-top: 1rem;
+  font-size: 10px;
+
+  a {
+    color: var(--color-text);
+    text-decoration: underline;
+  }
+`
+
 const ConnectWalletSelection = styled(({ className = '' }) => {
   const { t } = useTranslation('connect-wallet')
   const { connect } = useExtension()
@@ -176,6 +196,7 @@ const ConnectWalletSelection = styled(({ className = '' }) => {
           <h2 className="connect-headline">{t('Connect a wallet')}</h2>
           <ConnectWalletItem name="Polkadot{js}" src={`https://polkadot.js.org/docs/img/logo.svg`} onClick={connect} />
         </section>
+        <TermsOfService />
         <NoWallet className="no-wallet" />
       </aside>
       <aside>
@@ -242,8 +263,8 @@ const Welcome = styled(({ className }) => {
   display: grid;
   margin: 15% auto;
   padding: 0 6vw;
-  grid-template: 1fr 1fr / 1fr;
-  row-gap: 10rem;
+  grid-template: auto 1fr / 1fr;
+  row-gap: 4rem;
 
   @media ${device.xl} {
     grid-template: 1fr / 2fr 1fr;
