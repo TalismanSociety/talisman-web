@@ -122,7 +122,7 @@ const Crowdloans = ({ className }: { className?: string }) => {
         ) : error ? (
           <PanelSection comingSoon>{String(error)}</PanelSection>
         ) : Object.keys(totalAliveContributions).length < 1 ? (
-          <PanelSection comingSoon>{t('No crowdloan contributions found')}</PanelSection>
+          <PanelSection comingSoon>{`${`😕 `} ${t('You have not contributed to any Crowdloans')}`}</PanelSection>
         ) : (
           Object.keys(totalAliveContributions).map(id => (
             <PanelSection key={id}>
