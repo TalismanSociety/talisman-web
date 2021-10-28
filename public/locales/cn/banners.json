@@ -1,11 +1,11 @@
 {
   "explore": {
     "header": "建造平行宇宙",
-    "description": "众筹 帮助项目和团队筹集资金参与 Polkadot 和 Kusama 上的平行链拍卖。",
-    "primaryCta": "探索众筹"
+    "description": "众贷能支持项目团集资并参与 Polkadot 和 Kusama 的平行链拍卖。",
+    "primaryCta": "探索众贷"
   },
   "empty": {
-    "header": "你的包是空的！",
+    "header": "你的钱包是空的！",
     "description": "使用信用卡或加密货币购买 DOT 和 KSM",
     "primaryCta": "购买 DOT / KSM"
   },
@@ -15,13 +15,13 @@
     "primaryCta": "探索众筹"
   },
   "buy": {
-    "header": "买 DOT/KSM",
-    "description": "把钱拿出来",
-    "primaryCta": "买"
+    "header": "购买 DOT/KSM",
+    "description": "把钱掏出来",
+    "primaryCta": "购买"
   },
   "unlockTalisman": {
     "header": "解锁 Talisman",
-    "description": "为任何 Crowdloan 做出贡献并获得精神钥匙，稍后您将需要它...",
+    "description": "为任何众贷做出贡献并获得神秘钥匙，稍后您将需要它...",
     "primaryCta": "了解更多"
   }
 }
