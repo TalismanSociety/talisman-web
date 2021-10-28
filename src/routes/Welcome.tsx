@@ -40,14 +40,31 @@ const FeaturedConnectWalletItem = styled((props: ConnectWalletItemProps) => {
     border-radius: 1rem;
   }
   > .left-character {
-    position: absolute;
-    top: 0;
-    right: 10rem;
+    display: none;
+    @media ${device.sm} {
+      display: block;
+      position: absolute;
+      top: 0;
+      right: 2rem;
+    }
+    @media ${device.lg} {
+      right: 10rem;
+    }
   }
   > .right-character {
-    position: absolute;
-    top: 0;
-    left: 14rem;
+    display: none;
+    @media ${device.sm} {
+      display: block;
+      position: absolute;
+      top: 0;
+      left: 6rem;
+    }
+    @media ${device.md} {
+      left: 10rem;
+    }
+    @media ${device.lg} {
+      left: 16rem;
+    }
   }
   > * + * {
     margin-top: 0.5rem;
@@ -284,8 +301,14 @@ const Welcome = styled(({ className }) => {
     column-gap: 10rem;
   }
 
+  .description > * + * {
+    margin-top: 4rem;
+  }
+
   .connect-wallet {
-    min-width: 40rem;
+    @media ${device.xl} {
+      min-width: 40rem;
+    }
     justify-self: center;
   }
 
