@@ -43,30 +43,40 @@ const BuyItem = styled(({ nativeToken, className, onClick }) => {
 
   return (
     <span className={`${className}`} onClick={() => handleClick()}>
-      <span className="info">
-        <AlertCircle />
-        {t('You have no')}
-        {` ${nativeToken}`}
-      </span>
-      <Pill small primary>
-        {t('Buy')}
-      </Pill>
+      <div className="container">
+        <span className="info">
+          <AlertCircle width="48" />
+          {t('You have no')}
+          {` ${nativeToken}`}
+        </span>
+        <Pill small primary>
+          {t('Buy')}
+        </Pill>
+      </div>
     </span>
   )
 })`
   color: var(--color-primary);
-  background: var(--color-controlBackground);
 
   display: flex;
   align-items: center;
-  padding: 1.2em;
+  padding: 1rem;
   width: 100%;
   justify-content: space-between;
 
-  > .info {
+  .container {
+    background: var(--color-controlBackground);
+    width: 100%;
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    padding: 1.2rem;
+    justify-content: space-between;
+    border-radius: 1rem;
+    > .info {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
   }
 `
 
@@ -80,7 +90,7 @@ const Dropdown = styled(
     return (
       open && (
         <span className={`account-picker ${className}`}>
-          {!totalUsd && <BuyItem nativeToken={nativeToken} onClick={closeParent} />}
+          {totalUsd === '0' && <BuyItem nativeToken={nativeToken} onClick={closeParent} />}
           {(allAccounts ? [{ name: t('All Accounts') }, ...accounts] : accounts).map(
             ({ address, name, type, genesisHash }, index) => (
               <div
@@ -151,7 +161,7 @@ const Dropdown = styled(
   font-size: 0.8em;
   width: 26em;
   font-size: 1em;
-  max-height: 0;
+  max-height: 64rem;
   overflow: hidden;
   overflow-y: auto;
   border-radius: 1.2rem;
@@ -167,7 +177,7 @@ const Dropdown = styled(
   > .account {
     display: flex;
     align-items: center;
-    padding: 1.2em;
+    padding: 1.5rem 1.2rem;
     width: 100%;
     cursor: pointer;
     justify-content: space-between;
