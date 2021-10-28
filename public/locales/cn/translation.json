@@ -24,5 +24,13 @@
   "Buy": "买",
   "Fee": "在",
   "Add {{asset}} Balance": "添加 {{asset}} 余额",
-  "Unavailable": "不可用"
+  "Unavailable": "不可用",
+  "extensionUnavailable": {
+    "title": "不好了！",
+    "subtitle": "您似乎没有安装钱包扩展程序。",
+    "text": "别担心，我们目前正在建造一个非常好的，",
+    "text2": "但同时我们建议下载 Polkadot.js"
+  },
+  "Install Polkadot.js Extension": "安装 Polkadot.js 扩展",
+  "Requires Configuration": "需要配置"
 }

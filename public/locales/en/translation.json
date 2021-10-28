@@ -24,5 +24,13 @@
   "Buy": "Buy",
   "Fee": "Fee",
   "Add {{asset}} Balance": "Add {{asset}} Balance",
-  "Unavailable": "Unavailable"
+  "Unavailable": "Unavailable",
+  "extensionUnavailable": {
+    "title": "Oh no!",
+    "subtitle": "It doesn't look like you have a wallet extension installed.",
+    "text": "Don't worry we're currently building a really nice one,",
+    "text2": "but in the meantime we recommend downloading Polkadot.js"
+  },
+  "Install Polkadot.js Extension": "Install Polkadot.js Extension",
+  "Requires Configuration": "Requires Configuration"
 }
