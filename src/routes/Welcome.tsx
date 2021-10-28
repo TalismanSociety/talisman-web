@@ -1,5 +1,5 @@
 import { ReactComponent as TalismanWordLogo } from '@assets/talisman-red-black.svg'
-import { Pill } from '@components'
+import { Button } from '@components'
 import { ReactComponent as ChevronRight } from '@icons/chevron-right.svg'
 import { useExtension } from '@libs/talisman'
 import { device } from '@util/breakpoints'
@@ -10,6 +10,8 @@ import styled from 'styled-components'
 interface ConnectWalletItemProps {
   className?: string
   name: string
+  description?: string
+  cta?: React.ReactNode
   src: string
   LinkComponent?: React.ReactElement
   featured?: boolean
@@ -17,36 +19,34 @@ interface ConnectWalletItemProps {
   onClick?: () => void
 }
 
-const Badge = styled(({ className, children }) => {
-  return (
-    <Pill className={className} small primary>
-      {children}
-    </Pill>
-  )
-})`
-  position: absolute;
-  top: -20px;
-  right: -20px;
-`
-
 const FeaturedConnectWalletItem = styled((props: ConnectWalletItemProps) => {
-  const { t } = useTranslation('connect-wallet')
-  const { className = '', src, name, onClick } = props
+  const { className = '', src, name, description, cta, onClick } = props
   return (
     <div className={className} onClick={onClick}>
       <img height={48} width={48} src={src} alt={name} />
-      <span>{name}</span>
-      <Badge>{t('Coming soon')}</Badge>
+      <div className="title">{name}</div>
+      <div className="description">{description}</div>
+      <div className="cta">{cta}</div>
     </div>
   )
 })`
   position: relative;
   flex-direction: column;
   > img {
-    border-radius: 1.5rem;
+    border-radius: 1rem;
   }
   > * + * {
     margin-top: 0.5rem;
+  }
+  .title {
+    font-family: 'SurtExpanded', sans-serif;
+    font-size: var(--font-size-xlarge);
+  }
+  .description {
+    color: var(--color-foreground);
+  }
+  .cta {
+    margin-top: 3rem;
   }
 `
 
@@ -137,66 +137,86 @@ const NoWallet = styled(({ className = '' }) => {
   color: var(--color-text);
 `
 
-const ConnectWalletSelection = styled(({ className = '' }) => {
+// TODO: Deprecate this
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const ComingSoonWallets = styled(() => {
   const { t } = useTranslation('connect-wallet')
-  const { connect } = useExtension()
-
   return (
-    <aside className={className}>
-      <section>
-        <h2 className="connect-headline">{t('Connect a wallet')}</h2>
-        <ConnectWalletItem name="Polkadot{js}" src={`https://polkadot.js.org/docs/img/logo.svg`} onClick={connect} />
-      </section>
-      <section>
-        <h3 className="connect-subheadline">{t('Coming soon')}</h3>
-        <ConnectWalletItem
-          disabled
-          name="Talisman Wallet"
-          src={`
+    <section>
+      <h3 className="connect-subheadline">{t('Coming soon')}</h3>
+      <ConnectWalletItem
+        disabled
+        name="Talisman Wallet"
+        src={`
           https://pbs.twimg.com/profile_images/1433018747762085891/ZATzx-HG_400x400.jpg`}
-        />
-        <ConnectWalletItem
-          disabled
-          name="Wallet Connect"
-          src={`https://pbs.twimg.com/profile_images/998895674522353665/mQFAbUOX_400x400.jpg`}
-        />
-      </section>
-      <NoWallet />
-    </aside>
+      />
+      <ConnectWalletItem
+        disabled
+        name="Wallet Connect"
+        src={`https://pbs.twimg.com/profile_images/998895674522353665/mQFAbUOX_400x400.jpg`}
+      />
+    </section>
   )
 })`
-  background: var(--color-controlBackground);
-  color: var(--color-text);
-  padding: 4rem;
-  border-radius: 1rem;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin: 0 auto;
-  min-width: 35%;
-
-  .connect-headline {
-    font-family: 'SurtExpanded', sans-serif;
-    font-size: var(--font-size-xlarge);
-  }
-
   .connect-subheadline {
     font-family: 'SurtExpanded', sans-serif;
     color: var(--color-dim);
     font-size: var(--font-size-large);
   }
+`
 
-  > * + * {
-    margin-top: 3rem;
-  }
+const ConnectWalletSelection = styled(({ className = '' }) => {
+  const { t } = useTranslation('connect-wallet')
+  const { connect } = useExtension()
 
-  > section {
-    width: 100%;
+  return (
+    <div className={className}>
+      <aside>
+        <section>
+          <h2 className="connect-headline">{t('Connect a wallet')}</h2>
+          <ConnectWalletItem name="Polkadot{js}" src={`https://polkadot.js.org/docs/img/logo.svg`} onClick={connect} />
+        </section>
+        <NoWallet className="no-wallet" />
+      </aside>
+      <aside>
+        <FeaturedConnectWalletItem
+          name={t('Talisman Extension')}
+          description={t('Wallet extension coming soon')}
+          src={`
+          https://pbs.twimg.com/profile_images/1433018747762085891/ZATzx-HG_400x400.jpg`}
+          cta={<Button variant="outlined">{t('Get updates')}</Button>}
+        />
+      </aside>
+    </div>
+  )
+})`
+  aside {
+    background: var(--color-controlBackground);
+    color: var(--color-text);
+    padding: 4rem;
+    border-radius: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0 auto;
     text-align: center;
+
+    section {
+      width: 100%;
+    }
   }
 
-  > section > * + * {
-    margin-top: 1rem;
+  > aside + aside {
+    margin-top: 2rem;
+  }
+
+  .no-wallet {
+    margin-top: 2rem;
+  }
+
+  .connect-headline {
+    font-family: 'SurtExpanded', sans-serif;
+    font-size: var(--font-size-xlarge);
   }
 `
 
@@ -214,19 +234,26 @@ const Welcome = styled(({ className }) => {
         <h1 className="headline">{t('header')}</h1>
         <p className="subheading">{t('description')}</p>
       </div>
-      <ConnectWalletSelection />
+      <ConnectWalletSelection className="connect-wallet" />
     </section>
   )
 })`
-  width: 100%;
-  padding: 0 6vw;
-  margin: 15% auto;
-  display: flex;
-  align-items: center;
-  gap: 2rem;
   color: var(--color-text);
-  justify-content: space-between;
-  flex-wrap: wrap;
+  display: grid;
+  margin: 15% auto;
+  padding: 0 6vw;
+  grid-template: 1fr 1fr / 1fr;
+  row-gap: 10rem;
+
+  @media ${device.xl} {
+    grid-template: 1fr / 2fr 1fr;
+    column-gap: 10rem;
+  }
+
+  .connect-wallet {
+    min-width: 40rem;
+    justify-self: center;
+  }
 
   .headline {
     font-size: var(--font-size-xxxlarge);
@@ -234,18 +261,6 @@ const Welcome = styled(({ className }) => {
 
   .subheading {
     font-size: var(--font-size-xlarge);
-  }
-
-  @media ${device.xxl} {
-    padding: 0 18vw;
-    gap: 4rem;
-  }
-
-  .description {
-    flex: 1 0 40%;
-    * + * {
-      margin-top: 4rem;
-    }
   }
 `
 
