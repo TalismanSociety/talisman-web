@@ -80,7 +80,7 @@ const Dropdown = styled(
     return (
       open && (
         <span className={`account-picker ${className}`}>
-          <BuyItem nativeToken={nativeToken} onClick={closeParent} />
+          {!totalUsd && <BuyItem nativeToken={nativeToken} onClick={closeParent} />}
           {(allAccounts ? [{ name: t('All Accounts') }, ...accounts] : accounts).map(
             ({ address, name, type, genesisHash }, index) => (
               <div
@@ -327,6 +327,10 @@ const Authorized = styled(({ className, narrow, allAccounts, showValue = false, 
 
   useOnClickOutside(nodeRef, onClickOutside)
 
+  const totalBalanceByAddress =
+    ksmBalancesByAddress[address] &&
+    ksmBalancesByAddress[address].map(balance => balance?.tokens).reduce(addBigNumbers, undefined)
+
   return (
     <div
       ref={nodeRef}
@@ -358,11 +362,8 @@ const Authorized = styled(({ className, narrow, allAccounts, showValue = false, 
               ) : (
                 <span className="selected-account-balance">
                   <Pendor suffix={` ${nativeToken}`}>
-                    <AlertCircle />
-                    {ksmBalancesByAddress[address] &&
-                      formatCommas(
-                        ksmBalancesByAddress[address].map(balance => balance?.tokens).reduce(addBigNumbers, undefined)
-                      )}
+                    {totalBalanceByAddress === '0' && <AlertCircle />}
+                    {totalBalanceByAddress && formatCommas(totalBalanceByAddress)}
                   </Pendor>
                 </span>
               )}
