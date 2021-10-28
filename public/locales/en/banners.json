@@ -13,5 +13,10 @@
     "header": "Coming soon",
     "description": "In the meantime, you can check out Crowdloans.",
     "primaryCta": "Explore Crowdloans"
+  },
+  "buy": {
+    "header": "Buy DOT/KSM",
+    "description": "Show me the money",
+    "primaryCta": "Buy"
   }
 }

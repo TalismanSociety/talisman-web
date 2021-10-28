@@ -8,11 +8,11 @@ import Identicon from '@polkadot/react-identicon'
 import { addTokensToBalances, groupBalancesByAddress, useBalances, useChain } from '@talismn/api-react-hooks'
 import { addBigNumbers, encodeAnyAddress, useFuncMemo } from '@talismn/util'
 import customRpcs from '@util/customRpcs'
+import { buyNow } from '@util/fiatOnRamp'
 import { formatCommas, formatCurrency, truncateString } from '@util/helpers'
 import useOnClickOutside from '@util/useOnClickOutside'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useHistory } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 
 // format an address based on chain ID, derived from genesis ID
@@ -32,17 +32,8 @@ const Address = ({ address, genesis, truncate = false }) => {
 
 const BuyItem = styled(({ nativeToken, className, onClick }) => {
   const { t } = useTranslation()
-  const history = useHistory()
-
-  function handleClick() {
-    if (onClick) {
-      onClick()
-    }
-    history.push('/buy')
-  }
-
   return (
-    <span className={`${className}`} onClick={() => handleClick()}>
+    <span className={`${className}`} onClick={buyNow}>
       <div className="container">
         <span className="info">
           <AlertCircle width="48" />

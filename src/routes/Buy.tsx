@@ -1,15 +1,15 @@
-import { ComingSoonBanner } from '@archetypes/StateBanner/ComingSoonBanner'
+import { BuyBanner } from '@archetypes/StateBanner/BuyBanner'
 import { device } from '@util/breakpoints'
+import { buyNow } from '@util/fiatOnRamp'
 import styled from 'styled-components'
 
 const Buy = styled(({ className }) => {
   return (
     <section className={className}>
-      <ComingSoonBanner />
+      <BuyBanner onClick={buyNow} />
     </section>
   )
 })`
-  width: 100%;
   padding: 0 6vw;
   margin: 6rem auto;
 
