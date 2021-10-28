@@ -129,7 +129,7 @@ const Header = styled(({ className, isMobile, mobileMenuOpen, dispatch }) => {
   )
 })`
   display: grid;
-  grid-template: 1fr / 1fr 2fr 1fr;
+  grid-template: 1fr / auto 2fr 2fr;
   padding: 0 2.4rem;
   width: 100%;
   box-shadow: 0 0 2.4rem rgba(0, 0, 0, 0.05);
@@ -166,7 +166,7 @@ const Header = styled(({ className, isMobile, mobileMenuOpen, dispatch }) => {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 3rem;
+    gap: 2rem;
 
     > * {
       padding: 0.75rem 1rem;
@@ -187,6 +187,7 @@ const Header = styled(({ className, isMobile, mobileMenuOpen, dispatch }) => {
 
     > .lang-select > .children > select {
       background: var(--color-activeBackground);
+      font-size: small;
     }
   }
 
@@ -238,8 +239,8 @@ const Header = styled(({ className, isMobile, mobileMenuOpen, dispatch }) => {
     margin: 1.5rem 0;
     border-radius: 1rem;
     transition: all 0.15s ease-in-out;
-    height: 4.5rem;
-    width: 4.5rem;
+    height: 4.2rem;
+    width: 4.2rem;
   }
   .mobile-nav {
     display: grid;
