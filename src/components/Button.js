@@ -27,7 +27,7 @@ const IconButton = styled(({ children, className, ...rest }) => (
   }
 `
 
-const Button = styled(({ loading, children, className, ...props }) => {
+const Button = styled(({ loading, children, variant, className, ...props }) => {
   const wrappedChildren = !!loading ? (
     <Fragment>
       <IconLoading data-spin="true" />
@@ -50,7 +50,7 @@ const Button = styled(({ loading, children, className, ...props }) => {
       </Link>
     )
   ) : (
-    <button {..._props} className={`button ${className}`}>
+    <button {..._props} className={`button ${variant} ${className}`}>
       {wrappedChildren}
     </button>
   )
@@ -69,6 +69,14 @@ const Button = styled(({ loading, children, className, ...props }) => {
   font-weight: bold;
   transition: all 0.15s ease-in-out;
   white-space: nowrap;
+
+  &.outlined {
+    border: solid 1px;
+    background: transparent;
+    > * {
+      background: var(--color-controlBackground);
+    }
+  }
 
   > * {
     margin: 0 0.5rem;

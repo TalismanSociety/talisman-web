@@ -186,7 +186,10 @@ const Header = styled(({ className, isMobile, mobileMenuOpen, dispatch }) => {
     gap: 1rem;
 
     > .lang-select > .children > select {
-      background: var(--color-activeBackground);
+      background: transparent;
+      color: var(--color-foreground);
+      border-radius: 1rem;
+      border: solid 1px var(--color-dim);
       font-size: small;
     }
   }
