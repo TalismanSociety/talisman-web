@@ -1,0 +1,11 @@
+{
+  "Account balance too low": "Solde du compte insuffisant",
+  "A parachain must be selected": "Une parachain doit être sélectionnée",
+  "Please enter an amount of KSM": "Veuillez entrer un montant en KSM",
+  "Please enter a valid amount of KSM": "Veuillez entrer un montant en KSM",
+  "An account must be selected": "Aucun compte sélectionné",
+  "Account balance not ready yet": "Le solde du compte est en cours de calcul",
+  "A minimum of {{minimum}} KSM is required": "Un minimum de {{minimum}} KSM est requis pour participer",
+  "Failed to submit transaction: account balance too low": "Impossible de valider : solde du compte insuffisant",
+  "Failed to submit transaction": "Impossible de valider la transaction"
+}

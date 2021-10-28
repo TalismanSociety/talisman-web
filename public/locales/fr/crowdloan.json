@@ -1,0 +1,20 @@
+{
+  "inProgress": {
+    "header": "Transaction en cours...",
+    "description": "Votre transaction est en cours de validation, cela peut prendre quelques minutes.",
+    "primaryCta": "Voir sur Subscan",
+    "secondaryCta": "Fermer"
+  },
+  "success": {
+    "header": "Validée",
+    "description": "Votre transaction a été validée. Merci pour votre contribution",
+    "primaryCta": "Voir sur Subscan",
+    "secondaryCta": "Voir votre portefeuille"
+  },
+  "failed": {
+    "header": "Erreur",
+    "description": "Votre transaction n'a pas pu être validée",
+    "primaryCta": "Voir sur Subscan",
+    "secondaryCta": "Fermer"
+  }
+}
