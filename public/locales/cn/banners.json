@@ -18,5 +18,10 @@
     "header": "买 DOT/KSM",
     "description": "把钱拿出来",
     "primaryCta": "买"
+  },
+  "unlockTalisman": {
+    "header": "解锁 Talisman",
+    "description": "为任何 Crowdloan 做出贡献并获得精神钥匙，稍后您将需要它...",
+    "primaryCta": "了解更多"
   }
 }
