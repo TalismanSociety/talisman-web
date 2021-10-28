@@ -24,5 +24,13 @@
   "Buy": "Acheter",
   "Fee": "Frais",
   "Add {{asset}} Balance": "Ajouter le solde de {{asset}}",
-  "Unavailable": "Indisponible"
+  "Unavailable": "Indisponible",
+  "extensionUnavailable": {
+    "title": "Oh non!",
+    "subtitle": "Il ne semble pas que vous ayez installé une extension de portefeuille.",
+    "text": "Ne vous inquiétez pas, nous en construisons actuellement un très beau,",
+    "text2": "mais en attendant, nous vous recommandons de télécharger Polkadot.js"
+  },
+  "Install Polkadot.js Extension": "Installer l'extension Polkadot.js",
+  "Requires Configuration": "Nécessite une configuration"
 }

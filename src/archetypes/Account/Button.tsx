@@ -239,6 +239,7 @@ const Dropdown = styled(
 `
 
 const Unavailable = styled(({ className }) => {
+  const { t } = useTranslation()
   return (
     <Button
       className={`account-button ${className}`}
@@ -251,17 +252,18 @@ const Unavailable = styled(({ className }) => {
         )
       }
     >
-      Install Polkadot.js Extension
+      {t('Install Polkadot.js Extension')}
     </Button>
   )
 })``
 
 const NoAccount = styled(({ className }) => {
+  const { t } = useTranslation()
   return (
     <Button className={`account-button ${className}`}>
       {`Polkadot{.js}`}
       <br />
-      <span className="subtext">Requires Configuration</span>
+      <span className="subtext">{t('Requires Configuration')}</span>
     </Button>
   )
 })`
