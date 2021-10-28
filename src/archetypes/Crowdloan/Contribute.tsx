@@ -113,7 +113,7 @@ const ContributeTo = styled(
         }}
       >
         <header>
-          <h2>{t('Contribute To')}</h2>
+          <h2>{t('Contribute to')}</h2>
           <Parachain.Asset className="logo" id={parachainDetails?.id} type="logo" />
           <h3>{parachainDetails?.name}</h3>
         </header>
