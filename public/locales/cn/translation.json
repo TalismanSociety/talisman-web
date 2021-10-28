@@ -32,5 +32,11 @@
     "text2": "但同时我们建议下载 Polkadot.js"
   },
   "Install Polkadot.js Extension": "安装 Polkadot.js 扩展",
-  "Requires Configuration": "需要配置"
+  "Requires Configuration": "需要配置",
+  "desktopRequired": {
+    "title": "对不起！",
+    "subtitle": "此功能目前仅适用于桌面设备，但我们将很快推出适合移动设备的版本。",
+    "text": "在此期间，请不要犹豫，咨询我们的 Crowdloans 仪表板",
+    "primaryCta": "看 Crowdloans"
+  }
 }
