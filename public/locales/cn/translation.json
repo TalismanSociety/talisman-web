@@ -22,5 +22,7 @@
   },
   "You have no": "你没有",
   "Buy": "买",
-  "Fee": "在"
+  "Fee": "在",
+  "Add {{asset}} Balance": "添加 {{asset}} 余额",
+  "Unavailable": "不可用"
 }
