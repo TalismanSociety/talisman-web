@@ -1,5 +1,6 @@
 import { ReactComponent as AllAccountsIcon } from '@assets/icons/all-accounts.svg'
-import { Button, Pendor } from '@components'
+import { Button, Pendor, Pill } from '@components'
+import { ReactComponent as AlertCircle } from '@icons/alert-circle.svg'
 import { ReactComponent as ChevronDown } from '@icons/chevron-down.svg'
 import { usePortfolio } from '@libs/portfolio'
 import { useActiveAccount, useChainByGenesis, useExtensionAutoConnect } from '@libs/talisman'
@@ -11,6 +12,7 @@ import { formatCommas, formatCurrency, truncateString } from '@util/helpers'
 import useOnClickOutside from '@util/useOnClickOutside'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useHistory } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 
 // format an address based on chain ID, derived from genesis ID
@@ -28,79 +30,124 @@ const Address = ({ address, genesis, truncate = false }) => {
   return !!truncate ? truncateString(encoded, truncate[0] || 4, truncate[1] || 4) : encoded
 }
 
-const Dropdown = styled(({ className, open, handleClose, allAccounts, nativeToken, ksmBalancesByAddress }) => {
+const BuyItem = styled(({ nativeToken, className, onClick }) => {
   const { t } = useTranslation()
-  const { switchAccount } = useActiveAccount()
-  const { accounts } = useExtensionAutoConnect()
-  const { totalUsd, totalUsdByAddress } = usePortfolio()
+  const history = useHistory()
+
+  function handleClick() {
+    if (onClick) {
+      onClick()
+    }
+    history.push('/buy')
+  }
 
   return (
-    open && (
-      <span className={`account-picker ${className}`}>
-        {(allAccounts ? [{ name: t('All Accounts') }, ...accounts] : accounts).map(
-          ({ address, name, type, genesisHash }, index) => (
-            <div
-              key={index}
-              className="account"
-              onClick={() => {
-                switchAccount(address)
-                handleClose()
-              }}
-            >
-              <span className="left">
-                {address ? (
-                  <Identicon
-                    className="identicon"
-                    value={address}
-                    theme={type === 'ethereum' ? 'ethereum' : 'polkadot'}
-                  />
-                ) : (
-                  <Identicon
-                    Custom={AllAccountsIcon}
-                    className="identicon"
-                    value="5DHuDfmwzykE9KVmL87DLjAbfSX7P4f4wDW5CKx8QZnQA4FK"
-                    theme="polkadot"
-                  />
-                )}
-                <span className="name-address">
-                  <span className="name">{address ? truncateString(name, 10, 0) : name}</span>
-                  {address && (
-                    <span className="address">
-                      <Address address={address} genesis={genesisHash} truncate />
-                    </span>
-                  )}
-                </span>
-              </span>
-
-              <span className="right">
-                {address ? (
-                  allAccounts ? (
-                    <Pendor prefix={!totalUsdByAddress[encodeAnyAddress(address, 42)] && '-'}>
-                      {totalUsdByAddress[encodeAnyAddress(address, 42)] &&
-                        formatCurrency(totalUsdByAddress[encodeAnyAddress(address, 42)])}
-                    </Pendor>
-                  ) : (
-                    <Pendor suffix={` ${nativeToken}`}>
-                      {ksmBalancesByAddress[address] &&
-                        formatCommas(
-                          ksmBalancesByAddress[address].map(balance => balance?.tokens).reduce(addBigNumbers, undefined)
-                        )}
-                    </Pendor>
-                  )
-                ) : (
-                  <>
-                    <Pendor prefix={!totalUsd && '-'}>{totalUsd && formatCurrency(totalUsd)}</Pendor>
-                  </>
-                )}
-              </span>
-            </div>
-          )
-        )}
+    <span className={`${className}`} onClick={() => handleClick()}>
+      <span className="info">
+        <AlertCircle />
+        {t('You have no')}
+        {` ${nativeToken}`}
       </span>
-    )
+      <Pill small primary>
+        {t('Buy')}
+      </Pill>
+    </span>
   )
 })`
-  background: rgb(${({ theme }) => theme?.controlBackground});
+  color: var(--color-primary);
+  background: var(--color-controlBackground);
+
+  display: flex;
+  align-items: center;
+  padding: 1.2em;
+  width: 100%;
+  justify-content: space-between;
+
+  > .info {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+`
+
+const Dropdown = styled(
+  ({ className, open, handleClose, allAccounts, nativeToken, ksmBalancesByAddress, closeParent }) => {
+    const { t } = useTranslation()
+    const { switchAccount } = useActiveAccount()
+    const { accounts } = useExtensionAutoConnect()
+    const { totalUsd, totalUsdByAddress } = usePortfolio()
+
+    return (
+      open && (
+        <span className={`account-picker ${className}`}>
+          <BuyItem nativeToken={nativeToken} onClick={closeParent} />
+          {(allAccounts ? [{ name: t('All Accounts') }, ...accounts] : accounts).map(
+            ({ address, name, type, genesisHash }, index) => (
+              <div
+                key={index}
+                className="account"
+                onClick={() => {
+                  switchAccount(address)
+                  handleClose()
+                }}
+              >
+                <span className="left">
+                  {address ? (
+                    <Identicon
+                      className="identicon"
+                      value={address}
+                      theme={type === 'ethereum' ? 'ethereum' : 'polkadot'}
+                    />
+                  ) : (
+                    <Identicon
+                      Custom={AllAccountsIcon}
+                      className="identicon"
+                      value="5DHuDfmwzykE9KVmL87DLjAbfSX7P4f4wDW5CKx8QZnQA4FK"
+                      theme="polkadot"
+                    />
+                  )}
+                  <span className="name-address">
+                    <span className="name">{address ? truncateString(name, 10, 0) : name}</span>
+                    {address && (
+                      <span className="address">
+                        <Address address={address} genesis={genesisHash} truncate />
+                      </span>
+                    )}
+                  </span>
+                </span>
+
+                <span className="right">
+                  {address ? (
+                    allAccounts ? (
+                      <Pendor prefix={!totalUsdByAddress[encodeAnyAddress(address, 42)] && '-'}>
+                        {totalUsdByAddress[encodeAnyAddress(address, 42)] &&
+                          formatCurrency(totalUsdByAddress[encodeAnyAddress(address, 42)])}
+                      </Pendor>
+                    ) : (
+                      <Pendor suffix={` ${nativeToken}`}>
+                        {ksmBalancesByAddress[address] &&
+                          formatCommas(
+                            ksmBalancesByAddress[address]
+                              .map(balance => balance?.tokens)
+                              .reduce(addBigNumbers, undefined)
+                          )}
+                      </Pendor>
+                    )
+                  ) : (
+                    <>
+                      <Pendor prefix={!totalUsd && '-'}>{totalUsd && formatCurrency(totalUsd)}</Pendor>
+                    </>
+                  )}
+                </span>
+              </div>
+            )
+          )}
+        </span>
+      )
+    )
+  }
+)`
+  background: rgb(${({ theme }) => theme?.background});
   font-size: 0.8em;
   width: 26em;
   font-size: 1em;
@@ -242,7 +289,7 @@ const Unauthorized = styled(({ className }) => {
   }
 `
 
-const Authorized = styled(({ className, narrow, allAccounts, showValue = false }) => {
+const Authorized = styled(({ className, narrow, allAccounts, showValue = false, closeParent = null }) => {
   const { t } = useTranslation()
   const nodeRef = useRef<HTMLDivElement>(null)
   const { switchAccount } = useActiveAccount()
@@ -309,12 +356,15 @@ const Authorized = styled(({ className, narrow, allAccounts, showValue = false }
               {allAccounts ? (
                 <Pendor prefix={!usd && '-'}>{usd && formatCurrency(usd)}</Pendor>
               ) : (
-                <Pendor suffix={` ${nativeToken}`}>
-                  {ksmBalancesByAddress[address] &&
-                    formatCommas(
-                      ksmBalancesByAddress[address].map(balance => balance?.tokens).reduce(addBigNumbers, undefined)
-                    )}
-                </Pendor>
+                <span className="selected-account-balance">
+                  <Pendor suffix={` ${nativeToken}`}>
+                    <AlertCircle />
+                    {ksmBalancesByAddress[address] &&
+                      formatCommas(
+                        ksmBalancesByAddress[address].map(balance => balance?.tokens).reduce(addBigNumbers, undefined)
+                      )}
+                  </Pendor>
+                </span>
               )}
             </div>
           )}
@@ -340,6 +390,7 @@ const Authorized = styled(({ className, narrow, allAccounts, showValue = false }
           allAccounts={allAccounts}
           nativeToken={nativeToken}
           ksmBalancesByAddress={ksmBalancesByAddress}
+          closeParent={closeParent}
         />
       </span>
     </div>
@@ -353,6 +404,12 @@ const Authorized = styled(({ className, narrow, allAccounts, showValue = false }
 
   :hover {
     cursor: pointer;
+  }
+
+  .selected-account-balance {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
   }
 
   > .identicon {
@@ -381,6 +438,7 @@ const Authorized = styled(({ className, narrow, allAccounts, showValue = false }
     > div {
       line-height: 1.3em;
       &:first-child {
+        color: var(--color-text);
         font-weight: var(--font-weight-bold);
         width: 6.7em;
         text-overflow: ellipsis;
