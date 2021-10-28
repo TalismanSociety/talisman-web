@@ -167,17 +167,20 @@ const Assets = styled(({ id, className }) => {
 
 export default Assets
 
-const ExtensionUnavailable = styled(props => (
-  <PanelSection comingSoon {...props}>
-    <h2>Oh no!</h2>
-    <p>It doesn't look like you have a wallet extension installed.</p>
-    <p>
-      Don't worry we're currently building a really nice one,
-      <br />
-      but in the meantime we recommend downloading Polkadot.js
-    </p>
-  </PanelSection>
-))`
+const ExtensionUnavailable = styled(props => {
+  const { t } = useTranslation()
+  return (
+    <PanelSection comingSoon {...props}>
+      <h2>{t('extensionUnavailable.title')}</h2>
+      <p>{t('extensionUnavailable.subtitle')}</p>
+      <p>
+        {t('extensionUnavailable.text')}
+        <br />
+        {t('extensionUnavailable.text2')}
+      </p>
+    </PanelSection>
+  )
+})`
   text-align: center;
 
   > *:not(:last-child) {
