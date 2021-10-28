@@ -1,0 +1,28 @@
+{
+  "Portfolio value": "Valeur totale du portefeuille",
+  "Assets": "Actifs",
+  "All Accounts": "Tous les comptes",
+  "Crowdloans": "Crowdloans",
+  "Staking": "Staking",
+  "This door will be unlocked soon": "Ce Césame s'ouvrira bientôt...",
+  "You have not contributed to any Crowdloans": "Aucune contribution de Crowdloan n'a été trouvée parmi vos comptes",
+  "Summoning Crowdloan Contributions...": "Invocation des contributions aux Crowdloans...",
+  "Search Crowdloans": "Rechercher dans les Crowdloans",
+  "Raised": "Collectés",
+  "Ends in": "Termine dans",
+  "Contribute": "Contribuer",
+  "Rewards": "Récompense",
+  "Cancel": "Annuler",
+  "Contribute to": "Contribuer au Crowdloan",
+  "Sort by": "trier par",
+  "noResult": {
+    "title": "Désolé",
+    "subtitle": "Talisman ne peut pas invoquer ce à quoi vous vous attendiez.",
+    "text": "Essayer autre chose..."
+  },
+  "You have no": "Vous n'avez aucun",
+  "Buy": "Acheter",
+  "Fee": "Frais",
+  "Add {{asset}} Balance": "Ajouter le solde de {{asset}}",
+  "Unavailable": "Indisponible"
+}
