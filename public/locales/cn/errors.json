@@ -1,0 +1,11 @@
+{
+  "Account balance too low": "账户余额过低",
+  "A parachain must be selected": "A parachain must be selected",
+  "Please enter an amount of KSM": "Please enter an amount of KSM",
+  "Please enter a valid amount of KSM": "Please enter a valid amount of KSM",
+  "An account must be selected": "An account must be selected",
+  "Account balance not ready yet": "Account balance not ready yet",
+  "A minimum of {{minimum}} KSM is required": "A minimum of {{minimum}} KSM is required",
+  "Failed to submit transaction: account balance too low": "Failed to submit transaction: account balance too low",
+  "Failed to submit transaction": "Failed to submit transaction"
+}

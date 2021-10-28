@@ -104,6 +104,11 @@ const ContributeTo = styled(
       [contributionAmount, tokenPrice]
     )
 
+    const txFeeUsd = useMemo(
+      () => !Number.isNaN(Number(txFee?.fee)) && multiplyBigNumbers(txFee?.fee, tokenPrice),
+      [txFee?.fee, tokenPrice]
+    )
+
     return (
       <form
         className={className}
@@ -140,8 +145,11 @@ const ContributeTo = styled(
             <div className="switcher-column">
               <Account.Button narrow showValue showBuy closeParent={closeModal} />
               <div className="tx-fee">
-                <Pendor suffix={txFee ? 'KSM' : '-'} require={!txFee?.loading}>
-                  {txFee ? `Fee: ${shortNumber(txFee.fee)}` : null}
+                <span>
+                  {txFeeUsd && `${t('Fee')}: ${truncateString(formatCurrency(txFeeUsd), '$9,999,999,999.99'.length)} `}
+                </span>
+                <Pendor prefix={txFee ? ' = ' : ''} suffix={txFee ? 'KSM' : '-'} require={!txFee?.loading}>
+                  <span>{txFee ? `${shortNumber(txFee.fee)}` : null}</span>
                 </Pendor>
               </div>
             </div>
@@ -173,7 +181,7 @@ const ContributeTo = styled(
             type="submit"
             primary
             loading={status === 'VALIDATING'}
-            disabled={error === 'Account balance too low' || !contributionAmount}
+            disabled={error === t('Account balance too low') || !contributionAmount}
           >
             {t('Contribute')}
           </Button>
@@ -270,6 +278,10 @@ const ContributeTo = styled(
       left: auto;
     }
     > .tx-fee {
+      display: flex;
+      align-items: center;
+      justify-content: end;
+      white-space: pre;
       width: 100%;
       margin-top: 1rem;
       text-align: right;
