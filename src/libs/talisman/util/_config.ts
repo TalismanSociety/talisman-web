@@ -459,6 +459,20 @@ export const parachainDetails: ParachainDetails[] = [
     },
   },
   {
+    id: 2095,
+    name: 'Quartz',
+    slug: 'quartz',
+    token: 'NEER',
+    subtitle: `Quartz gives the Kusama community the essential and advanced NFT tools to unleash innovation.`,
+    info: `Quartz gives you easy access to test extreme innovation in NFTs and build for the next generation. Built on Substrate, Quartz gives you the most versatile options for discovery and democratization of the NFT ecosystem and marketplaces (with very low barriers for entry).\nAdvanced features like Flexible Economic Models, Scheduled Transactions, Re-fungiblity, and Nested NFTs will all be available via Quartz, allowing users to own UX/UI for your fans and customers.Quartz parachain on Kusama will allow you to build with interoperability between different blockchains, and give developers and engineers the access to the shared security of the entire network.`,
+    links: {
+      Website: 'https://unique.network/quartz/',
+      Twitter: 'https://twitter.com/Unique_NFTchain',
+      Telegram: 'https://t.me/Uniquechain',
+      Github: 'https://github.com/UniqueNetwork',
+    },
+  },
+  {
     id: 2096,
     name: 'Bit.Country Pioneer',
     slug: 'bit-country-pioneer',
@@ -993,6 +1007,20 @@ export const crowdloanDetails: CrowdloanDetails[] = [
         {
           symbol: 'KINT',
           perKSM: '>3.75',
+        },
+      ],
+      custom: null,
+      info: null,
+    },
+  },
+  {
+    paraId: 2095,
+    contributeUrl: 'https://unique.network/quartz/crowdloan/',
+    rewards: {
+      tokens: [
+        {
+          symbol: 'QTZ',
+          perKSM: '>237',
         },
       ],
       custom: null,
