@@ -1,6 +1,7 @@
 import { Button, useModal } from '@components'
 import { isMobileBrowser } from '@util/helpers'
 import { useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 export default function DesktopRequired() {
@@ -17,14 +18,15 @@ export default function DesktopRequired() {
 
 const DesktopRequiredModal = styled(props => {
   const { closeModal } = useModal()
+  const { t } = useTranslation()
 
   return (
     <div {...props}>
-      <h2>Sorry!</h2>
-      <p>This feature is currently only available on desktop, but we will be launching mobile-friendly version soon.</p>
-      <p>In the meantime feel free to check out our Crowdloans dashboard</p>
+      <h2>{t('desktopRequired.title')}</h2>
+      <p>{t('desktopRequired.subtitle')}</p>
+      <p>{t('desktopRequired.text')}</p>
       <Button primary to="/crowdloans" onClick={closeModal}>
-        View Crowdloans
+        {t('desktopRequired.primaryCta')}
       </Button>
     </div>
   )
