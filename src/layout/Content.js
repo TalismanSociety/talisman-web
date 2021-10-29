@@ -5,23 +5,11 @@ type ContentProps = {
   className: React.ReactNode,
 }
 
-const Content = styled(
-  (
-    {
-      children,
-      className
-    }: ContentProps
-  ) => 
-    <main
-      className={className}
-      >
-      {children}
-    </main>
-  )
-  `
-    display: block;
-   // padding: 4em 1em;
-    min-height: 100vh;
-  `
+const Content = styled(({ children, className }: ContentProps) => <main className={className}>{children}</main>)`
+  display: block;
+  min-height: 100vh;
+  max-width: 1280px;
+  margin: 0 auto;
+`
 
 export default Content
