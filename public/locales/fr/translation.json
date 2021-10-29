@@ -4,16 +4,16 @@
   "All Accounts": "Tous les comptes",
   "Crowdloans": "Crowdloans",
   "Staking": "Staking",
-  "This door will be unlocked soon": "Ce Césame s'ouvrira bientôt...",
+  "This door will be unlocked soon": "Cette fonctionnalité sera bientôt disponible...",
   "You have not contributed to any Crowdloans": "Aucune contribution de Crowdloan n'a été trouvée parmi vos comptes",
   "Summoning Crowdloan Contributions...": "Invocation des contributions aux Crowdloans...",
-  "Search Crowdloans": "Rechercher dans les Crowdloans",
-  "Raised": "Collectés",
+  "Search Crowdloans": "Rechercher",
+  "Raised": "Fonds collectés",
   "Ends in": "Termine dans",
   "Contribute": "Contribuer",
   "Rewards": "Récompense",
   "Cancel": "Annuler",
-  "Contribute to": "Contribuer au Crowdloan",
+  "Contribute to": "Contribuer à la Crowdloan",
   "Sort by": "trier par",
   "noResult": {
     "title": "Désolé",
@@ -26,9 +26,9 @@
   "Add {{asset}} Balance": "Ajouter le solde de {{asset}}",
   "Unavailable": "Indisponible",
   "extensionUnavailable": {
-    "title": "Oh non!",
-    "subtitle": "Il ne semble pas que vous ayez installé une extension de portefeuille.",
-    "text": "Ne vous inquiétez pas, nous en construisons actuellement un très beau,",
+    "title": "Oh non !",
+    "subtitle": "Il semble que vous n'ayez pas encore installé une extension de portefeuille sur votre navigateur.",
+    "text": "Ne vous inquiétez pas, nous en construisons une que vous allez adorer,",
     "text2": "mais en attendant, nous vous recommandons de télécharger Polkadot.js"
   },
   "Install Polkadot.js Extension": "Installer l'extension Polkadot.js",
@@ -36,7 +36,7 @@
   "desktopRequired": {
     "title": "Désolé!",
     "subtitle": "Cette fonctionnalité n'est actuellement disponible que sur ordinateur, mais nous lancerons bientôt une version adaptée aux mobiles.",
-    "text": "En attendant, n'hésitez pas à consulter notre tableau de bord CrowdloansIn the meantime feel free to check out our Crowdloans dashboard",
-    "primaryCta": "Voir Crowdloans"
+    "text": "En attendant, n'hésitez pas à consulter notre tableau de bord des Crowdloans",
+    "primaryCta": "Voir les Crowdloans"
   }
 }
