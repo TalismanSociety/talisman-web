@@ -7,9 +7,11 @@ import { ReactComponent as MoreHorizontal } from '@assets/icons/more-horizontal.
 import { ReactComponent as PortfolioLogo } from '@assets/icons/portfolio.svg'
 import { ReactComponent as SwapLogo } from '@assets/icons/swap.svg'
 import { ReactComponent as TwitterMobileLogo } from '@assets/icons/twitter-mobile.svg'
-import { Field } from '@components'
+import { Field, Pill } from '@components'
 import Menu from '@components/Menu'
 import { useExtension } from '@libs/talisman'
+import { device } from '@util/breakpoints'
+import { buyNow } from '@util/fiatOnRamp'
 import { useMediaQuery } from '@util/hooks'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useReducer } from 'react'
@@ -74,10 +76,12 @@ const Header = styled(({ className, isMobile, mobileMenuOpen, dispatch }) => {
             {t('Portfolio')}
           </NavLink>
           <NavLink to="/crowdloans">{t('Crowdloans')}</NavLink>
-          <NavLink to="/buy">{t('Buy')}</NavLink>
         </nav>
       )}
       <div className="menu-nav">
+        <Pill small primary onClick={buyNow}>
+          {t('Buy')}
+        </Pill>
         <Field.Select
           className="lang-select"
           options={i18n.languages.map(language => {
@@ -130,6 +134,11 @@ const Header = styled(({ className, isMobile, mobileMenuOpen, dispatch }) => {
 })`
   display: grid;
   grid-template: 1fr / auto 2fr 2fr;
+
+  @media ${device.xl} {
+    grid-template: 1fr / 1fr 1fr 1fr;
+  }
+
   padding: 0 2.4rem;
   width: 100%;
   box-shadow: 0 0 2.4rem rgba(0, 0, 0, 0.05);
