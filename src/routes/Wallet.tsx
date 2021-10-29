@@ -40,9 +40,13 @@ const _Wallet = styled(({ className }) => {
 
     width: 100%;
     display: flex;
-    flex-direction: row-reverse;
+    flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
+
+    @media ${device.lg} {
+      flex-direction: row-reverse;
+    }
 
     @media ${device.xxl} {
       display: block;
