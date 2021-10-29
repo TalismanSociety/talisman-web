@@ -292,13 +292,18 @@ const Welcome = styled(({ className }) => {
   color: var(--color-text);
   display: grid;
   margin: 15% auto;
-  padding: 0 6vw;
   grid-template: auto 1fr / 1fr;
   row-gap: 4rem;
+  padding: 0 2rem;
+
+  @media ${device.lg} {
+    padding: 0 8rem;
+  }
 
   @media ${device.xl} {
     grid-template: 1fr / 2fr 1fr;
-    column-gap: 10rem;
+    column-gap: 4rem;
+    padding: 0 6rem;
   }
 
   .description > * + * {
@@ -306,18 +311,25 @@ const Welcome = styled(({ className }) => {
   }
 
   .connect-wallet {
-    @media ${device.xl} {
-      min-width: 40rem;
+    min-width: 0;
+    @media ${device.xxl} {
+      min-width: 30%;
     }
     justify-self: center;
   }
 
   .headline {
-    font-size: var(--font-size-xxxlarge);
+    font-size: var(--font-size-xxlarge);
+    @media ${device.md} {
+      font-size: var(--font-size-xxxlarge);
+    }
   }
 
   .subheading {
-    font-size: var(--font-size-xlarge);
+    font-size: var(--font-size-large);
+    @media ${device.md} {
+      font-size: var(--font-size-xlarge);
+    }
   }
 `
 
