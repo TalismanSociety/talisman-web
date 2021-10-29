@@ -1,5 +1,3 @@
-import agyleImage from '@assets/agyle.png'
-import hoodImage from '@assets/hood.png'
 import { ReactComponent as TalismanWordLogo } from '@assets/talisman-red-black.svg'
 import { Button } from '@components'
 import { ReactComponent as ChevronRight } from '@icons/chevron-right.svg'
@@ -29,8 +27,9 @@ const FeaturedConnectWalletItem = styled((props: ConnectWalletItemProps) => {
       <div className="title">{name}</div>
       <div className="description">{description}</div>
       <div className="cta">{cta}</div>
-      <img className="left-character" src={agyleImage} alt="" />
-      <img className="right-character" src={hoodImage} alt="" />
+      {/* TODO: Remove illustrations for now */}
+      {/* <img className="left-character" src={agyleImage} alt="" />
+      <img className="right-character" src={hoodImage} alt="" /> */}
     </div>
   )
 })`
@@ -235,7 +234,13 @@ const ConnectWalletSelection = styled(({ className = '' }) => {
           description={t('Wallet extension coming soon')}
           src={`
           https://pbs.twimg.com/profile_images/1433018747762085891/ZATzx-HG_400x400.jpg`}
-          cta={<Button variant="outlined">{t('Get updates')}</Button>}
+          cta={
+            <Button variant="outlined">
+              <a href="https://m9m0weaebgi.typeform.com/mailing-list" target="_blank" rel="noreferrer noopener">
+                {t('Get updates')}
+              </a>
+            </Button>
+          }
         />
       </aside>
     </div>
@@ -311,10 +316,6 @@ const Welcome = styled(({ className }) => {
   }
 
   .connect-wallet {
-    min-width: 0;
-    @media ${device.xxl} {
-      min-width: 30%;
-    }
     justify-self: center;
   }
 
