@@ -31,11 +31,25 @@ const _Wallet = styled(({ className }) => {
   }
 
   .account-overview {
-    flex: 1 0 auto;
-    min-width: 25%;
+    // // flex: 1 0 auto;
+    // // min-width: 25%;
 
-    & > * + * {
-      margin-top: 4rem;
+    // & > * + * {
+    //   margin-top: 4rem;
+    // }
+
+    width: 100%;
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: center;
+    justify-content: space-between;
+
+    @media ${device.xxl} {
+      display: block;
+      width: auto;
+      > * + * {
+        margin-top: 4rem;
+      }
     }
   }
 
