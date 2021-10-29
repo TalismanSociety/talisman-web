@@ -7,9 +7,11 @@ import { ReactComponent as MoreHorizontal } from '@assets/icons/more-horizontal.
 import { ReactComponent as PortfolioLogo } from '@assets/icons/portfolio.svg'
 import { ReactComponent as SwapLogo } from '@assets/icons/swap.svg'
 import { ReactComponent as TwitterMobileLogo } from '@assets/icons/twitter-mobile.svg'
-import { Field } from '@components'
+import { Field, Pill } from '@components'
 import Menu from '@components/Menu'
 import { useExtension } from '@libs/talisman'
+import { device } from '@util/breakpoints'
+import { buyNow } from '@util/fiatOnRamp'
 import { useMediaQuery } from '@util/hooks'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useReducer } from 'react'
@@ -52,14 +54,30 @@ const subRoutes = [
   { name: 'Medium', url: 'https://medium.com/we-are-talisman', icon: <MediumMobileLogo alt="Medium" /> },
 ]
 
+const LanguageSelector = () => {
+  const { i18n } = useTranslation('languages')
+  const changeLanguage = language => i18n?.changeLanguage(language)
+  if (!i18n?.languages) {
+    return null
+  }
+  return (
+    <Field.Select
+      className="lang-select"
+      options={i18n.languages.map(language => {
+        return {
+          key: language,
+          value: language,
+        }
+      })}
+      onChange={changeLanguage}
+    />
+  )
+}
+
 const Header = styled(({ className, isMobile, mobileMenuOpen, dispatch }) => {
-  const { t, i18n } = useTranslation('nav')
+  const { t } = useTranslation('nav')
   const { status: extensionStatus } = useExtension()
   const homeRoute = ['LOADING', 'DISCONNECTED'].includes(extensionStatus) ? '/' : '/portfolio'
-
-  const changeLanguage = language => {
-    i18n.changeLanguage(language)
-  }
 
   return (
     <header className={className}>
@@ -74,20 +92,13 @@ const Header = styled(({ className, isMobile, mobileMenuOpen, dispatch }) => {
             {t('Portfolio')}
           </NavLink>
           <NavLink to="/crowdloans">{t('Crowdloans')}</NavLink>
-          <NavLink to="/buy">{t('Buy')}</NavLink>
         </nav>
       )}
       <div className="menu-nav">
-        <Field.Select
-          className="lang-select"
-          options={i18n.languages.map(language => {
-            return {
-              key: language,
-              value: t(language),
-            }
-          })}
-          onChange={changeLanguage}
-        />
+        <Pill small primary onClick={buyNow}>
+          {t('Buy')}
+        </Pill>
+        <LanguageSelector />
         <Menu
           dropdownAlignment="right"
           ButtonComponent={
@@ -130,6 +141,11 @@ const Header = styled(({ className, isMobile, mobileMenuOpen, dispatch }) => {
 })`
   display: grid;
   grid-template: 1fr / auto 2fr 2fr;
+
+  @media ${device.lg} {
+    grid-template: 1fr / 1fr 1fr 1fr;
+  }
+
   padding: 0 2.4rem;
   width: 100%;
   box-shadow: 0 0 2.4rem rgba(0, 0, 0, 0.05);
@@ -176,6 +192,11 @@ const Header = styled(({ className, isMobile, mobileMenuOpen, dispatch }) => {
       &.active {
         color: var(--color-text);
         background: var(--color-activeBackground);
+      }
+
+      &:hover {
+        color: var(--color-background);
+        background: var(--color-foreground);
       }
     }
   }

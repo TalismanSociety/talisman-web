@@ -1,13 +1,13 @@
 {
   "explore": {
     "header": "Construire l'univers des parachains",
-    "description": "Les Crowdloans aident les projet et les équipes à participer aux enchèrs pour obtenir une parachain sur Polkadot et Kusama",
+    "description": "Les Crowdloans aident les projet et les équipes à participer aux enchères afin d'obtenir une parachain sur Polkadot et Kusama",
     "primaryCta": "Voir les Crowdloans"
   },
   "empty": {
     "header": "C'est vide !",
     "description": "Achetez des DOT ou des KSM par carte de crédit ou en crypto",
-    "primaryCta": "Acheter DOT / KSM"
+    "primaryCta": "Acheter DOT/KSM"
   },
   "soon": {
     "header": "Prochainement",
@@ -20,8 +20,8 @@
     "primaryCta": "Acheter"
   },
   "unlockTalisman": {
-    "header": "Déverrouillez le Talisman",
-    "description": "Contribuez à n'importe quel Crowdloan et recevez une Clé Spirituelle, vous en aurez besoin plus tard...",
-    "primaryCta": "Apprendre encore plus"
+    "header": "Révélez le Talisman",
+    "description": "Contribuez à n'importe quelle Crowdloan et recevez une “Clé Spirituelle”, vous en aurez besoin plus tard...",
+    "primaryCta": "En savoir plus"
   }
 }

@@ -32,5 +32,11 @@
     "text2": "but in the meantime we recommend downloading Polkadot.js"
   },
   "Install Polkadot.js Extension": "Install Polkadot.js Extension",
-  "Requires Configuration": "Requires Configuration"
+  "Requires Configuration": "Requires Configuration",
+  "desktopRequired": {
+    "title": "Sorry!",
+    "subtitle": "This feature is currently only available on desktop, but we will be launching mobile-friendly version soon.",
+    "text": "In the meantime feel free to check out our Crowdloans dashboard",
+    "primaryCta": "View Crowdloans"
+  }
 }

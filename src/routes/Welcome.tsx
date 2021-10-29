@@ -1,5 +1,3 @@
-import agyleImage from '@assets/agyle.png'
-import hoodImage from '@assets/hood.png'
 import { ReactComponent as TalismanWordLogo } from '@assets/talisman-red-black.svg'
 import { Button } from '@components'
 import { ReactComponent as ChevronRight } from '@icons/chevron-right.svg'
@@ -29,8 +27,9 @@ const FeaturedConnectWalletItem = styled((props: ConnectWalletItemProps) => {
       <div className="title">{name}</div>
       <div className="description">{description}</div>
       <div className="cta">{cta}</div>
-      <img className="left-character" src={agyleImage} alt="" />
-      <img className="right-character" src={hoodImage} alt="" />
+      {/* TODO: Remove illustrations for now */}
+      {/* <img className="left-character" src={agyleImage} alt="" />
+      <img className="right-character" src={hoodImage} alt="" /> */}
     </div>
   )
 })`
@@ -235,7 +234,13 @@ const ConnectWalletSelection = styled(({ className = '' }) => {
           description={t('Wallet extension coming soon')}
           src={`
           https://pbs.twimg.com/profile_images/1433018747762085891/ZATzx-HG_400x400.jpg`}
-          cta={<Button variant="outlined">{t('Get updates')}</Button>}
+          cta={
+            <Button variant="outlined">
+              <a href="https://m9m0weaebgi.typeform.com/mailing-list" target="_blank" rel="noreferrer noopener">
+                {t('Get updates')}
+              </a>
+            </Button>
+          }
         />
       </aside>
     </div>
@@ -292,13 +297,18 @@ const Welcome = styled(({ className }) => {
   color: var(--color-text);
   display: grid;
   margin: 15% auto;
-  padding: 0 6vw;
   grid-template: auto 1fr / 1fr;
   row-gap: 4rem;
+  padding: 0 2rem;
+
+  @media ${device.lg} {
+    padding: 0 8rem;
+  }
 
   @media ${device.xl} {
     grid-template: 1fr / 2fr 1fr;
-    column-gap: 10rem;
+    column-gap: 4rem;
+    padding: 0 6rem;
   }
 
   .description > * + * {
@@ -306,18 +316,21 @@ const Welcome = styled(({ className }) => {
   }
 
   .connect-wallet {
-    @media ${device.xl} {
-      min-width: 40rem;
-    }
     justify-self: center;
   }
 
   .headline {
-    font-size: var(--font-size-xxxlarge);
+    font-size: var(--font-size-xxlarge);
+    @media ${device.md} {
+      font-size: var(--font-size-xxxlarge);
+    }
   }
 
   .subheading {
-    font-size: var(--font-size-xlarge);
+    font-size: var(--font-size-large);
+    @media ${device.md} {
+      font-size: var(--font-size-xlarge);
+    }
   }
 `
 
