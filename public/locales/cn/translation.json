@@ -1,42 +1,41 @@
 {
   "Portfolio value": "投资组合价值",
-  "Assets": "资产",
+  "Assets": "总资产",
   "All Accounts": "所有账户",
-  "Crowdloans": "众筹",
-  "Staking": "放样",
-  "This door will be unlocked soon": "这扇门很快就会解锁",
-  "You have not contributed to any Crowdloans": "您没有参与过任何众筹",
-  "Summoning Crowdloan Contributions...": "召集众筹捐款...",
+  "Crowdloans": "众贷",
+  "Staking": "权益质押",
+  "This door will be unlocked soon": "这扇门很快就会被解锁",
+  "You have not contributed to any Crowdloans": "您还未贡献过任何众贷",
+  "Summoning Crowdloan Contributions...": "召集众贷贡献...",
   "Search Crowdloans": "搜索众贷",
-  "Raised": "提高",
-  "Ends in": "结束于",
+  "Raised": "集资金额",
+  "Ends in": "结束时间",
   "Contribute": "贡献",
   "Rewards": "奖励",
   "Cancel": "取消",
   "Contribute to": "贡献于",
   "Sort by": "排序方式",
   "noResult": {
-    "title": "对不起",
-    "subtitle": "Talisman 不能召唤你想要的东西。",
-    "text": "试试别的。"
+    "title": "抱歉",
+    "subtitle": "Talisman 无法召唤你的愿望",
+    "text": "请试试别的。"
   },
-  "You have no": "你没有",
-  "Buy": "买",
-  "Fee": "在",
+  "You have no": "你目前没有",
+  "Buy": "购买",
+  "Fee": "费用",
   "Add {{asset}} Balance": "添加 {{asset}} 余额",
   "Unavailable": "不可用",
   "extensionUnavailable": {
-    "title": "不好了！",
-    "subtitle": "您似乎没有安装钱包扩展程序。",
-    "text": "别担心，我们目前正在建造一个非常好的，",
-    "text2": "但同时我们建议下载 Polkadot.js"
+    "title": "惨了！",
+    "subtitle": "您似乎没有安装任何钱包插件",
+    "text": "但别担心，我们正在努力搭建一个很优的钱包",
+    "text2": "在此期间，我们还是建议你下载 Polkadot.js"
   },
-  "Install Polkadot.js Extension": "安装 Polkadot.js 扩展",
-  "Requires Configuration": "需要配置",
-  "desktopRequired": {
-    "title": "对不起！",
-    "subtitle": "此功能目前仅适用于桌面设备，但我们将很快推出适合移动设备的版本。",
-    "text": "在此期间，请不要犹豫，咨询我们的 Crowdloans 仪表板",
-    "primaryCta": "看 Crowdloans"
-  }
+"Install Polkadot.js Extension": "安装 Polkadot.js 插件",
+"Requires Configuration": "需要配置",
+"desktopRequired": {
+  "title": "抱歉！",
+  "subtitle": "此功能暂时仅适用于桌面应用，但我们即将推出移动端适用的版本。",
+  "text": "在此期间你可先访问我们的众贷中心",
+  "primaryCta": "查看众贷"
 }
