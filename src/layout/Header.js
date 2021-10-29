@@ -60,7 +60,7 @@ const Header = styled(({ className, isMobile, mobileMenuOpen, dispatch }) => {
   const homeRoute = ['LOADING', 'DISCONNECTED'].includes(extensionStatus) ? '/' : '/portfolio'
 
   const changeLanguage = language => {
-    i18n.changeLanguage(language)
+    i18n?.changeLanguage(language)
   }
 
   return (
@@ -82,16 +82,18 @@ const Header = styled(({ className, isMobile, mobileMenuOpen, dispatch }) => {
         <Pill small primary onClick={buyNow}>
           {t('Buy')}
         </Pill>
-        <Field.Select
-          className="lang-select"
-          options={i18n.languages.map(language => {
-            return {
-              key: language,
-              value: t(language),
-            }
-          })}
-          onChange={changeLanguage}
-        />
+        {i18n?.languages && (
+          <Field.Select
+            className="lang-select"
+            options={i18n.languages.map(language => {
+              return {
+                key: language,
+                value: t(language),
+              }
+            })}
+            onChange={changeLanguage}
+          />
+        )}
         <Menu
           dropdownAlignment="right"
           ButtonComponent={
