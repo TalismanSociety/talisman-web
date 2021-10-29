@@ -1,5 +1,4 @@
 import { Crowdloan } from '@archetypes'
-import { UnlockTalismanBanner } from '@archetypes/StateBanner/UnlockTalismanBanner'
 import { Await, Field, Grid, NoResults } from '@components'
 import { device } from '@util/breakpoints'
 import { useTranslation } from 'react-i18next'
@@ -24,49 +23,24 @@ const FilterBar = styled(
     const { t } = useTranslation()
     return (
       <div className={`${className} filterbar`} {...rest}>
-        <div className="searchbar">
-          <Field.Search value={search} placeholder={t('Search Crowdloans')} onChange={setSearch} />
-        </div>
-        <div className="filtergroup">
-          <Field.RadioGroup value={status} onChange={setStatus} options={statusOptions} small />
-          <span className="sortby">
-            <label>{t('Sort by')}</label>
-            <Field.Select onChange={setOrder} options={orderOptions} />
-          </span>
-        </div>
+        <Field.Search className="searchbar" value={search} placeholder={t('Search Crowdloans')} onChange={setSearch} />
+        <Field.RadioGroup value={status} onChange={setStatus} options={statusOptions} small />
       </div>
     )
   }
 )`
   margin: 2.4rem 0;
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  flex-wrap: wrap;
 
   .searchbar {
     display: inline-block;
     width: 100%;
-
     @media ${device.lg} {
       width: auto;
     }
-  }
-
-  .filtergroup {
-    margin-top: 2rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-
-    > :first-child {
-      border-radius: 1rem;
-    }
-  }
-
-  .sortby {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1.5rem;
-    margin: 1rem 0;
   }
 `
 
@@ -76,7 +50,8 @@ const Index = styled(({ withFilter, className }) => {
 
   return (
     <div className={`crowdloan-index ${className}`}>
-      <UnlockTalismanBanner />
+      {/* TODO: Remove for now as no Learn more link yet */}
+      {/* <UnlockTalismanBanner /> */}
       {withFilter && <FilterBar {...filterProps} count={count} />}
       <Await until={!loading}>
         <NoResults
