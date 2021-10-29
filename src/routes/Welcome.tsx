@@ -303,7 +303,7 @@ const Welcome = styled(({ className }) => {
   @media ${device.xl} {
     grid-template: 1fr / 2fr 1fr;
     column-gap: 4rem;
-    padding: 0 4rem;
+    padding: 0 6rem;
   }
 
   .description > * + * {
