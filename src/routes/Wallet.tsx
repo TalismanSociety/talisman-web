@@ -28,6 +28,10 @@ const _Wallet = styled(({ className }) => {
   margin: 6rem auto;
   padding: 0 2.4rem;
 
+  > * + * {
+    margin-top: 4rem;
+  }
+
   .account-overview {
     display: flex;
     flex-wrap: wrap-reverse;

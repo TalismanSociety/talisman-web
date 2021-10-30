@@ -142,7 +142,7 @@ const Header = styled(({ className, isMobile, mobileMenuOpen, dispatch }) => {
   display: grid;
   grid-template: 1fr / auto 2fr 2fr;
 
-  @media ${device.lg} {
+  @media ${device.xl} {
     grid-template: 1fr / 1fr 1fr 1fr;
   }
 

@@ -502,11 +502,6 @@ const Authorized = styled(
         }
     `}
 
-    width: 88vw;
-    @media ${device.md} {
-      width: auto;
-    }
-
     z-index: 10;
     margin-top: 1rem;
   }
