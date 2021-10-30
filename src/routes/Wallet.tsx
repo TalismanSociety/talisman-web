@@ -1,13 +1,11 @@
 import { Account, Wallet } from '@archetypes'
 import { StateBanner } from '@archetypes/StateBanner'
-import { DesktopRequired } from '@components'
 import { device } from '@util/breakpoints'
 import styled from 'styled-components'
 
 const _Wallet = styled(({ className }) => {
   return (
     <section className={className}>
-      {/* <DesktopRequired /> */}
       <header>
         <div className="account-overview">
           <Wallet.Total />
