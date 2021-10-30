@@ -492,13 +492,20 @@ const Authorized = styled(
         position: absolute;
         top: 100%;
         left: 0;
-        @media ${device.sm} {
+        @media ${device.lg} {
+          left: unset;
           right: 0;
         }
         @media ${device.xxl} {
+          right: unset;
           left: 0;
         }
-      `}
+    `}
+
+    width: 88vw;
+    @media ${device.md} {
+      width: auto;
+    }
 
     z-index: 10;
     margin-top: 1rem;
