@@ -21,7 +21,7 @@ export const Banner = styled.aside<BannerProps>`
   gap: 2rem;
 
   @media ${device.lg} {
-    gap: 8rem;
+    // gap: 8rem;
   }
 
   > .description {
@@ -30,5 +30,10 @@ export const Banner = styled.aside<BannerProps>`
 
   > .cta {
     flex: 0 0 20%;
+    width: 100%;
+
+    button {
+      width: 100%;
+    }
   }
 `
