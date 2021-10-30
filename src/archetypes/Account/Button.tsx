@@ -489,9 +489,13 @@ const Authorized = styled(
       props.fixedDropdown
         ? `position: fixed; top: auto; left: auto;`
         : `
-        right: 0;
-        position: absolute; top: 100%;
-        @media ${device.lg} {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        @media ${device.sm} {
+          right: 0;
+        }
+        @media ${device.xxl} {
           left: 0;
         }
       `}

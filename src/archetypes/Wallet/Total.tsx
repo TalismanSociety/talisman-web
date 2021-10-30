@@ -19,8 +19,8 @@ const Total = styled(({ id, className }) => {
   // const totalUsd = 833_333_333_333_333_333.33
   // const totalUsd = 833_333_333_333.33
   // const totalUsd = 833_333_333.33
-  const totalUsd = 33_833_333.33
-  // const totalUsd = 833_333.33
+  // const totalUsd = 33_833_333.33
+  const totalUsd = 833_333.33
   // const totalUsd = 833.33
   // const totalUsd = useMemo(
   //   () =>

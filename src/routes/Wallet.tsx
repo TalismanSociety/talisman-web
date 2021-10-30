@@ -42,12 +42,6 @@ const _Wallet = styled(({ className }) => {
       flex-direction: column-reverse;
       align-items: start;
     }
-
-    .account-switcher-pill {
-    }
-
-    .wallet-total {
-    }
   }
 
   .banner {
