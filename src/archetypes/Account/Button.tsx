@@ -7,6 +7,7 @@ import { useActiveAccount, useChainByGenesis, useExtensionAutoConnect } from '@l
 import Identicon from '@polkadot/react-identicon'
 import { addTokensToBalances, groupBalancesByAddress, useBalances, useChain } from '@talismn/api-react-hooks'
 import { addBigNumbers, encodeAnyAddress, useFuncMemo } from '@talismn/util'
+import { device } from '@util/breakpoints'
 import customRpcs from '@util/customRpcs'
 import { buyNow } from '@util/fiatOnRamp'
 import { formatCommas, formatCurrency, truncateString } from '@util/helpers'
@@ -303,7 +304,15 @@ const Unauthorized = styled(({ className }) => {
 `
 
 const Authorized = styled(
-  ({ className, narrow, allAccounts, showValue = false, closeParent = null, showBuy = false }) => {
+  ({
+    className,
+    narrow,
+    allAccounts,
+    showValue = false,
+    closeParent = null,
+    showBuy = false,
+    fixedDropdown = false,
+  }) => {
     const { t } = useTranslation()
     const nodeRef = useRef<HTMLDivElement>(null)
     const { switchAccount } = useActiveAccount()
@@ -476,9 +485,23 @@ const Authorized = styled(
   }
 
   .account-picker {
-    position: absolute;
-    top: 100%;
-    left: 0;
+    ${props =>
+      props.fixedDropdown
+        ? `position: fixed; top: auto; left: auto;`
+        : `
+        position: absolute;
+        top: 100%;
+        left: 0;
+        @media ${device.lg} {
+          left: unset;
+          right: 0;
+        }
+        @media ${device.xxl} {
+          right: unset;
+          left: 0;
+        }
+    `}
+
     z-index: 10;
     margin-top: 1rem;
   }

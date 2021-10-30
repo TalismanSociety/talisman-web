@@ -16,14 +16,20 @@ const Total = styled(({ id, className }) => {
   // TODO: Price change value
   const totalUsdChange = null //-1000000
 
-  const totalUsd = useMemo(
-    () =>
-      Object.entries(totalUsdByAddress || {})
-        .filter(([address]) => accountAddresses && accountAddresses.includes(address))
-        .map(([, usd]) => usd)
-        .reduce(addBigNumbers, undefined),
-    [totalUsdByAddress, accountAddresses]
-  )
+  // const totalUsd = 833_333_333_333_333_333.33
+  // const totalUsd = 833_333_333_333.33
+  // const totalUsd = 833_333_333.33
+  // const totalUsd = 33_833_333.33
+  const totalUsd = 833_333.33
+  // const totalUsd = 833.33
+  // const totalUsd = useMemo(
+  //   () =>
+  //     Object.entries(totalUsdByAddress || {})
+  //       .filter(([address]) => accountAddresses && accountAddresses.includes(address))
+  //       .map(([, usd]) => usd)
+  //       .reduce(addBigNumbers, undefined),
+  //   [totalUsdByAddress, accountAddresses]
+  // )
 
   return (
     <div className={`wallet-total ${className}`}>
@@ -53,8 +59,6 @@ const Total = styled(({ id, className }) => {
   )
 })`
   color: var(--color-text);
-  min-width: 33%;
-  flex: 1 0 auto;
 
   > .title {
     font-size: var(--font-size-xsmall);
@@ -66,10 +70,11 @@ const Total = styled(({ id, className }) => {
     display: flex;
     align-items: center;
     gap: 1rem;
-    @media ${device.md} {
+    font-size: var(--font-size-large);
+    @media ${device.sm} {
       font-size: var(--font-size-xlarge);
     }
-    @media ${device.lg} {
+    @media ${device.md} {
       font-size: var(--font-size-xxlarge);
     }
     font-weight: bold;
