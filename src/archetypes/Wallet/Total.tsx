@@ -16,20 +16,14 @@ const Total = styled(({ id, className }) => {
   // TODO: Price change value
   const totalUsdChange = null //-1000000
 
-  // const totalUsd = 833_333_333_333_333_333.33
-  // const totalUsd = 833_333_333_333.33
-  // const totalUsd = 833_333_333.33
-  // const totalUsd = 33_833_333.33
-  const totalUsd = 833_333.33
-  // const totalUsd = 833.33
-  // const totalUsd = useMemo(
-  //   () =>
-  //     Object.entries(totalUsdByAddress || {})
-  //       .filter(([address]) => accountAddresses && accountAddresses.includes(address))
-  //       .map(([, usd]) => usd)
-  //       .reduce(addBigNumbers, undefined),
-  //   [totalUsdByAddress, accountAddresses]
-  // )
+  const totalUsd = useMemo(
+    () =>
+      Object.entries(totalUsdByAddress || {})
+        .filter(([address]) => accountAddresses && accountAddresses.includes(address))
+        .map(([, usd]) => usd)
+        .reduce(addBigNumbers, undefined),
+    [totalUsdByAddress, accountAddresses]
+  )
 
   return (
     <div className={`wallet-total ${className}`}>
