@@ -77,7 +77,7 @@ export const Modal = styled(function Modal({ className, closable }) {
   justify-content: center;
   align-items: center;
   background: rgba(0, 0, 0, 0.4);
-  z-index: 100;
+  z-index: 9998;
 
   > .modal-click-to-close-background {
     position: absolute;
