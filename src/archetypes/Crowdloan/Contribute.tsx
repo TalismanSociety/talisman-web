@@ -143,7 +143,7 @@ const ContributeTo = styled(
               </div>
             </div>
             <div className="switcher-column">
-              <Account.Button narrow showValue showBuy closeParent={closeModal} />
+              <Account.Button narrow showValue showBuy closeParent={closeModal} fixedDropdown />
               <div className="tx-fee">
                 <span>
                   {txFeeUsd && `${t('Fee')}: ${truncateString(formatCurrency(txFeeUsd), '$9,999,999,999.99'.length)} `}
@@ -272,11 +272,11 @@ const ContributeTo = styled(
       color: rgb(${({ theme }) => theme?.foreground});
       box-shadow: 0 0 0.8rem rgba(0, 0, 0, 0.1);
     }
-    .account-picker {
-      position: fixed;
-      top: auto;
-      left: auto;
-    }
+    // .account-picker {
+    //   position: fixed;
+    //   top: auto;
+    //   left: auto;
+    // }
     > .tx-fee {
       display: flex;
       align-items: center;

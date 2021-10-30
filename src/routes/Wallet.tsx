@@ -7,13 +7,15 @@ import styled from 'styled-components'
 const _Wallet = styled(({ className }) => {
   return (
     <section className={className}>
-      <DesktopRequired />
+      {/* <DesktopRequired /> */}
       <header>
         <div className="account-overview">
-          <Account.Button allAccounts />
           <Wallet.Total />
+          <Account.Button allAccounts />
         </div>
-        <StateBanner />
+        <div className="banner">
+          <StateBanner />
+        </div>
       </header>
       <Wallet.Assets />
       <Wallet.Crowdloans />
@@ -26,35 +28,37 @@ const _Wallet = styled(({ className }) => {
   margin: 6rem auto;
   padding: 0 2.4rem;
 
-  > * {
-    margin-bottom: 3.25vw;
+  > * + * {
+    margin-top: 4rem;
   }
 
   .account-overview {
-    flex: 1 0 auto;
-    min-width: 25%;
+    display: flex;
+    flex-wrap: wrap-reverse;
+    width: 100%;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
 
-    & > * + * {
-      margin-top: 4rem;
+    @media ${device.xxl} {
+      width: auto;
+      display: flex;
+      flex-direction: column-reverse;
+      align-items: start;
     }
+  }
+
+  .banner {
+    min-width: 70%;
+    flex: 1;
   }
 
   > header {
     display: flex;
-    align-items: center;
-    flex-wrap: wrap-reverse;
-    margin-bottom: 6rem;
-    > * + * {
-      margin-bottom: 2rem;
-    }
     gap: 4rem;
-    @media ${device.xxl} {
-      gap: 2rem;
-      flex-wrap: nowrap;
-      > * + * {
-        margin-top: 0;
-      }
-    }
+    flex-wrap: wrap-reverse;
+    align-items: center;
+    margin-bottom: 4rem;
   }
 `
 

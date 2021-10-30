@@ -27,14 +27,16 @@ const IconButton = styled(({ children, className, ...rest }) => (
   }
 `
 
-const Button = styled(({ loading, children, variant, className, ...props }) => {
+const Button = styled(({ loading, children, variant = '', className, ...props }) => {
   const wrappedChildren = !!loading ? (
     <Fragment>
       <IconLoading data-spin="true" />
       &nbsp;{loading}
     </Fragment>
   ) : (
-    React.Children.map(children, child => (React.isValidElement(child) ? child : <span>{child}</span>))
+    React.Children.map(children, child =>
+      React.isValidElement(child) ? child : <span className="child">{child}</span>
+    )
   )
 
   const _props = omit(props, ['loading', 'boxed', 'round', 'primary', 'tight', 'loose'])
@@ -76,6 +78,12 @@ const Button = styled(({ loading, children, variant, className, ...props }) => {
     > * {
       background: var(--color-controlBackground);
     }
+  }
+
+  .child {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
   }
 
   > * {
