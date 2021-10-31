@@ -8,7 +8,7 @@ import { ReactComponent as MoreHorizontal } from '@assets/icons/more-horizontal.
 import { ReactComponent as PortfolioLogo } from '@assets/icons/portfolio.svg'
 import { ReactComponent as SwapLogo } from '@assets/icons/swap.svg'
 import { ReactComponent as TwitterMobileLogo } from '@assets/icons/twitter-mobile.svg'
-import { Button, Pill } from '@components'
+import { Button } from '@components'
 import Menu from '@components/Menu'
 import { useExtension } from '@libs/talisman'
 import { device } from '@util/breakpoints'
