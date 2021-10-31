@@ -1,3 +1,4 @@
+import { LanguageSelector } from '@archetypes/LanguageSelector'
 import { ReactComponent as TalismanHandLogo } from '@assets/hand-red-black.svg'
 import { ReactComponent as CrowdloansLogo } from '@assets/icons/crowdloans.svg'
 import { ReactComponent as DiscordMobileLogo } from '@assets/icons/discord-mobile.svg'
@@ -7,7 +8,7 @@ import { ReactComponent as MoreHorizontal } from '@assets/icons/more-horizontal.
 import { ReactComponent as PortfolioLogo } from '@assets/icons/portfolio.svg'
 import { ReactComponent as SwapLogo } from '@assets/icons/swap.svg'
 import { ReactComponent as TwitterMobileLogo } from '@assets/icons/twitter-mobile.svg'
-import { Field, Pill } from '@components'
+import { Button, Pill } from '@components'
 import Menu from '@components/Menu'
 import { useExtension } from '@libs/talisman'
 import { device } from '@util/breakpoints'
@@ -54,26 +55,6 @@ const subRoutes = [
   { name: 'Medium', url: 'https://medium.com/we-are-talisman', icon: <MediumMobileLogo alt="Medium" /> },
 ]
 
-const LanguageSelector = () => {
-  const { i18n } = useTranslation('languages')
-  const changeLanguage = language => i18n?.changeLanguage(language)
-  if (!i18n?.languages) {
-    return null
-  }
-  return (
-    <Field.Select
-      className="lang-select"
-      options={i18n.languages.map(language => {
-        return {
-          key: language,
-          value: language,
-        }
-      })}
-      onChange={changeLanguage}
-    />
-  )
-}
-
 const Header = styled(({ className, isMobile, mobileMenuOpen, dispatch }) => {
   const { t } = useTranslation('nav')
   const { status: extensionStatus } = useExtension()
@@ -95,9 +76,9 @@ const Header = styled(({ className, isMobile, mobileMenuOpen, dispatch }) => {
         </nav>
       )}
       <div className="menu-nav">
-        <Pill small primary onClick={buyNow}>
+        <Button small primary onClick={buyNow}>
           {t('Buy')}
-        </Pill>
+        </Button>
         <LanguageSelector />
         <Menu
           dropdownAlignment="right"
@@ -205,14 +186,6 @@ const Header = styled(({ className, isMobile, mobileMenuOpen, dispatch }) => {
     display: flex;
     align-items: center;
     gap: 1rem;
-
-    > .lang-select > .children > select {
-      background: transparent;
-      color: var(--color-foreground);
-      border-radius: 1rem;
-      border: solid 1px var(--color-dim);
-      font-size: small;
-    }
   }
 
   .external-nav {
