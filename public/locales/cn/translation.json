@@ -32,11 +32,12 @@
     "text": "但别担心，我们正在努力搭建一个很优的钱包",
     "text2": "在此期间，我们还是建议你下载 Polkadot.js"
   },
-"Install Polkadot.js Extension": "安装 Polkadot.js 插件",
-"Requires Configuration": "需要配置",
-"desktopRequired": {
-  "title": "抱歉！",
-  "subtitle": "此功能暂时仅适用于桌面应用，但我们即将推出移动端适用的版本。",
-  "text": "在此期间你可先访问我们的众贷中心",
-  "primaryCta": "查看众贷"
+  "Install Polkadot.js Extension": "安装 Polkadot.js 插件",
+  "Requires Configuration": "需要配置",
+  "desktopRequired": {
+    "title": "抱歉！",
+    "subtitle": "此功能暂时仅适用于桌面应用，但我们即将推出移动端适用的版本。",
+    "text": "在此期间你可先访问我们的众贷中心",
+    "primaryCta": "查看众贷"
+  }
 }
