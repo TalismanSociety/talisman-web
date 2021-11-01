@@ -1,5 +1,6 @@
 import { Crowdloan } from '@archetypes'
 import { Await, Field, Grid, NoResults } from '@components'
+import { trackGoal } from '@libs/fathom'
 import { device } from '@util/breakpoints'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
@@ -23,8 +24,24 @@ const FilterBar = styled(
     const { t } = useTranslation()
     return (
       <div className={`${className} filterbar`} {...rest}>
-        <Field.Search className="searchbar" value={search} placeholder={t('Search Crowdloans')} onChange={setSearch} />
-        <Field.RadioGroup value={status} onChange={setStatus} options={statusOptions} small />
+        <Field.Search
+          className="searchbar"
+          value={search}
+          placeholder={t('Search Crowdloans')}
+          onChange={(search: any) => {
+            setSearch(search)
+            trackGoal('9XUF7WEB', 1) // crowdloan_search
+          }}
+        />
+        <Field.RadioGroup
+          value={status}
+          onChange={(status: any) => {
+            setStatus(status)
+            trackGoal('0AO7IT2G', 1) // crowdloan_filter
+          }}
+          options={statusOptions}
+          small
+        />
       </div>
     )
   }

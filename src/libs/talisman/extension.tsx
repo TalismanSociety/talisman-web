@@ -1,3 +1,4 @@
+import { trackGoal } from '@libs/fathom'
 import { Signer } from '@polkadot/api/types'
 import { isWeb3Injected, web3Enable } from '@polkadot/extension-dapp'
 import { InjectedProvider } from '@polkadot/extension-inject/types'
@@ -111,10 +112,14 @@ export const Provider = ({ children }: PropsWithChildren<{}>) => {
       if (polkadotJs.provider) setProvider(polkadotJs.provider)
       setSigner(polkadotJs.signer)
 
+      trackGoal('4RJ4JXDB', 1) // wallet_connected_polkadotjs
+
       unsub = polkadotJs.accounts.subscribe(accounts => {
         if (cancelled) return
         setAccounts(accounts)
         setStatus(accounts.length < 1 ? 'NOACCOUNT' : 'OK')
+
+        trackGoal('XNNVIVMR', accounts.length) // total_accounts_polkadotjs
       })
 
       if (cancelled) unsub()
