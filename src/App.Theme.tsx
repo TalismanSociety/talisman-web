@@ -101,6 +101,7 @@ const Style = createGlobalStyle`
     scroll-behavior: smooth;
     font-size: 10px;
     min-height: 100%;
+    height: 100vh;
     font-weight: var(--font-weight-regular);
   }
 
@@ -108,6 +109,10 @@ const Style = createGlobalStyle`
     background: rgb(${({ theme }) => theme?.background});
     color: rgb(${({ theme }) => theme?.foreground});
     font-size: var(--font-size-normal);
+  }
+
+  #root {
+    height: 100%;
   }
 
   h1,
