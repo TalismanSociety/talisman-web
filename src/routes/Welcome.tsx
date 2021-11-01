@@ -295,20 +295,18 @@ const Welcome = styled(({ className }) => {
   )
 })`
   color: var(--color-text);
+  max-width: 1280px;
   display: grid;
-  margin: 15% auto;
   grid-template: auto 1fr / 1fr;
+  place-items: center;
+  margin: auto;
+  height: 100%;
   row-gap: 4rem;
-  padding: 0 2rem;
-
-  @media ${device.lg} {
-    padding: 0 8rem;
-  }
+  padding: 4rem;
 
   @media ${device.xl} {
     grid-template: 1fr / 2fr 1fr;
     column-gap: 4rem;
-    padding: 0 6rem;
   }
 
   .description > * + * {
