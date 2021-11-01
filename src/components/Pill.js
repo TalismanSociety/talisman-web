@@ -44,15 +44,15 @@ const Pill = styled(({ children, className, small, large, primary, secondary, ac
     ${({ primary, theme, onClick }) =>
     !!primary &&
     `
-      background: rgba(${theme?.primary}, 0.2);
-      color: rgb(${theme?.primary});
+      background: var(--color-controlBackground);
+      color: var(--color-foreground);
       box-shadow: none;
       ${
         !!onClick &&
         `
         &:hover{
-          background: rgb(${theme?.primary});
-          color: rgb(${theme?.background});
+          background: var(--color-background);
+          color: var(--color-text);
         }
       `
       }

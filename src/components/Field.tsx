@@ -223,21 +223,24 @@ export const Toggle = styled(({ value = false, className, onChange = () => {}, .
   }
 `
 
-export const RadioGroup = styled(({ value, options = {}, onChange = () => {}, small, className, ...rest }) => (
-  <FieldWrapper type="radiogroup" className={className}>
-    {options.map(option => (
-      <Pill
-        key={option?.key}
-        onClick={() => onChange(option?.key)}
-        secondary
-        active={option?.key === value}
-        small={small}
-      >
-        {option?.value}
-      </Pill>
-    ))}
-  </FieldWrapper>
-))`
+export const RadioGroup = styled(
+  ({ value, options = {}, onChange = () => {}, small, primary, secondary, className, ...rest }) => (
+    <FieldWrapper type="radiogroup" className={className}>
+      {options.map(option => (
+        <Pill
+          key={option?.key}
+          onClick={() => onChange(option?.key)}
+          active={option?.key === value}
+          small={small}
+          primary={primary}
+          secondary={secondary}
+        >
+          {option?.value}
+        </Pill>
+      ))}
+    </FieldWrapper>
+  )
+)`
   .children {
     display: flex;
     gap: 0.25rem;

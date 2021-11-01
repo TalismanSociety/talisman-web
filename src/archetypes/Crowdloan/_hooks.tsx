@@ -56,6 +56,24 @@ const statusOptions = [
   },
 ]
 
+const networkOptions = [
+  {
+    key: 'all',
+    value: 'All',
+    cb: (items: Item[]) => filter(items, item => !!item?.parachainDetails?.id),
+  },
+  {
+    key: 'dot',
+    value: 'Polkadot',
+    cb: (items: Item[]) => filter(items, item => item?.parachainDetails?.id?.toString().slice(0, 1) === '1'),
+  },
+  {
+    key: 'ksm',
+    value: 'Kusama',
+    cb: (items: Item[]) => filter(items, item => item?.parachainDetails?.id?.toString().slice(0, 1) === '2'),
+  },
+]
+
 export const useFilter = () => {
   const { t } = useTranslation('filters')
   const { crowdloans, message, hydrated } = useLatestCrowdloans()
@@ -72,6 +90,7 @@ export const useFilter = () => {
   const [searchFilter, setSearchFilter] = useState('')
   const [orderFilter, setOrderFilter] = useState(orderOptions[0].key)
   const [statusFilter, setStatusFilter] = useState(statusOptions[1].key)
+  const [networkFilter, setNetworkFilter] = useState(networkOptions[0].key)
   const [loading, setLoading] = useState(true)
 
   // do searchy/filtery stuff
@@ -81,11 +100,15 @@ export const useFilter = () => {
     // filter by status
     const byStatus = find(statusOptions, { key: statusFilter })?.cb(items) || []
 
+    // filter by network
+    const networkFilterCb = find(networkOptions, { key: networkFilter })?.cb
+    const byNetwork = !!networkFilterCb ? networkFilterCb(byStatus) : byStatus
+
     // searching
     const bySearch =
       searchFilter !== ''
-        ? byStatus.filter(item => item.parachainDetails?.name.toLowerCase().includes(searchFilter.toLowerCase()))
-        : byStatus
+        ? byNetwork.filter(item => item.parachainDetails?.name.toLowerCase().includes(searchFilter.toLowerCase()))
+        : byNetwork
 
     // ordering
     const orderCallback = find(orderOptions, { key: orderFilter })?.cb
@@ -93,7 +116,7 @@ export const useFilter = () => {
 
     setFilteredItems(byOrder)
     setLoading(false)
-  }, [hydrated, items, orderFilter, searchFilter, statusFilter])
+  }, [hydrated, items, networkFilter, orderFilter, searchFilter, statusFilter])
 
   const filteredCrowdloans = useMemo(() => filteredItems.map(({ crowdloan }) => crowdloan), [filteredItems])
 
@@ -109,15 +132,19 @@ export const useFilter = () => {
       search: searchFilter,
       order: orderFilter,
       status: statusFilter,
+      network: networkFilter,
       setSearch: setSearchFilter,
       setOrder: setOrderFilter,
       setStatus: setStatusFilter,
+      setNetwork: setNetworkFilter,
       orderOptions: orderOptions.map(({ key, value }) => ({ key, value: t(value) })),
       statusOptions: statusOptions.map(({ key, value }) => ({ key, value: t(value) })),
+      networkOptions: networkOptions.map(({ key, value }) => ({ key, value: t(value) })),
       hasFilter: statusFilter !== 'all' || searchFilter !== '',
       reset: () => {
         setSearchFilter('')
         setStatusFilter(statusOptions[0].key)
+        setNetworkFilter(networkOptions[0].key)
       },
     },
   }
