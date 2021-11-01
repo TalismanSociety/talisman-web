@@ -50,7 +50,7 @@ const Index = styled(({ withFilter, className }) => {
 
   return (
     <div className={`crowdloan-index ${className}`}>
-      {/* TODO: Remove for now as no Learn more link yet */}
+      {/* TODO: Remove for now as no Learn more link yet. */}
       {/* <UnlockTalismanBanner /> */}
       {withFilter && <FilterBar {...filterProps} count={count} />}
       <Await until={!loading}>
