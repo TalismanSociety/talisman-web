@@ -5,10 +5,6 @@ type ContentProps = {
   className: React.ReactNode,
 }
 
-const Content = styled(({ children, className }: ContentProps) => <main className={className}>{children}</main>)`
-  display: block;
-  min-height: 100vh;
-  margin: 0 auto;
-`
+const Content = styled(({ children, className }: ContentProps) => <main className={className}>{children}</main>)``
 
 export default Content

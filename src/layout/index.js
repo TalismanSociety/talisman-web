@@ -11,24 +11,9 @@ const Layout = styled(({ children, className }) => (
     <Footer />
   </div>
 ))`
-  overflow-x: hidden;
-
-  > * {
-    position: relative;
-    z-index: 1;
-  }
-
-  > header {
-    z-index: 1000;
-  }
-
-  > main {
-    z-index: 1;
-  }
-
-  > footer {
-    z-index: 999;
-  }
+  display: grid;
+  grid-template: max-content auto max-content / 1fr;
+  height: 100%;
 `
 
 export default Layout
