@@ -30,7 +30,7 @@ const Teaser = styled(({ id, className }) => {
         <Parachain.Asset id={parachainId} type="logo" />
         {totalContribution && (
           <div className="has-contribution">
-            <CheckCircleIcon /> Contributed
+            <CheckCircleIcon /> {t('Contributed')}
           </div>
         )}
         <h1>{parachainDetails?.name}</h1>
