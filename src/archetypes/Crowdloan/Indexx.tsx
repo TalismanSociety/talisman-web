@@ -10,11 +10,14 @@ const FilterBar = styled(
     search = '',
     order = '',
     status = null,
+    network = null,
     setSearch = () => {},
     setOrder = () => {},
     setStatus = () => {},
+    setNetwork = () => {},
     orderOptions = {},
     statusOptions = {},
+    networkOptions = {},
     hasFilter = false,
     reset,
     count,
@@ -33,15 +36,28 @@ const FilterBar = styled(
             trackGoal('9XUF7WEB', 1) // crowdloan_search
           }}
         />
-        <Field.RadioGroup
-          value={status}
-          onChange={(status: any) => {
-            setStatus(status)
-            trackGoal('0AO7IT2G', 1) // crowdloan_filter
-          }}
-          options={statusOptions}
-          small
-        />
+        <div className="filters">
+          <Field.RadioGroup
+            value={status}
+            onChange={(status: any) => {
+              setStatus(status)
+              trackGoal('0AO7IT2G', 1) // crowdloan_filter
+            }}
+            options={statusOptions}
+            small
+            secondary
+          />
+          <Field.RadioGroup
+            value={network}
+            onChange={(network: any) => {
+              setNetwork(network)
+              trackGoal('0AO7IT2G', 1) // crowdloan_filter
+            }}
+            options={networkOptions}
+            small
+            primary
+          />
+        </div>
       </div>
     )
   }
@@ -58,6 +74,14 @@ const FilterBar = styled(
     @media ${device.lg} {
       width: auto;
     }
+  }
+
+  .filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: space-between;
+    width: 100%;
   }
 `
 
