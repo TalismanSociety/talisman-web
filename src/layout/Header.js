@@ -36,7 +36,6 @@ const mainRoutes = [
     url: '/crowdloans',
     icon: <CrowdloansLogo alt="Crowdloans" />,
   },
-  { name: 'Buy DOT/KSM', url: '/buy', icon: <PortfolioLogo alt="Portfolio" /> },
 ]
 
 const subRoutes = [
@@ -186,6 +185,13 @@ const Header = styled(({ className, isMobile, mobileMenuOpen, dispatch }) => {
     display: flex;
     align-items: center;
     gap: 1rem;
+    margin: 1rem 0;
+
+    button {
+      border-radius: 1rem;
+      height: 100%;
+      font-size: small;
+    }
   }
 
   .external-nav {
@@ -233,11 +239,8 @@ const Header = styled(({ className, isMobile, mobileMenuOpen, dispatch }) => {
     cursor: pointer;
     background: var(--color-activeBackground);
     padding: 1.25rem;
-    margin: 1.5rem 0;
     border-radius: 1rem;
     transition: all 0.15s ease-in-out;
-    height: 4.2rem;
-    width: 4.2rem;
   }
   .mobile-nav {
     display: grid;
