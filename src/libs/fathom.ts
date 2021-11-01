@@ -21,7 +21,13 @@ export function enableTrackingForMe() {
 function getFathom(): any {
   if (typeof (window as any).fathom === 'undefined') {
     console.error('Unable to track action via fathom: window.fathom is undefined')
-    return
+    return {
+      trackPageview: () => {},
+      trackGoal: () => {},
+      trackEvent: () => {},
+      blockTrackingForMe: () => {},
+      enableTrackingForMe: () => {},
+    }
   }
   return (window as any).fathom
 }
