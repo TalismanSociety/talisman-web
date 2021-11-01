@@ -137,7 +137,7 @@ export const Search = styled(({ value, className, onChange = () => {}, ...rest }
 ))`
   .children {
     [type='text'] {
-      background: var(--color-activeBackground);
+      background: var(--color-controlBackground);
     }
     .suffix {
       svg {
@@ -229,7 +229,7 @@ export const RadioGroup = styled(({ value, options = {}, onChange = () => {}, sm
       <Pill
         key={option?.key}
         onClick={() => onChange(option?.key)}
-        primary
+        secondary
         active={option?.key === value}
         small={small}
       >
@@ -240,14 +240,15 @@ export const RadioGroup = styled(({ value, options = {}, onChange = () => {}, sm
 ))`
   .children {
     display: flex;
+    gap: 0.25rem;
     box-shadow: none;
     overflow: visible;
     &:hover {
       box-shadow: none;
     }
 
-    .pill + .pill {
-      margin-left: 0.6em;
-    }
+    background: var(--color-controlBackground);
+    padding: 0.25rem;
+    border-radius: 1.5rem;
   }
 `
