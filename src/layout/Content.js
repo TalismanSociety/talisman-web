@@ -8,7 +8,6 @@ type ContentProps = {
 const Content = styled(({ children, className }: ContentProps) => <main className={className}>{children}</main>)`
   display: block;
   min-height: 100vh;
-  max-width: 1280px;
   margin: 0 auto;
 `
 

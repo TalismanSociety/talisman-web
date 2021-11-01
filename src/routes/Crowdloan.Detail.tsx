@@ -69,8 +69,9 @@ const CrowdloanDetail = styled(({ className }) => {
 
   > .content {
     width: 100%;
-    max-width: calc(115.4rem + 10vw);
+    max-width: 1280px;
     margin: 0 auto;
+
     padding: 0 5vw;
     display: flex;
     justify-content: space-between;
