@@ -23,7 +23,10 @@ const _Wallet = styled(({ className }) => {
 })`
   width: 100%;
   max-width: 1280px;
-  margin: 6rem auto;
+  margin: 3rem auto;
+  @media ${device.xl} {
+    margin: 6rem auto;
+  }
   padding: 0 2.4rem;
 
   > * + * {
