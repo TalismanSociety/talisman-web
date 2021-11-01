@@ -10,6 +10,7 @@ import { ReactComponent as SwapLogo } from '@assets/icons/swap.svg'
 import { ReactComponent as TwitterMobileLogo } from '@assets/icons/twitter-mobile.svg'
 import { Button } from '@components'
 import Menu from '@components/Menu'
+import { trackGoal } from '@libs/fathom'
 import { useExtension } from '@libs/talisman'
 import { device } from '@util/breakpoints'
 import { buyNow } from '@util/fiatOnRamp'
@@ -42,16 +43,33 @@ const subRoutes = [
   {
     name: 'Request Features',
     url: 'https://talisman.canny.io/feature-requests',
+    trackingCode: 'RMSKIY4Q', // bounce_feature_requests
     icon: <SwapLogo alt="Request Features" />,
   },
-  { name: 'GitHub', url: 'https://github.com/talismansociety', icon: <GithubMobileLogo alt="GitHub" /> },
+  {
+    name: 'GitHub',
+    url: 'https://github.com/talismansociety',
+    trackingCode: 'CG0L6VIJ', // bounce_github
+    icon: <GithubMobileLogo alt="GitHub" />,
+  },
   {
     name: 'Discord',
     url: 'https://discord.gg/rQgTD9SGtU',
+    trackingCode: '00L5TXCI', // bounce_discord
     icon: <DiscordMobileLogo alt="Discord" />,
   },
-  { name: 'Twitter', url: 'https://twitter.com/wearetalisman', icon: <TwitterMobileLogo alt="Twitter" /> },
-  { name: 'Medium', url: 'https://medium.com/we-are-talisman', icon: <MediumMobileLogo alt="Medium" /> },
+  {
+    name: 'Twitter',
+    url: 'https://twitter.com/wearetalisman',
+    trackingCode: 'NMVPOOER', // bounce_twitter
+    icon: <TwitterMobileLogo alt="Twitter" />,
+  },
+  {
+    name: 'Medium',
+    url: 'https://medium.com/we-are-talisman',
+    trackingCode: 'Y1JQOEBW', // bounce_medium
+    icon: <MediumMobileLogo alt="Medium" />,
+  },
 ]
 
 const Header = styled(({ className, isMobile, mobileMenuOpen, dispatch }) => {
@@ -104,7 +122,12 @@ const Header = styled(({ className, isMobile, mobileMenuOpen, dispatch }) => {
                 {subRoutes.map(route => {
                   return (
                     <li key={route.name}>
-                      <a href={route.url} target="_blank" rel="noreferrer noopener">
+                      <a
+                        href={route.url}
+                        target="_blank"
+                        rel="noreferrer noopener"
+                        onClick={route.trackingCode ? () => trackGoal(route.trackingCode, 1) : undefined}
+                      >
                         <span>{t(route.name)}</span>
                         {route.icon}
                       </a>

@@ -1,3 +1,4 @@
+import { trackGoal } from '@libs/fathom'
 import { ApiPromise, WsProvider } from '@polkadot/api'
 import { web3FromAddress } from '@polkadot/extension-dapp'
 import type { BalanceOf } from '@polkadot/types/interfaces'
@@ -255,6 +256,11 @@ export function useCrowdloanContribute(
       setError(t('Failed to submit transaction'))
       return
     }
+
+    const { tokenDecimals } = chaindata
+    const contributionPlanck = tokensToPlanck(contributionAmount, tokenDecimals)
+    trackGoal('GTVDUALL', 1) // crowdloan_contribute
+    trackGoal('WQGRJ9OC', parseInt(contributionPlanck, 10)) // crowdloan_contribute_amount
 
     setStatus(txStatus)
   }, [account, apiPromise, chaindata, contributionAmount, ksmBalance, parachainId, signature, status, t])

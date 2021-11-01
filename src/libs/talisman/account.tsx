@@ -1,3 +1,4 @@
+import { trackGoal } from '@libs/fathom'
 import { useExtension } from '@libs/talisman'
 import {
   PropsWithChildren,
@@ -70,6 +71,7 @@ export const Provider = ({ children }: PropsWithChildren<{}>) => {
     address => {
       const accountIndex = accounts.findIndex(account => account.address === address)
       setActiveAccountIndex(accountIndex)
+      trackGoal('KIPBMS1X', 1) // switch_accounts
     },
     [accounts]
   )
