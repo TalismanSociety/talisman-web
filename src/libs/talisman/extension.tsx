@@ -79,10 +79,11 @@ export const Provider = ({ children }: PropsWithChildren<{}>) => {
   const connect = useCallback(() => {
     setStatus(status => (status === 'DISCONNECTED' ? 'LOADING' : status))
     setShouldConnect(true)
+    localStorage.setItem('talisman-wallet-connected', 'true')
   }, [])
 
   useEffect(() => {
-    if (!shouldConnect) {
+    if (!shouldConnect && !localStorage.getItem('talisman-wallet-connected')) {
       setStatus('DISCONNECTED')
       return
     }
@@ -118,6 +119,10 @@ export const Provider = ({ children }: PropsWithChildren<{}>) => {
         if (cancelled) return
         setAccounts(accounts)
         setStatus(accounts.length < 1 ? 'NOACCOUNT' : 'OK')
+
+        if (!localStorage.getItem('talisman-wallet-connected') && accounts.length < 1) {
+          localStorage.setItem('talisman-wallet-connected', 'true')
+        }
 
         trackGoal('XNNVIVMR', accounts.length) // total_accounts_polkadotjs
       })
