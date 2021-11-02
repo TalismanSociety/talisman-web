@@ -24,4 +24,4 @@ The Talisman Web Application front-end is a MVP UI built in React, using the fol
 `REACT_APP_APPLICATION_NAME=MyApplicationName` provide a name for the application, used in configuring the web3 object. Should be unique to the environment.  
 `REACT_APP_DEFAULT_CHAIN_ID=0` select a chain ID to use. [options](https://wiki.polkadot.network/docs/build-ss58-registry)
 
-`RAMP_API_KEY=the-api-key` provide the Ramp API key for the specific environment.
+`REACT_APP_RAMP_API_KEY=the-api-key` provide the Ramp API key for the specific environment.
