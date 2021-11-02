@@ -2,7 +2,7 @@ import { device } from '@util/breakpoints'
 import styled from 'styled-components'
 
 interface BannerProps {
-  backgroundImage: string
+  backgroundImage?: string
 }
 
 export const Banner = styled.aside<BannerProps>`
@@ -12,7 +12,13 @@ export const Banner = styled.aside<BannerProps>`
     padding: 3rem;
   }
   border-radius: 1.6rem;
-  background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('${props => props.backgroundImage}');
+  background: ${props => `
+    ${
+      props.backgroundImage
+        ? `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('${props => props.backgroundImage}');`
+        : `var(--color-controlBackground);`
+    }
+  `}
   background-position: 50%;
   background-size: cover;
   color: var(--color-text);

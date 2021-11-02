@@ -39,5 +39,6 @@
     "subtitle": "This feature is currently only available on desktop, but we will be launching mobile-friendly version soon.",
     "text": "In the meantime feel free to check out our Crowdloans dashboard",
     "primaryCta": "View Crowdloans"
-  }
+  },
+  "No wallet found": "No wallet found"
 }
