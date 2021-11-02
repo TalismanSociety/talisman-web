@@ -3,9 +3,9 @@
   "A parachain must be selected": "请选择平行链",
   "Please enter an amount of KSM": "请输入 KSM 数量",
   "Please enter a valid amount of KSM": "请输入有效的 KSM 数量",
-  "An account must be selected": "必须选择账号",
-  "Account balance not ready yet": "账号余额未准备好",
-  "A minimum of {{minimum}} KSM is required": "需要最少 {{minimum}} KSM 的数量",
+  "An account must be selected": "必须选择一个账号",
+  "Account balance not ready yet": "账号余额不足",
+  "A minimum of {{minimum}} KSM is required": "最低需要 {{minimum}} KSM",
   "Failed to submit transaction: account balance too low": "交易提交失败：账户余额不足",
   "Failed to submit transaction": "交易提交失败"
 }
