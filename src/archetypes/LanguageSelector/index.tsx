@@ -1,12 +1,13 @@
 import { Field } from '@components'
+import { StyledLoader } from '@components/Await'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 export const LanguageSelector = styled(({ className }) => {
-  const { i18n } = useTranslation('languages')
+  const { i18n, ready } = useTranslation('languages', { useSuspense: false })
   const changeLanguage = (language: string) => i18n?.changeLanguage(language)
-  if (!i18n?.languages) {
-    return null
+  if (!ready) {
+    return <StyledLoader />
   }
   return (
     <Field.Select
