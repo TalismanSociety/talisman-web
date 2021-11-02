@@ -243,21 +243,28 @@ const Dropdown = styled(
 const Unavailable = styled(({ className }) => {
   const { t } = useTranslation()
   return (
-    <Button
-      className={`account-button ${className}`}
-      small
-      primary
-      onClick={() =>
-        window.open(
-          'https://chrome.google.com/webstore/detail/polkadot%7Bjs%7D-extension/mopnmbcafieddcagagdcbnhejhlodfdd',
-          '_blank'
-        )
-      }
-    >
-      {t('Install Polkadot.js Extension')}
-    </Button>
+    <div className={className}>
+      <span className="icon">
+        <AlertCircle />
+      </span>
+      <span>{t('No wallet found')}</span>
+    </div>
   )
-})``
+})`
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  border-radius: 1.5rem;
+  padding: 1rem 2.5rem 1rem 1.5rem;
+  background: var(--color-controlBackground);
+
+  .icon {
+    padding: 0.75rem;
+    border-radius: 12rem;
+    background: var(--color-activeBackground);
+    display: flex;
+  }
+`
 
 const NoAccount = styled(({ className }) => {
   const { t } = useTranslation()

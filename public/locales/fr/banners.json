@@ -23,5 +23,10 @@
     "header": "Révélez le Talisman",
     "description": "Contribuez à n'importe quelle Crowdloan et recevez une “Clé Spirituelle”, vous en aurez besoin plus tard...",
     "primaryCta": "En savoir plus"
+  },
+  "noWallet": {
+    "header": "Oh non!",
+    "description": "Il ne semble pas que vous ayez installé une extension de portefeuille. Nous vous recommandons de télécharger Polkadot.js",
+    "primaryCta": "Télécharger Polkadot.js"
   }
 }
