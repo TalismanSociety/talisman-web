@@ -51,7 +51,7 @@ const Pill = styled(({ children, className, small, large, primary, secondary, ac
         !!onClick &&
         `
         &:hover{
-          background: var(--color-background);
+          background: var(--color-activeBackground);
           color: var(--color-text);
         }
       `
