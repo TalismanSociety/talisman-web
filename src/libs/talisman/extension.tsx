@@ -134,6 +134,7 @@ export const Provider = ({ children }: PropsWithChildren<{}>) => {
   useEffect(() => {
     const recheckStatuses = ['UNAVAILABLE', 'UNAUTHORIZED']
     if (!recheckStatuses.includes(status)) return
+    if (localStorage.getItem('talisman-disable-extension-status-polling') === 'true') return
 
     const intervalId = setInterval(recheck, 1000)
     return () => clearInterval(intervalId)
