@@ -43,7 +43,7 @@ const CrowdloanItem = styled(({ id, className }) => {
   useTaggedAmountsInPortfolio(portfolioAmounts)
 
   return (
-    <div className={className}>
+    <div className={`${className} ${id}`}>
       <span className="left">
         <Info title={name} subtitle={longName || name} graphic={<ChainLogo chain={chain} type="logo" size={4} />} />
       </span>
