@@ -1,15 +1,12 @@
 import { RampInstantSDK } from '@ramp-network/ramp-instant-sdk'
 
-const STAGING_RAMP_API_KEY = 'y3asdf899w5xcnxguzas93uwg86dcxz54xaogyt9'
-const STAGING_RAMP_URL = 'https://ri-widget-staging.firebaseapp.com'
-
 export function buyNow() {
   const widget = new RampInstantSDK({
-    hostAppName: process.env.REACT_APP_APPLICATION_NAME || 'Talisman',
+    hostAppName: process.env.REACT_APP_APPLICATION_NAME || 'Talisman Default Name',
     hostLogoUrl: 'https://pbs.twimg.com/profile_images/1433018747762085891/ZATzx-HG_400x400.jpg',
-    hostApiKey: process.env.RAMP_API_KEY || STAGING_RAMP_API_KEY,
+    hostApiKey: process.env.RAMP_API_KEY,
     defaultAsset: 'DOT',
-    url: process.env.RAMP_URL || STAGING_RAMP_URL,
+    url: process.env.RAMP_URL,
   })
 
   if (widget) {
