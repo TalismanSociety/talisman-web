@@ -23,5 +23,10 @@
     "header": "Unlock the Talisman",
     "description": "Contribute to any Crowdloan and receive a Spirit Key, you’ll need it later...",
     "primaryCta": "Learn more"
+  },
+  "noWallet": {
+    "header": "Oh no!",
+    "description": "It doesnt look like you’ve got a wallet extension installed. We recommend downloading Polkadot.js",
+    "primaryCta": "Download Polkadot.js"
   }
 }

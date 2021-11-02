@@ -39,5 +39,6 @@
     "subtitle": "Cette fonctionnalité n'est actuellement disponible que sur ordinateur, mais nous lancerons bientôt une version adaptée aux mobiles.",
     "text": "En attendant, n'hésitez pas à consulter notre tableau de bord des Crowdloans",
     "primaryCta": "Voir les Crowdloans"
-  }
+  },
+  "No wallet found": "Aucun portefeuille trouvé"
 }
