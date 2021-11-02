@@ -7,13 +7,13 @@
   },
   "success": {
     "header": "交易成功",
-    "description": "你的交易已成功，感谢您的贡献！",
+    "description": "您的交易已成功，感谢您的贡献！",
     "primaryCta": "查看 Subscan",
     "secondaryCta": "查看投资组合"
   },
   "failed": {
     "header": "交易失败",
-    "description": "您的交易没有成功。",
+    "description": "您的交易失败。",
     "primaryCta": "查看 Subscan",
     "secondaryCta": "关闭"
   }
