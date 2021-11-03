@@ -70,12 +70,15 @@ const subRoutes = [
     trackingCode: 'Y1JQOEBW', // bounce_medium
     icon: <MediumMobileLogo alt="Medium" />,
   },
+]
+
+const smolLinks = [
   {
-    name: 'Terms of Service',
+    name: 'Terms of use',
     url: 'https://glib-calendula-bf6.notion.site/Terms-of-use-6ac8a57691a946f0b4805c34b26be2b9',
   },
   {
-    name: 'Privacy Policy',
+    name: 'Privacy policy',
     url: 'https://glib-calendula-bf6.notion.site/Privacy-policy-e82e4b901d814f46bf04f4472b6d6e91',
   },
 ]
@@ -142,6 +145,22 @@ const Header = styled(({ className, isMobile, mobileMenuOpen, dispatch }) => {
                     </li>
                   )
                 })}
+                <div className="smol-links">
+                  {smolLinks.map(route => {
+                    return (
+                      <a
+                        key={route.name}
+                        href={route.url}
+                        target="_blank"
+                        rel="noreferrer noopener"
+                        onClick={route.trackingCode ? () => trackGoal(route.trackingCode, 1) : undefined}
+                      >
+                        <span>{t(route.name)}</span>
+                        {route.icon}
+                      </a>
+                    )
+                  })}
+                </div>
               </ul>
             </motion.nav>
           </AnimatePresence>
@@ -222,6 +241,19 @@ const Header = styled(({ className, isMobile, mobileMenuOpen, dispatch }) => {
       border-radius: 1rem;
       height: 100%;
       font-size: small;
+    }
+  }
+
+  .smol-links {
+    display: flex;
+    font-size: var(--font-size-xsmall);
+    align-items: center;
+    padding: 1rem 1.5rem;
+    color: var(--color-dim);
+
+    > * + * :before {
+      content: '•';
+      margin: 0 1rem;
     }
   }
 
