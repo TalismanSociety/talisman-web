@@ -2697,6 +2697,7 @@ __metadata:
     react-router: ^5.2.0
     react-router-dom: ^5.2.0
     react-scripts: 4.0.3
+    safety-match: ^0.4.4
     styled-components: ^5.3.0
     typescript: ^4.1.2
     web-vitals: ^1.0.1
@@ -14286,6 +14287,13 @@ resolve@1.18.1:
   version: 2.1.2
   resolution: "safer-buffer@npm:2.1.2"
   checksum: cab8f25ae6f1434abee8d80023d7e72b598cf1327164ddab31003c51215526801e40b66c5e65d658a0af1e9d6478cadcb4c745f4bd6751f97d8644786c0978b0
+  languageName: node
+  linkType: hard
+
+"safety-match@npm:^0.4.4":
+  version: 0.4.4
+  resolution: "safety-match@npm:0.4.4"
+  checksum: 6bfc4c620361b37296ae0a7241a9fb28eaa3fb6b4c1bc2c7483b081d44d04329c7a7bde21fb9fa557032be4c7daae8c97355ea7522522097f48af086ed6ac03f
   languageName: node
   linkType: hard
 

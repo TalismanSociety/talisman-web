@@ -76,7 +76,7 @@ const networkOptions = [
 
 export const useFilter = () => {
   const { t } = useTranslation('filters')
-  const { crowdloans, message, hydrated } = useLatestCrowdloans()
+  const { crowdloans, hydrated } = useLatestCrowdloans()
   const { parachains } = useParachainsDetailsIndexedById()
   const items = useMemo(
     () =>
@@ -123,7 +123,6 @@ export const useFilter = () => {
   return {
     crowdloans: filteredCrowdloans,
     loading,
-    message,
     count: {
       total: crowdloans?.length,
       filtered: filteredItems?.length,

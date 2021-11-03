@@ -1,9 +1,15 @@
-import { gql } from '@apollo/client'
+import {
+  ApolloClient,
+  ApolloQueryResult,
+  InMemoryCache,
+  NormalizedCacheObject,
+  createHttpLink,
+  gql,
+} from '@apollo/client'
 import { find, get } from 'lodash'
 import { FC, useContext as _useContext, createContext, useEffect, useMemo, useState } from 'react'
 
-import { useQuery } from './'
-import { CrowdloanDetails, crowdloanDetails } from './util/_config'
+import { CrowdloanDetails, crowdloanDetails, relayChainsChaindata } from './util/_config'
 
 const AllCrowdloans = gql`
   {
@@ -62,6 +68,7 @@ export type Crowdloan = {
   }
 
   // custom fields
+  relayChainId: number
   percentRaised: number
   details: CrowdloanDetails
   uiStatus: 'active' | 'capped' | 'winner' | 'ended'
@@ -69,10 +76,6 @@ export type Crowdloan = {
 
 type ContextProps = {
   crowdloans: Crowdloan[]
-  called: boolean
-  loading: boolean
-  status: any
-  message: any
   hydrated: boolean
 }
 
@@ -87,37 +90,31 @@ function useContext() {
 
 export const useCrowdloans = () => useContext()
 
-const useFindCrowdloan = (
-  key: string,
-  value: any
-): { crowdloan?: Crowdloan; status: any; message: any; hydrated: boolean } => {
-  const { crowdloans, status, message, hydrated } = useCrowdloans()
+const useFindCrowdloan = (key: string, value: any): { crowdloan?: Crowdloan; hydrated: boolean } => {
+  const { crowdloans, hydrated } = useCrowdloans()
 
   const crowdloan = useMemo(
     () => find(crowdloans, crowdloan => get(crowdloan, key) === value),
     [crowdloans, key, value]
   )
 
-  return { crowdloan, status, message, hydrated }
+  return { crowdloan, hydrated }
 }
 
-const useFindCrowdloans = (
-  key: string,
-  value: any
-): { crowdloans: Crowdloan[]; status: any; message: any; hydrated: boolean } => {
-  const { crowdloans, status, message, hydrated } = useCrowdloans()
+const useFindCrowdloans = (key: string, value: any): { crowdloans: Crowdloan[]; hydrated: boolean } => {
+  const { crowdloans, hydrated } = useCrowdloans()
 
   const crowdloansFiltered = useMemo(
     () => crowdloans.filter(crowdloan => get(crowdloan, key) === value),
     [crowdloans, key, value]
   )
 
-  return { crowdloans: crowdloansFiltered, status, message, hydrated }
+  return { crowdloans: crowdloansFiltered, hydrated }
 }
 
 // only returns one (the most recent) crowdloan per parachain
-export const useLatestCrowdloans = (): { crowdloans: Crowdloan[]; status: any; message: any; hydrated: boolean } => {
-  const { crowdloans, status, message, hydrated } = useCrowdloans()
+export const useLatestCrowdloans = (): { crowdloans: Crowdloan[]; hydrated: boolean } => {
+  const { crowdloans, hydrated } = useCrowdloans()
 
   const crowdloansFiltered = useMemo(() => {
     const foundParachainIds: { [key: string]: boolean } = {}
@@ -128,7 +125,7 @@ export const useLatestCrowdloans = (): { crowdloans: Crowdloan[]; status: any; m
     })
   }, [crowdloans])
 
-  return { crowdloans: crowdloansFiltered, status, message, hydrated }
+  return { crowdloans: crowdloansFiltered, hydrated }
 }
 
 export const useCrowdloanById = (id?: string) => useFindCrowdloan('id', id)
@@ -137,7 +134,7 @@ export const useCrowdloanByParachainId = (id?: number) => useFindCrowdloan('para
 export const useCrowdloansByParachainId = (id?: number) => useFindCrowdloans('parachain.paraId', id)
 
 export const useCrowdloanAggregateStats = () => {
-  const { crowdloans, status, message } = useCrowdloans()
+  const { crowdloans, hydrated } = useCrowdloans()
   const [raised, setRaised] = useState<number>(0)
   const [projects, setProjects] = useState<number>(0)
   const [contributors /*, setContributors */] = useState<number>(0)
@@ -152,48 +149,82 @@ export const useCrowdloanAggregateStats = () => {
     raised,
     projects,
     contributors,
-    status,
-    message,
+    hydrated,
   }
 }
 
 export const Provider: FC = ({ children }) => {
-  const { data, called, loading, status, message } = useQuery(AllCrowdloans)
+  const [crowdloanResults, setCrowdloanResults] = useState<Array<[number, ApolloQueryResult<any> | null]>>([])
+  useEffect(() => {
+    // create an apollo client for each relaychain
+    const relayChainClients = relayChainsChaindata.map(
+      ({ id, subqueryCrowdloansUrl }) =>
+        [
+          id,
+          new ApolloClient({
+            link: createHttpLink({ uri: subqueryCrowdloansUrl }),
+            cache: new InMemoryCache(),
+            fetchOptions: {
+              mode: 'no-cors',
+            },
+            headers: {
+              'Content-Type': 'application/json',
+              'Access-Control-Allow-Origin': '*',
+              'Access-Control-Allow-Credentials': true,
+            },
+          }),
+        ] as [number, ApolloClient<NormalizedCacheObject>]
+    )
+
+    // query crowdloans on each relay chain
+    const relayChainCrowdloans = relayChainClients.map(([_id, client]) => client.query({ query: AllCrowdloans }))
+
+    // extract results and store in state with relayChainId
+    Promise.allSettled(relayChainCrowdloans).then(results =>
+      setCrowdloanResults(
+        results.map((result, resultIndex) => [
+          relayChainClients[resultIndex][0], // relayChainId
+          result.status === 'fulfilled' ? result.value : null, // result data
+        ])
+      )
+    )
+  }, [])
 
   const crowdloans = useMemo<Crowdloan[]>(
     () =>
-      (data || []).map(
-        (crowdloan: any): Crowdloan => ({
-          ...crowdloan,
-          raised: crowdloan.raised / 1e12,
-          cap: crowdloan.cap / 1e12,
+      crowdloanResults.flatMap(([relayChainId, result]) =>
+        (result?.data?.crowdloans?.nodes || []).map(
+          (crowdloan: any): Crowdloan => ({
+            ...crowdloan,
+            raised: crowdloan.raised / 1e12,
+            cap: crowdloan.cap / 1e12,
 
-          percentRaised: (100 / (crowdloan.cap / 1e12)) * (crowdloan.raised / 1e12),
-          details: find(crowdloanDetails, { paraId: crowdloan.parachain.paraId }),
-          uiStatus:
-            crowdloan.wonAuctionId !== null
-              ? 'winner'
-              : crowdloan.status === 'Started' &&
-                ((100 / (crowdloan.cap / 1e12)) * (crowdloan.raised / 1e12)).toFixed(2) === '100.00'
-              ? 'capped'
-              : crowdloan.status === 'Started'
-              ? 'active'
-              : 'ended',
-        })
+            relayChainId,
+            percentRaised: (100 / (crowdloan.cap / 1e12)) * (crowdloan.raised / 1e12),
+            details: find(crowdloanDetails, { paraId: crowdloan.parachain.paraId }),
+            uiStatus:
+              crowdloan.wonAuctionId !== null
+                ? 'winner'
+                : crowdloan.status === 'Started' &&
+                  ((100 / (crowdloan.cap / 1e12)) * (crowdloan.raised / 1e12)).toFixed(2) === '100.00'
+                ? 'capped'
+                : crowdloan.status === 'Started'
+                ? 'active'
+                : 'ended',
+          })
+        )
       ),
-    [data]
+    [crowdloanResults]
   )
+
+  const hydrated = crowdloanResults.length > 0
 
   const value = useMemo(
     () => ({
       crowdloans,
-      loading,
-      status,
-      message,
-      called,
-      hydrated: called === true && loading === false,
+      hydrated,
     }),
-    [crowdloans, loading, status, message, called]
+    [crowdloans, hydrated]
   )
 
   return <Context.Provider value={value}>{children}</Context.Provider>

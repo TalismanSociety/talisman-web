@@ -1,3 +1,20 @@
+export type RelayChaindata = { id: number; name: string; subscanUrl: string; subqueryCrowdloansUrl: string }
+export const relayChainsChaindata: RelayChaindata[] = [
+  {
+    id: 0,
+    name: 'Polkadot',
+    subscanUrl: 'https://polkadot.subscan.io',
+    // subqueryCrowdloansUrl: 'https://api.subquery.network/sq/TalismanSociety/polkadot-crowdloans__VGFsa',
+    subqueryCrowdloansUrl: 'https://api.subquery.network/sq/TalismanSociety/polkatrain-crowdloans__VGFsa',
+  },
+  {
+    id: 2,
+    name: 'Kusama',
+    subscanUrl: 'https://kusama.subscan.io',
+    subqueryCrowdloansUrl: 'https://api.subquery.network/sq/TalismanSociety/kusama-crowdloans',
+  },
+]
+
 export const statusOptions = {
   INITIALIZED: 'INITIALIZED',
   PROCESSING: 'PROCESSING',
@@ -74,6 +91,15 @@ export const parachainDetails: ParachainDetails[] = [
       Medium: 'https://medium.com/bifrost-finance',
       Github: 'https://github.com/bifrost-finance',
     },
+  },
+  {
+    id: 2002,
+    name: 'Moonbeam testnet',
+    slug: 'moonbeam-testnet',
+    token: 'MVN',
+    subtitle: '',
+    info: '',
+    links: {},
   },
   {
     id: 2004,

@@ -2,13 +2,13 @@ import { Account, Parachain } from '@archetypes'
 import { ReactComponent as CheckCircle } from '@assets/icons/check-circle.svg'
 import { ReactComponent as XCircle } from '@assets/icons/x-circle.svg'
 import { Button, DesktopRequired, Field, MaterialLoader, Pendor, useModal } from '@components'
-import { useCrowdloanContribute } from '@libs/crowdloans'
+import { ContributeEvent, useCrowdloanContribute } from '@libs/crowdloans'
 import { useActiveAccount, useCrowdloanById, useParachainDetailsById } from '@libs/talisman'
 import { useTokenPrice } from '@libs/tokenprices'
 import { multiplyBigNumbers } from '@talismn/util'
 import { isMobileBrowser } from '@util/helpers'
-import { formatCurrency, truncateString } from '@util/helpers'
-import { useCallback, useMemo, useState } from 'react'
+import { formatCurrency, shortNumber, truncateString } from '@util/helpers'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
@@ -40,11 +40,25 @@ export default function Contribute({ className, id }: ContributeProps) {
   const { address } = useActiveAccount()
   const [verifier, setVerifier] = useState()
 
-  const { contribute, status, explorerUrl, txFee, error } = useCrowdloanContribute(
-    crowdloan?.parachain?.paraId,
-    contributionAmount,
-    address
+  const { status, explorerUrl, txFee, error } = {
+    // contribute: () => {},
+    status: null,
+    explorerUrl: null,
+    txFee: null,
+    error: null,
+  }
+  const [contributeState, dispatch] = useCrowdloanContribute()
+
+  useMemo(
+    () => console.log(`ContributeState.${contributeState.variant}\n${JSON.stringify(contributeState.data, null, 2)}`),
+    [contributeState]
   )
+
+  useEffect(() => {
+    dispatch(ContributeEvent.initialize({ relayChainId: 0, parachainId: 2001 }))
+  }, [dispatch])
+
+  const contribute = useMemo(() => () => dispatch(ContributeEvent.contribute), [dispatch])
 
   const modalState = useMemo(() => {
     if (status === 'SUCCESS') return 'Success'
@@ -139,7 +153,7 @@ const ContributeTo = styled(
                 <Pendor prefix={!usd && '-'} require={!priceLoading}>
                   {usd && truncateString(formatCurrency(usd), '$9,999,999,999.99'.length)}
                 </Pendor>
-                {error && <span className="error">{error}</span>}
+                {error && <span className="error">{t(error.i18nCode, error.vars)}</span>}
               </div>
             </div>
             <div className="switcher-column">
