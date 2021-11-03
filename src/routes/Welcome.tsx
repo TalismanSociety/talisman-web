@@ -205,7 +205,7 @@ const TermsOfService = styled(({ className }) => {
           target="_blank"
           rel="noreferrer noopener"
         >
-          Terms of Service
+          Terms of use
         </a>
       </Trans>
     </span>
