@@ -1,0 +1,44 @@
+{
+  "Portfolio value": "Стоимость портфеля",
+  "Assets": "Активы",
+  "All Accounts": "Все учетные записи",
+  "Crowdloans": "Краудзаймы",
+  "Staking": "Ставки",
+  "This door will be unlocked soon": "Эта дверь скоро будет открыта",
+  "You have not contributed to any Crowdloans": "Вы не участвовали ни в каком краудзайме",
+  "Summoning Crowdloan Contributions...": "Привлечение вкладов краудзаймов ...",
+  "Search Crowdloans": "Поиск краудзаймов",
+  "Raised": "Собрано",
+  "Ends in": "Окончание",
+  "Contribute": "Внести вклад",
+  "Contributed": "Внесено",
+  "Rewards": "Награды",
+  "Cancel": "Отменить",
+  "Contribute to": "Внести вклад",
+  "Sort by": "Сортировать по",
+  "noResult": {
+    "title": "Извините",
+    "subtitle": "Талисман не может вызвать то, что вы хотите.",
+    "text": "Попробуйте что-нибудь еще."
+  },
+  "You have no": "У вас нет",
+  "Buy": "Купить",
+  "Fee": "Плата",
+  "Add {{asset}} Balance": "Пополнить баланс {{актив}}",
+  "Unavailable": "Недоступно",
+  "extensionUnavailable": {
+    "title": "О нет!",
+    "subtitle": "Не похоже, что у вас установлено расширение кошелька.",
+    "text": "Не волнуйтесь, мы сейчас создаем действительно хорошее расширение,",
+    "text2": "а пока мы рекомендуем скачать Polkadot.js"
+  },
+  "Install Polkadot.js Extension": "Установите расширение Polkadot.js",
+  "Requires Configuration": "Требуется конфигурация",
+  "desktopRequired": {
+    "title": "Извините!",
+    "subtitle": "Эта функция в настоящее время доступна только на настольных компьютерах, но мы скоро запустим версию для мобильных устройств.",
+    "text": "А пока не стесняйтесь проверить нашу панель управления Crowdloans",
+    "primaryCta": "Просмотр Crowdloans"
+  },
+  "No wallet found": "Кошелек не найден"
+}
