@@ -15,7 +15,7 @@ export const Banner = styled.aside<BannerProps>`
   background: ${props => `
     ${
       props.backgroundImage
-        ? `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('${props => props.backgroundImage}');`
+        ? `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('${props.backgroundImage}');`
         : `var(--color-controlBackground);`
     }
   `}
