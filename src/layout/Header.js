@@ -70,12 +70,15 @@ const subRoutes = [
     trackingCode: 'Y1JQOEBW', // bounce_medium
     icon: <MediumMobileLogo alt="Medium" />,
   },
+]
+
+const smolLinks = [
   {
-    name: 'Terms of Service',
+    name: 'Terms of use',
     url: 'https://glib-calendula-bf6.notion.site/Terms-of-use-6ac8a57691a946f0b4805c34b26be2b9',
   },
   {
-    name: 'Privacy Policy',
+    name: 'Privacy policy',
     url: 'https://glib-calendula-bf6.notion.site/Privacy-policy-e82e4b901d814f46bf04f4472b6d6e91',
   },
 ]
@@ -255,6 +258,19 @@ const Header = styled(({ className, isMobile, mobileMenuOpen, dispatch }) => {
     select {
       max-height: 38px;
       padding: 1rem 1.25rem;
+    }
+  }
+
+  .smol-links {
+    display: flex;
+    font-size: var(--font-size-xsmall);
+    align-items: center;
+    padding: 1rem 1.5rem;
+    color: var(--color-dim);
+
+    > * + * :before {
+      content: '•';
+      margin: 0 1rem;
     }
   }
 
