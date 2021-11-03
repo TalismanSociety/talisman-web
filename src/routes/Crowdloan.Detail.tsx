@@ -1,10 +1,12 @@
 import { Crowdloan, Parachain } from '@archetypes'
 import { Button, Panel, PanelSection, Poster, useModal } from '@components'
 import { useCrowdloanByParachainId, useParachainAssets, useParachainDetailsBySlug } from '@libs/talisman'
+import { useTranslation } from 'react-i18next'
 import { useParams } from 'react-router-dom'
 import styled from 'styled-components'
 
 const CrowdloanDetail = styled(({ className }) => {
+  const { t } = useTranslation()
   const { slug }: { slug: string } = useParams()
 
   const { parachainDetails } = useParachainDetailsBySlug(slug)
@@ -29,10 +31,10 @@ const CrowdloanDetail = styled(({ className }) => {
         </article>
         <aside>
           <Panel>
-            <PanelSection title="Raised">
+            <PanelSection title={t('Raised')}>
               <Crowdloan.Raised id={id} />
             </PanelSection>
-            <PanelSection title="Ends in">
+            <PanelSection title={t('Ends in')}>
               <Crowdloan.Countdown id={id} />
             </PanelSection>
             <PanelSection>
@@ -41,12 +43,12 @@ const CrowdloanDetail = styled(({ className }) => {
                 onClick={() => openModal(<Crowdloan.Contribute id={id} />)}
                 disabled={uiStatus !== 'active'}
               >
-                Contribute
+                {t('Contribute')}
               </Button>
             </PanelSection>
           </Panel>
 
-          <Panel title="Rewards">
+          <Panel title={t('Rewards')}>
             <Crowdloan.Rewards id={id} />
           </Panel>
 
@@ -67,8 +69,9 @@ const CrowdloanDetail = styled(({ className }) => {
 
   > .content {
     width: 100%;
-    max-width: calc(115.4rem + 10vw);
+    max-width: 1280px;
     margin: 0 auto;
+
     padding: 0 5vw;
     display: flex;
     justify-content: space-between;
@@ -79,6 +82,7 @@ const CrowdloanDetail = styled(({ className }) => {
       margin-top: -4rem;
       padding-right: 4vw;
       width: 61%;
+      color: var(--color-text);
 
       .crowdloan-logo {
         width: 8rem;
@@ -153,6 +157,7 @@ const CrowdloanDetail = styled(({ className }) => {
         font-weight: var(--font-weight-bold);
         font-size: var(--font-size-xlarge);
         font-family: 'SurtExpanded', sans-serif;
+        color: var(--color-text);
       }
     }
 

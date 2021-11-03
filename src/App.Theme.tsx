@@ -21,6 +21,7 @@ const statusColors = {
 
 // font size defs
 const fontSizes = {
+  xxxlarge: 5.6,
   xxlarge: 4,
   xlarge: 2.4,
   large: 1.8,
@@ -100,6 +101,7 @@ const Style = createGlobalStyle`
     scroll-behavior: smooth;
     font-size: 10px;
     min-height: 100%;
+    height: 100vh;
     font-weight: var(--font-weight-regular);
   }
 
@@ -107,6 +109,10 @@ const Style = createGlobalStyle`
     background: rgb(${({ theme }) => theme?.background});
     color: rgb(${({ theme }) => theme?.foreground});
     font-size: var(--font-size-normal);
+  }
+
+  #root {
+    height: 100%;
   }
 
   h1,
@@ -223,10 +229,13 @@ declare module 'styled-components' {
     dim: string
     light: string
     dark: string
+    text: string
+    activeBackground: string
+    controlBackground: string
   }
 }
 
-const light: DefaultTheme = {
+const orangeLight: DefaultTheme = {
   primary: '244,101,69',
   secondary: '0,0,255',
   background: '250,250,250',
@@ -235,9 +244,12 @@ const light: DefaultTheme = {
   dim: '245,245,245',
   light: '250,250,250',
   dark: '0,0,0',
+  text: '0,0,0',
+  activeBackground: '56,56,56',
+  controlBackground: '38,38,38',
 }
 
-const dark: DefaultTheme = {
+const orangeDark: DefaultTheme = {
   primary: '244,101,69',
   secondary: '0,0,255',
   background: '0,0,0',
@@ -246,11 +258,52 @@ const dark: DefaultTheme = {
   dim: '245,245,245',
   light: '255,255,255',
   dark: '0,0,0',
+  text: '255,255,255',
+  activeBackground: '56,56,56',
+  controlBackground: '38,38,38',
+}
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const orangeTheme = {
+  light: orangeLight,
+  dark: orangeDark,
+}
+
+const greenLight: DefaultTheme = {
+  primary: '213, 255, 92',
+  secondary: '0,0,255',
+  background: '250,250,250',
+  foreground: '0,0,0',
+  mid: '150,150,150',
+  dim: '245,245,245',
+  light: '250,250,250',
+  dark: '0,0,0',
+  text: '0,0,0',
+  activeBackground: '56,56,56',
+  controlBackground: '38,38,38',
+}
+
+const greenDark: DefaultTheme = {
+  primary: '213,255,92',
+  secondary: '0,0,255',
+  background: '27,27,27',
+  foreground: '165,165,165',
+  mid: '150,150,150',
+  dim: '90,90,90',
+  light: '250,250,250',
+  dark: '0,0,0',
+  text: '250,250,250',
+  activeBackground: '56,56,56',
+  controlBackground: '38,38,38',
+}
+
+const greenTheme = {
+  light: greenLight,
+  dark: greenDark,
 }
 
 const themes = {
-  light,
-  dark,
+  ...greenTheme,
 }
 
 /* style context */
@@ -261,7 +314,7 @@ export const useTheme = () => useContext(Context)
 
 const Provider = ({ children }: PropsWithChildren<{}>) => {
   // theme stuff
-  const [theme, setTheme] = useState('light')
+  const [theme, setTheme] = useState('dark')
   const toggle = () => setTheme(theme === 'dark' ? 'light' : 'dark')
   const set = (mode: string) => setTheme(mode === 'dark' ? 'dark' : 'light')
 

@@ -1,0 +1,44 @@
+{
+  "Portfolio value": "Portfolio value",
+  "Assets": "Assets",
+  "All Accounts": "All Accounts",
+  "Crowdloans": "Crowdloans",
+  "Staking": "Staking",
+  "This door will be unlocked soon": "This door will be unlocked soon",
+  "You have not contributed to any Crowdloans": "You have not contributed to any Crowdloans",
+  "Summoning Crowdloan Contributions...": "Summoning Crowdloan Contributions...",
+  "Search Crowdloans": "Search Crowdloans",
+  "Raised": "Raised",
+  "Ends in": "Ends in",
+  "Contribute": "Contribute",
+  "Contributed": "Contributed",
+  "Rewards": "Rewards",
+  "Cancel": "Cancel",
+  "Contribute to": "Contribute to",
+  "Sort by": "Sort by",
+  "noResult": {
+    "title": "Sorry",
+    "subtitle": "Talisman cannot summon what you wish for.",
+    "text": "Try something else."
+  },
+  "You have no": "You have no",
+  "Buy": "Buy",
+  "Fee": "Fee",
+  "Add {{asset}} Balance": "Add {{asset}} Balance",
+  "Unavailable": "Unavailable",
+  "extensionUnavailable": {
+    "title": "Oh no!",
+    "subtitle": "It doesn't look like you have a wallet extension installed.",
+    "text": "Don't worry we're currently building a really nice one,",
+    "text2": "but in the meantime we recommend downloading Polkadot.js"
+  },
+  "Install Polkadot.js Extension": "Install Polkadot.js Extension",
+  "Requires Configuration": "Requires Configuration",
+  "desktopRequired": {
+    "title": "Sorry!",
+    "subtitle": "This feature is currently only available on desktop, but we will be launching mobile-friendly version soon.",
+    "text": "In the meantime feel free to check out our Crowdloans dashboard",
+    "primaryCta": "View Crowdloans"
+  },
+  "No wallet found": "No wallet found"
+}

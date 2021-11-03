@@ -1,13 +1,20 @@
+import { Pendor, Pill, TextLoader } from '@components'
+import { ReactComponent as Loader } from '@icons/loader.svg'
 import { usePortfolio } from '@libs/portfolio'
 import { useAccountAddresses } from '@libs/talisman'
+import { addBigNumbers } from '@talismn/util'
+import { device } from '@util/breakpoints'
 import { formatCurrency } from '@util/helpers'
-import BigNumber from 'bignumber.js'
 import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 const Total = styled(({ id, className }) => {
+  const { t } = useTranslation()
   const accountAddresses = useAccountAddresses()
-  const { totalUsdByAddress } = usePortfolio()
+  const { isLoading, totalUsdByAddress } = usePortfolio()
+  // TODO: Price change value
+  const totalUsdChange = null //-1000000
 
   const totalUsd = useMemo(
     () =>
@@ -20,11 +27,33 @@ const Total = styled(({ id, className }) => {
 
   return (
     <div className={`wallet-total ${className}`}>
-      <div className="title">Your portfolio value</div>
-      <div className="amount">{totalUsd && formatCurrency(totalUsd)}</div>
+      <div className="title">{t('Portfolio value')}</div>
+      {isLoading && (
+        <div className="amount">
+          <span>{formatCurrency(totalUsd || '0')}</span>
+          <Loader />
+        </div>
+      )}
+      {!isLoading && (
+        <Pendor
+          loader={<TextLoader className="amount">{formatCurrency(totalUsd || '0')}</TextLoader>}
+          require={!isLoading && !!totalUsd}
+        >
+          <>
+            <div className="amount">{totalUsd && formatCurrency(totalUsd)}</div>
+            {totalUsdChange && (
+              <Pill primary small>
+                {formatCurrency(totalUsdChange)}
+              </Pill>
+            )}
+          </>
+        </Pendor>
+      )}
     </div>
   )
 })`
+  color: var(--color-text);
+
   > .title {
     font-size: var(--font-size-xsmall);
     color: var(--color-mid);
@@ -32,22 +61,20 @@ const Total = styled(({ id, className }) => {
   }
 
   > .amount {
-    font-size: var(--font-size-xxlarge);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-size: var(--font-size-large);
+    @media ${device.sm} {
+      font-size: var(--font-size-xlarge);
+    }
+    @media ${device.md} {
+      font-size: var(--font-size-xxlarge);
+    }
     font-weight: bold;
-    color: var(--color-primary);
     margin: 0;
     line-height: 1.4em;
   }
 `
 
 export default Total
-
-// TODO: Dedupe with src/archetypes/Wallet/Assets.tsx and move to @utils
-
-function addBigNumbers(a?: string, b?: string): string | undefined {
-  if (!a && !b) return undefined
-  if (!a) return b
-  if (!b) return a
-
-  return new BigNumber(a).plus(new BigNumber(b)).toString()
-}

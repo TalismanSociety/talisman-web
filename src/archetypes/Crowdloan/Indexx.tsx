@@ -1,5 +1,8 @@
 import { Crowdloan } from '@archetypes'
 import { Await, Field, Grid, NoResults } from '@components'
+import { trackGoal } from '@libs/fathom'
+import { device } from '@util/breakpoints'
+import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 const FilterBar = styled(
@@ -7,117 +10,96 @@ const FilterBar = styled(
     search = '',
     order = '',
     status = null,
+    network = null,
     setSearch = () => {},
     setOrder = () => {},
     setStatus = () => {},
+    setNetwork = () => {},
     orderOptions = {},
     statusOptions = {},
+    networkOptions = {},
     hasFilter = false,
     reset,
     count,
     className,
     ...rest
-  }) => (
-    <div className={`${className} filterbar`} {...rest}>
-      <span className="left">
-        <Field.Search value={search} placeholder="Search Crowdloans" onChange={setSearch} />
-        <Field.RadioGroup value={status} onChange={setStatus} options={statusOptions} small />
-      </span>
-      <span className="right">
-        <Field.Select onChange={setOrder} options={orderOptions} />
-      </span>
-    </div>
-  )
+  }) => {
+    const { t } = useTranslation()
+    return (
+      <div className={`${className} filterbar`} {...rest}>
+        <Field.Search
+          className="searchbar"
+          value={search}
+          placeholder={t('Search Crowdloans')}
+          onChange={(search: any) => {
+            setSearch(search)
+            trackGoal('9XUF7WEB', 1) // crowdloan_search
+          }}
+        />
+        <div className="filters">
+          <Field.RadioGroup
+            value={status}
+            onChange={(status: any) => {
+              setStatus(status)
+              trackGoal('0AO7IT2G', 1) // crowdloan_filter
+            }}
+            options={statusOptions}
+            small
+            secondary
+          />
+          <Field.RadioGroup
+            value={network}
+            onChange={(network: any) => {
+              setNetwork(network)
+              trackGoal('0AO7IT2G', 1) // crowdloan_filter
+            }}
+            options={networkOptions}
+            small
+            primary
+          />
+        </div>
+      </div>
+    )
+  }
 )`
-  display: flex;
-  width: 100%;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 2.4rem;
   margin: 2.4rem 0;
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  flex-wrap: wrap;
 
-  > span {
-    display: flex;
-    align-items: center;
-    position: relative;
-
-    &.left {
-      justify-content: flex-start;
-    }
-    &.right {
-      justify-content: flex-end;
-    }
-
-    &.right {
-      > * + * {
-        margin-left: 1em;
-      }
-
-      .field-toggle[data-on='true'] .toggle:after {
-        background: rgb(${({ theme }) => theme.primary});
-      }
-    }
-  }
-
-  .field-search {
-    width: 23vw;
-  }
-
-  .field-radiogroup {
-    margin-left: 2.3rem;
-
-    .pill {
-      white-space: pre;
-    }
-  }
-
-  .field-select .children {
-    font-size: 0.9em;
-    box-shadow: none;
-    color: rgb(${({ theme }) => theme.primary});
-  }
-
-  @media only screen and (max-width: 700px) {
+  .searchbar {
     display: inline-block;
-    margin-bottom: 0;
-    > span {
-      display: inline;
-      width: 100%;
-
-      .field-search {
-        display: block;
-        width: 100%;
-      }
-
-      .field-radiogroup {
-        margin: 0;
-        width: 40%;
-        display: inline-block;
-        margin-top: 1em;
-      }
-
-      .field-select {
-        display: inline-block;
-        margin: 0;
-        float: right;
-        margin-top: 0.5em;
-      }
+    width: 100%;
+    @media ${device.lg} {
+      width: auto;
     }
-  } ;
+  }
+
+  .filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: space-between;
+    width: 100%;
+  }
 `
 
 const Index = styled(({ withFilter, className }) => {
+  const { t } = useTranslation()
   const { crowdloans, count, loading, filterProps } = Crowdloan.useFilter()
 
   return (
     <div className={`crowdloan-index ${className}`}>
+      {/* TODO: Remove for now as no Learn more link yet. */}
+      {/* <UnlockTalismanBanner /> */}
       {withFilter && <FilterBar {...filterProps} count={count} />}
       <Await until={!loading}>
         <NoResults
           require={count?.filtered > 0}
-          title="Vamoosh"
-          subtitle="Talisman cannot summon what you wish for."
-          text="Better luck next time."
+          title={t('noResult.title')}
+          subtitle={t('noResult.subtitle')}
+          text={t('noResult.text')}
         >
           <Grid>
             {crowdloans.map(({ id }) => (
@@ -129,6 +111,8 @@ const Index = styled(({ withFilter, className }) => {
     </div>
   )
 })`
+  padding: 2.4rem;
+
   .await {
     font-size: var(--font-size-xxlarge);
   }

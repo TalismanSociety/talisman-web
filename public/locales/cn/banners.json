@@ -1,0 +1,32 @@
+{
+  "explore": {
+    "header": "构建平行宇宙",
+    "description": "众贷能帮助项目方和团队募集资金并参与 Polkadot 和 Kusama 的平行链拍卖。",
+    "primaryCta": "探索众贷"
+  },
+  "empty": {
+    "header": "钱包暂无余额！",
+    "description": "使用信用卡或加密货币购买 DOT 和 KSM",
+    "primaryCta": "购买 DOT / KSM"
+  },
+  "soon": {
+    "header": "即将推出",
+    "description": "在此期间，您可以查看 Crowdloans。",
+    "primaryCta": "探索众贷"
+  },
+  "buy": {
+    "header": "购买 DOT/KSM",
+    "description": "输入您要购买的金额/数量",
+    "primaryCta": "购买"
+  },
+  "unlockTalisman": {
+    "header": "解锁 Talisman",
+    "description": "为任何众贷做出贡献并获得“神秘”钥匙，后续您将需要它...",
+    "primaryCta": "了解更多"
+  },
+  "noWallet": {
+    "header": "不好了！",
+    "description": "看起来你没有安装钱包扩展。我们建议下载 Polkadot.js",
+    "primaryCta": "下载 Polkadot.js"
+  }
+}

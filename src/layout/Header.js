@@ -1,19 +1,23 @@
+import { LanguageSelector } from '@archetypes/LanguageSelector'
 import { ReactComponent as TalismanHandLogo } from '@assets/hand-red-black.svg'
 import { ReactComponent as CrowdloansLogo } from '@assets/icons/crowdloans.svg'
-import { ReactComponent as DiscordLogo } from '@assets/icons/discord-header.svg'
 import { ReactComponent as DiscordMobileLogo } from '@assets/icons/discord-mobile.svg'
-import { ReactComponent as GithubLogo } from '@assets/icons/github-header.svg'
 import { ReactComponent as GithubMobileLogo } from '@assets/icons/github-mobile.svg'
-import { ReactComponent as MediumLogo } from '@assets/icons/medium-header.svg'
 import { ReactComponent as MediumMobileLogo } from '@assets/icons/medium-mobile.svg'
+import { ReactComponent as MoreHorizontal } from '@assets/icons/more-horizontal.svg'
 import { ReactComponent as PortfolioLogo } from '@assets/icons/portfolio.svg'
 import { ReactComponent as SwapLogo } from '@assets/icons/swap.svg'
-import { ReactComponent as TwitterLogo } from '@assets/icons/twitter-header.svg'
 import { ReactComponent as TwitterMobileLogo } from '@assets/icons/twitter-mobile.svg'
-import { ReactComponent as TalismanWordLogo } from '@assets/talisman-red-black.svg'
+import { Button } from '@components'
+import Menu from '@components/Menu'
+import { trackGoal } from '@libs/fathom'
+import { useExtension } from '@libs/talisman'
+import { device } from '@util/breakpoints'
+import { buyNow } from '@util/fiatOnRamp'
 import { useMediaQuery } from '@util/hooks'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useReducer } from 'react'
+import { useTranslation } from 'react-i18next'
 import { NavLink } from 'react-router-dom'
 import styled from 'styled-components'
 
@@ -26,103 +30,156 @@ export default function HeaderState(props) {
   return <Header {...props} isMobile={isMobile} mobileMenuOpen={mobileMenuOpen} dispatch={dispatch} />
 }
 
-const Header = styled(({ className, isMobile, mobileMenuOpen, dispatch }) => (
-  <header className={className}>
-    <span>
-      <NavLink exact to="/" className="logo">
-        {isMobile ? <TalismanHandLogo /> : <TalismanWordLogo />}
-      </NavLink>
-    </span>
-    {isMobile ? (
-      <>
-        <button className="mobile-nav-button" onClick={() => dispatch('toggle')}>
-          Menu
-        </button>
-        <AnimatePresence>
-          {mobileMenuOpen && (
-            <motion.nav
-              className="mobile-nav"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => dispatch('close')}
-            >
-              <NavLink exact to="/">
-                <span>Portfolio</span>
-                <PortfolioLogo alt="Portfolio" />
-              </NavLink>
-              <NavLink to="/crowdloans">
-                <span>Crowdloans</span>
-                <CrowdloansLogo alt="Crowdloans" />
-              </NavLink>
-              <a
-                href="https://talisman.canny.io/feature-requests"
-                target="_blank"
-                rel="noreferrer noopener"
-                className="text-pill"
-              >
-                <span>Request Features</span>
-                <SwapLogo alt="Request Features" />
-              </a>
-              <a href="https://github.com/talismansociety" target="_blank" rel="noreferrer noopener">
-                <span>GitHub</span>
-                <GithubMobileLogo alt="GitHub" />
-              </a>
-              <a href="https://discord.gg/rQgTD9SGtU" target="_blank" rel="noreferrer noopener">
-                <span>Discord</span>
-                <DiscordMobileLogo alt="Discord" />
-              </a>
-              <a href="https://twitter.com/wearetalisman" target="_blank" rel="noreferrer noopener">
-                <span>Twitter</span>
-                <TwitterMobileLogo alt="Twitter" />
-              </a>
-              <a href="https://medium.com/we-are-talisman" target="_blank" rel="noreferrer noopener">
-                <span>Medium</span>
-                <MediumMobileLogo alt="Medium" />
-              </a>
-            </motion.nav>
-          )}
-        </AnimatePresence>
-      </>
-    ) : (
-      <>
+const mainRoutes = [
+  { name: 'Portfolio', url: '/portfolio', icon: <PortfolioLogo alt="Portfolio" /> },
+  {
+    name: 'Crowdloans',
+    url: '/crowdloans',
+    icon: <CrowdloansLogo alt="Crowdloans" />,
+  },
+]
+
+const subRoutes = [
+  {
+    name: 'Request Features',
+    url: 'https://talisman.canny.io/feature-requests',
+    trackingCode: 'RMSKIY4Q', // bounce_feature_requests
+    icon: <SwapLogo alt="Request Features" />,
+  },
+  {
+    name: 'GitHub',
+    url: 'https://github.com/talismansociety',
+    trackingCode: 'CG0L6VIJ', // bounce_github
+    icon: <GithubMobileLogo alt="GitHub" />,
+  },
+  {
+    name: 'Discord',
+    url: 'https://discord.gg/rQgTD9SGtU',
+    trackingCode: '00L5TXCI', // bounce_discord
+    icon: <DiscordMobileLogo alt="Discord" />,
+  },
+  {
+    name: 'Twitter',
+    url: 'https://twitter.com/wearetalisman',
+    trackingCode: 'NMVPOOER', // bounce_twitter
+    icon: <TwitterMobileLogo alt="Twitter" />,
+  },
+  {
+    name: 'Medium',
+    url: 'https://medium.com/we-are-talisman',
+    trackingCode: 'Y1JQOEBW', // bounce_medium
+    icon: <MediumMobileLogo alt="Medium" />,
+  },
+]
+
+const smolLinks = [
+  {
+    name: 'Terms of use',
+    url: 'https://glib-calendula-bf6.notion.site/Terms-of-use-6ac8a57691a946f0b4805c34b26be2b9',
+  },
+  {
+    name: 'Privacy policy',
+    url: 'https://glib-calendula-bf6.notion.site/Privacy-policy-e82e4b901d814f46bf04f4472b6d6e91',
+  },
+]
+
+const Header = styled(({ className, isMobile, mobileMenuOpen, dispatch }) => {
+  const { t } = useTranslation('nav')
+  const { status: extensionStatus } = useExtension()
+  const homeRoute = ['LOADING', 'DISCONNECTED'].includes(extensionStatus) ? '/' : '/portfolio'
+
+  return (
+    <header className={className}>
+      <span>
+        <NavLink exact to={homeRoute} className="logo">
+          <TalismanHandLogo />
+        </NavLink>
+      </span>
+      {!isMobile && (
         <nav className="main-nav">
-          <NavLink exact to="/">
-            Portfolio
+          <NavLink exact to="/portfolio">
+            {t('Portfolio')}
           </NavLink>
-          <NavLink to="/crowdloans">Crowdloans</NavLink>
+          <NavLink to="/crowdloans">{t('Crowdloans')}</NavLink>
         </nav>
-        <nav className="external-nav">
-          <a
-            href="https://talisman.canny.io/feature-requests"
-            target="_blank"
-            rel="noreferrer noopener"
-            className="text-pill"
-          >
-            Request Features
-          </a>
-          <a href="https://github.com/talismansociety" target="_blank" rel="noreferrer noopener">
-            <GithubLogo alt="GitHub" />
-          </a>
-          <a href="https://discord.gg/rQgTD9SGtU" target="_blank" rel="noreferrer noopener">
-            <DiscordLogo alt="Discord" />
-          </a>
-          <a href="https://twitter.com/wearetalisman" target="_blank" rel="noreferrer noopener">
-            <TwitterLogo alt="Twitter" />
-          </a>
-          <a href="https://medium.com/we-are-talisman" target="_blank" rel="noreferrer noopener">
-            <MediumLogo alt="Medium" />
-          </a>
-        </nav>
-      </>
-    )}
-  </header>
-))`
+      )}
+      <div className="menu-nav">
+        <Button small primary onClick={buyNow}>
+          {t('Buy')}
+        </Button>
+        <LanguageSelector />
+        <Menu
+          dropdownAlignment="right"
+          ButtonComponent={
+            <button className="mobile-nav-button">
+              <MoreHorizontal />
+            </button>
+          }
+        >
+          <AnimatePresence>
+            <motion.nav initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+              <ul>
+                {isMobile &&
+                  mainRoutes.map(route => {
+                    return (
+                      <li key={route.name}>
+                        <NavLink to={route.url}>
+                          <span>{t(route.name)}</span>
+                          {route.icon}
+                        </NavLink>
+                      </li>
+                    )
+                  })}
+                {subRoutes.map(route => {
+                  return (
+                    <li key={route.name}>
+                      <a
+                        href={route.url}
+                        target="_blank"
+                        rel="noreferrer noopener"
+                        onClick={route.trackingCode ? () => trackGoal(route.trackingCode, 1) : undefined}
+                      >
+                        <span>{t(route.name)}</span>
+                        {route.icon}
+                      </a>
+                    </li>
+                  )
+                })}
+                <div className="smol-links">
+                  {smolLinks.map(route => {
+                    return (
+                      <a
+                        key={route.name}
+                        href={route.url}
+                        target="_blank"
+                        rel="noreferrer noopener"
+                        onClick={route.trackingCode ? () => trackGoal(route.trackingCode, 1) : undefined}
+                      >
+                        <span>{t(route.name)}</span>
+                        {route.icon}
+                      </a>
+                    )
+                  })}
+                </div>
+              </ul>
+            </motion.nav>
+          </AnimatePresence>
+        </Menu>
+      </div>
+    </header>
+  )
+})`
   display: grid;
-  grid-template: 1fr / 1fr 1fr 1fr;
+  grid-template: 1fr / auto 2fr 2fr;
+
+  @media ${device.xl} {
+    grid-template: 1fr / 1fr 1fr 1fr;
+  }
+
   padding: 0 2.4rem;
   width: 100%;
   box-shadow: 0 0 2.4rem rgba(0, 0, 0, 0.05);
+  background: var(--color-controlBackground);
 
   > * {
     display: flex;
@@ -142,6 +199,7 @@ const Header = styled(({ className, isMobile, mobileMenuOpen, dispatch }) => (
   .logo {
     display: block;
     font-size: 3.2rem;
+    color: var(--color-text);
 
     svg {
       display: block;
@@ -154,29 +212,48 @@ const Header = styled(({ className, isMobile, mobileMenuOpen, dispatch }) => (
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 2rem;
 
     > * {
-      padding: 2.3rem 2.4rem;
+      padding: 0.75rem 1rem;
+      border-radius: 1rem;
       position: relative;
 
-      &:after {
-        content: '';
-        position: absolute;
-        bottom: 0;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 0;
-        height: 2px;
-        background: var(--color-primary);
-        transition: width 0.15s ease-in-out;
+      &.active {
+        color: var(--color-text);
+        background: var(--color-activeBackground);
       }
 
-      &.active {
-        color: var(--color-primary);
-        &:after {
-          width: 100%;
-        }
+      &:hover {
+        color: var(--color-background);
+        background: var(--color-foreground);
       }
+    }
+  }
+
+  .menu-nav {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin: 1rem 0;
+
+    button {
+      border-radius: 1rem;
+      height: 100%;
+      font-size: small;
+    }
+  }
+
+  .smol-links {
+    display: flex;
+    font-size: var(--font-size-xsmall);
+    align-items: center;
+    padding: 1rem 1.5rem;
+    color: var(--color-dim);
+
+    > * + * :before {
+      content: '•';
+      margin: 0 1rem;
     }
   }
 
@@ -219,17 +296,14 @@ const Header = styled(({ className, isMobile, mobileMenuOpen, dispatch }) => (
   }
 
   .mobile-nav-button {
+    display: flex;
+    align-items: center;
     border: none;
-    align-self: center;
-    padding: 1.2rem 2.4rem;
-    margin: 1.6rem 0;
-    line-height: 1em;
     cursor: pointer;
-    color: var(--color-primary);
-    background: #fff;
-    border-radius: 9999999rem;
+    background: var(--color-activeBackground);
+    padding: 1.25rem;
+    border-radius: 1rem;
     transition: all 0.15s ease-in-out;
-    box-shadow: 0 0 0.8rem rgba(0, 0, 0, 0.1);
   }
   .mobile-nav {
     display: grid;
@@ -239,9 +313,9 @@ const Header = styled(({ className, isMobile, mobileMenuOpen, dispatch }) => (
     top: calc(100% + 1rem);
     right: 1rem;
     padding: 1rem 2rem;
-    background: #fff;
     box-shadow: 0 0 0.8rem rgba(0, 0, 0, 0.1);
     border-radius: 1.6rem;
+    background: var(--color-controlBackground);
 
     > a {
       display: flex;
@@ -250,6 +324,9 @@ const Header = styled(({ className, isMobile, mobileMenuOpen, dispatch }) => (
       padding: 1rem 0;
 
       > svg {
+        border-radius: 100px;
+        background: var(--color-activeBackground);
+        color: var(--color-primary);
         font-size: 2.4rem;
         margin-left: 5rem;
       }
@@ -263,7 +340,7 @@ const Header = styled(({ className, isMobile, mobileMenuOpen, dispatch }) => (
   }
 
   @media only screen and (max-width: 700px) {
-    grid-template: 1fr / 1fr 1fr;
+    grid-template: 1fr / 1fr 2fr;
 
     > * {
       display: flex;

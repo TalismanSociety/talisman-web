@@ -5,6 +5,7 @@ import { getTotalContributionForCrowdloan, useCrowdloanContributions } from '@li
 import { useAccountAddresses, useCrowdloanById, useParachainDetailsById } from '@libs/talisman'
 import { encodeAnyAddress } from '@talismn/util'
 import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 
@@ -12,6 +13,7 @@ import Countdown from './Countdown'
 import Raised from './Raised'
 
 const Teaser = styled(({ id, className }) => {
+  const { t } = useTranslation()
   const { crowdloan } = useCrowdloanById(id)
   const parachainId = crowdloan?.parachain?.paraId
   const { parachainDetails } = useParachainDetailsById(parachainId)
@@ -28,11 +30,11 @@ const Teaser = styled(({ id, className }) => {
         <Parachain.Asset id={parachainId} type="logo" />
         {totalContribution && (
           <div className="has-contribution">
-            <CheckCircleIcon /> Contributed
+            <CheckCircleIcon /> {t('Contributed')}
           </div>
         )}
         <h1>{parachainDetails?.name}</h1>
-        <Raised id={id} title="Raised" />
+        <Raised id={id} title={t('Raised')} />
       </div>
 
       <Pill className="countdown">
@@ -42,12 +44,10 @@ const Teaser = styled(({ id, className }) => {
   )
 })`
   display: block;
-  background: #fff;
+  background: var(--color-controlBackground);
   overflow: hidden;
   border-radius: 2.4rem;
-  box-shadow: 0 0 1.2rem rgba(${({ theme }) => theme.foreground}, 0.1);
   position: relative;
-  //height: 35.9rem;
 
   > .crowdloan-card {
     width: 100%;
@@ -103,9 +103,8 @@ const Teaser = styled(({ id, className }) => {
     position: absolute;
     top: 1.6rem;
     right: 1.6rem;
-    color: white;
-    background: white;
-    color: black;
+    background: var(--color-activeBackground);
+    color: var(--color-mid);
   }
 
   .crowdloan-raised {

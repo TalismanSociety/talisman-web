@@ -38,11 +38,12 @@ const FieldWrapper = styled(({ type, prefix, suffix, label, dim, children, class
   display: flex;
   flex-direction: column;
   align-items: center;
+  color: var(--color-text);
 
   > .children {
     border: none;
     box-shadow: 0 0 1.2rem rgba(0, 0, 0, 0.1);
-    border-radius: 2.2em;
+    border-radius: 1rem;
     overflow: hidden;
     transition: box-shadow 0.2s ease;
     display: block;
@@ -79,7 +80,7 @@ const FieldWrapper = styled(({ type, prefix, suffix, label, dim, children, class
       font-family: inherit;
       font-weight: inherit;
       border: none;
-      padding: 1.1rem 3rem;
+      padding: 1.1rem 1.75rem;
       width: 100%;
       ${({ prefix }) => !!prefix && `padding-left: 5rem;`}
       ${({ suffix }) => !!suffix && `padding-right: 5rem;`}
@@ -106,9 +107,13 @@ const FieldWrapper = styled(({ type, prefix, suffix, label, dim, children, class
 
       input,
       select {
-        background: rgb(${({ theme }) => theme.dim});
+        background: var(--color-controlBackground);
       }
     }
+  }
+
+  ::placeholder {
+    color: var(--color-dim);
   }
 `
 
@@ -131,6 +136,9 @@ export const Search = styled(({ value, className, onChange = () => {}, ...rest }
   </FieldWrapper>
 ))`
   .children {
+    [type='text'] {
+      background: var(--color-controlBackground);
+    }
     .suffix {
       svg {
         transform: translatex(50%);
@@ -161,7 +169,7 @@ export const Select = styled(({ value, options, className, onChange = v => {}, .
 ))`
   select {
     appearance: none;
-    background-color: transparent;
+    background-color: var(--color-controlBackground);
     border: none;
   }
 `
@@ -215,31 +223,35 @@ export const Toggle = styled(({ value = false, className, onChange = () => {}, .
   }
 `
 
-export const RadioGroup = styled(({ value, options = {}, onChange = () => {}, small, className, ...rest }) => (
-  <FieldWrapper type="radiogroup" className={className}>
-    {options.map(option => (
-      <Pill
-        key={option?.key}
-        onClick={() => onChange(option?.key)}
-        primary
-        active={option?.key === value}
-        small={small}
-      >
-        {option?.value}
-      </Pill>
-    ))}
-  </FieldWrapper>
-))`
+export const RadioGroup = styled(
+  ({ value, options = {}, onChange = () => {}, small, primary, secondary, className, ...rest }) => (
+    <FieldWrapper type="radiogroup" className={className}>
+      {options.map(option => (
+        <Pill
+          key={option?.key}
+          onClick={() => onChange(option?.key)}
+          active={option?.key === value}
+          small={small}
+          primary={primary}
+          secondary={secondary}
+        >
+          {option?.value}
+        </Pill>
+      ))}
+    </FieldWrapper>
+  )
+)`
   .children {
     display: flex;
+    gap: 0.25rem;
     box-shadow: none;
     overflow: visible;
     &:hover {
       box-shadow: none;
     }
 
-    .pill + .pill {
-      margin-left: 0.6em;
-    }
+    background: var(--color-controlBackground);
+    padding: 0.25rem;
+    border-radius: 1.5rem;
   }
 `

@@ -9,6 +9,7 @@ import { multiplyBigNumbers } from '@talismn/util'
 import { isMobileBrowser } from '@util/helpers'
 import { formatCurrency, shortNumber, truncateString } from '@util/helpers'
 import { useCallback, useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 export type ContributeProps = {
@@ -96,10 +97,16 @@ const ContributeTo = styled(
 
     closeModal,
   }) => {
+    const { t } = useTranslation()
     const { price: tokenPrice, loading: priceLoading } = useTokenPrice('KSM')
     const usd = useMemo(
       () => !Number.isNaN(Number(contributionAmount)) && multiplyBigNumbers(contributionAmount, tokenPrice),
       [contributionAmount, tokenPrice]
+    )
+
+    const txFeeUsd = useMemo(
+      () => !Number.isNaN(Number(txFee?.fee)) && multiplyBigNumbers(txFee?.fee, tokenPrice),
+      [txFee?.fee, tokenPrice]
     )
 
     return (
@@ -111,7 +118,7 @@ const ContributeTo = styled(
         }}
       >
         <header>
-          <h2>Contribute To</h2>
+          <h2>{t('Contribute to')}</h2>
           <Parachain.Asset className="logo" id={parachainDetails?.id} type="logo" />
           <h3>{parachainDetails?.name}</h3>
         </header>
@@ -136,10 +143,13 @@ const ContributeTo = styled(
               </div>
             </div>
             <div className="switcher-column">
-              <Account.Button narrow />
+              <Account.Button narrow showValue showBuy closeParent={closeModal} fixedDropdown />
               <div className="tx-fee">
-                <Pendor suffix={txFee ? 'KSM' : '-'} require={!txFee?.loading}>
-                  {txFee ? `Fee: ${shortNumber(txFee.fee)}` : null}
+                <span>
+                  {txFeeUsd && `${t('Fee')}: ${truncateString(formatCurrency(txFeeUsd), '$9,999,999,999.99'.length)} `}
+                </span>
+                <Pendor prefix={txFee ? ' = ' : ''} suffix={txFee ? 'KSM' : '-'} require={!txFee?.loading}>
+                  <span>{txFee ? `${shortNumber(txFee.fee)}` : null}</span>
                 </Pendor>
               </div>
             </div>
@@ -165,15 +175,15 @@ const ContributeTo = styled(
         </main>
         <footer>
           <Button type="button" onClick={closeModal}>
-            Cancel
+            {t('Cancel')}
           </Button>
           <Button
             type="submit"
             primary
             loading={status === 'VALIDATING'}
-            disabled={error === 'Account balance too low' || !contributionAmount}
+            disabled={error === t('Account balance too low') || !contributionAmount}
           >
-            Contribute
+            {t('Contribute')}
           </Button>
         </footer>
       </form>
@@ -262,7 +272,16 @@ const ContributeTo = styled(
       color: rgb(${({ theme }) => theme?.foreground});
       box-shadow: 0 0 0.8rem rgba(0, 0, 0, 0.1);
     }
+    // .account-picker {
+    //   position: fixed;
+    //   top: auto;
+    //   left: auto;
+    // }
     > .tx-fee {
+      display: flex;
+      align-items: center;
+      justify-content: end;
+      white-space: pre;
       width: 100%;
       margin-top: 1rem;
       text-align: right;
@@ -300,25 +319,28 @@ const ContributeTo = styled(
   }
 `
 
-const InProgress = styled(({ className, explorerUrl, closeModal }) => (
-  <div className={className}>
-    <header>
-      <h2>In Progress</h2>
-      <MaterialLoader className="logo" />
-    </header>
-    <main>
-      <div>Your transaction is in progress. This may take a few minutes to confirm</div>
-      {explorerUrl && (
-        <a href={explorerUrl} target="_blank" rel="noopener noreferrer">
-          View on Subscan
-        </a>
-      )}
-    </main>
-    <footer>
-      <Button onClick={closeModal}>Close</Button>
-    </footer>
-  </div>
-))`
+const InProgress = styled(({ className, explorerUrl, closeModal }) => {
+  const { t } = useTranslation('crowdloan')
+  return (
+    <div className={className}>
+      <header>
+        <h2>{t('inProgress.header')}</h2>
+        <MaterialLoader className="logo" />
+      </header>
+      <main>
+        <div>{t('inProgress.description')}</div>
+        {explorerUrl && (
+          <a href={explorerUrl} target="_blank" rel="noopener noreferrer">
+            {t('inProgress.primaryCta')}
+          </a>
+        )}
+      </main>
+      <footer>
+        <Button onClick={closeModal}>{t('inProgress.secondaryCta')}</Button>
+      </footer>
+    </div>
+  )
+})`
   > header {
     display: flex;
     flex-direction: column;
@@ -366,27 +388,30 @@ const InProgress = styled(({ className, explorerUrl, closeModal }) => (
   }
 `
 
-const Success = styled(({ className, explorerUrl, closeModal }) => (
-  <div className={className}>
-    <header>
-      <h2>Success</h2>
-      <CheckCircle className="logo" />
-    </header>
-    <main>
-      <div>Your transaction was successful. Thank you for your contribution</div>
-      {explorerUrl && (
-        <a href={explorerUrl} target="_blank" rel="noopener noreferrer">
-          View on Subscan
-        </a>
-      )}
-    </main>
-    <footer>
-      <Button primary to="/" onClick={closeModal}>
-        Go to your portfolio
-      </Button>
-    </footer>
-  </div>
-))`
+const Success = styled(({ className, explorerUrl, closeModal }) => {
+  const { t } = useTranslation('crowdloan')
+  return (
+    <div className={className}>
+      <header>
+        <h2>{t('success.header')}</h2>
+        <CheckCircle className="logo" />
+      </header>
+      <main>
+        <div>{t('success.description')}</div>
+        {explorerUrl && (
+          <a href={explorerUrl} target="_blank" rel="noopener noreferrer">
+            {t('success.primaryCta')}
+          </a>
+        )}
+      </main>
+      <footer>
+        <Button primary to="/" onClick={closeModal}>
+          {t('success.secondaryCta')}
+        </Button>
+      </footer>
+    </div>
+  )
+})`
   > header {
     display: flex;
     flex-direction: column;
@@ -434,28 +459,31 @@ const Success = styled(({ className, explorerUrl, closeModal }) => (
   }
 `
 
-const Failed = styled(({ className, explorerUrl, error, closeModal }) => (
-  <div className={className}>
-    <header>
-      <h2>Failed</h2>
-      <XCircle className="logo" />
-    </header>
-    <main>
-      <div>
-        <div>Your transaction was not successful.</div>
-        {error && <div className="error">{error}</div>}
-      </div>
-      {explorerUrl && (
-        <a href={explorerUrl} target="_blank" rel="noopener noreferrer">
-          View on Subscan
-        </a>
-      )}
-    </main>
-    <footer>
-      <Button onClick={closeModal}>Close</Button>
-    </footer>
-  </div>
-))`
+const Failed = styled(({ className, explorerUrl, error, closeModal }) => {
+  const { t } = useTranslation('crowdloan')
+  return (
+    <div className={className}>
+      <header>
+        <h2>{t('failed.header')}</h2>
+        <XCircle className="logo" />
+      </header>
+      <main>
+        <div>
+          <div>{t('failed.description')}</div>
+          {error && <div className="error">{error}</div>}
+        </div>
+        {explorerUrl && (
+          <a href={explorerUrl} target="_blank" rel="noopener noreferrer">
+            {t('failed.primaryCta')}
+          </a>
+        )}
+      </main>
+      <footer>
+        <Button onClick={closeModal}>{t('failed.secondaryCta')}</Button>
+      </footer>
+    </div>
+  )
+})`
   > header {
     display: flex;
     flex-direction: column;

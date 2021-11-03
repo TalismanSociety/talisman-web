@@ -96,6 +96,7 @@ export const Modal = styled(function Modal({ className, closable }) {
     border-radius: 1.6rem;
     padding: 6.4rem 4.6rem 4.6rem 4.6rem;
     z-index: 10000;
+    position: relative;
 
     > .close-icon {
       position: absolute;

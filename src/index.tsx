@@ -1,3 +1,5 @@
+import './libs/i18n/i18n'
+
 import React from 'react'
 import ReactDOM from 'react-dom'
 

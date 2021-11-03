@@ -1,6 +1,6 @@
 import { ChainLogo, ExtensionStatusGate, Info, Panel, PanelSection, Pendor } from '@components'
 import { calculateAssetPortfolioAmounts, usePortfolio, useTaggedAmountsInPortfolio } from '@libs/portfolio'
-import { useAccountAddresses, useExtension } from '@libs/talisman'
+import { useAccountAddresses, useExtensionAutoConnect } from '@libs/talisman'
 import { useTokenPrice } from '@libs/tokenprices'
 import {
   BalanceWithTokens,
@@ -12,32 +12,16 @@ import {
   useChain,
 } from '@talismn/api-react-hooks'
 import { addBigNumbers, useFuncMemo } from '@talismn/util'
+import customRpcs from '@util/customRpcs'
 import { formatCommas, formatCurrency } from '@util/helpers'
 import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
-
-// TODO: Move these to a global config object
-const customRpcs = {
-  '0': [], // ['wss://polkadot.api.onfinality.io/ws?apikey=e1b2f3ea-f003-42f5-adf6-d2e6aa3ecfe4'], // Polkadot Relay
-  '2': [], // ['wss://kusama.api.onfinality.io/ws?apikey=e1b2f3ea-f003-42f5-adf6-d2e6aa3ecfe4'], // Kusama Relay
-  '1000': [], // ['wss://statemine.api.onfinality.io/ws?apikey=e1b2f3ea-f003-42f5-adf6-d2e6aa3ecfe4'], // Statemine
-  '2000': [], // ['wss://karura.api.onfinality.io/ws?apikey=e1b2f3ea-f003-42f5-adf6-d2e6aa3ecfe4'], // Karura
-  '2001': [], // ['wss://bifrost-parachain.api.onfinality.io/ws?apikey=e1b2f3ea-f003-42f5-adf6-d2e6aa3ecfe4'], // Bifrost
-  '2004': [], // ['wss://khala.api.onfinality.io/ws?apikey=e1b2f3ea-f003-42f5-adf6-d2e6aa3ecfe4'], // Khala
-  '2007': [], // ['wss://shiden.api.onfinality.io/ws?apikey=e1b2f3ea-f003-42f5-adf6-d2e6aa3ecfe4'], // Shiden
-  '2023': [], // ['wss://moonriver.api.onfinality.io/ws?apikey=e1b2f3ea-f003-42f5-adf6-d2e6aa3ecfe4'], // Moonriver
-  '2084': [], // Calamari
-  '2086': [], // KILT Spiritnet
-  '2090': [
-    'wss://basilisk.api.onfinality.io/ws?apikey=e1b2f3ea-f003-42f5-adf6-d2e6aa3ecfe4',
-    'wss://rpc-01.basilisk.hydradx.io',
-  ], // Basilisk
-}
 
 const AssetItem = styled(({ id, balances, addresses, className }) => {
   const chain = useChain(id)
 
-  const { status, accounts } = useExtension()
+  const { status, accounts } = useExtensionAutoConnect()
   const isMoonriver = id === '2023'
   const hasNoEthereumAddress = useMemo(
     () => status === 'OK' && accounts.every(account => account.type !== 'ethereum'),
@@ -103,23 +87,26 @@ const AssetItem = styled(({ id, balances, addresses, className }) => {
   }
 `
 
-const MoonriverWalletInstructions = styled(({ className }) => (
-  <Info
-    className={className}
-    title="🌕 Unavailable"
-    subtitle={
-      <a
-        href="https://medium.com/we-are-talisman/how-to-view-your-moonriver-balance-in-the-talisman-web-app-c37185fb3980"
-        target="_blank"
-        rel="noreferrer noopener"
-      >
-        <div className="text-vertical-center">
-          <span className="plus-icon">(+)</span> Add Moonriver Balance
-        </div>
-      </a>
-    }
-  />
-))`
+const MoonriverWalletInstructions = styled(({ className }) => {
+  const { t } = useTranslation()
+  return (
+    <Info
+      className={className}
+      title={`🌕  ${t('Unavailable')}`}
+      subtitle={
+        <a
+          href="https://medium.com/we-are-talisman/how-to-view-your-moonriver-balance-in-the-talisman-web-app-c37185fb3980"
+          target="_blank"
+          rel="noreferrer noopener"
+        >
+          <div className="text-vertical-center">
+            <span className="plus-icon">(+)</span> {`${t('Add {{asset}} Balance', { asset: 'Moonriver' })}`}
+          </div>
+        </a>
+      }
+    />
+  )
+})`
   .text-vertical-center {
     display: flex;
     align-items: center;
@@ -135,9 +122,10 @@ const MoonriverWalletInstructions = styled(({ className }) => (
 `
 
 const Assets = styled(({ id, className }) => {
+  const { t } = useTranslation()
   const chainIds = useMemo(() => Object.keys(customRpcs), [])
 
-  const { accounts } = useExtension()
+  const { accounts } = useExtensionAutoConnect()
   const addresses = useMemo(() => accounts.map((account: any) => account.address), [accounts])
   const accountAddresses = useAccountAddresses()
 
@@ -156,7 +144,7 @@ const Assets = styled(({ id, className }) => {
 
   return (
     <section className={`wallet-assets ${className}`}>
-      <Panel title="Assets" subtitle={assetsUsd && formatCurrency(assetsUsd)}>
+      <Panel title={t('Assets')} subtitle={assetsUsd && formatCurrency(assetsUsd)}>
         <ExtensionStatusGate unavailable={<ExtensionUnavailable />}>
           {Object.entries(balancesByChain).map(([chainId, balances]) => (
             <PanelSection key={chainId}>
@@ -179,17 +167,20 @@ const Assets = styled(({ id, className }) => {
 
 export default Assets
 
-const ExtensionUnavailable = styled(props => (
-  <PanelSection comingSoon {...props}>
-    <h2>Oh no!</h2>
-    <p>It doesn't look like you have a wallet extension installed.</p>
-    <p>
-      Don't worry we're currently building a really nice one,
-      <br />
-      but in the meantime we recommend downloading Polkadot.js
-    </p>
-  </PanelSection>
-))`
+const ExtensionUnavailable = styled(props => {
+  const { t } = useTranslation()
+  return (
+    <PanelSection comingSoon {...props}>
+      <h2>{t('extensionUnavailable.title')}</h2>
+      <p>{t('extensionUnavailable.subtitle')}</p>
+      <p>
+        {t('extensionUnavailable.text')}
+        <br />
+        {t('extensionUnavailable.text2')}
+      </p>
+    </PanelSection>
+  )
+})`
   text-align: center;
 
   > *:not(:last-child) {
@@ -199,8 +190,8 @@ const ExtensionUnavailable = styled(props => (
     margin-bottom: 0;
   }
 
-  h2 {
-    color: black;
+  > h2 {
+    color: var(--color-text);
     font-weight: 600;
     font-size: 1.8rem;
   }

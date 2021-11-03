@@ -27,14 +27,16 @@ const IconButton = styled(({ children, className, ...rest }) => (
   }
 `
 
-const Button = styled(({ loading, children, className, ...props }) => {
+const Button = styled(({ loading, children, variant = '', className, ...props }) => {
   const wrappedChildren = !!loading ? (
     <Fragment>
       <IconLoading data-spin="true" />
       &nbsp;{loading}
     </Fragment>
   ) : (
-    React.Children.map(children, child => (React.isValidElement(child) ? child : <span>{child}</span>))
+    React.Children.map(children, child =>
+      React.isValidElement(child) ? child : <span className="child">{child}</span>
+    )
   )
 
   const _props = omit(props, ['loading', 'boxed', 'round', 'primary', 'tight', 'loose'])
@@ -50,7 +52,7 @@ const Button = styled(({ loading, children, className, ...props }) => {
       </Link>
     )
   ) : (
-    <button {..._props} className={`button ${className}`}>
+    <button {..._props} className={`button ${variant} ${className}`}>
       {wrappedChildren}
     </button>
   )
@@ -68,6 +70,21 @@ const Button = styled(({ loading, children, className, ...props }) => {
   border-radius: 0.8em;
   font-weight: bold;
   transition: all 0.15s ease-in-out;
+  white-space: nowrap;
+
+  &.outlined {
+    border: solid 1px;
+    background: transparent;
+    > * {
+      background: var(--color-controlBackground);
+    }
+  }
+
+  .child {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
 
   > * {
     margin: 0 0.5rem;
@@ -84,7 +101,7 @@ const Button = styled(({ loading, children, className, ...props }) => {
     !!primary &&
     css`
       background: rgb(${theme?.primary});
-      color: rgb(${({ theme }) => theme?.light});
+      color: rgb(${({ theme }) => theme?.background});
     `}
 
   ${({ small }) =>
@@ -96,6 +113,7 @@ const Button = styled(({ loading, children, className, ...props }) => {
     &[disabled] {
     opacity: 0.4;
     filter: grayscale(100%);
+    color: var(--color-mid);
     cursor: not-allowed;
   }
 `
