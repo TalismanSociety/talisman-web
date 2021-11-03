@@ -1,6 +1,8 @@
 import { debounce } from 'lodash'
 import { FC, useContext as _useContext, createContext, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
+import { filteredCoinsList } from '../talisman/util/_supportedCoins'
+
 // TODO: Cache token USD values locally
 // TODO: Update token USD values in the background
 
@@ -9,7 +11,7 @@ import { FC, useContext as _useContext, createContext, useCallback, useEffect, u
 //
 
 const api = 'https://api.coingecko.com/api/v3'
-const apiCoinsList = `${api}/coins/list`
+// const apiCoinsList = `${api}/coins/list`
 const apiSimplePrice = `${api}/simple/price`
 
 //
@@ -62,22 +64,24 @@ export function useTokenPrice(token: string): TokenPrice {
 //
 
 function _useCoins() {
-  const [coins, setCoins] = useState<Coin[]>([])
-  const [attempt, setAttempt] = useState(1)
+  const [coins] = useState<Coin[]>(filteredCoinsList)
+  // const [attempt, setAttempt] = useState(1)
 
-  useEffect(() => {
-    fetch(apiCoinsList, { headers: { Accept: 'application/json' } })
-      .then(response => response.json())
-      .then(setCoins)
-      .catch(error => {
-        const timeoutSeconds = 5
-        console.error(
-          `Failed to fetch ${apiCoinsList} (attempt ${attempt}, retrying in ${timeoutSeconds} seconds`,
-          error
-        )
-        setTimeout(() => setAttempt(attempt => attempt + 1), timeoutSeconds * 1000)
-      })
-  }, [attempt])
+  // TODO: Avoid coingecko's /coins/list API as it will return 10K+ items.
+  // TODO: Hardcoded for now via `filteredCoinsList`.
+  // useEffect(() => {
+  //   fetch(apiCoinsList, { headers: { Accept: 'application/json' } })
+  //     .then(response => response.json())
+  //     .then(setCoins)
+  //     .catch(error => {
+  //       const timeoutSeconds = 5
+  //       console.error(
+  //         `Failed to fetch ${apiCoinsList} (attempt ${attempt}, retrying in ${timeoutSeconds} seconds`,
+  //         error
+  //       )
+  //       setTimeout(() => setAttempt(attempt => attempt + 1), timeoutSeconds * 1000)
+  //     })
+  // }, [attempt])
 
   return coins
 }
