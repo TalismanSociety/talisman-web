@@ -4,7 +4,10 @@ import { Banner } from '@components/Banner'
 import { useTranslation } from 'react-i18next'
 
 export const UnlockTalismanBanner = () => {
-  const { t } = useTranslation('banners')
+  const { t, ready } = useTranslation('banners')
+  if (!ready) {
+    return null
+  }
   return (
     <Banner backgroundImage={bannerImage}>
       <div className="description">
