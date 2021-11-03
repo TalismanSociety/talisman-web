@@ -1,0 +1,11 @@
+{
+  "Account balance too low": "Слишком низкий баланс учетной записи",
+  "A parachain must be selected": "Необходимо выбрать парачейн",
+  "Please enter an amount of KSM": "Введите сумму в KSM",
+  "Please enter a valid amount of KSM": "Введите действительную сумму в KSM",
+  "An account must be selected": "Необходимо выбрать учетную запись",
+  "Account balance not ready yet": "Баланс учетной записи еще не готов",
+  "A minimum of {{minimum}} KSM is required": "Минимум {{ минимум}} Требуется KSM",
+  "Failed to submit transaction: account balance too low": "Не удалось отправить транзакцию: слишком низкий остаток на счете",
+  "Failed to submit transaction": "Не удалось отправить транзакцию"
+}
