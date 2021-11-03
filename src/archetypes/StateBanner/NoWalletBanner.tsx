@@ -3,7 +3,10 @@ import { Banner } from '@components/Banner'
 import { useTranslation } from 'react-i18next'
 
 export const NoWalletBanner = () => {
-  const { t } = useTranslation('banners')
+  const { t, ready } = useTranslation('banners')
+  if (!ready) {
+    return null
+  }
   return (
     <Banner>
       <div className="description">
