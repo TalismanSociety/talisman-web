@@ -199,7 +199,14 @@ const TermsOfService = styled(({ className }) => {
   return (
     <span className={className}>
       <Trans i18nKey="TOS" ns="connect-wallet">
-        By connecting your wallet you agree to our <a href="/">Terms of Service</a>
+        By connecting your wallet you agree to our
+        <a
+          href="https://glib-calendula-bf6.notion.site/Terms-of-use-6ac8a57691a946f0b4805c34b26be2b9"
+          target="_blank"
+          rel="noreferrer noopener"
+        >
+          Terms of Service
+        </a>
       </Trans>
     </span>
   )
