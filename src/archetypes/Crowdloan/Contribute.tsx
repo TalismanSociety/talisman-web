@@ -2,7 +2,7 @@ import { Account, Parachain } from '@archetypes'
 import { ReactComponent as CheckCircle } from '@assets/icons/check-circle.svg'
 import { ReactComponent as XCircle } from '@assets/icons/x-circle.svg'
 import { Button, DesktopRequired, Field, MaterialLoader, Pendor, useModal } from '@components'
-import { ContributeEvent, useCrowdloanContribute } from '@libs/crowdloans'
+import { ContributeEvent, acalaOptions, useCrowdloanContribute } from '@libs/crowdloans'
 import { useActiveAccount, useCrowdloanById } from '@libs/talisman'
 import { useTokenPrice } from '@libs/tokenprices'
 import { multiplyBigNumbers } from '@talismn/util'
@@ -89,6 +89,7 @@ const ContributeTo = styled(
     parachainName,
 
     contributionAmount,
+    email,
 
     txFee,
     validationError,
@@ -171,6 +172,32 @@ const ContributeTo = styled(
               </div>
             </div>
           </div>
+
+          {parachainId === acalaOptions.parachainId && (
+            <div className="row">
+              <div className="email-input">
+                <Field.Input
+                  value={email}
+                  onChange={(email: string) => dispatch(ContributeEvent.setEmail(email))}
+                  dim
+                  type="email"
+                  placeholder="Email (optional)"
+                  disabled={submissionRequested}
+                />
+                <div className="info">
+                  All contributions made to Acala's{' '}
+                  <a
+                    href="https://medium.com/acalanetwork/acala-liquid-crowdloan-dot-lcdot-launch-on-polkadot-f28d8f561157#4080"
+                    target="_blank"
+                    rel="noreferrer noopener"
+                  >
+                    liquid crowdloan
+                  </a>{' '}
+                  via the Talisman dashboard are elligible for lcDOT rewards.
+                </div>
+              </div>
+            </div>
+          )}
         </main>
         <footer>
           <Button type="button" onClick={closeModal}>
@@ -289,6 +316,7 @@ const ContributeTo = styled(
       min-height: 2.2rem;
     }
   }
+  > main > .row > .email-input,
   > main > .row > .verifier-input {
     .field {
       margin-bottom: 1.6rem;
@@ -304,6 +332,10 @@ const ContributeTo = styled(
       color: #999;
       font-size: 1.4rem;
       line-height: 1.8rem;
+
+      a {
+        color: var(--color-primary);
+      }
     }
   }
 

@@ -9,7 +9,7 @@ import Talisman from '@talismn/api'
 import type { BalanceWithTokens } from '@talismn/api-react-hooks'
 import { addTokensToBalances } from '@talismn/api-react-hooks'
 import Chaindata from '@talismn/chaindata-js'
-import { planckToTokens, tokensToPlanck } from '@talismn/util'
+import { encodeAnyAddress, planckToTokens, tokensToPlanck } from '@talismn/util'
 import customRpcs from '@util/customRpcs'
 import BigNumber from 'bignumber.js'
 import { useCallback, useEffect, useState } from 'react'
@@ -18,6 +18,22 @@ import { MemberType, makeTaggedUnion, none } from 'safety-match'
 //
 // TODO: Move tx handling into a generic queue, store queue in react context
 //
+
+// TODO: Store Acala overrides somewhere neat
+export const acalaOptions = {
+  // prod
+  // api: 'https://crowdloan.aca-api.network',
+  // // TODO: Get prod parachainId
+  // parachainId: 2000,
+  // referral: '0xb4cdf472363967c308177936f6faddcccb3cd502d99728394fe9f4ec0d9dbf4f',
+  // jwt: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoidGFsaXNtYW4iLCJpYXQiOjE2MzYwNTM5NTV9.vplu8f6JI-T7SLuKwKU001KDPof04Lp6cCFyJXLWSKg',
+
+  // test
+  api: 'https://crowdloan.aca-dev.network',
+  parachainId: 2000,
+  referral: '0xb4cdf472363967c308177936f6faddcccb3cd502d99728394fe9f4ec0d9dbf4f',
+  jwt: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoidGFsaXNtYW4iLCJpYXQiOjE2MzYwNTM5NTV9.vplu8f6JI-T7SLuKwKU001KDPof04Lp6cCFyJXLWSKg',
+}
 
 //
 // Types
@@ -51,6 +67,7 @@ export const ContributeEvent = makeTaggedUnion({
   _setApi: (api?: ApiPromise) => api,
   setContributionAmount: (contributionAmount: string) => contributionAmount,
   setAccount: (account?: string) => account,
+  setEmail: (email?: string) => email,
   _setAccountBalance: (balance: BalanceWithTokens | null) => balance,
   _setValidationError: (validationError?: { i18nCode: string; vars?: { [key: string]: any } }) => validationError,
   _setTxFee: (txFee?: string | null) => txFee,
@@ -85,6 +102,7 @@ type ReadyProps = {
 
   contributionAmount: string
   account?: string
+  email?: string
   verifierSignature?: string
 
   api?: ApiPromise
@@ -183,7 +201,6 @@ function contributeEventReducer(state: ContributeState, event: ContributeEvent):
             submissionRequested: false,
             submissionValidated: false,
           }),
-
         _: () => {
           console.warn('Ignoring setContributionAmount')
           return state
@@ -199,9 +216,23 @@ function contributeEventReducer(state: ContributeState, event: ContributeEvent):
             submissionRequested: false,
             submissionValidated: false,
           }),
-
         _: () => {
           console.warn('Ignoring setAccount')
+          return state
+        },
+      }),
+
+    setEmail: (email?: string) =>
+      state.match({
+        Ready: props =>
+          ContributeState.Ready({
+            ...props,
+            email,
+            submissionRequested: false,
+            submissionValidated: false,
+          }),
+        _: () => {
+          console.warn('Ignoring setEmail')
           return state
         },
       }),
@@ -432,11 +463,22 @@ function useValidateAccountHasContributionBalanceThunk(state: ContributeState, d
 
 function useTxFeeThunk(state: ContributeState, dispatch: DispatchContributeEvent) {
   const stateDeps = state.match({
-    Ready: ({ relayTokenDecimals, parachainId, contributionAmount, account, verifierSignature, api }) => ({
+    Ready: ({
+      relayChainId,
       relayTokenDecimals,
       parachainId,
       contributionAmount,
       account,
+      email,
+      verifierSignature,
+      api,
+    }) => ({
+      relayChainId,
+      relayTokenDecimals,
+      parachainId,
+      contributionAmount,
+      account,
+      email,
       verifierSignature,
       api,
     }),
@@ -449,7 +491,16 @@ function useTxFeeThunk(state: ContributeState, dispatch: DispatchContributeEvent
 
     ;(async () => {
       if (!stateDeps) return
-      const { relayTokenDecimals, parachainId, contributionAmount, account, verifierSignature, api } = stateDeps
+      const {
+        relayChainId,
+        relayTokenDecimals,
+        parachainId,
+        contributionAmount,
+        account,
+        email,
+        verifierSignature,
+        api,
+      } = stateDeps
 
       dispatch(ContributeEvent._setTxFee())
 
@@ -459,7 +510,16 @@ function useTxFeeThunk(state: ContributeState, dispatch: DispatchContributeEvent
 
       const contributionPlanck = tokensToPlanck(contributionAmount, relayTokenDecimals)
 
-      const tx = buildTx(api, parachainId, contributionPlanck, verifierSignature)
+      let tx
+      try {
+        tx =
+          parachainId === acalaOptions.parachainId
+            ? await buildAcalaTx({ api, relayChainId, account, email, contributionPlanck, estimateOnly: true })
+            : buildTx(api, parachainId, contributionPlanck, verifierSignature)
+      } catch (error: any) {
+        dispatch(ContributeEvent._setValidationError({ i18nCode: error?.message || error.toString() }))
+        return
+      }
 
       const { partialFee } = await tx.paymentInfo(account)
       const feeTokens = planckToTokens(partialFee.toString(), relayTokenDecimals)
@@ -481,16 +541,20 @@ function useValidateContributionThunk(state: ContributeState, dispatch: Dispatch
     Ready: ({
       relayNativeToken,
       relayTokenDecimals,
+      parachainId,
       contributionAmount,
       account,
+      email,
       api,
       accountBalance,
       submissionRequested,
     }) => ({
       relayNativeToken,
       relayTokenDecimals,
+      parachainId,
       contributionAmount,
       account,
+      email,
       api,
       accountBalance,
       submissionRequested,
@@ -563,20 +627,24 @@ function useValidateContributionThunk(state: ContributeState, dispatch: Dispatch
 function useSignAndSendContributionThunk(state: ContributeState, dispatch: DispatchContributeEvent) {
   const stateDeps = state.match({
     Ready: ({
+      relayChainId,
       relayTokenDecimals,
       parachainId,
       subscanUrl,
       contributionAmount,
       account,
+      email,
       verifierSignature,
       api,
       submissionValidated,
     }) => ({
+      relayChainId,
       relayTokenDecimals,
       parachainId,
       subscanUrl,
       contributionAmount,
       account,
+      email,
       verifierSignature,
       api,
       submissionValidated,
@@ -591,11 +659,13 @@ function useSignAndSendContributionThunk(state: ContributeState, dispatch: Dispa
     ;(async () => {
       if (!stateDeps) return
       const {
+        relayChainId,
         relayTokenDecimals,
         parachainId,
         subscanUrl,
         contributionAmount,
         account,
+        email,
         verifierSignature,
         api,
         submissionValidated,
@@ -610,7 +680,16 @@ function useSignAndSendContributionThunk(state: ContributeState, dispatch: Dispa
       const injector = await web3FromAddress(account)
       if (cancelled) return
 
-      const tx = buildTx(api, parachainId, contributionPlanck, verifierSignature)
+      let tx
+      try {
+        tx =
+          parachainId === acalaOptions.parachainId
+            ? await buildAcalaTx({ api, relayChainId, account, email, contributionPlanck })
+            : buildTx(api, parachainId, contributionPlanck, verifierSignature)
+      } catch (error: any) {
+        dispatch(ContributeEvent._setValidationError({ i18nCode: error?.message || error.toString() }))
+        return
+      }
 
       let txSigned
       try {
@@ -676,7 +755,7 @@ function useSignAndSendContributionThunk(state: ContributeState, dispatch: Dispa
           }
         })
       } catch (error: any) {
-        dispatch(ContributeEvent._setValidationError({ i18nCode: error?.message || error.toString() }))
+        dispatch(ContributeEvent._finalizedContributionFailed({ error: error?.message || error.toString() }))
         return
       }
     })()
@@ -708,6 +787,71 @@ function buildTx(
 ): SubmittableExtrinsic<'promise', ISubmittableResult> {
   const txs = [
     api.tx.crowdloan.contribute(parachainId, contributionPlanck, verifierSignature),
+    api.tx.system.remarkWithEvent('Talisman - The Journey Begins'),
+  ]
+
+  return api.tx.utility.batchAll(txs)
+}
+
+async function buildAcalaTx({
+  api,
+  relayChainId,
+  account,
+  email,
+  contributionPlanck,
+  estimateOnly,
+}: {
+  api: ApiPromise
+  relayChainId: number
+  account: string
+  email?: string
+  contributionPlanck: string
+  estimateOnly?: true
+}): Promise<SubmittableExtrinsic<'promise', ISubmittableResult>> {
+  // don't bother acala's API when we only want to calculate a txFee
+  const statementResult = estimateOnly
+    ? {
+        paraId: acalaOptions.parachainId,
+        statementMsgHash: '0x39d8579eba72f48339686db6c4f6fb1c3164bc09b10226e64211c12b0b43460d',
+        statement:
+          'I hereby agree to the terms of the statement whose SHA-256 multihash is QmeUtSuuMBAKzcfLJB2SnMfQoeifYagyWrrNhucRX1vjA8. (This may be found at the URL: https://acala.network/acala/terms)',
+        proxyAddress: '12CnY6b89bFfTbM6Wh3cdFvHAfxxsDUQHHXtT2Ui7SQzxBrn',
+      }
+    : await (await fetch(`${acalaOptions.api}/statement`)).json()
+
+  const proxyAddress = statementResult.proxyAddress
+  const statement = statementResult.statement
+
+  if (!proxyAddress || proxyAddress.length < 1) throw new Error('Internal error (missing proxy address)')
+  if (!statement || statement.length < 1) throw new Error('Internal error (missing statement)')
+
+  const address = encodeAnyAddress(account, relayChainId)
+  const amount = contributionPlanck
+  const referral = acalaOptions.referral
+  const receiveEmail = email !== undefined && email.length > 0
+
+  if (!estimateOnly) {
+    const response = await fetch(`${acalaOptions.api}/transfer`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${acalaOptions.jwt}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        address,
+        amount,
+        referral,
+        email: receiveEmail ? email : undefined,
+        receiveEmail,
+      }),
+    })
+    if (!response.ok) throw new Error('Acala API rate-limit reached. Please try again in 60 seconds.')
+  }
+
+  const txs = [
+    api.tx.balances.transfer(proxyAddress, amount),
+    api.tx.system.remarkWithEvent(statement),
+    api.tx.system.remarkWithEvent(`referrer:${referral}`),
     api.tx.system.remarkWithEvent('Talisman - The Journey Begins'),
   ]
 
