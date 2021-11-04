@@ -53,7 +53,7 @@ const Countdown: React.FC<CountdownProps> = ({ id, showSeconds, className, ...re
   if (['active', 'capped'].includes(uiStatus)) {
     return <Ongoing {...rest} showSeconds={showSeconds} end={lockExpiredBlock} />
   }
-  if (uiStatus === 'winner') return <Generic text="🎉 Winner" />
+  if (uiStatus === 'winner') return <Generic text="Winner" />
   if (uiStatus === 'ended') return <Generic text="Ended" />
 
   // Pendor

@@ -46,7 +46,7 @@ const statusOptions = [
   },
   {
     key: 'winner',
-    value: '🎉 Winner',
+    value: 'Winner',
     cb: (items: Item[]) => filter(items, item => item.crowdloan.uiStatus === 'winner'),
   },
   {
