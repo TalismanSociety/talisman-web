@@ -1,12 +1,13 @@
-import { Crowdloan, Parachain } from '@archetypes'
+import { Crowdloan } from '@archetypes'
+import { LearnCrowdloansBanner } from '@archetypes/StateBanner/LearnCrowdloansBanner'
 import { UnlockTalismanBanner } from '@archetypes/StateBanner/UnlockTalismanBanner'
-import { Await, Field, Grid, NoResults, Panel, PanelSection } from '@components'
+import { Await, Field, Grid, NoResults } from '@components'
 import { trackGoal } from '@libs/fathom'
 import { device } from '@util/breakpoints'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
-import { CrowdloanSummary } from './CrowdloanSummary'
+import { PopularCrowdloans } from './PopularCrowdloans'
 
 const FilterBar = styled(
   ({
@@ -88,70 +89,6 @@ const FilterBar = styled(
   }
 `
 
-const PopularCrowdloans = styled(({ className }) => {
-  const { crowdloans } = Crowdloan.useFilter()
-  return (
-    <Panel className={className}>
-      <PanelSection className="card">
-        <div className="title">Popular Crowdloans</div>
-        <ol className="list">
-          {crowdloans.slice(0, 5).map(({ id }) => (
-            <li key={id}>
-              <CrowdloanSummary id={id} />
-            </li>
-          ))}
-        </ol>
-      </PanelSection>
-    </Panel>
-  )
-})`
-  min-width: max-content;
-
-  .card {
-    padding: 2.4rem;
-  }
-
-  .title {
-    color: var(--color-dim);
-  }
-
-  .list {
-    margin-top: 2rem;
-
-    & > * + * {
-      margin-top: 1rem;
-    }
-  }
-
-  ol {
-    list-style: none;
-    counter-reset: popular-crowdloans-counter;
-    padding-inline: 0;
-    margin-block-end: 0;
-  }
-  ol li {
-    counter-increment: popular-crowdloans-counter;
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-  }
-  ol li::before {
-    content: counter(popular-crowdloans-counter);
-    color: var(--color-primary);
-    font-weight: bold;
-    max-width: 1rem;
-    padding-right: 1rem;
-  }
-`
-
-const LearnCrowdloansBanner = () => {
-  return (
-    <Panel>
-      <PanelSection>LearnCrowdloansBanner</PanelSection>
-    </Panel>
-  )
-}
-
 const Index = styled(({ withFilter, className }) => {
   const { t } = useTranslation()
   const { crowdloans, count, loading, filterProps } = Crowdloan.useFilter()
@@ -159,10 +96,9 @@ const Index = styled(({ withFilter, className }) => {
   return (
     <div className={`crowdloan-index ${className}`}>
       <div className="overview">
-        {/* TODO: Comment out for now */}
-        {/* <PopularCrowdloans /> */}
-        {/* <LearnCrowdloansBanner />
-        <UnlockTalismanBanner /> */}
+        <PopularCrowdloans className="popular" />
+        <LearnCrowdloansBanner className="learn" />
+        <UnlockTalismanBanner className="unlock" />
       </div>
       {withFilter && <FilterBar {...filterProps} count={count} />}
       <Await until={!loading}>
@@ -188,6 +124,21 @@ const Index = styled(({ withFilter, className }) => {
     display: flex;
     gap: 2rem;
     flex-wrap: wrap;
+  }
+
+  .popular {
+    flex: 1;
+    max-width: 100%;
+  }
+
+  .learn {
+    flex: 1;
+    max-width: 100%;
+  }
+
+  .unlock {
+    flex: 1;
+    min-width: 50%;
   }
 
   .await {

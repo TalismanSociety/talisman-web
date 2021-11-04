@@ -29,5 +29,9 @@
     "description": "Похоже, у вас не установлено расширение кошелька. Мы рекомендуем загрузить <1>Polkadot.js</1>",
     "description2": "А пока вы можете проверить Crowdloans.",
     "primaryCta": "Изучите Crowdloans"
+  },
+  "learnCrowdloans": {
+    "description": "Crowdloans помогать проектам и командам собирать средства для участия в аукционах Parachainx на Polkadot и Kusama",
+    "primaryCta": "Учить больше"
   }
 }

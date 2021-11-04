@@ -29,5 +29,9 @@
     "description": "看起来你没有安装钱包扩展。我们建议下载 <1>Polkadot.js</1>",
     "description2": "在此期间，您可以查看 Crowdloans。",
     "primaryCta": "探索众贷"
+  },
+  "learnCrowdloans": {
+    "description": "Crowdloans 帮助项目和团队筹集资金参与 Polkadot 和 Kusama 上的 Parachain 拍卖",
+    "primaryCta": "了解更多"
   }
 }
