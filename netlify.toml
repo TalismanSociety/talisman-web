@@ -1,4 +1,4 @@
-[context.production.environment]
+[context.prod.environment]
     REACT_APP_APPLICATION_NAME = "Talisman ◬"
     REACT_APP_RAMP_API_KEY = "auu2eae53pvp6pboq7oft9dxh5fznhwq7h6tpaxq"
 
