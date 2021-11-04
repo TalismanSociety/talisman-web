@@ -290,10 +290,10 @@ const greenDark: DefaultTheme = {
   foreground: '165,165,165',
   mid: '150,150,150',
   dim: '90,90,90',
-  light: '250,250,250',
+  light: '250,250,250', // #fafafa
   dark: '0,0,0',
-  text: '250,250,250',
-  activeBackground: '56,56,56',
+  text: '250,250,250', // #fafafa
+  activeBackground: '56,56,56', // #383838
   controlBackground: '38,38,38',
 }
 

@@ -171,6 +171,7 @@ const Header = styled(({ className, isMobile, mobileMenuOpen, dispatch }) => {
 })`
   display: grid;
   grid-template: 1fr / auto 2fr 2fr;
+  max-height: 64px;
 
   @media ${device.xl} {
     grid-template: 1fr / 1fr 1fr 1fr;
@@ -225,8 +226,7 @@ const Header = styled(({ className, isMobile, mobileMenuOpen, dispatch }) => {
       }
 
       &:hover {
-        color: var(--color-background);
-        background: var(--color-foreground);
+        color: var(--color-text);
       }
     }
   }
@@ -238,9 +238,15 @@ const Header = styled(({ className, isMobile, mobileMenuOpen, dispatch }) => {
     margin: 1rem 0;
 
     button {
+      max-height: 38px;
       border-radius: 1rem;
       height: 100%;
       font-size: small;
+    }
+
+    select {
+      max-height: 38px;
+      padding: 1rem 1.25rem;
     }
   }
 
