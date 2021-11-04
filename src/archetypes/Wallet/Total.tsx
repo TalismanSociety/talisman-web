@@ -1,4 +1,4 @@
-import { Pendor, Pill, TextLoader } from '@components'
+import { Pendor, Pill } from '@components'
 import { ReactComponent as Loader } from '@icons/loader.svg'
 import { usePortfolio } from '@libs/portfolio'
 import { useAccountAddresses } from '@libs/talisman'
@@ -36,7 +36,7 @@ const Total = styled(({ id, className }) => {
       )}
       {!isLoading && (
         <Pendor
-          loader={<TextLoader className="amount">{formatCurrency(totalUsd || '0')}</TextLoader>}
+          loader={<div className="amount">{formatCurrency(totalUsd || '0')}</div>}
           require={!isLoading && !!totalUsd}
         >
           <>
