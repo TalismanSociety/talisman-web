@@ -1,0 +1,33 @@
+{
+  "explore": {
+    "header": "Постройте вселенную Parachain",
+    "description": "Crowdloans помогают проектам и командам собирать средства для участия в аукционах Parachain на Polkadot и Kusama.",
+    "primaryCta": "Изучите Crowdloans"
+  },
+  "empty": {
+    "header": "Ваши сумки пусты!",
+    "description": "Покупайте DOT и KSM с помощью кредитной карты или криптовалюты",
+    "primaryCta": "Купить DOT/KSM"
+  },
+  "soon": {
+    "header": "Скоро появится",
+    "description": "А пока вы можете проверить Crowdloans.",
+    "primaryCta": "Изучите Crowdloans"
+  },
+  "buy": {
+    "header": "купить DOT/KSM",
+    "description": "Покажите мне деньги",
+    "primaryCta": "Купить"
+  },
+  "unlockTalisman": {
+    "header": "Разблокируйте талисман",
+    "description": "Внесите вклад в любой коллективный заем и получите Spirit Key, он понадобится вам позже ...",
+    "primaryCta": "Подробнее"
+  },
+  "noWallet": {
+    "header": "О нет!",
+    "description": "Похоже, у вас не установлено расширение кошелька. Мы рекомендуем загрузить <1>Polkadot.js</1>",
+    "description2": "А пока вы можете проверить Crowdloans.",
+    "primaryCta": "Изучите Crowdloans"
+  }
+}

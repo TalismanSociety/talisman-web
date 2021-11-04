@@ -7,7 +7,7 @@ import { useActiveAccount, useCrowdloanById, useParachainDetailsById } from '@li
 import { useTokenPrice } from '@libs/tokenprices'
 import { multiplyBigNumbers } from '@talismn/util'
 import { isMobileBrowser } from '@util/helpers'
-import { formatCurrency, shortNumber, truncateString } from '@util/helpers'
+import { formatCurrency, truncateString } from '@util/helpers'
 import { useCallback, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
@@ -148,9 +148,10 @@ const ContributeTo = styled(
                 <span>
                   {txFeeUsd && `${t('Fee')}: ${truncateString(formatCurrency(txFeeUsd), '$9,999,999,999.99'.length)} `}
                 </span>
-                <Pendor prefix={txFee ? ' = ' : ''} suffix={txFee ? 'KSM' : '-'} require={!txFee?.loading}>
+                {/* As per agreement, removing txFee in native token for now. */}
+                {/* <Pendor prefix={txFee ? ' = ' : ''} suffix={txFee ? 'KSM' : '-'} require={!txFee?.loading}>
                   <span>{txFee ? `${shortNumber(txFee.fee)}` : null}</span>
-                </Pendor>
+                </Pendor> */}
               </div>
             </div>
           </div>

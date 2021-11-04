@@ -26,7 +26,8 @@
   },
   "noWallet": {
     "header": "不好了！",
-    "description": "看起来你没有安装钱包扩展。我们建议下载 Polkadot.js",
-    "primaryCta": "下载 Polkadot.js"
+    "description": "看起来你没有安装钱包扩展。我们建议下载 <1>Polkadot.js</1>",
+    "description2": "在此期间，您可以查看 Crowdloans。",
+    "primaryCta": "探索众贷"
   }
 }

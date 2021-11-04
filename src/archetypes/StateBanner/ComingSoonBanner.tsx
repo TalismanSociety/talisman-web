@@ -5,7 +5,10 @@ import { useTranslation } from 'react-i18next'
 import { NavLink } from 'react-router-dom'
 
 export const ComingSoonBanner = () => {
-  const { t } = useTranslation('banners')
+  const { t, ready } = useTranslation('banners')
+  if (!ready) {
+    return null
+  }
   return (
     <Banner backgroundImage={bannerImage}>
       <div className="description">
