@@ -1,6 +1,7 @@
 import { Button } from '@components'
 import { Banner } from '@components/Banner'
 import { Trans, useTranslation } from 'react-i18next'
+import { NavLink } from 'react-router-dom'
 
 export const NoWalletBanner = () => {
   const { t, ready } = useTranslation('banners')
@@ -27,9 +28,9 @@ export const NoWalletBanner = () => {
         <p>{t('noWallet.description2')}</p>
       </div>
       <div className="cta">
-        <a href="https://polkadot.js.org/extension" target="_blank" rel="noreferrer noopener">
+        <NavLink to="/crowdloans">
           <Button primary>{t('noWallet.primaryCta')}</Button>
-        </a>
+        </NavLink>
       </div>
     </Banner>
   )
