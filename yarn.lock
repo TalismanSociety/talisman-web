@@ -2624,9 +2624,9 @@ __metadata:
   linkType: hard
 
 "@talismn/chaindata-js@npm:~0":
-  version: 0.0.5
-  resolution: "@talismn/chaindata-js@npm:0.0.5"
-  checksum: 796c18e7252d2115096d1d7eb0b0bf5116cc6f4ad52b991e19830836ef19b5509433c584d6f82d65911ce74d0463118f98c011f0e99f388577564f3c1a9c6cc3
+  version: 0.0.6
+  resolution: "@talismn/chaindata-js@npm:0.0.6"
+  checksum: f41d33c043246e7f1bf213d55f481215c16e0fb6c8ac600b26ad11118790d1af2f11ceaf53728a5f4dcff85b003ae3e3a31ea920eb2fb80c16653a176dae5de3
   languageName: node
   linkType: hard
 

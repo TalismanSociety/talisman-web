@@ -1,19 +1,19 @@
 import { trackGoal } from '@libs/fathom'
 import { relayChainsChaindata } from '@libs/talisman/util/_config'
 import { ApiPromise, WsProvider } from '@polkadot/api'
+import { SubmittableExtrinsic } from '@polkadot/api/types'
 import { web3FromAddress } from '@polkadot/extension-dapp'
-import type { BalanceOf } from '@polkadot/types/interfaces'
 import type { ISubmittableResult } from '@polkadot/types/types'
 import type { Balance } from '@talismn/api'
 import Talisman from '@talismn/api'
-import { addTokensToBalances, groupBalancesByAddress, useBalances, useChain } from '@talismn/api-react-hooks'
+import type { BalanceWithTokens } from '@talismn/api-react-hooks'
+import { addTokensToBalances } from '@talismn/api-react-hooks'
 import Chaindata from '@talismn/chaindata-js'
-import { Deferred, addBigNumbers, planckToTokens, tokensToPlanck, useFuncMemo } from '@talismn/util'
+import { planckToTokens, tokensToPlanck } from '@talismn/util'
 import customRpcs from '@util/customRpcs'
 import BigNumber from 'bignumber.js'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-// import { useTranslation } from 'react-i18next'
-import { MemberType, TaggedUnion, makeTaggedUnion, none } from 'safety-match'
+import { useCallback, useEffect, useState } from 'react'
+import { MemberType, makeTaggedUnion, none } from 'safety-match'
 
 //
 // TODO: Move tx handling into a generic queue, store queue in react context
@@ -33,8 +33,6 @@ export const ContributeState = makeTaggedUnion({
   NeedSignature: (props: SignatureProps) => props,
   ProcessingSignature: (props: SignatureProps) => props,
   Ready: (props: ReadyProps) => props,
-  ValidatingContribution: none,
-  SubmittingContribution: none,
   ContributionSubmitting: (props: ContributionSubmittingProps) => props,
   ContributionSuccess: (props: ContributionSuccessProps) => props,
   ContributionFailed: (props: ContributionFailedProps) => props,
@@ -45,13 +43,22 @@ export type ContributeStateVariant = keyof typeof ContributeState
 // ContributeEvent represents the events which can be externally triggered in order to progress to the next ContributeState
 export const ContributeEvent = makeTaggedUnion({
   initialize: (props: InitializeProps) => props,
+  _noRpcsForRelayChain: none,
+  _noChaindataForRelayChain: none,
+  _initialized: (props: ReadyProps) => props,
   // TODO: Implement
   // Sign: (props: unknown) => props,
-  setApi: (api?: ApiPromise) => api,
+  _setApi: (api?: ApiPromise) => api,
   setContributionAmount: (contributionAmount: string) => contributionAmount,
-  setAccountBalance: (balance: Balance | null) => balance,
-  // TODO: Implement
+  setAccount: (account?: string) => account,
+  _setAccountBalance: (balance: BalanceWithTokens | null) => balance,
+  _setValidationError: (validationError?: { i18nCode: string; vars?: { [key: string]: any } }) => validationError,
+  _setTxFee: (txFee?: string | null) => txFee,
   contribute: none,
+  _validateContribution: none,
+  _setContributionSubmitting: (props: ContributionSubmittingProps) => props,
+  _finalizedContributionSuccess: (props: ContributionSuccessProps) => props,
+  _finalizedContributionFailed: (props: ContributionFailedProps) => props,
 })
 export type ContributeEvent = MemberType<typeof ContributeEvent> // eslint-disable-line @typescript-eslint/no-redeclare
 
@@ -69,27 +76,33 @@ type SignatureProps = {
 }
 type ReadyProps = {
   relayChainId: number
+  relayNativeToken: string
+  relayTokenDecimals: number
+  relayRpcs: string[]
   parachainId: number
-  nativeToken: string
-  tokenDecimals: number
-  rpcs: string[]
+  parachainName?: string
+  subscanUrl?: string
+
   contributionAmount: string
-  api?: ApiPromise
   account?: string
-  accountBalance?: Balance | null
-  signature?: string
-  txFee?: string
-  validationError?: { i18nCode: string; vars: { [key: string]: any } }
+  verifierSignature?: string
+
+  api?: ApiPromise
+  accountBalance?: BalanceWithTokens | null
+  txFee?: string | null
+  validationError?: { i18nCode: string; vars?: { [key: string]: any } }
+  submissionRequested: boolean
+  submissionValidated: boolean
 }
 type ContributionSubmittingProps = {
   explorerUrl?: string
 }
 type ContributionSuccessProps = {
-  explorerUrl: string
+  explorerUrl?: string
 }
 type ContributionFailedProps = {
-  explorerUrl: string
-  error: string
+  explorerUrl?: string
+  error?: string
 }
 
 //
@@ -106,99 +119,19 @@ export function useCrowdloanContribute(): [ContributeState, DispatchContributeEv
   // set up the event dispatcher
   // (used by the UI to trigger events)
   //
-  const dispatch = useCallback(async (event: ContributeEvent): Promise<void> => {
-    try {
-      // get current state
-      const state: ContributeState = await new Promise(resolve =>
-        setState(currentState => {
-          resolve(currentState)
-          return currentState
-        })
-      )
-
-      // call contributeEventReducer with current state and event
-      const newState = await contributeEventReducer(state, event)
-
-      // set new state
-      setState(newState)
-    } catch (error) {
-      // log reducer errors
-      console.error('contributeEventReducer failed', error)
-    }
-  }, [])
-
-  // set up the thunk dependencies
-  //
-  // this is where we create an instance of the api for states which need to use it inside the thunk reducer
-  // these dependencies are something of a pragmatic departure from our finite state machine architecture
-  //
-  // by creating and storing them here (outside of the state) we can make use of two useful properties:
-  // 1. we don't need to try and serialize/deserialize them when persisting the state to localStorage
-  // 2. we don't need to worry about how they're handed between multiple states which use the same dependency
-  //    e.g. for the api, we want to share the one api instance between the Ready and SubmittingContribution states
-  // const [thunkDependencies, setThunkDependencies] = useState({})
-  // const api = useThunkDependency<ContributeState, ApiPromise>(
-  //   state,
-  //   // setup func
-  //   async (dependency, state) => {
-  //     if (dependency !== null) return dependency
-
-  //     return await state.match({
-  //       Ready: async ({ rpcs }) => {
-  //         return await ApiPromise.create({ provider: new WsProvider(rpcs) })
-  //       },
-  //       _: () => dependency,
-  //     })
-  //   },
-  //   // cleanup func
-  //   dependency => dependency.disconnect()
-  // )
-
-  useApiDispatcher(state, dispatch)
-  useAccountBalanceDispatcher(state, dispatch)
-
-  // useThunkDependency<ContributeState, () => void>(
-  //   state,
-  //   async (dependency, state) =>
-  //     state.match({
-  //       Ready: props => {
-  //         const chainIds = [props.relayChainId.toString()]
-  //         const addresses = props.account ? [props.account] : []
-
-  //         console.log('setting up balance checker')
-
-  //         const unsubscribe = Talisman.init({ type: 'TALISMANCONNECT', rpcs: customRpcs }).subscribeBalances(
-  //           chainIds,
-  //           addresses,
-  //           balance => dispatch(ContributeEvent.setAccountBalance(balance))
-  //         )
-  //         return unsubscribe
-  //       },
-  //       _: () => dependency,
-  //     }),
-  //   unsubscribe => unsubscribe()
-  // )
-  // const addresses = useMemo(
-  //   () => state.match({ Ready: props => (props.account ? [props.account] : []), _: () => [] }),
-  //   [state]
-  // )
-  // const chainIds = useMemo(() => state.match({ Ready: props => [props.relayChainId.toString()], _: () => [] }), [state])
-  // const { balances } = useBalances(addresses, chainIds, customRpcs)
-  // useEffect(() => {
-
-  // }, [])
-
-  // const dependencies = useMemo(() => ({ api }), [api])
+  const dispatch = useCallback((event: ContributeEvent) => setState(state => contributeEventReducer(state, event)), [])
 
   //
-  // set up the thunk dispatcher
-  // (used internally to create and respond to side effects)
+  // set up state thunks
+  // used to asynchronously react to state changes, fire off side effects and dispatch further ContributeEvents
   //
-  useEffect(() => {
-    stateThunkReducer(state, /*dependencies, */ setState).catch(error =>
-      console.error('stateThunkReducer failed', error)
-    )
-  }, [state, /*dependencies, */ setState])
+  useInitializeThunk(state, dispatch)
+  useApiThunk(state, dispatch)
+  useAccountBalanceThunk(state, dispatch)
+  useValidateAccountHasContributionBalanceThunk(state, dispatch)
+  useTxFeeThunk(state, dispatch)
+  useValidateContributionThunk(state, dispatch)
+  useSignAndSendContributionThunk(state, dispatch)
 
   return [state, dispatch]
 }
@@ -211,363 +144,245 @@ export function useCrowdloanContribute(): [ContributeState, DispatchContributeEv
 //
 // it receives the current state and an event
 // it then returns the new state
-async function contributeEventReducer(state: ContributeState, event: ContributeEvent): Promise<ContributeState> {
+function contributeEventReducer(state: ContributeState, event: ContributeEvent): ContributeState {
+  if (process.env.NODE_ENV === 'development')
+    console.log(`Dispatching event ${event.variant} with data ${JSON.stringify(event.data, null, 2)}`)
+
   return event.match({
     initialize: props =>
       state.match({
         Uninitialized: () => ContributeState.Initializing(props),
-
         _: () => {
-          console.error('Ignoring ContributeEvent.initialize: ContributeState is already initialized')
+          console.warn('Ignoring ContributeEvent.initialize: ContributeState is already initialized')
           return state
         },
       }),
 
-    setApi: (api?: ApiPromise) =>
+    _noRpcsForRelayChain: () => ContributeState.NoRpcsForRelayChain,
+    _noChaindataForRelayChain: () => ContributeState.NoChaindataForRelayChain,
+    _initialized: props => ContributeState.Ready(props),
+
+    _setApi: (api?: ApiPromise) =>
       state.match({
         Ready: props => {
           if (props.api) props.api.disconnect()
           return ContributeState.Ready({ ...props, api })
         },
         _: () => {
-          console.warn('Ignoring setApi')
-          throw new Error('Ignoring setApi')
+          console.warn('Ignoring _setApi')
+          return state
         },
       }),
 
     setContributionAmount: (contributionAmount: string) =>
       state.match({
         Ready: props =>
-          ContributeState.Ready({ ...props, contributionAmount: filterContributionAmount(contributionAmount) }),
+          ContributeState.Ready({
+            ...props,
+            contributionAmount: filterContributionAmount(contributionAmount),
+            submissionRequested: false,
+            submissionValidated: false,
+          }),
 
         _: () => {
           console.warn('Ignoring setContributionAmount')
-          throw new Error('Ignoring setContributionAmount')
+          return state
         },
       }),
 
-    setAccountBalance: (balance: Balance | null) =>
+    setAccount: (account?: string) =>
       state.match({
         Ready: props =>
-          ContributeState.Ready({ ...props, accountBalance: addTokensToBalances([balance], props.tokenDecimals)[0] }),
+          ContributeState.Ready({
+            ...props,
+            account,
+            submissionRequested: false,
+            submissionValidated: false,
+          }),
+
         _: () => {
-          console.warn('Ignoring setAccountBalance')
-          throw new Error('Ignoring setAccountBalance')
+          console.warn('Ignoring setAccount')
+          return state
         },
       }),
 
-    // TODO: Implement
-    contribute: () => {
-      throw new Error('not implemented')
-    },
+    _setAccountBalance: (balance: Balance | null) =>
+      state.match({
+        Ready: props =>
+          ContributeState.Ready({
+            ...props,
+            accountBalance: addTokensToBalances([balance], props.relayTokenDecimals)[0],
+          }),
+        _: () => {
+          console.warn('Ignoring _setAccountBalance')
+          return state
+        },
+      }),
+
+    _setValidationError: (validationError?: { i18nCode: string; vars?: { [key: string]: any } }) =>
+      state.match({
+        Ready: props =>
+          ContributeState.Ready({
+            ...props,
+            validationError,
+            submissionRequested: validationError !== undefined ? false : props.submissionRequested,
+            submissionValidated: false,
+          }),
+        _: () => {
+          console.warn('Ignoring _setValidationError')
+          return state
+        },
+      }),
+
+    _setTxFee: (txFee?: string | null) =>
+      state.match({
+        Ready: props =>
+          ContributeState.Ready({
+            ...props,
+            txFee,
+          }),
+        _: () => {
+          console.warn('Ignoring _setTxFee')
+          return state
+        },
+      }),
+
+    contribute: () =>
+      state.match({
+        Ready: props =>
+          ContributeState.Ready({
+            ...props,
+            submissionRequested: true,
+            submissionValidated: false,
+          }),
+        _: () => {
+          console.warn('Ignoring contribute')
+          return state
+        },
+      }),
+
+    _validateContribution: () =>
+      state.match({
+        Ready: props =>
+          ContributeState.Ready({
+            ...props,
+            validationError: undefined,
+            submissionValidated: true,
+          }),
+        _: () => {
+          console.warn('Ignoring _validateContribution')
+          return state
+        },
+      }),
+
+    _setContributionSubmitting: props =>
+      state.match({
+        Ready: () => ContributeState.ContributionSubmitting(props),
+        ContributionSubmitting: () => ContributeState.ContributionSubmitting(props),
+        _: () => {
+          console.warn('Ignoring _setContributionSubmitting')
+          return state
+        },
+      }),
+
+    _finalizedContributionSuccess: props =>
+      state.match({
+        ContributionSubmitting: () => ContributeState.ContributionSuccess(props),
+        _: () => {
+          console.warn('Ignoring _finalizedContributionSuccess')
+          return state
+        },
+      }),
+
+    _finalizedContributionFailed: props =>
+      state.match({
+        ContributionSubmitting: () => ContributeState.ContributionFailed(props),
+        _: () => {
+          console.warn('Ignoring _finalizedContributionFailed')
+          return state
+        },
+      }),
   })
 }
-
-// the thunk reducer
-//
-// it receives the latest state and a setState dispatcher
-// it then calls side-effects and updates the state when necessary
-async function stateThunkReducer(
-  state: ContributeState,
-  // dependencies: { api: ApiPromise | null },
-  setState: React.Dispatch<React.SetStateAction<ContributeState>>
-): Promise<void> {
-  await state.match({
-    Initializing: async ({ relayChainId, parachainId }) => {
-      console.log('Initializing', relayChainId, parachainId)
-
-      // START: DEBUG MOONBEAM
-      relayChainId = 0
-      parachainId = 2001
-      const rpcs = ['wss://wss.polkatrain.moonbeam.network']
-      // END: DEBUG MOONBEAM
-
-      const chaindata = await Chaindata.chain(relayChainId)
-      const relayChaindata = relayChainsChaindata.find(chaindata => chaindata.id === relayChainId)
-      const relayChainCustomRpcs = customRpcs[relayChainId.toString()]
-
-      // const rpcs = relayChainCustomRpcs.length > 0 ? relayChainCustomRpcs : chaindata?.rpcs || []
-      const hasRpcs = rpcs.length > 0
-      if (!hasRpcs) return setState(ContributeState.NoRpcsForRelayChain)
-
-      const { nativeToken, tokenDecimals } = chaindata
-      if (!nativeToken) return setState(ContributeState.NoChaindataForRelayChain)
-      if (!tokenDecimals) return setState(ContributeState.NoChaindataForRelayChain)
-
-      setState(
-        ContributeState.Ready({ relayChainId, parachainId, nativeToken, tokenDecimals, rpcs, contributionAmount: '0' })
-      )
-    },
-
-    Ready: props => {
-      console.log('READY')
-
-      // // connect to api
-      // if (!props.connecting) {
-      //   setState(ContributeState.Ready({ ...props, connecting: true }))
-      //   ApiPromise.create({ provider: new WsProvider(props.rpcs) }).then(api => {
-      //     setState(state =>
-      //       state.match({
-      //         Ready: ({ connecting, ...props }) => ContributeState.ReadyWithApi({ ...props, api }),
-      //         _: () => {
-      //           api.disconnect()
-      //           return state
-      //         },
-      //       })
-      //     )
-      //   })
-      // }
-    },
-    // ReadyWithApi: props => {
-    //   console.log('READY WITH API')
-    // },
-
-    _: debug => console.log({ debug }),
-  })
-}
-
-// const balanceError = 'Account balance too low'
-
-// const chainIds = useMemo(() => [relayChainId.toString()], [relayChainId])
-// const addresses = useMemo(() => (account ? [account] : []), [account])
-
-// const { nativeToken, tokenDecimals } = chaindata
-// const { balances } = useBalances(addresses, chainIds, customRpcs)
-
-// const tokenBalances = useFuncMemo(addTokensToBalances, balances, nativeToken ? tokenDecimals : undefined)
-// const tokenBalancesByAddress = useFuncMemo(groupBalancesByAddress, tokenBalances)
-// const tokenBalance = useMemo(() => {
-//   if (!account) return undefined
-//   return (tokenBalancesByAddress[account] || []).map(balance => balance.tokens).reduce(addBigNumbers, undefined)
-// }, [account, tokenBalancesByAddress])
-
-// // switch from INIT to IDLE once rpcs found
-// useEffect(() => {
-//   if (!hasRpcs) return
-//   setStatus(status => (status === 'INIT' ? 'IDLE' : status))
-// }, [hasRpcs])
-
-// // update error message as user types
-// useEffect(() => {
-//   const setBalanceError = () => setError(balanceError)
-//   const clearBalanceError = () => setError(error => (error === balanceError ? null : error))
-
-//   if (!contributionAmount || contributionAmount === '') return clearBalanceError()
-//   if (Number.isNaN(Number(contributionAmount))) return clearBalanceError()
-//   if (ksmBalance === undefined) return clearBalanceError()
-//   if (new BigNumber(ksmBalance).isLessThan(new BigNumber(contributionAmount))) return setBalanceError()
-//   clearBalanceError()
-// }, [balanceError, contributionAmount, error, ksmBalance])
-
-// update tx fee as user types
-// useEffect(() => {
-//   ;(async () => {
-//     setTxFee({ loading: true })
-
-//     const api = await apiPromise
-//     if (!api.isReady) return
-//     if (!contributionAmount) return setTxFee(null)
-//     if (!account) return setTxFee(null)
-
-//     txFeeLoadingRef.current += 1
-//     const loadId = txFeeLoadingRef.current
-
-//     const { tokenDecimals } = chaindata
-//     const contributionPlanck = tokensToPlanck(contributionAmount, tokenDecimals)
-//     const { partialFee } = await api.tx.crowdloan
-//       .contribute(parachainId, contributionPlanck, signature)
-//       .paymentInfo(account)
-//     const feeTokens = planckToTokens(partialFee.toString(), tokenDecimals)
-
-//     // contributionAmount has changed since we started calculating the fee
-//     if (loadId !== txFeeLoadingRef.current) return
-
-//     setTxFee({ fee: feeTokens, loading: false })
-//   })()
-// }, [account, apiPromise, chaindata, contributionAmount, parachainId, signature])
-
-// const contribute = useCallback(async () => {
-//   if (status !== 'IDLE') return
-
-//   if (!parachainId) {
-//     setError(t('A parachain must be selected'))
-//     return
-//   }
-//   if (!contributionAmount || contributionAmount.length < 1) {
-//     setError(t('Please enter an amount of KSM'))
-//     return
-//   }
-//   if (Number.isNaN(Number(contributionAmount))) {
-//     setError(t('Please enter a valid amount of KSM'))
-//     return
-//   }
-//   if (!account || account.length < 1) {
-//     setError(t('An account must be selected'))
-//     return
-//   }
-
-//   setError(null)
-//   setExplorerUrl(null)
-//   setStatus('VALIDATING')
-
-//   const api = await apiPromise
-//   let txStatus
-//   try {
-//     const minContribution = api.consts.crowdloan.minContribution as BalanceOf
-//     const { tokenDecimals } = chaindata
-//     const contributionPlanck = tokensToPlanck(contributionAmount, tokenDecimals)
-
-//     if (!ksmBalance) {
-//       setStatus('IDLE')
-//       setError(t('Account balance not ready yet'))
-//       return
-//     }
-//     if (new BigNumber(ksmBalance).isLessThan(new BigNumber(contributionAmount))) {
-//       setStatus('IDLE')
-//       setError(t('Account balance too low'))
-//       return
-//     }
-
-//     // TODO: Test that contribution is above the minContribution
-//     // TODO: Test that contribution doesn't go above crowdloan cap
-//     // TODO: Test that crowdloan has not ended
-//     // TODO: Test that crowdloan is in a valid lease period
-//     // TODO: Test that crowdloan has not already won
-//     // TODO: Validate validator signature
-//     // TODO: Test user has enough KSM to not go below the existential deposit
-//     // https://github.com/paritytech/polkadot/blob/dee1484760aedfd699e764f2b7c7d85855f7b077/runtime/common/src/crowdloan.rs#L432
-
-//     if (
-//       !contributionPlanck ||
-//       new BigNumber(contributionPlanck).isLessThan(new BigNumber(minContribution.toString()))
-//     ) {
-//       setStatus('IDLE')
-//       const minimum = new BigNumber(planckToTokens(minContribution.toString(), tokenDecimals) || '').toFixed(2)
-//       setError(t(`A minimum of {minimum} KSM is required`, { minimum }))
-//       return
-//     }
-
-//     const injector = await web3FromAddress(account)
-
-//     const deferred = Deferred<Status>()
-
-//     const txs = [
-//       api.tx.crowdloan.contribute(parachainId, contributionPlanck, signature),
-//       api.tx.system.remarkWithEvent('Crowdloan contribution submitted via the Talisman dashboard'),
-//     ]
-
-//     const tx = api.tx.utility.batchAll(txs)
-
-//     // TODO: Show fee in UI
-//     const { partialFee, weight } = await tx.paymentInfo(account)
-//     console.log(`transaction will have a weight of ${weight}, with ${partialFee.toHuman()} weight fees`)
-
-//     const txSigned = await tx.signAsync(account, { signer: injector.signer })
-
-//     setStatus('PROCESSING')
-
-//     const unsub = await txSigned.send(async result => {
-//       const { status, events = [], dispatchError } = result
-
-//       // TODO: Get transaction hash / unique identifier instead of block hash
-//       // NOTE: Two transactions can both have the same hash
-//       // To correctly identify a single transation one should use the blockNum and transaction index
-//       // For more info: https://wiki.polkadot.network/docs/build-protocol-info#unique-identifiers-for-extrinsics
-
-//       for (const {
-//         phase,
-//         event: { data, method, section },
-//       } of events) {
-//         console.info(`\t${phase}: ${section}.${method}:: ${data}`)
-//       }
-
-//       if (status.isInBlock) {
-//         console.info(`Transaction included at blockHash ${status.asInBlock}`)
-
-//         setExplorerUrl((await deriveExplorerUrl(api, result)) || null)
-//       }
-//       if (status.isFinalized) {
-//         console.info(`Transaction finalized at blockHash ${status.asFinalized}`)
-//         unsub()
-
-//         let txStatus: Status = 'FAILED'
-//         if (
-//           events.some(({ event: { method, section } }) => section === 'system' && method === 'ExtrinsicSuccess') &&
-//           !events.some(({ event: { method, section } }) => section === 'system' && method === 'ExtrinsicFailed')
-//         ) {
-//           txStatus = 'SUCCESS'
-//         }
-
-//         setExplorerUrl((await deriveExplorerUrl(api, result)) || null)
-
-//         // https://polkadot.js.org/docs/api/cookbook/tx#how-do-i-get-the-decoded-enum-for-an-extrinsicfailed-event
-//         if (dispatchError && dispatchError.isModule && api) {
-//           const decoded = api.registry.findMetaError(dispatchError.asModule)
-//           const { docs, name, section } = decoded
-//           setError(`${section}.${name}: ${docs.join(' ')}`)
-//         } else if (dispatchError) {
-//           setError(dispatchError.toString())
-//         }
-
-//         deferred.resolve(txStatus)
-//       }
-//     })
-
-//     txStatus = await deferred.promise
-//   } catch (error) {
-//     setStatus('IDLE')
-
-//     if (typeof error?.message === 'string' && error.message.startsWith('1010:')) {
-//       setError(t('Failed to submit transaction: account balance too low'))
-//       return
-//     }
-//
-//     console.error('Failed to submit transaction', error)
-//     setError(t('Failed to submit transaction'))
-//     return
-//   }
-//
-//   const { tokenDecimals } = chaindata
-//   const contributionPlanck = tokensToPlanck(contributionAmount, tokenDecimals)
-//   trackGoal('GTVDUALL', 1) // crowdloan_contribute
-//   trackGoal('WQGRJ9OC', parseInt(contributionPlanck, 10)) // crowdloan_contribute_amount
-//
-//   setStatus(txStatus)
-// }, [account, apiPromise, chaindata, contributionAmount, ksmBalance, parachainId, signature, status, t])
-
-// return { contribute, status, explorerUrl, txFee, error }
 
 //
 // Hooks (internal)
 //
 
-function useApiDispatcher(state: ContributeState, dispatch: DispatchContributeEvent) {
+// When in the ContributeState.Initializing state, this thunk will call _setInitialized as needed
+function useInitializeThunk(state: ContributeState, dispatch: DispatchContributeEvent) {
   const stateDeps = state.match({
-    Ready: ({ rpcs }) => ({ rpcs }),
+    Initializing: ({ relayChainId, parachainId }) => ({ relayChainId, parachainId }),
+    _: () => false as false,
+  })
+
+  useEffect(() => {
+    ;(async () => {
+      if (!stateDeps) return
+      const { relayChainId, parachainId } = stateDeps
+
+      const [relayChaindata, chaindata] = await Promise.all([
+        Chaindata.chain(relayChainId),
+        Chaindata.chain(parachainId),
+      ])
+      const relayExtraChaindata = relayChainsChaindata.find(chaindata => chaindata.id === relayChainId)
+      const relayChainCustomRpcs = customRpcs[relayChainId.toString()]
+
+      const relayRpcs = relayChainCustomRpcs.length > 0 ? relayChainCustomRpcs : relayChaindata?.rpcs || []
+      const hasRelayRpcs = relayRpcs.length > 0
+      if (!hasRelayRpcs) return dispatch(ContributeEvent._noRpcsForRelayChain)
+
+      const { nativeToken: relayNativeToken, tokenDecimals: relayTokenDecimals } = relayChaindata
+      if (!relayNativeToken) return dispatch(ContributeEvent._noChaindataForRelayChain)
+      if (!relayTokenDecimals) return dispatch(ContributeEvent._noChaindataForRelayChain)
+
+      const parachainName = chaindata.name !== null ? chaindata.name : undefined
+
+      dispatch(
+        ContributeEvent._initialized({
+          relayChainId,
+          relayNativeToken,
+          relayTokenDecimals,
+          relayRpcs,
+          parachainId,
+          parachainName,
+          subscanUrl: relayExtraChaindata?.subscanUrl,
+          contributionAmount: '',
+          submissionRequested: false,
+          submissionValidated: false,
+        })
+      )
+    })()
+  }, [dispatch, JSON.stringify(stateDeps)]) // eslint-disable-line react-hooks/exhaustive-deps
+}
+
+// When in the ContributeState.Ready state, this thunk will call setApi as needed
+function useApiThunk(state: ContributeState, dispatch: DispatchContributeEvent) {
+  const stateDeps = state.match({
+    Ready: ({ relayRpcs }) => ({ relayRpcs }),
     _: () => false as false,
   })
 
   useEffect(() => {
     if (!stateDeps) return
-    const { rpcs } = stateDeps
-
-    console.log('setting up api', rpcs)
+    const { relayRpcs } = stateDeps
 
     let shouldDisconnect = false
 
-    ApiPromise.create({ provider: new WsProvider(rpcs) }).then(api => {
+    ApiPromise.create({ provider: new WsProvider(relayRpcs) }).then(api => {
       if (shouldDisconnect) return api.disconnect()
-      dispatch(ContributeEvent.setApi(api))
+      dispatch(ContributeEvent._setApi(api))
     })
 
     return () => {
       shouldDisconnect = true
-      dispatch(ContributeEvent.setApi())
+      dispatch(ContributeEvent._setApi())
     }
   }, [dispatch, JSON.stringify(stateDeps)]) // eslint-disable-line react-hooks/exhaustive-deps
 }
 
-function useAccountBalanceDispatcher(state: ContributeState, dispatch: DispatchContributeEvent) {
+// When in the ContributeState.Ready state, this thunk will call setAccountBalance as needed
+function useAccountBalanceThunk(state: ContributeState, dispatch: DispatchContributeEvent) {
   const stateDeps = state.match({
     Ready: ({ relayChainId, account }) => ({ relayChainId, account }),
     _: () => false as false,
@@ -582,117 +397,295 @@ function useAccountBalanceDispatcher(state: ContributeState, dispatch: DispatchC
     const chainIds = [relayChainId.toString()]
     const addresses = account ? [account] : []
 
-    console.log('setting up balance checker', chainIds, addresses)
-
     const unsubscribe = Talisman.init({ type: 'TALISMANCONNECT', rpcs: customRpcs }).subscribeBalances(
       chainIds,
       addresses,
-      balance => dispatch(ContributeEvent.setAccountBalance(balance))
+      balance => dispatch(ContributeEvent._setAccountBalance(balance))
     )
 
     return unsubscribe
   }, [dispatch, JSON.stringify(stateDeps)]) // eslint-disable-line react-hooks/exhaustive-deps
 }
 
-// function useThunkDependency<TState, TDependency>(
-//   state: TState,
-//   deriveDependency: (dependency: TDependency | null, state: TState) => Promise<TDependency | null>,
-//   cleanupDependency: (dependency: TDependency) => any
-// ) {
-//   const [dependency, setDependency] = useState<TDependency | null>(null)
+function useValidateAccountHasContributionBalanceThunk(state: ContributeState, dispatch: DispatchContributeEvent) {
+  const stateDeps = state.match({
+    Ready: ({ contributionAmount, accountBalance }) => ({ contributionAmount, accountBalance }),
+    _: () => false as false,
+  })
 
-//   useEffect(() => {
-//     let cancelled = false
-//     let newDependency: TDependency | null = null
-//     const cleanup = () => {
-//       // don't clean up when no dependency
-//       if (newDependency === null) return
+  useEffect(() => {
+    if (!stateDeps) return
+    const { contributionAmount, accountBalance } = stateDeps
 
-//       // don't clean up when dependency hasn't changed
-//       if (newDependency === dependency) return
+    const setBalanceError = () => dispatch(ContributeEvent._setValidationError({ i18nCode: 'Account balance too low' }))
+    const clearBalanceError = () => dispatch(ContributeEvent._setValidationError())
 
-//       // clean up
-//       setDependency(null)
-//       cleanupDependency(newDependency)
-//     }
+    if (!contributionAmount || contributionAmount === '') return clearBalanceError()
+    if (Number.isNaN(Number(contributionAmount))) return clearBalanceError()
+    if (!accountBalance || !accountBalance.tokens) return clearBalanceError()
+    if (new BigNumber(contributionAmount).isLessThanOrEqualTo(new BigNumber(accountBalance.tokens)))
+      return clearBalanceError()
 
-//     ;(async () => {
-//       // derive new dependency
-//       newDependency = await deriveDependency(dependency, state)
+    setBalanceError()
+  }, [dispatch, JSON.stringify(stateDeps)]) // eslint-disable-line react-hooks/exhaustive-deps
+}
 
-//       // clean up if useEffect was unmounted
-//       if (cancelled) return cleanup()
+function useTxFeeThunk(state: ContributeState, dispatch: DispatchContributeEvent) {
+  const stateDeps = state.match({
+    Ready: ({ relayTokenDecimals, parachainId, contributionAmount, account, verifierSignature, api }) => ({
+      relayTokenDecimals,
+      parachainId,
+      contributionAmount,
+      account,
+      verifierSignature,
+      api,
+    }),
+    _: () => false as false,
+  })
+  const { api, ...jsonCmpStateDeps } = stateDeps || {}
 
-//       // set new dependency
-//       setDependency(newDependency)
-//     })()
+  useEffect(() => {
+    let cancelled = false
 
-//     return () => {
-//       cancelled = true
-//       cleanup()
-//     }
-//   }, [state]) // eslint-disable-line react-hooks/exhaustive-deps
+    ;(async () => {
+      if (!stateDeps) return
+      const { relayTokenDecimals, parachainId, contributionAmount, account, verifierSignature, api } = stateDeps
 
-//   // clean up dependency on unmount
-//   useEffect(() => () => dependency !== null && cleanupDependency(dependency), []) // eslint-disable-line react-hooks/exhaustive-deps
+      dispatch(ContributeEvent._setTxFee())
 
-//   return dependency
-// }
+      if (!api || !api.isReady) return
+      if (!contributionAmount) return dispatch(ContributeEvent._setTxFee(null))
+      if (!account) return dispatch(ContributeEvent._setTxFee(null))
 
-// // api is either null or ApiPromise, the promise variation of the polkadotjs api
-// // apiPromise is a Promise<ApiPromise> which can be `await`ed to wait until the ApiPromise has been initialized
-// function useApi(rpcs?: string[]): [ApiPromise | null, Promise<ApiPromise>] {
-//   const [apiPromise, setApiPromise] = useState<Promise<ApiPromise> | null>(null)
-//   const [api, setApi] = useState<ApiPromise | null>(null)
-//   const [apiDeferred, setApiDeferred] = useState(Deferred<ApiPromise>())
+      const contributionPlanck = tokensToPlanck(contributionAmount, relayTokenDecimals)
 
-//   useEffect(() => {
-//     if (!Array.isArray(rpcs) || rpcs.length < 1) return
+      const tx = buildTx(api, parachainId, contributionPlanck, verifierSignature)
 
-//     setApiPromise(ApiPromise.create({ provider: new WsProvider(rpcs) }))
-//     return () => {
-//       // remove apiPromise
-//       setApiPromise(null)
-//       // reset deferred so users don't await on a disconnected apiPromise
-//       setApiDeferred(Deferred())
-//     }
-//   }, [rpcs])
+      const { partialFee } = await tx.paymentInfo(account)
+      const feeTokens = planckToTokens(partialFee.toString(), relayTokenDecimals)
 
-//   useEffect(() => {
-//     if (!apiPromise) return
+      if (cancelled) return
 
-//     apiPromise.then(api =>
-//       // check that we are the most recent api promise
-//       setApiPromise(currentApiPromise => {
-//         // set api
-//         if (apiPromise === currentApiPromise) setApi(api)
-//         return currentApiPromise
-//       })
-//     )
+      dispatch(ContributeEvent._setTxFee(feeTokens))
+    })()
 
-//     return () => {
-//       apiPromise.then(api => api.disconnect())
-//     }
-//   }, [apiPromise])
+    return () => {
+      cancelled = true
+      dispatch(ContributeEvent._setTxFee(null))
+    }
+  }, [dispatch, stateDeps && stateDeps?.api, JSON.stringify(jsonCmpStateDeps)]) // eslint-disable-line react-hooks/exhaustive-deps
+}
 
-//   useEffect(() => {
-//     if (!api) return
+function useValidateContributionThunk(state: ContributeState, dispatch: DispatchContributeEvent) {
+  const stateDeps = state.match({
+    Ready: ({
+      relayNativeToken,
+      relayTokenDecimals,
+      contributionAmount,
+      account,
+      api,
+      accountBalance,
+      submissionRequested,
+    }) => ({
+      relayNativeToken,
+      relayTokenDecimals,
+      contributionAmount,
+      account,
+      api,
+      accountBalance,
+      submissionRequested,
+    }),
+    _: () => false as false,
+  })
+  const { api, ...jsonCmpStateDeps } = stateDeps || {}
 
-//     setApiDeferred(apiDeferred => {
-//       // use existing deferred if still pending, otherwise create new deferred
-//       const deferred = apiDeferred.isPending() ? apiDeferred : Deferred<ApiPromise>()
+  useEffect(() => {
+    if (!stateDeps) return
+    const {
+      relayNativeToken,
+      relayTokenDecimals,
+      contributionAmount,
+      account,
+      api,
+      accountBalance,
+      submissionRequested,
+    } = stateDeps
 
-//       // resolve with api
-//       deferred.resolve(api)
+    if (!submissionRequested) return
 
-//       return deferred
-//     })
+    const setError = (error: { i18nCode: string; vars?: { [key: string]: any } }) =>
+      dispatch(ContributeEvent._setValidationError(error))
 
-//     return () => setApiDeferred(Deferred())
-//   }, [api])
+    if (!contributionAmount || contributionAmount.length < 1 || Number(contributionAmount) === 0) {
+      setError({ i18nCode: 'Please enter an amount of {{token}}', vars: { token: relayNativeToken } })
+      return
+    }
+    if (Number.isNaN(Number(contributionAmount))) {
+      setError({ i18nCode: 'Please enter a valid amount of {{token}}', vars: { token: relayNativeToken } })
+      return
+    }
+    if (!account || account.length < 1) {
+      setError({ i18nCode: 'An account must be selected' })
+      return
+    }
 
-//   return [api, apiDeferred.promise]
-// }
+    if (!accountBalance?.tokens) return
+    if (new BigNumber(accountBalance.tokens).isLessThan(new BigNumber(contributionAmount))) {
+      setError({ i18nCode: 'Account balance too low' })
+      return
+    }
+
+    if (!api) return
+    const minContribution = api.consts.crowdloan.minContribution.toString()
+    const contributionPlanck = tokensToPlanck(contributionAmount, relayTokenDecimals)
+    const minimum = new BigNumber(planckToTokens(minContribution.toString(), relayTokenDecimals) || '').toFixed(2)
+
+    if (!contributionPlanck || new BigNumber(contributionPlanck).isLessThan(new BigNumber(minContribution))) {
+      setError({
+        i18nCode: 'A minimum of {{minimum}} {{token}} is required',
+        vars: { minimum, token: relayNativeToken },
+      })
+      return
+    }
+
+    // TODO: Test that contribution doesn't go above crowdloan cap
+    // TODO: Test that crowdloan has not ended
+    // TODO: Test that crowdloan is in a valid lease period
+    // TODO: Test that crowdloan has not already won
+    // TODO: Validate validator signature
+    // TODO: Test user has enough tokens to not go below the existential deposit
+    // https://github.com/paritytech/polkadot/blob/dee1484760aedfd699e764f2b7c7d85855f7b077/runtime/common/src/crowdloan.rs#L432
+
+    dispatch(ContributeEvent._validateContribution)
+  }, [dispatch, stateDeps && stateDeps?.api, JSON.stringify(jsonCmpStateDeps)]) // eslint-disable-line react-hooks/exhaustive-deps
+}
+
+function useSignAndSendContributionThunk(state: ContributeState, dispatch: DispatchContributeEvent) {
+  const stateDeps = state.match({
+    Ready: ({
+      relayTokenDecimals,
+      parachainId,
+      subscanUrl,
+      contributionAmount,
+      account,
+      verifierSignature,
+      api,
+      submissionValidated,
+    }) => ({
+      relayTokenDecimals,
+      parachainId,
+      subscanUrl,
+      contributionAmount,
+      account,
+      verifierSignature,
+      api,
+      submissionValidated,
+    }),
+    _: () => false as false,
+  })
+  const { api, ...jsonCmpStateDeps } = stateDeps || {}
+
+  useEffect(() => {
+    let cancelled = false
+
+    ;(async () => {
+      if (!stateDeps) return
+      const {
+        relayTokenDecimals,
+        parachainId,
+        subscanUrl,
+        contributionAmount,
+        account,
+        verifierSignature,
+        api,
+        submissionValidated,
+      } = stateDeps
+
+      if (!submissionValidated) return
+      if (!account) return
+
+      if (!api) return
+      const contributionPlanck = tokensToPlanck(contributionAmount, relayTokenDecimals)
+
+      const injector = await web3FromAddress(account)
+      if (cancelled) return
+
+      const tx = buildTx(api, parachainId, contributionPlanck, verifierSignature)
+
+      let txSigned
+      try {
+        txSigned = await tx.signAsync(account, { signer: injector.signer })
+      } catch (error: any) {
+        dispatch(ContributeEvent._setValidationError({ i18nCode: error?.message || error.toString() }))
+        return
+      }
+      if (cancelled) return
+
+      dispatch(ContributeEvent._setContributionSubmitting({}))
+
+      try {
+        const unsub = await txSigned.send(async result => {
+          const { status, events = [], dispatchError } = result
+
+          for (const {
+            phase,
+            event: { data, method, section },
+          } of events) {
+            console.info(`\t${phase}: ${section}.${method}:: ${data}`)
+          }
+
+          if (status.isInBlock) {
+            console.info(`Transaction included at blockHash ${status.asInBlock}`)
+            dispatch(
+              ContributeEvent._setContributionSubmitting({
+                explorerUrl: await deriveExplorerUrl(api, result, subscanUrl),
+              })
+            )
+          }
+          if (status.isFinalized) {
+            console.info(`Transaction finalized at blockHash ${status.asFinalized}`)
+            unsub()
+
+            let success = false
+            let error
+            if (
+              events.some(({ event: { method, section } }) => section === 'system' && method === 'ExtrinsicSuccess') &&
+              !events.some(({ event: { method, section } }) => section === 'system' && method === 'ExtrinsicFailed')
+            ) {
+              success = true
+            }
+
+            // https://polkadot.js.org/docs/api/cookbook/tx#how-do-i-get-the-decoded-enum-for-an-extrinsicfailed-event
+            if (dispatchError && dispatchError.isModule && api) {
+              const decoded = api.registry.findMetaError(dispatchError.asModule)
+              const { docs, name, section } = decoded
+              error = `${section}.${name}: ${docs.join(' ')}`
+            } else if (dispatchError) {
+              error = dispatchError.toString()
+            }
+
+            const explorerUrl = await deriveExplorerUrl(api, result, subscanUrl)
+
+            if (success && !error) {
+              dispatch(ContributeEvent._finalizedContributionSuccess({ explorerUrl }))
+              trackGoal('GTVDUALL', 1) // crowdloan_contribute
+              trackGoal('WQGRJ9OC', parseInt(contributionPlanck, 10)) // crowdloan_contribute_amount
+            } else {
+              dispatch(ContributeEvent._finalizedContributionFailed({ error, explorerUrl }))
+            }
+          }
+        })
+      } catch (error: any) {
+        dispatch(ContributeEvent._setValidationError({ i18nCode: error?.message || error.toString() }))
+        return
+      }
+    })()
+
+    return () => {
+      cancelled = true
+    }
+  }, [dispatch, stateDeps && stateDeps?.api, JSON.stringify(jsonCmpStateDeps)]) // eslint-disable-line react-hooks/exhaustive-deps
+}
 
 //
 // Helpers (internal)
@@ -707,11 +700,27 @@ const filterContributionAmount = (contributionAmount: string): string =>
       match === '.' ? (string.indexOf('.') === offset ? '.' : '') : ''
     )
 
+function buildTx(
+  api: ApiPromise,
+  parachainId: number,
+  contributionPlanck: string,
+  verifierSignature?: string
+): SubmittableExtrinsic<'promise', ISubmittableResult> {
+  const txs = [
+    api.tx.crowdloan.contribute(parachainId, contributionPlanck, verifierSignature),
+    api.tx.system.remarkWithEvent('Talisman - The Journey Begins'),
+  ]
+
+  return api.tx.utility.batchAll(txs)
+}
+
 async function deriveExplorerUrl(
   api: ApiPromise,
   result: ISubmittableResult,
-  subscanUrl: string
+  subscanUrl?: string
 ): Promise<string | undefined> {
+  if (!subscanUrl) return
+
   const { status, events = [] } = result
 
   //
@@ -757,25 +766,3 @@ async function deriveExplorerUrl(
 
   return explorerUrl
 }
-
-// function stateIsVariant<TV, TState extends TaggedUnion<TV>>(state: TState, variant: string) {
-//   return state.match({
-//     [variant]: props => props,
-//     _: () => false
-//   })
-// }
-
-// function useStateProps(state: ContributeState, variant: ContributeStateVariant, props: string[]) {
-//   return useMemo(() => {
-//     state.match({
-//       [variant]: props => {
-//         const ret = {}
-//         for (const prop of props) {
-//           ret[prop] = props[prop]
-//         }
-//         return ret
-//       },
-//       _: () => false,
-//     })
-//   }, [state.variant, ...props.map(prop => state.data[prop])])
-// }

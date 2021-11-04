@@ -79,10 +79,11 @@ const Dropdown = styled(
     handleClose,
     allAccounts,
     nativeToken,
-    ksmBalancesByAddress,
+    tokenBalancesByAddress,
     totalBalanceByAddress,
     closeParent,
     showBuy = false,
+    parachainId,
   }) => {
     const { t } = useTranslation()
     const { switchAccount } = useActiveAccount()
@@ -90,8 +91,8 @@ const Dropdown = styled(
     const { totalUsd, totalUsdByAddress } = usePortfolio()
 
     const totalBalanceByAddressFunc = address =>
-      ksmBalancesByAddress[address] &&
-      ksmBalancesByAddress[address].map(balance => balance?.tokens).reduce(addBigNumbers, undefined)
+      tokenBalancesByAddress[address] &&
+      tokenBalancesByAddress[address].map(balance => balance?.tokens).reduce(addBigNumbers, undefined)
 
     return (
       open && (
@@ -136,7 +137,8 @@ const Dropdown = styled(
 
                   <span className="right">
                     {address ? (
-                      allAccounts ? (
+                      // show usd when no chainId specified
+                      parachainId === undefined ? (
                         <Pendor prefix={!totalUsdByAddress[encodeAnyAddress(address, 42)] && '-'}>
                           {totalUsdByAddress[encodeAnyAddress(address, 42)] &&
                             formatCurrency(totalUsdByAddress[encodeAnyAddress(address, 42)])}
@@ -319,6 +321,7 @@ const Authorized = styled(
     closeParent = null,
     showBuy = false,
     fixedDropdown = false,
+    parachainId,
   }) => {
     const { t } = useTranslation()
     const nodeRef = useRef<HTMLDivElement>(null)
@@ -335,21 +338,21 @@ const Authorized = styled(
       switchAccount(accounts[0].address)
     }, [accounts, allAccounts, hasActiveAccount, switchAccount])
 
-    // TODO: Currently we show KSM when allAccounts is false
-    // Instead we should maybe have a prop which specifies what
-    // balance (KSM/DOT/Parahain N/USD) should be shown for each account
+    const hasParachainId = parachainId !== undefined
 
-    const chainId = '2'
-    const chainIds = useMemo(() => [chainId], []) // 2 is kusama
+    const chainIds = useMemo(
+      () => [hasParachainId ? parachainId.toString() : undefined].filter(Boolean),
+      [hasParachainId, parachainId]
+    )
     const addresses = useMemo(() => accounts.map((account: any) => account.address), [accounts])
 
     const hasManyAccounts = addresses && addresses.length > 1
 
-    const { nativeToken, tokenDecimals } = useChain(chainId)
+    const { nativeToken, tokenDecimals } = useChain(parachainId)
     const { balances } = useBalances(addresses, chainIds, customRpcs)
 
-    const ksmBalances = useFuncMemo(addTokensToBalances, balances, nativeToken ? tokenDecimals : undefined)
-    const ksmBalancesByAddress = useFuncMemo(groupBalancesByAddress, ksmBalances)
+    const tokenBalances = useFuncMemo(addTokensToBalances, balances, nativeToken ? tokenDecimals : undefined)
+    const tokenBalancesByAddress = useFuncMemo(groupBalancesByAddress, tokenBalances)
 
     const onClickOutside = () => {
       setOpen(false)
@@ -358,8 +361,8 @@ const Authorized = styled(
     useOnClickOutside(nodeRef, onClickOutside)
 
     const totalBalanceByAddress =
-      ksmBalancesByAddress[address] &&
-      ksmBalancesByAddress[address].map(balance => balance?.tokens).reduce(addBigNumbers, undefined)
+      tokenBalancesByAddress[address] &&
+      tokenBalancesByAddress[address].map(balance => balance?.tokens).reduce(addBigNumbers, undefined)
 
     return (
       <div
@@ -387,16 +390,19 @@ const Authorized = styled(
             <div>{hasActiveAccount ? name : allAccounts ? t('All Accounts') : 'Loading...'}</div>
             {showValue && (
               <div>
-                {allAccounts ? (
-                  <Pendor prefix={!usd && '-'}>{usd && formatCurrency(usd)}</Pendor>
-                ) : (
-                  <span className="selected-account-balance">
-                    <Pendor suffix={` ${nativeToken}`}>
-                      {totalBalanceByAddress === '0' && <AlertCircle />}
-                      {totalBalanceByAddress && formatCommas(totalBalanceByAddress)}
-                    </Pendor>
-                  </span>
-                )}
+                {
+                  // show usd when no chainId specified
+                  !hasParachainId ? (
+                    <Pendor prefix={!usd && '-'}>{usd && formatCurrency(usd)}</Pendor>
+                  ) : (
+                    <span className="selected-account-balance">
+                      <Pendor suffix={` ${nativeToken}`}>
+                        {totalBalanceByAddress === '0' && <AlertCircle />}
+                        {totalBalanceByAddress && formatCommas(totalBalanceByAddress)}
+                      </Pendor>
+                    </span>
+                  )
+                }
               </div>
             )}
           </span>
@@ -420,10 +426,11 @@ const Authorized = styled(
             handleClose={() => setOpen(false)}
             allAccounts={allAccounts}
             nativeToken={nativeToken}
-            ksmBalancesByAddress={ksmBalancesByAddress}
+            tokenBalancesByAddress={tokenBalancesByAddress}
             totalBalanceByAddress={totalBalanceByAddress}
             closeParent={closeParent}
             showBuy={showBuy}
+            parachainId={parachainId}
           />
         </span>
       </div>

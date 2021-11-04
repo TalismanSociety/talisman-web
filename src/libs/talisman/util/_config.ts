@@ -93,15 +93,6 @@ export const parachainDetails: ParachainDetails[] = [
     },
   },
   {
-    id: 2002,
-    name: 'Moonbeam testnet',
-    slug: 'moonbeam-testnet',
-    token: 'MVN',
-    subtitle: '',
-    info: '',
-    links: {},
-  },
-  {
     id: 2004,
     name: 'Khala Network',
     slug: 'khala-network',
