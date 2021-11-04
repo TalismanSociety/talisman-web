@@ -1,4 +1,4 @@
-import { Crowdloan } from '@archetypes'
+import { CrowdloanV2 as Crowdloan } from '@archetypes'
 import styled from 'styled-components'
 
 const CrowdloanIndex = styled(({ className }) => (
