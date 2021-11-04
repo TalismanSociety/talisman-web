@@ -20,6 +20,7 @@ export function buyNow() {
     const style = overlay?.style
     if (style) {
       style.zIndex = '10001'
+      style.background = 'rgba(0,0,0,0.4)'
     }
   }
 }
