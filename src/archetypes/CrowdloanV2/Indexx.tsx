@@ -128,12 +128,12 @@ const Index = styled(({ withFilter, className }) => {
 
   .popular {
     flex: 1;
-    max-width: 100%;
+    // max-width: 100%;
   }
 
   .learn {
     flex: 1;
-    max-width: 100%;
+    // max-width: 100%;
   }
 
   .unlock {

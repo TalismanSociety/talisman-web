@@ -21,7 +21,7 @@ export const PopularCrowdloans = styled(({ className }) => {
     </Panel>
   )
 })`
-  min-width: max-content;
+  //   min-width: max-content;
 
   .card {
     padding: 2.4rem;
