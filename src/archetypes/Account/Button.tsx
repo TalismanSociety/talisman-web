@@ -492,8 +492,8 @@ const Authorized = styled(
   }
 
   .account-picker {
-    ${props =>
-      props.fixedDropdown
+    ${({ fixedDropdown }) =>
+      fixedDropdown
         ? `position: fixed; top: auto; left: auto;`
         : `
         position: absolute;
