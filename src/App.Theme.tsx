@@ -289,7 +289,7 @@ const greenDark: DefaultTheme = {
   background: '27,27,27',
   foreground: '165,165,165',
   mid: '150,150,150',
-  dim: '90,90,90',
+  dim: '90,90,90', // #5a5a5a
   light: '250,250,250', // #fafafa
   dark: '0,0,0',
   text: '250,250,250', // #fafafa

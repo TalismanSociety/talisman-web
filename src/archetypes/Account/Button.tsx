@@ -2,7 +2,6 @@ import { ReactComponent as AllAccountsIcon } from '@assets/icons/all-accounts.sv
 import { Button, Pendor, Pill } from '@components'
 import { ReactComponent as AlertCircle } from '@icons/alert-circle.svg'
 import { ReactComponent as ChevronDown } from '@icons/chevron-down.svg'
-import { trackGoal } from '@libs/fathom'
 import { usePortfolio } from '@libs/portfolio'
 import { useActiveAccount, useChainByGenesis, useExtensionAutoConnect } from '@libs/talisman'
 import Identicon from '@polkadot/react-identicon'
@@ -493,8 +492,8 @@ const Authorized = styled(
   }
 
   .account-picker {
-    ${props =>
-      props.fixedDropdown
+    ${({ fixedDropdown }) =>
+      fixedDropdown
         ? `position: fixed; top: auto; left: auto;`
         : `
         position: absolute;
