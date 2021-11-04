@@ -19,7 +19,7 @@ export const NoWalletBanner = () => {
               href="https://polkadot.js.org/extension"
               target="_blank"
               rel="noreferrer noopener"
-              style={{ textDecoration: 'underline' }}
+              style={{ textDecoration: 'underline', color: 'inherit', opacity: 'inherit' }}
             >
               Polkadot.js
             </a>
