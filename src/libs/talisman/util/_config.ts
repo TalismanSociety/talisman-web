@@ -4,7 +4,7 @@ export const relayChainsChaindata: RelayChaindata[] = [
     id: 0,
     name: 'Polkadot',
     subscanUrl: 'https://polkadot.subscan.io',
-    subqueryCrowdloansUrl: 'https://api.subquery.network/sq/TalismanSociety/polkadot-crowdloans__VGFsa',
+    subqueryCrowdloansUrl: 'https://api.subquery.network/sq/bianyunjian/polkadot-crowdloans',
   },
   {
     id: 2,
