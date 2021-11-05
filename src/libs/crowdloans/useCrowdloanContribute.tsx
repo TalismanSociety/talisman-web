@@ -757,6 +757,11 @@ function useSignAndSendContributionThunk(state: ContributeState, dispatch: Dispa
               dispatch(ContributeEvent._finalizedContributionSuccess({ explorerUrl }))
               trackGoal('GTVDUALL', 1) // crowdloan_contribute
               trackGoal('WQGRJ9OC', parseInt(contributionPlanck, 10)) // crowdloan_contribute_amount
+              
+              relayChainId ? 
+                trackGoal('QG3QGBYH', parseInt(contributionPlanck, 10)) : // crowdloan_contribute_amount_DOT
+                trackGoal('JFOFGXPN', parseInt(contributionPlanck, 10)) // crowdloan_contribute_amount_KSM
+
             } else {
               dispatch(ContributeEvent._finalizedContributionFailed({ error, explorerUrl }))
             }
