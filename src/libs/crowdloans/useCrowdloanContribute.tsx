@@ -22,17 +22,17 @@ import { MemberType, makeTaggedUnion, none } from 'safety-match'
 // TODO: Store Acala overrides somewhere neat
 export const acalaOptions = {
   // prod
-  // api: 'https://crowdloan.aca-api.network',
-  // // TODO: Get prod parachainId
-  // parachainId: 2000,
-  // referral: '0xb4cdf472363967c308177936f6faddcccb3cd502d99728394fe9f4ec0d9dbf4f',
-  // jwt: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoidGFsaXNtYW4iLCJpYXQiOjE2MzYwNTM5NTV9.vplu8f6JI-T7SLuKwKU001KDPof04Lp6cCFyJXLWSKg',
-
-  // test
-  api: 'https://crowdloan.aca-dev.network',
+  api: 'https://crowdloan.aca-api.network',
+  relayId: 0,
   parachainId: 2000,
   referral: '0xb4cdf472363967c308177936f6faddcccb3cd502d99728394fe9f4ec0d9dbf4f',
   jwt: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoidGFsaXNtYW4iLCJpYXQiOjE2MzYwNTM5NTV9.vplu8f6JI-T7SLuKwKU001KDPof04Lp6cCFyJXLWSKg',
+
+  // // test
+  // api: 'https://crowdloan.aca-dev.network',
+  // parachainId: 2000,
+  // referral: '0xb4cdf472363967c308177936f6faddcccb3cd502d99728394fe9f4ec0d9dbf4f',
+  // jwt: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoidGFsaXNtYW4iLCJpYXQiOjE2MzYwNTM5NTV9.vplu8f6JI-T7SLuKwKU001KDPof04Lp6cCFyJXLWSKg',
 }
 
 //
@@ -86,7 +86,7 @@ export type DispatchContributeEvent = (event: ContributeEvent) => void
 // All of the types of props which are passed to the various state constructors
 type InitializeProps = {
   relayChainId: number
-  parachainId: number
+  parachainId: string
 }
 type SignatureProps = {
   // TODO: Implement
@@ -96,7 +96,7 @@ type ReadyProps = {
   relayNativeToken: string
   relayTokenDecimals: number
   relayRpcs: string[]
-  parachainId: number
+  parachainId: string
   parachainName?: string
   subscanUrl?: string
 
@@ -353,8 +353,8 @@ function useInitializeThunk(state: ContributeState, dispatch: DispatchContribute
       const { relayChainId, parachainId } = stateDeps
 
       const [relayChaindata, chaindata] = await Promise.all([
-        Chaindata.chain(relayChainId),
-        Chaindata.chain(parachainId),
+        Chaindata.chain(relayChainId.toString()),
+        Chaindata.chain(`${relayChainId}-${parachainId}`),
       ])
       const relayExtraChaindata = relayChainsChaindata.find(chaindata => chaindata.id === relayChainId)
       const relayChainCustomRpcs = customRpcs[relayChainId.toString()]
@@ -513,7 +513,7 @@ function useTxFeeThunk(state: ContributeState, dispatch: DispatchContributeEvent
       let tx
       try {
         tx =
-          parachainId === acalaOptions.parachainId
+          relayChainId === acalaOptions.relayId && parachainId === acalaOptions.parachainId
             ? await buildAcalaTx({ api, relayChainId, account, email, contributionPlanck, estimateOnly: true })
             : buildTx(api, parachainId, contributionPlanck, verifierSignature)
       } catch (error: any) {
@@ -683,7 +683,7 @@ function useSignAndSendContributionThunk(state: ContributeState, dispatch: Dispa
       let tx
       try {
         tx =
-          parachainId === acalaOptions.parachainId
+          relayChainId === acalaOptions.relayId && parachainId === acalaOptions.parachainId
             ? await buildAcalaTx({ api, relayChainId, account, email, contributionPlanck })
             : buildTx(api, parachainId, contributionPlanck, verifierSignature)
       } catch (error: any) {

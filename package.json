@@ -19,6 +19,7 @@
     "@polkadot/util-crypto": "^7.4.1",
     "@ramp-network/ramp-instant-sdk": "^2.5.0",
     "@talismn/api-react-hooks": "~0",
+    "@talismn/chaindata-js": "~0",
     "@talismn/util": "~0",
     "@testing-library/dom": "^8.2.0",
     "@testing-library/jest-dom": "^5.11.4",

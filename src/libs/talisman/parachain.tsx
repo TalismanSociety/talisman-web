@@ -6,6 +6,7 @@ import {
   createHttpLink,
   gql,
 } from '@apollo/client'
+import { useChain } from '@talismn/api-react-hooks'
 import { find } from 'lodash'
 import { FC, useContext as _useContext, createContext, useEffect, useMemo, useState } from 'react'
 
@@ -13,8 +14,6 @@ import { parachainDetails, relayChainsChaindata } from './util/_config'
 import type { ParachainDetails } from './util/_config'
 
 export type { ParachainDetails } from './util/_config'
-
-const assetPath = require.context('./assets', true)
 
 //
 // Constants
@@ -78,29 +77,19 @@ export const useParachainDetailsById = (id?: number) => useFindParachainDetails(
 export const useParachainDetailsBySlug = (slug?: string) => useFindParachainDetails('slug', slug)
 
 export const useParachainAssets = (
-  id?: number
-): Partial<{ [key: string]: string; banner: string; card: string; logo: string }> =>
-  useMemo(() => {
-    if (!id) return {}
+  id?: string
+): Partial<{ [key: string]: string; banner: string; card: string; logo: string }> => {
+  const chain = useChain(id)
 
-    let banner = ''
-    let card = ''
-    let logo = ''
-
-    try {
-      banner = assetPath(`./${id}/banner.png`)?.default
-    } catch (e) {}
-
-    try {
-      card = assetPath(`./${id}/card.png`)?.default
-    } catch (e) {}
-
-    try {
-      logo = assetPath(`./${id}/logo.svg`)?.default
-    } catch (e) {}
-
-    return { banner, card, logo }
-  }, [id])
+  return useMemo(
+    () => ({
+      banner: chain.asset?.banner,
+      card: chain.asset?.card,
+      logo: chain.asset?.logo,
+    }),
+    [chain]
+  )
+}
 
 //
 // Hooks (internal)
@@ -181,18 +170,23 @@ export const Provider: FC = ({ children }) => {
 
   // TODO: Separate parachainDetails from parachains
   // parachainDetails should come from chaindata, parachains should come from subquery
-  const parachains = useMemo<ParachainDetails[]>(
-    () =>
+  const [parachains, setParachains] = useState<ParachainDetails[]>([])
+  useEffect(() => {
+    setParachains(
       parachainResults.flatMap(([relayChainId, result]) =>
         (result?.data?.parachains?.nodes || [])
+          .map(({ paraId: id }: { paraId?: number }) => ({ paraId: `${relayChainId}-${id}` }))
           .map(({ paraId: id }: { paraId?: number }) => find(parachainDetails, { id }))
           .filter(Boolean)
           .map((parachain: any) => ({ ...parachain, relayChainId }))
-      ),
-    [parachainResults]
-  )
+      )
+    )
+  }, [parachainResults])
 
-  const hydrated = parachainResults.length > 0
+  const [hydrated, setHydrated] = useState(false)
+  useEffect(() => {
+    setHydrated(parachainResults.length > 0)
+  }, [parachainResults])
 
   const value = useMemo(
     () => ({

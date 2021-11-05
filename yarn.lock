@@ -2585,8 +2585,8 @@ __metadata:
   linkType: hard
 
 "@talismn/api-react-hooks@npm:~0":
-  version: 0.0.22
-  resolution: "@talismn/api-react-hooks@npm:0.0.22"
+  version: 0.0.23
+  resolution: "@talismn/api-react-hooks@npm:0.0.23"
   dependencies:
     "@talismn/api": ~0
     "@talismn/chaindata-js": ~0
@@ -2597,7 +2597,7 @@ __metadata:
     "@polkadot/types": "*"
     "@polkadot/util-crypto": "*"
     react: ">=17"
-  checksum: 15504004d39efde334263d3e42a2583e53e5bb7d1a5f486e22aa11ca63f3c2005b1db0b9634b8ce085287586a49c0748c994fef576eaac119918827de7f6bbb8
+  checksum: 36ca13634c31e921dd4f4f250d4b11d9269c979775c90663c54c4886a446c41dd144a8a77a1cc332b259c7bdce96b20c13e9e0d5b9e3a61642f0533c869936dd
   languageName: node
   linkType: hard
 
@@ -2624,9 +2624,9 @@ __metadata:
   linkType: hard
 
 "@talismn/chaindata-js@npm:~0":
-  version: 0.0.6
-  resolution: "@talismn/chaindata-js@npm:0.0.6"
-  checksum: f41d33c043246e7f1bf213d55f481215c16e0fb6c8ac600b26ad11118790d1af2f11ceaf53728a5f4dcff85b003ae3e3a31ea920eb2fb80c16653a176dae5de3
+  version: 0.0.7
+  resolution: "@talismn/chaindata-js@npm:0.0.7"
+  checksum: c6a4697ae0459f6388b4367be250f4067cf51a0e55e9f9c777d75521de507639a717af5e28d4ace2edef27e58df5f3f42f6a86c004072dbc91a9ef6127314744
   languageName: node
   linkType: hard
 
@@ -2661,6 +2661,7 @@ __metadata:
     "@polkadot/util-crypto": ^7.4.1
     "@ramp-network/ramp-instant-sdk": ^2.5.0
     "@talismn/api-react-hooks": ~0
+    "@talismn/chaindata-js": ~0
     "@talismn/util": ~0
     "@testing-library/dom": ^8.2.0
     "@testing-library/jest-dom": ^5.11.4

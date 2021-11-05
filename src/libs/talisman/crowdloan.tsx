@@ -61,7 +61,7 @@ export type Crowdloan = {
   isFinished: boolean
   wonAuctionId: string | null
   parachain: {
-    paraId: number
+    paraId: string
   }
   contributions: {
     totalCount: number
@@ -190,8 +190,9 @@ export const Provider: FC = ({ children }) => {
     )
   }, [])
 
-  const crowdloans = useMemo<Crowdloan[]>(
-    () =>
+  const [crowdloans, setCrowdloans] = useState<Crowdloan[]>([])
+  useEffect(() => {
+    setCrowdloans(
       crowdloanResults.flatMap(([relayChainId, result]) =>
         (result?.data?.crowdloans?.nodes || []).map(
           (crowdloan: any): Crowdloan => ({
@@ -199,9 +200,18 @@ export const Provider: FC = ({ children }) => {
             raised: crowdloan.raised / 1e12,
             cap: crowdloan.cap / 1e12,
 
+            id: `${relayChainId}-${crowdloan.id}`,
+
+            parachain: {
+              paraId: `${relayChainId}-${crowdloan.parachain.paraId}`,
+            },
+
             relayChainId,
             percentRaised: (100 / (crowdloan.cap / 1e12)) * (crowdloan.raised / 1e12),
-            details: find(crowdloanDetails, { paraId: crowdloan.parachain.paraId }),
+            details: find(crowdloanDetails, {
+              relayId: relayChainId,
+              paraId: crowdloan.parachain.paraId,
+            }),
             uiStatus:
               crowdloan.wonAuctionId !== null
                 ? 'winner'
@@ -213,11 +223,14 @@ export const Provider: FC = ({ children }) => {
                 : 'ended',
           })
         )
-      ),
-    [crowdloanResults]
-  )
+      )
+    )
+  }, [crowdloanResults])
 
-  const hydrated = crowdloanResults.length > 0
+  const [hydrated, setHydrated] = useState(false)
+  useEffect(() => {
+    setHydrated(crowdloanResults.length > 0)
+  }, [crowdloanResults])
 
   const value = useMemo(
     () => ({

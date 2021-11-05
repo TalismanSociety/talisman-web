@@ -6,6 +6,7 @@ import {
 } from '@libs/crowdloans'
 import { calculateCrowdloanPortfolioAmounts, usePortfolio, useTaggedAmountsInPortfolio } from '@libs/portfolio'
 import { useAccountAddresses, useCrowdloanById, useCrowdloans } from '@libs/talisman'
+import { relayChainsChaindata } from '@libs/talisman/util/_config'
 import { useTokenPrice } from '@libs/tokenprices'
 import { useChain } from '@talismn/api-react-hooks'
 import { addBigNumbers, encodeAnyAddress, multiplyBigNumbers, planckToTokens, useFuncMemo } from '@talismn/util'
@@ -83,7 +84,10 @@ const CrowdloanItem = styled(({ id, className }) => {
 const Crowdloans = ({ className }: { className?: string }) => {
   const { t } = useTranslation()
   const accounts = useAccountAddresses()
-  const encoded = useMemo(() => accounts?.map(account => encodeAnyAddress(account, 2)), [accounts])
+  const encoded = useMemo(
+    () => accounts?.flatMap(account => relayChainsChaindata.map(({ id }) => encodeAnyAddress(account, id))),
+    [accounts]
+  )
   const { contributions, skipped, loading, error } = useCrowdloanContributions({ accounts: encoded })
   const totalContributions = groupTotalContributionsByCrowdloan(contributions)
 

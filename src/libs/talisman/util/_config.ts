@@ -48,7 +48,7 @@ export const SupportedParachains: { [key: number]: Parachain } = {
 }
 
 export type ParachainDetails = {
-  id: number
+  id: string
   name: string
   slug: string
   token: string
@@ -60,7 +60,22 @@ export type ParachainDetails = {
 
 export const parachainDetails: ParachainDetails[] = [
   {
-    id: 2000,
+    id: '0-2000',
+    name: 'Acala',
+    slug: 'acala',
+    token: 'ACA',
+    subtitle: 'Acala is the all-in-one DeFi hub of Kusama.',
+    info: `Acala is a scalable, EVM-compatible network optimized for DeFi. The platform offers a suite of financial applications including: a trustless staking derivative (liquid KSM), a multi-collateralized stablecoin backed by cross-chain assets (kUSD), and an AMM DEX – all with micro gas fees that can be paid in any token.\n\nAcala and Karura will operate in parallel and serve the users of the Polkadot and Kusama communities. Once Kusama is bridged to Polkadot, Karura and Acala will also be fully interoperable.`,
+    links: {
+      Website: 'https://acala.network',
+      Twitter: 'https://twitter.com/AcalaNetwork',
+      Telegram: 'https://t.me/acalaofficial',
+      Discord: 'https://discord.com/invite/6QHVY4X',
+      Github: 'https://github.com/AcalaNetwork',
+    },
+  },
+  {
+    id: '2-2000',
     name: 'Karura',
     slug: 'karura',
     token: 'KAR',
@@ -75,7 +90,7 @@ export const parachainDetails: ParachainDetails[] = [
     },
   },
   {
-    id: 2001,
+    id: '2-2001',
     name: 'Bifrost',
     slug: 'bifrost',
     token: 'BNC',
@@ -92,7 +107,7 @@ export const parachainDetails: ParachainDetails[] = [
     },
   },
   {
-    id: 2004,
+    id: '2-2004',
     name: 'Khala Network',
     slug: 'khala-network',
     token: 'PHA',
@@ -108,7 +123,7 @@ export const parachainDetails: ParachainDetails[] = [
     },
   },
   // {
-  //   id: 2006,
+  //   id: '2-2006',
   //   name: 'Darwinia Crab Redirect',
   //   slug: 'darwinia-crab-redirect',
   //   token: 'CRING',
@@ -124,7 +139,7 @@ export const parachainDetails: ParachainDetails[] = [
   //   },
   // },
   {
-    id: 2007,
+    id: '2-2007',
     name: 'Shiden',
     slug: 'shiden',
     token: 'SDN',
@@ -138,7 +153,7 @@ export const parachainDetails: ParachainDetails[] = [
     },
   },
   {
-    id: 2008,
+    id: '2-2008',
     name: 'Mars',
     slug: 'mars',
     token: 'ARES',
@@ -154,7 +169,7 @@ export const parachainDetails: ParachainDetails[] = [
     },
   },
   {
-    id: 2009,
+    id: '2-2009',
     name: 'PolkaSmith by PolkaFoundry',
     slug: 'polkasmith-by-polkafoundry',
     token: 'PKS',
@@ -169,7 +184,7 @@ export const parachainDetails: ParachainDetails[] = [
     },
   },
   {
-    id: 2012,
+    id: '2-2012',
     name: 'Crust Shadow',
     slug: 'crust-shadow',
     token: 'CSM',
@@ -185,7 +200,7 @@ export const parachainDetails: ParachainDetails[] = [
     },
   },
   {
-    id: 2013,
+    id: '2-2013',
     name: 'SherpaX',
     slug: 'sherpax',
     token: 'KSX',
@@ -201,7 +216,7 @@ export const parachainDetails: ParachainDetails[] = [
     },
   },
   {
-    id: 2015,
+    id: '2-2015',
     name: 'Integritee Network',
     slug: 'integritee-network',
     token: 'TEER',
@@ -218,7 +233,7 @@ export const parachainDetails: ParachainDetails[] = [
     },
   },
   {
-    id: 2016,
+    id: '2-2016',
     name: 'Sakura',
     slug: 'sakura',
     token: 'SKU',
@@ -234,7 +249,7 @@ export const parachainDetails: ParachainDetails[] = [
     },
   },
   {
-    id: 2018,
+    id: '2-2018',
     name: 'SubGame Gamma',
     slug: 'subgame-gamma',
     token: 'GSGB',
@@ -247,7 +262,7 @@ export const parachainDetails: ParachainDetails[] = [
     },
   },
   {
-    id: 2019,
+    id: '2-2019',
     name: 'Kpron',
     slug: 'kpron',
     token: 'KPN',
@@ -263,7 +278,7 @@ export const parachainDetails: ParachainDetails[] = [
     },
   },
   // {
-  //   id: 2021,
+  //   id: '2-2021',
   //   name: 'Altair',
   //   slug: 'altair',
   //   token: 'AIR',
@@ -280,7 +295,7 @@ export const parachainDetails: ParachainDetails[] = [
   //   },
   // },
   {
-    id: 2023,
+    id: '2-2023',
     name: 'Moonriver',
     slug: 'moonriver',
     token: 'MOVR',
@@ -296,7 +311,7 @@ export const parachainDetails: ParachainDetails[] = [
     },
   },
   {
-    id: 2024,
+    id: '2-2024',
     name: 'Genshiro',
     slug: 'genshiro',
     token: 'GENS',
@@ -311,7 +326,7 @@ export const parachainDetails: ParachainDetails[] = [
     },
   },
   {
-    id: 2077,
+    id: '2-2077',
     name: 'Robonomics',
     slug: 'robonomics',
     token: 'XRT',
@@ -327,7 +342,7 @@ export const parachainDetails: ParachainDetails[] = [
     },
   },
   {
-    id: 2080,
+    id: '2-2080',
     name: 'Loom Network',
     slug: 'loom-network',
     token: 'LOOM',
@@ -344,7 +359,7 @@ export const parachainDetails: ParachainDetails[] = [
     },
   },
   {
-    id: 2084,
+    id: '2-2084',
     name: 'Calamari',
     slug: 'calamari',
     token: 'KMA',
@@ -359,7 +374,7 @@ export const parachainDetails: ParachainDetails[] = [
     },
   },
   {
-    id: 2085,
+    id: '2-2085',
     name: 'Parallel Heiko',
     slug: 'parallel-heiko',
     token: 'HKO',
@@ -375,7 +390,7 @@ export const parachainDetails: ParachainDetails[] = [
     },
   },
   {
-    id: 2086,
+    id: '2-2086',
     name: 'KILT Spiritnet',
     slug: 'kilt-spiritnet',
     token: 'KILT',
@@ -394,7 +409,7 @@ export const parachainDetails: ParachainDetails[] = [
     },
   },
   {
-    id: 2087,
+    id: '2-2087',
     name: 'Picasso',
     slug: 'picasso',
     token: 'PICA',
@@ -411,7 +426,7 @@ export const parachainDetails: ParachainDetails[] = [
     },
   },
   {
-    id: 2088,
+    id: '2-2088',
     name: 'Altair',
     slug: 'altair',
     token: 'AIR',
@@ -428,7 +443,7 @@ export const parachainDetails: ParachainDetails[] = [
     },
   },
   // {
-  //   id: 2089,
+  //   id: '2-2089',
   //   name: 'Genshiro',
   //   slug: 'genshiro',
   //   token: 'GENS',
@@ -443,7 +458,7 @@ export const parachainDetails: ParachainDetails[] = [
   //   },
   // },
   {
-    id: 2090,
+    id: '2-2090',
     name: 'Basilisk',
     slug: 'basilisk',
     token: 'BSX',
@@ -459,7 +474,7 @@ export const parachainDetails: ParachainDetails[] = [
     },
   },
   {
-    id: 2092,
+    id: '2-2092',
     name: 'Kintsugi BTC',
     slug: 'kintsugi-btc',
     token: 'KINT',
@@ -475,7 +490,7 @@ export const parachainDetails: ParachainDetails[] = [
     },
   },
   {
-    id: 2095,
+    id: '2-2095',
     name: 'Quartz',
     slug: 'quartz',
     token: 'NEER',
@@ -489,7 +504,7 @@ export const parachainDetails: ParachainDetails[] = [
     },
   },
   {
-    id: 2096,
+    id: '2-2096',
     name: 'Bit.Country Pioneer',
     slug: 'bit-country-pioneer',
     token: 'NEER',
@@ -507,6 +522,7 @@ export const parachainDetails: ParachainDetails[] = [
 ]
 
 export type CrowdloanDetails = {
+  relayId: number
   paraId: number
   contributeUrl: string
   rewards: {
@@ -518,6 +534,7 @@ export type CrowdloanDetails = {
 
 export const crowdloanDetails: CrowdloanDetails[] = [
   {
+    relayId: 2,
     paraId: 2000,
     contributeUrl: 'https://acala.network/karura/join-karura',
     rewards: {
@@ -532,6 +549,7 @@ export const crowdloanDetails: CrowdloanDetails[] = [
     },
   },
   {
+    relayId: 2,
     paraId: 2001,
     contributeUrl: 'https://ksm.vtoken.io/?ref=polkadotjs',
     rewards: {
@@ -550,6 +568,7 @@ export const crowdloanDetails: CrowdloanDetails[] = [
     },
   },
   {
+    relayId: 2,
     paraId: 2004,
     contributeUrl: 'https://crowdloan.phala.network/en/',
     rewards: {
@@ -564,6 +583,7 @@ export const crowdloanDetails: CrowdloanDetails[] = [
     },
   },
   // {
+  //   relayId:2,
   //   paraId: 2006,
   //   contributeUrl: 'https://crab.network/plo#crowdloan',
   //   rewards: {
@@ -578,6 +598,7 @@ export const crowdloanDetails: CrowdloanDetails[] = [
   //   },
   // },
   {
+    relayId: 2,
     paraId: 2007,
     contributeUrl: 'https://crowdloan.plasmnet.io/',
     rewards: {
@@ -597,6 +618,7 @@ export const crowdloanDetails: CrowdloanDetails[] = [
     },
   },
   {
+    relayId: 2,
     paraId: 2008,
     contributeUrl:
       'https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Fkusama.api.onfinality.io%2Fpublic-ws#/parachains/crowdloan',
@@ -617,6 +639,7 @@ export const crowdloanDetails: CrowdloanDetails[] = [
     },
   },
   {
+    relayId: 2,
     paraId: 2009,
     contributeUrl: 'https://redkite.polkafoundry.com/#/join-polkasmith/',
     rewards: {
@@ -644,6 +667,7 @@ export const crowdloanDetails: CrowdloanDetails[] = [
     },
   },
   {
+    relayId: 2,
     paraId: 2012,
     contributeUrl: '',
     rewards: {
@@ -658,6 +682,7 @@ export const crowdloanDetails: CrowdloanDetails[] = [
     },
   },
   {
+    relayId: 2,
     paraId: 2013,
     contributeUrl: 'https://chainx-org.medium.com/sherpax-crowdloan-tutorial-88086714ff1',
     rewards: {
@@ -693,6 +718,7 @@ export const crowdloanDetails: CrowdloanDetails[] = [
     },
   },
   {
+    relayId: 2,
     paraId: 2015,
     contributeUrl: 'https://crowdloan.integritee.network/',
     rewards: {
@@ -712,6 +738,7 @@ export const crowdloanDetails: CrowdloanDetails[] = [
     },
   },
   {
+    relayId: 2,
     paraId: 2016,
     contributeUrl: 'https://auction.clover.finance/#/',
     rewards: {
@@ -726,6 +753,7 @@ export const crowdloanDetails: CrowdloanDetails[] = [
     },
   },
   {
+    relayId: 2,
     paraId: 2018,
     contributeUrl: 'https://www.subgame.org/#/contribute',
     rewards: {
@@ -745,6 +773,7 @@ export const crowdloanDetails: CrowdloanDetails[] = [
     },
   },
   {
+    relayId: 2,
     paraId: 2019,
     contributeUrl:
       'https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Fkusama.api.onfinality.io%2Fpublic-ws#/parachains/crowdloan',
@@ -761,6 +790,7 @@ export const crowdloanDetails: CrowdloanDetails[] = [
   },
   // NOTE: Superseded by 2088
   // {
+  //   relayId: 2,
   //   paraId: 2021,
   //   contributeUrl: 'https://centrifuge.io/altair/crowdloan',
   //   rewards: {
@@ -779,6 +809,7 @@ export const crowdloanDetails: CrowdloanDetails[] = [
   //   },
   // },
   {
+    relayId: 2,
     paraId: 2023,
     contributeUrl: 'https://moonbeam.foundation/moonriver-crowdloan/',
     rewards: {
@@ -810,6 +841,7 @@ export const crowdloanDetails: CrowdloanDetails[] = [
     },
   },
   {
+    relayId: 2,
     paraId: 2024,
     contributeUrl: 'https://genshiro.equilibrium.io/en/plo',
     rewards: {
@@ -833,6 +865,7 @@ export const crowdloanDetails: CrowdloanDetails[] = [
     },
   },
   {
+    relayId: 2,
     paraId: 2077,
     contributeUrl: 'https://robonomics.network/kusama-slot',
     rewards: {
@@ -860,6 +893,7 @@ export const crowdloanDetails: CrowdloanDetails[] = [
     },
   },
   {
+    relayId: 2,
     paraId: 2080,
     contributeUrl: 'https://loomx.io/',
     rewards: {
@@ -875,6 +909,7 @@ export const crowdloanDetails: CrowdloanDetails[] = [
   },
   // NOTE: Superseded by 2090
   // {
+  //   relayId: 2,
   //   paraId: 2082,
   //   contributeUrl: 'https://loan.bsx.fi/',
   //   rewards: {
@@ -889,6 +924,7 @@ export const crowdloanDetails: CrowdloanDetails[] = [
   //   },
   // },
   {
+    relayId: 2,
     paraId: 2084,
     contributeUrl: 'https://crowdloan.calamari.manta.network/',
     rewards: {
@@ -912,6 +948,7 @@ export const crowdloanDetails: CrowdloanDetails[] = [
     },
   },
   {
+    relayId: 2,
     paraId: 2085,
     contributeUrl: 'https://docs.parallel.fi/parallel-heiko-crowdloan/how-to-contribute',
     rewards: {
@@ -931,6 +968,7 @@ export const crowdloanDetails: CrowdloanDetails[] = [
     },
   },
   {
+    relayId: 2,
     paraId: 2086,
     contributeUrl: 'https://medium.com/kilt-protocol/kilts-crowdloan-how-to-participate-d0333cc952ef',
     rewards: {
@@ -945,6 +983,7 @@ export const crowdloanDetails: CrowdloanDetails[] = [
     },
   },
   {
+    relayId: 2,
     paraId: 2087,
     contributeUrl: 'https://composablefi.medium.com/how-to-participate-in-the-picasso-crowdloan-c17272f6aa0e',
     rewards: {
@@ -959,6 +998,7 @@ export const crowdloanDetails: CrowdloanDetails[] = [
     },
   },
   {
+    relayId: 2,
     paraId: 2088,
     contributeUrl: 'https://centrifuge.io/altair/crowdloan',
     rewards: {
@@ -979,6 +1019,7 @@ export const crowdloanDetails: CrowdloanDetails[] = [
   },
   // NOTE: Superseded by 2024
   // {
+  //   relayId: 2,
   //   paraId: 2089,
   //   contributeUrl: 'https://genshiro.equilibrium.io/en/plo',
   //   rewards: {
@@ -1002,6 +1043,7 @@ export const crowdloanDetails: CrowdloanDetails[] = [
   //   },
   // },
   {
+    relayId: 2,
     paraId: 2090,
     contributeUrl: 'https://loan.bsx.fi/',
     rewards: {
@@ -1016,6 +1058,7 @@ export const crowdloanDetails: CrowdloanDetails[] = [
     },
   },
   {
+    relayId: 2,
     paraId: 2092,
     contributeUrl: 'https://kintsugi.interlay.io/',
     rewards: {
@@ -1030,6 +1073,7 @@ export const crowdloanDetails: CrowdloanDetails[] = [
     },
   },
   {
+    relayId: 2,
     paraId: 2095,
     contributeUrl: 'https://unique.network/quartz/crowdloan/',
     rewards: {
@@ -1044,6 +1088,7 @@ export const crowdloanDetails: CrowdloanDetails[] = [
     },
   },
   {
+    relayId: 2,
     paraId: 2096,
     contributeUrl: 'https://ksmcrowdloan.bit.country/crowdloan',
     rewards: {

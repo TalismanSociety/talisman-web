@@ -22,7 +22,7 @@ const AssetItem = styled(({ id, balances, addresses, className }) => {
   const chain = useChain(id)
 
   const { status, accounts } = useExtensionAutoConnect()
-  const isMoonriver = id === '2023'
+  const isMoonriver = id === '2-2023'
   const hasNoEthereumAddress = useMemo(
     () => status === 'OK' && accounts.every(account => account.type !== 'ethereum'),
     [status, accounts]
@@ -121,7 +121,7 @@ const MoonriverWalletInstructions = styled(({ className }) => {
   }
 `
 
-const Assets = styled(({ id, className }) => {
+const Assets = styled(({ className }) => {
   const { t } = useTranslation()
   const chainIds = useMemo(() => Object.keys(customRpcs), [])
 

@@ -27,7 +27,7 @@ export default function Contribute({ className, id }: ContributeProps) {
     if (!crowdloan) return
 
     const relayChainId = crowdloan.relayChainId
-    const parachainId = crowdloan.parachain.paraId
+    const parachainId = crowdloan.parachain.paraId.split('-').slice(-1)[0]
 
     dispatch(ContributeEvent.initialize({ relayChainId, parachainId }))
   }, [crowdloan, dispatch])
@@ -124,7 +124,7 @@ const ContributeTo = styled(
       >
         <header>
           <h2>{t('Contribute to')}</h2>
-          <Parachain.Asset className="logo" id={parachainId} type="logo" />
+          <Parachain.Asset className="logo" id={`${relayChainId}-${parachainId}`} type="logo" />
           <h3>{parachainName}</h3>
         </header>
         <main>
