@@ -86,7 +86,7 @@ export type DispatchContributeEvent = (event: ContributeEvent) => void
 // All of the types of props which are passed to the various state constructors
 type InitializeProps = {
   relayChainId: number
-  parachainId: string
+  parachainId: number
 }
 type SignatureProps = {
   // TODO: Implement
@@ -96,7 +96,7 @@ type ReadyProps = {
   relayNativeToken: string
   relayTokenDecimals: number
   relayRpcs: string[]
-  parachainId: string
+  parachainId: number
   parachainName?: string
   subscanUrl?: string
 

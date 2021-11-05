@@ -27,7 +27,7 @@ export default function Contribute({ className, id }: ContributeProps) {
     if (!crowdloan) return
 
     const relayChainId = crowdloan.relayChainId
-    const parachainId = crowdloan.parachain.paraId.split('-').slice(-1)[0]
+    const parachainId = Number(crowdloan.parachain.paraId.split('-').slice(-1)[0])
 
     dispatch(ContributeEvent.initialize({ relayChainId, parachainId }))
   }, [crowdloan, dispatch])
@@ -173,7 +173,7 @@ const ContributeTo = styled(
             </div>
           </div>
 
-          {relayChainId === acalaOptions.relayId && parachainId === acalaOptions.parachainId.toString() && (
+          {relayChainId === acalaOptions.relayId && parachainId === acalaOptions.parachainId && (
             <div className="row">
               <div className="email-input">
                 <Field.Input
