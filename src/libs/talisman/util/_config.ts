@@ -524,7 +524,7 @@ export const parachainDetails: ParachainDetails[] = [
 export type CrowdloanDetails = {
   relayId: number
   paraId: number
-  contributeUrl: string
+  contributeUrl?: string
   rewards: {
     tokens: Array<{ symbol: string; perKSM: string }> | null
     custom: Array<{ title: string; value: string }> | null
@@ -533,6 +533,29 @@ export type CrowdloanDetails = {
 }
 
 export const crowdloanDetails: CrowdloanDetails[] = [
+  {
+    relayId: 0,
+    paraId: 2000,
+    rewards: {
+      tokens: [
+        {
+          symbol: 'ACA',
+          perKSM: '>1',
+        },
+      ],
+      custom: [
+        {
+          title: 'lcDOT per KSM',
+          value: '1',
+        },
+        {
+          title: 'Referals',
+          value: '5%',
+        },
+      ],
+      info: null,
+    },
+  },
   {
     relayId: 2,
     paraId: 2000,
