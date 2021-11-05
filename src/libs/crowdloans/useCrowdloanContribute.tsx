@@ -548,6 +548,7 @@ function useValidateContributionThunk(state: ContributeState, dispatch: Dispatch
       email,
       api,
       accountBalance,
+      txFee,
       submissionRequested,
     }) => ({
       relayChainId,
@@ -559,6 +560,7 @@ function useValidateContributionThunk(state: ContributeState, dispatch: Dispatch
       email,
       api,
       accountBalance,
+      txFee,
       submissionRequested,
     }),
     _: () => false as false,
@@ -576,6 +578,7 @@ function useValidateContributionThunk(state: ContributeState, dispatch: Dispatch
       account,
       api,
       accountBalance,
+      txFee,
       submissionRequested,
     } = stateDeps
 
@@ -620,13 +623,29 @@ function useValidateContributionThunk(state: ContributeState, dispatch: Dispatch
       return
     }
 
+    if (typeof txFee !== 'string') return
+
     // TODO: Test that contribution doesn't go above crowdloan cap
     // TODO: Test that crowdloan has not ended
     // TODO: Test that crowdloan is in a valid lease period
     // TODO: Test that crowdloan has not already won
     // TODO: Validate validator signature
-    // TODO: Test user has enough tokens to not go below the existential deposit
     // https://github.com/paritytech/polkadot/blob/dee1484760aedfd699e764f2b7c7d85855f7b077/runtime/common/src/crowdloan.rs#L432
+
+    const existentialDeposit = relayChainId === 2 ? 0.0000333333 : relayChainId === 0 ? 1 : 1
+    const expectedLoss = new BigNumber(contributionAmount).plus(new BigNumber(txFee))
+
+    if (
+      new BigNumber(accountBalance.tokens)
+        .minus(new BigNumber(expectedLoss))
+        .isLessThanOrEqualTo(new BigNumber(existentialDeposit))
+    ) {
+      setError({
+        i18nCode: `Your account can't go below a minimum of {{existentialDeposit}} {{token}}`,
+        vars: { existentialDeposit, token: relayNativeToken },
+      })
+      return
+    }
 
     dispatch(ContributeEvent._validateContribution)
   }, [dispatch, stateDeps && stateDeps?.api, JSON.stringify(jsonCmpStateDeps)]) // eslint-disable-line react-hooks/exhaustive-deps
@@ -757,11 +776,10 @@ function useSignAndSendContributionThunk(state: ContributeState, dispatch: Dispa
               dispatch(ContributeEvent._finalizedContributionSuccess({ explorerUrl }))
               trackGoal('GTVDUALL', 1) // crowdloan_contribute
               trackGoal('WQGRJ9OC', parseInt(contributionPlanck, 10)) // crowdloan_contribute_amount
-              
-              relayChainId ? 
-                trackGoal('QG3QGBYH', parseInt(contributionPlanck, 10)) : // crowdloan_contribute_amount_DOT
-                trackGoal('JFOFGXPN', parseInt(contributionPlanck, 10)) // crowdloan_contribute_amount_KSM
 
+              relayChainId
+                ? trackGoal('QG3QGBYH', parseInt(contributionPlanck, 10)) // crowdloan_contribute_amount_DOT
+                : trackGoal('JFOFGXPN', parseInt(contributionPlanck, 10)) // crowdloan_contribute_amount_KSM
             } else {
               dispatch(ContributeEvent._finalizedContributionFailed({ error, explorerUrl }))
             }
