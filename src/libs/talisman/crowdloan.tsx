@@ -6,6 +6,7 @@ import {
   createHttpLink,
   gql,
 } from '@apollo/client'
+import { planckToTokens } from '@talismn/util'
 import { find, get } from 'lodash'
 import { FC, useContext as _useContext, createContext, useEffect, useMemo, useState } from 'react'
 
@@ -193,12 +194,13 @@ export const Provider: FC = ({ children }) => {
   const [crowdloans, setCrowdloans] = useState<Crowdloan[]>([])
   useEffect(() => {
     setCrowdloans(
-      crowdloanResults.flatMap(([relayChainId, result]) =>
-        (result?.data?.crowdloans?.nodes || []).map(
+      crowdloanResults.flatMap(([relayChainId, result]) => {
+        const tokenDecimals = relayChainId === 2 ? 12 : 10
+        return (result?.data?.crowdloans?.nodes || []).map(
           (crowdloan: any): Crowdloan => ({
             ...crowdloan,
-            raised: crowdloan.raised / 1e12,
-            cap: crowdloan.cap / 1e12,
+            raised: Number(planckToTokens(crowdloan.raised, tokenDecimals)),
+            cap: Number(planckToTokens(crowdloan.cap, tokenDecimals)),
 
             id: `${relayChainId}-${crowdloan.id}`,
 
@@ -207,7 +209,9 @@ export const Provider: FC = ({ children }) => {
             },
 
             relayChainId,
-            percentRaised: (100 / (crowdloan.cap / 1e12)) * (crowdloan.raised / 1e12),
+            percentRaised:
+              (100 / Number(planckToTokens(crowdloan.cap, tokenDecimals))) *
+              Number(planckToTokens(crowdloan.raised, tokenDecimals)),
             details: find(crowdloanDetails, {
               relayId: relayChainId,
               paraId: crowdloan.parachain.paraId,
@@ -216,14 +220,17 @@ export const Provider: FC = ({ children }) => {
               crowdloan.wonAuctionId !== null
                 ? 'winner'
                 : crowdloan.status === 'Started' &&
-                  ((100 / (crowdloan.cap / 1e12)) * (crowdloan.raised / 1e12)).toFixed(2) === '100.00'
+                  (
+                    (100 / Number(planckToTokens(crowdloan.cap, tokenDecimals))) *
+                    Number(planckToTokens(crowdloan.raised, tokenDecimals))
+                  ).toFixed(2) === '100.00'
                 ? 'capped'
                 : crowdloan.status === 'Started'
                 ? 'active'
                 : 'ended',
           })
         )
-      )
+      })
     )
   }, [crowdloanResults])
 
