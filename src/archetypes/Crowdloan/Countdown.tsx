@@ -7,6 +7,7 @@ type OngoingProps = {
   end?: number
   showSeconds?: boolean
   className?: string
+  relayChainId?: number
 }
 
 const Ongoing: React.FC<OngoingProps> = ({ end, showSeconds, className = '', relayChainId }) => {
@@ -22,7 +23,7 @@ const Ongoing: React.FC<OngoingProps> = ({ end, showSeconds, className = '', rel
   return (
     <Pendor require={!!secondsRemaining}>
       <div className={`crowdloan-countdown ongoing ${className}`}>
-        <Cd showSeconds={showSeconds} seconds={secondsRemaining}/>
+        <Cd showSeconds={showSeconds} seconds={secondsRemaining} />
       </div>
     </Pendor>
   )
@@ -46,15 +47,15 @@ const Countdown: React.FC<CountdownProps> = ({ id, showSeconds, className, ...re
   const { crowdloan } = useCrowdloanById(id)
 
   // Pendor
-  if (!crowdloan) return <Ongoing relayChainId={crowdloan.relayChainId}/>
+  if (!crowdloan) return <Ongoing relayChainId={crowdloan?.relayChainId} />
 
   const { uiStatus, lockExpiredBlock } = crowdloan
 
   if (['active', 'capped'].includes(uiStatus)) {
-    return <Ongoing {...rest} showSeconds={showSeconds} end={lockExpiredBlock} relayChainId={crowdloan.relayChainId}/>
+    return <Ongoing {...rest} showSeconds={showSeconds} end={lockExpiredBlock} relayChainId={crowdloan?.relayChainId} />
   }
-  if (uiStatus === 'winner') return <Generic text="Winner" relayChainId={crowdloan.relayChainId}/>
-  if (uiStatus === 'ended') return <Generic text="Ended" relayChainId={crowdloan.relayChainId}/>
+  if (uiStatus === 'winner') return <Generic text="Winner" relayChainId={crowdloan?.relayChainId} />
+  if (uiStatus === 'ended') return <Generic text="Ended" relayChainId={crowdloan?.relayChainId} />
 
   // Pendor
   return <Ongoing />
