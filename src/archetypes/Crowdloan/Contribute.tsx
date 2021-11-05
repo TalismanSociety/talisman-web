@@ -173,7 +173,7 @@ const ContributeTo = styled(
             </div>
           </div>
 
-          {parachainId === acalaOptions.parachainId && (
+          {relayChainId === acalaOptions.relayId && parachainId === acalaOptions.parachainId.toString() && (
             <div className="row">
               <div className="email-input">
                 <Field.Input
