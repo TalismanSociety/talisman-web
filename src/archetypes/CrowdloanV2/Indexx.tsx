@@ -161,8 +161,8 @@ const Index = styled(({ withFilter, className }) => {
       <div className="overview">
         {/* TODO: Comment out for now */}
         {/* <PopularCrowdloans /> */}
-        {/* <LearnCrowdloansBanner />
-        <UnlockTalismanBanner /> */}
+        {/* <LearnCrowdloansBanner />*/}
+        <UnlockTalismanBanner />
       </div>
       {withFilter && <FilterBar {...filterProps} count={count} />}
       <Await until={!loading}>
