@@ -1,4 +1,5 @@
 import { Crowdloan } from '@archetypes'
+import { UnlockTalismanBanner } from '@archetypes/StateBanner/UnlockTalismanBanner'
 import { Await, Field, Grid, NoResults } from '@components'
 import { trackGoal } from '@libs/fathom'
 import { device } from '@util/breakpoints'
@@ -91,8 +92,7 @@ const Index = styled(({ withFilter, className }) => {
 
   return (
     <div className={`crowdloan-index ${className}`}>
-      {/* TODO: Remove for now as no Learn more link yet. */}
-      {/* <UnlockTalismanBanner /> */}
+      <UnlockTalismanBanner />
       {withFilter && <FilterBar {...filterProps} count={count} />}
       <Await until={!loading}>
         <NoResults
