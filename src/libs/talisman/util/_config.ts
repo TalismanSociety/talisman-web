@@ -84,6 +84,22 @@ export const parachainDetails: ParachainDetails[] = [
     },
   },
   {
+    id: '0-2006',
+    name: 'Astar',
+    slug: 'astar',
+    token: 'ASTR',
+    subtitle: 'Astar is the Polkadot-native dApp hub supporting Ethereum, WebAssembly, dApp Staking, and Layer2 solutions.',
+    info: `Astar Network (previously known as Plasm) is a dApp hub on Polkadot that supports Ethereum, WebAssembly, and layer 2 solutions like ZK Rollups. Astar aims to be a multi-chain smart contract platform that will support multiple blockchains and virtual machines.`,
+    links: {
+      Website: 'https://astar.network/',
+      Twitter: 'https://twitter.com/AstarNetwork',
+      Telegram: 'https://t.me/PlasmOfficial',
+      Medium: 'https://medium.com/astar-network',
+      Github: 'https://github.com/PlasmNetwork/Plasm',
+      Discord: 'https://discord.gg/Z3nC9U4'
+    },
+  },
+  {
     id: '2-2000',
     name: 'Karura',
     slug: 'karura',
