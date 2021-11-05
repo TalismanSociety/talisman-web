@@ -9,7 +9,7 @@ type OngoingProps = {
   className?: string
 }
 
-const Ongoing: React.FC<OngoingProps> = ({ end, showSeconds, className = '' }) => {
+const Ongoing: React.FC<OngoingProps> = ({ end, showSeconds, className = '', dashout }) => {
   const [secondsRemaining, setSecondsRemaining] = useState<number>()
   const blockNumber = useChainmetaValue('blockNumber')
   const blockPeriod = useChainmetaValue('blockPeriod')
@@ -22,7 +22,7 @@ const Ongoing: React.FC<OngoingProps> = ({ end, showSeconds, className = '' }) =
   return (
     <Pendor require={!!secondsRemaining}>
       <div className={`crowdloan-countdown ongoing ${className}`}>
-        <Cd showSeconds={showSeconds} seconds={secondsRemaining} />
+        <Cd showSeconds={showSeconds} seconds={secondsRemaining} dashout={dashout} />
       </div>
     </Pendor>
   )
@@ -51,7 +51,7 @@ const Countdown: React.FC<CountdownProps> = ({ id, showSeconds, className, ...re
   const { uiStatus, lockExpiredBlock } = crowdloan
 
   if (['active', 'capped'].includes(uiStatus)) {
-    return <Ongoing {...rest} showSeconds={showSeconds} end={lockExpiredBlock} />
+    return <Ongoing {...rest} showSeconds={showSeconds} end={lockExpiredBlock} dashout={(id || '').startsWith('0-')} />
   }
   if (uiStatus === 'winner') return <Generic text="Winner" />
   if (uiStatus === 'ended') return <Generic text="Ended" />
