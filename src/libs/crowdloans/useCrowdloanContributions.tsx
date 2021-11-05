@@ -42,7 +42,7 @@ export type CrowdloanContribution = {
   blockNum: number
 
   // the associated parachain
-  parachain: { paraId: number }
+  parachain: { paraId: string }
 
   // the associated crowdloan
   fund: { id: string }
@@ -59,7 +59,10 @@ export function useCrowdloanContributions({
 } {
   // memoize accounts and crowdloans so user can do useCrowdloansContributions([accountId], [crowdloanId]) without wasting cycles
   const accounts = useMemo(() => _accounts, [JSON.stringify(_accounts)]) // eslint-disable-line react-hooks/exhaustive-deps
-  const crowdloans = useMemo(() => _crowdloans, [JSON.stringify(_crowdloans)]) // eslint-disable-line react-hooks/exhaustive-deps
+  const crowdloans = useMemo(
+    () => _crowdloans?.map(id => id.split('-').slice(1).join('-')),
+    [JSON.stringify(_crowdloans)] // eslint-disable-line react-hooks/exhaustive-deps
+  )
   const query = useFuncMemo(Contributions, accounts, crowdloans)
 
   const hasAccounts = Array.isArray(accounts) && accounts.length > 0
@@ -70,8 +73,19 @@ export function useCrowdloanContributions({
   const pollInterval = 10000 // 10000ms == 10s
   const { data, loading, error } = useQuery(query, { skip, pollInterval })
 
+  const contributions = useMemo(
+    () =>
+      ((data?.contributions?.nodes as Array<CrowdloanContribution>) || []).map(contribution => ({
+        ...contribution,
+        relayChainId: 2,
+        parachain: { paraId: `2-${contribution.parachain.paraId}` },
+        fund: { id: `2-${contribution.fund.id}` },
+      })),
+    [data?.contributions?.nodes]
+  )
+
   return {
-    contributions: (data?.contributions?.nodes as Array<CrowdloanContribution>) || [],
+    contributions,
     skipped: skip,
     loading,
     error,

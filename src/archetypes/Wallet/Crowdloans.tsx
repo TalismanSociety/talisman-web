@@ -18,7 +18,7 @@ import styled from 'styled-components'
 const CrowdloanItem = styled(({ id, className }) => {
   const { crowdloan } = useCrowdloanById(id)
   const parachainId = crowdloan?.parachain.paraId
-  const relayChainId = 2 // kusama
+  const relayChainId = useMemo(() => id.split('-')[0], [id])
   const relayChain = useChain(relayChainId)
   const chain = useChain(parachainId)
 
@@ -27,7 +27,10 @@ const CrowdloanItem = styled(({ id, className }) => {
   const { price: relayTokenPrice, loading: relayPriceLoading } = useTokenPrice(relayNativeToken)
 
   const accounts = useAccountAddresses()
-  const encoded = useMemo(() => accounts?.map(account => encodeAnyAddress(account, 2)), [accounts])
+  const encoded = useMemo(
+    () => accounts?.flatMap(account => relayChainsChaindata.map(({ id }) => encodeAnyAddress(account, id))),
+    [accounts]
+  )
   const { contributions } = useCrowdloanContributions({ accounts: encoded, crowdloans: id ? [id] : undefined })
   const totalContributions = getTotalContributionForCrowdloan(id, contributions)
 
