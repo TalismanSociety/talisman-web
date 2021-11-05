@@ -6,6 +6,8 @@ import styled from 'styled-components'
 const Raised = styled(({ id, title, className }) => {
   const { crowdloan: { percentRaised, raised, cap, uiStatus } = {} } = useCrowdloanById(id)
 
+  const suffix = id.startsWith('0-') ? ' DOT' : ' KSM'
+
   return (
     <div className={`crowdloan-raised ${className}`} data-status={uiStatus?.toLowerCase()}>
       {uiStatus === 'capped' && <h3>Goal reached ✓</h3>}
@@ -15,7 +17,7 @@ const Raised = styled(({ id, title, className }) => {
 
       <Stat
         title={
-          <Pendor suffix=" KSM" require={!!raised && !!cap}>
+          <Pendor suffix={suffix} require={!!raised && !!cap}>
             {shortNumber(raised)} / {shortNumber(cap)}
           </Pendor>
         }
