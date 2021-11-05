@@ -6,7 +6,7 @@ import styled from 'styled-components'
 const Raised = styled(({ id, title, className }) => {
   const { crowdloan: { percentRaised, raised, cap, uiStatus } = {} } = useCrowdloanById(id)
 
-  const suffix = id.startsWith('0-') ? ' DOT' : ' KSM'
+  const suffix = (id || '').startsWith('0-') ? ' DOT' : ' KSM'
 
   return (
     <div className={`crowdloan-raised ${className}`} data-status={uiStatus?.toLowerCase()}>
