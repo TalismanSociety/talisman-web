@@ -548,7 +548,7 @@ export const crowdloanDetails: CrowdloanDetails[] = [
           value: '1',
         },
         {
-          title: 'Referals',
+          title: 'Referrals',
           value: '5%',
         },
       ],
@@ -1126,7 +1126,7 @@ export const crowdloanDetails: CrowdloanDetails[] = [
           value: '10% Bonus',
         },
         {
-          title: 'Referals',
+          title: 'Referrals',
           value: '2.5% Bonus',
         },
       ],
