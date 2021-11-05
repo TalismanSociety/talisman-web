@@ -156,8 +156,8 @@ export const Search = styled(({ value, className, onChange = () => {}, ...rest }
   }
 `
 
-export const Select = styled(({ value, options, className, onChange = v => {}, ...rest }) => (
-  <FieldWrapper type="select" suffix={<ChevronDown />} className={className}>
+export const Select = styled(({ value, options, className, suffix = true, onChange = v => {}, ...rest }) => (
+  <FieldWrapper type="select" suffix={suffix ? <ChevronDown /> : null} className={className}>
     <select onChange={e => onChange(e?.target?.value)} {...rest}>
       {options.map(({ key, value }) => (
         <option key={key} value={key}>

@@ -1,4 +1,4 @@
-import bannerImage from '@assets/unlock-spirit-key.png'
+import bannerImage from '@assets/unlock-spirit-key-pink.png'
 import { Button } from '@components'
 import { Banner } from '@components/Banner'
 import { useTranslation } from 'react-i18next'
@@ -15,7 +15,13 @@ export const UnlockTalismanBanner = () => {
         <p>{t('unlockTalisman.description')}</p>
       </div>
       <div className="cta">
-        <Button primary>{t('unlockTalisman.primaryCta')}</Button>
+        <a
+          href="https://medium.com/we-are-talisman/seek-the-spirit-key-enter-the-talisman-b68d3541157b"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <Button primary>{t('unlockTalisman.primaryCta')}</Button>
+        </a>
       </div>
     </Banner>
   )
