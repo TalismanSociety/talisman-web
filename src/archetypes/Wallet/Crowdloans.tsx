@@ -6,6 +6,7 @@ import {
 } from '@libs/crowdloans'
 import { calculateCrowdloanPortfolioAmounts, usePortfolio, useTaggedAmountsInPortfolio } from '@libs/portfolio'
 import { useAccountAddresses, useCrowdloanById, useCrowdloans } from '@libs/talisman'
+import { relayChainsChaindata } from '@libs/talisman/util/_config'
 import { useTokenPrice } from '@libs/tokenprices'
 import { useChain } from '@talismn/api-react-hooks'
 import { addBigNumbers, encodeAnyAddress, multiplyBigNumbers, planckToTokens, useFuncMemo } from '@talismn/util'
@@ -17,7 +18,7 @@ import styled from 'styled-components'
 const CrowdloanItem = styled(({ id, className }) => {
   const { crowdloan } = useCrowdloanById(id)
   const parachainId = crowdloan?.parachain.paraId
-  const relayChainId = 2 // kusama
+  const relayChainId = useMemo(() => id.split('-')[0], [id])
   const relayChain = useChain(relayChainId)
   const chain = useChain(parachainId)
 
@@ -26,7 +27,10 @@ const CrowdloanItem = styled(({ id, className }) => {
   const { price: relayTokenPrice, loading: relayPriceLoading } = useTokenPrice(relayNativeToken)
 
   const accounts = useAccountAddresses()
-  const encoded = useMemo(() => accounts?.map(account => encodeAnyAddress(account, 2)), [accounts])
+  const encoded = useMemo(
+    () => accounts?.flatMap(account => relayChainsChaindata.map(({ id }) => encodeAnyAddress(account, id))),
+    [accounts]
+  )
   const { contributions } = useCrowdloanContributions({ accounts: encoded, crowdloans: id ? [id] : undefined })
   const totalContributions = getTotalContributionForCrowdloan(id, contributions)
 
@@ -83,7 +87,10 @@ const CrowdloanItem = styled(({ id, className }) => {
 const Crowdloans = ({ className }: { className?: string }) => {
   const { t } = useTranslation()
   const accounts = useAccountAddresses()
-  const encoded = useMemo(() => accounts?.map(account => encodeAnyAddress(account, 2)), [accounts])
+  const encoded = useMemo(
+    () => accounts?.flatMap(account => relayChainsChaindata.map(({ id }) => encodeAnyAddress(account, id))),
+    [accounts]
+  )
   const { contributions, skipped, loading, error } = useCrowdloanContributions({ accounts: encoded })
   const totalContributions = groupTotalContributionsByCrowdloan(contributions)
 

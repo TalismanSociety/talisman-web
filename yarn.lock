@@ -2585,8 +2585,8 @@ __metadata:
   linkType: hard
 
 "@talismn/api-react-hooks@npm:~0":
-  version: 0.0.22
-  resolution: "@talismn/api-react-hooks@npm:0.0.22"
+  version: 0.0.23
+  resolution: "@talismn/api-react-hooks@npm:0.0.23"
   dependencies:
     "@talismn/api": ~0
     "@talismn/chaindata-js": ~0
@@ -2597,7 +2597,7 @@ __metadata:
     "@polkadot/types": "*"
     "@polkadot/util-crypto": "*"
     react: ">=17"
-  checksum: 15504004d39efde334263d3e42a2583e53e5bb7d1a5f486e22aa11ca63f3c2005b1db0b9634b8ce085287586a49c0748c994fef576eaac119918827de7f6bbb8
+  checksum: 36ca13634c31e921dd4f4f250d4b11d9269c979775c90663c54c4886a446c41dd144a8a77a1cc332b259c7bdce96b20c13e9e0d5b9e3a61642f0533c869936dd
   languageName: node
   linkType: hard
 
@@ -2624,9 +2624,9 @@ __metadata:
   linkType: hard
 
 "@talismn/chaindata-js@npm:~0":
-  version: 0.0.5
-  resolution: "@talismn/chaindata-js@npm:0.0.5"
-  checksum: 796c18e7252d2115096d1d7eb0b0bf5116cc6f4ad52b991e19830836ef19b5509433c584d6f82d65911ce74d0463118f98c011f0e99f388577564f3c1a9c6cc3
+  version: 0.0.7
+  resolution: "@talismn/chaindata-js@npm:0.0.7"
+  checksum: c6a4697ae0459f6388b4367be250f4067cf51a0e55e9f9c777d75521de507639a717af5e28d4ace2edef27e58df5f3f42f6a86c004072dbc91a9ef6127314744
   languageName: node
   linkType: hard
 
@@ -2661,6 +2661,7 @@ __metadata:
     "@polkadot/util-crypto": ^7.4.1
     "@ramp-network/ramp-instant-sdk": ^2.5.0
     "@talismn/api-react-hooks": ~0
+    "@talismn/chaindata-js": ~0
     "@talismn/util": ~0
     "@testing-library/dom": ^8.2.0
     "@testing-library/jest-dom": ^5.11.4
@@ -2697,6 +2698,7 @@ __metadata:
     react-router: ^5.2.0
     react-router-dom: ^5.2.0
     react-scripts: 4.0.3
+    safety-match: ^0.4.4
     styled-components: ^5.3.0
     typescript: ^4.1.2
     web-vitals: ^1.0.1
@@ -14286,6 +14288,13 @@ resolve@1.18.1:
   version: 2.1.2
   resolution: "safer-buffer@npm:2.1.2"
   checksum: cab8f25ae6f1434abee8d80023d7e72b598cf1327164ddab31003c51215526801e40b66c5e65d658a0af1e9d6478cadcb4c745f4bd6751f97d8644786c0978b0
+  languageName: node
+  linkType: hard
+
+"safety-match@npm:^0.4.4":
+  version: 0.4.4
+  resolution: "safety-match@npm:0.4.4"
+  checksum: 6bfc4c620361b37296ae0a7241a9fb28eaa3fb6b4c1bc2c7483b081d44d04329c7a7bde21fb9fa557032be4c7daae8c97355ea7522522097f48af086ed6ac03f
   languageName: node
   linkType: hard
 

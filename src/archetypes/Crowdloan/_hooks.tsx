@@ -65,18 +65,18 @@ const networkOptions = [
   {
     key: 'dot',
     value: 'Polkadot',
-    cb: (items: Item[]) => filter(items, item => item?.parachainDetails?.id?.toString().slice(0, 1) === '1'),
+    cb: (items: Item[]) => filter(items, item => item?.parachainDetails?.id.split('-')[0] === '0'),
   },
   {
     key: 'ksm',
     value: 'Kusama',
-    cb: (items: Item[]) => filter(items, item => item?.parachainDetails?.id?.toString().slice(0, 1) === '2'),
+    cb: (items: Item[]) => filter(items, item => item?.parachainDetails?.id.split('-')[0] === '2'),
   },
 ]
 
 export const useFilter = () => {
   const { t } = useTranslation('filters')
-  const { crowdloans, message, hydrated } = useLatestCrowdloans()
+  const { crowdloans, hydrated } = useLatestCrowdloans()
   const { parachains } = useParachainsDetailsIndexedById()
   const items = useMemo(
     () =>
@@ -123,7 +123,6 @@ export const useFilter = () => {
   return {
     crowdloans: filteredCrowdloans,
     loading,
-    message,
     count: {
       total: crowdloans?.length,
       filtered: filteredItems?.length,

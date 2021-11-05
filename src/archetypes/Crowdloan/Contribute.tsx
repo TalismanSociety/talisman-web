@@ -2,13 +2,13 @@ import { Account, Parachain } from '@archetypes'
 import { ReactComponent as CheckCircle } from '@assets/icons/check-circle.svg'
 import { ReactComponent as XCircle } from '@assets/icons/x-circle.svg'
 import { Button, DesktopRequired, Field, MaterialLoader, Pendor, useModal } from '@components'
-import { useCrowdloanContribute } from '@libs/crowdloans'
-import { useActiveAccount, useCrowdloanById, useParachainDetailsById } from '@libs/talisman'
+import { ContributeEvent, acalaOptions, useCrowdloanContribute } from '@libs/crowdloans'
+import { useActiveAccount, useCrowdloanById } from '@libs/talisman'
 import { useTokenPrice } from '@libs/tokenprices'
 import { multiplyBigNumbers } from '@talismn/util'
 import { isMobileBrowser } from '@util/helpers'
 import { formatCurrency, truncateString } from '@util/helpers'
-import { useCallback, useMemo, useState } from 'react'
+import { useEffect, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
@@ -20,155 +20,180 @@ export type ContributeProps = {
 export default function Contribute({ className, id }: ContributeProps) {
   const { closeModal } = useModal()
 
+  const [contributeState, dispatch] = useCrowdloanContribute()
+
   const { crowdloan } = useCrowdloanById(id)
-  const { parachainDetails } = useParachainDetailsById(crowdloan?.parachain?.paraId)
+  useEffect(() => {
+    if (!crowdloan) return
 
-  const [contributionAmount, setContributionAmount] = useState('')
-  const updateContributionAmount = useCallback(
-    value =>
-      setContributionAmount(
-        value
-          // remove anything which isn't a number or a decimal point
-          .replace(/[^.\d]/g, '')
-          // remove any decimal points after the first decimal point
-          .replace(/\./g, (match: string, offset: number, string: string) =>
-            match === '.' ? (string.indexOf('.') === offset ? '.' : '') : ''
-          )
-      ),
-    []
-  )
-  const { address } = useActiveAccount()
-  const [verifier, setVerifier] = useState()
+    const relayChainId = crowdloan.relayChainId
+    const parachainId = crowdloan.parachain.paraId.split('-').slice(-1)[0]
 
-  const { contribute, status, explorerUrl, txFee, error } = useCrowdloanContribute(
-    crowdloan?.parachain?.paraId,
-    contributionAmount,
-    address
-  )
-
-  const modalState = useMemo(() => {
-    if (status === 'SUCCESS') return 'Success'
-    if (status === 'FAILED') return 'Failed'
-    if (status === 'PROCESSING') return 'InProgress'
-    return 'ContributeTo'
-  }, [status])
-  const ModalComponent = ModalComponents[modalState] || null
+    dispatch(ContributeEvent.initialize({ relayChainId, parachainId }))
+  }, [crowdloan, dispatch])
 
   if (isMobileBrowser()) return <DesktopRequired />
-  if (!ModalComponent) return null
-  return (
-    <ModalComponent
-      {...{
-        crowdloan,
-        parachainDetails,
 
-        contributionAmount,
-        updateContributionAmount,
-        verifier,
-        setVerifier,
-
-        contribute,
-        status,
-        explorerUrl,
-        txFee,
-        error,
-
-        closeModal,
-      }}
-    />
-  )
+  return contributeState.match({
+    Initializing: () => <Loading />,
+    Ready: props => (
+      <ContributeTo
+        {...{
+          className,
+          closeModal,
+          dispatch,
+          ...props,
+        }}
+      />
+    ),
+    ContributionSubmitting: props => (
+      <InProgress
+        {...{
+          className,
+          closeModal,
+          ...props,
+        }}
+      />
+    ),
+    ContributionSuccess: props => (
+      <Success
+        {...{
+          className,
+          closeModal,
+          ...props,
+        }}
+      />
+    ),
+    ContributionFailed: props => (
+      <Failed
+        {...{
+          className,
+          closeModal,
+          ...props,
+        }}
+      />
+    ),
+    _: () => null,
+  })
 }
 
 const ContributeTo = styled(
   ({
     className,
-    crowdloan,
-    parachainDetails,
+    closeModal,
+    dispatch,
+
+    relayChainId,
+    relayNativeToken,
+    parachainId,
+    parachainName,
 
     contributionAmount,
-    updateContributionAmount,
-    verifier,
-    setVerifier,
+    email,
 
-    contribute,
-    status,
     txFee,
-    error,
-
-    closeModal,
+    validationError,
+    submissionRequested,
   }) => {
     const { t } = useTranslation()
-    const { price: tokenPrice, loading: priceLoading } = useTokenPrice('KSM')
+    const { t: tError } = useTranslation('errors')
+
+    const { price: tokenPrice, loading: priceLoading } = useTokenPrice(relayNativeToken)
     const usd = useMemo(
       () => !Number.isNaN(Number(contributionAmount)) && multiplyBigNumbers(contributionAmount, tokenPrice),
       [contributionAmount, tokenPrice]
     )
 
     const txFeeUsd = useMemo(
-      () => !Number.isNaN(Number(txFee?.fee)) && multiplyBigNumbers(txFee?.fee, tokenPrice),
-      [txFee?.fee, tokenPrice]
+      () => !Number.isNaN(Number(txFee)) && multiplyBigNumbers(txFee, tokenPrice),
+      [txFee, tokenPrice]
     )
+
+    const { address } = useActiveAccount()
+    useEffect(() => {
+      dispatch(ContributeEvent.setAccount(address))
+    }, [dispatch, address])
 
     return (
       <form
         className={className}
         onSubmit={event => {
           event.preventDefault()
-          contribute()
+          dispatch(ContributeEvent.contribute)
         }}
       >
         <header>
           <h2>{t('Contribute to')}</h2>
-          <Parachain.Asset className="logo" id={parachainDetails?.id} type="logo" />
-          <h3>{parachainDetails?.name}</h3>
+          <Parachain.Asset className="logo" id={`${relayChainId}-${parachainId}`} type="logo" />
+          <h3>{parachainName}</h3>
         </header>
         <main>
           <div className="row split">
             <div className="amount-input">
               <Field.Input
                 value={contributionAmount}
-                onChange={updateContributionAmount}
+                onChange={(amount: string) => dispatch(ContributeEvent.setContributionAmount(amount))}
                 dim
                 type="text"
                 inputMode="numeric"
                 pattern="[.\d]*"
-                suffix="KSM"
-                disabled={status === 'VALIDATING'}
+                suffix={relayNativeToken}
+                disabled={submissionRequested}
               />
               <div className="info-row usd-and-error">
                 <Pendor prefix={!usd && '-'} require={!priceLoading}>
                   {usd && truncateString(formatCurrency(usd), '$9,999,999,999.99'.length)}
                 </Pendor>
-                {error && <span className="error">{error}</span>}
+                {validationError && (
+                  <span className="error">{tError(validationError.i18nCode, validationError.vars)}</span>
+                )}
               </div>
             </div>
             <div className="switcher-column">
-              <Account.Button narrow showValue showBuy closeParent={closeModal} fixedDropdown />
+              <Account.Button
+                narrow
+                showValue
+                showBuy
+                closeParent={closeModal}
+                fixedDropdown
+                parachainId={relayChainId}
+              />
               <div className="tx-fee">
-                <span>
-                  {txFeeUsd && `${t('Fee')}: ${truncateString(formatCurrency(txFeeUsd), '$9,999,999,999.99'.length)} `}
-                </span>
-                {/* As per agreement, removing txFee in native token for now. */}
-                {/* <Pendor prefix={txFee ? ' = ' : ''} suffix={txFee ? 'KSM' : '-'} require={!txFee?.loading}>
-                  <span>{txFee ? `${shortNumber(txFee.fee)}` : null}</span>
-                </Pendor> */}
+                <Pendor suffix={txFee === null ? '-' : null} require={txFee !== undefined}>
+                  {txFee ? (
+                    <>
+                      <span>
+                        {`${t('Fee')}: ${truncateString(formatCurrency(txFeeUsd), '$9,999,999,999.99'.length)}`}
+                      </span>
+                      {/* <span>{` = ${shortNumber(txFee)}${relayNativeToken}`}</span> */}
+                    </>
+                  ) : null}
+                </Pendor>
               </div>
             </div>
           </div>
 
-          {crowdloan?.verifier && (
+          {parachainId === acalaOptions.parachainId && (
             <div className="row">
-              <div className="verifier-input">
+              <div className="email-input">
                 <Field.Input
-                  value={verifier}
-                  onChange={setVerifier}
+                  value={email}
+                  onChange={(email: string) => dispatch(ContributeEvent.setEmail(email))}
                   dim
-                  placeholder="Verifier Signature"
-                  disabled={status === 'VALIDATING'}
+                  type="email"
+                  placeholder="Email (optional)"
+                  disabled={submissionRequested}
                 />
                 <div className="info">
-                  The hex-encoded verifier signature should be provided to you by the team running the crowdloan (based
-                  on the information you provide). Please go to the {parachainDetails?.name} website for more info.
+                  All contributions made to Acala's{' '}
+                  <a
+                    href="https://medium.com/acalanetwork/acala-liquid-crowdloan-dot-lcdot-launch-on-polkadot-f28d8f561157#4080"
+                    target="_blank"
+                    rel="noreferrer noopener"
+                  >
+                    liquid crowdloan
+                  </a>{' '}
+                  via the Talisman dashboard are elligible for lcDOT rewards.
                 </div>
               </div>
             </div>
@@ -181,8 +206,13 @@ const ContributeTo = styled(
           <Button
             type="submit"
             primary
-            loading={status === 'VALIDATING'}
-            disabled={error === t('Account balance too low') || !contributionAmount}
+            loading={submissionRequested}
+            disabled={
+              !contributionAmount ||
+              Number(contributionAmount) === 0 ||
+              validationError?.i18nCode === 'Account balance too low' ||
+              validationError?.i18nCode === 'A minimum of {{minimum}} {{token}} is required'
+            }
           >
             {t('Contribute')}
           </Button>
@@ -273,11 +303,6 @@ const ContributeTo = styled(
       color: rgb(${({ theme }) => theme?.foreground});
       box-shadow: 0 0 0.8rem rgba(0, 0, 0, 0.1);
     }
-    // .account-picker {
-    //   position: fixed;
-    //   top: auto;
-    //   left: auto;
-    // }
     > .tx-fee {
       display: flex;
       align-items: center;
@@ -291,6 +316,7 @@ const ContributeTo = styled(
       min-height: 2.2rem;
     }
   }
+  > main > .row > .email-input,
   > main > .row > .verifier-input {
     .field {
       margin-bottom: 1.6rem;
@@ -306,6 +332,10 @@ const ContributeTo = styled(
       color: #999;
       font-size: 1.4rem;
       line-height: 1.8rem;
+
+      a {
+        color: var(--color-primary);
+      }
     }
   }
 
@@ -320,7 +350,7 @@ const ContributeTo = styled(
   }
 `
 
-const InProgress = styled(({ className, explorerUrl, closeModal }) => {
+const InProgress = styled(({ className, closeModal, explorerUrl }) => {
   const { t } = useTranslation('crowdloan')
   return (
     <div className={className}>
@@ -389,7 +419,7 @@ const InProgress = styled(({ className, explorerUrl, closeModal }) => {
   }
 `
 
-const Success = styled(({ className, explorerUrl, closeModal }) => {
+const Success = styled(({ className, closeModal, explorerUrl }) => {
   const { t } = useTranslation('crowdloan')
   return (
     <div className={className}>
@@ -460,7 +490,7 @@ const Success = styled(({ className, explorerUrl, closeModal }) => {
   }
 `
 
-const Failed = styled(({ className, explorerUrl, error, closeModal }) => {
+const Failed = styled(({ className, closeModal, explorerUrl, error }) => {
   const { t } = useTranslation('crowdloan')
   return (
     <div className={className}>
@@ -536,4 +566,9 @@ const Failed = styled(({ className, explorerUrl, error, closeModal }) => {
   }
 `
 
-const ModalComponents: { [key: string]: typeof ContributeTo } = { ContributeTo, InProgress, Success, Failed }
+const Loading = styled(MaterialLoader)`
+  font-size: 6.4rem;
+  margin: 4rem auto;
+  color: var(--color-primary);
+  user-select: none;
+`

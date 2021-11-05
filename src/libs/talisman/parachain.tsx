@@ -1,14 +1,19 @@
-import { gql } from '@apollo/client'
+import {
+  ApolloClient,
+  ApolloQueryResult,
+  InMemoryCache,
+  NormalizedCacheObject,
+  createHttpLink,
+  gql,
+} from '@apollo/client'
+import { useChain } from '@talismn/api-react-hooks'
 import { find } from 'lodash'
-import { FC, useContext as _useContext, createContext, useMemo } from 'react'
+import { FC, useContext as _useContext, createContext, useEffect, useMemo, useState } from 'react'
 
-import { useQuery } from './'
-import { parachainDetails } from './util/_config'
+import { parachainDetails, relayChainsChaindata } from './util/_config'
 import type { ParachainDetails } from './util/_config'
 
 export type { ParachainDetails } from './util/_config'
-
-const assetPath = require.context('./assets', true)
 
 //
 // Constants
@@ -60,11 +65,11 @@ const AllParachains = gql`
 
 export const useParachainsDetails = () => useContext()
 export const useParachainsDetailsIndexedById = () => {
-  const { parachains, ...rest } = useParachainsDetails()
+  const { parachains, hydrated } = useParachainsDetails()
 
   return {
     parachains: useMemo(() => Object.fromEntries(parachains.map(parachain => [parachain.id, parachain])), [parachains]),
-    ...rest,
+    hydrated,
   }
 }
 
@@ -72,29 +77,19 @@ export const useParachainDetailsById = (id?: number) => useFindParachainDetails(
 export const useParachainDetailsBySlug = (slug?: string) => useFindParachainDetails('slug', slug)
 
 export const useParachainAssets = (
-  id?: number
-): Partial<{ [key: string]: string; banner: string; card: string; logo: string }> =>
-  useMemo(() => {
-    if (!id) return {}
+  id?: string
+): Partial<{ [key: string]: string; banner: string; card: string; logo: string }> => {
+  const chain = useChain(id)
 
-    let banner = ''
-    let card = ''
-    let logo = ''
-
-    try {
-      banner = assetPath(`./${id}/banner.png`)?.default
-    } catch (e) {}
-
-    try {
-      card = assetPath(`./${id}/card.png`)?.default
-    } catch (e) {}
-
-    try {
-      logo = assetPath(`./${id}/logo.svg`)?.default
-    } catch (e) {}
-
-    return { banner, card, logo }
-  }, [id])
+  return useMemo(
+    () => ({
+      banner: chain.asset?.banner,
+      card: chain.asset?.card,
+      logo: chain.asset?.logo,
+    }),
+    [chain]
+  )
+}
 
 //
 // Hooks (internal)
@@ -103,15 +98,14 @@ export const useParachainAssets = (
 export const useFindParachainDetails = (
   key: string,
   value: any
-): Partial<{ parachainDetails?: ParachainDetails; status: any; message: any }> => {
-  const { parachains, status, message } = useParachainsDetails()
+): Partial<{ parachainDetails?: ParachainDetails; hydrated: boolean }> => {
+  const { parachains, hydrated } = useParachainsDetails()
 
   const parachainDetails = useMemo(() => find(parachains, { [key]: value }), [parachains, key, value])
 
   return {
     parachainDetails,
-    status,
-    message,
+    hydrated,
   }
 }
 
@@ -121,10 +115,7 @@ export const useFindParachainDetails = (
 
 type ContextProps = {
   parachains: ParachainDetails[]
-  called: boolean
-  loading: boolean
-  status: any
-  message: any
+  hydrated: boolean
 }
 
 const Context = createContext<ContextProps | null>(null)
@@ -141,24 +132,68 @@ function useContext() {
 //
 
 export const Provider: FC = ({ children }) => {
-  const { data, called, loading, status, message } = useQuery(AllParachains)
+  const [parachainResults, setParachainResults] = useState<Array<[number, ApolloQueryResult<any> | null]>>([])
+  useEffect(() => {
+    // create an apollo client for each relaychain
+    const relayChainClients = relayChainsChaindata.map(
+      ({ id, subqueryCrowdloansUrl }) =>
+        [
+          id,
+          new ApolloClient({
+            link: createHttpLink({ uri: subqueryCrowdloansUrl }),
+            cache: new InMemoryCache(),
+            fetchOptions: {
+              mode: 'no-cors',
+            },
+            headers: {
+              'Content-Type': 'application/json',
+              'Access-Control-Allow-Origin': '*',
+              'Access-Control-Allow-Credentials': true,
+            },
+          }),
+        ] as [number, ApolloClient<NormalizedCacheObject>]
+    )
+
+    // query parachains on each relay chain
+    const relayChainParachains = relayChainClients.map(([_id, client]) => client.query({ query: AllParachains }))
+
+    // extract results and store in state with relayChainId
+    Promise.allSettled(relayChainParachains).then(results =>
+      setParachainResults(
+        results.map((result, resultIndex) => [
+          relayChainClients[resultIndex][0], // relayChainId
+          result.status === 'fulfilled' ? result.value : null, // result data
+        ])
+      )
+    )
+  }, [])
 
   // TODO: Separate parachainDetails from parachains
   // parachainDetails should come from chaindata, parachains should come from subquery
-  const parachains = useMemo<ParachainDetails[]>(
-    () => (data || []).map(({ paraId: id }: { paraId?: number }) => find(parachainDetails, { id })).filter(Boolean),
-    [data]
-  )
+  const [parachains, setParachains] = useState<ParachainDetails[]>([])
+  useEffect(() => {
+    setParachains(
+      parachainResults.flatMap(([relayChainId, result]) =>
+        (result?.data?.parachains?.nodes || [])
+          .map(({ paraId: id }: { paraId?: number }) => ({ paraId: `${relayChainId}-${id}` }))
+          .map(({ paraId: id }: { paraId?: number }) => find(parachainDetails, { id }))
+          .filter(Boolean)
+          .map((parachain: any) => ({ ...parachain, relayChainId }))
+      )
+    )
+  }, [parachainResults])
+
+  const [hydrated, setHydrated] = useState(false)
+  useEffect(() => {
+    setHydrated(parachainResults.length > 0)
+  }, [parachainResults])
 
   const value = useMemo(
     () => ({
       parachains,
-      called,
-      loading,
-      status,
-      message,
+      hydrated,
     }),
-    [parachains, called, loading, status, message]
+    [parachains, hydrated]
   )
 
   return <Context.Provider value={value}>{children}</Context.Provider>
