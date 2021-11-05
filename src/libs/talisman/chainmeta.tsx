@@ -1,6 +1,8 @@
-import { useApi } from '@libs/talisman'
+import { useReducer } from 'react'
 import { get } from 'lodash'
 import { PropsWithChildren, useContext as _useContext, createContext, useEffect, useMemo, useState } from 'react'
+import { ApiPromise, WsProvider } from '@polkadot/api';
+import { SupportedParachains } from './util/_config'
 
 //
 // Types
@@ -23,7 +25,17 @@ export type Chainmeta = {
 
 export const useChainmeta = () => useContext()
 
-export const useChainmetaValue = (key: string) => get(useChainmeta().chainmeta, key)
+export const useChainmetaValue = (chainId: number, key: string) => {
+  const chains = useChainmeta(null)
+  const [val, setVal] = useState(null)
+
+  useEffect(() => {
+    if(!chains[chainId]) return
+    setVal(get(chains[chainId], key)||null)
+  }, [chainId, key, chains])
+
+  return val
+}
 
 //
 // Context
@@ -38,7 +50,6 @@ const Context = createContext<ContextProps | null>(null)
 function useContext() {
   const context = _useContext(Context)
   if (!context) throw new Error('The talisman extension provider is required in order to use this hook')
-
   return context
 }
 
@@ -46,52 +57,71 @@ function useContext() {
 // Provider
 //
 
+const ParachainReducer = (state={}, data) => {
+  
+  // not exists
+  if(!state[data.id]){
+    state[data.id] = data
+  }
+  // exists
+  else{
+    state[data.id] = {
+      ...state[data.id],
+      ...data
+    }
+  }
+
+  return {...state}
+}
+
 export const Provider = ({ children }: PropsWithChildren<{}>) => {
-  const api = useApi()
-  const [chainmeta, setChainmeta] = useState<Chainmeta | null>(null)
+
+  const [ chains, dispatch ] = useReducer(ParachainReducer, {})
+
+
+  const hydrateChainMeta = (id: number, rpc: string) => {
+    const wsProvider = new WsProvider(rpc);
+    ApiPromise
+      .create({ provider: wsProvider })
+      .then(api => {
+
+        // fetch the static values
+        Promise.all([
+          api.rpc.system.chain(),
+          api.rpc.system.name(),
+          api.rpc.system.version(),
+          api.rpc.system.properties(),
+        ]).then(([chain, nodeName, nodeVersion, properties]) => {
+          dispatch({
+            id,
+            chain: chain.toString(),
+            nodeName: nodeName.toString(),
+            nodeVersion: nodeVersion.toString(),
+            tokenSymbol: properties.tokenSymbol.value[0].toString(),
+            tokenDecimals: properties.tokenDecimals.value[0].toString(),
+            blockPeriod: 6,
+          })
+        })
+
+        // subscribe to dynamic values
+        api.rpc.chain
+          .subscribeNewHeads(header => {
+            dispatch({
+              id,
+              blockNumber: header.number.toNumber(),
+              blockHash: header.hash.toString(),
+            })
+          })
+        
+      })
+      .catch(error => console.log('ERROR', error.message))
+  }
 
   useEffect(() => {
-    if (!api?.isReady) return
-    let cancelled = false
-    let unsub: Function | null = null
-
-    Promise.all([
-      api.rpc.system.chain(),
-      api.rpc.system.name(),
-      api.rpc.system.version(),
-      api.rpc.system.properties(),
-    ]).then(([chain, nodeName, nodeVersion, properties]) => {
-      setChainmeta(chainmeta => ({
-        ...chainmeta,
-        chain: chain.toString(),
-        nodeName: nodeName.toString(),
-        nodeVersion: nodeVersion.toString(),
-        tokenSymbol: properties.tokenSymbol.value[0].toString(),
-        tokenDecimals: properties.tokenDecimals.value[0].toString(),
-        blockPeriod: 6,
-      }))
+    Object.values(SupportedParachains).forEach(chain => {
+      hydrateChainMeta(chain.id, chain.rpc)
     })
+  }, [])
 
-    api.rpc.chain
-      .subscribeNewHeads(header => {
-        setChainmeta(chainmeta => ({
-          ...chainmeta,
-          blockNumber: header.number.toNumber(),
-          blockHash: header.hash.toString(),
-        }))
-      })
-      .then(_unsub => {
-        if (cancelled) _unsub()
-        else unsub = _unsub
-      })
-
-    return () => {
-      cancelled = true
-      unsub && unsub()
-    }
-  }, [api, api?.isReady])
-
-  const value = useMemo(() => ({ chainmeta }), [chainmeta])
-
-  return <Context.Provider value={value}>{children}</Context.Provider>
+  return <Context.Provider value={chains}>{children}</Context.Provider>
 }

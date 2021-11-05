@@ -35,7 +35,7 @@ const hour = 60 * minute
 const day = 24 * hour
 const week = 7 * day
 
-const Countdown = ({ seconds: countdownSeconds = 10, showSeconds = true, dashout }) => {
+const Countdown = ({ seconds: countdownSeconds = 10, showSeconds = true }) => {
   const remaining = useCountdown(countdownSeconds)
 
   const weeks = Math.max(0, Math.floor(remaining / week))
@@ -50,15 +50,13 @@ const Countdown = ({ seconds: countdownSeconds = 10, showSeconds = true, dashout
   const minutes = Math.max(0, Math.floor(hoursRemainder / minute))
   const seconds = hoursRemainder % minute
 
-  const segments = dashout
-    ? [`-w`, `-d`, `-h`, `-m`, showSeconds && `-s`].filter(Boolean)
-    : [
-        weeks > 0 && `${weeks}w`,
-        days > 0 && `${days}d`,
-        `${hours}h`,
-        `${minutes.toString().padStart(2, '0')}m`,
-        showSeconds && seconds > 0 && `${seconds}s`,
-      ].filter(Boolean)
+  const segments = [
+    weeks > 0 && `${weeks}w`,
+    days > 0 && `${days}d`,
+    `${hours}h`,
+    `${minutes.toString().padStart(2, '0')}m`,
+    showSeconds && seconds > 0 && `${seconds}s`,
+  ].filter(Boolean)
 
   return <>{segments.join(' ')}</>
 }
