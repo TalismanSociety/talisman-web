@@ -69,14 +69,14 @@ const Teaser = styled(({ id, className }) => {
 
     .has-contribution {
       position: absolute;
-      top: 4.8rem;
+      top: 2rem;
       right: 1.6rem;
       display: flex;
       align-items: center;
       padding: 0.6rem 1.2rem;
       border-radius: 9999999999rem;
       color: black;
-      background: #f5f5f5;
+      background: var(--color-primary);
       font-size: 1.4rem;
       line-height: 1.6rem;
 
