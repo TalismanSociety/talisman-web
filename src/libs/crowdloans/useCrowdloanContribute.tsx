@@ -539,6 +539,7 @@ function useTxFeeThunk(state: ContributeState, dispatch: DispatchContributeEvent
 function useValidateContributionThunk(state: ContributeState, dispatch: DispatchContributeEvent) {
   const stateDeps = state.match({
     Ready: ({
+      relayChainId,
       relayNativeToken,
       relayTokenDecimals,
       parachainId,
@@ -549,6 +550,7 @@ function useValidateContributionThunk(state: ContributeState, dispatch: Dispatch
       accountBalance,
       submissionRequested,
     }) => ({
+      relayChainId,
       relayNativeToken,
       relayTokenDecimals,
       parachainId,
@@ -566,8 +568,10 @@ function useValidateContributionThunk(state: ContributeState, dispatch: Dispatch
   useEffect(() => {
     if (!stateDeps) return
     const {
+      relayChainId,
       relayNativeToken,
       relayTokenDecimals,
+      parachainId,
       contributionAmount,
       account,
       api,
@@ -600,7 +604,11 @@ function useValidateContributionThunk(state: ContributeState, dispatch: Dispatch
     }
 
     if (!api) return
-    const minContribution = api.consts.crowdloan.minContribution.toString()
+
+    const minContribution =
+      relayChainId === acalaOptions.relayId && parachainId === acalaOptions.parachainId
+        ? '1' // acala liquid crowdloan has a minimum of 1 DOT
+        : api.consts.crowdloan.minContribution.toString()
     const contributionPlanck = tokensToPlanck(contributionAmount, relayTokenDecimals)
     const minimum = new BigNumber(planckToTokens(minContribution.toString(), relayTokenDecimals) || '').toFixed(2)
 

@@ -193,7 +193,7 @@ const ContributeTo = styled(
                   >
                     liquid crowdloan
                   </a>{' '}
-                  via the Talisman dashboard are elligible for lcDOT rewards.
+                  via the Talisman dashboard are eligible for lcDOT rewards.
                 </div>
               </div>
             </div>

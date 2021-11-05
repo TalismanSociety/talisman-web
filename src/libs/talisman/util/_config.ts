@@ -64,8 +64,8 @@ export const parachainDetails: ParachainDetails[] = [
     name: 'Acala',
     slug: 'acala',
     token: 'ACA',
-    subtitle: 'Acala is the all-in-one DeFi hub of Kusama.',
-    info: `Acala is a scalable, EVM-compatible network optimized for DeFi. The platform offers a suite of financial applications including: a trustless staking derivative (liquid KSM), a multi-collateralized stablecoin backed by cross-chain assets (kUSD), and an AMM DEX – all with micro gas fees that can be paid in any token.\n\nAcala and Karura will operate in parallel and serve the users of the Polkadot and Kusama communities. Once Kusama is bridged to Polkadot, Karura and Acala will also be fully interoperable.`,
+    subtitle: 'Acala is the DeFi and Liquidity Hub of Polkadot',
+    info: `Acala is an Ethereum-compatible smart contract platform optimized for DeFi and scaling DApps to Polkadot. The blockchain has built-in DeFi protocols for application developers to leverage, including a decentralized stablecoin (Acala Dollar - aUSD), a trustless staking derivatives (liquid DOT - LDOT), and a decentralized exchange.`,
     links: {
       Website: 'https://acala.network',
       Twitter: 'https://twitter.com/AcalaNetwork',
@@ -541,7 +541,7 @@ export const crowdloanDetails: CrowdloanDetails[] = [
       custom: [
         {
           title: 'ACA per DOT',
-          value: '>1',
+          value: '>3',
         },
         {
           title: 'lcDOT per DOT',
