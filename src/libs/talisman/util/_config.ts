@@ -537,15 +537,14 @@ export const crowdloanDetails: CrowdloanDetails[] = [
     relayId: 0,
     paraId: 2000,
     rewards: {
-      tokens: [
-        {
-          symbol: 'ACA',
-          perKSM: '>1',
-        },
-      ],
+      tokens: null,
       custom: [
         {
-          title: 'lcDOT per KSM',
+          title: 'ACA per DOT',
+          value: '>1',
+        },
+        {
+          title: 'lcDOT per DOT',
           value: '1',
         },
         {
