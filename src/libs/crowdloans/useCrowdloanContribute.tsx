@@ -871,8 +871,8 @@ async function buildAstarTx({
   const referrerAddress = astarOptions.referral
 
   const txs = [
-    api.tx.crowdloan.addMemo(parachainId, referrerAddress),
     api.tx.crowdloan.contribute(parachainId, contributionPlanck, verifierSignature),
+    api.tx.crowdloan.addMemo(parachainId, referrerAddress),
     api.tx.system.remarkWithEvent('Talisman - The Journey Begins'),
   ]
 
