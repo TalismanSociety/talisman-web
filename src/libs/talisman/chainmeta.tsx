@@ -76,52 +76,34 @@ const ParachainReducer = (state={}, data) => {
 
 export const Provider = ({ children }: PropsWithChildren<{}>) => {
 
+  
   const [ chains, dispatch ] = useReducer(ParachainReducer, {})
 
+  const hydrateBlock = async (chain: any) => {
 
-  const hydrateChainMeta = (id: number, rpc: string) => {
-    const wsProvider = new WsProvider(rpc);
-    ApiPromise
-      .create({ provider: wsProvider })
-      .then(api => {
+    const wsProvider = new WsProvider(chain.rpc);
 
-        // fetch the static values
-        Promise.all([
-          api.rpc.system.chain(),
-          api.rpc.system.name(),
-          api.rpc.system.version(),
-          api.rpc.system.properties(),
-        ]).then(([chain, nodeName, nodeVersion, properties]) => {
-          dispatch({
-            id,
-            chain: chain.toString(),
-            nodeName: nodeName.toString(),
-            nodeVersion: nodeVersion.toString(),
-            tokenSymbol: properties.tokenSymbol.value[0].toString(),
-            tokenDecimals: properties.tokenDecimals.value[0].toString(),
-            blockPeriod: 6,
-          })
+    wsProvider.on('connected', () => {
+      
+      const cb = (error: Error | null, result: any) => {
+        dispatch({
+          id: chain?.id,
+          blockNumber: result.number,
+          blockHash: result.parentHash,
         })
+      }
 
-        // subscribe to dynamic values
-        api.rpc.chain
-          .subscribeNewHeads(header => {
-            dispatch({
-              id,
-              blockNumber: header.number.toNumber(),
-              blockHash: header.hash.toString(),
-            })
-          })
-        
-      })
-      .catch(error => console.log('ERROR', error.message))
+      wsProvider.subscribe('chain_newHead', 'chain_subscribeNewHeads', [], cb)
+    })
   }
 
   useEffect(() => {
     Object.values(SupportedParachains).forEach(chain => {
-      hydrateChainMeta(chain.id, chain.rpc)
+      dispatch(chain)
+      hydrateBlock(chain)
     })
   }, [])
+
 
   return <Context.Provider value={chains}>{children}</Context.Provider>
 }

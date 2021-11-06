@@ -27,6 +27,9 @@ export type Parachain = {
   rpc: string
   genesisHash: string
   subqueryEndpoint: string
+  tokenDecimals: number
+  tokenSymbol: string
+  blockPeriod: number
 }
 
 // https://wiki.polkadot.network/docs/build-ss58-registry
@@ -37,6 +40,9 @@ export const SupportedParachains: { [key: number]: Parachain } = {
     rpc: 'wss://rpc.polkadot.io',
     genesisHash: '0x91b171bb158e2d3848fa23a9f1c25182fb8e20313b2c1eb49219da7a70ce90c3',
     subqueryEndpoint: 'https://api.subquery.network/sq/subvis-io/kusama-auction',
+    tokenDecimals: 10,
+    tokenSymbol: "DOT",
+    blockPeriod: 6
   },
   2: {
     id: 2,
@@ -44,6 +50,9 @@ export const SupportedParachains: { [key: number]: Parachain } = {
     rpc: 'wss://kusama-rpc.polkadot.io',
     genesisHash: '0xb0a8d493285c2df73290dfb7e61f870f17b41801197a149ca93654499ea3dafe',
     subqueryEndpoint: 'https://api.subquery.network/sq/subvis-io/kusama-auction',
+    tokenDecimals: 12,
+    tokenSymbol: "KSM",
+    blockPeriod: 6
   },
 }
 
