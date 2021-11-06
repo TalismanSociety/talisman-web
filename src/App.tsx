@@ -13,7 +13,7 @@ const App: React.FC = () => (
   <Portfolio.Provider>
     <Tokenprices.Provider>
       <TalismanProvider>
-        <Crowdloans.Provider uri="https://api.subquery.network/sq/TalismanSociety/kusama-crowdloans">
+        <Crowdloans.Provider>
           <Router>
             <ThemeProvider>
               <ModalProvider>

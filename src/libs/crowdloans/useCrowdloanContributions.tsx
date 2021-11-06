@@ -1,7 +1,12 @@
-import { ApolloClient, ApolloError, ApolloProvider, InMemoryCache, gql, useQuery } from '@apollo/client'
+import { ApolloClient, ApolloQueryResult, InMemoryCache, NormalizedCacheObject, gql } from '@apollo/client'
 import { BatchHttpLink } from '@apollo/client/link/batch-http'
-import { addBigNumbers, useFuncMemo } from '@talismn/util'
-import { PropsWithChildren, useMemo } from 'react'
+import { relayChainsChaindata } from '@libs/talisman/util/_config'
+import { addBigNumbers, encodeAnyAddress } from '@talismn/util'
+import { PropsWithChildren, useContext as _useContext, createContext, useEffect, useMemo, useState } from 'react'
+
+//
+// Constants
+//
 
 const AccountFilter = (accounts?: string[]) =>
   Array.isArray(accounts) && accounts.length > 0 ? `account: { in: ${JSON.stringify(accounts)} }` : ``
@@ -48,64 +53,127 @@ export type CrowdloanContribution = {
   fund: { id: string }
 }
 
+//
+// Hooks (exported)
+//
+
 export function useCrowdloanContributions({
   accounts: _accounts,
   crowdloans: _crowdloans,
 }: { accounts?: string[]; crowdloans?: string[] } = {}): {
-  contributions: Array<CrowdloanContribution>
-  skipped: boolean
-  loading: boolean
-  error?: ApolloError
+  contributions: CrowdloanContribution[]
+  hydrated: boolean
 } {
   // memoize accounts and crowdloans so user can do useCrowdloansContributions([accountId], [crowdloanId]) without wasting cycles
-  const accounts = useMemo(() => _accounts, [JSON.stringify(_accounts)]) // eslint-disable-line react-hooks/exhaustive-deps
+  const accounts = useMemo(
+    () => relayChainsChaindata.map(({ id }) => (_accounts || []).map(account => encodeAnyAddress(account, id))),
+    [JSON.stringify(_accounts)] // eslint-disable-line react-hooks/exhaustive-deps
+  )
   const crowdloans = useMemo(
-    () => _crowdloans?.map(id => id.split('-').slice(1).join('-')),
+    () =>
+      relayChainsChaindata.map(({ id: relayId }) =>
+        (_crowdloans || []).filter(id => id.startsWith(`${relayId}-`)).map(id => id.split('-').slice(1).join('-'))
+      ),
     [JSON.stringify(_crowdloans)] // eslint-disable-line react-hooks/exhaustive-deps
   )
-  const query = useFuncMemo(Contributions, accounts, crowdloans)
 
-  const hasAccounts = Array.isArray(accounts) && accounts.length > 0
+  const { apolloClients } = useContext()
 
-  // if we're not filtering the result by accounts, the server response is going to be huge
-  const skip = !hasAccounts
+  const [contributionsResults, setContributionsResults] = useState<Array<[number, ApolloQueryResult<any> | null]>>([])
+  useEffect(() => {
+    // query crowdloan contributions on each relay chain
+    const relayChainContributions = apolloClients.map((client, index) => {
+      const query = Contributions(accounts[index], crowdloans[index])
 
-  const pollInterval = 10000 // 10000ms == 10s
-  const { data, loading, error } = useQuery(query, { skip, pollInterval })
+      // if we're not filtering the result by accounts, the server response is going to be huge
+      const hasAccounts = Array.isArray(accounts[index]) && accounts[index].length > 0
+      if (!hasAccounts) return Promise.reject()
 
-  const contributions = useMemo(
-    () =>
-      ((data?.contributions?.nodes as Array<CrowdloanContribution>) || []).map(contribution => ({
-        ...contribution,
-        relayChainId: 2,
-        parachain: { paraId: `2-${contribution.parachain.paraId}` },
-        fund: { id: `2-${contribution.fund.id}` },
-      })),
-    [data?.contributions?.nodes]
-  )
+      return client.query({ query })
+    })
+
+    // extract results and store in state with relayChainId
+    Promise.allSettled(relayChainContributions).then(results =>
+      setContributionsResults(
+        results.map((result, resultIndex) => [
+          relayChainsChaindata[resultIndex].id, // relayChainId
+          result.status === 'fulfilled' ? result.value : null, // result data
+        ])
+      )
+    )
+  }, [apolloClients, accounts, crowdloans])
+
+  const [contributions, setContributions] = useState<CrowdloanContribution[]>([])
+  useEffect(() => {
+    setContributions(
+      contributionsResults.flatMap(([relayChainId, result]) =>
+        ((result?.data?.contributions?.nodes || []) as CrowdloanContribution[]).map(contribution => ({
+          ...contribution,
+          relayChainId,
+
+          parachain: { paraId: `${relayChainId}-${contribution.parachain.paraId}` },
+
+          fund: { id: `${relayChainId}-${contribution.fund.id}` },
+        }))
+      )
+    )
+  }, [contributionsResults])
+
+  // const pollInterval = 30000 // 10000ms == 30s
+
+  const [hydrated, setHydrated] = useState(false)
+  useEffect(() => {
+    setHydrated(contributionsResults.length > 0)
+  }, [contributionsResults])
 
   return {
     contributions,
-    skipped: skip,
-    loading,
-    error,
+    hydrated,
   }
 }
 
-export function Provider({ uri, children }: PropsWithChildren<{ uri: string }>) {
-  const link = useMemo(() => new BatchHttpLink({ uri, batchMax: 999, batchInterval: 20 }), [uri])
+//
+// Context
+//
 
-  const apolloClient = useMemo(
+type ContextProps = {
+  apolloClients: ApolloClient<NormalizedCacheObject>[]
+}
+
+const Context = createContext<ContextProps | null>(null)
+
+function useContext() {
+  const context = _useContext(Context)
+  if (!context) throw new Error('The CrowdloanContributions provider is required in order to use this hook')
+
+  return context
+}
+
+//
+// Provider
+//
+
+export function Provider({ children }: PropsWithChildren<{}>) {
+  const apolloClients = useMemo(
     () =>
-      new ApolloClient({
-        link,
-        cache: new InMemoryCache(),
+      relayChainsChaindata.map(({ subqueryCrowdloansUrl }) => {
+        const link = new BatchHttpLink({ uri: subqueryCrowdloansUrl, batchMax: 999, batchInterval: 20 })
+        return new ApolloClient({
+          link,
+          cache: new InMemoryCache(),
+        })
       }),
-    [link]
+    []
   )
 
-  return <ApolloProvider client={apolloClient}>{children}</ApolloProvider>
+  const value = useMemo(() => ({ apolloClients }), [apolloClients])
+
+  return <Context.Provider value={value}>{children}</Context.Provider>
 }
+
+//
+// Helpers (exported)
+//
 
 export function groupTotalContributionsByCrowdloan(contributions: CrowdloanContribution[]) {
   return contributions.reduce((perCrowdloan, contribution) => {
