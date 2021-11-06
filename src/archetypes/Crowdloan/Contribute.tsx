@@ -185,15 +185,14 @@ const ContributeTo = styled(
                   disabled={submissionRequested}
                 />
                 <div className="info">
-                  All contributions made to Acala's{' '}
+                  All contributions via the Talisman dashboard are made to Acala's liquid crowdloan (lcDOT) offer and are subject to the rewards and vesting schedule described {' '}
                   <a
                     href="https://medium.com/acalanetwork/acala-liquid-crowdloan-dot-lcdot-launch-on-polkadot-f28d8f561157#4080"
                     target="_blank"
                     rel="noreferrer noopener"
                   >
-                    liquid crowdloan
-                  </a>{' '}
-                  via the Talisman dashboard are eligible for lcDOT rewards.
+                    here
+                  </a>
                 </div>
               </div>
             </div>
