@@ -9,7 +9,7 @@ import Talisman from '@talismn/api'
 import type { BalanceWithTokens } from '@talismn/api-react-hooks'
 import { addTokensToBalances } from '@talismn/api-react-hooks'
 import Chaindata from '@talismn/chaindata-js'
-import { encodeAnyAddress, planckToTokens, tokensToPlanck } from '@talismn/util'
+import { decodeAnyAddress, encodeAnyAddress, planckToTokens, tokensToPlanck } from '@talismn/util'
 import customRpcs from '@util/customRpcs'
 import BigNumber from 'bignumber.js'
 import { useCallback, useEffect, useState } from 'react'
@@ -21,23 +21,16 @@ import { MemberType, makeTaggedUnion, none } from 'safety-match'
 
 // TODO: Store Acala overrides somewhere neat
 export const acalaOptions = {
-  // prod
   api: 'https://crowdloan.aca-api.network',
   relayId: 0,
   parachainId: 2000,
-  referral: '0xb4cdf472363967c308177936f6faddcccb3cd502d99728394fe9f4ec0d9dbf4f',
+  referral: encodePolkadotAddressAsHexadecimalPublicKey('1564oSHxGVQEaSwHgeYKD1z1A8BXeuqL3hqBSWMA6zHmKnz1'),
   jwt: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoidGFsaXNtYW4iLCJpYXQiOjE2MzYwNTM5NTV9.vplu8f6JI-T7SLuKwKU001KDPof04Lp6cCFyJXLWSKg',
-
-  // // test
-  // api: 'https://crowdloan.aca-dev.network',
-  // parachainId: 2000,
-  // referral: '0xb4cdf472363967c308177936f6faddcccb3cd502d99728394fe9f4ec0d9dbf4f',
-  // jwt: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoidGFsaXNtYW4iLCJpYXQiOjE2MzYwNTM5NTV9.vplu8f6JI-T7SLuKwKU001KDPof04Lp6cCFyJXLWSKg',
 }
 export const astarOptions = {
   relayId: 0,
   parachainId: 2006,
-  referral: '1564oSHxGVQEaSwHgeYKD1z1A8BXeuqL3hqBSWMA6zHmKnz1',
+  referral: encodePolkadotAddressAsHexadecimalPublicKey('1564oSHxGVQEaSwHgeYKD1z1A8BXeuqL3hqBSWMA6zHmKnz1'),
 }
 
 //
@@ -876,6 +869,7 @@ async function buildAstarTx({
   api,
 }: BuildTxProps): Promise<BuildTxResponse> {
   const referrerAddress = astarOptions.referral
+
   const txs = [
     api.tx.crowdloan.addMemo(parachainId, referrerAddress),
     api.tx.crowdloan.contribute(parachainId, contributionPlanck, verifierSignature),
@@ -994,4 +988,10 @@ async function deriveExplorerUrl(
   const explorerUrl = txId ? `${subscanUrl}/extrinsic/${txId}` : `${subscanUrl}/block/${blockHash}`
 
   return explorerUrl
+}
+
+function encodePolkadotAddressAsHexadecimalPublicKey(polkadotAddress: string): string {
+  const byteArray = decodeAnyAddress(polkadotAddress)
+  const hexEncoded = [...byteArray].map(x => x.toString(16).padStart(2, '0')).join('')
+  return `0x${hexEncoded}`
 }
