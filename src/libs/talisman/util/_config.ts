@@ -101,6 +101,23 @@ export const parachainDetails: ParachainDetails[] = [
     },
   },
   {
+    id: '0-2013',
+    name: 'Litentry',
+    slug: 'litentry',
+    token: 'LIT',
+    subtitle:
+      'Litentry is a Decentralized Identity Aggregation protocol across multiple networks, it features a DID indexing mechanism and a Substrate-based credit computation network.',
+    info: `The protocol provides a decentralized, interoperable identity aggregation service that mitigates the difficulty of resolving agnostic DID mechanisms. Litentry provides a secure vehicle through which users manage their identities and dApps obtain the real-time credit/reputation of an identity owner across different blockchains.`,
+    links: {
+      Website: 'https://www.litentry.com/',
+      Twitter: 'https://twitter.com/litentry',
+      Telegram: 'https://t.me/litentry',
+      Medium: 'https://litentry.medium.com/',
+      Github: 'https://github.com/litentry/',
+      Linkedin: 'https://www.linkedin.com/company/litentry/about',
+    },
+  },
+  {
     id: '2-2000',
     name: 'Karura',
     slug: 'karura',
@@ -589,6 +606,32 @@ export const crowdloanDetails: CrowdloanDetails[] = [
         full: 'Earn up to 5% ACA + 🗝',
         info: 'Receive a <strong>bonus of 5% + a Spirit Key 🗝</strong> when you use Talisman',
       },
+      info: null,
+    },
+  },
+  {
+    relayId: 0,
+    paraId: 2013,
+    rewards: {
+      tokens: null,
+      custom: [
+        {
+          title: 'LIT per DOT',
+          value: '>25',
+        },
+        {
+          title: 'Crowdloan Allocation',
+          value: '20,000,000 LIT',
+        },
+        {
+          title: 'Early bonus',
+          value: '10% before auction start',
+        },
+        {
+          title: 'Early bonus',
+          value: '5% within 7 days of auction start',
+        },
+      ],
       info: null,
     },
   },
