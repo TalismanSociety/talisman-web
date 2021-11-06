@@ -88,7 +88,8 @@ export const parachainDetails: ParachainDetails[] = [
     name: 'Astar',
     slug: 'astar',
     token: 'ASTR',
-    subtitle: 'Astar is the Polkadot-native dApp hub supporting Ethereum, WebAssembly, dApp Staking, and Layer2 solutions.',
+    subtitle:
+      'Astar is the Polkadot-native dApp hub supporting Ethereum, WebAssembly, dApp Staking, and Layer2 solutions.',
     info: `Astar Network (previously known as Plasm) is a dApp hub on Polkadot that supports Ethereum, WebAssembly, and layer 2 solutions like ZK Rollups. Astar aims to be a multi-chain smart contract platform that will support multiple blockchains and virtual machines.`,
     links: {
       Website: 'https://astar.network/',
@@ -96,7 +97,7 @@ export const parachainDetails: ParachainDetails[] = [
       Telegram: 'https://t.me/PlasmOfficial',
       Medium: 'https://medium.com/astar-network',
       Github: 'https://github.com/PlasmNetwork/Plasm',
-      Discord: 'https://discord.gg/Z3nC9U4'
+      Discord: 'https://discord.gg/Z3nC9U4',
     },
   },
   {
@@ -577,9 +578,32 @@ export const crowdloanDetails: CrowdloanDetails[] = [
           title: 'lcDOT per DOT',
           value: '1',
         },
+        // this information isn't actionable, so I've clobbered it for now.
+        // {
+        //   title: 'Referals',
+        //   value: '5%',
+        // },
+      ],
+      info: null,
+    },
+  },
+  {
+    relayId: 0,
+    paraId: 2006,
+    rewards: {
+      tokens: null,
+      custom: [
         {
-          title: 'Referrals',
-          value: '5%',
+          title: 'ASTR per DOT',
+          value: '>2.6',
+        },
+        {
+          title: 'Crowdloan Allocation',
+          value: '1,050,000,000 ASTR',
+        },
+        {
+          title: 'Bonus Pool',
+          value: '350,000,000 ASTR',
         },
       ],
       bonus: {
