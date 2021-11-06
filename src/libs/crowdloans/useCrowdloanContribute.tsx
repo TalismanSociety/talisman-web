@@ -34,6 +34,11 @@ export const acalaOptions = {
   // referral: '0xb4cdf472363967c308177936f6faddcccb3cd502d99728394fe9f4ec0d9dbf4f',
   // jwt: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoidGFsaXNtYW4iLCJpYXQiOjE2MzYwNTM5NTV9.vplu8f6JI-T7SLuKwKU001KDPof04Lp6cCFyJXLWSKg',
 }
+export const astarOptions = {
+  relayId: 0,
+  parachainId: 2006,
+  referral: '1564oSHxGVQEaSwHgeYKD1z1A8BXeuqL3hqBSWMA6zHmKnz1',
+}
 
 //
 // Types
@@ -461,16 +466,6 @@ function useValidateAccountHasContributionBalanceThunk(state: ContributeState, d
   }, [dispatch, JSON.stringify(stateDeps)]) // eslint-disable-line react-hooks/exhaustive-deps
 }
 
-function getBuildTxStrategy(relayChainId: number, parachainId: number) {
-  const relayWithParachainId = `${relayChainId}-${parachainId}`
-  switch (relayWithParachainId) {
-    case '0-2006':
-      return buildTxWithMemo
-    default:
-      return buildTx
-  }
-}
-
 function useTxFeeThunk(state: ContributeState, dispatch: DispatchContributeEvent) {
   const stateDeps = state.match({
     Ready: ({
@@ -522,10 +517,18 @@ function useTxFeeThunk(state: ContributeState, dispatch: DispatchContributeEvent
 
       let tx
       try {
-        tx =
-          relayChainId === acalaOptions.relayId && parachainId === acalaOptions.parachainId
-            ? await buildAcalaTx({ api, relayChainId, account, email, contributionPlanck, estimateOnly: true })
-            : getBuildTxStrategy(relayChainId, parachainId)(api, parachainId, contributionPlanck, verifierSignature)
+        tx = await buildTx({
+          relayChainId,
+          parachainId,
+
+          contributionPlanck,
+          account,
+          email,
+          verifierSignature,
+
+          api,
+          estimateOnly: true,
+        })
       } catch (error: any) {
         dispatch(ContributeEvent._setValidationError({ i18nCode: error?.message || error.toString() }))
         return
@@ -719,10 +722,17 @@ function useSignAndSendContributionThunk(state: ContributeState, dispatch: Dispa
 
       let tx
       try {
-        tx =
-          relayChainId === acalaOptions.relayId && parachainId === acalaOptions.parachainId
-            ? await buildAcalaTx({ api, relayChainId, account, email, contributionPlanck })
-            : getBuildTxStrategy(relayChainId, parachainId)(api, parachainId, contributionPlanck, verifierSignature)
+        tx = await buildTx({
+          relayChainId,
+          parachainId,
+
+          contributionPlanck,
+          account,
+          email,
+          verifierSignature,
+
+          api,
+        })
       } catch (error: any) {
         dispatch(ContributeEvent._setValidationError({ i18nCode: error?.message || error.toString() }))
         return
@@ -820,12 +830,37 @@ const filterContributionAmount = (contributionAmount: string): string =>
       match === '.' ? (string.indexOf('.') === offset ? '.' : '') : ''
     )
 
-function buildTx(
-  api: ApiPromise,
-  parachainId: number,
-  contributionPlanck: string,
+type BuildTxProps = {
+  relayChainId: number
+  parachainId: number
+
+  contributionPlanck: string
+  account: string
+  email?: string
   verifierSignature?: string
-): SubmittableExtrinsic<'promise', ISubmittableResult> {
+
+  api: ApiPromise
+  estimateOnly?: true
+}
+type BuildTxResponse = SubmittableExtrinsic<'promise', ISubmittableResult>
+async function buildTx(props: BuildTxProps): Promise<BuildTxResponse> {
+  const buildTxFuncs = {
+    [`${acalaOptions.relayId}-${acalaOptions.parachainId}`]: buildAcalaTx,
+    [`${astarOptions.relayId}-${astarOptions.parachainId}`]: buildAstarTx,
+  }
+
+  const relayWithParachainId = `${props.relayChainId}-${props.parachainId}`
+  const buildTxFunc = buildTxFuncs[relayWithParachainId] || buildGenericTx
+
+  return await buildTxFunc(props)
+}
+
+async function buildGenericTx({
+  parachainId,
+  contributionPlanck,
+  verifierSignature,
+  api,
+}: BuildTxProps): Promise<BuildTxResponse> {
   const txs = [
     api.tx.crowdloan.contribute(parachainId, contributionPlanck, verifierSignature),
     api.tx.system.remarkWithEvent('Talisman - The Journey Begins'),
@@ -834,13 +869,13 @@ function buildTx(
   return api.tx.utility.batchAll(txs)
 }
 
-function buildTxWithMemo(
-  api: ApiPromise,
-  parachainId: number,
-  contributionPlanck: string,
-  verifierSignature?: string
-): SubmittableExtrinsic<'promise', ISubmittableResult> {
-  const referrerAddress = '1564oSHxGVQEaSwHgeYKD1z1A8BXeuqL3hqBSWMA6zHmKnz1'
+async function buildAstarTx({
+  parachainId,
+  contributionPlanck,
+  verifierSignature,
+  api,
+}: BuildTxProps): Promise<BuildTxResponse> {
+  const referrerAddress = astarOptions.referral
   const txs = [
     api.tx.crowdloan.addMemo(parachainId, referrerAddress),
     api.tx.crowdloan.contribute(parachainId, contributionPlanck, verifierSignature),
@@ -851,20 +886,13 @@ function buildTxWithMemo(
 }
 
 async function buildAcalaTx({
-  api,
   relayChainId,
+  contributionPlanck,
   account,
   email,
-  contributionPlanck,
+  api,
   estimateOnly,
-}: {
-  api: ApiPromise
-  relayChainId: number
-  account: string
-  email?: string
-  contributionPlanck: string
-  estimateOnly?: true
-}): Promise<SubmittableExtrinsic<'promise', ISubmittableResult>> {
+}: BuildTxProps): Promise<BuildTxResponse> {
   // don't bother acala's API when we only want to calculate a txFee
   const statementResult = estimateOnly
     ? {
