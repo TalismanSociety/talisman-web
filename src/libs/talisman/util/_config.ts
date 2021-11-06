@@ -560,7 +560,7 @@ export const crowdloanDetails: CrowdloanDetails[] = [
       bonus: {
         short: 'Up to 5% + 🗝',
         full: 'Earn up to 5% ACA + 🗝',
-        info: "Receive a <strong>bonus of 5% + a Spirit Key 🗝</strong> when you use Talsiman"
+        info: 'Receive a <strong>bonus of 5% + a Spirit Key 🗝</strong> when you use Talisman',
       },
       info: null,
     },
