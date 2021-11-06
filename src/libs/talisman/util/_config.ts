@@ -41,8 +41,8 @@ export const SupportedParachains: { [key: number]: Parachain } = {
     genesisHash: '0x91b171bb158e2d3848fa23a9f1c25182fb8e20313b2c1eb49219da7a70ce90c3',
     subqueryEndpoint: 'https://api.subquery.network/sq/subvis-io/kusama-auction',
     tokenDecimals: 10,
-    tokenSymbol: "DOT",
-    blockPeriod: 6
+    tokenSymbol: 'DOT',
+    blockPeriod: 6,
   },
   2: {
     id: 2,
@@ -51,8 +51,8 @@ export const SupportedParachains: { [key: number]: Parachain } = {
     genesisHash: '0xb0a8d493285c2df73290dfb7e61f870f17b41801197a149ca93654499ea3dafe',
     subqueryEndpoint: 'https://api.subquery.network/sq/subvis-io/kusama-auction',
     tokenDecimals: 12,
-    tokenSymbol: "KSM",
-    blockPeriod: 6
+    tokenSymbol: 'KSM',
+    blockPeriod: 6,
   },
 }
 
@@ -584,6 +584,11 @@ export const crowdloanDetails: CrowdloanDetails[] = [
         //   value: '5%',
         // },
       ],
+      bonus: {
+        short: 'Up to 5% + 🗝',
+        full: 'Earn up to 5% ACA + 🗝',
+        info: 'Receive a <strong>bonus of 5% + a Spirit Key 🗝</strong> when you use Talisman',
+      },
       info: null,
     },
   },
@@ -606,11 +611,6 @@ export const crowdloanDetails: CrowdloanDetails[] = [
           value: '350,000,000 ASTR',
         },
       ],
-      bonus: {
-        short: 'Up to 5% + 🗝',
-        full: 'Earn up to 5% ACA + 🗝',
-        info: 'Receive a <strong>bonus of 5% + a Spirit Key 🗝</strong> when you use Talisman',
-      },
       info: null,
     },
   },
