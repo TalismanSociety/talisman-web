@@ -461,6 +461,16 @@ function useValidateAccountHasContributionBalanceThunk(state: ContributeState, d
   }, [dispatch, JSON.stringify(stateDeps)]) // eslint-disable-line react-hooks/exhaustive-deps
 }
 
+function getBuildTxStrategy(relayChainId: number, parachainId: number) {
+  const relayWithParachainId = `${relayChainId}-${parachainId}`
+  switch (relayWithParachainId) {
+    case '0-2006':
+      return buildTxWithMemo
+    default:
+      return buildTx
+  }
+}
+
 function useTxFeeThunk(state: ContributeState, dispatch: DispatchContributeEvent) {
   const stateDeps = state.match({
     Ready: ({
@@ -515,7 +525,7 @@ function useTxFeeThunk(state: ContributeState, dispatch: DispatchContributeEvent
         tx =
           relayChainId === acalaOptions.relayId && parachainId === acalaOptions.parachainId
             ? await buildAcalaTx({ api, relayChainId, account, email, contributionPlanck, estimateOnly: true })
-            : buildTx(api, parachainId, contributionPlanck, verifierSignature)
+            : getBuildTxStrategy(relayChainId, parachainId)(api, parachainId, contributionPlanck, verifierSignature)
       } catch (error: any) {
         dispatch(ContributeEvent._setValidationError({ i18nCode: error?.message || error.toString() }))
         return
@@ -817,6 +827,22 @@ function buildTx(
   verifierSignature?: string
 ): SubmittableExtrinsic<'promise', ISubmittableResult> {
   const txs = [
+    api.tx.crowdloan.contribute(parachainId, contributionPlanck, verifierSignature),
+    api.tx.system.remarkWithEvent('Talisman - The Journey Begins'),
+  ]
+
+  return api.tx.utility.batchAll(txs)
+}
+
+function buildTxWithMemo(
+  api: ApiPromise,
+  parachainId: number,
+  contributionPlanck: string,
+  verifierSignature?: string
+): SubmittableExtrinsic<'promise', ISubmittableResult> {
+  const referrerAddress = '1564oSHxGVQEaSwHgeYKD1z1A8BXeuqL3hqBSWMA6zHmKnz1'
+  const txs = [
+    api.tx.crowdloan.addMemo(parachainId, referrerAddress),
     api.tx.crowdloan.contribute(parachainId, contributionPlanck, verifierSignature),
     api.tx.system.remarkWithEvent('Talisman - The Journey Begins'),
   ]
