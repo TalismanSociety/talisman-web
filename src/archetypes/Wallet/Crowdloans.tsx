@@ -94,6 +94,16 @@ const CrowdloanItem = styled(({ id, className, infoOnly = false }) => {
   }
 `
 
+const StyledNotificationPanel = styled(Panel)`
+  margin-top: 0.5em;
+  .inner{
+    background: var(--color-primary);
+    color: var(--color-background);
+    padding: var(--padding-small);
+  }
+
+`
+
 const Crowdloans = ({ className }: { className?: string }) => {
   const { t } = useTranslation()
   const accounts = useAccountAddresses()
@@ -148,7 +158,7 @@ const Crowdloans = ({ className }: { className?: string }) => {
               </PanelSection>
             ))}
             {/* Hardcode for now */}
-            <PanelSection>
+            {/*<PanelSection>
               <CrowdloanItem
                 id="0-2000"
                 infoOnly={
@@ -162,10 +172,13 @@ const Crowdloans = ({ className }: { className?: string }) => {
                   </a>
                 }
               />
-            </PanelSection>
+            </PanelSection>*/}
           </>
         )}
       </Panel>
+      <StyledNotificationPanel>
+        Note: Polkadot (DOT) crowdloan contributions coming soon
+      </StyledNotificationPanel>
     </section>
   )
 }
