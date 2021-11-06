@@ -37,6 +37,9 @@ export default function Contribute({ className, id }: ContributeProps) {
 
   return contributeState.match({
     Initializing: () => <Loading />,
+
+    IpBanned: () => 'Sorry, this crowdloan is not accepting contributions from IP addresses within your region.',
+
     Ready: props => (
       <ContributeTo
         {...{

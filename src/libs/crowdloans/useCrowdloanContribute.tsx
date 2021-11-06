@@ -15,6 +15,8 @@ import BigNumber from 'bignumber.js'
 import { useCallback, useEffect, useState } from 'react'
 import { MemberType, makeTaggedUnion, none } from 'safety-match'
 
+import moonbeamStatement from './moonbeamStatement'
+
 //
 // TODO: Move tx handling into a generic queue, store queue in react context
 //
@@ -32,6 +34,21 @@ export const astarOptions = {
   parachainId: 2006,
   referral: encodePolkadotAddressAsHexadecimalPublicKey('1564oSHxGVQEaSwHgeYKD1z1A8BXeuqL3hqBSWMA6zHmKnz1'),
 }
+export const moonbeamOptions = {
+  // // prod
+  // api: '',
+  // relayId:0,
+  // parachainId:2004,
+  // statement: moonbeamStatement,
+
+  // test
+  api: 'https://wallet-test.api.purestake.xyz',
+  relayId: 0,
+  // parachainId: 2004,
+  parachainId: 2002,
+  statement: moonbeamStatement,
+  apiKey: 'WbDaeFsMeh4BTLGqqzCe03A44w8vrwvl4lxw2WNm',
+}
 
 //
 // Types
@@ -44,8 +61,6 @@ export const ContributeState = makeTaggedUnion({
   NoRpcsForRelayChain: none,
   NoChaindataForRelayChain: none,
   IpBanned: none,
-  NeedSignature: (props: SignatureProps) => props,
-  ProcessingSignature: (props: SignatureProps) => props,
   Ready: (props: ReadyProps) => props,
   ContributionSubmitting: (props: ContributionSubmittingProps) => props,
   ContributionSuccess: (props: ContributionSuccessProps) => props,
@@ -59,6 +74,7 @@ export const ContributeEvent = makeTaggedUnion({
   initialize: (props: InitializeProps) => props,
   _noRpcsForRelayChain: none,
   _noChaindataForRelayChain: none,
+  _ipBanned: none,
   _initialized: (props: ReadyProps) => props,
   // TODO: Implement
   // Sign: (props: unknown) => props,
@@ -66,6 +82,7 @@ export const ContributeEvent = makeTaggedUnion({
   setContributionAmount: (contributionAmount: string) => contributionAmount,
   setAccount: (account?: string) => account,
   setEmail: (email?: string) => email,
+  setVerifierSignature: (verifierSignature?: string) => verifierSignature,
   _setAccountBalance: (balance: BalanceWithTokens | null) => balance,
   _setValidationError: (validationError?: { i18nCode: string; vars?: { [key: string]: any } }) => validationError,
   _setTxFee: (txFee?: string | null) => txFee,
@@ -146,6 +163,7 @@ export function useCrowdloanContribute(): [ContributeState, DispatchContributeEv
   useAccountBalanceThunk(state, dispatch)
   useValidateAccountHasContributionBalanceThunk(state, dispatch)
   useTxFeeThunk(state, dispatch)
+  useMoonbeamThunk(state, dispatch)
   useValidateContributionThunk(state, dispatch)
   useSignAndSendContributionThunk(state, dispatch)
 
@@ -176,6 +194,7 @@ function contributeEventReducer(state: ContributeState, event: ContributeEvent):
 
     _noRpcsForRelayChain: () => ContributeState.NoRpcsForRelayChain,
     _noChaindataForRelayChain: () => ContributeState.NoChaindataForRelayChain,
+    _ipBanned: () => ContributeState.IpBanned,
     _initialized: props => ContributeState.Ready(props),
 
     _setApi: (api?: ApiPromise) =>
@@ -348,7 +367,13 @@ function useInitializeThunk(state: ContributeState, dispatch: DispatchContribute
   useEffect(() => {
     ;(async () => {
       if (!stateDeps) return
-      const { relayChainId, parachainId } = stateDeps
+      // const { relayChainId, parachainId } = stateDeps
+
+      // START: DEBUG MOONBEAM/ACALA
+      const relayChainId = moonbeamOptions.relayId
+      const parachainId = moonbeamOptions.parachainId
+      const relayRpcs = ['wss://wss.polkatrain.moonbeam.network']
+      // // END: DEBUG MOONBEAM/ACALA
 
       const [relayChaindata, chaindata] = await Promise.all([
         Chaindata.chain(relayChainId.toString()),
@@ -357,7 +382,7 @@ function useInitializeThunk(state: ContributeState, dispatch: DispatchContribute
       const relayExtraChaindata = SupportedRelaychains[relayChainId]
       const relayChainCustomRpcs = customRpcs[relayChainId.toString()]
 
-      const relayRpcs = relayChainCustomRpcs.length > 0 ? relayChainCustomRpcs : relayChaindata?.rpcs || []
+      // const relayRpcs = relayChainCustomRpcs.length > 0 ? relayChainCustomRpcs : relayChaindata?.rpcs || []
       const hasRelayRpcs = relayRpcs.length > 0
       if (!hasRelayRpcs) return dispatch(ContributeEvent._noRpcsForRelayChain)
 
@@ -366,6 +391,14 @@ function useInitializeThunk(state: ContributeState, dispatch: DispatchContribute
       if (!relayTokenDecimals) return dispatch(ContributeEvent._noChaindataForRelayChain)
 
       const parachainName = chaindata.name !== null ? chaindata.name : undefined
+
+      if (relayChainId === moonbeamOptions.relayId && parachainId === moonbeamOptions.parachainId) {
+        const ipBlockedResponse = await fetch(`${moonbeamOptions.api}/health`, {
+          headers: { 'x-api-key': moonbeamOptions.apiKey },
+        })
+        const status = ipBlockedResponse.status
+        if (status !== 200) return dispatch(ContributeEvent._ipBanned)
+      }
 
       dispatch(
         ContributeEvent._initialized({
@@ -438,13 +471,23 @@ function useAccountBalanceThunk(state: ContributeState, dispatch: DispatchContri
 
 function useValidateAccountHasContributionBalanceThunk(state: ContributeState, dispatch: DispatchContributeEvent) {
   const stateDeps = state.match({
-    Ready: ({ contributionAmount, accountBalance }) => ({ contributionAmount, accountBalance }),
+    Ready: ({ relayChainId, parachainId, contributionAmount, verifierSignature, accountBalance }) => ({
+      relayChainId,
+      parachainId,
+      contributionAmount,
+      verifierSignature,
+      accountBalance,
+    }),
     _: () => false as false,
   })
 
   useEffect(() => {
     if (!stateDeps) return
-    const { contributionAmount, accountBalance } = stateDeps
+    const { relayChainId, parachainId, contributionAmount, verifierSignature, accountBalance } = stateDeps
+
+    if (relayChainId === moonbeamOptions.relayId && parachainId === moonbeamOptions.parachainId) {
+      if (!verifierSignature) return
+    }
 
     const setBalanceError = () => dispatch(ContributeEvent._setValidationError({ i18nCode: 'Account balance too low' }))
     const clearBalanceError = () => dispatch(ContributeEvent._setValidationError())
@@ -539,6 +582,133 @@ function useTxFeeThunk(state: ContributeState, dispatch: DispatchContributeEvent
       cancelled = true
       dispatch(ContributeEvent._setTxFee(null))
     }
+  }, [dispatch, stateDeps && stateDeps?.api, JSON.stringify(jsonCmpStateDeps)]) // eslint-disable-line react-hooks/exhaustive-deps
+}
+
+function useMoonbeamThunk(state: ContributeState, dispatch: DispatchContributeEvent) {
+  const stateDeps = state.match({
+    Ready: ({
+      relayChainId,
+      relayNativeToken,
+      relayTokenDecimals,
+      parachainId,
+      contributionAmount,
+      account,
+      email,
+      api,
+      accountBalance,
+      submissionRequested,
+    }) => ({
+      relayChainId,
+      relayNativeToken,
+      relayTokenDecimals,
+      parachainId,
+      contributionAmount,
+      account,
+      email,
+      api,
+      accountBalance,
+      submissionRequested,
+    }),
+    _: () => false as false,
+  })
+  const { api, ...jsonCmpStateDeps } = stateDeps || {}
+
+  useEffect(() => {
+    if (!stateDeps) return
+    const {
+      relayChainId,
+      relayNativeToken,
+      relayTokenDecimals,
+      parachainId,
+      contributionAmount,
+      account,
+      api,
+      accountBalance,
+      submissionRequested,
+    } = stateDeps
+
+    if (relayChainId !== moonbeamOptions.relayId || parachainId !== moonbeamOptions.parachainId) return
+    if (!account) return
+    ;(async () => {
+      const checkRemarkResponse = await fetch(
+        `${moonbeamOptions.api}/check-remark/${encodeAnyAddress(account, relayChainId)}`,
+        { headers: { 'x-api-key': moonbeamOptions.apiKey } }
+      )
+
+      if (!checkRemarkResponse.ok)
+        return dispatch(
+          ContributeEvent._setValidationError({ i18nCode: 'The Moonbeam API is unavailable, please try again later' })
+        )
+      if (!(await checkRemarkResponse.json()).verified)
+        return dispatch(ContributeEvent._setValidationError({ i18nCode: 'Please register for the Moonbeam crowdloan' }))
+
+      const contributionPlanck = tokensToPlanck(contributionAmount, relayTokenDecimals)
+      const makeSignatureResponse = await fetch(`${moonbeamOptions.api}/make-signature`, {
+        method: 'POST',
+        headers: { 'x-api-key': moonbeamOptions.apiKey },
+        body: JSON.stringify({
+          'address': encodeAnyAddress(account, relayChainId),
+          // TODO: Retrieve prior contributions
+          'previous-total-contribution': '0',
+          'contribution': contributionPlanck,
+        }),
+      })
+      if (!makeSignatureResponse.ok)
+        return dispatch(
+          ContributeEvent._setValidationError({ i18nCode: 'The Moonbeam API is unavailable, please try again later' })
+        )
+      const { signature } = await makeSignatureResponse.json()
+
+      console.log({ checkRemarkResponse, signature })
+
+      // dispatch(ContributeEvent
+
+      // const setError = (error: { i18nCode: string; vars?: { [key: string]: any } }) =>
+      //   dispatch(ContributeEvent._setValidationError(error))
+
+      // if (!contributionAmount || contributionAmount.length < 1 || Number(contributionAmount) === 0) {
+      //   setError({ i18nCode: 'Please enter an amount of {{token}}', vars: { token: relayNativeToken } })
+      //   return
+      // }
+      // if (Number.isNaN(Number(contributionAmount))) {
+      //   setError({ i18nCode: 'Please enter a valid amount of {{token}}', vars: { token: relayNativeToken } })
+      //   return
+      // }
+      // if (!account || account.length < 1) {
+      //   setError({ i18nCode: 'An account must be selected' })
+      //   return
+      // }
+
+      // if (!accountBalance?.tokens) return
+      // if (new BigNumber(accountBalance.tokens).isLessThan(new BigNumber(contributionAmount))) {
+      //   setError({ i18nCode: 'Account balance too low' })
+      //   return
+      // }
+
+      // if (!api) return
+      // const minContribution = api.consts.crowdloan.minContribution.toString()
+      // const contributionPlanck = tokensToPlanck(contributionAmount, relayTokenDecimals)
+      // const minimum = new BigNumber(planckToTokens(minContribution.toString(), relayTokenDecimals) || '').toFixed(2)
+
+      // if (!contributionPlanck || new BigNumber(contributionPlanck).isLessThan(new BigNumber(minContribution))) {
+      //   setError({
+      //     i18nCode: 'A minimum of {{minimum}} {{token}} is required',
+      //     vars: { minimum, token: relayNativeToken },
+      //   })
+      //   return
+      // }
+
+      // // TODO: Test that contribution doesn't go above crowdloan cap
+      // // TODO: Test that crowdloan has not ended
+      // // TODO: Test that crowdloan is in a valid lease period
+      // // TODO: Test that crowdloan has not already won
+      // // TODO: Validate validator signature
+      // // TODO: Test user has enough tokens to not go below the existential deposit
+      // // https://github.com/paritytech/polkadot/blob/dee1484760aedfd699e764f2b7c7d85855f7b077/runtime/common/src/crowdloan.rs#L432
+
+      // dispatch(ContributeEvent._validateContribution)
+    })()
   }, [dispatch, stateDeps && stateDeps?.api, JSON.stringify(jsonCmpStateDeps)]) // eslint-disable-line react-hooks/exhaustive-deps
 }
 
