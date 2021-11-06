@@ -118,6 +118,22 @@ export const parachainDetails: ParachainDetails[] = [
     },
   },
   {
+    id: '0-2002',
+    name: 'Clover',
+    slug: 'clover',
+    token: 'CLV',
+    subtitle: 'A foundational layer for cross-chain compatibility.',
+    info: `Clover describes itself as a blockchain operating system. It contains a storage layer, smart contract layer, Defi protocol layer, and eApp layer that work in unison to accomplish the goal of blockchain interoperability.`,
+    links: {
+      Website: 'https://clover.finance/',
+      Twitter: 'https://twitter.com/clover_finance/',
+      Telegram: 'https://t.me/clover_en/',
+      Medium: 'https://projectclover.medium.com/',
+      Github: 'https://github.com/clover-network',
+      Discord: 'https://discord.com/invite/7EFqBwZ3aw'
+    },
+  },
+  {
     id: '2-2000',
     name: 'Karura',
     slug: 'karura',
@@ -663,6 +679,37 @@ export const crowdloanDetails: CrowdloanDetails[] = [
         short: 'Up to 25% + 🗝',
         full: 'Earn up to 25% bonus ASTR + 🗝',
         info: 'Receive a <strong>20% bonus </strong> if you contribute before Nov 18th.',
+      },
+      info: null,
+    },
+  },
+  {
+    relayId: 0,
+    paraId: 2002,
+    rewards: {
+      tokens: null,
+      custom: [
+        {
+          title: 'CLV per DOT',
+          value: 'TBD',
+        },
+        {
+          title: 'Crowdloan Allocation',
+          value: '200,000,000 CLV',
+        },
+        {
+          title: 'Immediate Release',
+          value: '28% of rewarded CLV',
+        },
+        {
+          title: 'Vesting Remainder',
+          value: '72%, over 23 months',
+        },
+      ],
+      bonus: {
+        short: 'Bonus 🗝',
+        full: 'Receive a Talisman Spirit Key 🗝',
+        info: 'Receive a <strong>Talisman Spirit Key </strong> if you are one of the first 1000 crowdloan contributors on the Talisman dashboard.',
       },
       info: null,
     },
