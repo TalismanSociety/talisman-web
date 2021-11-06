@@ -11,6 +11,7 @@ import styled from 'styled-components'
 
 import Countdown from './Countdown'
 import Raised from './Raised'
+import Bonus from './Bonus'
 
 const Teaser = styled(({ id, className }) => {
   const { t } = useTranslation()
@@ -27,12 +28,10 @@ const Teaser = styled(({ id, className }) => {
     <Link to={`/crowdloans/${parachainDetails?.slug}`} className={`crowdloan-teaser ${className}`}>
       <Parachain.Asset id={parachainId} type="card" />
       <div className="content">
-        <Parachain.Asset id={parachainId} type="logo" />
-        {totalContribution && (
-          <div className="has-contribution">
-            <CheckCircleIcon /> {t('Contributed')}
-          </div>
-        )}
+        <div className="header">
+          <Parachain.Asset id={parachainId} type="logo" />
+          <Bonus short id={id} prefix={<Parachain.Asset id={parachainId} type="logo" />}/>
+        </div>
         <h1>{parachainDetails?.name}</h1>
         <Raised id={id} title={t('Raised')} />
       </div>
@@ -59,32 +58,31 @@ const Teaser = styled(({ id, className }) => {
     position: relative;
     padding: 0 1.6rem 1rem 1.6rem;
 
-    .crowdloan-logo {
-      width: 6.4rem;
-      height: 6.4rem;
-      padding-top: 0;
-      margin-top: -3.2rem;
-      box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.1);
-    }
-
-    .has-contribution {
-      position: absolute;
-      top: 2rem;
-      right: 1.6rem;
+    >.header{
       display: flex;
       align-items: center;
-      padding: 0.6rem 1.2rem;
-      border-radius: 9999999999rem;
-      color: black;
-      background: var(--color-primary);
-      font-size: 1.4rem;
-      line-height: 1.6rem;
+      justify-content: space-between;
+      margin-top: -3rem;
 
-      > svg {
-        display: block;
-        width: 1em;
-        height: 1em;
-        margin-right: 0.5em;
+      >.crowdloan-logo {
+        width: 6.4rem;
+        height: 6.4rem;
+        padding-top: 0;
+        box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      .crowdloan-bonus {
+        display: flex;
+        align-items: center;
+        border-radius: 2em;
+        padding: 0.3em 0.8em;
+        font-size: 1.4rem;
+        background: var(--color-dark);
+
+        .crowdloan-logo {
+          font-size: 1.4rem;
+          margin-right: 0.5em
+        }
       }
     }
 

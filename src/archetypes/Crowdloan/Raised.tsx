@@ -1,18 +1,31 @@
+import { useMemo } from 'react'
 import { Pendor, ProgressBar, Stat } from '@components'
-import { useCrowdloanById } from '@libs/talisman'
 import { shortNumber } from '@util/helpers'
 import styled from 'styled-components'
+import { getTotalContributionForCrowdloan, useCrowdloanContributions } from '@libs/crowdloans'
+import { useAccountAddresses, useCrowdloanById, useParachainDetailsById } from '@libs/talisman'
+import { encodeAnyAddress } from '@talismn/util'
+import { ReactComponent as CheckCircleIcon } from '@assets/icons/check-circle.svg'
+import { useTranslation } from 'react-i18next'
+
 
 const Raised = styled(({ id, title, className }) => {
   const { crowdloan: { percentRaised, raised, cap, uiStatus } = {} } = useCrowdloanById(id)
+  const { t } = useTranslation()
+  const accounts = useAccountAddresses()
+  const encoded = useMemo(() => accounts?.map(account => encodeAnyAddress(account, 2)), [accounts])
+  const myContributions = useCrowdloanContributions({ accounts: encoded, crowdloans: id ? [id] : undefined })
+  const totalContribution = getTotalContributionForCrowdloan(id, myContributions.contributions)
 
   const suffix = (id || '').startsWith('0-') ? ' DOT' : ' KSM'
 
   return (
     <div className={`crowdloan-raised ${className}`} data-status={uiStatus?.toLowerCase()}>
-      {uiStatus === 'capped' && <h3>Goal reached ✓</h3>}
-      {uiStatus !== 'capped' && title && <h3>{title}</h3>}
-
+      <div className="top">
+        <span>{uiStatus === 'capped' ? 'Goal reached ✓' : title}</span>
+        <span>{!!totalContribution && <><CheckCircleIcon /> {t('Contributed')}</>}</span>
+      </div>
+      
       <ProgressBar percent={percentRaised} />
 
       <Stat
@@ -29,10 +42,32 @@ const Raised = styled(({ id, title, className }) => {
     </div>
   )
 })`
-  h3 {
+  .top{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     font-size: var(--font-size-small);
-    opacity: 0.4;
     margin-bottom: 0.5em;
+
+    *{
+      font-size: var(--font-size-small);
+      margin: 0;
+
+      &:first-child{
+        opacity: 0.4;
+      }
+
+      &:last-child{
+        
+        display: flex;
+        align-items: center;
+        >svg{
+          margin-right: 0.4em;
+          font-size: 1.2em;
+          color: var(--color-primary);
+        }
+      }
+    }
   }
 
   > .stat {

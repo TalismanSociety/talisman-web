@@ -56,6 +56,7 @@ const Style = createGlobalStyle`
 
     /* misc */
     --border: 0.2rem solid var(--color-dark);
+    --border-radius: 1.5rem;
     --border-dashed: 0.2rem dashed var(--color-dark);
     --padding: 2.2rem 3rem;
     --padding-large: 4.2rem 4rem;
