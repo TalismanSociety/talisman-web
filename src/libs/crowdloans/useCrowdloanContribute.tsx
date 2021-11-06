@@ -722,7 +722,7 @@ function useSignAndSendContributionThunk(state: ContributeState, dispatch: Dispa
         tx =
           relayChainId === acalaOptions.relayId && parachainId === acalaOptions.parachainId
             ? await buildAcalaTx({ api, relayChainId, account, email, contributionPlanck })
-            : buildTx(api, parachainId, contributionPlanck, verifierSignature)
+            : getBuildTxStrategy(relayChainId, parachainId)(api, parachainId, contributionPlanck, verifierSignature)
       } catch (error: any) {
         dispatch(ContributeEvent._setValidationError({ i18nCode: error?.message || error.toString() }))
         return
