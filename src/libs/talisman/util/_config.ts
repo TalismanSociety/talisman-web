@@ -632,6 +632,11 @@ export const crowdloanDetails: CrowdloanDetails[] = [
           value: '5% within 7 days of auction start',
         },
       ],
+      bonus: {
+        short: 'Up to 10% + 🗝',
+        full: 'Earn up to 10% bonus LIT + 🗝',
+        info: '10% bonus LIT if you contribute <strong>before parachain auction starts</strong>. 5% bonus LIT <strong> within the first 7 days </strong> since parachain auction starting.',
+      },
       info: null,
     },
   },
@@ -654,6 +659,11 @@ export const crowdloanDetails: CrowdloanDetails[] = [
           value: '350,000,000 ASTR',
         },
       ],
+      bonus: {
+        short: 'Up to 25% + 🗝',
+        full: 'Earn up to 25% bonus ASTR + 🗝',
+        info: 'Receive a <strong>20% bonus </strong> if you contribute before Nov 18th.',
+      },
       info: null,
     },
   },
