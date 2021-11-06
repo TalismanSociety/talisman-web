@@ -96,7 +96,7 @@ const Provider = ({ uri = 'https://localhost:4000', children }) => {
         loading: numPendingQueries + numPendingMutations > 0,
       }}
     >
-      {!!client ? <ApolloProvider client={client}>{children}</ApolloProvider> : children}
+      {!!client ? <ApolloProvider client={client}>{children}</ApolloProvider> : null}
     </Context.Provider>
   )
 }
