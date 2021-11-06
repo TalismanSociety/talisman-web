@@ -790,9 +790,8 @@ function useSignAndSendContributionThunk(state: ContributeState, dispatch: Dispa
               trackGoal('GTVDUALL', 1) // crowdloan_contribute
               trackGoal('WQGRJ9OC', parseInt(contributionPlanck, 10)) // crowdloan_contribute_amount
 
-              relayChainId
-                ? trackGoal('QG3QGBYH', parseInt(contributionPlanck, 10)) // crowdloan_contribute_amount_DOT
-                : trackGoal('JFOFGXPN', parseInt(contributionPlanck, 10)) // crowdloan_contribute_amount_KSM
+              if (relayChainId === 0) trackGoal('JFOFGXPN', parseInt(contributionPlanck, 10)) // crowdloan_contribute_amount_DOT
+              if (relayChainId === 2) trackGoal('QG3QGBYH', parseInt(contributionPlanck, 10)) // crowdloan_contribute_amount_KSM
             } else {
               dispatch(ContributeEvent._finalizedContributionFailed({ error, explorerUrl }))
             }
