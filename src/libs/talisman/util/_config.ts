@@ -528,6 +528,11 @@ export type CrowdloanDetails = {
   rewards: {
     tokens: Array<{ symbol: string; perKSM: string }> | null
     custom: Array<{ title: string; value: string }> | null
+    bonus?: {
+      short: string
+      full: string
+      info: string
+    }
     info: string | null
   }
 }
@@ -552,6 +557,11 @@ export const crowdloanDetails: CrowdloanDetails[] = [
           value: '5%',
         },
       ],
+      bonus: {
+        short: 'Up to 5% + 🗝',
+        full: 'Earn up to 5% ACA + 🗝',
+        info: "Receive a <strong>bonus of 5% + a Spirit Key 🗝</strong> when you use Talsiman"
+      },
       info: null,
     },
   },

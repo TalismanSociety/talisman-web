@@ -38,6 +38,7 @@ const CrowdloanDetail = styled(({ className }) => {
               <Crowdloan.Countdown id={id} />
             </PanelSection>
             <PanelSection>
+              <Crowdloan.Bonus full id={id}/>
               <Button
                 primary
                 onClick={() => openModal(<Crowdloan.Contribute id={id} />)}
@@ -158,6 +159,14 @@ const CrowdloanDetail = styled(({ className }) => {
         font-size: var(--font-size-xlarge);
         font-family: 'SurtExpanded', sans-serif;
         color: var(--color-text);
+      }
+
+      .crowdloan-bonus {
+        font-weight: var(--font-weight-bold);
+        font-size: var(--font-size-normal);
+        margin: 0 0 1em 0;
+        display: block;
+        //color: var(--color-text);
       }
     }
 
