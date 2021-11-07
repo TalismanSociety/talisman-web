@@ -101,7 +101,7 @@ const Crowdloans = ({ className }: { className?: string }) => {
     () => accounts?.flatMap(account => relayChainsChaindata.map(({ id }) => encodeAnyAddress(account, id))),
     [accounts]
   )
-  const { contributions, skipped, loading, error } = useCrowdloanContributions({ accounts: encoded })
+  const { contributions, hydrated: contributionsHydrated } = useCrowdloanContributions({ accounts: encoded })
   const totalContributions = groupTotalContributionsByCrowdloan(contributions)
 
   const { crowdloans, hydrated } = useCrowdloans()
@@ -131,13 +131,11 @@ const Crowdloans = ({ className }: { className?: string }) => {
   return (
     <section className={`wallet-crowdloans ${className}`}>
       <Panel title={t('Crowdloans')} /*subtitle={crowdloansUsd && formatCurrency(crowdloansUsd)}*/ subtitle={'$--.--'}>
-        {skipped || loading ? (
+        {!contributionsHydrated ? (
           <PanelSection comingSoon>
             <div>{t('Summoning Crowdloan Contributions...')}</div>
             <Pendor />
           </PanelSection>
-        ) : error ? (
-          <PanelSection comingSoon>{String(error)}</PanelSection>
         ) : Object.keys(totalAliveContributions).length < 1 ? (
           <PanelSection comingSoon>{`${`😕 `} ${t('You have not contributed to any Crowdloans')}`}</PanelSection>
         ) : (

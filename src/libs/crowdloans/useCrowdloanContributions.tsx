@@ -123,7 +123,7 @@ export function useCrowdloanContributions({
 
   const [hydrated, setHydrated] = useState(false)
   useEffect(() => {
-    setHydrated(contributionsResults.length > 0)
+    setHydrated(contributionsResults.length > 0 && contributionsResults.some(([_, results]) => results !== null))
   }, [contributionsResults])
 
   return {
