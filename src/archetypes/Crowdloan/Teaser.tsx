@@ -1,17 +1,13 @@
 import { Parachain } from '@archetypes'
-import { ReactComponent as CheckCircleIcon } from '@assets/icons/check-circle.svg'
 import { Pill } from '@components'
-import { getTotalContributionForCrowdloan, useCrowdloanContributions } from '@libs/crowdloans'
-import { useAccountAddresses, useCrowdloanById, useParachainDetailsById } from '@libs/talisman'
-import { encodeAnyAddress } from '@talismn/util'
-import { useMemo } from 'react'
+import { useCrowdloanById, useParachainDetailsById } from '@libs/talisman'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 
+import Bonus from './Bonus'
 import Countdown from './Countdown'
 import Raised from './Raised'
-import Bonus from './Bonus'
 
 const Teaser = styled(({ id, className }) => {
   const { t } = useTranslation()
@@ -19,18 +15,13 @@ const Teaser = styled(({ id, className }) => {
   const parachainId = crowdloan?.parachain?.paraId
   const { parachainDetails } = useParachainDetailsById(parachainId)
 
-  const accounts = useAccountAddresses()
-  const encoded = useMemo(() => accounts?.map(account => encodeAnyAddress(account, 2)), [accounts])
-  const myContributions = useCrowdloanContributions({ accounts: encoded, crowdloans: id ? [id] : undefined })
-  const totalContribution = getTotalContributionForCrowdloan(id, myContributions.contributions)
-
   return (
     <Link to={`/crowdloans/${parachainDetails?.slug}`} className={`crowdloan-teaser ${className}`}>
       <Parachain.Asset id={parachainId} type="card" />
       <div className="content">
         <div className="header">
           <Parachain.Asset id={parachainId} type="logo" />
-          <Bonus short id={id} prefix={<Parachain.Asset id={parachainId} type="logo" />}/>
+          <Bonus short id={id} parachainId={parachainId} prefix={<Parachain.Asset id={parachainId} type="logo" />} />
         </div>
         <h1>{parachainDetails?.name}</h1>
         <Raised id={id} title={t('Raised')} />
@@ -58,13 +49,13 @@ const Teaser = styled(({ id, className }) => {
     position: relative;
     padding: 0 1.6rem 1rem 1.6rem;
 
-    >.header{
+    > .header {
       display: flex;
       align-items: center;
       justify-content: space-between;
       margin-top: -3rem;
 
-      >.crowdloan-logo {
+      > .crowdloan-logo {
         width: 6.4rem;
         height: 6.4rem;
         padding-top: 0;
@@ -81,7 +72,7 @@ const Teaser = styled(({ id, className }) => {
 
         .crowdloan-logo {
           font-size: 1.4rem;
-          margin-right: 0.5em
+          margin-right: 0.5em;
         }
       }
     }

@@ -1,4 +1,4 @@
-import { Crowdloan, Parachain } from '@archetypes'
+import { Crowdloan } from '@archetypes'
 import { UnlockTalismanBanner } from '@archetypes/StateBanner/UnlockTalismanBanner'
 import { Await, Field, Grid, NoResults, Panel, PanelSection } from '@components'
 import { trackGoal } from '@libs/fathom'

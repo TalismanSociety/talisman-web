@@ -41,7 +41,7 @@ const CrowdloanDetail = styled(({ className }) => {
               <Crowdloan.Countdown id={id} />
             </PanelSection>
             <PanelSection>
-              <Crowdloan.Bonus full id={id} />
+              <Crowdloan.Bonus full id={id} parachainId={parachainId} />
               <Button
                 primary
                 onClick={() => openModal(<Crowdloan.Contribute id={id} />)}
@@ -53,7 +53,7 @@ const CrowdloanDetail = styled(({ className }) => {
           </Panel>
 
           <Panel title={t('Rewards')}>
-            <Crowdloan.Rewards id={id} />
+            <Crowdloan.Rewards id={id} parachainId={parachainId} />
           </Panel>
 
           {/*<Panel

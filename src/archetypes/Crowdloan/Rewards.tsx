@@ -1,10 +1,13 @@
 import { Stat } from '@components'
-import { useCrowdloanById } from '@libs/talisman'
+// import { useCrowdloanById } from '@libs/talisman'
+import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
-const Rewards = styled(({ id, className }) => {
-  const { crowdloan } = useCrowdloanById(id)
-  const rewards = crowdloan?.details?.rewards
+const Rewards = styled(({ id, parachainId, className }) => {
+  // const { crowdloan } = useCrowdloanById(id)
+  // const rewards = crowdloan?.details?.rewards
+  const { t } = useTranslation('crowdloan-details')
+  const { rewards } = t(`${parachainId}`, { returnObjects: true })
 
   return (
     <div className={`crowdloan-rewards ${className}`}>
