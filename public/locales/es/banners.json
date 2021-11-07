@@ -5,7 +5,7 @@
     "primaryCta": "Explora los Crowdloans"
   },
   "empty": {
-    "header": "¡Tus bolsas estan vacias!",
+    "header": "¡Tus bolsas están vacias!",
     "description": "Compra DOT y KSM con tu tarjeta de crédito o cripto",
     "primaryCta": "Compra DOT / KSM"
   },
@@ -21,8 +21,8 @@
   },
   "unlockTalisman": {
     "header": "Desbloquea el Talisman",
-    "description": "Contribuye a cualquier Crowdloan y recibe una \"Spirit Key\",la necesitarás luego...",
-    "primaryCta": "Mas Información"
+    "description": "Contribuye a cualquier Crowdloan y recibe una \"Spirit Key\", la necesitarás luego...",
+    "primaryCta": "Más Información"
   },
   "noWallet": {
     "header": "¡Oh no!",
