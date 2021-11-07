@@ -46,9 +46,9 @@
         }
       ],
       "bonus": {
-        "short": "Up to 10% + 🗝",
-        "full": "Earn up to 10% bonus LIT + 🗝",
-        "info": "10% bonus LIT if you contribute <strong>before parachain auction starts</strong>. 5% bonus LIT <strong> within the first 7 days </strong> since parachain auction starting."
+        "short": "取决于 10% + 🗝",
+        "full": "赚取高达 10% 奖金 LIT + 🗝",
+        "info": "10% 奖金 LIT 如果你贡献 <strong>在 parachain 拍卖开始之前</strong>. 5% 奖金 LIT <strong> 前 7 天内 </strong> 自 parachain 拍卖开始。"
       },
       "info": null
     }
@@ -68,14 +68,14 @@
           "value": "1,050,000,000 ASTR"
         },
         {
-          "title": "Bonus Pool",
+          "title": "奖金池",
           "value": "350,000,000 ASTR"
         }
       ],
       "bonus": {
-        "short": "Up to 25% + 🗝",
-        "full": "Earn up to 25% bonus ASTR + 🗝",
-        "info": "Receive a <strong>20% bonus </strong> if you contribute before Nov 18th."
+        "short": "取决于 25% + 🗝",
+        "full": "赚取高达 25% 奖金 ASTR + 🗝",
+        "info": "收到 <strong>20% 奖金 </strong> 如果您在 11 月 18 日之前捐款。"
       },
       "info": null
     }
@@ -95,18 +95,18 @@
           "value": "200,000,000 CLV"
         },
         {
-          "title": "Immediate Release",
-          "value": "28% of rewarded CLV"
+          "title": "立即发布",
+          "value": "28% 的奖励 CLV"
         },
         {
-          "title": "Vesting Remainder",
-          "value": "72%, over 23 months"
+          "title": "剩余归属",
+          "value": "72%, 超过 23 个月"
         }
       ],
       "bonus": {
-        "short": "Bonus 🗝",
-        "full": "Receive a Talisman Spirit Key 🗝",
-        "info": "Receive a <strong>Talisman Spirit Key </strong> if you are one of the first 1000 crowdloan contributors on the Talisman dashboard."
+        "short": "奖金 🗝",
+        "full": "收到 Talisman Spirit Key 🗝",
+        "info": "收到 <strong>Talisman Spirit Key </strong> 如果您是 Talisman 仪表板上的前 1000 名 crowdloan 贡献者之一。"
       },
       "info": null
     }
@@ -272,23 +272,23 @@
       "custom": [
         {
           "title": ">50 KSM contribution",
-          "value": "20% Bonus"
+          "value": "20% 奖金"
         },
         {
           "title": ">100 KSM contribution",
-          "value": "40% Bonus"
+          "value": "40% 奖金"
         },
         {
           "title": ">200 KSM contribution",
-          "value": "60% Bonus"
+          "value": "60% 奖金"
         },
         {
           "title": ">300 KSM contribution",
-          "value": "90% Bonus"
+          "value": "90% 奖金"
         },
         {
           "title": ">500 KSM contribution",
-          "value": "120% Bonus"
+          "value": "120% 奖金"
         }
       ],
       "info": "KSX has an initial supply of 21 million, increased with 10% additional issuance every year. If you also refer a friend, both of you get a 5% referral bonus reward."
@@ -378,7 +378,7 @@
       "custom": [
         {
           "title": "First 250 participants",
-          "value": "10% Bonus"
+          "value": "10% 奖金"
         }
       ]
     }
@@ -429,11 +429,11 @@
       "custom": [
         {
           "title": ">50 KSM contribution",
-          "value": "20% Bonus"
+          "value": "20% 奖金"
         },
         {
           "title": "Contribute before September 10",
-          "value": "25% Bonus"
+          "value": "25% 奖金"
         }
       ],
       "info": null
@@ -511,11 +511,11 @@
       "custom": [
         {
           "title": "First 500 participants",
-          "value": "10% Bonus"
+          "value": "10% 奖金"
         },
         {
           "title": "Participants 501-1,000",
-          "value": "5% Bonus"
+          "value": "5% 奖金"
         }
       ],
       "info": null
@@ -585,7 +585,7 @@
       "custom": [
         {
           "title": "First 250 participants",
-          "value": "10% Bonus"
+          "value": "10% 奖金"
         }
       ],
       "info": null
@@ -605,11 +605,11 @@
       "custom": [
         {
           "title": ">50 KSM contribution",
-          "value": "20% Bonus"
+          "value": "20% 奖金"
         },
         {
           "title": "Contribute before September 10",
-          "value": "25% Bonus"
+          "value": "25% 奖金"
         }
       ],
       "info": null
@@ -674,11 +674,11 @@
       "custom": [
         {
           "title": "First 1000 contributors",
-          "value": "10% Bonus"
+          "value": "10% 奖金"
         },
         {
           "title": "Referrals",
-          "value": "2.5% Bonus"
+          "value": "2.5% 奖金"
         }
       ],
       "info": null
