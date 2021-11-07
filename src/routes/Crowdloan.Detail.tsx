@@ -6,7 +6,7 @@ import { useParams } from 'react-router-dom'
 import styled from 'styled-components'
 
 const CrowdloanDetail = styled(({ className }) => {
-  const { t } = useTranslation()
+  const { t, ready } = useTranslation(['translation', 'parachain-details'])
   const { slug }: { slug: string } = useParams()
 
   const { parachainDetails } = useParachainDetailsBySlug(slug)
@@ -16,6 +16,12 @@ const CrowdloanDetail = styled(({ className }) => {
 
   const { openModal } = useModal()
 
+  const parachainId = parachainDetails?.id
+
+  if (!ready) {
+    return null
+  }
+
   return (
     <section className={className}>
       <Poster backgroundImage={banner} />
@@ -24,9 +30,9 @@ const CrowdloanDetail = styled(({ className }) => {
           <Parachain.Asset id={parachainDetails?.id} type="logo" />
           <header>
             <h1>{parachainDetails?.name}</h1>
-            <h2>{parachainDetails?.subtitle}</h2>
+            <h2>{t(`${parachainId}.subtitle`, { ns: 'parachain-details' })}</h2>
           </header>
-          <p className="info">{parachainDetails?.info}</p>
+          <p className="info">{t(`${parachainId}.info`, { ns: 'parachain-details' })}</p>
           <Parachain.Links id={parachainDetails?.id} />
         </article>
         <aside>
@@ -38,7 +44,7 @@ const CrowdloanDetail = styled(({ className }) => {
               <Crowdloan.Countdown id={id} />
             </PanelSection>
             <PanelSection>
-              <Crowdloan.Bonus full id={id}/>
+              <Crowdloan.Bonus full id={id} />
               <Button
                 primary
                 onClick={() => openModal(<Crowdloan.Contribute id={id} />)}
