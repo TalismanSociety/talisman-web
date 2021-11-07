@@ -685,7 +685,6 @@ function useMoonbeamThunk(state: ContributeState, dispatch: DispatchContributeEv
         headers: { 'x-api-key': moonbeamOptions.apiKey },
         body: JSON.stringify({
           'address': encodeAnyAddress(account, relayChainId),
-          // TODO: Retrieve prior contributions
           'previous-total-contribution': previousTotalContributions,
           'contribution': contributionPlanck,
           'guid': guid,
@@ -717,6 +716,7 @@ function useValidateContributionThunk(state: ContributeState, dispatch: Dispatch
       contributionAmount,
       account,
       email,
+      verifierSignature,
       api,
       accountBalance,
       txFee,
@@ -729,6 +729,7 @@ function useValidateContributionThunk(state: ContributeState, dispatch: Dispatch
       contributionAmount,
       account,
       email,
+      verifierSignature,
       api,
       accountBalance,
       txFee,
@@ -747,6 +748,7 @@ function useValidateContributionThunk(state: ContributeState, dispatch: Dispatch
       parachainId,
       contributionAmount,
       account,
+      verifierSignature,
       api,
       accountBalance,
       txFee,
@@ -754,6 +756,10 @@ function useValidateContributionThunk(state: ContributeState, dispatch: Dispatch
     } = stateDeps
 
     if (!submissionRequested) return
+
+    if (relayChainId === moonbeamOptions.relayId && parachainId === moonbeamOptions.parachainId) {
+      if (!verifierSignature) return
+    }
 
     const setError = (error: { i18nCode: string; vars?: { [key: string]: any } }) =>
       dispatch(ContributeEvent._setValidationError(error))
