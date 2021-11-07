@@ -1,13 +1,12 @@
-import { useMemo } from 'react'
-import { Pendor, ProgressBar, Stat } from '@components'
-import { shortNumber } from '@util/helpers'
-import styled from 'styled-components'
-import { getTotalContributionForCrowdloan, useCrowdloanContributions } from '@libs/crowdloans'
-import { useAccountAddresses, useCrowdloanById, useParachainDetailsById } from '@libs/talisman'
-import { encodeAnyAddress } from '@talismn/util'
 import { ReactComponent as CheckCircleIcon } from '@assets/icons/check-circle.svg'
+import { Pendor, ProgressBar, Stat } from '@components'
+import { getTotalContributionForCrowdloan, useCrowdloanContributions } from '@libs/crowdloans'
+import { useAccountAddresses, useCrowdloanById } from '@libs/talisman'
+import { encodeAnyAddress } from '@talismn/util'
+import { shortNumber } from '@util/helpers'
+import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-
+import styled from 'styled-components'
 
 const Raised = styled(({ id, title, className }) => {
   const { crowdloan: { percentRaised, raised, cap, uiStatus } = {} } = useCrowdloanById(id)
@@ -22,10 +21,16 @@ const Raised = styled(({ id, title, className }) => {
   return (
     <div className={`crowdloan-raised ${className}`} data-status={uiStatus?.toLowerCase()}>
       <div className="top">
-        <span>{uiStatus === 'capped' ? 'Goal reached ✓' : title}</span>
-        <span>{!!totalContribution && <><CheckCircleIcon /> {t('Contributed')}</>}</span>
+        <span>{uiStatus === 'capped' ? `{t("Goal reached")} ✓` : title}</span>
+        <span>
+          {!!totalContribution && (
+            <>
+              <CheckCircleIcon /> {t('Contributed')}
+            </>
+          )}
+        </span>
       </div>
-      
+
       <ProgressBar percent={percentRaised} />
 
       <Stat
@@ -42,26 +47,25 @@ const Raised = styled(({ id, title, className }) => {
     </div>
   )
 })`
-  .top{
+  .top {
     display: flex;
     align-items: center;
     justify-content: space-between;
     font-size: var(--font-size-small);
     margin-bottom: 0.5em;
 
-    *{
+    * {
       font-size: var(--font-size-small);
       margin: 0;
 
-      &:first-child{
+      &:first-child {
         opacity: 0.4;
       }
 
-      &:last-child{
-        
+      &:last-child {
         display: flex;
         align-items: center;
-        >svg{
+        > svg {
           margin-right: 0.4em;
           font-size: 1.2em;
           color: var(--color-primary);

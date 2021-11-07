@@ -40,5 +40,6 @@
     "text": "А пока не стесняйтесь проверить нашу панель управления Crowdloans",
     "primaryCta": "Просмотр Crowdloans"
   },
-  "No wallet found": "Кошелек не найден"
+  "No wallet found": "Кошелек не найден",
+  "Goal reached": "Цель достигнута"
 }

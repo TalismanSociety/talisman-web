@@ -1,7 +1,8 @@
-import { useReducer } from 'react'
+import { WsProvider } from '@polkadot/api'
 import { get } from 'lodash'
-import { PropsWithChildren, useContext as _useContext, createContext, useEffect, useMemo, useState } from 'react'
-import { ApiPromise, WsProvider } from '@polkadot/api';
+import { useReducer } from 'react'
+import { PropsWithChildren, useContext as _useContext, createContext, useEffect, useState } from 'react'
+
 import { SupportedParachains } from './util/_config'
 
 //
@@ -30,8 +31,8 @@ export const useChainmetaValue = (chainId: number, key: string) => {
   const [val, setVal] = useState(null)
 
   useEffect(() => {
-    if(!chains[chainId]) return
-    setVal(get(chains[chainId], key)||null)
+    if (!chains[chainId]) return
+    setVal(get(chains[chainId], key) || null)
   }, [chainId, key, chains])
 
   return val
@@ -57,34 +58,29 @@ function useContext() {
 // Provider
 //
 
-const ParachainReducer = (state={}, data) => {
-  
+const ParachainReducer = (state = {}, data) => {
   // not exists
-  if(!state[data.id]){
+  if (!state[data.id]) {
     state[data.id] = data
   }
   // exists
-  else{
+  else {
     state[data.id] = {
       ...state[data.id],
-      ...data
+      ...data,
     }
   }
 
-  return {...state}
+  return { ...state }
 }
 
 export const Provider = ({ children }: PropsWithChildren<{}>) => {
-
-  
-  const [ chains, dispatch ] = useReducer(ParachainReducer, {})
+  const [chains, dispatch] = useReducer(ParachainReducer, {})
 
   const hydrateBlock = async (chain: any) => {
-
-    const wsProvider = new WsProvider(chain.rpc);
+    const wsProvider = new WsProvider(chain.rpc)
 
     wsProvider.on('connected', () => {
-      
       const cb = (error: Error | null, result: any) => {
         dispatch({
           id: chain?.id,
@@ -103,7 +99,6 @@ export const Provider = ({ children }: PropsWithChildren<{}>) => {
       hydrateBlock(chain)
     })
   }, [])
-
 
   return <Context.Provider value={chains}>{children}</Context.Provider>
 }
