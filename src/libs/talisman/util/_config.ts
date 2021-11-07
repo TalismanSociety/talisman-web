@@ -633,7 +633,7 @@ export const crowdloanDetails: CrowdloanDetails[] = [
       custom: [
         {
           title: 'LIT per DOT',
-          value: '>25',
+          value: '>2.5',
         },
         {
           title: 'Crowdloan Allocation',
