@@ -1,14 +1,15 @@
 import { Pendor, ProgressBar, Stat } from '@components'
 import { useCrowdloanById } from '@libs/talisman'
 import { shortNumber } from '@util/helpers'
+import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 const Raised = styled(({ id, title, className }) => {
   const { crowdloan: { percentRaised, raised, cap, uiStatus } = {} } = useCrowdloanById(id)
-
+  const { t } = useTranslation()
   return (
     <div className={`crowdloan-raised ${className}`} data-status={uiStatus?.toLowerCase()}>
-      {uiStatus === 'capped' && <h3>Goal reached ✓</h3>}
+      {uiStatus === 'capped' && <h3>{t('Goal reached')} ✓</h3>}
       {uiStatus !== 'capped' && title && <h3>{title}</h3>}
 
       <ProgressBar percent={percentRaised} />
