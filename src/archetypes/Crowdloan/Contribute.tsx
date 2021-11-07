@@ -30,8 +30,8 @@ export default function Contribute({ className, id }: ContributeProps) {
     const relayChainId = crowdloan.relayChainId
     const parachainId = Number(crowdloan.parachain.paraId.split('-').slice(-1)[0])
 
-    dispatch(ContributeEvent.initialize({ relayChainId, parachainId }))
-  }, [crowdloan, dispatch])
+    dispatch(ContributeEvent.initialize({ crowdloanId: id, relayChainId, parachainId }))
+  }, [id, crowdloan, dispatch])
 
   if (isMobileBrowser()) return <DesktopRequired />
 
