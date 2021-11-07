@@ -1,6 +1,6 @@
 import { ApolloClient, ApolloQueryResult, InMemoryCache, NormalizedCacheObject, gql } from '@apollo/client'
 import { BatchHttpLink } from '@apollo/client/link/batch-http'
-import { relayChainsChaindata } from '@libs/talisman/util/_config'
+import { SupportedRelaychains } from '@libs/talisman/util/_config'
 import { addBigNumbers, encodeAnyAddress } from '@talismn/util'
 import { PropsWithChildren, useContext as _useContext, createContext, useEffect, useMemo, useState } from 'react'
 
@@ -66,12 +66,15 @@ export function useCrowdloanContributions({
 } {
   // memoize accounts and crowdloans so user can do useCrowdloansContributions([accountId], [crowdloanId]) without wasting cycles
   const accounts = useMemo(
-    () => relayChainsChaindata.map(({ id }) => (_accounts || []).map(account => encodeAnyAddress(account, id))),
+    () =>
+      Object.values(SupportedRelaychains).map(({ id }) =>
+        (_accounts || []).map(account => encodeAnyAddress(account, id))
+      ),
     [JSON.stringify(_accounts)] // eslint-disable-line react-hooks/exhaustive-deps
   )
   const crowdloans = useMemo(
     () =>
-      relayChainsChaindata.map(({ id: relayId }) =>
+      Object.values(SupportedRelaychains).map(({ id: relayId }) =>
         (_crowdloans || []).filter(id => id.startsWith(`${relayId}-`)).map(id => id.split('-').slice(1).join('-'))
       ),
     [JSON.stringify(_crowdloans)] // eslint-disable-line react-hooks/exhaustive-deps
@@ -96,7 +99,7 @@ export function useCrowdloanContributions({
     Promise.allSettled(relayChainContributions).then(results =>
       setContributionsResults(
         results.map((result, resultIndex) => [
-          relayChainsChaindata[resultIndex].id, // relayChainId
+          Object.values(SupportedRelaychains)[resultIndex].id, // relayChainId
           result.status === 'fulfilled' ? result.value : null, // result data
         ])
       )
@@ -156,8 +159,8 @@ function useContext() {
 export function Provider({ children }: PropsWithChildren<{}>) {
   const apolloClients = useMemo(
     () =>
-      relayChainsChaindata.map(({ subqueryCrowdloansUrl }) => {
-        const link = new BatchHttpLink({ uri: subqueryCrowdloansUrl, batchMax: 999, batchInterval: 20 })
+      Object.values(SupportedRelaychains).map(({ subqueryCrowdloansEndpoint }) => {
+        const link = new BatchHttpLink({ uri: subqueryCrowdloansEndpoint, batchMax: 999, batchInterval: 20 })
         return new ApolloClient({
           link,
           cache: new InMemoryCache(),

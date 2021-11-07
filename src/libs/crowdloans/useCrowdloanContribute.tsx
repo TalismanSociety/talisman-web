@@ -1,5 +1,5 @@
 import { trackGoal } from '@libs/fathom'
-import { relayChainsChaindata } from '@libs/talisman/util/_config'
+import { SupportedRelaychains } from '@libs/talisman/util/_config'
 import { ApiPromise, WsProvider } from '@polkadot/api'
 import { SubmittableExtrinsic } from '@polkadot/api/types'
 import { web3FromAddress } from '@polkadot/extension-dapp'
@@ -354,7 +354,7 @@ function useInitializeThunk(state: ContributeState, dispatch: DispatchContribute
         Chaindata.chain(relayChainId.toString()),
         Chaindata.chain(`${relayChainId}-${parachainId}`),
       ])
-      const relayExtraChaindata = relayChainsChaindata.find(chaindata => chaindata.id === relayChainId)
+      const relayExtraChaindata = SupportedRelaychains[relayChainId]
       const relayChainCustomRpcs = customRpcs[relayChainId.toString()]
 
       const relayRpcs = relayChainCustomRpcs.length > 0 ? relayChainCustomRpcs : relayChaindata?.rpcs || []

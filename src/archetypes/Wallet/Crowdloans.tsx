@@ -6,7 +6,7 @@ import {
 } from '@libs/crowdloans'
 import { calculateCrowdloanPortfolioAmounts, usePortfolio, useTaggedAmountsInPortfolio } from '@libs/portfolio'
 import { useAccountAddresses, useCrowdloanById, useCrowdloans } from '@libs/talisman'
-import { relayChainsChaindata } from '@libs/talisman/util/_config'
+import { SupportedRelaychains } from '@libs/talisman/util/_config'
 import { useTokenPrice } from '@libs/tokenprices'
 import { useChain } from '@talismn/api-react-hooks'
 import { addBigNumbers, encodeAnyAddress, multiplyBigNumbers, planckToTokens, useFuncMemo } from '@talismn/util'
@@ -31,7 +31,8 @@ const CrowdloanItem = styled(({ id, className, infoOnly = false }) => {
 
   const accounts = useAccountAddresses()
   const encoded = useMemo(
-    () => accounts?.flatMap(account => relayChainsChaindata.map(({ id }) => encodeAnyAddress(account, id))),
+    () =>
+      accounts?.flatMap(account => Object.values(SupportedRelaychains).map(({ id }) => encodeAnyAddress(account, id))),
     [accounts]
   )
   const { contributions } = useCrowdloanContributions({ accounts: encoded, crowdloans: id ? [id] : undefined })
@@ -98,7 +99,8 @@ const Crowdloans = ({ className }: { className?: string }) => {
   const { t } = useTranslation()
   const accounts = useAccountAddresses()
   const encoded = useMemo(
-    () => accounts?.flatMap(account => relayChainsChaindata.map(({ id }) => encodeAnyAddress(account, id))),
+    () =>
+      accounts?.flatMap(account => Object.values(SupportedRelaychains).map(({ id }) => encodeAnyAddress(account, id))),
     [accounts]
   )
   const { contributions, hydrated: contributionsHydrated } = useCrowdloanContributions({ accounts: encoded })

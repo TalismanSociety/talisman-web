@@ -10,7 +10,7 @@ import { useChain } from '@talismn/api-react-hooks'
 import { find } from 'lodash'
 import { FC, useContext as _useContext, createContext, useEffect, useMemo, useState } from 'react'
 
-import { parachainDetails, relayChainsChaindata } from './util/_config'
+import { SupportedRelaychains, parachainDetails } from './util/_config'
 import type { ParachainDetails } from './util/_config'
 
 export type { ParachainDetails } from './util/_config'
@@ -135,12 +135,12 @@ export const Provider: FC = ({ children }) => {
   const [parachainResults, setParachainResults] = useState<Array<[number, ApolloQueryResult<any> | null]>>([])
   useEffect(() => {
     // create an apollo client for each relaychain
-    const relayChainClients = relayChainsChaindata.map(
-      ({ id, subqueryCrowdloansUrl }) =>
+    const relayChainClients = Object.values(SupportedRelaychains).map(
+      ({ id, subqueryCrowdloansEndpoint }) =>
         [
           id,
           new ApolloClient({
-            link: createHttpLink({ uri: subqueryCrowdloansUrl }),
+            link: createHttpLink({ uri: subqueryCrowdloansEndpoint }),
             cache: new InMemoryCache(),
             fetchOptions: {
               mode: 'no-cors',

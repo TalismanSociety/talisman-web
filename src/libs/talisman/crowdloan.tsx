@@ -10,7 +10,7 @@ import { planckToTokens } from '@talismn/util'
 import { find, get } from 'lodash'
 import { FC, useContext as _useContext, createContext, useEffect, useMemo, useState } from 'react'
 
-import { CrowdloanDetails, crowdloanDetails, relayChainsChaindata } from './util/_config'
+import { CrowdloanDetails, SupportedRelaychains, crowdloanDetails } from './util/_config'
 
 const AllCrowdloans = gql`
   {
@@ -158,12 +158,12 @@ export const Provider: FC = ({ children }) => {
   const [crowdloanResults, setCrowdloanResults] = useState<Array<[number, ApolloQueryResult<any> | null]>>([])
   useEffect(() => {
     // create an apollo client for each relaychain
-    const relayChainClients = relayChainsChaindata.map(
-      ({ id, subqueryCrowdloansUrl }) =>
+    const relayChainClients = Object.values(SupportedRelaychains).map(
+      ({ id, subqueryCrowdloansEndpoint }) =>
         [
           id,
           new ApolloClient({
-            link: createHttpLink({ uri: subqueryCrowdloansUrl }),
+            link: createHttpLink({ uri: subqueryCrowdloansEndpoint }),
             cache: new InMemoryCache(),
             fetchOptions: {
               mode: 'no-cors',

@@ -1,19 +1,3 @@
-export type RelayChaindata = { id: number; name: string; subscanUrl: string; subqueryCrowdloansUrl: string }
-export const relayChainsChaindata: RelayChaindata[] = [
-  {
-    id: 0,
-    name: 'Polkadot',
-    subscanUrl: 'https://polkadot.subscan.io',
-    subqueryCrowdloansUrl: 'https://api.subquery.network/sq/bianyunjian/polkadot-crowdloans',
-  },
-  {
-    id: 2,
-    name: 'Kusama',
-    subscanUrl: 'https://kusama.subscan.io',
-    subqueryCrowdloansUrl: 'https://api.subquery.network/sq/TalismanSociety/kusama-crowdloans',
-  },
-]
-
 export const statusOptions = {
   INITIALIZED: 'INITIALIZED',
   PROCESSING: 'PROCESSING',
@@ -21,25 +5,27 @@ export const statusOptions = {
   ERROR: 'ERROR',
 }
 
-export type Parachain = {
+export type Relaychain = {
   id: number
   name: string
   rpc: string
   genesisHash: string
-  subqueryEndpoint: string
+  subqueryCrowdloansEndpoint: string
+  subscanUrl: string
   tokenDecimals: number
   tokenSymbol: string
   blockPeriod: number
 }
 
 // https://wiki.polkadot.network/docs/build-ss58-registry
-export const SupportedParachains: { [key: number]: Parachain } = {
+export const SupportedRelaychains: { [key: number]: Relaychain } = {
   0: {
     id: 0,
     name: 'Polkadot',
     rpc: 'wss://rpc.polkadot.io',
     genesisHash: '0x91b171bb158e2d3848fa23a9f1c25182fb8e20313b2c1eb49219da7a70ce90c3',
-    subqueryEndpoint: 'https://api.subquery.network/sq/subvis-io/kusama-auction',
+    subqueryCrowdloansEndpoint: 'https://api.subquery.network/sq/bianyunjian/polkadot-crowdloans',
+    subscanUrl: 'https://polkadot.subscan.io',
     tokenDecimals: 10,
     tokenSymbol: 'DOT',
     blockPeriod: 6,
@@ -49,7 +35,8 @@ export const SupportedParachains: { [key: number]: Parachain } = {
     name: 'Kusama',
     rpc: 'wss://kusama-rpc.polkadot.io',
     genesisHash: '0xb0a8d493285c2df73290dfb7e61f870f17b41801197a149ca93654499ea3dafe',
-    subqueryEndpoint: 'https://api.subquery.network/sq/subvis-io/kusama-auction',
+    subqueryCrowdloansEndpoint: 'https://api.subquery.network/sq/TalismanSociety/kusama-crowdloans',
+    subscanUrl: 'https://kusama.subscan.io',
     tokenDecimals: 12,
     tokenSymbol: 'KSM',
     blockPeriod: 6,
@@ -130,7 +117,7 @@ export const parachainDetails: ParachainDetails[] = [
       Telegram: 'https://t.me/clover_en/',
       Medium: 'https://projectclover.medium.com/',
       Github: 'https://github.com/clover-network',
-      Discord: 'https://discord.com/invite/7EFqBwZ3aw'
+      Discord: 'https://discord.com/invite/7EFqBwZ3aw',
     },
   },
   {

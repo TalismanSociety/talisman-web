@@ -3,7 +3,7 @@ import { get } from 'lodash'
 import { useReducer } from 'react'
 import { PropsWithChildren, useContext as _useContext, createContext, useEffect, useState } from 'react'
 
-import { SupportedParachains } from './util/_config'
+import { SupportedRelaychains } from './util/_config'
 
 //
 // Types
@@ -94,7 +94,7 @@ export const Provider = ({ children }: PropsWithChildren<{}>) => {
   }
 
   useEffect(() => {
-    Object.values(SupportedParachains).forEach(chain => {
+    Object.values(SupportedRelaychains).forEach(chain => {
       dispatch(chain)
       hydrateBlock(chain)
     })
