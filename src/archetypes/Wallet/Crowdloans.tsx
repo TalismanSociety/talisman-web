@@ -47,7 +47,7 @@ const CrowdloanItem = styled(({ id, className, infoOnly = false }) => {
     relayTokenDecimals,
     relayTokenPrice
   )
-  useTaggedAmountsInPortfolio(portfolioAmounts)
+  //useTaggedAmountsInPortfolio(portfolioAmounts)
 
   return (
     <div className={`${className} ${id}`}>
@@ -130,7 +130,7 @@ const Crowdloans = ({ className }: { className?: string }) => {
 
   return (
     <section className={`wallet-crowdloans ${className}`}>
-      <Panel title={t('Crowdloans')} subtitle={crowdloansUsd && formatCurrency(crowdloansUsd)}>
+      <Panel title={t('Crowdloans')} /*subtitle={crowdloansUsd && formatCurrency(crowdloansUsd)}*/ subtitle={'$--.--'}>
         {skipped || loading ? (
           <PanelSection comingSoon>
             <div>{t('Summoning Crowdloan Contributions...')}</div>
