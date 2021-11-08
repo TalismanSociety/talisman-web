@@ -1,5 +1,6 @@
 import { Popup } from '@components'
 import { ReactComponent as IconHelp } from '@icons/help-circle.svg'
+import { SPIRIT_KEY_URL } from '@util/links'
 // import { useCrowdloanById } from '@libs/talisman'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
@@ -23,7 +24,9 @@ const Bonus = styled(({ id, parachainId, short, full, info, prefix, className })
         <>
           <span>{bonus?.full}</span>
           <Popup text={bonus?.info}>
-            <IconHelp className="icon-help" />
+            <a href={SPIRIT_KEY_URL} target="_blank" rel="noopener noreferrer">
+              Spirit Key
+            </a>
           </Popup>
         </>
       )}
@@ -32,7 +35,16 @@ const Bonus = styled(({ id, parachainId, short, full, info, prefix, className })
   )
 })`
   font-size: 1em;
-  display: block;
+  display: flex;
+  align-items: center;
+  background: var(--color-activeBackground);
+  padding: 0.5rem 1.25rem;
+  border-radius: 1.5rem;
+  width: max-content;
+
+  a {
+    text-decoration: underline;
+  }
 
   > * {
     display: inline-block;

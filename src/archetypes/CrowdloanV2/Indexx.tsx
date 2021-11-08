@@ -28,28 +28,10 @@ const FilterBar = styled(
     const { t } = useTranslation()
     return (
       <div className={`${className} filterbar`} {...rest}>
-        <Field.Search
-          className="searchbar"
-          value={search}
-          placeholder={t('Search Crowdloans')}
-          onChange={(search: any) => {
-            setSearch(search)
-            trackGoal('9XUF7WEB', 1) // crowdloan_search
-          }}
-        />
         <div className="filters">
           <Field.RadioGroup
-            value={status}
-            onChange={(status: any) => {
-              setStatus(status)
-              trackGoal('0AO7IT2G', 1) // crowdloan_filter
-            }}
-            options={statusOptions}
-            small
-            secondary
-          />
-          <Field.RadioGroup
             value={network}
+            className="network-filter"
             onChange={(network: any) => {
               setNetwork(network)
               trackGoal('0AO7IT2G', 1) // crowdloan_filter
@@ -58,7 +40,26 @@ const FilterBar = styled(
             small
             primary
           />
+          <Field.Search
+            className="searchbar"
+            value={search}
+            placeholder={t('Search Crowdloans')}
+            onChange={(search: any) => {
+              setSearch(search)
+              trackGoal('9XUF7WEB', 1) // crowdloan_search
+            }}
+          />
         </div>
+        <Field.RadioGroup
+          value={status}
+          onChange={(status: any) => {
+            setStatus(status)
+            trackGoal('0AO7IT2G', 1) // crowdloan_filter
+          }}
+          options={statusOptions}
+          small
+          secondary
+        />
       </div>
     )
   }
@@ -67,7 +68,21 @@ const FilterBar = styled(
   display: flex;
   align-items: center;
   gap: 2rem;
+  justify-content: space-between;
   flex-wrap: wrap;
+
+  .network-filter {
+    align-items: unset;
+    flex-direction: unset;
+
+    .children {
+      border-radius: 1rem;
+    }
+
+    .children .pill {
+      border-radius: inherit;
+    }
+  }
 
   .searchbar {
     display: inline-block;
@@ -79,10 +94,10 @@ const FilterBar = styled(
 
   .filters {
     display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
-    justify-content: space-between;
-    width: 100%;
+    flex-wrap: wrap-reverse;
+    gap: 2rem;
+    // justify-content: space-between;
+    // width: 100%;
   }
 `
 

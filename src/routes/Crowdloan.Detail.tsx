@@ -41,7 +41,12 @@ const CrowdloanDetail = styled(({ className }) => {
               <Crowdloan.Countdown id={id} />
             </PanelSection>
             <PanelSection>
-              <Crowdloan.Bonus full id={id} parachainId={parachainId} />
+              <Crowdloan.Bonus
+                full
+                id={id}
+                parachainId={parachainId}
+                prefix={<Parachain.Asset id={parachainId} type="logo" />}
+              />
               <Button
                 primary
                 onClick={() => openModal(<Crowdloan.Contribute id={id} />)}
@@ -121,6 +126,7 @@ const CrowdloanDetail = styled(({ className }) => {
     }
 
     > aside {
+      min-width: fit-content;
       margin-top: 6.3rem;
       width: 39%;
 
@@ -168,8 +174,13 @@ const CrowdloanDetail = styled(({ className }) => {
         font-weight: var(--font-weight-bold);
         font-size: var(--font-size-normal);
         margin: 0 0 1em 0;
-        display: block;
+        display: flex;
+        gap: 0.5rem;
         //color: var(--color-text);
+      }
+
+      .crowdloan-logo {
+        font-size: inherit;
       }
     }
 

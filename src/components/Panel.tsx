@@ -45,6 +45,8 @@ export default styled(({ title, subtitle, children, className, ...rest }) => (
     <div className="inner">{children}</div>
   </div>
 ))<BasePanelProps>`
+  width: 100%;
+
   > h1 {
     display: flex;
     align-items: baseline;
