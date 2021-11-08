@@ -74,9 +74,19 @@ export function useCrowdloanContributions({
   )
   const crowdloans = useMemo(
     () =>
-      Object.values(SupportedRelaychains).map(({ id: relayId }) =>
-        (_crowdloans || []).filter(id => id.startsWith(`${relayId}-`)).map(id => id.split('-').slice(1).join('-'))
-      ),
+      Object.values(SupportedRelaychains).map(({ id: relayId }) => {
+        // if no crowdloans specified, return empty array to get _all_ crowdloans from _all_ relay chains
+        if (!_crowdloans || _crowdloans.length < 1) return []
+
+        // get crowdloans specific to this relay chain
+        const relayCrowdloans = (_crowdloans || []).filter(id => id.startsWith(`${relayId}-`))
+
+        // if no crowdloans for this relay chain, return ['none'] so that we don't get _all_ crowdloans from this relay chain
+        if (relayCrowdloans.length < 1) return ['none']
+
+        // return crowdloans filter for this relay chain
+        return relayCrowdloans.map(id => id.split('-').slice(1).join('-'))
+      }),
     [JSON.stringify(_crowdloans)] // eslint-disable-line react-hooks/exhaustive-deps
   )
 
