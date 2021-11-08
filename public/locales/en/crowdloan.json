@@ -16,5 +16,11 @@
     "description": "Your transaction was not successful.",
     "primaryCta": "View on Subscan",
     "secondaryCta": "Close"
+  },
+  "validatingUser": {
+    "header": "Validating User blahblahblah",
+    "description": "Accept the terms & conditions pls&ty",
+    "primaryCta": "blahblahblah",
+    "secondaryCta": "Cancel blahblahblah"
   }
 }

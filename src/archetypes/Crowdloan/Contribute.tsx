@@ -50,6 +50,15 @@ export default function Contribute({ className, id }: ContributeProps) {
         }}
       />
     ),
+    ValidatingUser: props => (
+      <ValidatingUser
+        {...{
+          className,
+          closeModal,
+          ...props,
+        }}
+      />
+    ),
     ContributionSubmitting: props => (
       <InProgress
         {...{
@@ -412,6 +421,64 @@ const InProgress = styled(({ className, closeModal, explorerUrl }) => {
       border-radius: 5.6rem;
       padding: 0.6rem 1.2rem;
       cursor: pointer;
+    }
+  }
+
+  > footer {
+    display: flex;
+    justify-content: center;
+
+    button {
+      min-width: 27.8rem;
+    }
+  }
+`
+
+const ValidatingUser = styled(({ className, closeModal, explorerUrl }) => {
+  const { t } = useTranslation('crowdloan')
+  return (
+    <div className={className}>
+      <header>
+        <h2>{t('validatingUser.header')}</h2>
+        <MaterialLoader className="logo" />
+      </header>
+      <main>
+        <div>{t('validatingUser.description')}</div>
+        {/* display t's & c's */}
+        {/* emit signed msg */}
+      </main>
+      <footer>
+        <Button onClick={closeModal}>{t('validatingUser.secondaryCta')}</Button>
+      </footer>
+    </div>
+  )
+})`
+  > header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  > header > h2 {
+    text-align: center;
+    font-size: 2.4rem;
+    font-weight: 600;
+    margin-bottom: 8.2rem;
+  }
+  > header > .logo {
+    font-size: 6.4rem;
+    margin-bottom: 8.2rem;
+    color: var(--color-primary);
+    user-select: none;
+  }
+
+  > main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 4rem;
+
+    div:first-child {
+      margin-bottom: 4rem;
     }
   }
 

@@ -16,7 +16,8 @@ import { useCallback, useEffect, useState } from 'react'
 import { MemberType, makeTaggedUnion, none } from 'safety-match'
 import { v4 as uuidv4 } from 'uuid'
 
-import moonbeamStatement from './moonbeamStatement'
+import moonbeamStatement from './moonbeam/moonbeamStatement'
+import { submitTermsAndConditions } from './moonbeam/remarkFlow'
 import { useCrowdloanContributions } from './useCrowdloanContributions'
 
 //
@@ -64,6 +65,7 @@ export const ContributeState = makeTaggedUnion({
   NoChaindataForRelayChain: none,
   IpBanned: none,
   Ready: (props: ReadyProps) => props,
+  ValidatingUser: (props: ValidatingUserProps) => props, 
   ContributionSubmitting: (props: ContributionSubmittingProps) => props,
   ContributionSuccess: (props: ContributionSuccessProps) => props,
   ContributionFailed: (props: ContributionFailedProps) => props,
@@ -90,6 +92,7 @@ export const ContributeEvent = makeTaggedUnion({
   _setTxFee: (txFee?: string | null) => txFee,
   contribute: none,
   _validateContribution: none,
+  _setValidatingUser: (props: ValidatingUserProps) => props,
   _setContributionSubmitting: (props: ContributionSubmittingProps) => props,
   _finalizedContributionSuccess: (props: ContributionSuccessProps) => props,
   _finalizedContributionFailed: (props: ContributionFailedProps) => props,
@@ -131,6 +134,26 @@ type ReadyProps = {
   submissionRequested: boolean
   submissionValidated: boolean
 }
+type ValidatingUserProps = {
+  crowdloanId: string
+  relayChainId: number
+  relayNativeToken: string
+  relayTokenDecimals: number
+  parachainId: number
+
+  contributionAmount: string
+  account?: string
+  email?: string
+  verifierSignature?: string
+
+  api?: ApiPromise
+  accountBalance?: BalanceWithTokens | null
+  txFee?: string | null
+  validationError?: { i18nCode: string; vars?: { [key: string]: any } }
+  submissionRequested: boolean
+  submissionValidated: boolean
+}
+
 type ContributionSubmittingProps = {
   explorerUrl?: string
 }
@@ -200,6 +223,7 @@ function contributeEventReducer(state: ContributeState, event: ContributeEvent):
     _noChaindataForRelayChain: () => ContributeState.NoChaindataForRelayChain,
     _ipBanned: () => ContributeState.IpBanned,
     _initialized: props => ContributeState.Ready(props),
+    _setValidatingUser: props => ContributeState.ValidatingUser(props),
 
     _setApi: (api?: ApiPromise) =>
       state.match({
@@ -649,8 +673,7 @@ function useMoonbeamThunk(state: ContributeState, dispatch: DispatchContributeEv
       parachainId,
       contributionAmount,
       account,
-      api,
-      submissionRequested,
+      crowdloanId,
     } = stateDeps
 
     if (relayChainId !== moonbeamOptions.relayId || parachainId !== moonbeamOptions.parachainId) return
@@ -674,8 +697,25 @@ function useMoonbeamThunk(state: ContributeState, dispatch: DispatchContributeEv
         )
       }
       if (!(await checkRemarkResponse.json()).verified) {
-        // TODO: Replace this with a state change to a moonbeam-specific registration flow
-        return dispatch(ContributeEvent._setValidationError({ i18nCode: 'Please register for the Moonbeam crowdloan' }))
+        // execute this in another place
+        // --------------------------------------------------------------------------------
+        
+        // submitTermsAndConditions()
+
+        // --------------------------------------------------------------------------------
+
+        return dispatch(
+          ContributeEvent._setValidatingUser({
+            crowdloanId,
+            relayChainId,
+            relayNativeToken,
+            relayTokenDecimals,
+            parachainId,
+            contributionAmount: '',
+            submissionRequested: false,
+            submissionValidated: false,
+          })
+        )
       }
 
       const guid = uuidv4()
