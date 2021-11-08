@@ -37,6 +37,11 @@ const mainRoutes = [
     url: '/crowdloans',
     icon: <CrowdloansLogo alt="Crowdloans" />,
   },
+  {
+    name: '🗝 Spirit keys',
+    url: '/spiritkeys',
+    icon: <CrowdloansLogo alt="Spiritkeys" />,
+  }
 ]
 
 const subRoutes = [
@@ -112,6 +117,7 @@ const Header = styled(({ className, isMobile, mobileMenuOpen, dispatch }) => {
             {t('Portfolio')}
           </NavLink>
           <NavLink to="/crowdloans">{t('Crowdloans')}</NavLink>
+          <NavLink to="/spiritkeys">{t('🗝 Spirit Keys')}</NavLink>
         </nav>
       )}
       <div className="menu-nav">
