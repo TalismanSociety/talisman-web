@@ -26,7 +26,7 @@ const FieldLabel = styled(({ children, className, ...rest }) =>
 
 const FieldWrapper = styled(({ type, prefix, suffix, label, dim, children, className, ...rest }) => (
   <div className={`field field-${type}${dim ? ' dim' : ''} ${className}`} {...rest}>
-    <FieldLabel>{label}</FieldLabel>
+    {label && <FieldLabel>{label}</FieldLabel>}
     <span className="children">
       {!!prefix && <span className="prefix">{prefix}</span>}
       {children}
