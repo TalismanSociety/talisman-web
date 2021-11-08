@@ -1,5 +1,4 @@
 import { Popup } from '@components'
-import { ReactComponent as IconHelp } from '@icons/help-circle.svg'
 import { SPIRIT_KEY_URL } from '@util/links'
 // import { useCrowdloanById } from '@libs/talisman'
 import { useTranslation } from 'react-i18next'
