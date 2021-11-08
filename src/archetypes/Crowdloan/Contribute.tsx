@@ -379,12 +379,12 @@ const InProgress = styled(({ className, closeModal, explorerUrl }) => {
     display: flex;
     flex-direction: column;
     align-items: center;
+    margin-bottom: 4rem;
   }
   > header > h2 {
     text-align: center;
     font-size: 2.4rem;
     font-weight: 600;
-    margin-bottom: 8.2rem;
   }
   > header > .logo {
     font-size: 6.4rem;
@@ -450,12 +450,12 @@ const Success = styled(({ className, closeModal, explorerUrl }) => {
     display: flex;
     flex-direction: column;
     align-items: center;
+    margin-bottom: 4rem;
   }
   > header > h2 {
     text-align: center;
     font-size: 2.4rem;
     font-weight: 600;
-    margin-bottom: 8.2rem;
   }
   > header > .logo {
     font-size: 6.4rem;
