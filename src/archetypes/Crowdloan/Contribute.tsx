@@ -1,7 +1,8 @@
 import { Account, Parachain } from '@archetypes'
-import { ReactComponent as CheckCircle } from '@assets/icons/check-circle.svg'
 import { ReactComponent as XCircle } from '@assets/icons/x-circle.svg'
 import { Button, DesktopRequired, Field, MaterialLoader, Pendor, useModal } from '@components'
+import { TalismanHandLike } from '@components/TalismanHandLike'
+import { TalismanHandLoader } from '@components/TalismanHandLoader'
 import { ContributeEvent, acalaOptions, useCrowdloanContribute } from '@libs/crowdloans'
 import { useActiveAccount, useCrowdloanById } from '@libs/talisman'
 import { useTokenPrice } from '@libs/tokenprices'
@@ -358,7 +359,7 @@ const InProgress = styled(({ className, closeModal, explorerUrl }) => {
     <div className={className}>
       <header>
         <h2>{t('inProgress.header')}</h2>
-        <MaterialLoader className="logo" />
+        <TalismanHandLoader />
       </header>
       <main>
         <div>{t('inProgress.description')}</div>
@@ -403,8 +404,8 @@ const InProgress = styled(({ className, closeModal, explorerUrl }) => {
     }
     a {
       display: block;
-      color: #f46545;
-      background: #fbe2dc;
+      color: var(--color-background);
+      background: var(--color-primary);
       border-radius: 5.6rem;
       padding: 0.6rem 1.2rem;
       cursor: pointer;
@@ -427,7 +428,7 @@ const Success = styled(({ className, closeModal, explorerUrl }) => {
     <div className={className}>
       <header>
         <h2>{t('success.header')}</h2>
-        <CheckCircle className="logo" />
+        <TalismanHandLike />
       </header>
       <main>
         <div>{t('success.description')}</div>
@@ -474,8 +475,8 @@ const Success = styled(({ className, closeModal, explorerUrl }) => {
     }
     a {
       display: block;
-      color: #f46545;
-      background: #fbe2dc;
+      color: var(--color-background);
+      background: var(--color-primary);
       border-radius: 5.6rem;
       padding: 0.6rem 1.2rem;
       cursor: pointer;
