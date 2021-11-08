@@ -5,7 +5,7 @@ import {
   useCrowdloanContributions,
 } from '@libs/crowdloans'
 import { calculateCrowdloanPortfolioAmounts, usePortfolio, useTaggedAmountsInPortfolio } from '@libs/portfolio'
-import { useAccountAddresses, useCrowdloanById, useCrowdloans } from '@libs/talisman'
+import { useAccountAddresses, useCrowdloanById, useCrowdloans, useParachainDetailsById } from '@libs/talisman'
 import { SupportedRelaychains } from '@libs/talisman/util/_config'
 import { useTokenPrice } from '@libs/tokenprices'
 import { useChain } from '@talismn/api-react-hooks'
@@ -13,6 +13,7 @@ import { addBigNumbers, encodeAnyAddress, multiplyBigNumbers, planckToTokens, us
 import { formatCommas, formatCurrency } from '@util/helpers'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
+import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 
 const CrowdloanItem = styled(({ id, className, infoOnly = false }) => {
@@ -95,6 +96,33 @@ const CrowdloanItem = styled(({ id, className, infoOnly = false }) => {
   }
 `
 
+const CrowdloanItemWithLink = styled(props => {
+  const { id, className } = props
+  const { crowdloan } = useCrowdloanById(id)
+  const parachainId = crowdloan?.parachain?.paraId
+  const { parachainDetails } = useParachainDetailsById(parachainId)
+  const linkToCrowdloan = parachainDetails?.slug ? `/crowdloans/${parachainDetails?.slug}` : `/crowdloans`
+  return (
+    <Link to={linkToCrowdloan} className={className}>
+      <PanelSection>
+        <CrowdloanItem id={id} />
+      </PanelSection>
+    </Link>
+  )
+})`
+  :first-of-type .panel-section:hover {
+    border-radius: 1.6rem 1.6rem 0 0;
+  }
+
+  :last-of-type .panel-section:hover {
+    border-radius: 0 0 1.6rem 1.6rem;
+  }
+
+  .panel-section:hover {
+    background-color: var(--color-activeBackground);
+  }
+`
+
 const Crowdloans = ({ className }: { className?: string }) => {
   const { t } = useTranslation()
   const accounts = useAccountAddresses()
@@ -143,26 +171,8 @@ const Crowdloans = ({ className }: { className?: string }) => {
         ) : (
           <>
             {Object.keys(totalAliveContributions).map(id => (
-              <PanelSection key={id}>
-                <CrowdloanItem id={id} />
-              </PanelSection>
+              <CrowdloanItemWithLink key={id} id={id} />
             ))}
-            {/* Hardcode for now */}
-            <PanelSection>
-              <CrowdloanItem
-                id="0-2000"
-                infoOnly={
-                  <a
-                    href="https://apps.acala.network/wallet"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{ textDecoration: 'underline', color: 'var(--color-primary)' }}
-                  >
-                    {t('View contributions')}
-                  </a>
-                }
-              />
-            </PanelSection>
           </>
         )}
       </Panel>
