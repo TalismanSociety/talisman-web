@@ -108,8 +108,8 @@ export const parachainDetails: ParachainDetails[] = [
     name: 'Parallel',
     slug: 'parallel',
     token: 'PARA',
-    subtitle: '',
-    info: ``,
+    subtitle: 'Parallel Finance is a decentralized money market protocol that offers lending, staking, and borrowing in the Polkadot ecosystem.',
+    info: `Parallel's mission is to innovate and bring DeFi to the next level. We are creating the most secure and easy-to-use decentralized platform to empower everyone access to financial services.`,
     links: {
       Website: 'https://parallel.fi/',
       Twitter: 'https://twitter.com/ParallelFi',
@@ -141,8 +141,8 @@ export const parachainDetails: ParachainDetails[] = [
     name: 'Manta',
     slug: 'manta',
     token: 'MANTA',
-    subtitle: '',
-    info: '',
+    subtitle: 'The Privacy Preservation Layer on Polkadot.',
+    info: 'Manta Network is a private layer built for the entire Polkadot ecosystem. Built on the Substrate framework, Manta Network is natively compatible with other projects and parachain assets including wrapped major cryptoassets.',
     links: {
       Website: 'https://manta.network/',
       Twitter: 'https://twitter.com/mantanetwork',
