@@ -448,13 +448,13 @@ const RegisteringUser = styled(({ className, closeModal, dispatch }) => {
       <main>
         <div >{t('registeringUser.description')}</div>
         <div>{t('registeringUser.feeNote')}</div>
-        {/* <Button onClick={dispatch(ContributeEvent.contribute)}> */}
+        {/* <Button onClick={dispatch(ContributeEvent.registerUser)}> */}
       </main>
       <footer>
         <Button 
             type="submit"
             primary
-            onClick={() => dispatch(ContributeEvent.contribute)}>
+            onClick={() => dispatch(ContributeEvent.registerUser)}>
           {t('registeringUser.primaryCta')}
         </Button>
       </footer>
