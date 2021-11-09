@@ -152,6 +152,21 @@ export const parachainDetails: ParachainDetails[] = [
     },
   },
   {
+    id: '0-2018',
+    name: 'SubDAO',
+    slug: 'subdao',
+    token: 'GOV',
+    subtitle: 'DAO infrastructure for Polkadot.',
+    info: ' SubDAO allows any decentralized organization to swiftly create and manage DAOs, serving as a Web3.0 entry by providing blockchain-based digital agreement signing, DAO social networking, asset management, and other tools and services.',
+    links: {
+      Website: 'https://www.subdao.network/',
+      Twitter: 'https://twitter.com/subdao_network',
+      Telegram: 'https://t.me/subdao',
+      Medium: 'https://subdao.medium.com/',
+      Github: 'https://github.com/subdao-network',
+    },
+  },
+  {
     id: '2-2000',
     name: 'Karura',
     slug: 'karura',
@@ -764,6 +779,41 @@ export const crowdloanDetails: CrowdloanDetails[] = [
         {
           title: 'MANTA per DOT',
           value: '4',
+        },
+        {
+          "title": "Total Supply",
+          "value": "1,000,000,000 MANTA"
+        },
+        {
+          "title": "Crowdloan Allocation",
+          "value": "120,000,004 MANTA"
+        }
+      ],
+      bonus: {
+        short: 'Bonus 🗝',
+        full: 'Receive a Talisman Spirit Key 🗝',
+        info: 'Receive a <strong>Talisman Spirit Key </strong> if you are one of the first 1000 crowdloan contributors on the Talisman dashboard.',
+      },
+      info: null,
+    },
+  },
+  {
+    relayId: 0,
+    paraId: 2018,
+    rewards: {
+      tokens: null,
+      custom: [
+        {
+          title: 'GOV per DOT',
+          value: 'TBD',
+        },
+        {
+          title: 'Total Supply',
+          value: '1,000,000,000 GOV',
+        },
+        {
+          title: 'Crowdloan Allocation',
+          value: '300,000,000 GOV',
         },
       ],
       bonus: {
