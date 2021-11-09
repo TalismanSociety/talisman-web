@@ -438,8 +438,11 @@ const InProgress = styled(({ className, closeModal, explorerUrl }) => {
   }
 `
 
-const RegisteringUser = styled(({ className, closeModal, dispatch }) => {
+const RegisteringUser = styled(({ className, closeModal, dispatch, submissionRequested }) => {
   const { t } = useTranslation('crowdloan')
+
+  const terms = "https://glib-calendula-bf6.notion.site/Moonbeam-Crowdloan-Terms-and-Conditions-da2d8fe389214ae9a382a755110a6f45"
+
   return (
     <div className={className}>
       <header>
@@ -447,14 +450,17 @@ const RegisteringUser = styled(({ className, closeModal, dispatch }) => {
       </header>
       <main>
         <div >{t('registeringUser.description')}</div>
+        <a href={terms} target="_blank" rel="noopener noreferrer">
+          {t('registeringUser.termsNote')}
+        </a>
         <div>{t('registeringUser.feeNote')}</div>
-        {/* <Button onClick={dispatch(ContributeEvent.registerUser)}> */}
       </main>
       <footer>
-        <Button 
+        <Button
             type="submit"
             primary
-            onClick={() => dispatch(ContributeEvent.registerUser)}>
+            disabled={submissionRequested}
+            onClick={() => {dispatch(ContributeEvent.registerUser)}}>
           {t('registeringUser.primaryCta')}
         </Button>
       </footer>
@@ -486,10 +492,15 @@ const RegisteringUser = styled(({ className, closeModal, dispatch }) => {
     margin-bottom: 4rem;
 
     div:first-child {
+      margin-bottom: 2rem;
+    }
+    
+    > a {
+      color: var(--color-primary);
       margin-bottom: 4rem;
     }
 
-    div:nth-child(2) {
+    div:nth-child(3) {
       font-size: 1.5rem;
       color: var(--color-mid);
       font-style: italic;
