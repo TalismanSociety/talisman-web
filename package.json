@@ -34,7 +34,6 @@
     "@types/react-router-dom": "^5.1.8",
     "@types/styled-components": "^5.1.10",
     "@types/webpack-env": "^1.16.2",
-    "axios": "^0.24.0",
     "babel-plugin-styled-components": "^1.13.2",
     "bignumber.js": "^9.0.1",
     "craco-alias": "^3.0.1",
