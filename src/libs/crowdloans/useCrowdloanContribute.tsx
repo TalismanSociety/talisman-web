@@ -56,7 +56,7 @@ export const ContributeEvent = makeTaggedUnion({
   setContributionAmount: (contributionAmount: string) => contributionAmount,
   setAccount: (account?: string) => account,
   setEmail: (email?: string) => email,
-  setVerifierSignature: (verifierSignature?: string) => verifierSignature,
+  setVerifierSignature: (verifierSignature?: VerifierSignature) => verifierSignature,
   _setAccountBalance: (balance: BalanceWithTokens | null) => balance,
   _setTxFee: (txFee?: string | null) => txFee,
   _setValidationError: (validationError?: { i18nCode: string; vars?: { [key: string]: any } }) => validationError,
@@ -74,6 +74,8 @@ export type ContributeEvent = MemberType<typeof ContributeEvent> // eslint-disab
 // The callback for dispatching ContributeEvents
 // This is returned from the useCrowdloanContribute hook
 export type DispatchContributeEvent = (event: ContributeEvent) => void
+
+type VerifierSignature = { sr25519: string } | { ed25519: string }
 
 // All of the types of props which are passed to the various state constructors
 type InitializeProps = {
@@ -94,7 +96,7 @@ type ReadyProps = {
   contributionAmount: string
   account?: string
   email?: string
-  verifierSignature?: string
+  verifierSignature?: VerifierSignature
 
   api?: ApiPromise
   accountBalance?: BalanceWithTokens | null
@@ -253,7 +255,7 @@ function contributeEventReducer(state: ContributeState, event: ContributeEvent):
         _: ignoreWithWarning,
       }),
 
-    setVerifierSignature: (verifierSignature?: string) =>
+    setVerifierSignature: (verifierSignature?: VerifierSignature) =>
       state.match({
         Ready: props =>
           ContributeState.Ready({
@@ -725,7 +727,7 @@ function useMoonbeamVerifierSignatureThunk(state: ContributeState, dispatch: Dis
         )
       const { signature } = await makeSignatureResponse.json()
 
-      dispatch(ContributeEvent.setVerifierSignature(signature))
+      dispatch(ContributeEvent.setVerifierSignature({ sr25519: signature as string }))
     })()
   }, [dispatch, contributions, contributionsHydrated, stateDeps && stateDeps?.api, JSON.stringify(jsonCmpStateDeps)]) // eslint-disable-line react-hooks/exhaustive-deps
 }
@@ -814,7 +816,7 @@ function useMoonbeamRegisterUserThunk(state: ContributeState, dispatch: Dispatch
         })
       )
     ;(async () => {
-      const verified = await submitTermsAndConditions(api, account)
+      const verified = await submitTermsAndConditions(api, encodeAnyAddress(account, relayChainId))
       if (!verified) throw new Error('Failed to verify user registration')
       dispatch(
         ContributeEvent._userRegistered({
@@ -1137,7 +1139,7 @@ type BuildTxProps = {
   contributionPlanck: string
   account: string
   email?: string
-  verifierSignature?: string
+  verifierSignature?: VerifierSignature
 
   api: ApiPromise
   estimateOnly?: true
