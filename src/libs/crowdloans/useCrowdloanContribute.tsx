@@ -1,9 +1,8 @@
 import { trackGoal } from '@libs/fathom'
 import { SupportedRelaychains } from '@libs/talisman/util/_config'
-import { ApiPromise, WsProvider } from '@polkadot/api'
-import { SubmittableExtrinsic } from '@polkadot/api/types'
+import { ApiPromise, SubmittableResult, WsProvider } from '@polkadot/api'
+import { SubmittableExtrinsic } from '@polkadot/api/submittable/types'
 import { web3FromAddress } from '@polkadot/extension-dapp'
-import type { ISubmittableResult } from '@polkadot/types/types'
 import type { Balance } from '@talismn/api'
 import Talisman from '@talismn/api'
 import type { BalanceWithTokens } from '@talismn/api-react-hooks'
@@ -1143,7 +1142,7 @@ type BuildTxProps = {
   api: ApiPromise
   estimateOnly?: true
 }
-type BuildTxResponse = SubmittableExtrinsic<'promise', ISubmittableResult>
+type BuildTxResponse = SubmittableExtrinsic<'promise', SubmittableResult>
 async function buildTx(props: BuildTxProps): Promise<BuildTxResponse> {
   if (Acala.is(props.relayChainId, props.parachainId)) return await buildAcalaTx(props)
   if (Astar.is(props.relayChainId, props.parachainId)) return await buildAstarTx(props)
@@ -1241,7 +1240,7 @@ async function buildAcalaTx({
 
 async function deriveExplorerUrl(
   api: ApiPromise,
-  result: ISubmittableResult,
+  result: SubmittableResult,
   subscanUrl?: string
 ): Promise<string | undefined> {
   if (!subscanUrl) return
