@@ -454,7 +454,7 @@ const RegisteringUser = styled(({ className, closeModal, dispatch }) => {
         <Button 
             type="submit"
             primary
-            onClick={console.log("yeet")}>
+            onClick={dispatch(ContributeEvent.contribute)}>
           {t('registeringUser.primaryCta')}
         </Button>
       </footer>
