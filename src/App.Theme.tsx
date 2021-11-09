@@ -1,6 +1,7 @@
 import SurtRegular from '@assets/fonts/Surt-Regular.woff'
 import SurtSemiBold from '@assets/fonts/Surt-SemiBold.woff2'
 import SurtSemiBoldExpanded from '@assets/fonts/Surt-SemiBoldExp.woff2'
+import ATApocRevelations from '@assets/fonts/AT-Apoc-Revelations.woff'
 import { PropsWithChildren, createContext, useContext, useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import { DefaultTheme, ThemeProvider, createGlobalStyle, css } from 'styled-components'
@@ -85,6 +86,14 @@ const Style = createGlobalStyle`
     font-weight: 800;
     font-display: auto;
     src: url(${SurtSemiBoldExpanded}) format('woff2');
+  }
+
+  @font-face {
+    font-family: 'ATApocRevelations';
+    font-style: normal;
+    font-weight: 400;
+    font-display: auto;
+    src: url(${ATApocRevelations}) format('woff');
   }
 
   * {
