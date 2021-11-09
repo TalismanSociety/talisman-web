@@ -5,7 +5,6 @@ import CrowdloanDetail from './Crowdloan.Detail.tsx'
 import CrowdloanIndex from './Crowdloan.Index.tsx'
 import Home from './Home'
 import Wallet from './Wallet'
-import SpiritKeys1 from './SpiritKeys'
 import SpiritKeys from './SpiritKeysPage'
 
 const Routes = () => (

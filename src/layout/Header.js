@@ -88,17 +88,6 @@ const smolLinks = [
   },
 ]
 
-const smolLinks = [
-  {
-    name: 'Terms of use',
-    url: 'https://glib-calendula-bf6.notion.site/Terms-of-use-6ac8a57691a946f0b4805c34b26be2b9',
-  },
-  {
-    name: 'Privacy policy',
-    url: 'https://glib-calendula-bf6.notion.site/Privacy-policy-e82e4b901d814f46bf04f4472b6d6e91',
-  },
-]
-
 const Header = styled(({ className, isMobile, mobileMenuOpen, dispatch }) => {
   const { t } = useTranslation('nav')
   const { status: extensionStatus } = useExtension()
