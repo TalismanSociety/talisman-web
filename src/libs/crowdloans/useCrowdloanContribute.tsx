@@ -17,7 +17,6 @@ import { MemberType, makeTaggedUnion, none } from 'safety-match'
 import { v4 as uuidv4 } from 'uuid'
 
 import { Acala, Astar, Moonbeam, overrideByIds } from './crowdloanOverrides'
-import moonbeamStatement from './moonbeam/moonbeamStatement'
 import { submitTermsAndConditions } from './moonbeam/remarkFlow'
 import { useCrowdloanContributions } from './useCrowdloanContributions'
 
@@ -64,6 +63,8 @@ export const ContributeEvent = makeTaggedUnion({
   _setValidationError: (validationError?: { i18nCode: string; vars?: { [key: string]: any } }) => validationError,
   contribute: none,
   _setRegisteringUser: (props: RegisteringUserProps) => props,
+  registerUser: none,
+  _userRegistered: (props: ReadyProps) => props,
   _validateContribution: none,
   _setContributionSubmitting: (props: ContributionSubmittingProps) => props,
   _finalizedContributionSuccess: (props: ContributionSuccessProps) => props,
@@ -118,6 +119,7 @@ type RegisteringUserProps = {
   email?: string
 
   api?: ApiPromise
+  submissionRequested: boolean
 }
 
 type ContributionSubmittingProps = {
@@ -313,6 +315,27 @@ function contributeEventReducer(state: ContributeState, event: ContributeEvent):
     _setRegisteringUser: props =>
       state.match({
         Ready: () => ContributeState.RegisteringUser(props),
+        _: ignoreWithWarning,
+      }),
+
+    registerUser: () =>
+      state.match({
+        RegisteringUser: props =>
+          ContributeState.RegisteringUser({
+            ...props,
+            submissionRequested: true,
+          }),
+        _: ignoreWithWarning,
+      }),
+
+    _userRegistered: props =>
+      state.match({
+        RegisteringUser: props =>
+          ContributeState.Ready({
+            ...props,
+            submissionRequested: true,
+            submissionValidated: false,
+          }),
         _: ignoreWithWarning,
       }),
 
@@ -676,6 +699,7 @@ function useMoonbeamVerifierSignatureThunk(state: ContributeState, dispatch: Dis
             email,
 
             api,
+            submissionRequested: false,
           })
         )
 
@@ -708,8 +732,113 @@ function useMoonbeamVerifierSignatureThunk(state: ContributeState, dispatch: Dis
 }
 
 function useMoonbeamRegisterUserThunk(state: ContributeState, dispatch: DispatchContributeEvent) {
-  // TODO
-  // await submitTermsAndConditions()
+  const stateDeps = state.match({
+    RegisteringUser: ({
+      crowdloanId,
+      relayChainId,
+      relayNativeToken,
+      relayTokenDecimals,
+      relayRpcs,
+      parachainId,
+      parachainName,
+      subscanUrl,
+
+      contributionAmount,
+      account,
+      email,
+
+      api,
+      submissionRequested,
+    }) => ({
+      crowdloanId,
+      relayChainId,
+      relayNativeToken,
+      relayTokenDecimals,
+      relayRpcs,
+      parachainId,
+      parachainName,
+      subscanUrl,
+
+      contributionAmount,
+      account,
+      email,
+
+      api,
+      submissionRequested,
+    }),
+    _: () => false as false,
+  })
+  const { api, ...jsonCmpStateDeps } = stateDeps || {}
+
+  useEffect(() => {
+    if (!stateDeps) return
+
+    const {
+      crowdloanId,
+      relayChainId,
+      relayNativeToken,
+      relayTokenDecimals,
+      relayRpcs,
+      parachainId,
+      parachainName,
+      subscanUrl,
+
+      contributionAmount,
+      account,
+      email,
+
+      api,
+      submissionRequested,
+    } = stateDeps
+
+    if (!api) return
+    if (!submissionRequested) return
+    if (!account)
+      return dispatch(
+        ContributeEvent._initialized({
+          crowdloanId,
+          relayChainId,
+          relayNativeToken,
+          relayTokenDecimals,
+          relayRpcs,
+          parachainId,
+          parachainName,
+          subscanUrl,
+
+          contributionAmount,
+          account,
+          email,
+
+          api,
+          submissionRequested: false,
+          submissionValidated: false,
+        })
+      )
+    ;(async () => {
+      const verified = await submitTermsAndConditions(api, account)
+      if (!verified) throw new Error('Failed to verify user registration')
+      dispatch(
+        ContributeEvent._userRegistered({
+          crowdloanId,
+          relayChainId,
+          relayNativeToken,
+          relayTokenDecimals,
+          relayRpcs,
+          parachainId,
+          parachainName,
+          subscanUrl,
+
+          contributionAmount,
+          account,
+          email,
+
+          api,
+          submissionRequested: true,
+          submissionValidated: false,
+        })
+      )
+    })()
+  }, [dispatch, stateDeps && stateDeps?.api, JSON.stringify(jsonCmpStateDeps)]) // eslint-disable-line react-hooks/exhaustive-deps
 }
 
 function useValidateContributionThunk(state: ContributeState, dispatch: DispatchContributeEvent) {
