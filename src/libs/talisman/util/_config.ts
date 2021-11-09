@@ -71,6 +71,22 @@ export const parachainDetails: ParachainDetails[] = [
     },
   },
   {
+    id: '0-2002',
+    name: 'Clover',
+    slug: 'clover',
+    token: 'CLV',
+    subtitle: 'A foundational layer for cross-chain compatibility.',
+    info: `Clover describes itself as a blockchain operating system. It contains a storage layer, smart contract layer, Defi protocol layer, and eApp layer that work in unison to accomplish the goal of blockchain interoperability.`,
+    links: {
+      Website: 'https://clover.finance/',
+      Twitter: 'https://twitter.com/clover_finance/',
+      Telegram: 'https://t.me/clover_en/',
+      Medium: 'https://projectclover.medium.com/',
+      Github: 'https://github.com/clover-network',
+      Discord: 'https://discord.com/invite/7EFqBwZ3aw',
+    },
+  },
+  {
     id: '0-2006',
     name: 'Astar',
     slug: 'astar',
@@ -85,6 +101,22 @@ export const parachainDetails: ParachainDetails[] = [
       Medium: 'https://medium.com/astar-network',
       Github: 'https://github.com/PlasmNetwork/Plasm',
       Discord: 'https://discord.gg/Z3nC9U4',
+    },
+  },
+  {
+    id: '0-2012',
+    name: 'Parallel',
+    slug: 'parallel',
+    token: 'PARA',
+    subtitle: '',
+    info: ``,
+    links: {
+      Website: 'https://parallel.fi/',
+      Twitter: 'https://twitter.com/ParallelFi',
+      Telegram: 'https://t.me/parallelfi_community',
+      Medium: 'https://parallelfinance.medium.com/',
+      Github: 'https://github.com/parallel-finance',
+      Discord: 'https://discord.gg/buKKx4dySW',
     },
   },
   {
@@ -105,19 +137,18 @@ export const parachainDetails: ParachainDetails[] = [
     },
   },
   {
-    id: '0-2002',
-    name: 'Clover',
-    slug: 'clover',
-    token: 'CLV',
-    subtitle: 'A foundational layer for cross-chain compatibility.',
-    info: `Clover describes itself as a blockchain operating system. It contains a storage layer, smart contract layer, Defi protocol layer, and eApp layer that work in unison to accomplish the goal of blockchain interoperability.`,
+    id: '0-2015',
+    name: 'Manta',
+    slug: 'manta',
+    token: 'MANTA',
+    subtitle: '',
+    info: '',
     links: {
-      Website: 'https://clover.finance/',
-      Twitter: 'https://twitter.com/clover_finance/',
-      Telegram: 'https://t.me/clover_en/',
-      Medium: 'https://projectclover.medium.com/',
-      Github: 'https://github.com/clover-network',
-      Discord: 'https://discord.com/invite/7EFqBwZ3aw',
+      Website: 'https://manta.network/',
+      Twitter: 'https://twitter.com/mantanetwork',
+      Telegram: 'https://t.me/mantanetworkofficial',
+      Medium: 'https://medium.com/@mantanetwork',
+      Github: 'https://github.com/Manta-Network',
     },
   },
   {
@@ -614,31 +645,31 @@ export const crowdloanDetails: CrowdloanDetails[] = [
   },
   {
     relayId: 0,
-    paraId: 2013,
+    paraId: 2002,
     rewards: {
       tokens: null,
       custom: [
         {
-          title: 'LIT per DOT',
-          value: '>2.5',
+          title: 'CLV per DOT',
+          value: 'TBD',
         },
         {
           title: 'Crowdloan Allocation',
-          value: '20,000,000 LIT',
+          value: '200,000,000 CLV',
         },
         {
-          title: 'Early bonus',
-          value: '10% before auction start',
+          title: 'Immediate Release',
+          value: '28% of rewarded CLV',
         },
         {
-          title: 'Early bonus',
-          value: '5% within 7 days of auction start',
+          title: 'Vesting Remainder',
+          value: '72%, over 23 months',
         },
       ],
       bonus: {
-        short: 'Up to 10% + 🗝',
-        full: 'Earn up to 10% bonus LIT + 🗝',
-        info: '10% bonus LIT if you contribute <strong>before parachain auction starts</strong>. 5% bonus LIT <strong> within the first 7 days </strong> since parachain auction starting.',
+        short: 'Bonus 🗝',
+        full: 'Receive a Talisman Spirit Key 🗝',
+        info: 'Receive a <strong>Talisman Spirit Key </strong> if you are one of the first 1000 crowdloan contributors on the Talisman dashboard.',
       },
       info: null,
     },
@@ -672,25 +703,67 @@ export const crowdloanDetails: CrowdloanDetails[] = [
   },
   {
     relayId: 0,
-    paraId: 2002,
+    paraId: 2012,
     rewards: {
       tokens: null,
       custom: [
         {
-          title: 'CLV per DOT',
-          value: 'TBD',
+          title: 'PARA per DOT',
+          value: '>50',
         },
         {
           title: 'Crowdloan Allocation',
-          value: '200,000,000 CLV',
+          value: '1,500,000,000 PARA',
+        },
+      ],
+      bonus: {
+        short: 'Bonus 🗝',
+        full: 'Receive a Talisman Spirit Key 🗝',
+        info: 'Receive a <strong>Talisman Spirit Key </strong> if you are one of the first 1000 crowdloan contributors on the Talisman dashboard.',
+      },
+      info: null,
+    },
+  },
+  {
+    relayId: 0,
+    paraId: 2013,
+    rewards: {
+      tokens: null,
+      custom: [
+        {
+          title: 'LIT per DOT',
+          value: '>2.5',
         },
         {
-          title: 'Immediate Release',
-          value: '28% of rewarded CLV',
+          title: 'Crowdloan Allocation',
+          value: '20,000,000 LIT',
         },
         {
-          title: 'Vesting Remainder',
-          value: '72%, over 23 months',
+          title: 'Early bonus',
+          value: '10% before auction start',
+        },
+        {
+          title: 'Early bonus',
+          value: '5% within 7 days of auction start',
+        },
+      ],
+      bonus: {
+        short: 'Up to 10% + 🗝',
+        full: 'Earn up to 10% bonus LIT + 🗝',
+        info: '10% bonus LIT if you contribute <strong>before parachain auction starts</strong>. 5% bonus LIT <strong> within the first 7 days </strong> since parachain auction starting.',
+      },
+      info: null,
+    },
+  },
+  {
+    relayId: 0,
+    paraId: 2015,
+    rewards: {
+      tokens: null,
+      custom: [
+        {
+          title: 'MANTA per DOT',
+          value: '4',
         },
       ],
       bonus: {
