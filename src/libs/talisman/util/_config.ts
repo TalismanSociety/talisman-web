@@ -108,7 +108,8 @@ export const parachainDetails: ParachainDetails[] = [
     name: 'Parallel',
     slug: 'parallel',
     token: 'PARA',
-    subtitle: 'Parallel Finance is a decentralized money market protocol that offers lending, staking, and borrowing in the Polkadot ecosystem.',
+    subtitle:
+      'Parallel Finance is a decentralized money market protocol that offers lending, staking, and borrowing in the Polkadot ecosystem.',
     info: `Parallel's mission is to innovate and bring DeFi to the next level. We are creating the most secure and easy-to-use decentralized platform to empower everyone access to financial services.`,
     links: {
       Website: 'https://parallel.fi/',
@@ -578,7 +579,7 @@ export const parachainDetails: ParachainDetails[] = [
       Telegram: 'https://t.me/interlay_community',
       Medium: 'https://medium.com/interlay/',
       Github: 'https://github.com/interlay',
-      Discord: 'http://discord.gg/KgCYK3MKS',
+      Discord: 'https://discord.gg/KgCYK3MKSf',
     },
   },
   {
@@ -781,13 +782,13 @@ export const crowdloanDetails: CrowdloanDetails[] = [
           value: '4',
         },
         {
-          "title": "Total Supply",
-          "value": "1,000,000,000 MANTA"
+          title: 'Total Supply',
+          value: '1,000,000,000 MANTA',
         },
         {
-          "title": "Crowdloan Allocation",
-          "value": "120,000,004 MANTA"
-        }
+          title: 'Crowdloan Allocation',
+          value: '120,000,004 MANTA',
+        },
       ],
       bonus: {
         short: 'Bonus 🗝',
