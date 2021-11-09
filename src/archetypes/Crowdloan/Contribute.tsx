@@ -441,7 +441,8 @@ const InProgress = styled(({ className, closeModal, explorerUrl }) => {
 const RegisteringUser = styled(({ className, closeModal, dispatch, submissionRequested }) => {
   const { t } = useTranslation('crowdloan')
 
-  const terms = "https://glib-calendula-bf6.notion.site/Moonbeam-Crowdloan-Terms-and-Conditions-da2d8fe389214ae9a382a755110a6f45"
+  const terms =
+    'https://glib-calendula-bf6.notion.site/Moonbeam-Crowdloan-Terms-and-Conditions-da2d8fe389214ae9a382a755110a6f45'
 
   return (
     <div className={className}>
@@ -449,18 +450,27 @@ const RegisteringUser = styled(({ className, closeModal, dispatch, submissionReq
         <h2>{t('registeringUser.header')}</h2>
       </header>
       <main>
-        <div >{t('registeringUser.description')}</div>
-        <a href={terms} target="_blank" rel="noopener noreferrer">
-          {t('registeringUser.termsNote')}
-        </a>
-        <div>{t('registeringUser.feeNote')}</div>
+        {submissionRequested ? (
+          <Loading className="loading" />
+        ) : (
+          <>
+            <div>{t('registeringUser.description')}</div>
+            <a href={terms} target="_blank" rel="noopener noreferrer">
+              {t('registeringUser.termsNote')}
+            </a>
+            <div>{t('registeringUser.feeNote')}</div>
+          </>
+        )}
       </main>
       <footer>
         <Button
-            type="submit"
-            primary
-            disabled={submissionRequested}
-            onClick={() => {dispatch(ContributeEvent.registerUser)}}>
+          type="submit"
+          primary
+          disabled={submissionRequested}
+          onClick={() => {
+            dispatch(ContributeEvent.registerUser)
+          }}
+        >
           {t('registeringUser.primaryCta')}
         </Button>
       </footer>
@@ -489,15 +499,14 @@ const RegisteringUser = styled(({ className, closeModal, dispatch, submissionReq
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-bottom: 4rem;
+    margin-bottom: 2rem;
 
-    div:first-child {
+    > * {
       margin-bottom: 2rem;
     }
-    
+
     > a {
       color: var(--color-primary);
-      margin-bottom: 4rem;
     }
 
     div:nth-child(3) {
@@ -506,10 +515,14 @@ const RegisteringUser = styled(({ className, closeModal, dispatch, submissionReq
       font-style: italic;
     }
 
+    > .loading {
+      margin-top: 0;
+      margin-bottom: 6.2rem;
+    }
+
     > button {
       min-height: 7rem;
     }
-
   }
 
   > footer {
