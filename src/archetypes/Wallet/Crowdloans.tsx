@@ -175,6 +175,22 @@ const Crowdloans = ({ className }: { className?: string }) => {
             ))}
           </>
         )}
+        {/* Remove when we integrate Acala rewards + bonuses directly into our dashboard */}
+        <PanelSection>
+          <CrowdloanItem
+            id="0-2000"
+            infoOnly={
+              <a
+                href="https://wiki.acala.network/acala/acala-crowdloan/faq#how-do-i-check-my-crowdloan-contribution"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ textDecoration: 'underline', color: 'var(--color-primary)' }}
+              >
+                {t('View contributions')}
+              </a>
+            }
+          />
+        </PanelSection>
       </Panel>
     </section>
   )
