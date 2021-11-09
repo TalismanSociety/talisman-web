@@ -2,7 +2,15 @@ import { ApolloClient, ApolloQueryResult, InMemoryCache, NormalizedCacheObject, 
 import { BatchHttpLink } from '@apollo/client/link/batch-http'
 import { SupportedRelaychains } from '@libs/talisman/util/_config'
 import { addBigNumbers, encodeAnyAddress } from '@talismn/util'
-import { PropsWithChildren, useContext as _useContext, createContext, useEffect, useMemo, useState } from 'react'
+import {
+  PropsWithChildren,
+  useContext as _useContext,
+  createContext,
+  useEffect,
+  useMemo,
+  useReducer,
+  useState,
+} from 'react'
 
 //
 // Constants
@@ -91,9 +99,14 @@ export function useCrowdloanContributions({
   )
 
   const { apolloClients } = useContext()
+  const [refetchId, refetch] = useReducer(x => (x + 1) % 16384, 0)
 
   const [contributionsResults, setContributionsResults] = useState<Array<[number, ApolloQueryResult<any> | null]>>([])
   useEffect(() => {
+    if (refetchId) {
+      // do nothing
+    }
+
     // query crowdloan contributions on each relay chain
     const relayChainContributions = apolloClients.map((client, index) => {
       const query = Contributions(accounts[index], crowdloans[index])
@@ -114,7 +127,7 @@ export function useCrowdloanContributions({
         ])
       )
     )
-  }, [apolloClients, accounts, crowdloans])
+  }, [refetchId, apolloClients, accounts, crowdloans])
 
   const [contributions, setContributions] = useState<CrowdloanContribution[]>([])
   useEffect(() => {
@@ -132,7 +145,11 @@ export function useCrowdloanContributions({
     )
   }, [contributionsResults])
 
-  // const pollInterval = 30000 // 10000ms == 30s
+  useEffect(() => {
+    const pollInterval = 45000 // 45000ms == 45s
+    const intervalId = setInterval(refetch, pollInterval)
+    return () => clearInterval(intervalId)
+  }, [])
 
   const [hydrated, setHydrated] = useState(false)
   useEffect(() => {
