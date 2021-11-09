@@ -59,6 +59,7 @@ export default function Contribute({ className, id }: ContributeProps) {
         {...{
           className,
           closeModal,
+          dispatch,
           ...props,
         }}
       />
@@ -437,21 +438,25 @@ const InProgress = styled(({ className, closeModal, explorerUrl }) => {
   }
 `
 
-const RegisteringUser = styled(({ className, closeModal, explorerUrl }) => {
+const RegisteringUser = styled(({ className, closeModal, dispatch }) => {
   const { t } = useTranslation('crowdloan')
   return (
     <div className={className}>
       <header>
         <h2>{t('registeringUser.header')}</h2>
-        <MaterialLoader className="logo" />
       </header>
       <main>
-        <div>{t('registeringUser.description')}</div>
-        {/* display t's & c's */}
-        {/* emit signed msg */}
+        <div >{t('registeringUser.description')}</div>
+        <div>{t('registeringUser.feeNote')}</div>
+        {/* <Button onClick={dispatch(ContributeEvent.contribute)}> */}
       </main>
       <footer>
-        <Button onClick={closeModal}>{t('registeringUser.secondaryCta')}</Button>
+        <Button 
+            type="submit"
+            primary
+            onClick={console.log("yeet")}>
+          {t('registeringUser.primaryCta')}
+        </Button>
       </footer>
     </div>
   )
@@ -483,6 +488,17 @@ const RegisteringUser = styled(({ className, closeModal, explorerUrl }) => {
     div:first-child {
       margin-bottom: 4rem;
     }
+
+    div:nth-child(2) {
+      font-size: 1.5rem;
+      color: var(--color-mid);
+      font-style: italic;
+    }
+
+    > button {
+      min-height: 7rem;
+    }
+
   }
 
   > footer {
