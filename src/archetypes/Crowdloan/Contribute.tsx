@@ -3,7 +3,8 @@ import { ReactComponent as XCircle } from '@assets/icons/x-circle.svg'
 import { Button, DesktopRequired, Field, MaterialLoader, Pendor, useModal } from '@components'
 import { TalismanHandLike } from '@components/TalismanHandLike'
 import { TalismanHandLoader } from '@components/TalismanHandLoader'
-import { ContributeEvent, acalaOptions, useCrowdloanContribute } from '@libs/crowdloans'
+import { ContributeEvent, useCrowdloanContribute } from '@libs/crowdloans'
+import { Acala } from '@libs/crowdloans/crowdloanOverrides'
 import { useActiveAccount, useCrowdloanById } from '@libs/talisman'
 import { useTokenPrice } from '@libs/tokenprices'
 import { multiplyBigNumbers } from '@talismn/util'
@@ -25,7 +26,7 @@ export default function Contribute({ className, id }: ContributeProps) {
 
   const { crowdloan } = useCrowdloanById(id)
   useEffect(() => {
-    if (!crowdloan) return
+    if (!id || !crowdloan) return
 
     const relayChainId = crowdloan.relayChainId
     const parachainId = Number(crowdloan.parachain.paraId.split('-').slice(-1)[0])
@@ -36,8 +37,11 @@ export default function Contribute({ className, id }: ContributeProps) {
   if (isMobileBrowser()) return <DesktopRequired />
 
   return contributeState.match({
+    Uninitialized: () => null,
     Initializing: () => <Loading />,
 
+    NoRpcsForRelayChain: () => 'Sorry, making contributions to this crowdloan via Talisman is not yet supported.',
+    NoChaindataForRelayChain: () => 'Sorry, making contributions to this crowdloan via Talisman is not yet supported.',
     IpBanned: () => 'Sorry, this crowdloan is not accepting contributions from IP addresses within your region.',
 
     Ready: props => (
@@ -50,8 +54,8 @@ export default function Contribute({ className, id }: ContributeProps) {
         }}
       />
     ),
-    ValidatingUser: props => (
-      <ValidatingUser
+    RegisteringUser: props => (
+      <RegisteringUser
         {...{
           className,
           closeModal,
@@ -86,7 +90,6 @@ export default function Contribute({ className, id }: ContributeProps) {
         }}
       />
     ),
-    _: () => null,
   })
 }
 
@@ -186,7 +189,7 @@ const ContributeTo = styled(
             </div>
           </div>
 
-          {relayChainId === acalaOptions.relayId && parachainId === acalaOptions.parachainId && (
+          {Acala.is(relayChainId, parachainId) && (
             <div className="row">
               <div className="email-input">
                 <Field.Input
@@ -434,21 +437,21 @@ const InProgress = styled(({ className, closeModal, explorerUrl }) => {
   }
 `
 
-const ValidatingUser = styled(({ className, closeModal, explorerUrl }) => {
+const RegisteringUser = styled(({ className, closeModal, explorerUrl }) => {
   const { t } = useTranslation('crowdloan')
   return (
     <div className={className}>
       <header>
-        <h2>{t('validatingUser.header')}</h2>
+        <h2>{t('registeringUser.header')}</h2>
         <MaterialLoader className="logo" />
       </header>
       <main>
-        <div>{t('validatingUser.description')}</div>
+        <div>{t('registeringUser.description')}</div>
         {/* display t's & c's */}
         {/* emit signed msg */}
       </main>
       <footer>
-        <Button onClick={closeModal}>{t('validatingUser.secondaryCta')}</Button>
+        <Button onClick={closeModal}>{t('registeringUser.secondaryCta')}</Button>
       </footer>
     </div>
   )
