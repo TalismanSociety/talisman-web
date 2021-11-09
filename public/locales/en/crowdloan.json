@@ -16,5 +16,12 @@
     "description": "Your transaction was not successful.",
     "primaryCta": "View on Subscan",
     "secondaryCta": "Close"
+  },
+  "registeringUser": {
+    "header": "Sign the Terms & Conditions",
+    "description": "By clicking \"Sign and Send\" below, your agreement to the Moonbeam Crowdloan Terms and Conditions will be stored on chain, to your DOT account. This will be in the form of a remark extrinstic signed by your account.",
+    "feeNote": "Please note that this signing transaction will be subject to transaction fees on the Polkadot network (around 0.0411 DOT), and Polkadot has a minimum balance of 1 DOT.",
+    "termsNote": "[View terms]",
+    "primaryCta": "Sign and Send"
   }
 }

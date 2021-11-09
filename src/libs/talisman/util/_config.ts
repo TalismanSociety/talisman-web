@@ -87,6 +87,22 @@ export const parachainDetails: ParachainDetails[] = [
     },
   },
   {
+    id: '0-2004',
+    name: 'Moonbeam',
+    slug: 'moonbeam',
+    token: 'GLMR',
+    subtitle: 'An Ethereum-compatible smart contract parachain on Polkadot.',
+    info: `Moonbeam is a full Ethereum-like environment and works with industry-standard Ethereum tools, DApps, and protocols.`,
+    links: {
+      Website: 'https://moonbeam.network/networks/moonbeam/',
+      Twitter: 'https://twitter.com/moonbeamnetwork',
+      Telegram: 'https://t.me/Moonbeam_Official',
+      Medium: 'https://medium.com/moonbeam-network',
+      Github: 'https://github.com/PureStake/moonbeam',
+      Discord: 'https://discord.gg/PfpUATX',
+    },
+  },
+  {
     id: '0-2006',
     name: 'Astar',
     slug: 'astar',
@@ -680,6 +696,25 @@ export const crowdloanDetails: CrowdloanDetails[] = [
         {
           title: 'Vesting Remainder',
           value: '72%, over 23 months',
+        },
+      ],
+      bonus: {
+        short: 'Bonus 🗝',
+        full: 'Receive a Talisman Spirit Key 🗝',
+        info: 'Receive a <strong>Talisman Spirit Key </strong> if you are one of the first 1000 crowdloan contributors on the Talisman dashboard.',
+      },
+      info: null,
+    },
+  },
+  {
+    relayId: 0,
+    paraId: 2004,
+    rewards: {
+      tokens: null,
+      custom: [
+        {
+          title: 'GLMR per DOT',
+          value: '>1',
         },
       ],
       bonus: {

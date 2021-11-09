@@ -1,37 +1,27 @@
 import { trackGoal } from '@libs/fathom'
 import { SupportedRelaychains } from '@libs/talisman/util/_config'
-import { ApiPromise, WsProvider } from '@polkadot/api'
-import { SubmittableExtrinsic } from '@polkadot/api/types'
+import { ApiPromise, SubmittableResult, WsProvider } from '@polkadot/api'
+import { SubmittableExtrinsic } from '@polkadot/api/submittable/types'
 import { web3FromAddress } from '@polkadot/extension-dapp'
-import type { ISubmittableResult } from '@polkadot/types/types'
 import type { Balance } from '@talismn/api'
 import Talisman from '@talismn/api'
 import type { BalanceWithTokens } from '@talismn/api-react-hooks'
 import { addTokensToBalances } from '@talismn/api-react-hooks'
 import Chaindata from '@talismn/chaindata-js'
-import { decodeAnyAddress, encodeAnyAddress, planckToTokens, tokensToPlanck } from '@talismn/util'
+import { addBigNumbers, encodeAnyAddress, planckToTokens, tokensToPlanck } from '@talismn/util'
 import customRpcs from '@util/customRpcs'
 import BigNumber from 'bignumber.js'
 import { useCallback, useEffect, useState } from 'react'
 import { MemberType, makeTaggedUnion, none } from 'safety-match'
+import { v4 as uuidv4 } from 'uuid'
+
+import { Acala, Astar, Moonbeam, overrideByIds } from './crowdloanOverrides'
+import { submitTermsAndConditions } from './moonbeam/remarkFlow'
+import { useCrowdloanContributions } from './useCrowdloanContributions'
 
 //
 // TODO: Move tx handling into a generic queue, store queue in react context
 //
-
-// TODO: Store Acala overrides somewhere neat
-export const acalaOptions = {
-  api: 'https://crowdloan.aca-api.network',
-  relayId: 0,
-  parachainId: 2000,
-  referral: encodePolkadotAddressAsHexadecimalPublicKey('1564oSHxGVQEaSwHgeYKD1z1A8BXeuqL3hqBSWMA6zHmKnz1'),
-  jwt: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoidGFsaXNtYW4iLCJpYXQiOjE2MzYwNTM5NTV9.vplu8f6JI-T7SLuKwKU001KDPof04Lp6cCFyJXLWSKg',
-}
-export const astarOptions = {
-  relayId: 0,
-  parachainId: 2006,
-  referral: encodePolkadotAddressAsHexadecimalPublicKey('1564oSHxGVQEaSwHgeYKD1z1A8BXeuqL3hqBSWMA6zHmKnz1'),
-}
 
 //
 // Types
@@ -44,9 +34,8 @@ export const ContributeState = makeTaggedUnion({
   NoRpcsForRelayChain: none,
   NoChaindataForRelayChain: none,
   IpBanned: none,
-  NeedSignature: (props: SignatureProps) => props,
-  ProcessingSignature: (props: SignatureProps) => props,
   Ready: (props: ReadyProps) => props,
+  RegisteringUser: (props: RegisteringUserProps) => props,
   ContributionSubmitting: (props: ContributionSubmittingProps) => props,
   ContributionSuccess: (props: ContributionSuccessProps) => props,
   ContributionFailed: (props: ContributionFailedProps) => props,
@@ -59,6 +48,7 @@ export const ContributeEvent = makeTaggedUnion({
   initialize: (props: InitializeProps) => props,
   _noRpcsForRelayChain: none,
   _noChaindataForRelayChain: none,
+  _ipBanned: none,
   _initialized: (props: ReadyProps) => props,
   // TODO: Implement
   // Sign: (props: unknown) => props,
@@ -66,10 +56,14 @@ export const ContributeEvent = makeTaggedUnion({
   setContributionAmount: (contributionAmount: string) => contributionAmount,
   setAccount: (account?: string) => account,
   setEmail: (email?: string) => email,
+  setVerifierSignature: (verifierSignature?: VerifierSignature) => verifierSignature,
   _setAccountBalance: (balance: BalanceWithTokens | null) => balance,
-  _setValidationError: (validationError?: { i18nCode: string; vars?: { [key: string]: any } }) => validationError,
   _setTxFee: (txFee?: string | null) => txFee,
+  _setValidationError: (validationError?: { i18nCode: string; vars?: { [key: string]: any } }) => validationError,
   contribute: none,
+  _setRegisteringUser: (props: RegisteringUserProps) => props,
+  registerUser: none,
+  _userRegistered: (props: ReadyProps) => props,
   _validateContribution: none,
   _setContributionSubmitting: (props: ContributionSubmittingProps) => props,
   _finalizedContributionSuccess: (props: ContributionSuccessProps) => props,
@@ -81,15 +75,16 @@ export type ContributeEvent = MemberType<typeof ContributeEvent> // eslint-disab
 // This is returned from the useCrowdloanContribute hook
 export type DispatchContributeEvent = (event: ContributeEvent) => void
 
+type VerifierSignature = { sr25519: string } | { ed25519: string }
+
 // All of the types of props which are passed to the various state constructors
 type InitializeProps = {
+  crowdloanId: string
   relayChainId: number
   parachainId: number
 }
-type SignatureProps = {
-  // TODO: Implement
-}
 type ReadyProps = {
+  crowdloanId: string
   relayChainId: number
   relayNativeToken: string
   relayTokenDecimals: number
@@ -101,7 +96,7 @@ type ReadyProps = {
   contributionAmount: string
   account?: string
   email?: string
-  verifierSignature?: string
+  verifierSignature?: VerifierSignature
 
   api?: ApiPromise
   accountBalance?: BalanceWithTokens | null
@@ -110,6 +105,24 @@ type ReadyProps = {
   submissionRequested: boolean
   submissionValidated: boolean
 }
+type RegisteringUserProps = {
+  crowdloanId: string
+  relayChainId: number
+  relayNativeToken: string
+  relayTokenDecimals: number
+  relayRpcs: string[]
+  parachainId: number
+  parachainName?: string
+  subscanUrl?: string
+
+  contributionAmount: string
+  account?: string
+  email?: string
+
+  api?: ApiPromise
+  submissionRequested: boolean
+}
+
 type ContributionSubmittingProps = {
   explorerUrl?: string
 }
@@ -142,11 +155,15 @@ export function useCrowdloanContribute(): [ContributeState, DispatchContributeEv
   // used to asynchronously react to state changes, fire off side effects and dispatch further ContributeEvents
   //
   useInitializeThunk(state, dispatch)
+
   useApiThunk(state, dispatch)
   useAccountBalanceThunk(state, dispatch)
-  useValidateAccountHasContributionBalanceThunk(state, dispatch)
   useTxFeeThunk(state, dispatch)
+  useValidateAccountHasContributionBalanceThunk(state, dispatch)
   useValidateContributionThunk(state, dispatch)
+
+  useMoonbeamVerifierSignatureThunk(state, dispatch)
+  useMoonbeamRegisterUserThunk(state, dispatch)
   useSignAndSendContributionThunk(state, dispatch)
 
   return [state, dispatch]
@@ -161,21 +178,29 @@ export function useCrowdloanContribute(): [ContributeState, DispatchContributeEv
 // it receives the current state and an event
 // it then returns the new state
 function contributeEventReducer(state: ContributeState, event: ContributeEvent): ContributeState {
-  if (process.env.NODE_ENV === 'development')
+  if (process.env.NODE_ENV === 'development') {
     console.log(`Dispatching event ${event.variant} with data ${JSON.stringify(event.data, null, 2)}`)
+  }
+
+  const ignoreWithWarning = () => {
+    console.warn(`Ignoring ContributeEvent.${event.variant}`)
+    return state
+  }
+  const ignoreWithContextWarning = (context: string) => () => {
+    console.warn(`Ignoring ContributeEvent.${event.variant}: ${context}`)
+    return state
+  }
 
   return event.match({
     initialize: props =>
       state.match({
         Uninitialized: () => ContributeState.Initializing(props),
-        _: () => {
-          console.warn('Ignoring ContributeEvent.initialize: ContributeState is already initialized')
-          return state
-        },
+        _: ignoreWithContextWarning('ContributeState is already initialized'),
       }),
 
     _noRpcsForRelayChain: () => ContributeState.NoRpcsForRelayChain,
     _noChaindataForRelayChain: () => ContributeState.NoChaindataForRelayChain,
+    _ipBanned: () => ContributeState.IpBanned,
     _initialized: props => ContributeState.Ready(props),
 
     _setApi: (api?: ApiPromise) =>
@@ -184,10 +209,11 @@ function contributeEventReducer(state: ContributeState, event: ContributeEvent):
           if (props.api) props.api.disconnect()
           return ContributeState.Ready({ ...props, api })
         },
-        _: () => {
-          console.warn('Ignoring _setApi')
-          return state
+        RegisteringUser: props => {
+          if (props.api) props.api.disconnect()
+          return ContributeState.RegisteringUser({ ...props, api })
         },
+        _: ignoreWithWarning,
       }),
 
     setContributionAmount: (contributionAmount: string) =>
@@ -196,28 +222,29 @@ function contributeEventReducer(state: ContributeState, event: ContributeEvent):
           ContributeState.Ready({
             ...props,
             contributionAmount: filterContributionAmount(contributionAmount),
+            verifierSignature: undefined, // changes in contribution amount need a new signature
             submissionRequested: false,
             submissionValidated: false,
           }),
-        _: () => {
-          console.warn('Ignoring setContributionAmount')
-          return state
-        },
+        _: ignoreWithWarning,
       }),
 
     setAccount: (account?: string) =>
       state.match({
-        Ready: props =>
-          ContributeState.Ready({
+        Ready: props => {
+          // don't reset verifierSignature/submissionRequested/etc when user re-selects the already-selected account
+          if (account === props.account) return state
+
+          return ContributeState.Ready({
             ...props,
             account,
+            accountBalance: undefined,
+            verifierSignature: undefined, // changes in account need a new signature
             submissionRequested: false,
             submissionValidated: false,
-          }),
-        _: () => {
-          console.warn('Ignoring setAccount')
-          return state
+          })
         },
+        _: ignoreWithWarning,
       }),
 
     setEmail: (email?: string) =>
@@ -229,10 +256,21 @@ function contributeEventReducer(state: ContributeState, event: ContributeEvent):
             submissionRequested: false,
             submissionValidated: false,
           }),
-        _: () => {
-          console.warn('Ignoring setEmail')
-          return state
-        },
+        _: ignoreWithWarning,
+      }),
+
+    setVerifierSignature: (verifierSignature?: VerifierSignature) =>
+      state.match({
+        Ready: props =>
+          ContributeState.Ready({
+            ...props,
+            verifierSignature,
+            // verifierSignature is set automatically by a thunk, not by text input from the user
+            // as such, we should continue with the user's request to submit their contribution - even if the verifierSignature has since changed
+            // submissionRequested: false,
+            submissionValidated: false,
+          }),
+        _: ignoreWithWarning,
       }),
 
     _setAccountBalance: (balance: Balance | null) =>
@@ -242,25 +280,7 @@ function contributeEventReducer(state: ContributeState, event: ContributeEvent):
             ...props,
             accountBalance: addTokensToBalances([balance], props.relayTokenDecimals)[0],
           }),
-        _: () => {
-          console.warn('Ignoring _setAccountBalance')
-          return state
-        },
-      }),
-
-    _setValidationError: (validationError?: { i18nCode: string; vars?: { [key: string]: any } }) =>
-      state.match({
-        Ready: props =>
-          ContributeState.Ready({
-            ...props,
-            validationError,
-            submissionRequested: validationError !== undefined ? false : props.submissionRequested,
-            submissionValidated: false,
-          }),
-        _: () => {
-          console.warn('Ignoring _setValidationError')
-          return state
-        },
+        _: ignoreWithWarning,
       }),
 
     _setTxFee: (txFee?: string | null) =>
@@ -270,10 +290,20 @@ function contributeEventReducer(state: ContributeState, event: ContributeEvent):
             ...props,
             txFee,
           }),
-        _: () => {
-          console.warn('Ignoring _setTxFee')
-          return state
-        },
+        _: ignoreWithWarning,
+      }),
+
+    _setValidationError: (validationError?: { i18nCode: string; vars?: { [key: string]: any } }) =>
+      state.match({
+        Ready: props =>
+          ContributeState.Ready({
+            ...props,
+            validationError,
+            // if a validationError is shown to the user, we should cancel their request to submit their contribution
+            submissionRequested: validationError !== undefined ? false : props.submissionRequested,
+            submissionValidated: false,
+          }),
+        _: ignoreWithWarning,
       }),
 
     contribute: () =>
@@ -284,10 +314,34 @@ function contributeEventReducer(state: ContributeState, event: ContributeEvent):
             submissionRequested: true,
             submissionValidated: false,
           }),
-        _: () => {
-          console.warn('Ignoring contribute')
-          return state
-        },
+        _: ignoreWithWarning,
+      }),
+
+    _setRegisteringUser: props =>
+      state.match({
+        Ready: () => ContributeState.RegisteringUser(props),
+        _: ignoreWithWarning,
+      }),
+
+    registerUser: () =>
+      state.match({
+        RegisteringUser: props =>
+          ContributeState.RegisteringUser({
+            ...props,
+            submissionRequested: true,
+          }),
+        _: ignoreWithWarning,
+      }),
+
+    _userRegistered: props =>
+      state.match({
+        RegisteringUser: () =>
+          ContributeState.Ready({
+            ...props,
+            submissionRequested: true,
+            submissionValidated: false,
+          }),
+        _: ignoreWithWarning,
       }),
 
     _validateContribution: () =>
@@ -298,38 +352,26 @@ function contributeEventReducer(state: ContributeState, event: ContributeEvent):
             validationError: undefined,
             submissionValidated: true,
           }),
-        _: () => {
-          console.warn('Ignoring _validateContribution')
-          return state
-        },
+        _: ignoreWithWarning,
       }),
 
     _setContributionSubmitting: props =>
       state.match({
         Ready: () => ContributeState.ContributionSubmitting(props),
         ContributionSubmitting: () => ContributeState.ContributionSubmitting(props),
-        _: () => {
-          console.warn('Ignoring _setContributionSubmitting')
-          return state
-        },
+        _: ignoreWithWarning,
       }),
 
     _finalizedContributionSuccess: props =>
       state.match({
         ContributionSubmitting: () => ContributeState.ContributionSuccess(props),
-        _: () => {
-          console.warn('Ignoring _finalizedContributionSuccess')
-          return state
-        },
+        _: ignoreWithWarning,
       }),
 
     _finalizedContributionFailed: props =>
       state.match({
         ContributionSubmitting: () => ContributeState.ContributionFailed(props),
-        _: () => {
-          console.warn('Ignoring _finalizedContributionFailed')
-          return state
-        },
+        _: ignoreWithWarning,
       }),
   })
 }
@@ -341,14 +383,14 @@ function contributeEventReducer(state: ContributeState, event: ContributeEvent):
 // When in the ContributeState.Initializing state, this thunk will call _setInitialized as needed
 function useInitializeThunk(state: ContributeState, dispatch: DispatchContributeEvent) {
   const stateDeps = state.match({
-    Initializing: ({ relayChainId, parachainId }) => ({ relayChainId, parachainId }),
+    Initializing: ({ crowdloanId, relayChainId, parachainId }) => ({ crowdloanId, relayChainId, parachainId }),
     _: () => false as false,
   })
 
   useEffect(() => {
     ;(async () => {
       if (!stateDeps) return
-      const { relayChainId, parachainId } = stateDeps
+      const { crowdloanId, relayChainId, parachainId } = stateDeps
 
       const [relayChaindata, chaindata] = await Promise.all([
         Chaindata.chain(relayChainId.toString()),
@@ -367,8 +409,17 @@ function useInitializeThunk(state: ContributeState, dispatch: DispatchContribute
 
       const parachainName = chaindata.name !== null ? chaindata.name : undefined
 
+      if (Moonbeam.is(relayChainId, parachainId)) {
+        const ipBlockedResponse = await fetch(`${Moonbeam.api}/health`, {
+          headers: Moonbeam.apiKey ? { 'x-api-key': Moonbeam.apiKey } : undefined,
+        })
+        const status = ipBlockedResponse.status
+        if (status !== 200) return dispatch(ContributeEvent._ipBanned)
+      }
+
       dispatch(
         ContributeEvent._initialized({
+          crowdloanId,
           relayChainId,
           relayNativeToken,
           relayTokenDecimals,
@@ -389,6 +440,7 @@ function useInitializeThunk(state: ContributeState, dispatch: DispatchContribute
 function useApiThunk(state: ContributeState, dispatch: DispatchContributeEvent) {
   const stateDeps = state.match({
     Ready: ({ relayRpcs }) => ({ relayRpcs }),
+    RegisteringUser: ({ relayRpcs }) => ({ relayRpcs }),
     _: () => false as false,
   })
 
@@ -542,6 +594,258 @@ function useTxFeeThunk(state: ContributeState, dispatch: DispatchContributeEvent
   }, [dispatch, stateDeps && stateDeps?.api, JSON.stringify(jsonCmpStateDeps)]) // eslint-disable-line react-hooks/exhaustive-deps
 }
 
+function useMoonbeamVerifierSignatureThunk(state: ContributeState, dispatch: DispatchContributeEvent) {
+  const stateDeps = state.match({
+    Ready: ({
+      crowdloanId,
+      relayChainId,
+      relayNativeToken,
+      relayTokenDecimals,
+      relayRpcs,
+      parachainId,
+      parachainName,
+      subscanUrl,
+
+      contributionAmount,
+      account,
+      email,
+      verifierSignature,
+
+      api,
+      submissionRequested,
+    }) => ({
+      crowdloanId,
+      relayChainId,
+      relayNativeToken,
+      relayTokenDecimals,
+      relayRpcs,
+      parachainId,
+      parachainName,
+      subscanUrl,
+
+      contributionAmount,
+      account,
+      email,
+      verifierSignature,
+
+      api,
+      submissionRequested,
+    }),
+    _: () => false as false,
+  })
+  const { api, ...jsonCmpStateDeps } = stateDeps || {}
+
+  // don't fetch contributions unless we're on moonbeam crowdloan
+  // (if accounts is [] then useCrowdloanContributions will skip the query)
+  const contributionsProps =
+    stateDeps !== false && stateDeps.account !== undefined && Moonbeam.is(stateDeps.relayChainId, stateDeps.parachainId)
+      ? { accounts: [stateDeps.account], crowdloans: [stateDeps.crowdloanId] }
+      : { accounts: [], crowdloans: [] }
+
+  const { contributions, hydrated: contributionsHydrated } = useCrowdloanContributions(contributionsProps)
+
+  useEffect(() => {
+    if (!stateDeps) return
+    const {
+      crowdloanId,
+      relayChainId,
+      relayNativeToken,
+      relayTokenDecimals,
+      relayRpcs,
+      parachainId,
+      parachainName,
+      subscanUrl,
+
+      contributionAmount,
+      account,
+      email,
+      verifierSignature,
+
+      api,
+      submissionRequested,
+    } = stateDeps
+
+    if (!Moonbeam.is(relayChainId, parachainId)) return
+    if (!account) return
+    if (!contributionsHydrated) return
+    if (!api) return
+
+    // cancel if we have already calculated a verifierSignature
+    if (verifierSignature) return
+
+    // wait for user to hit submit
+    if (!submissionRequested) return
+    ;(async () => {
+      // check if user is already registered for the moonbeam crowdloan
+      const checkRemarkResponse = await fetch(
+        `${Moonbeam.api}/check-remark/${encodeAnyAddress(account, relayChainId)}`,
+        { headers: Moonbeam.apiKey ? { 'x-api-key': Moonbeam.apiKey } : undefined }
+      )
+      if (!checkRemarkResponse.ok)
+        return dispatch(
+          ContributeEvent._setValidationError({
+            i18nCode: 'The Moonbeam API is unavailable, please try again later',
+          })
+        )
+      if (!(await checkRemarkResponse.json()).verified)
+        return dispatch(
+          ContributeEvent._setRegisteringUser({
+            crowdloanId,
+            relayChainId,
+            relayNativeToken,
+            relayTokenDecimals,
+            relayRpcs,
+            parachainId,
+            parachainName,
+            subscanUrl,
+
+            contributionAmount,
+            account,
+            email,
+
+            api,
+            submissionRequested: false,
+          })
+        )
+
+      // get verificationSignature from moonbeam api
+      const guid = uuidv4()
+      const previousTotalContributions = contributions.reduce(
+        (total, contribution) => addBigNumbers(total, contribution.amount),
+        '0'
+      )
+      const contributionPlanck = tokensToPlanck(contributionAmount, relayTokenDecimals)
+      const makeSignatureResponse = await fetch(`${Moonbeam.api}/make-signature`, {
+        method: 'POST',
+        headers: Moonbeam.apiKey ? { 'x-api-key': Moonbeam.apiKey } : undefined,
+        body: JSON.stringify({
+          'address': encodeAnyAddress(account, relayChainId),
+          'previous-total-contribution': previousTotalContributions,
+          'contribution': contributionPlanck,
+          'guid': guid,
+        }),
+      })
+      if (!makeSignatureResponse.ok)
+        return dispatch(
+          ContributeEvent._setValidationError({ i18nCode: 'The Moonbeam API is unavailable, please try again later' })
+        )
+      const { signature } = await makeSignatureResponse.json()
+
+      dispatch(ContributeEvent.setVerifierSignature({ sr25519: signature as string }))
+    })()
+  }, [dispatch, contributions, contributionsHydrated, stateDeps && stateDeps?.api, JSON.stringify(jsonCmpStateDeps)]) // eslint-disable-line react-hooks/exhaustive-deps
+}
+
+function useMoonbeamRegisterUserThunk(state: ContributeState, dispatch: DispatchContributeEvent) {
+  const stateDeps = state.match({
+    RegisteringUser: ({
+      crowdloanId,
+      relayChainId,
+      relayNativeToken,
+      relayTokenDecimals,
+      relayRpcs,
+      parachainId,
+      parachainName,
+      subscanUrl,
+
+      contributionAmount,
+      account,
+      email,
+
+      api,
+      submissionRequested,
+    }) => ({
+      crowdloanId,
+      relayChainId,
+      relayNativeToken,
+      relayTokenDecimals,
+      relayRpcs,
+      parachainId,
+      parachainName,
+      subscanUrl,
+
+      contributionAmount,
+      account,
+      email,
+
+      api,
+      submissionRequested,
+    }),
+    _: () => false as false,
+  })
+  const { api, ...jsonCmpStateDeps } = stateDeps || {}
+
+  useEffect(() => {
+    if (!stateDeps) return
+
+    const {
+      crowdloanId,
+      relayChainId,
+      relayNativeToken,
+      relayTokenDecimals,
+      relayRpcs,
+      parachainId,
+      parachainName,
+      subscanUrl,
+
+      contributionAmount,
+      account,
+      email,
+
+      api,
+      submissionRequested,
+    } = stateDeps
+
+    if (!api) return
+    if (!submissionRequested) return
+    if (!account)
+      return dispatch(
+        ContributeEvent._initialized({
+          crowdloanId,
+          relayChainId,
+          relayNativeToken,
+          relayTokenDecimals,
+          relayRpcs,
+          parachainId,
+          parachainName,
+          subscanUrl,
+
+          contributionAmount,
+          account,
+          email,
+
+          api,
+          submissionRequested: false,
+          submissionValidated: false,
+        })
+      )
+    ;(async () => {
+      const verified = await submitTermsAndConditions(api, encodeAnyAddress(account, relayChainId))
+      if (!verified) throw new Error('Failed to verify user registration')
+      dispatch(
+        ContributeEvent._userRegistered({
+          crowdloanId,
+          relayChainId,
+          relayNativeToken,
+          relayTokenDecimals,
+          relayRpcs,
+          parachainId,
+          parachainName,
+          subscanUrl,
+
+          contributionAmount,
+          account,
+          email,
+
+          api,
+          submissionRequested: true,
+          submissionValidated: false,
+        })
+      )
+    })()
+  }, [dispatch, stateDeps && stateDeps?.api, JSON.stringify(jsonCmpStateDeps)]) // eslint-disable-line react-hooks/exhaustive-deps
+}
+
 function useValidateContributionThunk(state: ContributeState, dispatch: DispatchContributeEvent) {
   const stateDeps = state.match({
     Ready: ({
@@ -549,9 +853,11 @@ function useValidateContributionThunk(state: ContributeState, dispatch: Dispatch
       relayNativeToken,
       relayTokenDecimals,
       parachainId,
+
       contributionAmount,
       account,
-      email,
+      verifierSignature,
+
       api,
       accountBalance,
       txFee,
@@ -561,9 +867,11 @@ function useValidateContributionThunk(state: ContributeState, dispatch: Dispatch
       relayNativeToken,
       relayTokenDecimals,
       parachainId,
+
       contributionAmount,
       account,
-      email,
+      verifierSignature,
+
       api,
       accountBalance,
       txFee,
@@ -580,15 +888,22 @@ function useValidateContributionThunk(state: ContributeState, dispatch: Dispatch
       relayNativeToken,
       relayTokenDecimals,
       parachainId,
+
       contributionAmount,
       account,
+      verifierSignature,
+
       api,
       accountBalance,
       txFee,
       submissionRequested,
     } = stateDeps
 
+    // these validations will only run after the user hits submit
     if (!submissionRequested) return
+
+    // cancel checks if crowdloan needs a verifierSignature and one has not yet been set
+    if (overrideByIds(relayChainId, parachainId)?.needsVerifierSignature && !verifierSignature) return
 
     const setError = (error: { i18nCode: string; vars?: { [key: string]: any } }) =>
       dispatch(ContributeEvent._setValidationError(error))
@@ -614,10 +929,9 @@ function useValidateContributionThunk(state: ContributeState, dispatch: Dispatch
 
     if (!api) return
 
-    const minContribution =
-      relayChainId === acalaOptions.relayId && parachainId === acalaOptions.parachainId
-        ? '1' // acala liquid crowdloan has a minimum of 1 DOT
-        : api.consts.crowdloan.minContribution.toString()
+    const minContribution = Acala.is(relayChainId, parachainId)
+      ? '1' // acala liquid crowdloan has a minimum of 1 DOT
+      : api.consts.crowdloan.minContribution.toString()
     const contributionPlanck = tokensToPlanck(contributionAmount, relayTokenDecimals)
     const minimum = new BigNumber(planckToTokens(minContribution.toString(), relayTokenDecimals) || '').toFixed(2)
 
@@ -829,22 +1143,16 @@ type BuildTxProps = {
   contributionPlanck: string
   account: string
   email?: string
-  verifierSignature?: string
+  verifierSignature?: VerifierSignature
 
   api: ApiPromise
   estimateOnly?: true
 }
-type BuildTxResponse = SubmittableExtrinsic<'promise', ISubmittableResult>
+type BuildTxResponse = SubmittableExtrinsic<'promise', SubmittableResult>
 async function buildTx(props: BuildTxProps): Promise<BuildTxResponse> {
-  const buildTxFuncs = {
-    [`${acalaOptions.relayId}-${acalaOptions.parachainId}`]: buildAcalaTx,
-    [`${astarOptions.relayId}-${astarOptions.parachainId}`]: buildAstarTx,
-  }
-
-  const relayWithParachainId = `${props.relayChainId}-${props.parachainId}`
-  const buildTxFunc = buildTxFuncs[relayWithParachainId] || buildGenericTx
-
-  return await buildTxFunc(props)
+  if (Acala.is(props.relayChainId, props.parachainId)) return await buildAcalaTx(props)
+  if (Astar.is(props.relayChainId, props.parachainId)) return await buildAstarTx(props)
+  return await buildGenericTx(props)
 }
 
 async function buildGenericTx({
@@ -867,7 +1175,7 @@ async function buildAstarTx({
   verifierSignature,
   api,
 }: BuildTxProps): Promise<BuildTxResponse> {
-  const referrerAddress = astarOptions.referral
+  const referrerAddress = Astar.referrer
 
   const txs = [
     api.tx.crowdloan.contribute(parachainId, contributionPlanck, verifierSignature),
@@ -889,13 +1197,13 @@ async function buildAcalaTx({
   // don't bother acala's API when we only want to calculate a txFee
   const statementResult = estimateOnly
     ? {
-        paraId: acalaOptions.parachainId,
+        paraId: Acala.paraId,
         statementMsgHash: '0x39d8579eba72f48339686db6c4f6fb1c3164bc09b10226e64211c12b0b43460d',
         statement:
           'I hereby agree to the terms of the statement whose SHA-256 multihash is QmeUtSuuMBAKzcfLJB2SnMfQoeifYagyWrrNhucRX1vjA8. (This may be found at the URL: https://acala.network/acala/terms)',
         proxyAddress: '12CnY6b89bFfTbM6Wh3cdFvHAfxxsDUQHHXtT2Ui7SQzxBrn',
       }
-    : await (await fetch(`${acalaOptions.api}/statement`)).json()
+    : await (await fetch(`${Acala.api}/statement`)).json()
 
   const proxyAddress = statementResult.proxyAddress
   const statement = statementResult.statement
@@ -905,14 +1213,14 @@ async function buildAcalaTx({
 
   const address = encodeAnyAddress(account, relayChainId)
   const amount = contributionPlanck
-  const referral = acalaOptions.referral
+  const referral = Acala.referrer
   const receiveEmail = email !== undefined && email.length > 0
 
   if (!estimateOnly) {
-    const response = await fetch(`${acalaOptions.api}/transfer`, {
+    const response = await fetch(`${Acala.api}/transfer`, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${acalaOptions.jwt}`,
+        'Authorization': `Bearer ${Acala.apiBearerToken}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
@@ -938,7 +1246,7 @@ async function buildAcalaTx({
 
 async function deriveExplorerUrl(
   api: ApiPromise,
-  result: ISubmittableResult,
+  result: SubmittableResult,
   subscanUrl?: string
 ): Promise<string | undefined> {
   if (!subscanUrl) return
@@ -987,10 +1295,4 @@ async function deriveExplorerUrl(
   const explorerUrl = txId ? `${subscanUrl}/extrinsic/${txId}` : `${subscanUrl}/block/${blockHash}`
 
   return explorerUrl
-}
-
-function encodePolkadotAddressAsHexadecimalPublicKey(polkadotAddress: string): string {
-  const byteArray = decodeAnyAddress(polkadotAddress)
-  const hexEncoded = [...byteArray].map(x => x.toString(16).padStart(2, '0')).join('')
-  return `0x${hexEncoded}`
 }

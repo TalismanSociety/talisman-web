@@ -3,7 +3,8 @@ import { ReactComponent as XCircle } from '@assets/icons/x-circle.svg'
 import { Button, DesktopRequired, Field, MaterialLoader, Pendor, useModal } from '@components'
 import { TalismanHandLike } from '@components/TalismanHandLike'
 import { TalismanHandLoader } from '@components/TalismanHandLoader'
-import { ContributeEvent, acalaOptions, useCrowdloanContribute } from '@libs/crowdloans'
+import { ContributeEvent, useCrowdloanContribute } from '@libs/crowdloans'
+import { Acala } from '@libs/crowdloans/crowdloanOverrides'
 import { useActiveAccount, useCrowdloanById } from '@libs/talisman'
 import { useTokenPrice } from '@libs/tokenprices'
 import { multiplyBigNumbers } from '@talismn/util'
@@ -25,20 +26,36 @@ export default function Contribute({ className, id }: ContributeProps) {
 
   const { crowdloan } = useCrowdloanById(id)
   useEffect(() => {
-    if (!crowdloan) return
+    if (!id || !crowdloan) return
 
     const relayChainId = crowdloan.relayChainId
     const parachainId = Number(crowdloan.parachain.paraId.split('-').slice(-1)[0])
 
-    dispatch(ContributeEvent.initialize({ relayChainId, parachainId }))
-  }, [crowdloan, dispatch])
+    dispatch(ContributeEvent.initialize({ crowdloanId: id, relayChainId, parachainId }))
+  }, [id, crowdloan, dispatch])
 
   if (isMobileBrowser()) return <DesktopRequired />
 
   return contributeState.match({
+    Uninitialized: () => null,
     Initializing: () => <Loading />,
+
+    NoRpcsForRelayChain: () => 'Sorry, making contributions to this crowdloan via Talisman is not yet supported.',
+    NoChaindataForRelayChain: () => 'Sorry, making contributions to this crowdloan via Talisman is not yet supported.',
+    IpBanned: () => 'Sorry, this crowdloan is not accepting contributions from IP addresses within your region.',
+
     Ready: props => (
       <ContributeTo
+        {...{
+          className,
+          closeModal,
+          dispatch,
+          ...props,
+        }}
+      />
+    ),
+    RegisteringUser: props => (
+      <RegisteringUser
         {...{
           className,
           closeModal,
@@ -74,7 +91,6 @@ export default function Contribute({ className, id }: ContributeProps) {
         }}
       />
     ),
-    _: () => null,
   })
 }
 
@@ -174,7 +190,7 @@ const ContributeTo = styled(
             </div>
           </div>
 
-          {relayChainId === acalaOptions.relayId && parachainId === acalaOptions.parachainId && (
+          {Acala.is(relayChainId, parachainId) && (
             <div className="row">
               <div className="email-input">
                 <Field.Input
@@ -409,6 +425,103 @@ const InProgress = styled(({ className, closeModal, explorerUrl }) => {
       border-radius: 5.6rem;
       padding: 0.6rem 1.2rem;
       cursor: pointer;
+    }
+  }
+
+  > footer {
+    display: flex;
+    justify-content: center;
+
+    button {
+      min-width: 27.8rem;
+    }
+  }
+`
+
+const RegisteringUser = styled(({ className, closeModal, dispatch, submissionRequested }) => {
+  const { t } = useTranslation('crowdloan')
+
+  const terms =
+    'https://glib-calendula-bf6.notion.site/Moonbeam-Crowdloan-Terms-and-Conditions-da2d8fe389214ae9a382a755110a6f45'
+
+  return (
+    <div className={className}>
+      <header>
+        <h2>{t('registeringUser.header')}</h2>
+      </header>
+      <main>
+        {submissionRequested ? (
+          <Loading className="loading" />
+        ) : (
+          <>
+            <div>{t('registeringUser.description')}</div>
+            <a href={terms} target="_blank" rel="noopener noreferrer">
+              {t('registeringUser.termsNote')}
+            </a>
+            <div>{t('registeringUser.feeNote')}</div>
+          </>
+        )}
+      </main>
+      <footer>
+        <Button
+          type="submit"
+          primary
+          disabled={submissionRequested}
+          onClick={() => {
+            dispatch(ContributeEvent.registerUser)
+          }}
+        >
+          {t('registeringUser.primaryCta')}
+        </Button>
+      </footer>
+    </div>
+  )
+})`
+  > header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  > header > h2 {
+    text-align: center;
+    font-size: 2.4rem;
+    font-weight: 600;
+    margin-bottom: 8.2rem;
+  }
+  > header > .logo {
+    font-size: 6.4rem;
+    margin-bottom: 8.2rem;
+    color: var(--color-primary);
+    user-select: none;
+  }
+
+  > main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 2rem;
+
+    > * {
+      margin-bottom: 2rem;
+    }
+
+    > a {
+      color: var(--color-primary);
+    }
+
+    div:nth-child(3) {
+      font-size: 1.5rem;
+      color: var(--color-mid);
+      font-style: italic;
+    }
+
+    > .loading {
+      margin-top: 0;
+      margin-bottom: 6.2rem;
+    }
+
+    > button {
+      min-height: 7rem;
     }
   }
 
