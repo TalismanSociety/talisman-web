@@ -22,6 +22,30 @@
       "info": null
     }
   },
+  "0-2012": {
+    "relayId": 0,
+    "paraId": 2012,
+    "rewards": {
+      "tokens": null,
+      "custom": [
+        {
+          "title": "PARA per DOT",
+          "value": ">50"
+        },
+        {
+          "title": "Crowdloan Allocation",
+          "value": "1,500,000,000 PARA"
+        }
+      ],
+      "bonus": {
+        "short": "Bonus 🗝",
+        "full": "Receive a Talisman Spirit Key 🗝",
+        "info": "Receive a <strong>Talisman Spirit Key </strong> if you are one of the first 1000 crowdloan contributors on the Talisman dashboard."
+      },
+      "info": null
+    }
+  },
+
   "0-2013": {
     "relayId": 0,
     "paraId": 2013,
@@ -49,6 +73,60 @@
         "short": "Up to 10% + 🗝",
         "full": "Earn up to 10% bonus LIT + 🗝",
         "info": "10% bonus LIT if you contribute <strong>before parachain auction starts</strong>. 5% bonus LIT <strong> within the first 7 days </strong> since parachain auction starting."
+      },
+      "info": null
+    }
+  },
+  "0-2015": {
+    "relayId": 0,
+    "paraId": 2015,
+    "rewards": {
+      "tokens": null,
+      "custom": [
+        {
+          "title": "MANTA per DOT",
+          "value": "4"
+        },
+        {
+          "title": "Total Supply",
+          "value": "1,000,000,000 MANTA"
+        },
+        {
+          "title": "Crowdloan Allocation",
+          "value": "120,000,004 MANTA"
+        }
+      ],
+      "bonus": {
+        "short": "Bonus 🗝",
+        "full": "Receive a Talisman Spirit Key 🗝",
+        "info": "Receive a <strong>Talisman Spirit Key </strong> if you are one of the first 1000 crowdloan contributors on the Talisman dashboard."
+      },
+      "info": null
+    }
+  },
+  "0-2018": {
+    "relayId": 0,
+    "paraId": 2018,
+    "rewards": {
+      "tokens": null,
+      "custom": [
+        {
+          "title": "GOV per DOT",
+          "value": "TBD"
+        },
+        {
+          "title": "Total Supply",
+          "value": "1,000,000,000 GOV"
+        },
+        {
+          "title": "Crowdloan Allocation",
+          "value": "300,000,000 GOV"
+        }
+      ],
+      "bonus": {
+        "short": "Bonus 🗝",
+        "full": "Receive a Talisman Spirit Key 🗝",
+        "info": "Receive a <strong>Talisman Spirit Key </strong> if you are one of the first 1000 crowdloan contributors on the Talisman dashboard."
       },
       "info": null
     }
