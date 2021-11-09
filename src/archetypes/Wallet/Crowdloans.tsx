@@ -16,18 +16,15 @@ import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 
-const CrowdloanItem = styled(({ id, className, infoOnly = false }) => {
+const CrowdloanItem = styled(({ id, className }) => {
   const { crowdloan } = useCrowdloanById(id)
   const parachainId = crowdloan?.parachain.paraId
   const relayChainId = useMemo(() => id.split('-')[0], [id])
   const relayChain = useChain(relayChainId)
   const chain = useChain(parachainId)
 
-  // Only for info
-  const infoChain = useChain(id)
-
   const { nativeToken: relayNativeToken, tokenDecimals: relayTokenDecimals } = relayChain
-  const { name, longName } = infoOnly ? infoChain : chain
+  const { name, longName } = chain
   const { price: relayTokenPrice, loading: relayPriceLoading } = useTokenPrice(relayNativeToken)
 
   const accounts = useAccountAddresses()
@@ -54,31 +51,51 @@ const CrowdloanItem = styled(({ id, className, infoOnly = false }) => {
   return (
     <div className={`${className} ${id}`}>
       <span className="left">
+        <Info title={name} subtitle={longName || name} graphic={<ChainLogo chain={chain} type="logo" size={4} />} />
+      </span>
+      <span className="right">
         <Info
-          title={name}
-          subtitle={longName || name}
-          graphic={<ChainLogo chain={infoOnly ? infoChain : chain} type="logo" size={4} />}
+          title={
+            <Pendor suffix={` ${relayTokenSymbol} Contributed`}>
+              {contributedTokens && formatCommas(contributedTokens)}
+            </Pendor>
+          }
+          subtitle={
+            contributedTokens ? (
+              <Pendor prefix={!contributedUsd && '-'} require={!relayPriceLoading}>
+                {contributedUsd && formatCurrency(contributedUsd)}
+              </Pendor>
+            ) : null
+          }
         />
       </span>
-      {infoOnly}
-      {!infoOnly && (
-        <span className="right">
-          <Info
-            title={
-              <Pendor suffix={` ${relayTokenSymbol} Contributed`}>
-                {contributedTokens && formatCommas(contributedTokens)}
-              </Pendor>
-            }
-            subtitle={
-              contributedTokens ? (
-                <Pendor prefix={!contributedUsd && '-'} require={!relayPriceLoading}>
-                  {contributedUsd && formatCurrency(contributedUsd)}
-                </Pendor>
-              ) : null
-            }
-          />
-        </span>
-      )}
+    </div>
+  )
+})`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  > span {
+    display: flex;
+    align-items: center;
+
+    &.right {
+      text-align: right;
+    }
+  }
+`
+
+const CrowdloanInfoItem = styled(({ className, id, info }) => {
+  const chain = useChain(id)
+  const { name, longName } = chain
+
+  return (
+    <div className={`${className} ${id}`}>
+      <span className="left">
+        <Info title={name} subtitle={longName || name} graphic={<ChainLogo chain={chain} type="logo" size={4} />} />
+      </span>
+      {info}
     </div>
   )
 })`
@@ -169,17 +186,13 @@ const Crowdloans = ({ className }: { className?: string }) => {
         ) : Object.keys(totalAliveContributions).length < 1 ? (
           <PanelSection comingSoon>{`${`😕 `} ${t('You have not contributed to any Crowdloans')}`}</PanelSection>
         ) : (
-          <>
-            {Object.keys(totalAliveContributions).map(id => (
-              <CrowdloanItemWithLink key={id} id={id} />
-            ))}
-          </>
+          Object.keys(totalAliveContributions).map(id => <CrowdloanItemWithLink key={id} id={id} />)
         )}
         {/* Remove when we integrate Acala rewards + bonuses directly into our dashboard */}
         <PanelSection>
-          <CrowdloanItem
+          <CrowdloanInfoItem
             id="0-2000"
-            infoOnly={
+            info={
               <a
                 href="https://wiki.acala.network/acala/acala-crowdloan/faq#how-do-i-check-my-crowdloan-contribution"
                 target="_blank"
