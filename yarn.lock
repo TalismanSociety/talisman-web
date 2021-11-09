@@ -2826,7 +2826,7 @@ __metadata:
     react-router: ^5.2.0
     react-router-dom: ^5.2.0
     react-scripts: 4.0.3
-    rmrk-tools: 1.0.17
+    rmrk-tools: ^2.0.25
     safety-match: ^0.4.4
     styled-components: ^5.3.0
     typescript: ^4.1.2
@@ -6780,6 +6780,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"emoji-regex@npm:^9.2.2":
+  version: 9.2.2
+  resolution: "emoji-regex@npm:9.2.2"
+  checksum: 8487182da74aabd810ac6d6f1994111dfc0e331b01271ae01ec1eb0ad7b5ecc2bbbbd2f053c05cb55a1ac30449527d819bbfbf0e3de1023db308cbcb47f86601
+  languageName: node
+  linkType: hard
+
 "emojis-list@npm:^2.0.0":
   version: 2.1.0
   resolution: "emojis-list@npm:2.1.0"
@@ -10407,7 +10414,7 @@ fsevents@^1.2.7:
 "json-stream-stringify@git+https://github.com/Yuripetusko/json-stream-stringify.git#build":
   version: 2.0.3
   resolution: "json-stream-stringify@https://github.com/Yuripetusko/json-stream-stringify.git#commit=ed3d32a6b5c085e6486f49e0dd2458facdec1b76"
-  checksum: 79be96d245d843f63c7528340889aabd4a1fad0e16c97ebc113a75300e1e7ff89ab146da8cd1865160af7b525ba1d539aef8548f2cfe045eb93d0e5fa7be12e8
+  checksum: 576442a84fd5e1a85c902312c8f07a7fa719b9194be6a36cba4deb120c43d4cacc55846beb5bc8727720a9b030674db25f7c7ccc04fabe399dc2cca58346913f
   languageName: node
   linkType: hard
 
@@ -11409,6 +11416,15 @@ fsevents@^1.2.7:
   bin:
     nanoid: bin/nanoid.cjs
   checksum: f6246023d5d8313c2c16be05c18cdb189a6de50ab6418b513b34086eda4aabd12866b2cbe435548c760dc43cf11830b26b14b113afde47305398e3345795e433
+  languageName: node
+  linkType: hard
+
+"nanoid@npm:^3.1.23":
+  version: 3.1.30
+  resolution: "nanoid@npm:3.1.30"
+  bin:
+    nanoid: bin/nanoid.cjs
+  checksum: 276d0d4b0c41c46aeefec5f09f093e4085a2352d06881c845db22b84f8ef72cc8defae6d76bfb1d8a2a128eb2dec42ab148d16582be4e7754c97905806ef57b6
   languageName: node
   linkType: hard
 
@@ -14431,15 +14447,17 @@ resolve@1.18.1:
   languageName: node
   linkType: hard
 
-"rmrk-tools@npm:1.0.17":
-  version: 1.0.17
-  resolution: "rmrk-tools@npm:1.0.17"
+"rmrk-tools@npm:^2.0.25":
+  version: 2.0.25
+  resolution: "rmrk-tools@npm:2.0.25"
   dependencies:
     JSONStream: ^1.3.5
     chalk: ^4.1.0
+    emoji-regex: ^9.2.2
     isomorphic-fetch: ^3.0.0
     it-all: ^1.0.5
     json-stream-stringify: "git+https://github.com/Yuripetusko/json-stream-stringify.git#build"
+    nanoid: ^3.1.23
     superstruct: ^0.14.2
     uint8arrays: ^2.1.3
     winston: ^3.3.3
@@ -14449,7 +14467,7 @@ resolve@1.18.1:
     rmrk-tools-metadata: dist-cli/cli/metadata.js
     rmrk-tools-seed: dist-cli/cli/seed.js
     rmrk-tools-validate: dist-cli/cli/validate.js
-  checksum: 2f5b55ce5e1b8705aeaaf92d56880ca28005d037f2a82eb9871b0912fb0f57da846abc24d866da6133ee1bc94f3a3268fbcb17dbbe079da5bcffd4c4ada6a12d
+  checksum: fdead50f6b0ff75eaf75f1f795263e8b1a16e06322458c5be0381165fa341d7b8ed975e5dd4610fa8c6a985700c3c9d209d7c0a42950f7307cae7c0db3cffc2f
   languageName: node
   linkType: hard
 
