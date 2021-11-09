@@ -231,15 +231,19 @@ function contributeEventReducer(state: ContributeState, event: ContributeEvent):
 
     setAccount: (account?: string) =>
       state.match({
-        Ready: props =>
-          ContributeState.Ready({
+        Ready: props => {
+          // don't reset verifierSignature/submissionRequested/etc when user re-selects the already-selected account
+          if (account === props.account) return state
+
+          return ContributeState.Ready({
             ...props,
             account,
             accountBalance: undefined,
             verifierSignature: undefined, // changes in account need a new signature
             submissionRequested: false,
             submissionValidated: false,
-          }),
+          })
+        },
         _: ignoreWithWarning,
       }),
 
@@ -331,7 +335,7 @@ function contributeEventReducer(state: ContributeState, event: ContributeEvent):
 
     _userRegistered: props =>
       state.match({
-        RegisteringUser: props =>
+        RegisteringUser: () =>
           ContributeState.Ready({
             ...props,
             submissionRequested: true,
