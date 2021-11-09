@@ -1,17 +1,17 @@
 import { Popup } from '@components'
+import { useCrowdloanById } from '@libs/talisman'
 import { SPIRIT_KEY_URL } from '@util/links'
-// import { useCrowdloanById } from '@libs/talisman'
-import { useTranslation } from 'react-i18next'
+// import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 const Bonus = styled(({ id, parachainId, short, full, info, prefix, className }) => {
-  // const { crowdloan } = useCrowdloanById(id)
-  // const bonus = crowdloan?.details?.rewards?.bonus
+  const { crowdloan } = useCrowdloanById(id)
+  const bonus = crowdloan?.details?.rewards?.bonus
   const type = !!short ? 'short' : !!full ? 'full' : !!info ? 'info' : null
 
-  const { t } = useTranslation('crowdloan-details')
-  const { rewards } = t(`${parachainId}`, { returnObjects: true })
-  const bonus = rewards?.bonus
+  // const { t } = useTranslation('crowdloan-details')
+  // const { rewards } = t(`${parachainId}`, { returnObjects: true })
+  // const bonus = rewards?.bonus
 
   if (!bonus || !type) return null
 
