@@ -19,15 +19,17 @@ export const fetchNFTData = async (setNfts: (nfts: NFTConsolidated[]) => void, a
         nft.symbol = nft.instance
       }
     }
-    dataTotal = dataTotal.filter(nft => nft.collectionId === 'b6e98494bff52d3b1e-SPIRIT')
+    if (dataTotal) {
+      dataTotal = dataTotal.filter(nft => nft.collectionId === 'b6e98494bff52d3b1e-SPIRIT')
 
-    for await (const nft of dataTotal) {
-      const payload = await fetch(nft.metadata!.replace('ipfs://', 'https://rmrk.mypinata.cloud/'))
-      const metadata: PinataObject = await payload.json()
-      nft.image = metadata.image
-      nft.data = metadata
-      nft.collection = nft.collectionId
-      nft.symbol = nft.instance
+      for await (const nft of dataTotal) {
+        const payload = await fetch(nft.metadata!.replace('ipfs://', 'https://rmrk.mypinata.cloud/'))
+        const metadata: PinataObject = await payload.json()
+        nft.image = metadata.image
+        nft.data = metadata
+        nft.collection = nft.collectionId
+        nft.symbol = nft.instance
+      }
     }
 
     console.log('data', dataTotal)
@@ -44,7 +46,6 @@ export const fetchNFTData = async (setNfts: (nfts: NFTConsolidated[]) => void, a
     }
   } catch (error: any) {
     console.log(error)
-    setNfts([])
   }
 }
 
