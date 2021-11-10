@@ -1,5 +1,7 @@
 import { Button, DesktopRequired, Field } from '@components'
 import { StyledLoader } from '@components/Await'
+import { TalismanHandLike } from '@components/TalismanHandLike'
+import { TalismanHandLoader } from '@components/TalismanHandLoader'
 import { ReactComponent as ChevronDown } from '@icons/chevron-down.svg'
 import { useAccountAddresses, useExtensionAutoConnect } from '@libs/talisman'
 import { ApiPromise, WsProvider } from '@polkadot/api'
@@ -10,6 +12,7 @@ import { cryptoWaitReady } from '@polkadot/util-crypto'
 import { encodeAnyAddress } from '@talismn/util'
 import { isMobileBrowser } from '@util/helpers'
 import { useEffect, useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { consolidatedNFTtoInstance } from 'rmrk-tools'
 import { NFTConsolidated } from 'rmrk-tools/dist/tools/consolidator/consolidator'
 import styled from 'styled-components'
@@ -73,8 +76,12 @@ async function setupInjector(nftObject: NFTConsolidated) {
   if (!nftObject) {
     return undefined
   }
-  const injector = await web3FromAddress(nftObject?.account)
-  return injector
+  try {
+    const injector = await web3FromAddress(nftObject?.account)
+    return injector
+  } catch (err) {
+    console.error('>>> setupInjector', err)
+  }
 }
 
 function useNftRemark(nftObject: NFTConsolidated, toAddress: string) {
@@ -93,7 +100,9 @@ function useInjector(nftObject: NFTConsolidated) {
   return injector
 }
 
-const sendNFT = async (api: ApiPromise, nftObject: any, remark: string, injector: any) => {
+type SendStatus = 'INPROGRESS' | 'SUCCESS' | 'FAILED'
+
+const sendNFT = async (api: ApiPromise, nftObject: any, remark: string, injector: any, cb: any) => {
   const txs = [api.tx.system.remark(remark)]
   const tx = api.tx.utility.batchAll(txs)
   const txSigned = await tx.signAsync(nftObject?.account, { signer: injector.signer })
@@ -108,6 +117,8 @@ const sendNFT = async (api: ApiPromise, nftObject: any, remark: string, injector
       console.info(`\t${phase}: ${section}.${method}:: ${data}`)
     }
 
+    let txStatus: SendStatus = 'INPROGRESS'
+
     if (status.isInBlock) {
       console.info(`Transaction included at blockHash ${status.asInBlock}`)
     }
@@ -115,70 +126,262 @@ const sendNFT = async (api: ApiPromise, nftObject: any, remark: string, injector
       console.info(`Transaction finalized at blockHash ${status.asFinalized}`)
       unsub()
 
-      let txStatus = 'FAILED'
-      if (
-        events.some(({ event: { method, section } }) => section === 'system' && method === 'ExtrinsicSuccess') &&
-        !events.some(({ event: { method, section } }) => section === 'system' && method === 'ExtrinsicFailed')
-      ) {
-        txStatus = 'SUCCESS'
-      }
+      const someSuccess = events.some(
+        ({ event: { method, section } }) => section === 'system' && method === 'ExtrinsicSuccess'
+      )
+      const someFailed = events.some(
+        ({ event: { method, section } }) => section === 'system' && method === 'ExtrinsicFailed'
+      )
 
       if (dispatchError && dispatchError.isModule && api) {
         const decoded = api.registry.findMetaError(dispatchError.asModule)
         const { docs, name, section } = decoded
         console.log('error', `${section}.${name}: ${docs.join(' ')}`)
+        txStatus = 'FAILED'
       } else if (dispatchError) {
         console.log('error', dispatchError.toString())
+        txStatus = 'FAILED'
       }
+
+      if (someSuccess && !someFailed) {
+        txStatus = 'SUCCESS'
+      }
+
       console.log(txStatus)
+    }
+    if (cb) {
+      cb(txStatus)
     }
   })
 }
 
-function useNftSender(nft: NFTConsolidated, toAddress: string) {
+function useNftSender(nft: NFTConsolidated, toAddress: string): [SendStatus | undefined, () => void, () => void] {
   const api = useSender()
   const remark = useNftRemark(nft, toAddress)
   const injector = useInjector(nft)
+  const [status, setStatus] = useState<SendStatus | undefined>()
 
   const send = async () => {
-    await sendNFT(api, nft, remark, injector)
+    await sendNFT(api, nft, remark, injector, setStatus)
   }
 
   if (!api) {
-    return null
+    return [undefined, () => {}, () => {}]
   }
 
-  return send
+  return [status, send, () => setStatus(undefined)]
 }
+
+const Modal = styled(({ className, children }) => {
+  return <div className={className}>{children}</div>
+})`
+  position: absolute,
+  background: var(--color-activeBackground),
+  padding: 4rem,
+  borderRadius: 2rem,
+  marginTop: -20%,
+`
+
+const InProgress = styled(({ className, closeModal, explorerUrl }) => {
+  const { t } = useTranslation('crowdloan')
+  return (
+    <div className={className}>
+      <header>
+        <h2>{t('inProgress.header')}</h2>
+        <TalismanHandLoader />
+      </header>
+      <main>
+        <div>{t('inProgress.description')}</div>
+        {explorerUrl && (
+          <a href={explorerUrl} target="_blank" rel="noopener noreferrer">
+            {t('inProgress.primaryCta')}
+          </a>
+        )}
+      </main>
+      <footer>
+        <Button onClick={closeModal}>{t('inProgress.secondaryCta')}</Button>
+      </footer>
+    </div>
+  )
+})`
+  > header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 4rem;
+  }
+  > header > h2 {
+    text-align: center;
+    font-size: 2.4rem;
+    font-weight: 600;
+  }
+  > header > .logo {
+    font-size: 6.4rem;
+    margin-bottom: 8.2rem;
+    color: var(--color-primary);
+    user-select: none;
+  }
+
+  > main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 4rem;
+
+    div:first-child {
+      margin-bottom: 4rem;
+    }
+    a {
+      display: block;
+      color: var(--color-background);
+      background: var(--color-primary);
+      border-radius: 5.6rem;
+      padding: 0.6rem 1.2rem;
+      cursor: pointer;
+    }
+  }
+
+  > footer {
+    display: flex;
+    justify-content: center;
+
+    button {
+      min-width: 27.8rem;
+    }
+  }
+`
+
+const Success = styled(({ className, closeModal, explorerUrl }) => {
+  const { t } = useTranslation('crowdloan')
+  return (
+    <div className={className}>
+      <header>
+        <h2>{t('success.header')}</h2>
+        <TalismanHandLike />
+      </header>
+      <main>
+        <div>{t('success.description')}</div>
+        {explorerUrl && (
+          <a href={explorerUrl} target="_blank" rel="noopener noreferrer">
+            {t('success.primaryCta')}
+          </a>
+        )}
+      </main>
+      <footer>
+        <Button primary onClick={closeModal}>
+          Done
+        </Button>
+      </footer>
+    </div>
+  )
+})`
+  > header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 4rem;
+  }
+  > header > h2 {
+    text-align: center;
+    font-size: 2.4rem;
+    font-weight: 600;
+  }
+  > header > .logo {
+    font-size: 6.4rem;
+    margin-bottom: 8.2rem;
+    color: var(--color-primary);
+    user-select: none;
+  }
+
+  > main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 4rem;
+
+    div:first-child {
+      margin-bottom: 4rem;
+    }
+    a {
+      display: block;
+      color: var(--color-background);
+      background: var(--color-primary);
+      border-radius: 5.6rem;
+      padding: 0.6rem 1.2rem;
+      cursor: pointer;
+    }
+  }
+
+  > footer {
+    display: flex;
+    justify-content: center;
+
+    button {
+      min-width: 27.8rem;
+    }
+  }
+`
 
 const SendNft = styled(({ className, nft }) => {
   const [toAddress, setToAddress] = useState<string>('')
-  const sendNft = useNftSender(nft, toAddress)
+  const [status, sendNft, resetStatus] = useNftSender(nft, toAddress)
+  const [showModal, setShowModal] = useState(false)
+
+  useEffect(() => {
+    if (toAddress !== '' && (status === 'SUCCESS' || status === 'FAILED')) {
+      setToAddress('')
+    }
+  }, [status, toAddress])
+
+  useEffect(() => {
+    if (!showModal && toAddress !== '' && (status === 'SUCCESS' || status === 'INPROGRESS')) {
+      setShowModal(true)
+    }
+  }, [showModal, status, toAddress])
 
   if (!sendNft) {
     return <StyledLoader />
   }
 
+  if (showModal && status === 'INPROGRESS') {
+    return (
+      <Modal>
+        <InProgress />
+      </Modal>
+    )
+  }
+
+  if (showModal && status === 'SUCCESS') {
+    return (
+      <Modal>
+        <Success closeModal={() => resetStatus()} />
+      </Modal>
+    )
+  }
+
   return (
-    <div className={className}>
-      <Field.Input
-        value={toAddress}
-        onChange={setToAddress}
-        dim
-        type="text"
-        placeholder="Enter Kusama Address"
-        className="toAddress"
-      />
-      <Button
-        primary
-        disabled={!isValidAddress(toAddress)}
-        onClick={(e: any) => {
-          sendNft()
-        }}
-      >
-        Send
-      </Button>
-    </div>
+    <>
+      <div className={className}>
+        <Field.Input
+          value={toAddress}
+          onChange={setToAddress}
+          dim
+          type="text"
+          placeholder="Enter Kusama Address"
+          className="toAddress"
+        />
+        <Button
+          primary
+          disabled={!isValidAddress(toAddress)}
+          onClick={(e: any) => {
+            sendNft()
+          }}
+        >
+          Send
+        </Button>
+      </div>
+      {status === 'FAILED' && <>Error sending NFT</>}
+    </>
   )
 })`
   width: 100%;
@@ -188,6 +391,11 @@ const SendNft = styled(({ className, nft }) => {
 
   > .field {
     width: 50%;
+  }
+
+  > button {
+    max-height: 4.7rem;
+    border-radius: 1rem;
   }
 `
 
@@ -219,7 +427,6 @@ const SpiritKey = styled(({ className }) => {
     }
   }
 
-  console.log(`>>> aaa`, totalNFTs)
   if (totalNFTs === undefined) {
     return <StyledLoader />
   }
@@ -240,8 +447,7 @@ const SpiritKey = styled(({ className }) => {
               <Button className="join-discord-button"> Join Discord</Button>
             </a>
             <Button to="/crowdloans" className="explore-crowdloans-button">
-              {' '}
-              Explore Crowdloans{' '}
+              Explore Crowdloans
             </Button>
           </div>
         )}

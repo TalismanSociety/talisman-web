@@ -41,7 +41,7 @@ const mainRoutes = [
     name: '🗝 Spirit keys',
     url: '/spiritkeys',
     icon: <CrowdloansLogo alt="Spiritkeys" />,
-  }
+  },
 ]
 
 const subRoutes = [
@@ -225,6 +225,7 @@ const Header = styled(({ className, isMobile, mobileMenuOpen, dispatch }) => {
       padding: 0.75rem 1rem;
       border-radius: 1rem;
       position: relative;
+      white-space: nowrap;
 
       &.active {
         color: var(--color-text);
