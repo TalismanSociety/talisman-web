@@ -15,6 +15,8 @@ export const fetchNFTData = async (setNfts: (nfts: NFTConsolidated[]) => void, a
       console.log('nftdata', dataTotal)
       for await (const nft of dataTotal) {
         nft.account = address
+        nft.collection = nft.collectionId
+        nft.symbol = nft.instance
       }
     }
     dataTotal = dataTotal.filter(nft => nft.collectionId === 'b6e98494bff52d3b1e-SPIRIT')
@@ -25,6 +27,7 @@ export const fetchNFTData = async (setNfts: (nfts: NFTConsolidated[]) => void, a
       nft.image = metadata.image
       nft.data = metadata
       nft.collection = nft.collectionId
+      nft.symbol = nft.instance
     }
 
     console.log('data', dataTotal)
@@ -41,6 +44,7 @@ export const fetchNFTData = async (setNfts: (nfts: NFTConsolidated[]) => void, a
     }
   } catch (error: any) {
     console.log(error)
+    setNfts([])
   }
 }
 

@@ -64,7 +64,9 @@ async function setupRemark(nftObject: NFTConsolidated, toAddress: string) {
   }
   const nft = consolidatedNFTtoInstance(nftObject)
   const remark = await nft?.send(toAddress)
-  return remark
+
+  // TODO: For now, this is a workaround as v2 send is not compatible with v1 remarks
+  return remark?.replace('2.0.0', '1.0.0')
 }
 
 async function setupInjector(nftObject: NFTConsolidated) {
@@ -97,7 +99,6 @@ const sendNFT = async (api: ApiPromise, nftObject: any, remark: string, injector
   const txSigned = await tx.signAsync(nftObject?.account, { signer: injector.signer })
 
   const unsub = await txSigned.send(async result => {
-    console.log(`>>> aaa`, result)
     const { status, events = [], dispatchError } = result
 
     for (const {
@@ -134,13 +135,27 @@ const sendNFT = async (api: ApiPromise, nftObject: any, remark: string, injector
   })
 }
 
-const SendAsset = styled(({ className, nft }) => {
-  const [toAddress, setToAddress] = useState<string>('')
+function useNftSender(nft: NFTConsolidated, toAddress: string) {
   const api = useSender()
   const remark = useNftRemark(nft, toAddress)
   const injector = useInjector(nft)
 
+  const send = async () => {
+    await sendNFT(api, nft, remark, injector)
+  }
+
   if (!api) {
+    return null
+  }
+
+  return send
+}
+
+const SendNft = styled(({ className, nft }) => {
+  const [toAddress, setToAddress] = useState<string>('')
+  const sendNft = useNftSender(nft, toAddress)
+
+  if (!sendNft) {
     return <StyledLoader />
   }
 
@@ -157,8 +172,8 @@ const SendAsset = styled(({ className, nft }) => {
       <Button
         primary
         disabled={!isValidAddress(toAddress)}
-        onClick={async (e: any) => {
-          await sendNFT(api, nft, remark, injector)
+        onClick={(e: any) => {
+          sendNft()
         }}
       >
         Send
@@ -254,7 +269,7 @@ const SpiritKey = styled(({ className }) => {
               </Button.Icon>
             </div>
             <h2>Send to a friend</h2>
-            <SendAsset nft={nft} />
+            <SendNft nft={nft} />
           </div>
         )}
 
