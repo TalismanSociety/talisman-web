@@ -1,9 +1,11 @@
-import { Button } from '@components'
-import { DesktopRequired } from '@components'
+import { Button, DesktopRequired, Field } from '@components'
+import { StyledLoader } from '@components/Await'
 import { ReactComponent as ChevronDown } from '@icons/chevron-down.svg'
-import { useAccountAddresses } from '@libs/talisman'
+import { useAccountAddresses, useExtensionAutoConnect } from '@libs/talisman'
 import { ApiPromise, WsProvider } from '@polkadot/api'
 import { web3FromAddress } from '@polkadot/extension-dapp'
+import { decodeAddress, encodeAddress } from '@polkadot/keyring'
+import { hexToU8a, isHex } from '@polkadot/util'
 import { cryptoWaitReady } from '@polkadot/util-crypto'
 import { encodeAnyAddress } from '@talismn/util'
 import { isMobileBrowser } from '@util/helpers'
@@ -14,26 +16,197 @@ import styled from 'styled-components'
 
 import { fetchNFTData } from '../libs/spiritkey/spirit-key'
 
-const SpiritKey = styled(({ className }) => {
-  const baseImage = 'https://rmrk.mypinata.cloud/ipfs/bafybeicuuasrqnqndfw3k6rqacfpfil5sc5fhyjh63riqnd2imm5eucrk4'
-  const accountAddresses = useAccountAddresses()
-  const [totalNFTs, setNFTs] = useState<NFTConsolidated[]>([])
-  const [currentNFT, setCurrentNFT] = useState<number>(0)
-  const encoded = useMemo(() => accountAddresses?.map(account => encodeAnyAddress(account, 2)), [accountAddresses])
-  const [recipient, setRecipient] = useState('')
+const isValidAddress = (address: string) => {
+  try {
+    encodeAddress(isHex(address) ? hexToU8a(address) : decodeAddress(address))
+    return true
+  } catch (error) {
+    return false
+  }
+}
 
-  // Retreive nfts
+const getApi = async (wsEndpoint: string): Promise<ApiPromise> => {
+  const wsProvider = new WsProvider(wsEndpoint)
+  const api = ApiPromise.create({ provider: wsProvider })
+  return api
+}
+
+async function setupSender() {
+  await cryptoWaitReady()
+  const ws = 'wss://kusama-rpc.polkadot.io'
+  const api = await getApi(ws)
+  return api
+}
+
+function useFetchNFTs() {
+  const [totalNFTs, setNFTs] = useState<NFTConsolidated[]>()
+  const accountAddresses = useAccountAddresses()
+  const encoded = useMemo(() => accountAddresses?.map(account => encodeAnyAddress(account, 2)), [accountAddresses])
+
   useEffect(() => {
     fetchNFTData(setNFTs, encoded as string[])
   }, [setNFTs, encoded])
+
+  return totalNFTs
+}
+
+function useSender() {
+  const [api, setApi] = useState<ApiPromise>()
+  useEffect(() => {
+    setupSender().then(apiObject => setApi(apiObject))
+  }, [])
+  return api
+}
+
+async function setupRemark(nftObject: NFTConsolidated, toAddress: string) {
+  if (!toAddress) {
+    return undefined
+  }
+  const nft = consolidatedNFTtoInstance(nftObject)
+  const remark = await nft?.send(toAddress)
+  return remark
+}
+
+async function setupInjector(nftObject: NFTConsolidated) {
+  if (!nftObject) {
+    return undefined
+  }
+  const injector = await web3FromAddress(nftObject?.account)
+  return injector
+}
+
+function useNftRemark(nftObject: NFTConsolidated, toAddress: string) {
+  const [remark, setRemark] = useState<string | undefined>()
+  useEffect(() => {
+    setupRemark(nftObject, toAddress).then(r => setRemark(r))
+  }, [nftObject, toAddress])
+  return remark
+}
+
+function useInjector(nftObject: NFTConsolidated) {
+  const [injector, setInjector] = useState<unknown>()
+  useEffect(() => {
+    setupInjector(nftObject).then(i => setInjector(i))
+  }, [nftObject])
+  return injector
+}
+
+const sendNFT = async (api: ApiPromise, nftObject: any, remark: string, injector: any) => {
+  const txs = [api.tx.system.remark(remark)]
+  const tx = api.tx.utility.batchAll(txs)
+  const txSigned = await tx.signAsync(nftObject?.account, { signer: injector.signer })
+
+  const unsub = await txSigned.send(async result => {
+    console.log(`>>> aaa`, result)
+    const { status, events = [], dispatchError } = result
+
+    for (const {
+      phase,
+      event: { data, method, section },
+    } of events) {
+      console.info(`\t${phase}: ${section}.${method}:: ${data}`)
+    }
+
+    if (status.isInBlock) {
+      console.info(`Transaction included at blockHash ${status.asInBlock}`)
+    }
+    if (status.isFinalized) {
+      console.info(`Transaction finalized at blockHash ${status.asFinalized}`)
+      unsub()
+
+      let txStatus = 'FAILED'
+      if (
+        events.some(({ event: { method, section } }) => section === 'system' && method === 'ExtrinsicSuccess') &&
+        !events.some(({ event: { method, section } }) => section === 'system' && method === 'ExtrinsicFailed')
+      ) {
+        txStatus = 'SUCCESS'
+      }
+
+      if (dispatchError && dispatchError.isModule && api) {
+        const decoded = api.registry.findMetaError(dispatchError.asModule)
+        const { docs, name, section } = decoded
+        console.log('error', `${section}.${name}: ${docs.join(' ')}`)
+      } else if (dispatchError) {
+        console.log('error', dispatchError.toString())
+      }
+      console.log(txStatus)
+    }
+  })
+}
+
+const SendAsset = styled(({ className, nft }) => {
+  const [toAddress, setToAddress] = useState<string>('')
+  const api = useSender()
+  const remark = useNftRemark(nft, toAddress)
+  const injector = useInjector(nft)
+
+  if (!api) {
+    return <StyledLoader />
+  }
+
+  return (
+    <div className={className}>
+      <Field.Input
+        value={toAddress}
+        onChange={setToAddress}
+        dim
+        type="text"
+        placeholder="Enter Kusama Address"
+        className="toAddress"
+      />
+      <Button
+        primary
+        disabled={!isValidAddress(toAddress)}
+        onClick={async (e: any) => {
+          await sendNFT(api, nft, remark, injector)
+        }}
+      >
+        Send
+      </Button>
+    </div>
+  )
+})`
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  > .field {
+    width: 50%;
+  }
+`
+
+const SpiritKey = styled(({ className }) => {
+  const baseImage = 'https://rmrk.mypinata.cloud/ipfs/bafybeicuuasrqnqndfw3k6rqacfpfil5sc5fhyjh63riqnd2imm5eucrk4'
+  const [currentNFT, setCurrentNFT] = useState<number>(0)
+  useExtensionAutoConnect()
+
+  const totalNFTs = useFetchNFTs()
+  const hasNfts = totalNFTs?.length > 0
+
+  const [nft, setNft] = useState<NFTConsolidated>()
+
+  // Set default NFT
+  useEffect(() => {
+    if (hasNfts && !nft) {
+      setNft(totalNFTs[0])
+    }
+  }, [hasNfts, nft, totalNFTs])
 
   // Switch the current nft they're viewing
   function changeNFT(direction: number) {
     if (direction > 0 && currentNFT + 1 < totalNFTs.length) {
       setCurrentNFT(currentNFT + 1)
+      setNft(totalNFTs[currentNFT + 1])
     } else if (currentNFT - 1 >= 0 && direction === 0) {
       setCurrentNFT(currentNFT - 1)
+      setNft(totalNFTs[currentNFT - 1])
     }
+  }
+
+  console.log(`>>> aaa`, totalNFTs)
+  if (totalNFTs === undefined) {
+    return <StyledLoader />
   }
 
   return (
@@ -42,16 +215,13 @@ const SpiritKey = styled(({ className }) => {
       <div className="content">
         <img
           className="spirit-key-image"
-          src={
-            totalNFTs.length > 0
-              ? totalNFTs[currentNFT]?.image?.replace('ipfs://', 'https://rmrk.mypinata.cloud/')
-              : baseImage
-          }
+          src={hasNfts ? nft?.image?.replace('ipfs://', 'https://rmrk.mypinata.cloud/') : baseImage}
+          alt="Spirit Key"
         />
-        <p>You have {totalNFTs.length > 0 ? totalNFTs.length : 'no'} Spirit Keys</p>
+        <p>You have {hasNfts ? totalNFTs.length : 'no'} Spirit Keys</p>
         {totalNFTs.length < 1 && (
           <div className="empty-state-buttons-div">
-            <a href="https://discord.gg/jTzkMY9Y" target="_blank">
+            <a href="https://discord.gg/jTzkMY9Y" target="_blank" rel="noreferrer noopener">
               <Button className="join-discord-button"> Join Discord</Button>
             </a>
             <Button to="/crowdloans" className="explore-crowdloans-button">
@@ -60,7 +230,7 @@ const SpiritKey = styled(({ className }) => {
             </Button>
           </div>
         )}
-        {totalNFTs.length > 0 && (
+        {hasNfts && (
           <div className="spirit-key-body">
             <div className="switcher">
               <Button.Icon
@@ -83,22 +253,8 @@ const SpiritKey = styled(({ className }) => {
                 <ChevronDown />
               </Button.Icon>
             </div>
-            <h2 className="address-input-title">Send to a friend</h2>
-            <div className="address-input-container">
-              <input
-                id="input"
-                type="text"
-                placeholder="Enter Kusama Address"
-                onChange={e => setRecipient(e.target.value)}
-              />
-              <button
-                onClick={(e: any) => {
-                  SendNFT(totalNFTs[currentNFT], recipient)
-                }}
-              >
-                Send
-              </button>
-            </div>
+            <h2>Send to a friend</h2>
+            <SendAsset nft={nft} />
           </div>
         )}
 
@@ -174,10 +330,6 @@ const SpiritKey = styled(({ className }) => {
       }
     }
 
-    input {
-      padding-right: 14rem;
-    }
-
     .spirit-key-image {
       width: 316px;
       height: 316px;
@@ -199,7 +351,7 @@ const SpiritKey = styled(({ className }) => {
         display: flex;
         flex-direction: row;
         align-items: center;
-        margin: 0.4rem auto 0 auto;
+        margin: 0.4rem auto 4rem;
 
         .nav-toggle-left {
           width: 5rem;
@@ -261,6 +413,7 @@ const SpiritKey = styled(({ className }) => {
           margin: 0px 0px 0px -135px;
           border-style: none;
           color: #000000;
+          cursor: pointer;
         }
       }
     }
@@ -297,70 +450,3 @@ const SpiritKey = styled(({ className }) => {
 `
 
 export default SpiritKey
-
-export const SendNFT = async (nftObject: NFTConsolidated, recipient: string) => {
-  await cryptoWaitReady()
-
-  // Retreive accounts nfts
-  const recipientAddress = recipient
-
-  console.log('nft', nftObject, 'recipient', recipient)
-  // Get api
-  const ws = 'wss://kusama-rpc.polkadot.io'
-  const api = await getApi(ws)
-
-  console.log(nftObject.account)
-  // Retreive signing credentials from address associated with nft
-  const injector = await web3FromAddress(nftObject.account)
-
-  // Create send remark from nft
-  let nft = consolidatedNFTtoInstance(nftObject)
-  let remark = await nft!.send(recipientAddress)
-
-  // Spin up tx
-  const txs = [api.tx.system.remark(remark)]
-  const tx = api.tx.utility.batchAll(txs)
-  const txSigned = await tx.signAsync(nftObject.account, { signer: injector.signer })
-
-  const unsub = await txSigned.send(async result => {
-    const { status, events = [], dispatchError } = result
-
-    for (const {
-      phase,
-      event: { data, method, section },
-    } of events) {
-      console.info(`\t${phase}: ${section}.${method}:: ${data}`)
-    }
-
-    if (status.isInBlock) {
-      console.info(`Transaction included at blockHash ${status.asInBlock}`)
-    }
-    if (status.isFinalized) {
-      console.info(`Transaction finalized at blockHash ${status.asFinalized}`)
-      unsub()
-
-      let txStatus = 'FAILED'
-      if (
-        events.some(({ event: { method, section } }) => section === 'system' && method === 'ExtrinsicSuccess') &&
-        !events.some(({ event: { method, section } }) => section === 'system' && method === 'ExtrinsicFailed')
-      ) {
-        txStatus = 'SUCCESS'
-      }
-
-      if (dispatchError && dispatchError.isModule && api) {
-        const decoded = api.registry.findMetaError(dispatchError.asModule)
-        const { docs, name, section } = decoded
-        console.log('error', `${section}.${name}: ${docs.join(' ')}`)
-      } else if (dispatchError) {
-        console.log('error', dispatchError.toString())
-      }
-      console.log(txStatus)
-    }
-  })
-}
-
-export const getApi = async (wsEndpoint: string): Promise<ApiPromise> => {
-  const wsProvider = new WsProvider(wsEndpoint)
-  const api = ApiPromise.create({ provider: wsProvider })
-  return api
-}
