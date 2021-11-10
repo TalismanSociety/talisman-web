@@ -173,13 +173,41 @@ function useNftSender(nft: NFTConsolidated, toAddress: string): [SendStatus | un
 }
 
 const Modal = styled(({ className, children }) => {
-  return <div className={className}>{children}</div>
+  return (
+    <div className={className}>
+      <div className="modal">{children}</div>
+      <div className="overlay" />
+    </div>
+  )
 })`
-  position: absolute,
-  background: var(--color-activeBackground),
-  padding: 4rem,
-  borderRadius: 2rem,
-  marginTop: -20%,
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  .overlay {
+    position: absolute;
+    background: var(--color-background);
+    opacity: 0.8;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+  }
+
+  .modal {
+    position: absolute;
+    background: var(--color-activeBackground);
+    right: 0;
+    left: 0;
+    top: 30%;
+    padding: 4rem;
+    border-radius: 2rem;
+    margin: auto;
+    width: 50%;
+    z-index: 1;
+  }
 `
 
 const InProgress = styled(({ className, closeModal, explorerUrl }) => {
