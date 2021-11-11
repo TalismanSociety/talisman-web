@@ -1,4 +1,4 @@
-import bannerImage from '@assets/unlock-spirit-key-pink.png'
+import bannerImage from '@assets/unlock-spirit-key-pink-wide.png'
 import { Button } from '@components'
 import { Banner } from '@components/Banner'
 import { SPIRIT_KEY_URL } from '@util/links'
