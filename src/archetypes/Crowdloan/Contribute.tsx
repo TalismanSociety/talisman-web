@@ -4,7 +4,7 @@ import { Button, DesktopRequired, Field, MaterialLoader, Pendor, useModal } from
 import { TalismanHandLike } from '@components/TalismanHandLike'
 import { TalismanHandLoader } from '@components/TalismanHandLoader'
 import { ContributeEvent, useCrowdloanContribute } from '@libs/crowdloans'
-import { Acala } from '@libs/crowdloans/crowdloanOverrides'
+import { Acala, Moonbeam } from '@libs/crowdloans/crowdloanOverrides'
 import { useActiveAccount, useCrowdloanById } from '@libs/talisman'
 import { useTokenPrice } from '@libs/tokenprices'
 import { multiplyBigNumbers } from '@talismn/util'
@@ -107,6 +107,7 @@ const ContributeTo = styled(
 
     contributionAmount,
     email,
+    memoAddress,
 
     txFee,
     validationError,
@@ -189,6 +190,37 @@ const ContributeTo = styled(
               </div>
             </div>
           </div>
+
+          {Moonbeam.is(relayChainId, parachainId) && (
+            <div className="row">
+              <div className="memo-address-input">
+                <Field.Input
+                  value={memoAddress}
+                  onChange={(memoAddress: string) => dispatch(ContributeEvent.setMemoAddress(memoAddress))}
+                  dim
+                  placeholder="Moonbeam Rewards Address"
+                  disabled={submissionRequested}
+                />
+                <div className="info">
+                  Enter the address where your rewards will be paid out. This must be a Moonbeam address or an Ethereum
+                  address for which you have the private keys. If you do not have one,{' '}
+                  <a href="https://moonbeam.foundation/tutorials/how-to-create-a-moonbeam-ethereum-address-2/">
+                    follow this tutorial
+                  </a>{' '}
+                  to create one. <strong>Using an invalid account will result in a loss of funds.</strong>
+                  <br />
+                  <br />
+                  <strong>Do not use an exchange address</strong>, an Ethereum address that is mapped to a Substrate
+                  address, or any other kind of address where you do not have direct control over the private keys. This
+                  will prevent you from being able to collect rewards in the future.
+                  <br />
+                  <br />
+                  You can change your registered Moonbeam address by modifying this field and submiting a new
+                  contribution.
+                </div>
+              </div>
+            </div>
+          )}
 
           {Acala.is(relayChainId, parachainId) && (
             <div className="row">
@@ -335,6 +367,7 @@ const ContributeTo = styled(
       min-height: 2.2rem;
     }
   }
+  > main > .row > .memo-address-input,
   > main > .row > .email-input,
   > main > .row > .verifier-input {
     .field {

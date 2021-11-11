@@ -3,6 +3,7 @@ import { SupportedRelaychains } from '@libs/talisman/util/_config'
 import { ApiPromise, SubmittableResult, WsProvider } from '@polkadot/api'
 import { SubmittableExtrinsic } from '@polkadot/api/submittable/types'
 import { web3FromAddress } from '@polkadot/extension-dapp'
+import { isEthereumChecksum } from '@polkadot/util-crypto'
 import type { Balance } from '@talismn/api'
 import Talisman from '@talismn/api'
 import type { BalanceWithTokens } from '@talismn/api-react-hooks'
@@ -57,6 +58,7 @@ export const ContributeEvent = makeTaggedUnion({
   setAccount: (account?: string) => account,
   setEmail: (email?: string) => email,
   setVerifierSignature: (verifierSignature?: VerifierSignature) => verifierSignature,
+  setMemoAddress: (memoAddress?: string) => memoAddress,
   _setAccountBalance: (balance: BalanceWithTokens | null) => balance,
   _setTxFee: (txFee?: string | null) => txFee,
   _setValidationError: (validationError?: { i18nCode: string; vars?: { [key: string]: any } }) => validationError,
@@ -97,6 +99,7 @@ type ReadyProps = {
   account?: string
   email?: string
   verifierSignature?: VerifierSignature
+  memoAddress?: string
 
   api?: ApiPromise
   accountBalance?: BalanceWithTokens | null
@@ -268,6 +271,18 @@ function contributeEventReducer(state: ContributeState, event: ContributeEvent):
             // verifierSignature is set automatically by a thunk, not by text input from the user
             // as such, we should continue with the user's request to submit their contribution - even if the verifierSignature has since changed
             // submissionRequested: false,
+            submissionValidated: false,
+          }),
+        _: ignoreWithWarning,
+      }),
+
+    setMemoAddress: (memoAddress?: string) =>
+      state.match({
+        Ready: props =>
+          ContributeState.Ready({
+            ...props,
+            memoAddress,
+            submissionRequested: false,
             submissionValidated: false,
           }),
         _: ignoreWithWarning,
@@ -521,6 +536,7 @@ function useTxFeeThunk(state: ContributeState, dispatch: DispatchContributeEvent
       account,
       email,
       verifierSignature,
+      memoAddress,
       api,
     }) => ({
       relayChainId,
@@ -530,6 +546,7 @@ function useTxFeeThunk(state: ContributeState, dispatch: DispatchContributeEvent
       account,
       email,
       verifierSignature,
+      memoAddress,
       api,
     }),
     _: () => false as false,
@@ -549,6 +566,7 @@ function useTxFeeThunk(state: ContributeState, dispatch: DispatchContributeEvent
         account,
         email,
         verifierSignature,
+        memoAddress,
         api,
       } = stateDeps
 
@@ -557,6 +575,7 @@ function useTxFeeThunk(state: ContributeState, dispatch: DispatchContributeEvent
       if (!api || !api.isReady) return
       if (!contributionAmount) return dispatch(ContributeEvent._setTxFee(null))
       if (!account) return dispatch(ContributeEvent._setTxFee(null))
+      if (Moonbeam.is(relayChainId, parachainId) && !memoAddress) return dispatch(ContributeEvent._setTxFee(null))
 
       const contributionPlanck = tokensToPlanck(contributionAmount, relayTokenDecimals)
 
@@ -570,6 +589,7 @@ function useTxFeeThunk(state: ContributeState, dispatch: DispatchContributeEvent
           account,
           email,
           verifierSignature,
+          memoAddress,
 
           api,
           estimateOnly: true,
@@ -613,6 +633,7 @@ function useMoonbeamVerifierSignatureThunk(state: ContributeState, dispatch: Dis
 
       api,
       submissionRequested,
+      submissionValidated,
     }) => ({
       crowdloanId,
       relayChainId,
@@ -630,6 +651,7 @@ function useMoonbeamVerifierSignatureThunk(state: ContributeState, dispatch: Dis
 
       api,
       submissionRequested,
+      submissionValidated,
     }),
     _: () => false as false,
   })
@@ -663,6 +685,7 @@ function useMoonbeamVerifierSignatureThunk(state: ContributeState, dispatch: Dis
 
       api,
       submissionRequested,
+      submissionValidated,
     } = stateDeps
 
     if (!Moonbeam.is(relayChainId, parachainId)) return
@@ -675,6 +698,9 @@ function useMoonbeamVerifierSignatureThunk(state: ContributeState, dispatch: Dis
 
     // wait for user to hit submit
     if (!submissionRequested) return
+
+    // wait for clientside validations to complete
+    if (!submissionValidated) return
     ;(async () => {
       // check if user is already registered for the moonbeam crowdloan
       const checkRemarkResponse = await fetch(
@@ -856,7 +882,7 @@ function useValidateContributionThunk(state: ContributeState, dispatch: Dispatch
 
       contributionAmount,
       account,
-      verifierSignature,
+      memoAddress,
 
       api,
       accountBalance,
@@ -870,7 +896,7 @@ function useValidateContributionThunk(state: ContributeState, dispatch: Dispatch
 
       contributionAmount,
       account,
-      verifierSignature,
+      memoAddress,
 
       api,
       accountBalance,
@@ -891,7 +917,7 @@ function useValidateContributionThunk(state: ContributeState, dispatch: Dispatch
 
       contributionAmount,
       account,
-      verifierSignature,
+      memoAddress,
 
       api,
       accountBalance,
@@ -901,9 +927,6 @@ function useValidateContributionThunk(state: ContributeState, dispatch: Dispatch
 
     // these validations will only run after the user hits submit
     if (!submissionRequested) return
-
-    // cancel checks if crowdloan needs a verifierSignature and one has not yet been set
-    if (overrideByIds(relayChainId, parachainId)?.needsVerifierSignature && !verifierSignature) return
 
     const setError = (error: { i18nCode: string; vars?: { [key: string]: any } }) =>
       dispatch(ContributeEvent._setValidationError(error))
@@ -918,6 +941,14 @@ function useValidateContributionThunk(state: ContributeState, dispatch: Dispatch
     }
     if (!account || account.length < 1) {
       setError({ i18nCode: 'An account must be selected' })
+      return
+    }
+    if (Moonbeam.is(relayChainId, parachainId) && (!memoAddress || memoAddress.length < 1)) {
+      setError({ i18nCode: 'Please enter your moonbeam rewards address' })
+      return
+    }
+    if (Moonbeam.is(relayChainId, parachainId) && (!memoAddress || !isEthereumChecksum(memoAddress))) {
+      setError({ i18nCode: 'Please enter a valid moonbeam rewards address' })
       return
     }
 
@@ -982,6 +1013,7 @@ function useSignAndSendContributionThunk(state: ContributeState, dispatch: Dispa
       account,
       email,
       verifierSignature,
+      memoAddress,
       api,
       submissionValidated,
     }) => ({
@@ -993,6 +1025,7 @@ function useSignAndSendContributionThunk(state: ContributeState, dispatch: Dispa
       account,
       email,
       verifierSignature,
+      memoAddress,
       api,
       submissionValidated,
     }),
@@ -1014,12 +1047,17 @@ function useSignAndSendContributionThunk(state: ContributeState, dispatch: Dispa
         account,
         email,
         verifierSignature,
+        memoAddress,
         api,
         submissionValidated,
       } = stateDeps
 
       if (!submissionValidated) return
       if (!account) return
+
+      // after submissionValidated is set to true, useMoonbeamVerifierSignatureThunk will set the verifierSignature
+      // we should wait for that to happen before we make the contribution
+      if (Moonbeam.is(relayChainId, parachainId) && !verifierSignature) return
 
       if (!api) return
       const contributionPlanck = tokensToPlanck(contributionAmount, relayTokenDecimals)
@@ -1037,6 +1075,7 @@ function useSignAndSendContributionThunk(state: ContributeState, dispatch: Dispa
           account,
           email,
           verifierSignature,
+          memoAddress,
 
           api,
         })
@@ -1144,6 +1183,7 @@ type BuildTxProps = {
   account: string
   email?: string
   verifierSignature?: VerifierSignature
+  memoAddress?: string
 
   api: ApiPromise
   estimateOnly?: true
@@ -1152,6 +1192,7 @@ type BuildTxResponse = SubmittableExtrinsic<'promise', SubmittableResult>
 async function buildTx(props: BuildTxProps): Promise<BuildTxResponse> {
   if (Acala.is(props.relayChainId, props.parachainId)) return await buildAcalaTx(props)
   if (Astar.is(props.relayChainId, props.parachainId)) return await buildAstarTx(props)
+  if (Moonbeam.is(props.relayChainId, props.parachainId)) return await buildMoonbeamTx(props)
   return await buildGenericTx(props)
 }
 
@@ -1163,6 +1204,22 @@ async function buildGenericTx({
 }: BuildTxProps): Promise<BuildTxResponse> {
   const txs = [
     api.tx.crowdloan.contribute(parachainId, contributionPlanck, verifierSignature),
+    api.tx.system.remarkWithEvent('Talisman - The Journey Begins'),
+  ]
+
+  return api.tx.utility.batchAll(txs)
+}
+
+async function buildMoonbeamTx({
+  parachainId,
+  contributionPlanck,
+  verifierSignature,
+  memoAddress,
+  api,
+}: BuildTxProps): Promise<BuildTxResponse> {
+  const txs = [
+    api.tx.crowdloan.contribute(parachainId, contributionPlanck, verifierSignature),
+    api.tx.crowdloan.addMemo(parachainId, memoAddress),
     api.tx.system.remarkWithEvent('Talisman - The Journey Begins'),
   ]
 
