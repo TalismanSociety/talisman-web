@@ -169,6 +169,21 @@ export const parachainDetails: ParachainDetails[] = [
     },
   },
   {
+    id: '0-2017',
+    name: 'SubGame Network',
+    slug: 'subgame-network',
+    token: 'SGB',
+    subtitle: 'SubGame is a public chain development team based on the Polkadot Parachain.',
+    info: 'It hopes to build a public chain with cross-chain interoperability. In addition to creating game applications, it can also build various types of application scenarios to create a common cross-chain industry. The blockchain infrastructure provides unlimited possibilities for distributed mobile applications.',
+    links: {
+      Website: 'https://www.subgame.org/',
+      Twitter: 'https://twitter.com/SubGame_Network',
+      Telegram: 'https://t.me/subgame_network',
+      Medium: 'https://medium.com/@subgame_network',
+      Github: 'https://github.com/SubGame-Network',
+    },
+  },
+  {
     id: '0-2018',
     name: 'SubDAO',
     slug: 'subdao',
@@ -823,6 +838,25 @@ export const crowdloanDetails: CrowdloanDetails[] = [
         {
           title: 'Crowdloan Allocation',
           value: '120,000,004 MANTA',
+        },
+      ],
+      bonus: {
+        short: 'Bonus 🗝',
+        full: 'Receive a Talisman Spirit Key 🗝',
+        info: 'Receive a <strong>Talisman Spirit Key </strong> if you are one of the first 1000 crowdloan contributors on the Talisman dashboard.',
+      },
+      info: null,
+    },
+  },
+  {
+    relayId: 0,
+    paraId: 2017,
+    rewards: {
+      tokens: null,
+      custom: [
+        {
+          title: 'SGB per DOT',
+          value: '13',
         },
       ],
       bonus: {
