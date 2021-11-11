@@ -289,6 +289,9 @@ const Success = styled(({ className, closeModal, explorerUrl }) => {
       </header>
       <main>
         <div>{t('success.description')}</div>
+        <div style={{ fontWeight: 'bold', fontSize: 'small', color: 'var(--color-text)' }}>
+          The transfer will take a few minutes to sync so please avoid sending again.
+        </div>
         {explorerUrl && (
           <a href={explorerUrl} target="_blank" rel="noopener noreferrer">
             {t('success.primaryCta')}
