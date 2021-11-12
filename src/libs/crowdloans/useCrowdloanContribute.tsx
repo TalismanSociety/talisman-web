@@ -16,7 +16,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { MemberType, makeTaggedUnion, none } from 'safety-match'
 import { v4 as uuidv4 } from 'uuid'
 
-import { Acala, Astar, Moonbeam, overrideByIds } from './crowdloanOverrides'
+import { Acala, Astar, Moonbeam } from './crowdloanOverrides'
 import { submitTermsAndConditions } from './moonbeam/remarkFlow'
 import { useCrowdloanContributions } from './useCrowdloanContributions'
 
@@ -429,7 +429,8 @@ function useInitializeThunk(state: ContributeState, dispatch: DispatchContribute
           headers: Moonbeam.apiKey ? { 'x-api-key': Moonbeam.apiKey } : undefined,
         })
         const status = ipBlockedResponse.status
-        if (status !== 200) return dispatch(ContributeEvent._ipBanned)
+        const body = await ipBlockedResponse.text()
+        if (status !== 200 || body !== '') return dispatch(ContributeEvent._ipBanned)
       }
 
       dispatch(
