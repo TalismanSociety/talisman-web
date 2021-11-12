@@ -570,6 +570,7 @@ const SpiritKeyNft = styled(({ className, src }) => {
 const SpiritKey = styled(({ className }) => {
   const baseImage = 'https://rmrk.mypinata.cloud/ipfs/bafybeicuuasrqnqndfw3k6rqacfpfil5sc5fhyjh63riqnd2imm5eucrk4'
   const [currentNFT, setCurrentNFT] = useState<number>(0)
+  const addresses = useAllAccountAddresses()
   useExtensionAutoConnect()
 
   const totalNFTs = useFetchNFTs()
@@ -595,7 +596,7 @@ const SpiritKey = styled(({ className }) => {
     }
   }
 
-  if (totalNFTs === undefined) {
+  if (addresses === undefined) {
     return <StyledLoader />
   }
 
@@ -605,7 +606,7 @@ const SpiritKey = styled(({ className }) => {
       <div className="content">
         <SpiritKeyNft src={hasNfts ? nft?.image?.replace('ipfs://', 'https://rmrk.mypinata.cloud/') : baseImage} />
         <p>You have {hasNfts ? totalNFTs.length : 'no'} Spirit Keys</p>
-        {totalNFTs.length < 1 && (
+        {totalNFTs?.length < 1 && (
           <div className="empty-state-buttons-div">
             <a href="https://discord.gg/jTzkMY9Y" target="_blank" rel="noreferrer noopener">
               <Button className="join-discord-button"> Join Discord</Button>
