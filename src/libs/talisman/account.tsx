@@ -37,6 +37,17 @@ export const useAccountAddresses = () => {
   return addresses
 }
 
+export const useAllAccountAddresses = () => {
+  const { accounts, activeAccount } = useContext()
+  const [addresses, setAddresses] = useState<string[] | undefined>()
+
+  useEffect(() => {
+    setAddresses(accounts.map(account => account.address))
+  }, [activeAccount, accounts])
+
+  return addresses
+}
+
 //
 // Context
 //
