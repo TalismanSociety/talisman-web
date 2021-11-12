@@ -3,7 +3,7 @@ import { StyledLoader } from '@components/Await'
 import { TalismanHandLike } from '@components/TalismanHandLike'
 import { TalismanHandLoader } from '@components/TalismanHandLoader'
 import { ReactComponent as ChevronDown } from '@icons/chevron-down.svg'
-import { useAccountAddresses, useExtensionAutoConnect } from '@libs/talisman'
+import { useAllAccountAddresses, useExtensionAutoConnect } from '@libs/talisman'
 import { ApiPromise, WsProvider } from '@polkadot/api'
 import { web3FromAddress } from '@polkadot/extension-dapp'
 import { decodeAddress, encodeAddress } from '@polkadot/keyring'
@@ -43,7 +43,7 @@ async function setupSender() {
 
 function useFetchNFTs() {
   const [totalNFTs, setNFTs] = useState<NFTConsolidated[]>()
-  const accountAddresses = useAccountAddresses()
+  const accountAddresses = useAllAccountAddresses()
   const encoded = useMemo(() => accountAddresses?.map(account => encodeAnyAddress(account, 2)), [accountAddresses])
 
   useEffect(() => {
