@@ -87,6 +87,21 @@ export const parachainDetails: ParachainDetails[] = [
     },
   },
   {
+    id: '0-2003',
+    name: 'Darwinia',
+    slug: 'darwinia',
+    token: 'RING',
+    subtitle: 'Darwinia Network is a decentralized cross-chain bridge network building on Substrate.',
+    info: `Darwinia Network provides an entrance to the Polkadot ecology for projects that have been deployed on public blockchains such as Ethereum and BSC.`,
+    links: {
+      Website: 'https://darwinia.network/',
+      Twitter: 'https://twitter.com/DarwiniaNetwork/',
+      Telegram: 'http://t.me/DarwiniaNetwork',
+      Medium: 'https://darwinianetwork.medium.com/',
+      Github: 'https://github.com/darwinia-network',
+    },
+  },  
+  {
     id: '0-2004',
     name: 'Moonbeam',
     slug: 'moonbeam',
@@ -711,6 +726,41 @@ export const crowdloanDetails: CrowdloanDetails[] = [
         {
           title: 'Vesting Remainder',
           value: '72%, over 23 months',
+        },
+      ],
+      bonus: {
+        short: 'Bonus 🗝',
+        full: 'Receive a Talisman Spirit Key 🗝',
+        info: 'Receive a <strong>Talisman Spirit Key </strong> if you are one of the first 1000 crowdloan contributors on the Talisman dashboard.',
+      },
+      info: null,
+    },
+  },
+  {
+    relayId: 0,
+    paraId: 2003,
+    rewards: {
+      tokens: null,
+      custom: [
+        {
+          title: 'RING per DOT',
+          value: 'TBD',
+        },
+        {
+          title: 'Crowdloan Allocation',
+          value: '200,000,000 RING',
+        },
+        {
+          title: 'Total Supply',
+          value: '10,000,000,000 RING',
+        },
+        {
+          title: 'Immediate Release',
+          value: '10% of rewarded RING',
+        },
+        {
+          title: 'Vesting Remainder',
+          value: '90%, vesting linearly',
         },
       ],
       bonus: {
