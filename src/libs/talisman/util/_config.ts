@@ -658,6 +658,21 @@ export const parachainDetails: ParachainDetails[] = [
       Discord: 'https://discord.com/invite/PaMAXZZ59N',
     },
   },
+  {
+    id: '2-2100',
+    name: 'Subsocial',
+    slug: 'subsocial',
+    token: 'SUB',
+    subtitle: 'Subsocial - Decentralized social network on Polkadot & IPFS',
+    info: `Subsocial is a Polkadot ecosystem project supported by Web3 Foundation. Subsocial follows SoFi (social finance) principles to bring DeFi features to social networking.`,
+    links: {
+      Website: 'https://subsocial.network',
+      Twitter: 'https://twitter.com/SubsocialChain',
+      Telegram: 'https://t.me/Subsocial',
+      Discord: 'https://discord.com/invite/w2Rqy2M',
+      Github: 'https://github.com/dappforce',
+    },
+  },
 ]
 
 export type CrowdloanDetails = {
@@ -1518,6 +1533,38 @@ export const crowdloanDetails: CrowdloanDetails[] = [
           title: 'Referrals',
           value: '2.5% Bonus',
         },
+      ],
+      info: null,
+    },
+  },
+  {
+    relayId: 2,
+    paraId: 2100,
+    contributeUrl: 'https://app.subsocial.network/crowdloan',
+    rewards: {
+      tokens: null,
+      custom: [
+        {
+          title: 'SUB per KSM',
+          value: '>150 SUB',
+        },
+        {
+          title: 'Crowdloan Cap',
+          value: '100,000.420 KSM'
+        },
+        {
+          title: 'Total Supply',
+          value: '100,000,000 SUB',
+        },
+        {
+          title: 'Crowdloan Allocation',
+          value: '16,500,000 SUB',
+        },
+        {
+          title: 'Initial Unlock',
+          value: '20%'
+        },
+
       ],
       info: null,
     },
