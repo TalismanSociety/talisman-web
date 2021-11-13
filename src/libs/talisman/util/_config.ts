@@ -1462,12 +1462,25 @@ export const crowdloanDetails: CrowdloanDetails[] = [
       custom: [
         {
           title: 'SUB per KSM',
-          value: 'TBD',
+          value: '>150 SUB',
+        },
+        {
+          title: 'Crowdloan Cap',
+          value: '100,000.420 KSM'
         },
         {
           title: 'Total Supply',
           value: '100,000,000 SUB',
         },
+        {
+          title: 'Crowdloan Allocation',
+          value: '16,500,000 SUB',
+        },
+        {
+          title: 'Initial Unlock',
+          value: '20%'
+        },
+
       ],
       info: null,
     },
