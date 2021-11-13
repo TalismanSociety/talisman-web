@@ -102,10 +102,10 @@ function useInjector(nftObject: NFTConsolidated) {
 
 type SendStatus = 'INPROGRESS' | 'SUCCESS' | 'FAILED'
 
-const sendNFT = async (api: ApiPromise, nftObject: any, remark: string, injector: any, cb: any) => {
+const sendNFT = async (toAddress: string, api: ApiPromise, remark: string, injector: any, cb: any) => {
   const txs = [api.tx.system.remark(remark)]
   const tx = api.tx.utility.batchAll(txs)
-  const txSigned = await tx.signAsync(nftObject?.account, { signer: injector.signer })
+  const txSigned = await tx.signAsync(toAddress, { signer: injector.signer })
 
   const unsub = await txSigned.send(async result => {
     const { status, events = [], dispatchError } = result
@@ -162,7 +162,7 @@ function useNftSender(nft: NFTConsolidated, toAddress: string): [SendStatus | un
   const [status, setStatus] = useState<SendStatus | undefined>()
 
   const send = async () => {
-    await sendNFT(api, nft, remark, injector, setStatus)
+    await sendNFT(toAddress, api, remark, injector, setStatus)
   }
 
   if (!api) {
