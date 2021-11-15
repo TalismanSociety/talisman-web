@@ -1,0 +1,27 @@
+﻿{
+  "inProgress": {
+    "header": "อยู่ระหว่างการดำเนินการ",
+    "description": "การทำธุรกรรมอยู่ระหว่างการดำเนินการ อาจใช้เวลาชั่วครู่ในการยืนยันธุรกรรม",
+    "primaryCta": "ดู Subscan",
+    "secondaryCta": "ปิด"
+  },
+  "success": {
+    "header": "สำเร็จ",
+    "description": "การทำธุรกรรมสำเร็จแล้ว ขอบคุณที่สนับสนุน",
+    "primaryCta": "ดู Subscan",
+    "secondaryCta": "ไปที่ Portfolio"
+  },
+  "failed": {
+    "header": "ล้มเหลว",
+    "description": "การทำธุรกรรมล้มเหลว",
+    "primaryCta": "ดู Subscan",
+    "secondaryCta": "ปิด"
+  },
+  "registeringUser": {
+    "header": "ยอมรับข้อตกลงและเงื่อนไข",
+    "description": "หากคลิกที่ \"Sign and Send\" ด้านล่างนี้ ถือว่าคุณได้ยอมรับข้อตกลงและเงื่อนของในการ Crowdloan ของ Moonbeam ที่จะได้รับการจัดเก็บแบบ on-chain ไปยังบัญชี DOT ของคุณ การยอมรับนี้จะอยู่ในหมายเหตุ Extrinstic ที่ได้รับการยอมรับโดยบัญชีคุณ",
+    "feeNote": "โปรดรับทราบว่าการทำธุรกรรมนี้จะเสียค่าทำธุรกรมบนเครือข่าย Polkadot (ประมาณ 0.0411 DOT) และบัญชี Polkadot นั้นต้องมีขั้นต่ำอยู่ที่ 1 DOT",
+    "termsNote": "[View terms]",
+    "primaryCta": "Sign and Send"
+  }
+}
