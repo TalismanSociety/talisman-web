@@ -162,7 +162,7 @@ function useNftSender(nft: NFTConsolidated, toAddress: string): [SendStatus | un
   const [status, setStatus] = useState<SendStatus | undefined>()
 
   const send = async () => {
-    await sendNFT(toAddress, api, remark, injector, setStatus)
+    await sendNFT(nft.owner, api, remark, injector, setStatus)
   }
 
   if (!api) {
@@ -639,8 +639,8 @@ const SpiritKey = styled(({ className }) => {
                 <ChevronDown />
               </Button.Icon>
             </div>
-            {/* <h2>Send to a friend</h2>
-            <SendNft nft={nft} /> */}
+            <h2>Send to a friend</h2>
+            <SendNft nft={nft} />
           </div>
         )}
 
