@@ -19,9 +19,9 @@ import styled from 'styled-components'
 
 import { fetchNFTData } from '../libs/spiritkey/spirit-key'
 
-const isValidAddress = (address: string) => {
+const isValidKusamaAddress = (address: string) => {
   try {
-    encodeAddress(isHex(address) ? hexToU8a(address) : decodeAddress(address))
+    encodeAddress(isHex(address) ? hexToU8a(address) : decodeAddress(address, true, 2))
     return true
   } catch (error) {
     return false
@@ -102,10 +102,10 @@ function useInjector(nftObject: NFTConsolidated) {
 
 type SendStatus = 'INPROGRESS' | 'SUCCESS' | 'FAILED'
 
-const sendNFT = async (toAddress: string, api: ApiPromise, remark: string, injector: any, cb: any) => {
+const sendNFT = async (senderAddress: string, api: ApiPromise, remark: string, injector: any, cb: any) => {
   const txs = [api.tx.system.remark(remark)]
   const tx = api.tx.utility.batchAll(txs)
-  const txSigned = await tx.signAsync(toAddress, { signer: injector.signer })
+  const txSigned = await tx.signAsync(senderAddress, { signer: injector.signer })
 
   const unsub = await txSigned.send(async result => {
     const { status, events = [], dispatchError } = result
@@ -403,7 +403,7 @@ const SendNft = styled(({ className, nft }) => {
         />
         <Button
           primary
-          disabled={!isValidAddress(toAddress)}
+          disabled={!isValidKusamaAddress(toAddress)}
           onClick={(e: any) => {
             sendNft()
           }}
