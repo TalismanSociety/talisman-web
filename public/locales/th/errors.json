@@ -1,0 +1,11 @@
+﻿{
+  "Account balance too low": "ยอดในบัญชีน้อยเกินไป",
+  "A parachain must be selected": "ต้องทำการเลือก Parachain",
+  "Please enter an amount of {{token}}": "โปรดใส่จำนวนของ {{token}}",
+  "Please enter a valid amount of {{token}}": "กรุณากรอกจำนวนที่ถูกต้องของ {{token}}",
+  "An account must be selected": "ต้องทำการเลือกบัญชี",
+  "Account balance not ready yet": "ยอดในบัญชียังไม่พร้อมใช้งาน",
+  "A minimum of {{minimum}} {{token}} is required": "ต้องมีขั้นต่ำที่ {{minimum}} {{token}}",
+  "Failed to submit transaction: account balance too low": "การทำธุรกรรมล้มเหลว: ยอดในบัญชีน้อยเกินไป",
+  "Failed to submit transaction": "การทำธุรกรรมล้มเหลว"
+}

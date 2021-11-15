@@ -17,6 +17,7 @@ import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 
 const CrowdloanItem = styled(({ id, className }) => {
+  const { t } = useTranslation()
   const { crowdloan } = useCrowdloanById(id)
   const parachainId = crowdloan?.parachain.paraId
   const relayChainId = useMemo(() => id.split('-')[0], [id])
@@ -56,7 +57,7 @@ const CrowdloanItem = styled(({ id, className }) => {
       <span className="right">
         <Info
           title={
-            <Pendor suffix={` ${relayTokenSymbol} Contributed`}>
+            <Pendor suffix={` ${relayTokenSymbol} ${t('Contributed')}`}>
               {contributedTokens && formatCommas(contributedTokens)}
             </Pendor>
           }

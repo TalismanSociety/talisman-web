@@ -1,0 +1,33 @@
+{
+  "explore": {
+    "header": "ร่วมสร้างพาราเวิร์ส",
+    "description": "การ Crowdloan เป็นการช่วยเหล่าโปรเจคและทีมในการระดมทุน เพื่อร่วมในการประมูล Parachain บนทั้ง Polkadot และ Kusama",
+    "primaryCta": "เข้าสู่ Crowdloan"
+  },
+  "empty": {
+    "header": "ว่างเปล่า!",
+    "description": "ซื้อ DOT และ KSM ด้วยบัตรเครดิตหรือคริปโต",
+    "primaryCta": "ซื้อ DOT / KSM"
+  },
+  "soon": {
+    "header": "เร็วๆ นี้",
+    "description": "ระหว่างรอ ลองไปดู Crowdloan ก่อนได้นะ",
+    "primaryCta": "เข้าสู่ Crowdloan"
+  },
+  "buy": {
+    "header": "ซื้อ DOT / KSM",
+    "description": "ไหนขอดูเงินหน่อยสิ้",
+    "primaryCta": "ซื้อ"
+  },
+  "unlockTalisman": {
+    "header": "ปลดล็อก Talisman",
+    "description": "สนับสนุน DOT Crowdloan ใดก็ได้ พร้อมรับ Spirit Key เพราะไม่ช้าคุณต้องใช้มัน..",
+    "primaryCta": "เพิ่มเติม"
+  },
+  "noWallet": {
+    "header": "ไม่นะ!",
+    "description": "ดูหมือนคุณยังไม่ได้ติดตั้งส่วนขยาย แนะนำให้โหลด <1>Polkadot.js</1>",
+    "description2": "ระหว่างรอ ลองไปดู Crowdloan ก่อนได้นะ",
+    "primaryCta": "เข้าสู่ Crowdloan"
+  }
+}

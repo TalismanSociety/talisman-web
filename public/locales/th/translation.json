@@ -1,0 +1,46 @@
+﻿{
+  "Portfolio value": "มูลค่า Portfolio",
+  "Assets": "สินทรัพย์",
+  "All Accounts": "บัญชีทั้งหมด",
+  "Crowdloans": "Crowdloan",
+  "Staking": "Staking",
+  "This door will be unlocked soon": "ประตูบานนี้จะได้รับการปลดล็อคในไม่ช้า",
+  "You have not contributed to any Crowdloans": "คุณยังไม่เคยทำรายการ Crowdloan",
+  "Summoning Crowdloan Contributions...": "กำลังอัญเชิญการทำรายการ Crowdloan...",
+  "Search Crowdloans": "ค้นหา Crowdloan",
+  "Raised": "ได้",
+  "Ends in": "จบใน",
+  "Contribute": "ทำรายการ",
+  "Contributed": "ทำรายการแล้ว",
+  "Rewards": "รางวัล",
+  "Cancel": "ยกเลิก",
+  "Contribute to": "ทำรายการให้",
+  "Sort by": "จัดเรียงโดย",
+  "noResult": {
+    "title": "ขอโทษที",
+    "subtitle": "Talisman ไม่สามารถทำการอัญเชิญสิ่งที่ท่านร้องเรียกได้",
+    "text": "ลองอย่างอื่น"
+  },
+  "You have no": "คุณไม่มี",
+  "Buy": "ซื้อ",
+  "Fee": "ค่าธรรมเนียม",
+  "Add {{asset}} Balance": "เพิ่มยอดของ {{asset}}",
+  "Unavailable": "ไม่พร้อมใช้งาน",
+  "extensionUnavailable": {
+    "title": "ไม่นะ!",
+    "subtitle": "ดูหมือนคุณยังไม่ได้ติดตั้งส่วนขยาย",
+    "text": "ไม่ต้องเป็นห่วง เรากำลังสร้างกระเป๋าที่ดีเยี่ยมยอดสุดแจ่ม",
+    "text2": "แต่กว่าจะถึงตอนนั้น เราแนะนำให้ใช้ Polkadot.js ไปก่อน"
+  },
+  "Install Polkadot.js Extension": "ติดตั้งส่วนขยาย Polkadot.js",
+  "Requires Configuration": "Requires Configuration",
+  "desktopRequired": {
+    "title": "ขอโทษที!",
+    "subtitle": "ณ ตอนนี้ยังใช้งานได้เฉพาะบนเดสก์ท็อปเท่านั้น แต่ไม่นานเราจะมีเวอร์ชั่นบนมือถือที่ใช้งานง่ายแน่นอน",
+    "text": "ระหว่างรอ ลองไปท่อง dashboard ของ Crowdloan ดูก่อนนะ",
+    "primaryCta": "ดู Crowdloan"
+  },
+  "No wallet found": "ไม่พบกระเป๋า",
+  "Goal reached": "เป้าหมายเสร็จสิ้น",
+  "Spirit Key": "Spirit Key"
+}
