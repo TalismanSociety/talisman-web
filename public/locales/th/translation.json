@@ -1,11 +1,11 @@
 ﻿{
-  "Portfolio value": "มูลค่า Portfolio",
+  "Portfolio value": "มูลค่าพอร์ตฟอลิโอ",
   "Assets": "สินทรัพย์",
   "All Accounts": "บัญชีทั้งหมด",
   "Crowdloans": "Crowdloan",
   "Staking": "Staking",
   "This door will be unlocked soon": "ประตูบานนี้จะได้รับการปลดล็อคในไม่ช้า",
-  "You have not contributed to any Crowdloans": "คุณยังไม่เคยทำรายการ Crowdloan",
+  "You have not contributed to any Crowdloans": "คุณยังไม่เคยทำ Crowdloan",
   "Summoning Crowdloan Contributions...": "กำลังอัญเชิญการทำรายการ Crowdloan...",
   "Search Crowdloans": "ค้นหา Crowdloan",
   "Raised": "ได้",
@@ -36,7 +36,7 @@
   "Requires Configuration": "Requires Configuration",
   "desktopRequired": {
     "title": "ขอโทษที!",
-    "subtitle": "ณ ตอนนี้ยังใช้งานได้เฉพาะบนเดสก์ท็อปเท่านั้น แต่ไม่นานเราจะมีเวอร์ชั่นบนมือถือที่ใช้งานง่ายแน่นอน",
+    "subtitle": "ณ ตอนนี้ยังใช้งานได้เฉพาะบนเดสก์ท็อปเท่านั้น แต่ไม่นานเราจะมีเวอร์ชั่นมือถือที่ใช้งานง่ายแน่นอน",
     "text": "ระหว่างรอ ลองไปท่อง dashboard ของ Crowdloan ดูก่อนนะ",
     "primaryCta": "ดู Crowdloan"
   },

@@ -1,7 +1,7 @@
 {
   "explore": {
     "header": "ร่วมสร้างพาราเวิร์ส",
-    "description": "การ Crowdloan เป็นการช่วยเหล่าโปรเจคและทีมในการระดมทุน เพื่อร่วมในการประมูล Parachain บนทั้ง Polkadot และ Kusama",
+    "description": "Crowdloan เป็นการช่วยสนับสนุนทีมโปรเจคเพื่อระดมทุนร่วมประมูล Parachain ทั้งบน Polkadot และ Kusama",
     "primaryCta": "เข้าสู่ Crowdloan"
   },
   "empty": {
@@ -21,7 +21,7 @@
   },
   "unlockTalisman": {
     "header": "ปลดล็อก Talisman",
-    "description": "สนับสนุน DOT Crowdloan ใดก็ได้ พร้อมรับ Spirit Key เพราะไม่ช้าคุณต้องใช้มัน..",
+    "description": "สนับสนุน DOT Crowdloan ใดก็ตาม รับ Spirit Key เพราะไม่ช้าเจ้าต้องใช้มัน..",
     "primaryCta": "เพิ่มเติม"
   },
   "noWallet": {
