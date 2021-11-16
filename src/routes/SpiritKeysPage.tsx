@@ -11,6 +11,7 @@ import { hexToU8a, isHex } from '@polkadot/util'
 import { cryptoWaitReady } from '@polkadot/util-crypto'
 import { encodeAnyAddress } from '@talismn/util'
 import { isMobileBrowser } from '@util/helpers'
+import { AnyAddress, SS58Format, useAnyAddressFromClipboard } from '@util/useAnyAddressFromClipboard'
 import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { consolidatedNFTtoInstance } from 'rmrk-tools'
@@ -61,12 +62,12 @@ function useSender() {
   return api
 }
 
-async function setupRemark(nftObject: NFTConsolidated, toAddress: string) {
+async function setupRemark(nftObject: NFTConsolidated, toAddress: AnyAddress) {
   if (!toAddress) {
     return undefined
   }
   const nft = consolidatedNFTtoInstance(nftObject)
-  const remark = await nft?.send(toAddress)
+  const remark = await nft?.send(toAddress as string)
 
   // TODO: For now, this is a workaround as v2 send is not compatible with v1 remarks
   return remark?.replace('2.0.0', '1.0.0')
@@ -84,7 +85,7 @@ async function setupInjector(nftObject: NFTConsolidated) {
   }
 }
 
-function useNftRemark(nftObject: NFTConsolidated, toAddress: string) {
+function useNftRemark(nftObject: NFTConsolidated, toAddress: AnyAddress) {
   const [remark, setRemark] = useState<string | undefined>()
   useEffect(() => {
     setupRemark(nftObject, toAddress).then(r => setRemark(r))
@@ -155,7 +156,7 @@ const sendNFT = async (senderAddress: string, api: ApiPromise, remark: string, i
   })
 }
 
-function useNftSender(nft: NFTConsolidated, toAddress: string): [SendStatus | undefined, () => void, () => void] {
+function useNftSender(nft: NFTConsolidated, toAddress: AnyAddress): [SendStatus | undefined, () => void, () => void] {
   const api = useSender()
   const remark = useNftRemark(nft, toAddress)
   const injector = useInjector(nft)
@@ -354,9 +355,15 @@ const Success = styled(({ className, closeModal, explorerUrl }) => {
 `
 
 const SendNft = styled(({ className, nft }) => {
-  const [toAddress, setToAddress] = useState<string>('')
+  const [toAddress, setToAddress] = useState<string | Uint8Array>('')
   const [status, sendNft, resetStatus] = useNftSender(nft, toAddress)
   const [showModal, setShowModal] = useState(false)
+
+  const { address: pastedAddress } = useAnyAddressFromClipboard(SS58Format.Kusama)
+
+  useEffect(() => {
+    setToAddress(pastedAddress)
+  }, [pastedAddress])
 
   useEffect(() => {
     if (toAddress !== '' && (status === 'SUCCESS' || status === 'FAILED')) {
@@ -616,33 +623,33 @@ const SpiritKey = styled(({ className }) => {
             </Button>
           </div>
         )}
-        {hasNfts && (
-          <div className="spirit-key-body">
-            <div className="switcher">
-              <Button.Icon
-                className="nav-toggle-left"
-                onClick={(e: any) => {
-                  changeNFT(0)
-                }}
-              >
-                <ChevronDown />
-              </Button.Icon>
-              <div className="nft-number">
-                <p>#{totalNFTs[currentNFT]?.sn.substring(4)}</p>
-              </div>
-              <Button.Icon
-                className="nav-toggle-right"
-                onClick={(e: any) => {
-                  changeNFT(1)
-                }}
-              >
-                <ChevronDown />
-              </Button.Icon>
+        {/* {hasNfts && ( */}
+        <div className="spirit-key-body">
+          <div className="switcher">
+            <Button.Icon
+              className="nav-toggle-left"
+              onClick={(e: any) => {
+                changeNFT(0)
+              }}
+            >
+              <ChevronDown />
+            </Button.Icon>
+            <div className="nft-number">
+              <p>#{totalNFTs?.[currentNFT]?.sn.substring(4)}</p>
             </div>
-            <h2>Send to a friend</h2>
-            <SendNft nft={nft} />
+            <Button.Icon
+              className="nav-toggle-right"
+              onClick={(e: any) => {
+                changeNFT(1)
+              }}
+            >
+              <ChevronDown />
+            </Button.Icon>
           </div>
-        )}
+          <h2>Send to a friend</h2>
+          <SendNft nft={nft} />
+        </div>
+        {/* )} */}
 
         <div className="info">
           <div className="section">
