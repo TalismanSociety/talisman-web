@@ -355,7 +355,7 @@ const Success = styled(({ className, closeModal, explorerUrl }) => {
 `
 
 const SendNft = styled(({ className, nft }) => {
-  const [toAddress, setToAddress] = useState<string | Uint8Array>('')
+  const [toAddress, setToAddress] = useState<AnyAddress>('')
   const [status, sendNft, resetStatus] = useNftSender(nft, toAddress)
   const [showModal, setShowModal] = useState(false)
 
