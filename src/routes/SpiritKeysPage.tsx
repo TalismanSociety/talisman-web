@@ -623,33 +623,33 @@ const SpiritKey = styled(({ className }) => {
             </Button>
           </div>
         )}
-        {/* {hasNfts && ( */}
-        <div className="spirit-key-body">
-          <div className="switcher">
-            <Button.Icon
-              className="nav-toggle-left"
-              onClick={(e: any) => {
-                changeNFT(0)
-              }}
-            >
-              <ChevronDown />
-            </Button.Icon>
-            <div className="nft-number">
-              <p>#{totalNFTs?.[currentNFT]?.sn.substring(4)}</p>
+        {hasNfts && (
+          <div className="spirit-key-body">
+            <div className="switcher">
+              <Button.Icon
+                className="nav-toggle-left"
+                onClick={(e: any) => {
+                  changeNFT(0)
+                }}
+              >
+                <ChevronDown />
+              </Button.Icon>
+              <div className="nft-number">
+                <p>#{totalNFTs[currentNFT]?.sn.substring(4)}</p>
+              </div>
+              <Button.Icon
+                className="nav-toggle-right"
+                onClick={(e: any) => {
+                  changeNFT(1)
+                }}
+              >
+                <ChevronDown />
+              </Button.Icon>
             </div>
-            <Button.Icon
-              className="nav-toggle-right"
-              onClick={(e: any) => {
-                changeNFT(1)
-              }}
-            >
-              <ChevronDown />
-            </Button.Icon>
+            <h2>Send to a friend</h2>
+            <SendNft nft={nft} />
           </div>
-          <h2>Send to a friend</h2>
-          <SendNft nft={nft} />
-        </div>
-        {/* )} */}
+        )}
 
         <div className="info">
           <div className="section">
