@@ -100,7 +100,7 @@ export const parachainDetails: ParachainDetails[] = [
       Medium: 'https://darwinianetwork.medium.com/',
       Github: 'https://github.com/darwinia-network',
     },
-  },  
+  },
   {
     id: '0-2004',
     name: 'Moonbeam',
@@ -713,9 +713,9 @@ export const crowdloanDetails: CrowdloanDetails[] = [
         // },
       ],
       bonus: {
-        short: 'Up to 5% + 🗝',
-        full: 'Earn up to 5% ACA + 🗝',
-        info: 'Receive a <strong>bonus of 5% + a Spirit Key 🗝</strong> when you use Talisman',
+        short: '5% bonus + 🗝',
+        full: 'Earn 5% ACA + 🗝',
+        info: "Receive <strong>5% additional ACA</strong> when you contribute via Talisman. Receive a Spirit Key if you're part of the first 1000 contributors.",
       },
       info: null,
     },
@@ -799,8 +799,8 @@ export const crowdloanDetails: CrowdloanDetails[] = [
       ],
       bonus: {
         short: 'Bonus 🗝',
-        full: 'Receive a Talisman Spirit Key 🗝',
-        info: 'Receive a <strong>Talisman Spirit Key </strong> if you are one of the first 1000 crowdloan contributors on the Talisman dashboard.',
+        full: 'Receive a Spirit Key 🗝',
+        info: 'Receive a <strong>Spirit Key</strong>.',
       },
       info: null,
     },
@@ -825,8 +825,8 @@ export const crowdloanDetails: CrowdloanDetails[] = [
         },
       ],
       bonus: {
-        short: 'Up to 25% + 🗝',
-        full: 'Earn up to 25% bonus ASTR + 🗝',
+        short: '20% bonus + 🗝',
+        full: 'Earn up to 20% bonus ASTR + 🗝',
         info: 'Receive a <strong>20% bonus </strong> if you contribute before Nov 18th.',
       },
       info: null,
@@ -879,9 +879,9 @@ export const crowdloanDetails: CrowdloanDetails[] = [
         },
       ],
       bonus: {
-        short: 'Up to 10% + 🗝',
-        full: 'Earn up to 10% bonus LIT + 🗝',
-        info: '10% bonus LIT if you contribute <strong>before parachain auction starts</strong>. 5% bonus LIT <strong> within the first 7 days </strong> since parachain auction starting.',
+        short: '5% bonus + 🗝',
+        full: 'Earn 5% or 10% bonus LIT + 🗝',
+        info: '10% bonus LIT until <strong>November 11th 2021</strong>. 5% bonus LIT <strong> within the first 7 days </strong> after November 11th 2021.',
       },
       info: null,
     },
@@ -906,9 +906,9 @@ export const crowdloanDetails: CrowdloanDetails[] = [
         },
       ],
       bonus: {
-        short: 'Bonus 🗝',
-        full: 'Receive a Talisman Spirit Key 🗝',
-        info: 'Receive a <strong>Talisman Spirit Key </strong> if you are one of the first 1000 crowdloan contributors on the Talisman dashboard.',
+        short: '5% bonus + 🗝',
+        full: 'Earn 5% bonus + 🗝',
+        info: '10% before November 11th 2021, 5% bonus before Feb 1st, 2021 + a Manta NFT',
       },
       info: null,
     },
@@ -1550,7 +1550,7 @@ export const crowdloanDetails: CrowdloanDetails[] = [
         },
         {
           title: 'Crowdloan Cap',
-          value: '100,000.420 KSM'
+          value: '100,000.420 KSM',
         },
         {
           title: 'Total Supply',
@@ -1562,9 +1562,8 @@ export const crowdloanDetails: CrowdloanDetails[] = [
         },
         {
           title: 'Initial Unlock',
-          value: '20%'
+          value: '20%',
         },
-
       ],
       info: null,
     },
