@@ -4,6 +4,8 @@ import {
   groupTotalContributionsByCrowdloan,
   useCrowdloanContributions,
 } from '@libs/crowdloans'
+import { Moonbeam } from '@libs/crowdloans/crowdloanOverrides'
+import { MoonbeamPortfolioTag } from '@libs/moonbeam-contributors'
 import { calculateCrowdloanPortfolioAmounts, usePortfolio, useTaggedAmountsInPortfolio } from '@libs/portfolio'
 import { useAccountAddresses, useCrowdloanById, useCrowdloans, useParachainDetailsById } from '@libs/talisman'
 import { SupportedRelaychains } from '@libs/talisman/util/_config'
@@ -53,6 +55,7 @@ const CrowdloanItem = styled(({ id, className }) => {
     <div className={`${className} ${id}`}>
       <span className="left">
         <Info title={name} subtitle={longName || name} graphic={<ChainLogo chain={chain} type="logo" size={4} />} />
+        {Moonbeam.is(Number(id.split('-')[0]), Number(id.split('-')[1])) ? <MoonbeamPortfolioTag /> : null}
       </span>
       <span className="right">
         <Info

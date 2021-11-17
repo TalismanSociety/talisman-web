@@ -1302,7 +1302,7 @@ async function buildAcalaTx({
   return api.tx.utility.batchAll(txs)
 }
 
-async function deriveExplorerUrl(
+export async function deriveExplorerUrl(
   api: ApiPromise,
   result: SubmittableResult,
   subscanUrl?: string
