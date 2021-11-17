@@ -8,7 +8,10 @@ export enum SS58Format {
 
 export type AnyAddress = string | Uint8Array
 
-function convertAnyAddress(address: AnyAddress, ss58format: SS58Format) {
+export function convertAnyAddress(address: AnyAddress, ss58format: SS58Format) {
+  if (!address) {
+    return address
+  }
   try {
     const encodedAddress = encodeAnyAddress(address, ss58format)
     return encodedAddress
@@ -18,6 +21,7 @@ function convertAnyAddress(address: AnyAddress, ss58format: SS58Format) {
   }
 }
 
+// TODO: Maybe deprecate this as we don't really want to influence the "pasted" value.
 export function useAnyAddressFromClipboard(ss58format: SS58Format | number) {
   const [address, setAddress] = useState<AnyAddress>('')
   const [originalAddress, setOriginalAddress] = useState<AnyAddress>('')

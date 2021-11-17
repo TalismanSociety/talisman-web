@@ -11,7 +11,7 @@ import { hexToU8a, isHex } from '@polkadot/util'
 import { cryptoWaitReady } from '@polkadot/util-crypto'
 import { encodeAnyAddress } from '@talismn/util'
 import { isMobileBrowser } from '@util/helpers'
-import { AnyAddress, SS58Format, useAnyAddressFromClipboard } from '@util/useAnyAddressFromClipboard'
+import { AnyAddress, SS58Format, convertAnyAddress } from '@util/useAnyAddressFromClipboard'
 import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { consolidatedNFTtoInstance } from 'rmrk-tools'
@@ -20,9 +20,9 @@ import styled from 'styled-components'
 
 import { fetchNFTData } from '../libs/spiritkey/spirit-key'
 
-const isValidKusamaAddress = (address: string) => {
+const isValidAddress = (address: AnyAddress) => {
   try {
-    encodeAddress(isHex(address) ? hexToU8a(address) : decodeAddress(address, true, 2))
+    encodeAddress(isHex(address) ? hexToU8a(address) : decodeAddress(address))
     return true
   } catch (error) {
     return false
@@ -158,7 +158,8 @@ const sendNFT = async (senderAddress: string, api: ApiPromise, remark: string, i
 
 function useNftSender(nft: NFTConsolidated, toAddress: AnyAddress): [SendStatus | undefined, () => void, () => void] {
   const api = useSender()
-  const remark = useNftRemark(nft, toAddress)
+  const kusamaAddress = convertAnyAddress(toAddress, SS58Format.Kusama)
+  const remark = useNftRemark(nft, kusamaAddress)
   const injector = useInjector(nft)
   const [status, setStatus] = useState<SendStatus | undefined>()
 
@@ -359,12 +360,6 @@ const SendNft = styled(({ className, nft }) => {
   const [status, sendNft, resetStatus] = useNftSender(nft, toAddress)
   const [showModal, setShowModal] = useState(false)
 
-  const { address: pastedAddress } = useAnyAddressFromClipboard(SS58Format.Kusama)
-
-  useEffect(() => {
-    setToAddress(pastedAddress)
-  }, [pastedAddress])
-
   useEffect(() => {
     if (toAddress !== '' && (status === 'SUCCESS' || status === 'FAILED')) {
       setToAddress('')
@@ -410,7 +405,7 @@ const SendNft = styled(({ className, nft }) => {
         />
         <Button
           primary
-          disabled={!isValidKusamaAddress(toAddress)}
+          disabled={!isValidAddress(toAddress)}
           onClick={(e: any) => {
             sendNft()
           }}
