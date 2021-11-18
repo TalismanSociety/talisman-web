@@ -501,7 +501,7 @@ const SpiritKeyNft = styled(({ className, src }) => {
       position: relative;
 
       &:before {
-        content: 'testtt';
+        content: '';
         position: absolute;
         top: 0;
         left: 0;
