@@ -2,7 +2,7 @@ import * as crypto from 'crypto'
 
 import { ApiPromise } from '@polkadot/api'
 import { Signer } from '@polkadot/api/types'
-import { web3FromAddress } from '@polkadot/extension-dapp'
+import { web3FromAddress } from '@talismn/dapp-connect'
 
 import { Moonbeam } from '../crowdloanOverrides'
 import moonbeamStatement from './moonbeamStatement'
