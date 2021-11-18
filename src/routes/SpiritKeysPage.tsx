@@ -4,8 +4,6 @@ import { StyledLoader } from '@components/Await'
 import { TalismanHandLike } from '@components/TalismanHandLike'
 import { TalismanHandLoader } from '@components/TalismanHandLoader'
 import { ReactComponent as ChevronDown } from '@icons/chevron-down.svg'
-import { ReactComponent as MusicPause } from '@icons/music-pause.svg'
-import { ReactComponent as MusicPlay } from '@icons/music-play.svg'
 import { useAllAccountAddresses, useExtensionAutoConnect } from '@libs/talisman'
 import { ApiPromise, WsProvider } from '@polkadot/api'
 import { web3FromAddress } from '@polkadot/extension-dapp'
@@ -462,17 +460,6 @@ function useAudio(src: string, play?: boolean) {
     setPlaying,
     togglePlay,
   }
-}
-
-const AudioPlayer = ({ className = '', src = '', play = false }) => {
-  const { isPlaying, togglePlay } = useAudio(src)
-  return (
-    <div className={className}>
-      <button id="play-icon" onClick={togglePlay}>
-        {isPlaying ? `Pause` : `Play`}
-      </button>
-    </div>
-  )
 }
 
 const SpiritKeyNft = styled(({ className, src }) => {
