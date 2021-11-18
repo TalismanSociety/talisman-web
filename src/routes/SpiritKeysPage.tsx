@@ -1,8 +1,11 @@
+import miksySpiritKeysAudio from '@assets/miksy-spirit-keys.mp3'
 import { Button, DesktopRequired, Field } from '@components'
 import { StyledLoader } from '@components/Await'
 import { TalismanHandLike } from '@components/TalismanHandLike'
 import { TalismanHandLoader } from '@components/TalismanHandLoader'
 import { ReactComponent as ChevronDown } from '@icons/chevron-down.svg'
+import { ReactComponent as PauseCircle } from '@icons/pause-circle.svg'
+import { ReactComponent as PlayCircle } from '@icons/play-circle.svg'
 import { useAllAccountAddresses, useExtensionAutoConnect } from '@libs/talisman'
 import { ApiPromise, WsProvider } from '@polkadot/api'
 import { web3FromAddress } from '@polkadot/extension-dapp'
@@ -12,7 +15,7 @@ import { cryptoWaitReady } from '@polkadot/util-crypto'
 import { encodeAnyAddress } from '@talismn/util'
 import { isMobileBrowser } from '@util/helpers'
 import { AnyAddress, SS58Format, convertAnyAddress } from '@util/useAnyAddressFromClipboard'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { consolidatedNFTtoInstance } from 'rmrk-tools'
 import { NFTConsolidated } from 'rmrk-tools/dist/tools/consolidator/consolidator'
@@ -432,6 +435,80 @@ const SendNft = styled(({ className, nft }) => {
   }
 `
 
+function useAudio(src: string, play?: boolean) {
+  const audioRef = useRef(new Audio(src))
+  const [isPlaying, setPlaying] = useState(false)
+
+  useEffect(() => {
+    if (isPlaying) {
+      audioRef.current.play()
+    } else {
+      audioRef.current.pause()
+    }
+    const ref = audioRef.current
+    return () => {
+      ref.pause()
+    }
+  }, [isPlaying])
+
+  useEffect(() => {
+    if (play !== undefined) {
+      setPlaying(play)
+    }
+  }, [play])
+
+  function togglePlay() {
+    setPlaying(!isPlaying)
+  }
+
+  return {
+    isPlaying,
+    setPlaying,
+    togglePlay,
+  }
+}
+
+const SimplePlay = styled(({ className, src }) => {
+  const { isPlaying, togglePlay } = useAudio(src)
+  return (
+    <button className={className} onClick={togglePlay}>
+      {isPlaying ? <PauseCircle /> : <PlayCircle />}
+    </button>
+  )
+})`
+  padding: 0;
+  border: 0;
+  background: inherit;
+  cursor: pointer;
+  display: flex;
+
+  svg {
+    width: 3rem;
+    height: auto;
+  }
+`
+
+const Attribution = styled(({ className }) => {
+  return (
+    <span className={className}>
+      Music by{' '}
+      <a
+        href="https://soundcloud.com/miksyyy/spirit-keys?si=45ddd3a44b7c4ecc80ca1c31a1a846d9"
+        target="_blank"
+        rel="noreferrer noopener"
+      >
+        Miksy
+      </a>
+    </span>
+  )
+})`
+  color: var(--color-dim);
+  a {
+    color: var(--color-mid);
+    text-decoration: underline;
+  }
+`
+
 const SpiritKeyNft = styled(({ className, src }) => {
   return (
     <div className={className}>
@@ -444,14 +521,35 @@ const SpiritKeyNft = styled(({ className, src }) => {
 
         <div className="floating-card__card__background-scroller"></div>
       </div>
-
-      <div className="floating-card__floor-shadow"></div>
+      <div className="spirit-keys-music-info">
+        <SimplePlay src={miksySpiritKeysAudio} />
+        <Attribution />
+      </div>
     </div>
   )
 })`
+  .spirit-keys-music-info {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+
   .spirit-key-image {
     width: 100%;
     object-fit: cover;
+    &:hover {
+      cursor: pointer;
+      position: relative;
+
+      &:before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+      }
+    }
   }
 
   .floating-card__card {
