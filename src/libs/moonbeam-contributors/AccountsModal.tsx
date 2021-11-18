@@ -21,8 +21,8 @@ export const AccountsModal = styled(({ className, contributors, selectAccount }:
         <>
           <h3>You have unlinked accounts</h3>
           <p>
-            In order to receive GLMR rewards you will need to link an ETH address to the account you contributed to the
-            Moonbeam crowdloan from.
+            In order to receive GLMR rewards you will need to link an Ethereum address to the account you contributed to
+            the Moonbeam crowdloan from.
           </p>
           <p className="standalone-link">
             <a

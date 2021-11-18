@@ -62,6 +62,7 @@ export function useMoonbeamContributors(accounts?: string[]): {
   called: boolean
   loading: boolean
   error: any
+  refetch: () => void
 } {
   // memoize accounts so user can provide an array like [accountId] without wasting cycles
   const addresses = useMemo(
@@ -71,7 +72,7 @@ export function useMoonbeamContributors(accounts?: string[]): {
 
   const apolloClient = useContext()
 
-  const { data, called, loading, error } = useQuery(Contributors, {
+  const { data, called, loading, error, refetch } = useQuery(Contributors, {
     client: apolloClient,
     variables: { addresses },
   })
@@ -83,6 +84,7 @@ export function useMoonbeamContributors(accounts?: string[]): {
     called,
     loading,
     error,
+    refetch,
   }
 }
 

@@ -4,6 +4,7 @@ import { TalismanHandLoader } from '@components/TalismanHandLoader'
 import Identicon from '@polkadot/react-identicon'
 import { planckToTokens } from '@talismn/util'
 import { truncateString } from '@util/helpers'
+import { useEffect } from 'react'
 import styled from 'styled-components'
 
 import { ContributorWithName, moonbeamRelaychain, useSetMoonbeamRewardsAddress } from '.'
@@ -12,8 +13,9 @@ export type AccountModalProps = {
   className?: string
   account: ContributorWithName
   selectAccount: (contributor?: ContributorWithName) => void
+  refetch: () => void
 }
-export const AccountModal = styled(({ className, account, selectAccount }: AccountModalProps) => {
+export const AccountModal = styled(({ className, account, selectAccount, refetch }: AccountModalProps) => {
   const { state, setRewardsAddress, send } = useSetMoonbeamRewardsAddress(
     account.rewardsAddress === null ? account.id : undefined
   )
@@ -25,6 +27,10 @@ export const AccountModal = styled(({ className, account, selectAccount }: Accou
       ? state.rewardsAddress
       : undefined
 
+  useEffect(() => {
+    state.type === 'SUCCESS' && refetch()
+  }, [state, refetch])
+
   return (
     <form
       className={className}
@@ -33,7 +39,7 @@ export const AccountModal = styled(({ className, account, selectAccount }: Accou
         send()
       }}
     >
-      <h3>{hasRewardsAddress ? 'Linked Address' : 'Link ETH address'}</h3>
+      <h3>{hasRewardsAddress ? 'Linked Address' : 'Link Ethereum address'}</h3>
       <div className={`info${hasRewardsAddress ? ' hasRewardsAddress' : ''}`}>
         <div>
           <span>Account</span>
@@ -50,7 +56,7 @@ export const AccountModal = styled(({ className, account, selectAccount }: Accou
         </div>
         {hasRewardsAddress ? (
           <div>
-            <span>ETH address</span>
+            <span>Ethereum address</span>
             <span>{truncateString(rewardsAddress, 4, 4)}</span>
           </div>
         ) : null}

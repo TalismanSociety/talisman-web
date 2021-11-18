@@ -1,7 +1,7 @@
 import { MaterialLoader } from '@components'
 import { useExtension } from '@libs/talisman'
 import { encodeAnyAddress } from '@talismn/util'
-import { useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import styled from 'styled-components'
 
 import { AccountModal } from './AccountModal'
@@ -12,7 +12,7 @@ type ModalState = { type: 'allAccounts' } | { type: 'selectedAccount'; contribut
 
 export default function MoonbeamContributionModal() {
   const { accounts } = useExtension()
-  const { contributors, loading } = useMoonbeamContributors(accounts.map(({ address }) => address))
+  const { contributors, loading, refetch } = useMoonbeamContributors(accounts.map(({ address }) => address))
   const contributorsWithNames: ContributorWithName[] = useMemo(
     () =>
       contributors.map(contributor => ({
@@ -23,14 +23,17 @@ export default function MoonbeamContributionModal() {
   )
 
   const [state, setState] = useState<ModalState>({ type: 'allAccounts' })
-  const selectAccount = (contributor?: ContributorWithName) =>
-    setState(contributor ? { type: 'selectedAccount', contributor } : { type: 'allAccounts' })
+  const selectAccount = useCallback(
+    (contributor?: ContributorWithName) =>
+      setState(contributor ? { type: 'selectedAccount', contributor } : { type: 'allAccounts' }),
+    []
+  )
 
   if (loading) return <Loading />
   if (state.type === 'allAccounts')
     return <AccountsModal contributors={contributorsWithNames} selectAccount={selectAccount} />
   if (state.type === 'selectedAccount')
-    return <AccountModal account={state.contributor} selectAccount={selectAccount} />
+    return <AccountModal account={state.contributor} selectAccount={selectAccount} refetch={refetch} />
 
   return null
 }

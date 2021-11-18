@@ -4,7 +4,7 @@ import styled from 'styled-components'
 const Popup = styled(({ className, openModal, dismiss }) => (
   <div className={className}>
     <h3>Contributed to the Moonbeam crowdloan?</h3>
-    <p>Make sure you link your account to an ETH address to be eligible to claim your rewards</p>
+    <p>Make sure you link your account to an Ethereum address to be eligible to claim your GLMR rewards</p>
     <p className="standalone-link">
       <a
         href="https://moonbeam.foundation/tutorials/how-to-create-a-moonbeam-ethereum-address"
