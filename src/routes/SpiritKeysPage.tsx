@@ -4,6 +4,8 @@ import { StyledLoader } from '@components/Await'
 import { TalismanHandLike } from '@components/TalismanHandLike'
 import { TalismanHandLoader } from '@components/TalismanHandLoader'
 import { ReactComponent as ChevronDown } from '@icons/chevron-down.svg'
+import { ReactComponent as PauseCircle } from '@icons/pause-circle.svg'
+import { ReactComponent as PlayCircle } from '@icons/play-circle.svg'
 import { useAllAccountAddresses, useExtensionAutoConnect } from '@libs/talisman'
 import { ApiPromise, WsProvider } from '@polkadot/api'
 import { web3FromAddress } from '@polkadot/extension-dapp'
@@ -443,6 +445,10 @@ function useAudio(src: string, play?: boolean) {
     } else {
       audioRef.current.pause()
     }
+    const ref = audioRef.current
+    return () => {
+      ref.pause()
+    }
   }, [isPlaying])
 
   useEffect(() => {
@@ -462,11 +468,50 @@ function useAudio(src: string, play?: boolean) {
   }
 }
 
-const SpiritKeyNft = styled(({ className, src }) => {
-  const { togglePlay } = useAudio(miksySpiritKeysAudio)
-
+const SimplePlay = styled(({ className, src }) => {
+  const { isPlaying, togglePlay } = useAudio(src)
   return (
-    <div className={className} onClick={togglePlay}>
+    <button className={className} onClick={togglePlay}>
+      {isPlaying ? <PauseCircle /> : <PlayCircle />}
+    </button>
+  )
+})`
+  padding: 0;
+  border: 0;
+  background: inherit;
+  cursor: pointer;
+  display: flex;
+
+  svg {
+    width: 3rem;
+    height: auto;
+  }
+`
+
+const Attribution = styled(({ className }) => {
+  return (
+    <span className={className}>
+      Music by{' '}
+      <a
+        href="https://soundcloud.com/miksyyy/spirit-keys?si=45ddd3a44b7c4ecc80ca1c31a1a846d9"
+        target="_blank"
+        rel="noreferrer noopener"
+      >
+        Miksy
+      </a>
+    </span>
+  )
+})`
+  color: var(--color-dim);
+  a {
+    color: var(--color-mid);
+    text-decoration: underline;
+  }
+`
+
+const SpiritKeyNft = styled(({ className, src }) => {
+  return (
+    <div className={className}>
       <div className="floating-card__card">
         <div className="floating-card__card__inner-container">
           <img className="spirit-key-image" src={src} alt="Spirit Key" />
@@ -477,20 +522,18 @@ const SpiritKeyNft = styled(({ className, src }) => {
         <div className="floating-card__card__background-scroller"></div>
       </div>
       <div className="spirit-keys-music-info">
-        <span>Turn up the volume and tap on the Spirit Key</span>
+        <SimplePlay src={miksySpiritKeysAudio} />
+        <Attribution />
       </div>
     </div>
   )
 })`
   .spirit-keys-music-info {
     display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
     margin-top: 1rem;
-    & > * {
-      color: var(--color-dim);
-      margin: 0 auto;
-      font-size: small;
-      font-weight: bold;
-    }
   }
 
   .spirit-key-image {
