@@ -2845,13 +2845,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@talismn/connect@https://github.com/TalismanSociety/connect":
-  version: 0.0.20
-  resolution: "@talismn/connect@https://github.com/TalismanSociety/connect.git#commit=09514edf16142d78206dce7592211beca6047601"
+"@talismn/dapp-connect@npm:^0.1.1":
+  version: 0.1.1
+  resolution: "@talismn/dapp-connect@npm:0.1.1"
   dependencies:
     "@polkadot/api": ^6.6.1
     "@polkadot/extension-dapp": ^0.39.3
-  checksum: e87b38ea096518d9d36fe930a487188e0931b835ef217d8c4e1e489bdfa46f6d01976206ac8e3535d75a4cc91f14b1a66e40aa1fe783c1d27bd6ccf78d2cb1a8
+  checksum: 5757ee69e514e19ef6d63d00fc2829f20c7de490740f61b5b7f60409cc2e90fb9b90c8c8a70d4f2c77f612acd39d9c72aeb50d05fbe0d6300df74dd07e82f885
   languageName: node
   linkType: hard
 
@@ -2887,7 +2887,7 @@ __metadata:
     "@ramp-network/ramp-instant-sdk": ^2.5.0
     "@talismn/api-react-hooks": ~0
     "@talismn/chaindata-js": ~0
-    "@talismn/connect": "https://github.com/TalismanSociety/connect"
+    "@talismn/dapp-connect": ^0.1.1
     "@talismn/util": ~0
     "@testing-library/dom": ^8.2.0
     "@testing-library/jest-dom": ^5.11.4
