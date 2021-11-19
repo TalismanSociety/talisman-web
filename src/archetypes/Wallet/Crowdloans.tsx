@@ -90,33 +90,6 @@ const CrowdloanItem = styled(({ id, className }) => {
   }
 `
 
-const CrowdloanInfoItem = styled(({ className, id, info }) => {
-  const chain = useChain(id)
-  const { name, longName } = chain
-
-  return (
-    <div className={`${className} ${id}`}>
-      <span className="left">
-        <Info title={name} subtitle={longName || name} graphic={<ChainLogo chain={chain} type="logo" size={4} />} />
-      </span>
-      {info}
-    </div>
-  )
-})`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-
-  > span {
-    display: flex;
-    align-items: center;
-
-    &.right {
-      text-align: right;
-    }
-  }
-`
-
 const CrowdloanItemWithLink = styled(props => {
   const { id, className } = props
   const { crowdloan } = useCrowdloanById(id)
@@ -192,22 +165,6 @@ const Crowdloans = ({ className }: { className?: string }) => {
         ) : (
           Object.keys(totalAliveContributions).map(id => <CrowdloanItemWithLink key={id} id={id} />)
         )}
-        {/* Remove when we integrate Acala rewards + bonuses directly into our dashboard */}
-        <PanelSection>
-          <CrowdloanInfoItem
-            id="0-2000"
-            info={
-              <a
-                href="https://wiki.acala.network/acala/acala-crowdloan/faq#how-do-i-check-my-crowdloan-contribution"
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{ textDecoration: 'underline', color: 'var(--color-primary)' }}
-              >
-                {t('View contributions')}
-              </a>
-            }
-          />
-        </PanelSection>
       </Panel>
     </section>
   )

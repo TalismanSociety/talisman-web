@@ -12,6 +12,8 @@ import {
   useState,
 } from 'react'
 
+import { Acala } from './crowdloanOverrides'
+
 //
 // Constants
 //
@@ -47,6 +49,9 @@ const Contributions = (accounts?: string[], crowdloans?: string[]) => gql`
     }
   }
 `
+
+// Usage example: 'https://crowdloan.aca-api.network/contribution/12ECN131rm1harWHHmADUszkX4Wm5NDD1iEZMcwUxeovLXYb'
+const acalaContributionApi = 'https://crowdloan.aca-api.network/contribution'
 
 export type CrowdloanContribution = {
   id: string
@@ -156,8 +161,36 @@ export function useCrowdloanContributions({
     setHydrated(contributionsResults.length > 0 && contributionsResults.some(([_, results]) => results !== null))
   }, [contributionsResults])
 
+  const [acalaContributions, setAcalaContributions] = useState<CrowdloanContribution[]>([])
+  useEffect(() => {
+    ;(async () => {
+      const polkadotAccountIndex = Object.values(SupportedRelaychains).findIndex(({ id }) => id === 0)
+      const results = []
+      for (const account of accounts[polkadotAccountIndex]) {
+        const response = await fetch(`${acalaContributionApi}/${account}`)
+        if (!response.ok) continue
+        results.push({ account, response: await response.json() })
+      }
+
+      const contributions: CrowdloanContribution[] = results.map(({ account, response }) => ({
+        id: '1-1',
+        account,
+        amount: response.contributionAmount,
+        blockNum: 1,
+
+        parachain: { paraId: `${Acala.relayId}-${Acala.paraId}` },
+
+        fund: { id: '0-2000-1muqpuFcWvy1Q3tf9Tek882A6ngz46bWPsV6sWiYccnVjKb-0' },
+      }))
+
+      setAcalaContributions(contributions)
+    })()
+  }, [accounts])
+
+  const allContributions = useMemo(() => [...contributions, ...acalaContributions], [contributions, acalaContributions])
+
   return {
-    contributions,
+    contributions: allContributions,
     hydrated,
   }
 }
