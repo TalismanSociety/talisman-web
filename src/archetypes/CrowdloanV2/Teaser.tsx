@@ -3,8 +3,6 @@ import { ReactComponent as CheckCircleIcon } from '@assets/icons/check-circle.sv
 import { Pill } from '@components'
 import { getTotalContributionForCrowdloan, useCrowdloanContributions } from '@libs/crowdloans'
 import { useAccountAddresses, useCrowdloanById, useParachainDetailsById } from '@libs/talisman'
-import { encodeAnyAddress } from '@talismn/util'
-import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
@@ -19,8 +17,7 @@ const Teaser = styled(({ id, className }) => {
   const { parachainDetails } = useParachainDetailsById(parachainId)
 
   const accounts = useAccountAddresses()
-  const encoded = useMemo(() => accounts?.map(account => encodeAnyAddress(account, 2)), [accounts])
-  const myContributions = useCrowdloanContributions({ accounts: encoded, crowdloans: id ? [id] : undefined })
+  const myContributions = useCrowdloanContributions({ accounts, crowdloans: id ? [id] : undefined })
   const totalContribution = getTotalContributionForCrowdloan(id, myContributions.contributions)
 
   return (

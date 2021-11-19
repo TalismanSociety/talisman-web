@@ -2,9 +2,7 @@ import { ReactComponent as CheckCircleIcon } from '@assets/icons/check-circle.sv
 import { Pendor, ProgressBar, Stat } from '@components'
 import { getTotalContributionForCrowdloan, useCrowdloanContributions } from '@libs/crowdloans'
 import { useAccountAddresses, useCrowdloanById } from '@libs/talisman'
-import { encodeAnyAddress } from '@talismn/util'
 import { shortNumber } from '@util/helpers'
-import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
@@ -12,8 +10,7 @@ const Raised = styled(({ id, title, className }) => {
   const { crowdloan: { percentRaised, raised, cap, uiStatus } = {} } = useCrowdloanById(id)
   const { t } = useTranslation()
   const accounts = useAccountAddresses()
-  const encoded = useMemo(() => accounts?.map(account => encodeAnyAddress(account, 2)), [accounts])
-  const myContributions = useCrowdloanContributions({ accounts: encoded, crowdloans: id ? [id] : undefined })
+  const myContributions = useCrowdloanContributions({ accounts, crowdloans: id ? [id] : undefined })
   const totalContribution = getTotalContributionForCrowdloan(id, myContributions.contributions)
 
   const suffix = (id || '').startsWith('0-') ? ' DOT' : ' KSM'
