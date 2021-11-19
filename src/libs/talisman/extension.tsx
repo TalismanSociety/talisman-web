@@ -1,7 +1,7 @@
 import { trackGoal } from '@libs/fathom'
 import { Signer } from '@polkadot/api/types'
-import { isWeb3Injected, web3Enable } from '@polkadot/extension-dapp'
 import { InjectedProvider } from '@polkadot/extension-inject/types'
+import { isWeb3Injected, web3Enable } from '@talismn/dapp-connect'
 import {
   PropsWithChildren,
   useContext as _useContext,
@@ -97,25 +97,27 @@ export const Provider = ({ children }: PropsWithChildren<{}>) => {
 
     ;(async () => {
       const injectedExtensions = await web3Enable(process.env.REACT_APP_APPLICATION_NAME || 'Talisman')
-      const polkadotJs = injectedExtensions.find(extension => extension.name === 'polkadot-js')
+      const extension =
+        injectedExtensions.find(ext => ext.name === 'talisman') ||
+        injectedExtensions.find(ext => ext.name === 'polkadot-js')
 
       if (!isWeb3Injected) {
         if (!cancelled) setStatus('UNAVAILABLE')
         return
       }
 
-      if (!polkadotJs) {
+      if (!extension) {
         if (!cancelled) setStatus('UNAUTHORIZED')
         return
       }
 
       if (cancelled) return
-      if (polkadotJs.provider) setProvider(polkadotJs.provider)
-      setSigner(polkadotJs.signer)
+      if (extension.provider) setProvider(extension.provider)
+      setSigner(extension.signer)
 
       trackGoal('4RJ4JXDB', 1) // wallet_connected_polkadotjs
 
-      unsub = polkadotJs.accounts.subscribe(accounts => {
+      unsub = extension.accounts.subscribe(accounts => {
         if (cancelled) return
         setAccounts(accounts)
         setStatus(accounts.length < 1 ? 'NOACCOUNT' : 'OK')
