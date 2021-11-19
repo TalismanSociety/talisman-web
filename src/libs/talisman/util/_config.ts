@@ -214,6 +214,20 @@ export const parachainDetails: ParachainDetails[] = [
     },
   },
   {
+    id: '0-2021',
+    name: 'Effinity',
+    slug: 'effinity',
+    token: 'EFI',
+    subtitle: 'Enjin is developing Efinity, a next-generation blockchain for digital assets, built on Polkadot.',
+    info: 'Businesses and developers seriously need a platform that can deliver a modern, mainstream and developer-friendly NFT experience. Since the release of Ethereum, there have been attempts to build infrastructure and tokenization around this general-purpose computing blockchain, but there’s an ever-growing thirst for a better solution.\n\nCreators are forced to work with crippling fees, inflexible smart contracts and disjointed interoperability. Adoption of today’s NFTs is still limited to die-hard crypto enthusiasts.\n\nThe blockchains that non-fungible tokens live on give actual users no incentives (other than the prices rising), because miners are given the full share of generated tokens. Prices rise, infrastructure companies create silos and paywalls, and it becomes difficult to make real progress in this industry - unless we can unify the community and think a bit differently.\n\nEfinity is built to solve these problems.',
+    links: {
+      Website: 'https://enjin.io/products/efinity',
+      Twitter: 'https://twitter.com/efinityio',
+      Blog: 'https://enjin.io/blog-tags/efinity',
+      GitHub: 'https://github.com/enjin',
+    },
+  },
+  {
     id: '2-2000',
     name: 'Karura',
     slug: 'karura',
@@ -700,7 +714,7 @@ export const crowdloanDetails: CrowdloanDetails[] = [
       custom: [
         {
           title: 'ACA per DOT',
-          value: '>3',
+          value: '> 3',
         },
         {
           title: 'lcDOT per DOT',
@@ -794,7 +808,7 @@ export const crowdloanDetails: CrowdloanDetails[] = [
       custom: [
         {
           title: 'GLMR per DOT',
-          value: '>1',
+          value: '> 1',
         },
       ],
       bonus: {
@@ -813,7 +827,7 @@ export const crowdloanDetails: CrowdloanDetails[] = [
       custom: [
         {
           title: 'ASTR per DOT',
-          value: '>30',
+          value: '> 30',
         },
         {
           title: 'Crowdloan Allocation',
@@ -840,7 +854,7 @@ export const crowdloanDetails: CrowdloanDetails[] = [
       custom: [
         {
           title: 'PARA per DOT',
-          value: '>50',
+          value: '> 50',
         },
         {
           title: 'Crowdloan Allocation',
@@ -863,7 +877,7 @@ export const crowdloanDetails: CrowdloanDetails[] = [
       custom: [
         {
           title: 'LIT per DOT',
-          value: '>2.5',
+          value: '> 2.5',
         },
         {
           title: 'Crowdloan Allocation',
@@ -949,6 +963,33 @@ export const crowdloanDetails: CrowdloanDetails[] = [
         {
           title: 'Crowdloan Allocation',
           value: '300,000,000 GOV',
+        },
+      ],
+      bonus: {
+        short: 'Bonus 🗝',
+        full: 'Receive a Talisman Spirit Key 🗝',
+        info: 'Receive a <strong>Talisman Spirit Key </strong> if you are one of the first 1000 crowdloan contributors on the Talisman dashboard.',
+      },
+      info: null,
+    },
+  },
+  {
+    relayId: 0,
+    paraId: 2021,
+    rewards: {
+      tokens: null,
+      custom: [
+        {
+          title: 'EFI per DOT',
+          value: '> 4',
+        },
+        {
+          title: 'Total Supply',
+          value: '2,000,000,000 EFI',
+        },
+        {
+          title: 'Crowdloan Allocation',
+          value: '200,000,000 EFI',
         },
       ],
       bonus: {
@@ -1115,28 +1156,28 @@ export const crowdloanDetails: CrowdloanDetails[] = [
       tokens: [
         {
           symbol: 'KSX',
-          perKSM: '>15',
+          perKSM: '> 15',
         },
       ],
       custom: [
         {
-          title: '>50 KSM contribution',
+          title: '> 50 KSM contribution',
           value: '20% Bonus',
         },
         {
-          title: '>100 KSM contribution',
+          title: '> 100 KSM contribution',
           value: '40% Bonus',
         },
         {
-          title: '>200 KSM contribution',
+          title: '> 200 KSM contribution',
           value: '60% Bonus',
         },
         {
-          title: '>300 KSM contribution',
+          title: '> 300 KSM contribution',
           value: '90% Bonus',
         },
         {
-          title: '>500 KSM contribution',
+          title: '> 500 KSM contribution',
           value: '120% Bonus',
         },
       ],
@@ -1151,7 +1192,7 @@ export const crowdloanDetails: CrowdloanDetails[] = [
       tokens: [
         {
           symbol: 'TEER',
-          perKSM: '>6.5',
+          perKSM: '> 6.5',
         },
       ],
       custom: [
@@ -1274,12 +1315,12 @@ export const crowdloanDetails: CrowdloanDetails[] = [
       tokens: [
         {
           symbol: 'GENS',
-          perKSM: '>2000',
+          perKSM: '> 2000',
         },
       ],
       custom: [
         {
-          title: '>50 KSM contribution',
+          title: '> 50 KSM contribution',
           value: '20% Bonus',
         },
         {
@@ -1298,7 +1339,7 @@ export const crowdloanDetails: CrowdloanDetails[] = [
       tokens: [
         {
           symbol: 'XRT',
-          perKSM: '>3.5',
+          perKSM: '> 3.5',
         },
       ],
       custom: [
@@ -1381,7 +1422,7 @@ export const crowdloanDetails: CrowdloanDetails[] = [
       tokens: [
         {
           symbol: 'HKO',
-          perKSM: '>200',
+          perKSM: '> 200',
         },
       ],
       custom: [
@@ -1401,7 +1442,7 @@ export const crowdloanDetails: CrowdloanDetails[] = [
       tokens: [
         {
           symbol: 'KILT',
-          perKSM: '>25',
+          perKSM: '> 25',
         },
       ],
       custom: null,
@@ -1452,12 +1493,12 @@ export const crowdloanDetails: CrowdloanDetails[] = [
   //     tokens: [
   //       {
   //         symbol: 'GENS',
-  //         perKSM: '>2000',
+  //         perKSM: '> 2000',
   //       },
   //     ],
   //     custom: [
   //       {
-  //         title: '>50 KSM contribution',
+  //         title: '> 50 KSM contribution',
   //         value: '20% Bonus',
   //       },
   //       {
@@ -1476,7 +1517,7 @@ export const crowdloanDetails: CrowdloanDetails[] = [
       tokens: [
         {
           symbol: 'Reward',
-          perKSM: '>67,500 BSK + % HDX',
+          perKSM: '> 67,500 BSK + % HDX',
         },
       ],
       custom: null,
@@ -1491,7 +1532,7 @@ export const crowdloanDetails: CrowdloanDetails[] = [
       tokens: [
         {
           symbol: 'KINT',
-          perKSM: '>3.75',
+          perKSM: '> 3.75',
         },
       ],
       custom: null,
@@ -1506,7 +1547,7 @@ export const crowdloanDetails: CrowdloanDetails[] = [
       tokens: [
         {
           symbol: 'QTZ',
-          perKSM: '>237',
+          perKSM: '> 237',
         },
       ],
       custom: null,
@@ -1521,7 +1562,7 @@ export const crowdloanDetails: CrowdloanDetails[] = [
       tokens: [
         {
           symbol: 'NEER',
-          perKSM: '>68',
+          perKSM: '> 68',
         },
       ],
       custom: [
@@ -1546,7 +1587,7 @@ export const crowdloanDetails: CrowdloanDetails[] = [
       custom: [
         {
           title: 'SUB per KSM',
-          value: '>150 SUB',
+          value: '> 150 SUB',
         },
         {
           title: 'Crowdloan Cap',
