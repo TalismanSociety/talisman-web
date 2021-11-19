@@ -1,5 +1,6 @@
 import { ReactComponent as AllAccountsIcon } from '@assets/icons/all-accounts.svg'
 import { Button, Pendor, Pill } from '@components'
+import { CopyButton } from '@components/CopyButton'
 import { ReactComponent as AlertCircle } from '@icons/alert-circle.svg'
 import { ReactComponent as ChevronDown } from '@icons/chevron-down.svg'
 import { usePortfolio } from '@libs/portfolio'
@@ -126,16 +127,28 @@ const Dropdown = styled(
                       />
                     )}
                     <span className="name-address">
-                      <span className="name">{address ? truncateString(name, 10, 0) : name}</span>
+                      {/* <div className="name">{address ? truncateString(name, 10, 0) : name}</div> */}
+                      <div className="name">{name}</div>
                       {address && (
-                        <span className="address">
+                        <div className="address">
                           <Address address={address} genesis={genesisHash} truncate />
-                        </span>
+                        </div>
                       )}
                     </span>
+                    {address && (
+                      <CopyButton
+                        text={address}
+                        onCopied={text => {
+                          console.log(`>>> copied`, text)
+                        }}
+                        onFailed={text => {
+                          console.log(`>>> failed`, text)
+                        }}
+                      />
+                    )}
                   </span>
 
-                  <span className="right">
+                  <span className="balancePrice">
                     {address ? (
                       // show usd when no chainId specified
                       parachainId === undefined ? (
@@ -190,6 +203,12 @@ const Dropdown = styled(
     span {
       display: flex;
       align-items: center;
+      gap: 1rem;
+      min-width: 0;
+    }
+
+    .left {
+      flex: 0 1 60%;
     }
 
     .identicon {
@@ -208,25 +227,27 @@ const Dropdown = styled(
     }
 
     .name-address {
-      display: flex;
-      align-items: flex-end;
-      line-height: 1em;
-      * {
-        line-height: 1em;
-      }
-      margin-left: 1rem;
+      display: block;
+      min-width: 0;
     }
 
     .name {
       margin-left: 0.4em;
       font-weight: bold;
       letter-spacing: -0.03em;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
     }
 
     .address {
       font-size: 0.85em;
       opacity: 0.5;
       margin-left: 0.6em;
+    }
+
+    .balancePrice {
+      justify-content: flex-end;
     }
 
     &:hover {
