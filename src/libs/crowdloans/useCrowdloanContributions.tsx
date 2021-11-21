@@ -52,6 +52,8 @@ const Contributions = (accounts?: string[], crowdloans?: string[]) => gql`
 
 // Usage example: 'https://crowdloan.aca-api.network/contribution/12ECN131rm1harWHHmADUszkX4Wm5NDD1iEZMcwUxeovLXYb'
 const acalaContributionApi = 'https://crowdloan.aca-api.network/contribution'
+const acalaCrowdloanId = '0-2000-1muqpuFcWvy1Q3tf9Tek882A6ngz46bWPsV6sWiYccnVjKb-0'
+const acalaCrowdloanFilterId = '2000-1muqpuFcWvy1Q3tf9Tek882A6ngz46bWPsV6sWiYccnVjKb-0'
 
 export type CrowdloanContribution = {
   id: string
@@ -164,9 +166,15 @@ export function useCrowdloanContributions({
   const [acalaContributions, setAcalaContributions] = useState<CrowdloanContribution[]>([])
   useEffect(() => {
     ;(async () => {
-      const polkadotAccountIndex = Object.values(SupportedRelaychains).findIndex(({ id }) => id === 0)
+      const polkadotRelayIndex = Object.values(SupportedRelaychains).findIndex(({ id }) => id === 0)
+      const polkadotCrowdloans = crowdloans[polkadotRelayIndex]
+
+      // don't fetch acala crowdloans if hook caller has specified a crowdloans filter which doesn't include the acala crowdloan
+      if (polkadotCrowdloans && polkadotCrowdloans.length > 0 && !polkadotCrowdloans.includes(acalaCrowdloanFilterId))
+        return
+
       const results = []
-      for (const account of accounts[polkadotAccountIndex]) {
+      for (const account of accounts[polkadotRelayIndex]) {
         const response = await fetch(`${acalaContributionApi}/${account}`)
         if (!response.ok) continue
         results.push({ account, response: await response.json() })
@@ -180,12 +188,12 @@ export function useCrowdloanContributions({
 
         parachain: { paraId: `${Acala.relayId}-${Acala.paraId}` },
 
-        fund: { id: '0-2000-1muqpuFcWvy1Q3tf9Tek882A6ngz46bWPsV6sWiYccnVjKb-0' },
+        fund: { id: acalaCrowdloanId },
       }))
 
       setAcalaContributions(contributions)
     })()
-  }, [accounts])
+  }, [accounts, crowdloans])
 
   const allContributions = useMemo(() => [...contributions, ...acalaContributions], [contributions, acalaContributions])
 
