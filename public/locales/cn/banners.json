@@ -11,7 +11,7 @@
   },
   "soon": {
     "header": "即将推出",
-    "description": "在此期间，您可以查看 Crowdloans。",
+    "description": "在此期间，您可以查看众贷",
     "primaryCta": "探索众贷"
   },
   "buy": {
@@ -25,9 +25,9 @@
     "primaryCta": "了解更多"
   },
   "noWallet": {
-    "header": "不好了！",
-    "description": "看起来你没有安装钱包扩展。我们建议下载 <1>Polkadot.js</1>",
-    "description2": "在此期间，您可以查看 Crowdloans。",
+    "header": "惨了！",
+    "description": "看起来你没有安装钱包扩展，我们建议暂时下载 <1>Polkadot.js</1>",
+    "description2": "在此期间，您可以查看众贷",
     "primaryCta": "探索众贷"
   }
 }
