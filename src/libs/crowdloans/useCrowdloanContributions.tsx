@@ -180,16 +180,18 @@ export function useCrowdloanContributions({
         results.push({ account, response: await response.json() })
       }
 
-      const contributions: CrowdloanContribution[] = results.map(({ account, response }) => ({
-        id: '1-1',
-        account,
-        amount: response.contributionAmount,
-        blockNum: 1,
+      const contributions: CrowdloanContribution[] = results
+        .map(({ account, response }) => ({
+          id: '1-1',
+          account,
+          amount: response.contributionAmount,
+          blockNum: 1,
 
-        parachain: { paraId: `${Acala.relayId}-${Acala.paraId}` },
+          parachain: { paraId: `${Acala.relayId}-${Acala.paraId}` },
 
-        fund: { id: acalaCrowdloanId },
-      }))
+          fund: { id: acalaCrowdloanId },
+        }))
+        .filter(contribution => contribution.amount !== '0')
 
       setAcalaContributions(contributions)
     })()
