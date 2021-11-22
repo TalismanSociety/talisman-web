@@ -813,8 +813,8 @@ export const crowdloanDetails: CrowdloanDetails[] = [
       ],
       bonus: {
         short: 'Bonus 🗝',
-        full: 'Receive a Spirit Key 🗝',
-        info: 'Receive a <strong>Spirit Key</strong>.',
+        full: 'Receive a Talisman Spirit Key 🗝',
+        info: 'Receive a <strong>Talisman Spirit Key </strong> if you are one of the first 1000 crowdloan contributors on the Talisman dashboard.',
       },
       info: null,
     },
