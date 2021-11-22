@@ -184,7 +184,12 @@ export function useCrowdloanContributions({
         .map(({ account, response }) => ({
           id: '1-1',
           account,
-          amount: response.contributionAmount,
+
+          // the total of lcDOT contributions
+          amount: response.proxyAmount,
+          // the total of both direct+lcDOT contributions
+          // amount: response.contributionAmount,
+
           blockNum: 1,
 
           parachain: { paraId: `${Acala.relayId}-${Acala.paraId}` },
