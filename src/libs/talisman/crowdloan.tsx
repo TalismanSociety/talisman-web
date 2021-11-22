@@ -6,6 +6,7 @@ import {
   createHttpLink,
   gql,
 } from '@apollo/client'
+import { Moonbeam } from '@libs/crowdloans/crowdloanOverrides'
 import { planckToTokens } from '@talismn/util'
 import { find, get } from 'lodash'
 import { FC, useContext as _useContext, createContext, useEffect, useMemo, useState } from 'react'
@@ -224,6 +225,8 @@ export const Provider: FC = ({ children }) => {
                     (100 / Number(planckToTokens(crowdloan.cap, tokenDecimals))) *
                     Number(planckToTokens(crowdloan.raised, tokenDecimals))
                   ).toFixed(2) === '100.00'
+                ? 'capped'
+                : Moonbeam.is(relayChainId, crowdloan.parachain.paraId)
                 ? 'capped'
                 : crowdloan.status === 'Started'
                 ? 'active'
