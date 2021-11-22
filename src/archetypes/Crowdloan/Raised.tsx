@@ -18,7 +18,7 @@ const Raised = styled(({ id, title, className }) => {
   return (
     <div className={`crowdloan-raised ${className}`} data-status={uiStatus?.toLowerCase()}>
       <div className="top">
-        <span>{uiStatus === 'capped' ? `{t("Goal reached")} ✓` : title}</span>
+        <span>{uiStatus === 'capped' ? `${t('Goal reached')} ✓` : title}</span>
         <span>
           {!!totalContribution && (
             <>
