@@ -228,6 +228,22 @@ export const parachainDetails: ParachainDetails[] = [
     },
   },
   {
+    id: '0-2028',
+    name: 'Ares Protocol',
+    slug: 'ares-protocol',
+    token: 'ARES',
+    subtitle: 'Ares is an on-chain verifying oracle protocol powered by Polkadot.',
+    info: ` It provides reliable off-chain data efficiently and in a trustless manner. Ares is built on Substrate and constructed as a parachain to link to Polkadot's ecology and share its security consensus. It is a scalable oracle network that provides decentralized data services to the Polkadot ecosystem and its parachains.`,
+    links: {
+      Website: 'https://www.aresprotocol.io/',
+      Twitter: 'https://twitter.com/AresProtocolLab',
+      Telegram: 'https://t.me/aresprotocol',
+      Medium: 'https://aresprotocollab.medium.com/',
+      Github: 'https://github.com/aresprotocols',
+      Discord: 'https://discord.gg/EsaFRr7xmc',
+    },
+  },
+  {
     id: '2-2000',
     name: 'Karura',
     slug: 'karura',
@@ -309,7 +325,7 @@ export const parachainDetails: ParachainDetails[] = [
     id: '2-2008',
     name: 'Mars',
     slug: 'mars',
-    token: 'ARES',
+    token: 'MARS',
     subtitle: 'Ares is an on-chain verifying oracle protocol powered by Polkadot.',
     info: ` It provides reliable off-chain data efficiently and in a trustless manner. Ares is built on Substrate and constructed as a parachain to link to Polkadot's ecology and share its security consensus. It is a scalable oracle network that provides decentralized data services to the Polkadot ecosystem and its parachains.`,
     links: {
@@ -729,7 +745,7 @@ export const crowdloanDetails: CrowdloanDetails[] = [
       bonus: {
         short: '5% bonus + 🗝',
         full: 'Earn 5% ACA + 🗝',
-        info: "Receive <strong>5% additional ACA</strong> when you contribute via Talisman. Receive a Spirit Key if you're part of the first 1000 contributors.",
+        info: "Receive <strong>5% additional ACA</strong> when you contribute via Talisman. Receive a Spirit Key if you're part of the first 1000 DOT contributors.",
       },
       info: null,
     },
@@ -760,7 +776,7 @@ export const crowdloanDetails: CrowdloanDetails[] = [
       bonus: {
         short: 'Bonus 🗝',
         full: 'Receive a Talisman Spirit Key 🗝',
-        info: 'Receive a <strong>Talisman Spirit Key </strong> if you are one of the first 1000 crowdloan contributors on the Talisman dashboard.',
+        info: 'Receive a <strong>Talisman Spirit Key </strong> if you are one of the first 1000 DOT crowdloan contributors on the Talisman dashboard.',
       },
       info: null,
     },
@@ -795,7 +811,7 @@ export const crowdloanDetails: CrowdloanDetails[] = [
       bonus: {
         short: 'Bonus 🗝',
         full: 'Receive a Talisman Spirit Key 🗝',
-        info: 'Receive a <strong>Talisman Spirit Key </strong> if you are one of the first 1000 crowdloan contributors on the Talisman dashboard.',
+        info: 'Receive a <strong>Talisman Spirit Key </strong> if you are one of the first 1000 DOT crowdloan contributors on the Talisman dashboard.',
       },
       info: null,
     },
@@ -814,7 +830,7 @@ export const crowdloanDetails: CrowdloanDetails[] = [
       bonus: {
         short: 'Bonus 🗝',
         full: 'Receive a Talisman Spirit Key 🗝',
-        info: 'Receive a <strong>Talisman Spirit Key </strong> if you are one of the first 1000 crowdloan contributors on the Talisman dashboard.',
+        info: 'Receive a <strong>Talisman Spirit Key </strong> if you are one of the first 1000 DOT crowdloan contributors on the Talisman dashboard.',
       },
       info: null,
     },
@@ -841,7 +857,7 @@ export const crowdloanDetails: CrowdloanDetails[] = [
       bonus: {
         short: 'Bonus 🗝',
         full: 'Receive a Talisman Spirit Key 🗝',
-        info: 'Receive a <strong>Talisman Spirit Key </strong> if you are one of the first 1000 crowdloan contributors on the Talisman dashboard.',
+        info: 'Receive a <strong>Talisman Spirit Key </strong> if you are one of the first 1000 DOT crowdloan contributors on the Talisman dashboard.',
       },
       info: null,
     },
@@ -864,7 +880,7 @@ export const crowdloanDetails: CrowdloanDetails[] = [
       bonus: {
         short: 'Bonus 🗝',
         full: 'Receive a Talisman Spirit Key 🗝',
-        info: 'Receive a <strong>Talisman Spirit Key </strong> if you are one of the first 1000 crowdloan contributors on the Talisman dashboard.',
+        info: 'Receive a <strong>Talisman Spirit Key </strong> if you are one of the first 1000 DOT crowdloan contributors on the Talisman dashboard.',
       },
       info: null,
     },
@@ -895,7 +911,7 @@ export const crowdloanDetails: CrowdloanDetails[] = [
       bonus: {
         short: 'Bonus 🗝',
         full: 'Receive a Talisman Spirit Key 🗝',
-        info: 'Receive a <strong>Talisman Spirit Key </strong> if you are one of the first 1000 crowdloan contributors on the Talisman dashboard.',
+        info: 'Receive a <strong>Talisman Spirit Key </strong> if you are one of the first 1000 DOT crowdloan contributors on the Talisman dashboard.',
       },
       info: null,
     },
@@ -941,7 +957,7 @@ export const crowdloanDetails: CrowdloanDetails[] = [
       bonus: {
         short: 'Bonus 🗝',
         full: 'Receive a Talisman Spirit Key 🗝',
-        info: 'Receive a <strong>Talisman Spirit Key </strong> if you are one of the first 1000 crowdloan contributors on the Talisman dashboard.',
+        info: 'Receive a <strong>Talisman Spirit Key </strong> if you are one of the first 1000 DOT crowdloan contributors on the Talisman dashboard.',
       },
       info: null,
     },
@@ -968,7 +984,7 @@ export const crowdloanDetails: CrowdloanDetails[] = [
       bonus: {
         short: 'Bonus 🗝',
         full: 'Receive a Talisman Spirit Key 🗝',
-        info: 'Receive a <strong>Talisman Spirit Key </strong> if you are one of the first 1000 crowdloan contributors on the Talisman dashboard.',
+        info: 'Receive a <strong>Talisman Spirit Key </strong> if you are one of the first 1000 DOT crowdloan contributors on the Talisman dashboard.',
       },
       info: null,
     },
@@ -995,7 +1011,26 @@ export const crowdloanDetails: CrowdloanDetails[] = [
       bonus: {
         short: 'Bonus 🗝',
         full: 'Receive a Talisman Spirit Key 🗝',
-        info: 'Receive a <strong>Talisman Spirit Key </strong> if you are one of the first 1000 crowdloan contributors on the Talisman dashboard.',
+        info: 'Receive a <strong>Talisman Spirit Key </strong> if you are one of the first 1000 DOT crowdloan contributors on the Talisman dashboard.',
+      },
+      info: null,
+    },
+  },
+  {
+    relayId: 0,
+    paraId: 2028,
+    rewards: {
+      tokens: null,
+      custom: [
+        {
+          title: 'ARES per DOT',
+          value: 'TBA',
+        },
+      ],
+      bonus: {
+        short: 'Bonus 🗝',
+        full: 'Receive a Talisman Spirit Key 🗝',
+        info: 'Receive a <strong>Talisman Spirit Key </strong> if you are one of the first 1000 DOT crowdloan contributors on the Talisman dashboard.',
       },
       info: null,
     },
