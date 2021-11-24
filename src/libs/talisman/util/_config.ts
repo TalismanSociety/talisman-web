@@ -215,8 +215,8 @@ export const parachainDetails: ParachainDetails[] = [
   },
   {
     id: '0-2021',
-    name: 'Effinity',
-    slug: 'effinity',
+    name: 'Efinity',
+    slug: 'efinity',
     token: 'EFI',
     subtitle: 'Enjin is developing Efinity, a next-generation blockchain for digital assets, built on Polkadot.',
     info: 'Businesses and developers seriously need a platform that can deliver a modern, mainstream and developer-friendly NFT experience. Since the release of Ethereum, there have been attempts to build infrastructure and tokenization around this general-purpose computing blockchain, but there’s an ever-growing thirst for a better solution.\n\nCreators are forced to work with crippling fees, inflexible smart contracts and disjointed interoperability. Adoption of today’s NFTs is still limited to die-hard crypto enthusiasts.\n\nThe blockchains that non-fungible tokens live on give actual users no incentives (other than the prices rising), because miners are given the full share of generated tokens. Prices rise, infrastructure companies create silos and paywalls, and it becomes difficult to make real progress in this industry - unless we can unify the community and think a bit differently.\n\nEfinity is built to solve these problems.',
