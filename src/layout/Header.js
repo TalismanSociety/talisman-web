@@ -15,6 +15,7 @@ import { useExtension } from '@libs/talisman'
 import { device } from '@util/breakpoints'
 import { buyNow } from '@util/fiatOnRamp'
 import { useMediaQuery } from '@util/hooks'
+import { DISCORD_JOIN_URL } from '@util/links'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useReducer } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -59,7 +60,7 @@ const subRoutes = [
   },
   {
     name: 'Discord',
-    url: 'https://discord.gg/rQgTD9SGtU',
+    url: DISCORD_JOIN_URL,
     trackingCode: '00L5TXCI', // bounce_discord
     icon: <DiscordMobileLogo alt="Discord" />,
   },
