@@ -15,20 +15,15 @@ const Bonus = styled(({ id, parachainId, short, full, info, prefix, className })
 
   if (!bonus || !type) return null
 
+  if (Object.values(bonus).every(item => !item)) {
+    return null
+  }
+
   return (
     <span className={`crowdloan-bonus ${className} type-${type}`}>
       {!!prefix && <span className="prefix">{prefix}</span>}
       {type === 'short' && bonus?.short}
-      {type === 'full' && (
-        <>
-          <span>{bonus?.full}</span>
-          <Popup text={bonus?.info}>
-            <a href={SPIRIT_KEY_URL} target="_blank" rel="noopener noreferrer">
-              Spirit Key
-            </a>
-          </Popup>
-        </>
-      )}
+      {type === 'full' && <span>{bonus?.full}</span>}
       {type === 'info' && bonus?.info}
     </span>
   )
