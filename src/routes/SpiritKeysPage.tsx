@@ -13,16 +13,15 @@ import { decodeAddress, encodeAddress } from '@polkadot/keyring'
 import { hexToU8a, isHex } from '@polkadot/util'
 import { cryptoWaitReady } from '@polkadot/util-crypto'
 import { web3FromAddress } from '@talismn/dapp-connect'
-import { encodeAnyAddress } from '@talismn/util'
 import { isMobileBrowser } from '@util/helpers'
 import { AnyAddress, SS58Format, convertAnyAddress } from '@util/useAnyAddressFromClipboard'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { consolidatedNFTtoInstance } from 'rmrk-tools'
 import { NFTConsolidated } from 'rmrk-tools/dist/tools/consolidator/consolidator'
 import styled from 'styled-components'
 
-import { fetchNFTData } from '../libs/spiritkey/spirit-key'
+import { useFetchNFTs } from '../libs/spiritkey/spirit-key'
 
 const isValidAddress = (address: AnyAddress) => {
   try {
@@ -44,18 +43,6 @@ async function setupSender() {
   const ws = 'wss://kusama-rpc.polkadot.io'
   const api = await getApi(ws)
   return api
-}
-
-function useFetchNFTs() {
-  const [totalNFTs, setNFTs] = useState<NFTConsolidated[]>()
-  const accountAddresses = useAllAccountAddresses()
-  const encoded = useMemo(() => accountAddresses?.map(account => encodeAnyAddress(account, 2)), [accountAddresses])
-
-  useEffect(() => {
-    fetchNFTData(setNFTs, encoded as string[])
-  }, [setNFTs, encoded])
-
-  return totalNFTs
 }
 
 function useSender() {

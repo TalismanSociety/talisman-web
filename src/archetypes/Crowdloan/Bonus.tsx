@@ -1,6 +1,4 @@
-import { Popup } from '@components'
 import { useCrowdloanById } from '@libs/talisman'
-import { SPIRIT_KEY_URL } from '@util/links'
 // import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
