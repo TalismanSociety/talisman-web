@@ -1,3 +1,4 @@
+import { JoinButton } from '@archetypes/JoinButton/JoinButton'
 import miksySpiritKeysAudio from '@assets/miksy-spirit-keys.mp3'
 import { Button, DesktopRequired, Field } from '@components'
 import { StyledLoader } from '@components/Await'
@@ -708,9 +709,7 @@ const SpiritKey = styled(({ className }) => {
         <p>You have {hasNfts ? totalNFTs.length : 'no'} Spirit Keys</p>
         {totalNFTs?.length < 1 && (
           <div className="empty-state-buttons-div">
-            <a href="https://discord.gg/jTzkMY9Y" target="_blank" rel="noreferrer noopener">
-              <Button className="join-discord-button"> Join Discord</Button>
-            </a>
+            <JoinButton className="join-discord-button" />
             <Button to="/crowdloans" className="explore-crowdloans-button">
               Explore Crowdloans
             </Button>
