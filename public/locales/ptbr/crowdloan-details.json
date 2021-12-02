@@ -1,0 +1,765 @@
+{
+  "0-2000": {
+    "relayId": 0,
+    "paraId": 2000,
+    "rewards": {
+      "tokens": null,
+      "custom": [
+        {
+          "title": "ACA por DOT",
+          "value": ">3"
+        },
+        {
+          "title": "lcDOT por DOT",
+          "value": "1"
+        }
+      ],
+      "bonus": {
+        "short": "Mais 5% + 🗝",
+        "full": "Ganhe mais 5% ACA + 🗝",
+        "info": "Receba um <strong>bonus de 5% + uma Spirit Key 🗝</strong> quando voce usa a Talisman"
+      },
+      "info": null
+    }
+  },
+  "0-2012": {
+    "relayId": 0,
+    "paraId": 2012,
+    "rewards": {
+      "tokens": null,
+      "custom": [
+        {
+          "title": "PARA por DOT",
+          "value": ">50"
+        },
+        {
+          "title": "Alocação Crowdloan",
+          "value": "1,500,000,000 PARA"
+        }
+      ],
+      "bonus": {
+        "short": "Bonus 🗝",
+        "full": "Receba uma Spirit Key Talisman 🗝",
+        "info": "Receba uma <strong> Spirit Key Talisman </strong> se você for um dos 1000 primeiros contribuintes do crowdloan na Talisman."
+      },
+      "info": null
+    }
+  },
+
+  "0-2013": {
+    "relayId": 0,
+    "paraId": 2013,
+    "rewards": {
+      "tokens": null,
+      "custom": [
+        {
+          "title": "LIT por DOT",
+          "value": ">2.5"
+        },
+        {
+          "title": "Alocação Crowdloan",
+          "value": "20,000,000 LIT"
+        },
+        {
+          "title": "Bonus de Antecipação",
+          "value": "10% antes do leilão começar"
+        },
+        {
+          "title": "Bonus de Antecipação",
+          "value": "5% dentro de 7 dias do início do leilão"
+        }
+      ],
+      "bonus": {
+        "short": "Mais 10% + 🗝",
+        "full": "Ganhe mais 10% de bonus LIT + 🗝",
+        "info": "10% bonus LIT se você contribuir <strong>antes do leilão de parachain começar</strong>. 5% bonus LIT <strong> dentro dos primeiros 7 dias </strong> desde o inicio do leilão parachain."
+      },
+      "info": null
+    }
+  },
+  "0-2015": {
+    "relayId": 0,
+    "paraId": 2015,
+    "rewards": {
+      "tokens": null,
+      "custom": [
+        {
+          "title": "MANTA por DOT",
+          "value": "4"
+        },
+        {
+          "title": "Supply Total",
+          "value": "1,000,000,000 MANTA"
+        },
+        {
+          "title": "Alocação Crowdloan",
+          "value": "120,000,004 MANTA"
+        }
+      ],
+      "bonus": {
+        "short": "Bonus 🗝",
+        "full": "Receba a Spirit Key Talisman 🗝",
+        "info": "Receba uma <strong> Spirit Key Talisman </strong> se você for um dos 1000 primeiros contribuintes do crowdloan na Talisman."
+      },
+      "info": null
+    }
+  },
+  "0-2018": {
+    "relayId": 0,
+    "paraId": 2018,
+    "rewards": {
+      "tokens": null,
+      "custom": [
+        {
+          "title": "GOV por DOT",
+          "value": "TBD"
+        },
+        {
+          "title": "Supply Total",
+          "value": "1,000,000,000 GOV"
+        },
+        {
+          "title": "Alocação Crowdloan",
+          "value": "300,000,000 GOV"
+        }
+      ],
+      "bonus": {
+        "short": "Bonus 🗝",
+        "full": "Receba a Spirit Key Talisman 🗝",
+        "info": "Receba uma <strong> Spirit Key Talisman </strong> se você for um dos 1000 primeiros contribuintes do crowdloan na Talisman."
+      },
+      "info": null
+    }
+  },
+  "0-2006": {
+    "relayId": 0,
+    "paraId": 2006,
+    "rewards": {
+      "tokens": null,
+      "custom": [
+        {
+          "title": "ASTR por DOT",
+          "value": ">30"
+        },
+        {
+          "title": "Alocação Crowdloan",
+          "value": "1,050,000,000 ASTR"
+        },
+        {
+          "title": "Bonus Pool",
+          "value": "350,000,000 ASTR"
+        }
+      ],
+      "bonus": {
+        "short": "Up to 25% + 🗝",
+        "full": "Ganhe mais 25% bonus ASTR + 🗝",
+        "info": "Receba <strong>20% bonus </strong> se contribuir antes de 18 de Nov."
+      },
+      "info": null
+    }
+  },
+  "0-2002": {
+    "relayId": 0,
+    "paraId": 2002,
+    "rewards": {
+      "tokens": null,
+      "custom": [
+        {
+          "title": "CLV por DOT",
+          "value": "TBD"
+        },
+        {
+          "title": "Alocação Crowdloan",
+          "value": "200,000,000 CLV"
+        },
+        {
+          "title": "Liberação imediata",
+          "value": "28% of rewarded CLV"
+        },
+        {
+          "title": "Liberação restante",
+          "value": "72%, over 23 months"
+        }
+      ],
+      "bonus": {
+        "short": "Bonus 🗝",
+        "full": "Receba a Spirit Key Talisman 🗝",
+        "info": "Receba uma <strong> Spirit Key Talisman </strong> se você for um dos 1000 primeiros contribuintes do crowdloan na Talisman."
+      },
+      "info": null
+    }
+  },
+  "2-2000": {
+    "relayId": 2,
+    "paraId": 2000,
+    "contributeUrl": "https://acala.network/karura/join-karura",
+    "rewards": {
+      "tokens": [
+        {
+          "symbol": "KAR",
+          "perKSM": "12"
+        }
+      ],
+      "custom": [],
+      "info": null
+    }
+  },
+  "2-2001": {
+    "relayId": 2,
+    "paraId": 2001,
+    "contributeUrl": "https://ksm.vtoken.io/?ref=polkadotjs",
+    "rewards": {
+      "tokens": [
+        {
+          "symbol": "BNC Instantâneo",
+          "perKSM": "2"
+        },
+        {
+          "symbol": "BNC Sucesso",
+          "perKSM": "20"
+        }
+      ],
+      "custom": [],
+      "info": "O BNC instantâneo é distribuído independentemente da vitória. O BNC Sucesso é distribuido se o lance for ganho."
+    }
+  },
+  "2-2004": {
+    "relayId": 2,
+    "paraId": 2004,
+    "contributeUrl": "https://crowdloan.phala.network/en/",
+    "rewards": {
+      "tokens": [
+        {
+          "symbol": "PHA",
+          "perKSM": "150"
+        }
+      ],
+      "custom": [],
+      "info": "Se Phala ganhar o leilão de slots, as recompensas serão distribuídas de acordo com o cronograma de pagamento da Phala. Se um slot não for ganho, você pode desvincular seu KSM imediatamente após o término dos leilões."
+    }
+  },
+  "UNSUPPORTED-2-2006": {
+    "relayId": 2,
+    "paraId": 2006,
+    "contributeUrl": "https://crab.network/plo#crowdloan",
+    "rewards": {
+      "tokens": [
+        {
+          "symbol": "CRING",
+          "perKSM": "25"
+        }
+      ],
+      "custom": [],
+      "info": "Se for bem-sucedido, 240.000.000 de recompensas CRING e 6.000.000 RING serão distribuídas aos usuários de acordo com o número de KSM que eles apoiaram. 30% deles serão desbloqueados, 70% serão adquiridos por 48 semanas."
+    }
+  },
+  "2-2007": {
+    "relayId": 2,
+    "paraId": 2007,
+    "contributeUrl": "https://crowdloan.plasmnet.io/",
+    "rewards": {
+      "tokens": [
+        {
+          "symbol": "SDN",
+          "perKSM": "180-340"
+        }
+      ],
+      "custom": [
+        {
+          "title": "Total SDN available",
+          "value": "3,388,000"
+        }
+      ],
+      "info": "Mais informações: <a href='https://forum.plasmnet.io/t/faq-how-to-estimate-how-many-sdn-you-will-receive-from-crowdloan/1225'>recompensas do crowdloan</a>."
+    }
+  },
+  "2-2008": {
+    "relayId": 2,
+    "paraId": 2008,
+    "contributeUrl": "https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Fkusama.api.onfinality.io%2Fpublic-ws#/parachains/crowdloan",
+    "rewards": {
+      "tokens": [
+        {
+          "symbol": "AMAS",
+          "perKSM": "1200"
+        }
+      ],
+      "custom": [
+        {
+          "title": "Auction Total",
+          "value": "160,000,000 tokens"
+        }
+      ],
+      "info": "Mais informações: <a href='https://aresprotocollab.medium.com/ares-protocol-continues-to-participate-in-the-kusama-parachain-slot-auction-3dcda3d8356f'>recompansas do crowdloan</a>."
+    }
+  },
+  "2-2009": {
+    "relayId": 2,
+    "paraId": 2009,
+    "contributeUrl": "https://redkite.polkafoundry.com/#/join-polkasmith/",
+    "rewards": {
+      "tokens": [
+        {
+          "symbol": "Recompensa",
+          "perKSM": "350 PKS + 500 RedKite points"
+        }
+      ],
+      "custom": [
+        {
+          "title": "Pool de recompansas",
+          "value": "10,500,000 PKS"
+        },
+        {
+          "title": "Periodo de trava (vencedor)",
+          "value": "48 Semanas"
+        },
+        {
+          "title": "Periodo de trava (perdedor)",
+          "value": "6 Semanas"
+        }
+      ],
+      "info": "Após a contribuição KSM, 100% de ponto Red Kite entregue imediatamente. Depois que PolkaSmith vencer, 35% de PKS é entregue imediatamente e 65% de PKS adquirido em 10 meses"
+    }
+  },
+  "2-2012": {
+    "relayId": 2,
+    "paraId": 2012,
+    "contributeUrl": "",
+    "rewards": {
+      "tokens": [
+        {
+          "symbol": "Recompensa",
+          "perKSM": "1 CRU + 1000 CSM"
+        }
+      ],
+      "custom": null,
+      "info": "<a href='https://crustnetwork.medium.com/crust-updates-kusama-parachain-slot-auction-rewards-2f6b32c682ec'>Artigo Medium</a> com mais informações de recompensas."
+    }
+  },
+  "2-2013": {
+    "relayId": 2,
+    "paraId": 2013,
+    "contributeUrl": "https://chainx-org.medium.com/sherpax-crowdloan-tutorial-88086714ff1",
+    "rewards": {
+      "tokens": [
+        {
+          "symbol": "KSX",
+          "perKSM": ">15"
+        }
+      ],
+      "custom": [
+        {
+          "title": ">50 KSM de contribuição",
+          "value": "20% Bonus"
+        },
+        {
+          "title": ">100 KSM de contribuição",
+          "value": "40% Bonus"
+        },
+        {
+          "title": ">200 KSM de contribuição",
+          "value": "60% Bonus"
+        },
+        {
+          "title": ">300 KSM de contribuição",
+          "value": "90% Bonus"
+        },
+        {
+          "title": ">500 KSM de contribuição",
+          "value": "120% Bonus"
+        }
+      ],
+      "info": "KSX um supply inicial de 21 milhões, increased with 10% additional issuance every year. Se você também indicar um amigo, ambos receberão uma recompensa de bônus de indicação de 5%."
+    }
+  },
+  "2-2015": {
+    "relayId": 2,
+    "paraId": 2015,
+    "contributeUrl": "https://crowdloan.integritee.network/",
+    "rewards": {
+      "tokens": [
+        {
+          "symbol": "TEER",
+          "perKSM": ">6.5"
+        }
+      ],
+      "custom": [
+        {
+          "title": "Alocação de 10% do total de tokens",
+          "value": "1,000,000 TEER"
+        }
+      ],
+      "info": "10% da alocação total do token Integritee será distribuído de forma justa aos titulares de KSM que nos apoiam nos leilões de parachain de Kusama. A quantidade de TEER que cada apoiador recebe dependerá, portanto, da quantidade de KSM que eles bloqueiam, em relação ao valor total bloqueado por todos os apoiadores."
+    }
+  },
+  "2-2016": {
+    "relayId": 2,
+    "paraId": 2016,
+    "contributeUrl": "https://auction.clover.finance/#/",
+    "rewards": {
+      "tokens": [
+        {
+          "symbol": "Recompensa",
+          "perKSM": "150-210 SKU + 1sKSM LP token"
+        }
+      ],
+      "custom": null,
+      "info": "Novos usuários recebem SKU de bônus de até 20% a mais. Convide amigos para obter 5% a mais de SKU de bônus."
+    }
+  },
+  "2-2018": {
+    "relayId": 2,
+    "paraId": 2018,
+    "contributeUrl": "https://www.subgame.org/#/contribute",
+    "rewards": {
+      "tokens": [
+        {
+          "symbol": "GSGB",
+          "perKSM": "28"
+        }
+      ],
+      "custom": [
+        {
+          "title": "Máximo",
+          "value": "34,000,000 GSGB"
+        }
+      ],
+      "info": "Crowdloaned 10 KSM desbloqueado e devolvido após o término da Duração do Slot, caso contrário, imediatamente no leilão de slots malsucedido. \n\nGSGB é executado no SubGame Gamma. É um token de recompensa por participar das atividades de empréstimo coletivo do SubGame Gamma. Ele tem o mesmo valor que o token em execução na rede principal SubGame. Pode ser trocado 1: 1 com SGB por meio de SubGame Bridge."
+    }
+  },
+  "2-2019": {
+    "relayId": 2,
+    "paraId": 2019,
+    "contributeUrl": "https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Fkusama.api.onfinality.io%2Fpublic-ws#/parachains/crowdloan",
+    "rewards": {
+      "tokens": [
+        {
+          "symbol": "KPN",
+          "perKSM": "80"
+        }
+      ],
+      "custom": null,
+      "info": null
+    }
+  },
+  "UNSUPPORTED-2-2021-Superseded by 2088": {
+    "relayId": 2,
+    "paraId": 2021,
+    "contributeUrl": "https://centrifuge.io/altair/crowdloan",
+    "rewards": {
+      "tokens": [
+        {
+          "symbol": "AIR",
+          "perKSM": "400"
+        }
+      ],
+      "custom": [
+        {
+          "title": "Primeiros 250 participantes",
+          "value": "10% Bonus"
+        }
+      ]
+    }
+  },
+  "2-2023": {
+    "relayId": 2,
+    "paraId": 2023,
+    "contributeUrl": "https://moonbeam.foundation/moonriver-crowdloan/",
+    "rewards": {
+      "tokens": [
+        {
+          "symbol": "MOVR",
+          "perKSM": "14.5677"
+        }
+      ],
+      "custom": [
+        {
+          "title": "Pool de Recompensa",
+          "value": "3,000,000 MOVR"
+        },
+        {
+          "title": "Distribuição inicial",
+          "value": "900,000 MOVR"
+        },
+        {
+          "title": "Distribuição de aquisição",
+          "value": "2,100,000 MOVR"
+        },
+        {
+          "title": "Periodo de aquisição",
+          "value": "48 Semanas"
+        }
+      ],
+      "info": null
+    }
+  },
+  "2-2024": {
+    "relayId": 2,
+    "paraId": 2024,
+    "contributeUrl": "https://genshiro.equilibrium.io/en/plo",
+    "rewards": {
+      "tokens": [
+        {
+          "symbol": "GENS",
+          "perKSM": ">2000"
+        }
+      ],
+      "custom": [
+        {
+          "title": "Contribuição >50 KSM",
+          "value": "20% Bonus"
+        },
+        {
+          "title": "Cotribua antes de 10 de Setembro",
+          "value": "25% Bonus"
+        }
+      ],
+      "info": null
+    }
+  },
+  "2-2077": {
+    "relayId": 2,
+    "paraId": 2077,
+    "contributeUrl": "https://robonomics.network/kusama-slot",
+    "rewards": {
+      "tokens": [
+        {
+          "symbol": "XRT",
+          "perKSM": ">3.5"
+        }
+      ],
+      "custom": [
+        {
+          "title": "Primeiros 35,000 KSM",
+          "value": "5 XRT"
+        },
+        {
+          "title": "Limite Total da Coleção",
+          "value": "135,000 KSM"
+        },
+        {
+          "title": "Distribuição (1 mes Pós Lançamento)",
+          "value": "50%"
+        }
+      ],
+      "info": null
+    }
+  },
+  "2-2080": {
+    "relayId": 2,
+    "paraId": 2080,
+    "contributeUrl": "https://loomx.io/",
+    "rewards": {
+      "tokens": [
+        {
+          "symbol": "LOOM",
+          "perKSM": "100"
+        }
+      ],
+      "custom": null,
+      "info": null
+    }
+  },
+  "UNSUPPORTED-2-2082-Superseded by 2090": {
+    "relayId": 2,
+    "paraId": 2082,
+    "contributeUrl": "https://loan.bsx.fi/",
+    "rewards": {
+      "tokens": [
+        {
+          "symbol": "BSX",
+          "perKSM": "75,000"
+        }
+      ],
+      "custom": null,
+      "info": null
+    }
+  },
+  "2-2084": {
+    "relayId": 2,
+    "paraId": 2084,
+    "contributeUrl": "https://crowdloan.calamari.manta.network/",
+    "rewards": {
+      "tokens": [
+        {
+          "symbol": "KMA",
+          "perKSM": "10,000"
+        }
+      ],
+      "custom": [
+        {
+          "title": "Primeiros 500 participantes",
+          "value": "10% Bonus"
+        },
+        {
+          "title": "Participantes 501 a 1,000",
+          "value": "5% Bonus"
+        }
+      ],
+      "info": null
+    }
+  },
+  "2-2085": {
+    "relayId": 2,
+    "paraId": 2085,
+    "contributeUrl": "https://docs.parallel.fi/parallel-heiko-crowdloan/how-to-contribute",
+    "rewards": {
+      "tokens": [
+        {
+          "symbol": "HKO",
+          "perKSM": ">200"
+        }
+      ],
+      "custom": [
+        {
+          "title": "Periodo de Aquisição",
+          "value": "1 ano"
+        }
+      ],
+      "info": null
+    }
+  },
+  "2-2086": {
+    "relayId": 2,
+    "paraId": 2086,
+    "contributeUrl": "https://medium.com/kilt-protocol/kilts-crowdloan-how-to-participate-d0333cc952ef",
+    "rewards": {
+      "tokens": [
+        {
+          "symbol": "KILT",
+          "perKSM": ">25"
+        }
+      ],
+      "custom": null,
+      "info": null
+    }
+  },
+  "2-2087": {
+    "relayId": 2,
+    "paraId": 2087,
+    "contributeUrl": "https://composablefi.medium.com/how-to-participate-in-the-picasso-crowdloan-c17272f6aa0e",
+    "rewards": {
+      "tokens": [
+        {
+          "symbol": "PICA",
+          "perKSM": "20,000"
+        }
+      ],
+      "custom": null,
+      "info": null
+    }
+  },
+  "2-2088": {
+    "relayId": 2,
+    "paraId": 2088,
+    "contributeUrl": "https://centrifuge.io/altair/crowdloan",
+    "rewards": {
+      "tokens": [
+        {
+          "symbol": "AIR",
+          "perKSM": "400"
+        }
+      ],
+      "custom": [
+        {
+          "title": "Primeiros 250 participantes",
+          "value": "10% Bonus"
+        }
+      ],
+      "info": null
+    }
+  },
+  "UNSUPPORTED-2-2089-Superseded by 2024": {
+    "relayId": 2,
+    "paraId": 2089,
+    "contributeUrl": "https://genshiro.equilibrium.io/en/plo",
+    "rewards": {
+      "tokens": [
+        {
+          "symbol": "GENS",
+          "perKSM": ">2000"
+        }
+      ],
+      "custom": [
+        {
+          "title": "Contribuição >50 KSM",
+          "value": "20% Bonus"
+        },
+        {
+          "title": "Contribua antes de 10 de Setembro",
+          "value": "25% Bonus"
+        }
+      ],
+      "info": null
+    }
+  },
+  "2-2090": {
+    "relayId": 2,
+    "paraId": 2090,
+    "contributeUrl": "https://loan.bsx.fi/",
+    "rewards": {
+      "tokens": [
+        {
+          "symbol": "Recompensa",
+          "perKSM": ">67,500 BSK + % HDX"
+        }
+      ],
+      "custom": null,
+      "info": null
+    }
+  },
+  "2-2092": {
+    "relayId": 2,
+    "paraId": 2092,
+    "contributeUrl": "https://kintsugi.interlay.io/",
+    "rewards": {
+      "tokens": [
+        {
+          "symbol": "KINT",
+          "perKSM": ">3.75"
+        }
+      ],
+      "custom": null,
+      "info": null
+    }
+  },
+  "2-2095": {
+    "relayId": 2,
+    "paraId": 2095,
+    "contributeUrl": "https://unique.network/quartz/crowdloan/",
+    "rewards": {
+      "tokens": [
+        {
+          "symbol": "QTZ",
+          "perKSM": ">237"
+        }
+      ],
+      "custom": null,
+      "info": null
+    }
+  },
+  "2-2096": {
+    "relayId": 2,
+    "paraId": 2096,
+    "contributeUrl": "https://ksmcrowdloan.bit.country/crowdloan",
+    "rewards": {
+      "tokens": [
+        {
+          "symbol": "NEER",
+          "perKSM": ">68"
+        }
+      ],
+      "custom": [
+        {
+          "title": "Primeiros 1000 contribuintes",
+          "value": "10% Bonus"
+        },
+        {
+          "title": "Indicações",
+          "value": "2.5% Bonus"
+        }
+      ],
+      "info": null
+    }
+  }
+}
