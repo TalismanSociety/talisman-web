@@ -97,7 +97,9 @@ type SendStatus = 'INPROGRESS' | 'SUCCESS' | 'FAILED'
 const sendNFT = async (senderAddress: string, api: ApiPromise, remark: string, injector: any, cb: any) => {
   const txs = [api.tx.system.remark(remark)]
   const tx = api.tx.utility.batchAll(txs)
-  const txSigned = await tx.signAsync(senderAddress, { signer: injector.signer })
+  const txSigned = await tx.signAsync(senderAddress, { signer: injector?.signer })
+
+  console.log(`>>> txSigned`, txSigned)
 
   const unsub = await txSigned.send(async result => {
     const { status, events = [], dispatchError } = result
