@@ -1,0 +1,33 @@
+{
+  "explore": {
+    "header": "Construa o Paraverso",
+    "description": "Crowdloans projetos e equipes adiquirir fundos para os leilões de Parachains na Polkadot e Kusama.",
+    "primaryCta": "Explore os Crowdloans"
+  },
+  "empty": {
+    "header": "Suas sacolas estão vazias!",
+    "description": "Compre DOT e KSM com seu cartão de crédito ou cripto",
+    "primaryCta": "Buy DOT/KSM"
+  },
+  "soon": {
+    "header": "Em breve",
+    "description": "Por enquanto, voce pode checar os Crowdloans.",
+    "primaryCta": "Explore os Crowdloans"
+  },
+  "buy": {
+    "header": "Compre DOT/KSM",
+    "description": "Mostre-me o dinheiro",
+    "primaryCta": "Compre"
+  },
+  "unlockTalisman": {
+    "header": "Destrave a Talisman",
+    "description": "Contribua em qualquer DOT Crowdloan e receba uma Spirit Key, voce precisará depois...",
+    "primaryCta": "Mais informação"
+  },
+  "noWallet": {
+    "header": "Ahhh não!",
+    "description": "Me parece que voce não tem uma extensão de carteira instalada. Faça o download <1>Polkadot.js</1>",
+    "description2": "Por enquanto, voce pode checar os Crowdloans.",
+    "primaryCta": "Explore os Crowdloans"
+  }
+}

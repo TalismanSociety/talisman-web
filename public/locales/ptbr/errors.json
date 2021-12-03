@@ -1,0 +1,11 @@
+{
+  "Account balance too low": "Balanço em conta muito baixo",
+  "A parachain must be selected": "Uma parachain deve ser selecionada",
+  "Please enter an amount of {{token}}": "Por favor entre com a quantidade de {{token}}",
+  "Please enter a valid amount of {{token}}": "Por favor entre com uma quantidade válida de {{token}}",
+  "An account must be selected": "Uma conta deve ser selecionada",
+  "Account balance not ready yet": "Balanço da conta ainda não esta pronto",
+  "A minimum of {{minimum}} {{token}} is required": "O minimno de {{minimum}} {{token}} é requerido",
+  "Failed to submit transaction: account balance too low": "Falha em submeter a transação: balanço da conta muito baixo",
+  "Failed to submit transaction": "Falha em submeter a transação"
+}
