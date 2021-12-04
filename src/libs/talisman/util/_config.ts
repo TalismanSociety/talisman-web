@@ -703,6 +703,22 @@ export const parachainDetails: ParachainDetails[] = [
       Github: 'https://github.com/dappforce',
     },
   },
+  {
+    id: '2-2101',
+    name: 'Zeitgeist',
+    slug: 'zeitgeist',
+    token: 'ZTG',
+    subtitle: 'Zeitgeist is an evolving blockchain for prediction markets and futarchy.',
+    info: `Zeitgeist is a decentralized network for prediction markets. Zeitgeist is an evolving network that will change and adapt over time. It does this through a sophisticated on-chain governance process.`,
+    links: {
+      Website: 'https://zeitgeist.pm/',
+      Twitter: 'https://twitter.com/ZeitgeistPM',
+      Telegram: 'https://t.me/zeitgeist_official',
+      Discord: 'https://discord.gg/xv8HuA4s8v',
+      Github: 'https://github.com/ZeitgeistPM',
+      Medium: 'https://blog.zeitgeist.pm/#subscribe'
+    },
+  }
 ]
 
 export type CrowdloanDetails = {
@@ -1639,6 +1655,29 @@ export const crowdloanDetails: CrowdloanDetails[] = [
         {
           title: 'Initial Unlock',
           value: '20%',
+        },
+      ],
+      info: null,
+    },
+  },
+  {
+    relayId: 2,
+    paraId: 2101,
+    contributeUrl: 'https://crowdloan.zeitgeist.pm/',
+    rewards: {
+      tokens: null,
+      custom: [
+        {
+          title: "ZTG per KSM",
+          value: ">80 ZTG"
+        },
+        {
+          title: 'Genesis ZTG Supply',
+          value: '100,000,000 ZTG',
+        },
+        {
+          title: 'Crowdloan Allocation',
+          value: '12,500,000 ZTG'
         },
       ],
       info: null,
