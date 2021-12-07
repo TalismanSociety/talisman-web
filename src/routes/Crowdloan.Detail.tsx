@@ -128,7 +128,6 @@ const CrowdloanDetail = styled(({ className }) => {
     }
 
     > aside {
-      min-width: fit-content;
       margin-top: 6.3rem;
       width: 39%;
 
