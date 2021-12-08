@@ -701,9 +701,9 @@ export const parachainDetails: ParachainDetails[] = [
       Telegram: 'https://t.me/zeitgeist_official',
       Discord: 'https://discord.gg/xv8HuA4s8v',
       Github: 'https://github.com/ZeitgeistPM',
-      Medium: 'https://blog.zeitgeist.pm/#subscribe'
+      Medium: 'https://blog.zeitgeist.pm/#subscribe',
     },
-  }
+  },
 ]
 
 export type CrowdloanDetails = {
@@ -1201,7 +1201,7 @@ export const crowdloanDetails: CrowdloanDetails[] = [
       tokens: [
         {
           symbol: 'TEER',
-          perKSM: '> 6.5',
+          perKSM: '> 10',
         },
       ],
       custom: [
@@ -1626,8 +1626,8 @@ export const crowdloanDetails: CrowdloanDetails[] = [
       tokens: null,
       custom: [
         {
-          title: "ZTG per KSM",
-          value: ">80 ZTG"
+          title: 'ZTG per KSM',
+          value: '>80 ZTG',
         },
         {
           title: 'Genesis ZTG Supply',
@@ -1635,7 +1635,7 @@ export const crowdloanDetails: CrowdloanDetails[] = [
         },
         {
           title: 'Crowdloan Allocation',
-          value: '12,500,000 ZTG'
+          value: '12,500,000 ZTG',
         },
       ],
       info: null,
