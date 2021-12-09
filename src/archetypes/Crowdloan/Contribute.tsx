@@ -4,13 +4,13 @@ import { Button, DesktopRequired, Field, MaterialLoader, Pendor, useModal } from
 import { TalismanHandLike } from '@components/TalismanHandLike'
 import { TalismanHandLoader } from '@components/TalismanHandLoader'
 import { ContributeEvent, useCrowdloanContribute } from '@libs/crowdloans'
-import { Acala, Moonbeam, Zeitgeist } from '@libs/crowdloans/crowdloanOverrides'
+import { Acala, Moonbeam, overrideByIds } from '@libs/crowdloans/crowdloanOverrides'
 import { useActiveAccount, useCrowdloanById } from '@libs/talisman'
 import { useTokenPrice } from '@libs/tokenprices'
 import { multiplyBigNumbers } from '@talismn/util'
 import { isMobileBrowser } from '@util/helpers'
 import { formatCurrency, truncateString } from '@util/helpers'
-import { useEffect, useMemo } from 'react'
+import { MouseEventHandler, useCallback, useEffect, useMemo, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
@@ -115,6 +115,8 @@ const ContributeTo = styled(
   }) => {
     const { t } = useTranslation(['translation', 'parachain-details'])
     const { t: tError } = useTranslation('errors')
+
+    const [chainHasTerms, termsAgreed, onTermsCheckboxClick] = useTerms(relayChainId, parachainId)
 
     const { price: tokenPrice, loading: priceLoading } = useTokenPrice(relayNativeToken)
     const usd = useMemo(
@@ -250,24 +252,26 @@ const ContributeTo = styled(
             </div>
           )}
 
-          {Zeitgeist.is(relayChainId, parachainId) && (
+          {chainHasTerms && (
             <div className="row">
               <div className="email-input">
                 <div className="info">
-                    By contributing to this crowdloan you are agreeing to the
+                  <input id="chain-terms" type="checkbox" onClick={onTermsCheckboxClick} />
+                  <label htmlFor="chain-terms">
+                    I have read and agree to the{' '}
                     <a
-                      href="https://zeitgeist.pm/CrowdloanTerms.pdf"
+                      href={overrideByIds(relayChainId, parachainId)?.terms?.href}
                       target="_blank"
                       rel="noreferrer noopener"
                     >
-                      &nbsp;Zeitgeist Parachain Crowdloan Commitment Terms
+                      {overrideByIds(relayChainId, parachainId)?.terms?.label}
                     </a>
                     .
+                  </label>
                 </div>
               </div>
             </div>
           )}
-
         </main>
         <footer>
           <Button type="button" onClick={closeModal}>
@@ -281,7 +285,8 @@ const ContributeTo = styled(
               !contributionAmount ||
               Number(contributionAmount) === 0 ||
               validationError?.i18nCode === 'Account balance too low' ||
-              validationError?.i18nCode === 'A minimum of {{minimum}} {{token}} is required'
+              validationError?.i18nCode === 'A minimum of {{minimum}} {{token}} is required' ||
+              (chainHasTerms && !termsAgreed)
             }
           >
             {t('Contribute')}
@@ -740,3 +745,12 @@ const Loading = styled(MaterialLoader)`
   color: var(--color-primary);
   user-select: none;
 `
+
+function useTerms(relayId: number, paraId: number): [boolean, boolean, MouseEventHandler<HTMLInputElement>] {
+  const chainHasTerms = useMemo(() => overrideByIds(relayId, paraId)?.terms !== undefined, [paraId, relayId])
+
+  const [termsAgreed, setTermsAgreed] = useState(!chainHasTerms)
+  const onTermsCheckboxClick = useCallback(event => setTermsAgreed(event.target.checked), [])
+
+  return [chainHasTerms, termsAgreed, onTermsCheckboxClick]
+}

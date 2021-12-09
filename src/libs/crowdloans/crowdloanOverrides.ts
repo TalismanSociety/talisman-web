@@ -23,8 +23,11 @@ export const Astar = makeOverride({
 export const Zeitgeist = makeOverride({
   relayId: 2,
   paraId: 2101,
+  terms: {
+    label: 'Zeitgeist Parachain Crowdloan Commitment Terms',
+    href: 'https://zeitgeist.pm/CrowdloanTerms.pdf',
+  },
 })
-
 
 export const overrides = [Acala, Astar, Moonbeam, Zeitgeist]
 export const overrideByIds = (relayId: number, paraId: number) =>
@@ -38,6 +41,7 @@ function makeOverride(props: {
   apiKey?: string
   apiBearerToken?: string
   needsVerifierSignature?: true
+  terms?: { label: string; href: string }
 }) {
   return { ...props, is: (relayId: number, paraId: number) => relayId === props.relayId && paraId === props.paraId }
 }
