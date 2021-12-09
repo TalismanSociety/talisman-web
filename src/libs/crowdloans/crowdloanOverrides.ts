@@ -20,8 +20,13 @@ export const Astar = makeOverride({
   paraId: 2006,
   referrer: encodePolkadotAddressAsHexadecimalPublicKey('1564oSHxGVQEaSwHgeYKD1z1A8BXeuqL3hqBSWMA6zHmKnz1'),
 })
+export const Zeitgeist = makeOverride({
+  relayId: 2,
+  paraId: 2101,
+})
 
-export const overrides = [Acala, Astar, Moonbeam]
+
+export const overrides = [Acala, Astar, Moonbeam, Zeitgeist]
 export const overrideByIds = (relayId: number, paraId: number) =>
   overrides.find(override => override.is(relayId, paraId))
 
