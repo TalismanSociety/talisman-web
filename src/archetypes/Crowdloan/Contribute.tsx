@@ -4,7 +4,7 @@ import { Button, DesktopRequired, Field, MaterialLoader, Pendor, useModal } from
 import { TalismanHandLike } from '@components/TalismanHandLike'
 import { TalismanHandLoader } from '@components/TalismanHandLoader'
 import { ContributeEvent, useCrowdloanContribute } from '@libs/crowdloans'
-import { Acala, Moonbeam } from '@libs/crowdloans/crowdloanOverrides'
+import { Acala, Moonbeam, Zeitgeist } from '@libs/crowdloans/crowdloanOverrides'
 import { useActiveAccount, useCrowdloanById } from '@libs/talisman'
 import { useTokenPrice } from '@libs/tokenprices'
 import { multiplyBigNumbers } from '@talismn/util'
@@ -249,6 +249,25 @@ const ContributeTo = styled(
               </div>
             </div>
           )}
+
+          {Zeitgeist.is(relayChainId, parachainId) && (
+            <div className="row">
+              <div className="email-input">
+                <div className="info">
+                    By contributing to this crowdloan you are agreeing to the
+                    <a
+                      href="https://zeitgeist.pm/CrowdloanTerms.pdf"
+                      target="_blank"
+                      rel="noreferrer noopener"
+                    >
+                      &nbsp;Zeitgeist Parachain Crowdloan Commitment Terms
+                    </a>
+                    .
+                </div>
+              </div>
+            </div>
+          )}
+
         </main>
         <footer>
           <Button type="button" onClick={closeModal}>

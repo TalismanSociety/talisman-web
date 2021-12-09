@@ -16,7 +16,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { MemberType, makeTaggedUnion, none } from 'safety-match'
 import { v4 as uuidv4 } from 'uuid'
 
-import { Acala, Astar, Moonbeam } from './crowdloanOverrides'
+import { Acala, Astar, Moonbeam, Zeitgeist } from './crowdloanOverrides'
 import { submitTermsAndConditions } from './moonbeam/remarkFlow'
 import { useCrowdloanContributions } from './useCrowdloanContributions'
 
@@ -1194,6 +1194,7 @@ async function buildTx(props: BuildTxProps): Promise<BuildTxResponse> {
   if (Acala.is(props.relayChainId, props.parachainId)) return await buildAcalaTx(props)
   if (Astar.is(props.relayChainId, props.parachainId)) return await buildAstarTx(props)
   if (Moonbeam.is(props.relayChainId, props.parachainId)) return await buildMoonbeamTx(props)
+  if (Zeitgeist.is(props.relayChainId, props.parachainId)) return await buildZeitgeistTx(props)
   return await buildGenericTx(props)
 }
 
@@ -1205,6 +1206,22 @@ async function buildGenericTx({
 }: BuildTxProps): Promise<BuildTxResponse> {
   const txs = [
     api.tx.crowdloan.contribute(parachainId, contributionPlanck, verifierSignature),
+    api.tx.system.remarkWithEvent('Talisman - The Journey Begins'),
+  ]
+
+  return api.tx.utility.batchAll(txs)
+}
+
+async function buildZeitgeistTx({
+  parachainId,
+  contributionPlanck,
+  verifierSignature,
+  api,
+}: BuildTxProps): Promise<BuildTxResponse> {
+
+  const txs = [
+    api.tx.crowdloan.contribute(parachainId, contributionPlanck, verifierSignature),
+    api.tx.system.remarkWithEvent('I have read and agree to the terms found at https://zeitgeist.pm/CrowdloanTerms.pdf'),
     api.tx.system.remarkWithEvent('Talisman - The Journey Begins'),
   ]
 
