@@ -1,5 +1,6 @@
 import { JoinButton } from '@archetypes/JoinButton/JoinButton'
 import miksySpiritKeysAudio from '@assets/miksy-spirit-keys.mp3'
+import bannerImage from '@assets/unlock-the-paraverse.png'
 import { Button, DesktopRequired, Field } from '@components'
 import { StyledLoader } from '@components/Await'
 import { TalismanHandLike } from '@components/TalismanHandLike'
@@ -15,6 +16,7 @@ import { cryptoWaitReady } from '@polkadot/util-crypto'
 import { web3FromAddress } from '@talismn/dapp-connect'
 import { encodeAnyAddress } from '@talismn/util'
 import { isMobileBrowser } from '@util/helpers'
+import { TALISMAN_EXTENSION_DOWNLOAD_URL } from '@util/links'
 import { AnyAddress, SS58Format, convertAnyAddress } from '@util/useAnyAddressFromClipboard'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -705,8 +707,16 @@ const SpiritKey = styled(({ className }) => {
     <section className={className}>
       {isMobileBrowser() && <DesktopRequired />}
       <div className="content">
+        <img src={bannerImage} alt="Unlock the Paraverse" width="100%" />
+        <h2 style={{ padding: '0 10vw 5vw', color: 'var(--color-foreground)' }}>
+          Discover a Spirit Key to get access to special perks and be among the first to try the Talisman wallet
+          extension
+        </h2>
+        <h1 style={{ textAlign: 'center', margin: '2rem' }}>
+          You have {hasNfts ? <span style={{ color: 'var(--color-primary' }}>{totalNFTs.length}</span> : 'no'} Spirit
+          Keys
+        </h1>
         <SpiritKeyNft src={hasNfts ? nft?.image?.replace('ipfs://', 'https://rmrk.mypinata.cloud/') : baseImage} />
-        <p>You have {hasNfts ? totalNFTs.length : 'no'} Spirit Keys</p>
         {totalNFTs?.length < 1 && (
           <div className="empty-state-buttons-div">
             <JoinButton className="join-discord-button" />
@@ -717,6 +727,11 @@ const SpiritKey = styled(({ className }) => {
         )}
         {hasNfts && (
           <div className="spirit-key-body">
+            <a href={TALISMAN_EXTENSION_DOWNLOAD_URL} target="_blank" rel="noreferrer noopener">
+              <Button primary className="unlock-alpha">
+                Unlock the Alpha
+              </Button>
+            </a>
             <div className="switcher">
               <Button.Icon
                 className="nav-toggle-left"
@@ -726,7 +741,7 @@ const SpiritKey = styled(({ className }) => {
               >
                 <ChevronDown />
               </Button.Icon>
-              <div className="nft-number">
+              <div className="nft-number" style={{ color: 'var(--color-text)' }}>
                 <p>#{totalNFTs[currentNFT]?.sn.substring(4)}</p>
               </div>
               <Button.Icon
@@ -777,6 +792,10 @@ const SpiritKey = styled(({ className }) => {
     </section>
   )
 })`
+  .unlock-alpha {
+    margin: 2rem;
+  }
+
   h2 {
     color: var(--color-text);
   }
