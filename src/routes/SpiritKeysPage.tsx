@@ -16,7 +16,6 @@ import { cryptoWaitReady } from '@polkadot/util-crypto'
 import { web3FromAddress } from '@talismn/dapp-connect'
 import { encodeAnyAddress } from '@talismn/util'
 import { isMobileBrowser } from '@util/helpers'
-import { TALISMAN_EXTENSION_DOWNLOAD_URL } from '@util/links'
 import { AnyAddress, SS58Format, convertAnyAddress } from '@util/useAnyAddressFromClipboard'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -727,11 +726,12 @@ const SpiritKey = styled(({ className }) => {
         )}
         {hasNfts && (
           <div className="spirit-key-body">
-            <a href={TALISMAN_EXTENSION_DOWNLOAD_URL} target="_blank" rel="noreferrer noopener">
+            {/* TODO: Comment out for now as it should not be ready for the broader audience */}
+            {/* <a href={TALISMAN_EXTENSION_DOWNLOAD_URL} target="_blank" rel="noreferrer noopener">
               <Button primary className="unlock-alpha">
                 Unlock the Alpha
               </Button>
-            </a>
+            </a> */}
             <div className="switcher">
               <Button.Icon
                 className="nav-toggle-left"
