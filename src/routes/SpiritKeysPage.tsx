@@ -535,7 +535,7 @@ const SpiritKeyNft = styled(({ className, src }) => {
     align-items: center;
     justify-content: center;
     gap: 1rem;
-    margin-top: 1rem;
+    margin: 1.5rem;
   }
 
   .spirit-key-image {
@@ -676,6 +676,8 @@ const SpiritKey = styled(({ className }) => {
   useExtensionAutoConnect()
 
   const totalNFTs = useFetchNFTs()
+  const addressesLoading = addresses === undefined
+  const nftLoading = totalNFTs === undefined
   const hasNfts = totalNFTs?.length > 0
 
   const [nft, setNft] = useState<NFTConsolidated>()
@@ -698,7 +700,7 @@ const SpiritKey = styled(({ className }) => {
     }
   }
 
-  if (addresses === undefined) {
+  if (addressesLoading) {
     return <StyledLoader />
   }
 
@@ -711,10 +713,13 @@ const SpiritKey = styled(({ className }) => {
           Discover a Spirit Key to get access to special perks and be among the first to try the Talisman wallet
           extension
         </h2>
-        <h1 style={{ textAlign: 'center', margin: '2rem' }}>
-          You have {hasNfts ? <span style={{ color: 'var(--color-primary' }}>{totalNFTs.length}</span> : 'no'} Spirit
-          Keys
-        </h1>
+        {nftLoading && <StyledLoader />}
+        {!nftLoading && (
+          <h2 style={{ textAlign: 'center' }}>
+            You have {hasNfts ? <span style={{ color: 'var(--color-primary' }}>{totalNFTs.length}</span> : 'no'} Spirit
+            Keys
+          </h2>
+        )}
         <SpiritKeyNft src={hasNfts ? nft?.image?.replace('ipfs://', 'https://rmrk.mypinata.cloud/') : baseImage} />
         {totalNFTs?.length < 1 && (
           <div className="empty-state-buttons-div">
