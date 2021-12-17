@@ -8,6 +8,7 @@ import { TalismanHandLoader } from '@components/TalismanHandLoader'
 import { ReactComponent as ChevronDown } from '@icons/chevron-down.svg'
 import { ReactComponent as PauseCircle } from '@icons/pause-circle.svg'
 import { ReactComponent as PlayCircle } from '@icons/play-circle.svg'
+import { trackGoal } from '@libs/fathom'
 import { useAllAccountAddresses, useExtensionAutoConnect } from '@libs/talisman'
 import { ApiPromise, WsProvider } from '@polkadot/api'
 import { decodeAddress, encodeAddress } from '@polkadot/keyring'
@@ -732,7 +733,14 @@ const SpiritKey = styled(({ className }) => {
         )}
         {hasNfts && (
           <div className="spirit-key-body">
-            <a href={TALISMAN_EXTENSION_DOWNLOAD_URL} target="_blank" rel="noreferrer noopener">
+            <a
+              href={TALISMAN_EXTENSION_DOWNLOAD_URL}
+              target="_blank"
+              rel="noreferrer noopener"
+              onClick={e => {
+                trackGoal('TE3SATFD', 0) // alpha_downloads
+              }}
+            >
               <Button primary className="unlock-alpha">
                 Unlock the Alpha
               </Button>
