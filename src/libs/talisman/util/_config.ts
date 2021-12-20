@@ -135,6 +135,22 @@ export const parachainDetails: ParachainDetails[] = [
     },
   },
   {
+    id: '0-2008',
+    name: 'Crust',
+    slug: 'crust',
+    token: 'CRU',
+    subtitle: 'Crust implements the incentive layer protocol for decentralized storage.',
+    info: `It is adaptable to multiple storage layer protocols such as IPFS, and provides support for the application layer. Crust’s architecture also has the capability of supporting a decentralized computing layer and building a decentralized cloud ecosystem. Crust's decentralized storage layer provides a distributed file system. At the same time, Crust encapsulates some standard interfaces such as Amazon S3-like. Any application scenarios involving data storage, such as cloud services, edge computing, and decentralized applications, are the scenarios that Crust can adapt. Worth mentioning is that in edge computing scenarios, compared to centralized cloud storage, Crust's decentralized storage is closer to the edge, which can achieve relatively low cost and high performance.`,
+    links: {
+      Website: 'https://crust.network/',
+      Twitter: 'https://twitter.com/crustnetwork',
+      Telegram: 'https://t.me/CrustNetwork',
+      Medium: 'https://crustnetwork.medium.com/',
+      Github: 'https://github.com/crustio/crust',
+      Discord: 'https://discord.gg/Jbw2PAUSCR',
+    },
+  },
+  {
     id: '0-2012',
     name: 'Parallel',
     slug: 'parallel',
@@ -853,6 +869,29 @@ export const crowdloanDetails: CrowdloanDetails[] = [
         {
           title: 'Bonus Pool',
           value: '350,000,000 ASTR',
+        },
+      ],
+      bonus: {
+        short: '',
+        full: '',
+        info: '',
+      },
+      info: null,
+    },
+  },
+  {
+    relayId: 0,
+    paraId: 2008,
+    rewards: {
+      tokens: null,
+      custom: [
+        {
+          title: 'CRU per DOT',
+          value: '0.2+',
+        },
+        {
+          title: 'Crowdloan Allocation',
+          value: '1,000,000 CRU',
         },
       ],
       bonus: {

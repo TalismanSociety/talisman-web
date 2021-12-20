@@ -11,7 +11,7 @@ import { multiplyBigNumbers } from '@talismn/util'
 import { isMobileBrowser } from '@util/helpers'
 import { formatCurrency, truncateString } from '@util/helpers'
 import { MouseEventHandler, useCallback, useEffect, useMemo, useState } from 'react'
-import { Trans, useTranslation } from 'react-i18next'
+import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 export type ContributeProps = {
@@ -113,7 +113,7 @@ const ContributeTo = styled(
     validationError,
     submissionRequested,
   }) => {
-    const { t } = useTranslation(['translation', 'parachain-details'])
+    const { t } = useTranslation()
     const { t: tError } = useTranslation('errors')
 
     const [chainHasTerms, termsAgreed, onTermsCheckboxClick] = useTerms(relayChainId, parachainId)
@@ -236,17 +236,15 @@ const ContributeTo = styled(
                   disabled={submissionRequested}
                 />
                 <div className="info">
-                  <Trans i18nKey={`${relayChainId}-${parachainId}.disclaimer`} ns="parachain-details">
-                    All contributions via the Talisman dashboard are made to Acala's liquid crowdloan (lcDOT) offer and
-                    are subject to the rewards and vesting schedule described
-                    <a
-                      href="https://medium.com/acalanetwork/acala-liquid-crowdloan-dot-lcdot-launch-on-polkadot-f28d8f561157#4080"
-                      target="_blank"
-                      rel="noreferrer noopener"
-                    >
-                      here
-                    </a>
-                  </Trans>
+                  All contributions via the Talisman dashboard are made to Acala's liquid crowdloan (lcDOT) offer and
+                  are subject to the rewards and vesting schedule described
+                  <a
+                    href="https://medium.com/acalanetwork/acala-liquid-crowdloan-dot-lcdot-launch-on-polkadot-f28d8f561157#4080"
+                    target="_blank"
+                    rel="noreferrer noopener"
+                  >
+                    here
+                  </a>
                 </div>
               </div>
             </div>
