@@ -802,6 +802,22 @@ export const parachainDetails: ParachainDetails[] = [
       Medium: 'https://blog.zeitgeist.pm/#subscribe',
     },
   },
+  {
+    id: '2-2102',
+    name: 'Pichiu',
+    slug: 'pichiu',
+    token: 'PCHU',
+    subtitle: 'Pichiu aims to build a cross-chain platform powering the data economy on Kusama.',
+    info: `It will be the data infrastructure for the future DeFi and Web 3.0 powered by Kusama. Pichiu will provide valid, reliable, secure, cost-effective, and easily-coordinated data sources and data analytics.`,
+    links: {
+      Website: 'https://kylin.network/',
+      Twitter: 'https://twitter.com/Kylin_Network',
+      Telegram: 'https://t.me/KylinOfficial',
+      Discord: 'https://discord.com/invite/PwYCssr',
+      Github: 'https://github.com/Kylin-Network/kylin-collator',
+      Medium: 'https://kylinnetwork.medium.com/',
+    },
+  },
 ]
 
 export type CrowdloanDetails = {
@@ -1852,6 +1868,21 @@ export const crowdloanDetails: CrowdloanDetails[] = [
         {
           title: 'Crowdloan Allocation',
           value: '12,500,000 ZTG',
+        },
+      ],
+      info: null,
+    },
+  },
+  {
+    relayId: 2,
+    paraId: 2102,
+    contributeUrl: '',
+    rewards: {
+      tokens: null,
+      custom: [
+        {
+          title: 'PCHU per KSM',
+          value: '350+',
         },
       ],
       info: null,
