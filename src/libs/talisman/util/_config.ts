@@ -261,6 +261,23 @@ export const parachainDetails: ParachainDetails[] = [
     },
   },
   {
+    id: '0-2026',
+    name: 'Nodle',
+    slug: 'nodle',
+    token: 'NODL',
+    subtitle: "Nodle's mission is to connect the next trillion things to the Internet.",
+    info: "Nodle leverages Bluetooth Low Energy (BLE) via millions of smartphones and routers to allow enterprises and smart cities to connect IoT devices to the Internet at a low-cost while maintaining privacy and security. Nodle's decentralized wireless network is currently comprised of 5M daily active smartphones with 30 million IoT devices discovered daily in over 100 countries, moving approximately 100 GB of data.",
+    links: {
+      Website: 'https://nodle.com/',
+      Twitter: 'https://t.me/nodlecommunity',
+      Medium: 'https://medium.com/nodle-io',
+      GitHub: 'https://github.com/NodleCode/chain',
+      Reddit: 'https://www.reddit.com/r/Nodle/',
+      Discord: 'https://discord.gg/N5nTUt8RWJ',
+      Telegram: 'https://t.me/nodlecommunity',
+    },
+  },
+  {
     id: '0-2028',
     name: 'Ares Protocol',
     slug: 'ares-protocol',
@@ -1122,6 +1139,25 @@ export const crowdloanDetails: CrowdloanDetails[] = [
         {
           title: 'Crowdloan Allocation',
           value: '200,000,000 EFI',
+        },
+      ],
+      bonus: {
+        short: '',
+        full: '',
+        info: '',
+      },
+      info: null,
+    },
+  },
+  {
+    relayId: 0,
+    paraId: 2026,
+    rewards: {
+      tokens: null,
+      custom: [
+        {
+          title: 'NODL per DOT',
+          value: '20+',
         },
       ],
       bonus: {
