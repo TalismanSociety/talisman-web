@@ -719,7 +719,7 @@ const SpiritKey = styled(({ className }) => {
         {!nftLoading && (
           <h2 style={{ textAlign: 'center' }}>
             You have {hasNfts ? <span style={{ color: 'var(--color-primary' }}>{totalNFTs.length}</span> : 'no'} Spirit
-            Keys
+            Key{totalNFTs.length === 1 ? '' : 's'}
           </h2>
         )}
         <SpiritKeyNft src={hasNfts ? nft?.image?.replace('ipfs://', 'https://rmrk.mypinata.cloud/') : baseImage} />
@@ -774,7 +774,7 @@ const SpiritKey = styled(({ className }) => {
         <div className="info">
           <div className="section">
             <h2>How do I get one?</h2>
-            <p>Keys have been seen in various location, but never for very long. The best places to find them are:</p>
+            <p>Keys have been seen in various locations, but never for very long. The best places to find them are:</p>
             <ul>
               <li>The Talisman Discord Server</li>
               <li>Various DotSama communities</li>
