@@ -215,6 +215,22 @@ export const parachainDetails: ParachainDetails[] = [
     },
   },
   {
+    id: '0-2019',
+    name: 'Composable Finance',
+    slug: 'composable-finance',
+    token: 'LAYR',
+    subtitle:
+      'Composable’s parachain is going to be able to run multiple bytecodes together in the same place, in order to run smart contracts together in a manner that allows them to communicate and collaborate.',
+    info: 'As a result, protocols using different smart contract languages (i.e. those on different chains, especially) will be able to unite via our parachain, facilitating cross-chain asset swaps and other functionalities.',
+    links: {
+      Website: 'https://www.composable.finance/',
+      Twitter: 'https://twitter.com/ComposableFin',
+      Telegram: 'https://t.me/ComposableFinanceAnnouncements',
+      Medium: 'https://composablefi.medium.com/',
+      Github: 'https://github.com/ComposableFi/',
+    },
+  },
+  {
     id: '0-2021',
     name: 'Efinity',
     slug: 'efinity',
@@ -1008,6 +1024,25 @@ export const crowdloanDetails: CrowdloanDetails[] = [
         {
           title: 'SGB per DOT',
           value: '13',
+        },
+      ],
+      bonus: {
+        short: '',
+        full: '',
+        info: '',
+      },
+      info: null,
+    },
+  },
+  {
+    relayId: 0,
+    paraId: 2019,
+    rewards: {
+      tokens: null,
+      custom: [
+        {
+          title: 'LAYR per DOT',
+          value: '0.48+',
         },
       ],
       bonus: {
