@@ -151,6 +151,22 @@ export const parachainDetails: ParachainDetails[] = [
     },
   },
   {
+    id: '0-2011',
+    name: 'Equilibrium',
+    slug: 'equilibrium',
+    token: 'EQ',
+    subtitle:
+      'The functionality of all key DeFi apps on one platform, with advanced bailout mechanism for system security.',
+    info: `Users can: Lend - All main crypto assets, EQ tokens Borrow - All main crypto assets, decentralized stablecoins, synthetics Trade - All main crypto assets, decentralized stablecoins, synthetics, EQ tokens Stake - PoS & DPoS crypto assets, EQ tokens Solves cross-chain interoperability, unlocking $311 Bln of total remaining DeFi market potential.`,
+    links: {
+      Website: 'https://equilibrium.io/',
+      Twitter: 'https://twitter.com/EquilibriumDeFi',
+      Telegram: 'https://t.me/equilibrium_eosdt_official',
+      Medium: 'https://medium.com/equilibrium-eosdt',
+      Github: 'https://github.com/equilibrium-eosdt/equilibrium-substrate-chain',
+    },
+  },
+  {
     id: '0-2012',
     name: 'Parallel',
     slug: 'parallel',
@@ -941,6 +957,25 @@ export const crowdloanDetails: CrowdloanDetails[] = [
         {
           title: 'Crowdloan Allocation',
           value: '1,000,000 CRU',
+        },
+      ],
+      bonus: {
+        short: '',
+        full: '',
+        info: '',
+      },
+      info: null,
+    },
+  },
+  {
+    relayId: 0,
+    paraId: 2011,
+    rewards: {
+      tokens: null,
+      custom: [
+        {
+          title: 'EQ per DOT',
+          value: '200+',
         },
       ],
       bonus: {
