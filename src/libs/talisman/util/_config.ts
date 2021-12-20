@@ -277,6 +277,23 @@ export const parachainDetails: ParachainDetails[] = [
     },
   },
   {
+    id: '0-2032',
+    name: 'Interlay',
+    slug: 'interlay',
+    token: 'INTR',
+    subtitle:
+      'Interlay is a decentralized network dedicated to connecting crypto-currencies like Bitcoin with DeFi platforms like Polkadot and Ethereum.',
+    info: `The Interlay network is hosted as a Polkadot parachain and will be connected to Cosmos, Ethereum, and other major DeFi networks. Read more about Interlay’s vision of blockchain interoperability. interBTC, Interlay’s flagship product, is Bitcoin on any blockchain. A 1:1 Bitcoin-backed asset, fully collateralized, interoperable, and censorship-resistant.`,
+    links: {
+      Website: 'https://interlay.io/',
+      Twitter: 'https://twitter.com/interlayHQ',
+      Telegram: 'https://t.me/interlay_community',
+      Medium: 'https://medium.com/interlay',
+      Github: 'https://github.com/interlay/interbtc',
+      Discord: 'https://discord.com/invite/interlay',
+    },
+  },
+  {
     id: '2-2000',
     name: 'Karura',
     slug: 'karura',
@@ -1108,6 +1125,25 @@ export const crowdloanDetails: CrowdloanDetails[] = [
         {
           title: 'CFG per DOT',
           value: '3.28+',
+        },
+      ],
+      bonus: {
+        short: '',
+        full: '',
+        info: '',
+      },
+      info: null,
+    },
+  },
+  {
+    relayId: 0,
+    paraId: 2032,
+    rewards: {
+      tokens: null,
+      custom: [
+        {
+          title: 'INTR per DOT',
+          value: '3.46+',
         },
       ],
       bonus: {
