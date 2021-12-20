@@ -675,7 +675,7 @@ const SpiritKey = styled(({ className }) => {
   const baseImage = 'https://rmrk.mypinata.cloud/ipfs/bafybeicuuasrqnqndfw3k6rqacfpfil5sc5fhyjh63riqnd2imm5eucrk4'
   const [currentNFT, setCurrentNFT] = useState<number>(0)
   const addresses = useAllAccountAddresses()
-  useExtensionAutoConnect()
+  const { status } = useExtensionAutoConnect()
 
   const totalNFTs = useFetchNFTs()
   const addressesLoading = addresses === undefined
@@ -715,7 +715,7 @@ const SpiritKey = styled(({ className }) => {
           Discover a Spirit Key to get access to special perks and be among the first to try the Talisman wallet
           extension
         </h2>
-        {nftLoading && <StyledLoader />}
+        {status === 'OK' && nftLoading && <StyledLoader />}
         {!nftLoading && (
           <h2 style={{ textAlign: 'center' }}>
             You have {hasNfts ? <span style={{ color: 'var(--color-primary' }}>{totalNFTs.length}</span> : 'no'} Spirit
@@ -723,7 +723,7 @@ const SpiritKey = styled(({ className }) => {
           </h2>
         )}
         <SpiritKeyNft src={hasNfts ? nft?.image?.replace('ipfs://', 'https://rmrk.mypinata.cloud/') : baseImage} />
-        {totalNFTs?.length < 1 && (
+        {(status !== 'OK' || totalNFTs?.length < 1) && (
           <div className="empty-state-buttons-div">
             <JoinButton className="join-discord-button" />
             <Button to="/crowdloans" className="explore-crowdloans-button">
