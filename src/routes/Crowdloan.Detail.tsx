@@ -6,7 +6,7 @@ import { useParams } from 'react-router-dom'
 import styled from 'styled-components'
 
 const CrowdloanDetail = styled(({ className }) => {
-  const { t } = useTranslation(['translation', 'parachain-details'])
+  const { t } = useTranslation()
   const { slug }: { slug: string } = useParams()
 
   const { parachainDetails } = useParachainDetailsBySlug(slug)
@@ -17,7 +17,6 @@ const CrowdloanDetail = styled(({ className }) => {
   const { openModal } = useModal()
 
   const parachainId = parachainDetails?.id
-  // const isReady = ready && parachainId
 
   return (
     <section className={className}>
@@ -27,10 +26,8 @@ const CrowdloanDetail = styled(({ className }) => {
           <Parachain.Asset id={parachainDetails?.id} type="logo" />
           <header>
             <h1>{parachainDetails?.name}</h1>
-            {/* <h2>{isReady && t(`${parachainId}.subtitle`, { ns: 'parachain-details' })}</h2> */}
             <h2>{parachainDetails?.subtitle}</h2>
           </header>
-          {/* <p className="info">{isReady && t(`${parachainId}.info`, { ns: 'parachain-details' })}</p> */}
           <p className="info">{parachainDetails?.info}</p>
           <Parachain.Links id={parachainDetails?.id} />
         </article>
