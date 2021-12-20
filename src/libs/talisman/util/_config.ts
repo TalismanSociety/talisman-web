@@ -278,12 +278,28 @@ export const parachainDetails: ParachainDetails[] = [
     },
   },
   {
+    id: '0-2027',
+    name: 'Coinversation',
+    slug: 'coinversation',
+    token: 'CTO',
+    subtitle:
+      'Coinversation Protocol is a synthetic asset issuance protocol and decentralised contract trading exchange based on the Polkadot contract chain.',
+    info: 'It uses the token CTO issued by Coinversation Protocol and Polkadot(DOT) as collateral, and synthesizes any cryptocurrencies or stocks, bonds, gold and any other off-chain assets through smart contracts and oracles.',
+    links: {
+      Website: 'https://www.coinversation.io/',
+      Twitter: 'https://twitter.com/Coinversation_',
+      Medium: 'https://coinversationofficial.medium.com/',
+      GitHub: 'https://github.com/Coinversation/coinpro',
+      Telegram: 'https://t.me/coinversationofficial',
+    },
+  },
+  {
     id: '0-2028',
     name: 'Ares Protocol',
     slug: 'ares-protocol',
     token: 'ARES',
     subtitle: 'Ares is an on-chain verifying oracle protocol powered by Polkadot.',
-    info: ` It provides reliable off-chain data efficiently and in a trustless manner. Ares is built on Substrate and constructed as a parachain to link to Polkadot's ecology and share its security consensus. It is a scalable oracle network that provides decentralized data services to the Polkadot ecosystem and its parachains.`,
+    info: `It provides reliable off-chain data efficiently and in a trustless manner. Ares is built on Substrate and constructed as a parachain to link to Polkadot's ecology and share its security consensus. It is a scalable oracle network that provides decentralized data services to the Polkadot ecosystem and its parachains.`,
     links: {
       Website: 'https://www.aresprotocol.io/',
       Twitter: 'https://twitter.com/AresProtocolLab',
@@ -1174,6 +1190,25 @@ export const crowdloanDetails: CrowdloanDetails[] = [
         {
           title: 'NODL per DOT',
           value: '20+',
+        },
+      ],
+      bonus: {
+        short: '',
+        full: '',
+        info: '',
+      },
+      info: null,
+    },
+  },
+  {
+    relayId: 0,
+    paraId: 2027,
+    rewards: {
+      tokens: null,
+      custom: [
+        {
+          title: 'CTO per DOT',
+          value: '3.75+',
         },
       ],
       bonus: {
