@@ -578,7 +578,7 @@ export const parachainDetails: ParachainDetails[] = [
     },
   },
   {
-    id: '2-2077',
+    id: '2-2048',
     name: 'Robonomics',
     slug: 'robonomics',
     token: 'XRT',
@@ -1574,7 +1574,7 @@ export const crowdloanDetails: CrowdloanDetails[] = [
   },
   {
     relayId: 2,
-    paraId: 2077,
+    paraId: 2048,
     contributeUrl: 'https://robonomics.network/kusama-slot',
     rewards: {
       tokens: [
