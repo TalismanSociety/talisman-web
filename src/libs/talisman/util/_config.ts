@@ -245,6 +245,22 @@ export const parachainDetails: ParachainDetails[] = [
     },
   },
   {
+    id: '0-2031',
+    name: 'Centrifuge',
+    slug: 'centrifuge',
+    token: 'CFG',
+    subtitle: 'Centrifuge Chain is the gateway for real-world assets to the Blockchain Multiverse.',
+    info: `We built Centrifuge Chain on Parity Substrate with an initial bridge to Ethereum. This allows us to move faster and use a consistent approach for certain features. We envision a larger ecosystem of many, connected blockchains- where Dapps on Ethereum could use data from other chains, value could move freely, and Centrifuge Chain can enable off-chain assets to access financing through DeFi.`,
+    links: {
+      Website: 'https://centrifuge.io/',
+      Twitter: 'https://twitter.com/centrifuge',
+      Telegram: 'https://t.me/centrifuge_chat',
+      Medium: 'https://medium.com/centrifuge',
+      Github: 'https://github.com/centrifuge/centrifuge-chain/',
+      Discord: 'https://centrifuge.io/discord',
+    },
+  },
+  {
     id: '2-2000',
     name: 'Karura',
     slug: 'karura',
@@ -1038,6 +1054,25 @@ export const crowdloanDetails: CrowdloanDetails[] = [
         {
           title: 'ARES per DOT',
           value: 'TBA',
+        },
+      ],
+      bonus: {
+        short: '',
+        full: '',
+        info: '',
+      },
+      info: null,
+    },
+  },
+  {
+    relayId: 0,
+    paraId: 2031,
+    rewards: {
+      tokens: null,
+      custom: [
+        {
+          title: 'CFG per DOT',
+          value: '3.28+',
         },
       ],
       bonus: {
