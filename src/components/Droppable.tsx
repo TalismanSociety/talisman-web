@@ -6,16 +6,29 @@ interface DraggableProps {
   children: ReactNode
 }
 
-export const Droppable = styled(({ children, className, onDrop }) => {
+function isAllowed(id: string, e?: DragEvent) {
+  if (!id) {
+    return true
+  }
+  return id === e?.dataTransfer?.getData('text')
+}
+
+export const Droppable = styled(({ id, children, className, onDragEnter, onDragLeave, onDrop }) => {
   const ref = useRef<HTMLDivElement>(null)
   const callbacks: DragAndDropCallbacks = {
     onDragEnter(e) {
-      console.log(`>>> onDragEnter`, e)
+      if (onDragEnter) {
+        onDragEnter(e)
+      }
     },
     onDragLeave(e) {
-      console.log(`>>> onDragLeave`, e)
-      if (onDrop) {
-        onDrop()
+      if (onDragLeave) {
+        onDragLeave(e)
+      }
+    },
+    onDrop(e) {
+      if (onDrop && isAllowed(id, e)) {
+        onDrop(e)
       }
     },
   }

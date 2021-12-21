@@ -15,7 +15,7 @@ import { useExtension } from '@libs/talisman'
 import { device } from '@util/breakpoints'
 import { buyNow } from '@util/fiatOnRamp'
 import { useMediaQuery } from '@util/hooks'
-import { DISCORD_JOIN_URL } from '@util/links'
+import { DISCORD_JOIN_URL, TALISMAN_TWITTER_URL } from '@util/links'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useReducer } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -66,7 +66,7 @@ const subRoutes = [
   },
   {
     name: 'Twitter',
-    url: 'https://twitter.com/wearetalisman',
+    url: TALISMAN_TWITTER_URL,
     trackingCode: 'NMVPOOER', // bounce_twitter
     icon: <TwitterMobileLogo alt="Twitter" />,
   },

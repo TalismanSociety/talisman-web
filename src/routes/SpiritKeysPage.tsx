@@ -24,7 +24,7 @@ import { web3FromAddress } from '@talismn/dapp-connect'
 import { encodeAnyAddress } from '@talismn/util'
 import { downloadURI } from '@util/downloadURI'
 import { isMobileBrowser } from '@util/helpers'
-import { DISCORD_JOIN_URL, TALISMAN_EXTENSION_DOWNLOAD_URL } from '@util/links'
+import { DISCORD_JOIN_URL, TALISMAN_EXTENSION_DOWNLOAD_URL, TALISMAN_TWITTER_URL } from '@util/links'
 import { AnyAddress, SS58Format, convertAnyAddress } from '@util/useAnyAddressFromClipboard'
 import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -633,13 +633,13 @@ const SpiritKeyNftImage = styled(({ className }) => {
   height: 23.5rem;
   width: auto;
   border: 1px solid var(--color-mid);
-  border-radius: 2rem;
+  border-radius: 4rem;
   padding: 1.2rem;
   transition: padding 0.4s ease-out;
 
   &:hover {
     transition: padding 0.4s ease-in;
-    padding: 0;
+    padding: 0.5rem;
     box-shadow: 0px 10px 13px -7px #000000, 5px 5px 15px 5px rgba(0, 0, 0, 0);
   }
 `
@@ -749,7 +749,12 @@ const SpiritKeySenderModal = styled(({ className }) => {
 `
 
 const SpiritKeySender = styled(({ className }) => {
+  const totalNFTs = useFetchNFTs()
+  const hasNfts = totalNFTs?.length > 0
   const { openModal } = useModal()
+  if (!hasNfts) {
+    return null
+  }
   return (
     <div className={className} onClick={() => openModal(<SpiritKeySenderModal />)}>
       Send to a friend
@@ -764,10 +769,24 @@ const SpiritKeySender = styled(({ className }) => {
 
 const SpiritKeyUnlockBanner = styled(({ className }) => {
   const [downloading, setDownloading] = useState(false)
+  const [revealing, setRevealing] = useState(false)
+  const totalNFTs = useFetchNFTs()
+  const hasNfts = totalNFTs?.length > 0
+  const dragSrcId = 'spirit-key-id'
+
+  useEffect(() => {
+    if (downloading) {
+      setTimeout(() => {
+        setDownloading(false)
+        setRevealing(false)
+      }, 2000)
+    }
+  }, [downloading])
+
   return (
     <Banner className={className} backgroundImage={bannerImage}>
       <div className="center space-y-2">
-        <Draggable>
+        <Draggable id={dragSrcId} disabled={!hasNfts}>
           <SpiritKeyNftImage />
         </Draggable>
         <OwnershipText />
@@ -778,13 +797,21 @@ const SpiritKeyUnlockBanner = styled(({ className }) => {
         <div>Drag to unlock</div>
       </div>
       <Droppable
-        onDrop={() => {
+        id={dragSrcId}
+        onDragEnter={() => setRevealing(true)}
+        onDragLeave={() => setRevealing(false)}
+        onDrop={(e: DragEvent) => {
+          setRevealing(false)
+          setDownloading(true)
           downloadURI(TALISMAN_EXTENSION_DOWNLOAD_URL)
           trackGoal('TE3SATFD', 0) // alpha_downloads
-          setDownloading(true)
         }}
       >
-        <img src={alphaExtensionImage} alt="Talisman Extension" className="alpha-extension" />
+        <img
+          src={alphaExtensionImage}
+          alt="Talisman Extension"
+          className={`alpha-extension ${downloading ? 'downloading' : ''} ${revealing ? 'revealing' : ''}`}
+        />
       </Droppable>
     </Banner>
   )
@@ -814,6 +841,17 @@ const SpiritKeyUnlockBanner = styled(({ className }) => {
     height: auto;
     width: 31rem;
     filter: blur(1rem);
+    transition: filter 1s ease-out;
+
+    &.downloading {
+      transition: filter 0.5s ease-in;
+      filter: unset;
+    }
+
+    &.revealing {
+      transition: filter 0.5s ease-in;
+      filter: blur(0.1rem);
+    }
   }
 `
 
@@ -857,12 +895,18 @@ const BenefitsInfo = () => {
       </p>
       <ul>
         <li>
+          The Talisman{' '}
           <a href={DISCORD_JOIN_URL} target="_blank" rel="noopener noreferrer">
-            The Talisman Discord server
+            Discord server
           </a>
         </li>
         <li>Attending community calls and events</li>
-        <li>Keeping an eye out for giveaways on Twitter</li>
+        <li>
+          Keeping an eye out for giveaways on{' '}
+          <a href={TALISMAN_TWITTER_URL} target="_blank" rel="noopener noreferrer">
+            Twitter
+          </a>
+        </li>
         <li>By arranging to review, publish or produce media about Talisman</li>
       </ul>
     </Section>

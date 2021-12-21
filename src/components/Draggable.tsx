@@ -6,23 +6,25 @@ interface DraggableProps {
   children: ReactNode
 }
 
-export const Draggable = styled(({ className, children }) => {
+export const Draggable = styled(({ id, className, children, disabled }) => {
   const ref = useRef<HTMLDivElement>(null)
 
   const callbacks: DragAndDropCallbacks = {
     onDragStart(e) {
-      console.log(`>>> onDragStart`, e)
-    },
-    onDragEnd(e) {
-      console.log(`>>> onDragEnd`, e)
+      const dataTransfer = e?.dataTransfer
+      if (dataTransfer) {
+        dataTransfer.effectAllowed = 'move'
+        dataTransfer.setData('text/plain', id)
+      }
     },
   }
 
-  const { dragging } = useDragAndDrop(ref, callbacks)
-  const draggingStyles = dragging ? `dragging` : ``
+  const { dragging } = useDragAndDrop(ref, disabled ? undefined : callbacks)
+  const draggingStyles = dragging ? 'dragging' : ''
+  const disabledStyles = disabled ? 'disabled' : ''
 
   return (
-    <div ref={ref} draggable className={`${className} ${draggingStyles}`}>
+    <div ref={ref} draggable={!disabled} className={`${className} ${draggingStyles} ${disabledStyles}`}>
       {children}
     </div>
   )
@@ -33,5 +35,12 @@ export const Draggable = styled(({ className, children }) => {
 
   &.dragging {
     opacity: 0.1;
+  }
+
+  &.disabled {
+    pointer-events: none;
+    :hover {
+      cursor: not-allowed;
+    }
   }
 `
