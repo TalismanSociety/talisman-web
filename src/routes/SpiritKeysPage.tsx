@@ -628,19 +628,33 @@ const SpiritKeyNft = styled(({ className, src }) => {
 `
 
 const SpiritKeyNftImage = styled(({ className }) => {
-  return <img src={spiritKeyNftImage} alt="Spirit Key NFT" className={className} />
+  return (
+    <div className={className}>
+      <img src={spiritKeyNftImage} alt="Spirit Key NFT" />
+    </div>
+  )
 })`
+  border: 1px solid var(--color-mid);
+  border-radius: 3rem;
+  padding: 1.2rem;
   height: 23.5rem;
   width: auto;
-  border: 1px solid var(--color-mid);
-  border-radius: 4rem;
-  padding: 1.2rem;
-  transition: padding 0.4s ease-out;
 
-  &:hover {
-    transition: padding 0.4s ease-in;
-    padding: 0.5rem;
-    box-shadow: 0px 10px 13px -7px #000000, 5px 5px 15px 5px rgba(0, 0, 0, 0);
+  img {
+    height: 100%;
+    width: 100%;
+    border-radius: 2rem;
+    transition: all 0.15s ease-out;
+
+    &:hover {
+      box-shadow: 0px 10px 13px -7px #000000, 5px 5px 15px 5px rgba(0, 0, 0, 0);
+      margin-top: -0.25rem;
+    }
+  }
+
+  :hover {
+    transition: all 0.15s ease-in;
+    padding: 0.8rem;
   }
 `
 
@@ -774,14 +788,15 @@ const SpiritKeyUnlockBanner = styled(({ className }) => {
   const hasNfts = totalNFTs?.length > 0
   const dragSrcId = 'spirit-key-id'
 
-  useEffect(() => {
-    if (downloading) {
-      setTimeout(() => {
-        setDownloading(false)
-        setRevealing(false)
-      }, 2000)
-    }
-  }, [downloading])
+  // TODO: Figure out better reset
+  // useEffect(() => {
+  //   if (downloading) {
+  //     setTimeout(() => {
+  //       setDownloading(false)
+  //       setRevealing(false)
+  //     }, 2000)
+  //   }
+  // }, [downloading])
 
   return (
     <Banner className={className} backgroundImage={bannerImage}>
