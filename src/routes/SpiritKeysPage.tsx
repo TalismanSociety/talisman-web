@@ -6,7 +6,7 @@ import bannerImage from '@assets/gradient-purple-red.png'
 import miksySpiritKeysAudio from '@assets/miksy-spirit-keys.mp3'
 import spiritKeyNftImage from '@assets/spirit-key-nft.png'
 import { ReactComponent as BannerText } from '@assets/unlock-the-paraverse.svg'
-import { Button, DesktopRequired, Field } from '@components'
+import { Button, DesktopRequired, Field, useModal } from '@components'
 import { StyledLoader } from '@components/Await'
 import { Banner } from '@components/Banner'
 import { TalismanHandLike } from '@components/TalismanHandLike'
@@ -26,6 +26,7 @@ import { encodeAnyAddress } from '@talismn/util'
 import { isMobileBrowser } from '@util/helpers'
 import { DISCORD_JOIN_URL, TALISMAN_EXTENSION_DOWNLOAD_URL } from '@util/links'
 import { AnyAddress, SS58Format, convertAnyAddress } from '@util/useAnyAddressFromClipboard'
+import useOnClickOutside from '@util/useOnClickOutside'
 import { ReactNode, RefObject, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { consolidatedNFTtoInstance } from 'rmrk-tools'
@@ -201,6 +202,7 @@ const Modal = styled(({ className, children }) => {
   left: 0;
   right: 0;
   bottom: 0;
+  z-index: 9999;
 
   .overlay {
     position: absolute;
@@ -840,54 +842,6 @@ const OwnershipText = () => {
   )
 }
 
-const SpiritKeyUnlockBanner = styled(({ className }) => {
-  const [downloading, setDownloading] = useState(false)
-  return (
-    <Banner className={className} backgroundImage={bannerImage}>
-      <div style={{ textAlign: 'center' }}>
-        <Draggable>
-          <SpiritKeyNftImage />
-        </Draggable>
-        <OwnershipText />
-        <div>Send to a friend</div>
-      </div>
-      <div style={{ textAlign: 'center' }}>
-        <ArrowRight className="arrow-right" />
-        <div>Drag to unlock</div>
-      </div>
-      <Droppable
-        onDrop={() => {
-          downloadURI(TALISMAN_EXTENSION_DOWNLOAD_URL)
-          setDownloading(true)
-        }}
-      >
-        <img src={alphaExtensionImage} alt="Talisman Extension" className="alpha-extension" />
-        {/* {downloading ? 'Downloading...' : 'Key hole'} */}
-      </Droppable>
-    </Banner>
-  )
-})`
-  border-radius: 6.4rem;
-  padding: 5rem 12rem;
-  margin-bottom: 2rem;
-
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-
-  .arrow-right {
-    width: 4.8rem;
-    height: auto;
-  }
-
-  .alpha-extension {
-    height: auto;
-    width: 31rem;
-    filter: blur(1rem);
-  }
-`
-
-// TODO: Put in modal
 const SpiritKeySenderModal = styled(({ className }) => {
   const baseImage = 'https://rmrk.mypinata.cloud/ipfs/bafybeicuuasrqnqndfw3k6rqacfpfil5sc5fhyjh63riqnd2imm5eucrk4'
   const [currentNFT, setCurrentNFT] = useState<number>(0)
@@ -918,7 +872,8 @@ const SpiritKeySenderModal = styled(({ className }) => {
 
   return (
     <div className={className}>
-      <SpiritKeyNft src={hasNfts ? nft?.image?.replace('ipfs://', 'https://rmrk.mypinata.cloud/') : baseImage} />
+      {/* <SpiritKeyNft src={hasNfts ? nft?.image?.replace('ipfs://', 'https://rmrk.mypinata.cloud/') : baseImage} /> */}
+      <SpiritKeyNftImage />
       {(status !== 'OK' || totalNFTs?.length < 1) && (
         <div className="empty-state-buttons-div">
           <JoinButton className="join-discord-button" />
@@ -929,18 +884,6 @@ const SpiritKeySenderModal = styled(({ className }) => {
       )}
       {hasNfts && (
         <div className="spirit-key-body">
-          <a
-            href={TALISMAN_EXTENSION_DOWNLOAD_URL}
-            target="_blank"
-            rel="noreferrer noopener"
-            onClick={e => {
-              trackGoal('TE3SATFD', 0) // alpha_downloads
-            }}
-          >
-            <Button primary className="unlock-alpha">
-              Unlock the Alpha
-            </Button>
-          </a>
           <div className="switcher">
             <Button.Icon
               className="nav-toggle-left"
@@ -962,15 +905,186 @@ const SpiritKeySenderModal = styled(({ className }) => {
               <ChevronDown />
             </Button.Icon>
           </div>
-          <h2>Send to a friend</h2>
           <SendNft nft={nft} />
         </div>
       )}
     </div>
   )
 })`
+  text-align: center;
+
   .unlock-alpha {
     margin: 2rem;
+  }
+
+  > .empty-state-buttons-div {
+    display: flex;
+    flex-direction: column;
+    gap: 1.6rem;
+    align-items: center;
+    margin: 1.3rem auto 3.2rem auto;
+
+    .join-discord-button {
+      width: 22.9rem;
+      height: 5.6rem;
+      background-color: var(--color-background);
+      border-style: solid;
+      border-width: 1px;
+      border-color: #ffffff;
+      font-size: 16px;
+      font-weight: 400;
+      color: #ffffff;
+    }
+    .explore-crowdloans-button {
+      width: 22.9rem;
+      height: 5.6rem;
+      background-color: var(--color-primary);
+      border-style: none;
+      color: #000000;
+      font-size: 16px;
+      font-weight: 400;
+    }
+  }
+
+  p {
+    margin: 2rem auto;
+  }
+
+  .spirit-key-body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    > .switcher {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      margin: 0.4rem auto 4rem;
+
+      .nav-toggle-left {
+        width: 5rem;
+        height: 5rem;
+        background: none;
+        margin-right: 1rem;
+        transform: rotate(90deg);
+      }
+
+      .nav-toggle-right {
+        width: 5rem;
+        height: 5rem;
+        background: none;
+        margin-left: 1rem;
+        transform: rotate(-90deg);
+      }
+
+      .nft-number {
+        background: #262626;
+        border-radius: 1rem;
+        padding: 1rem;
+      }
+
+      p {
+        margin: 0;
+      }
+    }
+    .address-input-title {
+      margin: 5.6rem auto 0 auto;
+    }
+
+    > .address-input-container {
+      margin: 3.2rem auto;
+      align-items: center;
+      height: 56px;
+      display: flex;
+
+      > input {
+        background-color: var(--color-background);
+        border-radius: 1.2rem;
+        border-style: solid;
+        border-width: 1px;
+        border-color: #5a5a5a;
+        height: 56px;
+        width: 519px;
+        padding-left: 1.6rem;
+
+        ::placeholder {
+          color: #a5a5a5;
+          font-size: 1em;
+        }
+      }
+
+      button {
+        background-color: var(--color-primary);
+        height: 56px;
+        width: 135px;
+        border-radius: 1.2rem;
+        margin: 0px 0px 0px -135px;
+        border-style: none;
+        color: #000000;
+        cursor: pointer;
+      }
+    }
+  }
+`
+
+const SpiritKeySender = () => {
+  const { openModal } = useModal()
+  return (
+    <div
+      onClick={() => {
+        openModal(<SpiritKeySenderModal />)
+      }}
+    >
+      Send to a friend
+    </div>
+  )
+}
+
+const SpiritKeyUnlockBanner = styled(({ className }) => {
+  const [downloading, setDownloading] = useState(false)
+  return (
+    <Banner className={className} backgroundImage={bannerImage}>
+      <div style={{ textAlign: 'center' }}>
+        <Draggable>
+          <SpiritKeyNftImage />
+        </Draggable>
+        <OwnershipText />
+        <SpiritKeySender />
+      </div>
+      <div style={{ textAlign: 'center' }}>
+        <ArrowRight className="arrow-right" />
+        <div>Drag to unlock</div>
+      </div>
+      <Droppable
+        onDrop={() => {
+          downloadURI(TALISMAN_EXTENSION_DOWNLOAD_URL)
+          trackGoal('TE3SATFD', 0) // alpha_downloads
+          setDownloading(true)
+        }}
+      >
+        <img src={alphaExtensionImage} alt="Talisman Extension" className="alpha-extension" />
+        {/* {downloading ? 'Downloading...' : 'Key hole'} */}
+      </Droppable>
+    </Banner>
+  )
+})`
+  border-radius: 6.4rem;
+  padding: 5rem 12rem;
+  margin-bottom: 2rem;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  .arrow-right {
+    width: 4.8rem;
+    height: auto;
+  }
+
+  .alpha-extension {
+    height: auto;
+    width: 31rem;
+    filter: blur(1rem);
   }
 `
 
@@ -1086,6 +1200,10 @@ const SpiritKey = styled(({ className }) => {
 })`
   color: var(--color-text);
 
+  a {
+    text-decoration: underline;
+  }
+
   .info {
     display: grid;
     gap: 2rem;
@@ -1101,118 +1219,9 @@ const SpiritKey = styled(({ className }) => {
     padding: 0 5vw;
     display: flex;
     justify-content: center;
-    z-index: 1;
     position: relative;
     flex-direction: column;
-
-    > .empty-state-buttons-div {
-      display: flex;
-      flex-direction: column;
-      gap: 1.6rem;
-      align-items: center;
-      margin: 1.3rem auto 3.2rem auto;
-
-      .join-discord-button {
-        width: 22.9rem;
-        height: 5.6rem;
-        background-color: var(--color-background);
-        border-style: solid;
-        border-width: 1px;
-        border-color: #ffffff;
-        font-size: 16px;
-        font-weight: 400;
-        color: #ffffff;
-      }
-      .explore-crowdloans-button {
-        width: 22.9rem;
-        height: 5.6rem;
-        background-color: var(--color-primary);
-        border-style: none;
-        color: #000000;
-        font-size: 16px;
-        font-weight: 400;
-      }
-    }
-
-    p {
-      margin: 2rem auto;
-    }
-
-    > .spirit-key-body {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-
-      > .switcher {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        margin: 0.4rem auto 4rem;
-
-        .nav-toggle-left {
-          width: 5rem;
-          height: 5rem;
-          background: none;
-          margin-right: 1rem;
-          transform: rotate(90deg);
-        }
-
-        .nav-toggle-right {
-          width: 5rem;
-          height: 5rem;
-          background: none;
-          margin-left: 1rem;
-          transform: rotate(-90deg);
-        }
-
-        .nft-number {
-          background: #262626;
-          border-radius: 1rem;
-          padding: 1rem;
-        }
-
-        p {
-          margin: 0;
-        }
-      }
-      .address-input-title {
-        margin: 5.6rem auto 0 auto;
-      }
-
-      > .address-input-container {
-        margin: 3.2rem auto;
-        align-items: center;
-        height: 56px;
-        display: flex;
-
-        > input {
-          background-color: var(--color-background);
-          border-radius: 1.2rem;
-          border-style: solid;
-          border-width: 1px;
-          border-color: #5a5a5a;
-          height: 56px;
-          width: 519px;
-          padding-left: 1.6rem;
-
-          ::placeholder {
-            color: #a5a5a5;
-            font-size: 1em;
-          }
-        }
-
-        button {
-          background-color: var(--color-primary);
-          height: 56px;
-          width: 135px;
-          border-radius: 1.2rem;
-          margin: 0px 0px 0px -135px;
-          border-style: none;
-          color: #000000;
-          cursor: pointer;
-        }
-      }
-    }
+  }
 `
 
 export default SpiritKey
