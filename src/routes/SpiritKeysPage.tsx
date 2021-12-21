@@ -24,7 +24,7 @@ import { cryptoWaitReady } from '@polkadot/util-crypto'
 import { web3FromAddress } from '@talismn/dapp-connect'
 import { encodeAnyAddress } from '@talismn/util'
 import { isMobileBrowser } from '@util/helpers'
-import { TALISMAN_EXTENSION_DOWNLOAD_URL } from '@util/links'
+import { DISCORD_JOIN_URL, TALISMAN_EXTENSION_DOWNLOAD_URL } from '@util/links'
 import { AnyAddress, SS58Format, convertAnyAddress } from '@util/useAnyAddressFromClipboard'
 import { ReactNode, RefObject, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -1013,7 +1013,11 @@ const BenefitsInfo = () => {
         Keys have been seen in various locations, but never for very long. The best places to currently find them are:
       </p>
       <ul>
-        <li>The Talisman Discord server</li>
+        <li>
+          <a href={DISCORD_JOIN_URL} target="_blank" rel="noopener noreferrer">
+            The Talisman Discord server
+          </a>
+        </li>
         <li>Attending community calls and events</li>
         <li>Keeping an eye out for giveaways on Twitter</li>
         <li>By arranging to review, publish or produce media about Talisman</li>
@@ -1064,7 +1068,7 @@ const SpiritKey = styled(({ className }) => {
       <div className="content">
         <BannerText style={{ width: '100%', height: 'auto', margin: '4rem 0' }} />
         <SpiritKeyUnlockBanner />
-        <h1 style={{ color: 'var(--color-text)' }}>
+        <h1 style={{ color: 'var(--color-text)', padding: '4rem', textAlign: 'center' }}>
           Discover a Spirit Key to get access to special perks and be among the first to try the Talisman wallet
           extension
         </h1>
@@ -1080,9 +1084,7 @@ const SpiritKey = styled(({ className }) => {
     </section>
   )
 })`
-  h2 {
-    color: var(--color-text);
-  }
+  color: var(--color-text);
 
   .info {
     display: grid;
