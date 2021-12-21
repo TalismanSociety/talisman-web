@@ -686,6 +686,7 @@ const LeftRightPicker = styled(({ className, value, onLeftPick, onRightPick }) =
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 1rem;
 `
 
 const SpiritKeySenderModal = styled(({ className }) => {
@@ -731,13 +732,9 @@ const SpiritKeySenderModal = styled(({ className }) => {
       {hasNfts && (
         <>
           <LeftRightPicker
-            value={<p>#{totalNFTs[currentNFT]?.sn.substring(4)}</p>}
-            onLeftPick={() => {
-              changeNFT(0)
-            }}
-            onRightPick={() => {
-              changeNFT(1)
-            }}
+            value={<span>#{totalNFTs[currentNFT]?.sn.substring(4)}</span>}
+            onLeftPick={() => changeNFT(0)}
+            onRightPick={() => changeNFT(1)}
           />
           <SendNft nft={nft} />
         </>
@@ -754,12 +751,7 @@ const SpiritKeySenderModal = styled(({ className }) => {
 const SpiritKeySender = styled(({ className }) => {
   const { openModal } = useModal()
   return (
-    <div
-      className={className}
-      onClick={() => {
-        openModal(<SpiritKeySenderModal />)
-      }}
-    >
+    <div className={className} onClick={() => openModal(<SpiritKeySenderModal />)}>
       Send to a friend
     </div>
   )
