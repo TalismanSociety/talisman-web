@@ -1,7 +1,6 @@
 import { JoinButton } from '@archetypes/JoinButton/JoinButton'
 import alphaExtensionImage from '@assets/alpha-extension.png'
 import bannerImage from '@assets/gradient-purple-red.png'
-import miksySpiritKeysAudio from '@assets/miksy-spirit-keys.mp3'
 import spiritKeyNftImage from '@assets/spirit-key-nft.png'
 import { ReactComponent as BannerText } from '@assets/unlock-the-paraverse.svg'
 import { Button, DesktopRequired, Field, useModal } from '@components'
@@ -9,12 +8,13 @@ import { StyledLoader } from '@components/Await'
 import { Banner } from '@components/Banner'
 import { Draggable } from '@components/Draggable'
 import { Droppable } from '@components/Droppable'
-import { SimplePlay } from '@components/SimplePlay'
+import { LeftRightPicker } from '@components/LeftRightPicker'
 import { TalismanHandLike } from '@components/TalismanHandLike'
 import { TalismanHandLoader } from '@components/TalismanHandLoader'
 import { ReactComponent as ArrowRight } from '@icons/arrow-right.svg'
-import { ReactComponent as ChevronDown } from '@icons/chevron-down.svg'
 import { trackGoal } from '@libs/fathom'
+import { BenefitsInfo } from '@libs/spiritkey/BenefitsInfo'
+import { WhatIsInfo } from '@libs/spiritkey/WhatIsInfo'
 import { useAllAccountAddresses, useExtensionAutoConnect } from '@libs/talisman'
 import { ApiPromise, WsProvider } from '@polkadot/api'
 import { decodeAddress, encodeAddress } from '@polkadot/keyring'
@@ -24,7 +24,7 @@ import { web3FromAddress } from '@talismn/dapp-connect'
 import { encodeAnyAddress } from '@talismn/util'
 import { downloadURI } from '@util/downloadURI'
 import { isMobileBrowser } from '@util/helpers'
-import { DISCORD_JOIN_URL, TALISMAN_EXTENSION_DOWNLOAD_URL, TALISMAN_TWITTER_URL } from '@util/links'
+import { TALISMAN_EXTENSION_DOWNLOAD_URL } from '@util/links'
 import { AnyAddress, SS58Format, convertAnyAddress } from '@util/useAnyAddressFromClipboard'
 import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -447,186 +447,6 @@ const SendNft = styled(({ className, nft }) => {
   }
 `
 
-const Attribution = styled(({ className }) => {
-  return (
-    <span className={className}>
-      Music by{' '}
-      <a
-        href="https://soundcloud.com/miksyyy/spirit-keys?si=45ddd3a44b7c4ecc80ca1c31a1a846d9"
-        target="_blank"
-        rel="noreferrer noopener"
-      >
-        Miksy
-      </a>
-    </span>
-  )
-})`
-  color: var(--color-dim);
-  a {
-    color: var(--color-mid);
-    text-decoration: underline;
-  }
-`
-
-// TODO: Deprecate
-const SpiritKeyNft = styled(({ className, src }) => {
-  return (
-    <div className={className}>
-      <div className="floating-card__card">
-        <div className="floating-card__card__inner-container">
-          <img className="spirit-key-image" src={src} alt="Spirit Key" />
-
-          <div className="floating-card__card__inner-container__shimmer"></div>
-        </div>
-
-        <div className="floating-card__card__background-scroller"></div>
-      </div>
-      <div className="spirit-keys-music-info">
-        <SimplePlay src={miksySpiritKeysAudio} />
-        <Attribution />
-      </div>
-    </div>
-  )
-})`
-  .spirit-keys-music-info {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 1rem;
-    margin: 1.5rem;
-  }
-
-  .spirit-key-image {
-    width: 100%;
-    object-fit: cover;
-    &:hover {
-      cursor: pointer;
-      position: relative;
-
-      &:before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-      }
-    }
-  }
-
-  .floating-card__card {
-    width: 316px;
-    height: 316px;
-    background: #fff;
-    position: relative;
-    margin: 4rem auto 0;
-    padding: 10px;
-    text-align: center;
-    box-shadow: 1px 1px 1px #000;
-    overflow: hidden;
-    animation: floating 10s ease-in-out infinite;
-  }
-
-  .floating-card__card__inner-container {
-    width: 97%;
-    height: 97%;
-    background: #dbdbdb;
-    margin: 0 auto;
-    z-index: 2;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    overflow: hidden;
-  }
-
-  .floating-card__card__inner-container__shimmer {
-    width: 200%;
-    height: 40px;
-    background: #eee;
-    position: absolute;
-    top: -80%;
-    left: 50%;
-    transform: translate(-50%, -50%) rotate(-45deg);
-    animation-name: slideBottomRightAndBack;
-    animation-duration: 4s;
-    animation-iteration-count: infinite;
-    animation-timing-function: linear;
-  }
-
-  .floating-card__card__background-scroller {
-    width: 1800px;
-    height: 300px;
-    background: orange;
-    position: absolute;
-    top: -800px;
-    left: 20%;
-    transform: translate(-50%, 0) rotate(-35deg);
-    animation-name: slideBottomRight;
-    animation-duration: 5s;
-    animation-iteration-count: infinite;
-    animation-timing-function: linear;
-  }
-
-  .floating-card__floor-shadow {
-    width: 200px;
-    height: 10px;
-    background: #000;
-    margin: 20px auto 0 auto;
-    border-radius: 40%;
-    animation: scalingShadow 10s ease-in-out infinite;
-  }
-
-  @keyframes floating {
-    25% {
-      transform: translateY(5px);
-    }
-    50% {
-      transform: translateY(0px);
-    }
-    75% {
-      transform: translateY(5px);
-    }
-    100% {
-      transform: translateY(0px);
-    }
-  }
-
-  @keyframes scalingShadow {
-    25% {
-      transform: scale(1.05);
-    }
-    50% {
-      transform: scale(1);
-    }
-    75% {
-      transform: scale(1.05);
-    }
-    100% {
-      transform: scale(1);
-    }
-  }
-
-  @keyframes slideBottomRight {
-    0% {
-      transform: translate(-50%, 0) rotate(-35deg);
-    }
-    100% {
-      transform: translate(-50%, 2200px) rotate(-35deg);
-    }
-  }
-
-  @keyframes slideBottomRightAndBack {
-    0% {
-      transform: translate(-50%, 0) rotate(-45deg);
-    }
-    90% {
-      transform: translate(-50%, 0) rotate(-45deg);
-    }
-    100% {
-      transform: translate(-50%, 900px) rotate(-45deg);
-    }
-  }
-`
-
 const SpiritKeyNftImage = styled(({ className }) => {
   return (
     <div className={className}>
@@ -682,29 +502,7 @@ const OwnershipText = styled(({ className }) => {
   }
 `
 
-const LeftRightPicker = styled(({ className, value, onLeftPick, onRightPick }) => {
-  return (
-    <div className={className}>
-      <Button.Icon className="nav-toggle-left" onClick={onLeftPick}>
-        <ChevronDown />
-      </Button.Icon>
-      <div className="nft-number" style={{ color: 'var(--color-text)' }}>
-        {value}
-      </div>
-      <Button.Icon className="nav-toggle-right" onClick={onRightPick}>
-        <ChevronDown />
-      </Button.Icon>
-    </div>
-  )
-})`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 1rem;
-`
-
 const SpiritKeySenderModal = styled(({ className }) => {
-  const baseImage = 'https://rmrk.mypinata.cloud/ipfs/bafybeicuuasrqnqndfw3k6rqacfpfil5sc5fhyjh63riqnd2imm5eucrk4'
   const [currentNFT, setCurrentNFT] = useState<number>(0)
   const { status } = useExtensionAutoConnect()
 
@@ -733,7 +531,6 @@ const SpiritKeySenderModal = styled(({ className }) => {
 
   return (
     <div className={className}>
-      {/* <SpiritKeyNft src={hasNfts ? nft?.image?.replace('ipfs://', 'https://rmrk.mypinata.cloud/') : baseImage} /> */}
       <SpiritKeyNftImage />
       {(status !== 'OK' || totalNFTs?.length < 1) && (
         <div className="empty-state-buttons-div">
@@ -867,92 +664,6 @@ const SpiritKeyUnlockBanner = styled(({ className }) => {
       transition: filter 0.5s ease-in;
       filter: blur(0.1rem);
     }
-  }
-`
-
-const Section = styled(({ className, children }) => {
-  return <div className={className}>{children}</div>
-})`
-  background-color: #262626;
-  padding: 2.4rem;
-  border-radius: 1.2rem;
-  font-family: 'SurtExpanded';
-  height: 100%;
-
-  > ul {
-    padding-left: inherit;
-  }
-`
-
-const WhatIsInfo = () => {
-  return (
-    <Section>
-      <h2>What is a Spirit Key?</h2>
-      <p>
-        A Spirit Key is a a special RMRK NFT of which there are only 3333. Holders will be able to access special perks
-        including:
-      </p>
-      <ul>
-        <li>The opportunity to participate in the Alpha release of our wallet extension</li>
-        <li>Permissioned channels in our Discord for Sprit Clan members</li>
-        <li>Early access to new features in the Talisman web app</li>
-      </ul>
-    </Section>
-  )
-}
-
-const BenefitsInfo = () => {
-  return (
-    <Section>
-      <h2>Benefits</h2>
-      <p>
-        Keys have been seen in various locations, but never for very long. The best places to currently find them are:
-      </p>
-      <ul>
-        <li>
-          The Talisman{' '}
-          <a href={DISCORD_JOIN_URL} target="_blank" rel="noopener noreferrer">
-            Discord server
-          </a>
-        </li>
-        <li>Attending community calls and events</li>
-        <li>
-          Keeping an eye out for giveaways on{' '}
-          <a href={TALISMAN_TWITTER_URL} target="_blank" rel="noopener noreferrer">
-            Twitter
-          </a>
-        </li>
-        <li>By arranging to review, publish or produce media about Talisman</li>
-      </ul>
-    </Section>
-  )
-}
-
-// TODO: Remove
-const TalismanSeekerPoem = styled(({ className }) => {
-  return (
-    <article className={className}>
-      <h1>
-        <li>Talisman Seeker, it's your spirit that's key.</li>
-        <li>At the end of your seeking, you'll finally be free.</li>
-        <li>A key to the new world is a difficult thing.</li>
-        <li>You should ask yourself honestly, "what on earth should I bring?"</li>
-        <li>Give a moment of thought as to whether it can be brought.</li>
-        <li>All I can guarantee, is that nothing is for naught.</li>
-      </h1>
-    </article>
-  )
-})`
-  width: 80%;
-  color: var(--color-text);
-  text-align: center;
-  margin: 6rem auto 0 auto;
-
-  h1 {
-    font-family: 'ATApocRevelations', sans-serif;
-    font-size: 4rem;
-    font-weight: 400;
-    list-style-type: none;
   }
 `
 
