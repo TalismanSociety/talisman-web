@@ -1,10 +1,17 @@
 import { JoinButton } from '@archetypes/JoinButton/JoinButton'
+import alphaExtensionImage from '@assets/alpha-extension.png'
+// import spiritKeyCyan from '@assets/spirit-key-cyan.svg'
+// import bannerImage from '@assets/unlock-the-paraverse.png'
+import bannerImage from '@assets/gradient-purple-red.png'
 import miksySpiritKeysAudio from '@assets/miksy-spirit-keys.mp3'
-import bannerImage from '@assets/unlock-the-paraverse.png'
+import spiritKeyNftImage from '@assets/spirit-key-nft.png'
+import { ReactComponent as BannerText } from '@assets/unlock-the-paraverse.svg'
 import { Button, DesktopRequired, Field } from '@components'
 import { StyledLoader } from '@components/Await'
+import { Banner } from '@components/Banner'
 import { TalismanHandLike } from '@components/TalismanHandLike'
 import { TalismanHandLoader } from '@components/TalismanHandLoader'
+import { ReactComponent as ArrowRight } from '@icons/arrow-right.svg'
 import { ReactComponent as ChevronDown } from '@icons/chevron-down.svg'
 import { ReactComponent as PauseCircle } from '@icons/pause-circle.svg'
 import { ReactComponent as PlayCircle } from '@icons/play-circle.svg'
@@ -19,7 +26,7 @@ import { encodeAnyAddress } from '@talismn/util'
 import { isMobileBrowser } from '@util/helpers'
 import { TALISMAN_EXTENSION_DOWNLOAD_URL } from '@util/links'
 import { AnyAddress, SS58Format, convertAnyAddress } from '@util/useAnyAddressFromClipboard'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { ReactNode, RefObject, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { consolidatedNFTtoInstance } from 'rmrk-tools'
 import { NFTConsolidated } from 'rmrk-tools/dist/tools/consolidator/consolidator'
@@ -671,15 +678,222 @@ const SpiritKeyNft = styled(({ className, src }) => {
   }
 `
 
-const SpiritKey = styled(({ className }) => {
+interface DragAndDropCallbacks {
+  onDragStart?: (e?: DragEvent) => void
+  onDragEnd?: (e?: DragEvent) => void
+  onDragEnter?: (e?: DragEvent) => void
+  onDragLeave?: (e?: DragEvent) => void
+}
+
+function useDragAndDrop(ref: RefObject<HTMLElement>, callbacks: DragAndDropCallbacks) {
+  const [dragging, setDragging] = useState(false)
+
+  useEffect(() => {
+    function onDragStart(e: DragEvent) {
+      setDragging(true)
+      if (callbacks.onDragStart) {
+        callbacks.onDragStart(e)
+      }
+    }
+
+    function onDragEnd(e: DragEvent) {
+      setDragging(false)
+      if (callbacks.onDragEnd) {
+        callbacks.onDragEnd(e)
+      }
+    }
+
+    function onDragEnter(e: DragEvent) {
+      if (callbacks.onDragEnter) {
+        callbacks.onDragEnter(e)
+      }
+    }
+
+    function onDragLeave(e: DragEvent) {
+      if (callbacks.onDragLeave) {
+        callbacks.onDragLeave(e)
+      }
+    }
+
+    const el = ref.current
+
+    if (el) {
+      el.addEventListener('dragstart', onDragStart)
+      el.addEventListener('dragend', onDragEnd)
+      el.addEventListener('dragenter', onDragEnter)
+      el.addEventListener('dragleave', onDragLeave)
+    }
+
+    return () => {
+      if (el) {
+        el.removeEventListener('dragstart', onDragStart)
+        el.removeEventListener('dragend', onDragEnd)
+        el.removeEventListener('dragenter', onDragEnter)
+        el.removeEventListener('dragleave', onDragLeave)
+      }
+    }
+  }, [callbacks, ref])
+
+  return { dragging }
+}
+
+interface DraggableProps {
+  children: ReactNode
+}
+
+const Draggable = styled(({ className, children }) => {
+  const ref = useRef<HTMLDivElement>(null)
+
+  const callbacks: DragAndDropCallbacks = {
+    onDragStart(e) {
+      console.log(`>>> onDragStart`, e)
+    },
+    onDragEnd(e) {
+      console.log(`>>> onDragEnd`, e)
+    },
+  }
+
+  const { dragging } = useDragAndDrop(ref, callbacks)
+  const draggingStyles = dragging ? `dragging` : ``
+
+  return (
+    <div ref={ref} draggable className={`${className} ${draggingStyles}`}>
+      {children}
+    </div>
+  )
+})<DraggableProps>`
+  :hover {
+    cursor: pointer;
+  }
+
+  &.dragging {
+    opacity: 0.1;
+  }
+`
+
+function downloadURI(uri: string) {
+  var link = document.createElement('a')
+  link.href = uri
+  document.body.appendChild(link)
+  link.click()
+  link.remove()
+}
+
+const Droppable = styled(({ children, className, onDrop }) => {
+  const ref = useRef<HTMLDivElement>(null)
+  const callbacks: DragAndDropCallbacks = {
+    onDragEnter(e) {
+      console.log(`>>> onDragEnter`, e)
+    },
+    onDragLeave(e) {
+      console.log(`>>> onDragLeave`, e)
+      if (onDrop) {
+        onDrop()
+      }
+    },
+  }
+  useDragAndDrop(ref, callbacks)
+
+  return (
+    <div ref={ref} draggable className={className}>
+      {children}
+    </div>
+  )
+})<DraggableProps>`
+  :hover {
+    cursor: pointer;
+  }
+`
+
+const SpiritKeyNftImage = styled(({ className }) => {
+  return <img src={spiritKeyNftImage} alt="Spirit Key NFT" className={className} />
+})`
+  height: 23.5rem;
+  width: auto;
+  border: 1px solid var(--color-mid);
+  border-radius: 2rem;
+  padding: 1.2rem;
+  transition: padding 0.4s ease-out;
+
+  &:hover {
+    transition: padding 0.4s ease-in;
+    padding: 0;
+    box-shadow: 0px 10px 13px -7px #000000, 5px 5px 15px 5px rgba(0, 0, 0, 0);
+  }
+`
+
+const OwnershipText = () => {
+  const { status } = useExtensionAutoConnect()
+  const totalNFTs = useFetchNFTs()
+  const nftLoading = totalNFTs === undefined
+  const hasNfts = totalNFTs?.length > 0
+  return (
+    <>
+      {status === 'OK' && nftLoading && <StyledLoader />}
+      {!nftLoading && (
+        <span style={{ textAlign: 'center' }}>
+          You have {hasNfts ? <span style={{ color: 'var(--color-primary' }}>{totalNFTs.length}</span> : 'no'} Spirit
+          Key{totalNFTs.length === 1 ? '' : 's'}
+        </span>
+      )}
+    </>
+  )
+}
+
+const SpiritKeyUnlockBanner = styled(({ className }) => {
+  const [downloading, setDownloading] = useState(false)
+  return (
+    <Banner className={className} backgroundImage={bannerImage}>
+      <div style={{ textAlign: 'center' }}>
+        <Draggable>
+          <SpiritKeyNftImage />
+        </Draggable>
+        <OwnershipText />
+        <div>Send to a friend</div>
+      </div>
+      <div style={{ textAlign: 'center' }}>
+        <ArrowRight className="arrow-right" />
+        <div>Drag to unlock</div>
+      </div>
+      <Droppable
+        onDrop={() => {
+          downloadURI(TALISMAN_EXTENSION_DOWNLOAD_URL)
+          setDownloading(true)
+        }}
+      >
+        <img src={alphaExtensionImage} alt="Talisman Extension" className="alpha-extension" />
+        {/* {downloading ? 'Downloading...' : 'Key hole'} */}
+      </Droppable>
+    </Banner>
+  )
+})`
+  border-radius: 6.4rem;
+  padding: 5rem 12rem;
+  margin-bottom: 2rem;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  .arrow-right {
+    width: 4.8rem;
+    height: auto;
+  }
+
+  .alpha-extension {
+    height: auto;
+    width: 31rem;
+    filter: blur(1rem);
+  }
+`
+
+// TODO: Put in modal
+const SpiritKeySenderModal = styled(({ className }) => {
   const baseImage = 'https://rmrk.mypinata.cloud/ipfs/bafybeicuuasrqnqndfw3k6rqacfpfil5sc5fhyjh63riqnd2imm5eucrk4'
   const [currentNFT, setCurrentNFT] = useState<number>(0)
-  const addresses = useAllAccountAddresses()
   const { status } = useExtensionAutoConnect()
 
   const totalNFTs = useFetchNFTs()
-  const addressesLoading = addresses === undefined
-  const nftLoading = totalNFTs === undefined
   const hasNfts = totalNFTs?.length > 0
 
   const [nft, setNft] = useState<NFTConsolidated>()
@@ -702,6 +916,144 @@ const SpiritKey = styled(({ className }) => {
     }
   }
 
+  return (
+    <div className={className}>
+      <SpiritKeyNft src={hasNfts ? nft?.image?.replace('ipfs://', 'https://rmrk.mypinata.cloud/') : baseImage} />
+      {(status !== 'OK' || totalNFTs?.length < 1) && (
+        <div className="empty-state-buttons-div">
+          <JoinButton className="join-discord-button" />
+          <Button to="/crowdloans" className="explore-crowdloans-button">
+            Explore Crowdloans
+          </Button>
+        </div>
+      )}
+      {hasNfts && (
+        <div className="spirit-key-body">
+          <a
+            href={TALISMAN_EXTENSION_DOWNLOAD_URL}
+            target="_blank"
+            rel="noreferrer noopener"
+            onClick={e => {
+              trackGoal('TE3SATFD', 0) // alpha_downloads
+            }}
+          >
+            <Button primary className="unlock-alpha">
+              Unlock the Alpha
+            </Button>
+          </a>
+          <div className="switcher">
+            <Button.Icon
+              className="nav-toggle-left"
+              onClick={(e: any) => {
+                changeNFT(0)
+              }}
+            >
+              <ChevronDown />
+            </Button.Icon>
+            <div className="nft-number" style={{ color: 'var(--color-text)' }}>
+              <p>#{totalNFTs[currentNFT]?.sn.substring(4)}</p>
+            </div>
+            <Button.Icon
+              className="nav-toggle-right"
+              onClick={(e: any) => {
+                changeNFT(1)
+              }}
+            >
+              <ChevronDown />
+            </Button.Icon>
+          </div>
+          <h2>Send to a friend</h2>
+          <SendNft nft={nft} />
+        </div>
+      )}
+    </div>
+  )
+})`
+  .unlock-alpha {
+    margin: 2rem;
+  }
+`
+
+const Section = styled(({ className, children }) => {
+  return <div className={className}>{children}</div>
+})`
+  background-color: #262626;
+  padding: 2.4rem;
+  border-radius: 1.2rem;
+  font-family: 'SurtExpanded';
+  height: 100%;
+
+  > ul {
+    padding-left: inherit;
+  }
+`
+
+const WhatIsInfo = () => {
+  return (
+    <Section>
+      <h2>What is a Spirit Key?</h2>
+      <p>
+        A Spirit Key is a a special RMRK NFT of which there are only 3333. Holders will be able to access special perks
+        including:
+      </p>
+      <ul>
+        <li>The opportunity to participate in the Alpha release of our wallet extension</li>
+        <li>Permissioned channels in our Discord for Sprit Clan members</li>
+        <li>Early access to new features in the Talisman web app</li>
+      </ul>
+    </Section>
+  )
+}
+
+const BenefitsInfo = () => {
+  return (
+    <Section>
+      <h2>Benefits</h2>
+      <p>
+        Keys have been seen in various locations, but never for very long. The best places to currently find them are:
+      </p>
+      <ul>
+        <li>The Talisman Discord server</li>
+        <li>Attending community calls and events</li>
+        <li>Keeping an eye out for giveaways on Twitter</li>
+        <li>By arranging to review, publish or produce media about Talisman</li>
+      </ul>
+    </Section>
+  )
+}
+
+// TODO: Remove
+const TalismanSeekerPoem = styled(({ className }) => {
+  return (
+    <article className={className}>
+      <h1>
+        <li>Talisman Seeker, it's your spirit that's key.</li>
+        <li>At the end of your seeking, you'll finally be free.</li>
+        <li>A key to the new world is a difficult thing.</li>
+        <li>You should ask yourself honestly, "what on earth should I bring?"</li>
+        <li>Give a moment of thought as to whether it can be brought.</li>
+        <li>All I can guarantee, is that nothing is for naught.</li>
+      </h1>
+    </article>
+  )
+})`
+  width: 80%;
+  color: var(--color-text);
+  text-align: center;
+  margin: 6rem auto 0 auto;
+
+  h1 {
+    font-family: 'ATApocRevelations', sans-serif;
+    font-size: 4rem;
+    font-weight: 400;
+    list-style-type: none;
+  }
+`
+
+const SpiritKey = styled(({ className }) => {
+  const addresses = useAllAccountAddresses()
+  const addressesLoading = addresses === undefined
+
   if (addressesLoading) {
     return <StyledLoader />
   }
@@ -710,107 +1062,33 @@ const SpiritKey = styled(({ className }) => {
     <section className={className}>
       {isMobileBrowser() && <DesktopRequired />}
       <div className="content">
-        <img src={bannerImage} alt="Unlock the Paraverse" width="100%" />
-        <h2 style={{ padding: '0 10vw 5vw', color: 'var(--color-foreground)' }}>
+        <BannerText style={{ width: '100%', height: 'auto', margin: '4rem 0' }} />
+        <SpiritKeyUnlockBanner />
+        <h1 style={{ color: 'var(--color-text)' }}>
           Discover a Spirit Key to get access to special perks and be among the first to try the Talisman wallet
           extension
-        </h2>
-        {status === 'OK' && nftLoading && <StyledLoader />}
-        {!nftLoading && (
-          <h2 style={{ textAlign: 'center' }}>
-            You have {hasNfts ? <span style={{ color: 'var(--color-primary' }}>{totalNFTs.length}</span> : 'no'} Spirit
-            Key{totalNFTs.length === 1 ? '' : 's'}
-          </h2>
-        )}
-        <SpiritKeyNft src={hasNfts ? nft?.image?.replace('ipfs://', 'https://rmrk.mypinata.cloud/') : baseImage} />
-        {(status !== 'OK' || totalNFTs?.length < 1) && (
-          <div className="empty-state-buttons-div">
-            <JoinButton className="join-discord-button" />
-            <Button to="/crowdloans" className="explore-crowdloans-button">
-              Explore Crowdloans
-            </Button>
-          </div>
-        )}
-        {hasNfts && (
-          <div className="spirit-key-body">
-            <a
-              href={TALISMAN_EXTENSION_DOWNLOAD_URL}
-              target="_blank"
-              rel="noreferrer noopener"
-              onClick={e => {
-                trackGoal('TE3SATFD', 0) // alpha_downloads
-              }}
-            >
-              <Button primary className="unlock-alpha">
-                Unlock the Alpha
-              </Button>
-            </a>
-            <div className="switcher">
-              <Button.Icon
-                className="nav-toggle-left"
-                onClick={(e: any) => {
-                  changeNFT(0)
-                }}
-              >
-                <ChevronDown />
-              </Button.Icon>
-              <div className="nft-number" style={{ color: 'var(--color-text)' }}>
-                <p>#{totalNFTs[currentNFT]?.sn.substring(4)}</p>
-              </div>
-              <Button.Icon
-                className="nav-toggle-right"
-                onClick={(e: any) => {
-                  changeNFT(1)
-                }}
-              >
-                <ChevronDown />
-              </Button.Icon>
-            </div>
-            <h2>Send to a friend</h2>
-            <SendNft nft={nft} />
-          </div>
-        )}
-
+        </h1>
         <div className="info">
           <div className="section">
-            <h2>How do I get one?</h2>
-            <p>Keys have been seen in various locations, but never for very long. The best places to find them are:</p>
-            <ul>
-              <li>The Talisman Discord Server</li>
-              <li>Various DotSama communities</li>
-              <li>Contribute to Crowdloans during the Spirit Hour</li>
-            </ul>
+            <WhatIsInfo />
           </div>
           <div className="section">
-            <h2>Benefits</h2>
-            <p>Become a Paraverse explorer and gain special access to a variety of perks including:</p>
-            <ul>
-              <li>Participate in the Talisman Wallet Alpha release</li>
-              <li>Join the Spirit Clan channel in our Discord server</li>
-              <li>Get early access to new features on the Talisman web app</li>
-            </ul>
+            <BenefitsInfo />
           </div>
         </div>
-        <article>
-          <h1>
-            <li>Talisman Seeker, it's your spirit that's key.</li>
-            <li>At the end of your seeking, you'll finally be free.</li>
-            <li>A key to the new world is a difficult thing.</li>
-            <li>You should ask yourself honestly, "what on earth should I bring?"</li>
-            <li>Give a moment of thought as to whether it can be brought.</li>
-            <li>All I can guarantee, is that nothing is for naught.</li>
-          </h1>
-        </article>
       </div>
     </section>
   )
 })`
-  .unlock-alpha {
-    margin: 2rem;
-  }
-
   h2 {
     color: var(--color-text);
+  }
+
+  .info {
+    display: grid;
+    gap: 2rem;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr;
   }
 
   > .content {
@@ -933,37 +1211,6 @@ const SpiritKey = styled(({ className }) => {
         }
       }
     }
-
-    > .info {
-      display: flex;
-      felx-direction: row;
-      width: 90%;
-      margin: 4.8rem auto 9.6rem auto;
-      gap: 2.5rem;
-
-      .section {
-        background-color: #262626;
-        padding: 2.4rem;
-        border-radius: 1.2rem;
-        flex-basis: 100%;
-        font-family: 'Surt';
-      }
-    }
-
-    > article {
-      width: 80%;
-      color: var(--color-text);
-      text-align: center;
-      margin: 6rem auto 0 auto;
-
-      h1 {
-        font-family: 'ATApocRevelations', sans-serif;
-        font-size: 4rem;
-        font-weight: 400;
-        list-style-type: none;
-      }
-    }
-  }
 `
 
 export default SpiritKey
