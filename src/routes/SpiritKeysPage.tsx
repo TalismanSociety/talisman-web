@@ -1,7 +1,5 @@
 import { JoinButton } from '@archetypes/JoinButton/JoinButton'
 import alphaExtensionImage from '@assets/alpha-extension.png'
-// import spiritKeyCyan from '@assets/spirit-key-cyan.svg'
-// import bannerImage from '@assets/unlock-the-paraverse.png'
 import bannerImage from '@assets/gradient-purple-red.png'
 import miksySpiritKeysAudio from '@assets/miksy-spirit-keys.mp3'
 import spiritKeyNftImage from '@assets/spirit-key-nft.png'
@@ -9,12 +7,13 @@ import { ReactComponent as BannerText } from '@assets/unlock-the-paraverse.svg'
 import { Button, DesktopRequired, Field, useModal } from '@components'
 import { StyledLoader } from '@components/Await'
 import { Banner } from '@components/Banner'
+import { Draggable } from '@components/Draggable'
+import { Droppable } from '@components/Droppable'
+import { SimplePlay } from '@components/SimplePlay'
 import { TalismanHandLike } from '@components/TalismanHandLike'
 import { TalismanHandLoader } from '@components/TalismanHandLoader'
 import { ReactComponent as ArrowRight } from '@icons/arrow-right.svg'
 import { ReactComponent as ChevronDown } from '@icons/chevron-down.svg'
-import { ReactComponent as PauseCircle } from '@icons/pause-circle.svg'
-import { ReactComponent as PlayCircle } from '@icons/play-circle.svg'
 import { trackGoal } from '@libs/fathom'
 import { useAllAccountAddresses, useExtensionAutoConnect } from '@libs/talisman'
 import { ApiPromise, WsProvider } from '@polkadot/api'
@@ -23,11 +22,11 @@ import { hexToU8a, isHex } from '@polkadot/util'
 import { cryptoWaitReady } from '@polkadot/util-crypto'
 import { web3FromAddress } from '@talismn/dapp-connect'
 import { encodeAnyAddress } from '@talismn/util'
+import { downloadURI } from '@util/downloadURI'
 import { isMobileBrowser } from '@util/helpers'
 import { DISCORD_JOIN_URL, TALISMAN_EXTENSION_DOWNLOAD_URL } from '@util/links'
 import { AnyAddress, SS58Format, convertAnyAddress } from '@util/useAnyAddressFromClipboard'
-import useOnClickOutside from '@util/useOnClickOutside'
-import { ReactNode, RefObject, useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { consolidatedNFTtoInstance } from 'rmrk-tools'
 import { NFTConsolidated } from 'rmrk-tools/dist/tools/consolidator/consolidator'
@@ -448,59 +447,6 @@ const SendNft = styled(({ className, nft }) => {
   }
 `
 
-function useAudio(src: string, play?: boolean) {
-  const audioRef = useRef(new Audio(src))
-  const [isPlaying, setPlaying] = useState(false)
-
-  useEffect(() => {
-    if (isPlaying) {
-      audioRef.current.play()
-    } else {
-      audioRef.current.pause()
-    }
-    const ref = audioRef.current
-    return () => {
-      ref.pause()
-    }
-  }, [isPlaying])
-
-  useEffect(() => {
-    if (play !== undefined) {
-      setPlaying(play)
-    }
-  }, [play])
-
-  function togglePlay() {
-    setPlaying(!isPlaying)
-  }
-
-  return {
-    isPlaying,
-    setPlaying,
-    togglePlay,
-  }
-}
-
-const SimplePlay = styled(({ className, src }) => {
-  const { isPlaying, togglePlay } = useAudio(src)
-  return (
-    <button className={className} onClick={togglePlay}>
-      {isPlaying ? <PauseCircle /> : <PlayCircle />}
-    </button>
-  )
-})`
-  padding: 0;
-  border: 0;
-  background: inherit;
-  cursor: pointer;
-  display: flex;
-
-  svg {
-    width: 3rem;
-    height: auto;
-  }
-`
-
 const Attribution = styled(({ className }) => {
   return (
     <span className={className}>
@@ -522,6 +468,7 @@ const Attribution = styled(({ className }) => {
   }
 `
 
+// TODO: Deprecate
 const SpiritKeyNft = styled(({ className, src }) => {
   return (
     <div className={className}>
@@ -680,133 +627,6 @@ const SpiritKeyNft = styled(({ className, src }) => {
   }
 `
 
-interface DragAndDropCallbacks {
-  onDragStart?: (e?: DragEvent) => void
-  onDragEnd?: (e?: DragEvent) => void
-  onDragEnter?: (e?: DragEvent) => void
-  onDragLeave?: (e?: DragEvent) => void
-}
-
-function useDragAndDrop(ref: RefObject<HTMLElement>, callbacks: DragAndDropCallbacks) {
-  const [dragging, setDragging] = useState(false)
-
-  useEffect(() => {
-    function onDragStart(e: DragEvent) {
-      setDragging(true)
-      if (callbacks.onDragStart) {
-        callbacks.onDragStart(e)
-      }
-    }
-
-    function onDragEnd(e: DragEvent) {
-      setDragging(false)
-      if (callbacks.onDragEnd) {
-        callbacks.onDragEnd(e)
-      }
-    }
-
-    function onDragEnter(e: DragEvent) {
-      if (callbacks.onDragEnter) {
-        callbacks.onDragEnter(e)
-      }
-    }
-
-    function onDragLeave(e: DragEvent) {
-      if (callbacks.onDragLeave) {
-        callbacks.onDragLeave(e)
-      }
-    }
-
-    const el = ref.current
-
-    if (el) {
-      el.addEventListener('dragstart', onDragStart)
-      el.addEventListener('dragend', onDragEnd)
-      el.addEventListener('dragenter', onDragEnter)
-      el.addEventListener('dragleave', onDragLeave)
-    }
-
-    return () => {
-      if (el) {
-        el.removeEventListener('dragstart', onDragStart)
-        el.removeEventListener('dragend', onDragEnd)
-        el.removeEventListener('dragenter', onDragEnter)
-        el.removeEventListener('dragleave', onDragLeave)
-      }
-    }
-  }, [callbacks, ref])
-
-  return { dragging }
-}
-
-interface DraggableProps {
-  children: ReactNode
-}
-
-const Draggable = styled(({ className, children }) => {
-  const ref = useRef<HTMLDivElement>(null)
-
-  const callbacks: DragAndDropCallbacks = {
-    onDragStart(e) {
-      console.log(`>>> onDragStart`, e)
-    },
-    onDragEnd(e) {
-      console.log(`>>> onDragEnd`, e)
-    },
-  }
-
-  const { dragging } = useDragAndDrop(ref, callbacks)
-  const draggingStyles = dragging ? `dragging` : ``
-
-  return (
-    <div ref={ref} draggable className={`${className} ${draggingStyles}`}>
-      {children}
-    </div>
-  )
-})<DraggableProps>`
-  :hover {
-    cursor: pointer;
-  }
-
-  &.dragging {
-    opacity: 0.1;
-  }
-`
-
-function downloadURI(uri: string) {
-  var link = document.createElement('a')
-  link.href = uri
-  document.body.appendChild(link)
-  link.click()
-  link.remove()
-}
-
-const Droppable = styled(({ children, className, onDrop }) => {
-  const ref = useRef<HTMLDivElement>(null)
-  const callbacks: DragAndDropCallbacks = {
-    onDragEnter(e) {
-      console.log(`>>> onDragEnter`, e)
-    },
-    onDragLeave(e) {
-      console.log(`>>> onDragLeave`, e)
-      if (onDrop) {
-        onDrop()
-      }
-    },
-  }
-  useDragAndDrop(ref, callbacks)
-
-  return (
-    <div ref={ref} draggable className={className}>
-      {children}
-    </div>
-  )
-})<DraggableProps>`
-  :hover {
-    cursor: pointer;
-  }
-`
-
 const SpiritKeyNftImage = styled(({ className }) => {
   return <img src={spiritKeyNftImage} alt="Spirit Key NFT" className={className} />
 })`
@@ -824,7 +644,7 @@ const SpiritKeyNftImage = styled(({ className }) => {
   }
 `
 
-const OwnershipText = () => {
+const OwnershipText = styled(({ className }) => {
   const { status } = useExtensionAutoConnect()
   const totalNFTs = useFetchNFTs()
   const nftLoading = totalNFTs === undefined
@@ -833,14 +653,40 @@ const OwnershipText = () => {
     <>
       {status === 'OK' && nftLoading && <StyledLoader />}
       {!nftLoading && (
-        <span style={{ textAlign: 'center' }}>
-          You have {hasNfts ? <span style={{ color: 'var(--color-primary' }}>{totalNFTs.length}</span> : 'no'} Spirit
-          Key{totalNFTs.length === 1 ? '' : 's'}
-        </span>
+        <div className={className}>
+          You have {hasNfts ? <em>{totalNFTs.length}</em> : 'no'} Spirit Key{totalNFTs.length === 1 ? '' : 's'}
+        </div>
       )}
     </>
   )
-}
+})`
+  text-align: center;
+  font-size: large;
+  em {
+    font-style: unset;
+    color: var(--color-primary);
+  }
+`
+
+const LeftRightPicker = styled(({ className, value, onLeftPick, onRightPick }) => {
+  return (
+    <div className={className}>
+      <Button.Icon className="nav-toggle-left" onClick={onLeftPick}>
+        <ChevronDown />
+      </Button.Icon>
+      <div className="nft-number" style={{ color: 'var(--color-text)' }}>
+        {value}
+      </div>
+      <Button.Icon className="nav-toggle-right" onClick={onRightPick}>
+        <ChevronDown />
+      </Button.Icon>
+    </div>
+  )
+})`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`
 
 const SpiritKeySenderModal = styled(({ className }) => {
   const baseImage = 'https://rmrk.mypinata.cloud/ipfs/bafybeicuuasrqnqndfw3k6rqacfpfil5sc5fhyjh63riqnd2imm5eucrk4'
@@ -883,154 +729,33 @@ const SpiritKeySenderModal = styled(({ className }) => {
         </div>
       )}
       {hasNfts && (
-        <div className="spirit-key-body">
-          <div className="switcher">
-            <Button.Icon
-              className="nav-toggle-left"
-              onClick={(e: any) => {
-                changeNFT(0)
-              }}
-            >
-              <ChevronDown />
-            </Button.Icon>
-            <div className="nft-number" style={{ color: 'var(--color-text)' }}>
-              <p>#{totalNFTs[currentNFT]?.sn.substring(4)}</p>
-            </div>
-            <Button.Icon
-              className="nav-toggle-right"
-              onClick={(e: any) => {
-                changeNFT(1)
-              }}
-            >
-              <ChevronDown />
-            </Button.Icon>
-          </div>
+        <>
+          <LeftRightPicker
+            value={<p>#{totalNFTs[currentNFT]?.sn.substring(4)}</p>}
+            onLeftPick={() => {
+              changeNFT(0)
+            }}
+            onRightPick={() => {
+              changeNFT(1)
+            }}
+          />
           <SendNft nft={nft} />
-        </div>
+        </>
       )}
     </div>
   )
 })`
   text-align: center;
-
-  .unlock-alpha {
-    margin: 2rem;
-  }
-
-  > .empty-state-buttons-div {
-    display: flex;
-    flex-direction: column;
-    gap: 1.6rem;
-    align-items: center;
-    margin: 1.3rem auto 3.2rem auto;
-
-    .join-discord-button {
-      width: 22.9rem;
-      height: 5.6rem;
-      background-color: var(--color-background);
-      border-style: solid;
-      border-width: 1px;
-      border-color: #ffffff;
-      font-size: 16px;
-      font-weight: 400;
-      color: #ffffff;
-    }
-    .explore-crowdloans-button {
-      width: 22.9rem;
-      height: 5.6rem;
-      background-color: var(--color-primary);
-      border-style: none;
-      color: #000000;
-      font-size: 16px;
-      font-weight: 400;
-    }
-  }
-
-  p {
-    margin: 2rem auto;
-  }
-
-  .spirit-key-body {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-
-    > .switcher {
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      margin: 0.4rem auto 4rem;
-
-      .nav-toggle-left {
-        width: 5rem;
-        height: 5rem;
-        background: none;
-        margin-right: 1rem;
-        transform: rotate(90deg);
-      }
-
-      .nav-toggle-right {
-        width: 5rem;
-        height: 5rem;
-        background: none;
-        margin-left: 1rem;
-        transform: rotate(-90deg);
-      }
-
-      .nft-number {
-        background: #262626;
-        border-radius: 1rem;
-        padding: 1rem;
-      }
-
-      p {
-        margin: 0;
-      }
-    }
-    .address-input-title {
-      margin: 5.6rem auto 0 auto;
-    }
-
-    > .address-input-container {
-      margin: 3.2rem auto;
-      align-items: center;
-      height: 56px;
-      display: flex;
-
-      > input {
-        background-color: var(--color-background);
-        border-radius: 1.2rem;
-        border-style: solid;
-        border-width: 1px;
-        border-color: #5a5a5a;
-        height: 56px;
-        width: 519px;
-        padding-left: 1.6rem;
-
-        ::placeholder {
-          color: #a5a5a5;
-          font-size: 1em;
-        }
-      }
-
-      button {
-        background-color: var(--color-primary);
-        height: 56px;
-        width: 135px;
-        border-radius: 1.2rem;
-        margin: 0px 0px 0px -135px;
-        border-style: none;
-        color: #000000;
-        cursor: pointer;
-      }
-    }
+  > * + * {
+    margin-top: 2rem;
   }
 `
 
-const SpiritKeySender = () => {
+const SpiritKeySender = styled(({ className }) => {
   const { openModal } = useModal()
   return (
     <div
+      className={className}
       onClick={() => {
         openModal(<SpiritKeySenderModal />)
       }}
@@ -1038,20 +763,25 @@ const SpiritKeySender = () => {
       Send to a friend
     </div>
   )
-}
+})`
+  color: var(--color-primary);
+  :hover {
+    cursor: pointer;
+  }
+`
 
 const SpiritKeyUnlockBanner = styled(({ className }) => {
   const [downloading, setDownloading] = useState(false)
   return (
     <Banner className={className} backgroundImage={bannerImage}>
-      <div style={{ textAlign: 'center' }}>
+      <div className="center space-y-2">
         <Draggable>
           <SpiritKeyNftImage />
         </Draggable>
         <OwnershipText />
         <SpiritKeySender />
       </div>
-      <div style={{ textAlign: 'center' }}>
+      <div className="center">
         <ArrowRight className="arrow-right" />
         <div>Drag to unlock</div>
       </div>
@@ -1063,7 +793,6 @@ const SpiritKeyUnlockBanner = styled(({ className }) => {
         }}
       >
         <img src={alphaExtensionImage} alt="Talisman Extension" className="alpha-extension" />
-        {/* {downloading ? 'Downloading...' : 'Key hole'} */}
       </Droppable>
     </Banner>
   )
@@ -1075,6 +804,14 @@ const SpiritKeyUnlockBanner = styled(({ className }) => {
   display: flex;
   align-items: center;
   justify-content: space-between;
+
+  .center {
+    text-align: center;
+  }
+
+  .space-y-2 > * + * {
+    margin-top: 2rem;
+  }
 
   .arrow-right {
     width: 4.8rem;
