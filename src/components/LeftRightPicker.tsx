@@ -1,4 +1,4 @@
-import { ReactComponent as ChevronDown } from '@icons/chevron-down.svg'
+import { ReactComponent as ChevronRight } from '@icons/chevron-right.svg'
 import styled from 'styled-components'
 
 import Button from './Button'
@@ -6,20 +6,35 @@ import Button from './Button'
 export const LeftRightPicker = styled(({ className, value, onLeftPick, onRightPick }) => {
   return (
     <div className={className}>
-      <Button.Icon className="nav-toggle-left" onClick={onLeftPick}>
-        <ChevronDown />
+      <Button.Icon className="left-button picker-button" onClick={onLeftPick}>
+        <ChevronRight />
       </Button.Icon>
-      <div className="nft-number" style={{ color: 'var(--color-text)' }}>
-        {value}
-      </div>
-      <Button.Icon className="nav-toggle-right" onClick={onRightPick}>
-        <ChevronDown />
+      <div className="picker-value">{value}</div>
+      <Button.Icon className="right-button picker-button" onClick={onRightPick}>
+        <ChevronRight />
       </Button.Icon>
     </div>
   )
 })`
+  color: var(--color-text);
+
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 1rem;
+
+  .left-button {
+    transform: rotate(180deg);
+  }
+
+  .picker-button {
+    background: transparent;
+    color: var(--color-text);
+  }
+
+  .picker-value {
+    background: var(--color-controlBackground);
+    padding: 0.8rem 2rem;
+    border-radius: 1rem;
+  }
 `
