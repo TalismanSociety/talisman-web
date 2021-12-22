@@ -13,9 +13,11 @@ import { device } from '@util/breakpoints'
 import { downloadURI } from '@util/downloadURI'
 import { TALISMAN_EXTENSION_DOWNLOAD_URL } from '@util/links'
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 export const SpiritKeyUnlockBanner = styled(({ className }) => {
+  const { t } = useTranslation('spirit-keys')
   const [downloading, setDownloading] = useState(false)
   const [revealing, setRevealing] = useState(false)
   const [showAltDownload, setShowAltDownload] = useState(false)
@@ -43,7 +45,7 @@ export const SpiritKeyUnlockBanner = styled(({ className }) => {
       </div>
       <div className="center">
         <ArrowRight className="arrow-right" />
-        <div>Drag to unlock</div>
+        <div>{t('Drag to unlock')}</div>
       </div>
       <div className="center relative">
         <Droppable
@@ -76,7 +78,7 @@ export const SpiritKeyUnlockBanner = styled(({ className }) => {
               trackGoal('TE3SATFD', 0) // alpha_downloads
             }}
           >
-            Click here if download failed to start after 10 seconds.
+            {t('altDownload')}
           </a>
         )}
       </div>

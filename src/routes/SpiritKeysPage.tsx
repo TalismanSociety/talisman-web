@@ -6,9 +6,11 @@ import { SpiritKeyUnlockBanner } from '@libs/spiritkey/SpiritKeyUnlockBanner'
 import { WhatIsInfo } from '@libs/spiritkey/WhatIsInfo'
 import { useAllAccountAddresses } from '@libs/talisman'
 import { isMobileBrowser } from '@util/helpers'
+import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 const SpiritKeyPage = styled(({ className }) => {
+  const { t } = useTranslation('spirit-keys')
   const addresses = useAllAccountAddresses()
   const addressesLoading = addresses === undefined
 
@@ -22,10 +24,7 @@ const SpiritKeyPage = styled(({ className }) => {
       <div className="content">
         <BannerText className="banner-text" />
         <SpiritKeyUnlockBanner />
-        <h1 className="intro">
-          Discover a Spirit Key to get access to special perks and be among the first to try the Talisman wallet
-          extension
-        </h1>
+        <h1 className="intro">{t('intro')}</h1>
         <div className="info">
           <div className="section">
             <WhatIsInfo />

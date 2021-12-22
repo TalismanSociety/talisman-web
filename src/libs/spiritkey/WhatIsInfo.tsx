@@ -1,17 +1,20 @@
+import { useTranslation } from 'react-i18next'
+
 import { Section } from './Section'
 
 export const WhatIsInfo = () => {
+  const { t } = useTranslation('spirit-keys')
   return (
     <Section>
-      <h2>What is a Spirit Key?</h2>
-      <p>
-        A Spirit Key is a a special RMRK NFT of which there are only 3333. Holders will be able to access special perks
-        including:
-      </p>
+      <h2>{t('whatIsInfo.title')}</h2>
+      <p>{t('whatIsInfo.description')}</p>
       <ul>
-        <li>The opportunity to participate in the Alpha release of our wallet extension</li>
-        <li>Permissioned channels in our Discord for Sprit Clan members</li>
-        <li>Early access to new features in the Talisman web app</li>
+        <li>{t('whatIsInfo.list.0')}</li>
+        <li>{t('whatIsInfo.list.1')}</li>
+        <li>{t('whatIsInfo.list.2')}</li>
+        {/* {(t('whatIsInfo.list', { returnObjects: true }) as [])?.map(item => {
+          return <li key={item}>{item}</li>
+        })} */}
       </ul>
     </Section>
   )

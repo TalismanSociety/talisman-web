@@ -231,6 +231,7 @@ const InProgress = styled(({ className, closeModal, explorerUrl }) => {
 
 const Success = styled(({ className, closeModal, explorerUrl }) => {
   const { t } = useTranslation('crowdloan')
+  const { t: t2 } = useTranslation('spirit-keys')
   return (
     <div className={className}>
       <header>
@@ -240,7 +241,7 @@ const Success = styled(({ className, closeModal, explorerUrl }) => {
       <main>
         <div>{t('success.description')}</div>
         <div style={{ fontWeight: 'bold', fontSize: 'small', color: 'var(--color-text)' }}>
-          The transfer will take a few minutes to sync so please avoid sending again.
+          {t('willTakeFewMins', { ns: 'spirit-keys' })}
         </div>
         {explorerUrl && (
           <a href={explorerUrl} target="_blank" rel="noopener noreferrer">
@@ -250,7 +251,7 @@ const Success = styled(({ className, closeModal, explorerUrl }) => {
       </main>
       <footer>
         <Button primary onClick={closeModal}>
-          Done
+          {t2('Done')}
         </Button>
       </footer>
     </div>
@@ -314,6 +315,7 @@ const SendNftProgress = ({ status, onClose }) => {
 }
 
 const SendNftInput = styled(({ className, onChange, onSendNft }) => {
+  const { t } = useTranslation('spirit-keys')
   const [toAddress, setToAddress] = useState<AnyAddress>('')
   return (
     <div className={className}>
@@ -331,7 +333,7 @@ const SendNftInput = styled(({ className, onChange, onSendNft }) => {
         className="toAddress"
       />
       <Button primary disabled={!isValidAddress(toAddress)} onClick={onSendNft}>
-        Send
+        {t('Send')}
       </Button>
     </div>
   )
@@ -416,6 +418,7 @@ const SendNftInput = styled(({ className, onChange, onSendNft }) => {
 // })``
 
 const SpiritKeySenderModal = styled(({ className }) => {
+  const { t } = useTranslation('spirit-keys')
   const [currentNFT, setCurrentNFT] = useState<number>(0)
   const { status } = useExtensionAutoConnect()
   const { closeModal } = useModal()
@@ -465,7 +468,7 @@ const SpiritKeySenderModal = styled(({ className }) => {
         <div className="empty-state-buttons-div">
           <JoinButton className="join-discord-button" />
           <Button to="/crowdloans" className="explore-crowdloans-button">
-            Explore Crowdloans
+            {t('Explore Crowdloans')}
           </Button>
         </div>
       )}
@@ -477,7 +480,7 @@ const SpiritKeySenderModal = styled(({ className }) => {
             onRightPick={() => changeNFT(1)}
           />
           <SendNftInput onChange={setToAddress} onSendNft={sendNft} />
-          {sendStatus === 'FAILED' && <>Error sending NFT</>}
+          {sendStatus === 'FAILED' && <>{t('Error sending NFT')}</>}
         </>
       )}
     </div>
@@ -490,6 +493,7 @@ const SpiritKeySenderModal = styled(({ className }) => {
 `
 
 export const SpiritKeySender = styled(({ className }) => {
+  const { t } = useTranslation('spirit-keys')
   const totalNFTs = useFetchNFTs()
   const hasNfts = totalNFTs?.length > 0
   const { openModal } = useModal()
@@ -498,7 +502,7 @@ export const SpiritKeySender = styled(({ className }) => {
   }
   return (
     <div className={className} onClick={() => openModal(<SpiritKeySenderModal />)}>
-      Send to a friend
+      {t('Send to a friend')}
     </div>
   )
 })`
