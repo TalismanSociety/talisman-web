@@ -55,6 +55,7 @@ const SpiritKeyPage = styled(({ className }) => {
     width: 100%;
     height: auto;
     margin: 4rem 0;
+    padding: 0 4rem;
   }
 
   .intro {
