@@ -1,0 +1,34 @@
+{
+  "intro": "Discover a Spirit Key to get access to special perks and be among the first to try the Talisman wallet extension",
+  "Drag to unlock": "Drag to unlock",
+  "no": "no",
+  "Done": "Done",
+  "Send": "Send",
+  "altDownload": "Click here if download failed to start after 10 seconds.",
+  "ownershipText_one": "You have <1>{{total}}</1> Spirit Key",
+  "ownershipText_other": "You have <1>{{total}}</1> Spirit Keys",
+  "Send to a friend": "Send to a friend",
+  "Explore Crowdloans": "Explore Crowdloans",
+  "Error sending NFT": "Error sending NFT",
+  "Enter Kusama Address": "Enter Kusama Address",
+  "willTakeFewMins": "The transfer will take a few minutes to sync so please avoid sending again.",
+  "whatIsInfo": {
+    "title": "What is a Spirit Key?",
+    "description": "A Spirit Key is a a special RMRK NFT of which there are only 3333. Holders will be able to access special perks including:",
+    "list": [
+      "The opportunity to participate in the Alpha release of our wallet extension",
+      "Permissioned channels in our Discord for Spirit Clan members",
+      "Early access to new features in the Talisman web app"
+    ]
+  },
+  "benefitsInfo": {
+    "title": "Benefits",
+    "description": "Keys have been seen in various locations, but never for very long. The best places to currently find them are:",
+    "list": [
+      "The Talisman <1>Discord server</1>",
+      "Attending community calls and events",
+      "Keeping an eye out for giveaways on <1>Twitter</1>",
+      "By arranging to review, publish or produce media about Talisman"
+    ]
+  }
+}

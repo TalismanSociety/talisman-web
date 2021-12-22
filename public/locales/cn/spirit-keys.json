@@ -1,0 +1,34 @@
+{
+  "intro": "发现精神钥匙以获得特殊津贴，并成为第一个尝试 Talisman 钱包扩展的人",
+  "Drag to unlock": "拖动解锁",
+  "no": "不",
+  "Done": "完毕",
+  "Send": "发送",
+  "altDownload": "如果下载在 10 秒后未能开始，请单击此处。",
+  "ownershipText_one": "你有 <1>{{total}}</1> 灵魂钥匙",
+  "ownershipText_other": "你有 <1>{{total}}</1> 灵魂钥匙",
+  "Send to a friend": "寄给朋友",
+  "Explore Crowdloans": "探索众筹",
+  "Error sending NFT": "发送 NFT 时出错",
+  "Enter Kusama Address": "输入草间地址",
+  "willTakeFewMins": "传输将需要几分钟才能同步，因此请避免再次发送。",
+  "whatIsInfo": {
+    "title": "什么是灵魂钥匙？",
+    "description": "Spirit Key 是一种特殊的 RMRK NFT，其中只有 3333 个。持有者将能够获得特殊特权，包括：",
+    "list": [
+      "有机会参与我们钱包扩展的 Alpha 版本",
+      "我们 Discord 中为 Spirit Clan 成员提供许可的频道",
+      "抢先体验 Talisman 网络应用中的新功能"
+    ]
+  },
+  "benefitsInfo": {
+    "title": "好处",
+    "description": "钥匙已经在不同的地方看到过，但从来没有出现过很长时间。目前找到它们的最佳地点是：",
+    "list": [
+      "Talisman <1>Discord 服务器</1>",
+      "参加社区电话和活动",
+      "留意 <1>Twitter</1> 上的赠品",
+      "通过安排审查、发布或制作有关 Talisman 的媒体"
+    ]
+  }
+}
