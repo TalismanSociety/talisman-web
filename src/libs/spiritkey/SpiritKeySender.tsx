@@ -329,7 +329,7 @@ const SendNftInput = styled(({ className, onChange, onSendNft }) => {
         }}
         dim
         type="text"
-        placeholder="Enter Kusama Address"
+        placeholder={t('Enter Kusama Address')}
         className="toAddress"
       />
       <Button primary disabled={!isValidAddress(toAddress)} onClick={onSendNft}>
@@ -353,69 +353,6 @@ const SendNftInput = styled(({ className, onChange, onSendNft }) => {
     border-radius: 1rem;
   }
 `
-
-// const SendNft = styled(({ className, nft }) => {
-//   const [toAddress, setToAddress] = useState<AnyAddress>('')
-//   const [status, sendNft, resetStatus] = useNftSender(nft, toAddress)
-//   const [showModal, setShowModal] = useState(false)
-
-//   useEffect(() => {
-//     if (toAddress !== '' && (status === 'SUCCESS' || status === 'FAILED')) {
-//       setToAddress('')
-//     }
-//   }, [status, toAddress])
-
-//   useEffect(() => {
-//     if (!showModal && toAddress !== '' && (status === 'SUCCESS' || status === 'INPROGRESS')) {
-//       setShowModal(true)
-//     }
-//   }, [showModal, status, toAddress])
-
-//   if (!sendNft) {
-//     return <StyledLoader />
-//   }
-
-//   if (showModal && status === 'INPROGRESS') {
-//     return (
-//       <Modal>
-//         <InProgress />
-//       </Modal>
-//     )
-//   }
-
-//   if (showModal && status === 'SUCCESS') {
-//     return (
-//       <Modal>
-//         <Success closeModal={() => resetStatus()} />
-//       </Modal>
-//     )
-//   }
-
-//   return (
-//     <>
-//       <div className={className}>
-//         <Field.Input
-//           value={toAddress}
-//           onChange={setToAddress}
-//           dim
-//           type="text"
-//           placeholder="Enter Kusama Address"
-//           className="toAddress"
-//         />
-//         <Button
-//           primary
-//           disabled={!isValidAddress(toAddress)}
-//           onClick={(e: any) => {
-//             sendNft()
-//           }}
-//         >
-//           Send
-//         </Button>
-//       </div>
-//       {status === 'FAILED' && <>Error sending NFT</>}
-//     </>
-//   )
-// })``
 
 const SpiritKeySenderModal = styled(({ className }) => {
   const { t } = useTranslation('spirit-keys')
