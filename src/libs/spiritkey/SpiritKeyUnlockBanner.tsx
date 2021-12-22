@@ -32,12 +32,14 @@ export const SpiritKeyUnlockBanner = styled(({ className }) => {
 
   return (
     <Banner className={className} backgroundImage={bannerImage}>
-      <div className="center relative space-y-2">
+      <div className="center space-y-2">
         <Draggable id={dragSrcId} disabled={!hasNfts}>
           <SpiritKeyNftImage border />
         </Draggable>
-        <OwnershipText />
-        <SpiritKeySender />
+        <div className="center space-y-1">
+          <OwnershipText />
+          <SpiritKeySender />
+        </div>
       </div>
       <div className="center">
         <ArrowRight className="arrow-right" />
@@ -106,9 +108,18 @@ export const SpiritKeyUnlockBanner = styled(({ className }) => {
     margin-top: 2rem;
   }
 
+  .space-y-1 > * + * {
+    margin-top: 1rem;
+  }
+
   .arrow-right {
     width: 4.8rem;
     height: auto;
+    transform: rotate(90deg);
+
+    @media ${device.xl} {
+      transform: unset;
+    }
   }
 
   .alpha-extension {
