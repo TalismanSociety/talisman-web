@@ -343,6 +343,22 @@ export const parachainDetails: ParachainDetails[] = [
     },
   },
   {
+    id: '0-2035',
+    name: 'Phala Network',
+    slug: 'phala-network',
+    token: 'PHA',
+    subtitle: 'Phala Network as a confidentiality layer for Web3.0 developers',
+    info: `Phala is a Polkadot parachain, and developers can invoke and interact with confidential contracts on other Polkadot parachains.`,
+    links: {
+      Website: 'https://phala.network',
+      Twitter: 'https://twitter.com/PhalaNetwork',
+      Telegram: 'https://t.me/phalanetwork',
+      Medium: 'https://medium.com/phala-network',
+      Github: 'https://github.com/Phala-Network',
+      Discord: 'https://discord.gg/phala',
+    },
+  },
+  {
     id: '2-2000',
     name: 'Karura',
     slug: 'karura',
