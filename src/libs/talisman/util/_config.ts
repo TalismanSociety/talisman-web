@@ -343,6 +343,21 @@ export const parachainDetails: ParachainDetails[] = [
     },
   },
   {
+    id: '0-2034',
+    name: 'HydraDX',
+    slug: 'hydradx',
+    token: 'HDX',
+    subtitle: 'Cross-chain liquidity protocol built on Substrate',
+    info: `HydraDX is the creator of the Omnipool. Driven by the ambition to put an end to liquidity fragmentation, we have challenged the misconception that AMMs should be limited to pairs of assets. The Omnipool allows users to submerge any cryptoasset in an ocean of liquidity. One trading pool - many assets. Empowering native liquidity for the Polkadot ecosystem, and beyond.`,
+    links: {
+      Website: 'https://hydradx.io/',
+      Twitter: 'https://twitter.com/hydra_dx',
+      Medium: 'https://hydradx.substack.com/archive',
+      Github: 'https://github.com/galacticcouncil?tab=repositories',
+      Discord: 'https://discord.com/invite/xtVnQgq',
+    },
+  },
+  {
     id: '0-2035',
     name: 'Phala Network',
     slug: 'phala-network',
@@ -1282,6 +1297,25 @@ export const crowdloanDetails: CrowdloanDetails[] = [
         {
           title: 'INTR per DOT',
           value: '3.46+',
+        },
+      ],
+      bonus: {
+        short: '',
+        full: '',
+        info: '',
+      },
+      info: null,
+    },
+  },
+  {
+    relayId: 0,
+    paraId: 2034,
+    rewards: {
+      tokens: null,
+      custom: [
+        {
+          title: 'HDX per DOT',
+          value: '280 and 125',
         },
       ],
       bonus: {
