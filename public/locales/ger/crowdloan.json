@@ -1,0 +1,27 @@
+{
+  "inProgress": {
+    "header": "In Bearbeitung",
+    "description": "Deine Transaktion ist in Bearbeitung. Es kann einige Minuten zur Bestätigung dauern",
+    "primaryCta": "Ansehen auf Subscan",
+    "secondaryCta": "Schließen"
+  },
+  "success": {
+    "header": "Erfolg",
+    "description": "Deine Transaktion war erfolgreich. Danke für deinen Beitrag",
+    "primaryCta": "Ansehen auf Subscan",
+    "secondaryCta": "Portfolio ansehen"
+  },
+  "failed": {
+    "header": "Fehler",
+    "description": "Deine Transaktion ist Fehlgeschlagen.",
+    "primaryCta": "Ansehen auf Subscan",
+    "secondaryCta": "Schließen"
+  },
+  "registeringUser": {
+    "header": "Akzeptiere die Geschäftsbedingungen",
+    "description": "Durch Klicken \"Signieren und Abschicken\" unten, wird deine Zustimmung, in Verbindung mit deinem DOT Konto, zu den Moonbeam Crowdloan Geschäftsbedingungen 'on chain' gespeichert. Dies geschieht in Form einer von deinem Konto signierten Nachricht.",
+    "feeNote": "Bitte beachte, dass für diese Signierungstransaktion Transaktionsgebühren im Polkadot-Netzwerk anfallen (ca. 0,0411 DOT) und Polkadot einen Mindestkontostand von 1 DOT verlangt.",
+    "termsNote": "[Siehe Bedingungen]",
+    "primaryCta": "Signieren und Abschicken"
+  }
+}
