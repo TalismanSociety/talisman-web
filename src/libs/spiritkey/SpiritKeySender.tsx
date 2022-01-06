@@ -142,22 +142,32 @@ const sendNFT = async (senderAddress: string, api: ApiPromise, remark: string, i
   })
 }
 
-function useNftSender(nft: NFTConsolidated, toAddress: AnyAddress): [SendStatus | undefined, () => void, () => void] {
+function useNftSender(
+  nft: NFTConsolidated,
+  toAddress: AnyAddress
+): [SendStatus | undefined, () => void, () => void, string | undefined] {
   const api = useSender()
+  const [error, setError] = useState<string | undefined>()
   const kusamaAddress = convertAnyAddress(toAddress, SS58Format.Kusama)
   const remark = useNftRemark(nft, kusamaAddress)
   const injector = useInjector(nft)
   const [status, setStatus] = useState<SendStatus | undefined>()
 
   const send = async () => {
-    await sendNFT(nft.owner, api, remark, injector, setStatus)
+    try {
+      setError(undefined)
+      await sendNFT(nft.owner, api, remark, injector, setStatus)
+    } catch (err) {
+      console.log(`>>> err`, (err as Error).message)
+      setError((err as Error).message)
+    }
   }
 
   if (!api) {
-    return [undefined, () => {}, () => {}]
+    return [undefined, () => {}, () => {}, undefined]
   }
 
-  return [status, send, () => setStatus(undefined)]
+  return [status, send, () => setStatus(undefined), error]
 }
 
 const InProgress = styled(({ className, closeModal, explorerUrl }) => {
@@ -366,7 +376,7 @@ const SpiritKeySenderModal = styled(({ className }) => {
   const [nft, setNft] = useState<NFTConsolidated>()
 
   const [toAddress, setToAddress] = useState<AnyAddress>('')
-  const [sendStatus, sendNft, resetStatus] = useNftSender(nft, toAddress)
+  const [sendStatus, sendNft, resetStatus, errorMessage] = useNftSender(nft, toAddress)
 
   // Set default NFT
   useEffect(() => {
@@ -420,12 +430,18 @@ const SpiritKeySenderModal = styled(({ className }) => {
           {sendStatus === 'FAILED' && <>{t('Error sending NFT')}</>}
         </>
       )}
+      {errorMessage && <p className="error">{errorMessage}</p>}
     </div>
   )
 })`
   text-align: center;
   > * + * {
     margin-top: 2rem;
+  }
+
+  .error {
+    color: var(--color-status-error);
+    font-size: small;
   }
 `
 
