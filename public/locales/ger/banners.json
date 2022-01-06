@@ -16,7 +16,8 @@
   },
   "buy": {
     "header": "DOT/KSM kaufen",
-    "description": "Show me the money",
+    "description": "Zeig mir meinen Kontostand!",
+
     "primaryCta": "Kaufen"
   },
   "unlockTalisman": {
