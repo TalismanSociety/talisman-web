@@ -2,12 +2,14 @@ import { ReactComponent as AlertCircle } from '@assets/icons/alert-circle-bg.svg
 import { ReactComponent as LinkCircle } from '@assets/icons/link-circle-bg.svg'
 import { useModal } from '@components'
 import { useExtension } from '@libs/talisman'
+import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 import MoonbeamContributionModal from './Modal'
 import { useMoonbeamContributors } from '.'
 
 export const MoonbeamPortfolioTag = styled(({ className }) => {
+  const { t } = useTranslation('crowdloan', { keyPrefix: 'moonbeamPortflioTag' })
   const { openModal } = useModal()
   const { accounts } = useExtension()
   const { contributors, loading } = useMoonbeamContributors(accounts.map(({ address }) => address))
@@ -25,12 +27,12 @@ export const MoonbeamPortfolioTag = styled(({ className }) => {
       {hasUnlinked ? (
         <div>
           <AlertCircle />
-          You have unlinked addresses
+          {t('You have unlinked addresses')}
         </div>
       ) : (
         <div>
           <LinkCircle />
-          View linked addresses
+          {t('View linked addresses')}
         </div>
       )}
     </div>
