@@ -1,34 +1,34 @@
 {
-  "intro": "Discover a Spirit Key to get access to special perks and be among the first to try the Talisman wallet extension",
-  "Drag to unlock": "Drag to unlock",
-  "no": "no",
-  "Done": "Done",
-  "Send": "Send",
-  "altDownload": "Click here if download failed to start after 10 seconds.",
-  "ownershipText_one": "You have <1>{{total}}</1> Spirit Key",
-  "ownershipText_other": "You have <1>{{total}}</1> Spirit Keys",
-  "Send to a friend": "Send to a friend",
-  "Explore Crowdloans": "Explore Crowdloans",
-  "Error sending NFT": "Error sending NFT",
-  "Enter Kusama Address": "Enter Kusama Address",
-  "willTakeFewMins": "The transfer will take a few minutes to sync so please avoid sending again.",
+  "intro": "Trouvez une Spirit Key pour avoir accès à des avantages et être parmi les premiers à tester l'extension de navigateur Talisman",
+  "Drag to unlock": "Glissez pour dévérouiller",
+  "no": "non",
+  "Done": "Fait",
+  "Send": "Envoyé",
+  "altDownload": "Cliquez ici si le téléchargement n'a pas commencé au bout de 10 secondes",
+  "ownershipText_one": "Vous avez <1>{{total}}</1> Spirit Key",
+  "ownershipText_other": "Vous avez <1>{{total}}</1> Spirit Keys",
+  "Send to a friend": "Envoyer à un ami",
+  "Explore Crowdloans": "Explorer les Crowdloans",
+  "Error sending NFT": "Erreur lors de l'envoi du NFT",
+  "Enter Kusama Address": "Entrez l'addresse Kusama",
+  "willTakeFewMins": "Le transfert prendra quelques minutes avant d'être synchronisé, ne relancez l'opération à nouveau",
   "whatIsInfo": {
-    "title": "What is a Spirit Key?",
-    "description": "A Spirit Key is a a special RMRK NFT of which there are only 3333. Holders will be able to access special perks including:",
+    "title": "Qu'est-ce qu'une Spirit Key?",
+    "description": "Une Spirit Key est un NFT RMRK spécial, il n'en existe que 3333. Ceux qui en possedent pourront accéder a des avantages tels que :",
     "list": [
-      "The opportunity to participate in the Alpha release of our wallet extension",
-      "Permissioned channels in our Discord for Spirit Clan members",
-      "Early access to new features in the Talisman web app"
+      "L'opportunité de participer au test de la version alpha de l'extension de navigateur Talisman",
+      "L'accès à certains salons Discord dédiés aux membre du Spirit Clan",
+      "L'accès anticipé à de nouvelles fonctionnalités sur l'application web Talisman"
     ]
   },
   "benefitsInfo": {
-    "title": "Benefits",
-    "description": "Keys have been seen in various locations, but never for very long. The best places to currently find them are:",
+    "title": "Avantages",
+    "description": "Les clés ont été aperçues dans des endroits très variés, mais jamais très longtemps. Les meilleurs endroits pour s'en procurer actuellement sont :",
     "list": [
-      "The Talisman <1>Discord server</1>",
-      "Attending community calls and events",
-      "Keeping an eye out for giveaways on <1>Twitter</1>",
-      "By arranging to review, publish or produce media about Talisman"
+      "Le <1>serveur Discord</1> Talisman",
+      "Participer à un \"Community Call\"",
+      "Garder un œil sur le fil twitter @Talisman_fr <1>Twitter</1>",
+      "Participer à la création de média (fil, document, vidéo, image) autour de Talisman"
     ]
   }
 }
