@@ -23,5 +23,9 @@
     "feeNote": "Please note that this signing transaction will be subject to transaction fees on the Polkadot network (around 0.0411 DOT), and Polkadot has a minimum balance of 1 DOT.",
     "termsNote": "[View terms]",
     "primaryCta": "Sign and Send"
+  },
+  "moonbeamPortflioTag": {
+    "You have unlinked addresses": "You have unlinked addresses",
+    "View linked addresses": "View linked addresses"
   }
 }

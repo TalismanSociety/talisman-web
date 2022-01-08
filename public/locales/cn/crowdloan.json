@@ -16,5 +16,16 @@
     "description": "您的交易失败。",
     "primaryCta": "查看 Subscan",
     "secondaryCta": "关闭"
+  },
+  "registeringUser": {
+    "header": "签署条款和条件",
+    "description": "通过点击下面的“签名并发送”，您对 Moonbeam Crowdloan 条款和条件的同意将在链上存储到您的 DOT 帐户。这将采用由您的帐户签名的外部备注的形式。",
+    "feeNote": "请注意，本次签名交易将在波卡网络上收取交易费用（约 0.0411 DOT），波卡最低余额为 1 DOT。",
+    "termsNote": "[查看条款]",
+    "primaryCta": "签名并发送"
+  },
+  "moonbeamPortflioTag": {
+    "You have unlinked addresses": "您有未链接的地址",
+    "View linked addresses": "查看链接地址"
   }
 }

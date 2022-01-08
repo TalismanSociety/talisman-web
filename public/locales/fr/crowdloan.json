@@ -16,5 +16,16 @@
     "description": "Votre transaction n'a pas pu être validée",
     "primaryCta": "Voir sur Subscan",
     "secondaryCta": "Fermer"
+  },
+  "registeringUser": {
+    "header": "Signer les mentions légales",
+    "description": "En cliquant sur \"signer et envoyer\" ci-dessous, votre acceptation des conditions légales de la crowdloan de Moonbeam sera envoyée sur la blockchain, sur votre compte DOT. Sous la forme d'un \"excentric\" de type \"remark\" signé par votre compte.",
+    "feeNote": "Veuillez noter que cette transaction occasionnera des frais sur le réseau Polkadot (environ 0.0411 DOT), et que le réseau Polkadot est soumis à un dépôt existentiel de 1 DOT.",
+    "termsNote": "[voir les conditions légales]",
+    "primaryCta": "Signer et envoyer"
+  },
+  "moonbeamPortflioTag": {
+    "You have unlinked addresses": "Vous avez des adresses non associées",
+    "View linked addresses": "Voir les adresses associées"
   }
 }

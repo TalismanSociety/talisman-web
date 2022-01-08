@@ -23,5 +23,9 @@
     "feeNote": "Observe que esta transação de assinatura estará sujeita a taxas de transação na rede Polkadot (around 0.0411 DOT), e Polkadot tenha o minimo de 1 DOT restante.",
     "termsNote": "[Veja os termos]",
     "primaryCta": "Assine e envie"
+  },
+  "moonbeamPortflioTag": {
+    "You have unlinked addresses": "Você tem endereços não vinculados",
+    "View linked addresses": "Ver endereços vinculados"
   }
 }

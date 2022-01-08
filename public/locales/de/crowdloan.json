@@ -23,5 +23,9 @@
     "feeNote": "Bitte beachte, dass für diese Signierungstransaktion Transaktionsgebühren im Polkadot-Netzwerk anfallen (ca. 0,0411 DOT) und Polkadot einen Mindestkontostand von 1 DOT verlangt.",
     "termsNote": "[Siehe Bedingungen]",
     "primaryCta": "Signieren und Abschicken"
+  },
+  "moonbeamPortflioTag": {
+    "You have unlinked addresses": "Du hast nicht-verbundene Adressen",
+    "View linked addresses": "Verbundene Adressen ansehen"
   }
 }

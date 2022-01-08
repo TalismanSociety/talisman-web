@@ -16,5 +16,16 @@
     "description": "Tu transacción ha fallado",
     "primaryCta": "Ver on Subscan",
     "secondaryCta": "Cerrar"
+  },
+  "registeringUser": {
+    "header": "Firma los Términos y condiciones",
+    "description": "Al hacer clic en \" Firmar y enviar \"a continuación, su aceptación de los Términos y condiciones de Moonbeam Crowdloan se almacenará on-chain, en su cuenta DOT. Esto tendrá la forma de un comentario extrínseco firmado por su cuenta.",
+    "feeNote": "Tenga en cuenta que esta transacción estará sujeta a fees en la red Polkadot  (alrededor de 0.0411 DOT), y Polkadot tiene un balance mínimo de 1 DOT.",
+    "termsNote": "[Ver términos]",
+    "primaryCta": "Firmar y enviar"
+  },
+  "moonbeamPortflioTag": {
+    "You have unlinked addresses": "No tienes direcciones vinculadas",
+    "View linked addresses": "Ver direcciones vinculadas"
   }
 }
