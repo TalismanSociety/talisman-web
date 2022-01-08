@@ -18,14 +18,14 @@
     "secondaryCta": "Закрыть"
   },
   "registeringUser": {
-    "header": "Sign the Terms & Conditions",
-    "description": "By clicking \"Sign and Send\" below, your agreement to the Moonbeam Crowdloan Terms and Conditions will be stored on chain, to your DOT account. This will be in the form of a remark extrinstic signed by your account.",
-    "feeNote": "Please note that this signing transaction will be subject to transaction fees on the Polkadot network (around 0.0411 DOT), and Polkadot has a minimum balance of 1 DOT.",
-    "termsNote": "[View terms]",
-    "primaryCta": "Sign and Send"
+    "header": "Подписать условия",
+    "description": "Нажав \"Подписать и отправить\" ниже, ваше согласие с Условиями и положениями Moonbeam Crowdloan будет сохранено в цепочке, в вашей учетной записи DOT. Это будет в форме примечания, подписанного вашей учетной записью. .",
+    "feeNote": "Обратите внимание, что эта транзакция подписи облагается комиссией за транзакцию в сети Polkadot (около 0,0411 DOT), а минимальный баланс Polkadot составляет 1 DOT.",
+    "termsNote": "[Просмотреть условия]",
+    "primaryCta": "Подписать и отправить"
   },
   "moonbeamPortflioTag": {
-    "You have unlinked addresses": "You have unlinked addresses",
-    "View linked addresses": "View linked addresses"
+    "You have unlinked addresses": "У вас есть несвязанные адреса",
+    "View linked addresses": "Просмотр связанных адресов"
   }
 }
