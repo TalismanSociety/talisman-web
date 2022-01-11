@@ -29,7 +29,7 @@ const customRpcs: { [key: string]: string[] } = {
   '2-2000': [], // ['wss://karura.api.onfinality.io/ws?apikey=e1b2f3ea-f003-42f5-adf6-d2e6aa3ecfe4'], // Karura
   '2-2001': [], // ['wss://bifrost-parachain.api.onfinality.io/ws?apikey=e1b2f3ea-f003-42f5-adf6-d2e6aa3ecfe4'], // Bifrost
   '2-2004': [], // ['wss://khala.api.onfinality.io/ws?apikey=e1b2f3ea-f003-42f5-adf6-d2e6aa3ecfe4'], // Khala
-  '2-2005': [], // KILT Spiritnet
+  // '2-2005': [], // KILT Spiritnet
   // '2-2006': [], // Darwinia Crab Redirect
   '2-2007': [], // ['wss://shiden.api.onfinality.io/ws?apikey=e1b2f3ea-f003-42f5-adf6-d2e6aa3ecfe4'], // Shiden
   // '2-2008': [], // Mars
