@@ -269,7 +269,7 @@ export const parachainDetails: ParachainDetails[] = [
     info: "Nodle leverages Bluetooth Low Energy (BLE) via millions of smartphones and routers to allow enterprises and smart cities to connect IoT devices to the Internet at a low-cost while maintaining privacy and security. Nodle's decentralized wireless network is currently comprised of 5M daily active smartphones with 30 million IoT devices discovered daily in over 100 countries, moving approximately 100 GB of data.",
     links: {
       Website: 'https://nodle.com/',
-      Twitter: 'https://t.me/nodlecommunity',
+      Twitter: 'https://twitter.com/NodleNetwork',
       Medium: 'https://medium.com/nodle-io',
       GitHub: 'https://github.com/NodleCode/chain',
       Reddit: 'https://www.reddit.com/r/Nodle/',
@@ -792,7 +792,7 @@ export const parachainDetails: ParachainDetails[] = [
     id: '2-2095',
     name: 'Quartz',
     slug: 'quartz',
-    token: 'NEER',
+    token: 'QTZ',
     subtitle: `Quartz gives the Kusama community the essential and advanced NFT tools to unleash innovation.`,
     info: `Quartz gives you easy access to test extreme innovation in NFTs and build for the next generation. Built on Substrate, Quartz gives you the most versatile options for discovery and democratization of the NFT ecosystem and marketplaces (with very low barriers for entry).\nAdvanced features like Flexible Economic Models, Scheduled Transactions, Re-fungiblity, and Nested NFTs will all be available via Quartz, allowing users to own UX/UI for your fans and customers.Quartz parachain on Kusama will allow you to build with interoperability between different blockchains, and give developers and engineers the access to the shared security of the entire network.`,
     links: {
