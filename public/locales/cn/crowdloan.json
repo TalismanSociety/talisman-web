@@ -19,8 +19,8 @@
   },
   "registeringUser": {
     "header": "签署条款和条件",
-    "description": "通过点击下面的“签名并发送”，您对 Moonbeam Crowdloan 条款和条件的同意将在链上存储到您的 DOT 帐户。这将采用由您的帐户签名的外部备注的形式。",
-    "feeNote": "请注意，本次签名交易将在波卡网络上收取交易费用（约 0.0411 DOT），波卡最低余额为 1 DOT。",
+    "description": "通过点击下面的“签名并发送”，您对 Moonbeam Crowdloan 条款和条件的同意将在链上存储到您的 DOT 帐户。这将采用由您的帐户签名的外部备注 (remark extrinsic)。",
+    "feeNote": "请注意，本次签名交易将在波卡网络上收取交易费用（约 0.0411 DOT），另请注意波卡最低余额为 1 DOT。",
     "termsNote": "[查看条款]",
     "primaryCta": "签名并发送"
   },
