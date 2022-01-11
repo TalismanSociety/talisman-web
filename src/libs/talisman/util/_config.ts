@@ -421,22 +421,6 @@ export const parachainDetails: ParachainDetails[] = [
       Discord: 'https://discord.gg/myBmQu5',
     },
   },
-  // {
-  //   id: '2-2006',
-  //   name: 'Darwinia Crab Redirect',
-  //   slug: 'darwinia-crab-redirect',
-  //   token: 'CRING',
-  //   subtitle:
-  //     'Crab is the canary network of Darwinia, and is the first blockchain in the Kusama ecosystem to natively support cross-chain as well as smart contract and NFT.',
-  //   info: `Crab Network intends to participate in the Kusama Parachain Slot Auctions.\n\nThe Crab network is a network with long-term value. Some RINGs are allocated to Crab Network as backing assets to make it serve as a canary network having real economic incentives and massive gaming theory testing, not just working a testnet.\n\nThe economic model parameters of the Crab network are the same as those of the Darwinia Mainnet, and use the same staking and inflation models.`,
-  //   links: {
-  //     Website: 'https://crab.network/',
-  //     Twitter: 'https://twitter.com/DarwiniaNetwork',
-  //     Telegram: 'https://t.me/DarwiniaNetwork',
-  //     Medium: 'https://darwinianetwork.medium.com/',
-  //     Github: 'https://github.com/darwinia-network/darwinia/tree/master/runtime/crab',
-  //   },
-  // },
   {
     id: '2-2007',
     name: 'Shiden',
@@ -865,6 +849,23 @@ export const parachainDetails: ParachainDetails[] = [
       Medium: 'https://kylinnetwork.medium.com/',
     },
   },
+  {
+    id: '2-2105',
+    name: 'Darwinia Crab',
+    slug: 'darwinia-crab',
+    token: 'CRAB',
+    subtitle:
+      'Crab is the canary network of Darwinia, and is the first blockchain in the Kusama ecosystem to natively support cross-chain as well as smart contract and NFT.',
+    info: `Crab Network intends to participate in the Kusama Parachain Slot Auctions.\n\nThe Crab network is a network with long-term value. Some RINGs are allocated to Crab Network as backing assets to make it serve as a canary network having real economic incentives and massive gaming theory testing, not just working a testnet.\n\nThe economic model parameters of the Crab network are the same as those of the Darwinia Mainnet, and use the same staking and inflation models.`,
+    links: {
+      Website: 'https://crab.network/',
+      Twitter: 'https://twitter.com/DarwiniaNetwork',
+      Telegram: 'https://t.me/DarwiniaNetwork',
+      Medium: 'https://darwinianetwork.medium.com/',
+      Github: 'https://github.com/darwinia-network/darwinia/tree/master/runtime/crab',
+    },
+  },
+
 ]
 
 export type CrowdloanDetails = {
@@ -1398,21 +1399,6 @@ export const crowdloanDetails: CrowdloanDetails[] = [
       info: 'If Phala wins the Slot Auction, rewards will be distributed according to the Phala payment schedule. If a slot is not won, you can unbond your KSM immediately after the Auctions end.',
     },
   },
-  // {
-  //   relayId:2,
-  //   paraId: 2006,
-  //   contributeUrl: 'https://crab.network/plo#crowdloan',
-  //   rewards: {
-  //     tokens: [
-  //       {
-  //         symbol: 'CRING',
-  //         perKSM: '25',
-  //       },
-  //     ],
-  //     custom: [],
-  //     info: 'If successful, 240,000,000 CRING and 6,000,000 RING rewards will be distributed to users according to the number of KSM they supported. 30% of them will be unlocked, 70% will vest for 48 weeks.',
-  //   },
-  // },
   {
     relayId: 2,
     paraId: 2007,
@@ -1994,6 +1980,25 @@ export const crowdloanDetails: CrowdloanDetails[] = [
         },
       ],
       info: null,
+    },
+  },
+  {
+    relayId:2,
+    paraId: 2105,
+    contributeUrl: 'https://crab.network/plo#crowdloan',
+    rewards: {
+      tokens: null,
+      custom: [
+        {
+          title: 'CRAB Crowdloan Allocation',
+          value: '200,000,000 CRAB',
+        },
+        {
+          title: 'CKTON Crowdloan Allocation',
+          value: '8,000 CKTON'
+        }
+      ],
+      info: 'If successful, these allocations will be distributed to users according to the number of KSM they supported. After contributing to the Crab crowdloan, there is no need to wait for tokens to finish vesting or getting listed.',
     },
   },
 ]
