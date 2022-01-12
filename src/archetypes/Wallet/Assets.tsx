@@ -1,6 +1,6 @@
 import { ChainLogo, ExtensionStatusGate, Info, Panel, PanelSection, Pendor } from '@components'
 import { calculateAssetPortfolioAmounts, usePortfolio, useTaggedAmountsInPortfolio } from '@libs/portfolio'
-import { useAccountAddresses, useExtensionAutoConnect } from '@libs/talisman'
+import { useAccountAddresses, useExtensionAutoConnect, useParachainDetailsById } from '@libs/talisman'
 import { useTokenPrice } from '@libs/tokenprices'
 import {
   BalanceWithTokens,
@@ -22,7 +22,8 @@ const AssetItem = styled(({ id, balances, addresses, className }) => {
   const chain = useChain(id)
 
   const { status, accounts } = useExtensionAutoConnect()
-  const isMoonriver = id === '2-2023'
+  const { parachainDetails } = useParachainDetailsById(id)
+  const isMoonriver = ['Moonriver', 'Moonbeam'].includes(parachainDetails?.name as string)
   const hasNoEthereumAddress = useMemo(
     () => status === 'OK' && accounts.every(account => account.type !== 'ethereum'),
     [status, accounts]
@@ -62,7 +63,7 @@ const AssetItem = styled(({ id, balances, addresses, className }) => {
     <div className={className}>
       <Info title={name} subtitle={longName || name} graphic={<ChainLogo chain={chain} type="logo" size={4} />} />
       {isMoonriver && hasNoEthereumAddress ? (
-        <MoonriverWalletInstructions />
+        <MoonriverWalletInstructions id={id} />
       ) : (
         <Info
           title={<Pendor suffix={` ${tokenSymbol}`}>{tokens && formatCommas(tokens)}</Pendor>}
@@ -87,8 +88,10 @@ const AssetItem = styled(({ id, balances, addresses, className }) => {
   }
 `
 
-const MoonriverWalletInstructions = styled(({ className }) => {
+const MoonriverWalletInstructions = styled(({ className, id }) => {
   const { t } = useTranslation()
+  const { parachainDetails } = useParachainDetailsById(id)
+  const asset = parachainDetails?.name
   return (
     <Info
       className={className}
@@ -100,7 +103,7 @@ const MoonriverWalletInstructions = styled(({ className }) => {
           rel="noreferrer noopener"
         >
           <div className="text-vertical-center">
-            <span className="plus-icon">(+)</span> {`${t('Add {{asset}} Balance', { asset: 'Moonriver' })}`}
+            <span className="plus-icon">(+)</span> {`${t('Add {{asset}} Balance', { asset })}`}
           </div>
         </a>
       }
