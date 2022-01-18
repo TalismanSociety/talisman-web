@@ -50,8 +50,8 @@ const Contributions = (accounts?: string[], crowdloans?: string[]) => gql`
   }
 `
 
-// Usage example: 'https://crowdloan.aca-api.network/contribution/12ECN131rm1harWHHmADUszkX4Wm5NDD1iEZMcwUxeovLXYb'
-const acalaContributionApi = 'https://crowdloan.aca-api.network/contribution'
+// Usage example: 'https://distribution.acala.network/'
+const acalaContributionApi = 'https://api.polkawallet.io/acala-distribution-v2/crowdloan?account='
 const acalaCrowdloanId = '0-2000-1muqpuFcWvy1Q3tf9Tek882A6ngz46bWPsV6sWiYccnVjKb-0'
 const acalaCrowdloanFilterId = '2000-1muqpuFcWvy1Q3tf9Tek882A6ngz46bWPsV6sWiYccnVjKb-0'
 
@@ -175,7 +175,7 @@ export function useCrowdloanContributions({
 
       const results = []
       for (const account of accounts[polkadotRelayIndex]) {
-        const response = await fetch(`${acalaContributionApi}/${account}`)
+        const response = await fetch(`${acalaContributionApi}${account}`)
         if (!response.ok) continue
         results.push({ account, response: await response.json() })
       }
@@ -186,9 +186,15 @@ export function useCrowdloanContributions({
           account,
 
           // the total of lcDOT contributions
-          amount: response.proxyAmount,
+          amount: (response?.data?.acala || []).reduce(
+            (amount: string, contribution: any) => addBigNumbers(contribution?.detail?.lcAmount || '0', amount),
+            '0'
+          ),
           // the total of both direct+lcDOT contributions
-          // amount: response.contributionAmount,
+          // amount: (response?.data?.acala || []).reduce(
+          //   (amount: string, contribution: any) => addBigNumbers(contribution?.totalDOTLocked || '0', amount),
+          //   '0'
+          // ),
 
           blockNum: 1,
 
