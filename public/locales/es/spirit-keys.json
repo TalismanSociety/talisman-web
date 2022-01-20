@@ -21,14 +21,14 @@
       "Early access to new features in the Talisman web app"
     ]
   },
-  "benefitsInfo": {
-    "title": "Benefits",
-    "description": "Keys have been seen in various locations, but never for very long. The best places to currently find them are:",
+  "howToGetInfo": {
+    "title": "Como puedo encontrar un Spirit Key?",
+    "description": "Las Llaves han encontrados en lugares varios, per nunca por mucho tiempo. Los lugares mejores para encontrarlos son:",
     "list": [
-      "The Talisman <1>Discord server</1>",
-      "Attending community calls and events",
-      "Keeping an eye out for giveaways on <1>Twitter</1>",
-      "By arranging to review, publish or produce media about Talisman"
+      "El <1>servidor de discordia</1> del Talismán",
+      "Atender llamadas  de la comunidad y eventos",
+      "Mirar a los regalos en <1>Twitter</1>",
+      "Por revisar, publicar o producir medios sobre Talisman"
     ]
   }
 }
