@@ -1,7 +1,7 @@
 import { ReactComponent as BannerText } from '@assets/unlock-the-paraverse.svg'
 import { DesktopRequired } from '@components'
 import { StyledLoader } from '@components/Await'
-import { BenefitsInfo } from '@libs/spiritkey/BenefitsInfo'
+import { HowToGetInfo } from '@libs/spiritkey/HowToGetInfo'
 import { SpiritKeyUnlockBanner } from '@libs/spiritkey/SpiritKeyUnlockBanner'
 import { WhatIsInfo } from '@libs/spiritkey/WhatIsInfo'
 import { useAllAccountAddresses } from '@libs/talisman'
@@ -30,7 +30,7 @@ const SpiritKeyPage = styled(({ className }) => {
             <WhatIsInfo />
           </div>
           <div className="section">
-            <BenefitsInfo />
+            <HowToGetInfo />
           </div>
         </div>
       </div>
