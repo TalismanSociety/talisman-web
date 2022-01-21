@@ -21,7 +21,7 @@ const customRpcs: { [key: string]: string[] } = {
   // '0-2028': [], // Ares Odyssey
   // '0-2031': [], // Centrifuge
   '0-2032': [], // Interlay
-  '0-2034': [], // HydraDX
+  // '0-2034': [], // HydraDX
   // '0-2035': [], // Phala Network
   '2': [], // ['wss://kusama.api.onfinality.io/ws?apikey=e1b2f3ea-f003-42f5-adf6-d2e6aa3ecfe4'], // Kusama Relay
   '2-1000': [], // ['wss://statemine.api.onfinality.io/ws?apikey=e1b2f3ea-f003-42f5-adf6-d2e6aa3ecfe4'], // Statemine
