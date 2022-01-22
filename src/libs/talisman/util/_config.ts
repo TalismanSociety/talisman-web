@@ -374,6 +374,22 @@ export const parachainDetails: ParachainDetails[] = [
     },
   },
   {
+    id: '0-2036',
+    name: 'Polkadex',
+    slug: 'polkadex',
+    token: 'PDEX',
+    subtitle: 'The trading engine for Web3 and DeFi',
+    info: `Polkadex is a fully decentralized peer-to-peer orderbook-based cryptocurrency exchange for the DeFi ecosystem built on Substrate.`,
+    links: {
+      Website: 'https://www.polkadex.trade/',
+      Twitter: 'https://twitter.com/polkadex',
+      Telegram: 'https://t.me/Polkadex',
+      Medium: 'https://polkadex.medium.com/',
+      Github: 'https://github.com/Polkadex-Substrate/Polkadex',
+      Discord: 'https://discord.com/invite/qubycwPtSd',
+    },
+  },
+  {
     id: '2-2000',
     name: 'Karura',
     slug: 'karura',
@@ -1347,6 +1363,24 @@ export const crowdloanDetails: CrowdloanDetails[] = [
         full: '',
         info: '',
       },
+      info: null,
+    },
+  },
+  {
+    relayId: 0,
+    paraId: 2036,
+    rewards: {
+      tokens: null,
+      custom: [
+        {
+          title: 'PDEX per DOT',
+          value: '>0.1875',
+        },
+        {
+          title: 'Vesting Schedule',
+          value: '25% immediately, remainder vests linearly over 96 weeks.',
+        },
+      ],
       info: null,
     },
   },

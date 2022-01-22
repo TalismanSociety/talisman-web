@@ -4,7 +4,7 @@ import { Button, DesktopRequired, Field, MaterialLoader, Pendor, useModal } from
 import { TalismanHandLike } from '@components/TalismanHandLike'
 import { TalismanHandLoader } from '@components/TalismanHandLoader'
 import { ContributeEvent, useCrowdloanContribute } from '@libs/crowdloans'
-import { Acala, Moonbeam, overrideByIds } from '@libs/crowdloans/crowdloanOverrides'
+import { Acala, Moonbeam, Polkadex, overrideByIds } from '@libs/crowdloans/crowdloanOverrides'
 import { useActiveAccount, useCrowdloanById } from '@libs/talisman'
 import { useTokenPrice } from '@libs/tokenprices'
 import { multiplyBigNumbers } from '@talismn/util'
@@ -249,6 +249,20 @@ const ContributeTo = styled(
               </div>
             </div>
           )}
+
+          {Polkadex.is(relayChainId, parachainId) && (
+            <div className="row">
+              <div className="email-input">
+                <div className="info">
+                  <i>
+                    If you have 1 PDEX in your Polkadot.js account, you can contribute as much or as little DOT as you want without worrying about the existential deposit.
+                    If you do not currently have any PDEX in your Polkadot.js account and wish to contribute less than 22 DOT, please buy at least 1 PDEX, so the account has existential deposit requirement and is in active state to receive the reward.
+                  </i>
+                </div>
+              </div>
+            </div>
+          )}
+
 
           {chainHasTerms && (
             <div className="row">

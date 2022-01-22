@@ -20,6 +20,14 @@ export const Astar = makeOverride({
   paraId: 2006,
   referrer: encodePolkadotAddressAsHexadecimalPublicKey('1564oSHxGVQEaSwHgeYKD1z1A8BXeuqL3hqBSWMA6zHmKnz1'),
 })
+export const Polkadex = makeOverride({
+  relayId: 0,
+  paraId: 2036,
+  terms: {
+    label: 'Zeitgeist Parachain Crowdloan Commitment Terms',
+    href: 'https://zeitgeist.pm/CrowdloanTerms.pdf',
+  },
+})
 export const Zeitgeist = makeOverride({
   relayId: 2,
   paraId: 2101,
