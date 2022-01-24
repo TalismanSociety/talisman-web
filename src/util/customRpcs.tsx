@@ -1,15 +1,15 @@
 const customRpcs: { [key: string]: string[] } = {
-  '0': [], // ['wss://polkadot.api.onfinality.io/ws?apikey=e1b2f3ea-f003-42f5-adf6-d2e6aa3ecfe4'], // Polkadot Relay
-  '0-1000': [], // ['wss://statemine.api.onfinality.io/ws?apikey=e1b2f3ea-f003-42f5-adf6-d2e6aa3ecfe4'], // Statemint
-  '0-2000': [], // ['wss://acal.api.onfinality.io/ws?apikey=e1b2f3ea-f003-42f5-adf6-d2e6aa3ecfe4'], // Acala
-  // '0-2001': [], // Bifrost
+  '0': ['wss://polkadot.api.onfinality.io/ws?apikey=e1b2f3ea-f003-42f5-adf6-d2e6aa3ecfe4'], // Polkadot Relay
+  '0-1000': [], // Statemint
+  '0-2000': [], // Acala
+  // '0-2001': [], // Bifrost (DOT)
   // '0-2002': [], // ['wss://clover.api.onfinality.io/ws?apikey=e1b2f3ea-f003-42f5-adf6-d2e6aa3ecfe4'], // Clover
   // '0-2003': [], // Darwinia
-  '0-2004': [], // ['wss://moonbeam.api.onfinality.io/ws?apikey=e1b2f3ea-f003-42f5-adf6-d2e6aa3ecfe4'], // Moonbeam
-  '0-2006': [], // ['wss://astar.api.onfinality.io/ws?apikey=e1b2f3ea-f003-42f5-adf6-d2e6aa3ecfe4'], // Astar
+  '0-2004': ['wss://moonbeam.api.onfinality.io/ws?apikey=e1b2f3ea-f003-42f5-adf6-d2e6aa3ecfe4'], // Moonbeam
+  '0-2006': ['wss://astar.api.onfinality.io/ws?apikey=e1b2f3ea-f003-42f5-adf6-d2e6aa3ecfe4'], // Astar
   '0-2008': [], // Crust
   '0-2011': [], // Equilibrium
-  '0-2012': [], // ['wss://parallel.api.onfinality.io/ws?apikey=e1b2f3ea-f003-42f5-adf6-d2e6aa3ecfe4'], // Parallel
+  '0-2012': ['wss://parallel.api.onfinality.io/ws?apikey=e1b2f3ea-f003-42f5-adf6-d2e6aa3ecfe4'], // Parallel
   // '0-2013': [], // Litentry
   '0-2015': [], // Manta
   '0-2017': [], // SubGame Gamma
@@ -23,15 +23,15 @@ const customRpcs: { [key: string]: string[] } = {
   '0-2032': [], // Interlay
   // '0-2034': [], // HydraDX
   // '0-2035': [], // Phala Network
-  '2': [], // ['wss://kusama.api.onfinality.io/ws?apikey=e1b2f3ea-f003-42f5-adf6-d2e6aa3ecfe4'], // Kusama Relay
-  '2-1000': [], // ['wss://statemine.api.onfinality.io/ws?apikey=e1b2f3ea-f003-42f5-adf6-d2e6aa3ecfe4'], // Statemine
+  '2': ['wss://kusama.api.onfinality.io/ws?apikey=e1b2f3ea-f003-42f5-adf6-d2e6aa3ecfe4'], // Kusama Relay
+  '2-1000': ['wss://statemine.api.onfinality.io/ws?apikey=e1b2f3ea-f003-42f5-adf6-d2e6aa3ecfe4'], // Statemine
   // '2-1001': [], // Encointer Network
-  '2-2000': [], // ['wss://karura.api.onfinality.io/ws?apikey=e1b2f3ea-f003-42f5-adf6-d2e6aa3ecfe4'], // Karura
-  '2-2001': [], // ['wss://bifrost-parachain.api.onfinality.io/ws?apikey=e1b2f3ea-f003-42f5-adf6-d2e6aa3ecfe4'], // Bifrost
-  '2-2004': [], // ['wss://khala.api.onfinality.io/ws?apikey=e1b2f3ea-f003-42f5-adf6-d2e6aa3ecfe4'], // Khala
+  '2-2000': ['wss://karura.api.onfinality.io/ws?apikey=e1b2f3ea-f003-42f5-adf6-d2e6aa3ecfe4'], // Karura
+  '2-2001': ['wss://bifrost-parachain.api.onfinality.io/ws?apikey=e1b2f3ea-f003-42f5-adf6-d2e6aa3ecfe4'], // Bifrost (KSM)
+  '2-2004': ['wss://khala.api.onfinality.io/ws?apikey=e1b2f3ea-f003-42f5-adf6-d2e6aa3ecfe4'], // Khala
   // '2-2005': [], // KILT Spiritnet
   // '2-2006': [], // Darwinia Crab Redirect
-  '2-2007': [], // ['wss://shiden.api.onfinality.io/ws?apikey=e1b2f3ea-f003-42f5-adf6-d2e6aa3ecfe4'], // Shiden
+  '2-2007': ['wss://shiden.api.onfinality.io/ws?apikey=e1b2f3ea-f003-42f5-adf6-d2e6aa3ecfe4'], // Shiden
   // '2-2008': [], // Mars
   // '2-2009': [], // PolkaSmith by PolkaFoundry
   // '2-2012': [], // Crust Shadow
@@ -42,7 +42,7 @@ const customRpcs: { [key: string]: string[] } = {
   // '2-2018': [], // SubGame Gamma
   // '2-2019': [], // Kpron
   // '2-2021': [], // Altair
-  '2-2023': [], // ['wss://moonriver.api.onfinality.io/ws?apikey=e1b2f3ea-f003-42f5-adf6-d2e6aa3ecfe4'], // Moonriver
+  '2-2023': ['wss://moonriver.api.onfinality.io/ws?apikey=e1b2f3ea-f003-42f5-adf6-d2e6aa3ecfe4'], // Moonriver
   // '2-2024': [], // Genshiro
   // '2-2048': [], // Robonomics
   // '2-2080': [], // Loom Network
