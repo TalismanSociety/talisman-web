@@ -3,6 +3,7 @@ import { calculateAssetPortfolioAmounts, usePortfolio, useTaggedAmountsInPortfol
 import { useAccountAddresses, useExtensionAutoConnect, useParachainDetailsById } from '@libs/talisman'
 import { useTokenPrice } from '@libs/tokenprices'
 import {
+  Balance,
   BalanceWithTokens,
   BalanceWithTokensWithPrice,
   addPriceToTokenBalances,
@@ -17,6 +18,13 @@ import { formatCommas, formatCurrency } from '@util/helpers'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
+
+const hasBalance = (balances: Array<Balance>, addresses?: Array<string>) => {
+  return balances
+    .filter(balance => balance !== null)
+    .filter(balance => addresses?.includes(balance.address))
+    .some(balance => balance.total !== '0')
+}
 
 const AssetItem = styled(({ id, balances, addresses, className }) => {
   const chain = useChain(id)
@@ -124,6 +132,31 @@ const MoonriverWalletInstructions = styled(({ className, id }) => {
   }
 `
 
+const AssetBalance = styled(({ id, balances, addresses }) => {
+  const { status, accounts } = useExtensionAutoConnect()
+  const { parachainDetails } = useParachainDetailsById(id)
+
+  const isMoonriver = ['Moonriver', 'Moonbeam'].includes(parachainDetails?.name as string)
+  const hasNoEthereumAddress = useMemo(
+    () => status === 'OK' && accounts.every(account => account.type !== 'ethereum'),
+    [status, accounts]
+  )
+
+  const shouldShowInstructions = isMoonriver && hasNoEthereumAddress
+  const isNetworkId = id === '0' || id === '2'
+
+  if (!isNetworkId) {
+    if (!hasBalance(balances, addresses) && !shouldShowInstructions) {
+      return null
+    }
+  }
+  return (
+    <PanelSection key={id}>
+      <AssetItem id={id} balances={balances} addresses={addresses} />
+    </PanelSection>
+  )
+})``
+
 const Assets = styled(({ className }) => {
   const { t } = useTranslation()
   const chainIds = useMemo(() => Object.keys(customRpcs), [])
@@ -149,11 +182,9 @@ const Assets = styled(({ className }) => {
     <section className={`wallet-assets ${className}`}>
       <Panel title={t('Assets')} subtitle={assetsUsd && formatCurrency(assetsUsd)}>
         <ExtensionStatusGate unavailable={<ExtensionUnavailable />}>
-          {Object.entries(balancesByChain).map(([chainId, balances]) => (
-            <PanelSection key={chainId}>
-              <AssetItem id={chainId} balances={balances} addresses={accountAddresses} />
-            </PanelSection>
-          ))}
+          {Object.entries(balancesByChain).map(([chainId, balances]) => {
+            return <AssetBalance key={chainId} id={chainId} balances={balances} addresses={accountAddresses} />
+          })}
         </ExtensionStatusGate>
       </Panel>
     </section>
