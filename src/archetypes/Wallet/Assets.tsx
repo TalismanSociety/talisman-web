@@ -142,10 +142,13 @@ const AssetBalance = styled(({ id, balances, addresses }) => {
     [status, accounts]
   )
 
-  const shoulsShowInstructions = isMoonriver && hasNoEthereumAddress
+  const shouldShowInstructions = isMoonriver && hasNoEthereumAddress
+  const isNetworkId = id === '0' || id === '2'
 
-  if (!hasBalance(balances, addresses) && !shoulsShowInstructions) {
-    return null
+  if (!isNetworkId) {
+    if (!hasBalance(balances, addresses) && !shouldShowInstructions) {
+      return null
+    }
   }
   return (
     <PanelSection key={id}>
