@@ -1,0 +1,30 @@
+{
+  "inProgress": {
+    "header": "Đang tiến hành",
+    "description": "Giao dịch đang được tiến hành. Có thể mất một chút thời gian để giao dịch được xác nhận.",
+    "primaryCta": "Xem trong Subscan",
+    "secondaryCta": "Đóng"
+  },
+  "success": {
+    "header": "Thành công",
+    "description": "Giao dịch của bạn đã thành công. Cảm ơn sự đóng góp của bạn",
+    "primaryCta": "Xem trong Subscan",
+    "secondaryCta": "Đi tới portfolio"
+  },
+  "failed": {
+    "header": "Thất bại",
+    "description": "Giao dịch của bạn thất bại.",
+    "primaryCta": "Xem trong Subscan",
+    "secondaryCta": "Đóng"
+  },
+  "registeringUser": {
+    "header": "Xác nhận với các điều khoản",
+    "description": "Nếu bạn nhấp vào \"Sign and Send\" Dưới đây, bạn đồng ý với các điều khoản và điều kiện của Moonbeam để Crowdloan được lưu trữ trên chuỗi vào tài khoản DOT của bạn.",
+    "feeNote": "Xin lưu ý rằng giao dịch này sẽ phải chịu phí giao dịch trên mạng Polkadot (khoảng 0,0411 DOT) và Polkadot có số dư tối thiểu là 1 DOT.",
+    "termsNote": "[View terms]",
+    "primaryCta": "Xác nhận"
+  },
+  "moonbeamPortflioTag": {
+    "You have unlinked addresses": "Địa chỉ chưa được liên kết",
+    "View linked addresses": "Địa chỉ đã kết nối"
+  }

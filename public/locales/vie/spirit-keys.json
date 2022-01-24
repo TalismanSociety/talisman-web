@@ -1,0 +1,34 @@
+{
+  "intro": "Khám phá Chìa khóa  để nhận các đặc quyền đặc biệt và là một trong những người đầu tiên dùng thử tiện ích mở rộng ví Talisman",
+  "Drag to unlock": "Kéo để mở khóa",
+  "no": "no",
+  "Done": "Hoàn thành",
+  "Send": "Gửi",
+  "altDownload": "Nhấp vào đây nếu quá trình tải xuống không thể bắt đầu sau 10 giây.",
+  "ownershipText_one": "Bạn sở hữu <1>{{total}}</1> Chìa khóa Spirit",
+  "ownershipText_other": "Bạn sở hữu <1>{{total}}</1> Chìa khóa Spirit",
+  "Send to a friend": "Gửi tới bạn bè",
+  "Explore Crowdloans": "Khám  Crowdloans",
+  "Error sending NFT": "Lỗi gửi NFT",
+  "Enter Kusama Address": "Nhập địa chỉ Kusama",
+  "willTakeFewMins": "Quá trình chuyển sẽ mất vài phút, vì vậy vui lòng tránh gửi lại.",
+  "whatIsInfo": {
+    "title": "Chìa khóa Spirit là gì?",
+    "description": "Spirit Key là một RMRK NFT đặc biệt, trong đó chỉ có 3333 chiếc. Người sở hữu sẽ có thể nhận các đặc quyền bao gồm:",
+    "list": [
+      "Cơ hội tham gia vào đợt phát hành Alpha của tiện ích mở rộng ví của chúng tôi",
+      "Các kênh được phép trong Discord của chúng tôi dành cho các thành viên Spirit Clan",
+      "Quyền truy cập sớm vào các tính năng mới trong ứng dụng web Talisman"
+    ]
+  },
+  "howToGetInfo": {
+    "title": "Tôi có thể lấy một cái ở đâu?",
+    "description": "Chìa khóa đã được nhìn thấy ở nhiều nơi khác nhau. Những nơi tốt nhất hiện tại để tìm chúng là:",
+    "list": [
+      "Talisman <1>Discord server</1>",
+      "Tham gia community call và sự kiện của cộng đồng",
+      "Theo dõi giveaways trên <1>Twitter</1>",
+      "Bằng cách review, sáng tạo nội dung hoặc truyền thông về Talisman"
+    ]
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "Portfolio value": "Tổng danh mục đầu tư",
+  "Assets": "Tài ",
+  "All Accounts": "Tất cả các tài ",
+  "Crowdloans": "Crowdloans",
+  "Staking": "Staking",
+  "This door will be unlocked soon": "Tính năng này sẽ sớm ra mắt ...",
+  "You have not contributed to any Crowdloans": "Bạn chưa tham gia Crowdloans ",
+  "Summoning Crowdloan Contributions...": "Đóng góp crowdloans...",
+  "Search Crowdloans": "Tìm kiếm Crowdloans",
+  "Raised": "Số tiền Crowdloans",
+  "Ends in": "Kết thúc sau",
+  "Contribute": "Đóng góp",
+  "Contributed": "Đã đóng góp",
+  "Rewards": "Rewards",
+  "Cancel": "Hủy",
+  "Contribute to": "Đóng góp cho Crowdloans",
+  "Sort by": "Sắp xếp theo",
+  "noResult": {
+    "title": "Sorry",
+    "subtitle": "Talisman không thể tìm thấy",
+    "text": "Thử lại"
+  },
+  "You have no": "Bạn không có",
+  "Buy": "Mua",
+  "Fee": "Phí",
+  "Add {{asset}} Balance": "Số dư thêm {{asset}} ",
+  "Unavailable": "Không có sẵn",
+  "extensionUnavailable": {
+    "title": "Oh no!",
+    "subtitle": "Có vẻ như bạn chưa cài đặt tiện ích mở rộng ví.",
+    "text": "Đừng lo lắng, chúng tôi đang xây dựng một cái mà bạn sẽ thích,",
+    "text2": "nhưng trong thời gian chờ đợi, chúng tôi khuyên bạn nên tải xuống Polkadot.js"
+  },
+  "Install Polkadot.js Extension": "Cài đặt  Polkadot.js Extension",
+  "Requires Configuration": "Yêu cầu cấu hình",
+  "desktopRequired": {
+    "title": "Sorry!",
+    "subtitle": "Tính năng này hiện chỉ khả dụng trên máy tính, chúng tôi sẽ sớm ra mắt phiên bản thân thiện với thiết bị di động.",
+    "text": "Trong thời gian chờ đợi, bạn có thể xem trang tổng quan Crowdloans của chúng tôi",
+    "primaryCta": "Xem Crowdloans"
+  },
+  "No wallet found": "Không tìm thấy ví",
+  "Goal reached": "Mục tiêu đã đạt được",
+  "Spirit Key": "Chìa khóa Spirit"
+}

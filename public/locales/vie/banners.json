@@ -1,0 +1,33 @@
+{
+  "explore": {
+    "header": "Xây dựng Paraverse",
+    "description": "Crowdloan giúp các dự án và nhóm gây quỹ để tham gia vào các cuộc đấu giá Parachain trên Polkadot và Kusama",
+    "primaryCta": "Khám phá Crowdloan"
+  },
+  "empty": {
+    "header": "Ví của bạn trống !",
+    "description": "Mua DOT và KSM bằng thẻ tín dụng hoặc tiền điện tử",
+    "primaryCta": "Mua DOT / KSM"
+  },
+  "soon": {
+    "header": "Coming soon",
+    "description": "Trong thời gian chờ đợi, bạn có thể kiểm tra Crowdloan.",
+    "primaryCta": "Khám phá Crowdloan"
+  },
+  "buy": {
+    "header": "Mua DOT / KSM",
+    "description": "Kiểm tra tiền",
+    "primaryCta": "Mua"
+  },
+  "unlockTalisman": {
+    "header": "Mở khóa Talisman",
+    "description": "Đóng góp DOT vào bất kỳ đợt Crowdloan nào và nhận được Spirit Key, bạn sẽ sớm cần đến nó ...",
+    "primaryCta": "Thêm thông tin"
+  },
+  "noWallet": {
+    "header": "Không!",
+    "description": "Có vẻ như bạn đã cài đặt tiện ích mở rộng ví. Chúng tôi khuyên bạn nên tải xuống <1> Polkadot.js </1>",
+    "description2": "Trong thời gian chờ đợi, bạn có thể kiểm tra Crowdloan.",
+    "primaryCta": "Khám phá Crowdloan"
+  }
+}
