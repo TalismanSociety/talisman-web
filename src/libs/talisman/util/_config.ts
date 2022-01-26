@@ -483,6 +483,21 @@ export const parachainDetails: ParachainDetails[] = [
     },
   },
   {
+    id: '2-2011',
+    name: 'Sora Kusama',
+    slug: 'sora-kusama',
+    token: 'XOR',
+    subtitle: 'The SORA Network provides tools for decentralized applications that use digital assets.',
+    info: ' The SORA Network excels at providing tools for decentralized applications that use digital assets, such as atomic token swaps, bridging tokens to other chains, and creating programmatic rules involving digital assets.',
+    links: {
+      Website: 'https://sora.org/',
+      Twitter: 'https://twitter.com/sora_xor',
+      Telegram: 'https://t.me/sora_xor',
+      Medium: 'https://sora-xor.medium.com/',
+      Github: 'https://github.com/sora-xor',
+    },
+  },
+  {
     id: '2-2012',
     name: 'Crust Shadow',
     slug: 'crust-shadow',
@@ -1500,6 +1515,37 @@ export const crowdloanDetails: CrowdloanDetails[] = [
         },
       ],
       info: 'After KSM contribution, 100% Red Kite point delivered immediately. After PolkaSmith wins, 35% of PKS delivered immediately and 65% PKS vested over 10 months',
+    },
+  },
+  {
+    relayId: 2,
+    paraId: 2011,
+    contributeUrl: '',
+    rewards: {
+      tokens: null,
+      custom: [
+        {
+          title: 'Total rewards',
+          value: '5000 XOR',
+        },
+        {
+          title: 'Used to buy PSWAP',
+          value: '2000 XOR',
+        },
+        {
+          title: 'Used to buy VAL',
+          value: '2000 XOR',
+        },
+        {
+          title: 'Converted to XSTUSD',
+          value: '500 XOR',
+        },
+        {
+          title: '500 XOR',
+          value: 'Distributed proportionally',
+        },
+      ],
+      info: '<a href="https://medium.com/sora-xor/the-sora-network-kusama-parachain-auction-5a6fe3a5f35f">Medium article</a> with more info on rewards.',
     },
   },
   {
