@@ -483,6 +483,21 @@ export const parachainDetails: ParachainDetails[] = [
     },
   },
   {
+    id: '2-2011',
+    name: 'Sora Kusama',
+    slug: 'sora-kusama',
+    token: 'XOR',
+    subtitle: 'The SORA Network provides tools for decentralized applications that use digital assets.',
+    info: ' The SORA Network excels at providing tools for decentralized applications that use digital assets, such as atomic token swaps, bridging tokens to other chains, and creating programmatic rules involving digital assets.',
+    links: {
+      Website: 'https://sora.org/',
+      Twitter: 'https://twitter.com/sora_xor',
+      Telegram: 'https://t.me/sora_xor',
+      Medium: 'https://sora-xor.medium.com/',
+      Github: 'https://github.com/sora-xor',
+    },
+  },
+  {
     id: '2-2012',
     name: 'Crust Shadow',
     slug: 'crust-shadow',
@@ -881,7 +896,22 @@ export const parachainDetails: ParachainDetails[] = [
       Github: 'https://github.com/darwinia-network/darwinia/tree/master/runtime/crab',
     },
   },
-
+  {
+    id: '2-2106',
+    name: 'Litmus',
+    slug: 'litmus',
+    token: 'LIT',
+    subtitle:'A Web3 identity hub on Kusama.',
+    info: `Litmus is the aptly named canary network for Litentry, a decentralised identity aggregation protocol for DotSama. The protocol provides a decentralized, interoperable identity aggregation service that mitigates the difficulty of resolving agnostic DID mechanisms. Litentry provides a secure vehicle through which users manage their identities and dApps obtain the real-time credit/reputation of an identity owner across different blockchains.`,
+    links: {
+      Website: 'https://kusama-crowdloan.litentry.com/',
+      Twitter: 'https://twitter.com/litentry',
+      Telegram: 'https://t.me/litentry',
+      Medium: 'https://litentry.medium.com//',
+      Github: 'https://github.com/litentry',
+      Discord: 'https://discord.gg/M7T4y4skVD'
+    },
+  },
 ]
 
 export type CrowdloanDetails = {
@@ -1504,6 +1534,37 @@ export const crowdloanDetails: CrowdloanDetails[] = [
   },
   {
     relayId: 2,
+    paraId: 2011,
+    contributeUrl: '',
+    rewards: {
+      tokens: null,
+      custom: [
+        {
+          title: 'Total rewards',
+          value: '5000 XOR',
+        },
+        {
+          title: 'Used to buy PSWAP',
+          value: '2000 XOR',
+        },
+        {
+          title: 'Used to buy VAL',
+          value: '2000 XOR',
+        },
+        {
+          title: 'Converted to XSTUSD',
+          value: '500 XOR',
+        },
+        {
+          title: '500 XOR',
+          value: 'Distributed proportionally',
+        },
+      ],
+      info: '<a href="https://medium.com/sora-xor/the-sora-network-kusama-parachain-auction-5a6fe3a5f35f">Medium article</a> with more info on rewards.',
+    },
+  },
+  {
+    relayId: 2,
     paraId: 2012,
     contributeUrl: '',
     rewards: {
@@ -2035,4 +2096,20 @@ export const crowdloanDetails: CrowdloanDetails[] = [
       info: 'If successful, these allocations will be distributed to users according to the number of KSM they supported. After contributing to the Crab crowdloan, there is no need to wait for tokens to finish vesting or getting listed.',
     },
   },
+  {
+    relayId:2,
+    paraId: 2106,
+    contributeUrl: 'https://kusama-crowdloan.litentry.com/',
+    rewards: {
+      tokens: [
+        {
+          symbol: 'LIT',
+          perKSM: '30 LIT',
+        },
+      ],
+      custom: null,
+      info: 'LIT rewards will be distributed linearly in each block. The distribution starts once the Litmus parachain runs on the Kusama relay chain and balance transfer is enabled. Distribution ends when the parachain slot expires (after 48 weeks).',
+    },
+  },
+
 ]
