@@ -1,6 +1,9 @@
+import '@talisman-connect/components/talisman-connect-components.esm.css'
+
 import { Crowdloan } from '@archetypes'
 import { Await, Field, Grid, NoResults } from '@components'
 import { trackGoal } from '@libs/fathom'
+import { WalletSelect } from '@talisman-connect/components'
 import { device } from '@util/breakpoints'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
@@ -175,6 +178,11 @@ const Index = styled(({ withFilter, className }) => {
         {/* <PopularCrowdloans /> */}
         {/* <LearnCrowdloansBanner />*/}
         {/* <UnlockTalismanBanner /> */}
+        <WalletSelect
+          onAccountSelected={account => {
+            console.log(`>>> selected account`, account)
+          }}
+        />
       </div>
       {withFilter && <FilterBar {...filterProps} count={count} />}
       <Await until={!loading}>

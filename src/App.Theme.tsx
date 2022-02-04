@@ -62,6 +62,12 @@ const Style = createGlobalStyle`
     --padding: 2.2rem 3rem;
     --padding-large: 4.2rem 4rem;
     --padding-small: 1.1rem 1.5rem;
+
+    /* modal */
+    --talisman-modal-border-radius: 1rem;
+    --talisman-modal-gutter: 2.4rem;
+    --talisman-modal-color-background: #222;
+    --talisman-modal-color-text: #fafafa;
   }
 
   @font-face {

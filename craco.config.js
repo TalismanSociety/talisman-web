@@ -1,7 +1,6 @@
 const path = require('path')
 const { getLoader, loaderByName } = require('@craco/craco')
 const CracoAlias = require('craco-alias')
-const ImportMetaLoader = require('@open-wc/webpack-import-meta-loader')
 
 const isDevelopment = process.env.NODE_ENV === 'development'
 const talismanLibsFastRefresh = process.env.TALISMAN_LIBS_FAST_REFRESH === 'true'
@@ -14,6 +13,8 @@ const StyledComponentsPlugin = {
       if (!Array.isArray(cracoConfig.babel.plugins)) cracoConfig.babel.plugins = []
 
       cracoConfig.babel.plugins.push('babel-plugin-styled-components')
+      cracoConfig.babel.plugins.push('@babel/plugin-proposal-class-properties')
+      cracoConfig.babel.plugins.push('@babel/plugin-proposal-private-methods')
 
       return cracoConfig
     },
