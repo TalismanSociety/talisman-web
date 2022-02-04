@@ -912,6 +912,22 @@ export const parachainDetails: ParachainDetails[] = [
       Discord: 'https://discord.gg/M7T4y4skVD'
     },
   },
+  {
+    id: '2-2107',
+    name: 'Kico',
+    slug: 'Kico',
+    token: 'KICO',
+    subtitle:'KICO is the canary network for DICO.',
+    info: `The DICO chain creates a decentralized and governable ICO platform for the Polkadot environment. We provide a decentralized platform, which heavily supports its projects.`,
+    links: {
+      Website: 'https://dico.io/',
+      Twitter: 'https://twitter.com/DICO03279704',
+      Telegram: 'https://t.me/dicochain',
+      Medium: 'https://medium.com/@DearICO/',
+      Github: 'https://github.com/DICO-TEAM',
+      Discord: 'https://discord.com/invite/V2MASPX3Ra'
+    },
+  },
 ]
 
 export type CrowdloanDetails = {
@@ -2111,5 +2127,21 @@ export const crowdloanDetails: CrowdloanDetails[] = [
       info: 'LIT rewards will be distributed linearly in each block. The distribution starts once the Litmus parachain runs on the Kusama relay chain and balance transfer is enabled. Distribution ends when the parachain slot expires (after 48 weeks).',
     },
   },
+  {
+    relayId:2,
+    paraId: 2107,
+    contributeUrl: '',
+    rewards: {
+      tokens: [
+        {
+          symbol: 'KICO',
+          perKSM: '20,000 KICO',
+        },
+      ],
+      custom: null,
+      info: 'After the launch of the main network, 30% of KICO tokens will be released directly, and the remaining 48 weeks of linear release will be completed.',
+    },
+  },
+
 
 ]
