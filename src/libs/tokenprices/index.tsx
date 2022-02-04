@@ -110,7 +110,8 @@ function _useTokenPrices(coins: Coin[]): [TokenPrices, (token: string) => void] 
 
   const addToken = useCallback(
     (token: string) => {
-      const coinCandidates = coins.filter(coin => coin.symbol === token.toLowerCase())
+      let coinCandidates = coins.filter(coin => coin.symbol === token.toLowerCase())
+      coinCandidates = coinCandidates.filter(candidate => (candidate.id !== "paralink-network"))
       if (coinCandidates.length < 1) {
         console.error(`Failed to find token ${token}`)
         setTokenPrices(tokenPrices => ({ ...tokenPrices, [token]: { token, loading: false } }))
