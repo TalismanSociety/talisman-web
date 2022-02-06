@@ -66,8 +66,8 @@ const Style = createGlobalStyle`
     /* modal */
     --talisman-modal-border-radius: 1rem;
     --talisman-modal-gutter: 2.4rem;
-    --talisman-modal-color-background: #222;
-    --talisman-modal-color-text: #fafafa;
+    --talisman-modal-background: #fafafa;
+    --talisman-modal-color-text: #222;
   }
 
   @font-face {

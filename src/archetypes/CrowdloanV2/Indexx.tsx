@@ -3,7 +3,7 @@ import '@talisman-connect/components/talisman-connect-components.esm.css'
 import { Crowdloan } from '@archetypes'
 import { Await, Field, Grid, NoResults } from '@components'
 import { trackGoal } from '@libs/fathom'
-import { WalletSelect } from '@talisman-connect/components'
+import { WalletConnectButton, WalletSelect } from '@talisman-connect/components'
 import { device } from '@util/breakpoints'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
@@ -179,6 +179,15 @@ const Index = styled(({ withFilter, className }) => {
         {/* <LearnCrowdloansBanner />*/}
         {/* <UnlockTalismanBanner /> */}
         <WalletSelect
+          triggerComponent={
+            <WalletConnectButton
+              onClick={wallet => {
+                console.log(`>>> wallet`, wallet)
+              }}
+            >
+              Connect wallet
+            </WalletConnectButton>
+          }
           onAccountSelected={account => {
             console.log(`>>> selected account`, account)
           }}
