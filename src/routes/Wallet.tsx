@@ -1,6 +1,7 @@
 import { Account, Wallet } from '@archetypes'
 import { StateBanner } from '@archetypes/StateBanner'
 import { DesktopRequired } from '@components'
+import { WalletSelect } from '@talisman-connect/components'
 import { device } from '@util/breakpoints'
 import { isMobileBrowser } from '@util/helpers'
 import styled from 'styled-components'
@@ -18,6 +19,18 @@ const _Wallet = styled(({ className }) => {
           <StateBanner />
         </div>
       </header>
+      <WalletSelect
+        triggerComponent={<button>Switch wallet</button>}
+        onWalletSelected={wallet => {
+          localStorage.removeItem('talisman-wallet-connected')
+          localStorage.setItem('@talisman-connect/selected-wallet-name', wallet.extensionName)
+
+          const walletSelectedEvent = new CustomEvent('wallet-selected', {
+            detail: wallet,
+          })
+          document.dispatchEvent(walletSelectedEvent)
+        }}
+      />
       <Wallet.Assets />
       <Wallet.Crowdloans />
       <Wallet.Staking />

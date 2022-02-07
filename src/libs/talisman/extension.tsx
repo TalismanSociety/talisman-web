@@ -1,6 +1,7 @@
 import { trackGoal } from '@libs/fathom'
 import { Signer } from '@polkadot/api/types'
 import { InjectedProvider } from '@polkadot/extension-inject/types'
+import { getWalletBySource } from '@talisman-connect/wallets'
 import { isWeb3Injected, web3Enable } from '@talismn/dapp-connect'
 import {
   PropsWithChildren,
@@ -83,6 +84,17 @@ export const Provider = ({ children }: PropsWithChildren<{}>) => {
   }, [])
 
   useEffect(() => {
+    const onWalletSelected = (e: unknown) => {
+      console.log(`>>> onWalletSelected`, e)
+      recheck()
+    }
+    document.addEventListener('wallet-selected', onWalletSelected)
+    return () => {
+      document.removeEventListener('wallet-selected', onWalletSelected)
+    }
+  }, [recheck])
+
+  useEffect(() => {
     if (!shouldConnect && !localStorage.getItem('talisman-wallet-connected')) {
       setStatus('DISCONNECTED')
       return
@@ -96,10 +108,19 @@ export const Provider = ({ children }: PropsWithChildren<{}>) => {
     let cancelled = false
 
     ;(async () => {
-      const injectedExtensions = await web3Enable(process.env.REACT_APP_APPLICATION_NAME || 'Talisman')
-      const extension =
-        injectedExtensions.find(ext => ext.name === 'talisman') ||
-        injectedExtensions.find(ext => ext.name === 'polkadot-js')
+      // const injectedExtensions = await web3Enable(process.env.REACT_APP_APPLICATION_NAME || 'Talisman')
+      // const extension =
+      //   injectedExtensions.find(ext => ext.name === 'talisman') ||
+      //   injectedExtensions.find(ext => ext.name === 'polkadot-js')
+      // console.log(`>>> extension`, extension)
+
+      const selectedWalletName = localStorage.getItem('@talisman-connect/selected-wallet-name')
+      const wallet = getWalletBySource(selectedWalletName as string)
+
+      await wallet?.enable()
+
+      const extension = wallet?.extension
+      console.log(`>>> extension`, selectedWalletName, wallet, extension)
 
       if (!isWeb3Injected) {
         if (!cancelled) setStatus('UNAVAILABLE')
