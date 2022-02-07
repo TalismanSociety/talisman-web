@@ -80,7 +80,7 @@ export const Provider = ({ children }: PropsWithChildren<{}>) => {
   const connect = useCallback(() => {
     setStatus(status => (status === 'DISCONNECTED' ? 'LOADING' : status))
     setShouldConnect(true)
-    localStorage.setItem('talisman-wallet-connected', 'true')
+    // localStorage.setItem('talisman-wallet-connected', 'true')
   }, [])
 
   useEffect(() => {
@@ -95,10 +95,10 @@ export const Provider = ({ children }: PropsWithChildren<{}>) => {
   }, [recheck])
 
   useEffect(() => {
-    if (!shouldConnect && !localStorage.getItem('talisman-wallet-connected')) {
-      setStatus('DISCONNECTED')
-      return
-    }
+    // if (!shouldConnect && !localStorage.getItem('talisman-wallet-connected')) {
+    //   setStatus('DISCONNECTED')
+    //   return
+    // }
 
     if (recheckId) {
       // do nothing
@@ -137,9 +137,9 @@ export const Provider = ({ children }: PropsWithChildren<{}>) => {
         setAccounts(accounts)
         setStatus(accounts.length < 1 ? 'NOACCOUNT' : 'OK')
 
-        if (!localStorage.getItem('talisman-wallet-connected') && accounts.length < 1) {
-          localStorage.setItem('talisman-wallet-connected', 'true')
-        }
+        // if (!localStorage.getItem('talisman-wallet-connected') && accounts.length < 1) {
+        //   localStorage.setItem('talisman-wallet-connected', 'true')
+        // }
 
         trackGoal('XNNVIVMR', accounts.length) // total_accounts_polkadotjs
       })
