@@ -305,11 +305,24 @@ const Unavailable = styled(({ className }) => {
 const NoAccount = styled(({ className }) => {
   const { t } = useTranslation()
   return (
-    <Button className={`account-button ${className}`}>
-      {`Polkadot{.js}`}
-      <br />
-      <span className="subtext">{t('Requires Configuration')}</span>
-    </Button>
+    <WalletSelect
+      triggerComponent={
+        <Button className={`account-button ${className}`}>
+          {`Polkadot{.js}`}
+          <br />
+          <span className="subtext">{t('Requires Configuration')}</span>
+        </Button>
+      }
+      onWalletSelected={wallet => {
+        localStorage.removeItem('talisman-wallet-connected')
+        localStorage.setItem('@talisman-connect/selected-wallet-name', wallet.extensionName)
+
+        const walletSelectedEvent = new CustomEvent('wallet-selected', {
+          detail: wallet,
+        })
+        document.dispatchEvent(walletSelectedEvent)
+      }}
+    />
   )
 })`
   text-align: center;
@@ -327,11 +340,24 @@ const NoAccount = styled(({ className }) => {
 
 const Unauthorized = styled(({ className }) => {
   return (
-    <Button className={`account-button ${className}`}>
-      {`Polkadot{.js}`}
-      <br />
-      <span className="subtext">Requires Authorization</span>
-    </Button>
+    <WalletSelect
+      triggerComponent={
+        <Button className={`account-button ${className}`}>
+          {`Polkadot{.js}`}
+          <br />
+          <span className="subtext">Requires Authorization</span>
+        </Button>
+      }
+      onWalletSelected={wallet => {
+        localStorage.removeItem('talisman-wallet-connected')
+        localStorage.setItem('@talisman-connect/selected-wallet-name', wallet.extensionName)
+
+        const walletSelectedEvent = new CustomEvent('wallet-selected', {
+          detail: wallet,
+        })
+        document.dispatchEvent(walletSelectedEvent)
+      }}
+    />
   )
 })`
   text-align: center;
@@ -400,74 +426,92 @@ const Authorized = styled(
       tokenBalancesByAddress[address].map(balance => balance?.tokens).reduce(addBigNumbers, undefined)
 
     return (
-      <div
-        ref={nodeRef}
-        className="account-switcher-pill"
-        style={{
-          display: 'inline-flex',
-          background: 'var(--color-controlBackground)',
-          borderRadius: '1rem',
-        }}
-        onClick={() => setOpen(!open)}
-      >
-        <span className={`account-button${hasManyAccounts ? ' has-many-accounts' : ''} ${className}`}>
-          {hasActiveAccount ? (
-            <Identicon className="identicon" value={address} theme={type === 'ethereum' ? 'ethereum' : 'polkadot'} />
-          ) : (
-            <Identicon
-              className="identicon"
-              Custom={AllAccountsIcon}
-              value="5DHuDfmwzykE9KVmL87DLjAbfSX7P4f4wDW5CKx8QZnQA4FK"
-              theme="polkadot"
-            />
-          )}
-          <span className="selected-account">
-            <div>{hasActiveAccount ? name : allAccounts ? t('All Accounts') : 'Loading...'}</div>
-            {showValue && (
-              <div>
-                {
-                  // show usd when no chainId specified
-                  !hasParachainId ? (
-                    <Pendor prefix={!usd && '-'}>{usd && formatCurrency(usd)}</Pendor>
-                  ) : (
-                    <span className="selected-account-balance">
-                      <Pendor suffix={` ${nativeToken}`}>
-                        {totalBalanceByAddress === '0' && <AlertCircle />}
-                        {totalBalanceByAddress && formatCommas(totalBalanceByAddress)}
-                      </Pendor>
-                    </span>
-                  )
-                }
-              </div>
+      <div>
+        <WalletSelect
+          triggerComponent={
+            <span style={{ textDecoration: 'underline', color: 'inherit', opacity: 'inherit', cursor: 'pointer' }}>
+              Switch
+            </span>
+          }
+          onWalletSelected={wallet => {
+            localStorage.removeItem('talisman-wallet-connected')
+            localStorage.setItem('@talisman-connect/selected-wallet-name', wallet.extensionName)
+
+            const walletSelectedEvent = new CustomEvent('wallet-selected', {
+              detail: wallet,
+            })
+            document.dispatchEvent(walletSelectedEvent)
+          }}
+        />
+        <div
+          ref={nodeRef}
+          className="account-switcher-pill"
+          style={{
+            display: 'inline-flex',
+            background: 'var(--color-controlBackground)',
+            borderRadius: '1rem',
+          }}
+          onClick={() => setOpen(!open)}
+        >
+          <span className={`account-button${hasManyAccounts ? ' has-many-accounts' : ''} ${className}`}>
+            {hasActiveAccount ? (
+              <Identicon className="identicon" value={address} theme={type === 'ethereum' ? 'ethereum' : 'polkadot'} />
+            ) : (
+              <Identicon
+                className="identicon"
+                Custom={AllAccountsIcon}
+                value="5DHuDfmwzykE9KVmL87DLjAbfSX7P4f4wDW5CKx8QZnQA4FK"
+                theme="polkadot"
+              />
             )}
+            <span className="selected-account">
+              <div>{hasActiveAccount ? name : allAccounts ? t('All Accounts') : 'Loading...'}</div>
+              {showValue && (
+                <div>
+                  {
+                    // show usd when no chainId specified
+                    !hasParachainId ? (
+                      <Pendor prefix={!usd && '-'}>{usd && formatCurrency(usd)}</Pendor>
+                    ) : (
+                      <span className="selected-account-balance">
+                        <Pendor suffix={` ${nativeToken}`}>
+                          {totalBalanceByAddress === '0' && <AlertCircle />}
+                          {totalBalanceByAddress && formatCommas(totalBalanceByAddress)}
+                        </Pendor>
+                      </span>
+                    )
+                  }
+                </div>
+              )}
+            </span>
+
+            {narrow ? (
+              <ChevronDown style={{ margin: '0 1rem 0 0.8rem', visibility: hasManyAccounts ? 'visible' : 'hidden' }} />
+            ) : (
+              <Button.Icon
+                className="nav-toggle"
+                onClick={(e: any) => {
+                  e.stopPropagation()
+                  setOpen(!open)
+                }}
+              >
+                <ChevronDown />
+              </Button.Icon>
+            )}
+
+            <Dropdown
+              open={open}
+              handleClose={() => setOpen(false)}
+              allAccounts={allAccounts}
+              nativeToken={nativeToken}
+              tokenBalancesByAddress={tokenBalancesByAddress}
+              totalBalanceByAddress={totalBalanceByAddress}
+              closeParent={closeParent}
+              showBuy={showBuy}
+              parachainId={parachainId}
+            />
           </span>
-
-          {narrow ? (
-            <ChevronDown style={{ margin: '0 1rem 0 0.8rem', visibility: hasManyAccounts ? 'visible' : 'hidden' }} />
-          ) : (
-            <Button.Icon
-              className="nav-toggle"
-              onClick={(e: any) => {
-                e.stopPropagation()
-                setOpen(!open)
-              }}
-            >
-              <ChevronDown />
-            </Button.Icon>
-          )}
-
-          <Dropdown
-            open={open}
-            handleClose={() => setOpen(false)}
-            allAccounts={allAccounts}
-            nativeToken={nativeToken}
-            tokenBalancesByAddress={tokenBalancesByAddress}
-            totalBalanceByAddress={totalBalanceByAddress}
-            closeParent={closeParent}
-            showBuy={showBuy}
-            parachainId={parachainId}
-          />
-        </span>
+        </div>
       </div>
     )
   }

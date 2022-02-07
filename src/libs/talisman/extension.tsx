@@ -114,7 +114,7 @@ export const Provider = ({ children }: PropsWithChildren<{}>) => {
       await wallet?.enable()
 
       const extension = wallet?.extension
-      console.log(`>>> extension`, selectedWalletName, wallet, extension)
+      // console.log(`>>> extension`, selectedWalletName, wallet, extension)
 
       if (!isWeb3Injected) {
         if (!cancelled) setStatus('UNAVAILABLE')
