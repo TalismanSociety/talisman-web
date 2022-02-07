@@ -138,7 +138,7 @@ export const Provider = ({ children }: PropsWithChildren<{}>) => {
 
       trackGoal('4RJ4JXDB', 1) // wallet_connected_polkadotjs
 
-      unsub = extension.accounts.subscribe(accounts => {
+      unsub = extension.accounts.subscribe((accounts: Account[]) => {
         if (cancelled) return
         setAccounts(accounts)
         setStatus(accounts.length < 1 ? 'NOACCOUNT' : 'OK')
@@ -150,7 +150,7 @@ export const Provider = ({ children }: PropsWithChildren<{}>) => {
         trackGoal('XNNVIVMR', accounts.length) // total_accounts_polkadotjs
       })
 
-      if (cancelled) unsub()
+      if (cancelled) unsub?.()
     })()
 
     return () => {
