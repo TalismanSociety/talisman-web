@@ -26,7 +26,7 @@
   },
   "noWallet": {
     "header": "Oh non!",
-    "description": "Il ne semble pas que vous ayez installé une extension de portefeuille. Nous vous recommandons de télécharger <1>Polkadot.js</1>",
+    "description": "Il ne semble pas que vous ayez installé une extension de portefeuille. Nous vous recommandons de télécharger <1>Talisman Wallet.</1>",
     "description2": "En attendant, vous pouvez voir ce qui ce passe du côté des Crowdloans.",
     "primaryCta": "Voir les Crowdloans"
   }

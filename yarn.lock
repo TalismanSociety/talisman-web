@@ -3082,29 +3082,29 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@talisman-connect/components@npm:^0.0.12":
-  version: 0.0.12
-  resolution: "@talisman-connect/components@npm:0.0.12"
+"@talisman-connect/components@npm:latest":
+  version: 0.0.14
+  resolution: "@talisman-connect/components@npm:0.0.14"
   dependencies:
-    "@talisman-connect/wallets": ^0.0.6
+    "@talisman-connect/wallets": ^0.0.7
   peerDependencies:
     react: 17.0.2
     react-dom: 17.0.2
     regenerator-runtime: 0.13.7
     tslib: ^2.0.0
-  checksum: 4bb3e2ab5fab0d0461672b5fc712a5a7771b9ea3fe2c6036227c59a3fb7e7821527dbd3ca66227a62613d84ed674806932a225cb4b54a13a5035bc953479ab77
+  checksum: 7d3a7416bd22beee63e75a8af4c3dc2d56047c29c7e421ac75297f2d3bc07e1146081c6fd87af84a183f2253937f843fd4eb1a0c6aa3097a93a723eb716769f8
   languageName: node
   linkType: hard
 
-"@talisman-connect/wallets@npm:^0.0.6":
-  version: 0.0.6
-  resolution: "@talisman-connect/wallets@npm:0.0.6"
+"@talisman-connect/wallets@npm:^0.0.7":
+  version: 0.0.7
+  resolution: "@talisman-connect/wallets@npm:0.0.7"
   dependencies:
     "@polkadot/extension-dapp": ^0.42.7
   peerDependencies:
     regenerator-runtime: 0.13.7
     tslib: ^2.0.0
-  checksum: f9c84a0f0e4394bf19d5b7cdfe1ab581f0ca6bfdd69bbce13ecaaa7ef595d116c9b6ecf5e5eeffab3be6c5df851f23800d52d115c630dbec38af98b2a6c7bcb2
+  checksum: 3e7dc187a864cfcdea70889394f0ad35dff9ad04040c7b1aec2d643cc0ae6cc7208f4817373c22e5a7bb38df7844e72def581c5bc111f4ef21c4db8e1b072c23
   languageName: node
   linkType: hard
 
@@ -3197,7 +3197,7 @@ __metadata:
     "@polkadot/util": ^7.4.1
     "@polkadot/util-crypto": ^7.4.1
     "@ramp-network/ramp-instant-sdk": ^2.5.0
-    "@talisman-connect/components": ^0.0.12
+    "@talisman-connect/components": latest
     "@talismn/api-react-hooks": ~0
     "@talismn/chaindata-js": ~0
     "@talismn/dapp-connect": ^0.1.2

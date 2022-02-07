@@ -6,6 +6,7 @@ import { ReactComponent as ChevronDown } from '@icons/chevron-down.svg'
 import { usePortfolio } from '@libs/portfolio'
 import { useActiveAccount, useChainByGenesis, useExtensionAutoConnect } from '@libs/talisman'
 import Identicon from '@polkadot/react-identicon'
+import { WalletSelect } from '@talisman-connect/components'
 import { addTokensToBalances, groupBalancesByAddress, useBalances, useChain } from '@talismn/api-react-hooks'
 import { addBigNumbers, encodeAnyAddress, useFuncMemo } from '@talismn/util'
 import { device } from '@util/breakpoints'
@@ -265,12 +266,25 @@ const Dropdown = styled(
 const Unavailable = styled(({ className }) => {
   const { t } = useTranslation()
   return (
-    <div className={className}>
-      <span className="icon">
-        <AlertCircle />
-      </span>
-      <span>{t('No wallet found')}</span>
-    </div>
+    <WalletSelect
+      triggerComponent={
+        <div className={className} style={{ cursor: 'pointer' }}>
+          <span className="icon">
+            <AlertCircle />
+          </span>
+          <span>{t('No wallet found')}</span>
+        </div>
+      }
+      onWalletSelected={wallet => {
+        localStorage.removeItem('talisman-wallet-connected')
+        localStorage.setItem('@talisman-connect/selected-wallet-name', wallet.extensionName)
+
+        const walletSelectedEvent = new CustomEvent('wallet-selected', {
+          detail: wallet,
+        })
+        document.dispatchEvent(walletSelectedEvent)
+      }}
+    />
   )
 })`
   display: flex;

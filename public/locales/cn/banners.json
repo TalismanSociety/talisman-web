@@ -26,7 +26,7 @@
   },
   "noWallet": {
     "header": "惨了！",
-    "description": "看起来你没有安装钱包扩展，我们建议暂时下载 <1>Polkadot.js</1>",
+    "description": "看起来你没有安装钱包扩展，我们建议暂时下载 <1>Talisman Wallet.</1>",
     "description2": "在此期间，您可以查看众贷",
     "primaryCta": "探索众贷"
   }
