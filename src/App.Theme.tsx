@@ -64,10 +64,19 @@ const Style = createGlobalStyle`
     --padding-small: 1.1rem 1.5rem;
 
     /* modal */
-    --talisman-modal-border-radius: 1rem;
-    --talisman-modal-gutter: 2.4rem;
-    --talisman-modal-background: #fafafa;
-    --talisman-modal-color-text: #222;
+    --talisman-connect-modal-gutter: 3.4rem;
+    --talisman-connect-border-radius: 2rem;
+
+    --talisman-connect-control-background: #383838;
+    --talisman-connect-control-foreground: inherit;
+    --talisman-connect-active-background: #5a5a5a;
+    --talisman-connect-active-foreground: inherit;
+    --talisman-connect-modal-background: #222;
+    --talisman-connect-modal-foreground: #fafafa;
+    --talisman-connect-button-background: var(
+      --talisman-connect-control-background
+    );
+    --talisman-connect-button-foreground: #fafafa;
   }
 
   @font-face {
