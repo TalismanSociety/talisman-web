@@ -108,12 +108,6 @@ export const Provider = ({ children }: PropsWithChildren<{}>) => {
     let cancelled = false
 
     ;(async () => {
-      // const injectedExtensions = await web3Enable(process.env.REACT_APP_APPLICATION_NAME || 'Talisman')
-      // const extension =
-      //   injectedExtensions.find(ext => ext.name === 'talisman') ||
-      //   injectedExtensions.find(ext => ext.name === 'polkadot-js')
-      // console.log(`>>> extension`, extension)
-
       const selectedWalletName = localStorage.getItem('@talisman-connect/selected-wallet-name')
       const wallet = getWalletBySource(selectedWalletName as string)
 
