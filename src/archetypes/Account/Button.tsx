@@ -364,6 +364,7 @@ const Authorized = styled(
     closeParent = null,
     showBuy = false,
     fixedDropdown = false,
+    showDisconnect = false,
     parachainId,
   }) => {
     const { t } = useTranslation()
@@ -431,21 +432,23 @@ const Authorized = styled(
           )}
           <span className="selected-account">
             <div>{hasActiveAccount ? name : allAccounts ? t('All Accounts') : 'Loading...'}</div>
-            <span
-              style={{
-                fontSize: 'small',
-                textDecoration: 'underline',
-                color: 'inherit',
-                opacity: 'inherit',
-                cursor: 'pointer',
-              }}
-              onClick={() => {
-                localStorage.removeItem('@talisman-connect/selected-wallet-name')
-                document.dispatchEvent(new CustomEvent('@talisman-connect/wallet-selected'))
-              }}
-            >
-              Disconnect
-            </span>
+            {showDisconnect && (
+              <span
+                style={{
+                  fontSize: 'small',
+                  textDecoration: 'underline',
+                  color: 'inherit',
+                  opacity: 'inherit',
+                  cursor: 'pointer',
+                }}
+                onClick={() => {
+                  localStorage.removeItem('@talisman-connect/selected-wallet-name')
+                  document.dispatchEvent(new CustomEvent('@talisman-connect/wallet-selected'))
+                }}
+              >
+                Disconnect
+              </span>
+            )}
             {showValue && (
               <div>
                 {
