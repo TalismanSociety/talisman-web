@@ -70,7 +70,6 @@ async function setupInjector(nftObject: NFTConsolidated) {
     // Need to ditch `web3Enable` requirement as it pops up all polkadot based extensions.
     await web3Enable(process.env.REACT_APP_APPLICATION_NAME || 'Talisman')
     const injector = await web3FromAddress(nftObject?.owner)
-    console.log(`>>> injector`, injector)
     return injector
   } catch (err) {
     console.log('>>> setupInjector', err)
