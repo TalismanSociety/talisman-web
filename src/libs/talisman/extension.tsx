@@ -83,7 +83,6 @@ export const Provider = ({ children }: PropsWithChildren<{}>) => {
 
   useEffect(() => {
     const onWalletSelected = async (e: unknown) => {
-      console.log(`>>> onWalletSelected`, e)
       recheck()
     }
     document.addEventListener('@talisman-connect/wallet-selected', onWalletSelected)

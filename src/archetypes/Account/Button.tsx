@@ -7,6 +7,7 @@ import { usePortfolio } from '@libs/portfolio'
 import { useActiveAccount, useChainByGenesis, useExtensionAutoConnect } from '@libs/talisman'
 import Identicon from '@polkadot/react-identicon'
 import { WalletSelect } from '@talisman-connect/components'
+import { getWallets } from '@talisman-connect/wallets'
 import { addTokensToBalances, groupBalancesByAddress, useBalances, useChain } from '@talismn/api-react-hooks'
 import { addBigNumbers, encodeAnyAddress, useFuncMemo } from '@talismn/util'
 import { device } from '@util/breakpoints'
@@ -265,20 +266,20 @@ const Dropdown = styled(
 
 const Unavailable = styled(({ className }) => {
   const { t } = useTranslation()
+  const [title, setTitle] = useState<string | undefined>()
+  useEffect(() => {
+    const wallets = getWallets()
+    const installed = wallets.filter(wallet => wallet.installed)
+    setTitle(installed.length > 0 ? 'Connect wallet' : 'No wallet found')
+  }, [])
   return (
     <WalletSelect
       triggerComponent={
-        <div
-          className={className}
-          style={{ cursor: 'pointer' }}
-          onClick={wallet => {
-            console.log(`>>> selected wallet`, wallet)
-          }}
-        >
+        <div className={className} style={{ cursor: 'pointer' }}>
           <span className="icon">
             <AlertCircle />
           </span>
-          <span>{t('No wallet found')}</span>
+          {title && <span>{t(title)}</span>}
         </div>
       }
       onWalletSelected={wallet => {}}
