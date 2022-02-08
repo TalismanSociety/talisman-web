@@ -2,7 +2,6 @@ import { trackGoal } from '@libs/fathom'
 import { Signer } from '@polkadot/api/types'
 import { InjectedProvider } from '@polkadot/extension-inject/types'
 import { getWalletBySource } from '@talisman-connect/wallets'
-import { isWeb3Injected } from '@talismn/dapp-connect'
 import {
   PropsWithChildren,
   useContext as _useContext,
@@ -80,11 +79,10 @@ export const Provider = ({ children }: PropsWithChildren<{}>) => {
   const connect = useCallback(() => {
     setStatus(status => (status === 'DISCONNECTED' ? 'LOADING' : status))
     setShouldConnect(true)
-    // localStorage.setItem('talisman-wallet-connected', 'true')
   }, [])
 
   useEffect(() => {
-    const onWalletSelected = (e: unknown) => {
+    const onWalletSelected = async (e: unknown) => {
       console.log(`>>> onWalletSelected`, e)
       recheck()
     }
@@ -95,10 +93,10 @@ export const Provider = ({ children }: PropsWithChildren<{}>) => {
   }, [recheck])
 
   useEffect(() => {
-    // if (!shouldConnect && !localStorage.getItem('talisman-wallet-connected')) {
-    //   setStatus('DISCONNECTED')
-    //   return
-    // }
+    if (!shouldConnect && !localStorage.getItem('@talisman-connect/selected-wallet-name')) {
+      setStatus('DISCONNECTED')
+      return
+    }
 
     if (recheckId) {
       // do nothing
@@ -114,9 +112,8 @@ export const Provider = ({ children }: PropsWithChildren<{}>) => {
       await wallet?.enable()
 
       const extension = wallet?.extension
-      // console.log(`>>> extension`, selectedWalletName, wallet, extension)
 
-      if (!isWeb3Injected) {
+      if (!wallet?.installed) {
         if (!cancelled) setStatus('UNAVAILABLE')
         return
       }
@@ -136,11 +133,6 @@ export const Provider = ({ children }: PropsWithChildren<{}>) => {
         if (cancelled) return
         setAccounts(accounts)
         setStatus(accounts.length < 1 ? 'NOACCOUNT' : 'OK')
-
-        // if (!localStorage.getItem('talisman-wallet-connected') && accounts.length < 1) {
-        //   localStorage.setItem('talisman-wallet-connected', 'true')
-        // }
-
         trackGoal('XNNVIVMR', accounts.length) // total_accounts_polkadotjs
       })
 

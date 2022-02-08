@@ -22,15 +22,7 @@ export const NoWalletBanner = () => {
                   Talisman Wallet.
                 </span>
               }
-              onWalletSelected={wallet => {
-                localStorage.removeItem('talisman-wallet-connected')
-                // localStorage.setItem('@talisman-connect/selected-wallet-name', wallet.extensionName)
-
-                // const walletSelectedEvent = new CustomEvent('wallet-selected', {
-                //   detail: wallet,
-                // })
-                // document.dispatchEvent(walletSelectedEvent)
-              }}
+              onWalletSelected={wallet => {}}
             />
           </Trans>
         </p>

@@ -8,7 +8,7 @@ import { SupportedRelaychains } from '@libs/talisman/util/_config'
 import { ApiPromise, WsProvider } from '@polkadot/api'
 import { isEthereumChecksum } from '@polkadot/util-crypto'
 import { useChain } from '@talismn/api-react-hooks'
-import { web3FromAddress } from '@talismn/dapp-connect'
+import { web3Enable, web3FromAddress } from '@talismn/dapp-connect'
 import { Deferred } from '@talismn/util'
 import { encodeAnyAddress } from '@talismn/util'
 import {
@@ -145,6 +145,9 @@ export function useSetMoonbeamRewardsAddress(accountAddress?: string) {
     const tx = api.tx.crowdloan.addMemo(Moonbeam.paraId, rewardsAddress)
 
     try {
+      // TODO: Workaround to make web3* functions work.
+      // Need to ditch `web3Enable` requirement as it pops up all polkadot based extensions.
+      await web3Enable(process.env.REACT_APP_APPLICATION_NAME || 'Talisman')
       const injector = await web3FromAddress(accountAddress)
       var txSigned = await tx.signAsync(accountAddress, { signer: injector.signer })
     } catch (error: any) {

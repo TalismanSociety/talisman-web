@@ -8,7 +8,7 @@ import Talisman from '@talismn/api'
 import type { BalanceWithTokens } from '@talismn/api-react-hooks'
 import { addTokensToBalances } from '@talismn/api-react-hooks'
 import Chaindata from '@talismn/chaindata-js'
-import { web3FromAddress } from '@talismn/dapp-connect'
+import { web3Enable, web3FromAddress } from '@talismn/dapp-connect'
 import { addBigNumbers, encodeAnyAddress, planckToTokens, tokensToPlanck } from '@talismn/util'
 import customRpcs from '@util/customRpcs'
 import BigNumber from 'bignumber.js'
@@ -1063,6 +1063,9 @@ function useSignAndSendContributionThunk(state: ContributeState, dispatch: Dispa
       if (!api) return
       const contributionPlanck = tokensToPlanck(contributionAmount, relayTokenDecimals)
 
+      // TODO: Workaround to make web3* functions work.
+      // Need to ditch `web3Enable` requirement as it pops up all polkadot based extensions.
+      await web3Enable(process.env.REACT_APP_APPLICATION_NAME || 'Talisman')
       const injector = await web3FromAddress(account)
       if (cancelled) return
 
@@ -1218,10 +1221,11 @@ async function buildZeitgeistTx({
   verifierSignature,
   api,
 }: BuildTxProps): Promise<BuildTxResponse> {
-
   const txs = [
     api.tx.crowdloan.contribute(parachainId, contributionPlanck, verifierSignature),
-    api.tx.system.remarkWithEvent('I have read and agree to the terms found at https://zeitgeist.pm/CrowdloanTerms.pdf'),
+    api.tx.system.remarkWithEvent(
+      'I have read and agree to the terms found at https://zeitgeist.pm/CrowdloanTerms.pdf'
+    ),
     api.tx.system.remarkWithEvent('Talisman - The Journey Begins'),
   ]
 

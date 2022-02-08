@@ -281,15 +281,7 @@ const Unavailable = styled(({ className }) => {
           <span>{t('No wallet found')}</span>
         </div>
       }
-      onWalletSelected={wallet => {
-        localStorage.removeItem('talisman-wallet-connected')
-        // localStorage.setItem('@talisman-connect/selected-wallet-name', wallet.extensionName)
-
-        // const walletSelectedEvent = new CustomEvent('wallet-selected', {
-        //   detail: wallet,
-        // })
-        // document.dispatchEvent(walletSelectedEvent)
-      }}
+      onWalletSelected={wallet => {}}
     />
   )
 })`
@@ -319,15 +311,7 @@ const NoAccount = styled(({ className }) => {
           <span className="subtext">{t('Requires Configuration')}</span>
         </Button>
       }
-      onWalletSelected={wallet => {
-        localStorage.removeItem('talisman-wallet-connected')
-        // localStorage.setItem('@talisman-connect/selected-wallet-name', wallet.extensionName)
-
-        // const walletSelectedEvent = new CustomEvent('wallet-selected', {
-        //   detail: wallet,
-        // })
-        // document.dispatchEvent(walletSelectedEvent)
-      }}
+      onWalletSelected={wallet => {}}
     />
   )
 })`
@@ -354,15 +338,7 @@ const Unauthorized = styled(({ className }) => {
           <span className="subtext">Requires Authorization</span>
         </Button>
       }
-      onWalletSelected={wallet => {
-        localStorage.removeItem('talisman-wallet-connected')
-        // localStorage.setItem('@talisman-connect/selected-wallet-name', wallet.extensionName)
-
-        // const walletSelectedEvent = new CustomEvent('wallet-selected', {
-        //   detail: wallet,
-        // })
-        // document.dispatchEvent(walletSelectedEvent)
-      }}
+      onWalletSelected={wallet => {}}
     />
   )
 })`
