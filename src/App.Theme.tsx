@@ -66,6 +66,7 @@ const Style = createGlobalStyle`
     /* modal */
     --talisman-connect-modal-gutter: 3.4rem;
     --talisman-connect-border-radius: 2rem;
+    --talisman-connect-modal-header-font-size: 2.4rem;
 
     --talisman-connect-control-background: #383838;
     --talisman-connect-control-foreground: inherit;
