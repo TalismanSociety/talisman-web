@@ -88,9 +88,9 @@ export const Provider = ({ children }: PropsWithChildren<{}>) => {
       console.log(`>>> onWalletSelected`, e)
       recheck()
     }
-    document.addEventListener('wallet-selected', onWalletSelected)
+    document.addEventListener('@talisman-connect/wallet-selected', onWalletSelected)
     return () => {
-      document.removeEventListener('wallet-selected', onWalletSelected)
+      document.removeEventListener('@talisman-connect/wallet-selected', onWalletSelected)
     }
   }, [recheck])
 
