@@ -349,7 +349,6 @@ const Welcome = styled(({ className }) => {
 
   .headline {
     font-family: SurtExtended;
-    // padding: 0 5rem;
     text-align: center;
     margin: 4rem auto;
     max-width: 100%;
