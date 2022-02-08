@@ -8,6 +8,7 @@ import { useActiveAccount, useChainByGenesis, useExtensionAutoConnect } from '@l
 import Identicon from '@polkadot/react-identicon'
 import { WalletSelect } from '@talisman-connect/components'
 import { getWallets } from '@talisman-connect/wallets'
+import { getWalletBySource } from '@talisman-connect/wallets'
 import { addTokensToBalances, groupBalancesByAddress, useBalances, useChain } from '@talismn/api-react-hooks'
 import { addBigNumbers, encodeAnyAddress, useFuncMemo } from '@talismn/util'
 import { device } from '@util/breakpoints'
@@ -302,16 +303,21 @@ const Unavailable = styled(({ className }) => {
 
 const NoAccount = styled(({ className }) => {
   const { t } = useTranslation()
+  const [walletName, setWalletName] = useState<string | undefined>()
+  useEffect(() => {
+    const selectedWalletName = localStorage.getItem('@talisman-connect/selected-wallet-name')
+    const wallet = getWalletBySource(selectedWalletName)
+    setWalletName(wallet?.title)
+  }, [])
   return (
     <WalletSelect
       triggerComponent={
         <Button className={`account-button ${className}`}>
-          {`Polkadot{.js}`}
+          {walletName}
           <br />
           <span className="subtext">{t('Requires Configuration')}</span>
         </Button>
       }
-      onWalletSelected={wallet => {}}
     />
   )
 })`
@@ -319,7 +325,7 @@ const NoAccount = styled(({ className }) => {
   line-height: 1em;
   display: block;
   padding: 0.6em;
-  cursor: default;
+  cursor: pointer;
   .subtext {
     font-size: 0.7em;
     opacity: 0.7;
@@ -329,11 +335,17 @@ const NoAccount = styled(({ className }) => {
 `
 
 const Unauthorized = styled(({ className }) => {
+  const [walletName, setWalletName] = useState<string | undefined>()
+  useEffect(() => {
+    const selectedWalletName = localStorage.getItem('@talisman-connect/selected-wallet-name')
+    const wallet = getWalletBySource(selectedWalletName)
+    setWalletName(wallet?.title)
+  }, [])
   return (
     <WalletSelect
       triggerComponent={
         <Button className={`account-button ${className}`}>
-          {`Polkadot{.js}`}
+          {walletName}
           <br />
           <span className="subtext">Requires Authorization</span>
         </Button>
@@ -346,7 +358,7 @@ const Unauthorized = styled(({ className }) => {
   line-height: 1em;
   display: block;
   padding: 0.3em;
-  cursor: default;
+  cursor: pointer;
   .subtext {
     font-size: 0.7em;
     opacity: 0.7;
