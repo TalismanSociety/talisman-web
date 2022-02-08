@@ -1,11 +1,12 @@
 import { Redirect, Route, Switch } from 'react-router-dom'
 
+import Layout from '../layout'
 import Buy from './Buy'
 import CrowdloanDetail from './Crowdloan.Detail.tsx'
 import CrowdloanIndex from './Crowdloan.Index.tsx'
 import Home from './Home'
-import Wallet from './Wallet'
 import SpiritKeys from './SpiritKeysPage'
+import Wallet from './Wallet'
 
 const Routes = () => (
   <Switch>
@@ -13,19 +14,29 @@ const Routes = () => (
       <Home />
     </Route>
     <Route exact path="/portfolio">
-      <Wallet />
+      <Layout>
+        <Wallet />
+      </Layout>
     </Route>
     <Route exact path="/crowdloans">
-      <CrowdloanIndex />
+      <Layout>
+        <CrowdloanIndex />
+      </Layout>
     </Route>
     <Route exact path="/spiritkeys">
-      <SpiritKeys />
+      <Layout>
+        <SpiritKeys />
+      </Layout>
     </Route>
     <Route exact path="/crowdloans/:slug">
-      <CrowdloanDetail />
+      <Layout>
+        <CrowdloanDetail />
+      </Layout>
     </Route>
     <Route exact path="/buy">
-      <Buy />
+      <Layout>
+        <Buy />
+      </Layout>
     </Route>
     <Route path="*">
       <Redirect to="/" />

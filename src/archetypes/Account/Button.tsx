@@ -282,7 +282,6 @@ const Unavailable = styled(({ className }) => {
           {title && <span>{t(title)}</span>}
         </div>
       }
-      onWalletSelected={wallet => {}}
     />
   )
 })`

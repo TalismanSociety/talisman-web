@@ -8,7 +8,6 @@ import Routes from '@routes'
 import { BrowserRouter as Router } from 'react-router-dom'
 
 import ThemeProvider from './App.Theme'
-import Layout from './layout'
 
 const App: React.FC = () => (
   <Portfolio.Provider>
@@ -20,9 +19,7 @@ const App: React.FC = () => (
               <ThemeProvider>
                 <ModalProvider>
                   <MoonbeamContributors.PopupProvider>
-                    <Layout>
-                      <Routes />
-                    </Layout>
+                    <Routes />
                   </MoonbeamContributors.PopupProvider>
                 </ModalProvider>
               </ThemeProvider>
