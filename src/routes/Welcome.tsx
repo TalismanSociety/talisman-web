@@ -309,7 +309,12 @@ const Welcome = styled(({ className }) => {
         <TalismanLogo />
         <h1 className="headline">{t('header')}</h1>
         <div style={{ width: '100%', margin: '0 auto', textAlign: 'center' }}>
-          <WalletSelect triggerComponent={<Button primary>{tBase('Connect wallet')}</Button>} />
+          <WalletSelect
+            triggerComponent={<Button primary>{tBase('Connect wallet')}</Button>}
+            onError={err => {
+              console.log(`>>> err`, err)
+            }}
+          />
         </div>
       </div>
       <TermsOfService />
