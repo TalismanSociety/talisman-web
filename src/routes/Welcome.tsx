@@ -1,3 +1,6 @@
+import '@talisman-connect/components/talisman-connect-components.esm.css'
+import '@talisman-connect/ui/talisman-connect-ui.esm.css'
+
 import { LanguageSelector } from '@archetypes/LanguageSelector'
 import bgImage from '@assets/card-gradient.png'
 import { ReactComponent as TalismanHandLogo } from '@assets/hand-red-black.svg'

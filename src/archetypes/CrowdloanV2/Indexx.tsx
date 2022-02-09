@@ -1,5 +1,3 @@
-import '@talisman-connect/components/talisman-connect-components.esm.css'
-
 import { Crowdloan } from '@archetypes'
 import { Await, Field, Grid, NoResults } from '@components'
 import { trackGoal } from '@libs/fathom'
