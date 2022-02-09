@@ -1,3 +1,6 @@
+import '@talisman-connect/components/talisman-connect-components.esm.css'
+import '@talisman-connect/ui/talisman-connect-ui.esm.css'
+
 import ATApocRevelations from '@assets/fonts/AT-Apoc-Revelations.woff'
 import SurtRegular from '@assets/fonts/Surt-Regular.woff'
 import SurtSemiBold from '@assets/fonts/Surt-SemiBold.woff2'
