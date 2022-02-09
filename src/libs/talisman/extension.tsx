@@ -31,15 +31,17 @@ export type Status = 'LOADING' | 'DISCONNECTED' | 'UNAVAILABLE' | 'UNAUTHORIZED'
 //
 
 export const useExtension = () => useContext()
-export const useExtensionAutoConnect = () => {
-  const { connect, ...context } = useContext()
+export const useExtensionAutoConnect = () => useContext()
+// TODO: No autoconnect for now...
+// export const useExtensionAutoConnect = () => {
+//   const { connect, ...context } = useContext()
 
-  useEffect(() => {
-    connect()
-  }, [connect])
+//   useEffect(() => {
+//     connect()
+//   }, [connect])
 
-  return context
-}
+//   return context
+// }
 
 //
 // Context
