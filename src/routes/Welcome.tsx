@@ -27,6 +27,7 @@ const TermsOfService = styled(({ className }) => {
   color: var(--color-mid);
   margin-top: 1rem;
   font-size: 10px;
+  text-align: center;
 
   a {
     opacity: 1;
@@ -79,7 +80,11 @@ const Welcome = styled(({ className }) => {
   margin: auto;
   height: 100%;
   row-gap: 4rem;
-  padding: 4rem;
+  padding: 2rem;
+
+  @media ${device.sm} {
+    padding: 4rem;
+  }
 
   .lang-select {
     justify-self: end;
