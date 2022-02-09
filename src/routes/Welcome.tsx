@@ -30,6 +30,7 @@ const TermsOfService = styled(({ className }) => {
   text-align: center;
 
   a {
+    white-space: nowrap;
     opacity: 1;
     color: var(--color-text);
     text-decoration: underline;
