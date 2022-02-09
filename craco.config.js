@@ -13,6 +13,8 @@ const StyledComponentsPlugin = {
       if (!Array.isArray(cracoConfig.babel.plugins)) cracoConfig.babel.plugins = []
 
       cracoConfig.babel.plugins.push('babel-plugin-styled-components')
+      cracoConfig.babel.plugins.push('@babel/plugin-proposal-class-properties')
+      cracoConfig.babel.plugins.push('@babel/plugin-proposal-private-methods')
 
       return cracoConfig
     },
@@ -33,6 +35,37 @@ const ImportAliasesPlugin = {
     source: 'tsconfig',
     baseUrl: './src',
     tsConfigPath: './tsconfig.paths.json',
+  },
+}
+
+// Fixes the following error on `yarn start`:
+//
+//     Failed to compile.
+//
+//     ./node_modules/@polkadot/x-global/packageInfo.js 6:27
+//     Module parse failed: Unexpected token (6:27)
+//     File was processed with these loaders:
+//      * ./node_modules/babel-loader/lib/index.js
+//     You may need an additional loader to handle the result of these loaders.
+//     | export const packageInfo = {
+//     |   name: '@polkadot/x-global',
+//     >   path: new URL('.', import.meta.url).pathname,
+//     |   type: 'esm',
+//     |   version: '8.3.3'
+//
+// Solution comes from https://polkadot.js.org/docs/usage/FAQ/#on-webpack-4-i-have-a-parse-error-on-importmetaurl
+const ImportMetaLoaderPlugin = {
+  plugin: {
+    overrideWebpackConfig: ({ webpackConfig }) => {
+      if (!webpackConfig.module) webpackConfig.module = { rules: [] }
+      if (!webpackConfig.module.rules) webpackConfig.module.rules = []
+      webpackConfig.module.rules.push({
+        test: /\.js$/,
+        loader: require.resolve('@open-wc/webpack-import-meta-loader'),
+      })
+
+      return webpackConfig
+    },
   },
 }
 
@@ -93,5 +126,5 @@ const TalismanLibsFastRefreshPlugin = {
 }
 
 module.exports = {
-  plugins: [StyledComponentsPlugin, ImportAliasesPlugin, TalismanLibsFastRefreshPlugin],
+  plugins: [StyledComponentsPlugin, ImportAliasesPlugin, ImportMetaLoaderPlugin, TalismanLibsFastRefreshPlugin],
 }

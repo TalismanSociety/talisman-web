@@ -6,6 +6,9 @@ import { ReactComponent as ChevronDown } from '@icons/chevron-down.svg'
 import { usePortfolio } from '@libs/portfolio'
 import { useActiveAccount, useChainByGenesis, useExtensionAutoConnect } from '@libs/talisman'
 import Identicon from '@polkadot/react-identicon'
+import { WalletSelect } from '@talisman-connect/components'
+import { getWallets } from '@talisman-connect/wallets'
+import { getWalletBySource } from '@talisman-connect/wallets'
 import { addTokensToBalances, groupBalancesByAddress, useBalances, useChain } from '@talismn/api-react-hooks'
 import { addBigNumbers, encodeAnyAddress, useFuncMemo } from '@talismn/util'
 import { device } from '@util/breakpoints'
@@ -264,13 +267,23 @@ const Dropdown = styled(
 
 const Unavailable = styled(({ className }) => {
   const { t } = useTranslation()
+  const [title, setTitle] = useState<string | undefined>()
+  useEffect(() => {
+    const wallets = getWallets()
+    const installed = wallets.filter(wallet => wallet.installed)
+    setTitle(installed.length > 0 ? 'Connect wallet' : 'No wallet found')
+  }, [])
   return (
-    <div className={className}>
-      <span className="icon">
-        <AlertCircle />
-      </span>
-      <span>{t('No wallet found')}</span>
-    </div>
+    <WalletSelect
+      triggerComponent={
+        <div className={className} style={{ cursor: 'pointer' }}>
+          <span className="icon">
+            <AlertCircle />
+          </span>
+          {title && <span>{t(title)}</span>}
+        </div>
+      }
+    />
   )
 })`
   display: flex;
@@ -290,19 +303,29 @@ const Unavailable = styled(({ className }) => {
 
 const NoAccount = styled(({ className }) => {
   const { t } = useTranslation()
+  const [walletName, setWalletName] = useState<string | undefined>()
+  useEffect(() => {
+    const selectedWalletName = localStorage.getItem('@talisman-connect/selected-wallet-name')
+    const wallet = getWalletBySource(selectedWalletName)
+    setWalletName(wallet?.title)
+  }, [])
   return (
-    <Button className={`account-button ${className}`}>
-      {`Polkadot{.js}`}
-      <br />
-      <span className="subtext">{t('Requires Configuration')}</span>
-    </Button>
+    <WalletSelect
+      triggerComponent={
+        <Button className={`account-button ${className}`}>
+          {walletName}
+          <br />
+          <span className="subtext">{t('Requires Configuration')}</span>
+        </Button>
+      }
+    />
   )
 })`
   text-align: center;
   line-height: 1em;
   display: block;
   padding: 0.6em;
-  cursor: default;
+  cursor: pointer;
   .subtext {
     font-size: 0.7em;
     opacity: 0.7;
@@ -312,19 +335,30 @@ const NoAccount = styled(({ className }) => {
 `
 
 const Unauthorized = styled(({ className }) => {
+  const [walletName, setWalletName] = useState<string | undefined>()
+  useEffect(() => {
+    const selectedWalletName = localStorage.getItem('@talisman-connect/selected-wallet-name')
+    const wallet = getWalletBySource(selectedWalletName)
+    setWalletName(wallet?.title)
+  }, [])
   return (
-    <Button className={`account-button ${className}`}>
-      {`Polkadot{.js}`}
-      <br />
-      <span className="subtext">Requires Authorization</span>
-    </Button>
+    <WalletSelect
+      triggerComponent={
+        <Button className={`account-button ${className}`}>
+          {walletName}
+          <br />
+          <span className="subtext">Requires Authorization</span>
+        </Button>
+      }
+      onWalletSelected={wallet => {}}
+    />
   )
 })`
   text-align: center;
   line-height: 1em;
   display: block;
   padding: 0.3em;
-  cursor: default;
+  cursor: pointer;
   .subtext {
     font-size: 0.7em;
     opacity: 0.7;
@@ -342,6 +376,7 @@ const Authorized = styled(
     closeParent = null,
     showBuy = false,
     fixedDropdown = false,
+    showDisconnect = false,
     parachainId,
   }) => {
     const { t } = useTranslation()
@@ -409,6 +444,23 @@ const Authorized = styled(
           )}
           <span className="selected-account">
             <div>{hasActiveAccount ? name : allAccounts ? t('All Accounts') : 'Loading...'}</div>
+            {showDisconnect && (
+              <span
+                style={{
+                  fontSize: 'small',
+                  textDecoration: 'underline',
+                  color: 'inherit',
+                  opacity: 'inherit',
+                  cursor: 'pointer',
+                }}
+                onClick={() => {
+                  localStorage.removeItem('@talisman-connect/selected-wallet-name')
+                  document.dispatchEvent(new CustomEvent('@talisman-connect/wallet-selected'))
+                }}
+              >
+                Disconnect
+              </span>
+            )}
             {showValue && (
               <div>
                 {

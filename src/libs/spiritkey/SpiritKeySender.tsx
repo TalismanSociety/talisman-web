@@ -7,7 +7,7 @@ import { useExtensionAutoConnect } from '@libs/talisman'
 import { ApiPromise, WsProvider } from '@polkadot/api'
 import { hexToU8a, isHex } from '@polkadot/util'
 import { cryptoWaitReady, decodeAddress, encodeAddress } from '@polkadot/util-crypto'
-import { web3FromAddress } from '@talismn/dapp-connect'
+import { web3Enable, web3FromAddress } from '@talismn/dapp-connect'
 import { AnyAddress, SS58Format, convertAnyAddress } from '@util/useAnyAddressFromClipboard'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -66,10 +66,13 @@ async function setupInjector(nftObject: NFTConsolidated) {
     return undefined
   }
   try {
-    const injector = await web3FromAddress(nftObject?.account)
+    // TODO: Workaround to make web3* functions work.
+    // Need to ditch `web3Enable` requirement as it pops up all polkadot based extensions.
+    await web3Enable(process.env.REACT_APP_APPLICATION_NAME || 'Talisman')
+    const injector = await web3FromAddress(nftObject?.owner)
     return injector
   } catch (err) {
-    console.error('>>> setupInjector', err)
+    console.log('>>> setupInjector', err)
   }
 }
 

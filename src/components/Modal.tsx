@@ -77,7 +77,7 @@ export const Modal = styled(function Modal({ className, closable }) {
   justify-content: center;
   align-items: center;
   background: rgba(0, 0, 0, 0.4);
-  z-index: 9998;
+  z-index: 998;
 
   > .modal-click-to-close-background {
     position: absolute;
@@ -85,7 +85,7 @@ export const Modal = styled(function Modal({ className, closable }) {
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: 9999;
+    z-index: 999;
   }
   > .modal-content {
     width: 100%;
@@ -95,7 +95,7 @@ export const Modal = styled(function Modal({ className, closable }) {
     background: rgb(${({ theme }) => theme?.background});
     border-radius: 1.6rem;
     padding: 6.4rem 4.6rem 4.6rem 4.6rem;
-    z-index: 10000;
+    z-index: 1000;
     position: relative;
 
     > .close-icon {

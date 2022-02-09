@@ -33,7 +33,7 @@ const Popup = styled(({ className, openModal, dismiss }) => (
   background: var(--color-controlBackground);
   border: 1px solid #383838;
   text-align: center;
-  z-index: 99999;
+  z-index: 999;
 
   > h3 {
     font-size: 2.4rem;

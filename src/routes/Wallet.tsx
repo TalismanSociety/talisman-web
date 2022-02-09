@@ -12,7 +12,7 @@ const _Wallet = styled(({ className }) => {
       <header>
         <div className="account-overview">
           <Wallet.Total />
-          <Account.Button allAccounts />
+          <Account.Button allAccounts showDisconnect />
         </div>
         <div className="banner">
           <StateBanner />

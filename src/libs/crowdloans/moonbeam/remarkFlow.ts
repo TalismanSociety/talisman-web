@@ -2,12 +2,15 @@ import * as crypto from 'crypto'
 
 import { ApiPromise } from '@polkadot/api'
 import { Signer } from '@polkadot/api/types'
-import { web3FromAddress } from '@talismn/dapp-connect'
+import { web3Enable, web3FromAddress } from '@talismn/dapp-connect'
 
 import { Moonbeam } from '../crowdloanOverrides'
 import moonbeamStatement from './moonbeamStatement'
 
 export async function submitTermsAndConditions(api: ApiPromise, address: string) {
+  // TODO: Workaround to make web3* functions work.
+  // Need to ditch `web3Enable` requirement as it pops up all polkadot based extensions.
+  await web3Enable(process.env.REACT_APP_APPLICATION_NAME || 'Talisman')
   const injector = await web3FromAddress(address)
   if (!injector || !injector.signer || !injector.signer.signRaw)
     throw new Error('Extension does not support signing messages')

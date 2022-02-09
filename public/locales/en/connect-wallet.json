@@ -5,5 +5,7 @@
   "Talisman Extension": "Talisman Extension",
   "Wallet extension coming soon": "Wallet extension coming soon",
   "Get updates": "Get updates",
-  "TOS": "By connecting your wallet you agree to our <1>Terms of use</1>"
+  "TOS": "By connecting your wallet you agree to our <2>Terms of use</2>",
+  "By connecting your wallet you agree to our": "By connecting your wallet you agree to our",
+  "Terms of use": "Terms of use"
 }

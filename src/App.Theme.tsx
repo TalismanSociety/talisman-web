@@ -1,7 +1,11 @@
+import '@talisman-connect/components/talisman-connect-components.esm.css'
+import '@talisman-connect/ui/talisman-connect-ui.esm.css'
+
 import ATApocRevelations from '@assets/fonts/AT-Apoc-Revelations.woff'
 import SurtRegular from '@assets/fonts/Surt-Regular.woff'
 import SurtSemiBold from '@assets/fonts/Surt-SemiBold.woff2'
 import SurtSemiBoldExpanded from '@assets/fonts/Surt-SemiBoldExp.woff2'
+import SurtSemiBoldExtended from '@assets/fonts/Surt-SemiBoldExtended.woff2'
 import { PropsWithChildren, createContext, useContext, useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import { DefaultTheme, ThemeProvider, createGlobalStyle, css } from 'styled-components'
@@ -62,6 +66,22 @@ const Style = createGlobalStyle`
     --padding: 2.2rem 3rem;
     --padding-large: 4.2rem 4rem;
     --padding-small: 1.1rem 1.5rem;
+
+    /* modal */
+    --talisman-connect-modal-gutter: 3.4rem;
+    --talisman-connect-border-radius: 2rem;
+    --talisman-connect-modal-header-font-size: 2.4rem;
+
+    --talisman-connect-control-background: #383838;
+    --talisman-connect-control-foreground: inherit;
+    --talisman-connect-active-background: #5a5a5a;
+    --talisman-connect-active-foreground: inherit;
+    --talisman-connect-modal-background: #222;
+    --talisman-connect-modal-foreground: #fafafa;
+    --talisman-connect-button-background: var(
+      --talisman-connect-control-background
+    );
+    --talisman-connect-button-foreground: #fafafa;
   }
 
   @font-face {
@@ -86,6 +106,14 @@ const Style = createGlobalStyle`
     font-weight: 800;
     font-display: auto;
     src: url(${SurtSemiBoldExpanded}) format('woff2');
+  }
+
+  @font-face {
+    font-family: 'SurtExtended';
+    font-style: bold;
+    font-weight: 800;
+    font-display: auto;
+    src: url(${SurtSemiBoldExtended}) format('woff2');
   }
 
   @font-face {
