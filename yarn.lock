@@ -3106,15 +3106,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@talisman-connect/wallets@npm:^0.0.12":
-  version: 0.0.12
-  resolution: "@talisman-connect/wallets@npm:0.0.12"
+"@talisman-connect/wallets@npm:^0.0.13":
+  version: 0.0.13
+  resolution: "@talisman-connect/wallets@npm:0.0.13"
   dependencies:
     "@polkadot/extension-dapp": ^0.42.7
   peerDependencies:
     regenerator-runtime: 0.13.7
     tslib: ^2.0.0
-  checksum: 753489a82db676d74c4026774f85fc4c84ad5f7377f735812b1f214271b4b865239e5f158dff9d943a9dac9aa0c68667662e496fe89837eabb90a3990b55dbb7
+  checksum: 828550d6831199d6fc1ee5c01c47b447b2106b4340524a668a963beeec2cb9d2454378f2ca5657737cbb7ed3b6f373b4c68f99a1111a32729f04b40bb6d54c20
   languageName: node
   linkType: hard
 
@@ -3209,7 +3209,7 @@ __metadata:
     "@ramp-network/ramp-instant-sdk": ^2.5.0
     "@talisman-connect/components": ^0.0.32
     "@talisman-connect/ui": ^0.0.3
-    "@talisman-connect/wallets": ^0.0.12
+    "@talisman-connect/wallets": ^0.0.13
     "@talismn/api-react-hooks": ~0
     "@talismn/chaindata-js": ~0
     "@talismn/dapp-connect": ^0.1.2
