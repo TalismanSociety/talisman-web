@@ -9,6 +9,7 @@ import { OwnershipText } from '@libs/spiritkey/OwnershipText'
 import { SpiritKeyNftImage } from '@libs/spiritkey/SpiritKeyNftImage'
 import { SpiritKeySender } from '@libs/spiritkey/SpiritKeySender'
 import { useFetchNFTs } from '@libs/spiritkey/useFetchNFTs'
+import { WalletSelect } from '@talisman-connect/components'
 import { device } from '@util/breakpoints'
 import { downloadURI } from '@util/downloadURI'
 import { TALISMAN_EXTENSION_DOWNLOAD_URL } from '@util/links'
@@ -18,12 +19,21 @@ import styled from 'styled-components'
 
 export const SpiritKeyUnlockBanner = styled(({ className }) => {
   const { t } = useTranslation('spirit-keys')
+  const { t: tBase } = useTranslation()
   const [downloading, setDownloading] = useState(false)
   const [revealing, setRevealing] = useState(false)
   const [showAltDownload, setShowAltDownload] = useState(false)
   const totalNFTs = useFetchNFTs()
   const hasNfts = totalNFTs?.length > 0
   const dragSrcId = 'spirit-key-id'
+  const [selectedWallet, setSelectedWallet] = useState<string | undefined>()
+
+  useEffect(() => {
+    const item = localStorage.getItem('@talisman-connect/selected-wallet-name')
+    if (item && item !== 'null') {
+      setSelectedWallet(item)
+    }
+  }, [totalNFTs])
 
   useEffect(() => {
     if (!downloading) {
@@ -45,7 +55,24 @@ export const SpiritKeyUnlockBanner = styled(({ className }) => {
       </div>
       <div className="center">
         <ArrowRight className="arrow-right" />
-        <div>{t('Drag to unlock')}</div>
+        {selectedWallet && hasNfts ? (
+          <div>{t('Drag to unlock')}</div>
+        ) : (
+          <WalletSelect
+            triggerComponent={
+              <div
+                style={{
+                  textDecoration: 'underline',
+                  opacity: 'inherit',
+                  cursor: 'pointer',
+                  color: `var(--color-primary)`,
+                }}
+              >
+                {tBase('Connect wallet')}
+              </div>
+            }
+          />
+        )}
       </div>
       <div className="center relative">
         <Droppable
