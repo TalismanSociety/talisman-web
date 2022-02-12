@@ -7,7 +7,7 @@ import { useExtensionAutoConnect } from '@libs/talisman'
 import { ApiPromise, WsProvider } from '@polkadot/api'
 import { hexToU8a, isHex } from '@polkadot/util'
 import { cryptoWaitReady, decodeAddress, encodeAddress } from '@polkadot/util-crypto'
-import { web3Enable, web3FromAddress } from '@talismn/dapp-connect'
+import { getWalletBySource } from '@talisman-connect/wallets'
 import { AnyAddress, SS58Format, convertAnyAddress } from '@util/useAnyAddressFromClipboard'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -66,10 +66,12 @@ async function setupInjector(nftObject: NFTConsolidated) {
     return undefined
   }
   try {
-    // TODO: Workaround to make web3* functions work.
-    // Need to ditch `web3Enable` requirement as it pops up all polkadot based extensions.
-    await web3Enable(process.env.REACT_APP_APPLICATION_NAME || 'Talisman')
-    const injector = await web3FromAddress(nftObject?.owner)
+    // TODO: Make web3FromAddress work. Or add in Wallet interface.
+    // As this is a single-wallet interface, the addresses retrieved here belongs to the same wallet.
+    // Therefore, it is ok to get the wallet from the one saved in localstorage.
+    const selectedWalletName = localStorage.getItem('@talisman-connect/selected-wallet-name')
+    const wallet = getWalletBySource(selectedWalletName as string)
+    const injector = wallet?.extension
     return injector
   } catch (err) {
     console.log('>>> setupInjector', err)

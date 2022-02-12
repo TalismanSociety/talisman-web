@@ -2,17 +2,17 @@ import { NFTConsolidated } from 'rmrk-tools/dist/tools/consolidator/consolidator
 
 export const fetchNFTData = async (setNfts: (nfts: NFTConsolidated[]) => void, addresses: string[]) => {
   try {
-    console.log('addresses sent', addresses)
+    // console.log('addresses sent', addresses)
     let dataTotal: NFTConsolidated[] | undefined = undefined
     for await (const address of addresses) {
-      console.log(address)
+      // console.log(address)
       const payload = await fetch(`https://singular.rmrk.app/api/rmrk1/account/${address}`)
       const nftData: NFTConsolidated[] = await payload.json()
       if (!dataTotal) {
         dataTotal = []
       }
       dataTotal = dataTotal.concat(nftData)
-      console.log('nftdata', dataTotal)
+      // console.log('nftdata', dataTotal)
       for await (const nft of dataTotal) {
         nft.account = address
         nft.collection = nft.collectionId
@@ -32,7 +32,7 @@ export const fetchNFTData = async (setNfts: (nfts: NFTConsolidated[]) => void, a
       }
     }
 
-    console.log('data', dataTotal)
+    // console.log('data', dataTotal)
     if (dataTotal) {
       dataTotal = dataTotal.sort((n1, n2) => {
         if (n1.sn > n2.sn) {

@@ -2,16 +2,19 @@ import * as crypto from 'crypto'
 
 import { ApiPromise } from '@polkadot/api'
 import { Signer } from '@polkadot/api/types'
-import { web3Enable, web3FromAddress } from '@talismn/dapp-connect'
+import { getWalletBySource } from '@talisman-connect/wallets'
 
 import { Moonbeam } from '../crowdloanOverrides'
 import moonbeamStatement from './moonbeamStatement'
 
 export async function submitTermsAndConditions(api: ApiPromise, address: string) {
-  // TODO: Workaround to make web3* functions work.
-  // Need to ditch `web3Enable` requirement as it pops up all polkadot based extensions.
-  await web3Enable(process.env.REACT_APP_APPLICATION_NAME || 'Talisman')
-  const injector = await web3FromAddress(address)
+  // TODO: Make web3FromAddress work. Or add in Wallet interface.
+  // As this is a single-wallet interface, the addresses retrieved here belongs to the same wallet.
+  // Therefore, it is ok to get the wallet from the one saved in localstorage.
+  const selectedWalletName = localStorage.getItem('@talisman-connect/selected-wallet-name')
+  const wallet = getWalletBySource(selectedWalletName as string)
+  const injector = wallet?.extension
+
   if (!injector || !injector.signer || !injector.signer.signRaw)
     throw new Error('Extension does not support signing messages')
 
