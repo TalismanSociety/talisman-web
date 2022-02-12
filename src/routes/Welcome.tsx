@@ -57,10 +57,11 @@ const Welcome = styled(({ className }) => {
       }}
     >
       <LanguageSelector className="lang-select" />
-      <div className="description">
+      <div className="content">
         <TalismanLogo />
         <h1 className="headline">{t('header')}</h1>
-        <div style={{ width: '100%', margin: '0 auto', textAlign: 'center' }}>
+        <p className="description">{t('description')}</p>
+        <div className="cta">
           <WalletSelect
             triggerComponent={<Button primary>{tBase('Connect wallet')}</Button>}
             onError={err => {
@@ -95,10 +96,13 @@ const Welcome = styled(({ className }) => {
     justify-self: center;
   }
 
-  .headline {
-    font-family: SurtExtended;
+  .content {
     text-align: center;
-    margin: 4rem auto;
+    font-family: SurtExtended;
+  }
+
+  .headline {
+    margin: 4rem auto 2rem;
     max-width: 100%;
     overflow-wrap: break-word;
     hyphens: manual;
@@ -106,6 +110,19 @@ const Welcome = styled(({ className }) => {
     @media ${device.lg} {
       max-width: 80%;
     }
+  }
+
+  .description {
+    opacity: 0.8;
+    @media ${device.lg} {
+      max-width: 80%;
+      margin: 0 auto;
+    }
+  }
+
+  .cta {
+    width: 100%;
+    margin: 4rem auto auto;
   }
 
   .subheading {
