@@ -68,7 +68,7 @@ async function setupInjector(nftObject: NFTConsolidated) {
   try {
     // TODO: Make web3FromAddress work. Or add in Wallet interface.
     // As this is a single-wallet interface, the addresses retrieved here belongs to the same wallet.
-    // Therefore, it is ok to get
+    // Therefore, it is ok to get the wallet from the one saved in localstorage.
     const selectedWalletName = localStorage.getItem('@talisman-connect/selected-wallet-name')
     const wallet = getWalletBySource(selectedWalletName as string)
     const injector = wallet?.extension
