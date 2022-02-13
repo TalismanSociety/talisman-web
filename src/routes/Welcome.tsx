@@ -113,10 +113,8 @@ const Welcome = styled(({ className }) => {
   .description {
     font-size: x-large;
     opacity: 0.9;
-    @media ${device.lg} {
-      max-width: 70%;
-      margin: 4rem auto;
-    }
+    max-width: 80%;
+    margin: 4rem auto;
   }
 
   .cta {
