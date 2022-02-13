@@ -38,8 +38,8 @@ const TermsOfService = styled(({ className }) => {
 `
 
 const TalismanLogo = styled(TalismanHandLogo)`
-  height: 10rem;
-  width: 100%;
+  height: auto;
+  width: 13.6rem;
   margin: 0 auto;
 `
 
@@ -98,25 +98,24 @@ const Welcome = styled(({ className }) => {
 
   .content {
     text-align: center;
-    font-family: SurtExtended;
+    font-family: Surt, sans-serif;
   }
 
   .headline {
-    margin: 4rem auto 2rem;
+    font-family: SurtExtended, sans-serif;
+    font-size: xxx-large;
+    margin: 2rem auto;
     max-width: 100%;
     overflow-wrap: break-word;
     hyphens: manual;
-
-    @media ${device.lg} {
-      max-width: 80%;
-    }
   }
 
   .description {
-    opacity: 0.8;
+    font-size: x-large;
+    opacity: 0.9;
     @media ${device.lg} {
-      max-width: 80%;
-      margin: 0 auto;
+      max-width: 70%;
+      margin: 4rem auto;
     }
   }
 

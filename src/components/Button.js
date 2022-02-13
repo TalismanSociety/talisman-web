@@ -58,7 +58,7 @@ const Button = styled(({ loading, children, variant = '', className, ...props })
   )
 })`
   border: none;
-  padding: 1.3em 2em;
+  padding: 1.3em 2.4em;
   margin: 0;
   line-height: 1em;
   display: inline-flex;
