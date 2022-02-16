@@ -4,7 +4,7 @@ import { CopyButton } from '@components/CopyButton'
 import { ReactComponent as AlertCircle } from '@icons/alert-circle.svg'
 import { ReactComponent as ChevronDown } from '@icons/chevron-down.svg'
 import { usePortfolio } from '@libs/portfolio'
-import { useActiveAccount, useChainByGenesis, useExtensionAutoConnect } from '@libs/talisman'
+import { DAPP_NAME, useActiveAccount, useChainByGenesis, useExtensionAutoConnect } from '@libs/talisman'
 import Identicon from '@polkadot/react-identicon'
 import { WalletSelect } from '@talisman-connect/components'
 import { getWallets } from '@talisman-connect/wallets'
@@ -275,6 +275,7 @@ const Unavailable = styled(({ className }) => {
   }, [])
   return (
     <WalletSelect
+      dappName={DAPP_NAME}
       triggerComponent={
         <div className={className} style={{ cursor: 'pointer' }}>
           <span className="icon">
@@ -311,6 +312,7 @@ const NoAccount = styled(({ className }) => {
   }, [])
   return (
     <WalletSelect
+      dappName={DAPP_NAME}
       triggerComponent={
         <Button className={`account-button ${className}`}>
           {walletName}
@@ -343,6 +345,7 @@ const Unauthorized = styled(({ className }) => {
   }, [])
   return (
     <WalletSelect
+      dappName={DAPP_NAME}
       triggerComponent={
         <Button className={`account-button ${className}`}>
           {walletName}

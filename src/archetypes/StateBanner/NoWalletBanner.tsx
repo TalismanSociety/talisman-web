@@ -1,5 +1,6 @@
 import { Button } from '@components'
 import { Banner } from '@components/Banner'
+import { DAPP_NAME } from '@libs/talisman'
 import { WalletSelect } from '@talisman-connect/components'
 import { Trans, useTranslation } from 'react-i18next'
 import { NavLink } from 'react-router-dom'
@@ -17,6 +18,7 @@ export const NoWalletBanner = () => {
           <Trans i18nKey="noWallet.description" ns="banners">
             It doesn't look like you’ve got a wallet extension installed. We recommend downloading
             <WalletSelect
+              dappName={DAPP_NAME}
               triggerComponent={
                 <span style={{ textDecoration: 'underline', color: 'inherit', opacity: 'inherit', cursor: 'pointer' }}>
                   Talisman Wallet.

@@ -9,6 +9,7 @@ import { OwnershipText } from '@libs/spiritkey/OwnershipText'
 import { SpiritKeyNftImage } from '@libs/spiritkey/SpiritKeyNftImage'
 import { SpiritKeySender } from '@libs/spiritkey/SpiritKeySender'
 import { useFetchNFTs } from '@libs/spiritkey/useFetchNFTs'
+import { DAPP_NAME } from '@libs/talisman'
 import { WalletSelect } from '@talisman-connect/components'
 import { device } from '@util/breakpoints'
 import { downloadURI } from '@util/downloadURI'
@@ -59,6 +60,7 @@ export const SpiritKeyUnlockBanner = styled(({ className }) => {
           <div>{t('Drag to unlock')}</div>
         ) : (
           <WalletSelect
+            dappName={DAPP_NAME}
             triggerComponent={
               <div
                 style={{
@@ -68,7 +70,7 @@ export const SpiritKeyUnlockBanner = styled(({ className }) => {
                   color: `var(--color-primary)`,
                 }}
               >
-                {tBase('Connect wallet')}
+                {tBase(selectedWallet ? 'Switch wallet' : 'Connect wallet')}
               </div>
             }
           />
@@ -112,6 +114,7 @@ export const SpiritKeyUnlockBanner = styled(({ className }) => {
     </Banner>
   )
 })`
+  user-select: none;
   border-radius: 6.4rem;
   padding: 8rem;
   margin-bottom: 2rem;
