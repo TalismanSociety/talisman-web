@@ -5,7 +5,7 @@ const Staking = ({ className }: { className?: string }) => {
   const { t } = useTranslation()
   return (
     <section className={`wallet-assets ${className}`}>
-      <Panel title={t('Staking')}>
+      <Panel title={t('NFTs')}>
         <PanelSection comingSoon>🔑 {t('This door will be unlocked soon')}</PanelSection>
       </Panel>
     </section>
