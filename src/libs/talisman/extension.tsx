@@ -113,7 +113,7 @@ export const Provider = ({ children }: PropsWithChildren<{}>) => {
       const wallet = getWalletBySource(selectedWalletName as string)
 
       try {
-        await wallet?.enable(process.env.REACT_APP_APPLICATION_NAME || 'Talisman')
+        await wallet?.enable(DAPP_NAME)
       } catch (err) {
         console.error(err)
       }
