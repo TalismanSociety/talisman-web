@@ -64,6 +64,8 @@ function useContext() {
   return context
 }
 
+export const DAPP_NAME = process.env.REACT_APP_APPLICATION_NAME || 'Talisman'
+
 //
 // Provider
 //
@@ -111,7 +113,7 @@ export const Provider = ({ children }: PropsWithChildren<{}>) => {
       const wallet = getWalletBySource(selectedWalletName as string)
 
       try {
-        await wallet?.enable()
+        await wallet?.enable(DAPP_NAME)
       } catch (err) {
         console.error(err)
       }

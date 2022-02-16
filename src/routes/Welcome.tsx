@@ -2,6 +2,7 @@ import { LanguageSelector } from '@archetypes/LanguageSelector'
 import bgImage from '@assets/card-gradient.png'
 import { ReactComponent as TalismanHandLogo } from '@assets/hand-red-black.svg'
 import { Button } from '@components'
+import { DAPP_NAME } from '@libs/talisman'
 import { WalletSelect } from '@talisman-connect/components'
 import { device } from '@util/breakpoints'
 import { useTranslation } from 'react-i18next'
@@ -63,6 +64,7 @@ const Welcome = styled(({ className }) => {
         <p className="description">{t('description')}</p>
         <div className="cta">
           <WalletSelect
+            dappName={DAPP_NAME}
             triggerComponent={<Button primary>{tBase('Connect wallet')}</Button>}
             onError={err => {
               console.log(`>>> err`, err)
