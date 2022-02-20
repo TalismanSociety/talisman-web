@@ -106,7 +106,7 @@ const MoonriverWalletInstructions = styled(({ className, id }) => {
       title={`🌕  ${t('Unavailable')}`}
       subtitle={
         <a
-          href="https://medium.com/we-are-talisman/how-to-view-your-moonriver-balance-in-the-talisman-web-app-c37185fb3980"
+          href="https://medium.com/we-are-talisman/how-to-add-movr-and-glmr-balances-to-the-talisman-web-app-280b58a79109"
           target="_blank"
           rel="noreferrer noopener"
         >
