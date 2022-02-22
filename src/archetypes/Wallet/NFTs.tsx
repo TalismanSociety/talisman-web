@@ -1,7 +1,9 @@
 import '@talisman-connect/nft/nft.esm.css'
 
+import { Panel, PanelSection, Pendor } from '@components'
 import AllNFTs from '@components/AllNFTs'
 import { ReactComponent as ArrowRight } from '@icons/arrow-right.svg'
+import { useAllAccountAddresses } from '@libs/talisman'
 import { device } from '@util/breakpoints'
 import { useTranslation } from 'react-i18next'
 import { NavLink } from 'react-router-dom'
@@ -10,6 +12,19 @@ import styled from 'styled-components'
 const NFTs = styled(({ className }: { className?: string }) => {
   const { t } = useTranslation()
   const { t: tNav } = useTranslation('nav')
+  const addresses = useAllAccountAddresses()
+  if (!addresses?.length) {
+    return (
+      <section className={`wallet-assets ${className}`}>
+        <Panel title={tNav('NFTs')}>
+          <PanelSection comingSoon>
+            <div>{t('Connect wallet')}</div>
+            <Pendor />
+          </PanelSection>
+        </Panel>
+      </section>
+    )
+  }
   return (
     <section className={`wallet-assets ${className}`}>
       <div className="header">
