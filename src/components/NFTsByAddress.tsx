@@ -7,7 +7,7 @@ interface NFTsByAddressProps {
 
 const NFTsByAddress = ({ address }: NFTsByAddressProps) => {
   const { nfts, isLoading } = useNftsByAddress(address as string)
-  if (isLoading) {
+  if (isLoading || !nfts) {
     return null
   }
   return nfts?.map((nft: { id: Key | null | undefined }) => {

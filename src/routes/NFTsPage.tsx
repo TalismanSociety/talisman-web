@@ -1,11 +1,11 @@
 import { Account } from '@archetypes'
 import NFTsByAddress from '@components/NFTsByAddress'
-import { useAllAccountAddresses } from '@libs/talisman'
+import { useExtensionAutoConnect } from '@libs/talisman'
 import { device } from '@util/breakpoints'
 import styled from 'styled-components'
 
 const NFTsPage = styled(({ className }) => {
-  const addresses = useAllAccountAddresses()
+  const { accounts } = useExtensionAutoConnect()
 
   return (
     <section className={className}>
@@ -13,10 +13,10 @@ const NFTsPage = styled(({ className }) => {
       <div className="account-selector">
         <Account.Button allAccounts />
       </div>
-      {addresses?.map(address => {
+      {accounts?.map(({ address, name }) => {
         return (
           <div key={address}>
-            <p>{address}</p>
+            <p>{name}</p>
             <div className="nft-grid">
               <NFTsByAddress address={address} />
             </div>
