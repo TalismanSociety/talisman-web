@@ -928,6 +928,22 @@ export const parachainDetails: ParachainDetails[] = [
       Discord: 'https://discord.com/invite/V2MASPX3Ra'
     },
   },
+  {
+    id: '2-2110',
+    name: 'Mangata X',
+    slug: 'mangata-x',
+    token: 'MGX',
+    subtitle:'Mangata X is a community-owned exchange for experienced traders & experimental tokens.',
+    info: `Mangata X will build bridges to Ethereum and other networks, as well as open channels to Parachains to host tokens from the newest experimental Parachains and Protocols in the Kusama and Ethereum space.`,
+    links: {
+      Website: 'https://x.mangata.finance/',
+      Twitter: 'https://twitter.com/MangataFinance',
+      Telegram: 'https://t.me/mgtfi',
+      Medium: 'https://blog.mangata.finance/',
+      Github: 'https://github.com/mangata-finance',
+      Discord: 'https://discord.com/invite/X4VTaejebf'
+    },
+  },
 ]
 
 export type CrowdloanDetails = {
@@ -2139,9 +2155,26 @@ export const crowdloanDetails: CrowdloanDetails[] = [
         },
       ],
       custom: null,
-      info: 'After the launch of the main network, 30% of KICO tokens will be released directly, and the remaining 48 weeks of linear release will be completed.',
+      info: 'After the launch of the main network, 30% of KICO tokens will be released directly, and the remaining will be released linearly over 48 weeks.',
     },
   },
-
-
+  {
+    relayId:2,
+    paraId: 2110,
+    contributeUrl: '',
+    rewards: {
+      tokens: null,
+      custom: [
+        {
+          title: "Crowdloan Allocation",
+          value: "140,000,000 MGX"
+        },
+        {
+          title: "Distributed Immediately",
+          value: "30,000,000 MGX"
+        }
+      ],
+      info: 'After the launch of the main network, ~21% (30M) of MGX tokens will be released directly, and the remaining will be released linearly over 48 weeks.',
+    },
+  },
 ]
