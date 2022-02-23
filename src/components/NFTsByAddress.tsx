@@ -13,9 +13,10 @@ const Loading = styled(MaterialLoader)`
 
 interface NFTsByAddressProps {
   address: string
+  limit?: number
 }
 
-const NFTsByAddress = ({ address }: NFTsByAddressProps) => {
+const NFTsByAddress = ({ address, limit }: NFTsByAddressProps) => {
   const { nfts, isLoading } = useNftsByAddress(address as string)
   if (isLoading) {
     return <Loading />
@@ -23,7 +24,8 @@ const NFTsByAddress = ({ address }: NFTsByAddressProps) => {
   if (!nfts) {
     return null
   }
-  return nfts?.map((nft: { id: Key | null | undefined }) => {
+  const pickedNfts = limit ? nfts?.slice(0, limit) : nfts
+  return pickedNfts?.map((nft: { id: Key | null | undefined }) => {
     return <NftCard key={nft.id} nft={nft} />
   })
 }

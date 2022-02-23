@@ -7,7 +7,7 @@ const AllNFTs = () => {
   return (
     <>
       {addresses?.map(address => {
-        return <NFTsByAddress key={address} address={address} />
+        return <NFTsByAddress key={address} address={address} limit={4} />
       })}
     </>
   )
