@@ -3459,9 +3459,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@talisman-connect/nft@npm:^0.0.5":
-  version: 0.0.5
-  resolution: "@talisman-connect/nft@npm:0.0.5"
+"@talisman-connect/nft@npm:^0.0.6":
+  version: 0.0.6
+  resolution: "@talisman-connect/nft@npm:0.0.6"
   dependencies:
     "@polkadot/keyring": ^8.4.1
     swr: ^1.2.2
@@ -3469,7 +3469,7 @@ __metadata:
     "@talisman-connect/ui": 1.1.1
     react: 17.0.2
     react-dom: 17.0.2
-  checksum: 957ecb163d2232d2fe79275a779081df5773f14fd7967ff63e936773b587c45c2cfcd4b150ed7a0dc8558fc477f1a97765be204d2ca8a39648a97d7cfe361f2b
+  checksum: 262665297d90643e7566d7eb31f57bcf444ba6ace3b8b990b157cc90298d6f547295a219f5b1104208a55af4f796a8f0240d62068e704476c6015283a8f746c9
   languageName: node
   linkType: hard
 
@@ -3583,7 +3583,7 @@ __metadata:
     "@polkadot/util-crypto": ^7.4.1
     "@ramp-network/ramp-instant-sdk": ^2.5.0
     "@talisman-connect/components": ^1.1.0
-    "@talisman-connect/nft": ^0.0.5
+    "@talisman-connect/nft": ^0.0.6
     "@talisman-connect/ui": ^1.1.1
     "@talisman-connect/wallets": ^1.1.1
     "@talismn/api-react-hooks": ~0
