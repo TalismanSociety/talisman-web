@@ -1,4 +1,3 @@
-import { Account } from '@archetypes'
 import { ExtensionStatusGate, PanelSection } from '@components'
 import { CopyButton } from '@components/CopyButton'
 import NFTsByAddress from '@components/NFTsByAddress'
