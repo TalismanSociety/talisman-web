@@ -1,44 +1,68 @@
 import '@talisman-connect/nft/nft.esm.css'
 
-import { Panel, PanelSection, Pendor } from '@components'
+import { ExtensionStatusGate, Panel, PanelSection } from '@components'
 import AllNFTs from '@components/AllNFTs'
 import { ReactComponent as ArrowRight } from '@icons/arrow-right.svg'
-import { useAllAccountAddresses } from '@libs/talisman'
 import { device } from '@util/breakpoints'
 import { useTranslation } from 'react-i18next'
 import { NavLink } from 'react-router-dom'
 import styled from 'styled-components'
 
+const ExtensionUnavailable = styled(props => {
+  const { t } = useTranslation()
+  return (
+    <Panel title={t('NFTs')}>
+      <PanelSection comingSoon {...props}>
+        <h2>{t('extensionUnavailable.title')}</h2>
+        <p>{t('extensionUnavailable.subtitle')}</p>
+        <p>
+          {t('extensionUnavailable.text')}
+          <br />
+          {t('extensionUnavailable.text2')}
+        </p>
+      </PanelSection>
+    </Panel>
+  )
+})`
+  text-align: center;
+
+  > *:not(:last-child) {
+    margin-bottom: 2rem;
+  }
+  > *:last-child {
+    margin-bottom: 0;
+  }
+
+  > h2 {
+    color: var(--color-text);
+    font-weight: 600;
+    font-size: 1.8rem;
+  }
+  p {
+    color: #999;
+    font-size: 1.6rem;
+  }
+`
+
 const NFTs = styled(({ className }: { className?: string }) => {
   const { t } = useTranslation()
   const { t: tNav } = useTranslation('nav')
-  const addresses = useAllAccountAddresses()
-  if (!addresses?.length) {
-    return (
-      <section className={`wallet-assets ${className}`}>
-        <Panel title={tNav('NFTs')}>
-          <PanelSection comingSoon>
-            <div>{t('Connect wallet')}</div>
-            <Pendor />
-          </PanelSection>
-        </Panel>
-      </section>
-    )
-  }
   return (
     <section className={`wallet-assets ${className}`}>
-      <div className="header">
-        <h1>{tNav('NFTs')}</h1>
-        <NavLink to="/nfts">
-          <span className="view-all">
-            {t('View all')}
-            <ArrowRight />
-          </span>
-        </NavLink>
-      </div>
-      <div className="nft-grid">
-        <AllNFTs />
-      </div>
+      <ExtensionStatusGate unavailable={<ExtensionUnavailable />}>
+        <div className="header">
+          <h1>{tNav('NFTs')}</h1>
+          <NavLink to="/nfts">
+            <span className="view-all">
+              {t('View all')}
+              <ArrowRight />
+            </span>
+          </NavLink>
+        </div>
+        <div className="nft-grid">
+          <AllNFTs />
+        </div>
+      </ExtensionStatusGate>
     </section>
   )
 })`

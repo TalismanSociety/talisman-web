@@ -1,16 +1,52 @@
 import { Account } from '@archetypes'
+import { ExtensionStatusGate, PanelSection } from '@components'
 import { CopyButton } from '@components/CopyButton'
 import NFTsByAddress from '@components/NFTsByAddress'
 import { Account as IAccount, useExtensionAutoConnect } from '@libs/talisman'
 import Identicon from '@polkadot/react-identicon'
 import { useNftsByAddress } from '@talisman-connect/nft'
 import { device } from '@util/breakpoints'
+import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 interface AccountProps {
   className?: string
   account: IAccount
 }
+
+const ExtensionUnavailable = styled(props => {
+  const { t } = useTranslation()
+  return (
+    <PanelSection comingSoon {...props}>
+      <h2>{t('extensionUnavailable.title')}</h2>
+      <p>{t('extensionUnavailable.subtitle')}</p>
+      <p>
+        {t('extensionUnavailable.text')}
+        <br />
+        {t('extensionUnavailable.text2')}
+      </p>
+    </PanelSection>
+  )
+})`
+  text-align: center;
+
+  > *:not(:last-child) {
+    margin-bottom: 2rem;
+  }
+  > *:last-child {
+    margin-bottom: 0;
+  }
+
+  > h2 {
+    color: var(--color-text);
+    font-weight: 600;
+    font-size: 1.8rem;
+  }
+  p {
+    color: #999;
+    font-size: 1.6rem;
+  }
+`
 
 const NFTGrid = styled(({ className = '', account }: AccountProps) => {
   const { address, name } = account
@@ -67,7 +103,7 @@ const NFTGrid = styled(({ className = '', account }: AccountProps) => {
 `
 
 const NFTsPage = styled(({ className }) => {
-  const { accounts, status } = useExtensionAutoConnect()
+  const { accounts } = useExtensionAutoConnect()
 
   return (
     <section className={className}>
@@ -75,13 +111,13 @@ const NFTsPage = styled(({ className }) => {
       <div className="account-button-container">
         <Account.Button allAccounts showDisconnect />
       </div>
-      {status === 'OK' && (
+      <ExtensionStatusGate unavailable={<ExtensionUnavailable />}>
         <div className="all-nft-grids">
           {accounts?.map(account => {
             return <NFTGrid key={account.address} account={account} />
           })}
         </div>
-      )}
+      </ExtensionStatusGate>
     </section>
   )
 })`
