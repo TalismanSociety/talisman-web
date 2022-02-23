@@ -90,7 +90,11 @@ const NFTGrid = styled(({ className = '', account }: AccountProps) => {
   .nft-grid {
     display: grid;
     gap: 2rem;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
+
+    @media ${device.md} {
+      grid-template-columns: repeat(2, 1fr);
+    }
 
     @media ${device.lg} {
       grid-template-columns: repeat(3, 1fr);
