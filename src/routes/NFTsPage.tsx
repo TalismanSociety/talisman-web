@@ -112,9 +112,9 @@ const NFTsPage = styled(({ className }) => {
   return (
     <section className={className}>
       <h1>NFTs</h1>
-      <div className="account-button-container">
+      {/* <div className="account-button-container">
         <Account.Button allAccounts showDisconnect />
-      </div>
+      </div> */}
       <ExtensionStatusGate unavailable={<ExtensionUnavailable />}>
         <div className="all-nft-grids">
           {accounts?.map(account => {
