@@ -20,7 +20,7 @@ const _Wallet = styled(({ className }) => {
       </header>
       <Wallet.Assets />
       <Wallet.Crowdloans />
-      <Wallet.NFTs />
+      {/* <Wallet.NFTs /> */}
     </section>
   )
 })`
