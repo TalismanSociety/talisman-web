@@ -1,4 +1,5 @@
 import { NftCard, useNftsByAddress } from '@talisman-connect/nft'
+import { encodeAnyAddress } from '@talismn/util'
 import { Key } from 'react'
 import styled from 'styled-components'
 
@@ -17,7 +18,8 @@ interface NFTsByAddressProps {
 }
 
 const NFTsByAddress = ({ address, limit }: NFTsByAddressProps) => {
-  const { nfts, isLoading } = useNftsByAddress(address as string)
+  const encodedAddress = encodeAnyAddress(address, 2)
+  const { nfts, isLoading } = useNftsByAddress(encodedAddress as string)
   if (isLoading) {
     return <Loading />
   }
