@@ -1,5 +1,4 @@
 import { ExtensionStatusGate, PanelSection } from '@components'
-import { CopyButton } from '@components/CopyButton'
 import NFTsByAddress from '@components/NFTsByAddress'
 import { Account as IAccount, useExtensionAutoConnect } from '@libs/talisman'
 import Identicon from '@polkadot/react-identicon'
@@ -48,7 +47,7 @@ const ExtensionUnavailable = styled(props => {
 `
 
 const NFTGrid = styled(({ className = '', account }: AccountProps) => {
-  const { address, name } = account
+  const { address, name, type } = account
   const { nfts } = useNftsByAddress(address as string)
   if (!nfts?.length) {
     return null
@@ -56,11 +55,13 @@ const NFTGrid = styled(({ className = '', account }: AccountProps) => {
   return (
     <div className={className}>
       <div className="account-name">
-        <Identicon className="identicon" size={64} value={address} />
+        <Identicon
+          className="identicon"
+          size={64}
+          value={address}
+          theme={type === 'ethereum' ? 'ethereum' : 'polkadot'}
+        />
         <span>{name}</span>
-        <span className="copy-button">
-          <CopyButton text={address} />
-        </span>
       </div>
       <div className="nft-grid">
         <NFTsByAddress address={address} />
@@ -111,9 +112,6 @@ const NFTsPage = styled(({ className }) => {
   return (
     <section className={className}>
       <h1>NFTs</h1>
-      {/* <div className="account-button-container">
-        <Account.Button allAccounts showDisconnect />
-      </div> */}
       <ExtensionStatusGate unavailable={<ExtensionUnavailable />}>
         <div className="all-nft-grids">
           {accounts?.map(account => {
@@ -132,18 +130,6 @@ const NFTsPage = styled(({ className }) => {
     margin: 6rem auto;
   }
   padding: 0 2.4rem;
-
-  .account-picker {
-    margin-bottom: 4rem;
-    position: absolute;
-    top: 100%;
-    left: 0;
-  }
-
-  .account-button-container {
-    width: max-content;
-    margin-bottom: 4rem;
-  }
 
   .all-nft-grids > * + * {
     margin-top: 4rem;
