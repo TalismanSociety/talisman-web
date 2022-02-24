@@ -385,7 +385,7 @@ const Authorized = styled(
     const { t } = useTranslation()
     const nodeRef = useRef<HTMLDivElement>(null)
     const { switchAccount } = useActiveAccount()
-    const { accounts, disconnect } = useExtensionAutoConnect()
+    const { accounts } = useExtensionAutoConnect()
     const { hasActiveAccount, address, name, type } = useActiveAccount()
     const { totalUsd, totalUsdByAddress } = usePortfolio()
     const [open, setOpen] = useState(false)
@@ -459,8 +459,6 @@ const Authorized = styled(
                 onClick={() => {
                   localStorage.removeItem('@talisman-connect/selected-wallet-name')
                   document.dispatchEvent(new CustomEvent('@talisman-connect/wallet-selected'))
-                  disconnect()
-                  switchAccount('')
                 }}
               >
                 Disconnect

@@ -1,4 +1,4 @@
-import { ChainLogo, ExtensionStatusGate, Info, Panel, PanelSection, Pendor } from '@components'
+import { ChainLogo, Info, Panel, PanelSection, Pendor } from '@components'
 import {
   getTotalContributionForCrowdloan,
   groupTotalContributionsByCrowdloan,
@@ -111,40 +111,6 @@ const CrowdloanItemWithLink = styled(props => {
   }
 `
 
-const ExtensionUnavailable = styled(props => {
-  const { t } = useTranslation()
-  return (
-    <PanelSection comingSoon {...props}>
-      <h2>{t('extensionUnavailable.title')}</h2>
-      <p>{t('extensionUnavailable.subtitle')}</p>
-      <p>
-        {t('extensionUnavailable.text')}
-        <br />
-        {t('extensionUnavailable.text2')}
-      </p>
-    </PanelSection>
-  )
-})`
-  text-align: center;
-
-  > *:not(:last-child) {
-    margin-bottom: 2rem;
-  }
-  > *:last-child {
-    margin-bottom: 0;
-  }
-
-  > h2 {
-    color: var(--color-text);
-    font-weight: 600;
-    font-size: 1.8rem;
-  }
-  p {
-    color: #999;
-    font-size: 1.6rem;
-  }
-`
-
 const Crowdloans = ({ className }: { className?: string }) => {
   const { t } = useTranslation()
   const accounts = useAccountAddresses()
@@ -186,11 +152,7 @@ const Crowdloans = ({ className }: { className?: string }) => {
         ) : Object.keys(totalAliveContributions).length < 1 ? (
           <PanelSection comingSoon>{`${`😕 `} ${t('You have not contributed to any Crowdloans')}`}</PanelSection>
         ) : (
-          <ExtensionStatusGate unavailable={<ExtensionUnavailable />}>
-            {Object.keys(totalAliveContributions).map(id => (
-              <CrowdloanItemWithLink key={id} id={id} />
-            ))}
-          </ExtensionStatusGate>
+          Object.keys(totalAliveContributions).map(id => <CrowdloanItemWithLink key={id} id={id} />)
         )}
       </Panel>
     </section>

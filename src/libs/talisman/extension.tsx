@@ -49,7 +49,6 @@ export const useExtensionAutoConnect = () => useContext()
 
 type ContextProps = {
   connect: () => void
-  disconnect: () => void
   accounts: Account[]
   status: Status
   provider: InjectedProvider | null
@@ -86,11 +85,6 @@ export const Provider = ({ children }: PropsWithChildren<{}>) => {
     setShouldConnect(true)
   }, [])
 
-  const disconnect = useCallback(() => {
-    setStatus('DISCONNECTED')
-    recheck()
-  }, [])
-
   useEffect(() => {
     const onWalletSelected = async (e: unknown) => {
       recheck()
@@ -102,10 +96,10 @@ export const Provider = ({ children }: PropsWithChildren<{}>) => {
   }, [recheck])
 
   useEffect(() => {
-    // if (!shouldConnect && !localStorage.getItem('@talisman-connect/selected-wallet-name')) {
-    //   setStatus('DISCONNECTED')
-    //   return
-    // }
+    if (!shouldConnect && !localStorage.getItem('@talisman-connect/selected-wallet-name')) {
+      setStatus('DISCONNECTED')
+      return
+    }
 
     if (recheckId) {
       // do nothing
@@ -168,8 +162,8 @@ export const Provider = ({ children }: PropsWithChildren<{}>) => {
   }, [status])
 
   const value = useMemo(
-    () => ({ connect, disconnect, accounts, status, provider, signer }),
-    [connect, disconnect, accounts, status, provider, signer]
+    () => ({ connect, accounts, status, provider, signer }),
+    [connect, accounts, status, provider, signer]
   )
 
   return <Context.Provider value={value}>{children}</Context.Provider>
