@@ -18,7 +18,7 @@ interface NFTsByAddressProps {
 }
 
 const NFTsByAddress = ({ address, limit }: NFTsByAddressProps) => {
-  const encodedAddress = encodeAnyAddress(address, 2)
+  const encodedAddress = encodeAnyAddress(address, 2) // TODO: This should not be needed. Fix `useNftsByAddress` to accept eth address
   const { nfts, isLoading } = useNftsByAddress(encodedAddress as string)
   if (isLoading) {
     return <Loading />
