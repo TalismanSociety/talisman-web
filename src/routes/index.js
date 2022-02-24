@@ -5,7 +5,6 @@ import Buy from './Buy'
 import CrowdloanDetail from './Crowdloan.Detail.tsx'
 import CrowdloanIndex from './Crowdloan.Index.tsx'
 import Home from './Home'
-import NFTsPage from './NFTsPage'
 import SpiritKeys from './SpiritKeysPage'
 import Wallet from './Wallet'
 
@@ -17,11 +16,6 @@ const Routes = () => (
     <Route exact path="/portfolio">
       <Layout>
         <Wallet />
-      </Layout>
-    </Route>
-    <Route exact path="/nfts">
-      <Layout>
-        <NFTsPage />
       </Layout>
     </Route>
     <Route exact path="/crowdloans">
