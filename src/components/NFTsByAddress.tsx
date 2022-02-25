@@ -1,6 +1,5 @@
 import { NftCard, useNftsByAddress } from '@talisman-components/nft'
 import { device } from '@util/breakpoints'
-import { Key } from 'react'
 import styled from 'styled-components'
 
 import MaterialLoader from './MaterialLoader'
