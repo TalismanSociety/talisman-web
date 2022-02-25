@@ -1,4 +1,5 @@
-import { NftCard, useNftsByAddress } from '@talisman-connect/nft'
+import { NftCard, useNftsByAddress } from '@talisman-components/nft'
+import { device } from '@util/breakpoints'
 import { Key } from 'react'
 import styled from 'styled-components'
 
@@ -12,11 +13,12 @@ const Loading = styled(MaterialLoader)`
 `
 
 interface NFTsByAddressProps {
+  className?: string
   address: string
   limit?: number
 }
 
-const NFTsByAddress = ({ address, limit }: NFTsByAddressProps) => {
+const NFTsByAddress = styled(({ className = '', address, limit }: NFTsByAddressProps) => {
   const { nfts, isLoading } = useNftsByAddress(address as string)
   if (isLoading) {
     return <Loading />
@@ -25,9 +27,25 @@ const NFTsByAddress = ({ address, limit }: NFTsByAddressProps) => {
     return null
   }
   const pickedNfts = limit ? nfts?.slice(0, limit) : nfts
-  return pickedNfts?.map((nft: { id: Key | null | undefined }) => {
-    return <NftCard key={nft.id} nft={nft} />
+  return pickedNfts?.map((nft: any) => {
+    return (
+      <div key={nft.id} className={className}>
+        <NftCard nft={nft} />
+      </div>
+    )
   })
-}
+})`
+  svg {
+    width: 4.8rem;
+    height: 4rem;
+  }
+
+  @media ${device.lg} {
+    svg {
+      width: 4.1rem;
+      height: 4rem;
+    }
+  }
+`
 
 export default NFTsByAddress

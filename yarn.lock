@@ -1924,6 +1924,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@google/model-viewer@npm:^1.10.1":
+  version: 1.10.1
+  resolution: "@google/model-viewer@npm:1.10.1"
+  checksum: 8412e930be18a84b8e15fcf9eeaac5e233d9536f8393b77422899b9c94ff5e3e24d3483804633e64cf0f20d23b1ac025e6c3cb2039b820ef4d406120be389501
+  languageName: node
+  linkType: hard
+
 "@graphql-typed-document-node/core@npm:^3.0.0":
   version: 3.1.0
   resolution: "@graphql-typed-document-node/core@npm:3.1.0"
@@ -3445,6 +3452,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@talisman-components/nft@npm:^0.0.1":
+  version: 0.0.1
+  resolution: "@talisman-components/nft@npm:0.0.1"
+  dependencies:
+    "@google/model-viewer": ^1.10.1
+    "@polkadot/keyring": ^8.4.1
+    swr: ^1.2.2
+  peerDependencies:
+    react: 17.0.2
+  checksum: c6ad6940d037cfc1ca6ec20bcb6bf11cd431e77c742db997aaee329354290ba12e4f013a5f2ef25fb58dce0f64595e1a3b36d9591f30d3d492b5dc00b3a5bb62
+  languageName: node
+  linkType: hard
+
 "@talisman-connect/components@npm:^1.1.0":
   version: 1.1.0
   resolution: "@talisman-connect/components@npm:1.1.0"
@@ -3456,20 +3476,6 @@ __metadata:
     regenerator-runtime: 0.13.7
     tslib: ^2.0.0
   checksum: 8c037800f1c2312808682924da27dcdf6c975046c43b79b4b7e86de785af71c493e9f99b5d99e08c9ea8775eb44552f0c68a4fa089e529973b7f27ce57175b55
-  languageName: node
-  linkType: hard
-
-"@talisman-connect/nft@npm:^0.0.11":
-  version: 0.0.11
-  resolution: "@talisman-connect/nft@npm:0.0.11"
-  dependencies:
-    "@polkadot/keyring": ^8.4.1
-    swr: ^1.2.2
-  peerDependencies:
-    "@talisman-connect/ui": 1.1.1
-    react: 17.0.2
-    react-dom: 17.0.2
-  checksum: f6ab6f36ee0a5c16f86e699562ad64596e7e58a5815564654c209c1f39496c6d598c42b3d9dc7e4ccdee3b2cdb34b2ddc93082e77d96d0dd596744b2abaa612d
   languageName: node
   linkType: hard
 
@@ -3582,8 +3588,8 @@ __metadata:
     "@polkadot/util": ^7.4.1
     "@polkadot/util-crypto": ^7.4.1
     "@ramp-network/ramp-instant-sdk": ^2.5.0
+    "@talisman-components/nft": ^0.0.1
     "@talisman-connect/components": ^1.1.0
-    "@talisman-connect/nft": ^0.0.11
     "@talisman-connect/ui": ^1.1.1
     "@talisman-connect/wallets": ^1.1.1
     "@talismn/api-react-hooks": ~0
