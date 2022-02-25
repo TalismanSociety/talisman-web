@@ -1,4 +1,4 @@
-import '@talisman-connect/nft/nft.esm.css'
+import '@talisman-components/nft/index.umd.css'
 
 import { ExtensionStatusGate, Panel, PanelSection } from '@components'
 import AllNFTs from '@components/AllNFTs'

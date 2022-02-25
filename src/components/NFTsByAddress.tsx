@@ -1,4 +1,4 @@
-import { NftCard, useNftsByAddress } from '@talisman-connect/nft'
+import { NftCard, useNftsByAddress } from '@talisman-components/nft'
 import { Key } from 'react'
 import styled from 'styled-components'
 
