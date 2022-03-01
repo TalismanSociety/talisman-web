@@ -3452,16 +3452,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@talisman-components/nft@npm:^0.0.1":
-  version: 0.0.1
-  resolution: "@talisman-components/nft@npm:0.0.1"
+"@talisman-components/nft@npm:^0.0.2":
+  version: 0.0.2
+  resolution: "@talisman-components/nft@npm:0.0.2"
   dependencies:
     "@google/model-viewer": ^1.10.1
     "@polkadot/keyring": ^8.4.1
     swr: ^1.2.2
   peerDependencies:
     react: 17.0.2
-  checksum: c6ad6940d037cfc1ca6ec20bcb6bf11cd431e77c742db997aaee329354290ba12e4f013a5f2ef25fb58dce0f64595e1a3b36d9591f30d3d492b5dc00b3a5bb62
+  checksum: 852d559f341d500794d90071b7a6a049e1d65f793f65fbf5c6a52ed42d11e2a97909a942604d9bef0ea5f36cbc3ef7f5d8b796ed6fd1970887d9fbf70ff90c2a
   languageName: node
   linkType: hard
 
@@ -3588,7 +3588,7 @@ __metadata:
     "@polkadot/util": ^7.4.1
     "@polkadot/util-crypto": ^7.4.1
     "@ramp-network/ramp-instant-sdk": ^2.5.0
-    "@talisman-components/nft": ^0.0.1
+    "@talisman-components/nft": ^0.0.2
     "@talisman-connect/components": ^1.1.0
     "@talisman-connect/ui": ^1.1.1
     "@talisman-connect/wallets": ^1.1.1
