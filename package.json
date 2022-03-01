@@ -21,7 +21,7 @@
     "@polkadot/util": "^7.4.1",
     "@polkadot/util-crypto": "^7.4.1",
     "@ramp-network/ramp-instant-sdk": "^2.5.0",
-    "@talisman-components/nft": "^0.0.2",
+    "@talisman-components/nft": "^0.0.3",
     "@talisman-connect/components": "^1.1.0",
     "@talisman-connect/ui": "^1.1.1",
     "@talisman-connect/wallets": "^1.1.1",
