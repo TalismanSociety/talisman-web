@@ -15,7 +15,7 @@ const TermsOfService = styled(({ className }) => {
       {/* <Trans i18nKey="TOS" ns="connect-wallet"> */}
       {t('By connecting your wallet you agree to our')}{' '}
       <a
-        href="https://glib-calendula-bf6.notion.site/Terms-of-use-6ac8a57691a946f0b4805c34b26be2b9"
+        href="https://docs.talisman.xyz/talisman/legal-and-security/terms-of-use"
         target="_blank"
         rel="noreferrer noopener"
       >
