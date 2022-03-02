@@ -2379,7 +2379,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@polkadot/api@npm:6.8.1, @polkadot/api@npm:^6.6.1, @polkadot/api@npm:^6.8.1":
+"@polkadot/api@npm:6.8.1, @polkadot/api@npm:^6.6.1":
   version: 6.8.1
   resolution: "@polkadot/api@npm:6.8.1"
   dependencies:
@@ -2423,22 +2423,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@polkadot/extension-dapp@npm:0.41.1":
-  version: 0.41.1
-  resolution: "@polkadot/extension-dapp@npm:0.41.1"
-  dependencies:
-    "@babel/runtime": ^7.15.4
-    "@polkadot/extension-inject": ^0.41.1
-    "@polkadot/util": ^7.8.2
-    "@polkadot/util-crypto": ^7.8.2
-  peerDependencies:
-    "@polkadot/api": "*"
-    "@polkadot/util": "*"
-    "@polkadot/util-crypto": "*"
-  checksum: 0aa93223cd72ae183e18e73961691af41c576f6116e68c91dc8d38f96db201b1b235c8d3b14f124ffae6763cb8fc9fb3e7841183c8cf6d4403d2c7c51706cf5f
-  languageName: node
-  linkType: hard
-
 "@polkadot/extension-dapp@npm:^0.42.7":
   version: 0.42.7
   resolution: "@polkadot/extension-dapp@npm:0.42.7"
@@ -2463,17 +2447,6 @@ __metadata:
   peerDependencies:
     "@polkadot/api": "*"
   checksum: 9ac87aa2a9a54437da4844f40efa4753b876c02135c1d0ded9bda06029e37a6f2ddf8f0e6c2bc7ed95094ee2e7a2bd05f1648255eff02b384a96c043293935d3
-  languageName: node
-  linkType: hard
-
-"@polkadot/extension-inject@npm:^0.41.1":
-  version: 0.41.1
-  resolution: "@polkadot/extension-inject@npm:0.41.1"
-  dependencies:
-    "@babel/runtime": ^7.15.4
-  peerDependencies:
-    "@polkadot/api": "*"
-  checksum: 2e62b0746fd5d47271ef8bfa67b4d60d2cae7747a471588a0b4ce8459586dc2eb789261392a147a93ec58af887b3141bb5cbf2cb1f29127d9339cfff342a5c0a
   languageName: node
   linkType: hard
 
@@ -3545,16 +3518,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@talismn/dapp-connect@npm:^0.1.2":
-  version: 0.1.2
-  resolution: "@talismn/dapp-connect@npm:0.1.2"
-  dependencies:
-    "@polkadot/api": ^6.8.1
-    "@polkadot/extension-dapp": 0.41.1
-  checksum: 2a5b486492ded91816f5f74a48365c27fa77b2c8fa5171da5330d41ce37ba0cb20732632b375f61219d2301f9e9443e0817033d348178aa05f698e8d50e5b0e9
-  languageName: node
-  linkType: hard
-
 "@talismn/util@npm:~0":
   version: 0.0.11
   resolution: "@talismn/util@npm:0.0.11"
@@ -3594,7 +3557,6 @@ __metadata:
     "@talisman-connect/wallets": ^1.1.1
     "@talismn/api-react-hooks": ~0
     "@talismn/chaindata-js": ~0
-    "@talismn/dapp-connect": ^0.1.2
     "@talismn/util": ~0
     "@testing-library/dom": ^8.2.0
     "@testing-library/jest-dom": ^5.11.4
