@@ -10,15 +10,27 @@ import { DAPP_NAME, useAllAccountAddresses } from '@libs/talisman'
 import { WalletSelect } from '@talisman-connect/components'
 import { device } from '@util/breakpoints'
 import { isMobileBrowser } from '@util/helpers'
-import { DISCORD_JOIN_URL } from '@util/links'
-import { useTranslation } from 'react-i18next'
+import { DISCORD_JOIN_URL, TALISMAN_SPIRIT_KEYS_RMRK } from '@util/links'
+import { Trans, useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 const SpiritKeyPlaceholder = styled(({ className }) => {
-  const { t } = useTranslation('spirit-keys')
   return (
     <div className={className}>
-      <div className="content">{t('spiritClan.noKeyPlaceholder')}</div>
+      <div className="content">
+        <div>
+          <Trans
+            ns="spirit-keys"
+            i18nKey={'spiritClan.noKeyPlaceholder'}
+            components={{
+              a: (
+                // eslint-disable-next-line jsx-a11y/anchor-has-content
+                <a href={TALISMAN_SPIRIT_KEYS_RMRK} title="Singular" />
+              ),
+            }}
+          />
+        </div>
+      </div>
     </div>
   )
 })`
@@ -28,6 +40,10 @@ const SpiritKeyPlaceholder = styled(({ className }) => {
   height: 23.5rem;
   width: 23.5rem;
   margin: auto;
+
+  a {
+    text-decoration: underline;
+  }
 
   .content {
     height: 100%;
@@ -81,7 +97,18 @@ const SpiritKeyPageV2 = styled(({ className }) => {
         <div className="info">
           <div className="section">
             <h1 className="intro">{t('spiritClan.title')}</h1>
-            <p>{t('spiritClan.info.0')}</p>
+            <p>
+              <Trans
+                ns="spirit-keys"
+                i18nKey={'spiritClan.info.0'}
+                components={{
+                  a: (
+                    // eslint-disable-next-line jsx-a11y/anchor-has-content
+                    <a href={DISCORD_JOIN_URL} title="Join Spirit Clan" />
+                  ),
+                }}
+              />
+            </p>
             <p>{t('spiritClan.info.1')}</p>
             <p>{t('spiritClan.info.2')}</p>
           </div>
@@ -127,6 +154,12 @@ const SpiritKeyPageV2 = styled(({ className }) => {
       grid-template-columns: 1fr 1fr;
       grid-template-rows: 1fr;
       text-align: left;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: underline;
+      opacity: unset;
     }
   }
 

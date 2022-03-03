@@ -35,11 +35,11 @@
   "spiritClan": {
     "title": "Discover a Spirit Key to join the Spirit Clan.",
     "info": [
-      "A Spirit Key is a NFT which allows you to join the <1>Spirit Clan.</1>",
+      "A Spirit Key is a NFT which allows you to join the <a>Spirit Clan</a>.",
       "Spirit Clan members can access a permissioned Discord channel where they'll have the opportunity to help shape Talisman.",
       "Spirit Clan members will receive early access to new products, events, NFT drops and more."
     ],
-    "noKeyPlaceholder": "You don't have a key yet. Get one on <1>Singular.</1>",
+    "noKeyPlaceholder": "You don't have a key yet. Get one on <a>Singular</a>.",
     "Already have one?": "Already have one?",
     "Join Spirit Clan": "Join Spirit Clan"
   }

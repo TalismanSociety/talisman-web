@@ -3,3 +3,4 @@ export const DISCORD_JOIN_URL = 'https://discord.gg/talisman'
 export const TALISMAN_EXTENSION_DOWNLOAD_URL =
   'https://drive.google.com/u/0/uc?id=1M-nOghb0VhKeEOfCtmWeCKc7FboppQ9X&export=download'
 export const TALISMAN_TWITTER_URL = 'https://twitter.com/wearetalisman'
+export const TALISMAN_SPIRIT_KEYS_RMRK = 'https://singular.rmrk.app/collections/b6e98494bff52d3b1e-SPIRIT'
