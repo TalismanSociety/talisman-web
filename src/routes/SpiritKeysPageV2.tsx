@@ -73,7 +73,7 @@ const SpiritKeyPageV2 = styled(({ className }) => {
           {totalNFTs && !hasNfts && (
             <>
               <SpiritKeyPlaceholder />
-              <div>{t('Already have one?')}</div>
+              <div>{t('spiritClan.alreadyHaveOne')}</div>
               <WalletSelect
                 dappName={DAPP_NAME}
                 triggerComponent={<Button primary>{tBase('Connect wallet')}</Button>}
@@ -86,14 +86,14 @@ const SpiritKeyPageV2 = styled(({ className }) => {
               <OwnershipText />
               <div>
                 <a href={DISCORD_JOIN_URL} target="_blank" rel="noreferrer noopener" title="Join Spirit Clan">
-                  <Button primary>{t('Join Spirit Clan')}</Button>
+                  <Button primary>{t('spiritClan.joinSpiritClan')}</Button>
                 </a>
               </div>
               <SpiritKeySender />
             </>
           )}
         </div>
-        <p className="poem">{t('poem')}</p>
+        <p className="poem">{t('spiritClan.poem')}</p>
         <div className="info">
           <div className="section">
             <h1 className="intro">{t('spiritClan.title')}</h1>

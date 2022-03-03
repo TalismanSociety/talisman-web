@@ -31,16 +31,16 @@
       "通过制作或发布关于 Talisman 的媒体内容"
     ]
   },
-  "poem": "Talisman Seeker, it's your spirit that's key. At the end of your seeking, you'll finally be free. A key to the new world is a difficult thing. You should ask yourself honestly, \"what on earth should I bring?\" Give a moment of thought as to whether it can be brought. All I can guarantee, is that nothing is for naught.",
   "spiritClan": {
-    "title": "Discover a Spirit Key to join the Spirit Clan.",
+    "poem": "“求符者，关键是你的精神。在你求索的尽头，你终将获得自由。新世界的钥匙是一件困难的事情。你应该诚实地问自己，“到底是什么 我应该带吗？\"请考虑一下是否可以带。我只能保证，没有什么是徒劳的。",
+    "title": "发现一把加入精灵族的精灵钥匙。",
     "info": [
-      "A Spirit Key is a NFT which allows you to join the <a>Spirit Clan</a>.",
-      "Spirit Clan members can access a permissioned Discord channel where they'll have the opportunity to help shape Talisman.",
-      "Spirit Clan members will receive early access to new products, events, NFT drops and more."
+      "Spirit Key 是一种 NFT, 可让您加入 <a>Spirit Clan</a>。",
+      "Spirit Clan 的成员可以访问经过许可的 Discord 频道，他们将有机会帮助塑造 Talisman。",
+      "Spirit Clan 成员将提前获得新产品、活动、NFT 掉落等内容。"
     ],
-    "noKeyPlaceholder": "You don't have a key yet. Get one on <a>Singular</a>.",
-    "Already have one?": "Already have one?",
-    "Join Spirit Clan": "Join Spirit Clan"
+    "noKeyPlaceholder": "你还没有钥匙。在 <a>Singular</a> 上找一把。",
+    "alreadyHaveOne": "已经有了？",
+    "joinSpiritClan": "加入灵族"
   }
 }
