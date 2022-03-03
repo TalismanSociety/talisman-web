@@ -58,9 +58,9 @@ const SpiritKeyPageV2 = styled(({ className }) => {
               <SpiritKeyNftImage border />
               <OwnershipText />
               <div>
-                <Button primary to={DISCORD_JOIN_URL}>
-                  {t('Join Spirit Clan')}
-                </Button>
+                <a href={DISCORD_JOIN_URL} target="_blank" rel="noreferrer noopener" title="Join Spirit Clan">
+                  <Button primary>{t('Join Spirit Clan')}</Button>
+                </a>
               </div>
               <SpiritKeySender />
             </>
