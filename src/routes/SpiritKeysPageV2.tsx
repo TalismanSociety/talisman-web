@@ -1,0 +1,153 @@
+import handRedBlack from '@assets/hand-red-black.svg'
+import talismanSpiritKey from '@assets/spirit-key.png'
+import { Button, DesktopRequired } from '@components'
+import { StyledLoader } from '@components/Await'
+import { OwnershipText } from '@libs/spiritkey/OwnershipText'
+import { SpiritKeyNftImage } from '@libs/spiritkey/SpiritKeyNftImage'
+import { SpiritKeySender } from '@libs/spiritkey/SpiritKeySender'
+import { useFetchNFTs } from '@libs/spiritkey/useFetchNFTs'
+import { DAPP_NAME, useAllAccountAddresses } from '@libs/talisman'
+import { WalletSelect } from '@talisman-connect/components'
+import { isMobileBrowser } from '@util/helpers'
+import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import styled from 'styled-components'
+
+const SpiritKeyPageV2 = styled(({ className }) => {
+  const { t } = useTranslation('spirit-keys')
+  const { t: tBase } = useTranslation()
+  const totalNFTs = useFetchNFTs()
+  const hasNfts = totalNFTs?.length > 0
+  const addresses = useAllAccountAddresses()
+  const addressesLoading = addresses === undefined
+
+  const [selectedWallet, setSelectedWallet] = useState<string | undefined>()
+
+  useEffect(() => {
+    const item = localStorage.getItem('@talisman-connect/selected-wallet-name')
+    if (item && item !== 'null') {
+      setSelectedWallet(item)
+    }
+  }, [totalNFTs])
+
+  if (addressesLoading) {
+    return <StyledLoader />
+  }
+
+  return (
+    <section className={className}>
+      {isMobileBrowser() && <DesktopRequired />}
+      <div className="content">
+        <div className="spirit-key-control-group">
+          {hasNfts ? (
+            <>
+              <SpiritKeyNftImage border />
+              <OwnershipText />
+              <SpiritKeySender />
+            </>
+          ) : (
+            <>
+              <div>You don't have a key yet. Get one on Singular.</div>
+              <p>Already have one?</p>
+              <WalletSelect
+                dappName={DAPP_NAME}
+                triggerComponent={<Button primary>{tBase(selectedWallet ? 'Switch wallet' : 'Connect wallet')}</Button>}
+              />
+            </>
+          )}
+        </div>
+        <p className="poem">{t('poem')}</p>
+        <div className="info">
+          <div className="section">
+            <h1 className="intro">{t('spiritClan.title')}</h1>
+            <p>{t('spiritClan.info.0')}</p>
+            <p>{t('spiritClan.info.1')}</p>
+            <p>{t('spiritClan.info.2')}</p>
+          </div>
+          <div className="section">
+            <img className="w-full" src={talismanSpiritKey} alt="Spirit Key" />
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+})`
+  text-align: center;
+  color: var(--color-text);
+
+  .w-full {
+    width: 100%;
+  }
+
+  a {
+    text-decoration: underline;
+  }
+
+  p {
+    font-size: var(--font-size-xlarge);
+  }
+
+  .poem {
+    font-family: ATApocRevelations, sans-serif;
+    font-size: var(--font-size-xxlarge);
+    padding: 10rem;
+  }
+
+  .info {
+    display: grid;
+    gap: 2rem;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr;
+    text-align: left;
+  }
+
+  .banner-text {
+    width: 100%;
+    height: auto;
+    margin: 4rem 0;
+    padding: 0 4rem;
+  }
+
+  .intro {
+    color: var(--color-text);
+    font-family: SurtExtended, serif;
+    font-size: 3.2rem;
+    margin-bottom: 4.3rem;
+  }
+
+  > .content {
+    width: 100%;
+    max-width: 1280px;
+    margin: 0 auto;
+
+    padding: 0 5vw;
+    display: flex;
+    justify-content: center;
+    position: relative;
+    flex-direction: column;
+
+    position: relative;
+  }
+
+  > .content::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: -1;
+    background-image: url(${handRedBlack});
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 50%;
+    opacity: 0.65;
+    filter: blur(60px);
+  }
+
+  .spirit-key-control-group {
+    padding: 8rem;
+  }
+`
+
+export default SpiritKeyPageV2
