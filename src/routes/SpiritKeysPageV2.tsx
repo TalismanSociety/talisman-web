@@ -8,14 +8,17 @@ import { SpiritKeySender } from '@libs/spiritkey/SpiritKeySender'
 import { useFetchNFTs } from '@libs/spiritkey/useFetchNFTs'
 import { DAPP_NAME, useAllAccountAddresses } from '@libs/talisman'
 import { WalletSelect } from '@talisman-connect/components'
+import { device } from '@util/breakpoints'
 import { isMobileBrowser } from '@util/helpers'
+import { DISCORD_JOIN_URL } from '@util/links'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 const SpiritKeyPlaceholder = styled(({ className }) => {
+  const { t } = useTranslation('spirit-keys')
   return (
     <div className={className}>
-      <div className="content">You don't have a key yet. Get one on Singular.</div>
+      <div className="content">{t('spiritClan.noKeyPlaceholder')}</div>
     </div>
   )
 })`
@@ -54,6 +57,11 @@ const SpiritKeyPageV2 = styled(({ className }) => {
             <>
               <SpiritKeyNftImage border />
               <OwnershipText />
+              <div>
+                <Button primary to={DISCORD_JOIN_URL}>
+                  {t('Join Spirit Clan')}
+                </Button>
+              </div>
               <SpiritKeySender />
             </>
           ) : (
@@ -90,26 +98,34 @@ const SpiritKeyPageV2 = styled(({ className }) => {
     width: 100%;
   }
 
-  a {
-    text-decoration: underline;
-  }
-
   p {
-    font-size: var(--font-size-xlarge);
+    @media ${device.lg} {
+      font-size: var(--font-size-xlarge);
+    }
   }
 
   .poem {
     font-family: ATApocRevelations, sans-serif;
-    font-size: var(--font-size-xxlarge);
-    padding: 10rem;
+    padding: 4rem 0;
+
+    @media ${device.lg} {
+      font-size: var(--font-size-xxlarge);
+      padding: 10rem;
+    }
   }
 
   .info {
-    display: grid;
-    gap: 2rem;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: 1fr;
-    text-align: left;
+    flex-wrap: wrap-reverse;
+    display: flex;
+    gap: 4rem;
+
+    @media ${device.lg} {
+      display: grid;
+      gap: 2rem;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: 1fr;
+      text-align: left;
+    }
   }
 
   .banner-text {
@@ -151,13 +167,21 @@ const SpiritKeyPageV2 = styled(({ className }) => {
     background-image: url(${handRedBlack});
     background-repeat: no-repeat;
     background-position: center;
-    background-size: 50%;
+    background-size: 100%;
     opacity: 0.65;
-    filter: blur(60px);
+    filter: blur(40px);
+    @media ${device.lg} {
+      background-size: 80%;
+      filter: blur(60px);
+    }
   }
 
   .spirit-key-control-group {
-    padding: 8rem;
+    display: none;
+    @media ${device.lg} {
+      display: block;
+      padding: 8rem;
+    }
   }
 
   .spirit-key-control-group > * + * {

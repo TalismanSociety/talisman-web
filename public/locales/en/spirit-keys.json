@@ -39,7 +39,8 @@
       "Spirit Clan members can access a permissioned Discord channel where they'll have the opportunity to help shape Talisman.",
       "Spirit Clan members will receive early access to new products, events, NFT drops and more."
     ],
-    "placeholder": "You don't have a key yet. Get one on Singular.",
-    "Already have one?": "Already have one?"
+    "noKeyPlaceholder": "You don't have a key yet. Get one on <1>Singular.</1>",
+    "Already have one?": "Already have one?",
+    "Join Spirit Clan": "Join Spirit Clan"
   }
 }

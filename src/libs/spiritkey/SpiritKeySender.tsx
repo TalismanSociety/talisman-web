@@ -461,13 +461,13 @@ export const SpiritKeySender = styled(({ className }) => {
     return null
   }
   return (
-    <div className={className} onClick={() => openModal(<SpiritKeySenderModal />)}>
+    <Button className={`outlined ${className}`} onClick={() => openModal(<SpiritKeySenderModal />)}>
       {t('Send to a friend')}
-    </div>
+    </Button>
   )
 })`
-  color: var(--color-primary);
-  :hover {
-    cursor: pointer;
-  }
+  // color: var(--color-primary);
+  // :hover {
+  //   cursor: pointer;
+  // }
 `

@@ -73,11 +73,9 @@ const Button = styled(({ loading, children, variant = '', className, ...props })
   white-space: nowrap;
 
   &.outlined {
-    border: solid 1px;
+    color: var(--color-text);
+    border: 1px solid var(--color-text);
     background: transparent;
-    > * {
-      background: var(--color-controlBackground);
-    }
   }
 
   .child {
@@ -102,6 +100,7 @@ const Button = styled(({ loading, children, variant = '', className, ...props })
     css`
       background: rgb(${theme?.primary});
       color: rgb(${({ theme }) => theme?.background});
+      border: 3.13px solid rgb(${theme.primary});
     `}
 
   ${({ small }) =>
