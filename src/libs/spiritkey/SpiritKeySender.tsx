@@ -1,5 +1,6 @@
 import { JoinButton } from '@archetypes/JoinButton/JoinButton'
 import { Button, Field, useModal } from '@components'
+import { StyledLoader } from '@components/Await'
 import { LeftRightPicker } from '@components/LeftRightPicker'
 import { TalismanHandLike } from '@components/TalismanHandLike'
 import { TalismanHandLoader } from '@components/TalismanHandLoader'
@@ -424,6 +425,7 @@ const SpiritKeySenderModal = styled(({ className }) => {
           </Button>
         </div>
       )}
+      {!hasNfts && <StyledLoader />}
       {hasNfts && (
         <>
           <LeftRightPicker

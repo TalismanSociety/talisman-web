@@ -9,9 +9,29 @@ import { useFetchNFTs } from '@libs/spiritkey/useFetchNFTs'
 import { DAPP_NAME, useAllAccountAddresses } from '@libs/talisman'
 import { WalletSelect } from '@talisman-connect/components'
 import { isMobileBrowser } from '@util/helpers'
-import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
+
+const SpiritKeyPlaceholder = styled(({ className }) => {
+  return (
+    <div className={className}>
+      <div className="content">You don't have a key yet. Get one on Singular.</div>
+    </div>
+  )
+})`
+  border: 1px solid var(--color-mid);
+  border-radius: 3rem;
+  padding: 1.2rem;
+  height: 23.5rem;
+  width: 23.5rem;
+  margin: auto;
+
+  .content {
+    height: 100%;
+    display: flex;
+    align-items: center;
+  }
+`
 
 const SpiritKeyPageV2 = styled(({ className }) => {
   const { t } = useTranslation('spirit-keys')
@@ -20,15 +40,6 @@ const SpiritKeyPageV2 = styled(({ className }) => {
   const hasNfts = totalNFTs?.length > 0
   const addresses = useAllAccountAddresses()
   const addressesLoading = addresses === undefined
-
-  const [selectedWallet, setSelectedWallet] = useState<string | undefined>()
-
-  useEffect(() => {
-    const item = localStorage.getItem('@talisman-connect/selected-wallet-name')
-    if (item && item !== 'null') {
-      setSelectedWallet(item)
-    }
-  }, [totalNFTs])
 
   if (addressesLoading) {
     return <StyledLoader />
@@ -47,11 +58,11 @@ const SpiritKeyPageV2 = styled(({ className }) => {
             </>
           ) : (
             <>
-              <div>You don't have a key yet. Get one on Singular.</div>
-              <p>Already have one?</p>
+              <SpiritKeyPlaceholder />
+              <div>{t('Already have one?')}</div>
               <WalletSelect
                 dappName={DAPP_NAME}
-                triggerComponent={<Button primary>{tBase(selectedWallet ? 'Switch wallet' : 'Connect wallet')}</Button>}
+                triggerComponent={<Button primary>{tBase('Connect wallet')}</Button>}
               />
             </>
           )}
@@ -147,6 +158,10 @@ const SpiritKeyPageV2 = styled(({ className }) => {
 
   .spirit-key-control-group {
     padding: 8rem;
+  }
+
+  .spirit-key-control-group > * + * {
+    margin-top: 1.2rem;
   }
 `
 

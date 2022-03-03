@@ -38,6 +38,8 @@
       "A Spirit Key is a NFT which allows you to join the <1>Spirit Clan.</1>",
       "Spirit Clan members can access a permissioned Discord channel where they'll have the opportunity to help shape Talisman.",
       "Spirit Clan members will receive early access to new products, events, NFT drops and more."
-    ]
+    ],
+    "placeholder": "You don't have a key yet. Get one on Singular.",
+    "Already have one?": "Already have one?"
   }
 }
