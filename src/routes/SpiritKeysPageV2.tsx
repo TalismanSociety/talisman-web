@@ -53,7 +53,18 @@ const SpiritKeyPageV2 = styled(({ className }) => {
       {isMobileBrowser() && <DesktopRequired />}
       <div className="content">
         <div className="spirit-key-control-group">
-          {hasNfts ? (
+          {totalNFTs === undefined && <StyledLoader />}
+          {totalNFTs && !hasNfts && (
+            <>
+              <SpiritKeyPlaceholder />
+              <div>{t('Already have one?')}</div>
+              <WalletSelect
+                dappName={DAPP_NAME}
+                triggerComponent={<Button primary>{tBase('Connect wallet')}</Button>}
+              />
+            </>
+          )}
+          {hasNfts && (
             <>
               <SpiritKeyNftImage border />
               <OwnershipText />
@@ -63,15 +74,6 @@ const SpiritKeyPageV2 = styled(({ className }) => {
                 </a>
               </div>
               <SpiritKeySender />
-            </>
-          ) : (
-            <>
-              <SpiritKeyPlaceholder />
-              <div>{t('Already have one?')}</div>
-              <WalletSelect
-                dappName={DAPP_NAME}
-                triggerComponent={<Button primary>{tBase('Connect wallet')}</Button>}
-              />
             </>
           )}
         </div>
