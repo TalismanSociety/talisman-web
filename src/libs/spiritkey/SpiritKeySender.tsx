@@ -465,9 +465,4 @@ export const SpiritKeySender = styled(({ className }) => {
       {t('Send to a friend')}
     </Button>
   )
-})`
-  // color: var(--color-primary);
-  // :hover {
-  //   cursor: pointer;
-  // }
-`
+})``
