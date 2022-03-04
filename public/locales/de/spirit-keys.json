@@ -32,7 +32,14 @@
     ]
   },
   "spiritClan": {
-    "poem": "Talismansucher, dein Geist ist der Schlüssel. Am Ende deiner Suche wirst du endlich frei sein. Ein Schlüssel zur neuen Welt ist eine schwierige Sache. Du solltest dich ehrlich fragen: „Was um alles in der Welt soll ich mitbringen?\" Überlegen Sie kurz, ob es mitgebracht werden kann. Alles, was ich garantieren kann, ist, dass nichts umsonst ist.",
+    "poem": [
+      "Talismansucher, dein Geist ist der Schlüssel.",
+      "Am Ende deiner Suche wirst du endlich frei sein.",
+      "Ein Schlüssel zur neuen Welt ist eine schwierige Sache.",
+      "Du solltest dich ehrlich fragen, \"was um alles in der Welt soll ich mitbringen?\"",
+      "Denken Sie einen Moment darüber nach, ob es gebracht werden kann.",
+      "Ich kann nur garantieren, dass nichts umsonst ist."
+    ],
     "title": "Entdecke einen Geisterschlüssel, um dem Geisterclan beizutreten.",
     "info": [
       "Ein Geisterschlüssel ist ein NFT, mit dem Sie dem <a>Geisterclan</a> beitreten können.",

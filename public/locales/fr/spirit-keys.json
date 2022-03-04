@@ -32,7 +32,14 @@
     ]
   },
   "spiritClan": {
-    "poem": "Talisman Seeker, c'est votre esprit qui est la clé. À la fin de votre recherche, vous serez enfin libre. Une clé vers le nouveau monde est une chose difficile. Vous devriez vous demander honnêtement, \"que diable dois-je apporter ?\" Réfléchissez un instant pour savoir si cela peut être apporté. Tout ce que je peux garantir, c'est que rien n'est inutile.",
+    "poem": [
+      "Talisman Seeker, c'est ton esprit qui est la clé.",
+      "A la fin de ta recherche, tu seras enfin libre.",
+      "Une clé du nouveau monde est une chose difficile.",
+      "Vous devriez vous demander honnêtement, \"qu'est-ce que je dois apporter ?\"",
+      "Donnez un moment de réflexion pour savoir si cela peut être apporté.",
+      "Tout ce que je peux garantir, c'est que rien ne sert à rien."
+    ],
     "title": "Découvrez une clé spirituelle pour rejoindre le clan des esprits.",
     "info": [
       "Une Spirit Key est un NFT qui vous permet de rejoindre le <a>Spirit Clan</a>.",

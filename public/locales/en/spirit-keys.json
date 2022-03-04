@@ -32,7 +32,14 @@
     ]
   },
   "spiritClan": {
-    "poem": "Talisman Seeker, it's your spirit that's key. At the end of your seeking, you'll finally be free. A key to the new world is a difficult thing. You should ask yourself honestly, \"what on earth should I bring?\" Give a moment of thought as to whether it can be brought. All I can guarantee, is that nothing is for naught.",
+    "poem": [
+      "Talisman Seeker, it's your spirit that's key.",
+      "At the end of your seeking, you'll finally be free.",
+      "A key to the new world is a difficult thing.",
+      "You should ask yourself honestly, \"what on earth should I bring?\"",
+      "Give a moment of thought as to whether it can be brought.",
+      "All I can guarantee, is that nothing is for naught."
+    ],
     "title": "Discover a Spirit Key to join the Spirit Clan.",
     "info": [
       "A Spirit Key is a NFT which allows you to join the <a>Spirit Clan</a>.",

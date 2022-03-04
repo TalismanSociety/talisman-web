@@ -105,7 +105,11 @@ const SpiritKeyPageV2 = styled(({ className }) => {
             </>
           )}
         </div>
-        <p className="poem">{t('spiritClan.poem')}</p>
+        <div className="poem">
+          {(t('spiritClan.poem', { returnObjects: true }) as []).map(sentence => {
+            return <div key={sentence}>{sentence}</div>
+          })}
+        </div>
         <div className="info">
           <div className="section">
             <h1 className="intro">{t('spiritClan.title')}</h1>
@@ -146,25 +150,25 @@ const SpiritKeyPageV2 = styled(({ className }) => {
   }
 
   .no-wallet {
-    padding: var(--padding-large);
+    margin: var(--padding-large);
 
     p {
-      padding: var(--padding);
+      margin: var(--padding);
     }
   }
 
   .poem {
     font-family: ATApocRevelations, sans-serif;
     font-size: var(--font-size-xlarge);
-    padding: 4rem 0;
+    margin: 8rem 0;
 
     @media ${device.lg} {
       font-size: var(--font-size-xxlarge);
-      padding: 10rem;
     }
   }
 
   .info {
+    margin-top: 8rem;
     flex-wrap: wrap-reverse;
     display: flex;
     gap: 4rem;
@@ -236,7 +240,7 @@ const SpiritKeyPageV2 = styled(({ className }) => {
     display: none;
     @media ${device.lg} {
       display: block;
-      padding: 8rem;
+      margin: 8rem;
     }
   }
 

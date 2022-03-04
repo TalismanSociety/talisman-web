@@ -32,7 +32,14 @@
     ]
   },
   "spiritClan": {
-    "poem": "Talisman Seeker, chính tinh thần của bạn mới là chìa khóa. Khi bạn tìm kiếm, cuối cùng bạn sẽ được tự do. Chìa khóa mở ra thế giới mới là một điều khó khăn. Bạn nên tự hỏi bản thân một cách thành thật, \" cái quái gì vậy? Tôi có nên mang theo không? ",
+    "poem": [
+      "Talisman Seeker, chính là tinh thần của bạn đó là chìa khóa.",
+      "Khi bạn tìm kiếm, cuối cùng bạn sẽ được tự do.",
+      "Chìa khóa mở ra thế giới mới là một điều khó khăn.",
+      "Bạn nên tự hỏi bản thân một cách thành thật, \" tôi nên mang theo cái quái gì? \"",
+      "Hãy dành một chút thời gian để suy nghĩ xem liệu nó có thể được thực hiện hay không.",
+      "Tất cả những gì tôi có thể đảm bảo, đó là không có gì là vô ích."
+    ],
     "title": "Khám phá Spirit Key để tham gia Spirit Clan.",
     "info": [
       "Spirit Key là một NFT cho phép bạn tham gia <a> Spirit Clan </a>.",

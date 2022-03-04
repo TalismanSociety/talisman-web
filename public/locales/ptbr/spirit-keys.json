@@ -32,7 +32,14 @@
     ]
   },
   "spiritClan": {
-    "poem": "Apanhador de talismãs, é o seu espírito que é a chave. No final de sua busca, você finalmente será livre. Uma chave para o novo mundo é uma coisa difícil. Você deve se perguntar honestamente: \"o que diabos devo trazer?\" Pense um pouco se pode ser trazido. Tudo o que posso garantir é que nada é em vão.",
+    "poem": [
+      "Talisman Seeker, é o seu espírito que é a chave.",
+      "No final de sua busca, você finalmente será livre.",
+      "Uma chave para o novo mundo é uma coisa difícil.",
+      "Você deve se perguntar honestamente, \"o que diabos devo levar?\"",
+      "Dê um momento para pensar se ele pode ser trazido.",
+      "Tudo o que posso garantir é que nada é em vão."
+    ],
     "title": "Descubra uma Chave Espiritual para se juntar ao Clã Espiritual.",
     "info": [
       "Uma Chave Espiritual é uma NFT que permite que você se junte ao <a>Clã Espiritual</a>.",
