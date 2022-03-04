@@ -155,6 +155,7 @@ const SpiritKeyPageV2 = styled(({ className }) => {
 
   .poem {
     font-family: ATApocRevelations, sans-serif;
+    font-size: var(--font-size-xlarge);
     padding: 4rem 0;
 
     @media ${device.lg} {
