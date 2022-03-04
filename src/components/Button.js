@@ -58,7 +58,7 @@ const Button = styled(({ loading, children, variant = '', className, ...props })
   )
 })`
   border: none;
-  padding: 1.3em 2.4em;
+  padding: 1.156rem 1.6rem;
   margin: 0;
   line-height: 1em;
   display: inline-flex;
@@ -68,7 +68,6 @@ const Button = styled(({ loading, children, variant = '', className, ...props })
   background: rgb(${({ theme }) => theme?.dim});
   color: rgb(${({ theme }) => theme?.mid});
   border-radius: 0.8em;
-  font-weight: bold;
   transition: all 0.15s ease-in-out;
   white-space: nowrap;
 
