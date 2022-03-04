@@ -32,15 +32,15 @@
     ]
   },
   "spiritClan": {
-    "poem": "Talisman Seeker, it's your spirit that's key. At the end of your seeking, you'll finally be free. A key to the new world is a difficult thing. You should ask yourself honestly, \"what on earth should I bring?\" Give a moment of thought as to whether it can be brought. All I can guarantee, is that nothing is for naught.",
-    "title": "Discover a Spirit Key to join the Spirit Clan.",
+    "poem": "ผู้แสวงหายันต์ จิตวิญญาณของเธอคือกุญแจ เมื่อสิ้นสุดการแสวงหา ในที่สุด เธอก็เป็นอิสระ กุญแจสู่โลกใหม่เป็นสิ่งที่ยาก คุณควรถามตัวเองตามตรงว่า \"อะไรในโลกนี้ ฉันควรพาไปไหม\" ให้ครุ่นคิดสักครู่ว่าจะนำมาได้หรือไม่ สิ่งเดียวที่ฉันรับประกันได้คือไม่มีสิ่งใดที่ไร้ค่า",
+    "title": "ค้นพบ Spirit Key เพื่อเข้าร่วม Spirit Clan",
     "info": [
-      "A Spirit Key is a NFT which allows you to join the <a>Spirit Clan</a>.",
-      "Spirit Clan members can access a permissioned Discord channel where they'll have the opportunity to help shape Talisman.",
-      "Spirit Clan members will receive early access to new products, events, NFT drops and more."
+      "กุญแจวิญญาณคือ NFT ที่ให้คุณเข้าร่วม <a>กลุ่มวิญญาณ</a>",
+      "สมาชิก Spirit Clan สามารถเข้าถึงช่อง Discord ที่ได้รับอนุญาตซึ่งพวกเขาจะมีโอกาสช่วยสร้าง Talisman",
+      "สมาชิก Spirit Clan จะได้รับสิทธิ์ในการเข้าถึงผลิตภัณฑ์ใหม่ กิจกรรม การดรอป NFT และอื่นๆ ก่อนใคร"
     ],
-    "noKeyPlaceholder": "You don't have a key yet. Get one on <a>Singular</a>.",
-    "alreadyHaveOne?": "Already have one?",
-    "joinSpiritClan": "Join Spirit Clan"
+    "noKeyPlaceholder": "คุณยังไม่มีรหัส รับกุญแจใน <a>เอกพจน์</a>",
+    "alreadyHaveOne": "มีแล้วหรือ",
+    "joinSpiritClan": "เข้าร่วม Spirit Clan"
   }
 }

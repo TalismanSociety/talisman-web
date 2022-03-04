@@ -32,15 +32,15 @@
     ]
   },
   "spiritClan": {
-    "poem": "Talisman Seeker, it's your spirit that's key. At the end of your seeking, you'll finally be free. A key to the new world is a difficult thing. You should ask yourself honestly, \"what on earth should I bring?\" Give a moment of thought as to whether it can be brought. All I can guarantee, is that nothing is for naught.",
-    "title": "Discover a Spirit Key to join the Spirit Clan.",
+    "poem": "Talisman Seeker, chính tinh thần của bạn mới là chìa khóa. Khi bạn tìm kiếm, cuối cùng bạn sẽ được tự do. Chìa khóa mở ra thế giới mới là một điều khó khăn. Bạn nên tự hỏi bản thân một cách thành thật, \" cái quái gì vậy? Tôi có nên mang theo không? ",
+    "title": "Khám phá Spirit Key để tham gia Spirit Clan.",
     "info": [
-      "A Spirit Key is a NFT which allows you to join the <a>Spirit Clan</a>.",
-      "Spirit Clan members can access a permissioned Discord channel where they'll have the opportunity to help shape Talisman.",
-      "Spirit Clan members will receive early access to new products, events, NFT drops and more."
+      "Spirit Key là một NFT cho phép bạn tham gia <a> Spirit Clan </a>.",
+      "Các thành viên của Spirit Clan có thể truy cập kênh Discord được cấp phép, nơi họ sẽ có cơ hội giúp hình thành Talisman.",
+      "Các thành viên Spirit Clan sẽ nhận được quyền truy cập sớm vào các sản phẩm, sự kiện mới, giảm NFT và hơn thế nữa."
     ],
-    "noKeyPlaceholder": "You don't have a key yet. Get one on <a>Singular</a>.",
-    "alreadyHaveOne?": "Already have one?",
-    "joinSpiritClan": "Join Spirit Clan"
+    "noKeyPlaceholder": "Bạn chưa có khóa. Hãy mua một khóa trên <a> Số ít </a>.",
+    "alreadyHaveOne": "Đã có một?",
+    "joinSpiritClan": "Tham gia Spirit Clan"
   }
 }
