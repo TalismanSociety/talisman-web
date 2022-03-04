@@ -2,6 +2,7 @@ import { Button } from '@components'
 import { Banner } from '@components/Banner'
 import { DAPP_NAME } from '@libs/talisman'
 import { WalletSelect } from '@talisman-connect/components'
+import { TALISMAN_EXTENSION_CHROMESTORE_URL } from '@util/links'
 import { Trans, useTranslation } from 'react-i18next'
 import { NavLink } from 'react-router-dom'
 
@@ -31,9 +32,9 @@ export const NoWalletBanner = () => {
         <p>{t('noWallet.description2')}</p>
       </div>
       <div className="cta">
-        <NavLink to="/crowdloans">
+        <a href={TALISMAN_EXTENSION_CHROMESTORE_URL} target="_blank" rel="noopener noreferrer">
           <Button primary>{t('noWallet.primaryCta')}</Button>
-        </NavLink>
+        </a>
       </div>
     </Banner>
   )
