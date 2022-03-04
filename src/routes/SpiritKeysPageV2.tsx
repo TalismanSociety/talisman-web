@@ -70,14 +70,14 @@ const SpiritKeyPageV2 = styled(({ className }) => {
         <div className="spirit-key-control-group">
           {status !== 'OK' && (
             <div className="no-wallet">
-              <p>Looks like you don't have a wallet installed</p>
+              <p>{tBase('extensionUnavailable.subtitle')}</p>
               <a
                 href={TALISMAN_EXTENSION_CHROMESTORE_URL}
                 title="Install Talisman"
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <Button primary>Install Talisman</Button>
+                <Button primary>{tBase('Install Talisman Extension')}</Button>
               </a>
             </div>
           )}
