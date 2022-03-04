@@ -67,7 +67,7 @@ const Button = styled(({ loading, children, variant = '', className, ...props })
   cursor: pointer;
   background: rgb(${({ theme }) => theme?.dim});
   color: rgb(${({ theme }) => theme?.mid});
-  border-radius: 0.8em;
+  border-radius: 1rem;
   transition: all 0.15s ease-in-out;
   white-space: nowrap;
 
