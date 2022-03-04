@@ -58,7 +58,7 @@ const Button = styled(({ loading, children, variant = '', className, ...props })
   )
 })`
   border: none;
-  padding: 1.3em 2.4em;
+  padding: 1.156rem 1.6rem;
   margin: 0;
   line-height: 1em;
   display: inline-flex;
@@ -67,17 +67,14 @@ const Button = styled(({ loading, children, variant = '', className, ...props })
   cursor: pointer;
   background: rgb(${({ theme }) => theme?.dim});
   color: rgb(${({ theme }) => theme?.mid});
-  border-radius: 0.8em;
-  font-weight: bold;
+  border-radius: 1rem;
   transition: all 0.15s ease-in-out;
   white-space: nowrap;
 
   &.outlined {
-    border: solid 1px;
+    color: var(--color-text);
+    border: 1px solid var(--color-text);
     background: transparent;
-    > * {
-      background: var(--color-controlBackground);
-    }
   }
 
   .child {
@@ -102,6 +99,7 @@ const Button = styled(({ loading, children, variant = '', className, ...props })
     css`
       background: rgb(${theme?.primary});
       color: rgb(${({ theme }) => theme?.background});
+      border: 3.13px solid rgb(${theme.primary});
     `}
 
   ${({ small }) =>

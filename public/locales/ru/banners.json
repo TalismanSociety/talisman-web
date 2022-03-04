@@ -26,8 +26,8 @@
   },
   "noWallet": {
     "header": "О нет!",
-    "description": "Похоже, у вас не установлено расширение кошелька. Мы рекомендуем загрузить <1>Talisman Wallet.</1>",
+    "description": "Похоже, у вас не установлено расширение кошелька.<br>Мы рекомендуем загрузить <1>Talisman Wallet.</1>",
     "description2": "А пока вы можете проверить Crowdloans.",
-    "primaryCta": "Изучите Crowdloans"
+    "primaryCta": "Установить Талисман"
   }
 }

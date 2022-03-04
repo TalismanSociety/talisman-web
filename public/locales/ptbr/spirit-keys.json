@@ -5,9 +5,9 @@
   "Done": "Done",
   "Send": "Send",
   "altDownload": "Click here if download failed to start after 10 seconds.",
-  "ownershipText_one": "You have <1>{{total}}</1> Spirit Key",
-  "ownershipText_other": "You have <1>{{total}}</1> Spirit Keys",
-  "Send to a friend": "Send to a friend",
+  "ownershipText_one": "Você tem <1>{{total}}</1> Chave Espiritual",
+  "ownershipText_other": "Você tem <1>{{total}}</1> Chaves Espirituais",
+  "Send to a friend": "Enviar para um amigo",
   "Explore Crowdloans": "Explore Crowdloans",
   "Error sending NFT": "Error sending NFT",
   "Enter Kusama Address": "Enter Kusama Address",
@@ -30,5 +30,24 @@
       "Keeping an eye out for giveaways on <1>Twitter</1>",
       "By arranging to review, publish or produce media about Talisman"
     ]
+  },
+  "spiritClan": {
+    "poem": [
+      "Talisman Seeker, é o seu espírito que é a chave.",
+      "No final de sua busca, você finalmente será livre.",
+      "Uma chave para o novo mundo é uma coisa difícil.",
+      "Você deve se perguntar honestamente, \"o que diabos devo levar?\"",
+      "Dê um momento para pensar se ele pode ser trazido.",
+      "Tudo o que posso garantir é que nada é em vão."
+    ],
+    "title": "Descubra uma Chave Espiritual para se juntar ao Clã Espiritual.",
+    "info": [
+      "Uma Chave Espiritual é uma NFT que permite que você se junte ao <a>Clã Espiritual</a>.",
+      "Os membros do Clã dos Espíritos podem acessar um canal autorizado do Discord, onde terão a oportunidade de ajudar a moldar o Talismã.",
+      "Os membros do Spirit Clan receberão acesso antecipado a novos produtos, eventos, drops de NFT e muito mais."
+    ],
+    "noKeyPlaceholder": "Você ainda não tem uma chave. Obtenha uma no <a>Singular</a>.",
+    "alreadyHaveOne": "Já tem um?",
+    "joinSpiritClan": "Junte-se ao Clã Espiritual"
   }
 }

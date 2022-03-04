@@ -207,11 +207,7 @@ const ExtensionUnavailable = styled(props => {
     <PanelSection comingSoon {...props}>
       <h2>{t('extensionUnavailable.title')}</h2>
       <p>{t('extensionUnavailable.subtitle')}</p>
-      <p>
-        {t('extensionUnavailable.text')}
-        <br />
-        {t('extensionUnavailable.text2')}
-      </p>
+      <p>{t('extensionUnavailable.text')}</p>
     </PanelSection>
   )
 })`

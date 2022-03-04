@@ -1,5 +1,6 @@
 import { JoinButton } from '@archetypes/JoinButton/JoinButton'
 import { Button, Field, useModal } from '@components'
+import { StyledLoader } from '@components/Await'
 import { LeftRightPicker } from '@components/LeftRightPicker'
 import { TalismanHandLike } from '@components/TalismanHandLike'
 import { TalismanHandLoader } from '@components/TalismanHandLoader'
@@ -424,6 +425,7 @@ const SpiritKeySenderModal = styled(({ className }) => {
           </Button>
         </div>
       )}
+      {!hasNfts && <StyledLoader />}
       {hasNfts && (
         <>
           <LeftRightPicker
@@ -459,13 +461,8 @@ export const SpiritKeySender = styled(({ className }) => {
     return null
   }
   return (
-    <div className={className} onClick={() => openModal(<SpiritKeySenderModal />)}>
+    <Button className={`outlined ${className}`} onClick={() => openModal(<SpiritKeySenderModal />)}>
       {t('Send to a friend')}
-    </div>
+    </Button>
   )
-})`
-  color: var(--color-primary);
-  :hover {
-    cursor: pointer;
-  }
-`
+})``

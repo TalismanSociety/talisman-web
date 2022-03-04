@@ -5,9 +5,9 @@
   "Done": "Done",
   "Send": "Send",
   "altDownload": "Click here if download failed to start after 10 seconds.",
-  "ownershipText_one": "You have <1>{{total}}</1> Spirit Key",
-  "ownershipText_other": "You have <1>{{total}}</1> Spirit Keys",
-  "Send to a friend": "Send to a friend",
+  "ownershipText_one": "Tienes <1>{{total}}</1> llave espiritual",
+  "ownershipText_other": "Tienes <1>{{total}}</1> llaves espirituales",
+  "Send to a friend": "Enviar",
   "Explore Crowdloans": "Explore Crowdloans",
   "Error sending NFT": "Error sending NFT",
   "Enter Kusama Address": "Enter Kusama Address",
@@ -30,5 +30,24 @@
       "Mirar a los regalos en <1>Twitter</1>",
       "Por revisar, publicar o producir medios sobre Talisman"
     ]
+  },
+  "spiritClan": {
+    "poem": [
+      "Buscador de talismanes, la clave es tu espíritu.",
+      "Al final de tu búsqueda, finalmente serás libre.",
+      "Una llave para el nuevo mundo es algo difícil.",
+      "Deberías preguntarte honestamente, \"¿qué demonios debo traer?\"",
+      "Piense un momento en si se puede traer.",
+      "Todo lo que puedo garantizar es que nada es en vano."
+    ],
+    "title": "Découvrez une clé spirituelle pour rejoindre le clan des esprits.",
+    "info": [
+      "Une Spirit Key est un NFT qui vous permet de rejoindre le <a>Spirit Clan</a>.",
+      "Les membres du Spirit Clan peuvent accéder à un canal Discord autorisé où ils auront la possibilité d'aider à façonner Talisman.",
+      "Les membres du Spirit Clan recevront un accès anticipé aux nouveaux produits, événements, gouttes NFT et plus encore."
+    ],
+    "noKeyPlaceholder": "Vous n'avez pas encore de clé. Obtenez-en une sur <a>Singular</a>.",
+    "alreadyHaveOne": "Vous en avez déjà un ?",
+    "joinSpiritClan": "Rejoindre Spirit Clan"
   }
 }

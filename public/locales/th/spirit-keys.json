@@ -5,9 +5,9 @@
   "Done": "Done",
   "Send": "Send",
   "altDownload": "Click here if download failed to start after 10 seconds.",
-  "ownershipText_one": "You have <1>{{total}}</1> Spirit Key",
-  "ownershipText_other": "You have <1>{{total}}</1> Spirit Keys",
-  "Send to a friend": "Send to a friend",
+  "ownershipText_one": "คุณมีกุญแจวิญญาณ <1>{{total}}</1>",
+  "ownershipText_other": "คุณมีกุญแจวิญญาณ <1>{{total}}</1> อัน",
+  "Send to a friend": "ส่งให้เพื่อน",
   "Explore Crowdloans": "Explore Crowdloans",
   "Error sending NFT": "Error sending NFT",
   "Enter Kusama Address": "Enter Kusama Address",
@@ -30,5 +30,24 @@
       "Keeping an eye out for giveaways on <1>Twitter</1>",
       "By arranging to review, publish or produce media about Talisman"
     ]
+  },
+  "spiritClan": {
+    "poem": [
+      "ผู้ค้นหาเครื่องราง จิตวิญญาณของคุณคือกุญแจสำคัญ",
+      "เมื่อสิ้นสุดการแสวงหา ในที่สุดเจ้าก็เป็นอิสระ",
+      "กุญแจสู่โลกใหม่เป็นสิ่งที่ยาก",
+      "คุณควรถามตัวเองตามตรงว่า \"ฉันควรเอาอะไรไปบ้าง\"",
+      "ให้ครุ่นคิดสักครู่ว่าจะนำมาได้หรือไม่",
+      "ทั้งหมดที่ฉันสามารถรับประกันได้คือไม่มีอะไรที่ไร้ค่า"
+    ],
+    "title": "ค้นพบ Spirit Key เพื่อเข้าร่วม Spirit Clan",
+    "info": [
+      "กุญแจวิญญาณคือ NFT ที่ให้คุณเข้าร่วม <a>กลุ่มวิญญาณ</a>",
+      "สมาชิก Spirit Clan สามารถเข้าถึงช่อง Discord ที่ได้รับอนุญาตซึ่งพวกเขาจะมีโอกาสช่วยสร้าง Talisman",
+      "สมาชิก Spirit Clan จะได้รับสิทธิ์ในการเข้าถึงผลิตภัณฑ์ใหม่ กิจกรรม การดรอป NFT และอื่นๆ ก่อนใคร"
+    ],
+    "noKeyPlaceholder": "คุณยังไม่มีรหัส รับกุญแจใน <a>เอกพจน์</a>",
+    "alreadyHaveOne": "มีแล้วหรือ",
+    "joinSpiritClan": "เข้าร่วม Spirit Clan"
   }
 }

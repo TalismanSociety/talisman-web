@@ -30,5 +30,24 @@
       "Ein Auge auf die Giveaways auf <1>Twitter</1> zu haben",
       "Durch dein Beitragen zu Inhalten über Talisman. Viele Wege sind möglich!"
     ]
+  },
+  "spiritClan": {
+    "poem": [
+      "Talismansucher, dein Geist ist der Schlüssel.",
+      "Am Ende deiner Suche wirst du endlich frei sein.",
+      "Ein Schlüssel zur neuen Welt ist eine schwierige Sache.",
+      "Du solltest dich ehrlich fragen, \"was um alles in der Welt soll ich mitbringen?\"",
+      "Denken Sie einen Moment darüber nach, ob es gebracht werden kann.",
+      "Ich kann nur garantieren, dass nichts umsonst ist."
+    ],
+    "title": "Entdecke einen Geisterschlüssel, um dem Geisterclan beizutreten.",
+    "info": [
+      "Ein Geisterschlüssel ist ein NFT, mit dem Sie dem <a>Geisterclan</a> beitreten können.",
+      "Mitglieder des Spirit-Clans können auf einen zugelassenen Discord-Kanal zugreifen, wo sie die Möglichkeit haben, Talisman mitzugestalten.",
+      "Spirit Clan-Mitglieder erhalten frühzeitig Zugang zu neuen Produkten, Events, NFT-Drops und mehr."
+    ],
+    "noKeyPlaceholder": "Sie haben noch keinen Schlüssel. Holen Sie sich einen auf <a>Singular</a>.",
+    "alreadyHaveOne": "Haben Sie schon einen?",
+    "joinSpiritClan": "Geister-Clan beitreten"
   }
 }

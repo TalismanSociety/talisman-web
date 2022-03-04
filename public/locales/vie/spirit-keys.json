@@ -30,5 +30,24 @@
       "Theo dõi giveaways trên <1>Twitter</1>",
       "Bằng cách review, sáng tạo nội dung hoặc truyền thông về Talisman"
     ]
+  },
+  "spiritClan": {
+    "poem": [
+      "Talisman Seeker, chính là tinh thần của bạn đó là chìa khóa.",
+      "Khi bạn tìm kiếm, cuối cùng bạn sẽ được tự do.",
+      "Chìa khóa mở ra thế giới mới là một điều khó khăn.",
+      "Bạn nên tự hỏi bản thân một cách thành thật, \" tôi nên mang theo cái quái gì? \"",
+      "Hãy dành một chút thời gian để suy nghĩ xem liệu nó có thể được thực hiện hay không.",
+      "Tất cả những gì tôi có thể đảm bảo, đó là không có gì là vô ích."
+    ],
+    "title": "Khám phá Spirit Key để tham gia Spirit Clan.",
+    "info": [
+      "Spirit Key là một NFT cho phép bạn tham gia <a> Spirit Clan </a>.",
+      "Các thành viên của Spirit Clan có thể truy cập kênh Discord được cấp phép, nơi họ sẽ có cơ hội giúp hình thành Talisman.",
+      "Các thành viên Spirit Clan sẽ nhận được quyền truy cập sớm vào các sản phẩm, sự kiện mới, giảm NFT và hơn thế nữa."
+    ],
+    "noKeyPlaceholder": "Bạn chưa có khóa. Hãy mua một khóa trên <a> Số ít </a>.",
+    "alreadyHaveOne": "Đã có một?",
+    "joinSpiritClan": "Tham gia Spirit Clan"
   }
 }

@@ -5,9 +5,9 @@
   "Done": "Done",
   "Send": "Send",
   "altDownload": "Click here if download failed to start after 10 seconds.",
-  "ownershipText_one": "You have <1>{{total}}</1> Spirit Key",
-  "ownershipText_other": "You have <1>{{total}}</1> Spirit Keys",
-  "Send to a friend": "Send to a friend",
+  "ownershipText_one": "У вас есть <1>{{total}}</1> Духовный ключ",
+  "ownershipText_other": "У вас есть <1>{{total}}</1> духовных ключей",
+  "Send to a friend": "Отправить другу",
   "Explore Crowdloans": "Explore Crowdloans",
   "Error sending NFT": "Error sending NFT",
   "Enter Kusama Address": "Enter Kusama Address",
@@ -30,5 +30,24 @@
       "Keeping an eye out for giveaways on <1>Twitter</1>",
       "By arranging to review, publish or produce media about Talisman"
     ]
+  },
+  "spiritClan": {
+    "poem": [
+      "Искатель талисманов, ключевой момент — это твой дух.",
+      "В конце ваших поисков вы, наконец, будете свободны",
+      "Ключ к новому миру — вещь трудная.",
+      "Вы должны честно спросить себя, \"что мне взять с собой?\"",
+      "Подумай, можно ли его принести.",
+      "Все, что я могу гарантировать, это то, что все не напрасно."
+    ],
+    "title": "Отыщите ключ духа, чтобы присоединиться к клану духов.",
+    "info": [
+      "Духовный ключ — это NFT, который позволяет вам присоединиться к <a>Клану духов</a>.",
+      "Члены клана Духов могут получить доступ к разрешенному каналу Discord, где у них будет возможность помочь сформировать Талисман.",
+      "Члены Spirit Clan получат ранний доступ к новым продуктам, событиям, выпадам NFT и многому другому"
+    ],
+    "noKeyPlaceholder": "У вас еще нет ключа. Получите его в <a>Singular</a>.",
+    "alreadyHaveOne": "Уже есть?",
+    "joinSpiritClan": "Присоединиться к клану духов"
   }
 }

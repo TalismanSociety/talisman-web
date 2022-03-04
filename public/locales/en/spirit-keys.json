@@ -30,5 +30,24 @@
       "Keeping an eye out for giveaways on <1>Twitter</1>",
       "By arranging to review, publish or produce media about Talisman"
     ]
+  },
+  "spiritClan": {
+    "poem": [
+      "Talisman Seeker, it's your spirit that's key.",
+      "At the end of your seeking, you'll finally be free.",
+      "A key to the new world is a difficult thing.",
+      "You should ask yourself honestly, \"what on earth should I bring?\"",
+      "Give a moment of thought as to whether it can be brought.",
+      "All I can guarantee, is that nothing is for naught."
+    ],
+    "title": "Discover a Spirit Key to join the Spirit Clan.",
+    "info": [
+      "A Spirit Key is a NFT which allows you to join the <a>Spirit Clan</a>.",
+      "Spirit Clan members can access a permissioned Discord channel where they'll have the opportunity to help shape Talisman.",
+      "Spirit Clan members will receive early access to new products, events, NFT drops and more."
+    ],
+    "noKeyPlaceholder": "You don't have a key yet. Get one on <a>Singular</a>.",
+    "alreadyHaveOne": "Already have one?",
+    "joinSpiritClan": "Join Spirit Clan"
   }
 }

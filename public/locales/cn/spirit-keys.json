@@ -30,5 +30,24 @@
       "留意 <1>Twitter</1> 上的赠品",
       "通过制作或发布关于 Talisman 的媒体内容"
     ]
+  },
+  "spiritClan": {
+    "poem": [
+      "护身符寻求者，关键是你的精神。",
+      "在你寻求的尽头，你终将获得自由。",
+      "一把通往新世界的钥匙是件难事。",
+      "你应该诚实地问自己，“我到底应该带什么？",
+      "考虑一下是否可以带。",
+      "我只能保证，没有什么是徒劳的。"
+    ],
+    "title": "发现一把加入精灵族的精灵钥匙。",
+    "info": [
+      "Spirit Key 是一种 NFT, 可让您加入 <a>Spirit Clan</a>。",
+      "Spirit Clan 的成员可以访问经过许可的 Discord 频道，他们将有机会帮助塑造 Talisman。",
+      "Spirit Clan 成员将提前获得新产品、活动、NFT 掉落等内容。"
+    ],
+    "noKeyPlaceholder": "你还没有钥匙。在 <a>Singular</a> 上找一把。",
+    "alreadyHaveOne": "已经有了？",
+    "joinSpiritClan": "加入灵族"
   }
 }

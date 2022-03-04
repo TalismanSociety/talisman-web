@@ -28,11 +28,10 @@
   "Unavailable": "Unavailable",
   "extensionUnavailable": {
     "title": "Oh no!",
-    "subtitle": "It doesn't look like you have a wallet extension installed.",
-    "text": "Don't worry we're currently building a really nice one,",
-    "text2": "but in the meantime we recommend downloading Polkadot.js"
+    "subtitle": "Hmmm... It doesn't look like you have a wallet extension installed.",
+    "text": "We recommend installing the Talisman Wallet Extension"
   },
-  "Install Polkadot.js Extension": "Install Polkadot.js Extension",
+  "Install Talisman Extension": "Install Talisman Extension",
   "Requires Configuration": "Requires Configuration",
   "desktopRequired": {
     "title": "Sorry!",

@@ -26,8 +26,8 @@
   },
   "noWallet": {
     "header": "Không!",
-    "description": "Có vẻ như bạn đã cài đặt tiện ích mở rộng ví. Chúng tôi khuyên bạn nên tải xuống <1> Polkadot.js </1>",
+    "description": "Có vẻ như bạn đã cài đặt tiện ích mở rộng ví.<br>Chúng tôi khuyên bạn nên tải xuống <1> Talisman </1>",
     "description2": "Trong thời gian chờ đợi, bạn có thể kiểm tra Crowdloan.",
-    "primaryCta": "Khám phá Crowdloan"
+    "primaryCta": "Cài đặt Talisman"
   }
 }

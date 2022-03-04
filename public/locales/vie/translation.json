@@ -30,9 +30,9 @@
     "title": "Oh no!",
     "subtitle": "Có vẻ như bạn chưa cài đặt tiện ích mở rộng ví.",
     "text": "Đừng lo lắng, chúng tôi đang xây dựng một cái mà bạn sẽ thích,",
-    "text2": "nhưng trong thời gian chờ đợi, chúng tôi khuyên bạn nên tải xuống Polkadot.js"
+    "text2": "nhưng trong thời gian chờ đợi, chúng tôi khuyên bạn nên tải xuống Talisman"
   },
-  "Install Polkadot.js Extension": "Cài đặt  Polkadot.js Extension",
+  "Install Talisman Extension": "Cài đặt  Talisman Extension",
   "Requires Configuration": "Yêu cầu cấu hình",
   "desktopRequired": {
     "title": "Sorry!",

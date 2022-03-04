@@ -6,7 +6,7 @@ import CrowdloanDetail from './Crowdloan.Detail.tsx'
 import CrowdloanIndex from './Crowdloan.Index.tsx'
 import Home from './Home'
 import NFTsPage from './NFTsPage'
-import SpiritKeys from './SpiritKeysPage'
+import SpiritKeysPage from './SpiritKeysPageV2'
 import Wallet from './Wallet'
 
 const Routes = () => (
@@ -31,7 +31,7 @@ const Routes = () => (
     </Route>
     <Route exact path="/spiritkeys">
       <Layout>
-        <SpiritKeys />
+        <SpiritKeysPage />
       </Layout>
     </Route>
     <Route exact path="/crowdloans/:slug">
