@@ -25,7 +25,7 @@ const SpiritKeyPlaceholder = styled(({ className }) => {
             components={{
               a: (
                 // eslint-disable-next-line jsx-a11y/anchor-has-content
-                <a href={TALISMAN_SPIRIT_KEYS_RMRK} title="Singular" />
+                <a href={TALISMAN_SPIRIT_KEYS_RMRK} title="Singular" target="_blank" rel="noopener noreferrer" />
               ),
             }}
           />
@@ -104,7 +104,7 @@ const SpiritKeyPageV2 = styled(({ className }) => {
                 components={{
                   a: (
                     // eslint-disable-next-line jsx-a11y/anchor-has-content
-                    <a href={DISCORD_JOIN_URL} title="Join Spirit Clan" />
+                    <a href={DISCORD_JOIN_URL} title="Join Spirit Clan" target="_blank" rel="noopener noreferrer" />
                   ),
                 }}
               />
