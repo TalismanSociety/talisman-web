@@ -32,15 +32,15 @@
     ]
   },
   "spiritClan": {
-    "poem": "Talisman Seeker, it's your spirit that's key. At the end of your seeking, you'll finally be free. A key to the new world is a difficult thing. You should ask yourself honestly, \"what on earth should I bring?\" Give a moment of thought as to whether it can be brought. All I can guarantee, is that nothing is for naught.",
-    "title": "Discover a Spirit Key to join the Spirit Clan.",
+    "poem": "Apanhador de talismãs, é o seu espírito que é a chave. No final de sua busca, você finalmente será livre. Uma chave para o novo mundo é uma coisa difícil. Você deve se perguntar honestamente: \"o que diabos devo trazer?\" Pense um pouco se pode ser trazido. Tudo o que posso garantir é que nada é em vão.",
+    "title": "Descubra uma Chave Espiritual para se juntar ao Clã Espiritual.",
     "info": [
-      "A Spirit Key is a NFT which allows you to join the <a>Spirit Clan</a>.",
-      "Spirit Clan members can access a permissioned Discord channel where they'll have the opportunity to help shape Talisman.",
-      "Spirit Clan members will receive early access to new products, events, NFT drops and more."
+      "Uma Chave Espiritual é uma NFT que permite que você se junte ao <a>Clã Espiritual</a>.",
+      "Os membros do Clã dos Espíritos podem acessar um canal autorizado do Discord, onde terão a oportunidade de ajudar a moldar o Talismã.",
+      "Os membros do Spirit Clan receberão acesso antecipado a novos produtos, eventos, drops de NFT e muito mais."
     ],
-    "noKeyPlaceholder": "You don't have a key yet. Get one on <a>Singular</a>.",
-    "alreadyHaveOne": "Already have one?",
-    "joinSpiritClan": "Join Spirit Clan"
+    "noKeyPlaceholder": "Você ainda não tem uma chave. Obtenha uma no <a>Singular</a>.",
+    "alreadyHaveOne": "Já tem um?",
+    "joinSpiritClan": "Junte-se ao Clã Espiritual"
   }
 }
