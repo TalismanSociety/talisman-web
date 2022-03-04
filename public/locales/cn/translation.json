@@ -30,9 +30,9 @@
     "title": "抱歉！",
     "subtitle": "您似乎未安装任何钱包插件",
     "text": "请别担心，我们正在努力构建一个优质的钱包",
-    "text2": "在此期间，我们建议你下载 Polkadot.js"
+    "text2": "在此期间，我们建议你下载 Talisman"
   },
-  "Install Polkadot.js Extension": "安装 Polkadot.js 插件",
+  "Install Talisman Extension": "安装 Talisman 插件",
   "Requires Configuration": "需要配置",
   "desktopRequired": {
     "title": "抱歉！",

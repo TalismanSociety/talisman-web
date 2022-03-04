@@ -30,9 +30,9 @@
     "title": "Oh nein!",
     "subtitle": "Es sieht so aus, als wäre keine Wallet-Erweiterung installiert.",
     "text": "Keine Sorge, wir sind gerade dabei eine wirklich gute zu erstellen,",
-    "text2": "Bis dahin empfehlen wir den Download von Polkadot.js"
+    "text2": "Bis dahin empfehlen wir den Download von Talisman"
   },
-  "Install Polkadot.js Extension": "Polkadot.js-Erweiterung installieren",
+  "Install Talisman Extension": "Talisman-Erweiterung installieren",
   "Requires Configuration": "Erfordert Konfiguration",
   "desktopRequired": {
     "title": "Entschuldige!",

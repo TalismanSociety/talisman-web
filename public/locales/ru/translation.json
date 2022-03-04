@@ -30,9 +30,9 @@
     "title": "О нет!",
     "subtitle": "Не похоже, что у вас установлено расширение кошелька.",
     "text": "Не волнуйтесь, мы сейчас создаем действительно хорошее расширение,",
-    "text2": "а пока мы рекомендуем скачать Polkadot.js"
+    "text2": "а пока мы рекомендуем скачать Talisman"
   },
-  "Install Polkadot.js Extension": "Установите расширение Polkadot.js",
+  "Install Talisman Extension": "Установите расширение Talisman",
   "Requires Configuration": "Требуется конфигурация",
   "desktopRequired": {
     "title": "Извините!",

@@ -255,14 +255,15 @@ const ContributeTo = styled(
               <div className="email-input">
                 <div className="info">
                   <i>
-                    If you have 1 PDEX in your Polkadot.js account, you can contribute as much or as little DOT as you want without worrying about the existential deposit.
-                    If you do not currently have any PDEX in your Polkadot.js account and wish to contribute less than 22 DOT, please buy at least 1 PDEX, so the account has existential deposit requirement and is in active state to receive the reward.
+                    If you have 1 PDEX in your Talisman account, you can contribute as much or as little DOT as you want
+                    without worrying about the existential deposit. If you do not currently have any PDEX in your
+                    Talisman account and wish to contribute less than 22 DOT, please buy at least 1 PDEX, so the account
+                    has existential deposit requirement and is in active state to receive the reward.
                   </i>
                 </div>
               </div>
             </div>
           )}
-
 
           {chainHasTerms && (
             <div className="row">

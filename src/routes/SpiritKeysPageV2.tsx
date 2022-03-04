@@ -1,16 +1,15 @@
 import handRedBlack from '@assets/hand-red-black.svg'
 import talismanSpiritKey from '@assets/spirit-key.png'
-import { Button, DesktopRequired } from '@components'
+import { Button } from '@components'
 import { StyledLoader } from '@components/Await'
 import { OwnershipText } from '@libs/spiritkey/OwnershipText'
 import { SpiritKeyNftImage } from '@libs/spiritkey/SpiritKeyNftImage'
 import { SpiritKeySender } from '@libs/spiritkey/SpiritKeySender'
 import { useFetchNFTs } from '@libs/spiritkey/useFetchNFTs'
-import { DAPP_NAME, useAllAccountAddresses } from '@libs/talisman'
+import { DAPP_NAME, useAllAccountAddresses, useExtensionAutoConnect } from '@libs/talisman'
 import { WalletSelect } from '@talisman-connect/components'
 import { device } from '@util/breakpoints'
-import { isMobileBrowser } from '@util/helpers'
-import { DISCORD_JOIN_URL, TALISMAN_SPIRIT_KEYS_RMRK } from '@util/links'
+import { DISCORD_JOIN_URL, TALISMAN_EXTENSION_CHROMESTORE_URL, TALISMAN_SPIRIT_KEYS_RMRK } from '@util/links'
 import { Trans, useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
@@ -59,6 +58,7 @@ const SpiritKeyPageV2 = styled(({ className }) => {
   const hasNfts = totalNFTs?.length > 0
   const addresses = useAllAccountAddresses()
   const addressesLoading = addresses === undefined
+  const { status } = useExtensionAutoConnect()
 
   if (addressesLoading) {
     return <StyledLoader />
@@ -66,11 +66,23 @@ const SpiritKeyPageV2 = styled(({ className }) => {
 
   return (
     <section className={className}>
-      {isMobileBrowser() && <DesktopRequired />}
       <div className="content">
         <div className="spirit-key-control-group">
-          {totalNFTs === undefined && <StyledLoader />}
-          {totalNFTs && !hasNfts && (
+          {status !== 'OK' && (
+            <div className="no-wallet">
+              <p>Looks like you don't have a wallet installed</p>
+              <a
+                href={TALISMAN_EXTENSION_CHROMESTORE_URL}
+                title="Install Talisman"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Button primary>Install Talisman</Button>
+              </a>
+            </div>
+          )}
+          {status === 'OK' && totalNFTs === undefined && <StyledLoader />}
+          {status === 'OK' && totalNFTs && !hasNfts && (
             <>
               <SpiritKeyPlaceholder />
               <div>{t('spiritClan.alreadyHaveOne')}</div>
@@ -130,6 +142,14 @@ const SpiritKeyPageV2 = styled(({ className }) => {
   p {
     @media ${device.lg} {
       font-size: var(--font-size-xlarge);
+    }
+  }
+
+  .no-wallet {
+    padding: var(--padding-large);
+
+    p {
+      padding: var(--padding);
     }
   }
 

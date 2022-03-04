@@ -30,9 +30,9 @@
     "title": "¡Oh no!",
     "subtitle": "No parece que tengas instalada una wallet extensión.",
     "text": "No te preocupes, estamos construyendo una realmente buena,",
-    "text2": "pero mientras tanto recomendamos descargar Polkadot.js"
+    "text2": "pero mientras tanto recomendamos descargar Talisman"
   },
-  "Install Polkadot.js Extension": "Instalar Polkadot.js Extension",
+  "Install Talisman Extension": "Instalar Talisman Extension",
   "Requires Configuration": "Requiere Configuración",
   "desktopRequired": {
     "title": "¡Lo siento!",

@@ -30,9 +30,9 @@
     "title": "ไม่นะ!",
     "subtitle": "ดูหมือนคุณยังไม่ได้ติดตั้งส่วนขยาย",
     "text": "ไม่ต้องเป็นห่วง เรากำลังสร้างกระเป๋าที่ดีเยี่ยมยอดสุดแจ่ม",
-    "text2": "แต่กว่าจะถึงตอนนั้น เราแนะนำให้ใช้ Polkadot.js ไปก่อน"
+    "text2": "แต่กว่าจะถึงตอนนั้น เราแนะนำให้ใช้ Talisman ไปก่อน"
   },
-  "Install Polkadot.js Extension": "ติดตั้งส่วนขยาย Polkadot.js",
+  "Install Talisman Extension": "ติดตั้งส่วนขยาย Talisman",
   "Requires Configuration": "Requires Configuration",
   "desktopRequired": {
     "title": "ขอโทษที!",
