@@ -49,7 +49,7 @@ const mainRoutes = [
 const subRoutes = [
   {
     name: 'Request Features',
-    url: 'https://talisman.canny.io/feature-requests',
+    url: 'https://talisman.upvoty.com/b/feature-requests/',
     trackingCode: 'RMSKIY4Q', // bounce_feature_requests
     icon: <SwapLogo alt="Request Features" />,
   },
