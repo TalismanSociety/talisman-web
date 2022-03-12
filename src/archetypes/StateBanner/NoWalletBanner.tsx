@@ -1,41 +1,42 @@
+import bannerImage from '@assets/agyle-extension.png'
 import { Button } from '@components'
 import { Banner } from '@components/Banner'
 import { DAPP_NAME } from '@libs/talisman'
+import { useTalismanInstalled } from '@libs/talisman/useIsTalismanInstalled'
 import { WalletSelect } from '@talisman-connect/components'
 import { TALISMAN_EXTENSION_CHROMESTORE_URL } from '@util/links'
-import { Trans, useTranslation } from 'react-i18next'
-import { NavLink } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
+import styled from 'styled-components'
 
-export const NoWalletBanner = () => {
-  const { t, ready } = useTranslation('banners')
-  if (!ready) {
-    return null
-  }
+export const NoWalletBanner = styled(({ className }) => {
+  const { t } = useTranslation('banners')
+  const { t: tBase } = useTranslation('banners')
+  const isTalismanInstalled = useTalismanInstalled()
   return (
-    <Banner>
-      <div className="description">
-        <h1>{t('noWallet.header')}</h1>
-        <p>
-          <Trans i18nKey="noWallet.description" ns="banners">
-            It doesn't look like you’ve got a wallet extension installed. We recommend downloading
-            <WalletSelect
-              dappName={DAPP_NAME}
-              triggerComponent={
-                <span style={{ textDecoration: 'underline', color: 'inherit', opacity: 'inherit', cursor: 'pointer' }}>
-                  Talisman Wallet.
-                </span>
-              }
-              onWalletSelected={wallet => {}}
-            />
-          </Trans>
-        </p>
-        <p>{t('noWallet.description2')}</p>
-      </div>
+    <Banner className={className}>
+      <span className="heavy">{t('noWallet.header')}</span>
       <div className="cta">
-        <a href={TALISMAN_EXTENSION_CHROMESTORE_URL} target="_blank" rel="noopener noreferrer">
-          <Button primary>{t('noWallet.primaryCta')}</Button>
-        </a>
+        {isTalismanInstalled && (
+          <WalletSelect dappName={DAPP_NAME} triggerComponent={<Button primary>{tBase('Connect wallet')}</Button>} />
+        )}
+        {!isTalismanInstalled && (
+          <a href={TALISMAN_EXTENSION_CHROMESTORE_URL} target="_blank" rel="noopener noreferrer">
+            <Button primary>{t('noWallet.primaryCta')}</Button>
+          </a>
+        )}
       </div>
     </Banner>
   )
-}
+})`
+  background-image: url(${bannerImage});
+  background-repeat: no-repeat;
+  background-position-x: 20%;
+
+  .heavy {
+    font-family: SurtExtended, serif;
+    font-size: 3.2rem;
+    font-weight: 600;
+    line-height: 4rem;
+    max-width: 10ch;
+  }
+`

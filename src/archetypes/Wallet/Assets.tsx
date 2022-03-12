@@ -205,7 +205,6 @@ const ExtensionUnavailable = styled(props => {
   const { t } = useTranslation()
   return (
     <PanelSection comingSoon {...props}>
-      <h2>{t('extensionUnavailable.title')}</h2>
       <p>{t('extensionUnavailable.subtitle')}</p>
       <p>{t('extensionUnavailable.text')}</p>
     </PanelSection>

@@ -13,7 +13,6 @@ const ExtensionUnavailable = styled(props => {
   return (
     <Panel title={t('NFTs')}>
       <PanelSection comingSoon {...props}>
-        <h2>{t('extensionUnavailable.title')}</h2>
         <p>{t('extensionUnavailable.subtitle')}</p>
         <p>{t('extensionUnavailable.text')}</p>
       </PanelSection>
