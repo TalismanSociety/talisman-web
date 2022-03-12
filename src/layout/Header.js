@@ -210,6 +210,7 @@ const Header = styled(({ className, isMobile, mobileMenuOpen, dispatch }) => {
     display: block;
     font-size: 3.2rem;
     color: var(--color-text);
+    margin-right: 3rem;
 
     svg {
       display: block;

@@ -25,9 +25,9 @@
     "primaryCta": "More info"
   },
   "noWallet": {
-    "header": "Oh no!",
+    "header": "Unlock the Paraverse",
     "description": "Hmmm... It doesn't look like you’ve got a wallet extension installed.<br>We recommend installing <1>Talisman Wallet.</1>",
     "description2": "In the meantime, you can check out Crowdloans.",
-    "primaryCta": "Install Talisman"
+    "primaryCta": "Download Extension"
   }
 }

@@ -7,6 +7,7 @@ import { SpiritKeyNftImage } from '@libs/spiritkey/SpiritKeyNftImage'
 import { SpiritKeySender } from '@libs/spiritkey/SpiritKeySender'
 import { useFetchNFTs } from '@libs/spiritkey/useFetchNFTs'
 import { DAPP_NAME, useAllAccountAddresses, useExtensionAutoConnect } from '@libs/talisman'
+import { useTalismanInstalled } from '@libs/talisman/useIsTalismanInstalled'
 import { WalletSelect } from '@talisman-connect/components'
 import { device } from '@util/breakpoints'
 import { DISCORD_JOIN_URL, TALISMAN_EXTENSION_CHROMESTORE_URL, TALISMAN_SPIRIT_KEYS_RMRK } from '@util/links'
@@ -59,6 +60,7 @@ const SpiritKeyPageV2 = styled(({ className }) => {
   const addresses = useAllAccountAddresses()
   const addressesLoading = addresses === undefined
   const { status } = useExtensionAutoConnect()
+  const isTalismanInstalled = useTalismanInstalled()
 
   if (addressesLoading) {
     return <StyledLoader />
@@ -68,7 +70,7 @@ const SpiritKeyPageV2 = styled(({ className }) => {
     <section className={className}>
       <div className="content">
         <div className="spirit-key-control-group">
-          {status !== 'OK' && (
+          {!isTalismanInstalled && (
             <div className="no-wallet">
               <p>{tBase('extensionUnavailable.subtitle')}</p>
               <a
@@ -80,6 +82,16 @@ const SpiritKeyPageV2 = styled(({ className }) => {
                 <Button primary>{tBase('Install Talisman Extension')}</Button>
               </a>
             </div>
+          )}
+          {status !== 'OK' && isTalismanInstalled && (
+            <>
+              <SpiritKeyPlaceholder />
+              <div>{t('spiritClan.alreadyHaveOne')}</div>
+              <WalletSelect
+                dappName={DAPP_NAME}
+                triggerComponent={<Button primary>{tBase('Connect wallet')}</Button>}
+              />
+            </>
           )}
           {status === 'OK' && totalNFTs === undefined && <StyledLoader />}
           {status === 'OK' && totalNFTs && !hasNfts && (

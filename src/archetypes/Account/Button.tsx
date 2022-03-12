@@ -5,9 +5,9 @@ import { ReactComponent as AlertCircle } from '@icons/alert-circle.svg'
 import { ReactComponent as ChevronDown } from '@icons/chevron-down.svg'
 import { usePortfolio } from '@libs/portfolio'
 import { DAPP_NAME, useActiveAccount, useChainByGenesis, useExtensionAutoConnect } from '@libs/talisman'
+import { useTalismanInstalled } from '@libs/talisman/useIsTalismanInstalled'
 import Identicon from '@polkadot/react-identicon'
 import { WalletSelect } from '@talisman-connect/components'
-import { getWallets } from '@talisman-connect/wallets'
 import { getWalletBySource } from '@talisman-connect/wallets'
 import { addTokensToBalances, groupBalancesByAddress, useBalances, useChain } from '@talismn/api-react-hooks'
 import { addBigNumbers, encodeAnyAddress, useFuncMemo } from '@talismn/util'
@@ -267,12 +267,8 @@ const Dropdown = styled(
 
 const Unavailable = styled(({ className }) => {
   const { t } = useTranslation()
-  const [title, setTitle] = useState<string | undefined>()
-  useEffect(() => {
-    const wallets = getWallets()
-    const installed = wallets.filter(wallet => wallet.installed)
-    setTitle(installed.length > 0 ? 'Connect wallet' : 'No wallet found')
-  }, [])
+  const isTalismanInstalled = useTalismanInstalled()
+  const title = isTalismanInstalled ? 'Connect wallet' : 'No wallet found'
   return (
     <WalletSelect
       dappName={DAPP_NAME}
