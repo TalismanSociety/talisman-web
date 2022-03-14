@@ -127,8 +127,7 @@ const NFTsPage = styled(({ className }) => {
     setSortTrigger(true);
   }
 
-  // Once we grab all NFTs, in this case, it's an Array<{}>
-  // We use this function to store them in its respective category
+  // Store the collections in an object of arrays
   const sortNFtsByCollection = (nfts: any) => {
     const getAllNFtsCollections = nfts.reduce((collectionAccumlator: any, nft: any) => {
       // Get collection name
