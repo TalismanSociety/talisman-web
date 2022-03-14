@@ -52,6 +52,7 @@ const NFTGrid = styled(({ className = '', account, setTotalNfts }: AccountProps)
   const { nfts } = useNftsByAddress(address as string)
 
   useEffect(() => {
+    // Needs to add check if this is a function, or else TS will be angry
     if(setTotalNfts === false || typeof setTotalNfts !== 'function') {
       return;
     }

@@ -30,7 +30,9 @@ const NFTsBySort = ({ sortedNfts }: NFTsBySortProps) => {
     return <h3>No sorted NFTs found!</h3>
   }
 
-  const renderCollection = Object.keys(sortedNfts).map((collectionName: any) => {
+  console.log(typeof sortedNfts)
+
+  const renderCollection = Object.keys(sortedNfts).sort().map((collectionName: any) => {
     return (
       <div key={collectionName}>
       <h2>{collectionName}</h2>
