@@ -97,13 +97,13 @@ const NFTGrid = styled(({ className = '', account, setTotalNfts }: AccountProps)
   }
 `
 
-export type SoryByValue = 'account' | 'collection'
+export type SortByValue = 'account' | 'collection'
 
 const NFTsPage = styled(({ className }) => {
   const { accounts } = useExtensionAutoConnect()
   const [totalNfts, setTotalNfts] = useState<any[] | undefined>([])
   const [sortTrigger, setSortTrigger] = useState(false)
-  const [sortBy, setSortBy] = useState<SoryByValue>('account')
+  const [sortBy, setSortBy] = useState<SortByValue>('account')
 
   const updateTotalNfts = (nfts: any) => {
     if (!nfts) return
