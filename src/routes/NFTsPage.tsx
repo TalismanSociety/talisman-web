@@ -1,16 +1,14 @@
+import { ExtensionStatusGate, PanelSection } from '@components'
+import NFTsByAddress from '@components/NFTsByAddress'
+import { NFTsBySort, NFTsGridWrapper } from '@components/NFTsBySort'
+import SortButtons from '@components/SortButtons'
+import { Account as IAccount, useExtensionAutoConnect } from '@libs/talisman'
+import Identicon from '@polkadot/react-identicon'
+import { useNftsByAddress } from '@talisman-components/nft'
+import { device } from '@util/breakpoints'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
-
-import { device } from '@util/breakpoints'
-import { Account as IAccount, useExtensionAutoConnect } from '@libs/talisman'
-
-import Identicon from '@polkadot/react-identicon'
-import { useNftsByAddress } from '@talisman-components/nft'
-import { NFTsGridWrapper, NFTsBySort } from '@components/NFTsBySort'
-import { ExtensionStatusGate, PanelSection } from '@components'
-import NFTsByAddress from '@components/NFTsByAddress'
-import SortButtons from '@components/SortButtons'
 
 interface AccountProps {
   className?: string
@@ -53,12 +51,12 @@ const NFTGrid = styled(({ className = '', account, setTotalNfts }: AccountProps)
 
   useEffect(() => {
     // Needs to add check if this is a function, or else TS will be angry
-    if(setTotalNfts === false || typeof setTotalNfts !== 'function') {
-      return;
+    if (setTotalNfts === false || typeof setTotalNfts !== 'function') {
+      return
     }
     setTotalNfts(nfts)
   }, [nfts])
-  
+
   if (!nfts?.length) {
     return null
   }
@@ -99,32 +97,19 @@ const NFTGrid = styled(({ className = '', account, setTotalNfts }: AccountProps)
   }
 `
 
-export enum SoryByValue {
-  ACCOUNT = 'account',
-  COLLECTION = 'collection'
-}
+export type SoryByValue = 'account' | 'collection'
 
 const NFTsPage = styled(({ className }) => {
   const { accounts } = useExtensionAutoConnect()
   const [totalNfts, setTotalNfts] = useState<any[] | undefined>([])
   const [sortTrigger, setSortTrigger] = useState(false)
-  const [sortBy, setSortBy] = useState<SoryByValue>(SoryByValue.ACCOUNT)
+  const [sortBy, setSortBy] = useState<SoryByValue>('account')
 
   const updateTotalNfts = (nfts: any) => {
-    if(!nfts) return;
+    if (!nfts) return
     setTotalNfts((prevState: any) => {
       return [...prevState, ...nfts]
     })
-  }
-
-  const setSortByAccount = () => {
-    setSortBy(SoryByValue.ACCOUNT)
-  }
-
-  const setSortByCollection = () => {
-    setSortBy(SoryByValue.COLLECTION)
-    // this is needed to prevent the component from re-adding states during the re-render
-    setSortTrigger(true);
   }
 
   // Store the collections in an object of arrays
@@ -150,24 +135,15 @@ const NFTsPage = styled(({ className }) => {
     <section className={className}>
       <h1>NFTs</h1>
       <ExtensionStatusGate unavailable={<ExtensionUnavailable />}>
-        <SortButtons
-          setSortByAccount={setSortByAccount}
-          setSortByCollection={setSortByCollection}
-          sortBy={sortBy}
-        />
-        
-        <div className="all-nft-grids">
-          {sortBy === 'collection' && (
-            <NFTsBySort sortedNfts={sortNFtsByCollection(totalNfts)} />
-          )}
+        <SortButtons sortValue={sortBy} setSortBy={setSortBy} setSortTrigger={setSortTrigger} />
 
-          {sortBy === 'account' && accounts?.map(account => (
-            <NFTGrid
-              key={account.address}
-              account={account}
-              setTotalNfts={!sortTrigger && updateTotalNfts}
-            />
-          ))}
+        <div className="all-nft-grids">
+          {sortBy === 'collection' && <NFTsBySort sortedNfts={sortNFtsByCollection(totalNfts)} />}
+
+          {sortBy === 'account' &&
+            accounts?.map(account => (
+              <NFTGrid key={account.address} account={account} setTotalNfts={!sortTrigger && updateTotalNfts} />
+            ))}
         </div>
       </ExtensionStatusGate>
     </section>

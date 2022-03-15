@@ -1,34 +1,37 @@
+import { Field } from '@components'
 import styled from 'styled-components'
-import Button from '@components/Button'
 
-const GroupSortsButton = styled.div`
+const SortButtonsWrapper = styled.div`
   display: flex;
   padding: 0px 20px;
-  align-items: center;
-  margin-button: 40px;
   justify-content: center;
   gap: 10px;
-  color: black;
+  color: var(--color-primary);
 `
 
-const SortButton = styled(Button)`
-  color: white;
+const sortOptions = [
+  {
+    key: 'account',
+    value: 'Account',
+  },
+  {
+    key: 'collection',
+    value: 'Collection',
+  },
+]
 
-  ${({ isSelected, theme }) =>
-    !!isSelected &&
-    `
-      background: rgb(${theme?.primary});
-      color: rgb(${theme?.background});
-    `
-  }
-`
-
-const SortButtons = ({ setSortByAccount, setSortByCollection, sortBy }: any) => {
+const SortButtons = ({ sortValue, setSortBy, setSortTrigger }: any) => {
   return (
-    <GroupSortsButton>
-      <SortButton isSelected={sortBy === 'account'} onClick={setSortByAccount}>Account</SortButton>
-      <SortButton isSelected={sortBy === 'collection'} onClick={setSortByCollection}>Collection</SortButton>
-    </GroupSortsButton>
+    <SortButtonsWrapper>
+      <Field.RadioGroup
+        value={sortValue}
+        onChange={(value: any) => {
+          setSortBy(value)
+          setSortTrigger(true)
+        }}
+        options={sortOptions}
+      />
+    </SortButtonsWrapper>
   )
 }
 

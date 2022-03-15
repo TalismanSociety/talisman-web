@@ -30,28 +30,23 @@ const NFTsBySort = ({ sortedNfts }: NFTsBySortProps) => {
     return <h3>No sorted NFTs found!</h3>
   }
 
-  console.log(typeof sortedNfts)
+  const renderCollection = Object.keys(sortedNfts)
+    .sort()
+    .map((collectionName: any) => {
+      return (
+        <div key={collectionName}>
+          <h2>{collectionName}</h2>
 
-  const renderCollection = Object.keys(sortedNfts).sort().map((collectionName: any) => {
-    return (
-      <div key={collectionName}>
-      <h2>{collectionName}</h2>
+          <NFTsGridWrapper>
+            {sortedNfts[collectionName].map((nft: any) => (
+              <NftCard key={nft.id} nft={nft} />
+            ))}
+          </NFTsGridWrapper>
+        </div>
+      )
+    })
 
-      <NFTsGridWrapper>
-        {sortedNfts[collectionName].map((nft: any) => (
-            <NftCard key={nft.id} nft={nft} />
-          )
-        )}
-      </NFTsGridWrapper>
-    </div>
-    )
-  })
-
-  return (
-    <div>
-      {renderCollection}
-    </div>
-  )
+  return <>{renderCollection}</>
 }
 
 export { NFTsGridWrapper, NFTsBySort }
