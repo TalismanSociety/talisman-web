@@ -46,7 +46,7 @@ const NFTs = styled(({ className }: { className?: string }) => {
   const { t } = useTranslation()
   const { t: tNav } = useTranslation('nav')
   const { accounts } = useExtensionAutoConnect()
-  const { hasNfts, nfts } = useHasNFTs(accounts, { limitPerAddress: 4 })
+  const { hasNfts, nfts } = useHasNFTs(accounts, { limit: 4 })
   return (
     <section className={`wallet-assets ${className}`}>
       <ExtensionStatusGate unavailable={<ExtensionUnavailable />}>
