@@ -1,6 +1,7 @@
 import nftRowSkeleton from '@assets/nft-row-skeleton.png'
 import { Button, ExtensionStatusGate, PanelSection } from '@components'
 import NFTsByAddress from '@components/NFTsByAddress'
+import { Placeholder } from '@components/Placeholder'
 import { Account as IAccount, useExtensionAutoConnect } from '@libs/talisman'
 import Identicon from '@polkadot/react-identicon'
 import { useNfts, useNftsByAddress } from '@talisman-components/nft'
@@ -102,43 +103,24 @@ const NFTGrid = styled(({ className = '', account }: AccountProps) => {
   }
 `
 
-const NoNFTs = styled(({ className }) => {
+const NoNFTs = () => {
+  const { t } = useTranslation('banners')
   return (
-    <div className={className}>
-      <img className="skeleton" src={nftRowSkeleton} alt="" />
-      <div className="info">
-        <div>You don’t have any NFTs yet! Get started with a Spirit Key.</div>
-        <div>
-          <Button className="outlined">Buy Spirit Key</Button>
-        </div>
+    <Placeholder placeholderImage={nftRowSkeleton}>
+      <div className="description">{t('noNfts.description')}</div>
+      <div className="cta">
+        <Button className="outlined">{t('noNfts.primaryCta')}</Button>
       </div>
-    </div>
+    </Placeholder>
   )
-})`
-  position: relative;
-  text-align: center;
-
-  .skeleton {
-    position: absolute;
-    z-index: -1;
-    width: 100%;
-    left: 0;
-  }
-
-  .info {
-    position: absolute;
-    left: 50%;
-    transform: translate(-50%, 100%);
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
-  }
-`
+}
 
 const NFTsPage = styled(({ className }) => {
   const { accounts } = useExtensionAutoConnect()
   const addresses = accounts.map(account => account.address)
   const { nfts, isLoading } = useNfts(addresses, { limitPerAddress: 1 })
+
+  console.log(`>>> nfts`, nfts, addresses)
 
   return (
     <section className={className}>
