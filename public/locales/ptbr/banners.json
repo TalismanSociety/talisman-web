@@ -29,5 +29,9 @@
     "description": "Me parece que voce não tem uma extensão de carteira instalada.<br>Faça o download <1>Talisman Wallet.</1>",
     "description2": "Por enquanto, voce pode checar os Crowdloans.",
     "primaryCta": "Instalar talismã"
+  },
+  "noNfts": {
+    "description": "Você ainda não tem NFTs! Comece com uma Spirit Key.",
+    "primaryCta": "Comprar Chave Espiritual"
   }
 }
