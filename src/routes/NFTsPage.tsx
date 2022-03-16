@@ -1,10 +1,10 @@
-import nftRowSkeleton from '@assets/nft-row-skeleton.png'
-import { Button, ExtensionStatusGate, PanelSection } from '@components'
+import { ExtensionStatusGate, PanelSection } from '@components'
 import NFTsByAddress from '@components/NFTsByAddress'
-import { Placeholder } from '@components/Placeholder'
+import { NoNFTsPlaceholder } from '@libs/nft/NoNFTsPlaceholder'
+import { useHasNFTs } from '@libs/nft/useHasNFTs'
 import { Account as IAccount, useExtensionAutoConnect } from '@libs/talisman'
 import Identicon from '@polkadot/react-identicon'
-import { useNfts, useNftsByAddress } from '@talisman-components/nft'
+import { useNftsByAddress } from '@talisman-components/nft'
 import { device } from '@util/breakpoints'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
@@ -103,33 +103,19 @@ const NFTGrid = styled(({ className = '', account }: AccountProps) => {
   }
 `
 
-const NoNFTs = () => {
-  const { t } = useTranslation('banners')
-  return (
-    <Placeholder placeholderImage={nftRowSkeleton}>
-      <div className="description">{t('noNfts.description')}</div>
-      <div className="cta">
-        <Button className="outlined">{t('noNfts.primaryCta')}</Button>
-      </div>
-    </Placeholder>
-  )
-}
-
 const NFTsPage = styled(({ className }) => {
   const { accounts } = useExtensionAutoConnect()
-  const addresses = accounts.map(account => account.address)
-  const { nfts, isLoading } = useNfts(addresses, { limitPerAddress: 1 })
-
-  console.log(`>>> nfts`, nfts, addresses)
+  const { hasNfts, isLoading } = useHasNFTs(accounts)
 
   return (
     <section className={className}>
       <h1>NFTs</h1>
       <ExtensionStatusGate unavailable={<ExtensionUnavailable />}>
         <div className="all-nft-grids">
-          {nfts && nfts?.length === 0 && !isLoading && <NoNFTs />}
-          {nfts &&
-            nfts?.length > 0 &&
+          {isLoading && <>Loading...</>}
+          {!hasNfts && !isLoading && <NoNFTsPlaceholder />}
+          {hasNfts &&
+            !isLoading &&
             accounts?.map(account => {
               return <NFTGrid key={account.address} account={account} />
             })}
