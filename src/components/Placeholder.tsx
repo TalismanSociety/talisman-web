@@ -4,8 +4,6 @@ import styled from 'styled-components'
 export const Placeholder = styled(({ className, children, placeholder, placeholderImage }) => {
   return (
     <div className={className}>
-      {/* {placeholder} */}
-      {/* {placeholderImage && <div className="skeleton"><img src={placeholderImage} alt="" /></div>} */}
       <div className="info">{children}</div>
     </div>
   )
