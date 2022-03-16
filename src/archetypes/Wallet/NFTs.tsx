@@ -46,7 +46,7 @@ const NFTs = styled(({ className }: { className?: string }) => {
   const { t } = useTranslation()
   const { t: tNav } = useTranslation('nav')
   const { accounts } = useExtensionAutoConnect()
-  const { hasNfts, nfts } = useHasNFTs(accounts)
+  const { hasNfts, nfts } = useHasNFTs(accounts, { limitPerAddress: 4 })
   return (
     <section className={`wallet-assets ${className}`}>
       <ExtensionStatusGate unavailable={<ExtensionUnavailable />}>
@@ -110,6 +110,20 @@ const NFTs = styled(({ className }: { className?: string }) => {
     font-size: var(--font-size-large);
     font-weight: bold;
     color: var(--color-text);
+  }
+
+  .nft-grid {
+    svg {
+      width: 4.8rem;
+      height: 4rem;
+    }
+
+    @media ${device.lg} {
+      svg {
+        width: 4.5rem;
+        height: 4rem;
+      }
+    }
   }
 `
 
