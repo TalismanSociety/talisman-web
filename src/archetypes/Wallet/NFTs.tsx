@@ -1,8 +1,11 @@
 import '@talisman-components/nft/index.umd.css'
 
 import { ExtensionStatusGate, Panel, PanelSection } from '@components'
-import AllNFTs from '@components/AllNFTs'
 import { ReactComponent as ArrowRight } from '@icons/arrow-right.svg'
+import { NoNFTsPlaceholder } from '@libs/nft/NoNFTsPlaceholder'
+import { useHasNFTs } from '@libs/nft/useHasNFTs'
+import { useExtensionAutoConnect } from '@libs/talisman'
+import { NftCard } from '@talisman-components/nft'
 import { device } from '@util/breakpoints'
 import { useTranslation } from 'react-i18next'
 import { NavLink } from 'react-router-dom'
@@ -42,21 +45,30 @@ const ExtensionUnavailable = styled(props => {
 const NFTs = styled(({ className }: { className?: string }) => {
   const { t } = useTranslation()
   const { t: tNav } = useTranslation('nav')
+  const { accounts } = useExtensionAutoConnect()
+  const { hasNfts, nfts } = useHasNFTs(accounts, { limit: 4 })
   return (
     <section className={`wallet-assets ${className}`}>
       <ExtensionStatusGate unavailable={<ExtensionUnavailable />}>
         <div className="header">
           <h1>{tNav('NFTs')}</h1>
-          <NavLink to="/nfts">
-            <span className="view-all">
-              {t('View all')}
-              <ArrowRight />
-            </span>
-          </NavLink>
+          {hasNfts && (
+            <NavLink to="/nfts">
+              <span className="view-all">
+                {t('View all')}
+                <ArrowRight />
+              </span>
+            </NavLink>
+          )}
         </div>
-        <div className="nft-grid">
-          <AllNFTs />
-        </div>
+        {!hasNfts && <NoNFTsPlaceholder />}
+        {hasNfts && (
+          <div className="nft-grid">
+            {nfts?.map(nft => {
+              return <NftCard key={nft.id} nft={nft} />
+            })}
+          </div>
+        )}
       </ExtensionStatusGate>
     </section>
   )
@@ -98,6 +110,20 @@ const NFTs = styled(({ className }: { className?: string }) => {
     font-size: var(--font-size-large);
     font-weight: bold;
     color: var(--color-text);
+  }
+
+  .nft-grid {
+    svg {
+      width: 4.8rem;
+      height: 4rem;
+    }
+
+    @media ${device.lg} {
+      svg {
+        width: 4.5rem;
+        height: 4rem;
+      }
+    }
   }
 `
 

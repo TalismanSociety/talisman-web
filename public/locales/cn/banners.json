@@ -29,5 +29,9 @@
     "description": "看起来你没有安装钱包扩展<br>我们建议暂时下载 <1>Talisman Wallet.</1>",
     "description2": "在此期间，您可以查看众贷",
     "primaryCta": "安装护身符"
+  },
+  "noNfts": {
+    "description": "你还没有任何 NFT！开始使用 Spirit Key。",
+    "primaryCta": "购买精神钥匙"
   }
 }

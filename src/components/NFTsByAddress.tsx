@@ -41,7 +41,7 @@ const NFTsByAddress = styled(({ className = '', address, limit }: NFTsByAddressP
 
   @media ${device.lg} {
     svg {
-      width: 4.1rem;
+      width: 4.5rem;
       height: 4rem;
     }
   }

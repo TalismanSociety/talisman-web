@@ -29,5 +29,9 @@
     "description": "No parece que tengas instalada una wallet extensión.<br>Te recomendamos descargues <1>Talisman Wallet.</1>",
     "description2": "Mientras tanto, puedes revisar los Crowdloans.",
     "primaryCta": "Instalar Talismán"
+  },
+  "noNfts": {
+    "description": "¡Aún no tienes ningún NFT! Empieza con una Spirit Key.",
+    "primaryCta": "Comprar clave espiritual"
   }
 }

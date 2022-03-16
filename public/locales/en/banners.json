@@ -29,5 +29,9 @@
     "description": "Hmmm... It doesn't look like you’ve got a wallet extension installed.<br>We recommend installing <1>Talisman Wallet.</1>",
     "description2": "In the meantime, you can check out Crowdloans.",
     "primaryCta": "Download Extension"
+  },
+  "noNfts": {
+    "description": "You don’t have any NFTs yet! Get started with a Spirit Key.",
+    "primaryCta": "Buy Spirit Key"
   }
 }

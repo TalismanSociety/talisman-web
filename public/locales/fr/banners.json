@@ -29,5 +29,9 @@
     "description": "Il ne semble pas que vous ayez installé une extension de portefeuille.<br>Nous vous recommandons de télécharger <1>Talisman Wallet.</1>",
     "description2": "En attendant, vous pouvez voir ce qui ce passe du côté des Crowdloans.",
     "primaryCta": "Installer Talisman"
+  },
+  "noNfts": {
+    "description": "Vous n'avez pas encore de NFT ! Commencez avec une clé spirituelle.",
+    "primaryCta": "Acheter la clé spirituelle"
   }
 }

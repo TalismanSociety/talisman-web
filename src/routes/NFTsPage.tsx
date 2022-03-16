@@ -1,5 +1,7 @@
 import { ExtensionStatusGate, PanelSection } from '@components'
 import NFTsByAddress from '@components/NFTsByAddress'
+import { NoNFTsPlaceholder } from '@libs/nft/NoNFTsPlaceholder'
+import { useHasNFTs } from '@libs/nft/useHasNFTs'
 import { Account as IAccount, useExtensionAutoConnect } from '@libs/talisman'
 import Identicon from '@polkadot/react-identicon'
 import { useNftsByAddress } from '@talisman-components/nft'
@@ -103,15 +105,20 @@ const NFTGrid = styled(({ className = '', account }: AccountProps) => {
 
 const NFTsPage = styled(({ className }) => {
   const { accounts } = useExtensionAutoConnect()
+  const { hasNfts, isLoading } = useHasNFTs(accounts)
 
   return (
     <section className={className}>
       <h1>NFTs</h1>
       <ExtensionStatusGate unavailable={<ExtensionUnavailable />}>
         <div className="all-nft-grids">
-          {accounts?.map(account => {
-            return <NFTGrid key={account.address} account={account} />
-          })}
+          {isLoading && <>Loading...</>}
+          {!hasNfts && !isLoading && <NoNFTsPlaceholder />}
+          {hasNfts &&
+            !isLoading &&
+            accounts?.map(account => {
+              return <NFTGrid key={account.address} account={account} />
+            })}
         </div>
       </ExtensionStatusGate>
     </section>

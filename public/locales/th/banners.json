@@ -29,5 +29,9 @@
     "description": "ดูหมือนคุณยังไม่ได้ติดตั้งส่วนขยาย<br>แนะนำให้โหลด <1>Talisman Wallet.</1>",
     "description2": "ระหว่างรอ ลองไปดู Crowdloan ก่อนได้นะ",
     "primaryCta": "ติดตั้งยันต์"
+  },
+  "noNfts": {
+    "description": "คุณยังไม่มี NFT เลย! เริ่มต้นด้วย Spirit Key",
+    "primaryCta": "ซื้อคีย์ Spirit"
   }
 }
