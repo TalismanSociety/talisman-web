@@ -901,7 +901,7 @@ export const parachainDetails: ParachainDetails[] = [
     name: 'Litmus',
     slug: 'litmus',
     token: 'LIT',
-    subtitle:'A Web3 identity hub on Kusama.',
+    subtitle: 'A Web3 identity hub on Kusama.',
     info: `Litmus is the aptly named canary network for Litentry, a decentralised identity aggregation protocol for DotSama. The protocol provides a decentralized, interoperable identity aggregation service that mitigates the difficulty of resolving agnostic DID mechanisms. Litentry provides a secure vehicle through which users manage their identities and dApps obtain the real-time credit/reputation of an identity owner across different blockchains.`,
     links: {
       Website: 'https://kusama-crowdloan.litentry.com/',
@@ -909,7 +909,7 @@ export const parachainDetails: ParachainDetails[] = [
       Telegram: 'https://t.me/litentry',
       Medium: 'https://litentry.medium.com//',
       Github: 'https://github.com/litentry',
-      Discord: 'https://discord.gg/M7T4y4skVD'
+      Discord: 'https://discord.gg/M7T4y4skVD',
     },
   },
   {
@@ -917,7 +917,7 @@ export const parachainDetails: ParachainDetails[] = [
     name: 'Kico',
     slug: 'Kico',
     token: 'KICO',
-    subtitle:'KICO is the canary network for DICO.',
+    subtitle: 'KICO is the canary network for DICO.',
     info: `The DICO chain creates a decentralized and governable ICO platform for the Polkadot environment. We provide a decentralized platform, which heavily supports its projects.`,
     links: {
       Website: 'https://dico.io/',
@@ -925,7 +925,7 @@ export const parachainDetails: ParachainDetails[] = [
       Telegram: 'https://t.me/dicochain',
       Medium: 'https://medium.com/@DearICO/',
       Github: 'https://github.com/DICO-TEAM',
-      Discord: 'https://discord.com/invite/V2MASPX3Ra'
+      Discord: 'https://discord.com/invite/V2MASPX3Ra',
     },
   },
   {
@@ -933,7 +933,7 @@ export const parachainDetails: ParachainDetails[] = [
     name: 'Mangata X',
     slug: 'mangata-x',
     token: 'MGX',
-    subtitle:'Mangata X is a community-owned exchange for experienced traders & experimental tokens.',
+    subtitle: 'Mangata X is a community-owned exchange for experienced traders & experimental tokens.',
     info: `Mangata X will build bridges to Ethereum and other networks, as well as open channels to Parachains to host tokens from the newest experimental Parachains and Protocols in the Kusama and Ethereum space.`,
     links: {
       Website: 'https://x.mangata.finance/',
@@ -941,7 +941,23 @@ export const parachainDetails: ParachainDetails[] = [
       Telegram: 'https://t.me/mgtfi',
       Medium: 'https://blog.mangata.finance/',
       Github: 'https://github.com/mangata-finance',
-      Discord: 'https://discord.com/invite/X4VTaejebf'
+      Discord: 'https://discord.com/invite/X4VTaejebf',
+    },
+  },
+  {
+    id: '2-2114',
+    name: 'Turing Network',
+    slug: 'turing',
+    token: 'TUR',
+    subtitle: 'Turing Network is the Kusama parachain of Oat Network, the Web 3.0 Hub for DeFi and Payment Automation.',
+    info: `OAK (On-chain Autonomous Kernel) Network is an automation layer-2 blockchain for Defi and recurring payments. Our mission is to build a Stripe for Web 3.0 across protocols. The blockchain is built on Parity Substrate with an event-driven execution model. Different from Ethereum’s transaction-based model, where a transaction requires private key signing, OAK allows transactions to be triggered by event signals such as time, price, and smart contract state changes.\n\nOAK Network aims to be the No.1 utility Layer-2 across protocols, offering on-chain automation not possible today, such as limit & stop-loss orders on Automated-Market-Making DEX and recurring payments. With OAK's on-chain finality and network security, it can empower any blockchain with its autonomous functionality, unleashing endless product potentials.`,
+    links: {
+      Website: 'https://oak.tech/',
+      Twitter: 'https://twitter.com/oak_network',
+      Telegram: 'https://t.me/OAK_Announcements',
+      Medium: 'https://medium.com/oak-blockchain',
+      Github: 'https://github.com/OAK-Foundation',
+      Discord: 'https://discord.gg/7W9UDvsbwh',
     },
   },
 ]
@@ -2110,7 +2126,7 @@ export const crowdloanDetails: CrowdloanDetails[] = [
     },
   },
   {
-    relayId:2,
+    relayId: 2,
     paraId: 2105,
     contributeUrl: 'https://crab.network/plo#crowdloan',
     rewards: {
@@ -2122,14 +2138,14 @@ export const crowdloanDetails: CrowdloanDetails[] = [
         },
         {
           title: 'CKTON Crowdloan Allocation',
-          value: '8,000 CKTON'
-        }
+          value: '8,000 CKTON',
+        },
       ],
       info: 'If successful, these allocations will be distributed to users according to the number of KSM they supported. After contributing to the Crab crowdloan, there is no need to wait for tokens to finish vesting or getting listed.',
     },
   },
   {
-    relayId:2,
+    relayId: 2,
     paraId: 2106,
     contributeUrl: 'https://kusama-crowdloan.litentry.com/',
     rewards: {
@@ -2144,7 +2160,7 @@ export const crowdloanDetails: CrowdloanDetails[] = [
     },
   },
   {
-    relayId:2,
+    relayId: 2,
     paraId: 2107,
     contributeUrl: '',
     rewards: {
@@ -2159,22 +2175,41 @@ export const crowdloanDetails: CrowdloanDetails[] = [
     },
   },
   {
-    relayId:2,
+    relayId: 2,
     paraId: 2110,
     contributeUrl: '',
     rewards: {
       tokens: null,
       custom: [
         {
-          title: "Crowdloan Allocation",
-          value: "140,000,000 MGX"
+          title: 'Crowdloan Allocation',
+          value: '140,000,000 MGX',
         },
         {
-          title: "Distributed Immediately",
-          value: "30,000,000 MGX"
-        }
+          title: 'Distributed Immediately',
+          value: '30,000,000 MGX',
+        },
       ],
       info: 'After the launch of the main network, ~21% (30M) of MGX tokens will be released directly, and the remaining will be released linearly over 48 weeks.',
+    },
+  },
+  {
+    relayId: 2,
+    paraId: 2114,
+    contributeUrl: '',
+    rewards: {
+      tokens: null,
+      custom: [
+        {
+          title: 'Crowdloan Allocation',
+          value: '160,000,000 TUR',
+        },
+        {
+          title: 'Total Supply',
+          value: '1,000,000,000 TUR',
+        },
+      ],
+      info: null,
     },
   },
 ]
