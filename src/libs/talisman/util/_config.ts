@@ -1429,7 +1429,7 @@ export const crowdloanDetails: CrowdloanDetails[] = [
       custom: [
         {
           title: 'PHA per DOT',
-          value: '12',
+          value: '24',
         },
         {
           title: 'Khala Crowdloan Contributors',
