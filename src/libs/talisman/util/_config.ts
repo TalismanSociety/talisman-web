@@ -949,7 +949,7 @@ export const parachainDetails: ParachainDetails[] = [
     name: 'Turing Network',
     slug: 'turing',
     token: 'TUR',
-    subtitle: 'Turing Network is the Kusama parachain of Oat Network, the Web 3.0 Hub for DeFi and Payment Automation.',
+    subtitle: 'Turing Network is the Kusama parachain of Oak Network, the Web 3.0 Hub for DeFi and Payment Automation.',
     info: `OAK (On-chain Autonomous Kernel) Network is an automation layer-2 blockchain for Defi and recurring payments. Our mission is to build a Stripe for Web 3.0 across protocols. The blockchain is built on Parity Substrate with an event-driven execution model. Different from Ethereum’s transaction-based model, where a transaction requires private key signing, OAK allows transactions to be triggered by event signals such as time, price, and smart contract state changes.\n\nOAK Network aims to be the No.1 utility Layer-2 across protocols, offering on-chain automation not possible today, such as limit & stop-loss orders on Automated-Market-Making DEX and recurring payments. With OAK's on-chain finality and network security, it can empower any blockchain with its autonomous functionality, unleashing endless product potentials.`,
     links: {
       Website: 'https://oak.tech/',
