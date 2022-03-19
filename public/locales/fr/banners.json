@@ -21,17 +21,17 @@
   },
   "unlockTalisman": {
     "header": "Révélez le Talisman",
-    "description": "Contribuez à n'importe quelle Crowdloan et recevez une “Clé Spirituelle”, vous en aurez besoin plus tard...",
+    "description": "Contribuez à n'importe quelle Crowdloan et recevez une “Spirit Key”, vous en aurez besoin plus tard...",
     "primaryCta": "En savoir plus"
   },
   "noWallet": {
     "header": "Oh non!",
-    "description": "Il ne semble pas que vous ayez installé une extension de portefeuille.<br>Nous vous recommandons de télécharger <1>Talisman Wallet.</1>",
+    "description": "Il ne semble pas que vous ayez installé une extension de portefeuille.<br>Nous vous recommandons de télécharger <1>Talisman.</1>",
     "description2": "En attendant, vous pouvez voir ce qui ce passe du côté des Crowdloans.",
     "primaryCta": "Installer Talisman"
   },
   "noNfts": {
-    "description": "Vous n'avez pas encore de NFT ! Commencez avec une clé spirituelle.",
-    "primaryCta": "Acheter la clé spirituelle"
+    "description": "Vous n'avez pas encore de NFT ! Commencez avec une Spirit Key.",
+    "primaryCta": "Acheter la Spirit Key"
   }
 }
