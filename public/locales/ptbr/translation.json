@@ -1,12 +1,12 @@
 {
-  "Portfolio value": "Valor do Portfolio",
+  "Portfolio value": "Valor do Portfólio",
   "Assets": "Ativos",
   "All Accounts": "Todas as contas",
   "Crowdloans": "Crowdloans",
   "Staking": "Staking",
   "This door will be unlocked soon": "Esta porta será aberta em breve",
-  "You have not contributed to any Crowdloans": "Voce ainda nao contribuiu para nenhum Crowdloans",
-  "Summoning Crowdloan Contributions...": "Convocando Contribuições Crowdloan...",
+  "You have not contributed to any Crowdloans": "Voce ainda não contribuiu para nenhum Crowdloan",
+  "Summoning Crowdloan Contributions...": "Convocando Contribuições de Crowdloan...",
   "Search Crowdloans": "Procurar Crowdloans",
   "Raised": "Arrecadado",
   "Ends in": "Termina em",
@@ -18,7 +18,7 @@
   "Sort by": "Ordenar por",
   "noResult": {
     "title": "Desculpe",
-    "subtitle": "Talisman não pode realizar oque voce deseja.",
+    "subtitle": "Talisman não pode realizar oque você deseja.",
     "text": "Tente outra coisa."
   },
   "You have no": "Voce não tem",
@@ -28,7 +28,7 @@
   "Unavailable": "Indisponível",
   "extensionUnavailable": {
     "title": "Ahhh não!",
-    "subtitle": "Parece que você nao tem a extensão instalada.",
+    "subtitle": "Humm... Parece que você nao tem a extensão instalada.",
     "text": "Não se preocupe estamos construindo uma coisa bem legal,",
     "text2": "mas até la recomendamos o download da Talisman"
   },
@@ -36,8 +36,8 @@
   "Requires Configuration": "Requer Configuração",
   "desktopRequired": {
     "title": "Desculpe !",
-    "subtitle": "Esta ferramenta esta disponivel apenas para Desktop, mas lançaremos uma versão mobile-friendly em breve.",
-    "text": "Enquanto isso fique a vontade para ver nosso Crowdloans dashboard",
+    "subtitle": "Esta ferramenta esta disponivel apenas para Desktop, mas lançaremos uma versão mobile em breve.",
+    "text": "Enquanto isso fique a vontade para ver nosso dashboard de Crowdloans ",
     "primaryCta": "Ver Crowdloans"
   },
   "No wallet found": "Nenhuma carteira encontrada",

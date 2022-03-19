@@ -1,53 +1,53 @@
 {
-  "intro": "Discover a Spirit Key to get access to special perks and be among the first to try the Talisman wallet extension",
-  "Drag to unlock": "Drag to unlock",
-  "no": "no",
-  "Done": "Done",
-  "Send": "Send",
-  "altDownload": "Click here if download failed to start after 10 seconds.",
-  "ownershipText_one": "Você tem <1>{{total}}</1> Chave Espiritual",
-  "ownershipText_other": "Você tem <1>{{total}}</1> Chaves Espirituais",
+  "intro": "Com a Spirit Key você pode ter acesso a vantagens especiais e ser um dos primeiros a experimentar a extensão da carteira Talisman",
+  "Drag to unlock": "Arraste para Destravar",
+  "no": "não",
+  "Done": "Feito",
+  "Send": "Envio",
+  "altDownload": "Clique aqui se o download falhar após 10 segundos.",
+  "ownershipText_one": "Você tem <1>{{total}}</1> Spirit Key",
+  "ownershipText_other": "Você tem <1>{{total}}</1> Spirit Keys",
   "Send to a friend": "Enviar para um amigo",
-  "Explore Crowdloans": "Explore Crowdloans",
-  "Error sending NFT": "Error sending NFT",
-  "Enter Kusama Address": "Enter Kusama Address",
-  "willTakeFewMins": "The transfer will take a few minutes to sync so please avoid sending again.",
+  "Explore Crowdloans": "Explore os Crowdloans",
+  "Error sending NFT": "Erro ao enviar NFT",
+  "Enter Kusama Address": "Entre com endereço Kusama",
+  "willTakeFewMins": "A transferência levará alguns minutos para sincronizar, portanto evite enviar novamente.",
   "whatIsInfo": {
-    "title": "What is a Spirit Key?",
-    "description": "A Spirit Key is a a special RMRK NFT of which there are only 3333. Holders will be able to access special perks including:",
+    "title": "Oque é a Spirit Key?",
+    "description": "Spirit Key é um NFT RMRK especial da qual existem apenas 3333. Os detentores poderão acessar vantagens especiais, incluindo:",
     "list": [
-      "The opportunity to participate in the Alpha release of our wallet extension",
-      "Permissioned channels in our Discord for Spirit Clan members",
-      "Early access to new features in the Talisman web app"
+      "Oportunidade de participar do lançamento Alpha de nossa extensão da carteira",
+      "Obtenha acesso a Canais exclusivos em nosso Discord para membros do Clãn Spirit Key",
+      "Acesso antecipado a novos recursos no aplicativo web da Talisman"
     ]
   },
   "howToGetInfo": {
-    "title": "Where can I get one?",
-    "description": "Keys have been seen in various locations, but never for very long. The best places to currently find them are:",
+    "title": "Onde posso adquirir uma ?",
+    "description": "As Spirit Keys foram vistas em vários locais, mas nunca por muito tempo. Os melhores lugares para encontrá-la atualmente são:",
     "list": [
-      "The Talisman <1>Discord server</1>",
-      "Attending community calls and events",
-      "Keeping an eye out for giveaways on <1>Twitter</1>",
-      "By arranging to review, publish or produce media about Talisman"
+      "Talisman <1>Discord server</1>",
+      "Participar de calls e eventos da comunidade",
+      "Fique de olho nos brindes <1>Twitter</1>",
+      "Contribuir, revisar ou publicar conteúdos sobre a Talisman"
     ]
   },
   "spiritClan": {
     "poem": [
-      "Talisman Seeker, é o seu espírito que é a chave.",
-      "No final de sua busca, você finalmente será livre.",
+      "A busca pelo Talisman é o espírito.",
+      "No final da sua busca, você finalmente será livre.",
       "Uma chave para o novo mundo é uma coisa difícil.",
-      "Você deve se perguntar honestamente, \"o que diabos devo levar?\"",
-      "Dê um momento para pensar se ele pode ser trazido.",
-      "Tudo o que posso garantir é que nada é em vão."
+      "Você deve se perguntar honestamente, \"o que devo fazer em vida?\"",
+      "Reserve um momento para pensar se vale a pena.",
+      "Tudo o que podemos garantir é que nada é em vão."
     ],
-    "title": "Descubra uma Chave Espiritual para se juntar ao Clã Espiritual.",
+    "title": "Descubra uma Spirit Key para se juntar ao Spirit Clan.",
     "info": [
-      "Uma Chave Espiritual é uma NFT que permite que você se junte ao <a>Clã Espiritual</a>.",
-      "Os membros do Clã dos Espíritos podem acessar um canal autorizado do Discord, onde terão a oportunidade de ajudar a moldar o Talismã.",
+      "A Spirit Key é um NFT que permite a você se juntar ao <a>Spirit Clan</a>.",
+      "Os membros do Spirit Clan podem acessar um canal autorizado do Discord, onde terão a oportunidade de ajudar a moldar a Talisman.",
       "Os membros do Spirit Clan receberão acesso antecipado a novos produtos, eventos, drops de NFT e muito mais."
     ],
-    "noKeyPlaceholder": "Você ainda não tem uma chave. Obtenha uma no <a>Singular</a>.",
-    "alreadyHaveOne": "Já tem um?",
-    "joinSpiritClan": "Junte-se ao Clã Espiritual"
+    "noKeyPlaceholder": "Você ainda não tem uma chave. Obtenha uma na <a>Singular</a>.",
+    "alreadyHaveOne": "Já tem uma?",
+    "joinSpiritClan": "Junte-se ao Spirit Clan"
   }
 }
