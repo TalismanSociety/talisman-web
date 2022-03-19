@@ -1,0 +1,37 @@
+{
+  "explore": {
+    "header": "Paraverse'ü inşa et.",
+    "description": "Crowdloanlar, projelerin ve ekiplerin Polkadot ve Kusama'daki Parachain müzayedelerine katılmak için fon toplamasına yardımcı oluyor.",
+    "primaryCta": "Crowdloanları keşfedin."
+  },
+  "empty": {
+    "header": "Çantalarınız boş!",
+    "description": "Kredi kartınız veya kripto paranızla DOT ve KSM satın alın.",
+    "primaryCta": "DOT / KSM Satın al"
+  },
+  "soon": {
+    "header": "Çok yakında",
+    "description": "Bu arada, Crowdloanlara göz atabilirsiniz.",
+    "primaryCta": "Crowdloanları keşfedin."
+  },
+  "buy": {
+    "header": "DOT/KSM Satın al",
+    "description": "Parayı göster.",
+    "primaryCta": "Satın al"
+  },
+  "unlockTalisman": {
+    "header": "Talisman'ın kilidini aç.",
+    "description": "Herhangi bir DOT Crowdloanlara katkıda bulunun ve bir Spirit Key alın, daha sonra ihtiyacınız olacak...",
+    "primaryCta": "Daha fazla bilgi"
+  },
+  "noWallet": {
+    "header": "Paraverse'ün kilidini aç.",
+    "description": "Hmmm... Yüklü bir cüzdan uzantınız yok gibi görünüyor.<br>Yüklemenizi öneririz <1>Talisman Cüzdanı.</1>",
+    "description2": "Bu arada, Crowdloanlara göz atabilirsiniz.",
+    "primaryCta": "Eklentiyi indir."
+  },
+  "noNfts": {
+    "description": "Henüz hiç NFT'niz yok! Spirit Key ile başlayın.",
+    "primaryCta": "Spirit Key Satın al"
+  }
+}
