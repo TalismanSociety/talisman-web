@@ -1,0 +1,11 @@
+{
+  "Account balance too low": "Hesap bakiyesi çok düşük",
+  "A parachain must be selected": "Bir parachain seçilmelidir",
+  "Please enter an amount of {{token}}": "Lütfen bir miktar girin {{token}}",
+  "Please enter a valid amount of {{token}}": "Lütfen geçerli bir miktar girin {{token}}",
+  "An account must be selected": "Bir hesap seçilmelidir",
+  "Account balance not ready yet": "Hesap bakiyesi henüz hazır değil",
+  "A minimum of {{minimum}} {{token}} is required": "En az {{minimum}} {{token}} gereklidir",
+  "Failed to submit transaction: account balance too low": "İşlem gerçekleştirilemedi: Hesap bakiyesi çok düşük",
+  "Failed to submit transaction": "İşlem gerçekleştirilemedi"
+}

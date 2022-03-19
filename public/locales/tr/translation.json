@@ -1,0 +1,48 @@
+{
+  "Portfolio value": "Portfolyo değeri",
+  "Assets": "Varlıklar",
+  "All Accounts": "Tüm Hesaplar",
+  "Crowdloans": "Crowdloanlar",
+  "Staking": "Staking",
+  "This door will be unlocked soon": "Bu kapı yakında açılacak",
+  "You have not contributed to any Crowdloans": "Herhangi bir Crowdloana katkıda bulunmadınız",
+  "Summoning Crowdloan Contributions...": "Crowdloan Katkılarını Çağırma...",
+  "Search Crowdloans": "Crowdloanları ara",
+  "Raised": "Toplanan",
+  "Ends in": "Biter",
+  "Contribute": "Katkıda Bulun",
+  "Contributed": "Katkıda Bulunuldu",
+  "Rewards": "Ödüller",
+  "Cancel": "İptal",
+  "Contribute to": "Katkıda bulunun",
+  "Sort by": "Göre sırala",
+  "noResult": {
+    "title": "Üzgünüm",
+    "subtitle": "Talisman, istediğinizi çağıramaz.",
+    "text": "Başka bir şey deneyin."
+  },
+  "You have no": "Senin yok",
+  "Buy": "Satın al",
+  "Fee": "İşlem ücreti",
+  "Add {{asset}} Balance": "{{asset}} Bakiye Ekle",
+  "Unavailable": "Kullanılamıyor",
+  "extensionUnavailable": {
+    "title": "Oh hayır!",
+    "subtitle": "Hmm... Yüklü bir cüzdan eklentiniz yok gibi görünüyor.",
+    "text": "Talisman Cüzdan Eklentisini yüklemenizi öneririz"
+  },
+  "Install Talisman Extension": "Talisman Eklentisini Yükle",
+  "Requires Configuration": "Yapılandırma gerektirir",
+  "desktopRequired": {
+    "title": "Üzgünüm!",
+    "subtitle": "Bu özellik şu anda yalnızca masaüstünde kullanılabilir, ancak yakında mobil uyumlu sürümü kullanıma sunacağız.",
+    "text": "Bu arada Crowdloans kontrol panelimize göz atmaktan çekinmeyin",
+    "primaryCta": "Crowdloanları görüntüle."
+  },
+  "No wallet found": "Cüzdan bulunamadı",
+  "Connect wallet": "Cüzdanı bağla",
+  "Switch wallet": "Cüzdanı değiştir",
+  "Goal reached": "Hedefe ulaşıldı",
+  "Spirit Key": "Spirit Key",
+  "View all": "Hepsini görüntüle"
+}
