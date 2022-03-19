@@ -390,6 +390,22 @@ export const parachainDetails: ParachainDetails[] = [
     },
   },
   {
+    id: '0-2037',
+    name: 'Unique Network',
+    slug: 'unique-network',
+    token: 'UNQ',
+    subtitle: 'The NFT chain built for Polkadot and Kusama.',
+    info: `Unique Network is a scalable blockchain for programmable NFTs with advanced features. Built with Substrate as a parachain on Polkadot Network, Unique unlocks unlimited potential for next-generation NFTs.`,
+    links: {
+      Website: 'https://unique.network/',
+      Twitter: 'https://twitter.com/Unique_NFTchain',
+      Telegram: 'https://t.me/Uniquechain',
+      Medium: 'https://medium.com/unique-network',
+      Github: 'https://github.com/UniqueNetwork',
+      Discord: 'https://discord.gg/jHVdZhsakC',
+    },
+  },
+  {
     id: '2-2000',
     name: 'Karura',
     slug: 'karura',
