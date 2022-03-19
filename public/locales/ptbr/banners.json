@@ -1,7 +1,7 @@
 {
   "explore": {
     "header": "Construa o Paraverso",
-    "description": "Crowdloans projetos e equipes adiquirir fundos para os leilões de Parachains na Polkadot e Kusama.",
+    "description": "Crowdloans ajudam projetos e equipes adquirir fundos para os leilões de Parachains na Polkadot e Kusama.",
     "primaryCta": "Explore os Crowdloans"
   },
   "empty": {
@@ -11,7 +11,7 @@
   },
   "soon": {
     "header": "Em breve",
-    "description": "Por enquanto, voce pode checar os Crowdloans.",
+    "description": "Por enquanto, você pode checar os Crowdloans.",
     "primaryCta": "Explore os Crowdloans"
   },
   "buy": {
@@ -21,17 +21,17 @@
   },
   "unlockTalisman": {
     "header": "Destrave a Talisman",
-    "description": "Contribua em qualquer DOT Crowdloan e receba uma Spirit Key, voce precisará depois...",
+    "description": "Contribua com qualquer Crowdloan DOT e receba uma "Spirit Key NFT", você precisará dela depois...",
     "primaryCta": "Mais informação"
   },
   "noWallet": {
-    "header": "Ahhh não!",
-    "description": "Me parece que voce não tem uma extensão de carteira instalada.<br>Faça o download <1>Talisman Wallet.</1>",
+    "header": "Destrave o Paraverse",
+    "description": "Parece que voce não tem a extensão de carteira instalada.<br>Faça o download <1>Talisman Wallet.</1>",
     "description2": "Por enquanto, voce pode checar os Crowdloans.",
-    "primaryCta": "Instalar talismã"
+    "primaryCta": "Download da Extensão Talisman"
   },
   "noNfts": {
     "description": "Você ainda não tem NFTs! Comece com uma Spirit Key.",
-    "primaryCta": "Comprar Chave Espiritual"
+    "primaryCta": "Comprar Spirit Key"
   }
 }

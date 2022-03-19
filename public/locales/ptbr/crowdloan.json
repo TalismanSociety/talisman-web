@@ -3,7 +3,7 @@
     "header": "Em progresso",
     "description": "Sua transação esté em progresso. Isto pode levar alguns minutos para confirmar",
     "primaryCta": "Veja no Subscan",
-    "secondaryCta": "Fechado"
+    "secondaryCta": "Fechar"
   },
   "success": {
     "header": "Successo",
@@ -13,19 +13,19 @@
   },
   "failed": {
     "header": "Falhou",
-    "description": "Sua transação foi mal sucedida.",
+    "description": "Sua transação não foi sucedida.",
     "primaryCta": "Veja no Subscan",
     "secondaryCta": "Fechar"
   },
   "registeringUser": {
     "header": "Assine os Termos & Condições",
-    "description": "Clicando \"Assine e Envie\" abaixo, voce aprovas os Termos e Condições da Moonbeam Crowdloan e será armazenado on chain, para sua conta DOT. Isso será na forma de uma observação extra-institucional assinada por sua conta.",
-    "feeNote": "Observe que esta transação de assinatura estará sujeita a taxas de transação na rede Polkadot (around 0.0411 DOT), e Polkadot tenha o minimo de 1 DOT restante.",
+    "description": "Clicando \"Assine e Envie\" abaixo, voce aprova os Termos e Condições do Crowdloan Moonbeam e será armazenado on chain, para sua conta DOT. Isso será na forma de uma "extrinstic" assinada por sua conta.",
+    "feeNote": "Observe que esta transação de assinatura estará sujeita a taxas de transação na rede Polkadot (em torno de 0.0411 DOT), e que na carteira Polkadot tenha o minimo de 1 DOT restante.",
     "termsNote": "[Veja os termos]",
     "primaryCta": "Assine e envie"
   },
   "moonbeamPortflioTag": {
-    "You have unlinked addresses": "Você tem endereços não vinculados",
-    "View linked addresses": "Ver endereços vinculados"
+    "You have unlinked addresses": "Você tem endereços não linkados",
+    "View linked addresses": "Ver endereços linkados"
   }
 }
