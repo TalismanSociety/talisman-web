@@ -1479,6 +1479,24 @@ export const crowdloanDetails: CrowdloanDetails[] = [
     },
   },
   {
+    relayId: 0,
+    paraId: 2037,
+    rewards: {
+      tokens: null,
+      custom: [
+        {
+          title: 'UNQ per DOT',
+          value: '>5.28',
+        },
+        {
+          title: 'Vesting Schedule',
+          value: '20 months, linear vesting',
+        },
+      ],
+      info: null,
+    },
+  },
+  {
     relayId: 2,
     paraId: 2000,
     contributeUrl: 'https://acala.network/karura/join-karura',
