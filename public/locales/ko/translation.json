@@ -1,0 +1,48 @@
+{
+  "Portfolio value": "포트폴리오 가치",
+  "Assets": "자산",
+  "All Accounts": "모든 계정",
+  "Crowdloans": "크라우드론",
+  "Staking": "예치중",
+  "This door will be unlocked soon": "이 문은 곧 잠금해제 될 것입니다",
+  "You have not contributed to any Crowdloans": "당신이 기여한 크라우드론이 없습니다",
+  "Summoning Crowdloan Contributions...": "크라우드론 기여를 불러오는 중입니다...",
+  "Search Crowdloans": "크라우드론 검색",
+  "Raised": "모금됨",
+  "Ends in": "기한",
+  "Contribute": "기여하기",
+  "Contributed": "기여됨",
+  "Rewards": "보상",
+  "Cancel": "취소",
+  "Contribute to": "기여함",
+  "Sort by": "정렬 기준",
+  "noResult": {
+    "title": "죄송합니다",
+    "subtitle": "탈리스만은 당신이 원하는 것을 불러올 수 없습니다.",
+    "text": "다른 것을 시도해 보십시오."
+  },
+  "You have no": "You have no",
+  "Buy": "구매",
+  "Fee": "수수료",
+  "Add {{asset}} Balance": "{{asset}} 보유 수량 추가하기",
+  "Unavailable": "획득할 수 없음",
+  "extensionUnavailable": {
+    "title": "오 이런!",
+    "subtitle": "음... 지갑 확장프로그램이 설치되어 있는 것 같지 않네요.",
+    "text": "탈리스만 지갑 확장프로그램을 설치하는 것을 권장합니다"
+  },
+  "Install Talisman Extension": "탈리스만 확장프로그램을 설치합니다",
+  "Requires Configuration": "환경 설정이 요구됨",
+  "desktopRequired": {
+    "title": "죄송합니다!",
+    "subtitle": "이 기능은 현재 데스크톱에서만 사용 가능합니다. 모바일에서도 사용 가능한 버전을 곧 출시할 예정입니다.",
+    "text": "기다리는 동안 우리의 크라우드론 대시보드를 확인해주십시오",
+    "primaryCta": "크라우드론 살펴보기"
+  },
+  "No wallet found": "지갑을 찾을 수 없습니다",
+  "Connect wallet": "지갑 연결",
+  "Switch wallet": "지갑 전환",
+  "Goal reached": "목표 달성",
+  "Spirit Key": "스피릿 키",
+  "View all": "전체 보기"
+}

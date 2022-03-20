@@ -1,0 +1,37 @@
+{
+  "explore": {
+    "header": "파라버스 구축",
+    "description": "크라우드론은 프로젝트와 팀이 폴카닷과 쿠사마에서 열리는 파라체인 경매에 참여할 수 있도록 기금을 모으는 것을 도와줍니다.",
+    "primaryCta": "크라우드론 살펴보기"
+  },
+  "empty": {
+    "header": "가방이 비어있어요!",
+    "description": "당신의 신용카드나 암호화폐를 이용해 DOT과 KSM를 구입하십시오.",
+    "primaryCta": "DOT / KSM 구매"
+  },
+  "soon": {
+    "header": "준비중",
+    "description": "준비를 기다리는 동안 크라우드론을 확인 해보실 수 있습니다.",
+    "primaryCta": "크라우드론 살펴보기"
+  },
+  "buy": {
+    "header": "DOT/KSM 구매",
+    "description": "지불하실 금액을 보여주십시오.",
+    "primaryCta": "구매"
+  },
+  "unlockTalisman": {
+    "header": "탈리스만 잠금해제",
+    "description": "DOT 크라우드론에 기여하고 스피릿 키를 받으십시오, 나중에 필요할 것입니다.",
+    "primaryCta": "더 많은 정보"
+  },
+  "noWallet": {
+    "header": "파라버스 잠금해제",
+    "description": "음.. 지갑 확장프로그램이 설치되어 있는 것 같지 않네요.<br>우리는 당신에게 추천하고 싶습니다, <1>탈리스만 지갑 설치를요.</1>",
+    "description2": "준비를 기다리는 동안 크라우드론을 확인 해보실 수 있습니다.",
+    "primaryCta": "확장프로그램 내려받기"
+  },
+  "noNfts": {
+    "description": "당신은 아직 NFT를 가지고 있지 않습니다! 스피릿 키와 함께 시작해보십시오",
+    "primaryCta": "스피릿 키 구매"
+  }
+}

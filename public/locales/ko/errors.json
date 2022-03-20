@@ -1,0 +1,11 @@
+{
+  "Account balance too low": "계정의 잔액이 부족합니다",
+  "A parachain must be selected": "파라체인을 선택해야 합니다",
+  "Please enter an amount of {{token}}": "{{token}} 수량을 입력하십시오",
+  "Please enter a valid amount of {{token}}": "유요한 {{token}} 수량을 입력하십시오",
+  "An account must be selected": "계정을 선택해야 합니다",
+  "Account balance not ready yet": "계정에 잔액이 아직 준비되지 않았습니다",
+  "A minimum of {{minimum}} {{token}} is required": "최소 {{minimum}} {{token}} 이(가) 필요합니다",
+  "Failed to submit transaction: account balance too low": "트랜잭션 제출이 실패하였습니다: 계정의 잔액이 부족합니다",
+  "Failed to submit transaction": "트랜잭션 제출이 실패하였습니다"
+}
