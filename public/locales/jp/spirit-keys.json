@@ -1,0 +1,53 @@
+{
+  "intro": "Spirit Keyを発見して、特別な特典にアクセスしたり、Talismanウォレット拡張機能をいち早く試したりすることができます。",
+  "Drag to unlock": "ドラッグしてアンロック",
+  "no": "no",
+  "Done": "Done",
+  "Send": "Send",
+  "altDownload": "10秒後にダウンロードが開始されない場合は、こちらをクリックしてください。",
+  "ownershipText_one": "あなたはSpirit Keyを <1>{{total}}</1> 個持っています",
+  "ownershipText_other": "あなたはSpirit Keyを <1>{{total}}</1> 個持っています",
+  "Send to a friend": "友人に送る",
+  "Explore Crowdloans": "Crowdloansを探索する",
+  "Error sending NFT": "NFTの送信エラー",
+  "Enter Kusama Address": "Kusamaアドレスを入力する",
+  "willTakeFewMins": "転送の同期に数分かかります。再送信はお控えください。",
+  "whatIsInfo": {
+    "title": "Spirit Keyとは？",
+    "description": "Spirit Keyは、3333個しか存在しないRMRKの特別なNFTです。所持していると、以下のような特別な特典を受けることができます。:",
+    "list": [
+      "ウォレット拡張機能のアルファ版リリースに参加する機会",
+      "DiscordのSpirit Clanチャンネルへの特別アクセス",
+      "Talismanウェブアプリの新機能へのアーリーアクセス"
+    ]
+  },
+  "howToGetInfo": {
+    "title": "どこで手に入るの？",
+    "description": "Spirit Keyは様々な場所で見かけられますが、それほど長くはないでしょう。現在、最もよく見かける場所は:",
+    "list": [
+      "Talismanの <1>Discordサーバー</1>",
+      "コミュニティコールやイベントへの参加",
+      " <1>Twitter</1> でのプレゼント企画に注目していてください",
+      "Talismanに関するメディアのレビュー、出版、制作の手配"
+    ]
+  },
+  "spiritClan": {
+    "poem": [
+      "Talismanの探求者よ、あなたの精神こそが鍵なのです。",
+      "探索の果てに、あなたはついに自由になるでしょう。",
+      "新世界への鍵は困難を伴いますが、そんな時は",
+      " \"いったい何を持っていけばよいのか\"と、素直に自分に問いかけてみてください。",
+      "そして持っていけるかどうか、少しだけ考えてみてください。",
+      "私が保証できるのは、無駄なものは何一つないということだけです。"
+    ],
+    "title": "Spirit Keyを発見し、Spirit Clanに加わる",
+    "info": [
+      "Spirit Keyは <a>Spirit Clan</a> に参加するためのNFTです",
+      "Spirit Clanのメンバーは、特別なDiscordチャンネルにアクセスし、Talismanの開発に協力することができます。",
+      "Spirit Clanのメンバーは新製品やイベント、NFTのドロップなどにいち早くアクセスできます。"
+    ],
+    "noKeyPlaceholder": "あなたはまだ鍵を持っていません。 <a>Singular</a> で手に入れましょう。",
+    "alreadyHaveOne": "既にお持ちの方はこちら",
+    "joinSpiritClan": "Spirit Clanに参加する"
+  }
+}

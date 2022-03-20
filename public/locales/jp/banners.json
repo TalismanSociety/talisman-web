@@ -1,0 +1,37 @@
+{
+  "explore": {
+    "header": "パラバースを構築する",
+    "description": "プロジェクトやチームが、PolkadotやKusamaのParachainオークションに参加するための資金をCrowdloansで調達することができます。",
+    "primaryCta": "Crowdloansを探索する"
+  },
+  "empty": {
+    "header": "あなたのお財布は空です",
+    "description": "DOTとKSMをクレジットカードまたは暗号資産で購入する。",
+    "primaryCta": "Buy DOT / KSM"
+  },
+  "soon": {
+    "header": "Coming soon",
+    "description": "ふぅ...その間にCrowdloansについて知る",
+    "primaryCta": "Crowdloansを探索する"
+  },
+  "buy": {
+    "header": "Buy DOT/KSM",
+    "description": "残高を表示する",
+    "primaryCta": "Buy"
+  },
+  "unlockTalisman": {
+    "header": "タリスマンをアンロックする",
+    "description": "DOT Crowdloanに貢献するとSpirit Keyがもらえます。後で必要になるかもしれません...",
+    "primaryCta": "もっと詳しく"
+  },
+  "noWallet": {
+    "header": "パラバースをアンロックする",
+    "description": "残念ですが、ウォレット拡張機能がインストールされていません。<br>のインストールを推奨します。 <1>Talisman Wallet.</1>",
+    "description2": "ふぅ...その間にCrowdloansについて知る",
+    "primaryCta": "ウォレット拡張機能をダウンロード"
+  },
+  "noNfts": {
+    "description": "NFTをまだ持っていないようです。Spirit Keyではじめてみませんか？",
+    "primaryCta": "Buy Spirit Key"
+  }
+}
