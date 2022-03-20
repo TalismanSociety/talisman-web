@@ -1,0 +1,31 @@
+{
+  "inProgress": {
+    "header": "進行中",
+    "description": "お取引が進行中です。確認に数分かかる場合があります",
+    "primaryCta": "Subscanで確認する",
+    "secondaryCta": "閉じる"
+  },
+  "success": {
+    "header": "成功しました",
+    "description": "お取引は成功しました。ご貢献に感謝します",
+    "primaryCta": "Subscanで確認する",
+    "secondaryCta": "ポートフォリオを確認する"
+  },
+  "failed": {
+    "header": "失敗しました",
+    "description": "トランザクションが正常に行われませんでした。",
+    "primaryCta": "Subscanで確認する",
+    "secondaryCta": "閉じる"
+  },
+  "registeringUser": {
+    "header": "利用規約に同意する",
+    "description": "以下の \"同意して署名する\" をクリックすると、Moonbeam Crowdloan 利用規約への同意がDOTアカウントに保存されます。これは、あなたのアカウントによってremark extrinstic signedという形で行われます。",
+    "feeNote": "尚、この署名にはPolkadotネットワークでの取引手数料（約0.0411DOT）が掛かります。Polkadotでは最低残高が1DOTとなりますのでご注意ください。",
+    "termsNote": "[利用規約を確認する]",
+    "primaryCta": "同意して署名する"
+  },
+  "moonbeamPortflioTag": {
+    "You have unlinked addresses": "リンクされていないアドレスがあります",
+    "View linked addresses": "リンク先のアドレスを表示する"
+  }
+}

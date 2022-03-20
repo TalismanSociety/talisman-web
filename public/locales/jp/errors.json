@@ -1,0 +1,11 @@
+{
+  "Account balance too low": "アカウント残高が不足しています",
+  "A parachain must be selected": "Parachainを選択する必要があります",
+  "Please enter an amount of {{token}}": "の数量を入力してください。 {{token}}",
+  "Please enter a valid amount of {{token}}": "の有効な数量を入力してください {{token}}",
+  "An account must be selected": "アカウントを選択する必要があります",
+  "Account balance not ready yet": "口座残高がまだ準備されていません",
+  "A minimum of {{minimum}} {{token}} is required": "最低でも {{minimum}} {{token}} が必要です",
+  "Failed to submit transaction: account balance too low": "アカウント残高が不足しているため、トランザクションの送信に失敗しました。",
+  "Failed to submit transaction": "トランザクションの送信に失敗しました"
+}

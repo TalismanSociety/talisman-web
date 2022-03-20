@@ -1,0 +1,48 @@
+{
+  "Portfolio value": "ポートフォリオ資産",
+  "Assets": "Assets",
+  "All Accounts": "すべてのアカウント",
+  "Crowdloans": "Crowdloans",
+  "Staking": "ステーキング",
+  "This door will be unlocked soon": "この扉はもうすぐ開かれます",
+  "You have not contributed to any Crowdloans": "あなたはまだCrowdloansに貢献していません",
+  "Summoning Crowdloan Contributions...": "Crowdloansへの貢献を募る...",
+  "Search Crowdloans": "Crowdloansを探す",
+  "Raised": "Raised",
+  "Ends in": "Ends in",
+  "Contribute": "Contribute",
+  "Contributed": "Contributed",
+  "Rewards": "リワード",
+  "Cancel": "キャンセル",
+  "Contribute to": "Contribute to",
+  "Sort by": "並べ替え",
+  "noResult": {
+    "title": "ごめんね！",
+    "subtitle": "Talismanではその要望に応えられません",
+    "text": "他のものを試してみる"
+  },
+  "You have no": "あなたは持っていません",
+  "Buy": "Buy",
+  "Fee": "Fee",
+  "Add {{asset}} Balance": "Add {{asset}} Balance",
+  "Unavailable": "利用できません",
+  "extensionUnavailable": {
+    "title": "オーノー！",
+    "subtitle": "ふぅ... ウォレット拡張機能がインストールされていないようですね",
+    "text": "Talismanウォレット拡張機能のインストールをお勧めします。"
+  },
+  "Install Talisman Extension": "Talisman拡張機能をインストール",
+  "Requires Configuration": "Requires Configuration",
+  "desktopRequired": {
+    "title": "ごめんね！",
+    "subtitle": "この機能は現在デスクトップのみですが、近日中にモバイルフレンドリーバージョンをリリースする予定です。",
+    "text": "それまでの間、Crowdloansダッシュボードをご覧ください",
+    "primaryCta": "Crowdloansを確認する"
+  },
+  "No wallet found": "ウォレットが見つかりません",
+  "Connect wallet": "ウォレットを接続",
+  "Switch wallet": "ウォレットを切り替える",
+  "Goal reached": "目標に到達しました",
+  "Spirit Key": "Spirit Key",
+  "View all": "すべてを表示"
+}
