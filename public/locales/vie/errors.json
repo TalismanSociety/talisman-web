@@ -1,9 +1,9 @@
 {
   "Account balance too low": "Số dư tài khoản không đủ",
-  "A parachain must be selected": "Parachain phải được chọn",
+  "A parachain must be selected": "Hãy chọn Parachain",
   "Please enter an amount of {{token}}": "Vui lòng nhập số lượng {{token}}",
-  "Please enter a valid amount of {{token}}": "Vui lòng nhập đúng số tiền {{token}}",
-  "An account must be selected": "Một tài khoản phải được chọn",
+  "Please enter a valid amount of {{token}}": "Vui lòng nhập đúng số lượng {{token}}",
+  "An account must be selected": "Hãy chọn một tài khoản",
   "Account balance not ready yet": "Số dư tài khoản không có sẵn",
   "A minimum of {{minimum}} {{token}} is required": "Số tiền tối thiểu {{minimum}} {{token}}",
   "Failed to submit transaction: account balance too low": "Không thể gửi giao dịch: số dư tài khoản quá thấp",

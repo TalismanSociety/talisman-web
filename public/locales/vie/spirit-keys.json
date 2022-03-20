@@ -22,8 +22,8 @@
     ]
   },
   "howToGetInfo": {
-    "title": "Tôi có thể lấy một cái ở đâu?",
-    "description": "Chìa khóa đã được nhìn thấy ở nhiều nơi khác nhau. Những nơi tốt nhất hiện tại để tìm chúng là:",
+    "title": "Tôi có thể tìm một cái ở đâu?",
+    "description": "Chìa khóa đã được thấy ở nhiều nơi khác nhau. Những nơi tốt nhất hiện tại để tìm chúng là:",
     "list": [
       "Talisman <1>Discord server</1>",
       "Tham gia community call và sự kiện của cộng đồng",
@@ -33,18 +33,18 @@
   },
   "spiritClan": {
     "poem": [
-      "Talisman Seeker, chính là tinh thần của bạn đó là chìa khóa.",
-      "Khi bạn tìm kiếm, cuối cùng bạn sẽ được tự do.",
-      "Chìa khóa mở ra thế giới mới là một điều khó khăn.",
-      "Bạn nên tự hỏi bản thân một cách thành thật, \" tôi nên mang theo cái quái gì? \"",
-      "Hãy dành một chút thời gian để suy nghĩ xem liệu nó có thể được thực hiện hay không.",
+      "Talisman Seeker, chính là tinh thần của bạn, đó là chìa khóa.",
+      "Khi bạn thật sự tìm kiếm, cuối cùng bạn sẽ được tự do.",
+      "Chìa khóa sẽ mở ra thế giới mới.",
+      "Bạn nên tự hỏi bản thân một cách thành thật, \" tôi nên mang theo cái gì? \"",
+      "Hãy dành một chút thời gian để suy nghĩ xem liệu bạn nên làm gì ?",
       "Tất cả những gì tôi có thể đảm bảo, đó là không có gì là vô ích."
     ],
     "title": "Khám phá Spirit Key để tham gia Spirit Clan.",
     "info": [
       "Spirit Key là một NFT cho phép bạn tham gia <a> Spirit Clan </a>.",
-      "Các thành viên của Spirit Clan có thể truy cập kênh Discord được cấp phép, nơi họ sẽ có cơ hội giúp hình thành Talisman.",
-      "Các thành viên Spirit Clan sẽ nhận được quyền truy cập sớm vào các sản phẩm, sự kiện mới, giảm NFT và hơn thế nữa."
+      "Các thành viên của Spirit Clan có thể truy cập kênh Discord được cấp phép, nơi họ sẽ có cơ hội giúp xây dựng Talisman.",
+      "Các thành viên Spirit Clan sẽ nhận được quyền truy cập sớm vào các sản phẩm, sự kiện mới, nhận NFT và hơn thế nữa."
     ],
     "noKeyPlaceholder": "Bạn chưa có khóa. Hãy mua một khóa trên <a> Số ít </a>.",
     "alreadyHaveOne": "Đã có một?",
