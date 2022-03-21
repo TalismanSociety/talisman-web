@@ -1,34 +1,34 @@
 {
-  "intro": "Discover a Spirit Key to get access to special perks and be among the first to try the Talisman wallet extension",
-  "Drag to unlock": "Drag to unlock",
-  "no": "no",
-  "Done": "Done",
-  "Send": "Send",
-  "altDownload": "Click here if download failed to start after 10 seconds.",
+  "intro": "Откройте Spirit Key, чтобы получить доступ к особым преимуществам и в числе первых попробовать расширение кошелька Talisman",
+  "Drag to unlock": "Перетащите, чтобы разблокировать",
+  "no": "нет",
+  "Done": "Готово",
+  "Send": "Отправить",
+  "altDownload": "Нажмите здесь, если загрузка не началась через 10 секунд",
   "ownershipText_one": "У вас есть <1>{{total}}</1> Духовный ключ",
-  "ownershipText_other": "У вас есть <1>{{total}}</1> духовных ключей",
+  "ownershipText_other": "У вас есть <1>{{всего}}</1> духовных ключей",
   "Send to a friend": "Отправить другу",
-  "Explore Crowdloans": "Explore Crowdloans",
-  "Error sending NFT": "Error sending NFT",
-  "Enter Kusama Address": "Enter Kusama Address",
-  "willTakeFewMins": "The transfer will take a few minutes to sync so please avoid sending again.",
+  "Explore Crowdloans": " Исследуйте Crowdloans",
+  "Error sending NFT": "Ошибка отправки NFT",
+  "Enter Kusama Address": "Введите адрес Kusama",
+  "willTakeFewMins": "Перевод займет несколько минут для синхронизации, поэтому, пожалуйста, не отправляйте его снова.",
   "whatIsInfo": {
-    "title": "What is a Spirit Key?",
-    "description": "A Spirit Key is a a special RMRK NFT of which there are only 3333. Holders will be able to access special perks including:",
+    "title": "Что такое Spirit Key?",
+    "description": "Spirit Key - это особый RMRK NFT, которых существует всего 3333. Владельцы могут получить доступ к особым преимуществам, включая:",
     "list": [
-      "The opportunity to participate in the Alpha release of our wallet extension",
-      "Permissioned channels in our Discord for Spirit Clan members",
-      "Early access to new features in the Talisman web app"
+      "Возможность принять участие в Альфа-релизе расширения нашего кошелька",
+      "Разрешенные каналы в нашем Discord для членов клана Spirit",
+      "Ранний доступ к новым функциям веб-приложения Talisman".
     ]
   },
   "howToGetInfo": {
-    "title": "Where can I get one?",
-    "description": "Keys have been seen in various locations, but never for very long. The best places to currently find them are:",
+    "title": "Где купить?",
+    "description": "Ключи были замечены в различных местах, но никогда очень долго. Лучшими местами, где их можно найти в настоящее время, являются:",
     "list": [
-      "The Talisman <1>Discord server</1>",
-      "Attending community calls and events",
-      "Keeping an eye out for giveaways on <1>Twitter</1>",
-      "By arranging to review, publish or produce media about Talisman"
+      "Сервер Talisman <1>Discord</1>",
+      "Посещение звонков и мероприятий сообщества",
+      "Следить за розыгрышами на <1>Twitter</1>",
+      "Договариваясь об обзоре, публикации или производстве СМИ о Talisman".
     ]
   },
   "spiritClan": {
@@ -40,9 +40,9 @@
       "Подумай, можно ли его принести.",
       "Все, что я могу гарантировать, это то, что все не напрасно."
     ],
-    "title": "Отыщите ключ духа, чтобы присоединиться к клану духов.",
+    "title": "Отыщите spirit key, чтобы присоединиться к клану духов.",
     "info": [
-      "Духовный ключ — это NFT, который позволяет вам присоединиться к <a>Клану духов</a>.",
+      "Spirit key — это NFT, который позволяет вам присоединиться к <a>Клану духов</a>.",
       "Члены клана Духов могут получить доступ к разрешенному каналу Discord, где у них будет возможность помочь сформировать Талисман.",
       "Члены Spirit Clan получат ранний доступ к новым продуктам, событиям, выпадам NFT и многому другому"
     ],
