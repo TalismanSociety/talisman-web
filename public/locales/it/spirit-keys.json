@@ -1,0 +1,53 @@
+{
+  "intro": "Scopri la Spirit Key per avere accesso a funzioni speciali ed essere tra i primi a provare il Talisman wallet",
+  "Drag to unlock": "Trascina per sbloccare",
+  "no": "no",
+  "Done": "Fatto",
+  "Send": "Inviato",
+  "altDownload": "Clicca qui se il download non è partito dopo 10 secondi.",
+  "ownershipText_one": "Hai <1>{{total}}</1> Spirit Key",
+  "ownershipText_other": "Hai <1>{{total}}</1> Spirit Keys",
+  "Send to a friend": "Invia ad un amico",
+  "Explore Crowdloans": "Esplora le Crowdloans",
+  "Error sending NFT": "Errore nell'invio NFT",
+  "Enter Kusama Address": "Inserisci l'indirizzo Kusama",
+  "willTakeFewMins": "Il trasferimento impiegherà alcuni minuti per essere effetuato, perfavore non ripetere l'invio.",
+  "whatIsInfo": {
+    "title": "Cos'è una Spirit Key?",
+    "description": "Una Spirit Key è uno speciale RMRK NFT di cui ce ne sono solo 3333. Coloro che la possiedono potranno avere accesso a speciali benifici quali:",
+    "list": [
+      "Opportunità di partecipare alle versioni in anteprima della nostra estensione wallet",
+      "Canali esclusivi sul nostro canale Discord riservati ai membri Spirit Clan",
+      "Accesso anticipato alle nuove funzionalita del talisman wallet"
+    ]
+  },
+  "howToGetInfo": {
+    "title": "Dove ne posso ottenere una?",
+    "description": "Le chiavi sono state avvistate in vari posti, ma sempre per breve tempo. I migliori posti dove cercarle sono:",
+    "list": [
+      "Il Talisman <1>Discord server</1>",
+      "Partecipare alle community calls ed eventi",
+      "Facendo attenzione ai giveaways su <1>Twitter</1>",
+      "Recensendo, pubblicando o producendo media che parlino di Talisman"
+    ]
+  },
+  "spiritClan": {
+    "poem": [
+      "Oh cercatore del Talisman, la chiave è nel tuo spirito.",
+      "Alla fine della tua cerca, sarai finalmente libero.",
+      "Una chiave per il mondo nuovo è difficile da forgiare.",
+      "E dunque dovresti prima chiedere a te stesso, \"cosa mai dovrei portare?\"",
+      "Fermati un momento a riflettere se poterlo portare veramente.",
+      "Tutto quello che posso dirti, è che ne nulla sarà per niente."
+    ],
+    "title": "Trova una Spirit Key per entrare a far parte dello Spirit Clan.",
+    "info": [
+      "Una Spirit Key è un NFT che ti permette di unirti allo <a>Spirit Clan</a>.",
+      "I membri dello Spirit Clan possono avere accesso ad un canale Discord riservato dove avranno l'opportunità di interagire ed aiutare a sviluppare il progetto Talisman.",
+      "I membri dello Spirit Clan riceveranno accesso anticipato a nuovi prodotti, eventi, drop NFT, e tanto altro ancora."
+    ],
+    "noKeyPlaceholder": "Non hai ancora una chiave. Prendine una su <a>Singular</a>.",
+    "alreadyHaveOne": "Ne hai già una?",
+    "joinSpiritClan": "Entra nello Spirit Clan"
+  }
+}

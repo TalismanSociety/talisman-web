@@ -1,0 +1,37 @@
+{
+  "explore": {
+    "header": "Contribuisci a costruire il Paraverso",
+    "description": "I Crowdloans aiutano team e progetti a raccogliere fondi per partecipare alle aste su Polkadot e Kusama.",
+    "primaryCta": "Esplora i Crowdloans"
+  },
+  "empty": {
+    "header": "Hai le sacche vuote!",
+    "description": "Acquista DOT e KSM con la tua carta di credito o crypto",
+    "primaryCta": "Acquista DOT / KSM"
+  },
+  "soon": {
+    "header": "In arrivo",
+    "description": "Nel frattempo puoi dare un'occhiata ai Crowdloans.",
+    "primaryCta": "Esplora i Crowdloans"
+  },
+  "buy": {
+    "header": "Acquista DOT/KSM",
+    "description": "Show me the money",
+    "primaryCta": "Compra"
+  },
+  "unlockTalisman": {
+    "header": "Sblocca Talisman",
+    "description": "Contribuisci a qualsiasi DOT Crowdloan e ricevi la Spirit Key, ne avrai bisogno dopo...",
+    "primaryCta": "Più info"
+  },
+  "noWallet": {
+    "header": "Apri le porte del Paraverso",
+    "description": "Hmmm... Non sembri avere l'estentione del wallet installata.<br>Raccomandiamo di installare <1>Talisman Wallet.</1>",
+    "description2": "Nel frattempo puoi dare un occhiata ai Crowdloans.",
+    "primaryCta": "Scarica estensione"
+  },
+  "noNfts": {
+    "description": "Ancora non hai nessun NFT! Inizia con una Spirit Key.",
+    "primaryCta": "Acquista Spirit Key"
+  }
+}
