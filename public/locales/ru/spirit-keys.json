@@ -6,7 +6,7 @@
   "Send": "Отправить",
   "altDownload": "Нажмите здесь, если загрузка не началась через 10 секунд",
   "ownershipText_one": "У вас есть <1>{{total}}</1> Духовный ключ",
-  "ownershipText_other": "У вас есть <1>{{всего}}</1> духовных ключей",
+  "ownershipText_other": "У вас есть <1>{{total}}</1> духовных ключей",
   "Send to a friend": "Отправить другу",
   "Explore Crowdloans": " Исследуйте Crowdloans",
   "Error sending NFT": "Ошибка отправки NFT",
