@@ -1,31 +1,31 @@
 ﻿{
   "inProgress": {
     "header": "อยู่ระหว่างการดำเนินการ",
-    "description": "การทำธุรกรรมอยู่ระหว่างการดำเนินการ อาจใช้เวลาชั่วครู่ในการยืนยันธุรกรรม",
-    "primaryCta": "ดู Subscan",
+    "description": "ธุรกรรมอยู่ระหว่างการดำเนินการ อาจใช้เวลาสักครู่ในการยืนยันธุรกรรม",
+    "primaryCta": "ดูบน Subscan",
     "secondaryCta": "ปิด"
   },
   "success": {
     "header": "สำเร็จ",
-    "description": "การทำธุรกรรมสำเร็จ ขอบคุณที่สนับสนุน",
-    "primaryCta": "ดู Subscan",
-    "secondaryCta": "ไปที่ Portfolio"
+    "description": "การทำธุรกรรมสำเร็จ ขอบคุณสำหรับการสนับสนุนของคุณ",
+    "primaryCta": "ดูบน Subscan",
+    "secondaryCta": "ไปที่ Portfolio ของคุณ"
   },
   "failed": {
     "header": "ล้มเหลว",
     "description": "การทำธุรกรรมล้มเหลว",
-    "primaryCta": "ดู Subscan",
+    "primaryCta": "ดูบน Subscan",
     "secondaryCta": "ปิด"
   },
   "registeringUser": {
     "header": "ยอมรับข้อตกลงและเงื่อนไข",
-    "description": "หากคลิกที่ \"Sign and Send\" ด้านล่างนี้ ถือว่าคุณได้ยอมรับข้อตกลงและเงื่อนของในการ Crowdloan ของ Moonbeam ที่จะได้รับการจัดเก็บแบบ on-chain ไปยังบัญชี DOT ของคุณ การยอมรับนี้จะอยู่ในหมายเหตุ Extrinstic ที่ได้รับการยอมรับโดยบัญชีคุณ",
+    "description": "หากคลิกที่ \"Sign and Send\" ด้านล่างนี้ หมายความว่าคุณได้ยอมรับข้อตกลงและเงื่อนของในการ Crowdloan ของ Moonbeam ที่จะได้รับการจัดเก็บแบบ on-chain ไปยังบัญชี DOT โดยมันจะอยู่ในรูปแบบของ Extrinstic signedโดยบัญชีคุณ",
     "feeNote": "โปรดรับทราบว่าการทำธุรกรรมนี้จะเสียค่าทำธุรกรมบนเครือข่าย Polkadot (ประมาณ 0.0411 DOT) และขั้นต่ำของบัญชี Polkadot ต้องมี 1 DOT",
     "termsNote": "[View terms]",
     "primaryCta": "ยืนยัน และ ทำรายการ"
   },
   "moonbeamPortflioTag": {
-    "You have unlinked addresses": "ไม่พบ Address ที่เชื่อม",
-    "View linked addresses": "ดู Address ที่เชื่อม"
+    "You have unlinked addresses": "คุณมีบัญชีที่ยังไม่ได้ทำการเชื่อมโยง",
+    "View linked addresses": "ดูบัญชีที่มีการเชื่อมโยงกัน"
   }
 }
