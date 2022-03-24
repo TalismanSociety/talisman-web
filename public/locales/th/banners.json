@@ -1,37 +1,37 @@
 {
   "explore": {
     "header": "ร่วมสร้างพาราเวิร์ส",
-    "description": "Crowdloan เป็นการช่วยสนับสนุนทีมโปรเจคเพื่อระดมทุนร่วมประมูล Parachain ทั้งบน Polkadot และ Kusama",
-    "primaryCta": "เข้าสู่ Crowdloan"
+    "description": "Crowdloan เป็นการช่วยสนับสนุนโปรเจค และ ทีม ในการระดมทุนเพื่อร่วมประมูล Parachain ทั้งบน Polkadot และ Kusama",
+    "primaryCta": "ค้นหา Crowdloan"
   },
   "empty": {
-    "header": "ว่างเปล่า!",
-    "description": "ซื้อ DOT และ KSM ด้วยบัตรเครดิตหรือคริปโต",
+    "header": "กระเป๋าของคุณว่างเปล่า!",
+    "description": "ซื้อ DOT และ KSM ด้วยบัตรเครดิต หรือ คริปโต",
     "primaryCta": "ซื้อ DOT / KSM"
   },
   "soon": {
-    "header": "เร็วๆ นี้",
-    "description": "ระหว่างรอ ลองไปดู Crowdloan ก่อนได้นะ",
+    "header": "มาในเร็วๆ นี้",
+    "description": "ในระหว่างนี้ คุณสามารถดูเกี่ยวกับการ Crowdloan ก่อนได้นะ",
     "primaryCta": "เข้าสู่ Crowdloan"
   },
   "buy": {
     "header": "ซื้อ DOT / KSM",
-    "description": "ไหนขอดูเงินหน่อยสิ้",
+    "description": "ไหนขอดูเงินหน่อย",
     "primaryCta": "ซื้อ"
   },
   "unlockTalisman": {
     "header": "ปลดล็อก Talisman",
-    "description": "สนับสนุน DOT Crowdloan ใดก็ตาม รับ Spirit Key เพราะไม่ช้าเจ้าต้องใช้มัน..",
+    "description": "สนับสนุน Crowdloan ใดๆ บน DOT และรับ Spirit Key คุณจะได้ใช้มันหลังจากนี้..",
     "primaryCta": "เพิ่มเติม"
   },
   "noWallet": {
-    "header": "ไม่นะ!",
-    "description": "ดูหมือนคุณยังไม่ได้ติดตั้งส่วนขยาย<br>แนะนำให้โหลด <1>Talisman Wallet.</1>",
-    "description2": "ระหว่างรอ ลองไปดู Crowdloan ก่อนได้นะ",
-    "primaryCta": "ติดตั้งยันต์"
+    "header": "ปลดล็อด Paraverse",
+    "description": "ดูหมือนคุณยังไม่ได้ติดตั้งส่วนขยายของกระเป๋า<br>แนะนำให้โหลด <1>Talisman Wallet.</1>",
+    "description2": "ในระหว่างนี้ คุณสามารถดูเกี่ยวกับการ Crowdloan ก่อนได้นะ",
+    "primaryCta": "โหลดส่วนต่อขยาย"
   },
   "noNfts": {
-    "description": "คุณยังไม่มี NFT เลย! เริ่มต้นด้วย Spirit Key",
-    "primaryCta": "ซื้อคีย์ Spirit"
+    "description": "คุณยังไม่มี NFT เลย! เริ่มต้นด้วยการถือ Spirit Key",
+    "primaryCta": "ซื้อกุญแจวิญญาณ"
   }
 }

@@ -1,53 +1,53 @@
 {
-  "intro": "Discover a Spirit Key to get access to special perks and be among the first to try the Talisman wallet extension",
-  "Drag to unlock": "Drag to unlock",
-  "no": "no",
-  "Done": "Done",
-  "Send": "Send",
-  "altDownload": "Click here if download failed to start after 10 seconds.",
-  "ownershipText_one": "คุณมีกุญแจวิญญาณ <1>{{total}}</1>",
-  "ownershipText_other": "คุณมีกุญแจวิญญาณ <1>{{total}}</1> อัน",
+  "intro": "ค้นหากุญแจวิญญาณเพื่อได้รับสิทธิพิเศษและเป็นหนึ่งในคนกลุ่มแรกที่ได้ลองใช้งานส่วนเสริมของ Talisman wallet",
+  "Drag to unlock": "ลากเพื่อปลดล็อค",
+  "no": "ไม่",
+  "Done": "เรียบร้อย",
+  "Send": "ส่ง",
+  "altDownload": "คลิกที่นี่หากไม่เริ่มดาวน์โหลดหลังจากผ่านไป 10 วินาที",
+  "ownershipText_one": "คุณมีกุญแจวิญญาณ <1>{{total}}</1> ดอก",
+  "ownershipText_other": "คุณมีกุญแจวิญญาณ <1>{{total}}</1> ดอก",
   "Send to a friend": "ส่งให้เพื่อน",
-  "Explore Crowdloans": "Explore Crowdloans",
-  "Error sending NFT": "Error sending NFT",
-  "Enter Kusama Address": "Enter Kusama Address",
-  "willTakeFewMins": "The transfer will take a few minutes to sync so please avoid sending again.",
+  "Explore Crowdloans": "สำรวจ Crowdloans",
+  "Error sending NFT": "การส่ง NFT ไม่สำเร็จ",
+  "Enter Kusama Address": "กรุณาใส่ Kusama Address",
+  "willTakeFewMins": "การถ่ายโอนจะใช้เวลาสองถึงสามนาทีในการซิงค์ ดังนั้นโปรดหลีกเลี่ยงการส่งซ้ำ",
   "whatIsInfo": {
-    "title": "What is a Spirit Key?",
-    "description": "A Spirit Key is a a special RMRK NFT of which there are only 3333. Holders will be able to access special perks including:",
+    "title": "อะไรคือกุญแจวิญญาณ?",
+    "description": "กุญแจวิญญาณเป็น RMRK NFT แบบพิเศษที่มีเพียงแค่ 3333 ดอก ซึ่งผู้ครอบครองจะได้รับสิทธิพิเศษดังต่อไปนี้:",
     "list": [
-      "The opportunity to participate in the Alpha release of our wallet extension",
-      "Permissioned channels in our Discord for Spirit Clan members",
-      "Early access to new features in the Talisman web app"
+      "สิทธิพิเศษในการเข้าร่วมใช้งานส่วนเสริมของกระเป๋าของพวกเราในช่วง Alpha release",
+      "ช่องทางสื่อสารพิเศษในดิสคอร์ดสำหรับสมาชิกในตำแหน่ง Spirit Clan",
+      "เข้าใช้งานฟีเจอร์ใหม่ๆของ Talisman web app ได้ก่อนใคร"
     ]
   },
   "howToGetInfo": {
-    "title": "Where can I get one?",
-    "description": "Keys have been seen in various locations, but never for very long. The best places to currently find them are:",
+    "title": "ฉันจะหามันได้จากที่ไหนล่ะ?",
+    "description": "กุญแจเหล่านี้ถูกพบได้ในหลายๆที่แต่ว่ามันจะอยู่ไม่นานหรอกนะ สถานที่ที่ดีที่สุดที่จะค้นหามันก็คือ:",
     "list": [
-      "The Talisman <1>Discord server</1>",
-      "Attending community calls and events",
-      "Keeping an eye out for giveaways on <1>Twitter</1>",
-      "By arranging to review, publish or produce media about Talisman"
+      "ดิสคอร์ดของ Talisman",
+      "เข้าร่วมกิจกรรมและการพูดคุยของคอมมูนิตี้",
+      "จับตามองเมื่อมีการแจกฟรีบน <1>Twitter</1>",
+      "ได้รับการจัดสรรให้เป็นพิเศษจากการรีวิว เผยแพร่ หรือสร้างคอนเทนต์ต่างๆที่เกี่ยวกับ Talisman"
     ]
   },
   "spiritClan": {
     "poem": [
-      "ผู้ค้นหาเครื่องราง จิตวิญญาณของคุณคือกุญแจสำคัญ",
-      "เมื่อสิ้นสุดการแสวงหา ในที่สุดเจ้าก็เป็นอิสระ",
-      "กุญแจสู่โลกใหม่เป็นสิ่งที่ยาก",
-      "คุณควรถามตัวเองตามตรงว่า \"ฉันควรเอาอะไรไปบ้าง\"",
-      "ให้ครุ่นคิดสักครู่ว่าจะนำมาได้หรือไม่",
-      "ทั้งหมดที่ฉันสามารถรับประกันได้คือไม่มีอะไรที่ไร้ค่า"
+      "ผู้ค้นหาเครื่องราง ดวงวิญญาณของเจ้าคือกุญแจ",
+      "เมื่อค้นหาสิ้นสุดเป็นแน่แท้ เจ้าจะพบอิสระดังใจหมาย",
+      "หนึ่งกุญแจสู่โลกใหม่นั้นไม่ง่าย",
+      "ถามใจเจ้าด้วยความสัตย์ \"ข้าควรนำสิ่งใดไป\"",
+      "จงคิดใคร่ครวญให้แน่ใจ ว่าสิ่งนั้นเจ้าสามารถนำพา",
+      "เพียงหนึ่งสิ่งที่ข้ากล้ายืนยัน นั่นคือหามีสิ่งใดที่ไร้ค่า"
     ],
-    "title": "ค้นพบ Spirit Key เพื่อเข้าร่วม Spirit Clan",
+    "title": "ค้นหากุญแจวิญญาณเพื่อเข้าร่วม Spirit Clan",
     "info": [
-      "กุญแจวิญญาณคือ NFT ที่ให้คุณเข้าร่วม <a>กลุ่มวิญญาณ</a>",
-      "สมาชิก Spirit Clan สามารถเข้าถึงช่อง Discord ที่ได้รับอนุญาตซึ่งพวกเขาจะมีโอกาสช่วยสร้าง Talisman",
-      "สมาชิก Spirit Clan จะได้รับสิทธิ์ในการเข้าถึงผลิตภัณฑ์ใหม่ กิจกรรม การดรอป NFT และอื่นๆ ก่อนใคร"
+      "กุญแจวิญญาณคือ NFT ที่จะทำให้คุณได้เข้าร่วม <a>Spirit Clan</a>",
+      "สมาชิกของ Spirit Clan จะสามารถเข้าถึงช่องทางสื่อสารพิเศษบนดิสคอร์ด ที่ที่ซึ่งพวกเขาจะได้มีส่วนร่วมในการออกแบบ Talisman",
+      "สมาชิกของ Spirit Clan จะได้รับสิทธิ์ในการเข้าถึงผลิตภัณฑ์ใหม่ๆ กิจกรรมๆ NFT แจกฟรี และอื่นๆอีกมากมายก่อนใคร"
     ],
-    "noKeyPlaceholder": "คุณยังไม่มีรหัส รับกุญแจใน <a>เอกพจน์</a>",
-    "alreadyHaveOne": "มีแล้วหรือ",
+    "noKeyPlaceholder": "คุณไม่มีกุญแจ หากุญแจได้ที่ <a>Singular</a>",
+    "alreadyHaveOne": "มีแล้วหรือ?",
     "joinSpiritClan": "เข้าร่วม Spirit Clan"
   }
 }
