@@ -33,21 +33,21 @@
   },
   "spiritClan": {
     "poem": [
-      "Talismansucher, dein Geist ist der Schlüssel.",
+      "Sucher des Talisman, dein Geist ist der Schlüssel.",
       "Am Ende deiner Suche wirst du endlich frei sein.",
       "Ein Schlüssel zur neuen Welt ist eine schwierige Sache.",
-      "Du solltest dich ehrlich fragen, \"was um alles in der Welt soll ich mitbringen?\"",
-      "Denken Sie einen Moment darüber nach, ob es gebracht werden kann.",
+      "Du solltest dich ehrlich fragen, \"was um alles in der Welt soll ich erbringen?\"",
+      "Denke einen Moment darüber nach, ob es erbracht werden kann.",
       "Ich kann nur garantieren, dass nichts umsonst ist."
     ],
-    "title": "Entdecke einen Geisterschlüssel, um dem Geisterclan beizutreten.",
+    "title": "Entdecke einen Spirit Key, um dem Spirit Clan beizutreten.",
     "info": [
-      "Ein Geisterschlüssel ist ein NFT, mit dem Sie dem <a>Geisterclan</a> beitreten können.",
+      "Ein Spirit Key ist ein NFT, mit dem Sie dem <a>Spirit-Clan</a> beitreten können.",
       "Mitglieder des Spirit-Clans können auf einen zugelassenen Discord-Kanal zugreifen, wo sie die Möglichkeit haben, Talisman mitzugestalten.",
       "Spirit Clan-Mitglieder erhalten frühzeitig Zugang zu neuen Produkten, Events, NFT-Drops und mehr."
     ],
-    "noKeyPlaceholder": "Sie haben noch keinen Schlüssel. Holen Sie sich einen auf <a>Singular</a>.",
-    "alreadyHaveOne": "Haben Sie schon einen?",
-    "joinSpiritClan": "Geister-Clan beitreten"
+    "noKeyPlaceholder": "Du hast noch keinen Spirit Key. Hol dir einen auf <a>Singular</a>.",
+    "alreadyHaveOne": "Hast du schon einen?",
+    "joinSpiritClan": "Spirit-Clan beitreten"
   }
 }
