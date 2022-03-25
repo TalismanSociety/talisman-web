@@ -3425,19 +3425,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@talisman-components/nft@npm:^0.0.13":
-  version: 0.0.13
-  resolution: "@talisman-components/nft@npm:0.0.13"
-  dependencies:
-    "@google/model-viewer": ^1.10.1
-    "@polkadot/keyring": ^8.4.1
-    swr: ^1.2.2
-  peerDependencies:
-    react: 17.0.2
-  checksum: 6f47b4ffdfc44a67ec04fa48ba6d23fb6a196691913e8ffa02e04b2a64e5907c2cd41b1e329a319d4efeadf94dbbb233407661734d21ae047b6a316dc8a22dba
-  languageName: node
-  linkType: hard
-
 "@talisman-connect/components@npm:^1.1.1":
   version: 1.1.1
   resolution: "@talisman-connect/components@npm:1.1.1"
@@ -3516,6 +3503,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@talismn/components-nft@npm:^0.0.17":
+  version: 0.0.17
+  resolution: "@talismn/components-nft@npm:0.0.17"
+  dependencies:
+    "@google/model-viewer": ^1.10.1
+    "@polkadot/keyring": ^8.4.1
+    swr: ^1.2.2
+  peerDependencies:
+    react: 17.0.2
+    regenerator-runtime: 0.13.7
+  checksum: b139bb12be13722c77cf984392cf5714763b58e5b7d4c9a29d46e1e01da093e77674f009c2eade5e1459baca01cba444b4a03ee3db700fe749d528131539d234
+  languageName: node
+  linkType: hard
+
 "@talismn/util@npm:~0":
   version: 0.0.11
   resolution: "@talismn/util@npm:0.0.11"
@@ -3549,12 +3550,12 @@ __metadata:
     "@polkadot/util": ^7.4.1
     "@polkadot/util-crypto": ^7.4.1
     "@ramp-network/ramp-instant-sdk": ^2.5.0
-    "@talisman-components/nft": ^0.0.13
     "@talisman-connect/components": ^1.1.1
     "@talisman-connect/ui": ^1.1.1
     "@talisman-connect/wallets": ^1.1.1
     "@talismn/api-react-hooks": ~0
     "@talismn/chaindata-js": ~0
+    "@talismn/components-nft": ^0.0.17
     "@talismn/util": ~0
     "@testing-library/dom": ^8.2.0
     "@testing-library/jest-dom": ^5.11.4
