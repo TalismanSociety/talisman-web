@@ -30,7 +30,7 @@
     "title": "Oh nein!",
     "subtitle": "Es sieht so aus, als wäre keine Wallet-Erweiterung installiert.",
     "text": "Keine Sorge, wir sind gerade dabei eine wirklich gute zu erstellen,",
-    "text2": "Bis dahin empfehlen wir den Download von Talisman"
+    "text2": "Wir empfehlen den Download von Talisman"
   },
   "Install Talisman Extension": "Talisman-Erweiterung installieren",
   "Requires Configuration": "Erfordert Konfiguration",
@@ -40,9 +40,9 @@
     "text": "Sieh dir in der Zwischenzeit unser Crowdloan-Dashboard an",
     "primaryCta": "Crowdloans ansehen"
   },
-  "No wallet found": "Keine Wallet gefunden",
-  "Connect wallet": "Brieftasche verbinden",
-  "Switch wallet": "Portemonnaie wechseln",
+  "No wallet found": "Kein Wallet gefunden",
+  "Connect wallet": "Wallet verbinden",
+  "Switch wallet": "Wallet wechseln",
   "Goal reached": "Ziel erreicht",
   "Spirit Key": "Spirit Key",
   "View all": "Alle ansehen"
