@@ -8,7 +8,7 @@
   "You have not contributed to any Crowdloans": "您还未参与过任何众贷贡献",
   "Summoning Crowdloan Contributions...": "召集众贷贡献...",
   "Search Crowdloans": "搜索众贷",
-  "Raised": "集资金额",
+  "Raised": "已募集金额",
   "Ends in": "结束时间",
   "Contribute": "贡献",
   "Contributed": "已贡献",
@@ -21,7 +21,7 @@
     "subtitle": "Talisman 无法完成您的愿望",
     "text": "请尝试其他功能"
   },
-  "You have no": "你目前没有",
+  "You have no": "您目前没有",
   "Buy": "购买",
   "Fee": "费用",
   "Add {{asset}} Balance": "添加 {{asset}} 余额",
@@ -30,7 +30,7 @@
     "title": "抱歉！",
     "subtitle": "您似乎未安装任何钱包插件",
     "text": "请别担心，我们正在努力构建一个优质的钱包",
-    "text2": "在此期间，我们建议你下载 Talisman"
+    "text2": "在此期间，我们建议您下载 Talisman"
   },
   "Install Talisman Extension": "安装 Talisman 插件",
   "Requires Configuration": "需要配置",
@@ -42,8 +42,8 @@
   },
   "No wallet found": "未找到钱包",
   "Connect wallet": "连接钱包",
-  "Switch wallet": "“换钱包”",
+  "Switch wallet": "更换钱包",
   "Goal reached": "目标达成",
-  "Spirit Key": "灵魂钥匙",
+  "Spirit Key": "Spirit Key",
   "View all": "查看全部"
 }

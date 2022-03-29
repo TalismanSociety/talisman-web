@@ -1,20 +1,20 @@
 {
-  "intro": "探索到灵魂钥匙可获取特殊权益，并成为第一批 Talisman 钱包插件的测试人员",
+  "intro": "拥有 Spirit Key 可获取特殊权益，并成为第一批 Talisman 钱包插件的测试人员",
   "Drag to unlock": "拖动解锁",
   "no": "不",
-  "Done": "完毕",
+  "Done": "已完成",
   "Send": "发送",
   "altDownload": "如果钱包下载未在10秒内开始，请点击此处。",
-  "ownershipText_one": "你有 <1>{{total}}</1> 灵魂钥匙",
-  "ownershipText_other": "你有 <1>{{total}}</1> 灵魂钥匙",
-  "Send to a friend": "发给好友",
-  "Explore Crowdloans": "探索众筹",
+  "ownershipText_one": "您拥有 <1>{{total}}</1> 灵魂钥匙",
+  "ownershipText_other": "您拥有 <1>{{total}}</1> 灵魂钥匙",
+  "Send to a friend": "发送给好友",
+  "Explore Crowdloans": "探索众贷",
   "Error sending NFT": "发送 NFT 时出错",
-  "Enter Kusama Address": "输入 Kusama 地址",
-  "willTakeFewMins": "交易需要几分钟后才能完成，因此请避免重新发送。",
+  "Enter Kusama Address": "请输入 Kusama 地址",
+  "willTakeFewMins": "交易需要几分钟后才能完成，因此请勿重复发送。",
   "whatIsInfo": {
-    "title": "什么是灵魂钥匙？",
-    "description": "灵魂钥匙是一种特殊的 RMRK NFT，唯有发放3333个。持有者将能获取以下特殊权益：",
+    "title": "什么是 Spirit Key？",
+    "description": "Spirit Key 是一种特殊的 RMRK NFT，总量仅有3333个。持有者将能获取以下特殊权益：",
     "list": [
       "参与 Talisman 钱包插件 Alpha 版本的机会",
       "成为 Discord 上 Spirit Clan 频道的荣誉成员",
@@ -23,31 +23,31 @@
   },
   "howToGetInfo": {
     "title": "获取方法",
-    "description": "灵魂钥匙已在各种场合冒出过，但机会稍縱即逝。目前能找到它们最佳的方式是：",
+    "description": "Spirit Key 已在各种场合出现过，但机会稍纵即逝。目前能找到它们最佳的方式是：",
     "list": [
       "在 Talisman 的<1>Discord 服务器上</1>",
       "参加社区线上会议和活动",
-      "留意 <1>Twitter</1> 上的赠品",
+      "留意 <1>Twitter</1> 上的赠送活动",
       "通过制作或发布关于 Talisman 的媒体内容"
     ]
   },
   "spiritClan": {
     "poem": [
-      "护身符寻求者，关键是你的精神。",
-      "在你寻求的尽头，你终将获得自由。",
-      "一把通往新世界的钥匙是件难事。",
-      "你应该诚实地问自己，“我到底应该带什么？",
-      "考虑一下是否可以带。",
+      "护身符的寻求者，您的精神是关键。",
+      "在您寻求的尽头，您终将获得自由。",
+      "获取一把通往新世界的钥匙并非易事。",
+      "您应该诚实地问自己，“我到底应该带来什么？",
+      "并仔细思考是否可以将它带来。",
       "我只能保证，没有什么是徒劳的。"
     ],
-    "title": "发现一把加入精灵族的精灵钥匙。",
+    "title": "发现一把加入 Spirit Clan 的 Spirit Key。",
     "info": [
       "Spirit Key 是一种 NFT, 可让您加入 <a>Spirit Clan</a>。",
       "Spirit Clan 的成员可以访问经过许可的 Discord 频道，他们将有机会帮助塑造 Talisman。",
-      "Spirit Clan 成员将提前获得新产品、活动、NFT 掉落等内容。"
+      "Spirit Clan 的成员将提前获得新产品、活动、NFT 等内容。"
     ],
-    "noKeyPlaceholder": "你还没有钥匙。在 <a>Singular</a> 上找一把。",
+    "noKeyPlaceholder": "您还没有 Spirit Key。在 <a>Singular</a> 上找一把。",
     "alreadyHaveOne": "已经有了？",
-    "joinSpiritClan": "加入灵族"
+    "joinSpiritClan": "加入 Spirit Clan"
   }
 }
