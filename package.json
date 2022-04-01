@@ -12,6 +12,7 @@
     "@babel/plugin-proposal-class-properties": "^7.16.7",
     "@babel/plugin-proposal-private-methods": "^7.16.11",
     "@craco/craco": "^6.1.2",
+    "@google/model-viewer": "^1.11.0",
     "@open-wc/webpack-import-meta-loader": "^0.4.7",
     "@polkadot/api": "^6.6.1",
     "@polkadot/keyring": "^7.4.1",
@@ -26,7 +27,6 @@
     "@talisman-connect/wallets": "^1.1.1",
     "@talismn/api-react-hooks": "~0",
     "@talismn/chaindata-js": "~0",
-    "@talismn/components-nft": "^0.0.17",
     "@talismn/util": "~0",
     "@testing-library/dom": "^8.2.0",
     "@testing-library/jest-dom": "^5.11.4",
@@ -66,6 +66,7 @@
     "rmrk-tools": "^2.0.25",
     "safety-match": "^0.4.4",
     "styled-components": "^5.3.0",
+    "swr": "^1.2.2",
     "typescript": "^4.1.2",
     "uuid": "^8.3.2",
     "web-vitals": "^1.0.1"

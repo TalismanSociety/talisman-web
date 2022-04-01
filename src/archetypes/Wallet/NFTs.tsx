@@ -1,11 +1,11 @@
-import '@talismn/components-nft/index.umd.css'
+// import '@talismn/components-nft/index.umd.css'
 
 import { ExtensionStatusGate, Panel, PanelSection } from '@components'
 import { ReactComponent as ArrowRight } from '@icons/arrow-right.svg'
 import { NoNFTsPlaceholder } from '@libs/nft/NoNFTsPlaceholder'
 import { useHasNFTs } from '@libs/nft/useHasNFTs'
 import { useExtensionAutoConnect } from '@libs/talisman'
-import { NftCard } from '@talismn/components-nft'
+import { NftCard } from '@libs/nft/NftCard/NftCard'
 import { device } from '@util/breakpoints'
 import { useTranslation } from 'react-i18next'
 import { NavLink } from 'react-router-dom'

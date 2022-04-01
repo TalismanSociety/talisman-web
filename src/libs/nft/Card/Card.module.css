@@ -1,0 +1,13 @@
+.card-root {
+  display: grid;
+  grid-template-rows: 1fr auto;
+  box-sizing: border-box;
+  overflow: hidden;
+  border-radius: 1rem;
+  background-color: #262626;
+  color: #fafafa;
+}
+
+.card-root > * {
+  width: 100%;
+}
