@@ -1486,7 +1486,7 @@ export const crowdloanDetails: CrowdloanDetails[] = [
       custom: [
         {
           title: 'PDEX per DOT',
-          value: '>0.1875',
+          value: '>2',
         },
         {
           title: 'Vesting Schedule',
