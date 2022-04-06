@@ -1,4 +1,4 @@
-import {
+import React, {
   cloneElement,
   EmbedHTMLAttributes,
   ImgHTMLAttributes,
@@ -71,9 +71,19 @@ function MediaPreview(props: MediaPreviewProps) {
         mediaElementProps as MediaHTMLAttributes<HTMLMediaElement>;
       return (
         <video
+          onMouseOver={
+          event => {
+            // event.target.load(); // Comment out if you want the webpage to preload all the NFTs
+            event.target.play();
+          }}
+          onMouseOut={
+          event => {
+            event.target.pause(); 
+            event.target.currentTime = 0;
+          }}
           loop
           muted
-          autoPlay
+          // autoPlay
           playsInline
           preload="metadata"
           controlsList="nodownload"
