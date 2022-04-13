@@ -37,6 +37,7 @@ export function useNftAsset(nft: any) {
       nftMetadata?.mediaUri ||
       nftMetadata?.thumbnailUri
   );
+
   const {
     contentType: contentTypeFromMetadata,
     contentCategory: contentCategoryFromMetadata,
@@ -45,10 +46,12 @@ export function useNftAsset(nft: any) {
   const [prefetchedContentCategory, prefetchedContentExtension] =
     prefetchedContentType?.split('/') || [];
   const collectibleUrl = getNftCollectibleUrl(nft);
+  const properties = nftMetadata?.properties || {}
   const collection = {
     // TODO: Should not be description but need something as placeholder for collection name if it does not exist.
     name: nft?.collection?.name || nftMetadata?.description,
   };
+  const description = nftMetadata?.description || "No Description"
   const contentType = prefetchedContentType || contentTypeFromMetadata;
   const contentCategory =
     prefetchedContentCategory || contentCategoryFromMetadata;
@@ -62,7 +65,9 @@ export function useNftAsset(nft: any) {
   return {
     previewSrc,
     name,
+    description,
     imageUrl,
+    properties,
     animationUrl,
     contentCategory,
     contentExtension,

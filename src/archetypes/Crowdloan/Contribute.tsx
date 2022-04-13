@@ -309,6 +309,8 @@ const ContributeTo = styled(
     )
   }
 )`
+  max-width: 648px;
+
   > header {
     display: flex;
     flex-direction: column;

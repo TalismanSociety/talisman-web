@@ -14,6 +14,7 @@ type ContextProps = {
   openModal: (content: JSX.Element, options?: OpenModalOptions) => void
   closeModal: () => void
 }
+
 const Context = createContext<ContextProps | null>(null)
 export function useModal(): ContextProps {
   const context = useContext(Context)
@@ -88,8 +89,9 @@ export const Modal = styled(function Modal({ className, closable }) {
     z-index: 999;
   }
   > .modal-content {
-    width: 100%;
-    max-width: 684px;
+    // width: 100%;
+    // min-width: 684px;
+    max-width: 1092px;
     margin: 2rem;
     overflow-y: auto;
     background: rgb(${({ theme }) => theme?.background});

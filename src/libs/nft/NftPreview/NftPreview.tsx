@@ -73,7 +73,6 @@ function MediaPreview(props: MediaPreviewProps) {
         <video
           onMouseOver={
           event => {
-            // event.target.load(); // Comment out if you want the webpage to preload all the NFTs
             event.target.play();
           }}
           onMouseOut={
