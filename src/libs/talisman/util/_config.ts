@@ -976,6 +976,20 @@ export const parachainDetails: ParachainDetails[] = [
       Discord: 'https://discord.gg/7W9UDvsbwh',
     },
   },
+  {
+    id: '2-2115',
+    name: 'Dora Factory',
+    slug: 'dora-factory',
+    token: 'DORA',
+    subtitle: 'The DAO infrastructure of the Kusama ecosystem.',
+    info: `The DAO-as-a-Service infrastructure for future organizations and communities.`,
+    links: {
+      Website: 'https://dorafactory.org/kusama/',
+      Twitter: 'https://twitter.com/DoraFactory',
+      Telegram: 'https://t.me/dorafactory',
+      Medium: 'https://dorafactory.medium.com/',
+    },
+  },
 ]
 
 export type CrowdloanDetails = {
@@ -2243,6 +2257,21 @@ export const crowdloanDetails: CrowdloanDetails[] = [
           value: '1,000,000,000 TUR',
         },
       ],
+      info: null,
+    },
+  },
+  {
+    relayId: 2,
+    paraId: 2115,
+    contributeUrl: '',
+    rewards: {
+      tokens: [
+        {
+          symbol: 'DORA',
+          perKSM: '3 DORA',
+        },
+      ],
+      custom: null,
       info: null,
     },
   },
