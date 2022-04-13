@@ -990,6 +990,20 @@ export const parachainDetails: ParachainDetails[] = [
       Medium: 'https://dorafactory.medium.com/',
     },
   },
+  {
+    id: '2-2113',
+    name: 'Kabucha',
+    slug: 'kabucha',
+    token: 'KAB',
+    subtitle: 'Kabocha is a holistic self-evolving grass-roots parachain project, funding and incubating teams to build new public infrastructure.',
+    info: `It is an experiment in crafting new realities through direct participation, collaborative creation and shared values.
+    Its ownership and governance is fair, transparent and decentralised at launch thanks to its genesis in the Edgeware community. 
+    The project introduces a Network Public template and novel Store of Values currency and is built with the Substrate framework.`,
+    links: {
+      Website : "https://www.kabocha.network/",
+      Twitter : "https://twitter.com/kabochanetwork"
+    },
+  },
 ]
 
 export type CrowdloanDetails = {
@@ -2275,4 +2289,25 @@ export const crowdloanDetails: CrowdloanDetails[] = [
       info: null,
     },
   },
+  {
+    relayId: 2,
+    paraId: 2113,
+    contributeUrl: '',
+    rewards: {
+      tokens: [
+        {
+          symbol: 'KAB',
+          perKSM: '> 124 KAB',
+        },
+      ],
+      custom: [
+        {
+          title: 'Crowdloan Allocation',
+          value: '3,100,000 KAB',
+        },
+      ],
+      info: null,
+    },
+  },
 ]
+
