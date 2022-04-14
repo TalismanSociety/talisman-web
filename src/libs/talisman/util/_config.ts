@@ -1004,6 +1004,40 @@ export const parachainDetails: ParachainDetails[] = [
       Twitter : "https://twitter.com/kabochanetwork"
     },
   },
+  {
+    id: '2-2116',
+    name: 'Tanganika Network',
+    slug: 'tanganika',
+    token: 'DHX',
+    subtitle: 'DataHighway is a DAO that incentivizes the community to run a sophisticated IoT parachain based on Polkadot using the DHX token.',
+    info: `DataHighway's community members will ultimately be incentivized to operate a sophisticated IoT parachain based on Polkadot, where they may stake, govern, 
+    mine and otherwise participate using the new DHX token and its associated Decentralized Autonomous Organization (DAO), and Inter-Chain Data Market.`,
+    links: {
+      Website : "https://www.datahighway.com/",
+      Twitter : "https://twitter.com/DataHighway_DHX",
+      Discord : "https://discord.com/invite/UuZN2tE"
+    },
+  },
+  {
+    id: '2-2118',
+    name: 'Listen Network',
+    slug: 'listen-network',
+    token: 'LT',
+    subtitle: 'Listen is a voice social software based on decentralized data storage technology and blockchain technology.',
+    info: `Listen as a voice of social software, it is different with other communication tools, and podcasting
+    software is also different, social support acquaintances, including voice, images, text and video, such as
+    social practices, and social group in a stranger, using a similar round table in the form of BBS, group
+    manager invited several guests, they have speaking right, and join hands to Listen and speak to the
+    rest of the room, at the same time also can use the LT token to buy the speaking time, almost purchases
+    will accumulate in the room below. Listen creates a unique experience that is different from a Feed
+    stream. In a community of strangers, celebrities engage in voice discussions and audience interactions
+    around topics`,
+    links: {
+      Website : "https://listen.io/",
+      Twitter : "https://twitter.com/Listen_io",
+      Telegram : "https://t.me/listengroup"
+    },
+  },
 ]
 
 export type CrowdloanDetails = {
@@ -2304,6 +2338,46 @@ export const crowdloanDetails: CrowdloanDetails[] = [
         {
           title: 'Crowdloan Allocation',
           value: '3,100,000 KAB',
+        },
+      ],
+      info: null,
+    },
+  },
+  {
+    relayId: 2,
+    paraId: 2116,
+    contributeUrl: '',
+    rewards: {
+      tokens: [
+        {
+          symbol: 'DHX',
+          perKSM: '> 20 DHX',
+        },
+      ],
+      custom: [
+        {
+          title: 'Crowdloan Allocation',
+          value: '300,000 DHX',
+        },
+      ],
+      info: null,
+    },
+  },
+  {
+    relayId: 2,
+    paraId: 2118,
+    contributeUrl: '',
+    rewards: {
+      tokens: [
+        {
+          symbol: 'LT',
+          perKSM: '5000 LT',
+        },
+      ],
+      custom: [
+        {
+          title: 'Crowdloan Allocation',
+          value: '100,000,000 LT',
         },
       ],
       info: null,
