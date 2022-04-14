@@ -1024,14 +1024,7 @@ export const parachainDetails: ParachainDetails[] = [
     slug: 'listen-network',
     token: 'LT',
     subtitle: 'Listen is a voice social software based on decentralized data storage technology and blockchain technology.',
-    info: `Listen as a voice of social software, it is different with other communication tools, and podcasting
-    software is also different, social support acquaintances, including voice, images, text and video, such as
-    social practices, and social group in a stranger, using a similar round table in the form of BBS, group
-    manager invited several guests, they have speaking right, and join hands to Listen and speak to the
-    rest of the room, at the same time also can use the LT token to buy the speaking time, almost purchases
-    will accumulate in the room below. Listen creates a unique experience that is different from a Feed
-    stream. In a community of strangers, celebrities engage in voice discussions and audience interactions
-    around topics`,
+    info: `Listen as a voice of social software, it is different with other communication tools, and podcasting software is also different, social support acquaintances, including voice, images, text and video, such as social practices, and social group in a stranger, using a similar round table in the form of BBS, group manager invited several guests, they have speaking right, and join hands to Listen and speak to the rest of the room, at the same time also can use the LT token to buy the speaking time, almost purchases will accumulate in the room below. Listen creates a unique experience that is different from a Feed stream. In a community of strangers, celebrities engage in voice discussions and audience interactions around topics.`,
     links: {
       Website : "https://listen.io/",
       Twitter : "https://twitter.com/Listen_io",
