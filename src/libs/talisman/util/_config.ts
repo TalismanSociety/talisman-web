@@ -374,22 +374,6 @@ export const parachainDetails: ParachainDetails[] = [
     },
   },
   {
-    id: '0-2036',
-    name: 'Polkadex',
-    slug: 'polkadex',
-    token: 'PDEX',
-    subtitle: 'The trading engine for Web3 and DeFi',
-    info: `Polkadex is a fully decentralized peer-to-peer orderbook-based cryptocurrency exchange for the DeFi ecosystem built on Substrate.`,
-    links: {
-      Website: 'https://www.polkadex.trade/',
-      Twitter: 'https://twitter.com/polkadex',
-      Telegram: 'https://t.me/Polkadex',
-      Medium: 'https://polkadex.medium.com/',
-      Github: 'https://github.com/Polkadex-Substrate/Polkadex',
-      Discord: 'https://discord.com/invite/qubycwPtSd',
-    },
-  },
-  {
     id: '0-2037',
     name: 'Unique Network',
     slug: 'unique-network',
@@ -403,6 +387,22 @@ export const parachainDetails: ParachainDetails[] = [
       Medium: 'https://medium.com/unique-network',
       Github: 'https://github.com/UniqueNetwork',
       Discord: 'https://discord.gg/jHVdZhsakC',
+    },
+  },
+  {
+    id: '0-2040',
+    name: 'Polkadex',
+    slug: 'polkadex',
+    token: 'PDEX',
+    subtitle: 'The trading engine for Web3 and DeFi',
+    info: `Polkadex is a fully decentralized peer-to-peer orderbook-based cryptocurrency exchange for the DeFi ecosystem built on Substrate.`,
+    links: {
+      Website: 'https://www.polkadex.trade/',
+      Twitter: 'https://twitter.com/polkadex',
+      Telegram: 'https://t.me/Polkadex',
+      Medium: 'https://polkadex.medium.com/',
+      Github: 'https://github.com/Polkadex-Substrate/Polkadex',
+      Discord: 'https://discord.com/invite/qubycwPtSd',
     },
   },
   {
@@ -976,6 +976,61 @@ export const parachainDetails: ParachainDetails[] = [
       Discord: 'https://discord.gg/7W9UDvsbwh',
     },
   },
+  {
+    id: '2-2115',
+    name: 'Dora Factory',
+    slug: 'dora-factory',
+    token: 'DORA',
+    subtitle: 'The DAO infrastructure of the Kusama ecosystem.',
+    info: `The DAO-as-a-Service infrastructure for future organizations and communities.`,
+    links: {
+      Website: 'https://dorafactory.org/kusama/',
+      Twitter: 'https://twitter.com/DoraFactory',
+      Telegram: 'https://t.me/dorafactory',
+      Medium: 'https://dorafactory.medium.com/',
+    },
+  },
+  {
+    id: '2-2113',
+    name: 'Kabucha',
+    slug: 'kabucha',
+    token: 'KAB',
+    subtitle: 'Kabocha is a holistic self-evolving grass-roots parachain project, funding and incubating teams to build new public infrastructure.',
+    info: `It is an experiment in crafting new realities through direct participation, collaborative creation and shared values.
+    Its ownership and governance is fair, transparent and decentralised at launch thanks to its genesis in the Edgeware community. 
+    The project introduces a Network Public template and novel Store of Values currency and is built with the Substrate framework.`,
+    links: {
+      Website : "https://www.kabocha.network/",
+      Twitter : "https://twitter.com/kabochanetwork"
+    },
+  },
+  {
+    id: '2-2116',
+    name: 'Tanganika Network',
+    slug: 'tanganika',
+    token: 'DHX',
+    subtitle: 'DataHighway is a DAO that incentivizes the community to run a sophisticated IoT parachain based on Polkadot using the DHX token.',
+    info: `DataHighway's community members will ultimately be incentivized to operate a sophisticated IoT parachain based on Polkadot, where they may stake, govern, 
+    mine and otherwise participate using the new DHX token and its associated Decentralized Autonomous Organization (DAO), and Inter-Chain Data Market.`,
+    links: {
+      Website : "https://www.datahighway.com/",
+      Twitter : "https://twitter.com/DataHighway_DHX",
+      Discord : "https://discord.com/invite/UuZN2tE"
+    },
+  },
+  {
+    id: '2-2118',
+    name: 'Listen Network',
+    slug: 'listen-network',
+    token: 'LT',
+    subtitle: 'Listen is a voice social software based on decentralized data storage technology and blockchain technology.',
+    info: `Listen as a voice of social software, it is different with other communication tools, and podcasting software is also different, social support acquaintances, including voice, images, text and video, such as social practices, and social group in a stranger, using a similar round table in the form of BBS, group manager invited several guests, they have speaking right, and join hands to Listen and speak to the rest of the room, at the same time also can use the LT token to buy the speaking time, almost purchases will accumulate in the room below. Listen creates a unique experience that is different from a Feed stream. In a community of strangers, celebrities engage in voice discussions and audience interactions around topics.`,
+    links: {
+      Website : "https://listen.io/",
+      Twitter : "https://twitter.com/Listen_io",
+      Telegram : "https://t.me/listengroup"
+    },
+  },
 ]
 
 export type CrowdloanDetails = {
@@ -1462,24 +1517,6 @@ export const crowdloanDetails: CrowdloanDetails[] = [
   },
   {
     relayId: 0,
-    paraId: 2036,
-    rewards: {
-      tokens: null,
-      custom: [
-        {
-          title: 'PDEX per DOT',
-          value: '>0.1875',
-        },
-        {
-          title: 'Vesting Schedule',
-          value: '25% immediately, remainder vests linearly over 96 weeks.',
-        },
-      ],
-      info: null,
-    },
-  },
-  {
-    relayId: 0,
     paraId: 2037,
     rewards: {
       tokens: null,
@@ -1491,6 +1528,24 @@ export const crowdloanDetails: CrowdloanDetails[] = [
         {
           title: 'Vesting Schedule',
           value: '20 months, linear vesting',
+        },
+      ],
+      info: null,
+    },
+  },
+  {
+    relayId: 0,
+    paraId: 2040,
+    rewards: {
+      tokens: null,
+      custom: [
+        {
+          title: 'PDEX per DOT',
+          value: '>2',
+        },
+        {
+          title: 'Vesting Schedule',
+          value: '25% immediately, remainder vests linearly over 96 weeks.',
         },
       ],
       info: null,
@@ -2246,4 +2301,80 @@ export const crowdloanDetails: CrowdloanDetails[] = [
       info: null,
     },
   },
+  {
+    relayId: 2,
+    paraId: 2115,
+    contributeUrl: '',
+    rewards: {
+      tokens: [
+        {
+          symbol: 'DORA',
+          perKSM: '3 DORA',
+        },
+      ],
+      custom: null,
+      info: null,
+    },
+  },
+  {
+    relayId: 2,
+    paraId: 2113,
+    contributeUrl: '',
+    rewards: {
+      tokens: [
+        {
+          symbol: 'KAB',
+          perKSM: '> 124 KAB',
+        },
+      ],
+      custom: [
+        {
+          title: 'Crowdloan Allocation',
+          value: '3,100,000 KAB',
+        },
+      ],
+      info: null,
+    },
+  },
+  {
+    relayId: 2,
+    paraId: 2116,
+    contributeUrl: '',
+    rewards: {
+      tokens: [
+        {
+          symbol: 'DHX',
+          perKSM: '> 20 DHX',
+        },
+      ],
+      custom: [
+        {
+          title: 'Crowdloan Allocation',
+          value: '300,000 DHX',
+        },
+      ],
+      info: null,
+    },
+  },
+  {
+    relayId: 2,
+    paraId: 2118,
+    contributeUrl: '',
+    rewards: {
+      tokens: [
+        {
+          symbol: 'LT',
+          perKSM: '5000 LT',
+        },
+      ],
+      custom: [
+        {
+          title: 'Crowdloan Allocation',
+          value: '100,000,000 LT',
+        },
+      ],
+      info: null,
+    },
+  },
 ]
+
