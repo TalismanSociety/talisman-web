@@ -1,23 +1,26 @@
 import useNftAsset from '../useNftAsset/useNftAsset';
 import { device } from '@util/breakpoints'
-import NftPreview from '../NftPreview/NftPreview';
-import { Button, useModal } from '@components'
 import { useTranslation } from 'react-i18next';
 
 import styled from 'styled-components'
+import NftFullView from '../NftFullView/NftFullView';
 
-const NftMainDetails = styled(({ details, className }) => {
+const NftMainDetails = styled(({ nftId, collection, name, className }) => {
     return (
         <div className={className}>
-            <h1>I couldn't think of a collection name to test length.</h1>
-            <p className='nft-main-val'>{details}</p>
+            <p className='nft-main-val'>{name}</p>
+            <h1># {NftGetEdition(nftId)}</h1>
         </div>
     ) 
 })`
-grid-area: nft-main-details;
-overflow: hidden;
-text-overflow: ellipsis;
+margin-bottom: 1em;
 `
+
+const NftGetEdition = (nftId : string) : number => {
+
+    let newString = parseInt(nftId.split('-')[4].replace(/^0+/, ''))
+    return newString
+}
 
 const NftEdition = styled(({ editionData, className }) => {
     const { t } = useTranslation('nft-viewer');
@@ -27,7 +30,7 @@ const NftEdition = styled(({ editionData, className }) => {
             <p className='nft-main-val'>#0053<span className='nft-sub-val'> / 1000</span></p>
         </div>        
     )
-})`grid-area: nft-edition;`
+})``
 
 
 const NftFloorPrice = styled(({ price, className }) => {
@@ -38,27 +41,33 @@ const NftFloorPrice = styled(({ price, className }) => {
             <p className='nft-main-val'>{price}</p>
         </div>        
     )
-})`grid-area: nft-floor-price;`
+})``
 
 const NftDescription = styled(({ description, className }) => {
     return (
         <div className={className}>
-            <p className='nft-desc-value'>{description}</p>
+            <p className='nft-desc-value'>
+                {description}
+                </p>
         </div>        
     )
 })`
-grid-area: nft-description;
-overflow: hidden;
+
+margin-bottom: 1em;
 
 .nft-desc-value {
     font-size: 14px;
     font-weight: 400;
     line-height: 22px;
+    width: 350px;
 }
 `
 
 const NftAttributes = styled(({ properties, className }) => {
     const { t } = useTranslation('nft-viewer');
+
+    if(Object.keys(properties).length == 0) return null;
+
     return (
         <div className={className}>
             <h1>{t('Attributes')}</h1>
@@ -73,8 +82,8 @@ const NftAttributes = styled(({ properties, className }) => {
         </div>        
     )
 })`
-grid-area: nft-attributes;
-margin-top: 10px;
+margin-bottom: 1em;
+max-height: 150px;
 
 .attribute-grid {
     display: inline-box;
@@ -110,11 +119,42 @@ const NftNetwork = styled(({ network, className }) => {
         </div>        
     )
 })`
-grid-area: nft-network;
-
 > p {
     font-size: 16px;
     color: var(--color-light);
+    font-weight: 400;
+}
+`
+
+const NftButtons = styled(({ collectibleUrl, className }) => {
+    const { t } = useTranslation('nft-viewer');
+    return (
+        <div className={className}>
+            <a href={collectibleUrl} 
+                target="_blank" 
+                className="nft-modal-button"
+                rel="noreferrer"
+            >{t('View Singular')}</a>
+        </div>
+    )
+})`
+
+grid-area: nft-buttons;
+display: flex;
+justify-content: space-between;
+min-height: 70px;
+
+.nft-modal-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: transparent;
+    width: 49%;
+    margin: 10px 0px;
+    color: var(--color-foreground);
+    border-radius: 1rem;
+    border: solid 1px var(--color-dim);
+    font-size: 16px;
     font-weight: 400;
 }
 `
@@ -123,42 +163,31 @@ const NftInformation = styled(({ className, nftData }) => {
 
     const { t } = useTranslation('nft-viewer');
 
-    // Multiple components.
-
     return (
         <div className={className}>
-            <NftMainDetails details={nftData?.name} />
-            <NftEdition editionData={""}/>
-            <NftFloorPrice price={"0.05KSM"}/>
+            <NftMainDetails name={nftData?.name} collection={nftData?.collection} nftId={nftData?.id}/>
+            {/* <NftEdition editionData={""}/> */}
+            {/* <NftFloorPrice price={"0.05KSM"}/> */}
             <NftDescription description={nftData?.description} />
-            <div className='nft-buttons'>
-                {/* Will be moved to new components */}
-                <a className="nft-modal-button">{t('Send NFT Button')}</a>
-                <a href={nftData?.collectibleUrl} 
-                    target="_blank" 
-                    className="nft-modal-button"
-                    rel="noreferrer"
-                >{t('View Singular')}</a>
-            </div>
             <NftAttributes properties={nftData?.properties}/>
-            <NftNetwork network={"RMRK2"}/>
-            <p></p>
+            {/* <NftNetwork network={"RMRK2"}/> */}
+            <NftButtons collectibleUrl={nftData?.collectibleUrl}/>
         </div>
     )
 })`
-overflow: hidden;
-display: grid;
-grid-template-areas:
-    "nft-main-details nft-main-details nft-main-details"
-    "nft-floor-price nft-edition nft-edition"
-    "nft-description nft-description nft-description"
-    "nft-buttons nft-buttons nft-buttons"
-    "nft-attributes nft-attributes nft-attributes"
-    "nft-network nft-network nft-network";
-grid-template-rows: auto;
+display: flex;
+flex-direction: column;
+// justify-content: space-between;
 
-@media ${device.sm}{ padding-left: 0; }
-@media ${device.lg}{ padding-left: 3em; }
+overflow-y: auto;
+max-height: 458px;
+
+@media ${device.sm}{ margin-left: 0; }
+@media ${device.lg}{ margin-left: 3em; }
+
+div:last-of-type {
+    margin-top: auto;
+}
 
 p {  margin-bottom: 0; }
 
@@ -178,28 +207,9 @@ h1 {
     color: var(--color-mid);
     font-size: 14px;
     line-height: 16px;
-    margin: 0;
+    margin-bottom: 10px;
 }
 
-.nft-buttons {
-    grid-area: nft-buttons;
-    display:flex;
-    justify-content: space-between;
-}
-
-.nft-modal-button {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background: transparent;
-    width: 49%;
-    margin: 10px 0px;
-    color: var(--color-foreground);
-    border-radius: 1rem;
-    border: solid 1px var(--color-dim);
-    font-size: 16px;
-    font-weight: 400;
-}
 `
 
 export const NftModal = styled(({ className, nft }) => {
@@ -207,7 +217,7 @@ export const NftModal = styled(({ className, nft }) => {
 
     return (
         <div className={className}>
-            <NftPreview nft={nft} />
+            <NftFullView nft={nft} />
             <NftInformation nftData={nftData}/>
         </div>
     )
@@ -218,20 +228,11 @@ export const NftModal = styled(({ className, nft }) => {
     @media ${device.sm}{
         grid-template-columns: 1fr;
         width: 100%;
-
-        .nft-modal-content {
-            overflow: hidden;
-            padding-left: 0;
-        }
     }
 
     @media ${device.lg}{
-
-        // grid-template-areas:
-        //     "nft-modal-image-preview nft-modal-content";
         grid-template-columns: 1fr 1fr;
         width: 905px;
         max-height: 1500px;
-
     }
 `

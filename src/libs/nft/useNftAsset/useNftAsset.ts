@@ -15,6 +15,7 @@ function getNftCollectibleUrl(nft: any) {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function useNftAsset(nft: any) {
+
   const metadataUrl = nft?.metadata;
   const prefetchedContentType = nft?.metadata_content_type;
   const image = nft?.metadata_image;
@@ -45,12 +46,6 @@ export function useNftAsset(nft: any) {
   } = useContentType(RMRK1.toWeb2Url(nftMetadata?.mediaUri));
   const [prefetchedContentCategory, prefetchedContentExtension] =
     prefetchedContentType?.split('/') || [];
-  const collectibleUrl = getNftCollectibleUrl(nft);
-  const properties = nftMetadata?.properties || {}
-  const collection = {
-    // TODO: Should not be description but need something as placeholder for collection name if it does not exist.
-    name: nft?.collection?.name || nftMetadata?.description,
-  };
   const description = nftMetadata?.description || "No Description"
   const contentType = prefetchedContentType || contentTypeFromMetadata;
   const contentCategory =
@@ -61,10 +56,21 @@ export function useNftAsset(nft: any) {
     ['video', 'model'].includes(contentCategory) && (animationUrl || imageUrl);
   const previewImageUrl = animationUrl || imageUrl;
   const previewSrc = previewAnimationUrl || previewImageUrl;
+  const properties = nftMetadata?.properties || {}
+  const collectibleUrl = getNftCollectibleUrl(nft);
+  const id = nft?.id;
+  
+  // Fetching the Collelction
+
+  const collection = {
+    // TODO: Should not be description but need something as placeholder for collection name if it does not exist.
+    name: nft?.collection?.name || nftMetadata?.name,
+  };
 
   return {
     previewSrc,
     name,
+    id,
     description,
     imageUrl,
     properties,

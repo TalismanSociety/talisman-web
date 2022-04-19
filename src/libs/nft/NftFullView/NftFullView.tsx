@@ -4,16 +4,19 @@ import React, {
   ImgHTMLAttributes,
   MediaHTMLAttributes,
 } from 'react';
-import { MediaPreviewProps } from '@util/nfts/types';
-import DualRingLoader from '../DualRingLoader/DualRingLoader';
-import PlaceCenter from '../PlaceCenter/PlaceCenter';
-import styles from './NftPreview.module.css';
-import useNftAsset from '../useNftAsset/useNftAsset';
-import '@google/model-viewer';
+
+// To Do: Put all interfaces within a component for easier access
 import { NftPreviewProps } from '../NftView/NftView';
 
+import DualRingLoader from '../DualRingLoader/DualRingLoader';
+import PlaceCenter from '../PlaceCenter/PlaceCenter';
+import styles from './NftFullView.module.css';
+import useNftAsset from '../useNftAsset/useNftAsset';
+import '@google/model-viewer';
+import { MediaPreviewProps } from '@util/nfts/types';
+import { RMRK1Fetcher } from '../fetchers/RMRK1Fetcher';
 
-export function MediaPreview(props: MediaPreviewProps) {
+function MediaPreview(props: MediaPreviewProps) {
   const { contentCategory, ...mediaElementProps } = props;
   const imgProps = mediaElementProps as ImgHTMLAttributes<HTMLImageElement>;
   switch (contentCategory) {
@@ -42,21 +45,13 @@ export function MediaPreview(props: MediaPreviewProps) {
         mediaElementProps as MediaHTMLAttributes<HTMLMediaElement>;
       return (
         <video
-          onMouseOver={
-          event => {
-            event.target.play();
-          }}
-          onMouseOut={
-          event => {
-            event.target.pause(); 
-            event.target.currentTime = 0;
-          }}
           loop
           muted
           // autoPlay
           playsInline
           preload="metadata"
-          controlsList="nodownload"
+          // controlsList="nodownload"
+          controls={true}
           {...videoProps}
         />
       );
@@ -72,7 +67,7 @@ export function MediaPreview(props: MediaPreviewProps) {
   }
 }
 
-export function NftPreview(props: NftPreviewProps) {
+export function NftFullView(props: NftPreviewProps) {
   const { nft, LoaderComponent, ErrorComponent, ...imageProps } = props;
   const { contentCategory, name, previewSrc, isLoading, error } =
     useNftAsset(nft);
@@ -110,4 +105,4 @@ export function NftPreview(props: NftPreviewProps) {
   );
 }
 
-export default NftPreview;
+export default NftFullView;

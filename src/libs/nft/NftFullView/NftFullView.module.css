@@ -1,0 +1,18 @@
+.nft-image-root {
+    position: relative;
+    width: 100%;
+    padding-bottom: 100%;
+    background-color: transparent;
+    /* border: 2px solid var(--color-dim); */
+    /* border-radius: 10px; */
+    background-color: rgb(22, 22, 22);
+  }
+  
+  .nft-image-content {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    /* object-position: center; */
+  }
+  
