@@ -180,10 +180,11 @@ flex-direction: column;
 // justify-content: space-between;
 
 overflow-y: auto;
+// overflow-x: hidden;
 max-height: 458px;
 
-@media ${device.sm}{ margin-left: 0; }
-@media ${device.lg}{ margin-left: 3em; }
+@media ${device.sm}{ margin-left: 0; margin-top: 1em; }
+@media ${device.lg}{ margin-left: 3em; margin-top: 0;}
 
 div:last-of-type {
     margin-top: auto;
