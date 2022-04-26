@@ -26,8 +26,8 @@ const Attribution = styled(({ className }) => {
 // TODO: Deprecate
 export const SpiritKeyNft = styled(({ className, src }) => {
   // NOTE: Reference usage
-  // const baseImage = 'https://rmrk.mypinata.cloud/ipfs/bafybeicuuasrqnqndfw3k6rqacfpfil5sc5fhyjh63riqnd2imm5eucrk4'
-  // <SpiritKeyNft src={hasNfts ? nft?.image?.replace('ipfs://', 'https://rmrk.mypinata.cloud/') : baseImage} />
+  // const baseImage = 'https://talisman.mypinata.cloud/ipfs/bafybeicuuasrqnqndfw3k6rqacfpfil5sc5fhyjh63riqnd2imm5eucrk4'
+  // <SpiritKeyNft src={hasNfts ? nft?.image?.replace('ipfs://', 'https://talisman.mypinata.cloud/') : baseImage} />
   return (
     <div className={className}>
       <div className="floating-card__card">

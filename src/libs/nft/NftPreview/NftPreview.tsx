@@ -12,10 +12,10 @@ import useNftAsset from '../useNftAsset/useNftAsset';
 import '@google/model-viewer';
 import { NftPreviewProps } from '../NftView/NftView';
 
-
 export function MediaPreview(props: MediaPreviewProps) {
   const { contentCategory, ...mediaElementProps } = props;
   const imgProps = mediaElementProps as ImgHTMLAttributes<HTMLImageElement>;
+
   switch (contentCategory) {
     case 'model':
       const modelProps = {

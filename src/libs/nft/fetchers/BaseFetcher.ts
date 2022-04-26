@@ -7,7 +7,7 @@ interface FetcherURL {
 export abstract class BaseFetcher {
   abstract baseFetchUrl: string;
   abstract baseCollectibleUrl: string;
-  baseWeb2Url = 'https://rmrk.mypinata.cloud/';
+  baseWeb2Url = 'https://talisman.mypinata.cloud/';
 
   toWeb2Url(metadataUrl: string): string {
     return metadataUrl?.replace('ipfs://', this.baseWeb2Url);

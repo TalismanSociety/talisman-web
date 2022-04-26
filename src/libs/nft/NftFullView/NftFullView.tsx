@@ -19,6 +19,9 @@ import { RMRK1Fetcher } from '../fetchers/RMRK1Fetcher';
 function MediaPreview(props: MediaPreviewProps) {
   const { contentCategory, ...mediaElementProps } = props;
   const imgProps = mediaElementProps as ImgHTMLAttributes<HTMLImageElement>;
+
+  
+
   switch (contentCategory) {
     case 'model':
       const modelProps = {
