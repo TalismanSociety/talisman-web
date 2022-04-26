@@ -1,0 +1,24 @@
+name: Prettier
+
+on:
+  pull_request:
+    branches: [prod]
+
+jobs:
+  format:
+    name: Format
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+        with:
+          # Make sure the actual branch is checked out when running on pull requests
+          ref: ${{ github.head_ref }}
+          # This is important to fetch the changes to the previous commit
+          fetch-depth: 0
+
+      - name: Format code
+        uses: creyD/prettier_action@v4.2
+        with:
+          only_changed: True
