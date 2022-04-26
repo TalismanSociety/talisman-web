@@ -413,10 +413,10 @@ export const parachainDetails: ParachainDetails[] = [
     subtitle: 'Cross chain liquidity for staking.',
     info: `Cross chain liquidity for staking. Based on polkadot, kusama, substrate, and web3 infrastructure`,
     links: {
-      "Website": "https://bifrost.finance/",
-      "Twitter": "https://twitter.com/bifrost_finance",
-      "Telegram": "https://t.me/bifrost_finance",
-      "Discord": "https://discord.com/invite/XjnjdKBNXj"
+      Website: 'https://bifrost.finance/',
+      Twitter: 'https://twitter.com/bifrost_finance',
+      Telegram: 'https://t.me/bifrost_finance',
+      Discord: 'https://discord.com/invite/XjnjdKBNXj',
     },
   },
   {
@@ -427,9 +427,9 @@ export const parachainDetails: ParachainDetails[] = [
     subtitle: 'Bringing real world assets to Polkadot.',
     info: `By harnessing the power of the OriginTrail Decentralized Knowledge Graph, OriginTrail Parachain extends discoverability, verifiability and greater value for interconnected Web3 assets to Polkadot.`,
     links: {
-      "Website": "https://parachain.origintrail.io/",
-      "Twitter": "https://twitter.com/origin_trail",
-      "Telegram": "https://t.me/origintrail"
+      Website: 'https://parachain.origintrail.io/',
+      Twitter: 'https://twitter.com/origin_trail',
+      Telegram: 'https://t.me/origintrail',
     },
   },
   {
@@ -481,7 +481,7 @@ export const parachainDetails: ParachainDetails[] = [
     },
   },
   {
-    id: '2-2007',
+    id: '2-2120',
     name: 'Shiden',
     slug: 'shiden',
     token: 'SDN',
@@ -1022,13 +1022,14 @@ export const parachainDetails: ParachainDetails[] = [
     name: 'Kabucha',
     slug: 'kabucha',
     token: 'KAB',
-    subtitle: 'Kabocha is a holistic self-evolving grass-roots parachain project, funding and incubating teams to build new public infrastructure.',
+    subtitle:
+      'Kabocha is a holistic self-evolving grass-roots parachain project, funding and incubating teams to build new public infrastructure.',
     info: `It is an experiment in crafting new realities through direct participation, collaborative creation and shared values.
     Its ownership and governance is fair, transparent and decentralised at launch thanks to its genesis in the Edgeware community. 
     The project introduces a Network Public template and novel Store of Values currency and is built with the Substrate framework.`,
     links: {
-      Website : "https://www.kabocha.network/",
-      Twitter : "https://twitter.com/kabochanetwork"
+      Website: 'https://www.kabocha.network/',
+      Twitter: 'https://twitter.com/kabochanetwork',
     },
   },
   {
@@ -1036,13 +1037,14 @@ export const parachainDetails: ParachainDetails[] = [
     name: 'Tanganika Network',
     slug: 'tanganika',
     token: 'DHX',
-    subtitle: 'DataHighway is a DAO that incentivizes the community to run a sophisticated IoT parachain based on Polkadot using the DHX token.',
+    subtitle:
+      'DataHighway is a DAO that incentivizes the community to run a sophisticated IoT parachain based on Polkadot using the DHX token.',
     info: `DataHighway's community members will ultimately be incentivized to operate a sophisticated IoT parachain based on Polkadot, where they may stake, govern, 
     mine and otherwise participate using the new DHX token and its associated Decentralized Autonomous Organization (DAO), and Inter-Chain Data Market.`,
     links: {
-      Website : "https://www.datahighway.com/",
-      Twitter : "https://twitter.com/DataHighway_DHX",
-      Discord : "https://discord.com/invite/UuZN2tE"
+      Website: 'https://www.datahighway.com/',
+      Twitter: 'https://twitter.com/DataHighway_DHX',
+      Discord: 'https://discord.com/invite/UuZN2tE',
     },
   },
   {
@@ -1050,12 +1052,13 @@ export const parachainDetails: ParachainDetails[] = [
     name: 'Listen Network',
     slug: 'listen-network',
     token: 'LT',
-    subtitle: 'Listen is a voice social software based on decentralized data storage technology and blockchain technology.',
+    subtitle:
+      'Listen is a voice social software based on decentralized data storage technology and blockchain technology.',
     info: `Listen as a voice of social software, it is different with other communication tools, and podcasting software is also different, social support acquaintances, including voice, images, text and video, such as social practices, and social group in a stranger, using a similar round table in the form of BBS, group manager invited several guests, they have speaking right, and join hands to Listen and speak to the rest of the room, at the same time also can use the LT token to buy the speaking time, almost purchases will accumulate in the room below. Listen creates a unique experience that is different from a Feed stream. In a community of strangers, celebrities engage in voice discussions and audience interactions around topics.`,
     links: {
-      Website : "https://listen.io/",
-      Twitter : "https://twitter.com/Listen_io",
-      Telegram : "https://t.me/listengroup"
+      Website: 'https://listen.io/',
+      Twitter: 'https://twitter.com/Listen_io',
+      Telegram: 'https://t.me/listengroup',
     },
   },
 ]
@@ -1581,11 +1584,11 @@ export const crowdloanDetails: CrowdloanDetails[] = [
         },
         {
           title: 'Vesting Schedule',
-          value: 'linearly each block (96 weeks)'
+          value: 'linearly each block (96 weeks)',
         },
         {
           title: 'Early Bird Bonus',
-          value: '20% 4/22 10am ~ 4/30 10am (UTC)'
+          value: '20% 4/22 10am ~ 4/30 10am (UTC)',
         },
       ],
       info: null,
@@ -1600,7 +1603,7 @@ export const crowdloanDetails: CrowdloanDetails[] = [
         {
           title: 'OTP per DOT',
           value: '20',
-        }
+        },
       ],
       info: null,
     },
@@ -1656,22 +1659,22 @@ export const crowdloanDetails: CrowdloanDetails[] = [
   },
   {
     relayId: 2,
-    paraId: 2007,
+    paraId: 2120,
     contributeUrl: 'https://crowdloan.plasmnet.io/',
     rewards: {
       tokens: [
         {
           symbol: 'SDN',
-          perKSM: '180-340',
+          perKSM: '22.4',
         },
       ],
       custom: [
         {
-          title: 'Total SDN available',
-          value: '3,388,000',
+          title: 'Total Rewards Distribution',
+          value: '350,000 SDN',
         },
       ],
-      info: 'More information: <a href="https://forum.plasmnet.io/t/faq-how-to-estimate-how-many-sdn-you-will-receive-from-crowdloan/1225">crowdloan rewards</a>.',
+      info: null,
     },
   },
   {
@@ -2431,4 +2434,3 @@ export const crowdloanDetails: CrowdloanDetails[] = [
     },
   },
 ]
-
