@@ -1,0 +1,32 @@
+name: Lint
+
+on:
+  push:
+    branches:
+      - prod
+  pull_request:
+    branches:
+      - prod
+
+jobs:
+  run-linters:
+    name: Run linters
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v2
+
+      - name: Set up nodejs
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12
+
+      - name: Install npm deps
+        run: yarn
+
+      - name: Run linters
+        uses: wearerequired/lint-action@v2
+        with:
+          eslint: true
+          prettier: true
