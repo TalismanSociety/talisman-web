@@ -1,5 +1,3 @@
-// import '@talismn/components-nft/index.umd.css'
-
 import { ExtensionStatusGate, Panel, PanelSection } from '@components'
 import { ReactComponent as ArrowRight } from '@icons/arrow-right.svg'
 import { NoNFTsPlaceholder } from '@libs/nft/NoNFTsPlaceholder'

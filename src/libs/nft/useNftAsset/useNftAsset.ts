@@ -15,9 +15,7 @@ function getNftCollectibleUrl(nft: any) {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function useNftAsset(nft: any) {
-
-  // console.log(nft)
-
+  
   const metadataUrl = nft?.metadata;
   const prefetchedContentType = nft?.metadata_content_type;
   const image = nft?.metadata_image;

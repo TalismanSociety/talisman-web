@@ -1,6 +1,6 @@
 import { ReactComponent as PlayCircleIcon } from './play-circle.svg';
 import styles from './NftContentType.module.css';
-import { NftElement } from '../../types';
+import { NftElement } from '../../../util/nfts/types';
 import useNftAsset from '../useNftAsset/useNftAsset';
 
 export type NftContentTypes = 'audio' | 'video' | 'image';

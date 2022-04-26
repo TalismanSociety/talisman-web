@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 
 import styled from 'styled-components'
 import NftFullView from '../NftFullView/NftFullView';
+import { Suspense } from 'react';
 
 const NftMainDetails = styled(({ nftId, collection, name, className }) => {
     return (
@@ -66,7 +67,7 @@ margin-bottom: 1em;
 const NftAttributes = styled(({ properties, className }) => {
     const { t } = useTranslation('nft-viewer');
 
-    if(Object.keys(properties).length == 0) return null;
+    if(Object.keys(properties).length === 0) return null;
 
     return (
         <div className={className}>
@@ -97,7 +98,6 @@ max-height: 150px;
 .nft-attribute {
     background-color: var(--color-dim);
     width: fit-content;
-    flex: 1;
     padding: 5px 8px;
     border-radius: 8px;
 }
@@ -160,9 +160,6 @@ min-height: 70px;
 `
 
 const NftInformation = styled(({ className, nftData }) => {
-
-    const { t } = useTranslation('nft-viewer');
-
     return (
         <div className={className}>
             <NftMainDetails name={nftData?.name} collection={nftData?.collection} nftId={nftData?.id}/>
@@ -177,12 +174,8 @@ const NftInformation = styled(({ className, nftData }) => {
 })`
 display: flex;
 flex-direction: column;
-// justify-content: space-between;
-
 overflow-y: auto;
-// overflow-x: hidden;
 max-height: 458px;
-
 @media ${device.sm}{ margin-left: 0; margin-top: 1em; }
 @media ${device.lg}{ margin-left: 3em; margin-top: 0;}
 
@@ -219,7 +212,9 @@ export const NftModal = styled(({ className, nft }) => {
     return (
         <div className={className}>
             <NftFullView nft={nft} />
-            <NftInformation nftData={nftData}/>
+            <Suspense fallback={null}>
+                <NftInformation nftData={nftData}/>
+            </Suspense>
         </div>
     )
 
