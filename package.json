@@ -43,6 +43,7 @@
     "babel-plugin-styled-components": "^1.13.2",
     "bignumber.js": "^9.0.1",
     "craco-alias": "^3.0.1",
+    "eslint": "^7.11.0",
     "framer-motion": "^4.1.17",
     "graphql": "^15.5.1",
     "husky": "^6.0.0",
