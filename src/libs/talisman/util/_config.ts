@@ -406,6 +406,33 @@ export const parachainDetails: ParachainDetails[] = [
     },
   },
   {
+    id: '0-2030',
+    name: 'Bifrost',
+    slug: 'bifrost',
+    token: 'BNC',
+    subtitle: 'Cross chain liquidity for staking.',
+    info: `Cross chain liquidity for staking. Based on polkadot, kusama, substrate, and web3 infrastructure`,
+    links: {
+      "Website": "https://bifrost.finance/",
+      "Twitter": "https://twitter.com/bifrost_finance",
+      "Telegram": "https://t.me/bifrost_finance",
+      "Discord": "https://discord.com/invite/XjnjdKBNXj"
+    },
+  },
+  {
+    id: '0-2043',
+    name: 'OriginTrail Parachain',
+    slug: 'origintrail',
+    token: 'OTP',
+    subtitle: 'Bringing real world assets to Polkadot.',
+    info: `By harnessing the power of the OriginTrail Decentralized Knowledge Graph, OriginTrail Parachain extends discoverability, verifiability and greater value for interconnected Web3 assets to Polkadot.`,
+    links: {
+      "Website": "https://parachain.origintrail.io/",
+      "Twitter": "https://twitter.com/origin_trail",
+      "Telegram": "https://t.me/origintrail"
+    },
+  },
+  {
     id: '2-2000',
     name: 'Karura',
     slug: 'karura',
@@ -1538,15 +1565,42 @@ export const crowdloanDetails: CrowdloanDetails[] = [
     paraId: 2040,
     rewards: {
       tokens: null,
+      custom: [],
+      info: null,
+    },
+  },
+  {
+    relayId: 0,
+    paraId: 2030,
+    rewards: {
+      tokens: null,
       custom: [
         {
-          title: 'PDEX per DOT',
-          value: '>2',
+          title: 'BNC per DOT',
+          value: '>10',
         },
         {
           title: 'Vesting Schedule',
-          value: '25% immediately, remainder vests linearly over 96 weeks.',
+          value: 'linearly each block (96 weeks)'
         },
+        {
+          title: 'Early Bird Bonus',
+          value: '20% 4/22 10am ~ 4/30 10am (UTC)'
+        },
+      ],
+      info: null,
+    },
+  },
+  {
+    relayId: 0,
+    paraId: 2043,
+    rewards: {
+      tokens: null,
+      custom: [
+        {
+          title: 'OTP per DOT',
+          value: '20',
+        }
       ],
       info: null,
     },
