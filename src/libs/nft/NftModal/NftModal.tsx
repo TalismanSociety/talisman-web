@@ -84,7 +84,6 @@ const NftAttributes = styled(({ properties, className }) => {
     )
 })`
 margin-bottom: 1em;
-max-height: 150px;
 
 .attribute-grid {
     display: inline-box;
