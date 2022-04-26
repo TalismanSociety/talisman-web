@@ -14,7 +14,6 @@ import styles from './NftFullView.module.css';
 import useNftAsset from '../useNftAsset/useNftAsset';
 import '@google/model-viewer';
 import { MediaPreviewProps } from '@util/nfts/types';
-import { RMRK1Fetcher } from '../fetchers/RMRK1Fetcher';
 
 function MediaPreview(props: MediaPreviewProps) {
   const { contentCategory, ...mediaElementProps } = props;
@@ -50,10 +49,8 @@ function MediaPreview(props: MediaPreviewProps) {
         <video
           loop
           muted
-          // autoPlay
           playsInline
           preload="metadata"
-          // controlsList="nodownload"
           controls={true}
           {...videoProps}
         />

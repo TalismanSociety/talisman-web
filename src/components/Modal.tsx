@@ -89,8 +89,6 @@ export const Modal = styled(function Modal({ className, closable }) {
     z-index: 999;
   }
   > .modal-content {
-    // width: 100%;
-    // min-width: 684px;
     max-width: 1092px;
     margin: 2rem;
     overflow-y: auto;

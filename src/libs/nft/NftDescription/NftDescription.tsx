@@ -1,4 +1,4 @@
-import { NftElement } from '../../types';
+import { NftElement } from '../../../util/nfts/types';
 import useNftAsset from '../useNftAsset/useNftAsset';
 import styles from './NftDescription.module.css';
 
