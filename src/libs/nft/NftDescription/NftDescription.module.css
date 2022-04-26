@@ -1,0 +1,31 @@
+.nft-description-root {
+  min-width: 0;
+  width: 100%;
+}
+
+.nft-description-root > * {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.description-title {
+  color: #a5a5a5;
+  font-size: small;
+}
+
+.placeholder {
+  background-color: #5a5a5a;
+  height: 0.5rem;
+  width: 100%;
+  margin-bottom: 0.25rem;
+  border-radius: 0.25rem;
+}
+
+.width-1\/2 {
+  width: 50%;
+}
+
+.width-3\/4 {
+  width: 75%;
+}

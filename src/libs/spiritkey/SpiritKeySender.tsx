@@ -441,6 +441,7 @@ const SpiritKeySenderModal = styled(({ className }) => {
     </div>
   )
 })`
+  width: 684px;
   text-align: center;
   > * + * {
     margin-top: 2rem;

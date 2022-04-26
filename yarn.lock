@@ -1924,10 +1924,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@google/model-viewer@npm:^1.10.1":
-  version: 1.10.1
-  resolution: "@google/model-viewer@npm:1.10.1"
-  checksum: 8412e930be18a84b8e15fcf9eeaac5e233d9536f8393b77422899b9c94ff5e3e24d3483804633e64cf0f20d23b1ac025e6c3cb2039b820ef4d406120be389501
+"@google/model-viewer@npm:^1.11.0":
+  version: 1.11.0
+  resolution: "@google/model-viewer@npm:1.11.0"
+  dependencies:
+    lit-element: ^2.5.1
+    lit-html: ^1.4.1
+    three: ^0.138.3
+  checksum: 4beb1f4c050eab8dda0fb4652d5b69bd69c96d6aa1d0d27d2f219d0c0a8fc184a25fb45850180c19fb8d1e91ba5d08b82d36f4014391460455a25e7c1edc3313
   languageName: node
   linkType: hard
 
@@ -3503,20 +3507,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@talismn/components-nft@npm:^0.0.17":
-  version: 0.0.17
-  resolution: "@talismn/components-nft@npm:0.0.17"
-  dependencies:
-    "@google/model-viewer": ^1.10.1
-    "@polkadot/keyring": ^8.4.1
-    swr: ^1.2.2
-  peerDependencies:
-    react: 17.0.2
-    regenerator-runtime: 0.13.7
-  checksum: b139bb12be13722c77cf984392cf5714763b58e5b7d4c9a29d46e1e01da093e77674f009c2eade5e1459baca01cba444b4a03ee3db700fe749d528131539d234
-  languageName: node
-  linkType: hard
-
 "@talismn/util@npm:~0":
   version: 0.0.11
   resolution: "@talismn/util@npm:0.0.11"
@@ -3541,6 +3531,7 @@ __metadata:
     "@babel/plugin-proposal-class-properties": ^7.16.7
     "@babel/plugin-proposal-private-methods": ^7.16.11
     "@craco/craco": ^6.1.2
+    "@google/model-viewer": ^1.11.0
     "@open-wc/webpack-import-meta-loader": ^0.4.7
     "@polkadot/api": ^6.6.1
     "@polkadot/keyring": ^7.4.1
@@ -3555,7 +3546,6 @@ __metadata:
     "@talisman-connect/wallets": ^1.1.1
     "@talismn/api-react-hooks": ~0
     "@talismn/chaindata-js": ~0
-    "@talismn/components-nft": ^0.0.17
     "@talismn/util": ~0
     "@testing-library/dom": ^8.2.0
     "@testing-library/jest-dom": ^5.11.4
@@ -3595,6 +3585,7 @@ __metadata:
     rmrk-tools: ^2.0.25
     safety-match: ^0.4.4
     styled-components: ^5.3.0
+    swr: ^1.2.2
     typescript: ^4.1.2
     uuid: ^8.3.2
     web-vitals: ^1.0.1
@@ -11444,6 +11435,22 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
+"lit-element@npm:^2.5.1":
+  version: 2.5.1
+  resolution: "lit-element@npm:2.5.1"
+  dependencies:
+    lit-html: ^1.1.1
+  checksum: c4f45d0cc84d49cc9dca2502b5e0bd14289c46a5ee331c21fb0014693541a4824887f8c2c6725310d380d713adecbe31fba1eda6f8aabc14927f524d6527f6c9
+  languageName: node
+  linkType: hard
+
+"lit-html@npm:^1.1.1, lit-html@npm:^1.4.1":
+  version: 1.4.1
+  resolution: "lit-html@npm:1.4.1"
+  checksum: 6e1bb335cd8493700d2f1eaf1e019c2f6bf78ac641bdba5e2ff9f1545430e0fec15c6721ee1c8ca75559e1d52a1d34cdc568da46319681304299d9aff83a6346
+  languageName: node
+  linkType: hard
+
 "load-json-file@npm:^2.0.0":
   version: 2.0.0
   resolution: "load-json-file@npm:2.0.0"
@@ -16778,6 +16785,13 @@ resolve@1.18.1:
   version: 0.2.0
   resolution: "text-table@npm:0.2.0"
   checksum: b6937a38c80c7f84d9c11dd75e49d5c44f71d95e810a3250bd1f1797fc7117c57698204adf676b71497acc205d769d65c16ae8fa10afad832ae1322630aef10a
+  languageName: node
+  linkType: hard
+
+"three@npm:^0.138.3":
+  version: 0.138.3
+  resolution: "three@npm:0.138.3"
+  checksum: beef4db3914c98f02f87c18743a24c994f093132b6c9b959150d017a1835a7360b2a98ede080b9deb0ca41c3c969d7a2ee08fff35d880fb1f94a0cc343a843b1
   languageName: node
   linkType: hard
 

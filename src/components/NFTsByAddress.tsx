@@ -1,4 +1,5 @@
-import { NftCard, useNftsByAddress } from '@talismn/components-nft'
+import { useNftsByAddress } from '@libs/nft/useNftsByAddress/useNftsByAddress'
+import { NftCard } from '@libs/nft/NftCard/NftCard'
 import { device } from '@util/breakpoints'
 import styled from 'styled-components'
 

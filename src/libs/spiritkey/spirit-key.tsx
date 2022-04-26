@@ -23,7 +23,7 @@ export const fetchNFTData = async (setNfts: (nfts: NFTConsolidated[]) => void, a
       dataTotal = dataTotal.filter(nft => nft.collectionId === 'b6e98494bff52d3b1e-SPIRIT')
 
       for await (const nft of dataTotal) {
-        const payload = await fetch(nft.metadata!.replace('ipfs://', 'https://rmrk.mypinata.cloud/'))
+        const payload = await fetch(nft.metadata!.replace('ipfs://', 'https://talisman.mypinata.cloud/'))
         const metadata: PinataObject = await payload.json()
         nft.image = metadata.image
         nft.data = metadata
