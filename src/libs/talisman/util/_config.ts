@@ -1034,8 +1034,8 @@ export const parachainDetails: ParachainDetails[] = [
   },
   {
     id: '2-2113',
-    name: 'Kabucha',
-    slug: 'kabucha',
+    name: 'Kabocha',
+    slug: 'kabocha',
     token: 'KAB',
     subtitle:
       'Kabocha is a holistic self-evolving grass-roots parachain project, funding and incubating teams to build new public infrastructure.',
