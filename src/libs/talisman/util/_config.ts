@@ -1587,11 +1587,7 @@ export const crowdloanDetails: CrowdloanDetails[] = [
         {
           title: 'GEM per DOT',
           value: '>10',
-<<<<<<< HEAD
-        }
-=======
         },
->>>>>>> 3c1910f992003ae775e2a1d71439d4f2a71c79ff
       ],
       info: null,
     },
