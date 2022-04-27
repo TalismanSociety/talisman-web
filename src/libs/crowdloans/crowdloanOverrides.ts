@@ -36,6 +36,10 @@ export const Zeitgeist = makeOverride({
     href: 'https://zeitgeist.pm/CrowdloanTerms.pdf',
   },
 })
+export const BifrostDOT = makeOverride({
+  relayId: 0,
+  paraId: 2030,
+})
 
 export const overrides = [Acala, Astar, Moonbeam, Zeitgeist]
 export const overrideByIds = (relayId: number, paraId: number) =>
