@@ -6,6 +6,8 @@ import styled from 'styled-components'
 import NftFullView from '../NftFullView/NftFullView';
 import { Suspense } from 'react';
 
+// test changed file
+
 const NftMainDetails = styled(({ nftId, collection, name, className }) => {
     return (
         <div className={className}>
