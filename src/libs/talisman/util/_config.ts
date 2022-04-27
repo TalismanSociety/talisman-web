@@ -397,11 +397,11 @@ export const parachainDetails: ParachainDetails[] = [
     subtitle: 'Geminis Network is the first parachain supported by the advanced ParaState tech stack.',
     info: `Geminis takes Ethereum chain support to the next level through WasmEdge. Develop and execute high-speed smart contracts with built-in Ethereum compatibility (EVM & EWASM) and interoperability in Solidity, Vyper, and next-level programming languages like Rust, C ++, and Golang.`,
     links: {
-      "Website": "https://geminis.network/",
-      "Twitter": "https://twitter.com/_ParaState",
-      "Telegram": "https://t.me/ParaState",
-      "Discord": "https://geminis.network/",
-      "Facebook": "https://www.facebook.com/ParaState.io/",
+      Website: 'https://geminis.network/',
+      Twitter: 'https://twitter.com/_ParaState',
+      Telegram: 'https://t.me/ParaState',
+      Discord: 'https://geminis.network/',
+      Facebook: 'https://www.facebook.com/ParaState.io/',
     },
   },
   {
@@ -1587,7 +1587,7 @@ export const crowdloanDetails: CrowdloanDetails[] = [
         {
           title: 'GEM per DOT',
           value: '>10',
-        }
+        },
       ],
       info: null,
     },
