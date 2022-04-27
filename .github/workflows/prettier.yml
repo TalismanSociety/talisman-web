@@ -15,17 +15,29 @@ jobs:
         with:
           ref: ${{ github.head_ref }}
 
-      - id: files
-        uses: jitterbit/get-changed-files@v1
+      - name: Get changed files
+        id: files
+        uses: Ana06/get-changed-files@v2.1.0
         with:
-          format: 'csv'
+          format: 'space-delimited'
+          filter: |
+            **.ts
+            **.tsx
+            **.js
+            **.jsx
+            **.html
+            **.css
+            **.scss
+            !.github/**
 
       - name: Format code
         uses: DukeManh/scoped-actions@v1
         with:
           files: ${{ steps.files.outputs.added_modified }}
-          s0: 'yarn'
-          s1: 'yarn run prettier --write --no-error-on-unmatched-pattern'
+          s0: >
+            yarn
+          s1: >
+            bash -c "[[ -n '${{ steps.files.outputs.added_modified }}' ]] && yarn run ci:formatter ${{ steps.files.outputs.added_modified }} || echo 'No files to format'"
 
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v4
