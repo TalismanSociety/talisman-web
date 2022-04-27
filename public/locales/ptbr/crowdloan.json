@@ -19,7 +19,7 @@
   },
   "registeringUser": {
     "header": "Assine os Termos & Condições",
-    "description": "Clicando \"Assine e Envie\" abaixo, voce aprova os Termos e Condições do Crowdloan Moonbeam e será armazenado on chain, para sua conta DOT. Isso será na forma de uma "extrinstic" assinada por sua conta.",
+    "description": "Clicando \"Assine e Envie\" abaixo, voce aprova os Termos e Condições do Crowdloan Moonbeam e será armazenado on chain, para sua conta DOT. Isso será na forma de uma \"extrinstic\" assinada por sua conta.",
     "feeNote": "Observe que esta transação de assinatura estará sujeita a taxas de transação na rede Polkadot (em torno de 0.0411 DOT), e que na carteira Polkadot tenha o minimo de 1 DOT restante.",
     "termsNote": "[Veja os termos]",
     "primaryCta": "Assine e envie"
