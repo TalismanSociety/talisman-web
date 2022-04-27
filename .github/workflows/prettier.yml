@@ -13,12 +13,22 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v2
         with:
-          # Make sure the actual branch is checked out when running on pull requests
           ref: ${{ github.head_ref }}
-          # This is important to fetch the changes to the previous commit
-          fetch-depth: 0
+
+      - id: files
+        uses: jitterbit/get-changed-files@v1
+        with:
+          format: 'csv'
 
       - name: Format code
-        uses: creyD/prettier_action@v4.2
+        uses: DukeManh/scoped-actions@v1
         with:
-          only_changed: True
+          files: ${{ steps.files.outputs.added_modified}}
+          s0: 'yarn'
+          s1: 'yarn run prettier --write src public'
+
+      - name: Commit changes
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: 'ci: prettier format'
+          branch: ${{ github.head_ref }}
