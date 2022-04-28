@@ -28,8 +28,8 @@
   "Unavailable": "Unavailable",
   "extensionUnavailable": {
     "title": "Oh no!",
-    "subtitle": "Hmm... It doesn't look like you have a wallet extension installed.",
-    "text": "We recommend installing the Talisman Wallet Extension"
+    "subtitle": "Hmm... It looks like you're not connected.",
+    "text": "Please download or connect your wallet. "
   },
   "Install Talisman Extension": "Install Talisman Extension",
   "Requires Configuration": "Requires Configuration",
