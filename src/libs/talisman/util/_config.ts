@@ -139,8 +139,7 @@ export const parachainDetails: ParachainDetails[] = [
     name: 'Kapex',
     slug: 'kapex',
     token: 'KAPEX',
-    subtitle:
-      'Building the 1st decentralised p2p accounting protocol anywhere.',
+    subtitle: 'Building the 1st decentralised p2p accounting protocol anywhere.',
     info: `Totem is building the world's first peer-to-peer accounting consensus protocol. It’s not just a first in the blockchain space – it’s a first in the accounting world too.`,
     links: {
       Website: 'https://totemaccounting.com/',
