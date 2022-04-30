@@ -1,32 +1,29 @@
-import React, {
-  cloneElement,
-  EmbedHTMLAttributes,
-  ImgHTMLAttributes,
-  MediaHTMLAttributes,
-} from 'react';
-import { MediaPreviewProps } from '@util/nfts/types';
-import DualRingLoader from '../DualRingLoader/DualRingLoader';
-import PlaceCenter from '../PlaceCenter/PlaceCenter';
-import styles from './NftPreview.module.css';
-import useNftAsset from '../useNftAsset/useNftAsset';
-import '@google/model-viewer';
-import { NftPreviewProps } from '../NftView/NftView';
+import '@google/model-viewer'
+
+import { MediaPreviewProps } from '@util/nfts/types'
+import React, { EmbedHTMLAttributes, ImgHTMLAttributes, MediaHTMLAttributes, cloneElement } from 'react'
+
+import DualRingLoader from '../DualRingLoader/DualRingLoader'
+import { NftPreviewProps } from '../NftView/NftView'
+import PlaceCenter from '../PlaceCenter/PlaceCenter'
+import useNftAsset from '../useNftAsset/useNftAsset'
+import styles from './NftPreview.module.css'
 
 export function MediaPreview(props: MediaPreviewProps) {
-  const { contentCategory, ...mediaElementProps } = props;
-  const imgProps = mediaElementProps as ImgHTMLAttributes<HTMLImageElement>;
+  const { contentCategory, ...mediaElementProps } = props
+  const imgProps = mediaElementProps as ImgHTMLAttributes<HTMLImageElement>
 
   switch (contentCategory) {
     case 'model':
       const modelProps = {
-        src: imgProps.src,
-        alt: imgProps.alt,
-        autoplay: 'true',
+        'src': imgProps.src,
+        'alt': imgProps.alt,
+        'autoplay': 'true',
         'camera-controls': 'true',
         'shadow-intensity': '1',
         'ar-status': 'not-presenting',
         ...mediaElementProps,
-      };
+      }
       return (
         <model-viewer
           style={{
@@ -36,20 +33,17 @@ export function MediaPreview(props: MediaPreviewProps) {
           }}
           {...modelProps}
         />
-      );
+      )
     case 'video':
-      const videoProps =
-        mediaElementProps as MediaHTMLAttributes<HTMLMediaElement>;
+      const videoProps = mediaElementProps as MediaHTMLAttributes<HTMLMediaElement>
       return (
         <video
-          onMouseOver={
-          event => {
-            event.target.play();
+          onMouseOver={event => {
+            event.target.play()
           }}
-          onMouseOut={
-          event => {
-            event.target.pause(); 
-            event.target.currentTime = 0;
+          onMouseOut={event => {
+            event.target.pause()
+            event.target.currentTime = 0
           }}
           loop
           muted
@@ -59,30 +53,28 @@ export function MediaPreview(props: MediaPreviewProps) {
           controlsList="nodownload"
           {...videoProps}
         />
-      );
+      )
     case 'application':
-      const { src, ...embedProps } =
-        mediaElementProps as EmbedHTMLAttributes<HTMLEmbedElement>;
-      return <embed src={`${src}#toolbar=0`} {...embedProps} />;
+      const { src, ...embedProps } = mediaElementProps as EmbedHTMLAttributes<HTMLEmbedElement>
+      return <embed src={`${src}#toolbar=0`} {...embedProps} />
     default:
       if (!imgProps.src) {
-        return null;
+        return null
       }
-      return <img loading="lazy" {...imgProps} />;
+      return <img loading="lazy" alt={imgProps.alt} {...imgProps} />
   }
 }
 
 export function NftPreview(props: NftPreviewProps) {
-  const { nft, LoaderComponent, ErrorComponent, ...imageProps } = props;
-  const { contentCategory, name, previewSrc, isLoading, error } =
-    useNftAsset(nft);
+  const { nft, LoaderComponent, ErrorComponent, ...imageProps } = props
+  const { contentCategory, name, previewSrc, isLoading, error } = useNftAsset(nft)
 
   if (isLoading) {
     return (
       <PlaceCenter className={styles['nft-image-root']}>
         {LoaderComponent || <DualRingLoader style={{ height: 'unset' }} />}
       </PlaceCenter>
-    );
+    )
   }
   if (error) {
     return (
@@ -95,7 +87,7 @@ export function NftPreview(props: NftPreviewProps) {
           <span>{error?.message}</span>
         )}
       </PlaceCenter>
-    );
+    )
   }
   return (
     <div className={styles['nft-image-root']}>
@@ -107,7 +99,7 @@ export function NftPreview(props: NftPreviewProps) {
         {...imageProps}
       />
     </div>
-  );
+  )
 }
 
-export default NftPreview;
+export default NftPreview

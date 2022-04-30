@@ -10,7 +10,8 @@ import { DAPP_NAME, useAllAccountAddresses, useExtensionAutoConnect } from '@lib
 import { useTalismanInstalled } from '@libs/talisman/useIsTalismanInstalled'
 import { WalletSelect } from '@talisman-connect/components'
 import { device } from '@util/breakpoints'
-import { DISCORD_JOIN_URL, TALISMAN_EXTENSION_CHROMESTORE_URL, TALISMAN_SPIRIT_KEYS_RMRK } from '@util/links'
+import getDownloadLink from '@util/getDownloadLink'
+import { DISCORD_JOIN_URL, TALISMAN_SPIRIT_KEYS_RMRK } from '@util/links'
 import { Trans, useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
@@ -61,6 +62,7 @@ const SpiritKeyPageV2 = styled(({ className }) => {
   const addressesLoading = addresses === undefined
   const { status } = useExtensionAutoConnect()
   const isTalismanInstalled = useTalismanInstalled()
+  const downloadLink = getDownloadLink()
 
   if (addressesLoading) {
     return <StyledLoader />
@@ -73,12 +75,7 @@ const SpiritKeyPageV2 = styled(({ className }) => {
           {!isTalismanInstalled && (
             <div className="no-wallet">
               <p>{tBase('extensionUnavailable.subtitle')}</p>
-              <a
-                href={TALISMAN_EXTENSION_CHROMESTORE_URL}
-                title="Install Talisman"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
+              <a href={downloadLink} title="Install Talisman" target="_blank" rel="noopener noreferrer">
                 <Button primary>{tBase('Install Talisman Extension')}</Button>
               </a>
             </div>
