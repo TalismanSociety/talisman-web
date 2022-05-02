@@ -22,10 +22,7 @@ export function useNftAsset(nft: any) {
   // If any of `metadata_content_type` or `metadata_image` is missing,
   // fallback to calling the `metadata` url to get image or `animation_url`.
   // Otherwise, no need to do an extra call. Video content_type needs the extra metadata call.
-  const shouldGetMetadata =
-    !prefetchedContentType ||
-    !image ||
-    prefetchedContentType?.startsWith('video');
+  const shouldGetMetadata = true
   const url = RMRK1.toWeb2Url(shouldGetMetadata ? metadataUrl : null);
   const { nftMetadata, ...restMetadata } = useNftMetadata(url);
   const name = nft?.name || nft?.metadata_name || nftMetadata?.name;
