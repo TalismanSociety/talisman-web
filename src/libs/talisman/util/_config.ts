@@ -139,8 +139,7 @@ export const parachainDetails: ParachainDetails[] = [
     name: 'Kapex',
     slug: 'kapex',
     token: 'KAPEX',
-    subtitle:
-      'Building the 1st decentralised p2p accounting protocol anywhere.',
+    subtitle: 'Building the 1st decentralised p2p accounting protocol anywhere.',
     info: `Totem is building the world's first peer-to-peer accounting consensus protocol. It’s not just a first in the blockchain space – it’s a first in the accounting world too.`,
     links: {
       Website: 'https://totemaccounting.com/',
@@ -1091,6 +1090,21 @@ export const parachainDetails: ParachainDetails[] = [
       Website: 'https://listen.io/',
       Twitter: 'https://twitter.com/Listen_io',
       Telegram: 'https://t.me/listengroup',
+    },
+  },
+  {
+    id: '2-2119',
+    name: 'Bajun Network',
+    slug: 'bajun-network',
+    token: 'BAJU',
+    subtitle:
+      'Ajuna is ready to unlock the next level of blockchain gaming. We have the power to enable responsive, immersive, graphically-rich web3 games built with industry-leading development tools.',
+    info: `Ajuna Network makes the world’s leading game development engines — Unity and Unreal — fully integrated with the world of blockchain-based assets. It empowers gamers to own and control their in-game assets, trade them in community marketplaces, and bring them to new worlds.`,
+    links: {
+      Website: 'https://ajuna.io/',
+      Twitter: 'https://twitter.com/AjunaNetwork',
+      Telegram: 'https://t.me/ajunanetwork',
+      Discord: 'https://discord.com/invite/cE72GYcFgY',
     },
   },
 ]
@@ -2493,6 +2507,34 @@ export const crowdloanDetails: CrowdloanDetails[] = [
         {
           title: 'Crowdloan Allocation',
           value: '100,000,000 LT',
+        },
+      ],
+      info: null,
+    },
+  },
+  {
+    relayId: 2,
+    paraId: 2119,
+    contributeUrl: '',
+    rewards: {
+      tokens: [
+        {
+          symbol: 'BAJU',
+          perKSM: '105 BAJU',
+        },
+      ],
+      custom: [
+        {
+          title: 'First 500 Contributions',
+          value: '> 5 KSM + 10% Bonus',
+        },
+        {
+          title: 'First 100 Contributions',
+          value: '> 1 KSM + 5% Bonus',
+        },
+        {
+          title: 'NFT Rewards',
+          value: '2 Free AAA mints per 1 KSM',
         },
       ],
       info: null,
