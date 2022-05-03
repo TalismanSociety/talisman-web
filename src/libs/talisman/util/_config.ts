@@ -135,6 +135,22 @@ export const parachainDetails: ParachainDetails[] = [
     },
   },
   {
+    id: '0-2007',
+    name: 'Kapex',
+    slug: 'kapex',
+    token: 'KAPEX',
+    subtitle: 'Building the 1st decentralised p2p accounting protocol anywhere.',
+    info: `Totem is building the world's first peer-to-peer accounting consensus protocol. It’s not just a first in the blockchain space – it’s a first in the accounting world too.`,
+    links: {
+      Website: 'https://totemaccounting.com/',
+      Twitter: 'https://twitter.com/Totem_live_',
+      Telegram: 'https://t.me/totemchat',
+      Medium: 'https://medium.com/totemlive',
+      Gitlab: 'https://gitlab.com/totem-tech',
+      Discord: 'https://discord.com/invite/kmuZucW',
+    },
+  },
+  {
     id: '0-2008',
     name: 'Crust',
     slug: 'crust',
@@ -397,11 +413,11 @@ export const parachainDetails: ParachainDetails[] = [
     subtitle: 'Geminis Network is the first parachain supported by the advanced ParaState tech stack.',
     info: `Geminis takes Ethereum chain support to the next level through WasmEdge. Develop and execute high-speed smart contracts with built-in Ethereum compatibility (EVM & EWASM) and interoperability in Solidity, Vyper, and next-level programming languages like Rust, C ++, and Golang.`,
     links: {
-      "Website": "https://geminis.network/",
-      "Twitter": "https://twitter.com/_ParaState",
-      "Telegram": "https://t.me/ParaState",
-      "Discord": "https://geminis.network/",
-      "Facebook": "https://www.facebook.com/ParaState.io/",
+      Website: 'https://geminis.network/',
+      Twitter: 'https://twitter.com/_ParaState',
+      Telegram: 'https://t.me/ParaState',
+      Discord: 'https://geminis.network/',
+      Facebook: 'https://www.facebook.com/ParaState.io/',
     },
   },
   {
@@ -1034,8 +1050,8 @@ export const parachainDetails: ParachainDetails[] = [
   },
   {
     id: '2-2113',
-    name: 'Kabucha',
-    slug: 'kabucha',
+    name: 'Kabocha',
+    slug: 'kabocha',
     token: 'KAB',
     subtitle:
       'Kabocha is a holistic self-evolving grass-roots parachain project, funding and incubating teams to build new public infrastructure.',
@@ -1225,6 +1241,25 @@ export const crowdloanDetails: CrowdloanDetails[] = [
         {
           title: 'Bonus Pool',
           value: '350,000,000 ASTR',
+        },
+      ],
+      bonus: {
+        short: '',
+        full: '',
+        info: '',
+      },
+      info: null,
+    },
+  },
+  {
+    relayId: 0,
+    paraId: 2007,
+    rewards: {
+      tokens: null,
+      custom: [
+        {
+          title: 'KAPEX per DOT',
+          value: '> 0.1',
         },
       ],
       bonus: {
@@ -1587,7 +1622,7 @@ export const crowdloanDetails: CrowdloanDetails[] = [
         {
           title: 'GEM per DOT',
           value: '>10',
-        }
+        },
       ],
       info: null,
     },

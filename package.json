@@ -74,6 +74,7 @@
   "scripts": {
     "prepare": "husky install",
     "pre-commit": "lint-staged",
+    "ci:formatter": "prettier --write",
     "start": "CI= craco start",
     "build": "CI= GENERATE_SOURCEMAP=false craco build",
     "test": "craco test",
