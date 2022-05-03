@@ -68,9 +68,9 @@ const NftAttributes = styled(({ properties, className }) => {
     <div className={className}>
       <h1>{t('Attributes')}</h1>
       <div className="attribute-grid">
-        { properties['Migrated from'] ? (
+        {properties['Migrated from'] ? (
           <div className="nft-attribute">
-            <p className='nft-attribute-header'>Migrated NFT</p>
+            <p className="nft-attribute-header">Migrated NFT</p>
           </div>
         ) : (
           Object.keys(properties).map(k => (
@@ -80,7 +80,6 @@ const NftAttributes = styled(({ properties, className }) => {
             </div>
           ))
         )}
-
       </div>
     </div>
   )
