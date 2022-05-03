@@ -61,9 +61,7 @@ const NftDescription = styled(({ description, className }) => {
 
 const NftAttributes = styled(({ properties, className }) => {
   const { t } = useTranslation('nft-viewer')
-
-  console.log(properties)
-
+  
   if (Object.keys(properties).length === 0) return null
 
   return (
