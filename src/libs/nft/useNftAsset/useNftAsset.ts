@@ -28,7 +28,7 @@ export function useNftAsset(nft: any) {
   const imageUrl = RMRK1.toWeb2Url(
     image || nft?.image || nftMetadata?.image || nftMetadata?.mediaUri || nftMetadata?.thumbnailUri
   )
-  
+
   const {
     contentType: contentTypeFromMetadata,
     contentCategory: contentCategoryFromMetadata,
@@ -45,7 +45,7 @@ export function useNftAsset(nft: any) {
   const properties = nftMetadata?.properties || {}
   const collectibleUrl = getNftCollectibleUrl(nft)
   const id = nft?.id
-  const audioUrl = contentCategory === "audio" ? RMRK1.toWeb2Url(nftMetadata?.mediaUri) : null
+  const audioUrl = contentCategory === 'audio' ? RMRK1.toWeb2Url(nftMetadata?.mediaUri) : null
 
   // Fetching the Collelction
 

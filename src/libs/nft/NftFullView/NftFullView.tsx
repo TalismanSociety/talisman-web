@@ -48,11 +48,14 @@ function MediaPreview(props: MediaPreviewProps) {
       return (
         <>
           <img loading="lazy" alt={imgProps.alt} {...imgProps} />
-          <audio controls style={{
-              position: 'absolute', 
-              bottom: '0px', 
-              width: '100%'
-          }}>
+          <audio
+            controls
+            style={{
+              position: 'absolute',
+              bottom: '0px',
+              width: '100%',
+            }}
+          >
             <source src={audioUrl} />
           </audio>
         </>
