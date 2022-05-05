@@ -11,7 +11,7 @@ import useNftAsset from '../useNftAsset/useNftAsset'
 import styles from './NftFullView.module.css'
 
 function MediaPreview(props: MediaPreviewProps) {
-  const { contentCategory, ...mediaElementProps } = props
+  const { contentCategory, audioUrl, ...mediaElementProps } = props
   const imgProps = mediaElementProps as ImgHTMLAttributes<HTMLImageElement>
 
   switch (contentCategory) {
@@ -41,6 +41,18 @@ function MediaPreview(props: MediaPreviewProps) {
     case 'application':
       const { src, ...embedProps } = mediaElementProps as EmbedHTMLAttributes<HTMLEmbedElement>
       return <embed src={`${src}#toolbar=0`} {...embedProps} />
+    case 'audio':
+      if (!imgProps.src) {
+        return null
+      }
+      return (
+        <div>
+          <img loading="lazy" alt={imgProps.alt} {...imgProps} />
+          <audio controls style={{position: 'absolute', bottom: '0px', width: '100%'}}>
+            <source src={audioUrl} />
+          </audio>
+        </div>
+      )
     default:
       if (!imgProps.src) {
         return null
@@ -51,7 +63,7 @@ function MediaPreview(props: MediaPreviewProps) {
 
 export function NftFullView(props: NftPreviewProps) {
   const { nft, LoaderComponent, ErrorComponent, ...imageProps } = props
-  const { contentCategory, name, previewSrc, isLoading, error } = useNftAsset(nft)
+  const { contentCategory, name, previewSrc, audioUrl, isLoading, error } = useNftAsset(nft)
 
   if (isLoading) {
     return (
@@ -77,6 +89,7 @@ export function NftFullView(props: NftPreviewProps) {
     <div className={styles['nft-image-root']}>
       <MediaPreview
         contentCategory={contentCategory}
+        audioUrl={audioUrl}
         src={previewSrc}
         alt={name}
         className={styles['nft-image-content']}
