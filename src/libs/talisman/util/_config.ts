@@ -1099,7 +1099,7 @@ export const parachainDetails: ParachainDetails[] = [
     token: 'BAJU',
     subtitle:
       'Ajuna is ready to unlock the next level of blockchain gaming. We have the power to enable responsive, immersive, graphically-rich web3 games built with industry-leading development tools.',
-    info: `Ajuna Network makes the world’s leading game development engines — Unity and Unreal — fully integrated with the world of blockchain-based assets. It empowers gamers to own and control their in-game assets, trade them in community marketplaces, and bring them to new worlds.`,
+    info: `To get there, we need a Kusama Parachain, and WE NEED YOUR SUPPORT. We’ve launched a Crowdloan campaign to reward everyone who backs Ajuna in the upcoming Kusama Parachain auctions with BAJU — our primary token on Kusama — and other exclusive perks.`,
     links: {
       Website: 'https://ajuna.io/',
       Twitter: 'https://twitter.com/AjunaNetwork',
@@ -2520,7 +2520,7 @@ export const crowdloanDetails: CrowdloanDetails[] = [
       tokens: [
         {
           symbol: 'BAJU',
-          perKSM: '105 BAJU',
+          perKSM: '> 110 BAJU (Dynamic)',
         },
       ],
       custom: [
@@ -2529,7 +2529,7 @@ export const crowdloanDetails: CrowdloanDetails[] = [
           value: '> 5 KSM + 10% Bonus',
         },
         {
-          title: 'First 100 Contributions',
+          title: 'First 1000 Contributions',
           value: '> 1 KSM + 5% Bonus',
         },
         {
