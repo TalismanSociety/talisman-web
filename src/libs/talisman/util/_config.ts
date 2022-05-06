@@ -2520,7 +2520,7 @@ export const crowdloanDetails: CrowdloanDetails[] = [
       tokens: [
         {
           symbol: 'BAJU',
-          perKSM: '105 BAJU',
+          perKSM: '> 110 BAJU (Dynamic)',
         },
       ],
       custom: [
@@ -2529,7 +2529,7 @@ export const crowdloanDetails: CrowdloanDetails[] = [
           value: '> 5 KSM + 10% Bonus',
         },
         {
-          title: 'First 100 Contributions',
+          title: 'First 1000 Contributions',
           value: '> 1 KSM + 5% Bonus',
         },
         {
