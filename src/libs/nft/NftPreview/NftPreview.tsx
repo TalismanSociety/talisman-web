@@ -22,6 +22,7 @@ export function MediaPreview(props: MediaPreviewProps) {
         'autoplay': 'false',
         'shadow-intensity': '1',
         'ar-status': 'not-presenting',
+        'rotation-per-second': '40deg',
         ...mediaElementProps,
       }
       return (
