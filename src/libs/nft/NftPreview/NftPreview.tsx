@@ -55,8 +55,9 @@ export function MediaPreview(props: MediaPreviewProps) {
         />
       )
     case 'application':
-      const { src, ...embedProps } = mediaElementProps as EmbedHTMLAttributes<HTMLEmbedElement>
-      return <embed src={`${src}#toolbar=0`} {...embedProps} />
+      return <img loading="lazy" alt={imgProps.alt} src="https://thumbs.dreamstime.com/b/pdf-icon-vector-digital-learning-concept-thin-line-illustration-editable-stroke-linear-sign-use-web-mobile-apps-192176122.jpg" />
+      // const { src, ...embedProps } = mediaElementProps as EmbedHTMLAttributes<HTMLEmbedElement>
+      // return <embed src={`${src}#toolbar=0`} {...embedProps} />
     default:
       if (!imgProps.src) {
         return null

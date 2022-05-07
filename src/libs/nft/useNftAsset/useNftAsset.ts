@@ -1,5 +1,6 @@
 import { RMRK1Fetcher } from '../fetchers/RMRK1Fetcher'
 import { RMRK2Fetcher } from '../fetchers/RMRK2Fetcher'
+import { useComposableProperties } from '../useComposableProperties/useComposableProperties'
 import useContentType from '../useContentType/useContentType'
 import useNftMetadata from '../useNftMetadata/useNftMetadata'
 
@@ -47,7 +48,7 @@ export function useNftAsset(nft: any) {
   const id = nft?.id
   const audioUrl = contentCategory === 'audio' ? RMRK1.toWeb2Url(nftMetadata?.mediaUri) : null
 
-  // Fetching the Collelction
+  // const stats = nft?.primaryResource?.base ? RMRK1.toWeb2Url(nft?.primaryResource?.metadata) : null
 
   const collection = {
     // TODO: Should not be description but need something as placeholder for collection name if it does not exist.
