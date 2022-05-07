@@ -14,6 +14,9 @@ function getNftCollectibleUrl(nft: any) {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function useNftAsset(nft: any) {
+
+  console.log(nft)
+
   const metadataUrl = nft?.metadata
   const prefetchedContentType = nft?.metadata_content_type
   const image = nft?.metadata_image
@@ -47,6 +50,7 @@ export function useNftAsset(nft: any) {
   const collectibleUrl = getNftCollectibleUrl(nft)
   const id = nft?.id
   const audioUrl = contentCategory === 'audio' ? RMRK1.toWeb2Url(nftMetadata?.mediaUri) : null
+  const thumb = nft?.primaryResource?.thumb
 
   // const stats = nft?.primaryResource?.base ? RMRK1.toWeb2Url(nft?.primaryResource?.metadata) : null
 
@@ -61,6 +65,7 @@ export function useNftAsset(nft: any) {
     id,
     description,
     imageUrl,
+    thumb,
     audioUrl,
     properties,
     animationUrl,

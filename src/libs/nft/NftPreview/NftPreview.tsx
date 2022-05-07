@@ -10,7 +10,7 @@ import useNftAsset from '../useNftAsset/useNftAsset'
 import styles from './NftPreview.module.css'
 
 export function MediaPreview(props: MediaPreviewProps) {
-  const { contentCategory, ...mediaElementProps } = props
+  const { contentCategory, thumb, ...mediaElementProps } = props
   const imgProps = mediaElementProps as ImgHTMLAttributes<HTMLImageElement>
 
   switch (contentCategory) {
@@ -18,8 +18,8 @@ export function MediaPreview(props: MediaPreviewProps) {
       const modelProps = {
         'src': imgProps.src,
         'alt': imgProps.alt,
-        'autoplay': 'true',
-        'camera-controls': 'true',
+        'auto-rotate': 'true',
+        'autoplay': 'false',
         'shadow-intensity': '1',
         'ar-status': 'not-presenting',
         ...mediaElementProps,
@@ -27,6 +27,7 @@ export function MediaPreview(props: MediaPreviewProps) {
       return (
         <model-viewer
           style={{
+            cursor: 'pointer',
             height: '100%',
             width: '100%',
             position: 'absolute',
@@ -55,7 +56,9 @@ export function MediaPreview(props: MediaPreviewProps) {
         />
       )
     case 'application':
-      return <img loading="lazy" alt={imgProps.alt} src="https://thumbs.dreamstime.com/b/pdf-icon-vector-digital-learning-concept-thin-line-illustration-editable-stroke-linear-sign-use-web-mobile-apps-192176122.jpg" />
+      return <img loading="lazy" alt={imgProps.alt} {...imgProps} 
+      src={thumb ? thumb : "https://thumbs.dreamstime.com/b/pdf-icon-vector-digital-learning-concept-thin-line-illustration-editable-stroke-linear-sign-use-web-mobile-apps-192176122.jpg"
+      } />
       // const { src, ...embedProps } = mediaElementProps as EmbedHTMLAttributes<HTMLEmbedElement>
       // return <embed src={`${src}#toolbar=0`} {...embedProps} />
     default:
@@ -68,7 +71,7 @@ export function MediaPreview(props: MediaPreviewProps) {
 
 export function NftPreview(props: NftPreviewProps) {
   const { nft, LoaderComponent, ErrorComponent, ...imageProps } = props
-  const { contentCategory, name, previewSrc, isLoading, error } = useNftAsset(nft)
+  const { contentCategory, name, thumb, previewSrc, isLoading, error } = useNftAsset(nft)
 
   if (isLoading) {
     return (
@@ -94,6 +97,7 @@ export function NftPreview(props: NftPreviewProps) {
     <div className={styles['nft-image-root']}>
       <MediaPreview
         contentCategory={contentCategory}
+        thumb={thumb}
         src={previewSrc}
         alt={name}
         className={styles['nft-image-content']}
