@@ -1,10 +1,10 @@
-import { render } from '@testing-library/react';
+import { render } from '@testing-library/react'
 
-import DualRingLoader from './DualRingLoader';
+import DualRingLoader from './DualRingLoader'
 
 describe('DualRingLoader', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(<DualRingLoader />);
-    expect(baseElement).toBeTruthy();
-  });
-});
+    const { baseElement } = render(<DualRingLoader />)
+    expect(baseElement).toBeTruthy()
+  })
+})
