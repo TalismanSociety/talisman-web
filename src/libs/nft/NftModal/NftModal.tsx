@@ -64,8 +64,6 @@ export const NftModal = styled(({ className, nft }) => {
   const nftData = useNftAsset(nft)
   const nftCollectionStats = useNftCollectionStats(nftData.collectionId, nftData.isRMRK2)
 
-  console.log(nftCollectionStats)
-
   return (
     <div className={className}>
       <NftFullView nft={nft} />
