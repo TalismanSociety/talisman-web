@@ -1,21 +1,21 @@
-import { ReactComponent as PlayCircleIcon } from './play-circle.svg';
-import styles from './NftContentType.module.css';
-import { NftElement } from '../../../util/nfts/types';
-import useNftAsset from '../useNftAsset/useNftAsset';
+import { NftElement } from '../../../util/nfts/types'
+import useNftAsset from '../useNftAsset/useNftAsset'
+import styles from './NftContentType.module.css'
+import { ReactComponent as PlayCircleIcon } from './play-circle.svg'
 
-export type NftContentTypes = 'audio' | 'video' | 'image';
+export type NftContentTypes = 'audio' | 'video' | 'image'
 
 export function NftContentType(props: NftElement) {
-  const { nft } = props;
-  const { contentCategory: type } = useNftAsset(nft);
+  const { nft } = props
+  const { contentCategory: type } = useNftAsset(nft)
   switch (type) {
     case 'audio':
-      return <PlayCircleIcon className={styles['nft-content-type-root']} />;
+      return <PlayCircleIcon className={styles['nft-content-type-root']} />
     case 'video':
-      return <PlayCircleIcon className={styles['nft-content-type-root']} />;
+      return <PlayCircleIcon className={styles['nft-content-type-root']} />
     default:
-      return null;
+      return null
   }
 }
 
-export default NftContentType;
+export default NftContentType

@@ -1,14 +1,15 @@
-import { NftElement } from '../../../util/nfts/types';
 import { useModal } from '@components'
-import Card from '../Card/Card';
-import NftContentType from '../NftContentType/NftContentType';
-import NftDescription from '../NftDescription/NftDescription';
-import NftPreview from '../NftPreview/NftPreview';
-import {NftModal } from '../NftModal/NftModal';
-import styles from './NftCard.module.css';
+
+import { NftElement } from '../../../util/nfts/types'
+import Card from '../Card/Card'
+import NftContentType from '../NftContentType/NftContentType'
+import NftDescription from '../NftDescription/NftDescription'
+import { NftModal } from '../NftModal/NftModal'
+import NftPreview from '../NftPreview/NftPreview'
+import styles from './NftCard.module.css'
 
 const RenderCard = (props: NftElement) => {
-  const { nft } = props;
+  const { nft } = props
   return (
     <Card
       header={<NftPreview nft={nft} />}
@@ -19,27 +20,25 @@ const RenderCard = (props: NftElement) => {
         </div>
       }
     />
-  );
-};
+  )
+}
 
 export function NftCard(props: NftElement) {
-  const { nft } = props;
-  const { openModal } = useModal();
+  const { nft } = props
+  const { openModal } = useModal()
   if (!nft) {
-    return <RenderCard {...props} />;
+    return <RenderCard {...props} />
   }
   return (
     <div
       onClick={() => {
-        openModal(<NftModal nft={nft} />);
+        openModal(<NftModal nft={nft} />)
       }}
       className={styles['nft-link']}
     >
       <RenderCard {...props} />
     </div>
-  );
+  )
 }
 
-export default NftCard;
-
-
+export default NftCard

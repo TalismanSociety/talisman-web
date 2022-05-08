@@ -1,32 +1,32 @@
-import { encodeAddress } from '@polkadot/keyring';
+import { encodeAddress } from '@polkadot/keyring'
 
 interface FetcherURL {
-  address: string;
+  address: string
 }
 
 export abstract class BaseFetcher {
-  abstract baseFetchUrl: string;
-  abstract baseCollectibleUrl: string;
-  baseWeb2Url = 'https://talisman.mypinata.cloud/';
+  abstract baseFetchUrl: string
+  abstract baseCollectibleUrl: string
+  baseWeb2Url = 'https://talisman.mypinata.cloud/'
 
   toWeb2Url(metadataUrl: string): string {
-    return metadataUrl?.replace('ipfs://', this.baseWeb2Url);
+    return metadataUrl?.replace('ipfs://', this.baseWeb2Url)
   }
 
   collectibleUrl(id: string, srcUrl: string): string | undefined {
     if (!srcUrl.startsWith(this?.baseFetchUrl as string)) {
-      return undefined;
+      return undefined
     }
-    return `${this.baseCollectibleUrl}/${id}`;
+    return `${this.baseCollectibleUrl}/${id}`
   }
 
   fetchUrl({ address }: FetcherURL): string | null {
-    const baseFetchUrl = this.baseFetchUrl;
+    const baseFetchUrl = this.baseFetchUrl
     try {
-      const kusamaAddress = encodeAddress(address, 2);
-      return `${baseFetchUrl}/${kusamaAddress}`;
+      const kusamaAddress = encodeAddress(address, 2)
+      return `${baseFetchUrl}/${kusamaAddress}`
     } catch (err) {
-      return null;
+      return null
     }
   }
 }

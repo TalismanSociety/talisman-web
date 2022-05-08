@@ -1,10 +1,10 @@
 import '@google/model-viewer'
 
+import PDFPlaceholder from '@assets/pdf-generic.png'
 import { MediaPreviewProps } from '@util/nfts/types'
 import React, { EmbedHTMLAttributes, ImgHTMLAttributes, MediaHTMLAttributes, cloneElement } from 'react'
 
 import DualRingLoader from '../DualRingLoader/DualRingLoader'
-import PDFPlaceholder from '@assets/pdf-generic.png'
 import { NftPreviewProps } from '../NftView/NftView'
 import PlaceCenter from '../PlaceCenter/PlaceCenter'
 import useNftAsset from '../useNftAsset/useNftAsset'
@@ -58,12 +58,9 @@ export function MediaPreview(props: MediaPreviewProps) {
         />
       )
     case 'application':
-      return <img loading="lazy" alt={imgProps.alt} {...imgProps} 
-      src={thumb ? 
-        thumb : PDFPlaceholder
-      } />
-      // const { src, ...embedProps } = mediaElementProps as EmbedHTMLAttributes<HTMLEmbedElement>
-      // return <embed src={`${src}#toolbar=0`} {...embedProps} />
+      return <img loading="lazy" alt={imgProps.alt} {...imgProps} src={thumb ? thumb : PDFPlaceholder} />
+    // const { src, ...embedProps } = mediaElementProps as EmbedHTMLAttributes<HTMLEmbedElement>
+    // return <embed src={`${src}#toolbar=0`} {...embedProps} />
     default:
       if (!imgProps.src) {
         return null
