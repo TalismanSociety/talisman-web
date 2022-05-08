@@ -1,16 +1,17 @@
-import { act, renderHook } from '@testing-library/react-hooks';
-import useContentType from './useContentType';
+import { act, renderHook } from '@testing-library/react-hooks'
+
+import useContentType from './useContentType'
 
 describe('useContentType', () => {
   it('should render successfully', () => {
-    const { result } = renderHook(() => useContentType());
+    const { result } = renderHook(() => useContentType())
 
-    expect(result.current.count).toBe(0);
+    expect(result.current.count).toBe(0)
 
     act(() => {
-      result.current.increment();
-    });
+      result.current.increment()
+    })
 
-    expect(result.current.count).toBe(1);
-  });
-});
+    expect(result.current.count).toBe(1)
+  })
+})

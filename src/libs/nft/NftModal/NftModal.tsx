@@ -3,7 +3,14 @@ import { Suspense } from 'react'
 import styled from 'styled-components'
 
 import NftFullView from '../NftFullView/NftFullView'
-import { NftMainDetails, NftCollectionData, NftAttributes, NftButtons, NftDescription, NftNetwork } from '../NftFullViewInformation/NftFullViewInformation'
+import {
+  NftAttributes,
+  NftButtons,
+  NftCollectionData,
+  NftDescription,
+  NftMainDetails,
+  NftNetwork,
+} from '../NftFullViewInformation/NftFullViewInformation'
 import useNftAsset from '../useNftAsset/useNftAsset'
 import { useNftCollectionStats } from '../useNftCollectionStats/useNftCollectionStats'
 
@@ -11,7 +18,11 @@ const NftInformation = styled(({ className, nftData, nftCollectionStats }) => {
   return (
     <div className={className}>
       <NftMainDetails name={nftData?.name} collection={nftData?.collection} />
-      <NftCollectionData editionData={nftCollectionStats.totalNFTs} nftId={nftData.id} price={nftCollectionStats.floor} />
+      <NftCollectionData
+        editionData={nftCollectionStats.totalNFTs}
+        nftId={nftData.id}
+        price={nftCollectionStats.floor}
+      />
       <NftDescription description={nftData?.description} />
       <NftAttributes properties={nftData?.properties} />
       {/* <NftNetwork network={"RMRK2"}/> */}

@@ -1,5 +1,5 @@
-import styled from 'styled-components'
 import { useTranslation } from 'react-i18next'
+import styled from 'styled-components'
 
 export const NftMainDetails = styled(({ nftId, collection, name, className }) => {
   return (
@@ -10,13 +10,13 @@ export const NftMainDetails = styled(({ nftId, collection, name, className }) =>
 })`
   margin-bottom: 1em;
 `
-  
+
 export const NftCollectionData = styled(({ editionData, nftId, price, className }) => {
   const { t } = useTranslation('nft-viewer')
   return (
     <div className={className}>
-      <NftEdition editionData={editionData} nftId={nftId}/>
-      <NftFloorPrice price={price}/>
+      <NftEdition editionData={editionData} nftId={nftId} />
+      <NftFloorPrice price={price} />
     </div>
   )
 })`
@@ -29,33 +29,36 @@ const NftGetEdition = (nftId: string): number => {
   let newString = parseInt(nftId.split('-')[4].replace(/^0+/, ''))
   return newString
 }
-  
+
 export const NftEdition = styled(({ editionData, nftId, className }) => {
-  const { t } = useTranslation('nft-viewer');
+  const { t } = useTranslation('nft-viewer')
 
   return (
-      <div className={className}>
-          <h1>{t('Edition')}</h1>
-          <p className='nft-main-val'># {NftGetEdition(nftId)}<span className='nft-sub-val'> / {editionData}</span></p>
-      </div>
+    <div className={className}>
+      <h1>{t('Edition')}</h1>
+      <p className="nft-main-val">
+        # {NftGetEdition(nftId)}
+        <span className="nft-sub-val"> / {editionData}</span>
+      </p>
+    </div>
   )
 })`
   width: 55%;
 `
-  
-export  const NftFloorPrice = styled(({ price, className }) => {
-  const { t } = useTranslation('nft-viewer');
+
+export const NftFloorPrice = styled(({ price, className }) => {
+  const { t } = useTranslation('nft-viewer')
   return (
-      <div className={className}>
-          <h1>{t('Floor Price')}</h1>
-          <p className='nft-main-val'>{price} KSM</p>
-      </div>
+    <div className={className}>
+      <h1>{t('Floor Price')}</h1>
+      <p className="nft-main-val">{price} KSM</p>
+    </div>
   )
 })`
   margin-top: 0 !important;
   width: 45%;
 `
-  
+
 export const NftDescription = styled(({ description, className }) => {
   return (
     <div className={className}>
@@ -72,7 +75,7 @@ export const NftDescription = styled(({ description, className }) => {
     width: 350px;
   }
 `
-  
+
 export const NftAttributes = styled(({ properties, className }) => {
   const { t } = useTranslation('nft-viewer')
 
@@ -125,7 +128,7 @@ export const NftAttributes = styled(({ properties, className }) => {
     font-size: 16px;
   }
 `
-  
+
 export const NftNetwork = styled(({ network, className }) => {
   const { t } = useTranslation('nft-viewer')
   return (
@@ -141,7 +144,7 @@ export const NftNetwork = styled(({ network, className }) => {
     font-weight: 400;
   }
 `
-  
+
 export const NftButtons = styled(({ collectibleUrl, className }) => {
   const { t } = useTranslation('nft-viewer')
   return (
