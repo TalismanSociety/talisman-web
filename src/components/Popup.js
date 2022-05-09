@@ -3,21 +3,21 @@ import styled from 'styled-components'
 const Info = styled(({ text, children, className }) => (
   <div className={`popup ${className}`}>
     <div className="trigger">{children}</div>
-    <div className="content" dangerouslySetInnerHTML={{ __html: text }}/>
+    <div className="content" dangerouslySetInnerHTML={{ __html: text }} />
   </div>
 ))`
   position: relative;
   font-weight: var(--font-weight-regular);
 
-  .trigger{
+  .trigger {
     display: block;
     cursor: pointer;
-    >*{
+    > * {
       display: block;
     }
   }
 
-  .content{
+  .content {
     display: none;
     position: absolute;
     top: calc(100% + 0.5em);
@@ -32,8 +32,8 @@ const Info = styled(({ text, children, className }) => (
     min-width: 24rem;
   }
 
-  &:hover{
-    >.content{
+  &:hover {
+    > .content {
       display: block;
     }
   }

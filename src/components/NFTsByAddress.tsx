@@ -1,5 +1,5 @@
-import { useNftsByAddress } from '@libs/nft/useNftsByAddress/useNftsByAddress'
 import { NftCard } from '@libs/nft/NftCard/NftCard'
+import { useNftsByAddress } from '@libs/nft/useNftsByAddress/useNftsByAddress'
 import { device } from '@util/breakpoints'
 import styled from 'styled-components'
 

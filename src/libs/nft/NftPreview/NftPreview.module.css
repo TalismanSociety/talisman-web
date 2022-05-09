@@ -2,7 +2,8 @@
   position: relative;
   width: 100%;
   padding-bottom: 100%;
-  background-color: rgba(255, 255, 255, 0.2);
+  background-color: #333;
+  cursor: pointer;
   /* background-color: rgb(22, 22, 22); */
 }
 

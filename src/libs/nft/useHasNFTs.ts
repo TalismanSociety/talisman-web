@@ -1,5 +1,6 @@
 import { Account } from '@libs/talisman'
-import { useNfts, UseNftsOptions } from '../nft/useNfts/useNfts'
+
+import { UseNftsOptions, useNfts } from '../nft/useNfts/useNfts'
 
 export function useHasNFTs(accounts: Account[], options?: UseNftsOptions) {
   const addresses = accounts.map(account => account.address)

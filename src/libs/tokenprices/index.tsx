@@ -112,7 +112,7 @@ function _useTokenPrices(coins: Coin[]): [TokenPrices, (token: string) => void] 
     (token: string) => {
       // TODO: remove this patch & check coin.id as well as coin.symbol
       let coinCandidates = coins.filter(coin => coin.symbol === token.toLowerCase())
-      coinCandidates = coinCandidates.filter(candidate => (candidate.id !== "paralink-network"))
+      coinCandidates = coinCandidates.filter(candidate => candidate.id !== 'paralink-network')
 
       if (coinCandidates.length < 1) {
         console.error(`Failed to find token ${token}`)
