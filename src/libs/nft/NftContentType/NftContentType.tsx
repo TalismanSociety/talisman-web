@@ -1,13 +1,13 @@
-import { NftElement } from '../../../util/nfts/types'
-import useNftAsset from '../useNftAsset/useNftAsset'
-import styles from './NftContentType.module.css'
+import NFT3DIcon from '@assets/icons/NFT-3D-icon.png'
 // import { ReactComponent as PlayCircleIcon } from './play-circle.svg'
 // Icons Import
 import NFTAudioIcon from '@assets/icons/NFT-Audio-icon.png'
-import NFT3DIcon from '@assets/icons/NFT-3D-icon.png'
-import NFTVideoIcon from '@assets/icons/NFT-Video-icon.png'
 import NFTPDFIcon from '@assets/icons/NFT-PDF-icon.png'
+import NFTVideoIcon from '@assets/icons/NFT-Video-icon.png'
 
+import { NftElement } from '../../../util/nfts/types'
+import useNftAsset from '../useNftAsset/useNftAsset'
+import styles from './NftContentType.module.css'
 
 export type NftContentTypes = 'audio' | 'video' | 'image' | 'application' | 'model'
 
@@ -16,7 +16,7 @@ export function NftContentType(props: NftElement) {
   const { contentCategory: type } = useNftAsset(nft)
   switch (type) {
     case 'audio':
-      return <img src={NFTAudioIcon} className={styles['nft-content-type-root']} title="Audio"/>
+      return <img src={NFTAudioIcon} className={styles['nft-content-type-root']} title="Audio" />
     case 'video':
       return <img src={NFTVideoIcon} className={styles['nft-content-type-root']} title="Video" />
     case 'model':
