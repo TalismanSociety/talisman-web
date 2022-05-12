@@ -16,13 +16,13 @@ export function NftContentType(props: NftElement) {
   const { contentCategory: type } = useNftAsset(nft)
   switch (type) {
     case 'audio':
-      return <img src={NFTAudioIcon} className={styles['nft-content-type-root']} />
+      return <img src={NFTAudioIcon} className={styles['nft-content-type-root']} title="Audio"/>
     case 'video':
-      return <img src={NFTVideoIcon} className={styles['nft-content-type-root']} />
+      return <img src={NFTVideoIcon} className={styles['nft-content-type-root']} title="Video" />
     case 'model':
-      return <img src={NFT3DIcon} className={styles['nft-content-type-root']} />
+      return <img src={NFT3DIcon} className={styles['nft-content-type-root']} title="3D Model" />
     case 'application':
-      return <img src={NFTPDFIcon} className={styles['nft-content-type-root']} />
+      return <img src={NFTPDFIcon} className={styles['nft-content-type-root']} title="PDF / Application" />
     default:
       return null
   }
