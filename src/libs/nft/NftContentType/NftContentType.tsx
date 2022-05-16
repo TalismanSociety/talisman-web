@@ -3,10 +3,10 @@ import useNftAsset from '../useNftAsset/useNftAsset'
 import styles from './NftContentType.module.css'
 // import { ReactComponent as PlayCircleIcon } from './play-circle.svg'
 // Icons Import
-import NFTAudioIcon from '@assets/icons/NFT-Audio-icon.png'
-import NFT3DIcon from '@assets/icons/NFT-3D-icon.png'
-import NFTVideoIcon from '@assets/icons/NFT-Video-icon.png'
-import NFTPDFIcon from '@assets/icons/NFT-PDF-icon.png'
+import NFTAudioIcon from '@assets/icons/NFT-Audio-icon.svg'
+import NFT3DIcon from '@assets/icons/NFT-3D-icon.svg'
+import NFTVideoIcon from '@assets/icons/NFT-Video-icon.svg'
+import NFTPDFIcon from '@assets/icons/NFT-PDF-icon.svg'
 
 
 export type NftContentTypes = 'audio' | 'video' | 'image' | 'application' | 'model'

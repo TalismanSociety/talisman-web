@@ -2,7 +2,7 @@ import '@google/model-viewer'
 
 import PDFPlaceholder from '@assets/pdf-generic.png'
 import { MediaPreviewProps } from '@util/nfts/types'
-import React, { EmbedHTMLAttributes, ImgHTMLAttributes, MediaHTMLAttributes, cloneElement } from 'react'
+import { ImgHTMLAttributes, MediaHTMLAttributes, cloneElement } from 'react'
 
 import DualRingLoader from '../DualRingLoader/DualRingLoader'
 import { NftPreviewProps } from '../NftView/NftView'
