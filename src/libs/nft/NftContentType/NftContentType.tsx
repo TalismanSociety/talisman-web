@@ -1,9 +1,9 @@
+import NFT3DIcon from '@assets/icons/NFT-3D-icon.svg'
 // import { ReactComponent as PlayCircleIcon } from './play-circle.svg'
 // Icons Import
 import NFTAudioIcon from '@assets/icons/NFT-Audio-icon.svg'
-import NFT3DIcon from '@assets/icons/NFT-3D-icon.svg'
-import NFTVideoIcon from '@assets/icons/NFT-Video-icon.svg'
 import NFTPDFIcon from '@assets/icons/NFT-PDF-icon.svg'
+import NFTVideoIcon from '@assets/icons/NFT-Video-icon.svg'
 
 import { NftElement } from '../../../util/nfts/types'
 import useNftAsset from '../useNftAsset/useNftAsset'
