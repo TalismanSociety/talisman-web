@@ -14,5 +14,6 @@ export function useNftCollectionStats(nftId: string, rmrk2: boolean) {
   return {
     floor,
     totalNFTs: data ? data.totalNFTs : '...',
+    error,
   }
 }

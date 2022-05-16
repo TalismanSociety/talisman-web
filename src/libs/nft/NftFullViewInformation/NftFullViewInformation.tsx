@@ -12,7 +12,6 @@ export const NftMainDetails = styled(({ nftId, collection, name, className }) =>
 `
 
 export const NftCollectionData = styled(({ editionData, nftId, price, className }) => {
-  const { t } = useTranslation('nft-viewer')
   return (
     <div className={className}>
       <NftEdition editionData={editionData} nftId={nftId} />

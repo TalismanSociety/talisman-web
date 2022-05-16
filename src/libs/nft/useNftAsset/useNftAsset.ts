@@ -1,6 +1,5 @@
 import { RMRK1Fetcher } from '../fetchers/RMRK1Fetcher'
 import { RMRK2Fetcher } from '../fetchers/RMRK2Fetcher'
-import { useComposableProperties } from '../useComposableProperties/useComposableProperties'
 import useContentType from '../useContentType/useContentType'
 import useNftMetadata from '../useNftMetadata/useNftMetadata'
 

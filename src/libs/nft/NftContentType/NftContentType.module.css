@@ -1,6 +1,13 @@
 .nft-content-type-root {
   color: #a5a5a5;
-  /* TODO: Need to observe svgs when imported and used. The default one breaks the svg sizes. */
-  width: unset;
-  height: unset;
+  width: 1.3em;
+  height: 1.3em;
+}
+
+.tooltiptext {
+  visibility: hidden;
+}
+
+.nft-content-type-root:hover .tooltiptext {
+  visibility: visible;
 }
