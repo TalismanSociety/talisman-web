@@ -353,7 +353,7 @@ export const useTheme = () => useContext(Context)
 
 const Provider = ({ children }: PropsWithChildren<{}>) => {
   // theme stuff
-  const [theme, setTheme] = useState('dark')
+  const [theme, setTheme] = useState<'dark' | 'light'>('dark')
   const toggle = () => setTheme(theme === 'dark' ? 'light' : 'dark')
   const set = (mode: string) => setTheme(mode === 'dark' ? 'dark' : 'light')
 

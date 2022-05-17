@@ -2,6 +2,9 @@ import { ChainLogo, ExtensionStatusGate, Info, Panel, PanelSection, Pendor } fro
 import { calculateAssetPortfolioAmounts, usePortfolio, useTaggedAmountsInPortfolio } from '@libs/portfolio'
 import { useAccountAddresses, useExtensionAutoConnect, useParachainDetailsById } from '@libs/talisman'
 import { useTokenPrice } from '@libs/tokenprices'
+import getBalances from '@libs/tokens/getBalances'
+import getChainList from '@libs/tokens/getChainList'
+import getTokenList from '@libs/tokens/getTokenList'
 import {
   Balance,
   BalanceWithTokens,
@@ -16,6 +19,7 @@ import { addBigNumbers, useFuncMemo } from '@talismn/util'
 import customRpcs from '@util/customRpcs'
 import { formatCommas, formatCurrency } from '@util/helpers'
 import { useMemo } from 'react'
+import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
@@ -67,6 +71,17 @@ const AssetItem = styled(({ id, balances, addresses, className }) => {
     pricedTokenBalances,
     addresses
   )
+
+  useEffect(() => {
+    ;(async () => {
+      const tokens = await getTokenList()
+      const chains = await getChainList()
+      const balances = await getBalances(addresses)
+
+      console.log({ tokens, chains, balances })
+    })()
+  }, [])
+
   return (
     <div className={className}>
       <Info title={name} subtitle={longName || name} graphic={<ChainLogo chain={chain} type="logo" size={4} />} />
