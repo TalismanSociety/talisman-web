@@ -32,7 +32,7 @@ export const useChainByGenesis = _useChainByGenesis
 
 /* publically exposed provider */
 const Provider = ({ children }) => (
-  <Subquery.Provider uri="https://api.subquery.network/sq/TalismanSociety/kusama-crowdloans">
+  <Subquery.Provider uri="https://api.subquery.network/sq/subvis-io/kusama-crowdloans-and-auctions-v2">
     <Extension.Provider>
       <Chainmeta.Provider>
         <Account.Provider>

@@ -35,7 +35,7 @@ export const SupportedRelaychains: { [key: number]: Relaychain } = {
     name: 'Kusama',
     rpc: 'wss://kusama-rpc.polkadot.io',
     genesisHash: '0xb0a8d493285c2df73290dfb7e61f870f17b41801197a149ca93654499ea3dafe',
-    subqueryCrowdloansEndpoint: 'https://api.subquery.network/sq/TalismanSociety/kusama-crowdloans',
+    subqueryCrowdloansEndpoint: 'https://api.subquery.network/sq/subvis-io/kusama-crowdloans-and-auctions-v2',
     subscanUrl: 'https://kusama.subscan.io',
     tokenDecimals: 12,
     tokenSymbol: 'KSM',

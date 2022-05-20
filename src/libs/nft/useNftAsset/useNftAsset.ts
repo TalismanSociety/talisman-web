@@ -44,11 +44,11 @@ export function useNftAsset(nft: any) {
   const previewSrc = previewAnimationUrl || previewImageUrl
   const properties = nftMetadata?.properties || {}
   const collectibleUrl = getNftCollectibleUrl(nft)
-  const collectionId = nft?.collectionId
+  // const collectionId = nft?.collectionId
   const id = nft?.id
   const audioUrl = contentCategory === 'audio' ? RMRK1.toWeb2Url(nftMetadata?.mediaUri) : null
   const thumb = nft?.primaryResource?.thumb
-  const isRMRK2 = nft?.primaryResource ? true : false
+  // const isRMRK2 = nft?.primaryResource ? true : false
 
   // const stats = nft?.primaryResource?.base ? RMRK1.toWeb2Url(nft?.primaryResource?.metadata) : null
 
@@ -61,7 +61,7 @@ export function useNftAsset(nft: any) {
     previewSrc,
     name,
     id,
-    isRMRK2,
+    // isRMRK2,
     description,
     imageUrl,
     thumb,
@@ -72,7 +72,7 @@ export function useNftAsset(nft: any) {
     contentExtension,
     contentType,
     collection,
-    collectionId,
+    // collectionId,
     collectibleUrl,
     ...restMetadata,
   }
