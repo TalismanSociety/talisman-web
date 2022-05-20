@@ -1065,7 +1065,7 @@ export const parachainDetails: ParachainDetails[] = [
   },
   {
     id: '2-2116',
-    name: 'Tanganika Network',
+    name: 'Tanganika Network (DHX)',
     slug: 'tanganika',
     token: 'DHX',
     subtitle:
