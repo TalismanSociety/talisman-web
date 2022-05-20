@@ -79,9 +79,7 @@ export const NftModal = styled(({ className, nft }) => {
     <div className={className}>
       <NftFullView nft={nft} />
       <Suspense fallback={null}>
-        <NftInformation nftData={nftData} 
-        nftCollectionStats={nftCollectionData.collectionData} 
-        />
+        <NftInformation nftData={nftData} nftCollectionStats={nftCollectionData.collectionData} />
       </Suspense>
     </div>
   )

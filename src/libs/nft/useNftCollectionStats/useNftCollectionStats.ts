@@ -3,7 +3,7 @@ import useSWR from 'swr'
 
 const fetcher = (url: string) => fetch(url).then(res => res.json())
 
-export function useNftCollectionStats(nft : any) {
+export function useNftCollectionStats(nft: any) {
   const collectionId = nft?.collectionId
   const isRMRK2 = nft?.primaryResource ? true : false
 
@@ -25,6 +25,6 @@ export function useNftCollectionStats(nft : any) {
 
   return {
     isLoading: nft && !error && data,
-    collectionData
+    collectionData,
   }
 }
