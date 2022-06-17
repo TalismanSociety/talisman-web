@@ -13,8 +13,6 @@ export function useNftCollectionStats(nft : any) {
 
   const { data, error } = useSWR(fetchURL + '/' + collectionId, fetcher)
 
-  console.log(data)
-
   let floor = data ? (parseFloat(data.floor) / 1000000000000).toFixed(3) : '...'
 
   let collectionData = {

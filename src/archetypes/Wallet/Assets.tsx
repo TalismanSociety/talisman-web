@@ -28,7 +28,6 @@ const hasBalance = (balances: Array<Balance>, addresses?: Array<string>) => {
 
 const AssetItem = styled(({ id, balances, addresses, className }) => {
   const chain = useChain(id)
-
   const { status, accounts } = useExtensionAutoConnect()
   const { parachainDetails } = useParachainDetailsById(id)
   const isMoonriver = ['Moonriver', 'Moonbeam'].includes(parachainDetails?.name as string)

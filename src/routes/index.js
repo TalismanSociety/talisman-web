@@ -8,6 +8,7 @@ import Home from './Home'
 import NFTsPage from './NFTsPage'
 import SpiritKeysPage from './SpiritKeysPageV2'
 import Wallet from './Wallet'
+import TransactionHistory from './TransactionHistory'
 
 const Routes = () => (
   <Switch>
@@ -42,6 +43,11 @@ const Routes = () => (
     <Route exact path="/buy">
       <Layout>
         <Buy />
+      </Layout>
+    </Route>
+    <Route exact path="/transaction-history">
+      <Layout>
+        <TransactionHistory />
       </Layout>
     </Route>
     <Route path="*">
