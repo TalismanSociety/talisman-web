@@ -74,7 +74,7 @@ const TransactionItem = styled(({ id, method, section, chainId, createdAt, signe
       </div>
 
 
-      <Info title="Fee" subtitle="0.01 KSM / $0.0111" />
+      {/* <Info title="Fee" subtitle="0.01 KSM / $0.0111" /> */}
 
       <a href="https://kusama.subscan.io/extrinsic/" target='_blank' rel='noreferrer' className='external-link'>
         <ExternalLink />
@@ -96,6 +96,7 @@ const TransactionItem = styled(({ id, method, section, chainId, createdAt, signe
 
   > *:last-child {
     text-align: right;
+
   }
 
 

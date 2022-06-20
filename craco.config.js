@@ -126,5 +126,10 @@ const TalismanLibsFastRefreshPlugin = {
 }
 
 module.exports = {
-  plugins: [StyledComponentsPlugin, ImportAliasesPlugin, ImportMetaLoaderPlugin, TalismanLibsFastRefreshPlugin],
+  plugins: [
+    StyledComponentsPlugin, 
+    ImportAliasesPlugin, 
+    ImportMetaLoaderPlugin, 
+    TalismanLibsFastRefreshPlugin,
+  ],
 }

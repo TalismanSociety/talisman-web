@@ -74,7 +74,7 @@ export const useTransactions = (initialAddress: string) => {
   )
 
 	// the query object
-	const [getTxs, { data = [], loading, error }] = useLazyQuery(TX_QUERY, {client: apolloClient});
+	const [getTxs, { data = [], loading, error }] = useLazyQuery(TX_QUERY, {client: apolloClient });
 
 	// handle new incoming data
 	useEffect(() => {
@@ -140,7 +140,11 @@ export const useTransactions = (initialAddress: string) => {
 	}
 }
 
-const txCategories = {
+type TXCategories = {
+	[key: string]: string[]
+}
+
+const txCategories : TXCategories = {
 	Transfer : [
 		'balances.transfer',
 		'balances.transferKeepAlive',
@@ -149,6 +153,22 @@ const txCategories = {
 	System : [
 		'system.remark',
 		'system.remark_with_event',
+	],
+	Staking : [
+		'staking.bond',
+		'staking.unbond',
+		'staking.withdraw_unbonded',
+	],
+	Crowdloan: [
+		'crowdloan.add_memo',
+		'crowdloan.contribute',
+		'crowdloan.contribute_all',
+		'crowdloan.create',
+		'crowdloan.dissolve',
+		'crowdloan.edit',
+		'crowdloan.poke',
+		'crowdloan.refund',
+		'crowdloan.withdraw'
 	],
 	Batch : [
 		'utility.batch',
