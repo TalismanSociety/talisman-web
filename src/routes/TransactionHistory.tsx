@@ -4,10 +4,7 @@ import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 import { PanelSection } from '@components'
 import { List } from '@archetypes/Transaction'
-import { useAccountAddresses } from '@libs/talisman'
-//import { useURLParams } from '@libs/txhistory'
-//import { useEffect, useState } from 'react'
-
+import { useAllAccountAddresses } from '@libs/talisman'
 
 const ExtensionUnavailable = styled(props => {
   const { t } = useTranslation()
@@ -39,25 +36,14 @@ const ExtensionUnavailable = styled(props => {
 `
 
 const TransactionHistory = styled(({ className } : { className : string }) => {
-
-  // URL Address is recieved first
-  // then the account addresses is recieved from the wallet (Slight delay about half a second)
-  // This triggers the useEffect
-
-  const addresses = useAccountAddresses()
-  // Returns an array [the selected account]
-
-  // const [address, setAddress] = useState<string>(addresses[0])
-
-  // useEffect(() => {
-  //   setAddress(addresses[0])
-  // }, [addresses])
+  
+  const addresses = useAllAccountAddresses()
 
   return (
     <section className={className}>
       <h1>Transaction History</h1>
       <ExtensionStatusGate unavailable={<ExtensionUnavailable />}>
-        <List address={addresses[0]} />
+        <List addresses={addresses} />
       </ExtensionStatusGate>
     </section>
   )

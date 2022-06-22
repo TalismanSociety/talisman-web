@@ -2,35 +2,36 @@ import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 import Item from './Item'
 import { useTransactions } from './store'
-import { Button, Field, Panel } from '@components'
-import { Account, Wallet } from '@archetypes'
-import { useEffect } from 'react'
+import { Button, Panel } from '@components'
+import { Account } from '@archetypes'
 import { useURLParams } from '@libs/txhistory'
 
-type IProps = {
-  address: string
+type ITransactionListProps = {
+  addresses: string[]
   className?: string
 }
 
-const TransactionList = ({ address, className }: IProps) => {
+const TransactionList = ({ addresses = [], className }: ITransactionListProps) => {
   const { t } = useTranslation()
+
+  const urlAddress = useURLParams(['address'])[0]
 
   const {
       changeAddress,
+      address,
       loadMore,
       hasMore,
       transactions,
       status
-  } = useTransactions(address)
-
-  useEffect(() => {
-    changeAddress(address)
-  }, [address, changeAddress])
+  } = useTransactions(addresses[0])
 
   return (
     <section className={`transaction-list ${className}`}>
         <header>
-          <Account.Button />
+          <Account.Picker 
+            additionalAccounts={[{name: urlAddress, address: urlAddress}]} 
+            onChange={({address}: any) => changeAddress(address)}
+          />
         </header>
 
           {['INITIALISED', 'PROCESSING'].includes(status) 
@@ -62,14 +63,12 @@ const TransactionList = ({ address, className }: IProps) => {
 const StyledTransactionList = styled(TransactionList)`
   >header{
     padding-bottom: 1rem;
-    // border-bottom: 1px solid red;
-    margin-bottom: 1em
+    margin-bottom: 1em;
+
+    .account-picker{
+      //width: 500px
+    }
   }
-
-  // >article{
-  //   margin-top: 1rem
-
-  // }
 
   >footer{
     padding-top: 1rem;
