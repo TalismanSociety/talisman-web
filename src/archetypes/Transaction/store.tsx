@@ -66,12 +66,14 @@ export const useTransactions = (initialAddress: string|undefined) => {
 
 	// create a query client
 	const apolloClient = useMemo(
-    () =>
-      new ApolloClient({
-        link: new BatchHttpLink({ uri: 'http://localhost:4350/graphql', batchMax: 999, batchInterval: 20 }),
+    () => {
+			const GRAPH_URI = process.env.REACT_APP_TX_GRAPHQL_ENDPOINT || 'http://localhost:4350/graphql'
+
+      return new ApolloClient({
+        link: new BatchHttpLink({ uri: GRAPH_URI, batchMax: 999, batchInterval: 20 }),
         cache: new InMemoryCache(),
-      }),
-    []
+      })
+		}, []
   )
 
 	// the query object
@@ -155,7 +157,7 @@ const txCategories : TXCategories = {
 	Transfer : [
 		'balances.transfer',
 		'balances.transferKeepAlive',
-		'balances.transfer_all'
+		'balances.transferAll'
 	],
 	System : [
 		'system.remark',
