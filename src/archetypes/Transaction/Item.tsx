@@ -44,8 +44,6 @@ const TransactionItem = styled(({ id, blockNumber, indexInBlock, method, section
 
   const { typeCategory } = useTypeCategory(`${section}.${method}`)
 
-
-  
   return (
     <PanelSection  className={className}>
       <Info 
