@@ -2,10 +2,13 @@ import { gql } from "@apollo/client";
 
 export const TX_QUERY = gql`
   query ($address: String!, $count: Float, $lastId: String) {
-    transactionsByAccount (address : $address, count : $count, lastId : $lastId) {
+    transactionsByAddress (address : $address, count : $count, lastId : $lastId) {
       id
+      extrinsicId
       chainId
+      name
       blockNumber
+      indexInBlock
       createdAt
       section
       method

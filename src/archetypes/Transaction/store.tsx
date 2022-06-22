@@ -43,6 +43,7 @@ const transactionReducer = (state: TTransaction[], action: reducerAction) => {
 	return [...state];
 };
 
+const initialId = '9999999999999--9999999999-999999-fffff--zzzzzzzz'
 
 // add the transaction fetching hook here
 export const useTransactions = (initialAddress: string) => {
@@ -52,7 +53,7 @@ export const useTransactions = (initialAddress: string) => {
 	// the last id fetched so we know where to start the fetching next time
 	// set this initially to a very large number - larger than the highest ID we can store
 	// maybe a better way to do this is to handle undefined on the backend
-	const [lastId, setLastId] = useState<string>('9999999999999999999999999999999999')
+	const [lastId, setLastId] = useState<string>(initialId)
 
 	// T/F boolean based on the number of results from the last query
 	const [hasMore, setHasMore] = useState<boolean>(true)
@@ -74,13 +75,13 @@ export const useTransactions = (initialAddress: string) => {
   )
 
 	// the query object
-	const [getTxs, { data = [], loading, error }] = useLazyQuery(TX_QUERY, {client: apolloClient });
-
+	const [getTxs, { data = [], loading, error }] = useLazyQuery(TX_QUERY, {client: apolloClient});
+		
 	// handle new incoming data
 	useEffect(() => {
 		if(!!loading||!!error) return
 
-		const txs = data?.transactionsByAccount||[]
+		const txs = data?.transactionsByAddress||[]
 		
 		if(!txs.length) {
 			setHasMore(false)
@@ -112,6 +113,11 @@ export const useTransactions = (initialAddress: string) => {
 	// clear existing items when address is changed
 	useEffect(() => {
 		if(!address) return
+
+		// reset the last ID to a high number
+		setLastId(initialId)
+		//1655749404569--0010830700-000002-b7c9b--polkadot
+		
 		// TODO: race condition sometimes when apollo is cached
 		dispatch({type: 'CLEAR'})
 	}, [address])
@@ -128,6 +134,7 @@ export const useTransactions = (initialAddress: string) => {
 	// we can only set the lastID if we have > 1 TXs
 	// this will trigger refetch
 	const loadMore = useCallback(() => {
+		// dispatch({type: 'CLEAR'})
 		!!transactions.length && setLastId(transactions[transactions.length-1].id)
 	}, [transactions])
 
@@ -183,4 +190,11 @@ export const useTypeCategory = ( extrinsicType : string ) => {
 	if(!typeCategory) return { typeCategory : "Other"}
 
 	return { typeCategory }
+}
+
+export const externalURLDefined = (chainId : string, blockNumber : string, indexInBlock : string) => {
+
+	const externalURL = `https://${chainId}.subscan.io/extrinsic/${blockNumber}-${indexInBlock}`
+
+	return externalURL
 }

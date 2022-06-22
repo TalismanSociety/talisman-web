@@ -1,18 +1,18 @@
 
 import styled from 'styled-components'
-import { TTransaction } from './types'
-import { ChainLogo, Info, Panel, PanelSection } from '@components'
+import { ChainLogo, Info, PanelSection } from '@components'
 import Logo  from './Logo'
-import { truncateString } from '@util/helpers'
 import { useChain } from '@talismn/api-react-hooks'
 import { ReactComponent as ArrowRight } from '@icons/arrow-right.svg'
 import { ReactComponent as ExternalLink } from '@icons/external-link.svg'
-import moment from 'moment';
-import { useTypeCategory } from './store'
-// import { PanelSection } from '@components'
+import { externalURLDefined, useTypeCategory } from './store'
+import { toDate } from 'date-fns-tz'
+import { formatDistanceToNow } from 'date-fns'
 
 export type TProps = {
   id: string
+  blockNumber: string
+  indexInBlock: string
   method: string
   section: string
   chainId: string
@@ -23,7 +23,8 @@ export type TProps = {
   className: string
 }
 
-const TransactionItem = styled(({ id, method, section, chainId, createdAt, signer, address, direction, className } : TProps) => {
+const TransactionItem = styled(({ id, blockNumber, indexInBlock, method, section, chainId, createdAt, signer, address, direction, className } : TProps) => {
+
 
   // Temporary ========
   let chainNumericalID : string
@@ -41,15 +42,15 @@ const TransactionItem = styled(({ id, method, section, chainId, createdAt, signe
   
   const chain = useChain(chainNumericalID)
 
-  const transactionDate = new Date(createdAt)
-
   const { typeCategory } = useTypeCategory(`${section}.${method}`)
+
+
   
   return (
     <PanelSection  className={className}>
       <Info 
         title={typeCategory} 
-        subtitle={moment(transactionDate).fromNow()}
+        subtitle={formatDistanceToNow(toDate(createdAt, { timeZone : 'UTC'}), { addSuffix: true, includeSeconds: true })}
         graphic={<Logo type={direction} />}
       />
 
@@ -74,11 +75,13 @@ const TransactionItem = styled(({ id, method, section, chainId, createdAt, signe
       </div>
 
 
-      {/* <Info title="Fee" subtitle="0.01 KSM / $0.0111" /> */}
+      {/* <Info title="Fee" subtitle="-" /> */}
 
-      <a href="https://kusama.subscan.io/extrinsic/" target='_blank' rel='noreferrer' className='external-link'>
-        <ExternalLink />
-      </a>
+      <div className='external-link'>
+        <a href={externalURLDefined(chainId, blockNumber, indexInBlock)} target='_blank' rel='noreferrer'>
+          <ExternalLink />
+        </a>
+      </div>
       
     </PanelSection>
   )
@@ -94,16 +97,11 @@ const TransactionItem = styled(({ id, method, section, chainId, createdAt, signe
     align-items: center;
   }
 
-  > *:last-child {
-    text-align: right;
 
-  }
-
-
-  > *:nth-child(1){ width: 20% }
-  > *:nth-child(2){ width: 60% }
-  > *:nth-child(3){ width: 15% }
-  > *:nth-child(4){ width: 5% }
+  > *:nth-child(1){ width: 30%; }
+  > *:nth-child(2){ width 50%; }
+  > *:nth-child(3){ width 20%; }
+  // > *:nth-child(4){ ; }
 
 
   >.tofrom{
@@ -142,8 +140,9 @@ const TransactionItem = styled(({ id, method, section, chainId, createdAt, signe
 
   .external-link {
     display: flex;
-    justify-content: center;
+    justify-content: flex-end;
     text-align: center;
+    padding-right: 1em;
   }
 
 `

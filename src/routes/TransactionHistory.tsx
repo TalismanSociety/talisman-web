@@ -5,8 +5,8 @@ import styled from 'styled-components'
 import { PanelSection } from '@components'
 import { List } from '@archetypes/Transaction'
 import { useAccountAddresses } from '@libs/talisman'
-import { useURLParams } from '@libs/txhistory'
-import { useEffect, useState } from 'react'
+//import { useURLParams } from '@libs/txhistory'
+//import { useEffect, useState } from 'react'
 
 
 const ExtensionUnavailable = styled(props => {
@@ -40,22 +40,24 @@ const ExtensionUnavailable = styled(props => {
 
 const TransactionHistory = styled(({ className } : { className : string }) => {
 
-  const urlAccountAddress = useURLParams(['address'])
+  // URL Address is recieved first
+  // then the account addresses is recieved from the wallet (Slight delay about half a second)
+  // This triggers the useEffect
+
   const addresses = useAccountAddresses()
+  // Returns an array [the selected account]
 
-  const [address, setAddress] = useState<string>(urlAccountAddress[0] || addresses[0])
+  // const [address, setAddress] = useState<string>(addresses[0])
 
-  // const addresses = [...urlAccountAddress, '12WNUbjKPfezJdSUL5vWJV95wPtBhFPQyKV9jpe4tcfyTmED']
-
-  useEffect(() => {
-    setAddress(addresses[0])
-  }, [addresses])
+  // useEffect(() => {
+  //   setAddress(addresses[0])
+  // }, [addresses])
 
   return (
     <section className={className}>
       <h1>Transaction History</h1>
       <ExtensionStatusGate unavailable={<ExtensionUnavailable />}>
-        <List address={address} />
+        <List address={addresses[0]} />
       </ExtensionStatusGate>
     </section>
   )

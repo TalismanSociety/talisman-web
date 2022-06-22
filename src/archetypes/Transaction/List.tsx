@@ -5,6 +5,7 @@ import { useTransactions } from './store'
 import { Button, Field, Panel } from '@components'
 import { Account, Wallet } from '@archetypes'
 import { useEffect } from 'react'
+import { useURLParams } from '@libs/txhistory'
 
 type IProps = {
   address: string
@@ -22,18 +23,9 @@ const TransactionList = ({ address, className }: IProps) => {
       status
   } = useTransactions(address)
 
-  // const result = transactions.reduce((acc, curr) => {
-  //   if (acc.some(e => e[0].createdAt.slice(0, 9) === curr.createdAt.slice(0, 9))) acc.filter(e => e[0].createdAt.slice(0, 9) === curr.createdAt.slice(0, 9))[0].push(curr)
-  //   else acc.push([curr])
-    
-  //   return acc
-  // }, [])
-
-  console.log(transactions)
-
   useEffect(() => {
     changeAddress(address)
-  }, [address])
+  }, [address, changeAddress])
 
   return (
     <section className={`transaction-list ${className}`}>
@@ -41,15 +33,17 @@ const TransactionList = ({ address, className }: IProps) => {
           <Account.Button />
         </header>
 
-          { transactions.length > 0 ? (
-            <Panel>{
-              transactions.map((tx: any) => 
-                <Item key={tx.id} {...tx} address={address} />
-              )}
-            </Panel>
-          ) : 
-            <div>No Transactions</div>
+          {['INITIALISED', 'PROCESSING'].includes(status) 
+            ? <div>LOADING</div>
+            : !transactions?.length 
+              ? <div>No Transactions</div>
+              : <Panel>{
+                transactions.map((tx: any) => 
+                  <Item key={tx.id} {...tx} address={address} />
+                )}
+              </Panel>
           }
+
         <footer>
           {/* TODO: use an existing button component */}
           <Button onClick={loadMore} disabled={!hasMore}>Load More</Button>
