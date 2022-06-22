@@ -7,7 +7,7 @@ import { BatchHttpLink } from '@apollo/client/link/batch-http'
 
 // consts
 const FETCH_LIMIT = 5
-const INITIAL_ID = '9999999999999--9999999999-999999-fffff--zzzzzzzz'
+const INITIAL_ID = '9999999999999--9999999999-999999-fffff--zzzzzzzzz'
 
 type reducerAction = {
 	type: string, 
