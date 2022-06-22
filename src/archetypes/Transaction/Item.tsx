@@ -1,13 +1,13 @@
 
 import styled from 'styled-components'
-import { ChainLogo, Info, PanelSection, Image } from '@components'
+import { Info, PanelSection } from '@components'
 import Logo  from './Logo'
-import { useChain } from '@talismn/api-react-hooks'
 import { ReactComponent as ArrowRight } from '@icons/arrow-right.svg'
 import { ReactComponent as ExternalLink } from '@icons/external-link.svg'
 import { externalURLDefined, useTypeCategory } from './store'
 import { toDate } from 'date-fns-tz'
 import { formatDistanceToNow } from 'date-fns'
+import { Chain } from '@archetypes'
 
 export type TProps = {
   id: string
@@ -35,18 +35,12 @@ const TransactionItem = styled(({ id, blockNumber, indexInBlock, method, section
         graphic={<Logo type={direction} />}
       />
 
-      {/* Create new component and flip children absed on type */}
+      {/* Create new component and flip children based on type */}
       <div className='tofrom' data-direction={direction}>
         <Info 
           title="You" 
           subtitle={direction.toLowerCase()} 
-          graphic={
-            <Image
-              src={`https://raw.githubusercontent.com/TalismanSociety/chaindata/main/assets/${chainId}/logo.svg`}
-              alt={`${chainId} logo`}
-              data-type={'logo'}
-            />
-          } 
+          graphic={<Chain.LogoById id={chainId}/>} 
           className='signer'
         />
 
@@ -55,18 +49,10 @@ const TransactionItem = styled(({ id, blockNumber, indexInBlock, method, section
         <Info 
           title={section} 
           subtitle={method}
-          graphic={
-            <Image
-              src={`https://raw.githubusercontent.com/TalismanSociety/chaindata/main/assets/${chainId}/logo.svg`}
-              alt={`${chainId} logo`}
-              data-type={'logo'}
-            />
-          }
+          graphic={<Chain.LogoById id={chainId}/>} 
           className='reciever'
         />
-
       </div>
-
 
       {/* <Info title="Fee" subtitle="-" /> */}
 
@@ -90,12 +76,9 @@ const TransactionItem = styled(({ id, blockNumber, indexInBlock, method, section
     align-items: center;
   }
 
-
   > *:nth-child(1){ width: 30%; }
   > *:nth-child(2){ width 50%; }
   > *:nth-child(3){ width 20%; }
-  // > *:nth-child(4){ ; }
-
 
   >.tofrom{
     display: flex;
