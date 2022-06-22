@@ -72,16 +72,6 @@ const AssetItem = styled(({ id, balances, addresses, className }) => {
     addresses
   )
 
-  useEffect(() => {
-    ;(async () => {
-      const tokens = await getTokenList()
-      const chains = await getChainList()
-      const balances = await getBalances(addresses)
-
-      console.log({ tokens, chains, balances })
-    })()
-  }, [])
-
   return (
     <div className={className}>
       <Info title={name} subtitle={longName || name} graphic={<ChainLogo chain={chain} type="logo" size={4} />} />
@@ -192,6 +182,17 @@ const Assets = styled(({ className }) => {
         .reduce(addBigNumbers, undefined),
     [totalAssetsUsdByAddress, accountAddresses]
   )
+
+  useEffect(() => {
+    ;(async () => {
+      if (addresses) {
+        const tokens = await getTokenList()
+        const chains = await getChainList()
+        const balances = await getBalances(addresses)
+        console.log({ tokens, chains, balances })
+      }
+    })()
+  }, [])
 
   return (
     <section className={`wallet-assets ${className}`}>
