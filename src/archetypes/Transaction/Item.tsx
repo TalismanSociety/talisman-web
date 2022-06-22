@@ -28,11 +28,11 @@ const TransactionItem = styled(({ id, blockNumber, indexInBlock, method, section
   const { typeCategory } = useTypeCategory(`${section}.${method}`)
 
   return (
-    <PanelSection  className={className}>
+    <PanelSection className={`transaction-item ${className}`}>
       <Info 
         title={typeCategory} 
         subtitle={formatDistanceToNow(toDate(createdAt, { timeZone : 'UTC'}), { addSuffix: true, includeSeconds: true })}
-        graphic={<Logo type={direction} />}
+        graphic={<Logo type={direction} className='category-logo'/>}
       />
 
       {/* Create new component and flip children based on type */}
@@ -95,16 +95,6 @@ const TransactionItem = styled(({ id, blockNumber, indexInBlock, method, section
       > *:last-child{ justify-content: flex-end; }
     }
 
-    .graphic{
-      .image{
-        font-size: var(--font-size-xxlarge);
-        width: 1em;
-        height: 1em;
-        border-radius: 50%;
-        display: block;
-      }
-    }
-
     .title,
     .subtitle{
       width: 12rem;
@@ -113,8 +103,23 @@ const TransactionItem = styled(({ id, blockNumber, indexInBlock, method, section
 
     >.signer{
       .title{
-        color: var(--color-primary);
+        font-weight: var(--font-weight-xbold)
       }
+    }
+  }
+
+  .category-logo,
+  .graphic .chain-logo{
+    font-size: 3.2rem;
+    width: 1em;
+    height: 1em;
+  }
+
+  .info{
+    font-size: var(--font-size-normal);
+    .title,
+    .subtitle{
+      font-weight: var(--font-weight-regular)
     }
   }
 
@@ -128,7 +133,6 @@ const TransactionItem = styled(({ id, blockNumber, indexInBlock, method, section
     text-align: center;
     padding-right: 1em;
   }
-
 `
 
 // Need to do a little CSS magic with ::after to get the border radius set accordingly.

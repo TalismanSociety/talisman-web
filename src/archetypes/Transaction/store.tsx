@@ -116,7 +116,6 @@ export const useTransactions = (initialAddress: string|undefined) => {
 
 		// reset the last ID to a high number
 		setLastId(INITIAL_ID)
-		//1655749404569--0010830700-000002-b7c9b--polkadot
 		
 		// TODO: race condition sometimes when apollo is cached
 		dispatch({type: 'CLEAR'})

@@ -34,16 +34,12 @@ const TransactionList = ({ addresses = [], className }: ITransactionListProps) =
           />
         </header>
 
-          {['INITIALISED', 'PROCESSING'].includes(status) 
-            ? <div>LOADING</div>
-            : !transactions?.length 
-              ? <div>No Transactions</div>
-              : <Panel>{
-                transactions.map((tx: any) => 
-                  <Item key={tx.id} {...tx} address={address} />
-                )}
-              </Panel>
-          }
+        {['INITIALISED', 'PROCESSING'].includes(status) 
+          ? <div>LOADING</div>
+          : !transactions?.length 
+            ? <div>No Transactions</div>
+            : <Panel className={'transaction-item-container'}>{transactions.map((tx: any) => <Item key={tx.id} {...tx} address={address} />)}</Panel>
+        }
 
         <footer>
           {/* TODO: use an existing button component */}
@@ -63,9 +59,15 @@ const StyledTransactionList = styled(TransactionList)`
     }
   }
 
+  .transaction-item{
+    transition: all 0.2s;
+    &:hover{
+      background: var(--color-activeBackground)
+    }
+  }
+
   >footer{
     padding-top: 1rem;
-    // border-top: 1px solid red;
     margin-top: 1em
   }
 `

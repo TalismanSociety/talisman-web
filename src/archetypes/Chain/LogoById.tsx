@@ -4,6 +4,7 @@ import styled from 'styled-components'
 export default styled(({ id, className }) => {
   return (
     <Image
+      className={`chain-logo ${className}`}
       src={`https://raw.githubusercontent.com/TalismanSociety/chaindata/main/assets/${id}/logo.svg`}
       alt={`${id} logo`}
       data-type={'logo'}

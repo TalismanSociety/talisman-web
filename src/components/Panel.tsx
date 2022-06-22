@@ -46,6 +46,7 @@ export default styled(({ title, subtitle, children, className, ...rest }) => (
   </div>
 ))<BasePanelProps>`
   width: 100%;
+  
 
   > h1 {
     display: flex;
@@ -64,6 +65,7 @@ export default styled(({ title, subtitle, children, className, ...rest }) => (
   }
 
   > .inner {
+    overflow: hidden;
     display: block;
     border-radius: 1.6rem;
     user-select: none;
