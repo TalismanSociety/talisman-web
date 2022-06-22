@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import styled, { css } from 'styled-components'
+import styled from 'styled-components'
 import { Button } from '@components'
 import { ReactComponent as ChevronDown } from '@icons/chevron-down.svg'
 import Identicon from '@polkadot/react-identicon'
@@ -48,9 +48,8 @@ const Dropdown = styled(
 )`
   background: rgb(${({ theme }) => theme?.background});
   font-size: 0.8em;
-  width: 22em;
   font-size: 1em;
-  //max-height: 64rem;
+  width: 150%;
   overflow: hidden;
   overflow-y: auto;
   border-radius: 1.2rem;
@@ -77,10 +76,6 @@ const Dropdown = styled(
       align-items: center;
       gap: 1rem;
       min-width: 0;
-    }
-
-    .left {
-      //flex: 0 1 60%;
     }
 
     .identicon {
@@ -168,11 +163,6 @@ const AccountPicker = styled(
       <div
         ref={nodeRef}
         className="account-picker"
-        style={{
-          display: 'inline-flex',
-          background: 'var(--color-controlBackground)',
-          borderRadius: '1rem',
-        }}
         onClick={() => setOpen(!open)}
       >
         <span className={`account-button ${className}`}>
@@ -208,7 +198,7 @@ const AccountPicker = styled(
   font-size: inherit;
   display: flex;
   align-items: center;
-  padding: 1rem;
+  padding: 1rem 0;
   position: relative;
 
   :hover {
@@ -217,13 +207,9 @@ const AccountPicker = styled(
 
   > .identicon {
     margin-right: 0.3em;
-    color: var(--color-primary);
-    background: var(--color-activeBackground);
-    border-radius: 100px;
     > svg,
     > img {
-      width: 2.5em;
-      height: 2.5em;
+      font-size: var(--font-size-xlarge);
     }
     img {
       border-radius: 999999999999rem;
@@ -270,14 +256,6 @@ const AccountPicker = styled(
       right: unset;
       left: 0;
     }
-  }
-
-  &.has-many-accounts {
-    ${props =>
-      props.narrow &&
-      css`
-        cursor: pointer;
-      `}
   }
 `
 

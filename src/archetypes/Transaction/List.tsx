@@ -29,7 +29,7 @@ const TransactionList = ({ addresses = [], className }: ITransactionListProps) =
     <section className={`transaction-list ${className}`}>
         <header>
           <Account.Picker 
-            additionalAccounts={[{name: urlAddress, address: urlAddress}]} 
+            additionalAccounts={urlAddress ? [{name: urlAddress, address: urlAddress}] : []} 
             onChange={({address}: any) => changeAddress(address)}
           />
         </header>
@@ -53,20 +53,13 @@ const TransactionList = ({ addresses = [], className }: ITransactionListProps) =
   )
 }
 
-
-// todo josh: styling
-//  - the header, item container, footer etc
-//  - the margin between elements 
-//
-// do not style the indlvidual elements here
-// style those in the component itself
 const StyledTransactionList = styled(TransactionList)`
   >header{
     padding-bottom: 1rem;
     margin-bottom: 1em;
 
     .account-picker{
-      //width: 500px
+      width: 500px
     }
   }
 
