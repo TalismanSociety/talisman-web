@@ -1,6 +1,6 @@
 
 import styled from 'styled-components'
-import { ChainLogo, Info, PanelSection } from '@components'
+import { ChainLogo, Info, PanelSection, Image } from '@components'
 import Logo  from './Logo'
 import { useChain } from '@talismn/api-react-hooks'
 import { ReactComponent as ArrowRight } from '@icons/arrow-right.svg'
@@ -25,23 +25,6 @@ export type TProps = {
 
 const TransactionItem = styled(({ id, blockNumber, indexInBlock, method, section, chainId, createdAt, signer, address, direction, className } : TProps) => {
 
-
-  // Temporary ========
-  let chainNumericalID : string
-  switch (chainId) {
-    case 'polkadot':
-      chainNumericalID = "0"
-      break;
-    case 'kusama':
-      chainNumericalID = "2"
-      break;
-    default:
-      chainNumericalID = "0"
-      break;
-  }
-  
-  const chain = useChain(chainNumericalID)
-
   const { typeCategory } = useTypeCategory(`${section}.${method}`)
 
   return (
@@ -57,7 +40,13 @@ const TransactionItem = styled(({ id, blockNumber, indexInBlock, method, section
         <Info 
           title="You" 
           subtitle={direction.toLowerCase()} 
-          graphic={<ChainLogo chain={chain} type="logo" size={4} />} 
+          graphic={
+            <Image
+              src={`https://raw.githubusercontent.com/TalismanSociety/chaindata/main/assets/${chainId}/logo.svg`}
+              alt={`${chainId} logo`}
+              data-type={'logo'}
+            />
+          } 
           className='signer'
         />
 
@@ -66,7 +55,13 @@ const TransactionItem = styled(({ id, blockNumber, indexInBlock, method, section
         <Info 
           title={section} 
           subtitle={method}
-          graphic={<ChainLogo chain={chain} type="logo" size={4} />}
+          graphic={
+            <Image
+              src={`https://raw.githubusercontent.com/TalismanSociety/chaindata/main/assets/${chainId}/logo.svg`}
+              alt={`${chainId} logo`}
+              data-type={'logo'}
+            />
+          }
           className='reciever'
         />
 
@@ -117,12 +112,20 @@ const TransactionItem = styled(({ id, blockNumber, indexInBlock, method, section
       > *:last-child{ justify-content: flex-end; }
     }
 
+    .graphic{
+      .image{
+        font-size: var(--font-size-xxlarge);
+        width: 1em;
+        height: 1em;
+        border-radius: 50%;
+        display: block;
+      }
+    }
+
     .title,
     .subtitle{
       width: 12rem;
       overflow: hidden;
-      // do elipses
-
     }
 
     >.signer{

@@ -188,7 +188,7 @@ const txCategories : TXCategories = {
 export const useTypeCategory = ( extrinsicType : string ) => {
 
 	const typeCategory = Object.keys(txCategories).find((key: string) => txCategories[key].includes(extrinsicType))
-	if(!typeCategory) return { typeCategory : "Other"}
+	if(!typeCategory) return { typeCategory : extrinsicType}
 
 	return { typeCategory }
 }
