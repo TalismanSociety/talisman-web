@@ -2,16 +2,9 @@ import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 import Item from './Item'
 import { useTransactions } from './store'
-<<<<<<< HEAD
-import { Button, Field, Panel, PanelSection } from '@components'
-import { ReactComponent as IconLoading } from '@assets/icons/loader.svg'
+import { Button, Panel, PanelSection } from '@components'
 import { ReactComponent as ArrowDown } from '@icons/arrow-right.svg'
-import { Account, Wallet } from '@archetypes'
-import { useEffect } from 'react'
-=======
-import { Button, Panel } from '@components'
 import { Account } from '@archetypes'
->>>>>>> 2b471576d489d4fcc7b58292aa54c24a7a5656b0
 import { useURLParams } from '@libs/txhistory'
 
 type ITransactionListProps = {
@@ -78,15 +71,11 @@ const StyledTransactionList = styled(TransactionList)`
 
   >footer{
     padding-top: 1rem;
-<<<<<<< HEAD
     // border-top: 1px solid red;
     margin-top: 1em;
     display: flex;
     align-items: center;
     justify-content: center;
-=======
-    margin-top: 1em
->>>>>>> 2b471576d489d4fcc7b58292aa54c24a7a5656b0
   }
 
   .arrow-down {
