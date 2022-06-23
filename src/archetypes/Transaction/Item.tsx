@@ -1,13 +1,13 @@
 
 import styled from 'styled-components'
-import { ChainLogo, Info, PanelSection } from '@components'
+import { Info, PanelSection } from '@components'
 import Logo  from './Logo'
-import { useChain } from '@talismn/api-react-hooks'
 import { ReactComponent as ArrowRight } from '@icons/arrow-right.svg'
 import { ReactComponent as ExternalLink } from '@icons/external-link.svg'
 import { externalURLDefined, useTypeCategory } from './store'
 import { toDate } from 'date-fns-tz'
 import { formatDistanceToNow } from 'date-fns'
+import { Chain } from '@archetypes'
 
 export type TProps = {
   id: string
@@ -24,24 +24,22 @@ export type TProps = {
 
 const TransactionItem = styled(({ id, blockNumber, indexInBlock, method, section, chainId, createdAt, ss58Format, direction, className } : TProps) => {
 
-  const chain = useChain("0")
-
   const { typeCategory } = useTypeCategory(`${section}.${method}`)
 
   return (
-    <PanelSection className={className} id={id}>
+    <PanelSection className={`transaction-item ${className}`}>
       <Info 
         title={typeCategory} 
         subtitle={formatDistanceToNow(toDate(createdAt, { timeZone : 'UTC'}), { addSuffix: true, includeSeconds: true })}
-        graphic={<Logo type={direction} />}
+        graphic={<Logo type={direction} className='category-logo'/>}
       />
 
-      {/* Create new component and flip children absed on type */}
+      {/* Create new component and flip children based on type */}
       <div className='tofrom' data-direction={direction}>
         <Info 
           title="You" 
           subtitle={direction.toLowerCase()} 
-          graphic={<ChainLogo chain={chain} type="logo" size={4} />} 
+          graphic={<Chain.LogoById id={chainId}/>} 
           className='signer'
         />
 
@@ -50,12 +48,10 @@ const TransactionItem = styled(({ id, blockNumber, indexInBlock, method, section
         <Info 
           title={section} 
           subtitle={method}
-          graphic={<ChainLogo chain={chain} type="logo" size={4} />}
+          graphic={<Chain.LogoById id={chainId}/>} 
           className='reciever'
         />
-
       </div>
-
 
       {/* <Info title="Fee" subtitle="-" /> */}
 
@@ -79,12 +75,9 @@ const TransactionItem = styled(({ id, blockNumber, indexInBlock, method, section
     align-items: center;
   }
 
-
   > *:nth-child(1){ width: 30%; }
   > *:nth-child(2){ width 50%; }
   > *:nth-child(3){ width 20%; }
-  // > *:nth-child(4){ ; }
-
 
   >.tofrom{
     display: flex;
@@ -105,14 +98,27 @@ const TransactionItem = styled(({ id, blockNumber, indexInBlock, method, section
     .subtitle{
       width: 12rem;
       overflow: hidden;
-      // do elipses
-
     }
 
     >.signer{
       .title{
-        color: var(--color-primary);
+        font-weight: var(--font-weight-xbold)
       }
+    }
+  }
+
+  .category-logo,
+  .graphic .chain-logo{
+    font-size: 3.2rem;
+    width: 1em;
+    height: 1em;
+  }
+
+  .info{
+    font-size: var(--font-size-normal);
+    .title,
+    .subtitle{
+      font-weight: var(--font-weight-regular)
     }
   }
 
@@ -126,7 +132,6 @@ const TransactionItem = styled(({ id, blockNumber, indexInBlock, method, section
     text-align: center;
     padding-right: 1em;
   }
-
 `
 
 // Need to do a little CSS magic with ::after to get the border radius set accordingly.

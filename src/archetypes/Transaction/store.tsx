@@ -5,7 +5,9 @@ import { TX_QUERY } from './consts';
 import { ApolloClient, InMemoryCache, NormalizedCacheObject, gql, useQuery } from '@apollo/client'
 import { BatchHttpLink } from '@apollo/client/link/batch-http'
 
-const fetchLimit = 5
+// consts
+const FETCH_LIMIT = 5
+const INITIAL_ID = '9999999999999--9999999999-999999-fffff--zzzzzzzz'
 
 type reducerAction = {
 	type: string, 
@@ -43,17 +45,15 @@ const transactionReducer = (state: TTransaction[], action: reducerAction) => {
 	return [...state];
 };
 
-const initialId = '9999999999999--9999999999-999999-fffff--zzzzzzzz'
-
-// add the transaction fetching hook here
-export const useTransactions = (initialAddress: string) => {
+// fetch all transaction based on the address provided
+export const useTransactions = (initialAddress: string|undefined) => {
 	// the current address to query
-	const [address, setAddress] = useState<string>(initialAddress)
+	const [address, setAddress] = useState<string|undefined>(initialAddress)
 
 	// the last id fetched so we know where to start the fetching next time
 	// set this initially to a very large number - larger than the highest ID we can store
 	// maybe a better way to do this is to handle undefined on the backend
-	const [lastId, setLastId] = useState<string>(initialId)
+	const [lastId, setLastId] = useState<string>(INITIAL_ID)
 
 	// T/F boolean based on the number of results from the last query
 	const [hasMore, setHasMore] = useState<boolean>(true)
@@ -66,12 +66,14 @@ export const useTransactions = (initialAddress: string) => {
 
 	// create a query client
 	const apolloClient = useMemo(
-    () =>
-      new ApolloClient({
-        link: new BatchHttpLink({ uri: 'http://localhost:4350/graphql', batchMax: 999, batchInterval: 20 }),
+    () => {
+			const GRAPH_URI = process.env.REACT_APP_TX_GRAPHQL_ENDPOINT || 'http://localhost:4350/graphql'
+
+      return new ApolloClient({
+        link: new BatchHttpLink({ uri: GRAPH_URI, batchMax: 999, batchInterval: 20 }),
         cache: new InMemoryCache(),
-      }),
-    []
+      })
+		}, []
   )
 
 	// the query object
@@ -89,7 +91,7 @@ export const useTransactions = (initialAddress: string) => {
 		}
 
 		dispatch({type: 'ADD_MULTI', data: [...txs]})
-		setHasMore(txs.length >= fetchLimit)
+		setHasMore(txs.length >= FETCH_LIMIT)
 		setStatus("SUCCESS")
 	}, [loading, error, data])
 
@@ -115,8 +117,7 @@ export const useTransactions = (initialAddress: string) => {
 		if(!address) return
 
 		// reset the last ID to a high number
-		setLastId(initialId)
-		//1655749404569--0010830700-000002-b7c9b--polkadot
+		setLastId(INITIAL_ID)
 		
 		// TODO: race condition sometimes when apollo is cached
 		dispatch({type: 'CLEAR'})
@@ -126,7 +127,7 @@ export const useTransactions = (initialAddress: string) => {
 	// trigger refetch if address or lastID change
 	useEffect(() => {
 		if(!address) return
-		getTxs({variables: { address, lastId, count: fetchLimit }})
+		getTxs({variables: { address, lastId, count: FETCH_LIMIT }})
 	}, [address, lastId, getTxs])
 
 
@@ -140,6 +141,7 @@ export const useTransactions = (initialAddress: string) => {
 
 	return {
 		changeAddress: setAddress,
+		address,
 		loadMore,
 		hasMore,
 		transactions,
@@ -155,7 +157,7 @@ const txCategories : TXCategories = {
 	Transfer : [
 		'balances.transfer',
 		'balances.transferKeepAlive',
-		'balances.transfer_all'
+		'balances.transferAll'
 	],
 	System : [
 		'system.remark',
@@ -187,7 +189,7 @@ const txCategories : TXCategories = {
 export const useTypeCategory = ( extrinsicType : string ) => {
 
 	const typeCategory = Object.keys(txCategories).find((key: string) => txCategories[key].includes(extrinsicType))
-	if(!typeCategory) return { typeCategory : "Other"}
+	if(!typeCategory) return { typeCategory : extrinsicType}
 
 	return { typeCategory }
 }
