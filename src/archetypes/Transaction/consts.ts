@@ -6,6 +6,7 @@ export const TX_QUERY = gql`
       id
       extrinsicId
       chainId
+      ss58Format
       name
       blockNumber
       indexInBlock

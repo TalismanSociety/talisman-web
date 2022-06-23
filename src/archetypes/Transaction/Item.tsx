@@ -17,35 +17,19 @@ export type TProps = {
   section: string
   chainId: string
   createdAt: string
-  signer: string
-  address: string
+  ss58Format: string
   direction: string
   className: string
 }
 
-const TransactionItem = styled(({ id, blockNumber, indexInBlock, method, section, chainId, createdAt, signer, address, direction, className } : TProps) => {
+const TransactionItem = styled(({ id, blockNumber, indexInBlock, method, section, chainId, createdAt, ss58Format, direction, className } : TProps) => {
 
-
-  // Temporary ========
-  let chainNumericalID : string
-  switch (chainId) {
-    case 'polkadot':
-      chainNumericalID = "0"
-      break;
-    case 'kusama':
-      chainNumericalID = "2"
-      break;
-    default:
-      chainNumericalID = "0"
-      break;
-  }
-  
-  const chain = useChain(chainNumericalID)
+  const chain = useChain("0")
 
   const { typeCategory } = useTypeCategory(`${section}.${method}`)
 
   return (
-    <PanelSection  className={className}>
+    <PanelSection className={className} id={id}>
       <Info 
         title={typeCategory} 
         subtitle={formatDistanceToNow(toDate(createdAt, { timeZone : 'UTC'}), { addSuffix: true, includeSeconds: true })}

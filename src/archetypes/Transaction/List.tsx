@@ -2,7 +2,9 @@ import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 import Item from './Item'
 import { useTransactions } from './store'
-import { Button, Field, Panel } from '@components'
+import { Button, Field, Panel, PanelSection } from '@components'
+import { ReactComponent as IconLoading } from '@assets/icons/loader.svg'
+import { ReactComponent as ArrowDown } from '@icons/arrow-right.svg'
 import { Account, Wallet } from '@archetypes'
 import { useEffect } from 'react'
 import { useURLParams } from '@libs/txhistory'
@@ -23,6 +25,8 @@ const TransactionList = ({ address, className }: IProps) => {
       status
   } = useTransactions(address)
 
+  // const status = 'PROCESSING'
+
   useEffect(() => {
     changeAddress(address)
   }, [address, changeAddress])
@@ -32,21 +36,25 @@ const TransactionList = ({ address, className }: IProps) => {
         <header>
           <Account.Button />
         </header>
-
+          <Panel>
           {['INITIALISED', 'PROCESSING'].includes(status) 
-            ? <div>LOADING</div>
+            ? <PanelSection className="centered-state">
+                Loading
+              </PanelSection>
             : !transactions?.length 
-              ? <div>No Transactions</div>
-              : <Panel>{
+              ? <PanelSection className="centered-state">
+                  🥺 No Transactions
+                </PanelSection>
+              : 
                 transactions.map((tx: any) => 
                   <Item key={tx.id} {...tx} address={address} />
-                )}
-              </Panel>
+                )
           }
-
+          </Panel>
         <footer>
-          {/* TODO: use an existing button component */}
-          <Button onClick={loadMore} disabled={!hasMore}>Load More</Button>
+          {hasMore ? 
+          <Button onClick={loadMore} disabled={!hasMore}>Load More <ArrowDown className="arrow-down"/></Button> 
+           : <></> }
         </footer>
     </section> 
   )
@@ -74,8 +82,20 @@ const StyledTransactionList = styled(TransactionList)`
   >footer{
     padding-top: 1rem;
     // border-top: 1px solid red;
-    margin-top: 1em
+    margin-top: 1em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
+
+  .arrow-down {
+    transform: rotate(90deg);
+  }
+
+  .centered-state {
+    text-align: center;
+  }
+  
 `
 
 
