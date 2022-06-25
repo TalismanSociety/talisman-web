@@ -8,11 +8,13 @@ import { externalURLDefined, useTypeCategory } from './store'
 import { toDate } from 'date-fns-tz'
 import { formatDistanceToNow } from 'date-fns'
 import { Chain } from '@archetypes'
+import { truncateAddress } from '@util/helpers' 
 
 export type TProps = {
   id: string
   blockNumber: string
   indexInBlock: string
+  signer: string
   method: string
   section: string
   chainId: string
@@ -22,7 +24,7 @@ export type TProps = {
   className: string
 }
 
-const TransactionItem = styled(({ id, blockNumber, indexInBlock, method, section, chainId, createdAt, ss58Format, direction, className } : TProps) => {
+const TransactionItem = styled(({ id, signer, blockNumber, indexInBlock, method, section, chainId, createdAt, ss58Format, direction, className } : TProps) => {
 
   const { typeCategory } = useTypeCategory(`${section}.${method}`)
 
@@ -38,7 +40,7 @@ const TransactionItem = styled(({ id, blockNumber, indexInBlock, method, section
       <div className='tofrom' data-direction={direction}>
         <Info 
           title="You" 
-          subtitle={direction.toLowerCase()} 
+          subtitle={method} 
           graphic={<Chain.LogoById id={chainId}/>} 
           className='signer'
         />
@@ -46,7 +48,7 @@ const TransactionItem = styled(({ id, blockNumber, indexInBlock, method, section
         <ArrowRight />
         
         <Info 
-          title={section} 
+          title={truncateAddress(signer, 4, 4)} 
           subtitle={method}
           graphic={<Chain.LogoById id={chainId}/>} 
           className='reciever'
@@ -118,7 +120,11 @@ const TransactionItem = styled(({ id, blockNumber, indexInBlock, method, section
     font-size: var(--font-size-normal);
     .title,
     .subtitle{
-      font-weight: var(--font-weight-regular)
+      font-weight: var(--font-weight-regular);
+    }
+
+    .subtitle{
+      font-size: var(--font-size-xsmall)
     }
   }
 

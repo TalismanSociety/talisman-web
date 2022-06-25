@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
-import { Button } from '@components'
+import { Button, Pill } from '@components'
 import { ReactComponent as ChevronDown } from '@icons/chevron-down.svg'
+import { ReactComponent as Check } from '@icons/check-circle.svg'
 import Identicon from '@polkadot/react-identicon'
 import { device } from '@util/breakpoints'
 import useOnClickOutside from '@util/useOnClickOutside'
@@ -12,6 +13,7 @@ const Dropdown = styled(
   ({
     className,
     accounts,
+    activeAccount,
     open,
     handleChange
   }) => {
@@ -36,6 +38,9 @@ const Dropdown = styled(
                     <span className="name-address">
                       <div className="name">{account.name}</div>
                     </span>
+                  </span>
+                  <span className='right'>
+                    {activeAccount?.address === account?.address && <Check className='active'/>}
                   </span>
                 </div>
               )
@@ -79,12 +84,13 @@ const Dropdown = styled(
     }
 
     .identicon {
-      font-size: 2.6em;
+      //font-size: 2.6em;
       color: var(--color-primary);
       background: var(--color-activeBackground);
       border-radius: 100px;
       > svg,
       > img {
+        font-size: var(--font-size-xlarge);
         width: 1em;
         height: 1em;
       }
@@ -120,12 +126,17 @@ const Dropdown = styled(
     &:hover {
       background: rgba(0, 0, 0, 0.1);
     }
+
+    svg{
+      color: var(--color-primary);
+      align-slef: felx-end
+    }
   }
 
   ${({ open }) =>
     !!open &&
     `
-      max-height: 32.5rem;
+      max-height: 25.5rem;
     `}
 `
 
@@ -185,6 +196,7 @@ const AccountPicker = styled(
           <Dropdown
             open={open}
             accounts={allAccounts}
+            activeAccount={activeAccount}
             handleChange={(account:any) => {
               setActiveAccount(account)
               setOpen(false)
@@ -210,6 +222,8 @@ const AccountPicker = styled(
     > svg,
     > img {
       font-size: var(--font-size-xlarge);
+      width: 1em;
+      height: 1em;
     }
     img {
       border-radius: 999999999999rem;

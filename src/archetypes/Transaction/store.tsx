@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback, useReducer, useMemo } from 'react'
 import { useLazyQuery } from "@apollo/client";
 import { TTransaction } from './types';
 import { TX_QUERY } from './consts';
-import { ApolloClient, InMemoryCache, NormalizedCacheObject, gql, useQuery } from '@apollo/client'
+import { ApolloClient, InMemoryCache } from '@apollo/client'
 import { BatchHttpLink } from '@apollo/client/link/batch-http'
 
 // consts
@@ -97,7 +97,6 @@ export const useTransactions = (initialAddress: string|undefined) => {
 
 	// handle updating the status of the query when the loading or error states change
 	useEffect(() => {
-		console.log({loading, error})
 		// if we're loading
 		if(!!loading){
 			setStatus("PROCESSING")

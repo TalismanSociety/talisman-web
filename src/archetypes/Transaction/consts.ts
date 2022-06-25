@@ -16,5 +16,5 @@ export const TX_QUERY = gql`
       relatedAddresses
       signer
       direction
-  }
-}`
+    }
+  }`

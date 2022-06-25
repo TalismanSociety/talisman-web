@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 import Item from './Item'
 import { useTransactions } from './store'
-import { Button, Panel, PanelSection } from '@components'
+import { Button, Panel, PanelSection, MaterialLoader } from '@components'
 import { ReactComponent as ArrowDown } from '@icons/arrow-right.svg'
 import { Account } from '@archetypes'
 import { useURLParams } from '@libs/txhistory'
@@ -34,19 +34,27 @@ const TransactionList = ({ addresses = [], className }: ITransactionListProps) =
             onChange={({address}: any) => changeAddress(address)}
           />
         </header>
-          <Panel>
-          {['INITIALISED', 'PROCESSING'].includes(status) 
-            ? <PanelSection className="centered-state"> Loading </PanelSection>
+
+        <Panel>
+          {status === 'INITIALISED' || (status === 'PROCESSING' && !transactions?.length) 
+            ? <PanelSection className="centered-state"> <MaterialLoader/> <div>Searching the paraverse</div> </PanelSection>
             : !transactions?.length 
-              ? <PanelSection className="centered-state"> 🥺 No Transactions </PanelSection>
+              ? <PanelSection className="centered-state"> 🥺 No Transactions - try another account </PanelSection>
               : <Panel className={'transaction-item-container'}>{transactions.map((tx: any) => <Item key={tx.id} {...tx} address={address} />)}</Panel>
           }
-          </Panel>
+        </Panel>
 
         <footer>
-          {hasMore ? 
-          <Button onClick={loadMore} disabled={!hasMore}>Load More <ArrowDown className="arrow-down"/></Button> 
-           : <></> }
+          {hasMore && status !== 'INITIALISED' &&
+            <Button 
+              onClick={loadMore} 
+              //disabled={!hasMore}
+              >
+                {status === 'PROCESSING' 
+                  ? <>Finding &nbsp; <MaterialLoader/></>
+                  : <>Older <ArrowDown className="arrow-down"/></>
+                }
+            </Button>}
         </footer>
     </section> 
   )
@@ -84,6 +92,12 @@ const StyledTransactionList = styled(TransactionList)`
 
   .centered-state {
     text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+     >*{
+      margin: 0 0.3em;
+     }
   }
   
 `
