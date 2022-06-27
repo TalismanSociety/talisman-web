@@ -1107,6 +1107,22 @@ export const parachainDetails: ParachainDetails[] = [
       Discord: 'https://discord.com/invite/cE72GYcFgY',
     },
   },
+  {
+    id: '2-2125',
+    name: 'Tinker',
+    slug: 'tinker',
+    token: 'TNKR',
+    subtitle:
+      'The IP Asset & Accelerated Development Hub Of Kusama',
+    info: 
+      `The Tinkernet Parachain is the canary network of the InvArch Network, designed as the IP Asset & accelerated development staging grounds for the Kusama ecosystem.`,
+    links: {
+      Website: "https://invarch.network/tinkernet",
+      Twitter: "https://twitter.com/invarchnetwork",
+      Telegram: "https://t.me/InvArch",
+      Discord: "https://discord.com/invite/invarch"
+    },
+  }
 ]
 
 export type CrowdloanDetails = {
@@ -2535,6 +2551,26 @@ export const crowdloanDetails: CrowdloanDetails[] = [
         {
           title: 'NFT Rewards',
           value: '2 Free AAA mints per 1 KSM',
+        },
+      ],
+      info: null,
+    },
+  },
+  {
+    relayId: 2,
+    paraId: 2125,
+    contributeUrl: '',
+    rewards: {
+      tokens: [
+        {
+          symbol: 'TNKR',
+          perKSM: '87.75 TNKR',
+        },
+      ],
+      custom: [
+        {
+          title: 'Crowdloan Allocation',
+          value: '1,755,000 TNKR',
         },
       ],
       info: null,
