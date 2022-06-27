@@ -1109,8 +1109,8 @@ export const parachainDetails: ParachainDetails[] = [
   },
   {
     id: '2-2125',
-    name: 'Tinker',
-    slug: 'tinker',
+    name: 'Tinkernet',
+    slug: 'tinkernet',
     token: 'TNKR',
     subtitle: 'The IP Asset & Accelerated Development Hub Of Kusama',
     info: `The Tinkernet Parachain is the canary network of the InvArch Network, designed as the IP Asset & accelerated development staging grounds for the Kusama ecosystem.`,
