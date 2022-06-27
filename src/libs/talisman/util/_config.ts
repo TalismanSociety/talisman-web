@@ -1112,17 +1112,15 @@ export const parachainDetails: ParachainDetails[] = [
     name: 'Tinker',
     slug: 'tinker',
     token: 'TNKR',
-    subtitle:
-      'The IP Asset & Accelerated Development Hub Of Kusama',
-    info: 
-      `The Tinkernet Parachain is the canary network of the InvArch Network, designed as the IP Asset & accelerated development staging grounds for the Kusama ecosystem.`,
+    subtitle: 'The IP Asset & Accelerated Development Hub Of Kusama',
+    info: `The Tinkernet Parachain is the canary network of the InvArch Network, designed as the IP Asset & accelerated development staging grounds for the Kusama ecosystem.`,
     links: {
-      Website: "https://invarch.network/tinkernet",
-      Twitter: "https://twitter.com/invarchnetwork",
-      Telegram: "https://t.me/InvArch",
-      Discord: "https://discord.com/invite/invarch"
+      Website: 'https://invarch.network/tinkernet',
+      Twitter: 'https://twitter.com/invarchnetwork',
+      Telegram: 'https://t.me/InvArch',
+      Discord: 'https://discord.com/invite/invarch',
     },
-  }
+  },
 ]
 
 export type CrowdloanDetails = {
