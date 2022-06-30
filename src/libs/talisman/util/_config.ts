@@ -1108,21 +1108,33 @@ export const parachainDetails: ParachainDetails[] = [
     },
   },
   {
+    id: '2-2124',
+    name: 'Amplitude',
+    slug: 'amplitude',
+    token: 'AMPE',
+    subtitle: 'Amplitude is going to launch as a canary network of its sister blockchain, Pendulum.',
+    info: `It will act as a testing ground for applications and network parameters for Pendulum. Unlike a traditional testnet, users can interact on the Amplitude chain with real financial consequences. We’re expecting lots of novel concepts to be trialled on Amplitude, giving rise to many exciting opportunities for anyone using the chain.`,
+    links: {
+      Website: 'https://pendulumchain.org/amplitude',
+      Twitter: 'https://twitter.com/pendulum_chain',
+      Telegram: 'https://t.me/pendulum_community',
+      Discord: 'https://discord.gg/wJ2fQh776B',
+    },
+  },
+  {
     id: '2-2125',
     name: 'Tinker',
     slug: 'tinker',
     token: 'TNKR',
-    subtitle:
-      'The IP Asset & Accelerated Development Hub Of Kusama',
-    info: 
-      `The Tinkernet Parachain is the canary network of the InvArch Network, designed as the IP Asset & accelerated development staging grounds for the Kusama ecosystem.`,
+    subtitle: 'The IP Asset & Accelerated Development Hub Of Kusama',
+    info: `The Tinkernet Parachain is the canary network of the InvArch Network, designed as the IP Asset & accelerated development staging grounds for the Kusama ecosystem.`,
     links: {
-      Website: "https://invarch.network/tinkernet",
-      Twitter: "https://twitter.com/invarchnetwork",
-      Telegram: "https://t.me/InvArch",
-      Discord: "https://discord.com/invite/invarch"
+      Website: 'https://invarch.network/tinkernet',
+      Twitter: 'https://twitter.com/invarchnetwork',
+      Telegram: 'https://t.me/InvArch',
+      Discord: 'https://discord.com/invite/invarch',
     },
-  }
+  },
 ]
 
 export type CrowdloanDetails = {
@@ -2551,6 +2563,26 @@ export const crowdloanDetails: CrowdloanDetails[] = [
         {
           title: 'NFT Rewards',
           value: '2 Free AAA mints per 1 KSM',
+        },
+      ],
+      info: null,
+    },
+  },
+  {
+    relayId: 2,
+    paraId: 2124,
+    contributeUrl: '',
+    rewards: {
+      tokens: [
+        {
+          symbol: 'AMPE',
+          perKSM: '> 600 AMPE',
+        },
+      ],
+      custom: [
+        {
+          title: 'Total Supply',
+          value: '200,000,000 AMPE',
         },
       ],
       info: null,
