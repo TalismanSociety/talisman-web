@@ -180,11 +180,7 @@ const Index = styled(({ withFilter, className }) => {
       </div>
       {withFilter && <FilterBar {...filterProps} count={count} />}
       <Await until={!loading}>
-        <NoCrowdloans
-          require={count?.filtered > 0}
-          text={t('noCrowdloans.text')}
-          subtext={t('noCrowdloans.subtext')}
-        >
+        <NoCrowdloans require={count?.filtered > 0} text={t('noCrowdloans.text')} subtext={t('noCrowdloans.subtext')}>
           <Grid>
             {crowdloans.map(({ id }) => (
               <Crowdloan.Teaser key={id} id={id} />
