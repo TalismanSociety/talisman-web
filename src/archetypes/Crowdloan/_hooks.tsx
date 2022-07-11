@@ -90,7 +90,7 @@ export const useFilter = () => {
   const [searchFilter, setSearchFilter] = useState('')
   const [orderFilter, setOrderFilter] = useState(orderOptions[0].key)
   const [statusFilter, setStatusFilter] = useState(statusOptions[1].key)
-  const [networkFilter, setNetworkFilter] = useState(networkOptions[1].key)
+  const [networkFilter, setNetworkFilter] = useState(networkOptions[0].key)
   const [loading, setLoading] = useState(true)
 
   // do searchy/filtery stuff

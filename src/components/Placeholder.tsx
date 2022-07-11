@@ -10,7 +10,9 @@ export const Placeholder = styled(({ className, children, placeholder, placehold
 })`
   text-align: center;
   background-image: url(${props => props.placeholderImage});
-  background-size: cover;
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
   padding: 14rem 4rem;
 
   @media ${device.lg} {
