@@ -1135,6 +1135,19 @@ export const parachainDetails: ParachainDetails[] = [
       Discord: 'https://discord.com/invite/invarch',
     },
   },
+  {
+    id: '2-2123',
+    name: 'GM Parachain',
+    slug: 'gm-parachain',
+    token: '$FREN',
+    subtitle: "$GM OR DIE, UNTIL IT'S TIME TO $GN",
+    info: `Burn $FREN to mint and send $GM, but mind the clock on the GMdapp, $GM can only be minted in the morning, $GN can only be minted at night. If you try to mint during the day, you'll burn your $FREN for nothing!`,
+    links: {
+      Website: 'https://www.gmordie.com/',
+      Twitter: 'https://twitter.com/GmOrDie_',
+      Discord: 'https://discord.com/invite/JFzD2b5P2B',
+    },
+  },
 ]
 
 export type CrowdloanDetails = {
@@ -2603,6 +2616,26 @@ export const crowdloanDetails: CrowdloanDetails[] = [
         {
           title: 'Crowdloan Allocation',
           value: '1,755,000 TNKR',
+        },
+      ],
+      info: null,
+    },
+  },
+  {
+    relayId: 2,
+    paraId: 2123,
+    contributeUrl: '',
+    rewards: {
+      tokens: [
+        {
+          symbol: '$FREN',
+          perKSM: '> 21,693',
+        },
+      ],
+      custom: [
+        {
+          title: 'Crowdloan Allocation',
+          value: '208,000,000 $FREN',
         },
       ],
       info: null,
