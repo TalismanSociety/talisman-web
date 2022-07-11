@@ -168,8 +168,7 @@ const FilterBar = styled(
 const Index = styled(({ withFilter, className }) => {
   const { t } = useTranslation()
   const { crowdloans, count, loading, filterProps } = Crowdloan.useFilter()
-
-  console.log(filterProps)
+  
   return (
     <div className={`crowdloan-index ${className}`}>
       <div className="overview">
