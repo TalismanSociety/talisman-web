@@ -1140,7 +1140,7 @@ export const parachainDetails: ParachainDetails[] = [
     name: 'GM Parachain',
     slug: 'gm-parachain',
     token: '$FREN',
-    subtitle: '$GM OR DIE, UNTIL IT\'S TIME TO $GN',
+    subtitle: "$GM OR DIE, UNTIL IT'S TIME TO $GN",
     info: `Burn $FREN to mint and send $GM, but mind the clock on the GMdapp, $GM can only be minted in the morning, $GN can only be minted at night. If you try to mint during the day, you'll burn your $FREN for nothing!`,
     links: {
       Website: 'https://www.gmordie.com/',
