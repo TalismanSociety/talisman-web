@@ -1,5 +1,6 @@
 import { Crowdloan } from '@archetypes'
 import { Await, Field, Grid, NoResults } from '@components'
+import NoCrowdloans from '@components/NoCrowdloansPlaceholder'
 import { trackGoal } from '@libs/fathom'
 import { device } from '@util/breakpoints'
 import { useTranslation } from 'react-i18next'
@@ -168,6 +169,7 @@ const Index = styled(({ withFilter, className }) => {
   const { t } = useTranslation()
   const { crowdloans, count, loading, filterProps } = Crowdloan.useFilter()
 
+  console.log(filterProps)
   return (
     <div className={`crowdloan-index ${className}`}>
       <div className="overview">
@@ -178,18 +180,17 @@ const Index = styled(({ withFilter, className }) => {
       </div>
       {withFilter && <FilterBar {...filterProps} count={count} />}
       <Await until={!loading}>
-        <NoResults
+        <NoCrowdloans
           require={count?.filtered > 0}
-          title={t('noResult.title')}
-          subtitle={t('noResult.subtitle')}
-          text={t('noResult.text')}
+          text={t('noCrowdloans.text')}
+          subtext={t('noCrowdloans.subtext')}
         >
           <Grid>
             {crowdloans.map(({ id }) => (
               <Crowdloan.Teaser key={id} id={id} />
             ))}
           </Grid>
-        </NoResults>
+        </NoCrowdloans>
       </Await>
     </div>
   )
