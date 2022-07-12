@@ -45,7 +45,7 @@ const TransactionList = ({ addresses = [], className }: ITransactionListProps) =
         </Panel>
 
         <footer>
-          {hasMore && status !== 'INITIALISED' &&
+          {hasMore && status !== 'INITIALISED' && !!transactions?.length &&
             <Button 
               onClick={loadMore} 
               //disabled={!hasMore}
