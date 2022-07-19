@@ -24,20 +24,14 @@ export const NftCollectionData = styled(({ editionData, nftId, price, className 
   min-height: 70px;
 `
 
-const NftGetEdition = (nftId: string): number => {
-  let newString = parseInt(nftId.split('-')[4].replace(/^0+/, ''))
-  return newString
-}
-
 export const NftEdition = styled(({ editionData, nftId, className }) => {
   const { t } = useTranslation('nft-viewer')
-
   return (
     <div className={className}>
       <h1>{t('Edition')}</h1>
       <p className="nft-main-val">
-        # {NftGetEdition(nftId)}
-        <span className="nft-sub-val"> / {editionData}</span>
+        # {nftId}
+        <span className="nft-sub-val"> / {editionData || "..."}</span>
       </p>
     </div>
   )
@@ -50,7 +44,7 @@ export const NftFloorPrice = styled(({ price, className }) => {
   return (
     <div className={className}>
       <h1>{t('Floor Price')}</h1>
-      <p className="nft-main-val">{price} KSM</p>
+      <p className="nft-main-val">{price || "..."} KSM</p>
     </div>
   )
 })`
@@ -61,7 +55,7 @@ export const NftFloorPrice = styled(({ price, className }) => {
 export const NftDescription = styled(({ description, className }) => {
   return (
     <div className={className}>
-      <p className="nft-desc-value">{description}</p>
+      <p className="nft-desc-value">{description || ""}</p>
     </div>
   )
 })`
@@ -76,9 +70,9 @@ export const NftDescription = styled(({ description, className }) => {
 `
 
 export const NftAttributes = styled(({ properties, className }) => {
+  
   const { t } = useTranslation('nft-viewer')
-
-  if (Object.keys(properties).length === 0) return null
+  if (properties === undefined || Object.keys(properties).length === 0) return null
 
   return (
     <div className={className}>

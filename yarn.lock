@@ -3553,6 +3553,7 @@ __metadata:
     "@testing-library/user-event": ^12.1.10
     "@types/jest": ^26.0.15
     "@types/lodash": ^4.14.172
+    "@types/md5": ^2.3.2
     "@types/node": ^12.0.0
     "@types/react": ^17.0.0
     "@types/react-dom": ^17.0.0
@@ -3864,6 +3865,13 @@ __metadata:
   version: 4.14.172
   resolution: "@types/lodash@npm:4.14.172"
   checksum: 5fc51ea40d7e455bd1c760bcc60c9e81f82d85988666d4d4969bd8311367c63bbf1fe2be48755ba87836710e45fff94014ec164ebe6ccaa72815014981152434
+  languageName: node
+  linkType: hard
+
+"@types/md5@npm:^2.3.2":
+  version: 2.3.2
+  resolution: "@types/md5@npm:2.3.2"
+  checksum: ce59779c5aa9bcafe6e089f7a0be2f25fb4661d437809dd7e895e13e9369855aeee8521a0a954bb38468cd8ed2d7c84d5dbb3ba37544f5a11c8a199e5a8561b6
   languageName: node
   linkType: hard
 
@@ -11180,7 +11188,7 @@ fsevents@^1.2.7:
 "json-stream-stringify@git+https://github.com/Yuripetusko/json-stream-stringify.git#build":
   version: 2.0.3
   resolution: "json-stream-stringify@https://github.com/Yuripetusko/json-stream-stringify.git#commit=ed3d32a6b5c085e6486f49e0dd2458facdec1b76"
-  checksum: 576442a84fd5e1a85c902312c8f07a7fa719b9194be6a36cba4deb120c43d4cacc55846beb5bc8727720a9b030674db25f7c7ccc04fabe399dc2cca58346913f
+  checksum: 38baa7c5be703ac6b440ae4a70de4db321e00477a796b90b0e264b70aea7f3a71d5ba727a3bd0f233070c51b57e926f2329e4d5e1e2ace6e2c7624ed65f42500
   languageName: node
   linkType: hard
 

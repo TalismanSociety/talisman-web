@@ -13,8 +13,8 @@ export type NftContentTypes = 'audio' | 'video' | 'image' | 'application' | 'mod
 
 export function NftContentType(props: NftElement) {
   const { nft } = props
-  const { contentCategory: type } = useNftAsset(nft)
-  switch (type) {
+  // const { contentCategory: type } = useNftAsset(nft)
+  switch (nft?.type) {
     case 'audio':
       return <img src={NFTAudioIcon} className={styles['nft-content-type-root']} title="Audio" alt="Audio NFT" />
     case 'video':

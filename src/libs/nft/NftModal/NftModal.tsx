@@ -14,19 +14,19 @@ import {
 import useNftAsset from '../useNftAsset/useNftAsset'
 import { useNftCollectionStats } from '../useNftCollectionStats/useNftCollectionStats'
 
-const NftInformation = styled(({ className, nftData, nftCollectionStats }) => {
+const NftInformation = styled(({ className, nft }) => {
   return (
     <div className={className}>
-      <NftMainDetails name={nftData?.name} collection={nftData?.collection} />
+      <NftMainDetails name={nft?.name} collection={nft?.collection?.name} />
       <NftCollectionData
-        editionData={nftCollectionStats?.totalNFTs}
-        nftId={nftData.id}
-        price={nftCollectionStats?.floor}
+        editionData={nft?.collection?.totalCount}
+        nftId={nft.serialNumber}
+        price={nft?.collection?.floorPrice}
       />
-      <NftDescription description={nftData?.description} />
-      <NftAttributes properties={nftData?.properties} />
-      {/* <NftNetwork network={"RMRK2"}/> */}
-      <NftButtons collectibleUrl={nftData?.collectibleUrl} />
+      <NftDescription description={nft?.description} />
+      <NftAttributes properties={nft?.attributes} />
+      <NftNetwork network={nft?.platform}/>
+      <NftButtons collectibleUrl={nft?.id} />
     </div>
   )
 })`
@@ -52,7 +52,7 @@ const NftInformation = styled(({ className, nftData, nftCollectionStats }) => {
   }
 
   .nft-main-val {
-    font-size: 1.5em;
+    font-size: 1.4em;
     font-weight: 600;
     color: var(--color-light);
   }
@@ -72,15 +72,15 @@ const NftInformation = styled(({ className, nftData, nftCollectionStats }) => {
 `
 
 export const NftModal = styled(({ className, nft }) => {
-  const nftData = useNftAsset(nft)
-  const nftCollectionData = useNftCollectionStats(nft)
+  // const nft = useNftAsset(nft)
+  // const nftCollectionData = useNftCollectionStats(nft)
 
   return (
     <div className={className}>
       <NftFullView nft={nft} />
       <Suspense fallback={null}>
-        <NftInformation nftData={nftData} 
-        nftCollectionStats={nftCollectionData.collectionData} 
+        <NftInformation nft={nft} 
+        // nftCollectionStats={nftCollectionData.collectionData} 
         />
       </Suspense>
     </div>

@@ -11,7 +11,7 @@ import useNftAsset from '../useNftAsset/useNftAsset'
 import styles from './NftFullView.module.css'
 
 function MediaPreview(props: MediaPreviewProps) {
-  const { contentCategory, audioUrl, ...mediaElementProps } = props
+  const { contentCategory, thumb, ...mediaElementProps } = props
   const imgProps = mediaElementProps as ImgHTMLAttributes<HTMLImageElement>
 
   switch (contentCategory) {
@@ -47,7 +47,7 @@ function MediaPreview(props: MediaPreviewProps) {
       }
       return (
         <>
-          <img loading="lazy" alt={imgProps.alt} {...imgProps} />
+          <img loading="lazy" alt={imgProps.alt} {...imgProps} src={thumb} />
           <audio
             controls
             style={{
@@ -56,7 +56,7 @@ function MediaPreview(props: MediaPreviewProps) {
               width: '100%',
             }}
           >
-            <source src={audioUrl} />
+            <source src={imgProps.src} />
           </audio>
         </>
       )
@@ -70,35 +70,35 @@ function MediaPreview(props: MediaPreviewProps) {
 
 export function NftFullView(props: NftPreviewProps) {
   const { nft, LoaderComponent, ErrorComponent, ...imageProps } = props
-  const { contentCategory, name, previewSrc, audioUrl, isLoading, error } = useNftAsset(nft)
+  // const { contentCategory, name, previewSrc, audioUrl, isLoading, error } = useNftAsset(nft)
 
-  if (isLoading) {
-    return (
-      <PlaceCenter className={styles['nft-image-root']}>
-        {LoaderComponent || <DualRingLoader style={{ height: 'unset' }} />}
-      </PlaceCenter>
-    )
-  }
-  if (error) {
-    return (
-      <PlaceCenter className={styles['nft-image-root']}>
-        {ErrorComponent ? (
-          cloneElement(ErrorComponent, {
-            error,
-          })
-        ) : (
-          <span>{error?.message}</span>
-        )}
-      </PlaceCenter>
-    )
-  }
+  // if (isLoading) {
+  //   return (
+  //     <PlaceCenter className={styles['nft-image-root']}>
+  //       {LoaderComponent || <DualRingLoader style={{ height: 'unset' }} />}
+  //     </PlaceCenter>
+  //   )
+  // }
+  // if (error) {
+  //   return (
+  //     <PlaceCenter className={styles['nft-image-root']}>
+  //       {ErrorComponent ? (
+  //         cloneElement(ErrorComponent, {
+  //           error,
+  //         })
+  //       ) : (
+  //         <span>{error?.message}</span>
+  //       )}
+  //     </PlaceCenter>
+  //   )
+  // }
   return (
     <div className={styles['nft-image-root']}>
       <MediaPreview
-        contentCategory={contentCategory}
-        audioUrl={audioUrl}
-        src={previewSrc}
-        alt={name}
+        contentCategory={nft?.type}
+        src={nft?.mediaUri}
+        alt={nft?.name}
+        thumb={nft?.thumb}
         className={styles['nft-image-content']}
         {...imageProps}
       />

@@ -61,6 +61,8 @@ export function MediaPreview(props: MediaPreviewProps) {
       return <img loading="lazy" alt={imgProps.alt} {...imgProps} src={thumb ? thumb : PDFPlaceholder} />
     // const { src, ...embedProps } = mediaElementProps as EmbedHTMLAttributes<HTMLEmbedElement>
     // return <embed src={`${src}#toolbar=0`} {...embedProps} />
+    case 'audio':
+      return <img loading="lazy" alt={imgProps.alt} {...imgProps} src={thumb ? thumb : PDFPlaceholder} />
     default:
       if (!imgProps.src) {
         return null
@@ -71,35 +73,35 @@ export function MediaPreview(props: MediaPreviewProps) {
 
 export function NftPreview(props: NftPreviewProps) {
   const { nft, LoaderComponent, ErrorComponent, ...imageProps } = props
-  const { contentCategory, name, thumb, previewSrc, isLoading, error } = useNftAsset(nft)
+  // const { contentCategory, name, thumb, previewSrc, isLoading, error } = useNftAsset(nft)
 
-  if (isLoading) {
-    return (
-      <PlaceCenter className={styles['nft-image-root']}>
-        {LoaderComponent || <DualRingLoader style={{ height: 'unset' }} />}
-      </PlaceCenter>
-    )
-  }
-  if (error) {
-    return (
-      <PlaceCenter className={styles['nft-image-root']}>
-        {ErrorComponent ? (
-          cloneElement(ErrorComponent, {
-            error,
-          })
-        ) : (
-          <span>{error?.message}</span>
-        )}
-      </PlaceCenter>
-    )
-  }
+  // if (isLoading) {
+  //   return (
+  //     <PlaceCenter className={styles['nft-image-root']}>
+  //       {LoaderComponent || <DualRingLoader style={{ height: 'unset' }} />}
+  //     </PlaceCenter>
+  //   )
+  // }
+  // if (error) {
+  //   return (
+  //     <PlaceCenter className={styles['nft-image-root']}>
+  //       {ErrorComponent ? (
+  //         cloneElement(ErrorComponent, {
+  //           error,
+  //         })
+  //       ) : (
+  //         <span>{error?.message}</span>
+  //       )}
+  //     </PlaceCenter>
+  //   )
+  // }
   return (
     <div className={styles['nft-image-root']}>
       <MediaPreview
-        contentCategory={contentCategory}
-        thumb={thumb}
-        src={previewSrc}
-        alt={name}
+        contentCategory={nft.type}
+        thumb={nft.thumb}
+        src={nft.mediaUri}
+        alt={nft.name}
         className={styles['nft-image-content']}
         {...imageProps}
       />

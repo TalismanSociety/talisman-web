@@ -1,5 +1,5 @@
+import { useNftsByAddress } from '@libs/@talisman-nft/useNftsByAddress'
 import { NftCard } from '@libs/nft/NftCard/NftCard'
-import { useNftsByAddress } from '@libs/nft/useNftsByAddress/useNftsByAddress'
 import { device } from '@util/breakpoints'
 import styled from 'styled-components'
 
@@ -19,8 +19,9 @@ interface NFTsByAddressProps {
 }
 
 const NFTsByAddress = styled(({ className = '', address, limit }: NFTsByAddressProps) => {
-  const { nfts, isLoading } = useNftsByAddress(address as string)
-  if (isLoading) {
+  // const { nfts, isLoading } = useNftsByAddress(address as string)
+  const { setAddress, nfts, loading } = useNftsByAddress(address as string)
+  if (loading) {
     return <Loading />
   }
   if (!nfts) {
