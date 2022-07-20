@@ -1153,7 +1153,8 @@ export const parachainDetails: ParachainDetails[] = [
     name: 'SNOW',
     slug: 'snow-network',
     token: '$ICZ',
-    subtitle: "SNOW is a long-term incentivized network for cutting-edge development backed by the ICZ token, which has real-world value.",
+    subtitle:
+      'SNOW is a long-term incentivized network for cutting-edge development backed by the ICZ token, which has real-world value.',
     info: `SNOW will serve as a 'canary network' for ICE. Supply and other token economic behaviors on SNOW will be the same as ICE, but token distribution will be different in order to support the goals and attributes of the network.`,
     links: {
       Website: 'https://icenetwork.io/snow/',
