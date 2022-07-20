@@ -1,11 +1,9 @@
 import { NftElement } from '../../../util/nfts/types'
-import useNftAsset from '../useNftAsset/useNftAsset'
 import styles from './NftDescription.module.css'
 
 export function NftDescription(props: NftElement) {
   const { nft } = props
   const placeholderStyles = (width: string) => (nft ? '' : `${styles['placeholder']} ${styles[width]}`)
-  // const { name, collection } = useNftAsset(nft)
 
   return (
     <div className={styles['nft-description-root']}>

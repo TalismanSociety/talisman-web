@@ -1,6 +1,6 @@
 import { NFTInterface } from "../NFTInterface";
 import { encodeAddress } from '@polkadot/util-crypto'
-import { NFTCategory, NFTItem, NFTItemArray } from "../types";
+import { NFTCategory, NFTItem, NFTItemArray } from "../../types";
 import { resolve } from "path";
 
 type NFTRawData = {

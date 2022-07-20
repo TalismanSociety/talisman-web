@@ -27,8 +27,6 @@ export function NftCard(props: NftElement) {
   const { nft } = props
   const { openModal } = useModal()
 
-  console.log(nft)
-
   if (!nft) {
     return <RenderCard {...props} />
   }

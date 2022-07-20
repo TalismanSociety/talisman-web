@@ -1,5 +1,5 @@
 import { NFTInterface } from "./providers/NFTInterface";
-import { NFTItemArray } from "./providers/types";
+import { NFTItemArray } from "./types";
 
 export class NFTFactory {
   providers: NFTInterface[]

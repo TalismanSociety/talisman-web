@@ -1,4 +1,4 @@
-import { NFTItemArray} from "./types";
+import { NFTItemArray} from "../types";
 import md5 from "md5";
 
 // export interface NFTInterfaceType {

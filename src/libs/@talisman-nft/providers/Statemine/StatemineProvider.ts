@@ -1,7 +1,7 @@
 import { ApiPromise, WsProvider } from "@polkadot/api";
 import { encodeAddress } from "@polkadot/util-crypto";
 import { NFTInterface } from "../NFTInterface";
-import { NFTCategory, NFTItem, NFTItemArray } from "../types";
+import { NFTCategory, NFTItem, NFTItemArray } from "../../types";
 
 export class StatemineProvider extends NFTInterface {
 

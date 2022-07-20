@@ -1,5 +1,5 @@
 import { NFTInterface } from "../NFTInterface";
-import { NFTItem, NFTItemArray } from "../types";
+import { NFTItem, NFTItemArray } from "../../types";
 
 type NFTRawData = {
   id: string
