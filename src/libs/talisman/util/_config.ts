@@ -1147,7 +1147,7 @@ export const parachainDetails: ParachainDetails[] = [
       Twitter: 'https://twitter.com/GmOrDie_',
       Discord: 'https://discord.com/invite/JFzD2b5P2B',
     },
-  }
+  },
   // {
   //   id: '2-2127',
   //   name: 'SNOW',
@@ -2654,7 +2654,7 @@ export const crowdloanDetails: CrowdloanDetails[] = [
       ],
       info: null,
     },
-  }
+  },
   // {
   //   relayId: 2,
   //   paraId: 2127,
