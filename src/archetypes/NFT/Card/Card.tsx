@@ -1,8 +1,8 @@
 import { NFTShort } from '@libs/@talisman-nft/types'
-import Info from './Info'
 import styled from 'styled-components'
-import Preview from './Preview'
 
+import Info from './Info'
+import Preview from './Preview'
 
 interface CardProps {
   className?: string
@@ -10,8 +10,7 @@ interface CardProps {
   onClick: () => void
 }
 
-function Card({className, nft, onClick}: CardProps) {
-
+function Card({ className, nft, onClick }: CardProps) {
   return (
     <div className={className} onClick={onClick}>
       <Preview nft={nft} />

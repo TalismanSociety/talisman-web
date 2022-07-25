@@ -1,63 +1,58 @@
-import { useEffect, useState } from "react";
-import { NFTFactory } from "./nftFactory";
-import { Rmrk1Provider, Rmrk2Provider, StatemineProvider } from "./providers";
-import { NFTInterface } from "./providers/NFTInterface";
-import { NFTDetail, NFTShortArray } from "./types";
+import { useEffect, useState } from 'react'
 
-const providers : NFTInterface[] = [
-  new Rmrk1Provider(), 
-  new Rmrk2Provider(), 
-  new StatemineProvider()
-] 
+import { NFTFactory } from './nftFactory'
+import { Rmrk1Provider, Rmrk2Provider, StatemineProvider } from './providers'
+import { NFTInterface } from './providers/NFTInterface'
+import { NFTDetail, NFTShortArray } from './types'
 
-const nftFactory = new NFTFactory(providers);
+const providers: NFTInterface[] = [new Rmrk1Provider(), new Rmrk2Provider(), new StatemineProvider()]
+
+const nftFactory = new NFTFactory(providers)
 
 export const useNftsByAddress = (initialAddress?: string) => {
-  
-  const [address, setAddress] = useState<string|undefined>(initialAddress)
-  const [nfts, setNfts] = useState<NFTShortArray>([]);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [address, setAddress] = useState<string | undefined>(initialAddress)
+  const [nfts, setNfts] = useState<NFTShortArray>([])
+  const [loading, setLoading] = useState<boolean>(false)
 
   useEffect(() => {
-    if(!address) return
+    if (!address) return
     setLoading(true)
-    nftFactory.fetchNFTSByAddress(address)
-      .then((nfts : NFTShortArray) => { 
-        setNfts(nfts); 
-        setLoading(false); 
-      })
+    nftFactory.fetchNFTSByAddress(address).then((nfts: NFTShortArray) => {
+      setNfts(nfts)
+      setLoading(false)
+    })
   }, [address])
 
   return {
     setAddress,
     nfts,
-    loading
+    loading,
   }
 }
 
 export const useNftById = (id?: string) => {
-
-  const [loading, setLoading] = useState<boolean>(false);
-  const [nft, setNft] = useState<NFTDetail>();
-  const [error, setError] = useState<string|undefined>();
+  const [loading, setLoading] = useState<boolean>(false)
+  const [nft, setNft] = useState<NFTDetail>()
+  const [error, setError] = useState<string | undefined>()
 
   useEffect(() => {
-    if(!id) return
+    if (!id) return
     setLoading(true)
-    nftFactory.fetchNFTById(id)
-      .then((nft : NFTDetail) => { 
-        setNft(nft); 
-        setLoading(false); 
-      }).catch((error : string) => {
-        setError(error); 
-        setLoading(false); 
-      }
-    )
+    nftFactory
+      .fetchNFTById(id)
+      .then((nft: NFTDetail) => {
+        setNft(nft)
+        setLoading(false)
+      })
+      .catch((error: string) => {
+        setError(error)
+        setLoading(false)
+      })
   }, [id])
 
   return {
     nft,
     loading,
-    error
+    error,
   }
 }

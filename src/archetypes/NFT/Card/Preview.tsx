@@ -1,14 +1,13 @@
 import '@google/model-viewer'
 
-// Placeholders
-import PDFPlaceholder from '@assets/generic-pdf.png'
-import VideoPlaceholder from '@assets/generic-video.png'
 import AudioPlaceholder from '@assets/generic-audio.png'
 import ImagePlaceholder from '@assets/generic-image.png'
-import UnknownPlaceholder from '@assets/generic-unknown.png'
 import ModelPlaceholder from '@assets/generic-model.png'
-
-import { NFTShort } from "@libs/@talisman-nft/types"
+// Placeholders
+import PDFPlaceholder from '@assets/generic-pdf.png'
+import UnknownPlaceholder from '@assets/generic-unknown.png'
+import VideoPlaceholder from '@assets/generic-video.png'
+import { NFTShort } from '@libs/@talisman-nft/types'
 import styled from 'styled-components'
 
 type PreviewType = {
@@ -17,37 +16,38 @@ type PreviewType = {
 }
 
 const MediaPreview = (props: NFTShort) => {
-
   const { mediaUri, thumb, type, name, id } = props
 
   if (thumb) return <img loading="lazy" src={thumb} alt={name || id} />
 
-  switch(type){
+  switch (type) {
     case 'image':
       return <img loading="lazy" src={mediaUri || ImagePlaceholder} alt={name || id} />
     case 'video':
-      if(!mediaUri) return <img loading="lazy" src={VideoPlaceholder} alt={name || id} />
-      return <video 
-              src={thumb || mediaUri}
-              onMouseOver={event => {
-                event.target.play()
-              }}
-              onMouseOut={event => {
-                event.target.pause()
-                event.target.currentTime = 0
-              }}
-              loop
-              muted
-              playsInline
-              preload="metadata"
-              controlsList="nodownload"
-            />
+      if (!mediaUri) return <img loading="lazy" src={VideoPlaceholder} alt={name || id} />
+      return (
+        <video
+          src={thumb || mediaUri}
+          onMouseOver={event => {
+            event.target.play()
+          }}
+          onMouseOut={event => {
+            event.target.pause()
+            event.target.currentTime = 0
+          }}
+          loop
+          muted
+          playsInline
+          preload="metadata"
+          controlsList="nodownload"
+        />
+      )
     case 'application':
       return <img loading="lazy" alt={name || id} src={PDFPlaceholder} />
     case 'audio':
       return <img loading="lazy" alt={name || id} src={AudioPlaceholder} />
     case 'model':
-      if(!mediaUri) return <img loading="lazy" alt={name || id} src={ModelPlaceholder} />
+      if (!mediaUri) return <img loading="lazy" alt={name || id} src={ModelPlaceholder} />
       const modelProps = {
         'src': mediaUri,
         'alt': name || id,
@@ -61,17 +61,12 @@ const MediaPreview = (props: NFTShort) => {
     default:
       return <img loading="lazy" alt={name || id} src={UnknownPlaceholder} />
   }
-
 }
 
-
-const Preview = ({className, nft} : PreviewType) => {
-  
+const Preview = ({ className, nft }: PreviewType) => {
   return (
     <header className={className}>
-      <MediaPreview
-        {...nft}
-      />
+      <MediaPreview {...nft} />
     </header>
   )
 }

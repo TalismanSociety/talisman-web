@@ -45,7 +45,7 @@ const StyledListItems = styled(ListItems)`
   }
 `
 
-const Loading = ({className} : an) => {
+const Loading = ({className} : any) => {
   return <div className={className}>
     ...loading
     </div>

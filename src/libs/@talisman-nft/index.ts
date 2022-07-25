@@ -1,6 +1,6 @@
-import { NFTFactory } from "./nftFactory";
+import { NFTFactory } from './nftFactory'
 
 export default NFTFactory
 
-export * from "./providers"
-export * from "./hooks"
+export * from './providers'
+export * from './hooks'

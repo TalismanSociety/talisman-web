@@ -1,8 +1,7 @@
-import { device } from "@util/breakpoints"
-
+import { NFTItem } from '@libs/@talisman-nft/types'
+import { device } from '@util/breakpoints'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
-import { NFTItem } from "@libs/@talisman-nft/types"
 
 export const MainDetails = styled(({ nftId, collection, name, className }) => {
   return (
@@ -34,7 +33,7 @@ export const Edition = styled(({ editionData, nftId, className }) => {
       <h1>{t('Edition')}</h1>
       <p className="nft-main-val">
         # {nftId}
-        <span className="nft-sub-val"> / {editionData || "..."}</span>
+        <span className="nft-sub-val"> / {editionData || '...'}</span>
       </p>
     </div>
   )
@@ -47,7 +46,7 @@ export const FloorPrice = styled(({ price, className }) => {
   return (
     <div className={className}>
       <h1>{t('Floor Price')}</h1>
-      <p className="nft-main-val">{price || "..."} KSM</p>
+      <p className="nft-main-val">{price || '...'} KSM</p>
     </div>
   )
 })`
@@ -58,7 +57,7 @@ export const FloorPrice = styled(({ price, className }) => {
 export const Description = styled(({ description, className }) => {
   return (
     <div className={className}>
-      <p className="nft-desc-value">{description || ""}</p>
+      <p className="nft-desc-value">{description || ''}</p>
     </div>
   )
 })`
@@ -73,7 +72,6 @@ export const Description = styled(({ description, className }) => {
 `
 
 export const Attributes = styled(({ properties, className }) => {
-  
   const { t } = useTranslation('nft-viewer')
   if (properties === undefined || Object.keys(properties).length === 0) return null
 
@@ -176,12 +174,10 @@ type InfoProps = {
   nft?: NFTItem
 }
 
-const Info = ({ className, nft } : InfoProps) => {
-
-
+const Info = ({ className, nft }: InfoProps) => {
   return (
     <div className={className}>
-      {!!nft && 
+      {!!nft && (
         <>
           <MainDetails name={nft?.name} collection={nft?.collection?.name} />
           <CollectionData
@@ -191,11 +187,10 @@ const Info = ({ className, nft } : InfoProps) => {
           />
           <Description description={nft?.description} />
           <Attributes properties={nft?.attributes} />
-          <Network network={nft?.platform}/>
+          <Network network={nft?.platform} />
           <Buttons collectibleUrl={nft?.id} />
         </>
-      }
-
+      )}
     </div>
   )
 }
