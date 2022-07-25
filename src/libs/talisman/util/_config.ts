@@ -1148,20 +1148,20 @@ export const parachainDetails: ParachainDetails[] = [
       Discord: 'https://discord.com/invite/JFzD2b5P2B',
     },
   },
-  {
-    id: '2-2127',
-    name: 'SNOW',
-    slug: 'snow-network',
-    token: '$ICZ',
-    subtitle:
-      'SNOW is a long-term incentivized network for cutting-edge development backed by the ICZ token, which has real-world value.',
-    info: `SNOW will serve as a 'canary network' for ICE. Supply and other token economic behaviors on SNOW will be the same as ICE, but token distribution will be different in order to support the goals and attributes of the network.`,
-    links: {
-      Website: 'https://icenetwork.io/snow/',
-      Twitter: 'https://twitter.com/icenetwork_io',
-      Discord: 'https://discord.com/invite/x6DxjxfP24',
-    },
-  },
+  // {
+  //   id: '2-2127',
+  //   name: 'SNOW',
+  //   slug: 'snow-network',
+  //   token: '$ICZ',
+  //   subtitle:
+  //     'SNOW is a long-term incentivized network for cutting-edge development backed by the ICZ token, which has real-world value.',
+  //   info: `SNOW will serve as a 'canary network' for ICE. Supply and other token economic behaviors on SNOW will be the same as ICE, but token distribution will be different in order to support the goals and attributes of the network.`,
+  //   links: {
+  //     Website: 'https://icenetwork.io/snow/',
+  //     Twitter: 'https://twitter.com/icenetwork_io',
+  //     Discord: 'https://discord.com/invite/x6DxjxfP24',
+  //   },
+  // },
 ]
 
 export type CrowdloanDetails = {
@@ -2655,28 +2655,28 @@ export const crowdloanDetails: CrowdloanDetails[] = [
       info: null,
     },
   },
-  {
-    relayId: 2,
-    paraId: 2127,
-    contributeUrl: '',
-    rewards: {
-      tokens: [
-        {
-          symbol: '$ICZ',
-          perKSM: '> 4,000',
-        },
-      ],
-      custom: [
-        {
-          title: 'Early Supporter Reward',
-          value: '4,000 Extra ICZ per KSM (Decreases linearly with time)',
-        },
-        {
-          title: 'Referral Bonus',
-          value: '5%',
-        },
-      ],
-      info: null,
-    },
-  },
+  // {
+  //   relayId: 2,
+  //   paraId: 2127,
+  //   contributeUrl: '',
+  //   rewards: {
+  //     tokens: [
+  //       {
+  //         symbol: '$ICZ',
+  //         perKSM: '> 4,000',
+  //       },
+  //     ],
+  //     custom: [
+  //       {
+  //         title: 'Early Supporter Reward',
+  //         value: '4,000 Extra ICZ per KSM (Decreases linearly with time)',
+  //       },
+  //       {
+  //         title: 'Referral Bonus',
+  //         value: '5%',
+  //       },
+  //     ],
+  //     info: null,
+  //   },
+  // },
 ]
