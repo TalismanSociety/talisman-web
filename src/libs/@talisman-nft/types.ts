@@ -1,6 +1,6 @@
-export type NFTCategory = "image" | "video" | "model" | "application" | "audio" | "unknown"
+export type NFTCategory = "image" | "video" | "model" | "application" | "audio" | null
 
-type NFTAttributes = Record<string, any> | null
+type NFTAttributes = Record<string, any>
 
 type NFTCollectionDetails = {
   id?: string
@@ -9,18 +9,22 @@ type NFTCollectionDetails = {
   floorPrice?: string
 }
 
-export type NFTItem = {
+export type NFTShort = {
   id: string;
   name: string | null;
-  description: string;
   thumb: string | null;
   type: NFTCategory;
-  mediaUri: string;
-  serialNumber?: string;
+  mediaUri: string; // PDF
   platform: string;
+}
+
+export type NFTDetail = NFTShort & {
+  description: string;
+  serialNumber?: string;
   attributes: NFTAttributes
   collection: NFTCollectionDetails | {}
   nftSpecificData: any
 } 
 
-export type NFTItemArray = [NFTItem?]
+export type NFTDetailArray = NFTDetail[]
+export type NFTShortArray = NFTShort[]

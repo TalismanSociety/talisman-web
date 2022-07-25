@@ -1,8 +1,8 @@
 import { ExtensionStatusGate, Panel, PanelSection } from '@components'
 import { ReactComponent as ArrowRight } from '@icons/arrow-right.svg'
-import { NftCard } from '@libs/nft/NftCard/NftCard'
-import { NoNFTsPlaceholder } from '@libs/nft/NoNFTsPlaceholder'
-import { useHasNFTs } from '@libs/nft/useHasNFTs'
+// import { NftCard } from '@libs/nft/NftCard/NftCard'
+import { NoNFTsPlaceholder } from '@archetypes/NFT/NoNFTsPlaceholder'
+// import { useHasNFTs } from '@libs/nft/useHasNFTs'
 import { useExtensionAutoConnect } from '@libs/talisman'
 import { device } from '@util/breakpoints'
 import { useTranslation } from 'react-i18next'
@@ -43,11 +43,11 @@ const ExtensionUnavailable = styled(props => {
 const NFTs = styled(({ className }: { className?: string }) => {
   const { t } = useTranslation()
   const { t: tNav } = useTranslation('nav')
-  const { accounts } = useExtensionAutoConnect()
-  const { hasNfts, nfts } = useHasNFTs(accounts, { limit: 4 })
+  // const { accounts } = useExtensionAutoConnect()
+  // const { hasNfts, nfts } = useHasNFTs(accounts, { limit: 4 })
   return (
     <section className={`wallet-assets ${className}`}>
-      <ExtensionStatusGate unavailable={<ExtensionUnavailable />}>
+      {/* <ExtensionStatusGate unavailable={<ExtensionUnavailable />}>
         <div className="header">
           <h1>{tNav('NFTs')}</h1>
           {hasNfts && (
@@ -67,7 +67,7 @@ const NFTs = styled(({ className }: { className?: string }) => {
             })}
           </div>
         )}
-      </ExtensionStatusGate>
+      </ExtensionStatusGate> */}
     </section>
   )
 })`
