@@ -2,8 +2,8 @@ import { useNftById } from '@libs/@talisman-nft/hooks'
 import { device } from '@util/breakpoints'
 import { Suspense } from 'react'
 import styled from 'styled-components'
-import Info from './Info'
 
+import Info from './Info'
 import Preview from './Preview'
 
 type ModalProps = {
@@ -11,8 +11,7 @@ type ModalProps = {
   id: string
 }
 
-const Modal = ({ className, id } : ModalProps) => {
-
+const Modal = ({ className, id }: ModalProps) => {
   const { nft } = useNftById(id)
 
   return (

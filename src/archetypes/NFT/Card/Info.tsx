@@ -19,7 +19,6 @@ const Info = styled(({ title, subtitle, icon, className, ...rest }) => (
     position: absolute;
     top: 0.5rem;
     right: 1.25rem;
-
   }
 
   .text {
@@ -27,7 +26,8 @@ const Info = styled(({ title, subtitle, icon, className, ...rest }) => (
     width: 100%;
     display: block;
 
-    .title, .subtitle {
+    .title,
+    .subtitle {
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;

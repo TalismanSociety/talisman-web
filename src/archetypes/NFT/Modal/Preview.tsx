@@ -1,14 +1,13 @@
 import '@google/model-viewer'
 
-// Placeholders
-import PDFPlaceholder from '@assets/generic-pdf.png'
-import VideoPlaceholder from '@assets/generic-video.png'
 import AudioPlaceholder from '@assets/generic-audio.png'
 import ImagePlaceholder from '@assets/generic-image.png'
-import UnknownPlaceholder from '@assets/generic-unknown.png'
 import ModelPlaceholder from '@assets/generic-model.png'
-
-import { NFTDetail } from "@libs/@talisman-nft/types"
+// Placeholders
+import PDFPlaceholder from '@assets/generic-pdf.png'
+import UnknownPlaceholder from '@assets/generic-unknown.png'
+import VideoPlaceholder from '@assets/generic-video.png'
+import { NFTDetail } from '@libs/@talisman-nft/types'
 import styled from 'styled-components'
 
 type PreviewType = {
@@ -16,24 +15,15 @@ type PreviewType = {
   nft?: NFTDetail
 }
 
-
-const MediaPreview = ( { mediaUri, thumb, type, name, id } : NFTDetail) => {
-
-  switch(type){
+const MediaPreview = ({ mediaUri, thumb, type, name, id }: NFTDetail) => {
+  switch (type) {
     case 'image':
       return <img loading="lazy" src={mediaUri || ImagePlaceholder} alt={name || id} />
     case 'video':
-      if(!mediaUri) return <img loading="lazy" src={VideoPlaceholder} alt={name || id} />
-      return <video 
-              src={mediaUri}
-              loop
-              muted
-              playsInline
-              preload="metadata"
-              controls={true}
-            />
+      if (!mediaUri) return <img loading="lazy" src={VideoPlaceholder} alt={name || id} />
+      return <video src={mediaUri} loop muted playsInline preload="metadata" controls={true} />
     case 'application':
-      if(!mediaUri) return <img loading="lazy" alt={name || id} src={PDFPlaceholder} />
+      if (!mediaUri) return <img loading="lazy" alt={name || id} src={PDFPlaceholder} />
       return <embed src={`${mediaUri}#toolbar=0`} />
     case 'audio':
       return (
@@ -52,7 +42,7 @@ const MediaPreview = ( { mediaUri, thumb, type, name, id } : NFTDetail) => {
         </>
       )
     case 'model':
-      if(!mediaUri) return <img loading="lazy" alt={name || id} src={ModelPlaceholder} />
+      if (!mediaUri) return <img loading="lazy" alt={name || id} src={ModelPlaceholder} />
       const modelProps = {
         'src': mediaUri,
         'alt': name || id,
@@ -65,17 +55,10 @@ const MediaPreview = ( { mediaUri, thumb, type, name, id } : NFTDetail) => {
     default:
       return <img loading="lazy" alt={name || id} src={UnknownPlaceholder} />
   }
-
 }
 
-
-const Preview = ({className, nft} : PreviewType) => {
-  
-  return (
-    <section className={className}>
-      {!!nft && <MediaPreview {...nft}/>}
-    </section>
-  )
+const Preview = ({ className, nft }: PreviewType) => {
+  return <section className={className}>{!!nft && <MediaPreview {...nft} />}</section>
 }
 
 const StyledPreview = styled(Preview)`

@@ -1,7 +1,3 @@
-import { NFTInterface } from "../NFTInterface";
-import { encodeAddress } from '@polkadot/util-crypto'
-import { NFTCategory, NFTDetail, NFTShort, NFTShortArray } from "../../types";
-
 import {
   ApolloClient,
   ApolloQueryResult,
@@ -10,10 +6,14 @@ import {
   createHttpLink,
   gql,
 } from '@apollo/client'
+import { encodeAddress } from '@polkadot/util-crypto'
+
+import { NFTCategory, NFTDetail, NFTShort, NFTShortArray } from '../../types'
+import { NFTInterface } from '../NFTInterface'
 
 const QUERY_SHORT = gql`
   query ($address: String!) {
-    nfts(where: {owner: {_eq: $address}}) {
+    nfts(where: { owner: { _eq: $address } }) {
       id
       symbol
       metadata_name
@@ -22,14 +22,14 @@ const QUERY_SHORT = gql`
         thumb
         src
       }
-      metadata_image	
+      metadata_image
     }
   }
 `
 
 const QUERY_DETAIL = gql`
   query ($id: String!) {
-    nfts (where : {id : {_eq : $id}}) {
+    nfts(where: { id: { _eq: $id } }) {
       id
       symbol
       metadata_name
@@ -38,7 +38,7 @@ const QUERY_DETAIL = gql`
         metadata_content_type
         thumb
       }
-      metadata_image	
+      metadata_image
       sn
       metadata_properties
       collection {
@@ -56,8 +56,8 @@ export class Rmrk2Provider extends NFTInterface {
   storageProvider = ''
   client: any
 
-  async getClient(){
-    if(this.client) return this.client
+  async getClient() {
+    if (this.client) return this.client
 
     this.client = await new ApolloClient({
       link: createHttpLink({ uri: this.uri }),
@@ -71,65 +71,57 @@ export class Rmrk2Provider extends NFTInterface {
         'Access-Control-Allow-Credentials': 'true',
       },
     })
-    
+
     return this.client
   }
 
-  async fetchAllByAddress(address: string){
-
+  async fetchAllByAddress(address: string) {
     const encodedAddress = encodeAddress(address, 2)
 
     const client = await this.getClient()
 
     // @Josh handle funny stuff
-    const data = await client.query({ query: QUERY_SHORT, variables : { address: encodedAddress } })
-      .then((res : any) => {
-        return res?.data?.nfts.map((nft : any) => {
-          // parse out the thumb image
-          const thumb = !!nft?.resources[0]?.thumb
-            ? this.toIPFSUrl(nft?.resources[0]?.thumb)
-            : null // fetch from somewhere
+    const data = await client.query({ query: QUERY_SHORT, variables: { address: encodedAddress } }).then((res: any) => {
+      return res?.data?.nfts.map((nft: any) => {
+        // parse out the thumb image
+        const thumb = !!nft?.resources[0]?.thumb ? this.toIPFSUrl(nft?.resources[0]?.thumb) : null // fetch from somewhere
 
-          // get the context type of null
-          const type = nft?.resources[0]?.metadata_content_type
+        // get the context type of null
+        const type = nft?.resources[0]?.metadata_content_type
 
-          return {
-            id: nft?.id,
-            name: nft?.metadata_name || nft?.symbol,
-            thumb,
-            type,
-            mediaUri: this.toIPFSUrl(nft?.metadata_image),
-            platform: this.name,
-          } as NFTShort
-        })
+        return {
+          id: nft?.id,
+          name: nft?.metadata_name || nft?.symbol,
+          thumb,
+          type,
+          mediaUri: this.toIPFSUrl(nft?.metadata_image),
+          platform: this.name,
+        } as NFTShort
       })
+    })
 
     // data smooshing here before returning
     return data as NFTShortArray
   }
-  
-  async fetchOneById(id: string){
+
+  async fetchOneById(id: string) {
     const client = await this.getClient()
 
-    return await client.query({ query: QUERY_DETAIL, variables : { id: id } })
-      .then((res : any) => {
+    return await client
+      .query({ query: QUERY_DETAIL, variables: { id: id } })
+      .then((res: any) => {
         const nft = res?.data?.nfts[0]
 
-        if(!nft) throw new Error('TBD')
+        if (!nft) throw new Error('TBD')
 
         // parse out the thumb image
-        const mediaUri = !!nft?.metadata_image
-          ? this.toIPFSUrl(nft?.metadata_image)
-          : null // fetch from somewhere
+        const mediaUri = !!nft?.metadata_image ? this.toIPFSUrl(nft?.metadata_image) : null // fetch from somewhere
 
-        
-          const thumb = !!nft?.resources[0]?.thumb
-          ? this.toIPFSUrl(nft?.resources[0]?.thumb)
-          : null // fetch from somewhere
+        const thumb = !!nft?.resources[0]?.thumb ? this.toIPFSUrl(nft?.resources[0]?.thumb) : null // fetch from somewhere
 
         // get the context type of null
         const type = nft?.resources[0]?.metadata_content_type
-        
+
         return {
           id: nft?.id,
           name: nft?.metadata_name || nft?.symbol,
@@ -147,8 +139,6 @@ export class Rmrk2Provider extends NFTInterface {
           },
         } as NFTDetail
       })
-      .catch((e: any) => {
-        
-      })
+      .catch((e: any) => {})
   }
 }
