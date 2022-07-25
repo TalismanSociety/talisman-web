@@ -6,6 +6,13 @@ import Card from './Card/Card'
 
 import { useModal } from '@components'
 import Modal from './Modal/Modal'
+import { useTranslation } from 'react-i18next'
+
+import nftRowSkeleton from '@assets/nft-row-skeleton.png'
+import { Button } from '@components'
+import { Placeholder } from '@components/Placeholder'
+import { TALISMAN_SPIRIT_KEYS_RMRK } from '@util/links'
+
 
 
 type ListPropsType = {
@@ -13,30 +20,17 @@ type ListPropsType = {
   address?: string
 }
 
-const List = ({className, address}: ListPropsType) => {
+const ListItems = ({className, nfts}: any) => { // Create a type
 
   const { openModal } = useModal()
 
-  const {
-    setAddress,
-    loading,
-    nfts
-  } = useNftsByAddress(address)
-
-  useEffect(() => {
-    setAddress(address)
-  }, [address, setAddress])
 
   return <div className={className}>
-    {!!loading
-      ? <span>Loading</span> : 
-      !loading && nfts.length > 0 ? nfts.map((nft : any) => <Card key={nft.id} nft={nft} onClick={() => openModal(<Modal id={nft?.id} />)}/> ) :
-      <span>No NFTs</span>
-    }
+    {nfts.map((nft : any) => <Card key={nft.id} nft={nft} onClick={() => openModal(<Modal id={nft?.id} />)}/> )}
   </div>
 }
 
-const StyledList = styled(List)`
+const StyledListItems = styled(ListItems)`
   display: grid;
   gap: 2rem;
   grid-template-columns: 1fr;
@@ -51,4 +45,50 @@ const StyledList = styled(List)`
   }
 `
 
-export default StyledList
+const Loading = ({className} : an) => {
+  return <div className={className}>
+    ...loading
+    </div>
+}
+
+const StyledLoading = styled(Loading)`
+  color: red
+`
+
+const NoNFTsPlaceholder = () => {
+  const { t } = useTranslation('banners')
+  return (
+    <Placeholder placeholderImage={nftRowSkeleton}>
+      <div className="description">{t('noNfts.description')}</div>
+      <div className="cta">
+        <a href={TALISMAN_SPIRIT_KEYS_RMRK} target="_blank" rel="noopener noreferrer">
+          <Button className="outlined">{t('noNfts.primaryCta')}</Button>
+        </a>
+      </div>
+    </Placeholder>
+  )
+}
+
+
+const List = ({ className, address } : ListPropsType) => {
+  const {
+    setAddress,
+    loading,
+    nfts
+  } = useNftsByAddress(address)
+
+  useEffect(() => {
+    setAddress(address)
+  }, [address, setAddress])
+  
+
+  return(
+    !!loading 
+      ? <StyledLoading />
+      : !!nfts.length
+        ? <StyledListItems nfts={nfts}/>
+        : <NoNFTsPlaceholder />
+  )
+}
+
+export default List
