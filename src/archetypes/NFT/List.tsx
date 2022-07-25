@@ -13,8 +13,6 @@ import { Button } from '@components'
 import { Placeholder } from '@components/Placeholder'
 import { TALISMAN_SPIRIT_KEYS_RMRK } from '@util/links'
 
-
-
 type ListPropsType = {
   className?: string
   address?: string

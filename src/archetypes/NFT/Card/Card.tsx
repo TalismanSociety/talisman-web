@@ -14,11 +14,11 @@ function Card({ className, nft, onClick }: CardProps) {
   return (
     <div className={className} onClick={onClick}>
       <Preview nft={nft} />
-      {/* <Info
+      <Info
         subtitle={nft?.name || nft?.id}
         title={nft?.name || nft?.id}
         // Work on ICONS
-      /> */}
+      />
     </div>
   )
 }
