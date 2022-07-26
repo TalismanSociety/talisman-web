@@ -1,9 +1,4 @@
-import {
-  ApolloClient,
-  InMemoryCache,
-  createHttpLink,
-  gql,
-} from '@apollo/client'
+import { ApolloClient, InMemoryCache, createHttpLink, gql } from '@apollo/client'
 import { encodeAddress } from '@polkadot/util-crypto'
 
 import { NFTDetail, NFTShort, NFTShortArray } from '../../types'
@@ -80,14 +75,16 @@ export class Rmrk2Provider extends NFTInterface {
     // @Josh handle funny stuff
     const data = await client.query({ query: QUERY_SHORT, variables: { address: encodedAddress } }).then((res: any) => {
       return res?.data?.nfts.map((nft: any) => {
-
         const type = nft?.resources[0]?.metadata_content_type
 
-        const mediaUri = !!nft?.metadata_image ? this.toIPFSUrl(nft?.metadata_image) : !!nft?.resources[0]?.src ? this.toIPFSUrl(nft?.resources[0]?.src) : null
+        const mediaUri = !!nft?.metadata_image
+          ? this.toIPFSUrl(nft?.metadata_image)
+          : !!nft?.resources[0]?.src
+          ? this.toIPFSUrl(nft?.resources[0]?.src)
+          : null
         // parse out the thumb image
         const thumb = !!nft?.resources[0]?.thumb ? this.toIPFSUrl(nft?.resources[0]?.thumb) : null // fetch from somewhere
         // get the context type of null
-
 
         return {
           id: nft?.id,
@@ -116,11 +113,14 @@ export class Rmrk2Provider extends NFTInterface {
 
         const type = nft?.resources[0]?.metadata_content_type
         // parse out the thumb image
-        const mediaUri = !!nft?.metadata_image ? this.toIPFSUrl(nft?.metadata_image) : !!nft?.resources[0]?.src ? this.toIPFSUrl(nft?.resources[0]?.src) : null
+        const mediaUri = !!nft?.metadata_image
+          ? this.toIPFSUrl(nft?.metadata_image)
+          : !!nft?.resources[0]?.src
+          ? this.toIPFSUrl(nft?.resources[0]?.src)
+          : null
 
         const thumb = !!nft?.resources[0]?.thumb ? this.toIPFSUrl(nft?.resources[0]?.thumb) : null // fetch from somewhere
         // get the context type of null
-
 
         const item = {
           id: nft?.id,

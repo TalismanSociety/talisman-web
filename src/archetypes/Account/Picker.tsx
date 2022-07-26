@@ -146,9 +146,9 @@ const AccountPicker = styled(({ additionalAccounts = [], className, onChange }) 
   return (
     <div ref={nodeRef} className="account-picker" onClick={() => setOpen(!open)}>
       <span className={`account-button ${className}`}>
-        <span className='account'>
+        <span className="account">
           <span>
-              <Identicon
+            <Identicon
               className="identicon"
               value={activeAccount?.address}
               theme={activeAccount?.type === 'ethereum' ? 'ethereum' : 'polkadot'}
@@ -159,19 +159,21 @@ const AccountPicker = styled(({ additionalAccounts = [], className, onChange }) 
             </span>
           </span>
 
-        <Button.Icon
-          className="nav-toggle"
-          onClick={(e: any) => {
-            e.stopPropagation()
-            setOpen(!open)
-          }}
-        >
-          <ChevronDown className="nav-toggle"
-          onClick={(e: any) => {
-            e.stopPropagation()
-            setOpen(!open)
-          }} />
-        </Button.Icon>
+          <Button.Icon
+            className="nav-toggle"
+            onClick={(e: any) => {
+              e.stopPropagation()
+              setOpen(!open)
+            }}
+          >
+            <ChevronDown
+              className="nav-toggle"
+              onClick={(e: any) => {
+                e.stopPropagation()
+                setOpen(!open)
+              }}
+            />
+          </Button.Icon>
         </span>
 
         <Dropdown

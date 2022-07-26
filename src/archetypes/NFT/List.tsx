@@ -47,9 +47,7 @@ const StyledListItems = styled(ListItems)`
 `
 
 const Loading = ({ className }: any) => {
-  return (
-    <div className={className}>Fetching NFTs from the Paraverse...</div>
-  ) 
+  return <div className={className}>Fetching NFTs from the Paraverse...</div>
 }
 
 const StyledLoading = styled(Loading)`
