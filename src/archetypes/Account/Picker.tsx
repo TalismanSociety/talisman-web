@@ -144,11 +144,8 @@ const AccountPicker = styled(({ additionalAccounts = [], className, onChange }) 
   }, [activeAccount])
 
   return (
-    <div ref={nodeRef} className="account-picker" onClick={
-      accounts.length > 1 ? () => setOpen(!open) : undefined}
-      >
+    <div ref={nodeRef} className="account-picker" onClick={accounts.length > 1 ? () => setOpen(!open) : undefined}>
       <span className={`account-button ${className}`}>
-
         <span className="account">
           <span>
             <Identicon
@@ -172,7 +169,6 @@ const AccountPicker = styled(({ additionalAccounts = [], className, onChange }) 
             />
           )}
         </span>
-
 
         <Dropdown
           open={open}
