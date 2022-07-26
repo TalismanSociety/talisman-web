@@ -144,8 +144,11 @@ const AccountPicker = styled(({ additionalAccounts = [], className, onChange }) 
   }, [activeAccount])
 
   return (
-    <div ref={nodeRef} className="account-picker" onClick={() => setOpen(!open)}>
+    <div ref={nodeRef} className="account-picker" onClick={
+      accounts.length > 1 ? () => setOpen(!open) : undefined}
+      >
       <span className={`account-button ${className}`}>
+
         <span className="account">
           <span>
             <Identicon
@@ -159,13 +162,7 @@ const AccountPicker = styled(({ additionalAccounts = [], className, onChange }) 
             </span>
           </span>
 
-          <Button.Icon
-            className="nav-toggle"
-            onClick={(e: any) => {
-              e.stopPropagation()
-              setOpen(!open)
-            }}
-          >
+          {accounts.length > 1 && (
             <ChevronDown
               className="nav-toggle"
               onClick={(e: any) => {
@@ -173,8 +170,9 @@ const AccountPicker = styled(({ additionalAccounts = [], className, onChange }) 
                 setOpen(!open)
               }}
             />
-          </Button.Icon>
+          )}
         </span>
+
 
         <Dropdown
           open={open}

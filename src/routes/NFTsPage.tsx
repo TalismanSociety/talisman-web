@@ -57,7 +57,7 @@ const NFTsPage = styled(({ className }: any) => {
   }
   padding: 0 2.4rem;
   > header + article {
-    margin-top: 2rem;
+    margin-top: 3rem;
   }
 `
 
