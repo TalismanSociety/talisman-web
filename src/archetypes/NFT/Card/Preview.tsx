@@ -15,8 +15,7 @@ type PreviewType = {
   nft: NFTDetail
 }
 
-const MediaPreview = ({ mediaUri, thumb, type, name, id } : NFTDetail) => {
-  
+const MediaPreview = ({ mediaUri, thumb, type, name, id }: NFTDetail) => {
   if (thumb) return <img loading="lazy" src={thumb} alt={name || id} />
 
   switch (type) {

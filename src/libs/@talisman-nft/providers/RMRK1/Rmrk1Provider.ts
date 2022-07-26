@@ -1,9 +1,4 @@
-import {
-  ApolloClient,
-  InMemoryCache,
-  createHttpLink,
-  gql,
-} from '@apollo/client'
+import { ApolloClient, InMemoryCache, createHttpLink, gql } from '@apollo/client'
 import { encodeAddress } from '@polkadot/util-crypto'
 
 import { NFTDetail, NFTShort, NFTShortArray } from '../../types'

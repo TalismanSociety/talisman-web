@@ -38,7 +38,7 @@ export const Edition = styled(({ editionData, nftId, className }) => {
     </div>
   )
 })`
-margin-top: 0 !important;
+  margin-top: 0 !important;
   width: 55%;
 `
 
