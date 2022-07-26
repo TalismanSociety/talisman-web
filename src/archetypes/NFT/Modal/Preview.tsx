@@ -7,7 +7,7 @@ import ModelPlaceholder from '@assets/generic-model.png'
 import PDFPlaceholder from '@assets/generic-pdf.png'
 import UnknownPlaceholder from '@assets/generic-unknown.png'
 import VideoPlaceholder from '@assets/generic-video.png'
-import { NFTCategory, NFTDetail } from '@libs/@talisman-nft/types'
+import { NFTDetail } from '@libs/@talisman-nft/types'
 import styled from 'styled-components'
 
 type PreviewType = {

@@ -38,16 +38,17 @@ const Dropdown = styled(({ className, accounts, activeAccount, open, handleChang
     )
   )
 })`
-  background: rgb(${({ theme }) => theme?.background});
+  background: var(--color-background);
+
   font-size: 0.8em;
   font-size: 1em;
-  width: 150%;
+  width: 100%;
   overflow: hidden;
   overflow-y: auto;
   border-radius: 1.2rem;
   border: solid 1px var(--color-activeBackground);
   box-shadow: 0 0 1.2rem rgba(0, 0, 0, 0.1);
-  max-width: 40rem;
+  max-width: 30rem;
   &::-webkit-scrollbar {
     display: none;
   }
@@ -93,6 +94,7 @@ const Dropdown = styled(({ className, accounts, activeAccount, open, handleChang
       white-space: nowrap;
       text-overflow: ellipsis;
       overflow: hidden;
+      width: 10em;
     }
     .address {
       font-size: 0.85em;
@@ -103,7 +105,7 @@ const Dropdown = styled(({ className, accounts, activeAccount, open, handleChang
       justify-content: flex-end;
     }
     &:hover {
-      background: rgba(0, 0, 0, 0.1);
+      background: var(--color-controlBackground);
     }
     svg {
       color: var(--color-primary);
@@ -144,15 +146,18 @@ const AccountPicker = styled(({ additionalAccounts = [], className, onChange }) 
   return (
     <div ref={nodeRef} className="account-picker" onClick={() => setOpen(!open)}>
       <span className={`account-button ${className}`}>
-        <Identicon
-          className="identicon"
-          value={activeAccount?.address}
-          theme={activeAccount?.type === 'ethereum' ? 'ethereum' : 'polkadot'}
-        />
+        <span className='account'>
+          <span>
+              <Identicon
+              className="identicon"
+              value={activeAccount?.address}
+              theme={activeAccount?.type === 'ethereum' ? 'ethereum' : 'polkadot'}
+            />
 
-        <span className="selected-account">
-          <div>{activeAccount?.name}</div>
-        </span>
+            <span className="selected-account">
+              <div>{activeAccount?.name}</div>
+            </span>
+          </span>
 
         <Button.Icon
           className="nav-toggle"
@@ -161,8 +166,13 @@ const AccountPicker = styled(({ additionalAccounts = [], className, onChange }) 
             setOpen(!open)
           }}
         >
-          <ChevronDown />
+          <ChevronDown className="nav-toggle"
+          onClick={(e: any) => {
+            e.stopPropagation()
+            setOpen(!open)
+          }} />
         </Button.Icon>
+        </span>
 
         <Dropdown
           open={open}
@@ -180,57 +190,64 @@ const AccountPicker = styled(({ additionalAccounts = [], className, onChange }) 
   font-size: inherit;
   display: flex;
   align-items: center;
-  padding: 1rem 0;
   position: relative;
-  :hover {
-    cursor: pointer;
-  }
-  > .identicon {
-    margin-right: 0.3em;
-    > svg,
-    > img {
-      font-size: var(--font-size-xlarge);
-      width: 1em;
-      height: 1em;
-    }
-    img {
-      border-radius: 999999999999rem;
-    }
-  }
-  > .nav-toggle {
-    margin-left: 0.5em;
-    background: inherit;
-  }
-  > .selected-account {
-    display: block;
-    margin-left: 0.4em;
-    > div {
-      line-height: 1.3em;
-      min-width: 15rem;
-      color: var(--color-text);
-      font-weight: var(--font-weight-bold);
-      width: 6.7em;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      overflow: hidden;
-    }
-  }
-  .identicon {
-    cursor: inherit;
-  }
+  max-width: 30rem;
+  border: 1px solid var(--color-activeBackground);
+  border-radius: 1.2rem 1.2rem;
+  background: var(--color-controlBackground);
   .account-picker {
     position: absolute;
     top: 100%;
     left: 0;
     z-index: 10;
     margin-top: 1rem;
-    @media ${device.lg} {
-      left: unset;
-      right: 0;
-    }
     @media ${device.xxl} {
       right: unset;
       left: 0;
+    }
+  }
+
+  > .account {
+    display: flex;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    width: 100%;
+    cursor: pointer;
+    justify-content: space-between;
+    transition: all 0.15s;
+    span {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      min-width: 0;
+      > .selected-account {
+        margin-left: 0.4em;
+        font-weight: bold;
+        letter-spacing: -0.03em;
+        white-space: nowrap;
+        > div {
+          width: 10em;
+          text-overflow: ellipsis;
+          overflow: hidden;
+        }
+      }
+    }
+    .identicon {
+      color: var(--color-primary);
+      background: var(--color-activeBackground);
+      border-radius: 100px;
+      > svg,
+      > img {
+        font-size: var(--font-size-xlarge);
+        width: 1em;
+        height: 1em;
+      }
+      img {
+        border-radius: 999999999999rem;
+      }
+    }
+    &:hover {
+      background: rgba(0, 0, 0, 0.1);
     }
   }
 `
