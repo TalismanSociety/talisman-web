@@ -24,7 +24,7 @@ export const SupportedRelaychains: { [key: number]: Relaychain } = {
     name: 'Polkadot',
     rpc: 'wss://rpc.polkadot.io',
     genesisHash: '0x91b171bb158e2d3848fa23a9f1c25182fb8e20313b2c1eb49219da7a70ce90c3',
-    subqueryCrowdloansEndpoint: 'https://api.subquery.network/sq/bianyunjian/polkadot-crowdloans',
+    subqueryCrowdloansEndpoint: 'https://api.subquery.network/sq/interlay/polkadot-crowdloan-indexer',
     subscanUrl: 'https://polkadot.subscan.io',
     tokenDecimals: 10,
     tokenSymbol: 'DOT',
