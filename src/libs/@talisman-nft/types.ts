@@ -1,4 +1,4 @@
-export type NFTCategory = 'image' | 'video' | 'model' | 'application' | 'audio' | null
+export type NFTCategory = 'image' | 'video' | 'model' | 'application' | 'audio' | 'pdf' | null
 
 type NFTAttributes = Record<string, any>
 
@@ -24,6 +24,7 @@ export type NFTDetail = NFTShort & {
   attributes: NFTAttributes
   collection: NFTCollectionDetails | {}
   nftSpecificData: any
+  platformUri: string
 }
 
 export type NFTDetailArray = NFTDetail[]

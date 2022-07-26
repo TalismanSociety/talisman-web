@@ -7,7 +7,7 @@ import { NFTInterface } from '../NFTInterface'
 export class StatemineProvider extends NFTInterface {
   name = 'StateMine'
   uri = 'wss://statemine.api.onfinality.io/public-ws'
-  collectionUri = ''
+  platformUri = 'https://singular.app/collectibles/statemine/'
   storageProvider = ''
   items: NFTDetailArray = []
 
@@ -126,6 +126,7 @@ export class StatemineProvider extends NFTInterface {
                   type,
                   serialNumber: assetId.nftTokenId,
                   platform: this.name,
+                  platformUri: `${this.platformUri}${assetId.collectionId.replaceAll(',', '')}/${assetId.nftTokenId}`,
                   attributes: {},
                   collection: {
                     id: NFTdetails.collectionId,

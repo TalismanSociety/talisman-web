@@ -28,7 +28,6 @@ export class NFTFactory {
     // create a mapping between
     this.nftPlatformMapping = {}
     nftArray.forEach((nft: NFTShort) => (this.nftPlatformMapping[nft.id] = nft.platform))
-
     return nftArray
   }
 

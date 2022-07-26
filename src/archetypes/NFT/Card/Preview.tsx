@@ -7,17 +7,16 @@ import ModelPlaceholder from '@assets/generic-model.png'
 import PDFPlaceholder from '@assets/generic-pdf.png'
 import UnknownPlaceholder from '@assets/generic-unknown.png'
 import VideoPlaceholder from '@assets/generic-video.png'
-import { NFTShort } from '@libs/@talisman-nft/types'
+import { NFTDetail, NFTShort } from '@libs/@talisman-nft/types'
 import styled from 'styled-components'
 
 type PreviewType = {
   className?: string
-  nft: NFTShort
+  nft: NFTDetail
 }
 
-const MediaPreview = (props: NFTShort) => {
-  const { mediaUri, thumb, type, name, id } = props
-
+const MediaPreview = ({ mediaUri, thumb, type, name, id } : NFTDetail) => {
+  
   if (thumb) return <img loading="lazy" src={thumb} alt={name || id} />
 
   switch (type) {
@@ -42,6 +41,7 @@ const MediaPreview = (props: NFTShort) => {
           controlsList="nodownload"
         />
       )
+    case 'pdf':
     case 'application':
       return <img loading="lazy" alt={name || id} src={PDFPlaceholder} />
     case 'audio':

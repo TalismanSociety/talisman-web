@@ -15,19 +15,6 @@ export class NFTInterface {
     return url.replace('ipfs://ipfs/', this.baseIPFSUrl)
   }
 
-  protected async fetchNFTs_type(IPFSUrl: string): Promise<NFTCategory> {
-    let cat = 'unknown'
-
-    if (IPFSUrl !== null) {
-      cat = await fetch(IPFSUrl).then(res => {
-        const headers = res.headers.get('content-type')
-        return !headers ? cat : headers.split('/')[0]
-      })
-    }
-
-    return cat as NFTCategory
-  }
-
   public fetchAllByAddress(address: string): Promise<NFTShortArray> {
     return Promise.reject()
   }

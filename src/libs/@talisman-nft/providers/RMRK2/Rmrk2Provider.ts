@@ -1,14 +1,12 @@
 import {
   ApolloClient,
-  ApolloQueryResult,
   InMemoryCache,
-  NormalizedCacheObject,
   createHttpLink,
   gql,
 } from '@apollo/client'
 import { encodeAddress } from '@polkadot/util-crypto'
 
-import { NFTCategory, NFTDetail, NFTShort, NFTShortArray } from '../../types'
+import { NFTDetail, NFTShort, NFTShortArray } from '../../types'
 import { NFTInterface } from '../NFTInterface'
 
 const QUERY_SHORT = gql`
@@ -37,6 +35,7 @@ const QUERY_DETAIL = gql`
       resources {
         metadata_content_type
         thumb
+        src
       }
       metadata_image
       sn
@@ -53,6 +52,7 @@ const QUERY_DETAIL = gql`
 export class Rmrk2Provider extends NFTInterface {
   name = 'RMRK2'
   uri = 'https://gql-rmrk2-prod.graphcdn.app'
+  platformUri = 'https://singular.app/collectibles/'
   storageProvider = ''
   client: any
 
@@ -62,9 +62,6 @@ export class Rmrk2Provider extends NFTInterface {
     this.client = await new ApolloClient({
       link: createHttpLink({ uri: this.uri }),
       cache: new InMemoryCache(),
-      // fetchOptions: {
-      //   mode: 'no-cors',
-      // },
       headers: {
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*',
@@ -83,18 +80,21 @@ export class Rmrk2Provider extends NFTInterface {
     // @Josh handle funny stuff
     const data = await client.query({ query: QUERY_SHORT, variables: { address: encodedAddress } }).then((res: any) => {
       return res?.data?.nfts.map((nft: any) => {
+
+        const type = nft?.resources[0]?.metadata_content_type
+
+        const mediaUri = !!nft?.metadata_image ? this.toIPFSUrl(nft?.metadata_image) : !!nft?.resources[0]?.src ? this.toIPFSUrl(nft?.resources[0]?.src) : null
         // parse out the thumb image
         const thumb = !!nft?.resources[0]?.thumb ? this.toIPFSUrl(nft?.resources[0]?.thumb) : null // fetch from somewhere
-
         // get the context type of null
-        const type = nft?.resources[0]?.metadata_content_type
+
 
         return {
           id: nft?.id,
           name: nft?.metadata_name || nft?.symbol,
           thumb,
           type,
-          mediaUri: this.toIPFSUrl(nft?.metadata_image),
+          mediaUri,
           platform: this.name,
         } as NFTShort
       })
@@ -114,15 +114,15 @@ export class Rmrk2Provider extends NFTInterface {
 
         if (!nft) throw new Error('TBD')
 
+        const type = nft?.resources[0]?.metadata_content_type
         // parse out the thumb image
-        const mediaUri = !!nft?.metadata_image ? this.toIPFSUrl(nft?.metadata_image) : null // fetch from somewhere
+        const mediaUri = !!nft?.metadata_image ? this.toIPFSUrl(nft?.metadata_image) : !!nft?.resources[0]?.src ? this.toIPFSUrl(nft?.resources[0]?.src) : null
 
         const thumb = !!nft?.resources[0]?.thumb ? this.toIPFSUrl(nft?.resources[0]?.thumb) : null // fetch from somewhere
-
         // get the context type of null
-        const type = nft?.resources[0]?.metadata_content_type
 
-        return {
+
+        const item = {
           id: nft?.id,
           name: nft?.metadata_name || nft?.symbol,
           thumb,
@@ -131,6 +131,7 @@ export class Rmrk2Provider extends NFTInterface {
           type,
           mediaUri,
           platform: this.name,
+          platformUri: this.platformUri + nft?.id,
           attributes: nft?.metadata_properties || [],
           collection: {
             id: nft?.collection?.id,
@@ -138,6 +139,8 @@ export class Rmrk2Provider extends NFTInterface {
             totalCount: nft?.collection?.max,
           },
         } as NFTDetail
+
+        return item
       })
       .catch((e: any) => {})
   }

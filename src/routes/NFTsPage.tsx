@@ -1,9 +1,10 @@
-import { Account, NFT } from '@archetypes'
-import { ExtensionStatusGate, PanelSection } from '@components'
-import { device } from '@util/breakpoints'
+
 import { useState } from 'react'
-import { useTranslation } from 'react-i18next'
+import { NFT, Account } from '@archetypes'
 import styled from 'styled-components'
+import { device } from '@util/breakpoints'
+import { ExtensionStatusGate, PanelSection } from '@components'
+import { useTranslation } from 'react-i18next'
 
 const ExtensionUnavailable = styled(props => {
   const { t } = useTranslation()
@@ -33,18 +34,21 @@ const ExtensionUnavailable = styled(props => {
 `
 
 const NFTsPage = styled(({ className }: any) => {
-  const [address, setAddress] = useState<string | undefined>()
+
+  const [address, setAddress] = useState<string|undefined>()
 
   return (
     <section className={className}>
       <h1>NFTs</h1>
       <ExtensionStatusGate unavailable={<ExtensionUnavailable />}>
-        <header>
-          <Account.Picker onChange={({ address }: any) => setAddress(address)} />
-        </header>
-        <article>
-          <NFT.List address={address} />
-        </article>
+      <header>
+        <Account.Picker 
+          onChange={({address}: any) => setAddress(address)}
+        />
+      </header>
+      <article>
+        <NFT.List address={address}/>
+      </article>
       </ExtensionStatusGate>
     </section>
   )
@@ -62,3 +66,4 @@ const NFTsPage = styled(({ className }: any) => {
 `
 
 export default NFTsPage
+

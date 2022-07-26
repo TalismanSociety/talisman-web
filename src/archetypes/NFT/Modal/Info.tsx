@@ -17,7 +17,7 @@ export const CollectionData = styled(({ editionData, nftId, price, className }) 
   return (
     <div className={className}>
       <Edition editionData={editionData} nftId={nftId} />
-      <FloorPrice price={price} />
+      {/* <FloorPrice price={price} /> */}
     </div>
   )
 })`
@@ -38,6 +38,7 @@ export const Edition = styled(({ editionData, nftId, className }) => {
     </div>
   )
 })`
+margin-top: 0 !important;
   width: 55%;
 `
 
@@ -141,6 +142,9 @@ export const Network = styled(({ network, className }) => {
 
 export const Buttons = styled(({ collectibleUrl, className }) => {
   const { t } = useTranslation('nft-viewer')
+
+  console.log(collectibleUrl)
+
   return (
     <div className={className}>
       <a href={collectibleUrl} target="_blank" className="nft-modal-button" rel="noreferrer">
@@ -188,7 +192,7 @@ const Info = ({ className, nft }: InfoProps) => {
           <Description description={nft?.description} />
           <Attributes properties={nft?.attributes} />
           <Network network={nft?.platform} />
-          <Buttons collectibleUrl={nft?.id} />
+          <Buttons collectibleUrl={nft?.platformUri} />
         </>
       )}
     </div>

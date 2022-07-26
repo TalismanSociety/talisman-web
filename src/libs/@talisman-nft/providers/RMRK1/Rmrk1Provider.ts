@@ -1,14 +1,12 @@
 import {
   ApolloClient,
-  ApolloQueryResult,
   InMemoryCache,
-  NormalizedCacheObject,
   createHttpLink,
   gql,
 } from '@apollo/client'
 import { encodeAddress } from '@polkadot/util-crypto'
 
-import { NFTCategory, NFTDetail, NFTShort, NFTShortArray } from '../../types'
+import { NFTDetail, NFTShort, NFTShortArray } from '../../types'
 import { NFTInterface } from '../NFTInterface'
 
 const QUERY_SHORT = gql`
@@ -47,6 +45,7 @@ const QUERY_DETAIL = gql`
 export class Rmrk1Provider extends NFTInterface {
   name = 'RMRK1'
   uri = 'https://gql-rmrk1.rmrk.link/v1/graphql'
+  platformUri = ''
   storageProvider = ''
   client: any
 
@@ -121,6 +120,7 @@ export class Rmrk1Provider extends NFTInterface {
           type,
           mediaUri,
           platform: this.name,
+          platformUri: this.platformUri + nft?.id,
           attributes: nft?.metadata_properties || [],
           collection: {
             id: nft?.collection?.id,
