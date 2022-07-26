@@ -8,7 +8,6 @@ import { TALISMAN_SPIRIT_KEYS_RMRK } from '@util/links'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
-
 import Card from './Card/Card'
 import Modal from './Modal/Modal'
 
