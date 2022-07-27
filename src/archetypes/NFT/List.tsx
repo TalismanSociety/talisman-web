@@ -68,7 +68,7 @@ const List = ({ className, address }: ListPropsType) => {
     setAddress(address)
   }, [address, setAddress])
 
-  return !!loading ? <Loading isLoading={true} /> : !!nfts.length ? <StyledListItems nfts={nfts} /> : <NoNFTsPlaceholder />
+  return !!loading ? <Loading /> : !!nfts.length ? <StyledListItems nfts={nfts} /> : <NoNFTsPlaceholder />
 }
 
 export default List

@@ -12,7 +12,7 @@ const Loading = ({ className, isLoading }: any) => {
       id: `x0${i}`,
       name: "Placeholder NFT",
       thumb: "",
-      type: isLoading ? "loading" : null,
+      type: "loading",
       mediaUri: "",
       platform: "No Platform"
     } as NFTShort) 
@@ -33,10 +33,25 @@ const Loading = ({ className, isLoading }: any) => {
 const StyledLoading = styled(Loading)`
 
 display: grid;
-filter: grayscale(100%) blur(5px);
+// filter: blur(4px);
 gap: 2rem;
 grid-template-columns: 1fr;
 
+span > .title, span > .subtitle {
+  color: transparent !important;
+  background-color: var(--color-dim);
+  border-radius: 0.5rem;
+}
+
+span > .title {
+  padding-top: 0 !important;
+  margin-top: 0.5rem;
+  width: 80% !important;
+}
+
+span > .subtitle {
+  width: 50% !important;
+}
 
 @media ${device.md} {
   grid-template-columns: repeat(2, 1fr);
