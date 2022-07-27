@@ -23,19 +23,17 @@ export class NFTInterface {
     return Promise.reject()
   }
 
-  public async fetchContentType(mediaUri ?: string | null){
-    
-    if(!mediaUri) return null
+  public async fetchContentType(mediaUri?: string | null) {
+    if (!mediaUri) return null
 
     try {
-      const req = await fetch(mediaUri, {method: 'HEAD'})
+      const req = await fetch(mediaUri, { method: 'HEAD' })
       return req.headers.get('content-type')?.split('/')[0] ?? null
     } catch (err) {
       console.log(err)
       return null
     }
   }
-
 
   // use the cacehed data if available
   // address: address of the NFTs we're storing

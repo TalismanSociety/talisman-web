@@ -44,7 +44,6 @@ const QUERY_DETAIL = gql`
   }
 `
 
-
 export class Rmrk2Provider extends NFTInterface {
   name = 'RMRK2'
   uri = 'https://gql-rmrk2-prod.graphcdn.app'
@@ -75,29 +74,30 @@ export class Rmrk2Provider extends NFTInterface {
 
     // @Josh handle funny stuff
     const data = await client.query({ query: QUERY_SHORT, variables: { address: encodedAddress } }).then((res: any) => {
-      return Promise.all(res?.data?.nfts.map(async (nft: any) => {
+      return Promise.all(
+        res?.data?.nfts.map(async (nft: any) => {
+          const mediaUri = !!nft?.metadata_image
+            ? this.toIPFSUrl(nft?.metadata_image)
+            : !!nft?.resources[0]?.src
+            ? this.toIPFSUrl(nft?.resources[0]?.src)
+            : null
 
-        const mediaUri = !!nft?.metadata_image
-          ? this.toIPFSUrl(nft?.metadata_image)
-          : !!nft?.resources[0]?.src
-          ? this.toIPFSUrl(nft?.resources[0]?.src)
-          : null
+          const type = nft?.resources[0]?.metadata_content_type ?? (await this.fetchContentType(mediaUri))
 
-        const type = nft?.resources[0]?.metadata_content_type ?? await this.fetchContentType(mediaUri)
-  
-        // parse out the thumb image
-        const thumb = !!nft?.resources[0]?.thumb ? this.toIPFSUrl(nft?.resources[0]?.thumb) : null // fetch from somewhere
-        // get the context type of null
+          // parse out the thumb image
+          const thumb = !!nft?.resources[0]?.thumb ? this.toIPFSUrl(nft?.resources[0]?.thumb) : null // fetch from somewhere
+          // get the context type of null
 
-        return {
-          id: nft?.id,
-          name: nft?.metadata_name || nft?.symbol,
-          thumb,
-          type,
-          mediaUri,
-          platform: this.name,
-        } as NFTShort
-      }))
+          return {
+            id: nft?.id,
+            name: nft?.metadata_name || nft?.symbol,
+            thumb,
+            type,
+            mediaUri,
+            platform: this.name,
+          } as NFTShort
+        })
+      )
     })
 
     // data smooshing here before returning
@@ -116,12 +116,12 @@ export class Rmrk2Provider extends NFTInterface {
 
         // parse out the thumb image
         const mediaUri = !!nft?.metadata_image
-        ? this.toIPFSUrl(nft?.metadata_image)
-        : !!nft?.resources[0]?.src
-        ? this.toIPFSUrl(nft?.resources[0]?.src)
-        : null
-        
-        const type = nft?.resources[0]?.metadata_content_type ?? await this.fetchContentType(mediaUri)
+          ? this.toIPFSUrl(nft?.metadata_image)
+          : !!nft?.resources[0]?.src
+          ? this.toIPFSUrl(nft?.resources[0]?.src)
+          : null
+
+        const type = nft?.resources[0]?.metadata_content_type ?? (await this.fetchContentType(mediaUri))
         const thumb = !!nft?.resources[0]?.thumb ? this.toIPFSUrl(nft?.resources[0]?.thumb) : null // fetch from somewhere
         // get the context type of null
 

@@ -17,8 +17,8 @@ type PreviewType = {
 }
 
 // const fetchNFTs_type = async (IPFSUrl : string) : Promise<NFTCategory> => {
-//   let cat = 'unknown' 
-  
+//   let cat = 'unknown'
+
 //   if(IPFSUrl !== null) {
 //     cat = await fetch(IPFSUrl)
 //       .then(res => {
