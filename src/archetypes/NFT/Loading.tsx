@@ -17,9 +17,7 @@ const Loading = ({ className, isLoading }: any) => {
       platform: "No Platform"
     } as NFTShort) 
   }
-
-  console.log(nfts)
-
+  
   return (
     <div className={className}>
       {nfts.map((nft: any) => (

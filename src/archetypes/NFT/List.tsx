@@ -23,6 +23,8 @@ const ListItems = ({ className, nfts }: any) => {
 
   const { openModal } = useModal()
 
+  console.log(nfts)
+
   return (
     <div className={className}>
       {nfts.map((nft: any) => (
