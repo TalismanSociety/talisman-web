@@ -68,22 +68,23 @@ export class Rmrk1Provider extends NFTInterface {
     const encodedAddress = encodeAddress(address, 2)
     // @Josh handle funny stuff
     const data = await client.query({ query: QUERY_SHORT, variables: { address: encodedAddress } }).then((res: any) => {
-      return res?.data?.nfts.map((nft: any) => {
+      return Promise.all(res?.data?.nfts.map(async (nft: any) => {
         // parse out the thumb image
         const thumb = this.toIPFSUrl(nft?.metadata_animation_url || nft?.metadata_image)
+        const mediaUri = this.toIPFSUrl(nft?.metadata_animation_url || nft?.metadata_image)
 
         // get the context type of null
-        const type = nft?.metadata_content_type.split('/')[0]
+        const type = nft?.metadata_content_type.split('/')[0] ?? await this.fetchContentType(mediaUri)
 
         return {
           id: nft?.id,
           name: nft?.metadata_name,
           thumb,
           type,
-          mediaUri: this.toIPFSUrl(nft?.metadata_animation_url || nft?.metadata_image),
+          mediaUri,
           platform: this.name,
         } as NFTShort
-      })
+      }))
     })
 
     // data smooshing here before returning
@@ -95,7 +96,7 @@ export class Rmrk1Provider extends NFTInterface {
 
     return await client
       .query({ query: QUERY_DETAIL, variables: { id: id } })
-      .then((res: any) => {
+      .then(async (res: any) => {
         const nft = res?.data?.nfts[0]
 
         if (!nft) throw new Error('TBD')
@@ -104,7 +105,7 @@ export class Rmrk1Provider extends NFTInterface {
         const thumb = this.toIPFSUrl(nft?.metadata_image)
 
         // get the context type of null
-        const type = nft?.metadata_content_type.split('/')[0]
+        const type = nft?.metadata_content_type.split('/')[0] ?? await this.fetchContentType(mediaUri)
 
         return {
           id: nft?.id,

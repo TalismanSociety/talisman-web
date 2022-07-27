@@ -8,13 +8,27 @@ import PDFPlaceholder from '@assets/generic-pdf.png'
 import UnknownPlaceholder from '@assets/generic-unknown.png'
 import VideoPlaceholder from '@assets/generic-video.png'
 import { Spinner } from '@components'
-import { NFTDetail } from '@libs/@talisman-nft/types'
+import { NFTCategory, NFTDetail } from '@libs/@talisman-nft/types'
 import styled from 'styled-components'
 
 type PreviewType = {
   className?: string
   nft: NFTDetail
 }
+
+// const fetchNFTs_type = async (IPFSUrl : string) : Promise<NFTCategory> => {
+//   let cat = 'unknown' 
+  
+//   if(IPFSUrl !== null) {
+//     cat = await fetch(IPFSUrl)
+//       .then(res => {
+//         const headers = res.headers.get('content-type')
+//         return !headers ? cat : headers.split('/')[0]
+//       })
+//   }
+
+//   return cat as NFTCategory
+// }
 
 const MediaPreview = ({ mediaUri, thumb, type, name, id }: NFTDetail) => {
   if (thumb) return <img loading="lazy" src={thumb} alt={name || id} />

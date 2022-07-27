@@ -143,8 +143,6 @@ export const Network = styled(({ network, className }) => {
 export const Buttons = styled(({ collectibleUrl, className }) => {
   const { t } = useTranslation('nft-viewer')
 
-  console.log(collectibleUrl)
-
   return (
     <div className={className}>
       <a href={collectibleUrl} target="_blank" className="nft-modal-button" rel="noreferrer">
