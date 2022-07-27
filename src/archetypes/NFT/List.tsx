@@ -8,6 +8,7 @@ import { TALISMAN_SPIRIT_KEYS_RMRK } from '@util/links'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
+import Loading from './Loading'
 
 import Card from './Card/Card'
 import Modal from './Modal/Modal'
@@ -46,22 +47,10 @@ const StyledListItems = styled(ListItems)`
   }
 `
 
-const Loading = ({ className }: any) => {
-  return (
-    <div className={className}>Fetching NFTs from the Paraverse...</div>
-  )
-}
-
-const StyledLoading = styled(Loading)`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`
-
 const NoNFTsPlaceholder = () => {
   const { t } = useTranslation('banners')
   return (
-    <Placeholder placeholderImage={nftRowSkeleton}>
+    <Placeholder>
       <div className="description">{t('noNfts.description')}</div>
       <div className="cta">
         <a href={TALISMAN_SPIRIT_KEYS_RMRK} target="_blank" rel="noopener noreferrer">
@@ -79,7 +68,7 @@ const List = ({ className, address }: ListPropsType) => {
     setAddress(address)
   }, [address, setAddress])
 
-  return !!loading ? <StyledLoading /> : !!nfts.length ? <StyledListItems nfts={nfts} /> : <NoNFTsPlaceholder />
+  return !!loading ? <Loading isLoading={true} /> : !!nfts.length ? <StyledListItems nfts={nfts} /> : <NoNFTsPlaceholder />
 }
 
 export default List

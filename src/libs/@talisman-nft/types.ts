@@ -1,4 +1,4 @@
-export type NFTCategory = 'image' | 'video' | 'model' | 'application' | 'audio' | 'pdf' | null
+export type NFTCategory = 'image' | 'video' | 'model' | 'application' | 'audio' | 'pdf' | 'loading' | null
 
 type NFTAttributes = Record<string, any>
 

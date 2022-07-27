@@ -9,6 +9,7 @@ import UnknownPlaceholder from '@assets/generic-unknown.png'
 import VideoPlaceholder from '@assets/generic-video.png'
 import { NFTDetail } from '@libs/@talisman-nft/types'
 import styled from 'styled-components'
+import { Spinner } from '@components'
 
 type PreviewType = {
   className?: string
@@ -57,6 +58,8 @@ const MediaPreview = ({ mediaUri, thumb, type, name, id }: NFTDetail) => {
         'rotation-per-second': '20deg',
       }
       return <model-viewer {...modelProps} />
+    case 'loading':
+      return <Spinner />
     default:
       return <img loading="lazy" alt={name || id} src={UnknownPlaceholder} />
   }
