@@ -7,9 +7,9 @@ import ModelPlaceholder from '@assets/generic-model.png'
 import PDFPlaceholder from '@assets/generic-pdf.png'
 import UnknownPlaceholder from '@assets/generic-unknown.png'
 import VideoPlaceholder from '@assets/generic-video.png'
+import { Spinner } from '@components'
 import { NFTDetail } from '@libs/@talisman-nft/types'
 import styled from 'styled-components'
-import { Spinner } from '@components'
 
 type PreviewType = {
   className?: string
