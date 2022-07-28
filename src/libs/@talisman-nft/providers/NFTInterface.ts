@@ -9,6 +9,7 @@ import { NFTCategory, NFTDetail, NFTDetailArray, NFTShortArray } from '../types'
 export class NFTInterface {
   name = ''
   baseIPFSUrl = 'https://talisman.mypinata.cloud/ipfs/'
+  indexedNFTs : any = []
 
   protected toIPFSUrl(url: string): string | null {
     if (url == null) return null
@@ -24,9 +25,7 @@ export class NFTInterface {
   }
 
   public async fetchContentType(mediaUri ?: string | null){
-    
     if(!mediaUri) return null
-
     try {
       const req = await fetch(mediaUri, {method: 'HEAD'})
       return req.headers.get('content-type')?.split('/')[0] ?? null
@@ -36,6 +35,31 @@ export class NFTInterface {
     }
   }
 
+  async fetchNFTs_CollectionInfo(collectionId: string, collectionUri: string) {
+    if(collectionId == null) return
+    return fetch(`${collectionUri}${collectionId}`)
+    .then(res => res.json())
+    .then(data => {
+      if(!data) return {
+        totalNfts: null,
+        floor: null
+      }
+
+      return ({
+        totalNfts: data.totalNFTs,
+        floor: (parseFloat(data.floor) / 1000000000000).toFixed(3)
+      })
+    })
+  }
+
+  async fetchMediaFromMetadata(IPFSUrl : string){
+    if(IPFSUrl == null) return 
+    return fetch(IPFSUrl)
+    .then(res => res.json())
+    .then(data => {
+      return this.toIPFSUrl(data.mediaUri)
+    })
+  }
 
   // use the cacehed data if available
   // address: address of the NFTs we're storing

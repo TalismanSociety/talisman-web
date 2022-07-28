@@ -81,6 +81,11 @@ export class StatemineProvider extends NFTInterface {
         thumb: item.thumb,
         type: item.type,
         mediaUri: item.mediaUri,
+        collection: {
+          id: item.collection?.id,
+          totalCount: item.collection?.totalCount,
+          floorPrice: item.collection?.floorPrice,
+        },
         platform: item.platform,
       }
     }) as NFTShortArray

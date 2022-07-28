@@ -31,13 +31,21 @@ type PreviewType = {
 // }
 
 const MediaPreview = ({ mediaUri, thumb, type, name, id }: NFTDetail) => {
-  if (thumb) return <img loading="lazy" src={thumb} alt={name || id} />
+
+  if(!type){
+    type = 'image'
+  }
 
   switch (type) {
     case 'image':
       return <img loading="lazy" src={mediaUri || ImagePlaceholder} alt={name || id} />
     case 'video':
-      if (!mediaUri) return <img loading="lazy" src={VideoPlaceholder} alt={name || id} />
+      // if(thumb) return <img loading="lazy" src={thumb || VideoPlaceholder} alt={name || id} />
+      if(thumb) return (
+        <video poster={thumb}>
+          <source src={thumb} />
+        </video>
+      )
       return (
         <video
           src={thumb || mediaUri}
@@ -57,9 +65,10 @@ const MediaPreview = ({ mediaUri, thumb, type, name, id }: NFTDetail) => {
       )
     case 'pdf':
     case 'application':
-      return <img loading="lazy" alt={name || id} src={PDFPlaceholder} />
+      return <img loading="lazy" src={thumb || PDFPlaceholder} alt={name || id} />
+      // return <img loading="lazy" alt={name || id} src={PDFPlaceholder} />
     case 'audio':
-      return <img loading="lazy" alt={name || id} src={AudioPlaceholder} />
+      return <img loading="lazy" alt={name || id} src={thumb || AudioPlaceholder} />
     case 'model':
       if (!mediaUri) return <img loading="lazy" alt={name || id} src={ModelPlaceholder} />
       const modelProps = {
@@ -74,6 +83,8 @@ const MediaPreview = ({ mediaUri, thumb, type, name, id }: NFTDetail) => {
       return <model-viewer {...modelProps} />
     case 'loading':
       return <Spinner />
+    case 'blank':
+      return <></>
     default:
       return <img loading="lazy" alt={name || id} src={UnknownPlaceholder} />
   }

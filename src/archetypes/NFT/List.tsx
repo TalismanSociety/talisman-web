@@ -23,8 +23,6 @@ const ListItems = ({ className, nfts }: any) => {
 
   const { openModal } = useModal()
 
-  console.log(nfts)
-
   return (
     <div className={className}>
       {nfts.map((nft: any) => (
@@ -49,28 +47,21 @@ const StyledListItems = styled(ListItems)`
   }
 `
 
-const NoNFTsPlaceholder = () => {
-  const { t } = useTranslation('banners')
-  return (
-    <Placeholder>
-      <div className="description">{t('noNfts.description')}</div>
-      <div className="cta">
-        <a href={TALISMAN_SPIRIT_KEYS_RMRK} target="_blank" rel="noopener noreferrer">
-          <Button className="outlined">{t('noNfts.primaryCta')}</Button>
-        </a>
-      </div>
-    </Placeholder>
-  )
-}
-
 const List = ({ className, address }: ListPropsType) => {
   const { setAddress, loading, nfts } = useNftsByAddress(address)
+
+  const { t } = useTranslation('banners')
+
 
   useEffect(() => {
     setAddress(address)
   }, [address, setAddress])
 
-  return !!loading ? <Loading /> : !!nfts.length ? <StyledListItems nfts={nfts} /> : <NoNFTsPlaceholder />
+  return !!loading 
+    ? <Loading isLoading={true} /> 
+    : !!nfts.length 
+      ? <StyledListItems nfts={nfts} /> 
+      : <Loading isLoading={false} title={t('noNfts.description')} button={{href: TALISMAN_SPIRIT_KEYS_RMRK, text: t('noNfts.primaryCta')}} />
 }
 
 export default List

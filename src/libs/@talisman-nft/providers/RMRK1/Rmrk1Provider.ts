@@ -8,10 +8,16 @@ const QUERY_SHORT = gql`
   query ($address: String!) {
     nfts(where: { owner: { _eq: $address }, burned: { _eq: "" } }) {
       id
+      metadata
       metadata_name
       metadata_content_type
       metadata_animation_url
       metadata_image
+      collection {
+        id
+        name
+        max
+      }
     }
   }
 `
@@ -20,11 +26,10 @@ const QUERY_DETAIL = gql`
   query ($id: String!) {
     nfts(where: { id: { _eq: $id } }) {
       id
+      metadata
       metadata_name
       metadata_description
-      metadata
       metadata_animation_url
-      metadata
       metadata_image
       metadata_content_type
       sn
@@ -40,6 +45,8 @@ const QUERY_DETAIL = gql`
 export class Rmrk1Provider extends NFTInterface {
   name = 'RMRK1'
   uri = 'https://gql-rmrk1.rmrk.link/v1/graphql'
+  collectionUri = 'https://singular.rmrk.app/api/stats/collection/'
+  indexUri = 'https://singular.rmrk.app/api/rmrk1/account/'
   platformUri = ''
   storageProvider = ''
   client: any
@@ -67,11 +74,26 @@ export class Rmrk1Provider extends NFTInterface {
     const client = await this.getClient()
     const encodedAddress = encodeAddress(address, 2)
     // @Josh handle funny stuff
+
+    this.indexedNFTs = await fetch(`${this.indexUri}${encodedAddress}`).then((res: any) => res.json()).then((res: any) => {
+      return Promise.all(res?.map(async (nft: any) => {
+        return {
+          id: nft?.id,
+          name: nft?.metadata_name || nft?.symbol,
+          metadata: this.toIPFSUrl(nft?.metadata),
+          serialNumber: nft?.sn.replace(/^0+/, ''),
+          mediaUri: this.toIPFSUrl(nft?.metadata_image),
+        } as any
+      }))
+    })
+
     const data = await client.query({ query: QUERY_SHORT, variables: { address: encodedAddress } }).then((res: any) => {
       return Promise.all(res?.data?.nfts.map(async (nft: any) => {
         // parse out the thumb image
-        const thumb = this.toIPFSUrl(nft?.metadata_animation_url || nft?.metadata_image)
-        const mediaUri = this.toIPFSUrl(nft?.metadata_animation_url || nft?.metadata_image)
+
+        const indexedItemRef = this.indexedNFTs.find((item: any) => item.id === nft?.id)
+        const thumb = this.toIPFSUrl(nft?.metadata_image || nft?.metadata_animation_url)
+        const mediaUri = this.toIPFSUrl(nft?.metadata_animation_url || nft?.metadata_image || indexedItemRef?.mediaUri)
 
         // get the context type of null
         const type = nft?.metadata_content_type.split('/')[0] ?? await this.fetchContentType(mediaUri)
@@ -82,6 +104,11 @@ export class Rmrk1Provider extends NFTInterface {
           thumb,
           type,
           mediaUri,
+          collection: {
+            id: nft?.collection?.id,
+            name: nft?.collection?.name,
+            totalCount: nft?.collection?.max,
+          },
           platform: this.name,
         } as NFTShort
       }))
@@ -101,11 +128,12 @@ export class Rmrk1Provider extends NFTInterface {
 
         if (!nft) throw new Error('TBD')
 
-        const mediaUri = this.toIPFSUrl(nft?.metadata_animation_url || nft?.metadata_image)
+        const mediaUri = this.toIPFSUrl(nft?.metadata_animation_url || nft?.metadata_image || indexedItemRef?.mediaUri)
         const thumb = this.toIPFSUrl(nft?.metadata_image)
 
         // get the context type of null
         const type = nft?.metadata_content_type.split('/')[0] ?? await this.fetchContentType(mediaUri)
+        const collectionInfo = await this.fetchNFTs_CollectionInfo(nft?.collection?.id, this.collectionUri)
 
         return {
           id: nft?.id,
@@ -120,8 +148,9 @@ export class Rmrk1Provider extends NFTInterface {
           attributes: nft?.metadata_properties || [],
           collection: {
             id: nft?.collection?.id,
-            name: nft?.collection?.name,
-            totalCount: nft?.collection?.max,
+            name: nft?.collection?.metadata_name,
+            totalCount: collectionInfo?.totalNfts,
+            floorPrice: collectionInfo?.floor
           },
         } as NFTDetail
       })

@@ -1,4 +1,4 @@
-export type NFTCategory = 'image' | 'video' | 'model' | 'application' | 'audio' | 'pdf' | 'loading' | null
+export type NFTCategory = 'image' | 'video' | 'model' | 'application' | 'audio' | 'pdf' | 'loading' | 'blank' | null
 
 type NFTAttributes = Record<string, any>
 
@@ -14,15 +14,16 @@ export type NFTShort = {
   name: string | null
   thumb: string | null
   type: NFTCategory
+  metadata: string
   mediaUri: string // PDF
   platform: string
+  collection: NFTCollectionDetails | {}
 }
 
 export type NFTDetail = NFTShort & {
   description: string
   serialNumber?: string
   attributes: NFTAttributes
-  collection: NFTCollectionDetails | {}
   nftSpecificData: any
   platformUri: string
 }

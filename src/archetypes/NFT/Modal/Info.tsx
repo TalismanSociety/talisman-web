@@ -17,7 +17,7 @@ export const CollectionData = styled(({ editionData, nftId, price, className }) 
   return (
     <div className={className}>
       <Edition editionData={editionData} nftId={nftId} />
-      {/* <FloorPrice price={price} /> */}
+      <FloorPrice price={price} />
     </div>
   )
 })`
