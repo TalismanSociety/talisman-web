@@ -1,7 +1,7 @@
 import { ApolloClient, InMemoryCache, createHttpLink, gql } from '@apollo/client'
 import { encodeAddress } from '@polkadot/util-crypto'
 
-import { NFTDetail, NFTShort, NFTShortArray } from '../../types'
+import { NFTDetail, NFTShort } from '../../types'
 import { NFTInterface } from '../NFTInterface'
 
 const QUERY_SHORT = gql`
@@ -47,7 +47,6 @@ const QUERY_DETAIL = gql`
     }
   }
 `
-
 
 export class Rmrk2Provider extends NFTInterface {
   name = 'RMRK2'

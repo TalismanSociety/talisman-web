@@ -1,6 +1,6 @@
 import md5 from 'md5'
 
-import { NFTCategory, NFTDetail, NFTDetailArray, NFTShortArray } from '../types'
+import { NFTDetail, NFTDetailArray, NFTShortArray } from '../types'
 
 // export interface NFTInterfaceType {
 //   name: string;
@@ -27,7 +27,7 @@ export class NFTInterface {
   public async fetchContentType(mediaUri ?: string | null){
     if(!mediaUri) return null
     try {
-      const req = await fetch(mediaUri, {method: 'HEAD'})
+      const req = await fetch(mediaUri, { method: 'HEAD' })
       return req.headers.get('content-type')?.split('/')[0] ?? null
     } catch (err) {
       console.log(err)
