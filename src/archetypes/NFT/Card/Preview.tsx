@@ -31,8 +31,7 @@ type PreviewType = {
 // }
 
 const MediaPreview = ({ mediaUri, thumb, type, name, id }: NFTDetail) => {
-
-  if(!type){
+  if (!type) {
     type = 'image'
   }
 
@@ -41,11 +40,12 @@ const MediaPreview = ({ mediaUri, thumb, type, name, id }: NFTDetail) => {
       return <img loading="lazy" src={mediaUri || ImagePlaceholder} alt={name || id} />
     case 'video':
       // if(thumb) return <img loading="lazy" src={thumb || VideoPlaceholder} alt={name || id} />
-      if(thumb) return (
-        <video poster={thumb}>
-          <source src={thumb} />
-        </video>
-      )
+      if (thumb)
+        return (
+          <video poster={thumb}>
+            <source src={thumb} />
+          </video>
+        )
       return (
         <video
           src={thumb || mediaUri}
@@ -66,7 +66,7 @@ const MediaPreview = ({ mediaUri, thumb, type, name, id }: NFTDetail) => {
     case 'pdf':
     case 'application':
       return <img loading="lazy" src={thumb || PDFPlaceholder} alt={name || id} />
-      // return <img loading="lazy" alt={name || id} src={PDFPlaceholder} />
+    // return <img loading="lazy" alt={name || id} src={PDFPlaceholder} />
     case 'audio':
       return <img loading="lazy" alt={name || id} src={thumb || AudioPlaceholder} />
     case 'model':

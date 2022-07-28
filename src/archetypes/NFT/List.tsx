@@ -52,16 +52,21 @@ const List = ({ className, address }: ListPropsType) => {
 
   const { t } = useTranslation('banners')
 
-
   useEffect(() => {
     setAddress(address)
   }, [address, setAddress])
 
-  return !!loading 
-    ? <Loading isLoading={true} /> 
-    : !!nfts.length 
-      ? <StyledListItems nfts={nfts} /> 
-      : <Loading isLoading={false} title={t('noNfts.description')} button={{href: TALISMAN_SPIRIT_KEYS_RMRK, text: t('noNfts.primaryCta')}} />
+  return !!loading ? (
+    <Loading isLoading={true} />
+  ) : !!nfts.length ? (
+    <StyledListItems nfts={nfts} />
+  ) : (
+    <Loading
+      isLoading={false}
+      title={t('noNfts.description')}
+      button={{ href: TALISMAN_SPIRIT_KEYS_RMRK, text: t('noNfts.primaryCta') }}
+    />
+  )
 }
 
 export default List
