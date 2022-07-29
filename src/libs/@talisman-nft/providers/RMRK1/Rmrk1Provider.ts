@@ -156,7 +156,7 @@ export class Rmrk1Provider extends NFTInterface {
           attributes: nft?.metadata_properties || [],
           collection: {
             id: nft?.collection?.id,
-            name: nft?.collection?.metadata_name,
+            name: nft?.collection?.name,
             totalCount: collectionInfo?.totalNfts,
             floorPrice: collectionInfo?.floor,
           },

@@ -1,18 +1,24 @@
 import { NFTDetail } from '@libs/@talisman-nft/types'
 import { device } from '@util/breakpoints'
 import { useTranslation } from 'react-i18next'
+import { ReactComponent as Composable } from '@icons/composable.svg'
 import styled from 'styled-components'
 
-export const MainDetails = styled(({ name, composable, className }) => {
+export const MainDetails = styled(({ name, collection, composable, className }) => {
   return (
     <div className={className}>
+      <h1>{collection}</h1>
       <p className="nft-main-val">
-        {name} {!!composable && ''}
+        {name} {!!composable && <Composable className='composable'/>}
       </p>
     </div>
   )
 })`
   margin-bottom: 1em;
+
+  .composable {
+    padding-top: 0.2em;
+  }
 `
 
 export const CollectionData = styled(({ editionData, nftId, price, className }) => {
@@ -71,6 +77,7 @@ export const Description = styled(({ description, className }) => {
     font-weight: 400;
     line-height: 22px;
     width: 350px;
+    text-align: left;
   }
 `
 
@@ -100,6 +107,10 @@ export const Attributes = styled(({ properties, className }) => {
 })`
   margin-bottom: 1em;
 
+  h1 + .attribute-grid {
+    margin-top: 0.5em !important;
+  }
+
   .attribute-grid {
     display: inline-box;
     flex-wrap: wrap;
@@ -122,7 +133,7 @@ export const Attributes = styled(({ properties, className }) => {
 
   .nft-attribute-value {
     color: var(--color-light);
-    font-size: 16px;
+    font-size: 14px;
   }
 `
 
@@ -243,7 +254,7 @@ const Info = ({ className, nft, loading }: InfoProps) => {
         <>
           <MainDetails
             name={nft?.name}
-            collection={nft?.collection?.name}
+            collection={nft?.collection?.name || nft?.collection?.id}
             composable={nft?.nftSpecificData?.isComposable}
           />
           <CollectionData
@@ -266,6 +277,29 @@ const StyledInfo = styled(Info)`
   flex-direction: column;
   overflow-y: auto;
   max-height: 458px;
+
+  ::-webkit-scrollbar {
+    width: 5px;
+    border-radius: 10px;
+  }
+
+    /* Track */
+  ::-webkit-scrollbar-track {
+    background: var(--color-controlBackground); 
+    border-radius: 10px;
+  }
+  
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-dim); 
+    border-radius: 10px;
+  }
+
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    background: #555; 
+  }
+
   @media ${device.sm} {
     margin-left: 0;
     margin-top: 1em;
@@ -284,22 +318,24 @@ const StyledInfo = styled(Info)`
   }
 
   .nft-main-val {
-    font-size: 1.4em;
+    font-size: 22px;
     font-weight: 600;
     color: var(--color-light);
+    letter-spacing: -0.04em;
   }
 
   .nft-sub-val {
+    font-size: 22px;
     font-weight: 600;
     color: var(--color-dim);
   }
 
   h1 {
-    font-weight: 400;
+    font-weight: 100;
     color: var(--color-mid);
-    font-size: 14px;
+    font-size: 12px;
     line-height: 16px;
-    margin-bottom: 10px;
+    margin: 0;
   }
 `
 
