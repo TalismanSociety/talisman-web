@@ -16,7 +16,7 @@ const Modal = ({ className, id }: ModalProps) => {
 
   return (
     <div className={className}>
-      <Preview nft={nft} loading={loading}/>
+      <Preview nft={nft} loading={loading} />
       <Suspense fallback={null}>
         <Info nft={nft} loading={loading} />
       </Suspense>

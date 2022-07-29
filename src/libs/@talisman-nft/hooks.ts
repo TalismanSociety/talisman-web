@@ -1,15 +1,16 @@
 import { useEffect, useState } from 'react'
 
 import { NFTFactory } from './nftFactory'
-import { Rmrk1Provider, Rmrk2Provider, StatemineProvider, 
-  // AcalaProvider 
-} from './providers'
+import { Rmrk1Provider, Rmrk2Provider, StatemineProvider } from './providers'
 import { NFTInterface } from './providers/NFTInterface'
 import { NFTDetail, NFTShortArray } from './types'
 
-const providers: NFTInterface[] = [new Rmrk1Provider(), new Rmrk2Provider(), new StatemineProvider(),
+const providers: NFTInterface[] = [
+  new Rmrk1Provider(),
+  new Rmrk2Provider(),
+  new StatemineProvider(),
   //  new AcalaProvider()
-  ]
+]
 
 const nftFactory = new NFTFactory(providers)
 

@@ -1,17 +1,10 @@
-
-
 import { device } from '@util/breakpoints'
 import styled from 'styled-components'
-
 
 const NFTs = styled(({ className }: { className?: string }) => {
   // const { accounts } = useExtensionAutoConnect()
   // const { hasNfts, nfts } = useHasNFTs(accounts, { limit: 4 })
-  return (
-    <section className={`wallet-assets ${className}`}>
-
-    </section>
-  )
+  return <section className={`wallet-assets ${className}`}></section>
 })`
   .header {
     display: flex;

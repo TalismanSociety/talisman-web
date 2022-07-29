@@ -6,7 +6,9 @@ import styled from 'styled-components'
 export const MainDetails = styled(({ name, composable, className }) => {
   return (
     <div className={className}>
-      <p className="nft-main-val">{name} {!!composable && ""}</p>
+      <p className="nft-main-val">
+        {name} {!!composable && ''}
+      </p>
     </div>
   )
 })`
@@ -171,19 +173,19 @@ export const Buttons = styled(({ collectibleUrl, className }) => {
   }
 `
 
-const LoadingState = ({className} : any) => {
+const LoadingState = ({ className }: any) => {
   return (
     <div className={className}>
-      <span className='title' />
-      <span className='description' />
-      <span className='description' />
-      <span className='description' />
-      <span className='description' />
+      <span className="title" />
+      <span className="description" />
+      <span className="description" />
+      <span className="description" />
+      <span className="description" />
     </div>
   )
 }
 
-const StyledLoadingState : any = styled(LoadingState)`
+const StyledLoadingState: any = styled(LoadingState)`
   margin: 0 3em;
   display: flex;
   flex-direction: column;
@@ -193,14 +195,17 @@ const StyledLoadingState : any = styled(LoadingState)`
     border-radius: 0.5rem;
   }
 
-  > .title, .description {
+  > .title,
+  .description {
     background-color: var(--color-activeBackground);
-    -webkit-mask:linear-gradient(-60deg,#000 30%,#0005,#000 70%) right/300% 100%;
+    -webkit-mask: linear-gradient(-60deg, #000 30%, #0005, #000 70%) right/300% 100%;
     animation: shimmer 1s infinite;
   }
 
   @keyframes shimmer {
-    100% {-webkit-mask-position:left}
+    100% {
+      -webkit-mask-position: left;
+    }
   }
 
   .title + .description {
@@ -221,7 +226,6 @@ const StyledLoadingState : any = styled(LoadingState)`
     width: 70%;
     height: 1.25em;
   }
-
 `
 
 type InfoProps = {
@@ -231,14 +235,17 @@ type InfoProps = {
 }
 
 const Info = ({ className, nft, loading }: InfoProps) => {
-
-  if(loading) return <StyledLoadingState />
+  if (loading) return <StyledLoadingState />
 
   return (
     <div className={className}>
       {!!nft && (
         <>
-          <MainDetails name={nft?.name} collection={nft?.collection?.name} composable={nft?.nftSpecificData?.isComposable}/>
+          <MainDetails
+            name={nft?.name}
+            collection={nft?.collection?.name}
+            composable={nft?.nftSpecificData?.isComposable}
+          />
           <CollectionData
             editionData={nft?.collection?.totalCount}
             nftId={nft?.serialNumber}
