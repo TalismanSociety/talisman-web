@@ -24,21 +24,21 @@ const Routes = () => (
         <NFTsPage />
       </Layout>
     </Route>
-    <Route exact path="/crowdloans">
+    {/* <Route exact path="/crowdloans">
       <Layout>
         <CrowdloanIndex />
       </Layout>
-    </Route>
+    </Route> */}
     <Route exact path="/spiritkeys">
       <Layout>
         <SpiritKeysPage />
       </Layout>
     </Route>
-    <Route exact path="/crowdloans/:slug">
+    {/* <Route exact path="/crowdloans/:slug">
       <Layout>
         <CrowdloanDetail />
       </Layout>
-    </Route>
+    </Route> */}
     <Route exact path="/buy">
       <Layout>
         <Buy />

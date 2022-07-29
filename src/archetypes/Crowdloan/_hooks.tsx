@@ -65,12 +65,12 @@ const networkOptions = [
   {
     key: 'dot',
     value: 'Polkadot',
-    cb: (items: Item[]) => filter(items, item => item?.parachainDetails?.id.split('-')[0] === '0'),
+    cb: (items: Item[]) => filter(items, item => item?.parachainDetails?.id?.toString().slice(0, 1) === '0'),
   },
   {
     key: 'ksm',
     value: 'Kusama',
-    cb: (items: Item[]) => filter(items, item => item?.parachainDetails?.id.split('-')[0] === '2'),
+    cb: (items: Item[]) => filter(items, item => item?.parachainDetails?.id?.toString().slice(0, 1) === '2'),
   },
 ]
 
