@@ -39,7 +39,7 @@ const Button = styled(({ loading, children, variant = '', className, ...props })
     )
   )
 
-  const _props = omit(props, ['loading', 'boxed', 'round', 'primary', 'tight', 'loose'])
+  const _props = omit(props, ['loading', 'boxed', 'round', 'primary', 'tight', 'loose', 'small'])
 
   return !!props?.to ? (
     !!props?.navlink ? (

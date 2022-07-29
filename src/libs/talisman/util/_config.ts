@@ -24,7 +24,7 @@ export const SupportedRelaychains: { [key: number]: Relaychain } = {
     name: 'Polkadot',
     rpc: 'wss://rpc.polkadot.io',
     genesisHash: '0x91b171bb158e2d3848fa23a9f1c25182fb8e20313b2c1eb49219da7a70ce90c3',
-    subqueryCrowdloansEndpoint: 'https://api.subquery.network/sq/subvis-io/polkadot-auctions-and-crowdloans',
+    subqueryCrowdloansEndpoint: 'https://api.subquery.network/sq/interlay/polkadot-crowdloan-indexer',
     subscanUrl: 'https://polkadot.subscan.io',
     tokenDecimals: 10,
     tokenSymbol: 'DOT',
@@ -35,7 +35,7 @@ export const SupportedRelaychains: { [key: number]: Relaychain } = {
     name: 'Kusama',
     rpc: 'wss://kusama-rpc.polkadot.io',
     genesisHash: '0xb0a8d493285c2df73290dfb7e61f870f17b41801197a149ca93654499ea3dafe',
-    subqueryCrowdloansEndpoint: 'https://api.subquery.network/sq/subvis-io/kusama-crowdloans-and-auctions-v2',
+    subqueryCrowdloansEndpoint: 'https://api.subquery.network/sq/interlay/kusama-crowdloan-indexer',
     subscanUrl: 'https://kusama.subscan.io',
     tokenDecimals: 12,
     tokenSymbol: 'KSM',
@@ -461,6 +461,46 @@ export const parachainDetails: ParachainDetails[] = [
       Website: 'https://parachain.origintrail.io/',
       Twitter: 'https://twitter.com/origin_trail',
       Telegram: 'https://t.me/origintrail',
+    },
+  },
+  {
+    id: '0-2039',
+    name: 'Integritee Shell',
+    slug: 'integriteeshell',
+    token: 'TEER',
+    subtitle: 'Unchain the value of sensitive data. At scale.',
+    info: `Integritee is the most scalable public blockchain solution for securely processing sensitive business or personal data. Harness the speed and confidentiality of trusted execution environments, combined with the trust of a decentralized network, with Integritee.`,
+    links: {
+      Website: 'https://integritee.network/',
+      Twitter: 'https://twitter.com/integri_t_e_e'
+    },
+  },
+  {
+    id: '0-2052',
+    name: 'Kylin',
+    slug: 'kylin',
+    token: 'KYL',
+    subtitle: 'Building a Cross-chain Platfor. Powering the DeData Economy',
+    info: `Kylin Network is the native Polkadot Data Blockchain to accelerate the world’s transition to DeData within a Web3.0 context by Building a Cross-chain Platform Powering the Data Economy. It is the Data Infrastructure for DeFi and Web 3.0 Powered by Polkadot.`,
+    links: {
+      Website: "https://kylin.network/",
+      Twitter: "https://twitter.com/Kylin_Network",
+      Telegram: "https://t.me/KylinOfficial",
+      Github: "https://github.com/Kylin-Network"
+    },
+  },
+  {
+    id: '0-2053',
+    name: 'OmniBTC',
+    slug: 'omnibtc',
+    token: 'TEER',
+    subtitle: 'Make Finance Omnichainable.',
+    info: `OmniBTC is an omnichain financial platform for web3,including omnichain swap and BTC omnichain lending`,
+    links: {
+      Website: "https://www.omnibtc.finance/",
+      Twitter: "https://twitter.com/OmniBTC",
+      Medium: "https://medium.com/@omnibtc",
+      Github: "https://github.com/OmniBTC"
     },
   },
   {
@@ -1737,6 +1777,20 @@ export const crowdloanDetails: CrowdloanDetails[] = [
         {
           title: 'OTP per DOT',
           value: '20',
+        },
+      ],
+      info: null,
+    },
+  },
+  {
+    relayId: 0,
+    paraId: 2039,
+    rewards: {
+      tokens: null,
+      custom: [
+        {
+          title: 'Supporter rewards',
+          value: '2.5 TEER + bonuses',
         },
       ],
       info: null,

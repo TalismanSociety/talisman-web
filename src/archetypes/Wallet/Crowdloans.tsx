@@ -93,7 +93,8 @@ const CrowdloanItemWithLink = styled(props => {
   const { parachainDetails } = useParachainDetailsById(parachainId)
   const linkToCrowdloan = parachainDetails?.slug ? `/crowdloans/${parachainDetails?.slug}` : `/crowdloans`
   return (
-    <Link to={linkToCrowdloan} className={className}>
+    // <Link to={linkToCrowdloan} className={className}>
+    <Link to={'#'} className={className}>
       <PanelSection>
         <CrowdloanItem id={id} />
       </PanelSection>
