@@ -33,11 +33,11 @@ export default function HeaderState(props) {
 
 const mainRoutes = [
   { name: 'Portfolio', url: '/portfolio', icon: <PortfolioLogo alt="Portfolio" /> },
-  {
-    name: 'Crowdloans',
-    url: '/crowdloans',
-    icon: <CrowdloansLogo alt="Crowdloans" />,
-  },
+  // {
+  //   name: 'Crowdloans',
+  //   url: '/crowdloans',
+  //   icon: <CrowdloansLogo alt="Crowdloans" />,
+  // },
   {
     name: '🗝 Spirit keys',
     url: '/spiritkeys',
@@ -109,7 +109,7 @@ const Header = styled(({ className, isMobile, mobileMenuOpen, dispatch }) => {
           </NavLink>
           <NavLink to="/nfts">{t('NFTs')}</NavLink>
           <NavLink to="/spiritkeys">{t('🗝 Spirit Keys')}</NavLink>
-          <NavLink to="/crowdloans">{t('Crowdloans')}</NavLink>
+          {/* <NavLink to="/crowdloans">{t('Crowdloans')}</NavLink> */}
         </nav>
       )}
       <div className="menu-nav">

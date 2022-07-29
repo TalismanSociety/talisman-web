@@ -2,7 +2,7 @@ import { Stat } from '@components'
 import { useCrowdloanById } from '@libs/talisman'
 import styled from 'styled-components'
 
-const Rewards = styled(({ id, parachainId, className }) => {
+const Countdown = styled(({ id, className }) => {
   const { crowdloan } = useCrowdloanById(id)
   const rewards = crowdloan?.details?.rewards
 
@@ -48,4 +48,4 @@ const Rewards = styled(({ id, parachainId, className }) => {
   }
 `
 
-export default Rewards
+export default Countdown
