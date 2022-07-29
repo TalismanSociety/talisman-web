@@ -7,7 +7,7 @@ import NFTVideoIcon from '@assets/icons/NFT-Video-icon.svg'
 import { NFTCategory } from '@libs/@talisman-nft/types'
 import styled from 'styled-components'
 
-function NftContentIcon({type, className}: {type: NFTCategory, className?: string}) {
+function NftContentIcon({ type, className }: { type: NFTCategory; className?: string }) {
   switch (type) {
     case 'audio':
       return <img src={NFTAudioIcon} className={className} title="Audio" alt="Audio NFT" />
@@ -17,9 +17,7 @@ function NftContentIcon({type, className}: {type: NFTCategory, className?: strin
       return <img src={NFT3DIcon} className={className} title="3D Model" alt="3D NFT" />
     case 'application':
     case 'pdf':
-      return (
-        <img src={NFTPDFIcon} className={className} title="PDF / Application" alt="PDF NFT" />
-      )
+      return <img src={NFTPDFIcon} className={className} title="PDF / Application" alt="PDF NFT" />
     default:
       return null
   }
