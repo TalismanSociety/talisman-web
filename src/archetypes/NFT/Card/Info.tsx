@@ -14,6 +14,7 @@ const Info = styled(({ title, subtitle, icon, className, ...rest }) => (
   align-items: center;
   text-align: inherit;
   position: relative;
+  width: 80%;
 
   .icon {
     position: absolute;
@@ -32,7 +33,7 @@ const Info = styled(({ title, subtitle, icon, className, ...rest }) => (
       text-overflow: ellipsis;
       white-space: nowrap;
       width: 100%;
-      max-width: calc(100% - 3rem);
+      // max-width: calc(100% - 3rem);
     }
 
     > * {

@@ -1,5 +1,6 @@
 import { NFTShort } from '@libs/@talisman-nft/types'
 import styled from 'styled-components'
+import { NFTIcon } from '..'
 
 import Info from './Info'
 import Preview from './Preview'
@@ -14,12 +15,14 @@ function Card({ className, nft, onClick }: CardProps) {
   return (
     <div className={className} onClick={onClick}>
       <Preview nft={nft} />
-      <Info
-        subtitle={nft?.collection?.name || nft?.collection?.id}
-        title={nft?.name || nft?.id}
-        icon={"aaaaaa"}
-        // Work on ICONS
-      />
+      <div className='abc'>
+        <Info
+          subtitle={nft?.collection?.name || nft?.collection?.id}
+          title={nft?.name || nft?.id}
+        />
+        <span><NFTIcon type={nft?.type} /></span>
+      </div>
+
     </div>
   )
 }
@@ -30,8 +33,20 @@ const StyledCard = styled(Card)`
   background-color: #262626;
   cursor: pointer;
 
+  .abc {
+    display: flex;
+    justify-content: space-between;
+  }
+
   > * {
     width: 100%;
+  }
+
+  span {
+    width: 20%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 
   > div {
