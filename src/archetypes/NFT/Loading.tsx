@@ -16,6 +16,10 @@ const Loading = ({ className, title, subtitle, button, isLoading }: any) => {
       type: isLoading ? 'loading' : 'blank',
       mediaUri: '',
       platform: 'No Platform',
+      collection: {
+        id: '',
+        name: 'Collection'
+      }
     } as NFTShort)
   }
 

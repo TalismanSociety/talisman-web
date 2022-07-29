@@ -6,7 +6,7 @@ const Info = styled(({ title, subtitle, icon, className, ...rest }) => (
       {!!subtitle && <span className="subtitle">{subtitle}</span>}
       {!!title && <span className="title">{title}</span>}
     </span>
-    {icon && <span className="icon">{icon}</span>}
+    {/* {icon && <span className="icon">{icon}</span>} */}
   </div>
 ))`
   display: flex;
