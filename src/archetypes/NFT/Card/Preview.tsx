@@ -40,11 +40,12 @@ const MediaPreview = ({ mediaUri, thumb, type, name, id }: NFTDetail) => {
       return <img loading="lazy" src={mediaUri || ImagePlaceholder} alt={name || id} />
     case 'video':
       // if(thumb) return <img loading="lazy" src={thumb || VideoPlaceholder} alt={name || id} />
-      if(thumb) return (
-        <video poster={thumb || VideoPlaceholder}>
-          <source src={thumb} />
-        </video>
-      )
+      if (thumb)
+        return (
+          <video poster={thumb || VideoPlaceholder}>
+            <source src={thumb} />
+          </video>
+        )
       return (
         <video
           src={thumb || mediaUri}
