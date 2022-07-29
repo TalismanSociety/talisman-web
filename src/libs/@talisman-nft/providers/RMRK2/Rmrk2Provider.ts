@@ -110,10 +110,6 @@ export class Rmrk2Provider extends NFTInterface {
             ? this.toIPFSUrl(nft?.metadata_image)
             : await this.fetchMediaFromMetadata(indexedItemRef?.metadata)
 
-          const thumb = indexedItemRef?.thumb || this.toIPFSUrl(nft?.resources[0]?.thumb) || null
-          const type = nft?.resources[0]?.metadata_content_type ?? (await this.fetchContentType(mediaUri))
-
-<<<<<<< HEAD
         const thumb = indexedItemRef?.thumb || this.toIPFSUrl(nft?.resources[0]?.thumb) || null
         const type = nft?.resources[0]?.metadata_content_type ?? await this.fetchContentType(mediaUri)
         
@@ -131,23 +127,6 @@ export class Rmrk2Provider extends NFTInterface {
           platform: this.name,
         } as NFTShort
       }))
-=======
-          return {
-            id: indexedItemRef.id,
-            name: nft?.metadata_name || indexedItemRef?.symbol,
-            thumb,
-            type,
-            mediaUri,
-            collection: {
-              id: nft?.collection?.id,
-              name: nft?.collection?.metadata_name,
-              totalCount: nft?.collection?.max,
-            },
-            platform: this.name,
-          } as NFTShort
-        })
-      )
->>>>>>> e794bf20e2d56c41dba9a92d9c50c2e017814277
     })
 
     // data smooshing here before returning
