@@ -110,23 +110,24 @@ export class Rmrk2Provider extends NFTInterface {
             ? this.toIPFSUrl(nft?.metadata_image)
             : await this.fetchMediaFromMetadata(indexedItemRef?.metadata)
 
-        const thumb = indexedItemRef?.thumb || this.toIPFSUrl(nft?.resources[0]?.thumb) || null
-        const type = nft?.resources[0]?.metadata_content_type ?? await this.fetchContentType(mediaUri)
-        
-        return {
-          id: indexedItemRef.id,
-          name: nft?.metadata_name || indexedItemRef?.symbol,
-          thumb,
-          type,
-          mediaUri,
-          collection: {
-            id: nft?.collection?.id,
-            name: nft?.collection?.metadata_name,
-            totalCount: nft?.collection?.max,
-          },
-          platform: this.name,
-        } as NFTShort
-      }))
+          const thumb = indexedItemRef?.thumb || this.toIPFSUrl(nft?.resources[0]?.thumb) || null
+          const type = nft?.resources[0]?.metadata_content_type ?? (await this.fetchContentType(mediaUri))
+
+          return {
+            id: indexedItemRef.id,
+            name: nft?.metadata_name || indexedItemRef?.symbol,
+            thumb,
+            type,
+            mediaUri,
+            collection: {
+              id: nft?.collection?.id,
+              name: nft?.collection?.metadata_name,
+              totalCount: nft?.collection?.max,
+            },
+            platform: this.name,
+          } as NFTShort
+        })
+      )
     })
 
     // data smooshing here before returning
@@ -183,7 +184,7 @@ export class Rmrk2Provider extends NFTInterface {
           },
           nftSpecificData: {
             isComposable: indexedItemRef?.isComposable,
-          }
+          },
         } as NFTDetail
 
         return item
