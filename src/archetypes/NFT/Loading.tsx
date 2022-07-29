@@ -21,32 +21,32 @@ const Loading = ({ className, title, subtitle, button, isLoading }: any) => {
 
   const hasHeader = !!title || !!subtitle || !!button
 
-
   return (
     <section className={className}>
-      {!!hasHeader && 
+      {!!hasHeader && (
         <header>
           {!!title && <div className="title">{title}</div>}
           {!!subtitle && <div className="subtitle">{title}</div>}
-          {!!button &&
+          {!!button && (
             <div className="cta">
               <a href={button.href} target="_blank" rel="noopener noreferrer">
                 <Button className="outlined">{button.text}</Button>
               </a>
             </div>
-          }
+          )}
         </header>
-      }
+      )}
       <article data-blur={hasHeader}>
-        { nfts.map((nft: any) => <Card key={nft.id} nft={nft} />)}
+        {nfts.map((nft: any) => (
+          <Card key={nft.id} nft={nft} />
+        ))}
       </article>
     </section>
   )
 }
 
 const StyledLoading = styled(Loading)`
-
-  > header{
+  > header {
     z-index: 5;
     display: flex;
     justify-content: space-between;
@@ -86,33 +86,28 @@ const StyledLoading = styled(Loading)`
         display: block;
       }
     }
-    
+
     span {
-      .title, .subtitle {
+      .title,
+      .subtitle {
         color: transparent !important;
         background-color: var(--color-dim);
         border-radius: 0.5rem;
       }
-      .title{
+      .title {
         padding-top: 0 !important;
         margin-top: 0.5rem;
         width: 80% !important;
       }
-      .subtitle{
+      .subtitle {
         width: 50% !important;
       }
     }
 
-    &[data-blur=true]{
+    &[data-blur='true'] {
       filter: blur(4px);
     }
   }
-
-
- 
-
-
-
 `
 
 export default StyledLoading

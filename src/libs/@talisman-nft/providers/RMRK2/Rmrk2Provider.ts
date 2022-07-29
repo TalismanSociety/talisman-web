@@ -78,35 +78,42 @@ export class Rmrk2Provider extends NFTInterface {
 
     const client = await this.getClient()
 
-    this.indexedNFTs = await fetch(`${this.indexUri}${encodedAddress}`).then((res: any) => res.json()).then((res: any) => {
-      return Promise.all(res?.map(async (nft: any) => {
-        
-        return {
-          id: nft?.id,
-          name: nft?.metadata_name || nft?.symbol,
-          isComposable: nft?.isComposable,
-          metadata: this.toIPFSUrl(nft?.metadata),
-          symbol: nft?.symbol,
-          serialNumber: nft?.sn.replace(/^0+/, ''),
-          mediaUri: this.toIPFSUrl(nft?.image),
-          thumb: this.toIPFSUrl(nft?.primaryResource?.thumb),
-        } as any
-      }))
-    })
+    this.indexedNFTs = await fetch(`${this.indexUri}${encodedAddress}`)
+      .then((res: any) => res.json())
+      .then((res: any) => {
+        return Promise.all(
+          res?.map(async (nft: any) => {
+            return {
+              id: nft?.id,
+              name: nft?.metadata_name || nft?.symbol,
+              isComposable: nft?.isComposable,
+              metadata: this.toIPFSUrl(nft?.metadata),
+              symbol: nft?.symbol,
+              serialNumber: nft?.sn.replace(/^0+/, ''),
+              mediaUri: this.toIPFSUrl(nft?.image),
+              thumb: this.toIPFSUrl(nft?.primaryResource?.thumb),
+            } as any
+          })
+        )
+      })
 
     const data = await client.query({ query: QUERY_SHORT, variables: { address: encodedAddress } }).then((res: any) => {
-      return Promise.all(res?.data?.nfts.map(async (nft: any) => {
+      return Promise.all(
+        res?.data?.nfts.map(async (nft: any) => {
+          const indexedItemRef = this.indexedNFTs.find((item: any) => item.id === nft?.id)
 
-        const indexedItemRef = this.indexedNFTs.find((item: any) => item.id === nft?.id)
+          const mediaUri = !!indexedItemRef?.mediaUri
+            ? indexedItemRef?.mediaUri
+            : !!nft?.resources[0]?.src
+            ? this.toIPFSUrl(nft?.resources[0]?.src)
+            : !!nft?.metadata_image
+            ? this.toIPFSUrl(nft?.metadata_image)
+            : await this.fetchMediaFromMetadata(indexedItemRef?.metadata)
 
-        const mediaUri = !!indexedItemRef?.mediaUri ?
-          indexedItemRef?.mediaUri
-          : !!nft?.resources[0]?.src
-          ? this.toIPFSUrl(nft?.resources[0]?.src)
-          : !!nft?.metadata_image
-          ? this.toIPFSUrl(nft?.metadata_image)
-          : await this.fetchMediaFromMetadata(indexedItemRef?.metadata)
+          const thumb = indexedItemRef?.thumb || this.toIPFSUrl(nft?.resources[0]?.thumb) || null
+          const type = nft?.resources[0]?.metadata_content_type ?? (await this.fetchContentType(mediaUri))
 
+<<<<<<< HEAD
         const thumb = indexedItemRef?.thumb || this.toIPFSUrl(nft?.resources[0]?.thumb) || null
         const type = nft?.resources[0]?.metadata_content_type ?? await this.fetchContentType(mediaUri)
         
@@ -124,6 +131,23 @@ export class Rmrk2Provider extends NFTInterface {
           platform: this.name,
         } as NFTShort
       }))
+=======
+          return {
+            id: indexedItemRef.id,
+            name: nft?.metadata_name || indexedItemRef?.symbol,
+            thumb,
+            type,
+            mediaUri,
+            collection: {
+              id: nft?.collection?.id,
+              name: nft?.collection?.metadata_name,
+              totalCount: nft?.collection?.max,
+            },
+            platform: this.name,
+          } as NFTShort
+        })
+      )
+>>>>>>> e794bf20e2d56c41dba9a92d9c50c2e017814277
     })
 
     // data smooshing here before returning
@@ -143,17 +167,20 @@ export class Rmrk2Provider extends NFTInterface {
         const indexedItemRef = this.indexedNFTs.find((item: any) => item.id === nft?.id)
 
         // parse out the thumb image
-        const mediaUri = !!indexedItemRef?.mediaUri ?
-          indexedItemRef?.mediaUri
+        const mediaUri = !!indexedItemRef?.mediaUri
+          ? indexedItemRef?.mediaUri
           : !!nft?.resources[0]?.src
           ? this.toIPFSUrl(nft?.resources[0]?.src)
           : !!nft?.metadata_image
           ? this.toIPFSUrl(nft?.metadata_image)
           : await this.fetchMediaFromMetadata(indexedItemRef?.metadata)
-  
 
-        const type = nft?.resources[0]?.metadata_content_type ?? await this.fetchContentType(mediaUri)
-        const thumb = !!indexedItemRef.thumb ? indexedItemRef.thumb : !!nft?.resources[0]?.thumb ? this.toIPFSUrl(nft?.resources[0]?.thumb) : null // fetch from somewhere
+        const type = nft?.resources[0]?.metadata_content_type ?? (await this.fetchContentType(mediaUri))
+        const thumb = !!indexedItemRef.thumb
+          ? indexedItemRef.thumb
+          : !!nft?.resources[0]?.thumb
+          ? this.toIPFSUrl(nft?.resources[0]?.thumb)
+          : null // fetch from somewhere
         const collectionInfo = await this.fetchNFTs_CollectionInfo(nft?.collection?.id, this.collectionUri)
         // get the context type of null
 
@@ -173,13 +200,13 @@ export class Rmrk2Provider extends NFTInterface {
             id: nft?.collection?.id,
             name: nft?.collection?.metadata_name,
             totalCount: collectionInfo?.totalNfts,
-            floorPrice: collectionInfo?.floor
+            floorPrice: collectionInfo?.floor,
           },
           nftSpecificData: {
             isComposable: indexedItemRef?.isComposable,
           }
         } as NFTDetail
-        
+
         return item
       })
       .catch((e: any) => {})
