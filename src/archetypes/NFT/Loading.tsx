@@ -18,8 +18,8 @@ const Loading = ({ className, title, subtitle, button, isLoading }: any) => {
       platform: 'No Platform',
       collection: {
         id: '',
-        name: 'Collection'
-      }
+        name: 'Collection',
+      },
     } as NFTShort)
   }
 

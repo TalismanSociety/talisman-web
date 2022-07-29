@@ -17,7 +17,7 @@ function Card({ className, nft, onClick }: CardProps) {
       <Info
         subtitle={nft?.collection?.name || nft?.collection?.id}
         title={nft?.name || nft?.id}
-        icon={"aaaaaa"}
+        icon={'aaaaaa'}
         // Work on ICONS
       />
     </div>
