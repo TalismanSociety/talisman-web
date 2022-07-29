@@ -1,4 +1,3 @@
-import { Button, Pill } from '@components'
 import { ReactComponent as Check } from '@icons/check-circle.svg'
 import { ReactComponent as ChevronDown } from '@icons/chevron-down.svg'
 import { useAccounts } from '@libs/talisman'
@@ -6,11 +5,11 @@ import Identicon from '@polkadot/react-identicon'
 import { device } from '@util/breakpoints'
 import useOnClickOutside from '@util/useOnClickOutside'
 import { useEffect, useRef, useState } from 'react'
-import { useTranslation } from 'react-i18next'
+// import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 const Dropdown = styled(({ className, accounts, activeAccount, open, handleChange }) => {
-  const { t } = useTranslation()
+  // const { t } = useTranslation()
 
   return (
     open && (
@@ -120,7 +119,7 @@ const Dropdown = styled(({ className, accounts, activeAccount, open, handleChang
 `
 
 const AccountPicker = styled(({ additionalAccounts = [], className, onChange }) => {
-  const { t } = useTranslation()
+  // const { t } = useTranslation()
   const nodeRef = useRef<HTMLDivElement>(null)
   const accounts = useAccounts()
   const [open, setOpen] = useState(false)

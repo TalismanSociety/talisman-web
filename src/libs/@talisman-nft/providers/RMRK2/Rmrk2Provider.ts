@@ -109,7 +109,7 @@ export class Rmrk2Provider extends NFTInterface {
 
         const thumb = indexedItemRef?.thumb || this.toIPFSUrl(nft?.resources[0]?.thumb) || null
         const type = nft?.resources[0]?.metadata_content_type ?? await this.fetchContentType(mediaUri)
-
+        
         return {
           id: indexedItemRef.id,
           name: nft?.metadata_name || indexedItemRef?.symbol,
@@ -175,6 +175,9 @@ export class Rmrk2Provider extends NFTInterface {
             totalCount: collectionInfo?.totalNfts,
             floorPrice: collectionInfo?.floor
           },
+          nftSpecificData: {
+            isComposable: indexedItemRef?.isComposable,
+          }
         } as NFTDetail
         
         return item

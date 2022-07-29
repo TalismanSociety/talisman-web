@@ -1,7 +1,4 @@
-import nftRowSkeleton from '@assets/nft-row-skeleton.png'
 import { useModal } from '@components'
-import { Button } from '@components'
-import { Placeholder } from '@components/Placeholder'
 import { useNftsByAddress } from '@libs/@talisman-nft'
 import { device } from '@util/breakpoints'
 import { TALISMAN_SPIRIT_KEYS_RMRK } from '@util/links'
@@ -47,7 +44,7 @@ const StyledListItems = styled(ListItems)`
   }
 `
 
-const List = ({ className, address }: ListPropsType) => {
+const List = ({ address }: ListPropsType) => {
   const { setAddress, loading, nfts } = useNftsByAddress(address)
 
   const { t } = useTranslation('banners')

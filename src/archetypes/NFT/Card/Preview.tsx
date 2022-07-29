@@ -8,7 +8,7 @@ import PDFPlaceholder from '@assets/generic-pdf.png'
 import UnknownPlaceholder from '@assets/generic-unknown.png'
 import VideoPlaceholder from '@assets/generic-video.png'
 import { Spinner } from '@components'
-import { NFTCategory, NFTDetail } from '@libs/@talisman-nft/types'
+import { NFTDetail } from '@libs/@talisman-nft/types'
 import styled from 'styled-components'
 
 type PreviewType = {
@@ -42,7 +42,7 @@ const MediaPreview = ({ mediaUri, thumb, type, name, id }: NFTDetail) => {
     case 'video':
       // if(thumb) return <img loading="lazy" src={thumb || VideoPlaceholder} alt={name || id} />
       if(thumb) return (
-        <video poster={thumb}>
+        <video poster={thumb || VideoPlaceholder}>
           <source src={thumb} />
         </video>
       )

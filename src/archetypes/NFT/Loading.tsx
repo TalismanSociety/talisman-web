@@ -1,7 +1,6 @@
 import Button from '@components/Button'
 import { NFTShort, NFTShortArray } from '@libs/@talisman-nft/types'
 import { device } from '@util/breakpoints'
-import { TALISMAN_SPIRIT_KEYS_RMRK } from '@util/links'
 import styled from 'styled-components'
 
 import Card from './Card/Card'

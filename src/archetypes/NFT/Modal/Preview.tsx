@@ -9,10 +9,12 @@ import UnknownPlaceholder from '@assets/generic-unknown.png'
 import VideoPlaceholder from '@assets/generic-video.png'
 import { NFTDetail } from '@libs/@talisman-nft/types'
 import styled from 'styled-components'
+import { Spinner } from '@components'
 
 type PreviewType = {
   className?: string
   nft?: NFTDetail
+  loading: boolean
 }
 
 const MediaPreview = ({ mediaUri, thumb, type, name, id }: NFTDetail) => {
@@ -58,7 +60,11 @@ const MediaPreview = ({ mediaUri, thumb, type, name, id }: NFTDetail) => {
   }
 }
 
-const Preview = ({ className, nft }: PreviewType) => {
+const Preview = ({ className, nft, loading }: PreviewType) => {
+  if(loading){
+    return <section className={className}><Spinner /></section>
+  }
+
   return <section className={className}>{!!nft && <MediaPreview {...nft} />}</section>
 }
 

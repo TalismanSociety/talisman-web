@@ -1,12 +1,12 @@
-import { NFTItem } from '@libs/@talisman-nft/types'
+import { NFTDetail } from '@libs/@talisman-nft/types'
 import { device } from '@util/breakpoints'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
-export const MainDetails = styled(({ nftId, collection, name, className }) => {
+export const MainDetails = styled(({ name, composable, className }) => {
   return (
     <div className={className}>
-      <p className="nft-main-val">{name}</p>
+      <p className="nft-main-val">{name} {!!composable && ""}</p>
     </div>
   )
 })`
@@ -171,20 +171,77 @@ export const Buttons = styled(({ collectibleUrl, className }) => {
   }
 `
 
-type InfoProps = {
-  className?: string
-  nft?: NFTItem
+const LoadingState = ({className} : any) => {
+  return (
+    <div className={className}>
+      <span className='title' />
+      <span className='description' />
+      <span className='description' />
+      <span className='description' />
+      <span className='description' />
+    </div>
+  )
 }
 
-const Info = ({ className, nft }: InfoProps) => {
+const StyledLoadingState : any = styled(LoadingState)`
+  margin: 0 3em;
+  display: flex;
+  flex-direction: column;
+
+  > span {
+    font-size: 24px;
+    border-radius: 0.5rem;
+  }
+
+  > .title, .description {
+    background-color: var(--color-activeBackground);
+    -webkit-mask:linear-gradient(-60deg,#000 30%,#0005,#000 70%) right/300% 100%;
+    animation: shimmer 1s infinite;
+  }
+
+  @keyframes shimmer {
+    100% {-webkit-mask-position:left}
+  }
+
+  .title + .description {
+    margin-top: 2em;
+  }
+
+  .description {
+    margin-top: 1em;
+    font-size: 16px;
+    height: 1em;
+  }
+
+  .description:last-child {
+    width: 40%;
+  }
+
+  .title {
+    width: 70%;
+    height: 1.25em;
+  }
+
+`
+
+type InfoProps = {
+  className?: string
+  nft?: NFTDetail
+  loading: boolean
+}
+
+const Info = ({ className, nft, loading }: InfoProps) => {
+
+  if(loading) return <StyledLoadingState />
+
   return (
     <div className={className}>
       {!!nft && (
         <>
-          <MainDetails name={nft?.name} collection={nft?.collection?.name} />
+          <MainDetails name={nft?.name} collection={nft?.collection?.name} composable={nft?.nftSpecificData?.isComposable}/>
           <CollectionData
             editionData={nft?.collection?.totalCount}
-            nftId={nft.serialNumber}
+            nftId={nft?.serialNumber}
             price={nft?.collection?.floorPrice}
           />
           <Description description={nft?.description} />

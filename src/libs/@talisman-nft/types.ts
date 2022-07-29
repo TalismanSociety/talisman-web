@@ -14,7 +14,7 @@ export type NFTShort = {
   name: string | null
   thumb: string | null
   type: NFTCategory
-  metadata: string
+  metadata: string | null
   mediaUri: string // PDF
   platform: string
   collection: NFTCollectionDetails | {}
