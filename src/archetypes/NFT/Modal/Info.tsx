@@ -1,7 +1,7 @@
+import { ReactComponent as Composable } from '@icons/composable.svg'
 import { NFTDetail } from '@libs/@talisman-nft/types'
 import { device } from '@util/breakpoints'
 import { useTranslation } from 'react-i18next'
-import { ReactComponent as Composable } from '@icons/composable.svg'
 import styled from 'styled-components'
 
 export const MainDetails = styled(({ name, collection, composable, className }) => {
@@ -9,7 +9,7 @@ export const MainDetails = styled(({ name, collection, composable, className }) 
     <div className={className}>
       <h1>{collection}</h1>
       <p className="nft-main-val">
-        {name} {!!composable && <Composable className='composable'/>}
+        {name} {!!composable && <Composable className="composable" />}
       </p>
     </div>
   )
@@ -283,21 +283,21 @@ const StyledInfo = styled(Info)`
     border-radius: 10px;
   }
 
-    /* Track */
+  /* Track */
   ::-webkit-scrollbar-track {
-    background: var(--color-controlBackground); 
+    background: var(--color-controlBackground);
     border-radius: 10px;
   }
-  
+
   /* Handle */
   ::-webkit-scrollbar-thumb {
-    background: var(--color-dim); 
+    background: var(--color-dim);
     border-radius: 10px;
   }
 
   /* Handle on hover */
   ::-webkit-scrollbar-thumb:hover {
-    background: #555; 
+    background: #555;
   }
 
   @media ${device.sm} {
