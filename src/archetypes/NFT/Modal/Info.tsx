@@ -1,9 +1,9 @@
+import { Spinner } from '@components'
 import { ReactComponent as Composable } from '@icons/composable.svg'
 import { NFTDetail } from '@libs/@talisman-nft/types'
 import { device } from '@util/breakpoints'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
-import { Spinner } from '@components'
 
 export const MainDetails = styled(({ name, collection, composable, className }) => {
   return (
@@ -71,15 +71,15 @@ const Expansion = styled(({ className }) => {
     </div>
   )
 })`
-display: flex;
-margin-top: 0.5em !important;
-align-items: center;
+  display: flex;
+  margin-top: 0.5em !important;
+  align-items: center;
 
- > span {
-  font-size: 1.25rem;
-  padding: 0.25rem 0rem;
-  border-radius: 1rem;
- }
+  > span {
+    font-size: 1.25rem;
+    padding: 0.25rem 0rem;
+    border-radius: 1rem;
+  }
 `
 
 export const Description = styled(({ description, className }) => {
@@ -89,10 +89,14 @@ export const Description = styled(({ description, className }) => {
     <div className={className}>
       <input type="checkbox" id="expand" />
       <div className="medium-12 small-12 columns smalldesc">
-      <p className="nft-desc-value">{description || ''}</p>
-      <p className="nft-desc-value"></p>
+        <p className="nft-desc-value">{description || ''}</p>
+        <p className="nft-desc-value"></p>
       </div>
-      {description.length > 50 &&  <label htmlFor='expand'><Expansion /></label>}
+      {description.length > 50 && (
+        <label htmlFor="expand">
+          <Expansion />
+        </label>
+      )}
     </div>
   )
 })`
@@ -113,27 +117,25 @@ export const Description = styled(({ description, className }) => {
   }
 
   #expand {
-    display:none;  
+    display: none;
   }
-  
+
   #expand + .smalldesc {
-    max-height:54px;
-    overflow:hidden;
-    text-overflow:ellipsis;
-    transition:all .3s ease;
-    
+    max-height: 54px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: all 0.3s ease;
   }
-  
+
   #expand:checked + .smalldesc {
-    max-height:250px;  
+    max-height: 250px;
   }
 
   #expand:checked {
-
   }
-  
+
   label {
-    cursor:pointer;
+    cursor: pointer;
   }
 
   span::before {
@@ -145,10 +147,10 @@ export const Description = styled(({ description, className }) => {
       content: 'Read less' !important;
     }
   }
-  
+
   label:hover {
-    text-decoration:none;
-    color: var(--color-light); 
+    text-decoration: none;
+    color: var(--color-light);
   }
 `
 
