@@ -4,6 +4,7 @@ import Layout from '../layout'
 import Buy from './Buy'
 import CrowdloanDetail from './Crowdloan.Detail.tsx'
 import CrowdloanIndex from './Crowdloan.Index.tsx'
+import XCMBridge from './XCMBridge'
 import Home from './Home'
 import NFTsPage from './NFTsPage'
 import SpiritKeysPage from './SpiritKeysPageV2'
@@ -42,6 +43,11 @@ const Routes = () => (
     <Route exact path="/buy">
       <Layout>
         <Buy />
+      </Layout>
+    </Route>
+    <Route exact path="/xcm-bridge">
+      <Layout>
+        <XCMBridge />
       </Layout>
     </Route>
     <Route path="*">
