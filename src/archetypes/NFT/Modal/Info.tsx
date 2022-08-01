@@ -3,6 +3,7 @@ import { device } from '@util/breakpoints'
 import { useTranslation } from 'react-i18next'
 import { ReactComponent as Composable } from '@icons/composable.svg'
 import styled from 'styled-components'
+import { Spinner } from '@components'
 
 export const MainDetails = styled(({ name, collection, composable, className }) => {
   return (
@@ -63,21 +64,91 @@ export const FloorPrice = styled(({ price, className }) => {
   width: 45%;
 `
 
-export const Description = styled(({ description, className }) => {
+const Expansion = styled(({ className }) => {
   return (
     <div className={className}>
+      <span></span>
+    </div>
+  )
+})`
+display: flex;
+margin-top: 0.5em !important;
+align-items: center;
+
+ > span {
+  font-size: 1.25rem;
+  padding: 0.25rem 0rem;
+  border-radius: 1rem;
+ }
+`
+
+export const Description = styled(({ description, className }) => {
+  const { t } = useTranslation('nft-viewer')
+
+  return (
+    <div className={className}>
+      <input type="checkbox" id="expand" />
+      <div className="medium-12 small-12 columns smalldesc">
       <p className="nft-desc-value">{description || ''}</p>
+      <p className="nft-desc-value"></p>
+      </div>
+      {description.length > 50 &&  <label htmlFor='expand'><Expansion /></label>}
     </div>
   )
 })`
   margin-bottom: 1em;
 
+  > h1 {
+    margin-bottom: 0.5em !important;
+  }
+
   .nft-desc-value {
     font-size: 14px;
     font-weight: 400;
     line-height: 22px;
-    width: 350px;
+    width: 90%;
     text-align: left;
+    border-radius: 1rem;
+    color: var(--color-light);
+  }
+
+  #expand {
+    display:none;  
+  }
+  
+  #expand + .smalldesc {
+    max-height:54px;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    transition:all .3s ease;
+    
+  }
+  
+  #expand:checked + .smalldesc {
+    max-height:250px;  
+  }
+
+  #expand:checked {
+
+  }
+  
+  label {
+    cursor:pointer;
+  }
+
+  span::before {
+    content: 'Read more' !important;
+  }
+
+  #expand:checked ~ label {
+    span::before {
+      content: 'Read less' !important;
+    }
+  }
+  
+  label:hover {
+    text-decoration:none;
+    color: var(--color-light); 
   }
 `
 
@@ -153,13 +224,13 @@ export const Network = styled(({ network, className }) => {
   }
 `
 
-export const Buttons = styled(({ collectibleUrl, className }) => {
+export const Buttons = styled(({ collectibleUrl, platform, className }) => {
   const { t } = useTranslation('nft-viewer')
 
   return (
     <div className={className}>
       <a href={collectibleUrl} target="_blank" className="nft-modal-button" rel="noreferrer">
-        {t('View Singular')}
+        <span>View On {platform}</span>
       </a>
     </div>
   )
@@ -262,10 +333,10 @@ const Info = ({ className, nft, loading }: InfoProps) => {
             nftId={nft?.serialNumber}
             price={nft?.collection?.floorPrice}
           />
-          <Description description={nft?.description} />
+          {!!nft?.description && <Description description={nft?.description} />}
           <Attributes properties={nft?.attributes} />
           <Network network={nft?.platform} />
-          <Buttons collectibleUrl={nft?.platformUri} />
+          <Buttons collectibleUrl={nft?.platformUri} platform={nft?.platform} />
         </>
       )}
     </div>

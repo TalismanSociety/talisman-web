@@ -104,6 +104,10 @@ const StyledPreview = styled(Preview)`
   padding-bottom: 100%;
   background-color: #333;
 
+  > img {
+    text-align: center;
+  }
+
   > * {
     position: absolute;
     width: 100%;
