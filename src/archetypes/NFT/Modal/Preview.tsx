@@ -77,7 +77,7 @@ const StyledPreview = styled(Preview)`
   width: 100%;
   padding-bottom: 100%;
   background-color: transparent;
-  background-color: rgb(22, 22, 22);
+  background-color: var(--color-dark);
 
   > * {
     position: absolute;

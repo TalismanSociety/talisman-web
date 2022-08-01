@@ -160,7 +160,7 @@ export const Attributes = styled(({ properties, className }) => {
 
   return (
     <div className={className}>
-      <h1>{t('Attributes')}</h1>
+      {/* <h1>{t('Attributes')}</h1> */}
       <div className="attribute-grid">
         {properties['Migrated from'] ? (
           <div className="nft-attribute">
@@ -194,7 +194,7 @@ export const Attributes = styled(({ properties, className }) => {
   }
 
   .nft-attribute {
-    background-color: var(--color-dim);
+    background-color: var(--color-activeBackground);
     width: fit-content;
     padding: 5px 8px;
     border-radius: 8px;
