@@ -1,4 +1,4 @@
-import { Panel } from '@archetypes/XCM'
+import { Button, Panel } from '@archetypes/XCM'
 import { PanelSection } from '@components'
 import ExtensionStatusGate from '@components/ExtensionStatusGate'
 import { device } from '@util/breakpoints'
@@ -41,6 +41,11 @@ const XCMBridge = styled(({ className }: any) => {
         <article>
           {/* Rename this monstrosity */}
           <Panel /> 
+          <Button 
+            title={'Transfer'} 
+            onClick={""} 
+            disabled={false} 
+          />
         </article>
       </ExtensionStatusGate>
     </section>
@@ -57,12 +62,15 @@ const XCMBridge = styled(({ className }: any) => {
     margin: 6rem auto;
   }
 
+
+
   article {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     height: calc(100% - 15rem);
+    gap: 1.5em;
   }
 
   padding: 0 2.4rem;
