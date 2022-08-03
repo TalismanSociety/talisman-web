@@ -105,10 +105,7 @@ export class AcalaProvider extends NFTInterface {
     const encodedAddress = encodeAddress(address, 10)
 
     this.webSocket = await this.wsProvider()
-
-    // console.log(this.webSocket.query.ormlNft.nextTokenId(5))
-    // console.log(this.webSocket.query.ormlNft.tokensByOwner.keys(encodedAddress))
-
+    
     if (!this.webSocket) return []
     const nfts = await this.webSocket.query.ormlNft.tokensByOwner.keys(encodedAddress)
 
