@@ -51,8 +51,6 @@ const List = ({ address }: ListPropsType) => {
 
   useEffect(() => {
     setAddress(address)
-    // setAddress("ESMddXAAxypPjiRnFinnHWfmG5V4H2sZB5P6g3QFXjzUwYF")
-    // setAddress("FAvF9v7EF6oVKTUwk7v6GNPCPjjBPtmHq5fwR71PyVwQrTf")
   }, [address, setAddress])
 
   return !!loading ? (
