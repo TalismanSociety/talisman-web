@@ -92,8 +92,7 @@ export class StatemineProvider extends NFTInterface {
   }
 
   async fetchAllByAddress(address: string) {
-
-    if(address.startsWith('0x')) return []
+    if (address.startsWith('0x')) return []
 
     const encodedAddress = encodeAddress(address, 2)
 
