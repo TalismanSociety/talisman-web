@@ -124,8 +124,6 @@ export class AcalaProvider extends NFTInterface {
           nftRawAssetDetails.push({ collectionId: data[1], nftTokenId: data[2] })
         }
 
-        console.log(nftRawAssetDetails)
-
         const items = await Promise.all(
           nftRawAssetDetails.map(
             async (assetId: any) =>

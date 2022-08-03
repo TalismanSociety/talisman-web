@@ -360,6 +360,8 @@ const StyledInfo = styled(Info)`
   overflow-y: auto;
   max-height: 450px;
 
+  scrollbar-gutter: stable;
+
   ::-webkit-scrollbar {
     width: 5px;
     border-radius: 10px;
