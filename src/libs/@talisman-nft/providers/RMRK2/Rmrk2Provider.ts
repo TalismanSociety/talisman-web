@@ -147,10 +147,10 @@ export class Rmrk2Provider extends NFTInterface {
         const indexedItemRef = this.indexedNFTs.find((item: any) => item.id === nft?.id)
 
         // parse out the thumb image
-        const mediaUri = !!indexedItemRef?.mediaUri
-          ? indexedItemRef?.mediaUri
-          : !!nft?.resources[0]?.src
+        const mediaUri = !!nft?.resources[0]?.src
           ? this.toIPFSUrl(nft?.resources[0]?.src)
+          : !!indexedItemRef?.mediaUri
+          ? indexedItemRef?.mediaUri
           : !!nft?.metadata_image
           ? this.toIPFSUrl(nft?.metadata_image)
           : await this.fetchMediaFromMetadata(indexedItemRef?.metadata)
@@ -160,7 +160,7 @@ export class Rmrk2Provider extends NFTInterface {
           ? indexedItemRef.thumb
           : !!nft?.resources[0]?.thumb
           ? this.toIPFSUrl(nft?.resources[0]?.thumb)
-          : null // fetch from somewhere
+          : null 
         const collectionInfo = await this.fetchNFTs_CollectionInfo(nft?.collection?.id, this.collectionUri)
         // get the context type of null
 

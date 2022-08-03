@@ -10,7 +10,7 @@ export const MainDetails = styled(({ name, collection, composable, className }) 
     <div className={className}>
       <h1>{collection}</h1>
       <p className="nft-main-val">
-        {name} {!!composable && <Composable className="composable" />}
+        {name} {!!composable && <Composable className="composable" title="Composable" />}
       </p>
     </div>
   )
@@ -56,12 +56,22 @@ export const FloorPrice = styled(({ price, className }) => {
   return (
     <div className={className}>
       <h1>{t('Floor Price')}</h1>
-      <p className="nft-main-val">{price || '...'} KSM</p>
+      <div className="price-div">
+      <span className="nft-main-val">{price || '...'} KSM</span>
+      </div>
+
     </div>
   )
 })`
   margin-top: 0 !important;
   width: 45%;
+  overflow: hidden;
+
+  .price-div {
+    width: 80%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 `
 
 const Expansion = styled(({ className }) => {
@@ -92,7 +102,7 @@ export const Description = styled(({ description, className }) => {
         <p className="nft-desc-value">{description || ''}</p>
         <p className="nft-desc-value"></p>
       </div>
-      {description.length > 50 && (
+      {description.length > 120 && (
         <label htmlFor="expand">
           <Expansion />
         </label>
@@ -121,14 +131,14 @@ export const Description = styled(({ description, className }) => {
   }
 
   #expand + .smalldesc {
-    max-height: 54px;
+    max-height: 48px;
     overflow: hidden;
     text-overflow: ellipsis;
     transition: all 0.3s ease;
   }
 
   #expand:checked + .smalldesc {
-    max-height: 10000px;
+    max-height: 100%;
   }
 
   #expand:checked {
@@ -349,7 +359,7 @@ const StyledInfo = styled(Info)`
   display: flex;
   flex-direction: column;
   overflow-y: auto;
-  max-height: 458px;
+  max-height: 450px;
 
   ::-webkit-scrollbar {
     width: 5px;
