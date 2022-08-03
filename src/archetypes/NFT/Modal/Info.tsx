@@ -81,8 +81,9 @@ const Expansion = styled(({ className }) => {
   )
 })`
   display: flex;
-  margin-top: 0.5em !important;
+  margin-top: 0em !important;
   align-items: center;
+  text-decoration: underline;
 
   > span {
     font-size: 1.25rem;
@@ -97,11 +98,11 @@ export const Description = styled(({ description, className }) => {
   return (
     <div className={className}>
       <input type="checkbox" id="expand" />
-      <div className="medium-12 small-12 columns smalldesc">
+      <div className="medium-12 small-12 columns smalldesc" id="desc-box">
         <p className="nft-desc-value">{description || ''}</p>
         <p className="nft-desc-value"></p>
       </div>
-      {description.length > 120 && (
+      {description.length > 100 && (
         <label htmlFor="expand">
           <Expansion />
         </label>
@@ -132,12 +133,23 @@ export const Description = styled(({ description, className }) => {
   #expand + .smalldesc {
     max-height: 48px;
     overflow: hidden;
+
+    display: -webkit-box;
+    line-height: 16px; /* fallback */
+    -webkit-line-clamp: 2; /* number of lines to show */
+    -webkit-box-orient: vertical;
+    word-break: break-word;
+
     text-overflow: ellipsis;
     transition: all 0.3s ease;
   }
 
   #expand:checked + .smalldesc {
     max-height: 100%;
+    line-height: 100%; /* fallback */
+    -webkit-line-clamp: none; /* number of lines to show */
+    -webkit-box-orient: vertical;
+    word-break: break-word;
   }
 
   #expand:checked {
