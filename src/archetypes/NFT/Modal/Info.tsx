@@ -128,7 +128,7 @@ export const Description = styled(({ description, className }) => {
   }
 
   #expand:checked + .smalldesc {
-    max-height: 250px;
+    max-height: 10000px;
   }
 
   #expand:checked {
@@ -194,7 +194,7 @@ export const Attributes = styled(({ properties, className }) => {
   }
 
   .nft-attribute {
-    background-color: var(--color-activeBackground);
+    background-color: #262626;
     width: fit-content;
     padding: 5px 8px;
     border-radius: 8px;
