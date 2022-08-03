@@ -160,7 +160,7 @@ export class Rmrk2Provider extends NFTInterface {
           ? indexedItemRef.thumb
           : !!nft?.resources[0]?.thumb
           ? this.toIPFSUrl(nft?.resources[0]?.thumb)
-          : null 
+          : null
         const collectionInfo = await this.fetchNFTs_CollectionInfo(nft?.collection?.id, this.collectionUri)
         // get the context type of null
 

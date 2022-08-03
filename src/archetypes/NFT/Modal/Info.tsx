@@ -57,9 +57,8 @@ export const FloorPrice = styled(({ price, className }) => {
     <div className={className}>
       <h1>{t('Floor Price')}</h1>
       <div className="price-div">
-      <span className="nft-main-val">{price || '...'} KSM</span>
+        <span className="nft-main-val">{price || '...'} KSM</span>
       </div>
-
     </div>
   )
 })`
