@@ -94,16 +94,16 @@ export const Modal = styled(function Modal({ className, closable }) {
     overflow-y: auto;
     background: rgb(${({ theme }) => theme?.background});
     border-radius: 1.6rem;
-    padding: 5.4rem 3.6rem 3.6rem 3.6rem;
+    padding: 6.4rem 4.6rem 4.6rem 4.6rem;
     z-index: 1000;
     position: relative;
 
     > .close-icon {
       position: absolute;
-      width: 2.5rem;
-      height: 2.5rem;
-      top: 2.2rem;
-      right: 2.2rem;
+      width: 4rem;
+      height: 4rem;
+      top: 3.2rem;
+      right: 3.2rem;
       cursor: pointer;
     }
   }
