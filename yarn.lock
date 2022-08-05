@@ -3553,6 +3553,7 @@ __metadata:
     "@testing-library/user-event": ^12.1.10
     "@types/jest": ^26.0.15
     "@types/lodash": ^4.14.172
+    "@types/md5": ^2.3.2
     "@types/node": ^12.0.0
     "@types/react": ^17.0.0
     "@types/react-dom": ^17.0.0
@@ -3864,6 +3865,13 @@ __metadata:
   version: 4.14.172
   resolution: "@types/lodash@npm:4.14.172"
   checksum: 5fc51ea40d7e455bd1c760bcc60c9e81f82d85988666d4d4969bd8311367c63bbf1fe2be48755ba87836710e45fff94014ec164ebe6ccaa72815014981152434
+  languageName: node
+  linkType: hard
+
+"@types/md5@npm:^2.3.2":
+  version: 2.3.2
+  resolution: "@types/md5@npm:2.3.2"
+  checksum: ce59779c5aa9bcafe6e089f7a0be2f25fb4661d437809dd7e895e13e9369855aeee8521a0a954bb38468cd8ed2d7c84d5dbb3ba37544f5a11c8a199e5a8561b6
   languageName: node
   linkType: hard
 
