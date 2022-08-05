@@ -145,7 +145,7 @@ const AccountPicker = styled(({ additionalAccounts = [], className, onChange }) 
   return (
     <div ref={nodeRef} className="account-picker" onClick={accounts.length > 1 ? () => setOpen(!open) : undefined}>
       <span className={`account-button ${className}`}>
-        <span className="account">
+        <span className={accounts.length > 1 ? 'account' : 'single-account'}>
           <span>
             <Identicon
               className="identicon"
@@ -187,9 +187,13 @@ const AccountPicker = styled(({ additionalAccounts = [], className, onChange }) 
   align-items: center;
   position: relative;
   max-width: 30rem;
-  border: 1px solid var(--color-activeBackground);
   border-radius: 1.2rem 1.2rem;
   background: var(--color-controlBackground);
+
+  .account-button {
+    
+  }
+
   .account-picker {
     position: absolute;
     top: 100%;
@@ -202,7 +206,13 @@ const AccountPicker = styled(({ additionalAccounts = [], className, onChange }) 
     }
   }
 
-  > .account {
+  .single-account {
+    &:hover {
+      background: rgba(0, 0, 0, 0) !important;
+    }
+  }
+
+  > .account, .single-account {
     display: flex;
     align-items: center;
     padding: 1rem 1.5rem;
@@ -210,6 +220,8 @@ const AccountPicker = styled(({ additionalAccounts = [], className, onChange }) 
     cursor: pointer;
     justify-content: space-between;
     transition: all 0.15s;
+    border: 1px solid var(--color-activeBackground);
+    border-radius: 1.2rem;
     span {
       display: flex;
       align-items: center;
