@@ -106,7 +106,8 @@ export class Rmrk1Provider extends NFTInterface {
           )
 
           // get the context type of null
-          const type = nft?.metadata_content_type.split('/')[0] ?? (await this.fetchContentType(mediaUri))
+          const type = nft?.metadata_content_type.split('/')[0]
+          // const type = "image"
 
           return {
             id: nft?.id,
@@ -138,6 +139,8 @@ export class Rmrk1Provider extends NFTInterface {
         const nft = res?.data?.nfts[0]
 
         if (!nft) throw new Error('TBD')
+
+        const indexedItemRef = this.indexedNFTs.find((item: any) => item.id === nft?.id)
 
         const mediaUri = this.toIPFSUrl(nft?.metadata_animation_url || nft?.metadata_image || indexedItemRef?.mediaUri)
         const thumb = this.toIPFSUrl(nft?.metadata_image)

@@ -123,15 +123,13 @@ export class StatemineProvider extends NFTInterface {
               new Promise(async resolve => {
                 const NFTdetails = await this.getTokenDetails(assetId)
 
-                const type = await this.fetchNFTs_type(NFTdetails?.mediaUri)
-
                 resolve({
                   id: NFTdetails?.id,
                   name: NFTdetails?.name,
                   description: NFTdetails?.description,
                   mediaUri: NFTdetails?.mediaUri,
                   thumb: NFTdetails?.mediaUri,
-                  type,
+                  type: null,
                   serialNumber: assetId.nftTokenId,
                   platform: this.name,
                   platformUri: `${this.platformUri}${assetId.collectionId.replaceAll(',', '')}/${assetId.nftTokenId}`,

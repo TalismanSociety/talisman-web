@@ -1,7 +1,9 @@
 import { Account, NFT } from '@archetypes'
-import { ExtensionStatusGate, PanelSection } from '@components'
+import { Button, ExtensionStatusGate, PanelSection } from '@components'
+import { DAPP_NAME, useAccounts } from '@libs/talisman'
+import { WalletSelect } from '@talisman-connect/components'
 import { device } from '@util/breakpoints'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
@@ -33,18 +35,40 @@ const ExtensionUnavailable = styled(props => {
 `
 
 const NFTsPage = styled(({ className }: any) => {
+  const { t } = useTranslation('welcome')
+  const { t: tBase } = useTranslation()
+
   const [address, setAddress] = useState<string | undefined>()
+
+  const accounts = useAccounts()
+
+  // useEffect(() => {
+  //   if (!accounts.find(a => a.address === address))
+  //     setAddress(undefined)
+  // }, [accounts, address])
 
   return (
     <section className={className}>
       <h1>NFTs</h1>
       <ExtensionStatusGate unavailable={<ExtensionUnavailable />}>
-        <header>
-          <Account.Picker onChange={({ address }: any) => setAddress(address)} />
-        </header>
-        <article>
-          <NFT.List address={address} />
-        </article>
+        {accounts.length ? (
+          <>
+            <header>
+              <Account.Picker onChange={({ address }: any) => setAddress(address)} />
+            </header>
+            <article>
+              <NFT.List address={address} />
+            </article>
+          </>
+        ) : (
+          <WalletSelect
+            dappName={DAPP_NAME}
+            triggerComponent={<Button primary>{tBase('Connect wallet')}</Button>}
+            onError={err => {
+              console.log(`>>> err`, err)
+            }}
+          />
+        )}        
       </ExtensionStatusGate>
     </section>
   )

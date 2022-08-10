@@ -93,7 +93,7 @@ export class Rmrk2Provider extends NFTInterface {
               metadata: this.toIPFSUrl(nft?.metadata),
               symbol: nft?.symbol,
               serialNumber: nft?.sn.replace(/^0+/, ''),
-              mediaUri: this.toIPFSUrl(nft?.image),
+              mediaUri: this.toIPFSUrl(nft?.image), // Up here
               thumb: this.toIPFSUrl(nft?.primaryResource?.thumb),
             } as any
           })
@@ -114,7 +114,7 @@ export class Rmrk2Provider extends NFTInterface {
             : await this.fetchMediaFromMetadata(indexedItemRef?.metadata)
 
           const thumb = indexedItemRef?.thumb || this.toIPFSUrl(nft?.resources[0]?.thumb) || null
-          const type = nft?.resources[0]?.metadata_content_type ?? (await this.fetchContentType(mediaUri))
+          const type = nft?.resources[0]?.metadata_content_type
 
           return {
             id: indexedItemRef.id,
@@ -122,6 +122,7 @@ export class Rmrk2Provider extends NFTInterface {
             thumb,
             type,
             mediaUri,
+            metadata: indexedItemRef?.metadata,
             collection: {
               id: nft?.collection?.id,
               name: nft?.collection?.metadata_name,

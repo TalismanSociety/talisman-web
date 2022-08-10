@@ -1,12 +1,15 @@
 import { ReactComponent as Check } from '@icons/check-circle.svg'
 import { ReactComponent as ChevronDown } from '@icons/chevron-down.svg'
-import { useAccounts } from '@libs/talisman'
+import { DAPP_NAME, useAccounts } from '@libs/talisman'
 import Identicon from '@polkadot/react-identicon'
+import { WalletSelect } from '@talisman-connect/components'
 import { device } from '@util/breakpoints'
 import useOnClickOutside from '@util/useOnClickOutside'
 import { useEffect, useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 // import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
+import Button from './Button'
 
 const Dropdown = styled(({ className, accounts, activeAccount, open, handleChange }) => {
   // const { t } = useTranslation()
@@ -120,6 +123,10 @@ const Dropdown = styled(({ className, accounts, activeAccount, open, handleChang
 
 const AccountPicker = styled(({ additionalAccounts = [], className, onChange }) => {
   // const { t } = useTranslation()
+
+  const { t } = useTranslation('welcome')
+  const { t: tBase } = useTranslation()
+
   const nodeRef = useRef<HTMLDivElement>(null)
   const accounts = useAccounts()
   const [open, setOpen] = useState(false)
@@ -144,43 +151,44 @@ const AccountPicker = styled(({ additionalAccounts = [], className, onChange }) 
 
   return (
     <div ref={nodeRef} className="account-picker" onClick={accounts.length > 1 ? () => setOpen(!open) : undefined}>
-      <span className={`account-button ${className}`}>
-        <span className={accounts.length > 1 ? 'account' : 'single-account'}>
-          <span>
-            <Identicon
-              className="identicon"
-              value={activeAccount?.address}
-              theme={activeAccount?.type === 'ethereum' ? 'ethereum' : 'polkadot'}
-            />
+        <span className={`account-button ${className}`}>
+          <span className={accounts.length > 1 ? 'account' : 'single-account'}>
+            <span>
+              <Identicon
+                className="identicon"
+                value={activeAccount?.address}
+                theme={activeAccount?.type === 'ethereum' ? 'ethereum' : 'polkadot'}
+              />
 
-            <span className="selected-account">
-              <div>{activeAccount?.name}</div>
+              <span className="selected-account">
+                <div>{activeAccount?.name}</div>
+              </span>
             </span>
+
+            {accounts.length > 1 && (
+              <ChevronDown
+                className="nav-toggle"
+                onClick={(e: any) => {
+                  e.stopPropagation()
+                  setOpen(!open)
+                }}
+              />
+            )}
           </span>
 
-          {accounts.length > 1 && (
-            <ChevronDown
-              className="nav-toggle"
-              onClick={(e: any) => {
-                e.stopPropagation()
-                setOpen(!open)
-              }}
-            />
-          )}
+          <Dropdown
+            open={open}
+            accounts={allAccounts}
+            activeAccount={activeAccount}
+            handleChange={(account: any) => {
+              setActiveAccount(account)
+              setOpen(false)
+            }}
+          />
         </span>
+      </div>
+    )
 
-        <Dropdown
-          open={open}
-          accounts={allAccounts}
-          activeAccount={activeAccount}
-          handleChange={(account: any) => {
-            setActiveAccount(account)
-            setOpen(false)
-          }}
-        />
-      </span>
-    </div>
-  )
 })`
   font-size: inherit;
   display: flex;

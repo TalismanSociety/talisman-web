@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import { NFTFactory } from './nftFactory'
 import { Rmrk1Provider, Rmrk2Provider, StatemineProvider } from './providers'
 import { NFTInterface } from './providers/NFTInterface'
-import { NFTDetail, NFTShortArray } from './types'
+import { NFTCategory, NFTDetail, NFTShortArray } from './types'
 
 const providers: NFTInterface[] = [
   new Rmrk1Provider(),
@@ -22,6 +22,7 @@ export const useNftsByAddress = (initialAddress?: string) => {
   useEffect(() => {
     if (!address) return
     setLoading(true)
+    // setNfts([])
     nftFactory.fetchNFTSByAddress(address).then((nfts: NFTShortArray) => {
       setNfts(nfts)
       setLoading(false)
@@ -59,5 +60,16 @@ export const useNftById = (id?: string) => {
     nft,
     loading,
     error,
+  }
+}
+
+export async function getNFTType(mediaUri : string) {
+  if (!mediaUri) return 'unknown'
+  try {
+    const req = await fetch(mediaUri, { method: 'HEAD' })
+    return req.headers.get('content-type')?.split('/')[0] ?? 'unknown'
+  } catch (err) {
+    console.log(err)
+    return 'unknown'
   }
 }
