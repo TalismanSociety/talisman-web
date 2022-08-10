@@ -74,9 +74,8 @@ export class Rmrk2Provider extends NFTInterface {
   }
 
   async fetchAllByAddress(address: string) {
+    if (address.startsWith('0x')) return []
 
-    if(address.startsWith('0x')) return []
-    
     const encodedAddress = encodeAddress(address, 2)
 
     const client = await this.getClient()
