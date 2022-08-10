@@ -190,7 +190,7 @@ export const Attributes = styled(({ properties, className }) => {
         ) : (
           Object.keys(properties).map(k => (
             <div className="nft-attribute" key={k}>
-              <p className="nft-attribute-header">{k.replace("_", " ").toUpperCase()}</p>
+              <p className="nft-attribute-header">{k.replace('_', ' ').toUpperCase()}</p>
               <p className="nft-attribute-value">{properties[k].value}</p>
             </div>
           ))

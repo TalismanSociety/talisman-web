@@ -63,7 +63,7 @@ export const useNftById = (id?: string) => {
   }
 }
 
-export async function getNFTType(mediaUri : string) {
+export async function getNFTType(mediaUri: string) {
   if (!mediaUri) return 'unknown'
   try {
     const req = await fetch(mediaUri, { method: 'HEAD' })

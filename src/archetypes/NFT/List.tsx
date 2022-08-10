@@ -45,16 +45,13 @@ const StyledListItems = styled(ListItems)`
 `
 
 const List = ({ address }: ListPropsType) => {
-
   const { setAddress, loading, nfts } = useNftsByAddress(address)
-
 
   const { t } = useTranslation('banners')
 
   useEffect(() => {
     setAddress(address)
   }, [address, setAddress])
-
 
   return !!loading ? (
     <Loading isLoading={true} />
