@@ -42,7 +42,6 @@ const NFTsPage = styled(({ className }: any) => {
 
   const accounts = useAccounts()
 
-
   return (
     <section className={className}>
       <h1>NFTs</h1>
