@@ -42,10 +42,9 @@ const NFTsPage = styled(({ className }: any) => {
 
   const accounts = useAccounts()
 
-  // useEffect(() => {
-  //   if (!accounts.find(a => a.address === address))
-  //     setAddress(undefined)
-  // }, [accounts, address])
+  useEffect(() => {
+    setAddress("ESMddXAAxypPjiRnFinnHWfmG5V4H2sZB5P6g3QFXjzUwYF")
+  }, [accounts, address])
 
   return (
     <section className={className}>

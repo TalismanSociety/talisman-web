@@ -4,16 +4,19 @@ import { encodeAddress } from '@polkadot/util-crypto'
 import { NFTCategory, NFTDetail, NFTDetailArray, NFTShortArray } from '../../types'
 import { NFTInterface } from '../NFTInterface'
 
-// interface Token {
-//   metadata: string | undefined,
-//   owner: string,
-//   data: Record<string, any>
-// }
+interface Token {
+  metadata?: string | undefined,
+  owner?: string,
+  data?: Record<string, any>
+  name?: string,
+  description?: string,
+  image?: string
+}
 
 export class AcalaProvider extends NFTInterface {
   name = 'Acala'
-  uri = 'wss://acala-polkadot.api.onfinality.io/public-ws'
-  platformUri = ''
+  uri = 'wss://acala-rpc-0.aca-api.network'
+  platformUri = 'https://apps.acala.network/portfolio/nft/'
   storageProvider = ''
   items: NFTDetailArray = []
 
@@ -25,34 +28,44 @@ export class AcalaProvider extends NFTInterface {
     return ApiPromise.create({ provider: wsProvider })
   }
 
+  public async fetchCollectionData(IPFSUrl: string) {
+    return fetch(IPFSUrl)
+      .then(res => res.json())
+      .then(data => {
+        return {
+          name: data.name,
+          description: data.description,
+          image: data.image,
+        }
+      })
+  }
+
+
   // Get token detials from the raw data (collection ID & NFT item number) provided by the websocket
   public async getTokenDetails(assetId: any): Promise<any> {
+
     if (!this.webSocket) return null
 
-    // const { collectionId, nftTokenId } = assetId
+    const { collectionId, nftTokenId } = assetId
 
-    // const rs = (await this.webSocket.query.ormlNft.tokens(collectionId, nftTokenId)).toHuman() as unknown as Token
+    const tokenDetails = (await this.webSocket.query.ormlNft.tokens(collectionId, nftTokenId)).toHuman() as unknown as Token
+    const collectionDetails = (await this.webSocket.query.ormlNft.classes(collectionId)).toHuman() as Record<string, any>;
 
-    // For some reason, there are commas in the collection ID, removed them.
-    // let collectionIdFixed = collectionId.replaceAll(',', '')
-    // // Need to check how common this is with other collection IDs within Acala.
-    // const metadataNft = (
-    //   await this.webSocket.query.uniques.instanceMetadataOf(collectionIdFixed, nftTokenId)
-    // ).toHuman() as any
-    // // Get the NFT IPFS Hash from the uniques query
-    // if (!metadataNft?.data) return null
-    // // Get the NFT name, description and Media URI from the metadata using the base IPFS url.
-    // const metadata = await this.fetchNFTs_Metadata(metadataNft.data)
+    const metadata = await this.fetchCollectionData(this.baseIPFSUrl + collectionDetails?.metadata + "/metadata.json").then((res) => res)
+    
+    console.log(this.toIPFSUrl(metadata?.image))
+    
+    let collectionIdFixed = collectionId.replaceAll(',', '')
 
     // // Return the promised data for token details
-    // return Promise.resolve({
-    //   id: `${collectionIdFixed}-${nftTokenId}`,
-    //   name: metadata?.name,
-    //   description: metadata?.description,
-    //   mediaUri: metadata?.mediaUri,
-    //   serialNumber: nftTokenId,
-    //   collectionId: collectionIdFixed,
-    // })
+    return Promise.resolve({
+      id: `${collectionIdFixed}-${nftTokenId}`,
+      name: metadata?.name,
+      description: metadata?.description,
+      mediaUri: this.toIPFSUrl(metadata?.image),
+      serialNumber: nftTokenId,
+      collectionId: collectionIdFixed,
+    })
   }
 
   async fetchNFTs_Metadata(metadataId: string) {
@@ -107,6 +120,7 @@ export class AcalaProvider extends NFTInterface {
     this.webSocket = await this.wsProvider()
 
     if (!this.webSocket) return []
+    
     const nfts = await this.webSocket.query.ormlNft.tokensByOwner.keys(encodedAddress)
 
     return this.useCache(address, this.name, nfts)
@@ -119,6 +133,7 @@ export class AcalaProvider extends NFTInterface {
       })
       .catch(async store => {
         let nftRawAssetDetails: any = []
+
         for (let key of nfts) {
           const data = key.toHuman() as string[]
           nftRawAssetDetails.push({ collectionId: data[1], nftTokenId: data[2] })
@@ -128,9 +143,11 @@ export class AcalaProvider extends NFTInterface {
           nftRawAssetDetails.map(
             async (assetId: any) =>
               new Promise(async resolve => {
-                const NFTdetails = await this.getTokenDetails(assetId)
 
-                const type = await this.fetchNFTs_type(NFTdetails?.mediaUri)
+                const NFTdetails = await this.getTokenDetails(assetId)
+                
+                console.log("a")
+                const type = "image"
 
                 resolve({
                   id: NFTdetails?.id,
@@ -142,7 +159,7 @@ export class AcalaProvider extends NFTInterface {
                   metadata: null,
                   serialNumber: assetId.nftTokenId,
                   platform: this.name,
-                  platformUri: `${this.platformUri}${assetId.collectionId.replaceAll(',', '')}/${assetId.nftTokenId}`,
+                  platformUri: `${this.platformUri}`,
                   attributes: {},
                   collection: {
                     id: NFTdetails.collectionId,
@@ -154,6 +171,8 @@ export class AcalaProvider extends NFTInterface {
               })
           ) as NFTDetailArray
         )
+
+        console.log(items)
 
         store(items)
 

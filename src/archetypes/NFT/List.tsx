@@ -48,6 +48,7 @@ const List = ({ address }: ListPropsType) => {
 
   const { setAddress, loading, nfts } = useNftsByAddress(address)
 
+  console.log(loading)
 
   const { t } = useTranslation('banners')
 

@@ -51,6 +51,7 @@ export class StatemineProvider extends NFTInterface {
     return fetch(this.baseIPFSUrl + metadataId)
       .then(res => res.json())
       .then(data => {
+        console.log(data)
         return {
           name: data.name,
           description: data.description,
