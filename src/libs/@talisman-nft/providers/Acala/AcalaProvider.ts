@@ -53,8 +53,6 @@ export class AcalaProvider extends NFTInterface {
 
     const metadata = await this.fetchCollectionData(this.baseIPFSUrl + collectionDetails?.metadata + "/metadata.json").then((res) => res)
     
-    console.log(this.toIPFSUrl(metadata?.image))
-    
     let collectionIdFixed = collectionId.replaceAll(',', '')
 
     // // Return the promised data for token details
@@ -145,9 +143,6 @@ export class AcalaProvider extends NFTInterface {
               new Promise(async resolve => {
 
                 const NFTdetails = await this.getTokenDetails(assetId)
-                
-                console.log("a")
-                const type = "image"
 
                 resolve({
                   id: NFTdetails?.id,
@@ -155,7 +150,7 @@ export class AcalaProvider extends NFTInterface {
                   description: NFTdetails?.description,
                   mediaUri: NFTdetails?.mediaUri,
                   thumb: NFTdetails?.mediaUri,
-                  type,
+                  type: null,
                   metadata: null,
                   serialNumber: assetId.nftTokenId,
                   platform: this.name,
@@ -171,9 +166,7 @@ export class AcalaProvider extends NFTInterface {
               })
           ) as NFTDetailArray
         )
-
-        console.log(items)
-
+        
         store(items)
 
         this.items = items

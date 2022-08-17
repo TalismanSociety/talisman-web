@@ -27,7 +27,6 @@ const MediaPreview = ({ mediaUri, thumb, type, name, id }: NFTDetail) => {
     if(!fetchedType) {
       setIsLoading(true);
       getNFTType(mediaUri).then((type) => {
-        console.log(type, name, mediaUri)
         setFetchedType(type)
       })
       setIsLoading(false);
@@ -39,7 +38,6 @@ const MediaPreview = ({ mediaUri, thumb, type, name, id }: NFTDetail) => {
     if (isLoading) return "loading"
     return fetchedType ?? null
   }, [type, isLoading, fetchedType])
-
 
   switch (effectiveType) {
     case 'image':
