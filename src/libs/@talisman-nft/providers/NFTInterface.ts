@@ -14,11 +14,9 @@ export class NFTInterface {
   protected toIPFSUrl(url: string): string | null {
     if (url == null) return null
 
-    if (url.startsWith('ipfs://ipfs/')) 
-      return url.replace('ipfs://ipfs/', this.baseIPFSUrl)
+    if (url.startsWith('ipfs://ipfs/')) return url.replace('ipfs://ipfs/', this.baseIPFSUrl)
 
-    if(url.startsWith('ipfs://'))
-      return url.replace('ipfs://', this.baseIPFSUrl)
+    if (url.startsWith('ipfs://')) return url.replace('ipfs://', this.baseIPFSUrl)
 
     return url
   }

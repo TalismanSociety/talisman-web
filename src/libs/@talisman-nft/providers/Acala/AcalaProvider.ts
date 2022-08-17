@@ -5,11 +5,11 @@ import { NFTCategory, NFTDetail, NFTDetailArray, NFTShortArray } from '../../typ
 import { NFTInterface } from '../NFTInterface'
 
 interface Token {
-  metadata?: string | undefined,
-  owner?: string,
+  metadata?: string | undefined
+  owner?: string
   data?: Record<string, any>
-  name?: string,
-  description?: string,
+  name?: string
+  description?: string
   image?: string
 }
 
@@ -40,19 +40,24 @@ export class AcalaProvider extends NFTInterface {
       })
   }
 
-
   // Get token detials from the raw data (collection ID & NFT item number) provided by the websocket
   public async getTokenDetails(assetId: any): Promise<any> {
-
     if (!this.webSocket) return null
 
     const { collectionId, nftTokenId } = assetId
 
-    const tokenDetails = (await this.webSocket.query.ormlNft.tokens(collectionId, nftTokenId)).toHuman() as unknown as Token
-    const collectionDetails = (await this.webSocket.query.ormlNft.classes(collectionId)).toHuman() as Record<string, any>;
+    const tokenDetails = (
+      await this.webSocket.query.ormlNft.tokens(collectionId, nftTokenId)
+    ).toHuman() as unknown as Token
+    const collectionDetails = (await this.webSocket.query.ormlNft.classes(collectionId)).toHuman() as Record<
+      string,
+      any
+    >
 
-    const metadata = await this.fetchCollectionData(this.baseIPFSUrl + collectionDetails?.metadata + "/metadata.json").then((res) => res)
-    
+    const metadata = await this.fetchCollectionData(
+      this.baseIPFSUrl + collectionDetails?.metadata + '/metadata.json'
+    ).then(res => res)
+
     let collectionIdFixed = collectionId.replaceAll(',', '')
 
     // // Return the promised data for token details
@@ -118,7 +123,7 @@ export class AcalaProvider extends NFTInterface {
     this.webSocket = await this.wsProvider()
 
     if (!this.webSocket) return []
-    
+
     const nfts = await this.webSocket.query.ormlNft.tokensByOwner.keys(encodedAddress)
 
     return this.useCache(address, this.name, nfts)
@@ -141,7 +146,6 @@ export class AcalaProvider extends NFTInterface {
           nftRawAssetDetails.map(
             async (assetId: any) =>
               new Promise(async resolve => {
-
                 const NFTdetails = await this.getTokenDetails(assetId)
 
                 resolve({
@@ -166,7 +170,7 @@ export class AcalaProvider extends NFTInterface {
               })
           ) as NFTDetailArray
         )
-        
+
         store(items)
 
         this.items = items
