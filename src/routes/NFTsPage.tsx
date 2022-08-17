@@ -43,7 +43,7 @@ const NFTsPage = styled(({ className }: any) => {
   const accounts = useAccounts()
 
   useEffect(() => {
-    setAddress("ESMddXAAxypPjiRnFinnHWfmG5V4H2sZB5P6g3QFXjzUwYF")
+    setAddress('ESMddXAAxypPjiRnFinnHWfmG5V4H2sZB5P6g3QFXjzUwYF')
   }, [accounts, address])
 
   return (
