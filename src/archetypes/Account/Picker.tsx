@@ -9,6 +9,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 // import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
+
 import Button from './Button'
 
 const Dropdown = styled(({ className, accounts, activeAccount, open, handleChange }) => {
@@ -151,44 +152,43 @@ const AccountPicker = styled(({ additionalAccounts = [], className, onChange }) 
 
   return (
     <div ref={nodeRef} className="account-picker" onClick={accounts.length > 1 ? () => setOpen(!open) : undefined}>
-        <span className={`account-button ${className}`}>
-          <span className={accounts.length > 1 ? 'account' : 'single-account'}>
-            <span>
-              <Identicon
-                className="identicon"
-                value={activeAccount?.address}
-                theme={activeAccount?.type === 'ethereum' ? 'ethereum' : 'polkadot'}
-              />
+      <span className={`account-button ${className}`}>
+        <span className={accounts.length > 1 ? 'account' : 'single-account'}>
+          <span>
+            <Identicon
+              className="identicon"
+              value={activeAccount?.address}
+              theme={activeAccount?.type === 'ethereum' ? 'ethereum' : 'polkadot'}
+            />
 
-              <span className="selected-account">
-                <div>{activeAccount?.name}</div>
-              </span>
+            <span className="selected-account">
+              <div>{activeAccount?.name}</div>
             </span>
-
-            {accounts.length > 1 && (
-              <ChevronDown
-                className="nav-toggle"
-                onClick={(e: any) => {
-                  e.stopPropagation()
-                  setOpen(!open)
-                }}
-              />
-            )}
           </span>
 
-          <Dropdown
-            open={open}
-            accounts={allAccounts}
-            activeAccount={activeAccount}
-            handleChange={(account: any) => {
-              setActiveAccount(account)
-              setOpen(false)
-            }}
-          />
+          {accounts.length > 1 && (
+            <ChevronDown
+              className="nav-toggle"
+              onClick={(e: any) => {
+                e.stopPropagation()
+                setOpen(!open)
+              }}
+            />
+          )}
         </span>
-      </div>
-    )
 
+        <Dropdown
+          open={open}
+          accounts={allAccounts}
+          activeAccount={activeAccount}
+          handleChange={(account: any) => {
+            setActiveAccount(account)
+            setOpen(false)
+          }}
+        />
+      </span>
+    </div>
+  )
 })`
   font-size: inherit;
   display: flex;
@@ -199,7 +199,6 @@ const AccountPicker = styled(({ additionalAccounts = [], className, onChange }) 
   background: var(--color-controlBackground);
 
   .account-button {
-    
   }
 
   .account-picker {
@@ -220,7 +219,8 @@ const AccountPicker = styled(({ additionalAccounts = [], className, onChange }) 
     }
   }
 
-  > .account, .single-account {
+  > .account,
+  .single-account {
     display: flex;
     align-items: center;
     padding: 1rem 1.5rem;

@@ -13,15 +13,15 @@ import styled from 'styled-components'
 import { getNFTType } from '@libs/@talisman-nft'
 import { useEffect, useMemo, useState } from 'react'
 
+
 type PreviewType = {
   className?: string
   nft: NFTDetail
 }
 
 const MediaPreview = ({ mediaUri, thumb, type, name, id }: NFTDetail) => {
-
-  const [fetchedType, setFetchedType] = useState<string|null>();
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [fetchedType, setFetchedType] = useState<string | null>()
+  const [isLoading, setIsLoading] = useState<boolean>(false)
 
   useEffect(() => {
     if(!fetchedType) {
@@ -98,7 +98,6 @@ const MediaPreview = ({ mediaUri, thumb, type, name, id }: NFTDetail) => {
 }
 
 const Preview = ({ className, nft }: PreviewType) => {
-
   return (
     <header className={className}>
       <MediaPreview {...nft} />

@@ -67,7 +67,7 @@ const NFTsPage = styled(({ className }: any) => {
               console.log(`>>> err`, err)
             }}
           />
-        )}        
+        )}
       </ExtensionStatusGate>
     </section>
   )
