@@ -116,7 +116,6 @@ const Dropdown = styled(({ className, accounts, activeAccount, open, handleChang
 
     svg {
       color: var(--color-primary);
-      align-slef: felx-end;
     }
   }
 
