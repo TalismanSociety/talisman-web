@@ -1,14 +1,14 @@
-
-import styled from 'styled-components'
+import { Chain } from '@archetypes'
 import { Info, PanelSection } from '@components'
-import Logo  from './Logo'
 import { ReactComponent as ArrowRight } from '@icons/arrow-right.svg'
 import { ReactComponent as ExternalLink } from '@icons/external-link.svg'
-import { externalURLDefined, useTypeCategory } from './store'
-import { toDate } from 'date-fns-tz'
+import { truncateAddress } from '@util/helpers'
 import { formatDistanceToNow } from 'date-fns'
-import { Chain } from '@archetypes'
-import { truncateAddress } from '@util/helpers' 
+import { toDate } from 'date-fns-tz'
+import styled from 'styled-components'
+
+import Logo from './Logo'
+import { externalURLDefined, useTypeCategory } from './store'
 
 export type TProps = {
   id: string
@@ -24,49 +24,58 @@ export type TProps = {
   className: string
 }
 
-const TransactionItem = styled(({ id, signer, blockNumber, indexInBlock, method, section, chainId, createdAt, ss58Format, direction, className } : TProps) => {
+const TransactionItem = styled(
+  ({
+    id,
+    signer,
+    blockNumber,
+    indexInBlock,
+    method,
+    section,
+    chainId,
+    createdAt,
+    ss58Format,
+    direction,
+    className,
+  }: TProps) => {
+    const { typeCategory } = useTypeCategory(`${section}.${method}`)
 
-  const { typeCategory } = useTypeCategory(`${section}.${method}`)
-
-  return (
-    <PanelSection className={`transaction-item ${className}`}>
-      <Info 
-        title={typeCategory} 
-        subtitle={formatDistanceToNow(toDate(createdAt, { timeZone : 'UTC'}), { addSuffix: true, includeSeconds: true })}
-        graphic={<Logo type={direction} className='category-logo'/>}
-      />
-
-      {/* Create new component and flip children based on type */}
-      <div className='tofrom' data-direction={direction}>
-        <Info 
-          title="You" 
-          subtitle={method} 
-          graphic={<Chain.LogoById id={chainId}/>} 
-          className='signer'
+    return (
+      <PanelSection className={`transaction-item ${className}`}>
+        <Info
+          title={typeCategory}
+          subtitle={formatDistanceToNow(toDate(createdAt, { timeZone: 'UTC' }), {
+            addSuffix: true,
+            includeSeconds: true,
+          })}
+          graphic={<Logo type={direction} className="category-logo" />}
         />
 
-        <ArrowRight />
-        
-        <Info 
-          title={truncateAddress(signer, 4, 4)} 
-          subtitle={method}
-          graphic={<Chain.LogoById id={chainId}/>} 
-          className='reciever'
-        />
-      </div>
+        {/* Create new component and flip children based on type */}
+        <div className="tofrom" data-direction={direction}>
+          <Info title="You" subtitle={method} graphic={<Chain.LogoById id={chainId} />} className="signer" />
 
-      {/* <Info title="Fee" subtitle="-" /> */}
+          <ArrowRight />
 
-      <div className='external-link'>
-        <a href={externalURLDefined(chainId, blockNumber, indexInBlock)} target='_blank' rel='noreferrer'>
-          <ExternalLink />
-        </a>
-      </div>
-      
-    </PanelSection>
-  )
-  
-})`
+          <Info
+            title={truncateAddress(signer, 4, 4)}
+            subtitle={method}
+            graphic={<Chain.LogoById id={chainId} />}
+            className="reciever"
+          />
+        </div>
+
+        {/* <Info title="Fee" subtitle="-" /> */}
+
+        <div className="external-link">
+          <a href={externalURLDefined(chainId, blockNumber, indexInBlock)} target="_blank" rel="noreferrer">
+            <ExternalLink />
+          </a>
+        </div>
+      </PanelSection>
+    )
+  }
+)`
   display: flex;
   justify-content: space-between;
   align-items: center;

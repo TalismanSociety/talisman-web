@@ -119,7 +119,6 @@ export const Provider = ({ children }: PropsWithChildren<{}>) => {
       const selectedWalletName = localStorage.getItem('@talisman-connect/selected-wallet-name')
       const wallet = getWalletBySource(selectedWalletName as string)
 
-
       try {
         await wallet?.enable(DAPP_NAME)
       } catch (err) {

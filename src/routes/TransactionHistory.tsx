@@ -1,10 +1,10 @@
+import { List } from '@archetypes/Transaction'
+import { PanelSection } from '@components'
 import ExtensionStatusGate from '@components/ExtensionStatusGate'
+import { useAllAccountAddresses } from '@libs/talisman'
 import { device } from '@util/breakpoints'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
-import { PanelSection } from '@components'
-import { List } from '@archetypes/Transaction'
-import { useAllAccountAddresses } from '@libs/talisman'
 
 const ExtensionUnavailable = styled(props => {
   const { t } = useTranslation()
@@ -35,8 +35,7 @@ const ExtensionUnavailable = styled(props => {
   }
 `
 
-const TransactionHistory = styled(({ className } : { className : string }) => {
-  
+const TransactionHistory = styled(({ className }: { className: string }) => {
   const addresses = useAllAccountAddresses()
 
   return (
