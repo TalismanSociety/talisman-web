@@ -1,27 +1,28 @@
-# 🧿 Talisman Web Application
+# Talisman Web
 
-The Talisman Web Application front-end is a MVP UI built in React, using the following tech-stack:
+<img src="public/talisman.svg" alt="Talisman" width="15%" align="right" />
 
-1. React
-2. React Router
-3. Styled Components
-4. Polkadot.js
+[![website-link](https://img.shields.io/website?label=app.talisman.xyz&style=flat-square&up_message=online&url=https%3A%2F%2Fapp.talisman.xyz)](https://app.talisman.xyz)
+[![discord-link](https://img.shields.io/discord/858891448271634473?logo=discord&logoColor=white&style=flat-square)](https://discord.gg/talisman)
 
-### Development
+**Unlock the Paraverse** with Talisman Web.  
+A Polkadot, Kusama & Parachain dashboard for the community.
 
-1. Clone repo
-2. Fetch all module dependencies: `$: yarn`
-3. Copy `.env.example` to `.env.local` or `.env` and update values (see below)
-4. start dev env: `$: yarn start`
+With Talisman Web you can buy DOT and KSM, contribute to crowdloans, view NFTs and more.
 
-### Deployment
+**Want more?**  
+[Talisman Polkadot Wallet](https://talisman.xyz) | [Blog](https://talisman.xyz/blog) | [Docs](https://docs.talisman.xyz) | [Security Audit](https://talisman.xyz/static/media/talisman-security-audit.1d41357e3e47abcda755.pdf) | [Twitter](https://twitter.com/wearetalisman) | [Discord](https://discord.gg/talisman)
 
-1. [see above]
-2. replace step 4 with: `$: yarn build`
+## How to set up a development environment
 
-### Environmental variables
+1. Clone the repo:  
+   `git clone https://github.com/TalismanSociety/talisman-web.git`
 
-`REACT_APP_APPLICATION_NAME=MyApplicationName` provide a name for the application, used in configuring the web3 object. Should be unique to the environment.  
-`REACT_APP_DEFAULT_CHAIN_ID=0` select a chain ID to use. [options](https://wiki.polkadot.network/docs/build-ss58-registry)
+2. Install the project dependencies:  
+   `yarn`
 
-`REACT_APP_RAMP_API_KEY=the-api-key` provide the Ramp API key for the specific environment.
+3. Copy `.env.example` to `.env` and update the values inside:  
+   `cp .env.example .env`
+
+4. Start the dev server:  
+   `yarn start`
