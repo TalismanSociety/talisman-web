@@ -21,6 +21,10 @@
     "subtitle": "Talisman cannot summon what you wish for.",
     "text": "Try something else."
   },
+  "noCrowdloans": {
+    "text": "There are no active crowdloans.",
+    "subtext": "Please come back later or explore some previous winners."
+  },
   "You have no": "You have no",
   "Buy": "Buy",
   "Fee": "Fee",

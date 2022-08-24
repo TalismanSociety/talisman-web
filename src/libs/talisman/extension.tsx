@@ -88,6 +88,7 @@ export const Provider = ({ children }: PropsWithChildren<{}>) => {
 
   const disconnect = useCallback(() => {
     setStatus('DISCONNECTED')
+    setAccounts([])
     recheck()
   }, [])
 

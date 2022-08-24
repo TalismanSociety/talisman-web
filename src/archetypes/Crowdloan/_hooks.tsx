@@ -65,12 +65,12 @@ const networkOptions = [
   {
     key: 'dot',
     value: 'Polkadot',
-    cb: (items: Item[]) => filter(items, item => item?.parachainDetails?.id.split('-')[0] === '0'),
+    cb: (items: Item[]) => filter(items, item => item?.parachainDetails?.id?.toString().slice(0, 1) === '0'),
   },
   {
     key: 'ksm',
     value: 'Kusama',
-    cb: (items: Item[]) => filter(items, item => item?.parachainDetails?.id.split('-')[0] === '2'),
+    cb: (items: Item[]) => filter(items, item => item?.parachainDetails?.id?.toString().slice(0, 1) === '2'),
   },
 ]
 
@@ -90,7 +90,7 @@ export const useFilter = () => {
   const [searchFilter, setSearchFilter] = useState('')
   const [orderFilter, setOrderFilter] = useState(orderOptions[0].key)
   const [statusFilter, setStatusFilter] = useState(statusOptions[1].key)
-  const [networkFilter, setNetworkFilter] = useState(networkOptions[1].key)
+  const [networkFilter, setNetworkFilter] = useState(networkOptions[0].key)
   const [loading, setLoading] = useState(true)
 
   // do searchy/filtery stuff

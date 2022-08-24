@@ -24,7 +24,7 @@ export const SupportedRelaychains: { [key: number]: Relaychain } = {
     name: 'Polkadot',
     rpc: 'wss://rpc.polkadot.io',
     genesisHash: '0x91b171bb158e2d3848fa23a9f1c25182fb8e20313b2c1eb49219da7a70ce90c3',
-    subqueryCrowdloansEndpoint: 'https://api.subquery.network/sq/bianyunjian/polkadot-crowdloans',
+    subqueryCrowdloansEndpoint: 'https://api.subquery.network/sq/interlay/polkadot-crowdloan-indexer',
     subscanUrl: 'https://polkadot.subscan.io',
     tokenDecimals: 10,
     tokenSymbol: 'DOT',
@@ -35,7 +35,7 @@ export const SupportedRelaychains: { [key: number]: Relaychain } = {
     name: 'Kusama',
     rpc: 'wss://kusama-rpc.polkadot.io',
     genesisHash: '0xb0a8d493285c2df73290dfb7e61f870f17b41801197a149ca93654499ea3dafe',
-    subqueryCrowdloansEndpoint: 'https://api.subquery.network/sq/subvis-io/kusama-crowdloans-and-auctions-v2',
+    subqueryCrowdloansEndpoint: 'https://api.subquery.network/sq/interlay/kusama-crowdloan-indexer',
     subscanUrl: 'https://kusama.subscan.io',
     tokenDecimals: 12,
     tokenSymbol: 'KSM',
@@ -461,6 +461,46 @@ export const parachainDetails: ParachainDetails[] = [
       Website: 'https://parachain.origintrail.io/',
       Twitter: 'https://twitter.com/origin_trail',
       Telegram: 'https://t.me/origintrail',
+    },
+  },
+  {
+    id: '0-2039',
+    name: 'Integritee Shell',
+    slug: 'integriteeshell',
+    token: 'TEER',
+    subtitle: 'Unchain the value of sensitive data. At scale.',
+    info: `Integritee is the most scalable public blockchain solution for securely processing sensitive business or personal data. Harness the speed and confidentiality of trusted execution environments, combined with the trust of a decentralized network, with Integritee.`,
+    links: {
+      Website: 'https://integritee.network/',
+      Twitter: 'https://twitter.com/integri_t_e_e'
+    },
+  },
+  {
+    id: '0-2052',
+    name: 'Kylin',
+    slug: 'kylin',
+    token: 'KYL',
+    subtitle: 'Building a Cross-chain Platfor. Powering the DeData Economy',
+    info: `Kylin Network is the native Polkadot Data Blockchain to accelerate the world’s transition to DeData within a Web3.0 context by Building a Cross-chain Platform Powering the Data Economy. It is the Data Infrastructure for DeFi and Web 3.0 Powered by Polkadot.`,
+    links: {
+      Website: "https://kylin.network/",
+      Twitter: "https://twitter.com/Kylin_Network",
+      Telegram: "https://t.me/KylinOfficial",
+      Github: "https://github.com/Kylin-Network"
+    },
+  },
+  {
+    id: '0-2053',
+    name: 'OmniBTC',
+    slug: 'omnibtc',
+    token: 'TEER',
+    subtitle: 'Make Finance Omnichainable.',
+    info: `OmniBTC is an omnichain financial platform for web3,including omnichain swap and BTC omnichain lending`,
+    links: {
+      Website: "https://www.omnibtc.finance/",
+      Twitter: "https://twitter.com/OmniBTC",
+      Medium: "https://medium.com/@omnibtc",
+      Github: "https://github.com/OmniBTC"
     },
   },
   {
@@ -1107,6 +1147,61 @@ export const parachainDetails: ParachainDetails[] = [
       Discord: 'https://discord.com/invite/cE72GYcFgY',
     },
   },
+  {
+    id: '2-2124',
+    name: 'Amplitude',
+    slug: 'amplitude',
+    token: 'AMPE',
+    subtitle: 'Amplitude is going to launch as a canary network of its sister blockchain, Pendulum.',
+    info: `It will act as a testing ground for applications and network parameters for Pendulum. Unlike a traditional testnet, users can interact on the Amplitude chain with real financial consequences. We’re expecting lots of novel concepts to be trialled on Amplitude, giving rise to many exciting opportunities for anyone using the chain.`,
+    links: {
+      Website: 'https://pendulumchain.org/amplitude',
+      Twitter: 'https://twitter.com/pendulum_chain',
+      Telegram: 'https://t.me/pendulum_community',
+      Discord: 'https://discord.gg/wJ2fQh776B',
+    },
+  },
+  {
+    id: '2-2125',
+    name: 'Tinker',
+    slug: 'tinker',
+    token: 'TNKR',
+    subtitle: 'The IP Asset & Accelerated Development Hub Of Kusama',
+    info: `The Tinkernet Parachain is the canary network of the InvArch Network, designed as the IP Asset & accelerated development staging grounds for the Kusama ecosystem.`,
+    links: {
+      Website: 'https://invarch.network/tinkernet',
+      Twitter: 'https://twitter.com/invarchnetwork',
+      Telegram: 'https://t.me/InvArch',
+      Discord: 'https://discord.com/invite/invarch',
+    },
+  },
+  {
+    id: '2-2123',
+    name: 'GM Parachain',
+    slug: 'gm-parachain',
+    token: '$FREN',
+    subtitle: "$GM OR DIE, UNTIL IT'S TIME TO $GN",
+    info: `Burn $FREN to mint and send $GM, but mind the clock on the GMdapp, $GM can only be minted in the morning, $GN can only be minted at night. If you try to mint during the day, you'll burn your $FREN for nothing!`,
+    links: {
+      Website: 'https://www.gmordie.com/',
+      Twitter: 'https://twitter.com/GmOrDie_',
+      Discord: 'https://discord.com/invite/JFzD2b5P2B',
+    },
+  },
+  // {
+  //   id: '2-2127',
+  //   name: 'SNOW',
+  //   slug: 'snow-network',
+  //   token: '$ICZ',
+  //   subtitle:
+  //     'SNOW is a long-term incentivized network for cutting-edge development backed by the ICZ token, which has real-world value.',
+  //   info: `SNOW will serve as a 'canary network' for ICE. Supply and other token economic behaviors on SNOW will be the same as ICE, but token distribution will be different in order to support the goals and attributes of the network.`,
+  //   links: {
+  //     Website: 'https://icenetwork.io/snow/',
+  //     Twitter: 'https://twitter.com/icenetwork_io',
+  //     Discord: 'https://discord.com/invite/x6DxjxfP24',
+  //   },
+  // },
 ]
 
 export type CrowdloanDetails = {
@@ -1682,6 +1777,20 @@ export const crowdloanDetails: CrowdloanDetails[] = [
         {
           title: 'OTP per DOT',
           value: '20',
+        },
+      ],
+      info: null,
+    },
+  },
+  {
+    relayId: 0,
+    paraId: 2039,
+    rewards: {
+      tokens: null,
+      custom: [
+        {
+          title: 'Supporter rewards',
+          value: '2.5 TEER + bonuses',
         },
       ],
       info: null,
@@ -2540,4 +2649,88 @@ export const crowdloanDetails: CrowdloanDetails[] = [
       info: null,
     },
   },
+  {
+    relayId: 2,
+    paraId: 2124,
+    contributeUrl: '',
+    rewards: {
+      tokens: [
+        {
+          symbol: 'AMPE',
+          perKSM: '> 600 AMPE',
+        },
+      ],
+      custom: [
+        {
+          title: 'Total Supply',
+          value: '200,000,000 AMPE',
+        },
+      ],
+      info: null,
+    },
+  },
+  {
+    relayId: 2,
+    paraId: 2125,
+    contributeUrl: '',
+    rewards: {
+      tokens: [
+        {
+          symbol: 'TNKR',
+          perKSM: '87.75 TNKR',
+        },
+      ],
+      custom: [
+        {
+          title: 'Crowdloan Allocation',
+          value: '1,755,000 TNKR',
+        },
+      ],
+      info: null,
+    },
+  },
+  {
+    relayId: 2,
+    paraId: 2123,
+    contributeUrl: '',
+    rewards: {
+      tokens: [
+        {
+          symbol: '$FREN',
+          perKSM: '> 21,693',
+        },
+      ],
+      custom: [
+        {
+          title: 'Crowdloan Allocation',
+          value: '208,000,000 $FREN',
+        },
+      ],
+      info: null,
+    },
+  },
+  // {
+  //   relayId: 2,
+  //   paraId: 2127,
+  //   contributeUrl: '',
+  //   rewards: {
+  //     tokens: [
+  //       {
+  //         symbol: '$ICZ',
+  //         perKSM: '> 4,000',
+  //       },
+  //     ],
+  //     custom: [
+  //       {
+  //         title: 'Early Supporter Reward',
+  //         value: '4,000 Extra ICZ per KSM (Decreases linearly with time)',
+  //       },
+  //       {
+  //         title: 'Referral Bonus',
+  //         value: '5%',
+  //       },
+  //     ],
+  //     info: null,
+  //   },
+  // },
 ]

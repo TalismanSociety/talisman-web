@@ -27,7 +27,7 @@ export type Chainmeta = {
 export const useChainmeta = () => useContext()
 
 export const useChainmetaValue = (chainId: number, key: string) => {
-  const chains = useChainmeta(null)
+  const chains = useChainmeta()
   const [val, setVal] = useState(null)
 
   useEffect(() => {
