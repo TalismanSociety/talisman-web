@@ -66,10 +66,10 @@ export const useTransactions = (initialAddress: string | undefined) => {
 
   // create a query client
   const apolloClient = useMemo(() => {
-    const GRAPH_URI = process.env.REACT_APP_TX_GRAPHQL_ENDPOINT || 'http://localhost:4350/graphql'
+    const uri = process.env.REACT_APP_TX_HISTORY_INDEXER || 'http://localhost:4350/graphql'
 
     return new ApolloClient({
-      link: new BatchHttpLink({ uri: GRAPH_URI, batchMax: 999, batchInterval: 20 }),
+      link: new BatchHttpLink({ uri, batchMax: 999, batchInterval: 20 }),
       cache: new InMemoryCache(),
     })
   }, [])
