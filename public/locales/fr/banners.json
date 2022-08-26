@@ -1,9 +1,4 @@
 {
-  "explore": {
-    "header": "Construire l'univers des parachains",
-    "description": "Les Crowdloans aident les projet et les équipes à participer aux enchères afin d'obtenir une parachain sur Polkadot et Kusama",
-    "primaryCta": "Voir les Crowdloans"
-  },
   "empty": {
     "header": "C'est vide !",
     "description": "Achetez des DOT ou des KSM par carte de crédit ou en crypto",

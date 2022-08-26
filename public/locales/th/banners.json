@@ -1,9 +1,4 @@
 {
-  "explore": {
-    "header": "ร่วมสร้างพาราเวิร์ส",
-    "description": "Crowdloan เป็นการช่วยสนับสนุนโปรเจค และ ทีม ในการระดมทุนเพื่อร่วมประมูล Parachain ทั้งบน Polkadot และ Kusama",
-    "primaryCta": "ค้นหา Crowdloan"
-  },
   "empty": {
     "header": "กระเป๋าของคุณว่างเปล่า!",
     "description": "ซื้อ DOT และ KSM ด้วยบัตรเครดิต หรือ คริปโต",

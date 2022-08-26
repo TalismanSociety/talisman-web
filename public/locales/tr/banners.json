@@ -1,9 +1,4 @@
 {
-  "explore": {
-    "header": "Paraverse'ü inşa et.",
-    "description": "Crowdloanlar, projelerin ve ekiplerin Polkadot ve Kusama'daki Parachain müzayedelerine katılmak için fon toplamasına yardımcı oluyor.",
-    "primaryCta": "Crowdloanları keşfedin."
-  },
   "empty": {
     "header": "Çantalarınız boş!",
     "description": "Kredi kartınız veya kripto paranızla DOT ve KSM satın alın.",

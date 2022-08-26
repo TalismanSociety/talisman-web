@@ -1,9 +1,4 @@
 {
-  "explore": {
-    "header": "Contribuisci a costruire il Paraverso",
-    "description": "I Crowdloans aiutano team e progetti a raccogliere fondi per partecipare alle aste su Polkadot e Kusama.",
-    "primaryCta": "Esplora i Crowdloans"
-  },
   "empty": {
     "header": "Hai le sacche vuote!",
     "description": "Acquista DOT e KSM con la tua carta di credito o crypto",

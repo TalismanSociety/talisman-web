@@ -1,9 +1,4 @@
 {
-  "explore": {
-    "header": "Xây dựng Paraverse",
-    "description": "Crowdloans giúp các dự án và nhóm gây quỹ để tham gia vào các cuộc đấu giá Parachain trên Polkadot và Kusama",
-    "primaryCta": "Khám phá Crowdloans"
-  },
   "empty": {
     "header": "Ví của bạn trống !",
     "description": "Mua DOT và KSM bằng thẻ tín dụng hoặc tiền điện tử",
