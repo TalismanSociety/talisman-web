@@ -10,6 +10,8 @@ import VideoPlaceholder from '@assets/generic-video.png'
 import { Spinner } from '@components'
 import { NFTDetail } from '@libs/@talisman-nft/types'
 import styled from 'styled-components'
+import { getNFTType } from '@libs/@talisman-nft'
+import { useEffect, useState, useMemo } from 'react'
 
 type PreviewType = {
   className?: string
@@ -18,7 +20,27 @@ type PreviewType = {
 }
 
 const MediaPreview = ({ mediaUri, thumb, type, name, id }: NFTDetail) => {
-  switch (type) {
+
+  const [fetchedType, setFetchedType] = useState<string | null>()
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+
+  useEffect(() => {
+    if (!fetchedType) {
+      setIsLoading(true)
+      getNFTType(mediaUri).then(type => {
+        setFetchedType(type)
+      })
+      setIsLoading(false)
+    }
+  }, [fetchedType, mediaUri])
+
+  const effectiveType = useMemo(() => {
+    if (type) return type
+    if (isLoading) return 'loading'
+    return fetchedType ?? null
+  }, [type, isLoading, fetchedType])
+
+  switch (effectiveType) {
     case 'image':
       return <img loading="lazy" src={mediaUri || ImagePlaceholder} alt={name || id} />
     case 'video':
