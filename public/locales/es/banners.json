@@ -1,9 +1,4 @@
 {
-  "explore": {
-    "header": "Construye el Paraverse",
-    "description": "Los Crowdloans ayudan a los proyectos y equipos a recaudar fondos para participar en las subastas Parachain en Polkadot y Kusama.",
-    "primaryCta": "Explora los Crowdloans"
-  },
   "empty": {
     "header": "¡Tus bolsas están vacias!",
     "description": "Compra DOT y KSM con tu tarjeta de crédito o cripto",

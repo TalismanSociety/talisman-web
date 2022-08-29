@@ -29,11 +29,13 @@ const Routes = () => (
         <CrowdloanIndex />
       </Layout>
     </Route> */}
-    <Route exact path="/spiritkeys">
-      <Layout>
-        <SpiritKeysPage />
-      </Layout>
-    </Route>
+    <Route
+      path="/spiritkeys"
+      component={() => {
+        window.location.replace('https://talisman.xyz/download')
+        return null
+      }}
+    />
     {/* <Route exact path="/crowdloans/:slug">
       <Layout>
         <CrowdloanDetail />
