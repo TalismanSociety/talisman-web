@@ -8,7 +8,7 @@ import { DAPP_NAME, useActiveAccount, useChainByGenesis, useExtensionAutoConnect
 import { useTalismanInstalled } from '@libs/talisman/useIsTalismanInstalled'
 import Identicon from '@polkadot/react-identicon'
 import { WalletSelect } from '@talisman-connect/components'
-import { getWalletBySource } from '@talisman-connect/wallets'
+import { getWalletBySource } from '@talismn/wallets'
 import { addTokensToBalances, groupBalancesByAddress, useBalances, useChain } from '@talismn/api-react-hooks'
 import { addBigNumbers, encodeAnyAddress, useFuncMemo } from '@talismn/util'
 import { device } from '@util/breakpoints'
