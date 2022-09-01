@@ -4,6 +4,8 @@ import { ReactComponent as ArrowRight } from '@icons/arrow-right.svg'
 import Identicon from '@polkadot/react-identicon'
 import { encodeAnyAddress } from '@talismn/util'
 import { truncateAddress } from '@util/helpers'
+import startCase from 'lodash/startCase'
+import { useTranslation } from 'react-i18next'
 
 import { ParsedTransaction } from './types'
 import { formatDecimals } from './util'
@@ -13,10 +15,11 @@ type ItemDetailsProps = {
   addresses: string[]
 }
 export default function ItemDetails({ parsed, addresses }: ItemDetailsProps) {
+  const { t } = useTranslation()
   if (!parsed) return <div />
 
   switch (parsed.type) {
-    case 'transfer':
+    case 'transfer': {
       const isReceiver = addresses.map(a => encodeAnyAddress(a)).includes(encodeAnyAddress(parsed.to))
 
       const tokenInfo = (
@@ -50,60 +53,107 @@ export default function ItemDetails({ parsed, addresses }: ItemDetailsProps) {
           {isReceiver ? tokenInfo : receiverInfo}
         </div>
       )
+    }
 
-    case 'crowdloan contribution':
+    case 'contribute': {
+      const tokenInfo = (
+        <Info
+          title={`${formatDecimals(parsed.amount)} ${parsed.tokenSymbol}`}
+          subtitle="$xx.xx"
+          graphic={<Chain.LogoById id={parsed.chainId} />}
+        />
+      )
+      const fundInfo = (
+        <Info
+          title={t('To')}
+          subtitle={`${t('Crowdloan')} ${parsed.fund}`}
+          graphic={<Chain.LogoById id={parsed.chainId} />}
+        />
+      )
+
+      return (
+        <div className="details">
+          {tokenInfo}
+
+          <ArrowRight />
+
+          {fundInfo}
+        </div>
+      )
+    }
+
+    case 'stake': {
+      const tokenInfo = (
+        <Info
+          title={`${formatDecimals(parsed.amount)} ${parsed.tokenSymbol}`}
+          subtitle="$xx.xx"
+          graphic={<Chain.LogoById id={parsed.chainId} />}
+        />
+      )
+      const stakeInfo = (
+        <Info
+          title={startCase(parsed.chainId)}
+          subtitle={t('Staking balance')}
+          graphic={<Chain.LogoById id={parsed.chainId} />}
+        />
+      )
+
+      return (
+        <div className="details">
+          {tokenInfo}
+
+          <ArrowRight />
+
+          {stakeInfo}
+        </div>
+      )
+    }
+
+    case 'unstake': {
       return (
         <div className="details">
           <pre>{JSON.stringify(parsed, null, 2)}</pre>
         </div>
       )
+    }
 
-    case 'stake':
+    // case 'add liquidity': {
+    //   return (
+    //     <div className="details">
+    //       <pre>{JSON.stringify(parsed, null, 2)}</pre>
+    //     </div>
+    //   )
+    // }
+    // case 'remove liquidity': {
+    //   return (
+    //     <div className="details">
+    //       <pre>{JSON.stringify(parsed, null, 2)}</pre>
+    //     </div>
+    //   )
+    // }
+
+    // case 'add provision': {
+    //   return (
+    //     <div className="details">
+    //       <pre>{JSON.stringify(parsed, null, 2)}</pre>
+    //     </div>
+    //   )
+    // }
+    // case 'remove provision': {
+    //   return (
+    //     <div className="details">
+    //       <pre>{JSON.stringify(parsed, null, 2)}</pre>
+    //     </div>
+    //   )
+    // }
+
+    case 'swap': {
       return (
         <div className="details">
           <pre>{JSON.stringify(parsed, null, 2)}</pre>
         </div>
       )
-
-    case 'unstake':
-      return (
-        <div className="details">
-          <pre>{JSON.stringify(parsed, null, 2)}</pre>
-        </div>
-      )
-
-    // case 'add liquidity':
-    //   return (
-    //     <div className="details">
-    //       <pre>{JSON.stringify(parsed, null, 2)}</pre>
-    //     </div>
-    //   )
-    // case 'remove liquidity':
-    //   return (
-    //     <div className="details">
-    //       <pre>{JSON.stringify(parsed, null, 2)}</pre>
-    //     </div>
-    //   )
-
-    // case 'add provision':
-    //   return (
-    //     <div className="details">
-    //       <pre>{JSON.stringify(parsed, null, 2)}</pre>
-    //     </div>
-    //   )
-    // case 'remove provision':
-    //   return (
-    //     <div className="details">
-    //       <pre>{JSON.stringify(parsed, null, 2)}</pre>
-    //     </div>
-    //   )
-
-    case 'swap':
-      return (
-        <div className="details">
-          <pre>{JSON.stringify(parsed, null, 2)}</pre>
-        </div>
-      )
+    }
 
     default:
       const exhaustiveCheck: never = parsed

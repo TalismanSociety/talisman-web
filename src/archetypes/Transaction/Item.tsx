@@ -2,6 +2,7 @@ import { Info, PanelSection } from '@components'
 import { ReactComponent as ExternalLink } from '@icons/external-link.svg'
 import { useAccounts } from '@libs/talisman'
 import Identicon from '@polkadot/react-identicon'
+import { encodeAnyAddress } from '@talismn/util'
 import { truncateAddress } from '@util/helpers'
 import startCase from 'lodash/startCase'
 import { useMemo } from 'react'
@@ -15,7 +16,7 @@ type Props = { className?: string; transaction: Transaction; addresses: string[]
 const TransactionItem = styled(({ className, transaction, addresses }: Props) => {
   const accounts = useAccounts()
 
-  const { name, timestamp, blockExplorerUrl, parsed, relatedAddresses } = transaction
+  const { name, ss58Format, timestamp, blockExplorerUrl, parsed, relatedAddresses } = transaction
   const youAddress = relatedAddresses.find(address => addresses.includes(address))
   const youAccount = useMemo(
     () => accounts.find(({ address }) => address === youAddress)?.name || youAddress,
@@ -38,7 +39,7 @@ const TransactionItem = styled(({ className, transaction, addresses }: Props) =>
 
         <Info
           title={youAccount}
-          subtitle={truncateAddress(youAddress, 4)}
+          subtitle={truncateAddress(youAddress ? encodeAnyAddress(youAddress, ss58Format) : youAddress, 4)}
           graphic={<Identicon value={youAddress} theme="polkadot" />}
         />
 

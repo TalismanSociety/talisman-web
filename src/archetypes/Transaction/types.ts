@@ -68,7 +68,7 @@ export type ParsedTransfer = {
 }
 
 export type ParsedCrowdloanContribute = {
-  type: 'crowdloan contribution'
+  type: 'contribute'
 
   // source: event
   chainId: string
@@ -152,7 +152,14 @@ export type ParsedSwap = {
 
   // source: event
   chainId: string
-
+  // source: tba (hardcoded for now)
+  tokenSymbol: string
+  // source: tba (hardcoded for now)
+  tokenDecimals: number
+  // source: extrinsic
+  fee: string | undefined
+  // source: extrinsic
+  tip: string | undefined
   // source: extrinsic
   success: boolean
 }

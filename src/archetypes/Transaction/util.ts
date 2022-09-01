@@ -110,7 +110,7 @@ export const getBlockExplorerUrl = (tx: IndexerTransaction) => {
 
 const tokens: Record<string, { symbol: string; decimals: number }> = {
   polkadot: { symbol: 'DOT', decimals: 10 },
-  kusama: { symbol: 'KSM', decimals: 18 },
+  kusama: { symbol: 'KSM', decimals: 12 },
   acala: { symbol: 'ACA', decimals: 12 },
   astar: { symbol: 'ASTR', decimals: 18 },
 }
@@ -152,20 +152,26 @@ export const parseTransaction = (tx: IndexerTransaction): ParsedTransaction | nu
     //       type: 'transfer',
     //     }
 
-    //   if (tx.name === 'Crowdloan.Contributed')
-    //     return {
-    //       type: 'crowdloan contribution',
-    //       chainId: tx.chainId,
-    //       tokenSymbol: tokens[tx.chainId]?.symbol || 'UNKNOWN',
-    //       tokenDecimals: tokens[tx.chainId]?.decimals || 0,
-    //       contributor: encodeAnyAddress(event.args?.who, tx.ss58Format),
-    //       amount: planckToTokens(event.args?.amount, tokens[tx.chainId]?.decimals || 0),
-    //       // TODO: look up fund info (e.g. parachain name)
-    //       fund: event.args?.fundIndex,
-    //       fee: planckToTokens(extrinsic?.data?.fee, tokens[tx.chainId]?.decimals || 0),
-    //       tip: planckToTokens(extrinsic?.data?.tip, tokens[tx.chainId]?.decimals || 0),
-    //       success: extrinsic?.data?.success || false,
-    //     }
+    if (tx.name === 'Crowdloan.Contributed') {
+      // handle array args
+      const args = Array.isArray(event.args)
+        ? { who: event.args[0], fundIndex: event.args[1], amount: event.args[2] }
+        : event.args
+
+      return {
+        type: 'contribute',
+        chainId: tx.chainId,
+        tokenSymbol: tokens[tx.chainId]?.symbol || 'UNKNOWN',
+        tokenDecimals: tokens[tx.chainId]?.decimals || 0,
+        contributor: encodeAnyAddress(args?.who, tx.ss58Format),
+        amount: planckToTokens(args?.amount, tokens[tx.chainId]?.decimals || 0),
+        // TODO: look up fund info (e.g. parachain name)
+        fund: args?.fundIndex,
+        fee: planckToTokens(extrinsic?.data?.fee, tokens[tx.chainId]?.decimals || 0),
+        tip: planckToTokens(extrinsic?.data?.tip, tokens[tx.chainId]?.decimals || 0),
+        success: extrinsic?.data?.success || false,
+      }
+    }
 
     if (tx.name === 'Staking.Bonded')
       return {
@@ -205,7 +211,17 @@ export const parseTransaction = (tx: IndexerTransaction): ParsedTransaction | nu
     //       type: 'remove provision',
     //     }
 
-    //   if (tx.name === 'Dex.Swap') return { type: 'swap' }
+    // TODO: Parse event+extrinsic+call from this transaction type into a ParsedTransfer format
+    // if (tx.name === 'Dex.Swap')
+    //   return {
+    //     type: 'swap',
+    //     chainId: tx.chainId,
+    //     tokenSymbol: tokens[tx.chainId]?.symbol || 'UNKNOWN',
+    //     tokenDecimals: tokens[tx.chainId]?.decimals || 0,
+    //     fee: planckToTokens(extrinsic?.data?.fee, tokens[tx.chainId]?.decimals || 0),
+    //     tip: planckToTokens(extrinsic?.data?.tip, tokens[tx.chainId]?.decimals || 0),
+    //     success: extrinsic?.data?.success || false,
+    //   }
   } catch (error) {
     console.error('Failed to parse transaction', error)
     return null

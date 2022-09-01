@@ -28,7 +28,7 @@ const Logo = ({ className, parsed, addresses }: Props) => {
       if (parsed.success) return <Send className={className} />
       return <SendFailed className={className} />
 
-    case 'crowdloan contribution':
+    case 'contribute':
       if (parsed.success) return <CrowdloanContribute className={className} />
       return <CrowdloanContributeFailed className={className} />
 
