@@ -1,154 +1,158 @@
-import { Chain } from '@archetypes'
 import { Info, PanelSection } from '@components'
-import { ReactComponent as ArrowRight } from '@icons/arrow-right.svg'
 import { ReactComponent as ExternalLink } from '@icons/external-link.svg'
+import { useAccounts } from '@libs/talisman'
+import Identicon from '@polkadot/react-identicon'
 import { truncateAddress } from '@util/helpers'
-import { formatDistanceToNow } from 'date-fns'
-import { toDate } from 'date-fns-tz'
+import startCase from 'lodash/startCase'
+import { useMemo } from 'react'
 import styled from 'styled-components'
 
+import ItemDetails from './ItemDetails'
 import Logo from './Logo'
-import { externalURLDefined, useTypeCategory } from './store'
+import { Transaction } from './types'
 
-export type TProps = {
-  id: string
-  blockNumber: string
-  indexInBlock: string
-  signer: string
-  method: string
-  section: string
-  chainId: string
-  createdAt: string
-  ss58Format: string
-  direction: string
-  className: string
-}
+type Props = { className?: string; transaction: Transaction; addresses: string[] }
+const TransactionItem = styled(({ className, transaction, addresses }: Props) => {
+  const accounts = useAccounts()
 
-const TransactionItem = styled(
-  ({
-    id,
-    signer,
-    blockNumber,
-    indexInBlock,
-    method,
-    section,
-    chainId,
-    createdAt,
-    ss58Format,
-    direction,
-    className,
-  }: TProps) => {
-    const { typeCategory } = useTypeCategory(`${section}.${method}`)
+  const { name, timestamp, blockExplorerUrl, parsed, relatedAddresses } = transaction
+  const youAddress = relatedAddresses.find(address => addresses.includes(address))
+  const youAccount = useMemo(
+    () => accounts.find(({ address }) => address === youAddress)?.name || youAddress,
+    [accounts, youAddress]
+  )
 
-    return (
-      <PanelSection className={`transaction-item ${className}`}>
+  return (
+    <>
+      <PanelSection
+        className={`transaction-item ${className}`}
+        initial={{ opacity: 0, transition: { ease: [0.78, 0.14, 0.15, 0.86] } }}
+        animate={{ opacity: 1, transition: { ease: [0.78, 0.14, 0.15, 0.86] } }}
+        exit={{ opacity: 0, scale: 0.5, transition: { ease: [0.78, 0.14, 0.15, 0.86] } }}
+      >
         <Info
-          title={typeCategory}
-          subtitle={formatDistanceToNow(toDate(createdAt, { timeZone: 'UTC' }), {
-            addSuffix: true,
-            includeSeconds: true,
-          })}
-          graphic={<Logo type={direction} className="category-logo" />}
+          title={parsed?.type ? startCase(parsed.type) : name}
+          subtitle={timestamp.fromNow()}
+          graphic={<Logo className="category-logo" parsed={parsed} addresses={addresses} />}
         />
 
-        {/* Create new component and flip children based on type */}
-        <div className="tofrom" data-direction={direction}>
-          <Info title="You" subtitle={method} graphic={<Chain.LogoById id={chainId} />} className="signer" />
+        <Info
+          title={youAccount}
+          subtitle={truncateAddress(youAddress, 4)}
+          graphic={<Identicon value={youAddress} theme="polkadot" />}
+        />
 
-          <ArrowRight />
-
-          <Info
-            title={truncateAddress(signer, 4, 4)}
-            subtitle={method}
-            graphic={<Chain.LogoById id={chainId} />}
-            className="reciever"
-          />
-        </div>
-
-        {/* <Info title="Fee" subtitle="-" /> */}
+        <ItemDetails parsed={transaction.parsed} addresses={addresses} />
 
         <div className="external-link">
-          <a href={externalURLDefined(chainId, blockNumber, indexInBlock)} target="_blank" rel="noreferrer">
-            <ExternalLink />
-          </a>
+          {blockExplorerUrl ? (
+            <a className="link" href={blockExplorerUrl} target="_blank" rel="noreferrer">
+              <ExternalLink />
+            </a>
+          ) : (
+            <span className="link">
+              <svg />
+            </span>
+          )}
         </div>
       </PanelSection>
-    )
-  }
-)`
+      {!parsed ? (
+        <pre className={`${className} debug`}>{JSON.stringify(JSON.parse(transaction._data), null, 2)}</pre>
+      ) : null}
+    </>
+  )
+})`
   display: flex;
   justify-content: space-between;
   align-items: center;
   text-align: left;
 
-  >*{
-    justify-content: flex-start;
-    align-items: center;
+  &.debug {
+    overflow: hidden;
+    font-size: var(--font-size-xsmall);
+    line-height: 1;
   }
 
-  > *:nth-child(1){ width: 30%; }
-  > *:nth-child(2){ width 50%; }
-  > *:nth-child(3){ width 20%; }
+  > .info {
+    justify-content: flex-start;
+  }
 
-  >.tofrom{
+  > *:nth-child(1) {
+    width: 25%;
+  }
+  > *:nth-child(2) {
+    width: 20%;
+  }
+  > *:nth-child(3) {
+    width: 40%;
+  }
+  > *:nth-child(4) {
+    width: 10%;
+  }
+
+  > .details {
     display: flex;
-    justify-content: center; 
-    flex-direction: row;
+    align-items: center;
 
-    > *:first-child{ width: 40%; justify-content: flex-end; }
-    > *:nth-child(2){ width: 20%; justify-content: center; }
-    > *:last-child{ width: 40%; justify-content: flex-start; }
-
-    &[data-direction='INBOUND']{ 
-      flex-direction: row-reverse;
-      > *:first-child{ justify-content: flex-start; }
-      > *:last-child{ justify-content: flex-end; }
+    > *:first-child {
+      width: 47.5%;
+      justify-content: flex-end;
+    }
+    > *:nth-child(2) {
+      width: 5%;
+      justify-content: center;
+    }
+    > *:last-child {
+      width: 47.5%;
+      justify-content: flex-end;
     }
 
     .title,
-    .subtitle{
+    .subtitle {
       width: 12rem;
       overflow: hidden;
-    }
-
-    >.signer{
-      .title{
-        font-weight: var(--font-weight-xbold)
-      }
     }
   }
 
   .category-logo,
-  .graphic .chain-logo{
+  .graphic .chain-logo,
+  .graphic .ui--IdentityIcon {
     font-size: 3.2rem;
     width: 1em;
     height: 1em;
+    cursor: default;
   }
 
-  .info{
+  .info {
     font-size: var(--font-size-normal);
+
     .title,
-    .subtitle{
+    .subtitle {
       font-weight: var(--font-weight-regular);
     }
 
-    .subtitle{
-      font-size: var(--font-size-xsmall)
+    .subtitle {
+      font-size: var(--font-size-xsmall);
     }
-  }
-
-  .title, .subtitle {
-    text-transform: capitalize;
   }
 
   .external-link {
     display: flex;
     justify-content: flex-end;
-    text-align: center;
-    padding-right: 1em;
+    align-items: center;
+
+    > .link {
+      display: block;
+      padding: 1em;
+      margin: -1em;
+
+      > svg {
+        display: block;
+        width: 1.2em;
+        height: 1.2em;
+      }
+    }
   }
 `
-
-// Need to do a little CSS magic with ::after to get the border radius set accordingly.
 
 export default TransactionItem

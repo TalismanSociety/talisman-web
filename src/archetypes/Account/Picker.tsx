@@ -1,7 +1,8 @@
-import { Button, Pill } from '@components'
+import { ReactComponent as AllAccountsIcon } from '@assets/icons/all-accounts.svg'
+import { ButtonIcon } from '@components'
 import { ReactComponent as Check } from '@icons/check-circle.svg'
 import { ReactComponent as ChevronDown } from '@icons/chevron-down.svg'
-import { useAccounts } from '@libs/talisman'
+import { Account, useAccounts } from '@libs/talisman'
 import Identicon from '@polkadot/react-identicon'
 import { device } from '@util/breakpoints'
 import useOnClickOutside from '@util/useOnClickOutside'
@@ -9,33 +10,45 @@ import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
-const Dropdown = styled(({ className, accounts, activeAccount, open, handleChange }) => {
+const Dropdown = styled(({ className, showAllAccounts = false, accounts, activeAccount, open, handleChange }) => {
   const { t } = useTranslation()
 
+  if (!open) return null
   return (
-    open && (
-      <span className={`account-picker ${className}`}>
-        {accounts.map((account: any) => {
-          return (
-            <div key={account.address} className="account" onClick={() => handleChange(account)}>
-              <span className="left">
-                <Identicon
-                  className="identicon"
-                  value={account.address}
-                  theme={account.type === 'ethereum' ? 'ethereum' : 'polkadot'}
-                />
-                <span className="name-address">
-                  <div className="name">{account.name}</div>
-                </span>
-              </span>
-              <span className="right">
-                {activeAccount?.address === account?.address && <Check className="active" />}
-              </span>
-            </div>
-          )
-        })}
-      </span>
-    )
+    <span className={`account-picker ${className}`}>
+      {showAllAccounts ? (
+        <div className="account" onClick={() => handleChange(undefined)}>
+          <span className="left">
+            <Identicon
+              className="identicon"
+              Custom={AllAccountsIcon}
+              value="5DHuDfmwzykE9KVmL87DLjAbfSX7P4f4wDW5CKx8QZnQA4FK"
+              theme="polkadot"
+            />
+            <span className="name-address">
+              <div className="name">{t('All Accounts')}</div>
+            </span>
+          </span>
+          <span className="right">{activeAccount === undefined && <Check className="active" />}</span>
+        </div>
+      ) : null}
+
+      {accounts.map((account: any) => (
+        <div key={account.address} className="account" onClick={() => handleChange(account)}>
+          <span className="left">
+            <Identicon
+              className="identicon"
+              value={account.address}
+              theme={account.type === 'ethereum' ? 'ethereum' : 'polkadot'}
+            />
+            <span className="name-address">
+              <div className="name">{account.name}</div>
+            </span>
+          </span>
+          <span className="right">{activeAccount?.address === account?.address && <Check className="active" />}</span>
+        </div>
+      ))}
+    </span>
   )
 })`
   background: rgb(${({ theme }) => theme?.background});
@@ -71,10 +84,10 @@ const Dropdown = styled(({ className, accounts, activeAccount, open, handleChang
     }
 
     .identicon {
-      //font-size: 2.6em;
       color: var(--color-primary);
       background: var(--color-activeBackground);
-      border-radius: 100px;
+      border-radius: 999999999999rem;
+
       > svg,
       > img {
         font-size: var(--font-size-xlarge);
@@ -126,44 +139,50 @@ const Dropdown = styled(({ className, accounts, activeAccount, open, handleChang
     `}
 `
 
-const AccountPicker = styled(({ additionalAccounts = [], className, onChange }) => {
+const AccountPicker = styled(({ className, onChange, showAllAccounts = false, additionalAccounts = [] }) => {
   const { t } = useTranslation()
   const nodeRef = useRef<HTMLDivElement>(null)
-  const accounts = useAccounts()
+  const _accounts = useAccounts()
   const [open, setOpen] = useState(false)
-  const [activeAccount, setActiveAccount] = useState(accounts[0])
+  const [activeAccount, setActiveAccount] = useState<Account | undefined>()
 
-  const [allAccounts, setAllAccounts] = useState([...additionalAccounts, ...accounts])
-
-  useOnClickOutside(nodeRef, () => setOpen(false))
-
-  // we may need a callback here to make sure it's not set already
+  const [accounts, setAccounts] = useState<Account[]>()
   useEffect(() => {
-    const _allAccounts = [...additionalAccounts, ...accounts]
-    setAllAccounts(_allAccounts)
-    setActiveAccount(_allAccounts[0])
-  }, [accounts])
+    const accounts = [..._accounts, ...additionalAccounts]
+    setAccounts(accounts)
+    setActiveAccount(showAllAccounts ? undefined : accounts[0])
+  }, [_accounts])
 
   // pass the active account back to the parent on change
   useEffect(() => {
-    if (!activeAccount) return
     onChange(activeAccount)
   }, [activeAccount])
+
+  useOnClickOutside(nodeRef, () => setOpen(false))
 
   return (
     <div ref={nodeRef} className="account-picker" onClick={() => setOpen(!open)}>
       <span className={`account-button ${className}`}>
-        <Identicon
-          className="identicon"
-          value={activeAccount?.address}
-          theme={activeAccount?.type === 'ethereum' ? 'ethereum' : 'polkadot'}
-        />
+        {activeAccount ? (
+          <Identicon
+            className="identicon"
+            value={activeAccount.address}
+            theme={activeAccount.type === 'ethereum' ? 'ethereum' : 'polkadot'}
+          />
+        ) : (
+          <Identicon
+            className="identicon"
+            Custom={AllAccountsIcon}
+            value="5DHuDfmwzykE9KVmL87DLjAbfSX7P4f4wDW5CKx8QZnQA4FK"
+            theme="polkadot"
+          />
+        )}
 
         <span className="selected-account">
-          <div>{activeAccount?.name}</div>
+          <div>{activeAccount ? activeAccount.name : t('All Accounts')}</div>
         </span>
 
-        <Button.Icon
+        <ButtonIcon
           className="nav-toggle"
           onClick={(e: any) => {
             e.stopPropagation()
@@ -171,13 +190,14 @@ const AccountPicker = styled(({ additionalAccounts = [], className, onChange }) 
           }}
         >
           <ChevronDown />
-        </Button.Icon>
+        </ButtonIcon>
 
         <Dropdown
           open={open}
-          accounts={allAccounts}
+          showAllAccounts={showAllAccounts}
+          accounts={accounts}
           activeAccount={activeAccount}
-          handleChange={(account: any) => {
+          handleChange={(account: Account) => {
             setActiveAccount(account)
             setOpen(false)
           }}
@@ -198,6 +218,10 @@ const AccountPicker = styled(({ additionalAccounts = [], className, onChange }) 
 
   > .identicon {
     margin-right: 0.3em;
+    color: var(--color-primary);
+    background: var(--color-activeBackground);
+    border-radius: 999999999999rem;
+
     > svg,
     > img {
       font-size: var(--font-size-xlarge);

@@ -1,5 +1,5 @@
 import { ReactComponent as AllAccountsIcon } from '@assets/icons/all-accounts.svg'
-import { Button, Pendor, Pill } from '@components'
+import { Button, ButtonIcon, Pendor, Pill } from '@components'
 import { CopyButton } from '@components/CopyButton'
 import { ReactComponent as AlertCircle } from '@icons/alert-circle.svg'
 import { ReactComponent as ChevronDown } from '@icons/chevron-down.svg'
@@ -484,7 +484,7 @@ const Authorized = styled(
           {narrow ? (
             <ChevronDown style={{ margin: '0 1rem 0 0.8rem', visibility: hasManyAccounts ? 'visible' : 'hidden' }} />
           ) : (
-            <Button.Icon
+            <ButtonIcon
               className="nav-toggle"
               onClick={(e: any) => {
                 e.stopPropagation()
@@ -492,7 +492,7 @@ const Authorized = styled(
               }}
             >
               <ChevronDown />
-            </Button.Icon>
+            </ButtonIcon>
           )}
 
           <Dropdown

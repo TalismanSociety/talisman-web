@@ -1,21 +1,20 @@
 import { gql } from '@apollo/client'
 
+export const FETCH_LIMIT = 3
+
 export const TX_QUERY = gql`
-  query ($address: String!, $count: Float, $lastId: String) {
-    transactionsByAddress(address: $address, count: $count, lastId: $lastId) {
+  query ($addresses: [String!]!, $limit: Float, $lastId: String) {
+    transactionsByAddress(addresses: $addresses, limit: $limit, lastId: $lastId) {
       id
-      extrinsicId
+      name
       chainId
       ss58Format
-      name
       blockNumber
-      indexInBlock
-      createdAt
-      section
-      method
-      relatedAddresses
+      blockHash
+      timestamp
       signer
-      direction
+      relatedAddresses
+      _data
     }
   }
 `

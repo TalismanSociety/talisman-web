@@ -1,0 +1,112 @@
+import { Chain } from '@archetypes'
+import { Info } from '@components'
+import { ReactComponent as ArrowRight } from '@icons/arrow-right.svg'
+import Identicon from '@polkadot/react-identicon'
+import { encodeAnyAddress } from '@talismn/util'
+import { truncateAddress } from '@util/helpers'
+
+import { ParsedTransaction } from './types'
+import { formatDecimals } from './util'
+
+type ItemDetailsProps = {
+  parsed: ParsedTransaction | null | undefined
+  addresses: string[]
+}
+export default function ItemDetails({ parsed, addresses }: ItemDetailsProps) {
+  if (!parsed) return <div />
+
+  switch (parsed.type) {
+    case 'transfer':
+      const isReceiver = addresses.map(a => encodeAnyAddress(a)).includes(encodeAnyAddress(parsed.to))
+
+      const tokenInfo = (
+        <Info
+          title={`${formatDecimals(parsed.amount)} ${parsed.tokenSymbol}`}
+          subtitle="$xx.xx"
+          graphic={<Chain.LogoById id={parsed.chainId} />}
+        />
+      )
+      const senderInfo = (
+        <Info
+          title="From"
+          subtitle={truncateAddress(parsed.from, 4)}
+          graphic={<Identicon value={parsed.from} theme="polkadot" />}
+        />
+      )
+      const receiverInfo = (
+        <Info
+          title="To"
+          subtitle={truncateAddress(parsed.to, 4)}
+          graphic={<Identicon value={parsed.to} theme="polkadot" />}
+        />
+      )
+
+      return (
+        <div className="details">
+          {isReceiver ? senderInfo : tokenInfo}
+
+          <ArrowRight />
+
+          {isReceiver ? tokenInfo : receiverInfo}
+        </div>
+      )
+
+    case 'crowdloan contribution':
+      return (
+        <div className="details">
+          <pre>{JSON.stringify(parsed, null, 2)}</pre>
+        </div>
+      )
+
+    case 'stake':
+      return (
+        <div className="details">
+          <pre>{JSON.stringify(parsed, null, 2)}</pre>
+        </div>
+      )
+
+    case 'unstake':
+      return (
+        <div className="details">
+          <pre>{JSON.stringify(parsed, null, 2)}</pre>
+        </div>
+      )
+
+    // case 'add liquidity':
+    //   return (
+    //     <div className="details">
+    //       <pre>{JSON.stringify(parsed, null, 2)}</pre>
+    //     </div>
+    //   )
+    // case 'remove liquidity':
+    //   return (
+    //     <div className="details">
+    //       <pre>{JSON.stringify(parsed, null, 2)}</pre>
+    //     </div>
+    //   )
+
+    // case 'add provision':
+    //   return (
+    //     <div className="details">
+    //       <pre>{JSON.stringify(parsed, null, 2)}</pre>
+    //     </div>
+    //   )
+    // case 'remove provision':
+    //   return (
+    //     <div className="details">
+    //       <pre>{JSON.stringify(parsed, null, 2)}</pre>
+    //     </div>
+    //   )
+
+    case 'swap':
+      return (
+        <div className="details">
+          <pre>{JSON.stringify(parsed, null, 2)}</pre>
+        </div>
+      )
+
+    default:
+      const exhaustiveCheck: never = parsed
+      throw new Error(`Unhandled transaction type ${exhaustiveCheck}`)
+  }
+}

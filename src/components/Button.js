@@ -4,7 +4,7 @@ import React, { Fragment } from 'react'
 import { Link, NavLink } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 
-const IconButton = styled(({ children, className, ...rest }) => (
+export const ButtonIcon = styled(({ children, className, ...rest }) => (
   <button className={`button icon-button ${className}`} {...rest}>
     {children}
   </button>
@@ -27,7 +27,7 @@ const IconButton = styled(({ children, className, ...rest }) => (
   }
 `
 
-const Button = styled(({ loading, children, variant = '', className, ...props }) => {
+export const Button = styled(({ loading, children, variant = '', className, ...props }) => {
   const wrappedChildren = !!loading ? (
     <Fragment>
       <IconLoading data-spin="true" />
@@ -115,7 +115,3 @@ const Button = styled(({ loading, children, variant = '', className, ...props })
     cursor: not-allowed;
   }
 `
-
-Button.Icon = IconButton
-
-export default Button

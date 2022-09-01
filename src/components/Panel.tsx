@@ -1,3 +1,4 @@
+import { motion } from 'framer-motion'
 import styled, { css } from 'styled-components'
 
 type BasePanelProps = {
@@ -9,10 +10,10 @@ type BasePanelProps = {
 
 export const Section = styled(({ title, children, className, comingSoon, ...rest }) => {
   return (
-    <div className={`panel-section ${className}`} {...rest}>
+    <motion.div className={`panel-section ${className}`} {...rest}>
       {!!title && <h2>{title}</h2>}
       {children}
-    </div>
+    </motion.div>
   )
 })<BasePanelProps>`
   display: block;
@@ -35,7 +36,7 @@ export const Section = styled(({ title, children, className, comingSoon, ...rest
 `
 
 export default styled(({ title, subtitle, children, className, ...rest }) => (
-  <div className={`panel ${className}`} {...rest}>
+  <motion.div className={`panel ${className}`} {...rest}>
     {!!title && (
       <h1>
         {title}
@@ -43,7 +44,7 @@ export default styled(({ title, subtitle, children, className, ...rest }) => (
       </h1>
     )}
     <div className="inner">{children}</div>
-  </div>
+  </motion.div>
 ))<BasePanelProps>`
   width: 100%;
 

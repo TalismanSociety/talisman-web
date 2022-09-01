@@ -1,6 +1,6 @@
 export * as Field from './Field'
+export * from './Button'
 export { default as Await } from './Await'
-export { default as Button } from './Button'
 export { default as ChainLogo } from './ChainLogo'
 export { default as Countdown } from './Countdown'
 export { default as DesktopRequired } from './DesktopRequired'

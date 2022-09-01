@@ -1,12 +1,15 @@
 import { Account } from '@archetypes'
-import { Button, MaterialLoader, Panel, PanelSection } from '@components'
-import { ReactComponent as ArrowDown } from '@icons/arrow-right.svg'
-import { useURLParams } from '@libs/txhistory'
+import { MaterialLoader, Panel, PanelSection } from '@components'
+import { Account as TAccount } from '@libs/talisman'
+import { AnimatePresence } from 'framer-motion'
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import useInfiniteScroll from 'react-infinite-scroll-hook'
 import styled from 'styled-components'
 
 import Item from './Item'
 import { useTransactions } from './store'
+import { useUrlParams } from './util'
 
 type ITransactionListProps = {
   addresses: string[]
@@ -16,52 +19,87 @@ type ITransactionListProps = {
 const TransactionList = ({ addresses = [], className }: ITransactionListProps) => {
   const { t } = useTranslation()
 
-  const urlAddress = useURLParams(['address'])[0]
+  const urlAddress = useUrlParams(['address'])[0]
 
-  const { changeAddress, address, loadMore, hasMore, transactions, status } = useTransactions(addresses[0])
+  const [selectedAccount, setSelectedAccount] = useState<TAccount | undefined>(undefined)
+  const [fetchAddresses, setFetchAddresses] = useState(addresses)
+  useEffect(() => {
+    if (!selectedAccount) return setFetchAddresses(urlAddress ? [urlAddress, ...addresses] : addresses)
+    setFetchAddresses([selectedAccount.address])
+  }, [addresses, selectedAccount, urlAddress])
+
+  const { loadMore, hasMore, transactions, status } = useTransactions(fetchAddresses)
+  const hasTransactions = Object.keys(transactions).length > 0
+
+  const [loadMoreRef] = useInfiniteScroll({
+    loading: status === 'PROCESSING',
+    hasNextPage: hasMore,
+    onLoadMore: loadMore,
+    disabled: status === 'ERROR',
+    rootMargin: '0px 0px 200px 0px',
+  })
 
   return (
     <section className={`transaction-list ${className}`}>
       <header>
         <Account.Picker
+          showAllAccounts
           additionalAccounts={urlAddress ? [{ name: urlAddress, address: urlAddress }] : []}
-          onChange={({ address }: any) => changeAddress(address)}
+          onChange={setSelectedAccount}
         />
       </header>
 
-      <Panel>
-        {status === 'INITIALISED' || (status === 'PROCESSING' && !transactions?.length) ? (
-          <PanelSection className="centered-state">
-            {' '}
-            <MaterialLoader /> <div>Searching the paraverse</div>{' '}
-          </PanelSection>
-        ) : !transactions?.length ? (
-          <PanelSection className="centered-state"> 🥺 No Transactions - try another account </PanelSection>
-        ) : (
-          <Panel className={'transaction-item-container'}>
-            {transactions.map((tx: any) => (
-              <Item key={tx.id} {...tx} address={address} />
-            ))}
-          </Panel>
-        )}
+      <Panel className="transaction-item-container">
+        <AnimatePresence exitBeforeEnter>
+          {status === 'INITIALISED' || (status === 'PROCESSING' && !hasTransactions) ? (
+            <PanelSection
+              className="centered-state"
+              initial={{ opacity: 0, transition: { ease: [0.78, 0.14, 0.15, 0.86] } }}
+              animate={{ opacity: 1, transition: { ease: [0.78, 0.14, 0.15, 0.86] } }}
+              exit={{ opacity: 0, scale: 0.5, transition: { ease: [0.78, 0.14, 0.15, 0.86] } }}
+            >
+              <MaterialLoader /> <div>{t('Searching the paraverse')}</div>
+            </PanelSection>
+          ) : status === 'ERROR' ? (
+            <PanelSection
+              className="centered-state"
+              initial={{ opacity: 0, transition: { ease: [0.78, 0.14, 0.15, 0.86] } }}
+              animate={{ opacity: 1, transition: { ease: [0.78, 0.14, 0.15, 0.86] } }}
+              exit={{ opacity: 0, scale: 0.5, transition: { ease: [0.78, 0.14, 0.15, 0.86] } }}
+            >
+              <div>{t('An error occured')}</div>
+            </PanelSection>
+          ) : !hasTransactions ? (
+            <PanelSection
+              className="centered-state"
+              initial={{ opacity: 0, transition: { ease: [0.78, 0.14, 0.15, 0.86] } }}
+              animate={{ opacity: 1, transition: { ease: [0.78, 0.14, 0.15, 0.86] } }}
+              exit={{ opacity: 0, scale: 0.5, transition: { ease: [0.78, 0.14, 0.15, 0.86] } }}
+            >
+              {t('No Transactions - try another account')}
+            </PanelSection>
+          ) : (
+            <>
+              {Object.values(transactions)
+                .sort((a, b) => b.id.localeCompare(a.id))
+                .map(transaction => (
+                  <Item key={transaction.id} transaction={transaction} addresses={fetchAddresses} />
+                ))}
+            </>
+          )}
+        </AnimatePresence>
       </Panel>
 
       <footer>
-        {hasMore && status !== 'INITIALISED' && !!transactions?.length && (
-          <Button
-            onClick={loadMore}
-            //disabled={!hasMore}
-          >
-            {status === 'PROCESSING' ? (
-              <>
-                Finding &nbsp; <MaterialLoader />
-              </>
-            ) : (
-              <>
-                Older <ArrowDown className="arrow-down" />
-              </>
-            )}
-          </Button>
+        {(status === 'PROCESSING' || hasMore) && hasTransactions && (
+          <div className="load-more" ref={loadMoreRef}>
+            <MaterialLoader /> <div>{t('Searching the paraverse')}</div>
+          </div>
+        )}
+        {status === 'SUCCESS' && !hasMore && hasTransactions && (
+          <div className="load-more complete" ref={loadMoreRef}>
+            {t('Search complete')}
+          </div>
         )}
       </footer>
     </section>
@@ -87,7 +125,6 @@ const StyledTransactionList = styled(TransactionList)`
 
   > footer {
     padding-top: 1rem;
-    // border-top: 1px solid red;
     margin-top: 1em;
     display: flex;
     align-items: center;
@@ -99,10 +136,23 @@ const StyledTransactionList = styled(TransactionList)`
   }
 
   .centered-state {
-    text-align: center;
     display: flex;
     align-items: center;
     justify-content: center;
+    text-align: center;
+
+    > * {
+      margin: 0 0.3em;
+    }
+  }
+
+  .load-more {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: var(--color-mid);
+
     > * {
       margin: 0 0.3em;
     }

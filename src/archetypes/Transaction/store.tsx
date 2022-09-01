@@ -1,68 +1,74 @@
-import { useLazyQuery } from '@apollo/client'
+import { useQuery } from '@apollo/client'
 import { ApolloClient, InMemoryCache } from '@apollo/client'
 import { BatchHttpLink } from '@apollo/client/link/batch-http'
+import moment from 'moment-timezone'
 import { useCallback, useEffect, useMemo, useReducer, useState } from 'react'
 
-import { TX_QUERY } from './consts'
-import { TTransaction } from './types'
+import { FETCH_LIMIT, TX_QUERY } from './consts'
+import { IndexerTransaction, Transaction, TransactionMap } from './types'
+import { getBlockExplorerUrl, parseTransaction } from './util'
 
-// consts
-const FETCH_LIMIT = 5
-const INITIAL_ID = '9999999999999--9999999999-999999-fffff--zzzzzzzz'
+type TransactionsStatus = 'INITIALISED' | 'PROCESSING' | 'ERROR' | 'SUCCESS'
 
-type reducerAction = {
-  type: string
-  data?: any
-}
+type ReducerAction =
+  // Add txs
+  | { type: 'ADD'; data: IndexerTransaction | IndexerTransaction[] }
+  // Remove all txs
+  | { type: 'CLEAR' }
 
-const transactionReducer = (state: TTransaction[], action: reducerAction) => {
-  // add a TX to the state tx array
-  const addTx = (tx: TTransaction) => {
-    const txIds = state.map((tx: any) => tx.id)
+const transactionReducer = (state: TransactionMap, action: ReducerAction): TransactionMap => {
+  // convert IndexerTransaction (what comes back from the API) into Transaction (what we use in the app)
+  const transformIndexerTx = (tx: IndexerTransaction): Transaction => ({
+    ...tx,
 
-    if (!txIds.includes(tx.id)) {
-      state.push(tx)
-      txIds.push(tx.id)
-    }
-  }
+    timestamp: moment(tx.timestamp),
+    relatedAddresses: tx.relatedAddresses.split('.'),
+
+    blockExplorerUrl: getBlockExplorerUrl(tx),
+    parsed: parseTransaction(tx),
+  })
+
+  // add new txs
+  const addTxs = (state: TransactionMap, txs: IndexerTransaction[]) => ({
+    ...state,
+    ...Object.fromEntries(txs.map(tx => [tx.id, transformIndexerTx(tx)])),
+  })
 
   // handle all actions
   switch (action.type) {
     case 'ADD':
-      addTx(action.data)
-      break
-    case 'ADD_MULTI':
-      action.data.forEach(addTx)
-      break
+      return addTxs(state, Array.isArray(action.data) ? action.data : [action.data])
     case 'CLEAR':
-      state = []
-      break
-    default:
-      break
-  }
+      return {}
 
-  // TODO: order here on return
-  return [...state]
+    default:
+      // force compilation error if any action types don't have a case
+      const exhaustiveCheck: never = action
+      throw new Error(`Unhandled action type ${exhaustiveCheck}`)
+  }
 }
 
-// fetch all transaction based on the address provided
-export const useTransactions = (initialAddress: string | undefined) => {
-  // the current address to query
-  const [address, setAddress] = useState<string | undefined>(initialAddress)
+// fetch all transaction based on the addresses provided
+export const useTransactions = (_addresses: string[]) => {
+  // memoize addresses
+  const addresses = useMemo(
+    () => _addresses,
+    [JSON.stringify(_addresses)] // eslint-disable-line react-hooks/exhaustive-deps
+  )
 
   // the last id fetched so we know where to start the fetching next time
   // set this initially to a very large number - larger than the highest ID we can store
   // maybe a better way to do this is to handle undefined on the backend
-  const [lastId, setLastId] = useState<string>(INITIAL_ID)
+  const [lastId, setLastId] = useState<string | undefined>()
 
   // T/F boolean based on the number of results from the last query
   const [hasMore, setHasMore] = useState<boolean>(true)
 
   // the current data we have fetched
-  const [transactions, dispatch] = useReducer(transactionReducer, [])
+  const [transactions, dispatch] = useReducer(transactionReducer, {})
 
   // the current status of the data
-  const [status, setStatus] = useState('INITIALISED')
+  const [status, setStatus] = useState<TransactionsStatus>('INITIALISED')
 
   // create a query client
   const apolloClient = useMemo(() => {
@@ -75,106 +81,52 @@ export const useTransactions = (initialAddress: string | undefined) => {
   }, [])
 
   // the query object
-  const [getTxs, { data = [], loading, error }] = useLazyQuery(TX_QUERY, { client: apolloClient })
+  const {
+    data = [],
+    loading,
+    error,
+  } = useQuery(TX_QUERY, {
+    client: apolloClient,
+    variables: { addresses, lastId, limit: FETCH_LIMIT },
+  })
 
-  // handle new incoming data
+  // clear existing items when addresses is changed
   useEffect(() => {
-    if (!!loading || !!error) return
+    // reset the last ID
+    setLastId(undefined)
 
-    const txs = data?.transactionsByAddress || []
+    // clear the store
+    dispatch({ type: 'CLEAR' })
+  }, [addresses])
 
-    if (!txs.length) {
-      setHasMore(false)
-      return
-    }
+  useEffect(() => {
+    // if we're loading
+    if (loading) return setStatus('PROCESSING')
+    // or have an error
+    if (error) return setStatus('ERROR')
 
-    dispatch({ type: 'ADD_MULTI', data: [...txs] })
-    setHasMore(txs.length >= FETCH_LIMIT)
+    const transactions = data?.transactionsByAddress || []
+
+    dispatch({ type: 'ADD', data: [...transactions] })
+    setHasMore(transactions.length >= FETCH_LIMIT)
+
     setStatus('SUCCESS')
   }, [loading, error, data])
 
-  // handle updating the status of the query when the loading or error states change
-  useEffect(() => {
-    // if we're loading
-    if (!!loading) {
-      setStatus('PROCESSING')
-    }
-    // else error
-    else if (!!error) {
-      setStatus('ERROR')
-    }
-    // else all good
-    else {
-      setStatus('SUCCESS')
-    }
-  }, [loading, error])
-
-  // clear existing items when address is changed
-  useEffect(() => {
-    if (!address) return
-
-    // reset the last ID to a high number
-    setLastId(INITIAL_ID)
-
-    // TODO: race condition sometimes when apollo is cached
-    dispatch({ type: 'CLEAR' })
-  }, [address])
-
-  // trigger refetch if address or lastID change
-  useEffect(() => {
-    if (!address) return
-    getTxs({ variables: { address, lastId, count: FETCH_LIMIT } })
-  }, [address, lastId, getTxs])
-
   // fetch more by updating the lastId
-  // we can only set the lastID if we have > 1 TXs
+  // we can only set the lastID if we have > 0 TXs
   // this will trigger refetch
   const loadMore = useCallback(() => {
-    // dispatch({type: 'CLEAR'})
-    !!transactions.length && setLastId(transactions[transactions.length - 1].id)
+    const sortedTransactionIds = Object.keys(transactions).sort((a, b) => b.localeCompare(a))
+    if (sortedTransactionIds.length < 1) return
+
+    setLastId(sortedTransactionIds.slice(-1)[0])
   }, [transactions])
 
   return {
-    changeAddress: setAddress,
-    address,
     loadMore,
     hasMore,
     transactions,
     status,
   }
-}
-
-type TXCategories = {
-  [key: string]: string[]
-}
-
-const txCategories: TXCategories = {
-  Transfer: ['balances.transfer', 'balances.transferKeepAlive', 'balances.transferAll'],
-  System: ['system.remark', 'system.remark_with_event'],
-  Staking: ['staking.bond', 'staking.unbond', 'staking.withdraw_unbonded'],
-  Crowdloan: [
-    'crowdloan.add_memo',
-    'crowdloan.contribute',
-    'crowdloan.contribute_all',
-    'crowdloan.create',
-    'crowdloan.dissolve',
-    'crowdloan.edit',
-    'crowdloan.poke',
-    'crowdloan.refund',
-    'crowdloan.withdraw',
-  ],
-  Batch: ['utility.batch', 'utility.batch_all'],
-}
-
-export const useTypeCategory = (extrinsicType: string) => {
-  const typeCategory = Object.keys(txCategories).find((key: string) => txCategories[key].includes(extrinsicType))
-  if (!typeCategory) return { typeCategory: extrinsicType }
-
-  return { typeCategory }
-}
-
-export const externalURLDefined = (chainId: string, blockNumber: string, indexInBlock: string) => {
-  const externalURL = `https://${chainId}.subscan.io/extrinsic/${blockNumber}-${indexInBlock}`
-
-  return externalURL
 }

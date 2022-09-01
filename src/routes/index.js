@@ -7,8 +7,8 @@ import CrowdloanIndex from './Crowdloan.Index.tsx'
 import Home from './Home'
 import NFTsPage from './NFTsPage'
 import SpiritKeysPage from './SpiritKeysPageV2'
-import Wallet from './Wallet'
 import TransactionHistory from './TransactionHistory'
+import Wallet from './Wallet'
 
 const Routes = () => (
   <Switch>
