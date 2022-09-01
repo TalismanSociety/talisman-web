@@ -2,11 +2,11 @@ import { Redirect, Route, Switch } from 'react-router-dom'
 
 import Layout from '../layout'
 import Buy from './Buy'
-import CrowdloanDetail from './Crowdloan.Detail.tsx'
-import CrowdloanIndex from './Crowdloan.Index.tsx'
+// import CrowdloanDetail from './Crowdloan.Detail.tsx'
+// import CrowdloanIndex from './Crowdloan.Index.tsx'
 import Home from './Home'
 import NFTsPage from './NFTsPage'
-import SpiritKeysPage from './SpiritKeysPageV2'
+// import SpiritKeysPage from './SpiritKeysPageV2'
 import Wallet from './Wallet'
 
 const Routes = () => (

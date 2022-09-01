@@ -1,4 +1,4 @@
-import { Await, Field, Grid, NoResults } from '@components'
+import { Await, Field, Grid } from '@components'
 import NoCrowdloans from '@components/NoCrowdloansPlaceholder'
 import { trackGoal } from '@libs/fathom'
 import { device } from '@util/breakpoints'

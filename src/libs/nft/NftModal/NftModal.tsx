@@ -1,5 +1,7 @@
 import { device } from '@util/breakpoints'
-import { Suspense, useEffect } from 'react'
+import { Suspense
+  // ,useEffect 
+} from 'react'
 import styled from 'styled-components'
 
 import NftFullView from '../NftFullView/NftFullView'
@@ -8,8 +10,8 @@ import {
   NftButtons,
   NftCollectionData,
   NftDescription,
-  NftMainDetails,
-  NftNetwork,
+  NftMainDetails
+  // NftNetwork,
 } from '../NftFullViewInformation/NftFullViewInformation'
 import useNftAsset from '../useNftAsset/useNftAsset'
 import { useNftCollectionStats } from '../useNftCollectionStats/useNftCollectionStats'

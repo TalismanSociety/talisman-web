@@ -1,8 +1,8 @@
 import {
   ApolloClient,
-  ApolloQueryResult,
+  // ApolloQueryResult,
   InMemoryCache,
-  NormalizedCacheObject,
+  // NormalizedCacheObject,
   createHttpLink,
   gql,
 } from '@apollo/client'

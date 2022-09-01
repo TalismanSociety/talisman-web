@@ -10,6 +10,7 @@ import { ReactComponent as SwapLogo } from '@assets/icons/swap.svg'
 import { ReactComponent as TwitterMobileLogo } from '@assets/icons/twitter-mobile.svg'
 import { Button } from '@components'
 import Menu from '@components/Menu'
+import { WalletNavConnector } from '@components/WalletNavConnector'
 import { trackGoal } from '@libs/fathom'
 import { useExtension } from '@libs/talisman'
 import { device } from '@util/breakpoints'
@@ -21,6 +22,8 @@ import { useReducer } from 'react'
 import { useTranslation } from 'react-i18next'
 import { NavLink } from 'react-router-dom'
 import styled from 'styled-components'
+
+
 
 export default function HeaderState(props) {
   const isMobile = useMediaQuery('(max-width: 700px)')
@@ -112,8 +115,10 @@ const Header = styled(({ className, isMobile, mobileMenuOpen, dispatch }) => {
           {/* <NavLink to="/crowdloans">{t('Crowdloans')}</NavLink> */}
         </nav>
       )}
+
       <div className="menu-nav">
-        <Button small primary onClick={buyNow}>
+        <WalletNavConnector />
+        <Button className="button-buy" small onClick={buyNow}>
           {t('Buy')}
         </Button>
         <LanguageSelector />
@@ -179,17 +184,17 @@ const Header = styled(({ className, isMobile, mobileMenuOpen, dispatch }) => {
   )
 })`
   display: grid;
-  grid-template: 1fr / auto 2fr 2fr;
+  grid-template: 1fr / auto 0fr 2fr;
   max-height: 64px;
 
-  @media ${device.xl} {
-    grid-template: 1fr / 1fr 1fr 1fr;
-  }
+  // @media ${device.xl} {
+  //   grid-template: 1fr / 1fr 1fr 1fr;
+  // }
 
   padding: 0 2.4rem;
   width: 100%;
   box-shadow: 0 0 2.4rem rgba(0, 0, 0, 0.05);
-  background: var(--color-controlBackground);
+  background: var(--color-background);
 
   > * {
     display: flex;
@@ -255,9 +260,19 @@ const Header = styled(({ className, isMobile, mobileMenuOpen, dispatch }) => {
       font-size: small;
     }
 
+    .button-buy {
+      max-height: 40px;
+      border-radius: 1rem;
+      height: 100%;
+      font-size: small;
+      background: var(--color-background) !important;
+      border: 1px solid var(--color-dim) !important;
+    }
+
     select {
       max-height: 38px;
       padding: 1rem 1.25rem;
+      background: var(--color-background);
     }
   }
 

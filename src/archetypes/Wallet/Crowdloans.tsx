@@ -7,7 +7,9 @@ import {
 import { Moonbeam } from '@libs/crowdloans/crowdloanOverrides'
 import { MoonbeamPortfolioTag } from '@libs/moonbeam-contributors'
 import { calculateCrowdloanPortfolioAmounts, usePortfolio, useTaggedAmountsInPortfolio } from '@libs/portfolio'
-import { useAccountAddresses, useCrowdloanById, useCrowdloans, useParachainDetailsById } from '@libs/talisman'
+import { useAccountAddresses, useCrowdloanById, useCrowdloans
+  // ,useParachainDetailsById 
+} from '@libs/talisman'
 import { useTokenPrice } from '@libs/tokenprices'
 import { useChain } from '@talismn/api-react-hooks'
 import { addBigNumbers, encodeAnyAddress, multiplyBigNumbers, planckToTokens, useFuncMemo } from '@talismn/util'
@@ -88,10 +90,10 @@ const CrowdloanItem = styled(({ id, className }) => {
 
 const CrowdloanItemWithLink = styled(props => {
   const { id, className } = props
-  const { crowdloan } = useCrowdloanById(id)
-  const parachainId = crowdloan?.parachain?.paraId
-  const { parachainDetails } = useParachainDetailsById(parachainId)
-  const linkToCrowdloan = parachainDetails?.slug ? `/crowdloans/${parachainDetails?.slug}` : `/crowdloans`
+  // const { crowdloan } = useCrowdloanById(id)
+  // const parachainId = crowdloan?.parachain?.paraId
+  // const { parachainDetails } = useParachainDetailsById(parachainId)
+  // const linkToCrowdloan = parachainDetails?.slug ? `/crowdloans/${parachainDetails?.slug}` : `/crowdloans`
   return (
     // <Link to={linkToCrowdloan} className={className}>
     <Link to={'#'} className={className}>

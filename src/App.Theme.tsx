@@ -325,7 +325,7 @@ const greenLight: DefaultTheme = {
 const greenDark: DefaultTheme = {
   primary: '213,255,92',
   secondary: '0,0,255',
-  background: '27,27,27',
+  background: '18,18,18',
   foreground: '165,165,165', // #a5a5a5
   mid: '150,150,150',
   dim: '90,90,90', // #5a5a5a

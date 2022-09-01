@@ -1,6 +1,7 @@
 import { Account, Wallet } from '@archetypes'
 import { StateBanner } from '@archetypes/StateBanner'
 import { DesktopRequired } from '@components'
+
 import { device } from '@util/breakpoints'
 import { isMobileBrowser } from '@util/helpers'
 import styled from 'styled-components'
@@ -12,7 +13,7 @@ const _Wallet = styled(({ className }) => {
       <header>
         <div className="account-overview">
           <Wallet.Total />
-          <Account.Button allAccounts showDisconnect />
+          {/* <Account.Button allAccounts showDisconnect /> */}
         </div>
         <div className="banner">
           <StateBanner />
