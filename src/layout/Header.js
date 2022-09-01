@@ -23,8 +23,6 @@ import { useTranslation } from 'react-i18next'
 import { NavLink } from 'react-router-dom'
 import styled from 'styled-components'
 
-
-
 export default function HeaderState(props) {
   const isMobile = useMediaQuery('(max-width: 700px)')
   const [mobileMenuOpen, dispatch] = useReducer((state = false, action) =>

@@ -8,9 +8,9 @@ import { DAPP_NAME, useActiveAccount, useChainByGenesis, useExtensionAutoConnect
 import { useTalismanInstalled } from '@libs/talisman/useIsTalismanInstalled'
 import Identicon from '@polkadot/react-identicon'
 import { WalletSelect } from '@talisman-connect/components'
-import { getWalletBySource } from '@talismn/wallets'
 import { addTokensToBalances, groupBalancesByAddress, useBalances, useChain } from '@talismn/api-react-hooks'
 import { addBigNumbers, encodeAnyAddress, useFuncMemo } from '@talismn/util'
+import { getWalletBySource } from '@talismn/wallets'
 import { device } from '@util/breakpoints'
 import customRpcs from '@util/customRpcs'
 import { buyNow } from '@util/fiatOnRamp'
@@ -173,12 +173,17 @@ const Dropdown = styled(
             }
           )}
           {/* <WalletSelect dappName={DAPP_NAME} triggerComponent={<Button small primary>{t('Connect')}</Button>} /> */}
-          <Button className="dropdown-button" onClick={() => {
-          localStorage.removeItem('@talisman-connect/selected-wallet-name')
-          document.dispatchEvent(new CustomEvent('@talisman-connect/wallet-selected'))
-          disconnect()
-          switchAccount('')
-          }}>{t('Disconnect Wallet')}</Button>
+          <Button
+            className="dropdown-button"
+            onClick={() => {
+              localStorage.removeItem('@talisman-connect/selected-wallet-name')
+              document.dispatchEvent(new CustomEvent('@talisman-connect/wallet-selected'))
+              disconnect()
+              switchAccount('')
+            }}
+          >
+            {t('Disconnect Wallet')}
+          </Button>
         </span>
       )
     )
