@@ -90,12 +90,7 @@ const CrowdloanItem = styled(({ id, className }) => {
 
 const CrowdloanItemWithLink = styled(props => {
   const { id, className } = props
-  // const { crowdloan } = useCrowdloanById(id)
-  // const parachainId = crowdloan?.parachain?.paraId
-  // const { parachainDetails } = useParachainDetailsById(parachainId)
-  // const linkToCrowdloan = parachainDetails?.slug ? `/crowdloans/${parachainDetails?.slug}` : `/crowdloans`
   return (
-    // <Link to={linkToCrowdloan} className={className}>
     <Link to={'#'} className={className}>
       <PanelSection>
         <CrowdloanItem id={id} />

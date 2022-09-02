@@ -16,7 +16,7 @@ export const LanguageSelector = styled(({ className }) => {
   return (
     <Field.Select
       className={className}
-      suffix={false}
+      suffix={true}
       options={i18n.languages.map(language => {
         return {
           key: language,

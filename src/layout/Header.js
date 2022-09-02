@@ -13,7 +13,6 @@ import Menu from '@components/Menu'
 import { WalletNavConnector } from '@components/WalletNavConnector'
 import { trackGoal } from '@libs/fathom'
 import { useExtension } from '@libs/talisman'
-import { device } from '@util/breakpoints'
 import { buyNow } from '@util/fiatOnRamp'
 import { useMediaQuery } from '@util/hooks'
 import { DISCORD_JOIN_URL, TALISMAN_TWITTER_URL } from '@util/links'
@@ -111,8 +110,6 @@ const Header = styled(({ className, isMobile, mobileMenuOpen, dispatch }) => {
             {t('Portfolio')}
           </NavLink>
           <NavLink to="/nfts">{t('NFTs')}</NavLink>
-          {/* <NavLink to="/spiritkeys">{t('🗝 Spirit Keys')}</NavLink> */}
-          {/* <NavLink to="/crowdloans">{t('Crowdloans')}</NavLink> */}
         </nav>
       )}
 
@@ -187,10 +184,6 @@ const Header = styled(({ className, isMobile, mobileMenuOpen, dispatch }) => {
   grid-template: 1fr / auto 0fr 2fr;
   max-height: 64px;
 
-  // @media ${device.xl} {
-  //   grid-template: 1fr / 1fr 1fr 1fr;
-  // }
-
   padding: 0 2.4rem;
   width: 100%;
   box-shadow: 0 0 2.4rem rgba(0, 0, 0, 0.05);
@@ -264,9 +257,14 @@ const Header = styled(({ className, isMobile, mobileMenuOpen, dispatch }) => {
       max-height: 40px;
       border-radius: 1rem;
       height: 100%;
-      font-size: small;
+      font-size: 0.9em;
+      font-weight: 500;
       background: var(--color-background) !important;
       border: 1px solid var(--color-dim) !important;
+
+      > * {
+        overflow: visible;
+      }
     }
 
     select {

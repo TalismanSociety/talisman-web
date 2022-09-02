@@ -589,7 +589,6 @@ const Authorized = styled(
       }
 
       &:last-child {
-        // opacity: 0.3;
         font-size: 0.9em;
       }
     }
@@ -611,10 +610,6 @@ const Authorized = styled(
           left: unset;
           right: 0;
         }
-        // @media ${device.xxl} {
-        //   right: unset;
-        //   left: 0;
-        // }
     `}
 
     z-index: 10;
