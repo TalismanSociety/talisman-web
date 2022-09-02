@@ -7,9 +7,7 @@ import {
 import { Moonbeam } from '@libs/crowdloans/crowdloanOverrides'
 import { MoonbeamPortfolioTag } from '@libs/moonbeam-contributors'
 import { calculateCrowdloanPortfolioAmounts, usePortfolio, useTaggedAmountsInPortfolio } from '@libs/portfolio'
-import { useAccountAddresses, useCrowdloanById, useCrowdloans
-  // ,useParachainDetailsById 
-} from '@libs/talisman'
+import { useAccountAddresses, useCrowdloanById, useCrowdloans } from '@libs/talisman'
 import { useTokenPrice } from '@libs/tokenprices'
 import { useChain } from '@talismn/api-react-hooks'
 import { addBigNumbers, encodeAnyAddress, multiplyBigNumbers, planckToTokens, useFuncMemo } from '@talismn/util'
