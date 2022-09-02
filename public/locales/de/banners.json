@@ -1,9 +1,4 @@
 {
-  "explore": {
-    "header": "Erschaffe das Paraverse",
-    "description": "Crowdloans helfen Projekten und Teams, Mittel für die Teilnahme an Parachain-Auktionen auf Polkadot und Kusama aufzubringen.",
-    "primaryCta": "Erkunde Crowdloans"
-  },
   "empty": {
     "header": "Deine Taschen sind leer!",
     "description": "Kaufe DOT und KSM mit Crypto oder deiner Kreditkarte",

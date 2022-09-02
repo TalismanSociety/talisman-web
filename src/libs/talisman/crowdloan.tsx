@@ -1,15 +1,9 @@
-import {
-  ApolloClient,
-  ApolloQueryResult,
-  InMemoryCache,
-  NormalizedCacheObject,
-  createHttpLink,
-  gql,
-} from '@apollo/client'
+import { ApolloClient, InMemoryCache, createHttpLink, gql } from '@apollo/client'
 //import { BifrostDOT, Moonbeam } from '@libs/crowdloans/crowdloanOverrides'
 import { planckToTokens } from '@talismn/util'
 import { find, get } from 'lodash'
 import { FC, useContext as _useContext, createContext, useEffect, useMemo, useState } from 'react'
+
 import { CrowdloanDetails, SupportedRelaychains, crowdloanDetails } from './util/_config'
 
 const AllCrowdloans = gql`
@@ -17,16 +11,11 @@ const AllCrowdloans = gql`
     # Order by BLOCK_NUM_DESC so that when we do:
     #   find(allCrowdloans, 'parachain.id', parachainId)
     # ...we get the most recent crowdloan, not the oldest
-    _metadata{
+    _metadata {
       specName
       targetHeight
     }
-    crowdloans(
-      orderBy: BLOCK_NUM_DESC
-      filter: {
-        status: {notEqualTo: "Dissolved"}
-      }
-    ) {
+    crowdloans(orderBy: BLOCK_NUM_DESC, filter: { status: { notEqualTo: "Dissolved" } }) {
       totalCount
       nodes {
         id
@@ -163,10 +152,16 @@ export const useCrowdloanAggregateStats = () => {
   }
 }
 
-const determineStatusInterlay = (crowdloan: any, cap: number, raised: number, relayChainId: number, targetHeight: number) => {
+const determineStatusInterlay = (
+  crowdloan: any,
+  cap: number,
+  raised: number,
+  relayChainId: number,
+  targetHeight: number
+) => {
   return crowdloan.status === 'Started' && crowdloan.lockExpiredBlock > targetHeight // active state
-    ? ((100 / cap) * raised).toFixed(2) === '100.00' 
-      ? 'capped' 
+    ? ((100 / cap) * raised).toFixed(2) === '100.00'
+      ? 'capped'
       : 'active'
     : 'winner'
 }
@@ -191,13 +186,13 @@ export const Provider: FC = ({ children }) => {
               'Access-Control-Allow-Origin': '*',
               'Access-Control-Allow-Credentials': true,
             },
-          })
+          }),
         }
       }
     )
 
     // query crowdloans on each relay chain
-    const relayChainCrowdloans = relayChainClients.map(({client}) => client.query({ query: AllCrowdloans }))
+    const relayChainCrowdloans = relayChainClients.map(({ client }) => client.query({ query: AllCrowdloans }))
 
     // extract results and store in state with relayChainId
     Promise.allSettled(relayChainCrowdloans).then(results =>
@@ -206,50 +201,44 @@ export const Provider: FC = ({ children }) => {
           return {
             relayChainId: relayChainClients[resultIndex].relayChainId, // relayChainId
             tokenDecimals: relayChainClients[resultIndex].tokenDecimals, // tokenDecimals
-            result: result.status === 'fulfilled' ? result?.value?.data||[] : [], // result data
+            result: result.status === 'fulfilled' ? result?.value?.data || [] : [], // result data
           } as any
-        }) 
+        })
       )
     )
   }, [])
 
   const [crowdloans, setCrowdloans] = useState<Crowdloan[]>([])
-  
-  useEffect(() => {
-    console.log({crowdloanResults});
-    setCrowdloans(
-    
-      crowdloanResults.flatMap(({relayChainId, tokenDecimals, result}: any) => {
-        const {
-          specName,
-          targetHeight
-        } = result?._metadata
-              
-        return (result?.crowdloans?.nodes || []).map(
-          (crowdloan: any): Crowdloan => {
-            const cap = Number(planckToTokens(crowdloan.cap, tokenDecimals))
-            const raised = Number(planckToTokens(crowdloan.raised, tokenDecimals))
-            const status = determineStatusInterlay(crowdloan, cap, raised, relayChainId, targetHeight)
 
-            return {
-              ...crowdloan,
-              raised:raised,
-              cap: cap,
-              id: `${relayChainId}-${crowdloan.id}`,
-              parachain: {
-                paraId: `${relayChainId}-${crowdloan.parachain.paraId}`,
-                specName: specName
-              },
-              relayChainId,
-              percentRaised: (100 / cap) * raised,
-              details: find(crowdloanDetails, {
-                relayId: relayChainId,
-                paraId: crowdloan.parachain.paraId,
-              }),
-              uiStatus: status
-            }
+  useEffect(() => {
+    console.log({ crowdloanResults })
+    setCrowdloans(
+      crowdloanResults.flatMap(({ relayChainId, tokenDecimals, result }: any) => {
+        const { specName, targetHeight } = result?._metadata
+
+        return (result?.crowdloans?.nodes || []).map((crowdloan: any): Crowdloan => {
+          const cap = Number(planckToTokens(crowdloan.cap, tokenDecimals))
+          const raised = Number(planckToTokens(crowdloan.raised, tokenDecimals))
+          const status = determineStatusInterlay(crowdloan, cap, raised, relayChainId, targetHeight)
+
+          return {
+            ...crowdloan,
+            raised: raised,
+            cap: cap,
+            id: `${relayChainId}-${crowdloan.id}`,
+            parachain: {
+              paraId: `${relayChainId}-${crowdloan.parachain.paraId}`,
+              specName: specName,
+            },
+            relayChainId,
+            percentRaised: (100 / cap) * raised,
+            details: find(crowdloanDetails, {
+              relayId: relayChainId,
+              paraId: crowdloan.parachain.paraId,
+            }),
+            uiStatus: status,
           }
-        )
+        })
       })
     )
   }, [crowdloanResults])

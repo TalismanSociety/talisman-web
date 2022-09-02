@@ -1,9 +1,4 @@
 {
-  "explore": {
-    "header": "构建平行宇宙",
-    "description": "众贷能帮助项目方和团队募集资金以参与 Polkadot 和 Kusama 的平行链拍卖。",
-    "primaryCta": "探索众贷"
-  },
   "empty": {
     "header": "钱包暂无余额！",
     "description": "使用信用卡或加密货币购买 DOT 和 KSM",

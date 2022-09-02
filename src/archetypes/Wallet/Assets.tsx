@@ -99,6 +99,7 @@ const MoonriverWalletInstructions = styled(({ className, id }) => {
   const { t } = useTranslation()
   const { parachainDetails } = useParachainDetailsById(id)
   const asset = parachainDetails?.name
+
   return (
     <Info
       className={className}
@@ -148,6 +149,9 @@ const AssetBalance = styled(({ id, balances, addresses }) => {
     if (!hasBalance(balances, addresses) && !shouldShowInstructions) {
       return null
     }
+  }
+  if (isMoonriver) {
+    return null
   }
   return (
     <PanelSection key={id}>

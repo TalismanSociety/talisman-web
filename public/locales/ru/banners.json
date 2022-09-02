@@ -1,9 +1,4 @@
 {
-  "explore": {
-    "header": "Постройте вселенную Parachain",
-    "description": "Crowdloans помогают проектам и командам собирать средства для участия в аукционах Parachain на Polkadot и Kusama.",
-    "primaryCta": "Изучите Crowdloans"
-  },
   "empty": {
     "header": "Ваши сумки пусты!",
     "description": "Покупайте DOT и KSM с помощью кредитной карты или криптовалюты",
