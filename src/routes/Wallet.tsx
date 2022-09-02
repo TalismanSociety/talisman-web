@@ -1,5 +1,6 @@
 import { Wallet } from '@archetypes'
 import { StateBanner } from '@archetypes/StateBanner'
+import NewBalanceExample from '@archetypes/Wallet/NewBalanceExample'
 import { DesktopRequired } from '@components'
 import { device } from '@util/breakpoints'
 import { isMobileBrowser } from '@util/helpers'
@@ -17,6 +18,7 @@ const _Wallet = styled(({ className }) => {
           <StateBanner />
         </div>
       </header>
+      <NewBalanceExample />
       <Wallet.Assets />
       <Wallet.Crowdloans />
       <Wallet.NFTs />
