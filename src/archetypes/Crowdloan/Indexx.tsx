@@ -1,9 +1,10 @@
-import { Await, Field, Grid, NoResults } from '@components'
+import { Await, Field, Grid } from '@components'
 import NoCrowdloans from '@components/NoCrowdloansPlaceholder'
 import { trackGoal } from '@libs/fathom'
 import { device } from '@util/breakpoints'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
+
 import { useFilter } from './_hooks'
 import Teaser from './Teaser'
 
@@ -169,7 +170,7 @@ const FilterBar = styled(
 const Index = styled(({ withFilter, className }) => {
   const { t } = useTranslation()
   const { crowdloans, count, loading, filterProps } = useFilter()
-  
+
   return (
     <div className={`crowdloan-index ${className}`}>
       <div className="overview">

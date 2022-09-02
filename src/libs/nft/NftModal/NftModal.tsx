@@ -1,5 +1,5 @@
 import { device } from '@util/breakpoints'
-import { Suspense, useEffect } from 'react'
+import { Suspense } from 'react'
 import styled from 'styled-components'
 
 import NftFullView from '../NftFullView/NftFullView'
@@ -9,7 +9,6 @@ import {
   NftCollectionData,
   NftDescription,
   NftMainDetails,
-  NftNetwork,
 } from '../NftFullViewInformation/NftFullViewInformation'
 import useNftAsset from '../useNftAsset/useNftAsset'
 import { useNftCollectionStats } from '../useNftCollectionStats/useNftCollectionStats'
@@ -79,9 +78,7 @@ export const NftModal = styled(({ className, nft }) => {
     <div className={className}>
       <NftFullView nft={nft} />
       <Suspense fallback={null}>
-        <NftInformation nftData={nftData} 
-        nftCollectionStats={nftCollectionData.collectionData} 
-        />
+        <NftInformation nftData={nftData} nftCollectionStats={nftCollectionData.collectionData} />
       </Suspense>
     </div>
   )

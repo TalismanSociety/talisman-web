@@ -91,7 +91,7 @@ const Dropdown = styled(
   }) => {
     const { t } = useTranslation()
     const { switchAccount } = useActiveAccount()
-    const { accounts } = useExtensionAutoConnect()
+    const { accounts, disconnect } = useExtensionAutoConnect()
     const { totalUsd, totalUsdByAddress } = usePortfolio()
 
     const totalBalanceByAddressFunc = address =>
@@ -172,12 +172,24 @@ const Dropdown = styled(
               )
             }
           )}
+          {/* <WalletSelect dappName={DAPP_NAME} triggerComponent={<Button small primary>{t('Connect')}</Button>} /> */}
+          <Button
+            className="dropdown-button"
+            onClick={() => {
+              localStorage.removeItem('@talisman-connect/selected-wallet-name')
+              document.dispatchEvent(new CustomEvent('@talisman-connect/wallet-selected'))
+              disconnect()
+              switchAccount('')
+            }}
+          >
+            {t('Disconnect Wallet')}
+          </Button>
         </span>
       )
     )
   }
 )`
-  background: rgb(${({ theme }) => theme?.background});
+  background: var(--color-controlBackground);
   font-size: 0.8em;
   width: 26em;
   font-size: 1em;
@@ -187,6 +199,23 @@ const Dropdown = styled(
   border-radius: 1.2rem;
   border: solid 1px var(--color-activeBackground);
   box-shadow: 0 0 1.2rem rgba(0, 0, 0, 0.1);
+
+  .dropdown-button {
+    margin: 1.5em 0 1em 0;
+    width: 100%;
+    height: 100%;
+    padding: 0.25em;
+    background: none;
+
+    > * {
+      background: none;
+      border: 1px solid var(--color-dim);
+      width: 100%;
+      padding: 1em;
+      border-radius: 1.2rem;
+      font-size: 1.25em;
+    }
+  }
 
   &::-webkit-scrollbar {
     display: none;
@@ -211,7 +240,7 @@ const Dropdown = styled(
     }
 
     .left {
-      flex: 0 1 60%;
+      // flex: 0 1 60%;
     }
 
     .identicon {
@@ -261,7 +290,7 @@ const Dropdown = styled(
   ${({ open }) =>
     !!open &&
     `
-      max-height: 36rem;
+      max-height: 42rem;
     `}
 `
 
@@ -514,8 +543,12 @@ const Authorized = styled(
   font-size: inherit;
   display: flex;
   align-items: center;
-  padding: 1rem;
+  height: 40px;
+  padding: 0 1rem;
   position: relative;
+  background: var(--color-controlBackground);
+  border-radius: 1rem;
+  border: 1px solid var(--color-dim);
 
   :hover {
     cursor: pointer;
@@ -534,8 +567,8 @@ const Authorized = styled(
     border-radius: 100px;
     > svg,
     > img {
-      width: 2.5em;
-      height: 2.5em;
+      width: 1.5em;
+      height: 1.5em;
     }
     img {
       border-radius: 999999999999rem;
@@ -553,8 +586,7 @@ const Authorized = styled(
     > div {
       line-height: 1.3em;
       &:first-child {
-        color: var(--color-text);
-        font-weight: var(--font-weight-bold);
+        color: var(--color-foreground);
         width: 6.7em;
         text-overflow: ellipsis;
         white-space: nowrap;
@@ -562,7 +594,6 @@ const Authorized = styled(
       }
 
       &:last-child {
-        opacity: 0.3;
         font-size: 0.9em;
       }
     }
@@ -583,10 +614,6 @@ const Authorized = styled(
         @media ${device.lg} {
           left: unset;
           right: 0;
-        }
-        @media ${device.xxl} {
-          right: unset;
-          left: 0;
         }
     `}
 
