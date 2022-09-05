@@ -16,7 +16,7 @@ export const ExploreCrowdloansBanner = () => {
         <p>{t('explore.description')}</p>
       </div>
       <div className="cta">
-        <NavLink to="/crowdloans">
+        <NavLink to="/nfts">
           <Button primary>{t('explore.primaryCta')}</Button>
         </NavLink>
       </div>

@@ -10,11 +10,6 @@ const NoCrowdloansPlaceholder = styled(({ text, subtext }) => (
       <br />
       {subtext}
     </div>
-    {/* <div className="cta">
-      <a href={TALISMAN_SPIRIT_KEYS_RMRK} target="_blank" rel="noopener noreferrer">
-        <Button className="outlined">{t('noNfts.primaryCta')}</Button>
-      </a>
-    </div> */}
   </Placeholder>
 ))`
   display: block;

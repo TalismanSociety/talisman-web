@@ -1,9 +1,4 @@
 {
-  "explore": {
-    "header": "パラバースを構築する",
-    "description": "プロジェクトやチームが、PolkadotやKusamaのParachainオークションに参加するための資金をCrowdloansで調達することができます。",
-    "primaryCta": "Crowdloansを探索する"
-  },
   "empty": {
     "header": "あなたのお財布は空です",
     "description": "DOTとKSMをクレジットカードまたは暗号資産で購入する。",

@@ -1,4 +1,4 @@
-import { getWallets } from '@talisman-connect/wallets'
+import { getWallets } from '@talismn/wallets'
 import { useEffect, useState } from 'react'
 
 export function useTalismanInstalled() {
