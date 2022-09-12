@@ -11,6 +11,7 @@ import { SpiritKeySender } from '@libs/spiritkey/SpiritKeySender'
 import { useFetchNFTs } from '@libs/spiritkey/useFetchNFTs'
 import { DAPP_NAME } from '@libs/talisman'
 import { WalletSelect } from '@talismn/connect-components'
+import { TalismanWallet, PolkadotjsWallet } from '@talismn/connect-wallets'
 import { device } from '@util/breakpoints'
 import { downloadURI } from '@util/downloadURI'
 import { TALISMAN_EXTENSION_DOWNLOAD_URL } from '@util/links'
@@ -61,6 +62,10 @@ export const SpiritKeyUnlockBanner = styled(({ className }) => {
         ) : (
           <WalletSelect
             dappName={DAPP_NAME}
+            walletList={[
+              new TalismanWallet(),
+              new PolkadotjsWallet()
+            ]}
             triggerComponent={
               <div
                 style={{

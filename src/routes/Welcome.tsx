@@ -4,6 +4,7 @@ import { ReactComponent as TalismanHandLogo } from '@assets/hand-red-black.svg'
 import { Button } from '@components'
 import { DAPP_NAME } from '@libs/talisman'
 import { WalletSelect } from '@talismn/connect-components'
+import { TalismanWallet, PolkadotjsWallet } from '@talismn/connect-wallets'
 import { device } from '@util/breakpoints'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
@@ -65,6 +66,10 @@ const Welcome = styled(({ className }) => {
         <div className="cta">
           <WalletSelect
             dappName={DAPP_NAME}
+            walletList={[
+              new TalismanWallet(),
+              new PolkadotjsWallet()
+            ]}
             triggerComponent={<Button primary>{tBase('Connect wallet')}</Button>}
             onError={err => {
               console.log(`>>> err`, err)

@@ -3,6 +3,7 @@ import { Button } from '@components'
 import { DAPP_NAME, useExtension } from '@libs/talisman'
 import { useTalismanInstalled } from '@libs/talisman/useIsTalismanInstalled'
 import { WalletSelect } from '@talismn/connect-components'
+import { TalismanWallet, PolkadotjsWallet } from '@talismn/connect-wallets'
 import getDownloadLink from '@util/getDownloadLink'
 import { useTranslation } from 'react-i18next'
 
@@ -17,6 +18,10 @@ export const WalletNavConnector = () => {
     return isTalismanInstalled ? (
       <WalletSelect
         dappName={DAPP_NAME}
+        walletList={[
+          new TalismanWallet(),
+          new PolkadotjsWallet()
+        ]}
         triggerComponent={
           <Button small primary>
             {t('Connect')}

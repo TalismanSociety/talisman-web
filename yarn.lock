@@ -2863,9 +2863,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@talismn/connect-components@npm:^1.1.2":
-  version: 1.1.2
-  resolution: "@talismn/connect-components@npm:1.1.2"
+"@talismn/connect-components@npm:^1.1.3":
+  version: 1.1.3
+  resolution: "@talismn/connect-components@npm:1.1.3"
   dependencies:
     "@testing-library/react": ^13.4.0
     "@testing-library/react-hooks": ^8.0.1
@@ -2880,7 +2880,7 @@ __metadata:
     "@types/react-dom": ^18.0.6
     react: ^18.2.0
     react-dom: ^18.2.0
-  checksum: 7ee704779279dc7bbad836ddba661148e13ffab9d8c277986c8151064fe18bd2efe4f9f1f3dc515396f0d48f9befad1d925004d3542bba0d4063296e7791155c
+  checksum: 8af43a8b530744afe03fdb1660ea934a3ef208ea7c3bf0c9dc5c2968f50ba9e31733d2e32a38ccd3da6cb4e6e9d2442dae8e06d235651c38b08886c6bbcb195b
   languageName: node
   linkType: hard
 
@@ -2947,7 +2947,7 @@ __metadata:
     "@ramp-network/ramp-instant-sdk": ^2.5.0
     "@talismn/api-react-hooks": ~0
     "@talismn/chaindata-js": ~0
-    "@talismn/connect-components": ^1.1.2
+    "@talismn/connect-components": ^1.1.3
     "@talismn/connect-ui": ^1.1.0
     "@talismn/connect-wallets": ^1.2.1
     "@talismn/util": ~0
@@ -3447,13 +3447,13 @@ __metadata:
   linkType: hard
 
 "@types/react@npm:^18.0.18":
-  version: 18.0.18
-  resolution: "@types/react@npm:18.0.18"
+  version: 18.0.19
+  resolution: "@types/react@npm:18.0.19"
   dependencies:
     "@types/prop-types": "*"
     "@types/scheduler": "*"
     csstype: ^3.0.2
-  checksum: 6d72d35ab3eecf382a5e0f225923f5a2c753045fce02e4e29713f36c99a24f0f770666a49dde96167f37c86271f93339d1b7e2b8969d011b137a9ebd24ee6806
+  checksum: 7dc048f9a6a38176c4c64ecf7f4c24c732df118402d7f34a4ff1702984c06f040fae1457b1b98b7f447ca2a3392dea7d027a05782dfe1b350475606f82ce6d63
   languageName: node
   linkType: hard
 
