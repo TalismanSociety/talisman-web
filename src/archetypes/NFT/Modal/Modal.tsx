@@ -13,6 +13,7 @@ type ModalProps = {
 
 const Modal = ({ className, id }: ModalProps) => {
   const { nft, loading } = useNftById(id)
+  
   return (
     <div className={className}>
       <Preview nft={nft} loading={loading} />

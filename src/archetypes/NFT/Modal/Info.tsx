@@ -342,6 +342,12 @@ type InfoProps = {
 const Info = ({ className, nft, loading }: InfoProps) => {
   if (loading) return <StyledLoadingState />
 
+  if(!nft?.metadata) return (
+    <div className={className}>
+      <p className="nft-sub-val">This NFT does not contain any metadata information.</p>
+    </div>
+  )
+
   return (
     <div className={className}>
       {!!nft && (

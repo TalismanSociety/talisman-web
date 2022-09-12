@@ -113,10 +113,10 @@ export class Rmrk2Provider extends NFTInterface {
             : await this.fetchMediaFromMetadata(indexedItemRef?.metadata)
 
           const thumb = indexedItemRef?.thumb || this.toIPFSUrl(nft?.resources[0]?.thumb) || null
-          const type = nft?.resources[0]?.metadata_content_type
+          let type = nft?.resources[0]?.metadata_content_type
 
           return {
-            id: indexedItemRef.id,
+            id: indexedItemRef?.id || nft?.id,
             name: nft?.metadata_name || indexedItemRef?.symbol,
             thumb,
             type,
