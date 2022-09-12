@@ -1,7 +1,7 @@
 import { Account, NFT } from '@archetypes'
 import { Button, ExtensionStatusGate, PanelSection } from '@components'
 import { DAPP_NAME, useAccounts } from '@libs/talisman'
-import { WalletSelect } from '@talisman-connect/components'
+import { WalletSelect } from '@talismn/connect-components'
 import { device } from '@util/breakpoints'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'

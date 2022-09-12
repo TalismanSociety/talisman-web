@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { Observable } from 'rxjs'
 
 import { NFTFactory } from './nftFactory'
 import { AcalaProvider, Rmrk1Provider, Rmrk2Provider, StatemineProvider } from './providers'
@@ -22,10 +23,14 @@ export const useNftsByAddress = (initialAddress?: string) => {
   useEffect(() => {
     if (!address) return
     setLoading(true)
-    nftFactory.fetchNFTSByAddress(address).then((nfts: NFTShortArray) => {
-      setNfts(nfts)
-      setLoading(false)
-    })
+    let temp : any = []
+    nftFactory
+      .fetchNFTSByAddress(address)
+      .subscribe((newNfts: any) => {
+        temp = [...temp, ...newNfts]
+        setNfts(temp)
+        setLoading(false)
+      })
   }, [address])
 
   return {
