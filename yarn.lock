@@ -2863,9 +2863,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@talismn/connect-components@npm:^1.1.3":
-  version: 1.1.3
-  resolution: "@talismn/connect-components@npm:1.1.3"
+"@talismn/connect-components@npm:^1.1.4":
+  version: 1.1.4
+  resolution: "@talismn/connect-components@npm:1.1.4"
   dependencies:
     "@testing-library/react": ^13.4.0
     "@testing-library/react-hooks": ^8.0.1
@@ -2880,7 +2880,7 @@ __metadata:
     "@types/react-dom": ^18.0.6
     react: ^18.2.0
     react-dom: ^18.2.0
-  checksum: 8af43a8b530744afe03fdb1660ea934a3ef208ea7c3bf0c9dc5c2968f50ba9e31733d2e32a38ccd3da6cb4e6e9d2442dae8e06d235651c38b08886c6bbcb195b
+  checksum: 3387278dadbe6de243938e6fabdf01443c31ffd339043c7b04d2e7ff38ee9ac2e20c4031801a00fb4ed47caf7cc5300716b59fe2b03d31de6a7e415e9de4d9a3
   languageName: node
   linkType: hard
 
@@ -2947,7 +2947,7 @@ __metadata:
     "@ramp-network/ramp-instant-sdk": ^2.5.0
     "@talismn/api-react-hooks": ~0
     "@talismn/chaindata-js": ~0
-    "@talismn/connect-components": ^1.1.3
+    "@talismn/connect-components": ^1.1.4
     "@talismn/connect-ui": ^1.1.0
     "@talismn/connect-wallets": ^1.2.1
     "@talismn/util": ~0
@@ -11000,7 +11000,7 @@ fsevents@^1.2.7:
 "json-stream-stringify@git+https://github.com/Yuripetusko/json-stream-stringify.git#build":
   version: 2.0.3
   resolution: "json-stream-stringify@https://github.com/Yuripetusko/json-stream-stringify.git#commit=ed3d32a6b5c085e6486f49e0dd2458facdec1b76"
-  checksum: 576442a84fd5e1a85c902312c8f07a7fa719b9194be6a36cba4deb120c43d4cacc55846beb5bc8727720a9b030674db25f7c7ccc04fabe399dc2cca58346913f
+  checksum: 38baa7c5be703ac6b440ae4a70de4db321e00477a796b90b0e264b70aea7f3a71d5ba727a3bd0f233070c51b57e926f2329e4d5e1e2ace6e2c7624ed65f42500
   languageName: node
   linkType: hard
 

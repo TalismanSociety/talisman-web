@@ -8,7 +8,6 @@ import { DAPP_NAME, useActiveAccount, useChainByGenesis, useExtensionAutoConnect
 import { useTalismanInstalled } from '@libs/talisman/useIsTalismanInstalled'
 import Identicon from '@polkadot/react-identicon'
 import { WalletSelect } from '@talismn/connect-components'
-import { TalismanWallet, PolkadotjsWallet } from '@talismn/connect-wallets'
 import { addTokensToBalances, groupBalancesByAddress, useBalances, useChain } from '@talismn/api-react-hooks'
 import { getWalletBySource } from '@talismn/connect-wallets'
 import { addBigNumbers, encodeAnyAddress, useFuncMemo } from '@talismn/util'
@@ -302,10 +301,6 @@ const Unavailable = styled(({ className }) => {
   return (
     <WalletSelect
       dappName={DAPP_NAME}
-      walletList={[
-        new TalismanWallet(),
-        new PolkadotjsWallet()
-      ]}
       triggerComponent={
         <div className={className} style={{ cursor: 'pointer' }}>
           <span className="icon">
@@ -343,10 +338,6 @@ const NoAccount = styled(({ className }) => {
   return (
     <WalletSelect
       dappName={DAPP_NAME}
-      walletList={[
-        new TalismanWallet(),
-        new PolkadotjsWallet()
-      ]}
       triggerComponent={
         <Button className={`account-button ${className}`}>
           {walletName}
@@ -380,10 +371,6 @@ const Unauthorized = styled(({ className }) => {
   return (
     <WalletSelect
       dappName={DAPP_NAME}
-      walletList={[
-        new TalismanWallet(),
-        new PolkadotjsWallet()
-      ]}
       triggerComponent={
         <Button className={`account-button ${className}`}>
           {walletName}
