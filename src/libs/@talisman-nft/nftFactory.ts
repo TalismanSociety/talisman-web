@@ -1,4 +1,5 @@
 import { Observable } from 'rxjs'
+
 import { NFTInterface } from './providers/NFTInterface'
 import { NFTDetail, NFTShort, NFTShortArray } from './types'
 

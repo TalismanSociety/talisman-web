@@ -8,10 +8,10 @@ import PDFPlaceholder from '@assets/generic-pdf.png'
 import UnknownPlaceholder from '@assets/generic-unknown.png'
 import VideoPlaceholder from '@assets/generic-video.png'
 import { Spinner } from '@components'
-import { NFTDetail } from '@libs/@talisman-nft/types'
-import styled from 'styled-components'
 import { getNFTType } from '@libs/@talisman-nft'
-import { useEffect, useState, useMemo } from 'react'
+import { NFTDetail } from '@libs/@talisman-nft/types'
+import { useEffect, useMemo, useState } from 'react'
+import styled from 'styled-components'
 
 type PreviewType = {
   className?: string
@@ -20,7 +20,6 @@ type PreviewType = {
 }
 
 const MediaPreview = ({ mediaUri, thumb, type, name, id }: NFTDetail) => {
-
   const [fetchedType, setFetchedType] = useState<string | null>()
   const [isLoading, setIsLoading] = useState<boolean>(false)
 

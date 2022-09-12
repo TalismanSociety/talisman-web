@@ -23,14 +23,12 @@ export const useNftsByAddress = (initialAddress?: string) => {
   useEffect(() => {
     if (!address) return
     setLoading(true)
-    let temp : any = []
-    nftFactory
-      .fetchNFTSByAddress(address)
-      .subscribe((newNfts: any) => {
-        temp = [...temp, ...newNfts]
-        setNfts(temp)
-        setLoading(false)
-      })
+    let temp: any = []
+    nftFactory.fetchNFTSByAddress(address).subscribe((newNfts: any) => {
+      temp = [...temp, ...newNfts]
+      setNfts(temp)
+      setLoading(false)
+    })
   }, [address])
 
   return {
