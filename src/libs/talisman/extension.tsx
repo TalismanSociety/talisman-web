@@ -1,7 +1,7 @@
 import { trackGoal } from '@libs/fathom'
 import { Signer } from '@polkadot/api/types'
 import { InjectedProvider } from '@polkadot/extension-inject/types'
-import { getWalletBySource } from '@talismn/wallets'
+import { getWalletBySource } from '@talismn/connect-wallets'
 import {
   PropsWithChildren,
   useContext as _useContext,
