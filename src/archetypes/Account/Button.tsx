@@ -7,9 +7,9 @@ import { usePortfolio } from '@libs/portfolio'
 import { DAPP_NAME, useActiveAccount, useChainByGenesis, useExtensionAutoConnect } from '@libs/talisman'
 import { useTalismanInstalled } from '@libs/talisman/useIsTalismanInstalled'
 import Identicon from '@polkadot/react-identicon'
-import { WalletSelect } from '@talismn/connect-components'
-import { TalismanWallet, PolkadotjsWallet } from '@talismn/connect-wallets'
 import { addTokensToBalances, groupBalancesByAddress, useBalances, useChain } from '@talismn/api-react-hooks'
+import { WalletSelect } from '@talismn/connect-components'
+import { PolkadotjsWallet, TalismanWallet } from '@talismn/connect-wallets'
 import { getWalletBySource } from '@talismn/connect-wallets'
 import { addBigNumbers, encodeAnyAddress, useFuncMemo } from '@talismn/util'
 import { device } from '@util/breakpoints'
@@ -302,10 +302,7 @@ const Unavailable = styled(({ className }) => {
   return (
     <WalletSelect
       dappName={DAPP_NAME}
-      walletList={[
-        new TalismanWallet(),
-        new PolkadotjsWallet()
-      ]}
+      walletList={[new TalismanWallet(), new PolkadotjsWallet()]}
       triggerComponent={
         <div className={className} style={{ cursor: 'pointer' }}>
           <span className="icon">
@@ -343,10 +340,7 @@ const NoAccount = styled(({ className }) => {
   return (
     <WalletSelect
       dappName={DAPP_NAME}
-      walletList={[
-        new TalismanWallet(),
-        new PolkadotjsWallet()
-      ]}
+      walletList={[new TalismanWallet(), new PolkadotjsWallet()]}
       triggerComponent={
         <Button className={`account-button ${className}`}>
           {walletName}
@@ -380,10 +374,7 @@ const Unauthorized = styled(({ className }) => {
   return (
     <WalletSelect
       dappName={DAPP_NAME}
-      walletList={[
-        new TalismanWallet(),
-        new PolkadotjsWallet()
-      ]}
+      walletList={[new TalismanWallet(), new PolkadotjsWallet()]}
       triggerComponent={
         <Button className={`account-button ${className}`}>
           {walletName}

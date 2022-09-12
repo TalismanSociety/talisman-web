@@ -9,7 +9,7 @@ import { useFetchNFTs } from '@libs/spiritkey/useFetchNFTs'
 import { DAPP_NAME, useAllAccountAddresses, useExtensionAutoConnect } from '@libs/talisman'
 import { useTalismanInstalled } from '@libs/talisman/useIsTalismanInstalled'
 import { WalletSelect } from '@talismn/connect-components'
-import { TalismanWallet, PolkadotjsWallet } from '@talismn/connect-wallets'
+import { PolkadotjsWallet, TalismanWallet } from '@talismn/connect-wallets'
 import { device } from '@util/breakpoints'
 import getDownloadLink from '@util/getDownloadLink'
 import { DISCORD_JOIN_URL, TALISMAN_SPIRIT_KEYS_RMRK } from '@util/links'
@@ -87,10 +87,7 @@ const SpiritKeyPageV2 = styled(({ className }) => {
               <div>{t('spiritClan.alreadyHaveOne')}</div>
               <WalletSelect
                 dappName={DAPP_NAME}
-                walletList={[
-                  new TalismanWallet(),
-                  new PolkadotjsWallet()
-                ]}
+                walletList={[new TalismanWallet(), new PolkadotjsWallet()]}
                 triggerComponent={<Button primary>{tBase('Connect wallet')}</Button>}
               />
             </>
@@ -102,10 +99,7 @@ const SpiritKeyPageV2 = styled(({ className }) => {
               <div>{t('spiritClan.alreadyHaveOne')}</div>
               <WalletSelect
                 dappName={DAPP_NAME}
-                walletList={[
-                  new TalismanWallet(),
-                  new PolkadotjsWallet()
-                ]}
+                walletList={[new TalismanWallet(), new PolkadotjsWallet()]}
                 triggerComponent={<Button primary>{tBase('Connect wallet')}</Button>}
               />
             </>
