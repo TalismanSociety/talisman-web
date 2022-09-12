@@ -3,7 +3,6 @@ import { Button } from '@components'
 import { DAPP_NAME, useExtension } from '@libs/talisman'
 import { useTalismanInstalled } from '@libs/talisman/useIsTalismanInstalled'
 import { WalletSelect } from '@talismn/connect-components'
-
 import getDownloadLink from '@util/getDownloadLink'
 import { useTranslation } from 'react-i18next'
 

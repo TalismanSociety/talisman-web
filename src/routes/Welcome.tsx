@@ -4,7 +4,6 @@ import { ReactComponent as TalismanHandLogo } from '@assets/hand-red-black.svg'
 import { Button } from '@components'
 import { DAPP_NAME } from '@libs/talisman'
 import { WalletSelect } from '@talismn/connect-components'
-
 import { device } from '@util/breakpoints'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'

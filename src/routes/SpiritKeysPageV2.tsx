@@ -9,7 +9,6 @@ import { useFetchNFTs } from '@libs/spiritkey/useFetchNFTs'
 import { DAPP_NAME, useAllAccountAddresses, useExtensionAutoConnect } from '@libs/talisman'
 import { useTalismanInstalled } from '@libs/talisman/useIsTalismanInstalled'
 import { WalletSelect } from '@talismn/connect-components'
-
 import { device } from '@util/breakpoints'
 import getDownloadLink from '@util/getDownloadLink'
 import { DISCORD_JOIN_URL, TALISMAN_SPIRIT_KEYS_RMRK } from '@util/links'
