@@ -2,9 +2,9 @@ import { Redirect, Route, Switch } from 'react-router-dom'
 
 import Layout from '../layout'
 import Buy from './Buy'
+import Explore from './Explore'
 import Home from './Home'
 import NFTsPage from './NFTsPage'
-import Explore from './Explore'
 import Wallet from './Wallet'
 
 const Routes = () => (
