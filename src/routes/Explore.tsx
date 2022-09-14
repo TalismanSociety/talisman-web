@@ -30,7 +30,8 @@ const ExploreGrid = ({ className } : any) => {
                                 (selectedTag === "All" || dapp.tags.includes(selectedTag)) &&
                                     <div className="card" key={dapp.id} onClick={() => window.location.href = dapp.url}>
                                         <div className="card__header">
-                                                <img src={dapp.logoUrl} alt={dapp.name + " logo"} />
+                                                <img src={dapp.logoUrl} alt={dapp.name + " logo"} className="logo"/>
+                                                <img src={dapp.logoUrl} alt={dapp.name + " logo"} className="logoBG"/>
                                         </div>
                                         <div className="card-body">
                                             <span>
@@ -108,6 +109,7 @@ const StyledExploreGrid = styled(ExploreGrid)`
             cursor: pointer;
             background: #1E1E1E;
             border-radius: 1rem;
+            border: 1px solid transparent;
             overflow: hidden;
             grid-column: span 3;
             display: flex;
@@ -115,13 +117,26 @@ const StyledExploreGrid = styled(ExploreGrid)`
             justify-content: space-between;
             .card__header {
                 height: 175px;
-                background: #090909;
+                // background: #090909;
+                overflow: hidden;
+                position: relative;
             }
-            img {
+            .logo {
+                position: absolute;
                 width: 100%;
                 height: 100%;
                 object-fit: contain;
                 padding: 1.5em;
+                z-index: 2;
+            }
+            .logoBG {
+                position: absolute;
+                top: 0;
+                left: 0;
+                filter: blur(50rem) saturate(3);
+                z-index: 1;
+                height: 100%;
+                width: 100%;
             }
             .card-body {
                 flex-grow: 2;
@@ -133,13 +148,11 @@ const StyledExploreGrid = styled(ExploreGrid)`
                 padding: 2rem;
                 h3 {
                     font-size: 2rem;
-
                 }
                 p {
 
                     font-size: 1.5rem;
                     color: var(--color-mid);
-
                 }
                 a {
 
@@ -157,10 +170,16 @@ const StyledExploreGrid = styled(ExploreGrid)`
                     padding: 0.5rem 1rem;
                     background: var(--color-activeBackground);
                     border-radius: 1rem;
+                    color: var(--color-mid);
                 }
             }
             height: 450px;
         }
+    }
+
+    .card:hover {
+        background: #363636;
+        border: 1px solid white;
     }
 
     .card:nth-child(-n+3) {
