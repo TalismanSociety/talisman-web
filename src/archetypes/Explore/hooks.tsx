@@ -49,9 +49,6 @@ export const useFetchDapps = () => {
                   })
                 }
 
-                if (process.env.NODE_ENV === 'production') {
-                  return item.envs.includes('production')
-                }
                 return item
               })
 
