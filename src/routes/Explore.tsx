@@ -67,6 +67,13 @@ const StyledExploreGrid = styled(ExploreGrid)`
   .tags {
     display: flex;
     flex-direction: row;
+    flex-wrap: wrap;
+    width: 87vw;
+
+    @media ${device.md} {
+      width: 100%;
+    }
+
     > div {
       font-size: 1.25rem;
       margin: 0.5rem 0.5rem 0 0;
@@ -99,10 +106,12 @@ const StyledExploreGrid = styled(ExploreGrid)`
 
     @media ${device.sm} {
       grid-template-columns: repeat(3, 1fr);
+      width: 87vw;
     }
 
     @media ${device.md} {
-      grid-template-columns: repeat(6, 1fr);
+      grid-template-columns: repeat(3, 1fr);
+      width: 100%;
     }
 
     @media ${device.lg} {
