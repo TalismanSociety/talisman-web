@@ -4,13 +4,14 @@ import { useState } from 'react'
 import styled from 'styled-components'
 
 const ExploreGrid = ({ className }: any) => {
+
   const { dapps, loading, error, tags } = useFetchDapps()
   const [selectedTag, setSelectedTag] = useState<string>('All')
 
   return (
     <div className={className}>
       {!!loading ? (
-        <p>Fetching...</p>
+        <div>Searching the Paraverse...</div>
       ) : !loading && dapps.length === 0 ? (
         <p>No dapps found</p>
       ) : !loading && dapps.length > 0 ? (
@@ -41,7 +42,10 @@ const ExploreGrid = ({ className }: any) => {
                       <span>
                         {!!dapp.tags &&
                           dapp.tags.map((tag: any) => (
-                            <span className="tag" key={tag}>
+                            <span className="tag" key={tag} onClick={(event) => {
+                              event.stopPropagation();
+                              setSelectedTag(tag)
+                            }}>
                               {tag}
                             </span>
                           ))}
@@ -73,20 +77,17 @@ const StyledExploreGrid = styled(ExploreGrid)`
       background: var(--color-activeBackground);
       border-radius: 1rem;
       cursor: pointer;
+      transition: 0.2s;
     }
 
     .selected-tag {
-      background: var(--color-primary);
-      color: black;
-    }
-
-    .selected-tag:hover {
-      background: #dbdb69;
+      background: var(--talisman-connect-button-foreground);
       color: black;
     }
 
     > div:hover {
       background: var(--color-dim);
+      transition: 0.2s;
     }
     margin-bottom: 2rem;
   }
@@ -119,9 +120,9 @@ const StyledExploreGrid = styled(ExploreGrid)`
       display: flex;
       flex-direction: column;
       justify-content: space-between;
+      transition: 0.2s;
       .card__header {
         height: 175px;
-        // background: #090909;
         overflow: hidden;
         position: relative;
       }
@@ -174,14 +175,18 @@ const StyledExploreGrid = styled(ExploreGrid)`
           border-radius: 1rem;
           color: var(--color-mid);
         }
+
+        .tag:hover {
+          background: var(--color-dim);
+        }
       }
       height: 450px;
     }
   }
 
   .card:hover {
-    background: #363636;
-    border: 1px solid white;
+    border: 1px solid rgb(90,90,90);
+    transition: 0.2s;
   }
 
   .card:nth-child(-n + 3) {
