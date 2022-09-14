@@ -108,6 +108,7 @@ const Header = styled(({ className, isMobile, mobileMenuOpen, dispatch }) => {
             {t('Portfolio')}
           </NavLink>
           <NavLink to="/nfts">{t('NFTs')}</NavLink>
+          <NavLink to="/explore">{t('Explore')}</NavLink>
         </nav>
       )}
 

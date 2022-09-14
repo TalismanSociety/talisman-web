@@ -4,6 +4,7 @@ import Layout from '../layout'
 import Buy from './Buy'
 import Home from './Home'
 import NFTsPage from './NFTsPage'
+import Explore from './Explore'
 import Wallet from './Wallet'
 
 const Routes = () => (
@@ -19,6 +20,11 @@ const Routes = () => (
     <Route exact path="/nfts">
       <Layout>
         <NFTsPage />
+      </Layout>
+    </Route>
+    <Route exact path="/explore">
+      <Layout>
+        <Explore />
       </Layout>
     </Route>
     <Route
