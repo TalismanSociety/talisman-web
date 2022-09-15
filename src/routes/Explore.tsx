@@ -190,10 +190,12 @@ const StyledExploreGrid = styled(ExploreGrid)`
           background: var(--color-activeBackground);
           border-radius: 1rem;
           color: var(--color-mid);
+          transition: 0.2s;
         }
 
         .tag:hover {
           background: var(--color-dim);
+          transition: 0.2s;
         }
       }
       height: 450px;
