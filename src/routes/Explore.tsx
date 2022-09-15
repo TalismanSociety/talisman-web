@@ -1,3 +1,4 @@
+import { CardLoading, TagLoading } from '@archetypes/Explore'
 import { useFetchDapps } from '@archetypes/Explore/hooks'
 import { device } from '@util/breakpoints'
 import { useState } from 'react'
@@ -10,8 +11,11 @@ const ExploreGrid = ({ className }: any) => {
 
   return (
     <div className={className}>
-      {!!loading ? (
-        <div>Searching the Paraverse...</div>
+      {!loading ? (
+        <>
+          <TagLoading />
+          <CardLoading />
+        </>
       ) : !loading && dapps.length === 0 ? (
         <p>No dapps found</p>
       ) : !loading && dapps.length > 0 ? (
@@ -147,7 +151,7 @@ const StyledExploreGrid = styled(ExploreGrid)`
         position: absolute;
         top: 0;
         left: 0;
-        filter: blur(50rem) saturate(3);
+        filter: blur(150px) saturate(3);
         z-index: 1;
         height: 100%;
         width: 100%;

@@ -8,7 +8,7 @@ export const useFetchDapps = () => {
   const [dapps, setDapps] = useState<Dapp>([])
   const [loading, setLoading] = useState<Boolean>(true)
   const [error, setError] = useState<String | null>(null)
-  const [tags, setTags] = useState<string[]>(['All'])
+  const [tags, setTags] = useState<string[]>(['All', '⭐ Featured']) // Hardcoded Featured for now so it appears first.
 
   useEffect(() => {
     const fetchDapps = async () => {
