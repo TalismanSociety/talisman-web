@@ -5,7 +5,6 @@ import { useState } from 'react'
 import styled from 'styled-components'
 
 const ExploreGrid = ({ className }: any) => {
-
   const { dapps, loading, error, tags } = useFetchDapps()
   const [selectedTag, setSelectedTag] = useState<string>('All')
 
@@ -46,10 +45,14 @@ const ExploreGrid = ({ className }: any) => {
                       <span>
                         {!!dapp.tags &&
                           dapp.tags.map((tag: any) => (
-                            <span className="tag" key={tag} onClick={(event) => {
-                              event.stopPropagation();
-                              setSelectedTag(tag)
-                            }}>
+                            <span
+                              className="tag"
+                              key={tag}
+                              onClick={event => {
+                                event.stopPropagation()
+                                setSelectedTag(tag)
+                              }}
+                            >
                               {tag}
                             </span>
                           ))}
@@ -198,7 +201,7 @@ const StyledExploreGrid = styled(ExploreGrid)`
   }
 
   .card:hover {
-    border: 1px solid rgb(90,90,90);
+    border: 1px solid rgb(90, 90, 90);
     transition: 0.2s;
   }
 
