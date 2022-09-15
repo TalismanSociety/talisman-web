@@ -11,7 +11,7 @@ const ExploreGrid = ({ className }: any) => {
 
   return (
     <div className={className}>
-      {!loading ? (
+      {!!loading ? (
         <>
           <TagLoading />
           <CardLoading />
@@ -61,7 +61,7 @@ const ExploreGrid = ({ className }: any) => {
           </div>
         </>
       ) : (
-        <p>Error: {error}</p>
+          <p>{error}</p>
       )}
     </div>
   )
