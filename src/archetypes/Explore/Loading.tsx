@@ -1,13 +1,10 @@
-import { device } from "@util/breakpoints";
-import styled from "styled-components";
+import { device } from '@util/breakpoints'
+import styled from 'styled-components'
 
 export const TagLoading = styled(({ className }) => {
-
   return (
     <div className={className}>
-        <div>
-          Talisman is the coolest 🍜. The explore page will help you find all the Dapps/Daos and Applications.
-        </div>
+      <div>Talisman is the coolest 🍜. The explore page will help you find all the Dapps/Daos and Applications.</div>
     </div>
   )
 })`
@@ -33,8 +30,8 @@ export const TagLoading = styled(({ className }) => {
     transition: 0.2s;
     color: transparent;
 
-    animation : shimmer 1s infinite;
-    background: linear-gradient(90deg, rgba(30,30,30,1) 4%, rgba(60,60,60,1) 25%, rgba(30,30,30,1) 36%);
+    animation: shimmer 1s infinite;
+    background: linear-gradient(90deg, rgba(30, 30, 30, 1) 4%, rgba(60, 60, 60, 1) 25%, rgba(30, 30, 30, 1) 36%);
     background-size: 4000px 100%;
   }
 
@@ -46,7 +43,6 @@ export const TagLoading = styled(({ className }) => {
       background-position: 1000px 0;
     }
   }
-
 `
 
 export const CardLoading = styled(({ className }) => {
@@ -84,12 +80,12 @@ export const CardLoading = styled(({ className }) => {
 `
 
 const Card = styled(({ className }) => {
-    return(
-      <div className={className}>
-        <div className="card-header" />
-        <div className="card-body" />
-      </div>
-    )
+  return (
+    <div className={className}>
+      <div className="card-header" />
+      <div className="card-body" />
+    </div>
+  )
 })`
   cursor: pointer;
   background: #1e1e1e;
@@ -108,8 +104,8 @@ const Card = styled(({ className }) => {
     display: flex;
     flex-direction: column;
 
-    animation : shimmer 1s infinite;
-    background: linear-gradient(90deg, rgba(30,30,30,1) 4%, rgba(60,60,60,1) 25%, rgba(30,30,30,1) 36%);
+    animation: shimmer 1s infinite;
+    background: linear-gradient(90deg, rgba(30, 30, 30, 1) 4%, rgba(60, 60, 60, 1) 25%, rgba(30, 30, 30, 1) 36%);
     background-size: 2000px 100%;
 
     padding: 2rem;
@@ -120,8 +116,8 @@ const Card = styled(({ className }) => {
     overflow: hidden;
     position: relative;
 
-    animation : shimmer 1s infinite;
-    background: linear-gradient(90deg, rgba(24,24,24,1) 4%, rgba(50,50,50,1) 25%, rgba(24,24,24,1) 36%);
+    animation: shimmer 1s infinite;
+    background: linear-gradient(90deg, rgba(24, 24, 24, 1) 4%, rgba(50, 50, 50, 1) 25%, rgba(24, 24, 24, 1) 36%);
     background-size: 2000px 100%;
   }
 
@@ -133,7 +129,7 @@ const Card = styled(({ className }) => {
       background-position: 400px 0;
     }
   }
-  
+
   height: 450px;
 
   :nth-child(-n + 3) {
@@ -142,5 +138,4 @@ const Card = styled(({ className }) => {
       grid-column: span 4;
     }
   }
-
 `

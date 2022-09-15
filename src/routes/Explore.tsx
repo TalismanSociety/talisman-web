@@ -64,7 +64,7 @@ const ExploreGrid = ({ className }: any) => {
           </div>
         </>
       ) : (
-          <p>{error}</p>
+        <p>{error}</p>
       )}
     </div>
   )
