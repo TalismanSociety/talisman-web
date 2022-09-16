@@ -9,7 +9,7 @@ type CardProps = {
 
 const Card = ({ className, dapp, setSelectedTag }: CardProps) => {
   return (
-    <div className={className} key={dapp.id} onClick={() => (window.open(dapp.url, "rel=noreferrer"))}>
+    <div className={className} key={dapp.id} onClick={() => window.open(dapp.url, 'rel=noreferrer')}>
       <div className="card__header">
         <img src={dapp.logoUrl} alt={dapp.name + ' logo'} className="logo" />
         <img src={dapp.logoUrl} alt={dapp.name + ' logo'} className="logoBG" />
