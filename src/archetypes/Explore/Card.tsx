@@ -17,6 +17,7 @@ const Card = ({ className, dapp, setSelectedTag }: CardProps) => {
       <div className="card-body">
         <span>
           <h3>{dapp.name}</h3>
+          <p>{dapp.score}</p>
           <p>{dapp.description}</p>
         </span>
         <span>
