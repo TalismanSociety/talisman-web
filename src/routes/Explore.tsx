@@ -32,7 +32,7 @@ const ExploreGrid = ({ className }: any) => {
             {dapps.map(
               (dapp: any) =>
                 (selectedTag === 'All' || dapp.tags.includes(selectedTag)) && (
-                  <Card dapp={dapp} setSelectedTag={(tag) => setSelectedTag(tag)} />
+                  <Card dapp={dapp} setSelectedTag={tag => setSelectedTag(tag)} />
                 )
             )}
           </div>

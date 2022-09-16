@@ -7,7 +7,7 @@ type CardProps = {
   setSelectedTag: (tag: string) => void
 }
 
-const Card = ({ className, dapp, setSelectedTag } : CardProps) => {
+const Card = ({ className, dapp, setSelectedTag }: CardProps) => {
   return (
     <div className={className} key={dapp.id} onClick={() => (window.location.href = dapp.url)}>
       <div className="card__header">
@@ -40,42 +40,72 @@ const Card = ({ className, dapp, setSelectedTag } : CardProps) => {
 }
 
 const StyledCard = styled(Card)`
-cursor: pointer;
-      background: #1e1e1e;
+  cursor: pointer;
+  background: #1e1e1e;
+  border-radius: 1rem;
+  border: 1px solid transparent;
+  overflow: hidden;
+  grid-column: span 3;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: 0.2s;
+  .card__header {
+    min-height: 175px;
+    max-height: 175px;
+    overflow: hidden;
+    position: relative;
+  }
+  .logo {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: 1.5em;
+    z-index: 2;
+  }
+  .logoBG {
+    position: absolute;
+    top: 0;
+    left: 0;
+    filter: blur(150px) saturate(3);
+    z-index: 1;
+    height: 100%;
+    width: 100%;
+  }
+  .card-body {
+    flex-grow: 2;
+    justify-content: space-between;
+
+    display: flex;
+    flex-direction: column;
+
+    padding: 2rem;
+    h3 {
+      font-size: 2rem;
+    }
+    p {
+      font-size: 1.5rem;
+      color: var(--color-mid);
+    }
+    a {
+      background: #ffbd00;
+      border-radius: 0.5rem;
+      padding: 0.5rem 1rem;
+      color: #1e1e1e;
+      font-weight: bold;
+      text-decoration: none;
+    }
+    .tag {
+      font-size: 1rem;
+      margin: 0.5rem 0.5rem 0 0;
+      display: inline-block;
+      padding: 0.5rem 1rem;
+      background: var(--color-activeBackground);
       border-radius: 1rem;
-      border: 1px solid transparent;
-      overflow: hidden;
-      grid-column: span 3;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
+      color: var(--color-mid);
       transition: 0.2s;
-      .card__header {
-        min-height: 175px;
-        max-height: 175px;
-        overflow: hidden;
-        position: relative;
-      }
-      .logo {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        object-fit: contain;
-        padding: 1.5em;
-        z-index: 2;
-      }
-      .logoBG {
-        position: absolute;
-        top: 0;
-        left: 0;
-        filter: blur(150px) saturate(3);
-        z-index: 1;
-        height: 100%;
-        width: 100%;
-      }
-      .card-body {
-        flex-grow: 2;
-        justify-content: space-between;
+    }
 
         display: flex;
         flex-direction: column;
