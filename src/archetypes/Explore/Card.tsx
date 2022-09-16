@@ -1,3 +1,4 @@
+import { device } from "@util/breakpoints"
 import styled from "styled-components"
 
 type CardProps = {
@@ -112,6 +113,18 @@ cursor: pointer;
         }
       }
       height: 450px;
+
+      :nth-child(-n + 3) {
+        grid-column: span 3;
+        @media ${device.lg} {
+          grid-column: span 4;
+        }
+      }
+
+      :hover {
+        border: 1px solid rgb(90, 90, 90);
+        transition: 0.2s;
+      }
 `
 
 export default StyledCard
