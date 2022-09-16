@@ -1,5 +1,5 @@
-import { device } from "@util/breakpoints"
-import styled from "styled-components"
+import { device } from '@util/breakpoints'
+import styled from 'styled-components'
 
 type CardProps = {
   className?: string
@@ -107,54 +107,54 @@ const StyledCard = styled(Card)`
       transition: 0.2s;
     }
 
-        display: flex;
-        flex-direction: column;
+    display: flex;
+    flex-direction: column;
 
-        padding: 2rem;
-        h3 {
-          font-size: 2rem;
-        }
-        p {
-          font-size: 1.5rem;
-          color: var(--color-mid);
-        }
-        a {
-          background: #ffbd00;
-          border-radius: 0.5rem;
-          padding: 0.5rem 1rem;
-          color: #1e1e1e;
-          font-weight: bold;
-          text-decoration: none;
-        }
-        .tag {
-          font-size: 1rem;
-          margin: 0.5rem 0.5rem 0 0;
-          display: inline-block;
-          padding: 0.5rem 1rem;
-          background: var(--color-activeBackground);
-          border-radius: 1rem;
-          color: var(--color-mid);
-          transition: 0.2s;
-        }
+    padding: 2rem;
+    h3 {
+      font-size: 2rem;
+    }
+    p {
+      font-size: 1.5rem;
+      color: var(--color-mid);
+    }
+    a {
+      background: #ffbd00;
+      border-radius: 0.5rem;
+      padding: 0.5rem 1rem;
+      color: #1e1e1e;
+      font-weight: bold;
+      text-decoration: none;
+    }
+    .tag {
+      font-size: 1rem;
+      margin: 0.5rem 0.5rem 0 0;
+      display: inline-block;
+      padding: 0.5rem 1rem;
+      background: var(--color-activeBackground);
+      border-radius: 1rem;
+      color: var(--color-mid);
+      transition: 0.2s;
+    }
 
-        .tag:hover {
-          background: var(--color-dim);
-          transition: 0.2s;
-        }
-      }
-      height: 450px;
+    .tag:hover {
+      background: var(--color-dim);
+      transition: 0.2s;
+    }
+  }
+  height: 450px;
 
-      :nth-child(-n + 3) {
-        grid-column: span 3;
-        @media ${device.lg} {
-          grid-column: span 4;
-        }
-      }
+  :nth-child(-n + 3) {
+    grid-column: span 3;
+    @media ${device.lg} {
+      grid-column: span 4;
+    }
+  }
 
-      :hover {
-        border: 1px solid rgb(90, 90, 90);
-        transition: 0.2s;
-      }
+  :hover {
+    border: 1px solid rgb(90, 90, 90);
+    transition: 0.2s;
+  }
 `
 
 export default StyledCard
