@@ -7,7 +7,6 @@ import { isMobileBrowser } from '@util/helpers'
 import styled from 'styled-components'
 
 const _Wallet = styled(({ className }) => {
-
   usePageTrack()
 
   return (
