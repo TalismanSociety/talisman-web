@@ -12,7 +12,7 @@ import {
   useBalances,
   useChain,
 } from '@talismn/api-react-hooks'
-import { addBigNumbers, useFuncMemo } from '@talismn/util'
+import { addBigNumbers, useFuncMemo } from '@talismn/util-legacy'
 import customRpcs from '@util/customRpcs'
 import { formatCommas, formatCurrency } from '@util/helpers'
 import { useMemo } from 'react'

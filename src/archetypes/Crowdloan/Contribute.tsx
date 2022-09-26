@@ -5,7 +5,7 @@ import { Button, DesktopRequired, Field, MaterialLoader, Pendor, useModal } from
 import { useCrowdloanContribute } from '@libs/crowdloans'
 import { useActiveAccount, useCrowdloanById, useParachainDetailsById } from '@libs/talisman'
 import { useTokenPrice } from '@libs/tokenprices'
-import { multiplyBigNumbers } from '@talismn/util'
+import { multiplyBigNumbers } from '@talismn/util-legacy'
 import { isMobileBrowser } from '@util/helpers'
 import { formatCurrency, truncateString } from '@util/helpers'
 import { useCallback, useMemo, useState } from 'react'

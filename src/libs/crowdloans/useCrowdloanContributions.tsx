@@ -1,7 +1,8 @@
 import { ApolloClient, ApolloQueryResult, InMemoryCache, NormalizedCacheObject, gql } from '@apollo/client'
 import { BatchHttpLink } from '@apollo/client/link/batch-http'
 import { SupportedRelaychains } from '@libs/talisman/util/_config'
-import { addBigNumbers, encodeAnyAddress } from '@talismn/util'
+import { encodeAnyAddress } from '@talismn/util'
+import { addBigNumbers } from '@talismn/util-legacy'
 import {
   PropsWithChildren,
   useContext as _useContext,
