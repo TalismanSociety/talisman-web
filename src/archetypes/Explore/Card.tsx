@@ -1,4 +1,5 @@
 import { device } from '@util/breakpoints'
+import posthog from 'posthog-js'
 import styled from 'styled-components'
 
 type CardProps = {
@@ -7,9 +8,22 @@ type CardProps = {
   setSelectedTag: (tag: string) => void
 }
 
+const toExternalDapp = (dapp : any) => {
+
+  const categories = dapp.tags.reduce((acc : any, tag : string) => {
+    acc["category_" + tag.replace(/[^\w]/, "")] = true
+    return acc
+  }, {})
+
+  console.log(categories)
+
+  posthog.capture("Goto Dapp", { dappName: dapp.name, dappUrl: dapp.url, ...categories })
+  window.open(dapp.url, 'rel=noreferrer')
+}
+
 const Card = ({ className, dapp, setSelectedTag }: CardProps) => {
   return (
-    <div className={className} key={dapp.id} onClick={() => window.open(dapp.url, 'rel=noreferrer')}>
+    <div className={className} key={dapp.id} onClick={() => toExternalDapp(dapp)}>
       <div className="card__header">
         <img src={dapp.logoUrl} alt={dapp.name + ' logo'} className="logo" />
         <img src={dapp.logoUrl} alt={dapp.name + ' logo'} className="logoBG" />
@@ -17,7 +31,6 @@ const Card = ({ className, dapp, setSelectedTag }: CardProps) => {
       <div className="card-body">
         <span>
           <h3>{dapp.name}</h3>
-          <p>{dapp.score}</p>
           <p>{dapp.description}</p>
         </span>
         <span>

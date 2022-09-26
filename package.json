@@ -53,6 +53,7 @@
     "lint-staged": "^11.1.2",
     "lodash": "^4.17.21",
     "md5": "^2.3.0",
+    "posthog-js": "^1.30.0",
     "prettier": "^2.3.2",
     "prettier-plugin-import-sort": "^0.0.7",
     "react": "^17.0.2",

@@ -1,5 +1,6 @@
 import { ExtensionStatusGate, PanelSection } from '@components'
 import NFTsByAddress from '@components/NFTsByAddress'
+import usePageTrack from '@components/TrackPageView'
 import { NoNFTsPlaceholder } from '@libs/nft/NoNFTsPlaceholder'
 import { useHasNFTs } from '@libs/nft/useHasNFTs'
 import { useNftsByAddress } from '@libs/nft/useNftsByAddress/useNftsByAddress'
@@ -106,6 +107,8 @@ const NFTGrid = styled(({ className = '', account }: AccountProps) => {
 const NFTsPage = styled(({ className }) => {
   const { accounts } = useExtensionAutoConnect()
   const { hasNfts, isLoading } = useHasNFTs(accounts)
+
+  usePageTrack()
 
   return (
     <section className={className}>

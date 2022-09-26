@@ -1,5 +1,6 @@
 import { Card, CardLoading, TagLoading } from '@archetypes/Explore'
 import { useFetchDapps } from '@archetypes/Explore/hooks'
+import usePageTrack from '@components/TrackPageView'
 import { device } from '@util/breakpoints'
 import { useState } from 'react'
 import styled from 'styled-components'
@@ -106,6 +107,9 @@ const StyledExploreGrid = styled(ExploreGrid)`
 `
 
 const Explore = styled(({ className }) => {
+
+  usePageTrack()
+
   return (
     <section className={className}>
       <h1>Explore</h1>
