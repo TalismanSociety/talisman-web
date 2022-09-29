@@ -95,13 +95,6 @@
   "lint-staged": {
     "*.{ts,tsx,js,jsx,html,css,scss}": "prettier --write"
   },
-  "prettier": {
-    "arrowParens": "avoid",
-    "printWidth": 120,
-    "quoteProps": "consistent",
-    "semi": false,
-    "singleQuote": true
-  },
   "importSort": {
     ".js, .jsx, .ts, .tsx": {
       "style": "module",
