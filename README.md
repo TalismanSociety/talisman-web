@@ -15,14 +15,32 @@ With Talisman Web you can buy DOT and KSM, contribute to crowdloans, view NFTs a
 
 ## How to set up a development environment
 
-1. Clone the repo:  
-   `git clone https://github.com/TalismanSociety/talisman-web.git`
+1. Clone the repo:
 
-2. Install the project dependencies:  
-   `yarn`
+```sh
+git clone https://github.com/TalismanSociety/talisman-web.git
+```
 
-3. Copy `.env.example` to `.env` and update the values inside:  
-   `cp .env.example .env`
+2. Use the project targeted Node version using [nvm](https://github.com/nvm-sh/nvm) (Optional but will ensure no funny business with Yarn)
 
-4. Start the dev server:  
-   `yarn start`
+```sh
+nvm use
+```
+
+3. Install the project dependencies:
+
+```sh
+yarn
+```
+
+4. Copy `.env.example` to `.env` and update the values inside:
+
+```sh
+cp .env.example .env
+```
+
+5. Start the dev server:
+
+```sh
+yarn start
+```
