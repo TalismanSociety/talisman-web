@@ -1,0 +1,22 @@
+name: Validation
+
+on:
+  push:
+    branches: [prod]
+  pull_request:
+    branches: [prod]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 'lts/*'
+          cache: yarn
+
+      - run: yarn install --immutable
+      - run: yarn pretty-quick --check
