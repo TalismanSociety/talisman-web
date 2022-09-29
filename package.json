@@ -70,12 +70,12 @@
     "lint-staged": "^11.1.2",
     "prettier": "^2.3.2",
     "prettier-plugin-import-sort": "^0.0.7",
+    "pretty-quick": "^3.1.3",
     "react-scripts": "4.0.3",
     "typescript": "^4.1.2"
   },
   "scripts": {
     "prepare": "husky install",
-    "pre-commit": "lint-staged",
     "ci:formatter": "prettier --write",
     "start": "CI= craco start",
     "build": "CI= GENERATE_SOURCEMAP=false craco build",
@@ -91,9 +91,6 @@
       "import/no-cycle": "warn",
       "react/jsx-key": "warn"
     }
-  },
-  "lint-staged": {
-    "*.{ts,tsx,js,jsx,html,css,scss}": "prettier --write"
   },
   "importSort": {
     ".js, .jsx, .ts, .tsx": {
