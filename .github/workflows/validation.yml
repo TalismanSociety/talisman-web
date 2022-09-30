@@ -20,3 +20,4 @@ jobs:
 
       - run: yarn install --immutable
       - run: yarn pretty-quick --check
+      - run: yarn eslint .
