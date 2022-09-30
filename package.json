@@ -65,6 +65,7 @@
     "@types/webpack-env": "^1.16.2",
     "babel-plugin-styled-components": "^1.13.2",
     "craco-alias": "^3.0.1",
+    "eslint": "^7.32.0",
     "husky": "^6.0.0",
     "import-sort-style-module": "^6.0.0",
     "lint-staged": "^11.1.2",
