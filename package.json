@@ -68,7 +68,7 @@
     "eslint": "^7.32.0",
     "eslint-config-react-app": "^6.0.0",
     "eslint-plugin-testing-library": "^5.7.0",
-    "husky": "^6.0.0",
+    "husky": "^8.0.0",
     "import-sort-style-module": "^6.0.0",
     "lint-staged": "^11.1.2",
     "prettier": "^2.3.2",
@@ -78,7 +78,7 @@
     "typescript": "^4.1.2"
   },
   "scripts": {
-    "prepare": "husky install",
+    "postinstall": "husky install",
     "ci:formatter": "prettier --write",
     "start": "CI= craco start",
     "build": "CI= GENERATE_SOURCEMAP=false craco build",
