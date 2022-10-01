@@ -49,6 +49,8 @@
   "devDependencies": {
     "@babel/plugin-proposal-class-properties": "^7.16.7",
     "@babel/plugin-proposal-private-methods": "^7.16.11",
+    "@commitlint/cli": "^17.1.2",
+    "@commitlint/config-conventional": "^17.1.0",
     "@craco/craco": "^6.1.2",
     "@open-wc/webpack-import-meta-loader": "^0.4.7",
     "@testing-library/dom": "^8.2.0",
