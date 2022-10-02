@@ -1,7 +1,7 @@
 import { Pill } from '@components'
+import styled from '@emotion/styled'
 import { useSet } from '@util/hooks'
 import { useEffect } from 'react'
-import styled from 'styled-components'
 
 const Filter = styled(({ value = [], options = {}, className, onChange = () => {}, ...rest }) => {
   const [selected, { add, remove, set }] = useSet()

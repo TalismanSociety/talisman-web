@@ -1,5 +1,5 @@
+import styled from '@emotion/styled'
 import { ReactComponent as Copy } from '@icons/copy.svg'
-import styled from 'styled-components'
 
 export const CopyButton = styled(({ className, text = '', onCopied, onFailed }) => {
   function tryLegacyCopy() {

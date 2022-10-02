@@ -1,9 +1,9 @@
 import { ReactComponent as AlertCircle } from '@assets/icons/alert-circle-bg.svg'
 import { ReactComponent as LinkCircle } from '@assets/icons/link-circle-bg.svg'
 import { useModal } from '@components'
+import styled from '@emotion/styled'
 import { useExtension } from '@libs/talisman'
 import { useTranslation } from 'react-i18next'
-import styled from 'styled-components'
 
 import MoonbeamContributionModal from './Modal'
 import { useMoonbeamContributors } from '.'

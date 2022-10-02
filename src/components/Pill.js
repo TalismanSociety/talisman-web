@@ -1,4 +1,4 @@
-import styled from 'styled-components'
+import styled from '@emotion/styled'
 
 const Pill = styled(({ children, className, small, large, primary, secondary, active, ...rest }) => (
   <span className={`pill ${className}`} {...rest}>

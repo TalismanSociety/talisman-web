@@ -1,6 +1,8 @@
 import { ReactComponent as AllAccountsIcon } from '@assets/icons/all-accounts.svg'
 import { Button, Pendor, Pill } from '@components'
 import { CopyButton } from '@components/CopyButton'
+import { css } from '@emotion/react'
+import styled from '@emotion/styled'
 import { ReactComponent as AlertCircle } from '@icons/alert-circle.svg'
 import { ReactComponent as ChevronDown } from '@icons/chevron-down.svg'
 import { usePortfolio } from '@libs/portfolio'
@@ -18,7 +20,6 @@ import { formatCommas, formatCurrency, truncateString } from '@util/helpers'
 import useOnClickOutside from '@util/useOnClickOutside'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import styled, { css } from 'styled-components'
 
 // format an address based on chain ID, derived from genesis ID
 // as returned from polkadot.js extension API

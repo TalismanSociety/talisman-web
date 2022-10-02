@@ -11,6 +11,7 @@ import { ReactComponent as TwitterMobileLogo } from '@assets/icons/twitter-mobil
 import { Button } from '@components'
 import Menu from '@components/Menu'
 import { WalletNavConnector } from '@components/WalletNavConnector'
+import styled from '@emotion/styled'
 import { trackGoal } from '@libs/fathom'
 import { useExtension } from '@libs/talisman'
 import { buyNow } from '@util/fiatOnRamp'
@@ -20,7 +21,6 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { useReducer } from 'react'
 import { useTranslation } from 'react-i18next'
 import { NavLink } from 'react-router-dom'
-import styled from 'styled-components'
 
 export default function HeaderState(props) {
   const isMobile = useMediaQuery('(max-width: 700px)')

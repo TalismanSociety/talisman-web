@@ -1,13 +1,13 @@
 import { ReactComponent as BannerText } from '@assets/unlock-the-paraverse.svg'
 import { DesktopRequired } from '@components'
 import { StyledLoader } from '@components/Await'
+import styled from '@emotion/styled'
 import { HowToGetInfo } from '@libs/spiritkey/HowToGetInfo'
 import { SpiritKeyUnlockBanner } from '@libs/spiritkey/SpiritKeyUnlockBanner'
 import { WhatIsInfo } from '@libs/spiritkey/WhatIsInfo'
 import { useAllAccountAddresses } from '@libs/talisman'
 import { isMobileBrowser } from '@util/helpers'
 import { useTranslation } from 'react-i18next'
-import styled from 'styled-components'
 
 const SpiritKeyPage = styled(({ className }) => {
   const { t } = useTranslation('spirit-keys')

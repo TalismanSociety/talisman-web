@@ -1,8 +1,8 @@
 import { Pendor, ProgressBar, Stat } from '@components'
+import styled from '@emotion/styled'
 import { useCrowdloanById } from '@libs/talisman'
 import { shortNumber } from '@util/helpers'
 import { useTranslation } from 'react-i18next'
-import styled from 'styled-components'
 
 const Raised = styled(({ id, title, className }) => {
   const { crowdloan: { percentRaised, raised, cap, uiStatus } = {} } = useCrowdloanById(id)

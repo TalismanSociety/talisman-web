@@ -1,6 +1,6 @@
+import styled from '@emotion/styled'
 import { useBoolean } from '@util/hooks'
 import { useEffect } from 'react'
-import styled from 'styled-components'
 
 const Toggle = styled(({ value = false, onChange = () => {}, off, on, className, ...rest }) => {
   let [isActive, toggleActive] = useBoolean(value)

@@ -1,5 +1,5 @@
 import spiritKeyNftImage from '@assets/spirit-key-nft.png'
-import styled from 'styled-components'
+import styled from '@emotion/styled'
 
 export const SpiritKeyNftImage = styled(({ className, border }) => {
   return (

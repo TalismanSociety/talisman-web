@@ -1,4 +1,4 @@
-import styled from 'styled-components'
+import styled from '@emotion/styled'
 
 export const Section = styled(({ className, children }) => {
   return <div className={className}>{children}</div>

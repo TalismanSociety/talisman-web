@@ -1,7 +1,7 @@
 import { Field } from '@components'
+import styled from '@emotion/styled'
 import { trackGoal } from '@libs/fathom'
 import { useTranslation } from 'react-i18next'
-import styled from 'styled-components'
 
 export const LanguageSelector = styled(({ className }) => {
   const { i18n, ready } = useTranslation('languages', { useSuspense: false })

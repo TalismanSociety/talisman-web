@@ -1,6 +1,6 @@
+import styled from '@emotion/styled'
 import { device } from '@util/breakpoints'
 import { Suspense } from 'react'
-import styled from 'styled-components'
 
 import NftFullView from '../NftFullView/NftFullView'
 import {
