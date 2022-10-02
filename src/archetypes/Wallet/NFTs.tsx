@@ -1,4 +1,5 @@
 import { ExtensionStatusGate, Panel, PanelSection } from '@components'
+import styled from '@emotion/styled'
 import { ReactComponent as ArrowRight } from '@icons/arrow-right.svg'
 import { NftCard } from '@libs/nft/NftCard/NftCard'
 import { NoNFTsPlaceholder } from '@libs/nft/NoNFTsPlaceholder'
@@ -7,7 +8,6 @@ import { useExtensionAutoConnect } from '@libs/talisman'
 import { device } from '@util/breakpoints'
 import { useTranslation } from 'react-i18next'
 import { NavLink } from 'react-router-dom'
-import styled from 'styled-components'
 
 const ExtensionUnavailable = styled(props => {
   const { t } = useTranslation()

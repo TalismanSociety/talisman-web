@@ -1,4 +1,4 @@
-import styled from 'styled-components'
+import styled from '@emotion/styled'
 
 const Poster = styled(({ title, subtitle, backgroundImage, children, className }) => (
   <section className={`${className} poster`} style={{ backgroundImage: `url(${backgroundImage})` }}>

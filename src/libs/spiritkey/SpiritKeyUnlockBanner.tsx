@@ -3,6 +3,7 @@ import bannerImage from '@assets/gradient-purple-red.png'
 import { Banner } from '@components/Banner'
 import { Draggable } from '@components/Draggable'
 import { Droppable } from '@components/Droppable'
+import styled from '@emotion/styled'
 import { ReactComponent as ArrowRight } from '@icons/arrow-right.svg'
 import { trackGoal } from '@libs/fathom'
 import { OwnershipText } from '@libs/spiritkey/OwnershipText'
@@ -16,7 +17,6 @@ import { downloadURI } from '@util/downloadURI'
 import { TALISMAN_EXTENSION_DOWNLOAD_URL } from '@util/links'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import styled from 'styled-components'
 
 export const SpiritKeyUnlockBanner = styled(({ className }) => {
   const { t } = useTranslation('spirit-keys')

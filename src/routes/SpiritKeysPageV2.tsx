@@ -2,6 +2,7 @@ import handRedBlack from '@assets/hand-red-black.svg'
 import talismanSpiritKey from '@assets/spirit-key.png'
 import { Button } from '@components'
 import { StyledLoader } from '@components/Await'
+import styled from '@emotion/styled'
 import { OwnershipText } from '@libs/spiritkey/OwnershipText'
 import { SpiritKeyNftImage } from '@libs/spiritkey/SpiritKeyNftImage'
 import { SpiritKeySender } from '@libs/spiritkey/SpiritKeySender'
@@ -13,7 +14,6 @@ import { device } from '@util/breakpoints'
 import getDownloadLink from '@util/getDownloadLink'
 import { DISCORD_JOIN_URL, TALISMAN_SPIRIT_KEYS_RMRK } from '@util/links'
 import { Trans, useTranslation } from 'react-i18next'
-import styled from 'styled-components'
 
 const SpiritKeyPlaceholder = styled(({ className }) => {
   return (

@@ -1,8 +1,8 @@
 import { MaterialLoader } from '@components'
+import styled from '@emotion/styled'
 import { useExtension } from '@libs/talisman'
 import { encodeAnyAddress } from '@talismn/util'
 import { useCallback, useMemo, useState } from 'react'
-import styled from 'styled-components'
 
 import { AccountModal } from './AccountModal'
 import { AccountsModal } from './AccountsModal'

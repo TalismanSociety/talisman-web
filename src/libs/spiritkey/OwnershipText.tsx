@@ -1,7 +1,7 @@
 import { StyledLoader } from '@components/Await'
+import styled from '@emotion/styled'
 import { useExtensionAutoConnect } from '@libs/talisman'
 import { Trans, useTranslation } from 'react-i18next'
-import styled from 'styled-components'
 
 import { useFetchNFTs } from './useFetchNFTs'
 

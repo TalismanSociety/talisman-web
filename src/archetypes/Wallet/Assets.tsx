@@ -1,4 +1,5 @@
 import { ChainLogo, ExtensionStatusGate, Info, Panel, PanelSection, Pendor } from '@components'
+import styled from '@emotion/styled'
 import { calculateAssetPortfolioAmounts, usePortfolio, useTaggedAmountsInPortfolio } from '@libs/portfolio'
 import { useAccountAddresses, useExtensionAutoConnect, useParachainDetailsById } from '@libs/talisman'
 import { useTokenPrice } from '@libs/tokenprices'
@@ -17,7 +18,6 @@ import customRpcs from '@util/customRpcs'
 import { formatCommas, formatCurrency } from '@util/helpers'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import styled from 'styled-components'
 
 const hasBalance = (balances: Array<Balance>, addresses?: Array<string>) => {
   return balances

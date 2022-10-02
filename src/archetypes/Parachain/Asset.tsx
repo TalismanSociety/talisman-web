@@ -1,6 +1,6 @@
 import { Image as Img } from '@components'
+import styled from '@emotion/styled'
 import { useParachainAssets, useParachainDetailsById } from '@libs/talisman'
-import styled from 'styled-components'
 
 const Image = styled(({ id, type, className }) => {
   const assets = useParachainAssets(id)
