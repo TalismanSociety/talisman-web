@@ -19,5 +19,5 @@ jobs:
           cache: yarn
 
       - run: yarn install --immutable
-      - run: yarn pretty-quick --check
+      - run: yarn pretty-quick --branch prod --check
       - run: yarn eslint .
