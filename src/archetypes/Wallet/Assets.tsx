@@ -84,7 +84,7 @@ const Assets = styled(({ className }) => {
   const addressesByToken = useAddressesByToken(addresses, tokenIds)
   const balances = useBalances(balanceModules, chaindata, addressesByToken)
 
-  const assetsUsd = typeof balances?.sum.fiat('usd').transferable === 'number'
+  const assetValue = typeof balances?.sum.fiat('usd').transferable === 'number'
   ? new Intl.NumberFormat(undefined, {
     style: 'currency',
     currency: 'usd',
@@ -94,7 +94,7 @@ const Assets = styled(({ className }) => {
 
   return (
     <section className={`wallet-assets ${className}`}>
-      <Panel title={t('Assets')} subtitle={!balances ? "Loading" : assetsUsd?.toString()}>
+      <Panel title={t('Assets')} subtitle={!balances ? "Loading" : assetValue?.toString()}>
         <ExtensionStatusGate unavailable={<ExtensionUnavailable />}>
           {tokens && balances && addresses ? 
             Object.values(tokens).map(token => (
