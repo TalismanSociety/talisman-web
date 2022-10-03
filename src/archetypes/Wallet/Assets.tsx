@@ -35,13 +35,12 @@ const AssetItem = styled(({ token, tokenAmount, balance, className }) => {
 const AssetBalance = styled(({ token, balances, addresses }) => {
 
   const tokenAmount : any = formatDecimals(
-    5
-    // new BalanceFormatter(
-    //   balances?.find({ tokenId: token.id }).sorted.reduce((sum : any, balance : any) => {
-    //     return sum + balance.transferable.planck
-    //   }, BigInt('0')) || BigInt('0'),
-    //   token.decimals
-    // ).tokens
+    new BalanceFormatter(
+      balances?.find({ tokenId: token.id }).sorted.reduce((sum : any, balance : any) => {
+        return sum + balance.transferable.planck
+      }, BigInt('0')) || BigInt('0'),
+      token.decimals
+    ).tokens
   )
 
   if(tokenAmount === '0') return null

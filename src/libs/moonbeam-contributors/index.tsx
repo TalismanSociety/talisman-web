@@ -10,7 +10,7 @@ import { isEthereumChecksum } from '@polkadot/util-crypto'
 import { useChain } from '@talismn/api-react-hooks'
 import { encodeAnyAddress } from '@talismn/util'
 import { Deferred } from '@talismn/util-legacy'
-import { getWalletBySource } from '@talismn/wallets'
+import { getWalletBySource } from '@talismn/connect-wallets'
 import {
   PropsWithChildren,
   useContext as _useContext,
