@@ -1,6 +1,6 @@
 import { ExtensionStatusGate, Info, Panel, PanelSection, Pendor, TokenLogo } from '@components'
 import { useAccountAddresses } from '@libs/talisman'
-import { BalanceFormatter, Balances } from '@talismn/balances'
+import { Balance, BalanceFormatter, Balances } from '@talismn/balances'
 import { EvmErc20Module } from '@talismn/balances-evm-erc20'
 import { EvmNativeModule } from '@talismn/balances-evm-native'
 import { useBalances, useChaindata, useChains, useEvmNetworks, useTokens } from '@talismn/balances-react'
@@ -19,11 +19,12 @@ type AssetItemProps = {
   token: Token
   tokenAmount: string
   fiatAmount: string
+  title?: string | null
   subtitle?: string | null
 }
-const AssetItem = styled(({ token, tokenAmount, fiatAmount, subtitle, className }: AssetItemProps) => (
+const AssetItem = styled(({ token, tokenAmount, fiatAmount, title, subtitle, className }: AssetItemProps) => (
   <div className={className}>
-    <Info title={token?.symbol} subtitle={subtitle} graphic={<TokenLogo token={token} type="logo" size={4} />} />
+    <Info title={title} subtitle={subtitle} graphic={<TokenLogo token={token} type="logo" size={4} />} />
     <Info title={<Pendor suffix={` ${token?.symbol}`}>{tokenAmount}</Pendor>} subtitle={fiatAmount} />
   </div>
 ))`
@@ -58,13 +59,17 @@ const AssetBalance = styled(({ token, balances }: AssetBalanceProps) => {
         }).format(tokenBalances.sum.fiat('usd').transferable || 0)
       : '-'
 
+  const chainName = tokenBalances.sorted[0].chain?.name || tokenBalances.sorted[0].evmNetwork?.name
+  const chainType = getNetworkType(tokenBalances.sorted[0])
+
   return (
     <PanelSection key={token.id}>
       <AssetItem
         token={token}
         tokenAmount={tokenAmountFormatted}
         fiatAmount={fiatAmount}
-        subtitle={tokenBalances.sorted[0].chain?.name || tokenBalances.sorted[0].evmNetwork?.name}
+        title={chainName}
+        subtitle={chainType}
       />
     </PanelSection>
   )
@@ -215,4 +220,13 @@ function useAddressesByToken(addresses: string[] | null | undefined, tokenIds: s
     if (addresses === undefined || addresses === null) return {}
     return Object.fromEntries(tokenIds.map(tokenId => [tokenId, addresses]))
   }, [addresses, tokenIds])
+}
+
+function getNetworkType({ chain, evmNetwork }: Balance): string | null {
+  if (evmNetwork) return evmNetwork.isTestnet ? 'EVM Testnet' : 'EVM Blockchain'
+  if (chain) {
+    if (chain.isTestnet) return 'Testnet'
+    return chain.paraId ? 'Parachain' : (chain.parathreads || []).length > 0 ? 'Relay Chain' : 'Blockchain'
+  }
+  return null
 }
