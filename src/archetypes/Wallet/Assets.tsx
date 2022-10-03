@@ -1,28 +1,32 @@
-import { ChainLogo, ExtensionStatusGate, Info, Panel, PanelSection, Pendor, TokenLogo } from '@components'
-import { calculateAssetPortfolioAmounts, usePortfolio, useTaggedAmountsInPortfolio } from '@libs/portfolio'
-import { useAccountAddresses, useExtensionAutoConnect, useParachainDetailsById } from '@libs/talisman'
-import { BalanceFormatter } from '@talismn/balances'
-import { useBalances, useChaindata, useTokens } from '@talismn/balances-react'
+import { ExtensionStatusGate, Info, Panel, PanelSection, Pendor, TokenLogo } from '@components'
+import { useAccountAddresses } from '@libs/talisman'
+import { BalanceFormatter, Balances } from '@talismn/balances'
 import { EvmErc20Module } from '@talismn/balances-evm-erc20'
 import { EvmNativeModule } from '@talismn/balances-evm-native'
+import { useBalances, useChaindata, useChains, useEvmNetworks, useTokens } from '@talismn/balances-react'
 import { SubNativeModule } from '@talismn/balances-substrate-native'
 import { SubOrmlModule } from '@talismn/balances-substrate-orml'
-
+import { Token } from '@talismn/chaindata-provider'
+import { formatDecimals } from '@talismn/util'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
-import { formatDecimals } from '@talismn/util'
 
 const balanceModules = [SubNativeModule, SubOrmlModule, EvmNativeModule, EvmErc20Module]
 
-const AssetItem = styled(({ token, tokenAmount, balance, className }) => {
-  return (
-    <div className={className}>
-      <Info title={token?.symbol} subtitle={balance?.chain?.name || balance?.evmNetwork?.name} graphic={<TokenLogo token={token} type="logo" size={4} />} />
-      <Info title={<Pendor suffix={` ${token?.symbol}`}>{tokenAmount}</Pendor>} subtitle={balance} />
-    </div>
-  )
-})`
+type AssetItemProps = {
+  className?: string
+  token: Token
+  tokenAmount: string
+  fiatAmount: string
+  subtitle?: string | null
+}
+const AssetItem = styled(({ token, tokenAmount, fiatAmount, subtitle, className }: AssetItemProps) => (
+  <div className={className}>
+    <Info title={token?.symbol} subtitle={subtitle} graphic={<TokenLogo token={token} type="logo" size={4} />} />
+    <Info title={<Pendor suffix={` ${token?.symbol}`}>{tokenAmount}</Pendor>} subtitle={fiatAmount} />
+  </div>
+))`
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -32,46 +36,49 @@ const AssetItem = styled(({ token, tokenAmount, balance, className }) => {
   }
 `
 
-const AssetBalance = styled(({ token, balances, addresses }) => {
+type AssetBalanceProps = {
+  token: Token
+  balances: Balances | undefined
+}
+const AssetBalance = styled(({ token, balances }: AssetBalanceProps) => {
+  const tokenBalances = balances?.find({ tokenId: token.id })
+  if (!tokenBalances) return null
 
-  const tokenAmount : any = formatDecimals(
-    new BalanceFormatter(
-      balances?.find({ tokenId: token.id }).sorted.reduce((sum : any, balance : any) => {
-        return sum + balance.transferable.planck
-      }, BigInt('0')) || BigInt('0'),
-      token.decimals
-    ).tokens
-  )
+  const tokenAmount = tokenBalances.sorted.reduce((sum, balance) => sum + balance.transferable.planck, BigInt('0'))
+  if (tokenAmount === BigInt('0')) return null
 
-  if(tokenAmount === '0') return null
+  const tokenAmountFormatted = formatDecimals(new BalanceFormatter(tokenAmount, token.decimals).tokens)
 
-  const fiatBalance = typeof balances?.find({ tokenId: token.id }).sum.fiat('usd').transferable === 'number'
-  ? new Intl.NumberFormat(undefined, {
-      style: 'currency',
-      currency: 'usd',
-      currencyDisplay: 'narrowSymbol',
-    }).format(balances?.find({ tokenId: token.id }).sum.fiat('usd').transferable || 0)
-  : ' -'
+  const fiatAmount =
+    typeof tokenBalances.sum.fiat('usd').transferable === 'number'
+      ? new Intl.NumberFormat(undefined, {
+          style: 'currency',
+          currency: 'usd',
+          currencyDisplay: 'narrowSymbol',
+        }).format(tokenBalances.sum.fiat('usd').transferable || 0)
+      : '-'
 
   return (
-    <PanelSection key={token.id} >
-      <AssetItem 
-      token={token} 
-      tokenAmount={tokenAmount} 
-      balance={fiatBalance.toString()} 
-      addresses={addresses} />
+    <PanelSection key={token.id}>
+      <AssetItem
+        token={token}
+        tokenAmount={tokenAmountFormatted}
+        fiatAmount={fiatAmount}
+        subtitle={tokenBalances.sorted[0].chain?.name || tokenBalances.sorted[0].evmNetwork?.name}
+      />
     </PanelSection>
   )
 })``
 
 const Assets = styled(({ className }) => {
-
   const { t } = useTranslation()
+
   const chaindata = useChaindata()
   const addresses = useAccountAddresses()
 
+  const chains = useChains(chaindata)
+  const evmNetworks = useEvmNetworks(chaindata)
   const tokens = useTokens(chaindata)
-
   const tokenIds = useMemo(
     () =>
       Object.values(tokens)
@@ -84,24 +91,64 @@ const Assets = styled(({ className }) => {
   const addressesByToken = useAddressesByToken(addresses, tokenIds)
   const balances = useBalances(balanceModules, chaindata, addressesByToken)
 
-  const assetValue = typeof balances?.sum.fiat('usd').transferable === 'number'
-  ? new Intl.NumberFormat(undefined, {
-    style: 'currency',
-    currency: 'usd',
-    currencyDisplay: 'narrowSymbol',
-  }).format(balances?.sum.fiat('usd').transferable || 0)
-  : ' -'
+  const fiatTotal =
+    typeof balances?.sum.fiat('usd').transferable === 'number'
+      ? new Intl.NumberFormat(undefined, {
+          style: 'currency',
+          currency: 'usd',
+          currencyDisplay: 'narrowSymbol',
+        }).format(balances?.sum.fiat('usd').transferable || 0)
+      : '-'
 
   return (
     <section className={`wallet-assets ${className}`}>
-      <Panel title={t('Assets')} subtitle={!balances ? "Loading" : assetValue?.toString()}>
+      <Panel title={t('Assets')} subtitle={!balances ? 'Loading' : fiatTotal}>
         <ExtensionStatusGate unavailable={<ExtensionUnavailable />}>
-          {tokens && balances && addresses ? 
-            Object.values(tokens).map(token => (
-              <AssetBalance key={token.id} token={token} balances={balances} addresses={addressesByToken} />
-            )) :
-            null
-          }
+          {(balances?.sorted.length || 0) > 0
+            ? tokenIds
+                .map(tokenId => tokens[tokenId])
+                .sort((a, b) => {
+                  // TODO: Move token sorting into the chaindata subsquid indexer
+
+                  if (a.chain?.id === 'polkadot' && b.chain?.id !== 'polkadot') return -1
+                  if (b.chain?.id === 'polkadot' && a.chain?.id !== 'polkadot') return 1
+                  if (a.chain?.id === 'kusama' && b.chain?.id !== 'kusama') return -1
+                  if (b.chain?.id === 'kusama' && a.chain?.id !== 'kusama') return 1
+
+                  if ((a.chain?.id || a.evmNetwork?.id) === (b.chain?.id || b.evmNetwork?.id)) {
+                    if (a.type === 'substrate-native') return -1
+                    if (b.type === 'substrate-native') return 1
+                    if (a.type === 'evm-native') return -1
+                    if (b.type === 'evm-native') return 1
+
+                    const aCmp = a.symbol?.toLowerCase() || a.id
+                    const bCmp = b.symbol?.toLowerCase() || b.id
+
+                    return aCmp.localeCompare(bCmp)
+                  }
+
+                  const aChain = a.chain?.id
+                    ? chains[a.chain.id]
+                    : a.evmNetwork?.id
+                    ? evmNetworks[a.evmNetwork.id]
+                    : null
+                  const bChain = b.chain?.id
+                    ? chains[b.chain.id]
+                    : b.evmNetwork?.id
+                    ? evmNetworks[b.evmNetwork.id]
+                    : null
+
+                  const aCmp = aChain?.name?.toLowerCase() || a.chain?.id || a.evmNetwork?.id
+                  const bCmp = bChain?.name?.toLowerCase() || b.chain?.id || b.evmNetwork?.id
+
+                  if (aCmp === undefined && bCmp === undefined) return 0
+                  if (aCmp === undefined) return 1
+                  if (bCmp === undefined) return -1
+
+                  return aCmp.localeCompare(bCmp)
+                })
+                .map(token => <AssetBalance key={token.id} token={token} balances={balances} />)
+            : null}
         </ExtensionStatusGate>
       </Panel>
     </section>
@@ -154,7 +201,16 @@ const ExtensionUnavailable = styled(props => {
   }
 `
 
-function useAddressesByToken(addresses: string[] | null | undefined, tokenIds: Token['id'][]) {
+/**
+ * Given an array of `addresses` and an array of `tokenIds`, will return an `addressesByToken` map like so:
+ *
+ *     {
+ *       [tokenIdOne]: [addressOne, addressTwo, etc]
+ *       [tokenIdTwo]: [addressOne, addressTwo, etc]
+ *       [etc]:        [addressOne, addressTwo, etc]
+ *     }
+ */
+function useAddressesByToken(addresses: string[] | null | undefined, tokenIds: string[]) {
   return useMemo(() => {
     if (addresses === undefined || addresses === null) return {}
     return Object.fromEntries(tokenIds.map(tokenId => [tokenId, addresses]))
