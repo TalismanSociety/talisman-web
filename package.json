@@ -97,6 +97,11 @@
     "test": "craco test",
     "eject": "craco eject"
   },
+  "jest": {
+    "transformIgnorePatterns": [
+      "/node_modules/(?!(@babel|@polkadot)/)"
+    ]
+  },
   "importSort": {
     ".js, .jsx, .ts, .tsx": {
       "style": "module",
