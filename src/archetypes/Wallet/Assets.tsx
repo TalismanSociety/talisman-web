@@ -37,7 +37,7 @@ const AssetBalance = styled(({ token, balances, addresses }) => {
   const tokenAmount : any = formatDecimals(
     new BalanceFormatter(
       balances?.find({ tokenId: token.id }).sorted.reduce((sum : any, balance : any) => {
-        return sum + balance.transferable.planck
+        return BigInt(sum) + BigInt(balance.transferable.planck)
       }, BigInt('0')) || BigInt('0'),
       token.decimals
     ).tokens
