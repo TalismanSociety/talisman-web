@@ -112,7 +112,7 @@ export default function ItemDetails({ parsed, addresses }: ItemDetailsProps) {
     case 'unstake': {
       return (
         <div className="details">
-          <pre>{JSON.stringify(parsed, null, 2)}</pre>
+          {process.env.NODE_ENV === 'development' && <pre>{JSON.stringify(parsed, null, 2)}</pre>}
         </div>
       )
     }
@@ -120,14 +120,14 @@ export default function ItemDetails({ parsed, addresses }: ItemDetailsProps) {
     // case 'add liquidity': {
     //   return (
     //     <div className="details">
-    //       <pre>{JSON.stringify(parsed, null, 2)}</pre>
+    //       {process.env.NODE_ENV === 'development' && <pre>{JSON.stringify(parsed, null, 2)}</pre>}
     //     </div>
     //   )
     // }
     // case 'remove liquidity': {
     //   return (
     //     <div className="details">
-    //       <pre>{JSON.stringify(parsed, null, 2)}</pre>
+    //       {process.env.NODE_ENV === 'development' && <pre>{JSON.stringify(parsed, null, 2)}</pre>}
     //     </div>
     //   )
     // }
@@ -135,14 +135,14 @@ export default function ItemDetails({ parsed, addresses }: ItemDetailsProps) {
     // case 'add provision': {
     //   return (
     //     <div className="details">
-    //       <pre>{JSON.stringify(parsed, null, 2)}</pre>
+    //       {process.env.NODE_ENV === 'development' && <pre>{JSON.stringify(parsed, null, 2)}</pre>}
     //     </div>
     //   )
     // }
     // case 'remove provision': {
     //   return (
     //     <div className="details">
-    //       <pre>{JSON.stringify(parsed, null, 2)}</pre>
+    //       {process.env.NODE_ENV === 'development' && <pre>{JSON.stringify(parsed, null, 2)}</pre>}
     //     </div>
     //   )
     // }
@@ -150,7 +150,7 @@ export default function ItemDetails({ parsed, addresses }: ItemDetailsProps) {
     case 'swap': {
       return (
         <div className="details">
-          <pre>{JSON.stringify(parsed, null, 2)}</pre>
+          {process.env.NODE_ENV === 'development' && <pre>{JSON.stringify(parsed, null, 2)}</pre>}
         </div>
       )
     }
