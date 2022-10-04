@@ -1,9 +1,9 @@
 import { Crowdloan, Parachain } from '@archetypes'
 import { Button, Panel, PanelSection, Poster, useModal } from '@components'
+import styled from '@emotion/styled'
 import { useCrowdloanByParachainId, useParachainAssets, useParachainDetailsBySlug } from '@libs/talisman'
 import { useTranslation } from 'react-i18next'
 import { useParams } from 'react-router-dom'
-import styled from 'styled-components'
 
 const CrowdloanDetail = styled(({ className }) => {
   const { t } = useTranslation()

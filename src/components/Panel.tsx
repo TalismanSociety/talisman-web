@@ -1,5 +1,6 @@
+import { css } from '@emotion/react'
+import styled from '@emotion/styled'
 import { motion } from 'framer-motion'
-import styled, { css } from 'styled-components'
 
 type BasePanelProps = {
   title: string

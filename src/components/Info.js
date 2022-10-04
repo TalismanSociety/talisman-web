@@ -1,4 +1,4 @@
-import styled from 'styled-components'
+import styled from '@emotion/styled'
 
 const Info = styled(({ title, subtitle, graphic, className, ...rest }) => (
   <div className={`info ${className}`} {...rest}>

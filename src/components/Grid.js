@@ -1,5 +1,5 @@
+import styled from '@emotion/styled'
 import { sortBy } from 'lodash'
-import styled from 'styled-components'
 
 const defaultColumns = 4
 

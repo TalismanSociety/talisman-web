@@ -2,7 +2,7 @@ import * as crypto from 'crypto'
 
 import { ApiPromise } from '@polkadot/api'
 import { Signer } from '@polkadot/api/types'
-import { getWalletBySource } from '@talismn/wallets'
+import { getWalletBySource } from '@talismn/connect-wallets'
 
 import { Moonbeam } from '../crowdloanOverrides'
 import moonbeamStatement from './moonbeamStatement'

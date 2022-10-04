@@ -1,7 +1,7 @@
 import { BuyBanner } from '@archetypes/StateBanner/BuyBanner'
+import styled from '@emotion/styled'
 import { device } from '@util/breakpoints'
 import { buyNow } from '@util/fiatOnRamp'
-import styled from 'styled-components'
 
 const Buy = styled(({ className }) => {
   return (

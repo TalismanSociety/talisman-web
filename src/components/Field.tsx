@@ -1,10 +1,10 @@
 import { ReactComponent as IconClear } from '@assets/icons/x-circle.svg'
 import { Pill } from '@components'
+import styled from '@emotion/styled'
 import { ReactComponent as ChevronDown } from '@icons/chevron-down.svg'
 import { ReactComponent as SearchIcon } from '@icons/search.svg'
 import { useBoolean } from '@util/hooks'
 import { useEffect } from 'react'
-import styled from 'styled-components'
 
 // framework
 

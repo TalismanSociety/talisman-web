@@ -1,7 +1,7 @@
 import { Pill } from '@components'
+import styled from '@emotion/styled'
 import { useSet } from '@util/hooks'
 import React, { useEffect } from 'react'
-import styled from 'styled-components'
 
 export default styled(({ inital = [], options = {}, className, onChange = () => {}, ...rest }) => {
   const [tags, { add, remove }] = useSet(inital)

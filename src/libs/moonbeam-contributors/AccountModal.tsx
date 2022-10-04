@@ -1,11 +1,11 @@
 import { ReactComponent as XCircle } from '@assets/icons/x-circle.svg'
 import { Button, Field } from '@components'
 import { TalismanHandLoader } from '@components/TalismanHandLoader'
+import styled from '@emotion/styled'
 import Identicon from '@polkadot/react-identicon'
 import { planckToTokens } from '@talismn/util'
 import { truncateString } from '@util/helpers'
 import { useEffect } from 'react'
-import styled from 'styled-components'
 
 import { ContributorWithName, moonbeamRelaychain, useSetMoonbeamRewardsAddress } from '.'
 

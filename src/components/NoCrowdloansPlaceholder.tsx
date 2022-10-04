@@ -1,7 +1,7 @@
 import crowdloanRowSkeleton from '@assets/crowdloan-row-skeleton.png'
 import { Placeholder } from '@components/Placeholder'
+import styled from '@emotion/styled'
 import React from 'react'
-import styled from 'styled-components'
 
 const NoCrowdloansPlaceholder = styled(({ text, subtext }) => (
   <Placeholder placeholderImage={crowdloanRowSkeleton}>

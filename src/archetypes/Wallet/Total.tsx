@@ -1,4 +1,5 @@
 import { Pendor, Pill } from '@components'
+import styled from '@emotion/styled'
 import { ReactComponent as Loader } from '@icons/loader.svg'
 import { usePortfolio } from '@libs/portfolio'
 import { useAccountAddresses } from '@libs/talisman'
@@ -7,7 +8,6 @@ import { device } from '@util/breakpoints'
 import { formatCurrency } from '@util/helpers'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import styled from 'styled-components'
 
 const Total = styled(({ id, className }) => {
   const { t } = useTranslation()

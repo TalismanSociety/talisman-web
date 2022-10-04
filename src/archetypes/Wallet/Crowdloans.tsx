@@ -1,4 +1,5 @@
 import { ChainLogo, ExtensionStatusGate, Info, Panel, PanelSection, Pendor } from '@components'
+import styled from '@emotion/styled'
 import {
   getTotalContributionForCrowdloan,
   groupTotalContributionsByCrowdloan,
@@ -15,7 +16,6 @@ import { formatCommas, formatCurrency } from '@util/helpers'
 import { Suspense, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
-import styled from 'styled-components'
 
 const CrowdloanItem = styled(({ id, className }) => {
   const { t } = useTranslation()

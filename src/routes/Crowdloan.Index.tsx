@@ -1,5 +1,5 @@
 import { Crowdloan } from '@archetypes'
-import styled from 'styled-components'
+import styled from '@emotion/styled'
 
 const CrowdloanIndex = styled(({ className }) => (
   <div className={className}>
