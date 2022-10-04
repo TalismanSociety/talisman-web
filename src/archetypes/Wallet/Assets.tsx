@@ -2,23 +2,26 @@ import { ChainLogo, ExtensionStatusGate, Info, Panel, PanelSection, Pendor, Toke
 import { calculateAssetPortfolioAmounts, usePortfolio, useTaggedAmountsInPortfolio } from '@libs/portfolio'
 import { useAccountAddresses, useExtensionAutoConnect, useParachainDetailsById } from '@libs/talisman'
 import { BalanceFormatter } from '@talismn/balances'
-import { useBalances, useChaindata, useTokens } from '@talismn/balances-react'
 import { EvmErc20Module } from '@talismn/balances-evm-erc20'
 import { EvmNativeModule } from '@talismn/balances-evm-native'
+import { useBalances, useChaindata, useTokens } from '@talismn/balances-react'
 import { SubNativeModule } from '@talismn/balances-substrate-native'
 import { SubOrmlModule } from '@talismn/balances-substrate-orml'
-
+import { formatDecimals } from '@talismn/util'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
-import { formatDecimals } from '@talismn/util'
 
 const balanceModules = [SubNativeModule, SubOrmlModule, EvmNativeModule, EvmErc20Module]
 
 const AssetItem = styled(({ token, tokenAmount, balance, className }) => {
   return (
     <div className={className}>
-      <Info title={token?.symbol} subtitle={balance?.chain?.name || balance?.evmNetwork?.name} graphic={<TokenLogo token={token} type="logo" size={4} />} />
+      <Info
+        title={token?.symbol}
+        subtitle={balance?.chain?.name || balance?.evmNetwork?.name}
+        graphic={<TokenLogo token={token} type="logo" size={4} />}
+      />
       <Info title={<Pendor suffix={` ${token?.symbol}`}>{tokenAmount}</Pendor>} subtitle={balance} />
     </div>
   )
@@ -33,39 +36,34 @@ const AssetItem = styled(({ token, tokenAmount, balance, className }) => {
 `
 
 const AssetBalance = styled(({ token, balances, addresses }) => {
-
-  const tokenAmount : any = formatDecimals(
+  const tokenAmount: any = formatDecimals(
     new BalanceFormatter(
-      balances?.find({ tokenId: token.id }).sorted.reduce((sum : any, balance : any) => {
+      balances?.find({ tokenId: token.id }).sorted.reduce((sum: any, balance: any) => {
         return sum + balance.transferable.planck
       }, BigInt('0')) || BigInt('0'),
       token.decimals
     ).tokens
   )
 
-  if(tokenAmount === '0') return null
+  if (tokenAmount === '0') return null
 
-  const fiatBalance = typeof balances?.find({ tokenId: token.id }).sum.fiat('usd').transferable === 'number'
-  ? new Intl.NumberFormat(undefined, {
-      style: 'currency',
-      currency: 'usd',
-      currencyDisplay: 'narrowSymbol',
-    }).format(balances?.find({ tokenId: token.id }).sum.fiat('usd').transferable || 0)
-  : ' -'
+  const fiatBalance =
+    typeof balances?.find({ tokenId: token.id }).sum.fiat('usd').transferable === 'number'
+      ? new Intl.NumberFormat(undefined, {
+          style: 'currency',
+          currency: 'usd',
+          currencyDisplay: 'narrowSymbol',
+        }).format(balances?.find({ tokenId: token.id }).sum.fiat('usd').transferable || 0)
+      : ' -'
 
   return (
-    <PanelSection key={token.id} >
-      <AssetItem 
-      token={token} 
-      tokenAmount={tokenAmount} 
-      balance={fiatBalance.toString()} 
-      addresses={addresses} />
+    <PanelSection key={token.id}>
+      <AssetItem token={token} tokenAmount={tokenAmount} balance={fiatBalance.toString()} addresses={addresses} />
     </PanelSection>
   )
 })``
 
 const Assets = styled(({ className }) => {
-
   const { t } = useTranslation()
   const chaindata = useChaindata()
   const addresses = useAccountAddresses()
@@ -84,24 +82,24 @@ const Assets = styled(({ className }) => {
   const addressesByToken = useAddressesByToken(addresses, tokenIds)
   const balances = useBalances(balanceModules, chaindata, addressesByToken)
 
-  const assetValue = typeof balances?.sum.fiat('usd').transferable === 'number'
-  ? new Intl.NumberFormat(undefined, {
-    style: 'currency',
-    currency: 'usd',
-    currencyDisplay: 'narrowSymbol',
-  }).format(balances?.sum.fiat('usd').transferable || 0)
-  : ' -'
+  const assetValue =
+    typeof balances?.sum.fiat('usd').transferable === 'number'
+      ? new Intl.NumberFormat(undefined, {
+          style: 'currency',
+          currency: 'usd',
+          currencyDisplay: 'narrowSymbol',
+        }).format(balances?.sum.fiat('usd').transferable || 0)
+      : ' -'
 
   return (
     <section className={`wallet-assets ${className}`}>
-      <Panel title={t('Assets')} subtitle={!balances ? "Loading" : assetValue?.toString()}>
+      <Panel title={t('Assets')} subtitle={!balances ? 'Loading' : assetValue?.toString()}>
         <ExtensionStatusGate unavailable={<ExtensionUnavailable />}>
-          {tokens && balances && addresses ? 
-            Object.values(tokens).map(token => (
-              <AssetBalance key={token.id} token={token} balances={balances} addresses={addressesByToken} />
-            )) :
-            null
-          }
+          {tokens && balances && addresses
+            ? Object.values(tokens).map(token => (
+                <AssetBalance key={token.id} token={token} balances={balances} addresses={addressesByToken} />
+              ))
+            : null}
         </ExtensionStatusGate>
       </Panel>
     </section>
@@ -117,7 +115,7 @@ const Assets = styled(({ className }) => {
 
   > div {
     > div {
-      max-height: 360px;
+      max-height: 400px;
       overflow-y: auto;
     }
   }
