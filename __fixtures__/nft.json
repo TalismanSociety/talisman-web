@@ -1,0 +1,19 @@
+{
+  "srcUrl": "https://singular.rmrk.app/api/rmrk1/account/D85kXmhRyMQGC7jg59n523H7sb6ZBj3Mn3puusP2TshQLGx",
+  "id": "9872816-b6e98494bff52d3b1e-SPIRIT-SPIRIT3283-00003283",
+  "block": 9872816,
+  "forsale": 0,
+  "collectionId": "b6e98494bff52d3b1e-SPIRIT",
+  "instance": "SPIRIT3283",
+  "metadata": "ipfs://ipfs/bafkreidofbdlph7sdhrrfdz5mffiqcfvpjr3jikwdktr7wuzuw5qgztt3i",
+  "metadata_content_type": "image/png",
+  "metadata_image": "ipfs://ipfs/bafybeicuuasrqnqndfw3k6rqacfpfil5sc5fhyjh63riqnd2imm5eucrk4",
+  "metadata_name": "Spirit Key #3283",
+  "name": "Spirit Key #3283",
+  "owner": "D85kXmhRyMQGC7jg59n523H7sb6ZBj3Mn3puusP2TshQLGx",
+  "sn": "00003283",
+  "transferable": 1,
+  "collection": {
+    "name": "Talisman Spirit Keys"
+  }
+}
