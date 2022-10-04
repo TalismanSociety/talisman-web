@@ -1,10 +1,10 @@
 import { List } from '@archetypes/Transaction'
 import { PanelSection } from '@components'
 import ExtensionStatusGate from '@components/ExtensionStatusGate'
+import styled from '@emotion/styled'
 import { useAllAccountAddresses } from '@libs/talisman'
 import { device } from '@util/breakpoints'
 import { useTranslation } from 'react-i18next'
-import styled from 'styled-components'
 
 const ExtensionUnavailable = styled(props => {
   const { t } = useTranslation()

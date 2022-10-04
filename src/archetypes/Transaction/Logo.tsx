@@ -1,3 +1,4 @@
+import styled from '@emotion/styled'
 import { ReactComponent as CrowdloanContributeFailed } from '@icons/transaction-icons/crowdloan-contribute-failed.svg'
 import { ReactComponent as CrowdloanContribute } from '@icons/transaction-icons/crowdloan-contribute.svg'
 import { ReactComponent as ReceiveFailed } from '@icons/transaction-icons/receive-failed.svg'
@@ -12,7 +13,6 @@ import { ReactComponent as Unknown } from '@icons/transaction-icons/unknown.svg'
 import { ReactComponent as UnstakeFailed } from '@icons/transaction-icons/unstake-failed.svg'
 import { ReactComponent as Unstake } from '@icons/transaction-icons/unstake.svg'
 import { encodeAnyAddress } from '@talismn/util'
-import styled from 'styled-components'
 
 import { ParsedTransaction } from './types'
 

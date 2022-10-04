@@ -1,5 +1,6 @@
 import { ReactComponent as AllAccountsIcon } from '@assets/icons/all-accounts.svg'
 import { ButtonIcon } from '@components'
+import styled from '@emotion/styled'
 import { ReactComponent as Check } from '@icons/check-circle.svg'
 import { ReactComponent as ChevronDown } from '@icons/chevron-down.svg'
 import { Account, useAccounts } from '@libs/talisman'
@@ -8,7 +9,6 @@ import { device } from '@util/breakpoints'
 import useOnClickOutside from '@util/useOnClickOutside'
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import styled from 'styled-components'
 
 const Dropdown = styled(({ className, showAllAccounts = false, accounts, activeAccount, open, handleChange }) => {
   const { t } = useTranslation()

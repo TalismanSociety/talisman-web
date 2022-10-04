@@ -1,4 +1,5 @@
 import { Info, PanelSection } from '@components'
+import styled from '@emotion/styled'
 import { ReactComponent as ExternalLink } from '@icons/external-link.svg'
 import { useAccounts } from '@libs/talisman'
 import Identicon from '@polkadot/react-identicon'
@@ -6,7 +7,6 @@ import { encodeAnyAddress } from '@talismn/util'
 import { truncateAddress } from '@util/helpers'
 import startCase from 'lodash/startCase'
 import { useMemo } from 'react'
-import styled from 'styled-components'
 
 import ItemDetails from './ItemDetails'
 import Logo from './Logo'

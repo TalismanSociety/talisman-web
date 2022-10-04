@@ -1,11 +1,11 @@
 import { Account } from '@archetypes'
 import { MaterialLoader, Panel, PanelSection } from '@components'
+import styled from '@emotion/styled'
 import { Account as TAccount } from '@libs/talisman'
 import { AnimatePresence } from 'framer-motion'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import useInfiniteScroll from 'react-infinite-scroll-hook'
-import styled from 'styled-components'
 
 import Item from './Item'
 import { useTransactions } from './store'
