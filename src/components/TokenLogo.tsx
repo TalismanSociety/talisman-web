@@ -1,7 +1,14 @@
 import { Image } from '@components'
+import { Token } from '@talismn/chaindata-provider'
 import styled from 'styled-components'
 
-export default styled(({ token, type, className }) => {
+type TokenLogoProps = {
+  token: Token
+  type: string
+  size: number
+  className?: string
+}
+export default styled(({ token, type, className }: TokenLogoProps) => {
   return (
     <Image
       src={token.logo}
