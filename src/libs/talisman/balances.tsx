@@ -6,7 +6,7 @@ import { useBalances as _useBalances } from '@talismn/balances-react'
 import { useChaindata, useTokens } from '@talismn/balances-react'
 import { SubNativeModule } from '@talismn/balances-substrate-native'
 import { SubOrmlModule } from '@talismn/balances-substrate-orml'
-import { Token, TokenList } from '@talismn/chaindata-provider'
+import { ChaindataProvider, Token, TokenList } from '@talismn/chaindata-provider'
 import { FC, useContext as _useContext, createContext, useMemo } from 'react'
 
 const balanceModules = [SubNativeModule, SubOrmlModule, EvmNativeModule, EvmErc20Module]
@@ -25,9 +25,16 @@ type ContextProps = {
   assetsValue: string | null
   tokenIds: string[]
   tokens: TokenList | any
+  chaindata: (ChaindataProvider & { generation?: number | undefined }) | null
 }
 
-const Context = createContext<ContextProps>({ balances: undefined, assetsValue: '', tokenIds: [], tokens: [] })
+const Context = createContext<ContextProps>({
+  balances: undefined,
+  assetsValue: '',
+  tokenIds: [],
+  tokens: [],
+  chaindata: null,
+})
 
 function useContext() {
   const context = _useContext(Context)
@@ -69,7 +76,10 @@ export const Provider: FC<ProviderProps> = ({ children }) => {
         }).format(balances?.sum.fiat('usd').transferable || 0)
       : null
 
-  const value = useMemo(() => ({ balances, assetsValue, tokenIds, tokens }), [balances, assetsValue, tokenIds, tokens])
+  const value = useMemo(
+    () => ({ balances, assetsValue, tokenIds, tokens, chaindata }),
+    [balances, assetsValue, tokenIds, tokens, chaindata]
+  )
 
   return <Context.Provider value={value}>{children}</Context.Provider>
 }

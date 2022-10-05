@@ -106,7 +106,6 @@ const Dropdown = styled(
           {totalBalanceByAddress === '0' && showBuy && <BuyItem nativeToken={nativeToken} onClick={closeParent} />}
           {(allAccounts ? [{ name: t('All Accounts') }, ...accounts] : accounts).map(
             ({ address, name, type, genesisHash }, index) => {
-              console.log(address)
               const { assetsValue } = _useBalances()
               // const totalBalance = totalBalanceByAddressFunc(address)
               return (
