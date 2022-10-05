@@ -7,6 +7,7 @@ import { useChaindata, useTokens } from '@talismn/balances-react'
 import { SubNativeModule } from '@talismn/balances-substrate-native'
 import { SubOrmlModule } from '@talismn/balances-substrate-orml'
 import { ChaindataProvider, Token, TokenList } from '@talismn/chaindata-provider'
+import { isNil } from 'lodash'
 import { FC, useContext as _useContext, createContext, useMemo } from 'react'
 
 const balanceModules = [SubNativeModule, SubOrmlModule, EvmNativeModule, EvmErc20Module]
@@ -15,7 +16,7 @@ export const useBalances = () => useContext()
 
 function useAddressesByToken(addresses: string[] | null | undefined, tokenIds: Token['id'][]) {
   return useMemo(() => {
-    if (addresses === undefined || addresses === null) return {}
+    if (isNil(addresses)) return {}
     return Object.fromEntries(tokenIds.map(tokenId => [tokenId, addresses]))
   }, [addresses, tokenIds])
 }
