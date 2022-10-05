@@ -1,5 +1,5 @@
 import { StyledLoader } from '@components/Await'
-import { useBalances } from '@libs/talisman'
+import { useActiveAccount, useBalances } from '@libs/talisman'
 import { device } from '@util/breakpoints'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
@@ -7,13 +7,27 @@ import styled from 'styled-components'
 const Total = styled(({ id, className }) => {
   const { t } = useTranslation()
 
-  const { assetsValue } = useBalances()
+  const { balances, assetsValue } = useBalances()
+  const address = useActiveAccount().address
+
+  let fiatTotal: string | null = null
+
+  if (!address) fiatTotal = assetsValue
+  else
+    fiatTotal =
+      typeof balances?.find({ address: address })?.sum?.fiat('usd').transferable === 'number'
+        ? new Intl.NumberFormat(undefined, {
+            style: 'currency',
+            currency: 'usd',
+            currencyDisplay: 'narrowSymbol',
+          }).format(balances?.find({ address: address })?.sum?.fiat('usd').transferable || 0)
+        : '-'
 
   return (
     <div className={`wallet-total ${className}`}>
       <div className="title">{t('Portfolio value')}</div>
       <div className="amount">
-        <span>{!!assetsValue ? assetsValue : <StyledLoader />}</span>
+        <span>{!!fiatTotal ? fiatTotal : <StyledLoader />}</span>
       </div>
     </div>
   )

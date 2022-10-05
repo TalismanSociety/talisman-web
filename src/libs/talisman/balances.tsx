@@ -1,4 +1,4 @@
-import { useAccountAddresses } from '@libs/talisman'
+import { useAllAccountAddresses } from '@libs/talisman'
 import { Balances } from '@talismn/balances'
 import { EvmErc20Module } from '@talismn/balances-evm-erc20'
 import { EvmNativeModule } from '@talismn/balances-evm-native'
@@ -51,7 +51,7 @@ type ProviderProps = {}
 
 export const Provider: FC<ProviderProps> = ({ children }) => {
   const chaindata = useChaindata()
-  const addresses = useAccountAddresses()
+  const addresses = useAllAccountAddresses()
 
   const tokens = useTokens(chaindata)
 

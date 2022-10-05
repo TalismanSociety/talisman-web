@@ -1,20 +1,13 @@
 import { ExtensionStatusGate, Info, Panel, PanelSection, Pendor, TokenLogo } from '@components'
 import { ReactComponent as Loader } from '@icons/loader.svg'
-import { useAccountAddresses } from '@libs/talisman'
+import { useActiveAccount } from '@libs/talisman'
 import { useBalances } from '@libs/talisman'
 import { Balance, BalanceFormatter, Balances } from '@talismn/balances'
-import { EvmErc20Module } from '@talismn/balances-evm-erc20'
-import { EvmNativeModule } from '@talismn/balances-evm-native'
-import { useChaindata, useChains, useEvmNetworks, useTokens } from '@talismn/balances-react'
-import { SubNativeModule } from '@talismn/balances-substrate-native'
-import { SubOrmlModule } from '@talismn/balances-substrate-orml'
+import { useChaindata, useChains, useEvmNetworks } from '@talismn/balances-react'
 import { Token } from '@talismn/chaindata-provider'
 import { formatDecimals } from '@talismn/util'
-import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
-
-const balanceModules = [SubNativeModule, SubOrmlModule, EvmNativeModule, EvmErc20Module]
 
 type AssetItemProps = {
   className?: string
@@ -42,9 +35,13 @@ const AssetItem = styled(({ token, tokenAmount, fiatAmount, title, subtitle, cla
 type AssetBalanceProps = {
   token: Token
   balances: Balances | undefined
+  address: string | undefined
 }
-const AssetBalance = styled(({ token, balances }: AssetBalanceProps) => {
-  const tokenBalances = balances?.find({ tokenId: token.id })
+const AssetBalance = styled(({ token, balances, address }: AssetBalanceProps) => {
+  let tokenBalances = null
+
+  if (!address) tokenBalances = balances?.find({ tokenId: token.id })
+  else tokenBalances = balances?.find([{ address: address, tokenId: token.id }])
   if (!tokenBalances) return null
 
   const tokenAmount = tokenBalances.sorted.reduce((sum, balance) => sum + balance.transferable.planck, BigInt('0'))
@@ -61,7 +58,6 @@ const AssetBalance = styled(({ token, balances }: AssetBalanceProps) => {
         }).format(tokenBalances.sum.fiat('usd').transferable || 0)
       : '-'
 
-  const chainName = tokenBalances?.sorted[0]?.chain?.name ?? tokenBalances?.sorted[0]?.evmNetwork?.name
   const chainType = getNetworkType(tokenBalances.sorted[0])
 
   return (
@@ -80,21 +76,25 @@ const AssetBalance = styled(({ token, balances }: AssetBalanceProps) => {
 const Assets = styled(({ className }) => {
   const { t } = useTranslation()
 
-  const { balances, tokenIds, tokens } = useBalances()
-
+  const { balances, tokenIds, tokens, assetsValue } = useBalances()
+  const address = useActiveAccount().address
   const chaindata = useChaindata()
 
   const chains = useChains(chaindata)
   const evmNetworks = useEvmNetworks(chaindata)
 
-  const fiatTotal =
-    typeof balances?.sum.fiat('usd').transferable === 'number'
-      ? new Intl.NumberFormat(undefined, {
-          style: 'currency',
-          currency: 'usd',
-          currencyDisplay: 'narrowSymbol',
-        }).format(balances?.sum.fiat('usd').transferable || 0)
-      : '-'
+  let fiatTotal: string | null = ''
+
+  if (!address) fiatTotal = assetsValue
+  else
+    fiatTotal =
+      typeof balances?.find({ address: address })?.sum?.fiat('usd').transferable === 'number'
+        ? new Intl.NumberFormat(undefined, {
+            style: 'currency',
+            currency: 'usd',
+            currencyDisplay: 'narrowSymbol',
+          }).format(balances?.find({ address: address })?.sum?.fiat('usd').transferable || 0)
+        : '-'
 
   return (
     <section className={`wallet-assets ${className}`}>
@@ -143,7 +143,7 @@ const Assets = styled(({ className }) => {
 
                   return aCmp.localeCompare(bCmp)
                 })
-                .map(token => <AssetBalance key={token.id} token={token} balances={balances} />)
+                .map(token => <AssetBalance key={token.id} token={token} balances={balances} address={address} />)
             : null}
         </ExtensionStatusGate>
       </Panel>
@@ -206,12 +206,6 @@ const ExtensionUnavailable = styled(props => {
  *       [etc]:        [addressOne, addressTwo, etc]
  *     }
  */
-function useAddressesByToken(addresses: string[] | null | undefined, tokenIds: string[]) {
-  return useMemo(() => {
-    if (addresses === undefined || addresses === null) return {}
-    return Object.fromEntries(tokenIds.map(tokenId => [tokenId, addresses]))
-  }, [addresses, tokenIds])
-}
 
 function getNetworkType({ chain, evmNetwork }: Balance): string | null {
   if (evmNetwork) return evmNetwork.isTestnet ? 'EVM Testnet' : 'EVM Blockchain'
