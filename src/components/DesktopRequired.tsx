@@ -1,6 +1,5 @@
 import { Button, useModal } from '@components'
 import { isMobileBrowser } from '@util/helpers'
-import { TALISMAN_TWITTER_URL } from '@util/links'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
@@ -18,20 +17,15 @@ export default function DesktopRequired() {
 }
 
 const DesktopRequiredModal = styled(props => {
-  // const { closeModal } = useModal()
+  const { closeModal } = useModal()
   const { t } = useTranslation()
-
-  const handleOpenTwitter = () => {
-    window.open(TALISMAN_TWITTER_URL, '_blank', 'noopener,noreferrer')
-    // closeModal()
-  }
 
   return (
     <div {...props}>
       <h2>{t('desktopRequired.title')}</h2>
       <p>{t('desktopRequired.subtitle')}</p>
       <p>{t('desktopRequired.text')}</p>
-      <Button primary onClick={() => handleOpenTwitter()}>
+      <Button primary to="/explore" onClick={() => closeModal()}>
         {t('desktopRequired.primaryCta')}
       </Button>
     </div>

@@ -211,7 +211,6 @@ export const Provider: FC = ({ children }) => {
   const [crowdloans, setCrowdloans] = useState<Crowdloan[]>([])
 
   useEffect(() => {
-    console.log({ crowdloanResults })
     setCrowdloans(
       crowdloanResults.flatMap(({ relayChainId, tokenDecimals, result }: any) => {
         const { specName, targetHeight } = result?._metadata

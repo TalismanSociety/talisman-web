@@ -83,8 +83,6 @@ const Assets = styled(({ className }) => {
   const address = useActiveAccount().address
   const chaindata = useChaindata()
 
-  console.log(tokenIds)
-
   const chains = useChains(chaindata)
   const evmNetworks = useEvmNetworks(chaindata)
 
@@ -204,7 +202,7 @@ const AssetsLoading = styled(({ className }) => {
   return (
     <PanelSection className={className}>
       {placeholderAssets.map((asset, index) => (
-        <div className="loading-segment animate">
+        <div className="loading-segment animate" key={index}>
           <span>{asset}</span>
         </div>
       ))}
