@@ -117,13 +117,12 @@ const tokens: Record<string, { symbol: string; decimals: number }> = {
 
 export const parseTransaction = (tx: IndexerTransaction): ParsedTransaction | null => {
   try {
-    const { data: event, extrinsic } = JSON.parse(tx._data) || {}
+    const { extrinsic } = JSON.parse(tx._data) || {}
 
     if (tx.name === 'Balances.Transfer') {
       // handle array args
-      const args = Array.isArray(event.args)
-        ? { from: event.args[0], to: event.args[1], amount: event.args[2] }
-        : event.args
+      let args = JSON.parse(tx.args)
+      args = Array.isArray(args) ? { from: args[0], to: args[1], amount: args[2] } : args
 
       return {
         type: 'transfer',
@@ -133,9 +132,9 @@ export const parseTransaction = (tx: IndexerTransaction): ParsedTransaction | nu
         from: encodeAnyAddress(args?.from, tx.ss58Format),
         to: encodeAnyAddress(args?.to, tx.ss58Format),
         amount: planckToTokens(args?.amount, tokens[tx.chainId]?.decimals || 0),
-        fee: planckToTokens(extrinsic?.data?.fee, tokens[tx.chainId]?.decimals || 0),
-        tip: planckToTokens(extrinsic?.data?.tip, tokens[tx.chainId]?.decimals || 0),
-        success: extrinsic?.data?.success || false,
+        fee: planckToTokens(extrinsic?.fee, tokens[tx.chainId]?.decimals || 0),
+        tip: planckToTokens(extrinsic?.tip, tokens[tx.chainId]?.decimals || 0),
+        success: extrinsic?.success || false,
       }
     }
     // TODO: Parse event+extrinsic+call from these transaction types into a ParsedTransfer format
@@ -154,9 +153,8 @@ export const parseTransaction = (tx: IndexerTransaction): ParsedTransaction | nu
 
     if (tx.name === 'Crowdloan.Contributed') {
       // handle array args
-      const args = Array.isArray(event.args)
-        ? { who: event.args[0], fundIndex: event.args[1], amount: event.args[2] }
-        : event.args
+      let args = JSON.parse(tx.args)
+      args = Array.isArray(args) ? { who: args[0], fundIndex: args[1], amount: args[2] } : args
 
       return {
         type: 'contribute',
@@ -167,24 +165,29 @@ export const parseTransaction = (tx: IndexerTransaction): ParsedTransaction | nu
         amount: planckToTokens(args?.amount, tokens[tx.chainId]?.decimals || 0),
         // TODO: look up fund info (e.g. parachain name)
         fund: args?.fundIndex,
-        fee: planckToTokens(extrinsic?.data?.fee, tokens[tx.chainId]?.decimals || 0),
-        tip: planckToTokens(extrinsic?.data?.tip, tokens[tx.chainId]?.decimals || 0),
-        success: extrinsic?.data?.success || false,
+        fee: planckToTokens(extrinsic?.fee, tokens[tx.chainId]?.decimals || 0),
+        tip: planckToTokens(extrinsic?.tip, tokens[tx.chainId]?.decimals || 0),
+        success: extrinsic?.success || false,
       }
     }
 
-    if (tx.name === 'Staking.Bonded')
+    if (tx.name === 'Staking.Bonded') {
+      // handle array args
+      let args = JSON.parse(tx.args)
+      args = Array.isArray(args) ? { staker: args[0], amount: args[1] } : args
+
       return {
         type: 'stake',
         chainId: tx.chainId,
         tokenSymbol: tokens[tx.chainId]?.symbol || 'UNKNOWN',
         tokenDecimals: tokens[tx.chainId]?.decimals || 0,
-        staker: encodeAnyAddress((event.args || [])[0], tx.ss58Format),
-        amount: planckToTokens((event.args || [])[1], tokens[tx.chainId]?.decimals || 0),
-        fee: planckToTokens(extrinsic?.data?.fee, tokens[tx.chainId]?.decimals || 0),
-        tip: planckToTokens(extrinsic?.data?.tip, tokens[tx.chainId]?.decimals || 0),
-        success: extrinsic?.data?.success || false,
+        staker: encodeAnyAddress(args?.staker, tx.ss58Format),
+        amount: planckToTokens(args?.amount, tokens[tx.chainId]?.decimals || 0),
+        fee: planckToTokens(extrinsic?.fee, tokens[tx.chainId]?.decimals || 0),
+        tip: planckToTokens(extrinsic?.tip, tokens[tx.chainId]?.decimals || 0),
+        success: extrinsic?.success || false,
       }
+    }
     // TODO: Parse event+extrinsic+call from this transaction type into a ParsedTransfer format
     //   if (tx.name === 'Staking.Unbonded')
     //     return {
@@ -218,9 +221,9 @@ export const parseTransaction = (tx: IndexerTransaction): ParsedTransaction | nu
     //     chainId: tx.chainId,
     //     tokenSymbol: tokens[tx.chainId]?.symbol || 'UNKNOWN',
     //     tokenDecimals: tokens[tx.chainId]?.decimals || 0,
-    //     fee: planckToTokens(extrinsic?.data?.fee, tokens[tx.chainId]?.decimals || 0),
-    //     tip: planckToTokens(extrinsic?.data?.tip, tokens[tx.chainId]?.decimals || 0),
-    //     success: extrinsic?.data?.success || false,
+    //     fee: planckToTokens(extrinsic?.fee, tokens[tx.chainId]?.decimals || 0),
+    //     tip: planckToTokens(extrinsic?.tip, tokens[tx.chainId]?.decimals || 0),
+    //     success: extrinsic?.success || false,
     //   }
   } catch (error) {
     console.error('Failed to parse transaction', error)

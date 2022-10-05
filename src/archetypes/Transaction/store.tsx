@@ -22,7 +22,6 @@ const transactionReducer = (state: TransactionMap, action: ReducerAction): Trans
     ...tx,
 
     timestamp: moment(tx.timestamp),
-    relatedAddresses: tx.relatedAddresses.split('.'),
 
     blockExplorerUrl: getBlockExplorerUrl(tx),
     parsed: parseTransaction(tx),

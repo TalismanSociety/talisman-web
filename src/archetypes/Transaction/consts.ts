@@ -12,6 +12,7 @@ export const TX_QUERY = gql`
       blockNumber
       blockHash
       timestamp
+      args
       signer
       relatedAddresses
       _data

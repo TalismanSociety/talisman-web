@@ -8,8 +8,9 @@ export type IndexerTransaction = {
   blockNumber: string
   blockHash: string
   timestamp: string
+  args: string
   signer: string
-  relatedAddresses: string
+  relatedAddresses: string[]
 
   _data: string
 }
@@ -24,7 +25,7 @@ export type Transaction = {
   blockHash: string
   timestamp: Moment // type is different to IndexerTransaction
   signer: string
-  relatedAddresses: string[] // type is different to IndexerTransaction
+  relatedAddresses: string[]
 
   blockExplorerUrl: string | undefined
   parsed?: ParsedTransaction | null
