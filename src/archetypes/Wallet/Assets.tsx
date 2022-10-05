@@ -1,10 +1,11 @@
 import { ExtensionStatusGate, Info, Panel, PanelSection, Pendor, TokenLogo } from '@components'
 import { ReactComponent as Loader } from '@icons/loader.svg'
 import { useAccountAddresses } from '@libs/talisman'
+import { useBalances } from '@libs/talisman'
 import { Balance, BalanceFormatter, Balances } from '@talismn/balances'
 import { EvmErc20Module } from '@talismn/balances-evm-erc20'
 import { EvmNativeModule } from '@talismn/balances-evm-native'
-import { useBalances, useChaindata, useChains, useEvmNetworks, useTokens } from '@talismn/balances-react'
+import { useChaindata, useChains, useEvmNetworks, useTokens } from '@talismn/balances-react'
 import { SubNativeModule } from '@talismn/balances-substrate-native'
 import { SubOrmlModule } from '@talismn/balances-substrate-orml'
 import { Token } from '@talismn/chaindata-provider'
@@ -63,15 +64,13 @@ const AssetBalance = styled(({ token, balances }: AssetBalanceProps) => {
   const chainName = tokenBalances?.sorted[0]?.chain?.name ?? tokenBalances?.sorted[0]?.evmNetwork?.name
   const chainType = getNetworkType(tokenBalances.sorted[0])
 
-  const isOrml = token.type === 'substrate-orml'
-
   return (
     <PanelSection key={token.id}>
       <AssetItem
         token={token}
         tokenAmount={tokenAmountFormatted}
         fiatAmount={fiatAmount}
-        title={isOrml ? `${chainName} (${token.symbol})` : chainName}
+        title={token.symbol}
         subtitle={chainType}
       />
     </PanelSection>
@@ -81,23 +80,12 @@ const AssetBalance = styled(({ token, balances }: AssetBalanceProps) => {
 const Assets = styled(({ className }) => {
   const { t } = useTranslation()
 
+  const { balances, tokenIds, tokens } = useBalances()
+
   const chaindata = useChaindata()
-  const addresses = useAccountAddresses()
 
   const chains = useChains(chaindata)
   const evmNetworks = useEvmNetworks(chaindata)
-  const tokens = useTokens(chaindata)
-  const tokenIds = useMemo(
-    () =>
-      Object.values(tokens)
-        // filter out testnet tokens
-        .filter(({ isTestnet }) => !isTestnet)
-        .map(({ id }) => id),
-    [tokens]
-  )
-
-  const addressesByToken = useAddressesByToken(addresses, tokenIds)
-  const balances = useBalances(balanceModules, chaindata, addressesByToken)
 
   const fiatTotal =
     typeof balances?.sum.fiat('usd').transferable === 'number'

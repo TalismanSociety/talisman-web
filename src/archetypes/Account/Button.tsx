@@ -5,13 +5,14 @@ import { ReactComponent as AlertCircle } from '@icons/alert-circle.svg'
 import { ReactComponent as ChevronDown } from '@icons/chevron-down.svg'
 import { usePortfolio } from '@libs/portfolio'
 import { DAPP_NAME, useActiveAccount, useChainByGenesis, useExtensionAutoConnect } from '@libs/talisman'
+import { useBalances as _useBalances } from '@libs/talisman'
 import { useTalismanInstalled } from '@libs/talisman/useIsTalismanInstalled'
 import Identicon from '@polkadot/react-identicon'
 import { addTokensToBalances, groupBalancesByAddress, useBalances, useChain } from '@talismn/api-react-hooks'
-import { encodeAnyAddress } from '@talismn/util'
-import { addBigNumbers, useFuncMemo } from '@talismn/util-legacy'
 import { WalletSelect } from '@talismn/connect-components'
 import { getWalletBySource } from '@talismn/connect-wallets'
+import { encodeAnyAddress } from '@talismn/util'
+import { addBigNumbers, useFuncMemo } from '@talismn/util-legacy'
 import { device } from '@util/breakpoints'
 import customRpcs from '@util/customRpcs'
 import { buyNow } from '@util/fiatOnRamp'
@@ -105,7 +106,9 @@ const Dropdown = styled(
           {totalBalanceByAddress === '0' && showBuy && <BuyItem nativeToken={nativeToken} onClick={closeParent} />}
           {(allAccounts ? [{ name: t('All Accounts') }, ...accounts] : accounts).map(
             ({ address, name, type, genesisHash }, index) => {
-              const totalBalance = totalBalanceByAddressFunc(address)
+              console.log(address)
+              const { assetsValue } = _useBalances()
+              // const totalBalance = totalBalanceByAddressFunc(address)
               return (
                 <div
                   key={index}
@@ -165,7 +168,7 @@ const Dropdown = styled(
                       )
                     ) : (
                       <>
-                        <Pendor prefix={!totalUsd && '-'}>{totalUsd && formatCurrency(totalUsd)}</Pendor>
+                        <Pendor prefix={!assetsValue && '-'}>{assetsValue}</Pendor>
                       </>
                     )}
                   </span>
