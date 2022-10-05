@@ -29,7 +29,7 @@
   "extensionUnavailable": {
     "title": "Oh non !",
     "subtitle": "Il semble que vous n'ayez pas encore installé une extension de portefeuille sur votre navigateur.",
-    "text": "nous vous recommandons de télécharger Talisman",
+    "text": "nous vous recommandons de télécharger Talisman"
   },
   "Install Talisman Extension": "Installer l'extension Talisman",
   "Requires Configuration": "Nécessite une configuration",
