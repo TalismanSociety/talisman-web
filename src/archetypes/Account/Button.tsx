@@ -277,6 +277,7 @@ const Dropdown = styled(
     .name-address {
       display: block;
       min-width: 0;
+      max-width: 15rem;
     }
 
     .name {

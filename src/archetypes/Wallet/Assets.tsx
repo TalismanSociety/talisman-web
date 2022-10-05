@@ -80,6 +80,8 @@ const Assets = styled(({ className }) => {
   const address = useActiveAccount().address
   const chaindata = useChaindata()
 
+  console.log(tokenIds)
+
   const chains = useChains(chaindata)
   const evmNetworks = useEvmNetworks(chaindata)
 
@@ -96,6 +98,8 @@ const Assets = styled(({ className }) => {
           }).format(balances?.find({ address: address })?.sum?.fiat('usd').transferable || 0)
         : '-'
 
+  const value = balances?.find({ address: address })?.sum?.fiat('usd').transferable
+
   return (
     <section className={`wallet-assets ${className}`}>
       <Panel title={t('Assets')} subtitle={!balances ? <Loader /> : fiatTotal}>
@@ -105,7 +109,6 @@ const Assets = styled(({ className }) => {
                 .map(tokenId => tokens[tokenId])
                 .sort((a, b) => {
                   // TODO: Move token sorting into the chaindata subsquid indexer
-
                   if (a.chain?.id === 'polkadot' && b.chain?.id !== 'polkadot') return -1
                   if (b.chain?.id === 'polkadot' && a.chain?.id !== 'polkadot') return 1
                   if (a.chain?.id === 'kusama' && b.chain?.id !== 'kusama') return -1
@@ -145,6 +148,36 @@ const Assets = styled(({ className }) => {
                 })
                 .map(token => <AssetBalance key={token.id} token={token} balances={balances} address={address} />)
             : null}
+          {value === 0 && !!address ? (
+            <>
+              <PanelSection>
+                <AssetItem
+                  token={tokens['kusama-substrate-native-ksm']}
+                  tokenAmount={'0'}
+                  fiatAmount={new Intl.NumberFormat(undefined, {
+                    style: 'currency',
+                    currency: 'usd',
+                    currencyDisplay: 'narrowSymbol',
+                  }).format(0)}
+                  title={tokens['kusama-substrate-native-ksm'].symbol}
+                  subtitle={'Relay Chain'}
+                />
+              </PanelSection>
+              <PanelSection>
+                <AssetItem
+                  token={tokens['polkadot-substrate-native-dot']}
+                  tokenAmount={'0'}
+                  fiatAmount={new Intl.NumberFormat(undefined, {
+                    style: 'currency',
+                    currency: 'usd',
+                    currencyDisplay: 'narrowSymbol',
+                  }).format(0)}
+                  title={tokens['polkadot-substrate-native-dot'].symbol}
+                  subtitle={'Relay Chain'}
+                />
+              </PanelSection>
+            </>
+          ) : null}
         </ExtensionStatusGate>
       </Panel>
     </section>

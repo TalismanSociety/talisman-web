@@ -225,7 +225,8 @@ export const Provider: FC<ProviderProps> = ({ children }) => {
     })
 
     const isLoading = Object.keys(loadingList).length !== 0
-    const hasEmptyBags = !isLoading && totalUsd === '0'
+    // const hasEmptyBags = !isLoading && totalUsd === '0'
+    const hasEmptyBags = false
 
     return {
       totalUsd,

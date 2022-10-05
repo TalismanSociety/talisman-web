@@ -1,6 +1,6 @@
 import { Wallet } from '@archetypes'
-import { StateBanner } from '@archetypes/StateBanner'
 import { DesktopRequired } from '@components'
+import { StateBanner } from '@layout/StateBanner'
 import { device } from '@util/breakpoints'
 import { isMobileBrowser } from '@util/helpers'
 import styled from 'styled-components'
