@@ -8,16 +8,15 @@ type CardProps = {
   setSelectedTag: (tag: string) => void
 }
 
-const toExternalDapp = (dapp : any) => {
-
-  const categories = dapp.tags.reduce((acc : any, tag : string) => {
-    acc["category_" + tag.replace(/[^\w]/, "")] = true
+const toExternalDapp = (dapp: any) => {
+  const categories = dapp.tags.reduce((acc: any, tag: string) => {
+    acc['category_' + tag.replace(/[^\w]/, '')] = true
     return acc
   }, {})
 
   console.log(categories)
 
-  posthog.capture("Goto Dapp", { dappName: dapp.name, dappUrl: dapp.url, ...categories })
+  posthog.capture('Goto Dapp', { dappName: dapp.name, dappUrl: dapp.url, ...categories })
   window.open(dapp.url, 'rel=noreferrer')
 }
 

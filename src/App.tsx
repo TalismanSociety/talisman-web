@@ -8,11 +8,11 @@ import * as Tokenprices from '@libs/tokenprices'
 import Routes from '@routes'
 import { Suspense } from 'react'
 import { BrowserRouter as Router } from 'react-router-dom'
-import { initPosthog } from './config/posthog'
 
 import ThemeProvider from './App.Theme'
+import { initPosthog } from './config/posthog'
 
-initPosthog();
+initPosthog()
 
 const Loader = () => {
   return (

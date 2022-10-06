@@ -51,7 +51,7 @@ export const useFetchDapps = () => {
 
                 return item
               })
-              
+
             items.sort((a: any, b: any) => {
               if (a.tags.includes('⭐ Featured') && b.tags.includes('⭐ Featured')) {
                 return b.score - a.score

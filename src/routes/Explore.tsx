@@ -107,7 +107,6 @@ const StyledExploreGrid = styled(ExploreGrid)`
 `
 
 const Explore = styled(({ className }) => {
-
   usePageTrack()
 
   return (
