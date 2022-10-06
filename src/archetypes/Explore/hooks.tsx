@@ -41,8 +41,18 @@ export const useFetchDapps = () => {
                 }
               })
               .filter((item: any) => item !== undefined)
+              .filter((item: any) => {
+                // Store all the item.tags in a dictionary
+                if (item.tags) {
+                  item.tags.forEach((tag: string) => {
+                    setTags(prev => (!prev.includes(tag) ? [...prev, tag] : prev))
+                  })
+                }
 
-            setTags([...new Set<string>(items.tags)])
+                return item
+              })
+
+            // setTags([...new Set<string>(items.tags)])
 
             const sortedItems = items.slice().sort((a: any, b: any) => {
               if (a.tags.includes('⭐ Featured') && b.tags.includes('⭐ Featured')) {
