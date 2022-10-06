@@ -53,10 +53,10 @@ export default styled(({ title, subtitle, children, className, ...rest }) => {
 
   return (
     <div className={`panel ${className}`} {...rest}>
-      {!!title && (
+      {title !== undefined && (
         <h1>
           {title}
-          {!!subtitle && <span>{subtitle}</span>}
+          {subtitle !== undefined && <span>{subtitle}</span>}
         </h1>
       )}
       <div className="inner">{children}</div>

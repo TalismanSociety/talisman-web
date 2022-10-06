@@ -8,11 +8,11 @@ import { SubNativeModule } from '@talismn/balances-substrate-native'
 import { SubOrmlModule } from '@talismn/balances-substrate-orml'
 import { ChaindataProvider, Token, TokenList } from '@talismn/chaindata-provider'
 import { isNil } from 'lodash'
-import { FC, useContext as _useContext, createContext, useMemo } from 'react'
+import { FC, createContext, useContext, useMemo } from 'react'
 
 const balanceModules = [SubNativeModule, SubOrmlModule, EvmNativeModule, EvmErc20Module]
 
-export const useBalances = () => useContext()
+export const useBalances = () => useBalanceContext()
 
 function useAddressesByToken(addresses: string[] | null | undefined, tokenIds: Token['id'][]) {
   return useMemo(() => {
@@ -37,8 +37,8 @@ const Context = createContext<ContextProps>({
   chaindata: null,
 })
 
-function useContext() {
-  const context = _useContext(Context)
+function useBalanceContext() {
+  const context = useContext(Context)
   if (!context) throw new Error('The talisman balances provider is required in order to use this hook')
 
   return context
@@ -69,13 +69,11 @@ export const Provider: FC<ProviderProps> = ({ children }) => {
   const balances = _useBalances(balanceModules, chaindata, addressesByToken)
 
   const assetsValue =
-    typeof balances?.sum.fiat('usd').transferable === 'number'
-      ? new Intl.NumberFormat(undefined, {
-          style: 'currency',
-          currency: 'usd',
-          currencyDisplay: 'narrowSymbol',
-        }).format(balances?.sum.fiat('usd').transferable || 0)
-      : null
+    (balances?.sum.fiat('usd').transferable ?? 0).toLocaleString(undefined, {
+      style: 'currency',
+      currency: 'USD',
+      currencyDisplay: 'narrowSymbol',
+    }) ?? ' -'
 
   const value = useMemo(
     () => ({ balances, assetsValue, tokenIds, tokens, chaindata }),

@@ -10,24 +10,20 @@ const Total = styled(({ id, className }) => {
   const { balances, assetsValue } = useBalances()
   const address = useActiveAccount().address
 
-  let fiatTotal: string | null = null
-
-  if (!address) fiatTotal = assetsValue
-  else
-    fiatTotal =
-      typeof balances?.find({ address: address })?.sum?.fiat('usd').transferable === 'number'
-        ? new Intl.NumberFormat(undefined, {
-            style: 'currency',
-            currency: 'usd',
-            currencyDisplay: 'narrowSymbol',
-          }).format(balances?.find({ address: address })?.sum?.fiat('usd').transferable || 0)
-        : '-'
+  const fiatTotal =
+    address !== undefined
+      ? (balances?.find({ address: address }).sum.fiat('usd').transferable ?? 0).toLocaleString(undefined, {
+          style: 'currency',
+          currency: 'USD',
+          currencyDisplay: 'narrowSymbol',
+        }) ?? ' -'
+      : assetsValue
 
   return (
     <div className={`wallet-total ${className}`}>
       <div className="title">{t('Portfolio value')}</div>
       <div className="amount">
-        <span>{!!fiatTotal ? fiatTotal : <StyledLoader />}</span>
+        <span>{fiatTotal ?? <StyledLoader />}</span>
       </div>
     </div>
   )

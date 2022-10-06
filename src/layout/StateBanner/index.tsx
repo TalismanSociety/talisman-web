@@ -9,10 +9,10 @@ export const StateBanner = () => {
   const { status, address } = useActiveAccount()
   const { assetsValue, balances } = useBalances()
 
-  let hasEmptyBags = false
-
-  if (!address) hasEmptyBags = assetsValue === '0.00'
-  else hasEmptyBags = balances?.find({ address: address })?.sum?.fiat('usd').transferable === 0
+  const hasEmptyBags =
+    address !== undefined
+      ? balances?.find({ address: address })?.sum?.fiat('usd').transferable === 0
+      : assetsValue === '0.00'
 
   if (status === 'UNAVAILABLE') {
     return <NoWalletBanner />

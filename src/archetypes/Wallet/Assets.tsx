@@ -6,6 +6,7 @@ import { Balance, BalanceFormatter, Balances } from '@talismn/balances'
 import { useChaindata, useChains, useEvmNetworks } from '@talismn/balances-react'
 import { Token } from '@talismn/chaindata-provider'
 import { formatDecimals } from '@talismn/util'
+import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
@@ -38,10 +39,12 @@ type AssetBalanceProps = {
   address: string | undefined
 }
 const AssetBalance = styled(({ token, balances, address }: AssetBalanceProps) => {
-  let tokenBalances = null
+  // let tokenBalances = null
 
-  if (!address) tokenBalances = balances?.find({ tokenId: token.id })
-  else tokenBalances = balances?.find([{ address: address, tokenId: token.id }])
+  const tokenBalances =
+    address !== undefined
+      ? balances?.find([{ address: address, tokenId: token.id }])
+      : balances?.find({ tokenId: token.id })
   if (!tokenBalances) return null
 
   const tokenAmount = tokenBalances.sorted.reduce((sum, balance) => sum + balance.transferable.planck, BigInt('0'))
@@ -50,13 +53,11 @@ const AssetBalance = styled(({ token, balances, address }: AssetBalanceProps) =>
   const tokenAmountFormatted = formatDecimals(new BalanceFormatter(tokenAmount, token.decimals).tokens)
 
   const fiatAmount =
-    typeof tokenBalances.sum.fiat('usd').transferable === 'number'
-      ? new Intl.NumberFormat(undefined, {
-          style: 'currency',
-          currency: 'usd',
-          currencyDisplay: 'narrowSymbol',
-        }).format(tokenBalances.sum.fiat('usd').transferable || 0)
-      : '-'
+    (balances?.find({ tokenId: token.id }).sum.fiat('usd').transferable ?? 0).toLocaleString(undefined, {
+      style: 'currency',
+      currency: 'USD',
+      currencyDisplay: 'narrowSymbol',
+    }) ?? '-'
 
   const isOrml = token.type === 'substrate-orml'
 
@@ -80,80 +81,78 @@ const Assets = styled(({ className }) => {
   const { t } = useTranslation()
 
   const { balances, tokenIds, tokens, assetsValue } = useBalances()
-  const address = useActiveAccount().address
+  const { address } = useActiveAccount()
   const chaindata = useChaindata()
 
   const chains = useChains(chaindata)
   const evmNetworks = useEvmNetworks(chaindata)
 
-  let fiatTotal: string | null = ''
-
-  if (!address) fiatTotal = assetsValue
-  else
-    fiatTotal =
-      typeof balances?.find({ address: address })?.sum?.fiat('usd').transferable === 'number'
-        ? new Intl.NumberFormat(undefined, {
-            style: 'currency',
-            currency: 'usd',
-            currencyDisplay: 'narrowSymbol',
-          }).format(balances?.find({ address: address })?.sum?.fiat('usd').transferable || 0)
-        : '-'
+  const fiatTotal =
+    address !== undefined
+      ? (balances?.find({ address: address }).sum.fiat('usd').transferable ?? 0).toLocaleString(undefined, {
+          style: 'currency',
+          currency: 'USD',
+          currencyDisplay: 'narrowSymbol',
+        }) ?? ' -'
+      : assetsValue
 
   const value = balances?.find({ address: address })?.sum?.fiat('usd').transferable
 
+  const assetBalances = useMemo(
+    () =>
+      tokenIds
+        .map(tokenId => tokens[tokenId])
+        .sort((a, b) => {
+          // TODO: Move token sorting into the chaindata subsquid indexer
+          if (a.chain?.id === 'polkadot' && b.chain?.id !== 'polkadot') return -1
+          if (b.chain?.id === 'polkadot' && a.chain?.id !== 'polkadot') return 1
+          if (a.chain?.id === 'kusama' && b.chain?.id !== 'kusama') return -1
+          if (b.chain?.id === 'kusama' && a.chain?.id !== 'kusama') return 1
+
+          if ((a.chain?.id || a.evmNetwork?.id) === (b.chain?.id || b.evmNetwork?.id)) {
+            if (a.type === 'substrate-native') return -1
+            if (b.type === 'substrate-native') return 1
+            if (a.type === 'evm-native') return -1
+            if (b.type === 'evm-native') return 1
+
+            const aCmp = a.symbol?.toLowerCase() || a.id
+            const bCmp = b.symbol?.toLowerCase() || b.id
+
+            return aCmp.localeCompare(bCmp)
+          }
+
+          const aChain = a.chain?.id ? chains[a.chain.id] : a.evmNetwork?.id ? evmNetworks[a.evmNetwork.id] : null
+          const bChain = b.chain?.id ? chains[b.chain.id] : b.evmNetwork?.id ? evmNetworks[b.evmNetwork.id] : null
+
+          const aCmp = aChain?.name?.toLowerCase() || a.chain?.id || a.evmNetwork?.id
+          const bCmp = bChain?.name?.toLowerCase() || b.chain?.id || b.evmNetwork?.id
+
+          if (aCmp === undefined && bCmp === undefined) return 0
+          if (aCmp === undefined) return 1
+          if (bCmp === undefined) return -1
+
+          return aCmp.localeCompare(bCmp)
+        })
+        .map(token => <AssetBalance key={token.id} token={token} balances={balances} address={address} />),
+    [address, balances, chains, evmNetworks, tokenIds, tokens]
+  )
+
   return (
     <section className={`wallet-assets ${className}`}>
-      <Panel title={t('Assets')} subtitle={!balances ? <Loader /> : fiatTotal}>
+      <Panel title={t('Assets')} subtitle={balances !== undefined ? fiatTotal : <Loader />}>
         <ExtensionStatusGate unavailable={<ExtensionUnavailable />}>
-          {(balances?.sorted.length || 0) > 0 ? (
-            tokenIds
-              .map(tokenId => tokens[tokenId])
-              .sort((a, b) => {
-                // TODO: Move token sorting into the chaindata subsquid indexer
-                if (a.chain?.id === 'polkadot' && b.chain?.id !== 'polkadot') return -1
-                if (b.chain?.id === 'polkadot' && a.chain?.id !== 'polkadot') return 1
-                if (a.chain?.id === 'kusama' && b.chain?.id !== 'kusama') return -1
-                if (b.chain?.id === 'kusama' && a.chain?.id !== 'kusama') return 1
-
-                if ((a.chain?.id || a.evmNetwork?.id) === (b.chain?.id || b.evmNetwork?.id)) {
-                  if (a.type === 'substrate-native') return -1
-                  if (b.type === 'substrate-native') return 1
-                  if (a.type === 'evm-native') return -1
-                  if (b.type === 'evm-native') return 1
-
-                  const aCmp = a.symbol?.toLowerCase() || a.id
-                  const bCmp = b.symbol?.toLowerCase() || b.id
-
-                  return aCmp.localeCompare(bCmp)
-                }
-
-                const aChain = a.chain?.id ? chains[a.chain.id] : a.evmNetwork?.id ? evmNetworks[a.evmNetwork.id] : null
-                const bChain = b.chain?.id ? chains[b.chain.id] : b.evmNetwork?.id ? evmNetworks[b.evmNetwork.id] : null
-
-                const aCmp = aChain?.name?.toLowerCase() || a.chain?.id || a.evmNetwork?.id
-                const bCmp = bChain?.name?.toLowerCase() || b.chain?.id || b.evmNetwork?.id
-
-                if (aCmp === undefined && bCmp === undefined) return 0
-                if (aCmp === undefined) return 1
-                if (bCmp === undefined) return -1
-
-                return aCmp.localeCompare(bCmp)
-              })
-              .map(token => <AssetBalance key={token.id} token={token} balances={balances} address={address} />)
-          ) : (
-            <AssetsLoading />
-          )}
-          {value === 0 && !!address ? (
+          {(balances?.sorted.length || 0) > 0 ? assetBalances : <AssetsLoading />}
+          {value === 0 && address ? (
             <>
               <PanelSection>
                 <AssetItem
                   token={tokens['kusama-substrate-native-ksm']}
                   tokenAmount={'0'}
-                  fiatAmount={new Intl.NumberFormat(undefined, {
+                  fiatAmount={(0).toLocaleString(undefined, {
                     style: 'currency',
-                    currency: 'usd',
+                    currency: 'USD',
                     currencyDisplay: 'narrowSymbol',
-                  }).format(0)}
+                  })}
                   title={tokens['kusama-substrate-native-ksm'].symbol}
                   subtitle={'Relay Chain'}
                 />
@@ -162,11 +161,11 @@ const Assets = styled(({ className }) => {
                 <AssetItem
                   token={tokens['polkadot-substrate-native-dot']}
                   tokenAmount={'0'}
-                  fiatAmount={new Intl.NumberFormat(undefined, {
+                  fiatAmount={(0).toLocaleString(undefined, {
                     style: 'currency',
-                    currency: 'usd',
+                    currency: 'USD',
                     currencyDisplay: 'narrowSymbol',
-                  }).format(0)}
+                  })}
                   title={tokens['polkadot-substrate-native-dot'].symbol}
                   subtitle={'Relay Chain'}
                 />
@@ -197,7 +196,7 @@ const Assets = styled(({ className }) => {
 export default Assets
 
 const AssetsLoading = styled(({ className }) => {
-  const placeholderAssets = ['🍜', '🍜', '🍜', '🍜', '🍜']
+  const placeholderAssets = Array(5).fill('🍜')
 
   return (
     <PanelSection className={className}>
@@ -285,9 +284,9 @@ const ExtensionUnavailable = styled(props => {
 
 function getNetworkType({ chain, evmNetwork }: Balance): string | null {
   if (evmNetwork) return evmNetwork.isTestnet ? 'EVM Testnet' : 'EVM Blockchain'
-  if (chain) {
-    if (chain.isTestnet) return 'Testnet'
-    return chain.paraId ? 'Parachain' : (chain.parathreads || []).length > 0 ? 'Relay Chain' : 'Blockchain'
-  }
-  return null
+
+  if (chain === null) return null
+
+  if (chain.isTestnet) return 'Testnet'
+  return chain.paraId ? 'Parachain' : (chain.parathreads ?? []).length > 0 ? 'Relay Chain' : 'Blockchain'
 }

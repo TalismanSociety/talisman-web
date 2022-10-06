@@ -110,19 +110,14 @@ const Dropdown = styled(
               const { assetsValue, balances } = _useBalances()
 
               // Do the filtering
-
-              let fiatBalance = null
-
-              if (!address) fiatBalance = assetsValue
-              else
-                fiatBalance =
-                  typeof balances?.find({ address: address })?.sum?.fiat('usd').transferable === 'number'
-                    ? new Intl.NumberFormat(undefined, {
-                        style: 'currency',
-                        currency: 'usd',
-                        currencyDisplay: 'narrowSymbol',
-                      }).format(balances?.find({ address: address })?.sum?.fiat('usd').transferable || 0)
-                    : '-'
+              const fiatBalance =
+                address !== undefined
+                  ? (balances?.find({ address: address }).sum.fiat('usd').transferable ?? 0).toLocaleString(undefined, {
+                      style: 'currency',
+                      currency: 'USD',
+                      currencyDisplay: 'narrowSymbol',
+                    }) ?? ' -'
+                  : assetsValue
 
               return (
                 <div
@@ -174,13 +169,13 @@ const Dropdown = styled(
                     {address ? (
                       // show usd when no chainId specified
                       parachainId === undefined ? (
-                        <Pendor prefix={!fiatBalance && '-'}>{fiatBalance}</Pendor>
+                        <Pendor>{fiatBalance}</Pendor>
                       ) : (
                         <Pendor suffix={` ${nativeToken}`}>{fiatBalance}</Pendor>
                       )
                     ) : (
                       <>
-                        <Pendor prefix={!fiatBalance && '-'}>{fiatBalance}</Pendor>
+                        <Pendor>{fiatBalance}</Pendor>
                       </>
                     )}
                   </span>
