@@ -8,9 +8,9 @@ import { SupportedRelaychains } from '@libs/talisman/util/_config'
 import { ApiPromise, WsProvider } from '@polkadot/api'
 import { isEthereumChecksum } from '@polkadot/util-crypto'
 import { useChain } from '@talismn/api-react-hooks'
+import { getWalletBySource } from '@talismn/connect-wallets'
 import { encodeAnyAddress } from '@talismn/util'
 import { Deferred } from '@talismn/util-legacy'
-import { getWalletBySource } from '@talismn/connect-wallets'
 import {
   PropsWithChildren,
   useContext as _useContext,
