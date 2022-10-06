@@ -1,4 +1,5 @@
 import * as Account from './account'
+import * as Balance from './balances'
 import * as Chainmeta from './chainmeta'
 import * as Crowdloan from './crowdloan'
 import * as Extension from './extension'
@@ -23,6 +24,8 @@ export * from './parachain'
 // crowdloans stuff
 export * from './crowdloan'
 
+export * from './balances'
+
 // subquery pieces
 export const useQuery = Subquery.useQuery
 export const gql = Subquery.gql
@@ -36,9 +39,11 @@ const Provider = ({ children }) => (
     <Extension.Provider>
       <Chainmeta.Provider>
         <Account.Provider>
-          <Parachain.Provider>
-            <Crowdloan.Provider>{children}</Crowdloan.Provider>
-          </Parachain.Provider>
+          <Balance.Provider>
+            <Parachain.Provider>
+              <Crowdloan.Provider>{children}</Crowdloan.Provider>
+            </Parachain.Provider>
+          </Balance.Provider>
         </Account.Provider>
       </Chainmeta.Provider>
     </Extension.Provider>

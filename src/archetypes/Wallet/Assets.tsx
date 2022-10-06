@@ -1,92 +1,29 @@
-import { ChainLogo, ExtensionStatusGate, Info, Panel, PanelSection, Pendor } from '@components'
+import { ExtensionStatusGate, Info, Panel, PanelSection, Pendor, TokenLogo } from '@components'
 import styled from '@emotion/styled'
-import { calculateAssetPortfolioAmounts, usePortfolio, useTaggedAmountsInPortfolio } from '@libs/portfolio'
-import { useAccountAddresses, useExtensionAutoConnect, useParachainDetailsById } from '@libs/talisman'
-import { useTokenPrice } from '@libs/tokenprices'
-import {
-  Balance,
-  BalanceWithTokens,
-  BalanceWithTokensWithPrice,
-  addPriceToTokenBalances,
-  addTokensToBalances,
-  groupBalancesByChain,
-  useBalances,
-  useChain,
-} from '@talismn/api-react-hooks'
-import { addBigNumbers, useFuncMemo } from '@talismn/util'
-import customRpcs from '@util/customRpcs'
-import { formatCommas, formatCurrency } from '@util/helpers'
+import { ReactComponent as Loader } from '@icons/loader.svg'
+import { useActiveAccount } from '@libs/talisman'
+import { useBalances } from '@libs/talisman'
+import { Balance, BalanceFormatter, Balances } from '@talismn/balances'
+import { useChaindata, useChains, useEvmNetworks } from '@talismn/balances-react'
+import { Token } from '@talismn/chaindata-provider'
+import { formatDecimals } from '@talismn/util'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 
-const hasBalance = (balances: Array<Balance>, addresses?: Array<string>) => {
-  return balances
-    .filter(balance => balance !== null)
-    .filter(balance => addresses?.includes(balance.address))
-    .some(balance => balance.total !== '0')
+type AssetItemProps = {
+  className?: string
+  token: Token
+  tokenAmount: string
+  fiatAmount: string
+  title?: string | null
+  subtitle?: string | null
 }
-
-const AssetItem = styled(({ id, balances, addresses, className }) => {
-  const chain = useChain(id)
-
-  const { status, accounts } = useExtensionAutoConnect()
-  const { parachainDetails } = useParachainDetailsById(id)
-  const isMoonriver = ['Moonriver', 'Moonbeam'].includes(parachainDetails?.name as string)
-  const hasNoEthereumAddress = useMemo(
-    () => status === 'OK' && accounts.every(account => account.type !== 'ethereum'),
-    [status, accounts]
-  )
-
-  const { name, longName, nativeToken, tokenDecimals } = chain
-  const { price: tokenPrice, loading: priceLoading } = useTokenPrice(nativeToken)
-
-  const tokenBalances = useFuncMemo(addTokensToBalances, balances, nativeToken ? tokenDecimals : undefined)
-  const pricedTokenBalances = useFuncMemo(addPriceToTokenBalances, tokenBalances, tokenPrice)
-
-  const portfolioAmounts = useFuncMemo(calculateAssetPortfolioAmounts, pricedTokenBalances)
-  useTaggedAmountsInPortfolio(portfolioAmounts)
-
-  const tokenSymbol = useFuncMemo(token => token || 'Planck', nativeToken)
-  const tokens = useFuncMemo(
-    (tokenBalances, addresses) =>
-      tokenBalances
-        .filter((balance): balance is BalanceWithTokens => balance !== null)
-        .filter(balance => addresses.includes(balance.address))
-        .map(balance => balance.tokens)
-        .reduce(addBigNumbers, undefined),
-    tokenBalances,
-    addresses
-  )
-  const usd = useFuncMemo(
-    (pricedBalances, addresses) =>
-      pricedBalances
-        .filter((balance): balance is BalanceWithTokensWithPrice => balance !== null)
-        .filter(balance => addresses.includes(balance.address))
-        .map(balance => balance.usd)
-        .reduce(addBigNumbers, undefined),
-    pricedTokenBalances,
-    addresses
-  )
-  return (
-    <div className={className}>
-      <Info title={name} subtitle={longName || name} graphic={<ChainLogo chain={chain} type="logo" size={4} />} />
-      {isMoonriver && hasNoEthereumAddress ? (
-        <MoonriverWalletInstructions id={id} />
-      ) : (
-        <Info
-          title={<Pendor suffix={` ${tokenSymbol}`}>{tokens && formatCommas(tokens)}</Pendor>}
-          subtitle={
-            tokens ? (
-              <Pendor prefix={!usd && '-'} require={!priceLoading}>
-                {usd && formatCurrency(usd)}
-              </Pendor>
-            ) : null
-          }
-        />
-      )}
-    </div>
-  )
-})`
+const AssetItem = styled(({ token, tokenAmount, fiatAmount, title, subtitle, className }: AssetItemProps) => (
+  <div className={className}>
+    <Info title={title} subtitle={subtitle} graphic={<TokenLogo token={token} type="logo" size={4} />} />
+    <Info title={<Pendor suffix={` ${token?.symbol}`}>{tokenAmount}</Pendor>} subtitle={fiatAmount} />
+  </div>
+))`
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -96,99 +33,145 @@ const AssetItem = styled(({ id, balances, addresses, className }) => {
   }
 `
 
-const MoonriverWalletInstructions = styled(({ className, id }) => {
-  const { t } = useTranslation()
-  const { parachainDetails } = useParachainDetailsById(id)
-  const asset = parachainDetails?.name
+type AssetBalanceProps = {
+  token: Token
+  balances: Balances | undefined
+  address: string | undefined
+}
+const AssetBalance = styled(({ token, balances, address }: AssetBalanceProps) => {
+  // let tokenBalances = null
+
+  const tokenBalances =
+    address !== undefined
+      ? balances?.find([{ address: address, tokenId: token.id }])
+      : balances?.find({ tokenId: token.id })
+  if (!tokenBalances) return null
+
+  const tokenAmount = tokenBalances.sorted.reduce((sum, balance) => sum + balance.transferable.planck, BigInt('0'))
+  if (tokenAmount === BigInt('0')) return null
+
+  const tokenAmountFormatted = formatDecimals(new BalanceFormatter(tokenAmount, token.decimals).tokens)
+
+  const fiatAmount =
+    (balances?.find({ tokenId: token.id }).sum.fiat('usd').transferable ?? 0).toLocaleString(undefined, {
+      style: 'currency',
+      currency: 'USD',
+      currencyDisplay: 'narrowSymbol',
+    }) ?? '-'
+
+  const isOrml = token.type === 'substrate-orml'
+
+  const chainName = tokenBalances?.sorted[0]?.chain?.name ?? tokenBalances?.sorted[0]?.evmNetwork?.name
+  const chainType = getNetworkType(tokenBalances.sorted[0])
 
   return (
-    <Info
-      className={className}
-      title={`🌕  ${t('Unavailable')}`}
-      subtitle={
-        <a
-          href="https://medium.com/we-are-talisman/how-to-add-movr-and-glmr-balances-to-the-talisman-web-app-280b58a79109"
-          target="_blank"
-          rel="noreferrer noopener"
-        >
-          <div className="text-vertical-center">
-            <span className="plus-icon">(+)</span> {`${t('Add {{asset}} Balance', { asset })}`}
-          </div>
-        </a>
-      }
-    />
-  )
-})`
-  .text-vertical-center {
-    display: flex;
-    align-items: center;
-  }
-  .plus-icon {
-    font: 0.75em monospace;
-    letter-spacing: -1px;
-    margin-right: 0.25em;
-  }
-  > .text > .subtitle a {
-    color: var(--color-primary);
-  }
-`
-
-const AssetBalance = styled(({ id, balances, addresses }) => {
-  const { status, accounts } = useExtensionAutoConnect()
-  const { parachainDetails } = useParachainDetailsById(id)
-
-  const isMoonriver = ['Moonriver', 'Moonbeam'].includes(parachainDetails?.name as string)
-  const hasNoEthereumAddress = useMemo(
-    () => status === 'OK' && accounts.every(account => account.type !== 'ethereum'),
-    [status, accounts]
-  )
-
-  const shouldShowInstructions = isMoonriver && hasNoEthereumAddress
-  const isNetworkId = id === '0' || id === '2'
-
-  if (!isNetworkId) {
-    if (!hasBalance(balances, addresses) && !shouldShowInstructions) {
-      return null
-    }
-  }
-  if (isMoonriver) {
-    return null
-  }
-  return (
-    <PanelSection key={id}>
-      <AssetItem id={id} balances={balances} addresses={addresses} />
+    <PanelSection key={token.id}>
+      <AssetItem
+        token={token}
+        tokenAmount={tokenAmountFormatted}
+        fiatAmount={fiatAmount}
+        title={isOrml ? `${chainName} (${token.symbol})` : chainName}
+        subtitle={chainType}
+      />
     </PanelSection>
   )
 })``
 
 const Assets = styled(({ className }) => {
   const { t } = useTranslation()
-  const chainIds = useMemo(() => Object.keys(customRpcs), [])
 
-  const { accounts } = useExtensionAutoConnect()
-  const addresses = useMemo(() => accounts.map((account: any) => account.address), [accounts])
-  const accountAddresses = useAccountAddresses()
+  const { balances, tokenIds, tokens, assetsValue } = useBalances()
+  const { address } = useActiveAccount()
+  const chaindata = useChaindata()
 
-  const { balances } = useBalances(addresses, chainIds, customRpcs)
-  const balancesByChain = useFuncMemo(groupBalancesByChain, chainIds, balances)
+  const chains = useChains(chaindata)
+  const evmNetworks = useEvmNetworks(chaindata)
 
-  const { totalAssetsUsdByAddress } = usePortfolio()
-  const assetsUsd = useMemo(
+  const fiatTotal =
+    address !== undefined
+      ? (balances?.find({ address: address }).sum.fiat('usd').transferable ?? 0).toLocaleString(undefined, {
+          style: 'currency',
+          currency: 'USD',
+          currencyDisplay: 'narrowSymbol',
+        }) ?? ' -'
+      : assetsValue
+
+  const value = balances?.find({ address: address })?.sum?.fiat('usd').transferable
+
+  const assetBalances = useMemo(
     () =>
-      Object.entries(totalAssetsUsdByAddress || {})
-        .filter(([address]) => accountAddresses && accountAddresses.includes(address))
-        .map(([, assetsUsd]) => assetsUsd)
-        .reduce(addBigNumbers, undefined),
-    [totalAssetsUsdByAddress, accountAddresses]
+      tokenIds
+        .map(tokenId => tokens[tokenId])
+        .sort((a, b) => {
+          // TODO: Move token sorting into the chaindata subsquid indexer
+          if (a.chain?.id === 'polkadot' && b.chain?.id !== 'polkadot') return -1
+          if (b.chain?.id === 'polkadot' && a.chain?.id !== 'polkadot') return 1
+          if (a.chain?.id === 'kusama' && b.chain?.id !== 'kusama') return -1
+          if (b.chain?.id === 'kusama' && a.chain?.id !== 'kusama') return 1
+
+          if ((a.chain?.id || a.evmNetwork?.id) === (b.chain?.id || b.evmNetwork?.id)) {
+            if (a.type === 'substrate-native') return -1
+            if (b.type === 'substrate-native') return 1
+            if (a.type === 'evm-native') return -1
+            if (b.type === 'evm-native') return 1
+
+            const aCmp = a.symbol?.toLowerCase() || a.id
+            const bCmp = b.symbol?.toLowerCase() || b.id
+
+            return aCmp.localeCompare(bCmp)
+          }
+
+          const aChain = a.chain?.id ? chains[a.chain.id] : a.evmNetwork?.id ? evmNetworks[a.evmNetwork.id] : null
+          const bChain = b.chain?.id ? chains[b.chain.id] : b.evmNetwork?.id ? evmNetworks[b.evmNetwork.id] : null
+
+          const aCmp = aChain?.name?.toLowerCase() || a.chain?.id || a.evmNetwork?.id
+          const bCmp = bChain?.name?.toLowerCase() || b.chain?.id || b.evmNetwork?.id
+
+          if (aCmp === undefined && bCmp === undefined) return 0
+          if (aCmp === undefined) return 1
+          if (bCmp === undefined) return -1
+
+          return aCmp.localeCompare(bCmp)
+        })
+        .map(token => <AssetBalance key={token.id} token={token} balances={balances} address={address} />),
+    [address, balances, chains, evmNetworks, tokenIds, tokens]
   )
 
   return (
     <section className={`wallet-assets ${className}`}>
-      <Panel title={t('Assets')} subtitle={assetsUsd && formatCurrency(assetsUsd)}>
+      <Panel title={t('Assets')} subtitle={balances !== undefined ? fiatTotal : <Loader />}>
         <ExtensionStatusGate unavailable={<ExtensionUnavailable />}>
-          {Object.entries(balancesByChain).map(([chainId, balances]) => {
-            return <AssetBalance key={chainId} id={chainId} balances={balances} addresses={accountAddresses} />
-          })}
+          {(balances?.sorted.length || 0) > 0 ? assetBalances : <AssetsLoading />}
+          {value === 0 && address ? (
+            <>
+              <PanelSection>
+                <AssetItem
+                  token={tokens['kusama-substrate-native-ksm']}
+                  tokenAmount={'0'}
+                  fiatAmount={(0).toLocaleString(undefined, {
+                    style: 'currency',
+                    currency: 'USD',
+                    currencyDisplay: 'narrowSymbol',
+                  })}
+                  title={tokens['kusama-substrate-native-ksm'].symbol}
+                  subtitle={'Relay Chain'}
+                />
+              </PanelSection>
+              <PanelSection>
+                <AssetItem
+                  token={tokens['polkadot-substrate-native-dot']}
+                  tokenAmount={'0'}
+                  fiatAmount={(0).toLocaleString(undefined, {
+                    style: 'currency',
+                    currency: 'USD',
+                    currencyDisplay: 'narrowSymbol',
+                  })}
+                  title={tokens['polkadot-substrate-native-dot'].symbol}
+                  subtitle={'Relay Chain'}
+                />
+              </PanelSection>
+            </>
+          ) : null}
         </ExtensionStatusGate>
       </Panel>
     </section>
@@ -201,9 +184,64 @@ const Assets = styled(({ className }) => {
       color: red;
     }
   }
+
+  > div {
+    > div {
+      max-height: 400px;
+      overflow-y: auto;
+    }
+  }
 `
 
 export default Assets
+
+const AssetsLoading = styled(({ className }) => {
+  const placeholderAssets = Array(5).fill('🍜')
+
+  return (
+    <PanelSection className={className}>
+      {placeholderAssets.map((asset, index) => (
+        <div className="loading-segment animate" key={index}>
+          <span>{asset}</span>
+        </div>
+      ))}
+    </PanelSection>
+  )
+})`
+  padding: 0 !important;
+
+  .loading-segment {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 71px;
+
+    border-top: 1px solid rgba(165, 165, 165, 0.05);
+
+    > span {
+      opacity: 0;
+    }
+
+    > *:last-child {
+      text-align: right;
+    }
+  }
+
+  .animate {
+    animation: shimmer 1.5s infinite;
+    background: linear-gradient(90deg, rgba(26, 26, 26, 1) 15%, rgba(38, 38, 38, 1) 25%, rgba(26, 26, 26, 1) 26%);
+    background-size: 3500px 100%;
+  }
+
+  @keyframes shimmer {
+    0% {
+      background-position: -1000px 0;
+    }
+    100% {
+      background-position: 1000px 0;
+    }
+  }
+`
 
 const ExtensionUnavailable = styled(props => {
   const { t } = useTranslation()
@@ -233,3 +271,22 @@ const ExtensionUnavailable = styled(props => {
     font-size: 1.6rem;
   }
 `
+
+/**
+ * Given an array of `addresses` and an array of `tokenIds`, will return an `addressesByToken` map like so:
+ *
+ *     {
+ *       [tokenIdOne]: [addressOne, addressTwo, etc]
+ *       [tokenIdTwo]: [addressOne, addressTwo, etc]
+ *       [etc]:        [addressOne, addressTwo, etc]
+ *     }
+ */
+
+function getNetworkType({ chain, evmNetwork }: Balance): string | null {
+  if (evmNetwork) return evmNetwork.isTestnet ? 'EVM Testnet' : 'EVM Blockchain'
+
+  if (chain === null) return null
+
+  if (chain.isTestnet) return 'Testnet'
+  return chain.paraId ? 'Parachain' : (chain.parathreads ?? []).length > 0 ? 'Relay Chain' : 'Blockchain'
+}

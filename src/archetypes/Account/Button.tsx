@@ -7,12 +7,14 @@ import { ReactComponent as AlertCircle } from '@icons/alert-circle.svg'
 import { ReactComponent as ChevronDown } from '@icons/chevron-down.svg'
 import { usePortfolio } from '@libs/portfolio'
 import { DAPP_NAME, useActiveAccount, useChainByGenesis, useExtensionAutoConnect } from '@libs/talisman'
+import { useBalances as _useBalances } from '@libs/talisman'
 import { useTalismanInstalled } from '@libs/talisman/useIsTalismanInstalled'
 import Identicon from '@polkadot/react-identicon'
 import { addTokensToBalances, groupBalancesByAddress, useBalances, useChain } from '@talismn/api-react-hooks'
 import { WalletSelect } from '@talismn/connect-components'
 import { getWalletBySource } from '@talismn/connect-wallets'
-import { addBigNumbers, encodeAnyAddress, useFuncMemo } from '@talismn/util'
+import { encodeAnyAddress } from '@talismn/util'
+import { addBigNumbers, useFuncMemo } from '@talismn/util-legacy'
 import { device } from '@util/breakpoints'
 import customRpcs from '@util/customRpcs'
 import { buyNow } from '@util/fiatOnRamp'
@@ -93,11 +95,11 @@ const Dropdown = styled(
     const { t } = useTranslation()
     const { switchAccount } = useActiveAccount()
     const { accounts, disconnect } = useExtensionAutoConnect()
-    const { totalUsd, totalUsdByAddress } = usePortfolio()
+    // const { totalUsd, totalUsdByAddress } = usePortfolio()
 
-    const totalBalanceByAddressFunc = address =>
-      tokenBalancesByAddress[address] &&
-      tokenBalancesByAddress[address].map(balance => balance?.tokens).reduce(addBigNumbers, undefined)
+    // const totalBalanceByAddressFunc = address =>
+    //   tokenBalancesByAddress[address] &&
+    //   tokenBalancesByAddress[address].map(balance => balance?.tokens).reduce(addBigNumbers, undefined)
 
     return (
       open && (
@@ -105,7 +107,19 @@ const Dropdown = styled(
           {totalBalanceByAddress === '0' && showBuy && <BuyItem nativeToken={nativeToken} onClick={closeParent} />}
           {(allAccounts ? [{ name: t('All Accounts') }, ...accounts] : accounts).map(
             ({ address, name, type, genesisHash }, index) => {
-              const totalBalance = totalBalanceByAddressFunc(address)
+              // const { assetsValue } = _useBalances()
+              const { assetsValue, balances } = _useBalances()
+
+              // Do the filtering
+              const fiatBalance =
+                address !== undefined
+                  ? (balances?.find({ address: address }).sum.fiat('usd').transferable ?? 0).toLocaleString(undefined, {
+                      style: 'currency',
+                      currency: 'USD',
+                      currencyDisplay: 'narrowSymbol',
+                    }) ?? ' -'
+                  : assetsValue
+
               return (
                 <div
                   key={index}
@@ -156,16 +170,13 @@ const Dropdown = styled(
                     {address ? (
                       // show usd when no chainId specified
                       parachainId === undefined ? (
-                        <Pendor prefix={!totalUsdByAddress[encodeAnyAddress(address, 42)] && '-'}>
-                          {totalUsdByAddress[encodeAnyAddress(address, 42)] &&
-                            formatCurrency(totalUsdByAddress[encodeAnyAddress(address, 42)])}
-                        </Pendor>
+                        <Pendor>{fiatBalance}</Pendor>
                       ) : (
-                        <Pendor suffix={` ${nativeToken}`}>{totalBalance && formatCommas(totalBalance)}</Pendor>
+                        <Pendor suffix={` ${nativeToken}`}>{fiatBalance}</Pendor>
                       )
                     ) : (
                       <>
-                        <Pendor prefix={!totalUsd && '-'}>{totalUsd && formatCurrency(totalUsd)}</Pendor>
+                        <Pendor>{fiatBalance}</Pendor>
                       </>
                     )}
                   </span>
@@ -262,6 +273,7 @@ const Dropdown = styled(
     .name-address {
       display: block;
       min-width: 0;
+      max-width: 15rem;
     }
 
     .name {

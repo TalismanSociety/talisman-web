@@ -112,7 +112,11 @@ const TalismanLibsFastRefreshPlugin = {
 module.exports = {
   babel: {
     presets: [['@babel/preset-react', { runtime: 'automatic', importSource: '@emotion/react' }]],
-    plugins: ['@emotion/babel-plugin'],
+    plugins: [
+      '@emotion/babel-plugin',
+      '@babel/plugin-proposal-class-properties',
+      '@babel/plugin-proposal-private-property-in-object',
+    ],
   },
   plugins: [ImportAliasesPlugin, ImportMetaLoaderPlugin, TalismanLibsFastRefreshPlugin],
 }

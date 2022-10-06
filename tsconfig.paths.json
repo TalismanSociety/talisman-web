@@ -15,7 +15,9 @@
       "@routes": ["./routes"],
       "@routes/*": ["./routes/*"],
       "@util": ["./util"],
-      "@util/*": ["./util/*"]
+      "@util/*": ["./util/*"],
+      "@layout": ["./layout"],
+      "@layout/*": ["./layout/*"]
     }
   }
 }

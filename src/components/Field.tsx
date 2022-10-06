@@ -71,7 +71,7 @@ const FieldWrapper = styled(({ type, prefix, suffix, label, dim, children, class
       left: 1em;
     }
     .suffix {
-      right: 1em;
+      right: 0.7em;
     }
 
     input,
