@@ -10,6 +10,9 @@ import { Suspense } from 'react'
 import { BrowserRouter as Router } from 'react-router-dom'
 
 import ThemeProvider from './App.Theme'
+import { initPosthog } from './config/posthog'
+
+initPosthog()
 
 const Loader = () => {
   return (

@@ -2,6 +2,7 @@ import { Redirect, Route, Switch } from 'react-router-dom'
 
 import Layout from '../layout'
 import Buy from './Buy'
+import Explore from './Explore'
 import Home from './Home'
 import NFTsPage from './NFTsPage'
 import Wallet from './Wallet'
@@ -19,6 +20,11 @@ const Routes = () => (
     <Route exact path="/nfts">
       <Layout>
         <NFTsPage />
+      </Layout>
+    </Route>
+    <Route exact path="/explore">
+      <Layout>
+        <Explore />
       </Layout>
     </Route>
     <Route

@@ -4493,6 +4493,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@sentry/types@npm:^7.2.0":
+  version: 7.14.1
+  resolution: "@sentry/types@npm:7.14.1"
+  checksum: c6c155514f044f5abc9a9627be9d8c5d4126d5f627c0bc5fee9e7beb06c08862bdcbea967c26371ae0e26288ac846083c6a02a06885384296f44acf369b62a82
+  languageName: node
+  linkType: hard
+
 "@sinonjs/commons@npm:^1.7.0":
   version: 1.8.2
   resolution: "@sinonjs/commons@npm:1.8.2"
@@ -5019,6 +5026,7 @@ __metadata:
     lint-staged: ^11.1.2
     lodash: ^4.17.21
     md5: ^2.3.0
+    posthog-js: ^1.30.0
     prettier: ^2.3.2
     prettier-plugin-import-sort: ^0.0.7
     pretty-quick: ^3.1.3
@@ -10822,6 +10830,13 @@ __metadata:
     node-domexception: ^1.0.0
     web-streams-polyfill: ^3.0.3
   checksum: f19bc28a2a0b9626e69fd7cf3a05798706db7f6c7548da657cbf5026a570945f5eeaedff52007ea35c8bcd3d237c58a20bf1543bc568ab2422411d762dd3d5bf
+  languageName: node
+  linkType: hard
+
+"fflate@npm:^0.4.1":
+  version: 0.4.8
+  resolution: "fflate@npm:0.4.8"
+  checksum: 29d8cbe44d5e7f53e7f5a160ac7f9cc025480c7b3bfd85c5f898cbe20dfa2dad4732daa534982664bf30b35896a90af44ea33ede5d94c5ffd1b8b0c0a0a56ca2
   languageName: node
   linkType: hard
 
@@ -17481,6 +17496,17 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
+"posthog-js@npm:^1.30.0":
+  version: 1.32.2
+  resolution: "posthog-js@npm:1.32.2"
+  dependencies:
+    "@sentry/types": ^7.2.0
+    fflate: ^0.4.1
+    rrweb-snapshot: ^1.1.14
+  checksum: 0962e5e63be98e079145646ff2d78c4c9c8b0bc5737419f89bf8459ee97165d0f24ef22cd347bdbc137f150cd6a0d14c7eedc5b2f87444eed229464c15a765e3
+  languageName: node
+  linkType: hard
+
 "prelude-ls@npm:^1.2.1":
   version: 1.2.1
   resolution: "prelude-ls@npm:1.2.1"
@@ -18925,6 +18951,13 @@ resolve@1.18.1:
   bin:
     rollup: dist/bin/rollup
   checksum: 3a02731c20c71321fae647c9c9cab0febee0580c6af029fdcd5dd6f424b8c85119d92c8554c6837327fd323c2458e92d955bbebc90ca6bed87cc626695e7c31f
+  languageName: node
+  linkType: hard
+
+"rrweb-snapshot@npm:^1.1.14":
+  version: 1.1.14
+  resolution: "rrweb-snapshot@npm:1.1.14"
+  checksum: 2e9a30233b542824bbca46af5588d1d7c909efafa00b38fb79d59637af17ec0f3fbe60ed37c4195448804a22aea0f47531da25a42af6ac9dc6281c3c6e5693db
   languageName: node
   linkType: hard
 

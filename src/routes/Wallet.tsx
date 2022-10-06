@@ -1,11 +1,14 @@
 import { Wallet } from '@archetypes'
 import { DesktopRequired } from '@components'
+import usePageTrack from '@components/TrackPageView'
 import styled from '@emotion/styled'
 import { StateBanner } from '@layout/StateBanner'
 import { device } from '@util/breakpoints'
 import { isMobileBrowser } from '@util/helpers'
 
 const _Wallet = styled(({ className }) => {
+  usePageTrack()
+
   return (
     <section className={className}>
       {isMobileBrowser() && <DesktopRequired />}

@@ -1,6 +1,6 @@
 import { Image } from '@components'
+import styled from '@emotion/styled'
 import { Token } from '@talismn/chaindata-provider'
-import styled from 'styled-components'
 
 type TokenLogoProps = {
   token: Token
