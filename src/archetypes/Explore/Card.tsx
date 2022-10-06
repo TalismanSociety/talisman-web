@@ -1,20 +1,21 @@
+import styled from '@emotion/styled'
 import { device } from '@util/breakpoints'
 import posthog from 'posthog-js'
-import styled from 'styled-components'
 
 type CardProps = {
   className?: string
   dapp: any
-  setSelectedTag: (tag: string) => void
+  setSelectedTag: (tag: string) => unknown
 }
 
 const toExternalDapp = (dapp: any) => {
-  const categories = dapp.tags.reduce((acc: any, tag: string) => {
-    acc['category_' + tag.replace(/[^\w]/, '')] = true
-    return acc
-  }, {})
-
-  console.log(categories)
+  const categories = dapp.tags.reduce(
+    (acc: any, tag: string) => ({
+      ...acc,
+      [`category_${tag.replace(/[^\w]/, '')}'`]: true,
+    }),
+    {}
+  )
 
   posthog.capture('Goto Dapp', { dappName: dapp.name, dappUrl: dapp.url, ...categories })
   window.open(dapp.url, 'rel=noreferrer')

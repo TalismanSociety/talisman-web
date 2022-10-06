@@ -26,8 +26,6 @@ const unsafeProperties = [
 ]
 
 export const initPosthog = () => {
-  console.log(process.env.REACT_APP_POSTHOG_AUTH_TOKEN)
-
   if (process.env.REACT_APP_POSTHOG_AUTH_TOKEN) {
     posthog.init(process.env.REACT_APP_POSTHOG_AUTH_TOKEN, {
       api_host: 'https://app.posthog.com',

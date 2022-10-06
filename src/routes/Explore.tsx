@@ -1,9 +1,9 @@
 import { Card, CardLoading, TagLoading } from '@archetypes/Explore'
-import { useFetchDapps } from '@archetypes/Explore/hooks'
+import { Dapp, useFetchDapps } from '@archetypes/Explore/hooks'
 import usePageTrack from '@components/TrackPageView'
+import styled from '@emotion/styled'
 import { device } from '@util/breakpoints'
 import { useState } from 'react'
-import styled from 'styled-components'
 
 const ExploreGrid = ({ className }: any) => {
   const { dapps, loading, error, tags } = useFetchDapps()
@@ -11,7 +11,7 @@ const ExploreGrid = ({ className }: any) => {
 
   return (
     <div className={className}>
-      {!!loading ? (
+      {loading ? (
         <>
           <TagLoading />
           <CardLoading />
@@ -31,7 +31,7 @@ const ExploreGrid = ({ className }: any) => {
 
           <div className="grid">
             {dapps.map(
-              (dapp: any) =>
+              (dapp: Dapp) =>
                 (selectedTag === 'All' || dapp.tags.includes(selectedTag)) && (
                   <Card dapp={dapp} setSelectedTag={tag => setSelectedTag(tag)} />
                 )

@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react'
 
-interface Dapp {
+export interface Dapp {
   [key: string]: any
 }
 
 export const useFetchDapps = () => {
-  const [dapps, setDapps] = useState<Dapp>([])
-  const [loading, setLoading] = useState<Boolean>(true)
-  const [error, setError] = useState<String | null>(null)
+  const [dapps, setDapps] = useState<Dapp[]>([])
+  const [loading, setLoading] = useState<boolean>(true)
+  const [error, setError] = useState<string | unknown>(undefined)
   const [tags, setTags] = useState<string[]>(['All', '⭐ Featured']) // Hardcoded Featured for now so it appears first.
 
   useEffect(() => {
@@ -21,12 +21,12 @@ export const useFetchDapps = () => {
               .map((item: any) => {
                 if (!item.fields.name || !item.fields.url) {
                   console.log('data err - ' + item.fields.name)
-                  return null
+                  return undefined
                 }
 
                 if (!item.fields.logo) {
                   console.log('logo err - ' + item.fields.name)
-                  return null
+                  return undefined
                 }
 
                 return {
@@ -34,25 +34,17 @@ export const useFetchDapps = () => {
                   name: item.fields.name,
                   description: item.fields.description,
                   url: item.fields.url,
-                  tags: item.fields.tags || [],
+                  tags: item.fields.tags ?? [],
                   envs: item.fields.envs,
                   score: item.fields.score,
                   logoUrl: item.fields.logo[0].url,
                 }
               })
-              .filter((item: any) => item !== null)
-              .filter((item: any) => {
-                // Store all the item.tags in a dictionary
-                if (item.tags) {
-                  item.tags.forEach((tag: string) => {
-                    setTags(prev => (!prev.includes(tag) ? [...prev, tag] : prev))
-                  })
-                }
+              .filter((item: any) => item !== undefined)
 
-                return item
-              })
+            setTags([...new Set<string>(items.tags)])
 
-            items.sort((a: any, b: any) => {
+            const sortedItems = items.slice().sort((a: any, b: any) => {
               if (a.tags.includes('⭐ Featured') && b.tags.includes('⭐ Featured')) {
                 return b.score - a.score
               } else if (a.tags.includes('⭐ Featured')) {
@@ -64,11 +56,11 @@ export const useFetchDapps = () => {
               }
             })
 
-            setDapps(items)
+            setDapps(sortedItems)
             setLoading(false)
           })
-      } catch (error: any) {
-        setError(error.toString())
+      } catch (error: unknown) {
+        setError(error)
       }
     }
 
