@@ -1,7 +1,7 @@
+import styled from '@emotion/styled'
 import { BuyBanner } from '@layout/StateBanner/BuyBanner'
 import { device } from '@util/breakpoints'
 import { buyNow } from '@util/fiatOnRamp'
-import styled from 'styled-components'
 
 const Buy = styled(({ className }) => {
   return (

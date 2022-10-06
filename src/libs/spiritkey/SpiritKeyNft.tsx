@@ -1,6 +1,6 @@
 import miksySpiritKeysAudio from '@assets/miksy-spirit-keys.mp3'
 import { SimplePlay } from '@components/SimplePlay'
-import styled from 'styled-components'
+import styled from '@emotion/styled'
 
 const Attribution = styled(({ className }) => {
   return (

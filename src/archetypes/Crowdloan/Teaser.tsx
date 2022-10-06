@@ -1,11 +1,11 @@
 import { Parachain } from '@archetypes'
 import { ReactComponent as CheckCircleIcon } from '@assets/icons/check-circle.svg'
 import { Pill } from '@components'
+import styled from '@emotion/styled'
 import { getTotalContributionForCrowdloan, useCrowdloanContributions } from '@libs/crowdloans'
 import { useAccountAddresses, useCrowdloanById, useParachainDetailsById } from '@libs/talisman'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
-import styled from 'styled-components'
 
 import Countdown from './Countdown'
 import Raised from './Raised'

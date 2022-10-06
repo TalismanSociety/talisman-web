@@ -1,8 +1,8 @@
 import { Button, useModal } from '@components'
+import styled from '@emotion/styled'
 import { isMobileBrowser } from '@util/helpers'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import styled from 'styled-components'
 
 export default function DesktopRequired() {
   const { openModal } = useModal()

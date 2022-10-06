@@ -1,9 +1,9 @@
 import { Wallet } from '@archetypes'
 import { DesktopRequired } from '@components'
+import styled from '@emotion/styled'
 import { StateBanner } from '@layout/StateBanner'
 import { device } from '@util/breakpoints'
 import { isMobileBrowser } from '@util/helpers'
-import styled from 'styled-components'
 
 const _Wallet = styled(({ className }) => {
   return (

@@ -1,8 +1,8 @@
 import { Parachain } from '@archetypes'
 import { ReactComponent as AllAccountsIcon } from '@assets/icons/all-accounts.svg'
+import styled from '@emotion/styled'
 import { useCrowdloanById, useParachainDetailsById } from '@libs/talisman'
 import { Link } from 'react-router-dom'
-import styled from 'styled-components'
 
 export const CrowdloanSummary = styled(({ id, className = '' }) => {
   const { crowdloan } = useCrowdloanById(id)

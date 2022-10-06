@@ -2,11 +2,11 @@ import { LanguageSelector } from '@archetypes/LanguageSelector'
 import bgImage from '@assets/card-gradient.png'
 import { ReactComponent as TalismanHandLogo } from '@assets/hand-red-black.svg'
 import { Button } from '@components'
+import styled from '@emotion/styled'
 import { DAPP_NAME } from '@libs/talisman'
 import { WalletSelect } from '@talismn/connect-components'
 import { device } from '@util/breakpoints'
 import { useTranslation } from 'react-i18next'
-import styled from 'styled-components'
 
 const TermsOfService = styled(({ className }) => {
   const { t } = useTranslation('connect-wallet')

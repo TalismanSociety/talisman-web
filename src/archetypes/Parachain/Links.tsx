@@ -1,7 +1,7 @@
 import { Pill } from '@components'
+import styled from '@emotion/styled'
 import { trackGoal } from '@libs/fathom'
 import { useParachainDetailsById } from '@libs/talisman'
-import styled from 'styled-components'
 
 const Links = styled(({ id, className }) => {
   const { parachainDetails: { links = {} } = {} } = useParachainDetailsById(id)

@@ -6,9 +6,9 @@ import SurtRegular from '@assets/fonts/Surt-Regular.woff'
 import SurtSemiBold from '@assets/fonts/Surt-SemiBold.woff2'
 import SurtSemiBoldExpanded from '@assets/fonts/Surt-SemiBoldExp.woff2'
 import SurtSemiBoldExtended from '@assets/fonts/Surt-SemiBoldExtended.woff2'
+import { Global, Theme, ThemeProvider, css } from '@emotion/react'
 import { PropsWithChildren, createContext, useContext, useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
-import { DefaultTheme, ThemeProvider, createGlobalStyle, css } from 'styled-components'
 
 /*
   base style definitions
@@ -42,22 +42,26 @@ const fontWeights = {
 }
 
 // base style
-const Style = createGlobalStyle`
+const globalStyle = (theme: Theme) => css`
   /*
       define all options as css variables
   */
   :root {
     /* theme colors as css variables */
-    ${({ theme }) => !!theme && Object.keys(theme).map(name => css`--color-${name}: rgb(${theme[name]});`)}
+    ${!!theme && Object.keys(theme).map(name => css`--color-${name}: rgb(${theme[name as keyof typeof theme]});`)}
 
     /* status color mappings */
-    ${Object.keys(statusColors).map(hex => statusColors[hex].map(status => css`--color-status-${status}: #${hex};`))}
+    ${Object.keys(statusColors).map(hex =>
+      statusColors[hex as keyof typeof statusColors].map(status => css`--color-status-${status}: #${hex};`)
+    )}
 
     /* fonts size mappings */
-    ${Object.keys(fontSizes).map(name => css`--font-size-${name}: ${fontSizes[name]}rem;`)}
+    ${Object.keys(fontSizes).map(name => css`--font-size-${name}: ${fontSizes[name as keyof typeof fontSizes]}rem;`)}
 
     /* font weights */
-    ${Object.keys(fontWeights).map(name => css`--font-weight-${name}: ${fontWeights[name]};`)}
+    ${Object.keys(fontWeights).map(
+      name => css`--font-weight-${name}: ${fontWeights[name as keyof typeof fontWeights]};`
+    )}
 
     /* misc */
     --border: 0.2rem solid var(--color-dark);
@@ -78,9 +82,7 @@ const Style = createGlobalStyle`
     --talisman-connect-active-foreground: inherit;
     --talisman-connect-modal-background: #222;
     --talisman-connect-modal-foreground: #fafafa;
-    --talisman-connect-button-background: var(
-      --talisman-connect-control-background
-    );
+    --talisman-connect-button-background: var(--talisman-connect-control-background);
     --talisman-connect-button-foreground: #fafafa;
   }
 
@@ -144,8 +146,8 @@ const Style = createGlobalStyle`
   }
 
   body {
-    background: rgb(${({ theme }) => theme?.background});
-    color: rgb(${({ theme }) => theme?.foreground});
+    background: rgb(${theme?.background});
+    color: rgb(${theme?.foreground});
     font-size: var(--font-size-normal);
   }
 
@@ -170,7 +172,7 @@ const Style = createGlobalStyle`
     a {
       line-height: inherit;
       opacity: 0.6;
-      color: rgb(${({ theme }) => theme?.primary});
+      color: rgb(${theme?.primary});
     }
   }
 
@@ -239,7 +241,7 @@ const Style = createGlobalStyle`
   }
 
   ::placeholder {
-    color: rgba(${({ theme }) => theme?.foreground}, 0.2);
+    color: rgba(${theme?.foreground}, 0.2);
   }
 
   input,
@@ -258,8 +260,8 @@ const Style = createGlobalStyle`
 // when using in component, need to wrap in rgb(...) declaration
 // can also use rgba to define opacity
 
-declare module 'styled-components' {
-  export interface DefaultTheme {
+declare module '@emotion/react' {
+  export interface Theme {
     primary: string
     secondary: string
     background: string
@@ -274,7 +276,7 @@ declare module 'styled-components' {
   }
 }
 
-const orangeLight: DefaultTheme = {
+const orangeLight: Theme = {
   primary: '244,101,69',
   secondary: '0,0,255',
   background: '250,250,250',
@@ -288,7 +290,7 @@ const orangeLight: DefaultTheme = {
   controlBackground: '38,38,38',
 }
 
-const orangeDark: DefaultTheme = {
+const orangeDark: Theme = {
   primary: '244,101,69',
   secondary: '0,0,255',
   background: '0,0,0',
@@ -308,7 +310,7 @@ const orangeTheme = {
   dark: orangeDark,
 }
 
-const greenLight: DefaultTheme = {
+const greenLight: Theme = {
   primary: '213, 255, 92',
   secondary: '0,0,255',
   background: '250,250,250',
@@ -322,7 +324,7 @@ const greenLight: DefaultTheme = {
   controlBackground: '38,38,38',
 }
 
-const greenDark: DefaultTheme = {
+const greenDark: Theme = {
   primary: '213,255,92',
   secondary: '0,0,255',
   background: '18,18,18',
@@ -353,7 +355,7 @@ export const useTheme = () => useContext(Context)
 
 const Provider = ({ children }: PropsWithChildren<{}>) => {
   // theme stuff
-  const [theme, setTheme] = useState('dark')
+  const [theme, setTheme] = useState<keyof typeof themes>('dark')
   const toggle = () => setTheme(theme === 'dark' ? 'light' : 'dark')
   const set = (mode: string) => setTheme(mode === 'dark' ? 'dark' : 'light')
 
@@ -370,7 +372,7 @@ const Provider = ({ children }: PropsWithChildren<{}>) => {
       }}
     >
       <ThemeProvider theme={themes[theme]}>
-        <Style />
+        <Global styles={globalStyle} />
         {children}
       </ThemeProvider>
     </Context.Provider>

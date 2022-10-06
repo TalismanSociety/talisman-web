@@ -1,4 +1,5 @@
 import { ExtensionStatusGate, Info, Panel, PanelSection, Pendor, TokenLogo } from '@components'
+import styled from '@emotion/styled'
 import { ReactComponent as Loader } from '@icons/loader.svg'
 import { useActiveAccount } from '@libs/talisman'
 import { useBalances } from '@libs/talisman'
@@ -8,7 +9,6 @@ import { Token } from '@talismn/chaindata-provider'
 import { formatDecimals } from '@talismn/util'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import styled from 'styled-components'
 
 type AssetItemProps = {
   className?: string

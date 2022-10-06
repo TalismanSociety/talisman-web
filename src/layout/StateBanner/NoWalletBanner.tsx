@@ -1,12 +1,12 @@
 import bannerImage from '@assets/agyle-extension.png'
 import { Button } from '@components'
 import { Banner } from '@components/Banner'
+import styled from '@emotion/styled'
 import { DAPP_NAME } from '@libs/talisman'
 import { useTalismanInstalled } from '@libs/talisman/useIsTalismanInstalled'
 import { WalletSelect } from '@talismn/connect-components'
 import getDownloadLink from '@util/getDownloadLink'
 import { useTranslation } from 'react-i18next'
-import styled from 'styled-components'
 
 export const NoWalletBanner = styled(({ className }) => {
   const { t } = useTranslation('banners')

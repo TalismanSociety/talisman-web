@@ -1,7 +1,7 @@
+import styled from '@emotion/styled'
 import { ReactComponent as PauseCircle } from '@icons/pause-circle.svg'
 import { ReactComponent as PlayCircle } from '@icons/play-circle.svg'
 import { useAudio } from '@util/useAudio'
-import styled from 'styled-components'
 
 export const SimplePlay = styled(({ className, src }) => {
   const { isPlaying, togglePlay } = useAudio(src)

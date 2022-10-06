@@ -1,8 +1,8 @@
 import { StyledLoader } from '@components/Await'
+import styled from '@emotion/styled'
 import { useActiveAccount, useBalances } from '@libs/talisman'
 import { device } from '@util/breakpoints'
 import { useTranslation } from 'react-i18next'
-import styled from 'styled-components'
 
 const Total = styled(({ id, className }) => {
   const { t } = useTranslation()

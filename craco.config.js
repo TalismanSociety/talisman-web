@@ -5,22 +5,6 @@ const CracoAlias = require('craco-alias')
 const isDevelopment = process.env.NODE_ENV === 'development'
 const talismanLibsFastRefresh = process.env.TALISMAN_LIBS_FAST_REFRESH === 'true'
 
-// Adds support for server-side rendering, minification of styles, and a nicer debugging experience
-const StyledComponentsPlugin = {
-  plugin: {
-    overrideCracoConfig: ({ cracoConfig }) => {
-      if (!cracoConfig.babel) cracoConfig.babel = {}
-      if (!Array.isArray(cracoConfig.babel.plugins)) cracoConfig.babel.plugins = []
-
-      cracoConfig.babel.plugins.push('babel-plugin-styled-components')
-      cracoConfig.babel.plugins.push('@babel/plugin-proposal-class-properties')
-      cracoConfig.babel.plugins.push('@babel/plugin-proposal-private-methods')
-
-      return cracoConfig
-    },
-  },
-}
-
 // Provides a number of @<ident> import aliases to the contents of the `src` directory
 //
 // Before:
@@ -126,5 +110,9 @@ const TalismanLibsFastRefreshPlugin = {
 }
 
 module.exports = {
-  plugins: [StyledComponentsPlugin, ImportAliasesPlugin, ImportMetaLoaderPlugin, TalismanLibsFastRefreshPlugin],
+  babel: {
+    presets: [['@babel/preset-react', { runtime: 'automatic', importSource: '@emotion/react' }]],
+    plugins: ['@emotion/babel-plugin'],
+  },
+  plugins: [ImportAliasesPlugin, ImportMetaLoaderPlugin, TalismanLibsFastRefreshPlugin],
 }
