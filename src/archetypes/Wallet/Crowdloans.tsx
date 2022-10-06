@@ -1,4 +1,5 @@
 import { ChainLogo, ExtensionStatusGate, Info, Panel, PanelSection, Pendor } from '@components'
+import styled from '@emotion/styled'
 import {
   getTotalContributionForCrowdloan,
   groupTotalContributionsByCrowdloan,
@@ -10,12 +11,12 @@ import { calculateCrowdloanPortfolioAmounts, usePortfolio, useTaggedAmountsInPor
 import { useAccountAddresses, useCrowdloanById, useCrowdloans } from '@libs/talisman'
 import { useTokenPrice } from '@libs/tokenprices'
 import { useChain } from '@talismn/api-react-hooks'
-import { addBigNumbers, encodeAnyAddress, multiplyBigNumbers, planckToTokens, useFuncMemo } from '@talismn/util'
+import { encodeAnyAddress, planckToTokens } from '@talismn/util'
+import { addBigNumbers, multiplyBigNumbers, useFuncMemo } from '@talismn/util-legacy'
 import { formatCommas, formatCurrency } from '@util/helpers'
 import { Suspense, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
-import styled from 'styled-components'
 
 const CrowdloanItem = styled(({ id, className }) => {
   const { t } = useTranslation()

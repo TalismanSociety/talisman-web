@@ -1,8 +1,8 @@
 import { Button, useModal } from '@components'
+import styled from '@emotion/styled'
 import { isMobileBrowser } from '@util/helpers'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import styled from 'styled-components'
 
 export default function DesktopRequired() {
   const { openModal } = useModal()
@@ -25,7 +25,7 @@ const DesktopRequiredModal = styled(props => {
       <h2>{t('desktopRequired.title')}</h2>
       <p>{t('desktopRequired.subtitle')}</p>
       <p>{t('desktopRequired.text')}</p>
-      <Button primary to="/crowdloans" onClick={closeModal}>
+      <Button primary to="/explore" onClick={() => closeModal()}>
         {t('desktopRequired.primaryCta')}
       </Button>
     </div>

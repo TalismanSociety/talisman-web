@@ -1,8 +1,8 @@
 import { ReactComponent as CheckCircle } from '@assets/icons/check-circle.svg'
 import { ReactComponent as ChevronRight } from '@assets/icons/chevron-right.svg'
+import styled from '@emotion/styled'
 import Identicon from '@polkadot/react-identicon'
 import { truncateString } from '@util/helpers'
-import styled from 'styled-components'
 
 import { ContributorWithName } from '.'
 

@@ -1,4 +1,4 @@
-import styled from 'styled-components'
+import styled from '@emotion/styled'
 
 const Pill = styled(({ percent, className }) => (
   <div className={`${className} progress-bar`}>

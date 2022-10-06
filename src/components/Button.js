@@ -1,8 +1,9 @@
 import { ReactComponent as IconLoading } from '@assets/icons/loader.svg'
+import { css } from '@emotion/react'
+import styled from '@emotion/styled'
 import { omit } from 'lodash'
 import React, { Fragment } from 'react'
 import { Link, NavLink } from 'react-router-dom'
-import styled, { css } from 'styled-components'
 
 const IconButton = styled(({ children, className, ...rest }) => (
   <button className={`button icon-button ${className}`} {...rest}>
@@ -98,7 +99,7 @@ const Button = styled(({ loading, children, variant = '', className, ...props })
     !!primary &&
     css`
       background: rgb(${theme?.primary});
-      color: rgb(${({ theme }) => theme?.background});
+      color: rgb(${theme?.background});
       border: 3.13px solid rgb(${theme.primary});
     `}
 

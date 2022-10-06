@@ -1,9 +1,9 @@
 import { Await, Field, Grid } from '@components'
 import NoCrowdloans from '@components/NoCrowdloansPlaceholder'
+import styled from '@emotion/styled'
 import { trackGoal } from '@libs/fathom'
 import { device } from '@util/breakpoints'
 import { useTranslation } from 'react-i18next'
-import styled from 'styled-components'
 
 import { useFilter } from './_hooks'
 import Teaser from './Teaser'

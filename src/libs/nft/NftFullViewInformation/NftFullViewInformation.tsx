@@ -1,5 +1,5 @@
+import styled from '@emotion/styled'
 import { useTranslation } from 'react-i18next'
-import styled from 'styled-components'
 
 export const NftMainDetails = styled(({ nftId, collection, name, className }) => {
   return (

@@ -1,7 +1,7 @@
 import { Countdown as Cd, Pendor } from '@components'
+import styled from '@emotion/styled'
 import { useChainmetaValue, useCrowdloanById } from '@libs/talisman'
 import { useEffect, useState } from 'react'
-import styled from 'styled-components'
 
 type OngoingProps = {
   relayChainId: number
@@ -52,7 +52,7 @@ const Countdown: React.FC<CountdownProps> = ({ id, showSeconds, className, ...re
   const { uiStatus, lockExpiredBlock, relayChainId } = crowdloan
 
   if (['active', 'capped'].includes(uiStatus)) {
-    return <Ongoing {...rest} showSeconds={showSeconds} end={lockExpiredBlock} relayChainId={relayChainId}/>
+    return <Ongoing {...rest} showSeconds={showSeconds} end={lockExpiredBlock} relayChainId={relayChainId} />
   }
   if (uiStatus === 'winner') return <Generic text="Winner" />
   if (uiStatus === 'ended') return <Generic text="Ended" />

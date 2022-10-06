@@ -1,5 +1,5 @@
+import styled from '@emotion/styled'
 import React from 'react'
-import styled from 'styled-components'
 
 const NoResultsMessage = styled(({ title, subtitle, text, className }) => (
   <div className={className}>

@@ -1,5 +1,4 @@
-import { usePortfolioHasEmptyBags } from '@libs/portfolio'
-import { useActiveAccount } from '@libs/talisman'
+import { useActiveAccount, useBalances } from '@libs/talisman'
 import { buyNow } from '@util/fiatOnRamp'
 
 import { EmptyBagsBanner } from './EmptyBagsBanner'
@@ -7,8 +6,14 @@ import { ExploreCrowdloansBanner } from './ExploreCrowdloansBanner'
 import { NoWalletBanner } from './NoWalletBanner'
 
 export const StateBanner = () => {
-  const hasEmptyBags = usePortfolioHasEmptyBags()
-  const { status } = useActiveAccount()
+  const { status, address } = useActiveAccount()
+  const { assetsValue, balances } = useBalances()
+
+  const hasEmptyBags =
+    address !== undefined
+      ? balances?.find({ address: address })?.sum?.fiat('usd').transferable === 0
+      : assetsValue === '0.00'
+
   if (status === 'UNAVAILABLE') {
     return <NoWalletBanner />
   }

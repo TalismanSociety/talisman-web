@@ -1,13 +1,12 @@
 import { Wallet } from '@archetypes'
-import { StateBanner } from '@archetypes/StateBanner'
 import { DesktopRequired } from '@components'
 import usePageTrack from '@components/TrackPageView'
+import styled from '@emotion/styled'
+import { StateBanner } from '@layout/StateBanner'
 import { device } from '@util/breakpoints'
 import { isMobileBrowser } from '@util/helpers'
-import styled from 'styled-components'
 
 const _Wallet = styled(({ className }) => {
-
   usePageTrack()
 
   return (
@@ -35,7 +34,7 @@ const _Wallet = styled(({ className }) => {
   padding: 0 2.4rem;
 
   > * + * {
-    margin-top: 4rem;
+    margin-top: 6rem;
   }
 
   .account-overview {
@@ -45,6 +44,7 @@ const _Wallet = styled(({ className }) => {
     align-items: center;
     justify-content: space-between;
     gap: 2rem;
+    flex: 1;
 
     @media ${device.xxl} {
       width: auto;
@@ -56,7 +56,7 @@ const _Wallet = styled(({ className }) => {
 
   .banner {
     min-width: 70%;
-    flex: 1;
+    flex: 5;
   }
 
   > header {

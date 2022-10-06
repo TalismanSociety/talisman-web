@@ -1,8 +1,8 @@
+import styled from '@emotion/styled'
 import { ReactComponent as IconClose } from '@icons/x.svg'
 import useKeyDown from '@util/useKeyDown'
 import { AnimatePresence, motion } from 'framer-motion'
 import { PropsWithChildren, createContext, useCallback, useContext, useMemo, useState } from 'react'
-import styled from 'styled-components'
 
 type OpenModalOptions = {
   closable: boolean
