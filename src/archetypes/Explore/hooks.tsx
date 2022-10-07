@@ -15,7 +15,7 @@ export const useFetchDapps = () => {
       try {
         fetch('https://api.airtable.com/v0/appBz0V1T1R760dRE/Dapps?api_key=key34AypYHAb59vGf')
           .then(res => res.json())
-          .then(data => {
+          .then((data: { records: any[] }) => {
             // Define a type for each item
             const items = data.records
               .map((item: any) => {
@@ -40,19 +40,15 @@ export const useFetchDapps = () => {
                   logoUrl: item.fields.logo[0].url,
                 }
               })
-              .filter((item: any) => item !== undefined)
-              .filter((item: any) => {
-                // Store all the item.tags in a dictionary
-                if (item.tags) {
-                  item.tags.forEach((tag: string) => {
-                    setTags(prev => (!prev.includes(tag) ? [...prev, tag] : prev))
-                  })
-                }
+              .filter(item => item !== undefined)
 
-                return item
+            setTags(prevTags =>
+              Array.from(new Set<string>([...prevTags, ...items.flatMap(item => item?.tags)])).sort((a, b) => {
+                if (a.match(/^other$/i)) return 1
+                if (b.match(/^other$/i)) return -1
+                return 0
               })
-
-            // setTags([...new Set<string>(items.tags)])
+            )
 
             const sortedItems = items.slice().sort((a: any, b: any) => {
               if (a.tags.includes('⭐ Featured') && b.tags.includes('⭐ Featured')) {
