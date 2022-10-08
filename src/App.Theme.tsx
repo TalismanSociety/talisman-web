@@ -42,7 +42,7 @@ const fontWeights = {
 }
 
 // base style
-const globalStyle = (theme: Theme) => css`
+export const globalStyle = (theme: Theme) => css`
   /*
       define all options as css variables
   */
@@ -310,7 +310,7 @@ const orangeTheme = {
   dark: orangeDark,
 }
 
-const greenLight: Theme = {
+export const greenLight: Theme = {
   primary: '213, 255, 92',
   secondary: '0,0,255',
   background: '250,250,250',
@@ -324,7 +324,7 @@ const greenLight: Theme = {
   controlBackground: '38,38,38',
 }
 
-const greenDark: Theme = {
+export const greenDark: Theme = {
   primary: '213,255,92',
   secondary: '0,0,255',
   background: '18,18,18',
