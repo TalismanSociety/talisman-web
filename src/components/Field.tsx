@@ -80,10 +80,10 @@ const FieldWrapper = styled(({ type, prefix, suffix, label, dim, children, class
       font-family: inherit;
       font-weight: inherit;
       border: none;
-      padding: 1.1rem 1.75rem;
+      padding: 1.1rem 1.5rem;
       width: 100%;
       ${({ prefix }) => !!prefix && `padding-left: 5rem;`}
-      ${({ suffix }) => !!suffix && `padding-right: 5rem;`}
+      ${({ suffix }) => !!suffix && `padding-right: 2rem;`}
     }
 
     select {
