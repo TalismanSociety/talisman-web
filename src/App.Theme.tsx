@@ -7,7 +7,7 @@ import SurtSemiBold from '@assets/fonts/Surt-SemiBold.woff2'
 import SurtSemiBoldExpanded from '@assets/fonts/Surt-SemiBoldExp.woff2'
 import SurtSemiBoldExtended from '@assets/fonts/Surt-SemiBoldExtended.woff2'
 import { Global, Theme, ThemeProvider, css } from '@emotion/react'
-import { PropsWithChildren, createContext, useContext, useEffect, useState } from 'react'
+import { PropsWithChildren, createContext, useContext, useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
 
 /*
@@ -262,6 +262,7 @@ export const globalStyle = (theme: Theme) => css`
 
 declare module '@emotion/react' {
   export interface Theme {
+    // Deprecated styling
     primary: string
     secondary: string
     background: string
@@ -273,55 +274,23 @@ declare module '@emotion/react' {
     text: string
     activeBackground: string
     controlBackground: string
+    // New styling with generic color names & alphas
+    color: {
+      primary: string
+      onPrimary: string
+      background: string
+      onBackground: string
+      surface: string
+      onSurface: string
+      foreground: string
+      onForeground: string
+    }
+    contentAlpha: {
+      disabled: number
+      medium: number
+      high: number
+    }
   }
-}
-
-const orangeLight: Theme = {
-  primary: '244,101,69',
-  secondary: '0,0,255',
-  background: '250,250,250',
-  foreground: '0,0,0',
-  mid: '150,150,150',
-  dim: '245,245,245',
-  light: '250,250,250',
-  dark: '0,0,0',
-  text: '0,0,0',
-  activeBackground: '56,56,56',
-  controlBackground: '38,38,38',
-}
-
-const orangeDark: Theme = {
-  primary: '244,101,69',
-  secondary: '0,0,255',
-  background: '0,0,0',
-  foreground: '255,255,255',
-  mid: '150,150,150',
-  dim: '245,245,245',
-  light: '255,255,255',
-  dark: '0,0,0',
-  text: '255,255,255',
-  activeBackground: '56,56,56',
-  controlBackground: '38,38,38',
-}
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const orangeTheme = {
-  light: orangeLight,
-  dark: orangeDark,
-}
-
-export const greenLight: Theme = {
-  primary: '213, 255, 92',
-  secondary: '0,0,255',
-  background: '250,250,250',
-  foreground: '0,0,0',
-  mid: '150,150,150',
-  dim: '245,245,245',
-  light: '250,250,250',
-  dark: '0,0,0',
-  text: '0,0,0',
-  activeBackground: '56,56,56',
-  controlBackground: '38,38,38',
 }
 
 export const greenDark: Theme = {
@@ -336,15 +305,21 @@ export const greenDark: Theme = {
   text: '250,250,250', // #fafafa
   activeBackground: '56,56,56', // #383838
   controlBackground: '38,38,38',
-}
-
-const greenTheme = {
-  light: greenLight,
-  dark: greenDark,
-}
-
-const themes = {
-  ...greenTheme,
+  color: {
+    primary: 'rgb(213,255,92)',
+    onPrimary: 'rgb(18,18,18)',
+    background: 'rgb(18,18,18)',
+    onBackground: 'rgb(250,250,250)',
+    surface: 'rgb(56,56,56)',
+    onSurface: 'rgb(250,250,250)',
+    foreground: 'rgb(165,165,165)',
+    onForeground: 'rgb(250,250,250)',
+  },
+  contentAlpha: {
+    disabled: 0.5,
+    medium: 0.7,
+    high: 1,
+  },
 }
 
 /* style context */
@@ -354,28 +329,15 @@ const Context = createContext({})
 export const useTheme = () => useContext(Context)
 
 const Provider = ({ children }: PropsWithChildren<{}>) => {
-  // theme stuff
-  const [theme, setTheme] = useState<keyof typeof themes>('dark')
-  const toggle = () => setTheme(theme === 'dark' ? 'light' : 'dark')
-  const set = (mode: string) => setTheme(mode === 'dark' ? 'dark' : 'light')
-
   // scroll to top on location change
   const { pathname } = useLocation()
   useEffect(() => window.scrollTo(0, 0), [pathname])
 
   return (
-    <Context.Provider
-      value={{
-        theme,
-        toggle,
-        set,
-      }}
-    >
-      <ThemeProvider theme={themes[theme]}>
-        <Global styles={globalStyle} />
-        {children}
-      </ThemeProvider>
-    </Context.Provider>
+    <ThemeProvider theme={greenDark}>
+      <Global styles={globalStyle} />
+      {children}
+    </ThemeProvider>
   )
 }
 
