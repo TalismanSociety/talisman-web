@@ -3,7 +3,7 @@ import { ComponentMeta } from '@storybook/react'
 import Text from './Text'
 
 export default {
-  title: 'Text',
+  title: 'Atoms/Text',
   component: Text,
   argTypes: {
     children: {
