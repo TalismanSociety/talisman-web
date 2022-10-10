@@ -130,7 +130,6 @@ export const globalStyle = (theme: Theme) => css`
     box-sizing: border-box;
     -webkit-font-smoothing: antialiased;
     color: inherit;
-    line-height: 1.6em;
   }
 
   body,
@@ -149,10 +148,6 @@ export const globalStyle = (theme: Theme) => css`
     background: rgb(${theme?.background});
     color: rgb(${theme?.foreground});
     font-size: var(--font-size-normal);
-  }
-
-  #root {
-    height: 100%;
   }
 
   h1,
@@ -215,11 +210,6 @@ export const globalStyle = (theme: Theme) => css`
 
   strong {
     font-weight: var(--font-weight-bold);
-  }
-
-  svg {
-    width: 1em;
-    height: 1em;
   }
 
   @keyframes spin {
@@ -310,9 +300,9 @@ export const greenDark: Theme = {
     onPrimary: 'rgb(18,18,18)',
     background: 'rgb(18,18,18)',
     onBackground: 'rgb(250,250,250)',
-    surface: 'rgb(56,56,56)',
+    surface: '#1B1B1B',
     onSurface: 'rgb(250,250,250)',
-    foreground: 'rgb(165,165,165)',
+    foreground: '#262626',
     onForeground: 'rgb(250,250,250)',
   },
   contentAlpha: {
