@@ -1,6 +1,6 @@
 import React from 'react'
 
-type PolymorphicTextProps<T extends React.ElementType> = { as?: T }
+type PolymorphicTextProps<T extends React.ElementType> = { as?: T; alpha?: 'disabled' | 'medium' | 'high' }
 type TextProps<T extends React.ElementType> = PolymorphicTextProps<T> &
   Omit<React.ComponentPropsWithoutRef<T>, keyof PolymorphicTextProps<T>>
 
@@ -11,8 +11,9 @@ const BaseText = <T extends React.ElementType = 'span'>(props: TextProps<T>) => 
     <Component
       {...props}
       css={theme => ({
+        color: 'white',
         fontFamily: 'Surt',
-        opacity: theme.contentAlpha.medium,
+        opacity: theme.contentAlpha[props.alpha ?? 'medium'],
       })}
     />
   )
@@ -25,8 +26,9 @@ const BaseHeaderText = <T extends React.ElementType = 'h1'>(props: TextProps<T>)
     <Component
       {...props}
       css={theme => ({
+        color: 'white',
         fontFamily: 'SurtExpanded',
-        opacity: theme.contentAlpha.high,
+        opacity: theme.contentAlpha[props.alpha ?? 'high'],
       })}
     />
   )
