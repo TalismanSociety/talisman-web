@@ -57,7 +57,7 @@ const Select = Object.assign(
             gap: '2rem',
             backgroundColor: theme.color.foreground,
             padding: '0.75rem 1.25rem',
-            borderRadius: '0.5rem',
+            borderRadius: '0.8rem',
             cursor: 'pointer',
             width: width,
           },
@@ -76,6 +76,7 @@ const Select = Object.assign(
               css={{
                 width,
                 position: 'absolute',
+                zIndex: 1,
                 // slight overlap for better border radius animation
                 top: '95%',
                 left: 0,

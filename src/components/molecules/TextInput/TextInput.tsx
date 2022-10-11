@@ -37,7 +37,7 @@ const TextInput = (props: TextInputProps) => {
           alignItems: 'center',
           padding: '1.5rem',
           borderRadius: '1.25rem',
-          backgroundColor: theme.color.surface,
+          backgroundColor: theme.color.foreground,
         }}
       >
         <input
@@ -67,27 +67,24 @@ const TextInput = (props: TextInputProps) => {
   )
 }
 
-export type LabelButtonProps = {
-  children: string
-}
+export type LabelButtonProps = React.DetailedHTMLProps<React.ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement>
 
 export const LabelButton = (props: LabelButtonProps) => {
   const theme = useTheme()
   return (
     <button
+      {...props}
       css={{
         'padding': '0.5rem',
         'border': 'none',
         'borderRadius': '1rem',
-        'background': theme.color.foreground,
+        'background': theme.color.foregroundVariant,
         'cursor': 'pointer',
         ':hover': {
           filter: 'brightness(1.4)',
         },
       }}
-    >
-      {props.children}
-    </button>
+    />
   )
 }
 

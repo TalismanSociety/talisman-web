@@ -274,6 +274,8 @@ declare module '@emotion/react' {
       onSurface: string
       foreground: string
       onForeground: string
+      foregroundVariant: string
+      onForegroundVariant: string
     }
     contentAlpha: {
       disabled: number
@@ -304,6 +306,8 @@ export const greenDark: Theme = {
     onSurface: 'rgb(250,250,250)',
     foreground: '#262626',
     onForeground: 'rgb(250,250,250)',
+    foregroundVariant: '#3F3F3F',
+    onForegroundVariant: 'rgb(250,250,250)',
   },
   contentAlpha: {
     disabled: 0.5,
