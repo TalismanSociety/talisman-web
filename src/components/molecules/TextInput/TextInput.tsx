@@ -1,6 +1,6 @@
 import Text from '@components/atoms/Text'
 import { useTheme } from '@emotion/react'
-import { ReactNode } from 'react'
+import { ReactNode, useId } from 'react'
 
 export type TextInputProps = React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement> & {
   leadingLabel?: ReactNode
@@ -12,6 +12,7 @@ export type TextInputProps = React.DetailedHTMLProps<React.InputHTMLAttributes<H
 
 const TextInput = (props: TextInputProps) => {
   const theme = useTheme()
+  const inputId = useId()
 
   return (
     <div>
@@ -25,7 +26,9 @@ const TextInput = (props: TextInputProps) => {
             marginBottom: '0.8rem',
           }}
         >
-          <Text as="label">{props.leadingLabel}</Text>
+          <Text as="label" htmlFor={inputId}>
+            {props.leadingLabel}
+          </Text>
           <div>
             <Text>{props.trailingLabel}</Text>
           </div>
@@ -42,6 +45,7 @@ const TextInput = (props: TextInputProps) => {
       >
         <input
           {...props}
+          id={inputId}
           type="text"
           css={{ fontSize: '3rem', width: '26rem', background: 'transparent', border: 'none' }}
         />
