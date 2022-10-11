@@ -57,7 +57,7 @@ const TransactionItem = styled(({ className, transaction, addresses }: Props) =>
           )}
         </div>
       </PanelSection>
-      {!parsed ? (
+      {process.env.NODE_ENV === 'development' && !parsed ? (
         <pre className={`${className} debug`}>{JSON.stringify(JSON.parse(transaction._data), null, 2)}</pre>
       ) : null}
     </>
