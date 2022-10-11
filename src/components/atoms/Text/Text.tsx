@@ -36,19 +36,19 @@ const BaseHeaderText = <T extends React.ElementType = 'h1'>(props: TextProps<T>)
 
 const Text = Object.assign(BaseText, {
   H1: <T extends React.ElementType = 'h1'>(props: TextProps<T>) => (
-    <BaseHeaderText {...props} as="h1" css={{ fontsize: 56 }} />
+    <BaseHeaderText {...props} as={props.as ?? 'h1'} css={{ fontsize: 56 }} />
   ),
   H2: <T extends React.ElementType = 'h2'>(props: TextProps<T>) => (
-    <BaseHeaderText {...props} as="h2" css={{ fontsize: 32 }} />
+    <BaseHeaderText {...props} as={props.as ?? 'h2'} css={{ fontsize: 32 }} />
   ),
   H3: <T extends React.ElementType = 'h3'>(props: TextProps<T>) => (
-    <BaseHeaderText {...props} as="h3" css={{ fontsize: 24 }} />
+    <BaseHeaderText {...props} as={props.as ?? 'h3'} css={{ fontsize: 24 }} />
   ),
   H4: <T extends React.ElementType = 'h4'>(props: TextProps<T>) => (
-    <BaseHeaderText {...props} as="h4" css={{ fontsize: 18 }} />
+    <BaseHeaderText {...props} as={props.as ?? 'h4'} css={{ fontsize: 18 }} />
   ),
   Body: <T extends React.ElementType = 'span'>(props: TextProps<T>) => (
-    <BaseText {...props} as="span" css={{ fontsize: 16 }} />
+    <BaseText {...props} as={props.as ?? 'span'} css={{ fontsize: 16 }} />
   ),
 })
 
