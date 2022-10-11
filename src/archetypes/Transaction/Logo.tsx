@@ -20,7 +20,11 @@ type Props = { className?: string; parsed: ParsedTransaction | null | undefined;
 const Logo = ({ className, parsed, addresses }: Props) => {
   switch (parsed?.type) {
     case 'transfer':
-      const isReceiver = addresses.map(a => encodeAnyAddress(a)).includes(encodeAnyAddress(parsed.to))
+      const genericAddresses = addresses.map(a => encodeAnyAddress(a))
+      const from = encodeAnyAddress(parsed.from)
+      const to = encodeAnyAddress(parsed.to)
+      const isReceiver = genericAddresses.includes(to) && !genericAddresses.includes(from)
+
       if (isReceiver) {
         if (parsed.success) return <Receive className={className} />
         return <ReceiveFailed className={className} />

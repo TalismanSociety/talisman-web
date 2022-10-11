@@ -3,7 +3,9 @@ import { MaterialLoader, Panel, PanelSection } from '@components'
 import styled from '@emotion/styled'
 import { Account as TAccount } from '@libs/talisman'
 import { AnimatePresence } from 'framer-motion'
-import { useEffect, useState } from 'react'
+import groupBy from 'lodash/groupBy'
+import moment from 'moment-timezone'
+import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import useInfiniteScroll from 'react-infinite-scroll-hook'
 
@@ -38,6 +40,15 @@ const TransactionList = ({ addresses = [], className }: ITransactionListProps) =
     disabled: status === 'ERROR',
     rootMargin: '0px 0px 200px 0px',
   })
+
+  const sortedTransactions = useMemo(
+    () => Object.values(transactions).sort((a, b) => b.id.localeCompare(a.id)),
+    [transactions]
+  )
+  const dayGroupedTransactions = useMemo(
+    () => groupBy(sortedTransactions, tx => tx.timestamp.clone().startOf('day').toISOString()),
+    [sortedTransactions]
+  )
 
   return (
     <section className={`transaction-list ${className}`}>
@@ -79,13 +90,14 @@ const TransactionList = ({ addresses = [], className }: ITransactionListProps) =
               {t('No Transactions - try another account')}
             </PanelSection>
           ) : (
-            <>
-              {Object.values(transactions)
-                .sort((a, b) => b.id.localeCompare(a.id))
-                .map(transaction => (
+            Object.entries(dayGroupedTransactions).map(([day, transactions]) => (
+              <>
+                <h3 className="transaction-date">{moment(day).format('ddd D MMMM YYYY')}</h3>
+                {transactions.map(transaction => (
                   <Item key={transaction.id} transaction={transaction} addresses={fetchAddresses} />
                 ))}
-            </>
+              </>
+            ))
           )}
         </AnimatePresence>
       </Panel>
@@ -133,6 +145,14 @@ const StyledTransactionList = styled(TransactionList)`
 
   .arrow-down {
     transform: rotate(90deg);
+  }
+
+  .transaction-date {
+    margin: 1.4rem;
+    color: white;
+  }
+  .transaction-date:not(:first-child) {
+    margin-top: 3rem;
   }
 
   .centered-state {

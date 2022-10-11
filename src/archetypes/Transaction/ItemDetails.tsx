@@ -20,7 +20,10 @@ export default function ItemDetails({ parsed, addresses }: ItemDetailsProps) {
 
   switch (parsed.type) {
     case 'transfer': {
-      const isReceiver = addresses.map(a => encodeAnyAddress(a)).includes(encodeAnyAddress(parsed.to))
+      const genericAddresses = addresses.map(a => encodeAnyAddress(a))
+      const from = encodeAnyAddress(parsed.from)
+      const to = encodeAnyAddress(parsed.to)
+      const isReceiver = genericAddresses.includes(to) && !genericAddresses.includes(from)
 
       const tokenInfo = (
         <Info

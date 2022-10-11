@@ -23,6 +23,19 @@ const TransactionItem = styled(({ className, transaction, addresses }: Props) =>
     [accounts, youAddress]
   )
 
+  const getTransactionName = () => {
+    if (typeof parsed?.type !== 'string') return name
+    if (parsed.type !== 'transfer') return startCase(parsed.type)
+
+    const genericAddresses = addresses.map(a => encodeAnyAddress(a))
+    const from = encodeAnyAddress(parsed.from)
+    const to = encodeAnyAddress(parsed.to)
+
+    if (genericAddresses.includes(from) && !genericAddresses.includes(to)) return 'Send'
+    if (genericAddresses.includes(to) && !genericAddresses.includes(from)) return 'Receive'
+    return 'Transfer'
+  }
+
   return (
     <>
       <PanelSection
@@ -32,7 +45,7 @@ const TransactionItem = styled(({ className, transaction, addresses }: Props) =>
         exit={{ opacity: 0, scale: 0.5, transition: { ease: [0.78, 0.14, 0.15, 0.86] } }}
       >
         <Info
-          title={parsed?.type ? startCase(parsed.type) : name}
+          title={getTransactionName()}
           subtitle={timestamp.fromNow()}
           graphic={<Logo className="category-logo" parsed={parsed} addresses={addresses} />}
         />

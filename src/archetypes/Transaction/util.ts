@@ -127,7 +127,7 @@ export const parseTransaction = (tx: IndexerTransaction): ParsedTransaction | nu
       return {
         type: 'transfer',
         chainId: tx.chainId,
-        tokenSymbol: tokens[tx.chainId]?.symbol || 'UNKNOWN',
+        tokenSymbol: tokens[tx.chainId]?.symbol || '???',
         tokenDecimals: tokens[tx.chainId]?.decimals || 0,
         from: encodeAnyAddress(args?.from, tx.ss58Format),
         to: encodeAnyAddress(args?.to, tx.ss58Format),
@@ -138,10 +138,24 @@ export const parseTransaction = (tx: IndexerTransaction): ParsedTransaction | nu
       }
     }
     // TODO: Parse event+extrinsic+call from these transaction types into a ParsedTransfer format
-    //   if (tx.name === 'Tokens.Transfer')
-    //     return {
-    //       type: 'transfer',
-    //     }
+    if (tx.name === 'Tokens.Transfer') {
+      // handle array args
+      let args = JSON.parse(tx.args)
+      args = Array.isArray(args) ? { from: args[0], to: args[1], amount: args[2], currencyId: args[3] } : args
+
+      return {
+        type: 'transfer',
+        chainId: tx.chainId,
+        tokenSymbol: '???',
+        tokenDecimals: 0,
+        from: encodeAnyAddress(args?.from, tx.ss58Format),
+        to: encodeAnyAddress(args?.to, tx.ss58Format),
+        amount: planckToTokens(args?.amount, tokens[tx.chainId]?.decimals || 0),
+        fee: planckToTokens(extrinsic?.fee, tokens[tx.chainId]?.decimals || 0),
+        tip: planckToTokens(extrinsic?.tip, tokens[tx.chainId]?.decimals || 0),
+        success: extrinsic?.success || false,
+      }
+    }
     //   if (tx.name === 'Currencies.Transfer')
     //     return {
     //       type: 'transfer',
