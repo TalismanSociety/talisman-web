@@ -3,6 +3,9 @@ import Text from '@components/atoms/Text'
 import { useTheme } from '@emotion/react'
 import { ReactComponent as EditIcon } from '@icons/edit.svg'
 import Identicon from '@polkadot/react-identicon'
+
+import { PoolStatusIndicator } from '../PoolStatusIndicator'
+
 export type PoolStakeProps = {
   accountName: string
   accountAddress: string
@@ -118,21 +121,8 @@ const PoolStake = (props: PoolStakeProps) => {
         >
           <dt>Pool</dt>
           <dd css={{ display: 'flex', alignItems: 'center', gap: '0.24rem' }}>
-            <Text
-              alpha="high"
-              css={{
-                '::before': {
-                  content: '""',
-                  display: 'inline-block',
-                  width: '0.6rem',
-                  height: '0.6rem',
-                  borderRadius: '50%',
-                  backgroundColor: '#38D448',
-                  verticalAlign: 'middle',
-                  marginRight: '1rem',
-                },
-              }}
-            >
+            <PoolStatusIndicator status="success" />
+            <Text alpha="high" css={{ marginLeft: '0.8rem' }}>
               {props.poolName}
             </Text>
             <button css={{ background: 'none', border: 'none', cursor: 'pointer' }}>
