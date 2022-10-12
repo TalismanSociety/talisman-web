@@ -85,15 +85,15 @@ export const Menu = styled((props: MenuProps) => {
       display: block;
       padding: 1rem 1.5rem;
 
-      & :hover {
+      :hover {
         background: var(--color-controlBackground);
       }
 
-      & :first-child {
+      :first-child {
         border-radius: 1rem 1rem 0 0;
       }
 
-      & :last-child {
+      :last-child {
         border-radius: 0 0 1rem 1rem;
       }
     }

@@ -9,8 +9,8 @@ import { ApiPromise, WsProvider } from '@polkadot/api'
 import { isEthereumChecksum } from '@polkadot/util-crypto'
 import { useChain } from '@talismn/api-react-hooks'
 import { getWalletBySource } from '@talismn/connect-wallets'
-import { Deferred } from '@talismn/util'
 import { encodeAnyAddress } from '@talismn/util'
+import { Deferred } from '@talismn/util-legacy'
 import {
   PropsWithChildren,
   useContext as _useContext,

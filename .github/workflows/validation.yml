@@ -11,13 +11,14 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@v3
         with:
           node-version: 'lts/*'
           cache: yarn
 
       - run: yarn install --immutable
-      - run: yarn pretty-quick --check
+      - run: yarn prettier --check .
       - run: yarn eslint .
+      - run: yarn test

@@ -25,7 +25,7 @@ const DesktopRequiredModal = styled(props => {
       <h2>{t('desktopRequired.title')}</h2>
       <p>{t('desktopRequired.subtitle')}</p>
       <p>{t('desktopRequired.text')}</p>
-      <Button primary to="/crowdloans" onClick={closeModal}>
+      <Button primary to="/explore" onClick={() => closeModal()}>
         {t('desktopRequired.primaryCta')}
       </Button>
     </div>

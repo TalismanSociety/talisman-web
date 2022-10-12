@@ -1,54 +1,30 @@
-import { Pendor, Pill } from '@components'
+import { StyledLoader } from '@components/Await'
 import styled from '@emotion/styled'
-import { ReactComponent as Loader } from '@icons/loader.svg'
-import { usePortfolio } from '@libs/portfolio'
-import { useAccountAddresses } from '@libs/talisman'
-import { addBigNumbers } from '@talismn/util'
+import { useActiveAccount, useBalances } from '@libs/talisman'
 import { device } from '@util/breakpoints'
-import { formatCurrency } from '@util/helpers'
-import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 
 const Total = styled(({ id, className }) => {
   const { t } = useTranslation()
-  const accountAddresses = useAccountAddresses()
-  const { isLoading, totalUsdByAddress } = usePortfolio()
-  // TODO: Price change value
-  const totalUsdChange = null //-1000000
 
-  const totalUsd = useMemo(
-    () =>
-      Object.entries(totalUsdByAddress || {})
-        .filter(([address]) => accountAddresses && accountAddresses.includes(address))
-        .map(([, usd]) => usd)
-        .reduce(addBigNumbers, undefined),
-    [totalUsdByAddress, accountAddresses]
-  )
+  const { balances, assetsValue } = useBalances()
+  const address = useActiveAccount().address
+
+  const fiatTotal =
+    address !== undefined
+      ? (balances?.find({ address: address }).sum.fiat('usd').transferable ?? 0).toLocaleString(undefined, {
+          style: 'currency',
+          currency: 'USD',
+          currencyDisplay: 'narrowSymbol',
+        }) ?? ' -'
+      : assetsValue
 
   return (
     <div className={`wallet-total ${className}`}>
       <div className="title">{t('Portfolio value')}</div>
-      {isLoading && (
-        <div className="amount">
-          <span>{formatCurrency(totalUsd || '0')}</span>
-          <Loader />
-        </div>
-      )}
-      {!isLoading && (
-        <Pendor
-          loader={<div className="amount">{formatCurrency(totalUsd || '0')}</div>}
-          require={!isLoading && !!totalUsd}
-        >
-          <>
-            <div className="amount">{totalUsd && formatCurrency(totalUsd)}</div>
-            {totalUsdChange && (
-              <Pill primary small>
-                {formatCurrency(totalUsdChange)}
-              </Pill>
-            )}
-          </>
-        </Pendor>
-      )}
+      <div className="amount">
+        <span>{fiatTotal ?? <StyledLoader />}</span>
+      </div>
     </div>
   )
 })`

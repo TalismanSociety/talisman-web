@@ -36,17 +36,35 @@ export const Section = styled(({ title, children, className, comingSoon, ...rest
     `}
 `
 
-export default styled(({ title, subtitle, children, className, ...rest }) => (
-  <motion.div className={`panel ${className}`} {...rest}>
-    {!!title && (
-      <h1>
-        {title}
-        {!!subtitle && <span>{subtitle}</span>}
-      </h1>
-    )}
-    <div className="inner">{children}</div>
-  </motion.div>
-))<BasePanelProps>`
+export default styled(({ title, subtitle, children, className, ...rest }) => {
+  // const listInnerRef : any = useRef();
+
+  // const [atBottom, setAtBottom] = useState<Boolean>(false);
+
+  // const onScroll = () => {
+  //   if (listInnerRef.current) {
+  //     const { scrollTop, scrollHeight, clientHeight } = listInnerRef.current;
+  //     if (scrollTop + clientHeight === scrollHeight) {
+  //       setAtBottom(true);
+  //     }
+  //     else {
+  //       setAtBottom(false);
+  //     }
+  //   }
+  // };
+
+  return (
+    <motion.div className={`panel ${className}`} {...rest}>
+      {title !== undefined && (
+        <h1>
+          {title}
+          {subtitle !== undefined && <span>{subtitle}</span>}
+        </h1>
+      )}
+      <div className="inner">{children}</div>
+    </motion.div>
+  )
+})<BasePanelProps>`
   width: 100%;
 
   > h1 {

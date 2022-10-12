@@ -1,7 +1,8 @@
 import { CrowdloanContribution } from '@libs/crowdloans'
 import type { BalanceWithTokensWithPrice } from '@talismn/api-react-hooks'
 import { groupBalancesByAddress } from '@talismn/api-react-hooks'
-import { addBigNumbers, encodeAnyAddress, multiplyBigNumbers, planckToTokens } from '@talismn/util'
+import { encodeAnyAddress, planckToTokens } from '@talismn/util'
+import { addBigNumbers, multiplyBigNumbers } from '@talismn/util-legacy'
 import useUniqueId from '@util/useUniqueId'
 import { FC, useContext as _useContext, createContext, useCallback, useEffect, useMemo, useState } from 'react'
 
@@ -224,7 +225,8 @@ export const Provider: FC<ProviderProps> = ({ children }) => {
     })
 
     const isLoading = Object.keys(loadingList).length !== 0
-    const hasEmptyBags = !isLoading && totalUsd === '0'
+    // const hasEmptyBags = !isLoading && totalUsd === '0'
+    const hasEmptyBags = false
 
     return {
       totalUsd,
