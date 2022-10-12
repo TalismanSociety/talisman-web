@@ -38,9 +38,9 @@ const PoolSelectorItem = (props: PoolSelectorItemProps) => {
           marginBottom: '0.6rem',
         }}
       >
-        <Text.H4 alpha={alpha} css={{ margin: 0 }}>
+        <Text.Body alpha={alpha} css={{ fontWeight: 'bold', margin: 0 }}>
           {props.poolName}
-        </Text.H4>
+        </Text.Body>
         <PoolStatusIndicator status="success" />
       </header>
       <Text.Body alpha={alpha}>{props.stakedAmount}</Text.Body>

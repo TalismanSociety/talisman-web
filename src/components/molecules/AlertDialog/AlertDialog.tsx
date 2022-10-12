@@ -5,11 +5,11 @@ import { keyframes, useTheme } from '@emotion/react'
 import { ReactComponent as XIcon } from '@icons/x.svg'
 import { ReactNode } from 'react'
 
-export type AlertDialogProps = Pick<DialogProps, 'open'> & {
+export type AlertDialogProps = DialogProps & {
   title: string
   text: ReactNode
   confirmButton: ReactNode
-  dismissButton: ReactNode
+  dismissButton?: ReactNode
   onRequestDismiss: () => unknown
 }
 

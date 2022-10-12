@@ -1,6 +1,6 @@
-import { ComponentMeta } from '@storybook/react'
+import { ComponentMeta, Story } from '@storybook/react'
 
-import PoolSelectorItem from './PoolSelectorItem'
+import PoolSelectorItem, { PoolSelectorItemProps } from './PoolSelectorItem'
 
 export default {
   title: 'Recipes/PoolSelectorItem',
@@ -8,14 +8,15 @@ export default {
   parameters: {
     layout: 'centered',
   },
-  argTypes: {
-    selected: { defaultValue: true },
-    poolName: { defaultValue: 'Talisman Paraverse Pool' },
-    stakedAmount: { defaultValue: '33.107 DOT Staked' },
-    talismanRecommended: { defaultValue: true },
-    rating: { defaultValue: 1 },
-    memberCount: { defaultValue: 69 },
-  },
 } as ComponentMeta<typeof PoolSelectorItem>
 
-export const Default = (args: any) => <PoolSelectorItem {...args} />
+export const Default: Story<PoolSelectorItemProps> = args => <PoolSelectorItem {...args} />
+
+Default.args = {
+  selected: true,
+  poolName: 'Talisman Paraverse Pool',
+  stakedAmount: '33.107 DOT Staked',
+  talismanRecommended: true,
+  rating: 1,
+  memberCount: 69,
+}
