@@ -10,8 +10,8 @@ import { useCallback, useState } from 'react'
 
 import { PoolStatusIndicator } from '../PoolStatusIndicator'
 
-type StakingInputProps = {
-  accounts: Array<{ name: string; address: string; balance: 'string' }>
+export type StakingInputProps = {
+  accounts: Array<{ name: string; address: string; balance: string }>
   amount: string
   fiatAmount: string
   onChangeAmount: (value: string) => unknown

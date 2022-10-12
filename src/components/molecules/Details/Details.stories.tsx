@@ -1,7 +1,7 @@
 import { Global, css } from '@emotion/react'
-import { ComponentMeta } from '@storybook/react'
+import { ComponentMeta, Story } from '@storybook/react'
 
-import Details from './Details'
+import Details, { DetailsProps } from './Details'
 
 export default {
   title: 'Molecules/Details',
@@ -9,15 +9,12 @@ export default {
   parameters: {
     layout: 'centered',
   },
-  argTypes: {
-    summary: {
-      defaultValue: 'What is nomination pool staking?',
-    },
-    contents: {
-      defaultValue:
-        'Unlike nominating staking using pools requires a smaller amount of DOT, and the pool manages nominees on your behalf.',
-    },
-  },
 } as ComponentMeta<typeof Details>
 
-export const Default = (args: any) => <Details {...args} />
+export const Default: Story<DetailsProps> = (args: any) => <Details {...args} />
+
+Default.args = {
+  summary: 'What is nomination pool staking?',
+  contents:
+    'Unlike nominating staking using pools requires a smaller amount of DOT, and the pool manages nominees on your behalf.',
+}

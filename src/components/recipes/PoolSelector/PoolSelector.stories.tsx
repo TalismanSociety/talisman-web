@@ -11,7 +11,6 @@ export default {
   parameters: {
     layout: 'centered',
   },
-  argTypes: {},
 } as ComponentMeta<typeof PoolSelector>
 
 export const Default: Story<PoolSelectorProps> = (args: any) => <PoolSelector {...args} />

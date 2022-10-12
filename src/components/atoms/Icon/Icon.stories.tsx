@@ -1,5 +1,5 @@
 import { useTheme } from '@emotion/react'
-import { ComponentMeta } from '@storybook/react'
+import { ComponentMeta, Story } from '@storybook/react'
 
 import * as Icon from './index'
 
@@ -12,7 +12,7 @@ export default {
   },
 } as ComponentMeta<typeof Icon.Activity>
 
-export const Default = (args: any) => {
+export const Default: Story<React.SVGProps<SVGSVGElement> & { title?: string }> = (args: any) => {
   const theme = useTheme()
   return (
     <div css={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '1rem' }}>

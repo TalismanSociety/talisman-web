@@ -1,7 +1,7 @@
 import React from 'react'
 
 type PolymorphicTextProps<T extends React.ElementType> = { as?: T; alpha?: 'disabled' | 'medium' | 'high' }
-type TextProps<T extends React.ElementType> = PolymorphicTextProps<T> &
+export type TextProps<T extends React.ElementType> = PolymorphicTextProps<T> &
   Omit<React.ComponentPropsWithoutRef<T>, keyof PolymorphicTextProps<T>>
 
 const BaseText = <T extends React.ElementType = 'span'>(props: TextProps<T>) => {

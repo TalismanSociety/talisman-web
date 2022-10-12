@@ -1,9 +1,9 @@
 import Button from '@components/atoms/Button'
 import Text from '@components/atoms/Text'
 import { Global, css } from '@emotion/react'
-import { ComponentMeta } from '@storybook/react'
+import { ComponentMeta, Story } from '@storybook/react'
 
-import AlertDialog from './AlertDialog'
+import AlertDialog, { AlertDialogProps } from './AlertDialog'
 
 export default {
   title: 'Molecules/AlertDialog',
@@ -11,29 +11,9 @@ export default {
   parameters: {
     layout: 'fullscreen',
   },
-  argTypes: {
-    open: { type: 'boolean' },
-    title: { defaultValue: 'Unstake' },
-    text: {
-      defaultValue: (
-        <>
-          <Text.Body as="p">You are unstaking 4000 DOT ($23,988.55).</Text.Body>
-          <Text.Body as="p">
-            Please note that when unstaking there is a 28-day unstaking period before your funds become available.
-          </Text.Body>
-        </>
-      ),
-    },
-    dismissButton: {
-      defaultValue: <Button variant="outlined">Cancel</Button>,
-    },
-    confirmButton: {
-      defaultValue: <Button>Confirm</Button>,
-    },
-  },
 } as ComponentMeta<typeof AlertDialog>
 
-export const Default = (args: any) => (
+export const Default: Story<AlertDialogProps> = (args: any) => (
   <>
     <Global
       styles={css`
@@ -46,3 +26,18 @@ export const Default = (args: any) => (
     <AlertDialog {...args} />
   </>
 )
+
+Default.args = {
+  open: true,
+  title: 'Unstake',
+  text: (
+    <>
+      <Text.Body as="p">You are unstaking 4000 DOT ($23,988.55).</Text.Body>
+      <Text.Body as="p">
+        Please note that when unstaking there is a 28-day unstaking period before your funds become available.
+      </Text.Body>
+    </>
+  ),
+  dismissButton: <Button variant="outlined">Cancel</Button>,
+  confirmButton: <Button>Confirm</Button>,
+}
