@@ -2,13 +2,12 @@ import { Chain } from '@archetypes'
 import { Info } from '@components'
 import { ReactComponent as ArrowRight } from '@icons/arrow-right.svg'
 import Identicon from '@polkadot/react-identicon'
-import { encodeAnyAddress } from '@talismn/util'
+import { encodeAnyAddress, formatDecimals } from '@talismn/util'
 import { truncateAddress } from '@util/helpers'
 import startCase from 'lodash/startCase'
 import { useTranslation } from 'react-i18next'
 
 import { ParsedTransaction } from './types'
-import { formatDecimals } from './util'
 
 type ItemDetailsProps = {
   parsed: ParsedTransaction | null | undefined
