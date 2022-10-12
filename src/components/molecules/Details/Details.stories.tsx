@@ -15,6 +15,6 @@ export const Default: Story<DetailsProps> = (args: any) => <Details {...args} />
 
 Default.args = {
   summary: 'What is nomination pool staking?',
-  contents:
+  content:
     'Unlike nominating staking using pools requires a smaller amount of DOT, and the pool manages nominees on your behalf.',
 }

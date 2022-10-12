@@ -1,7 +1,10 @@
 import useMergedRef from '@react-hook/merged-ref'
 import React, { useEffect, useMemo, useRef } from 'react'
 
-export type DialogProps = React.DetailedHTMLProps<React.DialogHTMLAttributes<HTMLDialogElement>, HTMLDialogElement> & {
+export type DialogProps = Omit<
+  React.DetailedHTMLProps<React.DialogHTMLAttributes<HTMLDialogElement>, HTMLDialogElement>,
+  'ref'
+> & {
   isModal?: boolean
   onClickBackdrop?: () => unknown
 }

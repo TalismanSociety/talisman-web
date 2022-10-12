@@ -8,7 +8,7 @@ export type DetailsProps = React.DetailedHTMLProps<
   HTMLDetailsElement
 > & {
   summary: string
-  contents: ReactNode
+  content: ReactNode
 }
 
 const Details = (props: DetailsProps) => {
@@ -49,10 +49,10 @@ const Details = (props: DetailsProps) => {
         <ChevronDownIcon className="marker" />
       </summary>
       <Text.Body
-        as={typeof props.contents === 'string' ? undefined : 'div'}
+        as={typeof props.content === 'string' ? undefined : 'div'}
         css={{ height: props.open ? undefined : 0 }}
       >
-        {props.contents}
+        {props.content}
       </Text.Body>
     </details>
   )

@@ -7,7 +7,7 @@ import { ReactNode } from 'react'
 
 export type AlertDialogProps = DialogProps & {
   title: string
-  text: ReactNode
+  content: ReactNode
   confirmButton: ReactNode
   dismissButton?: ReactNode
   onRequestDismiss: () => unknown
@@ -38,12 +38,12 @@ const AlertDialog = (props: AlertDialogProps) => {
     <Dialog
       {...props}
       css={{
-        maxWidth: '46rem',
-        padding: '2.4rem',
-        background: theme.color.background,
-        border: 'none',
-        borderRadius: '1.6rem',
-        ['&[open]']: {
+        'maxWidth': '46rem',
+        'padding': '2.4rem',
+        'background': theme.color.background,
+        'border': 'none',
+        'borderRadius': '1.6rem',
+        '&[open]': {
           'animation': `${show} .5s ease`,
           '::backdrop': {
             background: 'rgba(0,0,0,0.6)',
@@ -61,7 +61,7 @@ const AlertDialog = (props: AlertDialogProps) => {
           <XIcon width="1.6rem" height="1.6rem" />
         </Button>
       </header>
-      {props.text}
+      {props.content}
       <div
         css={{
           'display': 'flex',

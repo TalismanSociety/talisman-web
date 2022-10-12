@@ -19,7 +19,7 @@ const PoolSelector = Object.assign(
       <AlertDialog
         open
         title="Select a pool"
-        text={
+        content={
           <div>
             <Text.Body as="h3">Current pool</Text.Body>
             <div

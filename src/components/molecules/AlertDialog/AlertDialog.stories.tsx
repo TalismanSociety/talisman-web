@@ -30,7 +30,7 @@ export const Default: Story<AlertDialogProps> = (args: any) => (
 Default.args = {
   open: true,
   title: 'Unstake',
-  text: (
+  content: (
     <>
       <Text.Body as="p">You are unstaking 4000 DOT ($23,988.55).</Text.Body>
       <Text.Body as="p">
