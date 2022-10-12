@@ -1,6 +1,6 @@
+import { ChevronDown } from '@components/atoms/Icon'
 import Text from '@components/atoms/Text'
 import { useTheme } from '@emotion/react'
-import { ReactComponent as ChevronDownIcon } from '@icons/chevron-down.svg'
 import { ReactNode } from 'react'
 
 export type DetailsProps = React.DetailedHTMLProps<
@@ -46,7 +46,7 @@ const Details = (props: DetailsProps) => {
         <Text.H4 as="span" css={{ fontFamily: 'Surt', marginRight: '2rem' }}>
           {props.summary}
         </Text.H4>
-        <ChevronDownIcon className="marker" />
+        <ChevronDown className="marker" />
       </summary>
       <Text.Body
         as={typeof props.content === 'string' ? undefined : 'div'}

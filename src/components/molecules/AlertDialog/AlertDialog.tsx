@@ -1,8 +1,8 @@
 import Button from '@components/atoms/Button'
 import Dialog, { DialogProps } from '@components/atoms/Dialog'
+import { X } from '@components/atoms/Icon'
 import Text from '@components/atoms/Text'
 import { keyframes, useTheme } from '@emotion/react'
-import { ReactComponent as XIcon } from '@icons/x.svg'
 import { ReactNode } from 'react'
 
 export type AlertDialogProps = DialogProps & {
@@ -58,7 +58,7 @@ const AlertDialog = (props: AlertDialogProps) => {
       >
         <Text.H4>{props.title}</Text.H4>
         <Button variant="noop" onClick={props.onRequestDismiss}>
-          <XIcon width="1.6rem" height="1.6rem" />
+          <X width="1.6rem" height="1.6rem" />
         </Button>
       </header>
       {props.content}
