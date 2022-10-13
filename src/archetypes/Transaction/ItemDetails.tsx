@@ -1,19 +1,20 @@
 import { Chain } from '@archetypes'
 import { Info } from '@components'
-import { ReactComponent as ArrowRight } from '@icons/arrow-right.svg'
-import Identicon from '@polkadot/react-identicon'
+import styled from '@emotion/styled'
+import { ReactComponent as _ArrowRight } from '@icons/arrow-right.svg'
 import { encodeAnyAddress, formatDecimals } from '@talismn/util'
 import { truncateAddress } from '@util/helpers'
 import startCase from 'lodash/startCase'
 import { useTranslation } from 'react-i18next'
 
+import { Avatar } from './Avatar'
 import { ParsedTransaction } from './types'
 
-type ItemDetailsProps = {
+type Props = {
   parsed: ParsedTransaction | null | undefined
   addresses: string[]
 }
-export default function ItemDetails({ parsed, addresses }: ItemDetailsProps) {
+export const ItemDetails = ({ parsed, addresses }: Props) => {
   const { t } = useTranslation()
   if (!parsed) return <div />
 
@@ -32,18 +33,10 @@ export default function ItemDetails({ parsed, addresses }: ItemDetailsProps) {
         />
       )
       const senderInfo = (
-        <Info
-          title="From"
-          subtitle={truncateAddress(parsed.from, 4)}
-          graphic={<Identicon value={parsed.from} theme="polkadot" />}
-        />
+        <Info title="From" subtitle={truncateAddress(parsed.from, 4)} graphic={<Avatar value={parsed.from} />} />
       )
       const receiverInfo = (
-        <Info
-          title="To"
-          subtitle={truncateAddress(parsed.to, 4)}
-          graphic={<Identicon value={parsed.to} theme="polkadot" />}
-        />
+        <Info title="To" subtitle={truncateAddress(parsed.to, 4)} graphic={<Avatar value={parsed.to} />} />
       )
 
       return (
@@ -162,3 +155,8 @@ export default function ItemDetails({ parsed, addresses }: ItemDetailsProps) {
       throw new Error(`Unhandled transaction type ${exhaustiveCheck}`)
   }
 }
+
+const ArrowRight = styled(_ArrowRight)`
+  display: block;
+  height: auto;
+`

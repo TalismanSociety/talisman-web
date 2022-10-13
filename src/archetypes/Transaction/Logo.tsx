@@ -17,7 +17,7 @@ import { encodeAnyAddress } from '@talismn/util'
 import { ParsedTransaction } from './types'
 
 type Props = { className?: string; parsed: ParsedTransaction | null | undefined; addresses: string[] }
-const Logo = ({ className, parsed, addresses }: Props) => {
+export const Logo = styled(({ className, parsed, addresses }: Props) => {
   switch (parsed?.type) {
     case 'transfer':
       const genericAddresses = addresses.map(a => encodeAnyAddress(a))
@@ -51,11 +51,7 @@ const Logo = ({ className, parsed, addresses }: Props) => {
     default:
       return <Unknown className={className} />
   }
-}
-
-const StyledLogo = styled(Logo)`
+})`
   width: var(--font-size-xxlarge);
   height: var(--font-size-xxlarge);
 `
-
-export default StyledLogo

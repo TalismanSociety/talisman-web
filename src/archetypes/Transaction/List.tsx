@@ -9,16 +9,15 @@ import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import useInfiniteScroll from 'react-infinite-scroll-hook'
 
-import Item from './Item'
+import { Item } from './Item'
 import { useTransactions } from './store'
 import { useUrlParams } from './util'
 
-type ITransactionListProps = {
+type Props = {
   addresses: string[]
   className?: string
 }
-
-const TransactionList = ({ addresses = [], className }: ITransactionListProps) => {
+export const List = styled(({ addresses = [], className }: Props) => {
   const { t } = useTranslation()
 
   const urlAddress = useUrlParams(['address'])[0]
@@ -116,9 +115,7 @@ const TransactionList = ({ addresses = [], className }: ITransactionListProps) =
       </footer>
     </section>
   )
-}
-
-const StyledTransactionList = styled(TransactionList)`
+})`
   > header {
     padding-bottom: 1rem;
     margin-bottom: 1em;
@@ -178,5 +175,3 @@ const StyledTransactionList = styled(TransactionList)`
     }
   }
 `
-
-export default StyledTransactionList

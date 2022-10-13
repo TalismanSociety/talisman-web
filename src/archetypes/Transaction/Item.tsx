@@ -2,18 +2,18 @@ import { Info, PanelSection } from '@components'
 import styled from '@emotion/styled'
 import { ReactComponent as ExternalLink } from '@icons/external-link.svg'
 import { useAccounts } from '@libs/talisman'
-import Identicon from '@polkadot/react-identicon'
 import { encodeAnyAddress } from '@talismn/util'
 import { truncateAddress } from '@util/helpers'
 import startCase from 'lodash/startCase'
 import { useMemo } from 'react'
 
-import ItemDetails from './ItemDetails'
-import Logo from './Logo'
+import { Avatar } from './Avatar'
+import { ItemDetails } from './ItemDetails'
+import { Logo } from './Logo'
 import { Transaction } from './types'
 
 type Props = { className?: string; transaction: Transaction; addresses: string[] }
-const TransactionItem = styled(({ className, transaction, addresses }: Props) => {
+export const Item = styled(({ className, transaction, addresses }: Props) => {
   const accounts = useAccounts()
 
   const { name, ss58Format, timestamp, blockExplorerUrl, parsed, relatedAddresses } = transaction
@@ -40,7 +40,7 @@ const TransactionItem = styled(({ className, transaction, addresses }: Props) =>
     <>
       <PanelSection
         className={`transaction-item ${className}`}
-        initial={{ opacity: 0, transition: { ease: [0.78, 0.14, 0.15, 0.86] } }}
+        initial={{ opacity: 0 }}
         animate={{ opacity: 1, transition: { ease: [0.78, 0.14, 0.15, 0.86] } }}
         exit={{ opacity: 0, scale: 0.5, transition: { ease: [0.78, 0.14, 0.15, 0.86] } }}
       >
@@ -53,7 +53,7 @@ const TransactionItem = styled(({ className, transaction, addresses }: Props) =>
         <Info
           title={youAccount}
           subtitle={truncateAddress(youAddress ? encodeAnyAddress(youAddress, ss58Format) : youAddress, 4)}
-          graphic={<Identicon value={youAddress} theme="polkadot" />}
+          graphic={<Avatar value={youAddress} />}
         />
 
         <ItemDetails parsed={transaction.parsed} addresses={addresses} />
@@ -168,5 +168,3 @@ const TransactionItem = styled(({ className, transaction, addresses }: Props) =>
     }
   }
 `
-
-export default TransactionItem

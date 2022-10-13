@@ -1,7 +1,12 @@
 import { Image } from '@components'
 import styled from '@emotion/styled'
 
-export default styled(({ id, className }) => {
+type Props = {
+  id?: string
+  className?: string
+  size?: number
+}
+export default styled(({ id, className }: Props) => {
   return (
     <Image
       className={`chain-logo ${className}`}

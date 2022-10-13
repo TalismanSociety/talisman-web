@@ -1,3 +1,3 @@
-export { default as Item } from './Item'
-export { default as List } from './List'
-export { default as Logo } from './Logo'
+export { Item } from './Item'
+export { List } from './List'
+export { Logo } from './Logo'
