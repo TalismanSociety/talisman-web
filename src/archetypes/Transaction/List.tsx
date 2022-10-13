@@ -5,7 +5,7 @@ import { Account as TAccount } from '@libs/talisman'
 import { AnimatePresence } from 'framer-motion'
 import groupBy from 'lodash/groupBy'
 import moment from 'moment-timezone'
-import { useEffect, useMemo, useState } from 'react'
+import { Fragment, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import useInfiniteScroll from 'react-infinite-scroll-hook'
 
@@ -60,42 +60,42 @@ export const List = styled(({ addresses = [], className }: Props) => {
       </header>
 
       <Panel className="transaction-item-container">
-        <AnimatePresence exitBeforeEnter>
+        <AnimatePresence>
           {status === 'INITIALISED' || (status === 'PROCESSING' && !hasTransactions) ? (
             <PanelSection
+              key="first"
               className="centered-state"
-              initial={{ opacity: 0, transition: { ease: [0.78, 0.14, 0.15, 0.86] } }}
+              initial={{ opacity: 0 }}
               animate={{ opacity: 1, transition: { ease: [0.78, 0.14, 0.15, 0.86] } }}
-              exit={{ opacity: 0, scale: 0.5, transition: { ease: [0.78, 0.14, 0.15, 0.86] } }}
             >
               <MaterialLoader /> <div>{t('Searching the paraverse')}</div>
             </PanelSection>
           ) : status === 'ERROR' ? (
             <PanelSection
+              key="first"
               className="centered-state"
-              initial={{ opacity: 0, transition: { ease: [0.78, 0.14, 0.15, 0.86] } }}
+              initial={{ opacity: 0 }}
               animate={{ opacity: 1, transition: { ease: [0.78, 0.14, 0.15, 0.86] } }}
-              exit={{ opacity: 0, scale: 0.5, transition: { ease: [0.78, 0.14, 0.15, 0.86] } }}
             >
               <div>{t('An error occured')}</div>
             </PanelSection>
           ) : !hasTransactions ? (
             <PanelSection
+              key="first"
               className="centered-state"
-              initial={{ opacity: 0, transition: { ease: [0.78, 0.14, 0.15, 0.86] } }}
+              initial={{ opacity: 0 }}
               animate={{ opacity: 1, transition: { ease: [0.78, 0.14, 0.15, 0.86] } }}
-              exit={{ opacity: 0, scale: 0.5, transition: { ease: [0.78, 0.14, 0.15, 0.86] } }}
             >
               {t('No Transactions - try another account')}
             </PanelSection>
           ) : (
-            Object.entries(dayGroupedTransactions).map(([day, transactions]) => (
-              <>
+            Object.entries(dayGroupedTransactions).map(([day, transactions], index) => (
+              <Fragment key={index === 0 ? 'first' : day}>
                 <h3 className="transaction-date">{moment(day).format('ddd D MMMM YYYY')}</h3>
                 {transactions.map(transaction => (
                   <Item key={transaction.id} transaction={transaction} addresses={fetchAddresses} />
                 ))}
-              </>
+              </Fragment>
             ))
           )}
         </AnimatePresence>
