@@ -1,17 +1,17 @@
 import Button from '@components/atoms/Button'
+import { ChevronRight } from '@components/atoms/Icon'
 import Text from '@components/atoms/Text'
 import Select from '@components/molecules/Select'
 import TextInput, { LabelButton } from '@components/molecules/TextInput'
 import { useTheme } from '@emotion/react'
-import { ReactComponent as ChevronRightIcon } from '@icons/chevron-right.svg'
 import Identicon from '@polkadot/react-identicon'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useCallback, useState } from 'react'
 
 import { PoolStatusIndicator } from '../PoolStatusIndicator'
 
-type StakingInputProps = {
-  accounts: Array<{ name: string; address: string; balance: 'string' }>
+export type StakingInputProps = {
+  accounts: Array<{ name: string; address: string; balance: string }>
   amount: string
   fiatAmount: string
   onChangeAmount: (value: string) => unknown
@@ -73,7 +73,7 @@ const StakingInput = (props: StakingInputProps) => {
             </Text>
           </div>
           <motion.div animate={String(poolInfoExpanded)} variants={{ true: { transform: 'rotate(90deg)' }, false: {} }}>
-            <ChevronRightIcon />
+            <ChevronRight />
           </motion.div>
         </div>
         <AnimatePresence>
