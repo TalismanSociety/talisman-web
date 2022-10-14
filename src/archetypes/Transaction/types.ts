@@ -1,5 +1,3 @@
-import { Moment } from 'moment-timezone'
-
 export type IndexerTransaction = {
   id: string
   name: string
@@ -23,7 +21,7 @@ export type Transaction = {
   ss58Format: number
   blockNumber: string
   blockHash: string
-  timestamp: Moment // type is different to IndexerTransaction
+  timestamp: string
   signer: string
   relatedAddresses: string[]
 

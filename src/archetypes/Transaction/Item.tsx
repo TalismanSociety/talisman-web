@@ -4,6 +4,8 @@ import { ReactComponent as ExternalLink } from '@icons/external-link.svg'
 import { useAccounts } from '@libs/talisman'
 import { encodeAnyAddress } from '@talismn/util'
 import { truncateAddress } from '@util/helpers'
+import formatDistanceToNowStrict from 'date-fns/formatDistanceToNowStrict'
+import parseISO from 'date-fns/parseISO'
 import startCase from 'lodash/startCase'
 import { useMemo } from 'react'
 
@@ -46,7 +48,7 @@ export const Item = styled(({ className, transaction, addresses }: Props) => {
       >
         <Info
           title={getTransactionName()}
-          subtitle={timestamp.fromNow()}
+          subtitle={formatDistanceToNowStrict(parseISO(timestamp), { addSuffix: true })}
           graphic={<Logo className="category-logo" parsed={parsed} addresses={addresses} />}
         />
 

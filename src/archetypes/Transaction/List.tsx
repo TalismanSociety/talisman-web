@@ -2,9 +2,11 @@ import { Account } from '@archetypes'
 import { MaterialLoader, Panel, PanelSection } from '@components'
 import styled from '@emotion/styled'
 import { Account as TAccount } from '@libs/talisman'
+import format from 'date-fns/format'
+import parseISO from 'date-fns/parseISO'
+import startOfDay from 'date-fns/startOfDay'
 import { AnimatePresence } from 'framer-motion'
 import groupBy from 'lodash/groupBy'
-import moment from 'moment-timezone'
 import { Fragment, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import useInfiniteScroll from 'react-infinite-scroll-hook'
@@ -45,7 +47,7 @@ export const List = styled(({ addresses = [], className }: Props) => {
     [transactions]
   )
   const dayGroupedTransactions = useMemo(
-    () => groupBy(sortedTransactions, tx => tx.timestamp.clone().startOf('day').toISOString()),
+    () => groupBy(sortedTransactions, tx => startOfDay(parseISO(tx.timestamp)).toISOString()),
     [sortedTransactions]
   )
 
@@ -91,7 +93,7 @@ export const List = styled(({ addresses = [], className }: Props) => {
           ) : (
             Object.entries(dayGroupedTransactions).map(([day, transactions], index) => (
               <Fragment key={index === 0 ? 'first' : day}>
-                <h3 className="transaction-date">{moment(day).format('ddd D MMMM YYYY')}</h3>
+                <h3 className="transaction-date">{format(parseISO(day), 'eee d MMMM yyyy')}</h3>
                 {transactions.map(transaction => (
                   <Item key={transaction.id} transaction={transaction} addresses={fetchAddresses} />
                 ))}

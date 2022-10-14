@@ -1,7 +1,6 @@
 import { useQuery } from '@apollo/client'
 import { ApolloClient, InMemoryCache } from '@apollo/client'
 import { BatchHttpLink } from '@apollo/client/link/batch-http'
-import moment from 'moment-timezone'
 import { useCallback, useEffect, useMemo, useReducer, useState } from 'react'
 
 import { FETCH_LIMIT, TX_QUERY } from './consts'
@@ -20,8 +19,6 @@ const transactionReducer = (state: TransactionMap, action: ReducerAction): Trans
   // convert IndexerTransaction (what comes back from the API) into Transaction (what we use in the app)
   const transformIndexerTx = (tx: IndexerTransaction): Transaction => ({
     ...tx,
-
-    timestamp: moment(tx.timestamp),
 
     blockExplorerUrl: getBlockExplorerUrl(tx),
     parsed: parseTransaction(tx),
