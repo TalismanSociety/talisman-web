@@ -1,8 +1,10 @@
 import Button from '@components/atoms/Button'
-import { Edit } from '@components/atoms/Icon'
+import CircularProgressIndicator from '@components/atoms/CircularProgressIndicator'
+import { Edit, Loader } from '@components/atoms/Icon'
 import Text from '@components/atoms/Text'
 import { useTheme } from '@emotion/react'
 import Identicon from '@polkadot/react-identicon'
+import React, { ReactElement } from 'react'
 
 import { PoolStatusIndicator } from '../PoolStatusIndicator'
 
@@ -14,6 +16,12 @@ export type PoolStakeProps = {
   rewardsAmount: string
   rewardsAmountInFiat: string
   poolName: string
+  onRequestClaim: () => unknown
+  onRequestUnstake: () => unknown
+  onRequestAdd: () => unknown
+  claimState?: 'unavailable' | 'pending' | 'disabled'
+  addState?: 'pending' | 'disabled'
+  unstakeState?: 'pending' | 'disabled'
 }
 
 const PoolStake = (props: PoolStakeProps) => {
@@ -32,7 +40,7 @@ const PoolStake = (props: PoolStakeProps) => {
         },
       }}
     >
-      <Identicon value="143wN4e1nTTWJZHy1CFVXDHpAg6YJsNn2jDN52J2Xfjf8MWs" size={40} theme="polkadot" />
+      <Identicon value={props.accountAddress} size={40} theme="polkadot" />
       <dl
         css={{
           'display': 'flex',
@@ -75,7 +83,7 @@ const PoolStake = (props: PoolStakeProps) => {
               flex: 1,
               overflow: 'hidden',
             },
-            '> div:last-child': {
+            '> div:nth-child(2)': {
               flex: 2,
             },
           },
@@ -88,8 +96,23 @@ const PoolStake = (props: PoolStakeProps) => {
               <Text.Body alpha="high">{props.accountName}</Text.Body>
             </div>
             <div>
-              <Text.Body>{props.accountAddress}</Text.Body>
+              <Text.Body>
+                ({props.accountAddress.slice(0, 4)}...{props.accountAddress.slice(-4)})
+              </Text.Body>
             </div>
+          </dd>
+        </div>
+        <div
+          css={{
+            '@media (min-width: 1024px)': { flex: 3 },
+          }}
+        >
+          <dt>Pool</dt>
+          <dd css={{ display: 'flex', alignItems: 'center', gap: '0.24rem' }}>
+            <PoolStatusIndicator status="success" />
+            <Text alpha="high" css={{ marginLeft: '0.8rem' }}>
+              {props.poolName}
+            </Text>
           </dd>
         </div>
         <div>
@@ -114,22 +137,6 @@ const PoolStake = (props: PoolStakeProps) => {
             </div>
           </dd>
         </div>
-        <div
-          css={{
-            '@media (min-width: 1024px)': { flex: 3 },
-          }}
-        >
-          <dt>Pool</dt>
-          <dd css={{ display: 'flex', alignItems: 'center', gap: '0.24rem' }}>
-            <PoolStatusIndicator status="success" />
-            <Text alpha="high" css={{ marginLeft: '0.8rem' }}>
-              {props.poolName}
-            </Text>
-            <button css={{ background: 'none', border: 'none', cursor: 'pointer' }}>
-              <Edit width="1.6rem" />
-            </button>
-          </dd>
-        </div>
       </dl>
       <section
         css={{
@@ -144,11 +151,62 @@ const PoolStake = (props: PoolStakeProps) => {
           },
         }}
       >
-        <Button variant="outlined">Claim</Button>
-        <Button variant="outlined">Add</Button>
-        <Button variant="outlined">Unstake</Button>
+        <Button
+          variant="outlined"
+          onClick={props.onRequestClaim}
+          disabled={props.claimState === 'disabled' || props.claimState === 'unavailable'}
+          loading={props.claimState === 'pending'}
+          css={{ opacity: props.claimState === 'unavailable' ? 0 : undefined }}
+        >
+          Claim
+        </Button>
+        <Button
+          variant="outlined"
+          onClick={props.onRequestAdd}
+          disabled={props.addState === 'disabled'}
+          loading={props.addState === 'pending'}
+        >
+          Add
+        </Button>
+        <Button
+          variant="outlined"
+          onClick={props.onRequestUnstake}
+          disabled={props.unstakeState === 'disabled'}
+          loading={props.unstakeState === 'pending'}
+        >
+          Unstake
+        </Button>
       </section>
     </article>
+  )
+}
+
+export type PoolStakeListProps = {
+  children: ReactElement<PoolStakeProps> | ReactElement<PoolStakeProps>[]
+}
+
+export const PoolStakeList = (props: PoolStakeListProps) => {
+  const theme = useTheme()
+  return (
+    <ol
+      css={{
+        'listStyle': 'none',
+        'margin': 0,
+        'padding': 0,
+        'li + li': {
+          marginTop: '1.6rem',
+        },
+        '@media (min-width: 1024px)': {
+          'background': theme.color.surface,
+          'borderRadius': '1.6rem',
+          'li + li': { marginTop: 0, borderTop: 'solid 1px #383838' },
+        },
+      }}
+    >
+      {React.Children.map(props.children, child => (
+        <li key={child.key}>{child}</li>
+      ))}
+    </ol>
   )
 }
 

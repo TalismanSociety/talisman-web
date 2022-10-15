@@ -3,6 +3,7 @@ import { Lock } from '@components/atoms/Icon'
 import Text from '@components/atoms/Text'
 import { useTheme } from '@emotion/react'
 import Identicon from '@polkadot/react-identicon'
+import React, { ReactElement } from 'react'
 
 export type PoolUnstakeProps = {
   accountName: string
@@ -10,6 +11,8 @@ export type PoolUnstakeProps = {
   unstakingAmount: string
   unstakingFiatAmount: string
   timeTilWithdrawable?: string
+  onRequestWithdraw: () => unknown
+  withdrawState?: 'pending' | 'disabled'
 }
 
 const PoolUnstake = (props: PoolUnstakeProps) => {
@@ -142,10 +145,44 @@ const PoolUnstake = (props: PoolUnstakeProps) => {
             },
           }}
         >
-          <Button variant="outlined">Claim</Button>
+          <Button
+            variant="outlined"
+            onClick={props.onRequestWithdraw}
+            disabled={props.withdrawState === 'disabled'}
+            loading={props.withdrawState === 'pending'}
+          >
+            Withdraw
+          </Button>
         </section>
       )}
     </article>
+  )
+}
+
+export type PoolUnstakeListProps = {
+  children?: ReactElement<PoolUnstakeProps> | ReactElement<PoolUnstakeProps>[]
+}
+
+export const PoolUnstakeList = (props: PoolUnstakeListProps) => {
+  const theme = useTheme()
+  return (
+    <ol
+      css={{
+        'listStyle': 'none',
+        'margin': 0,
+        'padding': 0,
+        'li + li': {
+          marginTop: '1.6rem',
+        },
+        '@media (min-width: 1024px)': {
+          'background': theme.color.surface,
+          'borderRadius': '1.6rem',
+          'li + li': { marginTop: 0, borderTop: 'solid 1px #383838' },
+        },
+      }}
+    >
+      {props.children && React.Children.map(props.children, child => <li key={child.key}>{child}</li>)}
+    </ol>
   )
 }
 

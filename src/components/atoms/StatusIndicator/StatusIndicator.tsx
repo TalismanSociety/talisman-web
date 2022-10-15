@@ -10,6 +10,7 @@ const StatusIndicator = (props: StatusIndicatorProps) => (
     title={props.tooltip ?? props.status}
     css={{
       width: '0.8rem',
+      minWidth: '0.8rem',
       height: '0.8rem',
       borderRadius: '0.4rem',
       backgroundColor: useMemo(() => {

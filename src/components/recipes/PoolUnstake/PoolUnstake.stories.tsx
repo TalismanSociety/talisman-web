@@ -1,13 +1,19 @@
 import { ComponentMeta, Story } from '@storybook/react'
 
-import PoolUnstake, { PoolUnstakeProps } from './PoolUnstake'
+import PoolUnstake, { PoolUnstakeList, PoolUnstakeProps } from './PoolUnstake'
 
 export default {
   title: 'Recipes/PoolUnstake',
   component: PoolUnstake,
 } as ComponentMeta<typeof PoolUnstake>
 
-export const Default: Story<PoolUnstakeProps> = args => <PoolUnstake {...args} />
+export const Default: Story<PoolUnstakeProps> = args => (
+  <PoolUnstakeList>
+    <PoolUnstake {...args} />
+    <PoolUnstake {...args} />
+    <PoolUnstake {...args} />
+  </PoolUnstakeList>
+)
 
 Default.args = {
   accountName: 'Yeet account',
