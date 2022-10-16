@@ -1,7 +1,8 @@
 import { ChevronDown } from '@components/atoms/Icon'
 import Text from '@components/atoms/Text'
 import { useTheme } from '@emotion/react'
-import { ReactNode } from 'react'
+import { AnimatePresence, motion } from 'framer-motion'
+import { ReactNode, useCallback, useState } from 'react'
 
 export type DetailsProps = React.DetailedHTMLProps<
   React.DetailsHTMLAttributes<HTMLDetailsElement>,
@@ -13,18 +14,17 @@ export type DetailsProps = React.DetailedHTMLProps<
 
 const Details = (props: DetailsProps) => {
   const theme = useTheme()
+  const [open, setOpen] = useState(false)
 
   return (
     <details
+      open
       {...props}
       css={{
-        'padding': '3rem 3.2rem',
+        'padding': '2.2rem 3.2rem',
         'borderRadius': '1.6rem',
         'backgroundColor': theme.color.surface,
         '&[open]': {
-          'summary': {
-            marginBottom: '2.2rem',
-          },
           '.marker': {
             transform: 'rotate(180deg)',
             transition: 'ease 0.25s',
@@ -33,27 +33,42 @@ const Details = (props: DetailsProps) => {
       }}
     >
       <summary
+        onClick={useCallback<React.MouseEventHandler<HTMLElement>>(event => {
+          event.preventDefault()
+          setOpen(x => !x)
+        }, [])}
         css={{
           'listStyle': 'none',
           'display': 'flex',
           'justifyContent': 'space-between',
           'alignItems': 'center',
+          'cursor': 'pointer',
           '::-webkit-details-marker': {
             display: 'none',
           },
         }}
       >
-        <Text.H4 as="span" css={{ fontFamily: 'Surt', marginRight: '2rem' }}>
+        <Text.Body as="span" alpha={open ? 'high' : 'medium'} css={{ fontFamily: 'Surt', marginRight: '2rem' }}>
           {props.summary}
-        </Text.H4>
-        <ChevronDown className="marker" />
+        </Text.Body>
+        <motion.div variants={{ true: { transform: 'rotate(180deg)' } }} animate={JSON.stringify(open)}>
+          <ChevronDown className="marker" />
+        </motion.div>
       </summary>
-      <Text.Body
-        as={typeof props.content === 'string' ? undefined : 'div'}
-        css={{ height: props.open ? undefined : 0 }}
-      >
-        {props.content}
-      </Text.Body>
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            css={{ overflow: 'hidden' }}
+          >
+            <Text.Body as="div" css={{ marginTop: '2.2rem' }}>
+              {props.content}
+            </Text.Body>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </details>
   )
 }

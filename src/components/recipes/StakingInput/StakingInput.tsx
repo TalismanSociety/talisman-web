@@ -10,8 +10,11 @@ import { useCallback, useState } from 'react'
 
 import { PoolStatusIndicator } from '../PoolStatusIndicator'
 
+type Account = { selected?: boolean; name: string; address: string; balance: string }
+
 export type StakingInputProps = {
-  accounts: Array<{ name: string; address: string; balance: string }>
+  accounts: Account[]
+  onSelectAccount: (account: Account) => unknown
   amount: string
   fiatAmount: string
   onChangeAmount: (value: string) => unknown
@@ -20,7 +23,7 @@ export type StakingInputProps = {
   poolName: string
   poolTotalStaked: string
   poolMemberCount: string
-  onConfirm: () => unknown
+  onSubmit: () => unknown
 }
 
 const StakingInput = (props: StakingInputProps) => {
@@ -43,9 +46,11 @@ const StakingInput = (props: StakingInputProps) => {
       <Select width="100%">
         {props.accounts.map(account => (
           <Select.Item
+            selected={account.selected}
             leadingIcon={<Identicon value={account.address} size={40} theme="polkadot" />}
             headlineText={account.name}
             supportingText={account.balance}
+            onClick={() => props.onSelectAccount(account)}
           />
         ))}
       </Select>
@@ -114,7 +119,7 @@ const StakingInput = (props: StakingInputProps) => {
           )}
         </AnimatePresence>
       </div>
-      <Button onClick={props.onConfirm} css={{ width: '100%' }}>
+      <Button onClick={props.onSubmit} css={{ width: '100%' }}>
         Stake
       </Button>
     </form>

@@ -1,0 +1,114 @@
+import { ApiPromise } from '@polkadot/api'
+import type {
+  PromiseResult,
+  QueryableStorageEntry,
+  StorageEntryPromiseOverloads,
+  UnsubscribePromise,
+} from '@polkadot/api/types'
+import useDeferred from '@util/useDeferred'
+import { useEffect, useState } from 'react'
+import { useRecoilValue } from 'recoil'
+import { Observable } from 'rxjs'
+
+import { apiState } from '../../chains/recoils'
+
+type QueryMap = PickKnownKeys<
+  // @ts-ignore
+  { [P in keyof ApiPromise['query']]: `${P}.${keyof PickKnownKeys<ApiPromise['query'][P]>}` }
+>
+
+type Query = QueryMap[keyof QueryMap]
+
+type QueryParamsMap = {
+  [P in Query]: P extends `${infer TModule}.${infer TSection}`
+    ? Leading<
+        Parameters<
+          Diverge<
+            ApiPromise['query'][TModule][TSection],
+            StorageEntryPromiseOverloads & QueryableStorageEntry<any, any>
+          >
+        >
+      >
+    : never
+}
+
+type QueryResultMap = {
+  [P in Query]: P extends `${infer TModule}.${infer TSection}`
+    ? Diverge<
+        ApiPromise['query'][TModule][TSection],
+        StorageEntryPromiseOverloads & QueryableStorageEntry<any, any>
+      > extends PromiseResult<(...args: any) => Observable<infer TResult>>
+      ? TResult
+      : any
+    : never
+}
+
+const useQueryMulti = <TQueries extends Array<Query | [Query, ...unknown[]]> | [Query | [Query, ...unknown[]]]>(
+  queries: TQueries,
+  options?: { enabled: boolean }
+) => {
+  type TResult = {
+    [P in keyof typeof queries]: typeof queries[P] extends [infer Head, ...any[]]
+      ? Head extends keyof QueryResultMap
+        ? QueryResultMap[Head]
+        : any
+      : typeof queries[P] extends keyof QueryResultMap
+      ? QueryResultMap[typeof queries[P]]
+      : any
+  }
+
+  const api = useRecoilValue(apiState)
+
+  const { promise, resolve, reject } = useDeferred<TResult>()
+
+  const [loadable, setLoadable] = useState<
+    | { state: 'loading'; contents: Promise<TResult> }
+    | { state: 'hasValue'; contents: TResult }
+    | { state: 'hasError'; contents: any }
+  >({ state: 'loading', contents: promise })
+
+  useEffect(
+    () => {
+      if (options?.enabled === false) {
+        return
+      }
+
+      const params = queries.map(x => {
+        if (typeof x === 'string') {
+          const [module, section] = x.split('.')
+          return api.query[module][section]
+        }
+
+        const [query, ...params] = x
+        const [module, section] = query.split('.')
+
+        return [api.query[module][section], ...params]
+      })
+
+      // @ts-ignore
+      const unsubscribePromise: UnsubscribePromise = api
+        .queryMulti(params as any, (result: TResult) => {
+          setLoadable({ state: 'hasValue', contents: result })
+          resolve(result)
+        })
+        .catch((error: any) => {
+          setLoadable({ state: 'hasError', contents: error })
+          reject(error)
+        })
+
+      return () => {
+        unsubscribePromise.then(unsubscribe => {
+          if (typeof unsubscribe === 'function') {
+            unsubscribe()
+          }
+        })
+      }
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [api, options?.enabled, JSON.stringify(queries)]
+  )
+
+  return loadable
+}
+
+export default useQueryMulti

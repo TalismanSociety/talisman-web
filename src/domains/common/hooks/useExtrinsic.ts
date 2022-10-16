@@ -29,12 +29,8 @@ type ReturnTypeWithArgs<T extends (...args: any[]) => any, TParams> = T extends 
     : never
   : never
 
-type MapKnownKeys<T> = {
-  [K in keyof T as string extends K ? never : number extends K ? never : K]: T[K]
-}
-
 type ExtrinsicModules = {
-  [K in keyof AugmentedSubmittables<'promise'>]: MapKnownKeys<AugmentedSubmittables<'promise'>[K]>
+  [P in keyof AugmentedSubmittables<'promise'>]: PickKnownKeys<AugmentedSubmittables<'promise'>[P]>
 }
 
 const useExtrinsic = <

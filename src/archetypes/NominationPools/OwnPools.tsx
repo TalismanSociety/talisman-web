@@ -33,8 +33,8 @@ const Unstakings = () => {
     () =>
       activeEraLoadable.state !== 'hasValue' || poolMembersLoadable.state !== 'hasValue'
         ? undefined
-        : poolMembersLoadable.contents.flatMap(pool =>
-            Array.from(pool.unwrapOrDefault().unbondingEras.entries(), ([era, amount], index) => ({
+        : poolMembersLoadable.contents.flatMap((pool, index) =>
+            Array.from(pool.unwrapOrDefault().unbondingEras.entries(), ([era, amount]) => ({
               address: accounts[index].address,
               pool: pool.unwrapOrDefault(),
               era,

@@ -1,5 +1,10 @@
 import { ApiPromise } from '@polkadot/api'
-import type { PromiseResult, QueryableStorageEntry, StorageEntryPromiseOverloads } from '@polkadot/api/types'
+import type {
+  PromiseResult,
+  QueryableStorageEntry,
+  StorageEntryPromiseOverloads,
+  UnsubscribePromise,
+} from '@polkadot/api/types'
 import useDeferred from '@util/useDeferred'
 import { useEffect, useState } from 'react'
 import { useRecoilValue } from 'recoil'
@@ -27,7 +32,8 @@ const useChainState = <
         ? A[]
         : Array<Readonly<Leading<Parameters<TMethod>>>>
       : Leading<Parameters<TMethod>>
-    : never
+    : never,
+  options?: { enabled: boolean }
 ) => {
   type TResult = TMethod extends PromiseResult<(...args: any) => Observable<infer TResult>>
     ? // @ts-ignore
@@ -48,6 +54,10 @@ const useChainState = <
 
   useEffect(
     () => {
+      if (options?.enabled === false) {
+        return
+      }
+
       const [section, multi] = (sectionName as string).split('.')
 
       const func =
@@ -57,7 +67,7 @@ const useChainState = <
       const parsedParams = multi === undefined ? params : [params]
 
       // @ts-ignore
-      const unsubscribePromise: Promise<() => void> = func(...parsedParams, result => {
+      const unsubscribePromise: UnsubscribePromise = func(...parsedParams, result => {
         setLoadable({ state: 'hasValue', contents: result })
         resolve(result)
       }).catch((error: any) => {
@@ -66,10 +76,15 @@ const useChainState = <
       })
 
       return () => {
-        unsubscribePromise.then(unsubscribe => unsubscribe())
+        unsubscribePromise.then(unsubscribe => {
+          if (typeof unsubscribe === 'function') {
+            unsubscribe()
+          }
+        })
       }
-    }, // eslint-disable-next-line react-hooks/exhaustive-deps
-    [api.derive, moduleName, sectionName, JSON.stringify(params)]
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [api, typeName, moduleName, sectionName, options?.enabled, JSON.stringify(params)]
   )
 
   return loadable
