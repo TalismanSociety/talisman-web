@@ -119,7 +119,9 @@ const PoolStake = (props: PoolStakeProps) => {
           <dt>Staking</dt>
           <dd>
             <div>
-              <Text.Body alpha="high">{props.stakingAmount}</Text.Body>
+              <Text.Body alpha="high" css={{ fontWeight: 'bold' }}>
+                {props.stakingAmount}
+              </Text.Body>
             </div>
             <div>
               <Text.Body>{props.stakingAmountInFiat}</Text.Body>
@@ -130,7 +132,9 @@ const PoolStake = (props: PoolStakeProps) => {
           <dt>Rewards</dt>
           <dd>
             <div>
-              <Text.Body alpha="high">{props.rewardsAmount}</Text.Body>
+              <Text.Body alpha="high" css={{ fontWeight: 'bold' }}>
+                {props.rewardsAmount}
+              </Text.Body>
             </div>
             <div>
               <Text.Body>{props.rewardsAmountInFiat}</Text.Body>
@@ -182,7 +186,7 @@ const PoolStake = (props: PoolStakeProps) => {
 }
 
 export type PoolStakeListProps = {
-  children: ReactElement<PoolStakeProps> | ReactElement<PoolStakeProps>[]
+  children?: ReactElement<PoolStakeProps> | ReactElement<PoolStakeProps>[]
 }
 
 export const PoolStakeList = (props: PoolStakeListProps) => {

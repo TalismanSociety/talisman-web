@@ -6,6 +6,8 @@ import { StateBanner } from '@layout/StateBanner'
 import { device } from '@util/breakpoints'
 import { isMobileBrowser } from '@util/helpers'
 
+import OwnPools from '../archetypes/NominationPools/OwnPools'
+
 const _Wallet = styled(({ className }) => {
   usePageTrack()
 
@@ -21,6 +23,7 @@ const _Wallet = styled(({ className }) => {
         </div>
       </header>
       <Wallet.Assets />
+      <OwnPools />
       <Wallet.NFTs />
     </section>
   )

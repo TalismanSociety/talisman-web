@@ -6,11 +6,13 @@ import * as Portfolio from '@libs/portfolio'
 import TalismanProvider from '@libs/talisman'
 import * as Tokenprices from '@libs/tokenprices'
 import Routes from '@routes'
-import { Suspense } from 'react'
+import React, { Suspense } from 'react'
 import { BrowserRouter as Router } from 'react-router-dom'
+import { RecoilRoot } from 'recoil'
 
 import ThemeProvider from './App.Theme'
 import { initPosthog } from './config/posthog'
+import { AccountsWatcher } from './domains/extension/recoils'
 
 initPosthog()
 
@@ -33,27 +35,30 @@ const Loader = () => {
 }
 
 const App: React.FC = () => (
-  <Suspense fallback={<Loader />}>
-    <Portfolio.Provider>
-      <Tokenprices.Provider>
-        <TalismanProvider>
-          <Crowdloans.Provider>
-            <MoonbeamContributors.Provider>
-              <Router>
-                <ThemeProvider>
-                  <ModalProvider>
-                    <MoonbeamContributors.PopupProvider>
-                      <Routes />
-                    </MoonbeamContributors.PopupProvider>
-                  </ModalProvider>
-                </ThemeProvider>
-              </Router>
-            </MoonbeamContributors.Provider>
-          </Crowdloans.Provider>
-        </TalismanProvider>
-      </Tokenprices.Provider>
-    </Portfolio.Provider>
-  </Suspense>
+  <RecoilRoot>
+    <Suspense fallback={<Loader />}>
+      <Portfolio.Provider>
+        <Tokenprices.Provider>
+          <TalismanProvider>
+            <AccountsWatcher />
+            <Crowdloans.Provider>
+              <MoonbeamContributors.Provider>
+                <Router>
+                  <ThemeProvider>
+                    <ModalProvider>
+                      <MoonbeamContributors.PopupProvider>
+                        <Routes />
+                      </MoonbeamContributors.PopupProvider>
+                    </ModalProvider>
+                  </ThemeProvider>
+                </Router>
+              </MoonbeamContributors.Provider>
+            </Crowdloans.Provider>
+          </TalismanProvider>
+        </Tokenprices.Provider>
+      </Portfolio.Provider>
+    </Suspense>
+  </RecoilRoot>
 )
 
 export default App
