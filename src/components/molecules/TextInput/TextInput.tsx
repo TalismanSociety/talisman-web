@@ -47,7 +47,7 @@ const TextInput = (props: TextInputProps) => {
           {...props}
           id={inputId}
           type="text"
-          css={{ fontSize: '3rem', width: '26rem', background: 'transparent', border: 'none' }}
+          css={{ flex: 1, fontSize: '3rem', width: '26rem', background: 'transparent', border: 'none' }}
         />
         {props.trailingIcon}
       </div>

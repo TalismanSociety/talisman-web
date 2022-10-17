@@ -56,7 +56,7 @@ const AlertDialog = (props: AlertDialogProps) => {
       <header
         css={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '2.6rem' }}
       >
-        <Text.H4>{props.title}</Text.H4>
+        <Text.H4 css={{ marginBottom: 0 }}>{props.title}</Text.H4>
         <Button variant="noop" onClick={props.onRequestDismiss}>
           <X width="1.6rem" height="1.6rem" />
         </Button>

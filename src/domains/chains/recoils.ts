@@ -46,7 +46,7 @@ export const chainsState = selector({
   },
 })
 
-export const currentChainIdState = atom({ key: 'CurrentChainId', default: SUPPORTED_CHAIN_IDS[2] })
+export const currentChainIdState = atom({ key: 'CurrentChainId', default: SUPPORTED_CHAIN_IDS[1] })
 
 export const currentChainState = selector({
   key: 'CurrentChain',

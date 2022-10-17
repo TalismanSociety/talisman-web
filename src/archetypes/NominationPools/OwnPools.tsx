@@ -1,10 +1,12 @@
 import Text from '@components/atoms/Text'
+import AddStakeDialog from '@components/recipes/AddStakeDialog'
 import PoolStake, { PoolStakeList } from '@components/recipes/PoolStake/PoolStake'
 import PoolUnstake, { PoolUnstakeList } from '@components/recipes/PoolUnstake'
 import UnstakeAlertDialog from '@components/recipes/UnstakeAlertDialog'
 import { createAccounts } from '@domains/nomiationPools/utils'
+import { BN } from '@polkadot/util'
 import { addMilliseconds, formatDistance, formatDistanceToNow } from 'date-fns'
-import { Suspense, useMemo, useState } from 'react'
+import { Suspense, useCallback, useMemo, useState } from 'react'
 import { useRecoilValue, waitForAll } from 'recoil'
 
 import { apiState, nativeTokenDecimalState, nativeTokenPriceState } from '../../domains/chains/recoils'
@@ -12,6 +14,71 @@ import useChainState from '../../domains/common/hooks/useChainState'
 import useExtrinsic from '../../domains/common/hooks/useExtrinsic'
 import { accountsState } from '../../domains/extension/recoils'
 import { allPendingPoolRewardsState } from '../../domains/nomiationPools/recoils'
+
+const AddDialog = (props: { account?: string; onDismiss: () => unknown }) => {
+  const bondExtraExtrinsic = useExtrinsic('nominationPools', 'bondExtra')
+  const balanceLoadable = useChainState('derive', 'balances', 'all', [props.account!], {
+    enabled: props.account !== undefined,
+  })
+  const poolMemberLoadable = useChainState('query', 'nominationPools', 'poolMembers', [props.account!], {
+    enabled: props.account !== undefined,
+  })
+  const [nativeTokenDecimal, nativeTokenPrice] = useRecoilValue(
+    waitForAll([nativeTokenDecimalState, nativeTokenPriceState('usd')])
+  )
+
+  const [amount, setAmount] = useState('')
+
+  const amountDecimal = useMemo(() => {
+    try {
+      return nativeTokenDecimal.fromUserInput(amount)
+    } catch {
+      return undefined
+    }
+  }, [amount, nativeTokenDecimal])
+
+  const poolPointsDecimal = useMemo(
+    () => nativeTokenDecimal.fromAtomics(poolMemberLoadable.valueMaybe()?.unwrapOrDefault().points),
+    [nativeTokenDecimal, poolMemberLoadable]
+  )
+
+  const newAmount = useMemo(
+    () => nativeTokenDecimal.fromAtomics(poolPointsDecimal.atomics.add(amountDecimal?.atomics ?? new BN(0))),
+    [amountDecimal?.atomics, nativeTokenDecimal, poolPointsDecimal.atomics]
+  )
+
+  return (
+    <AddStakeDialog
+      open={props.account !== undefined}
+      availableToStake={nativeTokenDecimal.fromAtomics(balanceLoadable.valueMaybe()?.freeBalance).toHuman() ?? ''}
+      amount={amount}
+      onChangeAmount={setAmount}
+      fiatAmount={(amountDecimal?.toFloatApproximation() ?? 0 * nativeTokenPrice).toLocaleString(undefined, {
+        style: 'currency',
+        currency: 'usd',
+      })}
+      newAmount={newAmount.toHuman()}
+      newFiatAmount={(newAmount.toFloatApproximation() * nativeTokenPrice).toLocaleString(undefined, {
+        style: 'currency',
+        currency: 'usd',
+      })}
+      onDismiss={props.onDismiss}
+      onConfirm={useCallback(
+        () =>
+          bondExtraExtrinsic
+            .signAndSend(props.account ?? '', {
+              FreeBalance: amountDecimal?.atomics?.toString() ?? '0',
+            })
+            .then(() => props.onDismiss()),
+        [amountDecimal?.atomics, bondExtraExtrinsic, props]
+      )}
+      onRequestMaxAmount={() =>
+        setAmount(nativeTokenDecimal.fromAtomics(balanceLoadable.valueMaybe()?.freeBalance).toString())
+      }
+      confirmState={bondExtraExtrinsic.state === 'loading' ? 'pending' : undefined}
+    />
+  )
+}
 
 const Unstakings = () => {
   const withdrawExtrinsic = useExtrinsic('nominationPools', 'withdrawUnbonded')
@@ -174,9 +241,11 @@ const Stakings = () => {
   )
 
   const [currentUnstake, setCurrentUnstake] = useState<{ address: string; points: any }>()
+  const [addStakeAccount, setAddStakeAccount] = useState<string>()
 
   return (
     <div>
+      <AddDialog account={addStakeAccount} onDismiss={useCallback(() => setAddStakeAccount(undefined), [])} />
       <UnstakeAlertDialog
         open={currentUnstake !== undefined}
         amount={decimalFromAtomics.fromAtomics(currentUnstake?.points).toHuman()}
@@ -235,7 +304,7 @@ const Stakings = () => {
                 ? 'pending'
                 : undefined
             }
-            onRequestAdd={() => {}}
+            onRequestAdd={() => setAddStakeAccount(pool.account.address)}
           />
         ))}
       </PoolStakeList>

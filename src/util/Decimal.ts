@@ -1,4 +1,4 @@
-import { BN, formatBalance } from '@polkadot/util'
+import { BN, bnToBn, formatBalance } from '@polkadot/util'
 import { ToBn } from '@polkadot/util/types'
 
 // Too large values lead to massive memory usage. Limit to something sensible.
@@ -6,7 +6,7 @@ const MAX_FRACTIONAL_DIGITS = 100
 
 export default class Decimal {
   static fromAtomics(atomics: string | number | bigint | BN | ToBn | undefined, decimals: number, unit?: string) {
-    return new Decimal(atomics, decimals, unit)
+    return new Decimal(bnToBn(atomics), decimals, unit)
   }
 
   public static fromUserInput(input: string, fractionalDigits: number, unit?: string): Decimal {
@@ -47,14 +47,10 @@ export default class Decimal {
 
     const quantity = `${whole}${fractional.padEnd(fractionalDigits, '0')}`
 
-    return new Decimal(quantity, fractionalDigits, unit)
+    return new Decimal(bnToBn(quantity), fractionalDigits, unit)
   }
 
-  private constructor(
-    public atomics: string | number | bigint | BN | ToBn | undefined,
-    public decimals: number,
-    public unit?: string
-  ) {}
+  private constructor(public atomics: BN, public decimals: number, public unit?: string) {}
 
   toFloatApproximation() {
     return Number(
