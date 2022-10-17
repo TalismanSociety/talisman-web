@@ -1,6 +1,4 @@
 import Button from '@components/atoms/Button'
-import CircularProgressIndicator from '@components/atoms/CircularProgressIndicator'
-import { Edit, Loader } from '@components/atoms/Icon'
 import Text from '@components/atoms/Text'
 import { useTheme } from '@emotion/react'
 import Identicon from '@polkadot/react-identicon'
@@ -21,7 +19,7 @@ export type PoolStakeProps = {
   onRequestAdd: () => unknown
   claimState?: 'unavailable' | 'pending' | 'disabled'
   addState?: 'pending' | 'disabled'
-  unstakeState?: 'pending' | 'disabled'
+  unstakeState?: 'unavailable' | 'pending' | 'disabled'
 }
 
 const PoolStake = (props: PoolStakeProps) => {
@@ -166,19 +164,20 @@ const PoolStake = (props: PoolStakeProps) => {
         </Button>
         <Button
           variant="outlined"
+          onClick={props.onRequestUnstake}
+          disabled={props.unstakeState === 'disabled' || props.unstakeState === 'unavailable'}
+          loading={props.unstakeState === 'pending'}
+          css={{ opacity: props.unstakeState === 'unavailable' ? 0 : undefined }}
+        >
+          Unstake
+        </Button>
+        <Button
+          variant="outlined"
           onClick={props.onRequestAdd}
           disabled={props.addState === 'disabled'}
           loading={props.addState === 'pending'}
         >
           Add
-        </Button>
-        <Button
-          variant="outlined"
-          onClick={props.onRequestUnstake}
-          disabled={props.unstakeState === 'disabled'}
-          loading={props.unstakeState === 'pending'}
-        >
-          Unstake
         </Button>
       </section>
     </article>

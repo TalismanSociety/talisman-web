@@ -228,7 +228,13 @@ const Stakings = () => {
                 points: pool.poolMember.unwrapOrDefault().points ?? 0,
               })
             }
-            unstakeState={unbondExtrinsic.state === 'loading' ? 'pending' : undefined}
+            unstakeState={
+              pool.poolMember.unwrapOrDefault().points.isZero()
+                ? 'unavailable'
+                : unbondExtrinsic.state === 'loading'
+                ? 'pending'
+                : undefined
+            }
             onRequestAdd={() => {}}
           />
         ))}
