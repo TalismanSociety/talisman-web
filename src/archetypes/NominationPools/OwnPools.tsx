@@ -53,6 +53,12 @@ const AddDialog = (props: { account?: string; onDismiss: () => unknown }) => {
     }
   }, [props.account])
 
+  useEffect(() => {
+    if (bondExtraExtrinsic.state === 'loading' && bondExtraExtrinsic.contents?.status.isInBlock) {
+      props.onDismiss()
+    }
+  }, [bondExtraExtrinsic.contents?.status?.isInBlock, bondExtraExtrinsic.state, props])
+
   return (
     <AddStakeDialog
       open={props.account !== undefined}
@@ -75,7 +81,7 @@ const AddDialog = (props: { account?: string; onDismiss: () => unknown }) => {
             .signAndSend(props.account ?? '', {
               FreeBalance: amountDecimal?.atomics?.toString() ?? '0',
             })
-            .then(() => props.onDismiss()),
+            .finally(() => props.onDismiss()),
         [amountDecimal?.atomics, bondExtraExtrinsic, props]
       )}
       onRequestMaxAmount={() =>
@@ -250,6 +256,12 @@ const Stakings = () => {
   const [currentUnstake, setCurrentUnstake] = useState<{ address: string; points: any }>()
   const [addStakeAccount, setAddStakeAccount] = useState<string>()
 
+  useEffect(() => {
+    if (unbondExtrinsic.state === 'loading' && unbondExtrinsic.contents?.status.isBroadcast) {
+      setCurrentUnstake(undefined)
+    }
+  }, [unbondExtrinsic.contents?.status?.isBroadcast, unbondExtrinsic.state])
+
   return (
     <div>
       <AddDialog account={addStakeAccount} onDismiss={useCallback(() => setAddStakeAccount(undefined), [])} />
@@ -267,10 +279,12 @@ const Stakings = () => {
         onDismiss={() => setCurrentUnstake(undefined)}
         onConfirm={() => {
           if (currentUnstake) {
-            unbondExtrinsic.signAndSend(currentUnstake?.address, currentUnstake?.address, currentUnstake.points)
+            unbondExtrinsic
+              .signAndSend(currentUnstake?.address, currentUnstake?.address, currentUnstake.points)
+              .finally(() => setCurrentUnstake(undefined))
           }
-          setCurrentUnstake(undefined)
         }}
+        confirmState={unbondExtrinsic.state === 'loading' ? 'pending' : 'disabled'}
       />
       <header>
         <Text.H4>Staking</Text.H4>

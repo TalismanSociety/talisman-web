@@ -24,7 +24,7 @@ const useExtrinsic = <
 
   const [loadable, setLoadable] = useState<
     | { state: 'idle'; contents: undefined }
-    | { state: 'loading'; contents: Promise<any> }
+    | { state: 'loading'; contents: ISubmittableResult | undefined }
     | { state: 'hasValue'; contents: ISubmittableResult }
     | { state: 'hasError'; contents: any }
   >({ state: 'idle', contents: undefined })
@@ -53,9 +53,7 @@ const useExtrinsic = <
               if (result.isError) {
                 unsubscribe()
                 reject(result)
-              }
-
-              if (result.isFinalized) {
+              } else if (result.isFinalized) {
                 unsubscribe()
 
                 const failed = result.events.some(({ event }) => event.method === 'ExtrinsicFailed')
@@ -65,6 +63,8 @@ const useExtrinsic = <
                 } else {
                   resolve(result)
                 }
+              } else {
+                setLoadable({ state: 'loading', contents: result })
               }
             })
           } catch (error) {
@@ -76,7 +76,10 @@ const useExtrinsic = <
 
         const promise = promiseFunc()
 
-        setLoadable({ state: 'loading', contents: promise })
+        setLoadable(loadable => ({
+          state: 'loading',
+          contents: loadable.state === 'loading' ? loadable.contents : undefined,
+        }))
 
         toastExtrinsic(module, method as string, promise, chainLoadable)
 

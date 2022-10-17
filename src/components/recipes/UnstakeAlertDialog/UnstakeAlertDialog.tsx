@@ -6,6 +6,7 @@ export type UnstakeAlertDialogProps = {
   open: boolean
   onDismiss: () => unknown
   onConfirm: () => unknown
+  confirmState?: 'pending' | 'disabled'
   amount: string
   fiatAmount: string
   lockDuration: string
@@ -38,7 +39,11 @@ const UnstakeAlertDialog = (props: UnstakeAlertDialogProps) => (
         Cancel
       </Button>
     }
-    confirmButton={<Button onClick={props.onConfirm}>Confirm</Button>}
+    confirmButton={
+      <Button onClick={props.onConfirm} loading={props.confirmState === 'pending'}>
+        Confirm
+      </Button>
+    }
     onRequestDismiss={props.onDismiss}
   />
 )
