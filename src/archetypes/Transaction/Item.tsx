@@ -11,14 +11,14 @@ import { useMemo } from 'react'
 
 import { Avatar } from './Avatar'
 import { ItemDetails } from './ItemDetails'
+import { Transaction } from './lib'
 import { Logo } from './Logo'
-import { Transaction } from './types'
 
-type Props = { className?: string; transaction: Transaction; addresses: string[] }
-export const Item = styled(({ className, transaction, addresses }: Props) => {
+type Props = { className?: string; transaction: Transaction; addresses: string[]; selectedAccount?: string }
+export const Item = styled(({ className, transaction, addresses, selectedAccount }: Props) => {
   const accounts = useAccounts()
 
-  const { name, ss58Format, timestamp, blockExplorerUrl, parsed, relatedAddresses } = transaction
+  const { name, ss58Format, timestamp, explorerUrl, parsed, relatedAddresses } = transaction
   const youAddress = relatedAddresses.find(address => addresses.includes(address))
   const youAccount = useMemo(
     () => accounts.find(({ address }) => address === youAddress)?.name || youAddress,
@@ -26,8 +26,8 @@ export const Item = styled(({ className, transaction, addresses }: Props) => {
   )
 
   const getTransactionName = () => {
-    if (typeof parsed?.type !== 'string') return name
-    if (parsed.type !== 'transfer') return startCase(parsed.type)
+    if (typeof parsed?.__typename !== 'string') return name || undefined
+    if (parsed.__typename !== 'ParsedTransfer') return startCase(parsed.__typename.replace(/^Parsed/, ''))
 
     const genericAddresses = addresses.map(a => encodeAnyAddress(a))
     const from = encodeAnyAddress(parsed.from)
@@ -38,13 +38,19 @@ export const Item = styled(({ className, transaction, addresses }: Props) => {
     return 'Transfer'
   }
 
+  const isDevMode = process.env.NODE_ENV === 'development'
+  const isParsed = !!parsed
+  const isTransfer = isParsed && parsed.__typename === 'ParsedTransfer'
+  const hasTokenSymbol = isTransfer && parsed.tokenSymbol !== '???'
+
+  const showDebugInfo = (isDevMode && !isParsed) || (isDevMode && isTransfer && !hasTokenSymbol)
+
   return (
     <>
       <PanelSection
-        className={`transaction-item ${className}`}
+        className={`transaction-item ${typeof selectedAccount === 'string' ? 'selected-account' : ''} ${className}`}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1, transition: { ease: [0.78, 0.14, 0.15, 0.86] } }}
-        exit={{ opacity: 0, scale: 0.5, transition: { ease: [0.78, 0.14, 0.15, 0.86] } }}
       >
         <Info
           title={getTransactionName()}
@@ -52,17 +58,19 @@ export const Item = styled(({ className, transaction, addresses }: Props) => {
           graphic={<Logo className="category-logo" parsed={parsed} addresses={addresses} />}
         />
 
-        <Info
-          title={youAccount}
-          subtitle={truncateAddress(youAddress ? encodeAnyAddress(youAddress, ss58Format) : youAddress, 4)}
-          graphic={<Avatar value={youAddress} />}
-        />
+        {typeof selectedAccount !== 'string' && (
+          <Info
+            title={youAccount}
+            subtitle={truncateAddress(youAddress ? encodeAnyAddress(youAddress, ss58Format) : youAddress, 4)}
+            graphic={<Avatar value={youAddress} />}
+          />
+        )}
 
-        <ItemDetails parsed={transaction.parsed} addresses={addresses} />
+        <ItemDetails parsed={transaction.parsed} accounts={accounts} addresses={addresses} />
 
         <div className="external-link">
-          {blockExplorerUrl ? (
-            <a className="link" href={blockExplorerUrl} target="_blank" rel="noreferrer">
+          {explorerUrl ? (
+            <a className="link" href={explorerUrl} target="_blank" rel="noreferrer">
               <ExternalLink />
             </a>
           ) : (
@@ -72,66 +80,49 @@ export const Item = styled(({ className, transaction, addresses }: Props) => {
           )}
         </div>
       </PanelSection>
-      {process.env.NODE_ENV === 'development' && !parsed ? (
-        <pre className={`${className} debug`}>{JSON.stringify(JSON.parse(transaction._data), null, 2)}</pre>
-      ) : null}
+      {showDebugInfo && (
+        <pre className={`${className} debug`}>
+          {JSON.stringify({ ...transaction, args: JSON.parse(transaction.args || '{}') }, null, 2)}
+        </pre>
+      )}
     </>
   )
 })`
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-rows: auto;
+  grid-template-columns: 2.5fr 2.5fr 4fr 1fr;
   align-items: center;
   text-align: left;
 
-  &.debug {
-    overflow: hidden;
-    font-size: var(--font-size-xsmall);
-    line-height: 1;
+  &.selected-account {
+    grid-template-columns: 2.5fr 6.5fr 1fr;
+
+    > *:nth-child(2) {
+      justify-self: center;
+    }
   }
 
   > .info {
     justify-content: flex-start;
   }
 
-  > *:nth-child(1) {
-    width: 25%;
-  }
-  > *:nth-child(2) {
-    width: 20%;
-  }
-  > *:nth-child(3) {
-    width: 40%;
-  }
-  > *:nth-child(4) {
-    width: 10%;
-  }
-
   > .details {
     display: flex;
     align-items: center;
 
-    > *:first-child {
-      width: 47.5%;
-      justify-content: flex-end;
-    }
-    > *:nth-child(2) {
-      width: 5%;
-      justify-content: center;
-    }
     > *:last-child {
-      width: 47.5%;
-      justify-content: flex-end;
+      padding-left: 2rem;
     }
 
     .title,
     .subtitle {
-      width: 12rem;
+      width: 14rem;
       overflow: hidden;
     }
   }
 
   .category-logo,
-  .graphic .chain-logo,
+  .graphic .token-logo,
   .graphic .ui--IdentityIcon {
     font-size: 3.2rem;
     width: 1em;
@@ -168,5 +159,11 @@ export const Item = styled(({ className, transaction, addresses }: Props) => {
         height: 1.2em;
       }
     }
+  }
+
+  &.debug {
+    overflow: hidden;
+    font-size: var(--font-size-xsmall);
+    line-height: 1;
   }
 `

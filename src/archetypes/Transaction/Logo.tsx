@@ -14,12 +14,12 @@ import { ReactComponent as UnstakeFailed } from '@icons/transaction-icons/unstak
 import { ReactComponent as Unstake } from '@icons/transaction-icons/unstake.svg'
 import { encodeAnyAddress } from '@talismn/util'
 
-import { ParsedTransaction } from './types'
+import { ParsedTransaction } from './lib'
 
 type Props = { className?: string; parsed: ParsedTransaction | null | undefined; addresses: string[] }
 export const Logo = styled(({ className, parsed, addresses }: Props) => {
-  switch (parsed?.type) {
-    case 'transfer':
+  switch (parsed?.__typename) {
+    case 'ParsedTransfer':
       const genericAddresses = addresses.map(a => encodeAnyAddress(a))
       const from = encodeAnyAddress(parsed.from)
       const to = encodeAnyAddress(parsed.to)
@@ -32,19 +32,19 @@ export const Logo = styled(({ className, parsed, addresses }: Props) => {
       if (parsed.success) return <Send className={className} />
       return <SendFailed className={className} />
 
-    case 'contribute':
+    case 'ParsedCrowdloanContribute':
       if (parsed.success) return <CrowdloanContribute className={className} />
       return <CrowdloanContributeFailed className={className} />
 
-    case 'stake':
+    case 'ParsedStake':
       if (parsed.success) return <Stake className={className} />
       return <StakeFailed className={className} />
 
-    case 'unstake':
+    case 'ParsedUnstake':
       if (parsed.success) return <Unstake className={className} />
       return <UnstakeFailed className={className} />
 
-    case 'swap':
+    case 'ParsedSwap':
       if (parsed.success) return <Swap className={className} />
       return <SwapFailed className={className} />
 

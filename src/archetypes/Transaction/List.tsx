@@ -5,6 +5,7 @@ import { Account as TAccount } from '@libs/talisman'
 import format from 'date-fns/format'
 import parseISO from 'date-fns/parseISO'
 import startOfDay from 'date-fns/startOfDay'
+import { motion } from 'framer-motion'
 import { AnimatePresence } from 'framer-motion'
 import groupBy from 'lodash/groupBy'
 import { Fragment, useEffect, useMemo, useState } from 'react'
@@ -12,8 +13,7 @@ import { useTranslation } from 'react-i18next'
 import useInfiniteScroll from 'react-infinite-scroll-hook'
 
 import { Item } from './Item'
-import { useTransactions } from './store'
-import { useUrlParams } from './util'
+import { useTransactions, useUrlParams } from './lib'
 
 type Props = {
   addresses: string[]
@@ -65,7 +65,7 @@ export const List = styled(({ addresses = [], className }: Props) => {
         <AnimatePresence>
           {status === 'INITIALISED' || (status === 'PROCESSING' && !hasTransactions) ? (
             <PanelSection
-              key="first"
+              key={`first-${selectedAccount?.address}`}
               className="centered-state"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1, transition: { ease: [0.78, 0.14, 0.15, 0.86] } }}
@@ -74,7 +74,7 @@ export const List = styled(({ addresses = [], className }: Props) => {
             </PanelSection>
           ) : status === 'ERROR' ? (
             <PanelSection
-              key="first"
+              key={`first-${selectedAccount?.address}`}
               className="centered-state"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1, transition: { ease: [0.78, 0.14, 0.15, 0.86] } }}
@@ -83,7 +83,7 @@ export const List = styled(({ addresses = [], className }: Props) => {
             </PanelSection>
           ) : !hasTransactions ? (
             <PanelSection
-              key="first"
+              key={`first-${selectedAccount?.address}`}
               className="centered-state"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1, transition: { ease: [0.78, 0.14, 0.15, 0.86] } }}
@@ -92,10 +92,21 @@ export const List = styled(({ addresses = [], className }: Props) => {
             </PanelSection>
           ) : (
             Object.entries(dayGroupedTransactions).map(([day, transactions], index) => (
-              <Fragment key={index === 0 ? 'first' : day}>
-                <h3 className="transaction-date">{format(parseISO(day), 'eee d MMMM yyyy')}</h3>
+              <Fragment key={index === 0 ? `first-${selectedAccount?.address}` : `${day}-${selectedAccount?.address}`}>
+                <motion.h3
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1, transition: { ease: [0.78, 0.14, 0.15, 0.86] } }}
+                  className="transaction-date"
+                >
+                  {format(parseISO(day), 'eee d MMMM yyyy')}
+                </motion.h3>
                 {transactions.map(transaction => (
-                  <Item key={transaction.id} transaction={transaction} addresses={fetchAddresses} />
+                  <Item
+                    key={`${transaction.id}-${selectedAccount?.address}`}
+                    transaction={transaction}
+                    addresses={fetchAddresses}
+                    selectedAccount={selectedAccount?.address}
+                  />
                 ))}
               </Fragment>
             ))

@@ -20,7 +20,7 @@ export default styled(({ id, className }: Props) => {
     font-size: ${({ size = 8 }) => `${size}rem`};
     width: 1em;
     height: 1em;
-    border-radius: 50%;
+    border-radius: 999999999999rem;
     display: block;
   }
 `

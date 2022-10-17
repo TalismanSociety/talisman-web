@@ -1,6 +1,13 @@
 import styled from '@emotion/styled'
 
-const Info = styled(({ title, subtitle, graphic, className, ...rest }) => (
+type Props = {
+  className?: string
+  title?: string | null
+  subtitle?: string | null
+  graphic?: JSX.Element
+  rest?: any
+}
+const Info = styled(({ title, subtitle, graphic, className, ...rest }: Props) => (
   <div className={`info ${className}`} {...rest}>
     {graphic && <span className="graphic">{graphic}</span>}
     <span className="text">

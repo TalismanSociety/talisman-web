@@ -3,31 +3,23 @@ import { ApolloClient, InMemoryCache } from '@apollo/client'
 import { BatchHttpLink } from '@apollo/client/link/batch-http'
 import { useCallback, useEffect, useMemo, useReducer, useState } from 'react'
 
-import { FETCH_LIMIT, TX_QUERY } from './consts'
-import { IndexerTransaction, Transaction, TransactionMap } from './types'
-import { getBlockExplorerUrl, parseTransaction } from './util'
+import { FETCH_LIMIT, transactionsQuery } from './consts'
+import { Transaction } from './graphql-codegen/graphql'
 
 type TransactionsStatus = 'INITIALISED' | 'PROCESSING' | 'ERROR' | 'SUCCESS'
+type TransactionMap = Record<string, Transaction>
 
 type ReducerAction =
   // Add txs
-  | { type: 'ADD'; data: IndexerTransaction | IndexerTransaction[] }
+  | { type: 'ADD'; data: Transaction | Transaction[] }
   // Remove all txs
   | { type: 'CLEAR' }
 
 const transactionReducer = (state: TransactionMap, action: ReducerAction): TransactionMap => {
-  // convert IndexerTransaction (what comes back from the API) into Transaction (what we use in the app)
-  const transformIndexerTx = (tx: IndexerTransaction): Transaction => ({
-    ...tx,
-
-    blockExplorerUrl: getBlockExplorerUrl(tx),
-    parsed: parseTransaction(tx),
-  })
-
   // add new txs
-  const addTxs = (state: TransactionMap, txs: IndexerTransaction[]) => ({
+  const addTxs = (state: TransactionMap, txs: Transaction[]) => ({
     ...state,
-    ...Object.fromEntries(txs.map(tx => [tx.id, transformIndexerTx(tx)])),
+    ...Object.fromEntries(txs.map(tx => [tx.id, tx])),
   })
 
   // handle all actions
@@ -77,11 +69,7 @@ export const useTransactions = (_addresses: string[]) => {
   }, [])
 
   // the query object
-  const {
-    data = [],
-    loading,
-    error,
-  } = useQuery(TX_QUERY, {
+  const { data, loading, error } = useQuery(transactionsQuery, {
     client: apolloClient,
     variables: { addresses, lastId, limit: FETCH_LIMIT },
   })
@@ -103,7 +91,7 @@ export const useTransactions = (_addresses: string[]) => {
 
     const transactions = data?.transactionsByAddress || []
 
-    dispatch({ type: 'ADD', data: [...transactions] })
+    dispatch({ type: 'ADD', data: transactions })
     setHasMore(transactions.length >= FETCH_LIMIT)
 
     setStatus('SUCCESS')

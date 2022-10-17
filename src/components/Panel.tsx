@@ -1,12 +1,13 @@
 import { css } from '@emotion/react'
 import styled from '@emotion/styled'
 import { MotionProps, motion } from 'framer-motion'
+import { ReactNode } from 'react'
 
 type Props = {
   title?: string
   subtitle?: string
   className?: string
-  children?: JSX.Element | JSX.Element[]
+  children?: ReactNode
   comingSoon?: boolean
 } & MotionProps
 
