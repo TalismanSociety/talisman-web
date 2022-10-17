@@ -8,6 +8,9 @@ import ToastBar, { ToastBarProps } from './ToastBar'
 export default {
   title: 'Molecules/ToastBar',
   component: ToastBar,
+  parameters: {
+    layout: 'centered',
+  },
 } as ComponentMeta<typeof ToastBar>
 
 export const Default: Story<ToastBarProps> = (args: any) => <ToastBar {...args} />
