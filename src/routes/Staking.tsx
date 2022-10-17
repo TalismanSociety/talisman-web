@@ -5,7 +5,6 @@ import { nativeTokenDecimalState, nativeTokenPriceState } from '@domains/chains/
 import useChainState from '@domains/common/hooks/useChainState'
 import useExtrinsic from '@domains/common/hooks/useExtrinsic'
 import { accountsState } from '@domains/extension/recoils'
-import { unwrapLoadableValue } from '@util/loadable'
 import { useEffect, useMemo, useState } from 'react'
 import { useRecoilValue, waitForAll } from 'recoil'
 
@@ -43,32 +42,31 @@ const Staking = () => {
   const poolMembersLoadable = useChainState('query', 'nominationPools', 'poolMembers', [selectedAccount?.address!], {
     enabled: selectedAccount?.address !== undefined,
   })
-  const poolMember = unwrapLoadableValue(poolMembersLoadable)
 
   const bondedPoolLoadable = useChainState(
     'query',
     'nominationPools',
     'bondedPools',
-    [poolMember?.unwrapOrDefault().poolId ?? ''],
-    { enabled: poolMember?.isSome === true }
+    [poolMembersLoadable.valueMaybe()?.unwrapOrDefault().poolId ?? ''],
+    { enabled: poolMembersLoadable.valueMaybe()?.isSome === true }
   )
 
   const poolTotalStaked = useMemo(
-    () => nativeTokenDecimal.fromAtomics(unwrapLoadableValue(bondedPoolLoadable)?.unwrapOrDefault().points).toHuman(),
-    [bondedPoolLoadable, nativeTokenDecimal]
+    () => nativeTokenDecimal.fromAtomics(poolMembersLoadable.valueMaybe()?.unwrapOrDefault().points).toHuman(),
+    [nativeTokenDecimal, poolMembersLoadable]
   )
 
   const poolMetadata = useChainState(
     'query',
     'nominationPools',
     'metadata',
-    [poolMember?.unwrapOrDefault().poolId ?? ''],
+    [poolMembersLoadable.valueMaybe()?.unwrapOrDefault().poolId ?? ''],
     {
-      enabled: poolMember?.isSome === true,
+      enabled: poolMembersLoadable.valueMaybe()?.isSome === true,
     }
   )
 
-  const hasExistingPool = poolMember?.isSome === true
+  const hasExistingPool = poolMembersLoadable.valueMaybe()?.isSome === true
 
   const isReady =
     selectedAccount !== undefined &&
@@ -147,11 +145,9 @@ const Staking = () => {
                   ? nativeTokenDecimal.fromAtomics(balancesLoadable.contents.freeBalance).toHuman()
                   : '...'
               }
-              poolName={unwrapLoadableValue(poolMetadata)?.toUtf8() ?? ''}
+              poolName={poolMetadata.valueMaybe()?.toUtf8() ?? ''}
               poolTotalStaked={poolTotalStaked}
-              poolMemberCount={
-                unwrapLoadableValue(bondedPoolLoadable)?.unwrapOrDefault().memberCounter.toString() ?? ''
-              }
+              poolMemberCount={bondedPoolLoadable.valueMaybe()?.unwrapOrDefault().memberCounter.toString() ?? ''}
               onSubmit={() => {
                 if (selectedAccount === undefined || decimalAmount?.atomics === undefined) return
                 if (hasExistingPool) {

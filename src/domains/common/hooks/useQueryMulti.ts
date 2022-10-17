@@ -7,7 +7,7 @@ import type {
 } from '@polkadot/api/types'
 import useDeferred from '@util/useDeferred'
 import { useEffect, useState } from 'react'
-import { useRecoilValue } from 'recoil'
+import { Loadable, RecoilLoadable, useRecoilValue } from 'recoil'
 import { Observable } from 'rxjs'
 
 import { apiState } from '../../chains/recoils'
@@ -61,17 +61,13 @@ const useQueryMulti = <TQueries extends Array<Query | [Query, ...unknown[]]> | [
 
   const { promise, resolve, reject } = useDeferred<TResult>()
 
-  const [loadable, setLoadable] = useState<
-    | { state: 'loading'; contents: Promise<TResult> }
-    | { state: 'hasValue'; contents: TResult }
-    | { state: 'hasError'; contents: any }
-  >({ state: 'loading', contents: promise })
+  const [loadable, setLoadable] = useState<Loadable<TResult>>(RecoilLoadable.of(promise))
 
   useEffect(
     () => {
       if (options?.enabled === false) {
         if (options?.enabled === false) {
-          setLoadable({ state: 'loading', contents: promise })
+          setLoadable(RecoilLoadable.of(promise))
           return
         }
         return
@@ -92,11 +88,11 @@ const useQueryMulti = <TQueries extends Array<Query | [Query, ...unknown[]]> | [
       // @ts-ignore
       const unsubscribePromise: UnsubscribePromise = api
         .queryMulti(params as any, (result: TResult) => {
-          setLoadable({ state: 'hasValue', contents: result })
+          setLoadable(RecoilLoadable.of(result))
           resolve(result)
         })
         .catch((error: any) => {
-          setLoadable({ state: 'hasError', contents: error })
+          setLoadable(RecoilLoadable.error(error))
           reject(error)
         })
 

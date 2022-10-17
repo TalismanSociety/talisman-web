@@ -3,7 +3,6 @@ import PoolStake, { PoolStakeList } from '@components/recipes/PoolStake/PoolStak
 import PoolUnstake, { PoolUnstakeList } from '@components/recipes/PoolUnstake'
 import UnstakeAlertDialog from '@components/recipes/UnstakeAlertDialog'
 import { createAccounts } from '@domains/nomiationPools/utils'
-import { unwrapLoadableValue } from '@util/loadable'
 import { addMilliseconds, formatDistance, formatDistanceToNow } from 'date-fns'
 import { Suspense, useMemo, useState } from 'react'
 import { useRecoilValue, waitForAll } from 'recoil'
@@ -35,7 +34,7 @@ const Unstakings = () => {
     'query',
     'staking',
     'slashingSpans.multi',
-    unwrapLoadableValue(poolMembersLoadable)?.map(x => createAccounts(api, x.unwrapOrDefault().poolId).stashId) ?? [],
+    poolMembersLoadable.valueMaybe()?.map(x => createAccounts(api, x.unwrapOrDefault().poolId).stashId) ?? [],
     { enabled: poolMembersLoadable.state === 'hasValue' }
   )
 
@@ -97,8 +96,7 @@ const Unstakings = () => {
                     )
               }
               onRequestWithdraw={() => {
-                const unwrapped = unwrapLoadableValue(slashingSpans)
-                const priorLength = unwrapped?.[index].unwrapOr(undefined)?.prior.length
+                const priorLength = slashingSpans.valueMaybe()?.[index].unwrapOr(undefined)?.prior.length
                 withdrawExtrinsic.signAndSend(x.address, x.address, priorLength === undefined ? 0 : priorLength + 1)
               }}
             />
