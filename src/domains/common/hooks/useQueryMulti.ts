@@ -70,6 +70,10 @@ const useQueryMulti = <TQueries extends Array<Query | [Query, ...unknown[]]> | [
   useEffect(
     () => {
       if (options?.enabled === false) {
+        if (options?.enabled === false) {
+          setLoadable({ state: 'loading', contents: promise })
+          return
+        }
         return
       }
 

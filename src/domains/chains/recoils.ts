@@ -1,5 +1,5 @@
 import { ApiPromise, WsProvider } from '@polkadot/api'
-import { BN, formatBalance } from '@polkadot/util'
+import { BN } from '@polkadot/util'
 import { ToBn } from '@polkadot/util/types'
 import Decimal from '@util/Decimal'
 import { gql, request } from 'graphql-request'
@@ -8,6 +8,7 @@ import { atom, selector, selectorFamily } from 'recoil'
 type Chain = {
   id: string
   rpcs: Array<{ url: string }>
+  isTestnet: boolean
   nativeToken: {
     data: {
       symbol: string
@@ -17,7 +18,7 @@ type Chain = {
   }
 }
 
-const SUPPORTED_CHAIN_IDS = ['polkadot', 'kusama']
+const SUPPORTED_CHAIN_IDS = ['polkadot', 'kusama', 'westend-testnet']
 
 export const chainsState = selector({
   key: 'Chains',
@@ -28,6 +29,7 @@ export const chainsState = selector({
         query getChains($ids: [ID!]!) {
           chains(where: { id_in: $ids }) {
             id
+            isTestnet
             rpcs {
               url
             }
@@ -44,7 +46,7 @@ export const chainsState = selector({
   },
 })
 
-export const currentChainIdState = atom({ key: 'CurrentChainId', default: SUPPORTED_CHAIN_IDS[1] })
+export const currentChainIdState = atom({ key: 'CurrentChainId', default: SUPPORTED_CHAIN_IDS[2] })
 
 export const currentChainState = selector({
   key: 'CurrentChain',
@@ -65,6 +67,8 @@ export const nativeTokenPriceState = selectorFamily({
     (fiat: string = 'usd') =>
     async ({ get }) => {
       const chain = get(currentChainState)
+
+      if (chain.isTestnet) return 1
 
       const result = await fetch(
         `https://api.coingecko.com/api/v3/simple/price?ids=${chain.nativeToken.data.coingeckoId}&vs_currencies=${fiat}`

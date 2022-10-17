@@ -6,7 +6,7 @@ import useChainState from '@domains/common/hooks/useChainState'
 import useExtrinsic from '@domains/common/hooks/useExtrinsic'
 import { accountsState } from '@domains/extension/recoils'
 import { unwrapLoadableValue } from '@util/loadable'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useRecoilValue, waitForAll } from 'recoil'
 
 const Staking = () => {
@@ -40,12 +40,11 @@ const Staking = () => {
   const balancesLoadable = useChainState('derive', 'balances', 'all', [selectedAccount?.address ?? ''], {
     enabled: selectedAccount !== undefined,
   })
-
   const poolMembersLoadable = useChainState('query', 'nominationPools', 'poolMembers', [selectedAccount?.address!], {
     enabled: selectedAccount?.address !== undefined,
   })
-
   const poolMember = unwrapLoadableValue(poolMembersLoadable)
+
   const bondedPoolLoadable = useChainState(
     'query',
     'nominationPools',
@@ -53,6 +52,12 @@ const Staking = () => {
     [poolMember?.unwrapOrDefault().poolId ?? ''],
     { enabled: poolMember?.isSome === true }
   )
+
+  const poolTotalStaked = useMemo(
+    () => nativeTokenDecimal.fromAtomics(unwrapLoadableValue(bondedPoolLoadable)?.unwrapOrDefault().points).toHuman(),
+    [bondedPoolLoadable, nativeTokenDecimal]
+  )
+
   const poolMetadata = useChainState(
     'query',
     'nominationPools',
@@ -70,6 +75,12 @@ const Staking = () => {
     decimalAmount !== undefined &&
     poolMembersLoadable.state === 'hasValue' &&
     balancesLoadable.state === 'hasValue'
+
+  useEffect(() => {
+    if (selectedAccount === undefined && accounts.length > 0) {
+      setSelectedAccount(accounts[0])
+    }
+  }, [accounts, selectedAccount])
 
   return (
     <div
@@ -137,7 +148,7 @@ const Staking = () => {
                   : '...'
               }
               poolName={unwrapLoadableValue(poolMetadata)?.toUtf8() ?? ''}
-              poolTotalStaked="24,054.55 DOT"
+              poolTotalStaked={poolTotalStaked}
               poolMemberCount={
                 unwrapLoadableValue(bondedPoolLoadable)?.unwrapOrDefault().memberCounter.toString() ?? ''
               }

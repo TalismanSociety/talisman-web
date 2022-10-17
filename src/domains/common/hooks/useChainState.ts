@@ -7,7 +7,7 @@ import type {
 } from '@polkadot/api/types'
 import useDeferred from '@util/useDeferred'
 import { useEffect, useState } from 'react'
-import { useRecoilValue } from 'recoil'
+import { Loadable, RecoilLoadable, useRecoilValue } from 'recoil'
 import { Observable } from 'rxjs'
 
 import { apiState } from '../../chains/recoils'
@@ -48,15 +48,12 @@ const useChainState = <
 
   const { promise, resolve, reject } = useDeferred<TResult>()
 
-  const [loadable, setLoadable] = useState<
-    | { state: 'loading'; contents: Promise<TResult> }
-    | { state: 'hasValue'; contents: TResult }
-    | { state: 'hasError'; contents: any }
-  >({ state: 'loading', contents: promise })
+  const [loadable, setLoadable] = useState<Loadable<TResult>>(RecoilLoadable.of(promise))
 
   useEffect(
     () => {
       if (options?.enabled === false) {
+        setLoadable(RecoilLoadable.of(promise))
         return
       }
 
@@ -70,10 +67,10 @@ const useChainState = <
 
       // @ts-ignore
       const unsubscribePromise: UnsubscribePromise = func(...parsedParams, result => {
-        setLoadable({ state: 'hasValue', contents: result })
+        setLoadable(RecoilLoadable.of(result))
         resolve(result)
       }).catch((error: any) => {
-        setLoadable({ state: 'hasError', contents: error })
+        setLoadable(RecoilLoadable.error(error))
         reject(error)
       })
 

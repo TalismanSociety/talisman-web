@@ -2,7 +2,9 @@ import Text from '@components/atoms/Text'
 import PoolStake, { PoolStakeList } from '@components/recipes/PoolStake/PoolStake'
 import PoolUnstake, { PoolUnstakeList } from '@components/recipes/PoolUnstake'
 import UnstakeAlertDialog from '@components/recipes/UnstakeAlertDialog'
-import { addMilliseconds, formatDistanceToNow } from 'date-fns'
+import { createAccounts } from '@domains/nomiationPools/utils'
+import { unwrapLoadableValue } from '@util/loadable'
+import { addMilliseconds, formatDistance, formatDistanceToNow } from 'date-fns'
 import { Suspense, useMemo, useState } from 'react'
 import { useRecoilValue, waitForAll } from 'recoil'
 
@@ -27,6 +29,14 @@ const Unstakings = () => {
     'nominationPools',
     'poolMembers.multi',
     accounts.map(({ address }) => address)
+  )
+
+  const slashingSpans = useChainState(
+    'query',
+    'staking',
+    'slashingSpans.multi',
+    unwrapLoadableValue(poolMembersLoadable)?.map(x => createAccounts(api, x.unwrapOrDefault().poolId).stashId) ?? [],
+    { enabled: poolMembersLoadable.state === 'hasValue' }
   )
 
   const unstakings = useMemo(
@@ -86,7 +96,11 @@ const Unstakings = () => {
                       )
                     )
               }
-              onRequestWithdraw={() => withdrawExtrinsic.signAndSend(x.address, x.address, 0)}
+              onRequestWithdraw={() => {
+                const unwrapped = unwrapLoadableValue(slashingSpans)
+                const priorLength = unwrapped?.[index].unwrapOr(undefined)?.prior.length
+                withdrawExtrinsic.signAndSend(x.address, x.address, priorLength === undefined ? 0 : priorLength + 1)
+              }}
             />
           ))}
         </PoolUnstakeList>
@@ -99,8 +113,16 @@ const Stakings = () => {
   const claimPayoutExtrinsic = useExtrinsic('nominationPools', 'claimPayout')
   const unbondExtrinsic = useExtrinsic('nominationPools', 'unbond')
 
-  const [pendingRewards, accounts, decimalFromAtomics, nativeTokenPrice] = useRecoilValue(
-    waitForAll([allPendingPoolRewardsState, accountsState, nativeTokenDecimalState, nativeTokenPriceState('usd')])
+  const expectedEraTimeLoadable = useChainState('derive', 'session', 'eraLength', [])
+
+  const [api, pendingRewards, accounts, decimalFromAtomics, nativeTokenPrice] = useRecoilValue(
+    waitForAll([
+      apiState,
+      allPendingPoolRewardsState,
+      accountsState,
+      nativeTokenDecimalState,
+      nativeTokenPriceState('usd'),
+    ])
   )
 
   const poolMembersLoadable = useChainState(
@@ -115,6 +137,15 @@ const Stakings = () => {
     'nominationPools',
     'metadata.multi',
     poolMembersLoadable.state !== 'hasValue' ? [] : poolMembersLoadable.contents.map(x => x.unwrapOrDefault().poolId)
+  )
+
+  const lockDuration = useMemo(
+    () =>
+      expectedEraTimeLoadable
+        .valueMaybe()
+        ?.mul(api.consts.staking.bondingDuration)
+        .mul(api.consts.babe.expectedBlockTime),
+    [api.consts.babe.expectedBlockTime, api.consts.staking.bondingDuration, expectedEraTimeLoadable]
   )
 
   const pools = useMemo(
@@ -158,7 +189,7 @@ const Stakings = () => {
             style: 'currency',
             currency: 'usd',
           })}
-        lockDuration="28 days"
+        lockDuration={formatDistance(0, lockDuration?.toNumber() ?? 0)}
         onDismiss={() => setCurrentUnstake(undefined)}
         onConfirm={() => {
           if (currentUnstake) {
