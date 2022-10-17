@@ -6,7 +6,7 @@ import UnstakeAlertDialog from '@components/recipes/UnstakeAlertDialog'
 import { createAccounts } from '@domains/nomiationPools/utils'
 import { BN } from '@polkadot/util'
 import { addMilliseconds, formatDistance, formatDistanceToNow } from 'date-fns'
-import { Suspense, useCallback, useMemo, useState } from 'react'
+import { Suspense, useCallback, useEffect, useMemo, useState } from 'react'
 import { useRecoilValue, waitForAll } from 'recoil'
 
 import { apiState, nativeTokenDecimalState, nativeTokenPriceState } from '../../domains/chains/recoils'
@@ -46,6 +46,12 @@ const AddDialog = (props: { account?: string; onDismiss: () => unknown }) => {
     () => nativeTokenDecimal.fromAtomics(poolPointsDecimal.atomics.add(amountDecimal?.atomics ?? new BN(0))),
     [amountDecimal?.atomics, nativeTokenDecimal, poolPointsDecimal.atomics]
   )
+
+  useEffect(() => {
+    if (props.account === undefined) {
+      setAmount('')
+    }
+  }, [props.account])
 
   return (
     <AddStakeDialog
@@ -166,6 +172,7 @@ const Unstakings = () => {
                 const priorLength = slashingSpans.valueMaybe()?.[index].unwrapOr(undefined)?.prior.length
                 withdrawExtrinsic.signAndSend(x.address, x.address, priorLength === undefined ? 0 : priorLength + 1)
               }}
+              withdrawState={withdrawExtrinsic.state === 'loading' ? 'pending' : undefined}
             />
           ))}
         </PoolUnstakeList>
