@@ -4,10 +4,14 @@ import { ReactComponent as ExternalLink } from '@icons/external-link.svg'
 import { useAccounts } from '@libs/talisman'
 import { encodeAnyAddress } from '@talismn/util'
 import { truncateAddress } from '@util/helpers'
+import differenceInDays from 'date-fns/differenceInDays'
+import differenceInHours from 'date-fns/differenceInHours'
+import differenceInMinutes from 'date-fns/differenceInMinutes'
 import formatDistanceToNowStrict from 'date-fns/formatDistanceToNowStrict'
 import parseISO from 'date-fns/parseISO'
 import startCase from 'lodash/startCase'
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
+import { useInterval } from 'react-use'
 
 import { Avatar } from './Avatar'
 import { ItemDetails } from './ItemDetails'
@@ -45,6 +49,24 @@ export const Item = styled(({ className, transaction, addresses, selectedAccount
 
   const showDebugInfo = (isDevMode && !isParsed) || (isDevMode && isTransfer && !hasTokenSymbol)
 
+  const getTimestampDistanceToNow = () => formatDistanceToNowStrict(parseISO(timestamp), { addSuffix: true })
+  const [timestampDistanceToNow, setTimestampDistanceToNow] = useState(getTimestampDistanceToNow())
+
+  const daysAgo = differenceInDays(new Date(), parseISO(timestamp))
+  const hoursAgo = differenceInHours(new Date(), parseISO(timestamp))
+  const minutesAgo = differenceInMinutes(new Date(), parseISO(timestamp))
+
+  const updateTimestampDistanceInterval =
+    daysAgo > 0
+      ? 30 * 60 * 1000 // 30 minutes in ms
+      : hoursAgo > 0
+      ? 60 * 1000 // 1 minute in ms
+      : minutesAgo > 0
+      ? 10 * 1000 // 10 seconds in ms
+      : 500 // half a second in ms
+
+  useInterval(() => setTimestampDistanceToNow(getTimestampDistanceToNow()), updateTimestampDistanceInterval)
+
   return (
     <>
       <PanelSection
@@ -54,7 +76,7 @@ export const Item = styled(({ className, transaction, addresses, selectedAccount
       >
         <Info
           title={getTransactionName()}
-          subtitle={formatDistanceToNowStrict(parseISO(timestamp), { addSuffix: true })}
+          subtitle={timestampDistanceToNow}
           graphic={<Logo className="category-logo" parsed={parsed} addresses={addresses} />}
         />
 

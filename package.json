@@ -51,6 +51,7 @@
     "react-is": "^17.0.2",
     "react-router": "^5.3.3",
     "react-router-dom": "^5.3.3",
+    "react-use": "^17.4.0",
     "rmrk-tools": "^2.0.25",
     "safety-match": "^0.4.4",
     "swr": "^1.2.2",

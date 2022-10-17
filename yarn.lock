@@ -6887,6 +6887,7 @@ __metadata:
     react-router: ^5.3.3
     react-router-dom: ^5.3.3
     react-scripts: 4.0.3
+    react-use: ^17.4.0
     rmrk-tools: ^2.0.25
     safety-match: ^0.4.4
     storybook-preset-craco: ^0.0.6
