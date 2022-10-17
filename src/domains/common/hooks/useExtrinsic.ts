@@ -51,18 +51,20 @@ const useExtrinsic = <
           try {
             const unsubscribe = await func(...params).signAndSend(account, { signer: extension?.signer }, result => {
               if (result.isError) {
-                setLoadable({ state: 'hasError', contents: result })
+                unsubscribe()
                 reject(result)
               }
 
               if (result.isFinalized) {
-                if (result.isInBlock) {
-                  resolve(result)
-                } else {
-                  reject(result)
-                }
-
                 unsubscribe()
+
+                const failed = result.events.some(({ event }) => event.method === 'ExtrinsicFailed')
+
+                if (failed) {
+                  reject(result)
+                } else {
+                  resolve(result)
+                }
               }
             })
           } catch (error) {

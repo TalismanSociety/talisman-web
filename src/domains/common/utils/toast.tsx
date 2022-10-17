@@ -68,7 +68,7 @@ export const toastExtrinsic = (
             </code>{' '}
             transaction has failed.
           </Text.Body>
-          {chain !== undefined && (
+          {chain !== undefined && error?.txHash !== undefined && (
             <Text.Body as="div">
               View details on{' '}
               <Text.Body
