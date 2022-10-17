@@ -5,7 +5,7 @@ import { useRecoilCallback, useRecoilValueLoadable } from 'recoil'
 
 import { apiState, currentChainState } from '../../chains/recoils'
 import { extensionState } from '../../extension/recoils'
-import { toastExtrinsic } from '../utils/toast'
+import { toastExtrinsic } from '../utils'
 
 type ExtrinsicModules = {
   [P in keyof AugmentedSubmittables<'promise'>]: PickKnownKeys<AugmentedSubmittables<'promise'>[P]>

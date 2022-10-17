@@ -1,13 +1,13 @@
+import Button from '@components/atoms/Button'
+import Text from '@components/atoms/Text'
 import { ComponentMeta, Story } from '@storybook/react'
+import toast, { Toaster } from 'react-hot-toast'
 
 import ToastBar, { ToastBarProps } from './ToastBar'
 
 export default {
   title: 'Molecules/ToastBar',
   component: ToastBar,
-  parameters: {
-    layout: 'centered',
-  },
 } as ComponentMeta<typeof ToastBar>
 
 export const Default: Story<ToastBarProps> = (args: any) => <ToastBar {...args} />
@@ -17,7 +17,14 @@ Default.args = {
     id: '0',
     type: 'blank',
     visible: true,
-    message: 'Your staking transaction has been confirmed',
+    message: (
+      <>
+        <Text.Body as="div" alpha="high">
+          This is your toast
+        </Text.Body>
+        <Text.Body as="div">And this is its content</Text.Body>
+      </>
+    ),
     createdAt: Date.now(),
     pauseDuration: 0,
     ariaProps: { 'role': 'status', 'aria-live': 'assertive' },
@@ -35,3 +42,13 @@ Success.args = { toast: { ...Default.args.toast!, type: 'success' } }
 export const Error = Default.bind({})
 
 Error.args = { toast: { ...Default.args.toast!, type: 'error' } }
+
+export const Demo: Story<ToastBarProps> = (args: any) => (
+  <div css={{ display: 'flex', gap: '1rem' }}>
+    <Toaster>{t => <ToastBar toast={t} />}</Toaster>
+    <Button onClick={() => toast(Default.args?.toast?.message ?? '')}>Blank</Button>
+    <Button onClick={() => toast.loading(Loading.args?.toast?.message ?? '', { duration: 4000 })}>Loading</Button>
+    <Button onClick={() => toast.success(Success.args?.toast?.message ?? '')}>Success</Button>
+    <Button onClick={() => toast.error(Error.args?.toast?.message ?? '')}>Error</Button>
+  </div>
+)

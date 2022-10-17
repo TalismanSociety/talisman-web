@@ -67,8 +67,8 @@ const ToastBar = ({ toast }: ToastBarProps) => {
             )
         }
       }, [toast.type])}
-      <Text.Body>{message}</Text.Body>
-      <Text.Body alpha="disabled" css={React.Children.count(message) > 1 ? { alignSelf: 'first baseline' } : undefined}>
+      <Text.Body as="div">{message}</Text.Body>
+      <Text.Body alpha="disabled" css={{ alignSelf: 'first baseline' }}>
         {formatDistanceToNow(toast.createdAt, { addSuffix: true })}
       </Text.Body>
     </div>
