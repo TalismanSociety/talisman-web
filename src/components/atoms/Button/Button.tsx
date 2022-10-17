@@ -8,6 +8,7 @@ type ButtonElementType = Pick<JSX.IntrinsicElements, 'button' | 'a'>
 type PolymorphicTextProps<T extends keyof ButtonElementType> = {
   as?: T
   variant?: 'outlined' | 'noop'
+  disabled?: boolean
   loading?: boolean
 }
 
@@ -15,6 +16,8 @@ export type ButtonProps<T extends keyof ButtonElementType> = PolymorphicTextProp
 
 const Button = <T extends keyof ButtonElementType>({ as = 'button' as T, variant, ...props }: ButtonProps<T>) => {
   const theme = useTheme()
+
+  const disabled = props.disabled || props.loading
 
   const variantStyle = useMemo(() => {
     switch (variant) {
@@ -63,14 +66,21 @@ const Button = <T extends keyof ButtonElementType>({ as = 'button' as T, variant
         </span>
       </span>
     ),
-    css: {
-      display: 'block',
-      padding: '1.156rem 2.4rem',
-      border: 'none',
-      borderRadius: '1rem',
-      cursor: 'pointer',
-      ...variantStyle,
-    },
+    disabled,
+    css: [
+      {
+        display: 'block',
+        padding: '1.156rem 2.4rem',
+        border: 'none',
+        borderRadius: '1rem',
+        cursor: 'pointer',
+        transition: '.25s',
+        ...variantStyle,
+        ...(disabled ? { ':hover': undefined } : {}),
+      },
+      props.loading && { cursor: 'wait' },
+      props.disabled && { filter: 'grayscale(1) brightness(0.5)', cursor: 'not-allowed' },
+    ],
   })
 }
 

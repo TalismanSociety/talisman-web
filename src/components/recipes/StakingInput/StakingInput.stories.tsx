@@ -5,6 +5,9 @@ import StakingInput, { StakingInputProps } from './StakingInput'
 export default {
   title: 'Recipes/StakingInput',
   component: StakingInput,
+  parameters: {
+    layout: 'centered',
+  },
 } as ComponentMeta<typeof StakingInput>
 
 export const Default: Story<StakingInputProps> = args => <StakingInput {...args} />
@@ -34,3 +37,7 @@ Default.args = {
   poolTotalStaked: '24,054.55 DOT',
   poolMemberCount: '17',
 }
+
+export const AlreadyStaking = Default.bind({})
+
+AlreadyStaking.args = { ...Default.args, alreadyStaking: true }

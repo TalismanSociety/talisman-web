@@ -67,9 +67,9 @@ const Unstakings = () => {
               key={index}
               accountName={accounts.find(({ address }) => (address = x.address))?.name ?? ''}
               accountAddress={x.address}
-              unstakingAmount={decimalFromAtomics(x.amount).toHuman()}
+              unstakingAmount={decimalFromAtomics.fromAtomics(x.amount).toHuman()}
               unstakingFiatAmount={(
-                decimalFromAtomics(x.amount).toFloatApproximation() * nativeTokenPrice
+                decimalFromAtomics.fromAtomics(x.amount).toFloatApproximation() * nativeTokenPrice
               ).toLocaleString(undefined, {
                 style: 'currency',
                 currency: 'usd',
@@ -150,11 +150,14 @@ const Stakings = () => {
     <div>
       <UnstakeAlertDialog
         open={currentUnstake !== undefined}
-        amount={decimalFromAtomics(currentUnstake?.points).toHuman()}
-        fiatAmount={decimalFromAtomics(currentUnstake?.points).toFloatApproximation().toLocaleString(undefined, {
-          style: 'currency',
-          currency: 'usd',
-        })}
+        amount={decimalFromAtomics.fromAtomics(currentUnstake?.points).toHuman()}
+        fiatAmount={decimalFromAtomics
+          .fromAtomics(currentUnstake?.points)
+          .toFloatApproximation()
+          .toLocaleString(undefined, {
+            style: 'currency',
+            currency: 'usd',
+          })}
         lockDuration="28 days"
         onDismiss={() => setCurrentUnstake(undefined)}
         onConfirm={() => {
@@ -172,13 +175,14 @@ const Stakings = () => {
           <PoolStake
             accountName={pool.account.name ?? ''}
             accountAddress={pool.account.address}
-            stakingAmount={decimalFromAtomics(pool.poolMember.unwrapOrDefault().points).toHuman()}
+            stakingAmount={decimalFromAtomics.fromAtomics(pool.poolMember.unwrapOrDefault().points).toHuman()}
             stakingAmountInFiat={(
-              decimalFromAtomics(pool.poolMember.unwrapOrDefault().points).toFloatApproximation() * nativeTokenPrice
+              decimalFromAtomics.fromAtomics(pool.poolMember.unwrapOrDefault().points).toFloatApproximation() *
+              nativeTokenPrice
             ).toLocaleString(undefined, { style: 'currency', currency: 'usd' })}
-            rewardsAmount={decimalFromAtomics(pool.pendingRewards?.toString()).toHuman()}
+            rewardsAmount={decimalFromAtomics.fromAtomics(pool.pendingRewards?.toString()).toHuman()}
             rewardsAmountInFiat={(
-              decimalFromAtomics(pool.pendingRewards).toFloatApproximation() * nativeTokenPrice
+              decimalFromAtomics.fromAtomics(pool.pendingRewards).toFloatApproximation() * nativeTokenPrice
             ).toLocaleString(undefined, { style: 'currency', currency: 'usd' })}
             poolName={pool.poolName ?? ''}
             onRequestClaim={() => claimPayoutExtrinsic.signAndSend(pool.account.address)}

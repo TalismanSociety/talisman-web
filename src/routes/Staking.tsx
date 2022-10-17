@@ -1,23 +1,75 @@
 import Details from '@components/molecules/Details'
 import InfoCard from '@components/molecules/InfoCard'
 import StakingInput from '@components/recipes/StakingInput'
-import { nativeTokenDecimalState } from '@domains/chains/recoils'
+import { nativeTokenDecimalState, nativeTokenPriceState } from '@domains/chains/recoils'
 import useChainState from '@domains/common/hooks/useChainState'
+import useExtrinsic from '@domains/common/hooks/useExtrinsic'
 import { accountsState } from '@domains/extension/recoils'
-import { useState } from 'react'
-import { useRecoilValue } from 'recoil'
+import { unwrapLoadableValue } from '@util/loadable'
+import { useMemo, useState } from 'react'
+import { useRecoilValue, waitForAll } from 'recoil'
 
 const Staking = () => {
-  const accounts = useRecoilValue(accountsState)
-  const nativeTokenDecimal = useRecoilValue(nativeTokenDecimalState)
+  const joinPoolExtrinsic = useExtrinsic('nominationPools', 'join')
+  const bondExtraExtrtinsic = useExtrinsic('nominationPools', 'bondExtra')
+
+  const [accounts, nativeTokenDecimal, nativeTokenPrice] = useRecoilValue(
+    waitForAll([accountsState, nativeTokenDecimalState, nativeTokenPriceState('usd')])
+  )
 
   const [amount, setAmount] = useState('')
+
+  const decimalAmount = useMemo(() => {
+    try {
+      return nativeTokenDecimal.fromUserInput(amount)
+    } catch {
+      return undefined
+    }
+  }, [amount, nativeTokenDecimal])
+
+  const fiatAmount = useMemo(() => {
+    if (decimalAmount === undefined) return
+    return (decimalAmount.toFloatApproximation() * nativeTokenPrice).toLocaleString(undefined, {
+      style: 'currency',
+      currency: 'usd',
+    })
+  }, [decimalAmount, nativeTokenPrice])
 
   const [selectedAccount, setSelectedAccount] = useState<typeof accounts[number] | undefined>(accounts[0])
 
   const balancesLoadable = useChainState('derive', 'balances', 'all', [selectedAccount?.address ?? ''], {
     enabled: selectedAccount !== undefined,
   })
+
+  const poolMembersLoadable = useChainState('query', 'nominationPools', 'poolMembers', [selectedAccount?.address!], {
+    enabled: selectedAccount?.address !== undefined,
+  })
+
+  const poolMember = unwrapLoadableValue(poolMembersLoadable)
+  const bondedPoolLoadable = useChainState(
+    'query',
+    'nominationPools',
+    'bondedPools',
+    [poolMember?.unwrapOrDefault().poolId ?? ''],
+    { enabled: poolMember?.isSome === true }
+  )
+  const poolMetadata = useChainState(
+    'query',
+    'nominationPools',
+    'metadata',
+    [poolMember?.unwrapOrDefault().poolId ?? ''],
+    {
+      enabled: poolMember?.isSome === true,
+    }
+  )
+
+  const hasExistingPool = poolMember?.isSome === true
+
+  const isReady =
+    selectedAccount !== undefined &&
+    decimalAmount !== undefined &&
+    poolMembersLoadable.state === 'hasValue' &&
+    balancesLoadable.state === 'hasValue'
 
   return (
     <div
@@ -63,6 +115,7 @@ const Staking = () => {
         >
           <div css={{ marginBottom: '5.5rem' }}>
             <StakingInput
+              alreadyStaking={hasExistingPool}
               accounts={accounts.map(x => ({
                 ...x,
                 selected: x.address === selectedAccount?.address,
@@ -71,18 +124,38 @@ const Staking = () => {
               }))}
               onSelectAccount={x => setSelectedAccount(accounts.find(account => account.address === x.address)!)}
               amount={amount}
-              fiatAmount="$4,261.23"
+              fiatAmount={fiatAmount ?? ''}
               onChangeAmount={setAmount}
-              onRequestMaxAmount={() => {}}
+              onRequestMaxAmount={() => {
+                if (balancesLoadable.state === 'hasValue') {
+                  setAmount(nativeTokenDecimal.fromAtomics(balancesLoadable.contents.freeBalance).toString())
+                }
+              }}
               availableToStake={
                 balancesLoadable.state === 'hasValue'
-                  ? nativeTokenDecimal(balancesLoadable.contents.freeBalance).toHuman()
+                  ? nativeTokenDecimal.fromAtomics(balancesLoadable.contents.freeBalance).toHuman()
                   : '...'
               }
-              poolName="Bingbong pool"
+              poolName={unwrapLoadableValue(poolMetadata)?.toUtf8() ?? ''}
               poolTotalStaked="24,054.55 DOT"
-              poolMemberCount="17"
-              onSubmit={() => {}}
+              poolMemberCount={
+                unwrapLoadableValue(bondedPoolLoadable)?.unwrapOrDefault().memberCounter.toString() ?? ''
+              }
+              onSubmit={() => {
+                if (selectedAccount === undefined || decimalAmount?.atomics === undefined) return
+                if (hasExistingPool) {
+                  bondExtraExtrtinsic.signAndSend(selectedAccount.address, {
+                    FreeBalance: decimalAmount.atomics.toString(),
+                  })
+                } else {
+                  joinPoolExtrinsic.signAndSend(selectedAccount.address, decimalAmount.atomics.toString(), 1)
+                }
+              }}
+              submitState={useMemo(() => {
+                if (!isReady) return 'disabled'
+
+                return joinPoolExtrinsic.state === 'loading' ? 'pending' : undefined
+              }, [isReady, joinPoolExtrinsic.state])}
             />
           </div>
           <div css={{ display: 'flex', flexDirection: 'column', gap: '1.6rem' }}>

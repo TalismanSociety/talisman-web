@@ -87,7 +87,11 @@ export const nativeTokenDecimalState = selector({
   key: 'NativeTokenDecimal',
   get: ({ get }) => {
     const chain = get(currentChainState)
-    return (value: string | number | bigint | BN | ToBn | undefined) =>
-      Decimal.fromAtomics(value, chain.nativeToken.data.decimals, chain.nativeToken.data.symbol)
+    return {
+      fromAtomics: (value: string | number | bigint | BN | ToBn | undefined) =>
+        Decimal.fromAtomics(value, chain.nativeToken.data.decimals, chain.nativeToken.data.symbol),
+      fromUserInput: (input: string) =>
+        Decimal.fromUserInput(input, chain.nativeToken.data.decimals, chain.nativeToken.data.symbol),
+    }
   },
 })

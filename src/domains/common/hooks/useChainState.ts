@@ -15,31 +15,33 @@ import { apiState } from '../../chains/recoils'
 const useChainState = <
   TType extends keyof Pick<ApiPromise, 'query' | 'derive'>,
   TModule extends keyof PickKnownKeys<ApiPromise[TType]>,
-  TSection extends keyof PickKnownKeys<ApiPromise[TType][TModule]>,
+  TSection extends Extract<keyof PickKnownKeys<ApiPromise[TType][TModule]>, string>,
+  TAugmentedSection extends TType extends 'query' ? TSection | `${TSection}.multi` : TSection,
+  TExtractedSection extends TAugmentedSection extends `${infer TSection}.multi` ? TSection : TAugmentedSection,
   TMethod extends Diverge<
-    ApiPromise[TType][TModule][TSection],
+    // @ts-ignore
+    ApiPromise[TType][TModule][TExtractedSection],
     StorageEntryPromiseOverloads & QueryableStorageEntry<any, any>
   >
 >(
   typeName: TType,
   moduleName: TModule,
   // @ts-ignore
-  sectionName: TType extends 'query' ? TSection | `${TSection}.multi` : TSection,
+  sectionName: TAugmentedSection,
   params: TMethod extends (...args: any) => any
     ? // @ts-ignore
-      `${TSection}.multi` extends typeof sectionName
-      ? Leading<Parameters<TMethod>> extends [infer A]
-        ? A[]
-        : Array<Readonly<Leading<Parameters<TMethod>>>>
-      : Leading<Parameters<TMethod>>
+      TAugmentedSection extends TSection
+      ? Leading<Parameters<TMethod>>
+      : Leading<Parameters<TMethod>> extends [infer A]
+      ? A[]
+      : Array<Readonly<Leading<Parameters<TMethod>>>>
     : never,
   options?: { enabled: boolean }
 ) => {
   type TResult = TMethod extends PromiseResult<(...args: any) => Observable<infer TResult>>
-    ? // @ts-ignore
-      `${TSection}.multi` extends typeof sectionName
-      ? TResult[]
-      : TResult
+    ? TAugmentedSection extends TSection
+      ? TResult
+      : TResult[]
     : never
 
   const api = useRecoilValue(apiState)
