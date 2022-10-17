@@ -1,33 +1,11 @@
-import { AddressOrPair, AugmentedSubmittables, SignerOptions } from '@polkadot/api/types'
+import { AddressOrPair, AugmentedSubmittables } from '@polkadot/api/types'
+import { ISubmittableResult } from '@polkadot/types/types'
 import { useCallback, useState } from 'react'
-import { useRecoilCallback } from 'recoil'
+import { useRecoilCallback, useRecoilValueLoadable } from 'recoil'
 
-import { apiState } from '../../chains/recoils'
+import { apiState, currentChainState } from '../../chains/recoils'
 import { extensionState } from '../../extension/recoils'
-
-type ReturnTypeWithArgs<T extends (...args: any[]) => any, TParams> = T extends {
-  (...args: infer A1): infer R1
-  (...args: infer A2): infer R2
-  (...args: infer A3): infer R3
-}
-  ? TParams extends A1
-    ? R1
-    : TParams extends A2
-    ? R2
-    : TParams extends A3
-    ? R3
-    : never
-  : T extends { (...args: infer A1): infer R1; (...args: infer A2): infer R2 }
-  ? TParams extends A1
-    ? R1
-    : TParams extends A2
-    ? R2
-    : never
-  : T extends { (...args: infer A1): infer R1 }
-  ? TParams extends A1
-    ? R1
-    : never
-  : never
+import { toastExtrinsic } from '../utils/toast'
 
 type ExtrinsicModules = {
   [P in keyof AugmentedSubmittables<'promise'>]: PickKnownKeys<AugmentedSubmittables<'promise'>[P]>
@@ -41,15 +19,13 @@ const useExtrinsic = <
   method: TMethodName
 ) => {
   type TExtrinsic = ExtrinsicModules[TModuleName][TMethodName]
-  type TReturn = ReturnTypeWithArgs<
-    ReturnType<TExtrinsic>['signAndSend'],
-    [AddressOrPair, Partial<SignerOptions> | undefined]
-  >
+
+  const chainLoadable = useRecoilValueLoadable(currentChainState)
 
   const [loadable, setLoadable] = useState<
     | { state: 'idle'; contents: undefined }
     | { state: 'loading'; contents: Promise<any> }
-    | { state: 'hasValue'; contents: Awaited<TReturn> }
+    | { state: 'hasValue'; contents: ISubmittableResult }
     | { state: 'hasError'; contents: any }
   >({ state: 'idle', contents: undefined })
 
@@ -62,16 +38,45 @@ const useExtrinsic = <
           const api = await snapshot.getPromise(apiState)
           const extension = await snapshot.getPromise(extensionState)
 
+          let resolve = (value: ISubmittableResult) => {}
+          let reject = (value: unknown) => {}
+
+          const deferred = new Promise<ISubmittableResult>((_resolve, _reject) => {
+            resolve = _resolve
+            reject = _reject
+          })
+
           const func = api.tx[module][method].bind(api.tx[module])
 
-          return func(...params).signAndSend(account, {
-            signer: extension?.signer,
-          }) as Promise<TReturn>
+          try {
+            const unsubscribe = await func(...params).signAndSend(account, { signer: extension?.signer }, result => {
+              if (result.isError) {
+                setLoadable({ state: 'hasError', contents: result })
+                reject(result)
+              }
+
+              if (result.isFinalized) {
+                if (result.isInBlock) {
+                  resolve(result)
+                } else {
+                  reject(result)
+                }
+
+                unsubscribe()
+              }
+            })
+          } catch (error) {
+            reject(error)
+          }
+
+          return deferred
         }
 
         const promise = promiseFunc()
 
         setLoadable({ state: 'loading', contents: promise })
+
+        toastExtrinsic(module, method as string, promise, chainLoadable)
 
         try {
           const result = await promise

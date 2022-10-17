@@ -5,7 +5,7 @@ import Decimal from '@util/Decimal'
 import { gql, request } from 'graphql-request'
 import { atom, selector, selectorFamily } from 'recoil'
 
-type Chain = {
+export type Chain = {
   id: string
   rpcs: Array<{ url: string }>
   isTestnet: boolean
@@ -16,6 +16,7 @@ type Chain = {
       coingeckoId: string
     }
   }
+  subscanUrl: string | null
 }
 
 const SUPPORTED_CHAIN_IDS = ['polkadot', 'kusama', 'westend-testnet']
@@ -36,6 +37,7 @@ export const chainsState = selector({
             nativeToken {
               data
             }
+            subscanUrl
           }
         }
       `,

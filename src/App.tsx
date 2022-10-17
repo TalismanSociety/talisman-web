@@ -1,4 +1,5 @@
 import { ModalProvider } from '@components'
+import ToastBar from '@components/molecules/ToastBar'
 import { TalismanHandLoader } from '@components/TalismanHandLoader'
 import * as Crowdloans from '@libs/crowdloans'
 import * as MoonbeamContributors from '@libs/moonbeam-contributors'
@@ -7,6 +8,7 @@ import TalismanProvider from '@libs/talisman'
 import * as Tokenprices from '@libs/tokenprices'
 import Routes from '@routes'
 import React, { Suspense } from 'react'
+import { Toaster } from 'react-hot-toast'
 import { BrowserRouter as Router } from 'react-router-dom'
 import { RecoilRoot } from 'recoil'
 
@@ -50,6 +52,7 @@ const App: React.FC = () => (
                         <Routes />
                       </MoonbeamContributors.PopupProvider>
                     </ModalProvider>
+                    <Toaster>{t => <ToastBar toast={t} />}</Toaster>
                   </ThemeProvider>
                 </Router>
               </MoonbeamContributors.Provider>
