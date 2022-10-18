@@ -6,19 +6,22 @@ import { PoolStatusIndicator } from '../PoolStatusIndicator'
 
 export type PoolSelectorItemProps = {
   selected?: boolean
+  highlighted?: boolean
   poolName: string
   stakedAmount: string
   talismanRecommended: boolean
   rating: 0 | 1 | 2 | 3
   memberCount: number | string
+  onClick?: () => unknown
 }
 
 const PoolSelectorItem = (props: PoolSelectorItemProps) => {
   const theme = useTheme()
-  const alpha = props.selected ? 'high' : 'medium'
+  const alpha = props.selected || props.highlighted ? 'high' : 'disabled'
   return (
     <article
       {...props}
+      onClick={props.onClick}
       css={{
         'padding': '0.8rem 1.6rem',
         'borderRadius': '0.8rem',

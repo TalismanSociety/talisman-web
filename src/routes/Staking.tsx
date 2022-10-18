@@ -1,20 +1,83 @@
 import Details from '@components/molecules/Details'
 import InfoCard from '@components/molecules/InfoCard'
+import PoolSelectorDialog from '@components/recipes/PoolSelectorDialog'
 import StakingInput from '@components/recipes/StakingInput'
-import { nativeTokenDecimalState } from '@domains/chains/recoils'
+import { apiState, nativeTokenDecimalState } from '@domains/chains/recoils'
 import { useTokenAmountFromAtomics, useTokenAmountState } from '@domains/common/hooks'
 import useChainState from '@domains/common/hooks/useChainState'
 import useExtrinsic from '@domains/common/hooks/useExtrinsic'
 import { accountsState } from '@domains/extension/recoils'
 import { BN } from '@polkadot/util'
-import { useEffect, useMemo, useState } from 'react'
-import { useRecoilValue, waitForAll } from 'recoil'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { selector, useRecoilValue, waitForAll } from 'recoil'
+
+const recommendedPoolsState = selector({
+  key: 'BondedPools',
+  get: async ({ get }) => {
+    const api = get(apiState)
+
+    const bondedPools = await api.query.nominationPools.bondedPools
+      .entries()
+      .then(x =>
+        x
+          .map(([poolId, bondedPool]) => ({ poolId: poolId.args[0], bondedPool }))
+          .sort((a, b) => b.bondedPool.unwrapOrDefault().points.sub(a.bondedPool.unwrapOrDefault().points).toNumber())
+      )
+
+    const names = await api.query.nominationPools.metadata.multi(bondedPools.map(({ poolId }) => poolId))
+
+    return bondedPools.map((x, index) => ({ ...x, name: names[index].toUtf8() }))
+  },
+})
+
+const PoolSelector = (props: {
+  open: boolean
+  selectedPoolId: number
+  onChangePoolId: (poolId: number) => unknown
+  onDismiss: () => unknown
+}) => {
+  const [newPoolId, setNewPoolId] = useState<number>()
+  const [recommendedPools, nativeTokenDecimal] = useRecoilValue(
+    waitForAll([recommendedPoolsState, nativeTokenDecimalState])
+  )
+
+  return (
+    <PoolSelectorDialog
+      open={props.open}
+      onRequestDismiss={props.onDismiss}
+      onConfirm={() => {
+        if (newPoolId !== undefined) {
+          props.onChangePoolId(newPoolId)
+        }
+        props.onDismiss()
+      }}
+    >
+      {recommendedPools.map(pool => (
+        <PoolSelectorDialog.Item
+          selected={pool.poolId.eqn(props.selectedPoolId)}
+          highlighted={newPoolId !== undefined && pool.poolId.eqn(newPoolId)}
+          talismanRecommended
+          poolName={pool.name}
+          stakedAmount={`${nativeTokenDecimal.fromAtomics(pool.bondedPool.unwrapOrDefault().points).toHuman()} staked`}
+          rating={3}
+          memberCount={pool.bondedPool.unwrapOrDefault().memberCounter.toString()}
+          onClick={() => setNewPoolId(pool.poolId.toNumber())}
+        />
+      ))}
+    </PoolSelectorDialog>
+  )
+}
 
 const Staking = () => {
   const joinPoolExtrinsic = useExtrinsic('nominationPools', 'join')
   const bondExtraExtrinsic = useExtrinsic('nominationPools', 'bondExtra')
 
-  const [accounts, nativeTokenDecimal] = useRecoilValue(waitForAll([accountsState, nativeTokenDecimalState]))
+  const [accounts, nativeTokenDecimal, recommendedPools] = useRecoilValue(
+    waitForAll([accountsState, nativeTokenDecimalState, recommendedPoolsState])
+  )
+
+  const [selectedPoolId, setSelectedPoolId] = useState(recommendedPools[0].poolId.toNumber())
+  const [showPoolSelector, setShowPoolSelector] = useState(false)
 
   const [{ amount, decimalAmount, localizedFiatAmount }, setAmount] = useTokenAmountState('')
 
@@ -59,8 +122,6 @@ const Staking = () => {
     )
   )
 
-  const selectedPoolId = 1
-
   const bondedPoolLoadable = useChainState('query', 'nominationPools', 'bondedPools', [selectedPoolId])
 
   const { decimalAmount: poolTotalStaked } = useTokenAmountFromAtomics(
@@ -83,6 +144,10 @@ const Staking = () => {
     }
   }, [accounts, selectedAccount])
 
+  useEffect(() => {
+    setSelectedPoolId(recommendedPools[0].poolId.toNumber())
+  }, [recommendedPools, selectedAccount])
+
   return (
     <div
       css={{
@@ -92,6 +157,12 @@ const Staking = () => {
         padding: '6.4rem 1.8rem 1.8rem 1.8rem',
       }}
     >
+      <PoolSelector
+        open={showPoolSelector}
+        selectedPoolId={selectedPoolId}
+        onChangePoolId={setSelectedPoolId}
+        onDismiss={useCallback(() => setShowPoolSelector(false), [])}
+      />
       <div
         css={{
           '@media (min-width: 768px)': {
@@ -142,7 +213,10 @@ const Staking = () => {
                 name: x.name ?? x.address,
                 balance: '',
               }))}
-              onSelectAccount={x => setSelectedAccount(accounts.find(account => account.address === x.address)!)}
+              onSelectAccount={useCallback(
+                x => setSelectedAccount(accounts.find(account => account.address === x.address)!),
+                [accounts]
+              )}
               amount={amount}
               fiatAmount={localizedFiatAmount ?? ''}
               onChangeAmount={setAmount}
@@ -159,7 +233,8 @@ const Staking = () => {
               poolName={poolMetadataLoadable.valueMaybe()?.toUtf8() ?? ''}
               poolTotalStaked={poolTotalStaked?.toHuman() ?? ''}
               poolMemberCount={bondedPoolLoadable.valueMaybe()?.unwrapOrDefault().memberCounter.toString() ?? ''}
-              onSubmit={() => {
+              onRequestPoolChange={useCallback(() => setShowPoolSelector(true), [])}
+              onSubmit={useCallback(() => {
                 if (selectedAccount === undefined || decimalAmount?.atomics === undefined) return
                 if (hasExistingPool) {
                   bondExtraExtrinsic.signAndSend(selectedAccount.address, {
@@ -168,7 +243,7 @@ const Staking = () => {
                 } else {
                   joinPoolExtrinsic.signAndSend(selectedAccount.address, decimalAmount.atomics.toString(), 1)
                 }
-              }}
+              }, [bondExtraExtrinsic, decimalAmount?.atomics, hasExistingPool, joinPoolExtrinsic, selectedAccount])}
               submitState={useMemo(() => {
                 if (!isReady) return 'disabled'
 

@@ -24,6 +24,7 @@ export type StakingInputProps = {
   poolName: string
   poolTotalStaked: string
   poolMemberCount: string
+  onRequestPoolChange: () => unknown
   onSubmit: () => unknown
   submitState?: 'disabled' | 'pending'
   alreadyStaking?: boolean
@@ -132,6 +133,14 @@ const StakingInput = (props: StakingInputProps) => {
                   </dl>
                   <Text.Body as="p">
                     Talisman automatically finds the best available nomination pool for you based on xxxx
+                  </Text.Body>
+                  <Text.Body
+                    as="div"
+                    alpha="high"
+                    css={{ textDecoration: 'underline', cursor: 'pointer', marginBottom: '0.8rem' }}
+                    onClick={props.onRequestPoolChange}
+                  >
+                    Pick a different pool
                   </Text.Body>
                 </motion.div>
               )}
