@@ -36,7 +36,7 @@
     "@talismn/wallets": "^1.1.6",
     "bignumber.js": "^9.0.1",
     "date-fns": "^2.29.3",
-    "framer-motion": "^4.1.17",
+    "framer-motion": "^7.6.1",
     "graphql": "^16.6.0",
     "graphql-request": "^5.0.0",
     "i18next": "^21.3.3",

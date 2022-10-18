@@ -38,6 +38,8 @@ module.exports = {
             test: /\.js$/,
             loader: require.resolve('@open-wc/webpack-import-meta-loader'),
           },
+          // TODO: remove once upgrade to `react-scripts` version 5
+          { test: /\.mjs$/, type: 'javascript/auto' },
         ],
       },
     },
