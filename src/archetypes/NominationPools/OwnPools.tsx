@@ -3,6 +3,7 @@ import AddStakeDialog from '@components/recipes/AddStakeDialog'
 import PoolStake, { PoolStakeList } from '@components/recipes/PoolStake/PoolStake'
 import PoolUnstake, { PoolUnstakeList } from '@components/recipes/PoolUnstake'
 import UnstakeAlertDialog from '@components/recipes/UnstakeAlertDialog'
+import { useTokenAmountFromAtomics, useTokenAmountState } from '@domains/common/hooks'
 import { createAccounts } from '@domains/nomiationPools/utils'
 import { BN } from '@polkadot/util'
 import { addMilliseconds, formatDistance, formatDistanceToNow } from 'date-fns'
@@ -23,35 +24,24 @@ const AddDialog = (props: { account?: string; onDismiss: () => unknown }) => {
   const poolMemberLoadable = useChainState('query', 'nominationPools', 'poolMembers', [props.account!], {
     enabled: props.account !== undefined,
   })
-  const [nativeTokenDecimal, nativeTokenPrice] = useRecoilValue(
-    waitForAll([nativeTokenDecimalState, nativeTokenPriceState('usd')])
+
+  const [nativeTokenDecimal] = useRecoilValue(waitForAll([nativeTokenDecimalState]))
+
+  const [{ amount, decimalAmount, localizedFiatAmount }, setAmount] = useTokenAmountState('')
+
+  const { decimalAmount: poolPointsDecimal } = useTokenAmountFromAtomics(
+    poolMemberLoadable.valueMaybe()?.unwrapOrDefault().points ?? new BN(0)
   )
 
-  const [amount, setAmount] = useState('')
-
-  const amountDecimal = useMemo(() => {
-    try {
-      return nativeTokenDecimal.fromUserInput(amount)
-    } catch {
-      return undefined
-    }
-  }, [amount, nativeTokenDecimal])
-
-  const poolPointsDecimal = useMemo(
-    () => nativeTokenDecimal.fromAtomics(poolMemberLoadable.valueMaybe()?.unwrapOrDefault().points),
-    [nativeTokenDecimal, poolMemberLoadable]
-  )
-
-  const newAmount = useMemo(
-    () => nativeTokenDecimal.fromAtomics(poolPointsDecimal.atomics.add(amountDecimal?.atomics ?? new BN(0))),
-    [amountDecimal?.atomics, nativeTokenDecimal, poolPointsDecimal.atomics]
+  const { decimalAmount: newAmountDecimal, localizedFiatAmount: newLocalizedFiatAmount } = useTokenAmountFromAtomics(
+    poolPointsDecimal?.atomics.add(decimalAmount?.atomics ?? new BN(0)) ?? new BN(0)
   )
 
   useEffect(() => {
     if (props.account === undefined) {
       setAmount('')
     }
-  }, [props.account])
+  }, [props.account, setAmount])
 
   useEffect(() => {
     if (bondExtraExtrinsic.state === 'loading' && bondExtraExtrinsic.contents?.status.isInBlock) {
@@ -65,24 +55,18 @@ const AddDialog = (props: { account?: string; onDismiss: () => unknown }) => {
       availableToStake={nativeTokenDecimal.fromAtomics(balanceLoadable.valueMaybe()?.freeBalance).toHuman() ?? ''}
       amount={amount}
       onChangeAmount={setAmount}
-      fiatAmount={(amountDecimal?.toFloatApproximation() ?? 0 * nativeTokenPrice).toLocaleString(undefined, {
-        style: 'currency',
-        currency: 'usd',
-      })}
-      newAmount={newAmount.toHuman()}
-      newFiatAmount={(newAmount.toFloatApproximation() * nativeTokenPrice).toLocaleString(undefined, {
-        style: 'currency',
-        currency: 'usd',
-      })}
+      fiatAmount={localizedFiatAmount ?? ''}
+      newAmount={newAmountDecimal?.toHuman() ?? ''}
+      newFiatAmount={newLocalizedFiatAmount ?? ''}
       onDismiss={props.onDismiss}
       onConfirm={useCallback(
         () =>
           bondExtraExtrinsic
             .signAndSend(props.account ?? '', {
-              FreeBalance: amountDecimal?.atomics?.toString() ?? '0',
+              FreeBalance: decimalAmount?.atomics?.toString() ?? '0',
             })
             .finally(() => props.onDismiss()),
-        [amountDecimal?.atomics, bondExtraExtrinsic, props]
+        [bondExtraExtrinsic, decimalAmount?.atomics, props]
       )}
       onRequestMaxAmount={() =>
         setAmount(nativeTokenDecimal.fromAtomics(balanceLoadable.valueMaybe()?.freeBalance).toString())

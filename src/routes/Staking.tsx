@@ -1,7 +1,8 @@
 import Details from '@components/molecules/Details'
 import InfoCard from '@components/molecules/InfoCard'
 import StakingInput from '@components/recipes/StakingInput'
-import { nativeTokenDecimalState, nativeTokenPriceState } from '@domains/chains/recoils'
+import { nativeTokenDecimalState } from '@domains/chains/recoils'
+import { useTokenAmountState } from '@domains/common/hooks'
 import useChainState from '@domains/common/hooks/useChainState'
 import useExtrinsic from '@domains/common/hooks/useExtrinsic'
 import { accountsState } from '@domains/extension/recoils'
@@ -12,27 +13,9 @@ const Staking = () => {
   const joinPoolExtrinsic = useExtrinsic('nominationPools', 'join')
   const bondExtraExtrtinsic = useExtrinsic('nominationPools', 'bondExtra')
 
-  const [accounts, nativeTokenDecimal, nativeTokenPrice] = useRecoilValue(
-    waitForAll([accountsState, nativeTokenDecimalState, nativeTokenPriceState('usd')])
-  )
+  const [accounts, nativeTokenDecimal] = useRecoilValue(waitForAll([accountsState, nativeTokenDecimalState]))
 
-  const [amount, setAmount] = useState('')
-
-  const decimalAmount = useMemo(() => {
-    try {
-      return nativeTokenDecimal.fromUserInput(amount)
-    } catch {
-      return undefined
-    }
-  }, [amount, nativeTokenDecimal])
-
-  const fiatAmount = useMemo(() => {
-    if (decimalAmount === undefined) return
-    return (decimalAmount.toFloatApproximation() * nativeTokenPrice).toLocaleString(undefined, {
-      style: 'currency',
-      currency: 'usd',
-    })
-  }, [decimalAmount, nativeTokenPrice])
+  const [{ amount, decimalAmount, localizedFiatAmount }, setAmount] = useTokenAmountState('')
 
   const [selectedAccount, setSelectedAccount] = useState<typeof accounts[number] | undefined>(accounts[0])
 
@@ -133,7 +116,7 @@ const Staking = () => {
               }))}
               onSelectAccount={x => setSelectedAccount(accounts.find(account => account.address === x.address)!)}
               amount={amount}
-              fiatAmount={fiatAmount ?? ''}
+              fiatAmount={localizedFiatAmount ?? ''}
               onChangeAmount={setAmount}
               onRequestMaxAmount={() => {
                 if (balancesLoadable.state === 'hasValue') {

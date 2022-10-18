@@ -43,7 +43,7 @@ type QueryResultMap = {
     : never
 }
 
-const useQueryMulti = <TQueries extends Array<Query | [Query, ...unknown[]]> | [Query | [Query, ...unknown[]]]>(
+export const useQueryMulti = <TQueries extends Array<Query | [Query, ...unknown[]]> | [Query | [Query, ...unknown[]]]>(
   queries: TQueries,
   options?: { enabled: boolean }
 ) => {

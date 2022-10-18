@@ -11,7 +11,7 @@ type ExtrinsicModules = {
   [P in keyof AugmentedSubmittables<'promise'>]: PickKnownKeys<AugmentedSubmittables<'promise'>[P]>
 }
 
-const useExtrinsic = <
+export const useExtrinsic = <
   TModuleName extends keyof ExtrinsicModules,
   TMethodName extends keyof ExtrinsicModules[TModuleName]
 >(

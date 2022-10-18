@@ -12,7 +12,7 @@ import { Observable } from 'rxjs'
 
 import { apiState } from '../../chains/recoils'
 
-const useChainState = <
+export const useChainState = <
   TType extends keyof Pick<ApiPromise, 'query' | 'derive'>,
   TModule extends keyof PickKnownKeys<ApiPromise[TType]>,
   TSection extends Extract<keyof PickKnownKeys<ApiPromise[TType][TModule]>, string>,
