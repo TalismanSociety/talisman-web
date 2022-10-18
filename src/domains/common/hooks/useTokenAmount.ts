@@ -5,7 +5,7 @@ import { useRecoilValue, waitForAll } from 'recoil'
 
 type Options = { fiatCurrency?: string }
 
-export const useTokenAmount = (amount: string | (() => string), options: Options = { fiatCurrency: 'usd' }) => {
+export const useTokenAmount = (amount?: string | (() => string), options: Options = { fiatCurrency: 'usd' }) => {
   const stringAmount = typeof amount === 'function' ? amount() : amount
 
   const [nativeTokenDecimal, nativeTokenPrice] = useRecoilValue(
@@ -13,6 +13,7 @@ export const useTokenAmount = (amount: string | (() => string), options: Options
   )
 
   const decimalAmount = useMemo(() => {
+    if (stringAmount === undefined) return undefined
     try {
       return nativeTokenDecimal.fromUserInput(stringAmount)
     } catch {
@@ -30,13 +31,13 @@ export const useTokenAmount = (amount: string | (() => string), options: Options
     [fiatAmount, options?.fiatCurrency]
   )
 
-  return { amount: stringAmount, decimalAmount, fiatAmount, localizedFiatAmount } as const
+  return { decimalAmount, fiatAmount, localizedFiatAmount } as const
 }
 
-export const useTokenAmountFromAtomics = (atomics: string | BN, options: Options = { fiatCurrency: 'usd' }) => {
+export const useTokenAmountFromAtomics = (atomics?: string | BN, options: Options = { fiatCurrency: 'usd' }) => {
   const nativeTokenDecimal = useRecoilValue(nativeTokenDecimalState)
 
-  return useTokenAmount(nativeTokenDecimal.fromAtomics(atomics).toString(), options)
+  return useTokenAmount(atomics === undefined ? undefined : nativeTokenDecimal.fromAtomics(atomics).toString(), options)
 }
 
 export const useTokenAmountState = (
@@ -45,5 +46,5 @@ export const useTokenAmountState = (
 ) => {
   const [amount, setAmount] = useState(initialState)
 
-  return [useTokenAmount(amount, options), setAmount] as const
+  return [{ ...useTokenAmount(amount, options), amount }, setAmount] as const
 }

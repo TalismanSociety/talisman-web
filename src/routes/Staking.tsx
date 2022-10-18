@@ -2,54 +2,74 @@ import Details from '@components/molecules/Details'
 import InfoCard from '@components/molecules/InfoCard'
 import StakingInput from '@components/recipes/StakingInput'
 import { nativeTokenDecimalState } from '@domains/chains/recoils'
-import { useTokenAmountState } from '@domains/common/hooks'
+import { useTokenAmountFromAtomics, useTokenAmountState } from '@domains/common/hooks'
 import useChainState from '@domains/common/hooks/useChainState'
 import useExtrinsic from '@domains/common/hooks/useExtrinsic'
 import { accountsState } from '@domains/extension/recoils'
+import { BN } from '@polkadot/util'
 import { useEffect, useMemo, useState } from 'react'
 import { useRecoilValue, waitForAll } from 'recoil'
 
 const Staking = () => {
   const joinPoolExtrinsic = useExtrinsic('nominationPools', 'join')
-  const bondExtraExtrtinsic = useExtrinsic('nominationPools', 'bondExtra')
+  const bondExtraExtrinsic = useExtrinsic('nominationPools', 'bondExtra')
 
   const [accounts, nativeTokenDecimal] = useRecoilValue(waitForAll([accountsState, nativeTokenDecimalState]))
 
   const [{ amount, decimalAmount, localizedFiatAmount }, setAmount] = useTokenAmountState('')
 
   const [selectedAccount, setSelectedAccount] = useState<typeof accounts[number] | undefined>(accounts[0])
+  const selectedAccountIndex = useMemo(
+    () => accounts.findIndex(({ address }) => address === selectedAccount?.address),
+    [accounts, selectedAccount?.address]
+  )
 
   const balancesLoadable = useChainState('derive', 'balances', 'all', [selectedAccount?.address ?? ''], {
     enabled: selectedAccount !== undefined,
   })
-  const poolMembersLoadable = useChainState('query', 'nominationPools', 'poolMembers', [selectedAccount?.address!], {
-    enabled: selectedAccount?.address !== undefined,
-  })
 
-  const bondedPoolLoadable = useChainState(
+  const poolMembersLoadable = useChainState(
     'query',
     'nominationPools',
-    'bondedPools',
-    [poolMembersLoadable.valueMaybe()?.unwrapOrDefault().poolId ?? ''],
-    { enabled: poolMembersLoadable.valueMaybe()?.isSome === true }
-  )
-
-  const poolTotalStaked = useMemo(
-    () => nativeTokenDecimal.fromAtomics(poolMembersLoadable.valueMaybe()?.unwrapOrDefault().points).toHuman(),
-    [nativeTokenDecimal, poolMembersLoadable]
-  )
-
-  const poolMetadata = useChainState(
-    'query',
-    'nominationPools',
-    'metadata',
-    [poolMembersLoadable.valueMaybe()?.unwrapOrDefault().poolId ?? ''],
+    'poolMembers.multi',
+    accounts.map(({ address }) => address),
     {
-      enabled: poolMembersLoadable.valueMaybe()?.isSome === true,
+      enabled: selectedAccount?.address !== undefined,
     }
   )
 
-  const hasExistingPool = poolMembersLoadable.valueMaybe()?.isSome === true
+  const totalStaked = useTokenAmountFromAtomics(
+    useMemo(
+      () =>
+        poolMembersLoadable.valueMaybe()?.reduce((prev, curr) => prev.add(curr.unwrapOrDefault().points), new BN(0)),
+      [poolMembersLoadable]
+    )
+  )
+
+  const totalUnstaking = useTokenAmountFromAtomics(
+    useMemo(
+      () =>
+        poolMembersLoadable.valueMaybe()?.reduce((prev, curr) => {
+          for (const [_, unbonding] of curr.unwrapOrDefault().unbondingEras.entries()) {
+            prev.iadd(unbonding)
+          }
+          return prev
+        }, new BN(0)),
+      [poolMembersLoadable]
+    )
+  )
+
+  const selectedPoolId = 1
+
+  const bondedPoolLoadable = useChainState('query', 'nominationPools', 'bondedPools', [selectedPoolId])
+
+  const { decimalAmount: poolTotalStaked } = useTokenAmountFromAtomics(
+    bondedPoolLoadable.valueMaybe()?.unwrapOrDefault().points
+  )
+
+  const poolMetadataLoadable = useChainState('query', 'nominationPools', 'metadata', [selectedPoolId])
+
+  const hasExistingPool = poolMembersLoadable.valueMaybe()?.[selectedAccountIndex]?.isSome === true
 
   const isReady =
     selectedAccount !== undefined &&
@@ -92,9 +112,17 @@ const Staking = () => {
           }}
         >
           <InfoCard headlineText="Available to stake" text="1450.22 DOT" supportingText="$9,030.00" />
-          <InfoCard headlineText="Staking" text="0 DOT" supportingText="$0.00" />
+          <InfoCard
+            headlineText="Staking"
+            text={totalStaked.decimalAmount?.toHuman() ?? '...'}
+            supportingText={totalStaked.localizedFiatAmount ?? '...'}
+          />
           <InfoCard headlineText="Rewards" text="17.56% APR" />
-          <InfoCard headlineText="Unstaking" text="0 DOT" supportingText="$0.00" />
+          <InfoCard
+            headlineText="Unstaking"
+            text={totalUnstaking.decimalAmount?.toHuman() ?? '...'}
+            supportingText={totalUnstaking.localizedFiatAmount ?? '...'}
+          />
         </div>
         <div
           css={{
@@ -128,13 +156,13 @@ const Staking = () => {
                   ? nativeTokenDecimal.fromAtomics(balancesLoadable.contents.freeBalance).toHuman()
                   : '...'
               }
-              poolName={poolMetadata.valueMaybe()?.toUtf8() ?? ''}
-              poolTotalStaked={poolTotalStaked}
+              poolName={poolMetadataLoadable.valueMaybe()?.toUtf8() ?? ''}
+              poolTotalStaked={poolTotalStaked?.toHuman() ?? ''}
               poolMemberCount={bondedPoolLoadable.valueMaybe()?.unwrapOrDefault().memberCounter.toString() ?? ''}
               onSubmit={() => {
                 if (selectedAccount === undefined || decimalAmount?.atomics === undefined) return
                 if (hasExistingPool) {
-                  bondExtraExtrtinsic.signAndSend(selectedAccount.address, {
+                  bondExtraExtrinsic.signAndSend(selectedAccount.address, {
                     FreeBalance: decimalAmount.atomics.toString(),
                   })
                 } else {
