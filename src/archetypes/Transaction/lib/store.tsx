@@ -3,7 +3,7 @@ import { ApolloClient, InMemoryCache } from '@apollo/client'
 import { BatchHttpLink } from '@apollo/client/link/batch-http'
 import { useCallback, useEffect, useMemo, useReducer, useState } from 'react'
 
-import { FETCH_LIMIT, transactionsQuery } from './consts'
+import { FETCH_LIMIT, latestTxQuery, txQuery } from './consts'
 import { Transaction } from './graphql-codegen/graphql'
 
 type TransactionsStatus = 'INITIALISED' | 'PROCESSING' | 'ERROR' | 'SUCCESS'
@@ -44,10 +44,10 @@ export const useTransactions = (_addresses: string[]) => {
     [JSON.stringify(_addresses)] // eslint-disable-line react-hooks/exhaustive-deps
   )
 
-  // the last id fetched so we know where to start the fetching next time
+  // the oldest id fetched so we know where to start the fetching next time
   // set this initially to a very large number - larger than the highest ID we can store
   // maybe a better way to do this is to handle undefined on the backend
-  const [lastId, setLastId] = useState<string | undefined>()
+  const [oldestId, setOldestId] = useState<string | undefined>()
 
   // T/F boolean based on the number of results from the last query
   const [hasMore, setHasMore] = useState<boolean>(true)
@@ -58,7 +58,7 @@ export const useTransactions = (_addresses: string[]) => {
   // the current status of the data
   const [status, setStatus] = useState<TransactionsStatus>('INITIALISED')
 
-  // create a query client
+  // create an apollo client
   const apolloClient = useMemo(() => {
     const uri = process.env.REACT_APP_TX_HISTORY_INDEXER || 'http://localhost:4350/graphql'
 
@@ -68,16 +68,18 @@ export const useTransactions = (_addresses: string[]) => {
     })
   }, [])
 
-  // the query object
-  const { data, loading, error } = useQuery(transactionsQuery, {
+  // the tx query
+  const { data, loading, error } = useQuery(txQuery, {
     client: apolloClient,
-    variables: { addresses, lastId, limit: FETCH_LIMIT },
+    variables: { addresses, olderThanId: oldestId, limit: FETCH_LIMIT },
   })
 
   // clear existing items when addresses is changed
   useEffect(() => {
-    // reset the last ID
-    setLastId(undefined)
+    setStatus('INITIALISED')
+
+    // reset the oldest ID
+    setOldestId(undefined)
 
     // clear the store
     dispatch({ type: 'CLEAR' })
@@ -97,15 +99,58 @@ export const useTransactions = (_addresses: string[]) => {
     setStatus('SUCCESS')
   }, [loading, error, data])
 
-  // fetch more by updating the lastId
-  // we can only set the lastID if we have > 0 TXs
+  // fetch more by updating the oldestId
+  // we can only set the oldestId if we have > 0 TXs
   // this will trigger refetch
   const loadMore = useCallback(() => {
     const sortedTransactionIds = Object.keys(transactions).sort((a, b) => b.localeCompare(a))
     if (sortedTransactionIds.length < 1) return
 
-    setLastId(sortedTransactionIds.slice(-1)[0])
+    setOldestId(sortedTransactionIds.slice(-1)[0])
   }, [transactions])
+
+  // subscribe to the latest tx id,
+  // then fetch more txs starting from the most recent (instead of oldest)
+  // when the latest tx id can't be found in the store
+  const pollInterval = 5_000 // 5 seconds in ms
+  const { data: latestTxData } = useQuery(latestTxQuery, {
+    client: apolloClient,
+    variables: { addresses },
+    pollInterval,
+  })
+  const latestTxId = latestTxData?.events[0]?.id
+  const latestTxIdInStore = useMemo(() => {
+    const sortedTransactionIds = Object.keys(transactions).sort((a, b) => b.localeCompare(a))
+    return sortedTransactionIds[0]
+  }, [transactions])
+  useEffect(() => {
+    // don't fetch more recent txs if we're still fetching the latest tx id
+    if (latestTxId === undefined) return
+
+    // don't fetch more recent txs unless tx fetcher is idle
+    if (status !== 'SUCCESS') return
+
+    // don't fetch more recent txs if we already have the latest tx
+    if (Object.keys(transactions).includes(latestTxId)) return
+
+    // fetch more recent txs
+    let cancelled = false
+    apolloClient
+      .query({ query: txQuery, variables: { addresses, newerThanId: latestTxIdInStore, limit: FETCH_LIMIT } })
+      .then(({ data, loading, error }) => {
+        if (cancelled) return
+        if (loading) return
+        if (error) return console.warn('Failed to fetch recent txs for tx history', error)
+
+        const transactions = data.transactionsByAddress || []
+        dispatch({ type: 'ADD', data: transactions })
+      })
+
+    return () => {
+      // cancel any queries we've made which haven't been completed yet
+      cancelled = true
+    }
+  }, [latestTxId, latestTxIdInStore, status, transactions, apolloClient, addresses])
 
   return {
     loadMore,

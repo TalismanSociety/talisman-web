@@ -2,9 +2,9 @@ import { graphql } from './graphql-codegen'
 
 export const FETCH_LIMIT = 3
 
-export const transactionsQuery = graphql(`
-  query transactionsQuery($addresses: [String!]!, $limit: Float, $lastId: String) {
-    transactionsByAddress(addresses: $addresses, limit: $limit, lastId: $lastId) {
+export const txQuery = graphql(`
+  query txQuery($addresses: [String!]!, $limit: Float, $olderThanId: String, $newerThanId: String) {
+    transactionsByAddress(addresses: $addresses, limit: $limit, olderThanId: $olderThanId, newerThanId: $newerThanId) {
       id
       name
       chainId
@@ -100,6 +100,14 @@ export const transactionsQuery = graphql(`
           success
         }
       }
+    }
+  }
+`)
+
+export const latestTxQuery = graphql(`
+  query latestTxQuery($addresses: [String!]!) {
+    events(where: { relatedAddresses_some: { address: { id_in: $addresses } } }, orderBy: id_DESC, limit: 1) {
+      id
     }
   }
 `)
