@@ -56,7 +56,9 @@ export const useExtrinsic = <
               } else if (result.isFinalized) {
                 unsubscribe()
 
-                const failed = result.events.some(({ event }) => event.method === 'ExtrinsicFailed')
+                const failed =
+                  result.internalError !== undefined ||
+                  result.events.some(({ event }) => event.method === 'ExtrinsicFailed')
 
                 if (failed) {
                   reject(result)
