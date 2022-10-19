@@ -132,7 +132,8 @@ const Stakings = () => {
     'query',
     'nominationPools',
     'metadata.multi',
-    poolMembersLoadable.state !== 'hasValue' ? [] : poolMembersLoadable.contents.map(x => x.unwrapOrDefault().poolId)
+    poolMembersLoadable.valueMaybe()?.map(x => x.unwrapOrDefault().poolId) ?? [],
+    { enabled: poolMembersLoadable.state === 'hasValue' }
   )
 
   const pools = useMemo(
@@ -143,23 +144,13 @@ const Stakings = () => {
             .map((poolMember, index) => {
               return {
                 account: accounts[index],
-                poolName:
-                  poolMetadatumLoadable.state !== 'hasValue'
-                    ? undefined
-                    : (poolMetadatumLoadable.contents[index]?.toUtf8() as string),
+                poolName: poolMetadatumLoadable.valueMaybe()?.[index]?.toUtf8(),
                 poolMember,
                 pendingRewards: pendingRewards.find(rewards => rewards[0] === accounts[index]?.address)?.[1],
               }
             })
             .filter(x => x.poolMember.isSome),
-    [
-      poolMembersLoadable.state,
-      poolMembersLoadable.contents,
-      accounts,
-      poolMetadatumLoadable.state,
-      poolMetadatumLoadable.contents,
-      pendingRewards,
-    ]
+    [poolMembersLoadable.state, poolMembersLoadable.contents, accounts, poolMetadatumLoadable, pendingRewards]
   )
 
   const [unstakeAccount, setUnstakeAccount] = useState<string>()

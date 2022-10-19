@@ -242,10 +242,21 @@ const Staking = () => {
                   bondExtraExtrinsic.signAndSend(selectedAccount.address, {
                     FreeBalance: decimalAmount.atomics.toString(),
                   })
-                } else {
-                  joinPoolExtrinsic.signAndSend(selectedAccount.address, decimalAmount.atomics.toString(), 1)
+                } else if (selectedPoolId !== undefined) {
+                  joinPoolExtrinsic.signAndSend(
+                    selectedAccount.address,
+                    decimalAmount.atomics.toString(),
+                    selectedPoolId
+                  )
                 }
-              }, [bondExtraExtrinsic, decimalAmount?.atomics, hasExistingPool, joinPoolExtrinsic, selectedAccount])}
+              }, [
+                bondExtraExtrinsic,
+                decimalAmount?.atomics,
+                hasExistingPool,
+                joinPoolExtrinsic,
+                selectedAccount,
+                selectedPoolId,
+              ])}
               submitState={useMemo(() => {
                 if (!isReady || inputError !== undefined) return 'disabled'
 
