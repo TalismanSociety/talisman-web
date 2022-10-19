@@ -1,20 +1,22 @@
-import { jsx, useTheme } from '@emotion/react'
+import { useTheme } from '@emotion/react'
 import { useMemo } from 'react'
+import { Link } from 'react-router-dom'
 
 import CircularProgressIndicator from '../CircularProgressIndicator'
 
-type ButtonElementType = Pick<JSX.IntrinsicElements, 'button' | 'a'>
+type ButtonElementType = Extract<React.ElementType, 'button' | 'a'> | typeof Link
 
-type PolymorphicTextProps<T extends keyof ButtonElementType> = {
+type PolymorphicButtonProps<T extends ButtonElementType> = {
   as?: T
   variant?: 'outlined' | 'noop'
   disabled?: boolean
   loading?: boolean
 }
 
-export type ButtonProps<T extends keyof ButtonElementType> = PolymorphicTextProps<T> & ButtonElementType[T]
+export type ButtonProps<T extends ButtonElementType> = PolymorphicButtonProps<T> &
+  Omit<React.ComponentPropsWithoutRef<T>, keyof PolymorphicButtonProps<T>>
 
-const Button = <T extends keyof ButtonElementType>({ as = 'button' as T, variant, ...props }: ButtonProps<T>) => {
+const Button = <T extends ButtonElementType>({ as = 'button' as T, variant, ...props }: ButtonProps<T>) => {
   const theme = useTheme()
 
   const disabled = props.disabled || props.loading
@@ -52,9 +54,27 @@ const Button = <T extends keyof ButtonElementType>({ as = 'button' as T, variant
     }
   }, [theme.color.background, theme.color.onBackground, theme.color.onPrimary, theme.color.primary, variant])
 
-  return jsx(as ?? 'button', {
-    ...props,
-    children: (
+  const Component = as
+
+  return (
+    <Component
+      {...(props as any)}
+      disabled={disabled}
+      css={[
+        {
+          display: 'block',
+          padding: '1.156rem 2.4rem',
+          border: 'none',
+          borderRadius: '1rem',
+          cursor: 'pointer',
+          transition: '.25s',
+          ...variantStyle,
+          ...(disabled ? { ':hover': undefined } : {}),
+        },
+        props.loading && { cursor: 'wait' },
+        props.disabled && { filter: 'grayscale(1) brightness(0.5)', cursor: 'not-allowed' },
+      ]}
+    >
       <span css={{ position: 'relative' }}>
         {props.loading && (
           <span css={{ position: 'absolute', left: '-1.2rem', top: '0.1rem' }}>
@@ -65,23 +85,8 @@ const Button = <T extends keyof ButtonElementType>({ as = 'button' as T, variant
           {props.children}
         </span>
       </span>
-    ),
-    disabled,
-    css: [
-      {
-        display: 'block',
-        padding: '1.156rem 2.4rem',
-        border: 'none',
-        borderRadius: '1rem',
-        cursor: 'pointer',
-        transition: '.25s',
-        ...variantStyle,
-        ...(disabled ? { ':hover': undefined } : {}),
-      },
-      props.loading && { cursor: 'wait' },
-      props.disabled && { filter: 'grayscale(1) brightness(0.5)', cursor: 'not-allowed' },
-    ],
-  })
+    </Component>
+  )
 }
 
 export default Button

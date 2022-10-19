@@ -14,7 +14,6 @@ export default class Decimal {
 
     const badCharacter = input.match(/[^0-9.]/)
     if (badCharacter) {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       throw new Error(`Invalid character at position ${badCharacter.index! + 1}`)
     }
 
@@ -33,7 +32,7 @@ export default class Decimal {
           throw new Error('Fewer than two elements in split result. This must not happen here.')
         case 2:
           if (!parts[1]) throw new Error('Fractional part missing')
-          whole = parts[0]
+          whole = parts[0]!
           fractional = parts[1].replace(/0+$/, '')
           break
         default:

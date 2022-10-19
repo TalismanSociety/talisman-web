@@ -1,9 +1,12 @@
+import Button from '@components/atoms/Button'
 import Text from '@components/atoms/Text'
+import HiddenDetails from '@components/molecules/HiddenDetails'
 import PoolStake, { PoolStakeList } from '@components/recipes/PoolStake/PoolStake'
 import PoolUnstake, { PoolUnstakeList } from '@components/recipes/PoolUnstake'
 import { createAccounts } from '@domains/nominationPools/utils'
 import { addMilliseconds, formatDistanceToNow } from 'date-fns'
 import { Suspense, useCallback, useEffect, useMemo, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { useRecoilValue, waitForAll } from 'recoil'
 
 import { apiState, nativeTokenDecimalState, nativeTokenPriceState } from '../../domains/chains/recoils'
@@ -34,8 +37,7 @@ const Unstakings = () => {
     'query',
     'staking',
     'slashingSpans.multi',
-    poolMembersLoadable.valueMaybe()?.map(x => createAccounts(api, x.unwrapOrDefault().poolId).stashId) ?? [],
-    { enabled: poolMembersLoadable.state === 'hasValue' }
+    poolMembersLoadable.valueMaybe()?.map(x => createAccounts(api, x.unwrapOrDefault().poolId).stashId) ?? []
   )
 
   const unstakings = useMemo(
@@ -169,6 +171,33 @@ const Stakings = () => {
       <header>
         <Text.H4>Staking</Text.H4>
       </header>
+      {pools?.length === 0 && (
+        <HiddenDetails
+          hidden
+          overlay={
+            <div
+              css={{
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                alignItems: 'center',
+                gap: '3.2rem',
+              }}
+            >
+              <Text.Body>You have no staked assets yet...</Text.Body>
+              <Button as={Link} variant="outlined" to="/staking">
+                Get started
+              </Button>
+            </div>
+          }
+        >
+          <PoolStakeList>
+            <PoolStake.Skeleton animate={false} />
+            <PoolStake.Skeleton animate={false} />
+            <PoolStake.Skeleton animate={false} />
+          </PoolStakeList>
+        </HiddenDetails>
+      )}
       <PoolStakeList>
         {pools?.map(pool => (
           <PoolStake

@@ -1,10 +1,11 @@
-import Skeleton from '@components/atoms/Skeleton'
+import Skeleton, { SkeletonProps } from '@components/atoms/Skeleton'
 import { useTheme } from '@emotion/react'
 
-const PoolStakeSkeleton = () => {
+const PoolStakeSkeleton = (props: SkeletonProps) => {
   const theme = useTheme()
   return (
     <Skeleton.Surface
+      animate={props.animate}
       css={{
         'display': 'flex',
         'flexDirection': 'column',
