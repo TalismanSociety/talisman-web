@@ -27,6 +27,6 @@ export const chainState = selectorFamily({
 
       const api = get(apiState)
 
-      return api[type][module][section](...params) as Promise<TResult>
+      return api[type]?.[module]?.[section]?.(...params) as Promise<TResult>
     },
 })

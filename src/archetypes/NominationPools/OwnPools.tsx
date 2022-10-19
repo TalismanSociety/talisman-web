@@ -107,7 +107,7 @@ const Unstakings = () => {
         ? undefined
         : poolMembersLoadable.contents.flatMap((pool, index) =>
             Array.from(pool.unwrapOrDefault().unbondingEras.entries(), ([era, amount]) => ({
-              address: accounts[index].address,
+              address: accounts[index]?.address ?? '',
               pool: pool.unwrapOrDefault(),
               era,
               amount,
@@ -127,6 +127,8 @@ const Unstakings = () => {
 
   if (activeEraLoadable.state === 'loading' || expectedEraTimeLoadable.state === 'loading') return null
 
+  if (unstakings?.length === 0) return null
+
   return (
     <div>
       <header css={{ marginTop: '4rem' }}>
@@ -137,7 +139,7 @@ const Unstakings = () => {
           {unstakings?.map((x, index) => (
             <PoolUnstake
               key={index}
-              accountName={accounts.find(({ address }) => (address = x.address))?.name ?? ''}
+              accountName={accounts.find(({ address }) => address === x.address)?.name ?? ''}
               accountAddress={x.address}
               unstakingAmount={decimalFromAtomics.fromAtomics(x.amount).toHuman()}
               unstakingFiatAmount={(
@@ -159,7 +161,7 @@ const Unstakings = () => {
                     )
               }
               onRequestWithdraw={() => {
-                const priorLength = slashingSpans.valueMaybe()?.[index].unwrapOr(undefined)?.prior.length
+                const priorLength = slashingSpans.valueMaybe()?.[index]?.unwrapOr(undefined)?.prior.length
                 withdrawExtrinsic.signAndSend(x.address, x.address, priorLength === undefined ? 0 : priorLength + 1)
               }}
               withdrawState={withdrawExtrinsic.state === 'loading' ? 'pending' : undefined}
@@ -223,7 +225,7 @@ const Stakings = () => {
                     ? undefined
                     : (poolMetadatumLoadable.contents[index]?.toUtf8() as string),
                 poolMember,
-                pendingRewards: pendingRewards.find(rewards => rewards[0] === accounts[index].address)?.[1],
+                pendingRewards: pendingRewards.find(rewards => rewards[0] === accounts[index]?.address)?.[1],
               }
             })
             .filter(x => x.poolMember.isSome),
@@ -276,8 +278,8 @@ const Stakings = () => {
       <PoolStakeList>
         {pools?.map(pool => (
           <PoolStake
-            accountName={pool.account.name ?? ''}
-            accountAddress={pool.account.address}
+            accountName={pool.account?.name ?? ''}
+            accountAddress={pool.account?.address ?? ''}
             stakingAmount={decimalFromAtomics.fromAtomics(pool.poolMember.unwrapOrDefault().points).toHuman()}
             stakingAmountInFiat={(
               decimalFromAtomics.fromAtomics(pool.poolMember.unwrapOrDefault().points).toFloatApproximation() *
@@ -288,7 +290,7 @@ const Stakings = () => {
               decimalFromAtomics.fromAtomics(pool.pendingRewards).toFloatApproximation() * nativeTokenPrice
             ).toLocaleString(undefined, { style: 'currency', currency: 'usd' })}
             poolName={pool.poolName ?? ''}
-            onRequestClaim={() => claimPayoutExtrinsic.signAndSend(pool.account.address)}
+            onRequestClaim={() => claimPayoutExtrinsic.signAndSend(pool.account?.address ?? '')}
             claimState={
               pool.pendingRewards?.isZero() ?? true
                 ? 'unavailable'
@@ -298,7 +300,7 @@ const Stakings = () => {
             }
             onRequestUnstake={() =>
               setCurrentUnstake({
-                address: pool.account.address,
+                address: pool.account?.address ?? '',
                 points: pool.poolMember.unwrapOrDefault().points ?? 0,
               })
             }
@@ -309,7 +311,7 @@ const Stakings = () => {
                 ? 'pending'
                 : undefined
             }
-            onRequestAdd={() => setAddStakeAccount(pool.account.address)}
+            onRequestAdd={() => setAddStakeAccount(pool.account?.address)}
           />
         ))}
       </PoolStakeList>
@@ -320,7 +322,20 @@ const Stakings = () => {
 const OwnPools = () => {
   return (
     <div>
-      <Suspense fallback={<h1>Loading...</h1>}>
+      <Suspense
+        fallback={
+          <div>
+            <header>
+              <Text.H4>Staking</Text.H4>
+              <PoolStakeList>
+                <PoolStake.Skeleton />
+                <PoolStake.Skeleton />
+                <PoolStake.Skeleton />
+              </PoolStakeList>
+            </header>
+          </div>
+        }
+      >
         <Stakings />
       </Suspense>
       <Suspense>

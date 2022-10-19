@@ -9,7 +9,11 @@ const getConnectedExtension = async () => {
 
   await web3Enable('Talisman')
 
-  return web3FromSource(source)
+  try {
+    return await web3FromSource(source)
+  } catch {
+    return undefined
+  }
 }
 
 export const extensionState = atom({

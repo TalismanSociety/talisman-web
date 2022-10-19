@@ -1,6 +1,7 @@
 import { ComponentMeta, Story } from '@storybook/react'
 
 import PoolStake, { PoolStakeList, PoolStakeProps } from './PoolStake'
+import PoolStakeSkeleton from './PoolStake.skeleton'
 
 export default {
   title: 'Recipes/PoolStake',
@@ -25,6 +26,9 @@ export const List: Story<PoolStakeProps> = args => (
     <PoolStake {...args} />
     <PoolStake {...args} />
     <PoolStake {...args} />
+    <PoolStakeSkeleton />
+    <PoolStakeSkeleton />
+    <PoolStakeSkeleton />
   </PoolStakeList>
 )
 
@@ -37,3 +41,5 @@ List.args = {
   rewardsAmountInFiat: '+$120.55',
   poolName: 'Talisman Paraverse Pool',
 }
+
+export const Skeleton = () => <PoolStakeSkeleton />
