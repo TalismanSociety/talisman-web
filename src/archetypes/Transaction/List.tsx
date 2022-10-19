@@ -135,6 +135,14 @@ export const List = styled(({ addresses = [], className }: Props) => {
     }
   }
 
+  > .transaction-item-container > .inner {
+    ::before,
+    ::after {
+      content: '';
+      display: table;
+    }
+  }
+
   .transaction-item {
     transition: all 0.2s;
     &:hover {
