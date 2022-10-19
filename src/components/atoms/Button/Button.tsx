@@ -3,7 +3,7 @@ import { useMemo } from 'react'
 
 type ButtonElementType = Pick<JSX.IntrinsicElements, 'button' | 'a'>
 
-type PolymorphicTextProps<T extends keyof ButtonElementType> = { as?: T; variant?: 'outlined' }
+type PolymorphicTextProps<T extends keyof ButtonElementType> = { as?: T; variant?: 'outlined' | 'noop' }
 
 export type ButtonProps<T extends keyof ButtonElementType> = PolymorphicTextProps<T> & ButtonElementType[T]
 
@@ -23,6 +23,14 @@ const Button = <T extends keyof ButtonElementType>({ as = 'button' as T, variant
             color: theme.color.background,
             backgroundColor: theme.color.onBackground,
           },
+        }
+      case 'noop':
+        return {
+          padding: 'none',
+          margin: 'none',
+          background: 'none',
+          border: 'none',
+          outline: 'none',
         }
       default:
         return {

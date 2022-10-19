@@ -1,7 +1,7 @@
 import Button from '@components/atoms/Button'
+import { Edit } from '@components/atoms/Icon'
 import Text from '@components/atoms/Text'
 import { useTheme } from '@emotion/react'
-import { ReactComponent as EditIcon } from '@icons/edit.svg'
 import Identicon from '@polkadot/react-identicon'
 
 import { PoolStatusIndicator } from '../PoolStatusIndicator'
@@ -126,7 +126,7 @@ const PoolStake = (props: PoolStakeProps) => {
               {props.poolName}
             </Text>
             <button css={{ background: 'none', border: 'none', cursor: 'pointer' }}>
-              <EditIcon width="1.6rem" />
+              <Edit width="1.6rem" />
             </button>
           </dd>
         </div>

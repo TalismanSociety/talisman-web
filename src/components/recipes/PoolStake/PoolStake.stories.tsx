@@ -1,33 +1,20 @@
-import { ComponentMeta } from '@storybook/react'
+import { ComponentMeta, Story } from '@storybook/react'
 
-import PoolStake from './PoolStake'
+import PoolStake, { PoolStakeProps } from './PoolStake'
 
 export default {
   title: 'Recipes/PoolStake',
   component: PoolStake,
-  argTypes: {
-    accountName: {
-      defaultValue: 'Yeet Account',
-    },
-    accountAddress: {
-      default: '(13Kcw...ZQ4K)',
-    },
-    stakingAmount: {
-      defaultValue: '4000 DOT',
-    },
-    stakingAmountInFiat: {
-      defaultValue: '$23,988.55',
-    },
-    rewardsAmount: {
-      defaultValue: '+4 DOT',
-    },
-    rewardsAmountInFiat: {
-      defaultValue: '+$120.55',
-    },
-    poolName: {
-      defaultValue: 'Talisman Paraverse Pool',
-    },
-  },
 } as ComponentMeta<typeof PoolStake>
 
-export const Default = (args: any) => <PoolStake {...args} />
+export const Default: Story<PoolStakeProps> = args => <PoolStake {...args} />
+
+Default.args = {
+  accountName: 'Yeet account',
+  accountAddress: '(13Kcw...ZQ4K)',
+  stakingAmount: '4000 DOT',
+  stakingAmountInFiat: '$23,988.55',
+  rewardsAmount: '+4 DOT',
+  rewardsAmountInFiat: '+$120.55',
+  poolName: 'Talisman Paraverse Pool',
+}

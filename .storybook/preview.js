@@ -1,6 +1,7 @@
 import { Global, ThemeProvider } from '@emotion/react'
 
-import { globalStyle, greenDark, greenLight } from '../src/App.Theme'
+import { globalStyle, greenDark } from '../src/App.Theme'
+import theme from './talismanTheme'
 
 export const parameters = {
   actions: { argTypesRegex: '^on[A-Z].*' },
@@ -9,6 +10,9 @@ export const parameters = {
       color: /(background|color)$/i,
       date: /Date$/,
     },
+  },
+  docs: {
+    theme,
   },
 }
 

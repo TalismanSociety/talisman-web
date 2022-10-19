@@ -13,7 +13,6 @@ export default {
   parameters: {
     layout: 'centered',
   },
-  argTypes: {},
 } as ComponentMeta<typeof Select>
 
 export const Default = () => {

@@ -1,6 +1,6 @@
+import { ChevronDown } from '@components/atoms/Icon'
 import Text from '@components/atoms/Text'
 import { useTheme } from '@emotion/react'
-import { ReactComponent as ChevronDown } from '@icons/chevron-down.svg'
 import useOnClickOutside from '@util/useOnClickOutside'
 import { AnimatePresence, motion } from 'framer-motion'
 import React, { useRef } from 'react'

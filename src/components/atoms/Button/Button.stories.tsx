@@ -1,6 +1,6 @@
-import { ComponentMeta } from '@storybook/react'
+import { ComponentMeta, Story } from '@storybook/react'
 
-import Button from './Button'
+import Button, { ButtonProps } from './Button'
 
 export default {
   title: 'Atoms/Button',
@@ -8,16 +8,17 @@ export default {
   parameters: {
     layout: 'centered',
   },
-  argTypes: {
-    children: {
-      name: 'label',
-      type: 'string',
-      control: 'text',
-      defaultValue: 'Click me',
-    },
-  },
 } as ComponentMeta<typeof Button>
 
-export const Default = (args: any) => <Button {...args} />
+export const Default: Story<ButtonProps<'button'>> = args => <Button {...args} />
 
-export const Outlined = (args: any) => <Button {...args} variant="outlined" />
+Default.args = {
+  children: 'Click me',
+}
+
+export const Outlined = Default.bind({})
+
+Outlined.args = {
+  variant: 'outlined',
+  children: 'Click me',
+}
