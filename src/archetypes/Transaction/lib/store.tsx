@@ -45,8 +45,6 @@ export const useTransactions = (_addresses: string[], searchQuery?: string) => {
   )
 
   // the oldest id fetched so we know where to start the fetching next time
-  // set this initially to a very large number - larger than the highest ID we can store
-  // maybe a better way to do this is to handle undefined on the backend
   const [oldestId, setOldestId] = useState<string | undefined>()
 
   // T/F boolean based on the number of results from the last query
