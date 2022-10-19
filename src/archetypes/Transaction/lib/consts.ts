@@ -3,8 +3,20 @@ import { graphql } from './graphql-codegen'
 export const FETCH_LIMIT = 3
 
 export const txQuery = graphql(`
-  query txQuery($addresses: [String!]!, $limit: Float, $olderThanId: String, $newerThanId: String) {
-    transactionsByAddress(addresses: $addresses, limit: $limit, olderThanId: $olderThanId, newerThanId: $newerThanId) {
+  query txQuery(
+    $addresses: [String!]!
+    $limit: Float
+    $olderThanId: String
+    $newerThanId: String
+    $searchQuery: String
+  ) {
+    transactionsByAddress(
+      addresses: $addresses
+      limit: $limit
+      olderThanId: $olderThanId
+      newerThanId: $newerThanId
+      query: $searchQuery
+    ) {
       id
       name
       chainId
@@ -105,8 +117,8 @@ export const txQuery = graphql(`
 `)
 
 export const latestTxQuery = graphql(`
-  query latestTxQuery($addresses: [String!]!) {
-    events(where: { relatedAddresses_some: { address: { id_in: $addresses } } }, orderBy: id_DESC, limit: 1) {
+  query latestTxQuery($addresses: [String!]!, $searchQuery: String) {
+    transactionsByAddress(addresses: $addresses, query: $searchQuery, limit: 1) {
       id
     }
   }

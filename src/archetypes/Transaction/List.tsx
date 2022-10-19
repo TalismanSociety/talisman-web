@@ -1,16 +1,15 @@
-import { Account } from '@archetypes'
-import { MaterialLoader, Panel, PanelSection } from '@components'
+import { Field, MaterialLoader, Panel, PanelSection } from '@components'
 import styled from '@emotion/styled'
-import { Account as TAccount } from '@libs/talisman'
+import { useActiveAccount } from '@libs/talisman'
 import format from 'date-fns/format'
 import parseISO from 'date-fns/parseISO'
 import startOfDay from 'date-fns/startOfDay'
 import { motion } from 'framer-motion'
-import { AnimatePresence } from 'framer-motion'
 import groupBy from 'lodash/groupBy'
 import { Fragment, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import useInfiniteScroll from 'react-infinite-scroll-hook'
+import { useDebounce } from 'react-use'
 
 import { Item } from './Item'
 import { useTransactions, useUrlParams } from './lib'
@@ -24,14 +23,18 @@ export const List = styled(({ addresses = [], className }: Props) => {
 
   const urlAddress = useUrlParams(['address'])[0]
 
-  const [selectedAccount, setSelectedAccount] = useState<TAccount | undefined>(undefined)
+  const { hasActiveAccount, address: selectedAddress } = useActiveAccount()
   const [fetchAddresses, setFetchAddresses] = useState(addresses)
   useEffect(() => {
-    if (!selectedAccount) return setFetchAddresses(urlAddress ? [urlAddress, ...addresses] : addresses)
-    setFetchAddresses([selectedAccount.address])
-  }, [addresses, selectedAccount, urlAddress])
+    if (!hasActiveAccount) return setFetchAddresses(urlAddress ? [urlAddress, ...addresses] : addresses)
+    setFetchAddresses([selectedAddress])
+  }, [addresses, hasActiveAccount, selectedAddress, urlAddress])
 
-  const { loadMore, hasMore, transactions, status } = useTransactions(fetchAddresses)
+  const [searchQuery, setSearchQuery] = useState('')
+  const [searchQueryDebounced, setSearchQueryDebounced] = useState('')
+  useDebounce(() => setSearchQueryDebounced(searchQuery), 250, [searchQuery])
+
+  const { loadMore, hasMore, transactions, status } = useTransactions(fetchAddresses, searchQueryDebounced)
   const hasTransactions = Object.keys(transactions).length > 0
 
   const [loadMoreRef] = useInfiniteScroll({
@@ -54,64 +57,58 @@ export const List = styled(({ addresses = [], className }: Props) => {
   return (
     <section className={`transaction-list ${className}`}>
       <header>
-        <Account.Picker
-          showAllAccounts
-          additionalAccounts={urlAddress ? [{ name: urlAddress, address: urlAddress }] : []}
-          onChange={setSelectedAccount}
-        />
+        <Field.Search value={searchQuery} onChange={setSearchQuery} placeholder="Filter by Chain, Address, Type..." />
       </header>
 
       <Panel className="transaction-item-container">
-        <AnimatePresence>
-          {status === 'INITIALISED' || (status === 'PROCESSING' && !hasTransactions) ? (
-            <PanelSection
-              key={`first-${selectedAccount?.address}`}
-              className="centered-state"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1, transition: { ease: [0.78, 0.14, 0.15, 0.86] } }}
-            >
-              <MaterialLoader /> <div>{t('Searching the paraverse')}</div>
-            </PanelSection>
-          ) : status === 'ERROR' ? (
-            <PanelSection
-              key={`first-${selectedAccount?.address}`}
-              className="centered-state"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1, transition: { ease: [0.78, 0.14, 0.15, 0.86] } }}
-            >
-              <div>{t('An error occured')}</div>
-            </PanelSection>
-          ) : !hasTransactions ? (
-            <PanelSection
-              key={`first-${selectedAccount?.address}`}
-              className="centered-state"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1, transition: { ease: [0.78, 0.14, 0.15, 0.86] } }}
-            >
-              {t('No Transactions - try another account')}
-            </PanelSection>
-          ) : (
-            Object.entries(dayGroupedTransactions).map(([day, transactions], index) => (
-              <Fragment key={index === 0 ? `first-${selectedAccount?.address}` : `${day}-${selectedAccount?.address}`}>
-                <motion.h3
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1, transition: { ease: [0.78, 0.14, 0.15, 0.86] } }}
-                  className="transaction-date"
-                >
-                  {format(parseISO(day), 'eee d MMMM yyyy')}
-                </motion.h3>
-                {transactions.map(transaction => (
-                  <Item
-                    key={`${transaction.id}-${selectedAccount?.address}`}
-                    transaction={transaction}
-                    addresses={fetchAddresses}
-                    selectedAccount={selectedAccount?.address}
-                  />
-                ))}
-              </Fragment>
-            ))
-          )}
-        </AnimatePresence>
+        {status === 'INITIALISED' || (status === 'PROCESSING' && !hasTransactions) ? (
+          <PanelSection
+            key={`first-${selectedAddress}`}
+            className="centered-state"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1, transition: { ease: [0.78, 0.14, 0.15, 0.86] } }}
+          >
+            <MaterialLoader /> <div>{t('Searching the paraverse')}</div>
+          </PanelSection>
+        ) : status === 'ERROR' ? (
+          <PanelSection
+            key={`first-${selectedAddress}`}
+            className="centered-state"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1, transition: { ease: [0.78, 0.14, 0.15, 0.86] } }}
+          >
+            <div>{t('An error occured')}</div>
+          </PanelSection>
+        ) : !hasTransactions ? (
+          <PanelSection
+            key={`first-${selectedAddress}`}
+            className="centered-state"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1, transition: { ease: [0.78, 0.14, 0.15, 0.86] } }}
+          >
+            {t('No Transactions - try another account')}
+          </PanelSection>
+        ) : (
+          Object.entries(dayGroupedTransactions).map(([day, transactions], index) => (
+            <Fragment key={index === 0 ? `first-${selectedAddress}` : `${day}-${selectedAddress}`}>
+              <motion.h3
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1, transition: { ease: [0.78, 0.14, 0.15, 0.86] } }}
+                className="transaction-date"
+              >
+                {format(parseISO(day), 'eee d MMMM yyyy')}
+              </motion.h3>
+              {transactions.map(transaction => (
+                <Item
+                  key={`${transaction.id}-${selectedAddress}`}
+                  transaction={transaction}
+                  addresses={fetchAddresses}
+                  selectedAccount={selectedAddress}
+                />
+              ))}
+            </Fragment>
+          ))
+        )}
       </Panel>
 
       <footer>
@@ -133,8 +130,8 @@ export const List = styled(({ addresses = [], className }: Props) => {
     padding-bottom: 1rem;
     margin-bottom: 1em;
 
-    .account-picker {
-      width: 500px;
+    .field-search {
+      max-width: 500px;
     }
   }
 

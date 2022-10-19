@@ -8,6 +8,7 @@ import startCase from 'lodash/startCase'
 import { useTranslation } from 'react-i18next'
 
 import { Avatar } from './Avatar'
+import { ClickToCopy } from './ClickToCopy'
 import { ParsedTransaction } from './lib'
 
 type Props = {
@@ -39,17 +40,32 @@ export const ItemDetails = ({ parsed, addresses, accounts }: Props) => {
           title={`${formatDecimals(parsed.amount)} ${parsed.tokenSymbol}`}
           subtitle="$xx.xx"
           graphic={<TokenLogo className="token-logo" src={parsed.tokenLogo} alt={`${parsed.tokenSymbol} token logo`} />}
+          invert
         />
       )
       const senderInfo = (
         <Info
-          title={fromName || 'From'}
-          subtitle={truncateAddress(parsed.from, 4)}
+          title={'From'}
+          subtitle={
+            <ClickToCopy copy={parsed.from} message="Address copied to the clipboard">
+              {fromName || truncateAddress(parsed.from, 4)}
+            </ClickToCopy>
+          }
           graphic={<Avatar value={parsed.from} />}
+          invert
         />
       )
       const receiverInfo = (
-        <Info title={toName || 'To'} subtitle={truncateAddress(parsed.to, 4)} graphic={<Avatar value={parsed.to} />} />
+        <Info
+          title={'To'}
+          subtitle={
+            <ClickToCopy copy={parsed.to} message="Address copied to the clipboard">
+              {toName || truncateAddress(parsed.to, 4)}
+            </ClickToCopy>
+          }
+          graphic={<Avatar value={parsed.to} />}
+          invert
+        />
       )
 
       return (
@@ -69,6 +85,7 @@ export const ItemDetails = ({ parsed, addresses, accounts }: Props) => {
           title={`${formatDecimals(parsed.amount)} ${parsed.tokenSymbol}`}
           subtitle="$xx.xx"
           graphic={<TokenLogo className="token-logo" src={parsed.tokenLogo} alt={`${parsed.tokenSymbol} token logo`} />}
+          invert
         />
       )
       const fundInfo = (
@@ -76,6 +93,7 @@ export const ItemDetails = ({ parsed, addresses, accounts }: Props) => {
           title={t('To')}
           subtitle={`${t('Crowdloan')} ${parsed.fund}`}
           graphic={<TokenLogo className="token-logo" src={parsed.tokenLogo} alt={`${parsed.tokenSymbol} token logo`} />}
+          invert
         />
       )
 
@@ -96,6 +114,7 @@ export const ItemDetails = ({ parsed, addresses, accounts }: Props) => {
           title={`${formatDecimals(parsed.amount)} ${parsed.tokenSymbol}`}
           subtitle="$xx.xx"
           graphic={<TokenLogo className="token-logo" src={parsed.tokenLogo} alt={`${parsed.tokenSymbol} token logo`} />}
+          invert
         />
       )
       const stakeInfo = (
@@ -103,6 +122,7 @@ export const ItemDetails = ({ parsed, addresses, accounts }: Props) => {
           title={startCase(parsed.chainId)}
           subtitle={t('Staking balance')}
           graphic={<TokenLogo className="token-logo" src={parsed.tokenLogo} alt={`${parsed.tokenSymbol} token logo`} />}
+          invert
         />
       )
 

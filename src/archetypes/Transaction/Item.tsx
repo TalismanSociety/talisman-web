@@ -4,16 +4,13 @@ import { ReactComponent as ExternalLink } from '@icons/external-link.svg'
 import { useAccounts } from '@libs/talisman'
 import { encodeAnyAddress } from '@talismn/util'
 import { truncateAddress } from '@util/helpers'
-import differenceInDays from 'date-fns/differenceInDays'
-import differenceInHours from 'date-fns/differenceInHours'
-import differenceInMinutes from 'date-fns/differenceInMinutes'
-import formatDistanceToNowStrict from 'date-fns/formatDistanceToNowStrict'
+import intlFormat from 'date-fns/intlFormat'
 import parseISO from 'date-fns/parseISO'
 import startCase from 'lodash/startCase'
-import { useMemo, useState } from 'react'
-import { useInterval } from 'react-use'
+import { useMemo } from 'react'
 
 import { Avatar } from './Avatar'
+import { ClickToCopy } from './ClickToCopy'
 import { ItemDetails } from './ItemDetails'
 import { Transaction } from './lib'
 import { Logo } from './Logo'
@@ -31,6 +28,7 @@ export const Item = styled(({ className, transaction, addresses, selectedAccount
 
   const getTransactionName = () => {
     if (typeof parsed?.__typename !== 'string') return name || undefined
+    if (parsed.__typename === 'ParsedCrowdloanContribute') return 'Contribute'
     if (parsed.__typename !== 'ParsedTransfer') return startCase(parsed.__typename.replace(/^Parsed/, ''))
 
     const genericAddresses = addresses.map(a => encodeAnyAddress(a))
@@ -49,24 +47,6 @@ export const Item = styled(({ className, transaction, addresses, selectedAccount
 
   const showDebugInfo = (isDevMode && !isParsed) || (isDevMode && isTransfer && !hasTokenSymbol)
 
-  const getTimestampDistanceToNow = () => formatDistanceToNowStrict(parseISO(timestamp), { addSuffix: true })
-  const [timestampDistanceToNow, setTimestampDistanceToNow] = useState(getTimestampDistanceToNow())
-
-  const daysAgo = differenceInDays(new Date(), parseISO(timestamp))
-  const hoursAgo = differenceInHours(new Date(), parseISO(timestamp))
-  const minutesAgo = differenceInMinutes(new Date(), parseISO(timestamp))
-
-  const updateTimestampDistanceInterval =
-    daysAgo > 0
-      ? 30 * 60 * 1000 // 30 minutes in ms
-      : hoursAgo > 0
-      ? 60 * 1000 // 1 minute in ms
-      : minutesAgo > 0
-      ? 10 * 1000 // 10 seconds in ms
-      : 500 // half a second in ms
-
-  useInterval(() => setTimestampDistanceToNow(getTimestampDistanceToNow()), updateTimestampDistanceInterval)
-
   return (
     <>
       <PanelSection
@@ -74,19 +54,33 @@ export const Item = styled(({ className, transaction, addresses, selectedAccount
         initial={{ opacity: 0 }}
         animate={{ opacity: 1, transition: { ease: [0.78, 0.14, 0.15, 0.86] } }}
       >
-        <Info
-          title={getTransactionName()}
-          subtitle={timestampDistanceToNow}
-          graphic={<Logo className="category-logo" parsed={parsed} addresses={addresses} />}
-        />
-
         {typeof selectedAccount !== 'string' && (
           <Info
-            title={youAccount}
-            subtitle={truncateAddress(youAddress ? encodeAnyAddress(youAddress, ss58Format) : youAddress, 4)}
+            title={
+              <ClickToCopy
+                copy={youAddress ? encodeAnyAddress(youAddress, ss58Format) : undefined}
+                message="Address copied to the clipboard"
+              >
+                {youAccount}
+              </ClickToCopy>
+            }
+            subtitle={
+              <ClickToCopy
+                copy={youAddress ? encodeAnyAddress(youAddress, ss58Format) : undefined}
+                message="Address copied to the clipboard"
+              >
+                {truncateAddress(youAddress ? encodeAnyAddress(youAddress, ss58Format) : youAddress, 4)}
+              </ClickToCopy>
+            }
             graphic={<Avatar value={youAddress} />}
           />
         )}
+
+        <Info
+          title={getTransactionName()}
+          subtitle={intlFormat(parseISO(timestamp), { hour: 'numeric', minute: 'numeric' })}
+          graphic={<Logo className="category-logo" parsed={parsed} addresses={addresses} />}
+        />
 
         <ItemDetails parsed={transaction.parsed} accounts={accounts} addresses={addresses} />
 

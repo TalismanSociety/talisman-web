@@ -37,7 +37,7 @@ const transactionReducer = (state: TransactionMap, action: ReducerAction): Trans
 }
 
 // fetch all transaction based on the addresses provided
-export const useTransactions = (_addresses: string[]) => {
+export const useTransactions = (_addresses: string[], searchQuery?: string) => {
   // memoize addresses
   const addresses = useMemo(
     () => _addresses,
@@ -69,12 +69,38 @@ export const useTransactions = (_addresses: string[]) => {
   }, [])
 
   // the tx query
-  const { data, loading, error } = useQuery(txQuery, {
-    client: apolloClient,
-    variables: { addresses, olderThanId: oldestId, limit: FETCH_LIMIT },
-  })
+  useEffect(() => {
+    let cancelled = false
+    apolloClient
+      .query({ query: txQuery, variables: { addresses, olderThanId: oldestId, limit: FETCH_LIMIT, searchQuery } })
+      .then(({ data, loading, error }) => {
+        // if we've cancelled this query (variables have changed since the query was made)
+        if (cancelled) return
 
-  // clear existing items when addresses is changed
+        // if we're loading
+        if (loading) return setStatus('PROCESSING')
+
+        // or have an error
+        if (error) {
+          console.error('Failed to fetch txs for tx history', error)
+          return setStatus('ERROR')
+        }
+
+        const transactions = data?.transactionsByAddress || []
+
+        dispatch({ type: 'ADD', data: transactions })
+        setHasMore(transactions.length >= FETCH_LIMIT)
+
+        setStatus('SUCCESS')
+      })
+
+    return () => {
+      // cancel any queries we've made which haven't been completed yet
+      cancelled = true
+    }
+  }, [addresses, apolloClient, oldestId, searchQuery])
+
+  // clear existing items when addresses or searchQuery is changed
   useEffect(() => {
     setStatus('INITIALISED')
 
@@ -83,21 +109,7 @@ export const useTransactions = (_addresses: string[]) => {
 
     // clear the store
     dispatch({ type: 'CLEAR' })
-  }, [addresses])
-
-  useEffect(() => {
-    // if we're loading
-    if (loading) return setStatus('PROCESSING')
-    // or have an error
-    if (error) return setStatus('ERROR')
-
-    const transactions = data?.transactionsByAddress || []
-
-    dispatch({ type: 'ADD', data: transactions })
-    setHasMore(transactions.length >= FETCH_LIMIT)
-
-    setStatus('SUCCESS')
-  }, [loading, error, data])
+  }, [addresses, searchQuery])
 
   // fetch more by updating the oldestId
   // we can only set the oldestId if we have > 0 TXs
@@ -115,10 +127,10 @@ export const useTransactions = (_addresses: string[]) => {
   const pollInterval = 5_000 // 5 seconds in ms
   const { data: latestTxData } = useQuery(latestTxQuery, {
     client: apolloClient,
-    variables: { addresses },
+    variables: { addresses, searchQuery },
     pollInterval,
   })
-  const latestTxId = latestTxData?.events[0]?.id
+  const latestTxId = latestTxData?.transactionsByAddress[0]?.id
   const latestTxIdInStore = useMemo(() => {
     const sortedTransactionIds = Object.keys(transactions).sort((a, b) => b.localeCompare(a))
     return sortedTransactionIds[0]
@@ -136,7 +148,10 @@ export const useTransactions = (_addresses: string[]) => {
     // fetch more recent txs
     let cancelled = false
     apolloClient
-      .query({ query: txQuery, variables: { addresses, newerThanId: latestTxIdInStore, limit: FETCH_LIMIT } })
+      .query({
+        query: txQuery,
+        variables: { addresses, newerThanId: latestTxIdInStore, limit: FETCH_LIMIT, searchQuery },
+      })
       .then(({ data, loading, error }) => {
         if (cancelled) return
         if (loading) return
@@ -150,7 +165,7 @@ export const useTransactions = (_addresses: string[]) => {
       // cancel any queries we've made which haven't been completed yet
       cancelled = true
     }
-  }, [latestTxId, latestTxIdInStore, status, transactions, apolloClient, addresses])
+  }, [latestTxId, latestTxIdInStore, status, transactions, apolloClient, addresses, searchQuery])
 
   return {
     loadMore,
