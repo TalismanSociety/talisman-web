@@ -3,10 +3,11 @@ import InfoCard from '@components/molecules/InfoCard'
 import PoolSelectorDialog from '@components/recipes/PoolSelectorDialog'
 import StakingInput from '@components/recipes/StakingInput'
 import { apiState, nativeTokenDecimalState } from '@domains/chains/recoils'
-import { useTokenAmountFromAtomics, useTokenAmountState } from '@domains/common/hooks'
+import { useTokenAmountFromAtomics } from '@domains/common/hooks'
 import useChainState from '@domains/common/hooks/useChainState'
 import useExtrinsic from '@domains/common/hooks/useExtrinsic'
 import { accountsState } from '@domains/extension/recoils'
+import { usePoolAddForm } from '@domains/nomiationPools/hooks'
 import { BN } from '@polkadot/util'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { selector, useRecoilValue, waitForAll } from 'recoil'
@@ -26,7 +27,7 @@ const recommendedPoolsState = selector({
 
     const names = await api.query.nominationPools.metadata.multi(bondedPools.map(({ poolId }) => poolId))
 
-    return bondedPools.map((x, index) => ({ ...x, name: names[index].toUtf8() }))
+    return bondedPools.map((x, index) => ({ ...x, name: names[index]?.toUtf8() }))
   },
 })
 
@@ -57,7 +58,7 @@ const PoolSelector = (props: {
           selected={pool.poolId.eqn(props.selectedPoolId)}
           highlighted={newPoolId !== undefined && pool.poolId.eqn(newPoolId)}
           talismanRecommended
-          poolName={pool.name}
+          poolName={pool.name ?? ''}
           stakedAmount={`${nativeTokenDecimal.fromAtomics(pool.bondedPool.unwrapOrDefault().points).toHuman()} staked`}
           rating={3}
           memberCount={pool.bondedPool.unwrapOrDefault().memberCounter.toString()}
@@ -72,14 +73,10 @@ const Staking = () => {
   const joinPoolExtrinsic = useExtrinsic('nominationPools', 'join')
   const bondExtraExtrinsic = useExtrinsic('nominationPools', 'bondExtra')
 
-  const [accounts, nativeTokenDecimal, recommendedPools] = useRecoilValue(
-    waitForAll([accountsState, nativeTokenDecimalState, recommendedPoolsState])
-  )
+  const [accounts, recommendedPools] = useRecoilValue(waitForAll([accountsState, recommendedPoolsState]))
 
-  const [selectedPoolId, setSelectedPoolId] = useState(recommendedPools[0].poolId.toNumber())
+  const [selectedPoolId, setSelectedPoolId] = useState(recommendedPools[0]?.poolId.toNumber())
   const [showPoolSelector, setShowPoolSelector] = useState(false)
-
-  const [{ amount, decimalAmount, localizedFiatAmount }, setAmount] = useTokenAmountState('')
 
   const [selectedAccount, setSelectedAccount] = useState<typeof accounts[number] | undefined>(accounts[0])
   const selectedAccountIndex = useMemo(
@@ -87,10 +84,13 @@ const Staking = () => {
     [accounts, selectedAccount?.address]
   )
 
-  const balancesLoadable = useChainState('derive', 'balances', 'all', [selectedAccount?.address ?? ''], {
-    enabled: selectedAccount !== undefined,
-  })
-
+  const {
+    input: { amount, decimalAmount, localizedFiatAmount },
+    isReady: isInputReady,
+    freeBalance,
+    error: inputError,
+    setAmount,
+  } = usePoolAddForm(selectedAccount?.address)
   const poolMembersLoadable = useChainState(
     'query',
     'nominationPools',
@@ -122,13 +122,17 @@ const Staking = () => {
     )
   )
 
-  const bondedPoolLoadable = useChainState('query', 'nominationPools', 'bondedPools', [selectedPoolId])
+  const bondedPoolLoadable = useChainState('query', 'nominationPools', 'bondedPools', [selectedPoolId!], {
+    enabled: selectedPoolId !== undefined,
+  })
 
   const { decimalAmount: poolTotalStaked } = useTokenAmountFromAtomics(
     bondedPoolLoadable.valueMaybe()?.unwrapOrDefault().points
   )
 
-  const poolMetadataLoadable = useChainState('query', 'nominationPools', 'metadata', [selectedPoolId])
+  const poolMetadataLoadable = useChainState('query', 'nominationPools', 'metadata', [selectedPoolId!], {
+    enabled: selectedPoolId !== undefined,
+  })
 
   const hasExistingPool = poolMembersLoadable.valueMaybe()?.[selectedAccountIndex]?.isSome === true
 
@@ -136,7 +140,7 @@ const Staking = () => {
     selectedAccount !== undefined &&
     decimalAmount !== undefined &&
     poolMembersLoadable.state === 'hasValue' &&
-    balancesLoadable.state === 'hasValue'
+    isInputReady
 
   useEffect(() => {
     if (selectedAccount === undefined && accounts.length > 0) {
@@ -145,7 +149,7 @@ const Staking = () => {
   }, [accounts, selectedAccount])
 
   useEffect(() => {
-    setSelectedPoolId(recommendedPools[0].poolId.toNumber())
+    setSelectedPoolId(recommendedPools[0]?.poolId.toNumber())
   }, [recommendedPools, selectedAccount])
 
   return (
@@ -159,7 +163,7 @@ const Staking = () => {
     >
       <PoolSelector
         open={showPoolSelector}
-        selectedPoolId={selectedPoolId}
+        selectedPoolId={selectedPoolId!}
         onChangePoolId={setSelectedPoolId}
         onDismiss={useCallback(() => setShowPoolSelector(false), [])}
       />
@@ -220,16 +224,14 @@ const Staking = () => {
               amount={amount}
               fiatAmount={localizedFiatAmount ?? ''}
               onChangeAmount={setAmount}
+              isError={inputError !== undefined}
+              inputSupportingText={inputError?.message}
               onRequestMaxAmount={() => {
-                if (balancesLoadable.state === 'hasValue') {
-                  setAmount(nativeTokenDecimal.fromAtomics(balancesLoadable.contents.freeBalance).toString())
+                if (freeBalance.decimalAmount !== undefined) {
+                  setAmount(freeBalance.decimalAmount.toString())
                 }
               }}
-              availableToStake={
-                balancesLoadable.state === 'hasValue'
-                  ? nativeTokenDecimal.fromAtomics(balancesLoadable.contents.freeBalance).toHuman()
-                  : '...'
-              }
+              availableToStake={freeBalance.decimalAmount?.toHuman() ?? '...'}
               poolName={poolMetadataLoadable.valueMaybe()?.toUtf8() ?? ''}
               poolTotalStaked={poolTotalStaked?.toHuman() ?? ''}
               poolMemberCount={bondedPoolLoadable.valueMaybe()?.unwrapOrDefault().memberCounter.toString() ?? ''}
@@ -245,10 +247,10 @@ const Staking = () => {
                 }
               }, [bondExtraExtrinsic, decimalAmount?.atomics, hasExistingPool, joinPoolExtrinsic, selectedAccount])}
               submitState={useMemo(() => {
-                if (!isReady) return 'disabled'
+                if (!isReady || inputError !== undefined) return 'disabled'
 
                 return joinPoolExtrinsic.state === 'loading' ? 'pending' : undefined
-              }, [isReady, joinPoolExtrinsic.state])}
+              }, [inputError, isReady, joinPoolExtrinsic.state])}
             />
           </div>
           <div css={{ display: 'flex', flexDirection: 'column', gap: '1.6rem' }}>

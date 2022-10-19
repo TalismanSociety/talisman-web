@@ -1,12 +1,8 @@
 import Text from '@components/atoms/Text'
-import AddStakeDialog from '@components/recipes/AddStakeDialog'
 import PoolStake, { PoolStakeList } from '@components/recipes/PoolStake/PoolStake'
 import PoolUnstake, { PoolUnstakeList } from '@components/recipes/PoolUnstake'
-import UnstakeAlertDialog from '@components/recipes/UnstakeAlertDialog'
-import { useTokenAmountFromAtomics, useTokenAmountState } from '@domains/common/hooks'
 import { createAccounts } from '@domains/nomiationPools/utils'
-import { BN } from '@polkadot/util'
-import { addMilliseconds, formatDistance, formatDistanceToNow } from 'date-fns'
+import { addMilliseconds, formatDistanceToNow } from 'date-fns'
 import { Suspense, useCallback, useEffect, useMemo, useState } from 'react'
 import { useRecoilValue, waitForAll } from 'recoil'
 
@@ -15,66 +11,8 @@ import useChainState from '../../domains/common/hooks/useChainState'
 import useExtrinsic from '../../domains/common/hooks/useExtrinsic'
 import { accountsState } from '../../domains/extension/recoils'
 import { allPendingPoolRewardsState } from '../../domains/nomiationPools/recoils'
-
-const AddDialog = (props: { account?: string; onDismiss: () => unknown }) => {
-  const bondExtraExtrinsic = useExtrinsic('nominationPools', 'bondExtra')
-  const balanceLoadable = useChainState('derive', 'balances', 'all', [props.account!], {
-    enabled: props.account !== undefined,
-  })
-  const poolMemberLoadable = useChainState('query', 'nominationPools', 'poolMembers', [props.account!], {
-    enabled: props.account !== undefined,
-  })
-
-  const [nativeTokenDecimal] = useRecoilValue(waitForAll([nativeTokenDecimalState]))
-
-  const [{ amount, decimalAmount, localizedFiatAmount }, setAmount] = useTokenAmountState('')
-
-  const { decimalAmount: poolPointsDecimal } = useTokenAmountFromAtomics(
-    poolMemberLoadable.valueMaybe()?.unwrapOrDefault().points ?? new BN(0)
-  )
-
-  const { decimalAmount: newAmountDecimal, localizedFiatAmount: newLocalizedFiatAmount } = useTokenAmountFromAtomics(
-    poolPointsDecimal?.atomics.add(decimalAmount?.atomics ?? new BN(0)) ?? new BN(0)
-  )
-
-  useEffect(() => {
-    if (props.account === undefined) {
-      setAmount('')
-    }
-  }, [props.account, setAmount])
-
-  useEffect(() => {
-    if (bondExtraExtrinsic.state === 'loading' && bondExtraExtrinsic.contents?.status.isInBlock) {
-      props.onDismiss()
-    }
-  }, [bondExtraExtrinsic.contents?.status?.isInBlock, bondExtraExtrinsic.state, props])
-
-  return (
-    <AddStakeDialog
-      open={props.account !== undefined}
-      availableToStake={nativeTokenDecimal.fromAtomics(balanceLoadable.valueMaybe()?.freeBalance).toHuman() ?? ''}
-      amount={amount}
-      onChangeAmount={setAmount}
-      fiatAmount={localizedFiatAmount ?? ''}
-      newAmount={newAmountDecimal?.toHuman() ?? ''}
-      newFiatAmount={newLocalizedFiatAmount ?? ''}
-      onDismiss={props.onDismiss}
-      onConfirm={useCallback(
-        () =>
-          bondExtraExtrinsic
-            .signAndSend(props.account ?? '', {
-              FreeBalance: decimalAmount?.atomics?.toString() ?? '0',
-            })
-            .finally(() => props.onDismiss()),
-        [bondExtraExtrinsic, decimalAmount?.atomics, props]
-      )}
-      onRequestMaxAmount={() =>
-        setAmount(nativeTokenDecimal.fromAtomics(balanceLoadable.valueMaybe()?.freeBalance).toString())
-      }
-      confirmState={bondExtraExtrinsic.state === 'loading' ? 'pending' : undefined}
-    />
-  )
-}
+import AddStakeDialog from './AddStakeDialog'
+import UnstakeDialog from './UnstakeDialog'
 
 const Unstakings = () => {
   const withdrawExtrinsic = useExtrinsic('nominationPools', 'withdrawUnbonded')
@@ -177,16 +115,8 @@ const Stakings = () => {
   const claimPayoutExtrinsic = useExtrinsic('nominationPools', 'claimPayout')
   const unbondExtrinsic = useExtrinsic('nominationPools', 'unbond')
 
-  const expectedEraTimeLoadable = useChainState('derive', 'session', 'eraLength', [])
-
-  const [api, pendingRewards, accounts, decimalFromAtomics, nativeTokenPrice] = useRecoilValue(
-    waitForAll([
-      apiState,
-      allPendingPoolRewardsState,
-      accountsState,
-      nativeTokenDecimalState,
-      nativeTokenPriceState('usd'),
-    ])
+  const [pendingRewards, accounts, decimalFromAtomics, nativeTokenPrice] = useRecoilValue(
+    waitForAll([allPendingPoolRewardsState, accountsState, nativeTokenDecimalState, nativeTokenPriceState('usd')])
   )
 
   const poolMembersLoadable = useChainState(
@@ -201,15 +131,6 @@ const Stakings = () => {
     'nominationPools',
     'metadata.multi',
     poolMembersLoadable.state !== 'hasValue' ? [] : poolMembersLoadable.contents.map(x => x.unwrapOrDefault().poolId)
-  )
-
-  const lockDuration = useMemo(
-    () =>
-      expectedEraTimeLoadable
-        .valueMaybe()
-        ?.mul(api.consts.staking.bondingDuration)
-        .mul(api.consts.babe.expectedBlockTime),
-    [api.consts.babe.expectedBlockTime, api.consts.staking.bondingDuration, expectedEraTimeLoadable]
   )
 
   const pools = useMemo(
@@ -239,39 +160,19 @@ const Stakings = () => {
     ]
   )
 
-  const [currentUnstake, setCurrentUnstake] = useState<{ address: string; points: any }>()
+  const [unstakeAccount, setUnstakeAccount] = useState<string>()
   const [addStakeAccount, setAddStakeAccount] = useState<string>()
 
   useEffect(() => {
     if (unbondExtrinsic.state === 'loading' && unbondExtrinsic.contents?.status.isBroadcast) {
-      setCurrentUnstake(undefined)
+      setUnstakeAccount(undefined)
     }
   }, [unbondExtrinsic.contents?.status?.isBroadcast, unbondExtrinsic.state])
 
   return (
     <div>
-      <AddDialog account={addStakeAccount} onDismiss={useCallback(() => setAddStakeAccount(undefined), [])} />
-      <UnstakeAlertDialog
-        open={currentUnstake !== undefined}
-        amount={decimalFromAtomics.fromAtomics(currentUnstake?.points).toHuman()}
-        fiatAmount={decimalFromAtomics
-          .fromAtomics(currentUnstake?.points)
-          .toFloatApproximation()
-          .toLocaleString(undefined, {
-            style: 'currency',
-            currency: 'usd',
-          })}
-        lockDuration={formatDistance(0, lockDuration?.toNumber() ?? 0)}
-        onDismiss={() => setCurrentUnstake(undefined)}
-        onConfirm={() => {
-          if (currentUnstake) {
-            unbondExtrinsic
-              .signAndSend(currentUnstake?.address, currentUnstake?.address, currentUnstake.points)
-              .finally(() => setCurrentUnstake(undefined))
-          }
-        }}
-        confirmState={unbondExtrinsic.state === 'loading' ? 'pending' : 'disabled'}
-      />
+      <AddStakeDialog account={addStakeAccount} onDismiss={useCallback(() => setAddStakeAccount(undefined), [])} />
+      <UnstakeDialog account={unstakeAccount} onDismiss={useCallback(() => setUnstakeAccount(undefined), [])} />
       <header>
         <Text.H4>Staking</Text.H4>
       </header>
@@ -298,12 +199,7 @@ const Stakings = () => {
                 ? 'pending'
                 : undefined
             }
-            onRequestUnstake={() =>
-              setCurrentUnstake({
-                address: pool.account?.address ?? '',
-                points: pool.poolMember.unwrapOrDefault().points ?? 0,
-              })
-            }
+            onRequestUnstake={() => setUnstakeAccount(pool.account?.address)}
             unstakeState={
               pool.poolMember.unwrapOrDefault().points.isZero()
                 ? 'unavailable'

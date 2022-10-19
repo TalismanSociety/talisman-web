@@ -7,7 +7,7 @@ import TextInput, { LabelButton } from '@components/molecules/TextInput'
 import { useTheme } from '@emotion/react'
 import Identicon from '@polkadot/react-identicon'
 import { AnimatePresence, motion } from 'framer-motion'
-import { useState } from 'react'
+import { ReactNode, useState } from 'react'
 
 import { PoolStatusIndicator } from '../PoolStatusIndicator'
 
@@ -18,6 +18,7 @@ export type StakingInputProps = {
   onSelectAccount: (account: Account) => unknown
   amount: string
   fiatAmount: string
+  inputSupportingText?: ReactNode
   onChangeAmount: (value: string) => unknown
   onRequestMaxAmount: () => unknown
   availableToStake: string
@@ -28,6 +29,7 @@ export type StakingInputProps = {
   onSubmit: () => unknown
   submitState?: 'disabled' | 'pending'
   alreadyStaking?: boolean
+  isError?: boolean
 }
 
 const StakingInput = (props: StakingInputProps) => {
@@ -71,10 +73,12 @@ const StakingInput = (props: StakingInputProps) => {
       ) : (
         <>
           <TextInput
+            isError={props.isError}
             placeholder="0 DOT"
             leadingLabel="Available to stake"
             trailingLabel={props.availableToStake}
             leadingSupportingText={props.fiatAmount}
+            trailingSupportingText={props.inputSupportingText}
             trailingIcon={<LabelButton onClick={props.onRequestMaxAmount}>MAX</LabelButton>}
             value={props.amount}
             onChange={event => props.onChangeAmount(event.target.value)}

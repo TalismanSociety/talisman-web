@@ -4,36 +4,37 @@ import Button from '../../atoms/Button'
 import Text from '../../atoms/Text'
 import AlertDialog from '../../molecules/AlertDialog'
 
-export type AddStakeDialogProps = {
+export type UnstakeDialogProps = {
   open: boolean
   onDismiss: () => unknown
   onConfirm: () => unknown
   confirmState?: 'pending' | 'disabled'
-  availableToStake: string
+  availableAmount: string
   amount: string
   fiatAmount: string
   newAmount: string
   newFiatAmount: string
   onRequestMaxAmount: () => unknown
   onChangeAmount: (amount: string) => unknown
+  lockDuration: string
   isError?: boolean
   inputSupportingText?: string
 }
 
-const AddStakeDialog = (props: AddStakeDialogProps) => (
+const UnstakeDialog = (props: UnstakeDialogProps) => (
   <AlertDialog
     open={props.open}
-    title="Stake"
+    title="Unstake"
     content={
       <>
         <Text.Body as="p" css={{ marginBottom: '2.6rem' }}>
-          Increase your stake below. Talisman will automatically stake this in the same nomination pool for you.
+          How much would you like to unstake?
         </Text.Body>
         <TextInput
           isError={props.isError}
           placeholder="0 DOT"
-          leadingLabel="Available to stake"
-          trailingLabel={props.availableToStake}
+          leadingLabel="Available to unstake"
+          trailingLabel={props.availableAmount}
           leadingSupportingText={props.fiatAmount}
           trailingSupportingText={props.inputSupportingText}
           trailingIcon={<LabelButton onClick={props.onRequestMaxAmount}>MAX</LabelButton>}
@@ -49,6 +50,14 @@ const AddStakeDialog = (props: AddStakeDialogProps) => (
             <Text.Body as="div">{props.newFiatAmount}</Text.Body>
           </div>
         </div>
+        <div css={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '1.6rem' }}>
+          <Text.Body alpha="high">Unbonding period</Text.Body>
+          <div css={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
+            <Text.Body as="div" alpha="high">
+              {props.lockDuration}
+            </Text.Body>
+          </div>
+        </div>
       </>
     }
     confirmButton={
@@ -57,11 +66,11 @@ const AddStakeDialog = (props: AddStakeDialogProps) => (
         disabled={props.confirmState === 'disabled'}
         loading={props.confirmState === 'pending'}
       >
-        Stake
+        Unstake
       </Button>
     }
     onRequestDismiss={props.onDismiss}
   />
 )
 
-export default AddStakeDialog
+export default UnstakeDialog

@@ -8,6 +8,7 @@ export type TextInputProps = React.DetailedHTMLProps<React.InputHTMLAttributes<H
   trailingIcon?: ReactNode
   trailingSupportingText?: ReactNode
   leadingSupportingText?: ReactNode
+  isError?: boolean
 }
 
 const TextInput = (props: TextInputProps) => {
@@ -63,7 +64,7 @@ const TextInput = (props: TextInputProps) => {
         >
           <Text as="label">{props.leadingSupportingText}</Text>
           <div>
-            <Text>{props.trailingSupportingText}</Text>
+            <Text css={props.isError && { color: theme.color.error }}>{props.trailingSupportingText}</Text>
           </div>
         </div>
       )}
