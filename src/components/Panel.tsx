@@ -41,7 +41,6 @@ export const Panel = styled(({ title, subtitle, children, className, ...rest }: 
   }
 
   > .inner {
-    overflow: hidden;
     display: block;
     border-radius: 1.6rem;
     user-select: none;
