@@ -52,7 +52,7 @@ const PoolSelectorDialog = Object.assign(
                 },
               }}
             >
-              {nonSelectedItems.slice(0, 8)}
+              {nonSelectedItems.slice(0, 9)}
             </div>
           </div>
         }
