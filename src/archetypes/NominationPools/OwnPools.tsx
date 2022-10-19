@@ -17,8 +17,7 @@ import UnstakeDialog from './UnstakeDialog'
 const Unstakings = () => {
   const withdrawExtrinsic = useExtrinsic('nominationPools', 'withdrawUnbonded')
 
-  const activeEraLoadable = useChainState('derive', 'session', 'progress', [])
-  const expectedEraTimeLoadable = useChainState('derive', 'session', 'eraLength', [])
+  const sessionProgressLoadable = useChainState('derive', 'session', 'progress', [])
 
   const [api, accounts, decimalFromAtomics, nativeTokenPrice] = useRecoilValue(
     waitForAll([apiState, accountsState, nativeTokenDecimalState, nativeTokenPriceState('usd')])
@@ -41,7 +40,7 @@ const Unstakings = () => {
 
   const unstakings = useMemo(
     () =>
-      activeEraLoadable.state !== 'hasValue' || poolMembersLoadable.state !== 'hasValue'
+      sessionProgressLoadable.state !== 'hasValue' || poolMembersLoadable.state !== 'hasValue'
         ? undefined
         : poolMembersLoadable.contents.flatMap((pool, index) =>
             Array.from(pool.unwrapOrDefault().unbondingEras.entries(), ([era, amount]) => ({
@@ -49,21 +48,21 @@ const Unstakings = () => {
               pool: pool.unwrapOrDefault(),
               era,
               amount,
-              erasTilWithdrawable: era.lte(activeEraLoadable.contents.currentEra)
+              erasTilWithdrawable: era.lt(sessionProgressLoadable.contents.activeEra)
                 ? undefined
-                : era.sub(activeEraLoadable.contents.currentEra),
+                : era.sub(sessionProgressLoadable.contents.activeEra),
             }))
           ),
     [
-      activeEraLoadable.state,
-      activeEraLoadable.contents.currentEra,
+      sessionProgressLoadable.state,
+      sessionProgressLoadable.contents.activeEra,
       poolMembersLoadable.state,
       poolMembersLoadable.contents,
       accounts,
     ]
   )
 
-  if (activeEraLoadable.state === 'loading' || expectedEraTimeLoadable.state === 'loading') return null
+  if (sessionProgressLoadable.state !== 'hasValue') return null
 
   if (unstakings?.length === 0) return null
 
@@ -72,41 +71,44 @@ const Unstakings = () => {
       <header css={{ marginTop: '4rem' }}>
         <Text.H4>Unstaking</Text.H4>
       </header>
-      {expectedEraTimeLoadable.state === 'hasValue' && (
-        <PoolUnstakeList>
-          {unstakings?.map((x, index) => (
-            <PoolUnstake
-              key={index}
-              accountName={accounts.find(({ address }) => address === x.address)?.name ?? ''}
-              accountAddress={x.address}
-              unstakingAmount={decimalFromAtomics.fromAtomics(x.amount).toHuman()}
-              unstakingFiatAmount={(
-                decimalFromAtomics.fromAtomics(x.amount).toFloatApproximation() * nativeTokenPrice
-              ).toLocaleString(undefined, {
-                style: 'currency',
-                currency: 'usd',
-              })}
-              timeTilWithdrawable={
-                x.erasTilWithdrawable === undefined
-                  ? undefined
-                  : formatDistanceToNow(
-                      addMilliseconds(
-                        new Date(),
-                        x.erasTilWithdrawable
-                          .mul(expectedEraTimeLoadable.contents.mul(api.consts.babe.expectedBlockTime))
-                          .toNumber()
-                      )
+
+      <PoolUnstakeList>
+        {unstakings?.map((x, index) => (
+          <PoolUnstake
+            key={index}
+            accountName={accounts.find(({ address }) => address === x.address)?.name ?? ''}
+            accountAddress={x.address}
+            unstakingAmount={decimalFromAtomics.fromAtomics(x.amount).toHuman()}
+            unstakingFiatAmount={(
+              decimalFromAtomics.fromAtomics(x.amount).toFloatApproximation() * nativeTokenPrice
+            ).toLocaleString(undefined, {
+              style: 'currency',
+              currency: 'usd',
+            })}
+            timeTilWithdrawable={
+              x.erasTilWithdrawable === undefined
+                ? undefined
+                : formatDistanceToNow(
+                    addMilliseconds(
+                      new Date(),
+                      x.erasTilWithdrawable
+                        .subn(1)
+                        .mul(sessionProgressLoadable.contents.eraLength)
+                        .add(sessionProgressLoadable.contents.eraLength)
+                        .sub(sessionProgressLoadable.contents.eraProgress)
+                        .mul(api.consts.babe.expectedBlockTime)
+                        .toNumber()
                     )
-              }
-              onRequestWithdraw={() => {
-                const priorLength = slashingSpans.valueMaybe()?.[index]?.unwrapOr(undefined)?.prior.length
-                withdrawExtrinsic.signAndSend(x.address, x.address, priorLength === undefined ? 0 : priorLength + 1)
-              }}
-              withdrawState={withdrawExtrinsic.state === 'loading' ? 'pending' : undefined}
-            />
-          ))}
-        </PoolUnstakeList>
-      )}
+                  )
+            }
+            onRequestWithdraw={() => {
+              const priorLength = slashingSpans.valueMaybe()?.[index]?.unwrapOr(undefined)?.prior.length
+              withdrawExtrinsic.signAndSend(x.address, x.address, priorLength === undefined ? 0 : priorLength + 1)
+            }}
+            withdrawState={withdrawExtrinsic.state === 'loading' ? 'pending' : undefined}
+          />
+        ))}
+      </PoolUnstakeList>
     </div>
   )
 }
