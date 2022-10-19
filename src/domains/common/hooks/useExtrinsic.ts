@@ -1,24 +1,22 @@
-import { AddressOrPair, AugmentedSubmittables } from '@polkadot/api/types'
+import { ApiPromise } from '@polkadot/api'
+import { AddressOrPair } from '@polkadot/api/types'
 import { ISubmittableResult } from '@polkadot/types/types'
 import { useCallback, useState } from 'react'
 import { useRecoilCallback, useRecoilValueLoadable } from 'recoil'
 
 import { apiState, currentChainState } from '../../chains/recoils'
 import { extensionState } from '../../extension/recoils'
+import { extrinsicMiddleWare } from '../extrinsicMiddleware'
 import { toastExtrinsic } from '../utils'
 
-type ExtrinsicModules = {
-  [P in keyof AugmentedSubmittables<'promise'>]: PickKnownKeys<AugmentedSubmittables<'promise'>[P]>
-}
-
 export const useExtrinsic = <
-  TModuleName extends keyof ExtrinsicModules,
-  TMethodName extends keyof ExtrinsicModules[TModuleName]
+  TModule extends keyof PickKnownKeys<ApiPromise['tx']>,
+  TSection extends keyof ApiPromise['tx'][TModule]
 >(
-  module: TModuleName,
-  method: TMethodName
+  module: TModule,
+  section: TSection
 ) => {
-  type TExtrinsic = ExtrinsicModules[TModuleName][TMethodName]
+  type TExtrinsic = ApiPromise['tx'][TModule][TSection]
 
   const chainLoadable = useRecoilValueLoadable(currentChainState)
 
@@ -32,7 +30,7 @@ export const useExtrinsic = <
   const reset = useCallback(() => setLoadable({ state: 'idle', contents: undefined }), [])
 
   const signAndSend = useRecoilCallback(
-    ({ snapshot }) =>
+    ({ snapshot, refresh }) =>
       async (account: AddressOrPair, ...params: Parameters<TExtrinsic>) => {
         const promiseFunc = async () => {
           const api = await snapshot.getPromise(apiState)
@@ -46,10 +44,12 @@ export const useExtrinsic = <
             reject = _reject
           })
 
-          const func = api.tx[module]?.[method]?.bind(api.tx[module])
+          const func = api.tx[module]?.[section]?.bind(api.tx[module])
 
           try {
             const unsubscribe = await func?.(...params).signAndSend(account, { signer: extension?.signer }, result => {
+              extrinsicMiddleWare(module, section, result, { refresh })
+
               if (result.isError) {
                 unsubscribe?.()
                 reject(result)
@@ -81,7 +81,7 @@ export const useExtrinsic = <
           contents: loadable.state === 'loading' ? loadable.contents : undefined,
         }))
 
-        toastExtrinsic(module, method as string, promise, chainLoadable)
+        toastExtrinsic(module, section as string, promise, chainLoadable)
 
         try {
           const result = await promise

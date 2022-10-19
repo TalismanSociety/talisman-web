@@ -1,13 +1,17 @@
 import { ExternalLink } from '@components/atoms/Icon'
 import Text from '@components/atoms/Text'
 import { Chain } from '@domains/chains/recoils'
+import { ApiPromise } from '@polkadot/api'
 import { ISubmittableResult } from '@polkadot/types/types'
 import toast from 'react-hot-toast'
 import { Loadable } from 'recoil'
 
-export const toastExtrinsic = (
-  module: string,
-  section: string,
+export const toastExtrinsic = <
+  TModule extends keyof PickKnownKeys<ApiPromise['tx']>,
+  TSection extends keyof ApiPromise['tx'][TModule]
+>(
+  module: TModule,
+  section: TSection,
   promise: Promise<ISubmittableResult>,
   chainLoadable: Loadable<Chain>
 ) =>

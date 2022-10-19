@@ -1,6 +1,6 @@
 import BaseUnstakeDialog from '@components/recipes/UnstakeDialog'
-import { usePoolUnstakeForm } from '@domains/nomiationPools/hooks'
-import { useLockDuration } from '@domains/nomiationPools/hooks/useLockDuration'
+import { usePoolUnstakeForm } from '@domains/nominationPools/hooks'
+import { useLockDuration } from '@domains/nominationPools/hooks/useLockDuration'
 import { formatDistance } from 'date-fns'
 import { useCallback, useEffect } from 'react'
 

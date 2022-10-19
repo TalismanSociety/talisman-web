@@ -1,9 +1,6 @@
 import '@polkadot/api-augment/substrate'
 
-import { ApiPromise } from '@polkadot/api'
-import { AugmentedCall } from '@polkadot/api/types'
-import { selector, selectorFamily } from 'recoil'
-import { Observable } from 'rxjs'
+import { selector } from 'recoil'
 
 import { apiState } from '../chains/recoils'
 import { polkadotAccountsState } from '../extension/recoils'

@@ -1,5 +1,5 @@
 import BaseAddStakeDialog from '@components/recipes/AddStakeDialog'
-import { usePoolAddForm } from '@domains/nomiationPools/hooks'
+import { usePoolAddForm } from '@domains/nominationPools/hooks'
 import { useCallback, useEffect } from 'react'
 
 import useExtrinsic from '../../domains/common/hooks/useExtrinsic'

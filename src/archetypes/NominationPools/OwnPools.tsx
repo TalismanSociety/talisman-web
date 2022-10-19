@@ -1,7 +1,7 @@
 import Text from '@components/atoms/Text'
 import PoolStake, { PoolStakeList } from '@components/recipes/PoolStake/PoolStake'
 import PoolUnstake, { PoolUnstakeList } from '@components/recipes/PoolUnstake'
-import { createAccounts } from '@domains/nomiationPools/utils'
+import { createAccounts } from '@domains/nominationPools/utils'
 import { addMilliseconds, formatDistanceToNow } from 'date-fns'
 import { Suspense, useCallback, useEffect, useMemo, useState } from 'react'
 import { useRecoilValue, waitForAll } from 'recoil'
@@ -10,7 +10,7 @@ import { apiState, nativeTokenDecimalState, nativeTokenPriceState } from '../../
 import useChainState from '../../domains/common/hooks/useChainState'
 import useExtrinsic from '../../domains/common/hooks/useExtrinsic'
 import { accountsState } from '../../domains/extension/recoils'
-import { allPendingPoolRewardsState } from '../../domains/nomiationPools/recoils'
+import { allPendingPoolRewardsState } from '../../domains/nominationPools/recoils'
 import AddStakeDialog from './AddStakeDialog'
 import UnstakeDialog from './UnstakeDialog'
 
