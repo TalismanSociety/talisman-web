@@ -48,7 +48,7 @@ const Unstakings = () => {
               pool: pool.unwrapOrDefault(),
               era,
               amount,
-              erasTilWithdrawable: era.lt(sessionProgressLoadable.contents.activeEra)
+              erasTilWithdrawable: era.lte(sessionProgressLoadable.contents.activeEra)
                 ? undefined
                 : era.sub(sessionProgressLoadable.contents.activeEra),
             }))
