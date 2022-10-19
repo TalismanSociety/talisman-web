@@ -46,19 +46,17 @@ export const useExtrinsic = <
             reject = _reject
           })
 
-          const func = api.tx[module][method].bind(api.tx[module])
+          const func = api.tx[module]?.[method]?.bind(api.tx[module])
 
           try {
-            const unsubscribe = await func(...params).signAndSend(account, { signer: extension?.signer }, result => {
+            const unsubscribe = await func?.(...params).signAndSend(account, { signer: extension?.signer }, result => {
               if (result.isError) {
-                unsubscribe()
+                unsubscribe?.()
                 reject(result)
               } else if (result.isFinalized) {
-                unsubscribe()
+                unsubscribe?.()
 
-                const failed =
-                  result.internalError !== undefined ||
-                  result.events.some(({ event }) => event.method === 'ExtrinsicFailed')
+                const failed = result.events.some(({ event }) => event.method === 'ExtrinsicFailed')
 
                 if (failed) {
                   reject(result)
