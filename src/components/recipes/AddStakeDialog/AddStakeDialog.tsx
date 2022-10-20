@@ -30,6 +30,8 @@ const AddStakeDialog = (props: AddStakeDialogProps) => (
           Increase your stake below. Talisman will automatically stake this in the same nomination pool for you.
         </Text.Body>
         <TextInput
+          type="number"
+          min={0}
           isError={props.isError}
           placeholder="0 DOT"
           leadingLabel="Available to stake"

@@ -31,6 +31,8 @@ const UnstakeDialog = (props: UnstakeDialogProps) => (
           How much would you like to unstake?
         </Text.Body>
         <TextInput
+          type="number"
+          min={0}
           isError={props.isError}
           placeholder="0 DOT"
           leadingLabel="Available to unstake"
