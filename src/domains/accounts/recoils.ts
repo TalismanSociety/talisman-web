@@ -17,7 +17,7 @@ export const polkadotAccountsState = selector({
 
 export const selectedAccountAddressesState = atom<string[] | undefined>({
   key: 'SelectedAccountAddresses',
-  default: [],
+  default: undefined,
 })
 
 export const selectedAccountsState = selector({
