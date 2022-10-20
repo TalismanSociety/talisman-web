@@ -12,7 +12,7 @@ import { BN } from '@polkadot/util'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { selector, useRecoilValue, waitForAll } from 'recoil'
 
-const recommendedPoolsState = selector({
+export const recommendedPoolsState = selector({
   key: 'BondedPools',
   get: async ({ get }) => {
     const api = get(apiState)
