@@ -1,6 +1,7 @@
 import { apiState, nativeTokenDecimalState, nativeTokenPriceState } from '@domains/chains/recoils'
 import { accountsState } from '@domains/extension/recoils'
-import { Redirect, Route, Switch } from 'react-router-dom'
+import { useEffect, useLayoutEffect } from 'react'
+import { Redirect, Route, Switch, useLocation } from 'react-router-dom'
 import { useRecoilValueLoadable, waitForAll } from 'recoil'
 
 import Layout from '../layout'
@@ -16,6 +17,25 @@ const Routes = () => {
   useRecoilValueLoadable(
     waitForAll([apiState, accountsState, nativeTokenDecimalState, nativeTokenPriceState('usd'), recommendedPoolsState])
   )
+
+  const location = useLocation()
+
+  useEffect(() => {
+    if (location.hash !== '') {
+      const observer = new MutationObserver(() => {
+        const element = document.getElementById(location.hash.slice(1))
+
+        if (element !== null) {
+          element.scrollIntoView({ behavior: 'smooth' })
+          observer.disconnect()
+        }
+      })
+
+      observer.observe(document.body, { childList: true, subtree: true })
+
+      return observer.disconnect.bind(observer)
+    }
+  }, [location])
 
   return (
     <Switch>

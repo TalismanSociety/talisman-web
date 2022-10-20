@@ -210,6 +210,7 @@ const Staking = () => {
         >
           <div css={{ marginBottom: '5.5rem' }}>
             <StakingInput
+              portfolioHref="/portfolio#staking"
               alreadyStaking={hasExistingPool}
               accounts={accounts.map(x => ({
                 ...x,

@@ -8,6 +8,7 @@ import { useTheme } from '@emotion/react'
 import Identicon from '@polkadot/react-identicon'
 import { AnimatePresence, motion } from 'framer-motion'
 import { ReactNode, useState } from 'react'
+import { Link } from 'react-router-dom'
 
 import { PoolStatusIndicator } from '../PoolStatusIndicator'
 
@@ -29,6 +30,7 @@ export type StakingInputProps = {
   onSubmit: () => unknown
   submitState?: 'disabled' | 'pending'
   alreadyStaking?: boolean
+  portfolioHref: string
   isError?: boolean
 }
 
@@ -67,7 +69,8 @@ const StakingInput = (props: StakingInputProps) => {
           </Text.Body>
           <Text.Body as="p">Select a different account to continue staking.</Text.Body>
           <Text.Body as="p">
-            If you want to add more or unstake with this account, you can do this from the Portfolio page.
+            If you want to add more or unstake with this account, you can do this from the{' '}
+            <Link to={props.portfolioHref}>Portfolio</Link> page.
           </Text.Body>
         </>
       ) : (

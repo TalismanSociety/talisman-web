@@ -73,7 +73,6 @@ const Unstakings = () => {
       <header css={{ marginTop: '4rem' }}>
         <Text.H4>Unstaking</Text.H4>
       </header>
-
       <PoolUnstakeList>
         {unstakings?.map((x, index) => (
           <PoolUnstake
@@ -239,7 +238,7 @@ const Stakings = () => {
 
 const OwnPools = () => {
   return (
-    <div>
+    <div id="staking">
       <Suspense
         fallback={
           <div>
