@@ -26,7 +26,7 @@ const Skeleton = {
           },
           animate && {
             animation: `${shimmer} 1s infinite`,
-            background: `linear-gradient(90deg, ${theme.color.surface} 1%, ${theme.color.foreground} 25%, ${theme.color.surface} 50%)`,
+            background: `linear-gradient(90deg, ${theme.color.surface} 4%, ${theme.color.foregroundVariant} 25%, ${theme.color.surface} 36%)`,
             backgroundSize: '200% 100%',
           },
         ]}
