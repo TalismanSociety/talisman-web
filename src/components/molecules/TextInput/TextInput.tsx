@@ -52,22 +52,23 @@ const TextInput = (props: TextInputProps) => {
         />
         {props.trailingIcon}
       </div>
-      {(props.leadingLabel || props.trailingLabel) && (
-        <div
-          css={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            fontSize: '1.12rem',
-            marginTop: '0.8rem',
-          }}
-        >
-          <Text as="label">{props.leadingSupportingText}</Text>
-          <div>
-            <Text css={props.isError && { color: theme.color.error }}>{props.trailingSupportingText}</Text>
-          </div>
-        </div>
-      )}
+      <div
+        css={{
+          'display': 'flex',
+          'justifyContent': 'space-between',
+          'alignItems': 'center',
+          'fontSize': '1.12rem',
+          'marginTop': '0.8rem',
+          '> *:empty::after': {
+            content: `"\u200B"`,
+          },
+        }}
+      >
+        <Text as="label">{props.leadingSupportingText}</Text>
+        <Text as="label" css={props.isError && { color: theme.color.error }}>
+          {props.trailingSupportingText}
+        </Text>
+      </div>
     </div>
   )
 }
