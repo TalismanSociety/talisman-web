@@ -3,6 +3,7 @@ import Text from '@components/atoms/Text'
 import HiddenDetails from '@components/molecules/HiddenDetails'
 import PoolStake, { PoolStakeList } from '@components/recipes/PoolStake/PoolStake'
 import PoolUnstake, { PoolUnstakeList } from '@components/recipes/PoolUnstake'
+import { selectedPolkadotAccountsState } from '@domains/accounts/recoils'
 import { createAccounts } from '@domains/nominationPools/utils'
 import { addMilliseconds, formatDistanceToNow } from 'date-fns'
 import { Suspense, useCallback, useEffect, useMemo, useState } from 'react'
@@ -12,7 +13,6 @@ import { useRecoilValue, waitForAll } from 'recoil'
 import { apiState, nativeTokenDecimalState, nativeTokenPriceState } from '../../domains/chains/recoils'
 import useChainState from '../../domains/common/hooks/useChainState'
 import useExtrinsic from '../../domains/common/hooks/useExtrinsic'
-import { accountsState } from '../../domains/extension/recoils'
 import { allPendingPoolRewardsState } from '../../domains/nominationPools/recoils'
 import AddStakeDialog from './AddStakeDialog'
 import UnstakeDialog from './UnstakeDialog'
@@ -23,7 +23,7 @@ const Unstakings = () => {
   const sessionProgressLoadable = useChainState('derive', 'session', 'progress', [])
 
   const [api, accounts, decimalFromAtomics, nativeTokenPrice] = useRecoilValue(
-    waitForAll([apiState, accountsState, nativeTokenDecimalState, nativeTokenPriceState('usd')])
+    waitForAll([apiState, selectedPolkadotAccountsState, nativeTokenDecimalState, nativeTokenPriceState('usd')])
   )
 
   const poolMembersLoadable = useChainState(
@@ -119,7 +119,12 @@ const Stakings = () => {
   const unbondExtrinsic = useExtrinsic('nominationPools', 'unbond')
 
   const [pendingRewards, accounts, decimalFromAtomics, nativeTokenPrice] = useRecoilValue(
-    waitForAll([allPendingPoolRewardsState, accountsState, nativeTokenDecimalState, nativeTokenPriceState('usd')])
+    waitForAll([
+      allPendingPoolRewardsState,
+      selectedPolkadotAccountsState,
+      nativeTokenDecimalState,
+      nativeTokenPriceState('usd'),
+    ])
   )
 
   const poolMembersLoadable = useChainState(

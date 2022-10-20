@@ -1,9 +1,9 @@
 import '@polkadot/api-augment/substrate'
 
+import { polkadotAccountsState } from '@domains/accounts/recoils'
 import { selector } from 'recoil'
 
 import { apiState } from '../chains/recoils'
-import { polkadotAccountsState } from '../extension/recoils'
 
 export const allPendingPoolRewardsState = selector({
   key: 'AllPendingRewards',

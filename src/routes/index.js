@@ -1,6 +1,6 @@
+import { accountsState } from '@domains/accounts/recoils'
 import { apiState, nativeTokenDecimalState, nativeTokenPriceState } from '@domains/chains/recoils'
-import { accountsState } from '@domains/extension/recoils'
-import { useEffect, useLayoutEffect } from 'react'
+import { useEffect } from 'react'
 import { Redirect, Route, Switch, useLocation } from 'react-router-dom'
 import { useRecoilValueLoadable, waitForAll } from 'recoil'
 

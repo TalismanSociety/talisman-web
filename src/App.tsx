@@ -1,6 +1,7 @@
 import { ModalProvider } from '@components'
 import ToastBar from '@components/molecules/ToastBar'
 import { TalismanHandLoader } from '@components/TalismanHandLoader'
+import { AccountsWatcher } from '@domains/accounts/recoils'
 import * as Crowdloans from '@libs/crowdloans'
 import * as MoonbeamContributors from '@libs/moonbeam-contributors'
 import * as Portfolio from '@libs/portfolio'
@@ -14,7 +15,6 @@ import { RecoilRoot } from 'recoil'
 
 import ThemeProvider from './App.Theme'
 import { initPosthog } from './config/posthog'
-import { AccountsWatcher } from './domains/extension/recoils'
 
 initPosthog()
 
