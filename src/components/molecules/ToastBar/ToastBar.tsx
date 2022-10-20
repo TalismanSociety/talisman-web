@@ -2,9 +2,9 @@ import CircularProgressIndicator from '@components/atoms/CircularProgressIndicat
 import { Check, X } from '@components/atoms/Icon'
 import Text from '@components/atoms/Text'
 import { useTheme } from '@emotion/react'
-import { formatDistanceToNow } from 'date-fns'
-import React, { useMemo } from 'react'
-import { Toast } from 'react-hot-toast'
+import { formatDistanceToNowStrict } from 'date-fns'
+import React, { Fragment, useEffect, useMemo, useState } from 'react'
+import { Toast, resolveValue } from 'react-hot-toast'
 
 export type ToastBarProps = {
   toast: Toast
@@ -12,10 +12,26 @@ export type ToastBarProps = {
 
 const ToastBar = ({ toast }: ToastBarProps) => {
   const theme = useTheme()
-  const message = typeof toast.message === 'function' ? toast.message(toast) : toast.message
+  const [createdAtDistance, setCreatedAtDistance] = useState(
+    formatDistanceToNowStrict(toast.createdAt, { addSuffix: true })
+  )
+  const children = resolveValue(toast.message, toast)
+  const resolvedChildren = (children as any)?.type === Fragment ? (children as any)?.props?.children : children
+
+  const [firstMessage, ...messages] = React.Children.toArray(resolvedChildren)
+
+  useEffect(() => {
+    const interval = setInterval(
+      () => setCreatedAtDistance(formatDistanceToNowStrict(toast.createdAt, { addSuffix: true })),
+      1000
+    )
+
+    return () => clearInterval(interval)
+  }, [toast.createdAt])
 
   return (
     <div
+      key={toast.id}
       css={{
         position: 'relative',
         display: 'flex',
@@ -24,6 +40,8 @@ const ToastBar = ({ toast }: ToastBarProps) => {
         padding: '1.6rem',
         borderRadius: '0.8rem',
         backgroundColor: theme.color.surface,
+        opacity: toast.visible ? 1 : 0,
+        transition: '.5s',
       }}
       {...toast.ariaProps}
     >
@@ -67,9 +85,14 @@ const ToastBar = ({ toast }: ToastBarProps) => {
             )
         }
       }, [toast.type])}
-      <Text.Body as="div">{message}</Text.Body>
-      <Text.Body alpha="disabled" css={{ alignSelf: 'first baseline' }}>
-        {formatDistanceToNow(toast.createdAt, { addSuffix: true })}
+      <Text.Body as="div">
+        <Text.Body css={{ display: 'flex', justifyContent: 'space-between', gap: '1rem' }}>
+          <span>{firstMessage}</span>
+          <Text.Body alpha="disabled" css={{ textAlign: 'end', alignSelf: 'first baseline', minWidth: '11rem' }}>
+            {createdAtDistance}
+          </Text.Body>
+        </Text.Body>
+        {messages}
       </Text.Body>
     </div>
   )

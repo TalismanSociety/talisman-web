@@ -25,7 +25,7 @@ Default.args = {
         <Text.Body as="div" alpha="high">
           This is your toast
         </Text.Body>
-        <Text.Body as="div">And this is its content</Text.Body>
+        <Text.Body as="div">And this is its really really long content</Text.Body>
       </>
     ),
     createdAt: Date.now(),
@@ -48,7 +48,7 @@ Error.args = { toast: { ...Default.args.toast!, type: 'error' } }
 
 export const Demo: Story<ToastBarProps> = (args: any) => (
   <div css={{ display: 'flex', gap: '1rem' }}>
-    <Toaster>{t => <ToastBar toast={t} />}</Toaster>
+    <Toaster position="top-right">{t => <ToastBar toast={t} />}</Toaster>
     <Button onClick={() => toast(Default.args?.toast?.message ?? '')}>Blank</Button>
     <Button onClick={() => toast.loading(Loading.args?.toast?.message ?? '', { duration: 4000 })}>Loading</Button>
     <Button onClick={() => toast.success(Success.args?.toast?.message ?? '')}>Success</Button>

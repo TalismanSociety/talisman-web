@@ -8,7 +8,7 @@ import { Loadable } from 'recoil'
 
 export const toastExtrinsic = <
   TModule extends keyof PickKnownKeys<ApiPromise['tx']>,
-  TSection extends keyof ApiPromise['tx'][TModule]
+  TSection extends Extract<keyof ApiPromise['tx'][TModule], string>
 >(
   module: TModule,
   section: TSection,
@@ -43,7 +43,7 @@ export const toastExtrinsic = <
             <code>
               {module}:{section}
             </code>{' '}
-            transaction has was successful.
+            transaction was successful.
           </Text.Body>
           {chain !== undefined && (
             <Text.Body as="div">
@@ -66,11 +66,7 @@ export const toastExtrinsic = <
             Your transaction failed
           </Text.Body>
           <Text.Body as="div">
-            Your{' '}
-            <code>
-              {module}:{section}
-            </code>{' '}
-            transaction has failed.
+            Your <code>{`${module}:${section}`}</code> transaction has failed.
           </Text.Body>
           {chain !== undefined && error?.txHash !== undefined && (
             <Text.Body as="div">
@@ -87,5 +83,9 @@ export const toastExtrinsic = <
           )}
         </>
       ),
+    },
+    {
+      success: { duration: 6000 },
+      error: { duration: 6000 },
     }
   )

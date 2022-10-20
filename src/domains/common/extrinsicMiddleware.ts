@@ -8,7 +8,10 @@ type CallbackInterface = {
 }
 
 export type ExtrinsicMiddleware = {
-  <TModule extends keyof PickKnownKeys<ApiPromise['tx']>, TSection extends keyof ApiPromise['tx'][TModule]>(
+  <
+    TModule extends keyof PickKnownKeys<ApiPromise['tx']>,
+    TSection extends Extract<keyof ApiPromise['tx'][TModule], string>
+  >(
     module: TModule,
     section: TSection,
     result: ISubmittableResult,
