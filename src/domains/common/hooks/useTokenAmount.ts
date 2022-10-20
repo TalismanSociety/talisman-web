@@ -27,7 +27,12 @@ export const useTokenAmount = (amount?: string | (() => string), options: Option
   )
 
   const localizedFiatAmount = useMemo(
-    () => fiatAmount?.toLocaleString(undefined, { style: 'currency', currency: options.fiatCurrency ?? 'usd' }),
+    () =>
+      fiatAmount?.toLocaleString(undefined, {
+        style: 'currency',
+        currency: options.fiatCurrency ?? 'usd',
+        currencyDisplay: 'narrowSymbol',
+      }),
     [fiatAmount, options?.fiatCurrency]
   )
 

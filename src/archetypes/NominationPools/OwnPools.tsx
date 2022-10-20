@@ -85,6 +85,7 @@ const Unstakings = () => {
             ).toLocaleString(undefined, {
               style: 'currency',
               currency: 'usd',
+              currencyDisplay: 'narrowSymbol',
             })}
             timeTilWithdrawable={
               x.erasTilWithdrawable === undefined
@@ -211,11 +212,11 @@ const Stakings = () => {
             stakingAmountInFiat={(
               decimalFromAtomics.fromAtomics(pool.poolMember.unwrapOrDefault().points).toFloatApproximation() *
               nativeTokenPrice
-            ).toLocaleString(undefined, { style: 'currency', currency: 'usd' })}
+            ).toLocaleString(undefined, { style: 'currency', currency: 'usd', currencyDisplay: 'narrowSymbol' })}
             rewardsAmount={decimalFromAtomics.fromAtomics(pool.pendingRewards?.toString()).toHuman()}
             rewardsAmountInFiat={(
               decimalFromAtomics.fromAtomics(pool.pendingRewards).toFloatApproximation() * nativeTokenPrice
-            ).toLocaleString(undefined, { style: 'currency', currency: 'usd' })}
+            ).toLocaleString(undefined, { style: 'currency', currency: 'usd', currencyDisplay: 'narrowSymbol' })}
             poolName={pool.poolName ?? ''}
             onRequestClaim={() => claimPayoutExtrinsic.signAndSend(pool.account?.address ?? '')}
             claimState={
