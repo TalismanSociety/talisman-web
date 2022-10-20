@@ -81,14 +81,22 @@ const Select = Object.assign(
                 top: '95%',
                 left: 0,
                 margin: 0,
-                padding: '0 1.25rem',
+                padding: 0,
                 borderBottomLeftRadius: '0.5rem',
                 borderBottomRightRadius: '0.5rem',
                 backgroundColor: theme.color.foreground,
                 listStyle: 'none',
                 overflow: 'hidden',
                 li: {
-                  margin: '1.5rem 0',
+                  'margin': '0.5rem 0',
+                  'padding': '1rem 1.25rem',
+                  'backgroundColor': theme.color.foreground,
+                  ':hover': {
+                    filter: 'brightness(1.2)',
+                  },
+                  ':last-child': {
+                    margin: '0.5rem 0 0 0',
+                  },
                 },
               }}
             >
