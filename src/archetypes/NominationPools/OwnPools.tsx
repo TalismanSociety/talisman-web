@@ -254,8 +254,6 @@ const OwnPools = () => {
         }
       >
         <Stakings />
-      </Suspense>
-      <Suspense>
         <Unstakings />
       </Suspense>
     </div>
