@@ -259,10 +259,10 @@ const Staking = () => {
                 selectedPoolId,
               ])}
               submitState={useMemo(() => {
-                if (!isReady || inputError !== undefined) return 'disabled'
+                if (!isReady || inputError !== undefined || decimalAmount.atomics.isZero()) return 'disabled'
 
                 return joinPoolExtrinsic.state === 'loading' ? 'pending' : undefined
-              }, [inputError, isReady, joinPoolExtrinsic.state])}
+              }, [decimalAmount.atomics, inputError, isReady, joinPoolExtrinsic.state])}
             />
           </div>
           <div css={{ display: 'flex', flexDirection: 'column', gap: '1.6rem' }}>

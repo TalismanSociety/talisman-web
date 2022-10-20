@@ -55,7 +55,7 @@ const AddStakeDialog = (props: { account?: string; onDismiss: () => unknown }) =
         }
       }}
       confirmState={
-        !isReady || inputError !== undefined
+        !isReady || inputError !== undefined || decimalAmount?.atomics.isZero()
           ? 'disabled'
           : bondExtraExtrinsic.state === 'loading'
           ? 'pending'

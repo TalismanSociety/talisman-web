@@ -57,7 +57,11 @@ const UnstakeDialog = (props: { account?: string; onDismiss: () => unknown }) =>
         }
       }}
       confirmState={
-        !isReady || inputError !== undefined ? 'disabled' : unbondExtrinsic.state === 'loading' ? 'pending' : undefined
+        !isReady || inputError !== undefined || decimalAmount?.atomics.isZero()
+          ? 'disabled'
+          : unbondExtrinsic.state === 'loading'
+          ? 'pending'
+          : undefined
       }
     />
   )
