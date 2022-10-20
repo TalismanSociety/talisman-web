@@ -1,8 +1,11 @@
-import { useChainState, useTokenAmountFromAtomics, useTokenAmountState } from '@domains/common/hooks'
+import { useChainState, useTokenAmount, useTokenAmountFromAtomics, useTokenAmountState } from '@domains/common/hooks'
 import { BN } from '@polkadot/util'
-import { useMemo } from 'react'
+import usePrevious from '@util/usePrevious'
+import { useEffect, useMemo } from 'react'
 
 export const usePoolAddForm = (account?: string) => {
+  const prevAccount = usePrevious(account)
+
   const balancesLoadable = useChainState('derive', 'balances', 'all', [account!], { enabled: account !== undefined })
   const poolMembersLoadable = useChainState('query', 'nominationPools', 'poolMembers', [account!], {
     enabled: account !== undefined,
@@ -10,7 +13,17 @@ export const usePoolAddForm = (account?: string) => {
 
   const [input, setAmount] = useTokenAmountState('')
 
+  const oneToken = useTokenAmount('1')
   const freeBalance = useTokenAmountFromAtomics(balancesLoadable.valueMaybe()?.freeBalance)
+  const minAmount = useTokenAmountFromAtomics(
+    useMemo(
+      () =>
+        balancesLoadable.state !== 'hasValue' || oneToken.decimalAmount === undefined
+          ? undefined
+          : BN.min(balancesLoadable.contents.freeBalance, oneToken.decimalAmount.atomics),
+      [balancesLoadable.contents.freeBalance, balancesLoadable.state, oneToken.decimalAmount]
+    )
+  )
 
   const resulting = useTokenAmountFromAtomics(
     useMemo(
@@ -30,6 +43,21 @@ export const usePoolAddForm = (account?: string) => {
       return new Error('Insufficient balance')
     }
   }, [input.decimalAmount?.atomics, balancesLoadable.state, freeBalance.decimalAmount])
+
+  useEffect(() => {
+    if (account !== prevAccount) {
+      setAmount('')
+    }
+  }, [account, prevAccount, setAmount])
+
+  useEffect(
+    () => {
+      if ((input.amount === '' || account !== prevAccount) && minAmount.decimalAmount !== undefined) {
+        setAmount(minAmount.decimalAmount.toString())
+      }
+    }, // eslint-disable-next-line react-hooks/exhaustive-deps
+    [minAmount.decimalAmount]
+  )
 
   return {
     input,

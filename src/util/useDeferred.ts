@@ -1,16 +1,22 @@
-import { useRef } from 'react'
+import { DependencyList, useMemo } from 'react'
 
-const useDeferred = <T>() => {
-  const resolveRef = useRef<(value: T) => unknown>()
-  const rejectRef = useRef<(value: any) => unknown>()
-  const promiseRef = useRef(
-    new Promise<T>((resolve, reject) => {
-      resolveRef.current = resolve
-      rejectRef.current = reject
-    })
+const useDeferred = <T>(deps: DependencyList = []) => {
+  const resolver = useMemo<{ resolve?: (value: T) => unknown; reject?: (value: any) => unknown }>(
+    () => ({ resolve: undefined, reject: undefined }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    deps
   )
 
-  return { promise: promiseRef.current!, resolve: resolveRef.current!, reject: rejectRef.current! }
+  const promise = useMemo(
+    () =>
+      new Promise<T>((resolve, reject) => {
+        resolver.resolve = resolve
+        resolver.reject = reject
+      }),
+    [resolver]
+  )
+
+  return { promise, resolve: resolver.resolve!, reject: resolver.reject! }
 }
 
 export default useDeferred

@@ -45,7 +45,7 @@ type QueryResultMap = {
 
 export const useQueryMulti = <TQueries extends Array<Query | [Query, ...unknown[]]> | [Query | [Query, ...unknown[]]]>(
   queries: TQueries,
-  options?: { enabled: boolean }
+  options: { enabled?: boolean; keepPreviousData?: boolean } = { enabled: true, keepPreviousData: false }
 ) => {
   type TResult = {
     [P in keyof typeof queries]: typeof queries[P] extends [infer Head, ...any[]]
@@ -59,9 +59,15 @@ export const useQueryMulti = <TQueries extends Array<Query | [Query, ...unknown[
 
   const api = useRecoilValue(apiState)
 
-  const { promise, resolve, reject } = useDeferred<TResult>()
+  const { promise, resolve, reject } = useDeferred<TResult>(
+    options.keepPreviousData ? undefined : [JSON.stringify(queries)]
+  )
 
   const [loadable, setLoadable] = useState<Loadable<TResult>>(RecoilLoadable.of(promise))
+
+  useEffect(() => {
+    setLoadable(RecoilLoadable.of(promise))
+  }, [promise])
 
   useEffect(
     () => {
@@ -76,13 +82,13 @@ export const useQueryMulti = <TQueries extends Array<Query | [Query, ...unknown[
       const params = queries.map(x => {
         if (typeof x === 'string') {
           const [module, section] = x.split('.')
-          return api.query[module][section]
+          return api.query[module!]?.[section!]
         }
 
         const [query, ...params] = x
         const [module, section] = query.split('.')
 
-        return [api.query[module][section], ...params]
+        return [api.query[module!]?.[section!], ...params]
       })
 
       // @ts-ignore

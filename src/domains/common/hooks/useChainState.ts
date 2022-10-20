@@ -36,7 +36,7 @@ export const useChainState = <
       ? A[]
       : Array<Readonly<Leading<Parameters<TMethod>>>>
     : never,
-  options?: { enabled: boolean }
+  options: { enabled?: boolean; keepPreviousData?: boolean } = { enabled: true, keepPreviousData: false }
 ) => {
   type TResult = TMethod extends PromiseResult<(...args: any) => Observable<infer TResult>>
     ? TAugmentedSection extends TSection
@@ -46,9 +46,15 @@ export const useChainState = <
 
   const api = useRecoilValue(apiState)
 
-  const { promise, resolve, reject } = useDeferred<TResult>()
+  const { promise, resolve, reject } = useDeferred<TResult>(
+    options.keepPreviousData ? undefined : [typeName, moduleName, sectionName, JSON.stringify(params)]
+  )
 
   const [loadable, setLoadable] = useState<Loadable<TResult>>(RecoilLoadable.of(promise))
+
+  useEffect(() => {
+    setLoadable(RecoilLoadable.of(promise))
+  }, [promise])
 
   useEffect(
     () => {
