@@ -38,29 +38,29 @@ const Loader = () => {
 
 const App: React.FC = () => (
   <RecoilRoot>
-    <Suspense fallback={<Loader />}>
-      <Portfolio.Provider>
-        <Tokenprices.Provider>
-          <TalismanProvider>
-            <AccountsWatcher />
-            <Crowdloans.Provider>
-              <MoonbeamContributors.Provider>
-                <Router>
-                  <ThemeProvider>
+    <Portfolio.Provider>
+      <Tokenprices.Provider>
+        <TalismanProvider>
+          <AccountsWatcher />
+          <Crowdloans.Provider>
+            <MoonbeamContributors.Provider>
+              <Router>
+                <ThemeProvider>
+                  <Suspense fallback={<Loader />}>
                     <ModalProvider>
                       <MoonbeamContributors.PopupProvider>
                         <Routes />
                       </MoonbeamContributors.PopupProvider>
                     </ModalProvider>
                     <Toaster>{t => <ToastBar toast={t} />}</Toaster>
-                  </ThemeProvider>
-                </Router>
-              </MoonbeamContributors.Provider>
-            </Crowdloans.Provider>
-          </TalismanProvider>
-        </Tokenprices.Provider>
-      </Portfolio.Provider>
-    </Suspense>
+                  </Suspense>
+                </ThemeProvider>
+              </Router>
+            </MoonbeamContributors.Provider>
+          </Crowdloans.Provider>
+        </TalismanProvider>
+      </Tokenprices.Provider>
+    </Portfolio.Provider>
   </RecoilRoot>
 )
 
