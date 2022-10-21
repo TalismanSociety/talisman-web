@@ -70,7 +70,10 @@ const StakingInput = (props: StakingInputProps) => {
           <Text.Body as="p">Select a different account to continue staking.</Text.Body>
           <Text.Body as="p">
             If you want to add more or unstake with this account, you can do this from the{' '}
-            <Link to={props.portfolioHref}>Portfolio</Link> page.
+            <Link to={props.portfolioHref}>
+              <Text alpha="high">Portfolio page</Text>
+            </Link>
+            .
           </Text.Body>
         </>
       ) : (

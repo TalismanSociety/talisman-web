@@ -163,12 +163,6 @@ export const globalStyle = (theme: Theme) => css`
     &.-muted {
       opacity: 0.7;
     }
-
-    a {
-      line-height: inherit;
-      opacity: 0.6;
-      color: rgb(${theme?.primary});
-    }
   }
 
   h1 {
