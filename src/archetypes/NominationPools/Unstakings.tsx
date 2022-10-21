@@ -113,7 +113,13 @@ const Unstakings = () => {
               const priorLength = slashingSpans.valueMaybe()?.[index]?.unwrapOr(undefined)?.prior.length
               withdrawExtrinsic.signAndSend(x.address, x.address, priorLength === undefined ? 0 : priorLength + 1)
             }}
-            withdrawState={withdrawExtrinsic.state === 'loading' ? 'pending' : undefined}
+            withdrawState={
+              withdrawExtrinsic.state === 'loading'
+                ? withdrawExtrinsic.parameters?.[0] === x.address
+                  ? 'pending'
+                  : 'disabled'
+                : undefined
+            }
           />
         ))}
       </PoolUnstakeList>

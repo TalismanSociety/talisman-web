@@ -27,11 +27,15 @@ export const useExtrinsic = <
     | { state: 'hasError'; contents: any }
   >({ state: 'idle', contents: undefined })
 
+  const [parameters, setParameters] = useState<Parameters<TExtrinsic>>()
+
   const reset = useCallback(() => setLoadable({ state: 'idle', contents: undefined }), [])
 
   const signAndSend = useRecoilCallback(
     ({ snapshot, refresh }) =>
       async (account: AddressOrPair, ...params: Parameters<TExtrinsic>) => {
+        setParameters(params)
+
         const promiseFunc = async () => {
           const api = await snapshot.getPromise(apiState)
           const extension = await snapshot.getPromise(extensionState)
@@ -94,7 +98,7 @@ export const useExtrinsic = <
     [chainLoadable, module, section]
   )
 
-  return { ...loadable, signAndSend, reset }
+  return { ...loadable, parameters, signAndSend, reset }
 }
 
 export default useExtrinsic
