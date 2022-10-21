@@ -27,7 +27,7 @@ export const chainsState = selector({
     const response = await request<{ chains: Chain[] }>(
       'https://app.gc.subsquid.io/beta/chaindata/v3/graphql',
       gql`
-        query getChains($ids: [ID!]!) {
+        query getChains($ids: [String!]!) {
           chains(where: { id_in: $ids }) {
             id
             isTestnet
