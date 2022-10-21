@@ -91,7 +91,7 @@ export const useExtrinsic = <
           setLoadable({ state: 'hasError', contents: error })
         }
       },
-    []
+    [chainLoadable, module, section]
   )
 
   return { ...loadable, signAndSend, reset }

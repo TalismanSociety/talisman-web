@@ -1,9 +1,13 @@
+import { apiState } from '@domains/chains/recoils'
 import { useChainState, useTokenAmount, useTokenAmountFromAtomics, useTokenAmountState } from '@domains/common/hooks'
 import { BN } from '@polkadot/util'
 import usePrevious from '@util/usePrevious'
 import { useEffect, useMemo } from 'react'
+import { useRecoilValue } from 'recoil'
 
 export const usePoolAddForm = (account?: string) => {
+  const api = useRecoilValue(apiState)
+
   const prevAccount = usePrevious(account)
 
   const balancesLoadable = useChainState('derive', 'balances', 'all', [account!], { enabled: account !== undefined })
@@ -14,14 +18,16 @@ export const usePoolAddForm = (account?: string) => {
   const [input, setAmount] = useTokenAmountState('')
 
   const oneToken = useTokenAmount('1')
-  const freeBalance = useTokenAmountFromAtomics(balancesLoadable.valueMaybe()?.freeBalance)
+  const freeBalance = useTokenAmountFromAtomics(
+    balancesLoadable.valueMaybe()?.freeBalance.sub(api.consts.balances.existentialDeposit)
+  )
   const minAmount = useTokenAmountFromAtomics(
     useMemo(
       () =>
-        balancesLoadable.state !== 'hasValue' || oneToken.decimalAmount === undefined
+        freeBalance.decimalAmount === undefined || oneToken.decimalAmount === undefined
           ? undefined
-          : BN.min(balancesLoadable.contents.freeBalance, oneToken.decimalAmount.atomics),
-      [balancesLoadable.contents.freeBalance, balancesLoadable.state, oneToken.decimalAmount]
+          : BN.min(freeBalance.decimalAmount.atomics, oneToken.decimalAmount.atomics),
+      [freeBalance, oneToken.decimalAmount]
     )
   )
 
