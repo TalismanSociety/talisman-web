@@ -32,7 +32,7 @@ type QueryParamsMap = {
     : never
 }
 
-type QueryResultMap = {
+type SingleQueryResultMap = {
   [P in Query]: P extends `${infer TModule}.${infer TSection}`
     ? Diverge<
         ApiPromise['query'][TModule][TSection],
@@ -43,7 +43,26 @@ type QueryResultMap = {
     : never
 }
 
-export const useQueryMulti = <TQueries extends Array<Query | [Query, ...unknown[]]> | [Query | [Query, ...unknown[]]]>(
+type MultiQueryResultMap = {
+  [P in Query as `${P}.multi`]: P extends `${infer TModule}.${infer TSection}`
+    ? Diverge<
+        ApiPromise['query'][TModule][TSection],
+        StorageEntryPromiseOverloads & QueryableStorageEntry<any, any>
+      > extends PromiseResult<(...args: any) => Observable<infer TResult>>
+      ? TResult[]
+      : any
+    : never
+}
+
+type QueryResultMap = SingleQueryResultMap & MultiQueryResultMap
+
+type MultiPossibleQuery = keyof QueryResultMap
+
+export const useQueryMulti = <
+  TQueries extends
+    | Array<MultiPossibleQuery | [MultiPossibleQuery, ...unknown[]]>
+    | [MultiPossibleQuery | [MultiPossibleQuery, ...unknown[]]]
+>(
   queries: TQueries,
   options: { enabled?: boolean; keepPreviousData?: boolean } = { enabled: true, keepPreviousData: false }
 ) => {
