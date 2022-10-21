@@ -78,6 +78,7 @@ const StakingInput = (props: StakingInputProps) => {
           <TextInput
             type="number"
             min={0}
+            step="any"
             isError={props.isError}
             placeholder="0 DOT"
             leadingLabel="Available to stake"
