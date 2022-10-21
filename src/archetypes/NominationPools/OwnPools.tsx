@@ -5,6 +5,7 @@ import PoolStake, { PoolStakeList } from '@components/recipes/PoolStake/PoolStak
 import PoolUnstake, { PoolUnstakeList } from '@components/recipes/PoolUnstake'
 import { selectedPolkadotAccountsState } from '@domains/accounts/recoils'
 import { createAccounts } from '@domains/nominationPools/utils'
+import { BN } from '@polkadot/util'
 import { addMilliseconds, formatDistanceToNow } from 'date-fns'
 import { Suspense, useCallback, useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
@@ -40,29 +41,40 @@ const Unstakings = () => {
     poolMembersLoadable.valueMaybe()?.map(x => createAccounts(api, x.unwrapOrDefault().poolId).stashId) ?? []
   )
 
-  const unstakings = useMemo(
-    () =>
-      sessionProgressLoadable.state !== 'hasValue' || poolMembersLoadable.state !== 'hasValue'
-        ? undefined
-        : poolMembersLoadable.contents.flatMap((pool, index) =>
-            Array.from(pool.unwrapOrDefault().unbondingEras.entries(), ([era, amount]) => ({
-              address: accounts[index]?.address ?? '',
-              pool: pool.unwrapOrDefault(),
-              era,
-              amount,
-              erasTilWithdrawable: era.lte(sessionProgressLoadable.contents.activeEra)
-                ? undefined
-                : era.sub(sessionProgressLoadable.contents.activeEra),
-            }))
-          ),
-    [
-      sessionProgressLoadable.state,
-      sessionProgressLoadable.contents.activeEra,
-      poolMembersLoadable.state,
-      poolMembersLoadable.contents,
-      accounts,
-    ]
-  )
+  const unstakings = useMemo(() => {
+    if (sessionProgressLoadable.state !== 'hasValue' || poolMembersLoadable.state !== 'hasValue') {
+      return undefined
+    }
+
+    return poolMembersLoadable.contents.flatMap((pool, index) => {
+      const address = accounts[index]?.address
+
+      const all = Array.from(pool.unwrapOrDefault().unbondingEras.entries(), ([era, amount]) => ({
+        address: address,
+        pool: pool.unwrapOrDefault(),
+        amount,
+        erasTilWithdrawable: era.lte(sessionProgressLoadable.contents.activeEra)
+          ? undefined
+          : era.sub(sessionProgressLoadable.contents.activeEra),
+      }))
+
+      const withdrawables = all.filter(x => x.erasTilWithdrawable === undefined)
+      const pendings = all.filter(x => x.erasTilWithdrawable !== undefined)
+
+      if (withdrawables.length === 0) return pendings
+
+      return [
+        { ...withdrawables[0], amount: withdrawables.reduce((prev, curr) => prev.add(curr.amount), new BN(0)) },
+        ...pendings,
+      ]
+    })
+  }, [
+    sessionProgressLoadable.state,
+    sessionProgressLoadable.contents.activeEra,
+    poolMembersLoadable.state,
+    poolMembersLoadable.contents,
+    accounts,
+  ])
 
   if (sessionProgressLoadable.state !== 'hasValue') return null
 
@@ -78,7 +90,7 @@ const Unstakings = () => {
           <PoolUnstake
             key={index}
             accountName={accounts.find(({ address }) => address === x.address)?.name ?? ''}
-            accountAddress={x.address}
+            accountAddress={x.address ?? ''}
             unstakingAmount={decimalFromAtomics.fromAtomics(x.amount).toHuman()}
             unstakingFiatAmount={(
               decimalFromAtomics.fromAtomics(x.amount).toFloatApproximation() * nativeTokenPrice

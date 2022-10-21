@@ -11,7 +11,7 @@ import { toastExtrinsic } from '../utils'
 
 export const useExtrinsic = <
   TModule extends keyof PickKnownKeys<ApiPromise['tx']>,
-  TSection extends keyof ApiPromise['tx'][TModule]
+  TSection extends Extract<keyof ApiPromise['tx'][TModule], string>
 >(
   module: TModule,
   section: TSection
@@ -81,7 +81,7 @@ export const useExtrinsic = <
           contents: loadable.state === 'loading' ? loadable.contents : undefined,
         }))
 
-        toastExtrinsic(module, section as string, promise, chainLoadable)
+        toastExtrinsic(module, section, promise, chainLoadable)
 
         try {
           const result = await promise
