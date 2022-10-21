@@ -156,7 +156,7 @@ const Stakings = () => {
                 pendingRewards: pendingRewards.find(rewards => rewards[0] === accounts[index]?.address)?.[1],
               }
             })
-            .filter(x => x.poolMember.isSome),
+            .filter(x => x.poolMember.isSome && !x.poolMember.unwrapOrDefault().points.isZero()),
     [poolMembersLoadable.state, poolMembersLoadable.contents, accounts, poolMetadatumLoadable, pendingRewards]
   )
 
