@@ -2,7 +2,7 @@ import Details from '@components/molecules/Details'
 import InfoCard from '@components/molecules/InfoCard'
 import PoolSelectorDialog from '@components/recipes/PoolSelectorDialog'
 import StakingInput from '@components/recipes/StakingInput'
-import { accountsState } from '@domains/accounts/recoils'
+import { accountsState, polkadotAccountsState } from '@domains/accounts/recoils'
 import { apiState, nativeTokenDecimalState } from '@domains/chains/recoils'
 import { useTokenAmountFromAtomics } from '@domains/common/hooks'
 import useChainState from '@domains/common/hooks/useChainState'
@@ -10,10 +10,10 @@ import useExtrinsic from '@domains/common/hooks/useExtrinsic'
 import { usePoolAddForm } from '@domains/nominationPools/hooks'
 import { BN } from '@polkadot/util'
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { selector, useRecoilValue, waitForAll } from 'recoil'
+import { selector, useRecoilValue, useRecoilValueLoadable, waitForAll } from 'recoil'
 
 export const recommendedPoolsState = selector({
-  key: 'BondedPools',
+  key: 'Staking/BondedPools',
   get: async ({ get }) => {
     const api = get(apiState)
 
@@ -28,6 +28,21 @@ export const recommendedPoolsState = selector({
     const names = await api.query.nominationPools.metadata.multi(bondedPools.map(({ poolId }) => poolId))
 
     return bondedPools.map((x, index) => ({ ...x, name: names[index]?.toUtf8() }))
+  },
+})
+
+const availableToStakeState = selector({
+  key: 'Staking/AvailableToStake',
+  get: async ({ get }) => {
+    const api = get(apiState)
+    const accounts = get(polkadotAccountsState)
+
+    const balances = await Promise.all(accounts.map(({ address }) => api.derive.balances.all(address)))
+
+    return balances.reduce(
+      (prev, curr) => curr.freeBalance.sub(api.consts.balances.existentialDeposit).add(prev),
+      new BN(0)
+    )
   },
 })
 
@@ -100,6 +115,8 @@ const Staking = () => {
       enabled: selectedAccount?.address !== undefined,
     }
   )
+
+  const availableToStake = useTokenAmountFromAtomics(useRecoilValueLoadable(availableToStakeState).valueMaybe())
 
   const totalStaked = useTokenAmountFromAtomics(
     useMemo(
@@ -186,7 +203,11 @@ const Staking = () => {
             },
           }}
         >
-          <InfoCard headlineText="Available to stake" text="1450.22 DOT" supportingText="$9,030.00" />
+          <InfoCard
+            headlineText="Available to stake"
+            text={availableToStake.decimalAmount?.toHuman() ?? '...'}
+            supportingText={availableToStake.localizedFiatAmount ?? '...'}
+          />
           <InfoCard
             headlineText="Staking"
             text={totalStaked.decimalAmount?.toHuman() ?? '...'}
@@ -262,7 +283,7 @@ const Staking = () => {
                 if (!isReady || inputError !== undefined || decimalAmount.atomics.isZero()) return 'disabled'
 
                 return joinPoolExtrinsic.state === 'loading' ? 'pending' : undefined
-              }, [decimalAmount.atomics, inputError, isReady, joinPoolExtrinsic.state])}
+              }, [decimalAmount?.atomics, inputError, isReady, joinPoolExtrinsic.state])}
             />
           </div>
           <div css={{ display: 'flex', flexDirection: 'column', gap: '1.6rem' }}>
