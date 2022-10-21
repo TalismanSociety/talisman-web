@@ -75,7 +75,7 @@ const Stakings = () => {
       <header>
         <Text.H4>Staking</Text.H4>
       </header>
-      {pools?.length === 0 && (
+      {poolMembersLoadable.valueMaybe()?.every(pool => pool.isNone) && pools?.length === 0 && (
         <HiddenDetails
           hidden
           overlay={
