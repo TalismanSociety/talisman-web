@@ -35,7 +35,7 @@ const Routes = () => (
         return null
       }}
     />
-    <Route exact path="/transaction-history">
+    <Route exact path="/history">
       <Layout>
         <TransactionHistory />
       </Layout>

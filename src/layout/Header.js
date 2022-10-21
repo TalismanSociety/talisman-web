@@ -44,7 +44,7 @@ const mainRoutes = [
     icon: <CrowdloansLogo alt="Spiritkeys" />,
   },
   { name: 'NFTs', url: '/nfts', icon: <PortfolioLogo alt="NFTs" /> },
-  { name: 'Transaction History', url: '/transaction-history', icon: <PortfolioLogo alt="NFTs" /> },
+  { name: 'Transaction History', url: '/history', icon: <PortfolioLogo alt="NFTs" /> },
 ]
 
 const subRoutes = [
@@ -110,7 +110,7 @@ const Header = styled(({ className, isMobile, mobileMenuOpen, dispatch }) => {
           </NavLink>
           <NavLink to="/nfts">{t('NFTs')}</NavLink>
           <NavLink to="/explore">{t('Explore')}</NavLink>
-          {/* <NavLink to="/transaction-history">{t('Transaction History')}</NavLink> */}
+          {/* <NavLink to="/history">{t('Transaction History')}</NavLink> */}
         </nav>
       )}
 
