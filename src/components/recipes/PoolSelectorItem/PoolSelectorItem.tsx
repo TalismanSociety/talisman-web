@@ -25,7 +25,7 @@ const PoolSelectorItem = (props: PoolSelectorItemProps) => {
       css={{
         'padding': '0.8rem 1.6rem',
         'borderRadius': '0.8rem',
-        'backgroundColor': theme.color.surface,
+        'backgroundColor': theme.color.foreground,
         'cursor': 'pointer',
         ':hover': {
           filter: 'brightness(1.2)',

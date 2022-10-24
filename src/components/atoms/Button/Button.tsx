@@ -54,6 +54,19 @@ const Button = <T extends ButtonElementType>({ as = 'button' as T, variant, ...p
     }
   }, [theme.color.background, theme.color.onBackground, theme.color.onPrimary, theme.color.primary, variant])
 
+  const variantDisabledStyle = useMemo(() => {
+    switch (variant) {
+      case undefined:
+        return {
+          backgroundColor: theme.color.foreground,
+          color: `rgba(255,255,255,${theme.contentAlpha.disabled})`,
+          cursor: 'not-allowed',
+        }
+      default:
+        return { filter: 'grayscale(1) brightness(0.5)', cursor: 'not-allowed' }
+    }
+  }, [theme.color.foreground, theme.contentAlpha.disabled, variant])
+
   const Component = as
 
   return (
@@ -72,7 +85,7 @@ const Button = <T extends ButtonElementType>({ as = 'button' as T, variant, ...p
           ...(disabled ? { ':hover': undefined } : {}),
         },
         props.loading && { cursor: 'wait' },
-        props.disabled && { filter: 'grayscale(1) brightness(0.5)', cursor: 'not-allowed' },
+        props.disabled && variantDisabledStyle,
       ]}
     >
       <span css={{ position: 'relative' }}>

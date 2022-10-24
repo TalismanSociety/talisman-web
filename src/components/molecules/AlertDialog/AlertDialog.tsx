@@ -41,7 +41,7 @@ const AlertDialog = (props: AlertDialogProps) => {
       css={{
         'maxWidth': '46rem',
         'padding': '2.4rem',
-        'background': theme.color.background,
+        'background': theme.color.surface,
         'border': 'none',
         'borderRadius': '1.6rem',
         '&[open]': {
