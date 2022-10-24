@@ -52,6 +52,7 @@ const Details = (props: DetailsProps) => {
       <motion.div
         variants={{ true: { opacity: 1, height: 'auto' }, false: { opacity: 0, height: 0 } }}
         animate={JSON.stringify(open)}
+        initial={JSON.stringify(false)}
         css={{ overflow: 'hidden' }}
       >
         <Text.Body as="div" css={{ marginTop: '2.2rem' }}>
