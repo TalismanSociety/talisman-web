@@ -3,7 +3,9 @@ import Text from '@components/atoms/Text'
 import HiddenDetails from '@components/molecules/HiddenDetails'
 import PoolStake, { PoolStakeList } from '@components/recipes/PoolStake/PoolStake'
 import { selectedPolkadotAccountsState } from '@domains/accounts/recoils'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { Option, UInt } from '@polkadot/types-codec'
+import { PalletNominationPoolsPoolMember } from '@polkadot/types/lookup'
+import { useCallback, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useRecoilValue, waitForAll } from 'recoil'
 
@@ -14,17 +16,69 @@ import { allPendingPoolRewardsState } from '../../domains/nominationPools/recoil
 import AddStakeDialog from './AddStakeDialog'
 import UnstakeDialog from './UnstakeDialog'
 
-const Stakings = () => {
-  const claimPayoutExtrinsic = useExtrinsic('nominationPools', 'claimPayout')
-  const unbondExtrinsic = useExtrinsic('nominationPools', 'unbond')
+const PoolStakeItem = ({
+  item,
+}: {
+  item: {
+    account?: {
+      address: string
+      name?: string
+    }
+    poolName?: string
+    poolMember: Option<PalletNominationPoolsPoolMember>
+    pendingRewards?: UInt
+  }
+}) => {
+  const [decimalFromAtomics, nativeTokenPrice] = useRecoilValue(
+    waitForAll([nativeTokenDecimalState, nativeTokenPriceState('usd')])
+  )
 
-  const [pendingRewards, accounts, decimalFromAtomics, nativeTokenPrice] = useRecoilValue(
-    waitForAll([
-      allPendingPoolRewardsState,
-      selectedPolkadotAccountsState,
-      nativeTokenDecimalState,
-      nativeTokenPriceState('usd'),
-    ])
+  const claimPayoutExtrinsic = useExtrinsic('nominationPools', 'claimPayout')
+
+  const [isUnstaking, setIsUnstaking] = useState(false)
+  const [isAddingStake, setIsAddingStake] = useState(false)
+
+  return (
+    <>
+      <PoolStake
+        accountName={item.account?.name ?? ''}
+        accountAddress={item.account?.address ?? ''}
+        stakingAmount={decimalFromAtomics.fromAtomics(item.poolMember.unwrapOrDefault().points).toHuman()}
+        stakingAmountInFiat={(
+          decimalFromAtomics.fromAtomics(item.poolMember.unwrapOrDefault().points).toFloatApproximation() *
+          nativeTokenPrice
+        ).toLocaleString(undefined, { style: 'currency', currency: 'usd', currencyDisplay: 'narrowSymbol' })}
+        rewardsAmount={decimalFromAtomics.fromAtomics(item.pendingRewards?.toString()).toHuman()}
+        rewardsAmountInFiat={(
+          decimalFromAtomics.fromAtomics(item.pendingRewards).toFloatApproximation() * nativeTokenPrice
+        ).toLocaleString(undefined, { style: 'currency', currency: 'usd', currencyDisplay: 'narrowSymbol' })}
+        poolName={item.poolName ?? ''}
+        onRequestClaim={() => claimPayoutExtrinsic.signAndSend(item.account?.address ?? '')}
+        claimState={
+          item.pendingRewards?.isZero() ?? true
+            ? 'unavailable'
+            : claimPayoutExtrinsic.state === 'loading'
+            ? 'pending'
+            : undefined
+        }
+        onRequestUnstake={() => setIsUnstaking(true)}
+        onRequestAdd={() => setIsAddingStake(true)}
+      />
+      <AddStakeDialog
+        account={isAddingStake ? item.account?.address : undefined}
+        onDismiss={useCallback(() => setIsAddingStake(false), [])}
+      />
+      <UnstakeDialog
+        account={isUnstaking ? item.account?.address : undefined}
+        onDismiss={useCallback(() => setIsUnstaking(false), [])}
+      />
+    </>
+  )
+}
+
+const Stakings = () => {
+  const [pendingRewards, accounts] = useRecoilValue(
+    waitForAll([allPendingPoolRewardsState, selectedPolkadotAccountsState])
   )
 
   const poolMembersLoadable = useChainState(
@@ -62,12 +116,6 @@ const Stakings = () => {
   const [unstakeAccount, setUnstakeAccount] = useState<string>()
   const [addStakeAccount, setAddStakeAccount] = useState<string>()
 
-  useEffect(() => {
-    if (unbondExtrinsic.state === 'loading' && unbondExtrinsic.contents?.status.isBroadcast) {
-      setUnstakeAccount(undefined)
-    }
-  }, [unbondExtrinsic.contents?.status?.isBroadcast, unbondExtrinsic.state])
-
   return (
     <div>
       <AddStakeDialog account={addStakeAccount} onDismiss={useCallback(() => setAddStakeAccount(undefined), [])} />
@@ -104,39 +152,7 @@ const Stakings = () => {
       )}
       <PoolStakeList>
         {pools?.map(pool => (
-          <PoolStake
-            accountName={pool.account?.name ?? ''}
-            accountAddress={pool.account?.address ?? ''}
-            stakingAmount={decimalFromAtomics.fromAtomics(pool.poolMember.unwrapOrDefault().points).toHuman()}
-            stakingAmountInFiat={(
-              decimalFromAtomics.fromAtomics(pool.poolMember.unwrapOrDefault().points).toFloatApproximation() *
-              nativeTokenPrice
-            ).toLocaleString(undefined, { style: 'currency', currency: 'usd', currencyDisplay: 'narrowSymbol' })}
-            rewardsAmount={decimalFromAtomics.fromAtomics(pool.pendingRewards?.toString()).toHuman()}
-            rewardsAmountInFiat={(
-              decimalFromAtomics.fromAtomics(pool.pendingRewards).toFloatApproximation() * nativeTokenPrice
-            ).toLocaleString(undefined, { style: 'currency', currency: 'usd', currencyDisplay: 'narrowSymbol' })}
-            poolName={pool.poolName ?? ''}
-            onRequestClaim={() => claimPayoutExtrinsic.signAndSend(pool.account?.address ?? '')}
-            claimState={
-              pool.pendingRewards?.isZero() ?? true
-                ? 'unavailable'
-                : claimPayoutExtrinsic.state === 'loading'
-                ? claimPayoutExtrinsic.parameters?.[0] === pool.account?.address
-                  ? 'pending'
-                  : 'disabled'
-                : undefined
-            }
-            onRequestUnstake={() => setUnstakeAccount(pool.account?.address)}
-            unstakeState={
-              pool.poolMember.unwrapOrDefault().points.isZero()
-                ? 'unavailable'
-                : unbondExtrinsic.state === 'loading'
-                ? 'pending'
-                : undefined
-            }
-            onRequestAdd={() => setAddStakeAccount(pool.account?.address)}
-          />
+          <PoolStakeItem item={pool} />
         ))}
       </PoolStakeList>
     </div>

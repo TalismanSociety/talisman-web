@@ -20,12 +20,6 @@ const UnstakeDialog = (props: { account?: string; onDismiss: () => unknown }) =>
   } = usePoolUnstakeForm(props.account)
 
   useEffect(() => {
-    if (props.account === undefined) {
-      setAmount('')
-    }
-  }, [props.account, setAmount])
-
-  useEffect(() => {
     if (unbondExtrinsic.state === 'loading' && unbondExtrinsic.contents?.status.isInBlock) {
       props.onDismiss()
     }

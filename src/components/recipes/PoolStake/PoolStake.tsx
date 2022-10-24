@@ -207,9 +207,9 @@ export const PoolStakeList = (props: PoolStakeListProps) => {
           'background': theme.color.surface,
           'borderRadius': '1.6rem',
           'li + li': { marginTop: 0, borderTop: 'solid 1px #383838' },
-          '> li:not(:first-child):not(:last-child) > *': { borderRadius: 0 },
-          '> li:first-child:not(:last-child) > *': { borderEndStartRadius: 0, borderEndEndRadius: 0 },
-          '> li:last-child:not(:first-child) > *': { borderStartStartRadius: 0, borderStartEndRadius: 0 },
+          '> li:not(:first-child):not(:last-child) > article': { borderRadius: 0 },
+          '> li:first-child:not(:last-child) > article': { borderEndStartRadius: 0, borderEndEndRadius: 0 },
+          '> li:last-child:not(:first-child) > article': { borderStartStartRadius: 0, borderStartEndRadius: 0 },
         },
       }}
     >
