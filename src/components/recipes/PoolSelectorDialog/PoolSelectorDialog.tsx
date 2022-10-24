@@ -14,9 +14,10 @@ export type PoolSelectorDialogProps = {
 
 const PoolSelectorDialog = Object.assign(
   (props: PoolSelectorDialogProps) => {
-    const selectedItem = React.Children.toArray(props.children) as ReactElement<PoolSelectorItemProps>[]
-    const selectedItems = selectedItem.filter(item => item.props.selected)
-    const nonSelectedItems = selectedItem.filter(item => !item.props.selected)
+    const items = React.Children.toArray(props.children) as ReactElement<PoolSelectorItemProps>[]
+    const selectedItems = items.filter(item => item.props.selected)
+    const nonSelectedItems = items.filter(item => !item.props.selected)
+    const highlightedItems = items.filter(item => item.props.highlighted)
 
     return (
       <AlertDialog
@@ -61,7 +62,11 @@ const PoolSelectorDialog = Object.assign(
             Cancel
           </Button>
         }
-        confirmButton={<Button onClick={props.onConfirm}>Swap pool</Button>}
+        confirmButton={
+          <Button onClick={props.onConfirm} disabled={highlightedItems.length === 0}>
+            Swap pool
+          </Button>
+        }
         onRequestDismiss={props.onRequestDismiss}
         css={{ maxWidth: '83rem', padding: '3.2rem' }}
       />
