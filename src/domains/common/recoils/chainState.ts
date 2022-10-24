@@ -1,7 +1,8 @@
 import { apiState } from '@domains/chains/recoils'
+import { extensionState } from '@domains/extension/recoils'
 import { ApiPromise } from '@polkadot/api'
 import { AugmentedCall } from '@polkadot/api/types'
-import { selectorFamily } from 'recoil'
+import { selectorFamily, waitForAll } from 'recoil'
 import type { Observable } from 'rxjs'
 
 /**
@@ -28,5 +29,20 @@ export const chainState = selectorFamily({
       const api = get(apiState)
 
       return api[type]?.[module]?.[section]?.(...params) as Promise<TResult>
+    },
+})
+
+export const paymentInfoState = selectorFamily({
+  key: 'PaymentInfo',
+  get:
+    <
+      TModule extends keyof PickKnownKeys<ApiPromise['tx']>,
+      TSection extends keyof PickKnownKeys<ApiPromise['tx'][TModule]>,
+      TParams extends Parameters<ApiPromise['tx'][TModule][TSection]>
+    >([module, section, account, ...params]: [TModule, TSection, string, ...TParams]) =>
+    ({ get }) => {
+      const [api, extension] = get(waitForAll([apiState, extensionState]))
+
+      return api.tx[module]?.[section]?.(...params).paymentInfo(account, { signer: extension?.signer })
     },
 })

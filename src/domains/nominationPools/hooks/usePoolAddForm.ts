@@ -1,9 +1,12 @@
 import { apiState } from '@domains/chains/recoils'
 import { useChainState, useTokenAmount, useTokenAmountFromAtomics, useTokenAmountState } from '@domains/common/hooks'
+import { paymentInfoState } from '@domains/common/recoils'
 import { BN } from '@polkadot/util'
 import usePrevious from '@util/usePrevious'
 import { useEffect, useMemo } from 'react'
-import { useRecoilValue } from 'recoil'
+import { constSelector, useRecoilValue, useRecoilValueLoadable } from 'recoil'
+
+const ESTIMATED_FEE_MARGIN_OF_ERROR = 0.25
 
 export const usePoolAddForm = (account?: string) => {
   const api = useRecoilValue(apiState)
@@ -15,12 +18,38 @@ export const usePoolAddForm = (account?: string) => {
     enabled: account !== undefined,
   })
 
+  // TODO: using estimated fee for adding to existing pool for now
+  const paymentInfoLoadable = useRecoilValueLoadable(
+    account === undefined || balancesLoadable.state !== 'hasValue'
+      ? constSelector(undefined)
+      : paymentInfoState([
+          'nominationPools',
+          'bondExtra',
+          account,
+          { FreeBalance: balancesLoadable.contents.freeBalance },
+        ])
+  )
+
   const [input, setAmount] = useTokenAmountState('')
 
   const oneToken = useTokenAmount('1')
   const freeBalance = useTokenAmountFromAtomics(
-    balancesLoadable.valueMaybe()?.freeBalance.sub(api.consts.balances.existentialDeposit)
+    paymentInfoLoadable.state !== 'hasValue' || paymentInfoLoadable.contents === undefined
+      ? undefined
+      : balancesLoadable
+          .valueMaybe()
+          ?.freeBalance.lt(
+            api.consts.balances.existentialDeposit.add(
+              paymentInfoLoadable.contents.partialFee.muln(1 + ESTIMATED_FEE_MARGIN_OF_ERROR)
+            )
+          )
+      ? new BN(0)
+      : balancesLoadable
+          .valueMaybe()
+          ?.freeBalance.sub(api.consts.balances.existentialDeposit)
+          .sub(paymentInfoLoadable.contents.partialFee.muln(1 + ESTIMATED_FEE_MARGIN_OF_ERROR))
   )
+
   const minAmount = useTokenAmountFromAtomics(
     useMemo(
       () =>

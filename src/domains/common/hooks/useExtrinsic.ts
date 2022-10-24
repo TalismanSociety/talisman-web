@@ -1,8 +1,8 @@
 import { ApiPromise } from '@polkadot/api'
-import { AddressOrPair } from '@polkadot/api/types'
+import { AddressOrPair, SubmittableExtrinsic } from '@polkadot/api/types'
 import { ISubmittableResult } from '@polkadot/types/types'
-import { useCallback, useState } from 'react'
-import { useRecoilCallback, useRecoilValueLoadable } from 'recoil'
+import { useCallback, useMemo, useState } from 'react'
+import { RecoilLoadable, useRecoilCallback, useRecoilValue, useRecoilValueLoadable, waitForAll } from 'recoil'
 
 import { apiState, currentChainState } from '../../chains/recoils'
 import { extensionState } from '../../extension/recoils'
@@ -11,7 +11,7 @@ import { toastExtrinsic } from '../utils'
 
 export const useExtrinsic = <
   TModule extends keyof PickKnownKeys<ApiPromise['tx']>,
-  TSection extends Extract<keyof ApiPromise['tx'][TModule], string>
+  TSection extends keyof PickKnownKeys<ApiPromise['tx'][TModule]>
 >(
   module: TModule,
   section: TSection
@@ -48,29 +48,31 @@ export const useExtrinsic = <
             reject = _reject
           })
 
-          const func = api.tx[module]?.[section]?.bind(api.tx[module])
-
           try {
-            const unsubscribe = await func?.(...params).signAndSend(account, { signer: extension?.signer }, result => {
-              extrinsicMiddleWare(module, section, result, { refresh })
+            const unsubscribe = await api.tx[module]?.[section]?.(...params).signAndSend(
+              account,
+              { signer: extension?.signer },
+              result => {
+                extrinsicMiddleWare(module, section, result, { refresh })
 
-              if (result.isError) {
-                unsubscribe?.()
-                reject(result)
-              } else if (result.isFinalized) {
-                unsubscribe?.()
-
-                const failed = result.events.some(({ event }) => event.method === 'ExtrinsicFailed')
-
-                if (failed) {
+                if (result.isError) {
+                  unsubscribe?.()
                   reject(result)
+                } else if (result.isFinalized) {
+                  unsubscribe?.()
+
+                  const failed = result.events.some(({ event }) => event.method === 'ExtrinsicFailed')
+
+                  if (failed) {
+                    reject(result)
+                  } else {
+                    resolve(result)
+                  }
                 } else {
-                  resolve(result)
+                  setLoadable({ state: 'loading', contents: result })
                 }
-              } else {
-                setLoadable({ state: 'loading', contents: result })
               }
-            })
+            )
           } catch (error) {
             reject(error)
           }
@@ -85,7 +87,7 @@ export const useExtrinsic = <
           contents: loadable.state === 'loading' ? loadable.contents : undefined,
         }))
 
-        toastExtrinsic(module, section, promise, chainLoadable)
+        toastExtrinsic(module, section as any, promise, chainLoadable)
 
         try {
           const result = await promise
