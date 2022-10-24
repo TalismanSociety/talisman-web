@@ -114,8 +114,8 @@ const Unstakings = () => {
               withdrawExtrinsic.signAndSend(x.address, x.address, priorLength === undefined ? 0 : priorLength + 1)
             }}
             withdrawState={
-              withdrawExtrinsic.state === 'loading'
-                ? withdrawExtrinsic.parameters?.[0] === x.address
+              withdrawExtrinsic.state === 'loading' && withdrawExtrinsic.parameters?.[1] === x.address
+                ? withdrawExtrinsic.parameters?.[1] === x.address
                   ? 'pending'
                   : 'disabled'
                 : undefined

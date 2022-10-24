@@ -122,7 +122,9 @@ const Stakings = () => {
               pool.pendingRewards?.isZero() ?? true
                 ? 'unavailable'
                 : claimPayoutExtrinsic.state === 'loading'
-                ? 'pending'
+                ? claimPayoutExtrinsic.parameters?.[0] === pool.account?.address
+                  ? 'pending'
+                  : 'disabled'
                 : undefined
             }
             onRequestUnstake={() => setUnstakeAccount(pool.account?.address)}
