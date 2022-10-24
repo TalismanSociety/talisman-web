@@ -20,7 +20,7 @@ type AssetItemProps = {
 }
 const AssetItem = styled(({ token, tokenAmount, fiatAmount, title, subtitle, className }: AssetItemProps) => (
   <div className={className}>
-    <Info title={title} subtitle={subtitle} graphic={<TokenLogo token={token} type="logo" size={4} />} />
+    <Info title={title} subtitle={subtitle} graphic={<TokenLogo token={token} size={4} />} />
     <Info title={<Pendor suffix={` ${token?.symbol}`}>{tokenAmount}</Pendor>} subtitle={fiatAmount} />
   </div>
 ))`

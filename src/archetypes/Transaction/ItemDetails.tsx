@@ -1,4 +1,4 @@
-import { Info } from '@components'
+import { Info, TokenLogo } from '@components'
 import styled from '@emotion/styled'
 import { ReactComponent as _ArrowRight } from '@icons/arrow-right.svg'
 import { Account } from '@libs/talisman'
@@ -39,7 +39,7 @@ export const ItemDetails = ({ parsed, addresses, accounts }: Props) => {
         <Info
           title={`${formatDecimals(parsed.amount)} ${parsed.tokenSymbol}`}
           subtitle="$xx.xx"
-          graphic={<TokenLogo className="token-logo" src={parsed.tokenLogo} alt={`${parsed.tokenSymbol} token logo`} />}
+          graphic={<TokenLogo token={{ symbol: parsed.tokenSymbol, logo: parsed.tokenLogo }} />}
           invert
         />
       )
@@ -84,7 +84,7 @@ export const ItemDetails = ({ parsed, addresses, accounts }: Props) => {
         <Info
           title={`${formatDecimals(parsed.amount)} ${parsed.tokenSymbol}`}
           subtitle="$xx.xx"
-          graphic={<TokenLogo className="token-logo" src={parsed.tokenLogo} alt={`${parsed.tokenSymbol} token logo`} />}
+          graphic={<TokenLogo token={{ symbol: parsed.tokenSymbol, logo: parsed.tokenLogo }} />}
           invert
         />
       )
@@ -92,7 +92,7 @@ export const ItemDetails = ({ parsed, addresses, accounts }: Props) => {
         <Info
           title={t('To')}
           subtitle={`${t('Crowdloan')} ${parsed.fund}`}
-          graphic={<TokenLogo className="token-logo" src={parsed.tokenLogo} alt={`${parsed.tokenSymbol} token logo`} />}
+          graphic={<TokenLogo token={{ symbol: parsed.tokenSymbol, logo: parsed.tokenLogo }} />}
           invert
         />
       )
@@ -113,7 +113,7 @@ export const ItemDetails = ({ parsed, addresses, accounts }: Props) => {
         <Info
           title={`${formatDecimals(parsed.amount)} ${parsed.tokenSymbol}`}
           subtitle="$xx.xx"
-          graphic={<TokenLogo className="token-logo" src={parsed.tokenLogo} alt={`${parsed.tokenSymbol} token logo`} />}
+          graphic={<TokenLogo token={{ symbol: parsed.tokenSymbol, logo: parsed.tokenLogo }} />}
           invert
         />
       )
@@ -121,7 +121,7 @@ export const ItemDetails = ({ parsed, addresses, accounts }: Props) => {
         <Info
           title={startCase(parsed.chainId)}
           subtitle={t('Staking balance')}
-          graphic={<TokenLogo className="token-logo" src={parsed.tokenLogo} alt={`${parsed.tokenSymbol} token logo`} />}
+          graphic={<TokenLogo token={{ symbol: parsed.tokenSymbol, logo: parsed.tokenLogo }} />}
           invert
         />
       )
@@ -188,13 +188,6 @@ export const ItemDetails = ({ parsed, addresses, accounts }: Props) => {
       throw new Error(`Unhandled transaction type ${exhaustiveCheck}`)
   }
 }
-
-const TokenLogo = styled.img`
-  display: block;
-  width: 1em;
-  height: 1em;
-  border-radius: 999999999999rem;
-`
 
 const ArrowRight = styled(_ArrowRight)`
   display: block;
