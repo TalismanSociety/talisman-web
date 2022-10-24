@@ -84,7 +84,7 @@ export const useTransactions = (_addresses: string[], searchQuery?: string) => {
           return setStatus('ERROR')
         }
 
-        const transactions = data?.transactionsByAddress || []
+        const transactions = addresses.length === 0 ? [] : data?.transactionsByAddress || []
 
         dispatch({ type: 'ADD', data: transactions })
         setHasMore(transactions.length >= FETCH_LIMIT)
@@ -155,7 +155,7 @@ export const useTransactions = (_addresses: string[], searchQuery?: string) => {
         if (loading) return
         if (error) return console.warn('Failed to fetch recent txs for tx history', error)
 
-        const transactions = data.transactionsByAddress || []
+        const transactions = addresses.length === 0 ? [] : data?.transactionsByAddress || []
         dispatch({ type: 'ADD', data: transactions })
       })
 
