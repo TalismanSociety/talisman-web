@@ -2,17 +2,19 @@ import Button from '@components/atoms/Button'
 import Text from '@components/atoms/Text'
 import HiddenDetails from '@components/molecules/HiddenDetails'
 import PoolStake, { PoolStakeList } from '@components/recipes/PoolStake/PoolStake'
+import { PoolStatus } from '@components/recipes/PoolStatusIndicator'
 import { selectedPolkadotAccountsState } from '@domains/accounts/recoils'
+import { createAccounts } from '@domains/nominationPools/utils'
 import { Option, UInt } from '@polkadot/types-codec'
 import { PalletNominationPoolsPoolMember } from '@polkadot/types/lookup'
 import { useCallback, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { useRecoilValue, waitForAll } from 'recoil'
+import { constSelector, useRecoilValue, useRecoilValueLoadable, waitForAll } from 'recoil'
 
-import { nativeTokenDecimalState, nativeTokenPriceState } from '../../domains/chains/recoils'
+import { apiState, nativeTokenDecimalState, nativeTokenPriceState } from '../../domains/chains/recoils'
 import useChainState from '../../domains/common/hooks/useChainState'
 import useExtrinsic from '../../domains/common/hooks/useExtrinsic'
-import { allPendingPoolRewardsState } from '../../domains/nominationPools/recoils'
+import { allPendingPoolRewardsState, eraStakersState } from '../../domains/nominationPools/recoils'
 import AddStakeDialog from './AddStakeDialog'
 import UnstakeDialog from './UnstakeDialog'
 
@@ -20,6 +22,7 @@ const PoolStakeItem = ({
   item,
 }: {
   item: {
+    status?: PoolStatus
     account?: {
       address: string
       name?: string
@@ -41,6 +44,7 @@ const PoolStakeItem = ({
   return (
     <>
       <PoolStake
+        poolStatus={item.status}
         accountName={item.account?.name ?? ''}
         accountAddress={item.account?.address ?? ''}
         stakingAmount={decimalFromAtomics.fromAtomics(item.poolMember.unwrapOrDefault().points).toHuman()}
@@ -77,8 +81,8 @@ const PoolStakeItem = ({
 }
 
 const Stakings = () => {
-  const [pendingRewards, accounts] = useRecoilValue(
-    waitForAll([allPendingPoolRewardsState, selectedPolkadotAccountsState])
+  const [api, pendingRewards, accounts] = useRecoilValue(
+    waitForAll([apiState, allPendingPoolRewardsState, selectedPolkadotAccountsState])
   )
 
   const poolMembersLoadable = useChainState(
@@ -86,6 +90,14 @@ const Stakings = () => {
     'nominationPools',
     'poolMembers.multi',
     accounts.map(({ address }) => address)
+  )
+
+  const poolNominatorsLoadable = useChainState(
+    'query',
+    'staking',
+    'nominators.multi',
+    poolMembersLoadable.valueMaybe()?.map(x => createAccounts(api, x.unwrapOrDefault().poolId).stashId) ?? [],
+    { enabled: poolMembersLoadable.state === 'hasValue' }
   )
 
   const poolMetadatumLoadable = useChainState(
@@ -96,13 +108,32 @@ const Stakings = () => {
     { enabled: poolMembersLoadable.state === 'hasValue' }
   )
 
+  const activeEraLoadable = useChainState('query', 'staking', 'activeEra', [])
+
+  const eraStakersLoadable = useRecoilValueLoadable(
+    activeEraLoadable.state !== 'hasValue'
+      ? constSelector(undefined)
+      : eraStakersState(activeEraLoadable.contents.unwrapOrDefault().index)
+  )
+
+  const eraStakers = useMemo(() => eraStakersLoadable.valueMaybe()?.map(x => x[0].args[1]), [eraStakersLoadable])
+
   const pools = useMemo(
     () =>
       poolMembersLoadable.state !== 'hasValue'
         ? undefined
         : poolMembersLoadable.contents
             .map((poolMember, index) => {
+              const targets = poolNominatorsLoadable.valueMaybe()?.[index]?.unwrapOrDefault().targets
+
+              const status: PoolStatus = (() => {
+                if (targets?.length === 0) return 'not_nominating'
+
+                return targets?.some(x => eraStakers?.includes(x)) ? 'earning_rewards' : 'waiting'
+              })()
+
               return {
+                status,
                 account: accounts[index],
                 poolName: poolMetadatumLoadable.valueMaybe()?.[index]?.toUtf8(),
                 poolMember,
@@ -110,7 +141,15 @@ const Stakings = () => {
               }
             })
             .filter(x => x.poolMember.isSome && !x.poolMember.unwrapOrDefault().points.isZero()),
-    [poolMembersLoadable.state, poolMembersLoadable.contents, accounts, poolMetadatumLoadable, pendingRewards]
+    [
+      poolMembersLoadable.state,
+      poolMembersLoadable.contents,
+      poolNominatorsLoadable,
+      accounts,
+      poolMetadatumLoadable,
+      pendingRewards,
+      eraStakers,
+    ]
   )
 
   const [unstakeAccount, setUnstakeAccount] = useState<string>()

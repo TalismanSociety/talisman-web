@@ -107,11 +107,11 @@ export const useQueryMulti = <
         const [query, ...params] = x
         const [module, section] = query.split('.')
 
-        return [api.query[module!]?.[section!], ...params]
+        return [api.query[module!]?.[section!], params]
       })
 
       // @ts-ignore
-      const unsubscribePromise: UnsubscribePromise = api
+      const unsubscribePromise = api
         .queryMulti(params as any, (result: TResult) => {
           setLoadable(RecoilLoadable.of(result))
           resolve(result)
