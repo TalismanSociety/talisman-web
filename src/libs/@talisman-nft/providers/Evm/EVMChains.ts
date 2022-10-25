@@ -16,7 +16,7 @@ export const EVMChains: { [key: string]: EVMChain } = {
         totalSupply: 6008,
       },
       canaryNetworkAgency: {
-        address: '0x139e9BA28D64da245ddB4cF9943aA34f6d5aBFc',
+        address: '0x139e9BA28D64da245ddB4cF9943aA34f6d5aBFc5',
         name: 'Canary Network Agency',
         symbol: 'CNA',
         totalSupply: 1000,
