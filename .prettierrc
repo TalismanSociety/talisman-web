@@ -3,5 +3,11 @@
   "printWidth": 120,
   "quoteProps": "consistent",
   "semi": false,
-  "singleQuote": true
+  "singleQuote": true,
+  "overrides": [
+    {
+      "files": ["tsconfig.json"],
+      "options": { "printWidth": 1 }
+    }
+  ]
 }
