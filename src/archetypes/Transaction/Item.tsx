@@ -13,7 +13,7 @@ import { Avatar } from './Avatar'
 import { ClickToCopy } from './ClickToCopy'
 import { ItemDetails } from './ItemDetails'
 import { Transaction } from './lib'
-import { Logo } from './Logo'
+import { TransactionLogo } from './TransactionLogo'
 
 type Props = { className?: string; transaction: Transaction; addresses: string[]; selectedAccount?: string }
 export const Item = styled(({ className, transaction, addresses, selectedAccount }: Props) => {
@@ -93,7 +93,7 @@ export const Item = styled(({ className, transaction, addresses, selectedAccount
         <Info
           title={getTransactionName()}
           subtitle={intlFormat(parseISO(timestamp), { hour: 'numeric', minute: 'numeric' })}
-          graphic={<Logo className="category-logo" parsed={parsed} addresses={addresses} />}
+          graphic={<TransactionLogo className="category-logo" parsed={parsed} addresses={addresses} />}
         />
 
         <ItemDetails parsed={transaction.parsed} accounts={accounts} addresses={addresses} />
