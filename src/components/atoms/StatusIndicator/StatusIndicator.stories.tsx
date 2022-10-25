@@ -16,16 +16,19 @@ export const Success = Template.bind({})
 
 Success.args = {
   status: 'success',
+  tooltip: 'Success',
 }
 
 export const Warning = Template.bind({})
 
 Warning.args = {
   status: 'warning',
+  tooltip: 'Warning',
 }
 
 export const Error = Template.bind({})
 
 Error.args = {
   status: 'error',
+  tooltip: 'Error',
 }

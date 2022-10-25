@@ -4,7 +4,7 @@ import Text from '@components/atoms/Text'
 import { useTheme } from '@emotion/react'
 import React, { ReactElement } from 'react'
 
-import { PoolStatusIndicator } from '../PoolStatusIndicator'
+import { PoolStatus, PoolStatusIndicator } from '../PoolStatusIndicator'
 import PoolStakeSkeleton from './PoolStake.skeleton'
 
 export type PoolStakeProps = {
@@ -21,6 +21,7 @@ export type PoolStakeProps = {
   claimState?: 'unavailable' | 'pending' | 'disabled'
   addState?: 'pending' | 'disabled'
   unstakeState?: 'unavailable' | 'pending' | 'disabled'
+  poolStatus?: PoolStatus
 }
 
 const PoolStake = Object.assign(
@@ -109,7 +110,7 @@ const PoolStake = Object.assign(
           >
             <dt>Pool</dt>
             <dd css={{ display: 'flex', alignItems: 'center', gap: '0.24rem' }}>
-              <PoolStatusIndicator status="success" />
+              <PoolStatusIndicator status={props.poolStatus} />
               <Text alpha="high" css={{ marginLeft: '0.8rem' }}>
                 {props.poolName}
               </Text>
