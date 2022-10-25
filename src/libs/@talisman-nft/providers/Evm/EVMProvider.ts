@@ -48,10 +48,15 @@ export class EVMProvider extends NFTInterface {
     // Set the RPC
     this.web3.setProvider(this.rpc[0])
 
-    this.web3.eth.net.isListening().catch(e => {
-      console.log('Could not connect to EVM RPC', e)
-      return
-    })
+    this.web3.eth.net
+      .isListening()
+      .then(() => {
+        console.log(`${this.name} RPC has connected.`)
+      })
+      .catch(e => {
+        console.log('Could not connect to EVM RPC', e)
+        return
+      })
     // Ask Swami what would be a good way to go through each RPC and check if it's valid
   }
 
