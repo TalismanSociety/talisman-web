@@ -10,8 +10,6 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { ReactNode, useState } from 'react'
 import { Link } from 'react-router-dom'
 
-import { PoolStatusIndicator } from '../PoolStatusIndicator'
-
 type Account = { selected?: boolean; name: string; address: string; balance: string }
 
 export type StakingInputProps = {
@@ -97,12 +95,9 @@ const StakingInput = (props: StakingInputProps) => {
               onClick={() => setPoolInfoExpanded(x => !x)}
               css={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer' }}
             >
-              <div css={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
-                <PoolStatusIndicator status="success" />
-                <Text css={{ fontSize: '1.4rem' }} alpha={poolInfoExpanded ? 'high' : 'medium'}>
-                  {props.poolName}
-                </Text>
-              </div>
+              <Text css={{ fontSize: '1.4rem' }} alpha={poolInfoExpanded ? 'high' : 'medium'}>
+                {props.poolName}
+              </Text>
               <motion.div
                 animate={String(poolInfoExpanded)}
                 variants={{ true: { transform: 'rotate(90deg)' }, false: {} }}

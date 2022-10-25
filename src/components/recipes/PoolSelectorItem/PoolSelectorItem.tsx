@@ -1,8 +1,6 @@
-import { MoreHorizontal, Star, Union, User } from '@components/atoms/Icon'
+import { Star, Union, User } from '@components/atoms/Icon'
 import Text from '@components/atoms/Text'
 import { useTheme } from '@emotion/react'
-
-import { PoolStatusIndicator } from '../PoolStatusIndicator'
 
 export type PoolSelectorItemProps = {
   selected?: boolean
@@ -44,7 +42,7 @@ const PoolSelectorItem = (props: PoolSelectorItemProps) => {
         <Text.Body alpha={alpha} css={{ fontWeight: 'bold', margin: 0 }}>
           {props.poolName}
         </Text.Body>
-        <PoolStatusIndicator status="success" />
+        {/* <MoreHorizontal width="1.4rem" height="1.4rem" /> */}
       </header>
       <Text.Body alpha={alpha}>{props.stakedAmount}</Text.Body>
       <Text.Body
@@ -64,7 +62,6 @@ const PoolSelectorItem = (props: PoolSelectorItemProps) => {
           </Text.Body>
           <User width="1.4rem" height="1.4rem" />
         </div>
-        <MoreHorizontal width="1.4rem" height="1.4rem" />
       </Text.Body>
     </article>
   )
