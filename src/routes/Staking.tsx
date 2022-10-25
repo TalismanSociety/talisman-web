@@ -158,6 +158,12 @@ const Staking = () => {
     enabled: selectedPoolId !== undefined,
   })
 
+  // TODO: for demo purpose only
+  const demoPoolName =
+    selectedPoolId === recommendedPools[0]?.poolId.toNumber()
+      ? 'Talisman 🧿'
+      : poolMetadataLoadable.valueMaybe()?.toUtf8() ?? ''
+
   const hasExistingPool = poolMembersLoadable.valueMaybe()?.[selectedAccountIndex]?.isSome === true
 
   const isReady =
@@ -261,7 +267,7 @@ const Staking = () => {
                 }
               }}
               availableToStake={freeBalance.decimalAmount?.toHuman() ?? '...'}
-              poolName={poolMetadataLoadable.valueMaybe()?.toUtf8() ?? ''}
+              poolName={demoPoolName}
               poolTotalStaked={poolTotalStaked?.toHuman() ?? ''}
               poolMemberCount={bondedPoolLoadable.valueMaybe()?.unwrapOrDefault().memberCounter.toString() ?? ''}
               onRequestPoolChange={useCallback(() => setShowPoolSelector(true), [])}
