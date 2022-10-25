@@ -71,6 +71,7 @@ const PoolSelector = (props: {
       onConfirm={() => {
         if (newPoolId !== undefined) {
           props.onChangePoolId(newPoolId)
+          setNewPoolId(undefined)
         }
         props.onDismiss()
       }}
