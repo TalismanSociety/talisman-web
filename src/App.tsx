@@ -52,7 +52,9 @@ const App: React.FC = () => (
                         <Routes />
                       </MoonbeamContributors.PopupProvider>
                     </ModalProvider>
-                    <Toaster position="top-right">{t => <ToastBar toast={t} />}</Toaster>
+                    <Toaster position="top-right" containerStyle={{ top: '6rem' }}>
+                      {t => <ToastBar toast={t} />}
+                    </Toaster>
                   </Suspense>
                 </ThemeProvider>
               </Router>

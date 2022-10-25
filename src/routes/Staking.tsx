@@ -27,7 +27,14 @@ export const recommendedPoolsState = selector({
 
     const names = await api.query.nominationPools.metadata.multi(bondedPools.map(({ poolId }) => poolId))
 
-    return bondedPools.map((x, index) => ({ ...x, name: names[index]?.toUtf8() }))
+    return bondedPools.map((x, index) => ({
+      ...x,
+      name:
+        index === 0
+          ? // TODO: for demo purpose only
+            'Talisman 🧿'
+          : names[index]?.toUtf8(),
+    }))
   },
 })
 

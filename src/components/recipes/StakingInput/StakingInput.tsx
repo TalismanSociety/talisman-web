@@ -141,9 +141,7 @@ const StakingInput = (props: StakingInputProps) => {
                       </Text.Body>
                     </div>
                   </dl>
-                  <Text.Body as="p">
-                    Talisman automatically finds the best available nomination pool for you based on xxxx
-                  </Text.Body>
+                  <Text.Body as="p">Talisman automatically finds you the best available nomination pool</Text.Body>
                   <Text.Body
                     as="div"
                     alpha="high"
