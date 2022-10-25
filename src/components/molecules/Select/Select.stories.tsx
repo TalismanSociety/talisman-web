@@ -1,4 +1,4 @@
-import Identicon from '@polkadot/react-identicon'
+import Identicon from '@components/atoms/Identicon'
 import { ComponentMeta } from '@storybook/react'
 import { useState } from 'react'
 

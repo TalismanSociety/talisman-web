@@ -1,8 +1,8 @@
 import Button from '@components/atoms/Button'
 import { Lock } from '@components/atoms/Icon'
+import Identicon from '@components/atoms/Identicon'
 import Text from '@components/atoms/Text'
 import { useTheme } from '@emotion/react'
-import Identicon from '@polkadot/react-identicon'
 import React, { ReactElement } from 'react'
 
 export type PoolUnstakeProps = {
@@ -31,7 +31,7 @@ const PoolUnstake = (props: PoolUnstakeProps) => {
         },
       }}
     >
-      <Identicon value={props.accountAddress} size={40} theme="polkadot" />
+      <Identicon value={props.accountAddress} size={40} />
       <dl
         css={{
           'display': 'flex',

@@ -1,11 +1,11 @@
 import Button from '@components/atoms/Button'
 import { ChevronRight } from '@components/atoms/Icon'
 import { Info } from '@components/atoms/Icon'
+import Identicon from '@components/atoms/Identicon'
 import Text from '@components/atoms/Text'
 import Select from '@components/molecules/Select'
 import TextInput, { LabelButton } from '@components/molecules/TextInput'
 import { useTheme } from '@emotion/react'
-import Identicon from '@polkadot/react-identicon'
 import { AnimatePresence, motion } from 'framer-motion'
 import { ReactNode, useState } from 'react'
 import { Link } from 'react-router-dom'
@@ -55,7 +55,7 @@ const StakingInput = (props: StakingInputProps) => {
         {props.accounts.map(account => (
           <Select.Item
             selected={account.selected}
-            leadingIcon={<Identicon value={account.address} size={40} theme="polkadot" />}
+            leadingIcon={<Identicon value={account.address} size={40} />}
             headlineText={account.name}
             supportingText={account.balance}
             onClick={() => props.onSelectAccount(account)}

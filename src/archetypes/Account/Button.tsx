@@ -1,5 +1,6 @@
 import { ReactComponent as AllAccountsIcon } from '@assets/icons/all-accounts.svg'
 import { Button, Pendor, Pill } from '@components'
+import Identicon from '@components/atoms/Identicon'
 import { CopyButton } from '@components/CopyButton'
 import { css } from '@emotion/react'
 import styled from '@emotion/styled'
@@ -9,7 +10,6 @@ import { usePortfolio } from '@libs/portfolio'
 import { DAPP_NAME, useActiveAccount, useChainByGenesis, useExtensionAutoConnect } from '@libs/talisman'
 import { useBalances as _useBalances } from '@libs/talisman'
 import { useTalismanInstalled } from '@libs/talisman/useIsTalismanInstalled'
-import Identicon from '@polkadot/react-identicon'
 import { addTokensToBalances, groupBalancesByAddress, useBalances, useChain } from '@talismn/api-react-hooks'
 import { WalletSelect } from '@talismn/connect-components'
 import { getWalletBySource } from '@talismn/connect-wallets'
@@ -131,17 +131,12 @@ const Dropdown = styled(
                 >
                   <span className="left">
                     {address ? (
-                      <Identicon
-                        className="identicon"
-                        value={address}
-                        theme={type === 'ethereum' ? 'ethereum' : 'polkadot'}
-                      />
+                      <Identicon className="identicon" value={address} />
                     ) : (
                       <Identicon
                         Custom={AllAccountsIcon}
                         className="identicon"
                         value="5DHuDfmwzykE9KVmL87DLjAbfSX7P4f4wDW5CKx8QZnQA4FK"
-                        theme="polkadot"
                       />
                     )}
                     <span className="name-address">
@@ -260,11 +255,8 @@ const Dropdown = styled(
       color: var(--color-primary);
       background: var(--color-activeBackground);
       border-radius: 100px;
-      > svg,
-      > img {
-        width: 1em;
-        height: 1em;
-      }
+      width: 1em;
+      height: 1em;
       img {
         border-radius: 999999999999rem;
       }
@@ -474,13 +466,12 @@ const Authorized = styled(
       >
         <span className={`account-button${hasManyAccounts ? ' has-many-accounts' : ''} ${className}`}>
           {hasActiveAccount ? (
-            <Identicon className="identicon" value={address} theme={type === 'ethereum' ? 'ethereum' : 'polkadot'} />
+            <Identicon className="identicon" value={address} />
           ) : (
             <Identicon
               className="identicon"
               Custom={AllAccountsIcon}
               value="5DHuDfmwzykE9KVmL87DLjAbfSX7P4f4wDW5CKx8QZnQA4FK"
-              theme="polkadot"
             />
           )}
           <span className="selected-account">
@@ -578,11 +569,8 @@ const Authorized = styled(
     color: var(--color-primary);
     background: var(--color-activeBackground);
     border-radius: 100px;
-    > svg,
-    > img {
-      width: 1.5em;
-      height: 1.5em;
-    }
+    width: 1.5em;
+    height: 1.5em;
     img {
       border-radius: 999999999999rem;
     }

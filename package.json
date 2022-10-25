@@ -35,6 +35,7 @@
     "@talismn/util-legacy": "npm:@talismn/util@0.0.11",
     "@talismn/wallets": "^1.1.6",
     "bignumber.js": "^9.0.1",
+    "colorjs.io": "^0.4.0",
     "date-fns": "^2.29.3",
     "framer-motion": "^7.6.1",
     "graphql": "^16.6.0",
@@ -60,8 +61,7 @@
     "web-vitals": "^2.1.4"
   },
   "devDependencies": {
-    "@babel/plugin-proposal-class-properties": "^7.16.7",
-    "@babel/plugin-proposal-private-methods": "^7.16.11",
+    "@babel/preset-env": "^7.19.4",
     "@commitlint/cli": "^17.1.2",
     "@commitlint/config-conventional": "^17.1.0",
     "@craco/craco": "^6.4.5",
@@ -115,8 +115,8 @@
     "build": "CI= GENERATE_SOURCEMAP=false craco build",
     "test": "craco test",
     "eject": "craco eject",
-    "storybook": "start-storybook -p 6006 -s public",
-    "build-storybook": "build-storybook -s public"
+    "storybook": "STORYBOOK=true start-storybook -p 6006 -s public",
+    "build-storybook": "STORYBOOK=true build-storybook -s public"
   },
   "jest": {
     "transformIgnorePatterns": [

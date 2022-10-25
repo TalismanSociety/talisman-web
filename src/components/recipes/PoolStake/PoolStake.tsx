@@ -1,7 +1,7 @@
 import Button from '@components/atoms/Button'
+import Identicon from '@components/atoms/Identicon'
 import Text from '@components/atoms/Text'
 import { useTheme } from '@emotion/react'
-import Identicon from '@polkadot/react-identicon'
 import React, { ReactElement } from 'react'
 
 import { PoolStatusIndicator } from '../PoolStatusIndicator'
@@ -40,7 +40,7 @@ const PoolStake = Object.assign(
           },
         }}
       >
-        <Identicon value={props.accountAddress} size={40} theme="polkadot" />
+        <Identicon value={props.accountAddress} size={40} />
         <dl
           css={{
             'display': 'flex',
