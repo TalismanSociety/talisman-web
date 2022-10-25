@@ -122,7 +122,7 @@ export const useTransactions = (_addresses: string[], searchQuery?: string) => {
 
         const transactions =
           // ignore the results if we didn't provide any addresses
-          addresses.length === 0 ? [] : data?.transactionsByAddress || []
+          addresses.length === 0 ? [] : data?.transactionsByAddress ?? []
 
         dispatch({ type: 'ADD', data: transactions })
         setHasMore(transactions.length >= FETCH_LIMIT)
@@ -179,7 +179,7 @@ export const useTransactions = (_addresses: string[], searchQuery?: string) => {
 
         const transactions =
           // ignore the results if we didn't provide any addresses
-          addresses.length === 0 ? [] : data?.transactionsByAddress || []
+          addresses.length === 0 ? [] : data?.transactionsByAddress ?? []
 
         dispatch({ type: 'ADD', data: transactions })
       })

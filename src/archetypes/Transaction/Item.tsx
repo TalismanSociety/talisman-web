@@ -22,26 +22,40 @@ export const Item = styled(({ className, transaction, addresses, selectedAccount
   const { name, ss58Format, timestamp, explorerUrl, parsed, relatedAddresses } = transaction
   const youAddress = relatedAddresses.find(address => addresses.includes(address))
   const youAccount = useMemo(
-    () => accounts.find(({ address }) => address === youAddress)?.name || youAddress,
+    () => accounts.find(({ address }) => address === youAddress)?.name ?? youAddress,
     [accounts, youAddress]
   )
 
   const getTransactionName = () => {
-    if (typeof parsed?.__typename !== 'string') return name || undefined
-    if (parsed.__typename === 'ParsedCrowdloanContribute') return 'Contribute'
-    if (parsed.__typename !== 'ParsedTransfer') return startCase(parsed.__typename.replace(/^Parsed/, ''))
+    // if tx type is not parsed, use the event name as a fallback (e.g. Staking.Bonded, Dex.Swap)
+    if (typeof parsed?.__typename !== 'string') return name ?? undefined
 
-    const genericAddresses = addresses.map(a => encodeAnyAddress(a))
-    const from = encodeAnyAddress(parsed.from)
-    const to = encodeAnyAddress(parsed.to)
+    switch (parsed.__typename) {
+      // Special case: show 'Send' / 'Receive' / 'Transfer' for transfers, depending on whether
+      // the user's connected accounts include the sender, the receiver, or both
+      case 'ParsedTransfer': {
+        const genericAddresses = addresses.map(a => encodeAnyAddress(a))
+        const from = encodeAnyAddress(parsed.from)
+        const to = encodeAnyAddress(parsed.to)
 
-    if (genericAddresses.includes(from) && !genericAddresses.includes(to)) return 'Send'
-    if (genericAddresses.includes(to) && !genericAddresses.includes(from)) return 'Receive'
-    return 'Transfer'
+        if (genericAddresses.includes(from) && !genericAddresses.includes(to)) return 'Send'
+        if (genericAddresses.includes(to) && !genericAddresses.includes(from)) return 'Receive'
+        return 'Transfer'
+      }
+
+      // Special case: show `Contribute` instead of `CrowdloanContribute`
+      case 'ParsedCrowdloanContribute':
+        return 'Contribute'
+
+      // For all other cases, just strip off the Parsed prefix and startCase the rest
+      // i.e. ParsedSwap -> Swap
+      default:
+        return startCase(parsed.__typename.replace(/^Parsed/, ''))
+    }
   }
 
   const isDevMode = process.env.NODE_ENV === 'development'
-  const isParsed = !!parsed
+  const isParsed = typeof parsed?.__typename === 'string'
   const isTransfer = isParsed && parsed.__typename === 'ParsedTransfer'
   const hasTokenSymbol = isTransfer && parsed.tokenSymbol !== '???'
 
@@ -98,7 +112,7 @@ export const Item = styled(({ className, transaction, addresses, selectedAccount
       </PanelSection>
       {showDebugInfo && (
         <pre className={`${className} debug`}>
-          {JSON.stringify({ ...transaction, args: JSON.parse(transaction.args || '{}') }, null, 2)}
+          {JSON.stringify({ ...transaction, args: JSON.parse(transaction.args ?? '{}') }, null, 2)}
         </pre>
       )}
     </>

@@ -18,7 +18,8 @@ type Props = {
 }
 export const ItemDetails = ({ parsed, addresses, accounts }: Props) => {
   const { t } = useTranslation()
-  if (!parsed || parsed.__typename === undefined) return <div />
+
+  if (typeof parsed?.__typename !== 'string') return <div />
 
   const addressBook = accounts.reduce((addressBook, account) => {
     if (account.name) addressBook[encodeAnyAddress(account.address)] = account.name
@@ -48,7 +49,7 @@ export const ItemDetails = ({ parsed, addresses, accounts }: Props) => {
           title={'From'}
           subtitle={
             <ClickToCopy copy={parsed.from} message="Address copied to the clipboard">
-              {fromName || truncateAddress(parsed.from, 4)}
+              {fromName ?? truncateAddress(parsed.from, 4)}
             </ClickToCopy>
           }
           graphic={<Avatar value={parsed.from} />}
@@ -60,7 +61,7 @@ export const ItemDetails = ({ parsed, addresses, accounts }: Props) => {
           title={'To'}
           subtitle={
             <ClickToCopy copy={parsed.to} message="Address copied to the clipboard">
-              {toName || truncateAddress(parsed.to, 4)}
+              {toName ?? truncateAddress(parsed.to, 4)}
             </ClickToCopy>
           }
           graphic={<Avatar value={parsed.to} />}
