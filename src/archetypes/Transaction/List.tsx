@@ -8,7 +8,7 @@ import { motion } from 'framer-motion'
 import groupBy from 'lodash/groupBy'
 import { Fragment, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import useInfiniteScroll from 'react-infinite-scroll-hook'
+import InfiniteScroll from 'react-infinite-scroller'
 import { useDebounce } from 'react-use'
 
 import { Item } from './Item'
@@ -37,14 +37,6 @@ export const List = styled(({ addresses = [], className }: Props) => {
   const { loadMore, hasMore, transactions, status } = useTransactions(fetchAddresses, searchQueryDebounced)
   const hasTransactions = Object.keys(transactions).length > 0
 
-  const [loadMoreRef] = useInfiniteScroll({
-    loading: status === 'PROCESSING',
-    hasNextPage: hasMore,
-    onLoadMore: loadMore,
-    disabled: status === 'ERROR',
-    rootMargin: '0px 0px 200px 0px',
-  })
-
   const sortedTransactions = useMemo(
     () => Object.values(transactions).sort((a, b) => b.id.localeCompare(a.id)),
     [transactions]
@@ -61,36 +53,22 @@ export const List = styled(({ addresses = [], className }: Props) => {
       </header>
 
       <Panel className="transaction-item-container">
-        {status === 'INITIALISED' || (status === 'PROCESSING' && !hasTransactions) ? (
-          <PanelSection
-            key={`first-${selectedAddress}`}
-            className="centered-state"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1, transition: { ease: [0.78, 0.14, 0.15, 0.86] } }}
-          >
-            <MaterialLoader /> <div>{t('Searching the paraverse')}</div>
-          </PanelSection>
-        ) : status === 'ERROR' ? (
-          <PanelSection
-            key={`first-${selectedAddress}`}
-            className="centered-state"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1, transition: { ease: [0.78, 0.14, 0.15, 0.86] } }}
-          >
-            <div>{t('An error occured')}</div>
-          </PanelSection>
-        ) : !hasTransactions ? (
-          <PanelSection
-            key={`first-${selectedAddress}`}
-            className="centered-state"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1, transition: { ease: [0.78, 0.14, 0.15, 0.86] } }}
-          >
-            {t('No Transactions - try another account')}
-          </PanelSection>
-        ) : (
-          Object.entries(dayGroupedTransactions).map(([day, transactions], index) => (
-            <Fragment key={index === 0 ? `first-${selectedAddress}` : `${day}-${selectedAddress}`}>
+        <InfiniteScroll
+          loadMore={loadMore}
+          hasMore={hasMore && status !== 'ERROR'}
+          loader={
+            <PanelSection
+              key="loader"
+              className="centered-state"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1, transition: { ease: [0.78, 0.14, 0.15, 0.86] } }}
+            >
+              <MaterialLoader /> <div>{t('Searching the paraverse')}</div>
+            </PanelSection>
+          }
+        >
+          {Object.entries(dayGroupedTransactions).map(([day, transactions], index) => (
+            <Fragment key={`${day}-${selectedAddress}`}>
               <motion.h3
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1, transition: { ease: [0.78, 0.14, 0.15, 0.86] } }}
@@ -107,20 +85,33 @@ export const List = styled(({ addresses = [], className }: Props) => {
                 />
               ))}
             </Fragment>
-          ))
-        )}
+          ))}
+
+          {status === 'SUCCESS' && !hasTransactions && (
+            <PanelSection
+              className="centered-state"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1, transition: { ease: [0.78, 0.14, 0.15, 0.86] } }}
+            >
+              {t('No Transactions - try another account')}
+            </PanelSection>
+          )}
+
+          {status === 'ERROR' && (
+            <PanelSection
+              className="centered-state"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1, transition: { ease: [0.78, 0.14, 0.15, 0.86] } }}
+            >
+              <div>{t('An error occured')}</div>
+            </PanelSection>
+          )}
+        </InfiniteScroll>
       </Panel>
 
       <footer>
-        {(status === 'PROCESSING' || hasMore) && hasTransactions && (
-          <div className="load-more" ref={loadMoreRef}>
-            <MaterialLoader /> <div>{t('Searching the paraverse')}</div>
-          </div>
-        )}
         {status === 'SUCCESS' && !hasMore && hasTransactions && (
-          <div className="load-more complete" ref={loadMoreRef}>
-            {t('Search complete')}
-          </div>
+          <div className="seach-complete">{t('Search complete')}</div>
         )}
       </footer>
     </section>
@@ -181,7 +172,7 @@ export const List = styled(({ addresses = [], className }: Props) => {
     }
   }
 
-  .load-more {
+  .seach-complete {
     display: flex;
     align-items: center;
     justify-content: center;

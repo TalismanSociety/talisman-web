@@ -6892,7 +6892,7 @@ __metadata:
     react-apollo-network-status: ^5.1.0
     react-dom: ^18.2.0
     react-i18next: ^11.12.0
-    react-infinite-scroll-hook: ^4.0.3
+    react-infinite-scroller: ^1.2.6
     react-is: ^17.0.2
     react-router: ^5.3.3
     react-router-dom: ^5.3.3
@@ -22518,14 +22518,14 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"react-infinite-scroll-hook@npm:^4.0.3":
-  version: 4.0.3
-  resolution: "react-infinite-scroll-hook@npm:4.0.3"
+"react-infinite-scroller@npm:^1.2.6":
+  version: 1.2.6
+  resolution: "react-infinite-scroller@npm:1.2.6"
   dependencies:
-    react-intersection-observer-hook: ^2.0.4
+    prop-types: ^15.5.8
   peerDependencies:
-    react: ">=16.8.0"
-  checksum: 1af258bdb2d292bfa48ab59a9a324a322963f76bb9f18c6a2e507e3818d35e73b31794edc6eadc2c8fa0ca88493e8ac5be5529276d5f21b2c41e5120d9a23346
+    react: ^0.14.9 || ^15.3.0 || ^16.0.0 || ^17.0.0 || ^18.0.0
+  checksum: 5f5aae76c484b4039bada87070d5f8c54d2786697ae600be19a68f4e85158ff550122f15dccc5997d8b01fa487da47b9ffbc3e9d9a29f2cf71c77275f72551fd
   languageName: node
   linkType: hard
 
@@ -22539,15 +22539,6 @@ fsevents@^1.2.7:
   peerDependencies:
     react: ^16.8.4 || ^17.0.0
   checksum: ca9e4c1fedb94e4e956dd3142838c5a25a9d61375aee5e8a74dd623bae09a263098a93f220e8d84c7fd39e569e1fa4297d363ddbc91b15bca91baeb7281d7f4f
-  languageName: node
-  linkType: hard
-
-"react-intersection-observer-hook@npm:^2.0.4":
-  version: 2.0.4
-  resolution: "react-intersection-observer-hook@npm:2.0.4"
-  peerDependencies:
-    react: ">=16.8.0"
-  checksum: ab388b8b9328ebc22284360003d6339b6fb4a4af3adaa7820754ceeaaa797df6310ad02ec720837434382113cbb464e30b24b5445fc8845bf53c442d749881ef
   languageName: node
   linkType: hard
 
