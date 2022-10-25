@@ -2,6 +2,7 @@ import { ExternalLink } from '@components/atoms/Icon'
 import Text from '@components/atoms/Text'
 import { Chain } from '@domains/chains/recoils'
 import { ApiPromise } from '@polkadot/api'
+import RpcError from '@polkadot/rpc-provider/coder/error'
 import { ISubmittableResult } from '@polkadot/types/types'
 import toast from 'react-hot-toast'
 import { Loadable } from 'recoil'
@@ -65,9 +66,15 @@ export const toastExtrinsic = <
           <Text.Body as="div" alpha="high">
             Your transaction failed
           </Text.Body>
-          <Text.Body as="div">
-            Your <code>{`${module}:${section}`}</code> transaction has failed.
-          </Text.Body>
+          {/* TODO: can't do instanceof RpcError for some reason */}
+          {error instanceof Error && error.name === 'RpcError' ? (
+            <Text.Body as="div">{(error as RpcError).data}</Text.Body>
+          ) : (
+            <Text.Body as="div">
+              Your <code>{`${module}:${section}`}</code> transaction has failed.
+            </Text.Body>
+          )}
+
           {chain !== undefined && error?.txHash !== undefined && (
             <Text.Body as="div">
               View details on{' '}
