@@ -65,7 +65,7 @@ const StakingInput = (props: StakingInputProps) => {
       {props.alreadyStaking ? (
         <>
           <Text.Body as="p" css={{ color: theme.color.primary }}>
-            <Info width="1.2rem" height="1.2rem" /> You are already staking with this account
+            <Info width="1.2rem" height="1.2rem" /> Congratulations you’re staking
           </Text.Body>
           <Text.Body as="p">Select a different account to continue staking.</Text.Body>
           <Text.Body as="p">
