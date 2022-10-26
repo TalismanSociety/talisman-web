@@ -76,7 +76,7 @@ const Unstakings = () => {
   return (
     <div>
       <header css={{ marginTop: '4rem' }}>
-        <Text.H4>Unstaking</Text.H4>
+        <Text.H4 css={{ marginBottom: '2.4rem' }}>Unstaking</Text.H4>
       </header>
       <PoolUnstakeList>
         {unstakings?.map((x, index) => (
