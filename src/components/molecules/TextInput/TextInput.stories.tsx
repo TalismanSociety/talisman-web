@@ -16,6 +16,7 @@ export default {
 export const Default: Story<TextInputProps> = args => <TextInput {...args} />
 
 Default.args = {
+  type: 'text',
   leadingLabel: 'Available to stake',
   trailingLabel: '420 DOT',
   placeholder: '0 DOT',

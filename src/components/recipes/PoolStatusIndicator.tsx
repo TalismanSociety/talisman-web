@@ -1,17 +1,37 @@
 import StatusIndicator, { StatusIndicatorProps } from '@components/atoms/StatusIndicator'
 import { useMemo } from 'react'
 
-export const PoolStatusIndicator = (props: StatusIndicatorProps) => (
+export type PoolStatus = 'earning_rewards' | 'waiting' | 'not_nominating'
+
+export type PoolStatusIndicatorProps = Omit<StatusIndicatorProps, 'status'> & {
+  status?: PoolStatus
+}
+
+export const PoolStatusIndicator = (props: PoolStatusIndicatorProps) => (
   <StatusIndicator
     {...props}
+    status={useMemo(() => {
+      switch (props.status) {
+        case 'earning_rewards':
+          return 'success'
+        case 'waiting':
+          return 'warning'
+        case 'not_nominating':
+          return 'error'
+        case undefined:
+          return 'warning'
+      }
+    }, [props.status])}
     tooltip={useMemo(() => {
       switch (props.status) {
-        case 'success':
+        case 'earning_rewards':
           return 'Nominating'
-        case 'warning':
+        case 'waiting':
           return 'Waiting'
-        case 'error':
+        case 'not_nominating':
           return 'Not nominating'
+        case undefined:
+          return '...'
       }
     }, [props.status])}
   />

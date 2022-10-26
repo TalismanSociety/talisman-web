@@ -163,12 +163,6 @@ export const globalStyle = (theme: Theme) => css`
     &.-muted {
       opacity: 0.7;
     }
-
-    a {
-      line-height: inherit;
-      opacity: 0.6;
-      color: rgb(${theme?.primary});
-    }
   }
 
   h1 {
@@ -276,6 +270,7 @@ declare module '@emotion/react' {
       onForeground: string
       foregroundVariant: string
       onForegroundVariant: string
+      error: string
     }
     contentAlpha: {
       disabled: number
@@ -308,6 +303,7 @@ export const greenDark: Theme = {
     onForeground: 'rgb(250,250,250)',
     foregroundVariant: '#3F3F3F',
     onForegroundVariant: 'rgb(250,250,250)',
+    error: '#D22424',
   },
   contentAlpha: {
     disabled: 0.5,

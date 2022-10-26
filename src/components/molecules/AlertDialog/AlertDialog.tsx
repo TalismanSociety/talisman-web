@@ -37,10 +37,11 @@ const AlertDialog = (props: AlertDialogProps) => {
   return (
     <Dialog
       {...props}
+      onClickBackdrop={props.onRequestDismiss}
       css={{
         'maxWidth': '46rem',
         'padding': '2.4rem',
-        'background': theme.color.background,
+        'background': theme.color.surface,
         'border': 'none',
         'borderRadius': '1.6rem',
         '&[open]': {
@@ -56,7 +57,7 @@ const AlertDialog = (props: AlertDialogProps) => {
       <header
         css={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '2.6rem' }}
       >
-        <Text.H4>{props.title}</Text.H4>
+        <Text.H4 css={{ marginBottom: 0 }}>{props.title}</Text.H4>
         <Button variant="noop" onClick={props.onRequestDismiss}>
           <X width="1.6rem" height="1.6rem" />
         </Button>
