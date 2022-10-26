@@ -1,6 +1,5 @@
 import Button from '@components/atoms/Button'
-import { ChevronRight } from '@components/atoms/Icon'
-import { Info } from '@components/atoms/Icon'
+import { ChevronRight, Info } from '@components/atoms/Icon'
 import Identicon from '@components/atoms/Identicon'
 import Text from '@components/atoms/Text'
 import Select from '@components/molecules/Select'
@@ -21,9 +20,10 @@ export type StakingInputProps = {
   onChangeAmount: (value: string) => unknown
   onRequestMaxAmount: () => unknown
   availableToStake: string
-  poolName: string
-  poolTotalStaked: string
-  poolMemberCount: string
+  noPoolsAvailable?: boolean
+  poolName?: string
+  poolTotalStaked?: string
+  poolMemberCount?: string
   onRequestPoolChange: () => unknown
   onSubmit: () => unknown
   submitState?: 'disabled' | 'pending'
@@ -92,21 +92,30 @@ const StakingInput = (props: StakingInputProps) => {
           />
           <div css={{ padding: '0.8rem', borderRadius: '0.8rem', backgroundColor: theme.color.foreground }}>
             <div
-              onClick={() => setPoolInfoExpanded(x => !x)}
-              css={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer' }}
+              onClick={props.noPoolsAvailable ? undefined : () => setPoolInfoExpanded(x => !x)}
+              css={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                cursor: props.noPoolsAvailable ? undefined : 'pointer',
+              }}
             >
               <Text css={{ fontSize: '1.4rem' }} alpha={poolInfoExpanded ? 'high' : 'medium'}>
-                {props.poolName}
+                {props.noPoolsAvailable ? 'No pools available' : props.poolName}
               </Text>
-              <motion.div
-                animate={String(poolInfoExpanded)}
-                variants={{ true: { transform: 'rotate(90deg)' }, false: {} }}
-              >
-                <ChevronRight />
-              </motion.div>
+              {props.noPoolsAvailable ? (
+                <Info width="1.4rem" height="1.4rem" />
+              ) : (
+                <motion.div
+                  animate={String(poolInfoExpanded)}
+                  variants={{ true: { transform: 'rotate(90deg)' }, false: {} }}
+                >
+                  <ChevronRight />
+                </motion.div>
+              )}
             </div>
             <AnimatePresence>
-              {poolInfoExpanded && (
+              {poolInfoExpanded && !props.noPoolsAvailable && (
                 <motion.div
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: 'auto' }}
@@ -153,7 +162,7 @@ const StakingInput = (props: StakingInputProps) => {
       )}
       <Button
         onClick={props.onSubmit}
-        disabled={props.alreadyStaking || props.submitState === 'disabled'}
+        disabled={props.noPoolsAvailable || props.alreadyStaking || props.submitState === 'disabled'}
         loading={props.submitState === 'pending'}
         css={{ width: '100%' }}
       >

@@ -276,6 +276,7 @@ const Staking = () => {
                 }
               }}
               availableToStake={freeBalance.decimalAmount?.toHuman() ?? '...'}
+              noPoolsAvailable={recommendedPools.length === 0}
               poolName={demoPoolName}
               poolTotalStaked={poolTotalStaked?.toHuman() ?? ''}
               poolMemberCount={bondedPoolLoadable.valueMaybe()?.unwrapOrDefault().memberCounter.toString() ?? ''}

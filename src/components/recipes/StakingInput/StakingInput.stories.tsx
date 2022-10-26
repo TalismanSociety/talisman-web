@@ -41,3 +41,7 @@ Default.args = {
 export const AlreadyStaking = Default.bind({})
 
 AlreadyStaking.args = { ...Default.args, alreadyStaking: true }
+
+export const NoPoolsAvailable = Default.bind({})
+
+NoPoolsAvailable.args = { ...Default.args, noPoolsAvailable: true }
