@@ -67,14 +67,17 @@ const PoolSelector = (props: {
   return (
     <PoolSelectorDialog
       open={props.open}
-      onRequestDismiss={props.onDismiss}
-      onConfirm={() => {
+      onRequestDismiss={useCallback(() => {
+        props.onDismiss()
+        setNewPoolId(undefined)
+      }, [props])}
+      onConfirm={useCallback(() => {
         if (newPoolId !== undefined) {
           props.onChangePoolId(newPoolId)
           setNewPoolId(undefined)
         }
         props.onDismiss()
-      }}
+      }, [newPoolId, props])}
     >
       {recommendedPools.map(pool => (
         <PoolSelectorDialog.Item
