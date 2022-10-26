@@ -49,15 +49,15 @@ const PoolStakeItem = ({
         accountAddress={item.account?.address ?? ''}
         stakingAmount={decimalFromAtomics.fromAtomics(item.poolMember.unwrapOrDefault().points).toHuman()}
         stakingAmountInFiat={(
-          decimalFromAtomics.fromAtomics(item.poolMember.unwrapOrDefault().points).toFloatApproximation() *
-          nativeTokenPrice
+          decimalFromAtomics.fromAtomics(item.poolMember.unwrapOrDefault().points).toNumber() * nativeTokenPrice
         ).toLocaleString(undefined, { style: 'currency', currency: 'usd', currencyDisplay: 'narrowSymbol' })}
         rewardsAmount={'+' + decimalFromAtomics.fromAtomics(item.pendingRewards?.toString()).toHuman()}
         rewardsAmountInFiat={
           '+' +
-          (
-            decimalFromAtomics.fromAtomics(item.pendingRewards).toFloatApproximation() * nativeTokenPrice
-          ).toLocaleString(undefined, { style: 'currency', currency: 'usd', currencyDisplay: 'narrowSymbol' })
+          (decimalFromAtomics.fromAtomics(item.pendingRewards).toNumber() * nativeTokenPrice).toLocaleString(
+            undefined,
+            { style: 'currency', currency: 'usd', currencyDisplay: 'narrowSymbol' }
+          )
         }
         poolName={item.poolName ?? ''}
         onRequestClaim={() => claimPayoutExtrinsic.signAndSend(item.account?.address ?? '')}

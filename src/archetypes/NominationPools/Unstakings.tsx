@@ -86,7 +86,7 @@ const Unstakings = () => {
             accountAddress={x.address ?? ''}
             unstakingAmount={decimalFromAtomics.fromAtomics(x.amount).toHuman()}
             unstakingFiatAmount={(
-              decimalFromAtomics.fromAtomics(x.amount).toFloatApproximation() * nativeTokenPrice
+              decimalFromAtomics.fromAtomics(x.amount).toNumber() * nativeTokenPrice
             ).toLocaleString(undefined, {
               style: 'currency',
               currency: 'usd',

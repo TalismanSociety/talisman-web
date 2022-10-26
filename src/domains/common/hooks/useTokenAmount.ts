@@ -22,7 +22,7 @@ export const useTokenAmount = (amount?: string | (() => string), options: Option
   }, [stringAmount, nativeTokenDecimal])
 
   const fiatAmount = useMemo(
-    () => (decimalAmount === undefined ? undefined : decimalAmount.toFloatApproximation() * nativeTokenPrice),
+    () => (decimalAmount === undefined ? undefined : decimalAmount.toNumber() * nativeTokenPrice),
     [decimalAmount, nativeTokenPrice]
   )
 

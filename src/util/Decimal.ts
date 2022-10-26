@@ -1,16 +1,16 @@
 import { BN, bnToBn, formatBalance } from '@polkadot/util'
 import { ToBn } from '@polkadot/util/types'
 
-// Too large values lead to massive memory usage. Limit to something sensible.
-const MAX_FRACTIONAL_DIGITS = 100
-
 export default class Decimal {
+  // Too large values lead to massive memory usage. Limit to something sensible.
+  static #maxDecimal = 100
+
   static fromAtomics(atomics: string | number | bigint | BN | ToBn | undefined, decimals: number, unit?: string) {
     return new Decimal(bnToBn(atomics), decimals, unit)
   }
 
-  public static fromUserInput(input: string, fractionalDigits: number, unit?: string): Decimal {
-    Decimal.#verifyFractionalDigits(fractionalDigits)
+  public static fromUserInput(input: string, decimals: number, unit?: string): Decimal {
+    Decimal.#verifyDecimals(decimals)
 
     const badCharacter = input.match(/[^0-9.]/)
     if (badCharacter) {
@@ -40,18 +40,18 @@ export default class Decimal {
       }
     }
 
-    if (fractional.length > fractionalDigits) {
-      throw new Error('Got more fractional digits than supported')
+    if (fractional.length > decimals) {
+      throw new Error('Got more decimals than supported')
     }
 
-    const quantity = `${whole}${fractional.padEnd(fractionalDigits, '0')}`
+    const quantity = `${whole}${fractional.padEnd(decimals, '0')}`
 
-    return new Decimal(bnToBn(quantity), fractionalDigits, unit)
+    return new Decimal(bnToBn(quantity), decimals, unit)
   }
 
   private constructor(public atomics: BN, public decimals: number, public unit?: string) {}
 
-  toFloatApproximation() {
+  toNumber() {
     return Number(
       formatBalance(this.atomics, {
         forceUnit: '-',
@@ -83,11 +83,11 @@ export default class Decimal {
     return stringWithoutUnit.replace(/\.0*$/, '') + ` ${this.unit?.toUpperCase()}`
   }
 
-  static #verifyFractionalDigits(fractionalDigits: number): void {
-    if (!Number.isInteger(fractionalDigits)) throw new Error('Fractional digits is not an integer')
-    if (fractionalDigits < 0) throw new Error('Fractional digits must not be negative')
-    if (fractionalDigits > MAX_FRACTIONAL_DIGITS) {
-      throw new Error(`Fractional digits must not exceed ${MAX_FRACTIONAL_DIGITS}`)
+  static #verifyDecimals(fractionalDigits: number): void {
+    if (!Number.isInteger(fractionalDigits)) throw new Error('Decimals is not an integer')
+    if (fractionalDigits < 0) throw new Error('Decimals must not be negative')
+    if (fractionalDigits > Decimal.#maxDecimal) {
+      throw new Error(`Decimals must not exceed ${Decimal.#maxDecimal}`)
     }
   }
 }
