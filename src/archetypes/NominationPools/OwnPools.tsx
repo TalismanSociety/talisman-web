@@ -25,7 +25,7 @@ const OwnPools = () => {
     return (
       <div>
         <header>
-          <Text.H4>Staking</Text.H4>
+          <Text.H4 css={{ marginBottom: '2.4rem' }}>Staking</Text.H4>
         </header>
         <HiddenDetails
           overlay={
@@ -62,13 +62,13 @@ const OwnPools = () => {
         fallback={
           <div>
             <header>
-              <Text.H4>Staking</Text.H4>
-              <PoolStakeList>
-                <PoolStake.Skeleton />
-                <PoolStake.Skeleton />
-                <PoolStake.Skeleton />
-              </PoolStakeList>
+              <Text.H4 css={{ marginBottom: '2.4rem' }}>Staking</Text.H4>
             </header>
+            <PoolStakeList>
+              <PoolStake.Skeleton />
+              <PoolStake.Skeleton />
+              <PoolStake.Skeleton />
+            </PoolStakeList>
           </div>
         }
       >

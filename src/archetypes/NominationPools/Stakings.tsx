@@ -160,7 +160,7 @@ const Stakings = () => {
       <AddStakeDialog account={addStakeAccount} onDismiss={useCallback(() => setAddStakeAccount(undefined), [])} />
       <UnstakeDialog account={unstakeAccount} onDismiss={useCallback(() => setUnstakeAccount(undefined), [])} />
       <header>
-        <Text.H4>Staking</Text.H4>
+        <Text.H4 css={{ marginBottom: '2.4rem' }}>Staking</Text.H4>
       </header>
       {poolMembersLoadable.valueMaybe()?.every(pool => pool.isNone) && pools?.length === 0 && (
         <HiddenDetails
