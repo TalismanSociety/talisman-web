@@ -14,6 +14,7 @@ import { useTheme } from '@emotion/react'
 import { BN } from '@polkadot/util'
 import { differenceInHours, formatDistance, formatDuration, intervalToDuration } from 'date-fns'
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { selector, useRecoilValue, useRecoilValueLoadable, waitForAll } from 'recoil'
 
 export const recommendedPoolsState = selector({
@@ -56,6 +57,92 @@ const availableToStakeState = selector({
     )
   },
 })
+
+const Faq = () => {
+  const faqs = [
+    {
+      summary: 'What is nomination pool staking?',
+      content: (
+        <Text.Body>
+          Nomination pools allow participants to permissionlessly pool funds together to stake as a group. Benefits of
+          contributing your stake to a nomination pool include no staking minimum, no need for a stash and controller
+          account, and the selection of validators on your behalf.{' '}
+          <Text.A href="https://wiki.polkadot.network/docs/learn-nomination-pools" target="_blank">
+            Learn more
+          </Text.A>
+          .
+        </Text.Body>
+      ),
+    },
+    {
+      summary: 'How is the reward rate calculated?',
+      content: (
+        <Text.Body>
+          The rewards rate listed is an estimated annual yield based on historical polkadot reward and inflation rates.
+          Your real reward rate may vary with these rates, as well as any commission the validators you choose elect to
+          take. You can consult the name of your pool for information, or read about the Talisman run pools{' '}
+          <Text.A href="#">here</Text.A>.
+        </Text.Body>
+      ),
+    },
+    {
+      summary: 'How do I unstake my Polkadot?',
+      content: (
+        <Text.Body>
+          You can unstake at any time from the{' '}
+          <Text.A as={Link} to="portfolio#staking">
+            portfolio page
+          </Text.A>
+          . There is a 28-day unstaking period (often termed unbonding) on Polkadot before your funds become available
+          to withdraw.
+        </Text.Body>
+      ),
+    },
+    {
+      summary: 'How do I claim my staking rewards?',
+      content: (
+        <Text.Body>
+          You can claim accumulated rewards on the{' '}
+          <Text.A as={Link} to="portfolio#staking">
+            portfolio page
+          </Text.A>
+          . Ensure you have either "All Accounts", or the account you're actively staking with, selected in the top
+          right of the navigation bar.
+        </Text.Body>
+      ),
+    },
+    {
+      summary: 'How does Talisman pick which pool to enter?',
+      content: (
+        <Text.Body>
+          Talisman surveys the available pools at the time of staking, returning a recommendation based on the pool's
+          selection of validators, a verified identity, history of actively earning rewards, and not{' '}
+          <Text.A href="https://wiki.polkadot.network/docs/learn-nomination-pools#slashing" target="_blank">
+            being slashed
+          </Text.A>{' '}
+          for harmful behaviour.
+        </Text.Body>
+      ),
+    },
+  ]
+
+  const [expandedFaq, setExpandedFaq] = useState<number>()
+
+  return (
+    <div css={{ display: 'flex', flexDirection: 'column', gap: '1.6rem' }}>
+      {faqs.map((faq, index) => (
+        <Details
+          key={faq.summary}
+          open={index === expandedFaq}
+          onToggle={value => {
+            setExpandedFaq(prev => (prev === index ? undefined : index))
+          }}
+          {...faq}
+        />
+      ))}
+    </div>
+  )
+}
 
 const PoolSelector = (props: {
   open: boolean
@@ -340,24 +427,7 @@ const Staking = () => {
               />
             </HiddenDetails>
           </div>
-          <div css={{ display: 'flex', flexDirection: 'column', gap: '1.6rem' }}>
-            <Details
-              summary="What is nomination pool staking?"
-              content="Unlike nominating staking using pools requires a smaller amount of DOT, and the pool manages nominees on your behalf. Learn more"
-            />
-            <Details
-              summary="How is the reward rate calculated?"
-              content="Unlike nominating staking using pools requires a smaller amount of DOT, and the pool manages nominees on your behalf. Learn more"
-            />
-            <Details
-              summary="How do I claim my staking rewards?"
-              content="Unlike nominating staking using pools requires a smaller amount of DOT, and the pool manages nominees on your behalf. Learn more"
-            />
-            <Details
-              summary="How does Talisman pick which pool to enter?"
-              content="Unlike nominating staking using pools requires a smaller amount of DOT, and the pool manages nominees on your behalf. Learn more"
-            />
-          </div>
+          <Faq />
         </div>
       </div>
     </div>
