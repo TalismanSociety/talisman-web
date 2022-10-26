@@ -11,9 +11,8 @@ const BaseText = <T extends React.ElementType = 'span'>(props: TextProps<T>) => 
     <Component
       {...props}
       css={theme => ({
-        color: 'white',
+        color: `rgba(255,255,255,${theme.contentAlpha[props.alpha ?? 'medium']})`,
         fontFamily: 'Surt',
-        opacity: theme.contentAlpha[props.alpha ?? 'medium'],
       })}
     />
   )
@@ -26,9 +25,8 @@ const BaseHeaderText = <T extends React.ElementType = 'h1'>(props: TextProps<T>)
     <Component
       {...props}
       css={theme => ({
-        color: 'white',
+        color: `rgba(255,255,255,${theme.contentAlpha[props.alpha ?? 'high']})`,
         fontFamily: 'SurtExpanded',
-        opacity: theme.contentAlpha[props.alpha ?? 'high'],
       })}
     />
   )

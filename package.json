@@ -36,7 +36,9 @@
     "@talismn/util-legacy": "npm:@talismn/util@0.0.11",
     "@talismn/wallets": "^1.1.6",
     "bignumber.js": "^9.0.1",
-    "framer-motion": "^4.1.17",
+    "colorjs.io": "^0.4.0",
+    "date-fns": "^2.29.3",
+    "framer-motion": "^7.6.1",
     "graphql": "^15.5.1",
     "i18next": "^21.3.3",
     "i18next-browser-languagedetector": "^6.1.2",
@@ -46,6 +48,7 @@
     "react": "^18.2.0",
     "react-apollo-network-status": "^5.1.0",
     "react-dom": "^18.2.0",
+    "react-hot-toast": "^2.4.0",
     "react-i18next": "^11.12.0",
     "react-is": "^17.0.2",
     "react-router": "^5.3.3",
@@ -57,8 +60,6 @@
     "web-vitals": "^2.1.4"
   },
   "devDependencies": {
-    "@babel/plugin-proposal-class-properties": "^7.16.7",
-    "@babel/plugin-proposal-private-methods": "^7.16.11",
     "@commitlint/cli": "^17.1.2",
     "@commitlint/config-conventional": "^17.1.0",
     "@craco/craco": "^6.4.5",
@@ -112,8 +113,8 @@
     "build": "CI= GENERATE_SOURCEMAP=false craco build",
     "test": "craco test",
     "eject": "craco eject",
-    "storybook": "start-storybook -p 6006 -s public",
-    "build-storybook": "build-storybook -s public"
+    "storybook": "STORYBOOK=true start-storybook -p 6006 -s public",
+    "build-storybook": "STORYBOOK=true build-storybook -s public"
   },
   "jest": {
     "transformIgnorePatterns": [
