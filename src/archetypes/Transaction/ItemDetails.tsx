@@ -1,4 +1,5 @@
 import { Info, TokenLogo } from '@components'
+import { css } from '@emotion/react'
 import styled from '@emotion/styled'
 import { ReactComponent as _ArrowRight } from '@icons/arrow-right.svg'
 import { Account } from '@libs/talisman'
@@ -9,6 +10,7 @@ import { useTranslation } from 'react-i18next'
 
 import { Avatar } from './Avatar'
 import { ClickToCopy } from './ClickToCopy'
+import { ItemNoDetails } from './ItemNoDetails'
 import { ParsedTransaction } from './lib'
 
 type Props = {
@@ -19,7 +21,7 @@ type Props = {
 export const ItemDetails = ({ parsed, addresses, accounts }: Props) => {
   const { t } = useTranslation()
 
-  if (typeof parsed?.__typename !== 'string') return <div />
+  if (typeof parsed?.__typename !== 'string') return <ItemNoDetails />
 
   const addressBook = accounts.reduce((addressBook, account) => {
     if (account.name) addressBook[encodeAnyAddress(account.address)] = account.name
@@ -70,7 +72,14 @@ export const ItemDetails = ({ parsed, addresses, accounts }: Props) => {
       )
 
       return (
-        <div className="details">
+        <div
+          className="details"
+          css={css`
+            > *:last-child {
+              padding-left: 2rem;
+            }
+          `}
+        >
           {isReceiver ? senderInfo : tokenInfo}
 
           <ArrowRight />
@@ -99,7 +108,14 @@ export const ItemDetails = ({ parsed, addresses, accounts }: Props) => {
       )
 
       return (
-        <div className="details">
+        <div
+          className="details"
+          css={css`
+            > *:last-child {
+              padding-left: 2rem;
+            }
+          `}
+        >
           {tokenInfo}
 
           <ArrowRight />
@@ -128,7 +144,14 @@ export const ItemDetails = ({ parsed, addresses, accounts }: Props) => {
       )
 
       return (
-        <div className="details">
+        <div
+          className="details"
+          css={css`
+            > *:last-child {
+              padding-left: 2rem;
+            }
+          `}
+        >
           {tokenInfo}
 
           <ArrowRight />

@@ -120,7 +120,7 @@ export const Item = styled(({ className, transaction, addresses, selectedAccount
 })`
   display: grid;
   grid-template-rows: auto;
-  grid-template-columns: 2.5fr 2.5fr 4fr 1fr;
+  grid-template-columns: 2.5fr 2.5fr 5fr 1fr;
   align-items: center;
   text-align: left;
 
@@ -139,10 +139,6 @@ export const Item = styled(({ className, transaction, addresses, selectedAccount
   > .details {
     display: flex;
     align-items: center;
-
-    > *:last-child {
-      padding-left: 2rem;
-    }
 
     .title,
     .subtitle {
