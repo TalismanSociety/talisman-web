@@ -1,4 +1,6 @@
+import Text from '@components/atoms/Text'
 import Details from '@components/molecules/Details'
+import HiddenDetails from '@components/molecules/HiddenDetails'
 import InfoCard from '@components/molecules/InfoCard'
 import PoolSelectorDialog from '@components/recipes/PoolSelectorDialog'
 import StakingInput from '@components/recipes/StakingInput'
@@ -7,8 +9,10 @@ import { apiState, currentChainState, nativeTokenDecimalState } from '@domains/c
 import { useTokenAmountFromAtomics } from '@domains/common/hooks'
 import useChainState from '@domains/common/hooks/useChainState'
 import useExtrinsic from '@domains/common/hooks/useExtrinsic'
-import { usePoolAddForm } from '@domains/nominationPools/hooks'
+import { useCountDownToNomsPool, usePoolAddForm } from '@domains/nominationPools/hooks'
+import { useTheme } from '@emotion/react'
 import { BN } from '@polkadot/util'
+import { differenceInHours, formatDistance, formatDuration, intervalToDuration } from 'date-fns'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { selector, useRecoilValue, useRecoilValueLoadable, waitForAll } from 'recoil'
 
@@ -101,6 +105,10 @@ const PoolSelector = (props: {
 }
 
 const Staking = () => {
+  // TODO: remove
+  const nomsPoolCountDown = useCountDownToNomsPool()
+  const theme = useTheme()
+
   const joinPoolExtrinsic = useExtrinsic('nominationPools', 'join')
   const bondExtraExtrinsic = useExtrinsic('nominationPools', 'bondExtra')
 
@@ -252,62 +260,84 @@ const Staking = () => {
           }}
         >
           <div css={{ marginBottom: '5.5rem' }}>
-            <StakingInput
-              portfolioHref="/portfolio#staking"
-              alreadyStaking={hasExistingPool}
-              accounts={accounts.map(x => ({
-                ...x,
-                selected: x.address === selectedAccount?.address,
-                name: x.name ?? x.address,
-                balance: '',
-              }))}
-              onSelectAccount={useCallback(
-                x => setSelectedAccount(accounts.find(account => account.address === x.address)!),
-                [accounts]
-              )}
-              amount={amount}
-              fiatAmount={localizedFiatAmount ?? ''}
-              onChangeAmount={setAmount}
-              isError={inputError !== undefined}
-              inputSupportingText={inputError?.message}
-              onRequestMaxAmount={() => {
-                if (freeBalance.decimalAmount !== undefined) {
-                  setAmount(freeBalance.decimalAmount.toString())
-                }
-              }}
-              availableToStake={freeBalance.decimalAmount?.toHuman() ?? '...'}
-              noPoolsAvailable={recommendedPools.length === 0}
-              poolName={demoPoolName}
-              poolTotalStaked={poolTotalStaked?.toHuman() ?? ''}
-              poolMemberCount={bondedPoolLoadable.valueMaybe()?.unwrapOrDefault().memberCounter.toString() ?? ''}
-              onRequestPoolChange={useCallback(() => setShowPoolSelector(true), [])}
-              onSubmit={useCallback(() => {
-                if (selectedAccount === undefined || decimalAmount?.atomics === undefined) return
-                if (hasExistingPool) {
-                  bondExtraExtrinsic.signAndSend(selectedAccount.address, {
-                    FreeBalance: decimalAmount.atomics.toString(),
-                  })
-                } else if (selectedPoolId !== undefined) {
-                  joinPoolExtrinsic.signAndSend(
-                    selectedAccount.address,
-                    decimalAmount.atomics.toString(),
-                    selectedPoolId
-                  )
-                }
-              }, [
-                bondExtraExtrinsic,
-                decimalAmount?.atomics,
-                hasExistingPool,
-                joinPoolExtrinsic,
-                selectedAccount,
-                selectedPoolId,
-              ])}
-              submitState={useMemo(() => {
-                if (!isReady || inputError !== undefined || decimalAmount.atomics.isZero()) return 'disabled'
+            <HiddenDetails
+              hidden={nomsPoolCountDown?.blocksRemaining !== undefined}
+              overlay={
+                <div
+                  css={{
+                    textAlign: 'center',
+                  }}
+                >
+                  <Text.H3 css={{ color: theme.color.primary }}>Staking will unlock in</Text.H3>
+                  <Text.Body alpha="high" css={{ fontSize: '1.6rem' }}>
+                    {nomsPoolCountDown?.eta === undefined
+                      ? '...'
+                      : differenceInHours(0, nomsPoolCountDown.eta) === 0
+                      ? formatDistance(0, nomsPoolCountDown.eta)
+                      : formatDuration(intervalToDuration({ start: 0, end: nomsPoolCountDown.eta }), {
+                          format: ['days', 'hours', 'minutes'],
+                        })}
+                  </Text.Body>
+                </div>
+              }
+            >
+              <StakingInput
+                portfolioHref="/portfolio#staking"
+                alreadyStaking={hasExistingPool}
+                accounts={accounts.map(x => ({
+                  ...x,
+                  selected: x.address === selectedAccount?.address,
+                  name: x.name ?? x.address,
+                  balance: '',
+                }))}
+                onSelectAccount={useCallback(
+                  x => setSelectedAccount(accounts.find(account => account.address === x.address)!),
+                  [accounts]
+                )}
+                amount={amount}
+                fiatAmount={localizedFiatAmount ?? ''}
+                onChangeAmount={setAmount}
+                isError={inputError !== undefined}
+                inputSupportingText={inputError?.message}
+                onRequestMaxAmount={() => {
+                  if (freeBalance.decimalAmount !== undefined) {
+                    setAmount(freeBalance.decimalAmount.toString())
+                  }
+                }}
+                availableToStake={freeBalance.decimalAmount?.toHuman() ?? '...'}
+                noPoolsAvailable={recommendedPools.length === 0}
+                poolName={demoPoolName}
+                poolTotalStaked={poolTotalStaked?.toHuman() ?? ''}
+                poolMemberCount={bondedPoolLoadable.valueMaybe()?.unwrapOrDefault().memberCounter.toString() ?? ''}
+                onRequestPoolChange={useCallback(() => setShowPoolSelector(true), [])}
+                onSubmit={useCallback(() => {
+                  if (selectedAccount === undefined || decimalAmount?.atomics === undefined) return
+                  if (hasExistingPool) {
+                    bondExtraExtrinsic.signAndSend(selectedAccount.address, {
+                      FreeBalance: decimalAmount.atomics.toString(),
+                    })
+                  } else if (selectedPoolId !== undefined) {
+                    joinPoolExtrinsic.signAndSend(
+                      selectedAccount.address,
+                      decimalAmount.atomics.toString(),
+                      selectedPoolId
+                    )
+                  }
+                }, [
+                  bondExtraExtrinsic,
+                  decimalAmount?.atomics,
+                  hasExistingPool,
+                  joinPoolExtrinsic,
+                  selectedAccount,
+                  selectedPoolId,
+                ])}
+                submitState={useMemo(() => {
+                  if (!isReady || inputError !== undefined || decimalAmount.atomics.isZero()) return 'disabled'
 
-                return joinPoolExtrinsic.state === 'loading' ? 'pending' : undefined
-              }, [decimalAmount?.atomics, inputError, isReady, joinPoolExtrinsic.state])}
-            />
+                  return joinPoolExtrinsic.state === 'loading' ? 'pending' : undefined
+                }, [decimalAmount?.atomics, inputError, isReady, joinPoolExtrinsic.state])}
+              />
+            </HiddenDetails>
           </div>
           <div css={{ display: 'flex', flexDirection: 'column', gap: '1.6rem' }}>
             <Details
