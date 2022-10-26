@@ -26,19 +26,19 @@ export const usePoolAddForm = (account?: string) => {
           'nominationPools',
           'bondExtra',
           account,
-          { FreeBalance: balancesLoadable.contents.freeBalance },
+          { FreeBalance: balancesLoadable.contents.availableBalance },
         ])
   )
 
   const [input, setAmount] = useTokenAmountState('')
 
   const oneToken = useTokenAmount('1')
-  const freeBalance = useTokenAmountFromAtomics(
+  const availableBalance = useTokenAmountFromAtomics(
     paymentInfoLoadable.state !== 'hasValue' || paymentInfoLoadable.contents === undefined
       ? undefined
       : balancesLoadable
           .valueMaybe()
-          ?.freeBalance.lt(
+          ?.availableBalance.lt(
             api.consts.balances.existentialDeposit.add(
               paymentInfoLoadable.contents.partialFee.muln(1 + ESTIMATED_FEE_MARGIN_OF_ERROR)
             )
@@ -46,17 +46,17 @@ export const usePoolAddForm = (account?: string) => {
       ? new BN(0)
       : balancesLoadable
           .valueMaybe()
-          ?.freeBalance.sub(api.consts.balances.existentialDeposit)
+          ?.availableBalance.sub(api.consts.balances.existentialDeposit)
           .sub(paymentInfoLoadable.contents.partialFee.muln(1 + ESTIMATED_FEE_MARGIN_OF_ERROR))
   )
 
   const minAmount = useTokenAmountFromAtomics(
     useMemo(
       () =>
-        freeBalance.decimalAmount === undefined || oneToken.decimalAmount === undefined
+        availableBalance.decimalAmount === undefined || oneToken.decimalAmount === undefined
           ? undefined
-          : BN.min(freeBalance.decimalAmount.atomics, oneToken.decimalAmount.atomics),
-      [freeBalance, oneToken.decimalAmount]
+          : BN.min(availableBalance.decimalAmount.atomics, oneToken.decimalAmount.atomics),
+      [availableBalance, oneToken.decimalAmount]
     )
   )
 
@@ -74,10 +74,13 @@ export const usePoolAddForm = (account?: string) => {
   const error = useMemo(() => {
     if (balancesLoadable.state !== 'hasValue') return
 
-    if (freeBalance.decimalAmount !== undefined && input.decimalAmount?.atomics.gt(freeBalance.decimalAmount.atomics)) {
+    if (
+      availableBalance.decimalAmount !== undefined &&
+      input.decimalAmount?.atomics.gt(availableBalance.decimalAmount.atomics)
+    ) {
       return new Error('Insufficient balance')
     }
-  }, [input.decimalAmount?.atomics, balancesLoadable.state, freeBalance.decimalAmount])
+  }, [input.decimalAmount?.atomics, balancesLoadable.state, availableBalance.decimalAmount])
 
   useEffect(() => {
     if (account !== prevAccount) {
@@ -96,7 +99,7 @@ export const usePoolAddForm = (account?: string) => {
 
   return {
     input,
-    freeBalance,
+    availableBalance,
     resulting,
     setAmount,
     error,

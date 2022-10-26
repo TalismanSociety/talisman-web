@@ -10,7 +10,7 @@ const AddStakeDialog = (props: { account?: string; onDismiss: () => unknown }) =
   const {
     isReady,
     input: { amount, decimalAmount, localizedFiatAmount },
-    freeBalance,
+    availableBalance,
     resulting,
     setAmount,
     error: inputError,
@@ -26,7 +26,7 @@ const AddStakeDialog = (props: { account?: string; onDismiss: () => unknown }) =
     <BaseAddStakeDialog
       isError={inputError !== undefined}
       open={props.account !== undefined}
-      availableToStake={freeBalance.decimalAmount?.toHuman() ?? '...'}
+      availableToStake={availableBalance.decimalAmount?.toHuman() ?? '...'}
       amount={amount}
       onChangeAmount={setAmount}
       fiatAmount={localizedFiatAmount ?? ''}
@@ -44,8 +44,8 @@ const AddStakeDialog = (props: { account?: string; onDismiss: () => unknown }) =
         [bondExtraExtrinsic, decimalAmount?.atomics, props]
       )}
       onRequestMaxAmount={() => {
-        if (freeBalance.decimalAmount !== undefined) {
-          setAmount(freeBalance.decimalAmount?.toString())
+        if (availableBalance.decimalAmount !== undefined) {
+          setAmount(availableBalance.decimalAmount?.toString())
         }
       }}
       confirmState={

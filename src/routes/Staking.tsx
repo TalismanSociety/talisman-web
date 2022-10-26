@@ -51,7 +51,7 @@ const availableToStakeState = selector({
     const balances = await Promise.all(accounts.map(({ address }) => api.derive.balances.all(address)))
 
     return balances.reduce(
-      (prev, curr) => curr.freeBalance.sub(api.consts.balances.existentialDeposit).add(prev),
+      (prev, curr) => curr.availableBalance.sub(api.consts.balances.existentialDeposit).add(prev),
       new BN(0)
     )
   },
@@ -126,7 +126,7 @@ const Staking = () => {
   const {
     input: { amount, decimalAmount, localizedFiatAmount },
     isReady: isInputReady,
-    freeBalance,
+    availableBalance,
     error: inputError,
     setAmount,
   } = usePoolAddForm(selectedAccount?.address)
@@ -300,11 +300,11 @@ const Staking = () => {
                 isError={inputError !== undefined}
                 inputSupportingText={inputError?.message}
                 onRequestMaxAmount={() => {
-                  if (freeBalance.decimalAmount !== undefined) {
-                    setAmount(freeBalance.decimalAmount.toString())
+                  if (availableBalance.decimalAmount !== undefined) {
+                    setAmount(availableBalance.decimalAmount.toString())
                   }
                 }}
-                availableToStake={freeBalance.decimalAmount?.toHuman() ?? '...'}
+                availableToStake={availableBalance.decimalAmount?.toHuman() ?? '...'}
                 noPoolsAvailable={recommendedPools.length === 0}
                 poolName={demoPoolName}
                 poolTotalStaked={poolTotalStaked?.toHuman() ?? ''}
