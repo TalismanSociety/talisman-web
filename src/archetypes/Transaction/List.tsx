@@ -1,5 +1,6 @@
 import { Field, MaterialLoader, Panel, PanelSection } from '@components'
-import styled from '@emotion/styled'
+import * as Icon from '@components/atoms/Icon'
+import { css } from '@emotion/react'
 import { useActiveAccount } from '@libs/talisman'
 import format from 'date-fns/format'
 import parseISO from 'date-fns/parseISO'
@@ -18,7 +19,7 @@ type Props = {
   addresses: string[]
   className?: string
 }
-export const List = styled(({ addresses = [], className }: Props) => {
+export const List = ({ addresses = [], className }: Props) => {
   const { t } = useTranslation()
 
   const urlAddress = useUrlParams(['address'])[0]
@@ -48,31 +49,62 @@ export const List = styled(({ addresses = [], className }: Props) => {
 
   return (
     <section className={`transaction-list ${className}`}>
-      <header>
+      <header
+        css={css`
+          margin-bottom: 1rem;
+          padding-bottom: 1rem;
+
+          .field-search {
+            max-width: 500px;
+          }
+        `}
+      >
         <Field.Search value={searchQuery} onChange={setSearchQuery} placeholder="Filter by Chain, Address, Type..." />
       </header>
 
-      <Panel className="transaction-item-container">
+      <Panel
+        css={css`
+          > .inner {
+            ::before,
+            ::after {
+              content: '';
+              display: table;
+            }
+          }
+        `}
+      >
         <InfiniteScroll
           loadMore={loadMore}
           hasMore={hasMore && status !== 'ERROR'}
           loader={
             <PanelSection
               key="loader"
-              className="centered-state"
+              css={centered}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1, transition: { ease: [0.78, 0.14, 0.15, 0.86] } }}
             >
-              <MaterialLoader /> <div>{t('Searching the paraverse')}</div>
+              <MaterialLoader
+                css={css`
+                  margin: 0;
+                `}
+              />
+              <div>{t('Searching the paraverse')}</div>
             </PanelSection>
           }
         >
           {Object.entries(dayGroupedTransactions).map(([day, transactions], index) => (
             <Fragment key={`${day}-${selectedAddress}`}>
               <motion.h3
+                css={css`
+                  margin: 1.4rem;
+                  color: white;
+
+                  &:not(:first-child) {
+                    margin-top: 3rem;
+                  }
+                `}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1, transition: { ease: [0.78, 0.14, 0.15, 0.86] } }}
-                className="transaction-date"
               >
                 {format(parseISO(day), 'eee d MMMM yyyy')}
               </motion.h3>
@@ -89,98 +121,73 @@ export const List = styled(({ addresses = [], className }: Props) => {
 
           {status === 'SUCCESS' && !hasTransactions && (
             <PanelSection
-              className="centered-state"
+              css={centered}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1, transition: { ease: [0.78, 0.14, 0.15, 0.86] } }}
             >
+              <Icon.AlertCircle
+                css={css`
+                  display: block;
+                  width: 1.2em;
+                  height: 1.2em;
+                `}
+              />
               {t('No Transactions - try another account')}
             </PanelSection>
           )}
 
           {status === 'ERROR' && (
             <PanelSection
-              className="centered-state"
+              css={centered}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1, transition: { ease: [0.78, 0.14, 0.15, 0.86] } }}
             >
-              <div>{t('An error occured')}</div>
+              <Icon.AlertCircle
+                css={css`
+                  display: block;
+                  width: 1.2em;
+                  height: 1.2em;
+                `}
+              />
+              {t('An error occured')}
             </PanelSection>
           )}
         </InfiniteScroll>
       </Panel>
 
-      <footer>
+      <footer
+        css={css`
+          margin-top: 1rem;
+          padding-top: 1rem;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        `}
+      >
         {status === 'SUCCESS' && !hasMore && hasTransactions && (
-          <div className="seach-complete">{t('Search complete')}</div>
+          <div
+            css={[
+              centered,
+              css`
+                color: var(--color-mid);
+              `,
+            ]}
+          >
+            {t('Search complete')}
+          </div>
         )}
       </footer>
     </section>
   )
-})`
-  > header {
-    padding-bottom: 1rem;
-    margin-bottom: 1em;
+}
 
-    .field-search {
-      max-width: 500px;
-    }
-  }
+const centered = css`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
 
-  > .transaction-item-container > .inner {
-    ::before,
-    ::after {
-      content: '';
-      display: table;
-    }
-  }
-
-  .transaction-item {
-    transition: all 0.2s;
-    &:hover {
-      background: var(--color-activeBackground);
-    }
-  }
-
-  > footer {
-    padding-top: 1rem;
-    margin-top: 1em;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .arrow-down {
-    transform: rotate(90deg);
-  }
-
-  .transaction-date {
-    margin: 1.4rem;
-    color: white;
-  }
-  .transaction-date:not(:first-child) {
-    margin-top: 3rem;
-  }
-
-  .centered-state {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-
-    > * {
-      margin: 0 0.3em;
-    }
-  }
-
-  .seach-complete {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    color: var(--color-mid);
-
-    > * {
-      margin: 0 0.3em;
-    }
+  > * {
+    margin: 0 0.3em;
   }
 `

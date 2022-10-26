@@ -11,16 +11,16 @@ export const ItemNoDetails = () => {
       className="details"
       css={css`
         gap: 1em;
-
-        svg {
+      `}
+    >
+      <Icon.AlertCircle
+        css={css`
           display: block;
           font-size: 3.2rem;
           width: 1em;
           height: 1em;
-        }
-      `}
-    >
-      <Icon.AlertCircle css={css``} />
+        `}
+      />
       <div
         css={css`
           font-size: var(--font-size-xsmall);

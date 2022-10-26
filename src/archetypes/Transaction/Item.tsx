@@ -124,6 +124,11 @@ export const Item = styled(({ className, transaction, addresses, selectedAccount
   align-items: center;
   text-align: left;
 
+  transition: all 0.2s;
+  &:hover {
+    background: var(--color-activeBackground);
+  }
+
   &.selected-account {
     grid-template-columns: 2.5fr 6.5fr 1fr;
 
