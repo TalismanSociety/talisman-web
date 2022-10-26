@@ -129,7 +129,7 @@ const Stakings = () => {
               const status: PoolStatus = (() => {
                 if (targets?.length === 0) return 'not_nominating'
 
-                return targets?.some(x => eraStakers?.includes(x)) ? 'earning_rewards' : 'waiting'
+                return targets?.some(x => eraStakers?.some(y => y.eq(x))) ? 'earning_rewards' : 'waiting'
               })()
 
               return {

@@ -25,7 +25,7 @@ export const PoolStatusIndicator = (props: PoolStatusIndicatorProps) => (
     tooltip={useMemo(() => {
       switch (props.status) {
         case 'earning_rewards':
-          return 'Nominating'
+          return 'Earning rewards'
         case 'waiting':
           return 'Waiting'
         case 'not_nominating':
