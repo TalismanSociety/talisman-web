@@ -1,6 +1,7 @@
 import { ComponentMeta, Story } from '@storybook/react'
 
-import PoolStake, { PoolStakeProps } from './PoolStake'
+import PoolStake, { PoolStakeList, PoolStakeProps } from './PoolStake'
+import PoolStakeSkeleton from './PoolStake.skeleton'
 
 export default {
   title: 'Recipes/PoolStake',
@@ -11,10 +12,34 @@ export const Default: Story<PoolStakeProps> = args => <PoolStake {...args} />
 
 Default.args = {
   accountName: 'Yeet account',
-  accountAddress: '(13Kcw...ZQ4K)',
+  accountAddress: '143wN4e1nTTWJZHy1CFVXDHpAg6YJsNn2jDN52J2Xfjf8MWs',
+  stakingAmount: '4000 DOT',
+  stakingAmountInFiat: '$23,988.55',
+  rewardsAmount: '+4 DOT',
+  rewardsAmountInFiat: '+$120.55',
+  poolName: 'Talisman Paraverse Pool',
+  claimState: undefined,
+}
+
+export const List: Story<PoolStakeProps> = args => (
+  <PoolStakeList>
+    <PoolStake {...args} />
+    <PoolStake {...args} />
+    <PoolStake {...args} />
+    <PoolStakeSkeleton />
+    <PoolStakeSkeleton />
+    <PoolStakeSkeleton />
+  </PoolStakeList>
+)
+
+List.args = {
+  accountName: 'Yeet account',
+  accountAddress: '143wN4e1nTTWJZHy1CFVXDHpAg6YJsNn2jDN52J2Xfjf8MWs',
   stakingAmount: '4000 DOT',
   stakingAmountInFiat: '$23,988.55',
   rewardsAmount: '+4 DOT',
   rewardsAmountInFiat: '+$120.55',
   poolName: 'Talisman Paraverse Pool',
 }
+
+export const Skeleton = () => <PoolStakeSkeleton />

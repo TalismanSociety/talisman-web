@@ -1,14 +1,25 @@
-import { jsx, useTheme } from '@emotion/react'
+import { useTheme } from '@emotion/react'
 import { useMemo } from 'react'
+import { Link } from 'react-router-dom'
 
-type ButtonElementType = Pick<JSX.IntrinsicElements, 'button' | 'a'>
+import CircularProgressIndicator from '../CircularProgressIndicator'
 
-type PolymorphicTextProps<T extends keyof ButtonElementType> = { as?: T; variant?: 'outlined' | 'noop' }
+type ButtonElementType = Extract<React.ElementType, 'button' | 'a'> | typeof Link
 
-export type ButtonProps<T extends keyof ButtonElementType> = PolymorphicTextProps<T> & ButtonElementType[T]
+type PolymorphicButtonProps<T extends ButtonElementType> = {
+  as?: T
+  variant?: 'outlined' | 'noop'
+  disabled?: boolean
+  loading?: boolean
+}
 
-const Button = <T extends keyof ButtonElementType>({ as = 'button' as T, variant, ...props }: ButtonProps<T>) => {
+export type ButtonProps<T extends ButtonElementType> = PolymorphicButtonProps<T> &
+  Omit<React.ComponentPropsWithoutRef<T>, keyof PolymorphicButtonProps<T>>
+
+const Button = <T extends ButtonElementType>({ as = 'button' as T, variant, ...props }: ButtonProps<T>) => {
   const theme = useTheme()
+
+  const disabled = props.disabled || props.loading
 
   const variantStyle = useMemo(() => {
     switch (variant) {
@@ -43,17 +54,52 @@ const Button = <T extends keyof ButtonElementType>({ as = 'button' as T, variant
     }
   }, [theme.color.background, theme.color.onBackground, theme.color.onPrimary, theme.color.primary, variant])
 
-  return jsx(as ?? 'button', {
-    ...props,
-    css: {
-      display: 'block',
-      padding: '1.156rem 1.6rem',
-      border: 'none',
-      borderRadius: '1rem',
-      cursor: 'pointer',
-      ...variantStyle,
-    },
-  })
+  const variantDisabledStyle = useMemo(() => {
+    switch (variant) {
+      case undefined:
+        return {
+          backgroundColor: theme.color.foreground,
+          color: `rgba(255,255,255,${theme.contentAlpha.disabled})`,
+          cursor: 'not-allowed',
+        }
+      default:
+        return { filter: 'grayscale(1) brightness(0.5)', cursor: 'not-allowed' }
+    }
+  }, [theme.color.foreground, theme.contentAlpha.disabled, variant])
+
+  const Component = as
+
+  return (
+    <Component
+      {...(props as any)}
+      disabled={disabled}
+      css={[
+        {
+          display: 'block',
+          padding: '1.156rem 2.4rem',
+          border: 'none',
+          borderRadius: '1rem',
+          cursor: 'pointer',
+          transition: '.25s',
+          ...variantStyle,
+          ...(disabled ? { ':hover': undefined } : {}),
+        },
+        props.loading && { cursor: 'wait' },
+        props.disabled && variantDisabledStyle,
+      ]}
+    >
+      <span css={{ position: 'relative' }}>
+        {props.loading && (
+          <span css={{ position: 'absolute', left: '-1.2rem', top: '0.1rem' }}>
+            <CircularProgressIndicator size="1.6rem" />
+          </span>
+        )}
+        <span css={{ display: 'inline-block', transform: props.loading ? 'translateX(1rem)' : undefined }}>
+          {props.children}
+        </span>
+      </span>
+    </Component>
+  )
 }
 
 export default Button
