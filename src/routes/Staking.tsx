@@ -3,7 +3,7 @@ import InfoCard from '@components/molecules/InfoCard'
 import PoolSelectorDialog from '@components/recipes/PoolSelectorDialog'
 import StakingInput from '@components/recipes/StakingInput'
 import { accountsState, polkadotAccountsState } from '@domains/accounts/recoils'
-import { apiState, nativeTokenDecimalState } from '@domains/chains/recoils'
+import { apiState, currentChainState, nativeTokenDecimalState } from '@domains/chains/recoils'
 import { useTokenAmountFromAtomics } from '@domains/common/hooks'
 import useChainState from '@domains/common/hooks/useChainState'
 import useExtrinsic from '@domains/common/hooks/useExtrinsic'
@@ -60,8 +60,8 @@ const PoolSelector = (props: {
   onDismiss: () => unknown
 }) => {
   const [newPoolId, setNewPoolId] = useState<number>()
-  const [recommendedPools, nativeTokenDecimal] = useRecoilValue(
-    waitForAll([recommendedPoolsState, nativeTokenDecimalState])
+  const [recommendedPools, nativeTokenDecimal, currentChain] = useRecoilValue(
+    waitForAll([recommendedPoolsState, nativeTokenDecimalState, currentChainState])
   )
 
   return (
@@ -82,6 +82,11 @@ const PoolSelector = (props: {
           highlighted={newPoolId !== undefined && pool.poolId.eqn(newPoolId)}
           talismanRecommended
           poolName={pool.name ?? ''}
+          poolDetailUrl={
+            currentChain.subscanUrl === null
+              ? undefined
+              : new URL(`nomination_pool/${pool.poolId.toString()}`, currentChain.subscanUrl).toString()
+          }
           stakedAmount={`${nativeTokenDecimal.fromAtomics(pool.bondedPool.unwrapOrDefault().points).toHuman()} staked`}
           rating={3}
           memberCount={pool.bondedPool.unwrapOrDefault().memberCounter.toString()}

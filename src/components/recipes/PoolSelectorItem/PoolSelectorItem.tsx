@@ -1,4 +1,5 @@
-import { Star, Union, User } from '@components/atoms/Icon'
+import Button from '@components/atoms/Button'
+import { ExternalLink, Star, Union, User } from '@components/atoms/Icon'
 import Text from '@components/atoms/Text'
 import { useTheme } from '@emotion/react'
 
@@ -6,6 +7,7 @@ export type PoolSelectorItemProps = {
   selected?: boolean
   highlighted?: boolean
   poolName: string
+  poolDetailUrl?: string
   stakedAmount: string
   talismanRecommended: boolean
   rating: 0 | 1 | 2 | 3
@@ -34,7 +36,7 @@ const PoolSelectorItem = (props: PoolSelectorItemProps) => {
         css={{
           display: 'flex',
           justifyContent: 'space-between',
-          alignItems: 'center',
+          alignItems: 'baseline',
           gap: '1rem',
           marginBottom: '0.6rem',
         }}
@@ -42,7 +44,11 @@ const PoolSelectorItem = (props: PoolSelectorItemProps) => {
         <Text.Body alpha={alpha} css={{ fontWeight: 'bold', margin: 0 }}>
           {props.poolName}
         </Text.Body>
-        {/* <MoreHorizontal width="1.4rem" height="1.4rem" /> */}
+        {props.poolDetailUrl !== undefined && (
+          <Button as="a" variant="noop" href={props.poolDetailUrl} target="_blank">
+            <ExternalLink width="1.4rem" height="1.4rem" />
+          </Button>
+        )}
       </header>
       <Text.Body alpha={alpha}>{props.stakedAmount}</Text.Body>
       <Text.Body
