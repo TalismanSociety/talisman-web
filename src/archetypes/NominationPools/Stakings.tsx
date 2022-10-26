@@ -119,7 +119,10 @@ const Stakings = () => {
       : eraStakersState(activeEraLoadable.contents.unwrapOrDefault().index)
   )
 
-  const eraStakers = useMemo(() => eraStakersLoadable.valueMaybe()?.map(x => x[0].args[1]), [eraStakersLoadable])
+  const eraStakers = useMemo(
+    () => new Set(eraStakersLoadable.valueMaybe()?.map(x => x[0].args[1].toHuman())),
+    [eraStakersLoadable]
+  )
 
   const pools = useMemo(
     () =>
@@ -132,7 +135,7 @@ const Stakings = () => {
               const status: PoolStatus = (() => {
                 if (targets?.length === 0) return 'not_nominating'
 
-                return targets?.some(x => eraStakers?.some(y => y.eq(x))) ? 'earning_rewards' : 'waiting'
+                return targets?.some(x => eraStakers?.has(x.toHuman())) ? 'earning_rewards' : 'waiting'
               })()
 
               return {
