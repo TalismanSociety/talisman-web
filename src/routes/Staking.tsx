@@ -262,6 +262,7 @@ const Staking = () => {
           <div css={{ marginBottom: '5.5rem' }}>
             <HiddenDetails
               hidden={nomsPoolCountDown?.blocksRemaining !== undefined}
+              variant="dim"
               overlay={
                 <div
                   css={{
