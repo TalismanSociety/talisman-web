@@ -130,12 +130,16 @@ const Stakings = () => {
         ? undefined
         : poolMembersLoadable.contents
             .map((poolMember, index) => {
-              const targets = poolNominatorsLoadable.valueMaybe()?.[index]?.unwrapOrDefault().targets
+              const status: PoolStatus | undefined = (() => {
+                if (poolNominatorsLoadable.state !== 'hasValue' || eraStakers === undefined) {
+                  return undefined
+                }
 
-              const status: PoolStatus = (() => {
+                const targets = poolNominatorsLoadable.contents[index]?.unwrapOrDefault().targets
+
                 if (targets?.length === 0) return 'not_nominating'
 
-                return targets?.some(x => eraStakers?.has(x.toHuman())) ? 'earning_rewards' : 'waiting'
+                return targets?.some(x => eraStakers.has(x.toHuman())) ? 'earning_rewards' : 'waiting'
               })()
 
               return {

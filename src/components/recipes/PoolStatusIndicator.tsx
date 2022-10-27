@@ -19,7 +19,7 @@ export const PoolStatusIndicator = (props: PoolStatusIndicatorProps) => (
         case 'not_nominating':
           return 'error'
         case undefined:
-          return 'warning'
+          return undefined
       }
     }, [props.status])}
     tooltip={useMemo(() => {

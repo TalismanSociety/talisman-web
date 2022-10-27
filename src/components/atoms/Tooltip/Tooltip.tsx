@@ -1,6 +1,7 @@
 import { useTheme } from '@emotion/react'
 import { motion, useMotionValue } from 'framer-motion'
 import { MouseEventHandler, ReactNode, useCallback, useId, useState } from 'react'
+import ReactDOM from 'react-dom'
 
 import Text from '../Text'
 
@@ -14,6 +15,9 @@ export type TooltipProps = {
   }) => ReactNode
 }
 
+const X_OFFSET = 12
+const Y_OFFSET = 6
+
 const Tooltip = (props: TooltipProps) => {
   const theme = useTheme()
   const id = useId()
@@ -25,30 +29,42 @@ const Tooltip = (props: TooltipProps) => {
     <div>
       {props.children({
         'aria-labelledby': id,
-        'onMouseEnter': useCallback(() => setMouseOver(true), []),
+        'onMouseEnter': useCallback<MouseEventHandler<any>>(
+          event => {
+            setMouseOver(true)
+            x.set(event.clientX + X_OFFSET)
+            y.set(event.clientY - Y_OFFSET)
+          },
+          [x, y]
+        ),
         'onMouseLeave': useCallback(() => setMouseOver(false), []),
-        'onMouseMove': event => {
-          x.set(event.clientX + 12)
-          y.set(event.clientY - 6)
-        },
+        'onMouseMove': useCallback<MouseEventHandler<any>>(
+          event => {
+            x.set(event.clientX + X_OFFSET)
+            y.set(event.clientY - Y_OFFSET)
+          },
+          [x, y]
+        ),
       })}
-      {Boolean(props.content) && (
-        <motion.div
-          layout
-          id={id}
-          role="tooltip"
-          css={{
-            position: 'fixed',
-            pointerEvents: 'none',
-            backgroundColor: theme.color.foregroundVariant,
-            padding: '0.6rem',
-            borderRadius: '0.4rem',
-          }}
-          style={{ opacity: mouseOver ? 1 : 0, top: y, left: x }}
-        >
-          <Text.Body as="div">{props.content}</Text.Body>
-        </motion.div>
-      )}
+      {Boolean(props.content) &&
+        ReactDOM.createPortal(
+          <motion.div
+            layout
+            id={id}
+            role="tooltip"
+            css={{
+              position: 'fixed',
+              pointerEvents: 'none',
+              backgroundColor: theme.color.foregroundVariant,
+              padding: '0.6rem',
+              borderRadius: '0.4rem',
+            }}
+            style={{ opacity: mouseOver ? 1 : 0, top: y, left: x }}
+          >
+            <Text.Body as="div">{props.content}</Text.Body>
+          </motion.div>,
+          document.body
+        )}
     </div>
   )
 }

@@ -32,3 +32,10 @@ Error.args = {
   status: 'error',
   tooltip: 'Error',
 }
+
+export const Undefined = Template.bind({})
+
+Undefined.args = {
+  status: undefined,
+  tooltip: 'Error',
+}
