@@ -9,6 +9,8 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { ReactNode, useState } from 'react'
 import { Link } from 'react-router-dom'
 
+import { PoolStatus, PoolStatusIndicator } from '../PoolStatusIndicator'
+
 type Account = { selected?: boolean; name: string; address: string; balance: string }
 
 export type StakingInputProps = {
@@ -22,6 +24,7 @@ export type StakingInputProps = {
   availableToStake: string
   noPoolsAvailable?: boolean
   poolName?: string
+  poolStatus?: PoolStatus
   poolTotalStaked?: string
   poolMemberCount?: string
   onRequestPoolChange: () => unknown
@@ -100,9 +103,12 @@ const StakingInput = (props: StakingInputProps) => {
                 cursor: props.noPoolsAvailable ? undefined : 'pointer',
               }}
             >
-              <Text css={{ fontSize: '1.4rem' }} alpha={poolInfoExpanded ? 'high' : 'medium'}>
-                {props.noPoolsAvailable ? 'No pools available' : props.poolName}
-              </Text>
+              <div css={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
+                <PoolStatusIndicator status={props.poolStatus} />
+                <Text css={{ fontSize: '1.4rem' }} alpha={poolInfoExpanded ? 'high' : 'medium'}>
+                  {props.poolName}
+                </Text>
+              </div>
               {props.noPoolsAvailable ? (
                 <Info width="1.4rem" height="1.4rem" />
               ) : (

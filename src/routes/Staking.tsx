@@ -3,6 +3,7 @@ import Details from '@components/molecules/Details'
 import HiddenDetails from '@components/molecules/HiddenDetails'
 import InfoCard from '@components/molecules/InfoCard'
 import PoolSelectorDialog from '@components/recipes/PoolSelectorDialog'
+import { PoolStatus } from '@components/recipes/PoolStatusIndicator'
 import StakingInput from '@components/recipes/StakingInput'
 import { accountsState, polkadotAccountsState } from '@domains/accounts/recoils'
 import { apiState, currentChainState, nativeTokenDecimalState } from '@domains/chains/recoils'
@@ -10,12 +11,14 @@ import { useTokenAmountFromAtomics } from '@domains/common/hooks'
 import useChainState from '@domains/common/hooks/useChainState'
 import useExtrinsic from '@domains/common/hooks/useExtrinsic'
 import { useCountDownToNomsPool, usePoolAddForm } from '@domains/nominationPools/hooks'
+import { eraStakersState } from '@domains/nominationPools/recoils'
+import { createAccounts } from '@domains/nominationPools/utils'
 import { useTheme } from '@emotion/react'
 import { BN } from '@polkadot/util'
 import { differenceInHours, formatDistance, formatDuration, intervalToDuration } from 'date-fns'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { selector, useRecoilValue, useRecoilValueLoadable, waitForAll } from 'recoil'
+import { constSelector, selector, useRecoilValue, useRecoilValueLoadable, waitForAll } from 'recoil'
 
 export const recommendedPoolsState = selector({
   key: 'Staking/BondedPools',
@@ -199,7 +202,7 @@ const Staking = () => {
   const joinPoolExtrinsic = useExtrinsic('nominationPools', 'join')
   const bondExtraExtrinsic = useExtrinsic('nominationPools', 'bondExtra')
 
-  const [accounts, recommendedPools] = useRecoilValue(waitForAll([accountsState, recommendedPoolsState]))
+  const [api, accounts, recommendedPools] = useRecoilValue(waitForAll([apiState, accountsState, recommendedPoolsState]))
 
   const [selectedPoolId, setSelectedPoolId] = useState(recommendedPools[0]?.poolId.toNumber())
   const [showPoolSelector, setShowPoolSelector] = useState(false)
@@ -249,6 +252,42 @@ const Staking = () => {
       [poolMembersLoadable]
     )
   )
+
+  const activeEraLoadable = useChainState('query', 'staking', 'activeEra', [])
+  const eraStakersLoadable = useRecoilValueLoadable(
+    activeEraLoadable.state !== 'hasValue'
+      ? constSelector(undefined)
+      : eraStakersState(activeEraLoadable.contents.unwrapOrDefault().index)
+  ).map(value => new Set(value?.map(x => x[0].args[1].toHuman())))
+
+  const poolNominatorsLoadable = useChainState(
+    'query',
+    'staking',
+    'nominators',
+    [selectedPoolId === undefined ? '' : createAccounts(api, new BN(selectedPoolId)).stashId],
+    { enabled: selectedPoolId !== undefined }
+  )
+
+  const poolStatus = useMemo<PoolStatus | undefined>(() => {
+    if (eraStakersLoadable.state !== 'hasValue' || poolNominatorsLoadable.state !== 'hasValue') {
+      return
+    }
+
+    if (poolNominatorsLoadable.contents.unwrapOrDefault().targets.length === 0) {
+      return 'not_nominating'
+    }
+
+    return poolNominatorsLoadable.contents
+      .unwrapOrDefault()
+      .targets.some(x => eraStakersLoadable.contents.has(x.toHuman()))
+      ? 'earning_rewards'
+      : 'waiting'
+  }, [
+    eraStakersLoadable.contents,
+    eraStakersLoadable.state,
+    poolNominatorsLoadable.contents,
+    poolNominatorsLoadable.state,
+  ])
 
   const bondedPoolLoadable = useChainState('query', 'nominationPools', 'bondedPools', [selectedPoolId!], {
     enabled: selectedPoolId !== undefined,
@@ -395,6 +434,7 @@ const Staking = () => {
                 availableToStake={availableBalance.decimalAmount?.toHuman() ?? '...'}
                 noPoolsAvailable={recommendedPools.length === 0}
                 poolName={demoPoolName}
+                poolStatus={poolStatus}
                 poolTotalStaked={poolTotalStaked?.toHuman() ?? ''}
                 poolMemberCount={bondedPoolLoadable.valueMaybe()?.unwrapOrDefault().memberCounter.toString() ?? ''}
                 onRequestPoolChange={useCallback(() => setShowPoolSelector(true), [])}
