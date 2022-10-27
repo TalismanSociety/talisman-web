@@ -10,7 +10,13 @@ import { Option, UInt } from '@polkadot/types-codec'
 import { PalletNominationPoolsPoolMember } from '@polkadot/types/lookup'
 import { ReactNode, useCallback, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { constSelector, useRecoilValue, useRecoilValueLoadable, waitForAll } from 'recoil'
+import {
+  constSelector,
+  useRecoilValue,
+  useRecoilValueLoadable,
+  useRecoilValue_TRANSITION_SUPPORT_UNSTABLE,
+  waitForAll,
+} from 'recoil'
 
 import { apiState, nativeTokenDecimalState, nativeTokenPriceState } from '../../domains/chains/recoils'
 import useChainState from '../../domains/common/hooks/useChainState'
@@ -85,7 +91,7 @@ const PoolStakeItem = ({
 }
 
 const Stakings = () => {
-  const [api, pendingRewards, accounts] = useRecoilValue(
+  const [api, pendingRewards, accounts] = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
     waitForAll([apiState, allPendingPoolRewardsState, selectedPolkadotAccountsState])
   )
 

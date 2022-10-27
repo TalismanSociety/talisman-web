@@ -1,11 +1,9 @@
-import { nominationPoolsExtrinsicMiddleWare } from '@domains/nominationPools/extrinsicMiddleware'
 import { ApiPromise } from '@polkadot/api'
 import { ISubmittableResult } from '@polkadot/types/types'
-import { RecoilValue } from 'recoil'
+import { startTransition } from 'react'
+import { CallbackInterface } from 'recoil'
 
-type CallbackInterface = {
-  refresh: (recoilValue: RecoilValue<any>) => void
-}
+import { chainReadIdState } from './recoils'
 
 export type ExtrinsicMiddleware = {
   <
@@ -19,6 +17,8 @@ export type ExtrinsicMiddleware = {
   ): unknown
 }
 
-export const extrinsicMiddleWare: ExtrinsicMiddleware = (...args) => {
-  nominationPoolsExtrinsicMiddleWare(...args)
+export const extrinsicMiddleWare: ExtrinsicMiddleware = (module, section, result, { set }) => {
+  if (result.isFinalized) {
+    startTransition(() => set(chainReadIdState, id => id + 1))
+  }
 }

@@ -10,6 +10,7 @@ import { apiState, currentChainState, nativeTokenDecimalState } from '@domains/c
 import { useTokenAmountFromAtomics } from '@domains/common/hooks'
 import useChainState from '@domains/common/hooks/useChainState'
 import useExtrinsic from '@domains/common/hooks/useExtrinsic'
+import { chainReadIdState } from '@domains/common/recoils'
 import { useCountDownToNomsPool, usePoolAddForm } from '@domains/nominationPools/hooks'
 import { eraStakersState } from '@domains/nominationPools/recoils'
 import { createAccounts } from '@domains/nominationPools/utils'
@@ -49,6 +50,8 @@ export const recommendedPoolsState = selector({
 const availableToStakeState = selector({
   key: 'Staking/AvailableToStake',
   get: async ({ get }) => {
+    get(chainReadIdState)
+
     const api = get(apiState)
     const accounts = get(polkadotAccountsState)
 

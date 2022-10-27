@@ -83,13 +83,17 @@ export const nativeTokenPriceState = selectorFamily({
     },
 })
 
-export const apiState = selector({
+export const apiState = atom({
   key: 'PolkadotApi',
-  get: async ({ get }) => {
-    const chain = get(currentChainState)
-    const wsProvider = new WsProvider(chain.rpcs[0].url)
-    return ApiPromise.create({ provider: wsProvider })
-  },
+  default: selector({
+    key: 'PolkadotApi/Default',
+    get: async ({ get }) => {
+      const chain = get(currentChainState)
+      const wsProvider = new WsProvider(chain.rpcs[0]?.url)
+      return ApiPromise.create({ provider: wsProvider })
+    },
+    cachePolicy_UNSTABLE: { eviction: 'most-recent' },
+  }),
 })
 
 export const nativeTokenDecimalState = selector({

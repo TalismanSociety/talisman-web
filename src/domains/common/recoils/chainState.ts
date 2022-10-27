@@ -2,7 +2,7 @@ import { apiState } from '@domains/chains/recoils'
 import { extensionState } from '@domains/extension/recoils'
 import { ApiPromise } from '@polkadot/api'
 import { AugmentedCall } from '@polkadot/api/types'
-import { selectorFamily, waitForAll } from 'recoil'
+import { atom, selectorFamily, waitForAll } from 'recoil'
 import type { Observable } from 'rxjs'
 
 /**
@@ -45,4 +45,14 @@ export const paymentInfoState = selectorFamily({
 
       return api.tx[module]?.[section]?.(...params).paymentInfo(account, { signer: extension?.signer })
     },
+})
+
+/**
+ * Used to refresh all chain state reads where a subscription cannot be establish
+ * TODO: right now this is a dumb counter that refresh all read on every extrinsic
+ * we should make this into a atom family keyed by extrinsic type
+ */
+export const chainReadIdState = atom({
+  key: 'ChainReadId',
+  default: 0,
 })

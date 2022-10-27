@@ -32,8 +32,10 @@ export const useExtrinsic = <
   const reset = useCallback(() => setLoadable({ state: 'idle', contents: undefined }), [])
 
   const signAndSend = useRecoilCallback(
-    ({ snapshot, refresh }) =>
+    callbackInterface =>
       async (account: AddressOrPair, ...params: Parameters<TExtrinsic>) => {
+        const { snapshot, refresh } = callbackInterface
+
         setParameters([account, ...params])
 
         const promiseFunc = async () => {
@@ -53,7 +55,7 @@ export const useExtrinsic = <
               account,
               { signer: extension?.signer },
               result => {
-                extrinsicMiddleWare(module, section, result, { refresh })
+                extrinsicMiddleWare(module, section, result, callbackInterface)
 
                 if (result.isError) {
                   unsubscribe?.()
