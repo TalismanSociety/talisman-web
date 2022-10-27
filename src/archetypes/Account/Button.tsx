@@ -1,6 +1,8 @@
 import { ReactComponent as AllAccountsIcon } from '@assets/icons/all-accounts.svg'
 import { Button, Pendor, Pill } from '@components'
+import { Copy } from '@components/atoms/Icon'
 import Identicon from '@components/atoms/Identicon'
+import Text from '@components/atoms/Text'
 import { CopyButton } from '@components/CopyButton'
 import { css } from '@emotion/react'
 import styled from '@emotion/styled'
@@ -21,6 +23,7 @@ import { buyNow } from '@util/fiatOnRamp'
 import { formatCommas, formatCurrency, truncateString } from '@util/helpers'
 import useOnClickOutside from '@util/useOnClickOutside'
 import { useEffect, useMemo, useRef, useState } from 'react'
+import toast from 'react-hot-toast'
 import { useTranslation } from 'react-i18next'
 
 // format an address based on chain ID, derived from genesis ID
@@ -152,7 +155,15 @@ const Dropdown = styled(
                       <CopyButton
                         text={address}
                         onCopied={text => {
-                          console.log(`>>> copied`, text)
+                          toast(
+                            <>
+                              <Text.Body as="div" alpha="high">
+                                Address copied to clipboard
+                              </Text.Body>
+                              <Text.Body as="div">{text}</Text.Body>
+                            </>,
+                            { position: 'bottom-right', icon: <Copy /> }
+                          )
                         }}
                         onFailed={text => {
                           console.log(`>>> failed`, text)
