@@ -1,7 +1,7 @@
 import { ApiPromise, WsProvider } from '@polkadot/api'
 import { encodeAddress } from '@polkadot/util-crypto'
 
-import { NFTCategory, NFTDetail, NFTDetailArray, NFTShortArray } from '../../types'
+import { NFTCategory, NFTDetail, NFTDetailArray, NFTShort } from '../../types'
 import { NFTInterface } from '../NFTInterface'
 
 export class StatemineProvider extends NFTInterface {
@@ -73,24 +73,6 @@ export class StatemineProvider extends NFTInterface {
     return cat as NFTCategory
   }
 
-  // parseShorts(items: NFTDetailArray): NFTShortArray {
-  //   return items.map((item: NFTDetail) => {
-  //     return {
-  //       id: item.id,
-  //       name: item.name,
-  //       thumb: item.thumb,
-  //       type: item.type,
-  //       mediaUri: item.mediaUri,
-  //       collection: {
-  //         id: item.collection?.id,
-  //         totalCount: item.collection?.totalCount,
-  //         floorPrice: item.collection?.floorPrice,
-  //       },
-  //       platform: item.platform,
-  //     }
-  //   }) as NFTShortArray
-  // }
-
   parseShort(item: any): NFTShort {
     return {
       id: item.id,
@@ -98,12 +80,15 @@ export class StatemineProvider extends NFTInterface {
       thumb: item.thumb,
       type: item.type,
       mediaUri: item.mediaUri,
+      metadata: null,
+      nftSpecificData: null,
       collection: {
         id: item.collection?.id,
         totalCount: item.collection?.totalCount,
         floorPrice: item.collection?.floorPrice,
       },
       provider: item?.provider,
+      address: item?.address,
     }
   }
 
@@ -151,6 +136,7 @@ export class StatemineProvider extends NFTInterface {
               metadata: null,
               mediaUri: tokenDetails?.mediaUri,
               provider: this.name,
+              address,
               collection: {
                 id: tokenDetails.collectionId,
                 totalCount: null,

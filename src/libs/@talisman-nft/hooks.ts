@@ -12,7 +12,7 @@ const providers: NFTInterface[] = [
   new Rmrk1Provider(),
   new Rmrk2Provider(),
   new StatemineProvider(),
-  // new AcalaProvider(),
+  new AcalaProvider(),
 ]
 
 // EVM Related Providers
@@ -24,10 +24,10 @@ const nftFactory = new NFTFactory(providers)
 export const useNftsByAddress = (initialAddress?: string) => {
   const [address, setAddress] = useState<string | undefined>(initialAddress)
   const [nftData, setNftData] = useState<NFTData>(defaultNftFactoryCallbackData)
+  const unsub = nftFactory.subscribe(setNftData)
 
   useEffect(() => {
     if (!address) return
-    const unsub = nftFactory.subscribe(setNftData)
     nftFactory.hydrateNftsByAddress(address)
     return unsub
   }, [address])

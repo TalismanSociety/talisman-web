@@ -1,4 +1,3 @@
-import { Spinner } from '@components'
 import styled from '@emotion/styled'
 import { ReactComponent as Composable } from '@icons/composable.svg'
 import { NFTDetail } from '@libs/@talisman-nft/types'
@@ -93,8 +92,6 @@ const Expansion = styled(({ className }) => {
 `
 
 export const Description = styled(({ description, className }) => {
-  const { t } = useTranslation('nft-viewer')
-
   return (
     <div className={className}>
       <input type="checkbox" id="expand" />
@@ -176,7 +173,6 @@ export const Description = styled(({ description, className }) => {
 `
 
 export const Attributes = styled(({ properties, className }) => {
-  const { t } = useTranslation('nft-viewer')
   if (properties === undefined || Object.keys(properties).length === 0) return null
 
   return (
@@ -248,8 +244,6 @@ export const Network = styled(({ network, className }) => {
 `
 
 export const Buttons = styled(({ collectibleUrl, platform, className }) => {
-  const { t } = useTranslation('nft-viewer')
-
   return (
     <div className={className}>
       <a href={collectibleUrl} target="_blank" className="nft-modal-button" rel="noreferrer">

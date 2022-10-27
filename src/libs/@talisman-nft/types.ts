@@ -18,14 +18,15 @@ export type NFTShort = {
   mediaUri: string // PDF
   provider: string
   collection: NFTCollectionDetails | {}
-  fetchDetail: () => Promise<NFTDetail>
+  address: string
+  fetchDetail?: () => Promise<NFTDetail>
+  nftSpecificData: any
 }
 
 export type NFTDetail = NFTShort & {
   description: string
   serialNumber?: string
   attributes: NFTAttributes
-  nftSpecificData: any
   platformUri: string
 }
 

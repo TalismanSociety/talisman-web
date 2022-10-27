@@ -69,7 +69,6 @@ export class NFTInterface extends SubscriptionService<NFTData> {
   }
 
   protected reset() {
-    console.log('resetting')
     this.isFetching = false
     this.items = {}
     this.count = 0

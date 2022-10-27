@@ -133,6 +133,10 @@ export class Rmrk2Provider extends NFTInterface {
             name: nft?.collection?.metadata_name,
             totalCount: nft?.collection?.max,
           },
+          nftSpecificData: {
+            isComposable: indexedItemRef?.isComposable,
+          },
+          address,
           provider: this.name,
         } as NFTShort
 
@@ -218,7 +222,7 @@ export class Rmrk2Provider extends NFTInterface {
             floorPrice: collectionInfo?.floor,
           },
           nftSpecificData: {
-            isComposable: indexedItemRef?.isComposable,
+            isComposable: indexedItemRef?.nftSpecificData?.isComposable,
           },
         } as NFTDetail
       })

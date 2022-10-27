@@ -6,9 +6,9 @@ import { keyframes, useTheme } from '@emotion/react'
 import { ReactNode } from 'react'
 
 export type AlertDialogProps = DialogProps & {
-  title: string
+  title?: string
   content: ReactNode
-  confirmButton: ReactNode
+  confirmButton?: ReactNode
   dismissButton?: ReactNode
   onRequestDismiss: () => unknown
 }

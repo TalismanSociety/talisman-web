@@ -1,6 +1,6 @@
 import Web3 from 'web3'
 
-import { NFTDetail, NFTShort, NFTShortArray } from '../../types'
+import { NFTDetail, NFTShort } from '../../types'
 import { NFTInterface } from '../NFTInterface'
 
 export class EVMProvider extends NFTInterface {
@@ -45,19 +45,36 @@ export class EVMProvider extends NFTInterface {
     this.rpc = config.rpc
     this.contracts = config.contracts
 
-    // Set the RPC
+    // Go through each RPC, and try to connect to it by testing the connection with isListening, if it works, we use it, if it doesn't, we try the next one
+    // this.rpc.forEach(async (rpc: string) => {
+    //   console.log(rpc)
+    //   this.web3.setProvider(rpc)
+    //   const isListening = await this.web3.eth.net.isListening()
+    //   .then(() => {
+    //     return true
+    //   })
+    //   .catch(() => {
+    //     console.log('caught')
+    //     this.web3.setProvider('')
+    //     return false
+    //   })
+    //   if (isListening && !this.web3.currentProvider) {
+    //     console.log('aaaa', rpc)
+    //     this.web3.setProvider(rpc)
+    //   }
+    // })
+
     this.web3.setProvider(this.rpc[0])
 
     this.web3.eth.net
       .isListening()
       .then(() => {
-        console.log(`${this.name} RPC has connected.`)
+        console.log(`${this.name.toUpperCase()} RPC has connected.`)
       })
       .catch(e => {
         console.log('Could not connect to EVM RPC', e)
         return
       })
-    // Ask Swami what would be a good way to go through each RPC and check if it's valid
   }
 
   parseShort(item: any): NFTShort {
@@ -73,6 +90,7 @@ export class EVMProvider extends NFTInterface {
         name: item.collection?.name,
         totalCount: item.collection?.totalCount,
       },
+      address: item.address,
       provider: item?.provider,
       fetchDetail: () => this.fetchDetail(item.id),
     }
@@ -107,7 +125,7 @@ export class EVMProvider extends NFTInterface {
                     const data = await response.json()
 
                     const nftItem = {
-                      id: tokenId,
+                      id: tokenId + '-' + contract.name,
                       name: data.name,
                       thumb: this.toIPFSUrl(data.image),
                       description: data?.description,
@@ -115,6 +133,7 @@ export class EVMProvider extends NFTInterface {
                       metadata: null,
                       type: null,
                       mediaUri: this.toIPFSUrl(data.image),
+                      address,
                       provider: this.name,
                       platformUri: '',
                       attributes: data?.attributes,
@@ -128,7 +147,7 @@ export class EVMProvider extends NFTInterface {
                       },
                     }
 
-                    this.setItem(address, this.parseShort(nftItem))
+                    this.setItem(this.parseShort(nftItem))
                     this.detailedItems[nftItem.id] = nftItem
 
                     resolve(true)

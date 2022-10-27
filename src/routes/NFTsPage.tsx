@@ -5,7 +5,7 @@ import styled from '@emotion/styled'
 import { DAPP_NAME, useAccounts } from '@libs/talisman'
 import { WalletSelect } from '@talismn/connect-components'
 import { device } from '@util/breakpoints'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 const ExtensionUnavailable = styled(props => {
@@ -36,7 +36,6 @@ const ExtensionUnavailable = styled(props => {
 `
 
 const NFTsPage = styled(({ className }: any) => {
-  const { t } = useTranslation('welcome')
   const { t: tBase } = useTranslation()
 
   const [address, setAddress] = useState<string | undefined>()
@@ -63,7 +62,7 @@ const NFTsPage = styled(({ className }: any) => {
             dappName={DAPP_NAME}
             triggerComponent={<Button primary>{tBase('Connect wallet')}</Button>}
             onError={err => {
-              console.log(`>>> err`, err)
+              // console.log(`>>> err`, err)
             }}
           />
         )}

@@ -2,15 +2,11 @@
 import styled from '@emotion/styled'
 import { ReactComponent as Check } from '@icons/check-circle.svg'
 import { ReactComponent as ChevronDown } from '@icons/chevron-down.svg'
-import { DAPP_NAME, useAccounts } from '@libs/talisman'
+import { useAccounts } from '@libs/talisman'
 import Identicon from '@polkadot/react-identicon'
-import { WalletSelect } from '@talismn/connect-components'
 import { device } from '@util/breakpoints'
 import useOnClickOutside from '@util/useOnClickOutside'
 import { useEffect, useRef, useState } from 'react'
-import { useTranslation } from 'react-i18next'
-
-import Button from './Button'
 
 const Dropdown = styled(({ className, accounts, activeAccount, open, handleChange }) => {
   // const { t } = useTranslation()
@@ -123,11 +119,6 @@ const Dropdown = styled(({ className, accounts, activeAccount, open, handleChang
 `
 
 const AccountPicker = styled(({ additionalAccounts = [], className, onChange }) => {
-  // const { t } = useTranslation()
-
-  const { t } = useTranslation('welcome')
-  const { t: tBase } = useTranslation()
-
   const nodeRef = useRef<HTMLDivElement>(null)
   const accounts = useAccounts()
   const [open, setOpen] = useState(false)

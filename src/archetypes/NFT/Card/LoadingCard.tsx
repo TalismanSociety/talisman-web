@@ -1,9 +1,7 @@
 import styled from '@emotion/styled'
-import { NFTShort } from '@libs/@talisman-nft/types'
 
 import Info from './Info'
 import Preview from './Preview'
-import { NFTIcon } from '..'
 
 interface CardProps {
   className?: string

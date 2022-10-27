@@ -1,7 +1,7 @@
 import { ApiPromise, WsProvider } from '@polkadot/api'
 import { encodeAddress } from '@polkadot/util-crypto'
 
-import { NFTCategory, NFTDetail, NFTDetailArray, NFTShortArray } from '../../types'
+import { NFTCategory, NFTDetail, NFTDetailArray, NFTShort } from '../../types'
 import { NFTInterface } from '../NFTInterface'
 
 interface Token {
@@ -18,7 +18,7 @@ export class AcalaProvider extends NFTInterface {
   uri = 'wss://acala-rpc-0.aca-api.network'
   platformUri = 'https://apps.acala.network/portfolio/nft/'
   storageProvider = ''
-  items: NFTDetailArray = []
+  detailedItems: { [key: string]: any } = {}
 
   webSocket: ApiPromise | null = null
 
@@ -46,9 +46,8 @@ export class AcalaProvider extends NFTInterface {
 
     const { collectionId, nftTokenId } = assetId
 
-    const tokenDetails = (
-      await this.webSocket.query.ormlNft.tokens(collectionId, nftTokenId)
-    ).toHuman() as unknown as Token
+    const tokenDetails = await this.webSocket.query.ormlNft.tokens(collectionId, nftTokenId)
+    tokenDetails.toHuman() as unknown as Token
     const collectionDetails = (await this.webSocket.query.ormlNft.classes(collectionId)).toHuman() as Record<
       string,
       any
@@ -98,103 +97,100 @@ export class AcalaProvider extends NFTInterface {
     return cat as NFTCategory
   }
 
-  parseShorts(items: NFTDetailArray): NFTShortArray {
-    return items.map((item: NFTDetail) => {
-      return {
-        id: item.id,
-        name: item.name,
-        thumb: item.thumb,
-        type: item.type,
-        mediaUri: item.mediaUri,
-        metadata: null,
-        collection: {
-          id: item.collection?.id,
-          totalCount: item.collection?.totalCount,
-          floorPrice: item.collection?.floorPrice,
-        },
-        platform: item.platform,
-      }
-    }) as NFTShortArray
+  parseShort(item: any): NFTShort {
+    return {
+      id: item.id,
+      name: item.name,
+      thumb: item.thumb,
+      type: item.type,
+      mediaUri: item.mediaUri,
+      metadata: null,
+      nftSpecificData: null,
+      collection: {
+        id: item.collection?.id,
+        totalCount: item.collection?.totalCount,
+        floorPrice: item.collection?.floorPrice,
+      },
+      provider: item?.provider,
+      address: item?.address,
+    }
   }
 
-  async subscribeAllByAddress(address: string, upsertNftData: any) {
+  async hydrateNftsByAddress(address: string) {
+    this.reset()
+    this.isFetching = true
+
     if (address.startsWith('0x')) {
       this.isFetching = false
       return
     }
 
-    const encodedAddress = encodeAddress(address, 10)
-
     this.webSocket = await this.wsProvider()
-
     if (!this.webSocket) return []
 
+    const encodedAddress = encodeAddress(address, 10)
+
     const nfts = await this.webSocket.query.ormlNft.tokensByOwner.keys(encodedAddress)
+    this.count = nfts.length
 
     return this.useCache(address, this.name, nfts)
       .then((items: NFTDetailArray) => {
         // store the current set of items in this provider as a variable
         // so we can look up the details when needed
-        this.items = items
-
-        upsertNftData({
-          count: items.length,
-          loadingCount: false,
-          items: this.parseShorts(items),
+        items.forEach(item => {
+          this.setItem(item)
+          this.detailedItems[item.id] = item
         })
-        // return this.parseShorts(items)
+        this.isFetching = false
       })
       .catch(async store => {
         let nftRawAssetDetails: any = []
-
         for (let key of nfts) {
           const data = key.toHuman() as string[]
           nftRawAssetDetails.push({ collectionId: data[1], nftTokenId: data[2] })
         }
 
-        const items = await Promise.all(
-          nftRawAssetDetails.map(
-            async (assetId: any) =>
-              new Promise(async resolve => {
-                const NFTdetails = await this.getTokenDetails(assetId)
+        nftRawAssetDetails.map(async (assetId: any) => {
+          const tokenDetails = await this.getTokenDetails(assetId)
+          if (tokenDetails) {
+            const nftDetail = {
+              id: tokenDetails?.id,
+              name: tokenDetails?.name,
+              description: tokenDetails?.description,
+              mediaUri: tokenDetails?.mediaUri,
+              thumb: tokenDetails?.mediaUri,
+              type: null,
+              metadata: null,
+              serialNumber: assetId.nftTokenId,
+              provider: this.name,
+              platformUri: `${this.platformUri}`,
+              attributes: {},
+              collection: {
+                id: tokenDetails.collectionId,
+                totalCount: null,
+                floorPrice: null,
+              },
+              nftSpecificData: null,
+            }
 
-                resolve({
-                  id: NFTdetails?.id,
-                  name: NFTdetails?.name,
-                  description: NFTdetails?.description,
-                  mediaUri: NFTdetails?.mediaUri,
-                  thumb: NFTdetails?.mediaUri,
-                  type: null,
-                  metadata: null,
-                  serialNumber: assetId.nftTokenId,
-                  platform: this.name,
-                  platformUri: `${this.platformUri}`,
-                  attributes: {},
-                  collection: {
-                    id: NFTdetails.collectionId,
-                    totalCount: null,
-                    floorPrice: null,
-                  },
-                  nftSpecificData: null,
-                } as NFTDetail)
-              })
-          ) as NFTDetailArray
-        )
+            this.setItem(this.parseShort(nftDetail))
+            this.detailedItems[nftDetail.id] = nftDetail
 
-        store(items)
-
-        this.items = items
-
-        upsertNftData({
-          count: items.length,
-          loadingCount: false,
-          items: this.parseShorts(items),
+            store(Object.values(this.detailedItems))
+          }
         })
+
+        this.isFetching = false
       })
   }
 
-  async fetchOneById(id: string) {
-    const item = this.items.find(item => (item.id = id))
-    return item as NFTDetail
+  fetchOneById(id: string) {
+    const internalId = id.split('.').slice(1).join('.')
+    return this.items[internalId]
+  }
+
+  protected async fetchDetail(id: string): Promise<NFTDetail> {
+    const item = this.detailedItems[id]
+    return item
   }
 }

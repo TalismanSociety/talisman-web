@@ -15,12 +15,6 @@ export const EVMChains: { [key: string]: EVMChain } = {
         symbol: 'NEON',
         totalSupply: 6008,
       },
-      canaryNetworkAgency: {
-        address: '0x139e9BA28D64da245ddB4cF9943aA34f6d5aBFc5',
-        name: 'Canary Network Agency',
-        symbol: 'CNA',
-        totalSupply: 1000,
-      },
     },
     name: 'moonriver',
     rpc: [
@@ -28,6 +22,38 @@ export const EVMChains: { [key: string]: EVMChain } = {
       'https://moonriver.api.onfinality.io/public',
       'https://moonriver.public.blastapi.io',
     ],
+    other: {},
+  },
+  moonbeam: {
+    contracts: {
+      exiledRacers: {
+        address: '0x104b904e19fBDa76bb864731A2C9E01E6b41f855',
+        name: 'Exiled Racers',
+        symbol: 'EXR',
+        totalSupply: 1541,
+      },
+      canaryNetworkAgency: {
+        address: '0x139e9BA28D64da245ddB4cF9943aA34f6d5aBFc5',
+        name: 'Canary Network Agency',
+        symbol: 'CNA',
+        totalSupply: 5000,
+      },
+    },
+    name: 'moonbeam',
+    rpc: ['https://moonbeam.api.onfinality.io/public'],
+    other: {},
+  },
+  polygon: {
+    contracts: {
+      snookNFT: {
+        address: '0x4372597f1c600D86598675DCB6cF5713bB7525Cf',
+        name: 'Snook NFT',
+        symbol: 'SNK',
+        totalSupply: 99999,
+      },
+    },
+    name: 'polygon',
+    rpc: ['https://polygon-mainnet.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161'],
     other: {},
   },
 }

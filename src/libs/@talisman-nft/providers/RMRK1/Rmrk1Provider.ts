@@ -109,6 +109,7 @@ export class Rmrk1Provider extends NFTInterface {
             name: nft?.collection?.name,
             totalCount: nft?.collection?.max,
           },
+          address,
           provider: this.name,
         } as NFTShort
 
