@@ -1,4 +1,5 @@
 import { Info, PanelSection } from '@components'
+import { css } from '@emotion/react'
 import styled from '@emotion/styled'
 import { ReactComponent as ExternalLink } from '@icons/external-link.svg'
 import { useAccounts } from '@libs/talisman'
@@ -91,6 +92,13 @@ export const Item = styled(({ className, transaction, addresses, selectedAccount
         )}
 
         <Info
+          css={css`
+            .title {
+              max-width: 200px;
+              overflow: hidden;
+              text-overflow: ellipsis;
+            }
+          `}
           title={getTransactionName()}
           subtitle={intlFormat(parseISO(timestamp), { hour: 'numeric', minute: 'numeric' })}
           graphic={<TransactionLogo className="category-logo" parsed={parsed} addresses={addresses} />}
