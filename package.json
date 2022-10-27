@@ -61,7 +61,6 @@
     "web-vitals": "^2.1.4"
   },
   "devDependencies": {
-    "@babel/preset-env": "^7.19.4",
     "@commitlint/cli": "^17.1.2",
     "@commitlint/config-conventional": "^17.1.0",
     "@craco/craco": "^6.4.5",
