@@ -6928,6 +6928,7 @@ __metadata:
     "@types/node": ^18.8.2
     "@types/react": ^18.0.21
     "@types/react-dom": ^18.0.6
+    "@types/react-infinite-scroller": ^1.2.3
     "@types/react-router-dom": ^5.1.8
     "@types/webpack-env": ^1.16.2
     bignumber.js: ^9.0.1
@@ -7499,6 +7500,15 @@ __metadata:
   dependencies:
     "@types/react": "*"
   checksum: db571047af1a567631758700b9f7d143e566df939cfe5fbf7535347cc0c726a1cdbb5e3f8566d076e54cf708b6c1166689de194a9ba09ee35efc9e1d45911685
+  languageName: node
+  linkType: hard
+
+"@types/react-infinite-scroller@npm:^1.2.3":
+  version: 1.2.3
+  resolution: "@types/react-infinite-scroller@npm:1.2.3"
+  dependencies:
+    "@types/react": "*"
+  checksum: ae11063b5e114bff1f06e9d3d2ca0948a3a224f13b4a30fbfe56f84e535ee6232de9667456695bbbb409de51887d701f8558fd28c36a2ea172e8593346de85d1
   languageName: node
   linkType: hard
 

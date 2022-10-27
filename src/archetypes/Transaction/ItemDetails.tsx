@@ -200,9 +200,33 @@ export const ItemDetails = ({ parsed, addresses, accounts }: Props) => {
     }
 
     case 'ParsedSwap': {
+      const from = parsed.tokens[0]
+      const to = parsed.tokens.slice(-1)[0]
+
       return (
-        <div className="details">
-          {process.env.NODE_ENV === 'development' && <pre>{JSON.stringify(parsed, null, 2)}</pre>}
+        <div
+          className="details"
+          css={css`
+            > *:last-child {
+              padding-left: 2rem;
+            }
+          `}
+        >
+          <Info
+            title={`${formatDecimals(from.liquidityChange)} ${from.symbol}`}
+            subtitle="$xx.xx"
+            graphic={<TokenLogo token={{ symbol: from.symbol, logo: from.logo }} />}
+            invert
+          />
+
+          <ArrowRight />
+
+          <Info
+            title={`${formatDecimals(to.liquidityChange)} ${to.symbol}`}
+            subtitle="$xx.xx"
+            graphic={<TokenLogo token={{ symbol: to.symbol, logo: to.logo }} />}
+            invert
+          />
         </div>
       )
     }

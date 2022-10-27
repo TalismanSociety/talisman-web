@@ -104,9 +104,13 @@ export const txQuery = graphql(`
         }
         ... on ParsedSwap {
           chainId
-          tokenLogo
-          tokenSymbol
-          tokenDecimals
+          tokens {
+            logo
+            symbol
+            decimals
+            liquidityChange
+          }
+          trader
           fee
           tip
           success
