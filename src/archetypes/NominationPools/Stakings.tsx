@@ -1,4 +1,5 @@
 import Button from '@components/atoms/Button'
+import CircularProgressIndicator from '@components/atoms/CircularProgressIndicator'
 import Text from '@components/atoms/Text'
 import HiddenDetails from '@components/molecules/HiddenDetails'
 import PoolStake, { PoolStakeList } from '@components/recipes/PoolStake/PoolStake'
@@ -7,7 +8,7 @@ import { selectedPolkadotAccountsState } from '@domains/accounts/recoils'
 import { createAccounts } from '@domains/nominationPools/utils'
 import { Option, UInt } from '@polkadot/types-codec'
 import { PalletNominationPoolsPoolMember } from '@polkadot/types/lookup'
-import { useCallback, useMemo, useState } from 'react'
+import { ReactNode, useCallback, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { constSelector, useRecoilValue, useRecoilValueLoadable, waitForAll } from 'recoil'
 
@@ -27,7 +28,7 @@ const PoolStakeItem = ({
       address: string
       name?: string
     }
-    poolName?: string
+    poolName?: ReactNode
     poolMember: Option<PalletNominationPoolsPoolMember>
     pendingRewards?: UInt
   }
@@ -145,7 +146,9 @@ const Stakings = () => {
               return {
                 status,
                 account: accounts[index],
-                poolName: poolMetadatumLoadable.valueMaybe()?.[index]?.toUtf8(),
+                poolName: poolMetadatumLoadable.valueMaybe()?.[index]?.toUtf8() ?? (
+                  <CircularProgressIndicator size="1em" />
+                ),
                 poolMember,
                 pendingRewards: pendingRewards.find(rewards => rewards[0] === accounts[index]?.address)?.[1],
               }

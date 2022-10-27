@@ -2,7 +2,7 @@ import Button from '@components/atoms/Button'
 import Identicon from '@components/atoms/Identicon'
 import Text from '@components/atoms/Text'
 import { useTheme } from '@emotion/react'
-import React, { ReactElement } from 'react'
+import React, { ReactElement, ReactNode } from 'react'
 
 import { PoolStatus, PoolStatusIndicator } from '../PoolStatusIndicator'
 import PoolStakeSkeleton from './PoolStake.skeleton'
@@ -14,7 +14,7 @@ export type PoolStakeProps = {
   stakingAmountInFiat: string
   rewardsAmount: string
   rewardsAmountInFiat: string
-  poolName: string
+  poolName: ReactNode
   onRequestClaim: () => unknown
   onRequestUnstake: () => unknown
   onRequestAdd: () => unknown
