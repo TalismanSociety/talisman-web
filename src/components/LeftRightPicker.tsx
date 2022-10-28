@@ -1,18 +1,18 @@
 import styled from '@emotion/styled'
 import { ReactComponent as ChevronRight } from '@icons/chevron-right.svg'
 
-import Button from './Button'
+import { ButtonIcon } from './Button'
 
 export const LeftRightPicker = styled(({ className, value, onLeftPick, onRightPick }) => {
   return (
     <div className={className}>
-      <Button.Icon className="left-button picker-button" onClick={onLeftPick}>
+      <ButtonIcon className="left-button picker-button" onClick={onLeftPick}>
         <ChevronRight />
-      </Button.Icon>
+      </ButtonIcon>
       <div className="picker-value">{value}</div>
-      <Button.Icon className="right-button picker-button" onClick={onRightPick}>
+      <ButtonIcon className="right-button picker-button" onClick={onRightPick}>
         <ChevronRight />
-      </Button.Icon>
+      </ButtonIcon>
     </div>
   )
 })`

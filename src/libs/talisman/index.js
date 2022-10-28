@@ -24,6 +24,7 @@ export * from './parachain'
 // crowdloans stuff
 export * from './crowdloan'
 
+// balances stuff
 export * from './balances'
 
 // subquery pieces

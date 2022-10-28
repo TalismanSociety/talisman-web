@@ -1,69 +1,27 @@
 import { css } from '@emotion/react'
 import styled from '@emotion/styled'
+import { MotionProps, motion } from 'framer-motion'
+import { ReactNode } from 'react'
 
-type BasePanelProps = {
-  title: string
-  subtitle: string
-  className: string
-  rest: any[]
-}
+type Props = {
+  title?: string
+  subtitle?: string
+  className?: string
+  children?: ReactNode
+  comingSoon?: boolean
+} & MotionProps
 
-export const Section = styled(({ title, children, className, comingSoon, ...rest }) => {
-  return (
-    <div className={`panel-section ${className}`} {...rest}>
-      {!!title && <h2>{title}</h2>}
-      {children}
-    </div>
-  )
-})<BasePanelProps>`
-  display: block;
-  padding: 1.55rem 2rem;
-
-  h2 {
-    font-size: var(--font-size-xsmall);
-    font-weight: bold;
-    color: var(--color-mid);
-    margin-bottom: 1.4em;
-  }
-
-  ${props =>
-    props.comingSoon &&
-    css`
-      padding: 6rem 2rem;
-      color: var(--color-mid);
-      text-align: center;
-    `}
-`
-
-export default styled(({ title, subtitle, children, className, ...rest }) => {
-  // const listInnerRef : any = useRef();
-
-  // const [atBottom, setAtBottom] = useState<Boolean>(false);
-
-  // const onScroll = () => {
-  //   if (listInnerRef.current) {
-  //     const { scrollTop, scrollHeight, clientHeight } = listInnerRef.current;
-  //     if (scrollTop + clientHeight === scrollHeight) {
-  //       setAtBottom(true);
-  //     }
-  //     else {
-  //       setAtBottom(false);
-  //     }
-  //   }
-  // };
-
-  return (
-    <div className={`panel ${className}`} {...rest}>
-      {title !== undefined && (
-        <h1>
-          {title}
-          {subtitle !== undefined && <span>{subtitle}</span>}
-        </h1>
-      )}
-      <div className="inner">{children}</div>
-    </div>
-  )
-})<BasePanelProps>`
+export const Panel = styled(({ title, subtitle, children, className, ...rest }: Props) => (
+  <motion.div className={`panel ${className}`} {...rest}>
+    {title !== undefined && (
+      <h1>
+        {title}
+        {subtitle !== undefined && <span>{subtitle}</span>}
+      </h1>
+    )}
+    <div className="inner">{children}</div>
+  </motion.div>
+))`
   width: 100%;
 
   > h1 {
@@ -93,4 +51,29 @@ export default styled(({ title, subtitle, children, className, ...rest }) => {
       border-top: 1px solid rgba(${({ theme }) => theme.foreground}, 0.05);
     }
   }
+`
+
+export const Section = styled(({ title, children, className, comingSoon, ...rest }: Props) => (
+  <motion.div className={`panel-section ${className}`} {...rest}>
+    {!!title && <h2>{title}</h2>}
+    {children}
+  </motion.div>
+))`
+  display: block;
+  padding: 1.55rem 2rem;
+
+  h2 {
+    font-size: var(--font-size-xsmall);
+    font-weight: bold;
+    color: var(--color-mid);
+    margin-bottom: 1.4em;
+  }
+
+  ${props =>
+    props.comingSoon &&
+    css`
+      padding: 6rem 2rem;
+      color: var(--color-mid);
+      text-align: center;
+    `}
 `

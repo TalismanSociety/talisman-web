@@ -1,7 +1,15 @@
 import styled from '@emotion/styled'
 
-const Info = styled(({ title, subtitle, graphic, className, ...rest }) => (
-  <div className={`info ${className}`} {...rest}>
+type Props = {
+  className?: string
+  title?: React.ReactNode | string | null
+  subtitle?: React.ReactNode | string | null
+  graphic?: React.ReactNode
+  invert?: boolean
+  rest?: any
+}
+const Info = styled(({ title, subtitle, invert, graphic, className, ...rest }: Props) => (
+  <div className={`info ${invert ? 'style-invert' : ''} ${className}`} {...rest}>
     {graphic && <span className="graphic">{graphic}</span>}
     <span className="text">
       {!!title && <span className="title">{title}</span>}
@@ -28,13 +36,27 @@ const Info = styled(({ title, subtitle, graphic, className, ...rest }) => (
     }
 
     .title {
-      font-weight: bold;
+      font-weight: var(--font-weight-bold);
       color: var(--color-text);
     }
 
     .subtitle {
       font-size: var(--font-size-small);
       color: var(--color-mid);
+    }
+  }
+
+  &.style-invert .text {
+    .title {
+      font-weight: var(--font-weight-regular);
+      font-size: var(--font-size-small);
+      color: var(--color-mid);
+    }
+
+    .subtitle {
+      font-weight: var(--font-weight-bold);
+      font-size: var(--font-size-normal);
+      color: var(--color-text);
     }
   }
 `

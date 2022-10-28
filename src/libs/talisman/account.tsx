@@ -30,7 +30,7 @@ export const useActiveAccount = () => {
 
 export const useAccountAddresses = () => {
   const { accounts, activeAccount } = useContext()
-  const [addresses, setAddresses] = useState<string[] | undefined>()
+  const [addresses, setAddresses] = useState<string[]>([])
 
   useEffect(() => {
     setAddresses(activeAccount ? [activeAccount.address] : accounts.map(account => account.address))
@@ -39,9 +39,14 @@ export const useAccountAddresses = () => {
   return addresses
 }
 
+export const useAccounts = () => {
+  const { accounts } = useContext()
+  return accounts
+}
+
 export const useAllAccountAddresses = () => {
   const { accounts, activeAccount } = useContext()
-  const [addresses, setAddresses] = useState<string[] | undefined>()
+  const [addresses, setAddresses] = useState<string[]>([])
 
   useEffect(() => {
     setAddresses(accounts.map(account => account.address))
