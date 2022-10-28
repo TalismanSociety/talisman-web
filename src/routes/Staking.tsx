@@ -86,8 +86,7 @@ const Faq = () => {
         <Text.Body>
           The rewards rate listed is an estimated annual yield based on historical polkadot reward and inflation rates.
           Your real reward rate may vary with these rates, as well as any commission the validators you choose elect to
-          take. You can consult the name of your pool for information, or read about the Talisman run pools{' '}
-          <Text.A href="#">here</Text.A>.
+          take. You can consult the name of your pool for information.
         </Text.Body>
       ),
     },
