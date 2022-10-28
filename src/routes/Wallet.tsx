@@ -1,8 +1,8 @@
 import { Wallet } from '@archetypes'
 import { DesktopRequired } from '@components'
+import MainBanner from '@components/recipes/MainBanner'
 import usePageTrack from '@components/TrackPageView'
 import styled from '@emotion/styled'
-import { StateBanner } from '@layout/StateBanner'
 import { device } from '@util/breakpoints'
 import { isMobileBrowser } from '@util/helpers'
 
@@ -19,7 +19,7 @@ const _Wallet = styled(({ className }) => {
           <Wallet.Total />
         </div>
         <div className="banner">
-          <StateBanner />
+          <MainBanner />
         </div>
       </header>
       <Wallet.Assets />
