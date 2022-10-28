@@ -54,7 +54,7 @@ export const ItemDetails = ({ parsed, addresses, accounts }: Props) => {
               {fromName ?? truncateAddress(parsed.from, 4)}
             </ClickToCopy>
           }
-          graphic={<Identicon value={parsed.from} size="1em" />}
+          graphic={<Identicon value={parsed.from} size="3.2rem" />}
           invert
         />
       )
@@ -66,7 +66,7 @@ export const ItemDetails = ({ parsed, addresses, accounts }: Props) => {
               {toName ?? truncateAddress(parsed.to, 4)}
             </ClickToCopy>
           }
-          graphic={<Identicon value={parsed.to} size="1em" />}
+          graphic={<Identicon value={parsed.to} size="3.2rem" />}
           invert
         />
       )
