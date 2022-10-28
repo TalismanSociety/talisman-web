@@ -5,7 +5,7 @@ import InfoCard from '@components/molecules/InfoCard'
 import PoolSelectorDialog from '@components/recipes/PoolSelectorDialog'
 import { PoolStatus } from '@components/recipes/PoolStatusIndicator'
 import StakingInput from '@components/recipes/StakingInput'
-import { accountsState, polkadotAccountsState } from '@domains/accounts/recoils'
+import { polkadotAccountsState } from '@domains/accounts/recoils'
 import { apiState, currentChainState, nativeTokenDecimalState } from '@domains/chains/recoils'
 import { useTokenAmountFromAtomics } from '@domains/common/hooks'
 import useChainState from '@domains/common/hooks/useChainState'
@@ -197,7 +197,9 @@ const Staking = () => {
   const joinPoolExtrinsic = useExtrinsic('nominationPools', 'join')
   const bondExtraExtrinsic = useExtrinsic('nominationPools', 'bondExtra')
 
-  const [api, accounts, recommendedPools] = useRecoilValue(waitForAll([apiState, accountsState, recommendedPoolsState]))
+  const [api, accounts, recommendedPools] = useRecoilValue(
+    waitForAll([apiState, polkadotAccountsState, recommendedPoolsState])
+  )
 
   const [selectedPoolId, setSelectedPoolId] = useState(recommendedPools[0]?.poolId.toNumber())
   const [showPoolSelector, setShowPoolSelector] = useState(false)
