@@ -75,11 +75,17 @@ export const nativeTokenPriceState = selectorFamily({
 
       if (chain.isTestnet) return 1
 
-      const result = await fetch(
-        `https://api.coingecko.com/api/v3/simple/price?ids=${chain.nativeToken.data.coingeckoId}&vs_currencies=${fiat}`
-      ).then(x => x.json())
+      try {
+        const result = await fetch(
+          `https://api.coingecko.com/api/v3/simple/price?ids=${chain.nativeToken.data.coingeckoId}&vs_currencies=${fiat}`
+        ).then(x => x.json())
 
-      return result[chain.nativeToken.data.coingeckoId][fiat] as number
+        return result[chain.nativeToken.data.coingeckoId][fiat] as number
+      } catch {
+        // Coingecko has rate limit, better to return 0 than to crash the session
+        // TODO: find alternative or purchase Coingecko subscription
+        return 0
+      }
     },
 })
 
