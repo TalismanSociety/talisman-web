@@ -1,26 +1,21 @@
 import { ReactComponent as AllAccountsIcon } from '@assets/icons/all-accounts.svg'
-import { Button, Pendor, Pill } from '@components'
+import { Button, ButtonIcon, Pendor, Pill } from '@components'
 import { CopyButton } from '@components/CopyButton'
 import { css } from '@emotion/react'
 import styled from '@emotion/styled'
 import { ReactComponent as AlertCircle } from '@icons/alert-circle.svg'
 import { ReactComponent as ChevronDown } from '@icons/chevron-down.svg'
-import { usePortfolio } from '@libs/portfolio'
-import { DAPP_NAME, useActiveAccount, useChainByGenesis, useExtensionAutoConnect } from '@libs/talisman'
-import { useBalances as _useBalances } from '@libs/talisman'
+import { DAPP_NAME, useActiveAccount, useBalances, useChainByGenesis, useExtensionAutoConnect } from '@libs/talisman'
 import { useTalismanInstalled } from '@libs/talisman/useIsTalismanInstalled'
 import Identicon from '@polkadot/react-identicon'
-import { addTokensToBalances, groupBalancesByAddress, useBalances, useChain } from '@talismn/api-react-hooks'
 import { WalletSelect } from '@talismn/connect-components'
 import { getWalletBySource } from '@talismn/connect-wallets'
 import { encodeAnyAddress } from '@talismn/util'
-import { addBigNumbers, useFuncMemo } from '@talismn/util-legacy'
 import { device } from '@util/breakpoints'
-import customRpcs from '@util/customRpcs'
 import { buyNow } from '@util/fiatOnRamp'
-import { formatCommas, formatCurrency, truncateString } from '@util/helpers'
+import { truncateString } from '@util/helpers'
 import useOnClickOutside from '@util/useOnClickOutside'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 // format an address based on chain ID, derived from genesis ID
@@ -38,15 +33,14 @@ const Address = ({ address, genesis, truncate = false }) => {
   return !!truncate ? truncateString(encoded, truncate[0] || 4, truncate[1] || 4) : encoded
 }
 
-const BuyItem = styled(({ nativeToken, className, onClick }) => {
+const BuyItem = styled(({ nativeToken, className }) => {
   const { t } = useTranslation()
   return (
     <span className={`${className}`} onClick={buyNow}>
       <div className="container">
         <span className="info">
           <AlertCircle width="48" />
-          {t('You have no')}
-          {` ${nativeToken}`}
+          {t('You have no')} {nativeToken}
         </span>
         <Pill small primary>
           {t('Buy')}
@@ -79,128 +73,87 @@ const BuyItem = styled(({ nativeToken, className, onClick }) => {
   }
 `
 
-const Dropdown = styled(
-  ({
-    className,
-    open,
-    handleClose,
-    allAccounts,
-    nativeToken,
-    tokenBalancesByAddress,
-    totalBalanceByAddress,
-    closeParent,
-    showBuy = false,
-    parachainId,
-  }) => {
-    const { t } = useTranslation()
-    const { switchAccount } = useActiveAccount()
-    const { accounts, disconnect } = useExtensionAutoConnect()
-    // const { totalUsd, totalUsdByAddress } = usePortfolio()
+const Dropdown = styled(({ className, open, handleClose, allAccounts, closeParent, showBuy = false }) => {
+  const { t } = useTranslation()
 
-    // const totalBalanceByAddressFunc = address =>
-    //   tokenBalancesByAddress[address] &&
-    //   tokenBalancesByAddress[address].map(balance => balance?.tokens).reduce(addBigNumbers, undefined)
+  const { switchAccount } = useActiveAccount()
+  const { accounts, disconnect } = useExtensionAutoConnect()
 
-    return (
-      open && (
-        <span className={`account-picker ${className}`}>
-          {totalBalanceByAddress === '0' && showBuy && <BuyItem nativeToken={nativeToken} onClick={closeParent} />}
-          {(allAccounts ? [{ name: t('All Accounts') }, ...accounts] : accounts).map(
-            ({ address, name, type, genesisHash }, index) => {
-              // const { assetsValue } = _useBalances()
-              const { assetsValue, balances } = _useBalances()
+  const { assetsValue, balances } = useBalances()
 
-              // Do the filtering
-              const fiatBalance =
-                address !== undefined
-                  ? (balances?.find({ address: address }).sum.fiat('usd').transferable ?? 0).toLocaleString(undefined, {
-                      style: 'currency',
-                      currency: 'USD',
-                      currencyDisplay: 'narrowSymbol',
-                    }) ?? ' -'
-                  : assetsValue
+  return (
+    open && (
+      <span className={`account-picker ${className}`}>
+        {showBuy && <BuyItem onClick={closeParent} />}
+        {(allAccounts ? [{ name: t('All Accounts') }, ...accounts] : accounts).map(
+          ({ address, name, type, genesisHash }, index) => {
+            // Do the filtering
+            const fiatBalance =
+              address !== undefined
+                ? (balances?.find({ address: address }).sum.fiat('usd').transferable ?? 0).toLocaleString(undefined, {
+                    style: 'currency',
+                    currency: 'USD',
+                    currencyDisplay: 'narrowSymbol',
+                  }) ?? '-'
+                : assetsValue
 
-              return (
-                <div
-                  key={index}
-                  className="account"
-                  onClick={() => {
-                    switchAccount(address)
-                    handleClose()
-                  }}
-                >
-                  <span className="left">
-                    {address ? (
-                      <Identicon
-                        className="identicon"
-                        value={address}
-                        theme={type === 'ethereum' ? 'ethereum' : 'polkadot'}
-                      />
-                    ) : (
-                      <Identicon
-                        Custom={AllAccountsIcon}
-                        className="identicon"
-                        value="5DHuDfmwzykE9KVmL87DLjAbfSX7P4f4wDW5CKx8QZnQA4FK"
-                        theme="polkadot"
-                      />
-                    )}
-                    <span className="name-address">
-                      {/* <div className="name">{address ? truncateString(name, 10, 0) : name}</div> */}
-                      <div className="name">{name}</div>
-                      {address && (
-                        <div className="address">
-                          <Address address={address} genesis={genesisHash} truncate />
-                        </div>
-                      )}
-                    </span>
+            return (
+              <div
+                key={index}
+                className="account"
+                onClick={() => {
+                  switchAccount(address)
+                  handleClose()
+                }}
+              >
+                <span className="left">
+                  {address ? (
+                    <Identicon
+                      className="identicon"
+                      value={address}
+                      theme={type === 'ethereum' ? 'ethereum' : 'polkadot'}
+                    />
+                  ) : (
+                    <Identicon
+                      Custom={AllAccountsIcon}
+                      className="identicon"
+                      value="5DHuDfmwzykE9KVmL87DLjAbfSX7P4f4wDW5CKx8QZnQA4FK"
+                      theme="polkadot"
+                    />
+                  )}
+                  <span className="name-address">
+                    <div className="name">{name}</div>
                     {address && (
-                      <CopyButton
-                        text={address}
-                        onCopied={text => {
-                          console.log(`>>> copied`, text)
-                        }}
-                        onFailed={text => {
-                          console.log(`>>> failed`, text)
-                        }}
-                      />
+                      <div className="address">
+                        <Address address={address} genesis={genesisHash} truncate />
+                      </div>
                     )}
                   </span>
+                  {address && <CopyButton text={address} />}
+                </span>
 
-                  <span className="balancePrice">
-                    {address ? (
-                      // show usd when no chainId specified
-                      parachainId === undefined ? (
-                        <Pendor>{fiatBalance}</Pendor>
-                      ) : (
-                        <Pendor suffix={` ${nativeToken}`}>{fiatBalance}</Pendor>
-                      )
-                    ) : (
-                      <>
-                        <Pendor>{fiatBalance}</Pendor>
-                      </>
-                    )}
-                  </span>
-                </div>
-              )
-            }
-          )}
-          {/* <WalletSelect dappName={DAPP_NAME} triggerComponent={<Button small primary>{t('Connect')}</Button>} /> */}
-          <Button
-            className="dropdown-button"
-            onClick={() => {
-              localStorage.removeItem('@talisman-connect/selected-wallet-name')
-              document.dispatchEvent(new CustomEvent('@talisman-connect/wallet-selected'))
-              disconnect()
-              switchAccount('')
-            }}
-          >
-            {t('Disconnect Wallet')}
-          </Button>
-        </span>
-      )
+                <span className="balance-price">
+                  <Pendor require={(balances?.sorted.length || 0) > 0}>{fiatBalance}</Pendor>
+                </span>
+              </div>
+            )
+          }
+        )}
+        <Button
+          className="dropdown-button"
+          onClick={() => {
+            localStorage.removeItem('@talisman-connect/selected-wallet-name')
+            document.dispatchEvent(new CustomEvent('@talisman-connect/wallet-selected'))
+            disconnect()
+            switchAccount('')
+          }}
+        >
+          {t('Disconnect Wallet')}
+        </Button>
+      </span>
     )
-  }
-)`
+  )
+})`
   background: var(--color-controlBackground);
   font-size: 0.8em;
   width: 26em;
@@ -291,7 +244,7 @@ const Dropdown = styled(
       margin-left: 0.6em;
     }
 
-    .balancePrice {
+    .balance-price {
       justify-content: flex-end;
     }
 
@@ -409,57 +362,27 @@ const Unauthorized = styled(({ className }) => {
 `
 
 const Authorized = styled(
-  ({
-    className,
-    narrow,
-    allAccounts,
-    showValue = false,
-    closeParent = null,
-    showBuy = false,
-    fixedDropdown = false,
-    showDisconnect = false,
-    parachainId,
-  }) => {
+  ({ className, narrow, allAccounts, closeParent = null, showBuy = false, fixedDropdown = false }) => {
     const { t } = useTranslation()
-    const nodeRef = useRef<HTMLDivElement>(null)
-    const { switchAccount } = useActiveAccount()
-    const { accounts, disconnect } = useExtensionAutoConnect()
-    const { hasActiveAccount, address, name, type } = useActiveAccount()
-    const { totalUsd, totalUsdByAddress } = usePortfolio()
+
     const [open, setOpen] = useState(false)
 
-    const usd = hasActiveAccount ? totalUsdByAddress[encodeAnyAddress(address, 42)] : totalUsd
+    const { switchAccount } = useActiveAccount()
+    const { accounts } = useExtensionAutoConnect()
+    const { hasActiveAccount, address, name, type } = useActiveAccount()
+
     useEffect(() => {
       if (allAccounts) return
       if (hasActiveAccount) return
       switchAccount(accounts[0].address)
     }, [accounts, allAccounts, hasActiveAccount, switchAccount])
 
-    const hasParachainId = parachainId !== undefined
-
-    const chainIds = useMemo(
-      () => [hasParachainId ? parachainId.toString() : undefined].filter(Boolean),
-      [hasParachainId, parachainId]
-    )
-    const addresses = useMemo(() => accounts.map((account: any) => account.address), [accounts])
-
+    const addresses = useMemo(() => accounts.map(account => account.address), [accounts])
     const hasManyAccounts = addresses && addresses.length > 1
 
-    const { nativeToken, tokenDecimals } = useChain(parachainId)
-    const { balances } = useBalances(addresses, chainIds, customRpcs)
-
-    const tokenBalances = useFuncMemo(addTokensToBalances, balances, nativeToken ? tokenDecimals : undefined)
-    const tokenBalancesByAddress = useFuncMemo(groupBalancesByAddress, tokenBalances)
-
-    const onClickOutside = () => {
-      setOpen(false)
-    }
-
+    const onClickOutside = useCallback(() => setOpen(false), [])
+    const nodeRef = useRef<HTMLDivElement>(null)
     useOnClickOutside(nodeRef, onClickOutside)
-
-    const totalBalanceByAddress =
-      tokenBalancesByAddress[address] &&
-      tokenBalancesByAddress[address].map(balance => balance?.tokens).reduce(addBigNumbers, undefined)
 
     return (
       <div
@@ -485,48 +408,12 @@ const Authorized = styled(
           )}
           <span className="selected-account">
             <div>{hasActiveAccount ? name : allAccounts ? t('All Accounts') : 'Loading...'}</div>
-            {showDisconnect && (
-              <span
-                style={{
-                  fontSize: 'small',
-                  textDecoration: 'underline',
-                  color: 'inherit',
-                  opacity: 'inherit',
-                  cursor: 'pointer',
-                }}
-                onClick={() => {
-                  localStorage.removeItem('@talisman-connect/selected-wallet-name')
-                  document.dispatchEvent(new CustomEvent('@talisman-connect/wallet-selected'))
-                  disconnect()
-                  switchAccount('')
-                }}
-              >
-                Disconnect
-              </span>
-            )}
-            {showValue && (
-              <div>
-                {
-                  // show usd when no chainId specified
-                  !hasParachainId ? (
-                    <Pendor prefix={!usd && '-'}>{usd && formatCurrency(usd)}</Pendor>
-                  ) : (
-                    <span className="selected-account-balance">
-                      <Pendor suffix={` ${nativeToken}`}>
-                        {totalBalanceByAddress === '0' && <AlertCircle />}
-                        {totalBalanceByAddress && formatCommas(totalBalanceByAddress)}
-                      </Pendor>
-                    </span>
-                  )
-                }
-              </div>
-            )}
           </span>
 
           {narrow ? (
             <ChevronDown style={{ margin: '0 1rem 0 0.8rem', visibility: hasManyAccounts ? 'visible' : 'hidden' }} />
           ) : (
-            <Button.Icon
+            <ButtonIcon
               className="nav-toggle"
               onClick={(e: any) => {
                 e.stopPropagation()
@@ -534,19 +421,15 @@ const Authorized = styled(
               }}
             >
               <ChevronDown />
-            </Button.Icon>
+            </ButtonIcon>
           )}
 
           <Dropdown
             open={open}
             handleClose={() => setOpen(false)}
             allAccounts={allAccounts}
-            nativeToken={nativeToken}
-            tokenBalancesByAddress={tokenBalancesByAddress}
-            totalBalanceByAddress={totalBalanceByAddress}
             closeParent={closeParent}
             showBuy={showBuy}
-            parachainId={parachainId}
           />
         </span>
       </div>

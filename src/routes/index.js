@@ -5,6 +5,7 @@ import Buy from './Buy'
 import Explore from './Explore'
 import Home from './Home'
 import NFTsPage from './NFTsPage'
+import TransactionHistory from './TransactionHistory'
 import Wallet from './Wallet'
 
 const Routes = () => (
@@ -34,6 +35,11 @@ const Routes = () => (
         return null
       }}
     />
+    <Route exact path="/history">
+      <Layout>
+        <TransactionHistory />
+      </Layout>
+    </Route>
     <Route exact path="/buy">
       <Layout>
         <Buy />

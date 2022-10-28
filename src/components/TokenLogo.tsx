@@ -1,28 +1,22 @@
-import { Image } from '@components'
+import { css } from '@emotion/react'
 import styled from '@emotion/styled'
 import { Token } from '@talismn/chaindata-provider'
 
-type TokenLogoProps = {
-  token: Token
-  type: string
-  size: number
+type Props = {
+  token: Pick<Token, 'symbol' | 'logo'>
+  size?: number
   className?: string
 }
-export default styled(({ token, type, className }: TokenLogoProps) => {
-  return (
-    <Image
-      src={token.logo}
-      alt={`${token.symbol} ${type}`}
-      className={`token-asset token-${type} ${className}`}
-      data-type={type}
-    />
-  )
-})`
-  &[data-type='logo'] {
-    font-size: ${({ size = 8 }) => `${size}rem`};
-    width: 1em;
-    height: 1em;
-    border-radius: 50%;
-    display: block;
-  }
+export default styled(({ className, token }: Props) => (
+  <img className={`token-logo ${className}`} src={token.logo} alt={`${token.symbol} token logo`} />
+))`
+  display: block;
+  width: 1em;
+  height: 1em;
+
+  ${({ size }) =>
+    typeof size === 'number' &&
+    css`
+      font-size: ${size}rem;
+    `}
 `

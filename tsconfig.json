@@ -2,7 +2,11 @@
   "extends": "./tsconfig.paths.json",
   "compilerOptions": {
     "target": "ESNext",
-    "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "lib": [
+      "DOM",
+      "DOM.Iterable",
+      "ESNext"
+    ],
     "allowJs": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
@@ -18,5 +22,7 @@
     "jsx": "react-jsx",
     "jsxImportSource": "@emotion/react"
   },
-  "include": ["src"]
+  "include": [
+    "src"
+  ]
 }
