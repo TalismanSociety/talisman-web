@@ -1,5 +1,8 @@
 import { ReactComponent as AllAccountsIcon } from '@assets/icons/all-accounts.svg'
 import { Button, ButtonIcon, Pendor, Pill } from '@components'
+import { Copy } from '@components/atoms/Icon'
+import Identicon from '@components/atoms/Identicon'
+import Text from '@components/atoms/Text'
 import { CopyButton } from '@components/CopyButton'
 import { css } from '@emotion/react'
 import styled from '@emotion/styled'
@@ -7,7 +10,6 @@ import { ReactComponent as AlertCircle } from '@icons/alert-circle.svg'
 import { ReactComponent as ChevronDown } from '@icons/chevron-down.svg'
 import { DAPP_NAME, useActiveAccount, useBalances, useChainByGenesis, useExtensionAutoConnect } from '@libs/talisman'
 import { useTalismanInstalled } from '@libs/talisman/useIsTalismanInstalled'
-import Identicon from '@polkadot/react-identicon'
 import { WalletSelect } from '@talismn/connect-components'
 import { getWalletBySource } from '@talismn/connect-wallets'
 import { encodeAnyAddress } from '@talismn/util'
@@ -16,6 +18,7 @@ import { buyNow } from '@util/fiatOnRamp'
 import { truncateString } from '@util/helpers'
 import useOnClickOutside from '@util/useOnClickOutside'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import toast from 'react-hot-toast'
 import { useTranslation } from 'react-i18next'
 
 // format an address based on chain ID, derived from genesis ID
@@ -129,7 +132,25 @@ const Dropdown = styled(({ className, open, handleClose, allAccounts, closeParen
                       </div>
                     )}
                   </span>
-                  {address && <CopyButton text={address} />}
+                  {address && (
+                    <CopyButton
+                      text={address}
+                      onCopied={text => {
+                        toast(
+                          <>
+                            <Text.Body as="div" alpha="high">
+                              Address copied to clipboard
+                            </Text.Body>
+                            <Text.Body as="div">{text}</Text.Body>
+                          </>,
+                          { position: 'bottom-right', icon: <Copy /> }
+                        )
+                      }}
+                      onFailed={text => {
+                        console.log(`>>> failed`, text)
+                      }}
+                    />
+                  )}
                 </span>
 
                 <span className="balance-price">
@@ -213,11 +234,8 @@ const Dropdown = styled(({ className, open, handleClose, allAccounts, closeParen
       color: var(--color-primary);
       background: var(--color-activeBackground);
       border-radius: 100px;
-      > svg,
-      > img {
-        width: 1em;
-        height: 1em;
-      }
+      width: 1em;
+      height: 1em;
       img {
         border-radius: 999999999999rem;
       }
@@ -369,7 +387,7 @@ const Authorized = styled(
 
     const { switchAccount } = useActiveAccount()
     const { accounts } = useExtensionAutoConnect()
-    const { hasActiveAccount, address, name, type } = useActiveAccount()
+    const { hasActiveAccount, address, name } = useActiveAccount()
 
     useEffect(() => {
       if (allAccounts) return
@@ -397,13 +415,12 @@ const Authorized = styled(
       >
         <span className={`account-button${hasManyAccounts ? ' has-many-accounts' : ''} ${className}`}>
           {hasActiveAccount ? (
-            <Identicon className="identicon" value={address} theme={type === 'ethereum' ? 'ethereum' : 'polkadot'} />
+            <Identicon className="identicon" value={address} />
           ) : (
             <Identicon
               className="identicon"
               Custom={AllAccountsIcon}
               value="5DHuDfmwzykE9KVmL87DLjAbfSX7P4f4wDW5CKx8QZnQA4FK"
-              theme="polkadot"
             />
           )}
           <span className="selected-account">
@@ -461,11 +478,8 @@ const Authorized = styled(
     color: var(--color-primary);
     background: var(--color-activeBackground);
     border-radius: 100px;
-    > svg,
-    > img {
-      width: 1.5em;
-      height: 1.5em;
-    }
+    width: 1.5em;
+    height: 1.5em;
     img {
       border-radius: 999999999999rem;
     }

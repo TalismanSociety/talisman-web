@@ -1,8 +1,8 @@
 import { ReactComponent as XCircle } from '@assets/icons/x-circle.svg'
 import { Button, Field } from '@components'
+import Identicon from '@components/atoms/Identicon'
 import { TalismanHandLoader } from '@components/TalismanHandLoader'
 import styled from '@emotion/styled'
-import Identicon from '@polkadot/react-identicon'
 import { planckToTokens } from '@talismn/util'
 import { truncateString } from '@util/helpers'
 import { useEffect } from 'react'
@@ -44,7 +44,7 @@ export const AccountModal = styled(({ className, account, selectAccount, refetch
         <div>
           <span>Account</span>
           <span>
-            <Identicon className="identicon" value={account.id} theme={'polkadot'} /> {account.name}
+            <Identicon className="identicon" value={account.id} /> {account.name}
           </span>
         </div>
         <div>

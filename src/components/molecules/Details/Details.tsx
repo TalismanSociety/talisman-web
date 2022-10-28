@@ -1,8 +1,8 @@
 import { ChevronRight } from '@components/atoms/Icon'
 import Text from '@components/atoms/Text'
 import { useTheme } from '@emotion/react'
-import { AnimatePresence, motion } from 'framer-motion'
-import { ReactNode, useCallback, useState } from 'react'
+import { motion } from 'framer-motion'
+import { MouseEventHandler, ReactEventHandler, ReactNode, useCallback, useState } from 'react'
 
 export type DetailsProps = React.DetailedHTMLProps<
   React.DetailsHTMLAttributes<HTMLDetailsElement>,
@@ -10,27 +10,34 @@ export type DetailsProps = React.DetailedHTMLProps<
 > & {
   summary: string
   content: ReactNode
+  onToggle?: (value: boolean) => unknown
 }
 
 const Details = (props: DetailsProps) => {
   const theme = useTheme()
-  const [open, setOpen] = useState(false)
+  const [_open, setOpen] = useState(false)
+  const open = props.open ?? _open
 
   return (
     <details
-      open
       {...props}
+      open={true}
       css={{
         padding: '2.2rem 3.2rem',
         borderRadius: '1.6rem',
         backgroundColor: theme.color.surface,
       }}
+      onToggle={useCallback<ReactEventHandler<HTMLDetailsElement>>(event => event.preventDefault(), [])}
     >
       <summary
-        onClick={useCallback<React.MouseEventHandler<HTMLElement>>(event => {
-          event.preventDefault()
-          setOpen(x => !x)
-        }, [])}
+        onClick={useCallback<MouseEventHandler<HTMLElement>>(
+          event => {
+            event.preventDefault()
+            props.onToggle?.(!open)
+            setOpen(!open)
+          },
+          [open, props]
+        )}
         css={{
           'listStyle': 'none',
           'display': 'flex',

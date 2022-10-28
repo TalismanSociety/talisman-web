@@ -2,7 +2,7 @@ import Button from '@components/atoms/Button'
 import Identicon from '@components/atoms/Identicon'
 import Text from '@components/atoms/Text'
 import { useTheme } from '@emotion/react'
-import React, { ReactElement } from 'react'
+import React, { ReactElement, ReactNode } from 'react'
 
 import { PoolStatus, PoolStatusIndicator } from '../PoolStatusIndicator'
 import PoolStakeSkeleton from './PoolStake.skeleton'
@@ -14,7 +14,7 @@ export type PoolStakeProps = {
   stakingAmountInFiat: string
   rewardsAmount: string
   rewardsAmountInFiat: string
-  poolName: string
+  poolName: ReactNode
   onRequestClaim: () => unknown
   onRequestUnstake: () => unknown
   onRequestAdd: () => unknown
@@ -196,26 +196,46 @@ export type PoolStakeListProps = {
 export const PoolStakeList = (props: PoolStakeListProps) => {
   const theme = useTheme()
   return (
-    <ol
-      css={{
-        'listStyle': 'none',
-        'margin': 0,
-        'padding': 0,
-        'li + li': {
-          marginTop: '1.6rem',
-        },
-        '@media (min-width: 1024px)': {
-          'background': theme.color.surface,
-          'borderRadius': '1.6rem',
-          'li + li': { marginTop: 0, borderTop: 'solid 1px #383838' },
-          '> li:not(:first-child):not(:last-child) > article': { borderRadius: 0 },
-          '> li:first-child:not(:last-child) > article': { borderEndStartRadius: 0, borderEndEndRadius: 0 },
-          '> li:last-child:not(:first-child) > article': { borderStartStartRadius: 0, borderStartEndRadius: 0 },
-        },
-      }}
-    >
-      {React.Children.map(props.children, child => child !== undefined && <li key={child.key}>{child}</li>)}
-    </ol>
+    <div>
+      <div
+        css={{
+          'display': 'none',
+          '@media (min-width: 1024px)': {
+            display: React.Children.count(props.children) === 0 ? 'none' : 'flex',
+            margin: '0 32.35rem 0.5rem 5.6rem',
+          },
+        }}
+      >
+        <Text.Body css={{ flex: 1, transform: 'translateX(-3.4rem)' }}>Account</Text.Body>
+        <div css={{ flex: 2 }} />
+        <Text.Body css={{ flex: 1 }}>
+          <Text.Body css={{ paddingLeft: '2.4rem' }}>Staking</Text.Body>
+        </Text.Body>
+        <Text.Body css={{ flex: 1 }}>
+          <Text.Body css={{ paddingLeft: '3.4rem' }}>Rewards</Text.Body>
+        </Text.Body>
+      </div>
+      <ol
+        css={{
+          'listStyle': 'none',
+          'margin': 0,
+          'padding': 0,
+          'li + li': {
+            marginTop: '1.6rem',
+          },
+          '@media (min-width: 1024px)': {
+            'background': theme.color.surface,
+            'borderRadius': '1.6rem',
+            'li + li': { marginTop: 0, borderTop: 'solid 1px #383838' },
+            '> li:not(:first-child):not(:last-child) >:first-child': { borderRadius: 0 },
+            '> li:first-child:not(:last-child) >:first-child': { borderEndStartRadius: 0, borderEndEndRadius: 0 },
+            '> li:last-child:not(:first-child) >:first-child': { borderStartStartRadius: 0, borderStartEndRadius: 0 },
+          },
+        }}
+      >
+        {React.Children.map(props.children, child => child !== undefined && <li key={child.key}>{child}</li>)}
+      </ol>
+    </div>
   )
 }
 

@@ -1,13 +1,17 @@
 import { ModalProvider } from '@components'
+import ToastBar from '@components/molecules/ToastBar'
 import { TalismanHandLoader } from '@components/TalismanHandLoader'
+import { AccountsWatcher } from '@domains/accounts/recoils'
 import * as Crowdloans from '@libs/crowdloans'
 import * as MoonbeamContributors from '@libs/moonbeam-contributors'
 import * as Portfolio from '@libs/portfolio'
 import TalismanProvider from '@libs/talisman'
 import * as Tokenprices from '@libs/tokenprices'
 import Routes from '@routes'
-import { Suspense } from 'react'
+import React, { Suspense } from 'react'
+import { Toaster } from 'react-hot-toast'
 import { BrowserRouter as Router } from 'react-router-dom'
+import { RecoilRoot } from 'recoil'
 
 import ThemeProvider from './App.Theme'
 import { initPosthog } from './config/posthog'
@@ -33,19 +37,25 @@ const Loader = () => {
 }
 
 const App: React.FC = () => (
-  <Suspense fallback={<Loader />}>
+  <RecoilRoot>
     <Portfolio.Provider>
       <Tokenprices.Provider>
         <TalismanProvider>
+          <AccountsWatcher />
           <Crowdloans.Provider>
             <MoonbeamContributors.Provider>
               <Router>
                 <ThemeProvider>
-                  <ModalProvider>
-                    <MoonbeamContributors.PopupProvider>
-                      <Routes />
-                    </MoonbeamContributors.PopupProvider>
-                  </ModalProvider>
+                  <Suspense fallback={<Loader />}>
+                    <ModalProvider>
+                      <MoonbeamContributors.PopupProvider>
+                        <Routes />
+                      </MoonbeamContributors.PopupProvider>
+                    </ModalProvider>
+                    <Toaster position="top-right" containerStyle={{ top: '6rem' }}>
+                      {t => <ToastBar toast={t} />}
+                    </Toaster>
+                  </Suspense>
                 </ThemeProvider>
               </Router>
             </MoonbeamContributors.Provider>
@@ -53,7 +63,7 @@ const App: React.FC = () => (
         </TalismanProvider>
       </Tokenprices.Provider>
     </Portfolio.Provider>
-  </Suspense>
+  </RecoilRoot>
 )
 
 export default App

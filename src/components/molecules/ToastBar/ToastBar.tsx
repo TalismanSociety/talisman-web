@@ -3,6 +3,7 @@ import { Check, X } from '@components/atoms/Icon'
 import Text from '@components/atoms/Text'
 import { useTheme } from '@emotion/react'
 import { formatDistanceToNowStrict } from 'date-fns'
+import { motion } from 'framer-motion'
 import React, { Fragment, useEffect, useMemo, useState } from 'react'
 import { Toast, resolveValue } from 'react-hot-toast'
 
@@ -29,8 +30,24 @@ const ToastBar = ({ toast }: ToastBarProps) => {
     return () => clearInterval(interval)
   }, [toast.createdAt])
 
+  const origin = useMemo(() => {
+    switch (toast.position) {
+      case 'top-center':
+        return { y: '-100%' }
+      case 'bottom-left':
+      case 'bottom-center':
+      case 'bottom-right':
+        return { y: '100%' }
+      case 'top-right':
+      case undefined:
+        return { x: '100%' }
+      case 'top-left':
+        return { x: '-100%' }
+    }
+  }, [toast.position])
+
   return (
-    <div
+    <motion.div
       key={toast.id}
       css={{
         position: 'relative',
@@ -40,12 +57,32 @@ const ToastBar = ({ toast }: ToastBarProps) => {
         padding: '1.6rem',
         borderRadius: '0.8rem',
         backgroundColor: theme.color.surface,
-        opacity: toast.visible ? 1 : 0,
-        transition: '.5s',
       }}
+      initial={{ ...origin, opacity: 0, scale: 0.8 }}
+      animate={{ ...(toast.visible ? { x: 0, y: 0 } : origin), opacity: toast.visible ? 1 : 0, scale: 1 }}
+      whileHover={{ scale: 1.01 }}
       {...toast.ariaProps}
     >
       {useMemo(() => {
+        if (toast.icon !== undefined) {
+          return (
+            <div
+              css={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                width: '4rem',
+                height: '4rem',
+                borderRadius: '2rem',
+                backgroundColor: toast.iconTheme?.primary,
+                color: toast.iconTheme?.secondary,
+              }}
+            >
+              {resolveValue(toast.icon, toast)}
+            </div>
+          )
+        }
+
         switch (toast.type) {
           case 'loading':
             return <CircularProgressIndicator size="4rem" />
@@ -84,7 +121,7 @@ const ToastBar = ({ toast }: ToastBarProps) => {
               </div>
             )
         }
-      }, [toast.type])}
+      }, [toast])}
       <Text.Body as="div">
         <Text.Body css={{ display: 'flex', justifyContent: 'space-between', gap: '1rem' }}>
           <span>{firstMessage}</span>
@@ -94,7 +131,7 @@ const ToastBar = ({ toast }: ToastBarProps) => {
         </Text.Body>
         {messages}
       </Text.Body>
-    </div>
+    </motion.div>
   )
 }
 

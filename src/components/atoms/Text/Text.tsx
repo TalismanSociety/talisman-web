@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 
 type PolymorphicTextProps<T extends React.ElementType> = { as?: T; alpha?: 'disabled' | 'medium' | 'high' }
 export type TextProps<T extends React.ElementType> = PolymorphicTextProps<T> &
@@ -47,6 +48,9 @@ const Text = Object.assign(BaseText, {
   ),
   Body: <T extends React.ElementType = 'span'>(props: TextProps<T>) => (
     <BaseText {...props} as={props.as ?? 'span'} css={{ fontSize: 14 }} />
+  ),
+  A: <T extends React.ElementType | Link = 'a'>(props: TextProps<T>) => (
+    <BaseText {...props} as={props.as ?? 'a'} alpha="high" css={{ fontSize: 'inherit', textDecoration: 'underline' }} />
   ),
 })
 

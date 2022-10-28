@@ -1,4 +1,5 @@
 import { Info, TokenLogo } from '@components'
+import Identicon from '@components/atoms/Identicon'
 import { css } from '@emotion/react'
 import styled from '@emotion/styled'
 import { ReactComponent as _ArrowRight } from '@icons/arrow-right.svg'
@@ -8,7 +9,6 @@ import { truncateAddress } from '@util/helpers'
 import startCase from 'lodash/startCase'
 import { useTranslation } from 'react-i18next'
 
-import { Avatar } from './Avatar'
 import { ClickToCopy } from './ClickToCopy'
 import { ItemNoDetails } from './ItemNoDetails'
 import { ParsedTransaction } from './lib'
@@ -54,7 +54,7 @@ export const ItemDetails = ({ parsed, addresses, accounts }: Props) => {
               {fromName ?? truncateAddress(parsed.from, 4)}
             </ClickToCopy>
           }
-          graphic={<Avatar value={parsed.from} />}
+          graphic={<Identicon value={parsed.from} size="3.2rem" />}
           invert
         />
       )
@@ -66,7 +66,7 @@ export const ItemDetails = ({ parsed, addresses, accounts }: Props) => {
               {toName ?? truncateAddress(parsed.to, 4)}
             </ClickToCopy>
           }
-          graphic={<Avatar value={parsed.to} />}
+          graphic={<Identicon value={parsed.to} size="3.2rem" />}
           invert
         />
       )

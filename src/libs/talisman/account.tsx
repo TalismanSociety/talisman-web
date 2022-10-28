@@ -1,3 +1,4 @@
+import { selectedAccountAddressesState } from '@domains/accounts/recoils'
 import { trackGoal } from '@libs/fathom'
 import { useExtension } from '@libs/talisman'
 import {
@@ -9,6 +10,7 @@ import {
   useMemo,
   useState,
 } from 'react'
+import { useRecoilState } from 'recoil'
 
 import type { Account, Status } from './extension'
 
@@ -80,27 +82,25 @@ function useContext() {
 
 export const Provider = ({ children }: PropsWithChildren<{}>) => {
   const { accounts, status, connect } = useExtension()
-
-  const [activeAccountIndex, setActiveAccountIndex] = useState(-1)
+  const [selectedAddresses, setSelectedAddresses] = useRecoilState(selectedAccountAddressesState)
 
   const switchAccount = useCallback(
-    address => {
-      const accountIndex = accounts.findIndex(account => account.address === address)
-      setActiveAccountIndex(accountIndex)
+    (address: string) => {
+      setSelectedAddresses(!address ? undefined : [address])
       trackGoal('KIPBMS1X', 1) // switch_accounts
     },
-    [accounts]
+    [setSelectedAddresses]
   )
 
   const value = useMemo(
     () => ({
       accounts,
-      activeAccount: accounts[activeAccountIndex],
+      activeAccount: accounts.find(({ address }) => selectedAddresses?.includes(address)),
       status,
       switchAccount,
       connect,
     }),
-    [accounts, activeAccountIndex, status, switchAccount, connect]
+    [accounts, status, switchAccount, connect, selectedAddresses]
   )
 
   return <Context.Provider value={value}>{children}</Context.Provider>

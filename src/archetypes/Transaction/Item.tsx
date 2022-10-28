@@ -1,4 +1,5 @@
 import { Info, PanelSection } from '@components'
+import Identicon from '@components/atoms/Identicon'
 import { css } from '@emotion/react'
 import styled from '@emotion/styled'
 import { ReactComponent as ExternalLink } from '@icons/external-link.svg'
@@ -10,7 +11,6 @@ import parseISO from 'date-fns/parseISO'
 import startCase from 'lodash/startCase'
 import { useMemo } from 'react'
 
-import { Avatar } from './Avatar'
 import { ClickToCopy } from './ClickToCopy'
 import { ItemDetails } from './ItemDetails'
 import { Transaction } from './lib'
@@ -87,7 +87,7 @@ export const Item = styled(({ className, transaction, addresses, selectedAccount
                 {truncateAddress(youAddress ? encodeAnyAddress(youAddress, ss58Format) : youAddress, 4)}
               </ClickToCopy>
             }
-            graphic={<Avatar value={youAddress} />}
+            graphic={<Identicon value={youAddress} size="3.2rem" />}
           />
         )}
 

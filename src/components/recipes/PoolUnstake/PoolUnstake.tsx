@@ -67,7 +67,7 @@ const PoolUnstake = (props: PoolUnstakeProps) => {
               justifyContent: 'flex-end',
             },
             '> div:last-child': {
-              flex: 1,
+              flex: 0.5,
               overflow: 'hidden',
               justifyContent: props.timeTilWithdrawable === undefined ? 'flex-start' : undefined,
             },
@@ -118,11 +118,7 @@ const PoolUnstake = (props: PoolUnstakeProps) => {
           </dd>
         </div>
         {props.timeTilWithdrawable !== undefined && (
-          <div
-            css={{
-              '@media (min-width: 1024px)': { flex: 1, display: 'flex' },
-            }}
-          >
+          <div>
             <dt>Status</dt>
             <dd>
               <div>
