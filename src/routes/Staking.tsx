@@ -36,14 +36,7 @@ export const recommendedPoolsState = selector({
 
     const names = await api.query.nominationPools.metadata.multi(bondedPools.map(({ poolId }) => poolId))
 
-    return bondedPools.map((x, index) => ({
-      ...x,
-      name:
-        index === 0
-          ? // TODO: for demo purpose only
-            'Talisman 🧿'
-          : names[index]?.toUtf8(),
-    }))
+    return bondedPools.map((x, index) => ({ ...x, name: names[index]?.toUtf8() }))
   },
 })
 
@@ -303,12 +296,6 @@ const Staking = () => {
     enabled: selectedPoolId !== undefined,
   })
 
-  // TODO: for demo purpose only
-  const demoPoolName =
-    selectedPoolId === recommendedPools[0]?.poolId.toNumber()
-      ? 'Talisman 🧿'
-      : poolMetadataLoadable.valueMaybe()?.toUtf8() ?? ''
-
   const hasExistingPool = poolMembersLoadable.valueMaybe()?.[selectedAccountIndex]?.isSome === true
 
   const isReady =
@@ -435,7 +422,7 @@ const Staking = () => {
                 }}
                 availableToStake={availableBalance.decimalAmount?.toHuman() ?? '...'}
                 noPoolsAvailable={recommendedPools.length === 0}
-                poolName={demoPoolName}
+                poolName={poolMetadataLoadable.valueMaybe()?.toUtf8() ?? ''}
                 poolStatus={poolStatus}
                 poolTotalStaked={poolTotalStaked?.toHuman() ?? ''}
                 poolMemberCount={bondedPoolLoadable.valueMaybe()?.unwrapOrDefault().memberCounter.toString() ?? ''}
