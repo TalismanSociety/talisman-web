@@ -1,5 +1,5 @@
 import { MediaPreviewProps, NftElement } from '@util/nfts/types'
-import React, { EmbedHTMLAttributes, ImgHTMLAttributes, MediaHTMLAttributes, cloneElement } from 'react'
+import { EmbedHTMLAttributes, ImgHTMLAttributes, MediaHTMLAttributes } from 'react'
 
 export interface NftPreviewProps extends ImgHTMLAttributes<HTMLImageElement>, NftElement {}
 
@@ -74,6 +74,6 @@ export function MediaPreview(props: MediaPreviewProps) {
       if (!imgProps.src) {
         return null
       }
-      return <img loading="lazy" {...imgProps} />
+      return <img alt="" loading="lazy" {...imgProps} />
   }
 }

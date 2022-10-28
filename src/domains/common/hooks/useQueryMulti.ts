@@ -1,10 +1,5 @@
 import { ApiPromise } from '@polkadot/api'
-import type {
-  PromiseResult,
-  QueryableStorageEntry,
-  StorageEntryPromiseOverloads,
-  UnsubscribePromise,
-} from '@polkadot/api/types'
+import type { PromiseResult, QueryableStorageEntry, StorageEntryPromiseOverloads } from '@polkadot/api/types'
 import useDeferred from '@util/useDeferred'
 import { useEffect, useState } from 'react'
 import { Loadable, RecoilLoadable, useRecoilValue } from 'recoil'
@@ -19,18 +14,18 @@ type QueryMap = PickKnownKeys<
 
 type Query = QueryMap[keyof QueryMap]
 
-type QueryParamsMap = {
-  [P in Query]: P extends `${infer TModule}.${infer TSection}`
-    ? Leading<
-        Parameters<
-          Diverge<
-            ApiPromise['query'][TModule][TSection],
-            StorageEntryPromiseOverloads & QueryableStorageEntry<any, any>
-          >
-        >
-      >
-    : never
-}
+// type QueryParamsMap = {
+//   [P in Query]: P extends `${infer TModule}.${infer TSection}`
+//     ? Leading<
+//         Parameters<
+//           Diverge<
+//             ApiPromise['query'][TModule][TSection],
+//             StorageEntryPromiseOverloads & QueryableStorageEntry<any, any>
+//           >
+//         >
+//       >
+//     : never
+// }
 
 type SingleQueryResultMap = {
   [P in Query]: P extends `${infer TModule}.${infer TSection}`

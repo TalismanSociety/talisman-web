@@ -1,4 +1,3 @@
-import useEventListener from '@util/useEventListener'
 import useKeyDown from '@util/useKeyDown'
 import useKeyUp from '@util/useKeyUp'
 import { useCallback, useState } from 'react'

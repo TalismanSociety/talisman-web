@@ -387,7 +387,7 @@ const Authorized = styled(
 
     const { switchAccount } = useActiveAccount()
     const { accounts } = useExtensionAutoConnect()
-    const { hasActiveAccount, address, name, type } = useActiveAccount()
+    const { hasActiveAccount, address, name } = useActiveAccount()
 
     useEffect(() => {
       if (allAccounts) return

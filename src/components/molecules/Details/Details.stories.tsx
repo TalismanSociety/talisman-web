@@ -1,4 +1,3 @@
-import { Global, css } from '@emotion/react'
 import { ComponentMeta, Story } from '@storybook/react'
 
 import Details, { DetailsProps } from './Details'

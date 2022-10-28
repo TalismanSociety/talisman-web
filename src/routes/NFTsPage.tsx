@@ -45,7 +45,7 @@ const ExtensionUnavailable = styled(props => {
 `
 
 const NFTGrid = styled(({ className = '', account }: AccountProps) => {
-  const { address, name, type } = account
+  const { address, name } = account
   const { nfts } = useNftsByAddress(address as string)
   if (!nfts?.length) {
     return null

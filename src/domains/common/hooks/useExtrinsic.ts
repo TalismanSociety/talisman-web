@@ -1,8 +1,8 @@
 import { ApiPromise } from '@polkadot/api'
-import { AddressOrPair, SubmittableExtrinsic } from '@polkadot/api/types'
+import { AddressOrPair } from '@polkadot/api/types'
 import { ISubmittableResult } from '@polkadot/types/types'
-import { useCallback, useMemo, useState } from 'react'
-import { RecoilLoadable, useRecoilCallback, useRecoilValue, useRecoilValueLoadable, waitForAll } from 'recoil'
+import { useCallback, useState } from 'react'
+import { useRecoilCallback, useRecoilValueLoadable } from 'recoil'
 
 import { apiState, currentChainState } from '../../chains/recoils'
 import { extensionState } from '../../extension/recoils'
@@ -34,7 +34,7 @@ export const useExtrinsic = <
   const signAndSend = useRecoilCallback(
     callbackInterface =>
       async (account: AddressOrPair, ...params: Parameters<TExtrinsic>) => {
-        const { snapshot, refresh } = callbackInterface
+        const { snapshot } = callbackInterface
 
         setParameters([account, ...params])
 
