@@ -22,6 +22,10 @@ export class NFTFactory extends SubscriptionService<NFTData> {
     })
   }
 
+  reset() {
+    this.address = ''
+  }
+
   hydrateNftsByAddress(address: string) {
     if (this.address === address) return
     this.address = address

@@ -24,10 +24,19 @@ const nftFactory = new NFTFactory(providers)
 export const useNftsByAddress = (initialAddress?: string) => {
   const [address, setAddress] = useState<string | undefined>(initialAddress)
   const [nftData, setNftData] = useState<NFTData>(defaultNftFactoryCallbackData)
-  const unsub = nftFactory.subscribe(setNftData)
+
+  console.log(nftData)
 
   useEffect(() => {
+    nftFactory.reset()
+  })
+
+  useEffect(() => {
+    console.log('aaaa')
     if (!address) return
+    console.log('bbbb')
+
+    const unsub = nftFactory.subscribe(setNftData)
     nftFactory.hydrateNftsByAddress(address)
     return unsub
   }, [address])

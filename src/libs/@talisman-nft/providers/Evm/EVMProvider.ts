@@ -93,6 +93,7 @@ export class EVMProvider extends NFTInterface {
       address: item.address,
       provider: item?.provider,
       fetchDetail: () => this.fetchDetail(item.id),
+      nftSpecificData: null,
     }
   }
 

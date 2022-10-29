@@ -5,14 +5,16 @@ import Preview from './Preview'
 
 interface CardProps {
   className?: string
+  opacity?: string
+  isLoading?: boolean
 }
 
-function LoadingCard({ className }: CardProps) {
+function Card({ className, isLoading }: CardProps) {
   const loadingnft = {
     id: '0x0000000000000000000000000000000000000000000000000000000000000000',
     name: 'Loading...',
     provider: 'Loading...',
-    type: 'loading',
+    type: isLoading ? 'loading' : 'blank',
   }
 
   return (
@@ -26,8 +28,9 @@ function LoadingCard({ className }: CardProps) {
   )
 }
 
-const StyledLoadingCard = styled(LoadingCard)`
+const BlankCard = styled(Card)`
   overflow: hidden;
+  opacity: ${props => (props.opacity ? props.opacity : '100%')};
   border-radius: 1rem;
   background-color: #262626;
   cursor: pointer;
@@ -69,4 +72,4 @@ const StyledLoadingCard = styled(LoadingCard)`
   }
 `
 
-export default StyledLoadingCard
+export default BlankCard

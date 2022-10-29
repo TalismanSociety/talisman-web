@@ -4,7 +4,7 @@ import { device } from '@util/breakpoints'
 import { useEffect } from 'react'
 
 import Card from './Card/Card'
-import StyledLoadingCard from './Card/LoadingCard'
+import BlankCard from './Card/LoadingCard'
 
 type ListPropsType = {
   className?: string
@@ -24,9 +24,15 @@ const ListItems = ({ className, nfts, address }: any) => {
         <Card key={nft.id} nft={nft} />
       ))}
 
-      {items.length !== count && Array.from({ length: count - items.length }).map((_, index) => <StyledLoadingCard />)}
+      {items.length !== count &&
+        Array.from({ length: count - items.length }).map((_, index) => <BlankCard isLoading={true} />)}
 
-      {isFetching && <StyledLoadingCard />}
+      {isFetching && <BlankCard opacity="50%" isLoading={true} />}
+
+      {!isFetching && !filterItemsByAddress(items).length && (
+        <></>
+        // Create an empty array of 4 and map it
+      )}
     </div>
   )
 }
@@ -47,12 +53,10 @@ const StyledListItems = styled(ListItems)`
 `
 
 const List = ({ address }: ListPropsType) => {
-  // const { setAddress, nftData } = useNftsByAddress("0x73ae2354A270a6AFF6F84Ce84627c7ee2d5aFbcD")
   const { setAddress, nftData } = useNftsByAddress(address)
 
   useEffect(() => {
     setAddress(address)
-    // setAddress("0x73ae2354A270a6AFF6F84Ce84627c7ee2d5aFbcD")
   }, [address, setAddress])
 
   return (
