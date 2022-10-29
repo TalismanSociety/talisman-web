@@ -1,3 +1,4 @@
+import { storageEffect } from '@domains/common/effects'
 import { ApiPromise, WsProvider } from '@polkadot/api'
 import { BN } from '@polkadot/util'
 import { ToBn } from '@polkadot/util/types'
@@ -7,7 +8,7 @@ import { atom, selector, selectorFamily } from 'recoil'
 
 export type Chain = {
   id: string
-  rpcs: Array<{ url: string }>
+  rpcs: Array<{ url: string; isHealthy: true }>
   isTestnet: boolean
   nativeToken: {
     data: {
@@ -19,7 +20,7 @@ export type Chain = {
   subscanUrl: string | null
 }
 
-const SUPPORTED_CHAIN_IDS = ['polkadot', 'kusama', 'westend-testnet']
+export const SUPPORTED_CHAIN_IDS = ['polkadot', 'kusama', 'westend-testnet']
 
 export const chainsState = selector({
   key: 'Chains',
@@ -33,6 +34,7 @@ export const chainsState = selector({
             isTestnet
             rpcs {
               url
+              isHealthy
             }
             nativeToken {
               data
@@ -48,16 +50,25 @@ export const chainsState = selector({
   },
 })
 
-export const currentChainIdState = atom({
-  key: 'CurrentChainId',
-  default: sessionStorage.getItem('currentChainId') ?? SUPPORTED_CHAIN_IDS[0],
+export const chainIdState = atom({
+  key: 'ChainId',
+  default: SUPPORTED_CHAIN_IDS[0],
+  effects: [storageEffect(sessionStorage)],
 })
 
-export const currentChainState = selector({
-  key: 'CurrentChain',
+export const chainRpcState = atom({
+  key: 'ChainRpc',
+  default: selector({
+    key: 'ChainRpc/Default',
+    get: ({ get }) => get(chainState).rpcs.find(rpc => rpc.isHealthy)?.url,
+  }),
+})
+
+export const chainState = selector({
+  key: 'Chain',
   get: ({ get }) => {
     const allChains = get(chainsState)
-    const id = get(currentChainIdState)
+    const id = get(chainIdState)
     const chain = allChains.find(x => x.id === id)
 
     if (chain === undefined) throw new Error(`Can't find chain with id: ${id}`)
@@ -71,7 +82,7 @@ export const nativeTokenPriceState = selectorFamily({
   get:
     (fiat: string = 'usd') =>
     async ({ get }) => {
-      const chain = get(currentChainState)
+      const chain = get(chainState)
 
       if (chain.isTestnet) return 1
 
@@ -94,8 +105,7 @@ export const apiState = atom({
   default: selector({
     key: 'PolkadotApi/Default',
     get: async ({ get }) => {
-      const chain = get(currentChainState)
-      const wsProvider = new WsProvider(chain.rpcs[0]?.url)
+      const wsProvider = new WsProvider(get(chainRpcState))
       return ApiPromise.create({ provider: wsProvider })
     },
     cachePolicy_UNSTABLE: { eviction: 'most-recent' },
@@ -105,7 +115,7 @@ export const apiState = atom({
 export const nativeTokenDecimalState = selector({
   key: 'NativeTokenDecimal',
   get: ({ get }) => {
-    const chain = get(currentChainState)
+    const chain = get(chainState)
     return {
       fromAtomics: (value: string | number | bigint | BN | ToBn | undefined) =>
         Decimal.fromAtomics(value, chain.nativeToken.data.decimals, chain.nativeToken.data.symbol),
