@@ -7262,6 +7262,7 @@ __metadata:
     react-router-dom: ^5.3.3
     react-scripts: 4.0.3
     react-use: ^17.4.0
+    react-winbox: ^1.4.2
     recoil: ^0.7.5
     rmrk-tools: ^2.0.25
     safety-match: ^0.4.4
@@ -23003,6 +23004,18 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
+"react-winbox@npm:^1.4.2":
+  version: 1.4.2
+  resolution: "react-winbox@npm:1.4.2"
+  dependencies:
+    winbox: ^0.2.1
+  peerDependencies:
+    react: ">=16.14.0"
+    react-dom: ">=16.14.0"
+  checksum: ce74ba0284b0c2da132728f9b8304dbd898bcdad4df938ce8bd58000798a3d943398beed651894976d8e822e25682fb3da228e58c3ae37ae8c56222560d39ead
+  languageName: node
+  linkType: hard
+
 "react@npm:^18.2.0":
   version: 18.2.0
   resolution: "react@npm:18.2.0"
@@ -27492,6 +27505,13 @@ typescript@^3.2.4:
   dependencies:
     string-width: ^4.0.0
   checksum: 03db6c9d0af9329c37d74378ff1d91972b12553c7d72a6f4e8525fe61563fa7adb0b9d6e8d546b7e059688712ea874edd5ded475999abdeedf708de9849310e0
+  languageName: node
+  linkType: hard
+
+"winbox@npm:^0.2.1":
+  version: 0.2.6
+  resolution: "winbox@npm:0.2.6"
+  checksum: 7216b0b7f40ef20058f43c3d7ef327cfaf1af26ac37ad6d27307cf7b2065aee1310684ae32aba28882a7cbbecc31e4d195c5b530111263464b3aee00f210b926
   languageName: node
   linkType: hard
 

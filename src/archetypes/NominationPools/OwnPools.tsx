@@ -2,7 +2,7 @@ import Button from '@components/atoms/Button'
 import Text from '@components/atoms/Text'
 import HiddenDetails from '@components/molecules/HiddenDetails'
 import PoolStake, { PoolStakeList } from '@components/recipes/PoolStake/PoolStake'
-import { currentChainIdState } from '@domains/chains/recoils'
+import { chainIdState } from '@domains/chains/recoils'
 import { useCountDownToNomsPool } from '@domains/nominationPools/hooks'
 import { Suspense } from 'react'
 import { Link } from 'react-router-dom'
@@ -12,7 +12,7 @@ import Stakings from './Stakings'
 import Unstakings from './Unstakings'
 
 const OwnPools = () => {
-  const currentChainId = useRecoilValue(currentChainIdState)
+  const currentChainId = useRecoilValue(chainIdState)
 
   // TODO: remove
   const nomsPoolCountdown = useCountDownToNomsPool()

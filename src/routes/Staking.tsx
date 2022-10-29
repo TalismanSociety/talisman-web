@@ -6,7 +6,7 @@ import PoolSelectorDialog from '@components/recipes/PoolSelectorDialog'
 import { PoolStatus } from '@components/recipes/PoolStatusIndicator'
 import StakingInput from '@components/recipes/StakingInput'
 import { polkadotAccountsState } from '@domains/accounts/recoils'
-import { apiState, currentChainState, nativeTokenDecimalState } from '@domains/chains/recoils'
+import { apiState, chainState, nativeTokenDecimalState } from '@domains/chains/recoils'
 import { useTokenAmountFromAtomics } from '@domains/common/hooks'
 import useChainState from '@domains/common/hooks/useChainState'
 import useExtrinsic from '@domains/common/hooks/useExtrinsic'
@@ -144,13 +144,13 @@ const Faq = () => {
 
 const PoolSelector = (props: {
   open: boolean
-  selectedPoolId: number
+  selectedPoolId?: number
   onChangePoolId: (poolId: number) => unknown
   onDismiss: () => unknown
 }) => {
   const [newPoolId, setNewPoolId] = useState<number>()
   const [recommendedPools, nativeTokenDecimal, currentChain] = useRecoilValue(
-    waitForAll([recommendedPoolsState, nativeTokenDecimalState, currentChainState])
+    waitForAll([recommendedPoolsState, nativeTokenDecimalState, chainState])
   )
 
   return (
@@ -170,7 +170,7 @@ const PoolSelector = (props: {
     >
       {recommendedPools.map(pool => (
         <PoolSelectorDialog.Item
-          selected={pool.poolId.eqn(props.selectedPoolId)}
+          selected={props.selectedPoolId !== undefined && pool.poolId.eqn(props.selectedPoolId)}
           highlighted={newPoolId !== undefined && pool.poolId.eqn(newPoolId)}
           talismanRecommended
           poolName={pool.name ?? ''}
@@ -327,7 +327,7 @@ const Staking = () => {
     >
       <PoolSelector
         open={showPoolSelector}
-        selectedPoolId={selectedPoolId!}
+        selectedPoolId={selectedPoolId}
         onChangePoolId={setSelectedPoolId}
         onDismiss={useCallback(() => setShowPoolSelector(false), [])}
       />

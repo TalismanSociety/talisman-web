@@ -1,3 +1,4 @@
+import DevMenu from '@archetypes/DevMenu'
 import { ModalProvider } from '@components'
 import ToastBar from '@components/molecules/ToastBar'
 import { TalismanHandLoader } from '@components/TalismanHandLoader'
@@ -46,6 +47,7 @@ const App: React.FC = () => (
             <MoonbeamContributors.Provider>
               <Router>
                 <ThemeProvider>
+                  <DevMenu />
                   <Suspense fallback={<Loader />}>
                     <ModalProvider>
                       <MoonbeamContributors.PopupProvider>
