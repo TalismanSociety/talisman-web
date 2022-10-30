@@ -21,6 +21,7 @@ export const allPendingPoolRewardsState = selector({
       )
     )
   },
+  cachePolicy_UNSTABLE: { eviction: 'most-recent' },
 })
 
 // TODO: refactor to selector that can read all storage entries
@@ -33,4 +34,5 @@ export const eraStakersState = selectorFamily({
 
       return api.query.staking.erasStakers.entries(era)
     },
+  cachePolicy_UNSTABLE: { eviction: 'most-recent' },
 })

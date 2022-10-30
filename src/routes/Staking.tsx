@@ -38,6 +38,7 @@ export const recommendedPoolsState = selector({
 
     return bondedPools.map((x, index) => ({ ...x, name: names[index]?.toUtf8() }))
   },
+  cachePolicy_UNSTABLE: { eviction: 'most-recent' },
 })
 
 const availableToStakeState = selector({
@@ -55,6 +56,7 @@ const availableToStakeState = selector({
       new BN(0)
     )
   },
+  cachePolicy_UNSTABLE: { eviction: 'most-recent' },
 })
 
 const Faq = () => {
