@@ -158,6 +158,7 @@ export class Rmrk2Provider extends NFTInterface {
             collection: {
               id: metadata?.collection?.id,
             },
+            address,
             provider: this.name,
           } as NFTShort
 
@@ -171,7 +172,7 @@ export class Rmrk2Provider extends NFTInterface {
 
   fetchOneById(id: string) {
     const internalId = id.split('.').slice(1).join('.')
-    return this.items[internalId]
+    return this.items[internalId] || null
   }
 
   protected async fetchDetail(id: string): Promise<NFTDetail> {

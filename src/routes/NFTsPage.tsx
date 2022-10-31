@@ -1,11 +1,13 @@
-import { Account, NFT } from '@archetypes'
-import { Button, ExtensionStatusGate, PanelSection } from '@components'
+import { NFT } from '@archetypes'
+import { HiddenNFTGrid } from '@archetypes/NFT'
+import { ExtensionStatusGate, PanelSection } from '@components'
+import Text from '@components/atoms/Text'
 import usePageTrack from '@components/TrackPageView'
+import { WalletNavConnector } from '@components/WalletNavConnector'
+import { css } from '@emotion/react'
 import styled from '@emotion/styled'
-import { DAPP_NAME, useAccounts, useActiveAccount } from '@libs/talisman'
-import { WalletSelect } from '@talismn/connect-components'
+import { useActiveAccount } from '@libs/talisman'
 import { device } from '@util/breakpoints'
-import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 const ExtensionUnavailable = styled(props => {
@@ -36,10 +38,6 @@ const ExtensionUnavailable = styled(props => {
 `
 
 const NFTsPage = styled(({ className }: any) => {
-  const { t: tBase } = useTranslation()
-
-  // const [address, setAddress] = useState<string | undefined>()
-
   const { address } = useActiveAccount()
 
   usePageTrack()
@@ -56,7 +54,21 @@ const NFTsPage = styled(({ className }: any) => {
           </>
         ) : (
           // Add the placeholders and select one account
-          <div>Please Select One Account</div>
+          <HiddenNFTGrid
+            overlay={
+              <span
+                css={css`
+                  display: flex;
+                  flex-direction: column;
+                  align-items: center;
+                  justify-content: center;
+                `}
+              >
+                <Text.H2>Please Select an Account</Text.H2>
+                <WalletNavConnector />
+              </span>
+            }
+          />
         )}
       </ExtensionStatusGate>
     </section>

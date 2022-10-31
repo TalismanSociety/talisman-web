@@ -166,7 +166,7 @@ export class EVMProvider extends NFTInterface {
 
   fetchOneById(id: string) {
     const internalId = id.split('.').slice(1).join('.')
-    return this.items[internalId]
+    return this.items[internalId] || null
   }
 
   protected async fetchDetail(id: string): Promise<NFTDetail> {

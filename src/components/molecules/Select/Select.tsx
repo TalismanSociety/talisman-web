@@ -75,20 +75,28 @@ const Select = Object.assign(
               exit={{ height: 0 }}
               css={{
                 width,
-                position: 'absolute',
-                zIndex: 1,
+                'position': 'absolute',
+                'zIndex': 1,
                 // slight overlap for better border radius animation
-                top: '95%',
-                left: 0,
-                margin: 0,
-                padding: '0 1.25rem',
-                borderBottomLeftRadius: '0.5rem',
-                borderBottomRightRadius: '0.5rem',
-                backgroundColor: theme.color.foreground,
-                listStyle: 'none',
-                overflow: 'hidden',
-                li: {
-                  margin: '1.5rem 0',
+                'top': '95%',
+                'left': 0,
+                'margin': 0,
+                'padding': 0,
+                'borderBottomLeftRadius': '0.5rem',
+                'borderBottomRightRadius': '0.5rem',
+                'backgroundColor': theme.color.foreground,
+                'listStyle': 'none',
+                'overflow': 'hidden',
+                'li > *': {
+                  'margin': '0.5rem 0',
+                  'padding': '1rem 1.25rem',
+                  'backgroundColor': theme.color.foreground,
+                  ':hover': {
+                    filter: 'brightness(1.2)',
+                  },
+                  ':last-child': {
+                    margin: '0.5rem 0 0 0',
+                  },
                 },
               }}
             >

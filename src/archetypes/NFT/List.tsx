@@ -1,26 +1,21 @@
+import Text from '@components/atoms/Text'
+import { css } from '@emotion/react'
 import styled from '@emotion/styled'
 import { useNftsByAddress } from '@libs/@talisman-nft'
+import { NFTData, NFTShort } from '@libs/@talisman-nft/types'
 import { device } from '@util/breakpoints'
 import { useEffect } from 'react'
 
 import Card from './Card/Card'
 import BlankCard from './Card/LoadingCard'
+import HiddenNFTGrid from './HiddenNFTGrid'
 
-type ListPropsType = {
-  className?: string
-  address?: string
-}
-
-const ListItems = ({ className, nfts, address }: any) => {
+const ListItems = ({ nfts }: { nfts: NFTData }) => {
   const { count, isFetching, items } = nfts
 
-  const filterItemsByAddress = (items: any) => {
-    return items.filter((item: any) => item.address === address)
-  }
-
   return (
-    <div className={className}>
-      {filterItemsByAddress(items).map((nft: any) => (
+    <>
+      {items.map((nft: any) => (
         <Card key={nft.id} nft={nft} />
       ))}
 
@@ -28,16 +23,11 @@ const ListItems = ({ className, nfts, address }: any) => {
         Array.from({ length: count - items.length }).map((_, index) => <BlankCard isLoading={true} />)}
 
       {isFetching && <BlankCard opacity="50%" isLoading={true} />}
-
-      {!isFetching && !filterItemsByAddress(items).length && (
-        <></>
-        // Create an empty array of 4 and map it
-      )}
-    </div>
+    </>
   )
 }
 
-const StyledListItems = styled(ListItems)`
+const ListGrid = styled.div`
   display: grid;
   gap: 2rem;
   grid-template-columns: 1fr;
@@ -52,17 +42,44 @@ const StyledListItems = styled(ListItems)`
   }
 `
 
-const List = ({ address }: ListPropsType) => {
+const List = ({ address }: { address: string }) => {
   const { setAddress, nftData } = useNftsByAddress(address)
 
   useEffect(() => {
     setAddress(address)
   }, [address, setAddress])
 
+  const filterItemsByAddress = (nftData: NFTData) => {
+    const items = nftData?.items.filter((item: NFTShort) => item.address === address)
+    return {
+      ...nftData,
+      items: items,
+    }
+  }
+
+  if (!filterItemsByAddress(nftData).items.length && !nftData.isFetching && !nftData.count)
+    return (
+      <HiddenNFTGrid
+        overlay={
+          <span
+            css={css`
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              justify-content: center;
+            `}
+          >
+            <Text.H2>No NFTs Found</Text.H2>
+            <Text.Body>Lorem Ipsum Text</Text.Body>
+          </span>
+        }
+      />
+    )
+
   return (
-    <>
-      <StyledListItems nfts={nftData} address={address} />
-    </>
+    <ListGrid>
+      <ListItems nfts={filterItemsByAddress(nftData)} />
+    </ListGrid>
   )
 }
 

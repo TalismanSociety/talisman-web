@@ -3,11 +3,13 @@ import { useTheme } from '@emotion/react'
 import { ReactNode, useId } from 'react'
 
 export type TextInputProps = React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement> & {
+  type?: 'text' | 'number'
   leadingLabel?: ReactNode
   trailingLabel?: ReactNode
   trailingIcon?: ReactNode
   trailingSupportingText?: ReactNode
   leadingSupportingText?: ReactNode
+  isError?: boolean
 }
 
 const TextInput = (props: TextInputProps) => {
@@ -46,27 +48,38 @@ const TextInput = (props: TextInputProps) => {
         <input
           {...props}
           id={inputId}
-          type="text"
-          css={{ fontSize: '3rem', width: '26rem', background: 'transparent', border: 'none' }}
+          css={{
+            'flex': 1,
+            'fontSize': '3rem',
+            'width': '26rem',
+            'background': 'transparent',
+            'border': 'none',
+            '&[type=number]': {
+              '::-webkit-outer-spin-button': { display: 'none' },
+              '::-webkit-inner-spin-button': { display: 'none' },
+              '-moz-appearance': 'textfield',
+            },
+          }}
         />
         {props.trailingIcon}
       </div>
-      {(props.leadingLabel || props.trailingLabel) && (
-        <div
-          css={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            fontSize: '1.12rem',
-            marginTop: '0.8rem',
-          }}
-        >
-          <Text as="label">{props.leadingSupportingText}</Text>
-          <div>
-            <Text>{props.trailingSupportingText}</Text>
-          </div>
-        </div>
-      )}
+      <div
+        css={{
+          'display': 'flex',
+          'justifyContent': 'space-between',
+          'alignItems': 'center',
+          'fontSize': '1.12rem',
+          'marginTop': '0.8rem',
+          '> *:empty::after': {
+            content: `"\u200B"`,
+          },
+        }}
+      >
+        <Text as="label">{props.leadingSupportingText}</Text>
+        <Text as="label" css={props.isError && { color: theme.color.error }}>
+          {props.trailingSupportingText}
+        </Text>
+      </div>
     </div>
   )
 }

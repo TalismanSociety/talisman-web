@@ -53,11 +53,15 @@ export const CopyButton = styled(({ className, text = '', onCopied, onFailed }) 
   padding: 0;
   border: 0;
   background: inherit;
-  cursor: pointer;
+  cursor: copy;
   display: flex;
 
   svg {
     width: 1.8rem;
     height: auto;
+  }
+
+  &:hover {
+    filter: brightness(1.4);
   }
 `
