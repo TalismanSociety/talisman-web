@@ -273,7 +273,7 @@ const Staking = () => {
     availableBalance,
     error: inputError,
     setAmount,
-  } = usePoolAddForm(selectedAccount?.address)
+  } = usePoolAddForm('join', selectedAccount?.address)
   const poolMembersLoadable = useChainState(
     'query',
     'nominationPools',
