@@ -71,7 +71,7 @@ export default class Decimal {
     }).replaceAll(',', '')
   }
 
-  toHuman() {
+  toHuman(options = { withUnit: true }) {
     const raw = formatBalance(this.atomics, {
       forceUnit: '-',
       withUnit: false,
@@ -80,7 +80,7 @@ export default class Decimal {
 
     const stringWithoutUnit = raw.includes('.') ? raw.replace(/0+$/, '') : raw
 
-    return stringWithoutUnit.replace(/\.0*$/, '') + ` ${this.unit?.toUpperCase()}`
+    return stringWithoutUnit.replace(/\.0*$/, '') + (options.withUnit ? ` ${this.unit?.toUpperCase()}` : '')
   }
 
   static #verifyDecimals(fractionalDigits: number): void {

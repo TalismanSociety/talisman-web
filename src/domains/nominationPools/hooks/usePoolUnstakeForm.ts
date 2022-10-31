@@ -1,15 +1,17 @@
-import { useChainState, useTokenAmountFromAtomics, useTokenAmountState } from '@domains/common/hooks'
+import { useQueryMulti, useTokenAmountFromAtomics, useTokenAmountState } from '@domains/common/hooks'
 import { BN } from '@polkadot/util'
 import { useMemo } from 'react'
 
 export const usePoolUnstakeForm = (account?: string) => {
-  const poolMembersLoadable = useChainState('query', 'nominationPools', 'poolMembers', [account!], {
+  const queriesLoadable = useQueryMulti(['nominationPools.minJoinBond', ['nominationPools.poolMembers', account]], {
     enabled: account !== undefined,
   })
 
   const [input, setAmount] = useTokenAmountState('')
 
-  const available = useTokenAmountFromAtomics(poolMembersLoadable.valueMaybe()?.unwrapOrDefault().points)
+  const minNeededForMembership = useTokenAmountFromAtomics(queriesLoadable.contents[0])
+
+  const available = useTokenAmountFromAtomics(queriesLoadable.valueMaybe()?.[1]?.unwrapOrDefault().points)
 
   const resulting = useTokenAmountFromAtomics(
     useMemo(
@@ -19,12 +21,22 @@ export const usePoolUnstakeForm = (account?: string) => {
   )
 
   const error = useMemo(() => {
-    if (poolMembersLoadable.state !== 'hasValue') return
+    if (queriesLoadable.state !== 'hasValue') return
 
     if (available.decimalAmount !== undefined && input.decimalAmount?.atomics.gt(available.decimalAmount.atomics)) {
       return new Error('Insufficient balance')
     }
-  }, [poolMembersLoadable.state, available.decimalAmount, input.decimalAmount?.atomics])
 
-  return { input, available, resulting, setAmount, error, isReady: poolMembersLoadable.state === 'hasValue' }
+    if (
+      available.decimalAmount !== undefined &&
+      input.decimalAmount !== undefined &&
+      !input.decimalAmount.atomics.eq(available.decimalAmount.atomics) &&
+      minNeededForMembership.decimalAmount !== undefined &&
+      available.decimalAmount.atomics.sub(input.decimalAmount.atomics).lt(minNeededForMembership.decimalAmount.atomics)
+    ) {
+      return new Error(`Need ${minNeededForMembership.decimalAmount?.toHuman()} to stay in pool`)
+    }
+  }, [queriesLoadable.state, available.decimalAmount, input.decimalAmount, minNeededForMembership.decimalAmount])
+
+  return { input, available, resulting, setAmount, error, isReady: queriesLoadable.state === 'hasValue' }
 }

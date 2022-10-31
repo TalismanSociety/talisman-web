@@ -31,6 +31,7 @@ const UnstakeDialog = (props: { account?: string; onDismiss: () => unknown }) =>
       open={props.account !== undefined}
       availableAmount={available.decimalAmount?.toHuman() ?? '...'}
       amount={amount}
+      isLeaving={available.decimalAmount !== undefined && decimalAmount?.atomics.eq(available.decimalAmount.atomics)}
       onChangeAmount={setAmount}
       fiatAmount={localizedFiatAmount ?? ''}
       newAmount={resulting.decimalAmount?.toHuman() ?? '...'}
