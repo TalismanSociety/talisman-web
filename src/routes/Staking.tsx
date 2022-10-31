@@ -11,15 +11,17 @@ import { useTokenAmountFromAtomics } from '@domains/common/hooks'
 import useChainState from '@domains/common/hooks/useChainState'
 import useExtrinsic from '@domains/common/hooks/useExtrinsic'
 import { chainReadIdState } from '@domains/common/recoils'
-import { useCountDownToNomsPool, usePoolAddForm } from '@domains/nominationPools/hooks'
+import { useCountDownToNomsPool, useInflation, usePoolAddForm } from '@domains/nominationPools/hooks'
 import { eraStakersState } from '@domains/nominationPools/recoils'
 import { createAccounts } from '@domains/nominationPools/utils'
 import { useTheme } from '@emotion/react'
+import { Option } from '@polkadot/types-codec'
+import { PalletNominationPoolsPoolMember } from '@polkadot/types/lookup'
 import { BN } from '@polkadot/util'
 import { differenceInHours, formatDistance, formatDuration, intervalToDuration } from 'date-fns'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { constSelector, selector, useRecoilValue, useRecoilValueLoadable, waitForAll } from 'recoil'
+import { Loadable, constSelector, selector, useRecoilValue, useRecoilValueLoadable, waitForAll } from 'recoil'
 
 export const recommendedPoolsState = selector({
   key: 'Staking/BondedPools',
@@ -58,6 +60,76 @@ const availableToStakeState = selector({
   },
   cachePolicy_UNSTABLE: { eviction: 'most-recent' },
 })
+
+const Statistics = ({
+  poolMembersLoadable,
+}: {
+  poolMembersLoadable: Loadable<Option<PalletNominationPoolsPoolMember>[]>
+}) => {
+  const availableToStake = useTokenAmountFromAtomics(useRecoilValueLoadable(availableToStakeState).valueMaybe())
+
+  const totalStaked = useTokenAmountFromAtomics(
+    useMemo(
+      () =>
+        poolMembersLoadable.valueMaybe()?.reduce((prev, curr) => prev.add(curr.unwrapOrDefault().points), new BN(0)),
+      [poolMembersLoadable]
+    )
+  )
+
+  const totalUnstaking = useTokenAmountFromAtomics(
+    useMemo(
+      () =>
+        poolMembersLoadable.valueMaybe()?.reduce((prev, curr) => {
+          for (const [_, unbonding] of curr.unwrapOrDefault().unbondingEras.entries()) {
+            prev.iadd(unbonding)
+          }
+          return prev
+        }, new BN(0)),
+      [poolMembersLoadable]
+    )
+  )
+
+  const inflation = useInflation().valueMaybe()
+
+  return (
+    <div
+      css={{
+        'display': 'flex',
+        'flexDirection': 'column',
+        'gap': '1.6rem',
+        'marginBottom': '5.5rem',
+        '@media (min-width: 768px)': {
+          'flexDirection': 'row',
+          '> *': { flex: 1 },
+        },
+      }}
+    >
+      <InfoCard
+        headlineText="Available to stake"
+        text={availableToStake.decimalAmount?.toHuman() ?? '...'}
+        supportingText={availableToStake.localizedFiatAmount ?? '...'}
+      />
+      <InfoCard
+        headlineText="Staking"
+        text={totalStaked.decimalAmount?.toHuman() ?? '...'}
+        supportingText={totalStaked.localizedFiatAmount ?? '...'}
+      />
+      <InfoCard
+        headlineText="Rewards"
+        text={
+          inflation === undefined
+            ? '...'
+            : `${inflation?.stakedReturn.toLocaleString(undefined, { style: 'percent', maximumFractionDigits: 2 })} APR`
+        }
+      />
+      <InfoCard
+        headlineText="Unstaking"
+        text={totalUnstaking.decimalAmount?.toHuman() ?? '...'}
+        supportingText={totalUnstaking.localizedFiatAmount ?? '...'}
+      />
+    </div>
+  )
+}
 
 const Faq = () => {
   const faqs = [
@@ -229,29 +301,6 @@ const Staking = () => {
     }
   )
 
-  const availableToStake = useTokenAmountFromAtomics(useRecoilValueLoadable(availableToStakeState).valueMaybe())
-
-  const totalStaked = useTokenAmountFromAtomics(
-    useMemo(
-      () =>
-        poolMembersLoadable.valueMaybe()?.reduce((prev, curr) => prev.add(curr.unwrapOrDefault().points), new BN(0)),
-      [poolMembersLoadable]
-    )
-  )
-
-  const totalUnstaking = useTokenAmountFromAtomics(
-    useMemo(
-      () =>
-        poolMembersLoadable.valueMaybe()?.reduce((prev, curr) => {
-          for (const [_, unbonding] of curr.unwrapOrDefault().unbondingEras.entries()) {
-            prev.iadd(unbonding)
-          }
-          return prev
-        }, new BN(0)),
-      [poolMembersLoadable]
-    )
-  )
-
   const activeEraLoadable = useChainState('query', 'staking', 'activeEra', [])
   const eraStakersLoadable = useRecoilValueLoadable(
     activeEraLoadable.state !== 'hasValue'
@@ -333,6 +382,7 @@ const Staking = () => {
         onChangePoolId={setSelectedPoolId}
         onDismiss={useCallback(() => setShowPoolSelector(false), [])}
       />
+
       <div
         css={{
           '@media (min-width: 768px)': {
@@ -340,35 +390,7 @@ const Staking = () => {
           },
         }}
       >
-        <div
-          css={{
-            'display': 'flex',
-            'flexDirection': 'column',
-            'gap': '1.6rem',
-            'marginBottom': '5.5rem',
-            '@media (min-width: 768px)': {
-              'flexDirection': 'row',
-              '> *': { flex: 1 },
-            },
-          }}
-        >
-          <InfoCard
-            headlineText="Available to stake"
-            text={availableToStake.decimalAmount?.toHuman() ?? '...'}
-            supportingText={availableToStake.localizedFiatAmount ?? '...'}
-          />
-          <InfoCard
-            headlineText="Staking"
-            text={totalStaked.decimalAmount?.toHuman() ?? '...'}
-            supportingText={totalStaked.localizedFiatAmount ?? '...'}
-          />
-          <InfoCard headlineText="Rewards" text="17.56% APR" />
-          <InfoCard
-            headlineText="Unstaking"
-            text={totalUnstaking.decimalAmount?.toHuman() ?? '...'}
-            supportingText={totalUnstaking.localizedFiatAmount ?? '...'}
-          />
-        </div>
+        <Statistics poolMembersLoadable={poolMembersLoadable} />
         <div
           css={{
             '@media (min-width: 768px)': {
