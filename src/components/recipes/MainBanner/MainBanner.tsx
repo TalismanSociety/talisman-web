@@ -1,13 +1,15 @@
 import Text from '@components/atoms/Text'
 import { motion } from 'framer-motion'
+import { Link } from 'react-router-dom'
 
 import gradient from './gradient.png'
 import { ReactComponent as BaseStubStakingInput } from './staking-input.svg'
 
 const StubStakingInput = motion(BaseStubStakingInput)
-
+const MotionLink = motion(Link)
 const MainBanner = () => (
-  <div
+  <MotionLink
+    to="/staking"
     css={{
       display: 'flex',
       borderRadius: '1.6rem',
@@ -15,7 +17,9 @@ const MainBanner = () => (
       backgroundSize: 'cover',
       backgroundPosition: 'right center',
       overflow: 'hidden',
+      cursor: 'pointer',
     }}
+    whileHover={{ scale: 1.005 }}
   >
     <header css={{ flex: 1, padding: '3.3rem' }}>
       <Text.H2 css={{ marginBottom: '1.4rem' }}>Stake in seconds</Text.H2>
@@ -25,7 +29,7 @@ const MainBanner = () => (
       <StubStakingInput initial={{ y: '100%' }} animate={{ y: '8%' }} transition={{ delay: 0.25 }} />
       <StubStakingInput initial={{ y: '-100%' }} animate={{ y: '-50%' }} transition={{ delay: 0.5 }} />
     </div>
-  </div>
+  </MotionLink>
 )
 
 export default MainBanner
