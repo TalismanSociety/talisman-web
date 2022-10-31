@@ -1,4 +1,5 @@
 import { Global, ThemeProvider } from '@emotion/react'
+import { MemoryRouter } from 'react-router-dom'
 
 import { globalStyle, greenDark } from '../src/App.Theme'
 import theme from './talismanTheme'
@@ -18,9 +19,11 @@ export const parameters = {
 
 export const decorators = [
   Story => (
-    <ThemeProvider theme={greenDark}>
-      <Global styles={globalStyle} />
-      <Story />
-    </ThemeProvider>
+    <MemoryRouter>
+      <ThemeProvider theme={greenDark}>
+        <Global styles={globalStyle} />
+        <Story />
+      </ThemeProvider>
+    </MemoryRouter>
   ),
 ]
