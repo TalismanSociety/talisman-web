@@ -86,7 +86,7 @@ const PoolSelectorItem = (props: PoolSelectorItemProps) => {
         css={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '0.6rem' }}
       >
         <div css={{ display: 'flex', alignItems: 'center' }}>
-          <Tooltip content="Talisman pool rating">
+          {/* <Tooltip content="Talisman pool rating">
             {tooltipProps => (
               <div {...tooltipProps}>
                 {Array(3)
@@ -96,15 +96,23 @@ const PoolSelectorItem = (props: PoolSelectorItemProps) => {
                   ))}
               </div>
             )}
-          </Tooltip>
+          </Tooltip> */}
           <Tooltip content="Number of pool members">
-            {toolTipProps => (
-              <Text.Body {...toolTipProps} alpha={alpha} css={{ marginLeft: '0.8rem', marginRight: '0.4rem' }}>
-                {props.memberCount}
-              </Text.Body>
+            {tooltipProps => (
+              <div {...tooltipProps} css={{ display: 'flex', alignItems: 'center' }}>
+                <Text.Body
+                  alpha={alpha}
+                  css={{
+                    // marginLeft: '0.8rem',
+                    marginRight: '0.4rem',
+                  }}
+                >
+                  {props.memberCount}
+                </Text.Body>
+                <User width="1.4rem" height="1.4rem" />
+              </div>
             )}
           </Tooltip>
-          <User width="1.4rem" height="1.4rem" />
         </div>
         {props.talismanRecommended && (
           <Tooltip content="Talisman top recommended pool">
