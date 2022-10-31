@@ -1,6 +1,7 @@
 import Button from '@components/atoms/Button'
 import { ExternalLink, Star, Union, User } from '@components/atoms/Icon'
 import Text from '@components/atoms/Text'
+import Tooltip from '@components/atoms/Tooltip'
 import { useTheme } from '@emotion/react'
 
 export type PoolSelectorItemProps = {
@@ -22,15 +23,22 @@ const PoolSelectorItem = (props: PoolSelectorItemProps) => {
     <article
       {...props}
       onClick={props.onClick}
-      css={{
-        'padding': '0.8rem 1.6rem',
-        'borderRadius': '0.8rem',
-        'backgroundColor': theme.color.foreground,
-        'cursor': 'pointer',
-        ':hover': {
-          filter: 'brightness(1.2)',
+      css={[
+        {
+          'padding': '0.8rem 1.6rem',
+          'borderRadius': '0.8rem',
+          'border': '1px solid transparent',
+          'backgroundColor': theme.color.foreground,
+          'cursor': 'pointer',
+          ':hover': {
+            filter: 'brightness(1.8)',
+          },
         },
-      }}
+        (props.selected || props.highlighted) && {
+          borderColor: theme.color.foregroundVariant,
+          filter: 'brightness(1.6)',
+        },
+      ]}
     >
       <header
         css={{
@@ -41,33 +49,68 @@ const PoolSelectorItem = (props: PoolSelectorItemProps) => {
           marginBottom: '0.6rem',
         }}
       >
-        <Text.Body alpha={alpha} css={{ fontWeight: 'bold', margin: 0 }}>
-          {props.poolName}
-        </Text.Body>
+        <Tooltip content={props.poolName}>
+          {toolTipProps => (
+            <Text.Body
+              {...toolTipProps}
+              alpha={alpha}
+              css={{
+                flex: 1,
+                fontWeight: 'bold',
+                margin: 0,
+                overflow: 'hidden',
+                whiteSpace: 'nowrap',
+                textOverflow: 'ellipsis',
+              }}
+            >
+              {props.poolName}
+            </Text.Body>
+          )}
+        </Tooltip>
         {props.poolDetailUrl !== undefined && (
           <Button as="a" variant="noop" href={props.poolDetailUrl} target="_blank">
             <ExternalLink width="1.4rem" height="1.4rem" />
           </Button>
         )}
       </header>
-      <Text.Body alpha={alpha}>{props.stakedAmount}</Text.Body>
+      <Tooltip content="Total staked in this pool">
+        {tooltipProps => (
+          <Text.Body {...tooltipProps} alpha={alpha}>
+            {props.stakedAmount}
+          </Text.Body>
+        )}
+      </Tooltip>
       <Text.Body
         as="div"
         alpha={alpha}
-        css={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+        css={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '0.6rem' }}
       >
-        <div css={{ display: 'flex', alignItems: 'center', marginTop: '0.6rem' }}>
-          <Union width="1.4rem" height="1.4rem" css={{ marginRight: '0.8rem' }} />
-          {Array(3)
-            .fill(undefined)
-            .map((_, index) => (
-              <Star width="1.4rem" height="1.4rem" fill={index < props.rating ? 'currentColor' : 'none'} />
-            ))}
-          <Text.Body alpha={alpha} css={{ marginLeft: '0.8rem', marginRight: '0.4rem' }}>
-            {props.memberCount}
-          </Text.Body>
+        <div css={{ display: 'flex', alignItems: 'center' }}>
+          <Tooltip content="Talisman pool rating">
+            {tooltipProps => (
+              <div {...tooltipProps}>
+                {Array(3)
+                  .fill(undefined)
+                  .map((_, index) => (
+                    <Star width="1.4rem" height="1.4rem" fill={index < props.rating ? 'currentColor' : 'none'} />
+                  ))}
+              </div>
+            )}
+          </Tooltip>
+          <Tooltip content="Number of pool members">
+            {toolTipProps => (
+              <Text.Body {...toolTipProps} alpha={alpha} css={{ marginLeft: '0.8rem', marginRight: '0.4rem' }}>
+                {props.memberCount}
+              </Text.Body>
+            )}
+          </Tooltip>
           <User width="1.4rem" height="1.4rem" />
         </div>
+        {props.talismanRecommended && (
+          <Tooltip content="Talisman top recommended pool">
+            {tooltipProps => <Union {...tooltipProps} width="1.4rem" height="1.4rem" />}
+          </Tooltip>
+        )}
       </Text.Body>
     </article>
   )

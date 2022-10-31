@@ -26,7 +26,7 @@ const Tooltip = (props: TooltipProps) => {
   const y = useMotionValue(0)
 
   return (
-    <div>
+    <>
       {props.children({
         'aria-labelledby': id,
         'onMouseEnter': useCallback<MouseEventHandler<any>>(
@@ -63,9 +63,9 @@ const Tooltip = (props: TooltipProps) => {
           >
             <Text.Body as="div">{props.content}</Text.Body>
           </motion.div>,
-          document.body
+          document.querySelector('dialog[open]') ?? document.body
         )}
-    </div>
+    </>
   )
 }
 
