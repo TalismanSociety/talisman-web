@@ -354,7 +354,7 @@ const Input = () => {
 
   useEffect(() => {
     setSelectedPoolId(recommendedPools[0]?.poolId)
-  }, [recommendedPools, selectedAccount])
+  }, [recommendedPools])
 
   return (
     <>
