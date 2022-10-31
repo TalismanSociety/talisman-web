@@ -32,7 +32,7 @@ const PoolSelectorDialog = Object.assign(
                 'gap': '1.6rem',
                 '@media (min-width: 768px)': {
                   display: 'grid',
-                  gridTemplateColumns: '1fr 1fr 1fr',
+                  gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr)',
                   gap: '1.6rem 0.8rem',
                 },
               }}
@@ -48,7 +48,7 @@ const PoolSelectorDialog = Object.assign(
                 'gap': '1.6rem',
                 '@media (min-width: 768px)': {
                   display: 'grid',
-                  gridTemplateColumns: '1fr 1fr 1fr',
+                  gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr)',
                   gap: '1.6rem 0.8rem',
                 },
               }}

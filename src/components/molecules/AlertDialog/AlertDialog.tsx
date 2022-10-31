@@ -37,6 +37,7 @@ const AlertDialog = (props: AlertDialogProps) => {
   return (
     <Dialog
       {...props}
+      title={undefined}
       onClickBackdrop={props.onRequestDismiss}
       css={{
         'maxWidth': '46rem',
