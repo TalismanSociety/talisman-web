@@ -1,3 +1,4 @@
+import CircularProgressIndicator from '@components/atoms/CircularProgressIndicator'
 import Text from '@components/atoms/Text'
 import Details from '@components/molecules/Details'
 import HiddenDetails from '@components/molecules/HiddenDetails'
@@ -106,20 +107,22 @@ const Statistics = ({
     >
       <InfoCard
         headlineText="Available to stake"
-        text={availableToStake.decimalAmount?.toHuman() ?? '...'}
-        supportingText={availableToStake.localizedFiatAmount ?? '...'}
+        text={availableToStake.decimalAmount?.toHuman() ?? <CircularProgressIndicator size="1em" />}
+        supportingText={availableToStake.localizedFiatAmount ?? <CircularProgressIndicator size="1em" />}
       />
       <InfoCard
         headlineText="Staking"
-        text={totalStaked.decimalAmount?.toHuman() ?? '...'}
-        supportingText={totalStaked.localizedFiatAmount ?? '...'}
+        text={totalStaked.decimalAmount?.toHuman() ?? <CircularProgressIndicator size="1em" />}
+        supportingText={totalStaked.localizedFiatAmount ?? <CircularProgressIndicator size="1em" />}
       />
       <InfoCard
         headlineText="Rewards"
         text={
-          inflation === undefined
-            ? '...'
-            : `${inflation?.stakedReturn.toLocaleString(undefined, { style: 'percent', maximumFractionDigits: 2 })} APR`
+          inflation === undefined ? (
+            <CircularProgressIndicator size="1em" />
+          ) : (
+            `${inflation?.stakedReturn.toLocaleString(undefined, { style: 'percent', maximumFractionDigits: 2 })} APR`
+          )
         }
       />
       <InfoCard
