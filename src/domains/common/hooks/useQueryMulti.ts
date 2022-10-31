@@ -38,18 +38,7 @@ type SingleQueryResultMap = {
     : never
 }
 
-type MultiQueryResultMap = {
-  [P in Query as `${P}.multi`]: P extends `${infer TModule}.${infer TSection}`
-    ? Diverge<
-        ApiPromise['query'][TModule][TSection],
-        StorageEntryPromiseOverloads & QueryableStorageEntry<any, any>
-      > extends PromiseResult<(...args: any) => Observable<infer TResult>>
-      ? TResult[]
-      : any
-    : never
-}
-
-type QueryResultMap = SingleQueryResultMap & MultiQueryResultMap
+type QueryResultMap = SingleQueryResultMap
 
 type MultiPossibleQuery = keyof QueryResultMap
 
@@ -86,10 +75,7 @@ export const useQueryMulti = <
   useEffect(
     () => {
       if (options?.enabled === false) {
-        if (options?.enabled === false) {
-          setLoadable(RecoilLoadable.of(promise))
-          return
-        }
+        setLoadable(RecoilLoadable.of(promise))
         return
       }
 
@@ -105,7 +91,6 @@ export const useQueryMulti = <
         return [api.query[module!]?.[section!], ...params]
       })
 
-      // @ts-ignore
       const unsubscribePromise = api
         .queryMulti(params as any, (result: TResult) => {
           setLoadable(RecoilLoadable.of(result))
