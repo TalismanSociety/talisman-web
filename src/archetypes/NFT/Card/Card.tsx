@@ -15,7 +15,6 @@ interface CardProps {
 
 function Card({ className, nft }: CardProps) {
   const [open, setOpen] = useState(false)
-
   return (
     <>
       {open && (

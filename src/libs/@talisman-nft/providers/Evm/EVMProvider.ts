@@ -97,6 +97,19 @@ export class EVMProvider extends NFTInterface {
     }
   }
 
+  typeCheck(mediaUri: string): string | null {
+    if (!mediaUri) return null
+    // check if media uri ends with png, jpg or gif
+    if (mediaUri.endsWith('.png') || mediaUri.endsWith('.jpg') || mediaUri.endsWith('.gif')) {
+      return 'image'
+    }
+    // check if media uri ends with mp4
+    if (mediaUri.endsWith('.mp4')) {
+      return 'video'
+    }
+    return null
+  }
+
   async hydrateNftsByAddress(address: string) {
     this.reset()
     this.isFetching = true
@@ -111,52 +124,57 @@ export class EVMProvider extends NFTInterface {
       Object.values(this.contracts).map(
         (contract: any) =>
           new Promise(async resolve => {
-            const contractInstance = new this.web3.eth.Contract(this.abi, contract.address)
-            const balance = await contractInstance.methods.balanceOf(address).call()
-            this.count += parseInt(balance)
+            try {
+              const contractInstance = new this.web3.eth.Contract(this.abi, contract.address)
+              const balance = await contractInstance.methods.balanceOf(address).call()
+              this.count += parseInt(balance)
 
-            await Promise.all(
-              Array.from(Array(parseInt(balance)).keys()).map(
-                i =>
-                  new Promise(async resolve => {
-                    const tokenId = await contractInstance.methods.tokenOfOwnerByIndex(address, i).call()
-                    const tokenURI = await contractInstance.methods.tokenURI(tokenId).call()
+              await Promise.all(
+                Array.from(Array(parseInt(balance)).keys()).map(
+                  i =>
+                    new Promise(async resolve => {
+                      const tokenId = await contractInstance.methods.tokenOfOwnerByIndex(address, i).call()
+                      const tokenURI = await contractInstance.methods.tokenURI(tokenId).call()
 
-                    const response = await fetch(tokenURI.replace('ipfs://', 'https://talisman.mypinata.cloud/ipfs/'))
-                    const data = await response.json()
+                      const response = await fetch(tokenURI.replace('ipfs://', 'https://talisman.mypinata.cloud/ipfs/'))
+                      const data = await response.json()
 
-                    const nftItem = {
-                      id: tokenId + '-' + contract.name,
-                      name: data.name,
-                      thumb: this.toIPFSUrl(data.image),
-                      description: data?.description,
-                      serialNumber: data?.edition,
-                      metadata: null,
-                      type: null,
-                      mediaUri: this.toIPFSUrl(data.image),
-                      address,
-                      provider: this.name,
-                      platformUri: '',
-                      attributes: data?.attributes,
-                      collection: {
-                        id: contract.address,
-                        name: contract.name,
-                        totalCount: contract.totalSupply,
-                      },
-                      nftSpecificData: {
-                        dataDump: data,
-                      },
-                    }
+                      const nftItem = {
+                        id: tokenId + '-' + contract.name,
+                        name: data.name,
+                        thumb: this.toIPFSUrl(data.image),
+                        description: data?.description,
+                        serialNumber: data?.edition,
+                        metadata: null,
+                        type: this.typeCheck(data.image),
+                        mediaUri: this.toIPFSUrl(data.image),
+                        address,
+                        provider: this.name,
+                        platformUri: '',
+                        attributes: data?.attributes,
+                        collection: {
+                          id: contract.address,
+                          name: contract.name,
+                          totalCount: contract.totalSupply,
+                        },
+                        nftSpecificData: {
+                          dataDump: data,
+                        },
+                      }
 
-                    this.setItem(this.parseShort(nftItem))
-                    this.detailedItems[nftItem.id] = nftItem
+                      this.setItem(this.parseShort(nftItem))
+                      this.detailedItems[nftItem.id] = nftItem
 
-                    resolve(true)
-                  })
+                      resolve(true)
+                    })
+                )
               )
-            )
 
-            resolve(true)
+              resolve(true)
+            } catch (e) {
+              console.log(e)
+              resolve(true)
+            }
           })
       )
     )
