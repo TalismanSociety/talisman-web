@@ -40,8 +40,11 @@ export const ItemDetails = ({ parsed, addresses, accounts }: Props) => {
 
       const tokenInfo = (
         <Info
-          title={`${formatDecimals(parsed.amount)} ${parsed.tokenSymbol}`}
-          subtitle="$xx.xx"
+          // TODO: Add fiat prices
+          // title={`${formatDecimals(parsed.amount)} ${parsed.tokenSymbol}`}
+          // subtitle="$xx.xx"
+          title={startCase(parsed.chainId)}
+          subtitle={`${formatDecimals(parsed.amount)} ${parsed.tokenSymbol}`}
           graphic={<TokenLogo token={{ symbol: parsed.tokenSymbol, logo: parsed.tokenLogo }} />}
           invert
         />
@@ -92,8 +95,11 @@ export const ItemDetails = ({ parsed, addresses, accounts }: Props) => {
     case 'ParsedCrowdloanContribute': {
       const tokenInfo = (
         <Info
-          title={`${formatDecimals(parsed.amount)} ${parsed.tokenSymbol}`}
-          subtitle="$xx.xx"
+          // TODO: Add fiat prices
+          // title={`${formatDecimals(parsed.amount)} ${parsed.tokenSymbol}`}
+          // subtitle="$xx.xx"
+          title={startCase(parsed.chainId)}
+          subtitle={`${formatDecimals(parsed.amount)} ${parsed.tokenSymbol}`}
           graphic={<TokenLogo token={{ symbol: parsed.tokenSymbol, logo: parsed.tokenLogo }} />}
           invert
         />
@@ -128,8 +134,11 @@ export const ItemDetails = ({ parsed, addresses, accounts }: Props) => {
     case 'ParsedStake': {
       const tokenInfo = (
         <Info
-          title={`${formatDecimals(parsed.amount)} ${parsed.tokenSymbol}`}
-          subtitle="$xx.xx"
+          // TODO: Add fiat prices
+          // title={`${formatDecimals(parsed.amount)} ${parsed.tokenSymbol}`}
+          // subtitle="$xx.xx"
+          title={startCase(parsed.chainId)}
+          subtitle={`${formatDecimals(parsed.amount)} ${parsed.tokenSymbol}`}
           graphic={<TokenLogo token={{ symbol: parsed.tokenSymbol, logo: parsed.tokenLogo }} />}
           invert
         />
@@ -213,18 +222,24 @@ export const ItemDetails = ({ parsed, addresses, accounts }: Props) => {
           `}
         >
           <Info
-            title={`${formatDecimals(from.liquidityChange)} ${from.symbol}`}
-            subtitle="$xx.xx"
-            graphic={<TokenLogo token={{ symbol: from.symbol, logo: from.logo }} />}
+            // TODO: Add fiat prices
+            // title={`${formatDecimals(from.liquidityChange)} ${from.symbol}`}
+            // subtitle="$xx.xx"
+            title={startCase(parsed.chainId)}
+            subtitle={`${formatDecimals(from!.liquidityChange)} ${from!.symbol}`}
+            graphic={<TokenLogo token={{ symbol: from!.symbol, logo: from!.logo }} />}
             invert
           />
 
           <ArrowRight />
 
           <Info
-            title={`${formatDecimals(to.liquidityChange)} ${to.symbol}`}
-            subtitle="$xx.xx"
-            graphic={<TokenLogo token={{ symbol: to.symbol, logo: to.logo }} />}
+            // TODO: Add fiat prices
+            // title={`${formatDecimals(to.liquidityChange)} ${to.symbol}`}
+            // subtitle="$xx.xx"
+            title={startCase(parsed.chainId)}
+            subtitle={`${formatDecimals(to!.liquidityChange)} ${to!.symbol}`}
+            graphic={<TokenLogo token={{ symbol: to!.symbol, logo: to!.logo }} />}
             invert
           />
         </div>
