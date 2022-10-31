@@ -1,10 +1,11 @@
 import Text from '@components/atoms/Text'
 import { useTheme } from '@emotion/react'
+import { ReactNode } from 'react'
 
 export type InfoCardProps = {
-  headlineText: string
-  text: string
-  supportingText?: string
+  headlineText: ReactNode
+  text: ReactNode
+  supportingText?: ReactNode
 }
 
 const InfoCard = (props: InfoCardProps) => {
