@@ -13,7 +13,7 @@ import useChainState from '@domains/common/hooks/useChainState'
 import useExtrinsic from '@domains/common/hooks/useExtrinsic'
 import { chainReadIdState } from '@domains/common/recoils'
 import { useCountDownToNomsPool, useInflation, usePoolAddForm } from '@domains/nominationPools/hooks'
-import { eraStakersState } from '@domains/nominationPools/recoils'
+import { eraStakersState, recommendedPoolsState } from '@domains/nominationPools/recoils'
 import { createAccounts } from '@domains/nominationPools/utils'
 import { useTheme } from '@emotion/react'
 import { Option } from '@polkadot/types-codec'
@@ -23,26 +23,6 @@ import { differenceInHours, formatDistance, formatDuration, intervalToDuration }
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Loadable, constSelector, selector, useRecoilValue, useRecoilValueLoadable, waitForAll } from 'recoil'
-
-export const recommendedPoolsState = selector({
-  key: 'Staking/BondedPools',
-  get: async ({ get }) => {
-    const api = get(apiState)
-
-    const bondedPools = await api.query.nominationPools.bondedPools
-      .entries()
-      .then(x =>
-        x
-          .map(([poolId, bondedPool]) => ({ poolId: poolId.args[0], bondedPool }))
-          .sort((a, b) => b.bondedPool.unwrapOrDefault().points.sub(a.bondedPool.unwrapOrDefault().points).toNumber())
-      )
-
-    const names = await api.query.nominationPools.metadata.multi(bondedPools.map(({ poolId }) => poolId))
-
-    return bondedPools.map((x, index) => ({ ...x, name: names[index]?.toUtf8() }))
-  },
-  cachePolicy_UNSTABLE: { eviction: 'most-recent' },
-})
 
 const availableToStakeState = selector({
   key: 'Staking/AvailableToStake',
@@ -245,21 +225,21 @@ const PoolSelector = (props: {
         props.onDismiss()
       }, [newPoolId, props])}
     >
-      {recommendedPools.map(pool => (
+      {recommendedPools.map((pool, index) => (
         <PoolSelectorDialog.Item
-          selected={props.selectedPoolId !== undefined && pool.poolId.eqn(props.selectedPoolId)}
-          highlighted={newPoolId !== undefined && pool.poolId.eqn(newPoolId)}
-          talismanRecommended
+          selected={props.selectedPoolId !== undefined && pool.poolId === props.selectedPoolId}
+          highlighted={newPoolId !== undefined && pool.poolId === newPoolId}
+          talismanRecommended={index === 0}
           poolName={pool.name ?? ''}
           poolDetailUrl={
             currentChain.subscanUrl === null
               ? undefined
-              : new URL(`nomination_pool/${pool.poolId.toString()}`, currentChain.subscanUrl).toString()
+              : new URL(`nomination_pool/${pool.poolId}`, currentChain.subscanUrl).toString()
           }
-          stakedAmount={`${nativeTokenDecimal.fromAtomics(pool.bondedPool.unwrapOrDefault().points).toHuman()} staked`}
+          stakedAmount={`${nativeTokenDecimal.fromAtomics(pool.bondedPool.points).toHuman()} staked`}
           rating={3}
-          memberCount={pool.bondedPool.unwrapOrDefault().memberCounter.toString()}
-          onClick={() => setNewPoolId(pool.poolId.toNumber())}
+          memberCount={pool.bondedPool.memberCounter.toString()}
+          onClick={() => setNewPoolId(pool.poolId)}
         />
       ))}
     </PoolSelectorDialog>
@@ -278,7 +258,7 @@ const Staking = () => {
     waitForAll([apiState, polkadotAccountsState, recommendedPoolsState])
   )
 
-  const [selectedPoolId, setSelectedPoolId] = useState(recommendedPools[0]?.poolId.toNumber())
+  const [selectedPoolId, setSelectedPoolId] = useState(recommendedPools[0]?.poolId)
   const [showPoolSelector, setShowPoolSelector] = useState(false)
 
   const [selectedAccount, setSelectedAccount] = useState<typeof accounts[number] | undefined>(accounts[0])
@@ -367,7 +347,7 @@ const Staking = () => {
   }, [accounts, selectedAccount])
 
   useEffect(() => {
-    setSelectedPoolId(recommendedPools[0]?.poolId.toNumber())
+    setSelectedPoolId(recommendedPools[0]?.poolId)
   }, [recommendedPools, selectedAccount])
 
   return (

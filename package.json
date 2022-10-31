@@ -27,6 +27,7 @@
     "@talismn/connect-components": "^1.1.4",
     "@talismn/connect-ui": "^1.1.0",
     "@talismn/connect-wallets": "^1.2.1",
+    "@talismn/dot-pool-selector": "snapshot",
     "@talismn/util": "^0.1.3",
     "@talismn/util-legacy": "npm:@talismn/util@0.0.11",
     "@talismn/wallets": "^1.1.6",
