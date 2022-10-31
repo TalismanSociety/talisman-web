@@ -102,7 +102,7 @@ export const useQueryMulti = <
         const [query, ...params] = x
         const [module, section] = query.split('.')
 
-        return [api.query[module!]?.[section!], params]
+        return [api.query[module!]?.[section!], ...params]
       })
 
       // @ts-ignore

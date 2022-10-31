@@ -6,6 +6,8 @@ import Decimal from '@util/Decimal'
 import { gql, request } from 'graphql-request'
 import { atom, selector, selectorFamily } from 'recoil'
 
+import { defaultParams } from './const'
+
 export type Chain = {
   id: string
   rpcs: Array<{ url: string; isHealthy: true }>
@@ -46,7 +48,19 @@ export const chainsState = selector({
       { ids: SUPPORTED_CHAIN_IDS }
     )
 
-    return response.chains
+    return response.chains.map(x => ({
+      ...x,
+      params: {
+        ...defaultParams,
+        ...(x.id === SUPPORTED_CHAIN_IDS[0]
+          ? { stakeTarget: 0.75 }
+          : x.id === SUPPORTED_CHAIN_IDS[1]
+          ? { auctionAdjust: 0.3 / 60, auctionMax: 60, stakeTarget: 0.75 }
+          : x.id === SUPPORTED_CHAIN_IDS[2]
+          ? { stakeTarget: 0.75 }
+          : {}),
+      },
+    }))
   },
 })
 
