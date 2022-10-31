@@ -11,6 +11,7 @@ export type UnstakeDialogProps = {
   confirmState?: 'pending' | 'disabled'
   availableAmount: string
   amount: string
+  isLeaving?: boolean
   fiatAmount: string
   newAmount: string
   newFiatAmount: string
@@ -69,7 +70,7 @@ const UnstakeDialog = (props: UnstakeDialogProps) => (
         disabled={props.confirmState === 'disabled'}
         loading={props.confirmState === 'pending'}
       >
-        Unstake
+        {props.isLeaving ? 'Leave pool' : 'Unstake'}
       </Button>
     }
     onRequestDismiss={props.onDismiss}
