@@ -3,7 +3,7 @@ import { useChainState } from '@domains/common/hooks'
 import { BN } from '@polkadot/util'
 import { useRecoilValue } from 'recoil'
 
-const AVAILABLE_AT_BLOCK = new BN(12_721_880)
+const AVAILABLE_AT_BLOCK = new BN(12_722_480)
 
 export const useCountDownToNomsPool = () => {
   const api = useRecoilValue(apiState)
