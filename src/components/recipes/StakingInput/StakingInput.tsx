@@ -106,7 +106,7 @@ const StakingInput = (props: StakingInputProps) => {
               <div css={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
                 <PoolStatusIndicator status={props.poolStatus} />
                 <Text css={{ fontSize: '1.4rem' }} alpha={poolInfoExpanded ? 'high' : 'medium'}>
-                  {props.poolName}
+                  {props.noPoolsAvailable ? 'No pools available' : props.poolName}
                 </Text>
               </div>
               {props.noPoolsAvailable ? (
