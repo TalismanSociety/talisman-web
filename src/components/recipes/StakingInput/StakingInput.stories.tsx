@@ -1,6 +1,7 @@
 import { ComponentMeta, Story } from '@storybook/react'
 
 import StakingInput, { StakingInputProps } from './StakingInput'
+import StakingInputSkeleton from './StakingInput.skeleton'
 
 export default {
   title: 'Recipes/StakingInput',
@@ -45,3 +46,5 @@ AlreadyStaking.args = { ...Default.args, alreadyStaking: true }
 export const NoPoolsAvailable = Default.bind({})
 
 NoPoolsAvailable.args = { ...Default.args, noPoolsAvailable: true }
+
+export const Skeleton = () => <StakingInputSkeleton />
