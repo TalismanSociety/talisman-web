@@ -11,10 +11,9 @@ import { useRecoilValue } from 'recoil'
 import Stakings from './Stakings'
 import Unstakings from './Unstakings'
 
-const OwnPools = () => {
+const OwnPoolsWithSneekPeek = () => {
+  // TODO: remove the countdown stuff
   const currentChainId = useRecoilValue(chainIdState)
-
-  // TODO: remove
   const nomsPoolCountdown = useCountDownToNomsPool()
 
   if (
@@ -57,6 +56,15 @@ const OwnPools = () => {
   }
 
   return (
+    <>
+      <Stakings />
+      <Unstakings />
+    </>
+  )
+}
+
+const OwnPools = () => {
+  return (
     <div id="staking">
       <Suspense
         fallback={
@@ -72,8 +80,7 @@ const OwnPools = () => {
           </div>
         }
       >
-        <Stakings />
-        <Unstakings />
+        <OwnPoolsWithSneekPeek />
       </Suspense>
     </div>
   )
