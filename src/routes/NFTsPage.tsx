@@ -1,4 +1,5 @@
 import { ExtensionStatusGate, PanelSection } from '@components'
+import Identicon from '@components/atoms/Identicon'
 import NFTsByAddress from '@components/NFTsByAddress'
 import usePageTrack from '@components/TrackPageView'
 import styled from '@emotion/styled'
@@ -6,7 +7,6 @@ import { NoNFTsPlaceholder } from '@libs/nft/NoNFTsPlaceholder'
 import { useHasNFTs } from '@libs/nft/useHasNFTs'
 import { useNftsByAddress } from '@libs/nft/useNftsByAddress/useNftsByAddress'
 import { Account as IAccount, useExtensionAutoConnect } from '@libs/talisman'
-import Identicon from '@polkadot/react-identicon'
 import { device } from '@util/breakpoints'
 import { useTranslation } from 'react-i18next'
 
@@ -45,7 +45,7 @@ const ExtensionUnavailable = styled(props => {
 `
 
 const NFTGrid = styled(({ className = '', account }: AccountProps) => {
-  const { address, name, type } = account
+  const { address, name } = account
   const { nfts } = useNftsByAddress(address as string)
   if (!nfts?.length) {
     return null
@@ -53,12 +53,7 @@ const NFTGrid = styled(({ className = '', account }: AccountProps) => {
   return (
     <div className={className}>
       <div className="account-name">
-        <Identicon
-          className="identicon"
-          size={64}
-          value={address}
-          theme={type === 'ethereum' ? 'ethereum' : 'polkadot'}
-        />
+        <Identicon size="2.5em" value={address} />
         <span>{name}</span>
       </div>
       <div className="nft-grid">
@@ -72,17 +67,6 @@ const NFTGrid = styled(({ className = '', account }: AccountProps) => {
     align-items: center;
     gap: 1rem;
     margin-bottom: 2rem;
-  }
-
-  .identicon {
-    svg {
-      width: 2.5em;
-      height: 2.5em;
-    }
-
-    > * {
-      line-height: 0;
-    }
   }
 
   .nft-grid {

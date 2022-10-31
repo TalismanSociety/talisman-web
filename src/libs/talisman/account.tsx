@@ -1,3 +1,4 @@
+import { selectedAccountAddressesState } from '@domains/accounts/recoils'
 import { trackGoal } from '@libs/fathom'
 import { useExtension } from '@libs/talisman'
 import {
@@ -9,6 +10,7 @@ import {
   useMemo,
   useState,
 } from 'react'
+import { useRecoilState } from 'recoil'
 
 import type { Account, Status } from './extension'
 
@@ -28,7 +30,7 @@ export const useActiveAccount = () => {
 
 export const useAccountAddresses = () => {
   const { accounts, activeAccount } = useContext()
-  const [addresses, setAddresses] = useState<string[] | undefined>()
+  const [addresses, setAddresses] = useState<string[]>([])
 
   useEffect(() => {
     setAddresses(activeAccount ? [activeAccount.address] : accounts.map(account => account.address))
@@ -37,9 +39,14 @@ export const useAccountAddresses = () => {
   return addresses
 }
 
+export const useAccounts = () => {
+  const { accounts } = useContext()
+  return accounts
+}
+
 export const useAllAccountAddresses = () => {
   const { accounts, activeAccount } = useContext()
-  const [addresses, setAddresses] = useState<string[] | undefined>()
+  const [addresses, setAddresses] = useState<string[]>([])
 
   useEffect(() => {
     setAddresses(accounts.map(account => account.address))
@@ -75,27 +82,25 @@ function useContext() {
 
 export const Provider = ({ children }: PropsWithChildren<{}>) => {
   const { accounts, status, connect } = useExtension()
-
-  const [activeAccountIndex, setActiveAccountIndex] = useState(-1)
+  const [selectedAddresses, setSelectedAddresses] = useRecoilState(selectedAccountAddressesState)
 
   const switchAccount = useCallback(
-    address => {
-      const accountIndex = accounts.findIndex(account => account.address === address)
-      setActiveAccountIndex(accountIndex)
+    (address: string) => {
+      setSelectedAddresses(!address ? undefined : [address])
       trackGoal('KIPBMS1X', 1) // switch_accounts
     },
-    [accounts]
+    [setSelectedAddresses]
   )
 
   const value = useMemo(
     () => ({
       accounts,
-      activeAccount: accounts[activeAccountIndex],
+      activeAccount: accounts.find(({ address }) => selectedAddresses?.includes(address)),
       status,
       switchAccount,
       connect,
     }),
-    [accounts, activeAccountIndex, status, switchAccount, connect]
+    [accounts, status, switchAccount, connect, selectedAddresses]
   )
 
   return <Context.Provider value={value}>{children}</Context.Provider>

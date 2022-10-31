@@ -17,7 +17,8 @@
       "@util": ["./util"],
       "@util/*": ["./util/*"],
       "@layout": ["./layout"],
-      "@layout/*": ["./layout/*"]
+      "@layout/*": ["./layout/*"],
+      "@domains/*": ["./domains/*"]
     }
   }
 }

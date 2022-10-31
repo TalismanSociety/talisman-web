@@ -1,6 +1,7 @@
 {
   "Portfolio": "Portfolio",
   "Crowdloans": "Crowdloans",
+  "Transaction History": "History",
   "Buy DOT/KSM": "Buy DOT/KSM",
   "Buy": "Buy",
   "Request Features": "Request Features",
@@ -10,5 +11,6 @@
   "Medium": "Medium",
   "Terms of use": "Terms of use",
   "Privacy policy": "Privacy policy",
-  "NFTs": "NFTs"
+  "NFTs": "NFTs",
+  "Staking": "Staking"
 }
