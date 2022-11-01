@@ -4,13 +4,11 @@ import { useLockDuration } from '@domains/nominationPools/hooks/useLockDuration'
 import { formatDistance } from 'date-fns'
 import { useCallback, useEffect } from 'react'
 
-import useExtrinsic from '../../domains/common/hooks/useExtrinsic'
-
 const UnstakeDialog = (props: { account?: string; onDismiss: () => unknown }) => {
-  const unbondExtrinsic = useExtrinsic('nominationPools', 'unbond')
   const lockDuration = useLockDuration()
 
   const {
+    extrinsic: unbondExtrinsic,
     isReady,
     input: { amount, decimalAmount, localizedFiatAmount },
     available,
@@ -19,11 +17,17 @@ const UnstakeDialog = (props: { account?: string; onDismiss: () => unknown }) =>
     error: inputError,
   } = usePoolUnstakeForm(props.account)
 
-  useEffect(() => {
-    if (unbondExtrinsic.state === 'loading' && unbondExtrinsic.contents?.status.isInBlock) {
-      props.onDismiss()
-    }
-  }, [unbondExtrinsic.contents?.status?.isInBlock, unbondExtrinsic.state, props])
+  useEffect(
+    () => {
+      if (unbondExtrinsic.state === 'loading' && unbondExtrinsic.contents?.status.isInBlock) {
+        props.onDismiss()
+      }
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [unbondExtrinsic.contents?.status?.isInBlock]
+  )
+
+  const isLeaving = available.decimalAmount !== undefined && decimalAmount?.atomics.eq(available.decimalAmount.atomics)
 
   return (
     <BaseUnstakeDialog
@@ -31,7 +35,7 @@ const UnstakeDialog = (props: { account?: string; onDismiss: () => unknown }) =>
       open={props.account !== undefined}
       availableAmount={available.decimalAmount?.toHuman() ?? '...'}
       amount={amount}
-      isLeaving={available.decimalAmount !== undefined && decimalAmount?.atomics.eq(available.decimalAmount.atomics)}
+      isLeaving={isLeaving}
       onChangeAmount={setAmount}
       fiatAmount={localizedFiatAmount ?? ''}
       newAmount={resulting.decimalAmount?.toHuman() ?? '...'}
@@ -41,11 +45,15 @@ const UnstakeDialog = (props: { account?: string; onDismiss: () => unknown }) =>
       onDismiss={props.onDismiss}
       onConfirm={useCallback(() => {
         if (props.account !== undefined && decimalAmount !== undefined) {
-          unbondExtrinsic
-            .signAndSend(props.account, props.account, decimalAmount?.atomics)
-            .finally(() => props.onDismiss())
+          if (isLeaving) {
+            unbondExtrinsic.unbondMax(props.account, props.account).finally(() => props.onDismiss())
+          } else {
+            unbondExtrinsic
+              .signAndSend(props.account, props.account, decimalAmount?.atomics)
+              .finally(() => props.onDismiss())
+          }
         }
-      }, [props, decimalAmount, unbondExtrinsic])}
+      }, [props, decimalAmount, isLeaving, unbondExtrinsic])}
       onRequestMaxAmount={() => {
         if (available.decimalAmount !== undefined) {
           setAmount(available.decimalAmount?.toString())

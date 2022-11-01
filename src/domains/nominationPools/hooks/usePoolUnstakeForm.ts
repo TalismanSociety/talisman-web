@@ -1,8 +1,10 @@
-import { useQueryMulti, useTokenAmountFromAtomics, useTokenAmountState } from '@domains/common/hooks'
+import { useExtrinsic, useQueryMulti, useTokenAmountFromAtomics, useTokenAmountState } from '@domains/common/hooks'
 import { BN } from '@polkadot/util'
 import { useMemo } from 'react'
 
 export const usePoolUnstakeForm = (account?: string) => {
+  const unbondExtrinsic = useExtrinsic('nominationPools', 'unbond')
+
   const queriesLoadable = useQueryMulti(['nominationPools.minJoinBond', ['nominationPools.poolMembers', account]], {
     enabled: account !== undefined,
   })
@@ -38,5 +40,24 @@ export const usePoolUnstakeForm = (account?: string) => {
     }
   }, [queriesLoadable.state, available.decimalAmount, input.decimalAmount, minNeededForMembership.decimalAmount])
 
-  return { input, available, resulting, setAmount, error, isReady: queriesLoadable.state === 'hasValue' }
+  return {
+    extrinsic: {
+      ...unbondExtrinsic,
+      unbondMax: (account: string, memberAccount: string) => {
+        const pool = queriesLoadable.valueMaybe()?.[1]
+
+        if (pool === undefined) {
+          throw new Error('Extrinsic not ready yet')
+        }
+
+        return unbondExtrinsic.signAndSend(account, memberAccount, pool.unwrapOrDefault().points)
+      },
+    },
+    input,
+    available,
+    resulting,
+    setAmount,
+    error,
+    isReady: queriesLoadable.state === 'hasValue',
+  }
 }
