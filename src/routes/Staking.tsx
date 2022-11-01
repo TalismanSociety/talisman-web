@@ -57,21 +57,27 @@ const Statistics = () => {
   const totalStaked = useTokenAmountFromAtomics(
     useMemo(
       () =>
-        poolMembersLoadable.valueMaybe()?.reduce((prev, curr) => prev.add(curr.unwrapOrDefault().points), new BN(0)),
-      [poolMembersLoadable]
+        accounts.length === 0
+          ? new BN(0)
+          : poolMembersLoadable
+              .valueMaybe()
+              ?.reduce((prev, curr) => prev.add(curr.unwrapOrDefault().points), new BN(0)),
+      [accounts.length, poolMembersLoadable]
     )
   )
 
   const totalUnstaking = useTokenAmountFromAtomics(
     useMemo(
       () =>
-        poolMembersLoadable.valueMaybe()?.reduce((prev, curr) => {
-          for (const [_, unbonding] of curr.unwrapOrDefault().unbondingEras.entries()) {
-            prev.iadd(unbonding)
-          }
-          return prev
-        }, new BN(0)),
-      [poolMembersLoadable]
+        accounts.length === 0
+          ? new BN(0)
+          : poolMembersLoadable.valueMaybe()?.reduce((prev, curr) => {
+              for (const [_, unbonding] of curr.unwrapOrDefault().unbondingEras.entries()) {
+                prev.iadd(unbonding)
+              }
+              return prev
+            }, new BN(0)),
+      [accounts.length, poolMembersLoadable]
     )
   )
 
