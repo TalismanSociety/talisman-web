@@ -42,6 +42,12 @@ export const AccountsWatcher = () => {
   const extension = useRecoilValue(extensionState)
   const setAccounts = useSetRecoilState(accountsState)
 
+  useEffect(() => {
+    if (extension === undefined) {
+      setAccounts([])
+    }
+  }, [extension, setAccounts])
+
   useEffect(() => extension?.accounts.subscribe(setAccounts), [extension?.accounts, setAccounts])
 
   return null
