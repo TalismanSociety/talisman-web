@@ -1,5 +1,6 @@
 import PoolStakeItem from '@archetypes/NominationPools/PoolStakeItem'
 import CircularProgressIndicator from '@components/atoms/CircularProgressIndicator'
+import { Info } from '@components/atoms/Icon'
 import Text from '@components/atoms/Text'
 import Details from '@components/molecules/Details'
 import InfoCard from '@components/molecules/InfoCard'
@@ -15,6 +16,7 @@ import { chainReadIdState } from '@domains/common/recoils'
 import { useInflation, usePoolAddForm } from '@domains/nominationPools/hooks'
 import { allPendingPoolRewardsState, eraStakersState, recommendedPoolsState } from '@domains/nominationPools/recoils'
 import { createAccounts } from '@domains/nominationPools/utils'
+import { useTheme } from '@emotion/react'
 import { BN } from '@polkadot/util'
 import { Maybe } from '@util/monads'
 import { motion } from 'framer-motion'
@@ -258,6 +260,7 @@ const PoolSelector = (props: {
 }
 
 const Input = () => {
+  const theme = useTheme()
   const joinPoolExtrinsic = useExtrinsic('nominationPools', 'join')
 
   const location = useLocation()
@@ -466,18 +469,53 @@ const Input = () => {
             false: { opacity: 0, scale: 0 },
           }}
         >
-          {existingPool !== undefined && (
-            <PoolStakeItem
-              variant="compact"
-              item={{
-                status: existingPoolStatus,
-                account: selectedAccount,
-                poolName: poolMetadataLoadable.valueMaybe()?.[1]?.toUtf8() ?? '',
-                poolMember: existingPool,
-                pendingRewards: pendingRewards.find(x => x[0] === selectedAccount?.address)?.[1],
-              }}
-            />
-          )}
+          {existingPool !== undefined &&
+            (existingPool.points.isZero() ? (
+              <div
+                css={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  padding: '3.2rem',
+                  borderRadius: '1.6rem',
+                  backgroundColor: theme.color.surface,
+                }}
+              >
+                <Text.Body
+                  alpha="high"
+                  css={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.25em',
+                    color: theme.color.primary,
+                    fontWeight: 'bold',
+                    marginBottom: '2.4rem',
+                  }}
+                >
+                  <Info width="1em" height="1em" css={{ verticalAlign: 'middle' }} /> You are leaving your current pool
+                </Text.Body>
+                <Text.Body>
+                  Select a different account to continue staking.
+                  <br />
+                  <br />
+                  You can check the current exiting status from the{' '}
+                  <Text.A as={Link} to="/portfolio#staking">
+                    Portfolio page
+                  </Text.A>
+                  .
+                </Text.Body>
+              </div>
+            ) : (
+              <PoolStakeItem
+                variant="compact"
+                item={{
+                  status: existingPoolStatus,
+                  account: selectedAccount,
+                  poolName: poolMetadataLoadable.valueMaybe()?.[1]?.toUtf8() ?? '',
+                  poolMember: existingPool,
+                  pendingRewards: pendingRewards.find(x => x[0] === selectedAccount?.address)?.[1],
+                }}
+              />
+            ))}
         </motion.div>
       </motion.div>
     </>
