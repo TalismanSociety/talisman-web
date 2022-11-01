@@ -8,6 +8,7 @@ import PDFPlaceholder from '@assets/generic-pdf.png'
 import UnknownPlaceholder from '@assets/generic-unknown.png'
 import VideoPlaceholder from '@assets/generic-video.png'
 import { Spinner } from '@components'
+import CircularProgressIndicator from '@components/atoms/CircularProgressIndicator'
 import styled from '@emotion/styled'
 import { getNFTType } from '@libs/@talisman-nft'
 import { NFTDetail } from '@libs/@talisman-nft/types'
@@ -85,7 +86,7 @@ const Preview = ({ className, nft, loading }: PreviewType) => {
   if (loading) {
     return (
       <section className={className}>
-        <Spinner />
+        <CircularProgressIndicator />
       </section>
     )
   }

@@ -28,7 +28,7 @@ function Card({ className, nft }: CardProps) {
       <div className={className} onClick={() => setOpen(true)}>
         <Preview nft={nft} />
         <div className="abc">
-          <Info subtitle={nft?.collection?.name || nft?.provider} title={nft?.name || nft?.id} />
+          <Info subtitle={nft?.collection?.name || nft?.provider} title={nft?.name || nft?.id} className={undefined} />
           <span>
             <NFTIcon type={nft?.type} />
           </span>

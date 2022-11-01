@@ -4,20 +4,21 @@ import NFT3DIcon from '@assets/icons/NFT-3D-icon.svg'
 import NFTAudioIcon from '@assets/icons/NFT-Audio-icon.svg'
 import NFTPDFIcon from '@assets/icons/NFT-PDF-icon.svg'
 import NFTVideoIcon from '@assets/icons/NFT-Video-icon.svg'
+import { Volume2 as Audio, File, Box as Model, Video } from '@components/atoms/Icon'
 import styled from '@emotion/styled'
 import { NFTCategory } from '@libs/@talisman-nft/types'
 
-function NftContentIcon({ type, className }: { type: NFTCategory; className?: string }) {
+const NftContentIcon = ({ type, className }: { type: NFTCategory; className?: string }) => {
   switch (type) {
     case 'audio':
-      return <img src={NFTAudioIcon} className={className} title="Audio" alt="Audio NFT" />
+      return <Audio />
     case 'video':
-      return <img src={NFTVideoIcon} className={className} title="Video" alt="Video NFT" />
+      return <Video />
     case 'model':
-      return <img src={NFT3DIcon} className={className} title="3D Model" alt="3D NFT" />
+      return <Model />
     case 'application':
     case 'pdf':
-      return <img src={NFTPDFIcon} className={className} title="PDF / Application" alt="PDF NFT" />
+      return <File />
     default:
       return null
   }

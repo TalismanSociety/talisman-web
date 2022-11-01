@@ -1,12 +1,17 @@
 import styled from '@emotion/styled'
 
-const Info = styled(({ title, subtitle, icon, className, ...rest }) => (
+type InfoProps = {
+  title: string
+  subtitle: string
+  className?: string
+}
+
+const Info = styled(({ title, subtitle, className, ...rest }: InfoProps) => (
   <div className={className} {...rest}>
     <span className="text">
       {!!subtitle && <span className="subtitle">{subtitle}</span>}
       {!!title && <span className="title">{title}</span>}
     </span>
-    {/* {icon && <span className="icon">{icon}</span>} */}
   </div>
 ))`
   display: flex;

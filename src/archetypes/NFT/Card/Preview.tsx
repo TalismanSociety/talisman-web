@@ -1,24 +1,20 @@
 import '@google/model-viewer'
 
-import AudioPlaceholder from '@assets/generic-audio.png'
-import ImagePlaceholder from '@assets/generic-image.png'
-import ModelPlaceholder from '@assets/generic-model.png'
-// Placeholders
-import PDFPlaceholder from '@assets/generic-pdf.png'
-import UnknownPlaceholder from '@assets/generic-unknown.png'
-import VideoPlaceholder from '@assets/generic-video.png'
-import { Spinner } from '@components'
+import CircularProgressIndicator from '@components/atoms/CircularProgressIndicator'
+import { Box, File, Image, Unknown, Video, Volume2 } from '@components/atoms/Icon'
 import styled from '@emotion/styled'
 import { getNFTType } from '@libs/@talisman-nft'
-import { NFTDetail } from '@libs/@talisman-nft/types'
+import { NFTDetail, NFTShort } from '@libs/@talisman-nft/types'
 import { useEffect, useMemo, useState } from 'react'
+
+import PlaceholderPreview from '../PlaceholderPreview'
 
 type PreviewType = {
   className?: string
-  nft: NFTDetail
+  nft: NFTDetail | NFTShort
 }
 
-const MediaPreview = ({ mediaUri, thumb, type, name, id }: NFTDetail) => {
+const MediaPreview = ({ mediaUri, thumb, type, name, id }: NFTDetail | NFTShort) => {
   const [fetchedType, setFetchedType] = useState<string | null>()
   const [isLoading, setIsLoading] = useState<boolean>(false)
 
@@ -40,14 +36,20 @@ const MediaPreview = ({ mediaUri, thumb, type, name, id }: NFTDetail) => {
 
   switch (effectiveType) {
     case 'image':
-      return <img loading="lazy" src={mediaUri || ImagePlaceholder} alt="" />
+      return mediaUri ? (
+        <img loading="lazy" src={mediaUri} alt="" />
+      ) : (
+        <PlaceholderPreview icon={<Image />} text={'Image'} />
+      )
     case 'video':
       // if(thumb) return <img loading="lazy" src={thumb || VideoPlaceholder} alt="" />
       if (thumb)
-        return (
-          <video poster={thumb || VideoPlaceholder}>
+        return thumb ? (
+          <video poster={thumb}>
             <source src={thumb} />
           </video>
+        ) : (
+          <PlaceholderPreview icon={<Video />} text={'Video'} />
         )
       return (
         <video
@@ -68,12 +70,15 @@ const MediaPreview = ({ mediaUri, thumb, type, name, id }: NFTDetail) => {
       )
     case 'pdf':
     case 'application':
-      return <img loading="lazy" src={thumb || PDFPlaceholder} alt="" />
-    // return <img loading="lazy" alt="" src={PDFPlaceholder} />
+      return thumb ? <img loading="lazy" alt="" src={thumb} /> : <PlaceholderPreview icon={<File />} text={'PDF'} />
     case 'audio':
-      return <img loading="lazy" alt="" src={thumb || AudioPlaceholder} />
+      return thumb ? (
+        <img loading="lazy" alt="" src={thumb} />
+      ) : (
+        <PlaceholderPreview icon={<Volume2 />} text={'Audio'} />
+      )
     case 'model':
-      if (!mediaUri) return <img loading="lazy" alt="" src={ModelPlaceholder} />
+      if (!mediaUri) return <PlaceholderPreview icon={<Box />} text={'Model'} />
       const modelProps = {
         'src': mediaUri,
         'alt': name || id,
@@ -87,14 +92,14 @@ const MediaPreview = ({ mediaUri, thumb, type, name, id }: NFTDetail) => {
     case 'loading':
       return (
         <span className="loadingArea">
-          <Spinner />
+          <CircularProgressIndicator />
         </span>
       )
     case null:
     case 'blank':
       return <></>
     default:
-      return <img loading="lazy" alt="" src={UnknownPlaceholder} />
+      return <PlaceholderPreview icon={<Unknown />} text={'Unknown'} />
   }
 }
 
