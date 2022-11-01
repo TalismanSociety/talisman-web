@@ -20,7 +20,7 @@ const AddStakeDialog = (props: { account?: string; onDismiss: () => unknown }) =
     if (bondExtraExtrinsic.state === 'loading' && bondExtraExtrinsic.contents?.status.isInBlock) {
       props.onDismiss()
     }
-  }, [bondExtraExtrinsic.contents?.status.isInBlock, bondExtraExtrinsic.state, props])
+  }, [bondExtraExtrinsic.contents?.status?.isInBlock, bondExtraExtrinsic.state, props])
 
   return (
     <BaseAddStakeDialog
