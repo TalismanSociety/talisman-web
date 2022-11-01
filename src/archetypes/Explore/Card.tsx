@@ -18,7 +18,7 @@ const toExternalDapp = (dapp: any) => {
   )
 
   posthog.capture('Goto Dapp', { dappName: dapp.name, dappUrl: dapp.url, ...categories })
-  window.open(dapp.url, 'rel=noreferrer')
+  window.open(dapp.url, '_blank', 'noopener,noreferrer')
 }
 
 const Card = ({ className, dapp, setSelectedTag }: CardProps) => {
