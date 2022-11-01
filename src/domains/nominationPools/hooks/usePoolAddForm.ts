@@ -1,5 +1,11 @@
 import { apiState } from '@domains/chains/recoils'
-import { useChainState, useTokenAmount, useTokenAmountFromAtomics, useTokenAmountState } from '@domains/common/hooks'
+import {
+  useChainState,
+  useQueryMulti,
+  useTokenAmount,
+  useTokenAmountFromAtomics,
+  useTokenAmountState,
+} from '@domains/common/hooks'
 import { paymentInfoState } from '@domains/common/recoils'
 import { BN } from '@polkadot/util'
 import usePrevious from '@util/usePrevious'
@@ -8,13 +14,14 @@ import { constSelector, useRecoilValue, useRecoilValueLoadable } from 'recoil'
 
 const ESTIMATED_FEE_MARGIN_OF_ERROR = 0.25
 
-export const usePoolAddForm = (account?: string) => {
+export const usePoolAddForm = (action: 'bondExtra' | 'join', account?: string) => {
   const api = useRecoilValue(apiState)
 
   const prevAccount = usePrevious(account)
 
   const balancesLoadable = useChainState('derive', 'balances', 'all', [account!], { enabled: account !== undefined })
-  const poolMembersLoadable = useChainState('query', 'nominationPools', 'poolMembers', [account!], {
+
+  const queriesLoadable = useQueryMulti([['nominationPools.poolMembers', account], 'nominationPools.minJoinBond'], {
     enabled: account !== undefined,
   })
 
@@ -22,12 +29,14 @@ export const usePoolAddForm = (account?: string) => {
   const paymentInfoLoadable = useRecoilValueLoadable(
     account === undefined || balancesLoadable.state !== 'hasValue'
       ? constSelector(undefined)
-      : paymentInfoState([
+      : action === 'bondExtra'
+      ? paymentInfoState([
           'nominationPools',
           'bondExtra',
           account,
           { FreeBalance: balancesLoadable.contents.availableBalance },
         ])
+      : paymentInfoState(['nominationPools', 'join', account, balancesLoadable.contents.availableBalance, 0])
   )
 
   const [input, setAmount] = useTokenAmountState('')
@@ -50,7 +59,7 @@ export const usePoolAddForm = (account?: string) => {
           .sub(paymentInfoLoadable.contents.partialFee.muln(1 + ESTIMATED_FEE_MARGIN_OF_ERROR))
   )
 
-  const minAmount = useTokenAmountFromAtomics(
+  const initialAmount = useTokenAmountFromAtomics(
     useMemo(
       () =>
         availableBalance.decimalAmount === undefined || oneToken.decimalAmount === undefined
@@ -63,16 +72,20 @@ export const usePoolAddForm = (account?: string) => {
   const resulting = useTokenAmountFromAtomics(
     useMemo(
       () =>
-        poolMembersLoadable
-          .valueMaybe()
+        queriesLoadable
+          .valueMaybe()?.[0]
           ?.unwrapOrDefault()
           .points.add(input.decimalAmount?.atomics ?? new BN(0)),
-      [input.decimalAmount?.atomics, poolMembersLoadable]
+      [input.decimalAmount?.atomics, queriesLoadable]
     )
   )
 
+  const minimum = useTokenAmountFromAtomics(queriesLoadable.valueMaybe()?.[1])
+
   const error = useMemo(() => {
     if (balancesLoadable.state !== 'hasValue') return
+
+    if (input.amount.trim() === '') return
 
     if (
       availableBalance.decimalAmount !== undefined &&
@@ -80,7 +93,22 @@ export const usePoolAddForm = (account?: string) => {
     ) {
       return new Error('Insufficient balance')
     }
-  }, [input.decimalAmount?.atomics, balancesLoadable.state, availableBalance.decimalAmount])
+
+    if (
+      action === 'join' &&
+      minimum.decimalAmount !== undefined &&
+      input.decimalAmount?.atomics.lt(minimum.decimalAmount.atomics)
+    ) {
+      return new Error(`Minimum ${minimum.decimalAmount.toHuman()} needed`)
+    }
+  }, [
+    balancesLoadable.state,
+    input.amount,
+    input.decimalAmount?.atomics,
+    availableBalance.decimalAmount,
+    action,
+    minimum.decimalAmount,
+  ])
 
   useEffect(() => {
     if (account !== prevAccount) {
@@ -90,11 +118,15 @@ export const usePoolAddForm = (account?: string) => {
 
   useEffect(
     () => {
-      if ((input.amount === '' || account !== prevAccount) && minAmount.decimalAmount !== undefined) {
-        setAmount(minAmount.decimalAmount.toString())
+      if (
+        (input.amount === '' || account !== prevAccount) &&
+        initialAmount.decimalAmount !== undefined &&
+        !initialAmount.decimalAmount.atomics.isZero()
+      ) {
+        setAmount(initialAmount.decimalAmount.toString())
       }
     }, // eslint-disable-next-line react-hooks/exhaustive-deps
-    [minAmount.decimalAmount]
+    [initialAmount.decimalAmount]
   )
 
   return {
@@ -103,6 +135,6 @@ export const usePoolAddForm = (account?: string) => {
     resulting,
     setAmount,
     error,
-    isReady: balancesLoadable.state === 'hasValue' && poolMembersLoadable.state === 'hasValue',
+    isReady: balancesLoadable.state === 'hasValue' && queriesLoadable.state === 'hasValue',
   }
 }

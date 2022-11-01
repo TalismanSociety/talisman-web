@@ -1,4 +1,5 @@
 import Text from '@components/atoms/Text'
+import { WalletNavConnector } from '@components/WalletNavConnector'
 import { css } from '@emotion/react'
 import styled from '@emotion/styled'
 import { useNftsByAddress } from '@libs/@talisman-nft'
@@ -67,10 +68,14 @@ const List = ({ address }: { address: string }) => {
               flex-direction: column;
               align-items: center;
               justify-content: center;
+              > * {
+                margin-bottom: 1rem;
+              }
             `}
           >
             <Text.H2>No NFTs Found</Text.H2>
-            <Text.Body>Lorem Ipsum Text</Text.Body>
+            <Text.Body>Please try another account</Text.Body>
+            <WalletNavConnector />
           </span>
         }
       />

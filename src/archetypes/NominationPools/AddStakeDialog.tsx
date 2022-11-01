@@ -14,7 +14,7 @@ const AddStakeDialog = (props: { account?: string; onDismiss: () => unknown }) =
     resulting,
     setAmount,
     error: inputError,
-  } = usePoolAddForm(props.account)
+  } = usePoolAddForm('bondExtra', props.account)
 
   useEffect(() => {
     if (bondExtraExtrinsic.state === 'loading' && bondExtraExtrinsic.contents?.status.isInBlock) {

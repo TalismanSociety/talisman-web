@@ -10,7 +10,11 @@ export default {
   },
 } as ComponentMeta<typeof PoolSelectorItem>
 
-export const Default: Story<PoolSelectorItemProps> = args => <PoolSelectorItem {...args} />
+export const Default: Story<PoolSelectorItemProps> = args => (
+  <div css={{ maxWidth: '20rem' }}>
+    <PoolSelectorItem {...args} />
+  </div>
+)
 
 Default.args = {
   selected: true,

@@ -4,7 +4,7 @@ import { ISubmittableResult } from '@polkadot/types/types'
 import { useCallback, useState } from 'react'
 import { useRecoilCallback, useRecoilValueLoadable } from 'recoil'
 
-import { apiState, currentChainState } from '../../chains/recoils'
+import { apiState, chainState } from '../../chains/recoils'
 import { extensionState } from '../../extension/recoils'
 import { extrinsicMiddleWare } from '../extrinsicMiddleware'
 import { toastExtrinsic } from '../utils'
@@ -18,7 +18,7 @@ export const useExtrinsic = <
 ) => {
   type TExtrinsic = ApiPromise['tx'][TModule][TSection]
 
-  const chainLoadable = useRecoilValueLoadable(currentChainState)
+  const chainLoadable = useRecoilValueLoadable(chainState)
 
   const [loadable, setLoadable] = useState<
     | { state: 'idle'; contents: undefined }
