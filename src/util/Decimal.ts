@@ -62,6 +62,9 @@ export default class Decimal {
     )
   }
 
+  // TODO: improve precision
+  // but to be honest maybe we shouldn't expect
+  // precision from a string representation?
   toString() {
     return formatBalance(this.atomics, {
       forceUnit: '-',

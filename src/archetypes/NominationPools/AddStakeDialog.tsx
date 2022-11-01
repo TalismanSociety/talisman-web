@@ -16,11 +16,15 @@ const AddStakeDialog = (props: { account?: string; onDismiss: () => unknown }) =
     error: inputError,
   } = usePoolAddForm('bondExtra', props.account)
 
-  useEffect(() => {
-    if (bondExtraExtrinsic.state === 'loading' && bondExtraExtrinsic.contents?.status.isInBlock) {
-      props.onDismiss()
-    }
-  }, [bondExtraExtrinsic.contents?.status?.isInBlock, bondExtraExtrinsic.state, props])
+  useEffect(
+    () => {
+      if (bondExtraExtrinsic.state === 'loading' && bondExtraExtrinsic.contents?.status.isInBlock) {
+        props.onDismiss()
+      }
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [bondExtraExtrinsic.contents?.status?.isInBlock]
+  )
 
   return (
     <BaseAddStakeDialog
