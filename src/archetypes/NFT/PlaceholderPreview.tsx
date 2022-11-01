@@ -18,7 +18,7 @@ const PlaceholderPreview = ({ icon, text }: PlaceholderPreviewProps) => {
         flex-direction: column;
 
         > * {
-          color: #a5a5a5;
+          color: #a5a5a5 !important;
         }
 
         > svg {

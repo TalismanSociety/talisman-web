@@ -2,6 +2,7 @@ import '@google/model-viewer'
 
 import CircularProgressIndicator from '@components/atoms/CircularProgressIndicator'
 import { Box, File, Image, Unknown, Video, Volume2 } from '@components/atoms/Icon'
+import { css } from '@emotion/react'
 import styled from '@emotion/styled'
 import { getNFTType } from '@libs/@talisman-nft'
 import { NFTDetail } from '@libs/@talisman-nft/types'
@@ -85,8 +86,20 @@ const MediaPreview = ({ mediaUri, thumb, type, name, id }: NFTDetail) => {
 const Preview = ({ className, nft, loading }: PreviewType) => {
   if (loading) {
     return (
-      <section className={className}>
-        <CircularProgressIndicator />
+      <section
+        className={className}
+        css={css`
+          > * {
+            // center
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            height: 20% !important;
+            width: 20% !important;
+          }
+        `}
+      >
+        <CircularProgressIndicator size={12} />
       </section>
     )
   }
