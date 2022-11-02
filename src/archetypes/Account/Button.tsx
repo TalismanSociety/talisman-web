@@ -488,6 +488,7 @@ const Authorized = styled(
   > .nav-toggle {
     margin-left: 0.5em;
     background: inherit;
+    padding: 0;
   }
 
   > .selected-account {

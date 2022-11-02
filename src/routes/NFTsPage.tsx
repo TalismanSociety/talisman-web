@@ -1,19 +1,14 @@
+import { NFT } from '@archetypes'
+import { HiddenNFTGrid } from '@archetypes/NFT'
 import { ExtensionStatusGate, PanelSection } from '@components'
-import Identicon from '@components/atoms/Identicon'
-import NFTsByAddress from '@components/NFTsByAddress'
+import Text from '@components/atoms/Text'
 import usePageTrack from '@components/TrackPageView'
+import { WalletNavConnector } from '@components/WalletNavConnector'
+import { css } from '@emotion/react'
 import styled from '@emotion/styled'
-import { NoNFTsPlaceholder } from '@libs/nft/NoNFTsPlaceholder'
-import { useHasNFTs } from '@libs/nft/useHasNFTs'
-import { useNftsByAddress } from '@libs/nft/useNftsByAddress/useNftsByAddress'
-import { Account as IAccount, useExtensionAutoConnect } from '@libs/talisman'
+import { useActiveAccount } from '@libs/talisman'
 import { device } from '@util/breakpoints'
 import { useTranslation } from 'react-i18next'
-
-interface AccountProps {
-  className?: string
-  account: IAccount
-}
 
 const ExtensionUnavailable = styled(props => {
   const { t } = useTranslation()
@@ -25,14 +20,12 @@ const ExtensionUnavailable = styled(props => {
   )
 })`
   text-align: center;
-
   > *:not(:last-child) {
     margin-bottom: 2rem;
   }
   > *:last-child {
     margin-bottom: 0;
   }
-
   > h2 {
     color: var(--color-text);
     font-weight: 600;
@@ -44,53 +37,8 @@ const ExtensionUnavailable = styled(props => {
   }
 `
 
-const NFTGrid = styled(({ className = '', account }: AccountProps) => {
-  const { address, name } = account
-  const { nfts } = useNftsByAddress(address as string)
-  if (!nfts?.length) {
-    return null
-  }
-  return (
-    <div className={className}>
-      <div className="account-name">
-        <Identicon size="2.5em" value={address} />
-        <span>{name}</span>
-      </div>
-      <div className="nft-grid">
-        <NFTsByAddress address={address} />
-      </div>
-    </div>
-  )
-})`
-  .account-name {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    margin-bottom: 2rem;
-  }
-
-  .nft-grid {
-    display: grid;
-    gap: 2rem;
-    grid-template-columns: 1fr;
-
-    @media ${device.md} {
-      grid-template-columns: repeat(2, 1fr);
-    }
-
-    @media ${device.lg} {
-      grid-template-columns: repeat(3, 1fr);
-    }
-
-    @media ${device.xl} {
-      grid-template-columns: repeat(4, 1fr);
-    }
-  }
-`
-
-const NFTsPage = styled(({ className }) => {
-  const { accounts } = useExtensionAutoConnect()
-  const { hasNfts, isLoading } = useHasNFTs(accounts)
+const NFTsPage = styled(({ className }: any) => {
+  const { address } = useActiveAccount()
 
   usePageTrack()
 
@@ -98,20 +46,34 @@ const NFTsPage = styled(({ className }) => {
     <section className={className}>
       <h1>NFTs</h1>
       <ExtensionStatusGate unavailable={<ExtensionUnavailable />}>
-        <div className="all-nft-grids">
-          {isLoading && <>Loading...</>}
-          {!hasNfts && !isLoading && <NoNFTsPlaceholder />}
-          {hasNfts &&
-            !isLoading &&
-            accounts?.map(account => {
-              return <NFTGrid key={account.address} account={account} />
-            })}
-        </div>
+        {address ? (
+          <>
+            <article>
+              <NFT.List address={address} />
+            </article>
+          </>
+        ) : (
+          // Add the placeholders and select one account
+          <HiddenNFTGrid
+            overlay={
+              <span
+                css={css`
+                  display: flex;
+                  flex-direction: column;
+                  align-items: center;
+                  justify-content: center;
+                `}
+              >
+                <Text.H2>Please Select an Account</Text.H2>
+                <WalletNavConnector />
+              </span>
+            }
+          />
+        )}
       </ExtensionStatusGate>
     </section>
   )
 })`
-  color: var(--color-text);
   width: 100%;
   max-width: 1280px;
   margin: 3rem auto;
@@ -119,9 +81,8 @@ const NFTsPage = styled(({ className }) => {
     margin: 6rem auto;
   }
   padding: 0 2.4rem;
-
-  .all-nft-grids > * + * {
-    margin-top: 4rem;
+  > header + article {
+    margin-top: 3rem;
   }
 `
 
