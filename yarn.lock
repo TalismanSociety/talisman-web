@@ -7576,7 +7576,6 @@ __metadata:
     "@types/webpack-env": ^1.16.2
     bignumber.js: ^9.0.1
     colorjs.io: ^0.4.0
-    craco-alias: ^3.0.1
     date-fns: ^2.29.3
     eslint: ^7.32.0
     eslint-config-prettier: ^8.5.0
@@ -7600,6 +7599,7 @@ __metadata:
     pretty-quick: ^3.1.3
     react: ^18.2.0
     react-apollo-network-status: ^5.1.0
+    react-app-alias: ^2.2.2
     react-dom: ^18.2.0
     react-hot-toast: ^2.4.0
     react-i18next: ^11.18.6
@@ -12159,13 +12159,6 @@ __metadata:
     p-filter: ^2.1.0
     p-map: ^3.0.0
   checksum: e121f13f2b6af4a7c00de17984086a45b67eaaeeb0286a5cf67f2fdaf18d8ce6c2a9fe4ccfa37953e6982f55772f384f040f45f1961530655838c2b7486788a7
-  languageName: node
-  linkType: hard
-
-"craco-alias@npm:^3.0.1":
-  version: 3.0.1
-  resolution: "craco-alias@npm:3.0.1"
-  checksum: 8d9a2bf38fa0834f365415509b57c33fda3a0fec18382242d9c92e766029bd72cca3f8aa548ff23c8d1272dd5621c97f9ceaa7e10517f0056a64bc89bff58d1e
   languageName: node
   linkType: hard
 
@@ -23893,6 +23886,13 @@ fsevents@^1.2.7:
     graphql: ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0
     react: ^16.8.0 || ^17.0.0
   checksum: 88c186a63121fca5075bbbfd0d89b78fcbedde17235a39117756935e1a7c6dfd0b06682cacd73b111c312bf951e9bbdb56afb4318444b196a545cfb1bfdb136f
+  languageName: node
+  linkType: hard
+
+"react-app-alias@npm:^2.2.2":
+  version: 2.2.2
+  resolution: "react-app-alias@npm:2.2.2"
+  checksum: f34d8047b599ce17c7dd32cdef7a93fdb69d466621db63a9d589bd720a0ca6298b186e6c340c1ee33f8d614d3dceed87375a81bcd2d57373504c677cb58270f9
   languageName: node
   linkType: hard
 
