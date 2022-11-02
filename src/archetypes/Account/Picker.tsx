@@ -18,11 +18,7 @@ const Dropdown = styled(({ className, accounts, activeAccount, open, handleChang
           return (
             <div key={account.address} className="account" onClick={() => handleChange(account)}>
               <span className="left">
-                <Identicon
-                  className="identicon"
-                  value={account.address}
-                  theme={account.type === 'ethereum' ? 'ethereum' : 'polkadot'}
-                />
+                <Identicon className="identicon" value={account.address} />
                 <span className="name-address">
                   <div className="name">{account.name}</div>
                 </span>
@@ -146,11 +142,7 @@ const AccountPicker = styled(({ additionalAccounts = [], className, onChange }) 
       <span className={`account-button ${className}`}>
         <span className={accounts.length > 1 ? 'account' : 'single-account'}>
           <span>
-            <Identicon
-              className="identicon"
-              value={activeAccount?.address}
-              theme={activeAccount?.type === 'ethereum' ? 'ethereum' : 'polkadot'}
-            />
+            <Identicon className="identicon" value={activeAccount?.address ?? ''} />
 
             <span className="selected-account">
               <div>{activeAccount?.name}</div>

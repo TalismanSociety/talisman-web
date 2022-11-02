@@ -17,7 +17,7 @@ type PreviewType = {
 }
 
 const MediaPreview = ({ mediaUri, thumb, type, name, id }: NFTDetail) => {
-  const [fetchedType, setFetchedType] = useState<string | null>()
+  const [fetchedType, setFetchedType] = useState<string | undefined>()
   const [isLoading, setIsLoading] = useState<boolean>(false)
 
   useEffect(() => {
@@ -33,13 +33,13 @@ const MediaPreview = ({ mediaUri, thumb, type, name, id }: NFTDetail) => {
   const effectiveType = useMemo(() => {
     if (type) return type
     if (isLoading) return 'loading'
-    return fetchedType ?? null
+    return fetchedType ?? undefined
   }, [type, isLoading, fetchedType])
 
   switch (effectiveType) {
     case 'image':
       if (!mediaUri) return <PlaceholderPreview icon={<Image />} text={'Image'} />
-      return <img loading="lazy" src={mediaUri} alt={name || id} />
+      return <img loading="lazy" src={mediaUri} alt={name ?? id} />
     case 'video':
       if (!mediaUri) return <PlaceholderPreview icon={<Video />} text={'Video'} />
       return <video src={mediaUri} loop muted playsInline preload="metadata" controls={true} />
@@ -51,9 +51,9 @@ const MediaPreview = ({ mediaUri, thumb, type, name, id }: NFTDetail) => {
       return (
         <>
           {thumb ? (
-            <PlaceholderPreview icon={<Volume2 />} text={'Audio'} />
+            <img loading="lazy" alt={name ?? id} src={thumb ?? ''} />
           ) : (
-            <img loading="lazy" alt={name || id} src={thumb} />
+            <PlaceholderPreview icon={<Volume2 />} text={'Audio'} />
           )}
           <audio
             controls
@@ -71,7 +71,7 @@ const MediaPreview = ({ mediaUri, thumb, type, name, id }: NFTDetail) => {
       if (!mediaUri) return <PlaceholderPreview icon={<Box />} text={'Model'} />
       const modelProps = {
         'src': mediaUri,
-        'alt': name || id,
+        'alt': name ?? id,
         'autoplay': 'true',
         'camera-controls': 'true',
         'shadow-intensity': '1',

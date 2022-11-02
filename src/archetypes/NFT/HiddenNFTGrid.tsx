@@ -39,9 +39,9 @@ const HiddenNFTGrid = ({ overlay }: { overlay?: ReactNode }) => {
   return (
     <HiddenDetails hidden={true} overlay={overlay}>
       <ListGrid
-        css={css`
-          opacity: 40%;
-        `}
+        css={{
+          opacity: '40%',
+        }}
       >
         {Array.from({ length: 4 }).map((_, index) => (
           <BlankCard />

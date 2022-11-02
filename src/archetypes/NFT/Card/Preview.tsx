@@ -15,7 +15,7 @@ type PreviewType = {
 }
 
 const MediaPreview = ({ mediaUri, thumb, type, name, id }: NFTDetail | NFTShort) => {
-  const [fetchedType, setFetchedType] = useState<string | null>()
+  const [fetchedType, setFetchedType] = useState<string | undefined>()
   const [isLoading, setIsLoading] = useState<boolean>(false)
 
   useEffect(() => {
@@ -31,7 +31,7 @@ const MediaPreview = ({ mediaUri, thumb, type, name, id }: NFTDetail | NFTShort)
   const effectiveType = useMemo(() => {
     if (type) return type
     if (isLoading) return 'loading'
-    return fetchedType ?? null
+    return fetchedType ?? undefined
   }, [type, isLoading, fetchedType])
 
   switch (effectiveType) {
@@ -53,7 +53,7 @@ const MediaPreview = ({ mediaUri, thumb, type, name, id }: NFTDetail | NFTShort)
         )
       return (
         <video
-          src={thumb || mediaUri}
+          src={thumb ?? mediaUri}
           onMouseOver={event => {
             event.target.play()
           }}
@@ -81,7 +81,7 @@ const MediaPreview = ({ mediaUri, thumb, type, name, id }: NFTDetail | NFTShort)
       if (!mediaUri) return <PlaceholderPreview icon={<Box />} text={'Model'} />
       const modelProps = {
         'src': mediaUri,
-        'alt': name || id,
+        'alt': name ?? id,
         'auto-rotate': 'true',
         'autoplay': 'false',
         'shadow-intensity': '1',
@@ -95,7 +95,7 @@ const MediaPreview = ({ mediaUri, thumb, type, name, id }: NFTDetail | NFTShort)
           <CircularProgressIndicator />
         </span>
       )
-    case null:
+    case undefined:
     case 'blank':
       return <></>
     default:

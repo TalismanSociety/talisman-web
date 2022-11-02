@@ -97,8 +97,8 @@ export class EVMProvider extends NFTInterface {
     }
   }
 
-  typeCheck(mediaUri: string): string | null {
-    if (!mediaUri) return null
+  typeCheck(mediaUri: string): string | undefined {
+    if (!mediaUri) return undefined
     // check if media uri ends with png, jpg or gif
     if (mediaUri.endsWith('.png') || mediaUri.endsWith('.jpg') || mediaUri.endsWith('.gif')) {
       return 'image'
@@ -107,7 +107,7 @@ export class EVMProvider extends NFTInterface {
     if (mediaUri.endsWith('.mp4')) {
       return 'video'
     }
-    return null
+    return undefined
   }
 
   async hydrateNftsByAddress(address: string) {

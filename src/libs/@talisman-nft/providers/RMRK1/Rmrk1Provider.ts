@@ -139,7 +139,6 @@ export class Rmrk1Provider extends NFTInterface {
         const mediaUri = this.toIPFSUrl(nft?.metadata_animation_url || nft?.metadata_image || indexedItemRef?.mediaUri)
         const thumb = this.toIPFSUrl(nft?.metadata_image)
 
-        // get the context type of null
         const type = nft?.metadata_content_type.split('/')[0] ?? (await this.fetchContentType(mediaUri))
         const collectionInfo = await this.fetchNFTs_CollectionInfo(nft?.collection?.id, this.collectionUri)
 
