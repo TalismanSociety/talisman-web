@@ -1,5 +1,5 @@
 import Button from '@components/atoms/Button'
-import { ExternalLink, Star, Union, User } from '@components/atoms/Icon'
+import { ExternalLink, Union, User } from '@components/atoms/Icon'
 import Text from '@components/atoms/Text'
 import Tooltip from '@components/atoms/Tooltip'
 import { useTheme } from '@emotion/react'

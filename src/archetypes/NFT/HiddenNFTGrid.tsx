@@ -1,5 +1,4 @@
 import HiddenDetails from '@components/molecules/HiddenDetails'
-import { css } from '@emotion/react'
 import styled from '@emotion/styled'
 import { device } from '@util/breakpoints'
 import { ReactNode } from 'react'

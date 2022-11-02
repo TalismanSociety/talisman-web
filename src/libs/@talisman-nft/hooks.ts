@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 
 import { defaultNftFactoryCallbackData } from './config'
 import { NFTFactory } from './nftFactory'
-import { AcalaProvider, EVMProvider, Rmrk1Provider, Rmrk2Provider, StatemineProvider } from './providers'
+import { EVMProvider, Rmrk1Provider, Rmrk2Provider, StatemineProvider } from './providers'
 import { EVMChains } from './providers/Evm/EVMChains'
 import { NFTInterface } from './providers/NFTInterface'
 import { EVMChain, NFTData, NFTDetail, NFTShort } from './types'

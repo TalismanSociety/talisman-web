@@ -129,13 +129,13 @@ const AccountPicker = styled(({ additionalAccounts = [], className, onChange }) 
     const _allAccounts = [...additionalAccounts, ...accounts]
     setAllAccounts(_allAccounts)
     setActiveAccount(_allAccounts[0])
-  }, [accounts])
+  }, [accounts, additionalAccounts])
 
   // pass the active account back to the parent on change
   useEffect(() => {
     if (!activeAccount) return
     onChange(activeAccount)
-  }, [activeAccount])
+  }, [activeAccount, onChange])
 
   return (
     <div ref={nodeRef} className="account-picker" onClick={accounts.length > 1 ? () => setOpen(!open) : undefined}>
