@@ -33,7 +33,7 @@ const availableToStakeState = selector({
     const balances = await Promise.all(accounts.map(({ address }) => api.derive.balances.all(address)))
 
     return balances.reduce(
-      (prev, curr) => curr.availableBalance.sub(api.consts.balances.existentialDeposit).add(prev),
+      (prev, curr) => BN.max(new BN(0), curr.availableBalance.sub(api.consts.balances.existentialDeposit)).add(prev),
       new BN(0)
     )
   },
