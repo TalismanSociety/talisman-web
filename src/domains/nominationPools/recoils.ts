@@ -51,14 +51,13 @@ export const recommendedPoolsState = selector({
       chainId === 'polkadot'
         ? {
             ...defaultOptions,
-            numberOfPools: 10,
+            numberOfPools: Infinity,
             rootMinStake: new BN(10),
             minNumberOfValidators: 16,
             checkRootVerified: true,
             checkForDuplicateValidators: true,
-            checkValidators: true,
           }
-        : { ...defaultOptions, numberOfPools: 10 }
+        : { ...defaultOptions, numberOfPools: Infinity }
     ).getPoolsMeetingCriteria()
 
     const pools =
