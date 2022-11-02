@@ -9,8 +9,6 @@ import { SerializableParam, selector, selectorFamily } from 'recoil'
 
 import { apiState, chainIdState } from '../chains/recoils'
 
-const TALISMAN_POOLS = [12, 16]
-
 export const allPendingPoolRewardsState = selector({
   key: 'AllPendingRewards',
   get: ({ get }) => {
@@ -66,10 +64,7 @@ export const recommendedPoolsState = selector({
     const pools =
       recommendedPools.length > 0
         ? await api.query.nominationPools.bondedPools
-            .multi([
-              ...TALISMAN_POOLS,
-              ...recommendedPools.map(({ poolId }) => poolId).filter(poolId => !TALISMAN_POOLS.includes(poolId)),
-            ])
+            .multi(recommendedPools.map(({ poolId }) => poolId))
             .then(bondedPools =>
               bondedPools.map((pool, index) => ({ poolId: recommendedPools[index]?.poolId ?? 0, bondedPool: pool }))
             )
@@ -83,13 +78,7 @@ export const recommendedPoolsState = selector({
       .map((pool, index) => ({ ...pool, name: names[index]?.toUtf8() }))
       .filter(pool => pool.bondedPool.isSome)
       .map(pool => ({ ...pool, bondedPool: pool.bondedPool.unwrap() }))
-      .sort((a, b) =>
-        TALISMAN_POOLS.includes(a.poolId) && !TALISMAN_POOLS.includes(b.poolId)
-          ? -1
-          : TALISMAN_POOLS.includes(b.poolId) && !TALISMAN_POOLS.includes(a.poolId)
-          ? 1
-          : b.bondedPool.points.sub(a.bondedPool.points).toNumber()
-      )
+      .sort((a, b) => b.bondedPool.points.sub(a.bondedPool.points).toNumber())
   },
   cachePolicy_UNSTABLE: { eviction: 'most-recent' },
 })
