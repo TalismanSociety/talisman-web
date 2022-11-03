@@ -10,6 +10,7 @@ type PolymorphicButtonProps<T extends ButtonElementType> = {
   as?: T
   variant?: 'outlined' | 'noop'
   disabled?: boolean
+  hidden?: boolean
   loading?: boolean
 }
 
@@ -19,7 +20,7 @@ export type ButtonProps<T extends ButtonElementType> = PolymorphicButtonProps<T>
 const Button = <T extends ButtonElementType>({ as = 'button' as T, variant, ...props }: ButtonProps<T>) => {
   const theme = useTheme()
 
-  const disabled = props.disabled || props.loading
+  const disabled = props.disabled || props.hidden || props.loading
 
   const variantStyle = useMemo(() => {
     switch (variant) {
@@ -37,13 +38,16 @@ const Button = <T extends ButtonElementType>({ as = 'button' as T, variant, ...p
         }
       case 'noop':
         return {
-          padding: 'none',
-          margin: 'none',
-          background: 'none',
-          border: 'none',
-          outline: 'none',
+          'padding': 'none',
+          'margin': 'none',
+          'background': 'none',
+          'border': 'none',
+          'outline': 'none',
+          ':hover': {
+            filter: 'brightness(1.5)',
+          },
         }
-      default:
+      case undefined:
         return {
           'backgroundColor': theme.color.primary,
           'color': theme.color.onPrimary,
@@ -60,10 +64,9 @@ const Button = <T extends ButtonElementType>({ as = 'button' as T, variant, ...p
         return {
           backgroundColor: theme.color.foreground,
           color: `rgba(255,255,255,${theme.contentAlpha.disabled})`,
-          cursor: 'not-allowed',
         }
       default:
-        return { filter: 'grayscale(1) brightness(0.5)', cursor: 'not-allowed' }
+        return { filter: 'grayscale(1) brightness(0.5)' }
     }
   }, [theme.color.foreground, theme.contentAlpha.disabled, variant])
 
@@ -85,7 +88,8 @@ const Button = <T extends ButtonElementType>({ as = 'button' as T, variant, ...p
           ...(disabled ? { ':hover': undefined } : {}),
         },
         props.loading && { cursor: 'wait' },
-        props.disabled && variantDisabledStyle,
+        props.disabled && [{ cursor: 'not-allowed' }, variantDisabledStyle],
+        props.hidden && { cursor: 'default', pointerEvent: 'none', opacity: 0 },
       ]}
     >
       <span css={{ position: 'relative' }}>

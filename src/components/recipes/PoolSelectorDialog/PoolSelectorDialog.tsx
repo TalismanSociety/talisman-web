@@ -1,7 +1,9 @@
 import Button from '@components/atoms/Button'
+import { ChevronLeft, ChevronRight } from '@components/atoms/Icon'
 import Text from '@components/atoms/Text'
 import AlertDialog from '@components/molecules/AlertDialog'
-import React, { ReactElement } from 'react'
+import { motion } from 'framer-motion'
+import React, { ReactElement, useRef, useState } from 'react'
 
 import PoolSelectorItem, { PoolSelectorItemProps } from '../PoolSelectorItem/PoolSelectorItem'
 
@@ -12,12 +14,18 @@ export type PoolSelectorDialogProps = {
   children: ReactElement<PoolSelectorItemProps> | ReactElement<PoolSelectorItemProps>[]
 }
 
+const ITEMS_PER_PAGE = 9
+
 const PoolSelectorDialog = Object.assign(
   (props: PoolSelectorDialogProps) => {
     const items = React.Children.toArray(props.children) as ReactElement<PoolSelectorItemProps>[]
     const selectedItems = items.filter(item => item.props.selected)
     const nonSelectedItems = items.filter(item => !item.props.selected)
     const highlightedItems = items.filter(item => item.props.highlighted)
+
+    const [page, setPage] = useState(0)
+    const hasNextPage = page * ITEMS_PER_PAGE + ITEMS_PER_PAGE < nonSelectedItems.length
+    const hasPreviousPage = page !== 0
 
     return (
       <AlertDialog
@@ -39,10 +47,20 @@ const PoolSelectorDialog = Object.assign(
             >
               {selectedItems[0]}
             </div>
-            <Text.Body as="h3" css={{ marginTop: '1.6rem' }}>
-              New pool
-            </Text.Body>
-            <div
+            <div css={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <Text.Body as="h3" css={{ marginTop: '1.6rem' }}>
+                New pool
+              </Text.Body>
+              <div css={{ display: 'flex' }}>
+                <Button variant="noop" onClick={() => setPage(page => page - 1)} hidden={!hasPreviousPage}>
+                  <ChevronLeft />
+                </Button>
+                <Button variant="noop" onClick={() => setPage(page => page + 1)} hidden={!hasNextPage}>
+                  <ChevronRight />
+                </Button>
+              </div>
+            </div>
+            <motion.div
               css={{
                 'display': 'grid',
                 'gap': '1.6rem',
@@ -53,8 +71,29 @@ const PoolSelectorDialog = Object.assign(
                 },
               }}
             >
-              {nonSelectedItems.slice(0, 9)}
-            </div>
+              {nonSelectedItems
+                .slice(page * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE + ITEMS_PER_PAGE)
+                .flatMap((item, index, array) => [
+                  <motion.div
+                    key={item.key}
+                    initial={{ y: 5, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ delay: index * 0.0125 }}
+                  >
+                    {item}
+                  </motion.div>,
+                  // Pad dummy hidden elements at the end to keep the last page height same as the first page
+                  ...(array.length < ITEMS_PER_PAGE &&
+                  array.length < nonSelectedItems.length &&
+                  index === array.length - 1
+                    ? Array.from({ length: ITEMS_PER_PAGE - array.length }, (_, index) => (
+                        <div key={'dummy' + index} css={{ opacity: 0, pointerEvents: 'none' }}>
+                          {item}
+                        </div>
+                      ))
+                    : []),
+                ])}
+            </motion.div>
           </div>
         }
         dismissButton={
