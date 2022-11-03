@@ -1901,7 +1901,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/runtime@npm:^7.0.0, @babel/runtime@npm:^7.1.2, @babel/runtime@npm:^7.10.2, @babel/runtime@npm:^7.11.2, @babel/runtime@npm:^7.12.13, @babel/runtime@npm:^7.12.5, @babel/runtime@npm:^7.14.5, @babel/runtime@npm:^7.15.3, @babel/runtime@npm:^7.16.0, @babel/runtime@npm:^7.17.2, @babel/runtime@npm:^7.17.8, @babel/runtime@npm:^7.18.3, @babel/runtime@npm:^7.18.9, @babel/runtime@npm:^7.19.0, @babel/runtime@npm:^7.19.4, @babel/runtime@npm:^7.5.0, @babel/runtime@npm:^7.5.5, @babel/runtime@npm:^7.7.2, @babel/runtime@npm:^7.7.6, @babel/runtime@npm:^7.8.4, @babel/runtime@npm:^7.9.2":
+"@babel/runtime@npm:^7.0.0, @babel/runtime@npm:^7.1.2, @babel/runtime@npm:^7.10.2, @babel/runtime@npm:^7.11.2, @babel/runtime@npm:^7.12.13, @babel/runtime@npm:^7.12.5, @babel/runtime@npm:^7.14.5, @babel/runtime@npm:^7.17.2, @babel/runtime@npm:^7.17.8, @babel/runtime@npm:^7.18.3, @babel/runtime@npm:^7.18.9, @babel/runtime@npm:^7.19.0, @babel/runtime@npm:^7.19.4, @babel/runtime@npm:^7.5.0, @babel/runtime@npm:^7.5.5, @babel/runtime@npm:^7.7.2, @babel/runtime@npm:^7.7.6, @babel/runtime@npm:^7.8.4, @babel/runtime@npm:^7.9.2":
   version: 7.19.4
   resolution: "@babel/runtime@npm:7.19.4"
   dependencies:
@@ -4659,17 +4659,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@polkadot/extension-inject@npm:^0.39.3":
-  version: 0.39.3
-  resolution: "@polkadot/extension-inject@npm:0.39.3"
-  dependencies:
-    "@babel/runtime": ^7.15.3
-  peerDependencies:
-    "@polkadot/api": "*"
-  checksum: 9ac87aa2a9a54437da4844f40efa4753b876c02135c1d0ded9bda06029e37a6f2ddf8f0e6c2bc7ed95094ee2e7a2bd05f1648255eff02b384a96c043293935d3
-  languageName: node
-  linkType: hard
-
 "@polkadot/extension-inject@npm:^0.44.6":
   version: 0.44.6
   resolution: "@polkadot/extension-inject@npm:0.44.6"
@@ -4783,15 +4772,6 @@ __metadata:
     "@polkadot/util": 8.7.1
     "@substrate/ss58-registry": ^1.17.0
   checksum: 8934295fca208843da3de5bc72de36f8a0885a43e88019e14563bb2066f8bfae20140d5b8b38f665cfe7c7084c4f18812bccf5b740345296038931229228a40b
-  languageName: node
-  linkType: hard
-
-"@polkadot/networks@npm:^7.3.1":
-  version: 7.8.2
-  resolution: "@polkadot/networks@npm:7.8.2"
-  dependencies:
-    "@babel/runtime": ^7.16.0
-  checksum: e94cc7a4f0767273a3efef07bde941296b730e8364545b92e01a3b6b627d54ed02d4f4ef7798e43ffd192a2e5a0d116cc7e35d5ccca42a888caa190d51c56b8a
   languageName: node
   linkType: hard
 
@@ -7621,22 +7601,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@talismn/util-legacy@npm:@talismn/util@0.0.11":
-  version: 0.0.11
-  resolution: "@talismn/util@npm:0.0.11"
-  dependencies:
-    "@polkadot/extension-inject": ^0.39.3
-    "@polkadot/networks": ^7.3.1
-    bignumber.js: ^9.0.1
-  peerDependencies:
-    "@polkadot/api": "*"
-    "@polkadot/keyring": "*"
-    "@polkadot/util-crypto": "*"
-    react: ">=17"
-  checksum: 24deaa341e48bbd8da6238a8fb9b907f4fc3753022abe39de901f0c36453dc22fabaa05ca1f4de3a355c1554d77747ffb0be7610424d2867f3ac39afa0f874af
-  languageName: node
-  linkType: hard
-
 "@talismn/util@npm:^0.1.3, @talismn/util@npm:~0":
   version: 0.1.3
   resolution: "@talismn/util@npm:0.1.3"
@@ -7705,7 +7669,6 @@ __metadata:
     "@talismn/connect-wallets": ^1.2.1
     "@talismn/dot-pool-selector": snapshot
     "@talismn/util": ^0.1.3
-    "@talismn/util-legacy": "npm:@talismn/util@0.0.11"
     "@talismn/wallets": ^1.1.6
     "@testing-library/jest-dom": ^5.16.5
     "@testing-library/react": ^13.4.0

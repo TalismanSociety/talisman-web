@@ -12,8 +12,8 @@ import { useAccountAddresses, useCrowdloanById, useCrowdloans } from '@libs/tali
 import { useTokenPrice } from '@libs/tokenprices'
 import { useChain } from '@talismn/api-react-hooks'
 import { encodeAnyAddress, planckToTokens } from '@talismn/util'
-import { addBigNumbers, multiplyBigNumbers, useFuncMemo } from '@talismn/util-legacy'
 import { formatCommas, formatCurrency } from '@util/helpers'
+import BigNumber from 'bignumber.js'
 import { Suspense, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
@@ -34,15 +34,16 @@ const CrowdloanItem = styled(({ id, className }) => {
   const { contributions } = useCrowdloanContributions({ accounts, crowdloans: id ? [id] : undefined })
   const totalContributions = getTotalContributionForCrowdloan(id, contributions)
 
-  const relayTokenSymbol = useFuncMemo(token => token || 'Planck', relayNativeToken)
-  const contributedTokens = useFuncMemo(planckToTokens, totalContributions || undefined, relayTokenDecimals)
-  const contributedUsd = multiplyBigNumbers(contributedTokens, relayTokenPrice)
+  const relayTokenSymbol = relayNativeToken ?? 'Planck'
+  const contributedTokens = useMemo(
+    () => planckToTokens(totalContributions || undefined, relayTokenDecimals),
+    [relayTokenDecimals, totalContributions]
+  )
+  const contributedUsd = new BigNumber(contributedTokens ?? 0).times(relayTokenPrice ?? 0).toString()
 
-  const portfolioAmounts = useFuncMemo(
-    calculateCrowdloanPortfolioAmounts,
-    contributions,
-    relayTokenDecimals,
-    relayTokenPrice
+  const portfolioAmounts = useMemo(
+    () => calculateCrowdloanPortfolioAmounts(contributions, relayTokenDecimals, relayTokenPrice),
+    [contributions, relayTokenDecimals, relayTokenPrice]
   )
   useTaggedAmountsInPortfolio(portfolioAmounts)
 
@@ -165,7 +166,8 @@ const Crowdloans = ({ className }: { className?: string }) => {
       Object.entries(totalCrowdloansUsdByAddress || {})
         .filter(([address]) => genericAccounts && genericAccounts.includes(address))
         .map(([, crowdloansUsd]) => crowdloansUsd)
-        .reduce(addBigNumbers, undefined),
+        .reduce((prev, curr) => prev.plus(curr), new BigNumber(0))
+        .toString(),
     [totalCrowdloansUsdByAddress, genericAccounts]
   )
 
