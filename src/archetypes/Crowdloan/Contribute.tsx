@@ -6,9 +6,9 @@ import styled from '@emotion/styled'
 import { useCrowdloanContribute } from '@libs/crowdloans'
 import { useActiveAccount, useCrowdloanById, useParachainDetailsById } from '@libs/talisman'
 import { useTokenPrice } from '@libs/tokenprices'
-import { multiplyBigNumbers } from '@talismn/util-legacy'
 import { isMobileBrowser } from '@util/helpers'
 import { formatCurrency, truncateString } from '@util/helpers'
+import BigNumber from 'bignumber.js'
 import { useCallback, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -100,12 +100,14 @@ const ContributeTo = styled(
     const { t } = useTranslation()
     const { price: tokenPrice, loading: priceLoading } = useTokenPrice('KSM')
     const usd = useMemo(
-      () => !Number.isNaN(Number(contributionAmount)) && multiplyBigNumbers(contributionAmount, tokenPrice),
+      () =>
+        !Number.isNaN(Number(contributionAmount)) &&
+        new BigNumber(contributionAmount).times(tokenPrice ?? 0).toString(),
       [contributionAmount, tokenPrice]
     )
 
     const txFeeUsd = useMemo(
-      () => !Number.isNaN(Number(txFee?.fee)) && multiplyBigNumbers(txFee?.fee, tokenPrice),
+      () => !Number.isNaN(Number(txFee?.fee)) && new BigNumber(txFee?.fee ?? 0).times(tokenPrice ?? 0).toString(),
       [txFee?.fee, tokenPrice]
     )
 
