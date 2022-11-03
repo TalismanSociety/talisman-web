@@ -33,7 +33,7 @@ export class EVMProvider extends NFTInterface {
       type: 'function',
     },
   ]
-  platformUri = 'https://opensea.io/'
+  platformUri = ''
   storageProvider = ''
   web3: Web3 = new Web3()
 
@@ -44,6 +44,7 @@ export class EVMProvider extends NFTInterface {
     this.name = config.name
     this.rpc = config.rpc
     this.contracts = config.contracts
+    this.platformUri = config.platformUri
 
     // Go through each RPC, and try to connect to it by testing the connection with isListening, if it works, we use it, if it doesn't, we try the next one
     // this.rpc.forEach(async (rpc: string) => {
@@ -150,7 +151,7 @@ export class EVMProvider extends NFTInterface {
                         mediaUri: this.toIPFSUrl(data.image),
                         address,
                         provider: this.name,
-                        platformUri: '',
+                        platformUri: `${this.platformUri}${contract.address}`,
                         attributes: data?.attributes,
                         collection: {
                           id: contract.address,

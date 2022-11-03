@@ -19,7 +19,7 @@ export type NFTShort = {
   provider: string
   collection: NFTCollectionDetails | {}
   address: string
-  fetchDetail?: () => Promise<NFTDetail>
+  fetchDetail: () => Promise<NFTDetail>
   nftSpecificData: any
 }
 
@@ -34,6 +34,7 @@ export type EVMChain = {
   contracts: Contract
   name: string
   rpc: string[] // Multiple RPC's incase one doesn't work.
+  platformUri: string
   other: {
     [key: string]: any
   }

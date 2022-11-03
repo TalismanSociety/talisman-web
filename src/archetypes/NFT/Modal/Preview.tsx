@@ -111,8 +111,7 @@ const StyledPreview = styled(Preview)`
   position: relative;
   width: 100%;
   padding-bottom: 100%;
-  background-color: transparent;
-  background-color: var(--color-dark);
+  background-color: var(--color-controlBackground);
 
   > * {
     position: absolute;

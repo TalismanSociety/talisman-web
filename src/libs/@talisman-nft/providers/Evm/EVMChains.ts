@@ -28,12 +28,13 @@ export const EVMChains: { [key: string]: EVMChain } = {
         totalSupply: 999999,
       },
     },
-    name: 'moonriver',
+    name: 'Moonriver',
     rpc: [
       'https://moonriver.api.onfinality.io/public',
       'https://moonriver-rpc.dwellir.com',
       'https://moonriver.public.blastapi.io',
     ],
+    platformUri: 'https://moonriver.moonscan.io/address/',
     other: {},
   },
   moonbeam: {
@@ -141,8 +142,9 @@ export const EVMChains: { [key: string]: EVMChain } = {
         totalSupply: 10000,
       },
     },
-    name: 'moonbeam',
+    name: 'Moonbeam',
     rpc: ['https://moonbeam.api.onfinality.io/public'],
+    platformUri: 'https://moonbeam.moonscan.io/address/',
     other: {},
   },
   polygon: {
@@ -154,8 +156,9 @@ export const EVMChains: { [key: string]: EVMChain } = {
         totalSupply: 99999,
       },
     },
-    name: 'polygon',
+    name: 'Polygon',
     rpc: ['https://polygon-mainnet.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161'],
+    platformUri: 'https://polygonscan.com/address/',
     other: {},
   },
   astar: {
@@ -193,6 +196,7 @@ export const EVMChains: { [key: string]: EVMChain } = {
     },
     name: 'Astar',
     rpc: ['https://astar.api.onfinality.io/public', 'https://astar-rpc.dwellir.com'],
+    platformUri: 'https://blockscout.com/astar/token/',
     other: {},
   },
 }

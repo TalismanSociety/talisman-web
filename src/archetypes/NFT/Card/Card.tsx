@@ -19,6 +19,8 @@ function Card({ className, nft }: CardProps) {
     <>
       {open && (
         <AlertDialog
+          title={nft.name ?? nft.id}
+          subtitle={nft?.collection?.name ?? nft?.provider}
           open={true}
           content={<Modal id={nft.id} />}
           onRequestDismiss={() => setOpen(false)}
