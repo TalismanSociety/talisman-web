@@ -9,15 +9,19 @@ import * as Portfolio from '@libs/portfolio'
 import TalismanProvider from '@libs/talisman'
 import * as Tokenprices from '@libs/tokenprices'
 import Routes from '@routes'
+import posthog from 'posthog-js'
 import React, { Suspense } from 'react'
 import { Toaster } from 'react-hot-toast'
 import { BrowserRouter as Router } from 'react-router-dom'
 import { RecoilRoot } from 'recoil'
 
 import ThemeProvider from './App.Theme'
-import { initPosthog } from './config/posthog'
 
-initPosthog()
+if (process.env.REACT_APP_POSTHOG_AUTH_TOKEN) {
+  posthog.init(process.env.REACT_APP_POSTHOG_AUTH_TOKEN)
+  // eslint-disable-next-line
+  posthog.debug(process.env.NODE_ENV === 'development')
+}
 
 const Loader = () => {
   return (
