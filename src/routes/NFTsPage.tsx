@@ -2,7 +2,6 @@ import { NFT } from '@archetypes'
 import { HiddenNFTGrid } from '@archetypes/NFT'
 import { ExtensionStatusGate, PanelSection } from '@components'
 import Text from '@components/atoms/Text'
-import usePageTrack from '@components/TrackPageView'
 import { WalletNavConnector } from '@components/WalletNavConnector'
 import { css } from '@emotion/react'
 import styled from '@emotion/styled'
@@ -39,8 +38,6 @@ const ExtensionUnavailable = styled(props => {
 
 const NFTsPage = styled(({ className }: any) => {
   const { address } = useActiveAccount()
-
-  usePageTrack()
 
   return (
     <section className={className}>

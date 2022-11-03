@@ -1,6 +1,5 @@
 import { Card, CardLoading, TagLoading } from '@archetypes/Explore'
 import { Dapp, useFetchDapps } from '@archetypes/Explore/hooks'
-import usePageTrack from '@components/TrackPageView'
 import styled from '@emotion/styled'
 import { device } from '@util/breakpoints'
 import { useState } from 'react'
@@ -106,16 +105,12 @@ const StyledExploreGrid = styled(ExploreGrid)`
 
 `
 
-const Explore = styled(({ className }) => {
-  usePageTrack()
-
-  return (
-    <section className={className}>
-      <h1>Explore</h1>
-      <StyledExploreGrid />
-    </section>
-  )
-})`
+const Explore = styled(({ className }) => (
+  <section className={className}>
+    <h1>Explore</h1>
+    <StyledExploreGrid />
+  </section>
+))`
   color: var(--color-text);
   width: 100%;
   max-width: 1280px;
