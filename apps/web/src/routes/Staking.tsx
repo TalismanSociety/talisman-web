@@ -1,9 +1,10 @@
 import PoolStakeItem from '@archetypes/NominationPools/PoolStakeItem'
+import Unstakings from '@archetypes/NominationPools/Unstakings'
 import CircularProgressIndicator from '@components/atoms/CircularProgressIndicator'
-import { Info } from '@components/atoms/Icon'
 import Text from '@components/atoms/Text'
 import Details from '@components/molecules/Details'
 import InfoCard from '@components/molecules/InfoCard'
+import PoolExitingInProgress from '@components/recipes/PoolExitingInProgress'
 import PoolSelectorDialog from '@components/recipes/PoolSelectorDialog'
 import { PoolStatus } from '@components/recipes/PoolStatusIndicator'
 import StakingInput from '@components/recipes/StakingInput'
@@ -16,13 +17,20 @@ import { chainReadIdState } from '@domains/common/recoils'
 import { useInflation, usePoolAddForm } from '@domains/nominationPools/hooks'
 import { allPendingPoolRewardsState, eraStakersState, recommendedPoolsState } from '@domains/nominationPools/recoils'
 import { createAccounts } from '@domains/nominationPools/utils'
-import { useTheme } from '@emotion/react'
 import { BN } from '@polkadot/util'
 import { Maybe } from '@util/monads'
-import { motion } from 'framer-motion'
+import { AnimatePresence, motion } from 'framer-motion'
 import { Suspense, useCallback, useEffect, useMemo, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { constSelector, selector, useRecoilValue, useRecoilValueLoadable, waitForAll } from 'recoil'
+import {
+  atom,
+  constSelector,
+  selector,
+  useRecoilState,
+  useRecoilValue,
+  useRecoilValueLoadable,
+  waitForAll,
+} from 'recoil'
 
 const availableToStakeState = selector({
   key: 'Staking/AvailableToStake',
@@ -259,8 +267,15 @@ const PoolSelector = (props: {
   )
 }
 
+const selectedAccountState = atom({
+  key: 'Page/Staking/SelectedAccount',
+  default: selector({
+    key: 'Page/Staking/SelectedAccount/Default',
+    get: ({ get }) => get(polkadotAccountsState)[0],
+  }),
+})
+
 const Input = () => {
-  const theme = useTheme()
   const joinPoolExtrinsic = useExtrinsic('nominationPools', 'join')
 
   const location = useLocation()
@@ -284,7 +299,7 @@ const Input = () => {
   const [selectedPoolId, setSelectedPoolId] = useState(initialPoolId)
   const [showPoolSelector, setShowPoolSelector] = useState(false)
 
-  const [selectedAccount, setSelectedAccount] = useState<typeof accounts[number] | undefined>(accounts[0])
+  const [selectedAccount, setSelectedAccount] = useRecoilState(selectedAccountState)
   const selectedAccountIndex = useMemo(
     () => accounts.findIndex(({ address }) => address === selectedAccount?.address),
     [accounts, selectedAccount?.address]
@@ -373,9 +388,13 @@ const Input = () => {
     'query',
     'nominationPools',
     'metadata.multi',
-    existingPool === undefined ? [selectedPoolId!] : [selectedPoolId!, existingPool.poolId],
+    existingPool === undefined
+      ? [selectedPoolId!]
+      : selectedPoolId === undefined
+      ? [existingPool.poolId, existingPool.poolId]
+      : [selectedPoolId!, existingPool.poolId],
     {
-      enabled: selectedPoolId !== undefined,
+      enabled: selectedPoolId !== undefined || existingPool !== undefined,
     }
   )
 
@@ -389,7 +408,7 @@ const Input = () => {
     if (selectedAccount === undefined && accounts.length > 0) {
       setSelectedAccount(accounts[0])
     }
-  }, [accounts, selectedAccount])
+  }, [accounts, selectedAccount, setSelectedAccount])
 
   useEffect(() => {
     setSelectedPoolId(initialPoolId)
@@ -421,7 +440,7 @@ const Input = () => {
             }))}
             onSelectAccount={useCallback(
               x => setSelectedAccount(accounts.find(account => account.address === x.address)!),
-              [accounts]
+              [accounts, setSelectedAccount]
             )}
             amount={amount}
             fiatAmount={localizedFiatAmount ?? ''}
@@ -471,39 +490,7 @@ const Input = () => {
         >
           {existingPool !== undefined &&
             (existingPool.points.isZero() ? (
-              <div
-                css={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  padding: '3.2rem',
-                  borderRadius: '1.6rem',
-                  backgroundColor: theme.color.surface,
-                }}
-              >
-                <Text.Body
-                  alpha="high"
-                  css={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.25em',
-                    color: theme.color.primary,
-                    fontWeight: 'bold',
-                    marginBottom: '2.4rem',
-                  }}
-                >
-                  <Info width="1em" height="1em" css={{ verticalAlign: 'middle' }} /> You are leaving your current pool
-                </Text.Body>
-                <Text.Body>
-                  Select a different account to continue staking.
-                  <br />
-                  <br />
-                  You can check the current exiting status from the{' '}
-                  <Text.A as={Link} to="/portfolio#staking">
-                    Portfolio page
-                  </Text.A>
-                  .
-                </Text.Body>
-              </div>
+              <PoolExitingInProgress />
             ) : (
               <PoolStakeItem
                 variant="compact"
@@ -522,77 +509,106 @@ const Input = () => {
   )
 }
 
-const Staking = () => {
+const PageUnstakings = () => {
+  const selectedAccount = useRecoilValue(selectedAccountState)
+
   return (
+    <AnimatePresence mode="popLayout">
+      <motion.div
+        key={selectedAccount?.address}
+        initial={{ y: 10, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        exit={{ y: -10, opacity: 0 }}
+        transition={{ duration: 0.2 }}
+      >
+        <Unstakings account={selectedAccount?.address} showHeader={false} compact />
+      </motion.div>
+    </AnimatePresence>
+  )
+}
+
+const Staking = () => (
+  <div
+    css={{
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      padding: '6.4rem 1.8rem 1.8rem 1.8rem',
+    }}
+  >
     <div
       css={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        padding: '6.4rem 1.8rem 1.8rem 1.8rem',
+        '@media (min-width: 768px)': {
+          width: '86rem',
+        },
       }}
     >
+      <Suspense
+        fallback={
+          <div
+            css={{
+              'display': 'flex',
+              'flexDirection': 'column',
+              'gap': '1.6rem',
+              'marginBottom': '5.5rem',
+              '@media (min-width: 768px)': {
+                'flexDirection': 'row',
+                '> *': { flex: 1 },
+              },
+            }}
+          >
+            <InfoCard
+              headlineText="Available to stake"
+              text={<CircularProgressIndicator size="1em" />}
+              supportingText={<CircularProgressIndicator size="1em" />}
+            />
+            <InfoCard
+              headlineText="Staking"
+              text={<CircularProgressIndicator size="1em" />}
+              supportingText={<CircularProgressIndicator size="1em" />}
+            />
+            <InfoCard headlineText="Rewards" text={<CircularProgressIndicator size="1em" />} />
+            <InfoCard
+              headlineText="Unstaking"
+              text={<CircularProgressIndicator size="1em" />}
+              supportingText={<CircularProgressIndicator size="1em" />}
+            />
+          </div>
+        }
+      >
+        <Statistics />
+      </Suspense>
+
       <div
         css={{
+          'display': 'flex',
+          'flexDirection': 'column',
+          'gap': '5.5rem',
           '@media (min-width: 768px)': {
-            width: '86rem',
+            flexDirection: 'row',
+            gap: '1.6rem',
           },
         }}
       >
-        <Suspense
-          fallback={
-            <div
-              css={{
-                'display': 'flex',
-                'flexDirection': 'column',
-                'gap': '1.6rem',
-                'marginBottom': '5.5rem',
-                '@media (min-width: 768px)': {
-                  'flexDirection': 'row',
-                  '> *': { flex: 1 },
-                },
-              }}
-            >
-              <InfoCard
-                headlineText="Available to stake"
-                text={<CircularProgressIndicator size="1em" />}
-                supportingText={<CircularProgressIndicator size="1em" />}
-              />
-              <InfoCard
-                headlineText="Staking"
-                text={<CircularProgressIndicator size="1em" />}
-                supportingText={<CircularProgressIndicator size="1em" />}
-              />
-              <InfoCard headlineText="Rewards" text={<CircularProgressIndicator size="1em" />} />
-              <InfoCard
-                headlineText="Unstaking"
-                text={<CircularProgressIndicator size="1em" />}
-                supportingText={<CircularProgressIndicator size="1em" />}
-              />
-            </div>
-          }
-        >
-          <Statistics />
-        </Suspense>
         <div
           css={{
-            '@media (min-width: 768px)': {
-              'display': 'flex',
-              'gap': '3.2rem',
-              '> *': { flex: 1 },
-            },
+            flex: '40rem',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '1.6rem',
           }}
         >
-          <div css={{ marginBottom: '5.5rem' }}>
-            <Suspense fallback={<StakingInput.Skeleton />}>
-              <Input />
-            </Suspense>
-          </div>
-          <Faq />
+          <Suspense fallback={<StakingInput.Skeleton />}>
+            <Input />
+          </Suspense>
+          <Suspense>
+            <PageUnstakings />
+          </Suspense>
         </div>
+        <Faq />
       </div>
     </div>
-  )
-}
+  </div>
+)
 
 export default Staking
