@@ -17,6 +17,7 @@ import { eraStakersState, recommendedPoolsState } from '@domains/nominationPools
 import { createAccounts } from '@domains/nominationPools/utils'
 import { useTheme } from '@emotion/react'
 import { BN } from '@polkadot/util'
+import { Maybe } from '@util/monads'
 import { differenceInHours, formatDistance, formatDuration, intervalToDuration } from 'date-fns'
 import { Suspense, useCallback, useEffect, useMemo, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
@@ -267,13 +268,15 @@ const Input = () => {
 
   const location = useLocation()
 
-  const poolIdFromSearch = useMemo(() => {
-    const rawPoolId = new URLSearchParams(location.search).get('poolId')
-
-    try {
-      return rawPoolId === null ? undefined : parseInt(rawPoolId)
-    } catch {}
-  }, [location.search])
+  const poolIdFromSearch = useMemo(
+    () =>
+      Maybe.of(new URLSearchParams(location.search).get('poolId')).mapOrUndefined(x => {
+        try {
+          return parseInt(x)
+        } catch {}
+      }),
+    [location.search]
+  )
 
   const [api, accounts, recommendedPools] = useRecoilValue(
     waitForAll([apiState, polkadotAccountsState, recommendedPoolsState])
