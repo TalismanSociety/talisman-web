@@ -1,5 +1,5 @@
 import { useTheme } from '@emotion/react'
-import { motion, useMotionValue } from 'framer-motion'
+import { AnimatePresence, motion, useMotionValue } from 'framer-motion'
 import { MouseEventHandler, ReactNode, useCallback, useId, useState } from 'react'
 import ReactDOM from 'react-dom'
 
@@ -47,22 +47,29 @@ const Tooltip = (props: TooltipProps) => {
         ),
       })}
       {Boolean(props.content) &&
+        mouseOver &&
         ReactDOM.createPortal(
-          <motion.div
-            layout
-            id={id}
-            role="tooltip"
-            css={{
-              position: 'fixed',
-              pointerEvents: 'none',
-              backgroundColor: theme.color.foregroundVariant,
-              padding: '0.6rem',
-              borderRadius: '0.4rem',
-            }}
-            style={{ opacity: mouseOver ? 1 : 0, top: y, left: x }}
-          >
-            <Text.Body as="div">{props.content}</Text.Body>
-          </motion.div>,
+          <AnimatePresence>
+            {mouseOver && (
+              <motion.div
+                layout
+                id={id}
+                role="tooltip"
+                css={{
+                  position: 'fixed',
+                  pointerEvents: 'none',
+                  backgroundColor: theme.color.foregroundVariant,
+                  padding: '0.6rem',
+                  borderRadius: '0.4rem',
+                }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1, transition: { delay: 0.125 } }}
+                style={{ top: y, left: x }}
+              >
+                <Text.Body as="div">{props.content}</Text.Body>
+              </motion.div>
+            )}
+          </AnimatePresence>,
           document.querySelector('dialog[open]') ?? document.body
         )}
     </>
