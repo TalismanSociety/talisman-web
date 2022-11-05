@@ -11,6 +11,7 @@
     "@apollo/client": "^3.6.9",
     "@emotion/react": "^11.10.4",
     "@emotion/styled": "^11.10.4",
+    "@floating-ui/react-dom-interactions": "^0.10.3",
     "@google/model-viewer": "^1.11.0",
     "@polkadot/api": "^9.6.1",
     "@polkadot/extension-dapp": "^0.44.6",

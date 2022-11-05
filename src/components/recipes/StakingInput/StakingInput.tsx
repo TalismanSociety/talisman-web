@@ -5,6 +5,7 @@ import Text from '@components/atoms/Text'
 import Select from '@components/molecules/Select'
 import TextInput, { LabelButton } from '@components/molecules/TextInput'
 import { useTheme } from '@emotion/react'
+import { Maybe } from '@util/monads'
 import { AnimatePresence, motion } from 'framer-motion'
 import { ReactNode, useState } from 'react'
 import { Link } from 'react-router-dom'
@@ -54,14 +55,22 @@ const StakingInput = Object.assign(
           gap: '1.6rem',
         }}
       >
-        <Select width="100%">
-          {props.accounts.map(account => (
+        <Select
+          width="100%"
+          placeholder="Select account"
+          value={props.accounts.findIndex(x => x.selected)}
+          onChange={value =>
+            Maybe.of(value)
+              .map(x => props.accounts[Number(x)])
+              .map(props.onSelectAccount)
+          }
+        >
+          {props.accounts.map((account, index) => (
             <Select.Item
-              selected={account.selected}
+              value={index}
               leadingIcon={<Identicon value={account.address} size={40} />}
               headlineText={account.name}
               supportingText={account.balance}
-              onClick={() => props.onSelectAccount(account)}
             />
           ))}
         </Select>
