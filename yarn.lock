@@ -3242,6 +3242,47 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@floating-ui/core@npm:^1.0.1":
+  version: 1.0.1
+  resolution: "@floating-ui/core@npm:1.0.1"
+  checksum: c8a5f1a491788e5bebfe747e9372df2c7cbee0d8790ddf95e25149ac91ccf1a2cca8f768029826cfd3d687617c1d0f3241b97f1648bdf2a28d421f39e79c2eee
+  languageName: node
+  linkType: hard
+
+"@floating-ui/dom@npm:^1.0.0":
+  version: 1.0.4
+  resolution: "@floating-ui/dom@npm:1.0.4"
+  dependencies:
+    "@floating-ui/core": ^1.0.1
+  checksum: f038ad74c8c0d4e3668705396c9955018ec4fce5de4a3ebc0d2317fa10a0dbae3ff6c9d331423014ab7558864977a83a1664be2800cb1a1d57cd35647a3d4907
+  languageName: node
+  linkType: hard
+
+"@floating-ui/react-dom-interactions@npm:^0.10.3":
+  version: 0.10.3
+  resolution: "@floating-ui/react-dom-interactions@npm:0.10.3"
+  dependencies:
+    "@floating-ui/react-dom": ^1.0.0
+    aria-hidden: ^1.1.3
+  peerDependencies:
+    react: ">=16.8.0"
+    react-dom: ">=16.8.0"
+  checksum: 8f3dbe9ab8b59edec825209a488c6e25b18e1019691c6d0cfa3ada0b83226efc76f4d06bfdd3cc12a27813cff197e1988917d371204d119ba67bd4e3c3c3a3c8
+  languageName: node
+  linkType: hard
+
+"@floating-ui/react-dom@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "@floating-ui/react-dom@npm:1.0.0"
+  dependencies:
+    "@floating-ui/dom": ^1.0.0
+  peerDependencies:
+    react: ">=16.8.0"
+    react-dom: ">=16.8.0"
+  checksum: d79e3c8570b0eaef5e968cd9c69de2c6bb372a5316e4e69a1cd12dae81771863ef430e81b74a0c21cefba663a2f971d8540c7294d7fb3b9807e32ba2a00c1e76
+  languageName: node
+  linkType: hard
+
 "@google/model-viewer@npm:^1.11.0":
   version: 1.11.0
   resolution: "@google/model-viewer@npm:1.11.0"
@@ -7637,6 +7678,7 @@ __metadata:
     "@craco/craco": ^6.4.5
     "@emotion/react": ^11.10.4
     "@emotion/styled": ^11.10.4
+    "@floating-ui/react-dom-interactions": ^0.10.3
     "@google/model-viewer": ^1.11.0
     "@graphql-codegen/cli": ^2.13.7
     "@graphql-codegen/client-preset": ^1.0.7
@@ -9609,6 +9651,21 @@ __metadata:
   version: 2.0.1
   resolution: "argparse@npm:2.0.1"
   checksum: 83644b56493e89a254bae05702abf3a1101b4fa4d0ca31df1c9985275a5a5bd47b3c27b7fa0b71098d41114d8ca000e6ed90cad764b306f8a503665e4d517ced
+  languageName: node
+  linkType: hard
+
+"aria-hidden@npm:^1.1.3":
+  version: 1.2.1
+  resolution: "aria-hidden@npm:1.2.1"
+  dependencies:
+    tslib: ^2.0.0
+  peerDependencies:
+    "@types/react": ^16.9.0 || ^17.0.0 || ^18.0.0
+    react: ^16.9.0 || ^17.0.0 || ^18.0.0
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+  checksum: cd8047a0113d5ecc11bce1616ae2772abcb0a6e1da5a70cbfc3555e8da063b0416d62cced3e704b6d424cbf408c1fc21225d69723cd62c3f1f0cf3b41d674c2b
   languageName: node
   linkType: hard
 
