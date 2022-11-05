@@ -3,7 +3,7 @@ import { ChevronLeft, ChevronRight } from '@components/atoms/Icon'
 import Text from '@components/atoms/Text'
 import AlertDialog from '@components/molecules/AlertDialog'
 import { motion } from 'framer-motion'
-import React, { ReactElement, useRef, useState } from 'react'
+import React, { ReactElement, useState } from 'react'
 
 import PoolSelectorItem, { PoolSelectorItemProps } from '../PoolSelectorItem/PoolSelectorItem'
 
