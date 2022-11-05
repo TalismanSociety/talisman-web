@@ -1,4 +1,4 @@
-[context.prod.environment]
+[context.production.environment]
     REACT_APP_APPLICATION_NAME = "Talisman"
     REACT_APP_RAMP_API_KEY = "auu2eae53pvp6pboq7oft9dxh5fznhwq7h6tpaxq"
     REACT_APP_TX_HISTORY_INDEXER = "https://squid.subsquid.io/tx-history/v/v0b/graphql"
