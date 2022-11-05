@@ -6,7 +6,7 @@ import { useCallback, useState } from 'react'
 import { useRecoilCallback, useRecoilValueLoadable } from 'recoil'
 
 import { apiState, chainState } from '../../chains/recoils'
-import { extrinsicMiddleWare } from '../extrinsicMiddleware'
+import { extrinsicMiddleware } from '../extrinsicMiddleware'
 import { toastExtrinsic } from '../utils'
 
 type ExtrinsicMap = PickKnownKeys<{
@@ -70,8 +70,15 @@ export const useExtrinsicBatch = <
               extrinsickeys.map(([module, section], index) => api.tx[module]?.[section]?.(...(params[index] ?? []))!)
             )
             .signAndSend(account, { signer: extension?.signer }, result => {
-              extrinsickeys.forEach(([module, section]) =>
-                extrinsicMiddleWare(module as any, section as any, result, callbackInterface)
+              extrinsickeys.forEach(([module, section], index) =>
+                extrinsicMiddleware(
+                  module as any,
+                  section as any,
+                  account,
+                  params[index] ?? [],
+                  result,
+                  callbackInterface
+                )
               )
 
               if (result.isError) {
