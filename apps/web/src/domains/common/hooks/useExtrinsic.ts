@@ -6,7 +6,7 @@ import { useCallback, useState } from 'react'
 import { useRecoilCallback, useRecoilValueLoadable } from 'recoil'
 
 import { apiState, chainState } from '../../chains/recoils'
-import { extrinsicMiddleWare } from '../extrinsicMiddleware'
+import { extrinsicMiddleware } from '../extrinsicMiddleware'
 import { toastExtrinsic } from '../utils'
 
 export const useExtrinsic = <
@@ -55,7 +55,7 @@ export const useExtrinsic = <
               account,
               { signer: extension?.signer },
               result => {
-                extrinsicMiddleWare(module, section as any, result, callbackInterface)
+                extrinsicMiddleware(module, section as any, account, params, result, callbackInterface)
 
                 if (result.isError) {
                   unsubscribe?.()
