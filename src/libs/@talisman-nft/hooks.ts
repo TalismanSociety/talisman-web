@@ -45,7 +45,7 @@ export const useNftsByAddress = (initialAddress?: string) => {
 
 export const useNftById = (id?: string) => {
   const [loading, setLoading] = useState<boolean>(false)
-  const [nft, setNft] = useState<NFTShort | NFTDetail>()
+  const [nft, setNft] = useState<NFTDetail>()
   const [error, setError] = useState<string | undefined>()
 
   useEffect(() => {
@@ -58,7 +58,7 @@ export const useNftById = (id?: string) => {
       return
     }
 
-    setNft(short)
+    // setNft(short)
     short.fetchDetail().then((nft: NFTDetail) => {
       setNft(nft)
       setLoading(false)

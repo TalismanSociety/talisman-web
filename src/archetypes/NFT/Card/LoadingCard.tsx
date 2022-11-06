@@ -22,7 +22,6 @@ function Card({ className, isLoading }: CardProps) {
       <Preview nft={loadingnft} />
       <div className="information">
         <Info subtitle={loadingnft.provider} title={loadingnft.name} />
-        <span></span>
       </div>
     </div>
   )
@@ -33,7 +32,6 @@ const BlankCard = styled(Card)`
   opacity: ${props => (props.opacity ? props.opacity : '100%')};
   border-radius: 1rem;
   background-color: #262626;
-  cursor: pointer;
 
   .information {
     display: flex;

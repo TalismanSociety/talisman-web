@@ -6,8 +6,6 @@ import { keyframes, useTheme } from '@emotion/react'
 import { ReactNode } from 'react'
 
 export type AlertDialogProps = DialogProps & {
-  title?: string
-  subtitle?: string
   content: ReactNode
   confirmButton?: ReactNode
   dismissButton?: ReactNode
@@ -61,10 +59,7 @@ const AlertDialog = (props: AlertDialogProps) => {
       <header
         css={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '2.6rem' }}
       >
-        <div css={{ display: 'flex', flexDirection: 'column', gap: '0.25em' }}>
-          <Text.H4 css={{ marginBottom: 0 }}>{props.title}</Text.H4>
-          <Text.Body>{props.subtitle}</Text.Body>
-        </div>
+        <Text.H4 css={{ marginBottom: 0 }}>{props.title}</Text.H4>
         <Button variant="noop" onClick={props.onRequestDismiss}>
           <X width="1.6rem" height="1.6rem" />
         </Button>

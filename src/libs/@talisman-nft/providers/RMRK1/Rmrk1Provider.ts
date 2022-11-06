@@ -47,7 +47,7 @@ export class Rmrk1Provider extends NFTInterface {
   uri = 'https://gql-rmrk1.rmrk.link/v1/graphql'
   collectionUri = 'https://singular.rmrk.app/api/stats/collection/'
   indexUri = 'https://singular.rmrk.app/api/rmrk1/account/'
-  platformUri = ''
+  platformUri = 'https://singular.rmrk.app/collectibles/'
   storageProvider = ''
   client: any
 

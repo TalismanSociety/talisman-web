@@ -90,7 +90,6 @@ const Preview = ({ className, nft, loading }: PreviewType) => {
         className={className}
         css={css`
           > * {
-            // center
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
@@ -111,7 +110,7 @@ const StyledPreview = styled(Preview)`
   position: relative;
   width: 100%;
   padding-bottom: 100%;
-  background-color: var(--color-controlBackground);
+  background-color: #000000;
 
   > * {
     position: absolute;
