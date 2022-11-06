@@ -112,11 +112,11 @@
     "postinstall": "husky install",
     "ci:formatter": "prettier --write",
     "start": "craco start",
-    "build": "craco build",
+    "build": "TSC_COMPILE_ON_ERROR=true craco build",
     "test": "craco test",
     "eject": "craco eject",
     "storybook": "start-storybook -p 6006 -s public",
-    "build-storybook": "build-storybook -s public",
+    "build-storybook": "TSC_COMPILE_ON_ERROR=true build-storybook -s public",
     "tx-history:graphql:codegen": "graphql-codegen -c src/archetypes/Transaction/lib/codegen.ts"
   },
   "importSort": {
