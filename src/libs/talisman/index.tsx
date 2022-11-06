@@ -10,22 +10,36 @@ import { useChainByGenesis as _useChainByGenesis } from './util/hooks'
 /* publically exposed hooks */
 
 // account things
-export * from './account'
+export { useAccountAddresses, useAccounts, useActiveAccount, useAllAccountAddresses } from './account'
 
-// chainmeta things
-export * from './chainmeta'
+// // chainmeta things
+export { useChainmeta, useChainmetaValue } from './chainmeta'
 
-// extension things
-export * from './extension'
+// // extension things
+export { DAPP_NAME, useExtension, useExtensionAutoConnect } from './extension'
 
-// parachain things
-export * from './parachain'
+// // parachain things
+export {
+  useFindParachainDetails,
+  useParachainAssets,
+  useParachainDetailsById,
+  useParachainDetailsBySlug,
+  useParachainsDetails,
+  useParachainsDetailsIndexedById,
+} from './parachain'
 
-// crowdloans stuff
-export * from './crowdloan'
+// // crowdloans stuff
+export {
+  useCrowdloanAggregateStats,
+  useCrowdloanById,
+  useCrowdloanByParachainId,
+  useCrowdloans,
+  useCrowdloansByParachainId,
+  useLatestCrowdloans,
+} from './crowdloan'
 
-// balances stuff
-export * from './balances'
+// // balances stuff
+export { useBalances } from './balances'
 
 // subquery pieces
 export const useQuery = Subquery.useQuery
