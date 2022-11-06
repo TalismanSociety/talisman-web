@@ -1,6 +1,7 @@
 import { accountsState } from '@domains/accounts/recoils'
 import { apiState, nativeTokenDecimalState, nativeTokenPriceState } from '@domains/chains/recoils'
 import { recommendedPoolsState } from '@domains/nominationPools/recoils'
+import posthog from 'posthog-js'
 import { useEffect } from 'react'
 import { Redirect, Route, Switch, useLocation } from 'react-router-dom'
 import { useRecoilValueLoadable, waitForAll } from 'recoil'
@@ -38,6 +39,10 @@ const Routes = () => {
       return observer.disconnect.bind(observer)
     }
   }, [location])
+
+  useEffect(() => {
+    posthog.capture('$pageview')
+  }, [location.pathname])
 
   return (
     <Switch>

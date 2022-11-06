@@ -10,7 +10,7 @@ import { isEthereumChecksum } from '@polkadot/util-crypto'
 import { useChain } from '@talismn/api-react-hooks'
 import { getWalletBySource } from '@talismn/connect-wallets'
 import { encodeAnyAddress } from '@talismn/util'
-import { Deferred } from '@talismn/util-legacy'
+import useDeferred from '@util/useDeferred'
 import {
   PropsWithChildren,
   useContext as _useContext,
@@ -18,7 +18,6 @@ import {
   useCallback,
   useEffect,
   useMemo,
-  useRef,
   useState,
 } from 'react'
 
@@ -101,14 +100,13 @@ export function useSetMoonbeamRewardsAddress(accountAddress?: string) {
   // get api
 
   const { rpcs } = useChain(`${moonbeamRelaychain.id}`)
-  const apiAwaitRef = useRef(Deferred<ApiPromise>())
+  const apiAwaitRef = useDeferred()
   useEffect(() => {
     if (accountAddress === undefined) return
-    if (apiAwaitRef.current.isResolved()) return
     if (!rpcs || rpcs.length < 1) return
 
-    ApiPromise.create({ provider: new WsProvider(rpcs) }).then(api => apiAwaitRef.current.resolve(api))
-  }, [accountAddress, rpcs])
+    ApiPromise.create({ provider: new WsProvider(rpcs) }).then(api => apiAwaitRef.resolve(api))
+  }, [accountAddress, apiAwaitRef, rpcs])
 
   // callbacks
 
@@ -141,7 +139,7 @@ export function useSetMoonbeamRewardsAddress(accountAddress?: string) {
     // build, sign + submit the tx
 
     setState({ type: 'SUBMITTING', rewardsAddress })
-    const api = await apiAwaitRef.current.promise
+    const api = await apiAwaitRef.promise
     const tx = api.tx.crowdloan.addMemo(Moonbeam.paraId, rewardsAddress)
 
     try {
@@ -197,7 +195,7 @@ export function useSetMoonbeamRewardsAddress(accountAddress?: string) {
     } catch (error: any) {
       return setState({ type: 'FAILED', error: error?.message || error.toString() })
     }
-  }, [accountAddress, state, setError])
+  }, [state, accountAddress, setError, apiAwaitRef.promise])
 
   return { state, send, setRewardsAddress }
 }

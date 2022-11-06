@@ -1,23 +1,3 @@
-const CracoAlias = require('craco-alias')
-
-// Provides a number of @<ident> import aliases to the contents of the `src` directory
-//
-// Before:
-// import MyComponent from '../../components/MyComponent'
-//
-// After:
-// import MyComponent from '@components/MyComponent'
-//
-const ImportAliasesPlugin = {
-  plugin: CracoAlias,
-  options: {
-    source: 'tsconfig',
-    baseUrl: './src',
-    tsConfigPath: './tsconfig.paths.json',
-    unsafeAllowModulesOutsideOfSrc: true,
-  },
-}
-
 const babel = {
   presets: [['@babel/preset-react', { runtime: 'automatic', importSource: '@emotion/react' }]],
   plugins: [
@@ -57,5 +37,12 @@ module.exports = {
       },
     },
   },
-  plugins: [ImportAliasesPlugin],
+  plugins: [
+    {
+      plugin: require('react-app-alias').CracoAliasPlugin,
+      options: {
+        tsconfig: 'tsconfig.paths.json',
+      },
+    },
+  ],
 }

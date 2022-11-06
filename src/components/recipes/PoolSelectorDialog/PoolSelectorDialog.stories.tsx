@@ -1,7 +1,10 @@
 import { ComponentMeta, Story } from '@storybook/react'
 
 import PoolSelectorItem from '../PoolSelectorItem/PoolSelectorItem'
-import { Default as PoolSelectorItemDefault } from '../PoolSelectorItem/PoolSelectorItem.stories'
+import {
+  Selected as SelectedPoolSelectorItem,
+  UnSelected as UnSelectedPoolSelectorItem,
+} from '../PoolSelectorItem/PoolSelectorItem.stories'
 import PoolSelectorDialog, { PoolSelectorDialogProps } from './PoolSelectorDialog'
 
 export default {
@@ -18,9 +21,27 @@ export const Default: Story<PoolSelectorDialogProps> = (args: any) => <PoolSelec
 Default.args = {
   open: true,
   children: [
-    <PoolSelectorItemDefault {...(PoolSelectorItemDefault.args as any)} selected />,
-    <PoolSelectorItemDefault {...(PoolSelectorItemDefault.args as any)} selected={false} />,
-    <PoolSelectorItemDefault {...(PoolSelectorItemDefault.args as any)} selected={false} />,
-    <PoolSelectorItemDefault {...(PoolSelectorItemDefault.args as any)} selected={false} />,
+    <SelectedPoolSelectorItem key={0} {...(SelectedPoolSelectorItem.args as any)} selected />,
+    ...new Array(50)
+      .fill(undefined)
+      .map((_, index) => (
+        <UnSelectedPoolSelectorItem
+          key={index + 1}
+          {...(UnSelectedPoolSelectorItem.args as any)}
+          memberCount={index + 1}
+        />
+      )),
+  ],
+}
+
+export const FewItems = Default.bind({})
+
+FewItems.args = {
+  ...Default.args,
+  children: [
+    <SelectedPoolSelectorItem key={0} {...(SelectedPoolSelectorItem.args as any)} />,
+    <UnSelectedPoolSelectorItem key={1} {...(UnSelectedPoolSelectorItem.args as any)} />,
+    <UnSelectedPoolSelectorItem key={2} {...(UnSelectedPoolSelectorItem.args as any)} />,
+    <UnSelectedPoolSelectorItem key={3} {...(UnSelectedPoolSelectorItem.args as any)} />,
   ],
 }

@@ -2,8 +2,8 @@ import { CrowdloanContribution } from '@libs/crowdloans'
 import type { BalanceWithTokensWithPrice } from '@talismn/api-react-hooks'
 import { groupBalancesByAddress } from '@talismn/api-react-hooks'
 import { encodeAnyAddress, planckToTokens } from '@talismn/util'
-import { addBigNumbers, multiplyBigNumbers } from '@talismn/util-legacy'
 import useUniqueId from '@util/useUniqueId'
+import BigNumber from 'bignumber.js'
 import { FC, useContext as _useContext, createContext, useCallback, useEffect, useMemo, useState } from 'react'
 
 // TODO: Replace this lib with an @talismn/api wrapper or redesign.
@@ -48,7 +48,7 @@ export function calculateCrowdloanPortfolioAmounts(
     const tags: Tag[] = ['USD', 'Crowdloans', { Address: address }]
     contributions.forEach(contribution => {
       const contributionTokens = planckToTokens(contribution.amount, tokenDecimals)
-      const contributionUsd = multiplyBigNumbers(contributionTokens, tokenPrice)
+      const contributionUsd = new BigNumber(contributionTokens ?? 0).times(tokenPrice ?? 0).toString()
       amounts.push({ tags, amount: contributionUsd })
     })
   })
@@ -184,43 +184,43 @@ export const Provider: FC<ProviderProps> = ({ children }) => {
   )
 
   const portfolio = useMemo<Portfolio>(() => {
-    let totalUsd = '0'
-    let totalUsdByAddress: { [key: string]: string } = {}
-    let totalAssetsUsd = '0'
-    let totalAssetsUsdByAddress: { [key: string]: string } = {}
-    let totalCrowdloansUsd = '0'
-    let totalCrowdloansUsdByAddress: { [key: string]: string } = {}
-    let totalStakingUsd = '0'
-    let totalStakingUsdByAddress: { [key: string]: string } = {}
+    let totalUsd = new BigNumber(0)
+    let totalUsdByAddress: Record<string, BigNumber> = {}
+    let totalAssetsUsd = new BigNumber(0)
+    let totalAssetsUsdByAddress: Record<string, BigNumber> = {}
+    let totalCrowdloansUsd = new BigNumber(0)
+    let totalCrowdloansUsdByAddress: Record<string, BigNumber> = {}
+    let totalStakingUsd = new BigNumber(0)
+    let totalStakingUsdByAddress: Record<string, BigNumber> = {}
 
     Object.values(totalStore).forEach(({ tags, amount }) => {
       if (tags.includes('USD')) {
-        totalUsd = addBigNumbers(totalUsd, amount)
+        totalUsd = totalUsd.plus(amount)
 
         tags
           .filter((tag): tag is AddressTag => Object.keys(tag).length === 1 && Object.keys(tag)[0] === 'Address')
           .map(tag => tag.Address)
           .forEach(address => {
-            if (!totalUsdByAddress[address]) totalUsdByAddress[address] = '0'
-            totalUsdByAddress[address] = addBigNumbers(totalUsdByAddress[address], amount)
+            if (!totalUsdByAddress[address]) totalUsdByAddress[address] = new BigNumber(0)
+            totalUsdByAddress[address] = totalUsdByAddress[address]!.plus(amount)
 
             if (tags.includes('Assets')) {
-              if (!totalAssetsUsdByAddress[address]) totalAssetsUsdByAddress[address] = '0'
-              totalAssetsUsdByAddress[address] = addBigNumbers(totalAssetsUsdByAddress[address], amount)
+              if (!totalAssetsUsdByAddress[address]) totalAssetsUsdByAddress[address] = new BigNumber(0)
+              totalAssetsUsdByAddress[address] = totalAssetsUsdByAddress[address]!.plus(amount)
             }
             if (tags.includes('Crowdloans')) {
-              if (!totalCrowdloansUsdByAddress[address]) totalCrowdloansUsdByAddress[address] = '0'
-              totalCrowdloansUsdByAddress[address] = addBigNumbers(totalCrowdloansUsdByAddress[address], amount)
+              if (!totalCrowdloansUsdByAddress[address]) totalCrowdloansUsdByAddress[address] = new BigNumber(0)
+              totalCrowdloansUsdByAddress[address] = totalCrowdloansUsdByAddress[address]!.plus(amount)
             }
             if (tags.includes('Staking')) {
-              if (!totalStakingUsdByAddress[address]) totalStakingUsdByAddress[address] = '0'
-              totalStakingUsdByAddress[address] = addBigNumbers(totalStakingUsdByAddress[address], amount)
+              if (!totalStakingUsdByAddress[address]) totalStakingUsdByAddress[address] = new BigNumber(0)
+              totalStakingUsdByAddress[address] = totalStakingUsdByAddress[address]!.plus(amount)
             }
           })
 
-        if (tags.includes('Assets')) totalAssetsUsd = addBigNumbers(totalAssetsUsd, amount)
-        if (tags.includes('Crowdloans')) totalCrowdloansUsd = addBigNumbers(totalCrowdloansUsd, amount)
-        if (tags.includes('Staking')) totalStakingUsd = addBigNumbers(totalStakingUsd, amount)
+        if (tags.includes('Assets')) totalAssetsUsd = totalAssetsUsd.plus(amount)
+        if (tags.includes('Crowdloans')) totalCrowdloansUsd = totalCrowdloansUsd.plus(amount)
+        if (tags.includes('Staking')) totalStakingUsd = totalStakingUsd.plus(amount)
       }
     })
 
@@ -228,15 +228,28 @@ export const Provider: FC<ProviderProps> = ({ children }) => {
     // const hasEmptyBags = !isLoading && totalUsd === '0'
     const hasEmptyBags = false
 
+    const parseBnRecord = (record: Record<string, BigNumber | Record<string, BigNumber>>): Partial<Portfolio> =>
+      Object.fromEntries(
+        Object.entries(record).map(([key, value]) => {
+          if (value instanceof BigNumber) {
+            return [key, value.toString()]
+          } else {
+            return [key, parseBnRecord(value)]
+          }
+        })
+      )
+
     return {
-      totalUsd,
-      totalUsdByAddress,
-      totalAssetsUsd,
-      totalAssetsUsdByAddress,
-      totalCrowdloansUsd,
-      totalCrowdloansUsdByAddress,
-      totalStakingUsd,
-      totalStakingUsdByAddress,
+      ...parseBnRecord({
+        totalUsd,
+        totalUsdByAddress,
+        totalAssetsUsd,
+        totalAssetsUsdByAddress,
+        totalCrowdloansUsd,
+        totalCrowdloansUsdByAddress,
+        totalStakingUsd,
+        totalStakingUsdByAddress,
+      }),
       isLoading,
       hasEmptyBags,
     }

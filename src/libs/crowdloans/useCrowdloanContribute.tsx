@@ -10,7 +10,6 @@ import { addTokensToBalances } from '@talismn/api-react-hooks'
 import Chaindata from '@talismn/chaindata-js'
 import { getWalletBySource } from '@talismn/connect-wallets'
 import { encodeAnyAddress, planckToTokens, tokensToPlanck } from '@talismn/util'
-import { addBigNumbers } from '@talismn/util-legacy'
 import customRpcs from '@util/customRpcs'
 import BigNumber from 'bignumber.js'
 import { useCallback, useEffect, useState } from 'react'
@@ -738,10 +737,9 @@ function useMoonbeamVerifierSignatureThunk(state: ContributeState, dispatch: Dis
 
       // get verificationSignature from moonbeam api
       const guid = uuidv4()
-      const previousTotalContributions = contributions.reduce(
-        (total, contribution) => addBigNumbers(total, contribution.amount),
-        '0'
-      )
+      const previousTotalContributions = contributions
+        .reduce((total, contribution) => new BigNumber(total).plus(contribution.amount), new BigNumber(0))
+        .toString()
       const contributionPlanck = tokensToPlanck(contributionAmount, relayTokenDecimals)
       const makeSignatureResponse = await fetch(`${Moonbeam.api}/make-signature`, {
         method: 'POST',

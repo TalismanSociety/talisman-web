@@ -2,7 +2,7 @@ import { ApolloClient, ApolloQueryResult, InMemoryCache, NormalizedCacheObject, 
 import { BatchHttpLink } from '@apollo/client/link/batch-http'
 import { SupportedRelaychains } from '@libs/talisman/util/_config'
 import { encodeAnyAddress } from '@talismn/util'
-import { addBigNumbers } from '@talismn/util-legacy'
+import BigNumber from 'bignumber.js'
 import {
   PropsWithChildren,
   useContext as _useContext,
@@ -187,15 +187,12 @@ export function useCrowdloanContributions({
           account,
 
           // the total of lcDOT contributions
-          amount: (response?.data?.acala || []).reduce(
-            (amount: string, contribution: any) => addBigNumbers(contribution?.detail?.lcAmount || '0', amount),
-            '0'
-          ),
-          // the total of both direct+lcDOT contributions
-          // amount: (response?.data?.acala || []).reduce(
-          //   (amount: string, contribution: any) => addBigNumbers(contribution?.totalDOTLocked || '0', amount),
-          //   '0'
-          // ),
+          amount: ((response?.data?.acala as any[]) || [])
+            .reduce<BigNumber>(
+              (amount, contribution: any) => new BigNumber(contribution?.detail?.lcAmount ?? 0).plus(amount),
+              new BigNumber(0)
+            )
+            .toString(),
 
           blockNum: 1,
 
@@ -264,7 +261,8 @@ export function groupTotalContributionsByCrowdloan(contributions: CrowdloanContr
   return contributions.reduce((perCrowdloan, contribution) => {
     if (!perCrowdloan[contribution.fund.id]) perCrowdloan[contribution.fund.id] = '0'
     perCrowdloan[contribution.fund.id] =
-      addBigNumbers(perCrowdloan[contribution.fund.id], contribution.amount) || perCrowdloan[contribution.fund.id]
+      new BigNumber(perCrowdloan[contribution.fund.id] ?? 0).plus(contribution.amount).toString() ||
+      perCrowdloan[contribution.fund.id]
     return perCrowdloan
   }, {} as { [key: string]: string })
 }
@@ -273,5 +271,6 @@ export function getTotalContributionForCrowdloan(crowdloan: string, contribution
   return contributions
     .filter(contribution => contribution.fund.id === crowdloan)
     .map(contribution => contribution.amount)
-    .reduce(addBigNumbers, undefined)
+    .reduce((prev, curr) => prev.plus(curr), new BigNumber(0))
+    .toString()
 }

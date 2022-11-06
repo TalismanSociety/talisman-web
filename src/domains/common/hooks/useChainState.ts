@@ -6,7 +6,7 @@ import type {
   UnsubscribePromise,
 } from '@polkadot/api/types'
 import useDeferred from '@util/useDeferred'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Loadable, RecoilLoadable, useRecoilValue } from 'recoil'
 import { Observable } from 'rxjs'
 
@@ -50,6 +50,12 @@ export const useChainState = <
     options.keepPreviousData ? undefined : [typeName, moduleName, sectionName, JSON.stringify(params)]
   )
 
+  // Reference to be compared, to prevent old promise from resolving after new one
+  const promiseRef = useRef(promise)
+  useEffect(() => {
+    promiseRef.current = promise
+  }, [promise])
+
   const [loadable, setLoadable] = useState<Loadable<TResult>>(RecoilLoadable.of(promise))
 
   useEffect(() => {
@@ -73,9 +79,17 @@ export const useChainState = <
 
       // @ts-ignore
       const unsubscribePromise: UnsubscribePromise = func(...parsedParams, result => {
+        if (promise !== promiseRef.current) {
+          return
+        }
+
         setLoadable(RecoilLoadable.of(result))
         resolve(result)
       }).catch((error: any) => {
+        if (promise !== promiseRef.current) {
+          return
+        }
+
         setLoadable(RecoilLoadable.error(error))
         reject(error)
       })

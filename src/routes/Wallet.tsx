@@ -1,33 +1,28 @@
 import { Wallet } from '@archetypes'
 import { DesktopRequired } from '@components'
 import MainBanner from '@components/recipes/MainBanner'
-import usePageTrack from '@components/TrackPageView'
 import styled from '@emotion/styled'
 import { device } from '@util/breakpoints'
 import { isMobileBrowser } from '@util/helpers'
 
 import OwnPools from '../archetypes/NominationPools/OwnPools'
 
-const _Wallet = styled(({ className }) => {
-  usePageTrack()
-
-  return (
-    <section className={className}>
-      {isMobileBrowser() && <DesktopRequired />}
-      <header>
-        <div className="account-overview">
-          <Wallet.Total />
-        </div>
-        <div className="banner">
-          <MainBanner />
-        </div>
-      </header>
-      <Wallet.Assets />
-      <OwnPools />
-      <Wallet.NFTs />
-    </section>
-  )
-})`
+const _Wallet = styled(({ className }) => (
+  <section className={className}>
+    {isMobileBrowser() && <DesktopRequired />}
+    <header>
+      <div className="account-overview">
+        <Wallet.Total />
+      </div>
+      <div className="banner">
+        <MainBanner />
+      </div>
+    </header>
+    <Wallet.Assets />
+    <OwnPools />
+    <Wallet.NFTs />
+  </section>
+))`
   width: 100%;
   max-width: 1280px;
   margin: 3rem auto;

@@ -17,9 +17,10 @@ import { eraStakersState, recommendedPoolsState } from '@domains/nominationPools
 import { createAccounts } from '@domains/nominationPools/utils'
 import { useTheme } from '@emotion/react'
 import { BN } from '@polkadot/util'
+import { Maybe } from '@util/monads'
 import { differenceInHours, formatDistance, formatDuration, intervalToDuration } from 'date-fns'
 import { Suspense, useCallback, useEffect, useMemo, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { constSelector, selector, useRecoilValue, useRecoilValueLoadable, waitForAll } from 'recoil'
 
 const availableToStakeState = selector({
@@ -265,11 +266,25 @@ const Input = () => {
   const joinPoolExtrinsic = useExtrinsic('nominationPools', 'join')
   const bondExtraExtrinsic = useExtrinsic('nominationPools', 'bondExtra')
 
+  const location = useLocation()
+
+  const poolIdFromSearch = useMemo(
+    () =>
+      Maybe.of(new URLSearchParams(location.search).get('poolId')).mapOrUndefined(x => {
+        try {
+          return parseInt(x)
+        } catch {}
+      }),
+    [location.search]
+  )
+
   const [api, accounts, recommendedPools] = useRecoilValue(
     waitForAll([apiState, polkadotAccountsState, recommendedPoolsState])
   )
 
-  const [selectedPoolId, setSelectedPoolId] = useState(recommendedPools[0]?.poolId)
+  const initialPoolId = poolIdFromSearch ?? recommendedPools[0]?.poolId
+
+  const [selectedPoolId, setSelectedPoolId] = useState(initialPoolId)
   const [showPoolSelector, setShowPoolSelector] = useState(false)
 
   const [selectedAccount, setSelectedAccount] = useState<typeof accounts[number] | undefined>(accounts[0])
@@ -359,8 +374,8 @@ const Input = () => {
   }, [accounts, selectedAccount])
 
   useEffect(() => {
-    setSelectedPoolId(recommendedPools[0]?.poolId)
-  }, [recommendedPools])
+    setSelectedPoolId(initialPoolId)
+  }, [initialPoolId, recommendedPools])
 
   return (
     <>
