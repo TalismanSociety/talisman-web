@@ -3,7 +3,7 @@ import { ComponentMeta, Story } from '@storybook/react'
 import Pill, { PillProps } from './Pill'
 
 export default {
-  title: 'Molecules/InfoCard',
+  title: 'Molecules/Pill',
   component: Pill,
   parameters: {
     layout: 'centered',

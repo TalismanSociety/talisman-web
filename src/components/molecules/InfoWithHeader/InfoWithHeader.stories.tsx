@@ -4,7 +4,7 @@ import { ComponentMeta, Story } from '@storybook/react'
 import InfoWithHeader, { InfoWithHeaderProps } from './InfoWithHeader'
 
 export default {
-  title: 'Molecules/InfoCard',
+  title: 'Molecules/InfoWithHeader',
   component: InfoWithHeader,
   parameters: {
     layout: 'centered',
