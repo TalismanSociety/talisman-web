@@ -191,7 +191,7 @@ const NftDialog = (props: NftDialogProps) => {
                     Object.keys(nft?.attributes).map(attribute => (
                       <Pill
                         key={attribute}
-                        headerText={attribute.replace('_', ' ')}
+                        header={attribute.replace('_', ' ')}
                         content={
                           <Text.Body css={{ fontSize: '14px', color: '#FAFAFA' }}>
                             {nft?.attributes[attribute].value}

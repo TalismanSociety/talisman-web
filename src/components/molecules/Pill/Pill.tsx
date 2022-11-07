@@ -2,7 +2,7 @@ import Text from '@components/atoms/Text'
 import { ReactNode } from 'react'
 
 export type PillProps = {
-  headerText: string
+  header: ReactNode
   content: ReactNode
 }
 
@@ -28,7 +28,7 @@ const Pill = (props: PillProps) => {
         },
       }}
     >
-      <Text.Body css={{ fontSize: '12px', marginBottom: '.25em', color: '#A5A5A5' }}>{props.headerText}</Text.Body>
+      <Text.Body css={{ fontSize: '12px', marginBottom: '.25em', color: '#A5A5A5' }}>{props.header}</Text.Body>
       {props.content}
     </article>
   )
