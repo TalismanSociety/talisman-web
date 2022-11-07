@@ -7,10 +7,8 @@ import { Observable } from 'rxjs'
 
 import { apiState } from '../../chains/recoils'
 
-type QueryMap = PickKnownKeys<
-  // @ts-ignore
-  { [P in keyof ApiPromise['query']]: `${P}.${keyof PickKnownKeys<ApiPromise['query'][P]>}` }
->
+type QueryMap = PickKnownKeys<// @ts-ignore
+{ [P in keyof ApiPromise['query']]: `${P}.${keyof PickKnownKeys<ApiPromise['query'][P]>}` }>
 
 type Query = QueryMap[keyof QueryMap]
 

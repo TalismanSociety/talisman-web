@@ -36,7 +36,7 @@ yarn
 4. Copy `.env.example` to `.env` and update the values inside:
 
 ```sh
-cp apps/web/.env.example apps/web/.env
+cp .env.example .env
 ```
 
 5. Start the dev server:

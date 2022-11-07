@@ -20,5 +20,5 @@ jobs:
 
       - run: yarn install --immutable
       - run: yarn prettier --check .
-      - run: yarn eslint .
+      - run: yarn lint
       - run: yarn test
