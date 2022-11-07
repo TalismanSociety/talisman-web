@@ -37,7 +37,8 @@ const ExtensionUnavailable = styled(props => {
 `
 
 const NFTsPage = styled(({ className }: any) => {
-  const { address } = useActiveAccount()
+  const queryParams = new URLSearchParams(window.location.search)
+  const address = queryParams.get('address') ?? useActiveAccount().address
 
   return (
     <section className={className}>

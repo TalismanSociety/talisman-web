@@ -1,9 +1,8 @@
-import AlertDialog from '@components/molecules/AlertDialog'
+import NftDialog from '@archetypes/NFT/Modal/NftDialog'
 import styled from '@emotion/styled'
 import { NFTShort } from '@libs/@talisman-nft/types'
 import { useState } from 'react'
 
-import Modal from '../Modal/Modal'
 import Info from './Info'
 import Preview from './Preview'
 import { NFTIcon } from '..'
@@ -13,19 +12,13 @@ interface CardProps {
   nft: NFTShort
 }
 
-function Card({ className, nft }: CardProps) {
+const NFTCard = ({ className, nft }: CardProps) => {
   const [open, setOpen] = useState(false)
   return (
     <>
-      {open && (
-        <AlertDialog
-          open={true}
-          content={<Modal id={nft.id} />}
-          onRequestDismiss={() => setOpen(false)}
-          css={{ maxWidth: '1280px', padding: '3.2rem 3.2rem 0 3.2rem' }}
-        />
-      )}
-      <div className={className} onClick={() => setOpen(true)}>
+      <NftDialog nft={nft} open={open} onRequestDismiss={() => setOpen(false)} />
+      {/* Card */}
+      <Card onClick={() => setOpen(true)}>
         <Preview nft={nft} />
         <div className="abc">
           <Info subtitle={nft?.collection?.name ?? nft?.provider} title={nft?.name ?? nft?.id} className={undefined} />
@@ -33,16 +26,24 @@ function Card({ className, nft }: CardProps) {
             <NFTIcon type={nft?.type} />
           </span>
         </div>
-      </div>
+      </Card>
     </>
   )
 }
 
-const StyledCard = styled(Card)`
+const Card = styled.div`
   overflow: hidden;
   border-radius: 1rem;
-  background-color: #262626;
+  background-color: #1e1e1e;
   cursor: pointer;
+
+  transition: all 0.2s ease-in-out;
+
+  :hover {
+    box-shadow: 0 0 0 1.2px rgb(90, 90, 90);
+    transform: scale(1.01);
+    transition: all 0.1s ease-in-out;
+  }
 
   .abc {
     display: flex;
@@ -65,4 +66,4 @@ const StyledCard = styled(Card)`
   }
 `
 
-export default StyledCard
+export default NFTCard

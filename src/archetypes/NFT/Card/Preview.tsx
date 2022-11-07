@@ -115,7 +115,7 @@ const StyledPreview = styled(Preview)`
   position: relative;
   width: 100%;
   padding-bottom: 100%;
-  background-color: #333;
+  background-color: #191919;
 
   .loadingArea {
     width: 100%;

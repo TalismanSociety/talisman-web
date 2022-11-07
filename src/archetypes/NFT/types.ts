@@ -5,3 +5,10 @@ export interface NftElement extends NftData {
   FallbackComponent?: ReactElement
   ErrorComponent?: ReactElement
 }
+
+export type NFTChild = {
+  id: string
+  name: string
+  mediaUri: string
+  serialNumber: string
+}

@@ -19,6 +19,7 @@ export class AcalaProvider extends NFTInterface {
   platformUri = 'https://apps.acala.network/portfolio/nft/'
   storageProvider = ''
   detailedItems: { [key: string]: any } = {}
+  tokenCurrency = 'ACA'
 
   webSocket: ApiPromise | null = null
 
@@ -171,6 +172,7 @@ export class AcalaProvider extends NFTInterface {
                 floorPrice: null,
               },
               nftSpecificData: null,
+              tokenCurrency: this.tokenCurrency,
             }
 
             this.setItem(this.parseShort(nftDetail))

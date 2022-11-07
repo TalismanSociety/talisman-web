@@ -10,6 +10,7 @@ export class StatemineProvider extends NFTInterface {
   platformUri = 'https://singular.app/collectibles/statemine/'
   storageProvider = ''
   detailedItems: { [key: string]: any } = {}
+  tokenCurrency = 'KSM'
 
   webSocket: ApiPromise | null = null
 
@@ -147,6 +148,7 @@ export class StatemineProvider extends NFTInterface {
               attributes: {},
               nftSpecificData: undefined,
               platformUri: `${this.platformUri}${assetId.collectionId.replaceAll(',', '')}/${assetId.nftTokenId}`,
+              tokenCurrency: this.tokenCurrency,
             }
 
             this.setItem(this.parseShort(nftDetail))

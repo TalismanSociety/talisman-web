@@ -47,9 +47,10 @@ export class Rmrk1Provider extends NFTInterface {
   uri = 'https://gql-rmrk1.rmrk.link/v1/graphql'
   collectionUri = 'https://singular.rmrk.app/api/stats/collection/'
   indexUri = 'https://singular.rmrk.app/api/rmrk1/account/'
-  platformUri = ''
+  platformUri = 'https://singular.rmrk.app/collectibles/'
   storageProvider = ''
   client: any
+  tokenCurrency = 'KSM'
 
   async getClient() {
     if (this.client) return this.client
@@ -159,6 +160,7 @@ export class Rmrk1Provider extends NFTInterface {
             totalCount: collectionInfo?.totalNfts,
             floorPrice: collectionInfo?.floor,
           },
+          tokenCurrency: this.tokenCurrency,
         } as NFTDetail
       })
       .catch((e: any) => {})
