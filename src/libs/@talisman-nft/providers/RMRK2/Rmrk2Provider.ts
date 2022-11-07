@@ -214,7 +214,7 @@ export class Rmrk2Provider extends NFTInterface {
         const children = nft?.children?.map((child: any) => ({
           id: child?.id,
           name: child?.metadata_name,
-          mediaUri: this.items[child?.id]?.mediaUri || this.toIPFSUrl(child?.metadata_image),
+          mediaUri: this.items[child?.id]?.mediaUri ?? this.toIPFSUrl(child?.metadata_image),
           serialNumber: child?.sn.replace(/^0+/, ''),
         }))
 
