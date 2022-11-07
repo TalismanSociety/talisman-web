@@ -13,6 +13,6 @@ export default {
 export const Default: Story<PillProps> = (args: any) => <Pill {...args} />
 
 Default.args = {
-  headerText: 'Head',
-  text: 'Glorious Knight Helm',
+  header: 'Head',
+  content: 'Glorious Knight Helm',
 }
