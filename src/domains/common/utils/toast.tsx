@@ -66,15 +66,10 @@ export const toastExtrinsic = <
           <Text.Body as="div" alpha="high">
             Your transaction failed
           </Text.Body>
-          {/* TODO: can't do instanceof RpcError for some reason */}
-          {error instanceof Error && error.name === 'RpcError' ? (
-            <Text.Body as="div">{(error as RpcError).data}</Text.Body>
-          ) : (
-            <Text.Body as="div">
-              Your <code>{`${module}:${section}`}</code> transaction has failed.
-            </Text.Body>
+          {/* Can't do instanceof RpcError for some reason */}
+          {('data' in error || 'message' in error) && (
+            <Text.Body as="div">{(error as RpcError)?.data ?? (error as Error)?.message}</Text.Body>
           )}
-
           {chain !== undefined && error?.txHash !== undefined && (
             <Text.Body as="div">
               View details on{' '}
