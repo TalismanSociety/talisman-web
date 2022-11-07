@@ -169,18 +169,17 @@ const Select = Object.assign(
         <motion.ul
           ref={floating}
           variants={{
-            true: { height: 'unset', transitionEnd: { overflow: 'auto' } },
+            true: { height: 'unset', display: 'block', transitionEnd: { overflow: 'auto' } },
             false: { height: 0, overflow: 'hidden', transitionEnd: { display: 'none' } },
           }}
           css={{
-            margin: 0,
-            padding: 0,
-            paddingTop: OVERLAP,
-            borderBottomLeftRadius: '0.5rem',
-            borderBottomRightRadius: '0.5rem',
-            backgroundColor: theme.color.foreground,
-            listStyle: 'none',
-            li: {
+            'margin': 0,
+            'padding': 0,
+            'borderBottomLeftRadius': '0.5rem',
+            'borderBottomRightRadius': '0.5rem',
+            'backgroundColor': theme.color.foreground,
+            'listStyle': 'none',
+            'li': {
               'padding': '1.5rem 1.25rem',
               'backgroundColor': theme.color.foreground,
               ':hover': {
@@ -192,6 +191,16 @@ const Select = Object.assign(
               ':last-child': {
                 padding: '1.5rem 1.25rem 1rem 1.25rem',
               },
+            },
+            // Top spacer for animation overlap
+            '::before': {
+              content: '""',
+              display: 'block',
+              position: 'sticky',
+              top: 0,
+              height: OVERLAP,
+              backgroundColor: theme.color.foreground,
+              zIndex: 1,
             },
           }}
           {...getFloatingProps({
