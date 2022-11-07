@@ -192,7 +192,11 @@ const NftDialog = (props: NftDialogProps) => {
                       <Pill
                         key={attribute}
                         headerText={attribute.replace('_', ' ')}
-                        text={nft?.attributes[attribute].value}
+                        content={
+                          <Text.Body css={{ fontSize: '14px', color: '#FAFAFA' }}>
+                            {nft?.attributes[attribute].value}
+                          </Text.Body>
+                        }
                       />
                     ))
                   )}
