@@ -144,7 +144,7 @@ const NftDialog = (props: NftDialogProps) => {
             <>
               {/* Main Details */}
               <InfoWithHeader
-                headerText={nft?.collection?.name || nft?.provider || 'Unknown'}
+                header={nft?.collection?.name ?? nft?.provider ?? 'Unknown'}
                 content={
                   <Text.H3
                     css={{
@@ -251,7 +251,7 @@ const NftDialog = (props: NftDialogProps) => {
                 }}
               >
                 <InfoWithHeader
-                  headerText="Network"
+                  header="Network"
                   content={
                     <span>
                       <a href={nft?.platformUri} target="_blank" rel="noreferrer" css={{ color: '#fff' }}>
@@ -263,7 +263,7 @@ const NftDialog = (props: NftDialogProps) => {
                 />
                 {nft?.collection?.floorPrice && (
                   <InfoWithHeader
-                    headerText="Floor Price"
+                    header="Floor Price"
                     content={
                       <span css={{ color: '#fff' }}>
                         {nft?.collection?.floorPrice} {nft?.tokenCurrency}
@@ -273,7 +273,7 @@ const NftDialog = (props: NftDialogProps) => {
                 )}
                 {nft?.serialNumber && (
                   <InfoWithHeader
-                    headerText="Edition"
+                    header="Edition"
                     content={
                       <span css={{ color: '#fff' }}>
                         #{nft?.serialNumber}

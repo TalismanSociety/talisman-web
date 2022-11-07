@@ -2,7 +2,7 @@ import Text from '@components/atoms/Text'
 import { ReactNode } from 'react'
 
 export type InfoWithHeaderProps = {
-  headerText: string
+  header: ReactNode
   content: ReactNode
 }
 
@@ -19,7 +19,7 @@ const InfoWithHeader = (props: InfoWithHeaderProps) => {
           whiteSpace: 'nowrap',
         }}
       >
-        {props.headerText}
+        {props.header}
       </Text.Body>
       {props.content}
     </article>
