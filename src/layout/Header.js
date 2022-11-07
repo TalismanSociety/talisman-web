@@ -182,6 +182,9 @@ const Header = styled(({ className, isMobile, mobileMenuOpen, dispatch }) => {
     </header>
   )
 })`
+  position: sticky;
+  top: 0;
+  z-index: 10; /* just to be safe */
   display: grid;
   grid-template: 1fr / auto 0fr 2fr;
   max-height: 64px;
