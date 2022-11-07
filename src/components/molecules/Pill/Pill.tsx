@@ -1,5 +1,4 @@
 import Text from '@components/atoms/Text'
-import { ReactNode } from 'react'
 
 export type PillProps = {
   headerText: string

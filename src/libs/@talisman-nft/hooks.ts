@@ -5,7 +5,7 @@ import { NFTFactory } from './nftFactory'
 import { EVMProvider, Rmrk1Provider, Rmrk2Provider, StatemineProvider } from './providers'
 import { EVMChains } from './providers/Evm/EVMChains'
 import { NFTInterface } from './providers/NFTInterface'
-import { EVMChain, NFTData, NFTDetail, NFTShort } from './types'
+import { EVMChain, NFTData, NFTDetail } from './types'
 
 // Base providers
 const providers: NFTInterface[] = [

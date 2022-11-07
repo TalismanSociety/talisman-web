@@ -1,6 +1,5 @@
 import StyledPreview from '@archetypes/NFT/Modal/Preview'
 import Button from '@components/atoms/Button'
-import CircularProgressIndicator from '@components/atoms/CircularProgressIndicator'
 import Dialog, { DialogProps } from '@components/atoms/Dialog'
 import { ExternalLink, Layers, X } from '@components/atoms/Icon'
 import Text from '@components/atoms/Text'
@@ -9,6 +8,8 @@ import Pill from '@components/molecules/Pill'
 import { keyframes } from '@emotion/react'
 import { useNftById } from '@libs/@talisman-nft'
 import { NFTDetail } from '@libs/@talisman-nft/types'
+
+import { NFTChild } from '../types'
 
 export type NftDialogProps = DialogProps & {
   nft: NFTDetail
@@ -102,15 +103,17 @@ const NftDialog = (props: NftDialogProps) => {
         {/* Details Section */}
         <section
           css={{
-            width: '100%',
-            maxHeight: '50rem',
-            overflowY: 'scroll',
-            maxWidth: 'calc(100% - 50rem)',
-            display: 'flex',
-            flexDirection: 'column',
-            padding: '2rem 3rem',
-            transition: 'height .5s ease',
-            gap: '2em',
+            'width': '100%',
+            'maxHeight': '50rem',
+            'overflowY': 'scroll',
+            'maxWidth': 'calc(100% - 50rem)',
+            'display': 'flex',
+            'flexDirection': 'column',
+            'padding': '2rem 3rem',
+            'transition': 'height .5s ease',
+            '> *': {
+              marginBottom: '2rem',
+            },
           }}
         >
           {/* Main Details */}
@@ -138,13 +141,7 @@ const NftDialog = (props: NftDialogProps) => {
           {nft?.description && (
             <article
               css={{
-                'maxWidth': '478px',
-                '-webkit-box-orient': 'vertical',
-                'display': '-webkit-box',
-                '-webkit-line-clamp': '4',
-                'overflow': 'hidden',
-                'text-overflow': 'ellipsis',
-                'white-space': 'normal',
+                maxWidth: '478px',
               }}
             >
               <Text.Body>{nft?.description}</Text.Body>
@@ -160,8 +157,6 @@ const NftDialog = (props: NftDialogProps) => {
                 flexDirection: 'row',
                 flexWrap: 'wrap',
                 gap: '.5em',
-                maxHeight: '11rem',
-                overflow: 'hidden',
               }}
             >
               {nft?.attributes['Migrated from'] ? (
@@ -177,15 +172,52 @@ const NftDialog = (props: NftDialogProps) => {
               )}
             </div>
           )}
-
-          {/* Extra Details Section */}
+          {nft?.nftSpecificData?.children?.length > 0 && (
+            <div
+              css={{
+                display: 'flex',
+                flexDirection: 'row',
+                maxWidth: '480px',
+                flexWrap: 'wrap',
+                gap: '1rem',
+              }}
+            >
+              {nft?.nftSpecificData?.children?.map((child: NFTChild) => (
+                <div
+                  css={{
+                    'width': '6rem',
+                    'height': '6rem',
+                    'borderRadius': '1rem',
+                    'backgroundColor': 'rgb(8,8,8)',
+                    'border': '1px transparent solid',
+                    ':hover': {
+                      border: '1px solid #FFFFFF',
+                      cursor: 'help',
+                    },
+                    'transition': 'all .2s ease-in-out',
+                  }}
+                  title={`${child.name} #${child.serialNumber}`}
+                >
+                  <img
+                    src={child?.mediaUri}
+                    alt={child.name}
+                    css={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover',
+                      borderRadius: '1rem',
+                    }}
+                  />
+                </div>
+              ))}
+            </div>
+          )}
           <section
             css={{
               display: 'flex',
               flexDirection: 'row',
               justifyContent: 'flex-start',
               gap: '1.5em',
-              marginTop: 'auto',
             }}
           >
             <InfoWithHeader

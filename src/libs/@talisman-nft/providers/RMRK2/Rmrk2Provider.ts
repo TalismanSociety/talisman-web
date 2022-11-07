@@ -31,6 +31,12 @@ const QUERY_DETAIL = gql`
       metadata
       metadata_name
       metadata_description
+      children {
+        id
+        metadata_name
+        metadata_image
+        sn
+      }
       resources {
         metadata_content_type
         thumb
@@ -204,6 +210,13 @@ export class Rmrk2Provider extends NFTInterface {
           : null
         const collectionInfo = await this.fetchNFTs_CollectionInfo(nft?.collection?.id, this.collectionUri)
 
+        const children = nft?.children?.map((child: any) => ({
+          id: child?.id,
+          name: child?.metadata_name,
+          mediaUri: this.items[child?.id]?.mediaUri || this.toIPFSUrl(child?.metadata_image),
+          serialNumber: child?.sn.replace(/^0+/, ''),
+        }))
+
         return {
           id: nft?.id,
           name: nft?.metadata_name || nft?.symbol,
@@ -224,6 +237,7 @@ export class Rmrk2Provider extends NFTInterface {
           },
           nftSpecificData: {
             isComposable: indexedItemRef?.nftSpecificData?.isComposable,
+            children,
           },
         } as NFTDetail
       })
