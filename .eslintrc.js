@@ -2,7 +2,6 @@ module.exports = {
   extends: [
     'react-app',
     'react-app/jest',
-    'plugin:testing-library/react',
     'plugin:storybook/recommended',
 
     // make sure this one comes last

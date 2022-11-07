@@ -7,6 +7,7 @@
 .yarn/*
 !.yarn/releases
 !.yarn/plugins
+!.yarn/patches
 
 # testing
 /coverage

@@ -7,4 +7,7 @@ module.exports = {
     'storybook-preset-craco',
   ],
   framework: '@storybook/react',
+  core: {
+    builder: 'webpack5',
+  },
 }
