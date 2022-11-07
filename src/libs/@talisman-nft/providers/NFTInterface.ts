@@ -4,8 +4,9 @@ import SubscriptionService from '../SubscriptionService'
 import { NFTData, NFTDetail, NFTDetailArray, NFTShort } from '../types'
 
 export class NFTInterface extends SubscriptionService<NFTData> {
-  name = ''
-  baseIPFSUrl = 'https://talisman.mypinata.cloud/ipfs/'
+  name: string = ''
+  baseIPFSUrl: string = 'https://talisman.mypinata.cloud/ipfs/'
+  tokenCurrency: string = ''
   _count: number = 0
   _isFetching: boolean = false
   _items: { [key: string]: NFTShort } = {}

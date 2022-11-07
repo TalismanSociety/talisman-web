@@ -62,6 +62,7 @@ export class Rmrk2Provider extends NFTInterface {
   collectionUri = 'https://singular.app/api/stats/collection/'
   storageProvider = ''
   client: any
+  tokenCurrency = 'KSM'
 
   async getClient() {
     if (this.client) return this.client
@@ -239,6 +240,7 @@ export class Rmrk2Provider extends NFTInterface {
             isComposable: indexedItemRef?.nftSpecificData?.isComposable,
             children,
           },
+          tokenCurrency: this.tokenCurrency,
         } as NFTDetail
       })
       .catch((e: any) => {})

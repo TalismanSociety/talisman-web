@@ -45,6 +45,7 @@ export class EVMProvider extends NFTInterface {
     this.rpc = config.rpc
     this.contracts = config.contracts
     this.platformUri = config.platformUri
+    this.tokenCurrency = config.tokenCurrency
 
     // Go through each RPC, and try to connect to it by testing the connection with isListening, if it works, we use it, if it doesn't, we try the next one
     // this.rpc.forEach(async (rpc: string) => {
@@ -161,6 +162,7 @@ export class EVMProvider extends NFTInterface {
                         nftSpecificData: {
                           dataDump: data,
                         },
+                        tokenCurrency: this.tokenCurrency,
                       }
 
                       this.setItem(this.parseShort(nftItem))

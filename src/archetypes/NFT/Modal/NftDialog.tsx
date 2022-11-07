@@ -10,6 +10,7 @@ import { useNftById } from '@libs/@talisman-nft'
 import { NFTDetail } from '@libs/@talisman-nft/types'
 
 import { NFTChild } from '../types'
+import InfoSkeleton from './InfoSkeleton'
 
 export type NftDialogProps = DialogProps & {
   nft: NFTDetail
@@ -65,35 +66,50 @@ const NftDialog = (props: NftDialogProps) => {
         variant="noop"
         onClick={props.onRequestDismiss}
         css={{
-          position: 'absolute',
-          top: '2.8rem',
-          right: '4.5rem',
+          'position': 'absolute',
+          'top': '2.8rem',
+          'right': '4.5rem',
+          'zIndex': 999,
+          '@media (max-width: 1024px)': {
+            position: 'fixed',
+          },
         }}
       >
         <X width="24px" height="24px" />
       </Button>
       <div
         css={{
-          display: 'flex',
-          flexDirection: 'row',
-          justifyContent: 'space-between',
+          'display': 'flex',
+          'flexDirection': 'row',
+          'justifyContent': 'space-between',
+          '@media (max-width: 1024px)': {
+            flexDirection: 'column',
+            overflow: 'hidden',
+          },
         }}
       >
         {/* Preview Section */}
         <section
           css={{
-            width: '50rem',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
-            alignItems: 'center',
-            backgroundColor: 'var(--color-background)',
+            'width': '50rem',
+            'display': 'flex',
+            'flexDirection': 'column',
+            'justifyContent': 'center',
+            'alignItems': 'center',
+            'backgroundColor': 'var(--color-background)',
+            '@media (max-width: 1024px)': {
+              width: '100%',
+            },
           }}
         >
           <StyledPreview
             css={{
-              width: '50rem',
-              height: '50rem',
+              'width': '50rem',
+              'height': '50rem',
+              '@media (max-width: 1024px)': {
+                width: '100%',
+                height: '100%',
+              },
             }}
             nft={nft}
             loading={props.loading}
@@ -114,143 +130,159 @@ const NftDialog = (props: NftDialogProps) => {
             '> *': {
               marginBottom: '2rem',
             },
+            '@media (max-width: 1024px)': {
+              maxWidth: '100%',
+              maxHeight: '100%',
+              // width: '50rem',
+              // height: '50rem',
+            },
           }}
         >
-          {/* Main Details */}
-          <InfoWithHeader
-            headerText={nft?.collection?.name || nft?.provider}
-            content={
-              <Text.H3
-                css={{
-                  whiteSpace: 'nowrap',
-                  maxWidth: '380px',
-                  textOverflow: 'ellipsis',
-                  overflow: 'hidden',
-                  marginBottom: '0',
-                }}
-              >
-                {props.nft?.name}{' '}
-                {!!props.nft?.nftSpecificData?.isComposable && (
-                  <Layers css={{ color: 'var(--color-primary)', width: '0.75em' }} title="Composable" />
-                )}
-              </Text.H3>
-            }
-          />
-
-          {/* Description */}
-          {nft?.description && (
-            <article
-              css={{
-                maxWidth: '478px',
-              }}
-            >
-              <Text.Body>{nft?.description}</Text.Body>
-            </article>
-          )}
-
-          {/* Attributes */}
-          {nft?.attributes && (
-            <div
-              css={{
-                maxWidth: '478px',
-                display: 'flex',
-                flexDirection: 'row',
-                flexWrap: 'wrap',
-                gap: '.5em',
-              }}
-            >
-              {nft?.attributes['Migrated from'] ? (
-                <Text.Body css={{ color: '#d2fb5b' }}>Migrated NFT</Text.Body>
-              ) : (
-                Object.keys(nft?.attributes).map(attribute => (
-                  <Pill
-                    key={attribute}
-                    headerText={attribute.replace('_', ' ')}
-                    text={nft?.attributes[attribute].value}
-                  />
-                ))
-              )}
-            </div>
-          )}
-          {nft?.nftSpecificData?.children?.length > 0 && (
-            <div
-              css={{
-                display: 'flex',
-                flexDirection: 'row',
-                maxWidth: '480px',
-                flexWrap: 'wrap',
-                gap: '1rem',
-              }}
-            >
-              {nft?.nftSpecificData?.children?.map((child: NFTChild) => (
-                <div
-                  css={{
-                    'width': '6rem',
-                    'height': '6rem',
-                    'borderRadius': '1rem',
-                    'backgroundColor': 'rgb(8,8,8)',
-                    'border': '1px transparent solid',
-                    ':hover': {
-                      border: '1px solid #FFFFFF',
-                      cursor: 'help',
-                    },
-                    'transition': 'all .2s ease-in-out',
-                  }}
-                  title={`${child.name} #${child.serialNumber}`}
-                >
-                  <img
-                    src={child?.mediaUri}
-                    alt={child.name}
-                    css={{
-                      width: '100%',
-                      height: '100%',
-                      objectFit: 'cover',
-                      borderRadius: '1rem',
-                    }}
-                  />
-                </div>
-              ))}
-            </div>
-          )}
-          <section
-            css={{
-              display: 'flex',
-              flexDirection: 'row',
-              justifyContent: 'flex-start',
-              gap: '1.5em',
-            }}
-          >
-            <InfoWithHeader
-              headerText="Network"
-              content={
-                <span>
-                  <a href={nft?.platformUri} target="_blank" rel="noreferrer" css={{ color: '#fff' }}>
-                    {nft?.provider}
-                  </a>
-                  <ExternalLink height={'0.75em'} />
-                </span>
-              }
-            />
-            {nft?.collection?.floorPrice && (
+          {loading ? (
+            <InfoSkeleton />
+          ) : (
+            <>
+              {/* Main Details */}
               <InfoWithHeader
-                headerText="Floor Price"
-                content={<span css={{ color: '#fff' }}>{nft?.collection?.floorPrice}</span>}
-              />
-            )}
-            {nft?.serialNumber && (
-              <InfoWithHeader
-                headerText="Edition"
+                headerText={nft?.collection?.name || nft?.provider || 'Unknown'}
                 content={
-                  <span css={{ color: '#fff' }}>
-                    #{nft?.serialNumber}
-                    {nft?.collection?.totalCount && (
-                      <span css={{ color: '#A5A5A5' }}> / {nft?.collection?.totalCount}</span>
+                  <Text.H3
+                    css={{
+                      whiteSpace: 'nowrap',
+                      maxWidth: '380px',
+                      textOverflow: 'ellipsis',
+                      overflow: 'hidden',
+                      marginBottom: '0',
+                    }}
+                  >
+                    {props.nft?.name}{' '}
+                    {!!props.nft?.nftSpecificData?.isComposable && (
+                      <Layers css={{ color: 'var(--color-primary)', width: '0.75em' }} title="Composable" />
                     )}
-                  </span>
+                  </Text.H3>
                 }
               />
-            )}
-          </section>
+
+              {/* Description */}
+              {nft?.description && (
+                <article
+                  css={{
+                    maxWidth: '478px',
+                  }}
+                >
+                  <Text.Body>{nft?.description}</Text.Body>
+                </article>
+              )}
+
+              {/* Attributes */}
+              {nft?.attributes && (
+                <div
+                  css={{
+                    maxWidth: '478px',
+                    display: 'flex',
+                    flexDirection: 'row',
+                    flexWrap: 'wrap',
+                    gap: '.5em',
+                  }}
+                >
+                  {nft?.attributes['Migrated from'] ? (
+                    <Text.Body css={{ color: '#d2fb5b' }}>Migrated NFT</Text.Body>
+                  ) : (
+                    Object.keys(nft?.attributes).map(attribute => (
+                      <Pill
+                        key={attribute}
+                        headerText={attribute.replace('_', ' ')}
+                        text={nft?.attributes[attribute].value}
+                      />
+                    ))
+                  )}
+                </div>
+              )}
+              {nft?.nftSpecificData?.children?.length > 0 && (
+                <div
+                  css={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    maxWidth: '480px',
+                    flexWrap: 'wrap',
+                    gap: '1rem',
+                  }}
+                >
+                  {nft?.nftSpecificData?.children?.map((child: NFTChild) => (
+                    <div
+                      css={{
+                        'width': '6rem',
+                        'height': '6rem',
+                        'borderRadius': '1rem',
+                        'backgroundColor': 'rgb(8,8,8)',
+                        'border': '1px transparent solid',
+                        ':hover': {
+                          border: '1px solid #FFFFFF',
+                          cursor: 'help',
+                        },
+                        'transition': 'all .2s ease-in-out',
+                      }}
+                      title={`${child.name} #${child.serialNumber}`}
+                    >
+                      <img
+                        src={child?.mediaUri}
+                        alt={child.name}
+                        css={{
+                          width: '100%',
+                          height: '100%',
+                          objectFit: 'cover',
+                          borderRadius: '1rem',
+                        }}
+                      />
+                    </div>
+                  ))}
+                </div>
+              )}
+              <section
+                css={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  justifyContent: 'flex-start',
+                  gap: '1.5em',
+                }}
+              >
+                <InfoWithHeader
+                  headerText="Network"
+                  content={
+                    <span>
+                      <a href={nft?.platformUri} target="_blank" rel="noreferrer" css={{ color: '#fff' }}>
+                        {nft?.provider}
+                      </a>
+                      <ExternalLink height={'0.75em'} />
+                    </span>
+                  }
+                />
+                {nft?.collection?.floorPrice && (
+                  <InfoWithHeader
+                    headerText="Floor Price"
+                    content={
+                      <span css={{ color: '#fff' }}>
+                        {nft?.collection?.floorPrice} {nft?.tokenCurrency}
+                      </span>
+                    }
+                  />
+                )}
+                {nft?.serialNumber && (
+                  <InfoWithHeader
+                    headerText="Edition"
+                    content={
+                      <span css={{ color: '#fff' }}>
+                        #{nft?.serialNumber}
+                        {nft?.collection?.totalCount && (
+                          <span css={{ color: '#A5A5A5' }}> / {nft?.collection?.totalCount}</span>
+                        )}
+                      </span>
+                    }
+                  />
+                )}
+              </section>
+            </>
+          )}
         </section>
       </div>
     </Dialog>
