@@ -1,4 +1,5 @@
 import { Wallet } from '@archetypes'
+import { Crowdloans } from '@archetypes/Wallet'
 import { DesktopRequired } from '@components'
 import MainBanner from '@components/recipes/MainBanner'
 import styled from '@emotion/styled'
@@ -19,6 +20,7 @@ const _Wallet = styled(({ className }: { className?: string }) => (
       </div>
     </header>
     <Wallet.Assets />
+    <Crowdloans />
     <OwnPools />
   </section>
 ))`

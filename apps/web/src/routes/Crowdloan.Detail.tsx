@@ -41,12 +41,7 @@ const CrowdloanDetail = styled(({ className }: { className?: string }) => {
               <Crowdloan.Countdown id={id} />
             </PanelSection>
             <PanelSection>
-              <Crowdloan.Bonus
-                full
-                id={id ?? ''}
-                parachainId={parachainId}
-                prefix={<Parachain.Asset id={parachainId ?? ''} type="logo" />}
-              />
+              <Crowdloan.Bonus full id={id ?? ''} prefix={<Parachain.Asset id={parachainId ?? ''} type="logo" />} />
               <Button onClick={() => openModal(<Crowdloan.Contribute id={id} />)} disabled={uiStatus !== 'active'}>
                 {t('Contribute')}
               </Button>
