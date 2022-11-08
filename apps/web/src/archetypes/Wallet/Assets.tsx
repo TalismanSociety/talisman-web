@@ -77,7 +77,7 @@ const AssetBalance = styled(({ token, balances, address }: AssetBalanceProps) =>
   )
 })``
 
-const Assets = styled(({ className }) => {
+const Assets = styled(({ className }: { className: string }) => {
   const { t } = useTranslation()
 
   const { balances, tokenIds, tokens, assetsValue } = useBalances()
@@ -141,7 +141,7 @@ const Assets = styled(({ className }) => {
     <section className={`wallet-assets ${className}`}>
       <Panel title={t('Assets')} subtitle={balances !== undefined ? fiatTotal : <Loader />}>
         <ExtensionStatusGate unavailable={<ExtensionUnavailable />}>
-          {(balances?.sorted.length || 0) > 0 ? assetBalances : <AssetsLoading />}
+          {(balances?.sorted.length || 0) > 0 ? assetBalances : <AssetsLoading className={className} />}
           {value === 0 && address ? (
             <>
               <PanelSection>
@@ -195,7 +195,7 @@ const Assets = styled(({ className }) => {
 
 export default Assets
 
-const AssetsLoading = styled(({ className }) => {
+const AssetsLoading = styled(({ className }: { className: string }) => {
   const placeholderAssets = Array(5).fill('🍜')
 
   return (

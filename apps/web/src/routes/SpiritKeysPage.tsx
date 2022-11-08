@@ -9,13 +9,13 @@ import { useAllAccountAddresses } from '@libs/talisman'
 import { isMobileBrowser } from '@util/helpers'
 import { useTranslation } from 'react-i18next'
 
-const SpiritKeyPage = styled(({ className }) => {
+const SpiritKeyPage = styled(({ className }: { className: string }) => {
   const { t } = useTranslation('spirit-keys')
   const addresses = useAllAccountAddresses()
   const addressesLoading = addresses === undefined
 
   if (addressesLoading) {
-    return <StyledLoader />
+    return <StyledLoader className={className} />
   }
 
   return (
@@ -23,7 +23,7 @@ const SpiritKeyPage = styled(({ className }) => {
       {isMobileBrowser() && <DesktopRequired />}
       <div className="content">
         <BannerText className="banner-text" />
-        <SpiritKeyUnlockBanner />
+        <SpiritKeyUnlockBanner className={className} />
         <h1 className="intro">{t('intro')}</h1>
         <div className="info">
           <div className="section">

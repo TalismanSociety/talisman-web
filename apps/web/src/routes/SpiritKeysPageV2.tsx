@@ -15,7 +15,7 @@ import getDownloadLink from '@util/getDownloadLink'
 import { DISCORD_JOIN_URL, TALISMAN_SPIRIT_KEYS_RMRK } from '@util/links'
 import { Trans, useTranslation } from 'react-i18next'
 
-const SpiritKeyPlaceholder = styled(({ className }) => {
+const SpiritKeyPlaceholder = styled(({ className }: { className: string }) => {
   return (
     <div className={className}>
       <div className="content">
@@ -53,7 +53,7 @@ const SpiritKeyPlaceholder = styled(({ className }) => {
   }
 `
 
-const SpiritKeyPageV2 = styled(({ className }) => {
+const SpiritKeyPageV2 = styled(({ className }: { className: string }) => {
   const { t } = useTranslation('spirit-keys')
   const { t: tBase } = useTranslation()
   const totalNFTs = useFetchNFTs()
@@ -65,7 +65,7 @@ const SpiritKeyPageV2 = styled(({ className }) => {
   const downloadLink = getDownloadLink()
 
   if (addressesLoading) {
-    return <StyledLoader />
+    return <StyledLoader className={className} />
   }
 
   return (
@@ -76,41 +76,53 @@ const SpiritKeyPageV2 = styled(({ className }) => {
             <div className="no-wallet">
               <p>{tBase('extensionUnavailable.subtitle')}</p>
               <a href={downloadLink} title="Install Talisman" target="_blank" rel="noopener noreferrer">
-                <Button primary>{tBase('Install Talisman Extension')}</Button>
+                <Button className={className} primary>
+                  {tBase('Install Talisman Extension')}
+                </Button>
               </a>
             </div>
           )}
           {status !== 'OK' && isTalismanInstalled && (
             <>
-              <SpiritKeyPlaceholder />
+              <SpiritKeyPlaceholder className={className} />
               <div>{t('spiritClan.alreadyHaveOne')}</div>
               <WalletSelect
                 dappName={DAPP_NAME}
-                triggerComponent={<Button primary>{tBase('Connect wallet')}</Button>}
+                triggerComponent={
+                  <Button className={className} primary>
+                    {tBase('Connect wallet')}
+                  </Button>
+                }
               />
             </>
           )}
-          {status === 'OK' && totalNFTs === undefined && <StyledLoader />}
+          {status === 'OK' && totalNFTs === undefined && <StyledLoader className={className} />}
           {status === 'OK' && totalNFTs && !hasNfts && (
             <>
-              <SpiritKeyPlaceholder />
+              <SpiritKeyPlaceholder className={className} />
               <div>{t('spiritClan.alreadyHaveOne')}</div>
               <WalletSelect
                 dappName={DAPP_NAME}
-                triggerComponent={<Button primary>{tBase('Connect wallet')}</Button>}
+                triggerComponent={
+                  <Button className={className} primary>
+                    {tBase('Connect wallet')}
+                  </Button>
+                }
               />
             </>
           )}
           {hasNfts && (
             <>
-              <SpiritKeyNftImage border />
-              <OwnershipText />
+              <SpiritKeyNftImage className={className} border />
+              <OwnershipText className={className} />
               <div>
                 <a href={DISCORD_JOIN_URL} target="_blank" rel="noreferrer noopener" title="Join Spirit Clan">
-                  <Button primary>{t('spiritClan.joinSpiritClan')}</Button>
+                  <Button className={className} primary>
+                    {t('spiritClan.joinSpiritClan')}
+                  </Button>
                 </a>
               </div>
-              <SpiritKeySender />
+              <SpiritKeySender className={className} />
             </>
           )}
         </div>

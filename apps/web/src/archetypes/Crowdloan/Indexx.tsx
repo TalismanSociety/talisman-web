@@ -103,7 +103,7 @@ const FilterBar = styled(
   }
 `
 
-// const PopularCrowdloans = styled(({ className }) => {
+// const PopularCrowdloans = styled(({ className }: { className: string }) => {
 //   const { crowdloans } = Crowdloan.useFilter()
 //   return (
 //     <Panel className={className}>
@@ -167,7 +167,7 @@ const FilterBar = styled(
 //   )
 // }
 
-const Index = styled(({ withFilter, className }) => {
+const Index = styled(({ withFilter, className }: { withFilter: boolean; className: string }) => {
   const { t } = useTranslation()
   const { crowdloans, count, loading, filterProps } = useFilter()
 
@@ -179,12 +179,12 @@ const Index = styled(({ withFilter, className }) => {
         {/* <LearnCrowdloansBanner />*/}
         {/* <UnlockTalismanBanner /> */}
       </div>
-      {withFilter && <FilterBar {...filterProps} count={count} />}
+      {withFilter && <FilterBar className={className} {...filterProps} count={count} />}
       <Await until={!loading}>
         <NoCrowdloans require={count?.filtered > 0} text={t('noCrowdloans.text')} subtext={t('noCrowdloans.subtext')}>
-          <Grid>
+          <Grid className={className}>
             {crowdloans.map(({ id }) => (
-              <Teaser key={id} id={id} />
+              <Teaser className={className} key={id} id={id} />
             ))}
           </Grid>
         </NoCrowdloans>

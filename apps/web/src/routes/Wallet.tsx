@@ -7,18 +7,18 @@ import { isMobileBrowser } from '@util/helpers'
 
 import OwnPools from '../archetypes/NominationPools/OwnPools'
 
-const _Wallet = styled(({ className }) => (
+const _Wallet = styled(({ className }: { className: string }) => (
   <section className={className}>
     {isMobileBrowser() && <DesktopRequired />}
     <header>
       <div className="account-overview">
-        <Wallet.Total />
+        <Wallet.Total className={className} />
       </div>
       <div className="banner">
         <MainBanner />
       </div>
     </header>
-    <Wallet.Assets />
+    <Wallet.Assets className={className} />
     <OwnPools />
     <Wallet.NFTs />
   </section>

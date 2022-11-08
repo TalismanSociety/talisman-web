@@ -1,7 +1,7 @@
 import styled from '@emotion/styled'
 
 // TODO: Remove
-export const TalismanSeekerPoem = styled(({ className }) => {
+export const TalismanSeekerPoem = styled(({ className }: { className: string }) => {
   return (
     <article className={className}>
       <h1>

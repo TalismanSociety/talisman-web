@@ -8,7 +8,7 @@ import { WalletSelect } from '@talismn/connect-components'
 import getDownloadLink from '@util/getDownloadLink'
 import { useTranslation } from 'react-i18next'
 
-export const NoWalletBanner = styled(({ className }) => {
+export const NoWalletBanner = styled(({ className }: { className: string }) => {
   const { t } = useTranslation('banners')
   const { t: tBase } = useTranslation('banners')
   const isTalismanInstalled = useTalismanInstalled()
@@ -19,11 +19,20 @@ export const NoWalletBanner = styled(({ className }) => {
       <span className="heavy">{t('noWallet.header')}</span>
       <div className="cta">
         {isTalismanInstalled && (
-          <WalletSelect dappName={DAPP_NAME} triggerComponent={<Button primary>{tBase('Connect wallet')}</Button>} />
+          <WalletSelect
+            dappName={DAPP_NAME}
+            triggerComponent={
+              <Button className={className} primary>
+                {tBase('Connect wallet')}
+              </Button>
+            }
+          />
         )}
         {!isTalismanInstalled && (
           <a href={downloadLink} target="_blank" rel="noopener noreferrer">
-            <Button primary>{t('noWallet.primaryCta')}</Button>
+            <Button className={className} primary>
+              {t('noWallet.primaryCta')}
+            </Button>
           </a>
         )}
       </div>

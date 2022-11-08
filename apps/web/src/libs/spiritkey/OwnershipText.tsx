@@ -5,7 +5,7 @@ import { Trans, useTranslation } from 'react-i18next'
 
 import { useFetchNFTs } from './useFetchNFTs'
 
-export const OwnershipText = styled(({ className }) => {
+export const OwnershipText = styled(({ className }: { className: string }) => {
   const { t } = useTranslation('spirit-keys')
   const { status } = useExtensionAutoConnect()
   const totalNFTs = useFetchNFTs()
@@ -14,7 +14,7 @@ export const OwnershipText = styled(({ className }) => {
   const total = hasNfts ? totalNFTs?.length : t('no')
   return (
     <>
-      {status === 'OK' && nftLoading && <StyledLoader />}
+      {status === 'OK' && nftLoading && <StyledLoader className={className} />}
       {!nftLoading && (
         <div className={className}>
           <Trans i18nKey="ownershipText" ns="spirit-keys" count={totalNFTs?.length}>

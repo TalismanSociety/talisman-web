@@ -1,7 +1,7 @@
 import styled from '@emotion/styled'
 import { device } from '@util/breakpoints'
 
-export const TagLoading = styled(({ className }) => {
+export const TagLoading = styled(({ className }: { className: string }) => {
   return (
     <div className={className}>
       <div>Talisman is the coolest 🍜. The explore page will help you find all the Dapps/Daos and Applications.</div>
@@ -45,16 +45,16 @@ export const TagLoading = styled(({ className }) => {
   }
 `
 
-export const CardLoading = styled(({ className }) => {
+export const CardLoading = styled(({ className }: { className: string }) => {
   return (
     <div className={className}>
-      <Card />
-      <Card />
-      <Card />
-      <Card />
-      <Card />
-      <Card />
-      <Card />
+      <Card className={className} />
+      <Card className={className} />
+      <Card className={className} />
+      <Card className={className} />
+      <Card className={className} />
+      <Card className={className} />
+      <Card className={className} />
     </div>
   )
 })`
@@ -79,7 +79,7 @@ export const CardLoading = styled(({ className }) => {
   grid-gap: 2.5rem;
 `
 
-const Card = styled(({ className }) => {
+const Card = styled(({ className }: { className: string }) => {
   return (
     <div className={className}>
       <div className="card-header" />

@@ -370,7 +370,7 @@ const SendNftInput = styled(({ className, onChange, onSendNft }) => {
   }
 `
 
-const SpiritKeySenderModal = styled(({ className }) => {
+const SpiritKeySenderModal = styled(({ className }: { className: string }) => {
   const { t } = useTranslation('spirit-keys')
   const [currentNFT, setCurrentNFT] = useState<number>(0)
   const { status } = useExtensionAutoConnect()
@@ -416,7 +416,7 @@ const SpiritKeySenderModal = styled(({ className }) => {
 
   return (
     <div className={className}>
-      <SpiritKeyNftImage border={false} />
+      <SpiritKeyNftImage className={className} border={false} />
       {(status !== 'OK' || totalNFTs?.length < 1) && (
         <div className="empty-state-buttons-div">
           <JoinButton className="join-discord-button" />
@@ -425,15 +425,16 @@ const SpiritKeySenderModal = styled(({ className }) => {
           </Button>
         </div>
       )}
-      {!hasNfts && <StyledLoader />}
+      {!hasNfts && <StyledLoader className={className} />}
       {hasNfts && (
         <>
           <LeftRightPicker
+            className={className}
             value={<span>#{totalNFTs[currentNFT]?.sn.substring(4)}</span>}
             onLeftPick={() => changeNFT(0)}
             onRightPick={() => changeNFT(1)}
           />
-          <SendNftInput onChange={setToAddress} onSendNft={sendNft} />
+          <SendNftInput className={className} onChange={setToAddress} onSendNft={sendNft} />
           {sendStatus === 'FAILED' && <>{t('Error sending NFT')}</>}
         </>
       )}
@@ -453,7 +454,7 @@ const SpiritKeySenderModal = styled(({ className }) => {
   }
 `
 
-export const SpiritKeySender = styled(({ className }) => {
+export const SpiritKeySender = styled(({ className }: { className: string }) => {
   const { t } = useTranslation('spirit-keys')
   const totalNFTs = useFetchNFTs()
   const hasNfts = totalNFTs?.length > 0
@@ -462,7 +463,10 @@ export const SpiritKeySender = styled(({ className }) => {
     return null
   }
   return (
-    <Button className={`outlined ${className}`} onClick={() => openModal(<SpiritKeySenderModal />)}>
+    <Button
+      className={`outlined ${className}`}
+      onClick={() => openModal(<SpiritKeySenderModal className={className} />)}
+    >
       {t('Send to a friend')}
     </Button>
   )

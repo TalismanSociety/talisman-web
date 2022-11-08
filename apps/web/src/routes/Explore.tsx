@@ -4,7 +4,7 @@ import styled from '@emotion/styled'
 import { device } from '@util/breakpoints'
 import { useState } from 'react'
 
-const ExploreGrid = ({ className }: any) => {
+const ExploreGrid = ({ className }: { className: string }) => {
   const { dapps, loading, error, tags } = useFetchDapps()
   const [selectedTag, setSelectedTag] = useState<string>('All')
 
@@ -12,8 +12,8 @@ const ExploreGrid = ({ className }: any) => {
     <div className={className}>
       {loading ? (
         <>
-          <TagLoading />
-          <CardLoading />
+          <TagLoading className={className} />
+          <CardLoading className={className} />
         </>
       ) : !loading && dapps.length === 0 ? (
         <p>No dapps found</p>
@@ -100,15 +100,13 @@ const StyledExploreGrid = styled(ExploreGrid)`
     }
 
     grid-gap: 2.5rem;
-    }
   }
-
 `
 
-const Explore = styled(({ className }) => (
+const Explore = styled(({ className }: { className: string }) => (
   <section className={className}>
     <h1>Explore</h1>
-    <StyledExploreGrid />
+    <StyledExploreGrid className={className} />
   </section>
 ))`
   color: var(--color-text);

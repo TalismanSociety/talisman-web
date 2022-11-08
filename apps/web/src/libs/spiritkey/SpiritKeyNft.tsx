@@ -2,7 +2,7 @@ import miksySpiritKeysAudio from '@assets/miksy-spirit-keys.mp3'
 import { SimplePlay } from '@components/SimplePlay'
 import styled from '@emotion/styled'
 
-const Attribution = styled(({ className }) => {
+const Attribution = styled(({ className }: { className: string }) => {
   return (
     <span className={className}>
       Music by{' '}
@@ -24,7 +24,7 @@ const Attribution = styled(({ className }) => {
 `
 
 // TODO: Deprecate
-export const SpiritKeyNft = styled(({ className, src }) => {
+export const SpiritKeyNft = styled(({ className, src }: { className: string; src: string }) => {
   // NOTE: Reference usage
   // const baseImage = 'https://talisman.mypinata.cloud/ipfs/bafybeicuuasrqnqndfw3k6rqacfpfil5sc5fhyjh63riqnd2imm5eucrk4'
   // <SpiritKeyNft src={hasNfts ? nft?.image?.replace('ipfs://', 'https://talisman.mypinata.cloud/') : baseImage} />
@@ -40,8 +40,8 @@ export const SpiritKeyNft = styled(({ className, src }) => {
         <div className="floating-card__card__background-scroller"></div>
       </div>
       <div className="spirit-keys-music-info">
-        <SimplePlay src={miksySpiritKeysAudio} />
-        <Attribution />
+        <SimplePlay className={className} src={miksySpiritKeysAudio} />
+        <Attribution className={className} />
       </div>
     </div>
   )

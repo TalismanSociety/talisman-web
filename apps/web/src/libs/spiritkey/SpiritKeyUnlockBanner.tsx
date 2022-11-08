@@ -18,7 +18,7 @@ import { TALISMAN_EXTENSION_DOWNLOAD_URL } from '@util/links'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
-export const SpiritKeyUnlockBanner = styled(({ className }) => {
+export const SpiritKeyUnlockBanner = styled(({ className }: { className: string }) => {
   const { t } = useTranslation('spirit-keys')
   const { t: tBase } = useTranslation()
   const [downloading, setDownloading] = useState(false)
@@ -46,12 +46,12 @@ export const SpiritKeyUnlockBanner = styled(({ className }) => {
   return (
     <Banner className={className} backgroundImage={bannerImage}>
       <div className="center space-y-2">
-        <Draggable id={dragSrcId} disabled={!hasNfts}>
-          <SpiritKeyNftImage border />
+        <Draggable className={className} id={dragSrcId} disabled={!hasNfts}>
+          <SpiritKeyNftImage className={className} border />
         </Draggable>
         <div className="center space-y-1">
-          <OwnershipText />
-          <SpiritKeySender />
+          <OwnershipText className={className} />
+          <SpiritKeySender className={className} />
         </div>
       </div>
       <div className="center">
@@ -78,6 +78,7 @@ export const SpiritKeyUnlockBanner = styled(({ className }) => {
       </div>
       <div className="center relative">
         <Droppable
+          className={className}
           id={dragSrcId}
           onDragEnter={() => setRevealing(true)}
           onDragLeave={() => setRevealing(false)}
