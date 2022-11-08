@@ -85,7 +85,7 @@ const Dropdown = styled(
     closeParent,
     showBuy = false,
   }: {
-    className: string
+    className?: string
     open: any
     handleClose: any
     allAccounts: any
@@ -295,7 +295,7 @@ const Dropdown = styled(
     `}
 `
 
-const Unavailable = styled(({ className }: { className: string }) => {
+const Unavailable = styled(({ className }: { className?: string }) => {
   const { t } = useTranslation()
   const isTalismanInstalled = useTalismanInstalled()
   const title = isTalismanInstalled ? 'Connect wallet' : 'No wallet found'
@@ -328,7 +328,7 @@ const Unavailable = styled(({ className }: { className: string }) => {
   }
 `
 
-const NoAccount = styled(({ className }: { className: string }) => {
+const NoAccount = styled(({ className }: { className?: string }) => {
   const { t } = useTranslation()
   const [walletName, setWalletName] = useState<string | undefined>()
   useEffect(() => {
@@ -362,7 +362,7 @@ const NoAccount = styled(({ className }: { className: string }) => {
   }
 `
 
-const Unauthorized = styled(({ className }: { className: string }) => {
+const Unauthorized = styled(({ className }: { className?: string }) => {
   const [walletName, setWalletName] = useState<string | undefined>()
   useEffect(() => {
     const selectedWalletName = localStorage.getItem('@talisman-connect/selected-wallet-name')
@@ -405,7 +405,7 @@ const Authorized = styled(
     showBuy = false,
     fixedDropdown = false,
   }: {
-    className: string
+    className?: string
     narrow: any
     allAccounts: any
     closeParent: any
@@ -416,9 +416,8 @@ const Authorized = styled(
 
     const [open, setOpen] = useState(false)
 
-    const { switchAccount } = useActiveAccount()
     const { accounts } = useExtensionAutoConnect()
-    const { hasActiveAccount, address, name } = useActiveAccount()
+    const { switchAccount, hasActiveAccount, address, name } = useActiveAccount()
 
     useEffect(() => {
       if (allAccounts) return
