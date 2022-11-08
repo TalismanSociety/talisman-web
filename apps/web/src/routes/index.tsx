@@ -3,7 +3,7 @@ import { apiState, nativeTokenDecimalState, nativeTokenPriceState } from '@domai
 import { recommendedPoolsState } from '@domains/nominationPools/recoils'
 import posthog from 'posthog-js'
 import { useEffect } from 'react'
-import { BrowserRouter, Navigate, Route, Routes, useLocation } from 'react-router-dom'
+import { Navigate, Outlet, createBrowserRouter, useLocation } from 'react-router-dom'
 import { useRecoilValueLoadable, waitForAll } from 'recoil'
 
 import Layout from '../layout'
@@ -45,24 +45,24 @@ const Main = () => {
 
   return (
     <Layout>
-      <Routes>
-        <Route path="/" element={<Navigate to="portfolio" />} />
-        <Route path="portfolio" element={<Wallet />} />
-        <Route path="nfts" element={<NFTsPage />} />
-        <Route path="explore" element={<Explore />} />
-        <Route path="staking" element={<Staking />} />
-        <Route path="history" element={<TransactionHistory />} />
-        <Route path="buy" element={<Buy />} />
-        <Route path="*" element={<Navigate to="/" />} />
-      </Routes>
+      <Outlet />
     </Layout>
   )
 }
 
-const Router = () => (
-  <BrowserRouter>
-    <Main />
-  </BrowserRouter>
-)
-
-export default Router
+export default createBrowserRouter([
+  {
+    path: '/',
+    element: <Main />,
+    children: [
+      { path: '/', element: <Navigate to="portfolio" /> },
+      { path: 'portfolio', element: <Wallet /> },
+      { path: 'nfts', element: <NFTsPage /> },
+      { path: 'explore', element: <Explore /> },
+      { path: 'staking', element: <Staking /> },
+      { path: 'history', element: <TransactionHistory /> },
+      { path: 'buy', element: <Buy /> },
+    ],
+  },
+  { path: '*', element: <Navigate to="/" /> },
+])

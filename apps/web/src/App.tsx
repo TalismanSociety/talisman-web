@@ -8,10 +8,11 @@ import * as MoonbeamContributors from '@libs/moonbeam-contributors'
 import * as Portfolio from '@libs/portfolio'
 import TalismanProvider from '@libs/talisman'
 import * as Tokenprices from '@libs/tokenprices'
-import Router from '@routes'
+import router from '@routes'
 import posthog from 'posthog-js'
 import React, { Suspense } from 'react'
 import { Toaster } from 'react-hot-toast'
+import { RouterProvider } from 'react-router-dom'
 import { RecoilRoot } from 'recoil'
 
 import ThemeProvider from './App.Theme'
@@ -53,7 +54,7 @@ const App: React.FC = () => (
                 <Suspense fallback={<Loader />}>
                   <ModalProvider>
                     <MoonbeamContributors.PopupProvider>
-                      <Router />
+                      <RouterProvider router={router} />
                     </MoonbeamContributors.PopupProvider>
                   </ModalProvider>
                   <Toaster position="top-right" containerStyle={{ top: '6rem' }}>
