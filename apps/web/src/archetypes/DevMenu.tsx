@@ -64,7 +64,11 @@ const DevMenu = () => {
     }
   }, [])
 
-  return showDevMenu && <BaseDevMenu />
+  if (!showDevMenu) {
+    return null
+  }
+
+  return <BaseDevMenu />
 }
 
 export default DevMenu

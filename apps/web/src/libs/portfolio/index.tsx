@@ -4,7 +4,15 @@ import { groupBalancesByAddress } from '@talismn/api-react-hooks'
 import { encodeAnyAddress, planckToTokens } from '@talismn/util'
 import useUniqueId from '@util/useUniqueId'
 import BigNumber from 'bignumber.js'
-import { FC, useContext as _useContext, createContext, useCallback, useEffect, useMemo, useState } from 'react'
+import {
+  PropsWithChildren,
+  useContext as _useContext,
+  createContext,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
 
 // TODO: Replace this lib with an @talismn/api wrapper or redesign.
 //       Currently we get balances from the api, then convert and aggregate them all
@@ -41,7 +49,7 @@ export function calculateCrowdloanPortfolioAmounts(
   contributions.forEach(contribution => {
     if (!byAddress[encodeAnyAddress(contribution.account, 42)])
       byAddress[encodeAnyAddress(contribution.account, 42)] = []
-    byAddress[encodeAnyAddress(contribution.account, 42)].push(contribution)
+    byAddress[encodeAnyAddress(contribution.account, 42)]?.push(contribution)
   })
 
   Object.entries(byAddress).forEach(([address, contributions]) => {
@@ -150,18 +158,19 @@ function useContext() {
 // Provider
 //
 
-type ProviderProps = {}
+type ProviderProps = PropsWithChildren
 
-export const Provider: FC<ProviderProps> = ({ children }) => {
+export const Provider = ({ children }: ProviderProps) => {
   const [totalStore, setTotalStore] = useState<TotalStore>({})
   const [loadingList, setLoadingList] = useState<{ [key: string]: true }>({})
 
   const storeTotal = useCallback(
-    (uniqueId, tags, amount) => setTotalStore(totalStore => ({ ...totalStore, [uniqueId]: { tags, amount } })),
+    (uniqueId: string, tags: Tag[], amount: string) =>
+      setTotalStore(totalStore => ({ ...totalStore, [uniqueId]: { tags, amount } })),
     []
   )
   const clearTotal = useCallback(
-    uniqueId =>
+    (uniqueId: string) =>
       setTotalStore(totalStore => {
         delete totalStore[uniqueId]
         return totalStore
@@ -169,7 +178,7 @@ export const Provider: FC<ProviderProps> = ({ children }) => {
     []
   )
   const setLoading = useCallback(
-    (uniqueId, loading) =>
+    (uniqueId: string, loading: boolean) =>
       setLoadingList(loadingList => {
         if (loading && loadingList[uniqueId]) return loadingList
         if (!loading && !loadingList[uniqueId]) return loadingList
@@ -228,7 +237,7 @@ export const Provider: FC<ProviderProps> = ({ children }) => {
     // const hasEmptyBags = !isLoading && totalUsd === '0'
     const hasEmptyBags = false
 
-    const parseBnRecord = (record: Record<string, BigNumber | Record<string, BigNumber>>): Partial<Portfolio> =>
+    const parseBnRecord = (record: Record<string, BigNumber | Record<string, BigNumber>>): Portfolio =>
       Object.fromEntries(
         Object.entries(record).map(([key, value]) => {
           if (value instanceof BigNumber) {
