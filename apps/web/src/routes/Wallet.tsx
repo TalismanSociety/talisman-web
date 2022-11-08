@@ -7,7 +7,7 @@ import { isMobileBrowser } from '@util/helpers'
 
 import OwnPools from '../archetypes/NominationPools/OwnPools'
 
-const _Wallet = styled(({ className }) => (
+const _Wallet = styled(({ className }: { className?: string }) => (
   <section className={className}>
     {isMobileBrowser() && <DesktopRequired />}
     <header>

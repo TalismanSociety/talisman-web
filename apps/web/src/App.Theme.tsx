@@ -318,17 +318,11 @@ const Context = createContext({})
 
 export const useTheme = () => useContext(Context)
 
-const Provider = ({ children }: PropsWithChildren<{}>) => {
-  // scroll to top on location change
-  const { pathname } = useLocation()
-  useEffect(() => window.scrollTo(0, 0), [pathname])
-
-  return (
-    <ThemeProvider theme={greenDark}>
-      <Global styles={globalStyle} />
-      {children}
-    </ThemeProvider>
-  )
-}
+const Provider = ({ children }: PropsWithChildren<{}>) => (
+  <ThemeProvider theme={greenDark}>
+    <Global styles={globalStyle} />
+    {children}
+  </ThemeProvider>
+)
 
 export default Provider

@@ -105,7 +105,7 @@ const StyledExploreGrid = styled(ExploreGrid)`
 
 `
 
-const Explore = styled(({ className }) => (
+const Explore = styled(({ className }: { className?: string }) => (
   <section className={className}>
     <h1>Explore</h1>
     <StyledExploreGrid />

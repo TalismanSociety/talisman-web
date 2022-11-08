@@ -157,7 +157,7 @@ const Faq = () => {
       content: (
         <Text.Body>
           You can unstake at any time from the{' '}
-          <Text.A as={Link} to="portfolio#staking">
+          <Text.A as={Link} to="/portfolio#staking">
             portfolio page
           </Text.A>
           . There is a 28-day unstaking period (often termed unbonding) on Polkadot before your funds become available
@@ -170,7 +170,7 @@ const Faq = () => {
       content: (
         <Text.Body>
           You can claim accumulated rewards on the{' '}
-          <Text.A as={Link} to="portfolio#staking">
+          <Text.A as={Link} to="/portfolio#staking">
             portfolio page
           </Text.A>
           . Ensure you have either "All Accounts", or the account you're actively staking with, selected in the top

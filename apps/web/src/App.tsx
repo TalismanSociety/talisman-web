@@ -8,11 +8,10 @@ import * as MoonbeamContributors from '@libs/moonbeam-contributors'
 import * as Portfolio from '@libs/portfolio'
 import TalismanProvider from '@libs/talisman'
 import * as Tokenprices from '@libs/tokenprices'
-import Routes from '@routes'
+import Router from '@routes'
 import posthog from 'posthog-js'
 import React, { Suspense } from 'react'
 import { Toaster } from 'react-hot-toast'
-import { BrowserRouter as Router } from 'react-router-dom'
 import { RecoilRoot } from 'recoil'
 
 import ThemeProvider from './App.Theme'
@@ -49,21 +48,19 @@ const App: React.FC = () => (
           <AccountsWatcher />
           <Crowdloans.Provider>
             <MoonbeamContributors.Provider>
-              <Router>
-                <ThemeProvider>
-                  <DevMenu />
-                  <Suspense fallback={<Loader />}>
-                    <ModalProvider>
-                      <MoonbeamContributors.PopupProvider>
-                        <Routes />
-                      </MoonbeamContributors.PopupProvider>
-                    </ModalProvider>
-                    <Toaster position="top-right" containerStyle={{ top: '6rem' }}>
-                      {t => <ToastBar toast={t} />}
-                    </Toaster>
-                  </Suspense>
-                </ThemeProvider>
-              </Router>
+              <ThemeProvider>
+                <DevMenu />
+                <Suspense fallback={<Loader />}>
+                  <ModalProvider>
+                    <MoonbeamContributors.PopupProvider>
+                      <Router />
+                    </MoonbeamContributors.PopupProvider>
+                  </ModalProvider>
+                  <Toaster position="top-right" containerStyle={{ top: '6rem' }}>
+                    {t => <ToastBar toast={t} />}
+                  </Toaster>
+                </Suspense>
+              </ThemeProvider>
             </MoonbeamContributors.Provider>
           </Crowdloans.Provider>
         </TalismanProvider>

@@ -1,10 +1,11 @@
 import styled from '@emotion/styled'
+import { PropsWithChildren } from 'react'
 
 import Content from './Content'
 import Footer from './Footer'
 import Header from './Header'
 
-const Layout = styled(({ children, className }) => (
+const Layout = styled(({ children, className }: PropsWithChildren<{ className?: string }>) => (
   <div className={className}>
     <Header />
     <Content>{children}</Content>
