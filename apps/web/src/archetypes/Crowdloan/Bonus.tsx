@@ -16,11 +16,11 @@ const Bonus = ({ id, short, full, info, prefix }: BonusProps) => {
 
   const content = useMemo(() => {
     if (short) return bonus?.short
-    if (full) return Maybe.of(bonus).mapOrUndefined(bonus => <span>{bonus.full}</span>)
+    if (full) return Maybe.ofFalsy(bonus?.full).mapOrUndefined(x => <span>{x}</span>)
     if (info) return bonus?.info
   }, [bonus, full, info, short])
 
-  if (content === undefined || type === undefined) return null
+  if (!Boolean(content) || type === undefined) return null
 
   return (
     <span
