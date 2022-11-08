@@ -1,5 +1,6 @@
 import { ApiPromise } from '@polkadot/api'
 import type {
+  GenericStorageEntryFunction,
   PromiseResult,
   QueryableStorageEntry,
   StorageEntryPromiseOverloads,
@@ -21,7 +22,7 @@ export const useChainState = <
   TMethod extends Diverge<
     // @ts-ignore
     ApiPromise[TType][TModule][TExtractedSection],
-    StorageEntryPromiseOverloads & QueryableStorageEntry<any, any>
+    StorageEntryPromiseOverloads & QueryableStorageEntry<any, any> & PromiseResult<GenericStorageEntryFunction>
   >
 >(
   typeName: TType,
