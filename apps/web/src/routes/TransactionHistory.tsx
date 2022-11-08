@@ -35,7 +35,7 @@ const ExtensionUnavailable = styled(props => {
   }
 `
 
-const TransactionHistory = styled(({ className }: { className: string }) => {
+const TransactionHistory = styled(({ className }: { className?: string }) => {
   const addresses = useAllAccountAddresses()
 
   return (

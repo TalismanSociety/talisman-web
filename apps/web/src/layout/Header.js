@@ -99,13 +99,13 @@ const Header = styled(({ className, isMobile, mobileMenuOpen, dispatch }) => {
   return (
     <header className={className}>
       <span>
-        <NavLink exact to={homeRoute} className="logo">
+        <NavLink end to={homeRoute} className="logo">
           <TalismanHandLogo />
         </NavLink>
       </span>
       {!isMobile && (
         <nav className="main-nav">
-          <NavLink exact to="/portfolio">
+          <NavLink end to="/portfolio">
             {t('Portfolio')}
           </NavLink>
           <NavLink to="/nfts">{t('NFTs')}</NavLink>
