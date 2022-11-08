@@ -23,7 +23,7 @@ import { useTranslation } from 'react-i18next'
 
 // format an address based on chain ID, derived from genesis ID
 // as returned from polkadot.js extension API
-const Address = ({ address, genesis, truncate = false }: { address: string; genesis: string; truncate: any }) => {
+const Address = ({ address, genesis, truncate = false }) => {
   const { id } = useChainByGenesis(genesis)
   let encoded: string
   try {
@@ -36,7 +36,7 @@ const Address = ({ address, genesis, truncate = false }: { address: string; gene
   return !!truncate ? truncateString(encoded, truncate[0] || 4, truncate[1] || 4) : encoded
 }
 
-const BuyItem = styled(({ nativeToken, className }: { nativeToken: string; className: string }) => {
+const BuyItem = styled(({ nativeToken, className }) => {
   const { t } = useTranslation()
   return (
     <span className={`${className}`} onClick={buyNow}>
@@ -45,7 +45,7 @@ const BuyItem = styled(({ nativeToken, className }: { nativeToken: string; class
           <AlertCircle width="48" />
           {t('You have no')} {nativeToken}
         </span>
-        <Pill className={className} small primary>
+        <Pill small primary>
           {t('Buy')}
         </Pill>
       </div>
@@ -76,122 +76,105 @@ const BuyItem = styled(({ nativeToken, className }: { nativeToken: string; class
   }
 `
 
-const Dropdown = styled(
-  ({
-    className,
-    open,
-    handleClose,
-    allAccounts,
-    closeParent,
-    showBuy = false,
-  }: {
-    className?: string
-    open: any
-    handleClose: any
-    allAccounts: any
-    closeParent: any
-    showBuy: boolean
-  }) => {
-    const { t } = useTranslation()
+const Dropdown = styled(({ className, open, handleClose, allAccounts, closeParent, showBuy = false }) => {
+  const { t } = useTranslation()
 
-    const { switchAccount } = useActiveAccount()
-    const { accounts, disconnect } = useExtensionAutoConnect()
+  const { switchAccount } = useActiveAccount()
+  const { accounts, disconnect } = useExtensionAutoConnect()
 
-    const { assetsValue, balances } = useBalances()
+  const { assetsValue, balances } = useBalances()
 
-    return (
-      open && (
-        <span className={`account-picker ${className}`}>
-          {showBuy && <BuyItem onClick={closeParent} />}
-          {(allAccounts ? [{ name: t('All Accounts') }, ...accounts] : accounts).map(
-            ({ address, name, type, genesisHash }, index) => {
-              // Do the filtering
-              const fiatBalance =
-                address !== undefined
-                  ? (balances?.find({ address: address }).sum.fiat('usd').transferable ?? 0).toLocaleString(undefined, {
-                      style: 'currency',
-                      currency: 'USD',
-                      currencyDisplay: 'narrowSymbol',
-                    }) ?? '-'
-                  : assetsValue
+  return (
+    open && (
+      <span className={`account-picker ${className}`}>
+        {showBuy && <BuyItem onClick={closeParent} />}
+        {(allAccounts ? [{ name: t('All Accounts') }, ...accounts] : accounts).map(
+          ({ address, name, type, genesisHash }, index) => {
+            // Do the filtering
+            const fiatBalance =
+              address !== undefined
+                ? (balances?.find({ address: address }).sum.fiat('usd').transferable ?? 0).toLocaleString(undefined, {
+                    style: 'currency',
+                    currency: 'USD',
+                    currencyDisplay: 'narrowSymbol',
+                  }) ?? '-'
+                : assetsValue
 
-              return (
-                <div
-                  key={index}
-                  className="account"
-                  onClick={() => {
-                    switchAccount(address)
-                    handleClose()
-                  }}
-                >
-                  <span className="left">
-                    {address ? (
-                      <Identicon
-                        className="identicon"
-                        value={address}
-                        theme={type === 'ethereum' ? 'ethereum' : 'polkadot'}
-                      />
-                    ) : (
-                      <Identicon
-                        Custom={AllAccountsIcon}
-                        className="identicon"
-                        value="5DHuDfmwzykE9KVmL87DLjAbfSX7P4f4wDW5CKx8QZnQA4FK"
-                        theme="polkadot"
-                      />
-                    )}
-                    <span className="name-address">
-                      <div className="name">{name}</div>
-                      {address && (
-                        <div className="address">
-                          <Address address={address} genesis={genesisHash} truncate />
-                        </div>
-                      )}
-                    </span>
+            return (
+              <div
+                key={index}
+                className="account"
+                onClick={() => {
+                  switchAccount(address)
+                  handleClose()
+                }}
+              >
+                <span className="left">
+                  {address ? (
+                    <Identicon
+                      className="identicon"
+                      value={address}
+                      theme={type === 'ethereum' ? 'ethereum' : 'polkadot'}
+                    />
+                  ) : (
+                    <Identicon
+                      Custom={AllAccountsIcon}
+                      className="identicon"
+                      value="5DHuDfmwzykE9KVmL87DLjAbfSX7P4f4wDW5CKx8QZnQA4FK"
+                      theme="polkadot"
+                    />
+                  )}
+                  <span className="name-address">
+                    <div className="name">{name}</div>
                     {address && (
-                      <CopyButton
-                        className={className}
-                        text={address}
-                        onCopied={(text: string) => {
-                          toast(
-                            <>
-                              <Text.Body as="div" alpha="high">
-                                Address copied to clipboard
-                              </Text.Body>
-                              <Text.Body as="div">{text}</Text.Body>
-                            </>,
-                            { position: 'bottom-right', icon: <Copy /> }
-                          )
-                        }}
-                        onFailed={(text: string) => {
-                          console.log(`>>> failed`, text)
-                        }}
-                      />
+                      <div className="address">
+                        <Address address={address} genesis={genesisHash} truncate />
+                      </div>
                     )}
                   </span>
+                  {address && (
+                    <CopyButton
+                      text={address}
+                      onCopied={text => {
+                        toast(
+                          <>
+                            <Text.Body as="div" alpha="high">
+                              Address copied to clipboard
+                            </Text.Body>
+                            <Text.Body as="div">{text}</Text.Body>
+                          </>,
+                          { position: 'bottom-right', icon: <Copy /> }
+                        )
+                      }}
+                      onFailed={text => {
+                        console.log(`>>> failed`, text)
+                      }}
+                    />
+                  )}
+                </span>
 
-                  <span className="balance-price">
-                    <Pendor require={(balances?.sorted.length || 0) > 0}>{fiatBalance}</Pendor>
-                  </span>
-                </div>
-              )
-            }
-          )}
-          <Button
-            className="dropdown-button"
-            onClick={() => {
-              localStorage.removeItem('@talisman-connect/selected-wallet-name')
-              document.dispatchEvent(new CustomEvent('@talisman-connect/wallet-selected'))
-              disconnect()
-              switchAccount('')
-            }}
-          >
-            {t('Disconnect Wallet')}
-          </Button>
-        </span>
-      )
+                <span className="balance-price">
+                  <Pendor require={(balances?.sorted.length || 0) > 0}>{fiatBalance}</Pendor>
+                </span>
+              </div>
+            )
+          }
+        )}
+        <Button
+          className="dropdown-button"
+          onClick={() => {
+            localStorage.removeItem('@talisman-connect/selected-wallet-name')
+            document.dispatchEvent(new CustomEvent('@talisman-connect/wallet-selected'))
+            disconnect()
+            switchAccount('')
+          }}
+        >
+          {t('Disconnect Wallet')}
+        </Button>
+      </span>
     )
-  }
-)`
+  )
+})`
   background: var(--color-controlBackground);
   font-size: 0.8em;
   width: 26em;
@@ -295,7 +278,7 @@ const Dropdown = styled(
     `}
 `
 
-const Unavailable = styled(({ className }: { className?: string }) => {
+const Unavailable = styled(({ className }) => {
   const { t } = useTranslation()
   const isTalismanInstalled = useTalismanInstalled()
   const title = isTalismanInstalled ? 'Connect wallet' : 'No wallet found'
@@ -328,7 +311,7 @@ const Unavailable = styled(({ className }: { className?: string }) => {
   }
 `
 
-const NoAccount = styled(({ className }: { className?: string }) => {
+const NoAccount = styled(({ className }) => {
   const { t } = useTranslation()
   const [walletName, setWalletName] = useState<string | undefined>()
   useEffect(() => {
@@ -362,7 +345,7 @@ const NoAccount = styled(({ className }: { className?: string }) => {
   }
 `
 
-const Unauthorized = styled(({ className }: { className?: string }) => {
+const Unauthorized = styled(({ className }) => {
   const [walletName, setWalletName] = useState<string | undefined>()
   useEffect(() => {
     const selectedWalletName = localStorage.getItem('@talisman-connect/selected-wallet-name')
@@ -397,27 +380,14 @@ const Unauthorized = styled(({ className }: { className?: string }) => {
 `
 
 const Authorized = styled(
-  ({
-    className,
-    narrow,
-    allAccounts,
-    closeParent = null,
-    showBuy = false,
-    fixedDropdown = false,
-  }: {
-    className?: string
-    narrow: any
-    allAccounts: any
-    closeParent: any
-    showBuy: boolean
-    fixedDropdown: boolean
-  }) => {
+  ({ className, narrow, allAccounts, closeParent = null, showBuy = false, fixedDropdown = false }) => {
     const { t } = useTranslation()
 
     const [open, setOpen] = useState(false)
 
+    const { switchAccount } = useActiveAccount()
     const { accounts } = useExtensionAutoConnect()
-    const { switchAccount, hasActiveAccount, address, name } = useActiveAccount()
+    const { hasActiveAccount, address, name } = useActiveAccount()
 
     useEffect(() => {
       if (allAccounts) return
@@ -472,7 +442,6 @@ const Authorized = styled(
           )}
 
           <Dropdown
-            className={className}
             open={open}
             handleClose={() => setOpen(false)}
             allAccounts={allAccounts}
