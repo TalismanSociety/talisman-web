@@ -36,7 +36,7 @@ const Address = ({ address, genesis, truncate = false }: { address: string; gene
     encoded = address
   }
 
-  return !!truncate ? truncateString(encoded, truncate[0] || 4, truncate[1] || 4) : encoded
+  return <span>{!!truncate ? truncateString(encoded, truncate[0] || 4, truncate[1] || 4) : encoded}</span>
 }
 
 const BuyItem = styled(
@@ -98,13 +98,12 @@ const Dropdown = styled(
     const { accounts, disconnect } = useExtensionAutoConnect()
 
     const { assetsValue, balances } = useBalances()
-
     return (
       open && (
         <span className={`account-picker ${className}`}>
           {showBuy && <BuyItem onClick={closeParent} />}
-          {(allAccounts ? [{ name: t('All Accounts') }, ...accounts] : accounts).map(
-            ({ address, name, type, genesisHash }, index) => {
+          {(allAccounts ? [{ name: t('All Accounts'), address: '', genesisHash: '' }, ...accounts] : accounts).map(
+            ({ name, address, genesisHash }, index) => {
               // Do the filtering
               const fiatBalance =
                 address !== undefined
@@ -145,7 +144,7 @@ const Dropdown = styled(
                     {address && (
                       <CopyButton
                         text={address}
-                        onCopied={text => {
+                        onCopied={(text: string) => {
                           toast(
                             <>
                               <Text.Body as="div" alpha="high">
@@ -156,7 +155,7 @@ const Dropdown = styled(
                             { position: 'bottom-right', icon: <Copy /> }
                           )
                         }}
-                        onFailed={text => {
+                        onFailed={(text: string) => {
                           console.log(`>>> failed`, text)
                         }}
                       />

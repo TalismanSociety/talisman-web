@@ -22,6 +22,7 @@ export type Account = {
   name?: string
   type?: string
   address: string
+  genesisHash?: string
 }
 
 export type Status = 'LOADING' | 'DISCONNECTED' | 'UNAVAILABLE' | 'UNAUTHORIZED' | 'NOACCOUNT' | 'OK'
