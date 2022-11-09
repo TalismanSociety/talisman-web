@@ -27,10 +27,12 @@ export class StatemineProvider extends NFTInterface {
     const { collectionId, nftTokenId } = assetId
     // For some reason, there are commas in the collection ID, removed them.
     let collectionIdFixed = collectionId.replaceAll(',', '')
+    let nftTokenIdFixed = nftTokenId.replaceAll(',', '')
+
     // Need to check how common this is with other collection IDs within Statemine.
-    const metadataNft = (
-      await this.webSocket.query.uniques.instanceMetadataOf(collectionIdFixed, nftTokenId)
-    ).toHuman() as any
+    const metadataNft = // console.log('aaa')
+    (await this.webSocket.query.uniques.instanceMetadataOf(collectionIdFixed, nftTokenIdFixed)).toHuman() as any
+
     // Get the NFT IPFS Hash from the uniques query
     if (!metadataNft?.data) return null
     // Get the NFT name, description and Media URI from the metadata using the base IPFS url.
@@ -128,6 +130,7 @@ export class StatemineProvider extends NFTInterface {
 
         nftRawAssetDetails.map(async (assetId: any): Promise<any> => {
           const tokenDetails = await this.getTokenDetails(assetId)
+
           if (tokenDetails) {
             const nftDetail = {
               id: tokenDetails?.id,

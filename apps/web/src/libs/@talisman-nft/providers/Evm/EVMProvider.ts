@@ -141,6 +141,8 @@ export class EVMProvider extends NFTInterface {
                       const response = await fetch(tokenURI.replace('ipfs://', 'https://talisman.mypinata.cloud/ipfs/'))
                       const data = await response.json()
 
+                      console.log(data)
+
                       const nftItem = {
                         id: tokenId + '-' + contract.name,
                         name: data.name,
@@ -148,8 +150,8 @@ export class EVMProvider extends NFTInterface {
                         description: data?.description,
                         serialNumber: data?.edition,
                         metadata: null,
-                        type: this.typeCheck(data.image),
-                        mediaUri: this.toIPFSUrl(data.image),
+                        type: this.typeCheck(data?.animation_url ?? data.image),
+                        mediaUri: this.toIPFSUrl(data?.animation_url) ?? this.toIPFSUrl(data.image),
                         address,
                         provider: this.name,
                         platformUri: `${this.platformUri}${contract.address}`,
@@ -161,6 +163,7 @@ export class EVMProvider extends NFTInterface {
                         },
                         nftSpecificData: {
                           dataDump: data,
+                          isEvm: true,
                         },
                         tokenCurrency: this.tokenCurrency,
                       }

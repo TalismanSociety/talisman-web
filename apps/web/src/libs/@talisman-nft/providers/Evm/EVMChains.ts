@@ -27,6 +27,12 @@ export const EVMChains: { [key: string]: EVMChain } = {
         symbol: 'MNQ',
         totalSupply: 999999,
       },
+      zombieStories: {
+        address: '0x29a9E4AfE66f2Ceb453F3e5ebe4f09287CF3c793',
+        name: 'Zombie Stories: Project Infecticide',
+        symbol: 'ZSPIF',
+        totalSupply: 666,
+      },
     },
     name: 'Moonriver',
     tokenCurrency: 'MOVR',
