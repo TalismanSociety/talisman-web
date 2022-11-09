@@ -1,7 +1,6 @@
 import CircularProgressIndicator from '@components/atoms/CircularProgressIndicator'
 import Text from '@components/atoms/Text'
 import Details from '@components/molecules/Details'
-import HiddenDetails from '@components/molecules/HiddenDetails'
 import InfoCard from '@components/molecules/InfoCard'
 import PoolSelectorDialog from '@components/recipes/PoolSelectorDialog'
 import { PoolStatus } from '@components/recipes/PoolStatusIndicator'
@@ -12,13 +11,12 @@ import { useTokenAmountFromAtomics } from '@domains/common/hooks'
 import useChainState from '@domains/common/hooks/useChainState'
 import useExtrinsic from '@domains/common/hooks/useExtrinsic'
 import { chainReadIdState } from '@domains/common/recoils'
-import { useCountDownToNomsPool, useInflation, usePoolAddForm } from '@domains/nominationPools/hooks'
+import { useInflation, usePoolAddForm } from '@domains/nominationPools/hooks'
 import { eraStakersState, recommendedPoolsState } from '@domains/nominationPools/recoils'
 import { createAccounts } from '@domains/nominationPools/utils'
 import { useTheme } from '@emotion/react'
 import { BN } from '@polkadot/util'
 import { Maybe } from '@util/monads'
-import { differenceInHours, formatDistance, formatDuration, intervalToDuration } from 'date-fns'
 import { Suspense, useCallback, useEffect, useMemo, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { constSelector, selector, useRecoilValue, useRecoilValueLoadable, waitForAll } from 'recoil'
@@ -259,10 +257,6 @@ const PoolSelector = (props: {
 }
 
 const Input = () => {
-  // TODO: remove
-  const nomsPoolCountDown = useCountDownToNomsPool()
-  const theme = useTheme()
-
   const joinPoolExtrinsic = useExtrinsic('nominationPools', 'join')
   const bondExtraExtrinsic = useExtrinsic('nominationPools', 'bondExtra')
 
@@ -385,82 +379,59 @@ const Input = () => {
         onChangePoolId={setSelectedPoolId}
         onDismiss={useCallback(() => setShowPoolSelector(false), [])}
       />
-      <HiddenDetails
-        hidden={nomsPoolCountDown?.blocksRemaining !== undefined}
-        variant="dim"
-        overlay={
-          <div
-            css={{
-              textAlign: 'center',
-            }}
-          >
-            <Text.H3 css={{ color: theme.color.primary }}>Staking will unlock in</Text.H3>
-            <Text.Body alpha="high" css={{ fontSize: '1.6rem' }}>
-              {nomsPoolCountDown?.eta === undefined
-                ? '...'
-                : differenceInHours(0, nomsPoolCountDown.eta) === 0
-                ? formatDistance(0, nomsPoolCountDown.eta)
-                : formatDuration(intervalToDuration({ start: 0, end: nomsPoolCountDown.eta }), {
-                    format: ['days', 'hours', 'minutes'],
-                  })}
-            </Text.Body>
-          </div>
-        }
-      >
-        <StakingInput
-          portfolioHref="/portfolio#staking"
-          alreadyStaking={hasExistingPool}
-          accounts={accounts.map(x => ({
-            ...x,
-            selected: x.address === selectedAccount?.address,
-            name: x.name ?? x.address,
-            balance: '',
-          }))}
-          onSelectAccount={useCallback(
-            x => setSelectedAccount(accounts.find(account => account.address === x.address)!),
-            [accounts]
-          )}
-          amount={amount}
-          fiatAmount={localizedFiatAmount ?? ''}
-          onChangeAmount={setAmount}
-          isError={inputError !== undefined}
-          inputSupportingText={inputError?.message}
-          onRequestMaxAmount={() => {
-            if (availableBalance.decimalAmount !== undefined) {
-              setAmount(availableBalance.decimalAmount.toString())
-            }
-          }}
-          availableToStake={availableBalance.decimalAmount?.toHuman() ?? '...'}
-          noPoolsAvailable={recommendedPools.length === 0}
-          poolName={poolMetadataLoadable.valueMaybe()?.toUtf8() ?? ''}
-          poolStatus={poolStatus}
-          poolTotalStaked={poolTotalStaked?.toHuman() ?? ''}
-          poolMemberCount={bondedPoolLoadable.valueMaybe()?.unwrapOrDefault().memberCounter.toString() ?? ''}
-          onRequestPoolChange={useCallback(() => setShowPoolSelector(true), [])}
-          onSubmit={useCallback(() => {
-            if (selectedAccount === undefined || decimalAmount?.atomics === undefined) return
-            if (hasExistingPool) {
-              bondExtraExtrinsic.signAndSend(selectedAccount.address, {
-                FreeBalance: decimalAmount.atomics.toString(),
-              })
-            } else if (selectedPoolId !== undefined) {
-              joinPoolExtrinsic.signAndSend(selectedAccount.address, decimalAmount.atomics.toString(), selectedPoolId)
-            }
-          }, [
-            bondExtraExtrinsic,
-            decimalAmount?.atomics,
-            hasExistingPool,
-            joinPoolExtrinsic,
-            selectedAccount,
-            selectedPoolId,
-          ])}
-          submitState={useMemo(() => {
-            if (!isReady || inputError !== undefined || decimalAmount.atomics.isZero()) return 'disabled'
+      <StakingInput
+        portfolioHref="/portfolio#staking"
+        alreadyStaking={hasExistingPool}
+        accounts={accounts.map(x => ({
+          ...x,
+          selected: x.address === selectedAccount?.address,
+          name: x.name ?? x.address,
+          balance: '',
+        }))}
+        onSelectAccount={useCallback(
+          x => setSelectedAccount(accounts.find(account => account.address === x.address)!),
+          [accounts]
+        )}
+        amount={amount}
+        fiatAmount={localizedFiatAmount ?? ''}
+        onChangeAmount={setAmount}
+        isError={inputError !== undefined}
+        inputSupportingText={inputError?.message}
+        onRequestMaxAmount={() => {
+          if (availableBalance.decimalAmount !== undefined) {
+            setAmount(availableBalance.decimalAmount.toString())
+          }
+        }}
+        availableToStake={availableBalance.decimalAmount?.toHuman() ?? '...'}
+        noPoolsAvailable={recommendedPools.length === 0}
+        poolName={poolMetadataLoadable.valueMaybe()?.toUtf8() ?? ''}
+        poolStatus={poolStatus}
+        poolTotalStaked={poolTotalStaked?.toHuman() ?? ''}
+        poolMemberCount={bondedPoolLoadable.valueMaybe()?.unwrapOrDefault().memberCounter.toString() ?? ''}
+        onRequestPoolChange={useCallback(() => setShowPoolSelector(true), [])}
+        onSubmit={useCallback(() => {
+          if (selectedAccount === undefined || decimalAmount?.atomics === undefined) return
+          if (hasExistingPool) {
+            bondExtraExtrinsic.signAndSend(selectedAccount.address, {
+              FreeBalance: decimalAmount.atomics.toString(),
+            })
+          } else if (selectedPoolId !== undefined) {
+            joinPoolExtrinsic.signAndSend(selectedAccount.address, decimalAmount.atomics.toString(), selectedPoolId)
+          }
+        }, [
+          bondExtraExtrinsic,
+          decimalAmount?.atomics,
+          hasExistingPool,
+          joinPoolExtrinsic,
+          selectedAccount,
+          selectedPoolId,
+        ])}
+        submitState={useMemo(() => {
+          if (!isReady || inputError !== undefined || decimalAmount.atomics.isZero()) return 'disabled'
 
-            return joinPoolExtrinsic.state === 'loading' ? 'pending' : undefined
-          }, [decimalAmount?.atomics, inputError, isReady, joinPoolExtrinsic.state])}
-        />
-      </HiddenDetails>
+          return joinPoolExtrinsic.state === 'loading' ? 'pending' : undefined
+        }, [decimalAmount?.atomics, inputError, isReady, joinPoolExtrinsic.state])}
+      />
     </>
   )
 }
