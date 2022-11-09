@@ -5,7 +5,7 @@ import { device } from '@util/breakpoints'
 import { useState } from 'react'
 
 const ExploreGrid = ({ className }: { className: string }) => {
-  const { dapps, loading, error, tags } = useFetchDapps()
+  const { dapps, loading, tags } = useFetchDapps()
   const [selectedTag, setSelectedTag] = useState<string>('All')
 
   return (
