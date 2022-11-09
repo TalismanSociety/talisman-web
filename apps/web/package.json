@@ -1,12 +1,21 @@
 {
+  "private": true,
   "name": "@talismn/web",
   "version": "2.2.13",
-  "private": true,
-  "author": "Daniel Harrison <daniel@flexdapps.com>",
-  "repository": "github.com:TalismanSociety/talisman-web",
+  "homepage": "https://talisman.xyz",
+  "repository": "github:TalismanSociety/talisman-web",
   "bugs": "https://github.com/TalismanSociety/talisman-web/issues",
-  "homepage": "https://talisman.community",
-  "packageManager": "yarn@3.2.3",
+  "license": "GPL-3.0-or-later",
+  "scripts": {
+    "start": "craco start",
+    "build": "TSC_COMPILE_ON_ERROR=true craco build",
+    "test": "craco test",
+    "lint": "eslint src",
+    "eject": "craco eject",
+    "storybook": "start-storybook -p 6006 -s public",
+    "build-storybook": "TSC_COMPILE_ON_ERROR=true build-storybook -s public",
+    "tx-history:graphql:codegen": "graphql-codegen -c src/archetypes/Transaction/lib/codegen.ts"
+  },
   "dependencies": {
     "@apollo/client": "^3.6.9",
     "@emotion/react": "^11.10.4",
@@ -98,16 +107,6 @@
   },
   "resolutions": {
     "@storybook/preset-create-react-app": "^4.1.2"
-  },
-  "scripts": {
-    "start": "craco start",
-    "build": "TSC_COMPILE_ON_ERROR=true craco build",
-    "test": "craco test",
-    "lint": "eslint src",
-    "eject": "craco eject",
-    "storybook": "start-storybook -p 6006 -s public",
-    "build-storybook": "TSC_COMPILE_ON_ERROR=true build-storybook -s public",
-    "tx-history:graphql:codegen": "graphql-codegen -c src/archetypes/Transaction/lib/codegen.ts"
   },
   "browserslist": {
     "production": [
