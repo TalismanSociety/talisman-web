@@ -8,7 +8,7 @@ import {
 import { Moonbeam } from '@libs/crowdloans/crowdloanOverrides'
 import { MoonbeamPortfolioTag } from '@libs/moonbeam-contributors'
 import { calculateCrowdloanPortfolioAmounts, usePortfolio, useTaggedAmountsInPortfolio } from '@libs/portfolio'
-import { useAccountAddresses, useCrowdloanById, useCrowdloans } from '@libs/talisman'
+import { useAccountAddresses, useCrowdloanById, useCrowdloans, useParachainDetailsById } from '@libs/talisman'
 import { useTokenPrice } from '@libs/tokenprices'
 import { useChain } from '@talismn/api-react-hooks'
 import { encodeAnyAddress, planckToTokens } from '@talismn/util'
@@ -36,15 +36,16 @@ const CrowdloanItem = styled(({ id, className }: { id: string; className?: strin
 
   const relayTokenSymbol = relayNativeToken ?? 'Planck'
   const contributedTokens = useMemo(
-    () => planckToTokens(totalContributions || undefined, relayTokenDecimals),
+    () => planckToTokens(totalContributions ?? undefined, relayTokenDecimals),
     [relayTokenDecimals, totalContributions]
   )
-  const contributedUsd = new BigNumber(contributedTokens ?? 0).times(relayTokenPrice ?? 0).toString()
+  const contributedUsd = new BigNumber(contributedTokens).times(relayTokenPrice ?? 0).toString()
 
   const portfolioAmounts = useMemo(
     () => calculateCrowdloanPortfolioAmounts(contributions, relayTokenDecimals, relayTokenPrice),
     [contributions, relayTokenDecimals, relayTokenPrice]
   )
+
   useTaggedAmountsInPortfolio(portfolioAmounts)
 
   return (
@@ -90,8 +91,12 @@ const CrowdloanItem = styled(({ id, className }: { id: string; className?: strin
 
 const CrowdloanItemWithLink = styled((props: any) => {
   const { id, className } = props
+  const { crowdloan } = useCrowdloanById(id)
+  const parachainId = crowdloan?.parachain?.paraId
+  const { parachainDetails } = useParachainDetailsById(parachainId)
+  const linkToCrowdloan = parachainDetails?.slug ? `/crowdloans/${parachainDetails?.slug}` : `/crowdloans`
   return (
-    <Link to={'#'} className={className}>
+    <Link to={linkToCrowdloan} className={className}>
       <PanelSection>
         <CrowdloanItem id={id} />
       </PanelSection>

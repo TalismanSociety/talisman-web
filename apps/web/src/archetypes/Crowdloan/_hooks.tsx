@@ -1,11 +1,9 @@
 import { useLatestCrowdloans, useParachainsDetailsIndexedById } from '@libs/talisman'
-import { Crowdloan } from '@libs/talisman/crowdloan'
-import { ParachainDetails } from '@libs/talisman/parachain'
 import { filter, find, orderBy } from 'lodash'
 import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
-type Item = { crowdloan: Crowdloan; parachainDetails?: ParachainDetails }
+type Item = { crowdloan: any; parachainDetails?: any }
 
 const orderOptions = [
   {
@@ -67,12 +65,12 @@ const networkOptions = [
   {
     key: 'dot',
     value: 'Polkadot',
-    cb: (items: Item[]) => filter(items, item => item?.parachainDetails?.id?.toString().slice(0, 1) === '0'),
+    cb: (items: Item[]) => filter(items, item => item?.parachainDetails?.id.split('-')[0] === '0'),
   },
   {
     key: 'ksm',
     value: 'Kusama',
-    cb: (items: Item[]) => filter(items, item => item?.parachainDetails?.id?.toString().slice(0, 1) === '2'),
+    cb: (items: Item[]) => filter(items, item => item?.parachainDetails?.id.split('-')[0] === '2'),
   },
 ]
 
