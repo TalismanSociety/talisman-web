@@ -18,7 +18,7 @@ export const useChainState = <
   TModule extends keyof PickKnownKeys<ApiPromise[TType]>,
   TSection extends Extract<keyof PickKnownKeys<ApiPromise[TType][TModule]>, string>,
   TAugmentedSection extends TType extends 'query' ? TSection | `${TSection}.multi` : TSection,
-  TExtractedSection extends TAugmentedSection extends `${infer TSection}.multi` ? TSection : TAugmentedSection,
+  TExtractedSection extends TAugmentedSection extends `${infer Section}.multi` ? Section : TAugmentedSection,
   TMethod extends Diverge<
     // @ts-ignore
     ApiPromise[TType][TModule][TExtractedSection],
@@ -33,16 +33,16 @@ export const useChainState = <
     ? // @ts-ignore
       TAugmentedSection extends TSection
       ? Leading<Parameters<TMethod>>
-      : Leading<Parameters<TMethod>> extends [infer A]
-      ? A[]
+      : Leading<Parameters<TMethod>> extends [infer Head]
+      ? Head[]
       : Array<Readonly<Leading<Parameters<TMethod>>>>
     : never,
   options: { enabled?: boolean; keepPreviousData?: boolean } = { enabled: true, keepPreviousData: false }
 ) => {
-  type TResult = TMethod extends PromiseResult<(...args: any) => Observable<infer TResult>>
+  type TResult = TMethod extends PromiseResult<(...args: any) => Observable<infer Result>>
     ? TAugmentedSection extends TSection
-      ? TResult
-      : TResult[]
+      ? Result
+      : Result[]
     : never
 
   const api = useRecoilValue(apiState)

@@ -31,12 +31,12 @@ type Query = QueryMap[keyof QueryMap]
 // }
 
 type SingleQueryResultMap = {
-  [P in Query]: P extends `${infer TModule}.${infer TSection}`
+  [P in Query]: P extends `${infer Module}.${infer Section}`
     ? Diverge<
-        ApiPromise['query'][TModule][TSection],
+        ApiPromise['query'][Module][Section],
         StorageEntryPromiseOverloads & QueryableStorageEntry<any, any> & PromiseResult<GenericStorageEntryFunction>
-      > extends PromiseResult<(...args: any) => Observable<infer TResult>>
-      ? TResult
+      > extends PromiseResult<(...args: any) => Observable<infer Result>>
+      ? Result
       : any
     : never
 }
