@@ -101,7 +101,7 @@ const ContributeTo = styled(
     const usd = useMemo(
       () =>
         !Number.isNaN(Number(contributionAmount)) &&
-        new BigNumber(contributionAmount).times(tokenPrice ?? 0).toString(),
+        new BigNumber(Number(contributionAmount)).times(tokenPrice ?? 0).toString(),
       [contributionAmount, tokenPrice]
     )
 
