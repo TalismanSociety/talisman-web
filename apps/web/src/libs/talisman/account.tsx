@@ -61,7 +61,7 @@ export const useAllAccountAddresses = () => {
 
 type ContextProps = {
   accounts: Account[]
-  activeAccount: Account
+  activeAccount: Account | undefined
   status: Status
   switchAccount: (address: string) => void
   connect: () => void

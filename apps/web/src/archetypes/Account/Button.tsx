@@ -98,77 +98,79 @@ const Dropdown = styled(
     const { accounts, disconnect } = useExtensionAutoConnect()
 
     const { assetsValue, balances } = useBalances()
+
     return (
       open && (
         <span className={`account-picker ${className}`}>
           {showBuy && <BuyItem onClick={closeParent} />}
-          {(allAccounts ? [{ name: t('All Accounts'), address: '', genesisHash: '' }, ...accounts] : accounts).map(
-            ({ name, address, genesisHash }, index) => {
-              // Do the filtering
-              const fiatBalance =
-                address !== undefined
-                  ? (balances?.find({ address: address }).sum.fiat('usd').transferable ?? 0).toLocaleString(undefined, {
-                      style: 'currency',
-                      currency: 'USD',
-                      currencyDisplay: 'narrowSymbol',
-                    }) ?? '-'
-                  : assetsValue
+          {(allAccounts
+            ? [{ name: t('All Accounts'), address: undefined, genesisHash: '' }, ...accounts]
+            : accounts
+          ).map(({ name, address, genesisHash }, index) => {
+            // Do the filtering
+            const fiatBalance =
+              address !== undefined
+                ? (balances?.find({ address: address }).sum.fiat('usd').transferable ?? 0).toLocaleString(undefined, {
+                    style: 'currency',
+                    currency: 'USD',
+                    currencyDisplay: 'narrowSymbol',
+                  }) ?? '-'
+                : assetsValue
 
-              return (
-                <div
-                  key={index}
-                  className="account"
-                  onClick={() => {
-                    switchAccount(address)
-                    handleClose()
-                  }}
-                >
-                  <span className="left">
-                    {address ? (
-                      <Identicon className="identicon" value={address} />
-                    ) : (
-                      <Identicon
-                        Custom={AllAccountsIcon}
-                        className="identicon"
-                        value="5DHuDfmwzykE9KVmL87DLjAbfSX7P4f4wDW5CKx8QZnQA4FK"
-                      />
-                    )}
-                    <span className="name-address">
-                      <div className="name">{name}</div>
-                      {address && (
-                        <div className="address">
-                          <Address address={address} genesis={genesisHash} truncate />
-                        </div>
-                      )}
-                    </span>
+            return (
+              <div
+                key={index}
+                className="account"
+                onClick={() => {
+                  switchAccount(address ? address : '')
+                  handleClose()
+                }}
+              >
+                <span className="left">
+                  {address ? (
+                    <Identicon className="identicon" value={address} />
+                  ) : (
+                    <Identicon
+                      Custom={AllAccountsIcon}
+                      className="identicon"
+                      value="5DHuDfmwzykE9KVmL87DLjAbfSX7P4f4wDW5CKx8QZnQA4FK"
+                    />
+                  )}
+                  <span className="name-address">
+                    <div className="name">{name}</div>
                     {address && (
-                      <CopyButton
-                        text={address}
-                        onCopied={(text: string) => {
-                          toast(
-                            <>
-                              <Text.Body as="div" alpha="high">
-                                Address copied to clipboard
-                              </Text.Body>
-                              <Text.Body as="div">{text}</Text.Body>
-                            </>,
-                            { position: 'bottom-right', icon: <Copy /> }
-                          )
-                        }}
-                        onFailed={(text: string) => {
-                          console.log(`>>> failed`, text)
-                        }}
-                      />
+                      <div className="address">
+                        <Address address={address} genesis={genesisHash} truncate />
+                      </div>
                     )}
                   </span>
+                  {address && (
+                    <CopyButton
+                      text={address}
+                      onCopied={(text: string) => {
+                        toast(
+                          <>
+                            <Text.Body as="div" alpha="high">
+                              Address copied to clipboard
+                            </Text.Body>
+                            <Text.Body as="div">{text}</Text.Body>
+                          </>,
+                          { position: 'bottom-right', icon: <Copy /> }
+                        )
+                      }}
+                      onFailed={(text: string) => {
+                        console.log(`>>> failed`, text)
+                      }}
+                    />
+                  )}
+                </span>
 
-                  <span className="balance-price">
-                    <Pendor require={(balances?.sorted.length || 0) > 0}>{fiatBalance}</Pendor>
-                  </span>
-                </div>
-              )
-            }
-          )}
+                <span className="balance-price">
+                  <Pendor require={(balances?.sorted.length || 0) > 0}>{fiatBalance}</Pendor>
+                </span>
+              </div>
+            )
+          })}
           <Button
             className="dropdown-button"
             onClick={() => {
@@ -433,7 +435,7 @@ const Authorized = styled(
         onClick={() => setOpen(!open)}
       >
         <span className={`account-button${hasManyAccounts ? ' has-many-accounts' : ''} ${className}`}>
-          {hasActiveAccount ? (
+          {hasActiveAccount && address ? (
             <Identicon className="identicon" value={address} />
           ) : (
             <Identicon
