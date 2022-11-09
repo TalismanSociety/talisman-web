@@ -1,5 +1,6 @@
 import { Crowdloan, Parachain } from '@archetypes'
-import { Button, Panel, PanelSection, Poster, useModal } from '@components'
+import { Panel, PanelSection, Poster, useModal } from '@components'
+import Button from '@components/atoms/Button'
 import styled from '@emotion/styled'
 import { useCrowdloanByParachainId, useParachainAssets, useParachainDetailsBySlug } from '@libs/talisman'
 import { useTranslation } from 'react-i18next'
@@ -49,7 +50,6 @@ const CrowdloanDetail = styled(({ className }: { className: string }) => {
               />
               <Button
                 className={className}
-                primary
                 onClick={() => openModal(<Crowdloan.Contribute id={id} />)}
                 disabled={uiStatus !== 'active'}
               >
@@ -59,7 +59,7 @@ const CrowdloanDetail = styled(({ className }: { className: string }) => {
           </Panel>
 
           <Panel title={t('Rewards')}>
-            <Crowdloan.Rewards id={id} parachainId={parachainId} />
+            <Crowdloan.Rewards id={id} />
           </Panel>
 
           {/*<Panel

@@ -130,7 +130,7 @@ function _useTokenPrices(coins: Coin[]): [TokenPrices, (token: string) => void] 
       const coin = coinCandidates[0]
 
       setTokenPrices(tokenPrices => ({ ...tokenPrices, [token]: { token, loading: true, ...coin } }))
-      coin.id && fetchTokens.current.push([coin.id, token])
+      coin?.id && fetchTokens.current.push([coin.id, token])
       fetchNextBatch()
     },
     [coins, fetchNextBatch]
@@ -162,7 +162,9 @@ function useContext() {
 // Provider
 //
 
-type ProviderProps = {}
+type ProviderProps = {
+  children: any
+}
 
 export const Provider: FC<ProviderProps> = ({ children }) => {
   const coins = _useCoins()

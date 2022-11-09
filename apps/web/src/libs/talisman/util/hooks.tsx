@@ -52,6 +52,6 @@ export const useAwaitObjectValue = (object, key, cb = () => {}, timeout = 500) =
   }, [get(object, key)]) // eslint-disable-line
 }
 
-export const useChainByGenesis = genesisHash => {
-  return find(SupportedRelaychains, { genesisHash: genesisHash }) || {}
+export const useChainByGenesis = (genesisHash: any) => {
+  return find(SupportedRelaychains, { genesisHash: genesisHash }) || { id: undefined }
 }

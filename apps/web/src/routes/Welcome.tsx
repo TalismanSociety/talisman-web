@@ -44,7 +44,7 @@ const TalismanLogo = styled(TalismanHandLogo)`
   margin: 0 auto;
 `
 
-const Welcome = styled(({ className }: { className: string }) => {
+const Welcome = styled(({ className }: { className?: string }) => {
   const { t } = useTranslation('welcome')
   const { t: tBase } = useTranslation()
   return (

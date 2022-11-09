@@ -1,5 +1,15 @@
 /// <reference types="react-scripts" />
 
+declare module '*.woff2' {
+  const src: string
+  export default src
+}
+
+declare module '*.woff' {
+  const src: string
+  export default src
+}
+
 declare namespace NodeJS {
   interface ProcessEnv {
     REACT_APP_APPLICATION_NAME: string

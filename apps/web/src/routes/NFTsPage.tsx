@@ -9,7 +9,11 @@ import { useActiveAccount } from '@libs/talisman'
 import { device } from '@util/breakpoints'
 import { useTranslation } from 'react-i18next'
 
-const ExtensionUnavailable = styled(props => {
+type ExtensionUnavailableProps = {
+  props?: any
+}
+
+const ExtensionUnavailable = styled((props: ExtensionUnavailableProps) => {
   const { t } = useTranslation()
   return (
     <PanelSection comingSoon {...props}>

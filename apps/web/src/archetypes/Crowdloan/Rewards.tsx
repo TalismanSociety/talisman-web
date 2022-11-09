@@ -2,7 +2,7 @@ import { Stat } from '@components'
 import styled from '@emotion/styled'
 import { useCrowdloanById } from '@libs/talisman'
 
-const Countdown = styled(({ id, className }) => {
+const Countdown = styled(({ id, className }: { id?: string; className?: string }) => {
   const { crowdloan } = useCrowdloanById(id)
   const rewards = crowdloan?.details?.rewards
 

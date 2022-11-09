@@ -28,7 +28,7 @@ export const ButtonIcon = styled(({ children, className, ...rest }) => (
   }
 `
 
-export const Button = styled(({ loading, children, variant = '', className, ...props }) => {
+export const Button = styled(({ loading, children, variant = '', className, ...props }: any) => {
   const wrappedChildren = !!loading ? (
     <Fragment>
       <IconLoading data-spin="true" />

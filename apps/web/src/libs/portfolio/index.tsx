@@ -150,7 +150,9 @@ function useContext() {
 // Provider
 //
 
-type ProviderProps = {}
+type ProviderProps = {
+  children: any
+}
 
 export const Provider: FC<ProviderProps> = ({ children }) => {
   const [totalStore, setTotalStore] = useState<TotalStore>({})

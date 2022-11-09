@@ -64,7 +64,7 @@ const DevMenu = () => {
     }
   }, [])
 
-  return showDevMenu && <BaseDevMenu />
+  return showDevMenu ? <BaseDevMenu /> : null
 }
 
 export default DevMenu

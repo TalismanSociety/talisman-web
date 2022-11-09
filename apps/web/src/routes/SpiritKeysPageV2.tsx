@@ -1,6 +1,6 @@
 import handRedBlack from '@assets/hand-red-black.svg'
 import talismanSpiritKey from '@assets/spirit-key.png'
-import { Button } from '@components'
+import Button from '@components/atoms/Button'
 import { StyledLoader } from '@components/Await'
 import styled from '@emotion/styled'
 import { OwnershipText } from '@libs/spiritkey/OwnershipText'
@@ -57,7 +57,7 @@ const SpiritKeyPageV2 = styled(({ className }: { className: string }) => {
   const { t } = useTranslation('spirit-keys')
   const { t: tBase } = useTranslation()
   const totalNFTs = useFetchNFTs()
-  const hasNfts = totalNFTs?.length > 0
+  const hasNfts = totalNFTs ? totalNFTs?.length > 0 : false
   const addresses = useAllAccountAddresses()
   const addressesLoading = addresses === undefined
   const { status } = useExtensionAutoConnect()
@@ -76,9 +76,7 @@ const SpiritKeyPageV2 = styled(({ className }: { className: string }) => {
             <div className="no-wallet">
               <p>{tBase('extensionUnavailable.subtitle')}</p>
               <a href={downloadLink} title="Install Talisman" target="_blank" rel="noopener noreferrer">
-                <Button className={className} primary>
-                  {tBase('Install Talisman Extension')}
-                </Button>
+                <Button className={className}>{tBase('Install Talisman Extension')}</Button>
               </a>
             </div>
           )}
@@ -88,11 +86,7 @@ const SpiritKeyPageV2 = styled(({ className }: { className: string }) => {
               <div>{t('spiritClan.alreadyHaveOne')}</div>
               <WalletSelect
                 dappName={DAPP_NAME}
-                triggerComponent={
-                  <Button className={className} primary>
-                    {tBase('Connect wallet')}
-                  </Button>
-                }
+                triggerComponent={<Button className={className}>{tBase('Connect wallet')}</Button>}
               />
             </>
           )}
@@ -103,11 +97,7 @@ const SpiritKeyPageV2 = styled(({ className }: { className: string }) => {
               <div>{t('spiritClan.alreadyHaveOne')}</div>
               <WalletSelect
                 dappName={DAPP_NAME}
-                triggerComponent={
-                  <Button className={className} primary>
-                    {tBase('Connect wallet')}
-                  </Button>
-                }
+                triggerComponent={<Button className={className}>{tBase('Connect wallet')}</Button>}
               />
             </>
           )}
@@ -117,9 +107,7 @@ const SpiritKeyPageV2 = styled(({ className }: { className: string }) => {
               <OwnershipText className={className} />
               <div>
                 <a href={DISCORD_JOIN_URL} target="_blank" rel="noreferrer noopener" title="Join Spirit Clan">
-                  <Button className={className} primary>
-                    {t('spiritClan.joinSpiritClan')}
-                  </Button>
+                  <Button className={className}>{t('spiritClan.joinSpiritClan')}</Button>
                 </a>
               </div>
               <SpiritKeySender className={className} />

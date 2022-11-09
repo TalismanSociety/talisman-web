@@ -16,6 +16,7 @@ import { encodeAnyAddress } from '@talismn/util'
 import { device } from '@util/breakpoints'
 import { buyNow } from '@util/fiatOnRamp'
 import { truncateString } from '@util/helpers'
+import { Maybe } from '@util/monads'
 import useOnClickOutside from '@util/useOnClickOutside'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import toast from 'react-hot-toast'
@@ -23,7 +24,9 @@ import { useTranslation } from 'react-i18next'
 
 // format an address based on chain ID, derived from genesis ID
 // as returned from polkadot.js extension API
-const Address = ({ address, genesis, truncate = false }) => {
+
+// Please check through Truncate
+const Address = ({ address, genesis, truncate = false }: { address: string; genesis: any; truncate: any }) => {
   const { id } = useChainByGenesis(genesis)
   let encoded: string
   try {
@@ -36,22 +39,24 @@ const Address = ({ address, genesis, truncate = false }) => {
   return !!truncate ? truncateString(encoded, truncate[0] || 4, truncate[1] || 4) : encoded
 }
 
-const BuyItem = styled(({ nativeToken, className }) => {
-  const { t } = useTranslation()
-  return (
-    <span className={`${className}`} onClick={buyNow}>
-      <div className="container">
-        <span className="info">
-          <AlertCircle width="48" />
-          {t('You have no')} {nativeToken}
-        </span>
-        <Pill small primary>
-          {t('Buy')}
-        </Pill>
-      </div>
-    </span>
-  )
-})`
+const BuyItem = styled(
+  ({ nativeToken, className, onClick }: { nativeToken?: string; className?: string; onClick?: () => void }) => {
+    const { t } = useTranslation()
+    return (
+      <span className={`${className}`} onClick={buyNow}>
+        <div className="container">
+          <span className="info">
+            <AlertCircle width="48" />
+            {t('You have no')} {nativeToken}
+          </span>
+          <Pill small primary>
+            {t('Buy')}
+          </Pill>
+        </div>
+      </span>
+    )
+  }
+)`
   color: var(--color-primary);
 
   display: flex;
@@ -76,105 +81,111 @@ const BuyItem = styled(({ nativeToken, className }) => {
   }
 `
 
-const Dropdown = styled(({ className, open, handleClose, allAccounts, closeParent, showBuy = false }) => {
-  const { t } = useTranslation()
+type DropdownProps = {
+  className?: string
+  open: any
+  handleClose: any
+  allAccounts: any
+  closeParent: any
+  showBuy: boolean
+}
 
-  const { switchAccount } = useActiveAccount()
-  const { accounts, disconnect } = useExtensionAutoConnect()
+const Dropdown = styled(
+  ({ className, open, handleClose, allAccounts, closeParent, showBuy = false }: DropdownProps) => {
+    const { t } = useTranslation()
 
-  const { assetsValue, balances } = useBalances()
+    const { switchAccount } = useActiveAccount()
+    const { accounts, disconnect } = useExtensionAutoConnect()
 
-  return (
-    open && (
-      <span className={`account-picker ${className}`}>
-        {showBuy && <BuyItem onClick={closeParent} />}
-        {(allAccounts ? [{ name: t('All Accounts') }, ...accounts] : accounts).map(
-          ({ address, name, type, genesisHash }, index) => {
-            // Do the filtering
-            const fiatBalance =
-              address !== undefined
-                ? (balances?.find({ address: address }).sum.fiat('usd').transferable ?? 0).toLocaleString(undefined, {
-                    style: 'currency',
-                    currency: 'USD',
-                    currencyDisplay: 'narrowSymbol',
-                  }) ?? '-'
-                : assetsValue
+    const { assetsValue, balances } = useBalances()
 
-            return (
-              <div
-                key={index}
-                className="account"
-                onClick={() => {
-                  switchAccount(address)
-                  handleClose()
-                }}
-              >
-                <span className="left">
-                  {address ? (
-                    <Identicon
-                      className="identicon"
-                      value={address}
-                      theme={type === 'ethereum' ? 'ethereum' : 'polkadot'}
-                    />
-                  ) : (
-                    <Identicon
-                      Custom={AllAccountsIcon}
-                      className="identicon"
-                      value="5DHuDfmwzykE9KVmL87DLjAbfSX7P4f4wDW5CKx8QZnQA4FK"
-                      theme="polkadot"
-                    />
-                  )}
-                  <span className="name-address">
-                    <div className="name">{name}</div>
+    return (
+      open && (
+        <span className={`account-picker ${className}`}>
+          {showBuy && <BuyItem onClick={closeParent} />}
+          {(allAccounts ? [{ name: t('All Accounts') }, ...accounts] : accounts).map(
+            ({ address, name, type, genesisHash }, index) => {
+              // Do the filtering
+              const fiatBalance =
+                address !== undefined
+                  ? (balances?.find({ address: address }).sum.fiat('usd').transferable ?? 0).toLocaleString(undefined, {
+                      style: 'currency',
+                      currency: 'USD',
+                      currencyDisplay: 'narrowSymbol',
+                    }) ?? '-'
+                  : assetsValue
+
+              return (
+                <div
+                  key={index}
+                  className="account"
+                  onClick={() => {
+                    switchAccount(address)
+                    handleClose()
+                  }}
+                >
+                  <span className="left">
+                    {address ? (
+                      <Identicon className="identicon" value={address} />
+                    ) : (
+                      <Identicon
+                        Custom={AllAccountsIcon}
+                        className="identicon"
+                        value="5DHuDfmwzykE9KVmL87DLjAbfSX7P4f4wDW5CKx8QZnQA4FK"
+                      />
+                    )}
+                    <span className="name-address">
+                      <div className="name">{name}</div>
+                      {address && (
+                        <div className="address">
+                          <Address address={address} genesis={genesisHash} truncate />
+                        </div>
+                      )}
+                    </span>
                     {address && (
-                      <div className="address">
-                        <Address address={address} genesis={genesisHash} truncate />
-                      </div>
+                      <CopyButton
+                        text={address}
+                        onCopied={text => {
+                          toast(
+                            <>
+                              <Text.Body as="div" alpha="high">
+                                Address copied to clipboard
+                              </Text.Body>
+                              <Text.Body as="div">{text}</Text.Body>
+                            </>,
+                            { position: 'bottom-right', icon: <Copy /> }
+                          )
+                        }}
+                        onFailed={text => {
+                          console.log(`>>> failed`, text)
+                        }}
+                      />
                     )}
                   </span>
-                  {address && (
-                    <CopyButton
-                      text={address}
-                      onCopied={text => {
-                        toast(
-                          <>
-                            <Text.Body as="div" alpha="high">
-                              Address copied to clipboard
-                            </Text.Body>
-                            <Text.Body as="div">{text}</Text.Body>
-                          </>,
-                          { position: 'bottom-right', icon: <Copy /> }
-                        )
-                      }}
-                      onFailed={text => {
-                        console.log(`>>> failed`, text)
-                      }}
-                    />
-                  )}
-                </span>
 
-                <span className="balance-price">
-                  <Pendor require={(balances?.sorted.length || 0) > 0}>{fiatBalance}</Pendor>
-                </span>
-              </div>
-            )
-          }
-        )}
-        <Button
-          className="dropdown-button"
-          onClick={() => {
-            localStorage.removeItem('@talisman-connect/selected-wallet-name')
-            document.dispatchEvent(new CustomEvent('@talisman-connect/wallet-selected'))
-            disconnect()
-            switchAccount('')
-          }}
-        >
-          {t('Disconnect Wallet')}
-        </Button>
-      </span>
+                  <span className="balance-price">
+                    <Pendor require={(balances?.sorted.length || 0) > 0}>{fiatBalance}</Pendor>
+                  </span>
+                </div>
+              )
+            }
+          )}
+          <Button
+            className="dropdown-button"
+            onClick={() => {
+              localStorage.removeItem('@talisman-connect/selected-wallet-name')
+              document.dispatchEvent(new CustomEvent('@talisman-connect/wallet-selected'))
+              disconnect()
+              switchAccount('')
+            }}
+          >
+            {t('Disconnect Wallet')}
+          </Button>
+        </span>
+      )
     )
-  )
-})`
+  }
+)`
   background: var(--color-controlBackground);
   font-size: 0.8em;
   width: 26em;
@@ -278,7 +289,7 @@ const Dropdown = styled(({ className, open, handleClose, allAccounts, closeParen
     `}
 `
 
-const Unavailable = styled(({ className }) => {
+const Unavailable = styled(({ className }: { className?: string }) => {
   const { t } = useTranslation()
   const isTalismanInstalled = useTalismanInstalled()
   const title = isTalismanInstalled ? 'Connect wallet' : 'No wallet found'
@@ -311,7 +322,7 @@ const Unavailable = styled(({ className }) => {
   }
 `
 
-const NoAccount = styled(({ className }) => {
+const NoAccount = styled(({ className }: { className?: string }) => {
   const { t } = useTranslation()
   const [walletName, setWalletName] = useState<string | undefined>()
   useEffect(() => {
@@ -345,7 +356,7 @@ const NoAccount = styled(({ className }) => {
   }
 `
 
-const Unauthorized = styled(({ className }) => {
+const Unauthorized = styled(({ className }: { className?: string }) => {
   const [walletName, setWalletName] = useState<string | undefined>()
   useEffect(() => {
     const selectedWalletName = localStorage.getItem('@talisman-connect/selected-wallet-name')
@@ -379,8 +390,17 @@ const Unauthorized = styled(({ className }) => {
   }
 `
 
+type AuthorizedProps = {
+  className?: string
+  narrow?: boolean
+  allAccounts?: boolean
+  closeParent?: any
+  showBuy?: boolean
+  fixedDropdown?: boolean
+}
+
 const Authorized = styled(
-  ({ className, narrow, allAccounts, closeParent = null, showBuy = false, fixedDropdown = false }) => {
+  ({ className, narrow, allAccounts, closeParent = null, showBuy = false, fixedDropdown = false }: AuthorizedProps) => {
     const { t } = useTranslation()
 
     const [open, setOpen] = useState(false)
@@ -392,7 +412,7 @@ const Authorized = styled(
     useEffect(() => {
       if (allAccounts) return
       if (hasActiveAccount) return
-      switchAccount(accounts[0].address)
+      Maybe.of(accounts[0]).map(account => switchAccount(account.address))
     }, [accounts, allAccounts, hasActiveAccount, switchAccount])
 
     const addresses = useMemo(() => accounts.map(account => account.address), [accounts])
@@ -541,17 +561,27 @@ const Authorized = styled(
   }
 `
 
-const AccountButton = props => {
+type AccountButtonProps = {
+  narrow?: boolean
+  allAccounts?: boolean
+  closeParent?: any
+  showBuy?: boolean
+  fixedDropdown?: boolean
+  showValue?: boolean
+}
+
+const AccountButton = (props: AccountButtonProps) => {
   const { status } = useActiveAccount()
+
   switch (status) {
     case 'OK':
       return <Authorized {...props} />
     case 'UNAUTHORIZED':
-      return <Unauthorized {...props} />
+      return <Unauthorized />
     case 'UNAVAILABLE':
-      return <Unavailable {...props} />
+      return <Unavailable />
     case 'NOACCOUNT':
-      return <NoAccount {...props} />
+      return <NoAccount />
     default:
       return null
   }
