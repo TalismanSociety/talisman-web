@@ -11,14 +11,16 @@ import { ReactComponent as TwitterMobileLogo } from '@assets/icons/twitter-mobil
 import { Button } from '@components'
 import Menu from '@components/Menu'
 import { WalletNavConnector } from '@components/WalletNavConnector'
+import { useTheme } from '@emotion/react'
 import styled from '@emotion/styled'
 import { trackGoal } from '@libs/fathom'
 import { useExtension } from '@libs/talisman'
 import { buyNow } from '@util/fiatOnRamp'
 import { useMediaQuery } from '@util/hooks'
 import { DISCORD_JOIN_URL, TALISMAN_TWITTER_URL } from '@util/links'
-import { AnimatePresence, motion } from 'framer-motion'
-import { useReducer } from 'react'
+import Color from 'colorjs.io'
+import { AnimatePresence, motion, useAnimationControls, useScroll } from 'framer-motion'
+import { useEffect, useReducer } from 'react'
 import { useTranslation } from 'react-i18next'
 import { NavLink } from 'react-router-dom'
 
@@ -30,6 +32,14 @@ export default function HeaderState(props) {
 
   return <Header {...props} isMobile={isMobile} mobileMenuOpen={mobileMenuOpen} dispatch={dispatch} />
 }
+
+const desktopRoutes = [
+  { name: 'Portfolio', path: '/portfolio' },
+  { name: 'NFTs', path: '/nfts' },
+  { name: 'Explore', path: '/explore' },
+  { name: 'Staking', path: '/staking' },
+  // { name: 'Transaction History', path: '/history' },
+]
 
 const mainRoutes = [
   { name: 'Portfolio', url: '/portfolio', icon: <PortfolioLogo alt="Portfolio" /> },
@@ -92,26 +102,83 @@ const smolLinks = [
 ]
 
 const Header = styled(({ className, isMobile, mobileMenuOpen, dispatch }) => {
+  const theme = useTheme()
+
+  const controls = useAnimationControls()
+  const { scrollY } = useScroll()
+
+  useEffect(() => {
+    scrollY.onChange(y => {
+      controls.start(y > 30 ? 'scrolled' : 'initial')
+    })
+  }, [controls, scrollY])
+
   const { t } = useTranslation('nav')
   const { status: extensionStatus } = useExtension()
   const homeRoute = ['LOADING', 'DISCONNECTED'].includes(extensionStatus) ? '/' : '/portfolio'
 
+  const background = new Color(theme.color.background)
+  background.alpha = 0.5
+
   return (
-    <header className={className}>
+    <motion.header
+      className={className}
+      animate={controls}
+      variants={{
+        initial: {
+          backdropFilter: 'blur(0)',
+          boxShadow: 'rgba(255, 255, 255, 0.1) 0px 0px 0px 0px inset',
+        },
+        scrolled: {
+          backdropFilter: 'blur(12px)',
+          boxShadow: 'rgba(255, 255, 255, 0.1) 0px -1px 0px 0px inset',
+        },
+      }}
+      style={{
+        backgroundColor: background.display(),
+      }}
+    >
       <span>
         <NavLink end to={homeRoute} className="logo">
           <TalismanHandLogo />
         </NavLink>
       </span>
       {!isMobile && (
-        <nav className="main-nav">
-          <NavLink end to="/portfolio">
-            {t('Portfolio')}
-          </NavLink>
-          <NavLink to="/nfts">{t('NFTs')}</NavLink>
-          <NavLink to="/explore">{t('Explore')}</NavLink>
-          <NavLink to="/staking">{t('Staking')}</NavLink>
-          {/* <NavLink to="/history">{t('Transaction History')}</NavLink> */}
+        <nav css={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '2rem' }}>
+          {desktopRoutes.map(route => (
+            <NavLink
+              to={route.path}
+              css={{
+                'padding': '0.75rem 1rem',
+                'position': 'relative',
+                'whiteSpace': 'nowrap',
+                '&.active': { color: theme.color.onForegroundVariant },
+                ':hover': { color: theme.color.onForegroundVariant },
+              }}
+            >
+              {({ isActive }) => (
+                <>
+                  {t(route.name)}
+                  <AnimatePresence>
+                    {isActive && (
+                      <motion.div
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0 }}
+                        css={{
+                          position: 'absolute',
+                          inset: 0,
+                          borderRadius: '1rem',
+                          background: theme.color.foregroundVariant,
+                          zIndex: -1,
+                        }}
+                      />
+                    )}
+                  </AnimatePresence>
+                </>
+              )}
+            </NavLink>
+          ))}
         </nav>
       )}
 
@@ -179,7 +246,7 @@ const Header = styled(({ className, isMobile, mobileMenuOpen, dispatch }) => {
           </AnimatePresence>
         </Menu>
       </div>
-    </header>
+    </motion.header>
   )
 })`
   position: sticky;
@@ -219,29 +286,6 @@ const Header = styled(({ className, isMobile, mobileMenuOpen, dispatch }) => {
       display: block;
       width: auto;
       height: 1em;
-    }
-  }
-
-  .main-nav {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 2rem;
-
-    > * {
-      padding: 0.75rem 1rem;
-      border-radius: 1rem;
-      position: relative;
-      white-space: nowrap;
-
-      &.active {
-        color: var(--color-text);
-        background: var(--color-activeBackground);
-      }
-
-      &:hover {
-        color: var(--color-text);
-      }
     }
   }
 
