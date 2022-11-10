@@ -43,13 +43,15 @@ export class AcalaProvider extends NFTInterface {
     const collectionIdFixed: string = collectionId.replaceAll(',', '')
     const nftTokenIdFixed: string = nftTokenId.replaceAll(',', '')
 
-    const collectionDetails = (await this.webSocket.query.ormlNFT.classes(collectionIdFixed)).unwrap()
-
+    // Until resolved or a better way is found, toHuman will be used so Acala NFTs can be shown.
+    const collectionDetails = (await this.webSocket.query.ormlNFT.classes(collectionIdFixed)).unwrapOr(null)?.toHuman()
     if (!collectionDetails) return null
 
-    const metadata = await this.fetchCollectionData(
-      this.baseIPFSUrl + collectionDetails?.metadata + '/metadata.json'
-    ).then(res => res)
+    const metadata = await this.fetchCollectionData(this.baseIPFSUrl + collectionDetails?.metadata + '/metadata.json')
+      .then(res => res)
+      .catch(err => console.log(err))
+
+    // console.log(metadata, collectionDetails?.metadata)
 
     // // Return the promised data for token details
     return Promise.resolve({
@@ -105,7 +107,7 @@ export class AcalaProvider extends NFTInterface {
       },
       provider: item?.provider,
       address: item?.address,
-    }
+    } as NFTShort
   }
 
   async hydrateNftsByAddress(address: string) {
@@ -180,6 +182,8 @@ export class AcalaProvider extends NFTInterface {
               tokenCurrency: this.tokenCurrency,
               address,
             }
+
+            // console.log(nftDetail)
 
             this.setItem(this.parseShort(nftDetail))
             this.detailedItems[nftDetail.id] = nftDetail

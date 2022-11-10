@@ -102,6 +102,12 @@ export class EVMProvider extends NFTInterface {
     this.reset()
     this.isFetching = true
 
+    // check if address is valid
+    if (!ethers.utils.isAddress(address)) {
+      this.isFetching = false
+      return
+    }
+
     for (let i = 0; i < this.rpc.length; i++) {
       // try connecting to the rpc, compare to the chain id and if it matches, use it as the provider if not, try the next one
       const provider = new ethers.providers.JsonRpcProvider(this.rpc[i])
