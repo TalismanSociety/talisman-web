@@ -108,24 +108,31 @@ export class EVMProvider extends NFTInterface {
       return
     }
 
-    for (let i = 0; i < this.rpc.length; i++) {
-      // try connecting to the rpc, compare to the chain id and if it matches, use it as the provider if not, try the next one
-      const provider = new ethers.providers.JsonRpcProvider(this.rpc[i])
-      const chainId = await provider
-        .getNetwork()
-        .then(network => network.chainId)
-        .catch(e => undefined)
-      if (chainId !== this.chainId || chainId === undefined) {
-        continue
-      }
-      this.web3 = provider
-      break
-    }
+    const providers = await Promise.all(
+      this.rpc.map(async rpc => {
+        const provider = new ethers.providers.JsonRpcProvider(rpc)
+        const chainId = await provider
+          .getNetwork()
+          .then(network => network.chainId)
+          .catch(() => undefined)
 
-    if (this.web3 === undefined) {
+        if (chainId !== this.chainId || chainId === undefined) {
+          return
+        }
+
+        return rpc
+      })
+    )
+
+    // return first matching
+    const provider = providers.find(p => p !== undefined)
+
+    if (provider === undefined) {
       this.isFetching = false
       return
     }
+
+    this.web3 = new ethers.providers.JsonRpcProvider(provider)
 
     // we need to ...
     await Promise.all(
