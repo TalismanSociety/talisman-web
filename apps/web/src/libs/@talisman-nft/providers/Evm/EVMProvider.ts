@@ -109,17 +109,22 @@ export class EVMProvider extends NFTInterface {
     }
 
     const providers = await Promise.all(
+      // map through each RPC on the list
       this.rpc.map(async rpc => {
+        // Test the provider
         const provider = new ethers.providers.JsonRpcProvider(rpc)
+        // Get the chainId of the provider
         const chainId = await provider
           .getNetwork()
           .then(network => network.chainId)
           .catch(() => undefined)
 
+        // If the chainId does not match the chainId of the provider, return undefined
         if (chainId !== this.chainId || chainId === undefined) {
-          return
+          return undefined
         }
 
+        // If the chainId matches, return the provider
         return rpc
       })
     )
