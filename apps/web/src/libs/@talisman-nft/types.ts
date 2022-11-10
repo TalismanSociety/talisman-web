@@ -1,3 +1,5 @@
+import { provider } from 'web3-core'
+
 export type NFTCategory = 'image' | 'video' | 'model' | 'application' | 'audio' | 'pdf' | 'loading' | 'blank' | null
 
 type NFTAttributes = Record<string, any>
@@ -35,7 +37,7 @@ export type EVMChain = {
   contracts: Contract
   name: string
   tokenCurrency: string
-  rpc: string[] // Multiple RPC's incase one doesn't work.
+  rpc: provider[] // Multiple RPC's incase one doesn't work.
   platformUri: string
   other: {
     [key: string]: any
@@ -60,8 +62,6 @@ export type NFTData = {
   isFetching: boolean
   items: NFTShort[]
 }
-
-//export type NFTShortObject = {[key: string]: NFTShort[]}
 
 export type NFTFactorySubscriptionCallback = (data: NFTData) => void
 

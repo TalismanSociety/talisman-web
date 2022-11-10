@@ -5,6 +5,29 @@ __metadata:
   version: 6
   cacheKey: 8
 
+"@acala-network/type-definitions@npm:4.1.5":
+  version: 4.1.5
+  resolution: "@acala-network/type-definitions@npm:4.1.5"
+  dependencies:
+    "@open-web3/orml-type-definitions": ^1.1.4
+  checksum: 1d3247a48bc24fd4692965fef3cb2cb08a6143222986b8d1d80be4679c4f11c5e71b074608b72d3d7eacce85dea6a58570bc192f9afcf8302d7bca1b1d0c5c2a
+  languageName: node
+  linkType: hard
+
+"@acala-network/types@npm:^4.1.5":
+  version: 4.1.5
+  resolution: "@acala-network/types@npm:4.1.5"
+  dependencies:
+    "@acala-network/type-definitions": 4.1.5
+    "@babel/runtime": ^7.10.2
+    "@open-web3/api-mobx": ^1.1.4
+    "@open-web3/orml-types": ^1.1.4
+  peerDependencies:
+    "@polkadot/api": ">=8"
+  checksum: 09f250147daf7e9702e6004ee8949c5a977d9652bf8b3dca53a90f0ad9da4138384ab888cfde93a08de3d1cc59286d62b71cf43a3de37ec39aaf18a5a1cd839e
+  languageName: node
+  linkType: hard
+
 "@adobe/css-tools@npm:^4.0.1":
   version: 4.0.1
   resolution: "@adobe/css-tools@npm:4.0.1"
@@ -4484,6 +4507,38 @@ __metadata:
     mkdirp: ^1.0.4
     rimraf: ^3.0.2
   checksum: 52dc02259d98da517fae4cb3a0a3850227bdae4939dda1980b788a7670636ca2b4a01b58df03dd5f65c1e3cb70c50fa8ce5762b582b3f499ec30ee5ce1fd9380
+  languageName: node
+  linkType: hard
+
+"@open-web3/api-mobx@npm:^1.1.4":
+  version: 1.1.4
+  resolution: "@open-web3/api-mobx@npm:1.1.4"
+  dependencies:
+    mobx: ^5.15.7
+    mobx-utils: ^5.6.2
+  peerDependencies:
+    "@polkadot/api": ">6.3.1"
+  checksum: 8e7e609fcafe0cb0f1fd6f5226519c1000cfd6217c52a29a8923cab6bf0ee3852e847f891ae8438e4c365a908b3842659b812328e6398fbfc1065bc1ab242482
+  languageName: node
+  linkType: hard
+
+"@open-web3/orml-type-definitions@npm:1.1.4, @open-web3/orml-type-definitions@npm:^1.1.4":
+  version: 1.1.4
+  resolution: "@open-web3/orml-type-definitions@npm:1.1.4"
+  dependencies:
+    lodash.merge: ^4.6.2
+  checksum: 7a6aaef419db46346ec9449cab6b5b12f0a80779ba036561521e0f84bbed85e7a5e243409276d1dd5ace1d1446ca7a188e1133e9c031156b16faf282f3960344
+  languageName: node
+  linkType: hard
+
+"@open-web3/orml-types@npm:^1.1.4":
+  version: 1.1.4
+  resolution: "@open-web3/orml-types@npm:1.1.4"
+  dependencies:
+    "@open-web3/orml-type-definitions": 1.1.4
+  peerDependencies:
+    "@polkadot/api": ">6.3.1"
+  checksum: fb3985b70922c9bbac6fea41754467d8fa5db298383336d1d43d5aa59ed85d0036ffd077089cccf6e4936b4589829f079496e61ace3344e6a6cae22dce7cc265
   languageName: node
   linkType: hard
 
@@ -19922,6 +19977,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"mobx-utils@npm:^5.6.2":
+  version: 5.6.2
+  resolution: "mobx-utils@npm:5.6.2"
+  peerDependencies:
+    mobx: ^4.13.1 || ^5.13.1
+  checksum: 745f697576a838c1b728c507e7e6dd5aee38957113d2833eae207b727f4f6c953ec159c4373aa40c708b632b307ba7024268fd0aa4e58a9a66caaf387e85d9ac
+  languageName: node
+  linkType: hard
+
+"mobx@npm:^5.15.7":
+  version: 5.15.7
+  resolution: "mobx@npm:5.15.7"
+  checksum: 46aa00c330a256fdde1c030cf8bab0baebc7fdfb23709884400ac486c318ce650acc336fd8f1e629b5c8680d82051f2aed4737406c4ac6fe1b2d9f3d978c4339
+  languageName: node
+  linkType: hard
+
 "mock-fs@npm:^4.1.0":
   version: 4.14.0
   resolution: "mock-fs@npm:4.14.0"
@@ -26331,6 +26402,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "talisman-web@workspace:."
   dependencies:
+    "@acala-network/types": ^4.1.5
     "@commitlint/cli": ^17.2.0
     "@commitlint/config-conventional": ^17.2.0
     eslint: ^8.27.0
