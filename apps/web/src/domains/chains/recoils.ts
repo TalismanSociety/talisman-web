@@ -6,7 +6,7 @@ import Decimal from '@util/Decimal'
 import { gql, request } from 'graphql-request'
 import { atom, selector, selectorFamily } from 'recoil'
 
-import { defaultParams } from './const'
+import { ChainId, chainParams, defaultParams, supportedChainIds } from './consts'
 
 export type Chain = {
   id: string
@@ -21,8 +21,6 @@ export type Chain = {
   }
   subscanUrl: string | null
 }
-
-export const SUPPORTED_CHAIN_IDS = ['polkadot', 'kusama', 'westend-testnet']
 
 export const chainsState = selector({
   key: 'Chains',
@@ -45,28 +43,19 @@ export const chainsState = selector({
           }
         }
       `,
-      { ids: SUPPORTED_CHAIN_IDS }
+      { ids: supportedChainIds }
     )
 
     return response.chains.map(x => ({
       ...x,
-      params: {
-        ...defaultParams,
-        ...(x.id === SUPPORTED_CHAIN_IDS[0]
-          ? { stakeTarget: 0.75 }
-          : x.id === SUPPORTED_CHAIN_IDS[1]
-          ? { auctionAdjust: 0.3 / 60, auctionMax: 60, stakeTarget: 0.75 }
-          : x.id === SUPPORTED_CHAIN_IDS[2]
-          ? { stakeTarget: 0.75 }
-          : {}),
-      },
+      params: chainParams[x.id as ChainId] ?? defaultParams,
     }))
   },
 })
 
-export const chainIdState = atom({
+export const chainIdState = atom<ChainId>({
   key: 'ChainId',
-  default: SUPPORTED_CHAIN_IDS[0],
+  default: 'polkadot',
   effects: [storageEffect(sessionStorage)],
 })
 
