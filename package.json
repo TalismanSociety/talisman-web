@@ -14,7 +14,6 @@
     "lint": "yarn workspaces foreach run lint"
   },
   "devDependencies": {
-    "@acala-network/types": "^4.1.5",
     "@commitlint/cli": "^17.2.0",
     "@commitlint/config-conventional": "^17.2.0",
     "eslint": "^8.27.0",

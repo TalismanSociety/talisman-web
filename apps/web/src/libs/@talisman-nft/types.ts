@@ -1,5 +1,3 @@
-import { provider } from 'web3-core'
-
 export type NFTCategory = 'image' | 'video' | 'model' | 'application' | 'audio' | 'pdf' | 'loading' | 'blank' | null
 
 type NFTAttributes = Record<string, any>
@@ -36,8 +34,9 @@ export type NFTDetail = NFTShort & {
 export type EVMChain = {
   contracts: Contract
   name: string
+  chainId: number
   tokenCurrency: string
-  rpc: provider[] // Multiple RPC's incase one doesn't work.
+  rpc: string[] // Multiple RPC's incase one doesn't work.
   platformUri: string
   other: {
     [key: string]: any
@@ -53,7 +52,6 @@ export type Contract = {
     address: string
     name: string
     symbol: string
-    totalSupply: number
   }
 }
 
