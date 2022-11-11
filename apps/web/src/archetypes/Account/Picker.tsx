@@ -12,7 +12,7 @@ import { useEffect, useRef, useState } from 'react'
 type DropdownProps = {
   className?: string
   accounts: Account[]
-  activeAccount: Account
+  activeAccount: Account | undefined
   open: any
   handleChange: any
 }

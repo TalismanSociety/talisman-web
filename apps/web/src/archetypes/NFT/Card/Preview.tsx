@@ -54,10 +54,11 @@ const MediaPreview = ({ mediaUri, thumb, type, name, id }: NFTDetail | NFTShort)
       return (
         <video
           src={thumb ?? mediaUri}
-          onMouseOver={event => {
+          // Maybe figure out what type is the event?
+          onMouseOver={(event: any) => {
             event.target.play()
           }}
-          onMouseOut={event => {
+          onMouseOut={(event: any) => {
             event.target.pause()
             event.target.currentTime = 0
           }}

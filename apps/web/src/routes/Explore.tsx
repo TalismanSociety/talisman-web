@@ -10,7 +10,7 @@ const ExploreGrid = ({ className }: { className?: string }) => {
 
   return (
     <div className={className}>
-      {!loading ? (
+      {loading ? (
         <>
           <TagLoading className={className} />
           <CardLoading className={className} />

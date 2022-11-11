@@ -1,3 +1,5 @@
+import { PropsWithChildren } from 'react'
+
 import * as Account from './account'
 import * as Balance from './balances'
 import * as Chainmeta from './chainmeta'
@@ -49,7 +51,7 @@ export const gql = Subquery.gql
 export const useChainByGenesis = _useChainByGenesis
 
 /* publically exposed provider */
-const Provider = ({ children }) => (
+const Provider = ({ children }: PropsWithChildren) => (
   <Subquery.Provider uri="https://api.subquery.network/sq/subvis-io/kusama-crowdloans-and-auctions-v2">
     <Extension.Provider>
       <Chainmeta.Provider>

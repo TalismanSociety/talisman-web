@@ -87,7 +87,8 @@ export const Item = styled(({ className, transaction, addresses, selectedAccount
                 {truncateAddress(youAddress ? encodeAnyAddress(youAddress, ss58Format) : youAddress, 4)}
               </ClickToCopy>
             }
-            graphic={<Identicon value={youAddress} size="3.2rem" />}
+            // Probably not the best, but at the moment I'm not 100% sure where this would be utilised.
+            graphic={<Identicon value={youAddress ?? ''} size="3.2rem" />}
           />
         )}
 

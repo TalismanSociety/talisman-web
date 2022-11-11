@@ -1,4 +1,4 @@
-import { Crowdloan, ParachainDetails, useLatestCrowdloans, useParachainsDetailsIndexedById } from '@libs/talisman'
+import { Crowdloan, ParachainDetails, useLatestCrowdloans, useParachainsDetailsIndexedById } from '@libs/talisman/'
 import { filter, find, orderBy } from 'lodash'
 import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'

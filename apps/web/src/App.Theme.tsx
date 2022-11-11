@@ -7,8 +7,7 @@ import SurtSemiBold from '@assets/fonts/Surt-SemiBold.woff2'
 import SurtSemiBoldExpanded from '@assets/fonts/Surt-SemiBoldExp.woff2'
 import SurtSemiBoldExtended from '@assets/fonts/Surt-SemiBoldExtended.woff2'
 import { Global, Theme, ThemeProvider, css } from '@emotion/react'
-import { PropsWithChildren, createContext, useContext, useEffect } from 'react'
-import { useLocation } from 'react-router-dom'
+import { PropsWithChildren, createContext, useContext } from 'react'
 
 /*
   base style definitions

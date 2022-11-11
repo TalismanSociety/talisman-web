@@ -8,7 +8,7 @@ import {
 } from '@apollo/client'
 import { useChain } from '@talismn/api-react-hooks'
 import { find } from 'lodash'
-import { FC, useContext as _useContext, createContext, useEffect, useMemo, useState } from 'react'
+import { FC, PropsWithChildren, useContext as _useContext, createContext, useEffect, useMemo, useState } from 'react'
 
 import { SupportedRelaychains, parachainDetails } from './util/_config'
 import type { ParachainDetails } from './util/_config'
@@ -131,7 +131,7 @@ function useContext() {
 // Provider
 //
 
-export const Provider: FC = ({ children }) => {
+export const Provider: FC = ({ children }: PropsWithChildren) => {
   const [parachainResults, setParachainResults] = useState<Array<[number, ApolloQueryResult<any> | null]>>([])
   useEffect(() => {
     // create an apollo client for each relaychain

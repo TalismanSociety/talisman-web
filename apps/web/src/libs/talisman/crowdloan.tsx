@@ -2,7 +2,7 @@ import { ApolloClient, InMemoryCache, createHttpLink, gql } from '@apollo/client
 //import { BifrostDOT, Moonbeam } from '@libs/crowdloans/crowdloanOverrides'
 import { planckToTokens } from '@talismn/util'
 import { find, get } from 'lodash'
-import { FC, useContext as _useContext, createContext, useEffect, useMemo, useState } from 'react'
+import { FC, PropsWithChildren, useContext as _useContext, createContext, useEffect, useMemo, useState } from 'react'
 
 import { CrowdloanDetails, SupportedRelaychains, crowdloanDetails } from './util/_config'
 
@@ -166,7 +166,7 @@ const determineStatusInterlay = (
     : 'winner'
 }
 
-export const Provider: FC = ({ children }) => {
+export const Provider: FC = ({ children }: PropsWithChildren) => {
   const [crowdloanResults, setCrowdloanResults] = useState<any>([])
   useEffect(() => {
     // create an apollo client for each relaychain

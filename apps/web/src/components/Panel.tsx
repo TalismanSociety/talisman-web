@@ -5,7 +5,7 @@ import { ReactNode } from 'react'
 
 type Props = {
   title?: string
-  subtitle?: string
+  subtitle?: string | ReactNode
   className?: string
   children?: ReactNode
   comingSoon?: boolean

@@ -18,7 +18,7 @@ import { Suspense, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 
-const CrowdloanItem = styled(({ id, className }) => {
+const CrowdloanItem = styled(({ id, className }: { id: string; className?: string }) => {
   const { t } = useTranslation()
   const { crowdloan } = useCrowdloanById(id)
   const parachainId = crowdloan?.parachain.paraId
@@ -88,7 +88,7 @@ const CrowdloanItem = styled(({ id, className }) => {
   }
 `
 
-const CrowdloanItemWithLink = styled(props => {
+const CrowdloanItemWithLink = styled((props: any) => {
   const { id, className } = props
   return (
     <Link to={'#'} className={className}>
@@ -111,7 +111,7 @@ const CrowdloanItemWithLink = styled(props => {
   }
 `
 
-const ExtensionUnavailable = styled(props => {
+const ExtensionUnavailable = styled((props: any) => {
   const { t } = useTranslation()
   return (
     <PanelSection comingSoon {...props}>

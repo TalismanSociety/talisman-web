@@ -2,7 +2,9 @@ import { Pill } from '@components'
 import styled from '@emotion/styled'
 import { useParachainDetailsById } from '@libs/talisman'
 
-const Links = styled(({ id, className }) => {
+import { LinksProps } from './Links'
+
+const Links = styled(({ id, className }: LinksProps) => {
   const { parachainDetails: { tags = [] } = {} } = useParachainDetailsById(id)
 
   return (

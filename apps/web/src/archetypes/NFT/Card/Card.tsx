@@ -1,6 +1,6 @@
 import NftDialog from '@archetypes/NFT/Modal/NftDialog'
 import styled from '@emotion/styled'
-import { NFTShort } from '@libs/@talisman-nft/types'
+import { NFTDetail } from '@libs/@talisman-nft/types'
 import { useState } from 'react'
 
 import Info from './Info'
@@ -9,10 +9,10 @@ import { NFTIcon } from '..'
 
 interface CardProps {
   className?: string
-  nft: NFTShort
+  nft: NFTDetail
 }
 
-const NFTCard = ({ className, nft }: CardProps) => {
+const NFTCard = ({ nft }: CardProps) => {
   const [open, setOpen] = useState(false)
   return (
     <>
