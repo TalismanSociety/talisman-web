@@ -143,7 +143,7 @@ const Assets = styled(({ className }: { className?: string }) => {
   )
 
   return (
-    <section className={`wallet-assets ${className}`}>
+    <section data-testid="assets" className={`wallet-assets ${className}`}>
       <Panel title={t('Assets')} subtitle={balances !== undefined ? fiatTotal : <Loader />}>
         <ExtensionStatusGate unavailable={<ExtensionUnavailable />}>
           {(balances?.sorted.length || 0) > 0 ? assetBalances : <AssetsLoading />}
