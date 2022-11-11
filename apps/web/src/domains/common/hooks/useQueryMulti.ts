@@ -1,5 +1,10 @@
 import { ApiPromise } from '@polkadot/api'
-import type { PromiseResult, QueryableStorageEntry, StorageEntryPromiseOverloads } from '@polkadot/api/types'
+import type {
+  GenericStorageEntryFunction,
+  PromiseResult,
+  QueryableStorageEntry,
+  StorageEntryPromiseOverloads,
+} from '@polkadot/api/types'
 import useDeferred from '@util/useDeferred'
 import { useEffect, useRef, useState } from 'react'
 import { Loadable, RecoilLoadable, useRecoilValue } from 'recoil'
@@ -26,12 +31,12 @@ type Query = QueryMap[keyof QueryMap]
 // }
 
 type SingleQueryResultMap = {
-  [P in Query]: P extends `${infer TModule}.${infer TSection}`
+  [P in Query]: P extends `${infer Module}.${infer Section}`
     ? Diverge<
-        ApiPromise['query'][TModule][TSection],
-        StorageEntryPromiseOverloads & QueryableStorageEntry<any, any>
-      > extends PromiseResult<(...args: any) => Observable<infer TResult>>
-      ? TResult
+        ApiPromise['query'][Module][Section],
+        StorageEntryPromiseOverloads & QueryableStorageEntry<any, any> & PromiseResult<GenericStorageEntryFunction>
+      > extends PromiseResult<(...args: any) => Observable<infer Result>>
+      ? Result
       : any
     : never
 }

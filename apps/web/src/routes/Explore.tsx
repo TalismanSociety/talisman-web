@@ -4,7 +4,7 @@ import styled from '@emotion/styled'
 import { device } from '@util/breakpoints'
 import { useState } from 'react'
 
-const ExploreGrid = ({ className }: { className: string }) => {
+const ExploreGrid = ({ className }: { className?: string }) => {
   const { dapps, loading, tags } = useFetchDapps()
   const [selectedTag, setSelectedTag] = useState<string>('All')
 
@@ -103,10 +103,10 @@ const StyledExploreGrid = styled(ExploreGrid)`
   }
 `
 
-const Explore = styled(({ className }: { className: string }) => (
+const Explore = styled(({ className }: { className?: string }) => (
   <section className={className}>
     <h1>Explore</h1>
-    <StyledExploreGrid className={className} />
+    <StyledExploreGrid />
   </section>
 ))`
   color: var(--color-text);

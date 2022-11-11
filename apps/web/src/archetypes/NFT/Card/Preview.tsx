@@ -37,7 +37,7 @@ const MediaPreview = ({ mediaUri, thumb, type, name, id }: NFTDetail | NFTShort)
   switch (effectiveType) {
     case 'image':
       return mediaUri ? (
-        <img loading="lazy" src={mediaUri} alt="" />
+        <img loading="lazy" src={mediaUri} alt={name ?? id} />
       ) : (
         <PlaceholderPreview icon={<Image />} text={'Image'} />
       )

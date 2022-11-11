@@ -52,8 +52,10 @@ const List = ({ address }: { address: string }) => {
 
   const filterItemsByAddress = (nftData: NFTData) => {
     const items = nftData?.items.filter((item: NFTShort) => item.address === address)
+
     return {
       ...nftData,
+      count: items.length,
       items: items,
     }
   }

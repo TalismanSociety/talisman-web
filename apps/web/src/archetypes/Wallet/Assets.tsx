@@ -77,7 +77,7 @@ const AssetBalance = styled(({ token, balances, address }: AssetBalanceProps) =>
   )
 })``
 
-const Assets = styled(({ className }: { className: string }) => {
+const Assets = styled(({ className }: { className?: string }) => {
   const { t } = useTranslation()
 
   const { balances, tokenIds, tokens, assetsValue } = useBalances()

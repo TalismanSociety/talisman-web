@@ -1,4 +1,5 @@
-import { SUPPORTED_CHAIN_IDS, chainIdState, chainRpcState, chainState } from '@domains/chains/recoils'
+import { supportedChainIds } from '@domains/chains/consts'
+import { chainIdState, chainRpcState, chainState } from '@domains/chains/recoils'
 import { useTheme } from '@emotion/react'
 import { Suspense, useEffect, useState } from 'react'
 import WinBox from 'react-winbox'
@@ -25,7 +26,7 @@ const BaseDevMenu = () => {
             <label>
               <div>ID</div>
               <select value={chainId} onChange={event => setChainId(event.target.value)}>
-                {SUPPORTED_CHAIN_IDS.map(id => (
+                {supportedChainIds.map(id => (
                   <option key={id} value={id}>
                     {id}
                   </option>
@@ -64,7 +65,11 @@ const DevMenu = () => {
     }
   }, [])
 
-  return showDevMenu ? <BaseDevMenu /> : null
+  if (!showDevMenu) {
+    return null
+  }
+
+  return <BaseDevMenu />
 }
 
 export default DevMenu

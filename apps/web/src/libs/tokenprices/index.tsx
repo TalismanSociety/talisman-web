@@ -1,5 +1,14 @@
 import { debounce } from 'lodash'
-import { FC, useContext as _useContext, createContext, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import {
+  PropsWithChildren,
+  useContext as _useContext,
+  createContext,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react'
 
 // TODO: Cache token USD values locally
 // TODO: Update token USD values in the background
@@ -45,7 +54,7 @@ export function useTokenPrices(tokens: string[]): TokenPrice[] {
   return useMemo(
     () =>
       tokens.map(token => {
-        if (tokenPrices[token]) return tokenPrices[token]
+        if (tokenPrices[token]) return tokenPrices[token]!
         return { token, loading: true }
       }),
     [tokens, tokenPrices]
@@ -54,7 +63,7 @@ export function useTokenPrices(tokens: string[]): TokenPrice[] {
 
 export function useTokenPrice(token: string): TokenPrice {
   const tokens = useMemo(() => [token], [token])
-  return useTokenPrices(tokens)[0]
+  return useTokenPrices(tokens)[0]!
 }
 
 //
@@ -102,7 +111,7 @@ function _useTokenPrices(coins: Coin[]): [TokenPrices, (token: string) => void] 
         Object.entries(result).forEach(([tokenId, { usd }]: any) =>
           setTokenPrices(tokenPrices => ({
             ...tokenPrices,
-            [idToToken[tokenId]]: { ...tokenPrices[idToToken[tokenId]], loading: false, price: usd },
+            [idToToken[tokenId]!]: { ...tokenPrices[idToToken[tokenId]!]!, loading: false, price: usd },
           }))
         )
       )
@@ -162,11 +171,9 @@ function useContext() {
 // Provider
 //
 
-type ProviderProps = {
-  children: any
-}
+type ProviderProps = PropsWithChildren
 
-export const Provider: FC<ProviderProps> = ({ children }) => {
+export const Provider = ({ children }: ProviderProps) => {
   const coins = _useCoins()
   const [tokenPrices, addToken] = _useTokenPrices(coins)
 

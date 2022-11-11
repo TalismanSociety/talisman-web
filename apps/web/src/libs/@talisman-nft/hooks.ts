@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 
 import { defaultNftFactoryCallbackData } from './config'
 import { NFTFactory } from './nftFactory'
-import { EVMProvider, Rmrk1Provider, Rmrk2Provider, StatemineProvider } from './providers'
+import { AcalaProvider, EVMProvider, Rmrk1Provider, Rmrk2Provider, StatemineProvider } from './providers'
 import { EVMChains } from './providers/Evm/EVMChains'
 import { NFTInterface } from './providers/NFTInterface'
 import { EVMChain, NFTData, NFTDetail } from './types'
@@ -12,7 +12,7 @@ const providers: NFTInterface[] = [
   new Rmrk1Provider(),
   new Rmrk2Provider(),
   new StatemineProvider(),
-  // new AcalaProvider(),
+  new AcalaProvider(),
 ]
 
 // EVM Related Providers
@@ -52,7 +52,7 @@ export const useNftById = (id?: string) => {
     if (!id) return
     setLoading(true)
     const short = nftFactory.fetchOneById(id)
-    if (!short) {
+    if (short === null) {
       setError('NFT not found')
       setLoading(false)
       return
