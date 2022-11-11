@@ -179,7 +179,7 @@ export class Rmrk2Provider extends NFTInterface {
 
   fetchOneById(id: string) {
     const internalId = id.split('.').slice(1).join('.')
-    return this.items[internalId] || null
+    return this.items[internalId]
   }
 
   protected async fetchDetail(id: string): Promise<NFTDetail> {
@@ -204,7 +204,7 @@ export class Rmrk2Provider extends NFTInterface {
           : await this.fetchMediaFromMetadata(indexedItemRef?.metadata)
 
         const type = nft?.resources[0]?.metadata_content_type ?? (await this.fetchContentType(mediaUri))
-        const thumb = !!indexedItemRef.thumb
+        const thumb = !!indexedItemRef?.thumb
           ? indexedItemRef.thumb
           : !!nft?.resources[0]?.thumb
           ? this.toIPFSUrl(nft?.resources[0]?.thumb)

@@ -1,3 +1,4 @@
+import { isNil } from 'lodash'
 import md5 from 'md5'
 
 import SubscriptionService from '../SubscriptionService'
@@ -23,8 +24,8 @@ export class NFTInterface extends SubscriptionService<NFTData> {
 
   public hydrateNftsByAddress(address: string) {}
 
-  public fetchOneById(id: string): NFTShort | null {
-    return null
+  public fetchOneById(id: string): NFTShort | undefined {
+    return undefined
   }
 
   protected async fetchDetail(id: string): Promise<NFTDetail> {
@@ -60,8 +61,8 @@ export class NFTInterface extends SubscriptionService<NFTData> {
       })
   }
 
-  async fetchMediaFromMetadata(IPFSUrl: string) {
-    if (IPFSUrl == null) return
+  async fetchMediaFromMetadata(IPFSUrl: string | null | undefined) {
+    if (isNil(IPFSUrl)) return
     return fetch(IPFSUrl)
       .then(res => res.json())
       .then(data => {

@@ -34,6 +34,7 @@ export type NFTDetail = NFTShort & {
 export type EVMChain = {
   contracts: Contract
   name: string
+  chainId: number
   tokenCurrency: string
   rpc: string[] // Multiple RPC's incase one doesn't work.
   platformUri: string
@@ -51,7 +52,6 @@ export type Contract = {
     address: string
     name: string
     symbol: string
-    totalSupply: number
   }
 }
 
@@ -60,8 +60,6 @@ export type NFTData = {
   isFetching: boolean
   items: NFTShort[]
 }
-
-//export type NFTShortObject = {[key: string]: NFTShort[]}
 
 export type NFTFactorySubscriptionCallback = (data: NFTData) => void
 

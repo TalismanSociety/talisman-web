@@ -25,14 +25,19 @@ export class StatemineProvider extends NFTInterface {
     if (!this.webSocket) return null
 
     const { collectionId, nftTokenId } = assetId
-    // For some reason, there are commas in the collection ID, removed them.
+    // For some reason, there are commas in the collection ID and NFTTokenID, removed them.
     let collectionIdFixed = collectionId.replaceAll(',', '')
-    // Need to check how common this is with other collection IDs within Statemine.
-    const metadataNft = (
-      await this.webSocket.query.uniques.instanceMetadataOf(collectionIdFixed, nftTokenId)
-    ).toHuman() as any
-    // Get the NFT IPFS Hash from the uniques query
+    let nftTokenIdFixed = nftTokenId.replaceAll(',', '')
+
+    // Fetch the metadata of the NFT by querying the collection ID and NFT item number. Since the return is toHuman(). We are unsure of the return type, so we use any.
+    const metadataNft: any = (
+      await this.webSocket.query.uniques.instanceMetadataOf(collectionIdFixed, nftTokenIdFixed)
+    ).toHuman()
+
+    // A check to see if there is any metadata, without the metadata, we're unable to fetch the media of the NFT.
+    // Hence, we return null. Which will disregard the NFT altogether.
     if (!metadataNft?.data) return null
+
     // Get the NFT name, description and Media URI from the metadata using the base IPFS url.
     const metadata = await this.fetchNFTs_Metadata(metadataNft.data)
 
@@ -62,7 +67,7 @@ export class StatemineProvider extends NFTInterface {
   }
 
   async fetchNFTs_type(IPFSUrl: string): Promise<NFTCategory> {
-    let cat = 'unknown'
+    let cat: string | undefined = 'unknown'
 
     if (IPFSUrl !== null) {
       cat = await fetch(IPFSUrl).then(res => {
@@ -90,7 +95,7 @@ export class StatemineProvider extends NFTInterface {
       },
       provider: item?.provider,
       address: item?.address,
-    }
+    } as NFTShort
   }
 
   async hydrateNftsByAddress(address: string) {
@@ -101,6 +106,7 @@ export class StatemineProvider extends NFTInterface {
       this.isFetching = false
       return
     }
+
     this.webSocket = await this.wsProvider()
     if (!this.webSocket) return []
 
@@ -128,6 +134,10 @@ export class StatemineProvider extends NFTInterface {
 
         nftRawAssetDetails.map(async (assetId: any): Promise<any> => {
           const tokenDetails = await this.getTokenDetails(assetId)
+
+          // If there is no token details, disregard the NFT and remove it from the count.
+          if (!tokenDetails) this.count -= 1
+
           if (tokenDetails) {
             const nftDetail = {
               id: tokenDetails?.id,
@@ -164,7 +174,7 @@ export class StatemineProvider extends NFTInterface {
 
   fetchOneById(id: string) {
     const internalId = id.split('.').slice(1).join('.')
-    return this.items[internalId] || null
+    return this.items[internalId]
   }
 
   protected async fetchDetail(id: string): Promise<NFTDetail> {

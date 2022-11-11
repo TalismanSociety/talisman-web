@@ -1,12 +1,13 @@
-import Web3 from 'web3'
+import { ethers } from 'ethers'
 
-import { NFTDetail, NFTShort } from '../../types'
+import { Contract, EVMChain, NFTDetail, NFTShort } from '../../types'
 import { NFTInterface } from '../NFTInterface'
 
 export class EVMProvider extends NFTInterface {
-  name = ''
-  rpc = []
-  contracts: any = {}
+  name: string = ''
+  rpc: string[] = []
+  contracts: Contract = {}
+  chainId: number
   abi: any = [
     {
       inputs: [{ internalType: 'address', name: 'owner', type: 'address' }],
@@ -32,51 +33,30 @@ export class EVMProvider extends NFTInterface {
       stateMutability: 'view',
       type: 'function',
     },
+    {
+      inputs: [],
+      name: 'totalSupply',
+      outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
+      stateMutability: 'view',
+      type: 'function',
+    },
   ]
   platformUri = ''
   storageProvider = ''
-  web3: Web3 = new Web3()
+  web3: ethers.providers.JsonRpcProvider | undefined = undefined
+
+  storedAddress: string | undefined = undefined
 
   detailedItems: { [key: string]: any } = {}
 
-  constructor(config: any) {
+  constructor(config: EVMChain) {
     super()
     this.name = config.name
     this.rpc = config.rpc
     this.contracts = config.contracts
     this.platformUri = config.platformUri
     this.tokenCurrency = config.tokenCurrency
-
-    // Go through each RPC, and try to connect to it by testing the connection with isListening, if it works, we use it, if it doesn't, we try the next one
-    // this.rpc.forEach(async (rpc: string) => {
-    //   console.log(rpc)
-    //   this.web3.setProvider(rpc)
-    //   const isListening = await this.web3.eth.net.isListening()
-    //   .then(() => {
-    //     return true
-    //   })
-    //   .catch(() => {
-    //     console.log('caught')
-    //     this.web3.setProvider('')
-    //     return false
-    //   })
-    //   if (isListening && !this.web3.currentProvider) {
-    //     console.log('aaaa', rpc)
-    //     this.web3.setProvider(rpc)
-    //   }
-    // })
-
-    this.web3.setProvider(this.rpc[0])
-
-    this.web3.eth.net
-      .isListening()
-      .then(() => {
-        console.log(`${this.name.toUpperCase()} RPC has connected.`)
-      })
-      .catch(e => {
-        console.log('Could not connect to EVM RPC', e)
-        return
-      })
+    this.chainId = config.chainId
   }
 
   parseShort(item: any): NFTShort {
@@ -113,13 +93,51 @@ export class EVMProvider extends NFTInterface {
   }
 
   async hydrateNftsByAddress(address: string) {
+    if (this.storedAddress === address) {
+      return
+    }
+
+    this.storedAddress = address
+
     this.reset()
     this.isFetching = true
 
-    if (!this.web3.utils.isAddress(address)) {
+    // check if address is valid
+    if (!ethers.utils.isAddress(address)) {
       this.isFetching = false
       return
     }
+
+    const providers = await Promise.all(
+      // map through each RPC on the list
+      this.rpc.map(async rpc => {
+        // Test the provider
+        const provider = new ethers.providers.JsonRpcProvider(rpc)
+        // Get the chainId of the provider
+        const chainId = await provider
+          .getNetwork()
+          .then(network => network.chainId)
+          .catch(() => undefined)
+
+        // If the chainId does not match the chainId of the provider, return undefined
+        if (chainId !== this.chainId || chainId === undefined) {
+          return undefined
+        }
+
+        // If the chainId matches, return the provider
+        return rpc
+      })
+    )
+
+    // return first matching
+    const provider = providers.find(p => p !== undefined)
+
+    if (provider === undefined) {
+      this.isFetching = false
+      return
+    }
+
+    this.web3 = new ethers.providers.JsonRpcProvider(provider)
 
     // we need to ...
     await Promise.all(
@@ -127,29 +145,35 @@ export class EVMProvider extends NFTInterface {
         (contract: any) =>
           new Promise(async resolve => {
             try {
-              const contractInstance = new this.web3.eth.Contract(this.abi, contract.address)
-              const balance = await contractInstance.methods.balanceOf(address).call()
-              this.count += parseInt(balance)
+              const contractInstance = new ethers.Contract(contract.address, this.abi, this.web3)
+              const balance = await contractInstance.balanceOf(address)
+              const totalCount = await contractInstance.totalSupply()
+
+              const bnBalance = ethers.BigNumber.from(balance).toNumber()
+              const bnTotalCount = ethers.BigNumber.from(totalCount).toNumber()
+
+              this.count += bnBalance
 
               await Promise.all(
-                Array.from(Array(parseInt(balance)).keys()).map(
+                Array.from(Array(bnBalance).keys()).map(
                   i =>
                     new Promise(async resolve => {
-                      const tokenId = await contractInstance.methods.tokenOfOwnerByIndex(address, i).call()
-                      const tokenURI = await contractInstance.methods.tokenURI(tokenId).call()
+                      const tokenId = await contractInstance.tokenOfOwnerByIndex(address, i)
+                      const bnTokenId = ethers.BigNumber.from(tokenId).toNumber()
+                      const tokenURI = await contractInstance.tokenURI(tokenId)
 
                       const response = await fetch(tokenURI.replace('ipfs://', 'https://talisman.mypinata.cloud/ipfs/'))
                       const data = await response.json()
 
                       const nftItem = {
-                        id: tokenId + '-' + contract.name,
+                        id: bnTokenId + '-' + contract.name,
                         name: data.name,
                         thumb: this.toIPFSUrl(data.image),
                         description: data?.description,
-                        serialNumber: data?.edition,
+                        serialNumber: data?.edition ?? bnTokenId ?? '-',
                         metadata: null,
-                        type: this.typeCheck(data.image),
-                        mediaUri: this.toIPFSUrl(data.image),
+                        type: this.typeCheck(data?.animation_url ?? data.image),
+                        mediaUri: this.toIPFSUrl(data?.animation_url) ?? this.toIPFSUrl(data.image),
                         address,
                         provider: this.name,
                         platformUri: `${this.platformUri}${contract.address}`,
@@ -157,10 +181,11 @@ export class EVMProvider extends NFTInterface {
                         collection: {
                           id: contract.address,
                           name: contract.name,
-                          totalCount: contract.totalSupply,
+                          totalCount: bnTotalCount,
                         },
                         nftSpecificData: {
                           dataDump: data,
+                          isEvm: true,
                         },
                         tokenCurrency: this.tokenCurrency,
                       }
@@ -187,7 +212,7 @@ export class EVMProvider extends NFTInterface {
 
   fetchOneById(id: string) {
     const internalId = id.split('.').slice(1).join('.')
-    return this.items[internalId] || null
+    return this.items[internalId]
   }
 
   protected async fetchDetail(id: string): Promise<NFTDetail> {
