@@ -65,7 +65,7 @@ export function useMoonbeamContributors(accounts?: string[]): {
 } {
   // memoize accounts so user can provide an array like [accountId] without wasting cycles
   const addresses = useMemo(
-    () => (accounts || []).map(account => encodeAnyAddress(account, moonbeamRelaychain.id)),
+    () => (accounts || []).map(account => encodeAnyAddress(account, moonbeamRelaychain?.id)),
     [JSON.stringify(accounts)] // eslint-disable-line react-hooks/exhaustive-deps
   )
 
@@ -99,7 +99,7 @@ export function useSetMoonbeamRewardsAddress(accountAddress?: string) {
 
   // get api
 
-  const { rpcs } = useChain(`${moonbeamRelaychain.id}`)
+  const { rpcs } = useChain(`${moonbeamRelaychain?.id}`)
   const apiAwaitRef = useDeferred()
   useEffect(() => {
     if (accountAddress === undefined) return
@@ -139,7 +139,7 @@ export function useSetMoonbeamRewardsAddress(accountAddress?: string) {
     // build, sign + submit the tx
 
     setState({ type: 'SUBMITTING', rewardsAddress })
-    const api = await apiAwaitRef.promise
+    const api: any = await apiAwaitRef.promise
     const tx = api.tx.crowdloan.addMemo(Moonbeam.paraId, rewardsAddress)
 
     try {
@@ -156,13 +156,13 @@ export function useSetMoonbeamRewardsAddress(accountAddress?: string) {
     }
 
     try {
-      const unsub = await txSigned.send(async result => {
+      const unsub = await txSigned.send(async (result: any) => {
         const { status, events = [], dispatchError } = result
 
         if (status.isInBlock) {
           return setState({
             type: 'FINALIZING',
-            explorerUrl: await deriveExplorerUrl(api, result, moonbeamRelaychain.subscanUrl),
+            explorerUrl: await deriveExplorerUrl(api, result, moonbeamRelaychain?.subscanUrl),
           })
         }
 
@@ -170,8 +170,14 @@ export function useSetMoonbeamRewardsAddress(accountAddress?: string) {
           unsub()
           let success = false
           if (
-            events.some(({ event: { method, section } }) => section === 'system' && method === 'ExtrinsicSuccess') &&
-            !events.some(({ event: { method, section } }) => section === 'system' && method === 'ExtrinsicFailed')
+            events.some(
+              ({ event: { method, section } }: { event: { method: any; section: any } }) =>
+                section === 'system' && method === 'ExtrinsicSuccess'
+            ) &&
+            !events.some(
+              ({ event: { method, section } }: { event: { method: any; section: any } }) =>
+                section === 'system' && method === 'ExtrinsicFailed'
+            )
           ) {
             success = true
           }
@@ -186,7 +192,7 @@ export function useSetMoonbeamRewardsAddress(accountAddress?: string) {
             error = dispatchError.toString()
           }
 
-          const explorerUrl = await deriveExplorerUrl(api, result, moonbeamRelaychain.subscanUrl)
+          const explorerUrl = await deriveExplorerUrl(api, result, moonbeamRelaychain?.subscanUrl)
 
           if (success && !error) return setState({ type: 'SUCCESS', rewardsAddress, explorerUrl })
           return setState({ type: 'FAILED', error, explorerUrl })

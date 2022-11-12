@@ -50,8 +50,8 @@ export const AccountModal = styled(({ className, account, selectAccount, refetch
         <div>
           <span>Contribution</span>
           <span>
-            {planckToTokens(account.totalContributed, moonbeamRelaychain.tokenDecimals)}{' '}
-            {moonbeamRelaychain.tokenSymbol}
+            {planckToTokens(account.totalContributed, moonbeamRelaychain?.tokenDecimals)}{' '}
+            {moonbeamRelaychain?.tokenSymbol}
           </span>
         </div>
         {hasRewardsAddress ? (

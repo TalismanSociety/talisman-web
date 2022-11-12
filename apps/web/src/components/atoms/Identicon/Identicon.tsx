@@ -25,6 +25,7 @@ export type IdenticonProps = {
   size?: number | string
   className?: string
   Custom?: React.ComponentType<any>
+  theme?: string
 }
 
 const Identicon = ({ value: seed, size = '6.4rem', className, Custom }: IdenticonProps) => {

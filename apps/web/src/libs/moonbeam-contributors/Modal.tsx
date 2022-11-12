@@ -17,7 +17,8 @@ export default function MoonbeamContributionModal() {
     () =>
       contributors.map(contributor => ({
         ...contributor,
-        name: accounts.find(({ address }) => encodeAnyAddress(address, moonbeamRelaychain.id) === contributor.id)?.name,
+        name: accounts.find(({ address }) => encodeAnyAddress(address, moonbeamRelaychain?.id) === contributor.id)
+          ?.name,
       })),
     [contributors, accounts]
   )

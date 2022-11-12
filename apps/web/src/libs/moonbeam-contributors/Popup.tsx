@@ -1,29 +1,31 @@
 import { Button } from '@components'
 import styled from '@emotion/styled'
 
-const Popup = styled(({ className, openModal, dismiss }) => (
-  <div className={className}>
-    <h3>Contributed to the Moonbeam crowdloan?</h3>
-    <p>Make sure you link your account to an Ethereum address to be eligible to claim your GLMR rewards</p>
-    <p className="standalone-link">
-      <a
-        href="https://moonbeam.foundation/tutorials/how-to-create-a-moonbeam-ethereum-address"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        Learn more
-      </a>
-    </p>
-    <div className="button-row">
-      <Button small onClick={dismiss}>
-        Dismiss
-      </Button>
-      <Button primary small onClick={openModal}>
-        Link address
-      </Button>
+const Popup = styled(
+  ({ className, openModal, dismiss }: { className?: string; openModal?: () => void; dismiss?: (e: any) => void }) => (
+    <div className={className}>
+      <h3>Contributed to the Moonbeam crowdloan?</h3>
+      <p>Make sure you link your account to an Ethereum address to be eligible to claim your GLMR rewards</p>
+      <p className="standalone-link">
+        <a
+          href="https://moonbeam.foundation/tutorials/how-to-create-a-moonbeam-ethereum-address"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Learn more
+        </a>
+      </p>
+      <div className="button-row">
+        <Button small onClick={dismiss}>
+          Dismiss
+        </Button>
+        <Button primary small onClick={openModal}>
+          Link address
+        </Button>
+      </div>
     </div>
-  </div>
-))`
+  )
+)`
   max-width: 40rem;
   position: fixed;
   top: 9.2rem;

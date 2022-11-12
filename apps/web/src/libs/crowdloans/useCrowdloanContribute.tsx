@@ -414,8 +414,8 @@ function useInitializeThunk(state: ContributeState, dispatch: DispatchContribute
       const relayExtraChaindata = SupportedRelaychains[relayChainId]
       const relayChainCustomRpcs = customRpcs[relayChainId.toString()]
 
-      const relayRpcs = relayChainCustomRpcs.length > 0 ? relayChainCustomRpcs : relayChaindata?.rpcs || []
-      const hasRelayRpcs = relayRpcs.length > 0
+      const relayRpcs = relayChainCustomRpcs?.length! > 0 ? relayChainCustomRpcs : relayChaindata?.rpcs || []
+      const hasRelayRpcs = relayRpcs?.length! > 0
       if (!hasRelayRpcs) return dispatch(ContributeEvent._noRpcsForRelayChain)
 
       const { nativeToken: relayNativeToken, tokenDecimals: relayTokenDecimals } = relayChaindata

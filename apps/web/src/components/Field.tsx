@@ -141,8 +141,11 @@ type InputProps = {
   onChange?: (e: any) => void
   prefix?: any
   suffix?: React.ReactNode
-  label: string
+  label?: string
   dim?: boolean
+  value?: any
+  placeholder?: string
+  disabled?: boolean
 }
 
 export const Input = styled(({ className, onChange = v => {}, prefix, suffix, label, dim, ...rest }: InputProps) => (
