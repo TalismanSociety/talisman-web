@@ -56,7 +56,7 @@ export class NFTFactory extends SubscriptionService<NFTData> {
     })
   }
 
-  fetchOneById(id: string): NFTShort | null {
+  fetchOneById(id: string): NFTShort | undefined {
     const providerId = id.split('.')[0]
     const provider = this.providers.find(provider => provider.name === providerId)
 

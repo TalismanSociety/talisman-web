@@ -3,7 +3,7 @@ import { ReactComponent as PauseCircle } from '@icons/pause-circle.svg'
 import { ReactComponent as PlayCircle } from '@icons/play-circle.svg'
 import { useAudio } from '@util/useAudio'
 
-export const SimplePlay = styled(({ className, src }) => {
+export const SimplePlay = styled(({ className, src }: { className?: string; src: string }) => {
   const { isPlaying, togglePlay } = useAudio(src)
   return (
     <button className={className} onClick={togglePlay}>

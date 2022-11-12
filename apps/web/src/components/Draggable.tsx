@@ -4,9 +4,12 @@ import { ReactNode, useRef } from 'react'
 
 interface DraggableProps {
   children: ReactNode
+  id: string
+  className?: string
+  disabled?: boolean
 }
 
-export const Draggable = styled(({ id, className, children, disabled }) => {
+export const Draggable = styled(({ id, className, children, disabled }: DraggableProps) => {
   const ref = useRef<HTMLDivElement>(null)
 
   const callbacks: DragAndDropCallbacks = {

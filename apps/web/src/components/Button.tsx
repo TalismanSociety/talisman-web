@@ -5,11 +5,13 @@ import { omit } from 'lodash'
 import React, { Fragment } from 'react'
 import { Link, NavLink } from 'react-router-dom'
 
-export const ButtonIcon = styled(({ children, className, ...rest }) => (
-  <button className={`button icon-button ${className}`} {...rest}>
-    {children}
-  </button>
-))`
+export const ButtonIcon = styled(
+  ({ children, className, ...rest }: { children: any; className?: string; onClick?: (e: any) => void }) => (
+    <button className={`button icon-button ${className}`} {...rest}>
+      {children}
+    </button>
+  )
+)`
   border: none;
   padding: 0.335em;
   margin: 0;

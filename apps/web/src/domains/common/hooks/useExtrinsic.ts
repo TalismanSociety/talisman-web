@@ -1,5 +1,5 @@
 import { ApiPromise } from '@polkadot/api'
-import { AddressOrPair } from '@polkadot/api/types'
+import { AddressOrPair, SubmittableExtrinsics } from '@polkadot/api/types'
 import { ISubmittableResult } from '@polkadot/types/types'
 import { useCallback, useState } from 'react'
 import { useRecoilCallback, useRecoilValueLoadable } from 'recoil'
@@ -14,7 +14,7 @@ export const useExtrinsic = <
   TSection extends keyof PickKnownKeys<ApiPromise['tx'][TModule]>
 >(
   module: TModule,
-  section: TSection
+  section: Extract<keyof SubmittableExtrinsics<'promise'>[TModule], string>
 ) => {
   type TExtrinsic = ApiPromise['tx'][TModule][TSection]
 

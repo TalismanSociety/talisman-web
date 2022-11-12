@@ -24,7 +24,8 @@ import { useEffect, useReducer } from 'react'
 import { useTranslation } from 'react-i18next'
 import { NavLink } from 'react-router-dom'
 
-export default function HeaderState(props) {
+// @Tien Please Help w ith this
+export default function HeaderState(props: any) {
   const isMobile = useMediaQuery('(max-width: 700px)')
   const [mobileMenuOpen, dispatch] = useReducer((state = false, action) =>
     action === 'toggle' ? !state : action === 'open' ? true : action === 'close' ? false : state
@@ -101,7 +102,12 @@ const smolLinks = [
   },
 ]
 
-const Header = styled(({ className, isMobile, mobileMenuOpen, dispatch }) => {
+type HeaderProps = {
+  className?: string
+  isMobile: boolean
+}
+
+const Header = styled(({ className, isMobile }: HeaderProps) => {
   const theme = useTheme()
 
   const controls = useAnimationControls()
@@ -228,15 +234,8 @@ const Header = styled(({ className, isMobile, mobileMenuOpen, dispatch }) => {
                 <div className="smol-links">
                   {smolLinks.map(route => {
                     return (
-                      <a
-                        key={route.name}
-                        href={route.url}
-                        target="_blank"
-                        rel="noreferrer noopener"
-                        onClick={route.trackingCode ? () => trackGoal(route.trackingCode, 1) : undefined}
-                      >
+                      <a key={route.name} href={route.url} target="_blank" rel="noreferrer noopener">
                         <span>{t(route.name)}</span>
-                        {route.icon}
                       </a>
                     )
                   })}

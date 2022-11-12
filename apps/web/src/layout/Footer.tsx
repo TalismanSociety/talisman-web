@@ -1,7 +1,7 @@
 import styled from '@emotion/styled'
 
 type PropTypes = {
-  className: React.ReactNode,
+  className?: string
 }
 
 const Footer = styled(({ className }: PropTypes) => <footer className={className}></footer>)`

@@ -3,7 +3,14 @@ import { ReactComponent as ChevronRight } from '@icons/chevron-right.svg'
 
 import { ButtonIcon } from './Button'
 
-export const LeftRightPicker = styled(({ className, value, onLeftPick, onRightPick }) => {
+type LeftRightPickerProps = {
+  className?: string
+  value: string
+  onLeftPick: () => void
+  onRightPick: () => void
+}
+
+export const LeftRightPicker = styled(({ className, value, onLeftPick, onRightPick }: LeftRightPickerProps) => {
   return (
     <div className={className}>
       <ButtonIcon className="left-button picker-button" onClick={onLeftPick}>

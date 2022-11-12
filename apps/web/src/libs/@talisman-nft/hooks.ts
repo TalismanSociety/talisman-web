@@ -59,7 +59,7 @@ export const useNftById = (id?: string) => {
     }
 
     // setNft(short)
-    short.fetchDetail().then((nft: NFTDetail) => {
+    short?.fetchDetail().then((nft: NFTDetail) => {
       setNft(nft)
       setLoading(false)
     })
