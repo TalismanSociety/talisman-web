@@ -4,7 +4,7 @@ import { trackGoal } from '@libs/fathom'
 import { useParachainDetailsById } from '@libs/talisman'
 
 export type LinksProps = {
-  id: number
+  id: number | string
   className?: string
 }
 

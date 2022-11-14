@@ -26,7 +26,7 @@ const FilterBar = styled(
     count,
     className,
     ...rest
-  }) => {
+  }: any) => {
     const { t } = useTranslation()
     return (
       <div className={`${className} filterbar`} {...rest}>

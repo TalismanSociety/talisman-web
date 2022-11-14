@@ -8,7 +8,7 @@ import { useParams } from 'react-router-dom'
 
 const CrowdloanDetail = styled(({ className }: { className: string }) => {
   const { t } = useTranslation()
-  const { slug }: { slug: string } = useParams()
+  const { slug } = useParams<{ slug: string }>()
 
   const { parachainDetails } = useParachainDetailsBySlug(slug)
   const { banner } = useParachainAssets(parachainDetails?.id)
@@ -24,18 +24,18 @@ const CrowdloanDetail = styled(({ className }: { className: string }) => {
       <Poster className={className} backgroundImage={banner} />
       <div className="content">
         <article>
-          <Parachain.Asset className={className} id={parachainDetails?.id} type="logo" />
+          <Parachain.Asset className={className} id={parachainDetails?.id ?? ''} type="logo" />
           <header>
             <h1>{parachainDetails?.name}</h1>
             <h2>{parachainDetails?.subtitle}</h2>
           </header>
           <p className="info">{parachainDetails?.info}</p>
-          <Parachain.Links className={className} id={parachainDetails?.id} />
+          <Parachain.Links className={className} id={parachainDetails?.id ?? ''} />
         </article>
         <aside>
           <Panel>
             <PanelSection title={t('Raised')}>
-              <Crowdloan.Raised title className={className} id={id} />
+              <Crowdloan.Raised className={className} id={id ?? ''} />
             </PanelSection>
             <PanelSection title={t('Ends in')}>
               <Crowdloan.Countdown id={id} />
@@ -44,9 +44,9 @@ const CrowdloanDetail = styled(({ className }: { className: string }) => {
               <Crowdloan.Bonus
                 className={className}
                 full
-                id={id}
+                id={id ?? ''}
                 parachainId={parachainId}
-                prefix={<Parachain.Asset className={className} id={parachainId} type="logo" />}
+                prefix={<Parachain.Asset className={className} id={parachainId ?? ''} type="logo" />}
               />
               <Button
                 className={className}

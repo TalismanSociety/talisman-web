@@ -139,6 +139,9 @@ const FieldWrapper = styled(({ type, prefix, suffix, label, dim, children, class
 type InputProps = {
   className?: string
   onChange?: (e: any) => void
+  type?: string
+  inputMode?: string
+  pattern?: string
   prefix?: any
   suffix?: React.ReactNode
   label?: string
@@ -150,7 +153,7 @@ type InputProps = {
 
 export const Input = styled(({ className, onChange = v => {}, prefix, suffix, label, dim, ...rest }: InputProps) => (
   <FieldWrapper type="input" className={className} prefix={prefix} suffix={suffix} label={label} dim={dim}>
-    <input type="text" onChange={e => onChange(e?.target?.value)} {...rest} />
+    <input type="text" onChange={e => onChange(e?.target?.value)} {...(rest as any)} />
   </FieldWrapper>
 ))``
 
@@ -223,10 +226,10 @@ export const Select = styled(
 type ToggleProps = {
   value?: boolean
   className?: string
-  onChange?: (value: boolean) => void
+  onChange?: (value: any) => void
 }
 
-export const Toggle = styled(({ value = false, className, onChange = () => {}, ...rest }: ToggleProps) => {
+export const Toggle = styled(({ value = false, className, onChange = (value: any) => {}, ...rest }: ToggleProps) => {
   let [isActive, toggleActive] = useBoolean(value)
 
   useEffect(() => onChange(isActive), [isActive, onChange])

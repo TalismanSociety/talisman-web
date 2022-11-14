@@ -25,7 +25,7 @@ export default function Contribute({ className, id }: ContributeProps) {
 
   const [contributionAmount, setContributionAmount] = useState('')
   const updateContributionAmount = useCallback(
-    value =>
+    (value: string) =>
       setContributionAmount(
         value
           // remove anything which isn't a number or a decimal point
@@ -40,11 +40,10 @@ export default function Contribute({ className, id }: ContributeProps) {
   const { address } = useActiveAccount()
   const [verifier, setVerifier] = useState()
 
-  const { contribute, status, explorerUrl, txFee, error } = useCrowdloanContribute(
-    crowdloan?.parachain?.paraId,
-    contributionAmount,
-    address
-  )
+  // @ts-ignore
+  const { contribute, status, explorerUrl, txFee, error } =
+    // @ts-ignore
+    useCrowdloanContribute(crowdloan?.parachain?.paraId, contributionAmount, address)
 
   const modalState = useMemo(() => {
     if (status === 'SUCCESS') return 'Success'
@@ -96,7 +95,7 @@ const ContributeTo = styled(
     error,
 
     closeModal,
-  }) => {
+  }: any) => {
     const { t } = useTranslation()
     const { price: tokenPrice, loading: priceLoading } = useTokenPrice('KSM')
     const usd = useMemo(
@@ -317,7 +316,9 @@ const ContributeTo = styled(
   }
 `
 
-const InProgress = styled(({ className, explorerUrl, closeModal }) => {
+export type ProgressProps = { className?: string; explorerUrl?: string; closeModal: () => unknown; error?: any }
+
+const InProgress = styled(({ className, explorerUrl, closeModal }: ProgressProps) => {
   const { t } = useTranslation('crowdloan')
   return (
     <div className={className}>
@@ -386,7 +387,7 @@ const InProgress = styled(({ className, explorerUrl, closeModal }) => {
   }
 `
 
-const Success = styled(({ className, explorerUrl, closeModal }) => {
+const Success = styled(({ className, explorerUrl, closeModal }: ProgressProps) => {
   const { t } = useTranslation('crowdloan')
   return (
     <div className={className}>
@@ -457,7 +458,7 @@ const Success = styled(({ className, explorerUrl, closeModal }) => {
   }
 `
 
-const Failed = styled(({ className, explorerUrl, error, closeModal }) => {
+const Failed = styled(({ className, explorerUrl, error, closeModal }: ProgressProps) => {
   const { t } = useTranslation('crowdloan')
   return (
     <div className={className}>

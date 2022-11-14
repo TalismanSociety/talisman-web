@@ -18,7 +18,7 @@ export type Relaychain = {
 }
 
 // https://wiki.polkadot.network/docs/build-ss58-registry
-export const SupportedRelaychains: { [key: number]: Relaychain } = {
+export const SupportedRelaychains: { [key: number | string]: Relaychain } = {
   0: {
     id: 0,
     name: 'Polkadot',

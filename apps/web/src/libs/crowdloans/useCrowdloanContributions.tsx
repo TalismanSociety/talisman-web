@@ -120,7 +120,7 @@ export function useCrowdloanContributions({
       const query = Contributions(accounts[index], crowdloans[index])
 
       // if we're not filtering the result by accounts, the server response is going to be huge
-      const hasAccounts = Array.isArray(accounts[index]) && accounts[index].length > 0
+      const hasAccounts = Array.isArray(accounts[index]) && (accounts[index]?.length ?? 0) > 0
       if (!hasAccounts) return Promise.reject()
 
       return client.query({ query })
@@ -130,7 +130,7 @@ export function useCrowdloanContributions({
     Promise.allSettled(relayChainContributions).then(results =>
       setContributionsResults(
         results.map((result, resultIndex) => [
-          Object.values(SupportedRelaychains)[resultIndex].id, // relayChainId
+          Object.values(SupportedRelaychains)[resultIndex]?.id!, // relayChainId
           result.status === 'fulfilled' ? result.value : null, // result data
         ])
       )
@@ -175,7 +175,7 @@ export function useCrowdloanContributions({
         return
 
       const results = []
-      for (const account of accounts[polkadotRelayIndex]) {
+      for (const account of accounts[polkadotRelayIndex]!) {
         const response = await fetch(`${acalaContributionApi}${account}`)
         if (!response.ok) continue
         results.push({ account, response: await response.json() })
@@ -261,7 +261,7 @@ export function groupTotalContributionsByCrowdloan(contributions: CrowdloanContr
   return contributions.reduce((perCrowdloan, contribution) => {
     if (!perCrowdloan[contribution.fund.id]) perCrowdloan[contribution.fund.id] = '0'
     perCrowdloan[contribution.fund.id] =
-      new BigNumber(perCrowdloan[contribution.fund.id] ?? 0).plus(contribution.amount).toString() ||
+      new BigNumber(perCrowdloan[contribution.fund.id] ?? 0).plus(contribution.amount).toString() ??
       perCrowdloan[contribution.fund.id]
     return perCrowdloan
   }, {} as { [key: string]: string })

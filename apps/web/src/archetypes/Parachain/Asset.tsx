@@ -22,7 +22,7 @@ const Image = styled(({ id, type, className }: ImageProps) => {
   )
 })`
   &[data-type='logo'] {
-    font-size: ${({ size = 8 }: { size: number }) => `${size}rem`};
+    font-size: ${({ size = 8 }: { size?: number }) => `${size}rem`};
     width: 1em;
     height: 1em;
     border-radius: 50%;

@@ -1,6 +1,6 @@
 import styled from '@emotion/styled'
 
-const Pill = styled(({ percent, className }) => (
+const Pill = styled(({ percent, className }: { className?: String; percent?: number }) => (
   <div className={`${className} progress-bar`}>
     <span style={{ width: `${percent || 0}%` }} />
   </div>

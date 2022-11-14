@@ -1,20 +1,20 @@
-import { useSettings } from '@libs/talisman'
 import { ApiPromise, WsProvider } from '@polkadot/api'
-import { createContext, useContext, useEffect, useState } from 'react'
+import { PropsWithChildren, createContext, useContext, useEffect, useState } from 'react'
 
 import { useStatus } from './util/hooks'
+import { useSettings } from './x_settings'
 
 const Context = createContext({})
 
 const useApi = () => useContext(Context)
 
-const Provider = ({ children }) => {
-  const [api, setApi] = useState()
+const Provider = ({ children }: PropsWithChildren) => {
+  const [api, setApi] = useState<ApiPromise>()
   const { status, message, setStatus, options } = useStatus()
 
   const { chain } = useSettings()
 
-  const connect = async rpc => {
+  const connect = async (rpc: string) => {
     // eject if rpc not provided
     if (!rpc) return
 
