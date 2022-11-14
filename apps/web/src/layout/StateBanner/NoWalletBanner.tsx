@@ -8,7 +8,7 @@ import { WalletSelect } from '@talismn/connect-components'
 import getDownloadLink from '@util/getDownloadLink'
 import { useTranslation } from 'react-i18next'
 
-export const NoWalletBanner = styled(({ className }) => {
+export const NoWalletBanner = styled(({ className }: { className?: string }) => {
   const { t } = useTranslation('banners')
   const { t: tBase } = useTranslation('banners')
   const isTalismanInstalled = useTalismanInstalled()

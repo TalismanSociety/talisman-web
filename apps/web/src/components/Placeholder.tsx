@@ -1,7 +1,14 @@
 import styled from '@emotion/styled'
 import { device } from '@util/breakpoints'
 
-export const Placeholder = styled(({ className, children, placeholder, placeholderImage }) => {
+type PlaceholderProps = {
+  className?: string
+  children: React.ReactNode
+  placeholder?: string
+  placeholderImage?: string
+}
+
+export const Placeholder = styled(({ className, children, placeholder, placeholderImage }: PlaceholderProps) => {
   return (
     <div className={className}>
       <div className="info">{children}</div>

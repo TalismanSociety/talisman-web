@@ -1,14 +1,28 @@
 import styled from '@emotion/styled'
+import { PropsWithChildren } from 'react'
 
-const Poster = styled(({ title, subtitle, backgroundImage, children, className }) => (
-  <section className={`${className} poster`} style={{ backgroundImage: `url(${backgroundImage})` }}>
-    <span className="content">
-      <h1>{title}</h1>
-      <h2 dangerouslySetInnerHTML={{ __html: subtitle }} />
-      <div className="children">{children}</div>
-    </span>
-  </section>
-))`
+const Poster = styled(
+  ({
+    title,
+    subtitle,
+    backgroundImage,
+    children,
+    className,
+  }: PropsWithChildren<{
+    title?: string
+    subtitle?: string
+    backgroundImage?: string
+    className?: string
+  }>) => (
+    <section className={`${className} poster`} style={{ backgroundImage: `url(${backgroundImage})` }}>
+      <span className="content">
+        <h1>{title}</h1>
+        <h2 dangerouslySetInnerHTML={{ __html: subtitle ?? '' }} />
+        <div className="children">{children}</div>
+      </span>
+    </section>
+  )
+)`
   display: block;
   width: 100%;
   height: 24vw;

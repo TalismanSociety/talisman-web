@@ -1,7 +1,7 @@
 import { Image } from '@components'
 import styled from '@emotion/styled'
 
-export default styled(({ chain, type, className }) => {
+export default styled(({ chain, type, className }: { chain: any; type: any; size?: number; className?: string }) => {
   return (
     <Image
       src={chain?.asset?.logo}

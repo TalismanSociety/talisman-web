@@ -25,6 +25,7 @@ export type IdenticonProps = {
   size?: number | string
   className?: string
   Custom?: React.ComponentType<any>
+  theme?: string
 }
 
 const Identicon = ({ value: seed, size = '6.4rem', className, Custom }: IdenticonProps) => {
@@ -48,7 +49,7 @@ const Identicon = ({ value: seed, size = '6.4rem', className, Custom }: Identico
     // the 2 darkest ones will be used as gradient BG
     // the lightest one will be used as gradient circle, to mimic a 3D lighting effect
     const colors = [colorFromHash(hash1), colorFromHash(hash2), colorFromHash(hash3)].sort(
-      (c1, c2) => c1.hsl.l - c2.hsl.l
+      (c1, c2) => (c1.hsl?.l ?? 0) - (c2.hsl?.l ?? 0)
     )
 
     // random location in top left corner, avoid being to close from the center
@@ -59,9 +60,9 @@ const Identicon = ({ value: seed, size = '6.4rem', className, Custom }: Identico
     const rotation = valueFromHash(hash1, 360)
 
     return {
-      bgColor1: colors[0].display(),
-      bgColor2: colors[1].display(),
-      glowColor: colors[2].display(),
+      bgColor1: colors[0]?.display(),
+      bgColor2: colors[1]?.display(),
+      glowColor: colors[2]?.display(),
       transform: `rotate(${rotation} 32 32)`,
       cx: dotX,
       cy: dotY,

@@ -1,8 +1,8 @@
-import { createContext, useContext, useEffect, useReducer, useState } from 'react'
+import { PropsWithChildren, createContext, useContext, useEffect, useReducer, useState } from 'react'
 
 import { SupportedRelaychains } from './util/_config'
 
-const settingsReducer = (state = {}, data) => {
+const settingsReducer = (state = {}, data: any) => {
   const newState = {
     ...state,
     ...data,
@@ -11,15 +11,15 @@ const settingsReducer = (state = {}, data) => {
   return newState
 }
 
-const Context = createContext({})
+const Context = createContext({} as any)
 
-const useSettings = () => useContext(Context)
+export const useSettings = () => useContext(Context)
 
-const Provider = ({ children }) => {
-  const [settings, updateSettings] = useReducer(settingsReducer)
+const Provider = ({ children }: PropsWithChildren) => {
+  const [settings, updateSettings] = useReducer(settingsReducer, undefined)
   const [chainId, setChainId] = useState(process.env.REACT_APP_DEFAULT_CHAIN_ID || 2)
 
-  const hydrateChainDetails = id => {
+  const hydrateChainDetails = (id: string | number) => {
     updateSettings({
       chain: {
         id: id,
@@ -29,7 +29,11 @@ const Provider = ({ children }) => {
     })
   }
 
-  useEffect(() => !!chainId && hydrateChainDetails(chainId), [chainId])
+  useEffect(() => {
+    if (Boolean(chainId)) {
+      hydrateChainDetails(chainId)
+    }
+  }, [chainId])
 
   return (
     <Context.Provider

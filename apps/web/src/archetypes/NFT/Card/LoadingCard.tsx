@@ -1,4 +1,5 @@
 import styled from '@emotion/styled'
+import { NFTDetail, NFTShort } from '@libs/@talisman-nft/types'
 
 import Info from './Info'
 import Preview from './Preview'
@@ -15,13 +16,13 @@ function Card({ className, isLoading }: CardProps) {
     name: 'Loading...',
     provider: 'Loading...',
     type: isLoading ? 'loading' : 'blank',
-  }
+  } as NFTShort | NFTDetail
 
   return (
     <div className={className}>
       <Preview nft={loadingnft} />
       <div className="information">
-        <Info subtitle={loadingnft.provider} title={loadingnft.name} />
+        <Info subtitle={loadingnft.provider} title={'Loading...'} />
       </div>
     </div>
   )

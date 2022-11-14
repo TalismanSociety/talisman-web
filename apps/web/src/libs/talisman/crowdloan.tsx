@@ -2,7 +2,7 @@ import { ApolloClient, InMemoryCache, createHttpLink, gql } from '@apollo/client
 //import { BifrostDOT, Moonbeam } from '@libs/crowdloans/crowdloanOverrides'
 import { planckToTokens } from '@talismn/util'
 import { find, get } from 'lodash'
-import { FC, useContext as _useContext, createContext, useEffect, useMemo, useState } from 'react'
+import { PropsWithChildren, useContext as _useContext, createContext, useEffect, useMemo, useState } from 'react'
 
 import { CrowdloanDetails, SupportedRelaychains, crowdloanDetails } from './util/_config'
 
@@ -129,8 +129,8 @@ export const useLatestCrowdloans = (): { crowdloans: Crowdloan[]; hydrated: bool
 
 export const useCrowdloanById = (id?: string) => useFindCrowdloan('id', id)
 // only gets the most recent matching crowdloan
-export const useCrowdloanByParachainId = (id?: number) => useFindCrowdloan('parachain.paraId', id)
-export const useCrowdloansByParachainId = (id?: number) => useFindCrowdloans('parachain.paraId', id)
+export const useCrowdloanByParachainId = (id?: number | string) => useFindCrowdloan('parachain.paraId', id)
+export const useCrowdloansByParachainId = (id?: number | string) => useFindCrowdloans('parachain.paraId', id)
 
 export const useCrowdloanAggregateStats = () => {
   const { crowdloans, hydrated } = useCrowdloans()
@@ -166,7 +166,7 @@ const determineStatusInterlay = (
     : 'winner'
 }
 
-export const Provider: FC = ({ children }) => {
+export const Provider = ({ children }: PropsWithChildren) => {
   const [crowdloanResults, setCrowdloanResults] = useState<any>([])
   useEffect(() => {
     // create an apollo client for each relaychain
@@ -178,13 +178,10 @@ export const Provider: FC = ({ children }) => {
           client: new ApolloClient({
             link: createHttpLink({ uri: subqueryCrowdloansEndpoint }),
             cache: new InMemoryCache(),
-            fetchOptions: {
-              mode: 'no-cors',
-            },
             headers: {
               'Content-Type': 'application/json',
               'Access-Control-Allow-Origin': '*',
-              'Access-Control-Allow-Credentials': true,
+              'Access-Control-Allow-Credentials': 'true',
             },
           }),
         }
@@ -199,8 +196,8 @@ export const Provider: FC = ({ children }) => {
       setCrowdloanResults(
         results.map((result, resultIndex) => {
           return {
-            relayChainId: relayChainClients[resultIndex].relayChainId, // relayChainId
-            tokenDecimals: relayChainClients[resultIndex].tokenDecimals, // tokenDecimals
+            relayChainId: relayChainClients[resultIndex]?.relayChainId, // relayChainId
+            tokenDecimals: relayChainClients[resultIndex]?.tokenDecimals, // tokenDecimals
             result: result.status === 'fulfilled' ? result?.value?.data || [] : [], // result data
           } as any
         })

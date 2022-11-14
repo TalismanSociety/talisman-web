@@ -62,6 +62,11 @@ const AssetBalance = styled(({ token, balances, address }: AssetBalanceProps) =>
   const isOrml = token.type === 'substrate-orml'
 
   const chainName = tokenBalances?.sorted[0]?.chain?.name ?? tokenBalances?.sorted[0]?.evmNetwork?.name
+
+  if (tokenBalances.sorted[0] === undefined) {
+    return null
+  }
+
   const chainType = getNetworkType(tokenBalances.sorted[0])
 
   return (
@@ -77,7 +82,7 @@ const AssetBalance = styled(({ token, balances, address }: AssetBalanceProps) =>
   )
 })``
 
-const Assets = styled(({ className }) => {
+const Assets = styled(({ className }: { className?: string }) => {
   const { t } = useTranslation()
 
   const { balances, tokenIds, tokens, assetsValue } = useBalances()
@@ -195,7 +200,7 @@ const Assets = styled(({ className }) => {
 
 export default Assets
 
-const AssetsLoading = styled(({ className }) => {
+const AssetsLoading = styled(({ className }: { className?: string }) => {
   const placeholderAssets = Array(5).fill('🍜')
 
   return (
@@ -243,7 +248,7 @@ const AssetsLoading = styled(({ className }) => {
   }
 `
 
-const ExtensionUnavailable = styled(props => {
+const ExtensionUnavailable = styled((props: any) => {
   const { t } = useTranslation()
   return (
     <PanelSection comingSoon {...props}>

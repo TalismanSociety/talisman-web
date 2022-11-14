@@ -3,7 +3,7 @@ import { Button } from '@components'
 import { Banner } from '@components/Banner'
 import { useTranslation } from 'react-i18next'
 
-export const BuyBanner = ({ onClick }) => {
+export const BuyBanner = ({ onClick }: { onClick: () => void }) => {
   const { t, ready } = useTranslation('banners')
   if (!ready) {
     return null

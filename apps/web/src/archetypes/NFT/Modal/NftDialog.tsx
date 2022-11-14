@@ -14,8 +14,8 @@ import InfoSkeleton from './InfoSkeleton'
 
 export type NftDialogProps = DialogProps & {
   nft: NFTDetail
-  loading: boolean
-  onRequestDismiss: () => unknown
+  open?: boolean
+  onRequestDismiss: () => void
 }
 
 const show = keyframes`
@@ -112,7 +112,7 @@ const NftDialog = (props: NftDialogProps) => {
               },
             }}
             nft={nft}
-            loading={props.loading}
+            loading={loading}
           />
         </section>
 

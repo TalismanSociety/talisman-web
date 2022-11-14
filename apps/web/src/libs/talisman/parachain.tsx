@@ -8,10 +8,10 @@ import {
 } from '@apollo/client'
 import { useChain } from '@talismn/api-react-hooks'
 import { find } from 'lodash'
-import { FC, useContext as _useContext, createContext, useEffect, useMemo, useState } from 'react'
+import { PropsWithChildren, useContext as _useContext, createContext, useEffect, useMemo, useState } from 'react'
 
-import { SupportedRelaychains, parachainDetails } from './util/_config'
 import type { ParachainDetails } from './util/_config'
+import { SupportedRelaychains, parachainDetails } from './util/_config'
 
 export type { ParachainDetails } from './util/_config'
 
@@ -73,7 +73,7 @@ export const useParachainsDetailsIndexedById = () => {
   }
 }
 
-export const useParachainDetailsById = (id?: number) => useFindParachainDetails('id', id)
+export const useParachainDetailsById = (id?: number | string) => useFindParachainDetails('id', id)
 export const useParachainDetailsBySlug = (slug?: string) => useFindParachainDetails('slug', slug)
 
 export const useParachainAssets = (
@@ -131,7 +131,7 @@ function useContext() {
 // Provider
 //
 
-export const Provider: FC = ({ children }) => {
+export const Provider = ({ children }: PropsWithChildren) => {
   const [parachainResults, setParachainResults] = useState<Array<[number, ApolloQueryResult<any> | null]>>([])
   useEffect(() => {
     // create an apollo client for each relaychain
@@ -142,13 +142,10 @@ export const Provider: FC = ({ children }) => {
           new ApolloClient({
             link: createHttpLink({ uri: subqueryCrowdloansEndpoint }),
             cache: new InMemoryCache(),
-            fetchOptions: {
-              mode: 'no-cors',
-            },
             headers: {
               'Content-Type': 'application/json',
               'Access-Control-Allow-Origin': '*',
-              'Access-Control-Allow-Credentials': true,
+              'Access-Control-Allow-Credentials': 'true',
             },
           }),
         ] as [number, ApolloClient<NormalizedCacheObject>]
@@ -161,7 +158,7 @@ export const Provider: FC = ({ children }) => {
     Promise.allSettled(relayChainParachains).then(results =>
       setParachainResults(
         results.map((result, resultIndex) => [
-          relayChainClients[resultIndex][0], // relayChainId
+          relayChainClients[resultIndex]?.[0]!, // relayChainId
           result.status === 'fulfilled' ? result.value : null, // result data
         ])
       )

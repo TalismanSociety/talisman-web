@@ -26,7 +26,7 @@ const FilterBar = styled(
     count,
     className,
     ...rest
-  }) => {
+  }: any) => {
     const { t } = useTranslation()
     return (
       <div className={`${className} filterbar`} {...rest}>
@@ -103,7 +103,7 @@ const FilterBar = styled(
   }
 `
 
-// const PopularCrowdloans = styled(({ className }) => {
+// const PopularCrowdloans = styled(({ className }: { className: string }) => {
 //   const { crowdloans } = Crowdloan.useFilter()
 //   return (
 //     <Panel className={className}>
@@ -167,7 +167,7 @@ const FilterBar = styled(
 //   )
 // }
 
-const Index = styled(({ withFilter, className }) => {
+const Index = styled(({ withFilter, className }: { withFilter: boolean; className?: string }) => {
   const { t } = useTranslation()
   const { crowdloans, count, loading, filterProps } = useFilter()
 

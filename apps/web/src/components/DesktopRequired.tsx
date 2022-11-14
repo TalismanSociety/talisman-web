@@ -16,7 +16,7 @@ export default function DesktopRequired() {
   return null
 }
 
-const DesktopRequiredModal = styled(props => {
+const DesktopRequiredModal = styled((props: any) => {
   const { closeModal } = useModal()
   const { t } = useTranslation()
 

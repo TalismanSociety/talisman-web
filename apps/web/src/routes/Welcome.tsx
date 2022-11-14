@@ -8,7 +8,7 @@ import { WalletSelect } from '@talismn/connect-components'
 import { device } from '@util/breakpoints'
 import { useTranslation } from 'react-i18next'
 
-const TermsOfService = styled(({ className }) => {
+const TermsOfService = styled(({ className }: { className?: string }) => {
   const { t } = useTranslation('connect-wallet')
   return (
     <span className={className}>
@@ -44,7 +44,7 @@ const TalismanLogo = styled(TalismanHandLogo)`
   margin: 0 auto;
 `
 
-const Welcome = styled(({ className }) => {
+const Welcome = styled(({ className }: { className?: string }) => {
   const { t } = useTranslation('welcome')
   const { t: tBase } = useTranslation()
   return (
@@ -65,7 +65,11 @@ const Welcome = styled(({ className }) => {
         <div className="cta">
           <WalletSelect
             dappName={DAPP_NAME}
-            triggerComponent={<Button primary>{tBase('Connect wallet')}</Button>}
+            triggerComponent={
+              <Button loading={false} primary>
+                {tBase('Connect wallet')}
+              </Button>
+            }
             onError={err => {
               console.log(`>>> err`, err)
             }}

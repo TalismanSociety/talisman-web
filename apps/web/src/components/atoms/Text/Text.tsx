@@ -49,7 +49,7 @@ const Text = Object.assign(BaseText, {
   Body: <T extends React.ElementType = 'span'>(props: TextProps<T>) => (
     <BaseText {...props} as={props.as ?? 'span'} css={{ fontSize: 14 }} />
   ),
-  A: <T extends React.ElementType | Link = 'a'>(props: TextProps<T>) => (
+  A: <T extends React.ElementType | typeof Link = 'a'>(props: TextProps<T>) => (
     <BaseText {...props} as={props.as ?? 'a'} alpha="high" css={{ fontSize: 'inherit', textDecoration: 'underline' }} />
   ),
 })

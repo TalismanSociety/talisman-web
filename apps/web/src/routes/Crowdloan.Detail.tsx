@@ -1,13 +1,14 @@
 import { Crowdloan, Parachain } from '@archetypes'
-import { Button, Panel, PanelSection, Poster, useModal } from '@components'
+import { Panel, PanelSection, Poster, useModal } from '@components'
+import Button from '@components/atoms/Button'
 import styled from '@emotion/styled'
 import { useCrowdloanByParachainId, useParachainAssets, useParachainDetailsBySlug } from '@libs/talisman'
 import { useTranslation } from 'react-i18next'
 import { useParams } from 'react-router-dom'
 
-const CrowdloanDetail = styled(({ className }) => {
+const CrowdloanDetail = styled(({ className }: { className?: string }) => {
   const { t } = useTranslation()
-  const { slug }: { slug: string } = useParams()
+  const { slug } = useParams<{ slug: string }>()
 
   const { parachainDetails } = useParachainDetailsBySlug(slug)
   const { banner } = useParachainAssets(parachainDetails?.id)
@@ -23,18 +24,18 @@ const CrowdloanDetail = styled(({ className }) => {
       <Poster backgroundImage={banner} />
       <div className="content">
         <article>
-          <Parachain.Asset id={parachainDetails?.id} type="logo" />
+          <Parachain.Asset id={parachainDetails?.id ?? ''} type="logo" />
           <header>
             <h1>{parachainDetails?.name}</h1>
             <h2>{parachainDetails?.subtitle}</h2>
           </header>
           <p className="info">{parachainDetails?.info}</p>
-          <Parachain.Links id={parachainDetails?.id} />
+          <Parachain.Links id={parachainDetails?.id ?? ''} />
         </article>
         <aside>
           <Panel>
             <PanelSection title={t('Raised')}>
-              <Crowdloan.Raised id={id} />
+              <Crowdloan.Raised id={id ?? ''} />
             </PanelSection>
             <PanelSection title={t('Ends in')}>
               <Crowdloan.Countdown id={id} />
@@ -42,22 +43,18 @@ const CrowdloanDetail = styled(({ className }) => {
             <PanelSection>
               <Crowdloan.Bonus
                 full
-                id={id}
+                id={id ?? ''}
                 parachainId={parachainId}
-                prefix={<Parachain.Asset id={parachainId} type="logo" />}
+                prefix={<Parachain.Asset id={parachainId ?? ''} type="logo" />}
               />
-              <Button
-                primary
-                onClick={() => openModal(<Crowdloan.Contribute id={id} />)}
-                disabled={uiStatus !== 'active'}
-              >
+              <Button onClick={() => openModal(<Crowdloan.Contribute id={id} />)} disabled={uiStatus !== 'active'}>
                 {t('Contribute')}
               </Button>
             </PanelSection>
           </Panel>
 
           <Panel title={t('Rewards')}>
-            <Crowdloan.Rewards id={id} parachainId={parachainId} />
+            <Crowdloan.Rewards id={id} />
           </Panel>
 
           {/*<Panel

@@ -19,10 +19,3 @@ export interface NftElement extends NftData {
   FallbackComponent?: ReactElement
   ErrorComponent?: ReactElement
 }
-
-export type MediaPreviewProps =
-  | ImgPreviewProps
-  | VideoPreviewProps
-  | ModelPreviewProps
-  | EmbedPreviewProps
-  | GenericPreviewProps

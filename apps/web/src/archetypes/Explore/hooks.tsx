@@ -60,7 +60,7 @@ export const useFetchDapps = () => {
               } else {
                 return b.score - a.score
               }
-            })
+            }) as Dapp[]
 
             setDapps(sortedItems)
             setLoading(false)

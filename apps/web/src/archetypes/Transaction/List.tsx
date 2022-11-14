@@ -28,7 +28,9 @@ export const List = ({ addresses = [], className }: Props) => {
   const [fetchAddresses, setFetchAddresses] = useState(addresses)
   useEffect(() => {
     if (!hasActiveAccount) return setFetchAddresses(urlAddress ? [urlAddress, ...addresses] : addresses)
-    setFetchAddresses([selectedAddress])
+    // TODO: All addresses fetched from useActiveAccount, if All Accounts is selected, will result in undefined. Need to
+    // Handle this better in the future
+    setFetchAddresses([selectedAddress ?? ''])
   }, [addresses, hasActiveAccount, selectedAddress, urlAddress])
 
   const [searchQuery, setSearchQuery] = useState('')

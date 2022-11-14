@@ -2,9 +2,15 @@ import { Image as Img } from '@components'
 import styled from '@emotion/styled'
 import { useParachainAssets, useParachainDetailsById } from '@libs/talisman'
 
-const Image = styled(({ id, type, className }) => {
+type ImageProps = {
+  id: string
+  className?: string
+  type: string
+}
+
+const Image = styled(({ id, type, className }: ImageProps) => {
   const assets = useParachainAssets(id)
-  const { parachainDetails: { name } = {} } = useParachainDetailsById(id)
+  const { parachainDetails: { name } = {} } = useParachainDetailsById(parseInt(id))
 
   return (
     <Img
@@ -16,7 +22,7 @@ const Image = styled(({ id, type, className }) => {
   )
 })`
   &[data-type='logo'] {
-    font-size: ${({ size = 8 }) => `${size}rem`};
+    font-size: ${({ size = 8 }: { size?: number }) => `${size}rem`};
     width: 1em;
     height: 1em;
     border-radius: 50%;

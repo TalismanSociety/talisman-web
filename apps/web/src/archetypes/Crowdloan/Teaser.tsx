@@ -10,7 +10,7 @@ import { Link } from 'react-router-dom'
 import Countdown from './Countdown'
 import Raised from './Raised'
 
-const Teaser = styled(({ id, className }) => {
+const Teaser = styled(({ id, className }: { id: string; className?: string }) => {
   const { t } = useTranslation()
   const { crowdloan } = useCrowdloanById(id)
   const parachainId = crowdloan?.parachain?.paraId
@@ -22,9 +22,9 @@ const Teaser = styled(({ id, className }) => {
 
   return (
     <Link to={`/crowdloans/${parachainDetails?.slug}`} className={`crowdloan-teaser ${className}`}>
-      <Parachain.Asset id={parachainId} type="card" />
+      <Parachain.Asset id={parachainId ?? ''} type="card" />
       <div className="content">
-        <Parachain.Asset id={parachainId} type="logo" />
+        <Parachain.Asset id={parachainId ?? ''} type="logo" />
         {totalContribution && (
           <div className="has-contribution">
             <CheckCircleIcon /> {t('Contributed')}

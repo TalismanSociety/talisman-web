@@ -414,8 +414,8 @@ function useInitializeThunk(state: ContributeState, dispatch: DispatchContribute
       const relayExtraChaindata = SupportedRelaychains[relayChainId]
       const relayChainCustomRpcs = customRpcs[relayChainId.toString()]
 
-      const relayRpcs = relayChainCustomRpcs.length > 0 ? relayChainCustomRpcs : relayChaindata?.rpcs || []
-      const hasRelayRpcs = relayRpcs.length > 0
+      const relayRpcs = relayChainCustomRpcs?.length! > 0 ? relayChainCustomRpcs ?? [] : relayChaindata?.rpcs ?? []
+      const hasRelayRpcs = relayRpcs?.length! > 0
       if (!hasRelayRpcs) return dispatch(ContributeEvent._noRpcsForRelayChain)
 
       const { nativeToken: relayNativeToken, tokenDecimals: relayTokenDecimals } = relayChaindata
@@ -962,11 +962,11 @@ function useValidateContributionThunk(state: ContributeState, dispatch: Dispatch
 
     const minContribution = Acala.is(relayChainId, parachainId)
       ? '1' // acala liquid crowdloan has a minimum of 1 DOT
-      : api.consts.crowdloan.minContribution.toString()
+      : api.consts.crowdloan?.minContribution?.toString()
     const contributionPlanck = tokensToPlanck(contributionAmount, relayTokenDecimals)
-    const minimum = new BigNumber(planckToTokens(minContribution.toString(), relayTokenDecimals) || '').toFixed(2)
+    const minimum = new BigNumber(planckToTokens(minContribution?.toString(), relayTokenDecimals) || '').toFixed(2)
 
-    if (!contributionPlanck || new BigNumber(contributionPlanck).isLessThan(new BigNumber(minContribution))) {
+    if (!contributionPlanck || new BigNumber(contributionPlanck).isLessThan(new BigNumber(minContribution ?? 0))) {
       setError({
         i18nCode: 'A minimum of {{minimum}} {{token}} is required',
         vars: { minimum, token: relayNativeToken },
@@ -1210,11 +1210,11 @@ async function buildGenericTx({
   api,
 }: BuildTxProps): Promise<BuildTxResponse> {
   const txs = [
-    api.tx.crowdloan.contribute(parachainId, contributionPlanck, verifierSignature),
+    api.tx.crowdloan?.contribute?.(parachainId, contributionPlanck, verifierSignature),
     api.tx.system.remarkWithEvent('Talisman - The Journey Begins'),
   ]
 
-  return api.tx.utility.batchAll(txs)
+  return api.tx.utility.batchAll(txs as any)
 }
 
 async function buildZeitgeistTx({
@@ -1224,14 +1224,14 @@ async function buildZeitgeistTx({
   api,
 }: BuildTxProps): Promise<BuildTxResponse> {
   const txs = [
-    api.tx.crowdloan.contribute(parachainId, contributionPlanck, verifierSignature),
+    api.tx.crowdloan?.contribute?.(parachainId, contributionPlanck, verifierSignature),
     api.tx.system.remarkWithEvent(
       'I have read and agree to the terms found at https://zeitgeist.pm/CrowdloanTerms.pdf'
     ),
     api.tx.system.remarkWithEvent('Talisman - The Journey Begins'),
   ]
 
-  return api.tx.utility.batchAll(txs)
+  return api.tx.utility.batchAll(txs as any[])
 }
 
 async function buildMoonbeamTx({
@@ -1242,12 +1242,12 @@ async function buildMoonbeamTx({
   api,
 }: BuildTxProps): Promise<BuildTxResponse> {
   const txs = [
-    api.tx.crowdloan.contribute(parachainId, contributionPlanck, verifierSignature),
-    api.tx.crowdloan.addMemo(parachainId, memoAddress),
+    api.tx.crowdloan?.contribute?.(parachainId, contributionPlanck, verifierSignature),
+    api.tx.crowdloan?.addMemo?.(parachainId, memoAddress),
     api.tx.system.remarkWithEvent('Talisman - The Journey Begins'),
   ]
 
-  return api.tx.utility.batchAll(txs)
+  return api.tx.utility.batchAll(txs as any)
 }
 
 async function buildAstarTx({
@@ -1259,12 +1259,12 @@ async function buildAstarTx({
   const referrerAddress = Astar.referrer
 
   const txs = [
-    api.tx.crowdloan.contribute(parachainId, contributionPlanck, verifierSignature),
-    api.tx.crowdloan.addMemo(parachainId, referrerAddress),
+    api.tx.crowdloan?.contribute?.(parachainId, contributionPlanck, verifierSignature),
+    api.tx.crowdloan?.addMemo?.(parachainId, referrerAddress),
     api.tx.system.remarkWithEvent('Talisman - The Journey Begins'),
   ]
 
-  return api.tx.utility.batchAll(txs)
+  return api.tx.utility.batchAll(txs as any)
 }
 
 async function buildAcalaTx({

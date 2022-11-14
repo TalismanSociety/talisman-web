@@ -1,6 +1,6 @@
 import styled from '@emotion/styled'
 
-const Pill = styled(({ children, className, small, large, primary, secondary, active, ...rest }) => (
+const Pill = styled(({ children, className, small, large, primary, secondary, active, ...rest }: any) => (
   <span className={`pill ${className}`} {...rest}>
     {children}
   </span>

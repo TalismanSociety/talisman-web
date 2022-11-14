@@ -47,7 +47,7 @@ export function Provider({ children }: PropsWithChildren<ProviderProps>): JSX.El
   )
 }
 
-export const Modal = styled(function Modal({ className, closable }) {
+export const Modal = styled(function Modal({ className, closable }: { className?: string; closable: boolean }) {
   const { open, content, closeModal } = useModal()
 
   useKeyDown(
@@ -61,7 +61,7 @@ export const Modal = styled(function Modal({ className, closable }) {
     <AnimatePresence>
       {open && (
         <motion.div className={className} initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-          <div className="modal-click-to-close-background" onClick={closable && closeModal} />
+          <div className="modal-click-to-close-background" onClick={closable ? closeModal : undefined} />
           <div className="modal-content">
             {closable && <IconClose className="close-icon" onClick={closeModal} />}
             {content}

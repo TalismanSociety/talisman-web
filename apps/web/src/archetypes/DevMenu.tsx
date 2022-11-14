@@ -25,7 +25,7 @@ const BaseDevMenu = () => {
             <legend>Chain</legend>
             <label>
               <div>ID</div>
-              <select value={chainId} onChange={event => setChainId(event.target.value)}>
+              <select value={chainId} onChange={(event: any) => setChainId(event.target.value)}>
                 {supportedChainIds.map(id => (
                   <option key={id} value={id}>
                     {id}

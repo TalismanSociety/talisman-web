@@ -1,3 +1,4 @@
+export { default as Bonus } from './Bonus'
 export { default as Contribute } from './Contribute'
 export { default as Contributors } from './Contributors'
 export { default as Countdown } from './Countdown'

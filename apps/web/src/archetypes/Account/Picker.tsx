@@ -4,11 +4,20 @@ import styled from '@emotion/styled'
 import { ReactComponent as Check } from '@icons/check-circle.svg'
 import { ReactComponent as ChevronDown } from '@icons/chevron-down.svg'
 import { useAccounts } from '@libs/talisman'
+import { Account } from '@libs/talisman/extension'
 import { device } from '@util/breakpoints'
 import useOnClickOutside from '@util/useOnClickOutside'
 import { useEffect, useRef, useState } from 'react'
 
-const Dropdown = styled(({ className, accounts, activeAccount, open, handleChange }) => {
+type DropdownProps = {
+  className?: string
+  accounts: Account[]
+  activeAccount: Account | undefined
+  open: any
+  handleChange: any
+}
+
+const Dropdown = styled(({ className, accounts, activeAccount, open, handleChange }: DropdownProps) => {
   // const { t } = useTranslation()
 
   return (
@@ -114,65 +123,75 @@ const Dropdown = styled(({ className, accounts, activeAccount, open, handleChang
     `}
 `
 
-const AccountPicker = styled(({ additionalAccounts = [], className, onChange }) => {
-  const nodeRef = useRef<HTMLDivElement>(null)
-  const accounts = useAccounts()
-  const [open, setOpen] = useState(false)
-  const [activeAccount, setActiveAccount] = useState(accounts[0])
+const AccountPicker = styled(
+  ({
+    additionalAccounts = [],
+    className,
+    onChange,
+  }: {
+    additionalAccounts: any[]
+    className?: string
+    onChange?: any
+  }) => {
+    const nodeRef = useRef<HTMLDivElement>(null)
+    const accounts = useAccounts()
+    const [open, setOpen] = useState(false)
+    const [activeAccount, setActiveAccount] = useState(accounts[0])
 
-  const [allAccounts, setAllAccounts] = useState([...additionalAccounts, ...accounts])
+    const [allAccounts, setAllAccounts] = useState([...additionalAccounts, ...accounts])
 
-  useOnClickOutside(nodeRef, () => setOpen(false))
+    useOnClickOutside(nodeRef, () => setOpen(false))
 
-  // we may need a callback here to make sure it's not set already
-  useEffect(() => {
-    const _allAccounts = [...additionalAccounts, ...accounts]
-    setAllAccounts(_allAccounts)
-    setActiveAccount(_allAccounts[0])
-  }, [accounts, additionalAccounts])
+    // we may need a callback here to make sure it's not set already
+    useEffect(() => {
+      const _allAccounts = [...additionalAccounts, ...accounts]
+      setAllAccounts(_allAccounts)
+      setActiveAccount(_allAccounts[0])
+    }, [accounts, additionalAccounts])
 
-  // pass the active account back to the parent on change
-  useEffect(() => {
-    if (!activeAccount) return
-    onChange(activeAccount)
-  }, [activeAccount, onChange])
+    // pass the active account back to the parent on change
+    useEffect(() => {
+      if (!activeAccount) return
+      onChange(activeAccount)
+    }, [activeAccount, onChange])
 
-  return (
-    <div ref={nodeRef} className="account-picker" onClick={accounts.length > 1 ? () => setOpen(!open) : undefined}>
-      <span className={`account-button ${className}`}>
-        <span className={accounts.length > 1 ? 'account' : 'single-account'}>
-          <span>
-            <Identicon className="identicon" value={activeAccount?.address ?? ''} />
+    return (
+      <div ref={nodeRef} className="account-picker" onClick={accounts.length > 1 ? () => setOpen(!open) : undefined}>
+        <span className={`account-button ${className}`}>
+          <span className={accounts.length > 1 ? 'account' : 'single-account'}>
+            <span>
+              <Identicon className="identicon" value={activeAccount?.address ?? ''} />
 
-            <span className="selected-account">
-              <div>{activeAccount?.name}</div>
+              <span className="selected-account">
+                <div>{activeAccount?.name}</div>
+              </span>
             </span>
+
+            {accounts.length > 1 && (
+              <ChevronDown
+                className="nav-toggle"
+                onClick={(e: any) => {
+                  e.stopPropagation()
+                  setOpen(!open)
+                }}
+              />
+            )}
           </span>
 
-          {accounts.length > 1 && (
-            <ChevronDown
-              className="nav-toggle"
-              onClick={(e: any) => {
-                e.stopPropagation()
-                setOpen(!open)
-              }}
-            />
-          )}
+          <Dropdown
+            open={open}
+            accounts={allAccounts}
+            activeAccount={activeAccount}
+            handleChange={(account: any) => {
+              setActiveAccount(account)
+              setOpen(false)
+            }}
+          />
         </span>
-
-        <Dropdown
-          open={open}
-          accounts={allAccounts}
-          activeAccount={activeAccount}
-          handleChange={(account: any) => {
-            setActiveAccount(account)
-            setOpen(false)
-          }}
-        />
-      </span>
-    </div>
-  )
-})`
+      </div>
+    )
+  }
+)`
   font-size: inherit;
   display: flex;
   align-items: center;

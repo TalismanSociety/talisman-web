@@ -1,18 +1,18 @@
 import { ApolloClient, ApolloProvider, InMemoryCache, createHttpLink, gql, useLazyQuery } from '@apollo/client'
 import md5 from 'md5'
-import { createContext, useContext, useEffect, useState } from 'react'
+import { PropsWithChildren, createContext, useContext, useEffect, useState } from 'react'
 import { createNetworkStatusNotifier } from 'react-apollo-network-status'
 
 import { useStatus } from './util/hooks'
 
-const Context = createContext({})
+const Context = createContext<any>({})
 
 const useLoading = () => {
   const { loading } = useContext(Context)
   return loading
 }
 
-const useQuery = (query, _vars = {}) => {
+const useQuery = (query: string, _vars = {}) => {
   const [vars, setVars] = useState(_vars)
 
   const [trigger, { data = [], called, loading, networkStatus, refetch, error }] = useLazyQuery(
@@ -26,7 +26,9 @@ const useQuery = (query, _vars = {}) => {
     message: 'Processing query',
   })
 
-  useEffect(() => trigger({ variables: vars }), [md5(JSON.stringify(vars))]) // eslint-disable-line
+  useEffect(() => {
+    trigger({ variables: vars })
+  }, [md5(JSON.stringify(vars))]) // eslint-disable-line
 
   useEffect(() => {
     if (!!error) {
@@ -37,7 +39,7 @@ const useQuery = (query, _vars = {}) => {
   }, [loading, error, called]) // eslint-disable-line
 
   return {
-    data: Object.values(data)[0]?.nodes || [],
+    data: (Object.values(data)[0] as any)?.nodes || [],
     count: Object.values(data)?.length,
     called,
     loading,
@@ -49,8 +51,8 @@ const useQuery = (query, _vars = {}) => {
   }
 }
 
-const Provider = ({ uri = 'https://localhost:4000', children }) => {
-  const [client, setClient] = useState()
+const Provider = ({ uri = 'https://localhost:4000', children }: PropsWithChildren<{ uri: string }>) => {
+  const [client, setClient] = useState<ApolloClient<any>>()
   const { useApolloNetworkStatus } = createNetworkStatusNotifier()
   const { numPendingQueries, numPendingMutations } = useApolloNetworkStatus()
   const { status, message, setStatus, options } = useStatus({
@@ -67,19 +69,16 @@ const Provider = ({ uri = 'https://localhost:4000', children }) => {
       const apolloClient = new ApolloClient({
         link: httpLink,
         cache: new InMemoryCache(),
-        fetchOptions: {
-          mode: 'no-cors',
-        },
         headers: {
           'Content-Type': 'application/json',
           'Access-Control-Allow-Origin': '*',
-          'Access-Control-Allow-Credentials': true,
+          'Access-Control-Allow-Credentials': 'true',
         },
       })
 
       setClient(apolloClient)
       setStatus(options.READY)
-    } catch (e) {
+    } catch (e: any) {
       setStatus(options.ERROR, e.message)
     }
   }, [uri]) // eslint-disable-line

@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { statusOptions as baseStatusOptions } from './_config'
 import { SupportedRelaychains } from './_config'
 
-export const useStatus = (props = {}) => {
+export const useStatus = (props: { status?: string; message?: string | null; customOptions?: any } = {}) => {
   const { status = baseStatusOptions.INITIALIZED, message = null, customOptions = {} } = props
 
   const statusOptions = {
@@ -16,16 +16,16 @@ export const useStatus = (props = {}) => {
   const [_status, setStatus] = useState(
     !!status && Object.keys(statusOptions).includes(status) ? statusOptions[status] : statusOptions.INITIALIZED
   )
-  const [_message, setMessage] = useState(message)
+  const [_message, setMessage] = useState<any>(message)
 
-  const validateStatusAndSet = (newStatus, msg) => {
+  const validateStatusAndSet = (newStatus: string, msg?: any) => {
     Object.keys(statusOptions).includes(newStatus) && setStatus(newStatus)
     setMessage(msg)
   }
 
   useEffect(() => {
     Object.keys(statusOptions).forEach(option => {
-      validateStatusAndSet[option.toLowerCase()] = msg => {
+      ;(validateStatusAndSet as any)[option.toLowerCase()] = (msg: string) => {
         setStatus(option)
         setMessage(msg)
       }
@@ -40,7 +40,7 @@ export const useStatus = (props = {}) => {
   }
 }
 
-export const useAwaitObjectValue = (object, key, cb = () => {}, timeout = 500) => {
+export const useAwaitObjectValue = (object: any, key: string, cb = (value: any) => {}, timeout = 500) => {
   useEffect(() => {
     let _id = setInterval(() => {
       if (!!get(object, key)) {
@@ -52,6 +52,6 @@ export const useAwaitObjectValue = (object, key, cb = () => {}, timeout = 500) =
   }, [get(object, key)]) // eslint-disable-line
 }
 
-export const useChainByGenesis = genesisHash => {
-  return find(SupportedRelaychains, { genesisHash: genesisHash }) || {}
+export const useChainByGenesis = (genesisHash: any) => {
+  return find(SupportedRelaychains, { genesisHash: genesisHash }) || { id: undefined }
 }

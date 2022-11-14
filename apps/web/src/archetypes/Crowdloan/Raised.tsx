@@ -4,7 +4,7 @@ import { useCrowdloanById } from '@libs/talisman'
 import { shortNumber } from '@util/helpers'
 import { useTranslation } from 'react-i18next'
 
-const Raised = styled(({ id, title, className }) => {
+const Raised = styled(({ id, title, className }: { id: string; title?: string; className?: string }) => {
   const { crowdloan: { percentRaised, raised, cap, uiStatus } = {} } = useCrowdloanById(id)
   const { t } = useTranslation()
   return (

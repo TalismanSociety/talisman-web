@@ -8,7 +8,7 @@ import { SubNativeModule } from '@talismn/balances-substrate-native'
 import { SubOrmlModule } from '@talismn/balances-substrate-orml'
 import { ChaindataProvider, Token, TokenList } from '@talismn/chaindata-provider'
 import { isNil } from 'lodash'
-import { ReactNode, createContext, useContext, useMemo } from 'react'
+import { PropsWithChildren, createContext, useContext, useMemo } from 'react'
 
 const balanceModules = [SubNativeModule, SubOrmlModule, EvmNativeModule, EvmErc20Module]
 
@@ -48,9 +48,7 @@ function useBalanceContext() {
 // Provider
 //
 
-type ProviderProps = { children: ReactNode }
-
-export const Provider = ({ children }: ProviderProps) => {
+export const Provider = ({ children }: PropsWithChildren) => {
   const chaindata = useChaindata()
   const addresses = useAllAccountAddresses()
 

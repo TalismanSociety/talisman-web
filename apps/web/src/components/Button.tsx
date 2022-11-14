@@ -5,11 +5,13 @@ import { omit } from 'lodash'
 import React, { Fragment } from 'react'
 import { Link, NavLink } from 'react-router-dom'
 
-export const ButtonIcon = styled(({ children, className, ...rest }) => (
-  <button className={`button icon-button ${className}`} {...rest}>
-    {children}
-  </button>
-))`
+export const ButtonIcon = styled(
+  ({ children, className, ...rest }: { children: any; className?: string; onClick?: (e: any) => void }) => (
+    <button className={`button icon-button ${className}`} {...rest}>
+      {children}
+    </button>
+  )
+)`
   border: none;
   padding: 0.335em;
   margin: 0;
@@ -28,7 +30,7 @@ export const ButtonIcon = styled(({ children, className, ...rest }) => (
   }
 `
 
-export const Button = styled(({ loading, children, variant = '', className, ...props }) => {
+export const Button = styled(({ loading, children, variant = '', className, ...props }: any) => {
   const wrappedChildren = !!loading ? (
     <Fragment>
       <IconLoading data-spin="true" />
@@ -40,7 +42,7 @@ export const Button = styled(({ loading, children, variant = '', className, ...p
     )
   )
 
-  const _props = omit(props, ['loading', 'boxed', 'round', 'primary', 'tight', 'loose', 'small'])
+  const _props: any = omit(props, ['loading', 'boxed', 'round', 'primary', 'tight', 'loose', 'small'])
 
   return !!props?.to ? (
     !!props?.navlink ? (

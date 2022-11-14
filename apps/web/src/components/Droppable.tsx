@@ -13,7 +13,16 @@ function isAllowed(id: string, e?: DragEvent) {
   return id === e?.dataTransfer?.getData('text')
 }
 
-export const Droppable = styled(({ id, children, className, onDragEnter, onDragLeave, onDrop }) => {
+type DroppableProps = {
+  id: string
+  children?: ReactNode
+  className?: string
+  onDragEnter?: (e: any) => void
+  onDragLeave?: (e: any) => void
+  onDrop?: (e: any) => void
+}
+
+export const Droppable = styled(({ id, children, className, onDragEnter, onDragLeave, onDrop }: DroppableProps) => {
   const ref = useRef<HTMLDivElement>(null)
   const callbacks: DragAndDropCallbacks = {
     onDragEnter(e) {

@@ -4,7 +4,7 @@ import styled from '@emotion/styled'
 import { useCrowdloanById, useParachainDetailsById } from '@libs/talisman'
 import { Link } from 'react-router-dom'
 
-export const CrowdloanSummary = styled(({ id, className = '' }) => {
+export const CrowdloanSummary = styled(({ id, className = '' }: { className?: string; id: string }) => {
   const { crowdloan } = useCrowdloanById(id)
   const parachainId = crowdloan?.parachain?.paraId
   const contributors = crowdloan?.contributions?.totalCount
@@ -13,7 +13,7 @@ export const CrowdloanSummary = styled(({ id, className = '' }) => {
   return (
     <Link to={`/crowdloans/${parachainDetails?.slug}`} className={`crowdloan-teaser ${className}`}>
       <div className={className}>
-        <Parachain.Asset className="logo" id={parachainId} type="logo" />
+        <Parachain.Asset className="logo" id={parachainId ?? ''} type="logo" />
         <div>
           <div className="name">{parachainDetails?.name}</div>
           <div className="contributors">

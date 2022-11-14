@@ -3,7 +3,7 @@ import styled from '@emotion/styled'
 import { useSet } from '@util/hooks'
 import { useEffect } from 'react'
 
-const Filter = styled(({ value = [], options = {}, className, onChange = () => {}, ...rest }) => {
+const Filter = styled(({ value = [], options = {}, className, onChange = () => {}, ...rest }: any) => {
   const [selected, { add, remove, set }] = useSet()
 
   // fire onchange when tags change

@@ -8,7 +8,7 @@ import { useTranslation } from 'react-i18next'
 import MoonbeamContributionModal from './Modal'
 import { useMoonbeamContributors } from '.'
 
-export const MoonbeamPortfolioTag = styled(({ className }) => {
+export const MoonbeamPortfolioTag = styled(({ className }: { className?: string }) => {
   const { t } = useTranslation('crowdloan', { keyPrefix: 'moonbeamPortflioTag' })
   const { openModal } = useModal()
   const { accounts } = useExtension()

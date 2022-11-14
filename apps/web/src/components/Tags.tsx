@@ -1,24 +1,33 @@
 import { Pill } from '@components'
 import styled from '@emotion/styled'
 import { useSet } from '@util/hooks'
-import React, { useEffect } from 'react'
+import { useEffect } from 'react'
 
-export default styled(({ inital = [], options = {}, className, onChange = () => {}, ...rest }) => {
-  const [tags, { add, remove }] = useSet(inital)
+type StyledNoCrowdloansPlaceholderProps = {
+  inital: any[]
+  className?: string
+  options?: any // Best to double check what this data type might be
+  onChange: (e: any) => void
+}
 
-  // fire onchange when tags change
-  useEffect(() => onChange(Array.from(tags)), [tags.length]) // eslint-disable-line
+export default styled(
+  ({ inital = [], options = {}, className, onChange = () => {}, ...rest }: StyledNoCrowdloansPlaceholderProps) => {
+    const [tags, { add, remove }] = useSet(inital)
 
-  return (
-    <div className={`tabs ${className}`} {...rest}>
-      {Object.keys(options).map(key => (
-        <Pill key={key} onClick={() => (tags.includes(key) ? remove(key) : add(key))} active={tags.includes(key)}>
-          {options[key]}
-        </Pill>
-      ))}
-    </div>
-  )
-})`
+    // fire onchange when tags change
+    useEffect(() => onChange(Array.from(tags)), [tags?.length]) // eslint-disable-line
+
+    return (
+      <div className={`tabs ${className}`} {...rest}>
+        {Object.keys(options).map(key => (
+          <Pill key={key} onClick={() => (tags?.includes(key) ? remove(key) : add(key))} active={tags?.includes(key)}>
+            {options[key]}
+          </Pill>
+        ))}
+      </div>
+    )
+  }
+)`
   display: block;
 
   > .pill {

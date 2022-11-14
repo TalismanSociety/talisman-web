@@ -3,7 +3,7 @@ import styled from '@emotion/styled'
 import { trackGoal } from '@libs/fathom'
 import { useTranslation } from 'react-i18next'
 
-export const LanguageSelector = styled(({ className }) => {
+export const LanguageSelector = styled(({ className }: { className?: string }) => {
   const { i18n, ready } = useTranslation('languages', { useSuspense: false })
   const changeLanguage = (language: string) => {
     i18n?.changeLanguage(language)

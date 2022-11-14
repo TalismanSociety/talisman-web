@@ -1,7 +1,14 @@
 import styled from '@emotion/styled'
 import { ReactComponent as Copy } from '@icons/copy.svg'
 
-export const CopyButton = styled(({ className, text = '', onCopied, onFailed }) => {
+type CopyButtonProps = {
+  className?: string
+  text: string
+  onCopied: any
+  onFailed: any
+}
+
+export const CopyButton = styled(({ className, text = '', onCopied, onFailed }: CopyButtonProps) => {
   function tryLegacyCopy() {
     if (navigator.clipboard) {
       return

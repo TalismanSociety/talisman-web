@@ -3,7 +3,7 @@ import { Placeholder } from '@components/Placeholder'
 import styled from '@emotion/styled'
 import React from 'react'
 
-const NoCrowdloansPlaceholder = styled(({ text, subtext }) => (
+const NoCrowdloansPlaceholder = styled(({ text, subtext }: { text: string; subtext: string }) => (
   <Placeholder placeholderImage={crowdloanRowSkeleton}>
     <div className="description">
       {text}

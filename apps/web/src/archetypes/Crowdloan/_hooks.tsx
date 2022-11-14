@@ -1,4 +1,6 @@
-import { Crowdloan, ParachainDetails, useLatestCrowdloans, useParachainsDetailsIndexedById } from '@libs/talisman'
+import { useLatestCrowdloans, useParachainsDetailsIndexedById } from '@libs/talisman'
+import { Crowdloan } from '@libs/talisman/crowdloan'
+import { ParachainDetails } from '@libs/talisman/parachain'
 import { filter, find, orderBy } from 'lodash'
 import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -88,9 +90,9 @@ export const useFilter = () => {
 
   const [filteredItems, setFilteredItems] = useState<Item[]>([])
   const [searchFilter, setSearchFilter] = useState('')
-  const [orderFilter, setOrderFilter] = useState(orderOptions[0].key)
-  const [statusFilter, setStatusFilter] = useState(statusOptions[1].key)
-  const [networkFilter, setNetworkFilter] = useState(networkOptions[0].key)
+  const [orderFilter, setOrderFilter] = useState(orderOptions[0]?.key)
+  const [statusFilter, setStatusFilter] = useState(statusOptions[1]?.key)
+  const [networkFilter, setNetworkFilter] = useState(networkOptions[0]?.key)
   const [loading, setLoading] = useState(true)
 
   // do searchy/filtery stuff
@@ -142,8 +144,8 @@ export const useFilter = () => {
       hasFilter: statusFilter !== 'all' || searchFilter !== '',
       reset: () => {
         setSearchFilter('')
-        setStatusFilter(statusOptions[0].key)
-        setNetworkFilter(networkOptions[0].key)
+        setStatusFilter(statusOptions[0]?.key)
+        setNetworkFilter(networkOptions[0]?.key)
       },
     },
   }

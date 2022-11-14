@@ -4,7 +4,7 @@ import { useActiveAccount, useBalances } from '@libs/talisman'
 import { device } from '@util/breakpoints'
 import { useTranslation } from 'react-i18next'
 
-const Total = styled(({ id, className }) => {
+const Total = styled(({ className }: { className?: string }) => {
   const { t } = useTranslation()
 
   const { balances, assetsValue } = useBalances()

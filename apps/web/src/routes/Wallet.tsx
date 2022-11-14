@@ -20,7 +20,6 @@ const _Wallet = styled(({ className }: { className?: string }) => (
     </header>
     <Wallet.Assets />
     <OwnPools />
-    <Wallet.NFTs />
   </section>
 ))`
   width: 100%;

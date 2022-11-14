@@ -3,7 +3,12 @@ import styled from '@emotion/styled'
 import { trackGoal } from '@libs/fathom'
 import { useParachainDetailsById } from '@libs/talisman'
 
-const Links = styled(({ id, className }) => {
+export type LinksProps = {
+  id: number | string
+  className?: string
+}
+
+const Links = styled(({ id, className }: LinksProps) => {
   const { parachainDetails: { links = {} } = {} } = useParachainDetailsById(id)
 
   return (
