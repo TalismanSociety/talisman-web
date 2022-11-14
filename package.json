@@ -12,7 +12,8 @@
     "start": "yarn workspaces foreach run start",
     "build": "yarn workspaces foreach run build",
     "test": "yarn workspaces foreach run test --watchAll=false",
-    "lint": "yarn workspaces foreach run lint"
+    "lint": "yarn workspaces foreach run lint",
+    "checkTypes": "yarn workspaces foreach run checkTypes"
   },
   "devDependencies": {
     "@commitlint/cli": "^17.2.0",

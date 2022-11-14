@@ -3,3 +3,4 @@
 
 yarn pretty-quick --staged
 yarn lint
+yarn checkTypes
