@@ -6,7 +6,7 @@ import { useCrowdloanByParachainId, useParachainAssets, useParachainDetailsBySlu
 import { useTranslation } from 'react-i18next'
 import { useParams } from 'react-router-dom'
 
-const CrowdloanDetail = styled(({ className }: { className: string }) => {
+const CrowdloanDetail = styled(({ className }: { className?: string }) => {
   const { t } = useTranslation()
   const { slug } = useParams<{ slug: string }>()
 
@@ -21,38 +21,33 @@ const CrowdloanDetail = styled(({ className }: { className: string }) => {
 
   return (
     <section className={className}>
-      <Poster className={className} backgroundImage={banner} />
+      <Poster backgroundImage={banner} />
       <div className="content">
         <article>
-          <Parachain.Asset className={className} id={parachainDetails?.id ?? ''} type="logo" />
+          <Parachain.Asset id={parachainDetails?.id ?? ''} type="logo" />
           <header>
             <h1>{parachainDetails?.name}</h1>
             <h2>{parachainDetails?.subtitle}</h2>
           </header>
           <p className="info">{parachainDetails?.info}</p>
-          <Parachain.Links className={className} id={parachainDetails?.id ?? ''} />
+          <Parachain.Links id={parachainDetails?.id ?? ''} />
         </article>
         <aside>
           <Panel>
             <PanelSection title={t('Raised')}>
-              <Crowdloan.Raised className={className} id={id ?? ''} />
+              <Crowdloan.Raised id={id ?? ''} />
             </PanelSection>
             <PanelSection title={t('Ends in')}>
               <Crowdloan.Countdown id={id} />
             </PanelSection>
             <PanelSection>
               <Crowdloan.Bonus
-                className={className}
                 full
                 id={id ?? ''}
                 parachainId={parachainId}
-                prefix={<Parachain.Asset className={className} id={parachainId ?? ''} type="logo" />}
+                prefix={<Parachain.Asset id={parachainId ?? ''} type="logo" />}
               />
-              <Button
-                className={className}
-                onClick={() => openModal(<Crowdloan.Contribute id={id} />)}
-                disabled={uiStatus !== 'active'}
-              >
+              <Button onClick={() => openModal(<Crowdloan.Contribute id={id} />)} disabled={uiStatus !== 'active'}>
                 {t('Contribute')}
               </Button>
             </PanelSection>

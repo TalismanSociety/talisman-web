@@ -146,7 +146,7 @@ const Assets = styled(({ className }: { className?: string }) => {
     <section className={`wallet-assets ${className}`}>
       <Panel title={t('Assets')} subtitle={balances !== undefined ? fiatTotal : <Loader />}>
         <ExtensionStatusGate unavailable={<ExtensionUnavailable />}>
-          {(balances?.sorted.length || 0) > 0 ? assetBalances : <AssetsLoading className={className} />}
+          {(balances?.sorted.length || 0) > 0 ? assetBalances : <AssetsLoading />}
           {value === 0 && address ? (
             <>
               <PanelSection>

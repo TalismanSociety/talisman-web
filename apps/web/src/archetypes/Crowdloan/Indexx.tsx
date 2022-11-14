@@ -167,7 +167,7 @@ const FilterBar = styled(
 //   )
 // }
 
-const Index = styled(({ withFilter, className }: { withFilter: boolean; className: string }) => {
+const Index = styled(({ withFilter, className }: { withFilter: boolean; className?: string }) => {
   const { t } = useTranslation()
   const { crowdloans, count, loading, filterProps } = useFilter()
 
@@ -179,12 +179,12 @@ const Index = styled(({ withFilter, className }: { withFilter: boolean; classNam
         {/* <LearnCrowdloansBanner />*/}
         {/* <UnlockTalismanBanner /> */}
       </div>
-      {withFilter && <FilterBar className={className} {...filterProps} count={count} />}
+      {withFilter && <FilterBar {...filterProps} count={count} />}
       <Await until={!loading}>
         <NoCrowdloans require={count?.filtered > 0} text={t('noCrowdloans.text')} subtext={t('noCrowdloans.subtext')}>
-          <Grid className={className}>
+          <Grid>
             {crowdloans.map(({ id }) => (
-              <Teaser className={className} key={id} id={id} />
+              <Teaser key={id} id={id} />
             ))}
           </Grid>
         </NoCrowdloans>

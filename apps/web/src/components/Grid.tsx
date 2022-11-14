@@ -11,7 +11,15 @@ const defaultBreakpoints = {
   700: { columns: 1 },
 }
 
-const Grid = styled(({ className, children }) => <div className={`grid ${className}`}>{children}</div>)`
+type GridProps = {
+  children: React.ReactNode
+  className?: string
+  columns?: number
+  gap?: any
+  breakpoints?: any
+}
+
+const Grid = styled(({ className, children }: GridProps) => <div className={`grid ${className}`}>{children}</div>)`
   display: grid;
   grid-gap: 2.4rem;
   width: 100%;
@@ -19,14 +27,14 @@ const Grid = styled(({ className, children }) => <div className={`grid ${classNa
   margin: ${({ gap = defaultGap }) => gap} 0;
 
   > * {
-    ${({ itemHeight }) => !!itemHeight && `height: ${itemHeight}`}
+    ${({ itemHeight }: { itemHeight?: any }) => !!itemHeight && `height: ${itemHeight}`}
   }
 
   ${({ breakpoints = defaultBreakpoints, columns = defaultColumns, itemHeight }) =>
-    sortBy(Object.entries(breakpoints), bp => parseInt(bp))
+    sortBy(Object.entries(breakpoints), (bp: any) => parseInt(bp))
       .reverse()
       .map(
-        key =>
+        (key: any) =>
           `
             @media only screen and (max-width: ${key[0]}px) {
               grid-template-columns: repeat(${key[1]?.columns || columns}, 1fr);

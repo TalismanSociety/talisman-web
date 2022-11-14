@@ -23,7 +23,7 @@ const Total = styled(({ className }: { className?: string }) => {
     <div className={`wallet-total ${className}`}>
       <div className="title">{t('Portfolio value')}</div>
       <div className="amount">
-        <span>{fiatTotal ?? <StyledLoader className={className} />}</span>
+        <span>{fiatTotal ?? <StyledLoader />}</span>
       </div>
     </div>
   )

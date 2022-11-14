@@ -19,20 +19,11 @@ export const NoWalletBanner = styled(({ className }: { className?: string }) => 
       <span className="heavy">{t('noWallet.header')}</span>
       <div className="cta">
         {isTalismanInstalled && (
-          <WalletSelect
-            dappName={DAPP_NAME}
-            triggerComponent={
-              <Button className={className} primary>
-                {tBase('Connect wallet')}
-              </Button>
-            }
-          />
+          <WalletSelect dappName={DAPP_NAME} triggerComponent={<Button primary>{tBase('Connect wallet')}</Button>} />
         )}
         {!isTalismanInstalled && (
           <a href={downloadLink} target="_blank" rel="noopener noreferrer">
-            <Button className={className} primary>
-              {t('noWallet.primaryCta')}
-            </Button>
+            <Button primary>{t('noWallet.primaryCta')}</Button>
           </a>
         )}
       </div>

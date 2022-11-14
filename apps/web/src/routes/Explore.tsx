@@ -12,8 +12,8 @@ const ExploreGrid = ({ className }: { className?: string }) => {
     <div className={className}>
       {loading ? (
         <>
-          <TagLoading className={className} />
-          <CardLoading className={className} />
+          <TagLoading />
+          <CardLoading />
         </>
       ) : !loading && dapps.length === 0 ? (
         <p>No dapps found</p>
