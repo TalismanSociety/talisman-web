@@ -1,4 +1,4 @@
-﻿{
+{
   "Account balance too low": "ยอดคงเหลือในบัญชีน้อยเกินไป",
   "A parachain must be selected": "ต้องทำการเลือก Parachain",
   "Please enter an amount of {{token}}": "โปรดกรอกจำนวนของ {{token}}",
