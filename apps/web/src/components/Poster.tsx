@@ -17,7 +17,7 @@ const Poster = styled(
     <section className={`${className} poster`} style={{ backgroundImage: `url(${backgroundImage})` }}>
       <span className="content">
         <h1>{title}</h1>
-        <h2 dangerouslySetInnerHTML={{ __html: subtitle }} />
+        <h2 dangerouslySetInnerHTML={{ __html: subtitle ?? '' }} />
         <div className="children">{children}</div>
       </span>
     </section>

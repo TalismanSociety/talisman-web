@@ -31,8 +31,8 @@ export const useChainmetaValue = (chainId: number, key: string) => {
   const [val, setVal] = useState(null)
 
   useEffect(() => {
-    if (!chains[chainId]) return
-    setVal(get(chains[chainId], key) || null)
+    if (!chains[chainId as any as keyof ContextProps]) return
+    setVal(get(chains[chainId as any as keyof ContextProps], key) || null)
   }, [chainId, key, chains])
 
   return val
@@ -58,7 +58,7 @@ function useContext() {
 // Provider
 //
 
-const ParachainReducer = (state = {}, data) => {
+const ParachainReducer = (state: any = {}, data: any) => {
   // not exists
   if (!state[data.id]) {
     state[data.id] = data
