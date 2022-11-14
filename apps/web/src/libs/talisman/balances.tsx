@@ -8,7 +8,7 @@ import { SubNativeModule } from '@talismn/balances-substrate-native'
 import { SubOrmlModule } from '@talismn/balances-substrate-orml'
 import { ChaindataProvider, Token, TokenList } from '@talismn/chaindata-provider'
 import { isNil } from 'lodash'
-import { PropsWithChildren, ReactNode, createContext, useContext, useMemo } from 'react'
+import { PropsWithChildren, createContext, useContext, useMemo } from 'react'
 
 const balanceModules = [SubNativeModule, SubOrmlModule, EvmNativeModule, EvmErc20Module]
 
