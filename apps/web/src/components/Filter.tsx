@@ -3,7 +3,6 @@ import styled from '@emotion/styled'
 import { useSet } from '@util/hooks'
 import { useEffect } from 'react'
 
-// @Tien or Jon need to handle this
 const Filter = styled(({ value = [], options = {}, className, onChange = () => {}, ...rest }: any) => {
   const [selected, { add, remove, set }] = useSet()
 

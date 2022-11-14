@@ -1,9 +1,7 @@
 import { Pill } from '@components'
 import styled from '@emotion/styled'
 import { useSet } from '@util/hooks'
-import React, { useEffect } from 'react'
-
-// Needs a run through @Tien
+import { useEffect } from 'react'
 
 type StyledNoCrowdloansPlaceholderProps = {
   inital: any[]

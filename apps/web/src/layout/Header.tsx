@@ -24,11 +24,12 @@ import { useEffect, useReducer } from 'react'
 import { useTranslation } from 'react-i18next'
 import { NavLink } from 'react-router-dom'
 
-// @Tien Please Help w ith this
 export default function HeaderState(props: any) {
   const isMobile = useMediaQuery('(max-width: 700px)')
-  const [mobileMenuOpen, dispatch] = useReducer((state = false, action) =>
-    action === 'toggle' ? !state : action === 'open' ? true : action === 'close' ? false : state
+  const [mobileMenuOpen, dispatch] = useReducer(
+    (state = false, action: 'toggle' | 'open' | 'close') =>
+      action === 'toggle' ? !state : action === 'open' ? true : action === 'close' ? false : state,
+    undefined
   )
 
   return <Header {...props} isMobile={isMobile} mobileMenuOpen={mobileMenuOpen} dispatch={dispatch} />
@@ -43,19 +44,19 @@ const desktopRoutes = [
 ]
 
 const mainRoutes = [
-  { name: 'Portfolio', url: '/portfolio', icon: <PortfolioLogo alt="Portfolio" /> },
+  { name: 'Portfolio', url: '/portfolio', icon: <PortfolioLogo title="Portfolio" /> },
   // {
   //   name: 'Crowdloans',
   //   url: '/crowdloans',
-  //   icon: <CrowdloansLogo alt="Crowdloans" />,
+  //   icon: <CrowdloansLogo title="Crowdloans" />,
   // },
   {
     name: '🗝 Spirit keys',
     url: '/spiritkeys',
-    icon: <CrowdloansLogo alt="Spiritkeys" />,
+    icon: <CrowdloansLogo title="Spiritkeys" />,
   },
-  { name: 'NFTs', url: '/nfts', icon: <PortfolioLogo alt="NFTs" /> },
-  { name: 'Transaction History', url: '/history', icon: <PortfolioLogo alt="NFTs" /> },
+  { name: 'NFTs', url: '/nfts', icon: <PortfolioLogo title="NFTs" /> },
+  { name: 'Transaction History', url: '/history', icon: <PortfolioLogo title="NFTs" /> },
 ]
 
 const subRoutes = [
@@ -63,31 +64,31 @@ const subRoutes = [
     name: 'Request Features',
     url: 'https://talisman.upvoty.com/b/feature-requests/',
     trackingCode: 'RMSKIY4Q', // bounce_feature_requests
-    icon: <SwapLogo alt="Request Features" />,
+    icon: <SwapLogo title="Request Features" />,
   },
   {
     name: 'GitHub',
     url: 'https://github.com/talismansociety',
     trackingCode: 'CG0L6VIJ', // bounce_github
-    icon: <GithubMobileLogo alt="GitHub" />,
+    icon: <GithubMobileLogo title="GitHub" />,
   },
   {
     name: 'Discord',
     url: DISCORD_JOIN_URL,
     trackingCode: '00L5TXCI', // bounce_discord
-    icon: <DiscordMobileLogo alt="Discord" />,
+    icon: <DiscordMobileLogo title="Discord" />,
   },
   {
     name: 'Twitter',
     url: TALISMAN_TWITTER_URL,
     trackingCode: 'NMVPOOER', // bounce_twitter
-    icon: <TwitterMobileLogo alt="Twitter" />,
+    icon: <TwitterMobileLogo title="Twitter" />,
   },
   {
     name: 'Medium',
     url: 'https://medium.com/we-are-talisman',
     trackingCode: 'Y1JQOEBW', // bounce_medium
-    icon: <MediumMobileLogo alt="Medium" />,
+    icon: <MediumMobileLogo title="Medium" />,
   },
 ]
 

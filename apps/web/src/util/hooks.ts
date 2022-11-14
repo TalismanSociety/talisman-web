@@ -1,29 +1,29 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
-export const useBoolean = init => {
+export const useBoolean = <T>(init: T) => {
   const [value, setValue] = useState(init || false)
   const toggle = useCallback(() => setValue(!value), [value])
   return [value, toggle]
 }
 
-export const useSet = (initialSet = []) => {
-  const [_set, setSet] = useState(new Set(initialSet))
+export const useSet = <T>(initialSet: T[] = []) => {
+  const [_set, setSet] = useState<Set<T>>(new Set(initialSet))
 
   const actions = useMemo(() => {
     return {
-      set: (items = []) => setSet(new Set(items)),
-      add: item => setSet(state => new Set([...Array.from(state), item])),
-      remove: item => setSet(state => new Set(Array.from(state).filter(i => i !== item))),
+      set: (items: T[] = []) => setSet(new Set(items)),
+      add: (item: T) => setSet(state => new Set([...Array.from(state), item])),
+      remove: (item: T) => setSet(state => new Set(Array.from(state).filter(i => i !== item))),
       clear: () => setSet(new Set()),
       reset: () => setSet(new Set([...initialSet])),
-      contains: item => _set.has(item),
+      contains: (item: T) => _set.has(item),
     }
   }, [setSet]) // eslint-disable-line
 
-  return [Array.from(_set), actions]
+  return [Array.from(_set), actions] as const
 }
 
-export const useMediaQuery = query => {
+export const useMediaQuery = (query: string) => {
   const isSupported = typeof window !== 'undefined' && typeof window.matchMedia !== 'undefined'
 
   const mediaQueryList = isSupported ? window.matchMedia(query) : undefined
