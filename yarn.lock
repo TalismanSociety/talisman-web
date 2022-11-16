@@ -1969,9 +1969,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@craco/craco@npm:^7.0.0-alpha.9":
-  version: 7.0.0-alpha.9
-  resolution: "@craco/craco@npm:7.0.0-alpha.9"
+"@craco/craco@npm:^7.0.0":
+  version: 7.0.0
+  resolution: "@craco/craco@npm:7.0.0"
   dependencies:
     autoprefixer: ^10.4.12
     cosmiconfig: ^7.0.1
@@ -1984,7 +1984,7 @@ __metadata:
     react-scripts: ^5.0.0
   bin:
     craco: dist/bin/craco.js
-  checksum: e352187692c6080e3b3469e8d4cb5757556ebc5f87c0de11f7ff9a4eb1ad78d8d953bf5fcd1fbec543c4fa00352b71f9415575411b9f42ff75b9c42b91dfb0fb
+  checksum: d8371d5508a586ea00070d66010e632c8dab2761c2dd51163003e5b4e62e044f5931b081c3d19f02eea187fd970f9ddffeeaefcae004962e63286682e41e86b1
   languageName: node
   linkType: hard
 
@@ -4649,23 +4649,26 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@pmmmwh/react-refresh-webpack-plugin@npm:^0.4.3":
-  version: 0.4.3
-  resolution: "@pmmmwh/react-refresh-webpack-plugin@npm:0.4.3"
+"@pmmmwh/react-refresh-webpack-plugin@npm:^0.5.1":
+  version: 0.5.9
+  resolution: "@pmmmwh/react-refresh-webpack-plugin@npm:0.5.9"
   dependencies:
-    ansi-html: ^0.0.7
+    ansi-html-community: ^0.0.8
+    common-path-prefix: ^3.0.0
+    core-js-pure: ^3.23.3
     error-stack-parser: ^2.0.6
-    html-entities: ^1.2.1
-    native-url: ^0.2.6
-    schema-utils: ^2.6.5
+    find-up: ^5.0.0
+    html-entities: ^2.1.0
+    loader-utils: ^2.0.3
+    schema-utils: ^3.0.0
     source-map: ^0.7.3
   peerDependencies:
-    "@types/webpack": 4.x
-    react-refresh: ">=0.8.3 <0.10.0"
+    "@types/webpack": 4.x || 5.x
+    react-refresh: ">=0.10.0 <1.0.0"
     sockjs-client: ^1.4.0
-    type-fest: ^0.13.1
+    type-fest: ">=0.17.0 <4.0.0"
     webpack: ">=4.43.0 <6.0.0"
-    webpack-dev-server: 3.x
+    webpack-dev-server: 3.x || 4.x
     webpack-hot-middleware: 2.x
     webpack-plugin-serve: 0.x || 1.x
   peerDependenciesMeta:
@@ -4681,7 +4684,7 @@ __metadata:
       optional: true
     webpack-plugin-serve:
       optional: true
-  checksum: 36a7b0c63f0aabde856a2b43f3f3bfa7919920afa67b4fbcf7d4980b286c7c11e34ada13654d81bf30c3d3e2c12a5b9eef6c15e21a200003b8030809d3ddd6c6
+  checksum: 446c0add9ecf17ed9911bf310bf22ab64f4b3d0ce334e68a3fcac5efee782ef4d7b6260997efaf720c7a2ea39086db89629e4aa07fb18558387d8dc8f0f31da2
   languageName: node
   linkType: hard
 
@@ -6606,23 +6609,22 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@storybook/preset-create-react-app@npm:^3.1.5":
-  version: 3.2.0
-  resolution: "@storybook/preset-create-react-app@npm:3.2.0"
+"@storybook/preset-create-react-app@npm:>=3.1.5":
+  version: 4.1.2
+  resolution: "@storybook/preset-create-react-app@npm:4.1.2"
   dependencies:
-    "@pmmmwh/react-refresh-webpack-plugin": ^0.4.3
+    "@pmmmwh/react-refresh-webpack-plugin": ^0.5.1
+    "@storybook/react-docgen-typescript-plugin": canary
     "@types/babel__core": ^7.1.7
-    "@types/webpack": ^4.41.13
     babel-plugin-react-docgen: ^4.1.0
-    pnp-webpack-plugin: ^1.6.4
-    react-docgen-typescript-plugin: ^1.0.0
+    pnp-webpack-plugin: ^1.7.0
     semver: ^7.3.5
   peerDependencies:
     "@babel/core": "*"
     "@storybook/node-logger": "*"
     "@storybook/react": ">=5.2"
-    react-scripts: ">=3.0.0"
-  checksum: 22022446dbe6e48d82b017f4d6d2ac97737e812283bbabd3c1ceb0d8e62f54c90f2dffcbd7e48376d92f2f835d44ca4f939eedce9eaca66416bd4a2c82315a68
+    react-scripts: ">=5.0.0"
+  checksum: 4d01bde6e9c31eb3ae79063bdaf283b705cfdd1399abd2879ccf273da3a3e1ae0d5947f87e07b13cee0c43249f0841cd28167fd05b7bbde9d3add2ec7f357d6f
   languageName: node
   linkType: hard
 
@@ -6653,7 +6655,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@storybook/react-docgen-typescript-plugin@npm:1.0.2-canary.6.9d540b91e815f8fc2f8829189deb00553559ff63.0":
+"@storybook/react-docgen-typescript-plugin@npm:1.0.2-canary.6.9d540b91e815f8fc2f8829189deb00553559ff63.0, @storybook/react-docgen-typescript-plugin@npm:canary":
   version: 1.0.2-canary.6.9d540b91e815f8fc2f8829189deb00553559ff63.0
   resolution: "@storybook/react-docgen-typescript-plugin@npm:1.0.2-canary.6.9d540b91e815f8fc2f8829189deb00553559ff63.0"
   dependencies:
@@ -7333,7 +7335,7 @@ __metadata:
   dependencies:
     "@acala-network/types": ^4.1.5
     "@apollo/client": ^3.6.9
-    "@craco/craco": ^7.0.0-alpha.9
+    "@craco/craco": ^7.0.0
     "@emotion/react": ^11.10.4
     "@emotion/styled": ^11.10.4
     "@floating-ui/react-dom-interactions": ^0.10.3
@@ -7411,7 +7413,7 @@ __metadata:
     recoil: ^0.7.5
     rmrk-tools: ^1.0.60
     safety-match: ^0.4.4
-    storybook-preset-craco: ^0.0.6
+    storybook-preset-craco: artisanofcode/storybook-preset-craco
     stream-browserify: ^3.0.0
     swr: ^1.2.2
     typescript: ^4.8.4
@@ -8228,7 +8230,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/webpack@npm:^4.41.13, @types/webpack@npm:^4.41.26, @types/webpack@npm:^4.41.8":
+"@types/webpack@npm:^4.41.26, @types/webpack@npm:^4.41.8":
   version: 4.41.33
   resolution: "@types/webpack@npm:4.41.33"
   dependencies:
@@ -9156,15 +9158,6 @@ __metadata:
   bin:
     ansi-html: bin/ansi-html
   checksum: 04c568e8348a636963f915e48eaa3e01218322e1169acafdd79c384f22e5558c003f79bbc480c1563865497482817c7eed025f0653ebc17642fededa5cb42089
-  languageName: node
-  linkType: hard
-
-"ansi-html@npm:^0.0.7":
-  version: 0.0.7
-  resolution: "ansi-html@npm:0.0.7"
-  bin:
-    ansi-html: ./bin/ansi-html
-  checksum: 9b839ce99650b4c2d83621d67d68622d27e7948b54f7a4386f2218a3997ee4e684e5a6e8d290880c3f3260e8d90c2613c59c7028f04992ad5c8d99d3a0fcc02c
   languageName: node
   linkType: hard
 
@@ -15623,13 +15616,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"html-entities@npm:^1.2.1":
-  version: 1.4.0
-  resolution: "html-entities@npm:1.4.0"
-  checksum: 4b73ffb9eead200f99146e4fbe70acb0af2fea136901a131fc3a782e9ef876a7cbb07dec303ca1f8804232b812249dbf3643a270c9c524852065d9224a8dcdd0
-  languageName: node
-  linkType: hard
-
 "html-entities@npm:^2.1.0, html-entities@npm:^2.3.2":
   version: 2.3.3
   resolution: "html-entities@npm:2.3.3"
@@ -18429,6 +18415,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"loader-utils@npm:^2.0.3":
+  version: 2.0.4
+  resolution: "loader-utils@npm:2.0.4"
+  dependencies:
+    big.js: ^5.2.2
+    emojis-list: ^3.0.0
+    json5: ^2.1.2
+  checksum: a5281f5fff1eaa310ad5e1164095689443630f3411e927f95031ab4fb83b4a98f388185bb1fe949e8ab8d4247004336a625e9255c22122b815bb9a4c5d8fc3b7
+  languageName: node
+  linkType: hard
+
 "loader-utils@npm:^3.2.0":
   version: 3.2.0
   resolution: "loader-utils@npm:3.2.0"
@@ -19482,15 +19479,6 @@ __metadata:
     snapdragon: ^0.8.1
     to-regex: ^3.0.1
   checksum: 54d4166d6ef08db41252eb4e96d4109ebcb8029f0374f9db873bd91a1f896c32ec780d2a2ea65c0b2d7caf1f28d5e1ea33746a470f32146ac8bba821d80d38d8
-  languageName: node
-  linkType: hard
-
-"native-url@npm:^0.2.6":
-  version: 0.2.6
-  resolution: "native-url@npm:0.2.6"
-  dependencies:
-    querystring: ^0.2.0
-  checksum: d56a67b32e635c4944985f551a9976dfe609a3947810791c50f5c37cff1d9dd5fe040184989d104be8752582b79dc4e726f2a9c075d691ecce86b31ae9387f1b
   languageName: node
   linkType: hard
 
@@ -20690,7 +20678,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pnp-webpack-plugin@npm:^1.6.4":
+"pnp-webpack-plugin@npm:^1.7.0":
   version: 1.7.0
   resolution: "pnp-webpack-plugin@npm:1.7.0"
   dependencies:
@@ -22460,13 +22448,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"querystring@npm:^0.2.0":
-  version: 0.2.1
-  resolution: "querystring@npm:0.2.1"
-  checksum: 7b83b45d641e75fd39cd6625ddfd44e7618e741c61e95281b57bbae8fde0afcc12cf851924559e5cc1ef9baa3b1e06e22b164ea1397d65dd94b801f678d9c8ce
-  languageName: node
-  linkType: hard
-
 "querystringify@npm:^2.1.1":
   version: 2.2.0
   resolution: "querystringify@npm:2.2.0"
@@ -22625,26 +22606,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-docgen-typescript-plugin@npm:^1.0.0":
-  version: 1.0.2
-  resolution: "react-docgen-typescript-plugin@npm:1.0.2"
-  dependencies:
-    debug: ^4.1.1
-    endent: ^2.0.1
-    find-cache-dir: ^3.3.1
-    flat-cache: ^3.0.4
-    micromatch: ^4.0.2
-    react-docgen-typescript: ^2.2.2
-    tslib: ^2.0.0
-    webpack-sources: ^2.2.0
-  peerDependencies:
-    typescript: ">= 4.x"
-    webpack: ">= 4"
-  checksum: 01083a2745939812e514fc531b0b20fbdf9ab6471ed3b9c7f12776816755152dc3abcd8e13f48ea6a25624aed1c958047201edba05060a41e720c98ac97e8b3c
-  languageName: node
-  linkType: hard
-
-"react-docgen-typescript@npm:^2.1.1, react-docgen-typescript@npm:^2.2.2":
+"react-docgen-typescript@npm:^2.1.1":
   version: 2.2.2
   resolution: "react-docgen-typescript@npm:2.2.2"
   peerDependencies:
@@ -24804,18 +24766,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"storybook-preset-craco@npm:^0.0.6":
+storybook-preset-craco@artisanofcode/storybook-preset-craco:
   version: 0.0.6
-  resolution: "storybook-preset-craco@npm:0.0.6"
+  resolution: "storybook-preset-craco@https://github.com/artisanofcode/storybook-preset-craco.git#commit=7a14059de5d1f74187ad01c01832abc2a4f51ec2"
   dependencies:
-    "@storybook/preset-create-react-app": ^3.1.5
+    "@storybook/preset-create-react-app": ">=3.1.5"
   peerDependencies:
     "@babel/core": "*"
     "@craco/craco": ">=5.0.0"
     "@storybook/node-logger": "*"
     "@storybook/react": ">=5.2"
     react-scripts: ">=3.0.0"
-  checksum: 89d7160b428839a6a7ad44431be7e48941437d2477e0e781a7e774a644d3ffd0360668f4324d3dcede0ea4e461f895c1a609f31a956f81e9ef2f93ff76b33976
+  checksum: f95e34ee963ea6a9c961e59b987534a2eed1cb072ab85f5f1501fc8ced7eca62d4c12627bef88d46e3d90ec9d9edc2159bd42e9ca8ed98db290c3a1047a4380a
   languageName: node
   linkType: hard
 
