@@ -426,7 +426,7 @@ const Input = () => {
         initial="false"
         animate={String(existingPool !== undefined)}
         variants={{
-          true: { transition: { staggerChildren: 0.5 } },
+          true: { transition: { staggerChildren: 0.35 } },
         }}
       >
         <div css={{ position: 'relative', zIndex: 1 }}>
@@ -513,13 +513,12 @@ const PageUnstakings = () => {
   const selectedAccount = useRecoilValue(selectedAccountState)
 
   return (
-    <AnimatePresence mode="popLayout">
+    <AnimatePresence mode="wait">
       <motion.div
         key={selectedAccount?.address}
-        initial={{ y: 10, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        exit={{ y: -10, opacity: 0 }}
-        transition={{ duration: 0.2 }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
       >
         <Unstakings account={selectedAccount?.address} showHeader={false} compact />
       </motion.div>
