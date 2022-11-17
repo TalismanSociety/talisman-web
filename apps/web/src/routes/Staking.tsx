@@ -591,11 +591,9 @@ const Staking = () => (
       >
         <div
           css={{
-            'flex': 1,
-            '@media (min-width: 768px)': {
-              // Combine with flex 1 so child doesn't expand parent
-              width: 0,
-            },
+            flex: 1,
+            // Combine with flex 1 so child doesn't expand parent
+            minWidth: 0,
           }}
         >
           <Suspense fallback={<StakingInput.Skeleton />}>
@@ -604,14 +602,12 @@ const Staking = () => (
         </div>
         <Faq
           css={{
-            'flex': 1,
-            'display': 'flex',
-            'flexDirection': 'column',
-            'gap': '1.6rem',
-            '@media (min-width: 768px)': {
-              // Combine with flex 1 so child doesn't expand parent
-              width: 0,
-            },
+            flex: 1,
+            // Combine with flex 1 so child doesn't expand parent
+            minWidth: 0,
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '1.6rem',
           }}
         />
       </div>
