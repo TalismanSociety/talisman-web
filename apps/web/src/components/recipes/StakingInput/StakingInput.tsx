@@ -45,14 +45,11 @@ const StakingInput = Object.assign(
       <form
         onSubmit={event => event.preventDefault()}
         css={{
-          'display': 'flex',
-          'flexDirection': 'column',
-          'backgroundColor': theme.color.surface,
-          'borderRadius': '1.6rem',
-          'padding': '3.2rem',
-          '@media(768)': {
-            maxWidth: '40rem',
-          },
+          display: 'flex',
+          flexDirection: 'column',
+          backgroundColor: theme.color.surface,
+          borderRadius: '1.6rem',
+          padding: '3.2rem',
         }}
       >
         <Select

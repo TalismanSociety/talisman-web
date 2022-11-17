@@ -539,7 +539,7 @@ const Staking = () => (
     <div
       css={{
         '@media (min-width: 768px)': {
-          width: '86rem',
+          width: '80rem',
         },
       }}
     >
@@ -589,11 +589,7 @@ const Staking = () => (
           },
         }}
       >
-        <div
-          css={{
-            flex: '1',
-          }}
-        >
+        <div css={{ flex: 1 }}>
           <Suspense fallback={<StakingInput.Skeleton />}>
             <Input />
           </Suspense>
