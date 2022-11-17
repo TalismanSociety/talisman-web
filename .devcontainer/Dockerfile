@@ -6,6 +6,10 @@ FROM mcr.microsoft.com/vscode/devcontainers/typescript-node:0-${VARIANT}
 RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
     && apt-get -y install --no-install-recommends gnupg2
 
+RUN curl -sLO https://github.com/dandavison/delta/releases/download/0.14.0/git-delta_0.14.0_arm64.deb \
+    && dpkg -i git-delta_0.14.0_arm64.deb \
+    && apt-get install -f
+
 # [Optional] Uncomment if you want to install an additional version of node using nvm
 # ARG EXTRA_NODE_VERSION=10
 # RUN su node -c "source /usr/local/share/nvm/nvm.sh && nvm install ${EXTRA_NODE_VERSION}"
