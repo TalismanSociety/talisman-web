@@ -29,6 +29,11 @@ export const ItemNoDetails = () => {
       >
         {t(`We don't recognise this\ntransaction type yet...`)}
       </div>
+      <div
+        css={css`
+          width: 36px;
+        `}
+      />
       <Button
         variant="outlined"
         as="a"
