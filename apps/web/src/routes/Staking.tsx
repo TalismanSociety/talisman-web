@@ -135,7 +135,7 @@ const Statistics = () => {
   )
 }
 
-const Faq = () => {
+const Faq = (props: React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>) => {
   const faqs = [
     {
       summary: 'What is nomination pool staking?',
@@ -205,7 +205,7 @@ const Faq = () => {
   const [expandedFaq, setExpandedFaq] = useState<number>()
 
   return (
-    <div css={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '1.6rem' }}>
+    <div {...props}>
       {faqs.map((faq, index) => (
         <Details
           key={faq.summary}
@@ -589,12 +589,31 @@ const Staking = () => (
           },
         }}
       >
-        <div css={{ flex: 1 }}>
+        <div
+          css={{
+            'flex': 1,
+            '@media (min-width: 768px)': {
+              // Combine with flex 1 so child doesn't expand parent
+              width: 0,
+            },
+          }}
+        >
           <Suspense fallback={<StakingInput.Skeleton />}>
             <Input />
           </Suspense>
         </div>
-        <Faq />
+        <Faq
+          css={{
+            'flex': 1,
+            'display': 'flex',
+            'flexDirection': 'column',
+            'gap': '1.6rem',
+            '@media (min-width: 768px)': {
+              // Combine with flex 1 so child doesn't expand parent
+              width: 0,
+            },
+          }}
+        />
       </div>
     </div>
   </div>

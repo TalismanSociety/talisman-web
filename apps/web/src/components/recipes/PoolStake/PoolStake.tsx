@@ -123,7 +123,7 @@ const PoolStake = Object.assign(
           <div css={isWide && { flex: 3 }}>
             <dt>Pool</dt>
             <dd
-              css={!isWide && { maxWidth: '65%', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}
+              css={!isWide && { maxWidth: '50%', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}
             >
               <Text alpha="high" css={{ marginLeft: '0.8rem' }}>
                 <PoolStatusIndicator
