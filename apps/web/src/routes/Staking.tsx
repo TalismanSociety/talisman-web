@@ -482,10 +482,10 @@ const Input = () => {
           />
         </div>
         <motion.div
-          css={{ maxWidth: '40rem', marginTop: '1.6rem', overflow: 'hidden' }}
+          css={{ marginTop: '1.6rem', overflow: 'hidden' }}
           variants={{
             true: { opacity: 1, scale: 1 },
-            false: { opacity: 0, scale: 0 },
+            false: { opacity: 0, scale: 0.8 },
           }}
         >
           {existingPool !== undefined &&
@@ -504,25 +504,26 @@ const Input = () => {
               />
             ))}
         </motion.div>
+        <motion.div
+          css={{ marginTop: '1.6rem' }}
+          variants={{
+            true: { opacity: 1, y: 0 },
+            false: { opacity: 0, y: '-80%' },
+          }}
+        >
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={selectedAccount?.address}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+            >
+              <Unstakings account={selectedAccount?.address} showHeader={false} compact />
+            </motion.div>
+          </AnimatePresence>
+        </motion.div>
       </motion.div>
     </>
-  )
-}
-
-const PageUnstakings = () => {
-  const selectedAccount = useRecoilValue(selectedAccountState)
-
-  return (
-    <AnimatePresence mode="wait">
-      <motion.div
-        key={selectedAccount?.address}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-      >
-        <Unstakings account={selectedAccount?.address} showHeader={false} compact />
-      </motion.div>
-    </AnimatePresence>
   )
 }
 
@@ -577,7 +578,6 @@ const Staking = () => (
       >
         <Statistics />
       </Suspense>
-
       <div
         css={{
           'display': 'flex',
@@ -592,16 +592,10 @@ const Staking = () => (
         <div
           css={{
             flex: '40rem',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '1.6rem',
           }}
         >
           <Suspense fallback={<StakingInput.Skeleton />}>
             <Input />
-          </Suspense>
-          <Suspense>
-            <PageUnstakings />
           </Suspense>
         </div>
         <Faq />
