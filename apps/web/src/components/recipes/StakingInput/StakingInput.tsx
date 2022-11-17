@@ -172,6 +172,7 @@ const StakingInput = Object.assign(
                   </Text.Body>
                   <Text.Body
                     as="div"
+                    role="button"
                     alpha="high"
                     css={{ textDecoration: 'underline', cursor: 'pointer', marginBottom: '0.8rem' }}
                     onClick={props.onRequestPoolChange}
