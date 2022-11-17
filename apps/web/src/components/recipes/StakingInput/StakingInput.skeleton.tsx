@@ -12,7 +12,6 @@ const StakingInputSkeleton = (props: SkeletonProps) => {
         backgroundColor: theme.color.surface,
         borderRadius: '1.6rem',
         padding: '3.2rem',
-        width: '40rem',
         minHeight: '33.8rem',
       }}
     >
