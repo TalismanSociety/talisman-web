@@ -1,4 +1,4 @@
-name: Validation
+name: E2E Tests
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 jobs:
-  validate:
+  test:
     runs-on: ubuntu-latest
 
     steps:
@@ -19,7 +19,5 @@ jobs:
           cache: yarn
 
       - run: yarn install --immutable
-      - run: yarn prettier --check .
-      - run: yarn lint
-      - run: yarn checkTypes
-      - run: yarn test
+      - run: npx playwright install --with-deps
+      - run: yarn e2e

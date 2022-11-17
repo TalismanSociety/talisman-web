@@ -106,6 +106,8 @@ const StakingInput = Object.assign(
             />
             <div css={{ padding: '0.8rem', borderRadius: '0.8rem', backgroundColor: theme.color.foreground }}>
               <div
+                role="button"
+                aria-label="Show pool detail"
                 onClick={props.noPoolsAvailable ? undefined : () => setPoolInfoExpanded(x => !x)}
                 css={{
                   display: 'flex',
@@ -164,6 +166,7 @@ const StakingInput = Object.assign(
                     </dl>
                     <Text.Body as="p">Talisman automatically finds you the best available nomination pool</Text.Body>
                     <Text.Body
+                      role="button"
                       as="div"
                       alpha="high"
                       css={{ textDecoration: 'underline', cursor: 'pointer', marginBottom: '0.8rem' }}
