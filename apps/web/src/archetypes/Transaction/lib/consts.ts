@@ -115,6 +115,96 @@ export const txQuery = graphql(`
           tip
           success
         }
+        ... on ParsedSetIdentity {
+          chainId
+          info
+          fee
+          tip
+          success
+        }
+        ... on ParsedClearedIdentity {
+          chainId
+          fee
+          tip
+          success
+        }
+        ... on ParsedPoolStake {
+          chainId
+          tokenLogo
+          tokenSymbol
+          tokenDecimals
+          poolId
+          member
+          bonded
+          joined
+          fee
+          tip
+          success
+        }
+        ... on ParsedPoolUnstake {
+          chainId
+          tokenLogo
+          tokenSymbol
+          tokenDecimals
+          era
+          poolId
+          member
+          points
+          balance
+          fee
+          tip
+          success
+        }
+        ... on ParsedPoolPaidOut {
+          chainId
+          tokenLogo
+          tokenSymbol
+          tokenDecimals
+          poolId
+          member
+          payout
+          fee
+          tip
+          success
+        }
+        ... on ParsedPoolWithdrawn {
+          chainId
+          tokenLogo
+          tokenSymbol
+          tokenDecimals
+          poolId
+          member
+          points
+          balance
+          fee
+          tip
+          success
+        }
+        ... on ParsedPoolMemberRemoved {
+          chainId
+          tokenLogo
+          tokenSymbol
+          tokenDecimals
+          poolId
+          member
+          fee
+          tip
+          success
+        }
+        ... on ParsedVote {
+          chainId
+          tokenLogo
+          tokenSymbol
+          tokenDecimals
+          voter
+          referendumIndex
+          referendumUrl
+          voteNumber
+          amount
+          fee
+          tip
+          success
+        }
       }
     }
   }
