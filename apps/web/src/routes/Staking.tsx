@@ -205,7 +205,7 @@ const Faq = () => {
   const [expandedFaq, setExpandedFaq] = useState<number>()
 
   return (
-    <div css={{ display: 'flex', flexDirection: 'column', gap: '1.6rem' }}>
+    <div css={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '1.6rem' }}>
       {faqs.map((faq, index) => (
         <Details
           key={faq.summary}
@@ -591,7 +591,7 @@ const Staking = () => (
       >
         <div
           css={{
-            flex: '40rem',
+            flex: '1',
           }}
         >
           <Suspense fallback={<StakingInput.Skeleton />}>
