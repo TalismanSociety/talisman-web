@@ -248,7 +248,8 @@ export const ItemDetails = ({ parsed, addresses, accounts }: Props) => {
 
     default:
       const exhaustiveCheck: never = parsed.__typename
-      throw new Error(`Unhandled transaction type ${exhaustiveCheck}`)
+      console.error(`Unhandled transaction type ${exhaustiveCheck}`)
+      return <div className="details" />
   }
 }
 
