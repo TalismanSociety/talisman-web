@@ -13,6 +13,7 @@ export type PoolUnstakeProps = {
   timeTilWithdrawable?: string
   onRequestWithdraw: () => unknown
   withdrawState?: 'pending' | 'disabled'
+  variant?: 'compact'
 }
 
 const PoolUnstake = (props: PoolUnstakeProps) => {
@@ -31,76 +32,85 @@ const PoolUnstake = (props: PoolUnstakeProps) => {
         },
       }}
     >
-      <Identicon value={props.accountAddress} size={40} />
+      {props.variant !== 'compact' && <Identicon value={props.accountAddress} size="4rem" />}
       <dl
-        css={{
-          'display': 'flex',
-          'flexDirection': 'column',
-          'gap': '2rem',
-          '> div': {
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-          },
-          'dd': {
-            textAlign: 'right',
-          },
-          '@media (min-width: 1024px)': {
-            'flex': 1,
-            'flexDirection': 'row',
-            'alignItems': 'flex-start',
-            'margin': 0,
-            'overflow': 'hidden',
-            'span': {
-              display: 'block',
-              whiteSpace: 'nowrap',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-            },
-            '> div:first-child': {
-              flex: 1,
-              overflow: 'hidden',
-              justifyContent: 'flex-start',
-              dd: { textAlign: 'start' },
-            },
+        css={[
+          {
+            'display': 'flex',
+            'flexDirection': 'column',
+            'gap': '2rem',
             '> div': {
-              justifyContent: 'flex-end',
-            },
-            '> div:last-child': {
-              flex: 0.5,
-              overflow: 'hidden',
-              justifyContent: props.timeTilWithdrawable === undefined ? 'flex-start' : undefined,
-            },
-            'dt': {
-              display: 'none',
-              whiteSpace: 'nowrap',
-              overflow: 'hidden',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
             },
             'dd': {
-              'marginLeft': '2rem',
+              textAlign: 'right',
+            },
+            '@media (min-width: 1024px)': {
+              'flex': 1,
+              'flexDirection': 'row',
+              'alignItems': 'flex-start',
+              'margin': 0,
               'overflow': 'hidden',
-              '> div': {
+              'span': {
+                display: 'block',
+                whiteSpace: 'nowrap',
                 overflow: 'hidden',
+                textOverflow: 'ellipsis',
+              },
+              '> div:first-child': {
+                flex: 1,
+                overflow: 'hidden',
+                justifyContent: 'flex-start',
+                dd: { textAlign: 'start' },
+              },
+              '> div': {
+                justifyContent: 'flex-end',
+              },
+              '> div:last-child': {
+                flex: 0.5,
+                overflow: 'hidden',
+                justifyContent: props.timeTilWithdrawable === undefined ? 'flex-start' : undefined,
+              },
+              'dt': {
+                display: 'none',
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+              },
+              'dd': {
+                'marginLeft': '2rem',
+                'overflow': 'hidden',
+                '> div': {
+                  overflow: 'hidden',
+                },
               },
             },
           },
-        }}
+          props.variant === 'compact' && {
+            'dd:first-of-type': {
+              marginLeft: 0,
+            },
+          },
+        ]}
       >
-        <div>
-          <dt>Account</dt>
-          <dd>
-            <div>
-              <Text.Body alpha="high" css={{ '@media (min-width: 1024px)': { textAlign: 'left' } }}>
-                {props.accountName}
-              </Text.Body>
-            </div>
-            <div>
-              <Text.Body>
-                ({props.accountAddress.slice(0, 4)}...{props.accountAddress.slice(-4)})
-              </Text.Body>
-            </div>
-          </dd>
-        </div>
+        {props.variant !== 'compact' && (
+          <div>
+            <dt>Account</dt>
+            <dd>
+              <div>
+                <Text.Body alpha="high" css={{ '@media (min-width: 1024px)': { textAlign: 'left' } }}>
+                  {props.accountName}
+                </Text.Body>
+              </div>
+              <div>
+                <Text.Body>
+                  ({props.accountAddress.slice(0, 4)}...{props.accountAddress.slice(-4)})
+                </Text.Body>
+              </div>
+            </dd>
+          </div>
+        )}
         <div>
           <dt>Unstaking</dt>
           <dd>

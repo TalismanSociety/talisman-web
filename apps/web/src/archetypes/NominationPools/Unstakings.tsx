@@ -11,13 +11,19 @@ import { apiState, nativeTokenDecimalState, nativeTokenPriceState } from '../../
 import useChainState from '../../domains/common/hooks/useChainState'
 import useExtrinsic from '../../domains/common/hooks/useExtrinsic'
 
-const Unstakings = () => {
+// TODO: Extract individual unstaking items to own reuseable components
+const Unstakings = (props: { account?: string; showHeader?: boolean; compact?: boolean }) => {
   const withdrawExtrinsic = useExtrinsic('nominationPools', 'withdrawUnbonded')
 
   const sessionProgressLoadable = useChainState('derive', 'session', 'progress', [])
 
-  const [api, accounts, decimalFromAtomics, nativeTokenPrice] = useRecoilValue(
+  const [api, _accounts, decimalFromAtomics, nativeTokenPrice] = useRecoilValue(
     waitForAll([apiState, selectedPolkadotAccountsState, nativeTokenDecimalState, nativeTokenPriceState('usd')])
+  )
+
+  const accounts = useMemo(
+    () => (props.account === undefined ? _accounts : _accounts.filter(({ address }) => address === props.account)),
+    [_accounts, props.account]
   )
 
   const poolMembersLoadable = useChainState(
@@ -75,12 +81,15 @@ const Unstakings = () => {
 
   return (
     <div>
-      <header css={{ marginTop: '4rem' }}>
-        <Text.H4 css={{ marginBottom: '2.4rem' }}>Unstaking</Text.H4>
-      </header>
+      {props.showHeader !== false && (
+        <header css={{ marginTop: '4rem' }}>
+          <Text.H4 css={{ marginBottom: '2.4rem' }}>Unstaking</Text.H4>
+        </header>
+      )}
       <PoolUnstakeList>
         {unstakings?.map((x, index) => (
           <PoolUnstake
+            variant={props.compact ? 'compact' : undefined}
             key={index}
             accountName={accounts.find(({ address }) => address === x.address)?.name ?? ''}
             accountAddress={x.address ?? ''}

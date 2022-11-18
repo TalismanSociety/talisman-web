@@ -6,89 +6,16 @@ import PoolStake, { PoolStakeList } from '@components/recipes/PoolStake/PoolStak
 import { PoolStatus } from '@components/recipes/PoolStatusIndicator'
 import { selectedPolkadotAccountsState } from '@domains/accounts/recoils'
 import { createAccounts } from '@domains/nominationPools/utils'
-import { Option, UInt } from '@polkadot/types-codec'
-import { PalletNominationPoolsPoolMember } from '@polkadot/types/lookup'
-import { ReactNode, useCallback, useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import {
-  constSelector,
-  useRecoilValue,
-  useRecoilValueLoadable,
-  useRecoilValue_TRANSITION_SUPPORT_UNSTABLE,
-  waitForAll,
-} from 'recoil'
+import { constSelector, useRecoilValueLoadable, useRecoilValue_TRANSITION_SUPPORT_UNSTABLE, waitForAll } from 'recoil'
 
-import { apiState, nativeTokenDecimalState, nativeTokenPriceState } from '../../domains/chains/recoils'
+import { apiState } from '../../domains/chains/recoils'
 import useChainState from '../../domains/common/hooks/useChainState'
-import useExtrinsic from '../../domains/common/hooks/useExtrinsic'
 import { allPendingPoolRewardsState, eraStakersState } from '../../domains/nominationPools/recoils'
 import AddStakeDialog from './AddStakeDialog'
+import PoolStakeItem from './PoolStakeItem'
 import UnstakeDialog from './UnstakeDialog'
-
-const PoolStakeItem = ({
-  item,
-}: {
-  item: {
-    status?: PoolStatus
-    account?: {
-      address: string
-      name?: string
-    }
-    poolName?: ReactNode
-    poolMember: Option<PalletNominationPoolsPoolMember>
-    pendingRewards?: UInt
-  }
-}) => {
-  const [decimalFromAtomics, nativeTokenPrice] = useRecoilValue(
-    waitForAll([nativeTokenDecimalState, nativeTokenPriceState('usd')])
-  )
-
-  const claimPayoutExtrinsic = useExtrinsic('nominationPools', 'claimPayout')
-
-  const [isUnstaking, setIsUnstaking] = useState(false)
-  const [isAddingStake, setIsAddingStake] = useState(false)
-
-  return (
-    <>
-      <PoolStake
-        poolStatus={item.status}
-        accountName={item.account?.name ?? ''}
-        accountAddress={item.account?.address ?? ''}
-        stakingAmount={decimalFromAtomics.fromAtomics(item.poolMember.unwrapOrDefault().points).toHuman()}
-        stakingAmountInFiat={(
-          decimalFromAtomics.fromAtomics(item.poolMember.unwrapOrDefault().points).toNumber() * nativeTokenPrice
-        ).toLocaleString(undefined, { style: 'currency', currency: 'usd', currencyDisplay: 'narrowSymbol' })}
-        rewardsAmount={'+' + decimalFromAtomics.fromAtomics(item.pendingRewards?.toString()).toHuman()}
-        rewardsAmountInFiat={
-          '+' +
-          (decimalFromAtomics.fromAtomics(item.pendingRewards).toNumber() * nativeTokenPrice).toLocaleString(
-            undefined,
-            { style: 'currency', currency: 'usd', currencyDisplay: 'narrowSymbol' }
-          )
-        }
-        poolName={item.poolName ?? ''}
-        onRequestClaim={() => claimPayoutExtrinsic.signAndSend(item.account?.address ?? '')}
-        claimState={
-          item.pendingRewards?.isZero() ?? true
-            ? 'unavailable'
-            : claimPayoutExtrinsic.state === 'loading'
-            ? 'pending'
-            : undefined
-        }
-        onRequestUnstake={() => setIsUnstaking(true)}
-        onRequestAdd={() => setIsAddingStake(true)}
-      />
-      <AddStakeDialog
-        account={isAddingStake ? item.account?.address : undefined}
-        onDismiss={useCallback(() => setIsAddingStake(false), [])}
-      />
-      <UnstakeDialog
-        account={isUnstaking ? item.account?.address : undefined}
-        onDismiss={useCallback(() => setIsUnstaking(false), [])}
-      />
-    </>
-  )
-}
 
 const Stakings = () => {
   const [api, pendingRewards, accounts] = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
@@ -155,11 +82,11 @@ const Stakings = () => {
                 poolName: poolMetadatumLoadable.valueMaybe()?.[index]?.toUtf8() ?? (
                   <CircularProgressIndicator size="1em" />
                 ),
-                poolMember,
+                poolMember: poolMember.unwrapOrDefault(),
                 pendingRewards: pendingRewards.find(rewards => rewards[0] === accounts[index]?.address)?.[1],
               }
             })
-            .filter(x => x.poolMember.isSome && !x.poolMember.unwrapOrDefault().points.isZero()),
+            .filter(x => !x.poolMember.points.isZero()),
     [
       poolMembersLoadable.state,
       poolMembersLoadable.contents,

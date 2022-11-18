@@ -1,13 +1,16 @@
 import Button from '@components/atoms/Button'
 import Identicon from '@components/atoms/Identicon'
 import Text from '@components/atoms/Text'
+import Tooltip from '@components/atoms/Tooltip'
 import { useTheme } from '@emotion/react'
 import React, { ReactElement, ReactNode } from 'react'
+import { useMedia } from 'react-use'
 
 import { PoolStatus, PoolStatusIndicator } from '../PoolStatusIndicator'
 import PoolStakeSkeleton from './PoolStake.skeleton'
 
 export type PoolStakeProps = {
+  className?: string
   accountName: string
   accountAddress: string
   stakingAmount: string
@@ -22,40 +25,52 @@ export type PoolStakeProps = {
   addState?: 'pending' | 'disabled'
   unstakeState?: 'unavailable' | 'pending' | 'disabled'
   poolStatus?: PoolStatus
+  variant?: 'compact'
 }
 
 const PoolStake = Object.assign(
   (props: PoolStakeProps) => {
     const theme = useTheme()
+    const isWide = props.variant !== 'compact' && useMedia('(min-width: 1024px)')
+
     return (
       <article
-        css={{
-          'display': 'flex',
-          'flexDirection': 'column',
-          'padding': '1.6rem',
-          'borderRadius': '1.6rem',
-          'backgroundColor': theme.color.surface,
-          '@media (min-width: 1024px)': {
+        className={props.className}
+        css={[
+          {
+            display: 'flex',
+            flexDirection: 'column',
+            padding: '1.6rem',
+            borderRadius: '1.6rem',
+            backgroundColor: theme.color.surface,
+          },
+          isWide && {
             flexDirection: 'row',
             alignItems: 'center',
           },
-        }}
+        ]}
       >
-        <Identicon value={props.accountAddress} size={40} />
+        <Identicon
+          value={props.accountAddress}
+          size={40}
+          css={{ display: props.variant === 'compact' ? 'none' : undefined }}
+        />
         <dl
-          css={{
-            'display': 'flex',
-            'flexDirection': 'column',
-            'gap': '2rem',
-            '> div': {
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
+          css={[
+            {
+              'display': 'flex',
+              'flexDirection': 'column',
+              'gap': '2rem',
+              '> div': {
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              },
+              'dd': {
+                textAlign: 'right',
+              },
             },
-            'dd': {
-              textAlign: 'right',
-            },
-            '@media (min-width: 1024px)': {
+            isWide && {
               'flex': 1,
               'flexDirection': 'row',
               'alignItems': 'flex-start',
@@ -88,31 +103,40 @@ const PoolStake = Object.assign(
                 flex: 2,
               },
             },
-          }}
+          ]}
         >
-          <div>
-            <dt>Account</dt>
-            <dd>
-              <div>
-                <Text.Body alpha="high">{props.accountName}</Text.Body>
-              </div>
-              <div>
-                <Text.Body>
-                  ({props.accountAddress.slice(0, 4)}...{props.accountAddress.slice(-4)})
-                </Text.Body>
-              </div>
-            </dd>
-          </div>
-          <div
-            css={{
-              '@media (min-width: 1024px)': { flex: 3 },
-            }}
-          >
+          {props.variant !== 'compact' && (
+            <div>
+              <dt>Account</dt>
+              <dd>
+                <div>
+                  <Text.Body alpha="high">{props.accountName}</Text.Body>
+                </div>
+                <div>
+                  <Text.Body>
+                    ({props.accountAddress.slice(0, 4)}...{props.accountAddress.slice(-4)})
+                  </Text.Body>
+                </div>
+              </dd>
+            </div>
+          )}
+          <div css={isWide && { flex: 3 }}>
             <dt>Pool</dt>
-            <dd css={{ display: 'flex', alignItems: 'center', gap: '0.24rem' }}>
-              <PoolStatusIndicator status={props.poolStatus} />
+            <dd
+              css={!isWide && { maxWidth: '50%', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}
+            >
               <Text alpha="high" css={{ marginLeft: '0.8rem' }}>
-                {props.poolName}
+                <PoolStatusIndicator
+                  status={props.poolStatus}
+                  css={{ display: 'inline-block', verticalAlign: 'middle', marginRight: '0.6rem' }}
+                />
+                <Tooltip content={props.poolName}>
+                  {tooltipProps => (
+                    <div {...tooltipProps} css={{ display: 'inline' }}>
+                      {props.poolName}
+                    </div>
+                  )}
+                </Tooltip>
               </Text>
             </dd>
           </div>
@@ -144,24 +168,29 @@ const PoolStake = Object.assign(
           </div>
         </dl>
         <section
-          css={{
-            'display': 'flex',
-            'gap': '1rem',
-            'marginTop': '2.5rem',
-            '> *': {
-              flex: 1,
+          css={[
+            {
+              'display': 'flex',
+              'gap': '1rem',
+              'marginTop': '2.5rem',
+              '> *': {
+                flex: 1,
+              },
             },
-            '@media (min-width: 1024px)': {
+            isWide && {
               marginTop: 0,
             },
-          }}
+          ]}
         >
           <Button
             variant="outlined"
             onClick={props.onRequestClaim}
             disabled={props.claimState === 'disabled' || props.claimState === 'unavailable'}
             loading={props.claimState === 'pending'}
-            css={{ opacity: props.claimState === 'unavailable' ? 0 : undefined }}
+            css={[
+              props.claimState === 'unavailable' && { opacity: 0 },
+              props.claimState === 'unavailable' && !isWide && { display: 'none' },
+            ]}
           >
             Claim
           </Button>
@@ -170,7 +199,10 @@ const PoolStake = Object.assign(
             onClick={props.onRequestUnstake}
             disabled={props.unstakeState === 'disabled' || props.unstakeState === 'unavailable'}
             loading={props.unstakeState === 'pending'}
-            css={{ opacity: props.unstakeState === 'unavailable' ? 0 : undefined }}
+            css={[
+              props.unstakeState === 'unavailable' && { opacity: 0 },
+              props.unstakeState === 'unavailable' && !isWide && { display: 'none' },
+            ]}
           >
             Unstake
           </Button>
