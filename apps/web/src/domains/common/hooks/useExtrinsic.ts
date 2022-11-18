@@ -1,5 +1,5 @@
 import { ApiPromise } from '@polkadot/api'
-import { AddressOrPair, SubmittableExtrinsics } from '@polkadot/api/types'
+import { AddressOrPair } from '@polkadot/api/types'
 import { ISubmittableResult } from '@polkadot/types/types'
 import { useCallback, useState } from 'react'
 import { useRecoilCallback, useRecoilValueLoadable } from 'recoil'
@@ -14,7 +14,7 @@ export const useExtrinsic = <
   TSection extends keyof PickKnownKeys<ApiPromise['tx'][TModule]>
 >(
   module: TModule,
-  section: Extract<keyof SubmittableExtrinsics<'promise'>[TModule], string>
+  section: TSection
 ) => {
   type TExtrinsic = ApiPromise['tx'][TModule][TSection]
 
@@ -55,7 +55,7 @@ export const useExtrinsic = <
               account,
               { signer: extension?.signer },
               result => {
-                extrinsicMiddleWare(module, section, result, callbackInterface)
+                extrinsicMiddleWare(module, section as any, result, callbackInterface)
 
                 if (result.isError) {
                   unsubscribe?.()
@@ -63,9 +63,7 @@ export const useExtrinsic = <
                 } else if (result.isFinalized) {
                   unsubscribe?.()
 
-                  const failed = result.events.some(({ event }) => event.method === 'ExtrinsicFailed')
-
-                  if (failed) {
+                  if (result.dispatchError !== undefined) {
                     reject(result)
                   } else {
                     resolve(result)
