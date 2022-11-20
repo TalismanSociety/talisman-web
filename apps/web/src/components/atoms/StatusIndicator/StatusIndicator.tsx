@@ -3,6 +3,7 @@ import { useTheme } from '@emotion/react'
 import Tooltip from '../Tooltip'
 
 export type StatusIndicatorProps = {
+  className?: string
   status?: 'success' | 'warning' | 'error'
   tooltip?: string
 }
@@ -14,6 +15,7 @@ const StatusIndicator = (props: StatusIndicatorProps) => {
       {tooltipProps => (
         <div
           {...tooltipProps}
+          className={props.className}
           css={{
             width: '0.8rem',
             minWidth: '0.8rem',

@@ -51,7 +51,7 @@ const TextInput = (props: TextInputProps) => {
           css={{
             'flex': 1,
             'fontSize': '3rem',
-            'width': '26rem',
+            'width': '20rem',
             'background': 'transparent',
             'border': 'none',
             '&[type=number]': {
