@@ -109,8 +109,8 @@ export const apiState = selector({
     const wsProvider = new WsProvider(get(chainRpcState))
     return ApiPromise.create({ provider: wsProvider })
   },
+  dangerouslyAllowMutability: true,
 })
-
 export const nativeTokenDecimalState = selector({
   key: 'NativeTokenDecimal',
   get: ({ get }) => {
