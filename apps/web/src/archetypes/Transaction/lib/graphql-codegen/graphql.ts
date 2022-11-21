@@ -818,6 +818,342 @@ export type ExtrinsicsConnection = {
   totalCount: Scalars['Int'];
 };
 
+export type IndexedChain = {
+  __typename?: 'IndexedChain';
+  archive?: Maybe<Scalars['String']>;
+  calamarUrl?: Maybe<Scalars['String']>;
+  currentBlock?: Maybe<Scalars['Int']>;
+  enabled?: Maybe<Scalars['Boolean']>;
+  headBlock?: Maybe<Scalars['Int']>;
+  id: Scalars['String'];
+  info?: Maybe<IndexedChainInfo>;
+  ss58Format?: Maybe<Scalars['Int']>;
+  startBlock?: Maybe<Scalars['Int']>;
+  subscanUrl?: Maybe<Scalars['String']>;
+};
+
+export type IndexedChainEdge = {
+  __typename?: 'IndexedChainEdge';
+  cursor: Scalars['String'];
+  node: IndexedChain;
+};
+
+export type IndexedChainInfo = {
+  __typename?: 'IndexedChainInfo';
+  description?: Maybe<Scalars['String']>;
+  displayName?: Maybe<Scalars['String']>;
+  genesisHash?: Maybe<Scalars['String']>;
+  name?: Maybe<Scalars['String']>;
+  parachainId?: Maybe<Scalars['String']>;
+  relayChain?: Maybe<Scalars['String']>;
+  tokens: Array<Scalars['String']>;
+  website?: Maybe<Scalars['String']>;
+};
+
+export type IndexedChainInfoWhereInput = {
+  description_contains?: InputMaybe<Scalars['String']>;
+  description_containsInsensitive?: InputMaybe<Scalars['String']>;
+  description_endsWith?: InputMaybe<Scalars['String']>;
+  description_eq?: InputMaybe<Scalars['String']>;
+  description_gt?: InputMaybe<Scalars['String']>;
+  description_gte?: InputMaybe<Scalars['String']>;
+  description_in?: InputMaybe<Array<Scalars['String']>>;
+  description_isNull?: InputMaybe<Scalars['Boolean']>;
+  description_lt?: InputMaybe<Scalars['String']>;
+  description_lte?: InputMaybe<Scalars['String']>;
+  description_not_contains?: InputMaybe<Scalars['String']>;
+  description_not_containsInsensitive?: InputMaybe<Scalars['String']>;
+  description_not_endsWith?: InputMaybe<Scalars['String']>;
+  description_not_eq?: InputMaybe<Scalars['String']>;
+  description_not_in?: InputMaybe<Array<Scalars['String']>>;
+  description_not_startsWith?: InputMaybe<Scalars['String']>;
+  description_startsWith?: InputMaybe<Scalars['String']>;
+  displayName_contains?: InputMaybe<Scalars['String']>;
+  displayName_containsInsensitive?: InputMaybe<Scalars['String']>;
+  displayName_endsWith?: InputMaybe<Scalars['String']>;
+  displayName_eq?: InputMaybe<Scalars['String']>;
+  displayName_gt?: InputMaybe<Scalars['String']>;
+  displayName_gte?: InputMaybe<Scalars['String']>;
+  displayName_in?: InputMaybe<Array<Scalars['String']>>;
+  displayName_isNull?: InputMaybe<Scalars['Boolean']>;
+  displayName_lt?: InputMaybe<Scalars['String']>;
+  displayName_lte?: InputMaybe<Scalars['String']>;
+  displayName_not_contains?: InputMaybe<Scalars['String']>;
+  displayName_not_containsInsensitive?: InputMaybe<Scalars['String']>;
+  displayName_not_endsWith?: InputMaybe<Scalars['String']>;
+  displayName_not_eq?: InputMaybe<Scalars['String']>;
+  displayName_not_in?: InputMaybe<Array<Scalars['String']>>;
+  displayName_not_startsWith?: InputMaybe<Scalars['String']>;
+  displayName_startsWith?: InputMaybe<Scalars['String']>;
+  genesisHash_contains?: InputMaybe<Scalars['String']>;
+  genesisHash_containsInsensitive?: InputMaybe<Scalars['String']>;
+  genesisHash_endsWith?: InputMaybe<Scalars['String']>;
+  genesisHash_eq?: InputMaybe<Scalars['String']>;
+  genesisHash_gt?: InputMaybe<Scalars['String']>;
+  genesisHash_gte?: InputMaybe<Scalars['String']>;
+  genesisHash_in?: InputMaybe<Array<Scalars['String']>>;
+  genesisHash_isNull?: InputMaybe<Scalars['Boolean']>;
+  genesisHash_lt?: InputMaybe<Scalars['String']>;
+  genesisHash_lte?: InputMaybe<Scalars['String']>;
+  genesisHash_not_contains?: InputMaybe<Scalars['String']>;
+  genesisHash_not_containsInsensitive?: InputMaybe<Scalars['String']>;
+  genesisHash_not_endsWith?: InputMaybe<Scalars['String']>;
+  genesisHash_not_eq?: InputMaybe<Scalars['String']>;
+  genesisHash_not_in?: InputMaybe<Array<Scalars['String']>>;
+  genesisHash_not_startsWith?: InputMaybe<Scalars['String']>;
+  genesisHash_startsWith?: InputMaybe<Scalars['String']>;
+  name_contains?: InputMaybe<Scalars['String']>;
+  name_containsInsensitive?: InputMaybe<Scalars['String']>;
+  name_endsWith?: InputMaybe<Scalars['String']>;
+  name_eq?: InputMaybe<Scalars['String']>;
+  name_gt?: InputMaybe<Scalars['String']>;
+  name_gte?: InputMaybe<Scalars['String']>;
+  name_in?: InputMaybe<Array<Scalars['String']>>;
+  name_isNull?: InputMaybe<Scalars['Boolean']>;
+  name_lt?: InputMaybe<Scalars['String']>;
+  name_lte?: InputMaybe<Scalars['String']>;
+  name_not_contains?: InputMaybe<Scalars['String']>;
+  name_not_containsInsensitive?: InputMaybe<Scalars['String']>;
+  name_not_endsWith?: InputMaybe<Scalars['String']>;
+  name_not_eq?: InputMaybe<Scalars['String']>;
+  name_not_in?: InputMaybe<Array<Scalars['String']>>;
+  name_not_startsWith?: InputMaybe<Scalars['String']>;
+  name_startsWith?: InputMaybe<Scalars['String']>;
+  parachainId_contains?: InputMaybe<Scalars['String']>;
+  parachainId_containsInsensitive?: InputMaybe<Scalars['String']>;
+  parachainId_endsWith?: InputMaybe<Scalars['String']>;
+  parachainId_eq?: InputMaybe<Scalars['String']>;
+  parachainId_gt?: InputMaybe<Scalars['String']>;
+  parachainId_gte?: InputMaybe<Scalars['String']>;
+  parachainId_in?: InputMaybe<Array<Scalars['String']>>;
+  parachainId_isNull?: InputMaybe<Scalars['Boolean']>;
+  parachainId_lt?: InputMaybe<Scalars['String']>;
+  parachainId_lte?: InputMaybe<Scalars['String']>;
+  parachainId_not_contains?: InputMaybe<Scalars['String']>;
+  parachainId_not_containsInsensitive?: InputMaybe<Scalars['String']>;
+  parachainId_not_endsWith?: InputMaybe<Scalars['String']>;
+  parachainId_not_eq?: InputMaybe<Scalars['String']>;
+  parachainId_not_in?: InputMaybe<Array<Scalars['String']>>;
+  parachainId_not_startsWith?: InputMaybe<Scalars['String']>;
+  parachainId_startsWith?: InputMaybe<Scalars['String']>;
+  relayChain_contains?: InputMaybe<Scalars['String']>;
+  relayChain_containsInsensitive?: InputMaybe<Scalars['String']>;
+  relayChain_endsWith?: InputMaybe<Scalars['String']>;
+  relayChain_eq?: InputMaybe<Scalars['String']>;
+  relayChain_gt?: InputMaybe<Scalars['String']>;
+  relayChain_gte?: InputMaybe<Scalars['String']>;
+  relayChain_in?: InputMaybe<Array<Scalars['String']>>;
+  relayChain_isNull?: InputMaybe<Scalars['Boolean']>;
+  relayChain_lt?: InputMaybe<Scalars['String']>;
+  relayChain_lte?: InputMaybe<Scalars['String']>;
+  relayChain_not_contains?: InputMaybe<Scalars['String']>;
+  relayChain_not_containsInsensitive?: InputMaybe<Scalars['String']>;
+  relayChain_not_endsWith?: InputMaybe<Scalars['String']>;
+  relayChain_not_eq?: InputMaybe<Scalars['String']>;
+  relayChain_not_in?: InputMaybe<Array<Scalars['String']>>;
+  relayChain_not_startsWith?: InputMaybe<Scalars['String']>;
+  relayChain_startsWith?: InputMaybe<Scalars['String']>;
+  tokens_containsAll?: InputMaybe<Array<Scalars['String']>>;
+  tokens_containsAny?: InputMaybe<Array<Scalars['String']>>;
+  tokens_containsNone?: InputMaybe<Array<Scalars['String']>>;
+  tokens_isNull?: InputMaybe<Scalars['Boolean']>;
+  website_contains?: InputMaybe<Scalars['String']>;
+  website_containsInsensitive?: InputMaybe<Scalars['String']>;
+  website_endsWith?: InputMaybe<Scalars['String']>;
+  website_eq?: InputMaybe<Scalars['String']>;
+  website_gt?: InputMaybe<Scalars['String']>;
+  website_gte?: InputMaybe<Scalars['String']>;
+  website_in?: InputMaybe<Array<Scalars['String']>>;
+  website_isNull?: InputMaybe<Scalars['Boolean']>;
+  website_lt?: InputMaybe<Scalars['String']>;
+  website_lte?: InputMaybe<Scalars['String']>;
+  website_not_contains?: InputMaybe<Scalars['String']>;
+  website_not_containsInsensitive?: InputMaybe<Scalars['String']>;
+  website_not_endsWith?: InputMaybe<Scalars['String']>;
+  website_not_eq?: InputMaybe<Scalars['String']>;
+  website_not_in?: InputMaybe<Array<Scalars['String']>>;
+  website_not_startsWith?: InputMaybe<Scalars['String']>;
+  website_startsWith?: InputMaybe<Scalars['String']>;
+};
+
+export enum IndexedChainOrderByInput {
+  ArchiveAsc = 'archive_ASC',
+  ArchiveDesc = 'archive_DESC',
+  CalamarUrlAsc = 'calamarUrl_ASC',
+  CalamarUrlDesc = 'calamarUrl_DESC',
+  CurrentBlockAsc = 'currentBlock_ASC',
+  CurrentBlockDesc = 'currentBlock_DESC',
+  EnabledAsc = 'enabled_ASC',
+  EnabledDesc = 'enabled_DESC',
+  HeadBlockAsc = 'headBlock_ASC',
+  HeadBlockDesc = 'headBlock_DESC',
+  IdAsc = 'id_ASC',
+  IdDesc = 'id_DESC',
+  InfoDescriptionAsc = 'info_description_ASC',
+  InfoDescriptionDesc = 'info_description_DESC',
+  InfoDisplayNameAsc = 'info_displayName_ASC',
+  InfoDisplayNameDesc = 'info_displayName_DESC',
+  InfoGenesisHashAsc = 'info_genesisHash_ASC',
+  InfoGenesisHashDesc = 'info_genesisHash_DESC',
+  InfoNameAsc = 'info_name_ASC',
+  InfoNameDesc = 'info_name_DESC',
+  InfoParachainIdAsc = 'info_parachainId_ASC',
+  InfoParachainIdDesc = 'info_parachainId_DESC',
+  InfoRelayChainAsc = 'info_relayChain_ASC',
+  InfoRelayChainDesc = 'info_relayChain_DESC',
+  InfoWebsiteAsc = 'info_website_ASC',
+  InfoWebsiteDesc = 'info_website_DESC',
+  Ss58FormatAsc = 'ss58Format_ASC',
+  Ss58FormatDesc = 'ss58Format_DESC',
+  StartBlockAsc = 'startBlock_ASC',
+  StartBlockDesc = 'startBlock_DESC',
+  SubscanUrlAsc = 'subscanUrl_ASC',
+  SubscanUrlDesc = 'subscanUrl_DESC'
+}
+
+export type IndexedChainWhereInput = {
+  AND?: InputMaybe<Array<IndexedChainWhereInput>>;
+  OR?: InputMaybe<Array<IndexedChainWhereInput>>;
+  archive_contains?: InputMaybe<Scalars['String']>;
+  archive_containsInsensitive?: InputMaybe<Scalars['String']>;
+  archive_endsWith?: InputMaybe<Scalars['String']>;
+  archive_eq?: InputMaybe<Scalars['String']>;
+  archive_gt?: InputMaybe<Scalars['String']>;
+  archive_gte?: InputMaybe<Scalars['String']>;
+  archive_in?: InputMaybe<Array<Scalars['String']>>;
+  archive_isNull?: InputMaybe<Scalars['Boolean']>;
+  archive_lt?: InputMaybe<Scalars['String']>;
+  archive_lte?: InputMaybe<Scalars['String']>;
+  archive_not_contains?: InputMaybe<Scalars['String']>;
+  archive_not_containsInsensitive?: InputMaybe<Scalars['String']>;
+  archive_not_endsWith?: InputMaybe<Scalars['String']>;
+  archive_not_eq?: InputMaybe<Scalars['String']>;
+  archive_not_in?: InputMaybe<Array<Scalars['String']>>;
+  archive_not_startsWith?: InputMaybe<Scalars['String']>;
+  archive_startsWith?: InputMaybe<Scalars['String']>;
+  calamarUrl_contains?: InputMaybe<Scalars['String']>;
+  calamarUrl_containsInsensitive?: InputMaybe<Scalars['String']>;
+  calamarUrl_endsWith?: InputMaybe<Scalars['String']>;
+  calamarUrl_eq?: InputMaybe<Scalars['String']>;
+  calamarUrl_gt?: InputMaybe<Scalars['String']>;
+  calamarUrl_gte?: InputMaybe<Scalars['String']>;
+  calamarUrl_in?: InputMaybe<Array<Scalars['String']>>;
+  calamarUrl_isNull?: InputMaybe<Scalars['Boolean']>;
+  calamarUrl_lt?: InputMaybe<Scalars['String']>;
+  calamarUrl_lte?: InputMaybe<Scalars['String']>;
+  calamarUrl_not_contains?: InputMaybe<Scalars['String']>;
+  calamarUrl_not_containsInsensitive?: InputMaybe<Scalars['String']>;
+  calamarUrl_not_endsWith?: InputMaybe<Scalars['String']>;
+  calamarUrl_not_eq?: InputMaybe<Scalars['String']>;
+  calamarUrl_not_in?: InputMaybe<Array<Scalars['String']>>;
+  calamarUrl_not_startsWith?: InputMaybe<Scalars['String']>;
+  calamarUrl_startsWith?: InputMaybe<Scalars['String']>;
+  currentBlock_eq?: InputMaybe<Scalars['Int']>;
+  currentBlock_gt?: InputMaybe<Scalars['Int']>;
+  currentBlock_gte?: InputMaybe<Scalars['Int']>;
+  currentBlock_in?: InputMaybe<Array<Scalars['Int']>>;
+  currentBlock_isNull?: InputMaybe<Scalars['Boolean']>;
+  currentBlock_lt?: InputMaybe<Scalars['Int']>;
+  currentBlock_lte?: InputMaybe<Scalars['Int']>;
+  currentBlock_not_eq?: InputMaybe<Scalars['Int']>;
+  currentBlock_not_in?: InputMaybe<Array<Scalars['Int']>>;
+  enabled_eq?: InputMaybe<Scalars['Boolean']>;
+  enabled_isNull?: InputMaybe<Scalars['Boolean']>;
+  enabled_not_eq?: InputMaybe<Scalars['Boolean']>;
+  headBlock_eq?: InputMaybe<Scalars['Int']>;
+  headBlock_gt?: InputMaybe<Scalars['Int']>;
+  headBlock_gte?: InputMaybe<Scalars['Int']>;
+  headBlock_in?: InputMaybe<Array<Scalars['Int']>>;
+  headBlock_isNull?: InputMaybe<Scalars['Boolean']>;
+  headBlock_lt?: InputMaybe<Scalars['Int']>;
+  headBlock_lte?: InputMaybe<Scalars['Int']>;
+  headBlock_not_eq?: InputMaybe<Scalars['Int']>;
+  headBlock_not_in?: InputMaybe<Array<Scalars['Int']>>;
+  id_contains?: InputMaybe<Scalars['String']>;
+  id_containsInsensitive?: InputMaybe<Scalars['String']>;
+  id_endsWith?: InputMaybe<Scalars['String']>;
+  id_eq?: InputMaybe<Scalars['String']>;
+  id_gt?: InputMaybe<Scalars['String']>;
+  id_gte?: InputMaybe<Scalars['String']>;
+  id_in?: InputMaybe<Array<Scalars['String']>>;
+  id_isNull?: InputMaybe<Scalars['Boolean']>;
+  id_lt?: InputMaybe<Scalars['String']>;
+  id_lte?: InputMaybe<Scalars['String']>;
+  id_not_contains?: InputMaybe<Scalars['String']>;
+  id_not_containsInsensitive?: InputMaybe<Scalars['String']>;
+  id_not_endsWith?: InputMaybe<Scalars['String']>;
+  id_not_eq?: InputMaybe<Scalars['String']>;
+  id_not_in?: InputMaybe<Array<Scalars['String']>>;
+  id_not_startsWith?: InputMaybe<Scalars['String']>;
+  id_startsWith?: InputMaybe<Scalars['String']>;
+  info?: InputMaybe<IndexedChainInfoWhereInput>;
+  info_isNull?: InputMaybe<Scalars['Boolean']>;
+  ss58Format_eq?: InputMaybe<Scalars['Int']>;
+  ss58Format_gt?: InputMaybe<Scalars['Int']>;
+  ss58Format_gte?: InputMaybe<Scalars['Int']>;
+  ss58Format_in?: InputMaybe<Array<Scalars['Int']>>;
+  ss58Format_isNull?: InputMaybe<Scalars['Boolean']>;
+  ss58Format_lt?: InputMaybe<Scalars['Int']>;
+  ss58Format_lte?: InputMaybe<Scalars['Int']>;
+  ss58Format_not_eq?: InputMaybe<Scalars['Int']>;
+  ss58Format_not_in?: InputMaybe<Array<Scalars['Int']>>;
+  startBlock_eq?: InputMaybe<Scalars['Int']>;
+  startBlock_gt?: InputMaybe<Scalars['Int']>;
+  startBlock_gte?: InputMaybe<Scalars['Int']>;
+  startBlock_in?: InputMaybe<Array<Scalars['Int']>>;
+  startBlock_isNull?: InputMaybe<Scalars['Boolean']>;
+  startBlock_lt?: InputMaybe<Scalars['Int']>;
+  startBlock_lte?: InputMaybe<Scalars['Int']>;
+  startBlock_not_eq?: InputMaybe<Scalars['Int']>;
+  startBlock_not_in?: InputMaybe<Array<Scalars['Int']>>;
+  subscanUrl_contains?: InputMaybe<Scalars['String']>;
+  subscanUrl_containsInsensitive?: InputMaybe<Scalars['String']>;
+  subscanUrl_endsWith?: InputMaybe<Scalars['String']>;
+  subscanUrl_eq?: InputMaybe<Scalars['String']>;
+  subscanUrl_gt?: InputMaybe<Scalars['String']>;
+  subscanUrl_gte?: InputMaybe<Scalars['String']>;
+  subscanUrl_in?: InputMaybe<Array<Scalars['String']>>;
+  subscanUrl_isNull?: InputMaybe<Scalars['Boolean']>;
+  subscanUrl_lt?: InputMaybe<Scalars['String']>;
+  subscanUrl_lte?: InputMaybe<Scalars['String']>;
+  subscanUrl_not_contains?: InputMaybe<Scalars['String']>;
+  subscanUrl_not_containsInsensitive?: InputMaybe<Scalars['String']>;
+  subscanUrl_not_endsWith?: InputMaybe<Scalars['String']>;
+  subscanUrl_not_eq?: InputMaybe<Scalars['String']>;
+  subscanUrl_not_in?: InputMaybe<Array<Scalars['String']>>;
+  subscanUrl_not_startsWith?: InputMaybe<Scalars['String']>;
+  subscanUrl_startsWith?: InputMaybe<Scalars['String']>;
+};
+
+export type IndexedChainsConnection = {
+  __typename?: 'IndexedChainsConnection';
+  edges: Array<IndexedChainEdge>;
+  pageInfo: PageInfo;
+  totalCount: Scalars['Int'];
+};
+
+export type Mutation = {
+  __typename?: 'Mutation';
+  updateChain: MutationResult;
+};
+
+
+export type MutationUpdateChainArgs = {
+  apiKey: Scalars['String'];
+  calamarUrl?: InputMaybe<Scalars['String']>;
+  chainId: Scalars['String'];
+  enabled?: InputMaybe<Scalars['Boolean']>;
+  ss58Format?: InputMaybe<Scalars['Float']>;
+  startBlock?: InputMaybe<Scalars['Float']>;
+  subscanUrl?: InputMaybe<Scalars['String']>;
+};
+
+export type MutationResult = {
+  __typename?: 'MutationResult';
+  message?: Maybe<Scalars['String']>;
+  success: Scalars['Boolean'];
+};
+
 export type PageInfo = {
   __typename?: 'PageInfo';
   endCursor: Scalars['String'];
@@ -842,6 +1178,14 @@ export type ParsedAddProvision = {
   tip?: Maybe<Scalars['String']>;
 };
 
+export type ParsedClearedIdentity = {
+  __typename?: 'ParsedClearedIdentity';
+  chainId: Scalars['String'];
+  fee?: Maybe<Scalars['String']>;
+  success: Scalars['Boolean'];
+  tip?: Maybe<Scalars['String']>;
+};
+
 export type ParsedCrowdloanContribute = {
   __typename?: 'ParsedCrowdloanContribute';
   amount: Scalars['String'];
@@ -849,6 +1193,79 @@ export type ParsedCrowdloanContribute = {
   contributor: Scalars['String'];
   fee?: Maybe<Scalars['String']>;
   fund: Scalars['Int'];
+  success: Scalars['Boolean'];
+  tip?: Maybe<Scalars['String']>;
+  tokenDecimals: Scalars['Int'];
+  tokenLogo: Scalars['String'];
+  tokenSymbol: Scalars['String'];
+};
+
+export type ParsedPoolMemberRemoved = {
+  __typename?: 'ParsedPoolMemberRemoved';
+  chainId: Scalars['String'];
+  fee?: Maybe<Scalars['String']>;
+  member: Scalars['String'];
+  poolId: Scalars['Float'];
+  success: Scalars['Boolean'];
+  tip?: Maybe<Scalars['String']>;
+  tokenDecimals: Scalars['Int'];
+  tokenLogo: Scalars['String'];
+  tokenSymbol: Scalars['String'];
+};
+
+export type ParsedPoolPaidOut = {
+  __typename?: 'ParsedPoolPaidOut';
+  chainId: Scalars['String'];
+  fee?: Maybe<Scalars['String']>;
+  member: Scalars['String'];
+  payout: Scalars['String'];
+  poolId: Scalars['Float'];
+  success: Scalars['Boolean'];
+  tip?: Maybe<Scalars['String']>;
+  tokenDecimals: Scalars['Int'];
+  tokenLogo: Scalars['String'];
+  tokenSymbol: Scalars['String'];
+};
+
+export type ParsedPoolStake = {
+  __typename?: 'ParsedPoolStake';
+  bonded: Scalars['String'];
+  chainId: Scalars['String'];
+  fee?: Maybe<Scalars['String']>;
+  joined: Scalars['String'];
+  member: Scalars['String'];
+  poolId: Scalars['Float'];
+  success: Scalars['Boolean'];
+  tip?: Maybe<Scalars['String']>;
+  tokenDecimals: Scalars['Int'];
+  tokenLogo: Scalars['String'];
+  tokenSymbol: Scalars['String'];
+};
+
+export type ParsedPoolUnstake = {
+  __typename?: 'ParsedPoolUnstake';
+  balance: Scalars['String'];
+  chainId: Scalars['String'];
+  era: Scalars['Float'];
+  fee?: Maybe<Scalars['String']>;
+  member: Scalars['String'];
+  points: Scalars['String'];
+  poolId: Scalars['Float'];
+  success: Scalars['Boolean'];
+  tip?: Maybe<Scalars['String']>;
+  tokenDecimals: Scalars['Int'];
+  tokenLogo: Scalars['String'];
+  tokenSymbol: Scalars['String'];
+};
+
+export type ParsedPoolWithdrawn = {
+  __typename?: 'ParsedPoolWithdrawn';
+  balance: Scalars['String'];
+  chainId: Scalars['String'];
+  fee?: Maybe<Scalars['String']>;
+  member: Scalars['String'];
+  points: Scalars['String'];
+  poolId: Scalars['Float'];
   success: Scalars['Boolean'];
   tip?: Maybe<Scalars['String']>;
   tokenDecimals: Scalars['Int'];
@@ -868,6 +1285,15 @@ export type ParsedRemoveLiquidity = {
   __typename?: 'ParsedRemoveLiquidity';
   chainId: Scalars['String'];
   fee?: Maybe<Scalars['String']>;
+  success: Scalars['Boolean'];
+  tip?: Maybe<Scalars['String']>;
+};
+
+export type ParsedSetIdentity = {
+  __typename?: 'ParsedSetIdentity';
+  chainId: Scalars['String'];
+  fee?: Maybe<Scalars['String']>;
+  info: Scalars['JSON'];
   success: Scalars['Boolean'];
   tip?: Maybe<Scalars['String']>;
 };
@@ -903,7 +1329,7 @@ export type ParsedSwapToken = {
   symbol: Scalars['String'];
 };
 
-export type ParsedTransaction = ParsedAddLiquidity | ParsedAddProvision | ParsedCrowdloanContribute | ParsedRefundProvision | ParsedRemoveLiquidity | ParsedStake | ParsedSwap | ParsedTransfer | ParsedUnstake;
+export type ParsedTransaction = ParsedAddLiquidity | ParsedAddProvision | ParsedClearedIdentity | ParsedCrowdloanContribute | ParsedPoolMemberRemoved | ParsedPoolPaidOut | ParsedPoolStake | ParsedPoolUnstake | ParsedPoolWithdrawn | ParsedRefundProvision | ParsedRemoveLiquidity | ParsedSetIdentity | ParsedStake | ParsedSwap | ParsedTransfer | ParsedUnstake | ParsedVote;
 
 export type ParsedTransfer = {
   __typename?: 'ParsedTransfer';
@@ -930,6 +1356,22 @@ export type ParsedUnstake = {
   tokenLogo: Scalars['String'];
   tokenSymbol: Scalars['String'];
   unstaker: Scalars['String'];
+};
+
+export type ParsedVote = {
+  __typename?: 'ParsedVote';
+  amount: Scalars['String'];
+  chainId: Scalars['String'];
+  fee?: Maybe<Scalars['String']>;
+  referendumIndex: Scalars['String'];
+  referendumUrl?: Maybe<Scalars['String']>;
+  success: Scalars['Boolean'];
+  tip?: Maybe<Scalars['String']>;
+  tokenDecimals: Scalars['Int'];
+  tokenLogo: Scalars['String'];
+  tokenSymbol: Scalars['String'];
+  voteNumber: Scalars['String'];
+  voter: Scalars['String'];
 };
 
 export type Query = {
@@ -964,8 +1406,14 @@ export type Query = {
   extrinsicByUniqueInput?: Maybe<Extrinsic>;
   extrinsics: Array<Extrinsic>;
   extrinsicsConnection: ExtrinsicsConnection;
+  indexedChainById?: Maybe<IndexedChain>;
+  /** @deprecated Use indexedChainById */
+  indexedChainByUniqueInput?: Maybe<IndexedChain>;
+  indexedChains: Array<IndexedChain>;
+  indexedChainsConnection: IndexedChainsConnection;
   squidStatus?: Maybe<SquidStatus>;
   transactionsByAddress: Array<Transaction>;
+  verifyApiKey: Scalars['Boolean'];
 };
 
 
@@ -1125,6 +1573,32 @@ export type QueryExtrinsicsConnectionArgs = {
 };
 
 
+export type QueryIndexedChainByIdArgs = {
+  id: Scalars['String'];
+};
+
+
+export type QueryIndexedChainByUniqueInputArgs = {
+  where: WhereIdInput;
+};
+
+
+export type QueryIndexedChainsArgs = {
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Array<IndexedChainOrderByInput>>;
+  where?: InputMaybe<IndexedChainWhereInput>;
+};
+
+
+export type QueryIndexedChainsConnectionArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  orderBy: Array<IndexedChainOrderByInput>;
+  where?: InputMaybe<IndexedChainWhereInput>;
+};
+
+
 export type QueryTransactionsByAddressArgs = {
   addresses?: InputMaybe<Array<Scalars['String']>>;
   chains?: InputMaybe<Array<Scalars['String']>>;
@@ -1132,6 +1606,11 @@ export type QueryTransactionsByAddressArgs = {
   newerThanId?: InputMaybe<Scalars['String']>;
   olderThanId?: InputMaybe<Scalars['String']>;
   query?: InputMaybe<Scalars['String']>;
+};
+
+
+export type QueryVerifyApiKeyArgs = {
+  apiKey: Scalars['String'];
 };
 
 export type SquidStatus = {
@@ -1154,6 +1633,8 @@ export type Subscription = {
   events: Array<Event>;
   extrinsicById?: Maybe<Extrinsic>;
   extrinsics: Array<Extrinsic>;
+  indexedChainById?: Maybe<IndexedChain>;
+  indexedChains: Array<IndexedChain>;
 };
 
 
@@ -1234,6 +1715,19 @@ export type SubscriptionExtrinsicsArgs = {
   where?: InputMaybe<ExtrinsicWhereInput>;
 };
 
+
+export type SubscriptionIndexedChainByIdArgs = {
+  id: Scalars['String'];
+};
+
+
+export type SubscriptionIndexedChainsArgs = {
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Array<IndexedChainOrderByInput>>;
+  where?: InputMaybe<IndexedChainWhereInput>;
+};
+
 export type Transaction = {
   __typename?: 'Transaction';
   _data?: Maybe<Scalars['JSON']>;
@@ -1264,7 +1758,7 @@ export type TxQueryQueryVariables = Exact<{
 }>;
 
 
-export type TxQueryQuery = { __typename?: 'Query', transactionsByAddress: Array<{ __typename?: 'Transaction', id: string, name?: string | null, chainId: string, ss58Format: number, blockNumber: number, blockHash: string, timestamp: any, args?: any | null, signer?: string | null, relatedAddresses: Array<string>, explorerUrl?: string | null, parsed?: { __typename: 'ParsedAddLiquidity', chainId: string, fee?: string | null, tip?: string | null, success: boolean } | { __typename: 'ParsedAddProvision', chainId: string, fee?: string | null, tip?: string | null, success: boolean } | { __typename: 'ParsedCrowdloanContribute', chainId: string, tokenLogo: string, tokenSymbol: string, tokenDecimals: number, contributor: string, amount: string, fund: number, fee?: string | null, tip?: string | null, success: boolean } | { __typename: 'ParsedRefundProvision', chainId: string, fee?: string | null, tip?: string | null, success: boolean } | { __typename: 'ParsedRemoveLiquidity', chainId: string, fee?: string | null, tip?: string | null, success: boolean } | { __typename: 'ParsedStake', chainId: string, tokenLogo: string, tokenSymbol: string, tokenDecimals: number, staker: string, amount: string, fee?: string | null, tip?: string | null, success: boolean } | { __typename: 'ParsedSwap', chainId: string, trader: string, fee?: string | null, tip?: string | null, success: boolean, tokens: Array<{ __typename?: 'ParsedSwapToken', logo: string, symbol: string, decimals: number, liquidityChange: string }> } | { __typename: 'ParsedTransfer', chainId: string, tokenLogo: string, tokenSymbol: string, tokenDecimals: number, from: string, to: string, amount: string, fee?: string | null, tip?: string | null, success: boolean } | { __typename: 'ParsedUnstake', chainId: string, tokenLogo: string, tokenSymbol: string, tokenDecimals: number, unstaker: string, amount: string, fee?: string | null, tip?: string | null, success: boolean } | null }> };
+export type TxQueryQuery = { __typename?: 'Query', transactionsByAddress: Array<{ __typename?: 'Transaction', id: string, name?: string | null, chainId: string, ss58Format: number, blockNumber: number, blockHash: string, timestamp: any, args?: any | null, signer?: string | null, relatedAddresses: Array<string>, explorerUrl?: string | null, parsed?: { __typename: 'ParsedAddLiquidity', chainId: string, fee?: string | null, tip?: string | null, success: boolean } | { __typename: 'ParsedAddProvision', chainId: string, fee?: string | null, tip?: string | null, success: boolean } | { __typename: 'ParsedClearedIdentity', chainId: string, fee?: string | null, tip?: string | null, success: boolean } | { __typename: 'ParsedCrowdloanContribute', chainId: string, tokenLogo: string, tokenSymbol: string, tokenDecimals: number, contributor: string, amount: string, fund: number, fee?: string | null, tip?: string | null, success: boolean } | { __typename: 'ParsedPoolMemberRemoved', chainId: string, tokenLogo: string, tokenSymbol: string, tokenDecimals: number, poolId: number, member: string, fee?: string | null, tip?: string | null, success: boolean } | { __typename: 'ParsedPoolPaidOut', chainId: string, tokenLogo: string, tokenSymbol: string, tokenDecimals: number, poolId: number, member: string, payout: string, fee?: string | null, tip?: string | null, success: boolean } | { __typename: 'ParsedPoolStake', chainId: string, tokenLogo: string, tokenSymbol: string, tokenDecimals: number, poolId: number, member: string, bonded: string, joined: string, fee?: string | null, tip?: string | null, success: boolean } | { __typename: 'ParsedPoolUnstake', chainId: string, tokenLogo: string, tokenSymbol: string, tokenDecimals: number, era: number, poolId: number, member: string, points: string, balance: string, fee?: string | null, tip?: string | null, success: boolean } | { __typename: 'ParsedPoolWithdrawn', chainId: string, tokenLogo: string, tokenSymbol: string, tokenDecimals: number, poolId: number, member: string, points: string, balance: string, fee?: string | null, tip?: string | null, success: boolean } | { __typename: 'ParsedRefundProvision', chainId: string, fee?: string | null, tip?: string | null, success: boolean } | { __typename: 'ParsedRemoveLiquidity', chainId: string, fee?: string | null, tip?: string | null, success: boolean } | { __typename: 'ParsedSetIdentity', chainId: string, info: any, fee?: string | null, tip?: string | null, success: boolean } | { __typename: 'ParsedStake', chainId: string, tokenLogo: string, tokenSymbol: string, tokenDecimals: number, staker: string, amount: string, fee?: string | null, tip?: string | null, success: boolean } | { __typename: 'ParsedSwap', chainId: string, trader: string, fee?: string | null, tip?: string | null, success: boolean, tokens: Array<{ __typename?: 'ParsedSwapToken', logo: string, symbol: string, decimals: number, liquidityChange: string }> } | { __typename: 'ParsedTransfer', chainId: string, tokenLogo: string, tokenSymbol: string, tokenDecimals: number, from: string, to: string, amount: string, fee?: string | null, tip?: string | null, success: boolean } | { __typename: 'ParsedUnstake', chainId: string, tokenLogo: string, tokenSymbol: string, tokenDecimals: number, unstaker: string, amount: string, fee?: string | null, tip?: string | null, success: boolean } | { __typename: 'ParsedVote', chainId: string, tokenLogo: string, tokenSymbol: string, tokenDecimals: number, voter: string, referendumIndex: string, referendumUrl?: string | null, voteNumber: string, amount: string, fee?: string | null, tip?: string | null, success: boolean } | null }> };
 
 export type LatestTxQueryQueryVariables = Exact<{
   addresses: Array<Scalars['String']> | Scalars['String'];
@@ -1275,5 +1769,5 @@ export type LatestTxQueryQueryVariables = Exact<{
 export type LatestTxQueryQuery = { __typename?: 'Query', transactionsByAddress: Array<{ __typename?: 'Transaction', id: string }> };
 
 
-export const TxQueryDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"txQuery"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"addresses"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"limit"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Float"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"olderThanId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"newerThanId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"searchQuery"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"transactionsByAddress"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"addresses"},"value":{"kind":"Variable","name":{"kind":"Name","value":"addresses"}}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"Variable","name":{"kind":"Name","value":"limit"}}},{"kind":"Argument","name":{"kind":"Name","value":"olderThanId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"olderThanId"}}},{"kind":"Argument","name":{"kind":"Name","value":"newerThanId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"newerThanId"}}},{"kind":"Argument","name":{"kind":"Name","value":"query"},"value":{"kind":"Variable","name":{"kind":"Name","value":"searchQuery"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"chainId"}},{"kind":"Field","name":{"kind":"Name","value":"ss58Format"}},{"kind":"Field","name":{"kind":"Name","value":"blockNumber"}},{"kind":"Field","name":{"kind":"Name","value":"blockHash"}},{"kind":"Field","name":{"kind":"Name","value":"timestamp"}},{"kind":"Field","name":{"kind":"Name","value":"args"}},{"kind":"Field","name":{"kind":"Name","value":"signer"}},{"kind":"Field","name":{"kind":"Name","value":"relatedAddresses"}},{"kind":"Field","name":{"kind":"Name","value":"explorerUrl"}},{"kind":"Field","name":{"kind":"Name","value":"parsed"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ParsedTransfer"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"chainId"}},{"kind":"Field","name":{"kind":"Name","value":"tokenLogo"}},{"kind":"Field","name":{"kind":"Name","value":"tokenSymbol"}},{"kind":"Field","name":{"kind":"Name","value":"tokenDecimals"}},{"kind":"Field","name":{"kind":"Name","value":"from"}},{"kind":"Field","name":{"kind":"Name","value":"to"}},{"kind":"Field","name":{"kind":"Name","value":"amount"}},{"kind":"Field","name":{"kind":"Name","value":"fee"}},{"kind":"Field","name":{"kind":"Name","value":"tip"}},{"kind":"Field","name":{"kind":"Name","value":"success"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ParsedCrowdloanContribute"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"chainId"}},{"kind":"Field","name":{"kind":"Name","value":"tokenLogo"}},{"kind":"Field","name":{"kind":"Name","value":"tokenSymbol"}},{"kind":"Field","name":{"kind":"Name","value":"tokenDecimals"}},{"kind":"Field","name":{"kind":"Name","value":"contributor"}},{"kind":"Field","name":{"kind":"Name","value":"amount"}},{"kind":"Field","name":{"kind":"Name","value":"fund"}},{"kind":"Field","name":{"kind":"Name","value":"fee"}},{"kind":"Field","name":{"kind":"Name","value":"tip"}},{"kind":"Field","name":{"kind":"Name","value":"success"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ParsedStake"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"chainId"}},{"kind":"Field","name":{"kind":"Name","value":"tokenLogo"}},{"kind":"Field","name":{"kind":"Name","value":"tokenSymbol"}},{"kind":"Field","name":{"kind":"Name","value":"tokenDecimals"}},{"kind":"Field","name":{"kind":"Name","value":"staker"}},{"kind":"Field","name":{"kind":"Name","value":"amount"}},{"kind":"Field","name":{"kind":"Name","value":"fee"}},{"kind":"Field","name":{"kind":"Name","value":"tip"}},{"kind":"Field","name":{"kind":"Name","value":"success"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ParsedUnstake"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"chainId"}},{"kind":"Field","name":{"kind":"Name","value":"tokenLogo"}},{"kind":"Field","name":{"kind":"Name","value":"tokenSymbol"}},{"kind":"Field","name":{"kind":"Name","value":"tokenDecimals"}},{"kind":"Field","name":{"kind":"Name","value":"unstaker"}},{"kind":"Field","name":{"kind":"Name","value":"amount"}},{"kind":"Field","name":{"kind":"Name","value":"fee"}},{"kind":"Field","name":{"kind":"Name","value":"tip"}},{"kind":"Field","name":{"kind":"Name","value":"success"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ParsedAddLiquidity"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"chainId"}},{"kind":"Field","name":{"kind":"Name","value":"fee"}},{"kind":"Field","name":{"kind":"Name","value":"tip"}},{"kind":"Field","name":{"kind":"Name","value":"success"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ParsedRemoveLiquidity"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"chainId"}},{"kind":"Field","name":{"kind":"Name","value":"fee"}},{"kind":"Field","name":{"kind":"Name","value":"tip"}},{"kind":"Field","name":{"kind":"Name","value":"success"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ParsedAddProvision"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"chainId"}},{"kind":"Field","name":{"kind":"Name","value":"fee"}},{"kind":"Field","name":{"kind":"Name","value":"tip"}},{"kind":"Field","name":{"kind":"Name","value":"success"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ParsedRefundProvision"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"chainId"}},{"kind":"Field","name":{"kind":"Name","value":"fee"}},{"kind":"Field","name":{"kind":"Name","value":"tip"}},{"kind":"Field","name":{"kind":"Name","value":"success"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ParsedSwap"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"chainId"}},{"kind":"Field","name":{"kind":"Name","value":"tokens"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"logo"}},{"kind":"Field","name":{"kind":"Name","value":"symbol"}},{"kind":"Field","name":{"kind":"Name","value":"decimals"}},{"kind":"Field","name":{"kind":"Name","value":"liquidityChange"}}]}},{"kind":"Field","name":{"kind":"Name","value":"trader"}},{"kind":"Field","name":{"kind":"Name","value":"fee"}},{"kind":"Field","name":{"kind":"Name","value":"tip"}},{"kind":"Field","name":{"kind":"Name","value":"success"}}]}}]}}]}}]}}]} as unknown as DocumentNode<TxQueryQuery, TxQueryQueryVariables>;
+export const TxQueryDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"txQuery"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"addresses"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"limit"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Float"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"olderThanId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"newerThanId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"searchQuery"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"transactionsByAddress"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"addresses"},"value":{"kind":"Variable","name":{"kind":"Name","value":"addresses"}}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"Variable","name":{"kind":"Name","value":"limit"}}},{"kind":"Argument","name":{"kind":"Name","value":"olderThanId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"olderThanId"}}},{"kind":"Argument","name":{"kind":"Name","value":"newerThanId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"newerThanId"}}},{"kind":"Argument","name":{"kind":"Name","value":"query"},"value":{"kind":"Variable","name":{"kind":"Name","value":"searchQuery"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"chainId"}},{"kind":"Field","name":{"kind":"Name","value":"ss58Format"}},{"kind":"Field","name":{"kind":"Name","value":"blockNumber"}},{"kind":"Field","name":{"kind":"Name","value":"blockHash"}},{"kind":"Field","name":{"kind":"Name","value":"timestamp"}},{"kind":"Field","name":{"kind":"Name","value":"args"}},{"kind":"Field","name":{"kind":"Name","value":"signer"}},{"kind":"Field","name":{"kind":"Name","value":"relatedAddresses"}},{"kind":"Field","name":{"kind":"Name","value":"explorerUrl"}},{"kind":"Field","name":{"kind":"Name","value":"parsed"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ParsedTransfer"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"chainId"}},{"kind":"Field","name":{"kind":"Name","value":"tokenLogo"}},{"kind":"Field","name":{"kind":"Name","value":"tokenSymbol"}},{"kind":"Field","name":{"kind":"Name","value":"tokenDecimals"}},{"kind":"Field","name":{"kind":"Name","value":"from"}},{"kind":"Field","name":{"kind":"Name","value":"to"}},{"kind":"Field","name":{"kind":"Name","value":"amount"}},{"kind":"Field","name":{"kind":"Name","value":"fee"}},{"kind":"Field","name":{"kind":"Name","value":"tip"}},{"kind":"Field","name":{"kind":"Name","value":"success"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ParsedCrowdloanContribute"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"chainId"}},{"kind":"Field","name":{"kind":"Name","value":"tokenLogo"}},{"kind":"Field","name":{"kind":"Name","value":"tokenSymbol"}},{"kind":"Field","name":{"kind":"Name","value":"tokenDecimals"}},{"kind":"Field","name":{"kind":"Name","value":"contributor"}},{"kind":"Field","name":{"kind":"Name","value":"amount"}},{"kind":"Field","name":{"kind":"Name","value":"fund"}},{"kind":"Field","name":{"kind":"Name","value":"fee"}},{"kind":"Field","name":{"kind":"Name","value":"tip"}},{"kind":"Field","name":{"kind":"Name","value":"success"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ParsedStake"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"chainId"}},{"kind":"Field","name":{"kind":"Name","value":"tokenLogo"}},{"kind":"Field","name":{"kind":"Name","value":"tokenSymbol"}},{"kind":"Field","name":{"kind":"Name","value":"tokenDecimals"}},{"kind":"Field","name":{"kind":"Name","value":"staker"}},{"kind":"Field","name":{"kind":"Name","value":"amount"}},{"kind":"Field","name":{"kind":"Name","value":"fee"}},{"kind":"Field","name":{"kind":"Name","value":"tip"}},{"kind":"Field","name":{"kind":"Name","value":"success"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ParsedUnstake"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"chainId"}},{"kind":"Field","name":{"kind":"Name","value":"tokenLogo"}},{"kind":"Field","name":{"kind":"Name","value":"tokenSymbol"}},{"kind":"Field","name":{"kind":"Name","value":"tokenDecimals"}},{"kind":"Field","name":{"kind":"Name","value":"unstaker"}},{"kind":"Field","name":{"kind":"Name","value":"amount"}},{"kind":"Field","name":{"kind":"Name","value":"fee"}},{"kind":"Field","name":{"kind":"Name","value":"tip"}},{"kind":"Field","name":{"kind":"Name","value":"success"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ParsedAddLiquidity"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"chainId"}},{"kind":"Field","name":{"kind":"Name","value":"fee"}},{"kind":"Field","name":{"kind":"Name","value":"tip"}},{"kind":"Field","name":{"kind":"Name","value":"success"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ParsedRemoveLiquidity"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"chainId"}},{"kind":"Field","name":{"kind":"Name","value":"fee"}},{"kind":"Field","name":{"kind":"Name","value":"tip"}},{"kind":"Field","name":{"kind":"Name","value":"success"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ParsedAddProvision"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"chainId"}},{"kind":"Field","name":{"kind":"Name","value":"fee"}},{"kind":"Field","name":{"kind":"Name","value":"tip"}},{"kind":"Field","name":{"kind":"Name","value":"success"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ParsedRefundProvision"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"chainId"}},{"kind":"Field","name":{"kind":"Name","value":"fee"}},{"kind":"Field","name":{"kind":"Name","value":"tip"}},{"kind":"Field","name":{"kind":"Name","value":"success"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ParsedSwap"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"chainId"}},{"kind":"Field","name":{"kind":"Name","value":"tokens"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"logo"}},{"kind":"Field","name":{"kind":"Name","value":"symbol"}},{"kind":"Field","name":{"kind":"Name","value":"decimals"}},{"kind":"Field","name":{"kind":"Name","value":"liquidityChange"}}]}},{"kind":"Field","name":{"kind":"Name","value":"trader"}},{"kind":"Field","name":{"kind":"Name","value":"fee"}},{"kind":"Field","name":{"kind":"Name","value":"tip"}},{"kind":"Field","name":{"kind":"Name","value":"success"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ParsedSetIdentity"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"chainId"}},{"kind":"Field","name":{"kind":"Name","value":"info"}},{"kind":"Field","name":{"kind":"Name","value":"fee"}},{"kind":"Field","name":{"kind":"Name","value":"tip"}},{"kind":"Field","name":{"kind":"Name","value":"success"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ParsedClearedIdentity"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"chainId"}},{"kind":"Field","name":{"kind":"Name","value":"fee"}},{"kind":"Field","name":{"kind":"Name","value":"tip"}},{"kind":"Field","name":{"kind":"Name","value":"success"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ParsedPoolStake"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"chainId"}},{"kind":"Field","name":{"kind":"Name","value":"tokenLogo"}},{"kind":"Field","name":{"kind":"Name","value":"tokenSymbol"}},{"kind":"Field","name":{"kind":"Name","value":"tokenDecimals"}},{"kind":"Field","name":{"kind":"Name","value":"poolId"}},{"kind":"Field","name":{"kind":"Name","value":"member"}},{"kind":"Field","name":{"kind":"Name","value":"bonded"}},{"kind":"Field","name":{"kind":"Name","value":"joined"}},{"kind":"Field","name":{"kind":"Name","value":"fee"}},{"kind":"Field","name":{"kind":"Name","value":"tip"}},{"kind":"Field","name":{"kind":"Name","value":"success"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ParsedPoolUnstake"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"chainId"}},{"kind":"Field","name":{"kind":"Name","value":"tokenLogo"}},{"kind":"Field","name":{"kind":"Name","value":"tokenSymbol"}},{"kind":"Field","name":{"kind":"Name","value":"tokenDecimals"}},{"kind":"Field","name":{"kind":"Name","value":"era"}},{"kind":"Field","name":{"kind":"Name","value":"poolId"}},{"kind":"Field","name":{"kind":"Name","value":"member"}},{"kind":"Field","name":{"kind":"Name","value":"points"}},{"kind":"Field","name":{"kind":"Name","value":"balance"}},{"kind":"Field","name":{"kind":"Name","value":"fee"}},{"kind":"Field","name":{"kind":"Name","value":"tip"}},{"kind":"Field","name":{"kind":"Name","value":"success"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ParsedPoolPaidOut"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"chainId"}},{"kind":"Field","name":{"kind":"Name","value":"tokenLogo"}},{"kind":"Field","name":{"kind":"Name","value":"tokenSymbol"}},{"kind":"Field","name":{"kind":"Name","value":"tokenDecimals"}},{"kind":"Field","name":{"kind":"Name","value":"poolId"}},{"kind":"Field","name":{"kind":"Name","value":"member"}},{"kind":"Field","name":{"kind":"Name","value":"payout"}},{"kind":"Field","name":{"kind":"Name","value":"fee"}},{"kind":"Field","name":{"kind":"Name","value":"tip"}},{"kind":"Field","name":{"kind":"Name","value":"success"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ParsedPoolWithdrawn"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"chainId"}},{"kind":"Field","name":{"kind":"Name","value":"tokenLogo"}},{"kind":"Field","name":{"kind":"Name","value":"tokenSymbol"}},{"kind":"Field","name":{"kind":"Name","value":"tokenDecimals"}},{"kind":"Field","name":{"kind":"Name","value":"poolId"}},{"kind":"Field","name":{"kind":"Name","value":"member"}},{"kind":"Field","name":{"kind":"Name","value":"points"}},{"kind":"Field","name":{"kind":"Name","value":"balance"}},{"kind":"Field","name":{"kind":"Name","value":"fee"}},{"kind":"Field","name":{"kind":"Name","value":"tip"}},{"kind":"Field","name":{"kind":"Name","value":"success"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ParsedPoolMemberRemoved"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"chainId"}},{"kind":"Field","name":{"kind":"Name","value":"tokenLogo"}},{"kind":"Field","name":{"kind":"Name","value":"tokenSymbol"}},{"kind":"Field","name":{"kind":"Name","value":"tokenDecimals"}},{"kind":"Field","name":{"kind":"Name","value":"poolId"}},{"kind":"Field","name":{"kind":"Name","value":"member"}},{"kind":"Field","name":{"kind":"Name","value":"fee"}},{"kind":"Field","name":{"kind":"Name","value":"tip"}},{"kind":"Field","name":{"kind":"Name","value":"success"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ParsedVote"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"chainId"}},{"kind":"Field","name":{"kind":"Name","value":"tokenLogo"}},{"kind":"Field","name":{"kind":"Name","value":"tokenSymbol"}},{"kind":"Field","name":{"kind":"Name","value":"tokenDecimals"}},{"kind":"Field","name":{"kind":"Name","value":"voter"}},{"kind":"Field","name":{"kind":"Name","value":"referendumIndex"}},{"kind":"Field","name":{"kind":"Name","value":"referendumUrl"}},{"kind":"Field","name":{"kind":"Name","value":"voteNumber"}},{"kind":"Field","name":{"kind":"Name","value":"amount"}},{"kind":"Field","name":{"kind":"Name","value":"fee"}},{"kind":"Field","name":{"kind":"Name","value":"tip"}},{"kind":"Field","name":{"kind":"Name","value":"success"}}]}}]}}]}}]}}]} as unknown as DocumentNode<TxQueryQuery, TxQueryQueryVariables>;
 export const LatestTxQueryDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"latestTxQuery"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"addresses"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"searchQuery"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"transactionsByAddress"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"addresses"},"value":{"kind":"Variable","name":{"kind":"Name","value":"addresses"}}},{"kind":"Argument","name":{"kind":"Name","value":"query"},"value":{"kind":"Variable","name":{"kind":"Name","value":"searchQuery"}}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"IntValue","value":"1"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<LatestTxQueryQuery, LatestTxQueryQueryVariables>;

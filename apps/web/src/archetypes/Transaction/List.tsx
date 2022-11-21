@@ -10,10 +10,11 @@ import groupBy from 'lodash/groupBy'
 import { Fragment, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import InfiniteScroll from 'react-infinite-scroller'
+import { useSearchParams } from 'react-router-dom'
 import { useDebounce } from 'react-use'
 
 import { Item } from './Item'
-import { useTransactions, useUrlParams } from './lib'
+import { useTransactions } from './lib'
 
 type Props = {
   addresses: string[]
@@ -22,16 +23,32 @@ type Props = {
 export const List = ({ addresses = [], className }: Props) => {
   const { t } = useTranslation()
 
-  const urlAddress = useUrlParams(['address'])[0]
-
+  const [searchParams, setSearchParams] = useSearchParams()
+  const urlAddresses = useMemo(() => searchParams.getAll('address'), [searchParams])
   const { hasActiveAccount, address: selectedAddress } = useActiveAccount()
+
+  // remove urlAddresses when selectedAddress changes
+  useEffect(() => {
+    // check if an address is selected
+    if (!selectedAddress) return
+
+    // check if `address` is set in query string
+    if (searchParams.getAll('address').length < 1) return
+
+    // remove all instances of address
+    searchParams.delete('address')
+
+    // update react router + browser url
+    setSearchParams(searchParams)
+  }, [selectedAddress, searchParams, setSearchParams])
+
   const [fetchAddresses, setFetchAddresses] = useState(addresses)
   useEffect(() => {
-    if (!hasActiveAccount) return setFetchAddresses(urlAddress ? [urlAddress, ...addresses] : addresses)
+    if (!hasActiveAccount) return setFetchAddresses(urlAddresses.length > 0 ? urlAddresses : addresses)
     // TODO: All addresses fetched from useActiveAccount, if All Accounts is selected, will result in undefined. Need to
     // Handle this better in the future
     setFetchAddresses([selectedAddress ?? ''])
-  }, [addresses, hasActiveAccount, selectedAddress, urlAddress])
+  }, [addresses, hasActiveAccount, selectedAddress, urlAddresses])
 
   const [searchQuery, setSearchQuery] = useState('')
   const [searchQueryDebounced, setSearchQueryDebounced] = useState('')

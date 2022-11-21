@@ -30,13 +30,33 @@ export const TransactionLogo = ({ className, parsed, addresses }: Props) => {
       return <TransactionIconLogo className={className} logo="Contribute" error={!parsed.success} />
 
     case 'ParsedStake':
+    case 'ParsedPoolStake':
       return <TransactionIconLogo className={className} logo="Stake" error={!parsed.success} />
 
     case 'ParsedUnstake':
+    case 'ParsedPoolUnstake':
       return <TransactionIconLogo className={className} logo="Unstake" error={!parsed.success} />
 
     case 'ParsedSwap':
       return <TransactionIconLogo className={className} logo="Swap" error={!parsed.success} />
+
+    case 'ParsedSetIdentity':
+      return <TransactionIconLogo className={className} logo="SetIdentity" error={!parsed.success} />
+
+    case 'ParsedClearedIdentity':
+      return <TransactionIconLogo className={className} logo="ClearIdentity" error={!parsed.success} />
+
+    case 'ParsedPoolPaidOut':
+      return <TransactionIconLogo className={className} logo="PoolPaidOut" error={!parsed.success} />
+
+    case 'ParsedPoolWithdrawn':
+      return <TransactionIconLogo className={className} logo="PoolWithdrawn" error={!parsed.success} />
+
+    case 'ParsedPoolMemberRemoved':
+      return <TransactionIconLogo className={className} logo="PoolMemberRemoved" error={!parsed.success} />
+
+    case 'ParsedVote':
+      return <TransactionIconLogo className={className} logo="VoteUp" error={!parsed.success} />
 
     default:
       return <TransactionIconLogo className={className} logo="Unknown" />
@@ -64,11 +84,19 @@ type TransactionLogoName =
   | 'Stake'
   | 'StakeReward'
   | 'Unstake'
+  | 'PoolWithdrawn'
+  | 'PoolPaidOut'
+  | 'PoolMemberRemoved'
 
   // proxies
   | 'Proxy'
   | 'SetIdentity'
+  | 'ClearIdentity'
   | 'RemoveProxy'
+
+  // governance
+  | 'VoteUp'
+  | 'VoteDown'
 
   // batch
   | 'Swap'
@@ -91,11 +119,19 @@ const transactionLogos: Record<TransactionLogoName, { icon: IconKey; color: stri
   Stake: { icon: 'Zap', color: '#ffbf12' },
   StakeReward: { icon: 'ArrowDown', color: '#ffbf12' },
   Unstake: { icon: 'Loader', color: '#ffbf12' },
+  PoolPaidOut: { icon: 'Minimize2', color: '#ffbf12' },
+  PoolWithdrawn: { icon: 'ArrowDown', color: '#ffbf12' },
+  PoolMemberRemoved: { icon: 'UserMinus', color: '#ffbf12' },
 
   // proxies
   Proxy: { icon: 'Users', color: '#d5ff5c' },
   SetIdentity: { icon: 'UserPlus', color: '#d5ff5c' },
+  ClearIdentity: { icon: 'UserMinus', color: '#d5ff5c' },
   RemoveProxy: { icon: 'UserMinus', color: '#d5ff5c' },
+
+  // governance
+  VoteUp: { icon: 'ThumbsUp', color: '#d5ff5c' },
+  VoteDown: { icon: 'ThumbsDown', color: '#d5ff5c' },
 
   // batch
   Swap: { icon: 'Repeat', color: '#fd8fff' },

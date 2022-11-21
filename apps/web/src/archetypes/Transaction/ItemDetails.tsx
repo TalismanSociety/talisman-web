@@ -7,6 +7,7 @@ import { Account } from '@libs/talisman/extension'
 import { encodeAnyAddress, formatDecimals } from '@talismn/util'
 import { truncateAddress } from '@util/helpers'
 import startCase from 'lodash/startCase'
+import { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { ClickToCopy } from './ClickToCopy'
@@ -171,9 +172,40 @@ export const ItemDetails = ({ parsed, addresses, accounts }: Props) => {
     }
 
     case 'ParsedUnstake': {
+      const tokenInfo = (
+        <Info
+          // TODO: Add fiat prices
+          // title={`${formatDecimals(parsed.amount)} ${parsed.tokenSymbol}`}
+          // subtitle="$xx.xx"
+          title={startCase(parsed.chainId)}
+          subtitle={`${formatDecimals(parsed.amount)} ${parsed.tokenSymbol}`}
+          graphic={<TokenLogo token={{ symbol: parsed.tokenSymbol, logo: parsed.tokenLogo }} />}
+          invert
+        />
+      )
+      const stakeInfo = (
+        <Info
+          title={startCase(parsed.chainId)}
+          subtitle={t('Staking balance')}
+          graphic={<TokenLogo token={{ symbol: parsed.tokenSymbol, logo: parsed.tokenLogo }} />}
+          invert
+        />
+      )
+
       return (
-        <div className="details">
-          {process.env.NODE_ENV === 'development' && <pre>{JSON.stringify(parsed, null, 2)}</pre>}
+        <div
+          className="details"
+          css={css`
+            > *:last-child {
+              padding-left: 2rem;
+            }
+          `}
+        >
+          {stakeInfo}
+
+          <ArrowRight />
+
+          {tokenInfo}
         </div>
       )
     }
@@ -246,9 +278,268 @@ export const ItemDetails = ({ parsed, addresses, accounts }: Props) => {
       )
     }
 
+    case 'ParsedSetIdentity': {
+      return <div className="details" />
+    }
+
+    case 'ParsedClearedIdentity': {
+      return <div className="details" />
+    }
+
+    case 'ParsedPoolStake': {
+      const tokenInfo = (
+        <Info
+          // TODO: Add fiat prices
+          // title={`${formatDecimals(parsed.amount)} ${parsed.tokenSymbol}`}
+          // subtitle="$xx.xx"
+          title={startCase(parsed.chainId)}
+          subtitle={`${formatDecimals(parsed.bonded)} ${parsed.tokenSymbol}`}
+          graphic={<TokenLogo token={{ symbol: parsed.tokenSymbol, logo: parsed.tokenLogo }} />}
+          invert
+        />
+      )
+      const poolInfo = (
+        <Info
+          title={t('Nomination Pool')}
+          subtitle={parsed.poolId}
+          graphic={<TokenLogo token={{ symbol: parsed.tokenSymbol, logo: parsed.tokenLogo }} />}
+          invert
+        />
+      )
+
+      return (
+        <div
+          className="details"
+          css={css`
+            > *:last-child {
+              padding-left: 2rem;
+            }
+          `}
+        >
+          {tokenInfo}
+
+          <ArrowRight />
+
+          {poolInfo}
+        </div>
+      )
+    }
+
+    case 'ParsedPoolUnstake':
+      const tokenInfo = (
+        <Info
+          // TODO: Add fiat prices
+          // title={`${formatDecimals(parsed.amount)} ${parsed.tokenSymbol}`}
+          // subtitle="$xx.xx"
+          title={startCase(parsed.chainId)}
+          // TODO: Determine what to show when parsed.balance !== parsed.points (a slash has occurred)
+          subtitle={`${formatDecimals(parsed.points)} ${parsed.tokenSymbol}`}
+          graphic={<TokenLogo token={{ symbol: parsed.tokenSymbol, logo: parsed.tokenLogo }} />}
+          invert
+        />
+      )
+      const poolInfo = (
+        <Info
+          title={t('Nomination Pool')}
+          subtitle={parsed.poolId}
+          graphic={<TokenLogo token={{ symbol: parsed.tokenSymbol, logo: parsed.tokenLogo }} />}
+          invert
+        />
+      )
+
+      return (
+        <div
+          className="details"
+          css={css`
+            > *:last-child {
+              padding-left: 2rem;
+            }
+          `}
+        >
+          {poolInfo}
+
+          <ArrowRight />
+
+          {tokenInfo}
+        </div>
+      )
+
+    case 'ParsedPoolPaidOut': {
+      const tokenInfo = (
+        <Info
+          // TODO: Add fiat prices
+          // title={`${formatDecimals(parsed.amount)} ${parsed.tokenSymbol}`}
+          // subtitle="$xx.xx"
+          title={startCase(parsed.chainId)}
+          subtitle={`${formatDecimals(parsed.payout)} ${parsed.tokenSymbol}`}
+          graphic={<TokenLogo token={{ symbol: parsed.tokenSymbol, logo: parsed.tokenLogo }} />}
+          invert
+        />
+      )
+      const poolInfo = (
+        <Info
+          title={t('Nomination Pool')}
+          subtitle={parsed.poolId}
+          graphic={<TokenLogo token={{ symbol: parsed.tokenSymbol, logo: parsed.tokenLogo }} />}
+          invert
+        />
+      )
+      return (
+        <div
+          className="details"
+          css={css`
+            > *:last-child {
+              padding-left: 2rem;
+            }
+          `}
+        >
+          {poolInfo}
+
+          <ArrowRight />
+
+          {tokenInfo}
+        </div>
+      )
+    }
+
+    case 'ParsedPoolWithdrawn': {
+      const tokenInfo = (
+        <Info
+          // TODO: Add fiat prices
+          // title={`${formatDecimals(parsed.amount)} ${parsed.tokenSymbol}`}
+          // subtitle="$xx.xx"
+          title={startCase(parsed.chainId)}
+          // TODO: Determine what to show when parsed.balance !== parsed.points (a slash has occurred)
+          subtitle={`${formatDecimals(parsed.points)} ${parsed.tokenSymbol}`}
+          graphic={<TokenLogo token={{ symbol: parsed.tokenSymbol, logo: parsed.tokenLogo }} />}
+          invert
+        />
+      )
+      const poolInfo = (
+        <Info
+          title={t('Nomination Pool')}
+          subtitle={parsed.poolId}
+          graphic={<TokenLogo token={{ symbol: parsed.tokenSymbol, logo: parsed.tokenLogo }} />}
+          invert
+        />
+      )
+      return (
+        <div
+          className="details"
+          css={css`
+            > *:last-child {
+              padding-left: 2rem;
+            }
+          `}
+        >
+          {poolInfo}
+
+          <ArrowRight />
+
+          {tokenInfo}
+        </div>
+      )
+    }
+
+    case 'ParsedPoolMemberRemoved': {
+      const member = encodeAnyAddress(parsed.member)
+      const memberName = addressBook[member]
+
+      const memberInfo = (
+        <Info
+          title={'Member removed'}
+          subtitle={
+            <ClickToCopy copy={parsed.member} message="Address copied to the clipboard">
+              {memberName ?? truncateAddress(parsed.member, 4)}
+            </ClickToCopy>
+          }
+          graphic={<Identicon value={parsed.member} size="3.2rem" />}
+          invert
+        />
+      )
+      const poolInfo = (
+        <Info
+          title={t('Nomination Pool')}
+          subtitle={parsed.poolId}
+          graphic={<TokenLogo token={{ symbol: parsed.tokenSymbol, logo: parsed.tokenLogo }} />}
+          invert
+        />
+      )
+
+      return (
+        <div
+          className="details"
+          css={css`
+            > *:last-child {
+              padding-left: 2rem;
+            }
+          `}
+        >
+          {poolInfo}
+
+          <ArrowRight />
+
+          {memberInfo}
+        </div>
+      )
+    }
+
+    case 'ParsedVote': {
+      const tokenInfo = (
+        <Info
+          // TODO: Add fiat prices
+          // title={`${formatDecimals(parsed.amount)} ${parsed.tokenSymbol}`}
+          // subtitle="$xx.xx"
+          title={startCase(parsed.chainId)}
+          subtitle={`${formatDecimals(parsed.amount)} ${parsed.tokenSymbol}`}
+          graphic={<TokenLogo token={{ symbol: parsed.tokenSymbol, logo: parsed.tokenLogo }} />}
+          invert
+        />
+      )
+      const { referendumUrl } = parsed
+      const MaybeAnchor =
+        typeof referendumUrl === 'string'
+          ? ({ className, children }: { className?: string; children: ReactNode }) => (
+              <a className={className} href={referendumUrl} target="_blank" rel="noreferrer">
+                {children}
+              </a>
+            )
+          : ({ className, children }: { className?: string; children: ReactNode }) => (
+              <span className={className}>{children}</span>
+            )
+      const voteInfo = (
+        <MaybeAnchor>
+          <Info
+            title={t('Vote {{voteNumber}}', { voteNumber: parsed.voteNumber })}
+            subtitle={t('Referendum {{referendumId}}', { referendumId: parsed.referendumIndex })}
+            graphic={<TokenLogo token={{ symbol: parsed.tokenSymbol, logo: parsed.tokenLogo }} />}
+            invert
+          />
+        </MaybeAnchor>
+      )
+
+      return (
+        <div
+          className="details"
+          css={css`
+            > *:last-child {
+              padding-left: 2rem;
+            }
+          `}
+        >
+          {tokenInfo}
+
+          <ArrowRight />
+
+          {voteInfo}
+        </div>
+      )
+    }
+
     default:
       const exhaustiveCheck: never = parsed.__typename
-      throw new Error(`Unhandled transaction type ${exhaustiveCheck}`)
+      console.error(`Unhandled transaction type ${exhaustiveCheck}`)
+      return <div className="details" />
   }
 }
 

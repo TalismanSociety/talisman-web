@@ -95,7 +95,7 @@ export const Item = styled(({ className, transaction, addresses, selectedAccount
         <Info
           css={css`
             .title {
-              max-width: 200px;
+              max-width: 150px;
               overflow: hidden;
               text-overflow: ellipsis;
             }
