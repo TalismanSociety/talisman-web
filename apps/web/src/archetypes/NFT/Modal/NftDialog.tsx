@@ -1,10 +1,10 @@
-import StyledPreview from '@archetypes/NFT/Modal/Preview'
 import Button from '@components/atoms/Button'
 import Dialog, { DialogProps } from '@components/atoms/Dialog'
 import { ExternalLink, Layers, X } from '@components/atoms/Icon'
 import Text from '@components/atoms/Text'
 import InfoWithHeader from '@components/molecules/InfoWithHeader/InfoWithHeader'
 import Pill from '@components/molecules/Pill'
+import { NFTPreview } from '@components/recipes/NFTPreview'
 import { keyframes } from '@emotion/react'
 import { useNftById } from '@libs/@talisman-nft'
 import { NFTDetail } from '@libs/@talisman-nft/types'
@@ -92,6 +92,7 @@ const NftDialog = (props: NftDialogProps) => {
         <section
           css={{
             'width': '50rem',
+            'height': '50rem',
             'display': 'flex',
             'flexDirection': 'column',
             'justifyContent': 'center',
@@ -100,20 +101,14 @@ const NftDialog = (props: NftDialogProps) => {
             '@media (max-width: 1024px)': {
               width: '100%',
             },
+            '> *': {
+              width: '50rem',
+              height: '50rem',
+              objectFit: 'contain',
+            },
           }}
         >
-          <StyledPreview
-            css={{
-              'width': '50rem',
-              'height': '50rem',
-              '@media (max-width: 1024px)': {
-                width: '100%',
-                height: '100%',
-              },
-            }}
-            nft={nft}
-            loading={loading}
-          />
+          <NFTPreview nft={nft} loading={loading} isFull={true} />
         </section>
 
         {/* Details Section */}

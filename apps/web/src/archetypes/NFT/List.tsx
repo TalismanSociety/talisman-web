@@ -1,4 +1,5 @@
 import Text from '@components/atoms/Text'
+import { NFTCard } from '@components/recipes/NFTCard'
 import { WalletNavConnector } from '@components/WalletNavConnector'
 import { css } from '@emotion/react'
 import styled from '@emotion/styled'
@@ -7,8 +8,6 @@ import { NFTData, NFTShort } from '@libs/@talisman-nft/types'
 import { device } from '@util/breakpoints'
 import { useEffect } from 'react'
 
-import Card from './Card/Card'
-import BlankCard from './Card/LoadingCard'
 import HiddenNFTGrid from './HiddenNFTGrid'
 
 const ListItems = ({ nfts }: { nfts: NFTData }) => {
@@ -17,13 +16,14 @@ const ListItems = ({ nfts }: { nfts: NFTData }) => {
   return (
     <>
       {items.map((nft: any) => (
-        <Card key={nft.id} nft={nft} />
+        <NFTCard key={nft.id} nft={nft} />
+        // <NFTCard key={nft.id} nft={nft} />
       ))}
 
       {items.length !== count &&
-        Array.from({ length: count - items.length }).map((_, index) => <BlankCard isLoading={true} />)}
+        Array.from({ length: count - items.length }).map((_, index) => <NFTCard loading={true} />)}
 
-      {isFetching && <BlankCard opacity="50%" isLoading={true} />}
+      {isFetching && <NFTCard loading={true} />}
     </>
   )
 }

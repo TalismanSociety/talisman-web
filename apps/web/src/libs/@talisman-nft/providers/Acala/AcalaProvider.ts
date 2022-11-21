@@ -98,8 +98,8 @@ export class AcalaProvider extends NFTInterface {
       thumb: item.thumb,
       type: item.type,
       mediaUri: item.mediaUri,
-      metadata: null,
-      nftSpecificData: null,
+      metadata: undefined,
+      nftSpecificData: undefined,
       collection: {
         id: item.collection?.id,
         totalCount: item.collection?.totalCount,
