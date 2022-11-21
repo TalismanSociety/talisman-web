@@ -21,6 +21,10 @@ Default.args = {
   claimState: undefined,
 }
 
+export const Compact = Default.bind({})
+
+Compact.args = { ...Default.args, variant: 'compact' }
+
 export const List: Story<PoolStakeProps> = args => (
   <PoolStakeList>
     <PoolStake {...args} />

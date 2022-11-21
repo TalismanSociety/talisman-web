@@ -11,7 +11,11 @@ export default {
   },
 } as ComponentMeta<typeof StakingInput>
 
-export const Default: Story<StakingInputProps> = args => <StakingInput {...args} />
+export const Default: Story<StakingInputProps> = args => (
+  <div css={{ width: '40rem' }}>
+    <StakingInput {...args} />
+  </div>
+)
 
 Default.args = {
   accounts: [
@@ -47,4 +51,8 @@ export const NoPoolsAvailable = Default.bind({})
 
 NoPoolsAvailable.args = { ...Default.args, noPoolsAvailable: true }
 
-export const Skeleton = () => <StakingInputSkeleton />
+export const Skeleton = () => (
+  <div css={{ width: '40rem' }}>
+    <StakingInputSkeleton />
+  </div>
+)
