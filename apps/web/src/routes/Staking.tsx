@@ -156,8 +156,8 @@ const Faq = (props: React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>
       content: (
         <Text.Body>
           The rewards rate listed is an estimated annual yield based on historical polkadot reward and inflation rates.
-          Your real reward rate may vary with these rates, as well as any commission the validators you choose elect to
-          take. You can consult the name of your pool for information.
+          Your real reward rate is dependent on these variable rates, and any commission earnt by validators selected by
+          the pool. You may consult the URL in the name of your pool for information.
         </Text.Body>
       ),
     },
