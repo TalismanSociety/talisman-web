@@ -8,13 +8,16 @@ export default {
   parameters: {
     layout: 'centered',
   },
+  decorators: [
+    Story => (
+      <div css={{ maxWidth: '20rem' }}>
+        <Story />
+      </div>
+    ),
+  ],
 } as ComponentMeta<typeof PoolSelectorItem>
 
-export const Selected: Story<PoolSelectorItemProps> = args => (
-  <div css={{ maxWidth: '20rem' }}>
-    <PoolSelectorItem {...args} />
-  </div>
-)
+export const Selected: Story<PoolSelectorItemProps> = args => <PoolSelectorItem {...args} />
 
 Selected.args = {
   selected: true,
@@ -25,11 +28,7 @@ Selected.args = {
   memberCount: 69,
 }
 
-export const UnSelected: Story<PoolSelectorItemProps> = args => (
-  <div css={{ maxWidth: '20rem' }}>
-    <PoolSelectorItem {...args} />
-  </div>
-)
+export const UnSelected: Story<PoolSelectorItemProps> = args => <PoolSelectorItem {...args} />
 
 UnSelected.args = {
   selected: false,
@@ -40,11 +39,7 @@ UnSelected.args = {
   memberCount: 69,
 }
 
-export const Highlighted: Story<PoolSelectorItemProps> = args => (
-  <div css={{ maxWidth: '20rem' }}>
-    <PoolSelectorItem {...args} />
-  </div>
-)
+export const Highlighted: Story<PoolSelectorItemProps> = args => <PoolSelectorItem {...args} />
 
 Highlighted.args = {
   highlighted: true,

@@ -11,6 +11,7 @@ export type AlertDialogProps = DialogProps & {
   confirmButton?: ReactNode
   dismissButton?: ReactNode
   onRequestDismiss: () => unknown
+  width?: string | number
 }
 
 const show = keyframes`
@@ -44,7 +45,6 @@ const AlertDialog = (props: AlertDialogProps) => {
         onClose={props.onRequestDismiss}
         onCancel={props.onRequestDismiss}
         css={{
-          'maxWidth': '46rem',
           'padding': '2.4rem',
           'background': theme.color.surface,
           'border': 'none',
@@ -56,6 +56,9 @@ const AlertDialog = (props: AlertDialogProps) => {
               backdropFilter: 'blur(16px)',
               animation: `${backdropKeyframes} .5s ease forwards`,
             },
+          },
+          '@media (min-width: 768px)': {
+            width: props.width,
           },
         }}
       >

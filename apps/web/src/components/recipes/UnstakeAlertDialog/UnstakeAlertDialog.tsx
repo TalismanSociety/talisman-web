@@ -17,6 +17,7 @@ const UnstakeAlertDialog = (props: UnstakeAlertDialogProps) => (
   <AlertDialog
     open={props.open}
     title="Unstake"
+    width="48rem"
     content={
       <>
         You are unstaking{' '}
