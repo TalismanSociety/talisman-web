@@ -10,9 +10,9 @@ import Layout from '../layout'
 import Buy from './Buy'
 import Explore from './Explore'
 import NFTsPage from './NFTsPage'
+import Portfolio from './Portfolio'
 import Staking from './Staking'
 import TransactionHistory from './TransactionHistory'
-import Wallet from './Wallet'
 
 const Main = () => {
   // Pre-loading
@@ -56,7 +56,7 @@ export default createBrowserRouter([
     element: <Main />,
     children: [
       { path: '/', element: <Navigate to="portfolio" /> },
-      { path: 'portfolio', element: <Wallet /> },
+      { path: 'portfolio', element: <Portfolio /> },
       { path: 'nfts', element: <NFTsPage /> },
       { path: 'explore', element: <Explore /> },
       { path: 'staking', element: <Staking /> },

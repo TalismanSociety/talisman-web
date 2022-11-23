@@ -14,8 +14,8 @@ export const Default: Story<BottomBorderNavProps> = (args: any) => <BottomBorder
 
 Default.args = {
   items: [
-    { label: 'Overview', url: '/portfolio' },
-    { label: 'NFTs', url: '/nfts' },
-    { label: 'History', url: '/history' },
+    { labelValue: 'Overview', path: '/portfolio' },
+    { labelValue: 'NFTs', path: '/nfts' },
+    { labelValue: 'History', path: '/history' },
   ],
 }

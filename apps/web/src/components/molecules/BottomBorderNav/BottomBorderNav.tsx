@@ -1,5 +1,5 @@
 import styled from '@emotion/styled'
-import { useState } from 'react'
+import React, { ReactElement, useState } from 'react'
 
 interface NavItemProps {
   className?: string
@@ -7,15 +7,16 @@ interface NavItemProps {
 }
 
 export type NavItemType = {
-  label: string
-  url: string
+  labelValue: string
+  path: string
 }
 
 export type BottomBorderNavProps = {
   items: NavItemType[]
+  children?: ReactElement | []
 }
 
-const BottomBorderNav = ({ items }: BottomBorderNavProps) => {
+const BottomBorderNav = ({ items, children }: BottomBorderNavProps) => {
   const [selected, setSelected] = useState(0)
 
   const handleSelect = (index: number) => {
@@ -23,20 +24,30 @@ const BottomBorderNav = ({ items }: BottomBorderNavProps) => {
   }
 
   return (
-    <Navbar>
-      {items.map((item, index) => (
-        <NavItem key={index} selected={index === selected} onClick={() => handleSelect(index)}>
-          {item.label}
-        </NavItem>
-      ))}
-    </Navbar>
+    <div>
+      <Navbar>
+        {items.map((item, index) => (
+          <NavItem key={index} selected={index === selected} onClick={() => handleSelect(index)}>
+            {item.labelValue}
+          </NavItem>
+        ))}
+      </Navbar>
+      <section
+        css={{
+          width: '100%',
+        }}
+      >
+        {children}
+      </section>
+    </div>
   )
 }
 
 const Navbar = styled.section`
   display: flex;
-  gap: 2rem;
+  gap: 2.5rem;
   border-bottom: 1px solid #262626;
+  margin-bottom: 2em;
 `
 
 // nav item but if selected prop then add border bottom
