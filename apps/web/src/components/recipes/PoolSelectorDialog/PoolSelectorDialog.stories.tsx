@@ -8,7 +8,7 @@ import {
 import PoolSelectorDialog, { PoolSelectorDialogProps } from './PoolSelectorDialog'
 
 export default {
-  title: 'Recipes/PoolSelector',
+  title: 'Recipes/PoolSelectorDialog',
   component: PoolSelectorDialog,
   subcomponents: { PoolSelectorItem },
   parameters: {
