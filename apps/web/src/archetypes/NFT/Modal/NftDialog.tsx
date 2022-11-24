@@ -39,8 +39,6 @@ const backdropKeyframes = keyframes`
 const NftDialog = (props: NftDialogProps) => {
   const { nft, loading } = useNftById(props.nft.id)
 
-  console.log(nft)
-
   return (
     <Dialog
       {...props}
