@@ -4,7 +4,6 @@ import { AccountValueInfo } from '@components/molecules/AccountValueInfo'
 import { BottomBorderNav } from '@components/molecules/BottomBorderNav'
 import Asset, { AssetsList } from '@components/recipes/Asset'
 import { NFTCard } from '@components/recipes/NFTCard'
-import { useEffect, useState } from 'react'
 import { Outlet } from 'react-router'
 import { Link, useMatch } from 'react-router-dom'
 
