@@ -10,7 +10,7 @@ import Layout from '../layout'
 import Buy from './Buy'
 import Explore from './Explore'
 import NFTsPage from './NFTsPage'
-import Portfolio from './Portfolio'
+import Portfolio, { Overview } from './Portfolio'
 import Staking from './Staking'
 import TransactionHistory from './TransactionHistory'
 
@@ -56,8 +56,15 @@ export default createBrowserRouter([
     element: <Main />,
     children: [
       { path: '/', element: <Navigate to="portfolio" /> },
-      { path: 'portfolio', element: <Portfolio /> },
-      { path: 'nfts', element: <NFTsPage /> },
+      {
+        path: 'portfolio',
+        element: <Portfolio />,
+        children: [
+          { path: '', element: <Overview /> },
+          { path: 'nfts', element: <NFTsPage /> },
+          { path: 'history', element: <TransactionHistory /> },
+        ],
+      },
       { path: 'explore', element: <Explore /> },
       { path: 'staking', element: <Staking /> },
       { path: 'history', element: <TransactionHistory /> },

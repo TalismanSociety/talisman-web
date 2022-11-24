@@ -1,63 +1,60 @@
 import styled from '@emotion/styled'
-import React, { ReactElement, useState } from 'react'
+import { ReactElement } from 'react'
+
+const Navbar = styled.section`
+  display: flex;
+  border-bottom: 1px solid #262626;
+`
 
 interface NavItemProps {
   className?: string
   selected?: boolean
+  children?: ReactElement | ReactElement[]
 }
 
-export type NavItemType = {
-  labelValue: string
-  path: string
-}
-
-export type BottomBorderNavProps = {
-  items: NavItemType[]
-  children?: ReactElement | []
-}
-
-const BottomBorderNav = ({ items, children }: BottomBorderNavProps) => {
-  const [selected, setSelected] = useState(0)
-
-  const handleSelect = (index: number) => {
-    setSelected(index)
-  }
-
-  return (
-    <div>
-      <Navbar>
-        {items.map((item, index) => (
-          <NavItem key={index} selected={index === selected} onClick={() => handleSelect(index)}>
-            {item.labelValue}
-          </NavItem>
-        ))}
-      </Navbar>
-      <section
-        css={{
-          width: '100%',
-        }}
-      >
-        {children}
-      </section>
-    </div>
-  )
-}
-
-const Navbar = styled.section`
-  display: flex;
-  gap: 2.5rem;
-  border-bottom: 1px solid #262626;
-  margin-bottom: 2em;
-`
+const NavItem = (props: NavItemProps) => (
+  <div
+    css={{
+      'cursor': 'pointer',
+      'color': props.selected ? 'var(--color-primary)' : '#A5A5A5',
+      'fontSize': '18px',
+      'borderBottom': `1px solid ${props.selected ? 'var(--color-primary)' : 'transparent'}`,
+      'transition': 'all 0.25s ease-in-out',
+      'display': 'flex',
+      'alignItems': 'center',
+      'justifyContent': 'center',
+      '> *': {
+        padding: '1.5rem 1rem',
+      },
+    }}
+  >
+    {props.children}
+  </div>
+)
 
 // nav item but if selected prop then add border bottom
-const NavItem = styled.div<NavItemProps>`
-  cursor: pointer;
-  color: ${props => (props.selected ? 'var(--color-primary)' : '#A5A5A5')};
-  padding-bottom: 1rem;
-  font-size: 18px;
-  border-bottom: 1px solid ${props => (props.selected ? 'var(--color-primary)' : 'transparent')};
-  transition: all 0.2s ease-in-out;
-`
+// const NavItem = styled.div<NavItemProps>`
+
+// `
+
+export type BottomBorderNavProps = {
+  children?: ReactElement | ReactElement[]
+}
+
+const BottomBorderNav = Object.assign(
+  ({ children }: BottomBorderNavProps) => {
+    return (
+      <div>
+        <Navbar>{children}</Navbar>
+        <section
+          css={{
+            width: '100%',
+          }}
+        ></section>
+      </div>
+    )
+  },
+  { Item: NavItem }
+)
 
 export default BottomBorderNav

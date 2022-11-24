@@ -4,8 +4,11 @@ import { AccountValueInfo } from '@components/molecules/AccountValueInfo'
 import { BottomBorderNav } from '@components/molecules/BottomBorderNav'
 import Asset, { AssetsList } from '@components/recipes/Asset'
 import { NFTCard } from '@components/recipes/NFTCard'
+import { useEffect, useState } from 'react'
+import { Outlet } from 'react-router'
+import { Link, useMatch } from 'react-router-dom'
 
-const Overview = () => {
+export const Overview = () => {
   return (
     <div
       css={{
@@ -110,6 +113,15 @@ const Overview = () => {
 }
 
 const Portfolio = () => {
+  // useMatch
+  const paths = [
+    { path: '', name: 'Overview' },
+    { path: 'nfts', name: 'NFTs' },
+    { path: 'history', name: 'History' },
+  ]
+
+  const currentPath = useMatch('/portfolio/:id')?.params.id ?? paths[0]?.path
+
   return (
     <div
       css={{
@@ -126,28 +138,14 @@ const Portfolio = () => {
       }}
     >
       <AccountValueInfo address={''} name={'All Accounts'} balance={'$356,120.32'} />
-      <BottomBorderNav
-        items={[
-          {
-            labelValue: 'Overview',
-            path: '',
-          },
-          {
-            labelValue: 'NFTs',
-            path: '',
-          },
-          {
-            labelValue: 'Assets',
-            path: '',
-          },
-          {
-            labelValue: 'History',
-            path: '',
-          },
-        ]}
-      >
-        <Overview />
+      <BottomBorderNav>
+        {paths.map(path => (
+          <BottomBorderNav.Item key={path.path} selected={path.path === currentPath}>
+            <Link to={path.path}>{path.name}</Link>
+          </BottomBorderNav.Item>
+        ))}
       </BottomBorderNav>
+      <Outlet />
     </div>
   )
 }
