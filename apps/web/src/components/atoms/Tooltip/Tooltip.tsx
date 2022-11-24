@@ -58,6 +58,7 @@ const Tooltip = (props: TooltipProps) => {
               backgroundColor: theme.color.foregroundVariant,
               padding: '0.6rem',
               borderRadius: '0.4rem',
+              zIndex: 50,
             }}
             style={{ opacity: mouseOver ? 1 : 0, top: y, left: x }}
           >
