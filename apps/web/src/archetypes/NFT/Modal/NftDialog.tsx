@@ -39,6 +39,8 @@ const backdropKeyframes = keyframes`
 const NftDialog = (props: NftDialogProps) => {
   const { nft, loading } = useNftById(props.nft.id)
 
+  console.log(nft)
+
   return (
     <Dialog
       {...props}
@@ -188,7 +190,7 @@ const NftDialog = (props: NftDialogProps) => {
                   {nft?.attributes['Migrated from'] ? (
                     <Text.Body css={{ color: '#d2fb5b' }}>Migrated NFT</Text.Body>
                   ) : (
-                    Object.keys(nft?.attributes).map(attribute => (
+                    Object.keys(nft?.attributes)?.map((attribute: any) => (
                       <Pill
                         key={attribute}
                         header={
@@ -198,7 +200,9 @@ const NftDialog = (props: NftDialogProps) => {
                         }
                         content={
                           <Text.Body css={{ fontSize: '14px', color: '#FAFAFA' }}>
-                            {nft?.attributes[attribute].value}
+                            {typeof nft?.attributes[attribute]?.value == 'string'
+                              ? nft?.attributes[attribute]?.value
+                              : 'Unknown'}
                           </Text.Body>
                         }
                       />
@@ -280,7 +284,7 @@ const NftDialog = (props: NftDialogProps) => {
                     header="Edition"
                     content={
                       <span css={{ color: '#fff' }}>
-                        #{nft?.serialNumber}
+                        #{!isNaN(parseInt(nft?.serialNumber)) ? nft?.serialNumber : '-'}
                         {nft?.collection?.totalCount && (
                           <span css={{ color: '#A5A5A5' }}> / {nft?.collection?.totalCount}</span>
                         )}
