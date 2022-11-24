@@ -1,7 +1,7 @@
 import StatusIndicator, { StatusIndicatorProps } from '@components/atoms/StatusIndicator'
 import { useMemo } from 'react'
 
-export type PoolStatus = 'earning_rewards' | 'waiting' | 'not_nominating'
+export type PoolStatus = 'earning_rewards' | 'waiting' | 'not_nominating' | undefined
 
 export type PoolStatusIndicatorProps = Omit<StatusIndicatorProps, 'status'> & {
   status?: PoolStatus

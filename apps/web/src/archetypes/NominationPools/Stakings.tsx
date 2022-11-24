@@ -6,6 +6,7 @@ import PoolStake, { PoolStakeList } from '@components/recipes/PoolStake/PoolStak
 import { PoolStatus } from '@components/recipes/PoolStatusIndicator'
 import { selectedPolkadotAccountsState } from '@domains/accounts/recoils'
 import { createAccounts } from '@domains/nominationPools/utils'
+import { Maybe } from '@util/monads'
 import { useCallback, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { constSelector, useRecoilValueLoadable, useRecoilValue_TRANSITION_SUPPORT_UNSTABLE, waitForAll } from 'recoil'
@@ -54,7 +55,7 @@ const Stakings = () => {
   )
 
   const eraStakers = useMemo(
-    () => new Set(eraStakersLoadable.valueMaybe()?.map(x => x[0].args[1].toHuman())),
+    () => Maybe.of(eraStakersLoadable.valueMaybe()).mapOrUndefined(x => new Set(x.map(x => x[0].args[1].toHuman()))),
     [eraStakersLoadable]
   )
 
