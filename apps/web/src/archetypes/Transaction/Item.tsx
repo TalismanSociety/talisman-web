@@ -13,18 +13,28 @@ import { useMemo } from 'react'
 
 import { ClickToCopy } from './ClickToCopy'
 import { ItemDetails } from './ItemDetails'
-import { Transaction } from './lib'
+import { Transaction, formatGenericAddress } from './lib'
 import { TransactionLogo } from './TransactionLogo'
 
-type Props = { className?: string; transaction: Transaction; addresses: string[]; selectedAccount?: string }
+type Props = {
+  className?: string
+  transaction: Transaction
+  addresses: string[]
+  selectedAccount?: string
+}
 export const Item = styled(({ className, transaction, addresses, selectedAccount }: Props) => {
   const accounts = useAccounts()
+  const genericAddresses = useMemo(() => addresses.map(formatGenericAddress), [addresses])
 
-  const { name, ss58Format, timestamp, explorerUrl, parsed, relatedAddresses } = transaction
-  const youAddress = relatedAddresses.find(address => addresses.includes(address))
+  const { name, ss58Format, timestamp, explorerUrl, parsed, relatedAddresses, signer } = transaction
+  const youAddress = relatedAddresses.find(address => genericAddresses.includes(address)) ?? signer
   const youAccount = useMemo(
-    () => accounts.find(({ address }) => address === youAddress)?.name ?? youAddress,
-    [accounts, youAddress]
+    () =>
+      // use the account name if we have it
+      accounts.find(({ address }) => formatGenericAddress(address) === youAddress)?.name ??
+      // otherwise use the truncated address
+      truncateAddress(youAddress ? encodeAnyAddress(youAddress, ss58Format) : youAddress, 4),
+    [accounts, ss58Format, youAddress]
   )
 
   const getTransactionName = () => {
@@ -35,9 +45,8 @@ export const Item = styled(({ className, transaction, addresses, selectedAccount
       // Special case: show 'Send' / 'Receive' / 'Transfer' for transfers, depending on whether
       // the user's connected accounts include the sender, the receiver, or both
       case 'ParsedTransfer': {
-        const genericAddresses = addresses.map(a => encodeAnyAddress(a))
-        const from = encodeAnyAddress(parsed.from)
-        const to = encodeAnyAddress(parsed.to)
+        const from = formatGenericAddress(parsed.from)
+        const to = formatGenericAddress(parsed.to)
 
         if (genericAddresses.includes(from) && !genericAddresses.includes(to)) return 'Send'
         if (genericAddresses.includes(to) && !genericAddresses.includes(from)) return 'Receive'

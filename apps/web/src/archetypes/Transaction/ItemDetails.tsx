@@ -4,7 +4,7 @@ import { css } from '@emotion/react'
 import styled from '@emotion/styled'
 import { ReactComponent as _ArrowRight } from '@icons/arrow-right.svg'
 import { Account } from '@libs/talisman/extension'
-import { encodeAnyAddress, formatDecimals } from '@talismn/util'
+import { formatDecimals } from '@talismn/util'
 import { truncateAddress } from '@util/helpers'
 import startCase from 'lodash/startCase'
 import { ReactNode } from 'react'
@@ -12,7 +12,7 @@ import { useTranslation } from 'react-i18next'
 
 import { ClickToCopy } from './ClickToCopy'
 import { ItemNoDetails } from './ItemNoDetails'
-import { ParsedTransaction } from './lib'
+import { ParsedTransaction, formatGenericAddress } from './lib'
 
 type Props = {
   parsed: ParsedTransaction | null | undefined
@@ -25,15 +25,16 @@ export const ItemDetails = ({ parsed, addresses, accounts }: Props) => {
   if (typeof parsed?.__typename !== 'string') return <ItemNoDetails />
 
   const addressBook = accounts.reduce((addressBook, account) => {
-    if (account.name) addressBook[encodeAnyAddress(account.address)] = account.name
+    if (account.name) addressBook[formatGenericAddress(account.address)] = account.name
     return addressBook
   }, {} as Record<string, string>)
 
   switch (parsed.__typename) {
-    case 'ParsedTransfer': {
-      const genericAddresses = addresses.map(a => encodeAnyAddress(a))
-      const from = encodeAnyAddress(parsed.from)
-      const to = encodeAnyAddress(parsed.to)
+    case 'ParsedTransfer':
+    case 'ParsedEthereumExec': {
+      const genericAddresses = addresses.map(formatGenericAddress)
+      const from = formatGenericAddress(parsed.from)
+      const to = formatGenericAddress(parsed.to)
       const isReceiver = genericAddresses.includes(to) && !genericAddresses.includes(from)
 
       const fromName = addressBook[from]
@@ -210,28 +211,9 @@ export const ItemDetails = ({ parsed, addresses, accounts }: Props) => {
       )
     }
 
-    case 'ParsedAddLiquidity': {
-      return (
-        <div className="details">
-          {process.env.NODE_ENV === 'development' && <pre>{JSON.stringify(parsed, null, 2)}</pre>}
-        </div>
-      )
-    }
-    case 'ParsedRemoveLiquidity': {
-      return (
-        <div className="details">
-          {process.env.NODE_ENV === 'development' && <pre>{JSON.stringify(parsed, null, 2)}</pre>}
-        </div>
-      )
-    }
-
-    case 'ParsedAddProvision': {
-      return (
-        <div className="details">
-          {process.env.NODE_ENV === 'development' && <pre>{JSON.stringify(parsed, null, 2)}</pre>}
-        </div>
-      )
-    }
+    case 'ParsedAddLiquidity':
+    case 'ParsedRemoveLiquidity':
+    case 'ParsedAddProvision':
     case 'ParsedRefundProvision': {
       return (
         <div className="details">
@@ -278,12 +260,18 @@ export const ItemDetails = ({ parsed, addresses, accounts }: Props) => {
       )
     }
 
-    case 'ParsedSetIdentity': {
-      return <div className="details" />
-    }
-
+    case 'ParsedSetIdentity':
     case 'ParsedClearedIdentity': {
-      return <div className="details" />
+      return (
+        <div className="details">
+          <Info
+            title="Chain"
+            subtitle={startCase(parsed.chainId)}
+            graphic={<TokenLogo token={{ symbol: parsed.tokenSymbol, logo: parsed.tokenLogo }} />}
+            invert
+          />
+        </div>
+      )
     }
 
     case 'ParsedPoolStake': {
@@ -442,7 +430,7 @@ export const ItemDetails = ({ parsed, addresses, accounts }: Props) => {
     }
 
     case 'ParsedPoolMemberRemoved': {
-      const member = encodeAnyAddress(parsed.member)
+      const member = formatGenericAddress(parsed.member)
       const memberName = addressBook[member]
 
       const memberInfo = (
