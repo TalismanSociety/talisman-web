@@ -45,35 +45,32 @@ const NFTsPage = styled(({ className }: any) => {
   const address = queryParams.get('address') ?? useActiveAccount().address
 
   return (
-    <section className={className}>
-      <h1>NFTs</h1>
-      <ExtensionStatusGate unavailable={<ExtensionUnavailable />}>
-        {address ? (
-          <>
-            <article>
-              <NFT.List address={address} />
-            </article>
-          </>
-        ) : (
-          // Add the placeholders and select one account
-          <HiddenNFTGrid
-            overlay={
-              <span
-                css={css`
-                  display: flex;
-                  flex-direction: column;
-                  align-items: center;
-                  justify-content: center;
-                `}
-              >
-                <Text.H2>Please Select an Account</Text.H2>
-                <WalletNavConnector />
-              </span>
-            }
-          />
-        )}
-      </ExtensionStatusGate>
-    </section>
+    <ExtensionStatusGate unavailable={<ExtensionUnavailable />}>
+      {address ? (
+        <>
+          <article>
+            <NFT.List address={address} />
+          </article>
+        </>
+      ) : (
+        // Add the placeholders and select one account
+        <HiddenNFTGrid
+          overlay={
+            <span
+              css={css`
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+              `}
+            >
+              <Text.H2>Please Select an Account</Text.H2>
+              <WalletNavConnector />
+            </span>
+          }
+        />
+      )}
+    </ExtensionStatusGate>
   )
 })`
   width: 100%;

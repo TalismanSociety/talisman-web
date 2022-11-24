@@ -5,25 +5,6 @@ import { BottomBorderNav } from '@components/molecules/BottomBorderNav'
 import Asset, { AssetsList } from '@components/recipes/Asset'
 import { NFTCard } from '@components/recipes/NFTCard'
 
-const fakeNft = {
-  id: 'rmrk-coolestramennft',
-  name: 'Ramen NFT',
-  thumb: '',
-  type: 'image',
-  metadata: '',
-  mediaUri: 'https://www.theflavorbender.com/wp-content/uploads/2019/01/Easy-Chicken-Ramen-Featured.jpg',
-  provider: '',
-  collection: '',
-  address: '',
-  fetchDetail: '',
-  nftSpecificData: '',
-  description: '',
-  serialNumber: '',
-  attributes: '',
-  platformUri: '',
-  tokenCurrency: '',
-}
-
 const Overview = () => {
   return (
     <div
@@ -48,10 +29,13 @@ const Overview = () => {
       >
         <div
           css={{
-            display: 'flex',
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'center',
+            'display': 'flex',
+            'flexDirection': 'column',
+            'justifyContent': 'space-between',
+            'alignItems': 'center',
+            '@media (min-width: 1024px)': {
+              flexDirection: 'row',
+            },
           }}
         >
           {/* Make this into a component */}
@@ -67,7 +51,17 @@ const Overview = () => {
               $69,300.16
             </span>
           </Text.H3>
-          <Search placeholder="Search" />
+          <Search
+            placeholder="Search"
+            css={{
+              'marginTop': '2rem',
+              'width': '100%',
+              '@media (min-width: 1024px)': {
+                margin: 0,
+                width: '25vw',
+              },
+            }}
+          />
         </div>
         <AssetsList>
           <Asset />
@@ -104,6 +98,7 @@ const Overview = () => {
             },
           }}
         >
+          {/* Array of 4 NFT Cards passinng in fake NFT */}
           <NFTCard isBlank />
           <NFTCard isBlank />
           <NFTCard isBlank />
