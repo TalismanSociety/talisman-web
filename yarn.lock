@@ -4355,6 +4355,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@lottiefiles/react-lottie-player@npm:^3.4.7":
+  version: 3.4.7
+  resolution: "@lottiefiles/react-lottie-player@npm:3.4.7"
+  dependencies:
+    lottie-web: ^5.7.8
+  peerDependencies:
+    react: 16 - 18
+  checksum: cffabececafbe3cbf09b54c5d2c45fdeed32cf7156fa5cae1ba2f4218048cbef239c23ed19e36b94a1b4b41c4518f77269865b9f7111ab2f4bf1ba2b59f4ef76
+  languageName: node
+  linkType: hard
+
 "@mdx-js/mdx@npm:^1.6.22":
   version: 1.6.22
   resolution: "@mdx-js/mdx@npm:1.6.22"
@@ -7361,6 +7372,7 @@ __metadata:
     "@google/model-viewer": ^1.11.0
     "@graphql-codegen/cli": ^2.13.7
     "@graphql-codegen/client-preset": ^1.0.7
+    "@lottiefiles/react-lottie-player": ^3.4.7
     "@playwright/test": ^1.28.0
     "@polkadot/api": ^9.8.2
     "@polkadot/extension-dapp": ^0.44.6
@@ -18622,6 +18634,13 @@ __metadata:
   bin:
     loose-envify: cli.js
   checksum: 6517e24e0cad87ec9888f500c5b5947032cdfe6ef65e1c1936a0c48a524b81e65542c9c3edc91c97d5bddc806ee2a985dbc79be89215d613b1de5db6d1cfe6f4
+  languageName: node
+  linkType: hard
+
+"lottie-web@npm:^5.7.8":
+  version: 5.9.6
+  resolution: "lottie-web@npm:5.9.6"
+  checksum: aed6a1d0c24eefb6c42a42aae18f29737746551cfdc86319f1b9675f5bc276ba26971e8d2b0e1498df880571fe4bfe2fc87885a1d4f8a318d5e4e5b939b7a474
   languageName: node
   linkType: hard
 
