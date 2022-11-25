@@ -111,7 +111,7 @@ export const List = ({ addresses = [], className }: Props) => {
             </PanelSection>
           }
         >
-          {Object.entries(dayGroupedTransactions).map(([day, transactions], index) => (
+          {Object.entries(dayGroupedTransactions).map(([day, transactions]) => (
             <Fragment key={`${day}-${selectedAddress}`}>
               <motion.h3
                 css={css`
