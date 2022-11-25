@@ -1,11 +1,34 @@
 import Text from '@components/atoms/Text'
 import PoolStake, { PoolStakeList } from '@components/recipes/PoolStake/PoolStake'
+import { selectedPolkadotAccountsState } from '@domains/accounts/recoils'
+import { useChainState } from '@domains/common/hooks'
 import { Suspense } from 'react'
+import { useRecoilValue } from 'recoil'
 
 import Stakings from './Stakings'
 import Unstakings from './Unstakings'
+import ValidatorStakings from './ValidatorStakings'
+import ValidatorUnstakings from './ValidatorUnstakings'
 
 const OwnPools = () => {
+  const accounts = useRecoilValue(selectedPolkadotAccountsState)
+
+  const poolMembersLoadable = useChainState(
+    'query',
+    'nominationPools',
+    'poolMembers.multi',
+    accounts.map(({ address }) => address)
+  )
+
+  const stakingsLoadable = useChainState('derive', 'staking', 'accounts', [
+    accounts.map(({ address }) => address),
+    undefined,
+  ])
+
+  const hasUnstakings =
+    poolMembersLoadable.valueMaybe()?.some(x => x.unwrapOrDefault().unbondingEras.size > 0) ||
+    stakingsLoadable.valueMaybe()?.some(x => !x.redeemable?.isZero() || (x.unlocking?.length ?? 0) > 0)
+
   return (
     <div id="staking">
       <Suspense
@@ -22,8 +45,44 @@ const OwnPools = () => {
           </div>
         }
       >
-        <Stakings />
-        <Unstakings />
+        <div>
+          <header>
+            <Text.H4 css={{ marginBottom: '1.6rem' }}>Staking</Text.H4>
+          </header>
+          <div
+            css={{
+              'display': 'flex',
+              'flexDirection': 'column',
+              'gap': '2.8rem',
+              '> *:empty': {
+                display: 'none',
+              },
+            }}
+          >
+            <ValidatorStakings />
+            <Stakings />
+          </div>
+        </div>
+        <div>
+          {hasUnstakings && (
+            <header css={{ marginTop: '4rem' }}>
+              <Text.H4 css={{ marginBottom: '1.6rem' }}>Unstaking</Text.H4>
+            </header>
+          )}
+          <div
+            css={{
+              'display': 'flex',
+              'flexDirection': 'column',
+              'gap': '2.8rem',
+              '> *:empty': {
+                display: 'none',
+              },
+            }}
+          >
+            <ValidatorUnstakings />
+            <Unstakings />
+          </div>
+        </div>
       </Suspense>
     </div>
   )

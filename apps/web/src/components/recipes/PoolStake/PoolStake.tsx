@@ -3,10 +3,11 @@ import Identicon from '@components/atoms/Identicon'
 import Text from '@components/atoms/Text'
 import Tooltip from '@components/atoms/Tooltip'
 import { useTheme } from '@emotion/react'
-import React, { ReactElement, ReactNode } from 'react'
+import React, { ReactElement, ReactNode, useMemo } from 'react'
 import { useMedia } from 'react-use'
 
 import { PoolStatus, PoolStatusIndicator } from '../PoolStatusIndicator'
+import StakeList from '../StakeList'
 import PoolStakeSkeleton from './PoolStake.skeleton'
 
 export type PoolStakeProps = {
@@ -33,188 +34,148 @@ const PoolStake = Object.assign(
     const theme = useTheme()
     const isWide = props.variant !== 'compact' && useMedia('(min-width: 1024px)')
 
+    const buttonsRowArea = useMemo(() => {
+      if (props.claimState === 'unavailable' && props.unstakeState === 'unavailable') {
+        return `'aButton aButton aButton aButton aButton aButton'`
+      }
+
+      if (props.claimState === 'unavailable') {
+        return `'uButton uButton uButton aButton aButton aButton'`
+      }
+
+      if (props.unstakeState === 'unavailable') {
+        return `'cButton cButton cButton aButton aButton aButton'`
+      }
+
+      return `'cButton cButton uButton uButton aButton aButton'`
+    }, [props.claimState, props.unstakeState])
+
     return (
       <article
         className={props.className}
         css={[
           {
-            display: 'flex',
-            flexDirection: 'column',
+            display: 'grid',
+            gridTemplateColumns: 'repeat(6, 1fr)',
+            gridTemplateAreas: `
+              'account account account account account account'
+              'pLabel pLabel pLabel pValue pValue pValue'
+              'rLabel rLabel rLabel rValue rValue rValue'
+              'sLabel sLabel sLabel sValue sValue sValue'
+              ${buttonsRowArea}
+          `,
+            alignItems: 'center',
+            gap: '1.6rem',
             padding: '1.6rem',
             borderRadius: '1.6rem',
             backgroundColor: theme.color.surface,
           },
           isWide && {
-            flexDirection: 'row',
-            alignItems: 'center',
+            gridTemplateColumns: '1.15fr 1.25fr 0.75fr min-content 0.25fr repeat(2, min-content) 0.95fr',
+            gridTemplateAreas: `'account pValue rValue cButton . aButton uButton sValue'`,
+            alignItems: 'initial',
           },
         ]}
       >
-        <Identicon
-          value={props.accountAddress}
-          size={40}
-          css={{ display: props.variant === 'compact' ? 'none' : undefined }}
-        />
-        <dl
-          css={[
-            {
-              'display': 'flex',
-              'flexDirection': 'column',
-              'gap': '2rem',
-              '> div': {
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-              },
-              'dd': {
-                textAlign: 'right',
-              },
-            },
-            isWide && {
-              'flex': 1,
-              'flexDirection': 'row',
-              'alignItems': 'flex-start',
-              'margin': 0,
-              'overflow': 'hidden',
-              'span': {
-                display: 'block',
-                whiteSpace: 'nowrap',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-              },
-              'dt': {
-                display: 'none',
-                whiteSpace: 'nowrap',
-                overflow: 'hidden',
-              },
-              'dd': {
-                'textAlign': 'left',
-                'marginLeft': '2rem',
-                'overflow': 'hidden',
-                '> div': {
-                  overflow: 'hidden',
-                },
-              },
-              '> div': {
-                flex: 1,
-                overflow: 'hidden',
-              },
-              '> div:nth-child(2)': {
-                flex: 2,
-              },
-            },
-          ]}
-        >
-          {props.variant !== 'compact' && (
+        {props.variant !== 'compact' && (
+          <div css={{ display: 'flex', gap: '1rem', gridArea: 'account' }}>
+            <Identicon value={props.accountAddress} size={40} />
             <div>
-              <dt>Account</dt>
-              <dd>
-                <div>
-                  <Text.Body alpha="high">{props.accountName}</Text.Body>
-                </div>
-                <div>
-                  <Text.Body>
-                    ({props.accountAddress.slice(0, 4)}...{props.accountAddress.slice(-4)})
-                  </Text.Body>
-                </div>
-              </dd>
+              <Text.Body as="div" alpha="high">
+                {props.accountName}
+              </Text.Body>
+              <Text.Body as="div">
+                ({props.accountAddress.slice(0, 4)}...{props.accountAddress.slice(-4)})
+              </Text.Body>
             </div>
-          )}
-          <div css={isWide && { flex: 3 }}>
-            <dt>Pool</dt>
-            <dd
-              css={!isWide && { maxWidth: '50%', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}
-            >
-              <Text alpha="high" css={{ marginLeft: '0.8rem' }}>
-                <PoolStatusIndicator
-                  status={props.poolStatus}
-                  css={{ display: 'inline-block', verticalAlign: 'middle', marginRight: '0.6rem' }}
-                />
-                <Tooltip content={props.poolName}>
-                  {tooltipProps => (
-                    <div {...tooltipProps} css={{ display: 'inline' }}>
-                      {props.poolName}
-                    </div>
-                  )}
-                </Tooltip>
-              </Text>
-            </dd>
           </div>
-          <div>
-            <dt>Staking</dt>
-            <dd>
-              <div>
-                <Text.Body alpha="high" css={{ fontWeight: 'bold' }}>
-                  {props.stakingAmount}
-                </Text.Body>
-              </div>
-              <div>
-                <Text.Body>{props.stakingAmountInFiat}</Text.Body>
-              </div>
-            </dd>
-          </div>
-          <div>
-            <dt>Rewards</dt>
-            <dd>
-              <div>
-                <Text.Body alpha="high" css={{ fontWeight: 'bold' }}>
-                  {props.rewardsAmount}
-                </Text.Body>
-              </div>
-              <div>
-                <Text.Body>{props.rewardsAmountInFiat}</Text.Body>
-              </div>
-            </dd>
-          </div>
-        </dl>
-        <section
+        )}
+        <Text.Body as="div" css={[{ gridArea: 'pLabel' }, isWide && { display: 'none' }]}>
+          Pool
+        </Text.Body>
+        <div
           css={[
             {
-              'display': 'flex',
-              'gap': '1rem',
-              'marginTop': '2.5rem',
-              '> *': {
-                flex: 1,
-              },
+              maxWidth: '100%',
+              gridArea: 'pValue',
+              justifySelf: 'end',
+              textAlign: 'end',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+              textOverflow: 'ellipsis',
             },
-            isWide && {
-              marginTop: 0,
-            },
+            isWide && { justifySelf: 'start' },
           ]}
         >
-          <Button
-            variant="outlined"
-            onClick={props.onRequestClaim}
-            disabled={props.claimState === 'disabled' || props.claimState === 'unavailable'}
-            loading={props.claimState === 'pending'}
-            css={[
-              props.claimState === 'unavailable' && { opacity: 0 },
-              props.claimState === 'unavailable' && !isWide && { display: 'none' },
-            ]}
-          >
-            Claim
-          </Button>
-          <Button
-            variant="outlined"
-            onClick={props.onRequestUnstake}
-            disabled={props.unstakeState === 'disabled' || props.unstakeState === 'unavailable'}
-            loading={props.unstakeState === 'pending'}
-            css={[
-              props.unstakeState === 'unavailable' && { opacity: 0 },
-              props.unstakeState === 'unavailable' && !isWide && { display: 'none' },
-            ]}
-          >
-            Unstake
-          </Button>
-          <Button
-            variant="outlined"
-            onClick={props.onRequestAdd}
-            disabled={props.addState === 'disabled'}
-            loading={props.addState === 'pending'}
-          >
-            Add
-          </Button>
-        </section>
+          <Text alpha="high" css={{ marginLeft: '0.8rem' }}>
+            <PoolStatusIndicator
+              status={props.poolStatus}
+              css={{ display: 'inline-block', verticalAlign: 'middle', marginRight: '0.6rem' }}
+            />
+            <Tooltip content={props.poolName}>
+              {tooltipProps => (
+                <div {...tooltipProps} css={{ display: 'inline' }}>
+                  {props.poolName}
+                </div>
+              )}
+            </Tooltip>
+          </Text>
+        </div>
+        <Text.Body as="div" css={[{ gridArea: 'sLabel' }, isWide && { display: 'none' }]}>
+          Staking
+        </Text.Body>
+        <div css={{ gridArea: 'sValue', justifySelf: 'end', textAlign: 'end' }}>
+          <div>
+            <Text.Body alpha="high" css={{ fontWeight: 'bold' }}>
+              {props.stakingAmount}
+            </Text.Body>
+          </div>
+          <div>
+            <Text.Body>{props.stakingAmountInFiat}</Text.Body>
+          </div>
+        </div>
+        <Text.Body as="div" css={[{ gridArea: 'rLabel' }, isWide && { display: 'none' }]}>
+          Rewards
+        </Text.Body>
+        <div css={{ gridArea: 'rValue', justifySelf: 'end', textAlign: 'end' }}>
+          <div>
+            <Text.Body alpha="high" css={{ fontWeight: 'bold' }}>
+              {props.rewardsAmount}
+            </Text.Body>
+          </div>
+          <div>
+            <Text.Body>{props.rewardsAmountInFiat}</Text.Body>
+          </div>
+        </div>
+        <Button
+          variant="outlined"
+          onClick={props.onRequestClaim}
+          hidden={props.claimState === 'unavailable'}
+          disabled={props.claimState === 'disabled' || props.claimState === 'unavailable'}
+          loading={props.claimState === 'pending'}
+          css={[{ gridArea: 'cButton' }, props.claimState === 'unavailable' && !isWide && { display: 'none' }]}
+        >
+          Claim
+        </Button>
+        <Button
+          variant="outlined"
+          onClick={props.onRequestUnstake}
+          hidden={props.unstakeState === 'unavailable'}
+          disabled={props.unstakeState === 'disabled' || props.unstakeState === 'unavailable'}
+          loading={props.unstakeState === 'pending'}
+          css={[{ gridArea: 'uButton' }, props.unstakeState === 'unavailable' && !isWide && { display: 'none' }]}
+        >
+          Unstake
+        </Button>
+        <Button
+          variant="outlined"
+          onClick={props.onRequestAdd}
+          disabled={props.addState === 'disabled'}
+          loading={props.addState === 'pending'}
+          css={{ gridArea: 'aButton' }}
+        >
+          Add
+        </Button>
       </article>
     )
   },
@@ -225,50 +186,68 @@ export type PoolStakeListProps = {
   children?: ReactElement<PoolStakeProps> | ReactElement<PoolStakeProps>[]
 }
 
-export const PoolStakeList = (props: PoolStakeListProps) => {
-  const theme = useTheme()
-  return (
-    <div>
+export const PoolStakeList = (props: PoolStakeListProps) => (
+  <div>
+    <div
+      css={{
+        'display': 'none',
+        '@media (min-width: 1024px)': {
+          display: React.Children.count(props.children) === 0 ? 'none' : 'grid',
+          gridTemplateColumns: '1.15fr 1.25fr 0.75fr min-content 0.25fr repeat(2, min-content) 0.95fr',
+          gridTemplateAreas: `'account pValue rValue cButton . aButton uButton sValue'`,
+          gap: '1.6rem',
+          margin: '0.5rem 1rem',
+        },
+      }}
+    >
+      <Text.Body css={{ gridArea: 'account' }}>Nomination pool staking</Text.Body>
+      <Text.Body css={{ gridArea: 'pValue' }}>Nomination pool</Text.Body>
+      <Text.Body css={{ gridArea: 'rValue', textAlign: 'end' }}>Rewards</Text.Body>
+      <Text.Body css={{ gridArea: 'sValue', textAlign: 'end' }}>Staked amount</Text.Body>
+      {/* TODO: Dummy buttons to align with nomination pool stake item */}
+      {/* Find a better way to achieve alignment */}
       <div
         css={{
+          'gridArea': 'aButton',
+          'height': 0,
           'display': 'none',
-          '@media (min-width: 1024px)': {
-            display: React.Children.count(props.children) === 0 ? 'none' : 'flex',
-            margin: '0 32.35rem 0.5rem 5.6rem',
-          },
+          '@media (min-width: 1024px)': { display: 'unset' },
         }}
       >
-        <Text.Body css={{ flex: 1, transform: 'translateX(-3.4rem)' }}>Account</Text.Body>
-        <div css={{ flex: 2 }} />
-        <Text.Body css={{ flex: 1 }}>
-          <Text.Body css={{ paddingLeft: '2.4rem' }}>Staking</Text.Body>
-        </Text.Body>
-        <Text.Body css={{ flex: 1 }}>
-          <Text.Body css={{ paddingLeft: '3.4rem' }}>Rewards</Text.Body>
-        </Text.Body>
+        <Button hidden variant="outlined">
+          Add
+        </Button>
       </div>
-      <ol
+      <div
         css={{
-          'listStyle': 'none',
-          'margin': 0,
-          'padding': 0,
-          'li + li': {
-            marginTop: '1.6rem',
-          },
-          '@media (min-width: 1024px)': {
-            'background': theme.color.surface,
-            'borderRadius': '1.6rem',
-            'li + li': { marginTop: 0, borderTop: 'solid 1px #383838' },
-            '> li:not(:first-child):not(:last-child) >:first-child': { borderRadius: 0 },
-            '> li:first-child:not(:last-child) >:first-child': { borderEndStartRadius: 0, borderEndEndRadius: 0 },
-            '> li:last-child:not(:first-child) >:first-child': { borderStartStartRadius: 0, borderStartEndRadius: 0 },
-          },
+          'gridArea': 'cButton',
+          'height': 0,
+          'display': 'none',
+          '@media (min-width: 1024px)': { display: 'unset' },
         }}
       >
-        {React.Children.map(props.children, child => child !== undefined && <li key={child.key}>{child}</li>)}
-      </ol>
+        <Button hidden variant="outlined">
+          Claim
+        </Button>
+      </div>
+      <div
+        css={{
+          'gridArea': 'uButton',
+          'height': 0,
+          'display': 'none',
+          '@media (min-width: 1024px)': { display: 'unset' },
+        }}
+      >
+        <Button hidden variant="outlined">
+          Unstake
+        </Button>
+      </div>
+      {/* End dummy buttons */}
     </div>
-  )
-}
+    <StakeList>
+      {React.Children.map(props.children, child => child !== undefined && <li key={child.key}>{child}</li>)}
+    </StakeList>
+  </div>
+)
 
 export default PoolStake

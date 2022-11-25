@@ -7,16 +7,14 @@ import { PoolStatus } from '@components/recipes/PoolStatusIndicator'
 import { selectedPolkadotAccountsState } from '@domains/accounts/recoils'
 import { createAccounts } from '@domains/nominationPools/utils'
 import { Maybe } from '@util/monads'
-import { useCallback, useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { constSelector, useRecoilValueLoadable, useRecoilValue_TRANSITION_SUPPORT_UNSTABLE, waitForAll } from 'recoil'
 
 import { apiState } from '../../domains/chains/recoils'
 import useChainState from '../../domains/common/hooks/useChainState'
 import { allPendingPoolRewardsState, eraStakersState } from '../../domains/nominationPools/recoils'
-import AddStakeDialog from './AddStakeDialog'
 import PoolStakeItem from './PoolStakeItem'
-import UnstakeDialog from './UnstakeDialog'
 
 const Stakings = () => {
   const [api, pendingRewards, accounts] = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
@@ -99,17 +97,9 @@ const Stakings = () => {
     ]
   )
 
-  const [unstakeAccount, setUnstakeAccount] = useState<string>()
-  const [addStakeAccount, setAddStakeAccount] = useState<string>()
-
   return (
     <div>
-      <AddStakeDialog account={addStakeAccount} onDismiss={useCallback(() => setAddStakeAccount(undefined), [])} />
-      <UnstakeDialog account={unstakeAccount} onDismiss={useCallback(() => setUnstakeAccount(undefined), [])} />
-      <header>
-        <Text.H4 css={{ marginBottom: '2.4rem' }}>Staking</Text.H4>
-      </header>
-      {poolMembersLoadable.valueMaybe()?.every(pool => pool.isNone) && pools?.length === 0 && (
+      {poolMembersLoadable.valueMaybe()?.every(pool => pool.isNone) || pools?.length === 0 ? (
         <HiddenDetails
           hidden
           overlay={
@@ -135,12 +125,13 @@ const Stakings = () => {
             <PoolStake.Skeleton animate={false} />
           </PoolStakeList>
         </HiddenDetails>
+      ) : (
+        <PoolStakeList>
+          {pools?.map(pool => (
+            <PoolStakeItem item={pool} />
+          ))}
+        </PoolStakeList>
       )}
-      <PoolStakeList>
-        {pools?.map(pool => (
-          <PoolStakeItem item={pool} />
-        ))}
-      </PoolStakeList>
     </div>
   )
 }
