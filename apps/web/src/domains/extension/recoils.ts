@@ -1,4 +1,4 @@
-import { web3Enable, web3FromSource } from '@polkadot/extension-dapp'
+import type { InjectedWindow } from '@polkadot/extension-inject/types'
 import { atom } from 'recoil'
 
 const getConnectedExtension = async () => {
@@ -6,10 +6,10 @@ const getConnectedExtension = async () => {
 
   if (source === null) return undefined
 
-  await web3Enable('Talisman')
-
   try {
-    return await web3FromSource(source)
+    return (globalThis as InjectedWindow).injectedWeb3?.[source]?.enable(
+      process.env.REACT_APP_APPLICATION_NAME ?? 'Talisman'
+    )
   } catch {
     return undefined
   }
