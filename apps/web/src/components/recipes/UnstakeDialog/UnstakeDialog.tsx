@@ -26,6 +26,7 @@ const UnstakeDialog = (props: UnstakeDialogProps) => (
   <AlertDialog
     open={props.open}
     title="Unstake"
+    width="44rem"
     content={
       <>
         <Text.Body as="p" css={{ marginBottom: '2.6rem' }}>

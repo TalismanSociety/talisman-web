@@ -1,8 +1,7 @@
 import * as Icon from '@components/atoms/Icon'
 import { css } from '@emotion/react'
-import { encodeAnyAddress } from '@talismn/util'
 
-import { ParsedTransaction } from './lib'
+import { ParsedTransaction, formatGenericAddress } from './lib'
 
 // exported tx logo component
 
@@ -14,9 +13,9 @@ type Props = {
 export const TransactionLogo = ({ className, parsed, addresses }: Props) => {
   switch (parsed?.__typename) {
     case 'ParsedTransfer':
-      const genericAddresses = addresses.map(a => encodeAnyAddress(a))
-      const from = encodeAnyAddress(parsed.from)
-      const to = encodeAnyAddress(parsed.to)
+      const genericAddresses = addresses.map(formatGenericAddress)
+      const from = formatGenericAddress(parsed.from)
+      const to = formatGenericAddress(parsed.to)
 
       const type = (() => {
         if (genericAddresses.includes(from) && !genericAddresses.includes(to)) return 'Send'
@@ -58,6 +57,9 @@ export const TransactionLogo = ({ className, parsed, addresses }: Props) => {
     case 'ParsedVote':
       return <TransactionIconLogo className={className} logo="VoteUp" error={!parsed.success} />
 
+    case 'ParsedEthereumExec':
+      return <TransactionIconLogo className={className} logo="EthereumExec" error={!parsed.success} />
+
     default:
       return <TransactionIconLogo className={className} logo="Unknown" />
   }
@@ -71,6 +73,7 @@ type TransactionLogoName =
   | 'Generic'
   | 'Unknown'
   | 'Pending'
+  | 'EthereumExec'
 
   // transfers
   | 'Send'
@@ -106,6 +109,7 @@ const transactionLogos: Record<TransactionLogoName, { icon: IconKey; color: stri
   Generic: { icon: 'File', color: '#a5a5a5' },
   Unknown: { icon: 'Unknown', color: '#a5a5a5' },
   Pending: { icon: 'File', color: '#a5a5a5' },
+  EthereumExec: { icon: 'Cpu', color: '#a5a5a5' },
 
   // transfers
   Send: { icon: 'ArrowUp', color: '#6a7aeb' },

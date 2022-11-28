@@ -1,6 +1,8 @@
+import { ModalProvider } from '@components'
 import { accountsState } from '@domains/accounts/recoils'
 import { apiState, nativeTokenDecimalState, nativeTokenPriceState } from '@domains/chains/recoils'
 import { recommendedPoolsState } from '@domains/nominationPools/recoils'
+import * as MoonbeamContributors from '@libs/moonbeam-contributors'
 import posthog from 'posthog-js'
 import { useEffect } from 'react'
 import { Navigate, Outlet, createBrowserRouter, useLocation } from 'react-router-dom'
@@ -44,9 +46,14 @@ const Main = () => {
   }, [location.pathname])
 
   return (
-    <Layout>
-      <Outlet />
-    </Layout>
+    // TODO: remove legacy imperative modals
+    <ModalProvider>
+      <MoonbeamContributors.PopupProvider>
+        <Layout>
+          <Outlet />
+        </Layout>
+      </MoonbeamContributors.PopupProvider>
+    </ModalProvider>
   )
 }
 

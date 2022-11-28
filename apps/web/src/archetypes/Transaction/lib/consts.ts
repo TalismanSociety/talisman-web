@@ -117,6 +117,9 @@ export const txQuery = graphql(`
         }
         ... on ParsedSetIdentity {
           chainId
+          tokenLogo
+          tokenSymbol
+          tokenDecimals
           info
           fee
           tip
@@ -124,6 +127,9 @@ export const txQuery = graphql(`
         }
         ... on ParsedClearedIdentity {
           chainId
+          tokenLogo
+          tokenSymbol
+          tokenDecimals
           fee
           tip
           success
@@ -200,6 +206,18 @@ export const txQuery = graphql(`
           referendumIndex
           referendumUrl
           voteNumber
+          amount
+          fee
+          tip
+          success
+        }
+        ... on ParsedEthereumExec {
+          chainId
+          tokenLogo
+          tokenSymbol
+          tokenDecimals
+          from
+          to
           amount
           fee
           tip

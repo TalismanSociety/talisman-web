@@ -31,6 +31,7 @@ const PoolSelectorDialog = Object.assign(
       <AlertDialog
         open={props.open}
         title="Select a pool"
+        width="83rem"
         content={
           <div>
             <Text.Body as="h3">Current pool</Text.Body>
@@ -107,7 +108,7 @@ const PoolSelectorDialog = Object.assign(
           </Button>
         }
         onRequestDismiss={props.onRequestDismiss}
-        css={{ maxWidth: '83rem', padding: '3.2rem' }}
+        css={{ padding: '3.2rem' }}
       />
     )
   },

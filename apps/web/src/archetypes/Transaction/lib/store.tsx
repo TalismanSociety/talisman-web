@@ -1,6 +1,5 @@
 import { useQuery } from '@apollo/client'
-import { ApolloClient, InMemoryCache, NormalizedCacheObject } from '@apollo/client'
-import { BatchHttpLink } from '@apollo/client/link/batch-http'
+import { ApolloClient, InMemoryCache, NormalizedCacheObject, createHttpLink } from '@apollo/client'
 import { useCallback, useEffect, useMemo, useReducer, useState } from 'react'
 
 import { FETCH_LIMIT, latestTxQuery, txQuery } from './consts'
@@ -204,7 +203,7 @@ function useTxHistoryApolloClient() {
     const uri = process.env.REACT_APP_TX_HISTORY_INDEXER || 'http://localhost:4350/graphql'
 
     return new ApolloClient({
-      link: new BatchHttpLink({ uri, batchMax: 999, batchInterval: 20 }),
+      link: createHttpLink({ uri }),
       cache: new InMemoryCache(),
     })
   }, [])
