@@ -105,10 +105,14 @@ export const useExtrinsicBatch = <
         contents: loadable.state === 'loading' ? loadable.contents : undefined,
       }))
 
-      extrinsics.forEach(extrinsic => {
-        const [module, section] = extrinsic.split('.')
-        return toastExtrinsic(module as any, section as any, promise, chainLoadable)
-      })
+      toastExtrinsic(
+        extrinsics.map(extrinsic => {
+          const [module, section] = extrinsic.split('.')
+          return [module!, section!]
+        }),
+        promise,
+        chainLoadable
+      )
 
       try {
         const result = await promise

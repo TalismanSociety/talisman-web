@@ -1,21 +1,41 @@
 import { ExternalLink } from '@components/atoms/Icon'
 import Text from '@components/atoms/Text'
 import { Chain } from '@domains/chains/recoils'
-import { ApiPromise } from '@polkadot/api'
 import RpcError from '@polkadot/rpc-provider/coder/error'
 import { ISubmittableResult } from '@polkadot/types/types'
 import toast from 'react-hot-toast'
 import { Loadable } from 'recoil'
 
-export const toastExtrinsic = <
-  TModule extends keyof PickKnownKeys<ApiPromise['tx']>,
-  TSection extends Extract<keyof ApiPromise['tx'][TModule], string>
->(
-  module: TModule,
-  section: TSection,
+export const toastExtrinsic = (
+  extrinsics: [string, string][],
   promise: Promise<ISubmittableResult>,
   chainLoadable: Loadable<Chain>
-) =>
+) => {
+  const message = (() => {
+    if (extrinsics.length === 1) {
+      return (
+        <>
+          <Text.Body as="div" alpha="high">
+            Your transaction was successful
+          </Text.Body>
+          <Text.Body as="div">
+            Your{' '}
+            <code>
+              {extrinsics[0]?.[0]}:{extrinsics[0]?.[1]}
+            </code>{' '}
+            transaction was successful.
+          </Text.Body>
+        </>
+      )
+    } else {
+      return (
+        <Text.Body as="div" alpha="high">
+          Your transaction was successful
+        </Text.Body>
+      )
+    }
+  })()
+
   toast.promise(
     Promise.allSettled([promise, chainLoadable.toPromise()]).then(([data, chain]) => {
       if (data.status === 'fulfilled') {
@@ -36,16 +56,7 @@ export const toastExtrinsic = <
       ),
       success: ([data, chain]) => (
         <>
-          <Text.Body as="div" alpha="high">
-            Your transaction was successful
-          </Text.Body>
-          <Text.Body as="div">
-            Your{' '}
-            <code>
-              {module}:{section}
-            </code>{' '}
-            transaction was successful.
-          </Text.Body>
+          {message}
           {chain !== undefined && (
             <Text.Body as="div">
               View details on{' '}
@@ -91,3 +102,4 @@ export const toastExtrinsic = <
       error: { duration: 6000 },
     }
   )
+}
