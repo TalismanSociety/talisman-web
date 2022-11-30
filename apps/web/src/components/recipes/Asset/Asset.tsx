@@ -51,7 +51,7 @@ const AssetBalance = ({ locked, planck, fiat, tooltip, symbol }: AssetBalancePro
           fontSize: '14px',
         }}
       >
-        {fiat ? `$${fiat.toLocaleString()}` : ''}
+        {fiat ? `${fiat.toLocaleString()}` : ''}
       </Text.Body>
     </div>
   )
@@ -86,15 +86,9 @@ const Asset = Object.assign((props: AssetProps) => {
       currencyDisplay: 'narrowSymbol',
     }) ?? '-'
 
-  const isOrml = token.type === 'substrate-orml'
-
-  const chainName = tokenBalances?.sorted[0]?.chain?.name ?? tokenBalances?.sorted[0]?.evmNetwork?.name
-
   if (tokenBalances.sorted[0] === undefined) {
     return null
   }
-
-  const chainType = getNetworkType(tokenBalances.sorted[0])
 
   return (
     <tr className="asset">
@@ -106,14 +100,13 @@ const Asset = Object.assign((props: AssetProps) => {
             css={{
               width: '2em',
               height: '2em',
-              borderRadius: '50%',
               margin: '16px',
             }}
             alt={' logo'}
           />
           <div css={{ display: 'flex', flexDirection: 'column', gap: '0.4em' }}>
             <Text.Body css={{ fontWeight: 600, fontSize: '16px', color: theme.color.onSurface }}>
-              {chainName} <span css={{ color: '#a5a5a5', fontWeight: 200 }}>({token?.symbol})</span>
+              {token?.symbol}
             </Text.Body>
             <div
               css={{
@@ -129,12 +122,8 @@ const Asset = Object.assign((props: AssetProps) => {
               {Array(2)
                 .fill(0)
                 .map((_, i) => (
-                  <div css={{ width: '1em', height: '1em', borderRadius: '50%', background: 'black' }}>
-                    <img
-                      src={token?.logo}
-                      css={{ width: '100%', height: '100%', borderRadius: '50%' }}
-                      alt={'' + ' logo'}
-                    />
+                  <div css={{ width: '1em', height: '1em' }}>
+                    <img src={token?.logo} css={{ width: '100%', height: '100%' }} alt={'' + ' logo'} />
                   </div>
                 ))}
             </div>

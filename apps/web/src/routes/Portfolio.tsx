@@ -12,54 +12,10 @@ import { useActiveAccount } from '@libs/talisman'
 import { Outlet } from 'react-router'
 import { Link, useMatch } from 'react-router-dom'
 
-const testTokens = [
-  {
-    name: 'Bitcoin',
-    symbol: 'BTC',
-    imgUrl: 'https://assets.coingecko.com/coins/images/1/large/bitcoin.png?1547033579',
-    fiatBalance: 500,
-    planckBalance: BigInt(500),
-    locked: true,
-  },
-  {
-    name: 'Ethereum',
-    symbol: 'ETH',
-    imgUrl: 'https://assets.coingecko.com/coins/images/279/large/ethereum.png?1595348880',
-    fiatBalance: 900,
-    planckBalance: BigInt(321123500),
-  },
-  {
-    name: 'Cardano',
-    symbol: 'ADA',
-    imgUrl: 'https://assets.coingecko.com/coins/images/975/large/cardano.png?1547034860',
-    fiatBalance: 100,
-    planckBalance: BigInt(500),
-  },
-  {
-    name: 'Polkadot',
-    symbol: 'DOT',
-    imgUrl: 'https://assets.coingecko.com/coins/images/12171/large/aJGBjJFU_400x400.jpg?1597804776',
-    fiatBalance: 100,
-    planckBalance: BigInt(500),
-  },
-  {
-    name: 'Uniswap',
-    symbol: 'UNI',
-    imgUrl: 'https://assets.coingecko.com/coins/images/12504/large/uniswap-uni.png?1600306604',
-    fiatBalance: 100,
-    planckBalance: BigInt(500),
-  },
-  {
-    name: 'Chainlink',
-    symbol: 'LINK',
-    imgUrl: 'https://assets.coingecko.com/coins/images/877/large/chainlink-new-logo.png?1547034700',
-    fiatBalance: 100,
-    planckBalance: BigInt(500),
-  },
-]
-
 export const Overview = () => {
   const { address } = useActiveAccount()
+
+  // Create funny filter
   const { assetBalances, fiatTotal, balances } = useAssets()
 
   return (
@@ -135,9 +91,7 @@ export const Overview = () => {
               <Asset key={token.id} token={token} balances={balances} address={address} />
             ))}
           </AssetsList>
-          <AssetsListLocked>
-            <Asset token={testTokens[0]} />
-          </AssetsListLocked>
+          <AssetsListLocked></AssetsListLocked>
         </section>
         {/* NFTs */}
         <section
