@@ -8,7 +8,7 @@ type ButtonElementType = Extract<React.ElementType, 'button' | 'a'> | typeof Lin
 
 type PolymorphicButtonProps<T extends ButtonElementType> = {
   as?: T
-  variant?: 'outlined' | 'noop'
+  variant?: 'outlined' | 'noop' | 'secondary'
   disabled?: boolean
   hidden?: boolean
   loading?: boolean
@@ -43,6 +43,14 @@ const Button = <T extends ButtonElementType>({ as = 'button' as T, variant, ...p
           'background': 'none',
           'border': 'none',
           'outline': 'none',
+          ':hover': {
+            filter: 'brightness(1.5)',
+          },
+        }
+      case 'secondary':
+        return {
+          'backgroundColor': '#1B1B1B',
+          'color': '#A5A5A5',
           ':hover': {
             filter: 'brightness(1.5)',
           },
