@@ -24,6 +24,7 @@
     "@emotion/styled": "^11.10.4",
     "@floating-ui/react-dom-interactions": "^0.10.3",
     "@google/model-viewer": "^1.11.0",
+    "@lottiefiles/react-lottie-player": "^3.4.7",
     "@polkadot/api": "^9.8.2",
     "@polkadot/extension-dapp": "^0.44.6",
     "@ramp-network/ramp-instant-sdk": "^2.5.0",

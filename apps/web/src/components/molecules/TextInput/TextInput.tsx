@@ -76,7 +76,7 @@ const TextInput = (props: TextInputProps) => {
         }}
       >
         <Text as="label">{props.leadingSupportingText}</Text>
-        <Text as="label" css={props.isError && { color: theme.color.error }}>
+        <Text as="label" css={props.isError && { color: theme.color.onError }}>
           {props.trailingSupportingText}
         </Text>
       </div>

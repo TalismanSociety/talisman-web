@@ -270,6 +270,7 @@ declare module '@emotion/react' {
       foregroundVariant: string
       onForegroundVariant: string
       error: string
+      onError: string
     }
     contentAlpha: {
       disabled: number
@@ -302,7 +303,8 @@ export const greenDark: Theme = {
     onForeground: 'rgb(250,250,250)',
     foregroundVariant: '#3F3F3F',
     onForegroundVariant: 'rgb(250,250,250)',
-    error: '#D22424',
+    error: 'rgba(253, 72, 72, 0.25)',
+    onError: '#D22424',
   },
   contentAlpha: {
     disabled: 0.5,
