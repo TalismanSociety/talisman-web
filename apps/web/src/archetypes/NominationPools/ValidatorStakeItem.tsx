@@ -52,7 +52,7 @@ const ValidatorStakeItem = (props: {
         onRequestUnstake={() => setIsUnstakeDialogOpen(true)}
       />
       <ValidatorUnstakeDialog
-        accountAddress={props.account.address}
+        accountAddress={props.stake.controllerId?.toString() ?? props.account.address}
         open={isUnstakeDialogOpen}
         onRequestDismiss={() => setIsUnstakeDialogOpen(false)}
       />
