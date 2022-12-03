@@ -32,12 +32,12 @@ const Raised = styled(({ id, title, className }: { id: string; title?: string; c
 
       <Stat
         title={
-          <Pendor suffix={suffix} require={!!raised && !!cap}>
-            {shortNumber(raised)} / {shortNumber(cap)}
+          <Pendor suffix={suffix} require={raised !== undefined && cap !== undefined}>
+            {shortNumber(raised ?? 0)} / {shortNumber(cap ?? 0)}
           </Pendor>
         }
       >
-        <Pendor suffix="%" require={!!percentRaised}>
+        <Pendor suffix="%" require={percentRaised !== undefined}>
           {percentRaised?.toFixed(2)}
         </Pendor>
       </Stat>

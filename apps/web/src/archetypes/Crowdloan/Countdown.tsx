@@ -49,10 +49,10 @@ const Countdown: React.FC<CountdownProps> = ({ id, showSeconds, className, ...re
   // Pendor
   if (!crowdloan) return <Ongoing />
 
-  const { uiStatus, lockExpiredBlock } = crowdloan
+  const { uiStatus, end } = crowdloan
 
   if (['active', 'capped'].includes(uiStatus)) {
-    return <Ongoing {...rest} showSeconds={showSeconds} end={lockExpiredBlock} relayChainId={crowdloan?.relayChainId} />
+    return <Ongoing {...rest} showSeconds={showSeconds} end={end} relayChainId={crowdloan?.relayChainId} />
   }
   if (uiStatus === 'winner') return <Generic text="Winner" />
   if (uiStatus === 'ended') return <Generic text="Ended" />

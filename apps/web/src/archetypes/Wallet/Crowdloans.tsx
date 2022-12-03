@@ -20,8 +20,11 @@ import { Link } from 'react-router-dom'
 
 const CrowdloanItem = styled(({ id, className }: { id: string; className?: string }) => {
   const { t } = useTranslation()
-  const { crowdloan } = useCrowdloanById(id)
+  const crowdloanId = id.split('-').slice(0, 2).join('-')
+  const { crowdloan } = useCrowdloanById(crowdloanId)
+
   const parachainId = crowdloan?.parachain.paraId
+
   const relayChainId = useMemo(() => id.split('-')[0], [id])
   const relayChain = useChain(relayChainId)
   const chain = useChain(parachainId)
@@ -150,18 +153,16 @@ const Crowdloans = ({ className }: { className?: string }) => {
   const accounts = useAccountAddresses()
   const { contributions, hydrated: contributionsHydrated } = useCrowdloanContributions({ accounts })
   const totalContributions = groupTotalContributionsByCrowdloan(contributions)
+  const { crowdloans } = useCrowdloans()
 
-  const { crowdloans, hydrated } = useCrowdloans()
-  const notDisolvedCrowdloanIds = useMemo(
-    () => crowdloans.filter(crowdloan => crowdloan.dissolvedBlock === null).map(crowdloan => crowdloan.id),
-    [crowdloans]
-  )
   const totalAliveContributions = useMemo(
     () =>
-      hydrated
-        ? Object.fromEntries(Object.entries(totalContributions).filter(([id]) => notDisolvedCrowdloanIds.includes(id)))
-        : {},
-    [hydrated, totalContributions, notDisolvedCrowdloanIds]
+      Object.fromEntries(
+        Object.entries(totalContributions).filter(x =>
+          crowdloans.some(c => c.parachain.paraId === x[0].split('-').slice(0, 2).join('-'))
+        )
+      ),
+    [crowdloans, totalContributions]
   )
 
   const { totalCrowdloansUsdByAddress } = usePortfolio()

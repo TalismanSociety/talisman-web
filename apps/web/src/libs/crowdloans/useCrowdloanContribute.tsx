@@ -1188,7 +1188,7 @@ type BuildTxProps = {
   contributionPlanck: string
   account: string
   email?: string
-  verifierSignature?: VerifierSignature
+  verifierSignature?: any
   memoAddress?: string
 
   api: ApiPromise
@@ -1243,7 +1243,7 @@ async function buildMoonbeamTx({
 }: BuildTxProps): Promise<BuildTxResponse> {
   const txs = [
     api.tx.crowdloan?.contribute?.(parachainId, contributionPlanck, verifierSignature),
-    api.tx.crowdloan?.addMemo?.(parachainId, memoAddress),
+    api.tx.crowdloan?.addMemo?.(parachainId, memoAddress ?? ''),
     api.tx.system.remarkWithEvent('Talisman - The Journey Begins'),
   ]
 
@@ -1260,7 +1260,7 @@ async function buildAstarTx({
 
   const txs = [
     api.tx.crowdloan?.contribute?.(parachainId, contributionPlanck, verifierSignature),
-    api.tx.crowdloan?.addMemo?.(parachainId, referrerAddress),
+    api.tx.crowdloan?.addMemo?.(parachainId, referrerAddress ?? ''),
     api.tx.system.remarkWithEvent('Talisman - The Journey Begins'),
   ]
 

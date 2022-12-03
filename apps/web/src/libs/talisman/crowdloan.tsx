@@ -1,74 +1,23 @@
-import {
-  ApolloClient,
-  ApolloQueryResult,
-  InMemoryCache,
-  NormalizedCacheObject,
-  createHttpLink,
-  gql,
-} from '@apollo/client'
-import { BifrostDOT, Moonbeam } from '@libs/crowdloans/crowdloanOverrides'
+import { ApiPromise, WsProvider } from '@polkadot/api'
+import type { AccountId } from '@polkadot/types/interfaces'
+import { stringToU8a, u8aEq } from '@polkadot/util'
 import { planckToTokens } from '@talismn/util'
 import { find, get } from 'lodash'
 import { PropsWithChildren, useContext as _useContext, createContext, useEffect, useMemo, useState } from 'react'
 
 import { CrowdloanDetails, SupportedRelaychains, crowdloanDetails } from './util/_config'
 
-const AllCrowdloans = gql`
-  {
-    # Order by BLOCK_NUM_DESC so that when we do:
-    #   find(allCrowdloans, 'parachain.id', parachainId)
-    # ...we get the most recent crowdloan, not the oldest
-    crowdloans(orderBy: BLOCK_NUM_DESC) {
-      totalCount
-      nodes {
-        id
-        depositor
-        verifier
-        cap
-        raised
-        lockExpiredBlock
-        blockNum
-        firstSlot
-        lastSlot
-        status
-        leaseExpiredBlock
-        dissolvedBlock
-        isFinished
-        wonAuctionId
-        parachain {
-          paraId
-        }
-        contributions {
-          totalCount
-        }
-      }
-    }
-  }
-`
-
 export type Crowdloan = {
   // graphql fields
   id: string
   depositor: string
   verifier: string | null // e.g. {\"sr25519\":\"0x6c79c2c862124697baf6d0562055a50f3b0eac3c895c23bb16e8d1e2da341549\"}"
-  cap: string
-  raised: string
-  lockExpiredBlock: number
-  blockNum: number
-  firstSlot: number
-  lastSlot: number
-  status: string
-  leaseExpiredBlock: number | null
-  dissolvedBlock: number | null
-  isFinished: boolean
-  wonAuctionId: string | null
+  cap: number
+  raised: number
+  end: number
   parachain: {
     paraId: string
   }
-  contributions: {
-    totalCount: number
-  }
-
   // custom fields
   relayChainId: number
   percentRaised: number
@@ -142,7 +91,7 @@ export const useCrowdloanAggregateStats = () => {
   const [contributors /*, setContributors */] = useState<number>(0)
 
   useEffect(() => {
-    setRaised(crowdloans.reduce((acc: number, { raised = '0' }) => acc + parseInt(raised, 10), 0))
+    setRaised(crowdloans.reduce((acc: number, { raised = 0 }) => acc + raised, 0))
     setProjects(crowdloanDetails.length)
     // setContributors(crowdloans.reduce((acc: number, { contributors = [] }) => acc + contributors.length, 0))
   }, [crowdloans])
@@ -155,91 +104,65 @@ export const useCrowdloanAggregateStats = () => {
   }
 }
 
+const CROWD_PREFIX = stringToU8a('modlpy/cfund')
+
+function hasCrowdloadPrefix(accountId: AccountId): boolean {
+  return u8aEq(accountId.slice(0, CROWD_PREFIX.length), CROWD_PREFIX)
+}
+
 export const Provider = ({ children }: PropsWithChildren) => {
-  const [crowdloanResults, setCrowdloanResults] = useState<Array<[number, ApolloQueryResult<any> | null]>>([])
-  useEffect(() => {
-    // create an apollo client for each relaychain
-    const relayChainClients = Object.values(SupportedRelaychains).map(
-      ({ id, subqueryCrowdloansEndpoint }) =>
-        [
-          id,
-          new ApolloClient({
-            link: createHttpLink({ uri: subqueryCrowdloansEndpoint }),
-            cache: new InMemoryCache(),
-            headers: {
-              'Content-Type': 'application/json',
-              'Access-Control-Allow-Origin': '*',
-              'Access-Control-Allow-Credentials': 'true',
-            },
-          }),
-        ] as [number, ApolloClient<NormalizedCacheObject>]
-    )
-
-    // query crowdloans on each relay chain
-    const relayChainCrowdloans = relayChainClients.map(([_id, client]) => client.query({ query: AllCrowdloans }))
-
-    // extract results and store in state with relayChainId
-    Promise.allSettled(relayChainCrowdloans).then(results =>
-      setCrowdloanResults(
-        results.map((result, resultIndex) => [
-          relayChainClients[resultIndex]?.[0]!, // relayChainId
-          result.status === 'fulfilled' ? result.value : null, // result data
-        ])
-      )
-    )
-  }, [])
-
   const [crowdloans, setCrowdloans] = useState<Crowdloan[]>([])
+  const [hydrated, setHydrated] = useState(false)
+
   useEffect(() => {
-    setCrowdloans(
-      crowdloanResults.flatMap(([relayChainId, result]) => {
-        const tokenDecimals = relayChainId === 2 ? 12 : 10
-        return (result?.data?.crowdloans?.nodes || []).map(
-          (crowdloan: any): Crowdloan => ({
-            ...crowdloan,
-            raised: Number(planckToTokens(crowdloan.raised, tokenDecimals)),
-            cap: Number(planckToTokens(crowdloan.cap, tokenDecimals)),
+    const resultPromise = Promise.all(
+      Object.values(SupportedRelaychains).flatMap(async relayChain => {
+        const api = await ApiPromise.create({ provider: new WsProvider(relayChain.rpc) })
 
-            id: `${relayChainId}-${crowdloan.id}`,
+        const bestNumber = await api.derive.chain.bestNumber()
+        const funds = await api.query.crowdloan.funds.entries()
 
-            parachain: {
-              paraId: `${relayChainId}-${crowdloan.parachain.paraId}`,
-            },
-
-            relayChainId,
-            percentRaised:
-              (100 / Number(planckToTokens(crowdloan.cap, tokenDecimals))) *
-              Number(planckToTokens(crowdloan.raised, tokenDecimals)),
-            details: find(crowdloanDetails, {
-              relayId: relayChainId,
-              paraId: crowdloan.parachain.paraId,
-            }),
-            uiStatus:
-              crowdloan.wonAuctionId !== null
-                ? 'winner'
-                : crowdloan.status === 'Started' &&
-                  (
-                    (100 / Number(planckToTokens(crowdloan.cap, tokenDecimals))) *
-                    Number(planckToTokens(crowdloan.raised, tokenDecimals))
-                  ).toFixed(2) === '100.00'
-                ? 'capped'
-                : Moonbeam.is(relayChainId, crowdloan.parachain.paraId)
-                ? 'capped'
-                : BifrostDOT.is(relayChainId, crowdloan.parachain.paraId)
-                ? 'capped'
-                : crowdloan.status === 'Started'
-                ? 'active'
-                : 'ended',
-          })
+        const paraIds = await api.query.crowdloan.funds.keys().then(x => x.map(y => y.args[0]))
+        const leases = await api.query.slots.leases.multi(paraIds)
+        const leasedParaIds = paraIds.filter((_, index) =>
+          leases[index]?.some(lease => lease.isSome && hasCrowdloadPrefix(lease.unwrap()[0]))
         )
+
+        return funds.map(([fundId, maybeFund]) => {
+          const fund = maybeFund.unwrapOrDefault()
+          const tokenDecimals = relayChain.id === 2 ? 12 : 10
+
+          const isCapped = fund.cap.sub(fund.raised).lt(api.consts.crowdloan.minContribution)
+          const isEnded = bestNumber.gt(fund.end)
+          const isWinner = leasedParaIds.some(lease => lease.eq(fundId.args[0]))
+
+          return {
+            ...fund.toJSON(),
+            id: `${relayChain.id}-${fundId.args[0].toNumber()}`,
+            raised: Number(planckToTokens(fund.raised.toString(), tokenDecimals)),
+            cap: Number(planckToTokens(fund.cap.toString(), tokenDecimals)),
+            parachain: {
+              paraId: `${relayChain.id}-${fundId.args[0].toNumber()}`,
+            },
+            relayChainId: relayChain.id,
+            percentRaised:
+              (100 / Number(planckToTokens(fund.cap.toString(), tokenDecimals))) *
+              Number(planckToTokens(fund.raised.toString(), tokenDecimals)),
+            details: find(crowdloanDetails, {
+              relayId: relayChain.id,
+              paraId: fundId.args[0].toNumber(),
+            }),
+            uiStatus: isWinner ? 'winner' : isCapped ? 'capped' : isEnded ? 'ended' : 'active',
+          }
+        })
       })
     )
-  }, [crowdloanResults])
 
-  const [hydrated, setHydrated] = useState(false)
-  useEffect(() => {
-    setHydrated(crowdloanResults.length > 0)
-  }, [crowdloanResults])
+    resultPromise.then(result => {
+      setCrowdloans(result.flat() as any)
+      setHydrated(true)
+    })
+  }, [])
 
   const value = useMemo(
     () => ({

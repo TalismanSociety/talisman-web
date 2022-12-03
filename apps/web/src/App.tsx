@@ -1,3 +1,6 @@
+import '@polkadot/api-augment/polkadot'
+import '@polkadot/api-augment/substrate'
+
 import CookieBanner from '@archetypes/CookieBanner'
 import DevMenu from '@archetypes/DevMenu'
 import ToastBar from '@components/molecules/ToastBar'
