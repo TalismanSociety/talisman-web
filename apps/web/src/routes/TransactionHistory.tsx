@@ -44,7 +44,6 @@ const TransactionHistory = styled(({ className }: { className?: string }) => {
 
   return (
     <section className={className}>
-      <h1>Transaction History</h1>
       <ExtensionStatusGate unavailable={<ExtensionUnavailable />}>
         <List addresses={addresses} />
       </ExtensionStatusGate>
@@ -54,10 +53,6 @@ const TransactionHistory = styled(({ className }: { className?: string }) => {
   color: var(--color-text);
   width: 100%;
   max-width: 1280px;
-  margin: 3rem auto;
-  @media ${device.xl} {
-    margin: 6rem auto;
-  }
   padding: 0 2.4rem;
 
   .all-nft-grids > * + * {

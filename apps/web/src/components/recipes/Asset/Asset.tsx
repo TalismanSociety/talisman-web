@@ -1,10 +1,12 @@
 import { Lock } from '@components/atoms/Icon'
 import Text from '@components/atoms/Text'
-import { useTheme } from '@emotion/react'
+import HiddenDetails from '@components/molecules/HiddenDetails'
+import { keyframes, useTheme } from '@emotion/react'
 import styled from '@emotion/styled'
 import { Balance, BalanceFormatter, Balances } from '@talismn/balances'
 import { Token } from '@talismn/chaindata-provider'
 import { formatDecimals } from '@talismn/util'
+import _ from 'lodash'
 import { Children, ReactElement, ReactNode } from 'react'
 
 type AssetBalanceProps = {
@@ -40,7 +42,7 @@ const AssetBalance = ({ locked, planck, fiat, tooltip, symbol }: AssetBalancePro
             fontSize: '16px',
           }}
         >
-          {`${planck.toLocaleString()} ${symbol} `}
+          {planck ? `${planck.toLocaleString()} ${symbol} ` : '- ' + symbol}
         </Text.Body>
         {locked ? <Lock css={{ width: '16px', height: '16px' }} /> : ''}
       </div>
@@ -59,36 +61,123 @@ const AssetBalance = ({ locked, planck, fiat, tooltip, symbol }: AssetBalancePro
 
 export type AssetProps = {
   className?: string
-  token: Token
+  token: any
   balances: Balances | undefined
-  address: string | undefined
+  lockedAsset?: boolean
+}
+
+const shimmer = keyframes`
+  0% {
+    background-position: 100% 0;
+  }
+  100% {
+    background-position: -100% 0;
+  }
+`
+
+const AssetSkeleton = ({ loading = true }: { loading?: boolean }) => {
+  return (
+    <tr
+      className="asset"
+      css={{
+        '.shimmer': {
+          animation: loading ? `${shimmer} 1s infinite` : '',
+          background: loading
+            ? `linear-gradient(90deg, rgb(38, 38, 38) 4%, rgb(58, 58, 58) 25%, rgb(38, 38, 38) 36%)`
+            : 'rgb(38, 38, 38)',
+          backgroundSize: '200% 100%',
+        },
+      }}
+    >
+      <td valign="top">
+        {/* First Column */}
+        <div css={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+          <div
+            className="shimmer"
+            css={{
+              width: '2em',
+              height: '2em',
+              borderRadius: '50%',
+              margin: '16px',
+            }}
+          />
+          <div css={{ display: 'flex', flexDirection: 'column', gap: '0.4em' }}>
+            <div
+              className="shimmer"
+              css={{
+                width: '150px',
+                height: '1em',
+                borderRadius: '12px',
+              }}
+            />
+            <div
+              css={{
+                'display': 'flex',
+                'flexDirection': 'row',
+                // if not first child margin negative left
+                '& > :not(:first-child)': {
+                  marginLeft: '-0.2em',
+                },
+              }}
+            >
+              <div
+                className="shimmer"
+                css={{
+                  width: '100px',
+                  height: '1em',
+                  borderRadius: '12px',
+                }}
+              />
+            </div>
+          </div>
+        </div>
+      </td>
+      <td
+        align="right"
+        valign="middle"
+        css={{
+          'display': 'none',
+          '@media (min-width: 1024px)': {
+            display: 'table-cell',
+          },
+        }}
+      ></td>
+      <td align="right" valign="middle">
+        <div
+          css={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '0.4em',
+            alignItems: 'flex-end',
+            marginRight: '16px',
+          }}
+        >
+          <div
+            className="shimmer"
+            css={{
+              width: '150px',
+              height: '1em',
+              borderRadius: '12px',
+            }}
+          />
+          <div
+            className="shimmer"
+            css={{
+              width: '150px',
+              height: '1em',
+              borderRadius: '12px',
+            }}
+          />
+        </div>
+      </td>
+    </tr>
+  )
 }
 
 const Asset = Object.assign((props: AssetProps) => {
   const theme = useTheme()
-  const { token, balances, address } = props
 
-  const tokenBalances =
-    address !== undefined
-      ? balances?.find([{ address: address, tokenId: token.id }])
-      : balances?.find({ tokenId: token.id })
-  if (!tokenBalances) return null
-
-  const tokenAmount = tokenBalances.sorted.reduce((sum, balance) => sum + balance.transferable.planck, BigInt('0'))
-  if (tokenAmount === BigInt('0')) return null
-
-  const tokenAmountFormatted = formatDecimals(new BalanceFormatter(tokenAmount, token.decimals).tokens)
-
-  const fiatAmount =
-    (balances?.find({ tokenId: token.id }).sum.fiat('usd').transferable ?? 0).toLocaleString(undefined, {
-      style: 'currency',
-      currency: 'USD',
-      currencyDisplay: 'narrowSymbol',
-    }) ?? '-'
-
-  if (tokenBalances.sorted[0] === undefined) {
-    return null
-  }
+  const { token, lockedAsset } = props
 
   return (
     <tr className="asset">
@@ -96,7 +185,7 @@ const Asset = Object.assign((props: AssetProps) => {
         {/* First Column */}
         <div css={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
           <img
-            src={token?.logo}
+            src={token?.tokenDetails?.logo}
             css={{
               width: '2em',
               height: '2em',
@@ -106,7 +195,7 @@ const Asset = Object.assign((props: AssetProps) => {
           />
           <div css={{ display: 'flex', flexDirection: 'column', gap: '0.4em' }}>
             <Text.Body css={{ fontWeight: 600, fontSize: '16px', color: theme.color.onSurface }}>
-              {token?.symbol}
+              {token?.tokenDetails?.symbol}
             </Text.Body>
             <div
               css={{
@@ -118,14 +207,22 @@ const Asset = Object.assign((props: AssetProps) => {
                 },
               }}
             >
-              {/* array of 4 small images */}
-              {Array(2)
-                .fill(0)
-                .map((_, i) => (
-                  <div css={{ width: '1em', height: '1em' }}>
-                    <img src={token?.logo} css={{ width: '100%', height: '100%' }} alt={'' + ' logo'} />
-                  </div>
-                ))}
+              <div css={{ width: '1em', height: '1em' }}>
+                <img
+                  src={token?.tokenDetails?.logo}
+                  css={{ width: '100%', height: '100%' }}
+                  alt={token?.tokenDetails?.name + ' logo'}
+                />
+              </div>
+              {token?.ormlTokens?.map((token: any) => (
+                <div css={{ width: '1em', height: '1em' }}>
+                  <img
+                    src={token?.tokenDetails?.logo}
+                    css={{ width: '100%', height: '100%' }}
+                    alt={token?.tokenDetails?.name + ' logo'}
+                  />
+                </div>
+              ))}
             </div>
           </div>
         </div>
@@ -140,12 +237,14 @@ const Asset = Object.assign((props: AssetProps) => {
           },
         }}
       >
-        {/* { token.locked && <AssetBalance 
-          fiat={fiatAmount}
-          planck={tokenAmountFormatted}   
-          // locked={token.locked}
-          symbol={token?.symbol}
-        />} */}
+        {token?.locked && (
+          <AssetBalance
+            fiat={token?.overallLockedFiatAmount}
+            planck={token?.overallLockedAmount}
+            locked={token?.locked}
+            symbol={token?.tokenDetails?.symbol}
+          />
+        )}
       </td>
       <td
         align="right"
@@ -156,7 +255,11 @@ const Asset = Object.assign((props: AssetProps) => {
           },
         }}
       >
-        <AssetBalance fiat={fiatAmount} planck={tokenAmountFormatted} symbol={token.symbol} />
+        <AssetBalance
+          fiat={lockedAsset ? token?.overallLockedFiatAmount : token?.overallFiatAmount}
+          planck={lockedAsset ? token?.overallLockedAmount : token?.overallTokenAmount}
+          symbol={token?.tokenDetails?.symbol}
+        />
       </td>
     </tr>
   )
@@ -179,6 +282,7 @@ const Table = styled.table`
 
   td {
     padding: 0;
+    width: 33.333%;
   }
 
   tbody tr.asset {
@@ -257,37 +361,66 @@ const Table = styled.table`
 `
 
 export type AssetsListProps = {
+  isLoading?: boolean
   children?: ReactElement<AssetProps> | ReactElement<AssetProps>[]
 }
 
 export const AssetsList = (props: AssetsListProps) => {
+  const { isLoading } = props
+
+  console.log(props.children)
+
   const theme = useTheme()
+
   return (
-    <Table>
-      <thead>
-        <tr>
-          <th>Asset</th>
-          <th
-            align="right"
-            css={{
-              'display': 'none',
-              '@media (min-width: 1024px)': {
-                display: 'table-cell',
-              },
-            }}
-          >
-            Locked
-          </th>
-          <th align="right">Available</th>
-        </tr>
-      </thead>
-      <tbody>{Children.map(props.children, child => child !== undefined && child)}</tbody>
-    </Table>
+    <HiddenDetails
+      overlay={
+        <>
+          <Text.H3>No Assets Found</Text.H3>
+        </>
+      }
+      hidden={!isLoading && _.isEmpty(props.children)}
+    >
+      <Table>
+        <thead>
+          <tr>
+            <th>Asset</th>
+            <th
+              align="right"
+              css={{
+                'display': 'none',
+                '@media (min-width: 1024px)': {
+                  display: 'table-cell',
+                },
+              }}
+            >
+              Locked
+            </th>
+            <th align="right">Available</th>
+          </tr>
+        </thead>
+        <tbody>
+          {/* if is loading and no children, show an array of 8 assetskeleton. if not loading and no children show empty div, else map children */}
+          {isLoading && _.isEmpty(props.children)
+            ? Array(8)
+                .fill(0)
+                .map((_, i) => <AssetSkeleton key={i} />)
+            : !isLoading && _.isEmpty(props.children)
+            ? Array(8)
+                .fill(0)
+                .map((_, i) => <AssetSkeleton key={i} loading={false} />)
+            : Children.map(props.children, child => child !== undefined && child)}
+        </tbody>
+      </Table>
+    </HiddenDetails>
   )
 }
 
 export const AssetsListLocked = (props: AssetsListProps) => {
   const theme = useTheme()
+
+  const { isLoading } = props
+
   return (
     <Table>
       <thead>
@@ -296,18 +429,15 @@ export const AssetsListLocked = (props: AssetsListProps) => {
           <th align="right">Locked</th>
         </tr>
       </thead>
-      <tbody>{Children.map(props.children, child => child !== undefined && child)}</tbody>
+      <tbody>
+        {isLoading
+          ? // map out array of 3 to render skeleton rows
+            Array(3)
+              .fill(0)
+              .map((_, i) => <AssetSkeleton />)
+          : Children.map(props.children, child => child !== undefined && child)}
+      </tbody>
     </Table>
   )
 }
-
-function getNetworkType({ chain, evmNetwork }: Balance): string | null {
-  if (evmNetwork) return evmNetwork.isTestnet ? 'EVM Testnet' : 'EVM Blockchain'
-
-  if (chain === null) return null
-
-  if (chain.isTestnet) return 'Testnet'
-  return chain.paraId ? 'Parachain' : (chain.parathreads ?? []).length > 0 ? 'Relay Chain' : 'Blockchain'
-}
-
 export default Asset

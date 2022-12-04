@@ -9,10 +9,12 @@ import { Navigate, Outlet, createBrowserRouter, useLocation } from 'react-router
 import { useRecoilValueLoadable, waitForAll } from 'recoil'
 
 import Layout from '../layout'
+import Assets from './Assets'
 import Buy from './Buy'
 import Explore from './Explore'
 import NFTsPage from './NFTsPage'
-import Portfolio, { Overview } from './Portfolio'
+import Overview from './Overview'
+import Portfolio from './Portfolio'
 import Staking from './Staking'
 import TransactionHistory from './TransactionHistory'
 
@@ -68,6 +70,7 @@ export default createBrowserRouter([
         element: <Portfolio />,
         children: [
           { path: '', element: <Overview /> },
+          { path: 'assets', element: <Assets /> },
           { path: 'nfts', element: <NFTsPage /> },
           { path: 'history', element: <TransactionHistory /> },
         ],
