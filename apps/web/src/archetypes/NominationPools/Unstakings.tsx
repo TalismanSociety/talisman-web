@@ -1,8 +1,8 @@
-import Text from '@components/atoms/Text'
 import PoolUnstake, { PoolUnstakeList } from '@components/recipes/PoolUnstake'
 import { selectedPolkadotAccountsState } from '@domains/accounts/recoils'
+import { erasToMilliseconds } from '@domains/common/utils'
+import { usePoolUnlocking } from '@domains/nominationPools/hooks/usePoolUnlocking'
 import { createAccounts } from '@domains/nominationPools/utils'
-import { BN } from '@polkadot/util'
 import { addMilliseconds, formatDistanceToNow } from 'date-fns'
 import { useMemo } from 'react'
 import { useRecoilValue, waitForAll } from 'recoil'
@@ -40,40 +40,7 @@ const Unstakings = (props: { account?: string; showHeader?: boolean; compact?: b
     poolMembersLoadable.valueMaybe()?.map(x => createAccounts(api, x.unwrapOrDefault().poolId).stashId) ?? []
   )
 
-  const unstakings = useMemo(() => {
-    if (sessionProgressLoadable.state !== 'hasValue' || poolMembersLoadable.state !== 'hasValue') {
-      return undefined
-    }
-
-    return poolMembersLoadable.contents.flatMap((pool, index) => {
-      const address = accounts[index]?.address
-
-      const all = Array.from(pool.unwrapOrDefault().unbondingEras.entries(), ([era, amount]) => ({
-        address: address,
-        pool: pool.unwrapOrDefault(),
-        amount,
-        erasTilWithdrawable: era.lte(sessionProgressLoadable.contents.activeEra)
-          ? undefined
-          : era.sub(sessionProgressLoadable.contents.activeEra),
-      }))
-
-      const withdrawables = all.filter(x => x.erasTilWithdrawable === undefined)
-      const pendings = all.filter(x => x.erasTilWithdrawable !== undefined)
-
-      if (withdrawables.length === 0) return pendings
-
-      return [
-        { ...withdrawables[0], amount: withdrawables.reduce((prev, curr) => prev.add(curr.amount), new BN(0)) },
-        ...pendings,
-      ]
-    })
-  }, [
-    sessionProgressLoadable.state,
-    sessionProgressLoadable.contents.activeEra,
-    poolMembersLoadable.state,
-    poolMembersLoadable.contents,
-    accounts,
-  ])
+  const unstakings = usePoolUnlocking()
 
   if (sessionProgressLoadable.state !== 'hasValue') return null
 
@@ -81,12 +48,7 @@ const Unstakings = (props: { account?: string; showHeader?: boolean; compact?: b
 
   return (
     <div>
-      {props.showHeader !== false && (
-        <header css={{ marginTop: '4rem' }}>
-          <Text.H4 css={{ marginBottom: '2.4rem' }}>Unstaking</Text.H4>
-        </header>
-      )}
-      <PoolUnstakeList>
+      <PoolUnstakeList showHeader={props.showHeader}>
         {unstakings?.map((x, index) => (
           <PoolUnstake
             variant={props.compact ? 'compact' : undefined}
@@ -107,13 +69,12 @@ const Unstakings = (props: { account?: string; showHeader?: boolean; compact?: b
                 : formatDistanceToNow(
                     addMilliseconds(
                       new Date(),
-                      x.erasTilWithdrawable
-                        .subn(1)
-                        .mul(sessionProgressLoadable.contents.eraLength)
-                        .add(sessionProgressLoadable.contents.eraLength)
-                        .sub(sessionProgressLoadable.contents.eraProgress)
-                        .mul(api.consts.babe.expectedBlockTime)
-                        .toNumber()
+                      erasToMilliseconds(
+                        x.erasTilWithdrawable,
+                        sessionProgressLoadable.contents.eraLength,
+                        sessionProgressLoadable.contents.eraProgress,
+                        api.consts.babe.expectedBlockTime
+                      )
                     )
                   )
             }

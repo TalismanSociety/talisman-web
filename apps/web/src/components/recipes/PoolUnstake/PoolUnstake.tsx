@@ -5,6 +5,8 @@ import Text from '@components/atoms/Text'
 import { useTheme } from '@emotion/react'
 import React, { ReactElement } from 'react'
 
+import StakeList from '../StakeList'
+
 export type PoolUnstakeProps = {
   accountName: string
   accountAddress: string
@@ -69,7 +71,7 @@ const PoolUnstake = (props: PoolUnstakeProps) => {
                 justifyContent: 'flex-end',
               },
               '> div:last-child': {
-                flex: 0.5,
+                flex: 0.4,
                 overflow: 'hidden',
                 justifyContent: props.timeTilWithdrawable === undefined ? 'flex-start' : undefined,
               },
@@ -170,30 +172,55 @@ const PoolUnstake = (props: PoolUnstakeProps) => {
 }
 
 export type PoolUnstakeListProps = {
-  children?: ReactElement<PoolUnstakeProps> | ReactElement<PoolUnstakeProps>[]
+  showHeader?: boolean
+  children?:
+    | undefined
+    | null
+    | false
+    | ReactElement<PoolUnstakeProps>
+    | Array<undefined | null | false | ReactElement<PoolUnstakeProps>>
 }
 
-export const PoolUnstakeList = (props: PoolUnstakeListProps) => {
-  const theme = useTheme()
-  return (
-    <ol
-      css={{
-        'listStyle': 'none',
-        'margin': 0,
-        'padding': 0,
-        'li + li': {
-          marginTop: '1.6rem',
-        },
-        '@media (min-width: 1024px)': {
-          'background': theme.color.surface,
-          'borderRadius': '1.6rem',
-          'li + li': { marginTop: 0, borderTop: 'solid 1px #383838' },
-        },
-      }}
-    >
-      {props.children && React.Children.map(props.children, child => <li key={child.key}>{child}</li>)}
-    </ol>
-  )
-}
+export const PoolUnstakeList = (props: PoolUnstakeListProps) => (
+  <div>
+    {props.showHeader !== false && (
+      <div
+        css={{
+          'display': 'none',
+          '@media (min-width: 1024px)': {
+            display: React.Children.count(props.children) === 0 ? 'none' : 'block',
+            margin: '0.5rem 1rem',
+          },
+        }}
+      >
+        <Text.Body>Nomination pool unstaking</Text.Body>
+      </div>
+    )}
+    <StakeList>
+      {props.children && React.Children.map(props.children, child => child && <li key={child.key}>{child}</li>)}
+    </StakeList>
+  </div>
+)
+
+export const ValidatorUnstakeList = (props: PoolUnstakeListProps) => (
+  <div>
+    {props.showHeader !== false && (
+      <div
+        css={{
+          'display': 'none',
+          '@media (min-width: 1024px)': {
+            display: React.Children.count(props.children) === 0 ? 'none' : 'block',
+            margin: '0.5rem 1rem',
+          },
+        }}
+      >
+        <Text.Body>Validator unstaking</Text.Body>
+      </div>
+    )}
+    <StakeList>
+      {props.children && React.Children.map(props.children, child => child && <li key={child.key}>{child}</li>)}
+    </StakeList>
+  </div>
+)
 
 export default PoolUnstake
