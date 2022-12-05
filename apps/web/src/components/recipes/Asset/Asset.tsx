@@ -178,8 +178,6 @@ const Asset = Object.assign((props: AssetProps) => {
 
   const { token, lockedAsset } = props
 
-  console.log('token', token)
-
   return (
     <tr className="asset">
       <td valign="top">

@@ -107,8 +107,6 @@ const useAssets = (customAddress?: string) => {
     if (planckAmount === BigInt('0')) return undefined
     const planckAmountFormatted = formatDecimals(new BalanceFormatter(planckAmount, token.decimals).tokens)
 
-    console.log(address)
-
     const fiatAmount =
       address !== undefined
         ? balances?.find([{ address: address, tokenId: token.id }])?.sum.fiat('usd').transferable ?? 0

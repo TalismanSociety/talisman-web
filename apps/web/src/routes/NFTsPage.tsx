@@ -1,11 +1,7 @@
 import { NFT } from '@archetypes'
-import { HiddenNFTGrid } from '@archetypes/NFT'
 import { ExtensionStatusGate, PanelSection } from '@components'
-import Text from '@components/atoms/Text'
-import { WalletNavConnector } from '@components/WalletNavConnector'
-import { css } from '@emotion/react'
 import styled from '@emotion/styled'
-import { useActiveAccount } from '@libs/talisman'
+import { useAccountAddresses, useActiveAccount } from '@libs/talisman'
 import { device } from '@util/breakpoints'
 import { useTranslation } from 'react-i18next'
 
@@ -43,33 +39,13 @@ const ExtensionUnavailable = styled((props: ExtensionUnavailableProps) => {
 const NFTsPage = styled(({ className }: any) => {
   const queryParams = new URLSearchParams(window.location.search)
   const address = queryParams.get('address') ?? useActiveAccount().address
+  const addresses = useAccountAddresses()
 
   return (
     <ExtensionStatusGate unavailable={<ExtensionUnavailable />}>
-      {address ? (
-        <>
-          <article>
-            <NFT.List address={address} />
-          </article>
-        </>
-      ) : (
-        // Add the placeholders and select one account
-        <HiddenNFTGrid
-          overlay={
-            <span
-              css={css`
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-              `}
-            >
-              <Text.H2>Please Select an Account</Text.H2>
-              <WalletNavConnector />
-            </span>
-          }
-        />
-      )}
+      <article>
+        <NFT.List addresses={address ? [address] : addresses} />
+      </article>
     </ExtensionStatusGate>
   )
 })`

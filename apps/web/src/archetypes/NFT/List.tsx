@@ -3,10 +3,9 @@ import { NFTCard } from '@components/recipes/NFTCard'
 import { WalletNavConnector } from '@components/WalletNavConnector'
 import { css } from '@emotion/react'
 import styled from '@emotion/styled'
-import { useNftsByAddress } from '@libs/@talisman-nft'
-import { NFTData, NFTShort } from '@libs/@talisman-nft/types'
+import { GetNFTData } from '@libs/@talisman-nft'
+import { NFTData } from '@libs/@talisman-nft/types'
 import { device } from '@util/breakpoints'
-import { useEffect } from 'react'
 
 import HiddenNFTGrid from './HiddenNFTGrid'
 
@@ -42,24 +41,10 @@ const ListGrid = styled.div`
   }
 `
 
-const List = ({ address }: { address: string }) => {
-  const { setAddress, nftData } = useNftsByAddress(address)
+const List = ({ addresses }: { addresses: string[] }) => {
+  const { items, isFetching, count } = GetNFTData({ addresses: addresses })
 
-  useEffect(() => {
-    setAddress(address)
-  }, [address, setAddress])
-
-  const filterItemsByAddress = (nftData: NFTData) => {
-    const items = nftData?.items.filter((item: NFTShort) => item.address === address)
-
-    return {
-      ...nftData,
-      count: items.length,
-      items: items,
-    }
-  }
-
-  if (!filterItemsByAddress(nftData).items.length && !nftData.isFetching && !nftData.count)
+  if (!items.length && !isFetching && !count)
     return (
       <HiddenNFTGrid
         overlay={
@@ -82,9 +67,22 @@ const List = ({ address }: { address: string }) => {
       />
     )
 
+  // filter items by address and map listgrid per address
+  // const nfts = items.reduce((acc: any, nft: any) => {
+  //   if (!acc[nft?.address]) acc[nft?.address] = []
+  //   acc[nft?.address].push(nft)
+  //   return acc
+  // }, {})
+
   return (
     <ListGrid>
-      <ListItems nfts={filterItemsByAddress(nftData)} />
+      <ListItems
+        nfts={{
+          items: items,
+          isFetching: isFetching,
+          count: count,
+        }}
+      />
     </ListGrid>
   )
 }

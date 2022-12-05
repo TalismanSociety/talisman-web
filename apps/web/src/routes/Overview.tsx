@@ -7,13 +7,38 @@ import { Search } from '@components/Field'
 import DisplayValue from '@components/molecules/DisplayValue/DisplayValue'
 import Asset, { AssetsList, AssetsListLocked } from '@components/recipes/Asset'
 import { NFTCard } from '@components/recipes/NFTCard'
-import { useState } from 'react'
+import { GetNFTData } from '@libs/@talisman-nft'
+import { useAccountAddresses, useActiveAccount } from '@libs/talisman'
+import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 
 const Overview = () => {
   const [search, setSearch] = useState('')
   const { fiatTotal } = useAssets()
   const { tokens, balances, isLoading } = useAssetsFiltered({ size: 8, search })
+
+  const { address } = useActiveAccount()
+  const addresses = useAccountAddresses()
+
+  // const { items, isFetching, count } = GetNFTData({ addresses: address ? [address] : addresses })
+
+  const nfts = useMemo(() => {
+    // Keeps rerendering when items changes for some reason
+    // Ask Swami / Tien
+
+    // if(!isFetching && !items.length){
+    //   return <Text.Body>No NFTs found</Text.Body>
+    // }
+    // // if still fetching and the items lenght is less than 4, return the loading cards but only display the remainder of items minus 4
+    // if (isFetching && items.length < 4) {
+    //   return Array.from({ length: 4 - items.length }).map((_, index) => <NFTCard loading={true} />)
+    // }
+
+    // return items.slice(0, 4).map((nft: any) => (
+    //   <NFTCard key={nft.id} nft={nft} />
+    // ))
+    return <></>
+  }, [])
 
   return (
     <>
@@ -124,11 +149,7 @@ const Overview = () => {
               },
             }}
           >
-            {/* Array of 4 NFT Cards passinng in fake NFT */}
-            <NFTCard isBlank />
-            <NFTCard isBlank />
-            <NFTCard isBlank />
-            <NFTCard isBlank />
+            {nfts}
           </div>
         </section>
         <Link to="assets">
