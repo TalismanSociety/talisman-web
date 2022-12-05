@@ -77,7 +77,7 @@ const shimmer = keyframes`
 const AssetSkeleton = ({ loading = true }: { loading?: boolean }) => {
   return (
     <tr
-      className="asset"
+      className="asset skeleton"
       css={{
         '.shimmer': {
           animation: loading ? `${shimmer} 1s infinite` : '',

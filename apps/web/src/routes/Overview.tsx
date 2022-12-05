@@ -8,6 +8,7 @@ import DisplayValue from '@components/molecules/DisplayValue/DisplayValue'
 import Asset, { AssetsList, AssetsListLocked } from '@components/recipes/Asset'
 import { NFTCard } from '@components/recipes/NFTCard'
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 
 const Overview = () => {
   const [search, setSearch] = useState('')
@@ -130,23 +131,29 @@ const Overview = () => {
             <NFTCard isBlank />
           </div>
         </section>
-        <Button variant="secondary" css={{ width: 'fit-content' }}>
-          View all Assets
-        </Button>
-        <Button
-          variant="secondary"
-          css={{
-            'width': 'fit-content',
-            'display': 'none',
+        <Link to="assets">
+          <Button variant="secondary" css={{ width: 'fit-content' }}>
+            View all Assets
+          </Button>
+        </Link>
 
-            // mobile
-            '@media (min-width: 1024px)': {
-              display: 'block',
-            },
-          }}
-        >
-          View all NFTs
-        </Button>
+        <Link to="nfts">
+          <Button
+            onClick={() => {}}
+            variant="secondary"
+            css={{
+              'width': 'fit-content',
+              'display': 'none',
+
+              // mobile
+              '@media (min-width: 1024px)': {
+                display: 'block',
+              },
+            }}
+          >
+            View all NFTs
+          </Button>
+        </Link>
       </div>
       <OwnPools />
     </>
