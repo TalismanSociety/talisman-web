@@ -4,7 +4,7 @@ import DisplayValue from '@components/molecules/DisplayValue/DisplayValue'
 import InfoCard from '@components/molecules/InfoCard'
 import Asset, { AssetsList, AssetsListLocked } from '@components/recipes/Asset'
 import styled from '@emotion/styled'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 
 const Assets = () => {
   const [search, setSearch] = useState('')
