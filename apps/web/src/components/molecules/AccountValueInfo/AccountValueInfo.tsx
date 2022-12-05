@@ -2,10 +2,12 @@ import { ReactComponent as AllAccountsIcon } from '@assets/icons/all-accounts.sv
 import Identicon from '@components/atoms/Identicon'
 import Text from '@components/atoms/Text'
 
+import DisplayValue from '../DisplayValue/DisplayValue'
+
 export type AccountValueInfoProps = {
   address: string
   name: string
-  balance: string
+  balance: number
 }
 
 const AccountValueInfo = ({ address, name, balance }: any) => {
@@ -35,7 +37,9 @@ const AccountValueInfo = ({ address, name, balance }: any) => {
         }}
       >
         <Text.Body css={{ fontSize: '1em' }}>{name}</Text.Body>
-        <Text.H3 css={{ margin: '0', fontSize: '2em' }}>{balance}</Text.H3>
+        <Text.H3 css={{ margin: '0', fontSize: '2em' }}>
+          <DisplayValue amount={balance} />
+        </Text.H3>
       </section>
     </section>
   )

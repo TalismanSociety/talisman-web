@@ -15,5 +15,5 @@ export const Default: Story<AccountValueInfoProps> = (args: any) => <AccountValu
 Default.args = {
   address: '0x1234567890123456789012345678901234567890',
   name: 'My Account',
-  balance: '$320,728.44',
+  balance: 320728.44,
 }

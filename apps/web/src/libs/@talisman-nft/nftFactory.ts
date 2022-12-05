@@ -46,6 +46,7 @@ export class NFTFactory extends SubscriptionService<NFTData> {
       count += provider.count
       fetchingArray.push(provider.isFetching)
       items = { ...items, ...provider.items }
+      // || []).filter((item : any) => this.address.includes(item.address)
     })
 
     // fire the CB

@@ -4,6 +4,7 @@ import Button from '@components/atoms/Button'
 // import { ArrowRight } from '@components/atoms/Icon'
 import Text from '@components/atoms/Text'
 import { Search } from '@components/Field'
+import DisplayValue from '@components/molecules/DisplayValue/DisplayValue'
 import Asset, { AssetsList, AssetsListLocked } from '@components/recipes/Asset'
 import { NFTCard } from '@components/recipes/NFTCard'
 import { useState } from 'react'
@@ -66,7 +67,7 @@ const Overview = () => {
                   marginLeft: '1rem',
                 }}
               >
-                {fiatTotal}
+                <DisplayValue amount={fiatTotal} />
               </span>
             </Text.H3>
             <Search

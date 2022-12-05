@@ -24,7 +24,7 @@ function useAddressesByToken(addresses: string[] | null | undefined, tokenIds: T
 type ContextProps = {
   balances: Balances | undefined
   assetsValue: string | null
-  assetsValueTotal: string | null
+  assetsValueTotal: number
   tokenIds: string[]
   tokens: TokenList | any
   chaindata: (ChaindataProvider & { generation?: number | undefined }) | null
@@ -33,7 +33,7 @@ type ContextProps = {
 const Context = createContext<ContextProps>({
   balances: undefined,
   assetsValue: '',
-  assetsValueTotal: '',
+  assetsValueTotal: 0,
   tokenIds: [],
   tokens: [],
   chaindata: null,
@@ -76,15 +76,9 @@ export const Provider = ({ children }: PropsWithChildren) => {
     }) ?? ' -'
 
   const assetsValueTotal =
-    (
-      (balances?.sum.fiat('usd').transferable ?? 0) +
+    (balances?.sum.fiat('usd').transferable ?? 0) +
       (balances?.sum.fiat('usd').locked ?? 0) +
-      (balances?.sum.fiat('usd').reserved ?? 0)
-    ).toLocaleString(undefined, {
-      style: 'currency',
-      currency: 'USD',
-      currencyDisplay: 'narrowSymbol',
-    }) ?? ' -'
+      (balances?.sum.fiat('usd').reserved ?? 0) ?? 0
 
   const value = useMemo(
     () => ({ balances, assetsValue, tokenIds, tokens, chaindata, assetsValueTotal }),

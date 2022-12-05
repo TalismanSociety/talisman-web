@@ -1,15 +1,13 @@
-import { parse } from 'path'
-
 import { useActiveAccount } from '@libs/talisman'
 import { useBalances } from '@libs/talisman'
 import { BalanceFormatter } from '@talismn/balances'
 import { useChaindata, useChains, useEvmNetworks } from '@talismn/balances-react'
 import { formatDecimals } from '@talismn/util'
-import _, { chain, filter } from 'lodash'
+import _ from 'lodash'
 import { useMemo } from 'react'
 
 const FetchAssets = (address: string | undefined) => {
-  const { balances, tokenIds, tokens, assetsValue, assetsValueTotal } = useBalances()
+  const { balances, tokenIds, tokens, assetsValueTotal } = useBalances()
   const chaindata = useChaindata()
 
   const chains = useChains(chaindata)
@@ -21,28 +19,14 @@ const FetchAssets = (address: string | undefined) => {
 
   const fiatTotal =
     address !== undefined
-      ? (
-          (balances?.find({ address: address }).sum.fiat('usd').transferable ?? 0) +
-          (balances?.find({ address: address }).sum.fiat('usd').locked ?? 0)
-        ).toLocaleString(undefined, {
-          style: 'currency',
-          currency: 'USD',
-          currencyDisplay: 'narrowSymbol',
-        }) ?? ' -'
+      ? (balances?.find({ address: address }).sum.fiat('usd').transferable ?? 0) +
+        (balances?.find({ address: address }).sum.fiat('usd').locked ?? 0)
       : assetsValueTotal
 
   const lockedTotal =
     address !== undefined
-      ? (balances?.find({ address: address }).sum.fiat('usd').locked ?? 0).toLocaleString(undefined, {
-          style: 'currency',
-          currency: 'USD',
-          currencyDisplay: 'narrowSymbol',
-        }) ?? ' -'
-      : (balances?.sum.fiat('usd').locked ?? 0).toLocaleString(undefined, {
-          style: 'currency',
-          currency: 'USD',
-          currencyDisplay: 'narrowSymbol',
-        }) ?? ' -'
+      ? balances?.find({ address: address }).sum.fiat('usd').locked ?? 0
+      : balances?.sum.fiat('usd').locked ?? 0
 
   const value = balances?.find({ address: address })?.sum?.fiat('usd').transferable
 
@@ -87,7 +71,7 @@ const FetchAssets = (address: string | undefined) => {
   return { assetBalances, fiatTotal, lockedTotal, value, balances, chains, evmNetworks, isLoading }
 }
 
-const convertToFiatString = (value: any) => {
+export const convertToFiatString = (value: any) => {
   return (
     value.toLocaleString(undefined, {
       style: 'currency',
@@ -106,7 +90,8 @@ const useAssets = (customAddress?: string) => {
   if (!assetBalances)
     return {
       tokens: [],
-      fiatTotal: '0',
+      fiatTotal: 0,
+      lockedTotal: 0,
       balances: undefined,
       value: undefined,
     }
@@ -122,12 +107,19 @@ const useAssets = (customAddress?: string) => {
     if (planckAmount === BigInt('0')) return undefined
     const planckAmountFormatted = formatDecimals(new BalanceFormatter(planckAmount, token.decimals).tokens)
 
-    const fiatAmount = balances?.find({ tokenId: token.id })?.sum.fiat('usd').transferable ?? 0
+    console.log(address)
+
+    const fiatAmount =
+      address !== undefined
+        ? balances?.find([{ address: address, tokenId: token.id }])?.sum.fiat('usd').transferable ?? 0
+        : address === undefined
+        ? balances?.find({ tokenId: token.id })?.sum.fiat('usd').transferable ?? 0
+        : 0
+
     const fiatAmountFormatted = convertToFiatString(fiatAmount)
 
     const lockedAmount = tokenBalances.sorted.reduce((sum, balance) => sum + balance.locked.planck, BigInt('0'))
     const lockedAmountFormatted = formatDecimals(new BalanceFormatter(lockedAmount, token.decimals).tokens)
-
     const lockedFiatAmount = balances?.find({ tokenId: token.id })?.sum.fiat('usd').locked ?? 0
     const lockedFiatAmountFormatted = convertToFiatString(lockedFiatAmount)
 
@@ -212,12 +204,9 @@ const useAssets = (customAddress?: string) => {
         new BalanceFormatter(token.unformattedLockedAmount + ormlLockedAmount, token?.tokenDetails?.decimals).tokens
       )
 
-      const overallLockedFiatAmount = convertToFiatString(
+      const overallLockedFiatAmount =
         token.lockedFiatAmount + token.ormlTokens.reduce((sum, token) => sum + token.lockedFiatAmount, 0)
-      )
-      const overallFiatAmount = convertToFiatString(
-        token.fiatAmount + token.ormlTokens.reduce((sum, token) => sum + token.fiatAmount, 0)
-      )
+      const overallFiatAmount = token.fiatAmount + token.ormlTokens.reduce((sum, token) => sum + token.fiatAmount, 0)
 
       const locked = token.locked || token.ormlTokens.some(token => token.locked)
 

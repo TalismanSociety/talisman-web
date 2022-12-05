@@ -1,23 +1,22 @@
 import { Lock } from '@components/atoms/Icon'
 import Text from '@components/atoms/Text'
+import DisplayValue from '@components/molecules/DisplayValue/DisplayValue'
 import HiddenDetails from '@components/molecules/HiddenDetails'
 import { keyframes, useTheme } from '@emotion/react'
 import styled from '@emotion/styled'
-import { Balance, BalanceFormatter, Balances } from '@talismn/balances'
-import { Token } from '@talismn/chaindata-provider'
-import { formatDecimals } from '@talismn/util'
+import { Balances } from '@talismn/balances'
 import _ from 'lodash'
 import { Children, ReactElement, ReactNode } from 'react'
 
 type AssetBalanceProps = {
   locked?: boolean
   planck: string
-  fiat: string
+  fiat: number
   tooltip?: ReactNode
   symbol: string
 }
 
-const AssetBalance = ({ locked, planck, fiat, tooltip, symbol }: AssetBalanceProps) => {
+const AssetBalance = ({ locked, planck, fiat, symbol }: AssetBalanceProps) => {
   return (
     <div
       css={{
@@ -42,7 +41,7 @@ const AssetBalance = ({ locked, planck, fiat, tooltip, symbol }: AssetBalancePro
             fontSize: '16px',
           }}
         >
-          {planck ? `${planck.toLocaleString()} ${symbol} ` : '- ' + symbol}
+          {planck ? `${planck} ${symbol} ` : '- ' + symbol}
         </Text.Body>
         {locked ? <Lock css={{ width: '16px', height: '16px' }} /> : ''}
       </div>
@@ -53,7 +52,7 @@ const AssetBalance = ({ locked, planck, fiat, tooltip, symbol }: AssetBalancePro
           fontSize: '14px',
         }}
       >
-        {fiat ? `${fiat.toLocaleString()}` : ''}
+        {fiat ? <DisplayValue amount={fiat} /> : ''}
       </Text.Body>
     </div>
   )
@@ -178,6 +177,8 @@ const Asset = Object.assign((props: AssetProps) => {
   const theme = useTheme()
 
   const { token, lockedAsset } = props
+
+  console.log('token', token)
 
   return (
     <tr className="asset">
@@ -368,10 +369,6 @@ export type AssetsListProps = {
 export const AssetsList = (props: AssetsListProps) => {
   const { isLoading } = props
 
-  console.log(props.children)
-
-  const theme = useTheme()
-
   return (
     <HiddenDetails
       overlay={
@@ -417,8 +414,6 @@ export const AssetsList = (props: AssetsListProps) => {
 }
 
 export const AssetsListLocked = (props: AssetsListProps) => {
-  const theme = useTheme()
-
   const { isLoading } = props
 
   return (

@@ -1,9 +1,9 @@
 import useAssets, { useAssetsFiltered } from '@archetypes/Portfolio/Assets'
 import { Search } from '@components/Field'
+import DisplayValue from '@components/molecules/DisplayValue/DisplayValue'
 import InfoCard from '@components/molecules/InfoCard'
 import Asset, { AssetsList, AssetsListLocked } from '@components/recipes/Asset'
 import styled from '@emotion/styled'
-import { useBalances } from '@libs/talisman'
 import { useState } from 'react'
 
 const Assets = () => {
@@ -33,8 +33,12 @@ const Assets = () => {
             gap: '2rem',
           }}
         >
-          <InfoCard headlineText={'Total Portfolio Value'} text={fiatTotal} />
-          <InfoCard headlineText={'Locked'} text={lockedTotal} />
+          <InfoCard
+            headlineText={'Total Portfolio Value'}
+            text={<DisplayValue amount={fiatTotal} />}
+            minWidth={'150px'}
+          />
+          <InfoCard headlineText={'Locked Value'} text={<DisplayValue amount={lockedTotal} />} minWidth={'150px'} />
         </div>
       </section>
       {/* Lower Section */}

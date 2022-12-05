@@ -17,7 +17,6 @@ const ListItems = ({ nfts }: { nfts: NFTData }) => {
     <>
       {items.map((nft: any) => (
         <NFTCard key={nft.id} nft={nft} />
-        // <NFTCard key={nft.id} nft={nft} />
       ))}
 
       {items.length !== count &&
