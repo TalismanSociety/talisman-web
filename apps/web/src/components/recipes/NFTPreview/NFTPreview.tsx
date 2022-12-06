@@ -14,7 +14,7 @@ type NFTPreviewProps = {
   isBlank?: boolean
 }
 
-const NFTPreview = ({ nft, isFull, loading, isBlank = false }: NFTPreviewProps) => {
+const NFTPreview = ({ nft, isFull = false, loading, isBlank = false }: NFTPreviewProps) => {
   const [fetchedType, setFetchedType] = useState<string | undefined>()
   const [isLoading, setIsLoading] = useState<boolean>(false)
 
@@ -116,9 +116,9 @@ const NFTPreview = ({ nft, isFull, loading, isBlank = false }: NFTPreviewProps) 
         'autoplay': true,
         'shadow-intensity': '1',
         'ar-status': 'not-presenting',
-        'auto-rotate': isFull ? false : true,
+        'auto-rotate': isFull ? 'false' : 'true',
         'rotation-per-second': isFull ? '0deg' : '30deg',
-        'cameraControls': isFull ? true : false,
+        ...(isFull ? { 'camera-controls': 'true' } : {}),
       }
       return <model-viewer {...modelProps} />
     case 'loading':

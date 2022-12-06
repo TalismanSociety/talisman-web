@@ -102,8 +102,8 @@ const NftDialog = (props: NftDialogProps) => {
               width: '100%',
             },
             '> *': {
-              width: '50rem',
-              height: '50rem',
+              width: '100%',
+              height: '100%',
               objectFit: 'contain',
             },
           }}

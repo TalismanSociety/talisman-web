@@ -20,25 +20,26 @@ const Overview = () => {
   const { address } = useActiveAccount()
   const addresses = useAccountAddresses()
 
-  // const { items, isFetching, count } = GetNFTData({ addresses: address ? [address] : addresses })
+  const { items, isFetching, count } = GetNFTData({ addresses: address ? [address] : addresses })
 
   const nfts = useMemo(() => {
     // Keeps rerendering when items changes for some reason
     // Ask Swami / Tien
 
-    // if(!isFetching && !items.length){
-    //   return <Text.Body>No NFTs found</Text.Body>
-    // }
-    // // if still fetching and the items lenght is less than 4, return the loading cards but only display the remainder of items minus 4
-    // if (isFetching && items.length < 4) {
-    //   return Array.from({ length: 4 - items.length }).map((_, index) => <NFTCard loading={true} />)
-    // }
+    if (!isFetching && !items.length) {
+      return <Text.Body>No NFTs found</Text.Body>
+    }
+    // if still fetching and the items lenght is less than 4, return the loading cards but only display the remainder of items minus 4
 
-    // return items.slice(0, 4).map((nft: any) => (
-    //   <NFTCard key={nft.id} nft={nft} />
-    // ))
-    return <></>
-  }, [])
+    if (!isFetching && items.length === count) {
+      return items.slice(0, 4).map((nft: any) => <NFTCard key={nft.id} nft={nft} />)
+    }
+
+    // return Array of size 4 with loading cards
+    return Array.from({ length: 4 }).map((_, index) => <NFTCard loading={true} />)
+
+    // return <></>
+  }, [count, isFetching, items])
 
   return (
     <>

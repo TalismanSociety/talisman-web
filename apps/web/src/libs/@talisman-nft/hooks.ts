@@ -30,10 +30,8 @@ export const useNftsByAddresses = (initialAddresses: string[]) => {
   })
 
   useEffect(() => {
-    // if (!address) return
-
     const unsub = nftFactory.subscribe(setNftData)
-    // map
+
     addresses.forEach(address => {
       nftFactory.hydrateNftsByAddress(address)
     })
