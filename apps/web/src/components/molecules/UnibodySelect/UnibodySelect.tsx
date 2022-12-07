@@ -26,22 +26,22 @@ import React, {
 
 type Value = string | number | undefined
 
-export type SelectProps = {
+export type UnibodySelectProps = {
   value?: Value
   placeholder?: ReactNode
   width?: string | number
-  children: ReactElement<SelectItemProps> | ReactElement<SelectItemProps>[]
+  children: ReactElement<UnibodySelectItemProps> | ReactElement<UnibodySelectItemProps>[]
   onChange?: (value: string | undefined) => unknown
 }
 
-type SelectItemProps = {
+type UnibodySelectItemProps = {
   value?: Value
   leadingIcon: ReactNode
   headlineText: ReactNode
   supportingText: ReactNode
 }
 
-const SelectItem = forwardRef<HTMLDivElement, SelectItemProps>((props, ref) => (
+const SelectItem = forwardRef<HTMLDivElement, UnibodySelectItemProps>((props, ref) => (
   <div ref={ref} css={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
     <figure css={{ maxWidth: 40, maxHeight: 40, margin: 0 }}>{props.leadingIcon}</figure>
     <div>
@@ -58,8 +58,8 @@ const SelectItem = forwardRef<HTMLDivElement, SelectItemProps>((props, ref) => (
 // slight overlap for better border radius animation
 const OVERLAP = 6
 
-const Select = Object.assign(
-  ({ width = '30rem', children, ...props }: SelectProps) => {
+const UnibodySelect = Object.assign(
+  ({ width = '30rem', children, ...props }: UnibodySelectProps) => {
     const theme = useTheme()
     const listRef = useRef<HTMLLIElement[]>([])
     const [open, setOpen] = useState(false)
@@ -72,7 +72,7 @@ const Select = Object.assign(
       props.value === undefined
         ? undefined
         : childrenArray
-            .filter((x): x is ReactElement<SelectItemProps> => x as any)
+            .filter((x): x is ReactElement<UnibodySelectItemProps> => x as any)
             .findIndex(x => x.props.value !== undefined && x.props.value.toString() === props.value?.toString())
 
     const selectedChild = selectedIndex === undefined ? undefined : childrenArray[selectedIndex]
@@ -253,4 +253,4 @@ const Select = Object.assign(
   { Item: SelectItem }
 )
 
-export default Select
+export default UnibodySelect

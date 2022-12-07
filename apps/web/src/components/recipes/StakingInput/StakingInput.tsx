@@ -2,8 +2,8 @@ import Button from '@components/atoms/Button'
 import { ChevronRight, Info } from '@components/atoms/Icon'
 import Identicon from '@components/atoms/Identicon'
 import Text from '@components/atoms/Text'
-import Select from '@components/molecules/Select'
 import TextInput, { LabelButton } from '@components/molecules/TextInput'
+import UnibodySelect from '@components/molecules/UnibodySelect'
 import { useTheme } from '@emotion/react'
 import { Maybe } from '@util/monads'
 import { AnimatePresence, AnimationProps, motion } from 'framer-motion'
@@ -52,7 +52,7 @@ const StakingInput = Object.assign(
           padding: '3.2rem',
         }}
       >
-        <Select
+        <UnibodySelect
           width="100%"
           placeholder="Select account"
           value={props.accounts.findIndex(x => x.selected)}
@@ -63,14 +63,14 @@ const StakingInput = Object.assign(
           }
         >
           {props.accounts.map((account, index) => (
-            <Select.Item
+            <UnibodySelect.Item
               value={index}
               leadingIcon={<Identicon value={account.address} size={40} />}
               headlineText={account.name}
               supportingText={account.balance}
             />
           ))}
-        </Select>
+        </UnibodySelect>
         <motion.div
           {...(props.contentAnimation !== undefined
             ? props.contentAnimation
