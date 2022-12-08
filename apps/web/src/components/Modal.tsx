@@ -1,8 +1,8 @@
 import styled from '@emotion/styled'
 import { ReactComponent as IconClose } from '@icons/x.svg'
 import useKeyDown from '@util/useKeyDown'
-import { AnimatePresence, motion } from 'framer-motion'
-import { PropsWithChildren, createContext, useCallback, useContext, useMemo, useState } from 'react'
+import { AnimatePresence } from 'framer-motion'
+import { PropsWithChildren, Suspense, createContext, useCallback, useContext, useMemo, useState } from 'react'
 
 type OpenModalOptions = {
   closable: boolean
@@ -59,15 +59,17 @@ export const Modal = styled(function Modal({ className, closable }: { className?
 
   return (
     <AnimatePresence>
-      {open && (
-        <motion.div className={className} initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-          <div className="modal-click-to-close-background" onClick={closable ? closeModal : undefined} />
-          <div className="modal-content">
-            {closable && <IconClose className="close-icon" onClick={closeModal} />}
-            {content}
+      <Suspense>
+        {open && (
+          <div className={className}>
+            <div className="modal-click-to-close-background" onClick={closable ? closeModal : undefined} />
+            <div className="modal-content">
+              {closable && <IconClose className="close-icon" onClick={closeModal} />}
+              {content}
+            </div>
           </div>
-        </motion.div>
-      )}
+        )}
+      </Suspense>
     </AnimatePresence>
   )
 })`
