@@ -1,3 +1,4 @@
+import CookieBanner from '@archetypes/CookieBanner'
 import DevMenu from '@archetypes/DevMenu'
 import ToastBar from '@components/molecules/ToastBar'
 import { TalismanHandLoader } from '@components/TalismanHandLoader'
@@ -55,6 +56,7 @@ const App: React.FC = () => (
                   <Toaster position="top-right" containerStyle={{ top: '6.4rem' }}>
                     {t => <ToastBar toast={t} />}
                   </Toaster>
+                  <CookieBanner />
                 </Suspense>
               </ThemeProvider>
             </MoonbeamContributors.Provider>
