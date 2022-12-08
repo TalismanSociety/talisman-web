@@ -9,12 +9,14 @@ import { Navigate, Outlet, createBrowserRouter, useLocation } from 'react-router
 import { useRecoilValueLoadable, waitForAll } from 'recoil'
 
 import Layout from '../layout'
+import Assets from './Assets'
 import Buy from './Buy'
 import Explore from './Explore'
 import NFTsPage from './NFTsPage'
+import Overview from './Overview'
+import Portfolio from './Portfolio'
 import Staking from './Staking'
 import TransactionHistory from './TransactionHistory'
-import Wallet from './Wallet'
 
 const Main = () => {
   // Pre-loading
@@ -63,8 +65,16 @@ export default createBrowserRouter([
     element: <Main />,
     children: [
       { path: '/', element: <Navigate to="portfolio" /> },
-      { path: 'portfolio', element: <Wallet /> },
-      { path: 'nfts', element: <NFTsPage /> },
+      {
+        path: 'portfolio',
+        element: <Portfolio />,
+        children: [
+          { path: '', element: <Overview /> },
+          { path: 'assets', element: <Assets /> },
+          { path: 'nfts', element: <NFTsPage /> },
+          { path: 'history', element: <TransactionHistory /> },
+        ],
+      },
       { path: 'explore', element: <Explore /> },
       { path: 'staking', element: <Staking /> },
       { path: 'history', element: <TransactionHistory /> },

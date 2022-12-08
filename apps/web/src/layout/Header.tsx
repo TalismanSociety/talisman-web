@@ -37,7 +37,6 @@ export default function HeaderState(props: any) {
 
 const desktopRoutes = [
   { name: 'Portfolio', path: '/portfolio' },
-  { name: 'NFTs', path: '/nfts' },
   { name: 'Explore', path: '/explore' },
   { name: 'Staking', path: '/staking' },
   // { name: 'Transaction History', path: '/history' },

@@ -1,11 +1,11 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 import { defaultNftFactoryCallbackData } from './config'
 import { NFTFactory } from './nftFactory'
 import { AcalaProvider, EVMProvider, Rmrk1Provider, Rmrk2Provider, StatemineProvider } from './providers'
 import { EVMChains } from './providers/Evm/EVMChains'
 import { NFTInterface } from './providers/NFTInterface'
-import { EVMChain, NFTData, NFTDetail } from './types'
+import { EVMChain, NFTData, NFTDetail, NFTShort } from './types'
 
 // Base providers
 const providers: NFTInterface[] = [
@@ -21,8 +21,8 @@ Object.values(EVMChains).map((chain: EVMChain) => providers.push(new EVMProvider
 
 const nftFactory = new NFTFactory(providers)
 
-export const useNftsByAddress = (initialAddress?: string) => {
-  const [address, setAddress] = useState<string | undefined>(initialAddress)
+export const useNftsByAddresses = (initialAddresses: string[]) => {
+  const [addresses, setAddresses] = useState<string[]>(initialAddresses)
   const [nftData, setNftData] = useState<NFTData>(defaultNftFactoryCallbackData)
 
   useEffect(() => {
@@ -30,15 +30,17 @@ export const useNftsByAddress = (initialAddress?: string) => {
   })
 
   useEffect(() => {
-    if (!address) return
-
     const unsub = nftFactory.subscribe(setNftData)
-    nftFactory.hydrateNftsByAddress(address)
+
+    addresses.forEach(address => {
+      nftFactory.hydrateNftsByAddress(address)
+    })
+
     return unsub
-  }, [address])
+  }, [addresses])
 
   return {
-    setAddress,
+    setAddresses,
     nftData,
   }
 }
@@ -70,6 +72,23 @@ export const useNftById = (id?: string) => {
     loading,
     error,
   }
+}
+
+export const GetNFTData = ({ addresses }: { addresses: string[] }) => {
+  const { setAddresses, nftData } = useNftsByAddresses(addresses)
+
+  useEffect(() => {
+    setAddresses(addresses)
+  }, [addresses, setAddresses])
+
+  return useMemo(() => {
+    const items = nftData?.items.filter((item: NFTShort) => addresses.includes(item.address))
+    return {
+      ...nftData,
+      count: items.length,
+      items: items,
+    }
+  }, [addresses, nftData])
 }
 
 export async function getNFTType(mediaUri: string) {

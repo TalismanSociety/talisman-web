@@ -200,7 +200,7 @@ export const useTransactions = (_addresses: string[], searchQuery?: string) => {
 
 function useTxHistoryApolloClient() {
   return useMemo(() => {
-    const uri = process.env.REACT_APP_TX_HISTORY_INDEXER || 'http://localhost:4350/graphql'
+    const uri = process.env.REACT_APP_TX_HISTORY_INDEXER || 'https://squid.subsquid.io/tx-history/v/v0b/graphql'
 
     return new ApolloClient({
       link: createHttpLink({ uri }),
