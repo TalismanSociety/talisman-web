@@ -177,7 +177,7 @@ const ContributeTo = styled(
               </div>
             </div>
             <div className="switcher-column">
-              <Account.Button narrow showValue showBuy closeParent={closeModal} fixedDropdown />
+              <Account.Button narrow showValue closeParent={closeModal} fixedDropdown />
               <div className="tx-fee">
                 <Pendor suffix={txFee === null ? '-' : null} require={txFee !== undefined}>
                   {txFee ? (
