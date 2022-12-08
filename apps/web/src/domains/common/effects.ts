@@ -4,7 +4,7 @@ export const storageEffect =
   <T>(storage: Storage, keyPrefix: string = ''): AtomEffect<T> =>
   ({ node, setSelf, onSet }) => {
     const key = keyPrefix + node.key
-    const savedValue = storage.getItem(node.key)
+    const savedValue = storage.getItem(key)
 
     if (savedValue !== null) {
       setSelf(JSON.parse(savedValue))

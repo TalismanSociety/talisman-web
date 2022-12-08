@@ -1,5 +1,7 @@
 import { ApolloClient, InMemoryCache, createHttpLink, gql } from '@apollo/client'
 import { encodeAddress } from '@polkadot/util-crypto'
+import { Maybe } from '@util/monads'
+import { isNil } from 'lodash/fp'
 
 import { NFTDetail, NFTShort } from '../../types'
 import { NFTInterface } from '../NFTInterface'
@@ -105,11 +107,11 @@ export class Rmrk1Provider extends NFTInterface {
           thumb,
           type,
           mediaUri,
-          collection: {
-            id: nft?.collection?.id,
-            name: nft?.collection?.name,
-            totalCount: nft?.collection?.max,
-          },
+          collection: Maybe.of(nft?.collection).mapOrUndefined(collection => ({
+            id: collection.id,
+            name: collection.name,
+            totalCount: collection.max,
+          })),
           address,
           provider: this.name,
         } as NFTShort
@@ -154,12 +156,14 @@ export class Rmrk1Provider extends NFTInterface {
           provider: this.name,
           platformUri: this.platformUri + nft?.id,
           attributes: nft?.metadata_properties || [],
-          collection: {
-            id: nft?.collection?.id,
-            name: nft?.collection?.name,
-            totalCount: collectionInfo?.totalNfts,
-            floorPrice: collectionInfo?.floor,
-          },
+          collection: isNil(nft?.collection)
+            ? undefined
+            : {
+                id: nft.collection.id,
+                name: nft.collection.name,
+                totalCount: collectionInfo?.totalNfts,
+                floorPrice: collectionInfo?.floor,
+              },
           tokenCurrency: this.tokenCurrency,
         } as NFTDetail
       })

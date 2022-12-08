@@ -67,11 +67,7 @@ export class EVMProvider extends NFTInterface {
       type: item.type,
       mediaUri: item.mediaUri,
       metadata: item.metadata,
-      collection: {
-        id: item.collection?.id,
-        name: item.collection?.name,
-        totalCount: item.collection?.totalCount,
-      },
+      collection: item.collection,
       address: item.address,
       provider: item?.provider,
       fetchDetail: () => this.fetchDetail(item.id),

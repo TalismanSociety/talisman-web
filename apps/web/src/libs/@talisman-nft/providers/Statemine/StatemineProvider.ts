@@ -1,5 +1,6 @@
 import { ApiPromise, WsProvider } from '@polkadot/api'
 import { encodeAddress } from '@polkadot/util-crypto'
+import { Maybe } from '@util/monads'
 
 import { NFTCategory, NFTDetail, NFTDetailArray, NFTShort } from '../../types'
 import { NFTInterface } from '../NFTInterface'
@@ -88,11 +89,11 @@ export class StatemineProvider extends NFTInterface {
       mediaUri: item.mediaUri,
       metadata: undefined,
       nftSpecificData: undefined,
-      collection: {
-        id: item.collection?.id,
-        totalCount: item.collection?.totalCount,
-        floorPrice: item.collection?.floorPrice,
-      },
+      collection: Maybe.of(item.collection).mapOrUndefined(collection => ({
+        id: collection.id,
+        totalCount: collection.totalCount,
+        floorPrice: collection.floorPrice,
+      })),
       provider: item?.provider,
       address: item?.address,
     } as NFTShort

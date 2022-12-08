@@ -1,6 +1,10 @@
 import { NFTIcon } from '@archetypes/NFT'
 import NftDialog from '@archetypes/NFT/Modal/NftDialog'
+import Button from '@components/atoms/Button'
+import { Eye, EyeOff, Heart } from '@components/atoms/Icon'
 import Text from '@components/atoms/Text'
+import { useNftFavoriteState, useNftHiddenState } from '@domains/nfts/hooks'
+import { useTheme } from '@emotion/react'
 import styled from '@emotion/styled'
 import { NFTDetail } from '@libs/@talisman-nft/types'
 import { useState } from 'react'
@@ -14,6 +18,10 @@ type NFTCardProps = {
 }
 
 const NFTCard = ({ nft, loading, isBlank = false }: NFTCardProps) => {
+  const theme = useTheme()
+  const [favorited, toggleFavorited] = useNftFavoriteState(nft?.address ?? '', nft?.id ?? '')
+  const [hidden, toggleHidden] = useNftHiddenState(nft?.address ?? '', nft?.id ?? '')
+
   const [open, setOpen] = useState(false)
 
   return (
@@ -35,6 +43,46 @@ const NFTCard = ({ nft, loading, isBlank = false }: NFTCardProps) => {
       >
         <UpperSection>
           <NFTPreview nft={nft} loading={loading} isFull={false} isBlank={isBlank} />
+          {!isBlank && !loading && nft !== undefined && (
+            <div
+              className="controls"
+              css={{
+                position: 'absolute',
+                display: 'flex',
+                justifyContent: 'flex-end',
+                padding: '1rem',
+                gap: '0.4rem',
+              }}
+            >
+              <div className="hidden">
+                <Button
+                  variant="secondary"
+                  css={{ padding: '1.5rem' }}
+                  onClick={(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+                    event.stopPropagation()
+                    toggleHidden()
+                  }}
+                >
+                  {hidden ? <Eye /> : <EyeOff />}
+                </Button>
+              </div>
+              <div className="favorite" style={{ display: favorited ? 'block' : undefined }}>
+                <Button
+                  variant="secondary"
+                  css={{ padding: '1.5rem' }}
+                  onClick={(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+                    event.stopPropagation()
+                    toggleFavorited()
+                  }}
+                >
+                  <Heart
+                    fill={favorited ? theme.color.primary : 'transparent'}
+                    stroke={favorited ? theme.color.primary : 'currentColor'}
+                  />
+                </Button>
+              </div>
+            </div>
+          )}
         </UpperSection>
         <LowerSection>
           {(isBlank || loading) && !nft ? (
@@ -81,10 +129,17 @@ const Card = styled.div`
 
   transition: all 0.2s ease-in-out;
 
+  .controls > * {
+    display: none;
+  }
+
   :hover {
     box-shadow: 0 0 0 1.2px rgb(90, 90, 90);
     transform: scale(1.01);
     transition: all 0.1s ease-in-out;
+    .controls > * {
+      display: initial;
+    }
   }
 `
 

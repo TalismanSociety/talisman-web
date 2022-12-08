@@ -17,7 +17,7 @@ type PolymorphicButtonProps<T extends ButtonElementType> = {
 export type ButtonProps<T extends ButtonElementType> = PolymorphicButtonProps<T> &
   Omit<React.ComponentPropsWithoutRef<T>, keyof PolymorphicButtonProps<T>>
 
-const Button = <T extends ButtonElementType>({ as = 'button' as T, variant, ...props }: ButtonProps<T>) => {
+const Button = <T extends ButtonElementType = 'button'>({ as, variant, ...props }: ButtonProps<T>) => {
   const theme = useTheme()
 
   const disabled = props.disabled || props.hidden || props.loading
@@ -78,7 +78,7 @@ const Button = <T extends ButtonElementType>({ as = 'button' as T, variant, ...p
     }
   }, [theme.color.foreground, theme.contentAlpha.disabled, variant])
 
-  const Component = as
+  const Component = as ?? 'button'
 
   return (
     <Component

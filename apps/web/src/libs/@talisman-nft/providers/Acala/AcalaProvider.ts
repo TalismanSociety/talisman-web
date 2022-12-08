@@ -2,6 +2,7 @@ import '@acala-network/types'
 
 import { ApiPromise, WsProvider } from '@polkadot/api'
 import { encodeAddress } from '@polkadot/util-crypto'
+import { Maybe } from '@util/monads'
 
 import { NFTCategory, NFTDetail, NFTDetailArray, NFTShort } from '../../types'
 import { NFTInterface } from '../NFTInterface'
@@ -100,11 +101,7 @@ export class AcalaProvider extends NFTInterface {
       mediaUri: item.mediaUri,
       metadata: undefined,
       nftSpecificData: undefined,
-      collection: {
-        id: item.collection?.id,
-        totalCount: item.collection?.totalCount,
-        floorPrice: item.collection?.floorPrice,
-      },
+      collection: item.collection,
       provider: item?.provider,
       address: item?.address,
     } as NFTShort
@@ -173,11 +170,7 @@ export class AcalaProvider extends NFTInterface {
               provider: this.name,
               platformUri: `${this.platformUri}`,
               attributes: {},
-              collection: {
-                id: tokenDetails.collectionId,
-                totalCount: null,
-                floorPrice: null,
-              },
+              collection: Maybe.of(tokenDetails).mapOrUndefined(x => ({ id: x.collectionId })),
               nftSpecificData: null,
               tokenCurrency: this.tokenCurrency,
               address,

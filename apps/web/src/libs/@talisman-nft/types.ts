@@ -11,8 +11,8 @@ export type NFTCategory =
 
 type NFTAttributes = Record<string, any>
 
-type NFTCollectionDetails = {
-  id?: string
+export type NFTCollectionDetails = {
+  id: string
   name?: string
   totalCount?: number
   floorPrice?: string
@@ -26,7 +26,7 @@ export type NFTShort = {
   metadata: string | undefined
   mediaUri: string // PDF
   provider: string
-  collection: NFTCollectionDetails
+  collection?: NFTCollectionDetails
   address: string
   fetchDetail: () => Promise<NFTDetail>
   nftSpecificData: any
