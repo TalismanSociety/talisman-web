@@ -1,67 +1,11 @@
-import {
-  ApolloClient,
-  ApolloQueryResult,
-  InMemoryCache,
-  NormalizedCacheObject,
-  createHttpLink,
-  gql,
-} from '@apollo/client'
 import { useChain } from '@talismn/api-react-hooks'
 import { find } from 'lodash'
-import { PropsWithChildren, useContext as _useContext, createContext, useEffect, useMemo, useState } from 'react'
+import { PropsWithChildren, useContext as _useContext, createContext, useMemo } from 'react'
 
 import type { ParachainDetails } from './util/_config'
-import { SupportedRelaychains, parachainDetails } from './util/_config'
+import { parachainDetails } from './util/_config'
 
 export type { ParachainDetails } from './util/_config'
-
-//
-// Constants
-//
-
-const AllParachains = gql`
-  {
-    parachains(orderBy: ID_ASC) {
-      totalCount
-      nodes {
-        paraId
-        manager
-        deposit
-        leases {
-          totalCount
-        }
-      }
-    }
-  }
-`
-
-// TODO: Add parachain leases
-// const AllParachainLeases = gql`
-//   {
-//     parachainLeases {
-//       totalCount
-//       nodes {
-//         paraId
-//         leaseRange
-//         firstLease
-//         lastLease
-//         winningAmount
-//         extraAmount
-//         wonBidFrom
-//         numBlockWon
-//         winningResultBlock
-//         hasWon
-//         parachain {
-//           id
-//         }
-//       }
-//     }
-//   }
-// `
-
-//
-// Hooks (exported)
-//
 
 export const useParachainsDetails = () => useContext()
 export const useParachainsDetailsIndexedById = () => {
@@ -132,65 +76,12 @@ function useContext() {
 //
 
 export const Provider = ({ children }: PropsWithChildren) => {
-  const [parachainResults, setParachainResults] = useState<Array<[number, ApolloQueryResult<any> | null]>>([])
-  useEffect(() => {
-    // create an apollo client for each relaychain
-    const relayChainClients = Object.values(SupportedRelaychains).map(
-      ({ id, subqueryCrowdloansEndpoint }) =>
-        [
-          id,
-          new ApolloClient({
-            link: createHttpLink({ uri: subqueryCrowdloansEndpoint }),
-            cache: new InMemoryCache(),
-            headers: {
-              'Content-Type': 'application/json',
-              'Access-Control-Allow-Origin': '*',
-              'Access-Control-Allow-Credentials': 'true',
-            },
-          }),
-        ] as [number, ApolloClient<NormalizedCacheObject>]
-    )
-
-    // query parachains on each relay chain
-    const relayChainParachains = relayChainClients.map(([_id, client]) => client.query({ query: AllParachains }))
-
-    // extract results and store in state with relayChainId
-    Promise.allSettled(relayChainParachains).then(results =>
-      setParachainResults(
-        results.map((result, resultIndex) => [
-          relayChainClients[resultIndex]?.[0]!, // relayChainId
-          result.status === 'fulfilled' ? result.value : null, // result data
-        ])
-      )
-    )
-  }, [])
-
-  // TODO: Separate parachainDetails from parachains
-  // parachainDetails should come from chaindata, parachains should come from subquery
-  const [parachains, setParachains] = useState<ParachainDetails[]>([])
-  useEffect(() => {
-    setParachains(
-      parachainResults.flatMap(([relayChainId, result]) =>
-        (result?.data?.parachains?.nodes || [])
-          .map(({ paraId: id }: { paraId?: number }) => ({ paraId: `${relayChainId}-${id}` }))
-          .map(({ paraId: id }: { paraId?: number }) => find(parachainDetails, { id }))
-          .filter(Boolean)
-          .map((parachain: any) => ({ ...parachain, relayChainId }))
-      )
-    )
-  }, [parachainResults])
-
-  const [hydrated, setHydrated] = useState(false)
-  useEffect(() => {
-    setHydrated(parachainResults.length > 0)
-  }, [parachainResults])
-
   const value = useMemo(
     () => ({
-      parachains,
-      hydrated,
+      parachains: parachainDetails,
+      hydrated: true,
     }),
-    [parachains, hydrated]
+    []
   )
 
   return <Context.Provider value={value}>{children}</Context.Provider>

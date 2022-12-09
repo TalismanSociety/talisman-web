@@ -6,7 +6,6 @@ import DevMenu from '@archetypes/DevMenu'
 import ToastBar from '@components/molecules/ToastBar'
 import { TalismanHandLoader } from '@components/TalismanHandLoader'
 import { AccountsWatcher } from '@domains/accounts/recoils'
-import * as Crowdloans from '@libs/crowdloans'
 import * as MoonbeamContributors from '@libs/moonbeam-contributors'
 import * as Portfolio from '@libs/portfolio'
 import TalismanProvider from '@libs/talisman'
@@ -50,20 +49,18 @@ const App: React.FC = () => (
       <Tokenprices.Provider>
         <TalismanProvider>
           <AccountsWatcher />
-          <Crowdloans.Provider>
-            <MoonbeamContributors.Provider>
-              <ThemeProvider>
-                <DevMenu />
-                <Suspense fallback={<Loader />}>
-                  <RouterProvider router={router} />
-                  <Toaster position="top-right" containerStyle={{ top: '6.4rem' }}>
-                    {t => <ToastBar toast={t} />}
-                  </Toaster>
-                  <CookieBanner />
-                </Suspense>
-              </ThemeProvider>
-            </MoonbeamContributors.Provider>
-          </Crowdloans.Provider>
+          <MoonbeamContributors.Provider>
+            <ThemeProvider>
+              <DevMenu />
+              <Suspense fallback={<Loader />}>
+                <RouterProvider router={router} />
+                <Toaster position="top-right" containerStyle={{ top: '6.4rem' }}>
+                  {t => <ToastBar toast={t} />}
+                </Toaster>
+                <CookieBanner />
+              </Suspense>
+            </ThemeProvider>
+          </MoonbeamContributors.Provider>
         </TalismanProvider>
       </Tokenprices.Provider>
     </Portfolio.Provider>
