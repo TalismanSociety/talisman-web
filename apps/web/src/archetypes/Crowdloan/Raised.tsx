@@ -1,17 +1,16 @@
-import { ReactComponent as CheckCircleIcon } from '@assets/icons/check-circle.svg'
 import { Pendor, ProgressBar, Stat } from '@components'
 import styled from '@emotion/styled'
-import { getTotalContributionForCrowdloan, useCrowdloanContributions } from '@libs/crowdloans'
-import { useAccountAddresses, useCrowdloanById } from '@libs/talisman'
+import { useCrowdloanById } from '@libs/talisman'
 import { shortNumber } from '@util/helpers'
 import { useTranslation } from 'react-i18next'
 
 const Raised = styled(({ id, title, className }: { id: string; title?: string; className?: string }) => {
   const { crowdloan: { percentRaised, raised, cap, uiStatus } = {} } = useCrowdloanById(id)
   const { t } = useTranslation()
-  const accounts = useAccountAddresses()
-  const myContributions = useCrowdloanContributions({ accounts, crowdloans: id ? [id] : undefined })
-  const totalContribution = getTotalContributionForCrowdloan(id, myContributions.contributions)
+
+  // const accounts = useAccountAddresses()
+  // const myContributions = useCrowdloanContributions({ accounts, crowdloans: id ? [id] : undefined })
+  // const totalContribution = getTotalContributionForCrowdloan(id, myContributions.contributions)
 
   const suffix = (id || '').startsWith('0-') ? ' DOT' : ' KSM'
 
@@ -20,11 +19,11 @@ const Raised = styled(({ id, title, className }: { id: string; title?: string; c
       <div className="top">
         <span>{uiStatus === 'capped' ? `${t('Goal reached')} ✓` : title}</span>
         <span>
-          {!!totalContribution && (
+          {/* {!!totalContribution && (
             <>
               <CheckCircleIcon /> {t('Contributed')}
             </>
-          )}
+          )} */}
         </span>
       </div>
 
