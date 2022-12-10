@@ -48,6 +48,7 @@ const ListItems = ({ nfts, collectionId, isFetching }: ListItemProps) => {
 const ListGrid = styled.div`
   display: grid;
   gap: 2rem;
+  overflow-anchor: none;
   @media ${device.md} {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
