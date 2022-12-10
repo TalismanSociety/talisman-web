@@ -38,6 +38,7 @@ export type SelectProps = {
 
 type SelectItemProps = PropsWithChildren<{
   value?: Value
+  bottomBordered?: boolean
 }>
 
 const SelectItem = forwardRef<HTMLSpanElement, SelectItemProps>((props, ref) => (
@@ -209,7 +210,13 @@ const Select = Object.assign(
               }}
               tabIndex={!open ? -1 : index === activeIndex ? 0 : 1}
               aria-selected={index === activeIndex}
-              css={{ cursor: 'pointer' }}
+              css={[
+                { cursor: 'pointer' },
+                child.props.bottomBordered &&
+                  index < React.Children.count(children) - 1 && {
+                    borderBottom: `solid 1px ${theme.color.foregroundVariant}`,
+                  },
+              ]}
               {...getItemProps({
                 onClick: () => select(child.props.value),
                 onKeyDown: event => {

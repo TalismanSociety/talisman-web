@@ -1,4 +1,4 @@
-import { Copy } from '@components/atoms/Icon'
+import { Copy, EyeOff, Heart, Image } from '@components/atoms/Icon'
 import Identicon from '@components/atoms/Identicon'
 import Text from '@components/atoms/Text'
 import { CopyButton } from '@components/CopyButton'
@@ -65,11 +65,40 @@ const List = ({ addresses }: { addresses: string[] }) => {
 
   const { items, isFetching, count } = GetNFTData({ addresses: addresses })
 
-  const specialCollections = ['All collection', '❤️ Favorites', 'Hidden'] as const
+  const specialCollections = useMemo(
+    () =>
+      [
+        {
+          id: 'all',
+          element: (
+            <Text.Body css={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
+              <Image width="1.6rem" height="1.6rem" /> All collections
+            </Text.Body>
+          ),
+        },
+        {
+          id: 'favorites',
+          element: (
+            <Text.Body css={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
+              <Heart width="1.6rem" height="1.6rem" /> Favorites
+            </Text.Body>
+          ),
+        },
+        {
+          id: 'hidden',
+          element: (
+            <Text.Body css={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
+              <EyeOff width="1.6rem" height="1.6rem" /> Hidden
+            </Text.Body>
+          ),
+        },
+      ] as const,
+    []
+  )
 
   const [selectedCollection, setSelectedCollection] = useState<
-    typeof specialCollections[number] | NFTCollectionDetails
-  >('All collection')
+    typeof specialCollections[number]['id'] | NFTCollectionDetails
+  >('all')
   const selectedCollectionValue = typeof selectedCollection === 'string' ? selectedCollection : selectedCollection.id
 
   const collections = useMemo(
@@ -85,15 +114,15 @@ const List = ({ addresses }: { addresses: string[] }) => {
   )
 
   const filteredItems = useMemo(() => {
-    if (selectedCollection === 'All collection') {
+    if (selectedCollection === 'all') {
       return items.filter(item => !isHidden(item.address, item.id))
     }
 
-    if (selectedCollection === '❤️ Favorites') {
+    if (selectedCollection === 'favorites') {
       return items.filter(item => isFavorite(item.address, item.id))
     }
 
-    if (selectedCollection === 'Hidden') {
+    if (selectedCollection === 'hidden') {
       return items.filter(item => isHidden(item.address, item.id))
     }
 
@@ -161,14 +190,14 @@ const List = ({ addresses }: { addresses: string[] }) => {
         value={selectedCollectionValue}
         onChange={id =>
           setSelectedCollection(
-            collections.find(c => c.id === id) ?? specialCollections.find(x => x === id) ?? 'All collection'
+            collections.find(c => c.id === id) ?? specialCollections.find(x => x.id === id)?.id ?? 'all'
           )
         }
       >
         {[
-          ...specialCollections.map(x => (
-            <Select.Item key={x} value={x}>
-              <Text.Body alpha="high">{x}</Text.Body>
+          ...specialCollections.map((x, index, array) => (
+            <Select.Item key={x.id} value={x.id} bottomBordered={index === array.length - 1}>
+              {x.element}
             </Select.Item>
           )),
           ...collections.map(x => (
