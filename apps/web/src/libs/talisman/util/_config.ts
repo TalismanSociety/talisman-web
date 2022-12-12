@@ -2753,3 +2753,54 @@ export const crowdloanDetails: CrowdloanDetails[] = [
   //   },
   // },
 ]
+
+// We use the slug field from the parachainDetails list above for the crowdloan page url.
+// We also use the slug field to fetch chain assets from chaindata v3.
+//
+// However, some of the slugs don't match up with the chain id used in chaindata.
+//
+// For the slugs which don't match up, we want to keep the same crowdloan page url we have
+// always used, but also fetch the chain assets using the new id.
+//
+// This map lets us do just that, by mapping the parachainDetails.slug field to a chaindata v3 id.
+//
+// If a chain is not in this map, that means that the slug is the same as its id and can
+// therefore be used directly for asset lookups.
+//
+// Format:
+//     { [slug] -> chaindataId }
+//
+// Example usage:
+//     const parachain = parachainDetails.find(item => item.id === '0-2015')
+//     const v3Id = parachain ? legacySlugMap[parachain.slug] ?? parachain.slug : undefined
+export const legacySlugMap: Record<string, string> = {
+  'darwinia': 'darwinia-polkadot',
+  'equilibrium': 'equilibrium-polkadot',
+  'Kico': 'kico',
+  'ares-protocol': 'ares-odyssey',
+  'bajun-network': 'bajun',
+  'bifrost': 'bifrost-polkadot',
+  'bit-country-pioneer': 'bitcountry-pioneer',
+  'centrifuge': 'centrifuge-polkadot',
+  'crust-shadow': 'crust',
+  'darwinia-crab': 'crab-kusama',
+  'efinity': 'efinity-polkadot',
+  'genshiro': 'genshiro-kusama',
+  'gm-parachain': 'gm',
+  'hydradx': 'hydra',
+  'integritee-network': 'integritee-polkadot',
+  'integriteeshell': 'integritee-polkadot',
+  'khala-network': 'khala',
+  'kintsugi-btc': 'kintsugi',
+  'nodle': 'nodle-polkadot',
+  'parallel-heiko': 'parallel',
+  'phala-network': 'phala',
+  'polkadex': 'polkadex-polkadot',
+  'polkasmith-by-polkafoundry': 'polkasmith',
+  'robonomics': 'robonomics-kusama',
+  'shiden': 'shiden-kusama',
+  'sora-kusama': 'sora-ksm',
+  'subgame-gamma': 'subgame-polkadot',
+  'subgame-network': 'subgame-polkadot',
+  'subsocial': 'subsocial',
+}
