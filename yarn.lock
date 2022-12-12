@@ -7257,7 +7257,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@talismn/chaindata-provider@npm:^0.1.4, @talismn/chaindata-provider@npm:^0.1.9":
+"@talismn/chaindata-provider@npm:^0.1.9":
   version: 0.1.9
   resolution: "@talismn/chaindata-provider@npm:0.1.9"
   checksum: d67571a6df6a30a46e731acd5448b7b4afda53c91774f48c47d4b331a8b8415aa1424e96dbc836b0e9c1c21223a4ca29beed76eba5c1771fd639a5813ceb323a
@@ -7394,8 +7394,6 @@ __metadata:
     "@talismn/balances-react": ^0.1.16
     "@talismn/balances-substrate-native": ^0.1.16
     "@talismn/balances-substrate-orml": ^0.1.16
-    "@talismn/chaindata-js": ~0
-    "@talismn/chaindata-provider": ^0.1.4
     "@talismn/connect-components": ^1.1.4
     "@talismn/connect-ui": ^1.1.0
     "@talismn/connect-wallets": ^1.2.1

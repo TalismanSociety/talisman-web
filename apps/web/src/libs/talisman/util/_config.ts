@@ -1807,6 +1807,15 @@ export const crowdloanDetails: CrowdloanDetails[] = [
     },
   },
   {
+    relayId: 0,
+    paraId: 2093,
+    rewards: {
+      tokens: null,
+      custom: [],
+      info: null,
+    },
+  },
+  {
     relayId: 2,
     paraId: 2000,
     contributeUrl: 'https://acala.network/karura/join-karura',

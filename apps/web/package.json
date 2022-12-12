@@ -35,8 +35,6 @@
     "@talismn/balances-react": "^0.1.16",
     "@talismn/balances-substrate-native": "^0.1.16",
     "@talismn/balances-substrate-orml": "^0.1.16",
-    "@talismn/chaindata-js": "~0",
-    "@talismn/chaindata-provider": "^0.1.4",
     "@talismn/connect-components": "^1.1.4",
     "@talismn/connect-ui": "^1.1.0",
     "@talismn/connect-wallets": "^1.2.1",
