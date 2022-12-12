@@ -251,7 +251,7 @@ const Overview = () => {
         ) : (
           <div />
         )}
-        {items.length > 4 ? (
+        {items.length > 4 && !isFetching ? (
           <Link to="nfts">
             <Button
               onClick={() => {}}
