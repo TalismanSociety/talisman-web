@@ -9,7 +9,7 @@ import Bonus from './Bonus'
 import Countdown from './Countdown'
 import Raised from './Raised'
 
-const Teaser = styled(({ id, className }: { id: string; className?: string }) => {
+const Teaser = styled(({ id, contributed, className }: { id: string; contributed?: boolean; className?: string }) => {
   const { t } = useTranslation()
   const { crowdloan } = useCrowdloanById(id)
   const parachainId = crowdloan?.parachain?.paraId
@@ -24,7 +24,7 @@ const Teaser = styled(({ id, className }: { id: string; className?: string }) =>
           <Bonus short id={id} prefix={<Parachain.Asset id={parachainId ?? ''} type="logo" />} />
         </div>
         <h1>{parachainDetails?.name}</h1>
-        <Raised id={id} title={t('Raised')} />
+        <Raised id={id} title={t('Raised')} contributed={contributed} />
       </div>
 
       <Pill className="countdown">

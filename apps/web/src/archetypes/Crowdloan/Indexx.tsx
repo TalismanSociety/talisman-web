@@ -1,6 +1,7 @@
 import { Crowdloan } from '@archetypes'
 import { Await, Field, Grid, NoResults } from '@components'
 import styled from '@emotion/styled'
+import { useCrowdloanContributions } from '@libs/crowdloans'
 import { trackGoal } from '@libs/fathom'
 import { device } from '@util/breakpoints'
 import { useTranslation } from 'react-i18next'
@@ -88,6 +89,7 @@ const FilterBar = styled(
 const Index = styled(({ withFilter, className }: { withFilter: boolean; className?: string }) => {
   const { t } = useTranslation()
   const { crowdloans, count, loading, filterProps } = Crowdloan.useFilter()
+  const { contributions } = useCrowdloanContributions()
 
   return (
     <div className={`crowdloan-index ${className}`}>
@@ -103,7 +105,7 @@ const Index = styled(({ withFilter, className }: { withFilter: boolean; classNam
         >
           <Grid>
             {crowdloans.map(({ id }) => (
-              <Crowdloan.Teaser key={id} id={id} />
+              <Crowdloan.Teaser key={id} id={id} contributed={contributions.find(x => x.id === id) !== undefined} />
             ))}
           </Grid>
         </NoResults>

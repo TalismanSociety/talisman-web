@@ -111,6 +111,28 @@ export const apiState = selector({
   },
   dangerouslyAllowMutability: true,
 })
+
+// TODO: this hasn't been thought through, right now is a dirty hack for concurrent chain access
+// need to rethink how we want to tackle this
+export const chainApiState = selectorFamily({
+  key: 'ChainApi',
+  get:
+    (id: ChainId) =>
+    ({ get }) => {
+      const allChains = get(chainsState)
+      const chain = allChains.find(x => x.id === id)
+
+      if (chain === undefined) {
+        throw new Error(`Can't find chain with id: ${id}`)
+      }
+
+      return ApiPromise.create({
+        provider: new WsProvider(chain.rpcs.find(x => x.isHealthy)?.url ?? chain.rpcs[0]?.url),
+      })
+    },
+  dangerouslyAllowMutability: true,
+})
+
 export const nativeTokenDecimalState = selector({
   key: 'NativeTokenDecimal',
   get: ({ get }) => {

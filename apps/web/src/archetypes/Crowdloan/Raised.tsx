@@ -1,48 +1,57 @@
 import { Pendor, ProgressBar, Stat } from '@components'
+import { CheckCircle } from '@components/atoms/Icon'
 import styled from '@emotion/styled'
 import { useCrowdloanById } from '@libs/talisman'
 import { shortNumber } from '@util/helpers'
 import { useTranslation } from 'react-i18next'
 
-const Raised = styled(({ id, title, className }: { id: string; title?: string; className?: string }) => {
-  const { crowdloan: { percentRaised, raised, cap, uiStatus } = {} } = useCrowdloanById(id)
-  const { t } = useTranslation()
+const Raised = styled(
+  ({
+    id,
+    title,
+    contributed,
+    className,
+  }: {
+    id: string
+    title?: string
+    contributed?: boolean
+    className?: string
+  }) => {
+    const { crowdloan: { percentRaised, raised, cap, uiStatus } = {} } = useCrowdloanById(id)
+    const { t } = useTranslation()
 
-  // const accounts = useAccountAddresses()
-  // const myContributions = useCrowdloanContributions({ accounts, crowdloans: id ? [id] : undefined })
-  // const totalContribution = getTotalContributionForCrowdloan(id, myContributions.contributions)
+    const suffix = (id || '').startsWith('0-') ? ' DOT' : ' KSM'
 
-  const suffix = (id || '').startsWith('0-') ? ' DOT' : ' KSM'
+    return (
+      <div className={`crowdloan-raised ${className}`} data-status={uiStatus?.toLowerCase()}>
+        <div className="top">
+          <span>{uiStatus === 'capped' ? `${t('Goal reached')} ✓` : title}</span>
+          <span>
+            {contributed && (
+              <>
+                <CheckCircle /> {t('Contributed')}
+              </>
+            )}
+          </span>
+        </div>
 
-  return (
-    <div className={`crowdloan-raised ${className}`} data-status={uiStatus?.toLowerCase()}>
-      <div className="top">
-        <span>{uiStatus === 'capped' ? `${t('Goal reached')} ✓` : title}</span>
-        <span>
-          {/* {!!totalContribution && (
-            <>
-              <CheckCircleIcon /> {t('Contributed')}
-            </>
-          )} */}
-        </span>
-      </div>
+        <ProgressBar percent={percentRaised} />
 
-      <ProgressBar percent={percentRaised} />
-
-      <Stat
-        title={
-          <Pendor suffix={suffix} require={raised !== undefined && cap !== undefined}>
-            {shortNumber(raised ?? 0)} / {shortNumber(cap ?? 0)}
+        <Stat
+          title={
+            <Pendor suffix={suffix} require={raised !== undefined && cap !== undefined}>
+              {shortNumber(raised ?? 0)} / {shortNumber(cap ?? 0)}
+            </Pendor>
+          }
+        >
+          <Pendor suffix="%" require={percentRaised !== undefined}>
+            {percentRaised?.toFixed(2)}
           </Pendor>
-        }
-      >
-        <Pendor suffix="%" require={percentRaised !== undefined}>
-          {percentRaised?.toFixed(2)}
-        </Pendor>
-      </Stat>
-    </div>
-  )
-})`
+        </Stat>
+      </div>
+    )
+  }
+)`
   .top {
     display: flex;
     align-items: center;

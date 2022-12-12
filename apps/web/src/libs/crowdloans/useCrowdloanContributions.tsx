@@ -1,12 +1,12 @@
 import { polkadotAccountsState } from '@domains/accounts/recoils'
+import { chainApiState } from '@domains/chains/recoils'
 import { SupportedRelaychains } from '@libs/talisman/util/_config'
-import { ApiPromise, WsProvider } from '@polkadot/api'
 import { u8aToHex } from '@polkadot/util'
 import { decodeAddress } from '@polkadot/util-crypto'
 import { Maybe } from '@util/monads'
 import BigNumber from 'bignumber.js'
 import { useEffect, useState } from 'react'
-import { useRecoilValue } from 'recoil'
+import { useRecoilValue, useRecoilValueLoadable, waitForAll } from 'recoil'
 
 export type CrowdloanContribution = {
   id: string
@@ -27,6 +27,9 @@ export function useCrowdloanContributions({
   contributions: CrowdloanContribution[]
   hydrated: boolean
 } {
+  // TODO: clean me or kill me
+  const apiLoadable = useRecoilValueLoadable(waitForAll([chainApiState('polkadot'), chainApiState('kusama')]))
+
   const allAccounts = useRecoilValue(polkadotAccountsState)
   const [contributions, setContributions] = useState<CrowdloanContribution[]>([])
   const [hydrated, setHydrated] = useState(false)
@@ -37,7 +40,8 @@ export function useCrowdloanContributions({
         setHydrated(false)
         const results = await Promise.all(
           Object.values(SupportedRelaychains).map(async relayChain => {
-            const api = await ApiPromise.create({ provider: new WsProvider(relayChain.rpc) })
+            const apis = await apiLoadable.toPromise()
+            const api = relayChain.id === 0 ? apis[0] : apis[1]
 
             const paraIds =
               crowdloans?.map(x => Maybe.of(x.split('-')[1]).mapOr(0, x => parseInt(x))) ??

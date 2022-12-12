@@ -2,6 +2,7 @@ import { Crowdloan, Parachain } from '@archetypes'
 import { Panel, PanelSection, Poster, useModal } from '@components'
 import Button from '@components/atoms/Button'
 import styled from '@emotion/styled'
+import { useCrowdloanContributions } from '@libs/crowdloans'
 import { useCrowdloanByParachainId, useParachainAssets, useParachainDetailsBySlug } from '@libs/talisman'
 import { useTranslation } from 'react-i18next'
 import { useParams } from 'react-router-dom'
@@ -14,6 +15,7 @@ const CrowdloanDetail = styled(({ className }: { className?: string }) => {
   const { banner } = useParachainAssets(parachainDetails?.id)
 
   const { crowdloan: { id, uiStatus } = {} } = useCrowdloanByParachainId(parachainDetails?.id)
+  const { contributions } = useCrowdloanContributions()
 
   const { openModal } = useModal()
 
@@ -35,7 +37,7 @@ const CrowdloanDetail = styled(({ className }: { className?: string }) => {
         <aside>
           <Panel>
             <PanelSection title={t('Raised')}>
-              <Crowdloan.Raised id={id ?? ''} />
+              <Crowdloan.Raised id={id ?? ''} contributed={contributions.find(x => x.id === id) !== undefined} />
             </PanelSection>
             <PanelSection title={t('Ends in')}>
               <Crowdloan.Countdown id={id} />
