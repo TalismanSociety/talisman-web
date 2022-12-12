@@ -10,7 +10,7 @@ import Unstakings from './Unstakings'
 import ValidatorStakings from './ValidatorStakings'
 import ValidatorUnstakings from './ValidatorUnstakings'
 
-const OwnPools = () => {
+const UnstakingHeader = () => {
   const accounts = useRecoilValue(selectedPolkadotAccountsState)
 
   const poolMembersLoadable = useChainState(
@@ -29,63 +29,69 @@ const OwnPools = () => {
     poolMembersLoadable.valueMaybe()?.some(x => x.unwrapOrDefault().unbondingEras.size > 0) ||
     stakingsLoadable.valueMaybe()?.some(x => !x.redeemable?.isZero() || (x.unlocking?.length ?? 0) > 0)
 
+  if (!hasUnstakings) {
+    return null
+  }
+
   return (
-    <div id="staking">
-      <Suspense
-        fallback={
-          <div>
-            <header>
-              <Text.H4 css={{ marginBottom: '2.4rem' }}>Staking</Text.H4>
-            </header>
-            <PoolStakeList>
-              <PoolStake.Skeleton />
-              <PoolStake.Skeleton />
-              <PoolStake.Skeleton />
-            </PoolStakeList>
-          </div>
-        }
-      >
-        <div>
-          <header>
-            <Text.H4 css={{ marginBottom: '1.6rem' }}>Staking</Text.H4>
-          </header>
-          <div
-            css={{
-              'display': 'flex',
-              'flexDirection': 'column',
-              'gap': '2.8rem',
-              '> *:empty': {
-                display: 'none',
-              },
-            }}
-          >
-            <ValidatorStakings />
-            <Stakings />
-          </div>
-        </div>
-        <div>
-          {hasUnstakings && (
-            <header css={{ marginTop: '4rem' }}>
-              <Text.H4 css={{ marginBottom: '1.6rem' }}>Unstaking</Text.H4>
-            </header>
-          )}
-          <div
-            css={{
-              'display': 'flex',
-              'flexDirection': 'column',
-              'gap': '2.8rem',
-              '> *:empty': {
-                display: 'none',
-              },
-            }}
-          >
-            <ValidatorUnstakings />
-            <Unstakings />
-          </div>
-        </div>
-      </Suspense>
-    </div>
+    <header css={{ marginTop: '4rem' }}>
+      <Text.H4 css={{ marginBottom: '1.6rem' }}>Unstaking</Text.H4>
+    </header>
   )
 }
+
+const OwnPools = () => (
+  <div id="staking">
+    <Suspense
+      fallback={
+        <div>
+          <header>
+            <Text.H4 css={{ marginBottom: '2.4rem' }}>Staking</Text.H4>
+          </header>
+          <PoolStakeList>
+            <PoolStake.Skeleton />
+            <PoolStake.Skeleton />
+            <PoolStake.Skeleton />
+          </PoolStakeList>
+        </div>
+      }
+    >
+      <div>
+        <header>
+          <Text.H4 css={{ marginBottom: '1.6rem' }}>Staking</Text.H4>
+        </header>
+        <div
+          css={{
+            'display': 'flex',
+            'flexDirection': 'column',
+            'gap': '2.8rem',
+            '> *:empty': {
+              display: 'none',
+            },
+          }}
+        >
+          <ValidatorStakings />
+          <Stakings />
+        </div>
+      </div>
+      <div>
+        <UnstakingHeader />
+        <div
+          css={{
+            'display': 'flex',
+            'flexDirection': 'column',
+            'gap': '2.8rem',
+            '> *:empty': {
+              display: 'none',
+            },
+          }}
+        >
+          <ValidatorUnstakings />
+          <Unstakings />
+        </div>
+      </div>
+    </Suspense>
+  </div>
+)
 
 export default OwnPools
