@@ -1,9 +1,7 @@
-import { useChain } from '@talismn/api-react-hooks'
 import { find } from 'lodash'
 import { PropsWithChildren, useContext as _useContext, createContext, useMemo } from 'react'
 
-import type { ParachainDetails } from './util/_config'
-import { parachainDetails } from './util/_config'
+import { ParachainDetails, parachainDetails } from './util/_config'
 
 export type { ParachainDetails } from './util/_config'
 
@@ -23,16 +21,14 @@ export const useParachainDetailsBySlug = (slug?: string) => useFindParachainDeta
 export const useParachainAssets = (
   id?: string
 ): Partial<{ [key: string]: string; banner: string; card: string; logo: string }> => {
-  const chain = useChain(id)
+  const crowdloanDetail = parachainDetails.find(x => x.id === id)
+  const slug = crowdloanDetail?.slug
 
-  return useMemo(
-    () => ({
-      banner: chain.asset?.banner,
-      card: chain.asset?.card,
-      logo: chain.asset?.logo,
-    }),
-    [chain]
-  )
+  return {
+    banner: `https://raw.githubusercontent.com/TalismanSociety/chaindata/v3/assets/promo/${slug}-banner.png`,
+    card: `https://raw.githubusercontent.com/TalismanSociety/chaindata/v3/assets/promo/${slug}-card.png`,
+    logo: `https://raw.githubusercontent.com/TalismanSociety/chaindata/v3/assets/chains/${slug}.svg`,
+  }
 }
 
 //

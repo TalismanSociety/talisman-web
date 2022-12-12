@@ -5,11 +5,12 @@ import { CrowdloanContribution, useCrowdloanContributions } from '@libs/crowdloa
 import { Moonbeam } from '@libs/crowdloans/crowdloanOverrides'
 import { MoonbeamPortfolioTag } from '@libs/moonbeam-contributors'
 import { calculateCrowdloanPortfolioAmounts, usePortfolio, useTaggedAmountsInPortfolio } from '@libs/portfolio'
-import { useCrowdloanById, useParachainDetailsById } from '@libs/talisman'
+import { useCrowdloanById, useParachainAssets, useParachainDetailsById } from '@libs/talisman'
+import { SupportedRelaychains, parachainDetails } from '@libs/talisman/util/_config'
 import { useTokenPrice } from '@libs/tokenprices'
-import { useChain } from '@talismn/api-react-hooks'
 import { encodeAnyAddress, planckToTokens } from '@talismn/util'
 import { formatCommas, formatCurrency } from '@util/helpers'
+import { Maybe } from '@util/monads'
 import BigNumber from 'bignumber.js'
 import { Suspense, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -21,18 +22,19 @@ const CrowdloanItem = styled(
     const { t } = useTranslation()
 
     const id = contribution.parachain.paraId
-    const parachainId = contribution.parachain.paraId
+
+    const asset = useParachainAssets(id)
 
     const relayChainId = contribution.parachain.paraId.split('-')[0]
-    const relayChain = useChain(relayChainId)
-    const chain = useChain(parachainId)
+    const relayChain = Maybe.of(relayChainId).mapOrUndefined(x => SupportedRelaychains[x]!)
+    const chain = parachainDetails.find(x => x.id === id)
 
-    const { nativeToken: relayNativeToken, tokenDecimals: relayTokenDecimals } = relayChain
-    const { name, longName } = chain
-    const { price: relayTokenPrice, loading: relayPriceLoading } = useTokenPrice(relayNativeToken)
+    const { tokenSymbol: relayNativeToken, tokenDecimals: relayTokenDecimals } = relayChain ?? {}
+    const { name } = chain ?? {}
+    const { price: relayTokenPrice, loading: relayPriceLoading } = useTokenPrice(relayNativeToken!)
 
     const relayTokenSymbol = relayNativeToken ?? 'Planck'
-    const contributedTokens = planckToTokens(contribution.amount, relayTokenDecimals)
+    const contributedTokens = planckToTokens(contribution.amount, relayTokenDecimals!)
     const contributedUsd = new BigNumber(contributedTokens).times(relayTokenPrice ?? 0).toString()
 
     const portfolioAmounts = useMemo(
@@ -45,7 +47,7 @@ const CrowdloanItem = styled(
     return (
       <div className={`${className} ${id}`}>
         <span className="left">
-          <Info title={name} subtitle={longName || name} graphic={<ChainLogo chain={chain} type="logo" size={4} />} />
+          <Info title={name} subtitle={name} graphic={<ChainLogo chain={{ ...chain, asset }} type="logo" size={4} />} />
           <Suspense fallback={null}>
             {Moonbeam.is(Number(id.split('-')[0]), Number(id.split('-')[1])) ? <MoonbeamPortfolioTag /> : null}
           </Suspense>
