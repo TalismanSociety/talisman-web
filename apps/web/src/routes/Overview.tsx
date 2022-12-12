@@ -9,7 +9,8 @@ import HiddenDetails from '@components/molecules/HiddenDetails'
 import Asset, { AssetsList, AssetsListLocked } from '@components/recipes/Asset'
 import { NFTCard } from '@components/recipes/NFTCard'
 import { keyframes } from '@emotion/react'
-import { nftDataState } from '@libs/@talisman-nft/provider'
+import { filteredNftDataState } from '@libs/@talisman-nft/provider'
+import { NFTShort } from '@libs/@talisman-nft/types'
 import { DAPP_NAME, useExtension } from '@libs/talisman'
 import { useIsAnyWalletInstalled } from '@libs/talisman/useIsAnyWalletInstalled'
 import { WalletSelect } from '@talismn/connect-components'
@@ -98,21 +99,20 @@ const Overview = () => {
   const { fiatTotal } = useAssets()
   const { tokens, balances, isLoading } = useAssetsFiltered({ size: 8, search })
 
-  const { items, isFetching, count } = useRecoilValue(nftDataState)
-  console.log({ items, isFetching, count })
+  const { items, isFetching } = useRecoilValue(filteredNftDataState)
 
   const nfts = useMemo(() => {
-    if (!isFetching && !items.length) {
-      return Array.from({ length: 4 }).map((_, index) => <NFTCard isBlank />)
+    if (!isFetching && items.length === 0) {
+      return Array.from({ length: 4 }).map((_, index) => <NFTCard key={index} isBlank />)
     }
     // if still fetching and the items lenght is less than 4, return the loading cards but only display the remainder of items minus 4
 
-    if (!isFetching && items.length) {
-      return items.slice(0, 4).map((nft: any) => <NFTCard key={nft.id} nft={nft} />)
+    if (!isFetching && items.length !== 0) {
+      return items.slice(0, 4).map((nft: NFTShort) => <NFTCard key={nft.id} nft={nft} />)
     }
 
     // return Array of size 4 with loading cards
-    return Array.from({ length: 2 }).map((_, index) => <NFTCard loading={true} />)
+    return Array.from({ length: 2 }).map((_, index) => <NFTCard key={index} loading />)
 
     // return <></>
   }, [isFetching, items])
@@ -191,17 +191,17 @@ const Overview = () => {
             />
           </div>
           <AssetsList isLoading={isLoading}>
-            {tokens &&
-              tokens.map((token, i) => <Asset key={token?.tokenDetails?.id} token={token} balances={balances} />)}
+            {tokens?.map((token, i) => (
+              <Asset key={token?.tokenDetails?.id} token={token} balances={balances} />
+            ))}
           </AssetsList>
           <AssetsListLocked isLoading={isLoading}>
             {/* tokens but filtered by locked */}
-            {tokens &&
-              tokens
-                .filter(token => token.locked)
-                .map((token, i) => (
-                  <Asset key={token?.tokenDetails?.id} token={token} balances={balances} lockedAsset />
-                ))}
+            {tokens
+              ?.filter(token => token.locked)
+              ?.map((token, i) => (
+                <Asset key={token?.tokenDetails?.id} token={token} balances={balances} lockedAsset />
+              ))}
           </AssetsListLocked>
         </section>
         {/* NFTs */}
@@ -226,7 +226,7 @@ const Overview = () => {
           >
             <Text.H3 css={{ margin: 0 }}>NFTs</Text.H3>
           </div>
-          <HiddenDetails overlay={<Text.H3>No NFTs Found</Text.H3>} hidden={!isFetching && !items.length}>
+          <HiddenDetails overlay={<Text.H3>No NFTs Found</Text.H3>} hidden={!isFetching && items.length === 0}>
             <div
               css={{
                 'display': 'grid',

@@ -59,17 +59,17 @@ const Assets = () => {
         }}
       >
         <AssetsList isLoading={isLoading}>
-          {tokens &&
-            tokens?.map((token, i) => <Asset key={token?.tokenDetails?.id} token={token} balances={balances} />)}
+          {tokens?.map((token, i) => (
+            <Asset key={token?.tokenDetails?.id} token={token} balances={balances} />
+          ))}
         </AssetsList>
         <AssetsListLocked isLoading={isLoading}>
           {/* tokens but filtered by locked */}
-          {tokens &&
-            tokens
-              ?.filter(token => token.locked)
-              ?.map((token, i) => (
-                <Asset key={token?.tokenDetails?.id} token={token} balances={balances} lockedAsset />
-              ))}
+          {tokens
+            ?.filter(token => token.locked)
+            ?.map((token, i) => (
+              <Asset key={token?.tokenDetails?.id} token={token} balances={balances} lockedAsset />
+            ))}
         </AssetsListLocked>
       </section>
     </AssetPage>

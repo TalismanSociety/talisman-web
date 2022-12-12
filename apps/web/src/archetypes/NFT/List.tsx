@@ -4,11 +4,12 @@ import Text from '@components/atoms/Text'
 import { CopyButton } from '@components/CopyButton'
 import { NFTCard } from '@components/recipes/NFTCard'
 import { WalletNavConnector } from '@components/WalletNavConnector'
+import { accountsState } from '@domains/accounts/recoils'
 import { css } from '@emotion/react'
 import styled from '@emotion/styled'
 import { nftDataState } from '@libs/@talisman-nft/provider'
 import { NFTShort } from '@libs/@talisman-nft/types'
-import { useAccounts, useActiveAccount } from '@libs/talisman'
+import { useActiveAccount } from '@libs/talisman'
 import { device } from '@util/breakpoints'
 import toast from 'react-hot-toast'
 import { useRecoilValue } from 'recoil'
@@ -25,7 +26,7 @@ const ListItems = ({ nfts, isFetching }: ListItemProps) => {
     <>
       {nfts && nfts.map((nft: any) => <NFTCard key={nft.id} nft={nft} />)}
 
-      {isFetching && <NFTCard loading={true} />}
+      {isFetching && <NFTCard loading />}
     </>
   )
 }
@@ -45,23 +46,26 @@ export const ListGrid = styled.div`
   }
 `
 
+type AccType = {
+  [key: string]: NFTShort[]
+}
+
 const List = () => {
   const { items, isFetching, count } = useRecoilValue(nftDataState)
-  // filter items by address from useActiveAccount()
+
   const { address } = useActiveAccount()
+  const accounts = useRecoilValue(accountsState)
 
-  const accounts = useAccounts()
-
-  if (isFetching && !items.length)
+  if (isFetching && items.length === 0)
     return (
       <ListGrid>
         {Array.from({ length: 4 }).map((_, index) => (
-          <NFTCard loading={true} />
+          <NFTCard key={index} loading />
         ))}
       </ListGrid>
     )
 
-  if (!items.length && !isFetching && !count)
+  if (items.length === 0 && !isFetching && !count)
     return (
       <HiddenNFTGrid
         overlay={
@@ -85,22 +89,32 @@ const List = () => {
     )
 
   // filter items by address and map listgrid per address
-  const nfts = items.reduce((acc: any, nft: any) => {
+  const nfts = items.reduce((acc, nft) => {
     if (!acc[nft?.address]) acc[nft?.address] = []
-    acc[nft?.address].push(nft)
+    acc[nft?.address]?.push(nft)
     return acc
-  }, {})
+  }, {} as AccType)
 
-  // find account name whhere address matches
-  const accountName = (address: string) => {
-    const account = accounts.find(account => account.address === address)
-    return account?.name
-  }
+  // turn nfts into array of objects and put the account name per address
+  const nftsArray = Object.keys(nfts).map((address: string) => {
+    return {
+      address,
+      name: accounts.find(account => account.address === address)?.name,
+      nfts: nfts[address] ?? [],
+    }
+  })
 
-  if (!address)
+  // sort nftsArray by accounts address order
+  nftsArray.sort((a, b) => {
+    const aIndex = accounts.findIndex(account => account.address === a.address)
+    const bIndex = accounts.findIndex(account => account.address === b.address)
+    return aIndex - bIndex
+  })
+
+  if (address === undefined)
     return (
       <>
-        {Object.keys(nfts).map((address: string) => (
+        {nftsArray.map(({ address, name, nfts }) => (
           <>
             <div
               css={{
@@ -129,7 +143,7 @@ const List = () => {
                   fontSize: '2rem',
                 }}
               >
-                {accountName(address)}
+                {name}
               </Text.Body>
               <CopyButton
                 text={address}
@@ -150,17 +164,17 @@ const List = () => {
               />
             </div>
             <ListGrid>
-              <ListItems nfts={nfts[address]} isFetching={isFetching} />
+              <ListItems nfts={nfts} isFetching={isFetching} />
             </ListGrid>
           </>
         ))}
       </>
     )
 
-  if (address) {
+  if (address !== undefined) {
     return (
       <ListGrid>
-        <ListItems nfts={nfts[address]} isFetching={isFetching} />
+        <ListItems nfts={nfts[address] ?? []} isFetching={isFetching} />
       </ListGrid>
     )
   }

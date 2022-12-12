@@ -1,6 +1,6 @@
 import { accountsState, selectedAccountAddressesState } from '@domains/accounts/recoils'
 import { useEffect } from 'react'
-import { atom, useRecoilValue, useSetRecoilState } from 'recoil'
+import { atom, selector, useRecoilValue, useSetRecoilState } from 'recoil'
 
 import { useNFTData } from './hooks'
 import { NFTData } from './types'
@@ -14,23 +14,29 @@ export const nftDataState = atom<NFTData>({
   },
 })
 
+export const filteredNftDataState = selector<NFTData>({
+  key: 'FilteredNftData',
+  get: ({ get }) => {
+    const { items, isFetching, count } = get(nftDataState)
+    const activeAccounts = get(selectedAccountAddressesState)
+
+    if (activeAccounts && activeAccounts.length > 0) {
+      const filteredItems = items.filter(item => activeAccounts.includes(item.address))
+      return { items: filteredItems, isFetching, count }
+    }
+
+    return { items, isFetching, count }
+  },
+})
+
 const NftProvider = () => {
   const addresses = useRecoilValue(accountsState).map(account => account.address)
-  const activeAccounts = useRecoilValue(selectedAccountAddressesState)
-
   const setNftData = useSetRecoilState(nftDataState)
   const { items, isFetching, count } = useNFTData(addresses)
 
   useEffect(() => {
-    // if activeaccounts then filter items by address in activeaccounts
-    if (activeAccounts && activeAccounts.length > 0) {
-      const filteredItems = items.filter(item => activeAccounts.includes(item.address))
-      setNftData({ items: filteredItems, isFetching, count })
-      return
-    }
-
     setNftData({ items, isFetching, count })
-  }, [activeAccounts, count, isFetching, items, setNftData])
+  }, [count, isFetching, items, setNftData])
 
   return null
 }

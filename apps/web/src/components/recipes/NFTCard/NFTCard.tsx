@@ -2,13 +2,13 @@ import { NFTIcon } from '@archetypes/NFT'
 import NftDialog from '@archetypes/NFT/Modal/NftDialog'
 import Text from '@components/atoms/Text'
 import styled from '@emotion/styled'
-import { NFTDetail } from '@libs/@talisman-nft/types'
+import { NFTShort } from '@libs/@talisman-nft/types'
 import { useState } from 'react'
 
 import { NFTPreview } from '../NFTPreview'
 
 type NFTCardProps = {
-  nft?: NFTDetail
+  nft?: NFTShort
   loading?: boolean
   isBlank?: boolean
 }

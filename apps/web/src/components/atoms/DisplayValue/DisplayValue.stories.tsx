@@ -3,7 +3,7 @@ import { ComponentMeta, Story } from '@storybook/react'
 import DisplayValue, { DisplayValueProps } from './DisplayValue'
 
 export default {
-  title: 'Molecules/DisplayValue',
+  title: 'Atoms/DisplayValue',
   component: DisplayValue,
   parameters: {
     layout: 'centered',
