@@ -5,11 +5,11 @@ import { CopyButton } from '@components/CopyButton'
 import Select from '@components/molecules/Select'
 import { NFTCard } from '@components/recipes/NFTCard'
 import { WalletNavConnector } from '@components/WalletNavConnector'
-import { accountsState } from '@domains/accounts/recoils'
+import { accountsState, selectedAccountsState } from '@domains/accounts/recoils'
 import { useFavoriteNftLookup, useHiddenNftLookup } from '@domains/nfts/hooks'
 import { css } from '@emotion/react'
 import styled from '@emotion/styled'
-import { nftDataState } from '@libs/@talisman-nft/provider'
+import { filteredNftDataState } from '@libs/@talisman-nft/provider'
 import type { NFTCollectionDetails } from '@libs/@talisman-nft/types'
 import { NFTShort } from '@libs/@talisman-nft/types'
 import { device } from '@util/breakpoints'
@@ -61,8 +61,9 @@ const List = () => {
   const isFavorite = useFavoriteNftLookup()
   const isHidden = useHiddenNftLookup()
 
-  const { items, isFetching, count } = useRecoilValue(nftDataState)
+  const { items, isFetching, count } = useRecoilValue(filteredNftDataState)
   const accounts = useRecoilValue(accountsState)
+  const isSingleAccountSelected = useRecoilValue(selectedAccountsState).length <= 1
 
   const specialCollections = useMemo(
     () =>
@@ -244,37 +245,41 @@ const List = () => {
               'gap': '1rem',
             }}
           >
-            <Identicon
-              value={address}
-              css={{
-                width: '4rem',
-                height: '4rem',
-              }}
-            />
-            <Text.Body
-              css={{
-                fontSize: '2rem',
-              }}
-            >
-              {accountName(address)}
-            </Text.Body>
-            <CopyButton
-              text={address}
-              onCopied={(text: string) => {
-                toast(
-                  <>
-                    <Text.Body as="div" alpha="high">
-                      Address copied to clipboard
-                    </Text.Body>
-                    <Text.Body as="div">{text}</Text.Body>
-                  </>,
-                  { position: 'bottom-right', icon: <Copy /> }
-                )
-              }}
-              onFailed={(text: string) => {
-                console.log(`>>> failed`, text)
-              }}
-            />
+            {!isSingleAccountSelected && (
+              <>
+                <Identicon
+                  value={address}
+                  css={{
+                    width: '4rem',
+                    height: '4rem',
+                  }}
+                />
+                <Text.Body
+                  css={{
+                    fontSize: '2rem',
+                  }}
+                >
+                  {accountName(address)}
+                </Text.Body>
+                <CopyButton
+                  text={address}
+                  onCopied={(text: string) => {
+                    toast(
+                      <>
+                        <Text.Body as="div" alpha="high">
+                          Address copied to clipboard
+                        </Text.Body>
+                        <Text.Body as="div">{text}</Text.Body>
+                      </>,
+                      { position: 'bottom-right', icon: <Copy /> }
+                    )
+                  }}
+                  onFailed={(text: string) => {
+                    console.log(`>>> failed`, text)
+                  }}
+                />
+              </>
+            )}
           </div>
           <ListGrid>
             <ListItems nfts={sortedNfts[address]!} isFetching={isFetching} />
