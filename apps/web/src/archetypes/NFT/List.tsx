@@ -13,6 +13,7 @@ import type { NFTCollectionDetails } from '@libs/@talisman-nft/types'
 import { NFTShort } from '@libs/@talisman-nft/types'
 import { useAccounts } from '@libs/talisman'
 import { device } from '@util/breakpoints'
+import { Maybe } from '@util/monads'
 import { AnimatePresence, motion } from 'framer-motion'
 import { uniqWith } from 'lodash/fp'
 import { useMemo, useState } from 'react'
@@ -23,15 +24,14 @@ import HiddenNFTGrid from './HiddenNFTGrid'
 type ListItemProps = {
   nfts: NFTShort[]
   isFetching: boolean
-  collectionId?: string
 }
 
-const ListItems = ({ nfts, collectionId, isFetching }: ListItemProps) => {
+const ListItems = ({ nfts, isFetching }: ListItemProps) => {
   return (
     <>
       <AnimatePresence mode="popLayout">
         {nfts.map(nft => (
-          <motion.div key={nft.id} layoutId={`nft-card-${collectionId}-${nft.id}`} exit={{ opacity: 0, scale: 0.8 }}>
+          <motion.div key={nft.id} layoutId={`nft-card-${nft.id}`} exit={{ opacity: 0, scale: 0.8 }}>
             <NFTCard nft={nft as any} />
           </motion.div>
         ))}
@@ -145,16 +145,39 @@ const List = ({ addresses }: { addresses: string[] }) => {
     [filteredItems]
   )
 
-  const sortedNfts = useMemo(
-    () =>
-      Object.fromEntries(
-        Object.entries(nfts).map(([key, value]) => [
-          key,
-          value.sort((a, b) => (isFavorite(a.address, a.id) ? -1 : isFavorite(b.address, b.id) ? 1 : 0)),
-        ])
-      ),
-    [isFavorite, nfts]
-  )
+  const sortByKeys = ['Default', 'Name ascending', 'Name descending', 'Floor price'] as const
+  const [sortBy, setSortBy] = useState<typeof sortByKeys[number]>('Default')
+
+  const sortedNfts = useMemo(() => {
+    switch (sortBy) {
+      case 'Name ascending':
+        return Object.fromEntries(
+          Object.entries(nfts).map(([key, value]) => [key, value.sort((a, b) => a.name.localeCompare(b.name))])
+        )
+      case 'Name descending':
+        return Object.fromEntries(
+          Object.entries(nfts).map(([key, value]) => [key, value.sort((a, b) => b.name.localeCompare(a.name))])
+        )
+      case 'Floor price':
+        return Object.fromEntries(
+          Object.entries(nfts).map(([key, value]) => [
+            key,
+            value.sort(
+              (a, b) =>
+                Maybe.of(a.collection?.floorPrice).mapOr(0, parseFloat) -
+                Maybe.of(b.collection?.floorPrice).mapOr(0, parseFloat)
+            ),
+          ])
+        )
+      default:
+        return Object.fromEntries(
+          Object.entries(nfts).map(([key, value]) => [
+            key,
+            value.sort((a, b) => (isFavorite(a.address, a.id) ? -1 : isFavorite(b.address, b.id) ? 1 : 0)),
+          ])
+        )
+    }
+  }, [isFavorite, nfts, sortBy])
 
   // find account name whhere address matches
   const accountName = (address: string) => {
@@ -187,27 +210,43 @@ const List = ({ addresses }: { addresses: string[] }) => {
 
   return (
     <>
-      <Select
-        value={selectedCollectionValue}
-        onChange={id =>
-          setSelectedCollection(
-            collections.find(c => c.id === id) ?? specialCollections.find(x => x.id === id)?.id ?? 'all'
-          )
-        }
-      >
-        {[
-          ...specialCollections.map((x, index, array) => (
-            <Select.Item key={x.id} value={x.id} bottomBordered={index === array.length - 1}>
-              {x.element}
-            </Select.Item>
-          )),
-          ...collections.map(x => (
-            <Select.Item key={x.id} value={x.id}>
-              {x.name ?? x.id}
-            </Select.Item>
-          )),
-        ]}
-      </Select>
+      <div css={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <Select
+          value={selectedCollectionValue}
+          onChange={id =>
+            setSelectedCollection(
+              collections.find(c => c.id === id) ?? specialCollections.find(x => x.id === id)?.id ?? 'all'
+            )
+          }
+        >
+          {[
+            ...specialCollections.map((x, index, array) => (
+              <Select.Item key={x.id} value={x.id} bottomBordered={index === array.length - 1}>
+                {x.element}
+              </Select.Item>
+            )),
+            ...collections.map(x => (
+              <Select.Item key={x.id} value={x.id}>
+                {x.name ?? x.id}
+              </Select.Item>
+            )),
+          ]}
+        </Select>
+        <div css={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
+          <Text.Body alpha="high">Sort: </Text.Body>
+          <Select
+            variant="toggle-no-background"
+            value={sortBy}
+            onChange={key => setSortBy(key ?? ('Default' as const))}
+          >
+            {sortByKeys.map(x => (
+              <Select.Item key={x} value={x}>
+                {x}
+              </Select.Item>
+            ))}
+          </Select>
+        </div>
+      </div>
       {Object.keys(sortedNfts).map((address: string) => (
         <>
           <div
