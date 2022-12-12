@@ -6,11 +6,12 @@ import { NFTCard } from '@components/recipes/NFTCard'
 import { WalletNavConnector } from '@components/WalletNavConnector'
 import { css } from '@emotion/react'
 import styled from '@emotion/styled'
-import { GetNFTData } from '@libs/@talisman-nft'
+import { nftDataState } from '@libs/@talisman-nft/provider'
 import { NFTShort } from '@libs/@talisman-nft/types'
-import { useAccounts } from '@libs/talisman'
+import { useAccounts, useActiveAccount } from '@libs/talisman'
 import { device } from '@util/breakpoints'
 import toast from 'react-hot-toast'
+import { useRecoilValue } from 'recoil'
 
 import HiddenNFTGrid from './HiddenNFTGrid'
 
@@ -34,7 +35,7 @@ const ListItems = ({ nfts, isFetching }: ListItemProps) => {
   )
 }
 
-const ListGrid = styled.div`
+export const ListGrid = styled.div`
   display: grid;
   gap: 2rem;
   grid-template-columns: 1fr;
@@ -49,10 +50,21 @@ const ListGrid = styled.div`
   }
 `
 
-const List = ({ addresses }: { addresses: string[] }) => {
-  const { items, isFetching, count } = GetNFTData({ addresses: addresses })
+const List = () => {
+  const { items, isFetching, count } = useRecoilValue(nftDataState)
+  // filter items by address from useActiveAccount()
+  const { address } = useActiveAccount()
 
   const accounts = useAccounts()
+
+  if (isFetching && !items.length)
+    return (
+      <ListGrid>
+        {Array.from({ length: 4 }).map((_, index) => (
+          <NFTCard loading={true} />
+        ))}
+      </ListGrid>
+    )
 
   if (!items.length && !isFetching && !count)
     return (
@@ -90,7 +102,7 @@ const List = ({ addresses }: { addresses: string[] }) => {
     return account?.name
   }
 
-  if (Object.keys(nfts).length > 1)
+  if (!address)
     return (
       <>
         {Object.keys(nfts).map((address: string) => (
@@ -150,11 +162,15 @@ const List = ({ addresses }: { addresses: string[] }) => {
       </>
     )
 
-  return (
-    <ListGrid>
-      <ListItems nfts={items} isFetching={isFetching} />
-    </ListGrid>
-  )
+  if (address) {
+    return (
+      <ListGrid>
+        <ListItems nfts={nfts[address]} isFetching={isFetching} />
+      </ListGrid>
+    )
+  }
+
+  return null
 }
 
 export default List

@@ -26,6 +26,10 @@ const NavItem = (props: NavItemProps) => (
       '> *': {
         padding: '1.5rem 1rem',
       },
+      // hover
+      ':hover': {
+        color: props.selected ? 'var(--color-primary)' : 'var(--color-text)',
+      },
     }}
   >
     {props.children}

@@ -1,6 +1,6 @@
 import useAssets, { useAssetsFiltered } from '@archetypes/Portfolio/Assets'
+import DisplayValue from '@components/atoms/DisplayValue/DisplayValue'
 import { Search } from '@components/Field'
-import DisplayValue from '@components/molecules/DisplayValue/DisplayValue'
 import InfoCard from '@components/molecules/InfoCard'
 import Asset, { AssetsList, AssetsListLocked } from '@components/recipes/Asset'
 import styled from '@emotion/styled'
@@ -60,14 +60,16 @@ const Assets = () => {
       >
         <AssetsList isLoading={isLoading}>
           {tokens &&
-            tokens.map((token, i) => <Asset key={token?.tokenDetails?.id} token={token} balances={balances} />)}
+            tokens?.map((token, i) => <Asset key={token?.tokenDetails?.id} token={token} balances={balances} />)}
         </AssetsList>
         <AssetsListLocked isLoading={isLoading}>
           {/* tokens but filtered by locked */}
           {tokens &&
             tokens
-              .filter(token => token.locked)
-              .map((token, i) => <Asset key={token?.tokenDetails?.id} token={token} balances={balances} lockedAsset />)}
+              ?.filter(token => token.locked)
+              ?.map((token, i) => (
+                <Asset key={token?.tokenDetails?.id} token={token} balances={balances} lockedAsset />
+              ))}
         </AssetsListLocked>
       </section>
     </AssetPage>

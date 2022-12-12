@@ -11,7 +11,6 @@ const DisplayValue: React.FC<DisplayValueProps> = ({ amount, noCountUp }) => {
   // if amount is a string parse it to a number
   const format = useCallback((amount = 0) => formatFiat(amount, 'usd'), [])
   const formatted = useMemo(() => format(amount), [amount, format])
-  // const parsedAmount = typeof amount === 'string' ? parseFloat(amount) : amount
 
   if (noCountUp) return <>{formatted}</>
 

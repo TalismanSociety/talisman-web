@@ -1,5 +1,4 @@
 import { LanguageSelector } from '@archetypes/LanguageSelector'
-import { ReactComponent as TalismanHandLogo } from '@assets/hand-red-black.svg'
 import { ReactComponent as CrowdloansLogo } from '@assets/icons/crowdloans.svg'
 import { ReactComponent as DiscordMobileLogo } from '@assets/icons/discord-mobile.svg'
 import { ReactComponent as GithubMobileLogo } from '@assets/icons/github-mobile.svg'
@@ -8,7 +7,7 @@ import { ReactComponent as MoreHorizontal } from '@assets/icons/more-horizontal.
 import { ReactComponent as PortfolioLogo } from '@assets/icons/portfolio.svg'
 import { ReactComponent as SwapLogo } from '@assets/icons/swap.svg'
 import { ReactComponent as TwitterMobileLogo } from '@assets/icons/twitter-mobile.svg'
-import { Button } from '@components'
+import { ReactComponent as TalismanHandLogo } from '@assets/talisman-white-black.svg'
 import Menu from '@components/Menu'
 import { WalletNavConnector } from '@components/WalletNavConnector'
 import { useTheme } from '@emotion/react'
@@ -190,9 +189,19 @@ const Header = styled(({ className, isMobile }: HeaderProps) => {
 
       <div className="menu-nav">
         <WalletNavConnector />
-        <Button className="button-buy" small onClick={buyNow}>
+        <div
+          onClick={buyNow}
+          css={{
+            'cursor': 'pointer',
+            'padding': '0.75rem 2.5rem',
+            'position': 'relative',
+            'whiteSpace': 'nowrap',
+            ':hover': { color: theme.color.onForegroundVariant },
+            'transition': 'all 0.2s ease-in-out',
+          }}
+        >
           {t('Buy')}
-        </Button>
+        </div>
         <LanguageSelector />
         <Menu
           dropdownAlignment="right"
@@ -250,7 +259,7 @@ const Header = styled(({ className, isMobile }: HeaderProps) => {
 })`
   position: sticky;
   top: 0;
-  z-index: 10; /* just to be safe */
+  z-index: 101; /* just to be safe */
   display: grid;
   grid-template: 1fr / auto 0fr 2fr;
   max-height: 64px;

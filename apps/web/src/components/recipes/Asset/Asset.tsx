@@ -1,9 +1,10 @@
+import DisplayValue from '@components/atoms/DisplayValue/DisplayValue'
 import { Lock } from '@components/atoms/Icon'
 import Text from '@components/atoms/Text'
-import DisplayValue from '@components/molecules/DisplayValue/DisplayValue'
 import HiddenDetails from '@components/molecules/HiddenDetails'
 import { keyframes, useTheme } from '@emotion/react'
 import styled from '@emotion/styled'
+import { useExtension } from '@libs/talisman'
 import { Balances } from '@talismn/balances'
 import _ from 'lodash'
 import { Children, ReactElement, ReactNode } from 'react'
@@ -286,7 +287,8 @@ const Table = styled.table`
 
   tbody tr.asset {
     :not(.skeleton) {
-      cursor: pointer;
+      // Commented out until we're able to add hover states
+      // cursor: pointer;
     }
 
     td {
@@ -298,12 +300,13 @@ const Table = styled.table`
       border-top: 1px solid #262626;
     }
 
-    :not(.skeleton):hover td {
-      background: rgb(38, 38, 38);
-      .logo-stack .logo-circle {
-        border-color: rgb(38, 38, 38);
-      }
-    }
+    // Commented out until we're able to add hover states
+    // :not(.skeleton):hover td {
+    //   background: rgb(38, 38, 38);
+    //   .logo-stack .logo-circle {
+    //     border-color: rgb(38, 38, 38);
+    //   }
+    // }
 
     :first-of-type {
       > td {
@@ -368,14 +371,7 @@ export const AssetsList = (props: AssetsListProps) => {
   const { isLoading } = props
 
   return (
-    <HiddenDetails
-      overlay={
-        <>
-          <Text.H3>No Assets Found</Text.H3>
-        </>
-      }
-      hidden={!isLoading && _.isEmpty(props.children)}
-    >
+    <HiddenDetails overlay={<Text.H3>No Assets Found</Text.H3>} hidden={!isLoading && _.isEmpty(props.children)}>
       <Table>
         <thead>
           <tr>

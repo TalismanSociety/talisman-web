@@ -10,7 +10,7 @@ export class NFTFactory extends SubscriptionService<NFTData> {
   providers: NFTInterface[]
   nftPlatformMapping: nftPlatformMapping = {}
   private providerData: { [providerName: string]: NFTData } = {}
-  private address: string = ''
+  private addresses: string[] = []
 
   constructor(providers: NFTInterface[]) {
     super()
@@ -23,12 +23,12 @@ export class NFTFactory extends SubscriptionService<NFTData> {
   }
 
   reset() {
-    this.address = ''
+    this.addresses = []
   }
 
   hydrateNftsByAddress(address: string) {
-    if (this.address === address) return
-    this.address = address
+    if (this.addresses.includes(address)) return
+    this.addresses.push(address)
     this.providers.forEach(provider => {
       provider.hydrateNftsByAddress(address)
     })

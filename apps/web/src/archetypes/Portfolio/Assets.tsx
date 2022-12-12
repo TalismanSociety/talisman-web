@@ -221,9 +221,9 @@ const useAssets = (customAddress?: string) => {
     return {
       ...token,
       overallTokenAmount: token?.amount,
-      overallFiatAmount: token?.fiatAmountFormatted,
+      overallFiatAmount: token?.fiatAmount,
       overallLockedAmount: token?.lockedAmount,
-      overallLockedFiatAmount: token?.lockedFiatAmountFormatted,
+      overallLockedFiatAmount: token?.lockedFiatAmount,
     }
   })
 

@@ -1,7 +1,6 @@
 import { NFT } from '@archetypes'
 import { ExtensionStatusGate, PanelSection } from '@components'
 import styled from '@emotion/styled'
-import { useAccountAddresses, useActiveAccount } from '@libs/talisman'
 import { device } from '@util/breakpoints'
 import { useTranslation } from 'react-i18next'
 
@@ -36,15 +35,11 @@ const ExtensionUnavailable = styled((props: ExtensionUnavailableProps) => {
   }
 `
 
-const NFTsPage = styled(({ className }: any) => {
-  const queryParams = new URLSearchParams(window.location.search)
-  const address = queryParams.get('address') ?? useActiveAccount().address
-  const addresses = useAccountAddresses()
-
+const NFTsPage = styled(() => {
   return (
     <ExtensionStatusGate unavailable={<ExtensionUnavailable />}>
       <article>
-        <NFT.List addresses={address ? [address] : addresses} />
+        <NFT.List />
       </article>
     </ExtensionStatusGate>
   )

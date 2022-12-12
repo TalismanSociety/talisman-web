@@ -2,7 +2,7 @@ import { ReactComponent as AllAccountsIcon } from '@assets/icons/all-accounts.sv
 import Identicon from '@components/atoms/Identicon'
 import Text from '@components/atoms/Text'
 
-import DisplayValue from '../DisplayValue/DisplayValue'
+import DisplayValue from '../../atoms/DisplayValue/DisplayValue'
 
 export type AccountValueInfoProps = {
   address: string
