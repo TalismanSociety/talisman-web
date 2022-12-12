@@ -21,13 +21,12 @@ Object.values(EVMChains).map((chain: EVMChain) => providers.push(new EVMProvider
 
 const nftFactory = new NFTFactory(providers)
 
-export const useNftsByAddresses = (initialAddresses: string[]) => {
-  const [addresses, setAddresses] = useState<string[]>(initialAddresses)
+export const useNftsByAddresses = (addresses: string[]) => {
   const [nftData, setNftData] = useState<NFTData>(defaultNftFactoryCallbackData)
 
-  useEffect(() => {
-    nftFactory.reset()
-  })
+  // useEffect(() => {
+  //   nftFactory.reset()
+  // }, [addresses])
 
   useEffect(() => {
     const unsub = nftFactory.subscribe(setNftData)
@@ -40,7 +39,6 @@ export const useNftsByAddresses = (initialAddresses: string[]) => {
   }, [addresses])
 
   return {
-    setAddresses,
     nftData,
   }
 }
@@ -74,12 +72,9 @@ export const useNftById = (id?: string) => {
   }
 }
 
-export const GetNFTData = ({ addresses }: { addresses: string[] }) => {
-  const { setAddresses, nftData } = useNftsByAddresses(addresses)
-
-  useEffect(() => {
-    setAddresses(addresses)
-  }, [addresses, setAddresses])
+// rename to useNFTData
+export const useNFTData = (addresses: string[]) => {
+  const { nftData } = useNftsByAddresses(addresses)
 
   return useMemo(() => {
     const items = nftData?.items.filter((item: NFTShort) => addresses.includes(item.address))

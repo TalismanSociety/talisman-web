@@ -1,6 +1,6 @@
+import DisplayValue from '@components/atoms/DisplayValue/DisplayValue'
 import { Lock } from '@components/atoms/Icon'
 import Text from '@components/atoms/Text'
-import DisplayValue from '@components/molecules/DisplayValue/DisplayValue'
 import HiddenDetails from '@components/molecules/HiddenDetails'
 import { keyframes, useTheme } from '@emotion/react'
 import styled from '@emotion/styled'
@@ -173,13 +173,30 @@ const AssetSkeleton = ({ loading = true }: { loading?: boolean }) => {
   )
 }
 
+const slideDown = keyframes`
+  0% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+`
+
 const Asset = Object.assign((props: AssetProps) => {
   const theme = useTheme()
 
   const { token, lockedAsset } = props
 
   return (
-    <tr className="asset">
+    <tr
+      className="asset"
+      css={{
+        // slide down on load
+        animation: `${slideDown} 0.3s ease-in-out`,
+      }}
+    >
       <td valign="top">
         {/* First Column */}
         <div css={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
@@ -286,7 +303,8 @@ const Table = styled.table`
 
   tbody tr.asset {
     :not(.skeleton) {
-      cursor: pointer;
+      // Commented out until we're able to add hover states
+      // cursor: pointer;
     }
 
     td {
@@ -298,12 +316,13 @@ const Table = styled.table`
       border-top: 1px solid #262626;
     }
 
-    :not(.skeleton):hover td {
-      background: rgb(38, 38, 38);
-      .logo-stack .logo-circle {
-        border-color: rgb(38, 38, 38);
-      }
-    }
+    // Commented out until we're able to add hover states
+    // :not(.skeleton):hover td {
+    //   background: rgb(38, 38, 38);
+    //   .logo-stack .logo-circle {
+    //     border-color: rgb(38, 38, 38);
+    //   }
+    // }
 
     :first-of-type {
       > td {
@@ -368,14 +387,7 @@ export const AssetsList = (props: AssetsListProps) => {
   const { isLoading } = props
 
   return (
-    <HiddenDetails
-      overlay={
-        <>
-          <Text.H3>No Assets Found</Text.H3>
-        </>
-      }
-      hidden={!isLoading && _.isEmpty(props.children)}
-    >
+    <HiddenDetails overlay={<Text.H3>No Assets Found</Text.H3>} hidden={!isLoading && _.isEmpty(props.children)}>
       <Table>
         <thead>
           <tr>

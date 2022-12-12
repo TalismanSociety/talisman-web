@@ -5,19 +5,20 @@ import { CopyButton } from '@components/CopyButton'
 import Select from '@components/molecules/Select'
 import { NFTCard } from '@components/recipes/NFTCard'
 import { WalletNavConnector } from '@components/WalletNavConnector'
+import { accountsState } from '@domains/accounts/recoils'
 import { useFavoriteNftLookup, useHiddenNftLookup } from '@domains/nfts/hooks'
 import { css } from '@emotion/react'
 import styled from '@emotion/styled'
-import { GetNFTData } from '@libs/@talisman-nft'
+import { nftDataState } from '@libs/@talisman-nft/provider'
 import type { NFTCollectionDetails } from '@libs/@talisman-nft/types'
 import { NFTShort } from '@libs/@talisman-nft/types'
-import { useAccounts } from '@libs/talisman'
 import { device } from '@util/breakpoints'
 import { Maybe } from '@util/monads'
 import { AnimatePresence, motion } from 'framer-motion'
 import { uniqWith } from 'lodash/fp'
 import { useMemo, useState } from 'react'
 import toast from 'react-hot-toast'
+import { useRecoilValue } from 'recoil'
 
 import HiddenNFTGrid from './HiddenNFTGrid'
 
@@ -36,16 +37,12 @@ const ListItems = ({ nfts, isFetching }: ListItemProps) => {
           </motion.div>
         ))}
       </AnimatePresence>
-
-      {/* {nfts.length !== count &&
-        Array.from({ length: count - nfts.length }).map((_, index) => <NFTCard loading={true} />)} */}
-
-      {isFetching && <NFTCard loading={true} />}
+      {isFetching && <NFTCard loading />}
     </>
   )
 }
 
-const ListGrid = styled.div`
+export const ListGrid = styled.div`
   display: grid;
   gap: 2rem;
   overflow-anchor: none;
@@ -60,11 +57,12 @@ const ListGrid = styled.div`
   }
 `
 
-const List = ({ addresses }: { addresses: string[] }) => {
+const List = () => {
   const isFavorite = useFavoriteNftLookup()
   const isHidden = useHiddenNftLookup()
 
-  const { items, isFetching, count } = GetNFTData({ addresses: addresses })
+  const { items, isFetching, count } = useRecoilValue(nftDataState)
+  const accounts = useRecoilValue(accountsState)
 
   const specialCollections = useMemo(
     () =>
@@ -132,8 +130,6 @@ const List = ({ addresses }: { addresses: string[] }) => {
       .filter(item => !isHidden(item.address, item.id))
   }, [isFavorite, isHidden, items, selectedCollection])
 
-  const accounts = useAccounts()
-
   // filter items by address and map listgrid per address
   const nfts = useMemo(
     () =>
@@ -149,34 +145,22 @@ const List = ({ addresses }: { addresses: string[] }) => {
   const [sortBy, setSortBy] = useState<typeof sortByKeys[number]>('Default')
 
   const sortedNfts = useMemo(() => {
-    switch (sortBy) {
-      case 'Name ascending':
-        return Object.fromEntries(
-          Object.entries(nfts).map(([key, value]) => [key, value.sort((a, b) => a.name.localeCompare(b.name))])
-        )
-      case 'Name descending':
-        return Object.fromEntries(
-          Object.entries(nfts).map(([key, value]) => [key, value.sort((a, b) => b.name.localeCompare(a.name))])
-        )
-      case 'Floor price':
-        return Object.fromEntries(
-          Object.entries(nfts).map(([key, value]) => [
-            key,
-            value.sort(
-              (a, b) =>
-                Maybe.of(a.collection?.floorPrice).mapOr(0, parseFloat) -
-                Maybe.of(b.collection?.floorPrice).mapOr(0, parseFloat)
-            ),
-          ])
-        )
-      default:
-        return Object.fromEntries(
-          Object.entries(nfts).map(([key, value]) => [
-            key,
-            value.sort((a, b) => (isFavorite(a.address, a.id) ? -1 : isFavorite(b.address, b.id) ? 1 : 0)),
-          ])
-        )
-    }
+    const sortFunc = ((): ((a: NFTShort, b: NFTShort) => number) => {
+      switch (sortBy) {
+        case 'Name ascending':
+          return (a, b) => a.name.localeCompare(b.name)
+        case 'Name descending':
+          return (a, b) => b.name.localeCompare(a.name)
+        case 'Floor price':
+          return (a, b) =>
+            Maybe.of(b.collection?.floorPrice).mapOr(0, parseFloat) -
+            Maybe.of(a.collection?.floorPrice).mapOr(0, parseFloat)
+        default:
+          return (a, b) => (isFavorite(a.address, a.id) ? -1 : isFavorite(b.address, b.id) ? 1 : 0)
+      }
+    })()
+
+    return Object.fromEntries(Object.entries(nfts).map(([key, value]) => [key, [...value].sort(sortFunc)]))
   }, [isFavorite, nfts, sortBy])
 
   // find account name whhere address matches
@@ -234,11 +218,7 @@ const List = ({ addresses }: { addresses: string[] }) => {
         </Select>
         <div css={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
           <Text.Body alpha="high">Sort: </Text.Body>
-          <Select
-            variant="toggle-no-background"
-            value={sortBy}
-            onChange={key => setSortBy(key ?? ('Default' as const))}
-          >
+          <Select variant="toggle-no-background" value={sortBy} onChange={key => setSortBy(key ?? ('Default' as any))}>
             {sortByKeys.map(x => (
               <Select.Item key={x} value={x}>
                 {x}

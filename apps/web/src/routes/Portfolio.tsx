@@ -42,7 +42,7 @@ const Portfolio = () => {
           </BottomBorderNav.Item>
         ))}
       </BottomBorderNav>
-      <Outlet context={{}} />
+      <Outlet />
     </div>
   )
 }

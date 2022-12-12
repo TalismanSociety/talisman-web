@@ -6,7 +6,7 @@ import { formatDecimals } from '@talismn/util'
 import _ from 'lodash'
 import { useMemo } from 'react'
 
-const FetchAssets = (address: string | undefined) => {
+const useFetchAssets = (address: string | undefined) => {
   const { balances, tokenIds, tokens, assetsValueTotal } = useBalances()
   const chaindata = useChaindata()
 
@@ -83,7 +83,7 @@ export const convertToFiatString = (value: any) => {
 
 const useAssets = (customAddress?: string) => {
   const { address } = useActiveAccount()
-  const { assetBalances, fiatTotal, lockedTotal, value, balances, chains, evmNetworks, isLoading } = FetchAssets(
+  const { assetBalances, fiatTotal, lockedTotal, value, balances, chains, evmNetworks, isLoading } = useFetchAssets(
     customAddress ?? address
   )
 
@@ -221,9 +221,9 @@ const useAssets = (customAddress?: string) => {
     return {
       ...token,
       overallTokenAmount: token?.amount,
-      overallFiatAmount: token?.fiatAmountFormatted,
+      overallFiatAmount: token?.fiatAmount,
       overallLockedAmount: token?.lockedAmount,
-      overallLockedFiatAmount: token?.lockedFiatAmountFormatted,
+      overallLockedFiatAmount: token?.lockedFiatAmount,
     }
   })
 

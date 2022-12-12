@@ -6,13 +6,13 @@ import Text from '@components/atoms/Text'
 import { useNftFavoriteState, useNftHiddenState } from '@domains/nfts/hooks'
 import { useTheme } from '@emotion/react'
 import styled from '@emotion/styled'
-import { NFTDetail } from '@libs/@talisman-nft/types'
+import { NFTShort } from '@libs/@talisman-nft/types'
 import { useState } from 'react'
 
 import { NFTPreview } from '../NFTPreview'
 
 type NFTCardProps = {
-  nft?: NFTDetail
+  nft?: NFTShort
   loading?: boolean
   isBlank?: boolean
 }

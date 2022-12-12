@@ -42,7 +42,7 @@ const HiddenNFTGrid = ({ overlay }: { overlay?: ReactNode }) => {
         }}
       >
         {Array.from({ length: 4 }).map((_, index) => (
-          <NFTCard isBlank={true} />
+          <NFTCard key={index} isBlank />
         ))}
       </ListGrid>
     </HiddenDetails>

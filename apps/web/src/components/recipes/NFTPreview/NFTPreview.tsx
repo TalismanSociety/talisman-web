@@ -4,27 +4,27 @@ import PlaceholderPreview from '@archetypes/NFT/PlaceholderPreview'
 import CircularProgressIndicator from '@components/atoms/CircularProgressIndicator'
 import { Box, File, Image, Unknown, Video, Volume2 } from '@components/atoms/Icon'
 import { getNFTType } from '@libs/@talisman-nft'
-import { NFTDetail } from '@libs/@talisman-nft/types'
+import { NFTShort } from '@libs/@talisman-nft/types'
 import { useEffect, useMemo, useState } from 'react'
 
 type NFTPreviewProps = {
-  nft?: NFTDetail
+  nft?: NFTShort
   isFull?: boolean
   loading?: boolean
   isBlank?: boolean
 }
 
 const NFTPreview = ({ nft, isFull = false, loading, isBlank = false }: NFTPreviewProps) => {
-  const [fetchedType, setFetchedType] = useState<string | undefined>()
+  const [fetchedType, setFetchedType] = useState<string>()
   const [isLoading, setIsLoading] = useState<boolean>(false)
 
   useEffect(() => {
-    if (!fetchedType && nft?.mediaUri) {
+    if (!fetchedType && nft?.mediaUri !== undefined) {
       setIsLoading(true)
       getNFTType(nft?.mediaUri).then(type => {
         setFetchedType(type)
+        setIsLoading(false)
       })
-      setIsLoading(false)
     }
   }, [fetchedType, nft?.mediaUri])
 
@@ -41,7 +41,10 @@ const NFTPreview = ({ nft, isFull = false, loading, isBlank = false }: NFTPrevie
         <img
           loading="lazy"
           src={`${nft?.mediaUri}${
-            !isFull && !nft?.mediaUri.endsWith('gif' || 'jpeg' || 'jpg' || 'png')
+            (!isFull && nft?.mediaUri?.endsWith('.gif')) ||
+            nft?.mediaUri?.endsWith('.png') ||
+            nft?.mediaUri?.endsWith('.jpg') ||
+            nft?.mediaUri?.endsWith('.jpeg')
               ? '?img-width=500&img-height=500&img-quality=50&img-onerror=redirect'
               : ''
           }`}
@@ -58,12 +61,12 @@ const NFTPreview = ({ nft, isFull = false, loading, isBlank = false }: NFTPrevie
       ) : nft?.mediaUri ? (
         <video
           src={nft?.thumb ?? `${nft?.mediaUri}?stream=true`}
-          onMouseOver={(event: any) => {
-            event.target.play()
+          onMouseOver={event => {
+            event.currentTarget.play()
           }}
-          onMouseOut={(event: any) => {
-            event.target.pause()
-            event.target.currentTime = 0
+          onMouseOut={event => {
+            event.currentTarget.pause()
+            event.currentTarget.currentTime = 0
           }}
           loop
           muted

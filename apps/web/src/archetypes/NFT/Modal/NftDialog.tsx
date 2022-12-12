@@ -7,13 +7,13 @@ import Pill from '@components/molecules/Pill'
 import { NFTPreview } from '@components/recipes/NFTPreview'
 import { keyframes } from '@emotion/react'
 import { useNftById } from '@libs/@talisman-nft'
-import { NFTDetail } from '@libs/@talisman-nft/types'
+import { NFTShort } from '@libs/@talisman-nft/types'
 
 import { NFTChild } from '../types'
 import InfoSkeleton from './InfoSkeleton'
 
 export type NftDialogProps = DialogProps & {
-  nft: NFTDetail
+  nft: NFTShort
   open?: boolean
   onRequestDismiss: () => void
 }
