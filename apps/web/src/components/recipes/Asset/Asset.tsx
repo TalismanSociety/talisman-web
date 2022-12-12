@@ -173,13 +173,30 @@ const AssetSkeleton = ({ loading = true }: { loading?: boolean }) => {
   )
 }
 
+const slideDown = keyframes`
+  0% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+`
+
 const Asset = Object.assign((props: AssetProps) => {
   const theme = useTheme()
 
   const { token, lockedAsset } = props
 
   return (
-    <tr className="asset">
+    <tr
+      className="asset"
+      css={{
+        // slide down on load
+        animation: `${slideDown} 0.3s ease-in-out`,
+      }}
+    >
       <td valign="top">
         {/* First Column */}
         <div css={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>

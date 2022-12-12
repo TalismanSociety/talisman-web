@@ -99,6 +99,7 @@ const Overview = () => {
   const { tokens, balances, isLoading } = useAssetsFiltered({ size: 8, search })
 
   const { items, isFetching, count } = useRecoilValue(nftDataState)
+  console.log({ items, isFetching, count })
 
   const nfts = useMemo(() => {
     if (!isFetching && !items.length) {
@@ -106,7 +107,7 @@ const Overview = () => {
     }
     // if still fetching and the items lenght is less than 4, return the loading cards but only display the remainder of items minus 4
 
-    if (!isFetching && items.length === count) {
+    if (!isFetching && items.length) {
       return items.slice(0, 4).map((nft: any) => <NFTCard key={nft.id} nft={nft} />)
     }
 
@@ -114,7 +115,7 @@ const Overview = () => {
     return Array.from({ length: 2 }).map((_, index) => <NFTCard loading={true} />)
 
     // return <></>
-  }, [count, isFetching, items])
+  }, [isFetching, items])
 
   return (
     <>

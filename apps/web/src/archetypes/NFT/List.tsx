@@ -23,12 +23,7 @@ type ListItemProps = {
 const ListItems = ({ nfts, isFetching }: ListItemProps) => {
   return (
     <>
-      {nfts.map((nft: any) => (
-        <NFTCard key={nft.id} nft={nft} />
-      ))}
-
-      {/* {nfts.length !== count &&
-        Array.from({ length: count - nfts.length }).map((_, index) => <NFTCard loading={true} />)} */}
+      {nfts && nfts.map((nft: any) => <NFTCard key={nft.id} nft={nft} />)}
 
       {isFetching && <NFTCard loading={true} />}
     </>
