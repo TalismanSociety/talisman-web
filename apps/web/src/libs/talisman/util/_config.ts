@@ -1199,6 +1199,19 @@ export const parachainDetails: ParachainDetails[] = [
   //     Discord: 'https://discord.com/invite/x6DxjxfP24',
   //   },
   // },
+  {
+    id: '0-2093',
+    name: 'Hashed Network',
+    slug: 'hashed-network',
+    token: 'BHASH',
+    subtitle: 'Digitally Native Businesses on Polkadot',
+    info: 'Hashed Network enables the full lifecycle for digitally-native organizations and web3-curious businesses seeking benefits of decentralized digital economies.',
+    links: {
+      Website: 'https://hashed.network/',
+      Twitter: 'https://twitter.com/HashedNetwork',
+      GitHub: 'https://github.com/hashed-io',
+    },
+  },
 ]
 
 export type CrowdloanDetails = {
