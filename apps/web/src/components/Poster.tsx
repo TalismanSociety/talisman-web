@@ -14,7 +14,12 @@ const Poster = styled(
     backgroundImage?: string
     className?: string
   }>) => (
-    <section className={`${className} poster`} style={{ backgroundImage: `url(${backgroundImage})` }}>
+    <section
+      className={`${className} poster`}
+      style={{
+        backgroundImage: `url(${backgroundImage}), url(https://raw.githubusercontent.com/TalismanSociety/chaindata/v3/assets/promo/generic-banner.png)`,
+      }}
+    >
       <span className="content">
         <h1>{title}</h1>
         <h2 dangerouslySetInnerHTML={{ __html: subtitle ?? '' }} />
