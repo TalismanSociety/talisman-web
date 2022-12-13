@@ -1,4 +1,5 @@
 import { accountsState, selectedAccountAddressesState } from '@domains/accounts/recoils'
+import { favoriteNftsState, hiddenNftsState } from '@domains/nfts/recoils'
 import { useEffect } from 'react'
 import { atom, selector, useRecoilValue, useSetRecoilState } from 'recoil'
 
@@ -14,8 +15,8 @@ export const nftDataState = atom<NFTData>({
   },
 })
 
-export const filteredNftDataState = selector<NFTData>({
-  key: 'FilteredNftData',
+export const selectedAccountsNftDataState = selector<NFTData>({
+  key: 'SelectedAccountsNftData',
   get: ({ get }) => {
     const { items, isFetching, count } = get(nftDataState)
     const activeAccounts = get(selectedAccountAddressesState)
@@ -26,6 +27,25 @@ export const filteredNftDataState = selector<NFTData>({
     }
 
     return { items, isFetching, count }
+  },
+})
+
+export const overviewNftDataState = selector({
+  key: 'OverviewNftData',
+  get: ({ get }) => {
+    const nftData = get(selectedAccountsNftDataState)
+    const favoriteNfts = get(favoriteNftsState)
+    const hiddenNfts = get(hiddenNftsState)
+
+    const favoriteKeys = favoriteNfts.map(x => `${x.address}-${x.id}`)
+    const hiddenKeys = hiddenNfts.map(x => `${x.address}-${x.id}`)
+
+    return {
+      ...nftData,
+      items: [...nftData.items.filter(x => !hiddenKeys.includes(`${x.address}-${x.id}`))].sort((a, b) =>
+        favoriteKeys.includes(`${a.address}-${a.id}`) ? -1 : favoriteKeys.includes(`${b.address}-${b.id}`) ? 1 : 0
+      ),
+    }
   },
 })
 

@@ -9,7 +9,7 @@ import HiddenDetails from '@components/molecules/HiddenDetails'
 import Asset, { AssetsList, AssetsListLocked } from '@components/recipes/Asset'
 import { NFTCard } from '@components/recipes/NFTCard'
 import { keyframes } from '@emotion/react'
-import { filteredNftDataState } from '@libs/@talisman-nft/provider'
+import { overviewNftDataState } from '@libs/@talisman-nft/provider'
 import { NFTShort } from '@libs/@talisman-nft/types'
 import { DAPP_NAME, useExtension } from '@libs/talisman'
 import { useIsAnyWalletInstalled } from '@libs/talisman/useIsAnyWalletInstalled'
@@ -99,7 +99,7 @@ const Overview = () => {
   const { fiatTotal } = useAssets()
   const { tokens, balances, isLoading } = useAssetsFiltered({ size: 8, search })
 
-  const { items, isFetching } = useRecoilValue(filteredNftDataState)
+  const { items, isFetching } = useRecoilValue(overviewNftDataState)
 
   const nfts = useMemo(() => {
     if (!isFetching && items.length === 0) {

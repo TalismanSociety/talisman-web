@@ -9,7 +9,7 @@ import { accountsState, selectedAccountsState } from '@domains/accounts/recoils'
 import { useFavoriteNftLookup, useHiddenNftLookup } from '@domains/nfts/hooks'
 import { css } from '@emotion/react'
 import styled from '@emotion/styled'
-import { filteredNftDataState } from '@libs/@talisman-nft/provider'
+import { selectedAccountsNftDataState } from '@libs/@talisman-nft/provider'
 import type { NFTCollectionDetails } from '@libs/@talisman-nft/types'
 import { NFTShort } from '@libs/@talisman-nft/types'
 import { device } from '@util/breakpoints'
@@ -33,7 +33,7 @@ const ListItems = ({ nfts, isFetching }: ListItemProps) => {
       <AnimatePresence mode="popLayout">
         {nfts.map(nft => (
           <motion.div key={nft.id} layoutId={`nft-card-${nft.id}`} exit={{ opacity: 0, scale: 0.8 }}>
-            <NFTCard nft={nft as any} />
+            <NFTCard nft={nft as any} persistentFavoriteDisplay />
           </motion.div>
         ))}
       </AnimatePresence>
@@ -61,7 +61,7 @@ const List = () => {
   const isFavorite = useFavoriteNftLookup()
   const isHidden = useHiddenNftLookup()
 
-  const { items, isFetching, count } = useRecoilValue(filteredNftDataState)
+  const { items, isFetching, count } = useRecoilValue(selectedAccountsNftDataState)
   const accounts = useRecoilValue(accountsState)
   const isSingleAccountSelected = useRecoilValue(selectedAccountsState).length <= 1
 
