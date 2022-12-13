@@ -196,29 +196,33 @@ const List = () => {
   return (
     <>
       <div css={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <Select
-          value={selectedCollectionValue}
-          onChange={id =>
-            setSelectedCollection(
-              collections.find(c => c.id === id) ?? specialCollections.find(x => x.id === id)?.id ?? 'all'
-            )
-          }
-        >
-          {[
-            ...specialCollections.map((x, index, array) => (
-              <Select.Item key={x.id} value={x.id} bottomBordered={index === array.length - 1}>
-                {x.element}
-              </Select.Item>
-            )),
-            ...collections.map(x => (
-              <Select.Item key={x.id} value={x.id}>
-                {x.name ?? x.id}
-              </Select.Item>
-            )),
-          ]}
-        </Select>
-        <div css={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
-          <Text.Body alpha="high">Sort: </Text.Body>
+        <Select.Label>
+          Filter:
+          <Select
+            variant="toggle-no-background"
+            value={selectedCollectionValue}
+            onChange={id =>
+              setSelectedCollection(
+                collections.find(c => c.id === id) ?? specialCollections.find(x => x.id === id)?.id ?? 'all'
+              )
+            }
+          >
+            {[
+              ...specialCollections.map((x, index, array) => (
+                <Select.Item key={x.id} value={x.id} bottomBordered={index === array.length - 1}>
+                  {x.element}
+                </Select.Item>
+              )),
+              ...collections.map(x => (
+                <Select.Item key={x.id} value={x.id}>
+                  {x.name ?? x.id}
+                </Select.Item>
+              )),
+            ]}
+          </Select>
+        </Select.Label>
+        <Select.Label>
+          Sort:
           <Select variant="toggle-no-background" value={sortBy} onChange={key => setSortBy(key ?? ('Default' as any))}>
             {sortByKeys.map(x => (
               <Select.Item key={x} value={x}>
@@ -226,7 +230,7 @@ const List = () => {
               </Select.Item>
             ))}
           </Select>
-        </div>
+        </Select.Label>
       </div>
       {Object.keys(sortedNfts).map((address: string) => (
         <>

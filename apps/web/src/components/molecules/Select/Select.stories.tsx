@@ -45,6 +45,27 @@ export const ToggleNoBackground = () => {
   )
 }
 
+export const WithLabel = () => {
+  const [selected, setSelected] = useState<string | undefined>(undefined)
+
+  return (
+    <Select.Label>
+      Collection:
+      <Select
+        placeholder="Select account"
+        value={selected}
+        onChange={value => setSelected(value)}
+        variant="toggle-no-background"
+      >
+        <Select.Item value={0}>All collections</Select.Item>
+        <Select.Item value={1}>Talisman Spirits Keys</Select.Item>
+        <Select.Item value={2}>Talisman Commendations</Select.Item>
+        <Select.Item value={3}>Dudes</Select.Item>
+      </Select>
+    </Select.Label>
+  )
+}
+
 export const Overflow = () => {
   const [selected, setSelected] = useState<string | undefined>(undefined)
 

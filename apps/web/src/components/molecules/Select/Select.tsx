@@ -15,6 +15,7 @@ import {
 } from '@floating-ui/react-dom-interactions'
 import { motion } from 'framer-motion'
 import React, {
+  MouseEventHandler,
   PropsWithChildren,
   ReactElement,
   ReactNode,
@@ -36,10 +37,24 @@ export type SelectProps = {
   variant?: 'default' | 'toggle-no-background'
 }
 
+type LabelProps = {
+  children: [ReactNode, ReactElement<SelectProps>]
+}
+
 type SelectItemProps = PropsWithChildren<{
   value?: Value
   bottomBordered?: boolean
 }>
+
+const Label = (props: LabelProps) => (
+  <label
+    css={{ display: 'flex', alignItems: 'center', gap: '2rem' }}
+    onClick={useCallback<MouseEventHandler<HTMLLabelElement>>(event => event.preventDefault(), [])}
+  >
+    <Text.Body alpha="high">{props.children[0]}</Text.Body>
+    {props.children[1]}
+  </label>
+)
 
 const SelectItem = forwardRef<HTMLSpanElement, SelectItemProps>((props, ref) => (
   <span ref={ref}>
@@ -234,7 +249,7 @@ const Select = Object.assign(
       </motion.div>
     )
   },
-  { Item: SelectItem }
+  { Label, Item: SelectItem }
 )
 
 export default Select
