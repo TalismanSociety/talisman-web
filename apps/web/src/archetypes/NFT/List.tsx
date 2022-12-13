@@ -200,6 +200,7 @@ const List = () => {
           Filter:
           <Select
             variant="toggle-no-background"
+            width="30rem"
             value={selectedCollectionValue}
             onChange={id =>
               setSelectedCollection(
@@ -223,7 +224,12 @@ const List = () => {
         </Select.Label>
         <Select.Label>
           Sort:
-          <Select variant="toggle-no-background" value={sortBy} onChange={key => setSortBy(key ?? ('Default' as any))}>
+          <Select
+            variant="toggle-no-background"
+            width="20rem"
+            value={sortBy}
+            onChange={key => setSortBy(key ?? ('Default' as any))}
+          >
             {sortByKeys.map(x => (
               <Select.Item key={x} value={x}>
                 {x}

@@ -35,6 +35,7 @@ export type SelectProps = {
   children: ReactElement<SelectItemProps> | ReactElement<SelectItemProps>[]
   onChange?: (value: string | undefined) => unknown
   variant?: 'default' | 'toggle-no-background'
+  width?: number | string
 }
 
 type LabelProps = {
@@ -159,6 +160,7 @@ const Select = Object.assign(
               'padding': '1.6rem',
               'border': 'none',
               'borderRadius': '1.2rem',
+              'width': props.width,
               'cursor': 'pointer',
               ':hover': {
                 filter: 'brightness(1.2)',
