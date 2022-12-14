@@ -238,64 +238,70 @@ const List = () => {
           </Select>
         </Select.Label>
       </div>
-      {Object.keys(sortedNfts).map((address: string) => (
-        <>
-          <div
-            css={{
-              'display': 'flex',
-              'flexDirection': 'row',
-              'alignItems': 'center',
+      {Object.keys(sortedNfts).length === 0 ? (
+        <div css={{ marginTop: '3rem' }}>
+          <HiddenNFTGrid overlay={<Text.H3>No NFTs matched the selected filter</Text.H3>} />
+        </div>
+      ) : (
+        Object.keys(sortedNfts).map((address: string) => (
+          <>
+            <div
+              css={{
+                'display': 'flex',
+                'flexDirection': 'row',
+                'alignItems': 'center',
 
-              // first item no top margin
-              '&:first-of-type': {
-                marginTop: 0,
-              },
+                // first item no top margin
+                '&:first-of-type': {
+                  marginTop: 0,
+                },
 
-              'margin': '3rem 0',
-              'gap': '1rem',
-            }}
-          >
-            {!isSingleAccountSelected && (
-              <>
-                <Identicon
-                  value={address}
-                  css={{
-                    width: '4rem',
-                    height: '4rem',
-                  }}
-                />
-                <Text.Body
-                  css={{
-                    fontSize: '2rem',
-                  }}
-                >
-                  {accountName(address)}
-                </Text.Body>
-                <CopyButton
-                  text={address}
-                  onCopied={(text: string) => {
-                    toast(
-                      <>
-                        <Text.Body as="div" alpha="high">
-                          Address copied to clipboard
-                        </Text.Body>
-                        <Text.Body as="div">{text}</Text.Body>
-                      </>,
-                      { position: 'bottom-right', icon: <Copy /> }
-                    )
-                  }}
-                  onFailed={(text: string) => {
-                    console.log(`>>> failed`, text)
-                  }}
-                />
-              </>
-            )}
-          </div>
-          <ListGrid>
-            <ListItems nfts={sortedNfts[address]!} isFetching={isFetching} />
-          </ListGrid>
-        </>
-      ))}
+                'margin': '3rem 0',
+                'gap': '1rem',
+              }}
+            >
+              {!isSingleAccountSelected && (
+                <>
+                  <Identicon
+                    value={address}
+                    css={{
+                      width: '4rem',
+                      height: '4rem',
+                    }}
+                  />
+                  <Text.Body
+                    css={{
+                      fontSize: '2rem',
+                    }}
+                  >
+                    {accountName(address)}
+                  </Text.Body>
+                  <CopyButton
+                    text={address}
+                    onCopied={(text: string) => {
+                      toast(
+                        <>
+                          <Text.Body as="div" alpha="high">
+                            Address copied to clipboard
+                          </Text.Body>
+                          <Text.Body as="div">{text}</Text.Body>
+                        </>,
+                        { position: 'bottom-right', icon: <Copy /> }
+                      )
+                    }}
+                    onFailed={(text: string) => {
+                      console.log(`>>> failed`, text)
+                    }}
+                  />
+                </>
+              )}
+            </div>
+            <ListGrid>
+              <ListItems nfts={sortedNfts[address]!} isFetching={isFetching} />
+            </ListGrid>
+          </>
+        ))
+      )}
     </>
   )
 }
