@@ -1,4 +1,5 @@
 import styled from '@emotion/styled'
+import useImageWithFallback from '@util/useImageWithFallback'
 import { PropsWithChildren } from 'react'
 
 const Poster = styled(
@@ -6,27 +7,33 @@ const Poster = styled(
     title,
     subtitle,
     backgroundImage,
+    fallbackBackgroundImage,
     children,
     className,
   }: PropsWithChildren<{
     title?: string
     subtitle?: string
     backgroundImage?: string
+    fallbackBackgroundImage?: string
     className?: string
-  }>) => (
-    <section
-      className={`${className} poster`}
-      style={{
-        backgroundImage: `url(${backgroundImage}), url(https://raw.githubusercontent.com/TalismanSociety/chaindata/v3/assets/promo/generic-banner.png)`,
-      }}
-    >
-      <span className="content">
-        <h1>{title}</h1>
-        <h2 dangerouslySetInnerHTML={{ __html: subtitle ?? '' }} />
-        <div className="children">{children}</div>
-      </span>
-    </section>
-  )
+  }>) => {
+    const imageSrc = useImageWithFallback(backgroundImage, fallbackBackgroundImage)
+
+    return (
+      <section
+        className={`${className} poster`}
+        style={{
+          backgroundImage: `url(${imageSrc})`,
+        }}
+      >
+        <span className="content">
+          <h1>{title}</h1>
+          <h2 dangerouslySetInnerHTML={{ __html: subtitle ?? '' }} />
+          <div className="children">{children}</div>
+        </span>
+      </section>
+    )
+  }
 )`
   display: block;
   width: 100%;

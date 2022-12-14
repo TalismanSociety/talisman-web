@@ -1,5 +1,6 @@
 import styled from '@emotion/styled'
 import { useParachainAssets } from '@libs/talisman'
+import useImageWithFallback from '@util/useImageWithFallback'
 
 type ImageProps = {
   id: string
@@ -14,13 +15,13 @@ const fallbackMap = {
 
 const Image = styled(({ id, type, className }: ImageProps) => {
   const assets = useParachainAssets(id)
-
+  const imageSrc = useImageWithFallback(assets[type], fallbackMap[type as keyof typeof fallbackMap])
   return (
     <div
       className={`crowdloan-asset crowdloan-${type} ${className}`}
       data-type={type}
       css={{
-        backgroundImage: `url(${assets[type]}), url(${fallbackMap[type as keyof typeof fallbackMap]})`,
+        backgroundImage: `url(${imageSrc})`,
         backgroundSize: 'cover',
       }}
     />

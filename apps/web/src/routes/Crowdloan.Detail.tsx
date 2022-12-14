@@ -23,7 +23,10 @@ const CrowdloanDetail = styled(({ className }: { className?: string }) => {
 
   return (
     <section className={className}>
-      <Poster backgroundImage={banner} />
+      <Poster
+        backgroundImage={banner}
+        fallbackBackgroundImage="https://raw.githubusercontent.com/TalismanSociety/chaindata/v3/assets/promo/generic-banner.png"
+      />
       <div className="content">
         <article>
           <Parachain.Asset id={parachainDetails?.id ?? ''} type="logo" />
