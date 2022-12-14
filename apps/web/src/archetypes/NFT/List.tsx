@@ -106,11 +106,12 @@ const List = () => {
       uniqWith(
         (a, b) => a.id === b.id,
         items
+          .filter(x => !isHidden(x.address, x.id))
           .flatMap(x => x.collection)
           .filter((x): x is NFTCollectionDetails => x !== undefined)
           .sort((a, b) => a.id.localeCompare(b.id))
       ),
-    [items]
+    [isHidden, items]
   )
 
   const filteredItems = useMemo(() => {
