@@ -7,7 +7,6 @@ import { useNftFavoriteState, useNftHiddenState } from '@domains/nfts/hooks'
 import { useTheme } from '@emotion/react'
 import styled from '@emotion/styled'
 import { NFTShort } from '@libs/@talisman-nft/types'
-import { useExtension } from '@libs/talisman'
 import { useState } from 'react'
 
 import { NFTPreview } from '../NFTPreview'
