@@ -5,6 +5,7 @@ import CircularProgressIndicator from '@components/atoms/CircularProgressIndicat
 import { Box, File, Image, Unknown, Video, Volume2 } from '@components/atoms/Icon'
 import { getNFTType } from '@libs/@talisman-nft'
 import { NFTShort } from '@libs/@talisman-nft/types'
+import { useExtension } from '@libs/talisman'
 import { useEffect, useMemo, useState } from 'react'
 
 type NFTPreviewProps = {
@@ -18,6 +19,8 @@ const NFTPreview = ({ nft, isFull = false, loading, isBlank = false }: NFTPrevie
   const [fetchedType, setFetchedType] = useState<string>()
   const [isLoading, setIsLoading] = useState<boolean>(false)
 
+  const { status: extensionStatus } = useExtension()
+
   useEffect(() => {
     if (!fetchedType && nft?.mediaUri !== undefined) {
       setIsLoading(true)
@@ -29,11 +32,11 @@ const NFTPreview = ({ nft, isFull = false, loading, isBlank = false }: NFTPrevie
   }, [fetchedType, nft?.mediaUri])
 
   const effectiveType = useMemo(() => {
-    if (isBlank) return 'blank'
+    if (isBlank || extensionStatus === 'UNAVAILABLE') return 'blank'
     if (nft?.type) return nft?.type
     if (isLoading || loading) return 'loading'
     return fetchedType ?? undefined
-  }, [nft?.type, isLoading, loading, fetchedType, isBlank])
+  }, [isBlank, extensionStatus, nft?.type, isLoading, loading, fetchedType])
 
   switch (effectiveType) {
     case 'image':

@@ -7,6 +7,7 @@ import { useNftFavoriteState, useNftHiddenState } from '@domains/nfts/hooks'
 import { useTheme } from '@emotion/react'
 import styled from '@emotion/styled'
 import { NFTShort } from '@libs/@talisman-nft/types'
+import { useExtension } from '@libs/talisman'
 import { useState } from 'react'
 
 import { NFTPreview } from '../NFTPreview'
@@ -37,9 +38,24 @@ const NFTCard = ({ nft, loading, isBlank = false }: NFTCardProps) => {
       )}
       <Card
         onClick={() => setOpen(true)}
-        css={{
-          cursor: nft ? 'pointer' : 'default',
-        }}
+        css={[
+          {
+            cursor: 'default',
+          },
+          nft &&
+            !loading &&
+            !isBlank && {
+              'cursor': 'pointer',
+              '&:hover': {
+                'boxShadow': '0 0 0 1.2px rgb(90, 90, 90)',
+                'transform': 'scale(1.01)',
+                'transition': 'all 0.1s ease-in-out',
+                '.controls > *': {
+                  display: 'initial',
+                },
+              },
+            },
+        ]}
       >
         <UpperSection>
           <NFTPreview nft={nft} loading={loading} isFull={false} isBlank={isBlank} />
@@ -131,15 +147,6 @@ const Card = styled.div`
 
   .controls > * {
     display: none;
-  }
-
-  :hover {
-    box-shadow: 0 0 0 1.2px rgb(90, 90, 90);
-    transform: scale(1.01);
-    transition: all 0.1s ease-in-out;
-    .controls > * {
-      display: initial;
-    }
   }
 `
 

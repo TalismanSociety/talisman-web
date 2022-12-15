@@ -4,6 +4,8 @@ import Text from '@components/atoms/Text'
 import HiddenDetails from '@components/molecules/HiddenDetails'
 import { keyframes, useTheme } from '@emotion/react'
 import styled from '@emotion/styled'
+import { useExtension } from '@libs/talisman'
+import { useIsAnyWalletInstalled } from '@libs/talisman/useIsAnyWalletInstalled'
 import { Balances } from '@talismn/balances'
 import _ from 'lodash'
 import { Children, ReactElement, ReactNode } from 'react'
@@ -385,6 +387,7 @@ export type AssetsListProps = {
 
 export const AssetsList = (props: AssetsListProps) => {
   const { isLoading } = props
+  const { status: extensionStatus } = useExtension()
 
   return (
     <HiddenDetails overlay={<Text.H3>No Assets Found</Text.H3>} hidden={!isLoading && _.isEmpty(props.children)}>
@@ -408,11 +411,11 @@ export const AssetsList = (props: AssetsListProps) => {
         </thead>
         <tbody>
           {/* if is loading and no children, show an array of 8 assetskeleton. if not loading and no children show empty div, else map children */}
-          {isLoading && _.isEmpty(props.children)
+          {isLoading && _.isEmpty(props.children) && extensionStatus !== 'UNAVAILABLE'
             ? Array(8)
                 .fill(0)
                 .map((_, i) => <AssetSkeleton key={i} />)
-            : !isLoading && _.isEmpty(props.children)
+            : (!isLoading && _.isEmpty(props.children)) || extensionStatus === 'UNAVAILABLE'
             ? Array(8)
                 .fill(0)
                 .map((_, i) => <AssetSkeleton key={i} loading={false} />)
