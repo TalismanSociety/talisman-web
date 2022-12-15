@@ -9,7 +9,7 @@ import { accountsState, selectedAccountsState } from '@domains/accounts/recoils'
 import { useFavoriteNftLookup, useHiddenNftLookup } from '@domains/nfts/hooks'
 import { css } from '@emotion/react'
 import styled from '@emotion/styled'
-import { filteredNftDataState } from '@libs/@talisman-nft/provider'
+import { selectedAccountsNftDataState } from '@libs/@talisman-nft/provider'
 import type { NFTCollectionDetails } from '@libs/@talisman-nft/types'
 import { NFTShort } from '@libs/@talisman-nft/types'
 import { device } from '@util/breakpoints'
@@ -33,7 +33,7 @@ const ListItems = ({ nfts, isFetching }: ListItemProps) => {
       <AnimatePresence mode="popLayout">
         {nfts.map(nft => (
           <motion.div key={nft.id} layoutId={`nft-card-${nft.id}`} exit={{ opacity: 0, scale: 0.8 }}>
-            <NFTCard nft={nft as any} />
+            <NFTCard nft={nft as any} persistentFavoriteDisplay />
           </motion.div>
         ))}
       </AnimatePresence>
@@ -61,7 +61,7 @@ const List = () => {
   const isFavorite = useFavoriteNftLookup()
   const isHidden = useHiddenNftLookup()
 
-  const { items, isFetching, count } = useRecoilValue(filteredNftDataState)
+  const { items, isFetching, count } = useRecoilValue(selectedAccountsNftDataState)
   const accounts = useRecoilValue(accountsState)
   const isSingleAccountSelected = useRecoilValue(selectedAccountsState).length <= 1
 
@@ -106,11 +106,12 @@ const List = () => {
       uniqWith(
         (a, b) => a.id === b.id,
         items
+          .filter(x => !isHidden(x.address, x.id))
           .flatMap(x => x.collection)
           .filter((x): x is NFTCollectionDetails => x !== undefined)
           .sort((a, b) => a.id.localeCompare(b.id))
       ),
-    [items]
+    [isHidden, items]
   )
 
   const filteredItems = useMemo(() => {
@@ -196,96 +197,112 @@ const List = () => {
   return (
     <>
       <div css={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <Select
-          value={selectedCollectionValue}
-          onChange={id =>
-            setSelectedCollection(
-              collections.find(c => c.id === id) ?? specialCollections.find(x => x.id === id)?.id ?? 'all'
-            )
-          }
-        >
-          {[
-            ...specialCollections.map((x, index, array) => (
-              <Select.Item key={x.id} value={x.id} bottomBordered={index === array.length - 1}>
-                {x.element}
-              </Select.Item>
-            )),
-            ...collections.map(x => (
-              <Select.Item key={x.id} value={x.id}>
-                {x.name ?? x.id}
-              </Select.Item>
-            )),
-          ]}
-        </Select>
-        <div css={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
-          <Text.Body alpha="high">Sort: </Text.Body>
-          <Select variant="toggle-no-background" value={sortBy} onChange={key => setSortBy(key ?? ('Default' as any))}>
+        <Select.Label>
+          Filter:
+          <Select
+            variant="toggle-no-background"
+            width="30rem"
+            value={selectedCollectionValue}
+            onChange={id =>
+              setSelectedCollection(
+                collections.find(c => c.id === id) ?? specialCollections.find(x => x.id === id)?.id ?? 'all'
+              )
+            }
+          >
+            {[
+              ...specialCollections.map((x, index, array) => (
+                <Select.Item key={x.id} value={x.id} bottomBordered={index === array.length - 1}>
+                  {x.element}
+                </Select.Item>
+              )),
+              ...collections.map(x => (
+                <Select.Item key={x.id} value={x.id}>
+                  {x.name ?? x.id}
+                </Select.Item>
+              )),
+            ]}
+          </Select>
+        </Select.Label>
+        <Select.Label>
+          Sort:
+          <Select
+            variant="toggle-no-background"
+            width="20rem"
+            value={sortBy}
+            onChange={key => setSortBy(key ?? ('Default' as any))}
+          >
             {sortByKeys.map(x => (
               <Select.Item key={x} value={x}>
                 {x}
               </Select.Item>
             ))}
           </Select>
-        </div>
+        </Select.Label>
       </div>
-      {Object.keys(sortedNfts).map((address: string) => (
-        <>
-          <div
-            css={{
-              'display': 'flex',
-              'flexDirection': 'row',
-              'alignItems': 'center',
+      {Object.keys(sortedNfts).length === 0 ? (
+        <div css={{ marginTop: '3rem' }}>
+          <HiddenNFTGrid overlay={<Text.H3>No NFTs matched the selected filter</Text.H3>} />
+        </div>
+      ) : (
+        Object.keys(sortedNfts).map((address: string) => (
+          <>
+            <div
+              css={{
+                'display': 'flex',
+                'flexDirection': 'row',
+                'alignItems': 'center',
 
-              // first item no top margin
-              '&:first-of-type': {
-                marginTop: 0,
-              },
+                // first item no top margin
+                '&:first-of-type': {
+                  marginTop: 0,
+                },
 
-              'margin': '3rem 0',
-              'gap': '1rem',
-            }}
-          >
-            {!isSingleAccountSelected && (
-              <>
-                <Identicon
-                  value={address}
-                  css={{
-                    width: '4rem',
-                    height: '4rem',
-                  }}
-                />
-                <Text.Body
-                  css={{
-                    fontSize: '2rem',
-                  }}
-                >
-                  {accountName(address)}
-                </Text.Body>
-                <CopyButton
-                  text={address}
-                  onCopied={(text: string) => {
-                    toast(
-                      <>
-                        <Text.Body as="div" alpha="high">
-                          Address copied to clipboard
-                        </Text.Body>
-                        <Text.Body as="div">{text}</Text.Body>
-                      </>,
-                      { position: 'bottom-right', icon: <Copy /> }
-                    )
-                  }}
-                  onFailed={(text: string) => {
-                    console.log(`>>> failed`, text)
-                  }}
-                />
-              </>
-            )}
-          </div>
-          <ListGrid>
-            <ListItems nfts={sortedNfts[address]!} isFetching={isFetching} />
-          </ListGrid>
-        </>
-      ))}
+                'margin': '3rem 0',
+                'gap': '1rem',
+              }}
+            >
+              {!isSingleAccountSelected && (
+                <>
+                  <Identicon
+                    value={address}
+                    css={{
+                      width: '4rem',
+                      height: '4rem',
+                    }}
+                  />
+                  <Text.Body
+                    css={{
+                      fontSize: '2rem',
+                    }}
+                  >
+                    {accountName(address)}
+                  </Text.Body>
+                  <CopyButton
+                    text={address}
+                    onCopied={(text: string) => {
+                      toast(
+                        <>
+                          <Text.Body as="div" alpha="high">
+                            Address copied to clipboard
+                          </Text.Body>
+                          <Text.Body as="div">{text}</Text.Body>
+                        </>,
+                        { position: 'bottom-right', icon: <Copy /> }
+                      )
+                    }}
+                    onFailed={(text: string) => {
+                      console.log(`>>> failed`, text)
+                    }}
+                  />
+                </>
+              )}
+            </div>
+            <ListGrid>
+              <ListItems nfts={sortedNfts[address]!} isFetching={isFetching} />
+            </ListGrid>
+          </>
+        ))
+      )}
     </>
   )
 }

@@ -15,9 +15,10 @@ type NFTCardProps = {
   nft?: NFTShort
   loading?: boolean
   isBlank?: boolean
+  persistentFavoriteDisplay?: boolean
 }
 
-const NFTCard = ({ nft, loading, isBlank = false }: NFTCardProps) => {
+const NFTCard = ({ nft, loading, isBlank = false, persistentFavoriteDisplay = false }: NFTCardProps) => {
   const theme = useTheme()
   const [favorited, toggleFavorited] = useNftFavoriteState(nft?.address ?? '', nft?.id ?? '')
   const [hidden, toggleHidden] = useNftHiddenState(nft?.address ?? '', nft?.id ?? '')
@@ -81,7 +82,10 @@ const NFTCard = ({ nft, loading, isBlank = false }: NFTCardProps) => {
                   {hidden ? <Eye /> : <EyeOff />}
                 </Button>
               </div>
-              <div className="favorite" style={{ display: favorited ? 'block' : undefined }}>
+              <div
+                className="favorite"
+                style={{ display: favorited && persistentFavoriteDisplay ? 'block' : undefined }}
+              >
                 <Button
                   variant="secondary"
                   css={{ padding: '1.5rem' }}
