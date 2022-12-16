@@ -1,79 +1,77 @@
 import { ChainLogo, ExtensionStatusGate, Info, Panel, PanelSection, Pendor } from '@components'
+import { selectedPolkadotAccountsState } from '@domains/accounts/recoils'
 import styled from '@emotion/styled'
-import {
-  getTotalContributionForCrowdloan,
-  groupTotalContributionsByCrowdloan,
-  useCrowdloanContributions,
-} from '@libs/crowdloans'
+import { CrowdloanContribution, useCrowdloanContributions } from '@libs/crowdloans'
 import { Moonbeam } from '@libs/crowdloans/crowdloanOverrides'
 import { MoonbeamPortfolioTag } from '@libs/moonbeam-contributors'
 import { calculateCrowdloanPortfolioAmounts, usePortfolio, useTaggedAmountsInPortfolio } from '@libs/portfolio'
-import { useAccountAddresses, useCrowdloanById, useCrowdloans } from '@libs/talisman'
+import { useCrowdloanById, useParachainAssets, useParachainDetailsById } from '@libs/talisman'
+import { SupportedRelaychains, parachainDetails } from '@libs/talisman/util/_config'
 import { useTokenPrice } from '@libs/tokenprices'
-import { useChain } from '@talismn/api-react-hooks'
 import { encodeAnyAddress, planckToTokens } from '@talismn/util'
 import { formatCommas, formatCurrency } from '@util/helpers'
+import { Maybe } from '@util/monads'
 import BigNumber from 'bignumber.js'
 import { Suspense, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
+import { useRecoilValue } from 'recoil'
 
-const CrowdloanItem = styled(({ id, className }: { id: string; className?: string }) => {
-  const { t } = useTranslation()
-  const { crowdloan } = useCrowdloanById(id)
-  const parachainId = crowdloan?.parachain.paraId
-  const relayChainId = useMemo(() => id.split('-')[0], [id])
-  const relayChain = useChain(relayChainId)
-  const chain = useChain(parachainId)
+const CrowdloanItem = styled(
+  ({ contribution, className }: { contribution: CrowdloanContribution; className?: string }) => {
+    const { t } = useTranslation()
 
-  const { nativeToken: relayNativeToken, tokenDecimals: relayTokenDecimals } = relayChain
-  const { name, longName } = chain
-  const { price: relayTokenPrice, loading: relayPriceLoading } = useTokenPrice(relayNativeToken)
+    const id = contribution.parachain.paraId
 
-  const accounts = useAccountAddresses()
-  const { contributions } = useCrowdloanContributions({ accounts, crowdloans: id ? [id] : undefined })
-  const totalContributions = getTotalContributionForCrowdloan(id, contributions)
+    const asset = useParachainAssets(id)
 
-  const relayTokenSymbol = relayNativeToken ?? 'Planck'
-  const contributedTokens = useMemo(
-    () => planckToTokens(totalContributions || undefined, relayTokenDecimals),
-    [relayTokenDecimals, totalContributions]
-  )
-  const contributedUsd = new BigNumber(contributedTokens ?? 0).times(relayTokenPrice ?? 0).toString()
+    const relayChainId = contribution.parachain.paraId.split('-')[0]
+    const relayChain = Maybe.of(relayChainId).mapOrUndefined(x => SupportedRelaychains[x]!)
+    const chain = parachainDetails.find(x => x.id === id)
 
-  const portfolioAmounts = useMemo(
-    () => calculateCrowdloanPortfolioAmounts(contributions, relayTokenDecimals, relayTokenPrice),
-    [contributions, relayTokenDecimals, relayTokenPrice]
-  )
-  useTaggedAmountsInPortfolio(portfolioAmounts)
+    const { tokenSymbol: relayNativeToken, tokenDecimals: relayTokenDecimals } = relayChain ?? {}
+    const { name } = chain ?? {}
+    const { price: relayTokenPrice, loading: relayPriceLoading } = useTokenPrice(relayNativeToken!)
 
-  return (
-    <div className={`${className} ${id}`}>
-      <span className="left">
-        <Info title={name} subtitle={longName || name} graphic={<ChainLogo chain={chain} type="logo" size={4} />} />
-        <Suspense fallback={null}>
-          {Moonbeam.is(Number(id.split('-')[0]), Number(id.split('-')[1])) ? <MoonbeamPortfolioTag /> : null}
-        </Suspense>
-      </span>
-      <span className="right">
-        <Info
-          title={
-            <Pendor suffix={` ${relayTokenSymbol} ${t('Contributed')}`}>
-              {contributedTokens && formatCommas(contributedTokens)}
-            </Pendor>
-          }
-          subtitle={
-            contributedTokens ? (
-              <Pendor prefix={!contributedUsd && '-'} require={!relayPriceLoading}>
-                {contributedUsd && formatCurrency(contributedUsd)}
+    const relayTokenSymbol = relayNativeToken ?? 'Planck'
+    const contributedTokens = planckToTokens(contribution.amount, relayTokenDecimals!)
+    const contributedUsd = new BigNumber(contributedTokens).times(relayTokenPrice ?? 0).toString()
+
+    const portfolioAmounts = useMemo(
+      () => calculateCrowdloanPortfolioAmounts([contribution], relayTokenDecimals, relayTokenPrice),
+      [contribution, relayTokenDecimals, relayTokenPrice]
+    )
+
+    useTaggedAmountsInPortfolio(portfolioAmounts)
+
+    return (
+      <div className={`${className} ${id}`}>
+        <span className="left">
+          <Info title={name} subtitle={name} graphic={<ChainLogo chain={{ ...chain, asset }} type="logo" size={4} />} />
+          <Suspense fallback={null}>
+            {Moonbeam.is(Number(id.split('-')[0]), Number(id.split('-')[1])) ? <MoonbeamPortfolioTag /> : null}
+          </Suspense>
+        </span>
+        <span className="right">
+          <Info
+            title={
+              <Pendor suffix={` ${relayTokenSymbol} ${t('Contributed')}`}>
+                {contributedTokens && formatCommas(contributedTokens)}
               </Pendor>
-            ) : null
-          }
-        />
-      </span>
-    </div>
-  )
-})`
+            }
+            subtitle={
+              contributedTokens ? (
+                <Pendor prefix={!contributedUsd && '-'} require={!relayPriceLoading}>
+                  {contributedUsd && formatCurrency(contributedUsd)}
+                </Pendor>
+              ) : null
+            }
+          />
+        </span>
+      </div>
+    )
+  }
+)`
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -88,12 +86,16 @@ const CrowdloanItem = styled(({ id, className }: { id: string; className?: strin
   }
 `
 
-const CrowdloanItemWithLink = styled((props: any) => {
-  const { id, className } = props
+const CrowdloanItemWithLink = styled((props: { contribution: CrowdloanContribution; className?: string }) => {
+  const { className } = props
+  const { crowdloan } = useCrowdloanById(props.contribution.id)
+  const parachainId = crowdloan?.parachain?.paraId
+  const { parachainDetails } = useParachainDetailsById(parachainId)
+  const linkToCrowdloan = parachainDetails?.slug ? `/crowdloans/${parachainDetails?.slug}` : `/crowdloans`
   return (
-    <Link to={'#'} className={className}>
+    <Link to={linkToCrowdloan} className={className}>
       <PanelSection>
-        <CrowdloanItem id={id} />
+        <CrowdloanItem contribution={props.contribution} />
       </PanelSection>
     </Link>
   )
@@ -142,22 +144,8 @@ const ExtensionUnavailable = styled((props: any) => {
 
 const Crowdloans = ({ className }: { className?: string }) => {
   const { t } = useTranslation()
-  const accounts = useAccountAddresses()
+  const accounts = useRecoilValue(selectedPolkadotAccountsState).map(x => x.address)
   const { contributions, hydrated: contributionsHydrated } = useCrowdloanContributions({ accounts })
-  const totalContributions = groupTotalContributionsByCrowdloan(contributions)
-
-  const { crowdloans, hydrated } = useCrowdloans()
-  const notDisolvedCrowdloanIds = useMemo(
-    () => crowdloans.filter(crowdloan => crowdloan.dissolvedBlock === null).map(crowdloan => crowdloan.id),
-    [crowdloans]
-  )
-  const totalAliveContributions = useMemo(
-    () =>
-      hydrated
-        ? Object.fromEntries(Object.entries(totalContributions).filter(([id]) => notDisolvedCrowdloanIds.includes(id)))
-        : {},
-    [hydrated, totalContributions, notDisolvedCrowdloanIds]
-  )
 
   const { totalCrowdloansUsdByAddress } = usePortfolio()
   const genericAccounts = useMemo(() => accounts?.map(account => encodeAnyAddress(account, 42)), [accounts])
@@ -179,12 +167,12 @@ const Crowdloans = ({ className }: { className?: string }) => {
             <div>{t('Summoning Crowdloan Contributions...')}</div>
             <Pendor />
           </PanelSection>
-        ) : Object.keys(totalAliveContributions).length < 1 ? (
+        ) : contributions.length < 1 ? (
           <PanelSection comingSoon>{`${`😕 `} ${t('You have not contributed to any Crowdloans')}`}</PanelSection>
         ) : (
           <ExtensionStatusGate unavailable={<ExtensionUnavailable />}>
-            {Object.keys(totalAliveContributions).map(id => (
-              <CrowdloanItemWithLink key={id} id={id} />
+            {contributions.map(contribution => (
+              <CrowdloanItemWithLink key={contribution.id} contribution={contribution} />
             ))}
           </ExtensionStatusGate>
         )}

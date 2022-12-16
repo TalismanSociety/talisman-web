@@ -1,67 +1,11 @@
-import {
-  ApolloClient,
-  ApolloQueryResult,
-  InMemoryCache,
-  NormalizedCacheObject,
-  createHttpLink,
-  gql,
-} from '@apollo/client'
-import { useChain } from '@talismn/api-react-hooks'
+import { chainApiState } from '@domains/chains/recoils'
 import { find } from 'lodash'
 import { PropsWithChildren, useContext as _useContext, createContext, useEffect, useMemo, useState } from 'react'
+import { useRecoilValueLoadable, waitForAll } from 'recoil'
 
-import type { ParachainDetails } from './util/_config'
-import { SupportedRelaychains, parachainDetails } from './util/_config'
+import { ParachainDetails, parachainDetails } from './util/_config'
 
 export type { ParachainDetails } from './util/_config'
-
-//
-// Constants
-//
-
-const AllParachains = gql`
-  {
-    parachains(orderBy: ID_ASC) {
-      totalCount
-      nodes {
-        paraId
-        manager
-        deposit
-        leases {
-          totalCount
-        }
-      }
-    }
-  }
-`
-
-// TODO: Add parachain leases
-// const AllParachainLeases = gql`
-//   {
-//     parachainLeases {
-//       totalCount
-//       nodes {
-//         paraId
-//         leaseRange
-//         firstLease
-//         lastLease
-//         winningAmount
-//         extraAmount
-//         wonBidFrom
-//         numBlockWon
-//         winningResultBlock
-//         hasWon
-//         parachain {
-//           id
-//         }
-//       }
-//     }
-//   }
-// `
-
-//
-// Hooks (exported)
-//
 
 export const useParachainsDetails = () => useContext()
 export const useParachainsDetailsIndexedById = () => {
@@ -79,16 +23,14 @@ export const useParachainDetailsBySlug = (slug?: string) => useFindParachainDeta
 export const useParachainAssets = (
   id?: string
 ): Partial<{ [key: string]: string; banner: string; card: string; logo: string }> => {
-  const chain = useChain(id)
+  const crowdloanDetail = parachainDetails.find(x => x.id === id)
+  const slug = crowdloanDetail?.slug
 
-  return useMemo(
-    () => ({
-      banner: chain.asset?.banner,
-      card: chain.asset?.card,
-      logo: chain.asset?.logo,
-    }),
-    [chain]
-  )
+  return {
+    banner: `https://raw.githubusercontent.com/TalismanSociety/chaindata/v3/assets/promo/${slug}-banner.png`,
+    card: `https://raw.githubusercontent.com/TalismanSociety/chaindata/v3/assets/promo/${slug}-card.png`,
+    logo: `https://raw.githubusercontent.com/TalismanSociety/chaindata/v3/assets/chains/${slug}.svg`,
+  }
 }
 
 //
@@ -132,66 +74,39 @@ function useContext() {
 //
 
 export const Provider = ({ children }: PropsWithChildren) => {
-  const [parachainResults, setParachainResults] = useState<Array<[number, ApolloQueryResult<any> | null]>>([])
-  useEffect(() => {
-    // create an apollo client for each relaychain
-    const relayChainClients = Object.values(SupportedRelaychains).map(
-      ({ id, subqueryCrowdloansEndpoint }) =>
-        [
-          id,
-          new ApolloClient({
-            link: createHttpLink({ uri: subqueryCrowdloansEndpoint }),
-            cache: new InMemoryCache(),
-            headers: {
-              'Content-Type': 'application/json',
-              'Access-Control-Allow-Origin': '*',
-              'Access-Control-Allow-Credentials': 'true',
-            },
-          }),
-        ] as [number, ApolloClient<NormalizedCacheObject>]
-    )
-
-    // query parachains on each relay chain
-    const relayChainParachains = relayChainClients.map(([_id, client]) => client.query({ query: AllParachains }))
-
-    // extract results and store in state with relayChainId
-    Promise.allSettled(relayChainParachains).then(results =>
-      setParachainResults(
-        results.map((result, resultIndex) => [
-          relayChainClients[resultIndex]?.[0]!, // relayChainId
-          result.status === 'fulfilled' ? result.value : null, // result data
-        ])
-      )
-    )
-  }, [])
-
-  // TODO: Separate parachainDetails from parachains
-  // parachainDetails should come from chaindata, parachains should come from subquery
-  const [parachains, setParachains] = useState<ParachainDetails[]>([])
-  useEffect(() => {
-    setParachains(
-      parachainResults.flatMap(([relayChainId, result]) =>
-        (result?.data?.parachains?.nodes || [])
-          .map(({ paraId: id }: { paraId?: number }) => ({ paraId: `${relayChainId}-${id}` }))
-          .map(({ paraId: id }: { paraId?: number }) => find(parachainDetails, { id }))
-          .filter(Boolean)
-          .map((parachain: any) => ({ ...parachain, relayChainId }))
-      )
-    )
-  }, [parachainResults])
-
   const [hydrated, setHydrated] = useState(false)
-  useEffect(() => {
-    setHydrated(parachainResults.length > 0)
-  }, [parachainResults])
+  const [parachains, setParachains] = useState<ParachainDetails[]>([])
 
-  const value = useMemo(
-    () => ({
-      parachains,
-      hydrated,
-    }),
-    [parachains, hydrated]
+  const apisLoadable = useRecoilValueLoadable(waitForAll([chainApiState('polkadot'), chainApiState('kusama')]))
+
+  useEffect(
+    () => {
+      if (hydrated) {
+        return
+      }
+
+      if (apisLoadable.state !== 'hasValue') {
+        return
+      }
+
+      ;(async () => {
+        const [polkadotApi, kusamaApi] = apisLoadable.contents
+
+        const polkadotFunds = await polkadotApi.query.crowdloan.funds.entries()
+        const kusamaFunds = await kusamaApi.query.crowdloan.funds.entries()
+
+        const polkadotParaIds = polkadotFunds.map(x => `0-${x[0].args[0]}`)
+        const kusamaParaIds = kusamaFunds.map(x => `2-${x[0].args[0]}`)
+
+        const paraIds = [...polkadotParaIds, ...kusamaParaIds]
+
+        setParachains(parachainDetails.filter(x => paraIds.includes(x.id)))
+        setHydrated(true)
+      })()
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [apisLoadable.state]
   )
 
-  return <Context.Provider value={value}>{children}</Context.Provider>
+  return <Context.Provider value={{ parachains, hydrated }}>{children}</Context.Provider>
 }

@@ -26,8 +26,6 @@ export const unitPrefixes = [
   { multiplier: 1e24, symbol: 'Y' },
 ]
 export const shortNumber = (num, decimals = 2) => {
-  if (!num) return
-
   const prefix = unitPrefixes
     .slice()
     .reverse()

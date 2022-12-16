@@ -10,7 +10,6 @@ export type Relaychain = {
   name: string
   rpc: string
   genesisHash: string
-  subqueryCrowdloansEndpoint: string
   subscanUrl: string
   tokenDecimals: number
   tokenSymbol: string
@@ -24,7 +23,6 @@ export const SupportedRelaychains: { [key: number | string]: Relaychain } = {
     name: 'Polkadot',
     rpc: 'wss://rpc.polkadot.io',
     genesisHash: '0x91b171bb158e2d3848fa23a9f1c25182fb8e20313b2c1eb49219da7a70ce90c3',
-    subqueryCrowdloansEndpoint: 'https://api.subquery.network/sq/interlay/polkadot-crowdloan-indexer',
     subscanUrl: 'https://polkadot.subscan.io',
     tokenDecimals: 10,
     tokenSymbol: 'DOT',
@@ -35,7 +33,6 @@ export const SupportedRelaychains: { [key: number | string]: Relaychain } = {
     name: 'Kusama',
     rpc: 'wss://kusama-rpc.polkadot.io',
     genesisHash: '0xb0a8d493285c2df73290dfb7e61f870f17b41801197a149ca93654499ea3dafe',
-    subqueryCrowdloansEndpoint: 'https://api.subquery.network/sq/interlay/kusama-crowdloan-indexer',
     subscanUrl: 'https://kusama.subscan.io',
     tokenDecimals: 12,
     tokenSymbol: 'KSM',
@@ -61,7 +58,7 @@ export const parachainDetails: ParachainDetails[] = [
     slug: 'acala',
     token: 'ACA',
     subtitle: 'Acala is the DeFi and Liquidity Hub of Polkadot',
-    info: `Acala is an Ethereum-compatible smart contract platform optimized for DeFi and scaling DApps to Polkadot. The blockchain has built-in DeFi protocols for application developers to leverage, including a decentralized stablecoin (Acala Dollar - aUSD), a trustless staking derivatives (liquid DOT - LDOT), and a decentralized exchange.`,
+    info: 'Acala is an Ethereum-compatible smart contract platform optimized for DeFi and scaling DApps to Polkadot. The blockchain has built-in DeFi protocols for application developers to leverage, including a decentralized stablecoin (Acala Dollar - aUSD), a trustless staking derivatives (liquid DOT - LDOT), and a decentralized exchange.',
     links: {
       Website: 'https://acala.network',
       Twitter: 'https://twitter.com/AcalaNetwork',
@@ -76,7 +73,7 @@ export const parachainDetails: ParachainDetails[] = [
     slug: 'clover',
     token: 'CLV',
     subtitle: 'A foundational layer for cross-chain compatibility.',
-    info: `Clover describes itself as a blockchain operating system. It contains a storage layer, smart contract layer, Defi protocol layer, and eApp layer that work in unison to accomplish the goal of blockchain interoperability.`,
+    info: 'Clover describes itself as a blockchain operating system. It contains a storage layer, smart contract layer, Defi protocol layer, and eApp layer that work in unison to accomplish the goal of blockchain interoperability.',
     links: {
       Website: 'https://clover.finance/',
       Twitter: 'https://twitter.com/clover_finance/',
@@ -89,10 +86,10 @@ export const parachainDetails: ParachainDetails[] = [
   {
     id: '0-2003',
     name: 'Darwinia',
-    slug: 'darwinia',
+    slug: 'darwinia-polkadot',
     token: 'RING',
     subtitle: 'Darwinia Network is a decentralized cross-chain bridge network building on Substrate.',
-    info: `Darwinia Network provides an entrance to the Polkadot ecology for projects that have been deployed on public blockchains such as Ethereum and BSC.`,
+    info: 'Darwinia Network provides an entrance to the Polkadot ecology for projects that have been deployed on public blockchains such as Ethereum and BSC.',
     links: {
       Website: 'https://darwinia.network/',
       Twitter: 'https://twitter.com/DarwiniaNetwork/',
@@ -107,7 +104,7 @@ export const parachainDetails: ParachainDetails[] = [
     slug: 'moonbeam',
     token: 'GLMR',
     subtitle: 'An Ethereum-compatible smart contract parachain on Polkadot.',
-    info: `Moonbeam is a full Ethereum-like environment and works with industry-standard Ethereum tools, DApps, and protocols.`,
+    info: 'Moonbeam is a full Ethereum-like environment and works with industry-standard Ethereum tools, DApps, and protocols.',
     links: {
       Website: 'https://moonbeam.network/networks/moonbeam/',
       Twitter: 'https://twitter.com/moonbeamnetwork',
@@ -124,7 +121,7 @@ export const parachainDetails: ParachainDetails[] = [
     token: 'ASTR',
     subtitle:
       'Astar is the Polkadot-native dApp hub supporting Ethereum, WebAssembly, dApp Staking, and Layer2 solutions.',
-    info: `Astar Network (previously known as Plasm) is a dApp hub on Polkadot that supports Ethereum, WebAssembly, and layer 2 solutions like ZK Rollups. Astar aims to be a multi-chain smart contract platform that will support multiple blockchains and virtual machines.`,
+    info: 'Astar Network (previously known as Plasm) is a dApp hub on Polkadot that supports Ethereum, WebAssembly, and layer 2 solutions like ZK Rollups. Astar aims to be a multi-chain smart contract platform that will support multiple blockchains and virtual machines.',
     links: {
       Website: 'https://astar.network/',
       Twitter: 'https://twitter.com/AstarNetwork',
@@ -140,7 +137,7 @@ export const parachainDetails: ParachainDetails[] = [
     slug: 'kapex',
     token: 'KAPEX',
     subtitle: 'Building the 1st decentralised p2p accounting protocol anywhere.',
-    info: `Totem is building the world's first peer-to-peer accounting consensus protocol. It’s not just a first in the blockchain space – it’s a first in the accounting world too.`,
+    info: "Totem is building the world's first peer-to-peer accounting consensus protocol. It’s not just a first in the blockchain space – it’s a first in the accounting world too.",
     links: {
       Website: 'https://totemaccounting.com/',
       Twitter: 'https://twitter.com/Totem_live_',
@@ -156,7 +153,7 @@ export const parachainDetails: ParachainDetails[] = [
     slug: 'crust',
     token: 'CRU',
     subtitle: 'Crust implements the incentive layer protocol for decentralized storage.',
-    info: `It is adaptable to multiple storage layer protocols such as IPFS, and provides support for the application layer. Crust’s architecture also has the capability of supporting a decentralized computing layer and building a decentralized cloud ecosystem. Crust's decentralized storage layer provides a distributed file system. At the same time, Crust encapsulates some standard interfaces such as Amazon S3-like. Any application scenarios involving data storage, such as cloud services, edge computing, and decentralized applications, are the scenarios that Crust can adapt. Worth mentioning is that in edge computing scenarios, compared to centralized cloud storage, Crust's decentralized storage is closer to the edge, which can achieve relatively low cost and high performance.`,
+    info: "It is adaptable to multiple storage layer protocols such as IPFS, and provides support for the application layer. Crust’s architecture also has the capability of supporting a decentralized computing layer and building a decentralized cloud ecosystem. Crust's decentralized storage layer provides a distributed file system. At the same time, Crust encapsulates some standard interfaces such as Amazon S3-like. Any application scenarios involving data storage, such as cloud services, edge computing, and decentralized applications, are the scenarios that Crust can adapt. Worth mentioning is that in edge computing scenarios, compared to centralized cloud storage, Crust's decentralized storage is closer to the edge, which can achieve relatively low cost and high performance.",
     links: {
       Website: 'https://crust.network/',
       Twitter: 'https://twitter.com/crustnetwork',
@@ -169,11 +166,11 @@ export const parachainDetails: ParachainDetails[] = [
   {
     id: '0-2011',
     name: 'Equilibrium',
-    slug: 'equilibrium',
+    slug: 'equilibrium-polkadot',
     token: 'EQ',
     subtitle:
       'The functionality of all key DeFi apps on one platform, with advanced bailout mechanism for system security.',
-    info: `Users can: Lend - All main crypto assets, EQ tokens Borrow - All main crypto assets, decentralized stablecoins, synthetics Trade - All main crypto assets, decentralized stablecoins, synthetics, EQ tokens Stake - PoS & DPoS crypto assets, EQ tokens Solves cross-chain interoperability, unlocking $311 Bln of total remaining DeFi market potential.`,
+    info: 'Users can: Lend - All main crypto assets, EQ tokens Borrow - All main crypto assets, decentralized stablecoins, synthetics Trade - All main crypto assets, decentralized stablecoins, synthetics, EQ tokens Stake - PoS & DPoS crypto assets, EQ tokens Solves cross-chain interoperability, unlocking $311 Bln of total remaining DeFi market potential.',
     links: {
       Website: 'https://equilibrium.io/',
       Twitter: 'https://twitter.com/EquilibriumDeFi',
@@ -189,7 +186,7 @@ export const parachainDetails: ParachainDetails[] = [
     token: 'PARA',
     subtitle:
       'Parallel Finance is a decentralized money market protocol that offers lending, staking, and borrowing in the Polkadot ecosystem.',
-    info: `Parallel's mission is to innovate and bring DeFi to the next level. We are creating the most secure and easy-to-use decentralized platform to empower everyone access to financial services.`,
+    info: "Parallel's mission is to innovate and bring DeFi to the next level. We are creating the most secure and easy-to-use decentralized platform to empower everyone access to financial services.",
     links: {
       Website: 'https://parallel.fi/',
       Twitter: 'https://twitter.com/ParallelFi',
@@ -206,7 +203,7 @@ export const parachainDetails: ParachainDetails[] = [
     token: 'LIT',
     subtitle:
       'Litentry is a Decentralized Identity Aggregation protocol across multiple networks, it features a DID indexing mechanism and a Substrate-based credit computation network.',
-    info: `The protocol provides a decentralized, interoperable identity aggregation service that mitigates the difficulty of resolving agnostic DID mechanisms. Litentry provides a secure vehicle through which users manage their identities and dApps obtain the real-time credit/reputation of an identity owner across different blockchains.`,
+    info: 'The protocol provides a decentralized, interoperable identity aggregation service that mitigates the difficulty of resolving agnostic DID mechanisms. Litentry provides a secure vehicle through which users manage their identities and dApps obtain the real-time credit/reputation of an identity owner across different blockchains.',
     links: {
       Website: 'https://www.litentry.com/',
       Twitter: 'https://twitter.com/litentry',
@@ -234,7 +231,7 @@ export const parachainDetails: ParachainDetails[] = [
   {
     id: '0-2017',
     name: 'SubGame Network',
-    slug: 'subgame-network',
+    slug: 'subgame-polkadot',
     token: 'SGB',
     subtitle: 'SubGame is a public chain development team based on the Polkadot Parachain.',
     info: 'It hopes to build a public chain with cross-chain interoperability. In addition to creating game applications, it can also build various types of application scenarios to create a common cross-chain industry. The blockchain infrastructure provides unlimited possibilities for distributed mobile applications.',
@@ -265,7 +262,7 @@ export const parachainDetails: ParachainDetails[] = [
   {
     id: '0-2021',
     name: 'Efinity',
-    slug: 'efinity',
+    slug: 'efinity-polkadot',
     token: 'EFI',
     subtitle: 'Enjin is developing Efinity, a next-generation blockchain for digital assets, built on Polkadot.',
     info: 'Businesses and developers seriously need a platform that can deliver a modern, mainstream and developer-friendly NFT experience. Since the release of Ethereum, there have been attempts to build infrastructure and tokenization around this general-purpose computing blockchain, but there’s an ever-growing thirst for a better solution.\n\nCreators are forced to work with crippling fees, inflexible smart contracts and disjointed interoperability. Adoption of today’s NFTs is still limited to die-hard crypto enthusiasts.\n\nThe blockchains that non-fungible tokens live on give actual users no incentives (other than the prices rising), because miners are given the full share of generated tokens. Prices rise, infrastructure companies create silos and paywalls, and it becomes difficult to make real progress in this industry - unless we can unify the community and think a bit differently.\n\nEfinity is built to solve these problems.',
@@ -279,7 +276,7 @@ export const parachainDetails: ParachainDetails[] = [
   {
     id: '0-2026',
     name: 'Nodle',
-    slug: 'nodle',
+    slug: 'nodle-polkadot',
     token: 'NODL',
     subtitle: "Nodle's mission is to connect the next trillion things to the Internet.",
     info: "Nodle leverages Bluetooth Low Energy (BLE) via millions of smartphones and routers to allow enterprises and smart cities to connect IoT devices to the Internet at a low-cost while maintaining privacy and security. Nodle's decentralized wireless network is currently comprised of 5M daily active smartphones with 30 million IoT devices discovered daily in over 100 countries, moving approximately 100 GB of data.",
@@ -312,10 +309,10 @@ export const parachainDetails: ParachainDetails[] = [
   {
     id: '0-2028',
     name: 'Ares Protocol',
-    slug: 'ares-protocol',
+    slug: 'ares-odyssey',
     token: 'ARES',
     subtitle: 'Ares is an on-chain verifying oracle protocol powered by Polkadot.',
-    info: `It provides reliable off-chain data efficiently and in a trustless manner. Ares is built on Substrate and constructed as a parachain to link to Polkadot's ecology and share its security consensus. It is a scalable oracle network that provides decentralized data services to the Polkadot ecosystem and its parachains.`,
+    info: "It provides reliable off-chain data efficiently and in a trustless manner. Ares is built on Substrate and constructed as a parachain to link to Polkadot's ecology and share its security consensus. It is a scalable oracle network that provides decentralized data services to the Polkadot ecosystem and its parachains.",
     links: {
       Website: 'https://www.aresprotocol.io/',
       Twitter: 'https://twitter.com/AresProtocolLab',
@@ -328,10 +325,10 @@ export const parachainDetails: ParachainDetails[] = [
   {
     id: '0-2031',
     name: 'Centrifuge',
-    slug: 'centrifuge',
+    slug: 'centrifuge-polkadot',
     token: 'CFG',
     subtitle: 'Centrifuge Chain is the gateway for real-world assets to the Blockchain Multiverse.',
-    info: `We built Centrifuge Chain on Parity Substrate with an initial bridge to Ethereum. This allows us to move faster and use a consistent approach for certain features. We envision a larger ecosystem of many, connected blockchains- where Dapps on Ethereum could use data from other chains, value could move freely, and Centrifuge Chain can enable off-chain assets to access financing through DeFi.`,
+    info: 'We built Centrifuge Chain on Parity Substrate with an initial bridge to Ethereum. This allows us to move faster and use a consistent approach for certain features. We envision a larger ecosystem of many, connected blockchains- where Dapps on Ethereum could use data from other chains, value could move freely, and Centrifuge Chain can enable off-chain assets to access financing through DeFi.',
     links: {
       Website: 'https://centrifuge.io/',
       Twitter: 'https://twitter.com/centrifuge',
@@ -348,7 +345,7 @@ export const parachainDetails: ParachainDetails[] = [
     token: 'INTR',
     subtitle:
       'Interlay is a decentralized network dedicated to connecting crypto-currencies like Bitcoin with DeFi platforms like Polkadot and Ethereum.',
-    info: `The Interlay network is hosted as a Polkadot parachain and will be connected to Cosmos, Ethereum, and other major DeFi networks. Read more about Interlay’s vision of blockchain interoperability. interBTC, Interlay’s flagship product, is Bitcoin on any blockchain. A 1:1 Bitcoin-backed asset, fully collateralized, interoperable, and censorship-resistant.`,
+    info: 'The Interlay network is hosted as a Polkadot parachain and will be connected to Cosmos, Ethereum, and other major DeFi networks. Read more about Interlay’s vision of blockchain interoperability. interBTC, Interlay’s flagship product, is Bitcoin on any blockchain. A 1:1 Bitcoin-backed asset, fully collateralized, interoperable, and censorship-resistant.',
     links: {
       Website: 'https://interlay.io/',
       Twitter: 'https://twitter.com/interlayHQ',
@@ -361,10 +358,10 @@ export const parachainDetails: ParachainDetails[] = [
   {
     id: '0-2034',
     name: 'HydraDX',
-    slug: 'hydradx',
+    slug: 'hydra',
     token: 'HDX',
     subtitle: 'Cross-chain liquidity protocol built on Substrate',
-    info: `HydraDX is the creator of the Omnipool. Driven by the ambition to put an end to liquidity fragmentation, we have challenged the misconception that AMMs should be limited to pairs of assets. The Omnipool allows users to submerge any cryptoasset in an ocean of liquidity. One trading pool - many assets. Empowering native liquidity for the Polkadot ecosystem, and beyond.`,
+    info: 'HydraDX is the creator of the Omnipool. Driven by the ambition to put an end to liquidity fragmentation, we have challenged the misconception that AMMs should be limited to pairs of assets. The Omnipool allows users to submerge any cryptoasset in an ocean of liquidity. One trading pool - many assets. Empowering native liquidity for the Polkadot ecosystem, and beyond.',
     links: {
       Website: 'https://hydradx.io/',
       Twitter: 'https://twitter.com/hydra_dx',
@@ -376,10 +373,10 @@ export const parachainDetails: ParachainDetails[] = [
   {
     id: '0-2035',
     name: 'Phala Network',
-    slug: 'phala-network',
+    slug: 'phala',
     token: 'PHA',
     subtitle: 'Phala Network as a confidentiality layer for Web3.0 developers',
-    info: `Phala is a Polkadot parachain, and developers can invoke and interact with confidential contracts on other Polkadot parachains.`,
+    info: 'Phala is a Polkadot parachain, and developers can invoke and interact with confidential contracts on other Polkadot parachains.',
     links: {
       Website: 'https://phala.network',
       Twitter: 'https://twitter.com/PhalaNetwork',
@@ -395,7 +392,7 @@ export const parachainDetails: ParachainDetails[] = [
     slug: 'unique-network',
     token: 'UNQ',
     subtitle: 'The NFT chain built for Polkadot and Kusama.',
-    info: `Unique Network is a scalable blockchain for programmable NFTs with advanced features. Built with Substrate as a parachain on Polkadot Network, Unique unlocks unlimited potential for next-generation NFTs.`,
+    info: 'Unique Network is a scalable blockchain for programmable NFTs with advanced features. Built with Substrate as a parachain on Polkadot Network, Unique unlocks unlimited potential for next-generation NFTs.',
     links: {
       Website: 'https://unique.network/',
       Twitter: 'https://twitter.com/Unique_NFTchain',
@@ -411,7 +408,7 @@ export const parachainDetails: ParachainDetails[] = [
     slug: 'geminis-network',
     token: 'GEM',
     subtitle: 'Geminis Network is the first parachain supported by the advanced ParaState tech stack.',
-    info: `Geminis takes Ethereum chain support to the next level through WasmEdge. Develop and execute high-speed smart contracts with built-in Ethereum compatibility (EVM & EWASM) and interoperability in Solidity, Vyper, and next-level programming languages like Rust, C ++, and Golang.`,
+    info: 'Geminis takes Ethereum chain support to the next level through WasmEdge. Develop and execute high-speed smart contracts with built-in Ethereum compatibility (EVM & EWASM) and interoperability in Solidity, Vyper, and next-level programming languages like Rust, C ++, and Golang.',
     links: {
       Website: 'https://geminis.network/',
       Twitter: 'https://twitter.com/_ParaState',
@@ -423,10 +420,10 @@ export const parachainDetails: ParachainDetails[] = [
   {
     id: '0-2040',
     name: 'Polkadex',
-    slug: 'polkadex',
+    slug: 'polkadex-polkadot',
     token: 'PDEX',
     subtitle: 'The trading engine for Web3 and DeFi',
-    info: `Polkadex is a fully decentralized peer-to-peer orderbook-based cryptocurrency exchange for the DeFi ecosystem built on Substrate.`,
+    info: 'Polkadex is a fully decentralized peer-to-peer orderbook-based cryptocurrency exchange for the DeFi ecosystem built on Substrate.',
     links: {
       Website: 'https://www.polkadex.trade/',
       Twitter: 'https://twitter.com/polkadex',
@@ -439,10 +436,10 @@ export const parachainDetails: ParachainDetails[] = [
   {
     id: '0-2030',
     name: 'Bifrost',
-    slug: 'bifrost',
+    slug: 'bifrost-polkadot',
     token: 'BNC',
     subtitle: 'Cross chain liquidity for staking.',
-    info: `Cross chain liquidity for staking. Based on polkadot, kusama, substrate, and web3 infrastructure`,
+    info: 'Cross chain liquidity for staking. Based on polkadot, kusama, substrate, and web3 infrastructure',
     links: {
       Website: 'https://bifrost.finance/',
       Twitter: 'https://twitter.com/bifrost_finance',
@@ -456,7 +453,7 @@ export const parachainDetails: ParachainDetails[] = [
     slug: 'origintrail',
     token: 'OTP',
     subtitle: 'Bringing real world assets to Polkadot.',
-    info: `By harnessing the power of the OriginTrail Decentralized Knowledge Graph, OriginTrail Parachain extends discoverability, verifiability and greater value for interconnected Web3 assets to Polkadot.`,
+    info: 'By harnessing the power of the OriginTrail Decentralized Knowledge Graph, OriginTrail Parachain extends discoverability, verifiability and greater value for interconnected Web3 assets to Polkadot.',
     links: {
       Website: 'https://parachain.origintrail.io/',
       Twitter: 'https://twitter.com/origin_trail',
@@ -466,14 +463,11 @@ export const parachainDetails: ParachainDetails[] = [
   {
     id: '0-2039',
     name: 'Integritee Shell',
-    slug: 'integriteeshell',
+    slug: 'integritee-polkadot',
     token: 'TEER',
     subtitle: 'Unchain the value of sensitive data. At scale.',
-    info: `Integritee is the most scalable public blockchain solution for securely processing sensitive business or personal data. Harness the speed and confidentiality of trusted execution environments, combined with the trust of a decentralized network, with Integritee.`,
-    links: {
-      Website: 'https://integritee.network/',
-      Twitter: 'https://twitter.com/integri_t_e_e',
-    },
+    info: 'Integritee is the most scalable public blockchain solution for securely processing sensitive business or personal data. Harness the speed and confidentiality of trusted execution environments, combined with the trust of a decentralized network, with Integritee.',
+    links: { Website: 'https://integritee.network/', Twitter: 'https://twitter.com/integri_t_e_e' },
   },
   {
     id: '0-2052',
@@ -481,7 +475,7 @@ export const parachainDetails: ParachainDetails[] = [
     slug: 'kylin',
     token: 'KYL',
     subtitle: 'Building a Cross-chain Platfor. Powering the DeData Economy',
-    info: `Kylin Network is the native Polkadot Data Blockchain to accelerate the world’s transition to DeData within a Web3.0 context by Building a Cross-chain Platform Powering the Data Economy. It is the Data Infrastructure for DeFi and Web 3.0 Powered by Polkadot.`,
+    info: 'Kylin Network is the native Polkadot Data Blockchain to accelerate the world’s transition to DeData within a Web3.0 context by Building a Cross-chain Platform Powering the Data Economy. It is the Data Infrastructure for DeFi and Web 3.0 Powered by Polkadot.',
     links: {
       Website: 'https://kylin.network/',
       Twitter: 'https://twitter.com/Kylin_Network',
@@ -495,7 +489,7 @@ export const parachainDetails: ParachainDetails[] = [
     slug: 'omnibtc',
     token: 'TEER',
     subtitle: 'Make Finance Omnichainable.',
-    info: `OmniBTC is an omnichain financial platform for web3,including omnichain swap and BTC omnichain lending`,
+    info: 'OmniBTC is an omnichain financial platform for web3,including omnichain swap and BTC omnichain lending',
     links: {
       Website: 'https://www.omnibtc.finance/',
       Twitter: 'https://twitter.com/OmniBTC',
@@ -509,7 +503,7 @@ export const parachainDetails: ParachainDetails[] = [
     slug: 'karura',
     token: 'KAR',
     subtitle: 'Karura is the all-in-one DeFi hub of Kusama.',
-    info: `Founded by the Acala Foundation, Karura is a scalable, EVM-compatible network optimized for DeFi. The platform offers a suite of financial applications including: a trustless staking derivative (liquid KSM), a multi-collateralized stablecoin backed by cross-chain assets (kUSD), and an AMM DEX – all with micro gas fees that can be paid in any token.\n\nAcala and Karura will operate in parallel and serve the users of the Polkadot and Kusama communities. Once Kusama is bridged to Polkadot, Karura and Acala will also be fully interoperable.`,
+    info: 'Founded by the Acala Foundation, Karura is a scalable, EVM-compatible network optimized for DeFi. The platform offers a suite of financial applications including: a trustless staking derivative (liquid KSM), a multi-collateralized stablecoin backed by cross-chain assets (kUSD), and an AMM DEX – all with micro gas fees that can be paid in any token.\n\nAcala and Karura will operate in parallel and serve the users of the Polkadot and Kusama communities. Once Kusama is bridged to Polkadot, Karura and Acala will also be fully interoperable.',
     links: {
       Website: 'https://acala.network',
       Twitter: 'https://twitter.com/AcalaNetwork',
@@ -521,11 +515,11 @@ export const parachainDetails: ParachainDetails[] = [
   {
     id: '2-2001',
     name: 'Bifrost',
-    slug: 'bifrost',
+    slug: 'bifrost-polkadot',
     token: 'BNC',
     subtitle:
       'As a DeFi project in the Polkadot ecosystem, Bifrost launches vToken which allows users to exchange PoS tokens to vTokens and obtain liquidity and Staking rewards through Bifrost protocol at any time.',
-    info: `Participants staking KSMs with the Bifrost parachain slot will receive rewards in the native token BNC. There will be no new tokens released as rewards for the Kusama parachain.\n\nThe vesting schedules provided in Bifrost’s whitepaper are split into quarters. There is no indicated vesting period for Kusama parachain auction participants, however Bifrost has indicated a vesting period for rewards in the Polkadot parachain auctions. Details of Kusama auction reward vesting are to be determined.`,
+    info: 'Participants staking KSMs with the Bifrost parachain slot will receive rewards in the native token BNC. There will be no new tokens released as rewards for the Kusama parachain.\n\nThe vesting schedules provided in Bifrost’s whitepaper are split into quarters. There is no indicated vesting period for Kusama parachain auction participants, however Bifrost has indicated a vesting period for rewards in the Polkadot parachain auctions. Details of Kusama auction reward vesting are to be determined.',
     links: {
       Website: 'https://ksm.vtoken.io/?ref=polkadotjs',
       Twitter: 'https://twitter.com/bifrost_finance',
@@ -538,10 +532,10 @@ export const parachainDetails: ParachainDetails[] = [
   {
     id: '2-2004',
     name: 'Khala Network',
-    slug: 'khala-network',
+    slug: 'khala',
     token: 'PHA',
     subtitle: 'Khala Network is the Phala pre-mainnet on Kusama, as published on the roadmap last year.',
-    info: `Phala will implement its mainnet on Polkadot, as the parachain to serve enterprise-scale blockchains and DeFi service.\n\nKhala will implement its mainnet on Kusama, as the parachain to serve creative and growth blockchains and DeFi service.`,
+    info: 'Phala will implement its mainnet on Polkadot, as the parachain to serve enterprise-scale blockchains and DeFi service.\n\nKhala will implement its mainnet on Kusama, as the parachain to serve creative and growth blockchains and DeFi service.',
     links: {
       Website: 'https://crowdloan.phala.network/en/',
       Twitter: 'https://twitter.com/PhalaNetwork',
@@ -554,7 +548,7 @@ export const parachainDetails: ParachainDetails[] = [
   {
     id: '2-2120',
     name: 'Shiden',
-    slug: 'shiden',
+    slug: 'shiden-kusama',
     token: 'SDN',
     subtitle: 'Shiden Network is a multi-chain decentralized application layer on Kusama Network. ',
     info: 'Kusama Relaychain does not support smart contract functionality by design - Kusama Network needs a smart contract layer. This is where Shiden Network comes in. Shiden supports Ethereum Virtual Machine, WebAssembly, and Layer2 solutions from day one. The platform supports various applications like DeFi, NFTs and more.',
@@ -571,7 +565,7 @@ export const parachainDetails: ParachainDetails[] = [
     slug: 'mars',
     token: 'MARS',
     subtitle: 'Ares is an on-chain verifying oracle protocol powered by Polkadot.',
-    info: ` It provides reliable off-chain data efficiently and in a trustless manner. Ares is built on Substrate and constructed as a parachain to link to Polkadot's ecology and share its security consensus. It is a scalable oracle network that provides decentralized data services to the Polkadot ecosystem and its parachains.`,
+    info: " It provides reliable off-chain data efficiently and in a trustless manner. Ares is built on Substrate and constructed as a parachain to link to Polkadot's ecology and share its security consensus. It is a scalable oracle network that provides decentralized data services to the Polkadot ecosystem and its parachains.",
     links: {
       Website: 'https://www.aresprotocol.io/',
       Twitter: 'https://twitter.com/AresProtocolLab',
@@ -584,11 +578,11 @@ export const parachainDetails: ParachainDetails[] = [
   {
     id: '2-2009',
     name: 'PolkaSmith by PolkaFoundry',
-    slug: 'polkasmith-by-polkafoundry',
+    slug: 'polkasmith',
     token: 'PKS',
     subtitle:
       'Implemented on Kusama Network, PolkaSmith is a canary chain of PolkaFoundry, a one-stop production hub creating borderless and frictionless DeFi & NFT applications.',
-    info: `PolkaSmith will be a reliable platform for early-stage startups to unleash their creativity, experiment with bold new ideas, and hack the growth.\n\nPKS is the native token of PolkaSmith. There is no pegging or mapping between PKS and PKF (PolkaFoundry’s native token).`,
+    info: 'PolkaSmith will be a reliable platform for early-stage startups to unleash their creativity, experiment with bold new ideas, and hack the growth.\n\nPKS is the native token of PolkaSmith. There is no pegging or mapping between PKS and PKF (PolkaFoundry’s native token).',
     links: {
       Website: 'https://polkasmith.polkafoundry.com/',
       Twitter: 'https://twitter.com/PolkaFoundry',
@@ -599,7 +593,7 @@ export const parachainDetails: ParachainDetails[] = [
   {
     id: '2-2011',
     name: 'Sora Kusama',
-    slug: 'sora-kusama',
+    slug: 'sora-ksm',
     token: 'XOR',
     subtitle: 'The SORA Network provides tools for decentralized applications that use digital assets.',
     info: ' The SORA Network excels at providing tools for decentralized applications that use digital assets, such as atomic token swaps, bridging tokens to other chains, and creating programmatic rules involving digital assets.',
@@ -614,7 +608,7 @@ export const parachainDetails: ParachainDetails[] = [
   {
     id: '2-2012',
     name: 'Crust Shadow',
-    slug: 'crust-shadow',
+    slug: 'crust',
     token: 'CSM',
     subtitle: 'CRUST provides a decentralized storage network of Web3.0 ecosystem.',
     info: 'It supports multiple storage layer protocols such as IPFS, and exposes storage interfaces to application layer. Crust’s technical stack is also capable of supporting a decentralized computing layer. It is designed to build a decentralized cloud ecosystem that values data privacy and ownership.',
@@ -646,7 +640,7 @@ export const parachainDetails: ParachainDetails[] = [
   {
     id: '2-2015',
     name: 'Integritee Network',
-    slug: 'integritee-network',
+    slug: 'integritee-polkadot',
     token: 'TEER',
     subtitle:
       'Integritee Network enables developers and firms to process sensitive data, without compromising on privacy.',
@@ -667,22 +661,21 @@ export const parachainDetails: ParachainDetails[] = [
     token: 'SKU',
     subtitle:
       'Sakura is a substrate-based parachain candidate specifically built for the cross-chain DeFi ecosystem on Kusama.',
-    info: `Building on the success of the Rococo testnet, the stage for Kusama has been set as the first “mainnet” to utilize the power of Substrate. Kusama is regarded as a layer zero protocol and as the CanaryNet of Polkadot. The Clover Finance team envisions Sakura to live on as the innovative sister network of Clover, with both Clover and Sakura continuing to serve their communities simultaneously. The unique on-chain governance parameters of Kusama enables DeFi applications built on top of the Sakura network to have higher performance and scalability right away. This will lower the barrier to entry for the development community to deploy their dApps on Sakura without having to meet the stricter guidelines of Polkadot.\n\nSakura will utilize all of the core underlying technology stack that Clover has created and is continuously innovating. The Clover extension wallet will natively support Sakura dApps on EVM, polkadot.js based injections, and a native-built SKU<->ETH and SKU<->BSC bridge. The trustless cross-chain bridge for Ethereum and Bitcoin will be utilized on both Sakura and Clover. Sakura will ultimately aim to be a parachain Operating System with a storage layer, smart contract layer, DeFi protocol layer and eApp layer built on top of Kusama.`,
+    info: 'Building on the success of the Rococo testnet, the stage for Kusama has been set as the first “mainnet” to utilize the power of Substrate. Kusama is regarded as a layer zero protocol and as the CanaryNet of Polkadot. The Clover Finance team envisions Sakura to live on as the innovative sister network of Clover, with both Clover and Sakura continuing to serve their communities simultaneously. The unique on-chain governance parameters of Kusama enables DeFi applications built on top of the Sakura network to have higher performance and scalability right away. This will lower the barrier to entry for the development community to deploy their dApps on Sakura without having to meet the stricter guidelines of Polkadot.\n\nSakura will utilize all of the core underlying technology stack that Clover has created and is continuously innovating. The Clover extension wallet will natively support Sakura dApps on EVM, polkadot.js based injections, and a native-built SKU<->ETH and SKU<->BSC bridge. The trustless cross-chain bridge for Ethereum and Bitcoin will be utilized on both Sakura and Clover. Sakura will ultimately aim to be a parachain Operating System with a storage layer, smart contract layer, DeFi protocol layer and eApp layer built on top of Kusama.',
     links: {
       Website: 'https://auction.clover.finance/#/',
       Twitter: 'https://twitter.com/clover_finance/',
       Telegram: 'https://t.me/clover_en/',
       Medium: 'https://projectclover.medium.com/',
-      //Discord: 'https://discord.com/invite/z2egJBsBWx/'
     },
   },
   {
     id: '2-2018',
     name: 'SubGame Gamma',
-    slug: 'subgame-gamma',
+    slug: 'subgame-polkadot',
     token: 'GSGB',
     subtitle: 'SubGame is a public chain development team based on the Polkadot Parachain.',
-    info: `It hopes to build a public chain with cross-chain interoperability. In addition to creating game applications, it can also build various types of application scenarios to create a common cross-chain industry. The blockchain infrastructure provides unlimited possibilities for distributed mobile applications.`,
+    info: 'It hopes to build a public chain with cross-chain interoperability. In addition to creating game applications, it can also build various types of application scenarios to create a common cross-chain industry. The blockchain infrastructure provides unlimited possibilities for distributed mobile applications.',
     links: {
       Website: 'https://www.subgame.org',
       Twitter: 'https://twitter.com/SubgameBase',
@@ -695,7 +688,7 @@ export const parachainDetails: ParachainDetails[] = [
     slug: 'kpron',
     token: 'KPN',
     subtitle: 'Kpron Network is the testnet that Apron Network deployed on the Kusama Network.',
-    info: `The Kpron Network’s token: KPN, is the APN on Kusama.\n\nKPN was issued on Kpron Network as a portion of the tokens allocated by Apron Network and can be swapped with APN at a 1:1 rate (1KPN=1APN). There is no change on Apron’s tokenomics, and the total amount of APN remains the same.`,
+    info: 'The Kpron Network’s token: KPN, is the APN on Kusama.\n\nKPN was issued on Kpron Network as a portion of the tokens allocated by Apron Network and can be swapped with APN at a 1:1 rate (1KPN=1APN). There is no change on Apron’s tokenomics, and the total amount of APN remains the same.',
     links: {
       Website: 'http://apron.network/',
       Twitter: 'https://twitter.com/apronofficial1',
@@ -705,30 +698,13 @@ export const parachainDetails: ParachainDetails[] = [
       Discord: 'https://discord.gg/Bu6HzJP2YY',
     },
   },
-  // {
-  //   id: '2-2021',
-  //   name: 'Altair',
-  //   slug: 'altair',
-  //   token: 'AIR',
-  //   subtitle:
-  //     'Altair combines the industry-leading infrastructure built by Centrifuge to finance real-world assets (RWA) on Centrifuge Chain, with the newest experimental features — before they go live on Centrifuge Chain.',
-  //   info: `Altair is built using Substrate, and will have nearly the same codebase as Centrifuge Chain (just like Kusama is to Polkadot!). It is an experimental network for users who want to test the bounds of asset financing. From art NFTs to undiscovered assets — Altair enables users to tokenize their most experimental assets and finance them. It is the next step for anyone looking to unlock financing for their assets.\n\nInteroperability is the key to increasing liquidity in DeFi. Altair will bridge across the Kusama, Polkadot, and Ethereum ecosystems to allow assets to access financing wherever it is available. In the future, Altair can connect more and more projects across these ecosystems — using Kusama to allow anyone to access DeFi liquidity. The more connected chains, protocols, and Dapps are — the greater the flow of liquidity will be.`,
-  //   links: {
-  //     Website: 'https://centrifuge.io/altair/',
-  //     Twitter: 'https://twitter.com/centrifuge',
-  //     Telegram: 'https://t.me/centrifuge_chat',
-  //     Medium: 'https://medium.com/centrifuge',
-  //     Github: 'https://github.com/centrifuge/',
-  //     Discord: 'https://centrifuge.io/discord',
-  //   },
-  // },
   {
     id: '2-2023',
     name: 'Moonriver',
     slug: 'moonriver',
     token: 'MOVR',
     subtitle: 'A Community-Led Sister Parachain on Kusama',
-    info: `Like Moonbeam, Moonriver is a complete Ethereum-like environment and works with industry-standard Ethereum tools, DApps, and protocols. Moonriver is a companion network to Moonbeam and provides a permanently incentivized canary network. New code ships to Moonriver first, where it can be tested and verified under real economic conditions. Once proven, the same code ships to Moonbeam on Polkadot. The Moonriver network is currently launching to Kusama. Track the launch status here: https://moonbeam.network/networks/moonriver/launch/`,
+    info: 'Like Moonbeam, Moonriver is a complete Ethereum-like environment and works with industry-standard Ethereum tools, DApps, and protocols. Moonriver is a companion network to Moonbeam and provides a permanently incentivized canary network. New code ships to Moonriver first, where it can be tested and verified under real economic conditions. Once proven, the same code ships to Moonbeam on Polkadot. The Moonriver network is currently launching to Kusama. Track the launch status here: https://moonbeam.network/networks/moonriver/launch/',
     links: {
       Website: 'https://moonbeam.network/networks/moonriver/',
       Twitter: 'https://twitter.com/moonbeamnetwork',
@@ -741,10 +717,10 @@ export const parachainDetails: ParachainDetails[] = [
   {
     id: '2-2024',
     name: 'Genshiro',
-    slug: 'genshiro',
+    slug: 'genshiro-kusama',
     token: 'GENS',
     subtitle: 'Genshiro is a canary network of equilibrium that shares the experimental spirit of Kusama.',
-    info: `Genshiro is EquilibriumDeFi's DeFi one-stop shop on Kusama that can do all things that existing DeFi primitives do, but with less risk and cross-chain.`,
+    info: "Genshiro is EquilibriumDeFi's DeFi one-stop shop on Kusama that can do all things that existing DeFi primitives do, but with less risk and cross-chain.",
     links: {
       Website: 'https://genshiro.equilibrium.io/',
       Twitter: 'https://twitter.com/GenshiroDeFi',
@@ -756,11 +732,11 @@ export const parachainDetails: ParachainDetails[] = [
   {
     id: '2-2048',
     name: 'Robonomics',
-    slug: 'robonomics',
+    slug: 'robonomics-kusama',
     token: 'XRT',
     subtitle:
       'Robonomics is a project with a long history that started in 2015, after the launch of the Ethereum network.',
-    info: `During the project’s development, the team published more than 10 academic articles and created more than 15 R&D projects which included control of drones, industrial manipulators, sensor networks, and even a Boston Dynamics’ robot dog over Ethereum and Polkadot networks.\n\nRobonomics is a project that integrates new technologies into the real economy. However, to fuel this, a reasonable ‘gas’ price is required. Kusama makes the costs of communication between IoT devices and humans affordable.`,
+    info: 'During the project’s development, the team published more than 10 academic articles and created more than 15 R&D projects which included control of drones, industrial manipulators, sensor networks, and even a Boston Dynamics’ robot dog over Ethereum and Polkadot networks.\n\nRobonomics is a project that integrates new technologies into the real economy. However, to fuel this, a reasonable ‘gas’ price is required. Kusama makes the costs of communication between IoT devices and humans affordable.',
     links: {
       Website: 'https://robonomics.network/',
       Twitter: 'https://twitter.com/AIRA_Robonomics',
@@ -776,7 +752,7 @@ export const parachainDetails: ParachainDetails[] = [
     token: 'LOOM',
     subtitle:
       'At Loom Network, we want to enable developers to build dapps that are easily accessible across all major blockchains, and for users to be able to use dapps without wasting time trying to figure out the intricacies of the blockchain each dapp happens to be running on.',
-    info: `To that end we’ve already built integrations with Ethereum, TRON, and Binance Smart Chain.\n\nWe are going to be giving out 100 LOOM tokens for each KSM token contributed to our Crowdloan. If we win a parachain auction, we will start distributing the rewards ASAP, there will be no vesting or lockup periods for these rewards.`,
+    info: 'To that end we’ve already built integrations with Ethereum, TRON, and Binance Smart Chain.\n\nWe are going to be giving out 100 LOOM tokens for each KSM token contributed to our Crowdloan. If we win a parachain auction, we will start distributing the rewards ASAP, there will be no vesting or lockup periods for these rewards.',
     links: {
       Website: 'https://loomx.io/',
       Twitter: 'https://twitter.com/loomnetwork',
@@ -791,8 +767,9 @@ export const parachainDetails: ParachainDetails[] = [
     name: 'Calamari',
     slug: 'calamari',
     token: 'KMA',
-    subtitle: `Calamari, Manta Network's canary-net, is the plug-and-play privacy-preservation parachain built to service the Kusama DeFi world.`,
-    info: `It combines Kusama and zkSNARKs to bring on-chain privacy to transactions and swaps.`,
+    subtitle:
+      "Calamari, Manta Network's canary-net, is the plug-and-play privacy-preservation parachain built to service the Kusama DeFi world.",
+    info: 'It combines Kusama and zkSNARKs to bring on-chain privacy to transactions and swaps.',
     links: {
       Website: 'https://www.calamari.network/',
       Twitter: 'https://twitter.com/CalamariNetwork',
@@ -804,10 +781,11 @@ export const parachainDetails: ParachainDetails[] = [
   {
     id: '2-2085',
     name: 'Parallel Heiko',
-    slug: 'parallel-heiko',
+    slug: 'parallel',
     token: 'HKO',
-    subtitle: `Parallel Finance is a decentralized money market protocol that offers lending, staking, and borrowing in the Polkadot ecosystem.`,
-    info: `Similar to the relationship between Polkadot and its “canary network” Kusama, Heiko Finance is the sister network to Parallel, and the parachain that we hope to launch on the Kusama blockchain. We are building for a decentralized future that empowers the community to increase capital efficiency, security, and accessibility through our leverage staking and auction lending platform.`,
+    subtitle:
+      'Parallel Finance is a decentralized money market protocol that offers lending, staking, and borrowing in the Polkadot ecosystem.',
+    info: 'Similar to the relationship between Polkadot and its “canary network” Kusama, Heiko Finance is the sister network to Parallel, and the parachain that we hope to launch on the Kusama blockchain. We are building for a decentralized future that empowers the community to increase capital efficiency, security, and accessibility through our leverage staking and auction lending platform.',
     links: {
       Website: 'https://parallel.fi/',
       Twitter: 'https://twitter.com/ParallelFi',
@@ -822,8 +800,9 @@ export const parachainDetails: ParachainDetails[] = [
     name: 'KILT Spiritnet',
     slug: 'kilt-spiritnet',
     token: 'KILT',
-    subtitle: `KILT is a blockchain protocol for issuing self-sovereign verifiable, revocable, anonymous credentials and enabling trust market business models in the Web 3.0.`,
-    info: `KILT is an open-source fat blockchain protocol for issuing claim-based verifiable, revocable, and anonymous credentials in the Web 3.0. It allows end users to claim arbitrary attributes about themselves, get them attested by trusted entities, and store the claims as self-sovereign credentials (certificates). As trusted entities can issue credentials in return for money, KILT aims to foster new business models for anyone who owns trust or wants to build up trust. KILT Protocol comes with a simple JavaScript SDK where useful applications can be built without requiring any blockchain development skills.`,
+    subtitle:
+      'KILT is a blockchain protocol for issuing self-sovereign verifiable, revocable, anonymous credentials and enabling trust market business models in the Web 3.0.',
+    info: 'KILT is an open-source fat blockchain protocol for issuing claim-based verifiable, revocable, and anonymous credentials in the Web 3.0. It allows end users to claim arbitrary attributes about themselves, get them attested by trusted entities, and store the claims as self-sovereign credentials (certificates). As trusted entities can issue credentials in return for money, KILT aims to foster new business models for anyone who owns trust or wants to build up trust. KILT Protocol comes with a simple JavaScript SDK where useful applications can be built without requiring any blockchain development skills.',
     links: {
       Website: 'https://www.kilt.io/',
       Twitter: 'https://twitter.com/Kiltprotocol',
@@ -841,8 +820,9 @@ export const parachainDetails: ParachainDetails[] = [
     name: 'Picasso',
     slug: 'picasso',
     token: 'PICA',
-    subtitle: `Picasso is an experimental ecosystem to birth new financial primitives and build applications that communicate natively, in a composed manner.`,
-    info: `Composable Finance is pleased to announce the Picasso token (PICA), which will be the native token of the Picasso Network Kusama parachain. PICA token will have a multitude of important use cases on our upcoming Picasso parachain, including key governance decisions.`,
+    subtitle:
+      'Picasso is an experimental ecosystem to birth new financial primitives and build applications that communicate natively, in a composed manner.',
+    info: 'Composable Finance is pleased to announce the Picasso token (PICA), which will be the native token of the Picasso Network Kusama parachain. PICA token will have a multitude of important use cases on our upcoming Picasso parachain, including key governance decisions.',
     links: {
       Website: 'https://picasso.composable.finance/',
       Twitter: 'https://twitter.com/ComposableFin',
@@ -860,7 +840,7 @@ export const parachainDetails: ParachainDetails[] = [
     token: 'AIR',
     subtitle:
       'Altair combines the industry-leading infrastructure built by Centrifuge to finance real-world assets (RWA) on Centrifuge Chain, with the newest experimental features — before they go live on Centrifuge Chain.',
-    info: `Altair is built using Substrate, and will have nearly the same codebase as Centrifuge Chain (just like Kusama is to Polkadot!). It is an experimental network for users who want to test the bounds of asset financing. From art NFTs to undiscovered assets — Altair enables users to tokenize their most experimental assets and finance them. It is the next step for anyone looking to unlock financing for their assets.\n\nInteroperability is the key to increasing liquidity in DeFi. Altair will bridge across the Kusama, Polkadot, and Ethereum ecosystems to allow assets to access financing wherever it is available. In the future, Altair can connect more and more projects across these ecosystems — using Kusama to allow anyone to access DeFi liquidity. The more connected chains, protocols, and Dapps are — the greater the flow of liquidity will be.`,
+    info: 'Altair is built using Substrate, and will have nearly the same codebase as Centrifuge Chain (just like Kusama is to Polkadot!). It is an experimental network for users who want to test the bounds of asset financing. From art NFTs to undiscovered assets — Altair enables users to tokenize their most experimental assets and finance them. It is the next step for anyone looking to unlock financing for their assets.\n\nInteroperability is the key to increasing liquidity in DeFi. Altair will bridge across the Kusama, Polkadot, and Ethereum ecosystems to allow assets to access financing wherever it is available. In the future, Altair can connect more and more projects across these ecosystems — using Kusama to allow anyone to access DeFi liquidity. The more connected chains, protocols, and Dapps are — the greater the flow of liquidity will be.',
     links: {
       Website: 'https://centrifuge.io/altair',
       Twitter: 'https://twitter.com/centrifuge',
@@ -870,21 +850,6 @@ export const parachainDetails: ParachainDetails[] = [
       Discord: 'https://centrifuge.io/discord',
     },
   },
-  // {
-  //   id: '2-2089',
-  //   name: 'Genshiro',
-  //   slug: 'genshiro',
-  //   token: 'GENS',
-  //   subtitle: 'Genshiro is a canary network of equilibrium that shares the experimental spirit of Kusama.',
-  //   info: `Genshiro is EquilibriumDeFi's DeFi one-stop shop on Kusama that can do all things that existing DeFi primitives do, but with less risk and cross-chain.`,
-  //   links: {
-  //     Website: 'https://genshiro.equilibrium.io/',
-  //     Twitter: 'https://twitter.com/GenshiroDeFi',
-  //     Telegram: 'https://t.me/genshiro_official',
-  //     Medium: 'https://medium.com/equilibrium-eosdt',
-  //     Github: 'https://github.com/equilibrium-eosdt',
-  //   },
-  // },
   {
     id: '2-2090',
     name: 'Basilisk',
@@ -892,7 +857,7 @@ export const parachainDetails: ParachainDetails[] = [
     token: 'BSX',
     subtitle:
       'Basilisk is a liquidity bootstrapping protocol designed to operate as a parachain in Kusama, the Substrate canary network from the Polkadot family.',
-    info: `Basilisk is a natural stepping stone on our journey of building the liquidity infrastructure of the future. This plan will eventually culminate in the HydraDX Omnipool which is intended to operate as a Polkadot parachain in order to enable frictionless liquidity for any asset on any chain.\n\nTogether, Basilisk and HydraDX create a synergy which caters to the varying needs of cryptoassets throughout their entire life cycle. Bootstrap liquidity in the early stages using Basilisk, then move over to the HydraDX Omnipool to unlock unprecedented liquidity in an ocean of assets.`,
+    info: 'Basilisk is a natural stepping stone on our journey of building the liquidity infrastructure of the future. This plan will eventually culminate in the HydraDX Omnipool which is intended to operate as a Polkadot parachain in order to enable frictionless liquidity for any asset on any chain.\n\nTogether, Basilisk and HydraDX create a synergy which caters to the varying needs of cryptoassets throughout their entire life cycle. Bootstrap liquidity in the early stages using Basilisk, then move over to the HydraDX Omnipool to unlock unprecedented liquidity in an ocean of assets.',
     links: {
       Website: 'https://bsx.fi/',
       Twitter: 'https://twitter.com/bsx_finance',
@@ -904,10 +869,11 @@ export const parachainDetails: ParachainDetails[] = [
   {
     id: '2-2092',
     name: 'Kintsugi BTC',
-    slug: 'kintsugi-btc',
+    slug: 'kintsugi',
     token: 'KINT',
-    subtitle: `Kintsugi’s kBTC brings radically open Bitcoin to Kusama to kickstart liquidity for parachains like Karura, Shiden and Moonriver.`,
-    info: `Kintsugi is interBTC’s canary network, developed by Interlay — an R&D company focused on blockchain interoperability. Founded by ex-Imperial College CS PhDs — Alexei Zamyatin and Dominik Harz, Interlay’s mission is to make Bitcoin interoperable in a fully trustless and decentralized way.\n\nThe non-profit Kintsugi Lab will be responsible for Kintsugi’s launch and further — support the development and growth of the decentralized network.\n\nInspired by the ancient Japanese tradition of embracing the flawed and imperfect, Kintsugi accepts the nascent DeFi ecosystem on Kusama as chaotic while constantly being perfected by golden streaks of its community.`,
+    subtitle:
+      'Kintsugi’s kBTC brings radically open Bitcoin to Kusama to kickstart liquidity for parachains like Karura, Shiden and Moonriver.',
+    info: 'Kintsugi is interBTC’s canary network, developed by Interlay — an R&D company focused on blockchain interoperability. Founded by ex-Imperial College CS PhDs — Alexei Zamyatin and Dominik Harz, Interlay’s mission is to make Bitcoin interoperable in a fully trustless and decentralized way.\n\nThe non-profit Kintsugi Lab will be responsible for Kintsugi’s launch and further — support the development and growth of the decentralized network.\n\nInspired by the ancient Japanese tradition of embracing the flawed and imperfect, Kintsugi accepts the nascent DeFi ecosystem on Kusama as chaotic while constantly being perfected by golden streaks of its community.',
     links: {
       Website: 'https://kintsugi.interlay.io/',
       Twitter: 'https://twitter.com/kintsugi_btc',
@@ -922,8 +888,8 @@ export const parachainDetails: ParachainDetails[] = [
     name: 'Quartz',
     slug: 'quartz',
     token: 'QTZ',
-    subtitle: `Quartz gives the Kusama community the essential and advanced NFT tools to unleash innovation.`,
-    info: `Quartz gives you easy access to test extreme innovation in NFTs and build for the next generation. Built on Substrate, Quartz gives you the most versatile options for discovery and democratization of the NFT ecosystem and marketplaces (with very low barriers for entry).\nAdvanced features like Flexible Economic Models, Scheduled Transactions, Re-fungiblity, and Nested NFTs will all be available via Quartz, allowing users to own UX/UI for your fans and customers.Quartz parachain on Kusama will allow you to build with interoperability between different blockchains, and give developers and engineers the access to the shared security of the entire network.`,
+    subtitle: 'Quartz gives the Kusama community the essential and advanced NFT tools to unleash innovation.',
+    info: 'Quartz gives you easy access to test extreme innovation in NFTs and build for the next generation. Built on Substrate, Quartz gives you the most versatile options for discovery and democratization of the NFT ecosystem and marketplaces (with very low barriers for entry).\nAdvanced features like Flexible Economic Models, Scheduled Transactions, Re-fungiblity, and Nested NFTs will all be available via Quartz, allowing users to own UX/UI for your fans and customers.Quartz parachain on Kusama will allow you to build with interoperability between different blockchains, and give developers and engineers the access to the shared security of the entire network.',
     links: {
       Website: 'https://unique.network/quartz/',
       Twitter: 'https://twitter.com/Unique_NFTchain',
@@ -934,10 +900,10 @@ export const parachainDetails: ParachainDetails[] = [
   {
     id: '2-2096',
     name: 'Bit.Country Pioneer',
-    slug: 'bit-country-pioneer',
+    slug: 'bitcountry-pioneer',
     token: 'NEER',
-    subtitle: `The Platform for User-created Metaverses & Games with Opportunities to Earn.`,
-    info: `The platform allows non-technical users to build their own metaverse. Developers can use our API to develop their games and smart contract dapps. Metaverse.Network is the blockchain network of Bit.Country application framework.`,
+    subtitle: 'The Platform for User-created Metaverses & Games with Opportunities to Earn.',
+    info: 'The platform allows non-technical users to build their own metaverse. Developers can use our API to develop their games and smart contract dapps. Metaverse.Network is the blockchain network of Bit.Country application framework.',
     links: {
       Website: 'https://bit.country/',
       Twitter: 'https://twitter.com/BitDotCountry',
@@ -953,7 +919,7 @@ export const parachainDetails: ParachainDetails[] = [
     slug: 'subsocial',
     token: 'SUB',
     subtitle: 'Subsocial - Decentralized social network on Polkadot & IPFS',
-    info: `Subsocial is a Polkadot ecosystem project supported by Web3 Foundation. Subsocial follows SoFi (social finance) principles to bring DeFi features to social networking.`,
+    info: 'Subsocial is a Polkadot ecosystem project supported by Web3 Foundation. Subsocial follows SoFi (social finance) principles to bring DeFi features to social networking.',
     links: {
       Website: 'https://subsocial.network',
       Twitter: 'https://twitter.com/SubsocialChain',
@@ -968,7 +934,7 @@ export const parachainDetails: ParachainDetails[] = [
     slug: 'zeitgeist',
     token: 'ZTG',
     subtitle: 'Zeitgeist is an evolving blockchain for prediction markets and futarchy.',
-    info: `Zeitgeist is a decentralized network for prediction markets. Zeitgeist is an evolving network that will change and adapt over time. It does this through a sophisticated on-chain governance process.`,
+    info: 'Zeitgeist is a decentralized network for prediction markets. Zeitgeist is an evolving network that will change and adapt over time. It does this through a sophisticated on-chain governance process.',
     links: {
       Website: 'https://zeitgeist.pm/',
       Twitter: 'https://twitter.com/ZeitgeistPM',
@@ -984,7 +950,7 @@ export const parachainDetails: ParachainDetails[] = [
     slug: 'pichiu',
     token: 'PCHU',
     subtitle: 'Pichiu aims to build a cross-chain platform powering the data economy on Kusama.',
-    info: `It will be the data infrastructure for the future DeFi and Web 3.0 powered by Kusama. Pichiu will provide valid, reliable, secure, cost-effective, and easily-coordinated data sources and data analytics.`,
+    info: 'It will be the data infrastructure for the future DeFi and Web 3.0 powered by Kusama. Pichiu will provide valid, reliable, secure, cost-effective, and easily-coordinated data sources and data analytics.',
     links: {
       Website: 'https://kylin.network/',
       Twitter: 'https://twitter.com/Kylin_Network',
@@ -997,11 +963,11 @@ export const parachainDetails: ParachainDetails[] = [
   {
     id: '2-2105',
     name: 'Darwinia Crab',
-    slug: 'darwinia-crab',
+    slug: 'crab-kusama',
     token: 'CRAB',
     subtitle:
       'Crab is the canary network of Darwinia, and is the first blockchain in the Kusama ecosystem to natively support cross-chain as well as smart contract and NFT.',
-    info: `Crab Network intends to participate in the Kusama Parachain Slot Auctions.\n\nThe Crab network is a network with long-term value. Some RINGs are allocated to Crab Network as backing assets to make it serve as a canary network having real economic incentives and massive gaming theory testing, not just working a testnet.\n\nThe economic model parameters of the Crab network are the same as those of the Darwinia Mainnet, and use the same staking and inflation models.`,
+    info: 'Crab Network intends to participate in the Kusama Parachain Slot Auctions.\n\nThe Crab network is a network with long-term value. Some RINGs are allocated to Crab Network as backing assets to make it serve as a canary network having real economic incentives and massive gaming theory testing, not just working a testnet.\n\nThe economic model parameters of the Crab network are the same as those of the Darwinia Mainnet, and use the same staking and inflation models.',
     links: {
       Website: 'https://crab.network/',
       Twitter: 'https://twitter.com/DarwiniaNetwork',
@@ -1016,7 +982,7 @@ export const parachainDetails: ParachainDetails[] = [
     slug: 'litmus',
     token: 'LIT',
     subtitle: 'A Web3 identity hub on Kusama.',
-    info: `Litmus is the aptly named canary network for Litentry, a decentralised identity aggregation protocol for DotSama. The protocol provides a decentralized, interoperable identity aggregation service that mitigates the difficulty of resolving agnostic DID mechanisms. Litentry provides a secure vehicle through which users manage their identities and dApps obtain the real-time credit/reputation of an identity owner across different blockchains.`,
+    info: 'Litmus is the aptly named canary network for Litentry, a decentralised identity aggregation protocol for DotSama. The protocol provides a decentralized, interoperable identity aggregation service that mitigates the difficulty of resolving agnostic DID mechanisms. Litentry provides a secure vehicle through which users manage their identities and dApps obtain the real-time credit/reputation of an identity owner across different blockchains.',
     links: {
       Website: 'https://kusama-crowdloan.litentry.com/',
       Twitter: 'https://twitter.com/litentry',
@@ -1029,10 +995,10 @@ export const parachainDetails: ParachainDetails[] = [
   {
     id: '2-2107',
     name: 'Kico',
-    slug: 'Kico',
+    slug: 'kico',
     token: 'KICO',
     subtitle: 'KICO is the canary network for DICO.',
-    info: `The DICO chain creates a decentralized and governable ICO platform for the Polkadot environment. We provide a decentralized platform, which heavily supports its projects.`,
+    info: 'The DICO chain creates a decentralized and governable ICO platform for the Polkadot environment. We provide a decentralized platform, which heavily supports its projects.',
     links: {
       Website: 'https://dico.io/',
       Twitter: 'https://twitter.com/DICO03279704',
@@ -1048,7 +1014,7 @@ export const parachainDetails: ParachainDetails[] = [
     slug: 'mangata-x',
     token: 'MGX',
     subtitle: 'Mangata X is a community-owned exchange for experienced traders & experimental tokens.',
-    info: `Mangata X will build bridges to Ethereum and other networks, as well as open channels to Parachains to host tokens from the newest experimental Parachains and Protocols in the Kusama and Ethereum space.`,
+    info: 'Mangata X will build bridges to Ethereum and other networks, as well as open channels to Parachains to host tokens from the newest experimental Parachains and Protocols in the Kusama and Ethereum space.',
     links: {
       Website: 'https://x.mangata.finance/',
       Twitter: 'https://twitter.com/MangataFinance',
@@ -1064,7 +1030,7 @@ export const parachainDetails: ParachainDetails[] = [
     slug: 'turing',
     token: 'TUR',
     subtitle: 'Turing Network is the Kusama parachain of Oak Network, the Web 3.0 Hub for DeFi and Payment Automation.',
-    info: `OAK (On-chain Autonomous Kernel) Network is an automation layer-2 blockchain for Defi and recurring payments. Our mission is to build a Stripe for Web 3.0 across protocols. The blockchain is built on Parity Substrate with an event-driven execution model. Different from Ethereum’s transaction-based model, where a transaction requires private key signing, OAK allows transactions to be triggered by event signals such as time, price, and smart contract state changes.\n\nOAK Network aims to be the No.1 utility Layer-2 across protocols, offering on-chain automation not possible today, such as limit & stop-loss orders on Automated-Market-Making DEX and recurring payments. With OAK's on-chain finality and network security, it can empower any blockchain with its autonomous functionality, unleashing endless product potentials.`,
+    info: "OAK (On-chain Autonomous Kernel) Network is an automation layer-2 blockchain for Defi and recurring payments. Our mission is to build a Stripe for Web 3.0 across protocols. The blockchain is built on Parity Substrate with an event-driven execution model. Different from Ethereum’s transaction-based model, where a transaction requires private key signing, OAK allows transactions to be triggered by event signals such as time, price, and smart contract state changes.\n\nOAK Network aims to be the No.1 utility Layer-2 across protocols, offering on-chain automation not possible today, such as limit & stop-loss orders on Automated-Market-Making DEX and recurring payments. With OAK's on-chain finality and network security, it can empower any blockchain with its autonomous functionality, unleashing endless product potentials.",
     links: {
       Website: 'https://oak.tech/',
       Twitter: 'https://twitter.com/oak_network',
@@ -1080,7 +1046,7 @@ export const parachainDetails: ParachainDetails[] = [
     slug: 'dora-factory',
     token: 'DORA',
     subtitle: 'The DAO infrastructure of the Kusama ecosystem.',
-    info: `The DAO-as-a-Service infrastructure for future organizations and communities.`,
+    info: 'The DAO-as-a-Service infrastructure for future organizations and communities.',
     links: {
       Website: 'https://dorafactory.org/kusama/',
       Twitter: 'https://twitter.com/DoraFactory',
@@ -1095,13 +1061,8 @@ export const parachainDetails: ParachainDetails[] = [
     token: 'KAB',
     subtitle:
       'Kabocha is a holistic self-evolving grass-roots parachain project, funding and incubating teams to build new public infrastructure.',
-    info: `It is an experiment in crafting new realities through direct participation, collaborative creation and shared values.
-    Its ownership and governance is fair, transparent and decentralised at launch thanks to its genesis in the Edgeware community. 
-    The project introduces a Network Public template and novel Store of Values currency and is built with the Substrate framework.`,
-    links: {
-      Website: 'https://www.kabocha.network/',
-      Twitter: 'https://twitter.com/kabochanetwork',
-    },
+    info: 'It is an experiment in crafting new realities through direct participation, collaborative creation and shared values.\n    Its ownership and governance is fair, transparent and decentralised at launch thanks to its genesis in the Edgeware community. \n    The project introduces a Network Public template and novel Store of Values currency and is built with the Substrate framework.',
+    links: { Website: 'https://www.kabocha.network/', Twitter: 'https://twitter.com/kabochanetwork' },
   },
   {
     id: '2-2116',
@@ -1110,8 +1071,7 @@ export const parachainDetails: ParachainDetails[] = [
     token: 'DHX',
     subtitle:
       'DataHighway is a DAO that incentivizes the community to run a sophisticated IoT parachain based on Polkadot using the DHX token.',
-    info: `DataHighway's community members will ultimately be incentivized to operate a sophisticated IoT parachain based on Polkadot, where they may stake, govern, 
-    mine and otherwise participate using the new DHX token and its associated Decentralized Autonomous Organization (DAO), and Inter-Chain Data Market.`,
+    info: "DataHighway's community members will ultimately be incentivized to operate a sophisticated IoT parachain based on Polkadot, where they may stake, govern, \n    mine and otherwise participate using the new DHX token and its associated Decentralized Autonomous Organization (DAO), and Inter-Chain Data Market.",
     links: {
       Website: 'https://www.datahighway.com/',
       Twitter: 'https://twitter.com/DataHighway_DHX',
@@ -1125,7 +1085,7 @@ export const parachainDetails: ParachainDetails[] = [
     token: 'LT',
     subtitle:
       'Listen is a voice social software based on decentralized data storage technology and blockchain technology.',
-    info: `Listen as a voice of social software, it is different with other communication tools, and podcasting software is also different, social support acquaintances, including voice, images, text and video, such as social practices, and social group in a stranger, using a similar round table in the form of BBS, group manager invited several guests, they have speaking right, and join hands to Listen and speak to the rest of the room, at the same time also can use the LT token to buy the speaking time, almost purchases will accumulate in the room below. Listen creates a unique experience that is different from a Feed stream. In a community of strangers, celebrities engage in voice discussions and audience interactions around topics.`,
+    info: 'Listen as a voice of social software, it is different with other communication tools, and podcasting software is also different, social support acquaintances, including voice, images, text and video, such as social practices, and social group in a stranger, using a similar round table in the form of BBS, group manager invited several guests, they have speaking right, and join hands to Listen and speak to the rest of the room, at the same time also can use the LT token to buy the speaking time, almost purchases will accumulate in the room below. Listen creates a unique experience that is different from a Feed stream. In a community of strangers, celebrities engage in voice discussions and audience interactions around topics.',
     links: {
       Website: 'https://listen.io/',
       Twitter: 'https://twitter.com/Listen_io',
@@ -1135,11 +1095,11 @@ export const parachainDetails: ParachainDetails[] = [
   {
     id: '2-2119',
     name: 'Bajun Network',
-    slug: 'bajun-network',
+    slug: 'bajun',
     token: 'BAJU',
     subtitle:
       'Ajuna is ready to unlock the next level of blockchain gaming. We have the power to enable responsive, immersive, graphically-rich web3 games built with industry-leading development tools.',
-    info: `To get there, we need a Kusama Parachain, and WE NEED YOUR SUPPORT. We’ve launched a Crowdloan campaign to reward everyone who backs Ajuna in the upcoming Kusama Parachain auctions with BAJU — our primary token on Kusama — and other exclusive perks.`,
+    info: 'To get there, we need a Kusama Parachain, and WE NEED YOUR SUPPORT. We’ve launched a Crowdloan campaign to reward everyone who backs Ajuna in the upcoming Kusama Parachain auctions with BAJU — our primary token on Kusama — and other exclusive perks.',
     links: {
       Website: 'https://ajuna.io/',
       Twitter: 'https://twitter.com/AjunaNetwork',
@@ -1153,7 +1113,7 @@ export const parachainDetails: ParachainDetails[] = [
     slug: 'amplitude',
     token: 'AMPE',
     subtitle: 'Amplitude is going to launch as a canary network of its sister blockchain, Pendulum.',
-    info: `It will act as a testing ground for applications and network parameters for Pendulum. Unlike a traditional testnet, users can interact on the Amplitude chain with real financial consequences. We’re expecting lots of novel concepts to be trialled on Amplitude, giving rise to many exciting opportunities for anyone using the chain.`,
+    info: 'It will act as a testing ground for applications and network parameters for Pendulum. Unlike a traditional testnet, users can interact on the Amplitude chain with real financial consequences. We’re expecting lots of novel concepts to be trialled on Amplitude, giving rise to many exciting opportunities for anyone using the chain.',
     links: {
       Website: 'https://pendulumchain.org/amplitude',
       Twitter: 'https://twitter.com/pendulum_chain',
@@ -1167,7 +1127,7 @@ export const parachainDetails: ParachainDetails[] = [
     slug: 'tinker',
     token: 'TNKR',
     subtitle: 'The IP Asset & Accelerated Development Hub Of Kusama',
-    info: `The Tinkernet Parachain is the canary network of the InvArch Network, designed as the IP Asset & accelerated development staging grounds for the Kusama ecosystem.`,
+    info: 'The Tinkernet Parachain is the canary network of the InvArch Network, designed as the IP Asset & accelerated development staging grounds for the Kusama ecosystem.',
     links: {
       Website: 'https://invarch.network/tinkernet',
       Twitter: 'https://twitter.com/invarchnetwork',
@@ -1178,30 +1138,29 @@ export const parachainDetails: ParachainDetails[] = [
   {
     id: '2-2123',
     name: 'GM Parachain',
-    slug: 'gm-parachain',
+    slug: 'gm',
     token: '$FREN',
     subtitle: "$GM OR DIE, UNTIL IT'S TIME TO $GN",
-    info: `Burn $FREN to mint and send $GM, but mind the clock on the GMdapp, $GM can only be minted in the morning, $GN can only be minted at night. If you try to mint during the day, you'll burn your $FREN for nothing!`,
+    info: "Burn $FREN to mint and send $GM, but mind the clock on the GMdapp, $GM can only be minted in the morning, $GN can only be minted at night. If you try to mint during the day, you'll burn your $FREN for nothing!",
     links: {
       Website: 'https://www.gmordie.com/',
       Twitter: 'https://twitter.com/GmOrDie_',
       Discord: 'https://discord.com/invite/JFzD2b5P2B',
     },
   },
-  // {
-  //   id: '2-2127',
-  //   name: 'SNOW',
-  //   slug: 'snow-network',
-  //   token: '$ICZ',
-  //   subtitle:
-  //     'SNOW is a long-term incentivized network for cutting-edge development backed by the ICZ token, which has real-world value.',
-  //   info: `SNOW will serve as a 'canary network' for ICE. Supply and other token economic behaviors on SNOW will be the same as ICE, but token distribution will be different in order to support the goals and attributes of the network.`,
-  //   links: {
-  //     Website: 'https://icenetwork.io/snow/',
-  //     Twitter: 'https://twitter.com/icenetwork_io',
-  //     Discord: 'https://discord.com/invite/x6DxjxfP24',
-  //   },
-  // },
+  {
+    id: '0-2093',
+    name: 'Hashed Network',
+    slug: 'hashed-network',
+    token: 'BHASH',
+    subtitle: 'Digitally Native Businesses on Polkadot',
+    info: 'Hashed Network enables the full lifecycle for digitally-native organizations and web3-curious businesses seeking benefits of decentralized digital economies.',
+    links: {
+      Website: 'https://hashed.network/',
+      Twitter: 'https://twitter.com/HashedNetwork',
+      GitHub: 'https://github.com/hashed-io',
+    },
+  },
 ]
 
 export type CrowdloanDetails = {
@@ -1793,6 +1752,15 @@ export const crowdloanDetails: CrowdloanDetails[] = [
           value: '2.5 TEER + bonuses',
         },
       ],
+      info: null,
+    },
+  },
+  {
+    relayId: 0,
+    paraId: 2093,
+    rewards: {
+      tokens: null,
+      custom: [],
       info: null,
     },
   },

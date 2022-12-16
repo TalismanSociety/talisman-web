@@ -1,12 +1,10 @@
-import { Await, Field, Grid } from '@components'
-import NoCrowdloans from '@components/NoCrowdloansPlaceholder'
+import { Crowdloan } from '@archetypes'
+import { Await, Field, Grid, NoResults } from '@components'
 import styled from '@emotion/styled'
+import { useCrowdloanContributions } from '@libs/crowdloans'
 import { trackGoal } from '@libs/fathom'
 import { device } from '@util/breakpoints'
 import { useTranslation } from 'react-i18next'
-
-import { useFilter } from './_hooks'
-import Teaser from './Teaser'
 
 const FilterBar = styled(
   ({
@@ -30,10 +28,28 @@ const FilterBar = styled(
     const { t } = useTranslation()
     return (
       <div className={`${className} filterbar`} {...rest}>
+        <Field.Search
+          className="searchbar"
+          value={search}
+          placeholder={t('Search Crowdloans')}
+          onChange={(search: any) => {
+            setSearch(search)
+            trackGoal('9XUF7WEB', 1) // crowdloan_search
+          }}
+        />
         <div className="filters">
           <Field.RadioGroup
+            value={status}
+            onChange={(status: any) => {
+              setStatus(status)
+              trackGoal('0AO7IT2G', 1) // crowdloan_filter
+            }}
+            options={statusOptions}
+            small
+            secondary
+          />
+          <Field.RadioGroup
             value={network}
-            className="network-filter"
             onChange={(network: any) => {
               setNetwork(network)
               trackGoal('0AO7IT2G', 1) // crowdloan_filter
@@ -42,26 +58,7 @@ const FilterBar = styled(
             small
             primary
           />
-          <Field.Search
-            className="searchbar"
-            value={search}
-            placeholder={t('Search Crowdloans')}
-            onChange={(search: any) => {
-              setSearch(search)
-              trackGoal('9XUF7WEB', 1) // crowdloan_search
-            }}
-          />
         </div>
-        <Field.RadioGroup
-          value={status}
-          onChange={(status: any) => {
-            setStatus(status)
-            trackGoal('0AO7IT2G', 1) // crowdloan_filter
-          }}
-          options={statusOptions}
-          small
-          secondary
-        />
       </div>
     )
   }
@@ -70,21 +67,7 @@ const FilterBar = styled(
   display: flex;
   align-items: center;
   gap: 2rem;
-  justify-content: space-between;
   flex-wrap: wrap;
-
-  .network-filter {
-    align-items: unset;
-    flex-direction: unset;
-
-    .children {
-      border-radius: 1rem;
-    }
-
-    .children .pill {
-      border-radius: inherit;
-    }
-  }
 
   .searchbar {
     display: inline-block;
@@ -96,109 +79,41 @@ const FilterBar = styled(
 
   .filters {
     display: flex;
-    flex-wrap: wrap-reverse;
-    gap: 2rem;
-    // justify-content: space-between;
-    // width: 100%;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: space-between;
+    width: 100%;
   }
 `
 
-// const PopularCrowdloans = styled(({ className }: { className: string }) => {
-//   const { crowdloans } = Crowdloan.useFilter()
-//   return (
-//     <Panel className={className}>
-//       <PanelSection className="card">
-//         <div className="title">Popular Crowdloans</div>
-//         <ol className="list">
-//           {crowdloans.slice(0, 5).map(({ id }) => (
-//             <li key={id}>
-//               <CrowdloanSummary id={id} />
-//             </li>
-//           ))}
-//         </ol>
-//       </PanelSection>
-//     </Panel>
-//   )
-// })`
-//   min-width: max-content;
-
-//   .card {
-//     padding: 2.4rem;
-//   }
-
-//   .title {
-//     color: var(--color-dim);
-//   }
-
-//   .list {
-//     margin-top: 2rem;
-
-//     & > * + * {
-//       margin-top: 1rem;
-//     }
-//   }
-
-//   ol {
-//     list-style: none;
-//     counter-reset: popular-crowdloans-counter;
-//     padding-inline: 0;
-//     margin-block-end: 0;
-//   }
-//   ol li {
-//     counter-increment: popular-crowdloans-counter;
-//     display: flex;
-//     align-items: center;
-//     gap: 1rem;
-//   }
-//   ol li::before {
-//     content: counter(popular-crowdloans-counter);
-//     color: var(--color-primary);
-//     font-weight: bold;
-//     max-width: 1rem;
-//     padding-right: 1rem;
-//   }
-// `
-
-// const LearnCrowdloansBanner = () => {
-//   return (
-//     <Panel>
-//       <PanelSection>LearnCrowdloansBanner</PanelSection>
-//     </Panel>
-//   )
-// }
-
 const Index = styled(({ withFilter, className }: { withFilter: boolean; className?: string }) => {
   const { t } = useTranslation()
-  const { crowdloans, count, loading, filterProps } = useFilter()
+  const { crowdloans, count, loading, filterProps } = Crowdloan.useFilter()
+  const { contributions } = useCrowdloanContributions()
 
   return (
     <div className={`crowdloan-index ${className}`}>
-      <div className="overview">
-        {/* TODO: Comment out for now */}
-        {/* <PopularCrowdloans /> */}
-        {/* <LearnCrowdloansBanner />*/}
-        {/* <UnlockTalismanBanner /> */}
-      </div>
+      {/* TODO: Remove for now as no Learn more link yet. */}
+      {/* <UnlockTalismanBanner /> */}
       {withFilter && <FilterBar {...filterProps} count={count} />}
       <Await until={!loading}>
-        <NoCrowdloans require={count?.filtered > 0} text={t('noCrowdloans.text')} subtext={t('noCrowdloans.subtext')}>
+        <NoResults
+          require={count?.filtered > 0}
+          title={t('noResult.title')}
+          subtitle={t('noResult.subtitle')}
+          text={t('noResult.text')}
+        >
           <Grid>
             {crowdloans.map(({ id }) => (
-              <Teaser key={id} id={id} />
+              <Crowdloan.Teaser key={id} id={id} contributed={contributions.find(x => x.id === id) !== undefined} />
             ))}
           </Grid>
-        </NoCrowdloans>
+        </NoResults>
       </Await>
     </div>
   )
 })`
   padding: 2.4rem;
-
-  .overview {
-    display: flex;
-    gap: 2rem;
-    flex-wrap: wrap;
-  }
 
   .await {
     font-size: var(--font-size-xxlarge);

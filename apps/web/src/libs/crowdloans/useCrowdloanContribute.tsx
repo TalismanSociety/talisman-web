@@ -1,5 +1,5 @@
 import { trackGoal } from '@libs/fathom'
-import { SupportedRelaychains } from '@libs/talisman/util/_config'
+import { SupportedRelaychains, parachainDetails } from '@libs/talisman/util/_config'
 import { ApiPromise, SubmittableResult, WsProvider } from '@polkadot/api'
 import { SubmittableExtrinsic } from '@polkadot/api/submittable/types'
 import { isEthereumChecksum } from '@polkadot/util-crypto'
@@ -7,10 +7,10 @@ import type { Balance } from '@talismn/api'
 import Talisman from '@talismn/api'
 import type { BalanceWithTokens } from '@talismn/api-react-hooks'
 import { addTokensToBalances } from '@talismn/api-react-hooks'
-import Chaindata from '@talismn/chaindata-js'
 import { getWalletBySource } from '@talismn/connect-wallets'
 import { encodeAnyAddress, planckToTokens, tokensToPlanck } from '@talismn/util'
 import customRpcs from '@util/customRpcs'
+import { Maybe } from '@util/monads'
 import BigNumber from 'bignumber.js'
 import { useCallback, useEffect, useState } from 'react'
 import { MemberType, makeTaggedUnion, none } from 'safety-match'
@@ -407,22 +407,22 @@ function useInitializeThunk(state: ContributeState, dispatch: DispatchContribute
       if (!stateDeps) return
       const { crowdloanId, relayChainId, parachainId } = stateDeps
 
-      const [relayChaindata, chaindata] = await Promise.all([
-        Chaindata.chain(relayChainId.toString()),
-        Chaindata.chain(`${relayChainId}-${parachainId}`),
-      ])
+      const relayChaindata = SupportedRelaychains[relayChainId]
       const relayExtraChaindata = SupportedRelaychains[relayChainId]
       const relayChainCustomRpcs = customRpcs[relayChainId.toString()]
 
-      const relayRpcs = relayChainCustomRpcs?.length! > 0 ? relayChainCustomRpcs ?? [] : relayChaindata?.rpcs ?? []
+      const relayRpcs =
+        relayChainCustomRpcs?.length! > 0
+          ? relayChainCustomRpcs ?? []
+          : Maybe.of(relayChaindata?.rpc).mapOrUndefined(x => [x]) ?? []
       const hasRelayRpcs = relayRpcs?.length! > 0
       if (!hasRelayRpcs) return dispatch(ContributeEvent._noRpcsForRelayChain)
 
-      const { nativeToken: relayNativeToken, tokenDecimals: relayTokenDecimals } = relayChaindata
+      const { tokenSymbol: relayNativeToken, tokenDecimals: relayTokenDecimals } = relayChaindata!
       if (!relayNativeToken) return dispatch(ContributeEvent._noChaindataForRelayChain)
       if (!relayTokenDecimals) return dispatch(ContributeEvent._noChaindataForRelayChain)
 
-      const parachainName = chaindata.name !== null ? chaindata.name : undefined
+      const parachainName = parachainDetails.find(x => x.id === `${relayChainId}-${parachainId}`)?.name
 
       if (Moonbeam.is(relayChainId, parachainId)) {
         const ipBlockedResponse = await fetch(`${Moonbeam.api}/health`, {
@@ -1188,7 +1188,7 @@ type BuildTxProps = {
   contributionPlanck: string
   account: string
   email?: string
-  verifierSignature?: VerifierSignature
+  verifierSignature?: any
   memoAddress?: string
 
   api: ApiPromise
@@ -1243,7 +1243,7 @@ async function buildMoonbeamTx({
 }: BuildTxProps): Promise<BuildTxResponse> {
   const txs = [
     api.tx.crowdloan?.contribute?.(parachainId, contributionPlanck, verifierSignature),
-    api.tx.crowdloan?.addMemo?.(parachainId, memoAddress),
+    api.tx.crowdloan?.addMemo?.(parachainId, memoAddress ?? ''),
     api.tx.system.remarkWithEvent('Talisman - The Journey Begins'),
   ]
 
@@ -1260,7 +1260,7 @@ async function buildAstarTx({
 
   const txs = [
     api.tx.crowdloan?.contribute?.(parachainId, contributionPlanck, verifierSignature),
-    api.tx.crowdloan?.addMemo?.(parachainId, referrerAddress),
+    api.tx.crowdloan?.addMemo?.(parachainId, referrerAddress ?? ''),
     api.tx.system.remarkWithEvent('Talisman - The Journey Begins'),
   ]
 

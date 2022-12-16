@@ -1,10 +1,8 @@
 import styled from '@emotion/styled'
 
-type PropTypes = {
-  className?: string
-}
-
-const Footer = styled(({ className }: PropTypes) => <footer className={className}></footer>)`
+const Footer = styled(({ className }: React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement>) => (
+  <footer className={className}></footer>
+))`
   padding: 3rem 1em;
   display: block;
 `
