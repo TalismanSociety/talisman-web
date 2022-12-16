@@ -40,7 +40,7 @@ const desktopRoutes = [
   { name: 'NFTs', path: '/nfts' },
   { name: 'Explore', path: '/explore' },
   { name: 'Staking', path: '/staking' },
-  // { name: 'Transaction History', path: '/history' },
+  { name: 'Transaction History', path: '/history' },
 ]
 
 const mainRoutes = [
