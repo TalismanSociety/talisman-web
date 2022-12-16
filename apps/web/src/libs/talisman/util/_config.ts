@@ -498,6 +498,28 @@ export const parachainDetails: ParachainDetails[] = [
     },
   },
   {
+    id: '0-2094',
+    name: 'Pendulum',
+    slug: 'pendulum',
+    token: 'PEN',
+    subtitle: 'FX Blockchain Infrastructure',
+    info: `Pendulum’s interoperable blockchain brings together high-quality fiat tokens in a single, powerful DeFi network. Building the missing link between fiat and DeFi through a forex-optimized smart contract DeFi network allowing traditional finance services to seamlessly integrate with DeFi applications such as specialized forex AMMs, lending protocols, and yield farming and offering composable fiat solutions with 1000x performance.
+‍
+Building Pendulum on Polkadot’s Substrate framework maximizes multi-chain interoperability and increased security. Pendulum will operate as a key piece of Web3 infrastructure to finally unlock DeFi use cases for fiat currencies.
+
+Our mission is to create an open financial future that overcomes borders and fosters economic inclusion.`,
+    links: {
+      Website: 'https://pendulumchain.org/',
+      Discord: 'https://discord.gg/wJ2fQh776B',
+      Telegram: 'https://t.me/pendulum_community',
+      Twitter: 'https://twitter.com/pendulum_chain',
+      Github: 'https://github.com/pendulum-chain',
+      Medium: 'https://pendulum-chain.medium.com/',
+      Reddit: 'https://www.reddit.com/r/Pendulum_Chain/',
+      LinkedIn: 'https://www.linkedin.com/company/pendulum-chain/',
+    },
+  },
+  {
     id: '2-2000',
     name: 'Karura',
     slug: 'karura',
