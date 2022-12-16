@@ -1,5 +1,7 @@
+import { chainApiState } from '@domains/chains/recoils'
 import { find } from 'lodash'
-import { PropsWithChildren, useContext as _useContext, createContext, useMemo } from 'react'
+import { PropsWithChildren, useContext as _useContext, createContext, useEffect, useMemo, useState } from 'react'
+import { useRecoilValueLoadable, waitForAll } from 'recoil'
 
 import { ParachainDetails, parachainDetails } from './util/_config'
 
@@ -72,13 +74,39 @@ function useContext() {
 //
 
 export const Provider = ({ children }: PropsWithChildren) => {
-  const value = useMemo(
-    () => ({
-      parachains: parachainDetails,
-      hydrated: true,
-    }),
-    []
+  const [hydrated, setHydrated] = useState(false)
+  const [parachains, setParachains] = useState<ParachainDetails[]>([])
+
+  const apisLoadable = useRecoilValueLoadable(waitForAll([chainApiState('polkadot'), chainApiState('kusama')]))
+
+  useEffect(
+    () => {
+      if (hydrated) {
+        return
+      }
+
+      if (apisLoadable.state !== 'hasValue') {
+        return
+      }
+
+      ;(async () => {
+        const [polkadotApi, kusamaApi] = apisLoadable.contents
+
+        const polkadotFunds = await polkadotApi.query.crowdloan.funds.entries()
+        const kusamaFunds = await kusamaApi.query.crowdloan.funds.entries()
+
+        const polkadotParaIds = polkadotFunds.map(x => `0-${x[0].args[0]}`)
+        const kusamaParaIds = kusamaFunds.map(x => `2-${x[0].args[0]}`)
+
+        const paraIds = [...polkadotParaIds, ...kusamaParaIds]
+
+        setParachains(parachainDetails.filter(x => paraIds.includes(x.id)))
+        setHydrated(true)
+      })()
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [apisLoadable.state]
   )
 
-  return <Context.Provider value={value}>{children}</Context.Provider>
+  return <Context.Provider value={{ parachains, hydrated }}>{children}</Context.Provider>
 }
