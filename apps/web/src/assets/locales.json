@@ -1,0 +1,2939 @@
+{
+  "en": {
+    "crowdloan": {
+      "inProgress": {
+        "header": "In Progress",
+        "description": "Your transaction is in progress. This may take a few minutes to confirm",
+        "primaryCta": "View on Subscan",
+        "secondaryCta": "Close"
+      },
+      "success": {
+        "header": "Success",
+        "description": "Your transaction was successful. Thank you for your contribution",
+        "primaryCta": "View on Subscan",
+        "secondaryCta": "Go to your portfolio"
+      },
+      "failed": {
+        "header": "Failed",
+        "description": "Your transaction was not successful.",
+        "primaryCta": "View on Subscan",
+        "secondaryCta": "Close"
+      },
+      "registeringUser": {
+        "header": "Sign the Terms & Conditions",
+        "description": "By clicking \"Sign and Send\" below, your agreement to the Moonbeam Crowdloan Terms and Conditions will be stored on chain, to your DOT account. This will be in the form of a remark extrinstic signed by your account.",
+        "feeNote": "Please note that this signing transaction will be subject to transaction fees on the Polkadot network (around 0.0411 DOT), and Polkadot has a minimum balance of 1 DOT.",
+        "termsNote": "[View terms]",
+        "primaryCta": "Sign and Send"
+      },
+      "moonbeamPortflioTag": {
+        "You have unlinked addresses": "You have unlinked addresses",
+        "View linked addresses": "View linked addresses"
+      }
+    },
+    "nav": {
+      "Portfolio": "Portfolio",
+      "Crowdloans": "Crowdloans",
+      "Transaction History": "History",
+      "Buy DOT/KSM": "Buy DOT/KSM",
+      "Buy": "Buy",
+      "Request Features": "Request Features",
+      "GitHub": "GitHub",
+      "Discord": "Discord",
+      "Twitter": "Twitter",
+      "Medium": "Medium",
+      "Terms of use": "Terms of use",
+      "Privacy policy": "Privacy policy",
+      "NFTs": "NFTs",
+      "Staking": "Staking"
+    },
+    "languages": {
+      "en": "English",
+      "fr": "Français",
+      "cn": "中文",
+      "ru": "Русский"
+    },
+    "errors": {
+      "Account balance too low": "Account balance too low",
+      "A parachain must be selected": "A parachain must be selected",
+      "Please enter an amount of {{token}}": "Please enter an amount of {{token}}",
+      "Please enter a valid amount of {{token}}": "Please enter a valid amount of {{token}}",
+      "An account must be selected": "An account must be selected",
+      "Account balance not ready yet": "Account balance not ready yet",
+      "A minimum of {{minimum}} {{token}} is required": "A minimum of {{minimum}} {{token}} is required",
+      "Failed to submit transaction: account balance too low": "Failed to submit transaction: account balance too low",
+      "Failed to submit transaction": "Failed to submit transaction"
+    },
+    "spirit-keys": {
+      "intro": "Discover a Spirit Key to get access to special perks and be among the first to try the Talisman wallet extension",
+      "Drag to unlock": "Drag to unlock",
+      "no": "no",
+      "Done": "Done",
+      "Send": "Send",
+      "altDownload": "Click here if download failed to start after 10 seconds.",
+      "ownershipText_one": "You have <1>{{total}}</1> Spirit Key",
+      "ownershipText_other": "You have <1>{{total}}</1> Spirit Keys",
+      "Send to a friend": "Send to a friend",
+      "Explore Crowdloans": "Explore Crowdloans",
+      "Error sending NFT": "Error sending NFT",
+      "Enter Kusama Address": "Enter Kusama Address",
+      "willTakeFewMins": "The transfer will take a few minutes to sync so please avoid sending again.",
+      "whatIsInfo": {
+        "title": "What is a Spirit Key?",
+        "description": "A Spirit Key is a a special RMRK NFT of which there are only 3333. Holders will be able to access special perks including:",
+        "list": [
+          "The opportunity to participate in the Alpha release of our wallet extension",
+          "Permissioned channels in our Discord for Spirit Clan members",
+          "Early access to new features in the Talisman web app"
+        ]
+      },
+      "howToGetInfo": {
+        "title": "Where can I get one?",
+        "description": "Keys have been seen in various locations, but never for very long. The best places to currently find them are:",
+        "list": [
+          "The Talisman <1>Discord server</1>",
+          "Attending community calls and events",
+          "Keeping an eye out for giveaways on <1>Twitter</1>",
+          "By arranging to review, publish or produce media about Talisman"
+        ]
+      },
+      "spiritClan": {
+        "poem": [
+          "Talisman Seeker, it's your spirit that's key.",
+          "At the end of your seeking, you'll finally be free.",
+          "A key to the new world is a difficult thing.",
+          "You should ask yourself honestly, \"what on earth should I bring?\"",
+          "Give a moment of thought as to whether it can be brought.",
+          "All I can guarantee, is that nothing is for naught."
+        ],
+        "title": "Discover a Spirit Key to join the Spirit Clan.",
+        "info": [
+          "A Spirit Key is a NFT which allows you to join the <a>Spirit Clan</a>.",
+          "Spirit Clan members can access a permissioned Discord channel where they'll have the opportunity to help shape Talisman.",
+          "Spirit Clan members will receive early access to new products, events, NFT drops and more."
+        ],
+        "noKeyPlaceholder": "You don't have a key yet. Get one on <a>Singular</a>.",
+        "alreadyHaveOne": "Already have one?",
+        "joinSpiritClan": "Join Spirit Clan"
+      }
+    },
+    "welcome": {
+      "header": "Explore DotSama with Talisman",
+      "description": "Manage your portfolio, invest in crowdloans and stake your assets (coming soon)."
+    },
+    "translation": {
+      "Portfolio value": "Portfolio value",
+      "Assets": "Assets",
+      "All Accounts": "All Accounts",
+      "Crowdloans": "Crowdloans",
+      "Staking": "Staking",
+      "This door will be unlocked soon": "This door will be unlocked soon",
+      "You have not contributed to any Crowdloans": "You have not contributed to any Crowdloans",
+      "Summoning Crowdloan Contributions...": "Summoning Crowdloan Contributions...",
+      "Search Crowdloans": "Search Crowdloans",
+      "Raised": "Raised",
+      "Ends in": "Ends in",
+      "Contribute": "Contribute",
+      "Contributed": "Contributed",
+      "Rewards": "Rewards",
+      "Cancel": "Cancel",
+      "Contribute to": "Contribute to",
+      "Sort by": "Sort by",
+      "noResult": {
+        "title": "Sorry",
+        "subtitle": "Talisman cannot summon what you wish for.",
+        "text": "Try something else."
+      },
+      "noCrowdloans": {
+        "text": "There are no active crowdloans.",
+        "subtext": "Please come back later or explore some previous winners."
+      },
+      "You have no": "You have no",
+      "Buy": "Buy",
+      "Fee": "Fee",
+      "Add {{asset}} Balance": "Add {{asset}} Balance",
+      "Unavailable": "Unavailable",
+      "extensionUnavailable": {
+        "title": "Oh no!",
+        "subtitle": "Hmm... It doesn't look like you have a wallet connected.",
+        "text": "Please download or connect your wallet, we recommend the Talisman Wallet Extension. "
+      },
+      "Install Talisman Extension": "Install Talisman Extension",
+      "Requires Configuration": "Requires Configuration",
+      "desktopRequired": {
+        "title": "Sorry!",
+        "subtitle": "This feature is currently only available on desktop, but we will be launching mobile-friendly version soon.",
+        "text": "In the meantime, browse and discover Polkadot dapps on our new Explore page.",
+        "primaryCta": "Explore"
+      },
+      "No wallet found": "No wallet found",
+      "Connect wallet": "Connect wallet",
+      "Switch wallet": "Switch wallet",
+      "Goal reached": "Goal reached",
+      "Spirit Key": "Spirit Key",
+      "View all": "View all"
+    },
+    "nft-viewer": {
+      "Floor Price": "FLOOR PRICE",
+      "Edition": "EDITION",
+      "Send NFT Button": "Send",
+      "View Singular": "View on Singular",
+      "Attributes": "ATTRIBUTES",
+      "NFT Network": "NETWORK"
+    },
+    "filters": {
+      "Raised": "Raised",
+      "Oldest": "Oldest",
+      "Newest": "Newest",
+      "A⇢Z": "A⇢Z",
+      "Z⇢A": "Z⇢A",
+      "All": "All",
+      "Active": "Active",
+      "Winner": "Winner",
+      "Ended": "Ended"
+    },
+    "connect-wallet": {
+      "Connect a wallet": "Connect a wallet",
+      "Coming soon": "Coming soon",
+      "No wallet": "I don’t have a wallet",
+      "Talisman Extension": "Talisman Extension",
+      "Wallet extension coming soon": "Wallet extension coming soon",
+      "Get updates": "Get updates",
+      "TOS": "By connecting your wallet you agree to our <2>Terms of use</2>",
+      "By connecting your wallet you agree to our": "By connecting your wallet you agree to our",
+      "Terms of use": "Terms of use"
+    },
+    "banners": {
+      "explore": {
+        "header": "Build the Paraverse",
+        "description": "Explore your visual and audio experiences within the Paraverse.",
+        "primaryCta": "Explore NFTs"
+      },
+      "empty": {
+        "header": "Your bags are empty!",
+        "description": "Buy DOT and KSM with your credit card or crypto",
+        "primaryCta": "Buy DOT / KSM"
+      },
+      "soon": {
+        "header": "Coming soon",
+        "description": "In the meantime, you can check out Crowdloans.",
+        "primaryCta": "Explore Crowdloans"
+      },
+      "buy": {
+        "header": "Buy DOT/KSM",
+        "description": "Show me the money",
+        "primaryCta": "Buy"
+      },
+      "unlockTalisman": {
+        "header": "Unlock the Talisman",
+        "description": "Contribute to any DOT Crowdloan and receive a Spirit Key, you’ll need it later...",
+        "primaryCta": "More info"
+      },
+      "noWallet": {
+        "header": "Unlock the Paraverse",
+        "description": "Hmmm... It doesn't look like you’ve got a wallet extension installed.<br>We recommend installing <1>Talisman Wallet.</1>",
+        "description2": "In the meantime, you can check out Crowdloans.",
+        "primaryCta": "Download Extension"
+      },
+      "noNfts": {
+        "description": "You don’t have any NFTs yet! Get started with a Spirit Key.",
+        "primaryCta": "Buy Spirit Key"
+      }
+    }
+  },
+  "cn": {
+    "crowdloan": {
+      "inProgress": {
+        "header": "交易进行中",
+        "description": "您的交易正在进行中，请耐心等候确认。",
+        "primaryCta": "查看 Subscan",
+        "secondaryCta": "关闭"
+      },
+      "success": {
+        "header": "交易成功",
+        "description": "您的交易已成功，感谢您的贡献！",
+        "primaryCta": "查看 Subscan",
+        "secondaryCta": "查看投资组合"
+      },
+      "failed": {
+        "header": "交易失败",
+        "description": "您的交易失败。",
+        "primaryCta": "查看 Subscan",
+        "secondaryCta": "关闭"
+      },
+      "registeringUser": {
+        "header": "签署条款和条件",
+        "description": "通过点击下面的“签名并发送”，您对 Moonbeam Crowdloan 条款和条件的同意将在链上存储到您的 DOT 帐户。这将采用由您帐户签名的外部备注 (remark extrinsic)。",
+        "feeNote": "请注意，本次签名交易将在波卡网络上收取交易费用（约 0.0411 DOT），另请注意波卡最低余额保持为 1 DOT。",
+        "termsNote": "[查看条款]",
+        "primaryCta": "签名并发送"
+      },
+      "moonbeamPortflioTag": {
+        "You have unlinked addresses": "您有未链接的地址",
+        "View linked addresses": "查看链接地址"
+      }
+    },
+    "nav": {
+      "Portfolio": "投资组合",
+      "Crowdloans": "众贷",
+      "Buy DOT/KSM": "购买 DOT 或 KSM",
+      "Buy": "购买",
+      "Request Features": "要求更多功能",
+      "GitHub": "GitHub",
+      "Discord": "Discord",
+      "Twitter": "Twitter",
+      "Medium": "Medium",
+      "Terms of use": "服务条款",
+      "Privacy policy": "隐私政策",
+      "NFTs": "NFTs"
+    },
+    "languages": {
+      "en": "English",
+      "fr": "Français",
+      "cn": "中文",
+      "ru": "Русский"
+    },
+    "errors": {
+      "Account balance too low": "账户余额不足",
+      "A parachain must be selected": "请选择平行链",
+      "Please enter an amount of {{token}}": "请输入 {{token}} 数量",
+      "Please enter a valid amount of {{token}}": "请输入有效的 {{token}} 数量",
+      "An account must be selected": "必须选择一个账户",
+      "Account balance not ready yet": "账户余额不足",
+      "A minimum of {{minimum}} {{token}} is required": "最低需要 {{minimum}} {{token}}",
+      "Failed to submit transaction: account balance too low": "交易提交失败：账户余额不足",
+      "Failed to submit transaction": "交易提交失败"
+    },
+    "spirit-keys": {
+      "intro": "拥有 Spirit Key 可获取特殊权益，并成为第一批 Talisman 钱包插件的测试人员",
+      "Drag to unlock": "拖动解锁",
+      "no": "不",
+      "Done": "已完成",
+      "Send": "发送",
+      "altDownload": "如果钱包下载未在10秒内开始，请点击此处。",
+      "ownershipText_one": "您拥有 <1>{{total}}</1> 灵魂钥匙",
+      "ownershipText_other": "您拥有 <1>{{total}}</1> 灵魂钥匙",
+      "Send to a friend": "发送给好友",
+      "Explore Crowdloans": "探索众贷",
+      "Error sending NFT": "发送 NFT 时出错",
+      "Enter Kusama Address": "请输入 Kusama 地址",
+      "willTakeFewMins": "交易需要几分钟后才能完成，因此请勿重复发送。",
+      "whatIsInfo": {
+        "title": "什么是 Spirit Key？",
+        "description": "Spirit Key 是一种特殊的 RMRK NFT，总量仅有3333个。持有者将能获取以下特殊权益：",
+        "list": [
+          "参与 Talisman 钱包插件 Alpha 版本的机会",
+          "成为 Discord 上 Spirit Clan 频道的荣誉成员",
+          "抢先体验 Talisman Web 端应用的新功能"
+        ]
+      },
+      "howToGetInfo": {
+        "title": "获取方法",
+        "description": "Spirit Key 已在各种场合出现过，但机会稍纵即逝。目前能找到它们最佳的方式是：",
+        "list": [
+          "在 Talisman 的<1>Discord 服务器上</1>",
+          "参加社区线上会议和活动",
+          "留意 <1>Twitter</1> 上的赠送活动",
+          "通过制作或发布关于 Talisman 的媒体内容"
+        ]
+      },
+      "spiritClan": {
+        "poem": [
+          "护身符的寻求者，您的精神是关键。",
+          "在您寻求的尽头，您终将获得自由。",
+          "获取一把通往新世界的钥匙并非易事。",
+          "您应该诚实地问自己，“我到底应该带来什么？",
+          "并仔细思考是否可以将它带来。",
+          "我只能保证，没有什么是徒劳的。"
+        ],
+        "title": "发现一把加入 Spirit Clan 的 Spirit Key。",
+        "info": [
+          "Spirit Key 是一种 NFT, 可让您加入 <a>Spirit Clan</a>。",
+          "Spirit Clan 的成员可以访问经过许可的 Discord 频道，他们将有机会帮助塑造 Talisman。",
+          "Spirit Clan 的成员将提前获得新产品、活动、NFT 等内容。"
+        ],
+        "noKeyPlaceholder": "您还没有 Spirit Key。在 <a>Singular</a> 上找一把。",
+        "alreadyHaveOne": "已经有了？",
+        "joinSpiritClan": "加入 Spirit Clan"
+      }
+    },
+    "welcome": {
+      "header": "用 Talisman 探索 DotSama",
+      "description": "管理您的投资组合，投资众筹并抵押您的资产（即将推出）"
+    },
+    "translation": {
+      "Portfolio value": "投资组合价值",
+      "Assets": "总资产",
+      "All Accounts": "所有账户",
+      "Crowdloans": "众贷",
+      "Staking": "质押",
+      "This door will be unlocked soon": "这扇门将很快为您打开",
+      "You have not contributed to any Crowdloans": "您还未参与过任何众贷贡献",
+      "Summoning Crowdloan Contributions...": "召集众贷贡献...",
+      "Search Crowdloans": "搜索众贷",
+      "Raised": "已募集金额",
+      "Ends in": "结束时间",
+      "Contribute": "贡献",
+      "Contributed": "已贡献",
+      "Rewards": "奖励",
+      "Cancel": "取消",
+      "Contribute to": "贡献于",
+      "Sort by": "排序方式",
+      "noResult": {
+        "title": "抱歉！",
+        "subtitle": "Talisman 无法完成您的愿望",
+        "text": "请尝试其他功能"
+      },
+      "You have no": "您目前没有",
+      "Buy": "购买",
+      "Fee": "费用",
+      "Add {{asset}} Balance": "添加 {{asset}} 余额",
+      "Unavailable": "无法使用",
+      "extensionUnavailable": {
+        "title": "抱歉！",
+        "subtitle": "您似乎未安装任何钱包插件",
+        "text": "请别担心，我们正在努力构建一个优质的钱包",
+        "text2": "在此期间，我们建议您下载 Talisman"
+      },
+      "Install Talisman Extension": "安装 Talisman 插件",
+      "Requires Configuration": "需要配置",
+      "desktopRequired": {
+        "title": "抱歉！",
+        "subtitle": "此功能暂时仅适用于桌面应用，但我们即将推出移动端适配版本",
+        "text": "在此期间您可先访问我们的众贷中心",
+        "primaryCta": "查看众贷"
+      },
+      "No wallet found": "未找到钱包",
+      "Connect wallet": "连接钱包",
+      "Switch wallet": "更换钱包",
+      "Goal reached": "目标达成",
+      "Spirit Key": "Spirit Key",
+      "View all": "查看全部"
+    },
+    "filters": {
+      "Raised": "已募资金额",
+      "Oldest": "最早",
+      "Newest": "最新",
+      "A⇢Z": "A⇢Z",
+      "Z⇢A": "Z⇢A",
+      "All": "所有",
+      "Active": "正在进行",
+      "Winner": "获胜者",
+      "Ended": "已结束"
+    },
+    "connect-wallet": {
+      "Connect a wallet": "连接钱包",
+      "Coming soon": "即将推出",
+      "No wallet": "我还没有钱包",
+      "Talisman Extension": "Talisman 扩展程序",
+      "Wallet extension coming soon": "钱包扩展程序即将推出",
+      "Get updates": "获取更新",
+      "TOS": "连接您的钱包即表示您已同意我们的 <2>服务条款</2>",
+      "By connecting your wallet you agree to our": "连接您的钱包即表示您已同意我们的",
+      "Terms of use": "服务条款"
+    },
+    "banners": {
+      "empty": {
+        "header": "钱包暂无余额！",
+        "description": "使用信用卡或加密货币购买 DOT 和 KSM",
+        "primaryCta": "购买 DOT 或 KSM"
+      },
+      "soon": {
+        "header": "即将推出",
+        "description": "在此期间，您可以查看众贷信息",
+        "primaryCta": "探索众贷"
+      },
+      "buy": {
+        "header": "购买 DOT 或 KSM",
+        "description": "输入您要购买的金额或数量",
+        "primaryCta": "购买"
+      },
+      "unlockTalisman": {
+        "header": "解锁 Talisman",
+        "description": "为任意众贷做出贡献并获得 Spirit Key，后续您将会需要它...",
+        "primaryCta": "了解更多"
+      },
+      "noWallet": {
+        "header": "解锁平行宇宙",
+        "description": "看起来您没有安装钱包扩展。<br>建议下载 <1>Talisman Wallet.</1>",
+        "description2": "在此期间，您可以查看众贷信息",
+        "primaryCta": "下载钱包扩展"
+      },
+      "noNfts": {
+        "description": "您还没有任何 NFT！开始使用 Spirit Key。",
+        "primaryCta": "购买 Spirit Key"
+      }
+    }
+  },
+  "fr": {
+    "crowdloan": {
+      "inProgress": {
+        "header": "Transaction en cours...",
+        "description": "Votre transaction est en cours de validation, cela peut prendre quelques minutes.",
+        "primaryCta": "Voir sur Subscan",
+        "secondaryCta": "Fermer"
+      },
+      "success": {
+        "header": "Validée",
+        "description": "Votre transaction a été validée. Merci pour votre contribution",
+        "primaryCta": "Voir sur Subscan",
+        "secondaryCta": "Voir votre portefeuille"
+      },
+      "failed": {
+        "header": "Erreur",
+        "description": "Votre transaction n'a pas pu être validée",
+        "primaryCta": "Voir sur Subscan",
+        "secondaryCta": "Fermer"
+      },
+      "registeringUser": {
+        "header": "Signer les mentions légales",
+        "description": "En cliquant sur \"signer et envoyer\" ci-dessous, votre acceptation des conditions légales de la crowdloan de Moonbeam sera envoyée sur la blockchain, sur votre compte DOT. Sous la forme d'un \"excentric\" de type \"remark\" signé par votre compte.",
+        "feeNote": "Veuillez noter que cette transaction occasionnera des frais sur le réseau Polkadot (environ 0.0411 DOT), et que le réseau Polkadot est soumis à un dépôt existentiel de 1 DOT.",
+        "termsNote": "[voir les conditions légales]",
+        "primaryCta": "Signer et envoyer"
+      },
+      "moonbeamPortflioTag": {
+        "You have unlinked addresses": "Vous avez des adresses non associées",
+        "View linked addresses": "Voir les adresses associées"
+      }
+    },
+    "nav": {
+      "Portfolio": "Portefeuille",
+      "Crowdloans": "Crowdloans",
+      "Buy DOT/KSM": "Acheter DOT/KSM",
+      "Buy": "Acheter",
+      "Request Features": "Demander une fonctionnalité / Signaler un bug",
+      "GitHub": "GitHub",
+      "Discord": "Discord",
+      "Twitter": "Twitter",
+      "Medium": "Medium",
+      "Terms of use": "Conditions d'utilisation",
+      "Privacy policy": "Politique de confidentialité",
+      "NFTs": "NFTs"
+    },
+    "languages": {
+      "en": "English",
+      "fr": "Français",
+      "cn": "中文",
+      "ru": "Русский",
+      "de": "Deutsche",
+      "es": "Español",
+      "ptbr": "Português",
+      "th": "ไทย",
+      "vie": "Tiếng Việt"
+    },
+    "errors": {
+      "Account balance too low": "Solde du compte insuffisant",
+      "A parachain must be selected": "Une parachain doit être sélectionnée",
+      "Please enter an amount of {{token}}": "Veuillez entrer un montant en {{token}}",
+      "Please enter a valid amount of {{token}}": "Veuillez entrer un montant en {{token}}",
+      "An account must be selected": "Aucun compte sélectionné",
+      "Account balance not ready yet": "Le solde du compte est en cours de calcul",
+      "A minimum of {{minimum}} {{token}} is required": "Un minimum de {{minimum}} {{token}} est requis pour participer",
+      "Failed to submit transaction: account balance too low": "Impossible de valider : solde du compte insuffisant",
+      "Failed to submit transaction": "Impossible de valider la transaction"
+    },
+    "spirit-keys": {
+      "intro": "Trouvez une Spirit Key pour avoir accès à des avantages et être parmi les premiers à tester l'extension de navigateur Talisman",
+      "Drag to unlock": "Glissez pour dévérouiller",
+      "no": "non",
+      "Done": "Fait",
+      "Send": "Envoyé",
+      "altDownload": "Cliquez ici si le téléchargement n'a pas commencé au bout de 10 secondes",
+      "ownershipText_one": "Vous avez <1>{{total}}</1> Spirit Key",
+      "ownershipText_other": "Vous avez <1>{{total}}</1> Spirit Keys",
+      "Send to a friend": "Envoyer à un ami",
+      "Explore Crowdloans": "Explorer les Crowdloans",
+      "Error sending NFT": "Erreur lors de l'envoi du NFT",
+      "Enter Kusama Address": "Entrez l'addresse Kusama",
+      "willTakeFewMins": "Le transfert prendra quelques minutes avant d'être synchronisé, ne relancez l'opération à nouveau",
+      "whatIsInfo": {
+        "title": "Qu'est-ce qu'une Spirit Key?",
+        "description": "Une Spirit Key est un NFT RMRK spécial, il n'en existe que 3333. Ceux qui en possedent pourront accéder a des avantages tels que :",
+        "list": [
+          "L'opportunité de participer au test de la version alpha de l'extension de navigateur Talisman",
+          "L'accès à certains salons Discord dédiés aux membre du Spirit Clan",
+          "L'accès anticipé à de nouvelles fonctionnalités sur l'application web Talisman"
+        ]
+      },
+      "howToGetInfo": {
+        "title": "Où puis-je m'en procurer un?",
+        "description": "Les clés ont été aperçues dans des endroits très variés, mais jamais très longtemps. Les meilleurs endroits pour s'en procurer actuellement sont :",
+        "list": [
+          "Le <1>serveur Discord</1> Talisman",
+          "Participer à un \"Community Call\"",
+          "Garder un œil sur le fil twitter @talisman_fr et @wearetalisman <1>Twitter</1>",
+          "Participer à la création de média (fil, document, vidéo, image) autour de Talisman"
+        ]
+      },
+      "spiritClan": {
+        "poem": [
+          "Chercheur du Talisman, ton esprit est la clé.",
+          "A la fin de la quête, tu auras la liberté.",
+          "Ce n'est pas chose aisée, la clé d'un nouveau monde.",
+          "\"Mais que dois-je apporter ?\" Et qui me corresponde...",
+          "Comment faire ? de quelle façon et par quel moyen ?",
+          "Au bout du chemin chercheur, vous n'irez pas en vain."
+        ],
+        "title": "Découvrez une Spirit Key pour rejoindre le Spirit Clan.",
+        "info": [
+          "Une Spirit Key est un NFT qui vous permet de rejoindre le <a>Spirit Clan</a>.",
+          "Les membres du Spirit Clan peuvent accéder à un canal Discord réservé où ils auront la possibilité d'aider à façonner Talisman.",
+          "Les membres du Spirit Clan recevront un accès anticipé aux nouveaux produits, événements, NFT et plus encore."
+        ],
+        "noKeyPlaceholder": "Vous n'avez pas encore de clé. Obtenez-en une sur <a>Singular</a>.",
+        "alreadyHaveOne": "Vous en avez déjà une ?",
+        "joinSpiritClan": "Rejoindre le Spirit Clan"
+      }
+    },
+    "welcome": {
+      "header": "Explorez DotSama avec Talisman",
+      "description": "Gérez votre portefeuille, investissez dans des Crowdloan et placez vos actifs en staking (à venir)"
+    },
+    "translation": {
+      "Portfolio value": "Valeur totale du portefeuille",
+      "Assets": "Actifs",
+      "All Accounts": "Tous les comptes",
+      "Crowdloans": "Crowdloans",
+      "Staking": "Staking",
+      "This door will be unlocked soon": "Cette fonctionnalité sera bientôt disponible...",
+      "You have not contributed to any Crowdloans": "Aucune contribution de Crowdloan n'a été trouvée parmi vos comptes",
+      "Summoning Crowdloan Contributions...": "Invocation des contributions aux Crowdloans...",
+      "Search Crowdloans": "Rechercher",
+      "Raised": "Fonds collectés",
+      "Ends in": "Termine dans",
+      "Contribute": "Contribuer",
+      "Contributed": "Contribué",
+      "Rewards": "Récompense",
+      "Cancel": "Annuler",
+      "Contribute to": "Contribuer à la Crowdloan",
+      "Sort by": "trier par",
+      "noResult": {
+        "title": "Désolé",
+        "subtitle": "Talisman ne peut pas invoquer ce à quoi vous vous attendiez.",
+        "text": "Essayer autre chose..."
+      },
+      "You have no": "Vous n'avez aucun",
+      "Buy": "Acheter",
+      "Fee": "Frais",
+      "Add {{asset}} Balance": "Ajouter le solde de {{asset}}",
+      "Unavailable": "Indisponible",
+      "extensionUnavailable": {
+        "title": "Oh non !",
+        "subtitle": "Il semble que vous n'ayez pas encore installé une extension de portefeuille sur votre navigateur.",
+        "text": "nous vous recommandons de télécharger Talisman"
+      },
+      "Install Talisman Extension": "Installer l'extension Talisman",
+      "Requires Configuration": "Nécessite une configuration",
+      "desktopRequired": {
+        "title": "Désolé!",
+        "subtitle": "Cette fonctionnalité n'est actuellement disponible que sur ordinateur, mais nous lancerons bientôt une version adaptée aux mobiles.",
+        "text": "En attendant, n'hésitez pas à consulter notre tableau de bord des Crowdloans",
+        "primaryCta": "Voir les Crowdloans"
+      },
+      "No wallet found": "Aucun portefeuille trouvé",
+      "Connect wallet": "Connecter le portefeuille",
+      "Switch wallet": "Changer de portefeuille",
+      "Goal reached": "Objectif atteint",
+      "Spirit Key": "Spirit Key",
+      "View all": "Voir tout"
+    },
+    "filters": {
+      "Raised": "Fonds collectés",
+      "Oldest": "Les plus anciennes",
+      "Newest": "Les plus récentes",
+      "A⇢Z": "A⇢Z",
+      "Z⇢A": "Z⇢A",
+      "All": "Toutes",
+      "Active": "En cours",
+      "Winner": "Gagnées",
+      "Ended": "Terminées"
+    },
+    "connect-wallet": {
+      "Connect a wallet": "Connectez votre portefeuille",
+      "Coming soon": "Prochainement...",
+      "No wallet": "Je n'ai pas encore d'extension de portefeuille",
+      "Talisman Extension": "Extension Talisman",
+      "Wallet extension coming soon": "disponible prochainement",
+      "Get updates": "Me tenir informé",
+      "TOS": "En connectant votre portefeuille, vous acceptez nos <1>Conditions d'utilisation</1>",
+      "By connecting your wallet you agree to our": "En connectant votre portefeuille, vous acceptez nos",
+      "Terms of use": "Conditions d'utilisation"
+    },
+    "banners": {
+      "empty": {
+        "header": "C'est vide !",
+        "description": "Achetez des DOT ou des KSM par carte de crédit ou en crypto",
+        "primaryCta": "Acheter DOT/KSM"
+      },
+      "soon": {
+        "header": "Prochainement",
+        "description": "En attendant, vous pouvez voir ce qui ce passe du côté des Crowdloans.",
+        "primaryCta": "Voir les Crowdloans"
+      },
+      "buy": {
+        "header": "Acheter des DOT/KSM",
+        "description": "Pour obtenir des DOT ou des KSM, simplement et rapidement",
+        "primaryCta": "Acheter"
+      },
+      "unlockTalisman": {
+        "header": "Révélez le Talisman",
+        "description": "Contribuez à n'importe quelle Crowdloan et recevez une “Spirit Key”, vous en aurez besoin plus tard...",
+        "primaryCta": "En savoir plus"
+      },
+      "noWallet": {
+        "header": "Oh non!",
+        "description": "Il ne semble pas que vous ayez installé une extension de portefeuille.<br>Nous vous recommandons de télécharger <1>Talisman.</1>",
+        "description2": "En attendant, vous pouvez voir ce qui ce passe du côté des Crowdloans.",
+        "primaryCta": "Installer Talisman"
+      },
+      "noNfts": {
+        "description": "Vous n'avez pas encore de NFT ! Commencez avec une Spirit Key.",
+        "primaryCta": "Acheter la Spirit Key"
+      }
+    }
+  },
+  "ru": {
+    "crowdloan": {
+      "inProgress": {
+        "header": "Выполняется",
+        "description": "Ваша транзакция выполняется. Подтверждение может занять несколько минут",
+        "primaryCta": "Просмотреть при дополнительном сканировании",
+        "secondaryCta": "Закрыть"
+      },
+      "success": {
+        "header": "Успешно",
+        "description": "Ваша транзакция прошла успешно. Спасибо за ваш вклад",
+        "primaryCta": "Просмотреть при дополнительном сканировании",
+        "secondaryCta": "Перейти к своему портфелю"
+      },
+      "failed": {
+        "header": "Ошибка",
+        "description": "Ваша транзакция не удалась.",
+        "primaryCta": "Просмотреть при дополнительном сканировании",
+        "secondaryCta": "Закрыть"
+      },
+      "registeringUser": {
+        "header": "Подписать условия",
+        "description": "Нажав \"Подписать и отправить\" ниже, ваше согласие с Условиями и положениями Moonbeam Crowdloan будет сохранено в цепочке, в вашей учетной записи DOT. Это будет в форме примечания, подписанного вашей учетной записью. .",
+        "feeNote": "Обратите внимание, что эта транзакция подписи облагается комиссией за транзакцию в сети Polkadot (около 0,0411 DOT), а минимальный баланс Polkadot составляет 1 DOT.",
+        "termsNote": "[Просмотреть условия]",
+        "primaryCta": "Подписать и отправить"
+      },
+      "moonbeamPortflioTag": {
+        "You have unlinked addresses": "У вас есть несвязанные адреса",
+        "View linked addresses": "Просмотр связанных адресов"
+      }
+    },
+    "nav": {
+      "Portfolio": "Портфолио",
+      "Crowdloans": "Crowdloans",
+      "Buy DOT/KSM": "купить DOT/KSM",
+      "Buy": "Купить",
+      "Request Features": "Запросить функции",
+      "GitHub": "GitHub",
+      "Discord": "Discord",
+      "Twitter": "Twitter",
+      "Medium": "Medium",
+      "Terms of use": "Условия использования",
+      "Privacy policy": "Политика конфиденциальности",
+      "NFTs": "NFTs"
+    },
+    "languages": {
+      "en": "English",
+      "fr": "Français",
+      "cn": "中文",
+      "ru": "Русский"
+    },
+    "errors": {
+      "Account balance too low": "Слишком низкий баланс учетной записи",
+      "A parachain must be selected": "Необходимо выбрать парачейн",
+      "Please enter an amount of KSM": "Введите сумму в KSM",
+      "Please enter a valid amount of KSM": "Введите действительную сумму в KSM",
+      "An account must be selected": "Необходимо выбрать учетную запись",
+      "Account balance not ready yet": "Баланс учетной записи еще не готов",
+      "A minimum of {{minimum}} KSM is required": "Минимум {{ минимум}} Требуется KSM",
+      "Failed to submit transaction: account balance too low": "Не удалось отправить транзакцию: слишком низкий остаток на счете",
+      "Failed to submit transaction": "Не удалось отправить транзакцию"
+    },
+    "spirit-keys": {
+      "intro": "Откройте Spirit Key, чтобы получить доступ к особым преимуществам и в числе первых попробовать расширение кошелька Talisman",
+      "Drag to unlock": "Перетащите, чтобы разблокировать",
+      "no": "нет",
+      "Done": "Готово",
+      "Send": "Отправить",
+      "altDownload": "Нажмите здесь, если загрузка не началась через 10 секунд",
+      "ownershipText_one": "У вас есть <1>{{total}}</1> Духовный ключ",
+      "ownershipText_other": "У вас есть <1>{{total}}</1> духовных ключей",
+      "Send to a friend": "Отправить другу",
+      "Explore Crowdloans": " Исследуйте Crowdloans",
+      "Error sending NFT": "Ошибка отправки NFT",
+      "Enter Kusama Address": "Введите адрес Kusama",
+      "willTakeFewMins": "Перевод займет несколько минут для синхронизации, поэтому, пожалуйста, не отправляйте его снова.",
+      "whatIsInfo": {
+        "title": "Что такое Spirit Key?",
+        "description": "Spirit Key - это особый RMRK NFT, которых существует всего 3333. Владельцы могут получить доступ к особым преимуществам, включая:",
+        "list": [
+          "Возможность принять участие в Альфа-релизе расширения нашего кошелька",
+          "Разрешенные каналы в нашем Discord для членов клана Spirit",
+          "Ранний доступ к новым функциям веб-приложения Talisman."
+        ]
+      },
+      "howToGetInfo": {
+        "title": "Где купить?",
+        "description": "Ключи были замечены в различных местах, но никогда очень долго. Лучшими местами, где их можно найти в настоящее время, являются:",
+        "list": [
+          "Сервер Talisman <1>Discord</1>",
+          "Посещение звонков и мероприятий сообщества",
+          "Следить за розыгрышами на <1>Twitter</1>",
+          "Договариваясь об обзоре, публикации или производстве СМИ о Talisman."
+        ]
+      },
+      "spiritClan": {
+        "poem": [
+          "Искатель талисманов, ключевой момент — это твой дух.",
+          "В конце ваших поисков вы, наконец, будете свободны",
+          "Ключ к новому миру — вещь трудная.",
+          "Вы должны честно спросить себя, \"что мне взять с собой?\"",
+          "Подумай, можно ли его принести.",
+          "Все, что я могу гарантировать, это то, что все не напрасно."
+        ],
+        "title": "Отыщите spirit key, чтобы присоединиться к клану духов.",
+        "info": [
+          "Spirit key — это NFT, который позволяет вам присоединиться к <a>Клану духов</a>.",
+          "Члены клана Духов могут получить доступ к разрешенному каналу Discord, где у них будет возможность помочь сформировать Талисман.",
+          "Члены Spirit Clan получат ранний доступ к новым продуктам, событиям, выпадам NFT и многому другому"
+        ],
+        "noKeyPlaceholder": "У вас еще нет ключа. Получите его в <a>Singular</a>.",
+        "alreadyHaveOne": "Уже есть?",
+        "joinSpiritClan": "Присоединиться к клану духов"
+      }
+    },
+    "welcome": {
+      "header": "Исследуйте DotSama с Талисманом",
+      "description": "Управляйте своим портфелем, инвестируйте в краудзаймы и размещайте свои активы (скоро)"
+    },
+    "translation": {
+      "Portfolio value": "Стоимость портфеля",
+      "Assets": "Активы",
+      "All Accounts": "Все учетные записи",
+      "Crowdloans": "Краудзаймы",
+      "Staking": "Ставки",
+      "This door will be unlocked soon": "Эта дверь скоро будет открыта",
+      "You have not contributed to any Crowdloans": "Вы не участвовали ни в каком краудзайме",
+      "Summoning Crowdloan Contributions...": "Привлечение вкладов краудзаймов ...",
+      "Search Crowdloans": "Поиск краудзаймов",
+      "Raised": "Собрано",
+      "Ends in": "Окончание",
+      "Contribute": "Внести вклад",
+      "Contributed": "Внесено",
+      "Rewards": "Награды",
+      "Cancel": "Отменить",
+      "Contribute to": "Внести вклад",
+      "Sort by": "Сортировать по",
+      "noResult": {
+        "title": "Извините",
+        "subtitle": "Талисман не может вызвать то, что вы хотите.",
+        "text": "Попробуйте что-нибудь еще."
+      },
+      "You have no": "У вас нет",
+      "Buy": "Купить",
+      "Fee": "Плата",
+      "Add {{asset}} Balance": "Пополнить баланс {{актив}}",
+      "Unavailable": "Недоступно",
+      "extensionUnavailable": {
+        "title": "О нет!",
+        "subtitle": "Не похоже, что у вас установлено расширение кошелька.",
+        "text": "Не волнуйтесь, мы сейчас создаем действительно хорошее расширение,",
+        "text2": "а пока мы рекомендуем скачать Talisman"
+      },
+      "Install Talisman Extension": "Установите расширение Talisman",
+      "Requires Configuration": "Требуется конфигурация",
+      "desktopRequired": {
+        "title": "Извините!",
+        "subtitle": "Эта функция в настоящее время доступна только на настольных компьютерах, но мы скоро запустим версию для мобильных устройств.",
+        "text": "А пока не стесняйтесь проверить нашу панель управления Crowdloans",
+        "primaryCta": "Просмотр Crowdloans"
+      },
+      "No wallet found": "Кошелек не найден",
+      "Connect wallet": "Подключить кошелек",
+      "Switch wallet": "Переключить кошелек",
+      "Goal reached": "Цель достигнута",
+      "Spirit Key": "Spirit Key",
+      "View all": "Посмотреть все"
+    },
+    "filters": {
+      "Raised": "Повышено",
+      "Oldest": "Старое",
+      "Newest": "Новое",
+      "A⇢Z": "A⇢Z",
+      "Z⇢A": "Z⇢A",
+      "All": "Все",
+      "Active": "Активно",
+      "Winner": "Победитель",
+      "Ended": "Завершено"
+    },
+    "connect-wallet": {
+      "Connect a wallet": "Подключите кошелек",
+      "Coming soon": "Скоро",
+      "No wallet": "У меня нет кошелька",
+      "Talisman Extension": "Расширение Talisman",
+      "Wallet extension coming soon": "Скоро появится расширение кошелька",
+      "Get updates": "Получать обновления",
+      "TOS": "Подключая кошелек, вы соглашаетесь с нашими <1>Условиями использования</1>",
+      "By connecting your wallet you agree to our": "Подключая кошелек, вы соглашаетесь с нашими",
+      "Terms of use": "Условиями использования"
+    },
+    "banners": {
+      "empty": {
+        "header": "Ваши сумки пусты!",
+        "description": "Покупайте DOT и KSM с помощью кредитной карты или криптовалюты",
+        "primaryCta": "Купить DOT/KSM"
+      },
+      "soon": {
+        "header": "Скоро появится",
+        "description": "А пока вы можете проверить Crowdloans.",
+        "primaryCta": "Изучите Crowdloans"
+      },
+      "buy": {
+        "header": "купить DOT/KSM",
+        "description": "Покажите мне деньги",
+        "primaryCta": "Купить"
+      },
+      "unlockTalisman": {
+        "header": "Разблокируйте талисман",
+        "description": "Внесите вклад в любой коллективный заем и получите Spirit Key, он понадобится вам позже ...",
+        "primaryCta": "Подробнее"
+      },
+      "noWallet": {
+        "header": "О нет!",
+        "description": "Похоже, у вас не установлено расширение кошелька.<br>Мы рекомендуем загрузить <1>Talisman Wallet.</1>",
+        "description2": "А пока вы можете проверить Crowdloans.",
+        "primaryCta": "Установить Талисман"
+      },
+      "noNfts": {
+        "description": "У вас еще нет NFT! Начните с Духовного ключа.",
+        "primaryCta": "Купить Духовный ключ"
+      }
+    }
+  },
+  "es": {
+    "crowdloan": {
+      "inProgress": {
+        "header": "En progreso",
+        "description": "Tu transacción está en progeso. Esto puede tardar unos minutos en confirmarse",
+        "primaryCta": "Ver en Subscan",
+        "secondaryCta": "Cerrar"
+      },
+      "success": {
+        "header": "Completada",
+        "description": "Tu transacción se realizó correctamente. Gracias por su contribución",
+        "primaryCta": "Ver en Subscan",
+        "secondaryCta": "Ir a tu portafolio"
+      },
+      "failed": {
+        "header": "Fallida",
+        "description": "Tu transacción ha fallado",
+        "primaryCta": "Ver on Subscan",
+        "secondaryCta": "Cerrar"
+      },
+      "registeringUser": {
+        "header": "Firma los Términos y condiciones",
+        "description": "Al hacer clic en \" Firmar y enviar \"a continuación, su aceptación de los Términos y condiciones de Moonbeam Crowdloan se almacenará on-chain, en su cuenta DOT. Esto tendrá la forma de un comentario extrínseco firmado por su cuenta.",
+        "feeNote": "Tenga en cuenta que esta transacción estará sujeta a fees en la red Polkadot  (alrededor de 0.0411 DOT), y Polkadot tiene un balance mínimo de 1 DOT.",
+        "termsNote": "[Ver términos]",
+        "primaryCta": "Firmar y enviar"
+      },
+      "moonbeamPortflioTag": {
+        "You have unlinked addresses": "No tienes direcciones vinculadas",
+        "View linked addresses": "Ver direcciones vinculadas"
+      }
+    },
+    "nav": {
+      "Portfolio": "Portafolio",
+      "Crowdloans": "Crowdloans",
+      "Buy DOT/KSM": "Comprar DOT/KSM",
+      "Buy": "Comprar",
+      "Request Features": "Solicitar funciones",
+      "GitHub": "GitHub",
+      "Discord": "Discord",
+      "Twitter": "Twitter",
+      "Medium": "Medium",
+      "Terms of use": "Condiciones de uso",
+      "Privacy policy": "Política de privacidad",
+      "NFTs": "NFTs"
+    },
+    "languages": {
+      "en": "English",
+      "fr": "Français",
+      "cn": "中文",
+      "ru": "Русский",
+      "es": "Espanol"
+    },
+    "errors": {
+      "Account balance too low": "El saldo de la cuenta es demasiado bajo",
+      "A parachain must be selected": "Se debe seleccionar una parachain",
+      "Please enter an amount of {{token}}": "Ingresa una monto de {{token}}",
+      "Please enter a valid amount of {{token}}": "Ingresa una monto válido de {{token}}",
+      "An account must be selected": "Se debe seleccionar una cuenta",
+      "Account balance not ready yet": "El saldo de la cuenta aún no esta listo",
+      "A minimum of {{minimum}} {{token}} is required": "Un mínimo de {{minimum}} {{token}} es requerido",
+      "Failed to submit transaction: account balance too low": "No se pudo enviar la transacción: el saldo de la cuenta es demasiado bajo",
+      "Failed to submit transaction": "No se pudo enviar la transacción"
+    },
+    "spirit-keys": {
+      "intro": "Discover a Spirit Key to get access to special perks and be among the first to try the Talisman wallet extension",
+      "Drag to unlock": "Drag to unlock",
+      "no": "no",
+      "Done": "Done",
+      "Send": "Send",
+      "altDownload": "Click here if download failed to start after 10 seconds.",
+      "ownershipText_one": "Tienes <1>{{total}}</1> llave espiritual",
+      "ownershipText_other": "Tienes <1>{{total}}</1> llaves espirituales",
+      "Send to a friend": "Enviar",
+      "Explore Crowdloans": "Explore Crowdloans",
+      "Error sending NFT": "Error sending NFT",
+      "Enter Kusama Address": "Enter Kusama Address",
+      "willTakeFewMins": "The transfer will take a few minutes to sync so please avoid sending again.",
+      "whatIsInfo": {
+        "title": "What is a Spirit Key?",
+        "description": "A Spirit Key is a a special RMRK NFT of which there are only 3333. Holders will be able to access special perks including:",
+        "list": [
+          "The opportunity to participate in the Alpha release of our wallet extension",
+          "Permissioned channels in our Discord for Spirit Clan members",
+          "Early access to new features in the Talisman web app"
+        ]
+      },
+      "howToGetInfo": {
+        "title": "Como puedo encontrar un Spirit Key?",
+        "description": "Las Llaves han encontrados en lugares varios, per nunca por mucho tiempo. Los lugares mejores para encontrarlos son:",
+        "list": [
+          "El <1>servidor de discordia</1> del Talismán",
+          "Atender llamadas  de la comunidad y eventos",
+          "Mirar a los regalos en <1>Twitter</1>",
+          "Por revisar, publicar o producir medios sobre Talisman"
+        ]
+      },
+      "spiritClan": {
+        "poem": [
+          "Buscador de talismanes, la clave es tu espíritu.",
+          "Al final de tu búsqueda, finalmente serás libre.",
+          "Una llave para el nuevo mundo es algo difícil.",
+          "Deberías preguntarte honestamente, \"¿qué demonios debo traer?\"",
+          "Piense un momento en si se puede traer.",
+          "Todo lo que puedo garantizar es que nada es en vano."
+        ],
+        "title": "Descubre una llave espiritual para unirte al clan espiritual.",
+        "info": [
+          "Una Llave Espiritual es un NFT que te permite unirte al <a>Clan Espiritual</a>.",
+          "Los miembros de Spirit Clan pueden acceder a un canal autorizado de Discord donde tendrán la oportunidad de ayudar a dar forma a Talisman.",
+          "Los miembros de Spirit Clan recibirán acceso temprano a nuevos productos, eventos, lanzamientos de NFT y más."
+        ],
+        "noKeyPlaceholder": "Vous n'avez pas encore de clé. Obtenez-en une sur <a>Singular</a>.",
+        "alreadyHaveOne": "Vous en avez déjà un ?",
+        "joinSpiritClan": "Rejoindre Spirit Clan"
+      }
+    },
+    "welcome": {
+      "header": "Explora DotSama con Talisman",
+      "description": "Administra tu cartera, invierte en préstamos colectivos y apuesta tus activos (próximamente)"
+    },
+    "translation": {
+      "Portfolio value": "Valor del Portafolio",
+      "Assets": "Activos",
+      "All Accounts": "Todas las cuentas",
+      "Crowdloans": "Crowdloans",
+      "Staking": "Staking",
+      "This door will be unlocked soon": "Esta puerta se desbloqueará pronto",
+      "You have not contributed to any Crowdloans": "No has contribuido a ningún Crowdloans",
+      "Summoning Crowdloan Contributions...": "Reuniendo tus contribuciones a los Crowdloans...",
+      "Search Crowdloans": "Buscar Crowdloans",
+      "Raised": "Recolectado",
+      "Ends in": "Finaliza en",
+      "Contribute": "Contribuye",
+      "Contributed": "Ya has contribuido",
+      "Rewards": "Recompensas",
+      "Cancel": "Cancelar",
+      "Contribute to": "Contribuye a",
+      "Sort by": "Ordenar por",
+      "noResult": {
+        "title": "Lo siento",
+        "subtitle": "Talisman no puede convocar lo que deseas.",
+        "text": "Prueba con otra cosa."
+      },
+      "You have no": "No tienes",
+      "Buy": "Comprar",
+      "Fee": "Fee",
+      "Add {{asset}} Balance": "Añadir saldo  de {{asset}}",
+      "Unavailable": "No disponibe",
+      "extensionUnavailable": {
+        "title": "¡Oh no!",
+        "subtitle": "No parece que tengas instalada una wallet extensión.",
+        "text": "No te preocupes, estamos construyendo una realmente buena,",
+        "text2": "pero mientras tanto recomendamos descargar Talisman"
+      },
+      "Install Talisman Extension": "Instalar Talisman Extension",
+      "Requires Configuration": "Requiere Configuración",
+      "desktopRequired": {
+        "title": "¡Lo siento!",
+        "subtitle": "Actualmente, esta función solo está disponible en computadoras de mesa, pero pronto lanzaremos una versión optimizada para dispositivos móviles.",
+        "text": "Mientras tanto, no dudes en revisar nuestro panel de Crowdloans",
+        "primaryCta": "Ver Crowdloans"
+      },
+      "No wallet found": "No se encontró ninguna billetera",
+      "Connect wallet": "Conectar billetera",
+      "Switch wallet": "Cambiar billetera",
+      "Goal reached": "Meta alcanzada",
+      "Spirit Key": "Spirit Key",
+      "View all": "Ver todo"
+    },
+    "filters": {
+      "Raised": "Recolectado",
+      "Oldest": "Más antiguo",
+      "Newest": "Más nuevo",
+      "A⇢Z": "A⇢Z",
+      "Z⇢A": "Z⇢A",
+      "All": "Todos",
+      "Active": "Activos",
+      "Winner": "Ganadores",
+      "Ended": "Finalizados"
+    },
+    "connect-wallet": {
+      "Connect a wallet": "Connecta una billetera",
+      "Coming soon": "Próximamenten",
+      "No wallet": "No tengo una billetera",
+      "Talisman Extension": "Talisman Extension",
+      "Wallet extension coming soon": "Próximamente Wallet extensión",
+      "Get updates": "Obtener actualizaciones",
+      "TOS": "Al conectar su billetera, acepta nuestras <1>Condiciones de uso</1>",
+      "By connecting your wallet you agree to our": "Al conectar su billetera, acepta nuestras",
+      "Terms of use": "Condiciones de uso"
+    },
+    "banners": {
+      "empty": {
+        "header": "¡Tus bolsas están vacias!",
+        "description": "Compra DOT y KSM con tu tarjeta de crédito o cripto",
+        "primaryCta": "Compra DOT / KSM"
+      },
+      "soon": {
+        "header": "Próximamente",
+        "description": "Mientras tanto, puedes revisar los Crowdloans.",
+        "primaryCta": "Explora los Crowdloans"
+      },
+      "buy": {
+        "header": "Compra DOT/KSM",
+        "description": "Muéstrame el dinero",
+        "primaryCta": "Comprar"
+      },
+      "unlockTalisman": {
+        "header": "Desbloquea el Talisman",
+        "description": "Contribuye a cualquier Crowdloan y recibe una \"Spirit Key\", la necesitarás luego...",
+        "primaryCta": "Más Información"
+      },
+      "noWallet": {
+        "header": "¡Oh no!",
+        "description": "No parece que tengas instalada una wallet extensión.<br>Te recomendamos descargues <1>Talisman Wallet.</1>",
+        "description2": "Mientras tanto, puedes revisar los Crowdloans.",
+        "primaryCta": "Instalar Talismán"
+      },
+      "noNfts": {
+        "description": "¡Aún no tienes ningún NFT! Empieza con una Spirit Key.",
+        "primaryCta": "Comprar clave espiritual"
+      }
+    }
+  },
+  "th": {
+    "crowdloan": {
+      "inProgress": {
+        "header": "อยู่ระหว่างการดำเนินการ",
+        "description": "ธุรกรรมอยู่ระหว่างการดำเนินการ อาจใช้เวลาสักครู่ในการยืนยันธุรกรรม",
+        "primaryCta": "ดูบน Subscan",
+        "secondaryCta": "ปิด"
+      },
+      "success": {
+        "header": "สำเร็จ",
+        "description": "การทำธุรกรรมสำเร็จ ขอบคุณสำหรับการสนับสนุนของคุณ",
+        "primaryCta": "ดูบน Subscan",
+        "secondaryCta": "ไปที่ Portfolio ของคุณ"
+      },
+      "failed": {
+        "header": "ล้มเหลว",
+        "description": "การทำธุรกรรมล้มเหลว",
+        "primaryCta": "ดูบน Subscan",
+        "secondaryCta": "ปิด"
+      },
+      "registeringUser": {
+        "header": "ยอมรับข้อตกลงและเงื่อนไข",
+        "description": "หากคลิกที่ \"Sign and Send\" ด้านล่างนี้ หมายความว่าคุณได้ยอมรับข้อตกลงและเงื่อนของในการ Crowdloan ของ Moonbeam ที่จะได้รับการจัดเก็บแบบ on-chain ไปยังบัญชี DOT โดยมันจะอยู่ในรูปแบบของ Extrinstic signedโดยบัญชีคุณ",
+        "feeNote": "โปรดรับทราบว่าการทำธุรกรรมนี้จะเสียค่าทำธุรกรมบนเครือข่าย Polkadot (ประมาณ 0.0411 DOT) และขั้นต่ำของบัญชี Polkadot ต้องมี 1 DOT",
+        "termsNote": "[View terms]",
+        "primaryCta": "ยืนยัน และ ทำรายการ"
+      },
+      "moonbeamPortflioTag": {
+        "You have unlinked addresses": "คุณมีบัญชีที่ยังไม่ได้ทำการเชื่อมโยง",
+        "View linked addresses": "ดูบัญชีที่มีการเชื่อมโยงกัน"
+      }
+    },
+    "nav": {
+      "Portfolio": "พอร์ตโฟลิโอ",
+      "Crowdloans": "คราวด์โลน",
+      "Buy DOT/KSM": "ซื้อ DOT/KSM",
+      "Buy": "ซื้อ",
+      "Request Features": "ขอคุณสมบัติ",
+      "GitHub": "GitHub",
+      "Discord": "Discord",
+      "Twitter": "Twitter",
+      "Medium": "Medium",
+      "Terms of use": "เงื่อนไขการใช้บริการ",
+      "Privacy policy": "นโยบายความเป็นส่วนตัว",
+      "NFTs": "NFTs"
+    },
+    "languages": {
+      "en": "English",
+      "fr": "Français",
+      "cn": "中文",
+      "ru": "Русский",
+      "th": "ไทย"
+    },
+    "errors": {
+      "Account balance too low": "ยอดคงเหลือในบัญชีน้อยเกินไป",
+      "A parachain must be selected": "ต้องทำการเลือก Parachain",
+      "Please enter an amount of {{token}}": "โปรดกรอกจำนวนของ {{token}}",
+      "Please enter a valid amount of {{token}}": "โปรดกรอกจำนวนที่ถูกต้องของ {{token}}",
+      "An account must be selected": "ต้องทำการเลือกบัญชี",
+      "Account balance not ready yet": "ยอดคงเหลือในบัญชีไม่พร้อมใช้งาน",
+      "A minimum of {{minimum}} {{token}} is required": "จำนวนขั้นต่ำที่ต้องการคือ {{minimum}} {{token}}",
+      "Failed to submit transaction: account balance too low": "การทำธุรกรรมล้มเหลว: ยอดคงเหลือในบัญชีน้อยเกินไป",
+      "Failed to submit transaction": "การทำธุรกรรมล้มเหลว"
+    },
+    "spirit-keys": {
+      "intro": "ค้นหากุญแจวิญญาณเพื่อได้รับสิทธิพิเศษและเป็นหนึ่งในคนกลุ่มแรกที่ได้ลองใช้งานส่วนเสริมของ Talisman wallet",
+      "Drag to unlock": "ลากเพื่อปลดล็อค",
+      "no": "ไม่",
+      "Done": "เรียบร้อย",
+      "Send": "ส่ง",
+      "altDownload": "คลิกที่นี่หากไม่เริ่มดาวน์โหลดหลังจากผ่านไป 10 วินาที",
+      "ownershipText_one": "คุณมีกุญแจวิญญาณ <1>{{total}}</1> ดอก",
+      "ownershipText_other": "คุณมีกุญแจวิญญาณ <1>{{total}}</1> ดอก",
+      "Send to a friend": "ส่งให้เพื่อน",
+      "Explore Crowdloans": "สำรวจ Crowdloans",
+      "Error sending NFT": "การส่ง NFT ไม่สำเร็จ",
+      "Enter Kusama Address": "กรุณาใส่ Kusama Address",
+      "willTakeFewMins": "การถ่ายโอนจะใช้เวลาสองถึงสามนาทีในการซิงค์ ดังนั้นโปรดหลีกเลี่ยงการส่งซ้ำ",
+      "whatIsInfo": {
+        "title": "อะไรคือกุญแจวิญญาณ?",
+        "description": "กุญแจวิญญาณเป็น RMRK NFT แบบพิเศษที่มีเพียงแค่ 3333 ดอก ซึ่งผู้ครอบครองจะได้รับสิทธิพิเศษดังต่อไปนี้:",
+        "list": [
+          "สิทธิพิเศษในการเข้าร่วมใช้งานส่วนเสริมของกระเป๋าของพวกเราในช่วง Alpha release",
+          "ช่องทางสื่อสารพิเศษในดิสคอร์ดสำหรับสมาชิกในตำแหน่ง Spirit Clan",
+          "เข้าใช้งานฟีเจอร์ใหม่ๆของ Talisman web app ได้ก่อนใคร"
+        ]
+      },
+      "howToGetInfo": {
+        "title": "ฉันจะหามันได้จากที่ไหนล่ะ?",
+        "description": "กุญแจเหล่านี้ถูกพบได้ในหลายๆที่แต่ว่ามันจะอยู่ไม่นานหรอกนะ สถานที่ที่ดีที่สุดที่จะค้นหามันก็คือ:",
+        "list": [
+          "ดิสคอร์ดของ Talisman",
+          "เข้าร่วมกิจกรรมและการพูดคุยของคอมมูนิตี้",
+          "จับตามองเมื่อมีการแจกฟรีบน <1>Twitter</1>",
+          "ได้รับการจัดสรรให้เป็นพิเศษจากการรีวิว เผยแพร่ หรือสร้างคอนเทนต์ต่างๆที่เกี่ยวกับ Talisman"
+        ]
+      },
+      "spiritClan": {
+        "poem": [
+          "ผู้ค้นหาเครื่องราง ดวงวิญญาณของเจ้าคือกุญแจ",
+          "เมื่อค้นหาสิ้นสุดเป็นแน่แท้ เจ้าจะพบอิสระดังใจหมาย",
+          "หนึ่งกุญแจสู่โลกใหม่นั้นไม่ง่าย",
+          "ถามใจเจ้าด้วยความสัตย์ \"ข้าควรนำสิ่งใดไป\"",
+          "จงคิดใคร่ครวญให้แน่ใจ ว่าสิ่งนั้นเจ้าสามารถนำพา",
+          "เพียงหนึ่งสิ่งที่ข้ากล้ายืนยัน นั่นคือหามีสิ่งใดที่ไร้ค่า"
+        ],
+        "title": "ค้นหากุญแจวิญญาณเพื่อเข้าร่วม Spirit Clan",
+        "info": [
+          "กุญแจวิญญาณคือ NFT ที่จะทำให้คุณได้เข้าร่วม <a>Spirit Clan</a>",
+          "สมาชิกของ Spirit Clan จะสามารถเข้าถึงช่องทางสื่อสารพิเศษบนดิสคอร์ด ที่ที่ซึ่งพวกเขาจะได้มีส่วนร่วมในการออกแบบ Talisman",
+          "สมาชิกของ Spirit Clan จะได้รับสิทธิ์ในการเข้าถึงผลิตภัณฑ์ใหม่ๆ กิจกรรมๆ NFT แจกฟรี และอื่นๆอีกมากมายก่อนใคร"
+        ],
+        "noKeyPlaceholder": "คุณไม่มีกุญแจ หากุญแจได้ที่ <a>Singular</a>",
+        "alreadyHaveOne": "มีแล้วหรือ?",
+        "joinSpiritClan": "เข้าร่วม Spirit Clan"
+      }
+    },
+    "welcome": {
+      "header": "สำรวจ DotSama ด้วย Talisman",
+      "description": "จัดการพอร์ตโฟลิโอของคุณ ลงทุนในคราวด์โลน และเดิมพันสินทรัพย์ของคุณ (เร็วๆ นี้)"
+    },
+    "translation": {
+      "Portfolio value": "มูลค่าพอร์ตฟอลิโอ",
+      "Assets": "สินทรัพย์",
+      "All Accounts": "บัญชีทั้งหมด",
+      "Crowdloans": "Crowdloan",
+      "Staking": "Staking",
+      "This door will be unlocked soon": "ประตูบานนี้จะได้รับการปลดล็อคในไม่ช้า",
+      "You have not contributed to any Crowdloans": "คุณยังไม่เคยทำ Crowdloan",
+      "Summoning Crowdloan Contributions...": "กำลังทำรายการ Crowdloan...",
+      "Search Crowdloans": "ค้นหา Crowdloan",
+      "Raised": "ได้",
+      "Ends in": "จบใน",
+      "Contribute": "ทำรายการ",
+      "Contributed": "ทำรายการแล้ว",
+      "Rewards": "รางวัล",
+      "Cancel": "ยกเลิก",
+      "Contribute to": "ทำรายการให้",
+      "Sort by": "จัดเรียงโดย",
+      "noResult": {
+        "title": "ขอโทษที",
+        "subtitle": "Talisman ไม่สามารถทำรายการที่ท่านต้องการได้",
+        "text": "ลองอย่างอื่น"
+      },
+      "You have no": "คุณไม่มี",
+      "Buy": "ซื้อ",
+      "Fee": "ค่าธรรมเนียม",
+      "Add {{asset}} Balance": "เพิ่มยอดของ {{asset}}",
+      "Unavailable": "ไม่พร้อมใช้งาน",
+      "extensionUnavailable": {
+        "title": "ไม่นะ!",
+        "subtitle": "ดูหมือนคุณยังไม่ได้ติดตั้งส่วนขยาย",
+        "text": "ไม่ต้องกังวล เรากำลังสร้างกระเป๋าที่เยี่ยมยอดสุดๆ",
+        "text2": "แต่กว่าจะถึงตอนนั้น เราแนะนำให้ใช้ Talisman ไปก่อน"
+      },
+      "Install Talisman Extension": "ติดตั้งส่วนขยาย Talisman",
+      "Requires Configuration": "Requires Configuration",
+      "desktopRequired": {
+        "title": "ขอโทษที!",
+        "subtitle": "ณ ตอนนี้ยังใช้งานได้เฉพาะบนเดสก์ท็อปเท่านั้น แต่ไม่นานเราจะมีเวอร์ชั่นมือถือที่ใช้งานง่ายแน่นอน",
+        "text": "ระหว่างรอ ลองไปท่อง dashboard ของ Crowdloan ดูก่อนนะ",
+        "primaryCta": "ดู Crowdloan"
+      },
+      "No wallet found": "ไม่พบกระเป๋า",
+      "Connect wallet": "เชื่อมต่อกระเป๋า",
+      "Switch wallet": "เปลี่ยนกระเป๋า",
+      "Goal reached": "เป้าหมายเสร็จสิ้น",
+      "Spirit Key": "Spirit Key",
+      "View all": "ดูทั้งหมด"
+    },
+    "filters": {
+      "Raised": "ได้รับแล้ว",
+      "Oldest": "เก่าสุด",
+      "Newest": "ใหม่สุด",
+      "A⇢Z": "A⇢Z",
+      "Z⇢A": "Z⇢A",
+      "All": "ทั้งหมด",
+      "Active": "อยู่ระหว่างดำเนินการ",
+      "Winner": "ผู้ชนะ",
+      "Ended": "สิ้นสุด"
+    },
+    "connect-wallet": {
+      "Connect a wallet": "เชื่อมต่อกระเป๋า",
+      "Coming soon": "มาในเร็วๆ นี้",
+      "No wallet": "ไม่มีกระเป๋า",
+      "Talisman Extension": "ส่วนขยาย Talisman",
+      "Wallet extension coming soon": "พบกับส่วนขยาย เร็วๆ นี้",
+      "Get updates": "อัพเดต",
+      "TOS": "ข้อตกลงในการใช้งาน",
+      "By connecting your wallet you agree to our": "ในการเชื่อมกระเป๋านั้น หมายถึงคุณได้ยอมรับ",
+      "Terms of use": "ข้อตกลงในการใช้งาน"
+    },
+    "banners": {
+      "empty": {
+        "header": "กระเป๋าของคุณว่างเปล่า!",
+        "description": "ซื้อ DOT และ KSM ด้วยบัตรเครดิต หรือ คริปโต",
+        "primaryCta": "ซื้อ DOT / KSM"
+      },
+      "soon": {
+        "header": "มาในเร็วๆ นี้",
+        "description": "ในระหว่างนี้ คุณสามารถดูเกี่ยวกับการ Crowdloan ก่อนได้นะ",
+        "primaryCta": "เข้าสู่ Crowdloan"
+      },
+      "buy": {
+        "header": "ซื้อ DOT / KSM",
+        "description": "ไหนขอดูเงินหน่อย",
+        "primaryCta": "ซื้อ"
+      },
+      "unlockTalisman": {
+        "header": "ปลดล็อก Talisman",
+        "description": "สนับสนุน Crowdloan ใดๆ บน DOT และรับ Spirit Key คุณจะได้ใช้มันหลังจากนี้..",
+        "primaryCta": "เพิ่มเติม"
+      },
+      "noWallet": {
+        "header": "ปลดล็อด Paraverse",
+        "description": "ดูหมือนคุณยังไม่ได้ติดตั้งส่วนขยายของกระเป๋า<br>แนะนำให้โหลด <1>Talisman Wallet.</1>",
+        "description2": "ในระหว่างนี้ คุณสามารถดูเกี่ยวกับการ Crowdloan ก่อนได้นะ",
+        "primaryCta": "โหลดส่วนต่อขยาย"
+      },
+      "noNfts": {
+        "description": "คุณยังไม่มี NFT เลย! เริ่มต้นด้วยการถือ Spirit Key",
+        "primaryCta": "ซื้อกุญแจวิญญาณ"
+      }
+    }
+  },
+  "ptbr": {
+    "crowdloan": {
+      "inProgress": {
+        "header": "Em progresso",
+        "description": "Sua transação esté em progresso. Isto pode levar alguns minutos para confirmar",
+        "primaryCta": "Veja no Subscan",
+        "secondaryCta": "Fechar"
+      },
+      "success": {
+        "header": "Successo",
+        "description": "Sua transação foi bem sucedida. Obrigado pela sua contribuição",
+        "primaryCta": "Veja no Subscan",
+        "secondaryCta": "Vá para seu portfolio"
+      },
+      "failed": {
+        "header": "Falhou",
+        "description": "Sua transação não foi sucedida.",
+        "primaryCta": "Veja no Subscan",
+        "secondaryCta": "Fechar"
+      },
+      "registeringUser": {
+        "header": "Assine os Termos & Condições",
+        "description": "Clicando \"Assine e Envie\" abaixo, voce aprova os Termos e Condições do Crowdloan Moonbeam e será armazenado on chain, para sua conta DOT. Isso será na forma de uma \"extrinstic\" assinada por sua conta.",
+        "feeNote": "Observe que esta transação de assinatura estará sujeita a taxas de transação na rede Polkadot (em torno de 0.0411 DOT), e que na carteira Polkadot tenha o minimo de 1 DOT restante.",
+        "termsNote": "[Veja os termos]",
+        "primaryCta": "Assine e envie"
+      },
+      "moonbeamPortflioTag": {
+        "You have unlinked addresses": "Você tem endereços não linkados",
+        "View linked addresses": "Ver endereços linkados"
+      }
+    },
+    "nav": {
+      "Portfolio": "Portfólio",
+      "Crowdloans": "Crowdloans",
+      "Buy DOT/KSM": "Compre DOT/KSM",
+      "Buy": "Compre",
+      "Request Features": "Solicitar melhorias",
+      "GitHub": "GitHub",
+      "Discord": "Discord",
+      "Twitter": "Twitter",
+      "Medium": "Medium",
+      "Terms of use": "Termos de uso",
+      "Privacy policy": "Politica de Privacidade",
+      "NFTs": "NFTs"
+    },
+    "languages": {
+      "en": "English",
+      "ptbr": "Portugues BR",
+      "fr": "Français",
+      "cn": "中文",
+      "ru": "Русский"
+    },
+    "errors": {
+      "Account balance too low": "Balanço em conta muito baixo",
+      "A parachain must be selected": "Uma parachain deve ser selecionada",
+      "Please enter an amount of {{token}}": "Por favor entre com a quantidade de {{token}}",
+      "Please enter a valid amount of {{token}}": "Por favor entre com uma quantidade válida de {{token}}",
+      "An account must be selected": "Uma conta deve ser selecionada",
+      "Account balance not ready yet": "Balanço da conta ainda não esta pronto",
+      "A minimum of {{minimum}} {{token}} is required": "O minimno de {{minimum}} {{token}} é requerido",
+      "Failed to submit transaction: account balance too low": "Falha em submeter a transação: balanço da conta muito baixo",
+      "Failed to submit transaction": "Falha em submeter a transação"
+    },
+    "spirit-keys": {
+      "intro": "Com a Spirit Key você pode ter acesso a vantagens especiais e ser um dos primeiros a experimentar a extensão da carteira Talisman",
+      "Drag to unlock": "Arraste para Destravar",
+      "no": "não",
+      "Done": "Feito",
+      "Send": "Envio",
+      "altDownload": "Clique aqui se o download falhar após 10 segundos.",
+      "ownershipText_one": "Você tem <1>{{total}}</1> Spirit Key",
+      "ownershipText_other": "Você tem <1>{{total}}</1> Spirit Keys",
+      "Send to a friend": "Enviar para um amigo",
+      "Explore Crowdloans": "Explore os Crowdloans",
+      "Error sending NFT": "Erro ao enviar NFT",
+      "Enter Kusama Address": "Entre com endereço Kusama",
+      "willTakeFewMins": "A transferência levará alguns minutos para sincronizar, portanto evite enviar novamente.",
+      "whatIsInfo": {
+        "title": "Oque é a Spirit Key?",
+        "description": "Spirit Key é um NFT RMRK especial da qual existem apenas 3333. Os detentores poderão acessar vantagens especiais, incluindo:",
+        "list": [
+          "Oportunidade de participar do lançamento Alpha de nossa extensão da carteira",
+          "Obtenha acesso a Canais exclusivos em nosso Discord para membros do Clãn Spirit Key",
+          "Acesso antecipado a novos recursos no aplicativo web da Talisman"
+        ]
+      },
+      "howToGetInfo": {
+        "title": "Onde posso adquirir uma ?",
+        "description": "As Spirit Keys foram vistas em vários locais, mas nunca por muito tempo. Os melhores lugares para encontrá-la atualmente são:",
+        "list": [
+          "Talisman <1>Discord server</1>",
+          "Participar de calls e eventos da comunidade",
+          "Fique de olho nos brindes <1>Twitter</1>",
+          "Contribuir, revisar ou publicar conteúdos sobre a Talisman"
+        ]
+      },
+      "spiritClan": {
+        "poem": [
+          "A busca pelo Talisman é o espírito.",
+          "No final da sua busca, você finalmente será livre.",
+          "Uma chave para o novo mundo é uma coisa difícil.",
+          "Você deve se perguntar honestamente, \"o que devo fazer em vida?\"",
+          "Reserve um momento para pensar se vale a pena.",
+          "Tudo o que podemos garantir é que nada é em vão."
+        ],
+        "title": "Descubra uma Spirit Key para se juntar ao Spirit Clan.",
+        "info": [
+          "A Spirit Key é um NFT que permite a você se juntar ao <a>Spirit Clan</a>.",
+          "Os membros do Spirit Clan podem acessar um canal autorizado do Discord, onde terão a oportunidade de ajudar a moldar a Talisman.",
+          "Os membros do Spirit Clan receberão acesso antecipado a novos produtos, eventos, drops de NFT e muito mais."
+        ],
+        "noKeyPlaceholder": "Você ainda não tem uma chave. Obtenha uma na <a>Singular</a>.",
+        "alreadyHaveOne": "Já tem uma?",
+        "joinSpiritClan": "Junte-se ao Spirit Clan"
+      }
+    },
+    "welcome": {
+      "header": "Explore a DotSama com a Talisman",
+      "description": "Gerencie seu portfólio, invista em crowdloans e faça stake de seus ativos (em breve)"
+    },
+    "translation": {
+      "Portfolio value": "Valor do Portfólio",
+      "Assets": "Ativos",
+      "All Accounts": "Todas as contas",
+      "Crowdloans": "Crowdloans",
+      "Staking": "Staking",
+      "This door will be unlocked soon": "Esta porta será aberta em breve",
+      "You have not contributed to any Crowdloans": "Voce ainda não contribuiu para nenhum Crowdloan",
+      "Summoning Crowdloan Contributions...": "Convocando Contribuições de Crowdloan...",
+      "Search Crowdloans": "Procurar Crowdloans",
+      "Raised": "Arrecadado",
+      "Ends in": "Termina em",
+      "Contribute": "Contribua",
+      "Contributed": "Contribuído",
+      "Rewards": "Recompensas",
+      "Cancel": "Cancelar",
+      "Contribute to": "Contribua para",
+      "Sort by": "Ordenar por",
+      "noResult": {
+        "title": "Desculpe",
+        "subtitle": "Talisman não pode realizar oque você deseja.",
+        "text": "Tente outra coisa."
+      },
+      "You have no": "Voce não tem",
+      "Buy": "Compre",
+      "Fee": "Taxa",
+      "Add {{asset}} Balance": "Adicionar {{asset}} Balanço",
+      "Unavailable": "Indisponível",
+      "extensionUnavailable": {
+        "title": "Ahhh não!",
+        "subtitle": "Humm... Parece que você nao tem a extensão instalada.",
+        "text": "Não se preocupe estamos construindo uma coisa bem legal,",
+        "text2": "mas até la recomendamos o download da Talisman"
+      },
+      "Install Talisman Extension": "Instale a Extensão Talisman ",
+      "Requires Configuration": "Requer Configuração",
+      "desktopRequired": {
+        "title": "Desculpe !",
+        "subtitle": "Esta ferramenta esta disponivel apenas para Desktop, mas lançaremos uma versão mobile em breve.",
+        "text": "Enquanto isso fique a vontade para ver nosso dashboard de Crowdloans ",
+        "primaryCta": "Ver Crowdloans"
+      },
+      "No wallet found": "Nenhuma carteira encontrada",
+      "Connect wallet": "Conectar carteira",
+      "Switch wallet": "Trocar carteira",
+      "Goal reached": "Objetivo antingido",
+      "Spirit Key": "Spirit Key",
+      "View all": "Ver tudo"
+    },
+    "filters": {
+      "Raised": "Arrecadado",
+      "Oldest": "Antigo",
+      "Newest": "Novo",
+      "A⇢Z": "A⇢Z",
+      "Z⇢A": "Z⇢A",
+      "All": "TUDO",
+      "Active": "Ativo",
+      "Winner": "Vencedor",
+      "Ended": "Finalizado"
+    },
+    "connect-wallet": {
+      "Connect a wallet": "Conecte a carteira",
+      "Coming soon": "Em breve",
+      "No wallet": "Eu não tenho uma carteira",
+      "Talisman Extension": "Extensão Talisman",
+      "Wallet extension coming soon": "Extensão da carteira em breve",
+      "Get updates": "Atualize",
+      "TOS": "Ao conectar sua carteira você concorda com os <1>Termos de Uso</1>",
+      "By connecting your wallet you agree to our": "Ao conectar sua carteira você concorda com nossos",
+      "Terms of use": "Termos de Uso"
+    },
+    "banners": {
+      "empty": {
+        "header": "Suas sacolas estão vazias!",
+        "description": "Compre DOT e KSM com seu cartão de crédito ou cripto",
+        "primaryCta": "Buy DOT/KSM"
+      },
+      "soon": {
+        "header": "Em breve",
+        "description": "Por enquanto, você pode checar os Crowdloans.",
+        "primaryCta": "Explore os Crowdloans"
+      },
+      "buy": {
+        "header": "Compre DOT/KSM",
+        "description": "Mostre-me o dinheiro",
+        "primaryCta": "Compre"
+      },
+      "unlockTalisman": {
+        "header": "Destrave a Talisman",
+        "description": "Contribua com qualquer Crowdloan DOT e receba uma \"Spirit Key NFT\", você precisará dela depois...",
+        "primaryCta": "Mais informação"
+      },
+      "noWallet": {
+        "header": "Destrave o Paraverse",
+        "description": "Parece que voce não tem a extensão de carteira instalada.<br>Faça o download <1>Talisman Wallet.</1>",
+        "description2": "Por enquanto, voce pode checar os Crowdloans.",
+        "primaryCta": "Download da Extensão Talisman"
+      },
+      "noNfts": {
+        "description": "Você ainda não tem NFTs! Comece com uma Spirit Key.",
+        "primaryCta": "Comprar Spirit Key"
+      }
+    }
+  },
+  "de": {
+    "crowdloan": {
+      "inProgress": {
+        "header": "In Bearbeitung",
+        "description": "Deine Transaktion ist in Bearbeitung. Es kann einige Minuten zur Bestätigung dauern",
+        "primaryCta": "Ansehen auf Subscan",
+        "secondaryCta": "Schließen"
+      },
+      "success": {
+        "header": "Erfolg",
+        "description": "Deine Transaktion war erfolgreich. Danke für deinen Beitrag",
+        "primaryCta": "Ansehen auf Subscan",
+        "secondaryCta": "Portfolio ansehen"
+      },
+      "failed": {
+        "header": "Fehler",
+        "description": "Deine Transaktion ist Fehlgeschlagen.",
+        "primaryCta": "Ansehen auf Subscan",
+        "secondaryCta": "Schließen"
+      },
+      "registeringUser": {
+        "header": "Akzeptiere die Geschäftsbedingungen",
+        "description": "Durch Klicken auf \"Signieren und Abschicken\" unten wird deine Zustimmung, in Verbindung mit deinem DOT Konto, zu den Moonbeam Crowdloan Geschäftsbedingungen 'on chain' gespeichert. Dies geschieht in Form einer von deinem Konto signierten Nachricht.",
+        "feeNote": "Bitte beachte, dass für diese Signierungstransaktion Transaktionsgebühren im Polkadot-Netzwerk anfallen (ca. 0,0411 DOT) und Polkadot einen Mindestkontostand von 1 DOT verlangt.",
+        "termsNote": "[Siehe Bedingungen]",
+        "primaryCta": "Signieren und Abschicken"
+      },
+      "moonbeamPortflioTag": {
+        "You have unlinked addresses": "Du hast nicht-verbundene Adressen",
+        "View linked addresses": "Verbundene Adressen ansehen"
+      }
+    },
+    "nav": {
+      "Portfolio": "Portfolio",
+      "Crowdloans": "Crowdloans",
+      "Buy DOT/KSM": "DOT/KSM kaufen",
+      "Buy": "Kaufen",
+      "Request Features": "Neue Features anfragen",
+      "GitHub": "GitHub",
+      "Discord": "Discord",
+      "Twitter": "Twitter",
+      "Medium": "Medium",
+      "Terms of use": "Nutzungsbedingungen",
+      "Privacy policy": "Datenschutzrichtlinien",
+      "NFTs": "NFTs"
+    },
+    "languages": {
+      "en": "English",
+      "fr": "Français",
+      "cn": "中文",
+      "ru": "Русский",
+      "de": "Deutsch"
+    },
+    "errors": {
+      "Account balance too low": "Kontostand zu niedrig",
+      "A parachain must be selected": "Eine Parachain muss ausgewählt werden",
+      "Please enter an amount of {{token}}": "Bitte Anzahl von {{token}} eingeben",
+      "Please enter a valid amount of {{token}}": "Bitte eine gültige Anzahl von {{token}} eingeben",
+      "An account must be selected": "Ein Konto muss ausgewählt sein",
+      "Account balance not ready yet": "Kontostand noch nicht bereit",
+      "A minimum of {{minimum}} {{token}} is required": "Ein Minimum von {{minimum}} {{token}} wird benötigt",
+      "Failed to submit transaction: account balance too low": "Senden der Transaktion fehlgeschlagen: Kontostand zu niedrig",
+      "Failed to submit transaction": "Senden der Transaktion fehlgeschlagen"
+    },
+    "spirit-keys": {
+      "intro": "Finde einen Spirit Key um Zugang zu besonderen Funktionen zu erhalten und als einer der Ersten die Talisman-Wallet-Erweiterung zu nutzen.",
+      "Drag to unlock": "Ziehe zum Öffnen",
+      "no": "Nein",
+      "Done": "Fertig",
+      "Send": "Senden",
+      "altDownload": "Hier klicken, falls der Download nicht nach 10 Sekunden gestartet wurde.",
+      "ownershipText_one": "Du besitzt <1>{{total}}</1> Spirit Key",
+      "ownershipText_other": "Du besitzt <1>{{total}}</1> Spirit Keys",
+      "Send to a friend": "Einem Freund schicken",
+      "Explore Crowdloans": "Erkunde Crowdloans",
+      "Error sending NFT": "Fehler beim Versenden des NFT",
+      "Enter Kusama Address": "Kusama Addresse eingeben",
+      "willTakeFewMins": "Die Transaktion wird ein paar Minuten zum Synchronisieren benötigen. Bitte nicht mehrmals versenden.",
+      "whatIsInfo": {
+        "title": "Was ist ein Spirit Key?",
+        "description": "Ein Spirit Key ist ein besonderes und auf 3333 Stück limitiertes RMRK NFT. Die Besitzer erhalten besondere Vorzüge. Unter anderem:",
+        "list": [
+          "Die Gelegenheit die Alpha Version von unserer Wallet-Erweiterung zu nutzen",
+          "Exklusive Kanäle in unserem Discord für Spirit Clan Mitglieder",
+          "Early Access zu neuen Funktionen in der Talisman Web App"
+        ]
+      },
+      "howToGetInfo": {
+        "title": "Wie bekomme ich einen Spirit Key?",
+        "description": "Die Keys wurden an verschiedenen Orten gesichtet, aber nie lange. Die besten Möglichkeiten um sie aktuell zu finden sind:",
+        "list": [
+          "Der Talisman <1>Discord Server</1>",
+          "Teilnahme an Community Calls und Events",
+          "Ein Auge auf die Giveaways auf <1>Twitter</1> zu haben",
+          "Durch dein Beitragen zu Inhalten über Talisman. Viele Wege sind möglich!"
+        ]
+      },
+      "spiritClan": {
+        "poem": [
+          "Sucher des Talisman, dein Geist ist der Schlüssel.",
+          "Am Ende deiner Suche wirst du endlich frei sein.",
+          "Ein Schlüssel zur neuen Welt ist eine schwierige Sache.",
+          "Du solltest dich ehrlich fragen, \"was um alles in der Welt soll ich erbringen?\"",
+          "Denke einen Moment darüber nach, ob es erbracht werden kann.",
+          "Ich kann nur garantieren, dass nichts umsonst ist."
+        ],
+        "title": "Entdecke einen Spirit Key, um dem Spirit Clan beizutreten.",
+        "info": [
+          "Ein Spirit Key ist ein NFT, mit dem Sie dem <a>Spirit-Clan</a> beitreten können.",
+          "Mitglieder des Spirit-Clans können auf einen zugelassenen Discord-Kanal zugreifen, wo sie die Möglichkeit haben, Talisman mitzugestalten.",
+          "Spirit Clan-Mitglieder erhalten frühzeitig Zugang zu neuen Produkten, Events, NFT-Drops und mehr."
+        ],
+        "noKeyPlaceholder": "Du hast noch keinen Spirit Key. Hol dir einen auf <a>Singular</a>.",
+        "alreadyHaveOne": "Hast du schon einen?",
+        "joinSpiritClan": "Spirit-Clan beitreten"
+      }
+    },
+    "welcome": {
+      "header": "Erkunden Sie DotSama mit Talisman",
+      "description": "Verwalte dein Portfolio, investiere in Crowdloans und setze dein Vermögen ein (bald verfügbar)"
+    },
+    "translation": {
+      "Portfolio value": "Portfoliowert",
+      "Assets": "Vermögenswerte",
+      "All Accounts": "Alle Konten",
+      "Crowdloans": "Crowdloans",
+      "Staking": "Staking",
+      "This door will be unlocked soon": "Diese Tür wird sich bald öffnen",
+      "You have not contributed to any Crowdloans": "Du hast noch zu keinem Crowdloan beigetragen",
+      "Summoning Crowdloan Contributions...": "Beschwöre Crowdloan Beiträge...",
+      "Search Crowdloans": "Suche Crowdloans",
+      "Raised": "Gesammelt",
+      "Ends in": "Endet in",
+      "Contribute": "Beitragen",
+      "Contributed": "Beigetragen",
+      "Rewards": "Belohnungen",
+      "Cancel": "Abbruch",
+      "Contribute to": "Trage bei",
+      "Sort by": "Sortieren nach",
+      "noResult": {
+        "title": "Entschuldigung",
+        "subtitle": "Talisman kann dir diesen Wunsch nicht erfüllen.",
+        "text": "Versuche etwas anderes."
+      },
+      "You have no": "Du besitzt keine",
+      "Buy": "Kaufen",
+      "Fee": "Gebühren",
+      "Add {{asset}} Balance": "{{asset}} Bilanz hinzufügen",
+      "Unavailable": "Nicht verfügbar",
+      "extensionUnavailable": {
+        "title": "Oh nein!",
+        "subtitle": "Es sieht so aus, als wäre keine Wallet-Erweiterung installiert.",
+        "text": "Keine Sorge, wir sind gerade dabei eine wirklich gute zu erstellen,",
+        "text2": "Wir empfehlen den Download von Talisman"
+      },
+      "Install Talisman Extension": "Talisman-Erweiterung installieren",
+      "Requires Configuration": "Erfordert Konfiguration",
+      "desktopRequired": {
+        "title": "Entschuldige!",
+        "subtitle": "Diese Funktion ist derzeit nur auf dem Desktop verfügbar, aber wir werden bald eine mobile Version einführen.",
+        "text": "Sieh dir in der Zwischenzeit unser Crowdloan-Dashboard an",
+        "primaryCta": "Crowdloans ansehen"
+      },
+      "No wallet found": "Kein Wallet gefunden",
+      "Connect wallet": "Wallet verbinden",
+      "Switch wallet": "Wallet wechseln",
+      "Goal reached": "Ziel erreicht",
+      "Spirit Key": "Spirit Key",
+      "View all": "Alle ansehen"
+    },
+    "filters": {
+      "Raised": "Gesammelt",
+      "Oldest": "Älteste",
+      "Newest": "Neueste",
+      "A⇢Z": "A⇢Z",
+      "Z⇢A": "Z⇢A",
+      "All": "Alle",
+      "Active": "Aktive",
+      "Winner": "Gewinner",
+      "Ended": "Geendet"
+    },
+    "connect-wallet": {
+      "Connect a wallet": "Wallet verbinden",
+      "Coming soon": "Bald verfügbar",
+      "No wallet": "Ich habe keine Wallet",
+      "Talisman Extension": "Talisman-Erweiterung",
+      "Wallet extension coming soon": "Wallet-Erweiterung bald verfügbar",
+      "Get updates": "Updates abrufen",
+      "TOS": "Durch Verbinden einer Wallet akzeptierst du unsere <1>Nutzungsbedingungen</1>",
+      "By connecting your wallet you agree to our": "Durch Verbinden einer Wallet akzeptierst du unsere",
+      "Terms of use": "Nutzungsbedingungen"
+    },
+    "banners": {
+      "empty": {
+        "header": "Deine Taschen sind leer!",
+        "description": "Kaufe DOT und KSM mit Crypto oder deiner Kreditkarte",
+        "primaryCta": "DOT / KSM kaufen"
+      },
+      "soon": {
+        "header": "Bald verfügbar",
+        "description": "In der Zwischenzeit kannst du dich über Crowdloans informieren.",
+        "primaryCta": "Erkunde Crowdloans"
+      },
+      "buy": {
+        "header": "DOT/KSM kaufen",
+        "description": "Zeig mir meinen Kontostand!",
+        "primaryCta": "Kaufen"
+      },
+      "unlockTalisman": {
+        "header": "Talisman freischalten",
+        "description": "Trage zu einem beliebigen DOT Crowdloan bei und erhalte einen Spirit Key, du wirst ihn später mal brauchen...",
+        "primaryCta": "Mehr Informationen"
+      },
+      "noWallet": {
+        "header": "Oh nein!",
+        "description": "Es sieht so aus, als wäre keine Wallet-Erweiterung installiert.<br>Wir empfehlen den Download von <1>Talisman Wallet.</1>",
+        "description2": "In der Zwischenzeit kannst du dich über Crowdloans informieren.",
+        "primaryCta": "Talisman installieren"
+      },
+      "noNfts": {
+        "description": "Sie haben noch keine NFTs! Beginnen Sie mit einem Spirit Key.",
+        "primaryCta": "Spirit Key kaufen"
+      }
+    }
+  },
+  "vie": {
+    "nav": {
+      "Portfolio": "Danh mục đầu tư",
+      "Crowdloans": "Crowdloans",
+      "Buy DOT/KSM": "Mua DOT/KSM",
+      "Buy": "Mua",
+      "Request Features": "Yêu cầu tính năng",
+      "GitHub": "GitHub",
+      "Discord": "Discord",
+      "Twitter": "Twitter",
+      "Medium": "Medium",
+      "Terms of use": "Điều khoản sử dụng",
+      "Privacy policy": "Chính sách bảo mật",
+      "NFTs": "NFTs"
+    },
+    "languages": {
+      "en": "English",
+      "fr": "Français",
+      "cn": "中文",
+      "ru": "Русский",
+      "vie": "Tiếng Việt"
+    },
+    "errors": {
+      "Account balance too low": "Số dư tài khoản không đủ",
+      "A parachain must be selected": "Hãy chọn Parachain",
+      "Please enter an amount of {{token}}": "Vui lòng nhập số lượng {{token}}",
+      "Please enter a valid amount of {{token}}": "Vui lòng nhập đúng số lượng {{token}}",
+      "An account must be selected": "Hãy chọn một tài khoản",
+      "Account balance not ready yet": "Số dư tài khoản không có sẵn",
+      "A minimum of {{minimum}} {{token}} is required": "Số tiền tối thiểu {{minimum}} {{token}}",
+      "Failed to submit transaction: account balance too low": "Không thể gửi giao dịch: số dư tài khoản quá thấp",
+      "Failed to submit transaction": "Không thể giao dịch"
+    },
+    "spirit-keys": {
+      "intro": "Khám phá Chìa khóa  để nhận các đặc quyền đặc biệt và là một trong những người đầu tiên dùng thử tiện ích mở rộng ví Talisman",
+      "Drag to unlock": "Kéo để mở khóa",
+      "no": "no",
+      "Done": "Hoàn thành",
+      "Send": "Gửi",
+      "altDownload": "Nhấp vào đây nếu quá trình tải xuống không thể bắt đầu sau 10 giây.",
+      "ownershipText_one": "Bạn sở hữu <1>{{total}}</1> Chìa khóa Spirit",
+      "ownershipText_other": "Bạn sở hữu <1>{{total}}</1> Chìa khóa Spirit",
+      "Send to a friend": "Gửi tới bạn bè",
+      "Explore Crowdloans": "Khám  Crowdloans",
+      "Error sending NFT": "Lỗi gửi NFT",
+      "Enter Kusama Address": "Nhập địa chỉ Kusama",
+      "willTakeFewMins": "Quá trình chuyển sẽ mất vài phút, vì vậy vui lòng tránh gửi lại.",
+      "whatIsInfo": {
+        "title": "Chìa khóa Spirit là gì?",
+        "description": "Spirit Key là một RMRK NFT đặc biệt, trong đó chỉ có 3333 chiếc. Người sở hữu sẽ có thể nhận các đặc quyền bao gồm:",
+        "list": [
+          "Cơ hội tham gia vào đợt phát hành Alpha của tiện ích mở rộng ví của chúng tôi",
+          "Các kênh được phép trong Discord của chúng tôi dành cho các thành viên Spirit Clan",
+          "Quyền truy cập sớm vào các tính năng mới trong ứng dụng web Talisman"
+        ]
+      },
+      "howToGetInfo": {
+        "title": "Tôi có thể tìm một cái ở đâu?",
+        "description": "Chìa khóa đã được thấy ở nhiều nơi khác nhau. Những nơi tốt nhất hiện tại để tìm chúng là:",
+        "list": [
+          "Talisman <1>Discord server</1>",
+          "Tham gia community call và sự kiện của cộng đồng",
+          "Theo dõi giveaways trên <1>Twitter</1>",
+          "Bằng cách review, sáng tạo nội dung hoặc truyền thông về Talisman"
+        ]
+      },
+      "spiritClan": {
+        "poem": [
+          "Talisman Seeker, chính là tinh thần của bạn, đó là chìa khóa.",
+          "Khi bạn thật sự tìm kiếm, cuối cùng bạn sẽ được tự do.",
+          "Chìa khóa sẽ mở ra thế giới mới.",
+          "Bạn nên tự hỏi bản thân một cách thành thật, \" tôi nên mang theo cái gì? \"",
+          "Hãy dành một chút thời gian để suy nghĩ xem liệu bạn nên làm gì ?",
+          "Tất cả những gì tôi có thể đảm bảo, đó là không có gì là vô ích."
+        ],
+        "title": "Khám phá Spirit Key để tham gia Spirit Clan.",
+        "info": [
+          "Spirit Key là một NFT cho phép bạn tham gia <a> Spirit Clan </a>.",
+          "Các thành viên của Spirit Clan có thể truy cập kênh Discord được cấp phép, nơi họ sẽ có cơ hội giúp xây dựng Talisman.",
+          "Các thành viên Spirit Clan sẽ nhận được quyền truy cập sớm vào các sản phẩm, sự kiện mới, nhận NFT và hơn thế nữa."
+        ],
+        "noKeyPlaceholder": "Bạn chưa có khóa. Hãy mua một khóa trên <a> Số ít </a>.",
+        "alreadyHaveOne": "Đã có một?",
+        "joinSpiritClan": "Tham gia Spirit Clan"
+      }
+    },
+    "welcome": {
+      "header": "Khám phá DotSama với Talisman",
+      "description": "Quản lý danh mục đầu tư của bạn, đầu tư vào các khoản huy động từ cộng đồng và đầu tư vào tài sản của bạn (sắp ra mắt)"
+    },
+    "translation": {
+      "Portfolio value": "Tổng danh mục đầu tư",
+      "Assets": "Tài sản",
+      "All Accounts": "Tất cả tài sản",
+      "Crowdloans": "Crowdloans",
+      "Staking": "Staking",
+      "This door will be unlocked soon": "Tính năng này sẽ sớm ra mắt ...",
+      "You have not contributed to any Crowdloans": "Bạn chưa tham gia Crowdloans ",
+      "Summoning Crowdloan Contributions...": "Đóng góp crowdloans...",
+      "Search Crowdloans": "Tìm kiếm Crowdloans",
+      "Raised": "Số tiền Crowdloans",
+      "Ends in": "Kết thúc sau",
+      "Contribute": "Đóng góp",
+      "Contributed": "Đã đóng góp",
+      "Rewards": "Rewards",
+      "Cancel": "Hủy",
+      "Contribute to": "Đóng góp cho Crowdloans",
+      "Sort by": "Sắp xếp theo",
+      "noResult": {
+        "title": "Sorry",
+        "subtitle": "Talisman không thể tìm thấy",
+        "text": "Thử lại"
+      },
+      "You have no": "Bạn không có",
+      "Buy": "Mua",
+      "Fee": "Phí",
+      "Add {{asset}} Balance": "Số dư thêm {{asset}} ",
+      "Unavailable": "Không có sẵn",
+      "extensionUnavailable": {
+        "title": "Oh no!",
+        "subtitle": "Có vẻ như bạn chưa cài đặt tiện ích mở rộng ví.",
+        "text": "Đừng lo lắng, chúng tôi đang xây dựng thứ mà bạn sẽ thích,",
+        "text2": "nhưng trong thời gian chờ đợi, chúng tôi khuyên bạn nên tải xuống Polkadot.js"
+      },
+      "Install Polkadot.js Extension": "Cài đặt  Polkadot.js Extension",
+      "Requires Configuration": "Yêu cầu cấu hình",
+      "desktopRequired": {
+        "title": "Sorry!",
+        "subtitle": "Tính năng này hiện chỉ khả dụng trên máy tính, chúng tôi sẽ sớm ra mắt phiên bản thân thiện với thiết bị di động.",
+        "text": "Trong thời gian chờ đợi, bạn có thể xem trang tổng quan Crowdloans của chúng tôi",
+        "primaryCta": "Xem Crowdloans"
+      },
+      "No wallet found": "Không tìm thấy ví",
+      "Connect wallet": "Kết nối ví",
+      "Switch wallet": "Chuyển đổi ví",
+      "Goal reached": "Mục tiêu đã đạt được",
+      "Spirit Key": "Chìa khóa Spirit",
+      "View all": "Xem tất cả"
+    },
+    "filters": {
+      "Raised": "Số tiền đóng góp",
+      "Oldest": "Cũ nhất ",
+      "Newest": "Mới nhất",
+      "A⇢Z": "A⇢Z",
+      "Z⇢A": "Z⇢A",
+      "All": "Tất cả",
+      "Active": "Đang tiến hành",
+      "Winner": "Người chiến thắng",
+      "Ended": "Kết thúc"
+    },
+    "crowdloans": {
+      "inProgress": {
+        "header": "Đang tiến hành",
+        "description": "Giao dịch đang được tiến hành. Có thể mất một chút thời gian để giao dịch được xác nhận.",
+        "primaryCta": "Xem trong Subscan",
+        "secondaryCta": "Đóng"
+      },
+      "success": {
+        "header": "Thành công",
+        "description": "Giao dịch của bạn đã thành công. Cảm ơn sự đóng góp của bạn",
+        "primaryCta": "Xem trong Subscan",
+        "secondaryCta": "Đi tới portfolio"
+      },
+      "failed": {
+        "header": "Thất bại",
+        "description": "Giao dịch của bạn thất bại.",
+        "primaryCta": "Xem trong Subscan",
+        "secondaryCta": "Đóng"
+      },
+      "registeringUser": {
+        "header": "Xác nhận với các điều khoản",
+        "description": "Nếu bạn nhấp vào \"Sign and Send\" Dưới đây, bạn đồng ý với các điều khoản và điều kiện của Moonbeam để Crowdloan được lưu trữ trên chuỗi vào tài khoản DOT của bạn.",
+        "feeNote": "Xin lưu ý rằng giao dịch này sẽ phải chịu phí giao dịch trên mạng Polkadot (khoảng 0,0411 DOT) và Polkadot có số dư tối thiểu là 1 DOT.",
+        "termsNote": "[View terms]",
+        "primaryCta": "Xác nhận"
+      },
+      "moonbeamPortflioTag": {
+        "You have unlinked addresses": "Địa chỉ chưa được liên kết",
+        "View linked addresses": "Địa chỉ đã kết nối"
+      }
+    },
+    "connect-wallet": {
+      "Connect a wallet": "Kết nối ví",
+      "Coming soon": "Coming ",
+      "No wallet": "Không có ví kết nối",
+      "Talisman Extension": "Talisman Extension",
+      "Wallet extension coming soon": "Talisman Extension coming soon",
+      "Get updates": "Cập nhật",
+      "TOS": "Đồng í kết nối với ví của bạn <1>Điều khoản sử dụng</1>",
+      "By connecting your wallet you agree to our": "Đồng í kết nối với ví của bạn",
+      "Terms of use": "Điều khoản sử dụng"
+    },
+    "banners": {
+      "empty": {
+        "header": "Ví của bạn trống !",
+        "description": "Mua DOT và KSM bằng thẻ tín dụng hoặc tiền điện tử",
+        "primaryCta": "Mua DOT / KSM"
+      },
+      "soon": {
+        "header": "Coming soon",
+        "description": "Trong thời gian chờ đợi, bạn có thể kiểm tra Crowdloans.",
+        "primaryCta": "Khám phá Crowdloans"
+      },
+      "buy": {
+        "header": "Mua DOT / KSM",
+        "description": "Kiểm tra tiền",
+        "primaryCta": "Mua"
+      },
+      "unlockTalisman": {
+        "header": "Mở khóa Talisman",
+        "description": "Đóng góp DOT vào bất kỳ đợt Crowdloan nào và nhận được Spirit Key, bạn sẽ sớm cần đến nó ...",
+        "primaryCta": "Thêm thông tin"
+      },
+      "noWallet": {
+        "header": "Không!",
+        "description": "Có vẻ như bạn đã cài đặt tiện ích mở rộng ví.<br>Chúng tôi khuyên bạn nên tải xuống <1> Talisman </1>",
+        "description2": "Trong thời gian chờ đợi, bạn có thể kiểm tra Crowdloans.",
+        "primaryCta": "Cài đặt Talisman"
+      },
+      "noNfts": {
+        "description": "Bạn chưa có bất kỳ NFT nào! Hãy bắt đầu với Spirit Key.",
+        "primaryCta": "Mua Spirit Key"
+      }
+    }
+  },
+  "tr": {
+    "crowdloan": {
+      "inProgress": {
+        "header": "İşlem sürüyor",
+        "description": "İşleminiz devam ediyor. Bunun onaylanması birkaç dakika sürebilir",
+        "primaryCta": "Subscan'da görüntüle",
+        "secondaryCta": "Kapat"
+      },
+      "success": {
+        "header": "Success",
+        "description": "İşleminiz başarılı oldu. Katkınız için teşekkürler",
+        "primaryCta": "Subscan'da görüntüle",
+        "secondaryCta": "Portföyüne git"
+      },
+      "failed": {
+        "header": "Başarısız oldu",
+        "description": "İşleminiz başarılı olmadı.",
+        "primaryCta": "Subscan'da görüntüle",
+        "secondaryCta": "Kapat"
+      },
+      "registeringUser": {
+        "header": "Hüküm ve Koşulları imzalayın",
+        "description": "Aşağıdaki \"İmzala ve Gönder\"i tıkladığınızda, Moonbeam Crowdloan Hüküm ve Koşullarına ilişkin anlaşmanız zincirde, DOT hesabınızda saklanacaktır. Bu, hesabınız tarafından imzalanmış harici bir açıklama şeklinde olacaktır.",
+        "feeNote": "Lütfen bu imzalama işleminin Polkadot ağındaki işlem ücretlerine tabi olacağını (yaklaşık 0.0411 DOT) ve Polkadot'un minimum 1 DOT bakiyesine sahip olduğunu unutmayın.",
+        "termsNote": "[Şartları görüntüle]",
+        "primaryCta": "İmzala ve Gönder"
+      },
+      "moonbeamPortflioTag": {
+        "You have unlinked addresses": "Bağlantısı kaldırılmış adresleriniz var",
+        "View linked addresses": "Bağlı adresleri görüntüleyin"
+      }
+    },
+    "nav": {
+      "Portfolio": "Portfolyo",
+      "Crowdloans": "Crowdloanlar",
+      "Buy DOT/KSM": "DOT/KSM Satın Al",
+      "Buy": "Satın Al",
+      "Request Features": "İstek Özellikleri",
+      "GitHub": "GitHub",
+      "Discord": "Discord",
+      "Twitter": "Twitter",
+      "Medium": "Medium",
+      "Terms of use": "Kullanım şartları",
+      "Privacy policy": "Gizlilik Politikası",
+      "NFTs": "NFT'ler"
+    },
+    "languages": {
+      "en": "İngilizce",
+      "fr": "Fransızca",
+      "cn": "Çince",
+      "ru": "Rusça",
+      "tr": "Türkçe"
+    },
+    "errors": {
+      "Account balance too low": "Hesap bakiyesi çok düşük",
+      "A parachain must be selected": "Bir parachain seçilmelidir",
+      "Please enter an amount of {{token}}": "Lütfen bir miktar girin {{token}}",
+      "Please enter a valid amount of {{token}}": "Lütfen geçerli bir miktar girin {{token}}",
+      "An account must be selected": "Bir hesap seçilmelidir",
+      "Account balance not ready yet": "Hesap bakiyesi henüz hazır değil",
+      "A minimum of {{minimum}} {{token}} is required": "En az {{minimum}} {{token}} gereklidir",
+      "Failed to submit transaction: account balance too low": "İşlem gerçekleştirilemedi: Hesap bakiyesi çok düşük",
+      "Failed to submit transaction": "İşlem gerçekleştirilemedi"
+    },
+    "spirit-keys": {
+      "intro": "Özel avantajlara erişmek için bir Spirit Key bulun ve Talisman cüzdan eklentisini ilk deneyenlerden biri olun.",
+      "Drag to unlock": "Kilidi açmak için sürükleyin",
+      "no": "hayır",
+      "Done": "Tamamlandı",
+      "Send": "Gönder",
+      "altDownload": "İndirme 10 saniye sonra başlamazsa buraya tıklayın.",
+      "ownershipText_one": "<1>{{total}}</1> Spirit Key'iniz var.",
+      "ownershipText_other": "<1>{{total}}</1> Spirit Key'iniz var.",
+      "Send to a friend": "Bir arkadaşına gönder",
+      "Explore Crowdloans": "Crowdloanları Keşfedin.",
+      "Error sending NFT": "NFT gönderilirken hata oluştu.",
+      "Enter Kusama Address": "Kusama Adresini Girin.",
+      "willTakeFewMins": "Transferin senkronize olması birkaç dakika sürecektir, bu nedenle lütfen tekrar göndermekten kaçının.",
+      "whatIsInfo": {
+        "title": "Spirit Key nedir?",
+        "description": "Spirit Key, yalnızca 3333 adet bulunan özel bir RMRK NFT'dir. Sahipleri bunlar da dahil olmak üzere özel avantajlara erişebilecekler:",
+        "list": [
+          "Cüzdan eklentimizin Alfa sürümüne katılma fırsatı.",
+          "Spirit Clan üyeleri için Discord'umuzda izin verilen kanallar.",
+          "Talisman web uygulamasındaki yeni özelliklere erken erişim."
+        ]
+      },
+      "howToGetInfo": {
+        "title": "Spirit Key'i nasıl alabilirim?",
+        "description": "Spirit Keys çeşitli yerlerde görüldü, ancak asla çok uzun sürmedi. Şu anda onları bulmanın en iyi yolları:",
+        "list": [
+          "The Talisman <1>Discord kanalı</1>",
+          "Topluluk çağrılarına ve etkinliklere katılım",
+          "<1>Twitter</1>'daki çekilişlere göz kulak olmak",
+          "İnceleme yazısı hazırlamak, yayınlamak veya Talisman hakkında medya ürünü üretmek"
+        ]
+      },
+      "spiritClan": {
+        "poem": [
+          "Talisman Seeker, anahtar olan senin ruhun.",
+          "Arayışının sonunda, sonunda özgür olacaksın.",
+          "Yeni dünyanın anahtarı zor bir şeydir.",
+          "Kendine dürüstçe sormalısın, \"Tanrı aşkına ne getirmeliyim?\"",
+          "Getirilip getirilemeyeceğine dair bir an düşün.",
+          "Garanti edebileceğim tek şey, hiçbir şeyin boşuna olmadığı."
+        ],
+        "title": "Spirit Clan'a katılmak için Spirit Key'i keşfedin",
+        "info": [
+          "Spirit Key <a>Spirit Clan</a>'a katılmanıza izin veren bir NFT'dir.",
+          "Spirit Clan üyeleri, Talisman'ı şekillendirmeye yardım etme fırsatına sahip olacakları özel bir Discord kanalına erişebilir.",
+          "Spirit Clan üyeleri yeni ürünlere, etkinliklere, NFT ödüllerine ve daha fazlasına erken erişim elde eder."
+        ],
+        "noKeyPlaceholder": "Henüz bir anahtarınız yok. <a>Singular</a>'da bir tane edinin.",
+        "alreadyHaveOne": "Zaten bir tane var mı?",
+        "joinSpiritClan": "Spirit Clan'a katıl"
+      }
+    },
+    "welcome": {
+      "header": "DotSama'yı Talisman'la keşfet",
+      "description": "Portfolyonuzu yönetin, crowdloanlara katılın ve varlıklarınızı stake edin. (çok yakında)."
+    },
+    "translation": {
+      "Portfolio value": "Portfolyo değeri",
+      "Assets": "Varlıklar",
+      "All Accounts": "Tüm Hesaplar",
+      "Crowdloans": "Crowdloanlar",
+      "Staking": "Staking",
+      "This door will be unlocked soon": "Bu kapı yakında açılacak",
+      "You have not contributed to any Crowdloans": "Herhangi bir Crowdloana katkıda bulunmadınız",
+      "Summoning Crowdloan Contributions...": "Crowdloan Katkılarını Çağırma...",
+      "Search Crowdloans": "Crowdloanları ara",
+      "Raised": "Toplanan",
+      "Ends in": "Biter",
+      "Contribute": "Katkıda Bulun",
+      "Contributed": "Katkıda Bulunuldu",
+      "Rewards": "Ödüller",
+      "Cancel": "İptal",
+      "Contribute to": "Katkıda bulunun",
+      "Sort by": "Göre sırala",
+      "noResult": {
+        "title": "Üzgünüm",
+        "subtitle": "Talisman, istediğinizi çağıramaz.",
+        "text": "Başka bir şey deneyin."
+      },
+      "You have no": "Senin yok",
+      "Buy": "Satın al",
+      "Fee": "İşlem ücreti",
+      "Add {{asset}} Balance": "{{asset}} Bakiye Ekle",
+      "Unavailable": "Kullanılamıyor",
+      "extensionUnavailable": {
+        "title": "Oh hayır!",
+        "subtitle": "Hmm... Yüklü bir cüzdan eklentiniz yok gibi görünüyor.",
+        "text": "Talisman Cüzdan Eklentisini yüklemenizi öneririz"
+      },
+      "Install Talisman Extension": "Talisman Eklentisini Yükle",
+      "Requires Configuration": "Yapılandırma gerektirir",
+      "desktopRequired": {
+        "title": "Üzgünüm!",
+        "subtitle": "Bu özellik şu anda yalnızca masaüstünde kullanılabilir, ancak yakında mobil uyumlu sürümü kullanıma sunacağız.",
+        "text": "Bu arada Crowdloans kontrol panelimize göz atmaktan çekinmeyin",
+        "primaryCta": "Crowdloanları görüntüle."
+      },
+      "No wallet found": "Cüzdan bulunamadı",
+      "Connect wallet": "Cüzdanı bağla",
+      "Switch wallet": "Cüzdanı değiştir",
+      "Goal reached": "Hedefe ulaşıldı",
+      "Spirit Key": "Spirit Key",
+      "View all": "Hepsini görüntüle"
+    },
+    "filters": {
+      "Raised": "Toplanan",
+      "Oldest": "En yeni",
+      "Newest": "En eski",
+      "A⇢Z": "A⇢Z",
+      "Z⇢A": "Z⇢A",
+      "All": "Hepsi",
+      "Active": "Aktif",
+      "Winner": "Kazanan",
+      "Ended": "Tamamlandı"
+    },
+    "connect-wallet": {
+      "Connect a wallet": "Bir cüzdan bağlayın.",
+      "Coming soon": "Çok yakında",
+      "No wallet": "Cüzdanım yok",
+      "Talisman Extension": "Talisman Eklentisi",
+      "Wallet extension coming soon": "Cüzdan eklentisi çok yakında",
+      "Get updates": "Güncellemeleri al",
+      "TOS": "Cüzdanınızı bağlayarak, bizim <2>Terms of use</2>mızı kabul etmiş olursunuz",
+      "By connecting your wallet you agree to our": "Cüzdanınızı bağlayarak, bizim",
+      "Terms of use": "Kullanım şartları"
+    },
+    "banners": {
+      "empty": {
+        "header": "Çantalarınız boş!",
+        "description": "Kredi kartınız veya kripto paranızla DOT ve KSM satın alın.",
+        "primaryCta": "DOT / KSM Satın al"
+      },
+      "soon": {
+        "header": "Çok yakında",
+        "description": "Bu arada, Crowdloanlara göz atabilirsiniz.",
+        "primaryCta": "Crowdloanları keşfedin."
+      },
+      "buy": {
+        "header": "DOT/KSM Satın al",
+        "description": "Parayı göster.",
+        "primaryCta": "Satın al"
+      },
+      "unlockTalisman": {
+        "header": "Talisman'ın kilidini aç.",
+        "description": "Herhangi bir DOT Crowdloanlara katkıda bulunun ve bir Spirit Key alın, daha sonra ihtiyacınız olacak...",
+        "primaryCta": "Daha fazla bilgi"
+      },
+      "noWallet": {
+        "header": "Paraverse'ün kilidini aç.",
+        "description": "Hmmm... Yüklü bir cüzdan uzantınız yok gibi görünüyor.<br>Yüklemenizi öneririz <1>Talisman Cüzdanı.</1>",
+        "description2": "Bu arada, Crowdloanlara göz atabilirsiniz.",
+        "primaryCta": "Eklentiyi indir."
+      },
+      "noNfts": {
+        "description": "Henüz hiç NFT'niz yok! Spirit Key ile başlayın.",
+        "primaryCta": "Spirit Key Satın al"
+      }
+    }
+  },
+  "jp": {
+    "crowdloan": {
+      "inProgress": {
+        "header": "進行中",
+        "description": "お取引が進行中です。確認に数分かかる場合があります",
+        "primaryCta": "Subscanで確認する",
+        "secondaryCta": "閉じる"
+      },
+      "success": {
+        "header": "成功しました",
+        "description": "お取引は成功しました。ご貢献に感謝します",
+        "primaryCta": "Subscanで確認する",
+        "secondaryCta": "ポートフォリオを確認する"
+      },
+      "failed": {
+        "header": "失敗しました",
+        "description": "トランザクションが正常に行われませんでした。",
+        "primaryCta": "Subscanで確認する",
+        "secondaryCta": "閉じる"
+      },
+      "registeringUser": {
+        "header": "利用規約に同意する",
+        "description": "以下の \"同意して署名する\" をクリックすると、Moonbeam Crowdloan 利用規約への同意がDOTアカウントに保存されます。これは、あなたのアカウントによってremark extrinstic signedという形で行われます。",
+        "feeNote": "尚、この署名にはPolkadotネットワークでの取引手数料（約0.0411DOT）が掛かります。Polkadotでは最低残高が1DOTとなりますのでご注意ください。",
+        "termsNote": "[利用規約を確認する]",
+        "primaryCta": "同意して署名する"
+      },
+      "moonbeamPortflioTag": {
+        "You have unlinked addresses": "リンクされていないアドレスがあります",
+        "View linked addresses": "リンク先のアドレスを表示する"
+      }
+    },
+    "nav": {
+      "Portfolio": "ポートフォリオ",
+      "Crowdloans": "Crowdloans",
+      "Buy DOT/KSM": "Buy DOT/KSM",
+      "Buy": "Buy",
+      "Request Features": "リクエスト機能",
+      "GitHub": "GitHub",
+      "Discord": "Discord",
+      "Twitter": "Twitter",
+      "Medium": "Medium",
+      "Terms of use": "利用規約",
+      "Privacy policy": "プライバシー・ポリシー",
+      "NFTs": "NFTs"
+    },
+    "languages": {
+      "en": "英語",
+      "fr": "フランス語",
+      "cn": "中国語",
+      "ru": "ロシア語"
+    },
+    "errors": {
+      "Account balance too low": "アカウント残高が不足しています",
+      "A parachain must be selected": "Parachainを選択する必要があります",
+      "Please enter an amount of {{token}}": "の数量を入力してください。 {{token}}",
+      "Please enter a valid amount of {{token}}": "の有効な数量を入力してください {{token}}",
+      "An account must be selected": "アカウントを選択する必要があります",
+      "Account balance not ready yet": "口座残高がまだ準備されていません",
+      "A minimum of {{minimum}} {{token}} is required": "最低でも {{minimum}} {{token}} が必要です",
+      "Failed to submit transaction: account balance too low": "アカウント残高が不足しているため、トランザクションの送信に失敗しました。",
+      "Failed to submit transaction": "トランザクションの送信に失敗しました"
+    },
+    "spirit-keys": {
+      "intro": "Spirit Keyを発見して、特別な特典にアクセスしたり、Talismanウォレット拡張機能をいち早く試したりすることができます。",
+      "Drag to unlock": "ドラッグしてアンロック",
+      "no": "no",
+      "Done": "Done",
+      "Send": "Send",
+      "altDownload": "10秒後にダウンロードが開始されない場合は、こちらをクリックしてください。",
+      "ownershipText_one": "あなたはSpirit Keyを <1>{{total}}</1> 個持っています",
+      "ownershipText_other": "あなたはSpirit Keyを <1>{{total}}</1> 個持っています",
+      "Send to a friend": "友人に送る",
+      "Explore Crowdloans": "Crowdloansを探索する",
+      "Error sending NFT": "NFTの送信エラー",
+      "Enter Kusama Address": "Kusamaアドレスを入力する",
+      "willTakeFewMins": "転送の同期に数分かかります。再送信はお控えください。",
+      "whatIsInfo": {
+        "title": "Spirit Keyとは？",
+        "description": "Spirit Keyは、3333個しか存在しないRMRKの特別なNFTです。所持していると、以下のような特別な特典を受けることができます。:",
+        "list": [
+          "ウォレット拡張機能のアルファ版リリースに参加する機会",
+          "DiscordのSpirit Clanチャンネルへの特別アクセス",
+          "Talismanウェブアプリの新機能へのアーリーアクセス"
+        ]
+      },
+      "howToGetInfo": {
+        "title": "どこで手に入るの？",
+        "description": "Spirit Keyは様々な場所で見かけられますが、それほど長くはないでしょう。現在、最もよく見かける場所は:",
+        "list": [
+          "Talismanの <1>Discordサーバー</1>",
+          "コミュニティコールやイベントへの参加",
+          " <1>Twitter</1> でのプレゼント企画に注目していてください",
+          "Talismanに関するメディアのレビュー、出版、制作の手配"
+        ]
+      },
+      "spiritClan": {
+        "poem": [
+          "Talismanの探求者よ、あなたの精神こそが鍵なのです。",
+          "探索の果てに、あなたはついに自由になるでしょう。",
+          "新世界への鍵は困難を伴いますが、そんな時は",
+          " \"いったい何を持っていけばよいのか\"と、素直に自分に問いかけてみてください。",
+          "そして持っていけるかどうか、少しだけ考えてみてください。",
+          "私が保証できるのは、無駄なものは何一つないということだけです。"
+        ],
+        "title": "Spirit Keyを発見し、Spirit Clanに加わる",
+        "info": [
+          "Spirit Keyは <a>Spirit Clan</a> に参加するためのNFTです",
+          "Spirit Clanのメンバーは、特別なDiscordチャンネルにアクセスし、Talismanの開発に協力することができます。",
+          "Spirit Clanのメンバーは新製品やイベント、NFTのドロップなどにいち早くアクセスできます。"
+        ],
+        "noKeyPlaceholder": "あなたはまだ鍵を持っていません。 <a>Singular</a> で手に入れましょう。",
+        "alreadyHaveOne": "既にお持ちの方はこちら",
+        "joinSpiritClan": "Spirit Clanに参加する"
+      }
+    },
+    "welcome": {
+      "header": "Talismanと一緒にDotSamaを探索しよう",
+      "description": "ポートフォリオ管理、クラウドローンへの参加、アセットのステーク(coming soon)を行うことができます。"
+    },
+    "translation": {
+      "Portfolio value": "ポートフォリオ資産",
+      "Assets": "Assets",
+      "All Accounts": "すべてのアカウント",
+      "Crowdloans": "Crowdloans",
+      "Staking": "ステーキング",
+      "This door will be unlocked soon": "この扉はもうすぐ開かれます",
+      "You have not contributed to any Crowdloans": "あなたはまだCrowdloansに貢献していません",
+      "Summoning Crowdloan Contributions...": "Crowdloansへの貢献を募る...",
+      "Search Crowdloans": "Crowdloansを探す",
+      "Raised": "Raised",
+      "Ends in": "Ends in",
+      "Contribute": "Contribute",
+      "Contributed": "Contributed",
+      "Rewards": "リワード",
+      "Cancel": "キャンセル",
+      "Contribute to": "Contribute to",
+      "Sort by": "並べ替え",
+      "noResult": {
+        "title": "ごめんね！",
+        "subtitle": "Talismanではその要望に応えられません",
+        "text": "他のものを試してみる"
+      },
+      "You have no": "あなたは持っていません",
+      "Buy": "Buy",
+      "Fee": "Fee",
+      "Add {{asset}} Balance": "Add {{asset}} Balance",
+      "Unavailable": "利用できません",
+      "extensionUnavailable": {
+        "title": "オーノー！",
+        "subtitle": "ふぅ... ウォレット拡張機能がインストールされていないようですね",
+        "text": "Talismanウォレット拡張機能のインストールをお勧めします。"
+      },
+      "Install Talisman Extension": "Talisman拡張機能をインストール",
+      "Requires Configuration": "Requires Configuration",
+      "desktopRequired": {
+        "title": "ごめんね！",
+        "subtitle": "この機能は現在デスクトップのみですが、近日中にモバイルフレンドリーバージョンをリリースする予定です。",
+        "text": "それまでの間、Crowdloansダッシュボードをご覧ください",
+        "primaryCta": "Crowdloansを確認する"
+      },
+      "No wallet found": "ウォレットが見つかりません",
+      "Connect wallet": "ウォレットを接続",
+      "Switch wallet": "ウォレットを切り替える",
+      "Goal reached": "目標に到達しました",
+      "Spirit Key": "Spirit Key",
+      "View all": "すべてを表示"
+    },
+    "filters": {
+      "Raised": "Raised",
+      "Oldest": "Oldest",
+      "Newest": "Newest",
+      "A⇢Z": "A⇢Z",
+      "Z⇢A": "Z⇢A",
+      "All": "All",
+      "Active": "Active",
+      "Winner": "Winner",
+      "Ended": "Ended"
+    },
+    "connect-wallet": {
+      "Connect a wallet": "ウォレットを接続する",
+      "Coming soon": "Coming soon",
+      "No wallet": "ウォレットを持っていません",
+      "Talisman Extension": "Talisman Extension",
+      "Wallet extension coming soon": "ウォレット拡張機能はもうすぐです",
+      "Get updates": "アップデートを取得する",
+      "TOS": "ウォレットを接続することで、あなたは利用規約に同意することになります。 <2>Terms of use</2>",
+      "By connecting your wallet you agree to our": "ウォレットを接続することで、あなたは利用規約に同意することになります。",
+      "Terms of use": "利用規約"
+    },
+    "banners": {
+      "empty": {
+        "header": "あなたのお財布は空です",
+        "description": "DOTとKSMをクレジットカードまたは暗号資産で購入する。",
+        "primaryCta": "Buy DOT / KSM"
+      },
+      "soon": {
+        "header": "Coming soon",
+        "description": "ふぅ...その間にCrowdloansについて知る",
+        "primaryCta": "Crowdloansを探索する"
+      },
+      "buy": {
+        "header": "Buy DOT/KSM",
+        "description": "残高を表示する",
+        "primaryCta": "Buy"
+      },
+      "unlockTalisman": {
+        "header": "タリスマンをアンロックする",
+        "description": "DOT Crowdloanに貢献するとSpirit Keyがもらえます。後で必要になるかもしれません...",
+        "primaryCta": "もっと詳しく"
+      },
+      "noWallet": {
+        "header": "パラバースをアンロックする",
+        "description": "残念ですが、ウォレット拡張機能がインストールされていません。<br>のインストールを推奨します。 <1>Talisman Wallet.</1>",
+        "description2": "ふぅ...その間にCrowdloansについて知る",
+        "primaryCta": "ウォレット拡張機能をダウンロード"
+      },
+      "noNfts": {
+        "description": "NFTをまだ持っていないようです。Spirit Keyではじめてみませんか？",
+        "primaryCta": "Buy Spirit Key"
+      }
+    }
+  },
+  "ko": {
+    "crowdloan": {
+      "inProgress": {
+        "header": "진행중",
+        "description": "당신의 트랜잭션이 진행중입니다. 확인을 마치기 까지 몇 분 정도 소요될 수 있습니다.",
+        "primaryCta": "Subscan에서 살펴보기",
+        "secondaryCta": "닫기"
+      },
+      "success": {
+        "header": "성공",
+        "description": "트랜잭션이 성공적으로 완료되었습니다. 기여해주셔서 감사합니다",
+        "primaryCta": "Subscan에서 살펴보기",
+        "secondaryCta": "포트폴리오 확인하기"
+      },
+      "failed": {
+        "header": "실패",
+        "description": "트랜잭션이 실패하였습니다.",
+        "primaryCta": "Subscan에서 살펴보기",
+        "secondaryCta": "닫기"
+      },
+      "registeringUser": {
+        "header": "계약 조건에 서명하십시오",
+        "description": "아래의 \"서명 후 전송하기\" 를 클릭함으로써, 문빔 크라우드론 이용 약관에 대한 동의서가 당신의 DOT 계정에 저장될 것입니다. 이것은 당신의 계정에 의해 서명된 외적 발언의 형태로 작성될 것입니다.",
+        "feeNote": "이 서명 트랜잭션에는 폴카닷 네트워크의 거래 수수료(약 0.0411 DOT)가 적용되며, 폴카닷은 최소 잔액으로 1 DOT이상 보유되어야 합니다.",
+        "termsNote": "[약관 확인]",
+        "primaryCta": "서명 후 전송하기"
+      },
+      "moonbeamPortflioTag": {
+        "You have unlinked addresses": "연결되어 있지 않은 주소입니다.",
+        "View linked addresses": "연결된 주소 확인하기"
+      }
+    },
+    "nav": {
+      "Portfolio": "포트폴리오",
+      "Crowdloans": "크라우드론",
+      "Buy DOT/KSM": "DOT/KSM 구매",
+      "Buy": "구매",
+      "Request Features": "기능 요청",
+      "GitHub": "깃허브",
+      "Discord": "디스코드",
+      "Twitter": "트위터",
+      "Medium": "미디움",
+      "Terms of use": "이용 약관",
+      "Privacy policy": "개인정보정책",
+      "NFTs": "NFTs"
+    },
+    "languages": {
+      "en": "영어",
+      "fr": "프랑스어",
+      "cn": "중국어",
+      "ru": "러시아어"
+    },
+    "errors": {
+      "Account balance too low": "계정의 잔액이 부족합니다",
+      "A parachain must be selected": "파라체인을 선택해야 합니다",
+      "Please enter an amount of {{token}}": "{{token}} 수량을 입력하십시오",
+      "Please enter a valid amount of {{token}}": "유요한 {{token}} 수량을 입력하십시오",
+      "An account must be selected": "계정을 선택해야 합니다",
+      "Account balance not ready yet": "계정에 잔액이 아직 준비되지 않았습니다",
+      "A minimum of {{minimum}} {{token}} is required": "최소 {{minimum}} {{token}} 이(가) 필요합니다",
+      "Failed to submit transaction: account balance too low": "트랜잭션 제출이 실패하였습니다: 계정의 잔액이 부족합니다",
+      "Failed to submit transaction": "트랜잭션 제출이 실패하였습니다"
+    },
+    "spirit-keys": {
+      "intro": "스피릿 키를 발견하여 특별 혜택을 받으시고 탈리스만 지갑 확장프로그램을 가장 먼저 사용해 보십시오",
+      "Drag to unlock": "드래그하여 잠금해제",
+      "no": "아니오",
+      "Done": "완료",
+      "Send": "전송",
+      "altDownload": "10초 후에도 다운로드가 시작되지 않으면 여기를 클릭하십시오.",
+      "ownershipText_one": "당신은 <1>{{total}}</1> 개의 스피릿 키를 가지고 있습니다",
+      "ownershipText_other": "당신은 <1>{{total}}</1> 개의 스피릿 키를 가지고 있습니다",
+      "Send to a friend": "친구에게 전송하기",
+      "Explore Crowdloans": "크라우드론 살펴보기",
+      "Error sending NFT": "NFT 전송 오류",
+      "Enter Kusama Address": "쿠사마 주소 입력하기",
+      "willTakeFewMins": "전송은 동기화하는 데 몇 분 정도 소요되므로 중복 전송은 삼가해주십시오.",
+      "whatIsInfo": {
+        "title": "스피릿 키란 무엇인가요?",
+        "description": "스피릿 키는 오직 3333개만 존재하는 특수한 RMRK NFT입니다. 보유자는 다음을 포함한 특별 혜택을 받을 수 있습니다:",
+        "list": [
+          "우리의 지갑 확장프로그램의 알파 릴리즈에 참여할 수 있는 기회",
+          "Spirit Clan 멤버들을 위한 디스코드 채널 허용",
+          "탈리스만 웹 애플리케이션의 새로운 기능들을 우선적으로 체험"
+        ]
+      },
+      "howToGetInfo": {
+        "title": "어디서 구할 수 있나요?",
+        "description": "스피릿 키는 다양한 곳에서 만나볼 수 있지만 그리 오래되지는 않았습니다. 현재 그것들을 찾아볼 수 있는 장소는 다음과 같습니다:",
+        "list": [
+          "탈리스만 <1>디스코드 서버</1>",
+          "커뮤니티 콜 및 각종 행사에 참여하기",
+          "<1>트위터</1> 기버웨이에 주목하기",
+          "탈리스만에 대한 리뷰, 평론, 미디어 제작등을 준비하기"
+        ]
+      },
+      "spiritClan": {
+        "poem": [
+          "탈리스만을 좇는 자여, 이것이 당신의 영혼 곧 열쇠이니라.",
+          "당신의 탐구 그 끝엔 마침내 자유롭게 될지어라.",
+          "새로운 세상을 여는 열쇠는 난해한 것이니라.",
+          "솔직하게 자신에게 물어보라, \"이 땅 위에 무엇을 가지어 가야 하는건가요?\"",
+          "그것이 가져질 수 있는 것인지 잠시 생각하게 해주시오.",
+          "제가 장담할 수 있는 것은 아무것도 헛되지 않는다는 것입니다 "
+        ],
+        "title": "Spirit Clan에 가입할 스피릿 키를 찾아야 합니다.",
+        "info": [
+          "스피릿 키는 <a>Spirit Clan</a>에 가입할 수 있는 NFT 입니다.",
+          "Spirit Clan 멤버들은 탈리스만 형성을 도울 수 있는 허용된 디스코드 채널에 접속할 수 있습니다.",
+          "Spirit Clan 멤버들은 새로운 제품, 이벤트, NFT 드롭 등을 조기에 이용할 수 있습니다."
+        ],
+        "noKeyPlaceholder": "당신은 아직 열쇠를 가지고 있지 않군요. <a>Singular</a>에서 획득하실 수 있습니다.",
+        "alreadyHaveOne": "이미 가지고 있나요?",
+        "joinSpiritClan": "Spirit Clan에 가입하십시오"
+      }
+    },
+    "welcome": {
+      "header": "탈리스만과 함께 DotSama를 살펴보십시오",
+      "description": "포트폴리오 관리, 크라우드론 투자 및 자산 예치(준비중) 등이 사용 가능합니다."
+    },
+    "translation": {
+      "Portfolio value": "포트폴리오 가치",
+      "Assets": "자산",
+      "All Accounts": "모든 계정",
+      "Crowdloans": "크라우드론",
+      "Staking": "예치중",
+      "This door will be unlocked soon": "이 문은 곧 잠금해제 될 것입니다",
+      "You have not contributed to any Crowdloans": "당신이 기여한 크라우드론이 없습니다",
+      "Summoning Crowdloan Contributions...": "크라우드론 기여를 불러오는 중입니다...",
+      "Search Crowdloans": "크라우드론 검색",
+      "Raised": "모금됨",
+      "Ends in": "기한",
+      "Contribute": "기여하기",
+      "Contributed": "기여됨",
+      "Rewards": "보상",
+      "Cancel": "취소",
+      "Contribute to": "기여함",
+      "Sort by": "정렬 기준",
+      "noResult": {
+        "title": "죄송합니다",
+        "subtitle": "탈리스만은 당신이 원하는 것을 불러올 수 없습니다.",
+        "text": "다른 것을 시도해 보십시오."
+      },
+      "You have no": "You have no",
+      "Buy": "구매",
+      "Fee": "수수료",
+      "Add {{asset}} Balance": "{{asset}} 보유 수량 추가하기",
+      "Unavailable": "획득할 수 없음",
+      "extensionUnavailable": {
+        "title": "오 이런!",
+        "subtitle": "음... 지갑 확장프로그램이 설치되어 있는 것 같지 않네요.",
+        "text": "탈리스만 지갑 확장프로그램을 설치하는 것을 권장합니다"
+      },
+      "Install Talisman Extension": "탈리스만 확장프로그램을 설치합니다",
+      "Requires Configuration": "환경 설정이 요구됨",
+      "desktopRequired": {
+        "title": "죄송합니다!",
+        "subtitle": "이 기능은 현재 데스크톱에서만 사용 가능합니다. 모바일에서도 사용 가능한 버전을 곧 출시할 예정입니다.",
+        "text": "기다리는 동안 우리의 크라우드론 대시보드를 확인해주십시오",
+        "primaryCta": "크라우드론 살펴보기"
+      },
+      "No wallet found": "지갑을 찾을 수 없습니다",
+      "Connect wallet": "지갑 연결",
+      "Switch wallet": "지갑 전환",
+      "Goal reached": "목표 달성",
+      "Spirit Key": "스피릿 키",
+      "View all": "전체 보기"
+    },
+    "filters": {
+      "Raised": "금액 순",
+      "Oldest": "가장 오래된 순",
+      "Newest": "가장 최신 순",
+      "A⇢Z": "A⇢Z",
+      "Z⇢A": "Z⇢A",
+      "All": "모두",
+      "Active": "활성화됨",
+      "Winner": "우승자",
+      "Ended": "종료됨"
+    },
+    "connect-wallet": {
+      "Connect a wallet": "지갑 연결",
+      "Coming soon": "준비중",
+      "No wallet": "지갑을 가지고 있지 않아요",
+      "Talisman Extension": "탈리스만 확장프로그램",
+      "Wallet extension coming soon": "지갑 확장프로그램 준비중",
+      "Get updates": "업데이트 하기",
+      "TOS": "지갑을 연결함으로써 당신은 이하 사항에 동의하는 것입니다 <2>이용 약관</2>",
+      "By connecting your wallet you agree to our": "지갑을 연결함으로써 당신은 이하 사항에 동의하는 것입니다",
+      "Terms of use": "이용 약관"
+    },
+    "banners": {
+      "empty": {
+        "header": "가방이 비어있어요!",
+        "description": "당신의 신용카드나 암호화폐를 이용해 DOT과 KSM를 구입하십시오.",
+        "primaryCta": "DOT / KSM 구매"
+      },
+      "soon": {
+        "header": "준비중",
+        "description": "준비를 기다리는 동안 크라우드론을 확인 해보실 수 있습니다.",
+        "primaryCta": "크라우드론 살펴보기"
+      },
+      "buy": {
+        "header": "DOT/KSM 구매",
+        "description": "지불하실 금액을 보여주십시오.",
+        "primaryCta": "구매"
+      },
+      "unlockTalisman": {
+        "header": "탈리스만 잠금해제",
+        "description": "DOT 크라우드론에 기여하고 스피릿 키를 받으십시오, 나중에 필요할 것입니다.",
+        "primaryCta": "더 많은 정보"
+      },
+      "noWallet": {
+        "header": "파라버스 잠금해제",
+        "description": "음.. 지갑 확장프로그램이 설치되어 있는 것 같지 않네요.<br>우리는 당신에게 추천하고 싶습니다, <1>탈리스만 지갑 설치를요.</1>",
+        "description2": "준비를 기다리는 동안 크라우드론을 확인 해보실 수 있습니다.",
+        "primaryCta": "확장프로그램 내려받기"
+      },
+      "noNfts": {
+        "description": "당신은 아직 NFT를 가지고 있지 않습니다! 스피릿 키와 함께 시작해보십시오",
+        "primaryCta": "스피릿 키 구매"
+      }
+    }
+  },
+  "it": {
+    "crowdloan": {
+      "inProgress": {
+        "header": "In Elaborazione",
+        "description": "La tua transazione è in corso. Potrebbero essere necessari un paio di minuti per la conferma",
+        "primaryCta": "Controlla su Subscan",
+        "secondaryCta": "Chiudi"
+      },
+      "success": {
+        "header": "Completata",
+        "description": "La tua transazione è stata completata. Grazie per il tuo contributo",
+        "primaryCta": "Controlla su Subscan",
+        "secondaryCta": "Vai al tuo portafoglio"
+      },
+      "failed": {
+        "header": "Fallita",
+        "description": "La tua transazione non è andata a buon fine.",
+        "primaryCta": "Controlla su Subscan",
+        "secondaryCta": "Chiudi"
+      },
+      "registeringUser": {
+        "header": "Firma Termini e Condizioni",
+        "description": "Cliccando su \"Firma & Invia\", la tua autorizzazione alle condizioni del crowdloan di Moonbeam sarà salvata on-chain, nella forma di una transazione extrinstic firmata con il tuo DOT account.",
+        "feeNote": "Nota che per firmare la transazioni è necessario pagare i costi di trasmissione su Polkadot network (circa 0.0411 DOT), ed avere un bilancio minimo di 1 DOT sul tuo account Polkadot.",
+        "termsNote": "[Vedi i termini]",
+        "primaryCta": "Firma & Invia"
+      },
+      "moonbeamPortflioTag": {
+        "You have unlinked addresses": "Il tuo indirizzo non è collegato",
+        "View linked addresses": "Vedi indirizzi collegati"
+      }
+    },
+    "nav": {
+      "Portfolio": "Portafoglio",
+      "Crowdloans": "Crowdloans",
+      "Buy DOT/KSM": "Compra DOT/KSM",
+      "Buy": "Compra",
+      "Request Features": "Richiedi funzionalità",
+      "GitHub": "GitHub",
+      "Discord": "Discord",
+      "Twitter": "Twitter",
+      "Medium": "Medium",
+      "Terms of use": "Termini d'uso",
+      "Privacy policy": "Privacy policy",
+      "NFTs": "NFTs"
+    },
+    "languages": {
+      "en": "English",
+      "fr": "Français",
+      "cn": "中文",
+      "ru": "Русский",
+      "it": "Italiano"
+    },
+    "errors": {
+      "Account balance too low": "Il bilancio del tuo account non è sufficiente",
+      "A parachain must be selected": "Deve essere selezionata una parachain",
+      "Please enter an amount of {{token}}": "Perfavore inserisci la quantità di {{token}}",
+      "Please enter a valid amount of {{token}}": "Perfavore inserisci una quantità valida di {{token}}",
+      "An account must be selected": "Deve essere selezionato un account",
+      "Account balance not ready yet": "Il bilancio dell'account non è ancora pronto",
+      "A minimum of {{minimum}} {{token}} is required": "Un minimo di {{minimum}} {{token}} è richiesto",
+      "Failed to submit transaction: account balance too low": "Transazione fallita: bilancio account non sufficiente",
+      "Failed to submit transaction": "Transazione fallita"
+    },
+    "spirit-keys": {
+      "intro": "Scopri la Spirit Key per avere accesso a funzioni speciali ed essere tra i primi a provare il Talisman wallet",
+      "Drag to unlock": "Trascina per sbloccare",
+      "no": "no",
+      "Done": "Fatto",
+      "Send": "Inviato",
+      "altDownload": "Clicca qui se il download non è partito dopo 10 secondi.",
+      "ownershipText_one": "Hai <1>{{total}}</1> Spirit Key",
+      "ownershipText_other": "Hai <1>{{total}}</1> Spirit Keys",
+      "Send to a friend": "Invia ad un amico",
+      "Explore Crowdloans": "Esplora le Crowdloans",
+      "Error sending NFT": "Errore nell'invio NFT",
+      "Enter Kusama Address": "Inserisci l'indirizzo Kusama",
+      "willTakeFewMins": "Il trasferimento impiegherà alcuni minuti per essere effetuato, perfavore non ripetere l'invio.",
+      "whatIsInfo": {
+        "title": "Cos'è una Spirit Key?",
+        "description": "Una Spirit Key è uno speciale RMRK NFT di cui ce ne sono solo 3333. Coloro che la possiedono potranno avere accesso a speciali benifici quali:",
+        "list": [
+          "Opportunità di partecipare alle versioni in anteprima della nostra estensione wallet",
+          "Canali esclusivi sul nostro canale Discord riservati ai membri Spirit Clan",
+          "Accesso anticipato alle nuove funzionalita del talisman wallet"
+        ]
+      },
+      "howToGetInfo": {
+        "title": "Dove ne posso ottenere una?",
+        "description": "Le chiavi sono state avvistate in vari posti, ma sempre per breve tempo. I migliori posti dove cercarle sono:",
+        "list": [
+          "Il Talisman <1>Discord server</1>",
+          "Partecipare alle community calls ed eventi",
+          "Facendo attenzione ai giveaways su <1>Twitter</1>",
+          "Recensendo, pubblicando o producendo media che parlino di Talisman"
+        ]
+      },
+      "spiritClan": {
+        "poem": [
+          "Oh cercatore del Talisman, la chiave è nel tuo spirito.",
+          "Alla fine della tua cerca, sarai finalmente libero.",
+          "Una chiave per il mondo nuovo è difficile da forgiare.",
+          "E dunque dovresti prima chiedere a te stesso, \"cosa mai dovrei portare?\"",
+          "Fermati un momento a riflettere se poterlo portare veramente.",
+          "Tutto quello che posso dirti, è che ne nulla sarà per niente."
+        ],
+        "title": "Trova una Spirit Key per entrare a far parte dello Spirit Clan.",
+        "info": [
+          "Una Spirit Key è un NFT che ti permette di unirti allo <a>Spirit Clan</a>.",
+          "I membri dello Spirit Clan possono avere accesso ad un canale Discord riservato dove avranno l'opportunità di interagire ed aiutare a sviluppare il progetto Talisman.",
+          "I membri dello Spirit Clan riceveranno accesso anticipato a nuovi prodotti, eventi, drop NFT, e tanto altro ancora."
+        ],
+        "noKeyPlaceholder": "Non hai ancora una chiave. Prendine una su <a>Singular</a>.",
+        "alreadyHaveOne": "Ne hai già una?",
+        "joinSpiritClan": "Entra nello Spirit Clan"
+      }
+    },
+    "welcome": {
+      "header": "Esplora il mondo DotSama con Talisman",
+      "description": "Gestisci il tuo portafoglio, investi con i crowdloan e metti in stake i tuoi assets (a breve)."
+    },
+    "translation": {
+      "Portfolio value": "Valore del Portafoglio",
+      "Assets": "Assets",
+      "All Accounts": "Tutti gli Accounts",
+      "Crowdloans": "Crowdloans",
+      "Staking": "Staking",
+      "This door will be unlocked soon": "Questa porta verrà aperta tra poco",
+      "You have not contributed to any Crowdloans": "Non hai ancora contribuito a nessun Crowdloan",
+      "Summoning Crowdloan Contributions...": "Raccolta contribuzioni alle Crowdloan...",
+      "Search Crowdloans": "Cerca Crowdloans",
+      "Raised": "Raccolti",
+      "Ends in": "Finisce in",
+      "Contribute": "Contributo",
+      "Contributed": "Contribuito",
+      "Rewards": "Rewards",
+      "Cancel": "Cancella",
+      "Contribute to": "Contribuisci ad",
+      "Sort by": "Organizza per",
+      "noResult": {
+        "title": "Mi dispiace",
+        "subtitle": "Talisman non è riuscito a trovare quello che cerchi.",
+        "text": "Prova qualcos'altro."
+      },
+      "You have no": "Non ne hai",
+      "Buy": "Compra",
+      "Fee": "Costi",
+      "Add {{asset}} Balance": "Aggiungi {{asset}}",
+      "Unavailable": "Non disponibile",
+      "extensionUnavailable": {
+        "title": "Oh no!",
+        "subtitle": "Hmm... Non sembra che tu abbia installato l'estensione del wallet.",
+        "text": "Raccomandiamo di installare l'estensione Talisman"
+      },
+      "Install Talisman Extension": "Installa l'estensione Talisman",
+      "Requires Configuration": "Necessita essere configurata",
+      "desktopRequired": {
+        "title": "Mi dispiace!",
+        "subtitle": "Questa funzione è al momento disponibile solo su desktop, ma tra poco verrà rilasciata anche la versione mobile.",
+        "text": "Nel frattempo dai un'occhiata alla nostra schermata delle Crowdloan",
+        "primaryCta": "Vedi le Crowdloans"
+      },
+      "No wallet found": "Non è stato trovato il wallet",
+      "Connect wallet": "Connetti wallet",
+      "Switch wallet": "Cambia wallet",
+      "Goal reached": "Traguardo raggiunto",
+      "Spirit Key": "Spirit Key",
+      "View all": "Guarda tutto"
+    },
+    "filters": {
+      "Raised": "Raccolti",
+      "Oldest": "Meno recente",
+      "Newest": "Più recente",
+      "A⇢Z": "A⇢Z",
+      "Z⇢A": "Z⇢A",
+      "All": "Tutto",
+      "Active": "Attive",
+      "Winner": "Vincitrici",
+      "Ended": "Finite"
+    },
+    "connect-wallet": {
+      "Connect a wallet": "Connetti un wallet",
+      "Coming soon": "Arriva a breve",
+      "No wallet": "Non ho un wallet",
+      "Talisman Extension": "Talisman Extension",
+      "Wallet extension coming soon": "L'estensione per il Wallet arriverà a breve",
+      "Get updates": "Installa aggiornamenti",
+      "TOS": "Connettendo il wallet aderisci ai nostri <2>Termini di uso</2>",
+      "By connecting your wallet you agree to our": "Connettendo il wallet aderisci ai nostri",
+      "Terms of use": "Termini di Uso"
+    },
+    "banners": {
+      "empty": {
+        "header": "Hai le sacche vuote!",
+        "description": "Acquista DOT e KSM con la tua carta di credito o crypto",
+        "primaryCta": "Acquista DOT / KSM"
+      },
+      "soon": {
+        "header": "In arrivo",
+        "description": "Nel frattempo puoi dare un'occhiata ai Crowdloans.",
+        "primaryCta": "Esplora i Crowdloans"
+      },
+      "buy": {
+        "header": "Acquista DOT/KSM",
+        "description": "Show me the money",
+        "primaryCta": "Compra"
+      },
+      "unlockTalisman": {
+        "header": "Sblocca Talisman",
+        "description": "Contribuisci a qualsiasi DOT Crowdloan e ricevi la Spirit Key, ne avrai bisogno dopo...",
+        "primaryCta": "Più info"
+      },
+      "noWallet": {
+        "header": "Apri le porte del Paraverso",
+        "description": "Hmmm... Non sembri avere l'estentione del wallet installata.<br>Raccomandiamo di installare <1>Talisman Wallet.</1>",
+        "description2": "Nel frattempo puoi dare un occhiata ai Crowdloans.",
+        "primaryCta": "Scarica estensione"
+      },
+      "noNfts": {
+        "description": "Ancora non hai nessun NFT! Inizia con una Spirit Key.",
+        "primaryCta": "Acquista Spirit Key"
+      }
+    }
+  }
+}

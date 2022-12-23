@@ -50,8 +50,6 @@
     "graphql": "^16.6.0",
     "graphql-request": "^5.0.0",
     "i18next": "^21.10.0",
-    "i18next-browser-languagedetector": "^6.1.8",
-    "i18next-http-backend": "^1.4.4",
     "lodash": "^4.17.21",
     "md5": "^2.3.0",
     "posthog-js": "^1.30.0",
