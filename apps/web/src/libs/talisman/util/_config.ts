@@ -520,6 +520,28 @@ Our mission is to create an open financial future that overcomes borders and fos
     },
   },
   {
+    id: '0-2097',
+    name: 'Bittensor',
+    slug: 'bittensor',
+    token: 'TAO',
+    subtitle: 'Incentivising Intelligence',
+    info: `Bittensor is an open-source protocol that powers a decentralized, blockchain-based machine learning network. 
+    
+    Machine learning models train collaboratively and are rewarded in TAO according to the informational value they offer the collective. 
+    
+    TAO also grants external access, allowing users to extract information from the network while tuning its activities to their needs.`,
+    links: {
+      Website: 'https://bittensor.com/',
+      Discord: 'https://discord.com/invite/3rUr6EcvbB',
+      Telegram: 'https://t.me/bittensor',
+      Twitter: 'https://twitter.com/bittensor_',
+      Github: 'https://github.com/opentensor/BitTensor',
+      Medium: 'https://bittensor.medium.com/',
+      Reddit: 'https://www.reddit.com/r/bittensor_',
+      LinkedIn: 'https://www.linkedin.com/company/bittensor',
+    },
+  },
+  {
     id: '2-2000',
     name: 'Karura',
     slug: 'karura',
@@ -1784,6 +1806,24 @@ export const crowdloanDetails: CrowdloanDetails[] = [
       tokens: null,
       custom: [],
       info: null,
+    },
+  },
+  {
+    relayId: 0,
+    paraId: 2097,
+    rewards: {
+      tokens: null,
+      custom: [
+        {
+          title: 'Rewards',
+          value: '0.0 TAO',
+        },
+        {
+          title: 'Token Supply',
+          value: '21,000,000 TAO',
+        },
+      ],
+      info: 'This crowdloan is following a "self-funded" approach, meaning any contributors to the crowdloan will not receive any TAO rewards. Therefore, we do not recommend contributing to this crowdloan - NFA/DYOR.',
     },
   },
   {
