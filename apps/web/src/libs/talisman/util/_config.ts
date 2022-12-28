@@ -1815,11 +1815,15 @@ export const crowdloanDetails: CrowdloanDetails[] = [
       tokens: null,
       custom: [
         {
+          title: 'Rewards',
+          value: '0.0 TAO',
+        },
+        {
           title: 'Token Supply',
           value: '21,000,000 TAO',
         },
       ],
-      info: null,
+      info: 'This crowdloan is following a "self-funded" approach, meaning any contributors to the crowdloan will not receive any TAO rewards. Therefore, we do not recommend contributing to this crowdloan - NFA/DYOR.',
     },
   },
   {
