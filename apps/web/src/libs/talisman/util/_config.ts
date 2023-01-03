@@ -1192,19 +1192,6 @@ Our mission is to create an open financial future that overcomes borders and fos
       Discord: 'https://discord.com/invite/JFzD2b5P2B',
     },
   },
-  {
-    id: '0-2093',
-    name: 'Hashed Network',
-    slug: 'hashed-network',
-    token: 'BHASH',
-    subtitle: 'Digitally Native Businesses on Polkadot',
-    info: 'Hashed Network enables the full lifecycle for digitally-native organizations and web3-curious businesses seeking benefits of decentralized digital economies.',
-    links: {
-      Website: 'https://hashed.network/',
-      Twitter: 'https://twitter.com/HashedNetwork',
-      GitHub: 'https://github.com/hashed-io',
-    },
-  },
 ]
 
 export type CrowdloanDetails = {
@@ -1796,15 +1783,6 @@ export const crowdloanDetails: CrowdloanDetails[] = [
           value: '2.5 TEER + bonuses',
         },
       ],
-      info: null,
-    },
-  },
-  {
-    relayId: 0,
-    paraId: 2093,
-    rewards: {
-      tokens: null,
-      custom: [],
       info: null,
     },
   },
