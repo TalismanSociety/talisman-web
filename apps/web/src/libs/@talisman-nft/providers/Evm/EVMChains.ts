@@ -42,6 +42,11 @@ export const EVMChains: { [key: string]: EVMChain } = {
   },
   moonbeam: {
     contracts: {
+      talismanghosts: {
+        address: '0xDF67E64DC198E5287a6a625a4733841bD147E584',
+        name: 'Talisman Ghosts',
+        symbol: 'GHOST',
+      },
       exiledRacerPilots: {
         address: '0x515e20e6275ceefe19221fc53e77e38cc32b80fb',
         name: 'Exiled Racer Pilots',
