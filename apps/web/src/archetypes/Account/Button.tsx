@@ -335,6 +335,7 @@ const NoAccount = styled(({ className }: { className?: string }) => {
   }, [])
   return (
     <WalletSelect
+      onlyShowInstalled
       dappName={DAPP_NAME}
       triggerComponent={
         <Button className={`account-button ${className}`}>
@@ -368,6 +369,7 @@ const Unauthorized = styled(({ className }: { className?: string }) => {
   }, [])
   return (
     <WalletSelect
+      onlyShowInstalled
       dappName={DAPP_NAME}
       triggerComponent={
         <Button className={`account-button ${className}`}>
