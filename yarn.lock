@@ -6918,9 +6918,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@talismn/connect-components@npm:^1.1.4":
-  version: 1.1.5
-  resolution: "@talismn/connect-components@npm:1.1.5"
+"@talismn/connect-components@npm:^1.1.6":
+  version: 1.1.6
+  resolution: "@talismn/connect-components@npm:1.1.6"
   dependencies:
     "@testing-library/react": ^13.4.0
     "@testing-library/react-hooks": ^8.0.1
@@ -6935,13 +6935,13 @@ __metadata:
     "@types/react-dom": ^18.0.6
     react: ^18.2.0
     react-dom: ^18.2.0
-  checksum: 3c5c21b6410d1ea9805ad5ff873d24a883e35b7f23875bde3a8b35e5e60fecc8271ee09a085eccea3c9cedb69de07015c6858b2df869cfc77b79622aa50deb25
+  checksum: ee14a50315c0fd48a2bf45f9039cebc5cc7a13671c1b22926a2b9c2715e3fc7dd99e19597824ec8fee82f9671b5567fc20180020c5abb1b9d584dbdc0be95041
   languageName: node
   linkType: hard
 
-"@talismn/connect-ui@npm:^1.1.0":
-  version: 1.1.1
-  resolution: "@talismn/connect-ui@npm:1.1.1"
+"@talismn/connect-ui@npm:^1.1.2":
+  version: 1.1.2
+  resolution: "@talismn/connect-ui@npm:1.1.2"
   dependencies:
     rollup-plugin-postcss-modules: ^2.0.2
     rollup-plugin-styles: ^4.0.0
@@ -6952,17 +6952,17 @@ __metadata:
     "@types/react-dom": ^18.0.6
     react: ^18.2.0
     react-dom: ^18.2.0
-  checksum: 1c4c8f069776636fab793282af00de70f00d6a137eda179c45aba45491cf22a082742a3b46a94833fbedb10461a8b67ef92e8bcaf3f4417765114f7d99cffd23
+  checksum: 213cf270de48fd625104e7a93a02d9c0aef015feb78774beb874d4e10403924fc2e92158dcaabec246d9cba558d857ecd26e140c5e7f4d802dfe6d3ccfb879d5
   languageName: node
   linkType: hard
 
-"@talismn/connect-wallets@npm:^1.2.1":
-  version: 1.2.2
-  resolution: "@talismn/connect-wallets@npm:1.2.2"
+"@talismn/connect-wallets@npm:^1.2.3":
+  version: 1.2.3
+  resolution: "@talismn/connect-wallets@npm:1.2.3"
   peerDependencies:
     "@polkadot/api": ">=9.3.3"
     "@polkadot/extension-inject": ">=0.44.6"
-  checksum: 585478a41e1f947d6a60fd3e4cabf755dd2b2c5c5869fee632f0bc294f43efc2afd2b9ee99cb5a9cc3530f4e105483b98755bdd45e207428465633b1c4d60137
+  checksum: eb7afed083633872eba857063545470bddd517cbfd6b0e447b5773bbfe1f4573d665bce4df99c96690c26f9a20299f96cdcf0785b87380f3bf18dedcea5066bb
   languageName: node
   linkType: hard
 
@@ -7060,9 +7060,9 @@ __metadata:
     "@talismn/balances-react": ^0.2.3
     "@talismn/balances-substrate-native": ^0.2.3
     "@talismn/balances-substrate-orml": ^0.2.3
-    "@talismn/connect-components": ^1.1.4
-    "@talismn/connect-ui": ^1.1.0
-    "@talismn/connect-wallets": ^1.2.1
+    "@talismn/connect-components": ^1.1.6
+    "@talismn/connect-ui": ^1.1.2
+    "@talismn/connect-wallets": ^1.2.3
     "@talismn/dot-pool-selector": snapshot
     "@talismn/util": ^0.1.4
     "@talismn/wallets": ^1.1.6

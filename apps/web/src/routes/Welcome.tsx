@@ -64,6 +64,7 @@ const Welcome = styled(({ className }: { className?: string }) => {
         <p className="description">{t('description')}</p>
         <div className="cta">
           <WalletSelect
+            onlyShowInstalled
             dappName={DAPP_NAME}
             triggerComponent={
               <Button loading={false} primary>
