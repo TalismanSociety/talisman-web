@@ -12,14 +12,17 @@ class SubscriptionService<CbResultType> {
 
   // fire all subscriptions
   public fire(data: CbResultType) {
+    let timeoutId: any
     // ensure sure the state has changed before firing
     const newStateHash = md5(JSON.stringify(data))
     if (newStateHash === this.stateHash) return
     this.stateHash = newStateHash
 
-    // todo?: potentially add some stort of debouncer for performance
-
-    Object.values(this.callbackStore).forEach(cb => cb(data))
+    // Debouncing
+    clearTimeout(timeoutId)
+    timeoutId = setTimeout(() => {
+      Object.values(this.callbackStore).forEach(cb => cb(data))
+    }, 250)
   }
 
   // subscribing to updates

@@ -19,11 +19,21 @@ import HiddenNFTGrid from './HiddenNFTGrid'
 type ListItemProps = {
   nfts: NFTShort[]
   isFetching: boolean
+  count: number
 }
 
-const ListItems = ({ nfts, isFetching }: ListItemProps) => {
+const ListItems = ({ nfts, isFetching, count }: ListItemProps) => {
   return (
     <>
+      {/* based on the count, compare the number of nfts, and whether is fetching, then show loading cards, based on the difference */}
+      {count > nfts.length && isFetching && (
+        <>
+          {Array.from({ length: count - nfts.length }).map((_, index) => (
+            <NFTCard key={index} loading />
+          ))}
+        </>
+      )}
+
       {nfts && nfts.map((nft: any) => <NFTCard key={nft.id} nft={nft} />)}
 
       {isFetching && <NFTCard loading />}
@@ -164,7 +174,7 @@ const List = () => {
               />
             </div>
             <ListGrid>
-              <ListItems nfts={nfts} isFetching={isFetching} />
+              <ListItems nfts={nfts} isFetching={isFetching} count={count[address]!!} />
             </ListGrid>
           </>
         ))}
@@ -174,7 +184,7 @@ const List = () => {
   if (address !== undefined) {
     return (
       <ListGrid>
-        <ListItems nfts={nfts[address] ?? []} isFetching={isFetching} />
+        <ListItems nfts={nfts[address] ?? []} isFetching={isFetching} count={count[address]!!} />
       </ListGrid>
     )
   }

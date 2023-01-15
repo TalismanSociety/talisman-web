@@ -18,7 +18,9 @@ export class NFTFactory extends SubscriptionService<NFTData> {
 
     this.providers.forEach(provider => {
       // Don't want to subscribe again
-      provider.subscribe(() => this.triggerCallback())
+      provider.subscribe(() => {
+        this.triggerCallback()
+      })
     })
   }
 
@@ -29,6 +31,7 @@ export class NFTFactory extends SubscriptionService<NFTData> {
   hydrateNftsByAddress(address: string) {
     if (this.addresses.includes(address)) return
     this.addresses.push(address)
+
     this.providers.forEach(provider => {
       provider.hydrateNftsByAddress(address)
     })
@@ -37,16 +40,22 @@ export class NFTFactory extends SubscriptionService<NFTData> {
   // create a return object & fire subscriptions
   private triggerCallback() {
     // init array
-    let count: number = 0
+    let count: { [key: string]: number } = {}
     let fetchingArray: boolean[] = []
     let items: { [key: string]: NFTShort } = {}
 
     // iterate through the providers and parse info
     this.providers.forEach(provider => {
-      count += provider.count
+      Object.keys(provider.count).forEach((address: string) => {
+        if (count[address]) {
+          count[address] += provider.count[address] ?? 0
+        } else {
+          count[address] = provider.count[address] ?? 0
+        }
+      })
+
       fetchingArray.push(provider.isFetching)
       items = { ...items, ...provider.items }
-      // || []).filter((item : any) => this.address.includes(item.address)
     })
 
     // fire the CB

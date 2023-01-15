@@ -113,7 +113,7 @@ export class StatemineProvider extends NFTInterface {
     const encodedAddress = encodeAddress(address, 2)
 
     const nfts = await this.webSocket.query.uniques.account.keys(encodedAddress) // CollectionID, NFTID
-    this.count = nfts.length
+    this.count[address] = nfts.length
 
     return this.useCache(address, this.name, nfts)
       .then((items: NFTDetailArray) => {
@@ -136,7 +136,7 @@ export class StatemineProvider extends NFTInterface {
           const tokenDetails = await this.getTokenDetails(assetId)
 
           // If there is no token details, disregard the NFT and remove it from the count.
-          if (!tokenDetails) this.count -= 1
+          if (!tokenDetails) this.count[address] -= 1
 
           if (tokenDetails) {
             const nftDetail = {

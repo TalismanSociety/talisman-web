@@ -138,6 +138,7 @@ export class EVMProvider extends NFTInterface {
     }
 
     this.web3 = new ethers.providers.JsonRpcProvider(provider)
+    this.count[address] = 0
 
     // we need to ...
     await Promise.all(
@@ -152,7 +153,7 @@ export class EVMProvider extends NFTInterface {
               const bnBalance = ethers.BigNumber.from(balance).toNumber()
               const bnTotalCount = ethers.BigNumber.from(totalCount).toNumber()
 
-              this.count += bnBalance
+              this.count[address] += bnBalance
 
               await Promise.all(
                 Array.from(Array(bnBalance).keys()).map(

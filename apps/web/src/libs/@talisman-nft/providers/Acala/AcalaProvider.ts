@@ -51,8 +51,6 @@ export class AcalaProvider extends NFTInterface {
       .then(res => res)
       .catch(err => console.log(err))
 
-    // console.log(metadata, collectionDetails?.metadata)
-
     // // Return the promised data for token details
     return Promise.resolve({
       id: `${collectionIdFixed}-${nftTokenIdFixed}`,
@@ -133,7 +131,7 @@ export class AcalaProvider extends NFTInterface {
       return
     }
 
-    this.count = nfts.length
+    this.count[address] = nfts.length
 
     return this.useCache(address, this.name, nfts)
       .then((items: NFTDetailArray) => {
@@ -156,7 +154,7 @@ export class AcalaProvider extends NFTInterface {
           const tokenDetails = await this.getTokenDetails(assetId)
 
           if (!tokenDetails) {
-            this.count--
+            this.count[address] -= 1
             return
           }
 

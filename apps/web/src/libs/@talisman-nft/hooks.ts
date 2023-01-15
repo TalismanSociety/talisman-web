@@ -80,7 +80,7 @@ export const useNFTData = (addresses: string[]) => {
     const items = nftData?.items.filter((item: NFTShort) => addresses.includes(item.address))
     return {
       ...nftData,
-      count: items.length,
+      // count: items.length,
       items: items,
     }
   }, [addresses, nftData])

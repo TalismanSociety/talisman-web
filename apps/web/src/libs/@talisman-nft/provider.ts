@@ -10,7 +10,7 @@ export const nftDataState = atom<NFTData>({
   default: {
     items: [],
     isFetching: true,
-    count: 0,
+    count: {},
   },
 })
 
