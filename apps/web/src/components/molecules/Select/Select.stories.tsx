@@ -1,8 +1,8 @@
 import Identicon from '@components/atoms/Identicon'
-import { ComponentMeta } from '@storybook/react'
+import { ComponentMeta, Story } from '@storybook/react'
 import { useState } from 'react'
 
-import Select from './Select'
+import Select, { SelectProps } from './Select'
 
 export default {
   title: 'Molecules/Select',
@@ -15,11 +15,11 @@ export default {
   },
 } as ComponentMeta<typeof Select>
 
-export const Default = () => {
+export const Default: Story<Partial<SelectProps>> = props => {
   const [selected, setSelected] = useState<string | undefined>(undefined)
 
   return (
-    <Select placeholder="Select account" value={selected} onChange={value => setSelected(value)}>
+    <Select placeholder="Select account" value={selected} onChange={value => setSelected(value)} {...props}>
       <Select.Item
         value={0}
         leadingIcon={<Identicon value="5CcU6DRpocLUWYJHuNLjB4gGyHJrkWuruQD5XFbRYffCfSAP" size={40} />}
