@@ -1,5 +1,3 @@
-import '@polkadot/api-augment/substrate'
-
 import { polkadotAccountsState } from '@domains/accounts/recoils'
 import { chainReadIdState } from '@domains/common/recoils'
 import type { AnyNumber } from '@polkadot/types-codec/types'

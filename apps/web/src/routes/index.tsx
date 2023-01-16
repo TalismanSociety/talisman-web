@@ -11,6 +11,8 @@ import { useRecoilValueLoadable, waitForAll } from 'recoil'
 import Layout from '../layout'
 import Assets from './Assets'
 import Buy from './Buy'
+import CrowdloanDetail from './Crowdloan.Detail'
+import CrowdloanIndex from './Crowdloan.Index'
 import Explore from './Explore'
 import NFTsPage from './NFTsPage'
 import Overview from './Overview'
@@ -77,6 +79,13 @@ export default createBrowserRouter([
       },
       { path: 'explore', element: <Explore /> },
       { path: 'staking', element: <Staking /> },
+      {
+        path: 'crowdloans',
+        children: [
+          { path: '', element: <CrowdloanIndex /> },
+          { path: ':slug', element: <CrowdloanDetail /> },
+        ],
+      },
       { path: 'history', element: <TransactionHistory /> },
       { path: 'buy', element: <Buy /> },
     ],

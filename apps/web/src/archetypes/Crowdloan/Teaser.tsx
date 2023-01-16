@@ -1,37 +1,30 @@
 import { Parachain } from '@archetypes'
-import { ReactComponent as CheckCircleIcon } from '@assets/icons/check-circle.svg'
 import { Pill } from '@components'
 import styled from '@emotion/styled'
-import { getTotalContributionForCrowdloan, useCrowdloanContributions } from '@libs/crowdloans'
-import { useAccountAddresses, useCrowdloanById, useParachainDetailsById } from '@libs/talisman'
+import { useCrowdloanById, useParachainDetailsById } from '@libs/talisman'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 
+import Bonus from './Bonus'
 import Countdown from './Countdown'
 import Raised from './Raised'
 
-const Teaser = styled(({ id, className }: { id: string; className?: string }) => {
+const Teaser = styled(({ id, contributed, className }: { id: string; contributed?: boolean; className?: string }) => {
   const { t } = useTranslation()
   const { crowdloan } = useCrowdloanById(id)
   const parachainId = crowdloan?.parachain?.paraId
   const { parachainDetails } = useParachainDetailsById(parachainId)
 
-  const accounts = useAccountAddresses()
-  const myContributions = useCrowdloanContributions({ accounts, crowdloans: id ? [id] : undefined })
-  const totalContribution = getTotalContributionForCrowdloan(id, myContributions.contributions)
-
   return (
     <Link to={`/crowdloans/${parachainDetails?.slug}`} className={`crowdloan-teaser ${className}`}>
       <Parachain.Asset id={parachainId ?? ''} type="card" />
       <div className="content">
-        <Parachain.Asset id={parachainId ?? ''} type="logo" />
-        {totalContribution && (
-          <div className="has-contribution">
-            <CheckCircleIcon /> {t('Contributed')}
-          </div>
-        )}
+        <div className="header">
+          <Parachain.Asset id={parachainId ?? ''} type="logo" />
+          <Bonus short id={id} prefix={<Parachain.Asset id={parachainId ?? ''} type="logo" />} />
+        </div>
         <h1>{parachainDetails?.name}</h1>
-        <Raised id={id} title={t('Raised')} />
+        <Raised id={id} title={t('Raised')} contributed={contributed} />
       </div>
 
       <Pill className="countdown">
@@ -56,32 +49,31 @@ const Teaser = styled(({ id, className }: { id: string; className?: string }) =>
     position: relative;
     padding: 0 1.6rem 1rem 1.6rem;
 
-    .crowdloan-logo {
-      width: 6.4rem;
-      height: 6.4rem;
-      padding-top: 0;
-      margin-top: -3.2rem;
-      box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.1);
-    }
-
-    .has-contribution {
-      position: absolute;
-      top: 4.8rem;
-      right: 1.6rem;
+    > .header {
       display: flex;
       align-items: center;
-      padding: 0.6rem 1.2rem;
-      border-radius: 9999999999rem;
-      color: black;
-      background: #f5f5f5;
-      font-size: 1.4rem;
-      line-height: 1.6rem;
+      justify-content: space-between;
+      margin-top: -3rem;
 
-      > svg {
-        display: block;
-        width: 1em;
-        height: 1em;
-        margin-right: 0.5em;
+      > .crowdloan-logo {
+        width: 6.4rem;
+        height: 6.4rem;
+        padding-top: 0;
+        box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      .crowdloan-bonus {
+        display: flex;
+        align-items: center;
+        border-radius: 2em;
+        padding: 0.3em 0.8em;
+        font-size: 1.4rem;
+        background: var(--color-dark);
+
+        .crowdloan-logo {
+          font-size: 1.4rem;
+          margin-right: 0.5em;
+        }
       }
     }
 

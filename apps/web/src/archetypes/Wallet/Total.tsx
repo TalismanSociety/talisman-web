@@ -2,9 +2,10 @@ import { StyledLoader } from '@components/Await'
 import styled from '@emotion/styled'
 import { useActiveAccount, useBalances } from '@libs/talisman'
 import { device } from '@util/breakpoints'
+import { PropsWithChildren } from 'react'
 import { useTranslation } from 'react-i18next'
 
-const Total = styled(({ className }: { className?: string }) => {
+const Total = styled(({ className }: PropsWithChildren<{ className?: string }>) => {
   const { t } = useTranslation()
 
   const { balances, assetsValue } = useBalances()

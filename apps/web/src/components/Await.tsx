@@ -17,6 +17,6 @@ export const StyledLoader = styled(({ className }: { className?: string }) => (
 `
 
 const Await = ({ until = true, children }: { until: boolean; children: React.ReactNode }) =>
-  until === true ? <>children</> : <StyledLoader />
+  until === true ? <>{children}</> : <StyledLoader />
 
 export default Await

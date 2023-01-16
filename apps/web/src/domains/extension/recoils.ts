@@ -7,7 +7,7 @@ const getConnectedExtension = async () => {
   if (source === null) return undefined
 
   try {
-    return (globalThis as InjectedWindow).injectedWeb3?.[source]?.enable(
+    return await (globalThis as InjectedWindow).injectedWeb3?.[source]?.enable(
       process.env.REACT_APP_APPLICATION_NAME ?? 'Talisman'
     )
   } catch {

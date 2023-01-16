@@ -1,76 +1,63 @@
-import styled from '@emotion/styled'
 import { useCrowdloanById } from '@libs/talisman'
-import { ReactNode } from 'react'
+import { Maybe } from '@util/monads'
+import { ReactNode, useMemo } from 'react'
 
-const Bonus = styled(
-  ({
-    id,
-    parachainId,
-    short,
-    full,
-    info,
-    prefix,
-    className,
-  }: {
-    id: string
-    parachainId?: string
-    short?: boolean
-    full?: boolean
-    info?: boolean
-    prefix?: ReactNode
-    className?: string
-  }) => {
-    const { crowdloan } = useCrowdloanById(id)
-    const bonus = crowdloan?.details?.rewards?.bonus
-    const type = !!short ? 'short' : !!full ? 'full' : !!info ? 'info' : null
+export type BonusProps = {
+  id: string
+  short?: boolean
+  full?: boolean
+  info?: boolean
+  prefix?: ReactNode
+}
 
-    if (!bonus || !type) return null
+const Bonus = ({ id, short, full, info, prefix }: BonusProps) => {
+  const bonus = useCrowdloanById(id).crowdloan?.details?.rewards?.bonus
+  const type = short ? 'short' : full ? 'full' : info ? 'info' : undefined
 
-    if (Object.values(bonus).every(item => !item)) {
-      return null
-    }
+  const content = useMemo(() => {
+    if (short) return bonus?.short
+    if (full) return Maybe.ofFalsy(bonus?.full).mapOrUndefined(x => <span>{x}</span>)
+    if (info) return bonus?.info
+  }, [bonus, full, info, short])
 
-    return (
-      <span className={`crowdloan-bonus ${className} type-${type}`}>
-        {!!prefix && <span className="prefix">{prefix}</span>}
-        {type === 'short' && bonus?.short}
-        {type === 'full' && <span>{bonus?.full}</span>}
-        {type === 'info' && bonus?.info}
-      </span>
-    )
-  }
-)`
-  font-size: 1em;
-  display: flex;
-  align-items: center;
-  background: var(--color-activeBackground);
-  padding: 0.5rem 1.25rem;
-  border-radius: 1.5rem;
-  width: max-content;
+  if (!Boolean(content) || type === undefined) return null
 
-  a {
-    text-decoration: underline;
-  }
-
-  > * {
-    display: inline-block;
-  }
-
-  &.type-full {
-    > * {
-      line-height: 1em;
-      vertical-align: center;
-      display: inline-block;
-    }
-
-    .popup {
-      margin-left: 0.4em;
-
-      .icon-help {
-        color: var(--color-primary);
-      }
-    }
-  }
-`
+  return (
+    <span
+      className={`crowdloan-bonus type-${type}`}
+      css={{
+        'fontSize': '1em',
+        'display': 'flex',
+        'alignItems': 'center',
+        'backgroundColor': 'var(--color-activeBackground)',
+        'padding': '0.5rem 1.25rem',
+        'borderRadius': '1.5rem',
+        'width': 'max-content',
+        'a': {
+          textDecoration: 'underline',
+        },
+        '> *': {
+          display: 'inline-block',
+        },
+        '&.type-full': {
+          '> *': {
+            lineHeight: '1em',
+            verticalAlign: 'center',
+            display: 'inline-block',
+          },
+          '.popup': {
+            'marginLeft': '0.4rem',
+            '.icon-help': {
+              color: 'var(--color-primary)',
+            },
+          },
+        },
+      }}
+    >
+      {prefix !== undefined && <span className="prefix">{prefix}</span>}
+      {content}
+    </span>
+  )
+}
 
 export default Bonus

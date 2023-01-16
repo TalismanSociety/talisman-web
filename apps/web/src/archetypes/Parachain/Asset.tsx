@@ -1,6 +1,6 @@
-import { Image as Img } from '@components'
 import styled from '@emotion/styled'
-import { useParachainAssets, useParachainDetailsById } from '@libs/talisman'
+import { useParachainAssets } from '@libs/talisman'
+import useImageWithFallback from '@util/useImageWithFallback'
 
 type ImageProps = {
   id: string
@@ -8,16 +8,22 @@ type ImageProps = {
   type: string
 }
 
+const fallbackMap = {
+  card: 'https://raw.githubusercontent.com/TalismanSociety/chaindata/v3/assets/promo/generic-card.png',
+  logo: 'https://raw.githubusercontent.com/TalismanSociety/chaindata/v3/assets/tokens/unknown.svg',
+}
+
 const Image = styled(({ id, type, className }: ImageProps) => {
   const assets = useParachainAssets(id)
-  const { parachainDetails: { name } = {} } = useParachainDetailsById(parseInt(id))
-
+  const imageSrc = useImageWithFallback(assets[type], fallbackMap[type as keyof typeof fallbackMap])
   return (
-    <Img
-      src={assets[type]}
-      alt={`${name} ${type}`}
+    <div
       className={`crowdloan-asset crowdloan-${type} ${className}`}
       data-type={type}
+      css={{
+        backgroundImage: `url(${imageSrc})`,
+        backgroundSize: 'cover',
+      }}
     />
   )
 })`

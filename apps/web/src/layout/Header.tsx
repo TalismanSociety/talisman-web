@@ -38,17 +38,18 @@ export default function HeaderState(props: any) {
 const desktopRoutes = [
   { name: 'Portfolio', path: '/portfolio' },
   { name: 'Explore', path: '/explore' },
+  { name: 'Crowdloans', path: '/crowdloans' },
   { name: 'Staking', path: '/staking' },
-  // { name: 'Transaction History', path: '/history' },
+  { name: 'Transaction History', path: '/history' },
 ]
 
 const mainRoutes = [
   { name: 'Portfolio', url: '/portfolio', icon: <PortfolioLogo title="Portfolio" /> },
-  // {
-  //   name: 'Crowdloans',
-  //   url: '/crowdloans',
-  //   icon: <CrowdloansLogo title="Crowdloans" />,
-  // },
+  {
+    name: 'Crowdloans',
+    url: '/crowdloans',
+    icon: <CrowdloansLogo title="Crowdloans" />,
+  },
   {
     name: '🗝 Spirit keys',
     url: '/spiritkeys',

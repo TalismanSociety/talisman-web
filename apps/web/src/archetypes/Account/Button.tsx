@@ -11,7 +11,7 @@ import { ReactComponent as ChevronDown } from '@icons/chevron-down.svg'
 import { DAPP_NAME, useActiveAccount, useBalances, useChainByGenesis, useExtensionAutoConnect } from '@libs/talisman'
 import { useTalismanInstalled } from '@libs/talisman/useIsTalismanInstalled'
 import { WalletSelect } from '@talismn/connect-components'
-import { getWalletBySource } from '@talismn/connect-wallets'
+import { EnkryptWallet, SubWallet, TalismanWallet, getWalletBySource } from '@talismn/connect-wallets'
 import { encodeAnyAddress } from '@talismn/util'
 import { device } from '@util/breakpoints'
 import { buyNow } from '@util/fiatOnRamp'
@@ -297,6 +297,8 @@ const Unavailable = styled(({ className }: { className?: string }) => {
   return (
     <WalletSelect
       dappName={DAPP_NAME}
+      walletList={[new TalismanWallet(), new SubWallet(), new EnkryptWallet()]}
+      onlyShowInstalled
       triggerComponent={
         <div className={className} style={{ cursor: 'pointer' }}>
           <span className="icon">
@@ -333,6 +335,7 @@ const NoAccount = styled(({ className }: { className?: string }) => {
   }, [])
   return (
     <WalletSelect
+      onlyShowInstalled
       dappName={DAPP_NAME}
       triggerComponent={
         <Button className={`account-button ${className}`}>
@@ -366,6 +369,7 @@ const Unauthorized = styled(({ className }: { className?: string }) => {
   }, [])
   return (
     <WalletSelect
+      onlyShowInstalled
       dappName={DAPP_NAME}
       triggerComponent={
         <Button className={`account-button ${className}`}>

@@ -1,71 +1,23 @@
-import { ApolloClient, InMemoryCache, createHttpLink, gql } from '@apollo/client'
-//import { BifrostDOT, Moonbeam } from '@libs/crowdloans/crowdloanOverrides'
+import { ApiPromise, WsProvider } from '@polkadot/api'
+import type { AccountId } from '@polkadot/types/interfaces'
+import { stringToU8a, u8aEq } from '@polkadot/util'
 import { planckToTokens } from '@talismn/util'
 import { find, get } from 'lodash'
 import { PropsWithChildren, useContext as _useContext, createContext, useEffect, useMemo, useState } from 'react'
 
 import { CrowdloanDetails, SupportedRelaychains, crowdloanDetails } from './util/_config'
 
-const AllCrowdloans = gql`
-  {
-    # Order by BLOCK_NUM_DESC so that when we do:
-    #   find(allCrowdloans, 'parachain.id', parachainId)
-    # ...we get the most recent crowdloan, not the oldest
-    _metadata {
-      specName
-      targetHeight
-    }
-    crowdloans(orderBy: BLOCK_NUM_DESC, filter: { status: { notEqualTo: "Dissolved" } }) {
-      totalCount
-      nodes {
-        id
-        depositor
-        verifier
-        cap
-        raised
-        lockExpiredBlock
-        blockNum
-        firstSlot
-        lastSlot
-        status
-        leaseExpiredBlock
-        dissolvedBlock
-        isFinished
-        wonAuctionId
-        parachain {
-          paraId
-        }
-        contributions {
-          totalCount
-        }
-      }
-    }
-  }
-`
-
 export type Crowdloan = {
   // graphql fields
   id: string
   depositor: string
   verifier: string | null // e.g. {\"sr25519\":\"0x6c79c2c862124697baf6d0562055a50f3b0eac3c895c23bb16e8d1e2da341549\"}"
-  cap: string
-  raised: string
-  lockExpiredBlock: number
-  blockNum: number
-  firstSlot: number
-  lastSlot: number
-  status: string
-  leaseExpiredBlock: number | null
-  dissolvedBlock: number | null
-  isFinished: boolean
-  wonAuctionId: string | null
+  cap: number
+  raised: number
+  end: number
   parachain: {
     paraId: string
   }
-  contributions: {
-    totalCount: number
-  }
-
   // custom fields
   relayChainId: number
   percentRaised: number
@@ -139,7 +91,7 @@ export const useCrowdloanAggregateStats = () => {
   const [contributors /*, setContributors */] = useState<number>(0)
 
   useEffect(() => {
-    setRaised(crowdloans.reduce((acc: number, { raised = '0' }) => acc + parseInt(raised, 10), 0))
+    setRaised(crowdloans.reduce((acc: number, { raised = 0 }) => acc + raised, 0))
     setProjects(crowdloanDetails.length)
     // setContributors(crowdloans.reduce((acc: number, { contributors = [] }) => acc + contributors.length, 0))
   }, [crowdloans])
@@ -152,97 +104,65 @@ export const useCrowdloanAggregateStats = () => {
   }
 }
 
-const determineStatusInterlay = (
-  crowdloan: any,
-  cap: number,
-  raised: number,
-  relayChainId: number,
-  targetHeight: number
-) => {
-  return crowdloan.status === 'Started' && crowdloan.lockExpiredBlock > targetHeight // active state
-    ? ((100 / cap) * raised).toFixed(2) === '100.00'
-      ? 'capped'
-      : 'active'
-    : 'winner'
+const CROWD_PREFIX = stringToU8a('modlpy/cfund')
+
+function hasCrowdloadPrefix(accountId: AccountId): boolean {
+  return u8aEq(accountId.slice(0, CROWD_PREFIX.length), CROWD_PREFIX)
 }
 
 export const Provider = ({ children }: PropsWithChildren) => {
-  const [crowdloanResults, setCrowdloanResults] = useState<any>([])
-  useEffect(() => {
-    // create an apollo client for each relaychain
-    const relayChainClients = Object.values(SupportedRelaychains).map(
-      ({ id, tokenDecimals, subqueryCrowdloansEndpoint }) => {
-        return {
-          relayChainId: id,
-          tokenDecimals,
-          client: new ApolloClient({
-            link: createHttpLink({ uri: subqueryCrowdloansEndpoint }),
-            cache: new InMemoryCache(),
-            headers: {
-              'Content-Type': 'application/json',
-              'Access-Control-Allow-Origin': '*',
-              'Access-Control-Allow-Credentials': 'true',
-            },
-          }),
-        }
-      }
-    )
-
-    // query crowdloans on each relay chain
-    const relayChainCrowdloans = relayChainClients.map(({ client }) => client.query({ query: AllCrowdloans }))
-
-    // extract results and store in state with relayChainId
-    Promise.allSettled(relayChainCrowdloans).then(results =>
-      setCrowdloanResults(
-        results.map((result, resultIndex) => {
-          return {
-            relayChainId: relayChainClients[resultIndex]?.relayChainId, // relayChainId
-            tokenDecimals: relayChainClients[resultIndex]?.tokenDecimals, // tokenDecimals
-            result: result.status === 'fulfilled' ? result?.value?.data || [] : [], // result data
-          } as any
-        })
-      )
-    )
-  }, [])
-
   const [crowdloans, setCrowdloans] = useState<Crowdloan[]>([])
+  const [hydrated, setHydrated] = useState(false)
 
   useEffect(() => {
-    setCrowdloans(
-      crowdloanResults.flatMap(({ relayChainId, tokenDecimals, result }: any) => {
-        const { specName, targetHeight } = result?._metadata
+    const resultPromise = Promise.all(
+      Object.values(SupportedRelaychains).flatMap(async relayChain => {
+        const api = await ApiPromise.create({ provider: new WsProvider(relayChain.rpc) })
 
-        return (result?.crowdloans?.nodes || []).map((crowdloan: any): Crowdloan => {
-          const cap = Number(planckToTokens(crowdloan.cap, tokenDecimals))
-          const raised = Number(planckToTokens(crowdloan.raised, tokenDecimals))
-          const status = determineStatusInterlay(crowdloan, cap, raised, relayChainId, targetHeight)
+        const bestNumber = await api.derive.chain.bestNumber()
+        const funds = await api.query.crowdloan.funds.entries()
+
+        const paraIds = await api.query.crowdloan.funds.keys().then(x => x.map(y => y.args[0]))
+        const leases = await api.query.slots.leases.multi(paraIds)
+        const leasedParaIds = paraIds.filter((_, index) =>
+          leases[index]?.some(lease => lease.isSome && hasCrowdloadPrefix(lease.unwrap()[0]))
+        )
+
+        return funds.map(([fundId, maybeFund]) => {
+          const fund = maybeFund.unwrapOrDefault()
+          const tokenDecimals = relayChain.id === 2 ? 12 : 10
+
+          const isCapped = fund.cap.sub(fund.raised).lt(api.consts.crowdloan.minContribution)
+          const isEnded = bestNumber.gt(fund.end)
+          const isWinner = leasedParaIds.some(lease => lease.eq(fundId.args[0]))
 
           return {
-            ...crowdloan,
-            raised: raised,
-            cap: cap,
-            id: `${relayChainId}-${crowdloan.id}`,
+            ...fund.toJSON(),
+            id: `${relayChain.id}-${fundId.args[0].toNumber()}`,
+            raised: Number(planckToTokens(fund.raised.toString(), tokenDecimals)),
+            cap: Number(planckToTokens(fund.cap.toString(), tokenDecimals)),
             parachain: {
-              paraId: `${relayChainId}-${crowdloan.parachain.paraId}`,
-              specName: specName,
+              paraId: `${relayChain.id}-${fundId.args[0].toNumber()}`,
             },
-            relayChainId,
-            percentRaised: (100 / cap) * raised,
+            relayChainId: relayChain.id,
+            percentRaised:
+              (100 / Number(planckToTokens(fund.cap.toString(), tokenDecimals))) *
+              Number(planckToTokens(fund.raised.toString(), tokenDecimals)),
             details: find(crowdloanDetails, {
-              relayId: relayChainId,
-              paraId: crowdloan.parachain.paraId,
+              relayId: relayChain.id,
+              paraId: fundId.args[0].toNumber(),
             }),
-            uiStatus: status,
+            uiStatus: isWinner ? 'winner' : isCapped ? 'capped' : isEnded ? 'ended' : 'active',
           }
         })
       })
     )
-  }, [crowdloanResults])
 
-  const [hydrated, setHydrated] = useState(false)
-  useEffect(() => {
-    setHydrated(crowdloanResults.length > 0)
-  }, [crowdloanResults])
+    resultPromise.then(result => {
+      setCrowdloans(result.flat() as any)
+      setHydrated(true)
+    })
+  }, [])
 
   const value = useMemo(
     () => ({
