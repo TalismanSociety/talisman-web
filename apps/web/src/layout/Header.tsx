@@ -8,6 +8,7 @@ import { ReactComponent as PortfolioLogo } from '@assets/icons/portfolio.svg'
 import { ReactComponent as SwapLogo } from '@assets/icons/swap.svg'
 import { ReactComponent as TwitterMobileLogo } from '@assets/icons/twitter-mobile.svg'
 import { ReactComponent as TalismanHandLogo } from '@assets/talisman-white-black.svg'
+import { Menu as MenuIcon } from '@components/atoms/Icon'
 import Menu from '@components/Menu'
 import { WalletNavConnector } from '@components/WalletNavConnector'
 import { useTheme } from '@emotion/react'
@@ -189,26 +190,36 @@ const Header = styled(({ className, isMobile }: HeaderProps) => {
 
       <div className="menu-nav">
         <WalletNavConnector />
-        <div
-          onClick={buyNow}
-          css={{
-            'cursor': 'pointer',
-            'padding': '0.75rem 2.5rem',
-            'position': 'relative',
-            'whiteSpace': 'nowrap',
-            ':hover': { color: theme.color.onForegroundVariant },
-            'transition': 'all 0.2s ease-in-out',
-          }}
-        >
-          {t('Buy')}
-        </div>
-        <LanguageSelector />
+        {!isMobile && (
+          <>
+            <div
+              onClick={buyNow}
+              css={{
+                'cursor': 'pointer',
+                'padding': '0.75rem 2.5rem',
+                'position': 'relative',
+                'whiteSpace': 'nowrap',
+                ':hover': { color: theme.color.onForegroundVariant },
+                'transition': 'all 0.2s ease-in-out',
+              }}
+            >
+              {t('Buy')}
+            </div>
+            <LanguageSelector />
+          </>
+        )}
         <Menu
           dropdownAlignment="right"
           ButtonComponent={
-            <button className="mobile-nav-button">
-              <MoreHorizontal />
-            </button>
+            isMobile ? (
+              <div className="mobile-nav-button">
+                <MenuIcon />
+              </div>
+            ) : (
+              <button className="nav-button">
+                <MoreHorizontal />
+              </button>
+            )
           }
         >
           <AnimatePresence>
@@ -225,6 +236,11 @@ const Header = styled(({ className, isMobile }: HeaderProps) => {
                       </li>
                     )
                   })}
+                {isMobile && (
+                  <li key="buy">
+                    <span onClick={buyNow}>Buy</span>
+                  </li>
+                )}
                 {subRoutes.map(route => {
                   return (
                     <li key={route.name}>
@@ -383,6 +399,10 @@ const Header = styled(({ className, isMobile }: HeaderProps) => {
   }
 
   .mobile-nav-button {
+    cursor: pointer;
+  }
+
+  .nav-button {
     display: flex;
     align-items: center;
     border: none;
@@ -442,7 +462,7 @@ const Header = styled(({ className, isMobile }: HeaderProps) => {
     }
 
     .logo svg {
-      height: 1.5em;
+      height: 0.75em;
     }
 
     .account-button {

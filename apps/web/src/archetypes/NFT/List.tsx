@@ -98,10 +98,10 @@ const List = () => {
       />
     )
 
-  // filter items by address and map listgrid per address
-  const nfts = items.reduce((acc, nft) => {
-    if (!acc[nft?.address]) acc[nft?.address] = []
-    acc[nft?.address]?.push(nft)
+  // filter items by address and order based on accounts
+  const nfts = accounts.reduce((acc: any, account: any) => {
+    const nfts = items.filter((nft: any) => nft?.address === account.address)
+    if (nfts.length) acc[account.address] = nfts
     return acc
   }, {} as AccType)
 
