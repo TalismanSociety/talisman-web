@@ -64,6 +64,7 @@ const StakingInput = Object.assign(
         >
           {props.accounts.map((account, index) => (
             <Select.Item
+              key={index}
               value={index}
               leadingIcon={<Identicon value={account.address} size={40} />}
               headlineText={account.name}

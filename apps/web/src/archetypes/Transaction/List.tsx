@@ -1,5 +1,7 @@
 import { Field, MaterialLoader, Panel, PanelSection } from '@components'
+import Button from '@components/atoms/Button'
 import * as Icon from '@components/atoms/Icon'
+import ExportTxHistoryWidget from '@domains/txHistory/widgets/ExportTxHistoryWidget'
 import { css } from '@emotion/react'
 import { useActiveAccount } from '@libs/talisman'
 import format from 'date-fns/format'
@@ -69,18 +71,25 @@ export const List = ({ addresses = [], className }: Props) => {
   return (
     <section className={`transaction-list ${className}`}>
       <header
-        css={css`
-          margin-bottom: 1rem;
-          padding-bottom: 1rem;
-
-          .field-search {
-            max-width: 500px;
-          }
-        `}
+        css={{
+          'marginBottom': '1rem',
+          'paddingBottom': '1rem',
+          'display': 'flex',
+          'justifyContent': 'space-between',
+          '.field-search': {
+            maxWidth: 500,
+          },
+        }}
       >
         <Field.Search value={searchQuery} onChange={setSearchQuery} placeholder="Filter by Chain, Address, Type..." />
+        <ExportTxHistoryWidget>
+          {({ onToggleOpen }) => (
+            <Button variant="outlined" onClick={onToggleOpen}>
+              Export
+            </Button>
+          )}
+        </ExportTxHistoryWidget>
       </header>
-
       <Panel
         css={css`
           > .inner {
