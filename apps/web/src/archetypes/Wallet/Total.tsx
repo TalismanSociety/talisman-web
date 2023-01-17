@@ -1,4 +1,6 @@
 import { StyledLoader } from '@components/Await'
+import { useTotalCrowdloanTotalFiatAmount } from '@domains/crowdloans/hooks'
+import { useTotalStaked } from '@domains/staking/hooks'
 import styled from '@emotion/styled'
 import { useActiveAccount, useBalances } from '@libs/talisman'
 import { device } from '@util/breakpoints'
@@ -8,23 +10,27 @@ import { useTranslation } from 'react-i18next'
 const Total = styled(({ className }: PropsWithChildren<{ className?: string }>) => {
   const { t } = useTranslation()
 
-  const { balances, assetsValue } = useBalances()
+  const { balances, assetsAmount } = useBalances()
   const address = useActiveAccount().address
 
   const fiatTotal =
-    address !== undefined
-      ? (balances?.find({ address: address }).sum.fiat('usd').transferable ?? 0).toLocaleString(undefined, {
-          style: 'currency',
-          currency: 'USD',
-          currencyDisplay: 'narrowSymbol',
-        }) ?? ' -'
-      : assetsValue
+    address !== undefined ? balances?.find({ address: address }).sum.fiat('usd').transferable ?? 0 : assetsAmount
+  const crowdloanTotal = useTotalCrowdloanTotalFiatAmount()
+  const totalStaked = useTotalStaked()
+
+  const totalPortfolioValue = fiatTotal + crowdloanTotal + (totalStaked.fiatAmount ?? 0)
 
   return (
     <div className={`wallet-total ${className}`}>
       <div className="title">{t('Portfolio value')}</div>
       <div className="amount">
-        <span>{fiatTotal ?? <StyledLoader />}</span>
+        <span>
+          {totalPortfolioValue.toLocaleString(undefined, {
+            style: 'currency',
+            currency: 'USD',
+            currencyDisplay: 'narrowSymbol',
+          }) ?? <StyledLoader />}
+        </span>
       </div>
     </div>
   )
