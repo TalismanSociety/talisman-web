@@ -17,6 +17,7 @@ import NFTsPage from './NFTsPage'
 import Staking from './Staking'
 import TransactionHistory from './TransactionHistory'
 import Wallet from './Wallet'
+import XcmDemo from './XcmDemo'
 
 const Main = () => {
   // Pre-loading
@@ -78,6 +79,7 @@ export default createBrowserRouter([
       },
       { path: 'history', element: <TransactionHistory /> },
       { path: 'buy', element: <Buy /> },
+      { path: 'xcm-demo', element: <XcmDemo /> },
     ],
   },
   { path: '*', element: <Navigate to="/" /> },

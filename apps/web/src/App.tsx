@@ -11,6 +11,7 @@ import * as Portfolio from '@libs/portfolio'
 import TalismanProvider from '@libs/talisman'
 import * as Tokenprices from '@libs/tokenprices'
 import router from '@routes'
+import { WayfinderProvider } from '@talismn/wayfinder-react'
 import posthog from 'posthog-js'
 import React, { Suspense } from 'react'
 import { Toaster } from 'react-hot-toast'
@@ -48,19 +49,21 @@ const App: React.FC = () => (
     <Portfolio.Provider>
       <Tokenprices.Provider>
         <TalismanProvider>
-          <AccountsWatcher />
-          <MoonbeamContributors.Provider>
-            <ThemeProvider>
-              <DevMenu />
-              <Suspense fallback={<Loader />}>
-                <RouterProvider router={router} />
-                <Toaster position="top-right" containerStyle={{ top: '6.4rem' }}>
-                  {t => <ToastBar toast={t} />}
-                </Toaster>
-                <CookieBanner />
-              </Suspense>
-            </ThemeProvider>
-          </MoonbeamContributors.Provider>
+          <WayfinderProvider>
+            <AccountsWatcher />
+            <MoonbeamContributors.Provider>
+              <ThemeProvider>
+                <DevMenu />
+                <Suspense fallback={<Loader />}>
+                  <RouterProvider router={router} />
+                  <Toaster position="top-right" containerStyle={{ top: '6.4rem' }}>
+                    {t => <ToastBar toast={t} />}
+                  </Toaster>
+                  <CookieBanner />
+                </Suspense>
+              </ThemeProvider>
+            </MoonbeamContributors.Provider>
+          </WayfinderProvider>
         </TalismanProvider>
       </Tokenprices.Provider>
     </Portfolio.Provider>
