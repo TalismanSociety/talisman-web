@@ -177,6 +177,9 @@ export default function XcmDemo() {
 
           {'ERROR' in status && <div>ERROR</div>}
           {'ERROR' in status && <div>{status.ERROR}</div>}
+          {'LOADING' in status && (
+            <div>Connecting to {selectedRoute?.from.id && all.sourcesMap[selectedRoute?.from.id]?.name}</div>
+          )}
           {'SUBMITTING' in status && <div>{status.SUBMITTING}</div>}
           {'TX_SUCCESS' in status && (
             <div>
