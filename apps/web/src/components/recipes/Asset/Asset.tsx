@@ -7,6 +7,7 @@ import styled from '@emotion/styled'
 import { Balances } from '@talismn/balances'
 import _ from 'lodash'
 import { Children, ReactElement, ReactNode } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 type AssetBalanceProps = {
   locked?: boolean
@@ -16,7 +17,7 @@ type AssetBalanceProps = {
   symbol: string
 }
 
-const AssetBalance = ({ locked, planck, fiat, symbol }: AssetBalanceProps) => {
+export const AssetBalance = ({ locked, planck, fiat, symbol }: AssetBalanceProps) => {
   return (
     <div
       css={{
@@ -25,6 +26,7 @@ const AssetBalance = ({ locked, planck, fiat, symbol }: AssetBalanceProps) => {
         alignItems: 'flex-end',
         justifyContent: 'center',
         gap: '0.4rem',
+        height: '100%',
       }}
     >
       <div
@@ -188,6 +190,7 @@ const Asset = Object.assign((props: AssetProps) => {
   const theme = useTheme()
 
   const { token, lockedAsset } = props
+  const navigate = useNavigate()
 
   return (
     <tr
@@ -195,6 +198,9 @@ const Asset = Object.assign((props: AssetProps) => {
       css={{
         // slide down on load
         animation: `${slideDown} 0.3s ease-in-out`,
+      }}
+      onClick={() => {
+        navigate('/portfolio/assets/' + token?.tokenDetails?.symbol)
       }}
     >
       <td valign="top">
@@ -206,6 +212,7 @@ const Asset = Object.assign((props: AssetProps) => {
               width: '2em',
               height: '2em',
               margin: '16px',
+              borderRadius: '50%',
             }}
             alt={' logo'}
           />
@@ -226,7 +233,7 @@ const Asset = Object.assign((props: AssetProps) => {
               <div css={{ width: '1em', height: '1em' }}>
                 <img
                   src={token?.tokenDetails?.logo}
-                  css={{ width: '100%', height: '100%' }}
+                  css={{ width: '100%', height: '100%', borderRadius: '50%' }}
                   alt={token?.tokenDetails?.name + ' logo'}
                 />
               </div>
@@ -234,7 +241,7 @@ const Asset = Object.assign((props: AssetProps) => {
                 <div css={{ width: '1em', height: '1em' }}>
                   <img
                     src={token?.tokenDetails?.logo}
-                    css={{ width: '100%', height: '100%' }}
+                    css={{ width: '100%', height: '100%', borderRadius: '50%' }}
                     alt={token?.tokenDetails?.name + ' logo'}
                   />
                 </div>
@@ -303,8 +310,7 @@ const Table = styled.table`
 
   tbody tr.asset {
     :not(.skeleton) {
-      // Commented out until we're able to add hover states
-      // cursor: pointer;
+      cursor: pointer;
     }
 
     td {
@@ -316,13 +322,12 @@ const Table = styled.table`
       border-top: 1px solid #262626;
     }
 
-    // Commented out until we're able to add hover states
-    // :not(.skeleton):hover td {
-    //   background: rgb(38, 38, 38);
-    //   .logo-stack .logo-circle {
-    //     border-color: rgb(38, 38, 38);
-    //   }
-    // }
+    :not(.skeleton):hover td {
+      background: rgb(38, 38, 38);
+      .logo-stack .logo-circle {
+        border-color: rgb(38, 38, 38);
+      }
+    }
 
     :first-of-type {
       > td {

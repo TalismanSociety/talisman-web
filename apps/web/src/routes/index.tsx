@@ -9,6 +9,7 @@ import { Navigate, Outlet, createBrowserRouter, useLocation } from 'react-router
 import { useRecoilValueLoadable, waitForAll } from 'recoil'
 
 import Layout from '../layout'
+import AssetItem from './AssetItem'
 import Assets from './Assets'
 import Buy from './Buy'
 import CrowdloanDetail from './Crowdloan.Detail'
@@ -75,6 +76,8 @@ export default createBrowserRouter([
           { path: 'assets', element: <Assets /> },
           { path: 'nfts', element: <NFTsPage /> },
           { path: 'history', element: <TransactionHistory /> },
+          // path to a specific asset that is under assets
+          { path: 'assets/:assetId', element: <AssetItem /> },
         ],
       },
       { path: 'explore', element: <Explore /> },
@@ -90,5 +93,5 @@ export default createBrowserRouter([
       { path: 'buy', element: <Buy /> },
     ],
   },
-  { path: '*', element: <Navigate to="/" /> },
+  // { path: '*', element: <Navigate to="/" /> },
 ])

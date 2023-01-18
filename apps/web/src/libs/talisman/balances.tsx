@@ -75,10 +75,7 @@ export const Provider = ({ children }: PropsWithChildren) => {
       currencyDisplay: 'narrowSymbol',
     }) ?? ' -'
 
-  const assetsValueTotal =
-    (balances?.sum.fiat('usd').transferable ?? 0) +
-      (balances?.sum.fiat('usd').locked ?? 0) +
-      (balances?.sum.fiat('usd').reserved ?? 0) ?? 0
+  const assetsValueTotal = balances?.sum.fiat('usd').total ?? 0
 
   const value = useMemo(
     () => ({ balances, assetsValue, tokenIds, tokens, chaindata, assetsValueTotal }),

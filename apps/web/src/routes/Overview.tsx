@@ -1,5 +1,6 @@
 import OwnPools from '@archetypes/NominationPools/OwnPools'
 import useAssets, { useAssetsFiltered } from '@archetypes/Portfolio/Assets'
+import { Crowdloans } from '@archetypes/Wallet'
 import Button from '@components/atoms/Button'
 import DisplayValue from '@components/atoms/DisplayValue/DisplayValue'
 // import { ArrowRight } from '@components/atoms/Icon'
@@ -273,6 +274,7 @@ const Overview = () => {
           <div />
         )}
       </div>
+      <Crowdloans />
       <OwnPools />
     </>
   )

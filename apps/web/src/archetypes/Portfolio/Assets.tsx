@@ -237,6 +237,33 @@ const useAssets = (customAddress?: string) => {
   }
 }
 
+type useSingleAssetProps = {
+  symbol?: string
+  // Could possibly add more ways to get a single asset, perhaps name, id, etc
+}
+
+export const useSingleAsset = ({ symbol }: useSingleAssetProps) => {
+  const { tokens, balances, isLoading } = useAssets()
+
+  const tokenNotFound = {
+    token: undefined,
+    balances: undefined,
+    isLoading: false,
+  }
+
+  if (!symbol) return tokenNotFound
+
+  const token = tokens.find(token => token?.tokenDetails?.symbol?.toLowerCase() === symbol?.toLowerCase())
+
+  if (!token && !isLoading) return tokenNotFound
+
+  return {
+    token,
+    balances,
+    isLoading,
+  }
+}
+
 type filterProps = {
   size?: number
   search?: string

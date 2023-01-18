@@ -17,7 +17,8 @@ const Portfolio = () => {
   const { fiatTotal } = useAssets()
   const account = useActiveAccount()
 
-  const currentPath = useMatch('/portfolio/:id')?.params.id ?? paths[0]?.path
+  // get the current path that is after /portfolio/ even if there is something after it
+  const currentPath = useMatch('/portfolio/:id/*')?.params.id ?? paths[0]?.path
 
   return (
     <div
