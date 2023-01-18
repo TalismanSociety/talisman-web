@@ -23,6 +23,7 @@ export type Account = {
   type?: string
   address: string
   genesisHash?: string
+  signer?: Signer
 }
 
 export type Status = 'LOADING' | 'DISCONNECTED' | 'UNAVAILABLE' | 'UNAUTHORIZED' | 'NOACCOUNT' | 'OK'
@@ -146,7 +147,7 @@ export const Provider = ({ children }: PropsWithChildren<{}>) => {
 
       unsub = extension.accounts.subscribe((accounts: Account[]) => {
         if (cancelled) return
-        setAccounts(accounts)
+        setAccounts(accounts.map(account => ({ ...account, signer: extension.signer ?? undefined })))
         setStatus(accounts.length < 1 ? 'NOACCOUNT' : 'OK')
         trackGoal('XNNVIVMR', accounts.length) // total_accounts_polkadotjs
       })
