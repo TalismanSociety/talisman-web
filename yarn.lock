@@ -7954,8 +7954,8 @@ __metadata:
   linkType: hard
 
 "@talismn/wayfinder-react@npm:snapshot":
-  version: 0.0.0-snapshot-20230118015641
-  resolution: "@talismn/wayfinder-react@npm:0.0.0-snapshot-20230118015641"
+  version: 0.0.0-snapshot-20230119190257
+  resolution: "@talismn/wayfinder-react@npm:0.0.0-snapshot-20230119190257"
   dependencies:
     "@graphql-codegen/cli": ^2.16.1
     "@graphql-codegen/client-preset": ^1.2.3
@@ -7966,7 +7966,7 @@ __metadata:
     "@talismn/balances-substrate-orml": ^0.2.3
     "@talismn/chaindata-provider": ^0.2.0
     "@talismn/util": ^0.1.4
-    "@talismn/wayfinder": ^0.0.0-snapshot-20230118015641
+    "@talismn/wayfinder": ^0.0.0-snapshot-20230119190257
     bignumber.js: ^9.1.1
     graphql: ^15.0.0
     graphql-request: ^5.0.0
@@ -7975,14 +7975,14 @@ __metadata:
   peerDependencies:
     react: "*"
     react-dom: "*"
-  checksum: c3629494d577dfd3f9ee1a632dbe7145595353ca2ce91b39a9e7738988871ff90a72576e43786e0c3305b82aaff6dfdbb949ede464a2fd35128a72d4fe63eece
+  checksum: 76c67caba8c8cc96a217289b9bc62725e2a7ed61b2daa936f4a311185a808d7f96977d967c645cd65111458ac02cd5c6c254040c10606431da7837eb16d3d08d
   languageName: node
   linkType: hard
 
-"@talismn/wayfinder@npm:^0.0.0-snapshot-20230118015641":
-  version: 0.0.0-snapshot-20230118015641
-  resolution: "@talismn/wayfinder@npm:0.0.0-snapshot-20230118015641"
-  checksum: a41f7dcaaf842de6bfd62084637323120ef8be0210cbd6935799580c87946d10f63e5059f331f3c91cca2026f591fe5b99c46c192eb48fd28dceebc383cf6b46
+"@talismn/wayfinder@npm:^0.0.0-snapshot-20230119190257":
+  version: 0.0.0-snapshot-20230119190257
+  resolution: "@talismn/wayfinder@npm:0.0.0-snapshot-20230119190257"
+  checksum: 5f189ed1ee3de85a103d381322e89f6f148e99006c17a62b0ec22f19e2cc5799ecfaada636e55739587b06bc7ac9435cb20bb252b5b37dfba8cd4ddc2c3da61a
   languageName: node
   linkType: hard
 
