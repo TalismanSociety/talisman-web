@@ -1,9 +1,12 @@
 import { selectedPolkadotAccountsState } from '@domains/accounts/recoils'
 import styled from '@emotion/styled'
+import { Account } from '@libs/talisman/extension'
 import { Balances } from '@talismn/balances'
+import { BalanceFormatter } from '@talismn/balances'
+import { formatDecimals } from '@talismn/util'
 import { useRecoilValue } from 'recoil'
 
-import { AssetBreakdownRowAvailable, AssetBreakdownRowHeader } from './AssetBreakdownRow'
+import { AssetBreakdownRow, AssetBreakdownRowHeader } from './AssetBreakdownRow'
 
 const Table = styled.table`
   width: 100%;
@@ -78,17 +81,65 @@ export const AssetBreakdownList = (props: AssetBreakdownListProps) => {
     <Table>
       <tbody>
         <AssetBreakdownRowHeader token={token} isOrml />
-        {accounts.map(account => {
+        {accounts.map((account: Account) => {
           const tokenBalance = balances?.find({ tokenId: token?.tokenDetails?.id, address: account.address })
 
-          return (
-            <AssetBreakdownRowAvailable
-              tokenBalance={tokenBalance}
-              decimals={token?.tokenDetails?.decimals}
-              symbol={token?.tokenDetails?.symbol}
-              account={account}
-            />
+          if (
+            !tokenBalance ||
+            tokenBalance?.sorted.reduce((sum, balance) => sum + balance.transferable.planck, BigInt('0')) ===
+              BigInt('0')
+          ) {
+            return null
+          }
+
+          const planckAmount = formatDecimals(
+            new BalanceFormatter(
+              tokenBalance.sorted.reduce((sum, balance) => sum + balance.transferable.planck, BigInt('0')),
+              token?.tokenDetails?.decimals
+            ).tokens
           )
+
+          const fiatAmount = tokenBalance?.sum?.fiat('usd')?.transferable
+
+          const assetSummary = {
+            planckAmount,
+            fiatAmount,
+            isLocked: false,
+            account,
+            symbol: token?.tokenDetails?.symbol,
+            variant: 'available',
+          }
+
+          return <AssetBreakdownRow assetSummary={assetSummary} />
+        })}
+        {accounts.map((account: Account) => {
+          const tokenBalance = balances?.find({ tokenId: token?.tokenDetails?.id, address: account.address })
+
+          if (
+            !tokenBalance ||
+            tokenBalance?.sorted.reduce((sum, balance) => sum + balance.locked.planck, BigInt('0')) === BigInt('0')
+          ) {
+            return null
+          }
+
+          const planckAmount = formatDecimals(
+            new BalanceFormatter(
+              tokenBalance.sorted.reduce((sum, balance) => sum + balance.locked.planck, BigInt('0')),
+              token?.tokenDetails?.decimals
+            ).tokens
+          )
+
+          const fiatAmount = tokenBalance?.sum?.fiat('usd')?.locked
+
+          const assetSummary = {
+            planckAmount,
+            fiatAmount,
+            account,
+            symbol: token?.tokenDetails?.symbol,
+            variant: 'frozen',
+          }
+
+          return <AssetBreakdownRow assetSummary={assetSummary} />
         })}
       </tbody>
     </Table>

@@ -4,7 +4,7 @@ import DisplayValue from '@components/atoms/DisplayValue/DisplayValue'
 import Text from '@components/atoms/Text'
 import HiddenDetails from '@components/molecules/HiddenDetails'
 import InfoCard from '@components/molecules/InfoCard'
-import { AssetBreakdownList, AssetBreakdownListHeader } from '@components/recipes/AssetBreakdown/AssetBreakdownList'
+import { AssetBreakdownList } from '@components/recipes/AssetBreakdown/AssetBreakdownList'
 import { keyframes } from '@emotion/react'
 import { startCase } from 'lodash'
 import { Link, useParams } from 'react-router-dom'
@@ -156,7 +156,7 @@ const AssetItem = () => {
             {/* Bottom Section, containing details */}
 
             {/* Table just containing details of all tables */}
-            <AssetBreakdownListHeader />
+            {/* <AssetBreakdownListHeader /> */}
             <AssetBreakdownList token={token} isLoading={isLoading} balances={balances} />
 
             {/* Then if any, the ORML tokens */}

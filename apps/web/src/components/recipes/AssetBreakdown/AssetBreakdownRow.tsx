@@ -3,10 +3,7 @@ import Text from '@components/atoms/Text'
 import { keyframes } from '@emotion/react'
 import styled from '@emotion/styled'
 import { Account } from '@libs/talisman/extension'
-import { Balances } from '@talismn/balances'
-import { BalanceFormatter } from '@talismn/balances'
-import { formatDecimals } from '@talismn/util'
-import { startCase } from 'lodash'
+import _, { startCase } from 'lodash'
 
 import { AssetBalance } from '../Asset'
 
@@ -97,47 +94,36 @@ export const AssetBreakdownRowHeader = ({ token, isOrml }: { token: any; isOrml?
 }
 
 type AssetBreakdownProps = {
-  tokenBalance?: Balances
-  account: Account
-  decimals: number
-  symbol: string
+  assetSummary: {
+    planckAmount: string
+    fiatAmount: number
+    account: Account
+    symbol: string
+    variant: string
+  }
 }
 
-export const AssetBreakdownRowAvailable = ({ tokenBalance, decimals, symbol, account }: AssetBreakdownProps) => {
-  if (tokenBalance === undefined) return <></>
-
-  const isLocked = tokenBalance?.sum?.fiat('usd')?.locked > 0
-  const fiatLockedAmount = tokenBalance?.sum?.fiat('usd')?.locked
-  const fiatAmount = tokenBalance?.sum?.fiat('usd')?.transferable
-  const planckLockedAmount = formatDecimals(
-    new BalanceFormatter(
-      tokenBalance.sorted.reduce((sum, balance) => sum + balance.locked.planck, BigInt('0')),
-      decimals
-    ).tokens
-  )
-  const planckAmount = formatDecimals(
-    new BalanceFormatter(
-      tokenBalance.sorted.reduce((sum, balance) => sum + balance.transferable.planck, BigInt('0')),
-      decimals
-    ).tokens
-  )
-
-  if (fiatAmount === 0 || planckAmount === '0') return <></>
+export const AssetBreakdownRow = ({ assetSummary }: AssetBreakdownProps) => {
+  const { planckAmount, fiatAmount, account, symbol, variant } = assetSummary
 
   return (
-    <AssetRow>
+    <AssetRow
+      css={{
+        '& > div': {
+          'gridTemplateColumns': '8fr 2fr !important',
+
+          '> td': {
+            display: 'table-cell !important',
+          },
+        },
+      }}
+    >
       <div
         css={{
           padding: '1.6rem',
         }}
       >
-        <td
-          css={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '0.75rem',
-          }}
-        >
+        <td valign="middle">
           <Text.Body
             css={{
               fontSize: '1.6rem',
@@ -145,7 +131,7 @@ export const AssetBreakdownRowAvailable = ({ tokenBalance, decimals, symbol, acc
               fontWeight: 'bold',
             }}
           >
-            Available
+            {_.startCase(variant)}
           </Text.Body>
           <div
             css={{
@@ -158,11 +144,6 @@ export const AssetBreakdownRowAvailable = ({ tokenBalance, decimals, symbol, acc
             <Identicon value={account?.address} css={{ width: '2rem', height: '2rem' }} />
             <Text.Body>{account?.name}</Text.Body>
           </div>
-        </td>
-        <td align="right">
-          {isLocked && (
-            <AssetBalance fiat={fiatLockedAmount} planck={planckLockedAmount} locked={true} symbol={symbol} />
-          )}
         </td>
         <td align="right">
           <AssetBalance fiat={fiatAmount} planck={planckAmount} locked={false} symbol={symbol} />
