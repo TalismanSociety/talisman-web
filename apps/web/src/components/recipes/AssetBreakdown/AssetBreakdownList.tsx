@@ -1,4 +1,4 @@
-import { selectedPolkadotAccountsState } from '@domains/accounts/recoils'
+import { selectedAccountsState } from '@domains/accounts/recoils'
 import styled from '@emotion/styled'
 import { Account } from '@libs/talisman/extension'
 import { Balances } from '@talismn/balances'
@@ -75,7 +75,7 @@ type AssetBreakdownListProps = {
 
 export const AssetBreakdownList = (props: AssetBreakdownListProps) => {
   const { token, balances } = props
-  const accounts = useRecoilValue(selectedPolkadotAccountsState)
+  const accounts = useRecoilValue(selectedAccountsState)
 
   return (
     <Table>
@@ -83,6 +83,8 @@ export const AssetBreakdownList = (props: AssetBreakdownListProps) => {
         <AssetBreakdownRowHeader token={token} isOrml />
         {accounts.map((account: Account) => {
           const tokenBalance = balances?.find({ tokenId: token?.tokenDetails?.id, address: account.address })
+
+          // console.log(token)
 
           if (
             !tokenBalance ||
