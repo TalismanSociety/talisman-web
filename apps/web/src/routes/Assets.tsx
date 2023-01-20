@@ -9,7 +9,7 @@ import { useState } from 'react'
 const Assets = () => {
   const [search, setSearch] = useState('')
   const { tokens, balances, isLoading } = useAssetsFiltered({ size: 0, search })
-  const { fiatTotal, lockedTotal } = useAssets()
+  const { fiatTotal, assetsTotalValue, lockedTotal } = useAssets()
 
   return (
     <AssetPage>
@@ -35,7 +35,7 @@ const Assets = () => {
         >
           <InfoCard
             headlineText={'Total Portfolio Value'}
-            text={<DisplayValue amount={fiatTotal} />}
+            text={<DisplayValue amount={assetsTotalValue ?? 0} />}
             minWidth={'150px'}
           />
           <InfoCard headlineText={'Locked Value'} text={<DisplayValue amount={lockedTotal} />} minWidth={'150px'} />

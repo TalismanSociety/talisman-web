@@ -7,7 +7,7 @@ import _ from 'lodash'
 import { useMemo } from 'react'
 
 const useFetchAssets = (address: string | undefined) => {
-  const { balances, tokenIds, tokens, assetsValueTotal } = useBalances()
+  const { balances, tokenIds, tokens, assetsOverallValue, assetsTotalValue } = useBalances()
   const chaindata = useChaindata()
 
   const chains = useChains(chaindata)
@@ -18,10 +18,7 @@ const useFetchAssets = (address: string | undefined) => {
   }, [chains, evmNetworks, tokens, balances])
 
   const fiatTotal =
-    address !== undefined
-      ? (balances?.find({ address: address }).sum.fiat('usd').transferable ?? 0) +
-        (balances?.find({ address: address }).sum.fiat('usd').locked ?? 0)
-      : assetsValueTotal
+    address !== undefined ? balances?.find({ address: address }).sum.fiat('usd').total ?? 0 : assetsOverallValue
 
   const lockedTotal =
     address !== undefined
@@ -68,7 +65,7 @@ const useFetchAssets = (address: string | undefined) => {
     [chains, evmNetworks, tokenIds, tokens]
   )
 
-  return { assetBalances, fiatTotal, lockedTotal, value, balances, chains, evmNetworks, isLoading }
+  return { assetBalances, assetsTotalValue, fiatTotal, lockedTotal, value, balances, chains, evmNetworks, isLoading }
 }
 
 export const convertToFiatString = (value: any) => {
@@ -83,9 +80,8 @@ export const convertToFiatString = (value: any) => {
 
 const useAssets = (customAddress?: string) => {
   const { address } = useActiveAccount()
-  const { assetBalances, fiatTotal, lockedTotal, value, balances, chains, evmNetworks, isLoading } = useFetchAssets(
-    customAddress ?? address
-  )
+  const { assetBalances, assetsTotalValue, fiatTotal, lockedTotal, value, balances, chains, evmNetworks, isLoading } =
+    useFetchAssets(customAddress ?? address)
 
   if (!assetBalances)
     return {
@@ -230,6 +226,7 @@ const useAssets = (customAddress?: string) => {
   return {
     tokens: balancesWithOrmlTokens,
     fiatTotal,
+    assetsTotalValue,
     lockedTotal,
     balances,
     value,

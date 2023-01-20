@@ -84,8 +84,6 @@ export const AssetBreakdownList = (props: AssetBreakdownListProps) => {
         {accounts.map((account: Account) => {
           const tokenBalance = balances?.find({ tokenId: token?.tokenDetails?.id, address: account.address })
 
-          // console.log(token)
-
           if (
             !tokenBalance ||
             tokenBalance?.sorted.reduce((sum, balance) => sum + balance.transferable.planck, BigInt('0')) ===
@@ -138,7 +136,7 @@ export const AssetBreakdownList = (props: AssetBreakdownListProps) => {
             fiatAmount,
             account,
             symbol: token?.tokenDetails?.symbol,
-            variant: 'frozen',
+            variant: 'governance',
           }
 
           return <AssetBreakdownRow assetSummary={assetSummary} />

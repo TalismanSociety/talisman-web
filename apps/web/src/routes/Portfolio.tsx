@@ -1,6 +1,6 @@
-import useAssets from '@archetypes/Portfolio/Assets'
 import { AccountValueInfo } from '@components/molecules/AccountValueInfo'
 import { BottomBorderNav } from '@components/molecules/BottomBorderNav'
+import { useBalances } from '@libs/talisman'
 import { useActiveAccount } from '@libs/talisman'
 import { Outlet } from 'react-router'
 import { Link, useMatch } from 'react-router-dom'
@@ -14,7 +14,7 @@ const Portfolio = () => {
     { path: 'history', name: 'History' },
   ]
 
-  const { fiatTotal } = useAssets()
+  const { assetsTotalValue } = useBalances()
   const account = useActiveAccount()
 
   // get the current path that is after /portfolio/ even if there is something after it
@@ -35,7 +35,7 @@ const Portfolio = () => {
         'padding': '0 2.4rem',
       }}
     >
-      <AccountValueInfo address={account?.address} name={account?.name ?? 'All Accounts'} balance={fiatTotal} />
+      <AccountValueInfo address={account?.address} name={account?.name ?? 'All Accounts'} balance={assetsTotalValue} />
       <BottomBorderNav>
         {paths.map(path => (
           <BottomBorderNav.Item key={path.path} selected={path.path === currentPath}>

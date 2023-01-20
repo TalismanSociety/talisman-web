@@ -2,6 +2,8 @@ import Text from '@components/atoms/Text'
 import PoolStake, { PoolStakeList } from '@components/recipes/PoolStake/PoolStake'
 import { selectedPolkadotAccountsState } from '@domains/accounts/recoils'
 import { useChainState } from '@domains/common/hooks'
+import { useTotalStaked } from '@domains/staking/hooks'
+import { useTheme } from '@emotion/react'
 import { Suspense } from 'react'
 import { useRecoilValue } from 'recoil'
 
@@ -40,6 +42,19 @@ const UnstakingHeader = () => {
   )
 }
 
+const StakingHeader = () => {
+  const theme = useTheme()
+  const totalStaked = useTotalStaked()
+  return (
+    <header>
+      <Text.H4 css={{ marginBottom: '2.4rem' }}>
+        Staking
+        <span css={{ color: theme.color.primary, marginLeft: '0.85em' }}>{totalStaked.localizedFiatAmount}</span>
+      </Text.H4>
+    </header>
+  )
+}
+
 const OwnPools = () => (
   <div id="staking">
     <Suspense
@@ -57,9 +72,7 @@ const OwnPools = () => (
       }
     >
       <div>
-        <header>
-          <Text.H4 css={{ marginBottom: '1.6rem' }}>Staking</Text.H4>
-        </header>
+        <StakingHeader />
         <div
           css={{
             'display': 'flex',
