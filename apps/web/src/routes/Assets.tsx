@@ -9,7 +9,7 @@ import { useState } from 'react'
 const Assets = () => {
   const [search, setSearch] = useState('')
   const { tokens, balances, isLoading } = useAssetsFiltered({ size: 0, search })
-  const { fiatTotal, assetsTotalValue, lockedTotal } = useAssets()
+  const { assetsTotalValue, lockedTotal } = useAssets()
 
   return (
     <AssetPage>
