@@ -4,6 +4,7 @@ import { ReactNode, useId } from 'react'
 
 export type TextInputProps = React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement> & {
   type?: 'text' | 'number'
+  fontSize?: string | number
   leadingLabel?: ReactNode
   trailingLabel?: ReactNode
   trailingIcon?: ReactNode
@@ -50,7 +51,7 @@ const TextInput = (props: TextInputProps) => {
           id={inputId}
           css={{
             'flex': 1,
-            'fontSize': '3rem',
+            'fontSize': props.fontSize ?? '3rem',
             'width': '20rem',
             'background': 'transparent',
             'border': 'none',

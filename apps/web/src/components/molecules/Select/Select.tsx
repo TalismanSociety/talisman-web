@@ -1,4 +1,4 @@
-import { ChevronDown } from '@components/atoms/Icon'
+import { ChevronDown, X } from '@components/atoms/Icon'
 import Text from '@components/atoms/Text'
 import { useTheme } from '@emotion/react'
 import {
@@ -26,24 +26,25 @@ import React, {
 
 type Value = string | number | undefined
 
-export type SelectProps = {
-  value?: Value
+export type SelectProps<T extends string | number | undefined> = {
+  value?: T
   placeholder?: ReactNode
   width?: string | number
   children: ReactElement<SelectItemProps> | ReactElement<SelectItemProps>[]
-  onChange?: (value: string | undefined) => unknown
+  onChange?: (value: T | undefined) => unknown
+  clearRequired?: boolean
 }
 
 type SelectItemProps = {
   value?: Value
-  leadingIcon: ReactNode
+  leadingIcon?: ReactNode
   headlineText: ReactNode
-  supportingText: ReactNode
+  supportingText?: ReactNode
 }
 
 const SelectItem = forwardRef<HTMLDivElement, SelectItemProps>((props, ref) => (
   <div ref={ref} css={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-    <figure css={{ maxWidth: 40, maxHeight: 40, margin: 0 }}>{props.leadingIcon}</figure>
+    {props.leadingIcon && <figure css={{ maxWidth: 40, maxHeight: 40, margin: 0 }}>{props.leadingIcon}</figure>}
     <div>
       <div>
         <Text>{props.headlineText}</Text>
@@ -59,7 +60,7 @@ const SelectItem = forwardRef<HTMLDivElement, SelectItemProps>((props, ref) => (
 const OVERLAP = 6
 
 const Select = Object.assign(
-  ({ width = '30rem', children, ...props }: SelectProps) => {
+  <T extends string | number | undefined>({ width = '30rem', children, ...props }: SelectProps<T>) => {
     const theme = useTheme()
     const listRef = useRef<HTMLLIElement[]>([])
     const [open, setOpen] = useState(false)
@@ -77,9 +78,17 @@ const Select = Object.assign(
 
     const selectedChild = selectedIndex === undefined ? undefined : childrenArray[selectedIndex]
 
+    const clearRequired = !open && props.clearRequired && selectedChild !== undefined
+
     const { context, x, y, reference, floating, strategy } = useFloating({
       open,
-      onOpenChange: setOpen,
+      onOpenChange: open => {
+        if (clearRequired) {
+          props.onChange?.(undefined)
+        } else {
+          setOpen(open)
+        }
+      },
       whileElementsMounted: autoUpdate,
       middleware: [
         // TODO: right now only work for bottom overflow
@@ -116,7 +125,7 @@ const Select = Object.assign(
       (value: Value) => {
         setOpen(false)
         setActiveIndex(null)
-        props.onChange?.(value?.toString())
+        props.onChange?.(value as any)
       },
       [props]
     )
@@ -164,7 +173,11 @@ const Select = Object.assign(
           <Text.Body as="div" css={{ pointerEvents: 'none', userSelect: 'none' }}>
             {selectedChild ?? props.placeholder}
           </Text.Body>
-          <ChevronDown css={{ transform: open ? 'rotate(180deg)' : undefined, transition: 'ease 0.25s' }} />
+          {clearRequired ? (
+            <X />
+          ) : (
+            <ChevronDown css={{ transform: open ? 'rotate(180deg)' : undefined, transition: 'ease 0.25s' }} />
+          )}
         </motion.button>
         <motion.ul
           ref={floating}

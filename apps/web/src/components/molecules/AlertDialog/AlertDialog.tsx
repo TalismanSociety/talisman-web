@@ -14,6 +14,8 @@ export type AlertDialogProps = DialogProps & {
   width?: string | number
 }
 
+export const PADDING = '2.4rem'
+
 const show = keyframes`
   from {
     opacity: 0;
@@ -45,7 +47,7 @@ const AlertDialog = (props: AlertDialogProps) => {
         onClose={props.onRequestDismiss}
         onCancel={props.onRequestDismiss}
         css={{
-          'padding': '2.4rem',
+          'padding': PADDING,
           'background': theme.color.surface,
           'border': 'none',
           'borderRadius': '1.6rem',
@@ -71,19 +73,21 @@ const AlertDialog = (props: AlertDialogProps) => {
           </Button>
         </header>
         {props.content}
-        <div
-          css={{
-            'display': 'flex',
-            'gap': '1.6rem',
-            'marginTop': '4.6rem',
-            '> *': {
-              flex: 1,
-            },
-          }}
-        >
-          {props.dismissButton}
-          {props.confirmButton}
-        </div>
+        {props.dismissButton && props.confirmButton && (
+          <div
+            css={{
+              'display': 'flex',
+              'gap': '1.6rem',
+              'marginTop': '4.6rem',
+              '> *': {
+                flex: 1,
+              },
+            }}
+          >
+            {props.dismissButton}
+            {props.confirmButton}
+          </div>
+        )}
       </Dialog>
     </>
   )
