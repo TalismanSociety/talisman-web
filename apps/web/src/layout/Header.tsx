@@ -41,6 +41,7 @@ const desktopRoutes = [
   { name: 'Explore', path: '/explore' },
   { name: 'Crowdloans', path: '/crowdloans' },
   { name: 'Staking', path: '/staking' },
+  { name: 'Swap', path: '/swap' },
   { name: 'Transaction History', path: '/history' },
 ]
 
