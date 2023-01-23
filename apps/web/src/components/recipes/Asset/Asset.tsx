@@ -215,6 +215,7 @@ const Asset = Object.assign((props: AssetProps) => {
               borderRadius: '50%',
             }}
             alt={' logo'}
+            title={token?.tokenDetails?.chain?.id ?? token?.tokenDetails?.coingeckoId}
           />
           <div css={{ display: 'flex', flexDirection: 'column', gap: '0.4em' }}>
             <Text.Body css={{ fontWeight: 600, fontSize: '16px', color: theme.color.onSurface }}>
@@ -235,6 +236,7 @@ const Asset = Object.assign((props: AssetProps) => {
                   src={token?.tokenDetails?.logo}
                   css={{ width: '100%', height: '100%', borderRadius: '50%' }}
                   alt={token?.tokenDetails?.name + ' logo'}
+                  title={token?.tokenDetails?.chain?.id ?? token?.tokenDetails?.coingeckoId}
                 />
               </div>
               {token?.ormlTokens?.map((token: any) => (
@@ -243,6 +245,7 @@ const Asset = Object.assign((props: AssetProps) => {
                     src={token?.tokenDetails?.logo}
                     css={{ width: '100%', height: '100%', borderRadius: '50%' }}
                     alt={token?.tokenDetails?.name + ' logo'}
+                    title={token?.tokenDetails?.chain?.id ?? token?.tokenDetails?.coingeckoId}
                   />
                 </div>
               ))}

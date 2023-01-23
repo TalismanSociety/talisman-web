@@ -42,6 +42,7 @@ export const AssetBreakdownRowHeader = ({ token, isOrml }: { token: any; isOrml?
               height: '2em',
               borderRadius: '50%',
             }}
+            title={token?.tokenDetails?.chain?.id ?? token?.tokenDetails?.coingeckoId}
           />
           <div
             css={{
@@ -124,25 +125,34 @@ export const AssetBreakdownRow = ({ assetSummary }: AssetBreakdownProps) => {
         }}
       >
         <td valign="middle">
-          <Text.Body
-            css={{
-              fontSize: '1.6rem',
-              color: 'var(--color-text)',
-              fontWeight: 'bold',
-            }}
-          >
-            {_.startCase(variant)}
-          </Text.Body>
           <div
             css={{
               display: 'flex',
-              flexDirection: 'row',
-              alignItems: 'center',
-              gap: '1rem',
+              flexDirection: 'column',
+              // alignItems: 'center',
+              gap: '0.3em',
             }}
           >
-            <Identicon value={account?.address} css={{ width: '2rem', height: '2rem' }} />
-            <Text.Body>{account?.name}</Text.Body>
+            <Text.Body
+              css={{
+                fontSize: '1.6rem',
+                color: 'var(--color-text)',
+                fontWeight: 'bold',
+              }}
+            >
+              {_.startCase(variant)}
+            </Text.Body>
+            <div
+              css={{
+                display: 'flex',
+                flexDirection: 'row',
+                alignItems: 'center',
+                gap: '0.5rem',
+              }}
+            >
+              <Identicon value={account?.address} css={{ width: '2rem', height: '2rem' }} />
+              <Text.Body>{account?.name}</Text.Body>
+            </div>
           </div>
         </td>
         <td align="right">

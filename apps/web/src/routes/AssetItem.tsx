@@ -95,6 +95,7 @@ const AssetItem = () => {
                         height: '2em',
                       }}
                       alt={' logo'}
+                      title={token?.tokenDetails?.chain?.id ?? token?.tokenDetails?.coingeckoId}
                     />
                     <Text.Body
                       css={{
