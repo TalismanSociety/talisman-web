@@ -39,3 +39,10 @@ WithSelection.args = {
   selectedToNetworkIndex: 0,
   token: { name: 'DOT', logoSrc: '' },
 }
+
+export const Loading = Default.bind({})
+
+Loading.args = {
+  ...Default.args,
+  loading: true,
+}

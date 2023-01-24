@@ -8011,9 +8011,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@talismn/wayfinder-react@npm:snapshot":
-  version: 0.0.0-snapshot-20230120041107
-  resolution: "@talismn/wayfinder-react@npm:0.0.0-snapshot-20230120041107"
+"@talismn/wayfinder-react@npm:pr1":
+  version: 0.0.0-pr1-20230124164423
+  resolution: "@talismn/wayfinder-react@npm:0.0.0-pr1-20230124164423"
   dependencies:
     "@graphql-codegen/cli": ^2.16.1
     "@graphql-codegen/client-preset": ^1.2.3
@@ -8024,20 +8024,21 @@ __metadata:
     "@talismn/balances-substrate-orml": ^0.2.3
     "@talismn/chaindata-provider": ^0.2.0
     "@talismn/util": ^0.1.4
-    "@talismn/wayfinder": ^0.0.0-snapshot-20230120041107
+    "@talismn/wayfinder": ^0.0.0-pr1-20230124164423
     bignumber.js: ^9.1.1
     graphql: ^15.0.0
     graphql-request: ^5.0.0
+    immer: ^9.0.18
     lodash: ^4.17.21
     react-query: ^3.39.2
   peerDependencies:
     react: "*"
     react-dom: "*"
-  checksum: e4ba0739a0098956371802e6ed9d94da2c6e6cc6e3df310199d1529d8964c9286dfad53f163658467f1c2f5dbb12f9f52efc7ce7d7d3d0018eb173d2ab9cb3fe
+  checksum: 8b712a43ad5beeab6165cc8786bc548b26057890019b5b2cb2fe12d94cd3910edfad37dc685135163602e762da885e17243771711035a91d7f408ffd222ff66a
   languageName: node
   linkType: hard
 
-"@talismn/wayfinder@npm:^0.0.0-snapshot-20230120041107":
+"@talismn/wayfinder@npm:^0.0.0-pr1-20230124164423":
   version: 0.0.0-snapshot-20230120041107
   resolution: "@talismn/wayfinder@npm:0.0.0-snapshot-20230120041107"
   checksum: edb57c114ca0b560979a4d01186af7c9ef1a2107b8ff1cd86d6aed32be99d198128b6c71db6293914a95b20ab56853b3fc3b3165996e144496c4789fa38a73e6
@@ -8082,7 +8083,7 @@ __metadata:
     "@talismn/dot-pool-selector": snapshot
     "@talismn/util": 0.1.5
     "@talismn/wallets": ^1.1.6
-    "@talismn/wayfinder-react": snapshot
+    "@talismn/wayfinder-react": pr1
     "@testing-library/jest-dom": ^5.16.5
     "@testing-library/react": ^13.4.0
     "@testing-library/user-event": ^14.4.3
@@ -16792,6 +16793,13 @@ __metadata:
   version: 5.2.0
   resolution: "ignore@npm:5.2.0"
   checksum: 6b1f926792d614f64c6c83da3a1f9c83f6196c2839aa41e1e32dd7b8d174cef2e329d75caabb62cb61ce9dc432f75e67d07d122a037312db7caa73166a1bdb77
+  languageName: node
+  linkType: hard
+
+"immer@npm:^9.0.18":
+  version: 9.0.18
+  resolution: "immer@npm:9.0.18"
+  checksum: 85b3153dd01fce73c40591d0d6d7cd95878dab49f8ec4744c044adac05e0dab847b30c26259c478a5f87f974897be6df2780ff5bf86c8a0a27578fdeb300eb10
   languageName: node
   linkType: hard
 

@@ -20,6 +20,7 @@ const Swap = () => {
   const addresses = useMemo(() => accounts.map(x => x.address), [accounts])
 
   const {
+    status: wayfinderStatus,
     inputs: { dispatch, ...inputs },
     all,
     filtered,
@@ -75,6 +76,14 @@ const Swap = () => {
 
   const pending = 'PROCESSING' in status || 'SUBMITTING' in status
 
+  const isBiDirectionalRoute = all.routes?.some(
+    x =>
+      x.token.id === inputs.token &&
+      x.from.id === inputs.to &&
+      x.to.id === inputs.from &&
+      inputs.assets?.some(({ chainId, tokenId }) => chainId === x.from.id && tokenId === x.token.id)
+  )
+
   useEffect(() => {
     if (pending) {
       toast.loading('Your transaction is pending...', { id: TOAST_ID })
@@ -97,6 +106,7 @@ const Swap = () => {
     <>
       <div css={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '80vh' }}>
         <SwapComponent
+          loading={wayfinderStatus === 'loading'}
           accounts={accounts.map(x => ({
             name: x.name ?? x.address,
             address: x.address,
@@ -120,6 +130,11 @@ const Swap = () => {
             index => dispatch({ setTo: Maybe.of(index).mapOrUndefined(x => filtered.destinations[x]?.id) }),
             [dispatch, filtered.destinations]
           )}
+          canReverseNetworkRoute={isBiDirectionalRoute}
+          onReverseNetworkRoute={useCallback(
+            () => dispatch({ setFrom: inputs.to, setTo: inputs.from }),
+            [dispatch, inputs.from, inputs.to]
+          )}
           token={Maybe.of(inputs.token)
             .map(x => all.tokensMap[x])
             .mapOrUndefined(x => ({
@@ -138,26 +153,36 @@ const Swap = () => {
         open={tokenSelectorOpen}
         onRequestDismiss={useCallback(() => setTokenSelectorOpen(false), [])}
       >
-        {all.tokens?.map(x => {
-          const balance = balances
-            .filter(balance => balance.token.id === x.id)
-            .reduce((sum, balance) => sum + BigInt(balance.amount), 0n)
-            .toString()
-          const decimal = Decimal.fromPlanck(balance, x.decimals, x.symbol)
-          return (
+        {all.tokens
+          ?.map(x => ({
+            ...x,
+            balance: Decimal.fromPlanck(
+              balances
+                .filter(balance => balance.token.id === x.id)
+                .reduce((sum, balance) => sum + BigInt(balance.amount), 0n)
+                .toString(),
+              x.decimals,
+              x.symbol
+            ),
+          }))
+          .filter(x => !x.balance.planck.isZero())
+          .map(x => (
             <TokenSelectorItem
               logoSrc={x.logo}
               name={x.name}
               network=""
-              amount={decimal.toHuman()}
+              amount={x.balance.toHuman()}
               fiatAmount=""
               onClick={() => {
-                dispatch({ setToken: x.id })
+                if (!filtered.tokens.some(y => y.id === x.id)) {
+                  dispatch({ setFrom: undefined, setTo: undefined, setToken: x.id })
+                } else {
+                  dispatch({ setToken: x.id })
+                }
                 setTokenSelectorOpen(false)
               }}
             />
-          )
-        })}
+          ))}
       </TokenSelectorDialog>
     </>
   )

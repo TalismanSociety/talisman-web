@@ -38,7 +38,7 @@
     "@talismn/dot-pool-selector": "snapshot",
     "@talismn/util": "0.1.5",
     "@talismn/wallets": "^1.1.6",
-    "@talismn/wayfinder-react": "snapshot",
+    "@talismn/wayfinder-react": "pr1",
     "bignumber.js": "^9.0.1",
     "colorjs.io": "^0.4.1",
     "crypto-browserify": "^3.12.0",

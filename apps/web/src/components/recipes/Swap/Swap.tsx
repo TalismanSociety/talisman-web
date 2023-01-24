@@ -1,16 +1,19 @@
-import Button from '@components/atoms/Button'
-import { ArrowRight, ChevronRight } from '@components/atoms/Icon'
+import Button, { ButtonProps } from '@components/atoms/Button'
+import { ArrowRight, ChevronRight, Repeat } from '@components/atoms/Icon'
 import Identicon from '@components/atoms/Identicon'
+import Skeleton from '@components/atoms/Skeleton'
 import Select from '@components/molecules/Select'
 import TextInput from '@components/molecules/TextInput'
 import { useTheme } from '@emotion/react'
 import { Maybe } from '@util/monads'
 import Color from 'colorjs.io'
-import { useMemo } from 'react'
+import { motion } from 'framer-motion'
+import { useCallback, useMemo, useState } from 'react'
 
 import Cryptoticon from '../Cryptoticon'
 
 export type SwapProps = {
+  loading?: boolean
   accounts: Array<{ name: string; address: string; balance: string }>
   selectedAccountIndex: number
   onSelectAccountIndex: (value: number | undefined) => unknown
@@ -20,6 +23,8 @@ export type SwapProps = {
   toNetworks: Array<{ name: string; logoSrc: string }>
   selectedToNetworkIndex: number
   onSelectToNetworkIndex: (value: number | undefined) => unknown
+  canReverseNetworkRoute?: boolean
+  onReverseNetworkRoute: () => unknown
   token?: { name: string; logoSrc: string }
   onRequestTokenChange: () => unknown
   selectedTokenBalance?: string
@@ -30,8 +35,35 @@ export type SwapProps = {
   inputError?: string
 }
 
+const SwapNetworksButton = (props: Pick<ButtonProps<'button'>, 'onClick' | 'disabled'>) => {
+  return (
+    <Button variant="noop" {...props}>
+      <motion.div
+        initial="false"
+        whileHover={props.disabled ? 'false' : 'true'}
+        variants={{ false: { rotate: 0 }, true: { rotate: 90 } }}
+        css={{ position: 'relative', width: '3.2rem', height: '3.2rem' }}
+      >
+        <motion.div
+          variants={{ false: { display: 'none' }, true: { display: 'unset' } }}
+          css={{ position: 'absolute', inset: 0 }}
+        >
+          <Repeat width="3.2rem" height="3.2rem" css={{ transform: 'rotate(90deg)' }} />
+        </motion.div>
+        <motion.div
+          variants={{ false: { display: 'unset' }, true: { display: 'none' } }}
+          css={{ position: 'absolute', inset: 0 }}
+        >
+          <ArrowRight width="3.2rem" height="3.2rem" />
+        </motion.div>
+      </motion.div>
+    </Button>
+  )
+}
+
 const Swap = (props: SwapProps) => {
   const theme = useTheme()
+  const [networksSwapped, setNetworkSwapped] = useState(false)
 
   const errorProps = useMemo(() => {
     if (props.inputError !== undefined) {
@@ -43,6 +75,56 @@ const Swap = (props: SwapProps) => {
 
     return {}
   }, [props.inputError])
+
+  const fromNetworkSelect = useMemo(
+    () =>
+      props.loading ? (
+        <Skeleton.Foreground css={{ width: '16rem', height: '3.9rem' }} animate />
+      ) : (
+        <Select
+          width="16rem"
+          placeholder="From network"
+          value={props.selectedFromNetworkIndex}
+          onChange={props.onSelectFromNetworkIndex}
+          clearRequired
+        >
+          {props.fromNetworks.map((network, index) => (
+            <Select.Item
+              key={index}
+              value={index}
+              headlineText={network.name}
+              leadingIcon={<Cryptoticon src={network.logoSrc} alt={network.name} size="2rem" />}
+            />
+          ))}
+        </Select>
+      ),
+    [props.fromNetworks, props.loading, props.onSelectFromNetworkIndex, props.selectedFromNetworkIndex]
+  )
+
+  const toNetworkSelect = useMemo(
+    () =>
+      props.loading ? (
+        <Skeleton.Foreground css={{ width: '16rem', height: '3.9rem' }} animate />
+      ) : (
+        <Select
+          width="16rem"
+          placeholder="To network"
+          value={props.selectedToNetworkIndex}
+          onChange={props.onSelectToNetworkIndex}
+          clearRequired
+        >
+          {props.toNetworks.map((network, index) => (
+            <Select.Item
+              key={index}
+              value={index}
+              headlineText={network.name}
+              leadingIcon={<Cryptoticon src={network.logoSrc} alt={network.name} size="2rem" />}
+            />
+          ))}
+        </Select>
+      ),
+    [props.loading, props.onSelectToNetworkIndex, props.selectedToNetworkIndex, props.toNetworks]
+  )
 
   return (
     <div>
@@ -71,42 +153,21 @@ const Swap = (props: SwapProps) => {
             />
           ))}
         </Select>
-        <div css={{ display: 'flex', alignItems: 'center' }}>
-          <Select
-            width="16rem"
-            placeholder="From network"
-            value={props.selectedFromNetworkIndex}
-            onChange={props.onSelectFromNetworkIndex}
-            clearRequired
-          >
-            {props.fromNetworks.map((network, index) => (
-              <Select.Item
-                key={index}
-                value={index}
-                headlineText={network.name}
-                leadingIcon={<Cryptoticon src={network.logoSrc} alt={network.name} size="2rem" />}
-              />
-            ))}
-          </Select>
+        <div
+          style={{ flexDirection: networksSwapped ? 'row-reverse' : 'row' }}
+          css={{ display: 'flex', alignItems: 'center' }}
+        >
+          <motion.div layout>{networksSwapped ? toNetworkSelect : fromNetworkSelect}</motion.div>
           <div css={{ margin: '0 3rem', color: theme.color.primary }}>
-            <ArrowRight width="3.2rem" height="3.2rem" />
+            <SwapNetworksButton
+              onClick={useCallback(() => {
+                props.onReverseNetworkRoute()
+                setNetworkSwapped(x => !x)
+              }, [props])}
+              disabled={!props.canReverseNetworkRoute}
+            />
           </div>
-          <Select
-            width="16rem"
-            placeholder="To network"
-            value={props.selectedToNetworkIndex}
-            onChange={props.onSelectToNetworkIndex}
-            clearRequired
-          >
-            {props.toNetworks.map((network, index) => (
-              <Select.Item
-                key={index}
-                value={index}
-                headlineText={network.name}
-                leadingIcon={<Cryptoticon src={network.logoSrc} alt={network.name} size="2rem" />}
-              />
-            ))}
-          </Select>
+          <motion.div layout>{networksSwapped ? fromNetworkSelect : toNetworkSelect}</motion.div>
         </div>
         <TextInput
           type="number"
@@ -117,6 +178,7 @@ const Swap = (props: SwapProps) => {
             props.token === undefined ? (
               <Button
                 onClick={props.onRequestTokenChange}
+                disabled={props.loading}
                 css={{
                   padding: '1.1rem 0.8rem',
                   color: theme.color.primary,
