@@ -133,7 +133,7 @@ export const globalStyle = (theme: Theme) => css`
 
   body,
   html {
-    font-family: 'Surt', sans-serif;
+    font-family: 'Surt';
     padding: 0;
     margin: 0;
     scroll-behavior: smooth;

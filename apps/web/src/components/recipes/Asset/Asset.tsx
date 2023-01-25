@@ -192,8 +192,6 @@ const Asset = Object.assign((props: AssetProps) => {
   const { token, lockedAsset } = props
   const navigate = useNavigate()
 
-  console.log(token)
-
   return (
     <tr
       className="asset"

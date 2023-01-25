@@ -159,7 +159,10 @@ const Crowdloans = ({ className }: { className?: string }) => {
 
   return (
     <section className={`wallet-crowdloans ${className}`}>
-      <Panel title={t('Crowdloans')} subtitle={crowdloansUsd && formatCurrency(crowdloansUsd)}>
+      <Panel
+        title={t('Crowdloans')}
+        subtitle={crowdloansUsd && crowdloansUsd !== 0 ? formatCurrency(crowdloansUsd) : ''}
+      >
         {!contributionsHydrated ? (
           <PanelSection comingSoon>
             <div>{t('Summoning Crowdloan Contributions...')}</div>
