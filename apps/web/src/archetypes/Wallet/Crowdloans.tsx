@@ -109,6 +109,10 @@ const CrowdloanItemWithLink = styled((props: { contribution: CrowdloanContributi
     border-radius: 0 0 1.6rem 1.6rem;
   }
 
+  .panel-section:only-of-type:hover {
+    border-radius: 1.6rem;
+  }
+
   .panel-section:hover {
     background-color: rgb(38, 38, 38);
   }
