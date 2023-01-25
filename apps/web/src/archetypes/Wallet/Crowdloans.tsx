@@ -1,5 +1,5 @@
 import { ChainLogo, ExtensionStatusGate, Info, Panel, PanelSection, Pendor } from '@components'
-import { selectedPolkadotAccountsState } from '@domains/accounts/recoils'
+import { selectedSubstrateAccountsState } from '@domains/accounts/recoils'
 import { useTotalCrowdloanTotalFiatAmount } from '@domains/crowdloans/hooks'
 import styled from '@emotion/styled'
 import { CrowdloanContribution, useCrowdloanContributions } from '@libs/crowdloans'
@@ -145,7 +145,7 @@ const ExtensionUnavailable = styled((props: any) => {
 
 const Crowdloans = ({ className }: { className?: string }) => {
   const { t } = useTranslation()
-  const accounts = useRecoilValue(selectedPolkadotAccountsState).map(x => x.address)
+  const accounts = useRecoilValue(selectedSubstrateAccountsState).map(x => x.address)
   const { contributions, hydrated: contributionsHydrated } = useCrowdloanContributions({ accounts })
   const crowdloansUsd = useTotalCrowdloanTotalFiatAmount()
 

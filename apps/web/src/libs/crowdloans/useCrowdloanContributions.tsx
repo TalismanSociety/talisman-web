@@ -1,4 +1,4 @@
-import { polkadotAccountsState } from '@domains/accounts/recoils'
+import { substrateAccountsState } from '@domains/accounts/recoils'
 import { chainApiState } from '@domains/chains/recoils'
 import { SupportedRelaychains } from '@libs/talisman/util/_config'
 import { u8aToHex } from '@polkadot/util'
@@ -30,7 +30,7 @@ export function useCrowdloanContributions({
   // TODO: clean me or kill me
   const apiLoadable = useRecoilValueLoadable(waitForAll([chainApiState('polkadot'), chainApiState('kusama')]))
 
-  const allAccounts = useRecoilValue(polkadotAccountsState)
+  const allAccounts = useRecoilValue(substrateAccountsState)
   const [contributions, setContributions] = useState<CrowdloanContribution[]>([])
   const [hydrated, setHydrated] = useState(false)
 

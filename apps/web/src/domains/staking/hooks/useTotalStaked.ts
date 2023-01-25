@@ -1,11 +1,11 @@
-import { polkadotAccountsState } from '@domains/accounts/recoils'
+import { substrateAccountsState } from '@domains/accounts/recoils'
 import { useChainState, useTokenAmountFromAtomics } from '@domains/common/hooks'
 import BN from 'bn.js'
 import { useMemo } from 'react'
 import { useRecoilValue } from 'recoil'
 
 export const useTotalStaked = () => {
-  const accounts = useRecoilValue(polkadotAccountsState)
+  const accounts = useRecoilValue(substrateAccountsState)
   const poolMembersLoadable = useChainState(
     'query',
     'nominationPools',

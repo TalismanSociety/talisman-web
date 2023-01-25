@@ -4,7 +4,7 @@ import Text from '@components/atoms/Text'
 import HiddenDetails from '@components/molecules/HiddenDetails'
 import PoolStake, { PoolStakeList } from '@components/recipes/PoolStake/PoolStake'
 import { PoolStatus } from '@components/recipes/PoolStatusIndicator'
-import { selectedPolkadotAccountsState } from '@domains/accounts/recoils'
+import { selectedSubstrateAccountsState } from '@domains/accounts/recoils'
 import { createAccounts } from '@domains/nominationPools/utils'
 import { Maybe } from '@util/monads'
 import { useMemo } from 'react'
@@ -18,7 +18,7 @@ import PoolStakeItem from './PoolStakeItem'
 
 const Stakings = () => {
   const [api, pendingRewards, accounts] = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
-    waitForAll([apiState, allPendingPoolRewardsState, selectedPolkadotAccountsState])
+    waitForAll([apiState, allPendingPoolRewardsState, selectedSubstrateAccountsState])
   )
 
   const poolMembersLoadable = useChainState(
