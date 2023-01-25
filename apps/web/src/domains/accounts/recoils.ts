@@ -1,3 +1,4 @@
+import { storageEffect } from '@domains/common/effects'
 import { extensionState } from '@domains/extension/recoils'
 import { useEffect } from 'react'
 import { atom, selector, useRecoilValue, useSetRecoilState, waitForAll } from 'recoil'
@@ -36,6 +37,19 @@ export const selectedSubstrateAccountsState = selector({
   get: ({ get }) => {
     return get(selectedAccountsState).filter((x: any) => x['type'] !== 'ethereum')
   },
+})
+
+/**
+ * For non-globally selected account
+ * example: staking, swapping
+ */
+export const selectedAccountState = atom({
+  key: 'SelectedAccount',
+  default: selector({
+    key: 'SelectedAccount/Default',
+    get: ({ get }) => get(substrateAccountsState)[0],
+  }),
+  effects: [storageEffect(sessionStorage)],
 })
 
 export const AccountsWatcher = () => {

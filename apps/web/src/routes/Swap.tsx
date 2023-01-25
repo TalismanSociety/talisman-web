@@ -1,6 +1,6 @@
 import SwapComponent from '@components/recipes/Swap'
 import TokenSelectorDialog, { TokenSelectorItem } from '@components/recipes/TokenSelectorDialog'
-import { substrateAccountsState } from '@domains/accounts/recoils'
+import { selectedAccountState, substrateAccountsState } from '@domains/accounts/recoils'
 import { extensionState } from '@domains/extension/recoils'
 import { useBalances } from '@libs/talisman'
 import { useAssetsWithBalances, useWayfinder, useXcmBalances, useXcmSender } from '@talismn/wayfinder-react'
@@ -8,13 +8,15 @@ import Decimal from '@util/Decimal'
 import { Maybe } from '@util/monads'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import toast from 'react-hot-toast'
-import { useRecoilValue } from 'recoil'
+import { useRecoilState, useRecoilValue } from 'recoil'
 
 const WAYFINDER_SQUID = 'https://squid.subsquid.io/wayfinder/v/0/graphql'
 const TOAST_ID = 'XCM_TRANSACTION'
 
 const Swap = () => {
   const accounts = useRecoilValue(substrateAccountsState)
+  const [selectedAccount, setSelectedAccount] = useRecoilState(selectedAccountState)
+
   const extension = useRecoilValue(extensionState)
 
   const addresses = useMemo(() => accounts.map(x => x.address), [accounts])
@@ -85,6 +87,10 @@ const Swap = () => {
   )
 
   useEffect(() => {
+    dispatch({ setSender: selectedAccount?.address })
+  }, [dispatch, selectedAccount?.address])
+
+  useEffect(() => {
     if (pending) {
       toast.loading('Your transaction is pending...', { id: TOAST_ID })
     }
@@ -112,10 +118,10 @@ const Swap = () => {
             address: x.address,
             balance: '',
           }))}
-          selectedAccountIndex={accounts.findIndex(x => x.address === inputs.sender)}
+          selectedAccountIndex={accounts.findIndex(x => x.address === selectedAccount?.address)}
           onSelectAccountIndex={useCallback(
-            index => dispatch({ setSender: Maybe.of(index).mapOrUndefined(x => accounts[x]?.address) }),
-            [accounts, dispatch]
+            index => setSelectedAccount(Maybe.of(index).mapOrUndefined(x => accounts[x])),
+            [accounts, setSelectedAccount]
           )}
           selectedTokenBalance={selectedTokenBalance?.toHuman()}
           fromNetworks={filtered.sources.map(x => ({ name: x.name, logoSrc: x.logo }))}

@@ -8,7 +8,7 @@ import PoolExitingInProgress from '@components/recipes/PoolExitingInProgress'
 import PoolSelectorDialog from '@components/recipes/PoolSelectorDialog'
 import { PoolStatus } from '@components/recipes/PoolStatusIndicator'
 import StakingInput from '@components/recipes/StakingInput'
-import { substrateAccountsState } from '@domains/accounts/recoils'
+import { selectedAccountState, substrateAccountsState } from '@domains/accounts/recoils'
 import { apiState, chainState, nativeTokenDecimalState } from '@domains/chains/recoils'
 import { useTokenAmountFromPlanck } from '@domains/common/hooks'
 import useChainState from '@domains/common/hooks/useChainState'
@@ -22,15 +22,7 @@ import { Maybe } from '@util/monads'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Suspense, useCallback, useEffect, useMemo, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import {
-  atom,
-  constSelector,
-  selector,
-  useRecoilState,
-  useRecoilValue,
-  useRecoilValueLoadable,
-  waitForAll,
-} from 'recoil'
+import { constSelector, selector, useRecoilState, useRecoilValue, useRecoilValueLoadable, waitForAll } from 'recoil'
 
 const availableToStakeState = selector({
   key: 'Staking/AvailableToStake',
@@ -266,14 +258,6 @@ const PoolSelector = (props: {
     </PoolSelectorDialog>
   )
 }
-
-const selectedAccountState = atom({
-  key: 'Page/Staking/SelectedAccount',
-  default: selector({
-    key: 'Page/Staking/SelectedAccount/Default',
-    get: ({ get }) => get(substrateAccountsState)[0],
-  }),
-})
 
 const Input = () => {
   const joinPoolExtrinsic = useExtrinsic('nominationPools', 'join')
