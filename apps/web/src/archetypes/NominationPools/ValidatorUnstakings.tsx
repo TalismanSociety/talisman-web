@@ -1,5 +1,5 @@
 import PoolUnstake, { ValidatorUnstakeList } from '@components/recipes/PoolUnstake'
-import { selectedPolkadotAccountsState } from '@domains/accounts/recoils'
+import { selectedSubstrateAccountsState } from '@domains/accounts/recoils'
 import { erasToMilliseconds } from '@domains/common/utils'
 import { addMilliseconds, formatDistanceToNow } from 'date-fns'
 import { useRecoilValue, waitForAll } from 'recoil'
@@ -14,7 +14,7 @@ const ValidatorUnstakings = () => {
   const sessionProgressLoadable = useChainState('derive', 'session', 'progress', [])
 
   const [api, accounts, decimal, nativeTokenPrice] = useRecoilValue(
-    waitForAll([apiState, selectedPolkadotAccountsState, nativeTokenDecimalState, nativeTokenPriceState('usd')])
+    waitForAll([apiState, selectedSubstrateAccountsState, nativeTokenDecimalState, nativeTokenPriceState('usd')])
   )
 
   const stakingsLoadable = useChainState('derive', 'staking', 'accounts', [

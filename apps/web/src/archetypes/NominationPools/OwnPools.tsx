@@ -1,6 +1,6 @@
 import Text from '@components/atoms/Text'
 import PoolStake, { PoolStakeList } from '@components/recipes/PoolStake/PoolStake'
-import { selectedPolkadotAccountsState } from '@domains/accounts/recoils'
+import { selectedSubstrateAccountsState } from '@domains/accounts/recoils'
 import { useChainState } from '@domains/common/hooks'
 import { useTotalStaked } from '@domains/staking/hooks'
 import { useTheme } from '@emotion/react'
@@ -13,7 +13,7 @@ import ValidatorStakings from './ValidatorStakings'
 import ValidatorUnstakings from './ValidatorUnstakings'
 
 const UnstakingHeader = () => {
-  const accounts = useRecoilValue(selectedPolkadotAccountsState)
+  const accounts = useRecoilValue(selectedSubstrateAccountsState)
 
   const poolMembersLoadable = useChainState(
     'query',

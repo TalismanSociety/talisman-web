@@ -1,5 +1,5 @@
 import PoolUnstake, { PoolUnstakeList } from '@components/recipes/PoolUnstake'
-import { selectedPolkadotAccountsState } from '@domains/accounts/recoils'
+import { selectedSubstrateAccountsState } from '@domains/accounts/recoils'
 import { erasToMilliseconds } from '@domains/common/utils'
 import { usePoolUnlocking } from '@domains/nominationPools/hooks/usePoolUnlocking'
 import { createAccounts } from '@domains/nominationPools/utils'
@@ -18,7 +18,7 @@ const Unstakings = (props: { account?: string; showHeader?: boolean; compact?: b
   const sessionProgressLoadable = useChainState('derive', 'session', 'progress', [])
 
   const [api, _accounts, decimalFromAtomics, nativeTokenPrice] = useRecoilValue(
-    waitForAll([apiState, selectedPolkadotAccountsState, nativeTokenDecimalState, nativeTokenPriceState('usd')])
+    waitForAll([apiState, selectedSubstrateAccountsState, nativeTokenDecimalState, nativeTokenPriceState('usd')])
   )
 
   const accounts = useMemo(
