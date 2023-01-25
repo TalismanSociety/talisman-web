@@ -1192,6 +1192,20 @@ Our mission is to create an open financial future that overcomes borders and fos
       Discord: 'https://discord.com/invite/JFzD2b5P2B',
     },
   },
+  {
+    id: '2-2256',
+    name: 'Mangata X',
+    slug: 'mangata',
+    token: '$MGX',
+    subtitle: 'Trade crypto without gas, front-running & MEV.',
+    info: 'Mangata offers traders and liquidity providers the best platform to access unique tokens and earn rewards. Mangata will offer access to the widest array of Polkadot tokens, better prices for traders by mitigating MEV, and the ability to trade without gas.',
+    links: {
+      Website: 'https://www.mangata.finance/',
+      Twitter: 'https://twitter.com/MangataFinance',
+      Discord: 'https://discord.com/invite/X4VTaejebf',
+      Github: 'https://github.com/mangata-finance',
+    },
+  },
 ]
 
 export type CrowdloanDetails = {
@@ -2741,4 +2755,28 @@ export const crowdloanDetails: CrowdloanDetails[] = [
   //     info: null,
   //   },
   // },
+  {
+    relayId: 2,
+    paraId: 2256,
+    contributeUrl: 'https://crowdloan.mangata.finance/',
+    rewards: {
+      tokens: [
+        {
+          symbol: 'MGX',
+          perKSM: '> 5,000',
+        },
+      ],
+      custom: [
+        {
+          title: 'Min. contribution',
+          value: '1 KSM',
+        },
+        {
+          title: 'Crowdloan Cap',
+          value: '6,000 KSM',
+        },
+      ],
+      info: null,
+    },
+  },
 ]
