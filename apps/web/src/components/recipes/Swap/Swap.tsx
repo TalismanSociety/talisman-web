@@ -207,7 +207,7 @@ const Swap = (props: SwapProps) => {
                 }}
               >
                 <div css={{ display: 'flex', alignItems: 'center', gap: '0.9rem' }}>
-                  <Cryptoticon src={props.token.logoSrc} alt={props.token.name} size="2.5rem" />
+                  <Cryptoticon src={props.token.logoSrc} alt={props.token.name} size="2rem" />
                   <div>{props.token.name}</div>
                 </div>
               </Button>
