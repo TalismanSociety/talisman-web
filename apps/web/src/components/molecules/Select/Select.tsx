@@ -45,13 +45,13 @@ type SelectItemProps = {
 const SelectItem = forwardRef<HTMLDivElement, SelectItemProps>((props, ref) => (
   <div ref={ref} css={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
     {props.leadingIcon && <figure css={{ maxWidth: 40, maxHeight: 40, margin: 0 }}>{props.leadingIcon}</figure>}
-    <div>
-      <div>
-        <Text>{props.headlineText}</Text>
-      </div>
-      <div>
-        <Text>{props.supportingText}</Text>
-      </div>
+    <div css={{ overflow: 'hidden' }}>
+      <Text.Body as="div" css={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+        {props.headlineText}
+      </Text.Body>
+      <Text.Body as="div" css={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+        {props.supportingText}
+      </Text.Body>
     </div>
   </div>
 ))
@@ -170,14 +170,16 @@ const Select = Object.assign(
           }}
           {...getReferenceProps()}
         >
-          <Text.Body as="div" css={{ pointerEvents: 'none', userSelect: 'none' }}>
+          <Text.Body as="div" css={{ pointerEvents: 'none', userSelect: 'none', overflow: 'hidden' }}>
             {selectedChild ?? props.placeholder}
           </Text.Body>
-          {clearRequired ? (
-            <X />
-          ) : (
-            <ChevronDown css={{ transform: open ? 'rotate(180deg)' : undefined, transition: 'ease 0.25s' }} />
-          )}
+          <div>
+            {clearRequired ? (
+              <X />
+            ) : (
+              <ChevronDown css={{ transform: open ? 'rotate(180deg)' : undefined, transition: 'ease 0.25s' }} />
+            )}
+          </div>
         </motion.button>
         <motion.ul
           ref={floating}
