@@ -39,10 +39,10 @@ export const useTokenAmount = (amount?: string | (() => string), options: Option
   return { decimalAmount, fiatAmount, localizedFiatAmount } as const
 }
 
-export const useTokenAmountFromAtomics = (atomics?: string | BN, options: Options = { fiatCurrency: 'usd' }) => {
+export const useTokenAmountFromPlanck = (planck?: string | BN, options: Options = { fiatCurrency: 'usd' }) => {
   const nativeTokenDecimal = useRecoilValue(nativeTokenDecimalState)
 
-  return useTokenAmount(atomics === undefined ? undefined : nativeTokenDecimal.fromAtomics(atomics).toString(), options)
+  return useTokenAmount(planck === undefined ? undefined : nativeTokenDecimal.fromPlanck(planck).toString(), options)
 }
 
 export const useTokenAmountState = (

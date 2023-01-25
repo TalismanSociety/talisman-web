@@ -28,7 +28,7 @@ const PoolStakeItem = ({
     pendingRewards?: UInt
   }
 }) => {
-  const [decimalFromAtomics, nativeTokenPrice] = useRecoilValue(
+  const [decimalFromPlanck, nativeTokenPrice] = useRecoilValue(
     waitForAll([nativeTokenDecimalState, nativeTokenPriceState('usd')])
   )
 
@@ -45,17 +45,18 @@ const PoolStakeItem = ({
         poolStatus={item.status}
         accountName={item.account?.name ?? ''}
         accountAddress={item.account?.address ?? ''}
-        stakingAmount={decimalFromAtomics.fromAtomics(item.poolMember.points).toHuman()}
+        stakingAmount={decimalFromPlanck.fromPlanck(item.poolMember.points).toHuman()}
         stakingAmountInFiat={(
-          decimalFromAtomics.fromAtomics(item.poolMember.points).toNumber() * nativeTokenPrice
+          decimalFromPlanck.fromPlanck(item.poolMember.points).toNumber() * nativeTokenPrice
         ).toLocaleString(undefined, { style: 'currency', currency: 'usd', currencyDisplay: 'narrowSymbol' })}
-        rewardsAmount={'+' + decimalFromAtomics.fromAtomics(item.pendingRewards?.toString()).toHuman()}
+        rewardsAmount={'+' + decimalFromPlanck.fromPlanck(item.pendingRewards?.toString()).toHuman()}
         rewardsAmountInFiat={
           '+' +
-          (decimalFromAtomics.fromAtomics(item.pendingRewards).toNumber() * nativeTokenPrice).toLocaleString(
-            undefined,
-            { style: 'currency', currency: 'usd', currencyDisplay: 'narrowSymbol' }
-          )
+          (decimalFromPlanck.fromPlanck(item.pendingRewards).toNumber() * nativeTokenPrice).toLocaleString(undefined, {
+            style: 'currency',
+            currency: 'usd',
+            currencyDisplay: 'narrowSymbol',
+          })
         }
         poolName={item.poolName ?? ''}
         onRequestClaim={() => claimPayoutExtrinsic.signAndSend(item.account?.address ?? '')}

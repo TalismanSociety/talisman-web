@@ -17,7 +17,7 @@ const Unstakings = (props: { account?: string; showHeader?: boolean; compact?: b
 
   const sessionProgressLoadable = useChainState('derive', 'session', 'progress', [])
 
-  const [api, _accounts, decimalFromAtomics, nativeTokenPrice] = useRecoilValue(
+  const [api, _accounts, decimal, nativeTokenPrice] = useRecoilValue(
     waitForAll([apiState, selectedSubstrateAccountsState, nativeTokenDecimalState, nativeTokenPriceState('usd')])
   )
 
@@ -55,14 +55,15 @@ const Unstakings = (props: { account?: string; showHeader?: boolean; compact?: b
             key={index}
             accountName={accounts.find(({ address }) => address === x.address)?.name ?? ''}
             accountAddress={x.address ?? ''}
-            unstakingAmount={decimalFromAtomics.fromAtomics(x.amount).toHuman()}
-            unstakingFiatAmount={(
-              decimalFromAtomics.fromAtomics(x.amount).toNumber() * nativeTokenPrice
-            ).toLocaleString(undefined, {
-              style: 'currency',
-              currency: 'usd',
-              currencyDisplay: 'narrowSymbol',
-            })}
+            unstakingAmount={decimal.fromPlanck(x.amount).toHuman()}
+            unstakingFiatAmount={(decimal.fromPlanck(x.amount).toNumber() * nativeTokenPrice).toLocaleString(
+              undefined,
+              {
+                style: 'currency',
+                currency: 'usd',
+                currencyDisplay: 'narrowSymbol',
+              }
+            )}
             timeTilWithdrawable={
               x.erasTilWithdrawable === undefined
                 ? undefined
