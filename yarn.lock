@@ -11393,9 +11393,9 @@ __metadata:
   linkType: hard
 
 "countup.js@npm:^2.3.2":
-  version: 2.3.2
-  resolution: "countup.js@npm:2.3.2"
-  checksum: 77bb509cd17619568c8d841f9dbba7d75c70948d7f9acd0a1acea80e3894c4b4173e27e8896268c1f53415ebee465229f1e623da5ad759083a618484ac4f9b60
+  version: 2.4.1
+  resolution: "countup.js@npm:2.4.1"
+  checksum: 0eed7a340e6737656ae28a00288e61124efc16303858d575c0620b8efca3d3d521a66ca442fab96ab6a5aa99529c49cff5db9e05647e740eb96d1f43b05ca22b
   languageName: node
   linkType: hard
 
