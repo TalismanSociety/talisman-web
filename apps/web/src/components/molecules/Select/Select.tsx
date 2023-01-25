@@ -85,9 +85,8 @@ const Select = Object.assign(
       onOpenChange: open => {
         if (clearRequired) {
           props.onChange?.(undefined)
-        } else {
-          setOpen(open)
         }
+        setOpen(open)
       },
       whileElementsMounted: autoUpdate,
       middleware: [
