@@ -1,4 +1,4 @@
-import { useExtrinsic, useQueryMulti, useTokenAmountFromAtomics, useTokenAmountState } from '@domains/common/hooks'
+import { useExtrinsic, useQueryMulti, useTokenAmountFromPlanck, useTokenAmountState } from '@domains/common/hooks'
 import useExtrinsicBatch from '@domains/common/hooks/useExtrinsicBatch'
 import { BN } from '@polkadot/util'
 import { useMemo } from 'react'
@@ -13,30 +13,30 @@ export const useValidatorUnstakeForm = (account?: string) => {
 
   const [input, setAmount] = useTokenAmountState('')
 
-  const minNeededForMembership = useTokenAmountFromAtomics(queriesLoadable.contents[0])
+  const minNeededForMembership = useTokenAmountFromPlanck(queriesLoadable.contents[0])
 
-  const available = useTokenAmountFromAtomics(queriesLoadable.valueMaybe()?.[1]?.unwrapOrDefault().active.unwrap())
+  const available = useTokenAmountFromPlanck(queriesLoadable.valueMaybe()?.[1]?.unwrapOrDefault().active.unwrap())
 
-  const resulting = useTokenAmountFromAtomics(
+  const resulting = useTokenAmountFromPlanck(
     useMemo(
-      () => available.decimalAmount?.atomics.sub(input.decimalAmount?.atomics ?? new BN(0)),
-      [available.decimalAmount?.atomics, input.decimalAmount?.atomics]
+      () => available.decimalAmount?.planck.sub(input.decimalAmount?.planck ?? new BN(0)),
+      [available.decimalAmount?.planck, input.decimalAmount?.planck]
     )
   )
 
   const error = useMemo(() => {
     if (queriesLoadable.state !== 'hasValue') return
 
-    if (available.decimalAmount !== undefined && input.decimalAmount?.atomics.gt(available.decimalAmount.atomics)) {
+    if (available.decimalAmount !== undefined && input.decimalAmount?.planck.gt(available.decimalAmount.planck)) {
       return new Error('Insufficient balance')
     }
 
     if (
       available.decimalAmount !== undefined &&
       input.decimalAmount !== undefined &&
-      !input.decimalAmount.atomics.eq(available.decimalAmount.atomics) &&
+      !input.decimalAmount.planck.eq(available.decimalAmount.planck) &&
       minNeededForMembership.decimalAmount !== undefined &&
-      available.decimalAmount.atomics.sub(input.decimalAmount.atomics).lt(minNeededForMembership.decimalAmount.atomics)
+      available.decimalAmount.planck.sub(input.decimalAmount.planck).lt(minNeededForMembership.decimalAmount.planck)
     ) {
       return new Error(`Need ${minNeededForMembership.decimalAmount?.toHuman()} to stay active`)
     }

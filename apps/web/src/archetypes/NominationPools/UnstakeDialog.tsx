@@ -27,7 +27,7 @@ const UnstakeDialog = (props: { account?: string; onDismiss: () => unknown }) =>
     [unbondExtrinsic.contents?.status?.isInBlock]
   )
 
-  const isLeaving = available.decimalAmount !== undefined && decimalAmount?.atomics.eq(available.decimalAmount.atomics)
+  const isLeaving = available.decimalAmount !== undefined && decimalAmount?.planck.eq(available.decimalAmount.planck)
 
   return (
     <BaseUnstakeDialog
@@ -49,7 +49,7 @@ const UnstakeDialog = (props: { account?: string; onDismiss: () => unknown }) =>
             unbondExtrinsic.unbondMax(props.account, props.account).finally(() => props.onDismiss())
           } else {
             unbondExtrinsic
-              .signAndSend(props.account, props.account, decimalAmount?.atomics)
+              .signAndSend(props.account, props.account, decimalAmount?.planck)
               .finally(() => props.onDismiss())
           }
         }
@@ -60,7 +60,7 @@ const UnstakeDialog = (props: { account?: string; onDismiss: () => unknown }) =>
         }
       }}
       confirmState={
-        !isReady || inputError !== undefined || decimalAmount?.atomics.isZero()
+        !isReady || inputError !== undefined || decimalAmount?.planck.isZero()
           ? 'disabled'
           : unbondExtrinsic.state === 'loading'
           ? 'pending'

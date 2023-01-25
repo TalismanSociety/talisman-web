@@ -47,8 +47,8 @@ const ValidatorUnstakings = () => {
         const commonProps = (amount: any) => ({
           accountName: accounts[sIndex]?.name ?? '',
           accountAddress: staking.accountId.toString(),
-          unstakingAmount: decimal.fromAtomics(amount).toHuman(),
-          unstakingFiatAmount: (decimal.fromAtomics(amount).toNumber() * nativeTokenPrice).toLocaleString(undefined, {
+          unstakingAmount: decimal.fromPlanck(amount).toHuman(),
+          unstakingFiatAmount: (decimal.fromPlanck(amount).toNumber() * nativeTokenPrice).toLocaleString(undefined, {
             style: 'currency',
             currency: 'usd',
             currencyDisplay: 'narrowSymbol',

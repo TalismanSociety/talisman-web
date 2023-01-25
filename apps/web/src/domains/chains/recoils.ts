@@ -138,8 +138,8 @@ export const nativeTokenDecimalState = selector({
   get: ({ get }) => {
     const chain = get(chainState)
     return {
-      fromAtomics: (value: string | number | bigint | BN | ToBn | undefined) =>
-        Decimal.fromAtomics(value, chain.nativeToken.data.decimals, chain.nativeToken.data.symbol),
+      fromPlanck: (value: string | number | bigint | BN | ToBn | undefined) =>
+        Decimal.fromPlanck(value, chain.nativeToken.data.decimals, chain.nativeToken.data.symbol),
       fromUserInput: (input: string) =>
         Decimal.fromUserInput(input, chain.nativeToken.data.decimals, chain.nativeToken.data.symbol),
     }

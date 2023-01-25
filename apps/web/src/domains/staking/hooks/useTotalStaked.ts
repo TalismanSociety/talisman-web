@@ -1,5 +1,5 @@
 import { substrateAccountsState } from '@domains/accounts/recoils'
-import { useChainState, useTokenAmountFromAtomics } from '@domains/common/hooks'
+import { useChainState, useTokenAmountFromPlanck } from '@domains/common/hooks'
 import BN from 'bn.js'
 import { useMemo } from 'react'
 import { useRecoilValue } from 'recoil'
@@ -16,7 +16,7 @@ export const useTotalStaked = () => {
     }
   )
 
-  return useTokenAmountFromAtomics(
+  return useTokenAmountFromPlanck(
     useMemo(
       () =>
         accounts.length === 0
