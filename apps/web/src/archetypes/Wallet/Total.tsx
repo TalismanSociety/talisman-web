@@ -4,12 +4,10 @@ import { useTotalStaked } from '@domains/staking/hooks'
 import styled from '@emotion/styled'
 import { useActiveAccount, useBalances } from '@libs/talisman'
 import { device } from '@util/breakpoints'
-import { PropsWithChildren } from 'react'
+import { PropsWithChildren, Suspense } from 'react'
 import { useTranslation } from 'react-i18next'
 
-const Total = styled(({ className }: PropsWithChildren<{ className?: string }>) => {
-  const { t } = useTranslation()
-
+const TotalAmount = () => {
   const { balances, assetsAmount } = useBalances()
   const address = useActiveAccount().address
 
@@ -21,16 +19,25 @@ const Total = styled(({ className }: PropsWithChildren<{ className?: string }>) 
   const totalPortfolioValue = fiatTotal + crowdloanTotal + (totalStaked.fiatAmount ?? 0)
 
   return (
+    <span>
+      {totalPortfolioValue.toLocaleString(undefined, {
+        style: 'currency',
+        currency: 'USD',
+        currencyDisplay: 'narrowSymbol',
+      })}
+    </span>
+  )
+}
+
+const Total = styled(({ className }: PropsWithChildren<{ className?: string }>) => {
+  const { t } = useTranslation()
+  return (
     <div className={`wallet-total ${className}`}>
       <div className="title">{t('Portfolio value')}</div>
       <div className="amount">
-        <span>
-          {totalPortfolioValue.toLocaleString(undefined, {
-            style: 'currency',
-            currency: 'USD',
-            currencyDisplay: 'narrowSymbol',
-          }) ?? <StyledLoader />}
-        </span>
+        <Suspense fallback={<StyledLoader />}>
+          <TotalAmount />
+        </Suspense>
       </div>
     </div>
   )
