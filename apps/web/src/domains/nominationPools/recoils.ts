@@ -1,4 +1,4 @@
-import { polkadotAccountsState } from '@domains/accounts/recoils'
+import { substrateAccountsState } from '@domains/accounts/recoils'
 import { chainReadIdState } from '@domains/common/recoils'
 import type { AnyNumber } from '@polkadot/types-codec/types'
 import DotPoolSelector, { ValidatorSelector, defaultOptions } from '@talismn/dot-pool-selector'
@@ -12,7 +12,7 @@ export const allPendingPoolRewardsState = selector({
     get(chainReadIdState)
 
     const api = get(apiState)
-    const accounts = get(polkadotAccountsState)
+    const accounts = get(substrateAccountsState)
 
     return Promise.all(
       accounts.map(({ address }) =>

@@ -7,8 +7,8 @@ export const accountsState = atom<Array<{ address: string; name?: string }>>({
   default: [],
 })
 
-export const polkadotAccountsState = selector({
-  key: 'PolkadotAccounts',
+export const substrateAccountsState = selector({
+  key: 'SubstrateAccounts',
   get: ({ get }) => {
     const accounts = get(accountsState)
     return accounts.filter((x: any) => x['type'] !== 'ethereum')
@@ -31,8 +31,8 @@ export const selectedAccountsState = selector({
   },
 })
 
-export const selectedPolkadotAccountsState = selector({
-  key: 'SelectedPolkadotAccounts',
+export const selectedSubstrateAccountsState = selector({
+  key: 'SelectedSubstrateAccounts',
   get: ({ get }) => {
     return get(selectedAccountsState).filter((x: any) => x['type'] !== 'ethereum')
   },

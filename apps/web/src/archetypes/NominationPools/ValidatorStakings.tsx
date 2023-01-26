@@ -1,5 +1,5 @@
 import { ValidatorStakeList } from '@components/recipes/ValidatorStake'
-import { selectedPolkadotAccountsState } from '@domains/accounts/recoils'
+import { selectedSubstrateAccountsState } from '@domains/accounts/recoils'
 import { Maybe } from '@util/monads'
 import { useRecoilValue } from 'recoil'
 
@@ -7,7 +7,7 @@ import useChainState from '../../domains/common/hooks/useChainState'
 import ValidatorStakeItem from './ValidatorStakeItem'
 
 const ValidatorStakings = () => {
-  const accounts = useRecoilValue(selectedPolkadotAccountsState)
+  const accounts = useRecoilValue(selectedSubstrateAccountsState)
 
   const activeEra = useChainState('query', 'staking', 'activeEra', []).valueMaybe()
 

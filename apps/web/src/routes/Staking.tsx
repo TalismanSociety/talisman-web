@@ -8,7 +8,7 @@ import PoolExitingInProgress from '@components/recipes/PoolExitingInProgress'
 import PoolSelectorDialog from '@components/recipes/PoolSelectorDialog'
 import { PoolStatus } from '@components/recipes/PoolStatusIndicator'
 import StakingInput from '@components/recipes/StakingInput'
-import { polkadotAccountsState } from '@domains/accounts/recoils'
+import { substrateAccountsState } from '@domains/accounts/recoils'
 import { apiState, chainState, nativeTokenDecimalState } from '@domains/chains/recoils'
 import { useTokenAmountFromAtomics } from '@domains/common/hooks'
 import useChainState from '@domains/common/hooks/useChainState'
@@ -38,7 +38,7 @@ const availableToStakeState = selector({
     get(chainReadIdState)
 
     const api = get(apiState)
-    const accounts = get(polkadotAccountsState)
+    const accounts = get(substrateAccountsState)
 
     const balances = await Promise.all(accounts.map(({ address }) => api.derive.balances.all(address)))
 
@@ -51,7 +51,7 @@ const availableToStakeState = selector({
 })
 
 const Statistics = () => {
-  const accounts = useRecoilValue(polkadotAccountsState)
+  const accounts = useRecoilValue(substrateAccountsState)
   const poolMembersLoadable = useChainState(
     'query',
     'nominationPools',
@@ -271,7 +271,7 @@ const selectedAccountState = atom({
   key: 'Page/Staking/SelectedAccount',
   default: selector({
     key: 'Page/Staking/SelectedAccount/Default',
-    get: ({ get }) => get(polkadotAccountsState)[0],
+    get: ({ get }) => get(substrateAccountsState)[0],
   }),
 })
 
@@ -291,7 +291,7 @@ const Input = () => {
   )
 
   const [api, accounts, recommendedPools, pendingRewards] = useRecoilValue(
-    waitForAll([apiState, polkadotAccountsState, recommendedPoolsState, allPendingPoolRewardsState])
+    waitForAll([apiState, substrateAccountsState, recommendedPoolsState, allPendingPoolRewardsState])
   )
 
   const initialPoolId = poolIdFromSearch ?? recommendedPools[0]?.poolId
