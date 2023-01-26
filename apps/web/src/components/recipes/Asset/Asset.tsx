@@ -5,7 +5,7 @@ import HiddenDetails from '@components/molecules/HiddenDetails'
 import { keyframes, useTheme } from '@emotion/react'
 import styled from '@emotion/styled'
 import { Balances } from '@talismn/balances'
-import _ from 'lodash'
+import _, { startCase } from 'lodash'
 import { Children, ReactElement, ReactNode } from 'react'
 import { useNavigate } from 'react-router-dom'
 
@@ -215,7 +215,7 @@ const Asset = Object.assign((props: AssetProps) => {
               borderRadius: '50%',
             }}
             alt={' logo'}
-            title={token?.tokenDetails?.chain?.id ?? token?.tokenDetails?.coingeckoId}
+            title={startCase(token?.tokenDetails?.chain?.id ?? token?.tokenDetails?.coingeckoId)}
           />
           <div css={{ display: 'flex', flexDirection: 'column', gap: '0.4em' }}>
             <Text.Body css={{ fontWeight: 600, fontSize: '16px', color: theme.color.onSurface }}>
@@ -236,7 +236,7 @@ const Asset = Object.assign((props: AssetProps) => {
                   src={token?.tokenDetails?.logo}
                   css={{ width: '100%', height: '100%', borderRadius: '50%' }}
                   alt={token?.tokenDetails?.name + ' logo'}
-                  title={token?.tokenDetails?.chain?.id ?? token?.tokenDetails?.coingeckoId}
+                  title={startCase(token?.tokenDetails?.chain?.id ?? token?.tokenDetails?.coingeckoId)}
                 />
               </div>
               {token?.ormlTokens?.map((token: any) => (
@@ -249,7 +249,7 @@ const Asset = Object.assign((props: AssetProps) => {
                     }
                     css={{ width: '100%', height: '100%', borderRadius: '50%' }}
                     alt={token?.tokenDetails?.name + ' logo'}
-                    title={token?.tokenDetails?.chain?.id ?? token?.tokenDetails?.coingeckoId}
+                    title={startCase(token?.tokenDetails?.chain?.id ?? token?.tokenDetails?.coingeckoId)}
                   />
                 </div>
               ))}

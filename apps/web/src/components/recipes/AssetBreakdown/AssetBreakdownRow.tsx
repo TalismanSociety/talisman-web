@@ -42,7 +42,7 @@ export const AssetBreakdownRowHeader = ({ token, isOrml }: { token: any; isOrml?
               height: '2em',
               borderRadius: '50%',
             }}
-            title={token?.tokenDetails?.chain?.id ?? token?.tokenDetails?.coingeckoId}
+            title={startCase(token?.tokenDetails?.chain?.id ?? token?.tokenDetails?.coingeckoId)}
           />
           <div
             css={{
@@ -59,9 +59,9 @@ export const AssetBreakdownRowHeader = ({ token, isOrml }: { token: any; isOrml?
                 fontWeight: 'bold',
               }}
             >
-              {token?.tokenDetails?.chain?.id
-                ? startCase(token?.tokenDetails?.chain?.id)
-                : startCase(token?.tokenDetails?.coingeckoId)}
+              {startCase(
+                token?.tokenDetails?.chain?.id ? token?.tokenDetails?.chain?.id : token?.tokenDetails?.coingeckoId
+              )}
             </Text.Body>
             {/* <Text.Body css={{
                                 fontSize: '1.6rem',
