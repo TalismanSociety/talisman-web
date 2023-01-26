@@ -17766,10 +17766,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"json-stream-stringify@git+https://github.com/Yuripetusko/json-stream-stringify.git#build":
-  version: 2.0.3
-  resolution: "json-stream-stringify@https://github.com/Yuripetusko/json-stream-stringify.git#commit=ed3d32a6b5c085e6486f49e0dd2458facdec1b76"
-  checksum: 576442a84fd5e1a85c902312c8f07a7fa719b9194be6a36cba4deb120c43d4cacc55846beb5bc8727720a9b030674db25f7c7ccc04fabe399dc2cca58346913f
+"json-stream-stringify@npm:2.0.4":
+  version: 2.0.4
+  resolution: "json-stream-stringify@npm:2.0.4"
+  checksum: 18161a4a6badf7f289649071031b562fb29f7e65cb2f358e9bf0d4226ea7e16a66d59bb4c3e4c5611772771935d8f4316b5c310e48072dfbff12813ed53f4b11
   languageName: node
   linkType: hard
 
