@@ -25,6 +25,8 @@ const AssetItem = () => {
   const { assetId } = useParams()
   const { token, balances, isLoading } = useSingleAsset({ symbol: assetId })
 
+  console.log(token)
+
   return (
     <>
       {/* Add a way back ? */}
@@ -94,7 +96,7 @@ const AssetItem = () => {
                         width: '2em',
                         height: '2em',
                       }}
-                      alt={' logo'}
+                      alt={token?.tokenDetails?.chain?.id ?? token?.tokenDetails?.coingeckoId + ' logo'}
                       title={token?.tokenDetails?.chain?.id ?? token?.tokenDetails?.coingeckoId}
                     />
                     <Text.Body
@@ -103,9 +105,9 @@ const AssetItem = () => {
                         color: 'var(--color-text)',
                       }}
                     >
-                      {token?.tokenDetails?.type === 'evm-erc20'
-                        ? token?.tokenDetails?.symbol
-                        : startCase(token?.tokenDetails?.chain?.id)}
+                      {token?.tokenDetails?.chain?.id
+                        ? startCase(token?.tokenDetails?.chain?.id)
+                        : startCase(token?.tokenDetails?.coingeckoId)}
                     </Text.Body>
                     <Text.Body
                       css={{
@@ -113,7 +115,7 @@ const AssetItem = () => {
                         color: 'var(--color-dim)',
                       }}
                     >
-                      {token?.tokenDetails?.type !== 'evm-erc20' && `(${token?.tokenDetails?.symbol})`}
+                      {`(${token?.tokenDetails?.symbol})`}
                     </Text.Body>
                   </div>
                 }

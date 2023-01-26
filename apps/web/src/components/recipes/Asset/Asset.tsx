@@ -242,9 +242,11 @@ const Asset = Object.assign((props: AssetProps) => {
               {token?.ormlTokens?.map((token: any) => (
                 <div css={{ width: '1em', height: '1em' }}>
                   <img
-                    src={`https://raw.githubusercontent.com/TalismanSociety/chaindata/v3/assets/chains/${
-                      token?.tokenDetails?.chain?.id ?? token?.tokenDetails?.coingeckoId
-                    }.svg`}
+                    src={
+                      `https://raw.githubusercontent.com/TalismanSociety/chaindata/v3/assets/chains/${
+                        token?.tokenDetails?.chain?.id ?? token?.tokenDetails?.evmNetwork?.id
+                      }.svg` ?? token?.tokenDetails?.logo
+                    }
                     css={{ width: '100%', height: '100%', borderRadius: '50%' }}
                     alt={token?.tokenDetails?.name + ' logo'}
                     title={token?.tokenDetails?.chain?.id ?? token?.tokenDetails?.coingeckoId}

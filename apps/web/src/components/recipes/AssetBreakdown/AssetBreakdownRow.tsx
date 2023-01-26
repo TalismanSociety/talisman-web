@@ -59,9 +59,9 @@ export const AssetBreakdownRowHeader = ({ token, isOrml }: { token: any; isOrml?
                 fontWeight: 'bold',
               }}
             >
-              {token?.tokenDetails?.type === 'evm-erc20'
-                ? token?.tokenDetails?.symbol
-                : startCase(token?.tokenDetails?.chain?.id)}
+              {token?.tokenDetails?.chain?.id
+                ? startCase(token?.tokenDetails?.chain?.id)
+                : startCase(token?.tokenDetails?.coingeckoId)}
             </Text.Body>
             {/* <Text.Body css={{
                                 fontSize: '1.6rem',
