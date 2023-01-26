@@ -15,8 +15,8 @@ import CrowdloanIndex from './Crowdloan.Index'
 import Explore from './Explore'
 import NFTsPage from './NFTsPage'
 import Staking from './Staking'
-import Swap from './Swap'
 import TransactionHistory from './TransactionHistory'
+import Transfer from './Transfer'
 import Wallet from './Wallet'
 
 const Main = () => {
@@ -70,7 +70,7 @@ export default createBrowserRouter([
       { path: 'nfts', element: <NFTsPage /> },
       { path: 'explore', element: <Explore /> },
       { path: 'staking', element: <Staking /> },
-      { path: 'swap', element: <Swap /> },
+      { path: 'transfer', element: <Transfer /> },
       {
         path: 'crowdloans',
         children: [

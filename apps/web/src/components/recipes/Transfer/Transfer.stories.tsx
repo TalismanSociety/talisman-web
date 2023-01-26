@@ -1,16 +1,16 @@
 import { ComponentMeta, Story } from '@storybook/react'
 
-import Swap, { SwapProps } from './Swap'
+import Transfer, { TransferProps } from './Transfer'
 
 export default {
-  title: 'Recipes/Swap',
-  component: Swap,
+  title: 'Recipes/Transfer',
+  component: Transfer,
   parameters: {
     layout: 'centered',
   },
-} as ComponentMeta<typeof Swap>
+} as ComponentMeta<typeof Transfer>
 
-export const Default: Story<SwapProps> = args => <Swap {...args} />
+export const Default: Story<TransferProps> = args => <Transfer {...args} />
 
 Default.args = {
   accounts: [

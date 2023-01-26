@@ -1,5 +1,5 @@
-import SwapComponent from '@components/recipes/Swap'
 import TokenSelectorDialog, { TokenSelectorItem } from '@components/recipes/TokenSelectorDialog'
+import SwapComponent from '@components/recipes/Transfer'
 import { selectedAccountState, substrateAccountsState } from '@domains/accounts/recoils'
 import { extensionState } from '@domains/extension/recoils'
 import { useBalances } from '@libs/talisman'
@@ -13,7 +13,7 @@ import { useRecoilState, useRecoilValue } from 'recoil'
 const WAYFINDER_SQUID = 'https://squid.subsquid.io/wayfinder/v/0/graphql'
 const TOAST_ID = 'XCM_TRANSACTION'
 
-const Swap = () => {
+const Transfer = () => {
   const accounts = useRecoilValue(substrateAccountsState)
   const [selectedAccount, setSelectedAccount] = useRecoilState(selectedAccountState)
 
@@ -201,4 +201,4 @@ const Swap = () => {
   )
 }
 
-export default Swap
+export default Transfer

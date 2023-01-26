@@ -13,7 +13,7 @@ import { useCallback, useMemo, useState } from 'react'
 
 import Cryptoticon from '../Cryptoticon'
 
-export type SwapProps = {
+export type TransferProps = {
   loading?: boolean
   accounts: Array<{ name: string; address: string; balance: string }>
   selectedAccountIndex: number
@@ -36,7 +36,7 @@ export type SwapProps = {
   inputError?: string
 }
 
-const SwapNetworksButton = (props: Pick<ButtonProps<'button'>, 'onClick' | 'disabled'>) => {
+const TransferNetworksButton = (props: Pick<ButtonProps<'button'>, 'onClick' | 'disabled'>) => {
   return (
     <Button variant="noop" {...props}>
       <motion.div
@@ -62,7 +62,7 @@ const SwapNetworksButton = (props: Pick<ButtonProps<'button'>, 'onClick' | 'disa
   )
 }
 
-const Swap = (props: SwapProps) => {
+const Transfer = (props: TransferProps) => {
   const theme = useTheme()
   const [networksSwapped, setNetworkSwapped] = useState(false)
 
@@ -211,7 +211,7 @@ const Swap = (props: SwapProps) => {
         >
           <motion.div layout>{networksSwapped ? toNetworkSelect : fromNetworkSelect}</motion.div>
           <div css={{ margin: '0 3rem', color: theme.color.primary }}>
-            <SwapNetworksButton
+            <TransferNetworksButton
               onClick={useCallback(() => {
                 props.onReverseNetworkRoute()
                 setNetworkSwapped(x => !x)
@@ -234,4 +234,4 @@ const Swap = (props: SwapProps) => {
   )
 }
 
-export default Swap
+export default Transfer
