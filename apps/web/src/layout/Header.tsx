@@ -7,7 +7,7 @@ import { ReactComponent as MoreHorizontal } from '@assets/icons/more-horizontal.
 import { ReactComponent as PortfolioLogo } from '@assets/icons/portfolio.svg'
 import { ReactComponent as SwapLogo } from '@assets/icons/swap.svg'
 import { ReactComponent as TwitterMobileLogo } from '@assets/icons/twitter-mobile.svg'
-import { ReactComponent as TalismanHandLogo } from '@assets/talisman-white-black.svg'
+import { Union } from '@components/atoms/Icon'
 import { Menu as MenuIcon } from '@components/atoms/Icon'
 import Menu from '@components/Menu'
 import { WalletNavConnector } from '@components/WalletNavConnector'
@@ -147,7 +147,7 @@ const Header = styled(({ className, isMobile }: HeaderProps) => {
     >
       <span>
         <NavLink end to={homeRoute} className="logo">
-          <TalismanHandLogo />
+          <Union />
         </NavLink>
       </span>
       {!isMobile && (
