@@ -11,9 +11,11 @@ import Cryptoticon from '../Cryptoticon'
 export type TokenSelectorItemProps = {
   logoSrc: string
   name: string
-  network: string
+  networkLogoSrc?: string
+  network?: string
   amount: string
   fiatAmount: string
+  disabled?: boolean
   onClick: () => unknown
 }
 
@@ -21,13 +23,16 @@ export const TokenSelectorItem = (props: TokenSelectorItemProps) => {
   const theme = useTheme()
   return (
     <li
-      onClick={props.onClick}
+      role="button"
+      aria-disabled={props.disabled}
+      onClick={props.disabled ? undefined : props.onClick}
       css={{
         'display': 'flex',
         'justifyContent': 'space-between',
         'alignItems': 'center',
         'padding': '1.4rem 1.8rem',
         'cursor': 'pointer',
+        '&[aria-disabled="true"]': { opacity: 0.3, cursor: 'not-allowed' },
         ':hover': { backgroundColor: theme.color.foreground },
       }}
     >
@@ -37,7 +42,12 @@ export const TokenSelectorItem = (props: TokenSelectorItemProps) => {
           <Text.Body as="div" alpha="high">
             {props.name}
           </Text.Body>
-          <Text.Body as="div">{props.network}</Text.Body>
+          {props.network && (
+            <Text.Body as="div" css={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+              <Cryptoticon src={props.logoSrc} size="1em" />
+              {props.network}
+            </Text.Body>
+          )}
         </div>
       </header>
       <div css={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>

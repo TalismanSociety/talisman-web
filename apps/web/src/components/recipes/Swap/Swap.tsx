@@ -1,4 +1,5 @@
 import Button, { ButtonProps } from '@components/atoms/Button'
+import CircularProgressIndicator from '@components/atoms/CircularProgressIndicator'
 import { ArrowRight, ChevronRight, Repeat } from '@components/atoms/Icon'
 import Identicon from '@components/atoms/Identicon'
 import Skeleton from '@components/atoms/Skeleton'
@@ -153,22 +154,6 @@ const Swap = (props: SwapProps) => {
             />
           ))}
         </Select>
-        <div
-          style={{ flexDirection: networksSwapped ? 'row-reverse' : 'row' }}
-          css={{ display: 'flex', alignItems: 'center' }}
-        >
-          <motion.div layout>{networksSwapped ? toNetworkSelect : fromNetworkSelect}</motion.div>
-          <div css={{ margin: '0 3rem', color: theme.color.primary }}>
-            <SwapNetworksButton
-              onClick={useCallback(() => {
-                props.onReverseNetworkRoute()
-                setNetworkSwapped(x => !x)
-              }, [props])}
-              disabled={!props.canReverseNetworkRoute}
-            />
-          </div>
-          <motion.div layout>{networksSwapped ? fromNetworkSelect : toNetworkSelect}</motion.div>
-        </div>
         <TextInput
           type="number"
           placeholder="0.00"
@@ -189,9 +174,13 @@ const Swap = (props: SwapProps) => {
                   })(),
                 }}
               >
-                <div css={{ display: 'flex', alignItems: 'center' }}>
+                <div css={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                   <div>Choose token</div>
-                  <ChevronRight />
+                  {props.loading ? (
+                    <CircularProgressIndicator size="1.5em" />
+                  ) : (
+                    <ChevronRight width="1.5em" height="1.5em" />
+                  )}
                 </div>
               </Button>
             ) : (
@@ -216,6 +205,22 @@ const Swap = (props: SwapProps) => {
           trailingSupportingText={Maybe.of(props.selectedTokenBalance).mapOrUndefined(x => `Balance: ${x}`)}
           {...errorProps}
         />
+        <div
+          style={{ flexDirection: networksSwapped ? 'row-reverse' : 'row' }}
+          css={{ display: 'flex', alignItems: 'center' }}
+        >
+          <motion.div layout>{networksSwapped ? toNetworkSelect : fromNetworkSelect}</motion.div>
+          <div css={{ margin: '0 3rem', color: theme.color.primary }}>
+            <SwapNetworksButton
+              onClick={useCallback(() => {
+                props.onReverseNetworkRoute()
+                setNetworkSwapped(x => !x)
+              }, [props])}
+              disabled={!props.canReverseNetworkRoute}
+            />
+          </div>
+          <motion.div layout>{networksSwapped ? fromNetworkSelect : toNetworkSelect}</motion.div>
+        </div>
       </div>
       <Button
         onClick={props.onConfirmTransfer}

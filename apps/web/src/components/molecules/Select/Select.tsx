@@ -172,13 +172,11 @@ const Select = Object.assign(
           <Text.Body as="div" css={{ pointerEvents: 'none', userSelect: 'none', overflow: 'hidden' }}>
             {selectedChild ?? props.placeholder}
           </Text.Body>
-          <div>
-            {clearRequired ? (
-              <X />
-            ) : (
-              <ChevronDown css={{ transform: open ? 'rotate(180deg)' : undefined, transition: 'ease 0.25s' }} />
-            )}
-          </div>
+          {clearRequired ? (
+            <X />
+          ) : (
+            <ChevronDown css={{ transform: open ? 'rotate(180deg)' : undefined, transition: 'ease 0.25s' }} />
+          )}
         </motion.button>
         <motion.ul
           ref={floating}

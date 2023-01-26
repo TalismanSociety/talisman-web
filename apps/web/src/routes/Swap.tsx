@@ -171,24 +171,31 @@ const Swap = () => {
               x.symbol
             ),
           }))
-          .filter(x => !x.balance.planck.isZero())
-          .map(x => (
-            <TokenSelectorItem
-              logoSrc={x.logo}
-              name={x.name}
-              network=""
-              amount={x.balance.toHuman()}
-              fiatAmount=""
-              onClick={() => {
-                if (!filtered.tokens.some(y => y.id === x.id)) {
-                  dispatch({ setFrom: undefined, setTo: undefined, setToken: x.id })
-                } else {
-                  dispatch({ setToken: x.id })
-                }
-                setTokenSelectorOpen(false)
-              }}
-            />
-          ))}
+          .sort((a, b) => b.balance.planck.cmp(a.balance.planck))
+          .map(x => {
+            const chain = Maybe.of(x.chains.find(y => y.isNative)?.chain.id).mapOrUndefined(
+              y => all.sourcesMap[y] ?? all.destinationsMap[y]
+            )
+            return (
+              <TokenSelectorItem
+                logoSrc={x.logo}
+                name={x.name}
+                networkLogoSrc={chain?.logo}
+                network={chain?.name ?? ''}
+                amount={x.balance.toHuman()}
+                fiatAmount=""
+                disabled={x.balance.planck.isZero()}
+                onClick={() => {
+                  if (!filtered.tokens.some(y => y.id === x.id)) {
+                    dispatch({ setFrom: undefined, setTo: undefined, setToken: x.id })
+                  } else {
+                    dispatch({ setToken: x.id })
+                  }
+                  setTokenSelectorOpen(false)
+                }}
+              />
+            )
+          })}
       </TokenSelectorDialog>
     </>
   )
