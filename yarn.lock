@@ -7973,7 +7973,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@talismn/util@npm:0.1.5, @talismn/util@npm:^0.1.5":
+"@talismn/util@npm:0.1.5, @talismn/util@npm:^0.1.4, @talismn/util@npm:^0.1.5":
   version: 0.1.5
   resolution: "@talismn/util@npm:0.1.5"
   dependencies:
@@ -8012,19 +8012,17 @@ __metadata:
   linkType: hard
 
 "@talismn/wayfinder-react@npm:pr1":
-  version: 0.0.0-pr1-20230124164423
-  resolution: "@talismn/wayfinder-react@npm:0.0.0-pr1-20230124164423"
+  version: 0.0.0-pr1-20230127072252
+  resolution: "@talismn/wayfinder-react@npm:0.0.0-pr1-20230127072252"
   dependencies:
     "@graphql-codegen/cli": ^2.16.1
     "@graphql-codegen/client-preset": ^1.2.3
     "@polkadot/api": ^9.10.1
-    "@talismn/balances-evm-native": ^0.2.3
-    "@talismn/balances-react": ^0.2.3
-    "@talismn/balances-substrate-native": ^0.2.3
-    "@talismn/balances-substrate-orml": ^0.2.3
-    "@talismn/chaindata-provider": ^0.2.0
+    "@talismn/balances-default-modules": 0.3.0
+    "@talismn/balances-react": 0.3.0
+    "@talismn/chaindata-provider": ^0.2.1
     "@talismn/util": ^0.1.4
-    "@talismn/wayfinder": ^0.0.0-pr1-20230124164423
+    "@talismn/wayfinder": ^0.0.0-pr1-20230127072252
     bignumber.js: ^9.1.1
     graphql: ^15.0.0
     graphql-request: ^5.0.0
@@ -8034,11 +8032,11 @@ __metadata:
   peerDependencies:
     react: "*"
     react-dom: "*"
-  checksum: 8b712a43ad5beeab6165cc8786bc548b26057890019b5b2cb2fe12d94cd3910edfad37dc685135163602e762da885e17243771711035a91d7f408ffd222ff66a
+  checksum: c5c5de969fbe6391f33c5ca4ef2f04e5056a4b3020463f96f17cfddf92dda583813cd6e9f098dd9978cf8299938f52f2279c680282b0d463b8fae03a03715dd3
   languageName: node
   linkType: hard
 
-"@talismn/wayfinder@npm:^0.0.0-pr1-20230124164423":
+"@talismn/wayfinder@npm:^0.0.0-pr1-20230127072252":
   version: 0.0.0-snapshot-20230120041107
   resolution: "@talismn/wayfinder@npm:0.0.0-snapshot-20230120041107"
   checksum: edb57c114ca0b560979a4d01186af7c9ef1a2107b8ff1cd86d6aed32be99d198128b6c71db6293914a95b20ab56853b3fc3b3165996e144496c4789fa38a73e6
