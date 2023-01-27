@@ -1,20 +1,14 @@
 import { useAllAccountAddresses } from '@libs/talisman'
-import { Balances } from '@talismn/balances'
-import { EvmErc20Module } from '@talismn/balances-evm-erc20'
-import { EvmNativeModule } from '@talismn/balances-evm-native'
-import { useBalances as _useBalances } from '@talismn/balances-react'
-import { useChaindata, useTokens } from '@talismn/balances-react'
-import { SubNativeModule } from '@talismn/balances-substrate-native'
-import { SubOrmlModule } from '@talismn/balances-substrate-orml'
+import { AddressesByToken, Balances } from '@talismn/balances'
+import { balanceModules } from '@talismn/balances-default-modules'
+import { useBalances as _useBalances, useChaindata, useTokens } from '@talismn/balances-react'
 import { ChaindataProvider, Token, TokenList } from '@talismn/chaindata-provider'
 import { isNil } from 'lodash'
 import { PropsWithChildren, createContext, useContext, useMemo } from 'react'
 
-const balanceModules = [SubNativeModule, SubOrmlModule, EvmNativeModule, EvmErc20Module]
-
 export const useBalances = () => useBalanceContext()
 
-function useAddressesByToken(addresses: string[] | null | undefined, tokenIds: Token['id'][]) {
+function useAddressesByToken(addresses: string[] | null | undefined, tokenIds: Token['id'][]): AddressesByToken<Token> {
   return useMemo(() => {
     if (isNil(addresses)) return {}
     return Object.fromEntries(tokenIds.map(tokenId => [tokenId, addresses]))
