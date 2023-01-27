@@ -1,12 +1,13 @@
-import { selectedPolkadotAccountsState } from '@domains/accounts/recoils'
+import { selectedSubstrateAccountsState } from '@domains/accounts/recoils'
 import { nativeTokenPriceState } from '@domains/chains/recoils'
 import { useChainState, useTokenAmountFromAtomics } from '@domains/common/hooks'
+import { Account } from '@libs/talisman/extension'
 import BN from 'bn.js'
 import { useMemo } from 'react'
 import { useRecoilValue } from 'recoil'
 
 export const useTotalStaked = () => {
-  const accounts = useRecoilValue(selectedPolkadotAccountsState)
+  const accounts: Account[] = useRecoilValue(selectedSubstrateAccountsState)
   const poolMembersLoadable = useChainState(
     'query',
     'nominationPools',
@@ -31,14 +32,14 @@ export const useTotalStaked = () => {
 }
 
 export const useStakedBalances = () => {
-  const accounts = useRecoilValue(selectedPolkadotAccountsState)
+  const accounts: Account[] = useRecoilValue(selectedSubstrateAccountsState)
   const price = useRecoilValue(nativeTokenPriceState('usd'))
 
   const poolMembersLoadable = useChainState(
     'query',
     'nominationPools',
     'poolMembers.multi',
-    accounts.map(({ address }) => address),
+    accounts.map(({ address }: { address: string }) => address),
     {
       enabled: accounts.length > 0,
     }

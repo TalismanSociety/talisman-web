@@ -108,7 +108,7 @@ const NftDialog = (props: NftDialogProps) => {
             },
           }}
         >
-          <NFTPreview nft={nft} loading={loading} isFull={true} />
+          <NFTPreview nft={nft} loading={loading} isFull />
         </section>
 
         {/* Details Section */}

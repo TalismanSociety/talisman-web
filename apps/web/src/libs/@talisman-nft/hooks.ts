@@ -72,7 +72,6 @@ export const useNftById = (id?: string) => {
   }
 }
 
-// rename to useNFTData
 export const useNFTData = (addresses: string[]) => {
   const { nftData } = useNftsByAddresses(addresses)
 

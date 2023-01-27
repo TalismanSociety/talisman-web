@@ -181,15 +181,11 @@ const List = () => {
       </>
     )
 
-  if (address !== undefined) {
-    return (
-      <ListGrid>
-        <ListItems nfts={nfts[address] ?? []} isFetching={isFetching} count={count[address]!!} />
-      </ListGrid>
-    )
-  }
-
-  return null
+  return (
+    <ListGrid>
+      <ListItems nfts={nfts[address] ?? []} isFetching={isFetching} count={count[address]!!} />
+    </ListGrid>
+  )
 }
 
 export default List

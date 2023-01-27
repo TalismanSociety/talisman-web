@@ -1,15 +1,10 @@
-import { StyledLoader } from '@components/Await'
 import { useTotalCrowdloanTotalFiatAmount } from '@domains/crowdloans/hooks'
 import { useTotalStaked } from '@domains/staking/hooks'
 import styled from '@emotion/styled'
 import { useActiveAccount, useBalances } from '@libs/talisman'
-import { device } from '@util/breakpoints'
-import { PropsWithChildren, Suspense } from 'react'
-import { useTranslation } from 'react-i18next'
+import { PropsWithChildren } from 'react'
 
 const Total = styled(({ className }: PropsWithChildren<{ className?: string }>) => {
-  const { t } = useTranslation()
-  
   const { balances, assetsOverallValue } = useBalances()
   const address = useActiveAccount().address
 
@@ -29,44 +24,6 @@ const Total = styled(({ className }: PropsWithChildren<{ className?: string }>) 
       })}
     </span>
   )
-}
-
-const Total = styled(({ className }: PropsWithChildren<{ className?: string }>) => {
-  const { t } = useTranslation()
-  return (
-    <div className={`wallet-total ${className}`}>
-      <div className="title">{t('Portfolio value')}</div>
-      <div className="amount">
-        <Suspense fallback={<StyledLoader />}>
-          <TotalAmount />
-        </Suspense>
-      </div>
-    </div>
-  )
-})`
-  color: var(--color-text);
-
-  > .title {
-    font-size: var(--font-size-xsmall);
-    color: var(--color-mid);
-    margin: 0;
-  }
-
-  > .amount {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    font-size: var(--font-size-large);
-    @media ${device.sm} {
-      font-size: var(--font-size-xlarge);
-    }
-    @media ${device.md} {
-      font-size: var(--font-size-xxlarge);
-    }
-    font-weight: bold;
-    margin: 0;
-    line-height: 1.4em;
-  }
-`
+})
 
 export default Total
