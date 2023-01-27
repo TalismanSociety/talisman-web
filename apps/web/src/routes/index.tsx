@@ -93,5 +93,5 @@ export default createBrowserRouter([
       { path: 'buy', element: <Buy /> },
     ],
   },
-  { path: '*', element: <Navigate to="/" /> },
+  { path: '*', element: <Navigate to="/portfolio" /> },
 ])
