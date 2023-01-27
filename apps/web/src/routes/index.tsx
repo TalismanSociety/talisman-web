@@ -76,7 +76,6 @@ export default createBrowserRouter([
           { path: 'assets', element: <Assets /> },
           { path: 'nfts', element: <NFTsPage /> },
           { path: 'history', element: <TransactionHistory /> },
-          // path to a specific asset that is under assets
           { path: 'assets/:assetId', element: <AssetItem /> },
         ],
       },
@@ -93,5 +92,5 @@ export default createBrowserRouter([
       { path: 'buy', element: <Buy /> },
     ],
   },
-  { path: '*', element: <Navigate to="/portfolio" /> },
+  { path: '*', element: <Navigate to="/" /> },
 ])
