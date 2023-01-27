@@ -19,8 +19,8 @@ const ValidatorStakeItem = (props: {
     waitForAll([nativeTokenDecimalState, nativeTokenPriceState('usd')])
   )
 
-  const active = decimal.fromAtomics(props.stake.stakingLedger.active)
-  const rewards = decimal.fromAtomics(
+  const active = decimal.fromPlanck(props.stake.stakingLedger.active)
+  const rewards = decimal.fromPlanck(
     props.rewards?.reduce(
       (prev, curr) => prev.add(Object.values(curr.validators).reduce((prev, curr) => prev.add(curr.value), new BN(0))),
       new BN(0)
