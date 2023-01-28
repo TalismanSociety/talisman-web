@@ -15,7 +15,6 @@ import { useTheme } from '@emotion/react'
 import styled from '@emotion/styled'
 import { trackGoal } from '@libs/fathom'
 import { useExtension } from '@libs/talisman'
-import { buyNow } from '@util/fiatOnRamp'
 import { useMediaQuery } from '@util/hooks'
 import { DISCORD_JOIN_URL, TALISMAN_TWITTER_URL } from '@util/links'
 import Color from 'colorjs.io'
@@ -192,7 +191,11 @@ const Header = styled(({ className, isMobile }: HeaderProps) => {
 
       <div className="menu-nav">
         <WalletNavConnector />
-        <Button className="button-buy" small onClick={buyNow}>
+        <Button
+          className="button-buy"
+          small
+          onClick={() => window.open('https://talisman.banxa.com/', '_blank', 'noopener,noreferrer')}
+        >
           {t('Buy')}
         </Button>
         <LanguageSelector />

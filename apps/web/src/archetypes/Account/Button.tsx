@@ -14,7 +14,6 @@ import { WalletSelect } from '@talismn/connect-components'
 import { EnkryptWallet, SubWallet, TalismanWallet, getWalletBySource } from '@talismn/connect-wallets'
 import { encodeAnyAddress } from '@talismn/util'
 import { device } from '@util/breakpoints'
-import { buyNow } from '@util/fiatOnRamp'
 import { truncateString } from '@util/helpers'
 import { Maybe } from '@util/monads'
 import useOnClickOutside from '@util/useOnClickOutside'
@@ -43,7 +42,10 @@ const BuyItem = styled(
   ({ nativeToken, className, onClick }: { nativeToken?: string; className?: string; onClick?: () => void }) => {
     const { t } = useTranslation()
     return (
-      <span className={`${className}`} onClick={buyNow}>
+      <span
+        className={`${className}`}
+        onClick={() => window.open('https://talisman.banxa.com/', '_blank', 'noopener,noreferrer')}
+      >
         <div className="container">
           <span className="info">
             <AlertCircle width="48" />

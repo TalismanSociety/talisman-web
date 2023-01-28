@@ -1,12 +1,11 @@
 import styled from '@emotion/styled'
 import { BuyBanner } from '@layout/StateBanner/BuyBanner'
 import { device } from '@util/breakpoints'
-import { buyNow } from '@util/fiatOnRamp'
 
 const Buy = styled(({ className }: { className?: string }) => {
   return (
     <section className={className}>
-      <BuyBanner onClick={buyNow} />
+      <BuyBanner onClick={() => window.open('https://talisman.banxa.com/', '_blank', 'noopener,noreferrer')} />
     </section>
   )
 })`

@@ -1,5 +1,4 @@
 import { useActiveAccount, useBalances } from '@libs/talisman'
-import { buyNow } from '@util/fiatOnRamp'
 
 import { EmptyBagsBanner } from './EmptyBagsBanner'
 import { ExploreCrowdloansBanner } from './ExploreCrowdloansBanner'
@@ -18,6 +17,9 @@ export const StateBanner = () => {
     return <NoWalletBanner />
   }
 
-  if (hasEmptyBags) return <EmptyBagsBanner onClick={buyNow} />
+  if (hasEmptyBags)
+    return (
+      <EmptyBagsBanner onClick={() => window.open('https://talisman.banxa.com/', '_blank', 'noopener,noreferrer')} />
+    )
   return <ExploreCrowdloansBanner />
 }
