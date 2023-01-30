@@ -2,10 +2,8 @@ import ClaimStakeDialog from '@components/recipes/ClaimStakeDialog'
 import PoolStake, { PoolStakeProps } from '@components/recipes/PoolStake/PoolStake'
 import { PoolStatus } from '@components/recipes/PoolStatusIndicator'
 import { useTokenAmountFromPlanck } from '@domains/common/hooks'
-import { useLockDuration } from '@domains/nominationPools/hooks/useLockDuration'
 import { UInt } from '@polkadot/types-codec'
 import { PalletNominationPoolsPoolMember } from '@polkadot/types/lookup'
-import { formatDistance } from 'date-fns'
 import { ReactNode, useCallback, useState } from 'react'
 import { useRecoilValue, waitForAll } from 'recoil'
 
@@ -40,7 +38,6 @@ const PoolStakeItem = ({
   const [isAddingStake, setIsAddingStake] = useState(false)
 
   const [claimDialogOpen, setClaimDialogOpen] = useState(false)
-  const lockDuration = useLockDuration()
   const claimPayoutExtrinsic = useExtrinsic('nominationPools', 'claimPayout')
   const restakeExtrinsic = useExtrinsic('nominationPools', 'bondExtra')
 
@@ -85,7 +82,6 @@ const PoolStakeItem = ({
         open={claimDialogOpen}
         amount={pendingRewards.decimalAmount?.toHuman() ?? '...'}
         fiatAmount={pendingRewards.localizedFiatAmount ?? '...'}
-        lockDuration={lockDuration === undefined ? '...' : formatDistance(0, lockDuration.toNumber())}
         onRequestDismiss={useCallback(() => setClaimDialogOpen(false), [])}
         onRequestClaim={useCallback(() => {
           claimPayoutExtrinsic.signAndSend(item.account?.address ?? '')
