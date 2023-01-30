@@ -15,7 +15,6 @@ import { useTheme } from '@emotion/react'
 import styled from '@emotion/styled'
 import { trackGoal } from '@libs/fathom'
 import { useExtension } from '@libs/talisman'
-import { buyNow } from '@util/fiatOnRamp'
 import { useMediaQuery } from '@util/hooks'
 import { DISCORD_JOIN_URL, TALISMAN_TWITTER_URL } from '@util/links'
 import Color from 'colorjs.io'
@@ -115,7 +114,7 @@ const Header = styled(({ className, isMobile }: HeaderProps) => {
   const { scrollY } = useScroll()
 
   useEffect(() => {
-    scrollY.onChange(y => {
+    scrollY.onChange((y: any) => {
       controls.start(y > 30 ? 'scrolled' : 'initial')
     })
   }, [controls, scrollY])
@@ -146,7 +145,7 @@ const Header = styled(({ className, isMobile }: HeaderProps) => {
       }}
     >
       <span>
-        <NavLink end to={homeRoute} className="logo">
+        <NavLink to={homeRoute} end className="logo">
           <Union />
         </NavLink>
       </span>
@@ -194,7 +193,7 @@ const Header = styled(({ className, isMobile }: HeaderProps) => {
         {!isMobile && (
           <>
             <div
-              onClick={buyNow}
+              onClick={() => window.open('https://talisman.banxa.com/', '_blank', 'noopener,noreferrer')}
               css={{
                 'cursor': 'pointer',
                 'padding': '0.75rem 2.5rem',
@@ -239,7 +238,9 @@ const Header = styled(({ className, isMobile }: HeaderProps) => {
                   })}
                 {isMobile && (
                   <li key="buy">
-                    <span onClick={buyNow}>Buy</span>
+                    <span onClick={() => window.open('https://talisman.banxa.com/', '_blank', 'noopener,noreferrer')}>
+                      Buy
+                    </span>
                   </li>
                 )}
                 {subRoutes.map(route => {
@@ -386,7 +387,7 @@ const Header = styled(({ className, isMobile }: HeaderProps) => {
       line-height: 1.4rem;
       font-size: 1.4rem;
       font-weight: 500;
-      color: rgb(${({ theme }) => theme?.background});
+      color: rgb(${({ theme }: { theme: any }) => theme?.background});
       background: var(--color-primary);
       text-align: center;
 
