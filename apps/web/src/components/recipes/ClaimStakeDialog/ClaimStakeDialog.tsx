@@ -6,7 +6,6 @@ export type ClaimStakeDialogProps = {
   open?: boolean
   amount: string
   fiatAmount: string
-  lockDuration: string
   onRequestDismiss: () => unknown
   onRequestReStake: () => unknown
   onRequestClaim: () => unknown
@@ -28,10 +27,6 @@ const ClaimStakeDialog = (props: ClaimStakeDialogProps) => (
           <br />
           You can claim your staking rewards either by re-staking (compounding) in the same nomination pool, or by
           claiming them as a freely available balance.
-          <br />
-          <br />
-          Please note that to be claimed as an available balance incurs a{' '}
-          <Text.Body alpha="high">{props.lockDuration} unstaking period.</Text.Body>
         </Text.Body>
       </div>
     }

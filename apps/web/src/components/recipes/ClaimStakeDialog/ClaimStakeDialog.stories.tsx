@@ -16,5 +16,4 @@ Default.args = {
   open: true,
   amount: '120 DOT',
   fiatAmount: '$420.00',
-  lockDuration: '18 days',
 }
