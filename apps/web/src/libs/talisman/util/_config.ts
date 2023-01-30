@@ -484,6 +484,21 @@ export const parachainDetails: ParachainDetails[] = [
     },
   },
   {
+    id: '0-2051',
+    name: 'Ajuna Network',
+    slug: 'ajuna-network',
+    token: 'AJUN',
+    subtitle:
+      'Ajuna Network is the fastest way for developers and game studios to create high-quality, decentralized games.',
+    info: 'Ajuna Network is a decentralized gaming platform that delivers real value to gamers, without compromising on gameplay. It empowers you to truly own your in-game assets, protect and control their functionality, and have a voice in the future of the games you love.',
+    links: {
+      Website: 'https://ajuna.io/',
+      Twitter: 'https://twitter.com/AjunaNetwork',
+      Medium: 'https://medium.com/@AjunaNetwork',
+      Github: 'https://github.com/ajuna-network/',
+    },
+  },
+  {
     id: '0-2053',
     name: 'OmniBTC',
     slug: 'omnibtc',
@@ -495,6 +510,20 @@ export const parachainDetails: ParachainDetails[] = [
       Twitter: 'https://twitter.com/OmniBTC',
       Medium: 'https://medium.com/@omnibtc',
       Github: 'https://github.com/OmniBTC',
+    },
+  },
+  {
+    id: '0-2090',
+    name: 'Oak Network',
+    slug: 'oak-network',
+    token: 'TEER',
+    subtitle: 'Secure and Trustless Automation Payments and finance infrastructure for the Web 3.0',
+    info: 'The Web 3.0 hub for DeFi and payment automation.',
+    links: {
+      Website: 'https://oak.tech/',
+      Twitter: 'https://twitter.com/oak_network',
+      Medium: 'https://medium.com/oak-blockchain',
+      Github: 'https://github.com/OAK-Foundation/OAK-blockchain',
     },
   },
   {
@@ -601,6 +630,22 @@ Our mission is to create an open financial future that overcomes borders and fos
       Twitter: 'https://twitter.com/ShidenNetwork',
       Telegram: 'https://t.me/PlasmOfficial',
       Discord: 'https://discord.com/invite/Dnfn5eT',
+    },
+  },
+  {
+    id: '2-2007',
+    name: 'Shiden Network',
+    slug: 'shiden-network',
+    token: 'SDN',
+    subtitle: 'Smart Contract Platform Natively Supporting Ethereum Virtual Machine and WebAssembly',
+    info: 'Shiden Network is a multi-chain decentralized application layer on Kusama Network.',
+    links: {
+      Website: 'https://shiden.astar.network/',
+      Twitter: 'https://twitter.com/ShidenNetwork',
+      Telegram: 'https://t.me/PlasmOfficial',
+      Medium: 'https://medium.com/astar-network',
+      Github: 'https://github.com/AstarNetwork/Astar',
+      Discord: 'https://discord.com/invite/Z3nC9U4',
     },
   },
   {
@@ -1819,6 +1864,34 @@ export const crowdloanDetails: CrowdloanDetails[] = [
     },
   },
   {
+    relayId: 0,
+    paraId: 2051,
+    rewards: {
+      tokens: null,
+      custom: [
+        {
+          title: 'AJUN per DOT',
+          value: '10+',
+        },
+      ],
+      info: null,
+    },
+  },
+  {
+    relayId: 0,
+    paraId: 2090,
+    rewards: {
+      tokens: null,
+      custom: [
+        {
+          title: 'OAK per DOT',
+          value: '75.5+',
+        },
+      ],
+      info: null,
+    },
+  },
+  {
     relayId: 2,
     paraId: 2000,
     contributeUrl: 'https://acala.network/karura/join-karura',
@@ -1882,6 +1955,26 @@ export const crowdloanDetails: CrowdloanDetails[] = [
         {
           title: 'Total Rewards Distribution',
           value: '350,000 SDN',
+        },
+      ],
+      info: null,
+    },
+  },
+  {
+    relayId: 2,
+    paraId: 2007,
+    contributeUrl: '',
+    rewards: {
+      tokens: [
+        {
+          symbol: 'SDN',
+          perKSM: '28.33',
+        },
+      ],
+      custom: [
+        {
+          title: 'Auction Total',
+          value: '350,000,000 tokens',
         },
       ],
       info: null,
