@@ -35,7 +35,11 @@ export const AssetBreakdownRowHeader = ({ token, isOrml }: { token: any; isOrml?
           }}
         >
           <img
-            src={token?.tokenDetails?.logo}
+            src={
+              token?.tokenDetails?.evmNetwork
+                ? token?.tokenDetails?.logo
+                : `https://raw.githubusercontent.com/TalismanSociety/chaindata/v3/assets/chains/${token?.tokenDetails?.chain?.id}.svg`
+            }
             alt={token?.name}
             css={{
               width: '2em',
