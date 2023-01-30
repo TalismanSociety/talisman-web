@@ -1,3 +1,5 @@
+import { useTotalCrowdloanTotalFiatAmount } from '@domains/crowdloans/hooks'
+import { useTotalStaked } from '@domains/staking/hooks'
 import { useAllAccountAddresses } from '@libs/talisman'
 import { AddressesByToken, Balances } from '@talismn/balances'
 import { balanceModules } from '@talismn/balances-default-modules'
@@ -17,8 +19,9 @@ function useAddressesByToken(addresses: string[] | null | undefined, tokenIds: T
 
 type ContextProps = {
   balances: Balances | undefined
-  assetsAmount: number
-  assetsValue: string | null
+  assetsTotalValue: number
+  assetsTransferable: string | null
+  assetsOverallValue: number
   tokenIds: string[]
   tokens: TokenList | any
   chaindata: (ChaindataProvider & { generation?: number | undefined }) | null
@@ -26,8 +29,9 @@ type ContextProps = {
 
 const Context = createContext<ContextProps>({
   balances: undefined,
-  assetsAmount: 0,
-  assetsValue: '',
+  assetsTransferable: '',
+  assetsOverallValue: 0,
+  assetsTotalValue: 0,
   tokenIds: [],
   tokens: [],
   chaindata: null,
@@ -64,16 +68,22 @@ export const Provider = ({ children }: PropsWithChildren) => {
 
   const assetsAmount = balances?.sum.fiat('usd').transferable ?? 0
 
-  const assetsValue =
+  const assetsTransferable =
     assetsAmount.toLocaleString(undefined, {
       style: 'currency',
       currency: 'USD',
       currencyDisplay: 'narrowSymbol',
     }) ?? ' -'
 
+  const crowdloanTotal = useTotalCrowdloanTotalFiatAmount()
+  const totalStaked = useTotalStaked()
+
+  const assetsOverallValue = balances?.sum.fiat('usd').total ?? 0
+  const assetsTotalValue = assetsOverallValue ? crowdloanTotal + (totalStaked.fiatAmount ?? 0) + assetsOverallValue : 0
+
   const value = useMemo(
-    () => ({ balances, assetsAmount, assetsValue, tokenIds, tokens, chaindata }),
-    [balances, assetsAmount, assetsValue, tokenIds, tokens, chaindata]
+    () => ({ balances, assetsTransferable, tokenIds, tokens, chaindata, assetsOverallValue, assetsTotalValue }),
+    [balances, assetsTransferable, tokenIds, tokens, chaindata, assetsOverallValue, assetsTotalValue]
   )
 
   return <Context.Provider value={value}>{children}</Context.Provider>

@@ -6,12 +6,12 @@ import { NoWalletBanner } from './NoWalletBanner'
 
 export const StateBanner = () => {
   const { status, address } = useActiveAccount()
-  const { assetsValue, balances } = useBalances()
+  const { assetsTransferable, balances } = useBalances()
 
   const hasEmptyBags =
     address !== undefined
       ? balances?.find({ address: address })?.sum?.fiat('usd').transferable === 0
-      : assetsValue === '0.00'
+      : assetsTransferable === '0.00'
 
   if (status === 'UNAVAILABLE') {
     return <NoWalletBanner />

@@ -99,7 +99,7 @@ const Dropdown = styled(
     const { switchAccount } = useActiveAccount()
     const { accounts, disconnect } = useExtensionAutoConnect()
 
-    const { assetsValue, balances } = useBalances()
+    const { assetsOverallValue, balances } = useBalances()
 
     return (
       open && (
@@ -112,12 +112,16 @@ const Dropdown = styled(
             // Do the filtering
             const fiatBalance =
               address !== undefined
-                ? (balances?.find({ address: address }).sum.fiat('usd').transferable ?? 0).toLocaleString(undefined, {
+                ? (balances?.find({ address: address }).sum.fiat('usd').total ?? 0).toLocaleString(undefined, {
                     style: 'currency',
                     currency: 'USD',
                     currencyDisplay: 'narrowSymbol',
                   }) ?? '-'
-                : assetsValue
+                : assetsOverallValue.toLocaleString(undefined, {
+                    style: 'currency',
+                    currency: 'USD',
+                    currencyDisplay: 'narrowSymbol',
+                  }) ?? ' -'
 
             return (
               <div

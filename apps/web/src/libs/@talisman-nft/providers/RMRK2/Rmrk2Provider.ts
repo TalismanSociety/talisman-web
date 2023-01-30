@@ -96,9 +96,10 @@ export class Rmrk2Provider extends NFTInterface {
     const itemIndex = await fetch(`${this.indexUri}${encodedAddress}`).then((res: any) => res.json())
 
     // Set this coutn based on length
-    this.count = itemIndex.length
+    // this.count = itemIndex.length
 
     const idItemMap: { [key: string]: any } = {}
+
     itemIndex.forEach(
       (item: any) =>
         (idItemMap[item.id] = {
@@ -114,6 +115,8 @@ export class Rmrk2Provider extends NFTInterface {
     )
 
     await client.query({ query: QUERY_SHORT, variables: { address: encodedAddress } }).then(({ data }: any) => {
+      this.count[address] = data.nfts.length
+
       data.nfts.forEach(async (nft: any) => {
         const indexedItemRef = idItemMap[nft.id]
 
@@ -153,6 +156,8 @@ export class Rmrk2Provider extends NFTInterface {
       Object.values(idItemMap).forEach(async (item: any) => {
         // check if item id is in the this.items array
         if (!data.nfts.find((i: any) => i.id === item.id)) {
+          this.count[address] += 1
+
           const metadata = await fetch(item.metadata).then((res: any) => res.json())
 
           const nft = {
@@ -209,6 +214,7 @@ export class Rmrk2Provider extends NFTInterface {
           : !!nft?.resources[0]?.thumb
           ? this.toIPFSUrl(nft?.resources[0]?.thumb)
           : null
+
         const collectionInfo = await this.fetchNFTs_CollectionInfo(nft?.collection?.id, this.collectionUri)
 
         const children = nft?.children?.map((child: any) => ({

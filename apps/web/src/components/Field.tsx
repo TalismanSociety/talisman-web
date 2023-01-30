@@ -93,7 +93,7 @@ const FieldWrapper = styled(({ type, prefix, suffix, label, dim, children, class
 
     input,
     select {
-      font-size: inherit;
+      font-size: 1.2em;
       font-family: inherit;
       font-weight: inherit;
       border: none;
@@ -101,6 +101,10 @@ const FieldWrapper = styled(({ type, prefix, suffix, label, dim, children, class
       width: 100%;
       ${({ prefix }) => !!prefix && `padding-left: 5rem;`}
       ${({ suffix }) => !!suffix && `padding-right: 2rem;`}
+      &:hover {
+        color: var(--color-text);
+      }
+      transition: all 0.2s ease-in-out;
     }
 
     select {

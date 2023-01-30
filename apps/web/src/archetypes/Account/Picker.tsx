@@ -161,7 +161,6 @@ const AccountPicker = styled(
           <span className={accounts.length > 1 ? 'account' : 'single-account'}>
             <span>
               <Identicon className="identicon" value={activeAccount?.address ?? ''} />
-
               <span className="selected-account">
                 <div>{activeAccount?.name}</div>
               </span>

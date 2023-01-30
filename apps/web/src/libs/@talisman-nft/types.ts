@@ -1,4 +1,13 @@
-export type NFTCategory = 'image' | 'video' | 'model' | 'application' | 'audio' | 'pdf' | 'loading' | 'blank' | null
+export type NFTCategory =
+  | 'image'
+  | 'video'
+  | 'model'
+  | 'application'
+  | 'audio'
+  | 'pdf'
+  | 'loading'
+  | 'blank'
+  | undefined
 
 type NFTAttributes = Record<string, any>
 
@@ -11,10 +20,10 @@ type NFTCollectionDetails = {
 
 export type NFTShort = {
   id: string
-  name: string | null
-  thumb: string | null
+  name: string
+  thumb: string | undefined
   type: NFTCategory
-  metadata: string | null
+  metadata: string | undefined
   mediaUri: string // PDF
   provider: string
   collection: NFTCollectionDetails
@@ -56,7 +65,9 @@ export type Contract = {
 }
 
 export type NFTData = {
-  count: number
+  count: {
+    [key: string]: number
+  }
   isFetching: boolean
   items: NFTShort[]
 }

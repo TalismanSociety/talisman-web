@@ -85,7 +85,7 @@ const AssetBalance = styled(({ token, balances, address }: AssetBalanceProps) =>
 const Assets = styled(({ className }: { className?: string }) => {
   const { t } = useTranslation()
 
-  const { balances, tokenIds, tokens, assetsValue } = useBalances()
+  const { balances, tokenIds, tokens, assetsTransferable } = useBalances()
   const { address } = useActiveAccount()
   const chaindata = useChaindata()
 
@@ -99,7 +99,7 @@ const Assets = styled(({ className }: { className?: string }) => {
           currency: 'USD',
           currencyDisplay: 'narrowSymbol',
         }) ?? ' -'
-      : assetsValue
+      : assetsTransferable
 
   const value = balances?.find({ address: address })?.sum?.fiat('usd').transferable
 

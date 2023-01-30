@@ -84,7 +84,6 @@ export class Rmrk1Provider extends NFTInterface {
     const itemIndex = await fetch(`${this.indexUri}${encodedAddress}`).then((res: any) => res.json())
 
     // set this count based on length
-    this.count = itemIndex.length
 
     // set all the item media mappings
     const idImageMap: { [key: string]: string | null } = {}
@@ -92,6 +91,8 @@ export class Rmrk1Provider extends NFTInterface {
 
     // fetch and set all items
     await client.query({ query: QUERY_SHORT, variables: { address: encodedAddress } }).then(({ data }: any) => {
+      this.count[address] = data.nfts.length
+
       data.nfts.forEach(async (nft: any) => {
         const thumb = this.toIPFSUrl(nft?.metadata_image || nft?.metadata_animation_url)
         const mediaUri = this.toIPFSUrl(nft?.metadata_animation_url || nft?.metadata_image || idImageMap[nft?.id])
