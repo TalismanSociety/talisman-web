@@ -97,7 +97,7 @@ const AssetItem = () => {
                         height: '2em',
                       }}
                       alt={token?.tokenDetails?.chain?.id ?? token?.tokenDetails?.coingeckoId + ' logo'}
-                      title={token?.tokenDetails?.chain?.id ?? token?.tokenDetails?.coingeckoId}
+                      title={startCase(token?.tokenDetails?.chain?.id ?? token?.tokenDetails?.coingeckoId)}
                     />
                     <Text.Body
                       css={{
