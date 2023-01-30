@@ -19,8 +19,6 @@ const slideDown = keyframes`
 `
 
 export const AssetBreakdownRowHeader = ({ token, isOrml }: { token: any; isOrml?: boolean }) => {
-  console.log(token)
-
   return (
     <AssetRow>
       <div
