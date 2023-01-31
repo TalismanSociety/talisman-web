@@ -39,6 +39,7 @@ const desktopRoutes = [
   { name: 'Explore', path: '/explore' },
   { name: 'Crowdloans', path: '/crowdloans' },
   { name: 'Staking', path: '/staking' },
+  { name: 'Transaction History', path: '/history' },
 ]
 
 const mainRoutes = [
@@ -54,6 +55,7 @@ const mainRoutes = [
     icon: <CrowdloansLogo title="Spiritkeys" />,
   },
   { name: 'NFTs', url: '/nfts', icon: <PortfolioLogo title="NFTs" /> },
+  { name: 'Transaction History', url: '/history', icon: <PortfolioLogo title="NFTs" /> },
 ]
 
 const subRoutes = [
