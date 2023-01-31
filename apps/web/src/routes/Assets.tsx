@@ -1,4 +1,5 @@
 import useAssets, { useAssetsFiltered } from '@archetypes/Portfolio/Assets'
+import { Total } from '@archetypes/Wallet'
 import DisplayValue from '@components/atoms/DisplayValue/DisplayValue'
 import { Search } from '@components/Field'
 import InfoCard from '@components/molecules/InfoCard'
@@ -9,7 +10,7 @@ import { useState } from 'react'
 const Assets = () => {
   const [search, setSearch] = useState('')
   const { tokens, balances, isLoading } = useAssetsFiltered({ size: 0, search })
-  const { assetsTotalValue, lockedTotal } = useAssets()
+  const { lockedTotal } = useAssets()
 
   return (
     <AssetPage>
@@ -33,11 +34,7 @@ const Assets = () => {
             gap: '2rem',
           }}
         >
-          <InfoCard
-            headlineText={'Total Portfolio Value'}
-            text={<DisplayValue amount={assetsTotalValue ?? 0} />}
-            minWidth={'150px'}
-          />
+          <InfoCard headlineText={'Total Portfolio Value'} text={<Total />} minWidth={'150px'} />
           <InfoCard headlineText={'Locked Value'} text={<DisplayValue amount={lockedTotal} />} minWidth={'150px'} />
         </div>
       </section>
