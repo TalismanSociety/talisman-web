@@ -6,6 +6,7 @@ import DevMenu from '@archetypes/DevMenu'
 import ToastBar from '@components/molecules/ToastBar'
 import { TalismanHandLoader } from '@components/TalismanHandLoader'
 import { AccountsWatcher } from '@domains/accounts/recoils'
+import NftProvider from '@libs/@talisman-nft/provider'
 import * as MoonbeamContributors from '@libs/moonbeam-contributors'
 import * as Portfolio from '@libs/portfolio'
 import TalismanProvider from '@libs/talisman'
@@ -53,6 +54,7 @@ const App: React.FC = () => (
             <ThemeProvider>
               <DevMenu />
               <Suspense fallback={<Loader />}>
+                <NftProvider />
                 <RouterProvider router={router} />
                 <Toaster position="top-right" containerStyle={{ top: '6.4rem' }}>
                   {t => <ToastBar toast={t} />}

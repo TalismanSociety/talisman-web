@@ -1,4 +1,4 @@
-import { selectedPolkadotAccountsState } from '@domains/accounts/recoils'
+import { selectedSubstrateAccountsState } from '@domains/accounts/recoils'
 import { useChainState } from '@domains/common/hooks'
 import BN from 'bn.js'
 import { useMemo } from 'react'
@@ -7,7 +7,7 @@ import { useRecoilValue, waitForAll } from 'recoil'
 export const usePoolUnlocking = () => {
   const sessionProgressLoadable = useChainState('derive', 'session', 'progress', [])
 
-  const [accounts] = useRecoilValue(waitForAll([selectedPolkadotAccountsState]))
+  const [accounts] = useRecoilValue(waitForAll([selectedSubstrateAccountsState]))
 
   const poolMembersLoadable = useChainState(
     'query',

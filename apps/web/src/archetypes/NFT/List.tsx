@@ -1,34 +1,47 @@
+import { Copy } from '@components/atoms/Icon'
+import Identicon from '@components/atoms/Identicon'
 import Text from '@components/atoms/Text'
+import { CopyButton } from '@components/CopyButton'
+import { NFTCard } from '@components/recipes/NFTCard'
 import { WalletNavConnector } from '@components/WalletNavConnector'
+import { accountsState } from '@domains/accounts/recoils'
 import { css } from '@emotion/react'
 import styled from '@emotion/styled'
-import { useNftsByAddress } from '@libs/@talisman-nft'
-import { NFTData, NFTShort } from '@libs/@talisman-nft/types'
+import { nftDataState } from '@libs/@talisman-nft/provider'
+import { NFTShort } from '@libs/@talisman-nft/types'
+import { useActiveAccount } from '@libs/talisman'
 import { device } from '@util/breakpoints'
-import { useEffect } from 'react'
+import toast from 'react-hot-toast'
+import { useRecoilValue } from 'recoil'
 
-import Card from './Card/Card'
-import BlankCard from './Card/LoadingCard'
 import HiddenNFTGrid from './HiddenNFTGrid'
 
-const ListItems = ({ nfts }: { nfts: NFTData }) => {
-  const { count, isFetching, items } = nfts
+type ListItemProps = {
+  nfts: NFTShort[]
+  isFetching: boolean
+  count: number
+}
 
+const ListItems = ({ nfts, isFetching, count }: ListItemProps) => {
   return (
     <>
-      {items.map((nft: any) => (
-        <Card key={nft.id} nft={nft} />
-      ))}
+      {/* based on the count, compare the number of nfts, and whether is fetching, then show loading cards, based on the difference */}
+      {count > nfts.length && isFetching && (
+        <>
+          {Array.from({ length: count - nfts.length }).map((_, index) => (
+            <NFTCard key={index} loading />
+          ))}
+        </>
+      )}
 
-      {items.length !== count &&
-        Array.from({ length: count - items.length }).map((_, index) => <BlankCard isLoading={true} />)}
+      {nfts && nfts.map((nft: any) => <NFTCard key={nft.id} nft={nft} />)}
 
-      {isFetching && <BlankCard opacity="50%" isLoading={true} />}
+      {isFetching && <NFTCard loading />}
     </>
   )
 }
 
-const ListGrid = styled.div`
+export const ListGrid = styled.div`
   display: grid;
   gap: 2rem;
   grid-template-columns: 1fr;
@@ -43,24 +56,26 @@ const ListGrid = styled.div`
   }
 `
 
-const List = ({ address }: { address: string }) => {
-  const { setAddress, nftData } = useNftsByAddress(address)
+type AccType = {
+  [key: string]: NFTShort[]
+}
 
-  useEffect(() => {
-    setAddress(address)
-  }, [address, setAddress])
+const List = () => {
+  const { items, isFetching, count } = useRecoilValue(nftDataState)
 
-  const filterItemsByAddress = (nftData: NFTData) => {
-    const items = nftData?.items.filter((item: NFTShort) => item.address === address)
+  const { address } = useActiveAccount()
+  const accounts = useRecoilValue(accountsState)
 
-    return {
-      ...nftData,
-      count: items.length,
-      items: items,
-    }
-  }
+  if (isFetching && items.length === 0)
+    return (
+      <ListGrid>
+        {Array.from({ length: 4 }).map((_, index) => (
+          <NFTCard key={index} loading />
+        ))}
+      </ListGrid>
+    )
 
-  if (!filterItemsByAddress(nftData).items.length && !nftData.isFetching && !nftData.count)
+  if (items.length === 0 && !isFetching && !count)
     return (
       <HiddenNFTGrid
         overlay={
@@ -83,9 +98,92 @@ const List = ({ address }: { address: string }) => {
       />
     )
 
+  // filter items by address and order based on accounts
+  const nfts = accounts.reduce((acc: any, account: any) => {
+    const nfts = items.filter((nft: any) => nft?.address === account.address)
+    if (nfts.length) acc[account.address] = nfts
+    return acc
+  }, {} as AccType)
+
+  // turn nfts into array of objects and put the account name per address
+  const nftsArray = Object.keys(nfts).map((address: string) => {
+    return {
+      address,
+      name: accounts.find(account => account.address === address)?.name,
+      nfts: nfts[address] ?? [],
+    }
+  })
+
+  // sort nftsArray by accounts address order
+  nftsArray.sort((a, b) => {
+    const aIndex = accounts.findIndex(account => account.address === a.address)
+    const bIndex = accounts.findIndex(account => account.address === b.address)
+    return aIndex - bIndex
+  })
+
+  if (address === undefined)
+    return (
+      <>
+        {nftsArray.map(({ address, name, nfts }) => (
+          <>
+            <div
+              css={{
+                'display': 'flex',
+                'flexDirection': 'row',
+                'alignItems': 'center',
+
+                // first item no top margin
+                '&:first-of-type': {
+                  marginTop: 0,
+                },
+
+                'margin': '3rem 0',
+                'gap': '1rem',
+              }}
+            >
+              <Identicon
+                value={address}
+                css={{
+                  width: '4rem',
+                  height: '4rem',
+                }}
+              />
+              <Text.Body
+                css={{
+                  fontSize: '2rem',
+                }}
+              >
+                {name}
+              </Text.Body>
+              <CopyButton
+                text={address}
+                onCopied={(text: string) => {
+                  toast(
+                    <>
+                      <Text.Body as="div" alpha="high">
+                        Address copied to clipboard
+                      </Text.Body>
+                      <Text.Body as="div">{text}</Text.Body>
+                    </>,
+                    { position: 'bottom-right', icon: <Copy /> }
+                  )
+                }}
+                onFailed={(text: string) => {
+                  console.log(`>>> failed`, text)
+                }}
+              />
+            </div>
+            <ListGrid>
+              <ListItems nfts={nfts} isFetching={isFetching} count={count[address]!!} />
+            </ListGrid>
+          </>
+        ))}
+      </>
+    )
+
   return (
     <ListGrid>
-      <ListItems nfts={filterItemsByAddress(nftData)} />
+      <ListItems nfts={nfts[address] ?? []} isFetching={isFetching} count={count[address]!!} />
     </ListGrid>
   )
 }

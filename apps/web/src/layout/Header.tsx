@@ -1,5 +1,4 @@
 import { LanguageSelector } from '@archetypes/LanguageSelector'
-import { ReactComponent as TalismanHandLogo } from '@assets/hand-red-black.svg'
 import { ReactComponent as CrowdloansLogo } from '@assets/icons/crowdloans.svg'
 import { ReactComponent as DiscordMobileLogo } from '@assets/icons/discord-mobile.svg'
 import { ReactComponent as GithubMobileLogo } from '@assets/icons/github-mobile.svg'
@@ -8,14 +7,14 @@ import { ReactComponent as MoreHorizontal } from '@assets/icons/more-horizontal.
 import { ReactComponent as PortfolioLogo } from '@assets/icons/portfolio.svg'
 import { ReactComponent as SwapLogo } from '@assets/icons/swap.svg'
 import { ReactComponent as TwitterMobileLogo } from '@assets/icons/twitter-mobile.svg'
-import { Button } from '@components'
+import { Union } from '@components/atoms/Icon'
+import { Menu as MenuIcon } from '@components/atoms/Icon'
 import Menu from '@components/Menu'
 import { WalletNavConnector } from '@components/WalletNavConnector'
 import { useTheme } from '@emotion/react'
 import styled from '@emotion/styled'
 import { trackGoal } from '@libs/fathom'
 import { useExtension } from '@libs/talisman'
-import { buyNow } from '@util/fiatOnRamp'
 import { useMediaQuery } from '@util/hooks'
 import { DISCORD_JOIN_URL, TALISMAN_TWITTER_URL } from '@util/links'
 import Color from 'colorjs.io'
@@ -37,7 +36,6 @@ export default function HeaderState(props: any) {
 
 const desktopRoutes = [
   { name: 'Portfolio', path: '/portfolio' },
-  { name: 'NFTs', path: '/nfts' },
   { name: 'Explore', path: '/explore' },
   { name: 'Crowdloans', path: '/crowdloans' },
   { name: 'Staking', path: '/staking' },
@@ -116,7 +114,7 @@ const Header = styled(({ className, isMobile }: HeaderProps) => {
   const { scrollY } = useScroll()
 
   useEffect(() => {
-    scrollY.onChange(y => {
+    scrollY.onChange((y: any) => {
       controls.start(y > 30 ? 'scrolled' : 'initial')
     })
   }, [controls, scrollY])
@@ -147,8 +145,8 @@ const Header = styled(({ className, isMobile }: HeaderProps) => {
       }}
     >
       <span>
-        <NavLink end to={homeRoute} className="logo">
-          <TalismanHandLogo />
+        <NavLink to={homeRoute} end className="logo">
+          <Union />
         </NavLink>
       </span>
       {!isMobile && (
@@ -192,16 +190,36 @@ const Header = styled(({ className, isMobile }: HeaderProps) => {
 
       <div className="menu-nav">
         <WalletNavConnector />
-        <Button className="button-buy" small onClick={buyNow}>
-          {t('Buy')}
-        </Button>
-        <LanguageSelector />
+        {!isMobile && (
+          <>
+            <div
+              onClick={() => window.open('https://talisman.banxa.com/', '_blank', 'noopener,noreferrer')}
+              css={{
+                'cursor': 'pointer',
+                'padding': '0.75rem 2.5rem',
+                'position': 'relative',
+                'whiteSpace': 'nowrap',
+                ':hover': { color: theme.color.onForegroundVariant },
+                'transition': 'all 0.2s ease-in-out',
+              }}
+            >
+              {t('Buy')}
+            </div>
+            <LanguageSelector />
+          </>
+        )}
         <Menu
           dropdownAlignment="right"
           ButtonComponent={
-            <button className="mobile-nav-button">
-              <MoreHorizontal />
-            </button>
+            isMobile ? (
+              <div className="mobile-nav-button">
+                <MenuIcon />
+              </div>
+            ) : (
+              <button className="nav-button">
+                <MoreHorizontal />
+              </button>
+            )
           }
         >
           <AnimatePresence>
@@ -218,6 +236,13 @@ const Header = styled(({ className, isMobile }: HeaderProps) => {
                       </li>
                     )
                   })}
+                {isMobile && (
+                  <li key="buy">
+                    <span onClick={() => window.open('https://talisman.banxa.com/', '_blank', 'noopener,noreferrer')}>
+                      Buy
+                    </span>
+                  </li>
+                )}
                 {subRoutes.map(route => {
                   return (
                     <li key={route.name}>
@@ -252,7 +277,7 @@ const Header = styled(({ className, isMobile }: HeaderProps) => {
 })`
   position: sticky;
   top: 0;
-  z-index: 10; /* just to be safe */
+  z-index: 101; /* just to be safe */
   display: grid;
   grid-template: 1fr / auto 0fr 2fr;
   max-height: 64px;
@@ -362,7 +387,7 @@ const Header = styled(({ className, isMobile }: HeaderProps) => {
       line-height: 1.4rem;
       font-size: 1.4rem;
       font-weight: 500;
-      color: rgb(${({ theme }) => theme?.background});
+      color: rgb(${({ theme }: { theme: any }) => theme?.background});
       background: var(--color-primary);
       text-align: center;
 
@@ -376,6 +401,10 @@ const Header = styled(({ className, isMobile }: HeaderProps) => {
   }
 
   .mobile-nav-button {
+    cursor: pointer;
+  }
+
+  .nav-button {
     display: flex;
     align-items: center;
     border: none;
@@ -435,7 +464,7 @@ const Header = styled(({ className, isMobile }: HeaderProps) => {
     }
 
     .logo svg {
-      height: 1.5em;
+      height: 0.75em;
     }
 
     .account-button {

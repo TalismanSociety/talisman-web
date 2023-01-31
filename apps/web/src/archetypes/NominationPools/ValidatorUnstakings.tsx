@@ -1,5 +1,5 @@
 import PoolUnstake, { ValidatorUnstakeList } from '@components/recipes/PoolUnstake'
-import { selectedPolkadotAccountsState } from '@domains/accounts/recoils'
+import { selectedSubstrateAccountsState } from '@domains/accounts/recoils'
 import { erasToMilliseconds } from '@domains/common/utils'
 import { addMilliseconds, formatDistanceToNow } from 'date-fns'
 import { useRecoilValue, waitForAll } from 'recoil'
@@ -14,7 +14,7 @@ const ValidatorUnstakings = () => {
   const sessionProgressLoadable = useChainState('derive', 'session', 'progress', [])
 
   const [api, accounts, decimal, nativeTokenPrice] = useRecoilValue(
-    waitForAll([apiState, selectedPolkadotAccountsState, nativeTokenDecimalState, nativeTokenPriceState('usd')])
+    waitForAll([apiState, selectedSubstrateAccountsState, nativeTokenDecimalState, nativeTokenPriceState('usd')])
   )
 
   const stakingsLoadable = useChainState('derive', 'staking', 'accounts', [
@@ -47,8 +47,8 @@ const ValidatorUnstakings = () => {
         const commonProps = (amount: any) => ({
           accountName: accounts[sIndex]?.name ?? '',
           accountAddress: staking.accountId.toString(),
-          unstakingAmount: decimal.fromAtomics(amount).toHuman(),
-          unstakingFiatAmount: (decimal.fromAtomics(amount).toNumber() * nativeTokenPrice).toLocaleString(undefined, {
+          unstakingAmount: decimal.fromPlanck(amount).toHuman(),
+          unstakingFiatAmount: (decimal.fromPlanck(amount).toNumber() * nativeTokenPrice).toLocaleString(undefined, {
             style: 'currency',
             currency: 'usd',
             currencyDisplay: 'narrowSymbol',

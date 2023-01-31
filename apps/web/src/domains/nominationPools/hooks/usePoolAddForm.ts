@@ -3,7 +3,7 @@ import {
   useChainState,
   useQueryMulti,
   useTokenAmount,
-  useTokenAmountFromAtomics,
+  useTokenAmountFromPlanck,
   useTokenAmountState,
 } from '@domains/common/hooks'
 import { paymentInfoState } from '@domains/common/recoils'
@@ -42,7 +42,7 @@ export const usePoolAddForm = (action: 'bondExtra' | 'join', account?: string) =
   const [input, setAmount] = useTokenAmountState('')
 
   const oneToken = useTokenAmount('1')
-  const availableBalance = useTokenAmountFromAtomics(
+  const availableBalance = useTokenAmountFromPlanck(
     paymentInfoLoadable.state !== 'hasValue' || paymentInfoLoadable.contents === undefined
       ? undefined
       : balancesLoadable
@@ -59,28 +59,28 @@ export const usePoolAddForm = (action: 'bondExtra' | 'join', account?: string) =
           .sub(paymentInfoLoadable.contents.partialFee.muln(1 + ESTIMATED_FEE_MARGIN_OF_ERROR))
   )
 
-  const initialAmount = useTokenAmountFromAtomics(
+  const initialAmount = useTokenAmountFromPlanck(
     useMemo(
       () =>
         availableBalance.decimalAmount === undefined || oneToken.decimalAmount === undefined
           ? undefined
-          : BN.min(availableBalance.decimalAmount.atomics, oneToken.decimalAmount.atomics),
+          : BN.min(availableBalance.decimalAmount.planck, oneToken.decimalAmount.planck),
       [availableBalance, oneToken.decimalAmount]
     )
   )
 
-  const resulting = useTokenAmountFromAtomics(
+  const resulting = useTokenAmountFromPlanck(
     useMemo(
       () =>
         queriesLoadable
           .valueMaybe()?.[0]
           ?.unwrapOrDefault()
-          .points.add(input.decimalAmount?.atomics ?? new BN(0)),
-      [input.decimalAmount?.atomics, queriesLoadable]
+          .points.add(input.decimalAmount?.planck ?? new BN(0)),
+      [input.decimalAmount?.planck, queriesLoadable]
     )
   )
 
-  const minimum = useTokenAmountFromAtomics(queriesLoadable.valueMaybe()?.[1])
+  const minimum = useTokenAmountFromPlanck(queriesLoadable.valueMaybe()?.[1])
 
   const error = useMemo(() => {
     if (balancesLoadable.state !== 'hasValue') return
@@ -89,7 +89,7 @@ export const usePoolAddForm = (action: 'bondExtra' | 'join', account?: string) =
 
     if (
       availableBalance.decimalAmount !== undefined &&
-      input.decimalAmount?.atomics.gt(availableBalance.decimalAmount.atomics)
+      input.decimalAmount?.planck.gt(availableBalance.decimalAmount.planck)
     ) {
       return new Error('Insufficient balance')
     }
@@ -97,14 +97,14 @@ export const usePoolAddForm = (action: 'bondExtra' | 'join', account?: string) =
     if (
       action === 'join' &&
       minimum.decimalAmount !== undefined &&
-      input.decimalAmount?.atomics.lt(minimum.decimalAmount.atomics)
+      input.decimalAmount?.planck.lt(minimum.decimalAmount.planck)
     ) {
       return new Error(`Minimum ${minimum.decimalAmount.toHuman()} needed`)
     }
   }, [
     balancesLoadable.state,
     input.amount,
-    input.decimalAmount?.atomics,
+    input.decimalAmount?.planck,
     availableBalance.decimalAmount,
     action,
     minimum.decimalAmount,
@@ -121,7 +121,7 @@ export const usePoolAddForm = (action: 'bondExtra' | 'join', account?: string) =
       if (
         (input.amount === '' || account !== prevAccount) &&
         initialAmount.decimalAmount !== undefined &&
-        !initialAmount.decimalAmount.atomics.isZero()
+        !initialAmount.decimalAmount.planck.isZero()
       ) {
         setAmount(initialAmount.decimalAmount.toString())
       }

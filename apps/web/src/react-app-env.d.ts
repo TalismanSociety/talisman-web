@@ -19,3 +19,10 @@ declare namespace NodeJS {
     REACT_APP_TX_HISTORY_INDEXER: string
   }
 }
+
+declare namespace JSX {
+  interface IntrinsicElements {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    'model-viewer': any
+  }
+}

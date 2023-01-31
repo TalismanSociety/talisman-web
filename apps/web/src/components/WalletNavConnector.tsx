@@ -16,7 +16,7 @@ export const WalletNavConnector = () => {
 
   if (extensionStatus === 'UNAVAILABLE')
     return isAnyWalletInstalled ? (
-      <WalletSelect dappName={DAPP_NAME} triggerComponent={<Button>{t('Connect')}</Button>} />
+      <WalletSelect onlyShowInstalled dappName={DAPP_NAME} triggerComponent={<Button>{t('Connect')}</Button>} />
     ) : (
       <a href={downloadLink} target="_blank" rel="noopener noreferrer">
         <Button>{t('Install')}</Button>

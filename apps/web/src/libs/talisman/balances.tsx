@@ -1,20 +1,16 @@
+import { useTotalCrowdloanTotalFiatAmount } from '@domains/crowdloans/hooks'
+import { useTotalStaked } from '@domains/staking/hooks'
 import { useAllAccountAddresses } from '@libs/talisman'
-import { Balances } from '@talismn/balances'
-import { EvmErc20Module } from '@talismn/balances-evm-erc20'
-import { EvmNativeModule } from '@talismn/balances-evm-native'
-import { useBalances as _useBalances } from '@talismn/balances-react'
-import { useChaindata, useTokens } from '@talismn/balances-react'
-import { SubNativeModule } from '@talismn/balances-substrate-native'
-import { SubOrmlModule } from '@talismn/balances-substrate-orml'
+import { AddressesByToken, Balances } from '@talismn/balances'
+import { balanceModules } from '@talismn/balances-default-modules'
+import { useBalances as _useBalances, useChaindata, useTokens } from '@talismn/balances-react'
 import { ChaindataProvider, Token, TokenList } from '@talismn/chaindata-provider'
 import { isNil } from 'lodash'
 import { PropsWithChildren, createContext, useContext, useMemo } from 'react'
 
-const balanceModules = [SubNativeModule, SubOrmlModule, EvmNativeModule, EvmErc20Module]
-
 export const useBalances = () => useBalanceContext()
 
-function useAddressesByToken(addresses: string[] | null | undefined, tokenIds: Token['id'][]) {
+function useAddressesByToken(addresses: string[] | null | undefined, tokenIds: Token['id'][]): AddressesByToken<Token> {
   return useMemo(() => {
     if (isNil(addresses)) return {}
     return Object.fromEntries(tokenIds.map(tokenId => [tokenId, addresses]))
@@ -23,7 +19,9 @@ function useAddressesByToken(addresses: string[] | null | undefined, tokenIds: T
 
 type ContextProps = {
   balances: Balances | undefined
-  assetsValue: string | null
+  assetsTotalValue: number
+  assetsTransferable: string | null
+  assetsOverallValue: number
   tokenIds: string[]
   tokens: TokenList | any
   chaindata: (ChaindataProvider & { generation?: number | undefined }) | null
@@ -31,7 +29,9 @@ type ContextProps = {
 
 const Context = createContext<ContextProps>({
   balances: undefined,
-  assetsValue: '',
+  assetsTransferable: '',
+  assetsOverallValue: 0,
+  assetsTotalValue: 0,
   tokenIds: [],
   tokens: [],
   chaindata: null,
@@ -66,16 +66,24 @@ export const Provider = ({ children }: PropsWithChildren) => {
   const addressesByToken = useAddressesByToken(addresses, tokenIds)
   const balances = _useBalances(balanceModules, chaindata, addressesByToken)
 
-  const assetsValue =
-    (balances?.sum.fiat('usd').transferable ?? 0).toLocaleString(undefined, {
+  const assetsAmount = balances?.sum.fiat('usd').transferable ?? 0
+
+  const assetsTransferable =
+    assetsAmount.toLocaleString(undefined, {
       style: 'currency',
       currency: 'USD',
       currencyDisplay: 'narrowSymbol',
     }) ?? ' -'
 
+  const crowdloanTotal = useTotalCrowdloanTotalFiatAmount()
+  const totalStaked = useTotalStaked()
+
+  const assetsOverallValue = balances?.sum.fiat('usd').total ?? 0
+  const assetsTotalValue = assetsOverallValue ? crowdloanTotal + (totalStaked.fiatAmount ?? 0) + assetsOverallValue : 0
+
   const value = useMemo(
-    () => ({ balances, assetsValue, tokenIds, tokens, chaindata }),
-    [balances, assetsValue, tokenIds, tokens, chaindata]
+    () => ({ balances, assetsTransferable, tokenIds, tokens, chaindata, assetsOverallValue, assetsTotalValue }),
+    [balances, assetsTransferable, tokenIds, tokens, chaindata, assetsOverallValue, assetsTotalValue]
   )
 
   return <Context.Provider value={value}>{children}</Context.Provider>

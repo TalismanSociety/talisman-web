@@ -30,6 +30,6 @@ export const LanguageSelector = styled(({ className }: { className?: string }) =
   background: transparent;
   color: var(--color-foreground);
   border-radius: 1rem;
-  border: solid 1px var(--color-dim);
   font-size: small;
+  padding: 0rem 1rem;
 `

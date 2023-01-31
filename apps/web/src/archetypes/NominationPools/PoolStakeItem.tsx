@@ -1,5 +1,7 @@
+import ClaimStakeDialog from '@components/recipes/ClaimStakeDialog'
 import PoolStake, { PoolStakeProps } from '@components/recipes/PoolStake/PoolStake'
 import { PoolStatus } from '@components/recipes/PoolStatusIndicator'
+import { useTokenAmountFromPlanck } from '@domains/common/hooks'
 import { UInt } from '@polkadot/types-codec'
 import { PalletNominationPoolsPoolMember } from '@polkadot/types/lookup'
 import { ReactNode, useCallback, useState } from 'react'
@@ -28,14 +30,18 @@ const PoolStakeItem = ({
     pendingRewards?: UInt
   }
 }) => {
-  const [decimalFromAtomics, nativeTokenPrice] = useRecoilValue(
+  const [decimal, nativeTokenPrice] = useRecoilValue(
     waitForAll([nativeTokenDecimalState, nativeTokenPriceState('usd')])
   )
 
-  const claimPayoutExtrinsic = useExtrinsic('nominationPools', 'claimPayout')
-
   const [isUnstaking, setIsUnstaking] = useState(false)
   const [isAddingStake, setIsAddingStake] = useState(false)
+
+  const [claimDialogOpen, setClaimDialogOpen] = useState(false)
+  const claimPayoutExtrinsic = useExtrinsic('nominationPools', 'claimPayout')
+  const restakeExtrinsic = useExtrinsic('nominationPools', 'bondExtra')
+
+  const pendingRewards = useTokenAmountFromPlanck(item.pendingRewards)
 
   return (
     <>
@@ -45,29 +51,24 @@ const PoolStakeItem = ({
         poolStatus={item.status}
         accountName={item.account?.name ?? ''}
         accountAddress={item.account?.address ?? ''}
-        stakingAmount={decimalFromAtomics.fromAtomics(item.poolMember.points).toHuman()}
-        stakingAmountInFiat={(
-          decimalFromAtomics.fromAtomics(item.poolMember.points).toNumber() * nativeTokenPrice
-        ).toLocaleString(undefined, { style: 'currency', currency: 'usd', currencyDisplay: 'narrowSymbol' })}
-        rewardsAmount={'+' + decimalFromAtomics.fromAtomics(item.pendingRewards?.toString()).toHuman()}
-        rewardsAmountInFiat={
-          '+' +
-          (decimalFromAtomics.fromAtomics(item.pendingRewards).toNumber() * nativeTokenPrice).toLocaleString(
-            undefined,
-            { style: 'currency', currency: 'usd', currencyDisplay: 'narrowSymbol' }
-          )
-        }
+        stakingAmount={decimal.fromPlanck(item.poolMember.points).toHuman()}
+        stakingAmountInFiat={(decimal.fromPlanck(item.poolMember.points).toNumber() * nativeTokenPrice).toLocaleString(
+          undefined,
+          { style: 'currency', currency: 'usd', currencyDisplay: 'narrowSymbol' }
+        )}
+        rewardsAmount={'+' + decimal.fromPlanck(item.pendingRewards?.toString()).toHuman()}
+        rewardsAmountInFiat={'+' + pendingRewards.localizedFiatAmount}
         poolName={item.poolName ?? ''}
-        onRequestClaim={() => claimPayoutExtrinsic.signAndSend(item.account?.address ?? '')}
+        onRequestClaim={useCallback(() => setClaimDialogOpen(true), [])}
         claimState={
           item.pendingRewards?.isZero() ?? true
             ? 'unavailable'
-            : claimPayoutExtrinsic.state === 'loading'
+            : claimPayoutExtrinsic.state === 'loading' || restakeExtrinsic.state === 'loading'
             ? 'pending'
             : undefined
         }
-        onRequestUnstake={() => setIsUnstaking(true)}
-        onRequestAdd={() => setIsAddingStake(true)}
+        onRequestUnstake={useCallback(() => setIsUnstaking(true), [])}
+        onRequestAdd={useCallback(() => setIsAddingStake(true), [])}
       />
       <AddStakeDialog
         account={isAddingStake ? item.account?.address : undefined}
@@ -76,6 +77,20 @@ const PoolStakeItem = ({
       <UnstakeDialog
         account={isUnstaking ? item.account?.address : undefined}
         onDismiss={useCallback(() => setIsUnstaking(false), [])}
+      />
+      <ClaimStakeDialog
+        open={claimDialogOpen}
+        amount={pendingRewards.decimalAmount?.toHuman() ?? '...'}
+        fiatAmount={pendingRewards.localizedFiatAmount ?? '...'}
+        onRequestDismiss={useCallback(() => setClaimDialogOpen(false), [])}
+        onRequestClaim={useCallback(() => {
+          claimPayoutExtrinsic.signAndSend(item.account?.address ?? '')
+          setClaimDialogOpen(false)
+        }, [claimPayoutExtrinsic, item.account?.address])}
+        onRequestReStake={useCallback(() => {
+          restakeExtrinsic.signAndSend(item.account?.address ?? '', { Rewards: item.pendingRewards })
+          setClaimDialogOpen(false)
+        }, [item.account?.address, item.pendingRewards, restakeExtrinsic])}
       />
     </>
   )

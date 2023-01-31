@@ -42,10 +42,10 @@ const AddStakeDialog = (props: { account?: string; onDismiss: () => unknown }) =
         () =>
           bondExtraExtrinsic
             .signAndSend(props.account ?? '', {
-              FreeBalance: decimalAmount?.atomics?.toString() ?? '0',
+              FreeBalance: decimalAmount?.planck?.toString() ?? '0',
             })
             .finally(() => props.onDismiss()),
-        [bondExtraExtrinsic, decimalAmount?.atomics, props]
+        [bondExtraExtrinsic, decimalAmount?.planck, props]
       )}
       onRequestMaxAmount={() => {
         if (availableBalance.decimalAmount !== undefined) {
@@ -53,7 +53,7 @@ const AddStakeDialog = (props: { account?: string; onDismiss: () => unknown }) =
         }
       }}
       confirmState={
-        !isReady || inputError !== undefined || decimalAmount?.atomics.isZero()
+        !isReady || inputError !== undefined || decimalAmount?.planck.isZero()
           ? 'disabled'
           : bondExtraExtrinsic.state === 'loading'
           ? 'pending'

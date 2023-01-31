@@ -72,7 +72,7 @@ export const Menu = styled((props: MenuProps) => {
     ${props => (props.dropdownAlignment === 'right' ? 'right' : 'left')}: 0px;
     ${props => (props.dropdownAlignment === 'right' ? `max-width: max-content;` : `max-width: 100%; width: 100%;`)}
     white-space: nowrap;
-    margin-top: 0.25rem;
+    margin-top: 1.5rem;
     z-index: 10;
     min-width: 256px;
 

@@ -1,9 +1,8 @@
 import HiddenDetails from '@components/molecules/HiddenDetails'
+import { NFTCard } from '@components/recipes/NFTCard'
 import styled from '@emotion/styled'
 import { device } from '@util/breakpoints'
 import { ReactNode } from 'react'
-
-import BlankCard from './Card/LoadingCard'
 
 const ListGrid = styled.div`
   display: grid;
@@ -43,7 +42,7 @@ const HiddenNFTGrid = ({ overlay }: { overlay?: ReactNode }) => {
         }}
       >
         {Array.from({ length: 4 }).map((_, index) => (
-          <BlankCard />
+          <NFTCard key={index} isBlank />
         ))}
       </ListGrid>
     </HiddenDetails>

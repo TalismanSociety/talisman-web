@@ -5,8 +5,8 @@ export default class Decimal {
   // Too large values lead to massive memory usage. Limit to something sensible.
   static #maxDecimal = 100
 
-  static fromAtomics(atomics: string | number | bigint | BN | ToBn | undefined, decimals: number, unit?: string) {
-    return new Decimal(bnToBn(atomics), decimals, unit)
+  static fromPlanck(planck: string | number | bigint | BN | ToBn | undefined, decimals: number, unit?: string) {
+    return new Decimal(bnToBn(planck), decimals, unit)
   }
 
   public static fromUserInput(input: string, decimals: number, unit?: string): Decimal {
@@ -49,11 +49,11 @@ export default class Decimal {
     return new Decimal(bnToBn(quantity), decimals, unit)
   }
 
-  private constructor(public atomics: BN, public decimals: number, public unit?: string) {}
+  private constructor(public planck: BN, public decimals: number, public unit?: string) {}
 
   toNumber() {
     return Number(
-      formatBalance(this.atomics, {
+      formatBalance(this.planck, {
         forceUnit: '-',
         withSi: false,
         withUnit: false,
@@ -66,7 +66,7 @@ export default class Decimal {
   // but to be honest maybe we shouldn't expect
   // precision from a string representation?
   toString() {
-    return formatBalance(this.atomics, {
+    return formatBalance(this.planck, {
       forceUnit: '-',
       withSi: false,
       withUnit: false,
@@ -75,7 +75,7 @@ export default class Decimal {
   }
 
   toHuman(options = { withUnit: true }) {
-    const raw = formatBalance(this.atomics, {
+    const raw = formatBalance(this.planck, {
       forceUnit: '-',
       withUnit: false,
       decimals: this.decimals,

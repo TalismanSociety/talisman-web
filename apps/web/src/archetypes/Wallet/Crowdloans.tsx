@@ -1,14 +1,15 @@
 import { ChainLogo, ExtensionStatusGate, Info, Panel, PanelSection, Pendor } from '@components'
-import { selectedPolkadotAccountsState } from '@domains/accounts/recoils'
+import { selectedSubstrateAccountsState } from '@domains/accounts/recoils'
+import { useTotalCrowdloanTotalFiatAmount } from '@domains/crowdloans/hooks'
 import styled from '@emotion/styled'
 import { CrowdloanContribution, useCrowdloanContributions } from '@libs/crowdloans'
 import { Moonbeam } from '@libs/crowdloans/crowdloanOverrides'
 import { MoonbeamPortfolioTag } from '@libs/moonbeam-contributors'
-import { calculateCrowdloanPortfolioAmounts, usePortfolio, useTaggedAmountsInPortfolio } from '@libs/portfolio'
+import { calculateCrowdloanPortfolioAmounts, useTaggedAmountsInPortfolio } from '@libs/portfolio'
 import { useCrowdloanById, useParachainAssets, useParachainDetailsById } from '@libs/talisman'
 import { SupportedRelaychains, parachainDetails } from '@libs/talisman/util/_config'
 import { useTokenPrice } from '@libs/tokenprices'
-import { encodeAnyAddress, planckToTokens } from '@talismn/util'
+import { planckToTokens } from '@talismn/util'
 import { formatCommas, formatCurrency } from '@util/helpers'
 import { Maybe } from '@util/monads'
 import BigNumber from 'bignumber.js'
@@ -108,8 +109,16 @@ const CrowdloanItemWithLink = styled((props: { contribution: CrowdloanContributi
     border-radius: 0 0 1.6rem 1.6rem;
   }
 
+  .panel-section:only-of-type:hover {
+    border-radius: 1.6rem;
+  }
+
   .panel-section:hover {
-    background-color: var(--color-activeBackground);
+    background-color: rgb(38, 38, 38);
+  }
+
+  :not(:last-of-type) .panel-section {
+    border-bottom: 1px solid #2a2a2a;
   }
 `
 
@@ -144,24 +153,16 @@ const ExtensionUnavailable = styled((props: any) => {
 
 const Crowdloans = ({ className }: { className?: string }) => {
   const { t } = useTranslation()
-  const accounts = useRecoilValue(selectedPolkadotAccountsState).map(x => x.address)
+  const accounts = useRecoilValue(selectedSubstrateAccountsState).map(x => x.address)
   const { contributions, hydrated: contributionsHydrated } = useCrowdloanContributions({ accounts })
-
-  const { totalCrowdloansUsdByAddress } = usePortfolio()
-  const genericAccounts = useMemo(() => accounts?.map(account => encodeAnyAddress(account, 42)), [accounts])
-  const crowdloansUsd = useMemo(
-    () =>
-      Object.entries(totalCrowdloansUsdByAddress || {})
-        .filter(([address]) => genericAccounts && genericAccounts.includes(address))
-        .map(([, crowdloansUsd]) => crowdloansUsd)
-        .reduce((prev, curr) => prev.plus(curr), new BigNumber(0))
-        .toString(),
-    [totalCrowdloansUsdByAddress, genericAccounts]
-  )
+  const crowdloansUsd = useTotalCrowdloanTotalFiatAmount()
 
   return (
     <section className={`wallet-crowdloans ${className}`}>
-      <Panel title={t('Crowdloans')} subtitle={crowdloansUsd && formatCurrency(crowdloansUsd)}>
+      <Panel
+        title={t('Crowdloans')}
+        subtitle={crowdloansUsd && crowdloansUsd !== 0 ? formatCurrency(crowdloansUsd) : ''}
+      >
         {!contributionsHydrated ? (
           <PanelSection comingSoon>
             <div>{t('Summoning Crowdloan Contributions...')}</div>

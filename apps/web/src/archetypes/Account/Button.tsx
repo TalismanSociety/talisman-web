@@ -11,10 +11,9 @@ import { ReactComponent as ChevronDown } from '@icons/chevron-down.svg'
 import { DAPP_NAME, useActiveAccount, useBalances, useChainByGenesis, useExtensionAutoConnect } from '@libs/talisman'
 import { useTalismanInstalled } from '@libs/talisman/useIsTalismanInstalled'
 import { WalletSelect } from '@talismn/connect-components'
-import { getWalletBySource } from '@talismn/connect-wallets'
+import { EnkryptWallet, SubWallet, TalismanWallet, getWalletBySource } from '@talismn/connect-wallets'
 import { encodeAnyAddress } from '@talismn/util'
 import { device } from '@util/breakpoints'
-import { buyNow } from '@util/fiatOnRamp'
 import { truncateString } from '@util/helpers'
 import { Maybe } from '@util/monads'
 import useOnClickOutside from '@util/useOnClickOutside'
@@ -43,7 +42,10 @@ const BuyItem = styled(
   ({ nativeToken, className, onClick }: { nativeToken?: string; className?: string; onClick?: () => void }) => {
     const { t } = useTranslation()
     return (
-      <span className={`${className}`} onClick={buyNow}>
+      <span
+        className={`${className}`}
+        onClick={() => window.open('https://talisman.banxa.com/', '_blank', 'noopener,noreferrer')}
+      >
         <div className="container">
           <span className="info">
             <AlertCircle width="48" />
@@ -97,7 +99,7 @@ const Dropdown = styled(
     const { switchAccount } = useActiveAccount()
     const { accounts, disconnect } = useExtensionAutoConnect()
 
-    const { assetsValue, balances } = useBalances()
+    const { assetsOverallValue, balances } = useBalances()
 
     return (
       open && (
@@ -110,12 +112,16 @@ const Dropdown = styled(
             // Do the filtering
             const fiatBalance =
               address !== undefined
-                ? (balances?.find({ address: address }).sum.fiat('usd').transferable ?? 0).toLocaleString(undefined, {
+                ? (balances?.find({ address: address }).sum.fiat('usd').total ?? 0).toLocaleString(undefined, {
                     style: 'currency',
                     currency: 'USD',
                     currencyDisplay: 'narrowSymbol',
                   }) ?? '-'
-                : assetsValue
+                : assetsOverallValue.toLocaleString(undefined, {
+                    style: 'currency',
+                    currency: 'USD',
+                    currencyDisplay: 'narrowSymbol',
+                  }) ?? ' -'
 
             return (
               <div
@@ -297,6 +303,8 @@ const Unavailable = styled(({ className }: { className?: string }) => {
   return (
     <WalletSelect
       dappName={DAPP_NAME}
+      walletList={[new TalismanWallet(), new SubWallet(), new EnkryptWallet()]}
+      onlyShowInstalled
       triggerComponent={
         <div className={className} style={{ cursor: 'pointer' }}>
           <span className="icon">
@@ -333,6 +341,7 @@ const NoAccount = styled(({ className }: { className?: string }) => {
   }, [])
   return (
     <WalletSelect
+      onlyShowInstalled
       dappName={DAPP_NAME}
       triggerComponent={
         <Button className={`account-button ${className}`}>
@@ -366,6 +375,7 @@ const Unauthorized = styled(({ className }: { className?: string }) => {
   }, [])
   return (
     <WalletSelect
+      onlyShowInstalled
       dappName={DAPP_NAME}
       triggerComponent={
         <Button className={`account-button ${className}`}>

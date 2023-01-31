@@ -27,7 +27,7 @@ const ValidatorUnstakeDialog = (props: { accountAddress: string; open: boolean; 
     [unbondExtrinsic.contents?.status?.isInBlock]
   )
 
-  const isLeaving = available.decimalAmount !== undefined && decimalAmount?.atomics.eq(available.decimalAmount.atomics)
+  const isLeaving = available.decimalAmount !== undefined && decimalAmount?.planck.eq(available.decimalAmount.planck)
 
   return (
     <BaseUnstakeDialog
@@ -48,7 +48,7 @@ const ValidatorUnstakeDialog = (props: { accountAddress: string; open: boolean; 
             unbondExtrinsic.unbondAll(props.accountAddress).finally(() => props.onRequestDismiss())
           } else {
             unbondExtrinsic
-              .signAndSend(props.accountAddress, decimalAmount?.atomics)
+              .signAndSend(props.accountAddress, decimalAmount?.planck)
               .finally(() => props.onRequestDismiss())
           }
         }
@@ -59,7 +59,7 @@ const ValidatorUnstakeDialog = (props: { accountAddress: string; open: boolean; 
         }
       }}
       confirmState={
-        !isReady || inputError !== undefined || decimalAmount?.atomics.isZero()
+        !isReady || inputError !== undefined || decimalAmount?.planck.isZero()
           ? 'disabled'
           : unbondExtrinsic.state === 'loading'
           ? 'pending'
