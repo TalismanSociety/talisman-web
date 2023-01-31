@@ -88,9 +88,9 @@ export default createBrowserRouter([
           { path: ':slug', element: <CrowdloanDetail /> },
         ],
       },
-      { path: 'history', element: <TransactionHistory /> },
       { path: 'buy', element: <Buy /> },
     ],
   },
+  { path: '/history', element: <Navigate to="/portfolio/history" /> },
   { path: '*', element: <Navigate to="/" /> },
 ])
