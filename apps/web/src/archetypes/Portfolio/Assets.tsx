@@ -3,7 +3,7 @@ import { useBalances } from '@libs/talisman'
 import { BalanceFormatter } from '@talismn/balances'
 import { useChaindata, useChains, useEvmNetworks } from '@talismn/balances-react'
 import { formatDecimals } from '@talismn/util'
-import _ from 'lodash'
+import { compact, groupBy, isEmpty, isNil } from 'lodash'
 import { useMemo } from 'react'
 
 const useFetchAssets = (address: string | undefined) => {
@@ -14,7 +14,7 @@ const useFetchAssets = (address: string | undefined) => {
   const evmNetworks = useEvmNetworks(chaindata)
 
   const isLoading = useMemo(() => {
-    return _.isEmpty(chains) || _.isEmpty(evmNetworks) || _.isEmpty(tokens) || _.isNil(balances)
+    return isEmpty(chains) || isEmpty(evmNetworks) || isEmpty(tokens) || isNil(balances)
   }, [chains, evmNetworks, tokens, balances])
 
   const fiatTotal =
@@ -139,14 +139,14 @@ const useAssets = (customAddress?: string) => {
     }
   })
 
-  const compressedTokens = _.compact(tokens)
+  const compressedTokens = compact(tokens)
 
   // for each compressed token
   // find the tokens with the same symbol in token details
   // group them together, in the new group, find the token that is substrate native
   // if there is a substrate native token, then add the other tokens to the ormlTokens array
 
-  const groupedTokens = _.groupBy(compressedTokens, 'tokenDetails.symbol')
+  const groupedTokens = groupBy(compressedTokens, 'tokenDetails.symbol')
   const groupedTokensArray = Object.values(groupedTokens)
 
   // for each group of tokens look through the chains using the tokendetails.chain.id as the key and find if the chain nativeToken.id is the same as the tokenDetails.id
