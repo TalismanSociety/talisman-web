@@ -3,7 +3,7 @@ import Text from '@components/atoms/Text'
 import { keyframes } from '@emotion/react'
 import styled from '@emotion/styled'
 import { Account } from '@libs/talisman/extension'
-import _, { startCase } from 'lodash'
+import { startCase } from 'lodash'
 
 import { AssetBalance } from '../Asset'
 
@@ -144,7 +144,7 @@ export const AssetBreakdownRow = ({ assetSummary }: AssetBreakdownProps) => {
                 fontWeight: 'bold',
               }}
             >
-              {_.startCase(variant)}
+              {startCase(variant)}
             </Text.Body>
             <div
               css={{

@@ -5,7 +5,7 @@ import HiddenDetails from '@components/molecules/HiddenDetails'
 import { keyframes, useTheme } from '@emotion/react'
 import styled from '@emotion/styled'
 import { Balances } from '@talismn/balances'
-import _, { startCase } from 'lodash'
+import { isEmpty, startCase } from 'lodash'
 import { Children, ReactElement, ReactNode } from 'react'
 import { useNavigate } from 'react-router-dom'
 
@@ -399,7 +399,7 @@ export const AssetsList = (props: AssetsListProps) => {
   const { isLoading } = props
 
   return (
-    <HiddenDetails overlay={<Text.H3>No Assets Found</Text.H3>} hidden={!isLoading && _.isEmpty(props.children)}>
+    <HiddenDetails overlay={<Text.H3>No Assets Found</Text.H3>} hidden={!isLoading && isEmpty(props.children)}>
       <Table>
         <thead>
           <tr>
@@ -420,11 +420,11 @@ export const AssetsList = (props: AssetsListProps) => {
         </thead>
         <tbody>
           {/* if is loading and no children, show an array of 8 assetskeleton. if not loading and no children show empty div, else map children */}
-          {isLoading && _.isEmpty(props.children)
+          {isLoading && isEmpty(props.children)
             ? Array(8)
                 .fill(0)
                 .map((_, i) => <AssetSkeleton key={i} />)
-            : !isLoading && _.isEmpty(props.children)
+            : !isLoading && isEmpty(props.children)
             ? Array(8)
                 .fill(0)
                 .map((_, i) => <AssetSkeleton key={i} loading={false} />)
