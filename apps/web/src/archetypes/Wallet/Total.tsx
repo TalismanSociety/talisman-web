@@ -1,10 +1,10 @@
+import CircularProgressIndicator from '@components/atoms/CircularProgressIndicator'
 import { useTotalCrowdloanTotalFiatAmount } from '@domains/crowdloans/hooks'
 import { useTotalStaked } from '@domains/staking/hooks'
-import styled from '@emotion/styled'
 import { useActiveAccount, useBalances } from '@libs/talisman'
-import { PropsWithChildren } from 'react'
+import { Suspense } from 'react'
 
-const Total = styled(({ className }: PropsWithChildren<{ className?: string }>) => {
+const TotalSuspense = () => {
   const { balances, assetsOverallValue } = useBalances()
   const address = useActiveAccount().address
 
@@ -16,14 +16,22 @@ const Total = styled(({ className }: PropsWithChildren<{ className?: string }>) 
   const totalPortfolioValue = fiatTotal + crowdloanTotal + (totalStaked.fiatAmount ?? 0)
 
   return (
-    <span>
+    <>
       {totalPortfolioValue.toLocaleString(undefined, {
         style: 'currency',
         currency: 'USD',
         currencyDisplay: 'narrowSymbol',
       })}
-    </span>
+    </>
   )
-})
+}
+
+const Total = () => {
+  return (
+    <Suspense fallback={<CircularProgressIndicator />}>
+      <TotalSuspense />
+    </Suspense>
+  )
+}
 
 export default Total

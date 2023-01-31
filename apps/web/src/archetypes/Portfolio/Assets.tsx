@@ -7,7 +7,7 @@ import { compact, groupBy, isEmpty, isNil } from 'lodash'
 import { useMemo } from 'react'
 
 const useFetchAssets = (address: string | undefined) => {
-  const { balances, tokenIds, tokens, assetsOverallValue, assetsTotalValue } = useBalances()
+  const { balances, tokenIds, tokens, assetsOverallValue } = useBalances()
   const chaindata = useChaindata()
 
   const chains = useChains(chaindata)
@@ -65,7 +65,7 @@ const useFetchAssets = (address: string | undefined) => {
     [chains, evmNetworks, tokenIds, tokens]
   )
 
-  return { assetBalances, assetsTotalValue, fiatTotal, lockedTotal, value, balances, chains, evmNetworks, isLoading }
+  return { assetBalances, fiatTotal, lockedTotal, value, balances, chains, evmNetworks, isLoading }
 }
 
 export const convertToFiatString = (value: any) => {
@@ -80,8 +80,9 @@ export const convertToFiatString = (value: any) => {
 
 const useAssets = (customAddress?: string) => {
   const { address } = useActiveAccount()
-  const { assetBalances, assetsTotalValue, fiatTotal, lockedTotal, value, balances, chains, evmNetworks, isLoading } =
-    useFetchAssets(customAddress ?? address)
+  const { assetBalances, fiatTotal, lockedTotal, value, balances, chains, evmNetworks, isLoading } = useFetchAssets(
+    customAddress ?? address
+  )
 
   if (!assetBalances)
     return {
@@ -226,7 +227,6 @@ const useAssets = (customAddress?: string) => {
   return {
     tokens: balancesWithOrmlTokens,
     fiatTotal,
-    assetsTotalValue,
     lockedTotal,
     balances,
     value,
