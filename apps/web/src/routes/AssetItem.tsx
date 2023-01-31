@@ -25,23 +25,19 @@ const AssetItem = () => {
   const { assetId } = useParams()
   const { token, balances, isLoading } = useSingleAsset({ symbol: assetId })
 
-  console.log(token)
-
   return (
     <>
-      {/* Add a way back ? */}
-      <Link to="/portfolio/assets">
-        <Button
-          variant="secondary"
-          css={{
-            width: 'fit-content',
-            padding: '1rem',
-            fontSize: '1.25rem',
-          }}
-        >
-          {`< Back`}
-        </Button>
-      </Link>
+      <Button
+        variant="secondary"
+        css={{
+          width: 'fit-content',
+          padding: '1rem',
+          fontSize: '1.25rem',
+        }}
+        onClick={() => window.history.back()}
+      >
+        {`< Back`}
+      </Button>
       {
         // isLoading - Finding Token, most likely a skeleton
         isLoading ? (
