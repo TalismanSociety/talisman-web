@@ -7,7 +7,7 @@ import InfoCard from '@components/molecules/InfoCard'
 import { AssetBreakdownList } from '@components/recipes/AssetBreakdown/AssetBreakdownList'
 import { keyframes } from '@emotion/react'
 import { startCase } from 'lodash'
-import { Link, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 
 const slideDown = keyframes`
     from {
