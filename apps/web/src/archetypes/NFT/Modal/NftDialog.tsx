@@ -8,6 +8,7 @@ import { NFTPreview } from '@components/recipes/NFTPreview'
 import { keyframes } from '@emotion/react'
 import { useNftById } from '@libs/@talisman-nft'
 import { NFTShort } from '@libs/@talisman-nft/types'
+import { memo } from 'react'
 
 import { NFTChild } from '../types'
 import InfoSkeleton from './InfoSkeleton'
@@ -294,4 +295,4 @@ const NftDialog = (props: NftDialogProps) => {
   )
 }
 
-export default NftDialog
+export default memo(NftDialog)

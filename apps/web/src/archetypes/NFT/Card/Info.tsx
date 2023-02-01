@@ -1,4 +1,5 @@
 import styled from '@emotion/styled'
+import { memo } from 'react'
 
 type InfoProps = {
   title: string
@@ -59,4 +60,4 @@ const Info = styled(({ title, subtitle, className, ...rest }: InfoProps) => (
   }
 `
 
-export default Info
+export default memo(Info)
