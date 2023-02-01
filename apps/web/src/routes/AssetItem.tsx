@@ -7,6 +7,7 @@ import InfoCard from '@components/molecules/InfoCard'
 import { AssetBreakdownList } from '@components/recipes/AssetBreakdown/AssetBreakdownList'
 import { keyframes } from '@emotion/react'
 import { startCase } from 'lodash'
+import { memo } from 'react'
 import { useParams } from 'react-router-dom'
 
 const slideDown = keyframes`
@@ -269,4 +270,4 @@ const AssetItemSkeleton = ({ noToken }: { noToken?: boolean }) => {
   )
 }
 
-export default AssetItem
+export default memo(AssetItem)

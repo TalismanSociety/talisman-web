@@ -6,7 +6,7 @@ import { keyframes, useTheme } from '@emotion/react'
 import styled from '@emotion/styled'
 import { Balances } from '@talismn/balances'
 import { isEmpty, startCase } from 'lodash'
-import { Children, ReactElement, ReactNode } from 'react'
+import { Children, ReactElement, ReactNode, memo } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 type AssetBalanceProps = {
@@ -457,4 +457,4 @@ export const AssetsListLocked = (props: AssetsListProps) => {
     </Table>
   )
 }
-export default Asset
+export default memo(Asset)

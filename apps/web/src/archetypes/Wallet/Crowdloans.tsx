@@ -173,7 +173,7 @@ const Crowdloans = ({ className }: { className?: string }) => {
         ) : (
           <ExtensionStatusGate unavailable={<ExtensionUnavailable />}>
             {contributions.map(contribution => (
-              <CrowdloanItemWithLink key={contribution.id} contribution={contribution} />
+              <CrowdloanItemWithLink key={contribution.id + contribution.account} contribution={contribution} />
             ))}
           </ExtensionStatusGate>
         )}

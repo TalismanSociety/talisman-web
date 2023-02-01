@@ -4,6 +4,7 @@ import { Account } from '@libs/talisman/extension'
 import { Balances } from '@talismn/balances'
 import { BalanceFormatter } from '@talismn/balances'
 import { formatDecimals } from '@talismn/util'
+import { memo } from 'react'
 import { useRecoilValue } from 'recoil'
 
 import { AssetBreakdownRow, AssetBreakdownRowHeader } from './AssetBreakdownRow'
@@ -73,7 +74,9 @@ type AssetBreakdownListProps = {
   token: any
 }
 
-export const AssetBreakdownList = (props: AssetBreakdownListProps) => {
+// React.memo AssetBreakdownList
+
+export const AssetBreakdownList = memo((props: AssetBreakdownListProps) => {
   const { token, balances } = props
   const accounts = useRecoilValue(selectedAccountsState)
 
@@ -144,4 +147,4 @@ export const AssetBreakdownList = (props: AssetBreakdownListProps) => {
       </tbody>
     </Table>
   )
-}
+})
