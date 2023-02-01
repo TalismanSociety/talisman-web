@@ -79,8 +79,7 @@ export default createBrowserRouter([
           { path: 'assets/:assetId', element: <AssetItem /> },
         ],
       },
-      { path: 'history', element: <Navigate to="/portfolio/history" /> },
-      { path: 'nfts', element: <Navigate to="/portfolio/nfts" /> },
+      { path: 'history', element: <Navigate to="portfolio/history" /> },
       { path: 'explore', element: <Explore /> },
       { path: 'staking', element: <Staking /> },
       {
@@ -90,6 +89,7 @@ export default createBrowserRouter([
           { path: ':slug', element: <CrowdloanDetail /> },
         ],
       },
+      { path: 'history', element: <TransactionHistory /> },
       { path: 'buy', element: <Buy /> },
     ],
   },
