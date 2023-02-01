@@ -7,7 +7,7 @@ import InfoCard from '@components/molecules/InfoCard'
 import { AssetBreakdownList } from '@components/recipes/AssetBreakdown/AssetBreakdownList'
 import { keyframes } from '@emotion/react'
 import { startCase } from 'lodash'
-import { Link, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 
 const slideDown = keyframes`
     from {
@@ -25,23 +25,19 @@ const AssetItem = () => {
   const { assetId } = useParams()
   const { token, balances, isLoading } = useSingleAsset({ symbol: assetId })
 
-  console.log(token)
-
   return (
     <>
-      {/* Add a way back ? */}
-      <Link to="/portfolio/assets">
-        <Button
-          variant="secondary"
-          css={{
-            width: 'fit-content',
-            padding: '1rem',
-            fontSize: '1.25rem',
-          }}
-        >
-          {`< Back`}
-        </Button>
-      </Link>
+      <Button
+        variant="secondary"
+        css={{
+          width: 'fit-content',
+          padding: '1rem',
+          fontSize: '1.25rem',
+        }}
+        onClick={() => window.history.back()}
+      >
+        {`< Back`}
+      </Button>
       {
         // isLoading - Finding Token, most likely a skeleton
         isLoading ? (

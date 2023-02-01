@@ -69,7 +69,7 @@ const WalletConnectionOverview = () => {
                 Talisman Portal
               </Text.H1>
               <Text.H4 css={{ color: '#A5A5A5' }}>Please connect your wallet to view your Portfolio</Text.H4>
-              <WalletSelect dappName={DAPP_NAME} triggerComponent={<Button>Connect Wallet</Button>} />
+              <WalletSelect onlyShowInstalled dappName={DAPP_NAME} triggerComponent={<Button>Connect Wallet</Button>} />
             </>
           ) : (
             <>
