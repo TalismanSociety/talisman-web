@@ -72,7 +72,7 @@ const NFTPreview = ({ nft, isFull = false, loading, isBlank = false }: NFTPrevie
           muted
           playsInline
           preload="metadata"
-          controlsList="nodownload"
+          // controlsList="nodownload"
         />
       ) : (
         <PlaceholderPreview icon={<Video />} text={'Video'} />
@@ -104,7 +104,7 @@ const NFTPreview = ({ nft, isFull = false, loading, isBlank = false }: NFTPrevie
           ) : (
             <PlaceholderPreview icon={<Volume2 />} text={'Audio'} />
           )}
-          <audio controls css={{ position: 'absolute', bottom: '0px' }}>
+          <audio controls css={{ position: 'absolute', bottom: '0px', width: 'inherit' }}>
             <source src={nft?.mediaUri} />
           </audio>
         </>
