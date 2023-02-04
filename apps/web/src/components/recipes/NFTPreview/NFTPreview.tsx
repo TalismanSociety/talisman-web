@@ -62,17 +62,18 @@ const NFTPreview = ({ nft, isFull = false, loading, isBlank = false }: NFTPrevie
         <video
           src={nft?.thumb ?? `${nft?.mediaUri}?stream=true`}
           onMouseOver={event => {
-            event.currentTarget.play()
+            !isFull && event.currentTarget.play()
           }}
           onMouseOut={event => {
-            event.currentTarget.pause()
-            event.currentTarget.currentTime = 0
+            if (!isFull) {
+              event.currentTarget.pause()
+              event.currentTarget.currentTime = 0
+            }
           }}
-          loop
           muted
           playsInline
           preload="metadata"
-          // controlsList="nodownload"
+          controls={isFull}
         />
       ) : (
         <PlaceholderPreview icon={<Video />} text={'Video'} />
