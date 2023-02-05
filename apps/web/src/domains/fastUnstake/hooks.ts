@@ -1,17 +1,10 @@
-import { injectedSubstrateAccountsState } from '@domains/accounts/recoils'
-import { apiState, chainRpcState } from '@domains/chains/recoils'
+import { substrateAccountsState } from '@domains/accounts/recoils'
+import { chainRpcState } from '@domains/chains/recoils'
 import { useChainState } from '@domains/common/hooks'
 import { ApiPromise, WsProvider } from '@polkadot/api'
 import { range } from 'lodash/fp'
-import {
-  RecoilLoadable,
-  constSelector,
-  selector,
-  selectorFamily,
-  useRecoilValue,
-  useRecoilValueLoadable,
-  waitForAll,
-} from 'recoil'
+import { useMemo } from 'react'
+import { RecoilLoadable, constSelector, selector, selectorFamily, useRecoilValue, useRecoilValueLoadable } from 'recoil'
 
 // Can't re-use global api because fast unstake eligibility check is very resource intensive and will congest all other subscriptions
 const fastUnstakeApiState = selector({
@@ -19,33 +12,28 @@ const fastUnstakeApiState = selector({
   get: ({ get }) => ApiPromise.create({ provider: new WsProvider(get(chainRpcState)) }),
 })
 
-const eraExposedAccountsState = selectorFamily({
-  key: 'EraExposedAccounts',
-  get:
-    (era: number) =>
-    async ({ get }) =>
-      get(fastUnstakeApiState)
-        .query.staking.erasStakers.entries(era)
-        .then(x => x.flatMap(([_, exposure]) => (exposure as any).others.flatMap(({ who }: any) => who.toString())))
-        .then(array => new Set(array)),
-})
-
 const exposedAccountsState = selectorFamily({
   key: 'ExposedAccount',
   get:
     (activeEra: number) =>
     ({ get }) => {
-      const api = get(apiState)
+      const api = get(fastUnstakeApiState)
       const startEraToCheck = activeEra - api.consts.staking.bondingDuration.toNumber()
 
-      return get(waitForAll(range(startEraToCheck, activeEra).map(eraExposedAccountsState))).reduce(
-        (prev, curr) => new Set([...prev, ...curr])
-      )
+      return Promise.all(
+        range(startEraToCheck, activeEra).map(era =>
+          api.query.staking.erasStakers
+            .entries(era)
+            .then(x => x.flatMap(([_, exposure]) => exposure.others.flatMap(({ who }) => who.toString())))
+            .then(array => new Set(array))
+        )
+      ).then(x => x.reduce((prev, curr) => new Set([...prev, ...curr])))
     },
+  cachePolicy_UNSTABLE: { eviction: 'most-recent' },
 })
 
-export const useExposedAccounts = () => {
-  const activeEra = useChainState('query', 'staking', 'activeEra', [])
+export const useExposedAccounts = (options?: { enabled?: boolean } | undefined) => {
+  const activeEra = useChainState('query', 'staking', 'activeEra', [], { enabled: options?.enabled })
 
   const loadable = useRecoilValueLoadable(
     activeEra.state !== 'hasValue'
@@ -61,15 +49,25 @@ export const useExposedAccounts = () => {
 }
 
 export const useFastUnstakeEligibleAccounts = () => {
-  const accounts = useRecoilValue(injectedSubstrateAccountsState)
+  const accounts = useRecoilValue(substrateAccountsState)
+  const erasToCheckPerBlock = useChainState('query', 'fastUnstake', 'erasToCheckPerBlock', [])
 
-  const exposedAccountsLoadable = useExposedAccounts()
+  // Only check when some accounts has no active nominations & when fast unstaking is enalbed
+  const shouldCheckForFastUnstake = !erasToCheckPerBlock.valueMaybe()?.isZero()
+
+  const exposedAccountsLoadable = useExposedAccounts({ enabled: shouldCheckForFastUnstake })
   const ledgersLoadable = useChainState(
     'query',
     'staking',
     'ledger.multi',
     accounts.map(x => x.address)
   )
+
+  const emptyArray = useMemo(() => [] as typeof accounts, [])
+
+  if (!shouldCheckForFastUnstake) {
+    return RecoilLoadable.of(emptyArray)
+  }
 
   return RecoilLoadable.all([exposedAccountsLoadable, ledgersLoadable]).map(([exposedAccounts, ledgers]) =>
     accounts.filter(

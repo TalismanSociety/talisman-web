@@ -97,10 +97,11 @@ const ValidatorStake = Object.assign(
           )}
         </div>
         <Button
-          hidden={props.unstakeState === 'unavailable' || props.readonly}
           variant="outlined"
           onClick={props.onRequestUnstake}
           css={{ gridArea: 'uButton' }}
+          hidden={props.unstakeState === 'unavailable' || props.readonly}
+          loading={props.unstakeState === 'pending'}
         >
           Unstake
         </Button>

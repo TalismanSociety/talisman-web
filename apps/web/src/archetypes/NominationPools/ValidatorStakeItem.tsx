@@ -1,52 +1,89 @@
 import CircularProgressIndicator from '@components/atoms/CircularProgressIndicator'
+import FastUnstakeDialog from '@components/recipes/FastUnstakeDialog'
 import ValidatorStake from '@components/recipes/ValidatorStake'
 import { Account } from '@domains/accounts/recoils'
+import { useExtrinsic, useTokenAmountFromPlanck } from '@domains/common/hooks'
+import { useLockDuration } from '@domains/nominationPools/hooks/useLockDuration'
 import { DeriveStakingAccount } from '@polkadot/api-derive/types'
-import { useState } from 'react'
-import { useRecoilValue, waitForAll } from 'recoil'
+import { formatDistanceStrict } from 'date-fns'
+import { useCallback, useMemo, useState } from 'react'
 
-import { nativeTokenDecimalState, nativeTokenPriceState } from '../../domains/chains/recoils'
 import ValidatorUnstakeDialog from './ValidatorUnstakeDialog'
 
-const ValidatorStakeItem = (props: { account: Account; stake: DeriveStakingAccount; reward?: bigint }) => {
+const ValidatorStakeItem = (props: {
+  account: Account
+  stake: DeriveStakingAccount
+  reward?: bigint
+  eligibleForFastUnstake?: boolean
+  potentiallyEligibleForFastUnstake: boolean
+}) => {
   const [isUnstakeDialogOpen, setIsUnstakeDialogOpen] = useState(false)
+  const [isFastUnstakeDialogOpen, setIsFastUnstakeDialogOpen] = useState(false)
 
-  const [decimal, nativeTokenPrice] = useRecoilValue(
-    waitForAll([nativeTokenDecimalState, nativeTokenPriceState('usd')])
-  )
+  const lockDuration = useLockDuration()
 
-  const active = decimal.fromPlanck(props.stake.stakingLedger.active)
-  const rewards = decimal.fromPlanck(props.reward)
+  const active = useTokenAmountFromPlanck(props.stake.stakingLedger.active.unwrap())
+  const reward = useTokenAmountFromPlanck(props.reward)
+
+  const fastUnstake = useExtrinsic('fastUnstake', 'registerFastUnstake')
 
   return (
     <>
       <ValidatorStake
         accountName={props.account.name ?? ''}
         accountAddress={props.account.address}
-        stakingAmount={active.toHuman()}
-        stakingAmountInFiat={(active.toNumber() * nativeTokenPrice).toLocaleString(undefined, {
-          style: 'currency',
-          currency: 'usd',
-          currencyDisplay: 'narrowSymbol',
-        })}
-        rewardsAmount={props.reward === undefined ? <CircularProgressIndicator size="1em" /> : '+' + rewards.toHuman()}
-        rewardsAmountInFiat={
-          props.reward === undefined
-            ? ''
-            : '+' +
-              (rewards.toNumber() * nativeTokenPrice).toLocaleString(undefined, {
-                style: 'currency',
-                currency: 'usd',
-                currencyDisplay: 'narrowSymbol',
-              })
+        stakingAmount={active.decimalAmount?.toHuman() ?? '...'}
+        stakingAmountInFiat={active.localizedFiatAmount ?? '...'}
+        rewardsAmount={
+          reward.decimalAmount === undefined ? (
+            <CircularProgressIndicator size="1em" />
+          ) : (
+            '+' + reward.decimalAmount?.toHuman()
+          )
         }
-        onRequestUnstake={() => setIsUnstakeDialogOpen(true)}
+        rewardsAmountInFiat={reward.localizedFiatAmount === undefined ? '' : '+' + reward.localizedFiatAmount}
+        onRequestUnstake={useCallback(() => {
+          if (props.potentiallyEligibleForFastUnstake && props.eligibleForFastUnstake !== false) {
+            setIsFastUnstakeDialogOpen(true)
+          } else {
+            setIsUnstakeDialogOpen(true)
+          }
+        }, [props.eligibleForFastUnstake, props.potentiallyEligibleForFastUnstake])}
+        unstakeState={fastUnstake.state === 'loading' ? 'pending' : undefined}
         readonly={props.account.readonly}
       />
       <ValidatorUnstakeDialog
         accountAddress={props.stake.controllerId?.toString() ?? props.account.address}
         open={isUnstakeDialogOpen}
         onRequestDismiss={() => setIsUnstakeDialogOpen(false)}
+      />
+      <FastUnstakeDialog
+        open={isFastUnstakeDialogOpen}
+        fastUnstakeEligibility={useMemo(() => {
+          switch (props.eligibleForFastUnstake) {
+            case undefined:
+              return 'pending'
+            case true:
+              return 'eligible'
+            case false:
+              return 'ineligible'
+          }
+        }, [props.eligibleForFastUnstake])}
+        amount={active.decimalAmount?.toHuman() ?? '...'}
+        fiatAmount={active.localizedFiatAmount ?? '...'}
+        lockDuration={lockDuration === undefined ? '...' : formatDistanceStrict(0, lockDuration.toNumber())}
+        onDismiss={useCallback(() => {
+          setIsFastUnstakeDialogOpen(false)
+        }, [])}
+        onConfirm={useCallback(() => {
+          if (props.eligibleForFastUnstake) {
+            fastUnstake.signAndSend(props.account.address)
+            setIsFastUnstakeDialogOpen(false)
+          } else {
+            setIsFastUnstakeDialogOpen(false)
+            setIsUnstakeDialogOpen(true)
+          }
+        }, [fastUnstake, props.account.address, props.eligibleForFastUnstake])}
       />
     </>
   )
