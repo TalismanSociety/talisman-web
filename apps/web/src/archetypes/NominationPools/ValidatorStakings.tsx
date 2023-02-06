@@ -11,8 +11,17 @@ import ValidatorStakeItem from './ValidatorStakeItem'
 const ValidatorStakings = () => {
   const accounts = useRecoilValue(selectedSubstrateAccountsState)
 
-  const queriesLoadable = useQueryMulti(['staking.activeEra', 'fastUnstake.erasToCheckPerBlock'])
+  const queriesLoadable = useQueryMulti(['staking.activeEra', 'fastUnstake.erasToCheckPerBlock', 'fastUnstake.head'])
+
+  const queueLoadable = useChainState(
+    'query',
+    'fastUnstake',
+    'queue.multi',
+    accounts.map(x => x.address)
+  )
+
   const erasToCheckPerBlock = queriesLoadable.valueMaybe()?.[1]
+  const fastUnstakeHead = queriesLoadable.valueMaybe()?.[2]
 
   const stakes = useChainState('derive', 'staking', 'accounts', [
     accounts.map(({ address }) => address),
@@ -31,17 +40,27 @@ const ValidatorStakings = () => {
     ?.map((stake, index) => {
       const reward = stakerRewards.valueMaybe()?.[accounts[index]?.address ?? '']
 
+      const inFastUnstakeHead = fastUnstakeHead?.unwrapOrDefault().stashes.some(x => x[0].eq(stake.accountId))
+      const inFastUnstakeQueue = !queueLoadable.valueMaybe()?.[index]?.unwrapOrDefault().isZero ?? false
+
       return {
         stake,
-        account: accounts[index],
+        account: accounts[index]!,
         reward,
         eligibleForFastUnstake: fastUnstakeEligibleAccounts
           .valueMaybe()
           ?.some(x => x.address === accounts[index]?.address),
-        potentiallyEligibleForFastUnstake: !erasToCheckPerBlock?.isZero() && reward === 0n,
+        potentiallyEligibleForFastUnstake: !erasToCheckPerBlock?.isZero() && (reward?.isZero() ?? true),
+        inFastUnstakeHead,
+        inFastUnstakeQueue,
       }
     })
-    .filter(({ account, stake }) => account !== undefined && !stake.stakingLedger.active.unwrap().isZero())
+    .filter(
+      ({ account, stake, inFastUnstakeHead, inFastUnstakeQueue }) =>
+        (account !== undefined && !stake.stakingLedger.active.unwrap().isZero()) ||
+        inFastUnstakeHead ||
+        inFastUnstakeQueue
+    )
 
   if (stakesToDisplay === undefined || stakesToDisplay?.length === 0) {
     return null
@@ -49,14 +68,8 @@ const ValidatorStakings = () => {
 
   return (
     <ValidatorStakeList>
-      {stakesToDisplay.map(({ stake, account, reward, eligibleForFastUnstake, potentiallyEligibleForFastUnstake }) => (
-        <ValidatorStakeItem
-          account={account!}
-          stake={stake}
-          reward={reward}
-          eligibleForFastUnstake={eligibleForFastUnstake}
-          potentiallyEligibleForFastUnstake={potentiallyEligibleForFastUnstake}
-        />
+      {stakesToDisplay.map(props => (
+        <ValidatorStakeItem {...props} />
       ))}
     </ValidatorStakeList>
   )

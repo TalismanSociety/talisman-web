@@ -16,6 +16,8 @@ const ValidatorStakeItem = (props: {
   reward?: bigint
   eligibleForFastUnstake?: boolean
   potentiallyEligibleForFastUnstake: boolean
+  inFastUnstakeHead?: boolean
+  inFastUnstakeQueue?: boolean
 }) => {
   const [isUnstakeDialogOpen, setIsUnstakeDialogOpen] = useState(false)
   const [isFastUnstakeDialogOpen, setIsFastUnstakeDialogOpen] = useState(false)
@@ -49,7 +51,15 @@ const ValidatorStakeItem = (props: {
             setIsUnstakeDialogOpen(true)
           }
         }, [props.eligibleForFastUnstake, props.potentiallyEligibleForFastUnstake])}
-        unstakeState={fastUnstake.state === 'loading' ? 'pending' : undefined}
+        unstakeState={
+          props.inFastUnstakeHead
+            ? 'head-of-fast-unstake-queue'
+            : props.inFastUnstakeQueue
+            ? 'in-fast-unstake-queue'
+            : fastUnstake.state === 'loading'
+            ? 'pending'
+            : undefined
+        }
         readonly={props.account.readonly}
       />
       <ValidatorUnstakeDialog

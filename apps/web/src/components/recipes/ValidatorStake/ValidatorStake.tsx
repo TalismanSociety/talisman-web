@@ -1,9 +1,11 @@
 import Button from '@components/atoms/Button'
+import CircularProgressIndicator from '@components/atoms/CircularProgressIndicator'
+import { Lock } from '@components/atoms/Icon'
 import Identicon from '@components/atoms/Identicon'
 import Text from '@components/atoms/Text'
 import { useTheme } from '@emotion/react'
 import { shortenAddress } from '@util/format'
-import React, { ReactElement, ReactNode } from 'react'
+import React, { ReactElement, ReactNode, useMemo } from 'react'
 
 import StakeList from '../StakeList'
 import ValidatorStakeSkeleton from './ValidatorStake.skeleton'
@@ -16,7 +18,7 @@ export type ValidatorStakeProps = {
   rewardsAmount: ReactNode
   rewardsAmountInFiat: string
   onRequestUnstake: () => unknown
-  unstakeState?: 'unavailable' | 'pending' | 'disabled'
+  unstakeState?: 'unavailable' | 'pending' | 'disabled' | 'in-fast-unstake-queue' | 'head-of-fast-unstake-queue'
   notEarningRewards?: boolean
   readonly?: boolean
 }
@@ -24,6 +26,8 @@ export type ValidatorStakeProps = {
 const ValidatorStake = Object.assign(
   (props: ValidatorStakeProps) => {
     const theme = useTheme()
+    const isFastUnstaking =
+      props.unstakeState === 'in-fast-unstake-queue' || props.unstakeState === 'head-of-fast-unstake-queue'
     return (
       <article
         css={{
@@ -60,8 +64,9 @@ const ValidatorStake = Object.assign(
           Staking
         </Text.Body>
         <div css={{ gridArea: 'sValue', justifySelf: 'end', textAlign: 'end' }}>
-          <Text.Body as="div" alpha="high" css={{ fontWeight: 'bold' }}>
-            {props.stakingAmount}
+          <Text.Body as="div" alpha={isFastUnstaking ? 'medium' : 'high'} css={{ fontWeight: 'bold' }}>
+            {props.stakingAmount}{' '}
+            {isFastUnstaking && <Lock width="1.2rem" height="1.2rem" css={{ marginLeft: '0.4rem' }} />}
           </Text.Body>
           <Text.Body as="div">{props.stakingAmountInFiat}</Text.Body>
         </div>
@@ -96,15 +101,35 @@ const ValidatorStake = Object.assign(
             </>
           )}
         </div>
-        <Button
-          variant="outlined"
-          onClick={props.onRequestUnstake}
-          css={{ gridArea: 'uButton' }}
-          hidden={props.unstakeState === 'unavailable' || props.readonly}
-          loading={props.unstakeState === 'pending'}
-        >
-          Unstake
-        </Button>
+        {useMemo(() => {
+          switch (props.unstakeState) {
+            case 'in-fast-unstake-queue':
+            case 'head-of-fast-unstake-queue':
+              return (
+                <Text as="div" css={{ gridArea: 'uButton', whiteSpace: 'nowrap' }}>
+                  <Text.Body as="div" alpha="high">
+                    Fast unstaking
+                  </Text.Body>
+                  <Text.Body as="div" alpha="medium" css={{ display: 'flex', alignItems: 'center', gap: '0.25em' }}>
+                    {props.unstakeState === 'in-fast-unstake-queue' ? 'In queue' : 'Processing'}{' '}
+                    <CircularProgressIndicator size="1em" />
+                  </Text.Body>
+                </Text>
+              )
+            default:
+              return (
+                <Button
+                  variant="outlined"
+                  onClick={props.onRequestUnstake}
+                  css={{ gridArea: 'uButton' }}
+                  loading={props.unstakeState === 'pending'}
+                  hidden={props.unstakeState === 'unavailable' || props.readonly}
+                >
+                  Unstake
+                </Button>
+              )
+          }
+        }, [props.onRequestUnstake, props.readonly, props.unstakeState])}
         {/* Dummy buttons to align with nomination pool stake item */}
         <Button
           hidden
