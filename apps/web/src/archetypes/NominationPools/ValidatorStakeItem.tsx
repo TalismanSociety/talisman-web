@@ -24,7 +24,11 @@ const ValidatorStakeItem = (props: {
 
   const lockDuration = useLockDuration()
 
-  const active = useTokenAmountFromPlanck(props.stake.stakingLedger.active.unwrap())
+  const amount = useTokenAmountFromPlanck(
+    props.inFastUnstakeQueue || props.inFastUnstakeHead
+      ? props.stake.unlocking?.[0]?.value
+      : props.stake.stakingLedger.active.unwrap()
+  )
   const reward = useTokenAmountFromPlanck(props.reward)
 
   const fastUnstake = useExtrinsic('fastUnstake', 'registerFastUnstake')
@@ -34,13 +38,13 @@ const ValidatorStakeItem = (props: {
       <ValidatorStake
         accountName={props.account.name ?? ''}
         accountAddress={props.account.address}
-        stakingAmount={active.decimalAmount?.toHuman() ?? '...'}
-        stakingAmountInFiat={active.localizedFiatAmount ?? '...'}
+        stakingAmount={amount.decimalAmount?.toHuman() ?? '...'}
+        stakingAmountInFiat={amount.localizedFiatAmount ?? '...'}
         rewardsAmount={
           reward.decimalAmount === undefined ? (
             <CircularProgressIndicator size="1em" />
           ) : (
-            '+' + reward.decimalAmount?.toHuman()
+            '+' + reward.decimalAmount.toHuman()
           )
         }
         rewardsAmountInFiat={reward.localizedFiatAmount === undefined ? '' : '+' + reward.localizedFiatAmount}
@@ -79,8 +83,8 @@ const ValidatorStakeItem = (props: {
               return 'ineligible'
           }
         }, [props.eligibleForFastUnstake])}
-        amount={active.decimalAmount?.toHuman() ?? '...'}
-        fiatAmount={active.localizedFiatAmount ?? '...'}
+        amount={amount.decimalAmount?.toHuman() ?? '...'}
+        fiatAmount={amount.localizedFiatAmount ?? '...'}
         lockDuration={lockDuration === undefined ? '...' : formatDistanceStrict(0, lockDuration.toNumber())}
         onDismiss={useCallback(() => {
           setIsFastUnstakeDialogOpen(false)
