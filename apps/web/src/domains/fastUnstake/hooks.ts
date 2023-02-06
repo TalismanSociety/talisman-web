@@ -1,10 +1,13 @@
 import { substrateAccountsState } from '@domains/accounts/recoils'
-import { chainRpcState } from '@domains/chains/recoils'
+import { chainIdState, chainRpcState } from '@domains/chains/recoils'
 import { useChainState } from '@domains/common/hooks'
 import { ApiPromise, WsProvider } from '@polkadot/api'
+import { array, assertion, jsonParser, number, object, string } from '@recoiljs/refine'
+import { isNil } from 'lodash'
 import { range } from 'lodash/fp'
 import { useMemo } from 'react'
 import { RecoilLoadable, constSelector, selector, selectorFamily, useRecoilValue, useRecoilValueLoadable } from 'recoil'
+const STORAGE_KEY = 'fast-unstake-exposure'
 
 // Can't re-use global api because fast unstake eligibility check is very resource intensive and will congest all other subscriptions
 const fastUnstakeApiState = selector({
@@ -12,15 +15,31 @@ const fastUnstakeApiState = selector({
   get: ({ get }) => ApiPromise.create({ provider: new WsProvider(get(chainRpcState)) }),
 })
 
+const fastUnstakeExposureChecker = object({
+  network: string(),
+  era: number(),
+  exposed: array(string()),
+})
+
+const fastUnstakeExposureAsssertion = assertion(fastUnstakeExposureChecker)
+
+const fastUnstakeExposureJsonParser = jsonParser(fastUnstakeExposureChecker)
+
 const exposedAccountsState = selectorFamily({
   key: 'ExposedAccount',
   get:
     (activeEra: number) =>
-    ({ get }) => {
+    async ({ get }) => {
+      const storedValue = fastUnstakeExposureJsonParser(sessionStorage.getItem(STORAGE_KEY))
+
+      if (!isNil(storedValue) && storedValue.era === activeEra && storedValue.network === get(chainIdState)) {
+        return new Set(storedValue.exposed)
+      }
+
       const api = get(fastUnstakeApiState)
       const startEraToCheck = activeEra - api.consts.staking.bondingDuration.toNumber()
 
-      return Promise.all(
+      const exposed = await Promise.all(
         range(startEraToCheck, activeEra).map(era =>
           api.query.staking.erasStakers
             .entries(era)
@@ -28,6 +47,15 @@ const exposedAccountsState = selectorFamily({
             .then(array => new Set(array))
         )
       ).then(x => x.reduce((prev, curr) => new Set([...prev, ...curr])))
+
+      sessionStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify(
+          fastUnstakeExposureAsssertion({ network: get(chainIdState), era: activeEra, exposed: [...exposed] })
+        )
+      )
+
+      return exposed
     },
   cachePolicy_UNSTABLE: { eviction: 'most-recent' },
 })
