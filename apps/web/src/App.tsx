@@ -2,7 +2,7 @@ import '@polkadot/api-augment/polkadot'
 import '@polkadot/api-augment/substrate'
 
 import CookieBanner from '@archetypes/CookieBanner'
-import DevMenu from '@archetypes/DevMenu'
+import Development from '@archetypes/Development'
 import ToastBar from '@components/molecules/ToastBar'
 import { TalismanHandLoader } from '@components/TalismanHandLoader'
 import { AccountsWatcher } from '@domains/accounts/recoils'
@@ -52,7 +52,7 @@ const App: React.FC = () => (
           <AccountsWatcher />
           <MoonbeamContributors.Provider>
             <ThemeProvider>
-              <DevMenu />
+              <Development />
               <Suspense fallback={<Loader />}>
                 <NftProvider />
                 <RouterProvider router={router} />

@@ -1,15 +1,15 @@
-import 'winbox/dist/css/winbox.min.css'
 import 'winbox/dist/css/themes/modern.min.css'
+import 'winbox/dist/css/winbox.min.css'
 
 import { supportedChainIds } from '@domains/chains/consts'
 import { chainIdState, chainRpcState, chainState } from '@domains/chains/recoils'
 import { useTheme } from '@emotion/react'
-import { Suspense, useCallback, useEffect, useState } from 'react'
+import { useCallback } from 'react'
 import { useSessionStorage } from 'react-use'
 import WinBox, { WinBoxPropType } from 'react-winbox'
 import { useRecoilState, useRecoilValue } from 'recoil'
 
-const BaseDevMenu = () => {
+const DevMenu = () => {
   const theme = useTheme()
   const [chainId, setChainId] = useRecoilState(chainIdState)
   const [rpc, setRpc] = useRecoilState(chainRpcState)
@@ -67,32 +67,6 @@ const BaseDevMenu = () => {
         </fieldset>
       </form>
     </WinBox>
-  )
-}
-
-const DevMenu = () => {
-  const [showDevMenu, setShowDevMenu] = useState(false)
-
-  useEffect(() => {
-    const search = new URLSearchParams(window.location.search)
-
-    if (search.get('development') !== null) {
-      sessionStorage.setItem('development', JSON.stringify(true))
-    }
-
-    if (JSON.parse(sessionStorage.getItem('development') ?? JSON.stringify(false))) {
-      setShowDevMenu(true)
-    }
-  }, [])
-
-  if (!showDevMenu) {
-    return null
-  }
-
-  return (
-    <Suspense>
-      <BaseDevMenu />
-    </Suspense>
   )
 }
 
