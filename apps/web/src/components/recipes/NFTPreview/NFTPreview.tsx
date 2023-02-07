@@ -62,17 +62,18 @@ const NFTPreview = ({ nft, isFull = false, loading, isBlank = false }: NFTPrevie
         <video
           src={nft?.thumb ?? `${nft?.mediaUri}?stream=true`}
           onMouseOver={event => {
-            event.currentTarget.play()
+            !isFull && event.currentTarget.play()
           }}
           onMouseOut={event => {
-            event.currentTarget.pause()
-            event.currentTarget.currentTime = 0
+            if (!isFull) {
+              event.currentTarget.pause()
+              event.currentTarget.currentTime = 0
+            }
           }}
-          loop
           muted
           playsInline
           preload="metadata"
-          controlsList="nodownload"
+          controls={isFull}
         />
       ) : (
         <PlaceholderPreview icon={<Video />} text={'Video'} />
@@ -104,7 +105,7 @@ const NFTPreview = ({ nft, isFull = false, loading, isBlank = false }: NFTPrevie
           ) : (
             <PlaceholderPreview icon={<Volume2 />} text={'Audio'} />
           )}
-          <audio controls css={{ position: 'absolute', bottom: '0px' }}>
+          <audio controls css={{ position: 'absolute', bottom: '0px', width: 'inherit' }}>
             <source src={nft?.mediaUri} />
           </audio>
         </>
