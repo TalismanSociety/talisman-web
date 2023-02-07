@@ -54,12 +54,12 @@ export const useQueryMulti = <
   options: { enabled?: boolean; keepPreviousData?: boolean } = { enabled: true, keepPreviousData: false }
 ) => {
   type TResult = {
-    [P in keyof typeof queries]: typeof queries[P] extends [infer Head, ...any[]]
+    [P in keyof typeof queries]: (typeof queries)[P] extends [infer Head, ...any[]]
       ? Head extends keyof QueryResultMap
         ? QueryResultMap[Head]
         : any
-      : typeof queries[P] extends keyof QueryResultMap
-      ? QueryResultMap[typeof queries[P]]
+      : (typeof queries)[P] extends keyof QueryResultMap
+      ? QueryResultMap[(typeof queries)[P]]
       : any
   }
 
