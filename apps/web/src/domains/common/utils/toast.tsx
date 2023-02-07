@@ -1,6 +1,6 @@
 import { ExternalLink } from '@components/atoms/Icon'
 import Text from '@components/atoms/Text'
-import { Chain } from '@domains/chains/recoils'
+import { Chain } from '@domains/chains/config'
 import RpcError from '@polkadot/rpc-provider/coder/error'
 import { ISubmittableResult } from '@polkadot/types/types'
 import toast from 'react-hot-toast'
