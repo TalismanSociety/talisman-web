@@ -1,6 +1,6 @@
 export const supportedChainIds = ['polkadot', 'kusama', 'westend-testnet'] as const
 
-export type ChainId = typeof supportedChainIds[number]
+export type ChainId = (typeof supportedChainIds)[number]
 
 export type ChainParameters = {
   auctionAdjust: number

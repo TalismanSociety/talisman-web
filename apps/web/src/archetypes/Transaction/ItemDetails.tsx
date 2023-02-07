@@ -29,7 +29,7 @@ export const ItemDetails = ({ parsed, addresses, accounts }: Props) => {
     return addressBook
   }, {} as Record<string, string>)
 
-  switch (parsed.__typename) {
+  switch (parsed?.__typename) {
     case 'ParsedTransfer':
     case 'ParsedEthereumExec': {
       const genericAddresses = addresses.map(formatGenericAddress)
@@ -525,7 +525,7 @@ export const ItemDetails = ({ parsed, addresses, accounts }: Props) => {
     }
 
     default:
-      const exhaustiveCheck: never = parsed.__typename
+      const exhaustiveCheck = parsed?.__typename
       console.error(`Unhandled transaction type ${exhaustiveCheck}`)
       return <div className="details" />
   }
