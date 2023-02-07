@@ -45,7 +45,7 @@ const WalletConnectionOverview = () => {
           width: '100%',
           background:
             'linear-gradient(135deg, rgba(26,26,26,0.5) 0%, rgba(15,15,15,1) 30%, rgba(15,15,15,1) 65%, rgba(15,15,15,0.8) 68%, rgba(26,26,26,0.5) 100%)',
-          zIndex: 100,
+          zIndex: 10,
           animation: `${fadeIn} 0.3s ease-in-out`,
         }}
       >
