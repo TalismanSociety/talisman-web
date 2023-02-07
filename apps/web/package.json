@@ -43,7 +43,7 @@
     "crypto-browserify": "^3.12.0",
     "date-fns": "^2.29.3",
     "ethers": "^5.7.2",
-    "framer-motion": "^7.10.3",
+    "framer-motion": "^9.0.2",
     "graphql": "^16.6.0",
     "graphql-request": "^5.1.0",
     "i18next": "^21.10.0",
