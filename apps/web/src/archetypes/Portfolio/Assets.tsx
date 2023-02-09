@@ -3,7 +3,7 @@ import { useBalances } from '@libs/talisman'
 import { BalanceFormatter } from '@talismn/balances'
 import { useChaindata, useChains, useEvmNetworks } from '@talismn/balances-react'
 import { formatDecimals } from '@talismn/util'
-import { compact, groupBy, isEmpty, isNil } from 'lodash'
+import { compact, groupBy, isEmpty, isNil, startCase } from 'lodash'
 import { useMemo } from 'react'
 
 const useFetchAssets = (address: string | undefined) => {
@@ -124,6 +124,13 @@ const useAssets = (customAddress?: string) => {
 
     const locked = lockedAmount > BigInt('0')
 
+    const tokenDisplayName =
+      token?.type === 'evm-erc20'
+        ? 'Ethereum'
+        : token?.chain?.id
+        ? startCase(token?.chain?.id)
+        : startCase(token?.coingeckoId)
+
     return {
       locked,
       unformattedLockedAmount: lockedAmount,
@@ -134,7 +141,10 @@ const useAssets = (customAddress?: string) => {
       amount: planckAmountFormatted,
       fiatAmount,
       fiatAmountFormatted,
-      tokenDetails: token,
+      tokenDetails: {
+        ...token,
+        tokenDisplayName,
+      },
       // if the token is substrate-native then make ormlTokens an array else make it undefined
       ormlTokens: [],
     }

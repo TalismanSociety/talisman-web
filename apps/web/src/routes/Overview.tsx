@@ -244,32 +244,29 @@ const Overview = () => {
           </HiddenDetails>
         </section>
         {tokens.length >= 8 && !isLoading ? (
-          <Link to="assets">
-            <Button variant="secondary" css={{ width: 'fit-content' }}>
-              View all Assets
-            </Button>
-          </Link>
+          <Button variant="secondary" css={{ width: 'fit-content' }} as={Link} to="assets">
+            View all assets
+          </Button>
         ) : (
           <div />
         )}
         {items.length > 4 ? (
-          <Link to="nfts">
-            <Button
-              onClick={() => {}}
-              variant="secondary"
-              css={{
-                'width': 'fit-content',
-                'display': 'none',
+          <Button
+            as={Link}
+            variant="secondary"
+            css={{
+              'width': 'fit-content',
+              'display': 'none',
 
-                // mobile
-                '@media (min-width: 1024px)': {
-                  display: 'block',
-                },
-              }}
-            >
-              View all NFTs
-            </Button>
-          </Link>
+              // mobile
+              '@media (min-width: 1024px)': {
+                display: 'block',
+              },
+            }}
+            to="nfts"
+          >
+            View all NFTs
+          </Button>
         ) : (
           <div />
         )}
