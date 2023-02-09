@@ -62,7 +62,7 @@
     "react-i18next": "^11.18.6",
     "react-infinite-scroller": "^1.2.6",
     "react-is": "^17.0.2",
-    "react-router-dom": "^6.8.0",
+    "react-router-dom": "^6.8.1",
     "react-use": "^17.4.0",
     "react-winbox": "^1.5.0",
     "recoil": "^0.7.6",
