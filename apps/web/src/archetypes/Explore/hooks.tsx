@@ -13,7 +13,7 @@ export const useFetchDapps = () => {
   useEffect(() => {
     const fetchDapps = async () => {
       try {
-        fetch('https://api.airtable.com/v0/appBz0V1T1R760dRE/Dapps?api_key=key34AypYHAb59vGf')
+        fetch(`https://api.airtable.com/v0/appBz0V1T1R760dRE/Dapps?api_key=${process.env.REACT_APP_AIR_TABLE_API_KEY}`)
           .then(res => res.json())
           .then((data: { records: any[] }) => {
             // Define a type for each item

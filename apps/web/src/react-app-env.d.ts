@@ -15,6 +15,7 @@ declare namespace NodeJS {
     REACT_APP_APPLICATION_NAME: string
     REACT_APP_POSTHOG_AUTH_TOKEN: string
     REACT_APP_TX_HISTORY_INDEXER: string
+    REACT_APP_AIR_TABLE_API_KEY: string
   }
 }
 
