@@ -127,8 +127,8 @@ const Stakings = () => {
         </HiddenDetails>
       ) : (
         <PoolStakeList>
-          {pools?.map(pool => (
-            <PoolStakeItem item={pool} />
+          {pools?.map((pool, index) => (
+            <PoolStakeItem key={index} item={pool} />
           ))}
         </PoolStakeList>
       )}

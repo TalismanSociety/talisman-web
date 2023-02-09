@@ -32,7 +32,15 @@ const backdropKeyframes = keyframes`
   }
 `
 
-const AlertDialog = (props: AlertDialogProps) => {
+const AlertDialog = ({
+  title,
+  content,
+  confirmButton,
+  dismissButton,
+  onRequestDismiss,
+  width,
+  ...props
+}: AlertDialogProps) => {
   const theme = useTheme()
 
   return (
@@ -41,9 +49,9 @@ const AlertDialog = (props: AlertDialogProps) => {
       <Dialog
         {...props}
         title={undefined}
-        onClickBackdrop={props.onRequestDismiss}
-        onClose={props.onRequestDismiss}
-        onCancel={props.onRequestDismiss}
+        onClickBackdrop={onRequestDismiss}
+        onClose={onRequestDismiss}
+        onCancel={onRequestDismiss}
         css={{
           'padding': '2.4rem',
           'background': theme.color.surface,
@@ -58,19 +66,19 @@ const AlertDialog = (props: AlertDialogProps) => {
             },
           },
           '@media (min-width: 768px)': {
-            width: props.width,
+            width: width,
           },
         }}
       >
         <header
           css={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '2.6rem' }}
         >
-          <Text.H4 css={{ marginBottom: 0 }}>{props.title}</Text.H4>
-          <Button variant="noop" onClick={props.onRequestDismiss}>
+          <Text.H4 css={{ marginBottom: 0 }}>{title}</Text.H4>
+          <Button variant="noop" onClick={onRequestDismiss}>
             <X width="1.6rem" height="1.6rem" />
           </Button>
         </header>
-        {props.content}
+        {content}
         <div
           css={{
             'display': 'flex',
@@ -81,8 +89,8 @@ const AlertDialog = (props: AlertDialogProps) => {
             },
           }}
         >
-          {props.dismissButton}
-          {props.confirmButton}
+          {dismissButton}
+          {confirmButton}
         </div>
       </Dialog>
     </>

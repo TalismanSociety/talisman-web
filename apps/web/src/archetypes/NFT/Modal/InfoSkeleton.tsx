@@ -38,6 +38,7 @@ const InfoSkeleton = (props: SkeletonProps) => {
         .fill(undefined)
         .map((_, index) => (
           <Skeleton.Surface
+            key={index}
             animate={props.animate}
             css={{
               'borderRadius': '1rem',

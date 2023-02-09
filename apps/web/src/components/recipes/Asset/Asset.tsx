@@ -248,8 +248,8 @@ const Asset = Object.assign((props: AssetProps) => {
                   )}
                 </Tooltip>
               </div>
-              {token?.ormlTokens?.map((token: any) => (
-                <div css={{ width: '1em', height: '1em' }}>
+              {token?.ormlTokens?.map((token: any, index: number) => (
+                <div key={index} css={{ width: '1em', height: '1em' }}>
                   <Tooltip content={startCase(token?.tokenDetails?.chain?.id ?? token?.tokenDetails?.coingeckoId)}>
                     {tooltipProps => (
                       <img
@@ -464,7 +464,7 @@ export const AssetsListLocked = (props: AssetsListProps) => {
           ? // map out array of 3 to render skeleton rows
             Array(3)
               .fill(0)
-              .map((_, i) => <AssetSkeleton />)
+              .map((_, index) => <AssetSkeleton key={index} />)
           : Children.map(props.children, child => child !== undefined && child)}
       </tbody>
     </Table>

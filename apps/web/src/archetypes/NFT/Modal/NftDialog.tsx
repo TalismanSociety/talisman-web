@@ -36,15 +36,15 @@ const backdropKeyframes = keyframes`
   }
 `
 
-const NftDialog = (props: NftDialogProps) => {
+const NftDialog = ({ onRequestDismiss, ...props }: NftDialogProps) => {
   const { nft, loading } = useNftById(props.nft.id)
 
   return (
     <Dialog
       {...props}
-      onClickBackdrop={props.onRequestDismiss}
-      onClose={props.onRequestDismiss}
-      onCancel={props.onRequestDismiss}
+      onClickBackdrop={onRequestDismiss}
+      onClose={onRequestDismiss}
+      onCancel={onRequestDismiss}
       css={{
         'width': '108rem',
         'maxHeight': '66rem',
@@ -64,7 +64,7 @@ const NftDialog = (props: NftDialogProps) => {
     >
       <Button
         variant="noop"
-        onClick={props.onRequestDismiss}
+        onClick={onRequestDismiss}
         css={{
           'position': 'absolute',
           'top': '2.8rem',

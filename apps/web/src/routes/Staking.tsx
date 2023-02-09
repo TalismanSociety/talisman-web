@@ -248,6 +248,7 @@ const PoolSelector = (props: {
     >
       {recommendedPools.map((pool, index) => (
         <PoolSelectorDialog.Item
+          key={pool.poolId}
           selected={props.selectedPoolId !== undefined && pool.poolId === props.selectedPoolId}
           highlighted={newPoolId !== undefined && pool.poolId === newPoolId}
           talismanRecommended={index === 0}

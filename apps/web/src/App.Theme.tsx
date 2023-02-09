@@ -6,7 +6,8 @@ import SurtRegular from '@assets/fonts/Surt-Regular.woff'
 import SurtSemiBold from '@assets/fonts/Surt-SemiBold.woff2'
 import SurtSemiBoldExpanded from '@assets/fonts/Surt-SemiBoldExp.woff2'
 import SurtSemiBoldExtended from '@assets/fonts/Surt-SemiBoldExtended.woff2'
-import { Global, Theme, ThemeProvider, css } from '@emotion/react'
+import createCache from '@emotion/cache'
+import { CacheProvider, Global, Theme, ThemeProvider, css } from '@emotion/react'
 import { PropsWithChildren, createContext, useContext } from 'react'
 
 /*
@@ -319,11 +320,18 @@ const Context = createContext({})
 
 export const useTheme = () => useContext(Context)
 
+// Custom cache to turn off SSR errors
+// https://github.com/emotion-js/emotion/issues/1105
+const emotionCache = createCache({ key: 'emotion-css' })
+emotionCache.compat = true
+
 const Provider = ({ children }: PropsWithChildren<{}>) => (
-  <ThemeProvider theme={greenDark}>
-    <Global styles={globalStyle} />
-    {children}
-  </ThemeProvider>
+  <CacheProvider value={emotionCache}>
+    <ThemeProvider theme={greenDark}>
+      <Global styles={globalStyle} />
+      {children}
+    </ThemeProvider>
+  </CacheProvider>
 )
 
 export default Provider

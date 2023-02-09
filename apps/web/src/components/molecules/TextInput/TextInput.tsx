@@ -12,13 +12,21 @@ export type TextInputProps = React.DetailedHTMLProps<React.InputHTMLAttributes<H
   isError?: boolean
 }
 
-const TextInput = (props: TextInputProps) => {
+const TextInput = ({
+  leadingLabel,
+  trailingLabel,
+  trailingIcon,
+  trailingSupportingText,
+  leadingSupportingText,
+  isError,
+  ...props
+}: TextInputProps) => {
   const theme = useTheme()
   const inputId = useId()
 
   return (
     <div>
-      {(props.leadingLabel || props.trailingLabel) && (
+      {(leadingLabel || trailingLabel) && (
         <div
           css={{
             display: 'flex',
@@ -29,10 +37,10 @@ const TextInput = (props: TextInputProps) => {
           }}
         >
           <Text as="label" htmlFor={inputId}>
-            {props.leadingLabel}
+            {leadingLabel}
           </Text>
           <div>
-            <Text>{props.trailingLabel}</Text>
+            <Text>{trailingLabel}</Text>
           </div>
         </div>
       )}
@@ -61,7 +69,7 @@ const TextInput = (props: TextInputProps) => {
             },
           }}
         />
-        {props.trailingIcon}
+        {trailingIcon}
       </div>
       <div
         css={{
@@ -75,9 +83,9 @@ const TextInput = (props: TextInputProps) => {
           },
         }}
       >
-        <Text as="label">{props.leadingSupportingText}</Text>
-        <Text as="label" css={props.isError && { color: theme.color.onError }}>
-          {props.trailingSupportingText}
+        <Text as="label">{leadingSupportingText}</Text>
+        <Text as="label" css={isError && { color: theme.color.onError }}>
+          {trailingSupportingText}
         </Text>
       </div>
     </div>

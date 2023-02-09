@@ -17,10 +17,16 @@ type PolymorphicButtonProps<T extends ButtonElementType> = {
 export type ButtonProps<T extends ButtonElementType> = PolymorphicButtonProps<T> &
   Omit<React.ComponentPropsWithoutRef<T>, keyof PolymorphicButtonProps<T>>
 
-const Button = <T extends ButtonElementType>({ as = 'button' as T, variant, ...props }: ButtonProps<T>) => {
+const Button = <T extends ButtonElementType>({
+  as = 'button' as T,
+  hidden,
+  loading,
+  variant,
+  ...props
+}: ButtonProps<T>) => {
   const theme = useTheme()
 
-  const disabled = props.disabled || props.hidden || props.loading
+  const disabled = props.disabled || hidden || loading
 
   const variantStyle = useMemo(() => {
     switch (variant) {
@@ -95,18 +101,18 @@ const Button = <T extends ButtonElementType>({ as = 'button' as T, variant, ...p
           ...variantStyle,
           ...(disabled ? { ':hover': undefined } : {}),
         },
-        props.loading && { cursor: 'wait' },
+        loading && { cursor: 'wait' },
         props.disabled && [{ cursor: 'not-allowed' }, variantDisabledStyle],
-        props.hidden && { cursor: 'default', pointerEvent: 'none', opacity: 0 },
+        hidden && { cursor: 'default', pointerEvent: 'none', opacity: 0 },
       ]}
     >
       <span css={{ position: 'relative' }}>
-        {props.loading && (
+        {loading && (
           <span css={{ position: 'absolute', left: '-1.2rem', top: '0.1rem' }}>
             <CircularProgressIndicator size="1.6rem" />
           </span>
         )}
-        <span css={{ display: 'inline-block', transform: props.loading ? 'translateX(1rem)' : undefined }}>
+        <span css={{ display: 'inline-block', transform: loading ? 'translateX(1rem)' : undefined }}>
           {props.children}
         </span>
       </span>

@@ -151,6 +151,7 @@ const Header = styled(({ className, isMobile }: HeaderProps) => {
         <nav css={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '2rem' }}>
           {desktopRoutes.map(route => (
             <NavLink
+              key={route.name}
               to={route.path}
               css={{
                 'padding': '0.75rem 1rem',
