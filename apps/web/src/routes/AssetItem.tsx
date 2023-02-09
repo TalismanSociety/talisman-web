@@ -2,6 +2,7 @@ import { useSingleAsset } from '@archetypes/Portfolio/Assets'
 import Button from '@components/atoms/Button'
 import DisplayValue from '@components/atoms/DisplayValue/DisplayValue'
 import Text from '@components/atoms/Text'
+import Tooltip from '@components/atoms/Tooltip'
 import HiddenDetails from '@components/molecules/HiddenDetails'
 import InfoCard from '@components/molecules/InfoCard'
 import { AssetBreakdownList } from '@components/recipes/AssetBreakdown/AssetBreakdownList'
@@ -86,15 +87,19 @@ const AssetItem = () => {
                       alignItems: 'center',
                     }}
                   >
-                    <img
-                      src={token?.tokenDetails?.logo}
-                      css={{
-                        width: '2em',
-                        height: '2em',
-                      }}
-                      alt={token?.tokenDetails?.chain?.id ?? token?.tokenDetails?.coingeckoId + ' logo'}
-                      title={startCase(token?.tokenDetails?.chain?.id ?? token?.tokenDetails?.coingeckoId)}
-                    />
+                    <Tooltip content={startCase(token?.tokenDetails?.chain?.id ?? token?.tokenDetails?.coingeckoId)}>
+                      {tooltipProps => (
+                        <img
+                          {...tooltipProps}
+                          src={token?.tokenDetails?.logo}
+                          css={{
+                            width: '2em',
+                            height: '2em',
+                          }}
+                          alt={token?.tokenDetails?.chain?.id ?? token?.tokenDetails?.coingeckoId + ' logo'}
+                        />
+                      )}
+                    </Tooltip>
                     <Text.Body
                       css={{
                         fontSize: '2rem',
