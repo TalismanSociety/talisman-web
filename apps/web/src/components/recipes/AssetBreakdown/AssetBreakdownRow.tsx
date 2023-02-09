@@ -63,17 +63,8 @@ export const AssetBreakdownRowHeader = ({ token, isOrml }: { token: any; isOrml?
                 fontWeight: 'bold',
               }}
             >
-              {startCase(
-                token?.tokenDetails?.chain?.id ? token?.tokenDetails?.chain?.id : token?.tokenDetails?.coingeckoId
-              )}
+              {token?.tokenDetails?.tokenDisplayName}
             </Text.Body>
-            {/* <Text.Body css={{
-                                fontSize: '1.6rem',
-                                color: 'var(--color-dim)',
-                                fontWeight: 'bold',
-                            }}>
-                                ({token?.tokenDetails?.symbol})
-                            </Text.Body> */}
           </div>
         </td>
         <td align="right">
