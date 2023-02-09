@@ -22,13 +22,16 @@ Sentry.init({
       ),
     }),
   ],
+  tracesSampleRate: 0.5,
 })
+
+const ProfiledApp = Sentry.withProfiler(App)
 
 const container = document.getElementById('root')
 const root = createRoot(container!)
 
 root.render(
   <React.StrictMode>
-    <App />
+    <ProfiledApp />
   </React.StrictMode>
 )
