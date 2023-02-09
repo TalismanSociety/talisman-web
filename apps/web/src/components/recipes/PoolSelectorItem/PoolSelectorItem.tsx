@@ -21,7 +21,6 @@ const PoolSelectorItem = (props: PoolSelectorItemProps) => {
   const alpha = props.selected || props.highlighted ? 'high' : 'disabled'
   return (
     <article
-      {...props}
       onClick={props.onClick}
       css={[
         {

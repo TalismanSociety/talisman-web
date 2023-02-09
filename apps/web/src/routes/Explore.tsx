@@ -1,5 +1,5 @@
 import { Card, CardLoading, TagLoading } from '@archetypes/Explore'
-import { Dapp, useFetchDapps } from '@archetypes/Explore/hooks'
+import { useFetchDapps } from '@archetypes/Explore/hooks'
 import styled from '@emotion/styled'
 import { device } from '@util/breakpoints'
 import { useState } from 'react'
@@ -21,7 +21,7 @@ const ExploreGrid = ({ className }: { className?: string }) => {
         // Create a 4 column grid
         <>
           <div className="tags">
-            {tags.map((tag: string) => (
+            {tags.map(tag => (
               <div key={tag} onClick={() => setSelectedTag(tag)} className={selectedTag === tag ? 'selected-tag' : ''}>
                 {tag}
               </div>
@@ -30,9 +30,9 @@ const ExploreGrid = ({ className }: { className?: string }) => {
 
           <div className="grid">
             {dapps.map(
-              (dapp: Dapp) =>
+              (dapp, index) =>
                 (selectedTag === 'All' || dapp.tags.includes(selectedTag)) && (
-                  <Card dapp={dapp} setSelectedTag={tag => setSelectedTag(tag)} />
+                  <Card key={index} dapp={dapp} setSelectedTag={tag => setSelectedTag(tag)} />
                 )
             )}
           </div>

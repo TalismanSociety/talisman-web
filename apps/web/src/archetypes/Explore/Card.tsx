@@ -2,9 +2,11 @@ import styled from '@emotion/styled'
 import { device } from '@util/breakpoints'
 import posthog from 'posthog-js'
 
+import { Dapp } from './hooks'
+
 type CardProps = {
   className?: string
-  dapp: any
+  dapp: Dapp
   setSelectedTag: (tag: string) => unknown
 }
 
