@@ -3,6 +3,7 @@ import { accountsState } from '@domains/accounts/recoils'
 import { apiState, nativeTokenDecimalState, nativeTokenPriceState } from '@domains/chains/recoils'
 import { recommendedPoolsState } from '@domains/nominationPools/recoils'
 import * as MoonbeamContributors from '@libs/moonbeam-contributors'
+import * as Sentry from '@sentry/react'
 import posthog from 'posthog-js'
 import { useEffect } from 'react'
 import { Navigate, Outlet, createBrowserRouter, useLocation } from 'react-router-dom'
@@ -62,7 +63,7 @@ const Main = () => {
   )
 }
 
-export default createBrowserRouter([
+export default Sentry.wrapCreateBrowserRouter(createBrowserRouter)([
   {
     path: '/',
     element: <Main />,
