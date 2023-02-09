@@ -1,5 +1,0 @@
-# For easier transition to monorepo
-# should remove this after transtion is complete
-# since this disabllow multi sites deployment
-[build]
-base = "apps/web"
