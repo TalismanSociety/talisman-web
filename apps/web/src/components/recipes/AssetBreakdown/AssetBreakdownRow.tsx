@@ -1,5 +1,6 @@
 import Identicon from '@components/atoms/Identicon'
 import Text from '@components/atoms/Text'
+import Tooltip from '@components/atoms/Tooltip'
 import { keyframes } from '@emotion/react'
 import styled from '@emotion/styled'
 import { Account } from '@libs/talisman/extension'
@@ -34,20 +35,24 @@ export const AssetBreakdownRowHeader = ({ token, isOrml }: { token: any; isOrml?
             gap: '1.6rem',
           }}
         >
-          <img
-            src={
-              token?.tokenDetails?.evmNetwork
-                ? token?.tokenDetails?.logo
-                : `https://raw.githubusercontent.com/TalismanSociety/chaindata/v3/assets/chains/${token?.tokenDetails?.chain?.id}.svg`
-            }
-            alt={token?.name}
-            css={{
-              width: '2em',
-              height: '2em',
-              borderRadius: '50%',
-            }}
-            title={startCase(token?.tokenDetails?.chain?.id ?? token?.tokenDetails?.coingeckoId)}
-          />
+          <Tooltip content={startCase(token?.tokenDetails?.chain?.id ?? token?.tokenDetails?.coingeckoId)}>
+            {tooltipProps => (
+              <img
+                {...tooltipProps}
+                src={
+                  token?.tokenDetails?.evmNetwork
+                    ? token?.tokenDetails?.logo
+                    : `https://raw.githubusercontent.com/TalismanSociety/chaindata/v3/assets/chains/${token?.tokenDetails?.chain?.id}.svg`
+                }
+                alt={token?.name}
+                css={{
+                  width: '2em',
+                  height: '2em',
+                  borderRadius: '50%',
+                }}
+              />
+            )}
+          </Tooltip>
           <div
             css={{
               display: 'flex',
