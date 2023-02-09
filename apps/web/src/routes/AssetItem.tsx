@@ -101,9 +101,7 @@ const AssetItem = () => {
                         color: 'var(--color-text)',
                       }}
                     >
-                      {token?.tokenDetails?.chain?.id
-                        ? startCase(token?.tokenDetails?.chain?.id)
-                        : startCase(token?.tokenDetails?.coingeckoId)}
+                      {token?.tokenDetails?.tokenDisplayName}
                     </Text.Body>
                     <Text.Body
                       css={{
