@@ -1,6 +1,6 @@
 import { Query } from '@archetypes/Transaction/lib'
 import DialogComponent from '@components/recipes/ExportTxHistoryDialog'
-import { polkadotAccountsState } from '@domains/accounts/recoils'
+import { substrateAccountsState } from '@domains/accounts/recoils'
 import { stringify } from 'csv-stringify/browser/esm'
 import { subMonths } from 'date-fns'
 import { gql, request } from 'graphql-request'
@@ -15,7 +15,7 @@ export type ExportTxHistoryWidgetProps = {
 const ExportTxHistoryWidget = (props: ExportTxHistoryWidgetProps) => {
   const [open, setOpen] = useState(false)
 
-  const accounts = useRecoilValue(polkadotAccountsState)
+  const accounts = useRecoilValue(substrateAccountsState)
   const [selectedAccount, setSelectedAccount] = useState(accounts[0])
 
   const [fromDate, setFromDate] = useState(subMonths(new Date(), 1))
