@@ -11,6 +11,7 @@ import App from './App'
 
 Sentry.init({
   dsn: process.env.REACT_APP_SENTRY_DSN,
+  release: process.env.REACT_APP_SENTRY_RELEASE,
   integrations: [
     new BrowserTracing({
       routingInstrumentation: Sentry.reactRouterV6Instrumentation(
