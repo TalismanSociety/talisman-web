@@ -8,7 +8,7 @@
   "license": "GPL-3.0-or-later",
   "scripts": {
     "start": "craco start",
-    "build": "craco build",
+    "build": "REACT_APP_SENTRY_RELEASE=$(git rev-parse --verify HEAD) craco build",
     "test": "craco test",
     "lint": "eslint src",
     "checkTypes": "tsc --noEmit",
