@@ -63,7 +63,7 @@ export const recommendedPoolsState = selector({
           ? -1
           : recommendedPoolIds.includes(b.poolId) && !recommendedPoolIds.includes(a.poolId)
           ? 1
-          : b.bondedPool.points.sub(a.bondedPool.points).toNumber()
+          : b.bondedPool.points.cmp(a.bondedPool.points)
       )
   },
   cachePolicy_UNSTABLE: { eviction: 'most-recent' },
