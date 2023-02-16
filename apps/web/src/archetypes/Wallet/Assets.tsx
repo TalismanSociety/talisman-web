@@ -87,7 +87,7 @@ const Assets = styled(({ className }: { className?: string }) => {
 
   const { balances, tokenIds, tokens, assetsTransferable } = useBalances()
   const { address } = useActiveAccount()
-  const chaindata = useChaindata()
+  const chaindata = useChaindata({ onfinalityApiKey: process.env.REACT_APP_ONFINALITY_API_KEY })
 
   const chains = useChains(chaindata)
   const evmNetworks = useEvmNetworks(chaindata)

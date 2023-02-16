@@ -45,7 +45,7 @@ function useBalanceContext() {
 //
 
 export const Provider = ({ children }: PropsWithChildren) => {
-  const chaindata = useChaindata()
+  const chaindata = useChaindata({ onfinalityApiKey: process.env.REACT_APP_ONFINALITY_API_KEY })
   const addresses = useAllAccountAddresses()
 
   const tokens = useTokens(chaindata)
@@ -60,7 +60,9 @@ export const Provider = ({ children }: PropsWithChildren) => {
   )
 
   const addressesByToken = useAddressesByToken(addresses, tokenIds)
-  const balances = _useBalances(balanceModules, chaindata, addressesByToken)
+  const balances = _useBalances(balanceModules, chaindata, addressesByToken, {
+    onfinalityApiKey: process.env.REACT_APP_ONFINALITY_API_KEY,
+  })
 
   const assetsAmount = balances?.sum.fiat('usd').transferable ?? 0
 

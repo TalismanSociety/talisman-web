@@ -13,6 +13,7 @@ declare module '*.woff' {
 declare namespace NodeJS {
   interface ProcessEnv {
     REACT_APP_APPLICATION_NAME: string
+    REACT_APP_ONFINALITY_API_KEY?: string
     REACT_APP_SENTRY_DSN: string
     REACT_APP_SENTRY_RELEASE?: string
     REACT_APP_POSTHOG_AUTH_TOKEN: string
