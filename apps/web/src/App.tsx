@@ -5,6 +5,7 @@ import CookieBanner from '@archetypes/CookieBanner'
 import Development from '@archetypes/Development'
 import ToastBar from '@components/molecules/ToastBar'
 import { TalismanHandLoader } from '@components/TalismanHandLoader'
+import ErrorBoundary from '@components/widgets/ErrorBoundary'
 import { AccountsWatcher } from '@domains/accounts/recoils'
 import { useTalismanAutoConnectEffect } from '@domains/extension/hooks'
 import NftProvider from '@libs/@talisman-nft/provider'
@@ -48,28 +49,30 @@ const Loader = () => {
 const App: React.FC = () => {
   useTalismanAutoConnectEffect()
   return (
-    <RecoilRoot>
-      <Portfolio.Provider>
-        <Tokenprices.Provider>
-          <TalismanProvider>
-            <AccountsWatcher />
-            <MoonbeamContributors.Provider>
-              <ThemeProvider>
-                <Development />
-                <Suspense fallback={<Loader />}>
-                  <NftProvider />
-                  <RouterProvider router={router} />
-                  <Toaster position="top-right" containerStyle={{ top: '6.4rem' }}>
-                    {t => <ToastBar toast={t} />}
-                  </Toaster>
-                  <CookieBanner />
-                </Suspense>
-              </ThemeProvider>
-            </MoonbeamContributors.Provider>
-          </TalismanProvider>
-        </Tokenprices.Provider>
-      </Portfolio.Provider>
-    </RecoilRoot>
+    <ErrorBoundary>
+      <RecoilRoot>
+        <Portfolio.Provider>
+          <Tokenprices.Provider>
+            <TalismanProvider>
+              <AccountsWatcher />
+              <MoonbeamContributors.Provider>
+                <ThemeProvider>
+                  <Development />
+                  <Suspense fallback={<Loader />}>
+                    <NftProvider />
+                    <RouterProvider router={router} />
+                    <Toaster position="top-right" containerStyle={{ top: '6.4rem' }}>
+                      {t => <ToastBar toast={t} />}
+                    </Toaster>
+                    <CookieBanner />
+                  </Suspense>
+                </ThemeProvider>
+              </MoonbeamContributors.Provider>
+            </TalismanProvider>
+          </Tokenprices.Provider>
+        </Portfolio.Provider>
+      </RecoilRoot>
+    </ErrorBoundary>
   )
 }
 

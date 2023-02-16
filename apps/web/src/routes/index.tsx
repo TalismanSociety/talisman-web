@@ -1,4 +1,5 @@
 import { ModalProvider } from '@components'
+import { RouteErrorElement } from '@components/widgets/ErrorBoundary'
 import { accountsState } from '@domains/accounts/recoils'
 import { apiState, nativeTokenDecimalState, nativeTokenPriceState } from '@domains/chains/recoils'
 import { recommendedPoolsState } from '@domains/nominationPools/recoils'
@@ -67,6 +68,7 @@ export default Sentry.wrapCreateBrowserRouter(createBrowserRouter)([
   {
     path: '/',
     element: <Main />,
+    errorElement: <RouteErrorElement />,
     children: [
       { path: '/', element: <Navigate to="portfolio" /> },
       {
@@ -94,5 +96,4 @@ export default Sentry.wrapCreateBrowserRouter(createBrowserRouter)([
       { path: 'buy', element: <Buy /> },
     ],
   },
-  // { path: '*', element: <Navigate to="/" /> },
 ])
