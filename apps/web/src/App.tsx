@@ -49,14 +49,14 @@ const Loader = () => {
 const App: React.FC = () => {
   useTalismanAutoConnectEffect()
   return (
-    <ErrorBoundary>
-      <RecoilRoot>
-        <Portfolio.Provider>
-          <Tokenprices.Provider>
-            <TalismanProvider>
-              <AccountsWatcher />
-              <MoonbeamContributors.Provider>
-                <ThemeProvider>
+    <ThemeProvider>
+      <ErrorBoundary>
+        <RecoilRoot>
+          <Portfolio.Provider>
+            <Tokenprices.Provider>
+              <TalismanProvider>
+                <AccountsWatcher />
+                <MoonbeamContributors.Provider>
                   <Development />
                   <Suspense fallback={<Loader />}>
                     <NftProvider />
@@ -66,13 +66,13 @@ const App: React.FC = () => {
                     </Toaster>
                     <CookieBanner />
                   </Suspense>
-                </ThemeProvider>
-              </MoonbeamContributors.Provider>
-            </TalismanProvider>
-          </Tokenprices.Provider>
-        </Portfolio.Provider>
-      </RecoilRoot>
-    </ErrorBoundary>
+                </MoonbeamContributors.Provider>
+              </TalismanProvider>
+            </Tokenprices.Provider>
+          </Portfolio.Provider>
+        </RecoilRoot>
+      </ErrorBoundary>
+    </ThemeProvider>
   )
 }
 
