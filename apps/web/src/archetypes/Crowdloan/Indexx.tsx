@@ -99,9 +99,11 @@ const Index = styled(({ withFilter, className }: { withFilter: boolean; classNam
       <Await until={!loading}>
         <NoResults
           require={count?.filtered > 0}
-          title={t('noResult.title')}
-          subtitle={t('noResult.subtitle')}
-          text={t('noResult.text')}
+          // title={t('noResult.title')}
+          // subtitle={t('noResult.subtitle')}
+          // text={t('noResult.text')}
+          subtitle={t('noCrowdloans.text')}
+          text={t('noCrowdloans.subtext')}
         >
           <Grid>
             {crowdloans.map(({ id }) => (
