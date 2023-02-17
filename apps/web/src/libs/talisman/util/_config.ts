@@ -527,6 +527,20 @@ export const parachainDetails: ParachainDetails[] = [
     },
   },
   {
+    id: '0-2093',
+    name: 'Hashed Network',
+    slug: 'hashed-network',
+    token: 'HASH',
+    subtitle: 'Digitally-native business on Polkadot',
+    info: 'Hashed Network enables the full business lifecycle for digitally-native organizations and web3-curious businesses seeking benefits of decentralized digital economies.',
+    links: {
+      Website: 'https://hashed.network/',
+      Twitter: 'https://twitter.com/HashedNetwork',
+      Medium: 'https://medium.com/hashednetwork',
+      Github: 'https://github.com/hashed-io',
+    },
+  },
+  {
     id: '0-2094',
     name: 'Pendulum',
     slug: 'pendulum',
@@ -1840,6 +1854,28 @@ export const crowdloanDetails: CrowdloanDetails[] = [
         {
           title: 'Supporter rewards',
           value: '2.5 TEER + bonuses',
+        },
+      ],
+      info: null,
+    },
+  },
+  {
+    relayId: 0,
+    paraId: 2093,
+    rewards: {
+      tokens: null,
+      custom: [
+        {
+          title: 'HASH per DOT',
+          value: '480 HASH',
+        },
+        {
+          title: 'Crowdloan Cap',
+          value: '125,000 DOT',
+        },
+        {
+          title: 'Crowdloan Allocation',
+          value: '60m of 1b HASH (6%)',
         },
       ],
       info: null,
