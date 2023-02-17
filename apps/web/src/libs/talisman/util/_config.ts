@@ -1992,48 +1992,6 @@ export const crowdloanDetails: CrowdloanDetails[] = [
       info: 'If Phala wins the Slot Auction, rewards will be distributed according to the Phala payment schedule. If a slot is not won, you can unbond your KSM immediately after the Auctions end.',
     },
   },
-  // supersceded by 2-2258
-  // {
-  //   relayId: 2,
-  //   paraId: 2120,
-  //   contributeUrl: 'https://crowdloan.plasmnet.io/',
-  //   rewards: {
-  //     tokens: [
-  //       {
-  //         symbol: 'SDN',
-  //         perKSM: '22.4',
-  //       },
-  //     ],
-  //     custom: [
-  //       {
-  //         title: 'Total Rewards Distribution',
-  //         value: '350,000 SDN',
-  //       },
-  //     ],
-  //     info: null,
-  //   },
-  // },
-  // supersceded by 2-2120
-  // {
-  //   relayId: 2,
-  //   paraId: 2007,
-  //   contributeUrl: '',
-  //   rewards: {
-  //     tokens: [
-  //       {
-  //         symbol: 'SDN',
-  //         perKSM: '28.33',
-  //       },
-  //     ],
-  //     custom: [
-  //       {
-  //         title: 'Auction Total',
-  //         value: '350,000,000 tokens',
-  //       },
-  //     ],
-  //     info: null,
-  //   },
-  // },
   {
     relayId: 2,
     paraId: 2008,
@@ -2236,26 +2194,6 @@ export const crowdloanDetails: CrowdloanDetails[] = [
       info: null,
     },
   },
-  // NOTE: Superseded by 2088
-  // {
-  //   relayId: 2,
-  //   paraId: 2021,
-  //   contributeUrl: 'https://centrifuge.io/altair/crowdloan',
-  //   rewards: {
-  //     tokens: [
-  //       {
-  //         symbol: 'AIR',
-  //         perKSM: '400',
-  //       },
-  //     ],
-  //     custom: [
-  //       {
-  //         title: 'First 250 participants',
-  //         value: '10% Bonus',
-  //       },
-  //     ],
-  //   },
-  // },
   {
     relayId: 2,
     paraId: 2023,
@@ -2355,22 +2293,6 @@ export const crowdloanDetails: CrowdloanDetails[] = [
       info: null,
     },
   },
-  // NOTE: Superseded by 2090
-  // {
-  //   relayId: 2,
-  //   paraId: 2082,
-  //   contributeUrl: 'https://loan.bsx.fi/',
-  //   rewards: {
-  //     tokens: [
-  //       {
-  //         symbol: 'BSX',
-  //         perKSM: '75,000',
-  //       },
-  //     ],
-  //     custom: null,
-  //     info: null,
-  //   },
-  // },
   {
     relayId: 2,
     paraId: 2084,
@@ -2465,31 +2387,6 @@ export const crowdloanDetails: CrowdloanDetails[] = [
       info: null,
     },
   },
-  // NOTE: Superseded by 2024
-  // {
-  //   relayId: 2,
-  //   paraId: 2089,
-  //   contributeUrl: 'https://genshiro.equilibrium.io/en/plo',
-  //   rewards: {
-  //     tokens: [
-  //       {
-  //         symbol: 'GENS',
-  //         perKSM: '> 2000',
-  //       },
-  //     ],
-  //     custom: [
-  //       {
-  //         title: '> 50 KSM contribution',
-  //         value: '20% Bonus',
-  //       },
-  //       {
-  //         title: 'Contribute before September 10',
-  //         value: '25% Bonus',
-  //       },
-  //     ],
-  //     info: null,
-  //   },
-  // },
   {
     relayId: 2,
     paraId: 2090,
@@ -2878,30 +2775,6 @@ export const crowdloanDetails: CrowdloanDetails[] = [
       info: null,
     },
   },
-  // {
-  //   relayId: 2,
-  //   paraId: 2127,
-  //   contributeUrl: '',
-  //   rewards: {
-  //     tokens: [
-  //       {
-  //         symbol: '$ICZ',
-  //         perKSM: '> 4,000',
-  //       },
-  //     ],
-  //     custom: [
-  //       {
-  //         title: 'Early Supporter Reward',
-  //         value: '4,000 Extra ICZ per KSM (Decreases linearly with time)',
-  //       },
-  //       {
-  //         title: 'Referral Bonus',
-  //         value: '5%',
-  //       },
-  //     ],
-  //     info: null,
-  //   },
-  // },
   {
     relayId: 2,
     paraId: 2256,
