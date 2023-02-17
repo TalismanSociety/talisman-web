@@ -527,6 +527,20 @@ export const parachainDetails: ParachainDetails[] = [
     },
   },
   {
+    id: '0-2093',
+    name: 'Hashed Network',
+    slug: 'hashed-network',
+    token: 'HASH',
+    subtitle: 'Digitally-native business on Polkadot',
+    info: 'Hashed Network enables the full business lifecycle for digitally-native organizations and web3-curious businesses seeking benefits of decentralized digital economies.',
+    links: {
+      Website: 'https://hashed.network/',
+      Twitter: 'https://twitter.com/HashedNetwork',
+      Medium: 'https://medium.com/hashednetwork',
+      Github: 'https://github.com/hashed-io',
+    },
+  },
+  {
     id: '0-2094',
     name: 'Pendulum',
     slug: 'pendulum',
@@ -616,6 +630,22 @@ Our mission is to create an open financial future that overcomes borders and fos
       Medium: 'https://medium.com/phala-network',
       Github: 'https://github.com/Phala-Network',
       Discord: 'https://discord.gg/myBmQu5',
+    },
+  },
+  {
+    id: '2-2258',
+    name: 'Shiden',
+    slug: 'shiden-kusama',
+    token: 'SDN',
+    subtitle: 'Smart Contract Platform Natively Supporting Ethereum Virtual Machine and WebAssembly',
+    info: 'Shiden Network is a multi-chain decentralized application layer on Kusama Network.',
+    links: {
+      Website: 'https://shiden.astar.network/',
+      Twitter: 'https://twitter.com/ShidenNetwork',
+      Telegram: 'https://t.me/PlasmOfficial',
+      Medium: 'https://medium.com/astar-network',
+      Github: 'https://github.com/AstarNetwork/Astar',
+      Discord: 'https://discord.com/invite/Z3nC9U4',
     },
   },
   {
@@ -1847,6 +1877,28 @@ export const crowdloanDetails: CrowdloanDetails[] = [
   },
   {
     relayId: 0,
+    paraId: 2093,
+    rewards: {
+      tokens: null,
+      custom: [
+        {
+          title: 'HASH per DOT',
+          value: '480 HASH',
+        },
+        {
+          title: 'Crowdloan Cap',
+          value: '125,000 DOT',
+        },
+        {
+          title: 'Crowdloan Allocation',
+          value: '60m of 1b HASH (6%)',
+        },
+      ],
+      info: null,
+    },
+  },
+  {
+    relayId: 0,
     paraId: 2097,
     rewards: {
       tokens: null,
@@ -1938,46 +1990,6 @@ export const crowdloanDetails: CrowdloanDetails[] = [
       ],
       custom: [],
       info: 'If Phala wins the Slot Auction, rewards will be distributed according to the Phala payment schedule. If a slot is not won, you can unbond your KSM immediately after the Auctions end.',
-    },
-  },
-  {
-    relayId: 2,
-    paraId: 2120,
-    contributeUrl: 'https://crowdloan.plasmnet.io/',
-    rewards: {
-      tokens: [
-        {
-          symbol: 'SDN',
-          perKSM: '22.4',
-        },
-      ],
-      custom: [
-        {
-          title: 'Total Rewards Distribution',
-          value: '350,000 SDN',
-        },
-      ],
-      info: null,
-    },
-  },
-  {
-    relayId: 2,
-    paraId: 2007,
-    contributeUrl: '',
-    rewards: {
-      tokens: [
-        {
-          symbol: 'SDN',
-          perKSM: '28.33',
-        },
-      ],
-      custom: [
-        {
-          title: 'Auction Total',
-          value: '350,000,000 tokens',
-        },
-      ],
-      info: null,
     },
   },
   {
@@ -2182,26 +2194,6 @@ export const crowdloanDetails: CrowdloanDetails[] = [
       info: null,
     },
   },
-  // NOTE: Superseded by 2088
-  // {
-  //   relayId: 2,
-  //   paraId: 2021,
-  //   contributeUrl: 'https://centrifuge.io/altair/crowdloan',
-  //   rewards: {
-  //     tokens: [
-  //       {
-  //         symbol: 'AIR',
-  //         perKSM: '400',
-  //       },
-  //     ],
-  //     custom: [
-  //       {
-  //         title: 'First 250 participants',
-  //         value: '10% Bonus',
-  //       },
-  //     ],
-  //   },
-  // },
   {
     relayId: 2,
     paraId: 2023,
@@ -2301,22 +2293,6 @@ export const crowdloanDetails: CrowdloanDetails[] = [
       info: null,
     },
   },
-  // NOTE: Superseded by 2090
-  // {
-  //   relayId: 2,
-  //   paraId: 2082,
-  //   contributeUrl: 'https://loan.bsx.fi/',
-  //   rewards: {
-  //     tokens: [
-  //       {
-  //         symbol: 'BSX',
-  //         perKSM: '75,000',
-  //       },
-  //     ],
-  //     custom: null,
-  //     info: null,
-  //   },
-  // },
   {
     relayId: 2,
     paraId: 2084,
@@ -2411,31 +2387,6 @@ export const crowdloanDetails: CrowdloanDetails[] = [
       info: null,
     },
   },
-  // NOTE: Superseded by 2024
-  // {
-  //   relayId: 2,
-  //   paraId: 2089,
-  //   contributeUrl: 'https://genshiro.equilibrium.io/en/plo',
-  //   rewards: {
-  //     tokens: [
-  //       {
-  //         symbol: 'GENS',
-  //         perKSM: '> 2000',
-  //       },
-  //     ],
-  //     custom: [
-  //       {
-  //         title: '> 50 KSM contribution',
-  //         value: '20% Bonus',
-  //       },
-  //       {
-  //         title: 'Contribute before September 10',
-  //         value: '25% Bonus',
-  //       },
-  //     ],
-  //     info: null,
-  //   },
-  // },
   {
     relayId: 2,
     paraId: 2090,
@@ -2824,30 +2775,6 @@ export const crowdloanDetails: CrowdloanDetails[] = [
       info: null,
     },
   },
-  // {
-  //   relayId: 2,
-  //   paraId: 2127,
-  //   contributeUrl: '',
-  //   rewards: {
-  //     tokens: [
-  //       {
-  //         symbol: '$ICZ',
-  //         perKSM: '> 4,000',
-  //       },
-  //     ],
-  //     custom: [
-  //       {
-  //         title: 'Early Supporter Reward',
-  //         value: '4,000 Extra ICZ per KSM (Decreases linearly with time)',
-  //       },
-  //       {
-  //         title: 'Referral Bonus',
-  //         value: '5%',
-  //       },
-  //     ],
-  //     info: null,
-  //   },
-  // },
   {
     relayId: 2,
     paraId: 2256,
@@ -2870,6 +2797,25 @@ export const crowdloanDetails: CrowdloanDetails[] = [
         },
       ],
       info: null,
+    },
+  },
+  {
+    relayId: 2,
+    paraId: 2258,
+    contributeUrl: '',
+    rewards: {
+      tokens: [],
+      custom: [
+        {
+          title: 'Total Supply',
+          value: '70,000,000 SDN',
+        },
+        {
+          title: 'Circulating Supply',
+          value: '~59,000,000 SDN',
+        },
+      ],
+      info: 'Shiden is already a Kusama Parachain, and are renewing their slot. Crowdloan rewards details are unknown.',
     },
   },
 ]

@@ -1,9 +1,8 @@
 import styled from '@emotion/styled'
 import React from 'react'
 
-const NoResultsMessage = styled(({ title, subtitle, text, className }) => (
+const NoResultsMessage = styled(({ subtitle, text, className }) => (
   <div className={className}>
-    {title && <h1>{title}</h1>}
     {subtitle && <h2>{subtitle}</h2>}
     {text && <p>{text}</p>}
   </div>
