@@ -1,5 +1,5 @@
 import { useTheme } from '@emotion/react'
-import { useMemo } from 'react'
+import { ReactNode, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 
 import CircularProgressIndicator from '../CircularProgressIndicator'
@@ -9,6 +9,8 @@ type ButtonElementType = Extract<React.ElementType, 'button' | 'a'> | typeof Lin
 type PolymorphicButtonProps<T extends ButtonElementType> = {
   as?: T
   variant?: 'outlined' | 'noop' | 'secondary'
+  leadingIcon?: ReactNode
+  trailingIcon?: ReactNode
   disabled?: boolean
   hidden?: boolean
   loading?: boolean
@@ -19,9 +21,11 @@ export type ButtonProps<T extends ButtonElementType> = PolymorphicButtonProps<T>
 
 const Button = <T extends ButtonElementType>({
   as = 'button' as T,
+  variant,
+  trailingIcon,
+  leadingIcon,
   hidden,
   loading,
-  variant,
   ...props
 }: ButtonProps<T>) => {
   const theme = useTheme()
@@ -106,15 +110,54 @@ const Button = <T extends ButtonElementType>({
         hidden && { cursor: 'default', pointerEvent: 'none', opacity: 0 },
       ]}
     >
-      <span css={{ position: 'relative' }}>
-        {loading && (
-          <span css={{ position: 'absolute', left: '-1.2rem', top: '0.1rem' }}>
-            <CircularProgressIndicator size="1.6rem" />
+      <span css={{ position: 'relative', width: '100%' }}>
+        {(leadingIcon || loading) && (
+          <span
+            css={{
+              position: 'absolute',
+              left: '-1.2rem',
+              top: 0,
+              bottom: 0,
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+          >
+            {(() => {
+              if (loading) {
+                return <CircularProgressIndicator size="1.6rem" />
+              }
+
+              if (leadingIcon) {
+                return leadingIcon
+              }
+            })()}
           </span>
         )}
-        <span css={{ display: 'inline-block', transform: loading ? 'translateX(1rem)' : undefined }}>
+        <span
+          css={[
+            { display: 'inline-block' },
+            (loading || leadingIcon !== undefined) && { transform: 'translateX(1rem)' },
+            trailingIcon && { transform: 'translateX(-1rem)' },
+          ]}
+        >
           {props.children}
         </span>
+        {trailingIcon && (
+          <span
+            css={{
+              position: 'absolute',
+              right: '-1.6rem',
+              top: 0,
+              bottom: 0,
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+          >
+            {trailingIcon}
+          </span>
+        )}
       </span>
     </Component>
   )
