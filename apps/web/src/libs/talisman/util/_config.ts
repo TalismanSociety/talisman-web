@@ -633,6 +633,22 @@ Our mission is to create an open financial future that overcomes borders and fos
     },
   },
   {
+    id: '2-2258',
+    name: 'Shiden',
+    slug: 'shiden-kusama',
+    token: 'SDN',
+    subtitle: 'Smart Contract Platform Natively Supporting Ethereum Virtual Machine and WebAssembly',
+    info: 'Shiden Network is a multi-chain decentralized application layer on Kusama Network.',
+    links: {
+      Website: 'https://shiden.astar.network/',
+      Twitter: 'https://twitter.com/ShidenNetwork',
+      Telegram: 'https://t.me/PlasmOfficial',
+      Medium: 'https://medium.com/astar-network',
+      Github: 'https://github.com/AstarNetwork/Astar',
+      Discord: 'https://discord.com/invite/Z3nC9U4',
+    },
+  },
+  {
     id: '2-2120',
     name: 'Shiden',
     slug: 'shiden-kusama',
@@ -1976,46 +1992,48 @@ export const crowdloanDetails: CrowdloanDetails[] = [
       info: 'If Phala wins the Slot Auction, rewards will be distributed according to the Phala payment schedule. If a slot is not won, you can unbond your KSM immediately after the Auctions end.',
     },
   },
-  {
-    relayId: 2,
-    paraId: 2120,
-    contributeUrl: 'https://crowdloan.plasmnet.io/',
-    rewards: {
-      tokens: [
-        {
-          symbol: 'SDN',
-          perKSM: '22.4',
-        },
-      ],
-      custom: [
-        {
-          title: 'Total Rewards Distribution',
-          value: '350,000 SDN',
-        },
-      ],
-      info: null,
-    },
-  },
-  {
-    relayId: 2,
-    paraId: 2007,
-    contributeUrl: '',
-    rewards: {
-      tokens: [
-        {
-          symbol: 'SDN',
-          perKSM: '28.33',
-        },
-      ],
-      custom: [
-        {
-          title: 'Auction Total',
-          value: '350,000,000 tokens',
-        },
-      ],
-      info: null,
-    },
-  },
+  // supersceded by 2-2258
+  // {
+  //   relayId: 2,
+  //   paraId: 2120,
+  //   contributeUrl: 'https://crowdloan.plasmnet.io/',
+  //   rewards: {
+  //     tokens: [
+  //       {
+  //         symbol: 'SDN',
+  //         perKSM: '22.4',
+  //       },
+  //     ],
+  //     custom: [
+  //       {
+  //         title: 'Total Rewards Distribution',
+  //         value: '350,000 SDN',
+  //       },
+  //     ],
+  //     info: null,
+  //   },
+  // },
+  // supersceded by 2-2120
+  // {
+  //   relayId: 2,
+  //   paraId: 2007,
+  //   contributeUrl: '',
+  //   rewards: {
+  //     tokens: [
+  //       {
+  //         symbol: 'SDN',
+  //         perKSM: '28.33',
+  //       },
+  //     ],
+  //     custom: [
+  //       {
+  //         title: 'Auction Total',
+  //         value: '350,000,000 tokens',
+  //       },
+  //     ],
+  //     info: null,
+  //   },
+  // },
   {
     relayId: 2,
     paraId: 2008,
@@ -2906,6 +2924,25 @@ export const crowdloanDetails: CrowdloanDetails[] = [
         },
       ],
       info: null,
+    },
+  },
+  {
+    relayId: 2,
+    paraId: 2258,
+    contributeUrl: '',
+    rewards: {
+      tokens: [],
+      custom: [
+        {
+          title: 'Total Supply',
+          value: '70,000,000 SDN',
+        },
+        {
+          title: 'Circulating Supply',
+          value: '~59,000,000 SDN',
+        },
+      ],
+      info: 'Shiden is already a Kusama Parachain, and are renewing their slot. Crowdloan rewards details are unknown.',
     },
   },
 ]
