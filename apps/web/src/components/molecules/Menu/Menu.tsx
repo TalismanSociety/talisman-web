@@ -1,5 +1,6 @@
 import { useTheme } from '@emotion/react'
 import {
+  FloatingPortal,
   Placement,
   ReferenceType,
   Strategy,
@@ -93,43 +94,45 @@ const MenuItems = (props: MenuItemsProps) => {
   }, [placement])
 
   return (
-    <motion.section
-      ref={floating}
-      variants={{
-        true: {
-          clipPath: `inset(0% 0% 0% 0% round ${BORDER_RADIUS})`,
-          transition: {
-            type: 'spring',
-            bounce: 0,
-            duration: 0.7,
-            delayChildren: 0.3,
-            staggerChildren: 0.05,
+    <FloatingPortal>
+      <motion.section
+        ref={floating}
+        variants={{
+          true: {
+            clipPath: `inset(0% 0% 0% 0% round ${BORDER_RADIUS})`,
+            transition: {
+              type: 'spring',
+              bounce: 0,
+              duration: 0.7,
+              delayChildren: 0.3,
+              staggerChildren: 0.05,
+            },
           },
-        },
-        false: {
-          clipPath: closedClipPath,
-          transition: {
-            type: 'spring',
-            bounce: 0,
-            duration: 0.3,
+          false: {
+            clipPath: closedClipPath,
+            transition: {
+              type: 'spring',
+              bounce: 0,
+              duration: 0.3,
+            },
           },
-        },
-      }}
-      css={{
-        border: `1px solid ${theme.color.border}`,
-        borderRadius: '1.2rem',
-        padding: '1.6rem',
-        backgroundColor: theme.color.surface,
-      }}
-      {...getFloatingProps({
-        ...props,
-        style: { ...props.style, position: strategy, top: y ?? 0, left: x ?? 0, width: 'max-content' },
-      })}
-    />
+        }}
+        css={{
+          border: `1px solid ${theme.color.border}`,
+          borderRadius: '1.2rem',
+          padding: '1.6rem',
+          backgroundColor: theme.color.surface,
+        }}
+        {...getFloatingProps({
+          ...props,
+          style: { ...props.style, position: strategy, top: y ?? 0, left: x ?? 0, width: 'max-content' },
+        })}
+      />
+    </FloatingPortal>
   )
 }
 
-const MenuItem = (props: PropsWithChildren) => {
+const MenuItem = (props: DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>) => {
   const { getItemProps } = useContext(MenuContext)
   return (
     <motion.div

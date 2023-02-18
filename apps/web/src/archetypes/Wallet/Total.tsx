@@ -1,12 +1,14 @@
 import CircularProgressIndicator from '@components/atoms/CircularProgressIndicator'
+import { selectedAccountsState } from '@domains/accounts/recoils'
 import { useTotalCrowdloanTotalFiatAmount } from '@domains/crowdloans/hooks'
 import { useTotalStaked } from '@domains/staking/hooks'
-import { useActiveAccount, useBalances } from '@libs/talisman'
+import { useBalances } from '@libs/talisman'
 import { Suspense } from 'react'
+import { useRecoilValue } from 'recoil'
 
 const TotalSuspense = () => {
   const { balances, assetsOverallValue } = useBalances()
-  const address = useActiveAccount().address
+  const address = useRecoilValue(selectedAccountsState)[0]?.address
 
   const fiatTotal =
     address !== undefined ? balances?.find({ address: address }).sum.fiat('usd').total ?? 0 : assetsOverallValue

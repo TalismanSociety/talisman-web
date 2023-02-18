@@ -3,13 +3,12 @@ import Identicon from '@components/atoms/Identicon'
 import Text from '@components/atoms/Text'
 import { CopyButton } from '@components/CopyButton'
 import { NFTCard } from '@components/recipes/NFTCard'
-import { WalletNavConnector } from '@components/WalletNavConnector'
-import { accountsState } from '@domains/accounts/recoils'
+import AccountsManagementMenu from '@components/widgets/AccountsManagementMenu'
+import { accountsState, selectedAccountsState } from '@domains/accounts/recoils'
 import { css } from '@emotion/react'
 import styled from '@emotion/styled'
 import { nftDataState } from '@libs/@talisman-nft/provider'
 import { NFTShort } from '@libs/@talisman-nft/types'
-import { useActiveAccount } from '@libs/talisman'
 import { device } from '@util/breakpoints'
 import toast from 'react-hot-toast'
 import { useRecoilValue } from 'recoil'
@@ -63,7 +62,7 @@ type AccType = {
 const List = () => {
   const { items, isFetching, count } = useRecoilValue(nftDataState)
 
-  const { address } = useActiveAccount()
+  const address = useRecoilValue(selectedAccountsState)[0]?.address
   const accounts = useRecoilValue(accountsState)
 
   if (isFetching && items.length === 0)
@@ -92,7 +91,7 @@ const List = () => {
           >
             <Text.H2>No NFTs Found</Text.H2>
             <Text.Body>Please try another account</Text.Body>
-            <WalletNavConnector />
+            <AccountsManagementMenu />
           </span>
         }
       />

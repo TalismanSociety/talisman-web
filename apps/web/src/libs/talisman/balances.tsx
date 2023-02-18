@@ -1,10 +1,11 @@
-import { useAllAccountAddresses } from '@libs/talisman'
+import { accountsState } from '@domains/accounts/recoils'
 import { AddressesByToken, Balances } from '@talismn/balances'
 import { balanceModules } from '@talismn/balances-default-modules'
 import { useBalances as _useBalances, useChaindata, useTokens } from '@talismn/balances-react'
 import { ChaindataProvider, Token, TokenList } from '@talismn/chaindata-provider'
 import { isNil } from 'lodash'
 import { PropsWithChildren, createContext, useContext, useMemo } from 'react'
+import { useRecoilValue } from 'recoil'
 
 export const useBalances = () => useBalanceContext()
 
@@ -46,7 +47,7 @@ function useBalanceContext() {
 
 export const Provider = ({ children }: PropsWithChildren) => {
   const chaindata = useChaindata({ onfinalityApiKey: process.env.REACT_APP_ONFINALITY_API_KEY })
-  const addresses = useAllAccountAddresses()
+  const addresses = useRecoilValue(accountsState).map(x => x.address)
 
   const tokens = useTokens(chaindata)
 

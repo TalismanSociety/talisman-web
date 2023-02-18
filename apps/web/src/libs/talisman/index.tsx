@@ -1,6 +1,5 @@
 import { PropsWithChildren } from 'react'
 
-import * as Account from './account'
 import * as Balance from './balances'
 import * as Chainmeta from './chainmeta'
 import * as Crowdloan from './crowdloan'
@@ -10,8 +9,6 @@ import { useChainByGenesis as _useChainByGenesis } from './util/hooks'
 
 /* publically exposed hooks */
 
-// account things
-export { useAccountAddresses, useAccounts, useActiveAccount, useAllAccountAddresses } from './account'
 // // balances stuff
 export { useBalances } from './balances'
 // // chainmeta things
@@ -44,13 +41,11 @@ export const useChainByGenesis = _useChainByGenesis
 const Provider = ({ children }: PropsWithChildren) => (
   <Extension.Provider>
     <Chainmeta.Provider>
-      <Account.Provider>
-        <Balance.Provider>
-          <Parachain.Provider>
-            <Crowdloan.Provider>{children}</Crowdloan.Provider>
-          </Parachain.Provider>
-        </Balance.Provider>
-      </Account.Provider>
+      <Balance.Provider>
+        <Parachain.Provider>
+          <Crowdloan.Provider>{children}</Crowdloan.Provider>
+        </Parachain.Provider>
+      </Balance.Provider>
     </Chainmeta.Provider>
   </Extension.Provider>
 )

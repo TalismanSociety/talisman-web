@@ -1,10 +1,37 @@
 import { extensionState } from '@domains/extension/recoils'
+import type { InjectedAccount } from '@polkadot/extension-inject/types'
 import { useEffect } from 'react'
-import { atom, selector, useRecoilValue, useSetRecoilState, waitForAll } from 'recoil'
+import { DefaultValue, atom, selector, useRecoilValue, useSetRecoilState, waitForAll } from 'recoil'
 
-export const accountsState = atom<Array<{ address: string; name?: string }>>({
-  key: 'Accounts',
+export type Account = InjectedAccount & {
+  readonly?: boolean
+}
+
+export const injectedAccountsState = atom<Account[]>({
+  key: 'InjectedAccounts',
   default: [],
+})
+
+export const _readOnlyAccountsState = atom<Account[]>({
+  key: '_ReadonlyAccounts',
+  default: [],
+})
+
+export const readOnlyAccountsState = selector<Account[]>({
+  key: 'ReadonlyAccounts',
+  get: ({ get }) => get(_readOnlyAccountsState).map(x => ({ ...x, readonly: true })),
+  set: ({ set }, newValue) =>
+    newValue instanceof DefaultValue
+      ? []
+      : set(
+          _readOnlyAccountsState,
+          newValue.map(x => ({ ...x, readonly: true }))
+        ),
+})
+
+export const accountsState = selector({
+  key: 'Accounts',
+  get: ({ get }) => [...get(injectedAccountsState), ...get(readOnlyAccountsState)],
 })
 
 export const substrateAccountsState = selector({
@@ -40,7 +67,7 @@ export const selectedSubstrateAccountsState = selector({
 
 export const AccountsWatcher = () => {
   const extension = useRecoilValue(extensionState)
-  const setAccounts = useSetRecoilState(accountsState)
+  const setAccounts = useSetRecoilState(injectedAccountsState)
 
   useEffect(() => {
     if (extension === undefined) {

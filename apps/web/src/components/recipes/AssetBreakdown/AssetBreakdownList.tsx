@@ -1,6 +1,5 @@
-import { selectedAccountsState } from '@domains/accounts/recoils'
+import { Account, selectedAccountsState } from '@domains/accounts/recoils'
 import styled from '@emotion/styled'
-import { Account } from '@libs/talisman/extension'
 import { Balances } from '@talismn/balances'
 import { BalanceFormatter } from '@talismn/balances'
 import { formatDecimals } from '@talismn/util'
@@ -81,7 +80,7 @@ export const AssetBreakdownList = (props: AssetBreakdownListProps) => {
     <Table>
       <tbody>
         <AssetBreakdownRowHeader token={token} isOrml />
-        {accounts.map((account: Account) => {
+        {accounts.map(account => {
           const tokenBalance = balances?.find({ tokenId: token?.tokenDetails?.id, address: account.address })
 
           if (

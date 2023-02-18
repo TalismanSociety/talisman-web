@@ -1,13 +1,13 @@
 import Identicon from '@components/atoms/Identicon'
+import { Account, accountsState } from '@domains/accounts/recoils'
 // import { useTranslation } from 'react-i18next'
 import styled from '@emotion/styled'
 import { ReactComponent as Check } from '@icons/check-circle.svg'
 import { ReactComponent as ChevronDown } from '@icons/chevron-down.svg'
-import { useAccounts } from '@libs/talisman'
-import { Account } from '@libs/talisman/extension'
 import { device } from '@util/breakpoints'
 import useOnClickOutside from '@util/useOnClickOutside'
 import { useEffect, useRef, useState } from 'react'
+import { useRecoilValue } from 'recoil'
 
 type DropdownProps = {
   className?: string
@@ -134,7 +134,7 @@ const AccountPicker = styled(
     onChange?: any
   }) => {
     const nodeRef = useRef<HTMLDivElement>(null)
-    const accounts = useAccounts()
+    const accounts = useRecoilValue(accountsState)
     const [open, setOpen] = useState(false)
     const [activeAccount, setActiveAccount] = useState(accounts[0])
 

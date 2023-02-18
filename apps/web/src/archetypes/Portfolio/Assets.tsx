@@ -1,10 +1,11 @@
-import { useActiveAccount } from '@libs/talisman'
+import { selectedAccountsState } from '@domains/accounts/recoils'
 import { useBalances } from '@libs/talisman'
 import { BalanceFormatter } from '@talismn/balances'
 import { useChaindata, useChains, useEvmNetworks } from '@talismn/balances-react'
 import { formatDecimals } from '@talismn/util'
 import { compact, groupBy, isEmpty, isNil, startCase } from 'lodash'
 import { useMemo } from 'react'
+import { useRecoilValue } from 'recoil'
 
 const useFetchAssets = (address: string | undefined) => {
   const { balances, tokenIds, tokens, assetsOverallValue } = useBalances()
@@ -79,7 +80,7 @@ export const convertToFiatString = (value: any) => {
 }
 
 const useAssets = (customAddress?: string) => {
-  const { address } = useActiveAccount()
+  const address = useRecoilValue(selectedAccountsState)[0]?.address
   const { assetBalances, fiatTotal, lockedTotal, value, balances, chains, evmNetworks, isLoading } = useFetchAssets(
     customAddress ?? address
   )

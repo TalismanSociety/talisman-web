@@ -80,7 +80,6 @@ const CrowdloanDetail = styled(({ className }: { className?: string }) => {
     padding: 0 5vw;
     display: flex;
     justify-content: space-between;
-    z-index: 1;
     position: relative;
 
     > article {
