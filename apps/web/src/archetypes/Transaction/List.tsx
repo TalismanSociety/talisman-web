@@ -1,7 +1,7 @@
 import { Field, MaterialLoader, Panel, PanelSection } from '@components'
 import Button from '@components/atoms/Button'
 import * as Icon from '@components/atoms/Icon'
-import { selectedAccountsState } from '@domains/accounts/recoils'
+import { legacySelectedAccountState, selectedAccountsState } from '@domains/accounts/recoils'
 import ExportTxHistoryWidget from '@domains/txHistory/widgets/ExportTxHistoryWidget'
 import { css } from '@emotion/react'
 import format from 'date-fns/format'
@@ -28,7 +28,7 @@ export const List = ({ addresses = [], className }: Props) => {
 
   const [searchParams, setSearchParams] = useSearchParams()
   const urlAddresses = useMemo(() => searchParams.getAll('address'), [searchParams])
-  const selectedAddress = useRecoilValue(selectedAccountsState)[0]?.address
+  const selectedAddress = useRecoilValue(legacySelectedAccountState)?.address
   const hasActiveAccount = selectedAddress !== undefined
 
   // remove urlAddresses when selectedAddress changes

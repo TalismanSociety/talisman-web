@@ -4,7 +4,7 @@ import { Button, DesktopRequired, Field, MaterialLoader, Pendor, useModal } from
 import { TalismanHandLike } from '@components/TalismanHandLike'
 import { TalismanHandLoader } from '@components/TalismanHandLoader'
 import AccountsManagementMenu from '@components/widgets/AccountsManagementMenu'
-import { selectedAccountsState } from '@domains/accounts/recoils'
+import { legacySelectedAccountState } from '@domains/accounts/recoils'
 import styled from '@emotion/styled'
 import { ContributeEvent, useCrowdloanContribute } from '@libs/crowdloans'
 import { Acala, Moonbeam, Polkadex, overrideByIds } from '@libs/crowdloans/crowdloanOverrides'
@@ -138,7 +138,7 @@ const ContributeTo = styled(
       [txFee, tokenPrice]
     )
 
-    const address = useRecoilValue(selectedAccountsState)[0]?.address
+    const address = useRecoilValue(legacySelectedAccountState)?.address
     useEffect(() => {
       dispatch(ContributeEvent.setAccount(address))
     }, [dispatch, address])

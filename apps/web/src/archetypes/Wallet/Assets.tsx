@@ -1,5 +1,5 @@
 import { ExtensionStatusGate, Info, Panel, PanelSection, Pendor, TokenLogo } from '@components'
-import { selectedAccountsState } from '@domains/accounts/recoils'
+import { legacySelectedAccountState } from '@domains/accounts/recoils'
 import { useLegacyBalances } from '@domains/balances/hooks'
 import styled from '@emotion/styled'
 import { ReactComponent as Loader } from '@icons/loader.svg'
@@ -87,7 +87,7 @@ const Assets = styled(({ className }: { className?: string }) => {
   const { t } = useTranslation()
 
   const { balances, tokenIds, tokens, assetsTransferable } = useLegacyBalances()
-  const address = useRecoilValue(selectedAccountsState)[0]?.address
+  const address = useRecoilValue(legacySelectedAccountState)?.address
   const chaindata = useChaindata({ onfinalityApiKey: process.env.REACT_APP_ONFINALITY_API_KEY })
 
   const chains = useChains(chaindata)

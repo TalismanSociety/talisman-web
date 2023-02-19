@@ -47,8 +47,6 @@ const IconButton = forwardRef(
 
     const Component = as
 
-    console.log(disabledContainerColor, disabledContentColor)
-
     return (
       <Component
         {...(props as any)}

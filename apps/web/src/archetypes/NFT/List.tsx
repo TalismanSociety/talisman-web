@@ -4,7 +4,7 @@ import Text from '@components/atoms/Text'
 import { CopyButton } from '@components/CopyButton'
 import { NFTCard } from '@components/recipes/NFTCard'
 import AccountsManagementMenu from '@components/widgets/AccountsManagementMenu'
-import { accountsState, selectedAccountsState } from '@domains/accounts/recoils'
+import { accountsState, legacySelectedAccountState } from '@domains/accounts/recoils'
 import { css } from '@emotion/react'
 import styled from '@emotion/styled'
 import { nftDataState } from '@libs/@talisman-nft/provider'
@@ -62,7 +62,7 @@ type AccType = {
 const List = () => {
   const { items, isFetching, count } = useRecoilValue(nftDataState)
 
-  const address = useRecoilValue(selectedAccountsState)[0]?.address
+  const address = useRecoilValue(legacySelectedAccountState)?.address
   const accounts = useRecoilValue(accountsState)
 
   if (isFetching && items.length === 0)

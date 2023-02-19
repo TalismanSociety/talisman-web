@@ -1,4 +1,4 @@
-import { selectedAccountsState } from '@domains/accounts/recoils'
+import { legacySelectedAccountState } from '@domains/accounts/recoils'
 import { useLegacyBalances } from '@domains/balances/hooks'
 import { BalanceFormatter } from '@talismn/balances'
 import { useChaindata, useChains, useEvmNetworks } from '@talismn/balances-react'
@@ -80,7 +80,7 @@ export const convertToFiatString = (value: any) => {
 }
 
 const useAssets = (customAddress?: string) => {
-  const address = useRecoilValue(selectedAccountsState)[0]?.address
+  const address = useRecoilValue(legacySelectedAccountState)?.address
   const { assetBalances, fiatTotal, lockedTotal, value, balances, chains, evmNetworks, isLoading } = useFetchAssets(
     customAddress ?? address
   )

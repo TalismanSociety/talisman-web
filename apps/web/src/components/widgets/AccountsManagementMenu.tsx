@@ -7,13 +7,13 @@ import ListItem from '@components/molecules/ListItem'
 import Menu from '@components/molecules/Menu'
 import {
   injectedAccountsState,
+  legacySelectedAccountState,
   readOnlyAccountsState,
   selectedAccountAddressesState,
-  selectedAccountsState,
 } from '@domains/accounts/recoils'
 import { useTheme } from '@emotion/react'
 import { motion } from 'framer-motion'
-import { useCallback, useMemo } from 'react'
+import { useCallback } from 'react'
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil'
 
 const AnimatedChevron = motion(ChevronDown)
@@ -22,7 +22,7 @@ const AccountsManagementMenu = () => {
   const theme = useTheme()
 
   const setSelectedAccountAddresses = useSetRecoilState(selectedAccountAddressesState)
-  const selectedAccount = useRecoilValue(selectedAccountsState)[0]
+  const selectedAccount = useRecoilValue(legacySelectedAccountState)
   const injectedAccounts = useRecoilValue(injectedAccountsState)
   const [readonlyAccounts, setReadonlyAccounts] = useRecoilState(readOnlyAccountsState)
 
