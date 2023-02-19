@@ -1,8 +1,8 @@
 import { ExtensionStatusGate, Info, Panel, PanelSection, Pendor, TokenLogo } from '@components'
 import { selectedAccountsState } from '@domains/accounts/recoils'
+import { useLegacyBalances } from '@domains/balances/hooks'
 import styled from '@emotion/styled'
 import { ReactComponent as Loader } from '@icons/loader.svg'
-import { useBalances } from '@libs/talisman'
 import { Balance, BalanceFormatter, Balances } from '@talismn/balances'
 import { useChaindata, useChains, useEvmNetworks } from '@talismn/balances-react'
 import { Token } from '@talismn/chaindata-provider'
@@ -86,7 +86,7 @@ const AssetBalance = styled(({ token, balances, address }: AssetBalanceProps) =>
 const Assets = styled(({ className }: { className?: string }) => {
   const { t } = useTranslation()
 
-  const { balances, tokenIds, tokens, assetsTransferable } = useBalances()
+  const { balances, tokenIds, tokens, assetsTransferable } = useLegacyBalances()
   const address = useRecoilValue(selectedAccountsState)[0]?.address
   const chaindata = useChaindata({ onfinalityApiKey: process.env.REACT_APP_ONFINALITY_API_KEY })
 

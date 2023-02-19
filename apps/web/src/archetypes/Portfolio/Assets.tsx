@@ -1,5 +1,5 @@
 import { selectedAccountsState } from '@domains/accounts/recoils'
-import { useBalances } from '@libs/talisman'
+import { useLegacyBalances } from '@domains/balances/hooks'
 import { BalanceFormatter } from '@talismn/balances'
 import { useChaindata, useChains, useEvmNetworks } from '@talismn/balances-react'
 import { formatDecimals } from '@talismn/util'
@@ -8,7 +8,7 @@ import { useMemo } from 'react'
 import { useRecoilValue } from 'recoil'
 
 const useFetchAssets = (address: string | undefined) => {
-  const { balances, tokenIds, tokens, assetsOverallValue } = useBalances()
+  const { balances, tokenIds, tokens, assetsOverallValue } = useLegacyBalances()
   const chaindata = useChaindata({ onfinalityApiKey: process.env.REACT_APP_ONFINALITY_API_KEY })
 
   const chains = useChains(chaindata)

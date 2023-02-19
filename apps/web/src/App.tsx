@@ -7,6 +7,7 @@ import ToastBar from '@components/molecules/ToastBar'
 import { TalismanHandLoader } from '@components/TalismanHandLoader'
 import ErrorBoundary from '@components/widgets/ErrorBoundary'
 import { AccountsWatcher } from '@domains/accounts/recoils'
+import { LegacyBalancesWatcher } from '@domains/balances/recoils'
 import { useTalismanAutoConnectEffect } from '@domains/extension/hooks'
 import NftProvider from '@libs/@talisman-nft/provider'
 import * as MoonbeamContributors from '@libs/moonbeam-contributors'
@@ -56,6 +57,7 @@ const App: React.FC = () => {
             <Tokenprices.Provider>
               <TalismanProvider>
                 <AccountsWatcher />
+                <LegacyBalancesWatcher />
                 <MoonbeamContributors.Provider>
                   <Development />
                   <Suspense fallback={<Loader />}>
