@@ -12,6 +12,7 @@ import {
   useClick,
   useDismiss,
   useFloating,
+  useFloatingNodeId,
   useInteractions,
   useRole,
 } from '@floating-ui/react-dom-interactions'
@@ -41,6 +42,7 @@ export type MenuButtonProps = { children: ReactNode | ((props: { open: boolean }
 export type MenuItemsProps = DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement>
 
 const MenuContext = createContext<{
+  nodeId?: string
   x: number | null
   y: number | null
   strategy: Strategy
@@ -53,6 +55,7 @@ const MenuContext = createContext<{
   open: boolean
   setOpen: (value: boolean) => unknown
 }>({
+  nodeId: '',
   x: 0,
   y: 0,
   strategy: 'absolute',
@@ -77,7 +80,8 @@ const MenuButton = ({ children, ...props }: MenuButtonProps) => {
 
 const MenuItems = (props: MenuItemsProps) => {
   const theme = useTheme()
-  const { floating, x, y, strategy, placement, getFloatingProps } = useContext(MenuContext)
+  const [animating, setAnimating] = useState(false)
+  const { nodeId, x, y, strategy, placement, floating, getFloatingProps, open } = useContext(MenuContext)
 
   const closedClipPath = useMemo(() => {
     switch (placement) {
@@ -95,40 +99,44 @@ const MenuItems = (props: MenuItemsProps) => {
   }, [placement])
 
   return (
-    <FloatingPortal>
-      <motion.section
-        ref={floating}
-        variants={{
-          true: {
-            clipPath: `inset(0% 0% 0% 0% round ${BORDER_RADIUS})`,
-            transition: {
-              type: 'spring',
-              bounce: 0,
-              duration: 0.7,
-              delayChildren: 0.3,
-              staggerChildren: 0.05,
+    <FloatingPortal id={nodeId}>
+      {(open || animating) && (
+        <motion.section
+          ref={floating}
+          onAnimationStart={() => setAnimating(true)}
+          onAnimationComplete={() => setAnimating(false)}
+          variants={{
+            true: {
+              clipPath: `inset(0% 0% 0% 0% round ${BORDER_RADIUS})`,
+              transition: {
+                type: 'spring',
+                bounce: 0,
+                duration: 0.7,
+                delayChildren: 0.3,
+                staggerChildren: 0.05,
+              },
             },
-          },
-          false: {
-            clipPath: closedClipPath,
-            transition: {
-              type: 'spring',
-              bounce: 0,
-              duration: 0.3,
+            false: {
+              clipPath: closedClipPath,
+              transition: {
+                type: 'spring',
+                bounce: 0,
+                duration: 0.3,
+              },
             },
-          },
-        }}
-        css={{
-          border: `1px solid ${theme.color.border}`,
-          borderRadius: '1.2rem',
-          padding: '1.6rem',
-          backgroundColor: theme.color.surface,
-        }}
-        {...getFloatingProps({
-          ...props,
-          style: { ...props.style, position: strategy, top: y ?? 0, left: x ?? 0, width: 'max-content' },
-        })}
-      />
+          }}
+          css={{
+            border: `1px solid ${theme.color.border}`,
+            borderRadius: '1.2rem',
+            padding: '1.6rem',
+            backgroundColor: theme.color.surface,
+          }}
+          {...getFloatingProps({
+            ...props,
+            style: { ...props.style, position: strategy, top: y ?? 0, left: x ?? 0, width: 'max-content' },
+          })}
+        />
+      )}
     </FloatingPortal>
   )
 }
@@ -164,9 +172,11 @@ const MenuItem = (props: DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLD
 }
 
 const Menu = (props: MenuProps) => {
+  const nodeId = useFloatingNodeId()
   const [open, setOpen] = useState(false)
 
   const { context, x, y, reference, floating, strategy, placement } = useFloating({
+    nodeId,
     open,
     onOpenChange: setOpen,
     whileElementsMounted: autoUpdate,
@@ -193,6 +203,7 @@ const Menu = (props: MenuProps) => {
   return (
     <MenuContext.Provider
       value={{
+        nodeId,
         x,
         y,
         strategy,
