@@ -26,15 +26,6 @@ const AccountsManagementMenu = () => {
   const injectedAccounts = useRecoilValue(injectedAccountsState)
   const [readonlyAccounts, setReadonlyAccounts] = useRecoilState(readOnlyAccountsState)
 
-  const allAccountsIcon = useMemo(
-    () => (
-      <IconButton containerColor={theme.color.foreground} contentColor={theme.color.primary}>
-        <Users />
-      </IconButton>
-    ),
-    [theme.color.foreground, theme.color.primary]
-  )
-
   return (
     <Menu>
       <Menu.Button>
@@ -42,12 +33,15 @@ const AccountsManagementMenu = () => {
           variant="secondary"
           leadingIcon={
             selectedAccount === undefined ? (
-              allAccountsIcon
+              <IconButton size="2.4rem" containerColor={theme.color.foreground} contentColor={theme.color.primary}>
+                <Users />
+              </IconButton>
             ) : (
               <Identicon value={selectedAccount.address} size="2.4rem" />
             )
           }
           trailingIcon={<AnimatedChevron variants={{ true: { transform: 'rotate(180deg)' }, false: {} }} />}
+          css={{ width: '25rem' }}
         >
           {selectedAccount === undefined ? 'All accounts' : selectedAccount.name ?? selectedAccount.address}
         </Button>
@@ -65,7 +59,11 @@ const AccountsManagementMenu = () => {
               <ListItem
                 headlineText="All accounts"
                 overlineText="$356,120.32"
-                leadingContent={allAccountsIcon}
+                leadingContent={
+                  <IconButton containerColor={theme.color.foreground} contentColor={theme.color.primary}>
+                    <Users />
+                  </IconButton>
+                }
                 css={{ paddingRight: 0, paddingLeft: 0 }}
               />
             </Menu.Item>

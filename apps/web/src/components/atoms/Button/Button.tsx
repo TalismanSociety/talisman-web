@@ -90,6 +90,8 @@ const Button = <T extends ButtonElementType>({
 
   const Component = as
 
+  const hasLeadingIcon = loading || leadingIcon !== undefined
+
   return (
     <Component
       {...(props as any)}
@@ -137,8 +139,9 @@ const Button = <T extends ButtonElementType>({
         <span
           css={[
             { display: 'inline-block' },
-            (loading || leadingIcon !== undefined) && { transform: 'translateX(1rem)' },
-            trailingIcon && { transform: 'translateX(-1rem)' },
+            hasLeadingIcon && !trailingIcon && { transform: 'translateX(1rem)' },
+            trailingIcon && !hasLeadingIcon && { transform: 'translateX(-1rem)' },
+            hasLeadingIcon && trailingIcon && { padding: '0 2rem' },
           ]}
         >
           {props.children}

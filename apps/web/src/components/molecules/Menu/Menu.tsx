@@ -20,7 +20,6 @@ import {
   DetailedHTMLProps,
   HTMLAttributes,
   HTMLProps,
-  PropsWithChildren,
   ReactElement,
   ReactNode,
   createContext,
@@ -52,6 +51,7 @@ const MenuContext = createContext<{
   getFloatingProps: (props?: HTMLProps<HTMLElement>) => any
   getItemProps: (props?: HTMLProps<HTMLElement>) => any
   open: boolean
+  setOpen: (value: boolean) => unknown
 }>({
   x: 0,
   y: 0,
@@ -63,6 +63,7 @@ const MenuContext = createContext<{
   getFloatingProps: props => props,
   getItemProps: props => props,
   open: false,
+  setOpen: () => {},
 })
 
 const MenuButton = ({ children, ...props }: MenuButtonProps) => {
@@ -133,7 +134,8 @@ const MenuItems = (props: MenuItemsProps) => {
 }
 
 const MenuItem = (props: DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>) => {
-  const { getItemProps } = useContext(MenuContext)
+  const theme = useTheme()
+  const { getItemProps, setOpen } = useContext(MenuContext)
   return (
     <motion.div
       variants={{
@@ -144,7 +146,19 @@ const MenuItem = (props: DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLD
         },
         false: { opacity: 0, y: 20, transition: { duration: 0.2 } },
       }}
-      {...getItemProps(props)}
+      css={{
+        'cursor': 'pointer',
+        ':hover': {
+          backgroundColor: theme.color.foreground,
+        },
+      }}
+      {...getItemProps({
+        ...props,
+        onClick: (event: any) => {
+          props.onClick?.(event)
+          setOpen(false)
+        },
+      })}
     />
   )
 }
@@ -189,6 +203,7 @@ const Menu = (props: MenuProps) => {
         getFloatingProps,
         getItemProps,
         open,
+        setOpen,
       }}
     >
       <motion.div initial={String(false)} animate={String(open)}>

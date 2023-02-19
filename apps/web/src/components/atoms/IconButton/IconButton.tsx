@@ -7,6 +7,7 @@ type IconButtonElementType = Extract<React.ElementType, 'button' | 'a'> | typeof
 
 type PolymorphicIconButtonProps<T extends IconButtonElementType> = {
   as?: T
+  size?: string | number
   disabled?: boolean
   containerColor?: string
   contentColor?: string
@@ -21,6 +22,7 @@ const IconButton = forwardRef(
   <T extends IconButtonElementType>(
     {
       as = 'IconButton' as T,
+      size = '4rem',
       containerColor,
       contentColor,
       disabledContainerColor,
@@ -56,8 +58,8 @@ const IconButton = forwardRef(
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
-            width: '4rem',
-            height: '4rem',
+            width: size,
+            height: size,
             borderRadius: '2rem',
             color: contentColor,
             backgroundColor: containerColor,
