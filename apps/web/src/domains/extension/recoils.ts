@@ -6,7 +6,7 @@ import { atom, useRecoilValue } from 'recoil'
 export const allowExtensionConnectionState = atom({
   key: 'allow-extension-connection',
   default: false,
-  effects: [storageEffect(sessionStorage)],
+  effects: [storageEffect(localStorage)],
 })
 
 export const ExtensionWatcher = () => {
