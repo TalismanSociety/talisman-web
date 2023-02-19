@@ -3,8 +3,7 @@ import { ReactComponent as XCircle } from '@assets/icons/x-circle.svg'
 import { Button, DesktopRequired, Field, MaterialLoader, Pendor, useModal } from '@components'
 import { TalismanHandLike } from '@components/TalismanHandLike'
 import { TalismanHandLoader } from '@components/TalismanHandLoader'
-import AccountsManagementMenu from '@components/widgets/AccountsManagementMenu'
-import { legacySelectedAccountState } from '@domains/accounts/recoils'
+import AccountSelector from '@components/widgets/AccountSelector'
 import styled from '@emotion/styled'
 import { ContributeEvent, useCrowdloanContribute } from '@libs/crowdloans'
 import { Acala, Moonbeam, Polkadex, overrideByIds } from '@libs/crowdloans/crowdloanOverrides'
@@ -14,7 +13,6 @@ import { formatCurrency, isMobileBrowser, truncateString } from '@util/helpers'
 import BigNumber from 'bignumber.js'
 import { MouseEventHandler, useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useRecoilValue } from 'recoil'
 
 export type ContributeProps = {
   className?: string
@@ -138,7 +136,7 @@ const ContributeTo = styled(
       [txFee, tokenPrice]
     )
 
-    const address = useRecoilValue(legacySelectedAccountState)?.address
+    const [address, setAddress] = useState<string>()
     useEffect(() => {
       dispatch(ContributeEvent.setAccount(address))
     }, [dispatch, address])
@@ -179,7 +177,7 @@ const ContributeTo = styled(
               </div>
             </div>
             <div className="switcher-column">
-              <AccountsManagementMenu />
+              <AccountSelector selectedAddress={address} onChangeSelectedAddress={setAddress} defaultToFirstAddress />
               <div className="tx-fee">
                 <Pendor suffix={txFee === null ? '-' : null} require={txFee !== undefined}>
                   {txFee ? (

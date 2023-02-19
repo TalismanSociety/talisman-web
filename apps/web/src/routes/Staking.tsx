@@ -433,12 +433,16 @@ const Input = () => {
         <div css={{ position: 'relative', zIndex: 1 }}>
           <StakingInput
             alreadyStaking={existingPool !== undefined}
-            accounts={accounts.map(x => ({
-              ...x,
-              selected: x.address === selectedAccount?.address,
-              name: x.name ?? x.address,
-              balance: '',
-            }))}
+            accounts={useMemo(
+              () =>
+                accounts.map(x => ({
+                  ...x,
+                  selected: x.address === selectedAccount?.address,
+                  name: x.name ?? x.address,
+                  balance: '',
+                })),
+              [accounts, selectedAccount?.address]
+            )}
             onSelectAccount={useCallback(
               x => setSelectedAccount(accounts.find(account => account.address === x.address)!),
               [accounts, setSelectedAccount]
