@@ -3,6 +3,7 @@ import { PanelSection } from '@components'
 import ExtensionStatusGate from '@components/ExtensionStatusGate'
 import { accountsState } from '@domains/accounts/recoils'
 import styled from '@emotion/styled'
+import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useRecoilValue } from 'recoil'
 
@@ -40,12 +41,12 @@ const ExtensionUnavailable = styled((props: ExtensionUnavailableProps) => {
 `
 
 const TransactionHistory = styled(({ className }: { className?: string }) => {
-  const addresses = useRecoilValue(accountsState).map(x => x.address)
+  const addresses = useRecoilValue(accountsState)
 
   return (
     <section className={className}>
       <ExtensionStatusGate unavailable={<ExtensionUnavailable />}>
-        <List addresses={addresses} />
+        <List addresses={useMemo(() => addresses.map(x => x.address), [addresses])} />
       </ExtensionStatusGate>
     </section>
   )

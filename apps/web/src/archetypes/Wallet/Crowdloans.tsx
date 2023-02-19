@@ -153,8 +153,10 @@ const ExtensionUnavailable = styled((props: any) => {
 
 const Crowdloans = ({ className }: { className?: string }) => {
   const { t } = useTranslation()
-  const accounts = useRecoilValue(selectedSubstrateAccountsState).map(x => x.address)
-  const { contributions, hydrated: contributionsHydrated } = useCrowdloanContributions({ accounts })
+  const accounts = useRecoilValue(selectedSubstrateAccountsState)
+  const { contributions, hydrated: contributionsHydrated } = useCrowdloanContributions({
+    accounts: useMemo(() => accounts.map(x => x.address), [accounts]),
+  })
   const crowdloansUsd = useTotalCrowdloanTotalFiatAmount()
 
   return (

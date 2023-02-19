@@ -6,9 +6,12 @@ import { useMemo } from 'react'
 import { useRecoilValue } from 'recoil'
 
 export const useTotalCrowdloanTotalFiatAmount = () => {
-  const accounts = useRecoilValue(selectedSubstrateAccountsState).map(x => x.address)
+  const accounts = useRecoilValue(selectedSubstrateAccountsState)
   const { totalCrowdloansUsdByAddress } = usePortfolio()
-  const genericAccounts = useMemo(() => accounts?.map(account => encodeAnyAddress(account, 42)), [accounts])
+  const genericAccounts = useMemo(
+    () => accounts?.map(x => x.address).map(account => encodeAnyAddress(account, 42)),
+    [accounts]
+  )
   return useMemo(
     () =>
       Object.entries(totalCrowdloansUsdByAddress || {})

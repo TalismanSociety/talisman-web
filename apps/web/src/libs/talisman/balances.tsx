@@ -47,7 +47,7 @@ function useBalanceContext() {
 
 export const Provider = ({ children }: PropsWithChildren) => {
   const chaindata = useChaindata({ onfinalityApiKey: process.env.REACT_APP_ONFINALITY_API_KEY })
-  const addresses = useRecoilValue(accountsState).map(x => x.address)
+  const addresses = useRecoilValue(accountsState)
 
   const tokens = useTokens(chaindata)
 
@@ -60,7 +60,10 @@ export const Provider = ({ children }: PropsWithChildren) => {
     [tokens]
   )
 
-  const addressesByToken = useAddressesByToken(addresses, tokenIds)
+  const addressesByToken = useAddressesByToken(
+    useMemo(() => addresses.map(x => x.address), [addresses]),
+    tokenIds
+  )
   const balances = _useBalances(balanceModules, chaindata, addressesByToken, {
     onfinalityApiKey: process.env.REACT_APP_ONFINALITY_API_KEY,
   })
