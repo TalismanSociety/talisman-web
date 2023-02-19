@@ -1,7 +1,7 @@
 import { List } from '@archetypes/Transaction'
 import { PanelSection } from '@components'
 import ExtensionStatusGate from '@components/ExtensionStatusGate'
-import { accountsState } from '@domains/accounts/recoils'
+import { accountsState, selectedAccountsState } from '@domains/accounts/recoils'
 import styled from '@emotion/styled'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -41,7 +41,7 @@ const ExtensionUnavailable = styled((props: ExtensionUnavailableProps) => {
 `
 
 const TransactionHistory = styled(({ className }: { className?: string }) => {
-  const addresses = useRecoilValue(accountsState)
+  const addresses = useRecoilValue(selectedAccountsState)
 
   return (
     <section className={className}>

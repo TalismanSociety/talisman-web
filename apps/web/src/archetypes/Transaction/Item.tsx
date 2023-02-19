@@ -1,6 +1,6 @@
 import { Info, PanelSection } from '@components'
 import Identicon from '@components/atoms/Identicon'
-import { accountsState } from '@domains/accounts/recoils'
+import { accountsState, selectedAccountsState } from '@domains/accounts/recoils'
 import { css } from '@emotion/react'
 import styled from '@emotion/styled'
 import { ReactComponent as ExternalLink } from '@icons/external-link.svg'
@@ -24,7 +24,7 @@ type Props = {
   selectedAccount?: string
 }
 export const Item = styled(({ className, transaction, addresses, selectedAccount }: Props) => {
-  const accounts = useRecoilValue(accountsState)
+  const accounts = useRecoilValue(selectedAccountsState)
   const genericAddresses = useMemo(() => addresses.map(formatGenericAddress), [addresses])
 
   const { name, ss58Format, timestamp, explorerUrl, parsed, relatedAddresses, signer } = transaction
