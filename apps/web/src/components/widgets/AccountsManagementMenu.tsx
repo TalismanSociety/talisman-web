@@ -55,7 +55,9 @@ const AccountsManagementMenu = () => {
             <Text.Body as="header" css={{ fontWeight: 'bold', marginBottom: '1.6rem' }}>
               <Union width="1em" height="1em" /> My accounts
             </Text.Body>
-            <Menu.Item onClick={useCallback(() => setSelectedAccountAddresses([]), [setSelectedAccountAddresses])}>
+            <Menu.Item
+              onClick={useCallback(() => setSelectedAccountAddresses(undefined), [setSelectedAccountAddresses])}
+            >
               <ListItem
                 headlineText="All accounts"
                 overlineText="$356,120.32"
