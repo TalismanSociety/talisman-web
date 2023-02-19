@@ -49,12 +49,12 @@ const AccountsManagement = () => {
         </Button>
       </Menu.Button>
       <Menu.Items>
-        <section css={{ width: '32rem' }}>
-          <Text.Body as="header" alpha="high" css={{ marginBottom: '1.6rem' }}>
+        <section css={{ width: '34rem' }}>
+          <Text.Body as="header" alpha="high" css={{ margin: '1.6rem 0', padding: '0 1.6rem' }}>
             Select account
           </Text.Body>
           <section css={{ marginBottom: '1.6rem' }}>
-            <Text.Body as="header" css={{ fontWeight: 'bold', marginBottom: '1.6rem' }}>
+            <Text.Body as="header" css={{ fontWeight: 'bold', marginBottom: '1.6rem', padding: '0 1.6rem' }}>
               <Union width="1em" height="1em" /> My accounts
             </Text.Body>
             <Menu.Item
@@ -68,7 +68,6 @@ const AccountsManagement = () => {
                     <Users />
                   </IconButton>
                 }
-                css={{ paddingRight: 0, paddingLeft: 0 }}
               />
             </Menu.Item>
             {injectedAccounts.map(x => (
@@ -77,13 +76,12 @@ const AccountsManagement = () => {
                   headlineText={x.name ?? x.address}
                   overlineText="$356,120.32"
                   leadingContent={<Identicon value={x.address} size="4rem" />}
-                  css={{ paddingRight: 0, paddingLeft: 0 }}
                 />
               </Menu.Item>
             ))}
           </section>
           <section>
-            <Text.Body as="header" css={{ fontWeight: 'bold', marginBottom: '1.6rem' }}>
+            <Text.Body as="header" css={{ fontWeight: 'bold', padding: '1.6rem' }}>
               <Eye width="1em" height="1em" /> Watched accounts
             </Text.Body>
             {readonlyAccounts.map(x => (
@@ -97,7 +95,6 @@ const AccountsManagement = () => {
                       <Trash2 />
                     </IconButton>
                   }
-                  css={{ paddingRight: 0, paddingLeft: 0 }}
                 />
               </Menu.Item>
             ))}
@@ -109,7 +106,6 @@ const AccountsManagement = () => {
                     <Eye />
                   </IconButton>
                 }
-                css={{ paddingRight: 0, paddingLeft: 0 }}
               />
             </Menu.Item>
           </section>

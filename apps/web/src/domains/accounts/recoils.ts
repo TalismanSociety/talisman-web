@@ -82,6 +82,7 @@ export const AccountsWatcher = () => {
 
   useEffect(() => {
     const unsubscribePromise = web3AccountsSubscribe(accounts => {
+      console.log(accounts)
       setAccounts(accounts.map(account => ({ ...account, ...account.meta })))
     })
 

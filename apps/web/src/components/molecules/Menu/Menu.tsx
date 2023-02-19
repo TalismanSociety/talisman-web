@@ -128,7 +128,6 @@ const MenuItems = (props: MenuItemsProps) => {
           css={{
             border: `1px solid ${theme.color.border}`,
             borderRadius: '1.2rem',
-            padding: '1.6rem',
             backgroundColor: theme.color.surface,
           }}
           {...getFloatingProps({
