@@ -111,9 +111,9 @@ const MenuItems = (props: MenuItemsProps) => {
               transition: {
                 type: 'spring',
                 bounce: 0,
-                duration: 0.7,
-                delayChildren: 0.3,
-                staggerChildren: 0.05,
+                duration: 0.35,
+                delayChildren: 0.15,
+                staggerChildren: 0.025,
               },
             },
             false: {
@@ -121,7 +121,7 @@ const MenuItems = (props: MenuItemsProps) => {
               transition: {
                 type: 'spring',
                 bounce: 0,
-                duration: 0.3,
+                duration: 0.15,
               },
             },
           }}
@@ -152,7 +152,7 @@ const MenuItem = (props: DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLD
           y: 0,
           transition: { type: 'spring', stiffness: 300, damping: 24 },
         },
-        false: { opacity: 0, y: 20, transition: { duration: 0.2 } },
+        false: { opacity: 0, y: 20, transition: { duration: 0.1 } },
       }}
       css={{
         'cursor': 'pointer',

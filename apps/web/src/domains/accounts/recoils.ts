@@ -1,7 +1,7 @@
-import { extensionState } from '@domains/extension/recoils'
+import { web3AccountsSubscribe } from '@polkadot/extension-dapp'
 import type { InjectedAccount } from '@polkadot/extension-inject/types'
 import { useEffect } from 'react'
-import { DefaultValue, atom, selector, useRecoilValue, useSetRecoilState, waitForAll } from 'recoil'
+import { DefaultValue, atom, selector, useSetRecoilState, waitForAll } from 'recoil'
 
 export type Account = InjectedAccount & {
   readonly?: boolean
@@ -78,16 +78,17 @@ export const selectedSubstrateAccountsState = selector({
 })
 
 export const AccountsWatcher = () => {
-  const extension = useRecoilValue(extensionState)
   const setAccounts = useSetRecoilState(injectedAccountsState)
 
   useEffect(() => {
-    if (extension === undefined) {
-      setAccounts([])
-    }
-  }, [extension, setAccounts])
+    const unsubscribePromise = web3AccountsSubscribe(accounts => {
+      setAccounts(accounts.map(account => ({ ...account, ...account.meta })))
+    })
 
-  useEffect(() => extension?.accounts.subscribe(setAccounts), [extension?.accounts, setAccounts])
+    return () => {
+      unsubscribePromise.then(unsubscribe => unsubscribe())
+    }
+  }, [setAccounts])
 
   return null
 }

@@ -1,9 +1,9 @@
 import { AtomEffect } from 'recoil'
 
 export const storageEffect =
-  <T>(storage: Storage, keyPrefix: string = ''): AtomEffect<T> =>
+  <T>(storage: Storage, key?: string): AtomEffect<T> =>
   ({ node, setSelf, onSet }) => {
-    const key = keyPrefix + node.key
+    const storageKey = key ?? node.key
     const savedValue = storage.getItem(node.key)
 
     if (savedValue !== null) {
@@ -11,6 +11,6 @@ export const storageEffect =
     }
 
     onSet((newValue, _, isReset) => {
-      isReset ? storage.removeItem(key) : storage.setItem(key, JSON.stringify(newValue))
+      isReset ? storage.removeItem(storageKey) : storage.setItem(storageKey, JSON.stringify(newValue))
     })
   }

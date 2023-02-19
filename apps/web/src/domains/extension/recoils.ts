@@ -1,30 +1,22 @@
-import type { InjectedWindow } from '@polkadot/extension-inject/types'
-import { atom } from 'recoil'
+import { storageEffect } from '@domains/common/effects'
+import { web3Enable } from '@polkadot/extension-dapp'
+import { useEffect } from 'react'
+import { atom, useRecoilValue } from 'recoil'
 
-const getConnectedExtension = async () => {
-  const source = localStorage.getItem('@talisman-connect/selected-wallet-name')
-
-  if (source === null) return undefined
-
-  try {
-    return await (globalThis as InjectedWindow).injectedWeb3?.[source]?.enable?.(
-      process.env.REACT_APP_APPLICATION_NAME ?? 'Talisman'
-    )
-  } catch {
-    return undefined
-  }
-}
-
-export const extensionState = atom({
-  key: 'Extension',
-  default: getConnectedExtension(),
-  effects: [
-    ({ setSelf }) => {
-      const listener = () => getConnectedExtension().then(setSelf)
-
-      document.addEventListener('@talisman-connect/wallet-selected', listener)
-
-      return () => document.removeEventListener('@talisman-connect/wallet-selected', listener)
-    },
-  ],
+export const allowExtensionConnectionState = atom({
+  key: 'allow-extension-connection',
+  default: false,
+  effects: [storageEffect(sessionStorage)],
 })
+
+export const ExtensionWatcher = () => {
+  const allowExtensionConnection = useRecoilValue(allowExtensionConnectionState)
+
+  useEffect(() => {
+    if (allowExtensionConnection) {
+      web3Enable(process.env.REACT_APP_APPLICATION_NAME ?? 'Talisman')
+    }
+  }, [allowExtensionConnection])
+
+  return null
+}

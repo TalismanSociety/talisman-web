@@ -1,11 +1,11 @@
 import { ApiPromise } from '@polkadot/api'
 import { AddressOrPair } from '@polkadot/api/types'
+import { web3FromAddress } from '@polkadot/extension-dapp'
 import { ISubmittableResult } from '@polkadot/types/types'
 import { useCallback, useState } from 'react'
 import { useRecoilCallback, useRecoilValueLoadable } from 'recoil'
 
 import { apiState, chainState } from '../../chains/recoils'
-import { extensionState } from '../../extension/recoils'
 import { extrinsicMiddleWare } from '../extrinsicMiddleware'
 import { toastExtrinsic } from '../utils'
 
@@ -40,7 +40,7 @@ export const useExtrinsic = <
 
         const promiseFunc = async () => {
           const api = await snapshot.getPromise(apiState)
-          const extension = await snapshot.getPromise(extensionState)
+          const extension = await web3FromAddress(account.toString())
 
           let resolve = (value: ISubmittableResult) => {}
           let reject = (value: unknown) => {}

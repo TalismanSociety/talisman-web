@@ -9,6 +9,7 @@ import ErrorBoundary from '@components/widgets/ErrorBoundary'
 import { AccountsWatcher } from '@domains/accounts/recoils'
 import { LegacyBalancesWatcher } from '@domains/balances/recoils'
 import { useTalismanAutoConnectEffect } from '@domains/extension/hooks'
+import { ExtensionWatcher } from '@domains/extension/recoils'
 import NftProvider from '@libs/@talisman-nft/provider'
 import * as MoonbeamContributors from '@libs/moonbeam-contributors'
 import * as Portfolio from '@libs/portfolio'
@@ -56,6 +57,7 @@ const App: React.FC = () => {
           <Portfolio.Provider>
             <Tokenprices.Provider>
               <TalismanProvider>
+                <ExtensionWatcher />
                 <AccountsWatcher />
                 <LegacyBalancesWatcher />
                 <MoonbeamContributors.Provider>

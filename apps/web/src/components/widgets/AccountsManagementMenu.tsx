@@ -11,14 +11,16 @@ import {
   readOnlyAccountsState,
   selectedAccountAddressesState,
 } from '@domains/accounts/recoils'
+import { allowExtensionConnectionState } from '@domains/extension/recoils'
 import { useTheme } from '@emotion/react'
 import { motion } from 'framer-motion'
 import { useCallback } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil'
 
 const AnimatedChevron = motion(ChevronDown)
 
-const AccountsManagementMenu = () => {
+const AccountsManagement = () => {
   const theme = useTheme()
 
   const setSelectedAccountAddresses = useSetRecoilState(selectedAccountAddressesState)
@@ -115,6 +117,23 @@ const AccountsManagementMenu = () => {
       </Menu.Items>
     </Menu>
   )
+}
+
+export const ConnectButton = () => {
+  const [allowExtensionConnection, setAllowExtensionConnection] = useRecoilState(allowExtensionConnectionState)
+  const { t } = useTranslation()
+
+  if (allowExtensionConnection) {
+    return null
+  }
+
+  return <Button onClick={() => setAllowExtensionConnection(true)}>{t('Connect')}</Button>
+}
+
+const AccountsManagementMenu = () => {
+  const allowExtensionConnection = useRecoilValue(allowExtensionConnectionState)
+
+  return allowExtensionConnection ? <AccountsManagement /> : <ConnectButton />
 }
 
 export default AccountsManagementMenu

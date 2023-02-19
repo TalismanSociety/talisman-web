@@ -3,7 +3,7 @@ import Identicon from '@components/atoms/Identicon'
 import Text from '@components/atoms/Text'
 import { CopyButton } from '@components/CopyButton'
 import { NFTCard } from '@components/recipes/NFTCard'
-import AccountsManagementMenu from '@components/widgets/AccountsManagementMenu'
+import AccountsManagement from '@components/widgets/AccountsManagementMenu'
 import { accountsState, legacySelectedAccountState } from '@domains/accounts/recoils'
 import { css } from '@emotion/react'
 import styled from '@emotion/styled'
@@ -91,7 +91,7 @@ const List = () => {
           >
             <Text.H2>No NFTs Found</Text.H2>
             <Text.Body>Please try another account</Text.Body>
-            <AccountsManagementMenu />
+            <AccountsManagement />
           </span>
         }
       />
