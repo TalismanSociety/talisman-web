@@ -11,6 +11,7 @@ import {
   readOnlyAccountsState,
   selectedAccountAddressesState,
 } from '@domains/accounts/recoils'
+import { fiatBalancesState, totalLocalizedFiatBalanceState } from '@domains/balances/recoils'
 import { allowExtensionConnectionState } from '@domains/extension/recoils'
 import { useTheme } from '@emotion/react'
 import { motion } from 'framer-motion'
@@ -23,10 +24,14 @@ const AnimatedChevron = motion(ChevronDown)
 const AccountsManagement = () => {
   const theme = useTheme()
 
+  const totalBalance = useRecoilValue(totalLocalizedFiatBalanceState)
+
   const setSelectedAccountAddresses = useSetRecoilState(selectedAccountAddressesState)
   const selectedAccount = useRecoilValue(legacySelectedAccountState)
   const injectedAccounts = useRecoilValue(injectedAccountsState)
   const [readonlyAccounts, setReadonlyAccounts] = useRecoilState(readOnlyAccountsState)
+
+  const fiatBalances = useRecoilValue(fiatBalancesState)
 
   return (
     <Menu>
@@ -62,7 +67,7 @@ const AccountsManagement = () => {
             >
               <ListItem
                 headlineText="All accounts"
-                overlineText="$356,120.32"
+                overlineText={totalBalance}
                 leadingContent={
                   <IconButton containerColor={theme.color.foreground} contentColor={theme.color.primary}>
                     <Users />
@@ -74,7 +79,11 @@ const AccountsManagement = () => {
               <Menu.Item onClick={() => setSelectedAccountAddresses(() => [x.address])}>
                 <ListItem
                   headlineText={x.name ?? x.address}
-                  overlineText="$356,120.32"
+                  overlineText={fiatBalances[x.address]?.toLocaleString(undefined, {
+                    style: 'currency',
+                    currency: 'usd',
+                    currencyDisplay: 'narrowSymbol',
+                  })}
                   leadingContent={<Identicon value={x.address} size="4rem" />}
                 />
               </Menu.Item>
@@ -87,8 +96,12 @@ const AccountsManagement = () => {
             {readonlyAccounts.map(x => (
               <Menu.Item onClick={() => setSelectedAccountAddresses(() => [x.address])}>
                 <ListItem
-                  headlineText="Polkadot.js import"
-                  overlineText="$356,120.32"
+                  headlineText={x.name ?? x.address}
+                  overlineText={fiatBalances[x.address]?.toLocaleString(undefined, {
+                    style: 'currency',
+                    currency: 'usd',
+                    currencyDisplay: 'narrowSymbol',
+                  })}
                   leadingContent={<Identicon value={x.address} size="4rem" />}
                   trailingContent={
                     <IconButton onClick={() => setReadonlyAccounts(y => y.filter(z => z.address !== x.address))}>
