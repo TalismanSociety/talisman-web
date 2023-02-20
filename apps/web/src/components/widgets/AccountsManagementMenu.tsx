@@ -1,5 +1,5 @@
 import Button from '@components/atoms/Button'
-import { ChevronDown, Eye, Trash2, Union, Users } from '@components/atoms/Icon'
+import { ChevronDown, Download, Eye, PlusCircle, Trash2, Union, Users } from '@components/atoms/Icon'
 import IconButton from '@components/atoms/IconButton'
 import Identicon from '@components/atoms/Identicon'
 import Text from '@components/atoms/Text'
@@ -14,14 +14,15 @@ import {
 import { fiatBalancesState, totalLocalizedFiatBalanceState } from '@domains/balances/recoils'
 import { allowExtensionConnectionState } from '@domains/extension/recoils'
 import { useTheme } from '@emotion/react'
+import { isWeb3Injected } from '@polkadot/extension-dapp'
+import getDownloadLink from '@util/getDownloadLink'
 import { motion } from 'framer-motion'
-import { useCallback } from 'react'
-import { useTranslation } from 'react-i18next'
+import { useMemo } from 'react'
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil'
 
 const AnimatedChevron = motion(ChevronDown)
 
-const AccountsManagement = () => {
+const AccountsManagementMenu = () => {
   const theme = useTheme()
 
   const totalBalance = useRecoilValue(totalLocalizedFiatBalanceState)
@@ -32,6 +33,63 @@ const AccountsManagement = () => {
   const [readonlyAccounts, setReadonlyAccounts] = useRecoilState(readOnlyAccountsState)
 
   const fiatBalances = useRecoilValue(fiatBalancesState)
+
+  const [allowExtensionConnection, setAllowExtensionConnection] = useRecoilState(allowExtensionConnectionState)
+
+  const leadingMenuItem = useMemo(() => {
+    if (!isWeb3Injected) {
+      return (
+        <Menu.Item>
+          <Button as="a" variant="noop" href={getDownloadLink()} target="_blank">
+            <ListItem
+              leadingContent={
+                <IconButton containerColor={theme.color.foreground} contentColor={theme.color.primary}>
+                  <Download />
+                </IconButton>
+              }
+              headlineText="Install wallet"
+            />
+          </Button>
+        </Menu.Item>
+      )
+    }
+
+    if (!allowExtensionConnection) {
+      return (
+        <Menu.Item onClick={() => setAllowExtensionConnection(true)}>
+          <ListItem
+            leadingContent={
+              <IconButton containerColor={theme.color.foreground} contentColor={theme.color.primary}>
+                <PlusCircle />
+              </IconButton>
+            }
+            headlineText="Connect wallet"
+          />
+        </Menu.Item>
+      )
+    }
+
+    return (
+      <Menu.Item onClick={() => setSelectedAccountAddresses(undefined)}>
+        <ListItem
+          headlineText="All accounts"
+          overlineText={totalBalance}
+          leadingContent={
+            <IconButton containerColor={theme.color.foreground} contentColor={theme.color.primary}>
+              <Users />
+            </IconButton>
+          }
+        />
+      </Menu.Item>
+    )
+  }, [
+    allowExtensionConnection,
+    setAllowExtensionConnection,
+    setSelectedAccountAddresses,
+    theme.color.foreground,
+    theme.color.primary,
+    totalBalance,
+  ])
 
   return (
     <Menu>
@@ -62,19 +120,7 @@ const AccountsManagement = () => {
             <Text.Body as="header" css={{ fontWeight: 'bold', marginBottom: '1.6rem', padding: '0 1.6rem' }}>
               <Union width="1em" height="1em" /> My accounts
             </Text.Body>
-            <Menu.Item
-              onClick={useCallback(() => setSelectedAccountAddresses(undefined), [setSelectedAccountAddresses])}
-            >
-              <ListItem
-                headlineText="All accounts"
-                overlineText={totalBalance}
-                leadingContent={
-                  <IconButton containerColor={theme.color.foreground} contentColor={theme.color.primary}>
-                    <Users />
-                  </IconButton>
-                }
-              />
-            </Menu.Item>
+            {leadingMenuItem}
             {injectedAccounts.map(x => (
               <Menu.Item onClick={() => setSelectedAccountAddresses(() => [x.address])}>
                 <ListItem
@@ -126,23 +172,6 @@ const AccountsManagement = () => {
       </Menu.Items>
     </Menu>
   )
-}
-
-export const ConnectButton = () => {
-  const [allowExtensionConnection, setAllowExtensionConnection] = useRecoilState(allowExtensionConnectionState)
-  const { t } = useTranslation()
-
-  if (allowExtensionConnection) {
-    return null
-  }
-
-  return <Button onClick={() => setAllowExtensionConnection(true)}>{t('Connect')}</Button>
-}
-
-const AccountsManagementMenu = () => {
-  const allowExtensionConnection = useRecoilValue(allowExtensionConnectionState)
-
-  return allowExtensionConnection ? <AccountsManagement /> : <ConnectButton />
 }
 
 export default AccountsManagementMenu

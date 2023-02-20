@@ -1,5 +1,5 @@
 import CircularProgressIndicator from '@components/atoms/CircularProgressIndicator'
-import { legacySelectedAccountState, selectedAccountsState } from '@domains/accounts/recoils'
+import { legacySelectedAccountState } from '@domains/accounts/recoils'
 import { useLegacyBalances } from '@domains/balances/hooks'
 import { useTotalCrowdloanTotalFiatAmount } from '@domains/crowdloans/hooks'
 import { useTotalStaked } from '@domains/staking/hooks'

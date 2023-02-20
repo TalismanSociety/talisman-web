@@ -13,10 +13,6 @@ import { selectedAccountsState } from '@domains/accounts/recoils'
 import { keyframes } from '@emotion/react'
 import { filteredNftDataState } from '@libs/@talisman-nft/provider'
 import { NFTShort } from '@libs/@talisman-nft/types'
-import { DAPP_NAME, useExtension } from '@libs/talisman'
-import { useIsAnyWalletInstalled } from '@libs/talisman/useIsAnyWalletInstalled'
-import { WalletSelect } from '@talismn/connect-components'
-import getDownloadLink from '@util/getDownloadLink'
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useRecoilValue } from 'recoil'
@@ -29,73 +25,6 @@ const fadeIn = keyframes`
     opacity: 1;
   }   
 `
-
-const WalletConnectionOverview = () => {
-  const isAnyWalletInstalled = useIsAnyWalletInstalled()
-  const downloadLink = getDownloadLink()
-  const { status: extensionStatus } = useExtension()
-
-  if (extensionStatus === 'UNAVAILABLE') {
-    return (
-      <section
-        css={{
-          position: 'fixed',
-          top: '0',
-          right: '0',
-          height: '100%',
-          width: '100%',
-          background:
-            'linear-gradient(135deg, rgba(26,26,26,0.5) 0%, rgba(15,15,15,1) 30%, rgba(15,15,15,1) 65%, rgba(15,15,15,0.8) 68%, rgba(26,26,26,0.5) 100%)',
-          zIndex: 10,
-          animation: `${fadeIn} 0.3s ease-in-out`,
-        }}
-      >
-        <section
-          css={{
-            display: 'flex',
-            width: '100%',
-            height: '100%',
-            flexDirection: 'column',
-            justifyContent: 'center',
-            alignItems: 'center',
-            textAlign: 'center',
-            gap: '3rem',
-          }}
-        >
-          {isAnyWalletInstalled ? (
-            <>
-              <Text.H1 css={{ margin: 0 }}>
-                Welcome to the
-                <br />
-                Talisman Portal
-              </Text.H1>
-              <Text.H4 css={{ color: '#A5A5A5' }}>Please connect your wallet to view your Portfolio</Text.H4>
-              <WalletSelect onlyShowInstalled dappName={DAPP_NAME} triggerComponent={<Button>Connect Wallet</Button>} />
-            </>
-          ) : (
-            <>
-              <Text.H1 css={{ margin: 0 }}>
-                You need a wallet to
-                <br />
-                view your portfolio
-              </Text.H1>
-              <Text.H4 css={{ color: '#A5A5A5' }}>
-                To see your portfolio, you need to have a<br />
-                browser wallet installed first
-              </Text.H4>
-              <a href={downloadLink} target="_blank" rel="noopener noreferrer">
-                <Button>Install Wallet</Button>
-              </a>
-            </>
-          )}
-        </section>
-      </section>
-    )
-  }
-
-  return null
-}
-
 const Overview = () => {
   const [search, setSearch] = useState('')
   const { fiatTotal } = useAssets()
@@ -124,7 +53,6 @@ const Overview = () => {
 
   return (
     <>
-      <WalletConnectionOverview />
       <div
         css={{
           // grid 1x2

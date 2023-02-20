@@ -6,7 +6,6 @@ import Development from '@archetypes/Development'
 import ToastBar from '@components/molecules/ToastBar'
 import { TalismanHandLoader } from '@components/TalismanHandLoader'
 import ErrorBoundary from '@components/widgets/ErrorBoundary'
-import { AccountsWatcher } from '@domains/accounts/recoils'
 import { LegacyBalancesWatcher } from '@domains/balances/recoils'
 import { useTalismanAutoConnectEffect } from '@domains/extension/hooks'
 import { ExtensionWatcher } from '@domains/extension/recoils'
@@ -58,7 +57,6 @@ const App: React.FC = () => {
             <Tokenprices.Provider>
               <TalismanProvider>
                 <ExtensionWatcher />
-                <AccountsWatcher />
                 <LegacyBalancesWatcher />
                 <MoonbeamContributors.Provider>
                   <Development />

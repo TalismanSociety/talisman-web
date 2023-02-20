@@ -1,7 +1,5 @@
-import { web3AccountsSubscribe } from '@polkadot/extension-dapp'
 import type { InjectedAccount } from '@polkadot/extension-inject/types'
-import { useEffect } from 'react'
-import { DefaultValue, atom, selector, useSetRecoilState, waitForAll } from 'recoil'
+import { DefaultValue, atom, selector, waitForAll } from 'recoil'
 
 export type Account = InjectedAccount & {
   readonly?: boolean
@@ -78,20 +76,3 @@ export const selectedSubstrateAccountsState = selector({
     return get(selectedAccountsState).filter((x: any) => x['type'] !== 'ethereum')
   },
 })
-
-export const AccountsWatcher = () => {
-  const setAccounts = useSetRecoilState(injectedAccountsState)
-
-  useEffect(() => {
-    const unsubscribePromise = web3AccountsSubscribe(accounts => {
-      console.log(accounts)
-      setAccounts(accounts.map(account => ({ ...account, ...account.meta })))
-    })
-
-    return () => {
-      unsubscribePromise.then(unsubscribe => unsubscribe())
-    }
-  }, [setAccounts])
-
-  return null
-}
