@@ -142,7 +142,7 @@ const AccountsManagementMenu = () => {
               <Eye width="1em" height="1em" /> Watched accounts
             </Text.Body>
             {readonlyAccounts.map(x => (
-              <Menu.Item onClick={() => setSelectedAccountAddresses(() => [x.address])} dismissAfterSelection={false}>
+              <Menu.Item onClick={() => setSelectedAccountAddresses(() => [x.address])}>
                 <ListItem
                   headlineText={x.name ?? x.address}
                   overlineText={fiatBalances[x.address]?.toLocaleString(undefined, {
@@ -152,7 +152,12 @@ const AccountsManagementMenu = () => {
                   })}
                   leadingContent={<Identicon value={x.address} size="4rem" />}
                   trailingContent={
-                    <IconButton onClick={() => setReadonlyAccounts(y => y.filter(z => z.address !== x.address))}>
+                    <IconButton
+                      onClick={event => {
+                        event.stopPropagation()
+                        setReadonlyAccounts(y => y.filter(z => z.address !== x.address))
+                      }}
+                    >
                       <Trash2 />
                     </IconButton>
                   }

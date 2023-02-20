@@ -319,7 +319,7 @@ const Header = styled(({ className, isMobile }: HeaderProps) => {
     gap: 1rem;
     margin: 1rem 0;
 
-    button {
+    .nav-button {
       max-height: 38px;
       border-radius: 1rem;
       height: 100%;
