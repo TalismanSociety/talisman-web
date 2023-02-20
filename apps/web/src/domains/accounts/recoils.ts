@@ -1,3 +1,4 @@
+import { storageEffect } from '@domains/common/effects'
 import type { InjectedAccount } from '@polkadot/extension-inject/types'
 import { DefaultValue, atom, selector, waitForAll } from 'recoil'
 
@@ -11,8 +12,9 @@ export const injectedAccountsState = atom<Account[]>({
 })
 
 export const _readOnlyAccountsState = atom<Account[]>({
-  key: '_ReadonlyAccounts',
+  key: 'readonly_accounts',
   default: [],
+  effects: [storageEffect(localStorage)],
 })
 
 export const readOnlyAccountsState = selector<Account[]>({
