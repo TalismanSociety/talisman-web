@@ -133,6 +133,7 @@ const MenuItems = (props: MenuItemsProps) => {
             border: `1px solid ${theme.color.border}`,
             borderRadius: '1.2rem',
             backgroundColor: theme.color.surface,
+            overflow: 'auto',
           }}
           {...getFloatingProps({
             ...props,
@@ -186,6 +187,9 @@ const Menu = (props: MenuProps) => {
     onOpenChange: setOpen,
     whileElementsMounted: autoUpdate,
     middleware: [
+      offset(OFFSET),
+      autoPlacement({ allowedPlacements: ['top-start', 'top-end', 'bottom-start', 'bottom-end'] }),
+      shift(),
       size({
         apply: ({ availableHeight, elements }) => {
           Object.assign(elements.floating.style, {
@@ -193,11 +197,10 @@ const Menu = (props: MenuProps) => {
           })
         },
       }),
-      offset(OFFSET),
-      autoPlacement({ allowedPlacements: ['top-start', 'top-end', 'bottom-start', 'bottom-end'] }),
-      shift(),
     ],
   })
+
+  console.log(strategy, placement)
 
   const { getReferenceProps, getFloatingProps, getItemProps } = useInteractions([
     useRole(context, { role: 'menu' }),
