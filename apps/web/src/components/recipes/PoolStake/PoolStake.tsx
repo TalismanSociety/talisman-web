@@ -27,6 +27,7 @@ export type PoolStakeProps = {
   unstakeState?: 'unavailable' | 'pending' | 'disabled'
   poolStatus?: PoolStatus
   variant?: 'compact'
+  readonly?: boolean
 }
 
 const PoolStake = Object.assign(
@@ -150,7 +151,7 @@ const PoolStake = Object.assign(
         <Button
           variant="outlined"
           onClick={props.onRequestClaim}
-          hidden={props.claimState === 'unavailable'}
+          hidden={props.claimState === 'unavailable' || props.readonly}
           disabled={props.claimState === 'disabled' || props.claimState === 'unavailable'}
           loading={props.claimState === 'pending'}
           css={[{ gridArea: 'cButton' }, props.claimState === 'unavailable' && !isWide && { display: 'none' }]}
@@ -160,7 +161,7 @@ const PoolStake = Object.assign(
         <Button
           variant="outlined"
           onClick={props.onRequestUnstake}
-          hidden={props.unstakeState === 'unavailable'}
+          hidden={props.unstakeState === 'unavailable' || props.readonly}
           disabled={props.unstakeState === 'disabled' || props.unstakeState === 'unavailable'}
           loading={props.unstakeState === 'pending'}
           css={[{ gridArea: 'uButton' }, props.unstakeState === 'unavailable' && !isWide && { display: 'none' }]}
@@ -170,7 +171,7 @@ const PoolStake = Object.assign(
         <Button
           variant="outlined"
           onClick={props.onRequestAdd}
-          disabled={props.addState === 'disabled'}
+          disabled={props.addState === 'disabled' || props.readonly}
           loading={props.addState === 'pending'}
           css={{ gridArea: 'aButton' }}
         >

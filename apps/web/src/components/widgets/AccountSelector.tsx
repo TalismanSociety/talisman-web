@@ -8,9 +8,10 @@ export type AccountSelectorProps = {
   selectedAddress?: string
   onChangeSelectedAddress: (value: string | undefined) => unknown
   defaultToFirstAddress?: boolean
+  includeReadonlyAccounts?: boolean
 }
 
-const AccountSelector = (props: AccountSelectorProps) => {
+const AccountSelector = ({ includeReadonlyAccounts = true, ...props }: AccountSelectorProps) => {
   const accounts = useRecoilValue(selectedSubstrateAccountsState)
 
   useEffect(
@@ -25,15 +26,22 @@ const AccountSelector = (props: AccountSelectorProps) => {
 
   return (
     <Select value={props.selectedAddress} onChange={props.onChangeSelectedAddress}>
-      {accounts.map(x => (
-        <Select.Item
-          key={x.address}
-          value={x.address}
-          leadingIcon={<Identicon value={x.address} size={40} />}
-          headlineText={x.name}
-          supportingText=""
-        />
-      ))}
+      {accounts
+        .filter(x => {
+          if (!includeReadonlyAccounts) {
+            return x.readonly !== true
+          }
+          return true
+        })
+        .map(x => (
+          <Select.Item
+            key={x.address}
+            value={x.address}
+            leadingIcon={<Identicon value={x.address} size={40} />}
+            headlineText={x.name}
+            supportingText=""
+          />
+        ))}
     </Select>
   )
 }

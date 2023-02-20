@@ -177,7 +177,12 @@ const ContributeTo = styled(
               </div>
             </div>
             <div className="switcher-column">
-              <AccountSelector selectedAddress={address} onChangeSelectedAddress={setAddress} defaultToFirstAddress />
+              <AccountSelector
+                selectedAddress={address}
+                onChangeSelectedAddress={setAddress}
+                defaultToFirstAddress
+                includeReadonlyAccounts={false}
+              />
               <div className="tx-fee">
                 <Pendor suffix={txFee === null ? '-' : null} require={txFee !== undefined}>
                   {txFee ? (

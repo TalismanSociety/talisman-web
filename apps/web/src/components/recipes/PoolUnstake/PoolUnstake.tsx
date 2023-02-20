@@ -16,6 +16,7 @@ export type PoolUnstakeProps = {
   onRequestWithdraw: () => unknown
   withdrawState?: 'pending' | 'disabled'
   variant?: 'compact'
+  readonly?: boolean
 }
 
 const PoolUnstake = (props: PoolUnstakeProps) => {
@@ -160,6 +161,7 @@ const PoolUnstake = (props: PoolUnstakeProps) => {
           <Button
             variant="outlined"
             onClick={props.onRequestWithdraw}
+            hidden={props.readonly}
             disabled={props.withdrawState === 'disabled'}
             loading={props.withdrawState === 'pending'}
           >

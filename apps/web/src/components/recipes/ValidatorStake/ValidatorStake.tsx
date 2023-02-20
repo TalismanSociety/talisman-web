@@ -17,6 +17,7 @@ export type ValidatorStakeProps = {
   onRequestUnstake: () => unknown
   unstakeState?: 'unavailable' | 'pending' | 'disabled'
   notEarningRewards?: boolean
+  readonly?: boolean
 }
 
 const ValidatorStake = Object.assign(
@@ -96,7 +97,12 @@ const ValidatorStake = Object.assign(
             </>
           )}
         </div>
-        <Button variant="outlined" onClick={props.onRequestUnstake} css={{ gridArea: 'uButton' }}>
+        <Button
+          hidden={props.unstakeState === 'unavailable' || props.readonly}
+          variant="outlined"
+          onClick={props.onRequestUnstake}
+          css={{ gridArea: 'uButton' }}
+        >
           Unstake
         </Button>
         {/* Dummy buttons to align with nomination pool stake item */}
