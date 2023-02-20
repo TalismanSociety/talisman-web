@@ -20,6 +20,8 @@ import { motion } from 'framer-motion'
 import { useMemo } from 'react'
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil'
 
+import AddReadOnlyAccountDialog from './AddReadOnlyAccountDialog'
+
 const AnimatedChevron = motion(ChevronDown)
 
 const AccountsManagementMenu = () => {
@@ -140,7 +142,7 @@ const AccountsManagementMenu = () => {
               <Eye width="1em" height="1em" /> Watched accounts
             </Text.Body>
             {readonlyAccounts.map(x => (
-              <Menu.Item onClick={() => setSelectedAccountAddresses(() => [x.address])}>
+              <Menu.Item onClick={() => setSelectedAccountAddresses(() => [x.address])} dismissAfterSelection={false}>
                 <ListItem
                   headlineText={x.name ?? x.address}
                   overlineText={fiatBalances[x.address]?.toLocaleString(undefined, {
@@ -157,16 +159,20 @@ const AccountsManagementMenu = () => {
                 />
               </Menu.Item>
             ))}
-            <Menu.Item>
-              <ListItem
-                headlineText="Add watch only address"
-                leadingContent={
-                  <IconButton>
-                    <Eye />
-                  </IconButton>
-                }
-              />
-            </Menu.Item>
+            <AddReadOnlyAccountDialog>
+              {({ onToggleOpen }) => (
+                <Menu.Item onClick={onToggleOpen} dismissAfterSelection={false}>
+                  <ListItem
+                    headlineText="Add watch only address"
+                    leadingContent={
+                      <IconButton>
+                        <Eye />
+                      </IconButton>
+                    }
+                  />
+                </Menu.Item>
+              )}
+            </AddReadOnlyAccountDialog>
           </section>
         </section>
       </Menu.Items>

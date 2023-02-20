@@ -41,6 +41,10 @@ export type MenuButtonProps = { children: ReactNode | ((props: { open: boolean }
 
 export type MenuItemsProps = DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement>
 
+export type MenuItemProps = DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> & {
+  dismissAfterSelection?: boolean
+}
+
 const MenuContext = createContext<{
   nodeId?: string
   x: number | null
@@ -140,7 +144,7 @@ const MenuItems = (props: MenuItemsProps) => {
   )
 }
 
-const MenuItem = (props: DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>) => {
+const MenuItem = ({ dismissAfterSelection = true, ...props }: MenuItemProps) => {
   const theme = useTheme()
   const { getItemProps, setOpen } = useContext(MenuContext)
   return (
@@ -163,7 +167,9 @@ const MenuItem = (props: DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLD
         ...props,
         onClick: (event: any) => {
           props.onClick?.(event)
-          setOpen(false)
+          if (dismissAfterSelection) {
+            setOpen(false)
+          }
         },
       })}
     />
