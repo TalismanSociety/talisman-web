@@ -10,21 +10,12 @@ import HiddenDetails from '@components/molecules/HiddenDetails'
 import Asset, { AssetsList, AssetsListLocked } from '@components/recipes/Asset'
 import { NFTCard } from '@components/recipes/NFTCard'
 import { selectedAccountsState } from '@domains/accounts/recoils'
-import { keyframes } from '@emotion/react'
 import { filteredNftDataState } from '@libs/@talisman-nft/provider'
 import { NFTShort } from '@libs/@talisman-nft/types'
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useRecoilValue } from 'recoil'
 
-const fadeIn = keyframes`
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }   
-`
 const Overview = () => {
   const [search, setSearch] = useState('')
   const { fiatTotal } = useAssets()
