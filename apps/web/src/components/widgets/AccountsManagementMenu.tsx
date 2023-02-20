@@ -1,5 +1,5 @@
 import Button from '@components/atoms/Button'
-import { ChevronDown, Download, Eye, PlusCircle, Trash2, Union, Users } from '@components/atoms/Icon'
+import { ChevronDown, Download, Eye, Link, PlusCircle, Trash2, Union, Users } from '@components/atoms/Icon'
 import IconButton from '@components/atoms/IconButton'
 import Identicon from '@components/atoms/Identicon'
 import Text from '@components/atoms/Text'
@@ -37,6 +37,31 @@ const AccountsManagementMenu = () => {
   const fiatBalances = useRecoilValue(fiatBalancesState)
 
   const [allowExtensionConnection, setAllowExtensionConnection] = useRecoilState(allowExtensionConnectionState)
+
+  const [buttonIcon, buttonText] = useMemo(() => {
+    if ((!isWeb3Injected || !allowExtensionConnection) && readonlyAccounts.length === 0) {
+      return [
+        <IconButton size="2.4rem" containerColor={theme.color.foreground} contentColor={theme.color.primary}>
+          <Link />
+        </IconButton>,
+        'Connect',
+      ]
+    }
+
+    if (selectedAccount === undefined) {
+      return [
+        <IconButton size="2.4rem" containerColor={theme.color.foreground} contentColor={theme.color.primary}>
+          <Users />
+        </IconButton>,
+        'All accounts',
+      ]
+    }
+
+    return [
+      <Identicon value={selectedAccount.address} size="2.4rem" />,
+      selectedAccount.name ?? selectedAccount.address,
+    ]
+  }, [allowExtensionConnection, readonlyAccounts.length, selectedAccount, theme.color.foreground, theme.color.primary])
 
   const leadingMenuItem = useMemo(() => {
     if (!isWeb3Injected) {
@@ -98,19 +123,11 @@ const AccountsManagementMenu = () => {
       <Menu.Button>
         <Button
           variant="secondary"
-          leadingIcon={
-            selectedAccount === undefined ? (
-              <IconButton size="2.4rem" containerColor={theme.color.foreground} contentColor={theme.color.primary}>
-                <Users />
-              </IconButton>
-            ) : (
-              <Identicon value={selectedAccount.address} size="2.4rem" />
-            )
-          }
+          leadingIcon={buttonIcon}
           trailingIcon={<AnimatedChevron variants={{ true: { transform: 'rotate(180deg)' }, false: {} }} />}
           css={{ width: '25rem' }}
         >
-          {selectedAccount === undefined ? 'All accounts' : selectedAccount.name ?? selectedAccount.address}
+          {buttonText}
         </Button>
       </Menu.Button>
       <Menu.Items>
