@@ -1,6 +1,6 @@
 import { Info, PanelSection } from '@components'
 import Identicon from '@components/atoms/Identicon'
-import { accountsState, selectedAccountsState } from '@domains/accounts/recoils'
+import { selectedAccountsState } from '@domains/accounts/recoils'
 import { css } from '@emotion/react'
 import styled from '@emotion/styled'
 import { ReactComponent as ExternalLink } from '@icons/external-link.svg'

@@ -1,7 +1,7 @@
 import { Field, MaterialLoader, Panel, PanelSection } from '@components'
 import Button from '@components/atoms/Button'
 import * as Icon from '@components/atoms/Icon'
-import { legacySelectedAccountState, selectedAccountsState } from '@domains/accounts/recoils'
+import { legacySelectedAccountState } from '@domains/accounts/recoils'
 import ExportTxHistoryWidget from '@domains/txHistory/widgets/ExportTxHistoryWidget'
 import { css } from '@emotion/react'
 import format from 'date-fns/format'
