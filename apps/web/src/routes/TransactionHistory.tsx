@@ -1,7 +1,7 @@
 import { List } from '@archetypes/Transaction'
 import { PanelSection } from '@components'
 import ExtensionStatusGate from '@components/ExtensionStatusGate'
-import { accountsState, selectedAccountsState } from '@domains/accounts/recoils'
+import { selectedAccountsState } from '@domains/accounts/recoils'
 import styled from '@emotion/styled'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'

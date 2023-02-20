@@ -1,6 +1,6 @@
 // TODO: nuke everything and re-write balances lib integration
 
-import { accountsState } from '@domains/accounts/recoils'
+import { accountsState, selectedAccountsState } from '@domains/accounts/recoils'
 import { Balances } from '@talismn/balances'
 import { balanceModules } from '@talismn/balances-default-modules'
 import { useBalances as _useBalances, useChaindata, useTokens } from '@talismn/balances-react'
@@ -90,7 +90,19 @@ export const LegacyBalancesWatcher = () => {
     )
   )
 
-  const assetsAmount = balances?.sum.fiat('usd').transferable ?? 0
+  const selectedAccounts = useRecoilValue(selectedAccountsState)
+  const selectedAddresses = useMemo(() => selectedAccounts.map(x => x.address), [selectedAccounts])
+
+  const balancesGroupByAddress = useMemo(() => groupBy(balances?.sorted, 'address'), [balances?.sorted])
+  const selectedBalances = useMemo(() => {
+    const balances = Object.entries(balancesGroupByAddress)
+      .filter(([address]) => selectedAddresses.includes(address))
+      .flatMap(x => x[1])
+
+    return new Balances(balances)
+  }, [balancesGroupByAddress, selectedAddresses])
+
+  const assetsAmount = selectedBalances?.sum.fiat('usd').transferable ?? 0
 
   const assetsTransferable =
     assetsAmount.toLocaleString(undefined, {
@@ -99,11 +111,11 @@ export const LegacyBalancesWatcher = () => {
       currencyDisplay: 'narrowSymbol',
     }) ?? ' -'
 
-  const assetsOverallValue = balances?.sum.fiat('usd').total ?? 0
+  const assetsOverallValue = selectedBalances?.sum.fiat('usd').total ?? 0
 
   const value = useMemo(
-    () => ({ balances, assetsTransferable, tokenIds, tokens, chaindata, assetsOverallValue }),
-    [balances, assetsTransferable, tokenIds, tokens, chaindata, assetsOverallValue]
+    () => ({ balances: selectedBalances, assetsTransferable, tokenIds, tokens, chaindata, assetsOverallValue }),
+    [selectedBalances, assetsTransferable, tokenIds, tokens, chaindata, assetsOverallValue]
   )
 
   useEffect(() => {
@@ -115,12 +127,12 @@ export const LegacyBalancesWatcher = () => {
   const AddressesFiatBalance = useMemo(
     () =>
       Object.fromEntries(
-        Object.entries(groupBy(balances?.sorted ?? [], 'address')).map(([key, value]) => [
+        Object.entries(groupBy(selectedBalances?.sorted ?? [], 'address')).map(([key, value]) => [
           key,
           value.reduce((previous, current) => previous + (current.total.fiat('usd') ?? 0), 0),
         ])
       ),
-    [balances?.sorted]
+    [selectedBalances?.sorted]
   )
 
   useEffect(

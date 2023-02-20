@@ -9,6 +9,7 @@ import { Search } from '@components/Field'
 import HiddenDetails from '@components/molecules/HiddenDetails'
 import Asset, { AssetsList, AssetsListLocked } from '@components/recipes/Asset'
 import { NFTCard } from '@components/recipes/NFTCard'
+import { selectedAccountsState } from '@domains/accounts/recoils'
 import { keyframes } from '@emotion/react'
 import { filteredNftDataState } from '@libs/@talisman-nft/provider'
 import { NFTShort } from '@libs/@talisman-nft/types'
@@ -100,23 +101,26 @@ const Overview = () => {
   const { fiatTotal } = useAssets()
   const { tokens, balances, isLoading } = useAssetsFiltered({ size: 8, search })
 
+  const selectedAccounts = useRecoilValue(selectedAccountsState)
   const { items, isFetching } = useRecoilValue(filteredNftDataState)
 
   const nfts = useMemo(() => {
-    if (!isFetching && items.length === 0) {
+    const filteredItems = items.filter(x => selectedAccounts.map(x => x.address).includes(x.address))
+
+    if (!isFetching && filteredItems.length === 0) {
       return Array.from({ length: 4 }).map((_, index) => <NFTCard key={index} isBlank />)
     }
     // if still fetching and the items lenght is less than 4, return the loading cards but only display the remainder of items minus 4
 
-    if (!isFetching && items.length !== 0) {
-      return items.slice(0, 4).map((nft: NFTShort) => <NFTCard key={nft.id} nft={nft} />)
+    if (!isFetching && filteredItems.length !== 0) {
+      return filteredItems.slice(0, 4).map((nft: NFTShort) => <NFTCard key={nft.id} nft={nft} />)
     }
 
     // return Array of size 4 with loading cards
     return Array.from({ length: 2 }).map((_, index) => <NFTCard key={index} loading />)
 
     // return <></>
-  }, [isFetching, items])
+  }, [isFetching, items, selectedAccounts])
 
   return (
     <>

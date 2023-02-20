@@ -50,9 +50,11 @@ export const selectedAccountAddressesState = atom<string[] | undefined>({
 export const selectedAccountsState = selector({
   key: 'SelectedAccounts',
   get: ({ get }) => {
-    const [accounts, selectedAddresses] = get(waitForAll([accountsState, selectedAccountAddressesState]))
+    const [accounts, injectedAccounts, selectedAddresses] = get(
+      waitForAll([accountsState, injectedAccountsState, selectedAccountAddressesState])
+    )
 
-    if (selectedAddresses === undefined) return accounts
+    if (selectedAddresses === undefined) return injectedAccounts
 
     return accounts.filter(({ address }) => selectedAddresses.includes(address))
   },
