@@ -1,8 +1,9 @@
 import { injectedAccountsState } from '@domains/accounts/recoils'
 import { storageEffect } from '@domains/common/effects'
 import { web3AccountsSubscribe, web3Enable } from '@polkadot/extension-dapp'
+import type { InjectedWindow } from '@polkadot/extension-inject/types'
 import { useEffect } from 'react'
-import { atom, useRecoilValue, useSetRecoilState } from 'recoil'
+import { atom, useRecoilState, useSetRecoilState } from 'recoil'
 
 export const allowExtensionConnectionState = atom({
   key: 'allow-extension-connection',
@@ -11,7 +12,7 @@ export const allowExtensionConnectionState = atom({
 })
 
 export const ExtensionWatcher = () => {
-  const allowExtensionConnection = useRecoilValue(allowExtensionConnectionState)
+  const [allowExtensionConnection, setAllowExtensionConnection] = useRecoilState(allowExtensionConnectionState)
   const setAccounts = useSetRecoilState(injectedAccountsState)
 
   useEffect(() => {
@@ -27,6 +28,17 @@ export const ExtensionWatcher = () => {
       unsubscribePromise.then(unsubscribe => unsubscribe())
     }
   }, [allowExtensionConnection, setAccounts])
+
+  // Auto connect on launch if Talisman extension is installed
+  useEffect(
+    () => {
+      if ((globalThis as InjectedWindow).injectedWeb3?.talisman !== undefined) {
+        setAllowExtensionConnection(true)
+      }
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
+  )
 
   return null
 }
