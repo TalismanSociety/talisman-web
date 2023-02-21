@@ -44,7 +44,7 @@ const AddReadOnlyAccountDialog = (props: AddReadOnlyAccountDialogProps) => {
           }
           setReadOnlyAccounts(accounts => [
             ...accounts.filter(x => x.address !== resultingAddress),
-            { address: resultingAddress, name },
+            { address: resultingAddress, name: isNilOrWhitespace(name) ? undefined : name },
           ])
           setOpen(false)
         }, [name, resultingAddress, setReadOnlyAccounts])}
