@@ -19,7 +19,12 @@ export const _readOnlyAccountsState = atom<Account[]>({
 
 export const readOnlyAccountsState = selector<Account[]>({
   key: 'ReadonlyAccounts',
-  get: ({ get }) => get(_readOnlyAccountsState).map(x => ({ ...x, readonly: true })),
+  get: ({ get }) => {
+    const injectedAddresses = get(injectedAccountsState).map(x => x.address)
+    return get(_readOnlyAccountsState)
+      .filter(x => !injectedAddresses.includes(x.address))
+      .map(x => ({ ...x, readonly: true }))
+  },
   set: ({ set, reset }, newValue) => {
     if (newValue instanceof DefaultValue) {
       reset(_readOnlyAccountsState)
