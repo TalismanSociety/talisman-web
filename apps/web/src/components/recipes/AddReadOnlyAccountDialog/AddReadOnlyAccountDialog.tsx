@@ -31,19 +31,19 @@ const AddReadOnlyAccountDialog = (props: AddReadOnlyAccountDialogProps) => {
       content={
         <form onSubmit={event => event.preventDefault()}>
           <TextInput
+            value={props.name}
+            onChange={event => props.onChangeName(event.target.value)}
+            leadingLabel="Name"
+            placeholder="Add a name"
+            css={{ fontSize: '1.8rem' }}
+          />
+          <TextInput
             value={props.address}
             onChange={event => props.onChangeAddress(event.target.value)}
             leadingLabel="Address"
             placeholder="Enter wallet address"
             trailingSupportingText={props.addressError}
             isError={props.addressError !== undefined}
-            css={{ fontSize: '1.8rem' }}
-          />
-          <TextInput
-            value={props.name}
-            onChange={event => props.onChangeName(event.target.value)}
-            leadingLabel="Name"
-            placeholder="Add a name"
             css={{ fontSize: '1.8rem' }}
           />
           {props.resultingAddress && (
