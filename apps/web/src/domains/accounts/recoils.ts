@@ -20,13 +20,16 @@ export const _readOnlyAccountsState = atom<Account[]>({
 export const readOnlyAccountsState = selector<Account[]>({
   key: 'ReadonlyAccounts',
   get: ({ get }) => get(_readOnlyAccountsState).map(x => ({ ...x, readonly: true })),
-  set: ({ set }, newValue) =>
-    newValue instanceof DefaultValue
-      ? []
-      : set(
-          _readOnlyAccountsState,
-          newValue.map(x => ({ ...x, readonly: true }))
-        ),
+  set: ({ set, reset }, newValue) => {
+    if (newValue instanceof DefaultValue) {
+      reset(_readOnlyAccountsState)
+    } else {
+      set(
+        _readOnlyAccountsState,
+        newValue.map(x => ({ ...x, readonly: true }))
+      )
+    }
+  },
 })
 
 export const accountsState = selector({
@@ -54,9 +57,14 @@ export const selectedAccountsState = selector({
       waitForAll([accountsState, injectedAccountsState, selectedAccountAddressesState])
     )
 
-    if (selectedAddresses === undefined) return injectedAccounts
+    if (selectedAddresses === undefined) {
+      return injectedAccounts
+    }
 
-    return accounts.filter(({ address }) => selectedAddresses.includes(address))
+    const selectedAccounts = accounts.filter(({ address }) => selectedAddresses.includes(address))
+
+    // TODO: clean this up
+    return selectedAccounts.length === 0 ? injectedAccounts : selectedAccounts
   },
 })
 
