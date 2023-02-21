@@ -4,6 +4,7 @@ import AlertDialog from '@components/molecules/AlertDialog'
 import ListItem from '@components/molecules/ListItem'
 import TextInput from '@components/molecules/TextInput'
 import { useTheme } from '@emotion/react'
+import { shortenAddress } from '@util/format'
 import { isNilOrWhitespace } from '@util/nil'
 
 export type AddReadOnlyAccountDialogProps = {
@@ -49,7 +50,7 @@ const AddReadOnlyAccountDialog = (props: AddReadOnlyAccountDialogProps) => {
             <ListItem
               leadingContent={<Identicon value={props.resultingAddress} size="4rem" />}
               headlineText={isNilOrWhitespace(props.name) ? undefined : props.name}
-              supportingText={`${props.resultingAddress.slice(0, 4)}...${props.resultingAddress.slice(-4)}`}
+              supportingText={shortenAddress(props.resultingAddress)}
               css={{ border: `2px solid ${theme.color.border}`, borderRadius: '0.8rem' }}
             />
           )}

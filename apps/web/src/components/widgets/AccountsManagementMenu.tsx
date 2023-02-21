@@ -15,9 +15,10 @@ import { fiatBalancesState, totalLocalizedFiatBalanceState } from '@domains/bala
 import { allowExtensionConnectionState } from '@domains/extension/recoils'
 import { useTheme } from '@emotion/react'
 import { isWeb3Injected } from '@polkadot/extension-dapp'
+import { shortenAddress } from '@util/format'
 import getDownloadLink from '@util/getDownloadLink'
 import { motion } from 'framer-motion'
-import { useCallback, useMemo } from 'react'
+import { useMemo } from 'react'
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil'
 
 import AddReadOnlyAccountDialog from './AddReadOnlyAccountDialog'
@@ -118,8 +119,6 @@ const AccountsManagementMenu = () => {
     totalBalance,
   ])
 
-  const formatAddress = useCallback((address: string) => address.slice(0, 4) + '...' + address.slice(-4), [])
-
   return (
     <Menu>
       <Menu.Button>
@@ -155,7 +154,7 @@ const AccountsManagementMenu = () => {
             {injectedAccounts.map(x => (
               <Menu.Item onClick={() => setSelectedAccountAddresses(() => [x.address])}>
                 <ListItem
-                  headlineText={x.name ?? formatAddress(x.address)}
+                  headlineText={x.name ?? shortenAddress(x.address)}
                   overlineText={fiatBalances[x.address]?.toLocaleString(undefined, {
                     style: 'currency',
                     currency: 'usd',
@@ -176,7 +175,7 @@ const AccountsManagementMenu = () => {
             {readonlyAccounts.map(x => (
               <Menu.Item onClick={() => setSelectedAccountAddresses(() => [x.address])}>
                 <ListItem
-                  headlineText={x.name ?? formatAddress(x.address)}
+                  headlineText={x.name ?? shortenAddress(x.address)}
                   overlineText={fiatBalances[x.address]?.toLocaleString(undefined, {
                     style: 'currency',
                     currency: 'usd',

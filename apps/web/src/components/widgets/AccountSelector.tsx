@@ -1,6 +1,7 @@
 import Identicon from '@components/atoms/Identicon'
 import Select from '@components/molecules/Select'
 import { selectedSubstrateAccountsState } from '@domains/accounts/recoils'
+import { shortenAddress } from '@util/format'
 import { useEffect } from 'react'
 import { useRecoilValue } from 'recoil'
 
@@ -38,7 +39,7 @@ const AccountSelector = ({ includeReadonlyAccounts = true, ...props }: AccountSe
             key={x.address}
             value={x.address}
             leadingIcon={<Identicon value={x.address} size={40} />}
-            headlineText={x.name}
+            headlineText={x.name ?? shortenAddress(x.address)}
             supportingText=""
           />
         ))}

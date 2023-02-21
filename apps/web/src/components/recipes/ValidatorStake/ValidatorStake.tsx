@@ -2,6 +2,7 @@ import Button from '@components/atoms/Button'
 import Identicon from '@components/atoms/Identicon'
 import Text from '@components/atoms/Text'
 import { useTheme } from '@emotion/react'
+import { shortenAddress } from '@util/format'
 import React, { ReactElement, ReactNode } from 'react'
 
 import StakeList from '../StakeList'
@@ -52,9 +53,7 @@ const ValidatorStake = Object.assign(
             <Text.Body as="div" alpha="high">
               {props.accountName}
             </Text.Body>
-            <Text.Body as="div">
-              ({props.accountAddress.slice(0, 4)}...{props.accountAddress.slice(-4)})
-            </Text.Body>
+            <Text.Body as="div">({shortenAddress(props.accountAddress)})</Text.Body>
           </div>
         </div>
         <Text.Body as="div" css={{ 'gridArea': 'sLabel', '@media (min-width: 1024px)': { display: 'none' } }}>

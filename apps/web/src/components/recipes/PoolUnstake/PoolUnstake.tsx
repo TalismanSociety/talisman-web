@@ -3,6 +3,7 @@ import { Lock } from '@components/atoms/Icon'
 import Identicon from '@components/atoms/Identicon'
 import Text from '@components/atoms/Text'
 import { useTheme } from '@emotion/react'
+import { shortenAddress } from '@util/format'
 import React, { ReactElement } from 'react'
 
 import StakeList from '../StakeList'
@@ -107,9 +108,7 @@ const PoolUnstake = (props: PoolUnstakeProps) => {
                 </Text.Body>
               </div>
               <div>
-                <Text.Body>
-                  ({props.accountAddress.slice(0, 4)}...{props.accountAddress.slice(-4)})
-                </Text.Body>
+                <Text.Body>({shortenAddress(props.accountAddress)})</Text.Body>
               </div>
             </dd>
           </div>

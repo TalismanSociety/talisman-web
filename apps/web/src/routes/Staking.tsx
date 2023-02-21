@@ -18,6 +18,7 @@ import { useInflation, usePoolAddForm } from '@domains/nominationPools/hooks'
 import { allPendingPoolRewardsState, eraStakersState, recommendedPoolsState } from '@domains/nominationPools/recoils'
 import { createAccounts } from '@domains/nominationPools/utils'
 import { BN } from '@polkadot/util'
+import { shortenAddress } from '@util/format'
 import { Maybe } from '@util/monads'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Suspense, useCallback, useEffect, useMemo, useState } from 'react'
@@ -438,7 +439,7 @@ const Input = () => {
                 accounts.map(x => ({
                   ...x,
                   selected: x.address === selectedAccount?.address,
-                  name: x.name ?? x.address,
+                  name: x.name ?? shortenAddress(x.address),
                   balance: '',
                 })),
               [accounts, selectedAccount?.address]

@@ -3,6 +3,7 @@ import Identicon from '@components/atoms/Identicon'
 import Text from '@components/atoms/Text'
 import Tooltip from '@components/atoms/Tooltip'
 import { useTheme } from '@emotion/react'
+import { shortenAddress } from '@util/format'
 import React, { ReactElement, ReactNode, useMemo } from 'react'
 import { useMedia } from 'react-use'
 
@@ -85,9 +86,7 @@ const PoolStake = Object.assign(
               <Text.Body as="div" alpha="high">
                 {props.accountName}
               </Text.Body>
-              <Text.Body as="div">
-                ({props.accountAddress.slice(0, 4)}...{props.accountAddress.slice(-4)})
-              </Text.Body>
+              <Text.Body as="div">({shortenAddress(props.accountAddress)})</Text.Body>
             </div>
           </div>
         )}
