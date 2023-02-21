@@ -8,7 +8,7 @@ import PoolExitingInProgress from '@components/recipes/PoolExitingInProgress'
 import PoolSelectorDialog from '@components/recipes/PoolSelectorDialog'
 import { PoolStatus } from '@components/recipes/PoolStatusIndicator'
 import StakingInput from '@components/recipes/StakingInput'
-import { substrateAccountsState } from '@domains/accounts/recoils'
+import { injectedSubstrateAccountsState, substrateAccountsState } from '@domains/accounts/recoils'
 import { apiState, chainState, nativeTokenDecimalState } from '@domains/chains/recoils'
 import { useTokenAmountFromPlanck } from '@domains/common/hooks'
 import useChainState from '@domains/common/hooks/useChainState'
@@ -293,7 +293,7 @@ const Input = () => {
   )
 
   const [api, accounts, recommendedPools, pendingRewards] = useRecoilValue(
-    waitForAll([apiState, substrateAccountsState, recommendedPoolsState, allPendingPoolRewardsState])
+    waitForAll([apiState, injectedSubstrateAccountsState, recommendedPoolsState, allPendingPoolRewardsState])
   )
 
   const initialPoolId = poolIdFromSearch ?? recommendedPools[0]?.poolId

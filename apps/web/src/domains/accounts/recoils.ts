@@ -14,6 +14,11 @@ export const injectedAccountsState = atom<Account[]>({
   default: [],
 })
 
+export const injectedSubstrateAccountsState = selector({
+  key: 'InjectedSubstrateAccountsState',
+  get: ({ get }) => get(injectedAccountsState).filter(x => x.type !== 'ethereum'),
+})
+
 const _readOnlyAccountsState = atom<ReadonlyAccount[]>({
   key: 'readonly_accounts',
   default: [],
