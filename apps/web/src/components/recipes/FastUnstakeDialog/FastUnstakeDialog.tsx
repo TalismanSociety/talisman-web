@@ -56,7 +56,7 @@ const FastUnstakeDialog = (props: FastUnstakeDialogProps) => (
                       <Text.Body as="p" css={{ textAlign: 'center', marginTop: '2.4rem' }}>
                         Checking eligibility
                         <br />
-                        This may take upto 30 seconds
+                        This may take up to 30 seconds
                       </Text.Body>
                     )
                   case 'eligible':
