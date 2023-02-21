@@ -33,6 +33,7 @@ const AddReadOnlyAccountDialog = (props: AddReadOnlyAccountDialogProps) => {
         onRequestDismiss={useCallback(() => setOpen(false), [])}
         address={address}
         onChangeAddress={setAddress}
+        resultingAddress={resultingAddress}
         name={name}
         onChangeName={setName}
         confirmState={isValidAddress ? undefined : 'disabled'}
