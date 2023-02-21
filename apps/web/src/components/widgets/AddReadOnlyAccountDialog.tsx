@@ -3,13 +3,15 @@ import { readOnlyAccountsState } from '@domains/accounts/recoils'
 import { isValidSubstrateOrEthereumAddress } from '@util/addressValidation'
 import { isNilOrWhitespace } from '@util/nil'
 import { ReactNode, useCallback, useMemo, useState } from 'react'
-import { useSetRecoilState } from 'recoil'
+import { useRecoilValue, useSetRecoilState } from 'recoil'
 
 type AddReadOnlyAccountDialogProps = {
   children?: ReactNode | ((props: { onToggleOpen: () => unknown }) => ReactNode)
 }
 
 const AddReadOnlyAccountDialog = (props: AddReadOnlyAccountDialogProps) => {
+  const readonlyAccounts = useRecoilValue(readOnlyAccountsState)
+
   const [open, setOpen] = useState(false)
   const [address, setAddress] = useState('')
   const [name, setName] = useState('')
@@ -20,6 +22,27 @@ const AddReadOnlyAccountDialog = (props: AddReadOnlyAccountDialogProps) => {
   )
 
   const resultingAddress = isValidAddress ? address : undefined
+
+  const hasExistingAccount = useMemo(
+    () => readonlyAccounts.map(x => x.address.toLowerCase()).includes(address.toLowerCase()),
+    [address, readonlyAccounts]
+  )
+
+  const confirmState = useMemo(() => {
+    if (!isValidAddress || hasExistingAccount) {
+      return 'disabled'
+    }
+  }, [hasExistingAccount, isValidAddress])
+
+  const error = useMemo(() => {
+    if (!isValidAddress) {
+      return 'Invalid address'
+    }
+
+    if (hasExistingAccount) {
+      return 'This account has already been added'
+    }
+  }, [hasExistingAccount, isValidAddress])
 
   const setReadOnlyAccounts = useSetRecoilState(readOnlyAccountsState)
 
@@ -36,8 +59,8 @@ const AddReadOnlyAccountDialog = (props: AddReadOnlyAccountDialogProps) => {
         resultingAddress={resultingAddress}
         name={name}
         onChangeName={setName}
-        confirmState={isValidAddress ? undefined : 'disabled'}
-        addressError={isValidAddress === false ? 'Invalid address' : undefined}
+        confirmState={confirmState}
+        addressError={error}
         onConfirm={useCallback(() => {
           if (isNilOrWhitespace(resultingAddress)) {
             return

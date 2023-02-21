@@ -51,7 +51,7 @@ const AddReadOnlyAccountDialog = (props: AddReadOnlyAccountDialogProps) => {
               leadingContent={<Identicon value={props.resultingAddress} size="4rem" />}
               headlineText={isNilOrWhitespace(props.name) ? undefined : props.name}
               supportingText={shortenAddress(props.resultingAddress)}
-              css={{ border: `2px solid ${theme.color.border}`, borderRadius: '0.8rem' }}
+              css={{ marginTop: '1.6rem', border: `2px solid ${theme.color.border}`, borderRadius: '0.8rem' }}
             />
           )}
         </form>
