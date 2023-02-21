@@ -170,7 +170,8 @@ const PoolStake = Object.assign(
         <Button
           variant="outlined"
           onClick={props.onRequestAdd}
-          disabled={props.addState === 'disabled' || props.readonly}
+          hidden={props.readonly}
+          disabled={props.addState === 'disabled'}
           loading={props.addState === 'pending'}
           css={{ gridArea: 'aButton' }}
         >
