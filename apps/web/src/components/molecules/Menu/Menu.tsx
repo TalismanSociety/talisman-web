@@ -112,6 +112,9 @@ const MenuItems = (props: MenuItemsProps) => {
           variants={{
             true: {
               clipPath: `inset(0% 0% 0% 0% round ${BORDER_RADIUS})`,
+              transitionEnd: {
+                overflow: 'auto',
+              },
               transition: {
                 type: 'spring',
                 bounce: 0,
@@ -122,6 +125,7 @@ const MenuItems = (props: MenuItemsProps) => {
             },
             false: {
               clipPath: closedClipPath,
+              overflow: false,
               transition: {
                 type: 'spring',
                 bounce: 0,
@@ -133,7 +137,6 @@ const MenuItems = (props: MenuItemsProps) => {
             border: `1px solid ${theme.color.border}`,
             borderRadius: '1.2rem',
             backgroundColor: theme.color.surface,
-            overflow: 'auto',
           }}
           {...getFloatingProps({
             ...props,
