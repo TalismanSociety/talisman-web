@@ -6,7 +6,7 @@ import { NoWalletBanner } from './NoWalletBanner'
 
 export const StateBanner = () => {
   const { status, address } = useActiveAccount()
-  const { assetsTransferable, balances } = useBalances()
+  const { balances, assetsTransferable } = useBalances()
 
   const hasEmptyBags =
     address !== undefined

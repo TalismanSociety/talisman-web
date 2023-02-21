@@ -1,3 +1,5 @@
+import { balanceModules } from '@talismn/balances-default-modules'
+import { BalancesProvider } from '@talismn/balances-react'
 import { PropsWithChildren } from 'react'
 
 import * as Account from './account'
@@ -45,11 +47,16 @@ const Provider = ({ children }: PropsWithChildren) => (
   <Extension.Provider>
     <Chainmeta.Provider>
       <Account.Provider>
-        <Balance.Provider>
-          <Parachain.Provider>
-            <Crowdloan.Provider>{children}</Crowdloan.Provider>
-          </Parachain.Provider>
-        </Balance.Provider>
+        <BalancesProvider
+          balanceModules={balanceModules}
+          onfinalityApiKey={process.env.REACT_APP_ONFINALITY_API_KEY ?? undefined}
+        >
+          <Balance.Provider>
+            <Parachain.Provider>
+              <Crowdloan.Provider>{children}</Crowdloan.Provider>
+            </Parachain.Provider>
+          </Balance.Provider>
+        </BalancesProvider>
       </Account.Provider>
     </Chainmeta.Provider>
   </Extension.Provider>

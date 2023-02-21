@@ -99,7 +99,7 @@ const Dropdown = styled(
     const { switchAccount } = useActiveAccount()
     const { accounts, disconnect } = useExtensionAutoConnect()
 
-    const { assetsOverallValue, balances } = useBalances()
+    const { balances, assetsOverallValue } = useBalances()
 
     return (
       open && (

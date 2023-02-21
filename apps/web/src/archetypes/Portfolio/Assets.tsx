@@ -1,17 +1,17 @@
 import { useActiveAccount } from '@libs/talisman'
 import { useBalances } from '@libs/talisman'
 import { BalanceFormatter } from '@talismn/balances'
-import { useChaindata, useChains, useEvmNetworks } from '@talismn/balances-react'
+import { useChains, useEvmNetworks, useTokens } from '@talismn/balances-react'
 import { formatDecimals } from '@talismn/util'
 import { compact, groupBy, isEmpty, isNil, startCase } from 'lodash'
 import { useMemo } from 'react'
 
 const useFetchAssets = (address: string | undefined) => {
-  const { balances, tokenIds, tokens, assetsOverallValue } = useBalances()
-  const chaindata = useChaindata({ onfinalityApiKey: process.env.REACT_APP_ONFINALITY_API_KEY })
+  const { balances, assetsOverallValue } = useBalances()
 
-  const chains = useChains(chaindata)
-  const evmNetworks = useEvmNetworks(chaindata)
+  const chains = useChains()
+  const evmNetworks = useEvmNetworks()
+  const tokens = useTokens()
 
   const isLoading = useMemo(() => {
     return isEmpty(chains) || isEmpty(evmNetworks) || isEmpty(tokens) || isNil(balances)
@@ -29,40 +29,38 @@ const useFetchAssets = (address: string | undefined) => {
 
   const assetBalances = useMemo(
     () =>
-      tokenIds
-        .map(tokenId => tokens[tokenId])
-        .sort((a, b) => {
-          // TODO: Move token sorting into the chaindata subsquid indexer
-          if (a.chain?.id === 'polkadot' && b.chain?.id !== 'polkadot') return -1
-          if (b.chain?.id === 'polkadot' && a.chain?.id !== 'polkadot') return 1
-          if (a.chain?.id === 'kusama' && b.chain?.id !== 'kusama') return -1
-          if (b.chain?.id === 'kusama' && a.chain?.id !== 'kusama') return 1
+      Object.values(tokens).sort((a, b) => {
+        // TODO: Move token sorting into the chaindata subsquid indexer
+        if (a.chain?.id === 'polkadot' && b.chain?.id !== 'polkadot') return -1
+        if (b.chain?.id === 'polkadot' && a.chain?.id !== 'polkadot') return 1
+        if (a.chain?.id === 'kusama' && b.chain?.id !== 'kusama') return -1
+        if (b.chain?.id === 'kusama' && a.chain?.id !== 'kusama') return 1
 
-          if ((a.chain?.id || a.evmNetwork?.id) === (b.chain?.id || b.evmNetwork?.id)) {
-            if (a.type === 'substrate-native') return -1
-            if (b.type === 'substrate-native') return 1
-            if (a.type === 'evm-native') return -1
-            if (b.type === 'evm-native') return 1
+        if ((a.chain?.id || a.evmNetwork?.id) === (b.chain?.id || b.evmNetwork?.id)) {
+          if (a.type === 'substrate-native') return -1
+          if (b.type === 'substrate-native') return 1
+          if (a.type === 'evm-native') return -1
+          if (b.type === 'evm-native') return 1
 
-            const aCmp = a.symbol?.toLowerCase() || a.id
-            const bCmp = b.symbol?.toLowerCase() || b.id
-
-            return aCmp.localeCompare(bCmp)
-          }
-
-          const aChain = a.chain?.id ? chains[a.chain.id] : a.evmNetwork?.id ? evmNetworks[a.evmNetwork.id] : null
-          const bChain = b.chain?.id ? chains[b.chain.id] : b.evmNetwork?.id ? evmNetworks[b.evmNetwork.id] : null
-
-          const aCmp = aChain?.name?.toLowerCase() || a.chain?.id || a.evmNetwork?.id
-          const bCmp = bChain?.name?.toLowerCase() || b.chain?.id || b.evmNetwork?.id
-
-          if (aCmp === undefined && bCmp === undefined) return 0
-          if (aCmp === undefined) return 1
-          if (bCmp === undefined) return -1
+          const aCmp = a.symbol?.toLowerCase() || a.id
+          const bCmp = b.symbol?.toLowerCase() || b.id
 
           return aCmp.localeCompare(bCmp)
-        }),
-    [chains, evmNetworks, tokenIds, tokens]
+        }
+
+        const aChain = a.chain?.id ? chains[a.chain.id] : a.evmNetwork?.id ? evmNetworks[a.evmNetwork.id] : null
+        const bChain = b.chain?.id ? chains[b.chain.id] : b.evmNetwork?.id ? evmNetworks[b.evmNetwork.id] : null
+
+        const aCmp = aChain?.name?.toLowerCase() || a.chain?.id || a.evmNetwork?.id
+        const bCmp = bChain?.name?.toLowerCase() || b.chain?.id || b.evmNetwork?.id
+
+        if (aCmp === undefined && bCmp === undefined) return 0
+        if (aCmp === undefined) return 1
+        if (bCmp === undefined) return -1
+
+        return aCmp.localeCompare(bCmp)
+      }),
+    [chains, evmNetworks, tokens]
   )
 
   return { assetBalances, fiatTotal, lockedTotal, value, balances, chains, evmNetworks, isLoading }
@@ -165,9 +163,11 @@ const useAssets = (customAddress?: string) => {
 
   const groupedTokensWithOrmlTokens = groupedTokensArray.map(group => {
     const substrateNativeToken = group.find(token => {
-      const chain = chains[token.tokenDetails?.chain?.id]
+      const chain = token.tokenDetails?.chain?.id ? chains[token.tokenDetails?.chain?.id] : undefined
       if (!chain) {
-        const evmNetwork = evmNetworks[token.tokenDetails?.evmNetwork?.id]
+        const evmNetwork = token.tokenDetails?.evmNetwork?.id
+          ? evmNetworks[token.tokenDetails?.evmNetwork?.id]
+          : undefined
         if (!evmNetwork) return token
         return evmNetwork?.nativeToken?.id === token.tokenDetails.id
       }
@@ -284,9 +284,11 @@ export const useAssetsFiltered = ({ size, search, address }: filterProps) => {
     if (search === '') return tokens
     return tokens.filter(token => {
       if (token === null) return false
-      if (token?.tokenDetails.symbol?.toLowerCase().includes(search?.toLowerCase())) return true
-      if (token?.tokenDetails?.chain?.id?.toLowerCase().includes(search?.toLowerCase())) return true
-      if (token?.tokenDetails?.coingeckoId?.toLowerCase().includes(search?.toLowerCase())) return true
+      if (search !== undefined && token?.tokenDetails?.symbol?.toLowerCase().includes(search.toLowerCase())) return true
+      if (search !== undefined && token?.tokenDetails?.chain?.id?.toLowerCase().includes(search.toLowerCase()))
+        return true
+      if (search !== undefined && token?.tokenDetails?.coingeckoId?.toLowerCase().includes(search.toLowerCase()))
+        return true
 
       // check if the search term is in the orml tokens
       if (
