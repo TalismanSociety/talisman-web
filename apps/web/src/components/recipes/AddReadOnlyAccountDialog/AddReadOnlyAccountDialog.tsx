@@ -27,7 +27,7 @@ const AddReadOnlyAccountDialog = (props: AddReadOnlyAccountDialogProps) => {
       open={props.open}
       onRequestDismiss={props.onRequestDismiss}
       width="42rem"
-      title="Edit contact"
+      title="Add contact"
       content={
         <form onSubmit={event => event.preventDefault()}>
           <TextInput
