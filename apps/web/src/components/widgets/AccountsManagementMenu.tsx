@@ -138,7 +138,17 @@ const AccountsManagementMenu = () => {
             Select account
           </Text.Body>
           <section css={{ marginBottom: '1.6rem' }}>
-            <Text.Body as="header" css={{ fontWeight: 'bold', marginBottom: '1.6rem', padding: '0 1.6rem' }}>
+            <Text.Body
+              as="header"
+              css={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                fontWeight: 'bold',
+                marginBottom: '1.6rem',
+                padding: '0 1.6rem',
+              }}
+            >
               <Union width="1em" height="1em" /> My accounts
             </Text.Body>
             {leadingMenuItem}
@@ -157,7 +167,10 @@ const AccountsManagementMenu = () => {
             ))}
           </section>
           <section>
-            <Text.Body as="header" css={{ fontWeight: 'bold', padding: '1.6rem' }}>
+            <Text.Body
+              as="header"
+              css={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 'bold', padding: '1.6rem' }}
+            >
               <Eye width="1em" height="1em" /> Watched accounts
             </Text.Body>
             {readonlyAccounts.map(x => (
