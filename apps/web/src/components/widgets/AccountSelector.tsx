@@ -1,6 +1,6 @@
 import Identicon from '@components/atoms/Identicon'
 import Select from '@components/molecules/Select'
-import { selectedSubstrateAccountsState } from '@domains/accounts/recoils'
+import { accountsState, substrateAccountsState } from '@domains/accounts/recoils'
 import { shortenAddress } from '@util/format'
 import { useEffect } from 'react'
 import { useRecoilValue } from 'recoil'
@@ -10,10 +10,15 @@ export type AccountSelectorProps = {
   onChangeSelectedAddress: (value: string | undefined) => unknown
   defaultToFirstAddress?: boolean
   includeReadonlyAccounts?: boolean
+  includeEthereumAccounts?: boolean
 }
 
-const AccountSelector = ({ includeReadonlyAccounts = true, ...props }: AccountSelectorProps) => {
-  const accounts = useRecoilValue(selectedSubstrateAccountsState)
+const AccountSelector = ({
+  includeReadonlyAccounts = true,
+  includeEthereumAccounts,
+  ...props
+}: AccountSelectorProps) => {
+  const accounts = useRecoilValue(includeEthereumAccounts ? accountsState : substrateAccountsState)
 
   useEffect(
     () => {

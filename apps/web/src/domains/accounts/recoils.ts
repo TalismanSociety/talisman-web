@@ -1,5 +1,6 @@
 import { storageEffect } from '@domains/common/effects'
 import type { InjectedAccount } from '@polkadot/extension-inject/types'
+import { ethers } from 'ethers'
 import { DefaultValue, atom, selector, waitForAll } from 'recoil'
 
 export type Account = InjectedAccount & {
@@ -11,7 +12,7 @@ export const injectedAccountsState = atom<Account[]>({
   default: [],
 })
 
-export const _readOnlyAccountsState = atom<Account[]>({
+const _readOnlyAccountsState = atom<Array<Pick<Account, 'address' | 'name'>>>({
   key: 'readonly_accounts',
   default: [],
   effects: [storageEffect(localStorage)],
@@ -23,16 +24,13 @@ export const readOnlyAccountsState = selector<Account[]>({
     const injectedAddresses = get(injectedAccountsState).map(x => x.address)
     return get(_readOnlyAccountsState)
       .filter(x => !injectedAddresses.includes(x.address))
-      .map(x => ({ ...x, readonly: true }))
+      .map(x => ({ ...x, readonly: true, type: ethers.utils.isAddress(x.address) ? 'ethereum' : undefined }))
   },
   set: ({ set, reset }, newValue) => {
     if (newValue instanceof DefaultValue) {
       reset(_readOnlyAccountsState)
     } else {
-      set(
-        _readOnlyAccountsState,
-        newValue.map(x => ({ ...x, readonly: true }))
-      )
+      set(_readOnlyAccountsState, newValue)
     }
   },
 })
@@ -46,7 +44,7 @@ export const substrateAccountsState = selector({
   key: 'SubstrateAccounts',
   get: ({ get }) => {
     const accounts = get(accountsState)
-    return accounts.filter((x: any) => x['type'] !== 'ethereum')
+    return accounts.filter(x => x.type !== 'ethereum')
   },
 })
 
@@ -88,6 +86,6 @@ export const legacySelectedAccountState = selector({
 export const selectedSubstrateAccountsState = selector({
   key: 'SelectedSubstrateAccounts',
   get: ({ get }) => {
-    return get(selectedAccountsState).filter((x: any) => x['type'] !== 'ethereum')
+    return get(selectedAccountsState).filter(x => x.type !== 'ethereum')
   },
 })

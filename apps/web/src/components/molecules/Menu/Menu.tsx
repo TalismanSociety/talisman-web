@@ -203,8 +203,6 @@ const Menu = (props: MenuProps) => {
     ],
   })
 
-  console.log(strategy, placement)
-
   const { getReferenceProps, getFloatingProps, getItemProps } = useInteractions([
     useRole(context, { role: 'menu' }),
     useClick(context),
