@@ -7,12 +7,14 @@ export type Account = InjectedAccount & {
   readonly?: boolean
 }
 
+export type ReadonlyAccount = Pick<Account, 'address' | 'name'>
+
 export const injectedAccountsState = atom<Account[]>({
   key: 'InjectedAccounts',
   default: [],
 })
 
-const _readOnlyAccountsState = atom<Array<Pick<Account, 'address' | 'name'>>>({
+const _readOnlyAccountsState = atom<ReadonlyAccount[]>({
   key: 'readonly_accounts',
   default: [],
   effects: [storageEffect(localStorage)],

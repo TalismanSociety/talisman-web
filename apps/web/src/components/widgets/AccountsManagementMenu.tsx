@@ -22,6 +22,7 @@ import { useMemo } from 'react'
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil'
 
 import AddReadOnlyAccountDialog from './AddReadOnlyAccountDialog'
+import RemoveWatchedAccountConfirmationDialog from './RemoveWatchedAccountConfirmationDialog'
 
 const AnimatedChevron = motion(ChevronDown)
 
@@ -33,7 +34,7 @@ const AccountsManagementMenu = () => {
   const setSelectedAccountAddresses = useSetRecoilState(selectedAccountAddressesState)
   const selectedAccount = useRecoilValue(legacySelectedAccountState)
   const injectedAccounts = useRecoilValue(injectedAccountsState)
-  const [readonlyAccounts, setReadonlyAccounts] = useRecoilState(readOnlyAccountsState)
+  const readonlyAccounts = useRecoilValue(readOnlyAccountsState)
 
   const fiatBalances = useRecoilValue(fiatBalancesState)
 
@@ -183,14 +184,18 @@ const AccountsManagementMenu = () => {
                   })}
                   leadingContent={<Identicon value={x.address} size="4rem" />}
                   trailingContent={
-                    <IconButton
-                      onClick={event => {
-                        event.stopPropagation()
-                        setReadonlyAccounts(y => y.filter(z => z.address !== x.address))
-                      }}
-                    >
-                      <Trash2 />
-                    </IconButton>
+                    <RemoveWatchedAccountConfirmationDialog account={x}>
+                      {({ onToggleOpen }) => (
+                        <IconButton
+                          onClick={event => {
+                            event.stopPropagation()
+                            onToggleOpen()
+                          }}
+                        >
+                          <Trash2 />
+                        </IconButton>
+                      )}
+                    </RemoveWatchedAccountConfirmationDialog>
                   }
                 />
               </Menu.Item>
