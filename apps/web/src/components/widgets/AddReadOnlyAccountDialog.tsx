@@ -35,7 +35,7 @@ const AddReadOnlyAccountDialog = (props: AddReadOnlyAccountDialogProps) => {
   }, [hasExistingAccount, isValidAddress])
 
   const error = useMemo(() => {
-    if (!isValidAddress) {
+    if (isValidAddress === false) {
       return 'Invalid address'
     }
 
