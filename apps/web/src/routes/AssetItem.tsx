@@ -2,12 +2,10 @@ import { useSingleAsset } from '@archetypes/Portfolio/Assets'
 import Button from '@components/atoms/Button'
 import DisplayValue from '@components/atoms/DisplayValue/DisplayValue'
 import Text from '@components/atoms/Text'
-import Tooltip from '@components/atoms/Tooltip'
 import HiddenDetails from '@components/molecules/HiddenDetails'
 import InfoCard from '@components/molecules/InfoCard'
 import { AssetBreakdownList } from '@components/recipes/AssetBreakdown/AssetBreakdownList'
 import { keyframes } from '@emotion/react'
-import { startCase } from 'lodash'
 import { useParams } from 'react-router-dom'
 
 const slideDown = keyframes`
