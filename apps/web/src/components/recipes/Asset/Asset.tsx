@@ -193,6 +193,8 @@ const Asset = Object.assign((props: AssetProps) => {
   const { token, lockedAsset } = props
   const navigate = useNavigate()
 
+  console.log(token)
+
   return (
     <tr
       className="asset"
@@ -207,21 +209,16 @@ const Asset = Object.assign((props: AssetProps) => {
       <td valign="top">
         {/* First Column */}
         <div css={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-          <Tooltip content={startCase(token?.tokenDetails?.chain?.id ?? token?.tokenDetails?.coingeckoId)}>
-            {tooltipProps => (
-              <img
-                {...tooltipProps}
-                src={token?.tokenDetails?.logo}
-                css={{
-                  width: '2em',
-                  height: '2em',
-                  margin: '16px',
-                  borderRadius: '50%',
-                }}
-                alt={' logo'}
-              />
-            )}
-          </Tooltip>
+          <img
+            src={token?.tokenDetails?.logo}
+            css={{
+              width: '2em',
+              height: '2em',
+              margin: '16px',
+              borderRadius: '50%',
+            }}
+            alt={' logo'}
+          />
           <div css={{ display: 'flex', flexDirection: 'column', gap: '0.4em' }}>
             <Text.Body css={{ fontWeight: 600, fontSize: '16px', color: theme.color.onSurface }}>
               {token?.tokenDetails?.symbol}

@@ -87,19 +87,14 @@ const AssetItem = () => {
                       alignItems: 'center',
                     }}
                   >
-                    <Tooltip content={startCase(token?.tokenDetails?.chain?.id ?? token?.tokenDetails?.coingeckoId)}>
-                      {tooltipProps => (
-                        <img
-                          {...tooltipProps}
-                          src={token?.tokenDetails?.logo}
-                          css={{
-                            width: '2em',
-                            height: '2em',
-                          }}
-                          alt={token?.tokenDetails?.chain?.id ?? token?.tokenDetails?.coingeckoId + ' logo'}
-                        />
-                      )}
-                    </Tooltip>
+                    <img
+                      src={token?.tokenDetails?.logo}
+                      css={{
+                        width: '2em',
+                        height: '2em',
+                      }}
+                      alt={token?.tokenDetails?.chain?.id ?? token?.tokenDetails?.coingeckoId + ' logo'}
+                    />
                     <Text.Body
                       css={{
                         fontSize: '2rem',
