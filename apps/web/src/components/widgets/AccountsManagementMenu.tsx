@@ -183,10 +183,12 @@ const AccountsManagementMenu = () => {
                     currencyDisplay: 'narrowSymbol',
                   })}
                   leadingContent={<Identicon value={x.address} size="4rem" />}
+                  revealTrailingContentOnHover
                   trailingContent={
                     <RemoveWatchedAccountConfirmationDialog account={x}>
                       {({ onToggleOpen }) => (
                         <IconButton
+                          containerColor={theme.color.foreground}
                           onClick={event => {
                             event.stopPropagation()
                             onToggleOpen()

@@ -1,13 +1,17 @@
 import Text from '@components/atoms/Text'
-import { DetailedHTMLProps, HTMLAttributes, ReactNode } from 'react'
+import { HTMLMotionProps, motion } from 'framer-motion'
+import { ReactNode } from 'react'
 
-export type ListItemProps = DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement> & {
+export type ListItemProps = HTMLMotionProps<'article'> & {
   headlineText: ReactNode
   overlineText?: ReactNode
   supportingText?: ReactNode
   leadingContent?: ReactNode
   trailingContent?: ReactNode
+  revealTrailingContentOnHover?: boolean
 }
+
+export type MotionVariant = 'hover'
 
 const ListItem = ({
   headlineText,
@@ -18,7 +22,12 @@ const ListItem = ({
   ...props
 }: ListItemProps) => {
   return (
-    <article {...props} css={{ display: 'flex', alignItems: 'center', gap: '0.8rem', padding: '1.3rem 1.6rem' }}>
+    <motion.article
+      animate="initial"
+      whileHover="hover"
+      {...props}
+      css={{ display: 'flex', alignItems: 'center', gap: '0.8rem', padding: '1.3rem 1.6rem' }}
+    >
       {leadingContent && (
         <div css={{ display: 'flex', justifyContent: 'center', justifyItems: 'center' }}>{leadingContent}</div>
       )}
@@ -28,9 +37,17 @@ const ListItem = ({
         {supportingText && <Text.Body as="div">{supportingText}</Text.Body>}
       </header>
       {trailingContent && (
-        <div css={{ display: 'flex', justifyContent: 'center', justifyItems: 'center' }}>{trailingContent}</div>
+        <motion.div
+          variants={{
+            initial: { opacity: props.revealTrailingContentOnHover ? 0 : 1, transition: { duration: 0 } },
+            hover: { opacity: 1 },
+          }}
+          css={{ display: 'flex', justifyContent: 'center', justifyItems: 'center' }}
+        >
+          {trailingContent}
+        </motion.div>
       )}
-    </article>
+    </motion.article>
   )
 }
 
