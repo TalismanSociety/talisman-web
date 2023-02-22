@@ -4,6 +4,7 @@ import { Lock } from '@components/atoms/Icon'
 import Identicon from '@components/atoms/Identicon'
 import Text from '@components/atoms/Text'
 import { useTheme } from '@emotion/react'
+import { ReactComponent as Zap } from '@icons/zap.svg'
 import { shortenAddress } from '@util/format'
 import React, { ReactElement, ReactNode, useMemo } from 'react'
 
@@ -20,6 +21,7 @@ export type ValidatorStakeProps = {
   onRequestUnstake: () => unknown
   unstakeState?: 'unavailable' | 'pending' | 'disabled' | 'in-fast-unstake-queue' | 'head-of-fast-unstake-queue'
   notEarningRewards?: boolean
+  eligibleForFastUnstake?: boolean
   readonly?: boolean
 }
 
@@ -125,11 +127,18 @@ const ValidatorStake = Object.assign(
                   loading={props.unstakeState === 'pending'}
                   hidden={props.unstakeState === 'unavailable' || props.readonly}
                 >
-                  Unstake
+                  {props.eligibleForFastUnstake ? (
+                    <Text css={{ display: 'flex', alignItems: 'center', whiteSpace: 'nowrap' }}>
+                      {' '}
+                      <Zap /> &nbsp; Fast Unstake{' '}
+                    </Text>
+                  ) : (
+                    <Text> Unstake </Text>
+                  )}
                 </Button>
               )
           }
-        }, [props.onRequestUnstake, props.readonly, props.unstakeState])}
+        }, [props.eligibleForFastUnstake, props.onRequestUnstake, props.readonly, props.unstakeState])}
         {/* Dummy buttons to align with nomination pool stake item */}
         <Button
           hidden

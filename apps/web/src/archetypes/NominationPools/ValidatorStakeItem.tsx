@@ -64,6 +64,7 @@ const ValidatorStakeItem = (props: {
             ? 'pending'
             : undefined
         }
+        eligibleForFastUnstake={props.eligibleForFastUnstake}
         readonly={props.account.readonly}
       />
       <ValidatorUnstakeDialog
