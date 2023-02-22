@@ -72,7 +72,7 @@ Default.args = {
             <ListItem
               headlineText="Add account"
               leadingContent={
-                <IconButton>
+                <IconButton as="figure">
                   <Plus />
                 </IconButton>
               }
@@ -101,7 +101,7 @@ Default.args = {
             <ListItem
               headlineText="Add watch only address"
               leadingContent={
-                <IconButton>
+                <IconButton as="figure">
                   <Eye />
                 </IconButton>
               }

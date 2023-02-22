@@ -3,7 +3,7 @@ import Color from 'colorjs.io'
 import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
 
-type IconButtonElementType = Extract<React.ElementType, 'button' | 'a'> | typeof Link
+type IconButtonElementType = Extract<React.ElementType, 'button' | 'a' | 'figure'> | typeof Link
 
 type PolymorphicIconButtonProps<T extends IconButtonElementType> = {
   as?: T
@@ -51,6 +51,8 @@ const IconButton = <T extends IconButtonElementType = 'button'>({
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
+          margin: 0,
+          padding: 0,
           width: size,
           height: size,
           border: 'none',

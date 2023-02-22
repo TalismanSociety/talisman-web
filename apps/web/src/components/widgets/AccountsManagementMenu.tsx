@@ -43,7 +43,12 @@ const AccountsManagementMenu = () => {
   const [buttonIcon, buttonText] = useMemo(() => {
     if ((!isWeb3Injected || !allowExtensionConnection) && readonlyAccounts.length === 0) {
       return [
-        <IconButton size="2.4rem" containerColor={theme.color.foreground} contentColor={theme.color.primary}>
+        <IconButton
+          as="figure"
+          size="2.4rem"
+          containerColor={theme.color.foreground}
+          contentColor={theme.color.primary}
+        >
           <Link />
         </IconButton>,
         'Connect',
@@ -52,7 +57,12 @@ const AccountsManagementMenu = () => {
 
     if (selectedAccount === undefined) {
       return [
-        <IconButton size="2.4rem" containerColor={theme.color.foreground} contentColor={theme.color.primary}>
+        <IconButton
+          as="figure"
+          size="2.4rem"
+          containerColor={theme.color.foreground}
+          contentColor={theme.color.primary}
+        >
           <Users />
         </IconButton>,
         'All accounts',
@@ -72,7 +82,7 @@ const AccountsManagementMenu = () => {
           <Button as="a" variant="noop" href={getDownloadLink()} target="_blank">
             <ListItem
               leadingContent={
-                <IconButton containerColor={theme.color.foreground} contentColor={theme.color.primary}>
+                <IconButton as="figure" containerColor={theme.color.foreground} contentColor={theme.color.primary}>
                   <Download />
                 </IconButton>
               }
@@ -88,7 +98,7 @@ const AccountsManagementMenu = () => {
         <Menu.Item onClick={() => setAllowExtensionConnection(true)}>
           <ListItem
             leadingContent={
-              <IconButton containerColor={theme.color.foreground} contentColor={theme.color.primary}>
+              <IconButton as="figure" containerColor={theme.color.foreground} contentColor={theme.color.primary}>
                 <PlusCircle />
               </IconButton>
             }
@@ -104,7 +114,7 @@ const AccountsManagementMenu = () => {
           headlineText="All accounts"
           overlineText={totalBalance}
           leadingContent={
-            <IconButton containerColor={theme.color.foreground} contentColor={theme.color.primary}>
+            <IconButton as="figure" containerColor={theme.color.foreground} contentColor={theme.color.primary}>
               <Users />
             </IconButton>
           }
@@ -208,7 +218,7 @@ const AccountsManagementMenu = () => {
                   <ListItem
                     headlineText="Add watch only address"
                     leadingContent={
-                      <IconButton>
+                      <IconButton as="figure">
                         <Eye />
                       </IconButton>
                     }
