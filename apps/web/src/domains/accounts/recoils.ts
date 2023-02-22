@@ -1,5 +1,6 @@
 import { storageEffect } from '@domains/common/effects'
 import type { InjectedAccount } from '@polkadot/extension-inject/types'
+import { array, jsonParser, object, optional, string } from '@recoiljs/refine'
 import { ethers } from 'ethers'
 import { DefaultValue, atom, selector, waitForAll } from 'recoil'
 
@@ -22,7 +23,18 @@ export const injectedSubstrateAccountsState = selector({
 const _readOnlyAccountsState = atom<ReadonlyAccount[]>({
   key: 'readonly_accounts',
   default: [],
-  effects: [storageEffect(localStorage)],
+  effects: [
+    storageEffect(localStorage, {
+      parser: jsonParser(
+        array(
+          object({
+            address: string(),
+            name: optional(string()),
+          })
+        )
+      ),
+    }),
+  ],
 })
 
 export const readOnlyAccountsState = selector<Account[]>({

@@ -1,13 +1,25 @@
+import { JSONParser } from '@recoiljs/refine'
+import { isNil } from 'lodash'
 import { AtomEffect } from 'recoil'
 
 export const storageEffect =
-  <T>(storage: Storage, key?: string): AtomEffect<T> =>
+  <TValue, TParsedValue extends TValue>(
+    storage: Storage,
+    options?: { key?: string; parser?: JSONParser<Readonly<TParsedValue> | null | undefined> }
+  ): AtomEffect<TValue> =>
   ({ node, setSelf, onSet }) => {
-    const storageKey = key ?? node.key
+    const storageKey = options?.key ?? node.key
     const savedValue = storage.getItem(node.key)
 
     if (savedValue !== null) {
-      setSelf(JSON.parse(savedValue))
+      if (options?.parser !== undefined) {
+        const value = options.parser(savedValue)
+        if (!isNil(value)) {
+          setSelf(value)
+        }
+      } else {
+        setSelf(JSON.parse(savedValue))
+      }
     }
 
     onSet((newValue, _, isReset) => {
