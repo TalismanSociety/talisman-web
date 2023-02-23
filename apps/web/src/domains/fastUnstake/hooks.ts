@@ -2,7 +2,7 @@ import { substrateAccountsState } from '@domains/accounts/recoils'
 import { chainIdState, chainRpcState } from '@domains/chains/recoils'
 import { useChainState } from '@domains/common/hooks'
 import { array, assertion, jsonParser, number, object, string } from '@recoiljs/refine'
-import { createWorkerFactory } from '@shopify/web-worker'
+import { createWorkerFactory, terminate } from '@shopify/web-worker'
 import { isNil } from 'lodash'
 import { useMemo } from 'react'
 import { RecoilLoadable, constSelector, selectorFamily, useRecoilValue, useRecoilValueLoadable } from 'recoil'
@@ -34,6 +34,7 @@ const exposedAccountsState = selectorFamily({
 
       const worker = createWorker()
       const exposed = await worker.getExposedAccounts(get(chainRpcState), activeEra)
+      terminate(worker)
 
       sessionStorage.setItem(
         STORAGE_KEY,
