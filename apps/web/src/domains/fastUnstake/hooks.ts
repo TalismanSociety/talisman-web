@@ -1,19 +1,15 @@
 import { substrateAccountsState } from '@domains/accounts/recoils'
 import { chainIdState, chainRpcState } from '@domains/chains/recoils'
 import { useChainState } from '@domains/common/hooks'
-import { ApiPromise, WsProvider } from '@polkadot/api'
 import { array, assertion, jsonParser, number, object, string } from '@recoiljs/refine'
+import { createWorkerFactory } from '@shopify/web-worker'
 import { isNil } from 'lodash'
-import { range } from 'lodash/fp'
 import { useMemo } from 'react'
-import { RecoilLoadable, constSelector, selector, selectorFamily, useRecoilValue, useRecoilValueLoadable } from 'recoil'
+import { RecoilLoadable, constSelector, selectorFamily, useRecoilValue, useRecoilValueLoadable } from 'recoil'
+
 const STORAGE_KEY = 'fast-unstake-exposure'
 
-// Can't re-use global api because fast unstake eligibility check is very resource intensive and will congest all other subscriptions
-const fastUnstakeApiState = selector({
-  key: 'FastUnstakeApi',
-  get: ({ get }) => ApiPromise.create({ provider: new WsProvider(get(chainRpcState)) }),
-})
+const createWorker = createWorkerFactory(() => import('./worker'))
 
 const fastUnstakeExposureChecker = object({
   network: string(),
@@ -36,17 +32,8 @@ const exposedAccountsState = selectorFamily({
         return new Set(storedValue.exposed)
       }
 
-      const api = get(fastUnstakeApiState)
-      const startEraToCheck = activeEra - api.consts.staking.bondingDuration.toNumber()
-
-      const exposed = await Promise.all(
-        range(startEraToCheck, activeEra).map(era =>
-          api.query.staking.erasStakers
-            .entries(era)
-            .then(x => x.flatMap(([_, exposure]) => exposure.others.flatMap(({ who }) => who.toString())))
-            .then(array => new Set(array))
-        )
-      ).then(x => x.reduce((prev, curr) => new Set([...prev, ...curr])))
+      const worker = createWorker()
+      const exposed = await worker.getExposedAccounts(get(chainRpcState), activeEra)
 
       sessionStorage.setItem(
         STORAGE_KEY,
