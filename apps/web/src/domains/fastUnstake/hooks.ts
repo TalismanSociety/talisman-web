@@ -68,7 +68,7 @@ export const useFastUnstakeEligibleAccounts = () => {
   const erasToCheckPerBlock = useChainState('query', 'fastUnstake', 'erasToCheckPerBlock', [])
 
   // Only check when some accounts has no active nominations & when fast unstaking is enalbed
-  const shouldCheckForFastUnstake = !erasToCheckPerBlock.valueMaybe()?.isZero()
+  const shouldCheckForFastUnstake = erasToCheckPerBlock.valueMaybe()?.isZero() === false
 
   const exposedAccountsLoadable = useExposedAccounts({ enabled: shouldCheckForFastUnstake })
   const ledgersLoadable = useChainState(
