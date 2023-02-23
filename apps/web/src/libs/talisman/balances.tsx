@@ -1,6 +1,6 @@
 import { useAllAccountAddresses } from '@libs/talisman'
 import { AddressesByToken, Balances } from '@talismn/balances'
-import { useBalances as _useBalances, useAllAddresses, useChaindata, useTokens } from '@talismn/balances-react'
+import { useBalances as _useBalances, useAllAddresses, useTokens } from '@talismn/balances-react'
 import { Token } from '@talismn/chaindata-provider'
 import { isNil } from 'lodash'
 import { PropsWithChildren, createContext, useContext, useEffect, useMemo } from 'react'
@@ -38,7 +38,6 @@ function useBalanceContext() {
 //
 
 export const Provider = ({ children }: PropsWithChildren) => {
-  const chaindata = useChaindata()
   const addresses = useAllAccountAddresses()
   const [, setAllAddresses] = useAllAddresses()
   useEffect(() => setAllAddresses(addresses ?? []), [addresses, setAllAddresses])
@@ -58,10 +57,14 @@ export const Provider = ({ children }: PropsWithChildren) => {
 
   const assetsOverallValue = balances?.sum.fiat('usd').total ?? 0
 
-  const value = useMemo(
-    () => ({ balances, assetsTransferable, tokenIds, tokens, chaindata, assetsOverallValue }),
-    [balances, assetsTransferable, tokenIds, tokens, chaindata, assetsOverallValue]
+  return (
+    <Context.Provider
+      value={useMemo(
+        () => ({ balances, assetsTransferable, assetsOverallValue }),
+        [balances, assetsTransferable, assetsOverallValue]
+      )}
+    >
+      {children}
+    </Context.Provider>
   )
-
-  return <Context.Provider value={value}>{children}</Context.Provider>
 }
