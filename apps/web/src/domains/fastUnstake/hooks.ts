@@ -1,5 +1,5 @@
 import { substrateAccountsState } from '@domains/accounts/recoils'
-import { chainIdState, chainRpcState } from '@domains/chains/recoils'
+import { chainIdState, chainsState } from '@domains/chains/recoils'
 import { useChainState } from '@domains/common/hooks'
 import { array, assertion, jsonParser, number, object, string } from '@recoiljs/refine'
 import { isNil } from 'lodash'
@@ -24,23 +24,32 @@ const fastUnstakeExposureJsonParser = jsonParser(fastUnstakeExposureChecker)
 const exposedAccountsState = selectorFamily({
   key: 'ExposedAccount',
   get:
-    (activeEra: number) =>
+    ({ chainId, activeEra }: { chainId: string; activeEra: number }) =>
     async ({ get }) => {
+      const chain = get(chainsState).find(x => x.id === chainId)
+
+      if (chain === undefined) {
+        throw new Error(`No chain found with id ${chainId}`)
+      }
+
       const storedValue = fastUnstakeExposureJsonParser(sessionStorage.getItem(STORAGE_KEY))
 
-      if (!isNil(storedValue) && storedValue.era === activeEra && storedValue.network === get(chainIdState)) {
+      if (!isNil(storedValue) && storedValue.era === activeEra && storedValue.network === chainId) {
         return new Set(storedValue.exposed)
       }
 
       const worker = await spawn<WorkerModule>(new Worker(new URL('./worker', import.meta.url)))
-      const exposed = await worker.getExposedAccounts(get(chainRpcState), activeEra)
+      const exposed = await worker.getExposedAccounts(
+        chain.rpcs.map(x => x.url),
+        activeEra
+      )
 
       Thread.terminate(worker)
 
       sessionStorage.setItem(
         STORAGE_KEY,
         JSON.stringify(
-          fastUnstakeExposureAsssertion({ network: get(chainIdState), era: activeEra, exposed: Array.from(exposed) })
+          fastUnstakeExposureAsssertion({ network: chainId, era: activeEra, exposed: Array.from(exposed) })
         )
       )
 
@@ -50,12 +59,13 @@ const exposedAccountsState = selectorFamily({
 })
 
 export const useExposedAccounts = (options?: { enabled?: boolean } | undefined) => {
+  const chainId = useRecoilValue(chainIdState)
   const activeEra = useChainState('query', 'staking', 'activeEra', [], { enabled: options?.enabled })
 
   const loadable = useRecoilValueLoadable(
     activeEra.state !== 'hasValue'
       ? constSelector(new Set([]))
-      : exposedAccountsState(activeEra.contents.unwrapOrDefault().index.toNumber())
+      : exposedAccountsState({ chainId, activeEra: activeEra.contents.unwrapOrDefault().index.toNumber() })
   )
 
   if (activeEra.state !== 'hasValue') {

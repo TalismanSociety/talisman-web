@@ -48,7 +48,7 @@ export const useChainState = <
   const api = useRecoilValue(apiState)
 
   const { promise, resolve, reject } = useDeferred<TResult>(
-    options.keepPreviousData ? undefined : [typeName, moduleName, sectionName, JSON.stringify(params)]
+    options.keepPreviousData ? undefined : [api, typeName, moduleName, sectionName, JSON.stringify(params)]
   )
 
   // Reference to be compared, to prevent old promise from resolving after new one
