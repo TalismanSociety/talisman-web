@@ -2,14 +2,14 @@ import { substrateAccountsState } from '@domains/accounts/recoils'
 import { chainIdState, chainRpcState } from '@domains/chains/recoils'
 import { useChainState } from '@domains/common/hooks'
 import { array, assertion, jsonParser, number, object, string } from '@recoiljs/refine'
-import { createWorkerFactory, terminate } from '@shopify/web-worker'
 import { isNil } from 'lodash'
 import { useMemo } from 'react'
 import { RecoilLoadable, constSelector, selectorFamily, useRecoilValue, useRecoilValueLoadable } from 'recoil'
+import { Thread, spawn } from 'threads'
+
+import { WorkerModule } from './worker'
 
 const STORAGE_KEY = 'fast-unstake-exposure'
-
-const createWorker = createWorkerFactory(() => import('./worker'))
 
 const fastUnstakeExposureChecker = object({
   network: string(),
@@ -32,14 +32,15 @@ const exposedAccountsState = selectorFamily({
         return new Set(storedValue.exposed)
       }
 
-      const worker = createWorker()
+      const worker = await spawn<WorkerModule>(new Worker(new URL('./worker', import.meta.url)))
       const exposed = await worker.getExposedAccounts(get(chainRpcState), activeEra)
-      terminate(worker)
+
+      Thread.terminate(worker)
 
       sessionStorage.setItem(
         STORAGE_KEY,
         JSON.stringify(
-          fastUnstakeExposureAsssertion({ network: get(chainIdState), era: activeEra, exposed: [...exposed] })
+          fastUnstakeExposureAsssertion({ network: get(chainIdState), era: activeEra, exposed: Array.from(exposed) })
         )
       )
 
