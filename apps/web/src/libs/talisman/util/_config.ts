@@ -13,6 +13,7 @@ export type Relaychain = {
   subscanUrl: string
   tokenDecimals: number
   tokenSymbol: string
+  coingeckoId: string
   blockPeriod: number
 }
 
@@ -26,6 +27,7 @@ export const SupportedRelaychains: { [key: number | string]: Relaychain } = {
     subscanUrl: 'https://polkadot.subscan.io',
     tokenDecimals: 10,
     tokenSymbol: 'DOT',
+    coingeckoId: 'polkadot',
     blockPeriod: 6,
   },
   2: {
@@ -36,6 +38,7 @@ export const SupportedRelaychains: { [key: number | string]: Relaychain } = {
     subscanUrl: 'https://kusama.subscan.io',
     tokenDecimals: 12,
     tokenSymbol: 'KSM',
+    coingeckoId: 'kusama',
     blockPeriod: 6,
   },
 }

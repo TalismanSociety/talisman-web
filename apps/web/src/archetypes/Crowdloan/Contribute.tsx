@@ -4,15 +4,16 @@ import { Button, DesktopRequired, Field, MaterialLoader, Pendor, useModal } from
 import { TalismanHandLike } from '@components/TalismanHandLike'
 import { TalismanHandLoader } from '@components/TalismanHandLoader'
 import AccountSelector from '@components/widgets/AccountSelector'
+import { tokenPriceState } from '@domains/chains/recoils'
 import styled from '@emotion/styled'
 import { ContributeEvent, useCrowdloanContribute } from '@libs/crowdloans'
 import { Acala, Moonbeam, Polkadex, overrideByIds } from '@libs/crowdloans/crowdloanOverrides'
 import { useCrowdloanById } from '@libs/talisman'
-import { useTokenPrice } from '@libs/tokenprices'
 import { formatCurrency, isMobileBrowser, truncateString } from '@util/helpers'
 import BigNumber from 'bignumber.js'
 import { MouseEventHandler, useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useRecoilValueLoadable } from 'recoil'
 
 export type ContributeProps = {
   className?: string
@@ -107,6 +108,7 @@ const ContributeTo = styled(
 
     relayChainId,
     relayNativeToken,
+    coinGeckoId,
     parachainId,
     parachainName,
 
@@ -123,7 +125,11 @@ const ContributeTo = styled(
 
     const [chainHasTerms, termsAgreed, onTermsCheckboxClick] = useTerms(relayChainId, parachainId)
 
-    const { price: tokenPrice, loading: priceLoading } = useTokenPrice(relayNativeToken)
+    const priceLoadable = useRecoilValueLoadable(tokenPriceState({ coingeckoId: coinGeckoId!, fiat: 'usd' }))
+
+    const tokenPrice = priceLoadable.valueMaybe()?.toString()
+    const priceLoading = priceLoadable.state === 'loading'
+
     const usd = useMemo(
       () =>
         !Number.isNaN(Number(contributionAmount)) &&

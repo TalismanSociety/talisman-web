@@ -45,6 +45,25 @@ export const chainState = selector({
   },
 })
 
+export const tokenPriceState = selectorFamily({
+  key: 'TokenPrice',
+  get:
+    ({ coingeckoId, fiat }: { coingeckoId: string; fiat: string }) =>
+    async () => {
+      try {
+        const result = await fetch(
+          `https://api.coingecko.com/api/v3/simple/price?ids=${coingeckoId}&vs_currencies=${fiat}`
+        ).then(x => x.json())
+
+        return result[coingeckoId][fiat] as number
+      } catch {
+        // Coingecko has rate limit, better to return 0 than to crash the session
+        // TODO: find alternative or purchase Coingecko subscription
+        return 0
+      }
+    },
+})
+
 export const nativeTokenPriceState = selectorFamily({
   key: 'NativeTokenPrice',
   get:
@@ -54,21 +73,11 @@ export const nativeTokenPriceState = selectorFamily({
 
       if (chain.isTestnet) return 1
 
-      try {
-        if (chain.nativeToken.coingeckoId === undefined) {
-          return 0
-        }
-
-        const result = await fetch(
-          `https://api.coingecko.com/api/v3/simple/price?ids=${chain.nativeToken.coingeckoId}&vs_currencies=${fiat}`
-        ).then(x => x.json())
-
-        return result[chain.nativeToken.coingeckoId][fiat] as number
-      } catch {
-        // Coingecko has rate limit, better to return 0 than to crash the session
-        // TODO: find alternative or purchase Coingecko subscription
+      if (chain.nativeToken.coingeckoId === undefined) {
         return 0
       }
+
+      return get(tokenPriceState({ coingeckoId: chain.nativeToken.coingeckoId, fiat }))
     },
 })
 

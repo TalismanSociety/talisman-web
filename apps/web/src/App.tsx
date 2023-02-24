@@ -12,7 +12,6 @@ import NftProvider from '@libs/@talisman-nft/provider'
 import * as MoonbeamContributors from '@libs/moonbeam-contributors'
 import * as Portfolio from '@libs/portfolio'
 import TalismanProvider from '@libs/talisman'
-import * as Tokenprices from '@libs/tokenprices'
 import router from '@routes'
 import posthog from 'posthog-js'
 import React, { Suspense } from 'react'
@@ -51,23 +50,21 @@ const App: React.FC = () => (
     <ErrorBoundary>
       <RecoilRoot>
         <Portfolio.Provider>
-          <Tokenprices.Provider>
-            <TalismanProvider>
-              <ExtensionWatcher />
-              <LegacyBalancesWatcher />
-              <MoonbeamContributors.Provider>
-                <Development />
-                <Suspense fallback={<Loader />}>
-                  <NftProvider />
-                  <RouterProvider router={router} />
-                  <Toaster position="top-right" containerStyle={{ top: '6.4rem' }}>
-                    {t => <ToastBar toast={t} />}
-                  </Toaster>
-                  <CookieBanner />
-                </Suspense>
-              </MoonbeamContributors.Provider>
-            </TalismanProvider>
-          </Tokenprices.Provider>
+          <TalismanProvider>
+            <ExtensionWatcher />
+            <LegacyBalancesWatcher />
+            <MoonbeamContributors.Provider>
+              <Development />
+              <Suspense fallback={<Loader />}>
+                <NftProvider />
+                <RouterProvider router={router} />
+                <Toaster position="top-right" containerStyle={{ top: '6.4rem' }}>
+                  {t => <ToastBar toast={t} />}
+                </Toaster>
+                <CookieBanner />
+              </Suspense>
+            </MoonbeamContributors.Provider>
+          </TalismanProvider>
         </Portfolio.Provider>
       </RecoilRoot>
     </ErrorBoundary>
