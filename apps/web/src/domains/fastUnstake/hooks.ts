@@ -26,7 +26,7 @@ const eraExposedAccountsState = selectorFamily({
     async ({ get }) =>
       get(fastUnstakeApiState)
         .query.staking.erasStakers.entries(era)
-        .then(x => x.flatMap(([_, exposure]) => exposure.others.flatMap(({ who }) => who.toString())))
+        .then(x => x.flatMap(([_, exposure]) => (exposure as any).others.flatMap(({ who }: any) => who.toString())))
         .then(array => new Set(array)),
 })
 

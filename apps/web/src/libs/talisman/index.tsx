@@ -1,3 +1,5 @@
+import { balanceModules } from '@talismn/balances-default-modules'
+import { BalancesProvider } from '@talismn/balances-react'
 import { PropsWithChildren } from 'react'
 
 import * as Chainmeta from './chainmeta'
@@ -38,9 +40,14 @@ export const useChainByGenesis = _useChainByGenesis
 const Provider = ({ children }: PropsWithChildren) => (
   <Extension.Provider>
     <Chainmeta.Provider>
-      <Parachain.Provider>
-        <Crowdloan.Provider>{children}</Crowdloan.Provider>
-      </Parachain.Provider>
+      <BalancesProvider
+        balanceModules={balanceModules}
+        onfinalityApiKey={process.env.REACT_APP_ONFINALITY_API_KEY ?? undefined}
+      >
+        <Parachain.Provider>
+          <Crowdloan.Provider>{children}</Crowdloan.Provider>
+        </Parachain.Provider>
+      </BalancesProvider>
     </Chainmeta.Provider>
   </Extension.Provider>
 )

@@ -57,6 +57,8 @@ export const useValidatorUnstakeForm = (account?: string) => {
 
         return unbondAllExtrinsic.signAndSend(account, [
           [],
+          // @ts-ignore
+          // Internal @polkadot type error
           [queriesLoadable.valueMaybe()?.[1].unwrapOrDefault().active ?? 0],
         ])
       },

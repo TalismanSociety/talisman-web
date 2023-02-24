@@ -2,7 +2,6 @@
 
 import { accountsState, injectedAccountsState, selectedAccountsState } from '@domains/accounts/recoils'
 import { Balances } from '@talismn/balances'
-import { balanceModules } from '@talismn/balances-default-modules'
 import { useBalances as _useBalances, useChaindata, useTokens } from '@talismn/balances-react'
 import { ChaindataProvider, TokenList } from '@talismn/chaindata-provider'
 import { groupBy, isNil } from 'lodash'
@@ -15,7 +14,7 @@ export type LegacyBalances = {
   assetsOverallValue: number
   tokenIds: string[]
   tokens: TokenList | any
-  chaindata: (ChaindataProvider & { generation?: number | undefined }) | null
+  chaindata: (ChaindataProvider & { generation?: number | undefined }) | undefined
 }
 
 export const legacyBalancesState = atom<LegacyBalances>({
@@ -26,7 +25,7 @@ export const legacyBalancesState = atom<LegacyBalances>({
     assetsOverallValue: 0,
     tokenIds: [],
     tokens: [],
-    chaindata: null,
+    chaindata: undefined,
   },
   dangerouslyAllowMutability: true,
 })
@@ -60,11 +59,11 @@ export const totalLocalizedFiatBalanceState = selector({
 export const LegacyBalancesWatcher = () => {
   const setLegacyBalances = useSetRecoilState(legacyBalancesState)
 
-  const chaindata = useChaindata({ onfinalityApiKey: process.env.REACT_APP_ONFINALITY_API_KEY })
+  const chaindata = useChaindata()
   const accounts = useRecoilValue(accountsState)
   const addresses = useMemo(() => accounts.map(x => x.address), [accounts])
 
-  const tokens = useTokens(chaindata)
+  const tokens = useTokens()
 
   const tokenIds = useMemo(
     () =>
@@ -84,17 +83,7 @@ export const LegacyBalancesWatcher = () => {
     [JSON.stringify(addresses), JSON.stringify(tokenIds)]
   )
 
-  const balances = _useBalances(
-    balanceModules,
-    chaindata,
-    addressesByToken,
-    useMemo(
-      () => ({
-        onfinalityApiKey: process.env.REACT_APP_ONFINALITY_API_KEY,
-      }),
-      []
-    )
-  )
+  const balances = _useBalances(addressesByToken)
 
   const selectedAccounts = useRecoilValue(selectedAccountsState)
   const selectedAddresses = useMemo(() => selectedAccounts.map(x => x.address), [selectedAccounts])

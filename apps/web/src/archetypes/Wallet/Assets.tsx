@@ -4,8 +4,8 @@ import { useLegacyBalances } from '@domains/balances/hooks'
 import styled from '@emotion/styled'
 import { ReactComponent as Loader } from '@icons/loader.svg'
 import { Balance, BalanceFormatter, Balances } from '@talismn/balances'
-import { useChaindata, useChains, useEvmNetworks } from '@talismn/balances-react'
-import { Token } from '@talismn/chaindata-provider'
+import { useChains, useEvmNetworks, useTokens } from '@talismn/balances-react'
+import { Token, TokenList } from '@talismn/chaindata-provider'
 import { formatDecimals } from '@talismn/util'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -86,12 +86,12 @@ const AssetBalance = styled(({ token, balances, address }: AssetBalanceProps) =>
 const Assets = styled(({ className }: { className?: string }) => {
   const { t } = useTranslation()
 
-  const { balances, tokenIds, tokens, assetsTransferable } = useLegacyBalances()
+  const { balances, assetsTransferable } = useLegacyBalances()
   const address = useRecoilValue(legacySelectedAccountState)?.address
-  const chaindata = useChaindata({ onfinalityApiKey: process.env.REACT_APP_ONFINALITY_API_KEY })
 
-  const chains = useChains(chaindata)
-  const evmNetworks = useEvmNetworks(chaindata)
+  const chains = useChains()
+  const evmNetworks = useEvmNetworks()
+  const tokens = useTokens() as TokenList
 
   const fiatTotal =
     address !== undefined
@@ -106,8 +106,7 @@ const Assets = styled(({ className }: { className?: string }) => {
 
   const assetBalances = useMemo(
     () =>
-      tokenIds
-        .map(tokenId => tokens[tokenId])
+      Object.values(tokens)
         .sort((a, b) => {
           // TODO: Move token sorting into the chaindata subsquid indexer
           if (a.chain?.id === 'polkadot' && b.chain?.id !== 'polkadot') return -1
@@ -140,7 +139,7 @@ const Assets = styled(({ className }: { className?: string }) => {
           return aCmp.localeCompare(bCmp)
         })
         .map(token => <AssetBalance key={token.id} token={token} balances={balances} address={address} />),
-    [address, balances, chains, evmNetworks, tokenIds, tokens]
+    [address, balances, chains, evmNetworks, tokens]
   )
 
   return (
@@ -151,30 +150,34 @@ const Assets = styled(({ className }: { className?: string }) => {
           {value === 0 && address ? (
             <>
               <PanelSection>
-                <AssetItem
-                  token={tokens['kusama-substrate-native-ksm']}
-                  tokenAmount={'0'}
-                  fiatAmount={(0).toLocaleString(undefined, {
-                    style: 'currency',
-                    currency: 'USD',
-                    currencyDisplay: 'narrowSymbol',
-                  })}
-                  title={tokens['kusama-substrate-native-ksm'].symbol}
-                  subtitle={'Relay Chain'}
-                />
+                {tokens['kusama-substrate-native-ksm'] && (
+                  <AssetItem
+                    token={tokens['kusama-substrate-native-ksm']}
+                    tokenAmount={'0'}
+                    fiatAmount={(0).toLocaleString(undefined, {
+                      style: 'currency',
+                      currency: 'USD',
+                      currencyDisplay: 'narrowSymbol',
+                    })}
+                    title={tokens['kusama-substrate-native-ksm'].symbol}
+                    subtitle={'Relay Chain'}
+                  />
+                )}
               </PanelSection>
               <PanelSection>
-                <AssetItem
-                  token={tokens['polkadot-substrate-native-dot']}
-                  tokenAmount={'0'}
-                  fiatAmount={(0).toLocaleString(undefined, {
-                    style: 'currency',
-                    currency: 'USD',
-                    currencyDisplay: 'narrowSymbol',
-                  })}
-                  title={tokens['polkadot-substrate-native-dot'].symbol}
-                  subtitle={'Relay Chain'}
-                />
+                {tokens['polkadot-substrate-native-dot'] && (
+                  <AssetItem
+                    token={tokens['polkadot-substrate-native-dot']}
+                    tokenAmount={'0'}
+                    fiatAmount={(0).toLocaleString(undefined, {
+                      style: 'currency',
+                      currency: 'USD',
+                      currencyDisplay: 'narrowSymbol',
+                    })}
+                    title={tokens['polkadot-substrate-native-dot'].symbol}
+                    subtitle={'Relay Chain'}
+                  />
+                )}
               </PanelSection>
             </>
           ) : null}
