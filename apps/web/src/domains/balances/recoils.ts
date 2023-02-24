@@ -2,7 +2,7 @@
 
 import { accountsState, injectedAccountsState, selectedAccountsState } from '@domains/accounts/recoils'
 import { Balances } from '@talismn/balances'
-import { useBalances as _useBalances, useChaindata, useTokens } from '@talismn/balances-react'
+import { useBalances as _useBalances, useAllAddresses, useChaindata, useTokens } from '@talismn/balances-react'
 import { ChaindataProvider, TokenList } from '@talismn/chaindata-provider'
 import { groupBy, isNil } from 'lodash'
 import { useEffect, useMemo } from 'react'
@@ -63,16 +63,11 @@ export const LegacyBalancesWatcher = () => {
   const accounts = useRecoilValue(accountsState)
   const addresses = useMemo(() => accounts.map(x => x.address), [accounts])
 
-  const tokens = useTokens()
+  const [, setAllAddresses] = useAllAddresses()
+  useEffect(() => setAllAddresses(addresses ?? []), [addresses, setAllAddresses])
 
-  const tokenIds = useMemo(
-    () =>
-      Object.values(tokens)
-        // filter out testnet tokens
-        .filter(({ isTestnet }) => !isTestnet)
-        .map(({ id }) => id),
-    [tokens]
-  )
+  const tokens = useTokens()
+  const tokenIds = useMemo(() => Object.values(tokens).map(({ id }) => id), [tokens])
 
   const addressesByToken = useMemo(
     () => {
@@ -101,10 +96,8 @@ export const LegacyBalancesWatcher = () => {
     return new Balances(selectedBalances)
   }, [balances, balancesGroupByAddress, selectedAddresses])
 
-  const assetsAmount = selectedBalances?.sum.fiat('usd').transferable ?? 0
-
   const assetsTransferable =
-    assetsAmount.toLocaleString(undefined, {
+    (selectedBalances?.sum.fiat('usd').transferable ?? 0).toLocaleString(undefined, {
       style: 'currency',
       currency: 'USD',
       currencyDisplay: 'narrowSymbol',
@@ -123,7 +116,7 @@ export const LegacyBalancesWatcher = () => {
 
   const setFiatBalances = useSetRecoilState(fiatBalancesState)
 
-  const AddressesFiatBalance = useMemo(() => {
+  const addressesFiatBalance = useMemo(() => {
     Object.fromEntries(
       Object.entries(groupBy(selectedBalances?.sorted, 'address')).map(([key, value]) => [
         key,
@@ -149,7 +142,7 @@ export const LegacyBalancesWatcher = () => {
     },
     // not doing this will cause constant re-render
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [balances, JSON.stringify(AddressesFiatBalance)]
+    [balances, JSON.stringify(addressesFiatBalance)]
   )
 
   return null
