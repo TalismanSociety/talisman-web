@@ -1,6 +1,6 @@
 // TODO: nuke everything and re-write balances lib integration
 
-import { accountsState, selectedAccountsState } from '@domains/accounts/recoils'
+import { accountsState, injectedAccountsState, selectedAccountsState } from '@domains/accounts/recoils'
 import { Balances } from '@talismn/balances'
 import { balanceModules } from '@talismn/balances-default-modules'
 import { useBalances as _useBalances, useChaindata, useTokens } from '@talismn/balances-react'
@@ -31,24 +31,30 @@ export const legacyBalancesState = atom<LegacyBalances>({
   dangerouslyAllowMutability: true,
 })
 
-export const totalFiatBalanceState = selector({
-  key: 'TotalFiatBalance',
-  get: ({ get }) => get(legacyBalancesState).assetsOverallValue,
+export const fiatBalancesState = atom<Record<string, number>>({
+  key: 'FiatBalances',
+})
+
+export const totalInjectedAccountsFiatBalance = selector({
+  key: 'TotalInjectedAccountsFiatBalance',
+  get: ({ get }) => {
+    const injecteds = get(injectedAccountsState).map(x => x.address)
+    const fiatBalances = get(fiatBalancesState)
+
+    return Object.entries(fiatBalances)
+      .filter(([key]) => injecteds.includes(key))
+      .reduce((previous, current) => previous + current[1], 0)
+  },
 })
 
 export const totalLocalizedFiatBalanceState = selector({
   key: 'TotalLocalizedFiatBalanceState',
   get: ({ get }) =>
-    get(totalFiatBalanceState).toLocaleString(undefined, {
+    get(totalInjectedAccountsFiatBalance).toLocaleString(undefined, {
       style: 'currency',
       currency: 'usd',
       currencyDisplay: 'narrowSymbol',
     }),
-})
-
-export const fiatBalancesState = atom({
-  key: 'FiatBalances',
-  default: {} as Record<string, number>,
 })
 
 export const LegacyBalancesWatcher = () => {
@@ -95,12 +101,16 @@ export const LegacyBalancesWatcher = () => {
 
   const balancesGroupByAddress = useMemo(() => groupBy(balances?.sorted, 'address'), [balances?.sorted])
   const selectedBalances = useMemo(() => {
-    const balances = Object.entries(balancesGroupByAddress)
+    if (balances === undefined) {
+      return
+    }
+
+    const selectedBalances = Object.entries(balancesGroupByAddress)
       .filter(([address]) => selectedAddresses.includes(address))
       .flatMap(x => x[1])
 
-    return new Balances(balances)
-  }, [balancesGroupByAddress, selectedAddresses])
+    return new Balances(selectedBalances)
+  }, [balances, balancesGroupByAddress, selectedAddresses])
 
   const assetsAmount = selectedBalances?.sum.fiat('usd').transferable ?? 0
 
@@ -124,22 +134,24 @@ export const LegacyBalancesWatcher = () => {
 
   const setFiatBalances = useSetRecoilState(fiatBalancesState)
 
-  const AddressesFiatBalance = useMemo(
-    () =>
-      Object.fromEntries(
-        Object.entries(groupBy(selectedBalances?.sorted ?? [], 'address')).map(([key, value]) => [
-          key,
-          value.reduce((previous, current) => previous + (current.total.fiat('usd') ?? 0), 0),
-        ])
-      ),
-    [selectedBalances?.sorted]
-  )
+  const AddressesFiatBalance = useMemo(() => {
+    Object.fromEntries(
+      Object.entries(groupBy(selectedBalances?.sorted, 'address')).map(([key, value]) => [
+        key,
+        value.reduce((previous, current) => previous + (current.total.fiat('usd') ?? 0), 0),
+      ])
+    )
+  }, [selectedBalances])
 
   useEffect(
     () => {
+      if (balances === undefined) {
+        return
+      }
+
       setFiatBalances(
         Object.fromEntries(
-          Object.entries(groupBy(balances?.sorted ?? [], 'address')).map(([key, value]) => [
+          Object.entries(groupBy(balances.sorted ?? [], 'address')).map(([key, value]) => [
             key,
             value.reduce((previous, current) => previous + (current.total.fiat('usd') ?? 0), 0),
           ])
@@ -148,7 +160,7 @@ export const LegacyBalancesWatcher = () => {
     },
     // not doing this will cause constant re-render
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [JSON.stringify(AddressesFiatBalance)]
+    [balances, JSON.stringify(AddressesFiatBalance)]
   )
 
   return null

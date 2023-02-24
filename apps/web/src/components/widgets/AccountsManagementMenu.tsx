@@ -1,4 +1,5 @@
 import Button from '@components/atoms/Button'
+import CircularProgressIndicator from '@components/atoms/CircularProgressIndicator'
 import { ChevronDown, Download, Eye, Link, PlusCircle, Trash2, Union, Users } from '@components/atoms/Icon'
 import IconButton from '@components/atoms/IconButton'
 import Identicon from '@components/atoms/Identicon'
@@ -19,7 +20,7 @@ import { shortenAddress } from '@util/format'
 import getDownloadLink from '@util/getDownloadLink'
 import { motion } from 'framer-motion'
 import { useMemo } from 'react'
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil'
+import { useRecoilState, useRecoilValue, useRecoilValueLoadable, useSetRecoilState } from 'recoil'
 
 import AddReadOnlyAccountDialog from './AddReadOnlyAccountDialog'
 import RemoveWatchedAccountConfirmationDialog from './RemoveWatchedAccountConfirmationDialog'
@@ -29,14 +30,14 @@ const AnimatedChevron = motion(ChevronDown)
 const AccountsManagementMenu = () => {
   const theme = useTheme()
 
-  const totalBalance = useRecoilValue(totalLocalizedFiatBalanceState)
+  const totalBalance = useRecoilValueLoadable(totalLocalizedFiatBalanceState)
 
   const setSelectedAccountAddresses = useSetRecoilState(selectedAccountAddressesState)
   const selectedAccount = useRecoilValue(legacySelectedAccountState)
   const injectedAccounts = useRecoilValue(injectedAccountsState)
   const readonlyAccounts = useRecoilValue(readOnlyAccountsState)
 
-  const fiatBalances = useRecoilValue(fiatBalancesState)
+  const fiatBalances = useRecoilValueLoadable(fiatBalancesState)
 
   const [allowExtensionConnection, setAllowExtensionConnection] = useRecoilState(allowExtensionConnectionState)
 
@@ -112,7 +113,7 @@ const AccountsManagementMenu = () => {
       <Menu.Item onClick={() => setSelectedAccountAddresses(undefined)}>
         <ListItem
           headlineText="All accounts"
-          overlineText={totalBalance}
+          overlineText={totalBalance.valueMaybe() ?? <CircularProgressIndicator size="1em" />}
           leadingContent={
             <IconButton as="figure" containerColor={theme.color.foreground} contentColor={theme.color.primary}>
               <Users />
@@ -166,11 +167,13 @@ const AccountsManagementMenu = () => {
               <Menu.Item onClick={() => setSelectedAccountAddresses(() => [x.address])}>
                 <ListItem
                   headlineText={x.name ?? shortenAddress(x.address)}
-                  overlineText={fiatBalances[x.address]?.toLocaleString(undefined, {
-                    style: 'currency',
-                    currency: 'usd',
-                    currencyDisplay: 'narrowSymbol',
-                  })}
+                  overlineText={
+                    fiatBalances.valueMaybe()?.[x.address]?.toLocaleString(undefined, {
+                      style: 'currency',
+                      currency: 'usd',
+                      currencyDisplay: 'narrowSymbol',
+                    }) ?? <CircularProgressIndicator size="1em" />
+                  }
                   leadingContent={<Identicon value={x.address} size="4rem" />}
                 />
               </Menu.Item>
@@ -187,11 +190,13 @@ const AccountsManagementMenu = () => {
               <Menu.Item onClick={() => setSelectedAccountAddresses(() => [x.address])}>
                 <ListItem
                   headlineText={x.name ?? shortenAddress(x.address)}
-                  overlineText={fiatBalances[x.address]?.toLocaleString(undefined, {
-                    style: 'currency',
-                    currency: 'usd',
-                    currencyDisplay: 'narrowSymbol',
-                  })}
+                  overlineText={
+                    fiatBalances.valueMaybe()?.[x.address]?.toLocaleString(undefined, {
+                      style: 'currency',
+                      currency: 'usd',
+                      currencyDisplay: 'narrowSymbol',
+                    }) ?? <CircularProgressIndicator size="1em" />
+                  }
                   leadingContent={<Identicon value={x.address} size="4rem" />}
                   revealTrailingContentOnHover
                   trailingContent={
