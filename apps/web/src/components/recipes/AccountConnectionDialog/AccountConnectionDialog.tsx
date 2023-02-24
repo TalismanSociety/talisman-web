@@ -1,6 +1,5 @@
 import Button from '@components/atoms/Button'
 import Hr from '@components/atoms/Hr'
-import Identicon from '@components/atoms/Identicon'
 import Text from '@components/atoms/Text'
 import AlertDialog from '@components/molecules/AlertDialog'
 import TextInput from '@components/molecules/TextInput'
@@ -9,18 +8,6 @@ export type AccountConnectionDialogProps = {
   open?: boolean
   onRequestDismiss: () => unknown
 }
-
-const Account = () => (
-  <figcaption css={{ display: 'flex' }}>
-    <figure>
-      <Identicon value="5F7eDjNwvgC2s2HT3ZCVP4TfK46tcZpdxEUsujJfyai8wgsU" />
-    </figure>
-    <div>
-      <Text.Body>Birdo</Text.Body>
-      <Text.Body>{}</Text.Body>
-    </div>
-  </figcaption>
-)
 
 const AccountConnectionDialog = (props: AccountConnectionDialogProps) => {
   return (
