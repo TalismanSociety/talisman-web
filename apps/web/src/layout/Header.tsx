@@ -11,7 +11,6 @@ import Menu from '@components/Menu'
 import AccountsManagementMenu from '@components/widgets/AccountsManagementMenu'
 import { useTheme } from '@emotion/react'
 import styled from '@emotion/styled'
-import { trackGoal } from '@libs/fathom'
 import { Icon } from '@talismn/ui'
 import { useMediaQuery } from '@util/hooks'
 import { DISCORD_JOIN_URL, TALISMAN_TWITTER_URL } from '@util/links'
@@ -58,31 +57,26 @@ const subRoutes = [
   {
     name: 'Request Features',
     url: 'https://talisman.upvoty.com/b/feature-requests/',
-    trackingCode: 'RMSKIY4Q', // bounce_feature_requests
     icon: <SwapLogo title="Request Features" />,
   },
   {
     name: 'GitHub',
     url: 'https://github.com/talismansociety',
-    trackingCode: 'CG0L6VIJ', // bounce_github
     icon: <GithubMobileLogo title="GitHub" />,
   },
   {
     name: 'Discord',
     url: DISCORD_JOIN_URL,
-    trackingCode: '00L5TXCI', // bounce_discord
     icon: <DiscordMobileLogo title="Discord" />,
   },
   {
     name: 'Twitter',
     url: TALISMAN_TWITTER_URL,
-    trackingCode: 'NMVPOOER', // bounce_twitter
     icon: <TwitterMobileLogo title="Twitter" />,
   },
   {
     name: 'Medium',
     url: 'https://medium.com/we-are-talisman',
-    trackingCode: 'Y1JQOEBW', // bounce_medium
     icon: <MediumMobileLogo title="Medium" />,
   },
 ]
@@ -241,12 +235,7 @@ const Header = styled(({ className, isMobile }: HeaderProps) => {
                 {subRoutes.map(route => {
                   return (
                     <li key={route.name}>
-                      <a
-                        href={route.url}
-                        target="_blank"
-                        rel="noreferrer noopener"
-                        onClick={route.trackingCode ? () => trackGoal(route.trackingCode, 1) : undefined}
-                      >
+                      <a href={route.url} target="_blank" rel="noreferrer noopener">
                         <span>{t(route.name)}</span>
                         {route.icon}
                       </a>

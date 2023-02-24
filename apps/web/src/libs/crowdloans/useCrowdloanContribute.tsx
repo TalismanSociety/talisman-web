@@ -1,4 +1,3 @@
-import { trackGoal } from '@libs/fathom'
 import { SupportedRelaychains, parachainDetails } from '@libs/talisman/util/_config'
 import { ApiPromise, SubmittableResult, WsProvider } from '@polkadot/api'
 import { SubmittableExtrinsic } from '@polkadot/api/submittable/types'
@@ -1134,11 +1133,6 @@ function useSignAndSendContributionThunk(state: ContributeState, dispatch: Dispa
 
             if (success && !error) {
               dispatch(ContributeEvent._finalizedContributionSuccess({ explorerUrl }))
-              trackGoal('GTVDUALL', 1) // crowdloan_contribute
-              trackGoal('WQGRJ9OC', parseInt(contributionPlanck, 10)) // crowdloan_contribute_amount
-
-              if (relayChainId === 0) trackGoal('JFOFGXPN', parseInt(contributionPlanck, 10)) // crowdloan_contribute_amount_DOT
-              if (relayChainId === 2) trackGoal('QG3QGBYH', parseInt(contributionPlanck, 10)) // crowdloan_contribute_amount_KSM
             } else {
               dispatch(ContributeEvent._finalizedContributionFailed({ error, explorerUrl }))
             }
