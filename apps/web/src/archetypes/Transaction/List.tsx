@@ -1,9 +1,9 @@
 import { Field, MaterialLoader, Panel, PanelSection } from '@components'
 import Button from '@components/atoms/Button'
 import * as Icon from '@components/atoms/Icon'
+import { legacySelectedAccountState } from '@domains/accounts/recoils'
 import ExportTxHistoryWidget from '@domains/txHistory/widgets/ExportTxHistoryWidget'
 import { css } from '@emotion/react'
-import { useActiveAccount } from '@libs/talisman'
 import format from 'date-fns/format'
 import parseISO from 'date-fns/parseISO'
 import startOfDay from 'date-fns/startOfDay'
@@ -14,6 +14,7 @@ import { useTranslation } from 'react-i18next'
 import InfiniteScroll from 'react-infinite-scroller'
 import { useSearchParams } from 'react-router-dom'
 import { useDebounce } from 'react-use'
+import { useRecoilValue } from 'recoil'
 
 import { Item } from './Item'
 import { useTransactions } from './lib'
@@ -27,7 +28,8 @@ export const List = ({ addresses = [], className }: Props) => {
 
   const [searchParams, setSearchParams] = useSearchParams()
   const urlAddresses = useMemo(() => searchParams.getAll('address'), [searchParams])
-  const { hasActiveAccount, address: selectedAddress } = useActiveAccount()
+  const selectedAddress = useRecoilValue(legacySelectedAccountState)?.address
+  const hasActiveAccount = selectedAddress !== undefined
 
   // remove urlAddresses when selectedAddress changes
   useEffect(() => {

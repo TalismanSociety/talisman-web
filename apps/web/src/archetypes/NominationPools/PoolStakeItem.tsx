@@ -1,6 +1,7 @@
 import ClaimStakeDialog from '@components/recipes/ClaimStakeDialog'
 import PoolStake, { PoolStakeProps } from '@components/recipes/PoolStake/PoolStake'
 import { PoolStatus } from '@components/recipes/PoolStatusIndicator'
+import { Account } from '@domains/accounts/recoils'
 import { useTokenAmountFromPlanck } from '@domains/common/hooks'
 import { UInt } from '@polkadot/types-codec'
 import { PalletNominationPoolsPoolMember } from '@polkadot/types/lookup'
@@ -21,10 +22,7 @@ const PoolStakeItem = ({
   variant?: PoolStakeProps['variant']
   item: {
     status?: PoolStatus
-    account?: {
-      address: string
-      name?: string
-    }
+    account?: Account
     poolName?: ReactNode
     poolMember: PalletNominationPoolsPoolMember
     pendingRewards?: UInt
@@ -69,6 +67,7 @@ const PoolStakeItem = ({
         }
         onRequestUnstake={useCallback(() => setIsUnstaking(true), [])}
         onRequestAdd={useCallback(() => setIsAddingStake(true), [])}
+        readonly={item.account?.readonly}
       />
       <AddStakeDialog
         account={isAddingStake ? item.account?.address : undefined}

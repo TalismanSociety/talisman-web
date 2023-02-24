@@ -7,10 +7,9 @@ import { ReactComponent as MoreHorizontal } from '@assets/icons/more-horizontal.
 import { ReactComponent as PortfolioLogo } from '@assets/icons/portfolio.svg'
 import { ReactComponent as SwapLogo } from '@assets/icons/swap.svg'
 import { ReactComponent as TwitterMobileLogo } from '@assets/icons/twitter-mobile.svg'
-import { Union } from '@components/atoms/Icon'
-import { Menu as MenuIcon } from '@components/atoms/Icon'
+import { Menu as MenuIcon, Union } from '@components/atoms/Icon'
 import Menu from '@components/Menu'
-import { WalletNavConnector } from '@components/WalletNavConnector'
+import AccountsManagementMenu from '@components/widgets/AccountsManagementMenu'
 import { useTheme } from '@emotion/react'
 import styled from '@emotion/styled'
 import { trackGoal } from '@libs/fathom'
@@ -188,7 +187,7 @@ const Header = styled(({ className, isMobile }: HeaderProps) => {
       )}
 
       <div className="menu-nav">
-        <WalletNavConnector />
+        <AccountsManagementMenu />
         {!isMobile && (
           <>
             <div
@@ -320,7 +319,7 @@ const Header = styled(({ className, isMobile }: HeaderProps) => {
     gap: 1rem;
     margin: 1rem 0;
 
-    button {
+    .nav-button {
       max-height: 38px;
       border-radius: 1rem;
       height: 100%;

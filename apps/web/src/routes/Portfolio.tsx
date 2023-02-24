@@ -1,9 +1,10 @@
 import { Total } from '@archetypes/Wallet'
 import { AccountValueInfo } from '@components/molecules/AccountValueInfo'
 import { BottomBorderNav } from '@components/molecules/BottomBorderNav'
-import { useActiveAccount } from '@libs/talisman'
+import { legacySelectedAccountState } from '@domains/accounts/recoils'
 import { Outlet } from 'react-router'
 import { Link, useMatch } from 'react-router-dom'
+import { useRecoilValue } from 'recoil'
 
 const Portfolio = () => {
   // useMatch
@@ -14,7 +15,7 @@ const Portfolio = () => {
     { path: 'history', name: 'History' },
   ]
 
-  const account = useActiveAccount()
+  const account = useRecoilValue(legacySelectedAccountState)
 
   // get the current path that is after /portfolio/ even if there is something after it
   const currentPath = useMatch('/portfolio/:id/*')?.params.id ?? paths[0]?.path

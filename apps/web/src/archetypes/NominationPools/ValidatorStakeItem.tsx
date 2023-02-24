@@ -1,5 +1,6 @@
 import CircularProgressIndicator from '@components/atoms/CircularProgressIndicator'
 import ValidatorStake from '@components/recipes/ValidatorStake'
+import { Account } from '@domains/accounts/recoils'
 import { DeriveStakerReward, DeriveStakingAccount } from '@polkadot/api-derive/types'
 import BN from 'bn.js'
 import { useState } from 'react'
@@ -9,7 +10,7 @@ import { nativeTokenDecimalState, nativeTokenPriceState } from '../../domains/ch
 import ValidatorUnstakeDialog from './ValidatorUnstakeDialog'
 
 const ValidatorStakeItem = (props: {
-  account: { address: string; name?: string }
+  account: Account
   stake: DeriveStakingAccount
   rewards?: DeriveStakerReward[]
 }) => {
@@ -50,6 +51,7 @@ const ValidatorStakeItem = (props: {
               })
         }
         onRequestUnstake={() => setIsUnstakeDialogOpen(true)}
+        readonly={props.account.readonly}
       />
       <ValidatorUnstakeDialog
         accountAddress={props.stake.controllerId?.toString() ?? props.account.address}

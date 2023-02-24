@@ -2,8 +2,6 @@ import { balanceModules } from '@talismn/balances-default-modules'
 import { BalancesProvider } from '@talismn/balances-react'
 import { PropsWithChildren } from 'react'
 
-import * as Account from './account'
-import * as Balance from './balances'
 import * as Chainmeta from './chainmeta'
 import * as Crowdloan from './crowdloan'
 import * as Extension from './extension'
@@ -12,10 +10,6 @@ import { useChainByGenesis as _useChainByGenesis } from './util/hooks'
 
 /* publically exposed hooks */
 
-// account things
-export { useAccountAddresses, useAccounts, useActiveAccount, useAllAccountAddresses } from './account'
-// // balances stuff
-export { useBalances } from './balances'
 // // chainmeta things
 export { useChainmeta, useChainmetaValue } from './chainmeta'
 // // crowdloans stuff
@@ -46,18 +40,14 @@ export const useChainByGenesis = _useChainByGenesis
 const Provider = ({ children }: PropsWithChildren) => (
   <Extension.Provider>
     <Chainmeta.Provider>
-      <Account.Provider>
-        <BalancesProvider
-          balanceModules={balanceModules}
-          onfinalityApiKey={process.env.REACT_APP_ONFINALITY_API_KEY ?? undefined}
-        >
-          <Balance.Provider>
-            <Parachain.Provider>
-              <Crowdloan.Provider>{children}</Crowdloan.Provider>
-            </Parachain.Provider>
-          </Balance.Provider>
-        </BalancesProvider>
-      </Account.Provider>
+      <BalancesProvider
+        balanceModules={balanceModules}
+        onfinalityApiKey={process.env.REACT_APP_ONFINALITY_API_KEY ?? undefined}
+      >
+        <Parachain.Provider>
+          <Crowdloan.Provider>{children}</Crowdloan.Provider>
+        </Parachain.Provider>
+      </BalancesProvider>
     </Chainmeta.Provider>
   </Extension.Provider>
 )

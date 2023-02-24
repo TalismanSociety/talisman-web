@@ -1,14 +1,15 @@
 import { ExtensionStatusGate, Info, Panel, PanelSection, Pendor, TokenLogo } from '@components'
+import { legacySelectedAccountState } from '@domains/accounts/recoils'
+import { useLegacyBalances } from '@domains/balances/hooks'
 import styled from '@emotion/styled'
 import { ReactComponent as Loader } from '@icons/loader.svg'
-import { useActiveAccount } from '@libs/talisman'
-import { useBalances } from '@libs/talisman'
 import { Balance, BalanceFormatter, Balances } from '@talismn/balances'
 import { useChains, useEvmNetworks, useTokens } from '@talismn/balances-react'
 import { Token, TokenList } from '@talismn/chaindata-provider'
 import { formatDecimals } from '@talismn/util'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useRecoilValue } from 'recoil'
 
 type AssetItemProps = {
   className?: string
@@ -85,8 +86,8 @@ const AssetBalance = styled(({ token, balances, address }: AssetBalanceProps) =>
 const Assets = styled(({ className }: { className?: string }) => {
   const { t } = useTranslation()
 
-  const { balances, assetsTransferable } = useBalances()
-  const { address } = useActiveAccount()
+  const { balances, assetsTransferable } = useLegacyBalances()
+  const address = useRecoilValue(legacySelectedAccountState)?.address
 
   const chains = useChains()
   const evmNetworks = useEvmNetworks()

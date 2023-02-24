@@ -82,6 +82,7 @@ const ValidatorUnstakings = () => {
                   )
                 )
               )}
+              readonly={accounts[sIndex]?.readonly}
             />
           )) ?? []),
         ]

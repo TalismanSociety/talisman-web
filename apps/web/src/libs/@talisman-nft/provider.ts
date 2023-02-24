@@ -1,5 +1,5 @@
 import { accountsState, selectedAccountAddressesState } from '@domains/accounts/recoils'
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 import { atom, selector, useRecoilValue, useSetRecoilState } from 'recoil'
 
 import { useNFTData } from './hooks'
@@ -30,9 +30,9 @@ export const filteredNftDataState = selector<NFTData>({
 })
 
 const NftProvider = () => {
-  const addresses = useRecoilValue(accountsState).map(account => account.address)
+  const addresses = useRecoilValue(accountsState)
   const setNftData = useSetRecoilState(nftDataState)
-  const { items, isFetching, count } = useNFTData(addresses)
+  const { items, isFetching, count } = useNFTData(useMemo(() => addresses.map(account => account.address), [addresses]))
 
   useEffect(() => {
     setNftData({ items, isFetching, count })

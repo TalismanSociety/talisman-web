@@ -3,6 +3,7 @@ import { Lock } from '@components/atoms/Icon'
 import Identicon from '@components/atoms/Identicon'
 import Text from '@components/atoms/Text'
 import { useTheme } from '@emotion/react'
+import { shortenAddress } from '@util/format'
 import React, { ReactElement } from 'react'
 
 import StakeList from '../StakeList'
@@ -16,6 +17,7 @@ export type PoolUnstakeProps = {
   onRequestWithdraw: () => unknown
   withdrawState?: 'pending' | 'disabled'
   variant?: 'compact'
+  readonly?: boolean
 }
 
 const PoolUnstake = (props: PoolUnstakeProps) => {
@@ -106,9 +108,7 @@ const PoolUnstake = (props: PoolUnstakeProps) => {
                 </Text.Body>
               </div>
               <div>
-                <Text.Body>
-                  ({props.accountAddress.slice(0, 4)}...{props.accountAddress.slice(-4)})
-                </Text.Body>
+                <Text.Body>({shortenAddress(props.accountAddress)})</Text.Body>
               </div>
             </dd>
           </div>
@@ -160,6 +160,7 @@ const PoolUnstake = (props: PoolUnstakeProps) => {
           <Button
             variant="outlined"
             onClick={props.onRequestWithdraw}
+            hidden={props.readonly}
             disabled={props.withdrawState === 'disabled'}
             loading={props.withdrawState === 'pending'}
           >

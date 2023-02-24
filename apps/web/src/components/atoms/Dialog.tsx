@@ -1,5 +1,5 @@
 import useMergedRef from '@react-hook/merged-ref'
-import React, { useEffect, useMemo, useRef } from 'react'
+import React, { MouseEventHandler, useCallback, useEffect, useRef } from 'react'
 
 export type DialogProps = Omit<
   React.DetailedHTMLProps<React.DialogHTMLAttributes<HTMLDialogElement>, HTMLDialogElement>,
@@ -52,9 +52,19 @@ export const Dialog = React.forwardRef<HTMLDialogElement, DialogProps>(function 
     return () => dialog?.removeEventListener('click', listener)
   }, [onClickBackdrop])
 
-  return useMemo(() => {
-    return <dialog ref={mergedRef} {...props} />
-  }, [mergedRef, props])
+  return (
+    <dialog
+      ref={mergedRef}
+      {...props}
+      onClick={useCallback<MouseEventHandler<HTMLDialogElement>>(
+        event => {
+          event.stopPropagation()
+          props.onClick?.(event)
+        },
+        [props]
+      )}
+    />
+  )
 })
 
 export default Dialog

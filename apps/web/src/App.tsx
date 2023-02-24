@@ -6,8 +6,8 @@ import Development from '@archetypes/Development'
 import ToastBar from '@components/molecules/ToastBar'
 import { TalismanHandLoader } from '@components/TalismanHandLoader'
 import ErrorBoundary from '@components/widgets/ErrorBoundary'
-import { AccountsWatcher } from '@domains/accounts/recoils'
-import { useTalismanAutoConnectEffect } from '@domains/extension/hooks'
+import { LegacyBalancesWatcher } from '@domains/balances/recoils'
+import { ExtensionWatcher } from '@domains/extension/recoils'
 import NftProvider from '@libs/@talisman-nft/provider'
 import * as MoonbeamContributors from '@libs/moonbeam-contributors'
 import * as Portfolio from '@libs/portfolio'
@@ -46,34 +46,32 @@ const Loader = () => {
   )
 }
 
-const App: React.FC = () => {
-  useTalismanAutoConnectEffect()
-  return (
-    <ThemeProvider>
-      <ErrorBoundary>
-        <RecoilRoot>
-          <Portfolio.Provider>
-            <Tokenprices.Provider>
-              <TalismanProvider>
-                <AccountsWatcher />
-                <MoonbeamContributors.Provider>
-                  <Development />
-                  <Suspense fallback={<Loader />}>
-                    <NftProvider />
-                    <RouterProvider router={router} />
-                    <Toaster position="top-right" containerStyle={{ top: '6.4rem' }}>
-                      {t => <ToastBar toast={t} />}
-                    </Toaster>
-                    <CookieBanner />
-                  </Suspense>
-                </MoonbeamContributors.Provider>
-              </TalismanProvider>
-            </Tokenprices.Provider>
-          </Portfolio.Provider>
-        </RecoilRoot>
-      </ErrorBoundary>
-    </ThemeProvider>
-  )
-}
+const App: React.FC = () => (
+  <ThemeProvider>
+    <ErrorBoundary>
+      <RecoilRoot>
+        <Portfolio.Provider>
+          <Tokenprices.Provider>
+            <TalismanProvider>
+              <ExtensionWatcher />
+              <LegacyBalancesWatcher />
+              <MoonbeamContributors.Provider>
+                <Development />
+                <Suspense fallback={<Loader />}>
+                  <NftProvider />
+                  <RouterProvider router={router} />
+                  <Toaster position="top-right" containerStyle={{ top: '6.4rem' }}>
+                    {t => <ToastBar toast={t} />}
+                  </Toaster>
+                  <CookieBanner />
+                </Suspense>
+              </MoonbeamContributors.Provider>
+            </TalismanProvider>
+          </Tokenprices.Provider>
+        </Portfolio.Provider>
+      </RecoilRoot>
+    </ErrorBoundary>
+  </ThemeProvider>
+)
 
 export default App

@@ -5929,6 +5929,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@recoiljs/refine@npm:^0.1.1":
+  version: 0.1.1
+  resolution: "@recoiljs/refine@npm:0.1.1"
+  checksum: 63b3e468f4ce7417cd13470f39a85a7318b902d411121759fc0a7ee427cd8882328a2c999ef0913e086f0c99f732e5478378b4ebe514bd811bb6e96333c747c3
+  languageName: node
+  linkType: hard
+
 "@remix-run/router@npm:1.3.2":
   version: 1.3.2
   resolution: "@remix-run/router@npm:1.3.2"
@@ -8301,6 +8308,7 @@ __metadata:
     "@polkadot/extension-dapp": ^0.44.8
     "@ramp-network/ramp-instant-sdk": ^2.5.2
     "@react-hook/merged-ref": ^1.3.2
+    "@recoiljs/refine": ^0.1.1
     "@sentry/react": ^7.37.2
     "@sentry/tracing": ^7.37.2
     "@storybook/addon-actions": ^6.5.16
