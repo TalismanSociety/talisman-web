@@ -154,12 +154,8 @@ const MenuItem = ({ dismissAfterSelection = true, ...props }: MenuItemProps) => 
   return (
     <motion.div
       variants={{
-        true: {
-          opacity: 1,
-          y: 0,
-          transition: { type: 'spring', stiffness: 300, damping: 24 },
-        },
-        false: { opacity: 0, y: 20, transition: { duration: 0.1 } },
+        true: { opacity: 1, transform: 'translateY(0px)', transition: { type: 'spring', stiffness: 300, damping: 24 } },
+        false: { opacity: 0, transform: 'translateY(20px)', transition: { duration: 0.1 } },
       }}
       css={{
         'cursor': 'pointer',
