@@ -1,10 +1,9 @@
 import { useAllAccountAddresses } from '@libs/talisman'
 import { AddressesByToken, Balances } from '@talismn/balances'
-import { balanceModules } from '@talismn/balances-default-modules'
-import { useBalances as _useBalances, useChaindata, useTokens } from '@talismn/balances-react'
-import { ChaindataProvider, Token, TokenList } from '@talismn/chaindata-provider'
+import { useBalances as _useBalances, useAllAddresses, useTokens } from '@talismn/balances-react'
+import { Token } from '@talismn/chaindata-provider'
 import { isNil } from 'lodash'
-import { PropsWithChildren, createContext, useContext, useMemo } from 'react'
+import { PropsWithChildren, createContext, useContext, useEffect, useMemo } from 'react'
 
 export const useBalances = () => useBalanceContext()
 
@@ -19,18 +18,12 @@ type ContextProps = {
   balances: Balances | undefined
   assetsTransferable: string | null
   assetsOverallValue: number
-  tokenIds: string[]
-  tokens: TokenList | any
-  chaindata: (ChaindataProvider & { generation?: number | undefined }) | null
 }
 
 const Context = createContext<ContextProps>({
   balances: undefined,
   assetsTransferable: '',
   assetsOverallValue: 0,
-  tokenIds: [],
-  tokens: [],
-  chaindata: null,
 })
 
 function useBalanceContext() {
@@ -45,29 +38,18 @@ function useBalanceContext() {
 //
 
 export const Provider = ({ children }: PropsWithChildren) => {
-  const chaindata = useChaindata({ onfinalityApiKey: process.env.REACT_APP_ONFINALITY_API_KEY })
   const addresses = useAllAccountAddresses()
+  const [, setAllAddresses] = useAllAddresses()
+  useEffect(() => setAllAddresses(addresses ?? []), [addresses, setAllAddresses])
 
-  const tokens = useTokens(chaindata)
-
-  const tokenIds = useMemo(
-    () =>
-      Object.values(tokens)
-        // filter out testnet tokens
-        .filter(({ isTestnet }) => !isTestnet)
-        .map(({ id }) => id),
-    [tokens]
-  )
+  const tokens = useTokens()
+  const tokenIds = useMemo(() => Object.values(tokens).map(({ id }) => id), [tokens])
 
   const addressesByToken = useAddressesByToken(addresses, tokenIds)
-  const balances = _useBalances(balanceModules, chaindata, addressesByToken, {
-    onfinalityApiKey: process.env.REACT_APP_ONFINALITY_API_KEY,
-  })
-
-  const assetsAmount = balances?.sum.fiat('usd').transferable ?? 0
+  const balances = _useBalances(addressesByToken)
 
   const assetsTransferable =
-    assetsAmount.toLocaleString(undefined, {
+    (balances?.sum.fiat('usd').transferable ?? 0).toLocaleString(undefined, {
       style: 'currency',
       currency: 'USD',
       currencyDisplay: 'narrowSymbol',
@@ -75,10 +57,14 @@ export const Provider = ({ children }: PropsWithChildren) => {
 
   const assetsOverallValue = balances?.sum.fiat('usd').total ?? 0
 
-  const value = useMemo(
-    () => ({ balances, assetsTransferable, tokenIds, tokens, chaindata, assetsOverallValue }),
-    [balances, assetsTransferable, tokenIds, tokens, chaindata, assetsOverallValue]
+  return (
+    <Context.Provider
+      value={useMemo(
+        () => ({ balances, assetsTransferable, assetsOverallValue }),
+        [balances, assetsTransferable, assetsOverallValue]
+      )}
+    >
+      {children}
+    </Context.Provider>
   )
-
-  return <Context.Provider value={value}>{children}</Context.Provider>
 }
