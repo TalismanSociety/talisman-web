@@ -2,7 +2,6 @@ import { Crowdloan } from '@archetypes'
 import { Await, Field, Grid, NoResults } from '@components'
 import styled from '@emotion/styled'
 import { useCrowdloanContributions } from '@libs/crowdloans'
-import { trackGoal } from '@libs/fathom'
 import { device } from '@util/breakpoints'
 import { useTranslation } from 'react-i18next'
 
@@ -34,7 +33,6 @@ const FilterBar = styled(
           placeholder={t('Search Crowdloans')}
           onChange={(search: any) => {
             setSearch(search)
-            trackGoal('9XUF7WEB', 1) // crowdloan_search
           }}
         />
         <div className="filters">
@@ -42,7 +40,6 @@ const FilterBar = styled(
             value={status}
             onChange={(status: any) => {
               setStatus(status)
-              trackGoal('0AO7IT2G', 1) // crowdloan_filter
             }}
             options={statusOptions}
             small
@@ -52,7 +49,6 @@ const FilterBar = styled(
             value={network}
             onChange={(network: any) => {
               setNetwork(network)
-              trackGoal('0AO7IT2G', 1) // crowdloan_filter
             }}
             options={networkOptions}
             small
