@@ -160,7 +160,7 @@ const Crowdloans = ({ className }: { className?: string }) => {
   const crowdloansUsd = useTotalCrowdloanTotalFiatAmount()
 
   return (
-    <section className={`wallet-crowdloans ${className}`}>
+    <section className={`wallet-crowdloans ${className}`} css={{ marginBottom: '2rem' }}>
       <Panel
         title={t('Crowdloans')}
         subtitle={crowdloansUsd && crowdloansUsd !== 0 ? formatCurrency(crowdloansUsd) : ''}
