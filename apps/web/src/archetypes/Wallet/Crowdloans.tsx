@@ -1,5 +1,6 @@
 import { ChainLogo, ExtensionStatusGate, Info, Panel, PanelSection, Pendor } from '@components'
 import { selectedSubstrateAccountsState } from '@domains/accounts/recoils'
+import { tokenPriceState } from '@domains/chains/recoils'
 import { useTotalCrowdloanTotalFiatAmount } from '@domains/crowdloans/hooks'
 import styled from '@emotion/styled'
 import { CrowdloanContribution, useCrowdloanContributions } from '@libs/crowdloans'
@@ -8,7 +9,6 @@ import { MoonbeamPortfolioTag } from '@libs/moonbeam-contributors'
 import { calculateCrowdloanPortfolioAmounts, useTaggedAmountsInPortfolio } from '@libs/portfolio'
 import { useCrowdloanById, useParachainAssets, useParachainDetailsById } from '@libs/talisman'
 import { SupportedRelaychains, parachainDetails } from '@libs/talisman/util/_config'
-import { useTokenPrice } from '@libs/tokenprices'
 import { planckToTokens } from '@talismn/util'
 import { formatCommas, formatCurrency } from '@util/helpers'
 import { Maybe } from '@util/monads'
@@ -16,7 +16,7 @@ import BigNumber from 'bignumber.js'
 import { Suspense, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
-import { useRecoilValue } from 'recoil'
+import { useRecoilValue, useRecoilValueLoadable } from 'recoil'
 
 const CrowdloanItem = styled(
   ({ contribution, className }: { contribution: CrowdloanContribution; className?: string }) => {
@@ -30,9 +30,13 @@ const CrowdloanItem = styled(
     const relayChain = Maybe.of(relayChainId).mapOrUndefined(x => SupportedRelaychains[x]!)
     const chain = parachainDetails.find(x => x.id === id)
 
-    const { tokenSymbol: relayNativeToken, tokenDecimals: relayTokenDecimals } = relayChain ?? {}
+    const { tokenSymbol: relayNativeToken, coingeckoId, tokenDecimals: relayTokenDecimals } = relayChain ?? {}
     const { name } = chain ?? {}
-    const { price: relayTokenPrice, loading: relayPriceLoading } = useTokenPrice(relayNativeToken!)
+
+    const priceLoadable = useRecoilValueLoadable(tokenPriceState({ coingeckoId: coingeckoId!, fiat: 'usd' }))
+
+    const relayTokenPrice = priceLoadable.valueMaybe()?.toString()
+    const relayPriceLoading = priceLoadable.state === 'loading'
 
     const relayTokenSymbol = relayNativeToken ?? 'Planck'
     const contributedTokens = planckToTokens(contribution.amount, relayTokenDecimals!)
