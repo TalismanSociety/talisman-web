@@ -145,10 +145,7 @@ const AccountsManagementMenu = () => {
       </Menu.Button>
       <Menu.Items>
         <section css={{ width: '34rem' }}>
-          <Text.Body as="header" alpha="high" css={{ margin: '1.6rem 0', padding: '0 1.6rem' }}>
-            Select account
-          </Text.Body>
-          <section css={{ marginBottom: '1.6rem' }}>
+          <section css={{ margin: '1.6rem 0' }}>
             <Text.Body
               as="header"
               css={{
