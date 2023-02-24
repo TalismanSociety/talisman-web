@@ -1,4 +1,4 @@
-import { substrateAccountsState } from '@domains/accounts/recoils'
+import { injectedSubstrateAccountsState } from '@domains/accounts/recoils'
 import { apiState, chainRpcState } from '@domains/chains/recoils'
 import { useChainState } from '@domains/common/hooks'
 import { ApiPromise, WsProvider } from '@polkadot/api'
@@ -61,7 +61,7 @@ export const useExposedAccounts = () => {
 }
 
 export const useFastUnstakeEligibleAccounts = () => {
-  const accounts = useRecoilValue(substrateAccountsState)
+  const accounts = useRecoilValue(injectedSubstrateAccountsState)
 
   const exposedAccountsLoadable = useExposedAccounts()
   const ledgersLoadable = useChainState(
