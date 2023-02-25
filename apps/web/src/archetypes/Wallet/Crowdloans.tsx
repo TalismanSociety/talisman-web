@@ -105,15 +105,15 @@ const CrowdloanItemWithLink = styled((props: { contribution: CrowdloanContributi
     </Link>
   )
 })`
-  :first-of-type .panel-section:hover {
+  :first-of-type .panel-section {
     border-radius: 1.6rem 1.6rem 0 0;
   }
 
-  :last-of-type .panel-section:hover {
+  :last-of-type .panel-section {
     border-radius: 0 0 1.6rem 1.6rem;
   }
 
-  .panel-section:only-of-type:hover {
+  :only-of-type .panel-section {
     border-radius: 1.6rem;
   }
 
