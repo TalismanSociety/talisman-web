@@ -2,8 +2,6 @@ import styled from '@emotion/styled'
 import { device } from '@util/breakpoints'
 
 const NFTs = styled(({ className }: { className?: string }) => {
-  // const { accounts } = useExtensionAutoConnect()
-  // const { hasNfts, nfts } = useHasNFTs(accounts, { limit: 4 })
   return <section className={`wallet-assets ${className}`}>{/* <h1>NFTs</h1> */}</section>
 })`
   .header {

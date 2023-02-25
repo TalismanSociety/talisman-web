@@ -2,12 +2,12 @@ import { trackGoal } from '@libs/fathom'
 import { SupportedRelaychains, parachainDetails } from '@libs/talisman/util/_config'
 import { ApiPromise, SubmittableResult, WsProvider } from '@polkadot/api'
 import { SubmittableExtrinsic } from '@polkadot/api/submittable/types'
+import { web3FromAddress } from '@polkadot/extension-dapp'
 import { isEthereumChecksum } from '@polkadot/util-crypto'
 import type { Balance } from '@talismn/api'
 import Talisman from '@talismn/api'
 import type { BalanceWithTokens } from '@talismn/api-react-hooks'
 import { addTokensToBalances } from '@talismn/api-react-hooks'
-import { getWalletBySource } from '@talismn/connect-wallets'
 import { encodeAnyAddress, planckToTokens, tokensToPlanck } from '@talismn/util'
 import customRpcs from '@util/customRpcs'
 import { Maybe } from '@util/monads'
@@ -1062,12 +1062,7 @@ function useSignAndSendContributionThunk(state: ContributeState, dispatch: Dispa
       if (!api) return
       const contributionPlanck = tokensToPlanck(contributionAmount, relayTokenDecimals)
 
-      // TODO: Make web3FromAddress work. Or add in Wallet interface.
-      // As this is a single-wallet interface, the addresses retrieved here belongs to the same wallet.
-      // Therefore, it is ok to get the wallet from the one saved in localstorage.
-      const selectedWalletName = localStorage.getItem('@talisman-connect/selected-wallet-name')
-      const wallet = getWalletBySource(selectedWalletName as string)
-      const injector = wallet?.extension
+      const injector = await web3FromAddress(account)
 
       if (cancelled) return
 

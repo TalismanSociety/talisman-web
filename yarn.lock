@@ -5986,18 +5986,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@rollup/plugin-image@npm:^2.1.1":
-  version: 2.1.1
-  resolution: "@rollup/plugin-image@npm:2.1.1"
-  dependencies:
-    "@rollup/pluginutils": ^3.1.0
-    mini-svg-data-uri: ^1.2.3
-  peerDependencies:
-    rollup: ^1.20.0 || ^2.0.0
-  checksum: a629c8f22233ca159c23655fdbc3449dab3c939372178ed4462fc9c525cc4ecd8b11fae359eb94be4f769d26f48b85fb18eb16ce1fbc33ed16b6a7c1f84391f6
-  languageName: node
-  linkType: hard
-
 "@rollup/plugin-node-resolve@npm:^11.2.1":
   version: 11.2.1
   resolution: "@rollup/plugin-node-resolve@npm:11.2.1"
@@ -8195,16 +8183,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@talismn/connect-wallets@npm:^1.2.3":
-  version: 1.2.3
-  resolution: "@talismn/connect-wallets@npm:1.2.3"
-  peerDependencies:
-    "@polkadot/api": ">=9.3.3"
-    "@polkadot/extension-inject": ">=0.44.6"
-  checksum: eb7afed083633872eba857063545470bddd517cbfd6b0e447b5773bbfe1f4573d665bce4df99c96690c26f9a20299f96cdcf0785b87380f3bf18dedcea5066bb
-  languageName: node
-  linkType: hard
-
 "@talismn/dot-pool-selector@npm:snapshot":
   version: 0.0.0-snapshot.14e1467
   resolution: "@talismn/dot-pool-selector@npm:0.0.0-snapshot.14e1467"
@@ -8275,20 +8253,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@talismn/wallets@npm:^1.1.6":
-  version: 1.1.6
-  resolution: "@talismn/wallets@npm:1.1.6"
-  dependencies:
-    "@babel/runtime": ^7.17.8
-    "@rollup/plugin-image": ^2.1.1
-  peerDependencies:
-    "@polkadot/api": "*"
-    "@polkadot/extension-dapp": ^0.42.7
-    "@polkadot/extension-inject": ^0.42.10-2
-  checksum: b87b94c669434b991d57f0b18341aa32ed757f1ab57cfb113843c0bf0eaa6ff3633a75ce2b9873cbbc7b4445375652896f0d6399ebba8e99a7fb3fb6571804e0
-  languageName: node
-  linkType: hard
-
 "@talismn/web@workspace:apps/web":
   version: 0.0.0-use.local
   resolution: "@talismn/web@workspace:apps/web"
@@ -8327,10 +8291,8 @@ __metadata:
     "@talismn/balances-react": 0.0.0-pr563-20230222052739
     "@talismn/connect-components": ^1.1.7
     "@talismn/connect-ui": ^1.1.2
-    "@talismn/connect-wallets": ^1.2.3
     "@talismn/dot-pool-selector": snapshot
     "@talismn/util": 0.1.5
-    "@talismn/wallets": ^1.1.6
     "@testing-library/jest-dom": ^5.16.5
     "@testing-library/react": ^13.4.0
     "@testing-library/user-event": ^14.4.3
@@ -20338,15 +20300,6 @@ __metadata:
   peerDependencies:
     webpack: ^5.0.0
   checksum: df60840404878c4832b4104799fd29c5a89b06b1e377956c8d4a5729efe0ef301a52e5087d6f383871df5e69a8445922a0ae635c11abf412d7645a7096d0e973
-  languageName: node
-  linkType: hard
-
-"mini-svg-data-uri@npm:^1.2.3":
-  version: 1.4.4
-  resolution: "mini-svg-data-uri@npm:1.4.4"
-  bin:
-    mini-svg-data-uri: cli.js
-  checksum: 997f1fbd8d59a70f03761e18626d335197a3479cb9d1ff75678e4b64b864d32a0b8fc18115eabde035e5299b8b4a354a78e57dd6ac10f9d604162a6170898d09
   languageName: node
   linkType: hard
 
