@@ -1,7 +1,7 @@
 import { ValidatorStakeList } from '@components/recipes/ValidatorStake'
 import { selectedSubstrateAccountsState } from '@domains/accounts/recoils'
-import { Maybe } from '@util/monads'
-import { useRecoilValue } from 'recoil'
+import { stakersRewardState } from '@domains/staking/recoils'
+import { constSelector, useRecoilValue, useRecoilValueLoadable } from 'recoil'
 
 import useChainState from '../../domains/common/hooks/useChainState'
 import ValidatorStakeItem from './ValidatorStakeItem'
@@ -9,26 +9,25 @@ import ValidatorStakeItem from './ValidatorStakeItem'
 const ValidatorStakings = () => {
   const accounts = useRecoilValue(selectedSubstrateAccountsState)
 
-  const activeEra = useChainState('query', 'staking', 'activeEra', []).valueMaybe()
+  const activeEra = useChainState('query', 'staking', 'activeEra', [])
 
   const stakes = useChainState('derive', 'staking', 'accounts', [
     accounts.map(({ address }) => address),
     undefined,
   ]).valueMaybe()
 
-  const stakerRewards = useChainState(
-    'derive',
-    'staking',
-    'stakerRewardsMultiEras',
-    [
-      accounts.map(({ address }) => address),
-      Maybe.of(activeEra?.unwrapOrDefault().index).mapOrUndefined(index => [index.subn(1) as any, index])!,
-    ],
-    { enabled: activeEra !== undefined }
-  ).valueMaybe()
+  const stakerRewards = useRecoilValueLoadable(
+    activeEra.state !== 'hasValue'
+      ? constSelector(undefined)
+      : stakersRewardState(activeEra.contents.unwrapOrDefault().index.toNumber())
+  )
 
   const stakesToDisplay = stakes
-    ?.map((stake, index) => ({ stake, account: accounts[index], reward: stakerRewards?.[index] }))
+    ?.map((stake, index) => ({
+      stake,
+      account: accounts[index],
+      reward: stakerRewards.valueMaybe()?.[accounts[index]?.address ?? ''],
+    }))
     .filter(({ account, stake }) => account !== undefined && !stake.stakingLedger.active.unwrap().isZero())
 
   if (stakesToDisplay === undefined || stakesToDisplay?.length === 0) {
@@ -38,7 +37,7 @@ const ValidatorStakings = () => {
   return (
     <ValidatorStakeList>
       {stakesToDisplay.map(({ stake, account, reward }) => (
-        <ValidatorStakeItem account={account!} stake={stake} rewards={reward} />
+        <ValidatorStakeItem account={account!} stake={stake} reward={reward} />
       ))}
     </ValidatorStakeList>
   )
