@@ -1,8 +1,9 @@
 import { MaterialLoader } from '@components'
+import { accountsState } from '@domains/accounts/recoils'
 import styled from '@emotion/styled'
-import { useExtension } from '@libs/talisman'
 import { encodeAnyAddress } from '@talismn/util'
 import { useCallback, useMemo, useState } from 'react'
+import { useRecoilValue } from 'recoil'
 
 import { AccountModal } from './AccountModal'
 import { AccountsModal } from './AccountsModal'
@@ -11,7 +12,7 @@ import { ContributorWithName, moonbeamRelaychain, useMoonbeamContributors } from
 type ModalState = { type: 'allAccounts' } | { type: 'selectedAccount'; contributor: ContributorWithName }
 
 export default function MoonbeamContributionModal() {
-  const { accounts } = useExtension()
+  const accounts = useRecoilValue(accountsState)
   const { contributors, loading, refetch } = useMoonbeamContributors(accounts.map(({ address }) => address))
   const contributorsWithNames: ContributorWithName[] = useMemo(
     () =>
