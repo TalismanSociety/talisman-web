@@ -50,7 +50,7 @@ const ValidatorStakings = () => {
         eligibleForFastUnstake: fastUnstakeEligibleAccounts
           .valueMaybe()
           ?.some(x => x.address === accounts[index]?.address),
-        potentiallyEligibleForFastUnstake: !erasToCheckPerBlock?.isZero() && (reward?.isZero() ?? true),
+        potentiallyEligibleForFastUnstake: !erasToCheckPerBlock?.isZero() && reward === 0n,
         inFastUnstakeHead,
         inFastUnstakeQueue,
       }

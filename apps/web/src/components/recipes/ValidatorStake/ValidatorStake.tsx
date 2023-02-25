@@ -1,10 +1,9 @@
 import Button from '@components/atoms/Button'
 import CircularProgressIndicator from '@components/atoms/CircularProgressIndicator'
-import { Lock } from '@components/atoms/Icon'
+import { Lock, Zap } from '@components/atoms/Icon'
 import Identicon from '@components/atoms/Identicon'
 import Text from '@components/atoms/Text'
 import { useTheme } from '@emotion/react'
-import { ReactComponent as Zap } from '@icons/zap.svg'
 import { shortenAddress } from '@util/format'
 import React, { ReactElement, ReactNode, useMemo } from 'react'
 
@@ -123,18 +122,12 @@ const ValidatorStake = Object.assign(
                 <Button
                   variant="outlined"
                   onClick={props.onRequestUnstake}
-                  css={{ gridArea: 'uButton' }}
+                  leadingIcon={props.eligibleForFastUnstake && <Zap width="1.25em" height="1.25em" />}
                   loading={props.unstakeState === 'pending'}
                   hidden={props.unstakeState === 'unavailable' || props.readonly}
+                  css={{ gridArea: 'uButton' }}
                 >
-                  {props.eligibleForFastUnstake ? (
-                    <Text css={{ display: 'flex', alignItems: 'center', whiteSpace: 'nowrap' }}>
-                      {' '}
-                      <Zap /> &nbsp; Fast Unstake{' '}
-                    </Text>
-                  ) : (
-                    <Text> Unstake </Text>
-                  )}
+                  Unstake
                 </Button>
               )
           }

@@ -90,7 +90,7 @@ const Button = <T extends ButtonElementType>({
 
   const Component = as
 
-  const hasLeadingIcon = loading || leadingIcon !== undefined
+  const hasLeadingIcon = loading || leadingIcon
 
   return (
     <Component
