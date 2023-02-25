@@ -27,8 +27,8 @@ const Card = ({ className, dapp, setSelectedTag }: CardProps) => {
   return (
     <div className={className} key={dapp.id} onClick={() => toExternalDapp(dapp)}>
       <div className="card__header">
-        <img src={dapp.logoUrl} alt={dapp.name + ' logo'} className="logo" />
         <img src={dapp.logoUrl} alt={dapp.name + ' logo'} className="logoBG" />
+        <img src={dapp.logoUrl} alt={dapp.name + ' logo'} className="logo" />
       </div>
       <div className="card-body">
         <span>
@@ -78,14 +78,12 @@ const StyledCard = styled(Card)`
     height: 100%;
     object-fit: contain;
     padding: 1.5em;
-    z-index: 2;
   }
   .logoBG {
     position: absolute;
     top: 0;
     left: 0;
     filter: blur(150px) saturate(3);
-    z-index: 1;
     height: 100%;
     width: 100%;
   }
