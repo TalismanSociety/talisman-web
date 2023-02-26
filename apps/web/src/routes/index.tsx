@@ -96,4 +96,5 @@ export default Sentry.wrapCreateBrowserRouter(createBrowserRouter)([
       { path: 'buy', element: <Buy /> },
     ],
   },
+  { path: '*', element: <Navigate to="/" /> },
 ])
