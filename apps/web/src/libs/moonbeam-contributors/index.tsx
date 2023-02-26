@@ -1,14 +1,14 @@
 import { ApolloClient, InMemoryCache, NormalizedCacheObject, gql, useQuery } from '@apollo/client'
 import { BatchHttpLink } from '@apollo/client/link/batch-http'
 import { useModal } from '@components'
+import { accountsState } from '@domains/accounts/recoils'
 import { deriveExplorerUrl } from '@libs/crowdloans'
 import { Moonbeam } from '@libs/crowdloans/crowdloanOverrides'
-import { useExtension } from '@libs/talisman'
 import { SupportedRelaychains } from '@libs/talisman/util/_config'
 import { ApiPromise, WsProvider } from '@polkadot/api'
+import { web3FromAddress } from '@polkadot/extension-dapp'
 import { isEthereumChecksum } from '@polkadot/util-crypto'
 import { useChain } from '@talismn/api-react-hooks'
-import { getWalletBySource } from '@talismn/connect-wallets'
 import { encodeAnyAddress } from '@talismn/util'
 import useDeferred from '@util/useDeferred'
 import {
@@ -20,6 +20,7 @@ import {
   useMemo,
   useState,
 } from 'react'
+import { useRecoilValue } from 'recoil'
 
 import MoonbeamContributionModal from './Modal'
 import MoonbeamContributionPopup from './Popup'
@@ -143,12 +144,7 @@ export function useSetMoonbeamRewardsAddress(accountAddress?: string) {
     const tx = api.tx.crowdloan.addMemo(Moonbeam.paraId, rewardsAddress)
 
     try {
-      // TODO: Make web3FromAddress work. Or add in Wallet interface.
-      // As this is a single-wallet interface, the addresses retrieved here belongs to the same wallet.
-      // Therefore, it is ok to get the wallet from the one saved in localstorage.
-      const selectedWalletName = localStorage.getItem('@talisman-connect/selected-wallet-name')
-      const wallet = getWalletBySource(selectedWalletName as string)
-      const injector = wallet?.extension
+      const injector = await web3FromAddress(accountAddress)
 
       var txSigned = await tx.signAsync(accountAddress, { signer: injector.signer })
     } catch (error: any) {
@@ -240,7 +236,7 @@ export function Provider({ children }: PropsWithChildren<{}>) {
 
 export function PopupProvider({ children }: PropsWithChildren<{}>) {
   const { openModal } = useModal()
-  const { accounts } = useExtension()
+  const accounts = useRecoilValue(accountsState)
   const { contributors, loading } = useMoonbeamContributors(accounts.map(({ address }) => address))
 
   const [showPopup, setShowPopup] = useState(false)

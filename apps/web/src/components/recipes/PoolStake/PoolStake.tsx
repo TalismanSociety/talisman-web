@@ -3,6 +3,7 @@ import Identicon from '@components/atoms/Identicon'
 import Text from '@components/atoms/Text'
 import Tooltip from '@components/atoms/Tooltip'
 import { useTheme } from '@emotion/react'
+import { shortenAddress } from '@util/format'
 import React, { ReactElement, ReactNode, useMemo } from 'react'
 import { useMedia } from 'react-use'
 
@@ -27,6 +28,7 @@ export type PoolStakeProps = {
   unstakeState?: 'unavailable' | 'pending' | 'disabled'
   poolStatus?: PoolStatus
   variant?: 'compact'
+  readonly?: boolean
 }
 
 const PoolStake = Object.assign(
@@ -84,9 +86,7 @@ const PoolStake = Object.assign(
               <Text.Body as="div" alpha="high">
                 {props.accountName}
               </Text.Body>
-              <Text.Body as="div">
-                ({props.accountAddress.slice(0, 4)}...{props.accountAddress.slice(-4)})
-              </Text.Body>
+              <Text.Body as="div">({shortenAddress(props.accountAddress)})</Text.Body>
             </div>
           </div>
         )}
@@ -150,7 +150,7 @@ const PoolStake = Object.assign(
         <Button
           variant="outlined"
           onClick={props.onRequestClaim}
-          hidden={props.claimState === 'unavailable'}
+          hidden={props.claimState === 'unavailable' || props.readonly}
           disabled={props.claimState === 'disabled' || props.claimState === 'unavailable'}
           loading={props.claimState === 'pending'}
           css={[{ gridArea: 'cButton' }, props.claimState === 'unavailable' && !isWide && { display: 'none' }]}
@@ -160,7 +160,7 @@ const PoolStake = Object.assign(
         <Button
           variant="outlined"
           onClick={props.onRequestUnstake}
-          hidden={props.unstakeState === 'unavailable'}
+          hidden={props.unstakeState === 'unavailable' || props.readonly}
           disabled={props.unstakeState === 'disabled' || props.unstakeState === 'unavailable'}
           loading={props.unstakeState === 'pending'}
           css={[{ gridArea: 'uButton' }, props.unstakeState === 'unavailable' && !isWide && { display: 'none' }]}
@@ -170,6 +170,7 @@ const PoolStake = Object.assign(
         <Button
           variant="outlined"
           onClick={props.onRequestAdd}
+          hidden={props.readonly}
           disabled={props.addState === 'disabled'}
           loading={props.addState === 'pending'}
           css={{ gridArea: 'aButton' }}

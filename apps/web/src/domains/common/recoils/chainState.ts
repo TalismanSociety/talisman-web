@@ -1,8 +1,8 @@
 import { apiState } from '@domains/chains/recoils'
-import { extensionState } from '@domains/extension/recoils'
 import { ApiPromise } from '@polkadot/api'
 import { AugmentedCall } from '@polkadot/api/types'
-import { atom, selectorFamily, waitForAll } from 'recoil'
+import { web3FromAddress } from '@polkadot/extension-dapp'
+import { atom, selectorFamily } from 'recoil'
 import type { Observable } from 'rxjs'
 
 /**
@@ -40,8 +40,9 @@ export const paymentInfoState = selectorFamily({
       TSection extends keyof PickKnownKeys<ApiPromise['tx'][TModule]>,
       TParams extends Parameters<ApiPromise['tx'][TModule][TSection]>
     >([module, section, account, ...params]: [TModule, TSection, string, ...TParams]) =>
-    ({ get }) => {
-      const [api, extension] = get(waitForAll([apiState, extensionState]))
+    async ({ get }) => {
+      const api = get(apiState)
+      const extension = await web3FromAddress(account)
 
       return api.tx[module]?.[section]?.(...params).paymentInfo(account, { signer: extension?.signer })
     },

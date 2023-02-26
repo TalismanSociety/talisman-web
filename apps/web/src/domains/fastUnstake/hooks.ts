@@ -1,4 +1,4 @@
-import { substrateAccountsState } from '@domains/accounts/recoils'
+import { injectedSubstrateAccountsState } from '@domains/accounts/recoils'
 import { apiState, chainRpcState } from '@domains/chains/recoils'
 import { useChainState } from '@domains/common/hooks'
 import { ApiPromise, WsProvider } from '@polkadot/api'
@@ -26,7 +26,7 @@ const eraExposedAccountsState = selectorFamily({
     async ({ get }) =>
       get(fastUnstakeApiState)
         .query.staking.erasStakers.entries(era)
-        .then(x => x.flatMap(([_, exposure]) => exposure.others.flatMap(({ who }) => who.toString())))
+        .then(x => x.flatMap(([_, exposure]) => (exposure as any).others.flatMap(({ who }: any) => who.toString())))
         .then(array => new Set(array)),
 })
 
@@ -61,7 +61,7 @@ export const useExposedAccounts = () => {
 }
 
 export const useFastUnstakeEligibleAccounts = () => {
-  const accounts = useRecoilValue(substrateAccountsState)
+  const accounts = useRecoilValue(injectedSubstrateAccountsState)
 
   const exposedAccountsLoadable = useExposedAccounts()
   const ledgersLoadable = useChainState(

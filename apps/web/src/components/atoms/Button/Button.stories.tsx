@@ -16,6 +16,13 @@ Default.args = {
   children: 'Click me',
 }
 
+export const Secondary = Default.bind({})
+
+Secondary.args = {
+  variant: 'secondary',
+  children: 'Click me',
+}
+
 export const Outlined = Default.bind({})
 
 Outlined.args = {

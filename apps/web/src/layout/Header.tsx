@@ -7,14 +7,12 @@ import { ReactComponent as MoreHorizontal } from '@assets/icons/more-horizontal.
 import { ReactComponent as PortfolioLogo } from '@assets/icons/portfolio.svg'
 import { ReactComponent as SwapLogo } from '@assets/icons/swap.svg'
 import { ReactComponent as TwitterMobileLogo } from '@assets/icons/twitter-mobile.svg'
-import { Union } from '@components/atoms/Icon'
-import { Menu as MenuIcon } from '@components/atoms/Icon'
+import { Menu as MenuIcon, Union } from '@components/atoms/Icon'
 import Menu from '@components/Menu'
-import { WalletNavConnector } from '@components/WalletNavConnector'
+import AccountsManagementMenu from '@components/widgets/AccountsManagementMenu'
 import { useTheme } from '@emotion/react'
 import styled from '@emotion/styled'
 import { trackGoal } from '@libs/fathom'
-import { useExtension } from '@libs/talisman'
 import { useMediaQuery } from '@util/hooks'
 import { DISCORD_JOIN_URL, TALISMAN_TWITTER_URL } from '@util/links'
 import Color from 'colorjs.io'
@@ -118,8 +116,6 @@ const Header = styled(({ className, isMobile }: HeaderProps) => {
   }, [controls, scrollY])
 
   const { t } = useTranslation('nav')
-  const { status: extensionStatus } = useExtension()
-  const homeRoute = ['LOADING', 'DISCONNECTED'].includes(extensionStatus) ? '/' : '/portfolio'
 
   const background = new Color(theme.color.background)
   background.alpha = 0.5
@@ -143,7 +139,7 @@ const Header = styled(({ className, isMobile }: HeaderProps) => {
       }}
     >
       <span>
-        <NavLink to={homeRoute} end className="logo">
+        <NavLink to="/" end className="logo">
           <Union />
         </NavLink>
       </span>
@@ -188,7 +184,7 @@ const Header = styled(({ className, isMobile }: HeaderProps) => {
       )}
 
       <div className="menu-nav">
-        <WalletNavConnector />
+        <AccountsManagementMenu />
         {!isMobile && (
           <>
             <div
@@ -320,7 +316,7 @@ const Header = styled(({ className, isMobile }: HeaderProps) => {
     gap: 1rem;
     margin: 1rem 0;
 
-    button {
+    .nav-button {
       max-height: 38px;
       border-radius: 1rem;
       height: 100%;

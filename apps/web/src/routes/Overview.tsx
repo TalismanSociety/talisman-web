@@ -9,118 +9,41 @@ import { Search } from '@components/Field'
 import HiddenDetails from '@components/molecules/HiddenDetails'
 import Asset, { AssetsList, AssetsListLocked } from '@components/recipes/Asset'
 import { NFTCard } from '@components/recipes/NFTCard'
-import { keyframes } from '@emotion/react'
+import { selectedAccountsState } from '@domains/accounts/recoils'
 import { filteredNftDataState } from '@libs/@talisman-nft/provider'
 import { NFTShort } from '@libs/@talisman-nft/types'
-import { DAPP_NAME, useExtension } from '@libs/talisman'
-import { useIsAnyWalletInstalled } from '@libs/talisman/useIsAnyWalletInstalled'
-import { WalletSelect } from '@talismn/connect-components'
-import getDownloadLink from '@util/getDownloadLink'
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useRecoilValue } from 'recoil'
-
-const fadeIn = keyframes`
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }   
-`
-
-const WalletConnectionOverview = () => {
-  const isAnyWalletInstalled = useIsAnyWalletInstalled()
-  const downloadLink = getDownloadLink()
-  const { status: extensionStatus } = useExtension()
-
-  if (extensionStatus === 'UNAVAILABLE') {
-    return (
-      <section
-        css={{
-          position: 'fixed',
-          top: '0',
-          right: '0',
-          height: '100%',
-          width: '100%',
-          background:
-            'linear-gradient(135deg, rgba(26,26,26,0.5) 0%, rgba(15,15,15,1) 30%, rgba(15,15,15,1) 65%, rgba(15,15,15,0.8) 68%, rgba(26,26,26,0.5) 100%)',
-          zIndex: 10,
-          animation: `${fadeIn} 0.3s ease-in-out`,
-        }}
-      >
-        <section
-          css={{
-            display: 'flex',
-            width: '100%',
-            height: '100%',
-            flexDirection: 'column',
-            justifyContent: 'center',
-            alignItems: 'center',
-            textAlign: 'center',
-            gap: '3rem',
-          }}
-        >
-          {isAnyWalletInstalled ? (
-            <>
-              <Text.H1 css={{ margin: 0 }}>
-                Welcome to the
-                <br />
-                Talisman Portal
-              </Text.H1>
-              <Text.H4 css={{ color: '#A5A5A5' }}>Please connect your wallet to view your Portfolio</Text.H4>
-              <WalletSelect onlyShowInstalled dappName={DAPP_NAME} triggerComponent={<Button>Connect Wallet</Button>} />
-            </>
-          ) : (
-            <>
-              <Text.H1 css={{ margin: 0 }}>
-                You need a wallet to
-                <br />
-                view your portfolio
-              </Text.H1>
-              <Text.H4 css={{ color: '#A5A5A5' }}>
-                To see your portfolio, you need to have a<br />
-                browser wallet installed first
-              </Text.H4>
-              <a href={downloadLink} target="_blank" rel="noopener noreferrer">
-                <Button>Install Wallet</Button>
-              </a>
-            </>
-          )}
-        </section>
-      </section>
-    )
-  }
-
-  return null
-}
 
 const Overview = () => {
   const [search, setSearch] = useState('')
   const { fiatTotal } = useAssets()
   const { tokens, balances, isLoading } = useAssetsFiltered({ size: 8, search })
 
+  const selectedAccounts = useRecoilValue(selectedAccountsState)
   const { items, isFetching } = useRecoilValue(filteredNftDataState)
 
   const nfts = useMemo(() => {
-    if (!isFetching && items.length === 0) {
+    const filteredItems = items.filter(x => selectedAccounts.map(x => x.address).includes(x.address))
+
+    if (!isFetching && filteredItems.length === 0) {
       return Array.from({ length: 4 }).map((_, index) => <NFTCard key={index} isBlank />)
     }
     // if still fetching and the items lenght is less than 4, return the loading cards but only display the remainder of items minus 4
 
-    if (!isFetching && items.length !== 0) {
-      return items.slice(0, 4).map((nft: NFTShort) => <NFTCard key={nft.id} nft={nft} />)
+    if (!isFetching && filteredItems.length !== 0) {
+      return filteredItems.slice(0, 4).map((nft: NFTShort) => <NFTCard key={nft.id} nft={nft} />)
     }
 
     // return Array of size 4 with loading cards
     return Array.from({ length: 2 }).map((_, index) => <NFTCard key={index} loading />)
 
     // return <></>
-  }, [isFetching, items])
+  }, [isFetching, items, selectedAccounts])
 
   return (
     <>
-      <WalletConnectionOverview />
       <div
         css={{
           // grid 1x2

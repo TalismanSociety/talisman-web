@@ -1,15 +1,16 @@
 import { Info, PanelSection } from '@components'
 import Identicon from '@components/atoms/Identicon'
+import { selectedAccountsState } from '@domains/accounts/recoils'
 import { css } from '@emotion/react'
 import styled from '@emotion/styled'
 import { ReactComponent as ExternalLink } from '@icons/external-link.svg'
-import { useAccounts } from '@libs/talisman'
 import { encodeAnyAddress } from '@talismn/util'
 import { truncateAddress } from '@util/helpers'
 import intlFormat from 'date-fns/intlFormat'
 import parseISO from 'date-fns/parseISO'
 import startCase from 'lodash/startCase'
 import { useMemo } from 'react'
+import { useRecoilValue } from 'recoil'
 
 import { ClickToCopy } from './ClickToCopy'
 import { ItemDetails } from './ItemDetails'
@@ -23,7 +24,7 @@ type Props = {
   selectedAccount?: string
 }
 export const Item = styled(({ className, transaction, addresses, selectedAccount }: Props) => {
-  const accounts = useAccounts()
+  const accounts = useRecoilValue(selectedAccountsState)
   const genericAddresses = useMemo(() => addresses.map(formatGenericAddress), [addresses])
 
   const { name, ss58Format, timestamp, explorerUrl, parsed, relatedAddresses, signer } = transaction

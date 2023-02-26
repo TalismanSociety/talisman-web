@@ -97,12 +97,7 @@ const Index = styled(({ withFilter, className }: { withFilter: boolean; classNam
       {/* <UnlockTalismanBanner /> */}
       {withFilter && <FilterBar {...filterProps} count={count} />}
       <Await until={!loading}>
-        <NoResults
-          require={count?.filtered > 0}
-          title={t('noResult.title')}
-          subtitle={t('noResult.subtitle')}
-          text={t('noResult.text')}
-        >
+        <NoResults require={count?.filtered > 0} subtitle={t('noCrowdloans.text')} text={t('noCrowdloans.subtext')}>
           <Grid>
             {crowdloans.map(({ id }) => (
               <Crowdloan.Teaser key={id} id={id} contributed={contributions.find(x => x.id === id) !== undefined} />

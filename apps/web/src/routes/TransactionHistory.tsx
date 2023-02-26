@@ -1,9 +1,11 @@
 import { List } from '@archetypes/Transaction'
 import { PanelSection } from '@components'
 import ExtensionStatusGate from '@components/ExtensionStatusGate'
+import { selectedAccountsState } from '@domains/accounts/recoils'
 import styled from '@emotion/styled'
-import { useAllAccountAddresses } from '@libs/talisman'
+import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useRecoilValue } from 'recoil'
 
 type ExtensionUnavailableProps = {
   props?: any
@@ -39,12 +41,12 @@ const ExtensionUnavailable = styled((props: ExtensionUnavailableProps) => {
 `
 
 const TransactionHistory = styled(({ className }: { className?: string }) => {
-  const addresses = useAllAccountAddresses()
+  const addresses = useRecoilValue(selectedAccountsState)
 
   return (
     <section className={className}>
       <ExtensionStatusGate unavailable={<ExtensionUnavailable />}>
-        <List addresses={addresses} />
+        <List addresses={useMemo(() => addresses.map(x => x.address), [addresses])} />
       </ExtensionStatusGate>
     </section>
   )
