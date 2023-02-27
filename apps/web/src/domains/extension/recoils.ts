@@ -2,6 +2,7 @@ import { injectedAccountsState } from '@domains/accounts/recoils'
 import { storageEffect } from '@domains/common/effects'
 import { web3AccountsSubscribe, web3Enable } from '@polkadot/extension-dapp'
 import type { InjectedWindow } from '@polkadot/extension-inject/types'
+import { uniqBy } from 'lodash'
 import { useEffect } from 'react'
 import { atom, useRecoilState, useSetRecoilState } from 'recoil'
 
@@ -21,7 +22,9 @@ export const ExtensionWatcher = () => {
     }
 
     const unsubscribePromise = web3Enable(process.env.REACT_APP_APPLICATION_NAME ?? 'Talisman').then(() =>
-      web3AccountsSubscribe(accounts => setAccounts(accounts.map(account => ({ ...account, ...account.meta }))))
+      web3AccountsSubscribe(accounts =>
+        setAccounts(uniqBy(accounts, account => account.address).map(account => ({ ...account, ...account.meta })))
+      )
     )
 
     return () => {
