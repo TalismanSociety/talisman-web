@@ -1,8 +1,5 @@
-import Button from '@components/atoms/Button'
-import { Lock } from '@components/atoms/Icon'
-import Identicon from '@components/atoms/Identicon'
-import Text from '@components/atoms/Text'
 import { useTheme } from '@emotion/react'
+import { Button, Icon, Identicon, Text } from '@talismn/ui'
 import { shortenAddress } from '@util/format'
 import React, { ReactElement } from 'react'
 
@@ -120,7 +117,7 @@ const PoolUnstake = (props: PoolUnstakeProps) => {
               <Text.Body css={{ fontSize: '1.6rem', fontWeight: 'bold' }}>
                 {props.unstakingAmount}
                 {props.timeTilWithdrawable !== undefined && (
-                  <Lock width="1.2rem" height="1.2rem" css={{ marginLeft: '0.4rem' }} />
+                  <Icon.Lock width="1.2rem" height="1.2rem" css={{ marginLeft: '0.4rem' }} />
                 )}
               </Text.Body>
             </div>

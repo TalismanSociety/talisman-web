@@ -1,10 +1,5 @@
-import Button from '@components/atoms/Button'
-import { ChevronRight, Info } from '@components/atoms/Icon'
-import Identicon from '@components/atoms/Identicon'
-import Text from '@components/atoms/Text'
-import Select from '@components/molecules/Select'
-import TextInput, { LabelButton } from '@components/molecules/TextInput'
 import { useTheme } from '@emotion/react'
+import { Button, Icon, Identicon, LabelButton, Select, Text, TextInput } from '@talismn/ui'
 import { Maybe } from '@util/monads'
 import { AnimatePresence, AnimationProps, motion } from 'framer-motion'
 import { ReactNode, useState } from 'react'
@@ -119,18 +114,18 @@ const StakingInput = Object.assign(
             >
               <div css={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
                 <PoolStatusIndicator status={props.poolStatus} />
-                <Text css={{ fontSize: '1.4rem' }} alpha={poolInfoExpanded ? 'high' : 'medium'}>
+                <Text.Body css={{ fontSize: '1.4rem' }} alpha={poolInfoExpanded ? 'high' : 'medium'}>
                   {props.noPoolsAvailable ? 'No pools available' : props.poolName}
-                </Text>
+                </Text.Body>
               </div>
               {props.noPoolsAvailable ? (
-                <Info width="1.4rem" height="1.4rem" />
+                <Icon.Info width="1.4rem" height="1.4rem" />
               ) : (
                 <motion.div
                   animate={String(poolInfoExpanded)}
                   variants={{ true: { transform: 'rotate(90deg)' }, false: {} }}
                 >
-                  <ChevronRight />
+                  <Icon.ChevronRight />
                 </motion.div>
               )}
             </div>

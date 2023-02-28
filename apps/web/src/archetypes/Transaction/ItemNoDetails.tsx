@@ -1,6 +1,5 @@
-import Button from '@components/atoms/Button'
-import * as Icon from '@components/atoms/Icon'
 import { css } from '@emotion/react'
+import { Button, Icon } from '@talismn/ui'
 import { useTranslation } from 'react-i18next'
 
 export const ItemNoDetails = () => {

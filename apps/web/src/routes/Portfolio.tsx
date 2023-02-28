@@ -1,7 +1,6 @@
 import { Total } from '@archetypes/Wallet'
-import { AccountValueInfo } from '@components/molecules/AccountValueInfo'
-import { BottomBorderNav } from '@components/molecules/BottomBorderNav'
 import { legacySelectedAccountState } from '@domains/accounts/recoils'
+import { AccountValueInfo, BottomBorderNav } from '@talismn/ui'
 import { Outlet } from 'react-router'
 import { Link, useMatch } from 'react-router-dom'
 import { useRecoilValue } from 'recoil'

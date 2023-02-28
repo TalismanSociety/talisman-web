@@ -1,9 +1,9 @@
 import { Crowdloan, Parachain } from '@archetypes'
 import { Panel, PanelSection, Poster, useModal } from '@components'
-import Button from '@components/atoms/Button'
 import styled from '@emotion/styled'
 import { useCrowdloanContributions } from '@libs/crowdloans'
 import { useCrowdloanByParachainId, useParachainAssets, useParachainDetailsBySlug } from '@libs/talisman'
+import { Button } from '@talismn/ui'
 import { useTranslation } from 'react-i18next'
 import { useParams } from 'react-router-dom'
 

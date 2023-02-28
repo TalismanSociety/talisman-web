@@ -1,11 +1,3 @@
-import Button from '@components/atoms/Button'
-import CircularProgressIndicator from '@components/atoms/CircularProgressIndicator'
-import { ChevronDown, Download, Eye, Link, PlusCircle, Trash2, Union, Users } from '@components/atoms/Icon'
-import IconButton from '@components/atoms/IconButton'
-import Identicon from '@components/atoms/Identicon'
-import Text from '@components/atoms/Text'
-import ListItem from '@components/molecules/ListItem'
-import Menu from '@components/molecules/Menu'
 import {
   injectedAccountsState,
   legacySelectedAccountState,
@@ -16,6 +8,7 @@ import { fiatBalancesState, totalLocalizedFiatBalanceState } from '@domains/bala
 import { allowExtensionConnectionState } from '@domains/extension/recoils'
 import { useTheme } from '@emotion/react'
 import { isWeb3Injected } from '@polkadot/extension-dapp'
+import { Button, CircularProgressIndicator, Icon, IconButton, Identicon, ListItem, Menu, Text } from '@talismn/ui'
 import { shortenAddress } from '@util/format'
 import getDownloadLink from '@util/getDownloadLink'
 import { motion } from 'framer-motion'
@@ -25,7 +18,7 @@ import { useRecoilState, useRecoilValue, useRecoilValueLoadable, useSetRecoilSta
 import AddReadOnlyAccountDialog from './AddReadOnlyAccountDialog'
 import RemoveWatchedAccountConfirmationDialog from './RemoveWatchedAccountConfirmationDialog'
 
-const AnimatedChevron = motion(ChevronDown)
+const AnimatedChevron = motion(Icon.ChevronDown)
 
 const AccountsManagementMenu = () => {
   const theme = useTheme()
@@ -50,7 +43,7 @@ const AccountsManagementMenu = () => {
           containerColor={theme.color.foreground}
           contentColor={theme.color.primary}
         >
-          <Link />
+          <Icon.Link />
         </IconButton>,
         'Connect',
       ]
@@ -64,7 +57,7 @@ const AccountsManagementMenu = () => {
           containerColor={theme.color.foreground}
           contentColor={theme.color.primary}
         >
-          <Users />
+          <Icon.Users />
         </IconButton>,
         'All accounts',
       ]
@@ -84,7 +77,7 @@ const AccountsManagementMenu = () => {
             <ListItem
               leadingContent={
                 <IconButton as="figure" containerColor={theme.color.foreground} contentColor={theme.color.primary}>
-                  <Download />
+                  <Icon.Download />
                 </IconButton>
               }
               headlineText="Install wallet"
@@ -100,7 +93,7 @@ const AccountsManagementMenu = () => {
           <ListItem
             leadingContent={
               <IconButton as="figure" containerColor={theme.color.foreground} contentColor={theme.color.primary}>
-                <PlusCircle />
+                <Icon.PlusCircle />
               </IconButton>
             }
             headlineText="Connect wallet"
@@ -116,7 +109,7 @@ const AccountsManagementMenu = () => {
           overlineText={totalBalance.valueMaybe() ?? <CircularProgressIndicator size="1em" />}
           leadingContent={
             <IconButton as="figure" containerColor={theme.color.foreground} contentColor={theme.color.primary}>
-              <Users />
+              <Icon.Users />
             </IconButton>
           }
         />
@@ -157,7 +150,7 @@ const AccountsManagementMenu = () => {
                 padding: '0 1.6rem',
               }}
             >
-              <Union width="1em" height="1em" /> My accounts
+              <Icon.Union width="1em" height="1em" /> My accounts
             </Text.Body>
             {leadingMenuItem}
             {injectedAccounts.map(x => (
@@ -181,7 +174,7 @@ const AccountsManagementMenu = () => {
               as="header"
               css={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 'bold', padding: '1.6rem' }}
             >
-              <Eye width="1em" height="1em" /> Watched accounts
+              <Icon.Eye width="1em" height="1em" /> Watched accounts
             </Text.Body>
             {readonlyAccounts.map(x => (
               <Menu.Item onClick={() => setSelectedAccountAddresses(() => [x.address])}>
@@ -206,7 +199,7 @@ const AccountsManagementMenu = () => {
                             onToggleOpen()
                           }}
                         >
-                          <Trash2 />
+                          <Icon.Trash2 />
                         </IconButton>
                       )}
                     </RemoveWatchedAccountConfirmationDialog>
@@ -221,7 +214,7 @@ const AccountsManagementMenu = () => {
                     headlineText="Add watch only address"
                     leadingContent={
                       <IconButton as="figure">
-                        <Eye />
+                        <Icon.Eye />
                       </IconButton>
                     }
                   />

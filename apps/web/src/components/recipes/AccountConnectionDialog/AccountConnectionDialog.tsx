@@ -1,8 +1,4 @@
-import Button from '@components/atoms/Button'
-import Hr from '@components/atoms/Hr'
-import Text from '@components/atoms/Text'
-import AlertDialog from '@components/molecules/AlertDialog'
-import TextInput from '@components/molecules/TextInput'
+import { AlertDialog, Button, Hr, Text, TextInput } from '@talismn/ui'
 
 export type AccountConnectionDialogProps = {
   open?: boolean

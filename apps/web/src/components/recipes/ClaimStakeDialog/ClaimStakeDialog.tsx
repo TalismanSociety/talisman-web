@@ -1,6 +1,4 @@
-import Button from '@components/atoms/Button'
-import Text from '@components/atoms/Text'
-import AlertDialog from '@components/molecules/AlertDialog'
+import { AlertDialog, Button, Text } from '@talismn/ui'
 
 export type ClaimStakeDialogProps = {
   open?: boolean

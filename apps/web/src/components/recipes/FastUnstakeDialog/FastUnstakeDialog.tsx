@@ -1,12 +1,6 @@
-import EyeOfSauronProgressIndicator from '@components/atoms/EyeOfSauronProgressIndicator'
-import Hr from '@components/atoms/Hr'
-import DescriptionList from '@components/molecules/DescriptionList'
+import { AlertDialog, Button, DescriptionList, EyeOfSauronProgressIndicator, Hr, Text } from '@talismn/ui'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useMemo } from 'react'
-
-import Button from '../../atoms/Button'
-import Text from '../../atoms/Text'
-import AlertDialog from '../../molecules/AlertDialog'
 
 export type FastUnstakeDialogProps = {
   open: boolean

@@ -1,6 +1,3 @@
-import { Copy } from '@components/atoms/Icon'
-import Identicon from '@components/atoms/Identicon'
-import Text from '@components/atoms/Text'
 import { CopyButton } from '@components/CopyButton'
 import { NFTCard } from '@components/recipes/NFTCard'
 import AccountsManagement from '@components/widgets/AccountsManagementMenu'
@@ -9,6 +6,7 @@ import { css } from '@emotion/react'
 import styled from '@emotion/styled'
 import { nftDataState } from '@libs/@talisman-nft/provider'
 import { NFTShort } from '@libs/@talisman-nft/types'
+import { Icon, Identicon, Text } from '@talismn/ui'
 import { device } from '@util/breakpoints'
 import toast from 'react-hot-toast'
 import { useRecoilValue } from 'recoil'
@@ -164,7 +162,7 @@ const List = () => {
                       </Text.Body>
                       <Text.Body as="div">{text}</Text.Body>
                     </>,
-                    { position: 'bottom-right', icon: <Copy /> }
+                    { position: 'bottom-right', icon: <Icon.Copy /> }
                   )
                 }}
                 onFailed={(text: string) => {
