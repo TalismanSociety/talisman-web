@@ -1,10 +1,10 @@
-import CircularProgressIndicator from '@components/atoms/CircularProgressIndicator'
 import FastUnstakeDialog from '@components/recipes/FastUnstakeDialog'
 import ValidatorStake from '@components/recipes/ValidatorStake'
 import { Account } from '@domains/accounts/recoils'
 import { useExtrinsic, useTokenAmountFromPlanck } from '@domains/common/hooks'
 import { useLockDuration } from '@domains/nominationPools/hooks/useLockDuration'
 import { DeriveStakingAccount } from '@polkadot/api-derive/types'
+import { CircularProgressIndicator } from '@talismn/ui'
 import { formatDistanceStrict } from 'date-fns'
 import { useCallback, useMemo, useState } from 'react'
 

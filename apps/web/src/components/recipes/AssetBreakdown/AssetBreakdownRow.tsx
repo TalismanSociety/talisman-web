@@ -1,9 +1,7 @@
-import Identicon from '@components/atoms/Identicon'
-import Text from '@components/atoms/Text'
-import Tooltip from '@components/atoms/Tooltip'
 import { Account } from '@domains/accounts/recoils'
 import { keyframes } from '@emotion/react'
 import styled from '@emotion/styled'
+import { Identicon, Text, Tooltip } from '@talismn/ui'
 import { startCase } from 'lodash'
 
 import { AssetBalance } from '../Asset'

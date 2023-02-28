@@ -7,13 +7,12 @@ import { ReactComponent as MoreHorizontal } from '@assets/icons/more-horizontal.
 import { ReactComponent as PortfolioLogo } from '@assets/icons/portfolio.svg'
 import { ReactComponent as SwapLogo } from '@assets/icons/swap.svg'
 import { ReactComponent as TwitterMobileLogo } from '@assets/icons/twitter-mobile.svg'
-import { Menu as MenuIcon, Union } from '@components/atoms/Icon'
 import Menu from '@components/Menu'
 import AccountsManagementMenu from '@components/widgets/AccountsManagementMenu'
 import { useTheme } from '@emotion/react'
 import styled from '@emotion/styled'
 import { trackGoal } from '@libs/fathom'
-import { useExtension } from '@libs/talisman'
+import { Icon } from '@talismn/ui'
 import { useMediaQuery } from '@util/hooks'
 import { DISCORD_JOIN_URL, TALISMAN_TWITTER_URL } from '@util/links'
 import Color from 'colorjs.io'
@@ -117,8 +116,6 @@ const Header = styled(({ className, isMobile }: HeaderProps) => {
   }, [controls, scrollY])
 
   const { t } = useTranslation('nav')
-  const { status: extensionStatus } = useExtension()
-  const homeRoute = ['LOADING', 'DISCONNECTED'].includes(extensionStatus) ? '/' : '/portfolio'
 
   const background = new Color(theme.color.background)
   background.alpha = 0.5
@@ -142,8 +139,8 @@ const Header = styled(({ className, isMobile }: HeaderProps) => {
       }}
     >
       <span>
-        <NavLink to={homeRoute} end className="logo">
-          <Union />
+        <NavLink to="/" end className="logo">
+          <Icon.Union />
         </NavLink>
       </span>
       {!isMobile && (
@@ -211,7 +208,7 @@ const Header = styled(({ className, isMobile }: HeaderProps) => {
           ButtonComponent={
             isMobile ? (
               <div className="mobile-nav-button">
-                <MenuIcon />
+                <Icon.Menu />
               </div>
             ) : (
               <button className="nav-button">

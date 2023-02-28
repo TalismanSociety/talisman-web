@@ -1,8 +1,4 @@
-import TextInput, { LabelButton } from '@components/molecules/TextInput'
-
-import Button from '../../atoms/Button'
-import Text from '../../atoms/Text'
-import AlertDialog from '../../molecules/AlertDialog'
+import { AlertDialog, Button, LabelButton, Text, TextInput } from '@talismn/ui'
 
 export type AddStakeDialogProps = {
   open: boolean

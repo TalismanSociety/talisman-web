@@ -1,7 +1,4 @@
-import Button from '@components/atoms/Button'
-import { ChevronLeft, ChevronRight } from '@components/atoms/Icon'
-import Text from '@components/atoms/Text'
-import AlertDialog from '@components/molecules/AlertDialog'
+import { AlertDialog, Button, Icon, Text } from '@talismn/ui'
 import { motion } from 'framer-motion'
 import React, { ReactElement, useState } from 'react'
 
@@ -54,10 +51,10 @@ const PoolSelectorDialog = Object.assign(
               </Text.Body>
               <div css={{ display: 'flex' }}>
                 <Button variant="noop" onClick={() => setPage(page => page - 1)} hidden={!hasPreviousPage}>
-                  <ChevronLeft />
+                  <Icon.ChevronLeft />
                 </Button>
                 <Button variant="noop" onClick={() => setPage(page => page + 1)} hidden={!hasNextPage}>
-                  <ChevronRight />
+                  <Icon.ChevronRight />
                 </Button>
               </div>
             </div>

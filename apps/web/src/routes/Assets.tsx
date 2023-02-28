@@ -1,10 +1,9 @@
 import useAssets, { useAssetsFiltered } from '@archetypes/Portfolio/Assets'
 import { Total } from '@archetypes/Wallet'
-import DisplayValue from '@components/atoms/DisplayValue/DisplayValue'
 import { Search } from '@components/Field'
-import InfoCard from '@components/molecules/InfoCard'
 import Asset, { AssetsList, AssetsListLocked } from '@components/recipes/Asset'
 import styled from '@emotion/styled'
+import { DisplayValue, InfoCard } from '@talismn/ui'
 import { useState } from 'react'
 
 const Assets = () => {

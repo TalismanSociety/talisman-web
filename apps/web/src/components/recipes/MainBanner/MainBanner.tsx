@@ -1,4 +1,4 @@
-import Text from '@components/atoms/Text'
+import { Text } from '@talismn/ui'
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 

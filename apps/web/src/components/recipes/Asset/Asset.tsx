@@ -1,11 +1,7 @@
-import DisplayValue from '@components/atoms/DisplayValue/DisplayValue'
-import { Lock } from '@components/atoms/Icon'
-import Text from '@components/atoms/Text'
-import Tooltip from '@components/atoms/Tooltip'
-import HiddenDetails from '@components/molecules/HiddenDetails'
 import { keyframes, useTheme } from '@emotion/react'
 import styled from '@emotion/styled'
 import { Balances } from '@talismn/balances'
+import { DisplayValue, HiddenDetails, Icon, Text, Tooltip } from '@talismn/ui'
 import { isEmpty, startCase } from 'lodash'
 import { Children, ReactElement, ReactNode } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -46,7 +42,7 @@ export const AssetBalance = ({ locked, planck, fiat, symbol }: AssetBalanceProps
         >
           {planck ? `${planck} ${symbol} ` : '- ' + symbol}
         </Text.Body>
-        {locked ? <Lock css={{ width: '16px', height: '16px' }} /> : ''}
+        {locked ? <Icon.Lock css={{ width: '16px', height: '16px' }} /> : ''}
       </div>
       <Text.Body
         css={{
