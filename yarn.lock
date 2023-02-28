@@ -8535,6 +8535,8 @@ __metadata:
 "@talismn/development@workspace:^, @talismn/development@workspace:packages/development":
   version: 0.0.0-use.local
   resolution: "@talismn/development@workspace:packages/development"
+  dependencies:
+    "@tsconfig/create-react-app": ^1.0.3
   languageName: unknown
   linkType: soft
 
@@ -8554,7 +8556,6 @@ __metadata:
   resolution: "@talismn/icons@workspace:packages/icons"
   dependencies:
     "@svgr/cli": ^6.5.1
-    "@tsconfig/create-react-app": ^1.0.3
     "@types/react": ^18.0.28
     react: ^18.2.0
     react-dom: ^18.2.0
@@ -8605,7 +8606,6 @@ __metadata:
     "@storybook/testing-library": ^0.0.13
     "@talismn/development": "workspace:^"
     "@talismn/icons": "workspace:^"
-    "@tsconfig/create-react-app": ^1.0.3
     "@types/react": ^18.0.28
     babel-loader: ^8.3.0
     framer-motion: ^9.1.7
