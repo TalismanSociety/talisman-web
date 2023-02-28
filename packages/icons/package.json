@@ -1,0 +1,26 @@
+{
+  "private": true,
+  "name": "@talismn/icons",
+  "packageManager": "yarn@3.4.1",
+  "main": "build/commonjs/index.js",
+  "exports": {
+    "import": "./build/module/index.js",
+    "require": "./build/commonjs/index.js"
+  },
+  "scripts": {
+    "codegen": "npx @svgr/cli --typescript --no-svgo --out-dir src/components -- src/svgs",
+    "build": "rm -rf build && tsc -p tsconfig.build.json -m commonjs --outDir build/commonjs && tsc -p tsconfig.build.json -m esnext --outDir build/module",
+    "check-types": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@svgr/cli": "^6.5.1",
+    "@tsconfig/create-react-app": "^1.0.3",
+    "@types/react": "^18.0.28",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "typescript": "^4.9.5"
+  },
+  "peerDependencies": {
+    "react": "18.x"
+  }
+}
