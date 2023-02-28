@@ -1,11 +1,5 @@
-import Button from '@components/atoms/Button'
-import Identicon from '@components/atoms/Identicon'
-import Text from '@components/atoms/Text'
-import AlertDialog, { AlertDialogProps } from '@components/molecules/AlertDialog'
-import Select from '@components/molecules/Select'
+import { AlertDialog, AlertDialogProps, Button, DateInput, Identicon, Select, Text } from '@talismn/ui'
 import { Maybe } from '@util/monads'
-
-import DateInput from '../DateInput'
 
 type Account = { selected?: boolean; name: string; address: string; balance: string }
 

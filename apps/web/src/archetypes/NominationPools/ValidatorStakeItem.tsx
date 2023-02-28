@@ -1,7 +1,7 @@
-import CircularProgressIndicator from '@components/atoms/CircularProgressIndicator'
 import ValidatorStake from '@components/recipes/ValidatorStake'
 import { Account } from '@domains/accounts/recoils'
 import { DeriveStakingAccount } from '@polkadot/api-derive/types'
+import { CircularProgressIndicator } from '@talismn/ui'
 import { useState } from 'react'
 import { useRecoilValue, waitForAll } from 'recoil'
 

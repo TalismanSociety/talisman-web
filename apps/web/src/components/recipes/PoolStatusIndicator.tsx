@@ -1,4 +1,4 @@
-import StatusIndicator, { StatusIndicatorProps } from '@components/atoms/StatusIndicator'
+import { StatusIndicator, StatusIndicatorProps } from '@talismn/ui'
 import { useMemo } from 'react'
 
 export type PoolStatus = 'earning_rewards' | 'waiting' | 'not_nominating' | undefined

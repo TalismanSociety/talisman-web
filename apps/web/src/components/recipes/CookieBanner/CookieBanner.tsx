@@ -1,7 +1,5 @@
-import Button from '@components/atoms/Button'
-import { X } from '@components/atoms/Icon'
-import Text from '@components/atoms/Text'
 import { useTheme } from '@emotion/react'
+import { Button, Icon, Text } from '@talismn/ui'
 import { AnimatePresence, motion } from 'framer-motion'
 
 export type CookieBannerProps = {
@@ -42,7 +40,7 @@ const CookieBanner = (props: CookieBannerProps) => {
             Accept
           </Button>
           <Button variant="noop" onClick={props.onDismiss}>
-            <X />
+            <Icon.X />
           </Button>
         </motion.form>
       )}

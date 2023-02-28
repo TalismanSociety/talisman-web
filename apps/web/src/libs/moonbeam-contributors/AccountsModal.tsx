@@ -1,7 +1,7 @@
 import { ReactComponent as CheckCircle } from '@assets/icons/check-circle.svg'
 import { ReactComponent as ChevronRight } from '@assets/icons/chevron-right.svg'
-import Identicon from '@components/atoms/Identicon'
 import styled from '@emotion/styled'
+import { Identicon } from '@talismn/ui'
 import { truncateString } from '@util/helpers'
 
 import { ContributorWithName } from '.'

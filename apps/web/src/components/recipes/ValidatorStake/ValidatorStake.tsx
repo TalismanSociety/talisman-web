@@ -1,7 +1,5 @@
-import Button from '@components/atoms/Button'
-import Identicon from '@components/atoms/Identicon'
-import Text from '@components/atoms/Text'
 import { useTheme } from '@emotion/react'
+import { Button, Identicon, Text } from '@talismn/ui'
 import { shortenAddress } from '@util/format'
 import React, { ReactElement, ReactNode } from 'react'
 

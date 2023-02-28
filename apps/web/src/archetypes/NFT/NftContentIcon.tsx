@@ -1,18 +1,18 @@
-import { Volume2 as Audio, File, Box as Model, Video } from '@components/atoms/Icon'
 import styled from '@emotion/styled'
 import { NFTCategory } from '@libs/@talisman-nft/types'
+import { Icon } from '@talismn/ui'
 
 const NftContentIcon = ({ type, className }: { type: NFTCategory; className?: string }) => {
   switch (type) {
     case 'audio':
-      return <Audio />
+      return <Icon.Volume2 />
     case 'video':
-      return <Video />
+      return <Icon.Video />
     case 'model':
-      return <Model />
+      return <Icon.Box />
     case 'application':
     case 'pdf':
-      return <File />
+      return <Icon.File />
     default:
       return null
   }

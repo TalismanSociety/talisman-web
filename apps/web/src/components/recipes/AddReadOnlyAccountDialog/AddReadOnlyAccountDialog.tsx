@@ -1,9 +1,5 @@
-import Button from '@components/atoms/Button'
-import Identicon from '@components/atoms/Identicon'
-import AlertDialog from '@components/molecules/AlertDialog'
-import ListItem from '@components/molecules/ListItem'
-import TextInput from '@components/molecules/TextInput'
 import { useTheme } from '@emotion/react'
+import { AlertDialog, Button, Identicon, ListItem, TextInput } from '@talismn/ui'
 import { shortenAddress } from '@util/format'
 import { isNilOrWhitespace } from '@util/nil'
 

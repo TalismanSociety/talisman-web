@@ -1,6 +1,5 @@
-import Identicon from '@components/atoms/Identicon'
-import Select from '@components/molecules/Select'
 import { accountsState, substrateAccountsState } from '@domains/accounts/recoils'
+import { Identicon, Select } from '@talismn/ui'
 import { shortenAddress } from '@util/format'
 import { useEffect } from 'react'
 import { useRecoilValue } from 'recoil'

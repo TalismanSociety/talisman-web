@@ -1,9 +1,9 @@
-import Text from '@components/atoms/Text'
 import PoolStake, { PoolStakeList } from '@components/recipes/PoolStake/PoolStake'
 import { selectedSubstrateAccountsState } from '@domains/accounts/recoils'
 import { useChainState } from '@domains/common/hooks'
 import { useTotalStaked } from '@domains/staking/hooks'
 import { useTheme } from '@emotion/react'
+import { Text } from '@talismn/ui'
 import { Suspense } from 'react'
 import { useRecoilValue } from 'recoil'
 

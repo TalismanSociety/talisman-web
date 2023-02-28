@@ -1,6 +1,6 @@
-import Text from '@components/atoms/Text'
 import { useTheme } from '@emotion/react'
 import * as Sentry from '@sentry/react'
+import { Text } from '@talismn/ui'
 import { PropsWithChildren, useEffect } from 'react'
 import { isRouteErrorResponse, useRouteError } from 'react-router-dom'
 

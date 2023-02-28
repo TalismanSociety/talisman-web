@@ -1,8 +1,7 @@
-import { ExternalLink } from '@components/atoms/Icon'
-import Text from '@components/atoms/Text'
 import { Chain } from '@domains/chains/config'
 import RpcError from '@polkadot/rpc-provider/coder/error'
 import { ISubmittableResult } from '@polkadot/types/types'
+import { Icon, Text } from '@talismn/ui'
 import toast from 'react-hot-toast'
 import { Loadable } from 'recoil'
 
@@ -90,7 +89,7 @@ export const toastExtrinsic = (
                 href={chain.subscanUrl + 'extrinsic/' + error?.txHash?.toString()}
                 target="_blank"
               >
-                Subscan <ExternalLink width="1.2rem" height="1.2rem" />
+                Subscan <Icon.ExternalLink width="1.2rem" height="1.2rem" />
               </Text.Body>
             </Text.Body>
           )}

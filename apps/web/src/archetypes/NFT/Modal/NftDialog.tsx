@@ -1,13 +1,8 @@
-import Button from '@components/atoms/Button'
-import Dialog, { DialogProps } from '@components/atoms/Dialog'
-import { ExternalLink, Layers, X } from '@components/atoms/Icon'
-import Text from '@components/atoms/Text'
-import InfoWithHeader from '@components/molecules/InfoWithHeader/InfoWithHeader'
-import Pill from '@components/molecules/Pill'
 import { NFTPreview } from '@components/recipes/NFTPreview'
 import { keyframes } from '@emotion/react'
 import { useNftById } from '@libs/@talisman-nft'
 import { NFTShort } from '@libs/@talisman-nft/types'
+import { Button, Dialog, DialogProps, Icon, InfoWithHeader, Tag, Text } from '@talismn/ui'
 
 import { NFTChild } from '../types'
 import InfoSkeleton from './InfoSkeleton'
@@ -75,7 +70,7 @@ const NftDialog = ({ onRequestDismiss, ...props }: NftDialogProps) => {
           },
         }}
       >
-        <X width="24px" height="24px" />
+        <Icon.X width="24px" height="24px" />
       </Button>
       <div
         css={{
@@ -152,7 +147,7 @@ const NftDialog = ({ onRequestDismiss, ...props }: NftDialogProps) => {
                   >
                     {props.nft?.name}{' '}
                     {!!props.nft?.nftSpecificData?.isComposable && (
-                      <Layers css={{ color: 'var(--color-primary)', width: '0.75em' }} title="Composable" />
+                      <Icon.Layers css={{ color: 'var(--color-primary)', width: '0.75em' }} />
                     )}
                   </Text.H3>
                 }
@@ -184,7 +179,7 @@ const NftDialog = ({ onRequestDismiss, ...props }: NftDialogProps) => {
                     <Text.Body css={{ color: '#d2fb5b' }}>Migrated NFT</Text.Body>
                   ) : (
                     Object.keys(nft?.attributes)?.map((attribute: any) => (
-                      <Pill
+                      <Tag
                         key={attribute}
                         header={
                           nft?.nftSpecificData?.isEvm
@@ -258,7 +253,7 @@ const NftDialog = ({ onRequestDismiss, ...props }: NftDialogProps) => {
                       <a href={nft?.platformUri} target="_blank" rel="noreferrer" css={{ color: '#fff' }}>
                         {nft?.provider}
                       </a>
-                      <ExternalLink height={'0.75em'} />
+                      <Icon.ExternalLink height={'0.75em'} />
                     </span>
                   }
                 />
