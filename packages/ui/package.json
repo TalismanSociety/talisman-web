@@ -11,7 +11,8 @@
     "./assets/css/talismn.css": "./assets/css/talismn.css"
   },
   "scripts": {
-    "build": "rm -rf build && tsc -p tsconfig.build.json -m commonjs --outDir build/commonjs && tsc -p tsconfig.build.json -m esnext --outDir build/module",
+    "dev": "tsc --build --watch tsconfig.build.json tsconfig.build.commonjs.json",
+    "build": "tsc --build tsconfig.build.json tsconfig.build.commonjs.json",
     "check-types": "tsc --noEmit",
     "storybook": "start-storybook -p 6007",
     "build-storybook": "build-storybook"
@@ -34,7 +35,6 @@
     "@storybook/react": "^6.5.16",
     "@storybook/testing-library": "^0.0.13",
     "@talismn/development": "workspace:^",
-    "@tsconfig/create-react-app": "^1.0.3",
     "@types/react": "^18.0.28",
     "babel-loader": "^8.3.0",
     "framer-motion": "^9.1.7",

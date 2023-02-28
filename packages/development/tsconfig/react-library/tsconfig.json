@@ -1,0 +1,6 @@
+{
+  "extends": "@tsconfig/create-react-app/tsconfig.json",
+  "compilerOptions": {
+    "resolveJsonModule": true
+  }
+}
