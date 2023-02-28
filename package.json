@@ -9,12 +9,12 @@
   ],
   "scripts": {
     "postinstall": "husky install",
-    "start": "yarn workspaces foreach run start",
-    "build": "yarn workspaces foreach run build",
-    "test": "yarn workspaces foreach run test --watchAll=false",
-    "lint": "yarn workspaces foreach run lint",
-    "checkTypes": "yarn workspaces foreach run checkTypes",
-    "e2e": "yarn workspaces foreach run e2e"
+    "dev": "yarn turbo run dev",
+    "build": "yarn turbo run build",
+    "test": "yarn turbo run test",
+    "lint": "yarn turbo run lint",
+    "check-types": "yarn turbo run check-types",
+    "e2e": "yarn turbo run e2e"
   },
   "devDependencies": {
     "@commitlint/cli": "^17.4.2",
@@ -24,7 +24,8 @@
     "import-sort-style-module": "^6.0.0",
     "prettier": "^2.8.3",
     "prettier-plugin-import-sort": "^0.0.7",
-    "pretty-quick": "^3.1.3"
+    "pretty-quick": "^3.1.3",
+    "turbo": "^1.8.2"
   },
   "resolutions": {
     "json-stream-stringify": "2.0.4"
