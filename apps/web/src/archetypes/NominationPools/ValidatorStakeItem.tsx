@@ -49,7 +49,10 @@ const ValidatorStakeItem = (props: {
         }
         rewardsAmountInFiat={reward.localizedFiatAmount === undefined ? '' : '+' + reward.localizedFiatAmount}
         onRequestUnstake={useCallback(() => {
-          if (props.potentiallyEligibleForFastUnstake && props.eligibleForFastUnstake !== false) {
+          if (
+            props.eligibleForFastUnstake ||
+            (props.potentiallyEligibleForFastUnstake && props.eligibleForFastUnstake !== false)
+          ) {
             setIsFastUnstakeDialogOpen(true)
           } else {
             setIsUnstakeDialogOpen(true)
