@@ -14,7 +14,8 @@
     "test": "yarn turbo run test",
     "lint": "yarn turbo run lint",
     "check-types": "yarn turbo run check-types",
-    "e2e": "yarn turbo run e2e"
+    "e2e": "yarn turbo run e2e",
+    "storybook": "yarn turbo run storybook"
   },
   "devDependencies": {
     "@commitlint/cli": "^17.4.2",
