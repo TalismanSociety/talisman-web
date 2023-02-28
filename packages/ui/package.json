@@ -13,7 +13,7 @@
   "scripts": {
     "build": "rm -rf build && tsc -p tsconfig.build.json -m commonjs --outDir build/commonjs && tsc -p tsconfig.build.json -m esnext --outDir build/module",
     "check-types": "tsc --noEmit",
-    "storybook": "start-storybook -p 6006",
+    "storybook": "start-storybook -p 6007",
     "build-storybook": "build-storybook"
   },
   "dependencies": {
@@ -33,6 +33,7 @@
     "@storybook/manager-webpack5": "^6.5.16",
     "@storybook/react": "^6.5.16",
     "@storybook/testing-library": "^0.0.13",
+    "@talismn/development": "workspace:^",
     "@tsconfig/create-react-app": "^1.0.3",
     "@types/react": "^18.0.28",
     "babel-loader": "^8.3.0",

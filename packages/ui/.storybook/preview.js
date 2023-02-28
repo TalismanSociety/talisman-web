@@ -1,8 +1,9 @@
 import '../assets/css/talismn.css'
 
-import { Global, ThemeProvider, css } from '@emotion/react'
+import { ThemeProvider } from '@emotion/react'
+import { theme as storybookTheme } from '@talismn/development/storybook'
 
-import { greenDark } from '../src/theme'
+import { theme } from '../src/theme'
 
 export const parameters = {
   actions: { argTypesRegex: '^on[A-Z].*' },
@@ -12,19 +13,14 @@ export const parameters = {
       date: /Date$/,
     },
   },
+  docs: {
+    theme: storybookTheme,
+  },
 }
 
 export const decorators = [
   Story => (
-    <ThemeProvider theme={greenDark}>
-      <Global
-        styles={css`
-          html,
-          body {
-            font-size: 10px;
-          }
-        `}
-      />
+    <ThemeProvider theme={theme.greenDark}>
       <Story />
     </ThemeProvider>
   ),

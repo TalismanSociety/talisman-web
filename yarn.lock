@@ -8532,6 +8532,12 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@talismn/development@workspace:^, @talismn/development@workspace:packages/development":
+  version: 0.0.0-use.local
+  resolution: "@talismn/development@workspace:packages/development"
+  languageName: unknown
+  linkType: soft
+
 "@talismn/dot-pool-selector@npm:snapshot":
   version: 0.0.0-snapshot.14e1467
   resolution: "@talismn/dot-pool-selector@npm:0.0.0-snapshot.14e1467"
@@ -8597,6 +8603,7 @@ __metadata:
     "@storybook/manager-webpack5": ^6.5.16
     "@storybook/react": ^6.5.16
     "@storybook/testing-library": ^0.0.13
+    "@talismn/development": "workspace:^"
     "@talismn/icons": "workspace:^"
     "@tsconfig/create-react-app": ^1.0.3
     "@types/react": ^18.0.28
@@ -8686,6 +8693,7 @@ __metadata:
     "@talismn/balances-react": 0.0.0-pr563-20230222052739
     "@talismn/connect-components": ^1.1.7
     "@talismn/connect-ui": ^1.1.2
+    "@talismn/development": "workspace:^"
     "@talismn/dot-pool-selector": snapshot
     "@talismn/ui": "workspace:^"
     "@talismn/util": 0.1.5
