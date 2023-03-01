@@ -1,7 +1,7 @@
 import * as React from 'react'
-import { SVGProps } from 'react'
-const SvgZoomIn = (props: SVGProps<SVGSVGElement>) => (
-  <svg width={24} height={24} fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+import { Ref, SVGProps, forwardRef } from 'react'
+const SvgZoomIn = (props: SVGProps<SVGSVGElement>, ref: Ref<SVGSVGElement>) => (
+  <svg width={24} height={24} fill="none" xmlns="http://www.w3.org/2000/svg" ref={ref} {...props}>
     <path
       d="M11 19a8 8 0 1 0 0-16 8 8 0 0 0 0 16Z"
       stroke="currentColor"
@@ -14,4 +14,5 @@ const SvgZoomIn = (props: SVGProps<SVGSVGElement>) => (
     <path d="M8 11h6" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
   </svg>
 )
-export default SvgZoomIn
+const ForwardRef = forwardRef(SvgZoomIn)
+export default ForwardRef

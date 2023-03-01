@@ -1,7 +1,7 @@
 import * as React from 'react'
-import { SVGProps } from 'react'
-const SvgPieChart = (props: SVGProps<SVGSVGElement>) => (
-  <svg width={24} height={24} fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+import { Ref, SVGProps, forwardRef } from 'react'
+const SvgPieChart = (props: SVGProps<SVGSVGElement>, ref: Ref<SVGSVGElement>) => (
+  <svg width={24} height={24} fill="none" xmlns="http://www.w3.org/2000/svg" ref={ref} {...props}>
     <path
       d="M21.21 15.89A10 10 0 1 1 8 2.83"
       stroke="currentColor"
@@ -18,4 +18,5 @@ const SvgPieChart = (props: SVGProps<SVGSVGElement>) => (
     />
   </svg>
 )
-export default SvgPieChart
+const ForwardRef = forwardRef(SvgPieChart)
+export default ForwardRef

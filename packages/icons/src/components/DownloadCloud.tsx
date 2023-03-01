@@ -1,7 +1,7 @@
 import * as React from 'react'
-import { SVGProps } from 'react'
-const SvgDownloadCloud = (props: SVGProps<SVGSVGElement>) => (
-  <svg width={24} height={24} fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+import { Ref, SVGProps, forwardRef } from 'react'
+const SvgDownloadCloud = (props: SVGProps<SVGSVGElement>, ref: Ref<SVGSVGElement>) => (
+  <svg width={24} height={24} fill="none" xmlns="http://www.w3.org/2000/svg" ref={ref} {...props}>
     <g clipPath="url(#a)" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
       <path d="m8 17 4 4 4-4" />
       <path d="M12 12v9" />
@@ -14,4 +14,5 @@ const SvgDownloadCloud = (props: SVGProps<SVGSVGElement>) => (
     </defs>
   </svg>
 )
-export default SvgDownloadCloud
+const ForwardRef = forwardRef(SvgDownloadCloud)
+export default ForwardRef

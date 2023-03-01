@@ -1,7 +1,7 @@
 import * as React from 'react'
-import { SVGProps } from 'react'
-const SvgGift = (props: SVGProps<SVGSVGElement>) => (
-  <svg width={24} height={24} fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+import { Ref, SVGProps, forwardRef } from 'react'
+const SvgGift = (props: SVGProps<SVGSVGElement>, ref: Ref<SVGSVGElement>) => (
+  <svg width={24} height={24} fill="none" xmlns="http://www.w3.org/2000/svg" ref={ref} {...props}>
     <path d="M20 12v10H4V12" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
     <path d="M22 7H2v5h20V7Z" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
     <path d="M12 22V7" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
@@ -21,4 +21,5 @@ const SvgGift = (props: SVGProps<SVGSVGElement>) => (
     />
   </svg>
 )
-export default SvgGift
+const ForwardRef = forwardRef(SvgGift)
+export default ForwardRef

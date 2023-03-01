@@ -1,7 +1,7 @@
 import * as React from 'react'
-import { SVGProps } from 'react'
-const SvgCodepen = (props: SVGProps<SVGSVGElement>) => (
-  <svg width={24} height={24} fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+import { Ref, SVGProps, forwardRef } from 'react'
+const SvgCodepen = (props: SVGProps<SVGSVGElement>, ref: Ref<SVGSVGElement>) => (
+  <svg width={24} height={24} fill="none" xmlns="http://www.w3.org/2000/svg" ref={ref} {...props}>
     <path
       d="m12 2 10 6.5v7L12 22 2 15.5v-7L12 2Z"
       stroke="currentColor"
@@ -15,4 +15,5 @@ const SvgCodepen = (props: SVGProps<SVGSVGElement>) => (
     <path d="M12 2v6.5" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
   </svg>
 )
-export default SvgCodepen
+const ForwardRef = forwardRef(SvgCodepen)
+export default ForwardRef

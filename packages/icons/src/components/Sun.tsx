@@ -1,7 +1,7 @@
 import * as React from 'react'
-import { SVGProps } from 'react'
-const SvgSun = (props: SVGProps<SVGSVGElement>) => (
-  <svg width={24} height={24} fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+import { Ref, SVGProps, forwardRef } from 'react'
+const SvgSun = (props: SVGProps<SVGSVGElement>, ref: Ref<SVGSVGElement>) => (
+  <svg width={24} height={24} fill="none" xmlns="http://www.w3.org/2000/svg" ref={ref} {...props}>
     <g clipPath="url(#a)" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
       <path d="M12 17a5 5 0 1 0 0-10 5 5 0 0 0 0 10Z" />
       <path d="M12 1v2" />
@@ -20,4 +20,5 @@ const SvgSun = (props: SVGProps<SVGSVGElement>) => (
     </defs>
   </svg>
 )
-export default SvgSun
+const ForwardRef = forwardRef(SvgSun)
+export default ForwardRef

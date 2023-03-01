@@ -1,7 +1,7 @@
 import * as React from 'react'
-import { SVGProps } from 'react'
-const SvgCloudDrizzle = (props: SVGProps<SVGSVGElement>) => (
-  <svg width={24} height={24} fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+import { Ref, SVGProps, forwardRef } from 'react'
+const SvgCloudDrizzle = (props: SVGProps<SVGSVGElement>, ref: Ref<SVGSVGElement>) => (
+  <svg width={24} height={24} fill="none" xmlns="http://www.w3.org/2000/svg" ref={ref} {...props}>
     <g clipPath="url(#a)" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
       <path d="M8 19v2" />
       <path d="M8 13v2" />
@@ -18,4 +18,5 @@ const SvgCloudDrizzle = (props: SVGProps<SVGSVGElement>) => (
     </defs>
   </svg>
 )
-export default SvgCloudDrizzle
+const ForwardRef = forwardRef(SvgCloudDrizzle)
+export default ForwardRef
