@@ -10,6 +10,7 @@ import {
   useListNavigation,
   useRole,
 } from '@floating-ui/react'
+import { ChevronDown } from '@talismn/icons'
 import { motion } from 'framer-motion'
 import React, {
   ReactElement,
@@ -22,7 +23,7 @@ import React, {
   useState,
 } from 'react'
 
-import { Icon, Text } from '../../atoms'
+import { Text } from '../../atoms'
 
 type Value = string | number | undefined
 
@@ -164,7 +165,7 @@ const Select = Object.assign(
           <Text.Body as="div" css={{ pointerEvents: 'none', userSelect: 'none' }}>
             {selectedChild ?? props.placeholder}
           </Text.Body>
-          <Icon.ChevronDown css={{ transform: open ? 'rotate(180deg)' : undefined, transition: 'ease 0.25s' }} />
+          <ChevronDown css={{ transform: open ? 'rotate(180deg)' : undefined, transition: 'ease 0.25s' }} />
         </motion.button>
         <motion.ul
           ref={floating}

@@ -1,5 +1,6 @@
 import { css } from '@emotion/react'
-import { Button, Icon } from '@talismn/ui'
+import { AlertCircle } from '@talismn/icons'
+import { Button } from '@talismn/ui'
 import { useTranslation } from 'react-i18next'
 
 export const ItemNoDetails = () => {
@@ -12,7 +13,7 @@ export const ItemNoDetails = () => {
         gap: 1em;
       `}
     >
-      <Icon.AlertCircle
+      <AlertCircle
         css={css`
           display: block;
           font-size: 3.2rem;

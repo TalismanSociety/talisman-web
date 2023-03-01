@@ -1,10 +1,11 @@
 import { useTheme } from '@emotion/react'
+import { Check, X } from '@talismn/icons'
 import { formatDistanceToNowStrict } from 'date-fns'
 import { motion } from 'framer-motion'
 import React, { Fragment, useEffect, useMemo, useState } from 'react'
 import { Toast, resolveValue } from 'react-hot-toast'
 
-import { CircularProgressIndicator, Icon, Text } from '../../atoms'
+import { CircularProgressIndicator, Text } from '../../atoms'
 
 export type ToastBarProps = {
   toast: Toast
@@ -99,7 +100,7 @@ const ToastBar = ({ toast }: ToastBarProps) => {
                   color: '#38D448',
                 }}
               >
-                <Icon.Check width="2rem" height="2rem" />
+                <Check width="2rem" height="2rem" />
               </div>
             )
           case 'error':
@@ -116,7 +117,7 @@ const ToastBar = ({ toast }: ToastBarProps) => {
                   color: '#D22424',
                 }}
               >
-                <Icon.X width="2rem" height="2rem" />
+                <X width="2rem" height="2rem" />
               </div>
             )
         }

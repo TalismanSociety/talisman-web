@@ -1,5 +1,6 @@
 import { useTheme } from '@emotion/react'
-import { Button, Icon, Text, Tooltip } from '@talismn/ui'
+import { ExternalLink, Union, User } from '@talismn/icons'
+import { Button, Text, Tooltip } from '@talismn/ui'
 
 export type PoolSelectorItemProps = {
   selected?: boolean
@@ -65,7 +66,7 @@ const PoolSelectorItem = (props: PoolSelectorItemProps) => {
         </Tooltip>
         {props.poolDetailUrl !== undefined && (
           <Button as="a" variant="noop" href={props.poolDetailUrl} target="_blank">
-            <Icon.ExternalLink width="1.4rem" height="1.4rem" />
+            <ExternalLink width="1.4rem" height="1.4rem" />
           </Button>
         )}
       </header>
@@ -105,14 +106,14 @@ const PoolSelectorItem = (props: PoolSelectorItemProps) => {
                 >
                   {props.memberCount}
                 </Text.Body>
-                <Icon.User width="1.4rem" height="1.4rem" />
+                <User width="1.4rem" height="1.4rem" />
               </div>
             )}
           </Tooltip>
         </div>
         {props.talismanRecommended && (
           <Tooltip content="Talisman top recommended pool">
-            {tooltipProps => <Icon.Union {...tooltipProps} width="1.4rem" height="1.4rem" />}
+            {tooltipProps => <Union {...tooltipProps} width="1.4rem" height="1.4rem" />}
           </Tooltip>
         )}
       </Text.Body>

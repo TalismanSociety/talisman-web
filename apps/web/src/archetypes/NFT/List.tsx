@@ -6,7 +6,8 @@ import { css } from '@emotion/react'
 import styled from '@emotion/styled'
 import { nftDataState } from '@libs/@talisman-nft/provider'
 import { NFTShort } from '@libs/@talisman-nft/types'
-import { Icon, Identicon, Text } from '@talismn/ui'
+import { Copy } from '@talismn/icons'
+import { Identicon, Text } from '@talismn/ui'
 import { device } from '@util/breakpoints'
 import toast from 'react-hot-toast'
 import { useRecoilValue } from 'recoil'
@@ -162,7 +163,7 @@ const List = () => {
                       </Text.Body>
                       <Text.Body as="div">{text}</Text.Body>
                     </>,
-                    { position: 'bottom-right', icon: <Icon.Copy /> }
+                    { position: 'bottom-right', icon: <Copy /> }
                   )
                 }}
                 onFailed={(text: string) => {

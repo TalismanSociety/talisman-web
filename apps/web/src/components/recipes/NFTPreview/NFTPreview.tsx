@@ -3,7 +3,8 @@ import '@google/model-viewer'
 import PlaceholderPreview from '@archetypes/NFT/PlaceholderPreview'
 import { getNFTType } from '@libs/@talisman-nft'
 import { NFTShort } from '@libs/@talisman-nft/types'
-import { CircularProgressIndicator, Icon } from '@talismn/ui'
+import { Box, File, Image, Unknown, Video, Volume2 } from '@talismn/icons'
+import { CircularProgressIndicator } from '@talismn/ui'
 import { useEffect, useMemo, useState } from 'react'
 
 type NFTPreviewProps = {
@@ -50,7 +51,7 @@ const NFTPreview = ({ nft, isFull = false, loading, isBlank = false }: NFTPrevie
           alt={nft?.name ?? nft?.id}
         />
       ) : (
-        <PlaceholderPreview icon={<Icon.Image />} text={'Image'} />
+        <PlaceholderPreview icon={<Image />} text={'Image'} />
       )
     case 'video':
       return nft?.thumb && !isFull ? (
@@ -75,7 +76,7 @@ const NFTPreview = ({ nft, isFull = false, loading, isBlank = false }: NFTPrevie
           controls={isFull}
         />
       ) : (
-        <PlaceholderPreview icon={<Icon.Video />} text={'Video'} />
+        <PlaceholderPreview icon={<Video />} text={'Video'} />
       )
     case 'pdf':
     case 'application':
@@ -88,7 +89,7 @@ const NFTPreview = ({ nft, isFull = false, loading, isBlank = false }: NFTPrevie
       ) : nft?.mediaUri && isFull ? (
         <embed src={`${nft?.mediaUri}#toolbar=0`} />
       ) : (
-        <PlaceholderPreview icon={<Icon.File />} text={'File'} />
+        <PlaceholderPreview icon={<File />} text={'File'} />
       )
     case 'audio':
       return nft?.thumb && !isFull ? (
@@ -102,17 +103,17 @@ const NFTPreview = ({ nft, isFull = false, loading, isBlank = false }: NFTPrevie
           {nft?.thumb ? (
             <img loading="lazy" src={nft?.thumb} alt={nft?.name ?? nft?.id} />
           ) : (
-            <PlaceholderPreview icon={<Icon.Volume2 />} text={'Audio'} />
+            <PlaceholderPreview icon={<Volume2 />} text={'Audio'} />
           )}
           <audio controls css={{ position: 'absolute', bottom: '0px', width: 'inherit' }}>
             <source src={nft?.mediaUri} />
           </audio>
         </>
       ) : (
-        <PlaceholderPreview icon={<Icon.Volume2 />} text={'Audio'} />
+        <PlaceholderPreview icon={<Volume2 />} text={'Audio'} />
       )
     case 'model':
-      if (!nft?.mediaUri) return <PlaceholderPreview icon={<Icon.Box />} text={'Model'} />
+      if (!nft?.mediaUri) return <PlaceholderPreview icon={<Box />} text={'Model'} />
       const modelProps = {
         'src': nft?.mediaUri,
         'alt': nft?.name ?? nft?.id,
@@ -141,7 +142,7 @@ const NFTPreview = ({ nft, isFull = false, loading, isBlank = false }: NFTPrevie
     case 'blank':
       return null
     default:
-      return <PlaceholderPreview icon={<Icon.Unknown />} text={'Unknown'} />
+      return <PlaceholderPreview icon={<Unknown />} text={'Unknown'} />
   }
 }
 

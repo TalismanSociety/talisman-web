@@ -8550,6 +8550,7 @@ __metadata:
     typescript: ^4.9.5
   peerDependencies:
     "@emotion/react": 11.x
+    "@talismn/icons": "*"
     framer-motion: 10.x
     react: 18.x
     react-hot-toast: 2.x
@@ -8630,6 +8631,7 @@ __metadata:
     "@talismn/connect-ui": ^1.1.2
     "@talismn/development": "workspace:^"
     "@talismn/dot-pool-selector": snapshot
+    "@talismn/icons": "workspace:^"
     "@talismn/ui": "workspace:^"
     "@talismn/util": 0.1.5
     "@testing-library/jest-dom": ^5.16.5

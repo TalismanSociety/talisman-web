@@ -45,6 +45,7 @@
   },
   "peerDependencies": {
     "@emotion/react": "11.x",
+    "@talismn/icons": "*",
     "framer-motion": "10.x",
     "react": "18.x",
     "react-hot-toast": "2.x"

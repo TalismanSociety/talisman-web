@@ -1,6 +1,5 @@
 import { keyframes } from '@emotion/react'
-
-import Icon from '../Icon'
+import { Loader } from '@talismn/icons'
 
 export type CircularProgressIndicatorProps = {
   size?: string | number
@@ -12,7 +11,7 @@ const fade = keyframes`
 `
 
 const CircularProgressIndicator = (props: CircularProgressIndicatorProps) => (
-  <Icon.Loader
+  <Loader
     width={props.size ?? 24}
     height={props.size ?? 24}
     css={{

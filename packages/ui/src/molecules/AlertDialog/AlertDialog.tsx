@@ -1,7 +1,8 @@
 import { Global, keyframes, useTheme } from '@emotion/react'
+import { X } from '@talismn/icons'
 import { ReactNode } from 'react'
 
-import { Button, Dialog, DialogProps, Icon, Text } from '../../atoms'
+import { Button, Dialog, DialogProps, Text } from '../../atoms'
 
 export type AlertDialogProps = DialogProps & {
   title?: string
@@ -73,7 +74,7 @@ const AlertDialog = ({
         >
           <Text.H4 css={{ marginBottom: 0 }}>{title}</Text.H4>
           <Button variant="noop" onClick={onRequestDismiss}>
-            <Icon.X width="1.6rem" height="1.6rem" />
+            <X width="1.6rem" height="1.6rem" />
           </Button>
         </header>
         {content}
