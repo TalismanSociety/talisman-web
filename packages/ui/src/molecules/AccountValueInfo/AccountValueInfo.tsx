@@ -1,6 +1,7 @@
+import { Users } from '@talismn/icons'
 import { ReactNode } from 'react'
 
-import { Icon, Identicon, Text } from '../../atoms'
+import { Identicon, Text } from '../../atoms'
 import DisplayValue from '../../atoms/DisplayValue/DisplayValue'
 
 export type AccountValueInfoProps = {
@@ -26,7 +27,7 @@ const AccountValueInfo = ({ address, name, balance }: AccountValueInfoProps) => 
           backgroundColor: '#383838',
           borderRadius: '50%',
         }}
-        custom={!address ? <Icon.Users width="2.4rem" height="2.4rem" /> : undefined}
+        custom={!address ? <Users width="2.4rem" height="2.4rem" /> : undefined}
         value={address ?? ''}
       />
       <section

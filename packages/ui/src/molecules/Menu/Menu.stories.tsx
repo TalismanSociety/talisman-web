@@ -1,7 +1,8 @@
 import { ComponentMeta, Story } from '@storybook/react'
+import { ChevronDown } from '@talismn/icons'
 import { motion } from 'framer-motion'
 
-import { Button, Icon, IconButton, Identicon, Text } from '../../atoms'
+import { Button, Identicon } from '../../atoms'
 import ListItem from '../ListItem'
 import Menu, { MenuProps, OFFSET } from './Menu'
 
@@ -27,7 +28,7 @@ export const Default: Story<MenuProps> = args => (
   </div>
 )
 
-const AnimatedChevron = motion(Icon.ChevronDown)
+const AnimatedChevron = motion(ChevronDown)
 
 Default.args = {
   children: [

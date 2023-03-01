@@ -11,7 +11,7 @@ import Menu from '@components/Menu'
 import AccountsManagementMenu from '@components/widgets/AccountsManagementMenu'
 import { useTheme } from '@emotion/react'
 import styled from '@emotion/styled'
-import { Icon } from '@talismn/ui'
+import { Menu as MenuIcon, Union } from '@talismn/icons'
 import { useMediaQuery } from '@util/hooks'
 import { DISCORD_JOIN_URL, TALISMAN_TWITTER_URL } from '@util/links'
 import Color from 'colorjs.io'
@@ -134,7 +134,7 @@ const Header = styled(({ className, isMobile }: HeaderProps) => {
     >
       <span>
         <NavLink to="/" end className="logo">
-          <Icon.Union />
+          <Union />
         </NavLink>
       </span>
       {!isMobile && (
@@ -202,7 +202,7 @@ const Header = styled(({ className, isMobile }: HeaderProps) => {
           ButtonComponent={
             isMobile ? (
               <div className="mobile-nav-button">
-                <Icon.Menu />
+                <MenuIcon />
               </div>
             ) : (
               <button className="nav-button">

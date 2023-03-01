@@ -1,5 +1,6 @@
 import { useTheme } from '@emotion/react'
-import { Button, Icon, Identicon, LabelButton, Select, Text, TextInput } from '@talismn/ui'
+import { ChevronRight, Info } from '@talismn/icons'
+import { Button, Identicon, LabelButton, Select, Text, TextInput } from '@talismn/ui'
 import { Maybe } from '@util/monads'
 import { AnimatePresence, AnimationProps, motion } from 'framer-motion'
 import { ReactNode, useState } from 'react'
@@ -119,13 +120,13 @@ const StakingInput = Object.assign(
                 </Text.Body>
               </div>
               {props.noPoolsAvailable ? (
-                <Icon.Info width="1.4rem" height="1.4rem" />
+                <Info width="1.4rem" height="1.4rem" />
               ) : (
                 <motion.div
                   animate={String(poolInfoExpanded)}
                   variants={{ true: { transform: 'rotate(90deg)' }, false: {} }}
                 >
-                  <Icon.ChevronRight />
+                  <ChevronRight />
                 </motion.div>
               )}
             </div>

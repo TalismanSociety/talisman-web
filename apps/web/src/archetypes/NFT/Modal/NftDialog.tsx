@@ -2,7 +2,8 @@ import { NFTPreview } from '@components/recipes/NFTPreview'
 import { keyframes } from '@emotion/react'
 import { useNftById } from '@libs/@talisman-nft'
 import { NFTShort } from '@libs/@talisman-nft/types'
-import { Button, Dialog, DialogProps, Icon, InfoWithHeader, Tag, Text } from '@talismn/ui'
+import { ExternalLink, Layers, X } from '@talismn/icons'
+import { Button, Dialog, DialogProps, InfoWithHeader, Tag, Text } from '@talismn/ui'
 
 import { NFTChild } from '../types'
 import InfoSkeleton from './InfoSkeleton'
@@ -70,7 +71,7 @@ const NftDialog = ({ onRequestDismiss, ...props }: NftDialogProps) => {
           },
         }}
       >
-        <Icon.X width="24px" height="24px" />
+        <X width="24px" height="24px" />
       </Button>
       <div
         css={{
@@ -147,7 +148,7 @@ const NftDialog = ({ onRequestDismiss, ...props }: NftDialogProps) => {
                   >
                     {props.nft?.name}{' '}
                     {!!props.nft?.nftSpecificData?.isComposable && (
-                      <Icon.Layers css={{ color: 'var(--color-primary)', width: '0.75em' }} />
+                      <Layers css={{ color: 'var(--color-primary)', width: '0.75em' }} />
                     )}
                   </Text.H3>
                 }
@@ -253,7 +254,7 @@ const NftDialog = ({ onRequestDismiss, ...props }: NftDialogProps) => {
                       <a href={nft?.platformUri} target="_blank" rel="noreferrer" css={{ color: '#fff' }}>
                         {nft?.provider}
                       </a>
-                      <Icon.ExternalLink height={'0.75em'} />
+                      <ExternalLink height={'0.75em'} />
                     </span>
                   }
                 />

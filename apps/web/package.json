@@ -36,6 +36,7 @@
     "@talismn/connect-components": "^1.1.7",
     "@talismn/connect-ui": "^1.1.2",
     "@talismn/dot-pool-selector": "snapshot",
+    "@talismn/icons": "workspace:^",
     "@talismn/ui": "workspace:^",
     "@talismn/util": "0.1.5",
     "bignumber.js": "^9.1.1",
