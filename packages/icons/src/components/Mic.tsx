@@ -1,7 +1,7 @@
 import * as React from 'react'
-import { SVGProps } from 'react'
-const SvgMic = (props: SVGProps<SVGSVGElement>) => (
-  <svg width={24} height={24} fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+import { Ref, SVGProps, forwardRef } from 'react'
+const SvgMic = (props: SVGProps<SVGSVGElement>, ref: Ref<SVGSVGElement>) => (
+  <svg width={24} height={24} fill="none" xmlns="http://www.w3.org/2000/svg" ref={ref} {...props}>
     <path
       d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3v0Z"
       stroke="currentColor"
@@ -20,4 +20,5 @@ const SvgMic = (props: SVGProps<SVGSVGElement>) => (
     <path d="M8 23h8" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
   </svg>
 )
-export default SvgMic
+const ForwardRef = forwardRef(SvgMic)
+export default ForwardRef

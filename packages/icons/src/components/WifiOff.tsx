@@ -1,7 +1,7 @@
 import * as React from 'react'
-import { SVGProps } from 'react'
-const SvgWifiOff = (props: SVGProps<SVGSVGElement>) => (
-  <svg width={24} height={24} fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+import { Ref, SVGProps, forwardRef } from 'react'
+const SvgWifiOff = (props: SVGProps<SVGSVGElement>, ref: Ref<SVGSVGElement>) => (
+  <svg width={24} height={24} fill="none" xmlns="http://www.w3.org/2000/svg" ref={ref} {...props}>
     <g clipPath="url(#a)" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
       <path d="m1 1 22 22" />
       <path d="M16.72 11.06c.82.4 1.585.9 2.28 1.49" />
@@ -18,4 +18,5 @@ const SvgWifiOff = (props: SVGProps<SVGSVGElement>) => (
     </defs>
   </svg>
 )
-export default SvgWifiOff
+const ForwardRef = forwardRef(SvgWifiOff)
+export default ForwardRef

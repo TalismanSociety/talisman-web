@@ -1,7 +1,7 @@
 import * as React from 'react'
-import { SVGProps } from 'react'
-const SvgRefreshCcw = (props: SVGProps<SVGSVGElement>) => (
-  <svg width={24} height={24} fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+import { Ref, SVGProps, forwardRef } from 'react'
+const SvgRefreshCcw = (props: SVGProps<SVGSVGElement>, ref: Ref<SVGSVGElement>) => (
+  <svg width={24} height={24} fill="none" xmlns="http://www.w3.org/2000/svg" ref={ref} {...props}>
     <path d="M1 4v6h6" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
     <path d="M23 20v-6h-6" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
     <path
@@ -13,4 +13,5 @@ const SvgRefreshCcw = (props: SVGProps<SVGSVGElement>) => (
     />
   </svg>
 )
-export default SvgRefreshCcw
+const ForwardRef = forwardRef(SvgRefreshCcw)
+export default ForwardRef

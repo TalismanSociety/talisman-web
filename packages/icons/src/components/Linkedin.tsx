@@ -1,7 +1,7 @@
 import * as React from 'react'
-import { SVGProps } from 'react'
-const SvgLinkedin = (props: SVGProps<SVGSVGElement>) => (
-  <svg width={24} height={24} fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+import { Ref, SVGProps, forwardRef } from 'react'
+const SvgLinkedin = (props: SVGProps<SVGSVGElement>, ref: Ref<SVGSVGElement>) => (
+  <svg width={24} height={24} fill="none" xmlns="http://www.w3.org/2000/svg" ref={ref} {...props}>
     <path
       d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6v0Z"
       stroke="currentColor"
@@ -19,4 +19,5 @@ const SvgLinkedin = (props: SVGProps<SVGSVGElement>) => (
     />
   </svg>
 )
-export default SvgLinkedin
+const ForwardRef = forwardRef(SvgLinkedin)
+export default ForwardRef

@@ -1,7 +1,7 @@
 import * as React from 'react'
-import { SVGProps } from 'react'
-const SvgAtSign = (props: SVGProps<SVGSVGElement>) => (
-  <svg width={24} height={24} fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+import { Ref, SVGProps, forwardRef } from 'react'
+const SvgAtSign = (props: SVGProps<SVGSVGElement>, ref: Ref<SVGSVGElement>) => (
+  <svg width={24} height={24} fill="none" xmlns="http://www.w3.org/2000/svg" ref={ref} {...props}>
     <path
       d="M12 16a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z"
       stroke="currentColor"
@@ -18,4 +18,5 @@ const SvgAtSign = (props: SVGProps<SVGSVGElement>) => (
     />
   </svg>
 )
-export default SvgAtSign
+const ForwardRef = forwardRef(SvgAtSign)
+export default ForwardRef

@@ -1,4 +1,5 @@
 {
   "outDir": "src/components",
-  "typescript": true
+  "typescript": true,
+  "ref": true
 }

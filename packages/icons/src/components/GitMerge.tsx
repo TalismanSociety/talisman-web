@@ -1,7 +1,7 @@
 import * as React from 'react'
-import { SVGProps } from 'react'
-const SvgGitMerge = (props: SVGProps<SVGSVGElement>) => (
-  <svg width={24} height={24} fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+import { Ref, SVGProps, forwardRef } from 'react'
+const SvgGitMerge = (props: SVGProps<SVGSVGElement>, ref: Ref<SVGSVGElement>) => (
+  <svg width={24} height={24} fill="none" xmlns="http://www.w3.org/2000/svg" ref={ref} {...props}>
     <path
       d="M18 21a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"
       stroke="currentColor"
@@ -25,4 +25,5 @@ const SvgGitMerge = (props: SVGProps<SVGSVGElement>) => (
     />
   </svg>
 )
-export default SvgGitMerge
+const ForwardRef = forwardRef(SvgGitMerge)
+export default ForwardRef

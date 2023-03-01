@@ -1,7 +1,7 @@
 import * as React from 'react'
-import { SVGProps } from 'react'
-const SvgUnion = (props: SVGProps<SVGSVGElement>) => (
-  <svg width={24} height={24} viewBox="0 0 12 13" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+import { Ref, SVGProps, forwardRef } from 'react'
+const SvgUnion = (props: SVGProps<SVGSVGElement>, ref: Ref<SVGSVGElement>) => (
+  <svg width={24} height={24} viewBox="0 0 12 13" fill="none" xmlns="http://www.w3.org/2000/svg" ref={ref} {...props}>
     <path
       d="M4.887 9.125c0 .617.497 1.118 1.113 1.125A1.126 1.126 0 0 0 6 8a1.126 1.126 0 0 0-1.113 1.125Z"
       fill="currentColor"
@@ -14,4 +14,5 @@ const SvgUnion = (props: SVGProps<SVGSVGElement>) => (
     />
   </svg>
 )
-export default SvgUnion
+const ForwardRef = forwardRef(SvgUnion)
+export default ForwardRef

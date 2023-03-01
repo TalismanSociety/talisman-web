@@ -1,7 +1,7 @@
 import * as React from 'react'
-import { SVGProps } from 'react'
-const SvgThermometer = (props: SVGProps<SVGSVGElement>) => (
-  <svg width={24} height={24} fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+import { Ref, SVGProps, forwardRef } from 'react'
+const SvgThermometer = (props: SVGProps<SVGSVGElement>, ref: Ref<SVGSVGElement>) => (
+  <svg width={24} height={24} fill="none" xmlns="http://www.w3.org/2000/svg" ref={ref} {...props}>
     <g clipPath="url(#a)">
       <path
         d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0Z"
@@ -18,4 +18,5 @@ const SvgThermometer = (props: SVGProps<SVGSVGElement>) => (
     </defs>
   </svg>
 )
-export default SvgThermometer
+const ForwardRef = forwardRef(SvgThermometer)
+export default ForwardRef
