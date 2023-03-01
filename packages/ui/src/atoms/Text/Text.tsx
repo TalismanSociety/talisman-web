@@ -45,8 +45,14 @@ const Text = Object.assign(BaseText, {
   H4: <T extends React.ElementType = 'h4'>(props: TextProps<T>) => (
     <BaseHeaderText {...props} as={props.as ?? 'h4'} css={{ fontSize: 18 }} />
   ),
+  BodyLarge: <T extends React.ElementType = 'span'>(props: TextProps<T>) => (
+    <BaseText {...props} as={props.as ?? 'span'} css={{ fontSize: 16 }} />
+  ),
   Body: <T extends React.ElementType = 'span'>(props: TextProps<T>) => (
     <BaseText {...props} as={props.as ?? 'span'} css={{ fontSize: 14 }} />
+  ),
+  BodySmall: <T extends React.ElementType = 'span'>(props: TextProps<T>) => (
+    <BaseText {...props} as={props.as ?? 'span'} css={{ fontSize: 12 }} />
   ),
   A: <T extends React.ElementType | ElementType<any> = 'a'>(props: TextProps<T>) => (
     <BaseText {...props} as={props.as ?? 'a'} alpha="high" css={{ fontSize: 'inherit', textDecoration: 'underline' }} />
