@@ -10,7 +10,7 @@
   "scripts": {
     "dev": "tsc --build --watch tsconfig.build.json tsconfig.build.commonjs.json",
     "build": "tsc --build tsconfig.build.json tsconfig.build.commonjs.json",
-    "codegen": "npx @svgr/cli --typescript --no-svgo --out-dir src/components -- src/svgs",
+    "codegen": "npx @svgr/cli -- src/svgs",
     "check-types": "tsc --noEmit"
   },
   "devDependencies": {

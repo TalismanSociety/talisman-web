@@ -1,27 +1,15 @@
 import * as React from 'react'
 import { SVGProps } from 'react'
 const SvgHelpCircle = (props: SVGProps<SVGSVGElement>) => (
-  <svg width={24} height={24} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
-    <g clipPath="url(#clip0_210_1234)">
-      <path
-        d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"
-        stroke="currentColor"
-        strokeWidth={2}
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M9.08997 9C9.32507 8.33167 9.78912 7.7681 10.3999 7.40913C11.0107 7.05016 11.7289 6.91894 12.4271 7.03871C13.1254 7.15848 13.7588 7.52152 14.215 8.06353C14.6713 8.60553 14.921 9.29152 14.92 10C14.92 12 11.92 13 11.92 13"
-        stroke="currentColor"
-        strokeWidth={2}
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <path d="M12 17H12.01" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+  <svg width={24} height={24} fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+    <g clipPath="url(#a)" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10Z" />
+      <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+      <path d="M12 17h.01" />
     </g>
     <defs>
-      <clipPath id="clip0_210_1234">
-        <rect width={24} height={24} fill="white" />
+      <clipPath id="a">
+        <path fill="#fff" d="M0 0h24v24H0z" />
       </clipPath>
     </defs>
   </svg>

@@ -1,17 +1,17 @@
 import * as React from 'react'
 import { SVGProps } from 'react'
 const SvgWatch = (props: SVGProps<SVGSVGElement>) => (
-  <svg width={24} height={24} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+  <svg width={24} height={24} fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
     <path
-      d="M12 19C15.866 19 19 15.866 19 12C19 8.13401 15.866 5 12 5C8.13401 5 5 8.13401 5 12C5 15.866 8.13401 19 12 19Z"
+      d="M12 19a7 7 0 1 0 0-14 7 7 0 0 0 0 14Z"
       stroke="currentColor"
       strokeWidth={2}
       strokeLinecap="round"
       strokeLinejoin="round"
     />
-    <path d="M12 9V12L13.5 13.5" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M12 9v3l1.5 1.5" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
     <path
-      d="M16.51 17.35L16.16 21.18C16.1149 21.6786 15.8845 22.1422 15.5142 22.4792C15.1439 22.8162 14.6607 23.002 14.16 23H9.82998C9.32931 23.002 8.84609 22.8162 8.47578 22.4792C8.10548 22.1422 7.87504 21.6786 7.82998 21.18L7.47998 17.35M7.48998 6.64999L7.83998 2.81999C7.88489 2.32306 8.11391 1.86087 8.4821 1.52414C8.85028 1.18741 9.33103 1.00046 9.82998 0.999986H14.18C14.6807 0.997954 15.1639 1.18378 15.5342 1.52076C15.9045 1.85773 16.1349 2.32134 16.18 2.81999L16.53 6.64999"
+      d="m16.51 17.35-.35 3.83a2 2 0 0 1-2 1.82H9.83a2 2 0 0 1-2-1.82l-.35-3.83m.01-10.7.35-3.83A2 2 0 0 1 9.83 1h4.35a2 2 0 0 1 2 1.82l.35 3.83"
       stroke="currentColor"
       strokeWidth={2}
       strokeLinecap="round"
