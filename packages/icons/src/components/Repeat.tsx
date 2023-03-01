@@ -1,18 +1,18 @@
 import * as React from 'react'
 import { SVGProps } from 'react'
 const SvgRepeat = (props: SVGProps<SVGSVGElement>) => (
-  <svg width={24} height={24} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
-    <path d="M17 1L21 5L17 9" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+  <svg width={24} height={24} fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+    <path d="m17 1 4 4-4 4" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
     <path
-      d="M3 11V9C3 7.93913 3.42143 6.92172 4.17157 6.17157C4.92172 5.42143 5.93913 5 7 5H21"
+      d="M3 11V9a4 4 0 0 1 4-4h14"
       stroke="currentColor"
       strokeWidth={2}
       strokeLinecap="round"
       strokeLinejoin="round"
     />
-    <path d="M7 23L3 19L7 15" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+    <path d="m7 23-4-4 4-4" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
     <path
-      d="M21 13V15C21 16.0609 20.5786 17.0783 19.8284 17.8284C19.0783 18.5786 18.0609 19 17 19H3"
+      d="M21 13v2a4 4 0 0 1-4 4H3"
       stroke="currentColor"
       strokeWidth={2}
       strokeLinecap="round"
