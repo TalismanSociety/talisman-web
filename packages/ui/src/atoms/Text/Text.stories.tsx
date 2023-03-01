@@ -8,13 +8,78 @@ export default {
 } as ComponentMeta<typeof Text>
 
 export const Default: Story<TextProps<'span'>> = (args: any) => (
-  <div>
-    <Text.H1 {...args} />
-    <Text.H2 {...args} />
-    <Text.H3 {...args} />
-    <Text.H4 {...args} />
-    <Text {...args} />
-  </div>
+  <table
+    css={{
+      tr: {
+        'td:first-of-type': {
+          fontWeight: 'bold',
+        },
+      },
+      td: {
+        'padding': '1rem',
+        '> *': {
+          margin: 0,
+        },
+      },
+    }}
+  >
+    <tr>
+      <Text.Body as="td" alpha="high">
+        H1
+      </Text.Body>
+      <td>
+        <Text.H1 {...args} />
+      </td>
+    </tr>
+    <tr>
+      <Text.Body as="td" alpha="high">
+        H2
+      </Text.Body>
+      <td>
+        <Text.H2 {...args} />
+      </td>
+    </tr>
+    <tr>
+      <Text.Body as="td" alpha="high">
+        H3
+      </Text.Body>
+      <td>
+        <Text.H3 {...args} />
+      </td>
+    </tr>
+    <tr>
+      <Text.Body as="td" alpha="high">
+        H4
+      </Text.Body>
+      <td>
+        <Text.H4 {...args} />
+      </td>
+    </tr>
+    <tr>
+      <Text.Body as="td" alpha="high">
+        BodyLarge
+      </Text.Body>
+      <td>
+        <Text.BodyLarge {...args} />
+      </td>
+    </tr>
+    <tr>
+      <Text.Body as="td" alpha="high">
+        Body
+      </Text.Body>
+      <td>
+        <Text.Body {...args} />
+      </td>
+    </tr>
+    <tr>
+      <Text.Body as="td" alpha="high">
+        BodySmall
+      </Text.Body>
+      <td>
+        <Text.BodySmall {...args} />
+      </td>
+    </tr>
+  </table>
 )
 
 Default.args = {
