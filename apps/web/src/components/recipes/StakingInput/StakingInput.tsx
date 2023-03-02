@@ -120,7 +120,7 @@ const StakingInput = Object.assign(
                 </Text.Body>
               </div>
               {props.noPoolsAvailable ? (
-                <Info width="1.4rem" height="1.4rem" />
+                <Info size="1.4rem" />
               ) : (
                 <motion.div
                   animate={String(poolInfoExpanded)}

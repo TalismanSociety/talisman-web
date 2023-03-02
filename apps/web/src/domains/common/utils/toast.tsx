@@ -90,7 +90,7 @@ export const toastExtrinsic = (
                 href={chain.subscanUrl + 'extrinsic/' + error?.txHash?.toString()}
                 target="_blank"
               >
-                Subscan <ExternalLink width="1.2rem" height="1.2rem" />
+                Subscan <ExternalLink size="1.2rem" />
               </Text.Body>
             </Text.Body>
           )}
