@@ -18,7 +18,7 @@
     "build-storybook": "build-storybook"
   },
   "dependencies": {
-    "@floating-ui/react": "^0.19.2",
+    "@floating-ui/react": "^0.20.1",
     "@lottiefiles/react-lottie-player": "^3.5.2",
     "@talismn/icons": "workspace:^"
   },
