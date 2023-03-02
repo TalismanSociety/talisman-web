@@ -13,31 +13,30 @@ export const useFetchDapps = () => {
   useEffect(() => {
     const fetchDapps = async () => {
       try {
-        fetch(`https://api.airtable.com/v0/appBz0V1T1R760dRE/Dapps?api_key=${process.env.REACT_APP_AIR_TABLE_API_KEY}`)
+        fetch(`https://api.baserow.io/api/database/rows/table/141541/?user_field_names=true`, {
+          method: 'GET',
+          headers: {
+            Authorization: `Token ${process.env.REACT_APP_BASEROW_AUTH_TOKEN}`,
+          },
+        })
           .then(res => res.json())
-          .then((data: { records: any[] }) => {
+          .then((data: { results: any[] }) => {
             // Define a type for each item
-            const items = data.records
+            const items = data?.results
               .map((item: any) => {
-                if (!item.fields.name || !item.fields.url) {
-                  console.log('data err - ' + item.fields.name)
-                  return undefined
-                }
-
-                if (!item.fields.logo) {
-                  console.log('logo err - ' + item.fields.name)
+                if (!item.name || !item.url || !item.logo?.[0]?.url) {
                   return undefined
                 }
 
                 return {
                   id: item.id,
-                  name: item.fields.name,
-                  description: item.fields.description,
-                  url: item.fields.url,
-                  tags: item.fields.tags ?? [],
-                  envs: item.fields.envs,
-                  score: item.fields.score,
-                  logoUrl: item.fields.logo[0].url,
+                  name: item.name,
+                  description: item.description,
+                  url: item.url,
+                  tags: item.tags?.map((tag: any) => tag.value) ?? [],
+                  envs: item.envs,
+                  score: item.score,
+                  logoUrl: item.logo[0].url,
                 }
               })
               .filter(item => item !== undefined)
