@@ -170,8 +170,8 @@ const Select = Object.assign(
         <motion.ul
           ref={floating}
           variants={{
-            true: { height: 'unset', display: 'block', transitionEnd: { overflow: 'auto' } },
-            false: { height: 0, overflow: 'hidden', transitionEnd: { display: 'none' } },
+            true: { height: 'unset', visibility: 'unset', transitionEnd: { overflow: 'auto' } },
+            false: { height: 0, overflow: 'hidden', transitionEnd: { visibility: 'hidden' } },
           }}
           css={{
             'margin': 0,
