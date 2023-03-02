@@ -100,7 +100,7 @@ const ToastBar = ({ toast }: ToastBarProps) => {
                   color: '#38D448',
                 }}
               >
-                <Check width="2rem" height="2rem" />
+                <Check size="2rem" />
               </div>
             )
           case 'error':
@@ -117,7 +117,7 @@ const ToastBar = ({ toast }: ToastBarProps) => {
                   color: '#D22424',
                 }}
               >
-                <X width="2rem" height="2rem" />
+                <X size="2rem" />
               </div>
             )
         }

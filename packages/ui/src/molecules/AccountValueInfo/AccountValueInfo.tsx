@@ -26,7 +26,7 @@ const AccountValueInfo = ({ address, name, balance }: AccountValueInfoProps) => 
           backgroundColor: '#383838',
           borderRadius: '50%',
         }}
-        custom={!address ? <Users width="2.4rem" height="2.4rem" /> : undefined}
+        custom={!address ? <Users size="2.4rem" /> : undefined}
         value={address ?? ''}
       />
       <section

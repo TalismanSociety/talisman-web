@@ -1,7 +1,19 @@
 import * as React from 'react'
 import { Ref, SVGProps, forwardRef } from 'react'
-const SvgWifi = (props: SVGProps<SVGSVGElement>, ref: Ref<SVGSVGElement>) => (
-  <svg width={24} height={24} fill="none" xmlns="http://www.w3.org/2000/svg" ref={ref} {...props}>
+const SvgWifi = (
+  props: Omit<SVGProps<SVGSVGElement>, 'width' | 'height'> & {
+    size?: number | string
+  },
+  ref: Ref<SVGSVGElement>
+) => (
+  <svg
+    width={props.size ?? 24}
+    height={props.size ?? 24}
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    ref={ref}
+    {...props}
+  >
     <g clipPath="url(#a)" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
       <path d="M5 12.55a11 11 0 0 1 14.08 0" />
       <path d="M1.42 9a16 16 0 0 1 21.16 0" />

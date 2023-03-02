@@ -12,8 +12,7 @@ const fade = keyframes`
 
 const CircularProgressIndicator = (props: CircularProgressIndicatorProps) => (
   <Loader
-    width={props.size ?? 24}
-    height={props.size ?? 24}
+    size={props.size}
     css={{
       path: {
         'animation': `${fade} 1s linear infinite`,

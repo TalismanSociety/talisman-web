@@ -1,7 +1,19 @@
 import * as React from 'react'
 import { Ref, SVGProps, forwardRef } from 'react'
-const SvgMicOff = (props: SVGProps<SVGSVGElement>, ref: Ref<SVGSVGElement>) => (
-  <svg width={24} height={24} fill="none" xmlns="http://www.w3.org/2000/svg" ref={ref} {...props}>
+const SvgMicOff = (
+  props: Omit<SVGProps<SVGSVGElement>, 'width' | 'height'> & {
+    size?: number | string
+  },
+  ref: Ref<SVGSVGElement>
+) => (
+  <svg
+    width={props.size ?? 24}
+    height={props.size ?? 24}
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    ref={ref}
+    {...props}
+  >
     <g clipPath="url(#a)" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
       <path d="m1 1 22 22" />
       <path d="M15 9.34V4a3 3 0 0 0-5.94-.6M9 9v3a3 3 0 0 0 5.12 2.12L9 9Z" />

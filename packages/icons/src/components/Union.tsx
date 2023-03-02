@@ -1,7 +1,20 @@
 import * as React from 'react'
 import { Ref, SVGProps, forwardRef } from 'react'
-const SvgUnion = (props: SVGProps<SVGSVGElement>, ref: Ref<SVGSVGElement>) => (
-  <svg width={24} height={24} viewBox="0 0 12 13" fill="none" xmlns="http://www.w3.org/2000/svg" ref={ref} {...props}>
+const SvgUnion = (
+  props: Omit<SVGProps<SVGSVGElement>, 'width' | 'height'> & {
+    size?: number | string
+  },
+  ref: Ref<SVGSVGElement>
+) => (
+  <svg
+    width={props.size ?? 24}
+    height={props.size ?? 24}
+    viewBox="0 0 12 13"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    ref={ref}
+    {...props}
+  >
     <path
       d="M4.887 9.125c0 .617.497 1.118 1.113 1.125A1.126 1.126 0 0 0 6 8a1.126 1.126 0 0 0-1.113 1.125Z"
       fill="currentColor"

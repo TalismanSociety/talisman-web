@@ -74,7 +74,7 @@ const AlertDialog = ({
         >
           <Text.H4 css={{ marginBottom: 0 }}>{title}</Text.H4>
           <Button variant="noop" onClick={onRequestDismiss}>
-            <X width="1.6rem" height="1.6rem" />
+            <X size="1.6rem" />
           </Button>
         </header>
         {content}

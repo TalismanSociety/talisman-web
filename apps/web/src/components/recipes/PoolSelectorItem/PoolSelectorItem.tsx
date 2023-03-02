@@ -66,7 +66,7 @@ const PoolSelectorItem = (props: PoolSelectorItemProps) => {
         </Tooltip>
         {props.poolDetailUrl !== undefined && (
           <Button as="a" variant="noop" href={props.poolDetailUrl} target="_blank">
-            <ExternalLink width="1.4rem" height="1.4rem" />
+            <ExternalLink size="1.4rem" />
           </Button>
         )}
       </header>
@@ -89,7 +89,7 @@ const PoolSelectorItem = (props: PoolSelectorItemProps) => {
                 {Array(3)
                   .fill(undefined)
                   .map((_, index) => (
-                    <Star width="1.4rem" height="1.4rem" fill={index < props.rating ? 'currentColor' : 'none'} />
+                    <Star size="1.4rem" fill={index < props.rating ? 'currentColor' : 'none'} />
                   ))}
               </div>
             )}
@@ -106,14 +106,14 @@ const PoolSelectorItem = (props: PoolSelectorItemProps) => {
                 >
                   {props.memberCount}
                 </Text.Body>
-                <User width="1.4rem" height="1.4rem" />
+                <User size="1.4rem" />
               </div>
             )}
           </Tooltip>
         </div>
         {props.talismanRecommended && (
           <Tooltip content="Talisman top recommended pool">
-            {tooltipProps => <Union {...tooltipProps} width="1.4rem" height="1.4rem" />}
+            {tooltipProps => <Union {...tooltipProps} size="1.4rem" />}
           </Tooltip>
         )}
       </Text.Body>

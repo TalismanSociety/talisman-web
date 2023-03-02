@@ -1,7 +1,19 @@
 import * as React from 'react'
 import { Ref, SVGProps, forwardRef } from 'react'
-const SvgThermometer = (props: SVGProps<SVGSVGElement>, ref: Ref<SVGSVGElement>) => (
-  <svg width={24} height={24} fill="none" xmlns="http://www.w3.org/2000/svg" ref={ref} {...props}>
+const SvgThermometer = (
+  props: Omit<SVGProps<SVGSVGElement>, 'width' | 'height'> & {
+    size?: number | string
+  },
+  ref: Ref<SVGSVGElement>
+) => (
+  <svg
+    width={props.size ?? 24}
+    height={props.size ?? 24}
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    ref={ref}
+    {...props}
+  >
     <g clipPath="url(#a)">
       <path
         d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0Z"

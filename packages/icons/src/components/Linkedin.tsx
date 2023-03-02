@@ -1,7 +1,19 @@
 import * as React from 'react'
 import { Ref, SVGProps, forwardRef } from 'react'
-const SvgLinkedin = (props: SVGProps<SVGSVGElement>, ref: Ref<SVGSVGElement>) => (
-  <svg width={24} height={24} fill="none" xmlns="http://www.w3.org/2000/svg" ref={ref} {...props}>
+const SvgLinkedin = (
+  props: Omit<SVGProps<SVGSVGElement>, 'width' | 'height'> & {
+    size?: number | string
+  },
+  ref: Ref<SVGSVGElement>
+) => (
+  <svg
+    width={props.size ?? 24}
+    height={props.size ?? 24}
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    ref={ref}
+    {...props}
+  >
     <path
       d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6v0Z"
       stroke="currentColor"
