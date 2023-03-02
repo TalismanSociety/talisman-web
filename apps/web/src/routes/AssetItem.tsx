@@ -1,7 +1,8 @@
 import { useSingleAsset } from '@archetypes/Portfolio/Assets'
 import { AssetBreakdownList } from '@components/recipes/AssetBreakdown/AssetBreakdownList'
+import AnimatedFiatNumber from '@components/widgets/AnimatedFiatNumber'
 import { keyframes } from '@emotion/react'
-import { Button, DisplayValue, HiddenDetails, InfoCard, Text, Tooltip } from '@talismn/ui'
+import { Button, HiddenDetails, InfoCard, Text, Tooltip } from '@talismn/ui'
 import { startCase } from 'lodash'
 import { useParams } from 'react-router-dom'
 
@@ -114,7 +115,7 @@ const AssetItem = () => {
                   </div>
                 }
                 text={token?.overallTokenAmount + ' ' + token?.tokenDetails?.symbol}
-                supportingText={<DisplayValue amount={token?.overallFiatAmount ?? 0} />}
+                supportingText={<AnimatedFiatNumber end={token?.overallFiatAmount ?? 0} />}
               />
               <InfoCard
                 headlineText={
@@ -130,7 +131,7 @@ const AssetItem = () => {
                   </div>
                 }
                 text={token?.overallLockedAmount + ' ' + token?.tokenDetails?.symbol}
-                supportingText={<DisplayValue amount={token?.overallLockedFiatAmount ?? 0} />}
+                supportingText={<AnimatedFiatNumber end={token?.overallLockedFiatAmount ?? 0} />}
               />
               <InfoCard
                 headlineText={
@@ -146,7 +147,7 @@ const AssetItem = () => {
                   </div>
                 }
                 text={token?.amount + ' ' + token?.tokenDetails?.symbol}
-                supportingText={<DisplayValue amount={token?.fiatAmount ?? 0} />}
+                supportingText={<AnimatedFiatNumber end={token?.fiatAmount ?? 0} />}
               />
             </div>
 

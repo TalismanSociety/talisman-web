@@ -2,8 +2,9 @@ import useAssets, { useAssetsFiltered } from '@archetypes/Portfolio/Assets'
 import { Total } from '@archetypes/Wallet'
 import { Search } from '@components/Field'
 import Asset, { AssetsList, AssetsListLocked } from '@components/recipes/Asset'
+import AnimatedFiatNumber from '@components/widgets/AnimatedFiatNumber'
 import styled from '@emotion/styled'
-import { DisplayValue, InfoCard } from '@talismn/ui'
+import { InfoCard } from '@talismn/ui'
 import { useState } from 'react'
 
 const Assets = () => {
@@ -34,7 +35,7 @@ const Assets = () => {
           }}
         >
           <InfoCard headlineText={'Total Portfolio Value'} text={<Total />} minWidth={'150px'} />
-          <InfoCard headlineText={'Locked Value'} text={<DisplayValue amount={lockedTotal} />} minWidth={'150px'} />
+          <InfoCard headlineText={'Locked Value'} text={<AnimatedFiatNumber end={lockedTotal} />} minWidth={'150px'} />
         </div>
       </section>
       {/* Lower Section */}

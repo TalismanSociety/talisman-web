@@ -1,8 +1,9 @@
+import AnimatedFiatNumber from '@components/widgets/AnimatedFiatNumber'
 import { keyframes, useTheme } from '@emotion/react'
 import styled from '@emotion/styled'
 import { Balances } from '@talismn/balances'
 import { Lock } from '@talismn/icons'
-import { DisplayValue, HiddenDetails, Text, Tooltip } from '@talismn/ui'
+import { HiddenDetails, Text, Tooltip } from '@talismn/ui'
 import { isEmpty, startCase } from 'lodash'
 import { Children, ReactElement, ReactNode } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -52,7 +53,7 @@ export const AssetBalance = ({ locked, planck, fiat, symbol }: AssetBalanceProps
           fontSize: '14px',
         }}
       >
-        {fiat ? <DisplayValue amount={fiat} /> : ''}
+        {fiat ? <AnimatedFiatNumber end={fiat} /> : ''}
       </Text.Body>
     </div>
   )
