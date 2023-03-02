@@ -18,7 +18,7 @@ declare namespace NodeJS {
     REACT_APP_SENTRY_RELEASE?: string
     REACT_APP_POSTHOG_AUTH_TOKEN: string
     REACT_APP_TX_HISTORY_INDEXER: string
-    REACT_APP_AIR_TABLE_API_KEY: string
+    REACT_APP_BASEROW_AUTH_TOKEN: string
   }
 }
 
