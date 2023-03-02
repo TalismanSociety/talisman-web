@@ -24,19 +24,8 @@ export const useFetchDapps = () => {
             // Define a type for each item
             const items = data?.results
               .map((item: any) => {
-                if (!item.name || !item.url) {
-                  console.log('data err - ' + item.name)
+                if (!item.name || !item.url || !item.logo?.[0]?.url) {
                   return undefined
-                }
-
-                if (!item.logo?.[0]?.url) {
-                  console.log('logo err - ' + item.name)
-                  return undefined
-                }
-
-                // take all the tags.value and put them in an array
-                if (item.tags) {
-                  item.tags = item.tags.map((tag: any) => tag.value)
                 }
 
                 return {
@@ -44,7 +33,7 @@ export const useFetchDapps = () => {
                   name: item.name,
                   description: item.description,
                   url: item.url,
-                  tags: item.tags ?? [],
+                  tags: item.tags?.map((tag: any) => tag.value) ?? [],
                   envs: item.envs,
                   score: item.score,
                   logoUrl: item.logo[0].url,
