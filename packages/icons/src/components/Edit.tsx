@@ -1,16 +1,28 @@
 import * as React from 'react'
-import { SVGProps } from 'react'
-const SvgEdit = (props: SVGProps<SVGSVGElement>) => (
-  <svg width={24} height={24} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+import { Ref, SVGProps, forwardRef } from 'react'
+const SvgEdit = (
+  props: Omit<SVGProps<SVGSVGElement>, 'width' | 'height'> & {
+    size?: number | string
+  },
+  ref: Ref<SVGSVGElement>
+) => (
+  <svg
+    width={props.size ?? 24}
+    height={props.size ?? 24}
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    ref={ref}
+    {...props}
+  >
     <path
-      d="M20 14.66V20C20 20.5304 19.7893 21.0391 19.4142 21.4142C19.0391 21.7893 18.5304 22 18 22H4C3.46957 22 2.96086 21.7893 2.58579 21.4142C2.21071 21.0391 2 20.5304 2 20V6C2 5.46957 2.21071 4.96086 2.58579 4.58579C2.96086 4.21071 3.46957 4 4 4H9.34"
+      d="M20 14.66V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h5.34"
       stroke="currentColor"
       strokeWidth={2}
       strokeLinecap="round"
       strokeLinejoin="round"
     />
     <path
-      d="M18 2L22 6L12 16H8V12L18 2Z"
+      d="m18 2 4 4-10 10H8v-4L18 2Z"
       stroke="currentColor"
       strokeWidth={2}
       strokeLinecap="round"
@@ -18,4 +30,5 @@ const SvgEdit = (props: SVGProps<SVGSVGElement>) => (
     />
   </svg>
 )
-export default SvgEdit
+const ForwardRef = forwardRef(SvgEdit)
+export default ForwardRef

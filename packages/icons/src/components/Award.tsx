@@ -1,16 +1,28 @@
 import * as React from 'react'
-import { SVGProps } from 'react'
-const SvgAward = (props: SVGProps<SVGSVGElement>) => (
-  <svg width={24} height={24} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+import { Ref, SVGProps, forwardRef } from 'react'
+const SvgAward = (
+  props: Omit<SVGProps<SVGSVGElement>, 'width' | 'height'> & {
+    size?: number | string
+  },
+  ref: Ref<SVGSVGElement>
+) => (
+  <svg
+    width={props.size ?? 24}
+    height={props.size ?? 24}
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    ref={ref}
+    {...props}
+  >
     <path
-      d="M12 15C15.866 15 19 11.866 19 8C19 4.13401 15.866 1 12 1C8.13401 1 5 4.13401 5 8C5 11.866 8.13401 15 12 15Z"
+      d="M12 15a7 7 0 1 0 0-14 7 7 0 0 0 0 14Z"
       stroke="currentColor"
       strokeWidth={2}
       strokeLinecap="round"
       strokeLinejoin="round"
     />
     <path
-      d="M8.21 13.89L7 23L12 20L17 23L15.79 13.88"
+      d="M8.21 13.89 7 23l5-3 5 3-1.21-9.12"
       stroke="currentColor"
       strokeWidth={2}
       strokeLinecap="round"
@@ -18,4 +30,5 @@ const SvgAward = (props: SVGProps<SVGSVGElement>) => (
     />
   </svg>
 )
-export default SvgAward
+const ForwardRef = forwardRef(SvgAward)
+export default ForwardRef

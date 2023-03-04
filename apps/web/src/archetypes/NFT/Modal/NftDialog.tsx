@@ -71,7 +71,7 @@ const NftDialog = ({ onRequestDismiss, ...props }: NftDialogProps) => {
           },
         }}
       >
-        <X width="24px" height="24px" />
+        <X />
       </Button>
       <div
         css={{
@@ -254,7 +254,7 @@ const NftDialog = ({ onRequestDismiss, ...props }: NftDialogProps) => {
                       <a href={nft?.platformUri} target="_blank" rel="noreferrer" css={{ color: '#fff' }}>
                         {nft?.provider}
                       </a>
-                      <ExternalLink height={'0.75em'} />
+                      <ExternalLink size="0.75em" />
                     </span>
                   }
                 />

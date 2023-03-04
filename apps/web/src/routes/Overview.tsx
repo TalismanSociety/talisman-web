@@ -4,10 +4,11 @@ import { Crowdloans } from '@archetypes/Wallet'
 import { Search } from '@components/Field'
 import Asset, { AssetsList, AssetsListLocked } from '@components/recipes/Asset'
 import { NFTCard } from '@components/recipes/NFTCard'
+import AnimatedFiatNumber from '@components/widgets/AnimatedFiatNumber'
 import { selectedAccountsState } from '@domains/accounts/recoils'
 import { filteredNftDataState } from '@libs/@talisman-nft/provider'
 import { NFTShort } from '@libs/@talisman-nft/types'
-import { Button, DisplayValue, HiddenDetails, Text } from '@talismn/ui'
+import { Button, HiddenDetails, Text } from '@talismn/ui'
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useRecoilValue } from 'recoil'
@@ -93,7 +94,7 @@ const Overview = () => {
                   marginLeft: '1rem',
                 }}
               >
-                <DisplayValue amount={fiatTotal} />
+                <AnimatedFiatNumber end={fiatTotal} />
               </span>
             </Text.H3>
             <Search

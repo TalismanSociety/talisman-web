@@ -1,10 +1,22 @@
 import * as React from 'react'
-import { SVGProps } from 'react'
-const SvgCheckSquare = (props: SVGProps<SVGSVGElement>) => (
-  <svg width={24} height={24} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
-    <path d="M9 11L12 14L22 4" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+import { Ref, SVGProps, forwardRef } from 'react'
+const SvgCheckSquare = (
+  props: Omit<SVGProps<SVGSVGElement>, 'width' | 'height'> & {
+    size?: number | string
+  },
+  ref: Ref<SVGSVGElement>
+) => (
+  <svg
+    width={props.size ?? 24}
+    height={props.size ?? 24}
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    ref={ref}
+    {...props}
+  >
+    <path d="m9 11 3 3L22 4" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
     <path
-      d="M21 12V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H16"
+      d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"
       stroke="currentColor"
       strokeWidth={2}
       strokeLinecap="round"
@@ -12,4 +24,5 @@ const SvgCheckSquare = (props: SVGProps<SVGSVGElement>) => (
     />
   </svg>
 )
-export default SvgCheckSquare
+const ForwardRef = forwardRef(SvgCheckSquare)
+export default ForwardRef

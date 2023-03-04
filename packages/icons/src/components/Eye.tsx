@@ -1,16 +1,28 @@
 import * as React from 'react'
-import { SVGProps } from 'react'
-const SvgEye = (props: SVGProps<SVGSVGElement>) => (
-  <svg width={24} height={24} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+import { Ref, SVGProps, forwardRef } from 'react'
+const SvgEye = (
+  props: Omit<SVGProps<SVGSVGElement>, 'width' | 'height'> & {
+    size?: number | string
+  },
+  ref: Ref<SVGSVGElement>
+) => (
+  <svg
+    width={props.size ?? 24}
+    height={props.size ?? 24}
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    ref={ref}
+    {...props}
+  >
     <path
-      d="M1 12C1 12 5 4 12 4C19 4 23 12 23 12C23 12 19 20 12 20C5 20 1 12 1 12Z"
+      d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8Z"
       stroke="currentColor"
       strokeWidth={2}
       strokeLinecap="round"
       strokeLinejoin="round"
     />
     <path
-      d="M12 15C13.6569 15 15 13.6569 15 12C15 10.3431 13.6569 9 12 9C10.3431 9 9 10.3431 9 12C9 13.6569 10.3431 15 12 15Z"
+      d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"
       stroke="currentColor"
       strokeWidth={2}
       strokeLinecap="round"
@@ -18,4 +30,5 @@ const SvgEye = (props: SVGProps<SVGSVGElement>) => (
     />
   </svg>
 )
-export default SvgEye
+const ForwardRef = forwardRef(SvgEye)
+export default ForwardRef

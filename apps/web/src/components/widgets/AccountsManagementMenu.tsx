@@ -151,7 +151,7 @@ const AccountsManagementMenu = () => {
                 padding: '0 1.6rem',
               }}
             >
-              <Union width="1em" height="1em" /> My accounts
+              <Union size="1em" /> My accounts
             </Text.Body>
             {leadingMenuItem}
             {injectedAccounts.map(x => (
@@ -175,7 +175,7 @@ const AccountsManagementMenu = () => {
               as="header"
               css={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 'bold', padding: '1.6rem' }}
             >
-              <Eye width="1em" height="1em" /> Watched accounts
+              <Eye size="1em" /> Watched accounts
             </Text.Body>
             {readonlyAccounts.map(x => (
               <Menu.Item onClick={() => setSelectedAccountAddresses(() => [x.address])}>

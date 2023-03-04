@@ -1,16 +1,29 @@
 import * as React from 'react'
-import { SVGProps } from 'react'
-const SvgVolumeX = (props: SVGProps<SVGSVGElement>) => (
-  <svg width={24} height={24} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+import { Ref, SVGProps, forwardRef } from 'react'
+const SvgVolumeX = (
+  props: Omit<SVGProps<SVGSVGElement>, 'width' | 'height'> & {
+    size?: number | string
+  },
+  ref: Ref<SVGSVGElement>
+) => (
+  <svg
+    width={props.size ?? 24}
+    height={props.size ?? 24}
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    ref={ref}
+    {...props}
+  >
     <path
-      d="M11 5L6 9H2V15H6L11 19V5Z"
+      d="M11 5 6 9H2v6h4l5 4V5Z"
       stroke="currentColor"
       strokeWidth={2}
       strokeLinecap="round"
       strokeLinejoin="round"
     />
-    <path d="M23 9L17 15" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
-    <path d="M17 9L23 15" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+    <path d="m23 9-6 6" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+    <path d="m17 9 6 6" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
   </svg>
 )
-export default SvgVolumeX
+const ForwardRef = forwardRef(SvgVolumeX)
+export default ForwardRef

@@ -1,9 +1,21 @@
 import * as React from 'react'
-import { SVGProps } from 'react'
-const SvgNavigation = (props: SVGProps<SVGSVGElement>) => (
-  <svg width={24} height={24} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+import { Ref, SVGProps, forwardRef } from 'react'
+const SvgNavigation = (
+  props: Omit<SVGProps<SVGSVGElement>, 'width' | 'height'> & {
+    size?: number | string
+  },
+  ref: Ref<SVGSVGElement>
+) => (
+  <svg
+    width={props.size ?? 24}
+    height={props.size ?? 24}
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    ref={ref}
+    {...props}
+  >
     <path
-      d="M3 11L22 2L13 21L11 13L3 11Z"
+      d="m3 11 19-9-9 19-2-8-8-2Z"
       stroke="currentColor"
       strokeWidth={2}
       strokeLinecap="round"
@@ -11,4 +23,5 @@ const SvgNavigation = (props: SVGProps<SVGSVGElement>) => (
     />
   </svg>
 )
-export default SvgNavigation
+const ForwardRef = forwardRef(SvgNavigation)
+export default ForwardRef

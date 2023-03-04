@@ -1,16 +1,29 @@
 import * as React from 'react'
-import { SVGProps } from 'react'
-const SvgShare = (props: SVGProps<SVGSVGElement>) => (
-  <svg width={24} height={24} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+import { Ref, SVGProps, forwardRef } from 'react'
+const SvgShare = (
+  props: Omit<SVGProps<SVGSVGElement>, 'width' | 'height'> & {
+    size?: number | string
+  },
+  ref: Ref<SVGSVGElement>
+) => (
+  <svg
+    width={props.size ?? 24}
+    height={props.size ?? 24}
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    ref={ref}
+    {...props}
+  >
     <path
-      d="M4 12V20C4 20.5304 4.21071 21.0391 4.58579 21.4142C4.96086 21.7893 5.46957 22 6 22H18C18.5304 22 19.0391 21.7893 19.4142 21.4142C19.7893 21.0391 20 20.5304 20 20V12"
+      d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"
       stroke="currentColor"
       strokeWidth={2}
       strokeLinecap="round"
       strokeLinejoin="round"
     />
-    <path d="M16 6L12 2L8 6" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
-    <path d="M12 2V15" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+    <path d="m16 6-4-4-4 4" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M12 2v13" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
   </svg>
 )
-export default SvgShare
+const ForwardRef = forwardRef(SvgShare)
+export default ForwardRef
