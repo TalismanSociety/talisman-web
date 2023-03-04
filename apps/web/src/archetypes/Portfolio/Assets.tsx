@@ -19,7 +19,7 @@ const useFetchAssets = (address: string | undefined) => {
   }, [chains, evmNetworks, tokens, balances])
 
   const fiatTotal =
-    address !== undefined ? balances?.find({ address: address }).sum.fiat('usd').total ?? 0 : assetsOverallValue
+    address !== undefined ? balances?.find({ address: address }).sum.fiat('usd').transferable ?? 0 : assetsOverallValue
 
   const lockedTotal =
     address !== undefined
@@ -99,8 +99,13 @@ const useAssets = (customAddress?: string) => {
         : balances?.find({ tokenId: token.id })
     if (!tokenBalances) return undefined
 
-    const planckAmount = tokenBalances.sorted.reduce((sum, balance) => sum + balance.transferable.planck, BigInt('0'))
-    if (planckAmount === BigInt('0')) return undefined
+    const totalPlanckAmount = tokenBalances.sorted.reduce((sum, balance) => sum + balance.total.planck, 0n)
+
+    if (totalPlanckAmount === 0n) {
+      return undefined
+    }
+
+    const planckAmount = tokenBalances.sorted.reduce((sum, balance) => sum + balance.transferable.planck, 0n)
     const planckAmountFormatted = formatDecimals(new BalanceFormatter(planckAmount, token.decimals).tokens)
 
     const fiatAmount =
@@ -112,7 +117,7 @@ const useAssets = (customAddress?: string) => {
 
     const fiatAmountFormatted = convertToFiatString(fiatAmount)
 
-    const lockedAmount = tokenBalances.sorted.reduce((sum, balance) => sum + balance.locked.planck, BigInt('0'))
+    const lockedAmount = tokenBalances.sorted.reduce((sum, balance) => sum + balance.locked.planck, 0n)
     const lockedAmountFormatted = formatDecimals(new BalanceFormatter(lockedAmount, token.decimals).tokens)
     const lockedFiatAmount = balances?.find({ tokenId: token.id })?.sum.fiat('usd').locked ?? 0
     const lockedFiatAmountFormatted = convertToFiatString(lockedFiatAmount)
@@ -121,7 +126,7 @@ const useAssets = (customAddress?: string) => {
       return null
     }
 
-    const locked = lockedAmount > BigInt('0')
+    const locked = lockedAmount > 0n
 
     const tokenDisplayName =
       token?.type === 'evm-erc20'
@@ -200,8 +205,8 @@ const useAssets = (customAddress?: string) => {
 
   const balancesWithOrmlTokens = groupedTokensWithOrmlTokens.map(token => {
     if (token && token.ormlTokens.length > 0) {
-      const ormlLockedAmount = token.ormlTokens.reduce((sum, token) => sum + token.unformattedLockedAmount, BigInt('0'))
-      const ormlPlanckAmount = token.ormlTokens.reduce((sum, token) => sum + token.unformattedPlancAmount, BigInt('0'))
+      const ormlLockedAmount = token.ormlTokens.reduce((sum, token) => sum + token.unformattedLockedAmount, 0n)
+      const ormlPlanckAmount = token.ormlTokens.reduce((sum, token) => sum + token.unformattedPlancAmount, 0n)
 
       const overallTokenAmount = formatDecimals(
         new BalanceFormatter(token.unformattedPlancAmount + ormlPlanckAmount, token?.tokenDetails?.decimals).tokens
