@@ -1,33 +1,55 @@
-import React, { ElementType } from 'react'
+import { useTheme } from '@emotion/react'
+import Color from 'colorjs.io'
+import React, { ElementType, useMemo } from 'react'
 
-type PolymorphicTextProps<T extends React.ElementType> = { as?: T; alpha?: 'disabled' | 'medium' | 'high' }
+type PolymorphicTextProps<T extends React.ElementType> = {
+  as?: T
+  color?: string
+  alpha?: 'disabled' | 'medium' | 'high'
+}
 export type TextProps<T extends React.ElementType> = PolymorphicTextProps<T> &
   Omit<React.ComponentPropsWithoutRef<T>, keyof PolymorphicTextProps<T>>
 
-const BaseText = <T extends React.ElementType = 'span'>(props: TextProps<T>) => {
-  const Component = props.as ?? 'span'
+const BaseText = <T extends React.ElementType = 'span'>({ as, color, alpha = 'medium', ...props }: TextProps<T>) => {
+  const theme = useTheme()
+  const Component = as ?? 'span'
+
+  const transformedColor = useMemo(() => {
+    const textColor = new Color(color ?? theme.color.onBackground)
+    textColor.alpha = theme.contentAlpha[alpha ?? 'medium']
+
+    return textColor.display().toString()
+  }, [color, alpha, theme.color.onBackground])
 
   return (
     <Component
       {...props}
-      css={theme => ({
-        color: `rgba(255,255,255,${theme.contentAlpha[props.alpha ?? 'medium']})`,
+      css={{
+        color: transformedColor,
         fontFamily: 'Surt',
-      })}
+      }}
     />
   )
 }
 
-const BaseHeaderText = <T extends React.ElementType = 'h1'>(props: TextProps<T>) => {
-  const Component = props.as ?? 'h1'
+const BaseHeaderText = <T extends React.ElementType = 'h1'>({ as, color, alpha, ...props }: TextProps<T>) => {
+  const theme = useTheme()
+  const Component = as ?? 'span'
+
+  const transformedColor = useMemo(() => {
+    const textColor = new Color(color ?? theme.color.onBackground)
+    textColor.alpha = theme.contentAlpha[alpha ?? 'medium']
+
+    return textColor.display().toString()
+  }, [color, alpha, theme.color.onBackground])
 
   return (
     <Component
       {...props}
-      css={theme => ({
-        color: `rgba(255,255,255,${theme.contentAlpha[props.alpha ?? 'high']})`,
+      css={{
+        color: transformedColor,
         fontFamily: 'SurtExpanded',
-      })}
+      }}
     />
   )
 }
