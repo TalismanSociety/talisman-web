@@ -15,23 +15,25 @@ export const Default: Story<React.SVGProps<SVGSVGElement> & { title?: string }> 
   const theme = useTheme()
   return (
     <div css={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '1rem' }}>
-      {Object.entries(Icon).map(([name, Icon]) => (
-        <figure
-          css={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            gap: '2rem',
-            background: theme.color.surface,
-            padding: '2.5rem 0',
-            margin: 0,
-            borderRadius: '1rem',
-          }}
-        >
-          <Icon {...args} />
-          <figcaption>{name}</figcaption>
-        </figure>
-      ))}
+      {Object.entries(Icon)
+        .filter(([name]) => name !== 'IconContext')
+        .map(([name, Icon]) => (
+          <figure
+            css={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: '2rem',
+              background: theme.color.surface,
+              padding: '2.5rem 0',
+              margin: 0,
+              borderRadius: '1rem',
+            }}
+          >
+            <Icon {...args} />
+            <figcaption>{name}</figcaption>
+          </figure>
+        ))}
     </div>
   )
 }
