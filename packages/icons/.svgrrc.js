@@ -8,7 +8,7 @@ module.exports = {
   },
   template: require('./template'),
   svgProps: {
-    width: '{props.size ?? 24}',
-    height: '{props.size ?? 24}',
+    width: '{props.size ?? iconContext.size ?? 24}',
+    height: '{props.size ?? iconContext.size ?? 24}',
   },
 }
