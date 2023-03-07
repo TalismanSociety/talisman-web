@@ -1,10 +1,17 @@
 import ClaimStakeDialog from '@components/recipes/ClaimStakeDialog'
-import PoolStake, { PoolStakeProps } from '@components/recipes/PoolStake/PoolStake'
 import { PoolStatus } from '@components/recipes/PoolStatusIndicator'
+import {
+  ClaimChip,
+  IncreaseStakeChip,
+  PoolStakeItem as PoolStakeItemComponent,
+  UnstakeChip,
+  WithdrawChip,
+} from '@components/recipes/StakeItem'
 import { Account } from '@domains/accounts/recoils'
 import { useTokenAmountFromPlanck } from '@domains/common/hooks'
 import { UInt } from '@polkadot/types-codec'
 import { PalletNominationPoolsPoolMember } from '@polkadot/types/lookup'
+import BN from 'bn.js'
 import { ReactNode, useCallback, useState } from 'react'
 import { useRecoilValue, waitForAll } from 'recoil'
 
@@ -14,18 +21,21 @@ import AddStakeDialog from './AddStakeDialog'
 import UnstakeDialog from './UnstakeDialog'
 
 const PoolStakeItem = ({
-  className,
-  variant,
   item,
 }: {
   className?: string
-  variant?: PoolStakeProps['variant']
   item: {
     status?: PoolStatus
     account?: Account
     poolName?: ReactNode
     poolMember: PalletNominationPoolsPoolMember
     pendingRewards?: UInt
+    withdrawable: bigint
+    unbondings: {
+      amount: bigint
+      erasTilWithdrawable: BN
+    }[]
+    slashingSpan: number
   }
 }) => {
   const [decimal, nativeTokenPrice] = useRecoilValue(
@@ -38,36 +48,46 @@ const PoolStakeItem = ({
   const [claimDialogOpen, setClaimDialogOpen] = useState(false)
   const claimPayoutExtrinsic = useExtrinsic('nominationPools', 'claimPayout')
   const restakeExtrinsic = useExtrinsic('nominationPools', 'bondExtra')
+  const withdrawExtrinsic = useExtrinsic('nominationPools', 'withdrawUnbonded')
 
   const pendingRewards = useTokenAmountFromPlanck(item.pendingRewards)
 
   return (
     <>
-      <PoolStake
-        className={className}
-        variant={variant}
+      <PoolStakeItemComponent
         poolStatus={item.status}
         accountName={item.account?.name ?? ''}
         accountAddress={item.account?.address ?? ''}
         stakingAmount={decimal.fromPlanck(item.poolMember.points).toHuman()}
-        stakingAmountInFiat={(decimal.fromPlanck(item.poolMember.points).toNumber() * nativeTokenPrice).toLocaleString(
+        stakingFiatAmount={(decimal.fromPlanck(item.poolMember.points).toNumber() * nativeTokenPrice).toLocaleString(
           undefined,
           { style: 'currency', currency: 'usd', currencyDisplay: 'narrowSymbol' }
         )}
-        rewardsAmount={'+' + decimal.fromPlanck(item.pendingRewards?.toString()).toHuman()}
-        rewardsAmountInFiat={'+' + pendingRewards.localizedFiatAmount}
         poolName={item.poolName ?? ''}
-        onRequestClaim={useCallback(() => setClaimDialogOpen(true), [])}
-        claimState={
-          item.pendingRewards?.isZero() ?? true
-            ? 'unavailable'
-            : claimPayoutExtrinsic.state === 'loading' || restakeExtrinsic.state === 'loading'
-            ? 'pending'
-            : undefined
+        claimChip={
+          item.pendingRewards?.isZero() === false && (
+            <ClaimChip
+              amount={decimal.fromPlanck(item.pendingRewards).toHuman()}
+              onClick={() => setClaimDialogOpen(true)}
+            />
+          )
         }
-        onRequestUnstake={useCallback(() => setIsUnstaking(true), [])}
-        onRequestAdd={useCallback(() => setIsAddingStake(true), [])}
-        readonly={item.account?.readonly}
+        unstakeChip={<UnstakeChip onClick={useCallback(() => setIsUnstaking(true), [])} />}
+        increaseStakeChip={<IncreaseStakeChip onClick={useCallback(() => setIsAddingStake(true), [])} />}
+        withdrawChip={
+          item.withdrawable > 0n && (
+            <WithdrawChip
+              amount={decimal.fromPlanck(item.withdrawable).toHuman()}
+              onClick={() =>
+                withdrawExtrinsic.signAndSend(
+                  item.account?.address ?? '',
+                  item.account?.address ?? '',
+                  item.slashingSpan
+                )
+              }
+            />
+          )
+        }
       />
       <AddStakeDialog
         account={isAddingStake ? item.account?.address : undefined}

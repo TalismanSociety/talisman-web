@@ -4,9 +4,18 @@ import { Chip, ChipProps, Identicon, ListItem, Text } from '@talismn/ui'
 import Color from 'colorjs.io'
 import { ReactNode, useMemo } from 'react'
 
+import { PoolStatus, PoolStatusIndicator } from '../PoolStatusIndicator'
+
 export type StakeItemProps = {
+  accountName: string
+  accountAddress: string
+  stakingAmount: string
+  stakingFiatAmount: string
+  poolName: ReactNode
+  poolStatus?: PoolStatus
   actions?: ReactNode
   status?: ReactNode
+  readonly?: boolean
 }
 
 export const IncreaseStakeChip = (props: Omit<ChipProps, 'children'>) => <Chip {...props}>Increase stake</Chip>
@@ -27,6 +36,10 @@ export const ClaimChip = ({ amount, ...props }: Omit<ChipProps, 'children'> & { 
   )
 }
 
+export const WithdrawChip = ({ amount, ...props }: Omit<ChipProps, 'children'> & { amount: ReactNode }) => (
+  <Chip {...props}>Withdraw {amount}</Chip>
+)
+
 export const FastUnstakeChip = (props: Omit<ChipProps, 'children'>) => (
   <Chip {...props} leadingContent={<Rocket size="1em" />}>
     Fast unstake
@@ -39,21 +52,22 @@ const StakeItem = (props: StakeItemProps) => {
   return (
     <article css={{ borderRadius: '0.8rem', overflow: 'hidden' }}>
       <ListItem
-        leadingContent={<Identicon value="1YmEYgtfPbwx5Jos1PjKDWRpuJWSpTzytwZgYan6kgiquNS" size="4rem" />}
-        headlineText="Dev wallet"
+        leadingContent={<Identicon value={props.accountAddress} size="4rem" />}
+        headlineText={props.accountName}
         supportingText={
           <Text.Body css={{ display: 'flex', alignItems: 'center', gap: '0.25em' }}>
+            <PoolStatusIndicator status={props.poolStatus} />
             <Text.Body css={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-              Talisman Pool 1: app.talisman.xyz
+              {props.poolName}
             </Text.Body>
           </Text.Body>
         }
         trailingContent={
           <div css={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
             <Text.BodyLarge as="div" css={{ fontWeight: 'bold' }}>
-              3,013.33 DOT <Lock size="1em" />
+              {props.stakingAmount} <Lock size="1em" />
             </Text.BodyLarge>
-            <Text.BodyLarge as="div">$24,358.05</Text.BodyLarge>
+            <Text.BodyLarge as="div">{props.stakingFiatAmount}</Text.BodyLarge>
           </div>
         }
         css={{ backgroundColor: theme.color.surface }}
@@ -68,7 +82,7 @@ const StakeItem = (props: StakeItemProps) => {
           backgroundColor: theme.color.foreground,
         }}
       >
-        <div css={{ display: 'flex', gap: '0.8rem' }}>{props.actions}</div>
+        {!props.readonly && <div css={{ display: 'flex', gap: '0.8rem' }}>{props.actions}</div>}
         <Text.Body
           css={{
             flex: 1,
