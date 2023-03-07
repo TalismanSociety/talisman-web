@@ -1,5 +1,4 @@
 import PoolStakeItem from '@archetypes/NominationPools/PoolStakeItem'
-import Unstakings from '@archetypes/NominationPools/Unstakings'
 import PoolExitingInProgress from '@components/recipes/PoolExitingInProgress'
 import PoolSelectorDialog from '@components/recipes/PoolSelectorDialog'
 import { PoolStatus } from '@components/recipes/PoolStatusIndicator'
@@ -506,24 +505,6 @@ const Input = () => {
                 }}
               />
             ))}
-        </motion.div>
-        <motion.div
-          css={{ marginTop: '1.6rem' }}
-          variants={{
-            true: { opacity: 1, y: 0 },
-            false: { opacity: 0, y: '-80%' },
-          }}
-        >
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={selectedAccount?.address}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-            >
-              <Unstakings account={selectedAccount?.address} showHeader={false} compact />
-            </motion.div>
-          </AnimatePresence>
         </motion.div>
       </motion.div>
     </>
