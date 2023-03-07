@@ -32,9 +32,11 @@ const ListItem = ({
       {leadingContent && (
         <div css={{ display: 'flex', justifyContent: 'center', justifyItems: 'center' }}>{leadingContent}</div>
       )}
-      <header css={{ flex: 1 }}>
+      <header css={{ flex: 1, overflow: 'hidden' }}>
         {overlineText && <Text.Body as="div">{overlineText}</Text.Body>}
-        <Text.Body as="div">{headlineText}</Text.Body>
+        <Text.Body as="div" alpha="high">
+          {headlineText}
+        </Text.Body>
         {supportingText && <Text.Body as="div">{supportingText}</Text.Body>}
       </header>
       {trailingContent && (
