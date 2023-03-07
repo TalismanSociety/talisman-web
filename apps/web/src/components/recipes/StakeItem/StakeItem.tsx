@@ -1,5 +1,5 @@
 import { useTheme } from '@emotion/react'
-import { Clock, Lock, Zap } from '@talismn/icons'
+import { Lock, Rocket } from '@talismn/icons'
 import { Chip, ChipProps, Identicon, ListItem, Text } from '@talismn/ui'
 import Color from 'colorjs.io'
 import { ReactNode, useMemo } from 'react'
@@ -28,8 +28,8 @@ export const ClaimChip = ({ amount, ...props }: Omit<ChipProps, 'children'> & { 
 }
 
 export const FastUnstakeChip = (props: Omit<ChipProps, 'children'>) => (
-  <Chip {...props}>
-    <Zap size="1em" /> Fast unstake
+  <Chip {...props} leadingContent={<Rocket size="1em" />}>
+    Fast unstake
   </Chip>
 )
 
