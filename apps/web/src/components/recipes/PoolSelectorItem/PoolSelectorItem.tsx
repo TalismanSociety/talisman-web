@@ -1,5 +1,5 @@
 import { useTheme } from '@emotion/react'
-import { ExternalLink, Union, User } from '@talismn/icons'
+import { ExternalLink, TalismanHand, User } from '@talismn/icons'
 import { Button, Text, Tooltip } from '@talismn/ui'
 
 export type PoolSelectorItemProps = {
@@ -113,7 +113,7 @@ const PoolSelectorItem = (props: PoolSelectorItemProps) => {
         </div>
         {props.talismanRecommended && (
           <Tooltip content="Talisman top recommended pool">
-            {tooltipProps => <Union {...tooltipProps} size="1.4rem" />}
+            {tooltipProps => <TalismanHand {...tooltipProps} size="1.4rem" />}
           </Tooltip>
         )}
       </Text.Body>
