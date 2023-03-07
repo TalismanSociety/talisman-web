@@ -1,8 +1,8 @@
 import { useTheme } from '@emotion/react'
 import Color from 'colorjs.io'
-import { ElementType, useMemo } from 'react'
+import { ComponentPropsWithoutRef, ElementType, useMemo } from 'react'
 
-type IconButtonElementType = Extract<React.ElementType, 'button' | 'a' | 'figure'>
+type IconButtonElementType = Extract<ElementType, 'button' | 'a' | 'figure'> | ElementType<any>
 
 type PolymorphicIconButtonProps<T extends IconButtonElementType> = {
   as?: T
@@ -15,7 +15,7 @@ type PolymorphicIconButtonProps<T extends IconButtonElementType> = {
 }
 
 export type IconButtonProps<T extends IconButtonElementType> = PolymorphicIconButtonProps<T> &
-  Omit<React.ComponentPropsWithoutRef<T>, keyof PolymorphicIconButtonProps<T>>
+  Omit<ComponentPropsWithoutRef<T>, keyof PolymorphicIconButtonProps<T>>
 
 const IconButton = <T extends IconButtonElementType = 'button'>({
   as = 'button' as T,

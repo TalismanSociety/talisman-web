@@ -9,6 +9,7 @@ import { Compass, CreditCard, Eye, TalismanHand, Zap } from '@talismn/icons'
 import { IconButton, NavigationRail } from '@talismn/ui'
 import posthog from 'posthog-js'
 import { useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import { Navigate, Outlet, createBrowserRouter, useLocation } from 'react-router-dom'
 import { useRecoilValueLoadable, waitForAll } from 'recoil'
 
@@ -26,15 +27,23 @@ import TransactionHistory from './TransactionHistory'
 const Navigation = () => (
   <NavigationRail
     header={
-      <IconButton>
+      <IconButton as={Link} to="/">
         <TalismanHand />
       </IconButton>
     }
   >
-    <NavigationRail.Item label="Portfolio" icon={<Eye />} />
-    <NavigationRail.Item label="Staking" icon={<Zap />} />
-    <NavigationRail.Item label="Explore" icon={<Compass />} />
-    <NavigationRail.Item label="Buy" icon={<CreditCard />} />
+    <Link to="/portfolio">
+      <NavigationRail.Item label="Portfolio" icon={<Eye />} />
+    </Link>
+    <Link to="https://talisman.banxa.com/">
+      <NavigationRail.Item label="Staking" icon={<Zap />} />
+    </Link>
+    <Link to="/explore">
+      <NavigationRail.Item label="Explore" icon={<Compass />} />
+    </Link>
+    <Link to="https://talisman.banxa.com/" target="_blank">
+      <NavigationRail.Item label="Buy" icon={<CreditCard />} />
+    </Link>
   </NavigationRail>
 )
 
