@@ -21,20 +21,10 @@ Default.args = {
     </IconButton>
   ),
   children: [
-    <NavigationRailItem key={0} label="Portfolio">
-      <Eye />
-    </NavigationRailItem>,
-    <NavigationRailItem key={1} label="Staking">
-      <Zap />
-    </NavigationRailItem>,
-    <NavigationRailItem key={2} label="Transfer">
-      <RefreshCcw />
-    </NavigationRailItem>,
-    <NavigationRailItem key={3} label="Explore">
-      <Compass />
-    </NavigationRailItem>,
-    <NavigationRailItem key={4} label="Buy">
-      <CreditCard />
-    </NavigationRailItem>,
+    <NavigationRail.Item key={0} label="Portfolio" icon={<Eye />} />,
+    <NavigationRail.Item key={1} label="Staking" icon={<Zap />} />,
+    <NavigationRail.Item key={2} label="Transfer" icon={<RefreshCcw />} />,
+    <NavigationRail.Item key={3} label="Explore" icon={<Compass />} />,
+    <NavigationRail.Item key={4} label="Buy" icon={<CreditCard />} />,
   ],
 }

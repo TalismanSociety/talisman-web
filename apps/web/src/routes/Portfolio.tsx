@@ -22,16 +22,10 @@ const Portfolio = () => {
   return (
     <div
       css={{
-        'display': 'flex',
-        'flexDirection': 'column',
-        'gap': '2rem',
-        'width': '100%',
-        'maxWidth': '1280px',
-        'margin': '3rem auto',
-        '@media (min-width: 1024px)': {
-          margin: '3rem auto',
-        },
-        'padding': '0 2.4rem',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '2rem',
+        width: '100%',
       }}
     >
       <AccountValueInfo address={account?.address ?? ''} name={account?.name ?? 'All Accounts'} balance={<Total />} />

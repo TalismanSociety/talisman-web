@@ -496,6 +496,7 @@ const Input = () => {
             ) : (
               <PoolStakeItem
                 variant="compact"
+                // @ts-expect-error
                 item={{
                   status: existingPoolStatus,
                   account: selectedAccount,

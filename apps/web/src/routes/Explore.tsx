@@ -169,12 +169,6 @@ const Explore = styled(({ className }: { className?: string }) => (
 ))`
   color: var(--color-text);
   width: 100%;
-  max-width: 1280px;
-  margin: 3rem auto;
-  @media ${device.xl} {
-    margin: 6rem auto;
-  }
-  padding: 0 2.4rem;
 `
 
 export default Explore
