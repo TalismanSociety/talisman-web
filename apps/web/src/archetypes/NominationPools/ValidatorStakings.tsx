@@ -1,4 +1,3 @@
-import { ValidatorStakeList } from '@components/recipes/ValidatorStake'
 import { selectedSubstrateAccountsState } from '@domains/accounts/recoils'
 import { stakersRewardState } from '@domains/staking/recoils'
 import { constSelector, useRecoilValue, useRecoilValueLoadable } from 'recoil'
@@ -16,6 +15,13 @@ const ValidatorStakings = () => {
     undefined,
   ]).valueMaybe()
 
+  const slashingSpansLoadable = useChainState(
+    'query',
+    'staking',
+    'slashingSpans.multi',
+    stakes?.map(staking => staking.stashId) ?? []
+  )
+
   const stakerRewards = useRecoilValueLoadable(
     activeEra.state !== 'hasValue'
       ? constSelector(undefined)
@@ -27,6 +33,7 @@ const ValidatorStakings = () => {
       stake,
       account: accounts[index],
       reward: stakerRewards.valueMaybe()?.[accounts[index]?.address ?? ''],
+      slashingSpan: (slashingSpansLoadable.contents[index]?.unwrapOrDefault().prior.length ?? -1) + 1,
     }))
     .filter(({ account, stake }) => account !== undefined && !stake.stakingLedger.active.unwrap().isZero())
 
@@ -35,11 +42,11 @@ const ValidatorStakings = () => {
   }
 
   return (
-    <ValidatorStakeList>
-      {stakesToDisplay.map(({ stake, account, reward }) => (
-        <ValidatorStakeItem account={account!} stake={stake} reward={reward} />
+    <section css={{ display: 'flex', flexDirection: 'column', gap: '1.6rem' }}>
+      {stakesToDisplay.map(({ stake, account, reward, slashingSpan }) => (
+        <ValidatorStakeItem account={account!} stake={stake} reward={reward} slashingSpan={slashingSpan} />
       ))}
-    </ValidatorStakeList>
+    </section>
   )
 }
 

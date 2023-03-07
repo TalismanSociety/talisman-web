@@ -1,45 +1,11 @@
 import PoolStake, { PoolStakeList } from '@components/recipes/PoolStake/PoolStake'
-import { selectedSubstrateAccountsState } from '@domains/accounts/recoils'
-import { useChainState } from '@domains/common/hooks'
 import { useTotalStaked } from '@domains/staking/hooks'
 import { useTheme } from '@emotion/react'
 import { Text } from '@talismn/ui'
 import { Suspense } from 'react'
-import { useRecoilValue } from 'recoil'
 
 import Stakings from './Stakings'
 import ValidatorStakings from './ValidatorStakings'
-import ValidatorUnstakings from './ValidatorUnstakings'
-
-const UnstakingHeader = () => {
-  const accounts = useRecoilValue(selectedSubstrateAccountsState)
-
-  const poolMembersLoadable = useChainState(
-    'query',
-    'nominationPools',
-    'poolMembers.multi',
-    accounts.map(({ address }) => address)
-  )
-
-  const stakingsLoadable = useChainState('derive', 'staking', 'accounts', [
-    accounts.map(({ address }) => address),
-    undefined,
-  ])
-
-  const hasUnstakings =
-    poolMembersLoadable.valueMaybe()?.some(x => x.unwrapOrDefault().unbondingEras.size > 0) ||
-    stakingsLoadable.valueMaybe()?.some(x => !x.redeemable?.isZero() || (x.unlocking?.length ?? 0) > 0)
-
-  if (!hasUnstakings) {
-    return null
-  }
-
-  return (
-    <header css={{ marginTop: '4rem' }}>
-      <Text.H4 css={{ marginBottom: '1.6rem' }}>Unstaking</Text.H4>
-    </header>
-  )
-}
 
 const StakingHeader = () => {
   const theme = useTheme()
@@ -76,7 +42,7 @@ const OwnPools = () => (
           css={{
             'display': 'flex',
             'flexDirection': 'column',
-            'gap': '2.8rem',
+            'gap': '1.6rem',
             '> *:empty': {
               display: 'none',
             },
@@ -84,21 +50,6 @@ const OwnPools = () => (
         >
           <ValidatorStakings />
           <Stakings />
-        </div>
-      </div>
-      <div>
-        <UnstakingHeader />
-        <div
-          css={{
-            'display': 'flex',
-            'flexDirection': 'column',
-            'gap': '2.8rem',
-            '> *:empty': {
-              display: 'none',
-            },
-          }}
-        >
-          <ValidatorUnstakings />
         </div>
       </div>
     </Suspense>
