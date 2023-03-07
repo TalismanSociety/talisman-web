@@ -53,8 +53,6 @@ const TransactionHistory = styled(({ className }: { className?: string }) => {
 })`
   color: var(--color-text);
   width: 100%;
-  max-width: 1280px;
-  padding: 0 2.4rem;
 
   .all-nft-grids > * + * {
     margin-top: 4rem;

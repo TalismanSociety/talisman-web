@@ -8,9 +8,10 @@ export type NavigationRailProps = PropsWithChildren<{
   header?: ReactNode
 }>
 
-export type NavigationRailItemProps = PropsWithChildren<{
+export type NavigationRailItemProps = {
   label: ReactNode
-}>
+  icon: ReactNode
+}
 
 export const NavigationRailItem = (props: NavigationRailItemProps) => {
   const theme = useTheme()
@@ -27,42 +28,45 @@ export const NavigationRailItem = (props: NavigationRailItemProps) => {
           hoverContentColor={theme.color.surface}
           {...tooltipProps}
         >
-          {props.children}
+          {props.icon}
         </FloatingActionButton>
       )}
     </Tooltip>
   )
 }
 
-const NavigationRail = (props: NavigationRailProps) => {
-  const theme = useTheme()
-  return (
-    <nav
-      css={[
-        {
-          display: 'flex',
-          flexDirection: 'column-reverse',
-          justifyContent: 'space-between',
-          gap: '2rem',
-          alignItems: 'center',
-          borderRadius: '1.6rem',
-          padding: '4.8rem 2.2rem',
-          backgroundColor: theme.color.surface,
-          width: 'min-content',
-          minHeight: '70vh',
-          maxHeight: '90vh',
-        },
-        props.header === undefined && {
-          minHeight: 'unset',
-        },
-      ]}
-    >
-      <header>{props.header}</header>
-      <ul css={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '1.2rem', padding: 0 }}>
-        {props.children}
-      </ul>
-    </nav>
-  )
-}
+const NavigationRail = Object.assign(
+  (props: NavigationRailProps) => {
+    const theme = useTheme()
+    return (
+      <nav
+        css={[
+          {
+            display: 'flex',
+            flexDirection: 'column-reverse',
+            justifyContent: 'space-between',
+            gap: '2rem',
+            alignItems: 'center',
+            borderRadius: '1.6rem',
+            padding: '4.8rem 2.2rem',
+            backgroundColor: theme.color.surface,
+            width: 'min-content',
+            minHeight: '70vh',
+            maxHeight: '90vh',
+          },
+          props.header === undefined && {
+            minHeight: 'unset',
+          },
+        ]}
+      >
+        <header>{props.header}</header>
+        <ul css={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '1.2rem', padding: 0 }}>
+          {props.children}
+        </ul>
+      </nav>
+    )
+  },
+  { Item: NavigationRailItem }
+)
 
 export default NavigationRail

@@ -75,8 +75,6 @@ const Assets = () => {
 
 const AssetPage = styled.section`
   width: 100%;
-  max-width: 1280px;
-  padding: 0 2.4rem;
   > header + article {
     margin-top: 3rem;
   }

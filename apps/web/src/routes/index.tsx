@@ -5,15 +5,15 @@ import { apiState, nativeTokenDecimalState, nativeTokenPriceState } from '@domai
 import { recommendedPoolsState } from '@domains/nominationPools/recoils'
 import * as MoonbeamContributors from '@libs/moonbeam-contributors'
 import * as Sentry from '@sentry/react'
+import { Compass, CreditCard, Eye, TalismanHand, Zap } from '@talismn/icons'
+import { IconButton, NavigationRail } from '@talismn/ui'
 import posthog from 'posthog-js'
 import { useEffect } from 'react'
 import { Navigate, Outlet, createBrowserRouter, useLocation } from 'react-router-dom'
 import { useRecoilValueLoadable, waitForAll } from 'recoil'
 
-import Layout from '../layout'
 import AssetItem from './AssetItem'
 import Assets from './Assets'
-import Buy from './Buy'
 import CrowdloanDetail from './Crowdloan.Detail'
 import CrowdloanIndex from './Crowdloan.Index'
 import Explore from './Explore'
@@ -22,6 +22,21 @@ import Overview from './Overview'
 import Portfolio from './Portfolio'
 import Staking from './Staking'
 import TransactionHistory from './TransactionHistory'
+
+const Navigation = () => (
+  <NavigationRail
+    header={
+      <IconButton>
+        <TalismanHand />
+      </IconButton>
+    }
+  >
+    <NavigationRail.Item label="Portfolio" icon={<Eye />} />
+    <NavigationRail.Item label="Staking" icon={<Zap />} />
+    <NavigationRail.Item label="Explore" icon={<Compass />} />
+    <NavigationRail.Item label="Buy" icon={<CreditCard />} />
+  </NavigationRail>
+)
 
 const Main = () => {
   // Pre-loading
@@ -56,9 +71,37 @@ const Main = () => {
     // TODO: remove legacy imperative modals
     <ModalProvider>
       <MoonbeamContributors.PopupProvider>
-        <Layout>
-          <Outlet />
-        </Layout>
+        <div
+          css={{
+            'display': 'grid',
+            'gridTemplateAreas': `
+              'main'
+              'nav'
+            `,
+            '@media(min-width: 1024px)': {
+              padding: '2.4rem',
+              gap: '4.8rem',
+              gridTemplateColumns: 'min-content 1fr',
+              gridTemplateAreas: `
+                'nav main'
+                'footer footer'
+              `,
+            },
+          }}
+        >
+          <div css={{ gridArea: 'nav' }}>
+            <div css={{ position: 'fixed' }}>
+              <Navigation />
+            </div>
+            {/* Filler */}
+            <div css={{ visibility: 'hidden' }}>
+              <Navigation />
+            </div>
+          </div>
+          <main css={{ gridArea: 'main' }}>
+            <Outlet />
+          </main>
+        </div>
       </MoonbeamContributors.PopupProvider>
     </ModalProvider>
   )
@@ -93,7 +136,6 @@ export default Sentry.wrapCreateBrowserRouter(createBrowserRouter)([
           { path: ':slug', element: <CrowdloanDetail /> },
         ],
       },
-      { path: 'buy', element: <Buy /> },
     ],
   },
   { path: '*', element: <Navigate to="/" /> },
