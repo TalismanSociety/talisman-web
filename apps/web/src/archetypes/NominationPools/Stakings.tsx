@@ -66,7 +66,7 @@ const Stakings = () => {
 
   const pools = useMemo(
     () =>
-      poolMembersLoadable.state !== 'hasValue'
+      poolMembersLoadable.state !== 'hasValue' || sessionProgressLoadable.state !== 'hasValue'
         ? undefined
         : poolMembersLoadable.contents
             // Calculate unbondings
