@@ -8,7 +8,6 @@ import { Suspense } from 'react'
 import { useRecoilValue } from 'recoil'
 
 import Stakings from './Stakings'
-import Unstakings from './Unstakings'
 import ValidatorStakings from './ValidatorStakings'
 import ValidatorUnstakings from './ValidatorUnstakings'
 
@@ -100,7 +99,6 @@ const OwnPools = () => (
           }}
         >
           <ValidatorUnstakings />
-          <Unstakings />
         </div>
       </div>
     </Suspense>

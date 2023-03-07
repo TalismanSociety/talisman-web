@@ -1,16 +1,15 @@
 import { useTheme } from '@emotion/react'
 import { IconContext } from '@talismn/icons'
-import React, { useMemo } from 'react'
-import { ElementType, PropsWithChildren, ReactNode } from 'react'
+import { ButtonHTMLAttributes, DetailedHTMLProps, ReactNode, useMemo } from 'react'
 
 import Text from '../Text'
 
-export type ChipProps = PropsWithChildren<{
+export type ChipProps = DetailedHTMLProps<ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement> & {
   size?: 'sm' | 'md' | 'lg'
   containerColor?: string
   contentColor?: string
   leadingContent?: ReactNode
-}>
+}
 
 const Chip = ({ size = 'md', containerColor, contentColor, leadingContent, ...props }: ChipProps) => {
   const theme = useTheme()
@@ -28,7 +27,7 @@ const Chip = ({ size = 'md', containerColor, contentColor, leadingContent, ...pr
         return Text.BodyLarge
     }
   }, [size])
-
+  const a = <button></button>
   return (
     <Container
       as="button"

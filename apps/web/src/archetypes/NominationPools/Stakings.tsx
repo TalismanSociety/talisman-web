@@ -4,6 +4,7 @@ import { selectedSubstrateAccountsState } from '@domains/accounts/recoils'
 import { createAccounts } from '@domains/nominationPools/utils'
 import { Button, CircularProgressIndicator, HiddenDetails, Text } from '@talismn/ui'
 import { Maybe } from '@util/monads'
+import BN from 'bn.js'
 import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { constSelector, useRecoilValueLoadable, useRecoilValue_TRANSITION_SUPPORT_UNSTABLE, waitForAll } from 'recoil'
@@ -33,6 +34,13 @@ const Stakings = () => {
     { enabled: poolMembersLoadable.state === 'hasValue' }
   )
 
+  const slashingSpans = useChainState(
+    'query',
+    'staking',
+    'slashingSpans.multi',
+    poolMembersLoadable.valueMaybe()?.map(x => createAccounts(api, x.unwrapOrDefault().poolId).stashId) ?? []
+  )
+
   const poolMetadatumLoadable = useChainState(
     'query',
     'nominationPools',
@@ -42,6 +50,8 @@ const Stakings = () => {
   )
 
   const activeEraLoadable = useChainState('query', 'staking', 'activeEra', [])
+
+  const sessionProgressLoadable = useChainState('derive', 'session', 'progress', [])
 
   const eraStakersLoadable = useRecoilValueLoadable(
     activeEraLoadable.state !== 'hasValue'
@@ -59,7 +69,27 @@ const Stakings = () => {
       poolMembersLoadable.state !== 'hasValue'
         ? undefined
         : poolMembersLoadable.contents
+            // Calculate unbondings
             .map((poolMember, index) => {
+              const all = Array.from(poolMember.unwrapOrDefault().unbondingEras.entries(), ([era, amount]) => ({
+                amount: amount.toBigInt(),
+                erasTilWithdrawable: era.lte(sessionProgressLoadable.contents.activeEra)
+                  ? undefined
+                  : era.sub(sessionProgressLoadable.contents.activeEra),
+              }))
+
+              const withdrawable = all
+                .filter(x => x.erasTilWithdrawable === undefined)
+                .reduce((previous, current) => previous + current.amount, 0n)
+              const pendings = all.filter(
+                (x): x is { amount: bigint; erasTilWithdrawable: BN } => x.erasTilWithdrawable !== undefined
+              )
+
+              return { account: accounts[index], poolMember, withdrawable, unbondings: pendings }
+            })
+
+            // Calculate remaining values
+            .map(({ poolMember, ...rest }, index) => {
               const status: PoolStatus | undefined = (() => {
                 if (poolNominatorsLoadable.state !== 'hasValue' || eraStakers === undefined) {
                   return undefined
@@ -72,24 +102,32 @@ const Stakings = () => {
                 return targets?.some(x => eraStakers.has(x.toHuman())) ? 'earning_rewards' : 'waiting'
               })()
 
+              const priorLength = slashingSpans.valueMaybe()?.[index]?.unwrapOr(undefined)?.prior.length
+              const slashingSpan = priorLength === undefined ? 0 : priorLength + 1
+
               return {
+                ...rest,
                 status,
-                account: accounts[index],
                 poolName: poolMetadatumLoadable.valueMaybe()?.[index]?.toUtf8() ?? (
                   <CircularProgressIndicator size="1em" />
                 ),
-                poolMember: poolMember.unwrapOrDefault(),
+                poolMember,
                 pendingRewards: pendingRewards.find(rewards => rewards[0] === accounts[index]?.address)?.[1],
+                slashingSpan,
               }
             })
-            .filter(x => !x.poolMember.points.isZero()),
+            .filter(x => x.poolMember.isSome)
+            .map(x => ({ ...x, poolMember: x.poolMember.unwrapOrDefault() })),
     [
       poolMembersLoadable.state,
       poolMembersLoadable.contents,
-      poolNominatorsLoadable,
       accounts,
+      sessionProgressLoadable.contents.activeEra,
+      slashingSpans,
       poolMetadatumLoadable,
       pendingRewards,
+      poolNominatorsLoadable.state,
+      poolNominatorsLoadable.contents,
       eraStakers,
     ]
   )
@@ -123,11 +161,11 @@ const Stakings = () => {
           </PoolStakeList>
         </HiddenDetails>
       ) : (
-        <PoolStakeList>
+        <section css={{ display: 'flex', flexDirection: 'column', gap: '1.6rem' }}>
           {pools?.map((pool, index) => (
             <PoolStakeItem key={index} item={pool} />
           ))}
-        </PoolStakeList>
+        </section>
       )}
     </div>
   )

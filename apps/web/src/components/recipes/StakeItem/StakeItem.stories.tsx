@@ -10,9 +10,18 @@ export default {
   component: StakeItem,
 } as ComponentMeta<typeof StakeItem>
 
+const defaultProps = {
+  accountName: 'Dev wallet',
+  accountAddress: '1YmEYgtfPbwx5Jos1PjKDWRpuJWSpTzytwZgYan6kgiquNS',
+  poolName: 'Talisman Pool 1: app.talisman.xyz',
+  stakingAmount: '3,013.33 DOT',
+  stakingFiatAmount: '$24,358.05',
+}
+
 export const PoolStake: Story<PoolStakeItemProps> = args => <PoolStakeItem {...args} />
 
 PoolStake.args = {
+  ...defaultProps,
   claimChip: <ClaimChip key="0" amount="104.96 DOT" />,
   unstakeChip: <UnstakeChip key="1" />,
   increaseStakeChip: <IncreaseStakeChip key="2" />,
@@ -26,6 +35,7 @@ PoolStake.args = {
 export const ValidatorStake: Story<ValidatorStakeItemProps> = args => <ValidatorStakeItem {...args} />
 
 ValidatorStake.args = {
+  ...defaultProps,
   unstakeChip: <UnstakeChip key="1" />,
   status: (
     <>
@@ -37,6 +47,7 @@ ValidatorStake.args = {
 export const ValidatorStakeWithFastUnstake = ValidatorStake.bind({})
 
 ValidatorStakeWithFastUnstake.args = {
+  ...defaultProps,
   unstakeChip: <FastUnstakeChip />,
   status: (
     <>
