@@ -40,7 +40,7 @@ const ExploreGrid = ({ className }: { className?: string }) => {
               'justifyContent': 'space-between',
               'alignItems': 'center',
               'marginBottom': '2rem',
-              'gap': '1rem',
+              'gap': '2rem',
               '@media (min-width: 1024px)': {
                 flexDirection: 'row-reverse',
                 gap: 0,
@@ -52,7 +52,7 @@ const ExploreGrid = ({ className }: { className?: string }) => {
               css={{
                 'width': '100%',
                 '@media (min-width: 1024px)': {
-                  width: '50%',
+                  width: '46.7%',
                   margin: 0,
                 },
               }}
@@ -107,6 +107,7 @@ const StyledExploreGrid = styled(ExploreGrid)`
     flex-wrap: wrap;
     width: 87vw;
     height: 100%;
+    justify-content: flex-start;
 
     @media ${device.md} {
       width: 100%;
