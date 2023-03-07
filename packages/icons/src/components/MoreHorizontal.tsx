@@ -17,6 +17,7 @@ const SvgMoreHorizontal = (
   >
     <path
       d="M12 13a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"
+      fill="currentColor"
       stroke="currentColor"
       strokeWidth={2}
       strokeLinecap="round"
@@ -24,6 +25,7 @@ const SvgMoreHorizontal = (
     />
     <path
       d="M19 13a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"
+      fill="currentColor"
       stroke="currentColor"
       strokeWidth={2}
       strokeLinecap="round"
@@ -31,6 +33,7 @@ const SvgMoreHorizontal = (
     />
     <path
       d="M5 13a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"
+      fill="currentColor"
       stroke="currentColor"
       strokeWidth={2}
       strokeLinecap="round"

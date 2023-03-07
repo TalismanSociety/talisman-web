@@ -1,5 +1,5 @@
 import { ComponentMeta, Story } from '@storybook/react'
-import { Union } from '@talismn/icons'
+import { TalismanHand } from '@talismn/icons'
 import { JSXElementConstructor } from 'react'
 
 import { Text } from './atoms'
@@ -45,7 +45,7 @@ export const DarkGreen: Story<Props> = args => {
                       margin: 0,
                     }}
                   >
-                    <Union css={{ color: contentColor }} />
+                    <TalismanHand css={{ color: contentColor }} />
                   </figure>
                   <Text.H4>{key}</Text.H4>
                   <Text.BodyLarge>{value}</Text.BodyLarge>

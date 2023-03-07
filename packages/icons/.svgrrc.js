@@ -3,6 +3,9 @@ module.exports = {
   typescript: true,
   prettier: true,
   ref: true,
+  replaceAttrValues: {
+    '#000': 'currentColor',
+  },
   template: require('./template'),
   svgProps: {
     width: '{props.size ?? 24}',

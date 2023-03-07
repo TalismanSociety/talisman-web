@@ -8,7 +8,7 @@ import { fiatBalancesState, totalLocalizedFiatBalanceState } from '@domains/bala
 import { allowExtensionConnectionState } from '@domains/extension/recoils'
 import { useTheme } from '@emotion/react'
 import { isWeb3Injected } from '@polkadot/extension-dapp'
-import { ChevronDown, Download, Eye, Link, PlusCircle, Trash2, Union, Users } from '@talismn/icons'
+import { ChevronDown, Download, Eye, Link, PlusCircle, TalismanHand, Trash2, Users } from '@talismn/icons'
 import { Button, CircularProgressIndicator, IconButton, Identicon, ListItem, Menu, Text } from '@talismn/ui'
 import { shortenAddress } from '@util/format'
 import getDownloadLink from '@util/getDownloadLink'
@@ -151,7 +151,7 @@ const AccountsManagementMenu = () => {
                 padding: '0 1.6rem',
               }}
             >
-              <Union size="1em" /> My accounts
+              <TalismanHand size="1em" /> My accounts
             </Text.Body>
             {leadingMenuItem}
             {injectedAccounts.map(x => (
