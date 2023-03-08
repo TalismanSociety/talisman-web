@@ -1,18 +1,19 @@
+import { Total } from '@archetypes/Wallet'
 import { ModalProvider } from '@components'
 import AccountsManagementMenu from '@components/widgets/AccountsManagementMenu'
 import { RouteErrorElement } from '@components/widgets/ErrorBoundary'
 import StakeDialog, { stakeDialogOpenState } from '@components/widgets/StakeWidget'
-import { accountsState } from '@domains/accounts/recoils'
+import { accountsState, legacySelectedAccountState } from '@domains/accounts/recoils'
 import { apiState, nativeTokenDecimalState, nativeTokenPriceState } from '@domains/chains/recoils'
 import { recommendedPoolsState } from '@domains/nominationPools/recoils'
 import * as MoonbeamContributors from '@libs/moonbeam-contributors'
 import * as Sentry from '@sentry/react'
 import { Compass, CreditCard, Eye, TalismanHand, Zap } from '@talismn/icons'
-import { IconButton, NavigationRail } from '@talismn/ui'
+import { AccountValueInfo, IconButton, NavigationRail } from '@talismn/ui'
 import posthog from 'posthog-js'
 import { useCallback, useEffect } from 'react'
 import { Link, Navigate, Outlet, createBrowserRouter, useLocation } from 'react-router-dom'
-import { useRecoilValueLoadable, useSetRecoilState, waitForAll } from 'recoil'
+import { useRecoilValue, useRecoilValueLoadable, useSetRecoilState, waitForAll } from 'recoil'
 
 import AssetItem from './AssetItem'
 import Assets from './Assets'
@@ -51,6 +52,15 @@ const Navigation = () => {
         <NavigationRail.Item label="Buy" icon={<CreditCard />} />
       </Link>
     </NavigationRail>
+  )
+}
+
+const Header = () => {
+  const account = useRecoilValue(legacySelectedAccountState)
+  return (
+    <div css={{ margin: '4rem 0' }}>
+      <AccountValueInfo address={account?.address ?? ''} name={account?.name ?? 'All Accounts'} balance={<Total />} />
+    </div>
   )
 }
 
@@ -115,7 +125,10 @@ const Main = () => {
             </div>
           </div>
           <main css={{ gridArea: 'main' }}>
-            <Outlet />
+            <div>
+              <Header />
+              <Outlet />
+            </div>
           </main>
         </div>
         <StakeDialog />
