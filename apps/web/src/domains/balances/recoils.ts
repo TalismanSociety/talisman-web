@@ -46,6 +46,18 @@ export const totalInjectedAccountsFiatBalance = selector({
   },
 })
 
+export const totalSelectedAccountsFiatBalance = selector({
+  key: 'TotalSelectedAccountsFiatBalance',
+  get: ({ get }) => {
+    const selecteds = get(selectedAccountsState).map(x => x.address)
+    const fiatBalances = get(fiatBalancesState)
+
+    return Object.entries(fiatBalances)
+      .filter(([key]) => selecteds.includes(key))
+      .reduce((previous, current) => previous + current[1], 0)
+  },
+})
+
 export const totalLocalizedFiatBalanceState = selector({
   key: 'TotalLocalizedFiatBalanceState',
   get: ({ get }) =>
