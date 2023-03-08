@@ -8,7 +8,7 @@ import { apiState, nativeTokenDecimalState, nativeTokenPriceState } from '@domai
 import { recommendedPoolsState } from '@domains/nominationPools/recoils'
 import * as MoonbeamContributors from '@libs/moonbeam-contributors'
 import * as Sentry from '@sentry/react'
-import { Compass, CreditCard, Eye, TalismanHand, Zap } from '@talismn/icons'
+import { Compass, CreditCard, Eye, Star, TalismanHand, Zap } from '@talismn/icons'
 import { AccountValueInfo, IconButton, NavigationRail } from '@talismn/ui'
 import posthog from 'posthog-js'
 import { useCallback, useEffect } from 'react'
@@ -47,6 +47,9 @@ const Navigation = () => {
       />
       <Link to="/explore">
         <NavigationRail.Item label="Explore" icon={<Compass />} />
+      </Link>
+      <Link to="/crowdloans">
+        <NavigationRail.Item label="Crowdloans" icon={<Star />} />
       </Link>
       <Link to="https://talisman.banxa.com/" target="_blank">
         <NavigationRail.Item label="Buy" icon={<CreditCard />} />
