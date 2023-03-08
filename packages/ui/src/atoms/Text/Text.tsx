@@ -10,6 +10,13 @@ type PolymorphicTextProps<T extends React.ElementType> = {
 export type TextProps<T extends React.ElementType> = PolymorphicTextProps<T> &
   Omit<React.ComponentPropsWithoutRef<T>, keyof PolymorphicTextProps<T>>
 
+const decorateText = <T extends Object>(element: T) =>
+  Object.assign(element, {
+    A: <T extends React.ElementType = 'a'>(props: TextProps<T>) => (
+      <BaseText as="a" alpha="high" {...props} css={{ textDecoration: 'underline' }} />
+    ),
+  })
+
 const BaseText = <T extends React.ElementType = 'span'>({ as, color, alpha = 'medium', ...props }: TextProps<T>) => {
   const theme = useTheme()
   const Component = as ?? 'span'
@@ -67,18 +74,15 @@ const Text = Object.assign(BaseText, {
   H4: <T extends React.ElementType = 'h4'>(props: TextProps<T>) => (
     <BaseHeaderText {...props} as={props.as ?? 'h4'} css={{ fontSize: 18 }} />
   ),
-  BodyLarge: <T extends React.ElementType = 'span'>(props: TextProps<T>) => (
+  BodyLarge: decorateText(<T extends React.ElementType = 'span'>(props: TextProps<T>) => (
     <BaseText {...props} as={props.as ?? 'span'} css={{ fontSize: 16 }} />
-  ),
-  Body: <T extends React.ElementType = 'span'>(props: TextProps<T>) => (
+  )),
+  Body: decorateText(<T extends React.ElementType = 'span'>(props: TextProps<T>) => (
     <BaseText {...props} as={props.as ?? 'span'} css={{ fontSize: 14 }} />
-  ),
-  BodySmall: <T extends React.ElementType = 'span'>(props: TextProps<T>) => (
+  )),
+  BodySmall: decorateText(<T extends React.ElementType = 'span'>(props: TextProps<T>) => (
     <BaseText {...props} as={props.as ?? 'span'} css={{ fontSize: 12 }} />
-  ),
-  A: <T extends React.ElementType | ElementType<any> = 'a'>(props: TextProps<T>) => (
-    <BaseText {...props} as={props.as ?? 'a'} alpha="high" css={{ fontSize: 'inherit', textDecoration: 'underline' }} />
-  ),
+  )),
 })
 
 export default Text

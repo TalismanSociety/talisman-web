@@ -1,14 +1,13 @@
 import { keyframes, useTheme } from '@emotion/react'
 import { X } from '@talismn/icons'
-import { PropsWithChildren, ReactNode } from 'react'
+import { ReactNode } from 'react'
 
-import { Dialog, IconButton, Text } from '../../atoms'
+import { Dialog, DialogProps, IconButton, Text } from '../../atoms'
 
-export type FullScreenDialogProps = PropsWithChildren<{
-  open?: boolean
+export type FullScreenDialogProps = Omit<DialogProps, 'title'> & {
   title: ReactNode
   onRequestDismiss: () => unknown
-}>
+}
 
 const slideInRight = keyframes`
   from {
@@ -42,8 +41,9 @@ const FullScreenDialog = ({ title, children, ...props }: FullScreenDialogProps) 
   return (
     <Dialog
       {...props}
+      onClickBackdrop={props.onRequestDismiss}
       css={{
-        'background': theme.color.surface,
+        'background': theme.color.background,
         'border': 'none',
         'width': '100%',
         'maxWidth': '100%',

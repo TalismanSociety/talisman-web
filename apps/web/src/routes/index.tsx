@@ -1,5 +1,7 @@
 import { ModalProvider } from '@components'
+import AccountsManagementMenu from '@components/widgets/AccountsManagementMenu'
 import { RouteErrorElement } from '@components/widgets/ErrorBoundary'
+import StakeDialog, { stakeDialogOpenState } from '@components/widgets/StakeWidget'
 import { accountsState } from '@domains/accounts/recoils'
 import { apiState, nativeTokenDecimalState, nativeTokenPriceState } from '@domains/chains/recoils'
 import { recommendedPoolsState } from '@domains/nominationPools/recoils'
@@ -8,10 +10,9 @@ import * as Sentry from '@sentry/react'
 import { Compass, CreditCard, Eye, TalismanHand, Zap } from '@talismn/icons'
 import { IconButton, NavigationRail } from '@talismn/ui'
 import posthog from 'posthog-js'
-import { useEffect } from 'react'
-import { Link } from 'react-router-dom'
-import { Navigate, Outlet, createBrowserRouter, useLocation } from 'react-router-dom'
-import { useRecoilValueLoadable, waitForAll } from 'recoil'
+import { useCallback, useEffect } from 'react'
+import { Link, Navigate, Outlet, createBrowserRouter, useLocation } from 'react-router-dom'
+import { useRecoilValueLoadable, useSetRecoilState, waitForAll } from 'recoil'
 
 import AssetItem from './AssetItem'
 import Assets from './Assets'
@@ -24,28 +25,34 @@ import Portfolio from './Portfolio'
 import Staking from './Staking'
 import TransactionHistory from './TransactionHistory'
 
-const Navigation = () => (
-  <NavigationRail
-    header={
-      <IconButton as={Link} to="/">
-        <TalismanHand />
-      </IconButton>
-    }
-  >
-    <Link to="/portfolio">
-      <NavigationRail.Item label="Portfolio" icon={<Eye />} />
-    </Link>
-    <Link to="https://talisman.banxa.com/">
-      <NavigationRail.Item label="Staking" icon={<Zap />} />
-    </Link>
-    <Link to="/explore">
-      <NavigationRail.Item label="Explore" icon={<Compass />} />
-    </Link>
-    <Link to="https://talisman.banxa.com/" target="_blank">
-      <NavigationRail.Item label="Buy" icon={<CreditCard />} />
-    </Link>
-  </NavigationRail>
-)
+const Navigation = () => {
+  const setStakeDialogOpen = useSetRecoilState(stakeDialogOpenState)
+  return (
+    <NavigationRail
+      header={
+        <IconButton as={Link} to="/">
+          <TalismanHand />
+        </IconButton>
+      }
+    >
+      <AccountsManagementMenu />
+      <Link to="/portfolio">
+        <NavigationRail.Item label="Portfolio" icon={<Eye />} />
+      </Link>
+      <NavigationRail.Item
+        label="Staking"
+        icon={<Zap />}
+        onClick={useCallback(() => setStakeDialogOpen(true), [setStakeDialogOpen])}
+      />
+      <Link to="/explore">
+        <NavigationRail.Item label="Explore" icon={<Compass />} />
+      </Link>
+      <Link to="https://talisman.banxa.com/" target="_blank">
+        <NavigationRail.Item label="Buy" icon={<CreditCard />} />
+      </Link>
+    </NavigationRail>
+  )
+}
 
 const Main = () => {
   // Pre-loading
@@ -111,6 +118,7 @@ const Main = () => {
             <Outlet />
           </main>
         </div>
+        <StakeDialog />
       </MoonbeamContributors.PopupProvider>
     </ModalProvider>
   )

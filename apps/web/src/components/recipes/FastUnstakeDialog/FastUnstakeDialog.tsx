@@ -18,7 +18,7 @@ const FastUnstakeDialog = (props: FastUnstakeDialogProps) => (
       <>
         <Text.Body as="p" css={{ textAlign: 'center', marginBottom: '4rem' }}>
           Fast unstaking allows you to bypass the 28 day unstaking period, however you cannot have earned rewards within
-          the past 28 days to be eligible. <Text.A href="#">Learn more</Text.A>
+          the past 28 days to be eligible. <Text.Body.A href="#">Learn more</Text.Body.A>
         </Text.Body>
         <EyeOfSauronProgressIndicator
           state={useMemo(() => {

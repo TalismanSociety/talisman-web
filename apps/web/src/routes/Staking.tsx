@@ -16,7 +16,7 @@ import { BN } from '@polkadot/util'
 import { CircularProgressIndicator, Details, InfoCard, Text } from '@talismn/ui'
 import { shortenAddress } from '@util/format'
 import { Maybe } from '@util/monads'
-import { AnimatePresence, motion } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { Suspense, useCallback, useEffect, useMemo, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import {
@@ -141,9 +141,9 @@ const Faq = (props: React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>
           Nomination pools allow participants to permissionlessly pool funds together to stake as a group. Benefits of
           contributing your stake to a nomination pool include no staking minimum, no need for a stash and controller
           account, and the selection of validators on your behalf.{' '}
-          <Text.A href="https://wiki.polkadot.network/docs/learn-nomination-pools" target="_blank">
+          <Text.Body.A href="https://wiki.polkadot.network/docs/learn-nomination-pools" target="_blank">
             Learn more
-          </Text.A>
+          </Text.Body.A>
           .
         </Text.Body>
       ),
@@ -163,9 +163,9 @@ const Faq = (props: React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>
       content: (
         <Text.Body>
           You can unstake at any time from the{' '}
-          <Text.A as={Link} to="/portfolio#staking">
+          <Text.Body.A as={Link} to="/portfolio#staking">
             portfolio page
-          </Text.A>
+          </Text.Body.A>
           . There is a 28-day unstaking period (often termed unbonding) on Polkadot before your funds become available
           to withdraw.
         </Text.Body>
@@ -176,9 +176,9 @@ const Faq = (props: React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>
       content: (
         <Text.Body>
           You can claim accumulated rewards on the{' '}
-          <Text.A as={Link} to="/portfolio#staking">
+          <Text.Body.A as={Link} to="/portfolio#staking">
             portfolio page
-          </Text.A>
+          </Text.Body.A>
           . Ensure you have either "All Accounts", or the account you're actively staking with, selected in the top
           right of the navigation bar.
         </Text.Body>
@@ -190,9 +190,9 @@ const Faq = (props: React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>
         <Text.Body>
           Talisman surveys the available pools at the time of staking, returning a recommendation based on the pool's
           selection of validators, a verified identity, history of actively earning rewards, and not{' '}
-          <Text.A href="https://wiki.polkadot.network/docs/learn-nomination-pools#slashing" target="_blank">
+          <Text.Body.A href="https://wiki.polkadot.network/docs/learn-nomination-pools#slashing" target="_blank">
             being slashed
-          </Text.A>{' '}
+          </Text.Body.A>{' '}
           for harmful behaviour.
         </Text.Body>
       ),
