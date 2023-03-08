@@ -1,5 +1,5 @@
-import PoolStake, { PoolStakeList } from '@components/recipes/PoolStake/PoolStake'
 import { PoolStatus } from '@components/recipes/PoolStatusIndicator'
+import StakeItem from '@components/recipes/StakeItem'
 import { selectedSubstrateAccountsState } from '@domains/accounts/recoils'
 import { createAccounts } from '@domains/nominationPools/utils'
 import { Button, CircularProgressIndicator, HiddenDetails, Text } from '@talismn/ui'
@@ -121,8 +121,9 @@ const Stakings = () => {
     [
       poolMembersLoadable.state,
       poolMembersLoadable.contents,
-      accounts,
+      sessionProgressLoadable.state,
       sessionProgressLoadable.contents.activeEra,
+      accounts,
       slashingSpans,
       poolMetadatumLoadable,
       pendingRewards,
@@ -154,11 +155,10 @@ const Stakings = () => {
             </div>
           }
         >
-          <PoolStakeList>
-            <PoolStake.Skeleton animate={false} />
-            <PoolStake.Skeleton animate={false} />
-            <PoolStake.Skeleton animate={false} />
-          </PoolStakeList>
+          <section css={{ display: 'flex', flexDirection: 'column', gap: '1.6rem' }}>
+            <StakeItem.Skeleton animate={false} />
+            <StakeItem.Skeleton animate={false} />
+          </section>
         </HiddenDetails>
       ) : (
         <section css={{ display: 'flex', flexDirection: 'column', gap: '1.6rem' }}>

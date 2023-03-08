@@ -55,3 +55,5 @@ ValidatorStakeWithFastUnstake.args = {
     </>
   ),
 }
+
+export const Skeleton = () => <StakeItem.Skeleton />

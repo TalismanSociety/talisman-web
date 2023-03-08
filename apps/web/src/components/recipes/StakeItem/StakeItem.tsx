@@ -5,6 +5,7 @@ import Color from 'colorjs.io'
 import { ReactNode, useMemo } from 'react'
 
 import { PoolStatus, PoolStatusIndicator } from '../PoolStatusIndicator'
+import StakeItemSkeleton from './StakeItemSkeleton'
 
 export type StakeItemProps = {
   accountName: string
@@ -46,58 +47,61 @@ export const FastUnstakeChip = (props: Omit<ChipProps, 'children'>) => (
   </Chip>
 )
 
-const StakeItem = (props: StakeItemProps) => {
-  const theme = useTheme()
+const StakeItem = Object.assign(
+  (props: StakeItemProps) => {
+    const theme = useTheme()
 
-  return (
-    <article css={{ borderRadius: '0.8rem', overflow: 'hidden' }}>
-      <ListItem
-        leadingContent={<Identicon value={props.accountAddress} size="4rem" />}
-        headlineText={props.accountName}
-        supportingText={
-          <Text.Body css={{ display: 'flex', alignItems: 'center', gap: '0.25em' }}>
-            <PoolStatusIndicator status={props.poolStatus} />
-            <Text.Body css={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-              {props.poolName}
+    return (
+      <article css={{ borderRadius: '0.8rem', overflow: 'hidden' }}>
+        <ListItem
+          leadingContent={<Identicon value={props.accountAddress} size="4rem" />}
+          headlineText={props.accountName}
+          supportingText={
+            <Text.Body css={{ display: 'flex', alignItems: 'center', gap: '0.25em' }}>
+              <PoolStatusIndicator status={props.poolStatus} />
+              <Text.Body css={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                {props.poolName}
+              </Text.Body>
             </Text.Body>
-          </Text.Body>
-        }
-        trailingContent={
-          <div css={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
-            <Text.BodyLarge as="div" css={{ fontWeight: 'bold' }}>
-              {props.stakingAmount} <Lock size="1em" />
-            </Text.BodyLarge>
-            <Text.BodyLarge as="div">{props.stakingFiatAmount}</Text.BodyLarge>
-          </div>
-        }
-        css={{ backgroundColor: theme.color.surface }}
-      />
-      <div
-        css={{
-          display: 'flex',
-          justifyContent: 'flex-end',
-          flexWrap: 'wrap',
-          gap: '0.8rem',
-          padding: '0.8rem 1.6rem',
-          backgroundColor: theme.color.foreground,
-        }}
-      >
-        {!props.readonly && <div css={{ display: 'flex', gap: '0.8rem' }}>{props.actions}</div>}
-        <Text.Body
+          }
+          trailingContent={
+            <div css={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
+              <Text.BodyLarge as="div" css={{ fontWeight: 'bold' }}>
+                {props.stakingAmount} <Lock size="1em" />
+              </Text.BodyLarge>
+              <Text.BodyLarge as="div">{props.stakingFiatAmount}</Text.BodyLarge>
+            </div>
+          }
+          css={{ backgroundColor: theme.color.surface }}
+        />
+        <div
           css={{
-            flex: 1,
-            justifyContent: 'flex-end',
             display: 'flex',
-            alignItems: 'center',
-            gap: '0.25em',
-            whiteSpace: 'nowrap',
+            justifyContent: 'flex-end',
+            flexWrap: 'wrap',
+            gap: '0.8rem',
+            padding: '0.8rem 1.6rem',
+            backgroundColor: theme.color.foreground,
           }}
         >
-          {props.status}
-        </Text.Body>
-      </div>
-    </article>
-  )
-}
+          {!props.readonly && <div css={{ display: 'flex', gap: '0.8rem' }}>{props.actions}</div>}
+          <Text.Body
+            css={{
+              flex: 1,
+              justifyContent: 'flex-end',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.25em',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            {props.status}
+          </Text.Body>
+        </div>
+      </article>
+    )
+  },
+  { Skeleton: StakeItemSkeleton }
+)
 
 export default StakeItem
