@@ -4,6 +4,7 @@ import { Crowdloans } from '@archetypes/Wallet'
 import { Search } from '@components/Field'
 import Asset, { AssetsList, AssetsListLocked } from '@components/recipes/Asset'
 import AnimatedFiatNumber from '@components/widgets/AnimatedFiatNumber'
+import PortfolioAllocationGraph from '@components/widgets/PortfolioAllocationGraph'
 import { Button, Text } from '@talismn/ui'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
@@ -108,6 +109,7 @@ const Overview = () => (
   >
     <AssetsOverview />
     <div css={{ display: 'grid', gap: '4.8rem' }}>
+      <PortfolioAllocationGraph />
       <OwnPools />
       <Crowdloans />
     </div>
