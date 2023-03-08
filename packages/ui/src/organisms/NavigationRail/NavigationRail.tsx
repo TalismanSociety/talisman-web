@@ -11,6 +11,7 @@ export type NavigationRailProps = PropsWithChildren<{
 export type NavigationRailItemProps = {
   label: ReactNode
   icon: ReactNode
+  onClick?: () => unknown
 }
 
 export const NavigationRailItem = (props: NavigationRailItemProps) => {
@@ -26,6 +27,7 @@ export const NavigationRailItem = (props: NavigationRailItemProps) => {
           hoverContainerColor={theme.color.onSurface}
           contentColor={theme.color.onSurface}
           hoverContentColor={theme.color.surface}
+          onClick={props.onClick}
           {...tooltipProps}
         >
           {props.icon}

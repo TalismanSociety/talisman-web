@@ -8,18 +8,24 @@ import { fiatBalancesState, totalLocalizedFiatBalanceState } from '@domains/bala
 import { allowExtensionConnectionState } from '@domains/extension/recoils'
 import { useTheme } from '@emotion/react'
 import { isWeb3Injected } from '@polkadot/extension-dapp'
-import { ChevronDown, Download, Eye, Link, PlusCircle, TalismanHand, Trash2, Users } from '@talismn/icons'
-import { Button, CircularProgressIndicator, IconButton, Identicon, ListItem, Menu, Text } from '@talismn/ui'
+import { Download, Eye, Link, PlusCircle, TalismanHand, Trash2, Users } from '@talismn/icons'
+import {
+  Button,
+  CircularProgressIndicator,
+  FloatingActionButton,
+  IconButton,
+  Identicon,
+  ListItem,
+  Menu,
+  Text,
+} from '@talismn/ui'
 import { shortenAddress } from '@util/format'
 import getDownloadLink from '@util/getDownloadLink'
-import { motion } from 'framer-motion'
 import { useMemo } from 'react'
 import { useRecoilState, useRecoilValue, useRecoilValueLoadable, useSetRecoilState } from 'recoil'
 
 import AddReadOnlyAccountDialog from './AddReadOnlyAccountDialog'
 import RemoveWatchedAccountConfirmationDialog from './RemoveWatchedAccountConfirmationDialog'
-
-const AnimatedChevron = motion(ChevronDown)
 
 const AccountsManagementMenu = () => {
   const theme = useTheme()
@@ -35,39 +41,24 @@ const AccountsManagementMenu = () => {
 
   const [allowExtensionConnection, setAllowExtensionConnection] = useRecoilState(allowExtensionConnectionState)
 
-  const [buttonIcon, buttonText] = useMemo(() => {
+  const buttonIcon = useMemo(() => {
     if ((!isWeb3Injected || !allowExtensionConnection) && readonlyAccounts.length === 0) {
-      return [
-        <IconButton
-          as="figure"
-          size="2.4rem"
-          containerColor={theme.color.foreground}
-          contentColor={theme.color.primary}
-        >
+      return (
+        <IconButton as="figure" containerColor={theme.color.foreground} contentColor={theme.color.primary}>
           <Link />
-        </IconButton>,
-        'Connect',
-      ]
+        </IconButton>
+      )
     }
 
     if (selectedAccount === undefined) {
-      return [
-        <IconButton
-          as="figure"
-          size="2.4rem"
-          containerColor={theme.color.foreground}
-          contentColor={theme.color.primary}
-        >
+      return (
+        <IconButton as="figure" containerColor={theme.color.foreground} contentColor={theme.color.primary}>
           <Users />
-        </IconButton>,
-        'All accounts',
-      ]
+        </IconButton>
+      )
     }
 
-    return [
-      <Identicon value={selectedAccount.address} size="2.4rem" />,
-      selectedAccount.name ?? selectedAccount.address,
-    ]
+    return <Identicon value={selectedAccount.address} size="2.4rem" />
   }, [allowExtensionConnection, readonlyAccounts.length, selectedAccount, theme.color.foreground, theme.color.primary])
 
   const leadingMenuItem = useMemo(() => {
@@ -128,14 +119,7 @@ const AccountsManagementMenu = () => {
   return (
     <Menu>
       <Menu.Button>
-        <Button
-          variant="secondary"
-          leadingIcon={buttonIcon}
-          trailingIcon={<AnimatedChevron variants={{ true: { transform: 'rotate(180deg)' }, false: {} }} />}
-          css={{ width: '25rem' }}
-        >
-          {buttonText}
-        </Button>
+        <FloatingActionButton containerColor="transparent">{buttonIcon}</FloatingActionButton>
       </Menu.Button>
       <Menu.Items>
         <section css={{ width: '34rem' }}>
@@ -195,7 +179,7 @@ const AccountsManagementMenu = () => {
                       trailingContent={
                         <IconButton
                           containerColor={theme.color.foreground}
-                          onClick={event => {
+                          onClick={(event: any) => {
                             event.stopPropagation()
                             toggleRemoveDialog()
                           }}

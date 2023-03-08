@@ -32,7 +32,7 @@ const CookieBanner = (props: CookieBannerProps) => {
         >
           <Text.Body alpha="high">
             We use cookies to improve your experience. By clicking ‘Accept’ you consent to our use of cookies and{' '}
-            <Text.A href={props.privacyPolicyHref}>privacy policy</Text.A>.
+            <Text.Body.A href={props.privacyPolicyHref}>privacy policy</Text.Body.A>.
           </Text.Body>
           <Button variant="outlined" onClick={props.onReject} css={{ borderRadius: '2.4rem' }}>
             Reject
