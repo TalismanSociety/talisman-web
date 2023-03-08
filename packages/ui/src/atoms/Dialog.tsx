@@ -34,6 +34,10 @@ export const Dialog = React.forwardRef<HTMLDialogElement, DialogProps>(function 
 
   useEffect(() => {
     const listener = function (this: HTMLDialogElement, event: MouseEvent) {
+      if (event.target !== innerRef.current) {
+        return
+      }
+
       const rect = this.getBoundingClientRect()
       if (
         event.clientY < rect.top ||
@@ -52,19 +56,7 @@ export const Dialog = React.forwardRef<HTMLDialogElement, DialogProps>(function 
     return () => dialog?.removeEventListener('click', listener)
   }, [onClickBackdrop])
 
-  return (
-    <dialog
-      ref={mergedRef}
-      {...props}
-      onClick={useCallback<MouseEventHandler<HTMLDialogElement>>(
-        event => {
-          event.stopPropagation()
-          props.onClick?.(event)
-        },
-        [props]
-      )}
-    />
-  )
+  return <dialog ref={mergedRef} {...props} />
 })
 
 export default Dialog

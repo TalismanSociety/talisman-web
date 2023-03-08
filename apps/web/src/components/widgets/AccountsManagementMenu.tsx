@@ -178,35 +178,35 @@ const AccountsManagementMenu = () => {
               <Eye size="1em" /> Watched accounts
             </Text.Body>
             {readonlyAccounts.map(x => (
-              <Menu.Item onClick={() => setSelectedAccountAddresses(() => [x.address])}>
-                <ListItem
-                  headlineText={x.name ?? shortenAddress(x.address)}
-                  overlineText={
-                    fiatBalances.valueMaybe()?.[x.address]?.toLocaleString(undefined, {
-                      style: 'currency',
-                      currency: 'usd',
-                      currencyDisplay: 'narrowSymbol',
-                    }) ?? <CircularProgressIndicator size="1em" />
-                  }
-                  leadingContent={<Identicon value={x.address} size="4rem" />}
-                  revealTrailingContentOnHover
-                  trailingContent={
-                    <RemoveWatchedAccountConfirmationDialog account={x}>
-                      {({ onToggleOpen }) => (
+              <RemoveWatchedAccountConfirmationDialog account={x}>
+                {({ onToggleOpen: toggleRemoveDialog }) => (
+                  <Menu.Item onClick={() => setSelectedAccountAddresses(() => [x.address])}>
+                    <ListItem
+                      headlineText={x.name ?? shortenAddress(x.address)}
+                      overlineText={
+                        fiatBalances.valueMaybe()?.[x.address]?.toLocaleString(undefined, {
+                          style: 'currency',
+                          currency: 'usd',
+                          currencyDisplay: 'narrowSymbol',
+                        }) ?? <CircularProgressIndicator size="1em" />
+                      }
+                      leadingContent={<Identicon value={x.address} size="4rem" />}
+                      revealTrailingContentOnHover
+                      trailingContent={
                         <IconButton
                           containerColor={theme.color.foreground}
                           onClick={event => {
                             event.stopPropagation()
-                            onToggleOpen()
+                            toggleRemoveDialog()
                           }}
                         >
                           <Trash2 />
                         </IconButton>
-                      )}
-                    </RemoveWatchedAccountConfirmationDialog>
-                  }
-                />
-              </Menu.Item>
+                      }
+                    />
+                  </Menu.Item>
+                )}
+              </RemoveWatchedAccountConfirmationDialog>
             ))}
             <AddReadOnlyAccountDialog>
               {({ onToggleOpen }) => (
