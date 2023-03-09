@@ -4,10 +4,14 @@ import { Search } from '@components/Field'
 import Asset, { AssetsList, AssetsListLocked } from '@components/recipes/Asset'
 import AnimatedFiatNumber from '@components/widgets/AnimatedFiatNumber'
 import styled from '@emotion/styled'
-import { InfoCard } from '@talismn/ui'
+import { ChevronLeft } from '@talismn/icons'
+import { Button, InfoCard } from '@talismn/ui'
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 const Assets = () => {
+  const navigate = useNavigate()
+
   const [search, setSearch] = useState('')
   const { tokens, balances, isLoading } = useAssetsFiltered({ size: 0, search })
   const { lockedTotal } = useAssets()
@@ -15,6 +19,9 @@ const Assets = () => {
   return (
     <AssetPage>
       {/* Upper Section */}
+      <Button variant="secondary" leadingIcon={<ChevronLeft />} onClick={() => navigate(-1)}>
+        Back
+      </Button>
       <section
         css={{
           display: 'flex',
