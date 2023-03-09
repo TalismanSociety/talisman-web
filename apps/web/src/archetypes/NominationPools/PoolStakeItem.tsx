@@ -1,18 +1,14 @@
 import ClaimStakeDialog from '@components/recipes/ClaimStakeDialog'
 import { PoolStatus } from '@components/recipes/PoolStatusIndicator'
-import {
-  ClaimChip,
-  IncreaseStakeChip,
-  PoolStakeItem as PoolStakeItemComponent,
-  UnstakeChip,
-  WithdrawChip,
-} from '@components/recipes/StakeItem'
+import { PoolStakeItem as PoolStakeItemComponent, WithdrawChip } from '@components/recipes/StakeItem'
 import { Account } from '@domains/accounts/recoils'
 import { useTokenAmountFromPlanck } from '@domains/common/hooks'
+import { useEraEtaFormatter } from '@domains/common/hooks/useEraEta'
 import { UInt } from '@polkadot/types-codec'
 import { PalletNominationPoolsPoolMember } from '@polkadot/types/lookup'
+import { CircularProgressIndicator } from '@talismn/ui'
 import BN from 'bn.js'
-import { ReactNode, useCallback, useState } from 'react'
+import { ReactNode, useCallback, useMemo, useState } from 'react'
 import { useRecoilValue, waitForAll } from 'recoil'
 
 import { nativeTokenDecimalState, nativeTokenPriceState } from '../../domains/chains/recoils'
@@ -52,6 +48,17 @@ const PoolStakeItem = ({
 
   const pendingRewards = useTokenAmountFromPlanck(item.pendingRewards)
 
+  const totalUnlocking = useMemo(
+    () => item.unbondings?.reduce((previous, current) => previous + current.amount, 0n),
+    [item.unbondings]
+  )
+
+  const eraEtaFormatter = useEraEtaFormatter()
+  const unlocks = item.unbondings?.map(x => ({
+    amount: decimal.fromPlanck(x.amount).toHuman(),
+    eta: eraEtaFormatter.valueMaybe()?.(x.erasTilWithdrawable) ?? <CircularProgressIndicator size="1em" />,
+  }))
+
   return (
     <>
       <PoolStakeItemComponent
@@ -66,15 +73,17 @@ const PoolStakeItem = ({
         poolName={item.poolName ?? ''}
         claimChip={
           item.pendingRewards?.isZero() === false && (
-            <ClaimChip
+            <PoolStakeItemComponent.ClaimChip
               amount={decimal.fromPlanck(item.pendingRewards).toHuman()}
               onClick={() => setClaimDialogOpen(true)}
               loading={claimPayoutExtrinsic.state === 'loading' || restakeExtrinsic.state === 'loading'}
             />
           )
         }
-        unstakeChip={<UnstakeChip onClick={useCallback(() => setIsUnstaking(true), [])} />}
-        increaseStakeChip={<IncreaseStakeChip onClick={useCallback(() => setIsAddingStake(true), [])} />}
+        unstakeChip={<PoolStakeItemComponent.UnstakeChip onClick={useCallback(() => setIsUnstaking(true), [])} />}
+        increaseStakeChip={
+          <PoolStakeItemComponent.IncreaseStakeChip onClick={useCallback(() => setIsAddingStake(true), [])} />
+        }
         withdrawChip={
           item.withdrawable > 0n && (
             <WithdrawChip
@@ -87,6 +96,14 @@ const PoolStakeItem = ({
                 )
               }
               loading={withdrawExtrinsic.state === 'loading'}
+            />
+          )
+        }
+        status={
+          totalUnlocking > 0n && (
+            <PoolStakeItemComponent.UnstakingStatus
+              amount={decimal.fromPlanck(totalUnlocking).toHuman()}
+              unlocks={unlocks ?? []}
             />
           )
         }

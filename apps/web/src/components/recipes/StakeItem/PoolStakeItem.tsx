@@ -1,6 +1,13 @@
 import { ReactNode } from 'react'
 
-import StakeItem, { StakeItemProps } from './StakeItem'
+import StakeItem, {
+  ClaimChip,
+  IncreaseStakeChip,
+  StakeItemProps,
+  UnstakeChip,
+  UnstakingStatus,
+  WithdrawChip,
+} from './StakeItem'
 
 export type PoolStakeItemProps = Omit<StakeItemProps, 'actions'> & {
   increaseStakeChip?: ReactNode
@@ -9,20 +16,23 @@ export type PoolStakeItemProps = Omit<StakeItemProps, 'actions'> & {
   withdrawChip?: ReactNode
 }
 
-const PoolStakeItem = ({ increaseStakeChip, unstakeChip, claimChip, withdrawChip, ...props }: PoolStakeItemProps) => {
-  return (
-    <StakeItem
-      {...props}
-      actions={
-        <>
-          {withdrawChip}
-          {claimChip}
-          {unstakeChip}
-          {increaseStakeChip}
-        </>
-      }
-    />
-  )
-}
+const PoolStakeItem = Object.assign(
+  ({ increaseStakeChip, unstakeChip, claimChip, withdrawChip, ...props }: PoolStakeItemProps) => {
+    return (
+      <StakeItem
+        {...props}
+        actions={
+          <>
+            {withdrawChip}
+            {claimChip}
+            {unstakeChip}
+            {increaseStakeChip}
+          </>
+        }
+      />
+    )
+  },
+  { IncreaseStakeChip, UnstakeChip, ClaimChip, WithdrawChip, UnstakingStatus }
+)
 
 export default PoolStakeItem

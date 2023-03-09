@@ -1,71 +1,76 @@
 import { useTheme } from '@emotion/react'
-import { motion, useMotionValue } from 'framer-motion'
-import { MouseEventHandler, ReactNode, useCallback, useId, useState } from 'react'
+import {
+  FloatingPortal,
+  autoUpdate,
+  flip,
+  offset,
+  shift,
+  useDismiss,
+  useFloating,
+  useFocus,
+  useHover,
+  useInteractions,
+  useRole,
+} from '@floating-ui/react'
+import { motion } from 'framer-motion'
+import { ReactNode, useState } from 'react'
 import ReactDOM from 'react-dom'
 
 import Text from '../Text'
+import useCursorFollow from './useCursorFollow'
 
 export type TooltipProps = {
   content: ReactNode
-  children: (props: {
-    'aria-labelledby': string
-    'onMouseEnter'?: MouseEventHandler<any>
-    'onMouseMove'?: MouseEventHandler<any>
-    'onMouseLeave'?: MouseEventHandler<any>
-  }) => ReactNode
+  placement?: 'bottom' | 'left' | 'right' | 'top'
+  children: (props: Record<string, unknown>) => ReactNode
 }
 
-const X_OFFSET = 12
-const Y_OFFSET = 6
-
-const Tooltip = (props: TooltipProps) => {
+const Tooltip = ({ placement = 'right', ...props }: TooltipProps) => {
   const theme = useTheme()
-  const id = useId()
-  const [mouseOver, setMouseOver] = useState(false)
-  const x = useMotionValue(0)
-  const y = useMotionValue(0)
+  const [open, setOpen] = useState(false)
+
+  const { x, y, strategy, refs, context } = useFloating({
+    open: open,
+    onOpenChange: setOpen,
+    placement,
+    middleware: [offset({ mainAxis: 10, crossAxis: 10 }), flip(), shift()],
+    whileElementsMounted: autoUpdate,
+  })
+
+  const { getReferenceProps, getFloatingProps } = useInteractions([
+    useHover(context, { move: false }),
+    useCursorFollow(context, { enabled: true }),
+    useFocus(context),
+    useDismiss(context),
+    useRole(context, { role: 'tooltip' }),
+  ])
 
   return (
     <>
-      {props.children({
-        'aria-labelledby': id,
-        'onMouseEnter': useCallback<MouseEventHandler<any>>(
-          event => {
-            setMouseOver(true)
-            x.set(event.clientX + X_OFFSET)
-            y.set(event.clientY - Y_OFFSET)
-          },
-          [x, y]
-        ),
-        'onMouseLeave': useCallback(() => setMouseOver(false), []),
-        'onMouseMove': useCallback<MouseEventHandler<any>>(
-          event => {
-            x.set(event.clientX + X_OFFSET)
-            y.set(event.clientY - Y_OFFSET)
-          },
-          [x, y]
-        ),
-      })}
-      {Boolean(props.content) &&
-        ReactDOM.createPortal(
+      {props.children(getReferenceProps({}))}
+      <FloatingPortal root={document.querySelector('dialog[open]') ?? (document.body as any)}>
+        {open && Boolean(props.content) && (
           <motion.div
-            layout
-            id={id}
-            role="tooltip"
+            ref={refs.setFloating}
             css={{
-              position: 'fixed',
               pointerEvents: 'none',
               backgroundColor: theme.color.foregroundVariant,
               padding: '0.6rem',
               borderRadius: '0.4rem',
               zIndex: 50,
             }}
-            style={{ opacity: mouseOver ? 1 : 0, top: y, left: x }}
+            style={{
+              position: strategy,
+              top: y ?? 0,
+              left: x ?? 0,
+              width: 'max-content',
+            }}
+            {...getFloatingProps()}
           >
             <Text.Body as="div">{props.content}</Text.Body>
-          </motion.div>,
-          document.querySelector('dialog[open]') ?? document.body
+          </motion.div>
         )}
+      </FloatingPortal>
     </>
   )
 }
