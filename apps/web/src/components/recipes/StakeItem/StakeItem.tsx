@@ -1,6 +1,6 @@
 import { useTheme } from '@emotion/react'
-import { Lock, Rocket } from '@talismn/icons'
-import { Chip, ChipProps, Identicon, ListItem, Text } from '@talismn/ui'
+import { Clock, Lock, Rocket } from '@talismn/icons'
+import { Chip, ChipProps, Hr, Identicon, ListItem, Text, Tooltip } from '@talismn/ui'
 import Color from 'colorjs.io'
 import { ReactNode, useMemo } from 'react'
 
@@ -49,6 +49,35 @@ export const FastUnstakeChip = (props: Omit<ChipProps, 'children'>) => (
   <Chip {...props} leadingContent={<Rocket size="1em" />}>
     Fast unstake
   </Chip>
+)
+
+export const UnstakingStatus = (props: {
+  amount: ReactNode
+  unlocks: Array<{ amount: ReactNode; eta: ReactNode }>
+}) => (
+  <Tooltip
+    placement="bottom"
+    content={
+      <div>
+        {props.unlocks.map((x, index, array) => (
+          <>
+            <Text.Body as="div" alpha="high">
+              {x.amount}
+            </Text.Body>
+            <Text.Body as="div">{x.eta}</Text.Body>
+            {index < array.length - 1 && <Hr />}
+          </>
+        ))}
+      </div>
+    }
+  >
+    {tooltipProps => (
+      <div {...tooltipProps} css={{ display: 'flex', alignItems: 'center', gap: '0.5em' }}>
+        <Clock size="1em" />
+        <Text.Body>Unstaking {props.amount}</Text.Body>
+      </div>
+    )}
+  </Tooltip>
 )
 
 const StakeItem = Object.assign(

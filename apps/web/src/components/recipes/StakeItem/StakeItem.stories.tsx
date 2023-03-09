@@ -1,8 +1,7 @@
 import { ComponentMeta, Story } from '@storybook/react'
-import { Clock } from '@talismn/icons'
 
 import PoolStakeItem, { PoolStakeItemProps } from './PoolStakeItem'
-import StakeItem, { ClaimChip, FastUnstakeChip, IncreaseStakeChip, UnstakeChip } from './StakeItem'
+import StakeItem from './StakeItem'
 import ValidatorStakeItem, { ValidatorStakeItemProps } from './ValidatorStakeItem'
 
 export default {
@@ -22,13 +21,18 @@ export const PoolStake: Story<PoolStakeItemProps> = args => <PoolStakeItem {...a
 
 PoolStake.args = {
   ...defaultProps,
-  claimChip: <ClaimChip key="0" amount="104.96 DOT" />,
-  unstakeChip: <UnstakeChip key="1" />,
-  increaseStakeChip: <IncreaseStakeChip key="2" />,
+  claimChip: <PoolStakeItem.ClaimChip key="0" amount="104.96 DOT" />,
+  unstakeChip: <PoolStakeItem.UnstakeChip key="1" />,
+  increaseStakeChip: <PoolStakeItem.IncreaseStakeChip key="2" />,
   status: (
-    <>
-      <Clock size="1em" /> Unstaking 14d 8hr 11min
-    </>
+    <PoolStakeItem.UnstakingStatus
+      amount="1 DOT"
+      unlocks={[
+        { amount: '1 DOT', eta: '11 hours 24 minutes' },
+        { amount: '1 DOT', eta: '11 hours 24 minutes' },
+        { amount: '1 DOT', eta: '11 hours 24 minutes' },
+      ]}
+    />
   ),
 }
 
@@ -36,11 +40,16 @@ export const ValidatorStake: Story<ValidatorStakeItemProps> = args => <Validator
 
 ValidatorStake.args = {
   ...defaultProps,
-  unstakeChip: <UnstakeChip key="1" />,
+  unstakeChip: <ValidatorStakeItem.UnstakeChip key="1" />,
   status: (
-    <>
-      <Clock size="1em" /> Unstaking 14d 8hr 11min
-    </>
+    <ValidatorStakeItem.UnstakingStatus
+      amount="1 DOT"
+      unlocks={[
+        { amount: '1 DOT', eta: '11 hours 24 minutes' },
+        { amount: '1 DOT', eta: '11 hours 24 minutes' },
+        { amount: '1 DOT', eta: '11 hours 24 minutes' },
+      ]}
+    />
   ),
 }
 
@@ -48,11 +57,16 @@ export const ValidatorStakeWithFastUnstake = ValidatorStake.bind({})
 
 ValidatorStakeWithFastUnstake.args = {
   ...defaultProps,
-  unstakeChip: <FastUnstakeChip />,
+  unstakeChip: <ValidatorStakeItem.FastUnstakeChip />,
   status: (
-    <>
-      <Clock size="1em" /> Unstaking 14d 8hr 11min
-    </>
+    <ValidatorStakeItem.UnstakingStatus
+      amount="1 DOT"
+      unlocks={[
+        { amount: '1 DOT', eta: '11 hours 24 minutes' },
+        { amount: '1 DOT', eta: '11 hours 24 minutes' },
+        { amount: '1 DOT', eta: '11 hours 24 minutes' },
+      ]}
+    />
   ),
 }
 
