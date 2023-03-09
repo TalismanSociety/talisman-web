@@ -128,7 +128,7 @@ const Main = () => {
             </NavigationRail>
           }
           footer={
-            <div css={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div css={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0 2.4rem' }}>
               <Text.BodyLarge>TalismanPortal</Text.BodyLarge>
               <ul css={{ display: 'flex', gap: '3.2rem' }}>
                 <Text.BodyLarge as="a" href="https://twitter.com/wearetalisman" target="_blank">
