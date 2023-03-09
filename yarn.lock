@@ -8306,7 +8306,7 @@ __metadata:
     "@talismn/icons": "workspace:^"
     "@types/react": ^18.0.28
     babel-loader: ^8.3.0
-    framer-motion: ^10.0.1
+    framer-motion: ^10.2.3
     react: ^18.2.0
     react-dom: ^18.2.0
     react-hot-toast: ^2.4.0
@@ -8418,7 +8418,7 @@ __metadata:
     eslint-config-prettier: ^8.6.0
     eslint-plugin-storybook: ^0.6.10
     ethers: ^5.7.2
-    framer-motion: ^10.0.1
+    framer-motion: ^10.2.3
     graphql: ^16.6.0
     graphql-request: ^5.1.0
     i18next: ^21.10.0
@@ -16134,9 +16134,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"framer-motion@npm:^10.0.1":
-  version: 10.0.1
-  resolution: "framer-motion@npm:10.0.1"
+"framer-motion@npm:^10.2.3":
+  version: 10.2.3
+  resolution: "framer-motion@npm:10.2.3"
   dependencies:
     "@emotion/is-prop-valid": ^0.8.2
     tslib: ^2.4.0
@@ -16146,7 +16146,12 @@ __metadata:
   dependenciesMeta:
     "@emotion/is-prop-valid":
       optional: true
-  checksum: 37081c26f949b8e3e86ad6268ed44661c64b20de3da118677375f8e77f3b04a762085d467d328cb8866e5667e03ad2397be18b9c29a1aeca4be223c8971fe826
+  peerDependenciesMeta:
+    react:
+      optional: true
+    react-dom:
+      optional: true
+  checksum: 7c4178227bfded58e7d992b81b41eacbefd420ed3850fad867d6b00e6feed4b480bcf5938c1a30b977bd9a213037ded162faee490205b12d20cd168629c4fe9e
   languageName: node
   linkType: hard
 

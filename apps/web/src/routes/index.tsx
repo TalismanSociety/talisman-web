@@ -2,7 +2,7 @@ import { Total } from '@archetypes/Wallet'
 import { ModalProvider } from '@components'
 import AccountsManagementMenu from '@components/widgets/AccountsManagementMenu'
 import { RouteErrorElement } from '@components/widgets/ErrorBoundary'
-import StakeDialog, { stakeDialogOpenState } from '@components/widgets/StakeWidget'
+import StakeDialog from '@components/widgets/StakeWidget'
 import { accountsState, legacySelectedAccountState } from '@domains/accounts/recoils'
 import { apiState, nativeTokenDecimalState, nativeTokenPriceState } from '@domains/chains/recoils'
 import { recommendedPoolsState } from '@domains/nominationPools/recoils'
@@ -11,9 +11,9 @@ import * as Sentry from '@sentry/react'
 import { Compass, CreditCard, Eye, Star, TalismanHand, Zap } from '@talismn/icons'
 import { AccountValueInfo, IconButton, NavigationRail } from '@talismn/ui'
 import posthog from 'posthog-js'
-import { useCallback, useEffect } from 'react'
+import { useEffect } from 'react'
 import { Link, Navigate, Outlet, createBrowserRouter, useLocation } from 'react-router-dom'
-import { useRecoilValue, useRecoilValueLoadable, useSetRecoilState, waitForAll } from 'recoil'
+import { useRecoilValue, useRecoilValueLoadable, waitForAll } from 'recoil'
 
 import AssetItem from './AssetItem'
 import Assets from './Assets'
@@ -23,40 +23,34 @@ import Explore from './Explore'
 import NFTsPage from './NFTsPage'
 import Overview from './Overview'
 import Portfolio from './Portfolio'
-import Staking from './Staking'
 import TransactionHistory from './TransactionHistory'
 
-const Navigation = () => {
-  const setStakeDialogOpen = useSetRecoilState(stakeDialogOpenState)
-  return (
-    <NavigationRail
-      header={
-        <IconButton as={Link} to="/">
-          <TalismanHand />
-        </IconButton>
-      }
-    >
-      <AccountsManagementMenu />
-      <Link to="/portfolio">
-        <NavigationRail.Item label="Portfolio" icon={<Eye />} />
-      </Link>
-      <NavigationRail.Item
-        label="Staking"
-        icon={<Zap />}
-        onClick={useCallback(() => setStakeDialogOpen(true), [setStakeDialogOpen])}
-      />
-      <Link to="/explore">
-        <NavigationRail.Item label="Explore" icon={<Compass />} />
-      </Link>
-      <Link to="/crowdloans">
-        <NavigationRail.Item label="Crowdloans" icon={<Star />} />
-      </Link>
-      <Link to="https://talisman.banxa.com/" target="_blank">
-        <NavigationRail.Item label="Buy" icon={<CreditCard />} />
-      </Link>
-    </NavigationRail>
-  )
-}
+const Navigation = () => (
+  <NavigationRail
+    header={
+      <IconButton as={Link} to="/">
+        <TalismanHand />
+      </IconButton>
+    }
+  >
+    <AccountsManagementMenu />
+    <Link to="/portfolio">
+      <NavigationRail.Item label="Portfolio" icon={<Eye />} />
+    </Link>
+    <Link to="/portfolio?action=stake">
+      <NavigationRail.Item label="Staking" icon={<Zap />} />
+    </Link>
+    <Link to="/explore">
+      <NavigationRail.Item label="Explore" icon={<Compass />} />
+    </Link>
+    <Link to="/crowdloans">
+      <NavigationRail.Item label="Crowdloans" icon={<Star />} />
+    </Link>
+    <Link to="https://talisman.banxa.com/" target="_blank">
+      <NavigationRail.Item label="Buy" icon={<CreditCard />} />
+    </Link>
+  </NavigationRail>
+)
 
 const Header = () => {
   const account = useRecoilValue(legacySelectedAccountState)
@@ -161,7 +155,7 @@ export default Sentry.wrapCreateBrowserRouter(createBrowserRouter)([
       { path: 'history', element: <Navigate to="/portfolio/history" /> },
       { path: 'nfts', element: <Navigate to="/portfolio/nfts" /> },
       { path: 'explore', element: <Explore /> },
-      { path: 'staking', element: <Staking /> },
+      { path: 'staking', element: <Navigate to="/portfolio?action=stake" /> },
       {
         path: 'crowdloans',
         children: [
