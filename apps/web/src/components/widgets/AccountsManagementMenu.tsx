@@ -9,57 +9,64 @@ import { allowExtensionConnectionState } from '@domains/extension/recoils'
 import { useTheme } from '@emotion/react'
 import { isWeb3Injected } from '@polkadot/extension-dapp'
 import { Download, Eye, Link, PlusCircle, TalismanHand, Trash2, Users } from '@talismn/icons'
-import {
-  Button,
-  CircularProgressIndicator,
-  FloatingActionButton,
-  IconButton,
-  Identicon,
-  ListItem,
-  Menu,
-  Text,
-} from '@talismn/ui'
+import { Button, CircularProgressIndicator, IconButton, Identicon, ListItem, Menu, Text } from '@talismn/ui'
 import { shortenAddress } from '@util/format'
 import getDownloadLink from '@util/getDownloadLink'
-import { useMemo } from 'react'
+import { ReactNode, useMemo } from 'react'
 import { useRecoilState, useRecoilValue, useRecoilValueLoadable, useSetRecoilState } from 'recoil'
 
 import AddReadOnlyAccountDialog from './AddReadOnlyAccountDialog'
 import RemoveWatchedAccountConfirmationDialog from './RemoveWatchedAccountConfirmationDialog'
 
-const AccountsManagementMenu = () => {
+const AccountsManagementIconButton = (props: { size?: number | string }) => {
+  const theme = useTheme()
+  const allowExtensionConnection = useRecoilValue(allowExtensionConnectionState)
+  const selectedAccount = useRecoilValue(legacySelectedAccountState)
+  const readonlyAccounts = useRecoilValue(readOnlyAccountsState)
+
+  if ((!isWeb3Injected || !allowExtensionConnection) && readonlyAccounts.length === 0) {
+    return (
+      <IconButton
+        as="figure"
+        size={props.size}
+        containerColor={theme.color.foreground}
+        contentColor={theme.color.primary}
+        css={{ cursor: 'pointer' }}
+      >
+        <Link />
+      </IconButton>
+    )
+  }
+
+  if (selectedAccount === undefined) {
+    return (
+      <IconButton
+        as="figure"
+        size={props.size}
+        containerColor={theme.color.foreground}
+        contentColor={theme.color.primary}
+        css={{ cursor: 'pointer' }}
+      >
+        <Users />
+      </IconButton>
+    )
+  }
+
+  return <Identicon value={selectedAccount.address} size={props.size ?? '2.4rem'} css={{ cursor: 'pointer' }} />
+}
+
+const AccountsManagementMenu = (props: { button: ReactNode }) => {
   const theme = useTheme()
 
   const totalBalance = useRecoilValueLoadable(totalLocalizedFiatBalanceState)
 
   const setSelectedAccountAddresses = useSetRecoilState(selectedAccountAddressesState)
-  const selectedAccount = useRecoilValue(legacySelectedAccountState)
   const injectedAccounts = useRecoilValue(injectedAccountsState)
   const readonlyAccounts = useRecoilValue(readOnlyAccountsState)
 
   const fiatBalances = useRecoilValueLoadable(fiatBalancesState)
 
   const [allowExtensionConnection, setAllowExtensionConnection] = useRecoilState(allowExtensionConnectionState)
-
-  const buttonIcon = useMemo(() => {
-    if ((!isWeb3Injected || !allowExtensionConnection) && readonlyAccounts.length === 0) {
-      return (
-        <IconButton as="figure" containerColor={theme.color.foreground} contentColor={theme.color.primary}>
-          <Link />
-        </IconButton>
-      )
-    }
-
-    if (selectedAccount === undefined) {
-      return (
-        <IconButton as="figure" containerColor={theme.color.foreground} contentColor={theme.color.primary}>
-          <Users />
-        </IconButton>
-      )
-    }
-
-    return <Identicon value={selectedAccount.address} size="2.4rem" />
-  }, [allowExtensionConnection, readonlyAccounts.length, selectedAccount, theme.color.foreground, theme.color.primary])
 
   const leadingMenuItem = useMemo(() => {
     if (!isWeb3Injected) {
@@ -118,9 +125,7 @@ const AccountsManagementMenu = () => {
 
   return (
     <Menu>
-      <Menu.Button>
-        <FloatingActionButton containerColor="transparent">{buttonIcon}</FloatingActionButton>
-      </Menu.Button>
+      <Menu.Button>{props.button}</Menu.Button>
       <Menu.Items>
         <section css={{ width: '34rem' }}>
           <section css={{ margin: '1.6rem 0' }}>
@@ -213,4 +218,4 @@ const AccountsManagementMenu = () => {
   )
 }
 
-export default AccountsManagementMenu
+export default Object.assign(AccountsManagementMenu, { IconButton: AccountsManagementIconButton })

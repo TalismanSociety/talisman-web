@@ -1,7 +1,7 @@
 import { encodeAnyAddress } from '@talismn/util'
 import Color from 'colorjs.io'
 import md5 from 'md5'
-import { ReactNode, useId, useMemo } from 'react'
+import { useId, useMemo } from 'react'
 
 const djb2 = (str: string) => {
   let hash = 5381
@@ -24,11 +24,10 @@ export type IdenticonProps = {
   value: string
   size?: number | string
   className?: string
-  custom?: ReactNode
   theme?: string
 }
 
-const Identicon = ({ value: seed, size = '2.4rem', className, custom }: IdenticonProps) => {
+const Identicon = ({ value: seed, size = '2.4rem', className }: IdenticonProps) => {
   const id = useId()
 
   const { bgColor1, bgColor2, transform, glowColor, cx, cy, isEthereum } = useMemo(() => {
@@ -70,11 +69,7 @@ const Identicon = ({ value: seed, size = '2.4rem', className, custom }: Identico
     }
   }, [seed])
 
-  return custom !== undefined ? (
-    <div className={className} css={{ width: size, height: size }}>
-      {custom}
-    </div>
-  ) : (
+  return (
     <svg
       className={className}
       width={size}

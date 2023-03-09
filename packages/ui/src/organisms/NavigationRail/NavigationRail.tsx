@@ -52,7 +52,7 @@ const NavigationRail = Object.assign(
             borderRadius: '1.6rem',
             padding: '4.8rem 2.2rem',
             backgroundColor: theme.color.surface,
-            width: 'min-content',
+            width: 'fit-content',
             minHeight: '70vh',
             maxHeight: '90vh',
           },
@@ -62,7 +62,16 @@ const NavigationRail = Object.assign(
         ]}
       >
         <header>{props.header}</header>
-        <ul css={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '1.2rem', padding: 0 }}>
+        <ul
+          css={{
+            listStyle: 'none',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: '1.2rem',
+            padding: 0,
+          }}
+        >
           {props.children}
         </ul>
       </nav>

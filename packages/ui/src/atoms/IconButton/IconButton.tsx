@@ -55,7 +55,7 @@ const IconButton = <T extends IconButtonElementType = 'button'>({
           width: size,
           height: size,
           border: 'none',
-          borderRadius: '2rem',
+          borderRadius: `calc(${size}/2)`,
           color: contentColor,
           backgroundColor: containerColor,
           overflow: 'hidden',
