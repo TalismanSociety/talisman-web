@@ -69,6 +69,7 @@ const PoolStakeItem = ({
             <ClaimChip
               amount={decimal.fromPlanck(item.pendingRewards).toHuman()}
               onClick={() => setClaimDialogOpen(true)}
+              loading={claimPayoutExtrinsic.state === 'loading' || restakeExtrinsic.state === 'loading'}
             />
           )
         }
@@ -85,6 +86,7 @@ const PoolStakeItem = ({
                   item.slashingSpan
                 )
               }
+              loading={withdrawExtrinsic.state === 'loading'}
             />
           )
         }

@@ -27,7 +27,7 @@ const ValidatorStakeItem = (props: {
   )
 
   const active = decimal.fromPlanck(props.stake.stakingLedger.active)
-  const rewards = decimal.fromPlanck(props.reward)
+  // const rewards = decimal.fromPlanck(props.reward)
 
   return (
     <>
@@ -46,6 +46,7 @@ const ValidatorStakeItem = (props: {
             <WithdrawChip
               amount={decimal.fromPlanck(props.stake.redeemable).toHuman()}
               onClick={() => withdrawExtrinsic.signAndSend(props.stake.controllerId ?? '', props.slashingSpan)}
+              loading={withdrawExtrinsic.state === 'loading'}
             />
           )
         }
