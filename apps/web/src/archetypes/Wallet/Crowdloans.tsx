@@ -105,6 +105,9 @@ const CrowdloanItemWithLink = styled((props: { contribution: CrowdloanContributi
     </Link>
   )
 })`
+  .panel-section {
+    overflow: hidden;
+  }
   :first-of-type .panel-section {
     border-radius: 1.6rem 1.6rem 0 0;
   }

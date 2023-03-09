@@ -19,7 +19,11 @@ export type StakeItemProps = {
   readonly?: boolean
 }
 
-export const IncreaseStakeChip = (props: Omit<ChipProps, 'children'>) => <Chip {...props}>Increase stake</Chip>
+export const IncreaseStakeChip = (props: Omit<ChipProps, 'children'>) => (
+  <Chip {...props} css={{ textTransform: 'capitalize' }}>
+    <span css={{ '@media(max-width: 425px)': { display: 'none' } }}>Increase </span>stake
+  </Chip>
+)
 
 export const UnstakeChip = (props: Omit<ChipProps, 'children'>) => <Chip {...props}>Unstake</Chip>
 
@@ -84,7 +88,7 @@ const StakeItem = Object.assign(
             backgroundColor: theme.color.foreground,
           }}
         >
-          {!props.readonly && <div css={{ display: 'flex', gap: '0.8rem' }}>{props.actions}</div>}
+          {!props.readonly && <div css={{ display: 'flex', flexWrap: 'wrap', gap: '0.8rem' }}>{props.actions}</div>}
           <Text.Body
             css={{
               flex: 1,

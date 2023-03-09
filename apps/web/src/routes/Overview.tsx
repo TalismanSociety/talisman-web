@@ -100,15 +100,17 @@ const AssetsOverview = () => {
 const Overview = () => (
   <div
     css={{
-      'display': 'grid',
+      'display': 'flex',
+      'flexDirection': 'column',
+      'gap': '2.3rem',
       '@media(min-width: 1024px)': {
+        display: 'grid',
         gridTemplateColumns: '1fr 1fr',
-        gap: '2.3rem',
       },
     }}
   >
     <AssetsOverview />
-    <div css={{ display: 'grid', gap: '4.8rem' }}>
+    <div css={{ display: 'flex', flexDirection: 'column', gap: '4.8rem' }}>
       <PortfolioAllocationGraph />
       <OwnPools />
       <Crowdloans />
