@@ -9,7 +9,7 @@ import { recommendedPoolsState } from '@domains/nominationPools/recoils'
 import * as MoonbeamContributors from '@libs/moonbeam-contributors'
 import * as Sentry from '@sentry/react'
 import { Compass, CreditCard, Eye, Star, TalismanHand, Zap } from '@talismn/icons'
-import { AccountValueInfo, IconButton, NavigationBar, NavigationRail, Scaffold, TopAppBar } from '@talismn/ui'
+import { AccountValueInfo, IconButton, NavigationBar, NavigationRail, Scaffold, Text, TopAppBar } from '@talismn/ui'
 import posthog from 'posthog-js'
 import { useEffect } from 'react'
 import { Link, Navigate, Outlet, createBrowserRouter, useLocation } from 'react-router-dom'
@@ -126,6 +126,36 @@ const Main = () => {
                 <NavigationRail.Item label="Buy" icon={<CreditCard />} />
               </Link>
             </NavigationRail>
+          }
+          footer={
+            <div css={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <Text.BodyLarge>TalismanPortal</Text.BodyLarge>
+              <ul css={{ display: 'flex', gap: '3.2rem' }}>
+                <Text.BodyLarge as="a" href="https://twitter.com/wearetalisman" target="_blank">
+                  Twitter
+                </Text.BodyLarge>
+                <Text.BodyLarge as="a" href="https://discord.gg/talisman" target="_blank">
+                  Discord
+                </Text.BodyLarge>
+                <Text.BodyLarge as="a" href="https://docs.talisman.xyz" target="_blank">
+                  Docs
+                </Text.BodyLarge>
+                <Text.BodyLarge
+                  as="a"
+                  href="https://docs.talisman.xyz/talisman/legal-and-security/terms-of-use"
+                  target="_blank"
+                >
+                  Terms
+                </Text.BodyLarge>
+                <Text.BodyLarge
+                  as="a"
+                  href="https://docs.talisman.xyz/talisman/legal-and-security/privacy-policy"
+                  target="_blank"
+                >
+                  Privacy
+                </Text.BodyLarge>
+              </ul>
+            </div>
           }
         >
           <Header />
