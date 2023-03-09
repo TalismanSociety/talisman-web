@@ -11,7 +11,7 @@ import { createAccounts } from '@domains/nominationPools/utils'
 import { shortenAddress } from '@util/format'
 import { Maybe } from '@util/monads'
 import BN from 'bn.js'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { Suspense, useCallback, useEffect, useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useLocation } from 'react-use'
 import { constSelector, useRecoilValue, useRecoilValueLoadable, waitForAll } from 'recoil'
@@ -253,7 +253,11 @@ const StakeDialog = () => {
     <StakeDialogComponent
       open={open}
       onRequestDismiss={useCallback(() => setSearchParams(new URLSearchParams()), [setSearchParams])}
-      stakeInput={<StakeInput />}
+      stakeInput={
+        <Suspense fallback={<StakingInput.Skeleton />}>
+          <StakeInput />
+        </Suspense>
+      }
       learnMoreAnchor={<StakeDialogComponent.LearnMore />}
     />
   )

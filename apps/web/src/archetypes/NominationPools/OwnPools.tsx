@@ -31,7 +31,6 @@ const OwnPools = () => (
           <section css={{ display: 'flex', flexDirection: 'column', gap: '1.6rem' }}>
             <StakeItem.Skeleton />
             <StakeItem.Skeleton />
-            <StakeItem.Skeleton />
           </section>
         </div>
       }
