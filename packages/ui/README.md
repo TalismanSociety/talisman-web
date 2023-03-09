@@ -21,7 +21,19 @@ import { ThemeProvider } from '@emotion/react'
 import { theme } from '@talismn/ui'
 
 export const App = () => {
-  return <ThemeProvider theme={theme.greenDark}>{/* Your app */}</ThemeProvider>
+  return (
+    <ThemeProvider theme={theme.greenDark}>
+      <Global
+        styles={css`
+          /* Root DOM node height need to be 100% if you intend on using the Scaffold component */
+          #root {
+            height: 100%;
+          }
+        `}
+      />
+      {/* Your app */}
+    </ThemeProvider>
+  )
 }
 ```
 

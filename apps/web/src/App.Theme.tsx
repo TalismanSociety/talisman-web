@@ -155,8 +155,6 @@ export const globalStyle = (theme: Theme) => css`
     margin: 0;
     scroll-behavior: smooth;
     font-size: 10px;
-    min-height: 100%;
-    height: 100vh;
     font-weight: var(--font-weight-regular);
   }
 
@@ -247,6 +245,10 @@ export const globalStyle = (theme: Theme) => css`
   input,
   select {
     font-size: var(--font-size-normal);
+  }
+
+  #root {
+    height: 100%;
   }
 
   .muted {
