@@ -1,4 +1,5 @@
 import { useTheme } from '@emotion/react'
+import { IconContext } from '@talismn/icons'
 import { ElementType, ReactNode, useMemo } from 'react'
 
 import CircularProgressIndicator from '../CircularProgressIndicator'
@@ -124,15 +125,17 @@ const Button = <T extends ButtonElementType>({
               alignItems: 'center',
             }}
           >
-            {(() => {
-              if (loading) {
-                return <CircularProgressIndicator size="1.6rem" />
-              }
+            <IconContext.Provider value={{ size: '1.6rem' }}>
+              {(() => {
+                if (loading) {
+                  return <CircularProgressIndicator size="1.6rem" />
+                }
 
-              if (leadingIcon) {
-                return leadingIcon
-              }
-            })()}
+                if (leadingIcon) {
+                  return leadingIcon
+                }
+              })()}
+            </IconContext.Provider>
           </span>
         )}
         <span

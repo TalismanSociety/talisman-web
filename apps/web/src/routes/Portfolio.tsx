@@ -6,8 +6,7 @@ const Portfolio = () => {
   // useMatch
   const paths = [
     { path: '', name: 'Overview' },
-    { path: 'nfts', name: 'NFTs' },
-    { path: 'assets', name: 'Assets' },
+    { path: 'nfts', name: 'Collectibles' },
     { path: 'history', name: 'History' },
   ]
 
