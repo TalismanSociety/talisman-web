@@ -1,5 +1,3 @@
-export * from './AccountValueInfo'
-export { default as AccountValueInfo } from './AccountValueInfo'
 export * from './AlertDialog'
 export { default as AlertDialog } from './AlertDialog'
 export * from './BottomBorderNav'

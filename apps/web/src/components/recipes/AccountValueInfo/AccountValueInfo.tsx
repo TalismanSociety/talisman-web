@@ -1,7 +1,6 @@
 import { Users } from '@talismn/icons'
+import { Identicon, Text } from '@talismn/ui'
 import { ReactNode } from 'react'
-
-import { Identicon, Text } from '../../atoms'
 
 export type AccountValueInfoProps = {
   address: string
