@@ -247,10 +247,6 @@ export const globalStyle = (theme: Theme) => css`
     font-size: var(--font-size-normal);
   }
 
-  #root {
-    height: 100%;
-  }
-
   .muted {
     font-size: 0.8em;
     opacity: 0.4;
