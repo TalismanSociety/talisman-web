@@ -2,6 +2,7 @@ import { useTheme } from '@emotion/react'
 import { IconContext } from '@talismn/icons'
 import { ButtonHTMLAttributes, DetailedHTMLProps, ReactNode, useMemo } from 'react'
 
+import CircularProgressIndicator from '../CircularProgressIndicator'
 import Text from '../Text'
 
 export type ChipProps = DetailedHTMLProps<ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement> & {
@@ -9,9 +10,10 @@ export type ChipProps = DetailedHTMLProps<ButtonHTMLAttributes<HTMLButtonElement
   containerColor?: string
   contentColor?: string
   leadingContent?: ReactNode
+  loading?: boolean
 }
 
-const Chip = ({ size = 'md', containerColor, contentColor, leadingContent, ...props }: ChipProps) => {
+const Chip = ({ size = 'md', containerColor, contentColor, leadingContent, loading, ...props }: ChipProps) => {
   const theme = useTheme()
 
   containerColor = containerColor ?? theme.color.foregroundVariant
@@ -27,25 +29,33 @@ const Chip = ({ size = 'md', containerColor, contentColor, leadingContent, ...pr
         return Text.BodyLarge
     }
   }, [size])
-  const a = <button></button>
+
+  const functionallyDisabled = props.disabled || loading
+
   return (
     <Container
       as="button"
       color={contentColor}
       {...props}
-      css={{
-        'display': 'flex',
-        'alignItems': 'center',
-        'gap': '0.25em',
-        'border': 'none',
-        'borderRadius': '1em',
-        'padding': '0.2rem 0.8rem',
-        'backgroundColor': containerColor,
-        'cursor': 'pointer',
-        ':hover': { opacity: 0.9 },
-      }}
+      disabled={functionallyDisabled}
+      css={[
+        {
+          'display': 'flex',
+          'alignItems': 'center',
+          'gap': '0.25em',
+          'border': 'none',
+          'borderRadius': '1em',
+          'padding': '0.2rem 0.8rem',
+          'backgroundColor': containerColor,
+          'cursor': 'pointer',
+          ':hover': { opacity: 0.9 },
+        },
+        loading && { cursor: 'progress' },
+      ]}
     >
-      <IconContext.Provider value={{ size: '1em' }}>{leadingContent}</IconContext.Provider>
+      <IconContext.Provider value={{ size: '1em' }}>
+        {loading ? <CircularProgressIndicator /> : leadingContent}
+      </IconContext.Provider>
       {props.children}
     </Container>
   )
