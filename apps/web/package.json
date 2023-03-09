@@ -45,7 +45,7 @@
     "csv-stringify": "^6.2.3",
     "date-fns": "^2.29.3",
     "ethers": "^5.7.2",
-    "framer-motion": "^10.0.1",
+    "framer-motion": "^10.2.3",
     "graphql": "^16.6.0",
     "graphql-request": "^5.1.0",
     "i18next": "^21.10.0",

@@ -37,7 +37,7 @@
     "@talismn/development": "workspace:^",
     "@types/react": "^18.0.28",
     "babel-loader": "^8.3.0",
-    "framer-motion": "^10.0.1",
+    "framer-motion": "^10.2.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-hot-toast": "^2.4.0",

@@ -12,8 +12,9 @@ import { shortenAddress } from '@util/format'
 import { Maybe } from '@util/monads'
 import BN from 'bn.js'
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { useLocation } from 'react-use'
-import { atom, constSelector, useRecoilState, useRecoilValue, useRecoilValueLoadable, waitForAll } from 'recoil'
+import { constSelector, useRecoilValue, useRecoilValueLoadable, waitForAll } from 'recoil'
 
 const PoolSelector = (props: {
   open: boolean
@@ -196,6 +197,7 @@ const StakeInput = () => {
       />
       <StakingInput
         alreadyStaking={existingPool !== undefined}
+        portfolioHref="/portfolio"
         accounts={useMemo(
           () =>
             accounts.map(x => ({
@@ -237,26 +239,20 @@ const StakeInput = () => {
 
           return joinPoolExtrinsic.state === 'loading' ? 'pending' : undefined
         }, [decimalAmount?.planck, inputError, isReady, joinPoolExtrinsic.state])}
-        contentAnimation={{
-          variants: {
-            true: { height: 0 },
-            false: { height: 'unset' },
-          },
-        }}
       />
     </>
   )
 }
 
-export const stakeDialogOpenState = atom({ key: 'Widget/StakeDialogOpen', default: false })
-
 const StakeDialog = () => {
-  const [open, setOpen] = useRecoilState(stakeDialogOpenState)
+  const [searchParams, setSearchParams] = useSearchParams()
+
+  const open = searchParams.get('action') === 'stake'
 
   return (
     <StakeDialogComponent
       open={open}
-      onRequestDismiss={useCallback(() => setOpen(false), [])}
+      onRequestDismiss={useCallback(() => setSearchParams(new URLSearchParams()), [setSearchParams])}
       stakeInput={<StakeInput />}
       learnMoreAnchor={<StakeDialogComponent.LearnMore />}
     />
