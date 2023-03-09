@@ -9,7 +9,7 @@ import { recommendedPoolsState } from '@domains/nominationPools/recoils'
 import * as MoonbeamContributors from '@libs/moonbeam-contributors'
 import * as Sentry from '@sentry/react'
 import { Compass, CreditCard, Eye, Star, TalismanHand, Zap } from '@talismn/icons'
-import { AccountValueInfo, IconButton, NavigationRail } from '@talismn/ui'
+import { AccountValueInfo, IconButton, NavigationBar, NavigationRail, Scaffold, TopAppBar } from '@talismn/ui'
 import posthog from 'posthog-js'
 import { useEffect } from 'react'
 import { Link, Navigate, Outlet, createBrowserRouter, useLocation } from 'react-router-dom'
@@ -24,33 +24,6 @@ import NFTsPage from './NFTsPage'
 import Overview from './Overview'
 import Portfolio from './Portfolio'
 import TransactionHistory from './TransactionHistory'
-
-const Navigation = () => (
-  <NavigationRail
-    header={
-      <IconButton as={Link} to="/">
-        <TalismanHand />
-      </IconButton>
-    }
-  >
-    <AccountsManagementMenu />
-    <Link to="/portfolio">
-      <NavigationRail.Item label="Portfolio" icon={<Eye />} />
-    </Link>
-    <Link to="/portfolio?action=stake">
-      <NavigationRail.Item label="Staking" icon={<Zap />} />
-    </Link>
-    <Link to="/explore">
-      <NavigationRail.Item label="Explore" icon={<Compass />} />
-    </Link>
-    <Link to="/crowdloans">
-      <NavigationRail.Item label="Crowdloans" icon={<Star />} />
-    </Link>
-    <Link to="https://talisman.banxa.com/" target="_blank">
-      <NavigationRail.Item label="Buy" icon={<CreditCard />} />
-    </Link>
-  </NavigationRail>
-)
 
 const Header = () => {
   const account = useRecoilValue(legacySelectedAccountState)
@@ -94,40 +67,70 @@ const Main = () => {
     // TODO: remove legacy imperative modals
     <ModalProvider>
       <MoonbeamContributors.PopupProvider>
-        <div
-          css={{
-            'display': 'grid',
-            'gridTemplateAreas': `
-              'main'
-              'nav'
-            `,
-            '@media(min-width: 1024px)': {
-              padding: '2.4rem',
-              gap: '4.8rem',
-              gridTemplateColumns: 'min-content 1fr',
-              gridTemplateAreas: `
-                'nav main'
-                'footer footer'
-              `,
-            },
-          }}
+        <Scaffold
+          topBar={
+            <TopAppBar
+              navigationIcon={
+                <IconButton as={Link} to="/">
+                  <TalismanHand />
+                </IconButton>
+              }
+              actions={
+                <TopAppBar.Actions>
+                  <AccountsManagementMenu />
+                </TopAppBar.Actions>
+              }
+            />
+          }
+          bottomBar={
+            <NavigationBar>
+              <Link to="/portfolio">
+                <NavigationBar.Item label="Portfolio" icon={<Eye />} />
+              </Link>
+              <Link to="/portfolio?action=stake">
+                <NavigationBar.Item label="Staking" icon={<Zap />} />
+              </Link>
+              <Link to="/explore">
+                <NavigationBar.Item label="Explore" icon={<Compass />} />
+              </Link>
+              <Link to="/crowdloans">
+                <NavigationBar.Item label="Crowdloans" icon={<Star />} />
+              </Link>
+              <Link to="https://talisman.banxa.com/" target="_blank">
+                <NavigationBar.Item label="Buy" icon={<CreditCard />} />
+              </Link>
+            </NavigationBar>
+          }
+          sideBar={
+            <NavigationRail
+              header={
+                <IconButton as={Link} to="/">
+                  <TalismanHand />
+                </IconButton>
+              }
+            >
+              <AccountsManagementMenu />
+              <Link to="/portfolio">
+                <NavigationRail.Item label="Portfolio" icon={<Eye />} />
+              </Link>
+              <Link to="/portfolio?action=stake">
+                <NavigationRail.Item label="Staking" icon={<Zap />} />
+              </Link>
+              <Link to="/explore">
+                <NavigationRail.Item label="Explore" icon={<Compass />} />
+              </Link>
+              <Link to="/crowdloans">
+                <NavigationRail.Item label="Crowdloans" icon={<Star />} />
+              </Link>
+              <Link to="https://talisman.banxa.com/" target="_blank">
+                <NavigationRail.Item label="Buy" icon={<CreditCard />} />
+              </Link>
+            </NavigationRail>
+          }
         >
-          <div css={{ gridArea: 'nav' }}>
-            <div css={{ position: 'fixed' }}>
-              <Navigation />
-            </div>
-            {/* Filler */}
-            <div css={{ visibility: 'hidden' }}>
-              <Navigation />
-            </div>
-          </div>
-          <main css={{ gridArea: 'main' }}>
-            <div>
-              <Header />
-              <Outlet />
-            </div>
-          </main>
-        </div>
+          <Header />
+          <Outlet />
+        </Scaffold>
         <StakeDialog />
       </MoonbeamContributors.PopupProvider>
     </ModalProvider>
