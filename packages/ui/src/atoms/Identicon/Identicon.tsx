@@ -28,7 +28,7 @@ export type IdenticonProps = {
   theme?: string
 }
 
-const Identicon = ({ value: seed, size = '6.4rem', className, custom }: IdenticonProps) => {
+const Identicon = ({ value: seed, size = '2.4rem', className, custom }: IdenticonProps) => {
   const id = useId()
 
   const { bgColor1, bgColor2, transform, glowColor, cx, cy, isEthereum } = useMemo(() => {
