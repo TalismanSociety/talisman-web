@@ -32,7 +32,10 @@ const assetDataState = selector({
       return
     }
 
-    return [...displayableBalance, { symbol: 'Other', total: otherBalanceTotal, percent: otherBalancePercent }]
+    return [
+      ...displayableBalance,
+      ...(otherBalanceTotal === 0 ? [] : [{ symbol: 'Other', total: otherBalanceTotal, percent: otherBalancePercent }]),
+    ]
   },
 })
 
