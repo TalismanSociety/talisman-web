@@ -63,9 +63,9 @@ const PortfolioAllocationGraph = () => {
   const parsedStateData = useMemo(
     () =>
       [
-        { label: 'Transferable', value: stateData.transferable ?? 0, color: '#6A7AEB' },
-        { label: 'Reserved', value: stateData.reserved ?? 0, color: '#E6007A' },
-        { label: 'Locked', value: stateData.locked ?? 0, color: '#FFD966' },
+        { label: 'Transferable', value: stateData.transferable ?? 0, color: '#FD8FFF' },
+        { label: 'Reserved', value: stateData.reserved ?? 0, color: '#FD4848' },
+        { label: 'Locked', value: stateData.locked ?? 0, color: '#D5FF5C' },
       ].filter(x => x.value > 0),
     [stateData.locked, stateData.reserved, stateData.transferable]
   )
