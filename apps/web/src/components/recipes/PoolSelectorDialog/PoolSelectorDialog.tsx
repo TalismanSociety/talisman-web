@@ -62,6 +62,7 @@ const PoolSelectorDialog = Object.assign(
             <motion.div
               css={{
                 'display': 'grid',
+                'gridTemplateColumns': 'minmax(0, 1fr)',
                 'gap': '1.6rem',
                 '@media (min-width: 768px)': {
                   display: 'grid',
