@@ -1,6 +1,5 @@
 import { CopyButton } from '@components/CopyButton'
 import { NFTCard } from '@components/recipes/NFTCard'
-import AccountsManagement from '@components/widgets/AccountsManagementMenu'
 import { legacySelectedAccountState, selectedAccountsState } from '@domains/accounts/recoils'
 import { css } from '@emotion/react'
 import styled from '@emotion/styled'
@@ -90,7 +89,6 @@ const List = () => {
           >
             <Text.H2>No NFTs Found</Text.H2>
             <Text.Body>Please try another account</Text.Body>
-            <AccountsManagement />
           </span>
         }
       />

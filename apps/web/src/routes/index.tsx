@@ -30,7 +30,15 @@ const Header = () => {
   const account = useRecoilValue(legacySelectedAccountState)
   return (
     <div css={{ margin: '4rem 0' }}>
-      <AccountValueInfo address={account?.address ?? ''} name={account?.name ?? 'All Accounts'} balance={<Total />} />
+      <AccountsManagementMenu
+        button={
+          <AccountValueInfo
+            address={account?.address ?? ''}
+            name={account?.name ?? 'All Accounts'}
+            balance={<Total />}
+          />
+        }
+      />
     </div>
   )
 }
@@ -78,7 +86,7 @@ const Main = () => {
               }
               actions={
                 <TopAppBar.Actions>
-                  <AccountsManagementMenu />
+                  <AccountsManagementMenu button={<AccountsManagementMenu.IconButton />} />
                 </TopAppBar.Actions>
               }
             />
@@ -110,7 +118,7 @@ const Main = () => {
                 </IconButton>
               }
             >
-              <AccountsManagementMenu />
+              <AccountsManagementMenu button={<AccountsManagementMenu.IconButton size="5.6rem" />} />
               <Link to="/portfolio">
                 <NavigationRail.Item label="Portfolio" icon={<Eye />} />
               </Link>
