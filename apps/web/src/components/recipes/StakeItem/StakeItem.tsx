@@ -17,6 +17,7 @@ export type StakeItemProps = {
   actions?: ReactNode
   status?: ReactNode
   readonly?: boolean
+  hideIdenticon?: boolean
 }
 
 export const IncreaseStakeChip = (props: Omit<ChipProps, 'children'>) => (
@@ -87,7 +88,7 @@ const StakeItem = Object.assign(
     return (
       <article css={{ borderRadius: '0.8rem', overflow: 'hidden' }}>
         <ListItem
-          leadingContent={<Identicon value={props.accountAddress} size="4rem" />}
+          leadingContent={!props.hideIdenticon && <Identicon value={props.accountAddress} size="4rem" />}
           headlineText={props.accountName}
           supportingText={
             <Text.Body css={{ display: 'flex', alignItems: 'center', gap: '0.25em' }}>

@@ -18,8 +18,9 @@ import UnstakeDialog from './UnstakeDialog'
 
 const PoolStakeItem = ({
   item,
+  hideIdenticon,
 }: {
-  className?: string
+  hideIdenticon?: boolean
   item: {
     status?: PoolStatus
     account?: Account
@@ -62,6 +63,7 @@ const PoolStakeItem = ({
   return (
     <>
       <PoolStakeItemComponent
+        hideIdenticon={hideIdenticon}
         poolStatus={item.status}
         accountName={item.account?.name ?? ''}
         accountAddress={item.account?.address ?? ''}
