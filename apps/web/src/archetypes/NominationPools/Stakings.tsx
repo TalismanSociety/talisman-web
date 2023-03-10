@@ -1,10 +1,9 @@
 import { PoolStatus } from '@components/recipes/PoolStatusIndicator'
 import StakeItem from '@components/recipes/StakeItem'
 import { selectedSubstrateAccountsState } from '@domains/accounts/recoils'
-import { createAccounts } from '@domains/nominationPools/utils'
+import { createAccounts, getPoolUnbonding } from '@domains/nominationPools/utils'
 import { Button, CircularProgressIndicator, HiddenDetails, Text } from '@talismn/ui'
 import { Maybe } from '@util/monads'
-import BN from 'bn.js'
 import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { constSelector, useRecoilValueLoadable, useRecoilValue_TRANSITION_SUPPORT_UNSTABLE, waitForAll } from 'recoil'
@@ -70,24 +69,11 @@ const Stakings = () => {
         ? undefined
         : poolMembersLoadable.contents
             // Calculate unbondings
-            .map((poolMember, index) => {
-              const all = Array.from(poolMember.unwrapOrDefault().unbondingEras.entries(), ([era, amount]) => ({
-                amount: amount.toBigInt(),
-                erasTilWithdrawable: era.lte(sessionProgressLoadable.contents.activeEra)
-                  ? undefined
-                  : era.sub(sessionProgressLoadable.contents.activeEra),
-              }))
-
-              const withdrawable = all
-                .filter(x => x.erasTilWithdrawable === undefined)
-                .reduce((previous, current) => previous + current.amount, 0n)
-              const pendings = all.filter(
-                (x): x is { amount: bigint; erasTilWithdrawable: BN } => x.erasTilWithdrawable !== undefined
-              )
-
-              return { account: accounts[index], poolMember, withdrawable, unbondings: pendings }
-            })
-
+            .map((poolMember, index) => ({
+              account: accounts[index],
+              poolMember,
+              ...getPoolUnbonding(poolMember.unwrapOrDefault(), sessionProgressLoadable.contents),
+            }))
             // Calculate remaining values
             .map(({ poolMember, ...rest }, index) => {
               const status: PoolStatus | undefined = (() => {
@@ -122,7 +108,7 @@ const Stakings = () => {
       poolMembersLoadable.state,
       poolMembersLoadable.contents,
       sessionProgressLoadable.state,
-      sessionProgressLoadable.contents.activeEra,
+      sessionProgressLoadable.contents,
       accounts,
       slashingSpans,
       poolMetadatumLoadable,
