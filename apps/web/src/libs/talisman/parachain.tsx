@@ -1,9 +1,10 @@
 import { chainApiState } from '@domains/chains/recoils'
+import crowdloanDataState, { ParachainDetail } from '@libs/@talisman-crowdloans/provider'
 import { find } from 'lodash'
 import { PropsWithChildren, useContext as _useContext, createContext, useEffect, useMemo, useState } from 'react'
-import { useRecoilValueLoadable, waitForAll } from 'recoil'
+import { useRecoilValue, useRecoilValueLoadable, waitForAll } from 'recoil'
 
-import { ParachainDetails, parachainDetails } from './util/_config'
+import { ParachainDetails } from './util/_config'
 
 export type { ParachainDetails } from './util/_config'
 
@@ -23,7 +24,8 @@ export const useParachainDetailsBySlug = (slug?: string) => useFindParachainDeta
 export const useParachainAssets = (
   id?: string
 ): Partial<{ [key: string]: string; banner: string; card: string; logo: string }> => {
-  const crowdloanDetail = parachainDetails.find(x => x.id === id)
+  const crowdloans = useRecoilValue(crowdloanDataState)
+  const crowdloanDetail = crowdloans.find(x => x.id === id)
   const slug = crowdloanDetail?.slug
 
   return {
@@ -56,7 +58,7 @@ export const useFindParachainDetails = (
 //
 
 type ContextProps = {
-  parachains: ParachainDetails[]
+  parachains: ParachainDetail[]
   hydrated: boolean
 }
 
@@ -75,7 +77,9 @@ function useContext() {
 
 export const Provider = ({ children }: PropsWithChildren) => {
   const [hydrated, setHydrated] = useState(false)
-  const [parachains, setParachains] = useState<ParachainDetails[]>([])
+  const [parachains, setParachains] = useState<ParachainDetail[]>([])
+
+  const crowdloans = useRecoilValue(crowdloanDataState)
 
   const apisLoadable = useRecoilValueLoadable(waitForAll([chainApiState('polkadot'), chainApiState('kusama')]))
 
@@ -100,7 +104,7 @@ export const Provider = ({ children }: PropsWithChildren) => {
 
         const paraIds = [...polkadotParaIds, ...kusamaParaIds]
 
-        setParachains(parachainDetails.filter(x => paraIds.includes(x.id)))
+        setParachains(crowdloans.filter(x => paraIds.includes(x.id)))
         setHydrated(true)
       })()
     },
