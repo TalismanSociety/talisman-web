@@ -1,13 +1,13 @@
 import PortfolioAllocationGraphComponent from '@components/recipes/PortfolioAllocationGraph'
-import { legacyBalancesState, totalSelectedAccountsFiatBalance } from '@domains/balances/recoils'
+import { selectedBalancesState, totalSelectedAccountsFiatBalance } from '@domains/balances/recoils'
 import { groupBy } from 'lodash'
-import { useCallback, useMemo, useState } from 'react'
+import { Suspense, useCallback, useMemo, useState } from 'react'
 import { selector, useRecoilValue } from 'recoil'
 
 const assetDataState = selector({
   key: 'PortfolioAllocationGraph/AssetData',
   get: ({ get }) => {
-    const balances = get(legacyBalancesState).balances
+    const balances = get(selectedBalancesState)
 
     const nonZeroBalance = Object.entries(
       groupBy(
@@ -42,14 +42,14 @@ const assetDataState = selector({
 const stateDataState = selector({
   key: 'PortfolioAllocationGraph/StateData',
   get: ({ get }) => {
-    const balances = get(legacyBalancesState).balances
+    const balances = get(selectedBalancesState)
     const fiatSum = balances?.sum.fiat('usd')
 
     return { transferable: fiatSum?.transferable, reserved: fiatSum?.reserved, locked: fiatSum?.locked }
   },
 })
 
-const PortfolioAllocationGraph = () => {
+const SuspendablePortfolioAllocationGraph = () => {
   const assetData = useRecoilValue(assetDataState)
   const stateData = useRecoilValue(stateDataState)
 
@@ -83,5 +83,11 @@ const PortfolioAllocationGraph = () => {
     />
   )
 }
+
+const PortfolioAllocationGraph = () => (
+  <Suspense fallback={<PortfolioAllocationGraphComponent.Skeleton />}>
+    <SuspendablePortfolioAllocationGraph />
+  </Suspense>
+)
 
 export default PortfolioAllocationGraph

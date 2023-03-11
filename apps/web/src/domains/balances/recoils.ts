@@ -6,7 +6,7 @@ import { useBalances as _useBalances, useAllAddresses, useChaindata, useTokens }
 import { ChaindataProvider, TokenList } from '@talismn/chaindata-provider'
 import { groupBy, isNil } from 'lodash'
 import { useEffect, useMemo } from 'react'
-import { atom, selector, useRecoilValue, useSetRecoilState } from 'recoil'
+import { atom, selector, useRecoilCallback, useRecoilValue, useSetRecoilState } from 'recoil'
 
 export type LegacyBalances = {
   balances: Balances | undefined
@@ -26,6 +26,17 @@ export const legacyBalancesState = atom<LegacyBalances>({
     tokenIds: [],
     tokens: [],
     chaindata: undefined,
+  },
+  dangerouslyAllowMutability: true,
+})
+
+export const balancesState = atom<Balances>({ key: 'Balances', dangerouslyAllowMutability: true })
+
+export const selectedBalancesState = selector({
+  key: 'SelectedBalances',
+  get: ({ get }) => {
+    const selectedAddresses = get(selectedAccountsState).map(x => x.address)
+    return new Balances(get(balancesState).sorted.filter(x => selectedAddresses.includes(x.address)))
   },
   dangerouslyAllowMutability: true,
 })
@@ -91,6 +102,14 @@ export const LegacyBalancesWatcher = () => {
   )
 
   const balances = _useBalances(addressesByToken)
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(
+    useRecoilCallback(({ set }) => () => {
+      set(balancesState, balances)
+    }),
+    [balances]
+  )
 
   const selectedAccounts = useRecoilValue(selectedAccountsState)
   const selectedAddresses = useMemo(() => selectedAccounts.map(x => x.address), [selectedAccounts])
