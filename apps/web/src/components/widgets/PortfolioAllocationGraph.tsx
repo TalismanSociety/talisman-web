@@ -63,7 +63,7 @@ const SuspendablePortfolioAllocationGraph = () => {
   const parsedStateData = useMemo(
     () =>
       [
-        { label: 'Transferable', value: stateData.transferable ?? 0, color: '#FD8FFF' },
+        { label: 'Available', value: stateData.transferable ?? 0, color: '#FD8FFF' },
         { label: 'Reserved', value: stateData.reserved ?? 0, color: '#FD4848' },
         { label: 'Locked', value: stateData.locked ?? 0, color: '#D5FF5C' },
       ].filter(x => x.value > 0),
