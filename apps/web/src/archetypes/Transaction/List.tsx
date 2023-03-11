@@ -77,8 +77,9 @@ export const List = ({ addresses = [], className }: Props) => {
           'paddingBottom': '1rem',
           'display': 'flex',
           'justifyContent': 'space-between',
+          'gap': '1.6rem',
           '.field-search': {
-            maxWidth: 500,
+            width: '35rem',
           },
         }}
       >
