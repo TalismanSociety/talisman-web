@@ -588,6 +588,22 @@ Our mission is to create an open financial future that overcomes borders and fos
     },
   },
   {
+    id: '0-3340',
+    name: 'Invarch',
+    slug: 'invarch',
+    token: 'VARCH',
+    subtitle: 'Incentivising Intelligence',
+    info: `InvArch is a highly optimized network for launching decentralized communities, borderless businesses, & unstoppable organizations on Polkadot & beyond!`,
+    links: {
+      Website: 'https://invarch.network/',
+      Discord: 'https://discord.com/invite/InvArch',
+      Twitter: 'https://twitter.com/invarchnetwork',
+      Telegram: 'https://t.me/InvArch',
+      Github: 'https://github.com/InvArch',
+      Medium: 'https://invarch.medium.com/',
+    },
+  },
+  {
     id: '2-2000',
     name: 'Karura',
     slug: 'karura',
@@ -1958,6 +1974,28 @@ export const crowdloanDetails: CrowdloanDetails[] = [
         },
       ],
       info: null,
+    },
+  },
+  {
+    relayId: 0,
+    paraId: 3340,
+    rewards: {
+      tokens: null,
+      custom: [
+        {
+          title: 'VARCH per DOT',
+          value: '100 VARCH',
+        },
+        {
+          title: 'Crowdloan Cap',
+          value: '150,000 DOT',
+        },
+        {
+          title: 'Reward Pool',
+          value: '15m of 1b (1.5%)',
+        },
+      ],
+      info: '20% of VARCH rewards will be available to claim immediately. The remaining 80% of VARCH rewards will vest/unlock linearly (every block) over a 96 week period.',
     },
   },
   {
