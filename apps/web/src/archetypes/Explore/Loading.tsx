@@ -45,16 +45,12 @@ export const TagLoading = styled(({ className }: { className?: string }) => {
   }
 `
 
-export const CardLoading = styled(({ className }: { className?: string }) => {
+export const CardLoading = styled(({ className, isLoading }: { className?: string; isLoading?: boolean }) => {
   return (
     <div className={className}>
-      <Card />
-      <Card />
-      <Card />
-      <Card />
-      <Card />
-      <Card />
-      <Card />
+      {Array.from({ length: 3 }).map((_, i) => (
+        <Card key={i} isLoading={isLoading} />
+      ))}
     </div>
   )
 })`
@@ -79,7 +75,7 @@ export const CardLoading = styled(({ className }: { className?: string }) => {
   grid-gap: 2.5rem;
 `
 
-const Card = styled(({ className }: { className?: string }) => {
+const Card = styled(({ className, isLoading }: { className?: string; isLoading?: boolean }) => {
   return (
     <div className={className}>
       <div className="card-header" />
@@ -104,8 +100,11 @@ const Card = styled(({ className }: { className?: string }) => {
     display: flex;
     flex-direction: column;
 
-    animation: shimmer 1s infinite;
-    background: linear-gradient(90deg, rgba(30, 30, 30, 1) 4%, rgba(60, 60, 60, 1) 25%, rgba(30, 30, 30, 1) 36%);
+    animation: ${props => (props.isLoading ? 'shimmer 1s infinite' : 'none')};
+    background: ${props =>
+      props.isLoading
+        ? 'linear-gradient(90deg, rgba(30, 30, 30, 1) 4%, rgba(60, 60, 60, 1) 25%, rgba(30, 30, 30, 1) 36%)'
+        : '#1e1e1e'};
     background-size: 2000px 100%;
 
     padding: 2rem;
@@ -116,8 +115,11 @@ const Card = styled(({ className }: { className?: string }) => {
     overflow: hidden;
     position: relative;
 
-    animation: shimmer 1s infinite;
-    background: linear-gradient(90deg, rgba(24, 24, 24, 1) 4%, rgba(50, 50, 50, 1) 25%, rgba(24, 24, 24, 1) 36%);
+    animation: ${props => (props.isLoading ? 'shimmer 1s infinite' : 'none')};
+    background: ${props =>
+      props.isLoading
+        ? 'linear-gradient(90deg, rgba(24, 24, 24, 1) 4%, rgba(50, 50, 50, 1) 25%, rgba(24, 24, 24, 1) 36%);'
+        : '#222'};
     background-size: 2000px 100%;
   }
 

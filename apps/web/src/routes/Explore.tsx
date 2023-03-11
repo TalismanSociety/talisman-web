@@ -1,41 +1,97 @@
 import { Card, CardLoading, TagLoading } from '@archetypes/Explore'
-import { useFetchDapps } from '@archetypes/Explore/hooks'
+import { Dapp, useFetchDapps } from '@archetypes/Explore/hooks'
+import { Search } from '@components/Field'
 import styled from '@emotion/styled'
+import { HiddenDetails } from '@talismn/ui'
+import { Text } from '@talismn/ui'
 import { device } from '@util/breakpoints'
 import { useState } from 'react'
+import { useDebounce } from 'react-use'
 
 const ExploreGrid = ({ className }: { className?: string }) => {
+  const [searchQuery, setSearchQuery] = useState('')
+  const [searchQueryDebounced, setSearchQueryDebounced] = useState('')
+  useDebounce(() => setSearchQueryDebounced(searchQuery), 250, [searchQuery])
   const { dapps, loading, tags } = useFetchDapps()
   const [selectedTag, setSelectedTag] = useState<string>('All')
+
+  const filteredDapps =
+    dapps &&
+    dapps.filter(
+      (dapp: Dapp) =>
+        dapp.name.toLowerCase().includes(searchQueryDebounced.toLowerCase()) &&
+        (dapp.tags.includes(selectedTag) || selectedTag === 'All')
+    )
 
   return (
     <div className={className}>
       {loading ? (
         <>
           <TagLoading />
-          <CardLoading />
+          <CardLoading isLoading={true} />
         </>
-      ) : !loading && dapps.length === 0 ? (
-        <p>No dapps found</p>
-      ) : !loading && dapps.length > 0 ? (
+      ) : !loading ? (
         // Create a 4 column grid
         <>
-          <div className="tags">
-            {tags.map(tag => (
-              <div key={tag} onClick={() => setSelectedTag(tag)} className={selectedTag === tag ? 'selected-tag' : ''}>
-                {tag}
-              </div>
-            ))}
-          </div>
+          <section
+            css={{
+              'display': 'flex',
+              'flexDirection': 'column',
+              'justifyContent': 'space-between',
+              'alignItems': 'center',
+              'marginBottom': '2rem',
+              'gap': '2rem',
+              '@media (min-width: 1024px)': {
+                flexDirection: 'row-reverse',
+                gap: 0,
+              },
+            }}
+          >
+            <Search
+              placeholder="Search"
+              css={{
+                'width': '100%',
+                '@media (min-width: 1024px)': {
+                  width: '46.7%',
+                  margin: 0,
+                },
+              }}
+              value={searchQuery}
+              onChange={setSearchQuery}
+            />
+            <div className="tags">
+              {tags.map(tag => (
+                <div
+                  key={tag}
+                  onClick={() => setSelectedTag(tag)}
+                  className={selectedTag === tag ? 'selected-tag' : ''}
+                >
+                  {tag}
+                </div>
+              ))}
+            </div>
+          </section>
 
-          <div className="grid">
-            {dapps.map(
-              (dapp, index) =>
-                (selectedTag === 'All' || dapp.tags.includes(selectedTag)) && (
-                  <Card key={index} dapp={dapp} setSelectedTag={tag => setSelectedTag(tag)} />
-                )
-            )}
-          </div>
+          {filteredDapps.length > 0 ? (
+            <div className="grid">
+              {filteredDapps.map((dapp, index) => (
+                <Card key={index} dapp={dapp} setSelectedTag={tag => setSelectedTag(tag)} />
+              ))}
+            </div>
+          ) : (
+            <HiddenDetails
+              overlay={
+                <Text.H4>
+                  {filteredDapps.length === 0 && dapps.length > 0
+                    ? 'Your search returned no results'
+                    : 'No Dapps Found'}
+                </Text.H4>
+              }
+              hidden={filteredDapps.length === 0}
+            >
+              <CardLoading isLoading={false} />
+            </HiddenDetails>
+          )}
         </>
       ) : (
         <p>Error</p>
@@ -50,12 +106,15 @@ const StyledExploreGrid = styled(ExploreGrid)`
     flex-direction: row;
     flex-wrap: wrap;
     width: 87vw;
+    height: 100%;
+    justify-content: flex-start;
 
     @media ${device.md} {
       width: 100%;
     }
 
     > div {
+      height: 26px;
       font-size: 1.25rem;
       margin: 0.5rem 0.5rem 0 0;
       display: flex;
@@ -77,7 +136,6 @@ const StyledExploreGrid = styled(ExploreGrid)`
       background: var(--color-dim);
       transition: 0.2s;
     }
-    margin-bottom: 2rem;
   }
 
   .grid {
