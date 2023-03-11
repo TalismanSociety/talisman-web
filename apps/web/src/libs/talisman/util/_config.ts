@@ -1271,6 +1271,20 @@ Our mission is to create an open financial future that overcomes borders and fos
     },
   },
   {
+    id: '2-2241',
+    name: 'Krest',
+    slug: 'krest',
+    token: 'KREST',
+    subtitle: "krest is peaq’s canary network - the world's first and only Economy of Things simulation network.",
+    info: 'krest is your home for socio-economic, technical, community, and governance innovation and experimentation within the peaq ecosystem. Launch dApps and tools for the Economy of Things and assess their impact in a live environment on a public blockchain network, without running the risk of causing real-world harm.',
+    links: {
+      Website: 'https://krest.peaq.network/?ref=parachains-info',
+      Twitter: 'https://twitter.com/peaqnetwork',
+      Discord: 'https://discord.gg/XhJwuFKAAD',
+      Github: 'https://github.com/peaqnetwork/peaq-network-node',
+    },
+  },
+  {
     id: '2-2256',
     name: 'Mangata X',
     slug: 'mangata',
@@ -2773,6 +2787,27 @@ export const crowdloanDetails: CrowdloanDetails[] = [
         {
           title: 'Crowdloan Allocation',
           value: '208,000,000 $FREN',
+        },
+      ],
+      info: null,
+    },
+  },
+  {
+    relayId: 2,
+    paraId: 2241,
+    contributeUrl:
+      'https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Fkusama-rpc.polkadot.io&ref=parachains-info#/parachains/crowdloan',
+    rewards: {
+      tokens: [
+        {
+          symbol: 'KREST',
+          perKSM: '800+',
+        },
+      ],
+      custom: [
+        {
+          title: 'Crowdloan Cap',
+          value: '15,000 KSM',
         },
       ],
       info: null,
