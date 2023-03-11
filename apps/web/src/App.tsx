@@ -58,9 +58,7 @@ const App: React.FC = () => (
               <Suspense fallback={<Loader />}>
                 <NftProvider />
                 <RouterProvider router={router} />
-                <Toaster position="top-right" containerStyle={{ top: '6.4rem' }}>
-                  {t => <ToastBar toast={t} />}
-                </Toaster>
+                <Toaster position="top-right">{t => <ToastBar toast={t} />}</Toaster>
                 <CookieBanner />
               </Suspense>
             </MoonbeamContributors.Provider>
