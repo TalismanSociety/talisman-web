@@ -118,7 +118,6 @@ const Main = () => {
                 </IconButton>
               }
             >
-              <AccountsManagementMenu button={<AccountsManagementMenu.IconButton size="5.6rem" />} />
               <Link to="/portfolio">
                 <NavigationRail.Item label="Portfolio" icon={<Eye />} />
               </Link>
