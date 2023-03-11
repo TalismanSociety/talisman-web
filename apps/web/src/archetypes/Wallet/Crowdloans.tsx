@@ -158,7 +158,7 @@ const ExtensionUnavailable = styled((props: any) => {
   }
 `
 
-const Crowdloans = ({ className }: { className?: string }) => {
+const SuspendableCrowdloans = ({ className }: { className?: string }) => {
   const { t } = useTranslation()
   const accounts = useRecoilValue(selectedSubstrateAccountsState)
   const { contributions, hydrated: contributionsHydrated } = useCrowdloanContributions({
@@ -190,5 +190,11 @@ const Crowdloans = ({ className }: { className?: string }) => {
     </section>
   )
 }
+
+export const Crowdloans = ({ className }: { className?: string }) => (
+  <Suspense>
+    <SuspendableCrowdloans className={className} />
+  </Suspense>
+)
 
 export default Crowdloans

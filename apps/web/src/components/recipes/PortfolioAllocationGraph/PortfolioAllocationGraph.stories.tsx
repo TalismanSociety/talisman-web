@@ -23,3 +23,5 @@ Default.args = {
     { label: 'Other', value: 0.05, color: '#5A5A5A' },
   ],
 }
+
+export const Skeleton = () => <PortfolioAllocationGraph.Skeleton />
