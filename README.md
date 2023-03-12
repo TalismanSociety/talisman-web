@@ -11,7 +11,7 @@ A Polkadot, Kusama & Parachain dashboard for the community.
 With Talisman Web you can buy DOT and KSM, contribute to crowdloans, view NFTs and more.
 
 **Want more?**  
-[Talisman Polkadot Wallet](https://talisman.xyz) | [Blog](https://talisman.xyz/blog) | [Docs](https://docs.talisman.xyz) | [Security Audit](https://talisman.xyz/static/media/talisman-security-audit.1d41357e3e47abcda755.pdf) | [Twitter](https://twitter.com/wearetalisman) | [Discord](https://discord.gg/talisman)
+[Talisman Polkadot Wallet](https://talisman.xyz) | [Blog](https://talisman.xyz/blog) | [Docs](https://docs.talisman.xyz) | [Security Audit](https://uploads-ssl.webflow.com/637412e5f6b29b2cb01a253e/639bb1f65ba1add16f8c4f3f_Talisman_Wallet_SecAssessment_report-v1.1_1.pdf) | [Twitter](https://twitter.com/wearetalisman) | [Discord](https://discord.gg/talisman)
 
 ## How to set up a development environment
 
