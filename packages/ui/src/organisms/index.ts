@@ -1,5 +1,7 @@
 export * from './NavigationBar'
 export { default as NavigationBar } from './NavigationBar'
+export * from './NavigationDrawer'
+export { default as NavigationDrawer } from './NavigationDrawer'
 export * from './NavigationRail'
 export { default as NavigationRail } from './NavigationRail'
 export * from './Scaffold'

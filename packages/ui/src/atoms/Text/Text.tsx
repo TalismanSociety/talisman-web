@@ -2,11 +2,14 @@ import { useTheme } from '@emotion/react'
 import Color from 'colorjs.io'
 import React, { ElementType, useMemo } from 'react'
 
+export type TextAlpha = 'disabled' | 'medium' | 'high'
+
 type PolymorphicTextProps<T extends React.ElementType> = {
   as?: T
   color?: string
-  alpha?: 'disabled' | 'medium' | 'high'
+  alpha?: TextAlpha | ((props: { hover: boolean }) => TextAlpha)
 }
+
 export type TextProps<T extends React.ElementType> = PolymorphicTextProps<T> &
   Omit<React.ComponentPropsWithoutRef<T>, keyof PolymorphicTextProps<T>>
 
@@ -17,45 +20,60 @@ const decorateText = <T extends Object>(element: T) =>
     ),
   })
 
-const BaseText = <T extends React.ElementType = 'span'>({ as, color, alpha = 'medium', ...props }: TextProps<T>) => {
+const useAlpha = (color: string, alpha: TextAlpha) => {
   const theme = useTheme()
-  const Component = as ?? 'span'
 
-  const transformedColor = useMemo(() => {
+  return useMemo(() => {
     const textColor = new Color(color ?? theme.color.onBackground)
     textColor.alpha = theme.contentAlpha[alpha ?? 'medium']
 
     return textColor.display().toString()
-  }, [color, alpha, theme.color.onBackground])
+  }, [alpha, color, theme.color.onBackground])
+}
+
+const BaseText = <T extends React.ElementType = 'span'>({
+  as,
+  color: _color,
+  alpha = 'medium',
+  ...props
+}: TextProps<T>) => {
+  const theme = useTheme()
+  const Component = as ?? 'span'
+  const color = _color ?? theme.color.onBackground
 
   return (
     <Component
       {...props}
       css={{
-        color: transformedColor,
-        fontFamily: 'Surt',
+        'color': useAlpha(color, typeof alpha === 'function' ? alpha({ hover: false }) : alpha),
+        'fontFamily': 'Surt',
+        ':hover': {
+          color: useAlpha(color, typeof alpha === 'function' ? alpha({ hover: true }) : alpha),
+        },
       }}
     />
   )
 }
 
-const BaseHeaderText = <T extends React.ElementType = 'h1'>({ as, color, alpha, ...props }: TextProps<T>) => {
+const BaseHeaderText = <T extends React.ElementType = 'h1'>({
+  as,
+  color: _color,
+  alpha = 'medium',
+  ...props
+}: TextProps<T>) => {
   const theme = useTheme()
   const Component = as ?? 'span'
-
-  const transformedColor = useMemo(() => {
-    const textColor = new Color(color ?? theme.color.onBackground)
-    textColor.alpha = theme.contentAlpha[alpha ?? 'medium']
-
-    return textColor.display().toString()
-  }, [color, alpha, theme.color.onBackground])
+  const color = _color ?? theme.color.onBackground
 
   return (
     <Component
       {...props}
       css={{
-        color: transformedColor,
-        fontFamily: 'SurtExpanded',
+        'color': useAlpha(color, typeof alpha === 'function' ? alpha({ hover: false }) : alpha),
+        'fontFamily': 'SurtExpanded',
+        ':hover': {
+          color: useAlpha(color, typeof alpha === 'function' ? alpha({ hover: true }) : alpha),
+        },
       }}
     />
   )
