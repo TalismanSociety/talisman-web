@@ -1,12 +1,10 @@
 import { chainApiState } from '@domains/chains/recoils'
-import crowdloanDataState, { ParachainDetail } from '@libs/@talisman-crowdloans/provider'
+import crowdloanDataState, { CrowdloanDetail } from '@libs/@talisman-crowdloans/provider'
 import { find } from 'lodash'
 import { PropsWithChildren, useContext as _useContext, createContext, useEffect, useMemo, useState } from 'react'
 import { useRecoilValue, useRecoilValueLoadable, waitForAll } from 'recoil'
 
-import { ParachainDetails } from './util/_config'
-
-export type { ParachainDetails } from './util/_config'
+export type { CrowdloanDetail } from '@libs/@talisman-crowdloans/provider'
 
 export const useParachainsDetails = () => useContext()
 export const useParachainsDetailsIndexedById = () => {
@@ -42,7 +40,7 @@ export const useParachainAssets = (
 export const useFindParachainDetails = (
   key: string,
   value: any
-): Partial<{ parachainDetails?: ParachainDetails; hydrated: boolean }> => {
+): Partial<{ parachainDetails?: CrowdloanDetail; hydrated: boolean }> => {
   const { parachains, hydrated } = useParachainsDetails()
 
   const parachainDetails = useMemo(() => find(parachains, { [key]: value }), [parachains, key, value])
@@ -58,7 +56,7 @@ export const useFindParachainDetails = (
 //
 
 type ContextProps = {
-  parachains: ParachainDetail[]
+  parachains: CrowdloanDetail[]
   hydrated: boolean
 }
 
@@ -77,7 +75,7 @@ function useContext() {
 
 export const Provider = ({ children }: PropsWithChildren) => {
   const [hydrated, setHydrated] = useState(false)
-  const [parachains, setParachains] = useState<ParachainDetail[]>([])
+  const [parachains, setParachains] = useState<CrowdloanDetail[]>([])
 
   const crowdloans = useRecoilValue(crowdloanDataState)
 

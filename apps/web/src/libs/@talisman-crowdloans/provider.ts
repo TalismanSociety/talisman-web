@@ -1,6 +1,6 @@
 import { selector } from 'recoil'
 
-export type ParachainDetail = {
+export type CrowdloanDetail = {
   id: string
   name: string
   image?: string
@@ -11,22 +11,15 @@ export type ParachainDetail = {
   paraId: string
   subtitle: string
   info: string
-  links: {
-    discord?: string
-    element?: string
-    github?: string
-    linkedin?: string
-    medium?: string
-    reddit?: string
-    telegram?: string
-    twitter?: string
-    website?: string
-    youtube?: string
-  }
+  links: { [key: string]: string }
   customRewards?: {
     title: string
     value: string
   }[]
+  rewards: {
+    tokens?: string
+    info?: string
+  }
   bonus: {
     full?: string
     info?: string
@@ -34,7 +27,7 @@ export type ParachainDetail = {
   }
 }
 
-const crowdloanDataState = selector<ParachainDetail[]>({
+const crowdloanDataState = selector<CrowdloanDetail[]>({
   key: 'CrowdloanData',
   get: async ({ get }) => {
     const response = await fetch(`https://api.baserow.io/api/database/rows/table/146542/?user_field_names=true`, {
@@ -92,7 +85,7 @@ const crowdloanDataState = selector<ParachainDetail[]>({
         headerImage: crowdloan?.headerImage[0],
         customRewards,
         rewards: {
-          token: crowdloan?.['rewards.token'],
+          tokens: crowdloan?.['rewards.tokens'],
           info: crowdloan?.['rewards.info'],
         },
         bonus: {
@@ -100,7 +93,7 @@ const crowdloanDataState = selector<ParachainDetail[]>({
           full: crowdloan?.['bonus.full'],
           info: crowdloan?.['bonus.info'],
         },
-      } as ParachainDetail
+      } as CrowdloanDetail
     })
 
     return crowdloans
