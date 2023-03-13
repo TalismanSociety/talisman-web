@@ -33,7 +33,7 @@ const crowdloanDataState = selector<CrowdloanDetail[]>({
     const response = await fetch(`https://api.baserow.io/api/database/rows/table/146542/?user_field_names=true`, {
       method: 'GET',
       headers: {
-        Authorization: `Token R09w2cI9DromULZxRpBlTM7xqjhIkhMp`,
+        Authorization: `Token ${process.env.REACT_APP_BASEROW_CROWDLOANS_AUTH}`,
       },
     })
     const data = await response.json()

@@ -16,7 +16,7 @@ export const useFetchDapps = () => {
         fetch(`https://api.baserow.io/api/database/rows/table/141541/?user_field_names=true`, {
           method: 'GET',
           headers: {
-            Authorization: `Token ${process.env.REACT_APP_BASEROW_AUTH_TOKEN}`,
+            Authorization: `Token ${process.env.REACT_APP_BASEROW_EXPLORE_AUTH}`,
           },
         })
           .then(res => res.json())
