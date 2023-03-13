@@ -35,7 +35,6 @@ const TopAppBar = Object.assign(
           alignItems: 'center',
           gap: '1.2rem',
           width: '100%',
-          borderBottom: `1px solid ${theme.color.border}`,
           padding: '1.6rem 2.4rem',
           backgroundColor: theme.color.background,
         }}

@@ -3,7 +3,7 @@ import { ComponentMeta, Story } from '@storybook/react'
 import AccountValueInfo, { AccountValueInfoProps } from './AccountValueInfo'
 
 export default {
-  title: 'Molecules/AccountValueInfo',
+  title: 'Recipes/AccountValueInfo',
   component: AccountValueInfo,
   parameters: {
     layout: 'centered',

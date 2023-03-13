@@ -14,7 +14,16 @@ import { recommendedPoolsState } from '@domains/nominationPools/recoils'
 import * as MoonbeamContributors from '@libs/moonbeam-contributors'
 import * as Sentry from '@sentry/react'
 import { Compass, CreditCard, Eye, MoreHorizontal, Star, TalismanHand, Zap } from '@talismn/icons'
-import { IconButton, NavigationBar, NavigationDrawer, NavigationRail, Scaffold, Text, TopAppBar } from '@talismn/ui'
+import {
+  IconButton,
+  NavigationBar,
+  NavigationDrawer,
+  NavigationRail,
+  SCAFFOLD_WIDE_VIEW_MEDIA_SELECTOR,
+  Scaffold,
+  Text,
+  TopAppBar,
+} from '@talismn/ui'
 import posthog from 'posthog-js'
 import { useCallback, useEffect, useState } from 'react'
 import { Link, Navigate, Outlet, createBrowserRouter, useLocation } from 'react-router-dom'
@@ -33,7 +42,7 @@ import TransactionHistory from './TransactionHistory'
 const Header = () => {
   const account = useRecoilValue(legacySelectedAccountState)
   return (
-    <div css={{ margin: '4rem 0' }}>
+    <div css={{ [SCAFFOLD_WIDE_VIEW_MEDIA_SELECTOR]: { marginTop: '4rem' } }}>
       <AccountsManagementMenu
         button={
           <AccountValueInfo

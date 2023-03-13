@@ -2,10 +2,11 @@ import OwnPools from '@archetypes/NominationPools/OwnPools'
 import useAssets, { useAssetsFiltered } from '@archetypes/Portfolio/Assets'
 import { Crowdloans } from '@archetypes/Wallet'
 import { Search } from '@components/Field'
+import SectionHeader from '@components/molecules/SectionHeader'
 import Asset, { AssetsList, AssetsListLocked } from '@components/recipes/Asset'
 import AnimatedFiatNumber from '@components/widgets/AnimatedFiatNumber'
 import PortfolioAllocationGraph from '@components/widgets/PortfolioAllocationGraph'
-import { Button, Text } from '@talismn/ui'
+import { Button } from '@talismn/ui'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 
@@ -39,25 +40,19 @@ const AssetsOverview = () => {
             'display': 'flex',
             'flexDirection': 'column',
             'justifyContent': 'space-between',
-            'alignItems': 'center',
+            'alignItems': 'stretch',
             '@media (min-width: 1024px)': {
               flexDirection: 'row',
+              alignItems: 'center',
             },
           }}
         >
           {/* Make this into a component */}
-          <Text.H3 css={{ margin: 0 }}>
-            Assets{' '}
-            <span
-              css={{
-                color: '#A5A5A5',
-                fontFamily: 'Surt',
-                marginLeft: '1rem',
-              }}
-            >
-              <AnimatedFiatNumber end={fiatTotal} />
-            </span>
-          </Text.H3>
+          <SectionHeader
+            headlineText="Assets"
+            supportingText={<AnimatedFiatNumber end={fiatTotal} />}
+            css={{ marginBottom: 0 }}
+          />
           <Search
             placeholder="Search"
             css={{

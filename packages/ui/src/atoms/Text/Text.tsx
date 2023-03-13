@@ -58,7 +58,7 @@ const BaseText = <T extends React.ElementType = 'span'>({
 const BaseHeaderText = <T extends React.ElementType = 'h1'>({
   as,
   color: _color,
-  alpha = 'medium',
+  alpha = 'high',
   ...props
 }: TextProps<T>) => {
   const theme = useTheme()
