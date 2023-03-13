@@ -20,7 +20,8 @@
   "dependencies": {
     "@floating-ui/react": "^0.20.1",
     "@lottiefiles/react-lottie-player": "^3.5.2",
-    "@talismn/icons": "workspace:^"
+    "@talismn/icons": "workspace:^",
+    "colorjs.io": "^0.4.3"
   },
   "devDependencies": {
     "@babel/core": "^7.21.0",

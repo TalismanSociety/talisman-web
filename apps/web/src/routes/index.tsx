@@ -1,4 +1,8 @@
 import { Total } from '@archetypes/Wallet'
+import { ReactComponent as Discord } from '@assets/icons/discord-header.svg'
+import { ReactComponent as GitHub } from '@assets/icons/github-header.svg'
+import { ReactComponent as Medium } from '@assets/icons/medium-header.svg'
+import { ReactComponent as Twitter } from '@assets/icons/twitter-header.svg'
 import { ModalProvider } from '@components'
 import AccountValueInfo from '@components/recipes/AccountValueInfo'
 import AccountsManagementMenu from '@components/widgets/AccountsManagementMenu'
@@ -9,10 +13,10 @@ import { apiState, nativeTokenDecimalState, nativeTokenPriceState } from '@domai
 import { recommendedPoolsState } from '@domains/nominationPools/recoils'
 import * as MoonbeamContributors from '@libs/moonbeam-contributors'
 import * as Sentry from '@sentry/react'
-import { Compass, CreditCard, Eye, Star, TalismanHand, Zap } from '@talismn/icons'
-import { IconButton, NavigationBar, NavigationRail, Scaffold, Text, TopAppBar } from '@talismn/ui'
+import { Compass, CreditCard, Eye, MoreHorizontal, Star, TalismanHand, Zap } from '@talismn/icons'
+import { IconButton, NavigationBar, NavigationDrawer, NavigationRail, Scaffold, Text, TopAppBar } from '@talismn/ui'
 import posthog from 'posthog-js'
-import { useEffect } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Link, Navigate, Outlet, createBrowserRouter, useLocation } from 'react-router-dom'
 import { useRecoilValue, useRecoilValueLoadable, waitForAll } from 'recoil'
 
@@ -72,11 +76,20 @@ const Main = () => {
     posthog.capture('$pageview')
   }, [location.pathname])
 
+  const [drawerOpen, setDrawerOpen] = useState(false)
+
   return (
     // TODO: remove legacy imperative modals
     <ModalProvider>
       <MoonbeamContributors.PopupProvider>
         <Scaffold
+          breakpoints={{
+            topBar: 'narrow',
+            bottomBar: 'narrow',
+            sideBar: 'wide',
+            drawer: 'narrow',
+            footer: 'wide',
+          }}
           topBar={
             <TopAppBar
               navigationIcon={
@@ -87,6 +100,9 @@ const Main = () => {
               actions={
                 <TopAppBar.Actions>
                   <AccountsManagementMenu button={<AccountsManagementMenu.IconButton />} />
+                  <IconButton onClick={useCallback(() => setDrawerOpen(true), [])}>
+                    <MoreHorizontal />
+                  </IconButton>
                 </TopAppBar.Actions>
               }
             />
@@ -134,6 +150,62 @@ const Main = () => {
                 <NavigationRail.Item label="Buy" icon={<CreditCard />} />
               </Link>
             </NavigationRail>
+          }
+          drawer={
+            <NavigationDrawer
+              open={drawerOpen}
+              onRequestDismiss={useCallback(() => setDrawerOpen(false), [])}
+              headerIcon={<TalismanHand />}
+              footer={
+                <NavigationDrawer.Footer>
+                  <Link to="https://discord.gg/talisman" target="_blank">
+                    <NavigationDrawer.Footer.Icon>
+                      <Discord width="2.4rem" height="2.4rem" />
+                    </NavigationDrawer.Footer.Icon>
+                  </Link>
+                  <Link to="https://github.com/TalismanSociety/talisman-web" target="_blank">
+                    <NavigationDrawer.Footer.Icon>
+                      <GitHub width="2.4rem" height="2.4rem" />
+                    </NavigationDrawer.Footer.Icon>
+                  </Link>
+                  <Link to="https://twitter.com/wearetalisman" target="_blank">
+                    <NavigationDrawer.Footer.Icon>
+                      <Twitter width="2.4rem" height="2.4rem" />
+                    </NavigationDrawer.Footer.Icon>
+                  </Link>
+                  <Link to="https://medium.com/we-are-talisman" target="_blank">
+                    <NavigationDrawer.Footer.Icon>
+                      <Medium width="2.4rem" height="2.4rem" />
+                    </NavigationDrawer.Footer.Icon>
+                  </Link>
+                  <NavigationDrawer.Footer.A
+                    href="https://docs.talisman.xyz/talisman/legal-and-security/terms-of-use"
+                    target="_blank"
+                  >
+                    Terms
+                  </NavigationDrawer.Footer.A>
+                  <NavigationDrawer.Footer.A
+                    href="https://docs.talisman.xyz/talisman/legal-and-security/privacy-policy"
+                    target="_blank"
+                  >
+                    Privacy
+                  </NavigationDrawer.Footer.A>
+                </NavigationDrawer.Footer>
+              }
+            >
+              <Link to="/portfolio">
+                <NavigationDrawer.Item label="Portfolio" icon={<Eye />} />
+              </Link>
+              <Link to="/staking">
+                <NavigationDrawer.Item label="Staking" icon={<Zap />} />
+              </Link>
+              <Link to="/explore">
+                <NavigationDrawer.Item label="Explore" icon={<Compass />} />
+              </Link>
+              <Link to="https://talisman.banxa.com/" target="_blank">
+                <NavigationDrawer.Item label="Buy crypto" icon={<CreditCard />} />
+              </Link>
+            </NavigationDrawer>
           }
           footer={
             <div css={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0 2.4rem' }}>
