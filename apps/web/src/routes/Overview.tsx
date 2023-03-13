@@ -95,19 +95,35 @@ const AssetsOverview = () => {
 const Overview = () => (
   <div
     css={{
-      'display': 'flex',
-      'flexDirection': 'column',
-      'gap': '2.3rem',
+      'display': 'grid',
+      'gap': '4.8rem 2.3rem',
+      'gridAutoColumns': `minmax(0, 1fr)`,
+      'gridTemplateAreas': `
+        'allocation'
+        'assets'
+        'staking'
+        'crowdloans'
+      `,
       '@media(min-width: 1024px)': {
-        display: 'grid',
         gridTemplateColumns: '1fr 1fr',
+        gridTemplateAreas: `
+          'assets allocation'
+          'assets staking'
+          'assets crowdloans'
+        `,
       },
     }}
   >
-    <AssetsOverview />
-    <div css={{ display: 'flex', flexDirection: 'column', gap: '4.8rem' }}>
+    <div css={{ gridArea: 'allocation' }}>
       <PortfolioAllocationGraph />
+    </div>
+    <div css={{ gridArea: 'assets' }}>
+      <AssetsOverview />
+    </div>
+    <div css={{ gridArea: 'staking' }}>
       <OwnPools />
+    </div>
+    <div css={{ gridArea: 'crowdloans' }}>
       <Crowdloans />
     </div>
   </div>
