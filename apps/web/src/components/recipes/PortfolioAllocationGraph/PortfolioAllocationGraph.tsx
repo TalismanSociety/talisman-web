@@ -32,52 +32,49 @@ const AssetChip = (props: ChipProps) => <Chip {...props}>Asset</Chip>
 
 const StateChip = (props: ChipProps) => <Chip {...props}>State</Chip>
 
-const PortfolioAllocationGraphSkeleton = () => {
-  const theme = useTheme()
-  return (
-    <Skeleton.Surface
+const PortfolioAllocationGraphSkeleton = () => (
+  <Skeleton.Surface
+    css={{
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'flex-start',
+      borderRadius: '2.4rem',
+      padding: '2.4rem',
+    }}
+  >
+    <div
       css={{
         display: 'flex',
+        flexDirection: 'column',
         justifyContent: 'space-between',
-        alignItems: 'flex-start',
-        borderRadius: '2.4rem',
-        padding: '2.4rem',
+        gap: '1.6rem',
+        height: '100%',
       }}
     >
-      <div
-        css={{
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'space-between',
-          gap: '1.6rem',
-          height: '100%',
-        }}
-      >
-        <div>
-          <header>
-            <Text.H4>Portfolio allocation</Text.H4>
-          </header>
-        </div>
-        <ul css={{ display: 'flex', flexDirection: 'column', gap: '0.8rem', margin: 0, padding: 0 }}>
-          <Skeleton.Foreground css={{ width: '10rem', height: '1em' }} />
-          <Skeleton.Foreground css={{ width: '10rem', height: '1em' }} />
-        </ul>
-      </div>
       <div>
-        <VictoryPie
-          width={196}
-          height={196}
-          padding={4}
-          innerRadius={80}
-          cornerRadius={20}
-          padAngle={6}
-          labels={() => ''}
-          data={[{ x: 'dummy', y: 1 }]}
-        />
+        <header>
+          <Text.H4>Portfolio allocation</Text.H4>
+        </header>
       </div>
-    </Skeleton.Surface>
-  )
-}
+      <ul css={{ display: 'flex', flexDirection: 'column', gap: '0.8rem', margin: 0, padding: 0 }}>
+        <Skeleton.Foreground css={{ width: '10rem', height: '1em' }} />
+        <Skeleton.Foreground css={{ width: '10rem', height: '1em' }} />
+      </ul>
+    </div>
+    <div>
+      <VictoryPie
+        width={196}
+        height={196}
+        padding={4}
+        innerRadius={80}
+        cornerRadius={20}
+        padAngle={6}
+        labels={() => ''}
+        data={[{ x: 'dummy', y: 1 }]}
+      />
+    </div>
+  </Skeleton.Surface>
+)
 
 const PortfolioAllocationGraph = Object.assign(
   (props: PortfolioAllocationGraphProps) => {
