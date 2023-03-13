@@ -1,22 +1,17 @@
+import SectionHeader from '@components/molecules/SectionHeader'
 import StakeItem from '@components/recipes/StakeItem'
+import AnimatedFiatNumber from '@components/widgets/AnimatedFiatNumber'
 import { useTotalStaked } from '@domains/staking/hooks'
-import { useTheme } from '@emotion/react'
-import { Text } from '@talismn/ui'
 import { Suspense } from 'react'
 
 import Stakings from './Stakings'
 import ValidatorStakings from './ValidatorStakings'
 
 const StakingHeader = () => {
-  const theme = useTheme()
   const totalStaked = useTotalStaked()
+
   return (
-    <header>
-      <Text.H4 css={{ marginBottom: '2.4rem' }}>
-        Staking
-        <span css={{ color: theme.color.primary, marginLeft: '0.85em' }}>{totalStaked.localizedFiatAmount}</span>
-      </Text.H4>
-    </header>
+    <SectionHeader headlineText="Staking" supportingText={<AnimatedFiatNumber end={totalStaked.fiatAmount ?? 0} />} />
   )
 }
 
@@ -25,9 +20,7 @@ const OwnPools = () => (
     <Suspense
       fallback={
         <div>
-          <header>
-            <Text.H4 css={{ marginBottom: '2.4rem' }}>Staking</Text.H4>
-          </header>
+          <SectionHeader headlineText="Staking" />
           <section css={{ display: 'flex', flexDirection: 'column', gap: '1.6rem' }}>
             <StakeItem.Skeleton />
             <StakeItem.Skeleton />

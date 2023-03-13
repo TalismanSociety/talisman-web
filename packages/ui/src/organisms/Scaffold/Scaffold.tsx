@@ -18,12 +18,12 @@ export type ScaffoldProps = PropsWithChildren<{
   }
 }>
 
-const WIDE_VIEW_MEDIA_SELECTOR = '@media(min-width: 1024px)'
+export const SCAFFOLD_WIDE_VIEW_MEDIA_SELECTOR = '@media(min-width: 1024px)'
 
 const breakpointToCss = (breakpoint: Breakpoint) =>
   css({
     display: breakpoint === 'narrow' ? 'initial' : breakpoint === 'wide' ? 'none' : undefined,
-    [WIDE_VIEW_MEDIA_SELECTOR]: {
+    [SCAFFOLD_WIDE_VIEW_MEDIA_SELECTOR]: {
       display: breakpoint === 'wide' ? 'initial' : breakpoint === 'narrow' ? 'none' : undefined,
     },
   })
@@ -42,7 +42,7 @@ const Scaffold = (props: ScaffoldProps) => (
         }
       `,
       {
-        [WIDE_VIEW_MEDIA_SELECTOR]: {
+        [SCAFFOLD_WIDE_VIEW_MEDIA_SELECTOR]: {
           display: 'grid',
           gap: '4.8rem',
           gridTemplateColumns: 'min-content 1fr',
@@ -76,7 +76,7 @@ const Scaffold = (props: ScaffoldProps) => (
       css={{
         gridArea: 'main',
         padding: '2.4rem 2.4rem 10rem 2.4rem',
-        [WIDE_VIEW_MEDIA_SELECTOR]: { paddingBottom: 0, paddingLeft: 0 },
+        [SCAFFOLD_WIDE_VIEW_MEDIA_SELECTOR]: { paddingBottom: 0, paddingLeft: 0 },
       }}
     >
       {props.children}

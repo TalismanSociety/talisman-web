@@ -1,4 +1,6 @@
 import { ChainLogo, ExtensionStatusGate, Info, Panel, PanelSection, Pendor } from '@components'
+import SectionHeader from '@components/molecules/SectionHeader'
+import AnimatedFiatNumber from '@components/widgets/AnimatedFiatNumber'
 import { selectedSubstrateAccountsState } from '@domains/accounts/recoils'
 import { tokenPriceState } from '@domains/chains/recoils'
 import { useTotalCrowdloanTotalFiatAmount } from '@domains/crowdloans/hooks'
@@ -168,10 +170,8 @@ const SuspendableCrowdloans = ({ className }: { className?: string }) => {
 
   return (
     <section className={`wallet-crowdloans ${className}`} css={{ marginBottom: '2rem' }}>
-      <Panel
-        title={t('Crowdloans')}
-        subtitle={crowdloansUsd && crowdloansUsd !== 0 ? formatCurrency(crowdloansUsd) : ''}
-      >
+      <SectionHeader headlineText={t('Crowdloans')} supportingText={<AnimatedFiatNumber end={crowdloansUsd} />} />
+      <Panel>
         {!contributionsHydrated ? (
           <PanelSection comingSoon>
             <div>{t('Summoning Crowdloan Contributions...')}</div>
