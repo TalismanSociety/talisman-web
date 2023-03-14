@@ -38,38 +38,37 @@ const crowdloanDataState = selector<CrowdloanDetail[]>({
     })
     const data = await response.json()
     const crowdloans = data?.results?.map((crowdloan: any) => {
-      const links: { [key: string]: string } = {}
-      for (const key in crowdloan) {
-        if (key.startsWith('links.')) {
-          const value = crowdloan[key]
-          if (value) {
-            // check if value is not empty
-            const newKey = key
-              .replace(/^links\./, '')
-              .replace(/-(\w)/g, (_, c) => c.toUpperCase())
-              .toLowerCase()
-            links[newKey] = value
+      const links: { [key: string]: string } = Object.keys(crowdloan).reduce(
+        (acc: Record<string, string>, key: string) => {
+          if (key.startsWith('links.')) {
+            const value = crowdloan[key]
+            if (value) {
+              const newKey = key
+                .replace(/^links\./, '')
+                .replace(/-(\w)/g, (_, c) => c.toUpperCase())
+                .toLowerCase()
+              acc[newKey] = value
+            }
           }
-        }
-      }
+          return acc
+        },
+        {}
+      )
 
-      const customRewards = []
-      for (let i = 0; ; i++) {
-        const titleKey = `rewards.custom.${i}.title`
-        const valueKey = `rewards.custom.${i}.value`
-        if (!crowdloan[titleKey] && !crowdloan[valueKey]) {
-          // Exit loop if both title and value are null or undefined
-          break
-        }
-        // Skip iteration if either title or value is null or undefined
-        if (!crowdloan[titleKey] || !crowdloan[valueKey]) {
-          continue
-        }
-        customRewards.push({
-          title: crowdloan[titleKey],
-          value: crowdloan[valueKey],
+      const customRewards = Object.keys(crowdloan)
+        .filter(key => key.match(/^rewards\.custom\.\d+\.title$/))
+        .filter(titleKey => {
+          const valueKey = titleKey.replace('title', 'value')
+          return crowdloan[valueKey] !== undefined
         })
-      }
+        .map(titleKey => {
+          const valueKey = titleKey.replace('title', 'value')
+          return {
+            title: crowdloan[titleKey],
+            value: crowdloan[valueKey],
+          }
+        })
+        .filter(reward => reward.title && reward.value)
 
       return {
         id: crowdloan?.crowdloanId,
