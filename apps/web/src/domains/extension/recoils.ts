@@ -6,9 +6,9 @@ import { uniqBy } from 'lodash'
 import { useEffect } from 'react'
 import { atom, useRecoilState, useSetRecoilState } from 'recoil'
 
-export const allowExtensionConnectionState = atom({
+export const allowExtensionConnectionState = atom<boolean | null>({
   key: 'allow-extension-connection',
-  default: false,
+  default: null,
   effects: [storageEffect(localStorage)],
 })
 
@@ -18,7 +18,7 @@ export const ExtensionWatcher = () => {
 
   useEffect(() => {
     if (!allowExtensionConnection) {
-      return
+      return setAccounts([])
     }
 
     const unsubscribePromise = web3Enable(process.env.REACT_APP_APPLICATION_NAME ?? 'Talisman').then(() =>
@@ -33,9 +33,10 @@ export const ExtensionWatcher = () => {
   }, [allowExtensionConnection, setAccounts])
 
   // Auto connect on launch if Talisman extension is installed
+  // and user has not explicitly disable wallet connection
   useEffect(
     () => {
-      if ((globalThis as InjectedWindow).injectedWeb3?.talisman !== undefined) {
+      if ((globalThis as InjectedWindow).injectedWeb3?.talisman !== undefined && allowExtensionConnection !== false) {
         setAllowExtensionConnection(true)
       }
     },

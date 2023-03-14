@@ -1,14 +1,14 @@
 import {
   injectedAccountsState,
-  legacySelectedAccountState,
   readOnlyAccountsState,
   selectedAccountAddressesState,
+  selectedAccountsState,
 } from '@domains/accounts/recoils'
 import { fiatBalancesState, totalLocalizedFiatBalanceState } from '@domains/balances/recoils'
 import { allowExtensionConnectionState } from '@domains/extension/recoils'
 import { useTheme } from '@emotion/react'
 import { isWeb3Injected } from '@polkadot/extension-dapp'
-import { Download, Eye, Link, PlusCircle, TalismanHand, Trash2, Users } from '@talismn/icons'
+import { Download, Eye, EyePlus, Link, PlusCircle, Power, TalismanHand, Trash2, Users } from '@talismn/icons'
 import { Button, CircularProgressIndicator, IconButton, Identicon, ListItem, Menu, Text } from '@talismn/ui'
 import { shortenAddress } from '@util/format'
 import getDownloadLink from '@util/getDownloadLink'
@@ -21,7 +21,7 @@ import RemoveWatchedAccountConfirmationDialog from './RemoveWatchedAccountConfir
 const AccountsManagementIconButton = (props: { size?: number | string }) => {
   const theme = useTheme()
   const allowExtensionConnection = useRecoilValue(allowExtensionConnectionState)
-  const selectedAccount = useRecoilValue(legacySelectedAccountState)
+  const selectedAccounts = useRecoilValue(selectedAccountsState)
   const readonlyAccounts = useRecoilValue(readOnlyAccountsState)
 
   if ((!isWeb3Injected || !allowExtensionConnection) && readonlyAccounts.length === 0) {
@@ -38,21 +38,21 @@ const AccountsManagementIconButton = (props: { size?: number | string }) => {
     )
   }
 
-  if (selectedAccount === undefined) {
-    return (
-      <IconButton
-        as="figure"
-        size={props.size}
-        containerColor={theme.color.foreground}
-        contentColor={theme.color.primary}
-        css={{ cursor: 'pointer' }}
-      >
-        <Users />
-      </IconButton>
-    )
+  if (selectedAccounts.length === 1) {
+    return <Identicon value={selectedAccounts[0]!.address} size={props.size ?? '2.4rem'} css={{ cursor: 'pointer' }} />
   }
 
-  return <Identicon value={selectedAccount.address} size={props.size ?? '2.4rem'} css={{ cursor: 'pointer' }} />
+  return (
+    <IconButton
+      as="figure"
+      size={props.size}
+      containerColor={theme.color.foreground}
+      contentColor={theme.color.primary}
+      css={{ cursor: 'pointer' }}
+    >
+      <Users />
+    </IconButton>
+  )
 }
 
 const AccountsManagementMenu = (props: { button: ReactNode }) => {
@@ -123,6 +123,25 @@ const AccountsManagementMenu = (props: { button: ReactNode }) => {
     totalBalance,
   ])
 
+  const disconnectButton = useMemo(() => {
+    if (!allowExtensionConnection) {
+      return null
+    }
+
+    return (
+      <Menu.Item onClick={() => setAllowExtensionConnection(false)}>
+        <ListItem
+          leadingContent={
+            <IconButton containerColor={theme.color.foreground}>
+              <Power />
+            </IconButton>
+          }
+          headlineText="Disconnect wallet"
+        />
+      </Menu.Item>
+    )
+  }, [allowExtensionConnection, setAllowExtensionConnection, theme.color.foreground])
+
   return (
     <Menu>
       <Menu.Button>{props.button}</Menu.Button>
@@ -158,6 +177,7 @@ const AccountsManagementMenu = (props: { button: ReactNode }) => {
                 />
               </Menu.Item>
             ))}
+            {disconnectButton}
           </section>
           <section>
             <Text.Body
@@ -203,8 +223,8 @@ const AccountsManagementMenu = (props: { button: ReactNode }) => {
                   <ListItem
                     headlineText="Add watch only address"
                     leadingContent={
-                      <IconButton as="figure">
-                        <Eye />
+                      <IconButton as="figure" containerColor={theme.color.foreground}>
+                        <EyePlus />
                       </IconButton>
                     }
                   />
