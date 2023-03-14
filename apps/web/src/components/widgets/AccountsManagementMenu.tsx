@@ -5,10 +5,11 @@ import {
   selectedAccountsState,
 } from '@domains/accounts/recoils'
 import { fiatBalancesState, totalLocalizedFiatBalanceState } from '@domains/balances/recoils'
+import { useToastAddressCopied } from '@domains/common/hooks'
 import { useIsWeb3Injected } from '@domains/extension/hooks'
 import { allowExtensionConnectionState } from '@domains/extension/recoils'
 import { useTheme } from '@emotion/react'
-import { Download, Eye, EyePlus, Link, PlusCircle, Power, TalismanHand, Trash2, Users } from '@talismn/icons'
+import { Copy, Download, Eye, EyePlus, Link, PlusCircle, Power, TalismanHand, Trash2, Users } from '@talismn/icons'
 import { Button, CircularProgressIndicator, IconButton, Identicon, ListItem, Menu, Text } from '@talismn/ui'
 import { shortenAddress } from '@util/format'
 import getDownloadLink from '@util/getDownloadLink'
@@ -69,6 +70,8 @@ const AccountsManagementMenu = (props: { button: ReactNode }) => {
 
   const [allowExtensionConnection, setAllowExtensionConnection] = useRecoilState(allowExtensionConnectionState)
   const isWeb3Injected = useIsWeb3Injected()
+
+  const toastAddressCopied = useToastAddressCopied()
 
   const leadingMenuItem = useMemo(() => {
     if (!isWeb3Injected) {
@@ -177,6 +180,19 @@ const AccountsManagementMenu = (props: { button: ReactNode }) => {
                     }) ?? <CircularProgressIndicator size="1em" />
                   }
                   leadingContent={<Identicon value={x.address} size="4rem" />}
+                  revealTrailingContentOnHover
+                  trailingContent={
+                    <IconButton
+                      containerColor={theme.color.foreground}
+                      onClick={(event: any) => {
+                        event.stopPropagation()
+                        toastAddressCopied(x.address)
+                      }}
+                      css={{ cursor: 'copy' }}
+                    >
+                      <Copy />
+                    </IconButton>
+                  }
                 />
               </Menu.Item>
             ))}
@@ -205,15 +221,27 @@ const AccountsManagementMenu = (props: { button: ReactNode }) => {
                       leadingContent={<Identicon value={x.address} size="4rem" />}
                       revealTrailingContentOnHover
                       trailingContent={
-                        <IconButton
-                          containerColor={theme.color.foreground}
-                          onClick={(event: any) => {
-                            event.stopPropagation()
-                            toggleRemoveDialog()
-                          }}
-                        >
-                          <Trash2 />
-                        </IconButton>
+                        <div css={{ display: 'flex' }}>
+                          <IconButton
+                            containerColor={theme.color.foreground}
+                            onClick={(event: any) => {
+                              event.stopPropagation()
+                              toastAddressCopied(x.address)
+                            }}
+                            css={{ cursor: 'copy' }}
+                          >
+                            <Copy />
+                          </IconButton>
+                          <IconButton
+                            containerColor={theme.color.foreground}
+                            onClick={(event: any) => {
+                              event.stopPropagation()
+                              toggleRemoveDialog()
+                            }}
+                          >
+                            <Trash2 />
+                          </IconButton>
+                        </div>
                       }
                     />
                   </Menu.Item>

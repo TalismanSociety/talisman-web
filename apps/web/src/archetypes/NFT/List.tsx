@@ -1,14 +1,13 @@
 import { CopyButton } from '@components/CopyButton'
 import { NFTCard } from '@components/recipes/NFTCard'
 import { legacySelectedAccountState, selectedAccountsState } from '@domains/accounts/recoils'
+import { useToastAddressCopied } from '@domains/common/hooks'
 import { css } from '@emotion/react'
 import styled from '@emotion/styled'
 import { nftDataState } from '@libs/@talisman-nft/provider'
 import { NFTShort } from '@libs/@talisman-nft/types'
-import { Copy } from '@talismn/icons'
 import { Identicon, Text } from '@talismn/ui'
 import { device } from '@util/breakpoints'
-import toast from 'react-hot-toast'
 import { useRecoilValue } from 'recoil'
 
 import HiddenNFTGrid from './HiddenNFTGrid'
@@ -62,6 +61,7 @@ const List = () => {
 
   const address = useRecoilValue(legacySelectedAccountState)?.address
   const accounts = useRecoilValue(selectedAccountsState)
+  const toastAddressCopied = useToastAddressCopied()
 
   if (isFetching && items.length === 0)
     return (
@@ -154,15 +154,7 @@ const List = () => {
               <CopyButton
                 text={address}
                 onCopied={(text: string) => {
-                  toast(
-                    <>
-                      <Text.Body as="div" alpha="high">
-                        Address copied to clipboard
-                      </Text.Body>
-                      <Text.Body as="div">{text}</Text.Body>
-                    </>,
-                    { position: 'bottom-right', icon: <Copy /> }
-                  )
+                  toastAddressCopied(text)
                 }}
                 onFailed={(text: string) => {
                   console.log(`>>> failed`, text)
