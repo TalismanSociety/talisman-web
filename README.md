@@ -42,5 +42,5 @@ cp apps/web/.env.example apps/web/.env
 5. Start the dev server:
 
 ```sh
-yarn start
+yarn dev
 ```
