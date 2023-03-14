@@ -1,10 +1,11 @@
 import { Zap } from '@talismn/icons'
-import { FulScreenDialogQuarterSelector, FullScreenDialog, Text } from '@talismn/ui'
-import { AnchorHTMLAttributes, DetailedHTMLProps, ReactNode } from 'react'
+import { FulScreenDialogQuarterSelector, FullScreenDialog, InfoCard, InfoCardProps, Text } from '@talismn/ui'
+import { AnchorHTMLAttributes, DetailedHTMLProps, PropsWithChildren, ReactNode } from 'react'
 
 export type StakeDialogProps = {
   open?: boolean
   onRequestDismiss: () => unknown
+  stats: ReactNode
   stakeInput: ReactNode
   learnMoreAnchor: ReactNode
 }
@@ -14,7 +15,7 @@ const LearnMore = (props: DetailedHTMLProps<AnchorHTMLAttributes<HTMLAnchorEleme
 )
 
 const StakeDialog = Object.assign(
-  ({ stakeInput, learnMoreAnchor, ...props }: StakeDialogProps) => (
+  ({ stats, stakeInput, learnMoreAnchor, ...props }: StakeDialogProps) => (
     <FullScreenDialog
       {...props}
       title={
@@ -28,6 +29,7 @@ const StakeDialog = Object.assign(
         },
       }}
     >
+      {stats}
       {stakeInput}
       <Text.Body as="p" css={{ marginTop: '4.8rem' }}>
         Nomination pools allow participants to permissionlessly pool funds together to stake as a group. Benefits of
@@ -36,7 +38,15 @@ const StakeDialog = Object.assign(
       </Text.Body>
     </FullScreenDialog>
   ),
-  { LearnMore }
+  {
+    LearnMore,
+    Stats: Object.assign(
+      (props: PropsWithChildren) => (
+        <section {...props} css={{ display: 'flex', alignItems: 'center', gap: '1.6rem', marginBottom: '3.2rem' }} />
+      ),
+      { Item: (props: InfoCardProps) => <InfoCard {...props} css={{ flex: 1 }} /> }
+    ),
+  }
 )
 
 export default StakeDialog
