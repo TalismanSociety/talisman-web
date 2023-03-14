@@ -5,6 +5,7 @@ import { ReactComponent as Medium } from '@assets/icons/medium-header.svg'
 import { ReactComponent as Twitter } from '@assets/icons/twitter-header.svg'
 import { ModalProvider } from '@components'
 import AccountValueInfo from '@components/recipes/AccountValueInfo'
+import AccountConnectionGuard, { useShouldShowAccountConnectionGuard } from '@components/widgets/AccountConnectionGuard'
 import AccountsManagementMenu from '@components/widgets/AccountsManagementMenu'
 import { RouteErrorElement } from '@components/widgets/ErrorBoundary'
 import StakeDialog from '@components/widgets/StakeWidget'
@@ -41,7 +42,13 @@ import Portfolio from './Portfolio'
 import TransactionHistory from './TransactionHistory'
 
 const Header = () => {
+  const shouldShowAccountConnectionGuard = useShouldShowAccountConnectionGuard()
   const accounts = useRecoilValue(selectedAccountsState)
+
+  if (shouldShowAccountConnectionGuard) {
+    return null
+  }
+
   return (
     <div css={{ [SCAFFOLD_WIDE_VIEW_MEDIA_SELECTOR]: { marginTop: '4rem' } }}>
       <AccountsManagementMenu
@@ -274,13 +281,38 @@ export default Sentry.wrapCreateBrowserRouter(createBrowserRouter)([
       { path: '/', element: <Navigate to="portfolio" /> },
       {
         path: 'portfolio',
-        element: <Portfolio />,
+        element: (
+          <AccountConnectionGuard>
+            <Portfolio />
+          </AccountConnectionGuard>
+        ),
         children: [
           { path: '', element: <Overview /> },
           { path: 'assets', element: <Assets /> },
-          { path: 'nfts', element: <NFTsPage /> },
-          { path: 'history', element: <TransactionHistory /> },
-          { path: 'assets/:assetId', element: <AssetItem /> },
+          {
+            path: 'nfts',
+            element: (
+              <AccountConnectionGuard>
+                <NFTsPage />
+              </AccountConnectionGuard>
+            ),
+          },
+          {
+            path: 'history',
+            element: (
+              <AccountConnectionGuard>
+                <TransactionHistory />
+              </AccountConnectionGuard>
+            ),
+          },
+          {
+            path: 'assets/:assetId',
+            element: (
+              <AccountConnectionGuard>
+                <AssetItem />
+              </AccountConnectionGuard>
+            ),
+          },
         ],
       },
       { path: 'history', element: <Navigate to="/portfolio/history" /> },
