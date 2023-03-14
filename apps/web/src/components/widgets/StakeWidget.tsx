@@ -6,10 +6,11 @@ import StakeDialogComponent from '@components/recipes/StakeDialog'
 import StakingInput from '@components/recipes/StakingInput'
 import { injectedSubstrateAccountsState } from '@domains/accounts/recoils'
 import { apiState, chainState, nativeTokenDecimalState } from '@domains/chains/recoils'
-import { useChainState, useExtrinsic, useTokenAmountFromPlanck } from '@domains/common/hooks'
-import { usePoolAddForm } from '@domains/nominationPools/hooks'
+import { useChainState, useEraEtaFormatter, useExtrinsic, useTokenAmountFromPlanck } from '@domains/common/hooks'
+import { useInflation, usePoolAddForm } from '@domains/nominationPools/hooks'
 import { allPendingPoolRewardsState, eraStakersState, recommendedPoolsState } from '@domains/nominationPools/recoils'
 import { createAccounts, getPoolUnbonding } from '@domains/nominationPools/utils'
+import { CircularProgressIndicator } from '@talismn/ui'
 import { shortenAddress } from '@util/format'
 import { Maybe } from '@util/monads'
 import BN from 'bn.js'
@@ -325,6 +326,22 @@ const StakeInput = () => {
   )
 }
 
+const Rewards = () => {
+  return (
+    <>
+      {useInflation()
+        .valueMaybe()
+        ?.stakedReturn.toLocaleString(undefined, { style: 'percent', maximumFractionDigits: 2 }) ?? (
+        <CircularProgressIndicator size="1em" />
+      )}
+    </>
+  )
+}
+
+const EraEta = () => {
+  return <>{useEraEtaFormatter().valueMaybe()?.(new BN(1)) ?? <CircularProgressIndicator size="1em" />}</>
+}
+
 const StakeDialog = () => {
   const [searchParams, setSearchParams] = useSearchParams()
 
@@ -334,6 +351,26 @@ const StakeDialog = () => {
     <StakeDialogComponent
       open={open}
       onRequestDismiss={useCallback(() => setSearchParams(new URLSearchParams()), [setSearchParams])}
+      stats={
+        <StakeDialogComponent.Stats>
+          <StakeDialogComponent.Stats.Item
+            headlineText="Rewards"
+            text={
+              <Suspense fallback={<CircularProgressIndicator size="1em" />}>
+                <Rewards />
+              </Suspense>
+            }
+          />
+          <StakeDialogComponent.Stats.Item
+            headlineText="Current era ends"
+            text={
+              <Suspense fallback={<CircularProgressIndicator size="1em" />}>
+                <EraEta />
+              </Suspense>
+            }
+          />
+        </StakeDialogComponent.Stats>
+      }
       stakeInput={
         <Suspense fallback={<StakingInput.Skeleton />}>
           <StakeInput />

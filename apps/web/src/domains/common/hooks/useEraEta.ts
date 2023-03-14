@@ -1,6 +1,7 @@
 import { apiState } from '@domains/chains/recoils'
 import BN from 'bn.js'
 import { addMilliseconds, formatDistanceToNow } from 'date-fns'
+import { useMemo } from 'react'
 import { useRecoilValue } from 'recoil'
 
 import useChainState from './useChainState'
@@ -12,18 +13,22 @@ export const useEraEtaFormatter = () => {
   const api = useRecoilValue(apiState)
   const sessionProgressLoadable = useChainState('derive', 'session', 'progress', [])
 
-  return sessionProgressLoadable.map(
-    sessionProgress => (era: BN) =>
-      formatDistanceToNow(
-        addMilliseconds(
-          new Date(),
-          erasToMilliseconds(
-            era,
-            sessionProgress.eraLength,
-            sessionProgress.eraProgress,
-            api.consts.babe.expectedBlockTime
+  return useMemo(
+    () =>
+      sessionProgressLoadable.map(
+        sessionProgress => (era: BN) =>
+          formatDistanceToNow(
+            addMilliseconds(
+              new Date(),
+              erasToMilliseconds(
+                era,
+                sessionProgress.eraLength,
+                sessionProgress.eraProgress,
+                api.consts.babe.expectedBlockTime
+              )
+            )
           )
-        )
-      )
+      ),
+    [api.consts.babe.expectedBlockTime, sessionProgressLoadable]
   )
 }

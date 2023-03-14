@@ -1,4 +1,5 @@
 import { ComponentMeta, Story } from '@storybook/react'
+import { InfoCard } from '@talismn/ui'
 
 import StakingInput from '../StakingInput'
 import { Default as StakeInputStory } from '../StakingInput/StakingInput.stories'
@@ -13,6 +14,12 @@ export const Default: Story<StakeDialogProps> = args => <StakeDialog {...args} /
 
 Default.args = {
   open: true,
+  stats: (
+    <StakeDialog.Stats>
+      <StakeDialog.Stats.Item headlineText="Rewards" text="15.07% APR" />
+      <StakeDialog.Stats.Item headlineText="Current era ends" text="9h 24min" />
+    </StakeDialog.Stats>
+  ),
   stakeInput: <StakingInput {...(StakeInputStory.args as any)} />,
   learnMoreAnchor: <StakeDialog.LearnMore />,
 }
