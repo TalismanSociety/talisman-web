@@ -5,7 +5,7 @@ import {
   selectedAccountsState,
 } from '@domains/accounts/recoils'
 import { fiatBalancesState, totalLocalizedFiatBalanceState } from '@domains/balances/recoils'
-import { useToastAddressCopied } from '@domains/common/hooks'
+import { copyAddressToClipboard } from '@domains/common/utils'
 import { useIsWeb3Injected } from '@domains/extension/hooks'
 import { allowExtensionConnectionState } from '@domains/extension/recoils'
 import { useTheme } from '@emotion/react'
@@ -70,8 +70,6 @@ const AccountsManagementMenu = (props: { button: ReactNode }) => {
 
   const [allowExtensionConnection, setAllowExtensionConnection] = useRecoilState(allowExtensionConnectionState)
   const isWeb3Injected = useIsWeb3Injected()
-
-  const toastAddressCopied = useToastAddressCopied()
 
   const leadingMenuItem = useMemo(() => {
     if (!isWeb3Injected) {
@@ -186,7 +184,7 @@ const AccountsManagementMenu = (props: { button: ReactNode }) => {
                       containerColor={theme.color.foreground}
                       onClick={(event: any) => {
                         event.stopPropagation()
-                        toastAddressCopied(x.address)
+                        copyAddressToClipboard(x.address)
                       }}
                       css={{ cursor: 'copy' }}
                     >
@@ -226,7 +224,7 @@ const AccountsManagementMenu = (props: { button: ReactNode }) => {
                             containerColor={theme.color.foreground}
                             onClick={(event: any) => {
                               event.stopPropagation()
-                              toastAddressCopied(x.address)
+                              copyAddressToClipboard(x.address)
                             }}
                             css={{ cursor: 'copy' }}
                           >
