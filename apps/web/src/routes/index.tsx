@@ -8,7 +8,7 @@ import AccountValueInfo from '@components/recipes/AccountValueInfo'
 import AccountsManagementMenu from '@components/widgets/AccountsManagementMenu'
 import { RouteErrorElement } from '@components/widgets/ErrorBoundary'
 import StakeDialog from '@components/widgets/StakeWidget'
-import { accountsState, legacySelectedAccountState } from '@domains/accounts/recoils'
+import { accountsState, selectedAccountsState } from '@domains/accounts/recoils'
 import { apiState, nativeTokenDecimalState, nativeTokenPriceState } from '@domains/chains/recoils'
 import { recommendedPoolsState } from '@domains/nominationPools/recoils'
 import * as MoonbeamContributors from '@libs/moonbeam-contributors'
@@ -24,6 +24,7 @@ import {
   Text,
   TopAppBar,
 } from '@talismn/ui'
+import { shortenAddress } from '@util/format'
 import posthog from 'posthog-js'
 import { useCallback, useEffect, useState } from 'react'
 import { Link, Navigate, Outlet, createBrowserRouter, useLocation } from 'react-router-dom'
@@ -40,14 +41,14 @@ import Portfolio from './Portfolio'
 import TransactionHistory from './TransactionHistory'
 
 const Header = () => {
-  const account = useRecoilValue(legacySelectedAccountState)
+  const accounts = useRecoilValue(selectedAccountsState)
   return (
     <div css={{ [SCAFFOLD_WIDE_VIEW_MEDIA_SELECTOR]: { marginTop: '4rem' } }}>
       <AccountsManagementMenu
         button={
           <AccountValueInfo
-            address={account?.address ?? ''}
-            name={account?.name ?? 'All Accounts'}
+            address={accounts.length === 1 ? accounts[0]!.address : ''}
+            name={accounts.length === 1 ? accounts[0]!.name ?? shortenAddress(accounts[0]!.address) : 'All accounts'}
             balance={<Total />}
           />
         }
