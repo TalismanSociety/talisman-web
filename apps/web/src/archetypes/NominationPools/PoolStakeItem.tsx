@@ -63,6 +63,7 @@ const PoolStakeItem = ({
   return (
     <>
       <PoolStakeItemComponent
+        readonly={item.account?.readonly}
         hideIdenticon={hideIdenticon}
         poolStatus={item.status}
         accountName={item.account?.name ?? ''}

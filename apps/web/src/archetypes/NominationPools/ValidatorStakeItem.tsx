@@ -42,6 +42,7 @@ const ValidatorStakeItem = (props: {
   return (
     <>
       <ValidatorStakeItemComponent
+        readonly={props.account.readonly}
         accountName={props.account.name ?? ''}
         accountAddress={props.account.address}
         stakingAmount={active.toHuman()}
