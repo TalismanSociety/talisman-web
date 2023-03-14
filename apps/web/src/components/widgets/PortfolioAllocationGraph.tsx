@@ -1,5 +1,6 @@
 import PortfolioAllocationGraphComponent from '@components/recipes/PortfolioAllocationGraph'
 import { selectedBalancesState, totalSelectedAccountsFiatBalance } from '@domains/balances/recoils'
+import { HiddenDetails, Text } from '@talismn/ui'
 import { groupBy } from 'lodash'
 import { Suspense, useCallback, useMemo, useState } from 'react'
 import { selector, useRecoilValue } from 'recoil'
@@ -29,7 +30,7 @@ const assetDataState = selector({
     const otherBalancePercent = otherBalanceTotal / get(totalSelectedAccountsFiatBalance)
 
     if (displayableBalance === undefined || displayableBalanceTotal === undefined) {
-      return
+      return []
     }
 
     return [
@@ -56,7 +57,7 @@ const SuspendablePortfolioAllocationGraph = () => {
   const [displayData, setDisplayData] = useState<'asset' | 'state'>()
 
   const parsedAssetData = useMemo(
-    () => assetData?.map(x => ({ label: x.symbol, value: x.percent, color: 'red' })) ?? [],
+    () => assetData.map(x => ({ label: x.symbol, value: x.percent, color: 'red' })) ?? [],
     [assetData]
   )
 
@@ -71,16 +72,18 @@ const SuspendablePortfolioAllocationGraph = () => {
   )
 
   return (
-    <PortfolioAllocationGraphComponent
-      assetChip={
-        <PortfolioAllocationGraphComponent.AssetChip onClick={useCallback(() => setDisplayData('asset'), [])} />
-      }
-      stateChip={
-        <PortfolioAllocationGraphComponent.StateChip onClick={useCallback(() => setDisplayData('state'), [])} />
-      }
-      valueType={displayData === 'state' ? 'currency' : 'percent'}
-      data={displayData === 'state' ? parsedStateData : parsedAssetData}
-    />
+    <HiddenDetails hidden={assetData.length === 0} overlay={<Text.H3>No assets found</Text.H3>}>
+      <PortfolioAllocationGraphComponent
+        assetChip={
+          <PortfolioAllocationGraphComponent.AssetChip onClick={useCallback(() => setDisplayData('asset'), [])} />
+        }
+        stateChip={
+          <PortfolioAllocationGraphComponent.StateChip onClick={useCallback(() => setDisplayData('state'), [])} />
+        }
+        valueType={displayData === 'state' ? 'currency' : 'percent'}
+        data={displayData === 'state' ? parsedStateData : parsedAssetData}
+      />
+    </HiddenDetails>
   )
 }
 

@@ -123,7 +123,7 @@ const Overview = () => (
     <div css={{ gridArea: 'staking' }}>
       <OwnPools />
     </div>
-    <div css={{ gridArea: 'crowdloans' }}>
+    <div css={{ 'gridArea': 'crowdloans', ':empty': { display: 'none' } }}>
       <Crowdloans />
     </div>
   </div>

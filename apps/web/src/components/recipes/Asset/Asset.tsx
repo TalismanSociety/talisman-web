@@ -410,7 +410,7 @@ export const AssetsList = (props: AssetsListProps) => {
   const { isLoading } = props
 
   return (
-    <HiddenDetails overlay={<Text.H3>No Assets Found</Text.H3>} hidden={!isLoading && isEmpty(props.children)}>
+    <HiddenDetails overlay={<Text.H3>No assets found</Text.H3>} hidden={!isLoading && isEmpty(props.children)}>
       <Table>
         <thead>
           <tr>

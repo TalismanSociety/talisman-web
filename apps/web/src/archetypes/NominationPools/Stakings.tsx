@@ -50,6 +50,17 @@ const Stakings = () => {
 
   const activeEraLoadable = useChainState('query', 'staking', 'activeEra', [])
 
+  const balances = useChainState(
+    'query',
+    'system',
+    'account.multi',
+    useMemo(() => accounts.filter(x => !x.readonly).map(({ address }) => address), [accounts])
+  )
+  const totalFree = useMemo(
+    () => balances.map(x => x.reduce((previous, current) => previous + current.data.free.toBigInt(), 0n)),
+    [balances]
+  )
+
   const sessionProgressLoadable = useChainState('derive', 'session', 'progress', [])
 
   const eraStakersLoadable = useRecoilValueLoadable(
@@ -135,9 +146,11 @@ const Stakings = () => {
               }}
             >
               <Text.Body>You have no staked assets yet...</Text.Body>
-              <Button as={Link} variant="outlined" to="/staking">
-                Get started
-              </Button>
+              {totalFree.valueMaybe() !== 0n && (
+                <Button as={Link} variant="outlined" to="/staking">
+                  Get started
+                </Button>
+              )}
             </div>
           }
         >

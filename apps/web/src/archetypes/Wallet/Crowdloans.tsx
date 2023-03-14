@@ -168,6 +168,11 @@ const SuspendableCrowdloans = ({ className }: { className?: string }) => {
   })
   const crowdloansUsd = useTotalCrowdloanTotalFiatAmount()
 
+  // Temporary disable crowdloan skeleton
+  if (!contributionsHydrated || contributions.length === 0) {
+    return null
+  }
+
   return (
     <section className={`wallet-crowdloans ${className}`} css={{ marginBottom: '2rem' }}>
       <SectionHeader headlineText={t('Crowdloans')} supportingText={<AnimatedFiatNumber end={crowdloansUsd} />} />
