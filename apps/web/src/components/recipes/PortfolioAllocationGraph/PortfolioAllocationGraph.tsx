@@ -97,7 +97,7 @@ const PortfolioAllocationGraph = Object.assign(
             flexDirection: 'column',
             justifyContent: 'space-between',
             gap: '1.6rem',
-            height: '100%',
+            alignSelf: 'stretch',
           }}
         >
           <div>

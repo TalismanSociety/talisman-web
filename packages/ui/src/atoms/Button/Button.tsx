@@ -6,9 +6,13 @@ import CircularProgressIndicator from '../CircularProgressIndicator'
 
 type ButtonElementType = Extract<React.ElementType, 'button' | 'a'> | ElementType<any>
 
-type PolymorphicButtonProps<T extends ButtonElementType> = {
+type PolymorphicButtonProps<T extends ButtonElementType = 'button'> = {
   as?: T
-  variant?: 'outlined' | 'noop' | 'secondary'
+  variant?:
+    | 'outlined'
+    | 'secondary'
+    // Deprecated
+    | 'noop'
   leadingIcon?: ReactNode
   trailingIcon?: ReactNode
   disabled?: boolean
@@ -16,10 +20,10 @@ type PolymorphicButtonProps<T extends ButtonElementType> = {
   loading?: boolean
 }
 
-export type ButtonProps<T extends ButtonElementType> = PolymorphicButtonProps<T> &
+export type ButtonProps<T extends ButtonElementType = 'button'> = PolymorphicButtonProps<T> &
   Omit<React.ComponentPropsWithoutRef<T>, keyof PolymorphicButtonProps<T>>
 
-const Button = <T extends ButtonElementType>({
+const Button = <T extends ButtonElementType = 'button'>({
   as = 'button' as T,
   variant,
   trailingIcon,

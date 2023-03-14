@@ -5,9 +5,9 @@ import {
   selectedAccountsState,
 } from '@domains/accounts/recoils'
 import { fiatBalancesState, totalLocalizedFiatBalanceState } from '@domains/balances/recoils'
+import { useIsWeb3Injected } from '@domains/extension/hooks'
 import { allowExtensionConnectionState } from '@domains/extension/recoils'
 import { useTheme } from '@emotion/react'
-import { isWeb3Injected } from '@polkadot/extension-dapp'
 import { Download, Eye, EyePlus, Link, PlusCircle, Power, TalismanHand, Trash2, Users } from '@talismn/icons'
 import { Button, CircularProgressIndicator, IconButton, Identicon, ListItem, Menu, Text } from '@talismn/ui'
 import { shortenAddress } from '@util/format'
@@ -23,6 +23,7 @@ const AccountsManagementIconButton = (props: { size?: number | string }) => {
   const allowExtensionConnection = useRecoilValue(allowExtensionConnectionState)
   const selectedAccounts = useRecoilValue(selectedAccountsState)
   const readonlyAccounts = useRecoilValue(readOnlyAccountsState)
+  const isWeb3Injected = useIsWeb3Injected()
 
   if ((!isWeb3Injected || !allowExtensionConnection) && readonlyAccounts.length === 0) {
     return (
@@ -67,6 +68,7 @@ const AccountsManagementMenu = (props: { button: ReactNode }) => {
   const fiatBalances = useRecoilValueLoadable(fiatBalancesState)
 
   const [allowExtensionConnection, setAllowExtensionConnection] = useRecoilState(allowExtensionConnectionState)
+  const isWeb3Injected = useIsWeb3Injected()
 
   const leadingMenuItem = useMemo(() => {
     if (!isWeb3Injected) {
@@ -116,6 +118,7 @@ const AccountsManagementMenu = (props: { button: ReactNode }) => {
     )
   }, [
     allowExtensionConnection,
+    isWeb3Injected,
     setAllowExtensionConnection,
     setSelectedAccountAddresses,
     theme.color.foreground,
