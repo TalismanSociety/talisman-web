@@ -22,9 +22,9 @@ export const SCAFFOLD_WIDE_VIEW_MEDIA_SELECTOR = '@media(min-width: 1024px)'
 
 const breakpointToCss = (breakpoint: Breakpoint) =>
   css({
-    display: breakpoint === 'narrow' ? 'initial' : breakpoint === 'wide' ? 'none' : undefined,
+    display: breakpoint === 'narrow' ? 'revert' : breakpoint === 'wide' ? 'none' : undefined,
     [SCAFFOLD_WIDE_VIEW_MEDIA_SELECTOR]: {
-      display: breakpoint === 'wide' ? 'initial' : breakpoint === 'narrow' ? 'none' : undefined,
+      display: breakpoint === 'wide' ? 'revert' : breakpoint === 'narrow' ? 'none' : undefined,
     },
   })
 
