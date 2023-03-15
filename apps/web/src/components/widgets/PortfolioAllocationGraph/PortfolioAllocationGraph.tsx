@@ -5,6 +5,8 @@ import { groupBy } from 'lodash'
 import { Suspense, useCallback, useMemo, useState } from 'react'
 import { selector, useRecoilValue } from 'recoil'
 
+import colors from './colors.json'
+
 const assetDataState = selector({
   key: 'PortfolioAllocationGraph/AssetData',
   get: ({ get }) => {
@@ -57,7 +59,12 @@ const SuspendablePortfolioAllocationGraph = () => {
   const [displayData, setDisplayData] = useState<'asset' | 'state'>()
 
   const parsedAssetData = useMemo(
-    () => assetData.map(x => ({ label: x.symbol, value: x.percent, color: 'red' })) ?? [],
+    () =>
+      assetData.map(x => ({
+        label: x.symbol,
+        value: x.percent,
+        color: colors[x.symbol.toUpperCase() as keyof typeof colors] ?? '#5A5A5A',
+      })) ?? [],
     [assetData]
   )
 
