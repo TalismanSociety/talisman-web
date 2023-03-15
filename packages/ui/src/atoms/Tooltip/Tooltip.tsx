@@ -33,6 +33,7 @@ const Tooltip = ({ placement = 'right', ...props }: TooltipProps) => {
     open: open,
     onOpenChange: setOpen,
     placement,
+    strategy: 'fixed',
     middleware: [offset({ mainAxis: 10, crossAxis: 10 }), flip(), shift()],
     whileElementsMounted: autoUpdate,
   })
@@ -45,10 +46,12 @@ const Tooltip = ({ placement = 'right', ...props }: TooltipProps) => {
     useRole(context, { role: 'tooltip' }),
   ])
 
+  const openDialogs = document.querySelectorAll('dialog[open]')
+
   return (
     <>
       {props.children(getReferenceProps({}))}
-      <FloatingPortal root={document.querySelector('dialog[open]') ?? (document.body as any)}>
+      <FloatingPortal root={(openDialogs.item(openDialogs.length - 1) as any) ?? (document.body as any)}>
         {open && Boolean(props.content) && (
           <motion.div
             ref={refs.setFloating}
@@ -63,7 +66,7 @@ const Tooltip = ({ placement = 'right', ...props }: TooltipProps) => {
               position: strategy,
               top: y ?? 0,
               left: x ?? 0,
-              width: 'max-content',
+              width: 'fit-content',
             }}
             {...getFloatingProps()}
           >
