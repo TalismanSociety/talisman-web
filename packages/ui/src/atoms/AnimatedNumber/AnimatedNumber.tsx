@@ -2,6 +2,7 @@ import { useMemo } from 'react'
 import CountUp, { CountUpProps } from 'react-countup'
 
 export type AnimatedNumberProps = Pick<CountUpProps, 'start' | 'end'> & {
+  decimals?: number
   formatter?: CountUpProps['formattingFn'] | Intl.NumberFormat
 }
 
