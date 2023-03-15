@@ -78,7 +78,7 @@ const NavigationDrawerItem = (props: NavigationDrawerItemProps) => {
           'display': 'flex',
           'alignItems': 'center',
           'gap': '3.7rem',
-          '@media(min-width: 414px)': { fontSize: '2.4rem' },
+          '@media(min-width: 375px)': { fontSize: '2.4rem' },
         }}
       >
         <IconContext.Provider value={{ size: '1em' }}>{props.icon}</IconContext.Provider>
