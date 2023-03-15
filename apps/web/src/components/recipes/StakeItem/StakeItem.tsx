@@ -110,27 +110,32 @@ const StakeItem = Object.assign(
         />
         <div
           css={{
-            display: 'flex',
-            justifyContent: 'flex-end',
-            flexWrap: 'wrap',
-            gap: '0.8rem',
-            padding: '0.8rem 1.6rem',
-            backgroundColor: theme.color.foreground,
+            'display': 'flex',
+            'justifyContent': 'flex-end',
+            'flexWrap': 'wrap',
+            'gap': '0.8rem',
+            'padding': '0.8rem 1.6rem',
+            'backgroundColor': theme.color.foreground,
+            ':empty': {
+              display: 'none',
+            },
           }}
         >
           {!props.readonly && <div css={{ display: 'flex', flexWrap: 'wrap', gap: '0.8rem' }}>{props.actions}</div>}
-          <Text.Body
-            css={{
-              flex: 1,
-              justifyContent: 'flex-end',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.25em',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            {props.status}
-          </Text.Body>
+          {props.status && (
+            <Text.Body
+              css={{
+                flex: 1,
+                justifyContent: 'flex-end',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.25em',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              {props.status}
+            </Text.Body>
+          )}
         </div>
       </article>
     )
