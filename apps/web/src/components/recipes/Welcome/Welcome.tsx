@@ -30,14 +30,14 @@ const AddressInputConfirmButton = (props: Omit<ButtonProps, 'variant' | 'childre
   </Button>
 )
 
-const PopularAccount = (props: { address: string; name: string; onClick?: () => unknown }) => {
+const PopularAccount = (props: { address: string; name: string; description?: string; onClick?: () => unknown }) => {
   const theme = useTheme()
   return (
     <Clickable.WithFeedback onClick={props.onClick}>
       <ListItem
         leadingContent={<Identicon value={props.address} size="3.2rem" />}
         headlineText={props.name}
-        supportingText={shortenAddress(props.address)}
+        supportingText={props.description ?? shortenAddress(props.address)}
         css={{ borderRadius: '1.2rem', backgroundColor: theme.color.foreground }}
       />
     </Clickable.WithFeedback>
@@ -93,8 +93,11 @@ const Welcome = Object.assign(
           <div
             css={{
               'display': 'grid',
-              'gridTemplateColumns': `repeat(2, minmax(0, 1fr))`,
+              'gridTemplateColumns': `repeat(1, minmax(0, 1fr))`,
               'gap': '1.6rem 2.4rem',
+              '@media(min-width: 562px)': {
+                gridTemplateColumns: `repeat(2, minmax(0, 1fr))`,
+              },
               '@media(min-width: 1024px)': {
                 gridTemplateColumns: `repeat(3, minmax(0, 1fr))`,
               },

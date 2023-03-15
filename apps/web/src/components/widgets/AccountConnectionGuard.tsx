@@ -9,10 +9,13 @@ import { useRecoilValue, useSetRecoilState } from 'recoil'
 
 export type AccountConnectionGuardProps = PropsWithChildren
 
-const POPULAR_ACCOUNTS: ReadonlyAccount[] = [
-  { name: 'Leemo', address: '5CLyeaugtNX8E24cFMRJZanhV1EZfTHwkt2MgFmcez9iuEe4' },
-  { name: 'Swader', address: '5CK8D1sKNwF473wbuBP6NuhQfPaWUetNsWUNAAzVwTfxqjfr' },
-  { name: 'Gav', address: '5F7LiCA6T4DWUDRQyFAWsRqVwxrJEznUtcw4WNnb5fe6snCH' },
+const POPULAR_ACCOUNTS: Array<ReadonlyAccount & { description?: string }> = [
+  { name: 'Swader', address: '5CK8D1sKNwF473wbuBP6NuhQfPaWUetNsWUNAAzVwTfxqjfr', description: '200+ NFTs' },
+  { name: '🍺 Gav', address: '5F7LiCA6T4DWUDRQyFAWsRqVwxrJEznUtcw4WNnb5fe6snCH', description: 'Polkadot founder' },
+  { name: 'Jay', address: '5DfAiCavECjh37Bdgy7q5ib7AtjJmvZDmSkVBoBXPjVWXCST', description: '$1M+ assets' },
+  { name: 'Bill Laboor', address: '5HjZCeVcUVpThHNMyMBMKqN5ajph9CkDmZhn9BK48TmC3K4Y', description: '50+ Crowdloans' },
+  { address: '0x0D0707963952f2fBA59dD06f2b425ace40b492Fe', description: '$767M+ EVM assets' },
+  { address: '0x804c4c527f3b278a1b328ebe239359e1c1008398', description: '$13M+ EVM assets' },
 ]
 
 export const useShouldShowAccountConnectionGuard = () => {
@@ -59,6 +62,7 @@ const AccountConnectionGuard = (props: AccountConnectionGuardProps) => {
           <Welcome.PopularAccount
             name={x.name ?? shortenAddress(x.address)}
             address={x.address}
+            description={x.description}
             onClick={() => add(x)}
           />
         ))}
