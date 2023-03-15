@@ -7,13 +7,21 @@ import Asset, { AssetsList, AssetsListLocked } from '@components/recipes/Asset'
 import AnimatedFiatNumber from '@components/widgets/AnimatedFiatNumber'
 import PortfolioAllocationGraph from '@components/widgets/PortfolioAllocationGraph'
 import { Button } from '@talismn/ui'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 
 const AssetsOverview = () => {
   const [search, setSearch] = useState('')
   const { fiatTotal } = useAssets()
   const { tokens, balances, isLoading } = useAssetsFiltered({ size: 8, search })
+
+  const lockedAssets = useMemo(
+    () =>
+      tokens
+        ?.filter(token => token.locked)
+        ?.map((token, i) => <Asset key={token?.tokenDetails?.id} token={token} balances={balances} lockedAsset />),
+    [balances, tokens]
+  )
 
   return (
     <div css={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '1.6rem' }}>
@@ -72,14 +80,13 @@ const AssetsOverview = () => {
             <Asset key={token?.tokenDetails?.id} token={token} balances={balances} />
           ))}
         </AssetsList>
-        <AssetsListLocked isLoading={isLoading}>
-          {/* tokens but filtered by locked */}
-          {tokens
-            ?.filter(token => token.locked)
-            ?.map((token, i) => (
-              <Asset key={token?.tokenDetails?.id} token={token} balances={balances} lockedAsset />
-            ))}
-        </AssetsListLocked>
+        {isLoading ||
+          (lockedAssets.length > 0 && (
+            <AssetsListLocked isLoading={isLoading}>
+              {/* tokens but filtered by locked */}
+              {lockedAssets}
+            </AssetsListLocked>
+          ))}
       </section>
       {tokens.length >= 8 && !isLoading ? (
         <Button variant="secondary" css={{ width: 'fit-content' }} as={Link} to="assets">
