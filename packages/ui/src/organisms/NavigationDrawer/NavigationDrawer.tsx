@@ -97,7 +97,7 @@ const NavigationDrawerFooter = Object.assign(
         display: 'flex',
         justifyContent: 'space-evenly',
         alignItems: 'center',
-        gap: '2.4rem',
+        gap: '1.8rem',
         flexWrap: 'wrap',
         position: 'sticky',
         top: '100vh',
