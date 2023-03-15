@@ -45,9 +45,7 @@ const TransactionHistory = styled(({ className }: { className?: string }) => {
 
   return (
     <section className={className}>
-      <ExtensionStatusGate unavailable={<ExtensionUnavailable />}>
-        <List addresses={useMemo(() => addresses.map(x => x.address), [addresses])} />
-      </ExtensionStatusGate>
+      <List addresses={useMemo(() => addresses.map(x => x.address), [addresses])} />
     </section>
   )
 })`
