@@ -71,6 +71,8 @@ const List = () => {
       </ListGrid>
     )
 
+  console.log(items.length, isFetching, count)
+
   if (items.length === 0 && !isFetching && !count)
     return (
       <HiddenNFTGrid
