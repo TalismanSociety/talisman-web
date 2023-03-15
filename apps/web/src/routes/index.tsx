@@ -213,6 +213,9 @@ const Main = () => {
           <Link to="/staking">
             <NavigationDrawer.Item label="Staking" icon={<Zap />} />
           </Link>
+          <Link to="/crowdloans">
+            <NavigationDrawer.Item label="Crowdloans" icon={<Star />} />
+          </Link>
           <Link to="/explore">
             <NavigationDrawer.Item label="Explore" icon={<Compass />} />
           </Link>
