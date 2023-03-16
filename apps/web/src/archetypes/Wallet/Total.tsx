@@ -1,21 +1,16 @@
-import { legacySelectedAccountState } from '@domains/accounts/recoils'
-import { useLegacyBalances } from '@domains/balances/hooks'
-import { useTotalCrowdloanTotalFiatAmount } from '@domains/crowdloans/hooks'
-import { useTotalStaked } from '@domains/staking/hooks'
+import { totalSelectedAccountsFiatBalance } from '@domains/balances/recoils'
 import { CircularProgressIndicator } from '@talismn/ui'
 import { Suspense } from 'react'
 import { useRecoilValue } from 'recoil'
 
 const TotalSuspense = () => {
-  const { balances, assetsOverallValue } = useLegacyBalances()
-  const address = useRecoilValue(legacySelectedAccountState)?.address
+  const fiatTotal = useRecoilValue(totalSelectedAccountsFiatBalance)
 
-  const fiatTotal =
-    address !== undefined ? balances?.find({ address: address }).sum.fiat('usd').total ?? 0 : assetsOverallValue
-  const crowdloanTotal = useTotalCrowdloanTotalFiatAmount()
-  const totalStaked = useTotalStaked()
+  // TODO: move these value into balances lib
+  // const crowdloanTotal = useTotalCrowdloanTotalFiatAmount()
+  // const totalStaked = useTotalStaked()
 
-  const totalPortfolioValue = fiatTotal + crowdloanTotal + (totalStaked.fiatAmount ?? 0)
+  const totalPortfolioValue = fiatTotal
 
   return (
     <>
