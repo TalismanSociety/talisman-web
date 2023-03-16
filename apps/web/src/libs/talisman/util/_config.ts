@@ -589,10 +589,10 @@ Our mission is to create an open financial future that overcomes borders and fos
   },
   {
     id: '0-3340',
-    name: 'Invarch',
-    slug: 'invarch',
+    name: 'InvArch',
+    slug: 'invArch',
     token: 'VARCH',
-    subtitle: 'Incentivising Intelligence',
+    subtitle: 'Home of the DAO Economy',
     info: `InvArch is a highly optimized network for launching decentralized communities, borderless businesses, & unstoppable organizations on Polkadot & beyond!`,
     links: {
       Website: 'https://invarch.network/',
