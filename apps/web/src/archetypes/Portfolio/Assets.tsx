@@ -19,7 +19,7 @@ const useFetchAssets = (address: string | undefined) => {
   }, [chains, evmNetworks, tokens, balances])
 
   const fiatTotal =
-    address !== undefined ? balances?.find({ address: address }).sum.fiat('usd').transferable ?? 0 : assetsOverallValue
+    address !== undefined ? balances?.find({ address: address }).sum.fiat('usd').total ?? 0 : assetsOverallValue
 
   const lockedTotal =
     address !== undefined

@@ -147,34 +147,19 @@ export const LegacyBalancesWatcher = () => {
 
   const setFiatBalances = useSetRecoilState(fiatBalancesState)
 
-  const addressesFiatBalance = useMemo(() => {
-    Object.fromEntries(
-      Object.entries(groupBy(selectedBalances?.sorted, 'address')).map(([key, value]) => [
-        key,
-        value.reduce((previous, current) => previous + (current.total.fiat('usd') ?? 0), 0),
-      ])
-    )
-  }, [selectedBalances])
-
-  useEffect(
-    () => {
-      if (balances === undefined) {
-        return
-      }
-
-      setFiatBalances(
-        Object.fromEntries(
-          Object.entries(groupBy(balances.sorted ?? [], 'address')).map(([key, value]) => [
-            key,
-            value.reduce((previous, current) => previous + (current.total.fiat('usd') ?? 0), 0),
-          ])
-        )
-      )
-    },
-    // not doing this will cause constant re-render
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [balances, JSON.stringify(addressesFiatBalance)]
+  const addressesFiatBalance = useMemo(
+    () =>
+      Object.fromEntries(accounts.map(x => [x.address, balances.find({ address: x.address }).sum.fiat('usd').total])),
+    [accounts, balances]
   )
+
+  useEffect(() => {
+    if (balances === undefined) {
+      return
+    }
+
+    setFiatBalances(addressesFiatBalance)
+  }, [addressesFiatBalance, balances, setFiatBalances])
 
   return null
 }
