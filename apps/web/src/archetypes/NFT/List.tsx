@@ -6,8 +6,10 @@ import { css } from '@emotion/react'
 import styled from '@emotion/styled'
 import { nftDataState } from '@libs/@talisman-nft/provider'
 import { NFTShort } from '@libs/@talisman-nft/types'
+import { ExternalLink } from '@talismn/icons'
 import { Identicon, Text } from '@talismn/ui'
 import { device } from '@util/breakpoints'
+import { useMemo } from 'react'
 import { useRecoilValue } from 'recoil'
 
 import HiddenNFTGrid from './HiddenNFTGrid'
@@ -61,6 +63,16 @@ const List = () => {
 
   const address = useRecoilValue(legacySelectedAccountState)?.address
   const accounts = useRecoilValue(selectedAccountsState)
+  const addresses = useMemo(() => accounts.map(x => x.address), [accounts])
+
+  const hasNoNfts = useMemo(
+    () =>
+      !isFetching &&
+      Object.entries(count)
+        .filter(x => addresses.includes(x[0]))
+        .every(([_, value]) => value === 0),
+    [addresses, count, isFetching]
+  )
 
   if (isFetching && items.length === 0)
     return (
@@ -71,25 +83,35 @@ const List = () => {
       </ListGrid>
     )
 
-  console.log(items.length, isFetching, count)
-
-  if (items.length === 0 && !isFetching && !count)
+  if (hasNoNfts)
     return (
       <HiddenNFTGrid
         overlay={
           <span
             css={css`
+              text-align: center;
               display: flex;
               flex-direction: column;
               align-items: center;
               justify-content: center;
+              gap: 0.8rem;
               > * {
                 margin-bottom: 1rem;
               }
             `}
           >
-            <Text.H2>No NFTs Found</Text.H2>
-            <Text.Body>Please try another account</Text.Body>
+            <Text.H2>No collectibles found</Text.H2>
+            <Text.Body>
+              Talisman currently supports RMRK 2, Astar,
+              <br />
+              Moonriver, Moonbeam, Statemine and Acala NFTs
+            </Text.Body>
+            <Text.Body>
+              Start your collection with a{' '}
+              <Text.Body.A href="https://singular.rmrk.app/collections/b6e98494bff52d3b1e-SPIRIT" target="_blank">
+                Spirit Key <ExternalLink size="1em" />
+              </Text.Body.A>
+            </Text.Body>
           </span>
         }
       />
