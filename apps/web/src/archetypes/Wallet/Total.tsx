@@ -1,3 +1,4 @@
+import AnimatedFiatNumber from '@components/widgets/AnimatedFiatNumber'
 import { totalSelectedAccountsFiatBalance } from '@domains/balances/recoils'
 import { CircularProgressIndicator } from '@talismn/ui'
 import { Suspense } from 'react'
@@ -12,15 +13,7 @@ const TotalSuspense = () => {
 
   const totalPortfolioValue = fiatTotal
 
-  return (
-    <>
-      {totalPortfolioValue.toLocaleString(undefined, {
-        style: 'currency',
-        currency: 'USD',
-        currencyDisplay: 'narrowSymbol',
-      })}
-    </>
-  )
+  return <AnimatedFiatNumber end={totalPortfolioValue} />
 }
 
 const Total = () => {
