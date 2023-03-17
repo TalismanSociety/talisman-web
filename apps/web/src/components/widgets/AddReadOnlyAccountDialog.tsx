@@ -1,6 +1,6 @@
 import AddReadOnlyAccountDialogComponent from '@components/recipes/AddReadOnlyAccountDialog'
 import { readOnlyAccountsState } from '@domains/accounts/recoils'
-import { isValidSubstrateOrEthereumAddress } from '@util/addressValidation'
+import { tryParseSubstrateOrEthereumAddress } from '@util/addressValidation'
 import { isNilOrWhitespace } from '@util/nil'
 import { ReactNode, useCallback, useMemo, useState } from 'react'
 import { useRecoilValue, useSetRecoilState } from 'recoil'
@@ -16,33 +16,30 @@ const AddReadOnlyAccountDialog = (props: AddReadOnlyAccountDialogProps) => {
   const [address, setAddress] = useState('')
   const [name, setName] = useState('')
 
-  const isValidAddress = useMemo(
-    () => (isNilOrWhitespace(address) ? undefined : isValidSubstrateOrEthereumAddress(address)),
-    [address]
-  )
-
-  const resultingAddress = isValidAddress ? address : undefined
+  const resultingAddress = useMemo(() => tryParseSubstrateOrEthereumAddress(address), [address])
 
   const hasExistingAccount = useMemo(
-    () => readonlyAccounts.map(x => x.address.toLowerCase()).includes(address.toLowerCase()),
-    [address, readonlyAccounts]
+    () =>
+      resultingAddress !== undefined &&
+      readonlyAccounts.map(x => x.address.toLowerCase()).includes(resultingAddress.toLowerCase()),
+    [readonlyAccounts, resultingAddress]
   )
 
   const confirmState = useMemo(() => {
-    if (!isValidAddress || hasExistingAccount) {
+    if (resultingAddress === undefined || hasExistingAccount) {
       return 'disabled'
     }
-  }, [hasExistingAccount, isValidAddress])
+  }, [hasExistingAccount, resultingAddress])
 
   const error = useMemo(() => {
-    if (isValidAddress === false) {
+    if (address !== '' && resultingAddress === undefined) {
       return 'Invalid address'
     }
 
     if (hasExistingAccount) {
       return 'This account has already been added'
     }
-  }, [hasExistingAccount, isValidAddress])
+  }, [address, hasExistingAccount, resultingAddress])
 
   const setReadOnlyAccounts = useSetRecoilState(readOnlyAccountsState)
 
