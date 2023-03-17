@@ -5,8 +5,6 @@ import { groupBy } from 'lodash'
 import { Suspense, useCallback, useMemo, useState } from 'react'
 import { selector, useRecoilValue } from 'recoil'
 
-import colors from './colors.json'
-
 const assetDataState = selector({
   key: 'PortfolioAllocationGraph/AssetData',
   get: ({ get }) => {
@@ -18,12 +16,17 @@ const assetDataState = selector({
           .map(x => ({
             symbol: x.token?.symbol ?? x.id,
             total: x.total.fiat('usd') ?? 0,
+            color: x.token?.themeColor ?? x.chain?.themeColor ?? x.evmNetwork?.themeColor,
           }))
           .filter(x => x.total > 0),
         x => x.symbol
       )
     )
-      .map(([key, value]) => ({ symbol: key, total: value.reduce((previous, current) => previous + current.total, 0) }))
+      .map(([key, value]) => ({
+        symbol: key,
+        color: value[0]?.color,
+        total: value.reduce((previous, current) => previous + current.total, 0),
+      }))
       .map(x => ({ ...x, percent: x.total / get(totalSelectedAccountsFiatBalance) }))
 
     const displayableBalance = nonZeroBalance?.filter(x => x.percent > 0.05).sort((a, b) => b.total - a.total)
@@ -37,7 +40,9 @@ const assetDataState = selector({
 
     return [
       ...displayableBalance,
-      ...(otherBalanceTotal === 0 ? [] : [{ symbol: 'Other', total: otherBalanceTotal, percent: otherBalancePercent }]),
+      ...(otherBalanceTotal === 0
+        ? []
+        : [{ symbol: 'Other', total: otherBalanceTotal, percent: otherBalancePercent, color: undefined }]),
     ]
   },
 })
@@ -63,7 +68,7 @@ const SuspendablePortfolioAllocationGraph = () => {
       assetData.map(x => ({
         label: x.symbol,
         value: x.percent,
-        color: colors[x.symbol.toUpperCase() as keyof typeof colors] ?? '#5A5A5A',
+        color: x.color ?? '#5A5A5A',
       })) ?? [],
     [assetData]
   )
