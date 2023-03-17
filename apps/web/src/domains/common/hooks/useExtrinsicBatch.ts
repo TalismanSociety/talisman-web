@@ -5,7 +5,7 @@ import { ISubmittableResult } from '@polkadot/types/types'
 import { useCallback, useState } from 'react'
 import { useRecoilCallback, useRecoilValueLoadable } from 'recoil'
 
-import { apiState, chainState } from '../../chains/recoils'
+import { apiState, chainIdState, chainState } from '../../chains/recoils'
 import { extrinsicMiddleware } from '../extrinsicMiddleware'
 import { toastExtrinsic } from '../utils'
 
@@ -48,8 +48,11 @@ export const useExtrinsicBatch = <
       const { snapshot } = callbackInterface
 
       const promiseFunc = async () => {
-        const api = await snapshot.getPromise(apiState)
-        const extension = await web3FromAddress(account.toString())
+        const [chainId, api, extension] = await Promise.all([
+          snapshot.getPromise(chainIdState),
+          snapshot.getPromise(apiState),
+          web3FromAddress(account.toString()),
+        ])
 
         let resolve = (value: ISubmittableResult) => {}
         let reject = (value: unknown) => {}
@@ -72,6 +75,7 @@ export const useExtrinsicBatch = <
             .signAndSend(account, { signer: extension?.signer }, result => {
               extrinsickeys.forEach(([module, section], index) =>
                 extrinsicMiddleware(
+                  chainId,
                   module as any,
                   section as any,
                   account,

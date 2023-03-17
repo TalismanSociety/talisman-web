@@ -16,6 +16,7 @@ export type ExtrinsicMiddleware = {
     TSection extends Extract<keyof ApiPromise['tx'][TModule], string>,
     TParams extends Parameters<ApiPromise['tx'][TModule][TSection]>
   >(
+    chainId: string,
     module: TModule,
     section: TSection,
     account: AddressOrPair,
@@ -40,7 +41,7 @@ const toHuman = <T>(object: T): unknown => {
   }
 
   if (object instanceof BN) {
-    return object.toNumber()
+    return object.toString()
   }
 
   if ('toHuman' in object) {
@@ -54,9 +55,10 @@ const toHuman = <T>(object: T): unknown => {
   return Object.fromEntries(Object.entries(object).map(([key, value]) => [key, toHuman(value)]))
 }
 
-export const posthogMiddleware: ExtrinsicMiddleware = (module, section, account, params, result) => {
+export const posthogMiddleware: ExtrinsicMiddleware = (chain, module, section, account, params, result) => {
   if (result.status.isInBlock && result.dispatchError === undefined) {
     posthog.capture('Extrinsic in block', {
+      chain,
       module,
       section,
       account: isKeyringPair(account) ? account.address : account.toString(),
@@ -65,7 +67,7 @@ export const posthogMiddleware: ExtrinsicMiddleware = (module, section, account,
   }
 }
 
-export const chainIdReadMiddleware: ExtrinsicMiddleware = (_, __, ___, ____, result, { set }) => {
+export const chainIdReadMiddleware: ExtrinsicMiddleware = (_, __, ___, ____, _____, result, { set }) => {
   if (result.isFinalized) {
     startTransition(() => set(chainReadIdState, id => id + 1))
   }
