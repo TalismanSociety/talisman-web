@@ -39,12 +39,12 @@ const toHuman = <T>(object: T): unknown => {
     return object
   }
 
-  if ('toHuman' in object) {
-    return (object as any as Codec).toHuman()
-  }
-
   if (object instanceof BN) {
     return object.toNumber()
+  }
+
+  if ('toHuman' in object) {
+    return (object as any as Codec).toHuman()
   }
 
   if (Array.isArray(object)) {
