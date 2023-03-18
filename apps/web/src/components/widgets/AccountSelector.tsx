@@ -1,28 +1,39 @@
-import { accountsState, substrateAccountsState } from '@domains/accounts/recoils'
+import { Account, accountsState, substrateAccountsState } from '@domains/accounts/recoils'
 import { Identicon, Select } from '@talismn/ui'
 import { shortenAddress } from '@util/format'
-import { useEffect } from 'react'
+import { useCallback, useEffect, useMemo } from 'react'
 import { useRecoilValue } from 'recoil'
 
 export type AccountSelectorProps = {
-  selectedAddress?: string
-  onChangeSelectedAddress: (value: string | undefined) => unknown
+  width?: number | string
+  selectedAccount?: Account | string
+  onChangeSelectedAccount: (account: Account | undefined) => unknown
   defaultToFirstAddress?: boolean
   includeReadonlyAccounts?: boolean
   includeEthereumAccounts?: boolean
 }
 
 const AccountSelector = ({
-  includeReadonlyAccounts = true,
-  includeEthereumAccounts,
+  includeReadonlyAccounts = false,
+  includeEthereumAccounts = false,
   ...props
 }: AccountSelectorProps) => {
-  const accounts = useRecoilValue(includeEthereumAccounts ? accountsState : substrateAccountsState)
+  const _accounts = useRecoilValue(includeEthereumAccounts ? accountsState : substrateAccountsState)
+  const accounts = useMemo(
+    () =>
+      _accounts.filter(x => {
+        if (!includeReadonlyAccounts) {
+          return x.readonly !== true
+        }
+        return true
+      }),
+    [_accounts, includeReadonlyAccounts]
+  )
 
   useEffect(
     () => {
       if (props.defaultToFirstAddress && accounts[0] !== undefined) {
-        props.onChangeSelectedAddress(accounts[0].address)
+        props.onChangeSelectedAccount(accounts[0])
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -30,23 +41,23 @@ const AccountSelector = ({
   )
 
   return (
-    <Select value={props.selectedAddress} onChange={props.onChangeSelectedAddress}>
-      {accounts
-        .filter(x => {
-          if (!includeReadonlyAccounts) {
-            return x.readonly !== true
-          }
-          return true
-        })
-        .map(x => (
-          <Select.Item
-            key={x.address}
-            value={x.address}
-            leadingIcon={<Identicon value={x.address} size={40} />}
-            headlineText={x.name ?? shortenAddress(x.address)}
-            supportingText=""
-          />
-        ))}
+    <Select
+      width={props.width}
+      value={typeof props.selectedAccount === 'string' ? props.selectedAccount : props.selectedAccount?.address}
+      onChange={useCallback(
+        (address: string | undefined) => props.onChangeSelectedAccount(accounts.find(x => x.address === address)),
+        [accounts, props]
+      )}
+    >
+      {accounts.map(x => (
+        <Select.Item
+          key={x.address}
+          value={x.address}
+          leadingIcon={<Identicon value={x.address} size={40} />}
+          headlineText={x.name ?? shortenAddress(x.address)}
+          supportingText=""
+        />
+      ))}
     </Select>
   )
 }

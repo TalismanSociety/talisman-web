@@ -11,7 +11,6 @@ import { useInflation, usePoolAddForm } from '@domains/nominationPools/hooks'
 import { allPendingPoolRewardsState, eraStakersState, recommendedPoolsState } from '@domains/nominationPools/recoils'
 import { createAccounts, getPoolUnbonding } from '@domains/nominationPools/utils'
 import { CircularProgressIndicator } from '@talismn/ui'
-import { shortenAddress } from '@util/format'
 import { Maybe } from '@util/monads'
 import BN from 'bn.js'
 import { motion } from 'framer-motion'
@@ -19,6 +18,8 @@ import { Suspense, useCallback, useEffect, useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useLocation } from 'react-use'
 import { constSelector, useRecoilValue, useRecoilValueLoadable, waitForAll } from 'recoil'
+
+import AccountSelector from './AccountSelector'
 
 const PoolSelector = (props: {
   open: boolean
@@ -92,8 +93,11 @@ const StakeInput = () => {
   const [selectedPoolId, setSelectedPoolId] = useState(initialPoolId)
   const [showPoolSelector, setShowPoolSelector] = useState(false)
 
-  const [selectedAccountIndex, setSelectedAccountIndex] = useState(0)
-  const selectedAccount = accounts[selectedAccountIndex]
+  const [selectedAccount, setSelectedAccount] = useState(accounts[0])
+  const selectedAccountIndex = useMemo(
+    () => accounts.findIndex(x => x.address === selectedAccount?.address),
+    [accounts, selectedAccount?.address]
+  )
 
   const {
     input: { amount, decimalAmount, localizedFiatAmount },
@@ -241,21 +245,13 @@ const StakeInput = () => {
       >
         <div css={{ position: 'relative', zIndex: 1 }}>
           <StakingInput
+            accountSelector={
+              <AccountSelector
+                selectedAccount={selectedAccount?.address}
+                onChangeSelectedAccount={setSelectedAccount}
+              />
+            }
             alreadyStaking={existingPool !== undefined}
-            accounts={useMemo(
-              () =>
-                accounts.map(x => ({
-                  ...x,
-                  selected: x.address === selectedAccount?.address,
-                  name: x.name ?? shortenAddress(x.address),
-                  balance: '',
-                })),
-              [accounts, selectedAccount?.address]
-            )}
-            onSelectAccount={useCallback(
-              x => setSelectedAccountIndex(accounts.findIndex(account => account.address === x.address)!),
-              [accounts]
-            )}
             amount={amount}
             fiatAmount={localizedFiatAmount ?? ''}
             onChangeAmount={setAmount}
