@@ -23,6 +23,7 @@ export const NavigationRailItem = (props: NavigationRailItemProps) => {
         <FloatingActionButton
           // @ts-expect-error
           as="li"
+          aria-label={props.label}
           containerColor={theme.color.surface}
           hoverContainerColor={theme.color.onSurface}
           contentColor={theme.color.onSurface}
