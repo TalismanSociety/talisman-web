@@ -54,28 +54,25 @@ export const useExtrinsic = <
           })
 
           try {
-            const unsubscribe = await api.tx[module]?.[section]?.(...params).signAndSend(
-              account,
-              { signer: extension?.signer },
-              result => {
-                extrinsicMiddleware(chainId, module, section as any, account, params, result, callbackInterface)
+            const extrinsic = api.tx[module]?.[section]?.(...params)
+            const unsubscribe = await extrinsic?.signAndSend(account, { signer: extension?.signer }, result => {
+              extrinsicMiddleware(chainId, extrinsic, result, callbackInterface)
 
-                if (result.isError) {
-                  unsubscribe?.()
+              if (result.isError) {
+                unsubscribe?.()
+                reject(result)
+              } else if (result.isFinalized) {
+                unsubscribe?.()
+
+                if (result.dispatchError !== undefined) {
                   reject(result)
-                } else if (result.isFinalized) {
-                  unsubscribe?.()
-
-                  if (result.dispatchError !== undefined) {
-                    reject(result)
-                  } else {
-                    resolve(result)
-                  }
                 } else {
-                  setLoadable({ state: 'loading', contents: result })
+                  resolve(result)
                 }
+              } else {
+                setLoadable({ state: 'loading', contents: result })
               }
-            )
+            })
           } catch (error) {
             reject(error)
           }
