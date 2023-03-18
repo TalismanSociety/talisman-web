@@ -1,6 +1,7 @@
 import styled from '@emotion/styled'
 import { device } from '@util/breakpoints'
-import posthog from 'posthog-js'
+import { usePostHog } from 'posthog-js/react'
+import { useCallback } from 'react'
 
 import { Dapp } from './hooks'
 
@@ -10,20 +11,25 @@ type CardProps = {
   setSelectedTag: (tag: string) => unknown
 }
 
-const toExternalDapp = (dapp: any) => {
-  const categories = dapp.tags.reduce(
-    (acc: any, tag: string) => ({
-      ...acc,
-      [`category_${tag.replace(/[^\w]/, '')}'`]: true,
-    }),
-    {}
+const Card = ({ className, dapp, setSelectedTag }: CardProps) => {
+  const posthog = usePostHog()
+
+  const toExternalDapp = useCallback(
+    (dapp: any) => {
+      const categories = dapp.tags.reduce(
+        (acc: any, tag: string) => ({
+          ...acc,
+          [`category_${tag.replace(/[^\w]/, '')}'`]: true,
+        }),
+        {}
+      )
+
+      posthog?.capture('Goto Dapp', { dappName: dapp.name, dappUrl: dapp.url, ...categories })
+      window.open(dapp.url, '_blank', 'noopener,noreferrer')
+    },
+    [posthog]
   )
 
-  posthog.capture('Goto Dapp', { dappName: dapp.name, dappUrl: dapp.url, ...categories })
-  window.open(dapp.url, '_blank', 'noopener,noreferrer')
-}
-
-const Card = ({ className, dapp, setSelectedTag }: CardProps) => {
   return (
     <div className={className} key={dapp.id} onClick={() => toExternalDapp(dapp)}>
       <div className="card__header">
