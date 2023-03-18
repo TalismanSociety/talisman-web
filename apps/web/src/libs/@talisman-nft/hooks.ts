@@ -2,7 +2,14 @@ import { useEffect, useMemo, useState } from 'react'
 
 import { defaultNftFactoryCallbackData } from './config'
 import { NFTFactory } from './nftFactory'
-import { AcalaProvider, EVMProvider, Rmrk1Provider, Rmrk2Provider, StatemineProvider } from './providers'
+import {
+  AcalaProvider,
+  BitCountryProvider,
+  EVMProvider,
+  Rmrk1Provider,
+  Rmrk2Provider,
+  StatemineProvider,
+} from './providers'
 import { EVMChains } from './providers/Evm/EVMChains'
 import { NFTInterface } from './providers/NFTInterface'
 import { EVMChain, NFTData, NFTDetail, NFTShort } from './types'
@@ -12,6 +19,7 @@ const providers: NFTInterface[] = [
   new Rmrk1Provider(),
   new Rmrk2Provider(),
   new StatemineProvider(),
+  new BitCountryProvider(),
   new AcalaProvider(),
 ]
 
@@ -23,10 +31,6 @@ const nftFactory = new NFTFactory(providers)
 
 export const useNftsByAddresses = (addresses: string[]) => {
   const [nftData, setNftData] = useState<NFTData>(defaultNftFactoryCallbackData)
-
-  // useEffect(() => {
-  //   nftFactory.reset()
-  // }, [addresses])
 
   useEffect(() => {
     const unsub = nftFactory.subscribe(setNftData)
