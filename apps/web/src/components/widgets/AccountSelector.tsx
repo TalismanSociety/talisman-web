@@ -1,8 +1,11 @@
 import { Account, accountsState, substrateAccountsState } from '@domains/accounts/recoils'
-import { Identicon, Select } from '@talismn/ui'
+import { useIsWeb3Injected } from '@domains/extension/hooks'
+import { allowExtensionConnectionState } from '@domains/extension/recoils'
+import { Download } from '@talismn/icons'
+import { Button, Identicon, Select } from '@talismn/ui'
 import { shortenAddress } from '@util/format'
 import { useCallback, useEffect, useMemo } from 'react'
-import { useRecoilValue } from 'recoil'
+import { useRecoilState, useRecoilValue } from 'recoil'
 
 export type AccountSelectorProps = {
   width?: number | string
@@ -40,14 +43,30 @@ const AccountSelector = ({
     [props.defaultToFirstAddress]
   )
 
+  const onChange = useCallback(
+    (address: string | undefined) => props.onChangeSelectedAccount(accounts.find(x => x.address === address)),
+    [accounts, props]
+  )
+
+  const [allowExtensionConnection, setAllowExtensionConnection] = useRecoilState(allowExtensionConnectionState)
+
+  if (!useIsWeb3Injected()) {
+    return (
+      <Button as="a" href="https://talisman.xyz/download" target="_blank" trailingIcon={<Download />}>
+        Install wallet
+      </Button>
+    )
+  }
+
+  if (!allowExtensionConnection) {
+    return <Button onClick={() => setAllowExtensionConnection(true)}>Connect wallet</Button>
+  }
+
   return (
     <Select
       width={props.width}
       value={typeof props.selectedAccount === 'string' ? props.selectedAccount : props.selectedAccount?.address}
-      onChange={useCallback(
-        (address: string | undefined) => props.onChangeSelectedAccount(accounts.find(x => x.address === address)),
-        [accounts, props]
-      )}
+      onChange={onChange}
     >
       {accounts.map(x => (
         <Select.Item

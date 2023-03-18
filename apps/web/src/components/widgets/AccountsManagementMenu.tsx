@@ -10,9 +10,8 @@ import { useIsWeb3Injected } from '@domains/extension/hooks'
 import { allowExtensionConnectionState } from '@domains/extension/recoils'
 import { useTheme } from '@emotion/react'
 import { Copy, Download, Eye, EyePlus, Link, PlusCircle, Power, TalismanHand, Trash2, Users } from '@talismn/icons'
-import { Button, CircularProgressIndicator, IconButton, Identicon, ListItem, Menu, Text } from '@talismn/ui'
+import { CircularProgressIndicator, IconButton, Identicon, ListItem, Menu, Text } from '@talismn/ui'
 import { shortenAddress } from '@util/format'
-import getDownloadLink from '@util/getDownloadLink'
 import { ReactNode, useMemo } from 'react'
 import { useRecoilState, useRecoilValue, useRecoilValueLoadable, useSetRecoilState } from 'recoil'
 
@@ -75,7 +74,7 @@ const AccountsManagementMenu = (props: { button: ReactNode }) => {
     if (!isWeb3Injected) {
       return (
         <Menu.Item>
-          <Button as="a" variant="noop" href={getDownloadLink()} target="_blank">
+          <a href="https://talisman.xyz/download" target="_blank" rel="noreferrer">
             <ListItem
               leadingContent={
                 <IconButton as="figure" containerColor={theme.color.foreground} contentColor={theme.color.primary}>
@@ -84,7 +83,7 @@ const AccountsManagementMenu = (props: { button: ReactNode }) => {
               }
               headlineText="Install wallet"
             />
-          </Button>
+          </a>
         </Menu.Item>
       )
     }

@@ -102,6 +102,7 @@ const Button = <T extends ButtonElementType = 'button'>({
       disabled={disabled}
       css={[
         {
+          textAlign: 'center',
           display: 'block',
           padding: '1.156rem 2.4rem',
           border: 'none',
