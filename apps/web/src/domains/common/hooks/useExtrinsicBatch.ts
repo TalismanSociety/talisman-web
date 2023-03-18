@@ -68,21 +68,14 @@ export const useExtrinsicBatch = <
         })
 
         try {
+          const extrinsics = extrinsickeys.map(
+            ([module, section], index) => api.tx[module]?.[section]?.(...(params[index] ?? []))!
+          )
           const unsubscribe = await api.tx.utility
-            .batchAll(
-              extrinsickeys.map(([module, section], index) => api.tx[module]?.[section]?.(...(params[index] ?? []))!)
-            )
+            .batchAll(extrinsics)
             .signAndSend(account, { signer: extension?.signer }, result => {
-              extrinsickeys.forEach(([module, section], index) =>
-                extrinsicMiddleware(
-                  chainId,
-                  module as any,
-                  section as any,
-                  account,
-                  params[index] ?? [],
-                  result,
-                  callbackInterface
-                )
+              extrinsics.forEach((extrinsic, index) =>
+                extrinsicMiddleware(chainId, extrinsic, result, callbackInterface)
               )
 
               if (result.isError) {

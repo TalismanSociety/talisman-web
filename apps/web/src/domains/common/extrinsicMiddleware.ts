@@ -1,9 +1,6 @@
-import { ApiPromise } from '@polkadot/api'
-import { AddressOrPair } from '@polkadot/api/types'
+import { SubmittableExtrinsic } from '@polkadot/api/types'
 import { isKeyringPair } from '@polkadot/api/util'
-import { Codec } from '@polkadot/types-codec/types'
 import { ISubmittableResult } from '@polkadot/types/types'
-import BN from 'bn.js'
 import posthog from 'posthog-js'
 import { startTransition } from 'react'
 import { CallbackInterface } from 'recoil'
@@ -11,16 +8,9 @@ import { CallbackInterface } from 'recoil'
 import { chainReadIdState } from './recoils'
 
 export type ExtrinsicMiddleware = {
-  <
-    TModule extends keyof PickKnownKeys<ApiPromise['tx']>,
-    TSection extends Extract<keyof ApiPromise['tx'][TModule], string>,
-    TParams extends Parameters<ApiPromise['tx'][TModule][TSection]>
-  >(
+  (
     chainId: string,
-    module: TModule,
-    section: TSection,
-    account: AddressOrPair,
-    params: TParams,
+    extrinsic: SubmittableExtrinsic<'promise', ISubmittableResult>,
     result: ISubmittableResult,
     callbackInterface: CallbackInterface
   ): unknown
@@ -31,43 +21,22 @@ const combineMiddleware =
   (...parameters) =>
     middleware.forEach(middleware => middleware(...parameters))
 
-const toHuman = <T>(object: T): unknown => {
-  if (typeof object !== 'object') {
-    return object
-  }
-
-  if (object === null) {
-    return object
-  }
-
-  if (object instanceof BN) {
-    return object.toString()
-  }
-
-  if ('toHuman' in object) {
-    return (object as any as Codec).toHuman()
-  }
-
-  if (Array.isArray(object)) {
-    return object.map(value => toHuman(value))
-  }
-
-  return Object.fromEntries(Object.entries(object).map(([key, value]) => [key, toHuman(value)]))
-}
-
-export const posthogMiddleware: ExtrinsicMiddleware = (chain, module, section, account, params, result) => {
+export const posthogMiddleware: ExtrinsicMiddleware = (chain, extrinsic, result) => {
   if (result.status.isInBlock && result.dispatchError === undefined) {
     posthog.capture('Extrinsic in block', {
       chain,
-      module,
-      section,
-      account: isKeyringPair(account) ? account.address : account.toString(),
-      params: toHuman(params),
+      chainProperties: extrinsic.registry.getChainProperties()?.toHuman(),
+      module: extrinsic.method.section,
+      section: extrinsic.method.method,
+      signer: isKeyringPair(extrinsic.signer) ? extrinsic.signer.address : extrinsic.signer.toString(),
+      args: Object.fromEntries(
+        extrinsic.meta.args.map((x, index) => [x.name.toPrimitive(), extrinsic.args[index]?.toHuman()])
+      ),
     })
   }
 }
 
-export const chainIdReadMiddleware: ExtrinsicMiddleware = (_, __, ___, ____, _____, result, { set }) => {
+export const chainIdReadMiddleware: ExtrinsicMiddleware = (_, __, result, { set }) => {
   if (result.isFinalized) {
     startTransition(() => set(chainReadIdState, id => id + 1))
   }
