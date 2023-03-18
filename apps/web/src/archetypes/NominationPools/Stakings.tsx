@@ -1,5 +1,5 @@
-import { PoolStatus } from '@components/recipes/PoolStatusIndicator'
 import StakeItem from '@components/recipes/StakeItem'
+import { StakeStatus } from '@components/recipes/StakeStatusIndicator'
 import { selectedSubstrateAccountsState } from '@domains/accounts/recoils'
 import { createAccounts, getPoolUnbonding } from '@domains/nominationPools/utils'
 import { Button, CircularProgressIndicator, HiddenDetails, Text } from '@talismn/ui'
@@ -87,7 +87,7 @@ const Stakings = () => {
             }))
             // Calculate remaining values
             .map(({ poolMember, ...rest }, index) => {
-              const status: PoolStatus | undefined = (() => {
+              const status: StakeStatus | undefined = (() => {
                 if (poolNominatorsLoadable.state !== 'hasValue' || eraStakers === undefined) {
                   return undefined
                 }

@@ -42,6 +42,9 @@ const ValidatorStakeItem = (props: {
   return (
     <>
       <ValidatorStakeItemComponent
+        stakeStatus={
+          props.reward === undefined ? undefined : props.reward === 0n ? 'not_earning_rewards' : 'earning_rewards'
+        }
         readonly={props.account.readonly}
         accountName={props.account.name ?? ''}
         accountAddress={props.account.address}

@@ -1,8 +1,8 @@
 import PoolStakeItem from '@archetypes/NominationPools/PoolStakeItem'
 import PoolExitingInProgress from '@components/recipes/PoolExitingInProgress'
 import PoolSelectorDialog from '@components/recipes/PoolSelectorDialog'
-import { PoolStatus } from '@components/recipes/PoolStatusIndicator'
 import StakeDialogComponent from '@components/recipes/StakeDialog'
+import { StakeStatus } from '@components/recipes/StakeStatusIndicator'
 import StakingInput from '@components/recipes/StakingInput'
 import { injectedSubstrateAccountsState } from '@domains/accounts/recoils'
 import { apiState, chainState, nativeTokenDecimalState } from '@domains/chains/recoils'
@@ -168,7 +168,7 @@ const StakeInput = () => {
     { enabled: selectedPoolId !== undefined }
   )
 
-  const [poolStatus, existingPoolStatus] = useMemo<readonly [PoolStatus | undefined, PoolStatus | undefined]>(() => {
+  const [poolStatus, existingPoolStatus] = useMemo<readonly [StakeStatus | undefined, StakeStatus | undefined]>(() => {
     if (eraStakersLoadable.state !== 'hasValue' || poolNominatorsLoadable.state !== 'hasValue') {
       return [undefined, undefined]
     }

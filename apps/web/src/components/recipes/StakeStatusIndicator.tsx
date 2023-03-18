@@ -1,13 +1,13 @@
 import { StatusIndicator, StatusIndicatorProps } from '@talismn/ui'
 import { useMemo } from 'react'
 
-export type PoolStatus = 'earning_rewards' | 'waiting' | 'not_nominating' | undefined
+export type StakeStatus = 'earning_rewards' | 'waiting' | 'not_nominating' | 'not_earning_rewards' | undefined
 
-export type PoolStatusIndicatorProps = Omit<StatusIndicatorProps, 'status'> & {
-  status?: PoolStatus
+export type StakeStatusIndicatorProps = Omit<StatusIndicatorProps, 'status'> & {
+  status?: StakeStatus
 }
 
-export const PoolStatusIndicator = (props: PoolStatusIndicatorProps) => (
+export const StakeStatusIndicator = (props: StakeStatusIndicatorProps) => (
   <StatusIndicator
     {...props}
     status={useMemo(() => {
@@ -17,6 +17,7 @@ export const PoolStatusIndicator = (props: PoolStatusIndicatorProps) => (
         case 'waiting':
           return 'warning'
         case 'not_nominating':
+        case 'not_earning_rewards':
           return 'error'
         case undefined:
           return undefined
@@ -30,6 +31,8 @@ export const PoolStatusIndicator = (props: PoolStatusIndicatorProps) => (
           return 'Waiting'
         case 'not_nominating':
           return 'Not nominating'
+        case 'not_earning_rewards':
+          return 'Not earing rewards'
         case undefined:
           return '...'
       }

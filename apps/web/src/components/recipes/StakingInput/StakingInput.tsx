@@ -4,7 +4,7 @@ import { Button, LabelButton, Text, TextInput } from '@talismn/ui'
 import { AnimatePresence, AnimationProps, motion } from 'framer-motion'
 import { ReactNode, useState } from 'react'
 
-import { PoolStatus, PoolStatusIndicator } from '../PoolStatusIndicator'
+import { StakeStatus, StakeStatusIndicator } from '../StakeStatusIndicator'
 import StakingInputSkeleton from './StakingInput.skeleton'
 
 export type StakingInputProps = {
@@ -17,7 +17,7 @@ export type StakingInputProps = {
   availableToStake: string
   noPoolsAvailable?: boolean
   poolName?: string
-  poolStatus?: PoolStatus
+  poolStatus?: StakeStatus
   poolTotalStaked?: string
   poolMemberCount?: string
   onRequestPoolChange: () => unknown
@@ -91,7 +91,7 @@ const StakingInput = Object.assign(
               }}
             >
               <div css={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
-                <PoolStatusIndicator status={props.poolStatus} />
+                <StakeStatusIndicator status={props.poolStatus} />
                 <Text.Body css={{ fontSize: '1.4rem' }} alpha={poolInfoExpanded ? 'high' : 'medium'}>
                   {props.noPoolsAvailable ? 'No pools available' : props.poolName}
                 </Text.Body>

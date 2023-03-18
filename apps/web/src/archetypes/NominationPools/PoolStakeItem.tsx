@@ -1,6 +1,6 @@
 import ClaimStakeDialog from '@components/recipes/ClaimStakeDialog'
-import { PoolStatus } from '@components/recipes/PoolStatusIndicator'
 import { PoolStakeItem as PoolStakeItemComponent, WithdrawChip } from '@components/recipes/StakeItem'
+import { StakeStatus } from '@components/recipes/StakeStatusIndicator'
 import { Account } from '@domains/accounts/recoils'
 import { useTokenAmountFromPlanck } from '@domains/common/hooks'
 import { useEraEtaFormatter } from '@domains/common/hooks/useEraEta'
@@ -22,7 +22,7 @@ const PoolStakeItem = ({
 }: {
   hideIdenticon?: boolean
   item: {
-    status?: PoolStatus
+    status?: StakeStatus
     account?: Account
     poolName?: ReactNode
     poolMember: PalletNominationPoolsPoolMember
@@ -65,7 +65,7 @@ const PoolStakeItem = ({
       <PoolStakeItemComponent
         readonly={item.account?.readonly}
         hideIdenticon={hideIdenticon}
-        poolStatus={item.status}
+        stakeStatus={item.status}
         accountName={item.account?.name ?? ''}
         accountAddress={item.account?.address ?? ''}
         stakingAmount={decimal.fromPlanck(item.poolMember.points).toHuman()}

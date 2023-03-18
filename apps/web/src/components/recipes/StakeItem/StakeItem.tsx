@@ -4,7 +4,7 @@ import { Chip, ChipProps, Hr, Identicon, ListItem, Text, Tooltip } from '@talism
 import Color from 'colorjs.io'
 import { ReactNode, useMemo } from 'react'
 
-import { PoolStatus, PoolStatusIndicator } from '../PoolStatusIndicator'
+import { StakeStatus, StakeStatusIndicator } from '../StakeStatusIndicator'
 import StakeItemSkeleton from './StakeItemSkeleton'
 
 export type StakeItemProps = {
@@ -13,7 +13,7 @@ export type StakeItemProps = {
   stakingAmount: string
   stakingFiatAmount: string
   poolName: ReactNode
-  poolStatus?: PoolStatus
+  stakeStatus?: StakeStatus
   actions?: ReactNode
   status?: ReactNode
   readonly?: boolean
@@ -92,7 +92,7 @@ const StakeItem = Object.assign(
           headlineText={props.accountName}
           supportingText={
             <Text.Body css={{ display: 'flex', alignItems: 'center', gap: '0.25em' }}>
-              <PoolStatusIndicator status={props.poolStatus} />
+              <StakeStatusIndicator status={props.stakeStatus} />
               <Text.Body css={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                 {props.poolName}
               </Text.Body>
