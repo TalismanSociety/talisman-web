@@ -112,7 +112,7 @@ export class BitCountryProvider extends NFTInterface {
 
         nftRawAssetDetails.map(async (assetId: any): Promise<any> => {
           const tokenDetails = await this.getTokenDetails(assetId)
-          const collectionDetails = await this.getCollectionDetails(assetId?.collectionId.replaceAll(',', ''))
+          // const collectionDetails = await this.getCollectionDetails(assetId?.collectionId.replaceAll(',', ''))
 
           // If there is no token details, disregard the NFT and remove it from the count.
           if (!tokenDetails) this.count[address] -= 1
