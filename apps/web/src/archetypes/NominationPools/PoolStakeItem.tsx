@@ -63,7 +63,11 @@ const PoolStakeItem = ({
   return (
     <>
       <PoolStakeItemComponent
-        readonly={item.account?.readonly}
+        readonly={
+          item.account?.readonly ||
+          // Fully unbonding pool can't be interacted with
+          item.poolMember.points.isZero()
+        }
         hideIdenticon={hideIdenticon}
         stakeStatus={item.status}
         accountName={item.account?.name ?? ''}

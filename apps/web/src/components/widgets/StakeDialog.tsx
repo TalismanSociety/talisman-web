@@ -1,5 +1,4 @@
 import PoolStakeItem from '@archetypes/NominationPools/PoolStakeItem'
-import PoolExitingInProgress from '@components/recipes/PoolExitingInProgress'
 import PoolSelectorDialog from '@components/recipes/PoolSelectorDialog'
 import StakeDialogComponent from '@components/recipes/StakeDialog'
 import { StakeStatus } from '@components/recipes/StakeStatusIndicator'
@@ -298,24 +297,21 @@ const StakeInput = () => {
             false: { opacity: 0, scale: 0.8 },
           }}
         >
-          {existingPool !== undefined &&
-            (existingPool.points.isZero() ? (
-              <PoolExitingInProgress />
-            ) : (
-              <PoolStakeItem
-                hideIdenticon
-                item={{
-                  status: existingPoolStatus,
-                  account: selectedAccount,
-                  poolName: poolMetadataLoadable.valueMaybe()?.[1]?.toUtf8() ?? '',
-                  poolMember: existingPool,
-                  pendingRewards: pendingRewards.find(x => x[0] === selectedAccount?.address)?.[1],
-                  withdrawable: existingPoolUnbonding.withdrawable,
-                  unbondings: existingPoolUnbonding.unbondings,
-                  slashingSpan: existingPoolSlashingSpan,
-                }}
-              />
-            ))}
+          {existingPool !== undefined && (
+            <PoolStakeItem
+              hideIdenticon
+              item={{
+                status: existingPoolStatus,
+                account: selectedAccount,
+                poolName: poolMetadataLoadable.valueMaybe()?.[1]?.toUtf8() ?? '',
+                poolMember: existingPool,
+                pendingRewards: pendingRewards.find(x => x[0] === selectedAccount?.address)?.[1],
+                withdrawable: existingPoolUnbonding.withdrawable,
+                unbondings: existingPoolUnbonding.unbondings,
+                slashingSpan: existingPoolSlashingSpan,
+              }}
+            />
+          )}
         </motion.div>
       </motion.div>
     </>
