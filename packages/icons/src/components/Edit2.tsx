@@ -2,6 +2,7 @@ import * as React from 'react'
 import { Ref, SVGProps, forwardRef } from 'react'
 
 import { IconContext } from '../context'
+
 const SvgEdit2 = (
   props: Omit<SVGProps<SVGSVGElement>, 'width' | 'height'> & {
     size?: number | string
