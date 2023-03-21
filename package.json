@@ -29,6 +29,7 @@
     "turbo": "^1.8.2"
   },
   "resolutions": {
+    "@storybook/react-docgen-typescript-plugin": "1.0.6--canary.9.cd77847.0",
     "json-stream-stringify": "2.0.4"
   },
   "importSort": {
