@@ -1,4 +1,5 @@
 import { ApiPromise, WsProvider } from '@polkadot/api'
+// @ts-expect-error
 import { expose } from 'threads/worker'
 
 export type WorkerFunction = typeof getStakersReward

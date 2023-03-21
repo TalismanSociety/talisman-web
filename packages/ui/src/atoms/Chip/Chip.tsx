@@ -1,5 +1,5 @@
 import { useTheme } from '@emotion/react'
-import { IconContext } from '@talismn/icons'
+import { IconContext } from '@talismn/icons/utils'
 import { ButtonHTMLAttributes, DetailedHTMLProps, ReactNode, useMemo } from 'react'
 
 import CircularProgressIndicator from '../CircularProgressIndicator'

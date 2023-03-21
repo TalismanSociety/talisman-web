@@ -1,6 +1,6 @@
 import { useTheme } from '@emotion/react'
 import Color from 'colorjs.io'
-import React, { ElementType, useMemo } from 'react'
+import React, { useMemo } from 'react'
 
 export type TextAlpha = 'disabled' | 'medium' | 'high'
 
