@@ -26,8 +26,6 @@ export class BitCountryProvider extends NFTInterface {
     let collectionIdFixed = collectionId.replaceAll(',', '')
     let nftTokenIdFixed = nftTokenId.replaceAll(',', '')
 
-    console.log(collectionIdFixed)
-
     // Fetch the metadata of the NFT by querying the collection ID and NFT item number. Since the return is toHuman(). We are unsure of the return type, so we use any.
     const metadataNft: any = (await this.webSocket?.query.ormlNFT.tokens(collectionIdFixed, nftTokenIdFixed)).toHuman()
 
@@ -46,17 +44,6 @@ export class BitCountryProvider extends NFTInterface {
       serialNumber: nftTokenId,
       collectionId: collectionIdFixed,
     })
-  }
-
-  async getCollectionDetails(collectionId: string | number) {
-    if (!this.webSocket) return null
-
-    const collection = (await this.webSocket?.query.ormlNFT.classes(collectionId)).toHuman() as any
-
-    if (!collection?.metadata) return null
-
-    const collectionInfo = await this.fetchNFT_Metadata(collection?.metadata!)
-    console.log(collectionInfo)
   }
 
   async fetchNFT_Metadata(metadataId: string) {
@@ -112,7 +99,6 @@ export class BitCountryProvider extends NFTInterface {
 
         nftRawAssetDetails.map(async (assetId: any): Promise<any> => {
           const tokenDetails = await this.getTokenDetails(assetId)
-          // const collectionDetails = await this.getCollectionDetails(assetId?.collectionId.replaceAll(',', ''))
 
           // If there is no token details, disregard the NFT and remove it from the count.
           if (!tokenDetails) this.count[address] -= 1
