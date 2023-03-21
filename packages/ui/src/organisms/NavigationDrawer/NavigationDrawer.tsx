@@ -1,5 +1,6 @@
 import { keyframes, useTheme } from '@emotion/react'
-import { IconContext, X } from '@talismn/icons'
+import { X } from '@talismn/icons'
+import { IconContext } from '@talismn/icons/utils'
 import Color from 'colorjs.io'
 import {
   AnchorHTMLAttributes,

@@ -181,7 +181,6 @@ const TransactionIconLogo = ({ className, logo, error }: TransactionIconLogoProp
         }
       `}
     >
-      {/* @ts-expect-error */}
       <IconComponent />
     </div>
   )

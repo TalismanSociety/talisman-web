@@ -15,9 +15,9 @@ export const Default: Story<React.SVGProps<SVGSVGElement> & { title?: string }> 
   const theme = useTheme()
   return (
     <div css={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '1rem' }}>
-      {Object.entries(Icon as any)
+      {Object.entries(Icon)
         .filter(([name]) => name !== 'IconContext')
-        .map(([name, Icon]: [any, any]) => (
+        .map(([name, Icon]) => (
           <figure
             css={{
               display: 'flex',

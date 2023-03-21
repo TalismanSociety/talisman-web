@@ -1,6 +1,7 @@
 import { selectedSubstrateAccountsState } from '@domains/accounts/recoils'
 import { chainIdState, chainsState } from '@domains/chains/recoils'
 import { selectorFamily } from 'recoil'
+// @ts-expect-error
 import { Thread, spawn } from 'threads'
 
 import { WorkerFunction } from './worker'
