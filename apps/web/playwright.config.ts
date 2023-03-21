@@ -21,7 +21,7 @@ const config: PlaywrightTestConfig = {
     },
   ],
   webServer: {
-    command: `yarn build && yarn dlx serve -s -p ${PORT} build`,
+    command: `yarn dev -p ${PORT}`,
     port: PORT,
     timeout: process.env.CI ? 10 * 60000 : 5 * 60000,
     reuseExistingServer: !process.env.CI,
