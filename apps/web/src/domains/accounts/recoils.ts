@@ -1,6 +1,7 @@
 import { storageEffect } from '@domains/common/effects'
 import type { InjectedAccount } from '@polkadot/extension-inject/types'
 import { array, jsonParser, object, optional, string } from '@recoiljs/refine'
+import { Maybe } from '@util/monads'
 import { ethers } from 'ethers'
 import { DefaultValue, atom, selector, waitForAll } from 'recoil'
 
@@ -75,18 +76,23 @@ export const selectedAccountAddressesState = atom<string[] | undefined>({
 export const selectedAccountsState = selector({
   key: 'SelectedAccounts',
   get: ({ get }) => {
-    const [accounts, injectedAccounts, selectedAddresses] = get(
-      waitForAll([accountsState, injectedAccountsState, selectedAccountAddressesState])
+    const [accounts, injectedAccounts, readOnlyAccounts, selectedAddresses] = get(
+      waitForAll([accountsState, injectedAccountsState, readOnlyAccountsState, selectedAccountAddressesState])
     )
 
+    const onlyHasReadonlyAccounts = injectedAccounts.length === 0 && readOnlyAccounts.length > 0
+    const defaultDisplayedAccounts = onlyHasReadonlyAccounts
+      ? Maybe.of(readOnlyAccounts[0]).mapOr([], x => [x])
+      : injectedAccounts
+
     if (selectedAddresses === undefined) {
-      return injectedAccounts
+      return defaultDisplayedAccounts
     }
 
     const selectedAccounts = accounts.filter(({ address }) => selectedAddresses.includes(address))
 
     // TODO: clean this up
-    return selectedAccounts.length === 0 ? injectedAccounts : selectedAccounts
+    return selectedAccounts.length === 0 ? defaultDisplayedAccounts : selectedAccounts
   },
 })
 

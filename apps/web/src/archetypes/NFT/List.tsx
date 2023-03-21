@@ -1,15 +1,15 @@
 import { CopyButton } from '@components/CopyButton'
 import { NFTCard } from '@components/recipes/NFTCard'
-import AccountsManagement from '@components/widgets/AccountsManagementMenu'
 import { legacySelectedAccountState, selectedAccountsState } from '@domains/accounts/recoils'
+import { copyAddressToClipboard } from '@domains/common/utils'
 import { css } from '@emotion/react'
 import styled from '@emotion/styled'
 import { nftDataState } from '@libs/@talisman-nft/provider'
 import { NFTShort } from '@libs/@talisman-nft/types'
-import { Copy } from '@talismn/icons'
+import { ExternalLink } from '@talismn/icons'
 import { Identicon, Text } from '@talismn/ui'
 import { device } from '@util/breakpoints'
-import toast from 'react-hot-toast'
+import { useMemo } from 'react'
 import { useRecoilValue } from 'recoil'
 
 import HiddenNFTGrid from './HiddenNFTGrid'
@@ -63,6 +63,16 @@ const List = () => {
 
   const address = useRecoilValue(legacySelectedAccountState)?.address
   const accounts = useRecoilValue(selectedAccountsState)
+  const addresses = useMemo(() => accounts.map(x => x.address), [accounts])
+
+  const hasNoNfts = useMemo(
+    () =>
+      !isFetching &&
+      Object.entries(count)
+        .filter(x => addresses.includes(x[0]))
+        .every(([_, value]) => value === 0),
+    [addresses, count, isFetching]
+  )
 
   if (isFetching && items.length === 0)
     return (
@@ -73,24 +83,35 @@ const List = () => {
       </ListGrid>
     )
 
-  if (items.length === 0 && !isFetching && !count)
+  if (hasNoNfts)
     return (
       <HiddenNFTGrid
         overlay={
           <span
             css={css`
+              text-align: center;
               display: flex;
               flex-direction: column;
               align-items: center;
               justify-content: center;
+              gap: 0.8rem;
               > * {
                 margin-bottom: 1rem;
               }
             `}
           >
-            <Text.H2>No NFTs Found</Text.H2>
-            <Text.Body>Please try another account</Text.Body>
-            <AccountsManagement />
+            <Text.H2>No collectibles found</Text.H2>
+            <Text.Body>
+              Talisman currently supports RMRK 2, Astar,
+              <br />
+              Moonriver, Moonbeam, Statemine and Acala NFTs
+            </Text.Body>
+            <Text.Body>
+              Start your collection with a{' '}
+              <Text.Body.A href="https://singular.rmrk.app/collections/b6e98494bff52d3b1e-SPIRIT" target="_blank">
+                Spirit Key <ExternalLink size="1em" />
+              </Text.Body.A>
+            </Text.Body>
           </span>
         }
       />
@@ -156,15 +177,7 @@ const List = () => {
               <CopyButton
                 text={address}
                 onCopied={(text: string) => {
-                  toast(
-                    <>
-                      <Text.Body as="div" alpha="high">
-                        Address copied to clipboard
-                      </Text.Body>
-                      <Text.Body as="div">{text}</Text.Body>
-                    </>,
-                    { position: 'bottom-right', icon: <Copy /> }
-                  )
+                  copyAddressToClipboard(text)
                 }}
                 onFailed={(text: string) => {
                   console.log(`>>> failed`, text)

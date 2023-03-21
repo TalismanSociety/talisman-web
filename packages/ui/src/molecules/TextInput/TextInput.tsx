@@ -11,6 +11,8 @@ export type TextInputProps = React.DetailedHTMLProps<React.InputHTMLAttributes<H
   trailingSupportingText?: ReactNode
   leadingSupportingText?: ReactNode
   isError?: boolean
+  // To disable label spacing
+  noLabel?: boolean
 }
 
 const TextInput = ({
@@ -20,6 +22,7 @@ const TextInput = ({
   trailingSupportingText,
   leadingSupportingText,
   isError,
+  noLabel,
   ...props
 }: TextInputProps) => {
   const theme = useTheme()
@@ -60,7 +63,7 @@ const TextInput = ({
           css={{
             'flex': 1,
             'fontSize': '3rem',
-            'width': '20rem',
+            'width': props.width ?? '20rem',
             'background': 'transparent',
             'border': 'none',
             '&[type=number]': {
@@ -72,23 +75,25 @@ const TextInput = ({
         />
         {trailingIcon}
       </div>
-      <div
-        css={{
-          'display': 'flex',
-          'justifyContent': 'space-between',
-          'alignItems': 'center',
-          'fontSize': '1.12rem',
-          'marginTop': '0.8rem',
-          '> *:empty::after': {
-            content: `"\u200B"`,
-          },
-        }}
-      >
-        <Text as="label">{leadingSupportingText}</Text>
-        <Text as="label" css={isError && { color: theme.color.onError }}>
-          {trailingSupportingText}
-        </Text>
-      </div>
+      {!noLabel && (
+        <div
+          css={{
+            'display': 'flex',
+            'justifyContent': 'space-between',
+            'alignItems': 'center',
+            'fontSize': '1.12rem',
+            'marginTop': '0.8rem',
+            '> *:empty::after': {
+              content: `"\u200B"`,
+            },
+          }}
+        >
+          <Text as="label">{leadingSupportingText}</Text>
+          <Text as="label" css={isError && { color: theme.color.onError }}>
+            {trailingSupportingText}
+          </Text>
+        </div>
+      )}
     </div>
   )
 }

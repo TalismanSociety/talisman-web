@@ -1,7 +1,7 @@
-import PoolStake, { PoolStakeList } from '@components/recipes/PoolStake/PoolStake'
-import { PoolStatus } from '@components/recipes/PoolStatusIndicator'
+import StakeItem from '@components/recipes/StakeItem'
+import { StakeStatus } from '@components/recipes/StakeStatusIndicator'
 import { selectedSubstrateAccountsState } from '@domains/accounts/recoils'
-import { createAccounts } from '@domains/nominationPools/utils'
+import { createAccounts, getPoolUnbonding } from '@domains/nominationPools/utils'
 import { Button, CircularProgressIndicator, HiddenDetails, Text } from '@talismn/ui'
 import { Maybe } from '@util/monads'
 import { useMemo } from 'react'
@@ -33,6 +33,13 @@ const Stakings = () => {
     { enabled: poolMembersLoadable.state === 'hasValue' }
   )
 
+  const slashingSpans = useChainState(
+    'query',
+    'staking',
+    'slashingSpans.multi',
+    poolMembersLoadable.valueMaybe()?.map(x => createAccounts(api, x.unwrapOrDefault().poolId).stashId) ?? []
+  )
+
   const poolMetadatumLoadable = useChainState(
     'query',
     'nominationPools',
@@ -42,6 +49,19 @@ const Stakings = () => {
   )
 
   const activeEraLoadable = useChainState('query', 'staking', 'activeEra', [])
+
+  const balances = useChainState(
+    'query',
+    'system',
+    'account.multi',
+    useMemo(() => accounts.filter(x => !x.readonly).map(({ address }) => address), [accounts])
+  )
+  const totalFree = useMemo(
+    () => balances.map(x => x.reduce((previous, current) => previous + current.data.free.toBigInt(), 0n)),
+    [balances]
+  )
+
+  const sessionProgressLoadable = useChainState('derive', 'session', 'progress', [])
 
   const eraStakersLoadable = useRecoilValueLoadable(
     activeEraLoadable.state !== 'hasValue'
@@ -56,11 +76,18 @@ const Stakings = () => {
 
   const pools = useMemo(
     () =>
-      poolMembersLoadable.state !== 'hasValue'
+      poolMembersLoadable.state !== 'hasValue' || sessionProgressLoadable.state !== 'hasValue'
         ? undefined
         : poolMembersLoadable.contents
-            .map((poolMember, index) => {
-              const status: PoolStatus | undefined = (() => {
+            // Calculate unbondings
+            .map((poolMember, index) => ({
+              account: accounts[index],
+              poolMember,
+              ...getPoolUnbonding(poolMember.unwrapOrDefault(), sessionProgressLoadable.contents),
+            }))
+            // Calculate remaining values
+            .map(({ poolMember, ...rest }, index) => {
+              const status: StakeStatus | undefined = (() => {
                 if (poolNominatorsLoadable.state !== 'hasValue' || eraStakers === undefined) {
                   return undefined
                 }
@@ -72,24 +99,33 @@ const Stakings = () => {
                 return targets?.some(x => eraStakers.has(x.toHuman())) ? 'earning_rewards' : 'waiting'
               })()
 
+              const priorLength = slashingSpans.valueMaybe()?.[index]?.unwrapOr(undefined)?.prior.length
+              const slashingSpan = priorLength === undefined ? 0 : priorLength + 1
+
               return {
+                ...rest,
                 status,
-                account: accounts[index],
                 poolName: poolMetadatumLoadable.valueMaybe()?.[index]?.toUtf8() ?? (
                   <CircularProgressIndicator size="1em" />
                 ),
-                poolMember: poolMember.unwrapOrDefault(),
+                poolMember,
                 pendingRewards: pendingRewards.find(rewards => rewards[0] === accounts[index]?.address)?.[1],
+                slashingSpan,
               }
             })
-            .filter(x => !x.poolMember.points.isZero()),
+            .filter(x => x.poolMember.isSome)
+            .map(x => ({ ...x, poolMember: x.poolMember.unwrapOrDefault() })),
     [
       poolMembersLoadable.state,
       poolMembersLoadable.contents,
-      poolNominatorsLoadable,
+      sessionProgressLoadable.state,
+      sessionProgressLoadable.contents,
       accounts,
+      slashingSpans,
       poolMetadatumLoadable,
       pendingRewards,
+      poolNominatorsLoadable.state,
+      poolNominatorsLoadable.contents,
       eraStakers,
     ]
   )
@@ -110,24 +146,25 @@ const Stakings = () => {
               }}
             >
               <Text.Body>You have no staked assets yet...</Text.Body>
-              <Button as={Link} variant="outlined" to="/staking">
-                Get started
-              </Button>
+              {totalFree.valueMaybe() !== 0n && (
+                <Button as={Link} variant="outlined" to="/staking">
+                  Get started
+                </Button>
+              )}
             </div>
           }
         >
-          <PoolStakeList>
-            <PoolStake.Skeleton animate={false} />
-            <PoolStake.Skeleton animate={false} />
-            <PoolStake.Skeleton animate={false} />
-          </PoolStakeList>
+          <section css={{ display: 'flex', flexDirection: 'column', gap: '1.6rem' }}>
+            <StakeItem.Skeleton animate={false} />
+            <StakeItem.Skeleton animate={false} />
+          </section>
         </HiddenDetails>
       ) : (
-        <PoolStakeList>
+        <section css={{ display: 'flex', flexDirection: 'column', gap: '1.6rem' }}>
           {pools?.map((pool, index) => (
             <PoolStakeItem key={index} item={pool} />
           ))}
-        </PoolStakeList>
+        </section>
       )}
     </div>
   )

@@ -9,6 +9,7 @@ export type AnimatedFiatNumberProps = {
 const AnimatedFiatNumber = (props: AnimatedFiatNumberProps) => (
   <AnimatedNumber
     end={props.end}
+    decimals={2}
     formatter={useMemo(
       () =>
         Intl.NumberFormat(undefined, {

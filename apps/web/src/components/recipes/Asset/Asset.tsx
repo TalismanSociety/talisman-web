@@ -101,11 +101,11 @@ const AssetSkeleton = ({ loading = true }: { loading?: boolean }) => {
               margin: '16px',
             }}
           />
-          <div css={{ display: 'flex', flexDirection: 'column', gap: '0.4em' }}>
+          <div css={{ flex: 1, alignItems: 'stretch', display: 'flex', flexDirection: 'column', gap: '0.4em' }}>
             <div
               className="shimmer"
               css={{
-                width: '150px',
+                maxWidth: '150px',
                 height: '1em',
                 borderRadius: '12px',
               }}
@@ -123,7 +123,8 @@ const AssetSkeleton = ({ loading = true }: { loading?: boolean }) => {
               <div
                 className="shimmer"
                 css={{
-                  width: '100px',
+                  width: '100%',
+                  maxWidth: '100px',
                   height: '1em',
                   borderRadius: '12px',
                 }}
@@ -410,7 +411,7 @@ export const AssetsList = (props: AssetsListProps) => {
   const { isLoading } = props
 
   return (
-    <HiddenDetails overlay={<Text.H3>No Assets Found</Text.H3>} hidden={!isLoading && isEmpty(props.children)}>
+    <HiddenDetails overlay={<Text.H3>No assets found</Text.H3>} hidden={!isLoading && isEmpty(props.children)}>
       <Table>
         <thead>
           <tr>

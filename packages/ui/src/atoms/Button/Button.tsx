@@ -1,13 +1,18 @@
 import { useTheme } from '@emotion/react'
+import { IconContext } from '@talismn/icons'
 import { ElementType, ReactNode, useMemo } from 'react'
 
 import CircularProgressIndicator from '../CircularProgressIndicator'
 
 type ButtonElementType = Extract<React.ElementType, 'button' | 'a'> | ElementType<any>
 
-type PolymorphicButtonProps<T extends ButtonElementType> = {
+type PolymorphicButtonProps<T extends ButtonElementType = 'button'> = {
   as?: T
-  variant?: 'outlined' | 'noop' | 'secondary'
+  variant?:
+    | 'outlined'
+    | 'secondary'
+    // Deprecated
+    | 'noop'
   leadingIcon?: ReactNode
   trailingIcon?: ReactNode
   disabled?: boolean
@@ -15,10 +20,10 @@ type PolymorphicButtonProps<T extends ButtonElementType> = {
   loading?: boolean
 }
 
-export type ButtonProps<T extends ButtonElementType> = PolymorphicButtonProps<T> &
+export type ButtonProps<T extends ButtonElementType = 'button'> = PolymorphicButtonProps<T> &
   Omit<React.ComponentPropsWithoutRef<T>, keyof PolymorphicButtonProps<T>>
 
-const Button = <T extends ButtonElementType>({
+const Button = <T extends ButtonElementType = 'button'>({
   as = 'button' as T,
   variant,
   trailingIcon,
@@ -97,6 +102,7 @@ const Button = <T extends ButtonElementType>({
       disabled={disabled}
       css={[
         {
+          textAlign: 'center',
           display: 'block',
           padding: '1.156rem 2.4rem',
           border: 'none',
@@ -124,15 +130,17 @@ const Button = <T extends ButtonElementType>({
               alignItems: 'center',
             }}
           >
-            {(() => {
-              if (loading) {
-                return <CircularProgressIndicator size="1.6rem" />
-              }
+            <IconContext.Provider value={{ size: '1.6rem' }}>
+              {(() => {
+                if (loading) {
+                  return <CircularProgressIndicator size="1.6rem" />
+                }
 
-              if (leadingIcon) {
-                return leadingIcon
-              }
-            })()}
+                if (leadingIcon) {
+                  return leadingIcon
+                }
+              })()}
+            </IconContext.Provider>
           </span>
         )}
         <span

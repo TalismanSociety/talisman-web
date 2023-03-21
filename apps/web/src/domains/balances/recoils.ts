@@ -6,7 +6,7 @@ import { useBalances as _useBalances, useAllAddresses, useChaindata, useTokens }
 import { ChaindataProvider, TokenList } from '@talismn/chaindata-provider'
 import { groupBy, isNil } from 'lodash'
 import { useEffect, useMemo } from 'react'
-import { atom, selector, useRecoilValue, useSetRecoilState } from 'recoil'
+import { atom, selector, useRecoilCallback, useRecoilValue, useSetRecoilState } from 'recoil'
 
 export type LegacyBalances = {
   balances: Balances | undefined
@@ -30,6 +30,17 @@ export const legacyBalancesState = atom<LegacyBalances>({
   dangerouslyAllowMutability: true,
 })
 
+export const balancesState = atom<Balances>({ key: 'Balances', dangerouslyAllowMutability: true })
+
+export const selectedBalancesState = selector({
+  key: 'SelectedBalances',
+  get: ({ get }) => {
+    const selectedAddresses = get(selectedAccountsState).map(x => x.address)
+    return new Balances(get(balancesState).sorted.filter(x => selectedAddresses.includes(x.address)))
+  },
+  dangerouslyAllowMutability: true,
+})
+
 export const fiatBalancesState = atom<Record<string, number>>({
   key: 'FiatBalances',
 })
@@ -42,6 +53,18 @@ export const totalInjectedAccountsFiatBalance = selector({
 
     return Object.entries(fiatBalances)
       .filter(([key]) => injecteds.includes(key))
+      .reduce((previous, current) => previous + current[1], 0)
+  },
+})
+
+export const totalSelectedAccountsFiatBalance = selector({
+  key: 'TotalSelectedAccountsFiatBalance',
+  get: ({ get }) => {
+    const selecteds = get(selectedAccountsState).map(x => x.address)
+    const fiatBalances = get(fiatBalancesState)
+
+    return Object.entries(fiatBalances)
+      .filter(([key]) => selecteds.includes(key))
       .reduce((previous, current) => previous + current[1], 0)
   },
 })
@@ -80,6 +103,14 @@ export const LegacyBalancesWatcher = () => {
 
   const balances = _useBalances(addressesByToken)
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(
+    useRecoilCallback(({ set }) => () => {
+      set(balancesState, balances)
+    }),
+    [balances]
+  )
+
   const selectedAccounts = useRecoilValue(selectedAccountsState)
   const selectedAddresses = useMemo(() => selectedAccounts.map(x => x.address), [selectedAccounts])
 
@@ -116,34 +147,19 @@ export const LegacyBalancesWatcher = () => {
 
   const setFiatBalances = useSetRecoilState(fiatBalancesState)
 
-  const addressesFiatBalance = useMemo(() => {
-    Object.fromEntries(
-      Object.entries(groupBy(selectedBalances?.sorted, 'address')).map(([key, value]) => [
-        key,
-        value.reduce((previous, current) => previous + (current.total.fiat('usd') ?? 0), 0),
-      ])
-    )
-  }, [selectedBalances])
-
-  useEffect(
-    () => {
-      if (balances === undefined) {
-        return
-      }
-
-      setFiatBalances(
-        Object.fromEntries(
-          Object.entries(groupBy(balances.sorted ?? [], 'address')).map(([key, value]) => [
-            key,
-            value.reduce((previous, current) => previous + (current.total.fiat('usd') ?? 0), 0),
-          ])
-        )
-      )
-    },
-    // not doing this will cause constant re-render
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [balances, JSON.stringify(addressesFiatBalance)]
+  const addressesFiatBalance = useMemo(
+    () =>
+      Object.fromEntries(accounts.map(x => [x.address, balances.find({ address: x.address }).sum.fiat('usd').total])),
+    [accounts, balances]
   )
+
+  useEffect(() => {
+    if (balances === undefined) {
+      return
+    }
+
+    setFiatBalances(addressesFiatBalance)
+  }, [addressesFiatBalance, balances, setFiatBalances])
 
   return null
 }

@@ -1,33 +1,80 @@
-import React, { ElementType } from 'react'
+import { useTheme } from '@emotion/react'
+import Color from 'colorjs.io'
+import React, { ElementType, useMemo } from 'react'
 
-type PolymorphicTextProps<T extends React.ElementType> = { as?: T; alpha?: 'disabled' | 'medium' | 'high' }
+export type TextAlpha = 'disabled' | 'medium' | 'high'
+
+type PolymorphicTextProps<T extends React.ElementType> = {
+  as?: T
+  color?: string
+  alpha?: TextAlpha | ((props: { hover: boolean }) => TextAlpha)
+}
+
 export type TextProps<T extends React.ElementType> = PolymorphicTextProps<T> &
   Omit<React.ComponentPropsWithoutRef<T>, keyof PolymorphicTextProps<T>>
 
-const BaseText = <T extends React.ElementType = 'span'>(props: TextProps<T>) => {
-  const Component = props.as ?? 'span'
+const decorateText = <T extends Object>(element: T) =>
+  Object.assign(element, {
+    A: <T extends React.ElementType = 'a'>(props: TextProps<T>) => (
+      <BaseText as="a" alpha="high" {...props} css={{ textDecoration: 'underline' }} />
+    ),
+  })
+
+const useAlpha = (color: string, alpha: TextAlpha) => {
+  const theme = useTheme()
+
+  return useMemo(() => {
+    const textColor = new Color(color ?? theme.color.onBackground)
+    textColor.alpha = theme.contentAlpha[alpha ?? 'medium']
+
+    return textColor.display().toString()
+  }, [alpha, color, theme.color.onBackground])
+}
+
+const BaseText = <T extends React.ElementType = 'span'>({
+  as,
+  color: _color,
+  alpha = 'medium',
+  ...props
+}: TextProps<T>) => {
+  const theme = useTheme()
+  const Component = as ?? 'span'
+  const color = _color ?? theme.color.onBackground
 
   return (
     <Component
       {...props}
-      css={theme => ({
-        color: `rgba(255,255,255,${theme.contentAlpha[props.alpha ?? 'medium']})`,
-        fontFamily: 'Surt',
-      })}
+      css={{
+        'color': useAlpha(color, typeof alpha === 'function' ? alpha({ hover: false }) : alpha),
+        'fontFamily': 'Surt',
+        ':hover': {
+          color: useAlpha(color, typeof alpha === 'function' ? alpha({ hover: true }) : alpha),
+        },
+      }}
     />
   )
 }
 
-const BaseHeaderText = <T extends React.ElementType = 'h1'>(props: TextProps<T>) => {
-  const Component = props.as ?? 'h1'
+const BaseHeaderText = <T extends React.ElementType = 'h1'>({
+  as,
+  color: _color,
+  alpha = 'high',
+  ...props
+}: TextProps<T>) => {
+  const theme = useTheme()
+  const Component = as ?? 'span'
+  const color = _color ?? theme.color.onBackground
 
   return (
     <Component
       {...props}
-      css={theme => ({
-        color: `rgba(255,255,255,${theme.contentAlpha[props.alpha ?? 'high']})`,
-        fontFamily: 'SurtExpanded',
-      })}
+      css={{
+        'color': useAlpha(color, typeof alpha === 'function' ? alpha({ hover: false }) : alpha),
+        'fontFamily': 'SurtExpanded',
+        ':hover': {
+          color: useAlpha(color, typeof alpha === 'function' ? alpha({ hover: true }) : alpha),
+        },
+      }}
     />
   )
 }
@@ -45,18 +92,15 @@ const Text = Object.assign(BaseText, {
   H4: <T extends React.ElementType = 'h4'>(props: TextProps<T>) => (
     <BaseHeaderText {...props} as={props.as ?? 'h4'} css={{ fontSize: 18 }} />
   ),
-  BodyLarge: <T extends React.ElementType = 'span'>(props: TextProps<T>) => (
+  BodyLarge: decorateText(<T extends React.ElementType = 'span'>(props: TextProps<T>) => (
     <BaseText {...props} as={props.as ?? 'span'} css={{ fontSize: 16 }} />
-  ),
-  Body: <T extends React.ElementType = 'span'>(props: TextProps<T>) => (
+  )),
+  Body: decorateText(<T extends React.ElementType = 'span'>(props: TextProps<T>) => (
     <BaseText {...props} as={props.as ?? 'span'} css={{ fontSize: 14 }} />
-  ),
-  BodySmall: <T extends React.ElementType = 'span'>(props: TextProps<T>) => (
+  )),
+  BodySmall: decorateText(<T extends React.ElementType = 'span'>(props: TextProps<T>) => (
     <BaseText {...props} as={props.as ?? 'span'} css={{ fontSize: 12 }} />
-  ),
-  A: <T extends React.ElementType | ElementType<any> = 'a'>(props: TextProps<T>) => (
-    <BaseText {...props} as={props.as ?? 'a'} alpha="high" css={{ fontSize: 'inherit', textDecoration: 'underline' }} />
-  ),
+  )),
 })
 
 export default Text

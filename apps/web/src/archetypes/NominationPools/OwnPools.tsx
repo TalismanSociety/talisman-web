@@ -1,57 +1,17 @@
-import PoolStake, { PoolStakeList } from '@components/recipes/PoolStake/PoolStake'
-import { selectedSubstrateAccountsState } from '@domains/accounts/recoils'
-import { useChainState } from '@domains/common/hooks'
+import SectionHeader from '@components/molecules/SectionHeader'
+import StakeItem from '@components/recipes/StakeItem'
+import AnimatedFiatNumber from '@components/widgets/AnimatedFiatNumber'
 import { useTotalStaked } from '@domains/staking/hooks'
-import { useTheme } from '@emotion/react'
-import { Text } from '@talismn/ui'
 import { Suspense } from 'react'
-import { useRecoilValue } from 'recoil'
 
 import Stakings from './Stakings'
-import Unstakings from './Unstakings'
 import ValidatorStakings from './ValidatorStakings'
-import ValidatorUnstakings from './ValidatorUnstakings'
-
-const UnstakingHeader = () => {
-  const accounts = useRecoilValue(selectedSubstrateAccountsState)
-
-  const poolMembersLoadable = useChainState(
-    'query',
-    'nominationPools',
-    'poolMembers.multi',
-    accounts.map(({ address }) => address)
-  )
-
-  const stakingsLoadable = useChainState('derive', 'staking', 'accounts', [
-    accounts.map(({ address }) => address),
-    undefined,
-  ])
-
-  const hasUnstakings =
-    poolMembersLoadable.valueMaybe()?.some(x => x.unwrapOrDefault().unbondingEras.size > 0) ||
-    stakingsLoadable.valueMaybe()?.some(x => !x.redeemable?.isZero() || (x.unlocking?.length ?? 0) > 0)
-
-  if (!hasUnstakings) {
-    return null
-  }
-
-  return (
-    <header css={{ marginTop: '4rem' }}>
-      <Text.H4 css={{ marginBottom: '1.6rem' }}>Unstaking</Text.H4>
-    </header>
-  )
-}
 
 const StakingHeader = () => {
-  const theme = useTheme()
   const totalStaked = useTotalStaked()
+
   return (
-    <header>
-      <Text.H4 css={{ marginBottom: '2.4rem' }}>
-        Staking
-        <span css={{ color: theme.color.primary, marginLeft: '0.85em' }}>{totalStaked.localizedFiatAmount}</span>
-      </Text.H4>
-    </header>
+    <SectionHeader headlineText="Staking" supportingText={<AnimatedFiatNumber end={totalStaked.fiatAmount ?? 0} />} />
   )
 }
 
@@ -60,14 +20,11 @@ const OwnPools = () => (
     <Suspense
       fallback={
         <div>
-          <header>
-            <Text.H4 css={{ marginBottom: '2.4rem' }}>Staking</Text.H4>
-          </header>
-          <PoolStakeList>
-            <PoolStake.Skeleton />
-            <PoolStake.Skeleton />
-            <PoolStake.Skeleton />
-          </PoolStakeList>
+          <SectionHeader headlineText="Staking" />
+          <section css={{ display: 'flex', flexDirection: 'column', gap: '1.6rem' }}>
+            <StakeItem.Skeleton />
+            <StakeItem.Skeleton />
+          </section>
         </div>
       }
     >
@@ -77,7 +34,7 @@ const OwnPools = () => (
           css={{
             'display': 'flex',
             'flexDirection': 'column',
-            'gap': '2.8rem',
+            'gap': '1.6rem',
             '> *:empty': {
               display: 'none',
             },
@@ -85,22 +42,6 @@ const OwnPools = () => (
         >
           <ValidatorStakings />
           <Stakings />
-        </div>
-      </div>
-      <div>
-        <UnstakingHeader />
-        <div
-          css={{
-            'display': 'flex',
-            'flexDirection': 'column',
-            'gap': '2.8rem',
-            '> *:empty': {
-              display: 'none',
-            },
-          }}
-        >
-          <ValidatorUnstakings />
-          <Unstakings />
         </div>
       </div>
     </Suspense>

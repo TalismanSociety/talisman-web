@@ -2,199 +2,138 @@ import OwnPools from '@archetypes/NominationPools/OwnPools'
 import useAssets, { useAssetsFiltered } from '@archetypes/Portfolio/Assets'
 import { Crowdloans } from '@archetypes/Wallet'
 import { Search } from '@components/Field'
+import SectionHeader from '@components/molecules/SectionHeader'
 import Asset, { AssetsList, AssetsListLocked } from '@components/recipes/Asset'
-import { NFTCard } from '@components/recipes/NFTCard'
 import AnimatedFiatNumber from '@components/widgets/AnimatedFiatNumber'
-import { selectedAccountsState } from '@domains/accounts/recoils'
-import { filteredNftDataState } from '@libs/@talisman-nft/provider'
-import { NFTShort } from '@libs/@talisman-nft/types'
-import { Button, HiddenDetails, Text } from '@talismn/ui'
+import PortfolioAllocationGraph from '@components/widgets/PortfolioAllocationGraph'
+import { Button } from '@talismn/ui'
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { useRecoilValue } from 'recoil'
 
-const Overview = () => {
+const AssetsOverview = () => {
   const [search, setSearch] = useState('')
   const { fiatTotal } = useAssets()
   const { tokens, balances, isLoading } = useAssetsFiltered({ size: 8, search })
 
-  const selectedAccounts = useRecoilValue(selectedAccountsState)
-  const { items, isFetching } = useRecoilValue(filteredNftDataState)
-
-  const nfts = useMemo(() => {
-    const filteredItems = items.filter(x => selectedAccounts.map(x => x.address).includes(x.address))
-
-    if (!isFetching && filteredItems.length === 0) {
-      return Array.from({ length: 4 }).map((_, index) => <NFTCard key={index} isBlank />)
-    }
-    // if still fetching and the items lenght is less than 4, return the loading cards but only display the remainder of items minus 4
-
-    if (!isFetching && filteredItems.length !== 0) {
-      return filteredItems.slice(0, 4).map((nft: NFTShort) => <NFTCard key={nft.id} nft={nft} />)
-    }
-
-    // return Array of size 4 with loading cards
-    return Array.from({ length: 2 }).map((_, index) => <NFTCard key={index} loading />)
-
-    // return <></>
-  }, [isFetching, items, selectedAccounts])
+  const lockedAssets = useMemo(
+    () =>
+      tokens
+        ?.filter(token => token.locked)
+        ?.map((token, i) => <Asset key={token?.tokenDetails?.id} token={token} balances={balances} lockedAsset />),
+    [balances, tokens]
+  )
 
   return (
-    <>
-      <div
+    <div css={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '1.6rem' }}>
+      <section
         css={{
-          // grid 1x2
-          'gridTemplateColumns': '1fr',
-          'display': 'grid',
-          'gap': '1em',
-          // mobile
-          '@media (min-width: 1024px)': {
-            gridTemplateColumns: '2.15fr 1fr',
-            gap: '2rem 3.2rem',
-            marginBottom: '2rem',
+          'width': '100%',
+          'display': 'flex',
+          'flexDirection': 'column',
+          'gap': '1.8rem',
+
+          // last table
+          '> table:last-of-type': {
+            'display': 'table',
+
+            '@media (min-width: 1024px)': {
+              display: 'none',
+              height: '620px',
+            },
           },
         }}
       >
-        {/* Assets */}
-        <section
+        <div
           css={{
             'display': 'flex',
             'flexDirection': 'column',
-            'gap': '1.8rem',
-
-            // last table
-            '> table:last-of-type': {
-              'display': 'table',
-
-              '@media (min-width: 1024px)': {
-                display: 'none',
-                height: '620px',
-              },
-            },
-          }}
-        >
-          <div
-            css={{
-              'display': 'flex',
-              'flexDirection': 'column',
-              'justifyContent': 'space-between',
-              'alignItems': 'center',
-              '@media (min-width: 1024px)': {
-                flexDirection: 'row',
-              },
-            }}
-          >
-            {/* Make this into a component */}
-            <Text.H3 css={{ margin: 0 }}>
-              Assets{' '}
-              <span
-                css={{
-                  color: '#A5A5A5',
-                  fontFamily: 'Surt',
-                  marginLeft: '1rem',
-                }}
-              >
-                <AnimatedFiatNumber end={fiatTotal} />
-              </span>
-            </Text.H3>
-            <Search
-              placeholder="Search"
-              css={{
-                'marginTop': '2rem',
-                'width': '100%',
-                '@media (min-width: 1024px)': {
-                  margin: 0,
-                  width: '35%',
-                },
-              }}
-              value={search}
-              onChange={setSearch}
-            />
-          </div>
-          <AssetsList isLoading={isLoading}>
-            {tokens?.map((token, i) => (
-              <Asset key={token?.tokenDetails?.id} token={token} balances={balances} />
-            ))}
-          </AssetsList>
-          <AssetsListLocked isLoading={isLoading}>
-            {/* tokens but filtered by locked */}
-            {tokens
-              ?.filter(token => token.locked)
-              ?.map((token, i) => (
-                <Asset key={token?.tokenDetails?.id} token={token} balances={balances} lockedAsset />
-              ))}
-          </AssetsListLocked>
-        </section>
-        {/* NFTs */}
-        <section
-          css={{
-            'display': 'none',
-            // mobile
+            'justifyContent': 'space-between',
+            'alignItems': 'stretch',
             '@media (min-width: 1024px)': {
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '4.45rem',
+              flexDirection: 'row',
+              alignItems: 'center',
             },
           }}
         >
-          {/* 2x2 grid of NFTCards */}
-          <div
+          {/* Make this into a component */}
+          <SectionHeader
+            headlineText="Assets"
+            supportingText={<AnimatedFiatNumber end={fiatTotal} />}
+            css={{ marginBottom: 0 }}
+          />
+          <Search
+            placeholder="Search"
             css={{
-              display: 'flex',
-              height: '41px',
-              alignItems: 'center',
-            }}
-          >
-            <Text.H3 css={{ margin: 0 }}>NFTs</Text.H3>
-          </div>
-          <HiddenDetails overlay={<Text.H3>No NFTs Found</Text.H3>} hidden={!isFetching && items.length === 0}>
-            <div
-              css={{
-                'display': 'grid',
-                'gridTemplateColumns': '1fr',
-                'gap': '2rem',
-                // mobile
-                '@media (min-width: 1024px)': {
-                  gridTemplateColumns: '1fr 1fr',
-                },
-              }}
-            >
-              {nfts}
-            </div>
-          </HiddenDetails>
-        </section>
-        {tokens.length >= 8 && !isLoading ? (
-          <Button variant="secondary" css={{ width: 'fit-content' }} as={Link} to="assets">
-            View all assets
-          </Button>
-        ) : (
-          <div />
-        )}
-        {items.length > 4 ? (
-          <Button
-            as={Link}
-            variant="secondary"
-            css={{
-              'width': 'fit-content',
-              'display': 'none',
-
-              // mobile
+              'marginTop': '2rem',
+              'width': '100%',
               '@media (min-width: 1024px)': {
-                display: 'block',
+                margin: 0,
+                width: '35%',
               },
             }}
-            to="nfts"
-          >
-            View all NFTs
-          </Button>
-        ) : (
-          <div />
-        )}
-      </div>
-      <Crowdloans />
-      <OwnPools />
-    </>
+            value={search}
+            onChange={setSearch}
+          />
+        </div>
+        <AssetsList isLoading={isLoading}>
+          {tokens?.map((token, i) => (
+            <Asset key={token?.tokenDetails?.id} token={token} balances={balances} />
+          ))}
+        </AssetsList>
+        {isLoading ||
+          (lockedAssets.length > 0 && (
+            <AssetsListLocked isLoading={isLoading}>
+              {/* tokens but filtered by locked */}
+              {lockedAssets}
+            </AssetsListLocked>
+          ))}
+      </section>
+      {tokens.length >= 8 && !isLoading ? (
+        <Button variant="secondary" css={{ width: 'fit-content' }} as={Link} to="assets">
+          View all assets
+        </Button>
+      ) : (
+        <div />
+      )}
+    </div>
   )
 }
+
+const Overview = () => (
+  <div
+    css={{
+      'display': 'grid',
+      'gap': '4.8rem 2.3rem',
+      'gridAutoColumns': `minmax(0, 1fr)`,
+      'gridTemplateAreas': `
+        'allocation'
+        'assets'
+        'staking'
+        'crowdloans'
+      `,
+      '@media(min-width: 1024px)': {
+        gridTemplateColumns: '1fr 1fr',
+        gridTemplateAreas: `
+          'assets allocation'
+          'assets staking'
+          'assets crowdloans'
+        `,
+      },
+    }}
+  >
+    <div css={{ gridArea: 'allocation' }}>
+      <PortfolioAllocationGraph />
+    </div>
+    <div css={{ gridArea: 'assets' }}>
+      <AssetsOverview />
+    </div>
+    <div css={{ gridArea: 'staking' }}>
+      <OwnPools />
+    </div>
+    <div css={{ 'gridArea': 'crowdloans', ':empty': { display: 'none' } }}>
+      <Crowdloans />
+    </div>
+  </div>
+)
 
 export default Overview

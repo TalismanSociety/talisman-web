@@ -24,7 +24,6 @@
     "jsxImportSource": "@emotion/react"
   },
   "include": [
-    "src",
-    "../../packages/ui/src/molecules/DateInput"
+    "src"
   ]
 }

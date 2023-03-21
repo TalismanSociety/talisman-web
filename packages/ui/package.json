@@ -20,7 +20,8 @@
   "dependencies": {
     "@floating-ui/react": "^0.20.1",
     "@lottiefiles/react-lottie-player": "^3.5.2",
-    "@talismn/icons": "workspace:^"
+    "@talismn/icons": "workspace:^",
+    "colorjs.io": "^0.4.3"
   },
   "devDependencies": {
     "@babel/core": "^7.21.0",
@@ -37,7 +38,7 @@
     "@talismn/development": "workspace:^",
     "@types/react": "^18.0.28",
     "babel-loader": "^8.3.0",
-    "framer-motion": "^10.0.1",
+    "framer-motion": "^10.2.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-hot-toast": "^2.4.0",
