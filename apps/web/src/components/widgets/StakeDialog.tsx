@@ -369,7 +369,10 @@ const StakeDialog = () => {
         </Suspense>
       }
       learnMoreAnchor={
-        <StakeDialogComponent.LearnMore href="https://docs.talisman.xyz/talisman/navigating-the-paraverse/using-the-talisman-portal/one-click-staking" />
+        <StakeDialogComponent.LearnMore
+          href="https://docs.talisman.xyz/talisman/navigating-the-paraverse/using-the-talisman-portal/one-click-staking"
+          target="_blank"
+        />
       }
     />
   )
