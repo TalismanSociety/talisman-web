@@ -1,5 +1,4 @@
 import { ComponentMeta, Story } from '@storybook/react'
-import { InfoCard } from '@talismn/ui'
 
 import StakingInput from '../StakingInput'
 import { Default as StakeInputStory } from '../StakingInput/StakingInput.stories'
