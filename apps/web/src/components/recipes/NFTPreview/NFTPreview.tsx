@@ -41,12 +41,13 @@ const NFTPreview = ({ nft, isFull = false, loading, isBlank = false }: NFTPrevie
         <img
           loading="lazy"
           src={`${nft?.mediaUri}${
-            (!isFull && nft?.mediaUri?.endsWith('.gif')) ||
-            nft?.mediaUri?.endsWith('.png') ||
-            nft?.mediaUri?.endsWith('.jpg') ||
-            nft?.mediaUri?.endsWith('.jpeg')
-              ? '?img-width=500&img-height=500&img-quality=50&img-onerror=redirect'
-              : ''
+            // (!isFull && nft?.mediaUri?.endsWith('.gif')) ||
+            // nft?.mediaUri?.endsWith('.png') ||
+            // nft?.mediaUri?.endsWith('.jpg') ||
+            // nft?.mediaUri?.endsWith('.jpeg')
+            //   ? '?img-width=500&img-height=500&img-quality=50&img-onerror=redirect'
+            //   : ''
+            !isFull && '?img-width=300&img-quality=50&img-onerror=redirect'
           }`}
           alt={nft?.name ?? nft?.id}
         />
