@@ -39,7 +39,9 @@ const crowdloanDataState = selector<CrowdloanDetail[]>({
         },
       })
       const data = await response.json()
-      const crowdloans = data?.results?.map((crowdloan: any) => {
+      if (!Array.isArray(data?.results)) throw new Error('Incorrectly formatted crowdloans baserow result')
+
+      const crowdloans: CrowdloanDetail[] = data.results.map((crowdloan: any) => {
         const links: { [key: string]: string } = Object.keys(crowdloan).reduce(
           (acc: Record<string, string>, key: string) => {
             if (key.startsWith('links.')) {
@@ -94,7 +96,7 @@ const crowdloanDataState = selector<CrowdloanDetail[]>({
             full: crowdloan?.['bonus.full'],
             info: crowdloan?.['bonus.info'],
           },
-        } as CrowdloanDetail
+        }
       })
 
       return crowdloans
