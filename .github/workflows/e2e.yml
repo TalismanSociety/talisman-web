@@ -21,3 +21,11 @@ jobs:
       - run: yarn install --immutable
       - run: npx playwright install --with-deps
       - run: yarn e2e
+
+      - name: Upload test results
+        if: failure()
+        uses: actions/upload-artifact@v3
+        with:
+          name: portal-playwright-report
+          path: apps/web/test-results
+          if-no-files-found: ignore

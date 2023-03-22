@@ -26,7 +26,7 @@ import {
   TopAppBar,
 } from '@talismn/ui'
 import { shortenAddress } from '@util/format'
-import posthog from 'posthog-js'
+import { usePostHog } from 'posthog-js/react'
 import { useCallback, useEffect, useState } from 'react'
 import { Link, Navigate, Outlet, createBrowserRouter, useLocation } from 'react-router-dom'
 import { useRecoilValue, useRecoilValueLoadable, waitForAll } from 'recoil'
@@ -70,6 +70,7 @@ const Main = () => {
     waitForAll([apiState, accountsState, nativeTokenDecimalState, nativeTokenPriceState('usd'), recommendedPoolsState])
   )
 
+  const posthog = usePostHog()
   const location = useLocation()
 
   useEffect(() => {
@@ -90,8 +91,8 @@ const Main = () => {
   }, [location])
 
   useEffect(() => {
-    posthog.capture('$pageview')
-  }, [location.pathname])
+    posthog?.capture('$pageview')
+  }, [location.pathname, posthog])
 
   const [drawerOpen, setDrawerOpen] = useState(false)
 
