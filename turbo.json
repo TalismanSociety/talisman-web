@@ -28,7 +28,8 @@
       "dependsOn": ["^build"]
     },
     "e2e": {
-      "dependsOn": ["^build"]
+      "dependsOn": ["^build"],
+      "cache": false
     }
   }
 }
