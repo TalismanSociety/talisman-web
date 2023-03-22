@@ -50,7 +50,11 @@ const Details = (props: DetailsProps) => {
           },
         }}
       >
-        <Text.Body as="span" alpha={open ? 'high' : 'medium'} css={{ fontFamily: 'Surt', marginRight: '2rem' }}>
+        <Text.Body
+          as="span"
+          alpha={open ? 'high' : 'medium'}
+          css={{ fontFamily: "'Surt', sans-serif", marginRight: '2rem' }}
+        >
           {props.summary}
         </Text.Body>
         <motion.div variants={{ true: { transform: 'rotate(90deg)' } }} animate={JSON.stringify(open)}>

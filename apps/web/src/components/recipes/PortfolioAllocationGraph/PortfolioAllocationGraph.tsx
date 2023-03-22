@@ -133,7 +133,7 @@ const PortfolioAllocationGraph = Object.assign(
                 flyoutWidth={100}
                 flyoutHeight={100}
                 flyoutStyle={{ fill: theme.color.foreground }}
-                style={{ fontFamily: 'Surt', fontWeight: 'bold', fill: theme.color.onForeground }}
+                style={{ fontFamily: "'Surt', sans-serif", fontWeight: 'bold', fill: theme.color.onForeground }}
               />
             }
             colorScale={props.data.map(x => x.color)}
