@@ -1,11 +1,9 @@
-import StakeItem from '@components/recipes/StakeItem'
 import { StakeStatus } from '@components/recipes/StakeStatusIndicator'
 import { selectedSubstrateAccountsState } from '@domains/accounts/recoils'
 import { createAccounts, getPoolUnbonding } from '@domains/nominationPools/utils'
-import { Button, CircularProgressIndicator, HiddenDetails, Text } from '@talismn/ui'
+import { CircularProgressIndicator } from '@talismn/ui'
 import { Maybe } from '@util/monads'
 import { useMemo } from 'react'
-import { Link } from 'react-router-dom'
 import { constSelector, useRecoilValueLoadable, useRecoilValue_TRANSITION_SUPPORT_UNSTABLE, waitForAll } from 'recoil'
 
 import { apiState } from '../../domains/chains/recoils'
@@ -49,17 +47,6 @@ const Stakings = () => {
   )
 
   const activeEraLoadable = useChainState('query', 'staking', 'activeEra', [])
-
-  const balances = useChainState(
-    'query',
-    'system',
-    'account.multi',
-    useMemo(() => accounts.filter(x => !x.readonly).map(({ address }) => address), [accounts])
-  )
-  const totalFree = useMemo(
-    () => balances.map(x => x.reduce((previous, current) => previous + current.data.free.toBigInt(), 0n)),
-    [balances]
-  )
 
   const sessionProgressLoadable = useChainState('derive', 'session', 'progress', [])
 
@@ -131,42 +118,11 @@ const Stakings = () => {
   )
 
   return (
-    <div>
-      {poolMembersLoadable.valueMaybe()?.every(pool => pool.isNone) || pools?.length === 0 ? (
-        <HiddenDetails
-          hidden
-          overlay={
-            <div
-              css={{
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center',
-                alignItems: 'center',
-                gap: '3.2rem',
-              }}
-            >
-              <Text.Body>You have no staked assets yet...</Text.Body>
-              {totalFree.valueMaybe() !== 0n && (
-                <Button as={Link} variant="outlined" to="/staking">
-                  Get started
-                </Button>
-              )}
-            </div>
-          }
-        >
-          <section css={{ display: 'flex', flexDirection: 'column', gap: '1.6rem' }}>
-            <StakeItem.Skeleton animate={false} />
-            <StakeItem.Skeleton animate={false} />
-          </section>
-        </HiddenDetails>
-      ) : (
-        <section css={{ display: 'flex', flexDirection: 'column', gap: '1.6rem' }}>
-          {pools?.map((pool, index) => (
-            <PoolStakeItem key={index} item={pool} />
-          ))}
-        </section>
-      )}
-    </div>
+    <section css={{ display: 'flex', flexDirection: 'column', gap: '1.6rem' }}>
+      {pools?.map((pool, index) => (
+        <PoolStakeItem key={index} item={pool} />
+      ))}
+    </section>
   )
 }
 
