@@ -46,7 +46,7 @@ const BaseText = <T extends React.ElementType = 'span'>({
       {...props}
       css={{
         'color': useAlpha(color, typeof alpha === 'function' ? alpha({ hover: false }) : alpha),
-        'fontFamily': 'Surt',
+        'fontFamily': "'Surt', sans-serif",
         ':hover': {
           color: useAlpha(color, typeof alpha === 'function' ? alpha({ hover: true }) : alpha),
         },
@@ -70,7 +70,7 @@ const BaseHeaderText = <T extends React.ElementType = 'h1'>({
       {...props}
       css={{
         'color': useAlpha(color, typeof alpha === 'function' ? alpha({ hover: false }) : alpha),
-        'fontFamily': 'SurtExpanded',
+        'fontFamily': "'SurtExpanded', sans-serif",
         ':hover': {
           color: useAlpha(color, typeof alpha === 'function' ? alpha({ hover: true }) : alpha),
         },
