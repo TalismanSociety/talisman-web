@@ -3,6 +3,7 @@ import './libs/i18n/i18n'
 
 import * as Sentry from '@sentry/react'
 import { BrowserTracing } from '@sentry/tracing'
+import { PostHogProvider } from 'posthog-js/react'
 import React from 'react'
 import { createRoot } from 'react-dom/client'
 import { createRoutesFromChildren, matchRoutes, useLocation, useNavigationType } from 'react-router-dom'
@@ -33,6 +34,11 @@ const root = createRoot(container!)
 
 root.render(
   <React.StrictMode>
-    <ProfiledApp />
+    <PostHogProvider
+      apiKey={process.env.REACT_APP_POSTHOG_AUTH_TOKEN}
+      options={{ debug: process.env.NODE_ENV === 'development' }}
+    >
+      <ProfiledApp />
+    </PostHogProvider>
   </React.StrictMode>
 )

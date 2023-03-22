@@ -6029,13 +6029,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/types@npm:7.22.0":
-  version: 7.22.0
-  resolution: "@sentry/types@npm:7.22.0"
-  checksum: eec788104d3a8ed8b8bf57d95e6c1ec8ec48212a94914e4e1d8bc110fe6b88825ce2a299439d10bd2f0c69778afedabcc6cbf38c4850345e6954d8bc3be0060b
-  languageName: node
-  linkType: hard
-
 "@sentry/types@npm:7.37.2":
   version: 7.37.2
   resolution: "@sentry/types@npm:7.37.2"
@@ -8431,7 +8424,7 @@ __metadata:
     i18next-http-backend: ^1.4.5
     lodash: ^4.17.21
     md5: ^2.3.0
-    posthog-js: ^1.42.3
+    posthog-js: ^1.51.4
     react: ^18.2.0
     react-apollo-network-status: ^5.2.1
     react-app-alias: ^2.2.2
@@ -23693,14 +23686,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"posthog-js@npm:^1.42.3":
-  version: 1.42.3
-  resolution: "posthog-js@npm:1.42.3"
+"posthog-js@npm:^1.51.4":
+  version: 1.51.4
+  resolution: "posthog-js@npm:1.51.4"
   dependencies:
-    "@sentry/types": 7.22.0
     fflate: ^0.4.1
     rrweb-snapshot: ^1.1.14
-  checksum: 43466d474374b464ff895fe919221ceef8ed750a9bf838891bfcb8e1574099a9b91a43fdfe51270196a3eaf0ff5b25495c96d306e06becd82b7bfc3d4ddbc5be
+  checksum: 65bea1455dfafa0e20bc18845da16b7ded3efd01ff0df257c60b929776913ccbbb978982251f8485bc2f9c9797bac32cba5df383982cfffd039f61bb65a7069c
   languageName: node
   linkType: hard
 

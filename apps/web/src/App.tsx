@@ -13,19 +13,12 @@ import * as Portfolio from '@libs/portfolio'
 import TalismanProvider from '@libs/talisman'
 import router from '@routes'
 import { ToastBar } from '@talismn/ui'
-import posthog from 'posthog-js'
 import React, { Suspense } from 'react'
 import { Toaster } from 'react-hot-toast'
 import { RouterProvider } from 'react-router-dom'
 import { RecoilRoot } from 'recoil'
 
 import ThemeProvider from './App.Theme'
-
-if (process.env.REACT_APP_POSTHOG_AUTH_TOKEN) {
-  posthog.init(process.env.REACT_APP_POSTHOG_AUTH_TOKEN)
-  // eslint-disable-next-line
-  posthog.debug(process.env.NODE_ENV === 'development')
-}
 
 const Loader = () => {
   return (

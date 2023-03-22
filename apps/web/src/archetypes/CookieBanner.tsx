@@ -1,5 +1,5 @@
 import BaseCookieBanner from '@components/recipes/CookieBanner'
-import posthog from 'posthog-js'
+import { usePostHog } from 'posthog-js/react'
 import { useCallback, useEffect, useState } from 'react'
 
 const GDPR_TIMEZONES = [
@@ -41,16 +41,17 @@ const GDPR_TIMEZONES = [
 const isGdprComplianceRequired = GDPR_TIMEZONES.includes(Intl.DateTimeFormat().resolvedOptions().timeZone)
 
 const CookieBanner = () => {
+  const posthog = usePostHog()
   const [visible, setVisible] = useState(
-    isGdprComplianceRequired && !posthog.has_opted_in_capturing() && !posthog.has_opted_out_capturing()
+    isGdprComplianceRequired && !posthog?.has_opted_in_capturing() && !posthog?.has_opted_out_capturing()
   )
 
   // When user is no longer in a GDPR compliance country
   useEffect(() => {
     if (!isGdprComplianceRequired) {
-      posthog.clear_opt_in_out_capturing()
+      posthog?.clear_opt_in_out_capturing()
     }
-  }, [])
+  }, [posthog])
 
   return (
     <div css={{ position: 'fixed', right: '1.5rem', bottom: '2.4rem', zIndex: 11 }}>
@@ -58,13 +59,13 @@ const CookieBanner = () => {
         privacyPolicyHref="https://docs.talisman.xyz/talisman/prepare-for-your-journey/privacy-policy"
         visible={visible}
         onAccept={useCallback(() => {
-          posthog.opt_in_capturing()
+          posthog?.opt_in_capturing()
           setVisible(false)
-        }, [])}
+        }, [posthog])}
         onReject={useCallback(() => {
-          posthog.opt_in_capturing()
+          posthog?.opt_in_capturing()
           setVisible(false)
-        }, [])}
+        }, [posthog])}
         onDismiss={useCallback(() => setVisible(false), [])}
       />
     </div>
