@@ -1,59 +1,105 @@
 import { apiState } from '@domains/chains/recoils'
 import { ApiPromise } from '@polkadot/api'
-import { AugmentedCall } from '@polkadot/api/types'
-import { web3FromAddress } from '@polkadot/extension-dapp'
-import { atom, selectorFamily } from 'recoil'
-import type { Observable } from 'rxjs'
+import type {
+  GenericStorageEntryFunction,
+  PromiseResult,
+  QueryableStorageEntry,
+  StorageEntryPromiseOverloads,
+  UnsubscribePromise,
+} from '@polkadot/api/types'
+import { RecoilState, atomFamily, errorSelector } from 'recoil'
+import { Observable } from 'rxjs'
 
-/**
- * For method where setting up subscription was not possible
- *
- */
-export const chainState = selectorFamily({
-  key: 'SubstrateApiCall',
-  get:
-    <
-      TType extends keyof Pick<ApiPromise, 'call'>,
-      TModule extends keyof PickKnownKeys<ApiPromise['call']>,
-      TSection extends keyof PickKnownKeys<ApiPromise['call'][TModule]>,
-      TParams extends Parameters<ApiPromise[TType][TModule][TSection]>
-    >([type, module, section, ...params]: [TType, TModule, TSection, ...TParams]) =>
-    ({ get }) => {
-      type TResult = ApiPromise[TType][TModule][TSection] extends AugmentedCall<
-        'promise',
-        (args: any) => Observable<infer Result>
-      >
+const chainState = atomFamily({
+  key: 'ChainState',
+  effects: ([typeName, moduleName, sectionName, params]: [string, string, string, any[]]) => [
+    ({ setSelf, getPromise }) => {
+      const apiPromise = getPromise(apiState)
+
+      const unsubscribePromise = apiPromise.then(api => {
+        const [section, multi] = (sectionName as string).split('.')
+
+        const func =
+          // @ts-ignore
+          multi === undefined ? api[typeName][moduleName][section] : api[typeName][moduleName][section][multi]
+
+        const parsedParams = multi === undefined ? params : [params]
+
+        const unsubscribePromise: UnsubscribePromise = func(...parsedParams, (result: any) => {
+          setSelf(result)
+        }).catch((error: any) => {
+          setSelf(errorSelector(error))
+        })
+
+        return unsubscribePromise
+      })
+
+      return () => {
+        unsubscribePromise.then(unsubscribe => unsubscribe())
+      }
+    },
+  ],
+  dangerouslyAllowMutability: true,
+})
+
+export const chainQueryState = <
+  TModule extends keyof PickKnownKeys<ApiPromise['query']>,
+  TSection extends Extract<keyof PickKnownKeys<ApiPromise['query'][TModule]>, string>,
+  TAugmentedSection extends TSection | `${TSection}.multi`,
+  TExtractedSection extends TAugmentedSection extends `${infer Section}.multi` ? Section : TAugmentedSection,
+  TMethod extends Diverge<
+    // @ts-ignore
+    ApiPromise['query'][TModule][TExtractedSection],
+    StorageEntryPromiseOverloads & QueryableStorageEntry<any, any> & PromiseResult<GenericStorageEntryFunction>
+  >
+>(
+  moduleName: TModule,
+  // @ts-ignore
+  sectionName: TAugmentedSection,
+  params: TMethod extends (...args: any) => any
+    ? // @ts-ignore
+      TAugmentedSection extends TSection
+      ? Leading<Parameters<TMethod>>
+      : Leading<Parameters<TMethod>> extends [infer Head]
+      ? Head[]
+      : Array<Readonly<Leading<Parameters<TMethod>>>>
+    : never
+) =>
+  chainState(['query', String(moduleName), sectionName, params]) as RecoilState<
+    TMethod extends PromiseResult<(...args: any) => Observable<infer Result>>
+      ? TAugmentedSection extends TSection
         ? Result
-        : any
+        : Result[]
+      : never
+  >
 
-      const api = get(apiState)
-
-      return api[type]?.[module]?.[section]?.(...params) as Promise<TResult>
-    },
-})
-
-export const paymentInfoState = selectorFamily({
-  key: 'PaymentInfo',
-  get:
-    <
-      TModule extends keyof PickKnownKeys<ApiPromise['tx']>,
-      TSection extends keyof PickKnownKeys<ApiPromise['tx'][TModule]>,
-      TParams extends Parameters<ApiPromise['tx'][TModule][TSection]>
-    >([module, section, account, ...params]: [TModule, TSection, string, ...TParams]) =>
-    async ({ get }) => {
-      const api = get(apiState)
-      const extension = await web3FromAddress(account)
-
-      return api.tx[module]?.[section]?.(...params).paymentInfo(account, { signer: extension?.signer })
-    },
-})
-
-/**
- * Used to refresh all chain state reads where a subscription cannot be establish
- * TODO: right now this is a dumb counter that refresh all read on every extrinsic
- * we should make this into a atom family keyed by extrinsic type
- */
-export const chainReadIdState = atom({
-  key: 'ChainReadId',
-  default: 0,
-})
+export const chainDeriveState = <
+  TModule extends keyof PickKnownKeys<ApiPromise['derive']>,
+  TSection extends Extract<keyof PickKnownKeys<ApiPromise['derive'][TModule]>, string>,
+  TAugmentedSection extends TSection | `${TSection}.multi`,
+  TExtractedSection extends TAugmentedSection extends `${infer Section}.multi` ? Section : TAugmentedSection,
+  TMethod extends Diverge<
+    // @ts-ignore
+    ApiPromise['derive'][TModule][TExtractedSection],
+    StorageEntryPromiseOverloads & QueryableStorageEntry<any, any> & PromiseResult<GenericStorageEntryFunction>
+  >
+>(
+  moduleName: TModule,
+  // @ts-ignore
+  sectionName: TAugmentedSection,
+  params: TMethod extends (...args: any) => any
+    ? // @ts-ignore
+      TAugmentedSection extends TSection
+      ? Leading<Parameters<TMethod>>
+      : Leading<Parameters<TMethod>> extends [infer Head]
+      ? Head[]
+      : Array<Readonly<Leading<Parameters<TMethod>>>>
+    : never
+) =>
+  chainState(['derive', String(moduleName), sectionName, params]) as RecoilState<
+    TMethod extends PromiseResult<(...args: any) => Observable<infer Result>>
+      ? TAugmentedSection extends TSection
+        ? Result
+        : Result[]
+      : never
+  >
