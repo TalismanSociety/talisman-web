@@ -2,12 +2,13 @@ import { ApiPromise } from '@polkadot/api'
 import { AddressOrPair } from '@polkadot/api/types'
 import { web3FromAddress } from '@polkadot/extension-dapp'
 import { ISubmittableResult } from '@polkadot/types/types'
-import { useCallback, useState } from 'react'
+import { useCallback, useContext, useState } from 'react'
 import { useRecoilCallback, useRecoilValueLoadable } from 'recoil'
 
-import { apiState, chainIdState, chainState } from '../../chains/recoils'
+import { chainIdState, chainState } from '../../chains/recoils'
 import { extrinsicMiddleware } from '../extrinsicMiddleware'
 import { toastExtrinsic } from '../utils'
+import { SubstrateApiContext, substrateApiState } from '..'
 
 type ExtrinsicMap = PickKnownKeys<{
   // @ts-ignore
@@ -32,6 +33,7 @@ export const useExtrinsicBatch = <
 >(
   extrinsics: TExtrinsics
 ) => {
+  const apiEndpoint = useContext(SubstrateApiContext).endpoint
   const chainLoadable = useRecoilValueLoadable(chainState)
 
   const [loadable, setLoadable] = useState<
@@ -50,7 +52,7 @@ export const useExtrinsicBatch = <
       const promiseFunc = async () => {
         const [chainId, api, extension] = await Promise.all([
           snapshot.getPromise(chainIdState),
-          snapshot.getPromise(apiState),
+          snapshot.getPromise(substrateApiState(apiEndpoint)),
           web3FromAddress(account.toString()),
         ])
 

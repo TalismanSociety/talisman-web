@@ -1,4 +1,4 @@
-import { apiState } from '@domains/chains/recoils'
+import { SubstrateApiContext } from '@domains/common'
 import {
   useChainState,
   useQueryMulti,
@@ -6,16 +6,17 @@ import {
   useTokenAmountFromPlanck,
   useTokenAmountState,
 } from '@domains/common/hooks'
-import { paymentInfoState } from '@domains/common/recoils'
+import { paymentInfoState, useSubstrateApiState } from '@domains/common/recoils'
 import { BN } from '@polkadot/util'
 import usePrevious from '@util/usePrevious'
-import { useEffect, useMemo } from 'react'
+import { useContext, useEffect, useMemo } from 'react'
 import { constSelector, useRecoilValue, useRecoilValueLoadable } from 'recoil'
 
 const ESTIMATED_FEE_MARGIN_OF_ERROR = 0.25
 
 export const usePoolAddForm = (action: 'bondExtra' | 'join', account?: string) => {
-  const api = useRecoilValue(apiState)
+  const api = useRecoilValue(useSubstrateApiState())
+  const apiEndpoint = useContext(SubstrateApiContext).endpoint
 
   const prevAccount = usePrevious(account)
 
@@ -31,12 +32,20 @@ export const usePoolAddForm = (action: 'bondExtra' | 'join', account?: string) =
       ? constSelector(undefined)
       : action === 'bondExtra'
       ? paymentInfoState([
+          apiEndpoint,
           'nominationPools',
           'bondExtra',
           account,
           { FreeBalance: balancesLoadable.contents.availableBalance },
         ])
-      : paymentInfoState(['nominationPools', 'join', account, balancesLoadable.contents.availableBalance, 0])
+      : paymentInfoState([
+          apiEndpoint,
+          'nominationPools',
+          'join',
+          account,
+          balancesLoadable.contents.availableBalance,
+          0,
+        ])
   )
 
   const [input, setAmount] = useTokenAmountState('')
