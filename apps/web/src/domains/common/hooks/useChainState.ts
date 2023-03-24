@@ -5,13 +5,15 @@ import type {
   QueryableStorageEntry,
   StorageEntryPromiseOverloads,
 } from '@polkadot/api/types'
+import { useContext } from 'react'
 import { Loadable, RecoilLoadable, constSelector, useRecoilValueLoadable } from 'recoil'
 import { Observable } from 'rxjs'
 
-import { chainDeriveState, chainQueryState } from '../recoils'
+import { chainState } from '../recoils'
+import { SubstrateApiContext } from '..'
 
 /**
- * @deprecated use `chainQueryState` or `chainDeriveState` instead
+ * @deprecated use `useChainQueryState` or `useChainDeriveState` instead
  */
 export const useChainState = <
   TType extends keyof Pick<ApiPromise, 'query' | 'derive'>,
@@ -45,16 +47,18 @@ export const useChainState = <
       : Result[]
     : never
 
+  const endpoint = useContext(SubstrateApiContext).endpoint
+
   const loadable = useRecoilValueLoadable<TResult>(
     typeName === 'query'
       ? !options.enabled
         ? (constSelector(undefined) as any)
         : // @ts-expect-error
-          chainQueryState(moduleName, sectionName, params)
+          chainState([endpoint, typeName, moduleName, sectionName, params])
       : !options.enabled
       ? (constSelector(undefined) as any)
       : // @ts-expect-error
-        chainDeriveState(moduleName, sectionName, params)
+        chainState([endpoint, typeName, moduleName, sectionName, params])
   )
 
   return !options.enabled ? (RecoilLoadable.loading() as Loadable<TResult>) : loadable

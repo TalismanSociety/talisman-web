@@ -1,4 +1,3 @@
-import { apiState } from '@domains/chains/recoils'
 import { ApiPromise } from '@polkadot/api'
 import type {
   GenericStorageEntryFunction,
@@ -6,8 +5,11 @@ import type {
   QueryableStorageEntry,
   StorageEntryPromiseOverloads,
 } from '@polkadot/api/types'
-import { RecoilState, atomFamily, errorSelector } from 'recoil'
+import { useContext } from 'react'
+import { RecoilValueReadOnly, atomFamily, constSelector, errorSelector } from 'recoil'
 import { Observable } from 'rxjs'
+
+import { SubstrateApiContext, substrateApiState } from '..'
 
 type QueryMap = PickKnownKeys<// @ts-ignore
 { [P in keyof ApiPromise['query']]: `${P}.${keyof PickKnownKeys<ApiPromise['query'][P]>}` }>
@@ -31,9 +33,9 @@ type MultiPossibleQuery = keyof QueryResultMap
 
 const _chainQueryMultiState = atomFamily({
   key: 'ChainQueryMulti',
-  effects: (queries: any[]) => [
+  effects: ({ endpoint, queries }: { endpoint: string; queries: any[] }) => [
     ({ setSelf, getPromise }) => {
-      const unsubscribePromise = getPromise(apiState).then(api => {
+      const unsubscribePromise = getPromise(substrateApiState(endpoint)).then(api => {
         const params = queries.map(x => {
           if (typeof x === 'string') {
             const [module, section] = x.split('.')
@@ -67,14 +69,16 @@ const _chainQueryMultiState = atomFamily({
   dangerouslyAllowMutability: true,
 })
 
-export const chainQueryMultiState = <
+export const useChainQueryMultiState = <
   TQueries extends
     | Array<MultiPossibleQuery | [MultiPossibleQuery, ...unknown[]]>
-    | [MultiPossibleQuery | [MultiPossibleQuery, ...unknown[]]]
+    | [MultiPossibleQuery | [MultiPossibleQuery, ...unknown[]]],
+  TEnabled = void
 >(
-  queries: TQueries
+  queries: TQueries,
+  options: { enabled?: TEnabled } = { enabled: true as TEnabled }
 ) => {
-  return _chainQueryMultiState(queries as any) as RecoilState<{
+  type TResult = RecoilValueReadOnly<{
     [P in keyof TQueries]: TQueries[P] extends [infer Head, ...any[]]
       ? Head extends keyof QueryResultMap
         ? QueryResultMap[Head]
@@ -83,4 +87,14 @@ export const chainQueryMultiState = <
       ? QueryResultMap[TQueries[P]]
       : any
   }>
+
+  type TReturn = TEnabled extends true | void ? TResult : TResult | RecoilValueReadOnly<undefined>
+
+  const endpoint = useContext(SubstrateApiContext).endpoint
+
+  if (!options.enabled) {
+    return constSelector(undefined) as TReturn
+  }
+
+  return _chainQueryMultiState({ endpoint, queries }) as any as TReturn
 }

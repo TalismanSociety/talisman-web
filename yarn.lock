@@ -8438,7 +8438,7 @@ __metadata:
     react-scripts: 5.0.1
     react-use: ^17.4.0
     react-winbox: ^1.5.0
-    recoil: ^0.7.6
+    recoil: ^0.7.7
     rmrk-tools: ^1.0.64
     safety-match: ^0.4.4
     storybook-preset-craco: artisanofcode/storybook-preset-craco
@@ -23742,12 +23742,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prettier@npm:^2.8.3":
-  version: 2.8.3
-  resolution: "prettier@npm:2.8.3"
+"prettier@npm:^2.8.6":
+  version: 2.8.6
+  resolution: "prettier@npm:2.8.6"
   bin:
     prettier: bin-prettier.js
-  checksum: 92f2ceb522d454370e02082aa74ad27388672f7cee8975028b59517c069fe643bdc73e322675c8faf2ff173d7a626d1a6389f26b474000308e793aa25fff46e5
+  checksum: 8ac94fa67aec0e65743ea15ebf954ef2f1e52638abd129dc04e8b49e8bb3224c0233c98df6b5c98efd31bd2a43866590486559438ee4ead09dc81be389068572
   languageName: node
   linkType: hard
 
@@ -24688,9 +24688,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"recoil@npm:^0.7.6":
-  version: 0.7.6
-  resolution: "recoil@npm:0.7.6"
+"recoil@npm:^0.7.7":
+  version: 0.7.7
+  resolution: "recoil@npm:0.7.7"
   dependencies:
     hamt_plus: 1.0.2
   peerDependencies:
@@ -24700,7 +24700,7 @@ __metadata:
       optional: true
     react-native:
       optional: true
-  checksum: 2b31dd29a7e0b369bc986a16f7253006776845144684c9e38bb6760e4ea954c5d7dc682aaf88e815e69098b8dea3ff62b6fa4e6c156157a29d2d9cb824db1779
+  checksum: 65edecbcb8d2cde89bfd61ec679c200483472a6cd343c33e4e9142b6ce524fb17d1fecc2bfd8c392926aaa8178c81457f165b32abce2a9662f51f98822c0a9cc
   languageName: node
   linkType: hard
 
@@ -27059,7 +27059,7 @@ storybook-preset-craco@artisanofcode/storybook-preset-craco:
     eslint: ^8.33.0
     husky: ^8.0.3
     import-sort-style-module: ^6.0.0
-    prettier: ^2.8.3
+    prettier: ^2.8.6
     prettier-plugin-import-sort: ^0.0.7
     pretty-quick: ^3.1.3
     turbo: ^1.8.2

@@ -10,8 +10,8 @@ import AccountsManagementMenu from '@components/widgets/AccountsManagementMenu'
 import { RouteErrorElement } from '@components/widgets/ErrorBoundary'
 import StakeDialog from '@components/widgets/StakeDialog'
 import { accountsState, selectedAccountsState } from '@domains/accounts/recoils'
-import { apiState, nativeTokenDecimalState, nativeTokenPriceState } from '@domains/chains/recoils'
-import { recommendedPoolsState } from '@domains/nominationPools/recoils'
+import { nativeTokenPriceState, useNativeTokenDecimalState } from '@domains/chains/recoils'
+import { useRecommendedPoolsState } from '@domains/nominationPools/recoils'
 import * as MoonbeamContributors from '@libs/moonbeam-contributors'
 import * as Sentry from '@sentry/react'
 import { Compass, CreditCard, Eye, MoreHorizontal, Star, TalismanHand, Zap } from '@talismn/icons'
@@ -67,7 +67,7 @@ const Header = () => {
 const Main = () => {
   // Pre-loading
   useRecoilValueLoadable(
-    waitForAll([apiState, accountsState, nativeTokenDecimalState, nativeTokenPriceState('usd'), recommendedPoolsState])
+    waitForAll([accountsState, useNativeTokenDecimalState(), nativeTokenPriceState('usd'), useRecommendedPoolsState()])
   )
 
   const posthog = usePostHog()

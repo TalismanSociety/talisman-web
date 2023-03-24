@@ -11,7 +11,7 @@ import BN from 'bn.js'
 import { ReactNode, useCallback, useMemo, useState } from 'react'
 import { useRecoilValue, waitForAll } from 'recoil'
 
-import { nativeTokenDecimalState, nativeTokenPriceState } from '../../domains/chains/recoils'
+import { nativeTokenPriceState, useNativeTokenDecimalState } from '../../domains/chains/recoils'
 import useExtrinsic from '../../domains/common/hooks/useExtrinsic'
 import AddStakeDialog from './AddStakeDialog'
 import UnstakeDialog from './UnstakeDialog'
@@ -36,7 +36,7 @@ const PoolStakeItem = ({
   }
 }) => {
   const [decimal, nativeTokenPrice] = useRecoilValue(
-    waitForAll([nativeTokenDecimalState, nativeTokenPriceState('usd')])
+    waitForAll([useNativeTokenDecimalState(), nativeTokenPriceState('usd')])
   )
 
   const [isUnstaking, setIsUnstaking] = useState(false)
@@ -57,7 +57,7 @@ const PoolStakeItem = ({
   const eraEtaFormatter = useEraEtaFormatter()
   const unlocks = item.unbondings?.map(x => ({
     amount: decimal.fromPlanck(x.amount).toHuman(),
-    eta: eraEtaFormatter.valueMaybe()?.(x.erasTilWithdrawable) ?? <CircularProgressIndicator size="1em" />,
+    eta: eraEtaFormatter(x.erasTilWithdrawable) ?? <CircularProgressIndicator size="1em" />,
   }))
 
   return (

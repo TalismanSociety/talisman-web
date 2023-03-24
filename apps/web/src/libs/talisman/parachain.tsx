@@ -1,4 +1,4 @@
-import { chainApiState } from '@domains/chains/recoils'
+import { substrateApiState } from '@domains/common'
 import crowdloanDataState, { CrowdloanDetail } from '@libs/@talisman-crowdloans/provider'
 import { find } from 'lodash'
 import { PropsWithChildren, useContext as _useContext, createContext, useEffect, useMemo, useState } from 'react'
@@ -79,7 +79,9 @@ export const Provider = ({ children }: PropsWithChildren) => {
 
   const crowdloans = useRecoilValue(crowdloanDataState)
 
-  const apisLoadable = useRecoilValueLoadable(waitForAll([chainApiState('polkadot'), chainApiState('kusama')]))
+  const apisLoadable = useRecoilValueLoadable(
+    waitForAll([substrateApiState('wss://rpc.polkadot.io'), substrateApiState('wss://kusama-rpc.polkadot.io')])
+  )
 
   useEffect(
     () => {

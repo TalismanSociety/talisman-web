@@ -1,8 +1,9 @@
+import { SubstrateApiContext, substrateApiState } from '@domains/common'
 import { storageEffect } from '@domains/common/effects'
-import { ApiPromise, WsProvider } from '@polkadot/api'
 import { BN } from '@polkadot/util'
 import { ToBn } from '@polkadot/util/types'
 import Decimal from '@util/Decimal'
+import { useContext } from 'react'
 import { atom, selector, selectorFamily } from 'recoil'
 
 import { chains } from './config'
@@ -28,7 +29,7 @@ export const chainRpcState = atom({
   key: 'ChainRpc',
   default: selector({
     key: 'ChainRpc/Default',
-    get: ({ get }) => get(chainState).rpcs[0]?.url,
+    get: ({ get }) => get(chainState).rpcs[0]?.url ?? '',
   }),
 })
 
@@ -81,45 +82,19 @@ export const nativeTokenPriceState = selectorFamily({
     },
 })
 
-export const apiState = selector({
-  key: 'PolkadotApi',
-  get: async ({ get }) => {
-    const wsProvider = new WsProvider(get(chainRpcState))
-    return ApiPromise.create({ provider: wsProvider })
-  },
-  dangerouslyAllowMutability: true,
-})
-
-// TODO: this hasn't been thought through, right now is a dirty hack for concurrent chain access
-// need to rethink how we want to tackle this
-export const chainApiState = selectorFamily({
-  key: 'ChainApi',
-  get:
-    (id: ChainId) =>
-    ({ get }) => {
-      const allChains = get(chainsState)
-      const chain = allChains.find(x => x.id === id)
-
-      if (chain === undefined) {
-        throw new Error(`Can't find chain with id: ${id}`)
-      }
-
-      return ApiPromise.create({
-        provider: new WsProvider(chain.rpcs[0]?.url),
-      })
-    },
-  dangerouslyAllowMutability: true,
-})
-
-export const nativeTokenDecimalState = selector({
+export const nativeTokenDecimalState = selectorFamily({
   key: 'NativeTokenDecimal',
-  get: ({ get }) => {
-    const api = get(apiState)
-    return {
-      fromPlanck: (value: string | number | bigint | BN | ToBn | undefined) =>
-        Decimal.fromPlanck(value, api.registry.chainDecimals[0] ?? 0, api.registry.chainTokens[0] ?? ''),
-      fromUserInput: (input: string) =>
-        Decimal.fromUserInput(input, api.registry.chainDecimals[0] ?? 0, api.registry.chainTokens[0] ?? ''),
-    }
-  },
+  get:
+    (apiEndpoint: string) =>
+    ({ get }) => {
+      const api = get(substrateApiState(apiEndpoint))
+      return {
+        fromPlanck: (value: string | number | bigint | BN | ToBn | undefined) =>
+          Decimal.fromPlanck(value, api.registry.chainDecimals[0] ?? 0, api.registry.chainTokens[0] ?? ''),
+        fromUserInput: (input: string) =>
+          Decimal.fromUserInput(input, api.registry.chainDecimals[0] ?? 0, api.registry.chainTokens[0] ?? ''),
+      }
+    },
 })
+
+export const useNativeTokenDecimalState = () => nativeTokenDecimalState(useContext(SubstrateApiContext).endpoint)
