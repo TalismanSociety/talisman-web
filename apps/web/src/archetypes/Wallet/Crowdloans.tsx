@@ -5,6 +5,7 @@ import { selectedSubstrateAccountsState } from '@domains/accounts/recoils'
 import { tokenPriceState } from '@domains/chains/recoils'
 import { useTotalCrowdloanTotalFiatAmount } from '@domains/crowdloans/hooks'
 import styled from '@emotion/styled'
+import crowdloanDataState from '@libs/@talisman-crowdloans/provider'
 import { CrowdloanContribution, useCrowdloanContributions } from '@libs/crowdloans'
 import { Moonbeam } from '@libs/crowdloans/crowdloanOverrides'
 import { MoonbeamPortfolioTag } from '@libs/moonbeam-contributors'
@@ -28,9 +29,11 @@ const CrowdloanItem = styled(
 
     const asset = useParachainAssets(id)
 
+    const crowdloans = useRecoilValue(crowdloanDataState)
+
     const relayChainId = contribution.parachain.paraId.split('-')[0]
     const relayChain = Maybe.of(relayChainId).mapOrUndefined(x => SupportedRelaychains[x]!)
-    const chain = parachainDetails.find(x => x.id === id)
+    const chain = crowdloans.find(x => x.id === id)
 
     const { tokenSymbol: relayNativeToken, coingeckoId, tokenDecimals: relayTokenDecimals } = relayChain ?? {}
     const { name } = chain ?? {}
