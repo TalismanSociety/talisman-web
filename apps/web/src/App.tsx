@@ -7,7 +7,7 @@ import { TalismanHandLoader } from '@components/TalismanHandLoader'
 import ErrorBoundary from '@components/widgets/ErrorBoundary'
 import { LegacyBalancesWatcher } from '@domains/balances/recoils'
 import { chainRpcState } from '@domains/chains/recoils'
-import { SubstrateApiContext } from '@domains/common'
+import { SUBSTRATE_API_STATE_GARBAGE_COLLECTOR_UNSTABLE, SubstrateApiContext } from '@domains/common'
 import { ExtensionWatcher } from '@domains/extension/recoils'
 import NftProvider from '@libs/@talisman-nft/provider'
 import * as MoonbeamContributors from '@libs/moonbeam-contributors'
@@ -15,7 +15,7 @@ import * as Portfolio from '@libs/portfolio'
 import TalismanProvider from '@libs/talisman'
 import router from '@routes'
 import { ToastBar } from '@talismn/ui'
-import React, { PropsWithChildren, Suspense } from 'react'
+import { PropsWithChildren, Suspense } from 'react'
 import { Toaster } from 'react-hot-toast'
 import { RouterProvider } from 'react-router-dom'
 import { RecoilRoot, useRecoilValue } from 'recoil'
@@ -48,10 +48,11 @@ const LegacyApiProvider = (props: PropsWithChildren) => (
   </SubstrateApiContext.Provider>
 )
 
-const App: React.FC = () => (
+const App = () => (
   <ThemeProvider>
     <ErrorBoundary>
       <RecoilRoot>
+        <SUBSTRATE_API_STATE_GARBAGE_COLLECTOR_UNSTABLE />
         <Suspense fallback={<Loader />}>
           <LegacyApiProvider>
             <Portfolio.Provider>
