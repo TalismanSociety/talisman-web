@@ -12,9 +12,7 @@ export const substrateApiState = atomFamily<ApiPromise, string>({
 
       setSelf(api.isReadyOrError)
 
-      return () => {
-        api.disconnect()
-      }
+      return api.disconnect
     },
   ],
   dangerouslyAllowMutability: true,

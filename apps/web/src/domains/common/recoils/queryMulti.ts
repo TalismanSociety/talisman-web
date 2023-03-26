@@ -57,13 +57,12 @@ const _chainQueryMultiState = atomFamily({
           })
       })
 
-      return () => {
+      return () =>
         unsubscribePromise.then(unsubscribe => {
           if (typeof unsubscribe === 'function') {
             unsubscribe()
           }
         })
-      }
     },
   ],
   dangerouslyAllowMutability: true,

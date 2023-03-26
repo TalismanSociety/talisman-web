@@ -24688,7 +24688,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"recoil@npm:^0.7.7":
+"recoil@npm:0.7.7":
   version: 0.7.7
   resolution: "recoil@npm:0.7.7"
   dependencies:
@@ -24701,6 +24701,22 @@ __metadata:
     react-native:
       optional: true
   checksum: 65edecbcb8d2cde89bfd61ec679c200483472a6cd343c33e4e9142b6ce524fb17d1fecc2bfd8c392926aaa8178c81457f165b32abce2a9662f51f98822c0a9cc
+  languageName: node
+  linkType: hard
+
+"recoil@patch:recoil@npm%3A0.7.7#./.yarn/patches/recoil-npm-0.7.7-4452f58b67.patch::locator=talisman-web%40workspace%3A.":
+  version: 0.7.7
+  resolution: "recoil@patch:recoil@npm%3A0.7.7#./.yarn/patches/recoil-npm-0.7.7-4452f58b67.patch::version=0.7.7&hash=782944&locator=talisman-web%40workspace%3A."
+  dependencies:
+    hamt_plus: 1.0.2
+  peerDependencies:
+    react: ">=16.13.1"
+  peerDependenciesMeta:
+    react-dom:
+      optional: true
+    react-native:
+      optional: true
+  checksum: 1c28b701af1ea2f5eae04d4e719ae5c2d554e665cce92a516361086811d108d980a4b58ef2bea87629771d24d9d7725250bf298d676a62e340e1bfd001b8c05b
   languageName: node
   linkType: hard
 

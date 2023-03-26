@@ -36,9 +36,7 @@ export const chainState = atomFamily({
         return unsubscribePromise
       })
 
-      return () => {
-        unsubscribePromise.then(unsubscribe => unsubscribe())
-      }
+      return () => unsubscribePromise.then(unsubscribe => unsubscribe())
     },
   ],
   dangerouslyAllowMutability: true,
