@@ -1,34 +1,31 @@
-import { apiState } from '@domains/chains/recoils'
 import BN from 'bn.js'
 import { addMilliseconds, formatDistanceToNow } from 'date-fns'
-import { useMemo } from 'react'
-import { useRecoilValue } from 'recoil'
+import { useCallback } from 'react'
+import { useRecoilValue, waitForAll } from 'recoil'
 
-import useChainState from './useChainState'
+import { useChainDeriveState, useSubstrateApiState } from '..'
 
 const erasToMilliseconds = (eras: BN, eraLength: BN, eraProgress: BN, expectedBlockTime: BN) =>
   eras.subn(1).mul(eraLength).add(eraLength).sub(eraProgress).mul(expectedBlockTime).toNumber()
 
 export const useEraEtaFormatter = () => {
-  const api = useRecoilValue(apiState)
-  const sessionProgressLoadable = useChainState('derive', 'session', 'progress', [])
+  const [api, sessionProgress] = useRecoilValue(
+    waitForAll([useSubstrateApiState(), useChainDeriveState('session', 'progress', [])])
+  )
 
-  return useMemo(
-    () =>
-      sessionProgressLoadable.map(
-        sessionProgress => (era: BN) =>
-          formatDistanceToNow(
-            addMilliseconds(
-              new Date(),
-              erasToMilliseconds(
-                era,
-                sessionProgress.eraLength,
-                sessionProgress.eraProgress,
-                api.consts.babe.expectedBlockTime
-              )
-            )
+  return useCallback(
+    (era: BN) =>
+      formatDistanceToNow(
+        addMilliseconds(
+          new Date(),
+          erasToMilliseconds(
+            era,
+            sessionProgress.eraLength,
+            sessionProgress.eraProgress,
+            api.consts.babe.expectedBlockTime
           )
+        )
       ),
-    [api.consts.babe.expectedBlockTime, sessionProgressLoadable]
+    [api.consts.babe.expectedBlockTime, sessionProgress.eraLength, sessionProgress.eraProgress]
   )
 }

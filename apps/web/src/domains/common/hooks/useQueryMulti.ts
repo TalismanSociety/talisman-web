@@ -10,25 +10,12 @@ import { useEffect, useRef, useState } from 'react'
 import { Loadable, RecoilLoadable, useRecoilValue } from 'recoil'
 import { Observable } from 'rxjs'
 
-import { apiState } from '../../chains/recoils'
+import { useSubstrateApiState } from '..'
 
 type QueryMap = PickKnownKeys<// @ts-ignore
 { [P in keyof ApiPromise['query']]: `${P}.${keyof PickKnownKeys<ApiPromise['query'][P]>}` }>
 
 type Query = QueryMap[keyof QueryMap]
-
-// type QueryParamsMap = {
-//   [P in Query]: P extends `${infer TModule}.${infer TSection}`
-//     ? Leading<
-//         Parameters<
-//           Diverge<
-//             ApiPromise['query'][TModule][TSection],
-//             StorageEntryPromiseOverloads & QueryableStorageEntry<any, any>
-//           >
-//         >
-//       >
-//     : never
-// }
 
 type SingleQueryResultMap = {
   [P in Query]: P extends `${infer Module}.${infer Section}`
@@ -45,6 +32,9 @@ type QueryResultMap = SingleQueryResultMap
 
 type MultiPossibleQuery = keyof QueryResultMap
 
+/**
+ * @deprecated use `useChainQueryMulti` instead
+ */
 export const useQueryMulti = <
   TQueries extends
     | Array<MultiPossibleQuery | [MultiPossibleQuery, ...unknown[]]>
@@ -63,7 +53,7 @@ export const useQueryMulti = <
       : any
   }
 
-  const api = useRecoilValue(apiState)
+  const api = useRecoilValue(useSubstrateApiState())
 
   const { promise, resolve, reject } = useDeferred<TResult>(
     options.keepPreviousData ? undefined : [JSON.stringify(queries)]

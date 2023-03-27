@@ -4,16 +4,17 @@ import StakeDialogComponent from '@components/recipes/StakeDialog'
 import { StakeStatus } from '@components/recipes/StakeStatusIndicator'
 import StakingInput from '@components/recipes/StakingInput'
 import { injectedSubstrateAccountsState } from '@domains/accounts/recoils'
-import { apiState, chainState, nativeTokenDecimalState } from '@domains/chains/recoils'
+import { chainState, useNativeTokenDecimalState } from '@domains/chains/recoils'
+import { SubstrateApiContext, useSubstrateApiState } from '@domains/common'
 import { useChainState, useEraEtaFormatter, useExtrinsic, useTokenAmountFromPlanck } from '@domains/common/hooks'
 import { useInflation, usePoolAddForm } from '@domains/nominationPools/hooks'
-import { allPendingPoolRewardsState, eraStakersState, recommendedPoolsState } from '@domains/nominationPools/recoils'
+import { eraStakersState, useAllPendingRewardsState, useRecommendedPoolsState } from '@domains/nominationPools/recoils'
 import { createAccounts, getPoolUnbonding } from '@domains/nominationPools/utils'
 import { CircularProgressIndicator } from '@talismn/ui'
 import { Maybe } from '@util/monads'
 import BN from 'bn.js'
 import { motion } from 'framer-motion'
-import { Suspense, useCallback, useEffect, useMemo, useState } from 'react'
+import { Suspense, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useLocation } from 'react-use'
 import { constSelector, useRecoilValue, useRecoilValueLoadable, waitForAll } from 'recoil'
@@ -28,7 +29,7 @@ const PoolSelector = (props: {
 }) => {
   const [newPoolId, setNewPoolId] = useState<number>()
   const [recommendedPools, nativeTokenDecimal, currentChain] = useRecoilValue(
-    waitForAll([recommendedPoolsState, nativeTokenDecimalState, chainState])
+    waitForAll([useRecommendedPoolsState(), useNativeTokenDecimalState(), chainState])
   )
 
   return (
@@ -83,8 +84,15 @@ const StakeInput = () => {
     [location.search]
   )
 
+  const apiEndpoint = useContext(SubstrateApiContext).endpoint
+
   const [api, accounts, recommendedPools, pendingRewards] = useRecoilValue(
-    waitForAll([apiState, injectedSubstrateAccountsState, recommendedPoolsState, allPendingPoolRewardsState])
+    waitForAll([
+      useSubstrateApiState(),
+      injectedSubstrateAccountsState,
+      useRecommendedPoolsState(),
+      useAllPendingRewardsState(),
+    ])
   )
 
   const initialPoolId = poolIdFromSearch ?? recommendedPools[0]?.poolId
@@ -120,7 +128,7 @@ const StakeInput = () => {
   const eraStakersLoadable = useRecoilValueLoadable(
     activeEraLoadable.state !== 'hasValue'
       ? constSelector(undefined)
-      : eraStakersState(activeEraLoadable.contents.unwrapOrDefault().index)
+      : eraStakersState({ endpoint: apiEndpoint, era: activeEraLoadable.contents.unwrapOrDefault().index })
   ).map(value => new Set(value?.map(x => x[0].args[1].toHuman())))
 
   const existingPool =
@@ -319,19 +327,12 @@ const StakeInput = () => {
 }
 
 const Rewards = () => {
-  return (
-    <>
-      {useInflation()
-        .valueMaybe()
-        ?.stakedReturn.toLocaleString(undefined, { style: 'percent', maximumFractionDigits: 2 }) ?? (
-        <CircularProgressIndicator size="1em" />
-      )}
-    </>
-  )
+  const { stakedReturn } = useInflation()
+  return <>{stakedReturn.toLocaleString(undefined, { style: 'percent', maximumFractionDigits: 2 })}</>
 }
 
 const EraEta = () => {
-  return <>{useEraEtaFormatter().valueMaybe()?.(new BN(1)) ?? <CircularProgressIndicator size="1em" />}</>
+  return <>{useEraEtaFormatter()(new BN(1))}</>
 }
 
 const StakeDialog = () => {
