@@ -277,13 +277,13 @@ export const useSingleAsset = ({ symbol }: useSingleAssetProps) => {
   }
 }
 
-type filterProps = {
+type Filter = {
   size?: number
   search?: string
   address?: string
 }
 
-export const useAssetsFiltered = ({ size, search, address }: filterProps) => {
+export const useAssetsFiltered = ({ size, search, address }: Filter) => {
   const { tokens, balances, isLoading } = useAssets(address)
 
   const filteredTokens = useMemo(() => {
@@ -312,11 +312,18 @@ export const useAssetsFiltered = ({ size, search, address }: filterProps) => {
     })
   }, [tokens, search])
 
-  // filter tokens by size, if size is 0, return all tokens
-  const filteredTokensBySize = size ? filteredTokens.slice(0, size) : filteredTokens
+  const filteredTokensBySize = useMemo(
+    () => (size !== undefined ? filteredTokens.slice(0, size) : filteredTokens),
+    [filteredTokens, size]
+  )
+
+  const sortedTokens = useMemo(
+    () => filteredTokensBySize.sort((a, b) => (b.fiatAmount ?? 0) - (a.fiatAmount ?? 0)),
+    [filteredTokensBySize]
+  )
 
   return {
-    tokens: filteredTokensBySize,
+    tokens: sortedTokens,
     balances,
     isLoading,
   }
