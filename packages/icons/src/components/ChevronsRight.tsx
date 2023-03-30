@@ -1,9 +1,29 @@
 import * as React from 'react'
-import { SVGProps } from 'react'
-const SvgChevronsRight = (props: SVGProps<SVGSVGElement>) => (
-  <svg width={24} height={24} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
-    <path d="M13 17L18 12L13 7" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
-    <path d="M6 17L11 12L6 7" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
-  </svg>
-)
-export default SvgChevronsRight
+import { Ref, SVGProps, forwardRef } from 'react'
+
+import { IconContext } from '../context'
+
+const SvgChevronsRight = (
+  props: Omit<SVGProps<SVGSVGElement>, 'width' | 'height'> & {
+    size?: number | string
+  },
+  ref: Ref<SVGSVGElement>
+) => {
+  const iconContext = React.useContext(IconContext)
+  return (
+    <svg
+      width={props.size ?? iconContext.size ?? 24}
+      height={props.size ?? iconContext.size ?? 24}
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      ref={ref}
+      {...props}
+    >
+      <path d="m13 17 5-5-5-5" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+      <path d="m6 17 5-5-5-5" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  )
+}
+const ForwardRef = forwardRef(SvgChevronsRight)
+export default ForwardRef

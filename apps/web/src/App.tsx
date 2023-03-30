@@ -6,6 +6,8 @@ import Development from '@archetypes/Development'
 import { TalismanHandLoader } from '@components/TalismanHandLoader'
 import ErrorBoundary from '@components/widgets/ErrorBoundary'
 import { LegacyBalancesWatcher } from '@domains/balances/recoils'
+import { chainRpcState } from '@domains/chains/recoils'
+import { SUBSTRATE_API_STATE_GARBAGE_COLLECTOR_UNSTABLE, SubstrateApiContext } from '@domains/common'
 import { ExtensionWatcher } from '@domains/extension/recoils'
 import NftProvider from '@libs/@talisman-nft/provider'
 import * as MoonbeamContributors from '@libs/moonbeam-contributors'
@@ -13,19 +15,12 @@ import * as Portfolio from '@libs/portfolio'
 import TalismanProvider from '@libs/talisman'
 import router from '@routes'
 import { ToastBar } from '@talismn/ui'
-import posthog from 'posthog-js'
-import React, { Suspense } from 'react'
+import { PropsWithChildren, Suspense } from 'react'
 import { Toaster } from 'react-hot-toast'
 import { RouterProvider } from 'react-router-dom'
-import { RecoilRoot } from 'recoil'
+import { RecoilRoot, useRecoilValue } from 'recoil'
 
 import ThemeProvider from './App.Theme'
-
-if (process.env.REACT_APP_POSTHOG_AUTH_TOKEN) {
-  posthog.init(process.env.REACT_APP_POSTHOG_AUTH_TOKEN)
-  // eslint-disable-next-line
-  posthog.debug(process.env.NODE_ENV === 'development')
-}
 
 const Loader = () => {
   return (
@@ -45,27 +40,36 @@ const Loader = () => {
   )
 }
 
-const App: React.FC = () => (
+// TODO: this is for backward compatibility only, will be remove
+// after multi chain support
+const LegacyApiProvider = (props: PropsWithChildren) => (
+  <SubstrateApiContext.Provider value={{ endpoint: useRecoilValue(chainRpcState) }}>
+    {props.children}
+  </SubstrateApiContext.Provider>
+)
+
+const App = () => (
   <ThemeProvider>
     <ErrorBoundary>
       <RecoilRoot>
-        <Portfolio.Provider>
-          <TalismanProvider>
-            <ExtensionWatcher />
-            <LegacyBalancesWatcher />
-            <MoonbeamContributors.Provider>
-              <Development />
-              <Suspense fallback={<Loader />}>
-                <NftProvider />
-                <RouterProvider router={router} />
-                <Toaster position="top-right" containerStyle={{ top: '6.4rem' }}>
-                  {t => <ToastBar toast={t} />}
-                </Toaster>
-                <CookieBanner />
-              </Suspense>
-            </MoonbeamContributors.Provider>
-          </TalismanProvider>
-        </Portfolio.Provider>
+        <SUBSTRATE_API_STATE_GARBAGE_COLLECTOR_UNSTABLE />
+        <Suspense fallback={<Loader />}>
+          <LegacyApiProvider>
+            <Portfolio.Provider>
+              <TalismanProvider>
+                <ExtensionWatcher />
+                <LegacyBalancesWatcher />
+                <MoonbeamContributors.Provider>
+                  <Development />
+                  <NftProvider />
+                  <RouterProvider router={router} />
+                  <Toaster position="top-right">{t => <ToastBar toast={t} />}</Toaster>
+                  <CookieBanner />
+                </MoonbeamContributors.Provider>
+              </TalismanProvider>
+            </Portfolio.Provider>
+          </LegacyApiProvider>
+        </Suspense>
       </RecoilRoot>
     </ErrorBoundary>
   </ThemeProvider>

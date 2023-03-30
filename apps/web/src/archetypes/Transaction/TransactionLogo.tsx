@@ -1,5 +1,5 @@
 import { css } from '@emotion/react'
-import { Icon } from '@talismn/ui'
+import * as Icon from '@talismn/icons'
 
 import { ParsedTransaction, formatGenericAddress } from './lib'
 

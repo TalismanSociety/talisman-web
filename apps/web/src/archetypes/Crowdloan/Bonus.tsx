@@ -11,7 +11,7 @@ export type BonusProps = {
 }
 
 const Bonus = ({ id, short, full, info, prefix }: BonusProps) => {
-  const bonus = useCrowdloanById(id).crowdloan?.details?.rewards?.bonus
+  const bonus = useCrowdloanById(id).crowdloan?.details?.bonus
   const type = short ? 'short' : full ? 'full' : info ? 'info' : undefined
 
   const content = useMemo(() => {

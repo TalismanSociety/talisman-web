@@ -588,6 +588,22 @@ Our mission is to create an open financial future that overcomes borders and fos
     },
   },
   {
+    id: '0-3340',
+    name: 'InvArch',
+    slug: 'invArch',
+    token: 'VARCH',
+    subtitle: 'Home of the DAO Economy',
+    info: `InvArch is a highly optimized network for launching decentralized communities, borderless businesses, & unstoppable organizations on Polkadot & beyond!`,
+    links: {
+      Website: 'https://invarch.network/',
+      Discord: 'https://discord.com/invite/InvArch',
+      Twitter: 'https://twitter.com/invarchnetwork',
+      Telegram: 'https://t.me/InvArch',
+      Github: 'https://github.com/InvArch',
+      Medium: 'https://invarch.medium.com/',
+    },
+  },
+  {
     id: '2-2000',
     name: 'Karura',
     slug: 'karura',
@@ -1271,6 +1287,20 @@ Our mission is to create an open financial future that overcomes borders and fos
     },
   },
   {
+    id: '2-2241',
+    name: 'Krest',
+    slug: 'krest',
+    token: 'KREST',
+    subtitle: "krest is peaq’s canary network - the world's first and only Economy of Things simulation network.",
+    info: 'krest is your home for socio-economic, technical, community, and governance innovation and experimentation within the peaq ecosystem. Launch dApps and tools for the Economy of Things and assess their impact in a live environment on a public blockchain network, without running the risk of causing real-world harm.',
+    links: {
+      Website: 'https://krest.peaq.network/?ref=parachains-info',
+      Twitter: 'https://twitter.com/peaqnetwork',
+      Discord: 'https://discord.gg/XhJwuFKAAD',
+      Github: 'https://github.com/peaqnetwork/peaq-network-node',
+    },
+  },
+  {
     id: '2-2256',
     name: 'Mangata X',
     slug: 'mangata',
@@ -1944,6 +1974,28 @@ export const crowdloanDetails: CrowdloanDetails[] = [
         },
       ],
       info: null,
+    },
+  },
+  {
+    relayId: 0,
+    paraId: 3340,
+    rewards: {
+      tokens: null,
+      custom: [
+        {
+          title: 'VARCH per DOT',
+          value: '100 VARCH',
+        },
+        {
+          title: 'Crowdloan Cap',
+          value: '150,000 DOT',
+        },
+        {
+          title: 'Reward Pool',
+          value: '15m of 1b (1.5%)',
+        },
+      ],
+      info: '20% of VARCH rewards will be available to claim immediately. The remaining 80% of VARCH rewards will vest/unlock linearly (every block) over a 96 week period.',
     },
   },
   {
@@ -2773,6 +2825,27 @@ export const crowdloanDetails: CrowdloanDetails[] = [
         {
           title: 'Crowdloan Allocation',
           value: '208,000,000 $FREN',
+        },
+      ],
+      info: null,
+    },
+  },
+  {
+    relayId: 2,
+    paraId: 2241,
+    contributeUrl:
+      'https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Fkusama-rpc.polkadot.io&ref=parachains-info#/parachains/crowdloan',
+    rewards: {
+      tokens: [
+        {
+          symbol: 'KREST',
+          perKSM: '800+',
+        },
+      ],
+      custom: [
+        {
+          title: 'Crowdloan Cap',
+          value: '15,000 KSM',
         },
       ],
       info: null,

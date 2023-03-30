@@ -1,9 +1,11 @@
 import { useSingleAsset } from '@archetypes/Portfolio/Assets'
 import { AssetBreakdownList } from '@components/recipes/AssetBreakdown/AssetBreakdownList'
+import AnimatedFiatNumber from '@components/widgets/AnimatedFiatNumber'
 import { keyframes } from '@emotion/react'
-import { Button, DisplayValue, HiddenDetails, InfoCard, Text, Tooltip } from '@talismn/ui'
+import { ChevronLeft } from '@talismn/icons'
+import { Button, HiddenDetails, InfoCard, Text, Tooltip } from '@talismn/ui'
 import { startCase } from 'lodash'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 
 const slideDown = keyframes`
     from {
@@ -18,22 +20,17 @@ const slideDown = keyframes`
 
 const AssetItem = () => {
   //Get the assetId from the url
+  const navigate = useNavigate()
   const { assetId } = useParams()
   const { token, balances, isLoading } = useSingleAsset({ symbol: assetId })
 
   return (
     <>
-      <Button
-        variant="secondary"
-        css={{
-          width: 'fit-content',
-          padding: '1rem',
-          fontSize: '1.25rem',
-        }}
-        onClick={() => window.history.back()}
-      >
-        {`< Back`}
-      </Button>
+      <div>
+        <Button variant="secondary" leadingIcon={<ChevronLeft />} onClick={() => navigate(-1)}>
+          Back
+        </Button>
+      </div>
       {
         // isLoading - Finding Token, most likely a skeleton
         isLoading ? (
@@ -114,7 +111,7 @@ const AssetItem = () => {
                   </div>
                 }
                 text={token?.overallTokenAmount + ' ' + token?.tokenDetails?.symbol}
-                supportingText={<DisplayValue amount={token?.overallFiatAmount ?? 0} />}
+                supportingText={<AnimatedFiatNumber end={token?.overallFiatAmount ?? 0} />}
               />
               <InfoCard
                 headlineText={
@@ -130,7 +127,7 @@ const AssetItem = () => {
                   </div>
                 }
                 text={token?.overallLockedAmount + ' ' + token?.tokenDetails?.symbol}
-                supportingText={<DisplayValue amount={token?.overallLockedFiatAmount ?? 0} />}
+                supportingText={<AnimatedFiatNumber end={token?.overallLockedFiatAmount ?? 0} />}
               />
               <InfoCard
                 headlineText={
@@ -146,7 +143,7 @@ const AssetItem = () => {
                   </div>
                 }
                 text={token?.amount + ' ' + token?.tokenDetails?.symbol}
-                supportingText={<DisplayValue amount={token?.fiatAmount ?? 0} />}
+                supportingText={<AnimatedFiatNumber end={token?.fiatAmount ?? 0} />}
               />
             </div>
 

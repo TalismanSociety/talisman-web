@@ -76,7 +76,7 @@ const MenuContext = createContext<{
 const MenuButton = ({ children, ...props }: MenuButtonProps) => {
   const { reference, getReferenceProps, open } = useContext(MenuContext)
   return (
-    <div ref={reference} {...getReferenceProps(props)}>
+    <div ref={reference} {...getReferenceProps(props)} css={{ width: 'fit-content' }}>
       {typeof children === 'function' ? children({ open }) : children}
     </div>
   )

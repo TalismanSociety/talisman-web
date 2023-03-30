@@ -1,11 +1,13 @@
+import crowdloanDataState, { CrowdloanDetail } from '@libs/@talisman-crowdloans/provider'
 import { ApiPromise, WsProvider } from '@polkadot/api'
 import type { AccountId } from '@polkadot/types/interfaces'
 import { stringToU8a, u8aEq } from '@polkadot/util'
 import { planckToTokens } from '@talismn/util'
 import { find, get } from 'lodash'
 import { PropsWithChildren, useContext as _useContext, createContext, useEffect, useMemo, useState } from 'react'
+import { useRecoilValue } from 'recoil'
 
-import { CrowdloanDetails, SupportedRelaychains, crowdloanDetails } from './util/_config'
+import { SupportedRelaychains } from './util/_config'
 
 export type Crowdloan = {
   // graphql fields
@@ -21,7 +23,7 @@ export type Crowdloan = {
   // custom fields
   relayChainId: number
   percentRaised: number
-  details: CrowdloanDetails
+  details: CrowdloanDetail
   uiStatus: 'active' | 'capped' | 'winner' | 'ended'
 }
 
@@ -85,6 +87,8 @@ export const useCrowdloanByParachainId = (id?: number | string) => useFindCrowdl
 export const useCrowdloansByParachainId = (id?: number | string) => useFindCrowdloans('parachain.paraId', id)
 
 export const useCrowdloanAggregateStats = () => {
+  const crowdloanData = useRecoilValue(crowdloanDataState)
+
   const { crowdloans, hydrated } = useCrowdloans()
   const [raised, setRaised] = useState<number>(0)
   const [projects, setProjects] = useState<number>(0)
@@ -92,9 +96,9 @@ export const useCrowdloanAggregateStats = () => {
 
   useEffect(() => {
     setRaised(crowdloans.reduce((acc: number, { raised = 0 }) => acc + raised, 0))
-    setProjects(crowdloanDetails.length)
+    setProjects(crowdloanData.length)
     // setContributors(crowdloans.reduce((acc: number, { contributors = [] }) => acc + contributors.length, 0))
-  }, [crowdloans])
+  }, [crowdloanData.length, crowdloans])
 
   return {
     raised,
@@ -111,6 +115,7 @@ function hasCrowdloadPrefix(accountId: AccountId): boolean {
 }
 
 export const Provider = ({ children }: PropsWithChildren) => {
+  const crowdloanData = useRecoilValue(crowdloanDataState)
   const [crowdloans, setCrowdloans] = useState<Crowdloan[]>([])
   const [hydrated, setHydrated] = useState(false)
 
@@ -148,9 +153,9 @@ export const Provider = ({ children }: PropsWithChildren) => {
             percentRaised:
               (100 / Number(planckToTokens(fund.cap.toString(), tokenDecimals))) *
               Number(planckToTokens(fund.raised.toString(), tokenDecimals)),
-            details: find(crowdloanDetails, {
-              relayId: relayChain.id,
-              paraId: fundId.args[0].toNumber(),
+            details: find(crowdloanData, {
+              relayId: relayChain.id.toString(),
+              paraId: fundId.args[0].toNumber().toString(),
             }),
             uiStatus: isWinner ? 'winner' : isCapped ? 'capped' : isEnded ? 'ended' : 'active',
           }
@@ -162,7 +167,7 @@ export const Provider = ({ children }: PropsWithChildren) => {
       setCrowdloans(result.flat() as any)
       setHydrated(true)
     })
-  }, [])
+  }, [crowdloanData])
 
   const value = useMemo(
     () => ({

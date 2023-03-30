@@ -11,3 +11,7 @@ export default {
 } as ComponentMeta<typeof CookieBanner>
 
 export const Default: Story<CookieBannerProps> = args => <CookieBanner {...args} />
+
+Default.args = {
+  visible: true,
+}

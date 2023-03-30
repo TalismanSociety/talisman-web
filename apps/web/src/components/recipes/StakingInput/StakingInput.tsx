@@ -1,17 +1,14 @@
 import { useTheme } from '@emotion/react'
-import { Button, Icon, Identicon, LabelButton, Select, Text, TextInput } from '@talismn/ui'
-import { Maybe } from '@util/monads'
+import { ChevronRight, Info } from '@talismn/icons'
+import { Button, LabelButton, Text, TextInput } from '@talismn/ui'
 import { AnimatePresence, AnimationProps, motion } from 'framer-motion'
 import { ReactNode, useState } from 'react'
 
-import { PoolStatus, PoolStatusIndicator } from '../PoolStatusIndicator'
+import { StakeStatus, StakeStatusIndicator } from '../StakeStatusIndicator'
 import StakingInputSkeleton from './StakingInput.skeleton'
 
-type Account = { selected?: boolean; name: string; address: string; balance: string }
-
 export type StakingInputProps = {
-  accounts: Account[]
-  onSelectAccount: (account: Account) => unknown
+  accountSelector: ReactNode
   amount: string
   fiatAmount: string
   inputSupportingText?: ReactNode
@@ -20,7 +17,7 @@ export type StakingInputProps = {
   availableToStake: string
   noPoolsAvailable?: boolean
   poolName?: string
-  poolStatus?: PoolStatus
+  poolStatus?: StakeStatus
   poolTotalStaked?: string
   poolMemberCount?: string
   onRequestPoolChange: () => unknown
@@ -47,26 +44,7 @@ const StakingInput = Object.assign(
           padding: '3.2rem',
         }}
       >
-        <Select
-          width="100%"
-          placeholder="Select account"
-          value={props.accounts.findIndex(x => x.selected)}
-          onChange={value =>
-            Maybe.of(value)
-              .map(x => props.accounts[Number(x)])
-              .map(props.onSelectAccount)
-          }
-        >
-          {props.accounts.map((account, index) => (
-            <Select.Item
-              key={index}
-              value={index}
-              leadingIcon={<Identicon value={account.address} size={40} />}
-              headlineText={account.name}
-              supportingText={account.balance}
-            />
-          ))}
-        </Select>
+        {props.accountSelector}
         <motion.div
           {...(props.contentAnimation !== undefined
             ? props.contentAnimation
@@ -113,19 +91,19 @@ const StakingInput = Object.assign(
               }}
             >
               <div css={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
-                <PoolStatusIndicator status={props.poolStatus} />
+                <StakeStatusIndicator status={props.poolStatus} />
                 <Text.Body css={{ fontSize: '1.4rem' }} alpha={poolInfoExpanded ? 'high' : 'medium'}>
                   {props.noPoolsAvailable ? 'No pools available' : props.poolName}
                 </Text.Body>
               </div>
               {props.noPoolsAvailable ? (
-                <Icon.Info width="1.4rem" height="1.4rem" />
+                <Info size="1.4rem" />
               ) : (
                 <motion.div
                   animate={String(poolInfoExpanded)}
                   variants={{ true: { transform: 'rotate(90deg)' }, false: {} }}
                 >
-                  <Icon.ChevronRight />
+                  <ChevronRight />
                 </motion.div>
               )}
             </div>

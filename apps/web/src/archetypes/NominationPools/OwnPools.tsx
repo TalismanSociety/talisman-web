@@ -1,57 +1,68 @@
-import PoolStake, { PoolStakeList } from '@components/recipes/PoolStake/PoolStake'
+import SectionHeader from '@components/molecules/SectionHeader'
+import StakeItem from '@components/recipes/StakeItem'
+import AnimatedFiatNumber from '@components/widgets/AnimatedFiatNumber'
 import { selectedSubstrateAccountsState } from '@domains/accounts/recoils'
 import { useChainState } from '@domains/common/hooks'
 import { useTotalStaked } from '@domains/staking/hooks'
-import { useTheme } from '@emotion/react'
-import { Text } from '@talismn/ui'
-import { Suspense } from 'react'
+import { Button, HiddenDetails, Text } from '@talismn/ui'
+import { PropsWithChildren, Suspense, useMemo } from 'react'
+import { Link } from 'react-router-dom'
 import { useRecoilValue } from 'recoil'
 
 import Stakings from './Stakings'
-import Unstakings from './Unstakings'
 import ValidatorStakings from './ValidatorStakings'
-import ValidatorUnstakings from './ValidatorUnstakings'
 
-const UnstakingHeader = () => {
-  const accounts = useRecoilValue(selectedSubstrateAccountsState)
-
-  const poolMembersLoadable = useChainState(
-    'query',
-    'nominationPools',
-    'poolMembers.multi',
-    accounts.map(({ address }) => address)
-  )
-
-  const stakingsLoadable = useChainState('derive', 'staking', 'accounts', [
-    accounts.map(({ address }) => address),
-    undefined,
-  ])
-
-  const hasUnstakings =
-    poolMembersLoadable.valueMaybe()?.some(x => x.unwrapOrDefault().unbondingEras.size > 0) ||
-    stakingsLoadable.valueMaybe()?.some(x => !x.redeemable?.isZero() || (x.unlocking?.length ?? 0) > 0)
-
-  if (!hasUnstakings) {
-    return null
-  }
+const StakingHeader = () => {
+  const totalStaked = useTotalStaked()
 
   return (
-    <header css={{ marginTop: '4rem' }}>
-      <Text.H4 css={{ marginBottom: '1.6rem' }}>Unstaking</Text.H4>
-    </header>
+    <SectionHeader headlineText="Staking" supportingText={<AnimatedFiatNumber end={totalStaked.fiatAmount ?? 0} />} />
   )
 }
 
-const StakingHeader = () => {
-  const theme = useTheme()
-  const totalStaked = useTotalStaked()
+const NoStakeGuard = (props: PropsWithChildren) => {
+  const accounts = useRecoilValue(selectedSubstrateAccountsState)
+  const addresses = useMemo(() => accounts.map(({ address }) => address), [accounts])
+
+  const poolMembersLoadable = useChainState('query', 'nominationPools', 'poolMembers.multi', addresses)
+  const ledgersLoadable = useChainState('query', 'staking', 'ledger.multi', addresses)
+
+  const hidden = useMemo(
+    () =>
+      poolMembersLoadable.valueMaybe()?.every(x => x.isNone) &&
+      ledgersLoadable.valueMaybe()?.every(x => x.unwrapOrDefault().active.unwrap().isZero()),
+    [ledgersLoadable, poolMembersLoadable]
+  )
+
   return (
-    <header>
-      <Text.H4 css={{ marginBottom: '2.4rem' }}>
-        Staking
-        <span css={{ color: theme.color.primary, marginLeft: '0.85em' }}>{totalStaked.localizedFiatAmount}</span>
-      </Text.H4>
-    </header>
+    <HiddenDetails
+      hidden={hidden}
+      overlay={
+        <div
+          css={{
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+            gap: '3.2rem',
+          }}
+        >
+          <Text.Body>You have no staked assets yet...</Text.Body>
+          <Button as={Link} variant="outlined" to="/staking">
+            Get started
+          </Button>
+        </div>
+      }
+    >
+      {hidden ? (
+        <section css={{ display: 'flex', flexDirection: 'column', gap: '1.6rem' }}>
+          <StakeItem.Skeleton animate={false} />
+          <StakeItem.Skeleton animate={false} />
+        </section>
+      ) : (
+        props.children
+      )}
+    </HiddenDetails>
   )
 }
 
@@ -60,48 +71,31 @@ const OwnPools = () => (
     <Suspense
       fallback={
         <div>
-          <header>
-            <Text.H4 css={{ marginBottom: '2.4rem' }}>Staking</Text.H4>
-          </header>
-          <PoolStakeList>
-            <PoolStake.Skeleton />
-            <PoolStake.Skeleton />
-            <PoolStake.Skeleton />
-          </PoolStakeList>
+          <SectionHeader headlineText="Staking" />
+          <section css={{ display: 'flex', flexDirection: 'column', gap: '1.6rem' }}>
+            <StakeItem.Skeleton />
+            <StakeItem.Skeleton />
+          </section>
         </div>
       }
     >
       <div>
         <StakingHeader />
-        <div
-          css={{
-            'display': 'flex',
-            'flexDirection': 'column',
-            'gap': '2.8rem',
-            '> *:empty': {
-              display: 'none',
-            },
-          }}
-        >
-          <ValidatorStakings />
-          <Stakings />
-        </div>
-      </div>
-      <div>
-        <UnstakingHeader />
-        <div
-          css={{
-            'display': 'flex',
-            'flexDirection': 'column',
-            'gap': '2.8rem',
-            '> *:empty': {
-              display: 'none',
-            },
-          }}
-        >
-          <ValidatorUnstakings />
-          <Unstakings />
-        </div>
+        <NoStakeGuard>
+          <div
+            css={{
+              'display': 'flex',
+              'flexDirection': 'column',
+              'gap': '1.6rem',
+              '> *:empty': {
+                display: 'none',
+              },
+            }}
+          >
+            <Stakings />
+            <ValidatorStakings />
+          </div>
+        </NoStakeGuard>
       </div>
     </Suspense>
   </div>

@@ -16,7 +16,7 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedIndexedAccess": true,
     "module": "ESNext",
-    "moduleResolution": "Node",
+    "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
@@ -24,7 +24,6 @@
     "jsxImportSource": "@emotion/react"
   },
   "include": [
-    "src",
-    "../../packages/ui/src/molecules/DateInput"
+    "src"
   ]
 }

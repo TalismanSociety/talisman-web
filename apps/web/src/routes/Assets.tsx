@@ -2,11 +2,16 @@ import useAssets, { useAssetsFiltered } from '@archetypes/Portfolio/Assets'
 import { Total } from '@archetypes/Wallet'
 import { Search } from '@components/Field'
 import Asset, { AssetsList, AssetsListLocked } from '@components/recipes/Asset'
+import AnimatedFiatNumber from '@components/widgets/AnimatedFiatNumber'
 import styled from '@emotion/styled'
-import { DisplayValue, InfoCard } from '@talismn/ui'
+import { ChevronLeft } from '@talismn/icons'
+import { Button, InfoCard } from '@talismn/ui'
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 const Assets = () => {
+  const navigate = useNavigate()
+
   const [search, setSearch] = useState('')
   const { tokens, balances, isLoading } = useAssetsFiltered({ size: 0, search })
   const { lockedTotal } = useAssets()
@@ -14,6 +19,9 @@ const Assets = () => {
   return (
     <AssetPage>
       {/* Upper Section */}
+      <Button variant="secondary" leadingIcon={<ChevronLeft />} onClick={() => navigate(-1)}>
+        Back
+      </Button>
       <section
         css={{
           display: 'flex',
@@ -34,7 +42,7 @@ const Assets = () => {
           }}
         >
           <InfoCard headlineText={'Total Portfolio Value'} text={<Total />} minWidth={'150px'} />
-          <InfoCard headlineText={'Locked Value'} text={<DisplayValue amount={lockedTotal} />} minWidth={'150px'} />
+          <InfoCard headlineText={'Locked Value'} text={<AnimatedFiatNumber end={lockedTotal} />} minWidth={'150px'} />
         </div>
       </section>
       {/* Lower Section */}
@@ -74,8 +82,6 @@ const Assets = () => {
 
 const AssetPage = styled.section`
   width: 100%;
-  max-width: 1280px;
-  padding: 0 2.4rem;
   > header + article {
     margin-top: 3rem;
   }

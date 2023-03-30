@@ -1,7 +1,9 @@
+import AnimatedFiatNumber from '@components/widgets/AnimatedFiatNumber'
 import { keyframes, useTheme } from '@emotion/react'
 import styled from '@emotion/styled'
 import { Balances } from '@talismn/balances'
-import { DisplayValue, HiddenDetails, Icon, Text, Tooltip } from '@talismn/ui'
+import { Lock } from '@talismn/icons'
+import { HiddenDetails, Text, Tooltip } from '@talismn/ui'
 import { isEmpty, startCase } from 'lodash'
 import { Children, ReactElement, ReactNode } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -42,7 +44,7 @@ export const AssetBalance = ({ locked, planck, fiat, symbol }: AssetBalanceProps
         >
           {planck ? `${planck} ${symbol} ` : '- ' + symbol}
         </Text.Body>
-        {locked ? <Icon.Lock css={{ width: '16px', height: '16px' }} /> : ''}
+        {locked ? <Lock css={{ width: '16px', height: '16px' }} /> : ''}
       </div>
       <Text.Body
         css={{
@@ -51,7 +53,7 @@ export const AssetBalance = ({ locked, planck, fiat, symbol }: AssetBalanceProps
           fontSize: '14px',
         }}
       >
-        {fiat ? <DisplayValue amount={fiat} /> : ''}
+        {fiat ? <AnimatedFiatNumber end={fiat} /> : ''}
       </Text.Body>
     </div>
   )
@@ -99,11 +101,11 @@ const AssetSkeleton = ({ loading = true }: { loading?: boolean }) => {
               margin: '16px',
             }}
           />
-          <div css={{ display: 'flex', flexDirection: 'column', gap: '0.4em' }}>
+          <div css={{ flex: 1, alignItems: 'stretch', display: 'flex', flexDirection: 'column', gap: '0.4em' }}>
             <div
               className="shimmer"
               css={{
-                width: '150px',
+                maxWidth: '150px',
                 height: '1em',
                 borderRadius: '12px',
               }}
@@ -121,7 +123,8 @@ const AssetSkeleton = ({ loading = true }: { loading?: boolean }) => {
               <div
                 className="shimmer"
                 css={{
-                  width: '100px',
+                  width: '100%',
+                  maxWidth: '100px',
                   height: '1em',
                   borderRadius: '12px',
                 }}
@@ -408,7 +411,7 @@ export const AssetsList = (props: AssetsListProps) => {
   const { isLoading } = props
 
   return (
-    <HiddenDetails overlay={<Text.H3>No Assets Found</Text.H3>} hidden={!isLoading && isEmpty(props.children)}>
+    <HiddenDetails overlay={<Text.H3>No assets found</Text.H3>} hidden={!isLoading && isEmpty(props.children)}>
       <Table>
         <thead>
           <tr>

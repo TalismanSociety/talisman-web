@@ -1,8 +1,9 @@
 import { useTheme } from '@emotion/react'
+import { ChevronRight } from '@talismn/icons'
 import { motion } from 'framer-motion'
 import { MouseEventHandler, ReactEventHandler, ReactNode, useCallback, useState } from 'react'
 
-import { Icon, Text } from '../../atoms'
+import { Text } from '../../atoms'
 
 export type DetailsProps = React.DetailedHTMLProps<
   React.DetailsHTMLAttributes<HTMLDetailsElement>,
@@ -49,11 +50,15 @@ const Details = (props: DetailsProps) => {
           },
         }}
       >
-        <Text.Body as="span" alpha={open ? 'high' : 'medium'} css={{ fontFamily: 'Surt', marginRight: '2rem' }}>
+        <Text.Body
+          as="span"
+          alpha={open ? 'high' : 'medium'}
+          css={{ fontFamily: "'Surt', sans-serif", marginRight: '2rem' }}
+        >
           {props.summary}
         </Text.Body>
         <motion.div variants={{ true: { transform: 'rotate(90deg)' } }} animate={JSON.stringify(open)}>
-          <Icon.ChevronRight className="marker" />
+          <ChevronRight className="marker" />
         </motion.div>
       </summary>
       <motion.div

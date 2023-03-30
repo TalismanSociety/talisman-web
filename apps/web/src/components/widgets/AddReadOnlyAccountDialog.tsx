@@ -1,50 +1,22 @@
 import AddReadOnlyAccountDialogComponent from '@components/recipes/AddReadOnlyAccountDialog'
-import { readOnlyAccountsState } from '@domains/accounts/recoils'
-import { isValidSubstrateOrEthereumAddress } from '@util/addressValidation'
+import { useAddReadonlyAccountForm } from '@domains/accounts/hooks'
 import { isNilOrWhitespace } from '@util/nil'
-import { ReactNode, useCallback, useMemo, useState } from 'react'
-import { useRecoilValue, useSetRecoilState } from 'recoil'
+import { ReactNode, useCallback, useState } from 'react'
 
 type AddReadOnlyAccountDialogProps = {
   children?: ReactNode | ((props: { onToggleOpen: () => unknown }) => ReactNode)
 }
 
 const AddReadOnlyAccountDialog = (props: AddReadOnlyAccountDialogProps) => {
-  const readonlyAccounts = useRecoilValue(readOnlyAccountsState)
-
   const [open, setOpen] = useState(false)
-  const [address, setAddress] = useState('')
-  const [name, setName] = useState('')
-
-  const isValidAddress = useMemo(
-    () => (isNilOrWhitespace(address) ? undefined : isValidSubstrateOrEthereumAddress(address)),
-    [address]
-  )
-
-  const resultingAddress = isValidAddress ? address : undefined
-
-  const hasExistingAccount = useMemo(
-    () => readonlyAccounts.map(x => x.address.toLowerCase()).includes(address.toLowerCase()),
-    [address, readonlyAccounts]
-  )
-
-  const confirmState = useMemo(() => {
-    if (!isValidAddress || hasExistingAccount) {
-      return 'disabled'
-    }
-  }, [hasExistingAccount, isValidAddress])
-
-  const error = useMemo(() => {
-    if (isValidAddress === false) {
-      return 'Invalid address'
-    }
-
-    if (hasExistingAccount) {
-      return 'This account has already been added'
-    }
-  }, [hasExistingAccount, isValidAddress])
-
-  const setReadOnlyAccounts = useSetRecoilState(readOnlyAccountsState)
+  const {
+    address: [address, setAddress],
+    name: [name, setName],
+    resultingAddress,
+    confirmState,
+    error,
+    submit,
+  } = useAddReadonlyAccountForm()
 
   const toggle = useCallback(() => setOpen(x => !x), [])
 
@@ -65,12 +37,9 @@ const AddReadOnlyAccountDialog = (props: AddReadOnlyAccountDialogProps) => {
           if (isNilOrWhitespace(resultingAddress)) {
             return
           }
-          setReadOnlyAccounts(accounts => [
-            ...accounts.filter(x => x.address !== resultingAddress),
-            { address: resultingAddress, name: isNilOrWhitespace(name) ? undefined : name },
-          ])
+          submit()
           setOpen(false)
-        }, [name, resultingAddress, setReadOnlyAccounts])}
+        }, [resultingAddress, submit])}
       />
     </>
   )

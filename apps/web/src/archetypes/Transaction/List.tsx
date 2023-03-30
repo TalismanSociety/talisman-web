@@ -2,7 +2,7 @@ import { Button, Field, MaterialLoader, Panel, PanelSection } from '@components'
 import { legacySelectedAccountState } from '@domains/accounts/recoils'
 import ExportTxHistoryWidget from '@domains/txHistory/widgets/ExportTxHistoryWidget'
 import { css } from '@emotion/react'
-import { Icon } from '@talismn/ui'
+import { AlertCircle } from '@talismn/icons'
 import format from 'date-fns/format'
 import parseISO from 'date-fns/parseISO'
 import startOfDay from 'date-fns/startOfDay'
@@ -77,8 +77,9 @@ export const List = ({ addresses = [], className }: Props) => {
           'paddingBottom': '1rem',
           'display': 'flex',
           'justifyContent': 'space-between',
+          'gap': '1.6rem',
           '.field-search': {
-            maxWidth: 500,
+            width: '35rem',
           },
         }}
       >
@@ -154,7 +155,7 @@ export const List = ({ addresses = [], className }: Props) => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1, transition: { ease: [0.78, 0.14, 0.15, 0.86] } }}
             >
-              <Icon.AlertCircle
+              <AlertCircle
                 css={css`
                   display: block;
                   width: 1.2em;
@@ -171,7 +172,7 @@ export const List = ({ addresses = [], className }: Props) => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1, transition: { ease: [0.78, 0.14, 0.15, 0.86] } }}
             >
-              <Icon.AlertCircle
+              <AlertCircle
                 css={css`
                   display: block;
                   width: 1.2em;

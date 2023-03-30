@@ -1,74 +1,120 @@
 import FastUnstakeDialog from '@components/recipes/FastUnstakeDialog'
-import ValidatorStake from '@components/recipes/ValidatorStake'
+import { ValidatorStakeItem as ValidatorStakeItemComponent } from '@components/recipes/StakeItem'
 import { Account } from '@domains/accounts/recoils'
 import { useExtrinsic, useTokenAmountFromPlanck } from '@domains/common/hooks'
+import { useEraEtaFormatter } from '@domains/common/hooks/useEraEta'
 import { useLockDuration } from '@domains/nominationPools/hooks/useLockDuration'
 import { DeriveStakingAccount } from '@polkadot/api-derive/types'
 import { CircularProgressIndicator } from '@talismn/ui'
+import BN from 'bn.js'
 import { formatDistanceStrict } from 'date-fns'
 import { useCallback, useMemo, useState } from 'react'
+import { useRecoilValue, waitForAll } from 'recoil'
 
+import { nativeTokenPriceState, useNativeTokenDecimalState } from '../../domains/chains/recoils'
 import ValidatorUnstakeDialog from './ValidatorUnstakeDialog'
 
 const ValidatorStakeItem = (props: {
   account: Account
   stake: DeriveStakingAccount
   reward?: bigint
+  slashingSpan: number
   eligibleForFastUnstake?: boolean
   potentiallyEligibleForFastUnstake: boolean
   inFastUnstakeHead?: boolean
   inFastUnstakeQueue?: boolean
 }) => {
+  const withdrawExtrinsic = useExtrinsic('staking', 'withdrawUnbonded')
+  const fastUnstake = useExtrinsic('fastUnstake', 'registerFastUnstake')
+
   const [isUnstakeDialogOpen, setIsUnstakeDialogOpen] = useState(false)
   const [isFastUnstakeDialogOpen, setIsFastUnstakeDialogOpen] = useState(false)
 
   const lockDuration = useLockDuration()
+
+  const [decimal, nativeTokenPrice] = useRecoilValue(
+    waitForAll([useNativeTokenDecimalState(), nativeTokenPriceState('usd')])
+  )
 
   const amount = useTokenAmountFromPlanck(
     props.inFastUnstakeQueue || props.inFastUnstakeHead
       ? props.stake.unlocking?.[0]?.value
       : props.stake.stakingLedger.active.unwrap()
   )
-  const reward = useTokenAmountFromPlanck(props.reward)
+  // const reward = useTokenAmountFromPlanck(props.reward)
 
-  const fastUnstake = useExtrinsic('fastUnstake', 'registerFastUnstake')
+  const active = decimal.fromPlanck(props.stake.stakingLedger.active)
+  // const rewards = decimal.fromPlanck(props.reward)
+
+  const totalUnlocking = useMemo(
+    () => props.stake.unlocking?.reduce((previous, current) => previous.add(current.value), new BN(0)),
+    [props.stake.unlocking]
+  )
+
+  const eraEtaFormatter = useEraEtaFormatter()
+  const unlocks = props.stake.unlocking?.map(x => ({
+    amount: decimal.fromPlanck(x.value).toHuman(),
+    eta: eraEtaFormatter(x.remainingEras) ?? <CircularProgressIndicator size="1em" />,
+  }))
+
+  const onRequestUnstake = useCallback(() => {
+    if (
+      props.eligibleForFastUnstake ||
+      (props.potentiallyEligibleForFastUnstake && props.eligibleForFastUnstake !== false)
+    ) {
+      setIsFastUnstakeDialogOpen(true)
+    } else {
+      setIsUnstakeDialogOpen(true)
+    }
+  }, [props.eligibleForFastUnstake, props.potentiallyEligibleForFastUnstake])
 
   return (
     <>
-      <ValidatorStake
+      <ValidatorStakeItemComponent
+        stakeStatus={
+          props.reward === undefined ? undefined : props.reward === 0n ? 'not_earning_rewards' : 'earning_rewards'
+        }
+        readonly={props.account.readonly}
         accountName={props.account.name ?? ''}
         accountAddress={props.account.address}
-        stakingAmount={amount.decimalAmount?.toHuman() ?? '...'}
-        stakingAmountInFiat={amount.localizedFiatAmount ?? '...'}
-        rewardsAmount={
-          reward.decimalAmount === undefined ? (
-            <CircularProgressIndicator size="1em" />
+        stakingAmount={active.toHuman()}
+        stakingFiatAmount={(active.toNumber() * nativeTokenPrice).toLocaleString(undefined, {
+          style: 'currency',
+          currency: 'usd',
+          currencyDisplay: 'narrowSymbol',
+        })}
+        unstakeChip={
+          props.stake.stakingLedger.active.unwrap().isZero() ? undefined : props.eligibleForFastUnstake ? (
+            !props.inFastUnstakeHead &&
+            !props.inFastUnstakeQueue && <ValidatorStakeItemComponent.FastUnstakeChip onClick={onRequestUnstake} />
           ) : (
-            '+' + reward.decimalAmount.toHuman()
+            <ValidatorStakeItemComponent.UnstakeChip onClick={onRequestUnstake} />
           )
         }
-        rewardsAmountInFiat={reward.localizedFiatAmount === undefined ? '' : '+' + reward.localizedFiatAmount}
-        onRequestUnstake={useCallback(() => {
-          if (
-            props.eligibleForFastUnstake ||
-            (props.potentiallyEligibleForFastUnstake && props.eligibleForFastUnstake !== false)
-          ) {
-            setIsFastUnstakeDialogOpen(true)
-          } else {
-            setIsUnstakeDialogOpen(true)
-          }
-        }, [props.eligibleForFastUnstake, props.potentiallyEligibleForFastUnstake])}
-        unstakeState={
-          props.inFastUnstakeHead
-            ? 'head-of-fast-unstake-queue'
-            : props.inFastUnstakeQueue
-            ? 'in-fast-unstake-queue'
-            : fastUnstake.state === 'loading'
-            ? 'pending'
-            : undefined
+        withdrawChip={
+          props.stake.redeemable?.isZero() === false && (
+            <ValidatorStakeItemComponent.WithdrawChip
+              amount={decimal.fromPlanck(props.stake.redeemable).toHuman()}
+              onClick={() => withdrawExtrinsic.signAndSend(props.stake.controllerId ?? '', props.slashingSpan)}
+              loading={withdrawExtrinsic.state === 'loading'}
+            />
+          )
         }
-        eligibleForFastUnstake={props.eligibleForFastUnstake}
-        readonly={props.account.readonly}
+        status={
+          totalUnlocking?.isZero() === false ? (
+            props.inFastUnstakeHead || props.inFastUnstakeQueue ? (
+              <ValidatorStakeItemComponent.FastUnstakingStatus
+                amount={decimal.fromPlanck(totalUnlocking).toHuman()}
+                status={props.inFastUnstakeHead ? 'in-head' : props.inFastUnstakeQueue ? 'in-queue' : undefined}
+              />
+            ) : (
+              <ValidatorStakeItemComponent.UnstakingStatus
+                amount={decimal.fromPlanck(totalUnlocking).toHuman()}
+                unlocks={unlocks ?? []}
+              />
+            )
+          ) : undefined
+        }
       />
       <ValidatorUnstakeDialog
         accountAddress={props.stake.controllerId?.toString() ?? props.account.address}

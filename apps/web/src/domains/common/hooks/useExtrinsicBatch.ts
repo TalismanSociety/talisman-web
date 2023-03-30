@@ -2,12 +2,13 @@ import { ApiPromise } from '@polkadot/api'
 import { AddressOrPair } from '@polkadot/api/types'
 import { web3FromAddress } from '@polkadot/extension-dapp'
 import { ISubmittableResult } from '@polkadot/types/types'
-import { useCallback, useState } from 'react'
+import { useCallback, useContext, useState } from 'react'
 import { useRecoilCallback, useRecoilValueLoadable } from 'recoil'
 
-import { apiState, chainState } from '../../chains/recoils'
-import { extrinsicMiddleWare } from '../extrinsicMiddleware'
+import { chainIdState, chainState } from '../../chains/recoils'
+import { extrinsicMiddleware } from '../extrinsicMiddleware'
 import { toastExtrinsic } from '../utils'
+import { SubstrateApiContext, substrateApiState } from '..'
 
 type ExtrinsicMap = PickKnownKeys<{
   // @ts-ignore
@@ -32,6 +33,7 @@ export const useExtrinsicBatch = <
 >(
   extrinsics: TExtrinsics
 ) => {
+  const apiEndpoint = useContext(SubstrateApiContext).endpoint
   const chainLoadable = useRecoilValueLoadable(chainState)
 
   const [loadable, setLoadable] = useState<
@@ -48,8 +50,11 @@ export const useExtrinsicBatch = <
       const { snapshot } = callbackInterface
 
       const promiseFunc = async () => {
-        const api = await snapshot.getPromise(apiState)
-        const extension = await web3FromAddress(account.toString())
+        const [chainId, api, extension] = await Promise.all([
+          snapshot.getPromise(chainIdState),
+          snapshot.getPromise(substrateApiState(apiEndpoint)),
+          web3FromAddress(account.toString()),
+        ])
 
         let resolve = (value: ISubmittableResult) => {}
         let reject = (value: unknown) => {}
@@ -65,13 +70,14 @@ export const useExtrinsicBatch = <
         })
 
         try {
+          const extrinsics = extrinsickeys.map(
+            ([module, section], index) => api.tx[module]?.[section]?.(...(params[index] ?? []))!
+          )
           const unsubscribe = await api.tx.utility
-            .batchAll(
-              extrinsickeys.map(([module, section], index) => api.tx[module]?.[section]?.(...(params[index] ?? []))!)
-            )
+            .batchAll(extrinsics)
             .signAndSend(account, { signer: extension?.signer }, result => {
-              extrinsickeys.forEach(([module, section]) =>
-                extrinsicMiddleWare(module as any, section as any, result, callbackInterface)
+              extrinsics.forEach((extrinsic, index) =>
+                extrinsicMiddleware(chainId, extrinsic, result, callbackInterface)
               )
 
               if (result.isError) {

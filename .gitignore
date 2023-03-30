@@ -9,6 +9,6 @@
 node_modules
 
 .turbo
-
+.vscode
 .DS_Store
 ._.DS_Store

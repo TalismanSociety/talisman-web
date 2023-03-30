@@ -1,9 +1,9 @@
 import RemoveWatchedAccountConfirmationDialogComponent from '@components/recipes/RemoveWatchedAccountConfirmationDialog'
-import { ReadonlyAccount, readOnlyAccountsState } from '@domains/accounts/recoils'
+import { useSetReadonlyAccounts } from '@domains/accounts/hooks'
+import { ReadonlyAccount } from '@domains/accounts/recoils'
 import { shortenAddress } from '@util/format'
 import { isNilOrWhitespace } from '@util/nil'
 import { ReactNode, useCallback, useState } from 'react'
-import { useSetRecoilState } from 'recoil'
 
 export type RemoveWatchedAccountConfirmationDialogProps = {
   account: ReadonlyAccount
@@ -12,7 +12,7 @@ export type RemoveWatchedAccountConfirmationDialogProps = {
 
 const RemoveWatchedAccountConfirmationDialog = (props: RemoveWatchedAccountConfirmationDialogProps) => {
   const [open, setOpen] = useState(false)
-  const setReadonlyAccounts = useSetRecoilState(readOnlyAccountsState)
+  const { remove } = useSetReadonlyAccounts()
 
   return (
     <>
@@ -22,9 +22,9 @@ const RemoveWatchedAccountConfirmationDialog = (props: RemoveWatchedAccountConfi
         onRequestDismiss={useCallback(() => setOpen(false), [])}
         name={isNilOrWhitespace(props.account.name) ? shortenAddress(props.account.address) : props.account.name}
         onConfirm={useCallback(() => {
-          setReadonlyAccounts(y => y.filter(z => z.address !== props.account.address))
+          remove(props.account)
           setOpen(false)
-        }, [props.account.address, setReadonlyAccounts])}
+        }, [props.account, remove])}
       />
     </>
   )

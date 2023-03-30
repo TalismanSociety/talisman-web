@@ -1,14 +1,17 @@
 import { ChainLogo, ExtensionStatusGate, Info, Panel, PanelSection, Pendor } from '@components'
+import SectionHeader from '@components/molecules/SectionHeader'
+import AnimatedFiatNumber from '@components/widgets/AnimatedFiatNumber'
 import { selectedSubstrateAccountsState } from '@domains/accounts/recoils'
 import { tokenPriceState } from '@domains/chains/recoils'
 import { useTotalCrowdloanTotalFiatAmount } from '@domains/crowdloans/hooks'
 import styled from '@emotion/styled'
+import crowdloanDataState from '@libs/@talisman-crowdloans/provider'
 import { CrowdloanContribution, useCrowdloanContributions } from '@libs/crowdloans'
 import { Moonbeam } from '@libs/crowdloans/crowdloanOverrides'
 import { MoonbeamPortfolioTag } from '@libs/moonbeam-contributors'
 import { calculateCrowdloanPortfolioAmounts, useTaggedAmountsInPortfolio } from '@libs/portfolio'
 import { useCrowdloanById, useParachainAssets, useParachainDetailsById } from '@libs/talisman'
-import { SupportedRelaychains, parachainDetails } from '@libs/talisman/util/_config'
+import { SupportedRelaychains } from '@libs/talisman/util/_config'
 import { planckToTokens } from '@talismn/util'
 import { formatCommas, formatCurrency } from '@util/helpers'
 import { Maybe } from '@util/monads'
@@ -26,9 +29,11 @@ const CrowdloanItem = styled(
 
     const asset = useParachainAssets(id)
 
+    const crowdloans = useRecoilValue(crowdloanDataState)
+
     const relayChainId = contribution.parachain.paraId.split('-')[0]
     const relayChain = Maybe.of(relayChainId).mapOrUndefined(x => SupportedRelaychains[x]!)
-    const chain = parachainDetails.find(x => x.id === id)
+    const chain = crowdloans.find(x => x.id === id)
 
     const { tokenSymbol: relayNativeToken, coingeckoId, tokenDecimals: relayTokenDecimals } = relayChain ?? {}
     const { name } = chain ?? {}
@@ -105,6 +110,9 @@ const CrowdloanItemWithLink = styled((props: { contribution: CrowdloanContributi
     </Link>
   )
 })`
+  .panel-section {
+    overflow: hidden;
+  }
   :first-of-type .panel-section {
     border-radius: 1.6rem 1.6rem 0 0;
   }
@@ -155,7 +163,7 @@ const ExtensionUnavailable = styled((props: any) => {
   }
 `
 
-const Crowdloans = ({ className }: { className?: string }) => {
+const SuspendableCrowdloans = ({ className }: { className?: string }) => {
   const { t } = useTranslation()
   const accounts = useRecoilValue(selectedSubstrateAccountsState)
   const { contributions, hydrated: contributionsHydrated } = useCrowdloanContributions({
@@ -163,12 +171,15 @@ const Crowdloans = ({ className }: { className?: string }) => {
   })
   const crowdloansUsd = useTotalCrowdloanTotalFiatAmount()
 
+  // Temporary disable crowdloan skeleton
+  if (!contributionsHydrated || contributions.length === 0) {
+    return null
+  }
+
   return (
     <section className={`wallet-crowdloans ${className}`} css={{ marginBottom: '2rem' }}>
-      <Panel
-        title={t('Crowdloans')}
-        subtitle={crowdloansUsd && crowdloansUsd !== 0 ? formatCurrency(crowdloansUsd) : ''}
-      >
+      <SectionHeader headlineText={t('Crowdloans')} supportingText={<AnimatedFiatNumber end={crowdloansUsd} />} />
+      <Panel>
         {!contributionsHydrated ? (
           <PanelSection comingSoon>
             <div>{t('Summoning Crowdloan Contributions...')}</div>
@@ -187,5 +198,11 @@ const Crowdloans = ({ className }: { className?: string }) => {
     </section>
   )
 }
+
+export const Crowdloans = ({ className }: { className?: string }) => (
+  <Suspense>
+    <SuspendableCrowdloans className={className} />
+  </Suspense>
+)
 
 export default Crowdloans

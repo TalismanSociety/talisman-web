@@ -1,7 +1,7 @@
 import { Pendor, ProgressBar, Stat } from '@components'
 import styled from '@emotion/styled'
 import { useCrowdloanById } from '@libs/talisman'
-import { Icon } from '@talismn/ui'
+import { CheckCircle } from '@talismn/icons'
 import { shortNumber } from '@util/helpers'
 import { useTranslation } from 'react-i18next'
 
@@ -29,7 +29,7 @@ const Raised = styled(
           <span>
             {contributed && (
               <>
-                <Icon.CheckCircle /> {t('Contributed')}
+                <CheckCircle /> {t('Contributed')}
               </>
             )}
           </span>

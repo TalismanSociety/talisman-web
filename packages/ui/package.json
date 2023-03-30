@@ -4,23 +4,21 @@
   "packageManager": "yarn@3.4.1",
   "main": "build/commonjs/index.js",
   "exports": {
-    ".": {
-      "import": "./build/module/index.js",
-      "require": "./build/commonjs/index.js"
-    },
+    ".": "./build/index.js",
     "./assets/css/talismn.css": "./assets/css/talismn.css"
   },
   "scripts": {
-    "dev": "tsc --build --watch tsconfig.build.json tsconfig.build.commonjs.json",
-    "build": "tsc --build tsconfig.build.json tsconfig.build.commonjs.json",
+    "dev": "tsc --build --watch tsconfig.build.json",
+    "build": "tsc --build tsconfig.build.json",
     "check-types": "tsc --noEmit",
     "storybook": "start-storybook -p 6007",
     "build-storybook": "build-storybook"
   },
   "dependencies": {
-    "@floating-ui/react": "^0.19.2",
+    "@floating-ui/react": "^0.20.1",
     "@lottiefiles/react-lottie-player": "^3.5.2",
-    "@talismn/icons": "workspace:^"
+    "@talismn/icons": "workspace:^",
+    "colorjs.io": "^0.4.3"
   },
   "devDependencies": {
     "@babel/core": "^7.21.0",
@@ -37,15 +35,16 @@
     "@talismn/development": "workspace:^",
     "@types/react": "^18.0.28",
     "babel-loader": "^8.3.0",
-    "framer-motion": "^9.1.7",
+    "framer-motion": "^10.2.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-hot-toast": "^2.4.0",
-    "typescript": "^4.9.5"
+    "typescript": "^5.0.2"
   },
   "peerDependencies": {
     "@emotion/react": "11.x",
-    "framer-motion": "9.x",
+    "@talismn/icons": "*",
+    "framer-motion": "10.x",
     "react": "18.x",
     "react-hot-toast": "2.x"
   }

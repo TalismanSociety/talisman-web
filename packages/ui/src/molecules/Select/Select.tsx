@@ -10,6 +10,7 @@ import {
   useListNavigation,
   useRole,
 } from '@floating-ui/react'
+import { ChevronDown } from '@talismn/icons'
 import { motion } from 'framer-motion'
 import React, {
   ReactElement,
@@ -22,7 +23,7 @@ import React, {
   useState,
 } from 'react'
 
-import { Icon, Text } from '../../atoms'
+import { Text } from '../../atoms'
 
 type Value = string | number | undefined
 
@@ -36,9 +37,9 @@ export type SelectProps = {
 
 type SelectItemProps = {
   value?: Value
-  leadingIcon: ReactNode
+  leadingIcon?: ReactNode
   headlineText: ReactNode
-  supportingText: ReactNode
+  supportingText?: ReactNode
 }
 
 const SelectItem = forwardRef<HTMLDivElement, SelectItemProps>((props, ref) => (
@@ -59,7 +60,7 @@ const SelectItem = forwardRef<HTMLDivElement, SelectItemProps>((props, ref) => (
 const OVERLAP = 6
 
 const Select = Object.assign(
-  ({ width = '30rem', children, ...props }: SelectProps) => {
+  ({ width = '100%', children, ...props }: SelectProps) => {
     const theme = useTheme()
     const listRef = useRef<HTMLLIElement[]>([])
     const [open, setOpen] = useState(false)
@@ -138,7 +139,7 @@ const Select = Object.assign(
     }, [open, activeIndex, pointer])
 
     return (
-      <motion.div initial={String(false)} animate={String(open)}>
+      <motion.div initial={String(false)} animate={String(open)} css={{ width }}>
         <motion.button
           ref={reference}
           variants={{
@@ -157,20 +158,20 @@ const Select = Object.assign(
             border: 'none',
             borderRadius: '0.8rem',
             cursor: 'pointer',
-            width: width,
+            width: '100%',
           }}
           {...getReferenceProps()}
         >
           <Text.Body as="div" css={{ pointerEvents: 'none', userSelect: 'none' }}>
             {selectedChild ?? props.placeholder}
           </Text.Body>
-          <Icon.ChevronDown css={{ transform: open ? 'rotate(180deg)' : undefined, transition: 'ease 0.25s' }} />
+          <ChevronDown css={{ transform: open ? 'rotate(180deg)' : undefined, transition: 'ease 0.25s' }} />
         </motion.button>
         <motion.ul
           ref={floating}
           variants={{
-            true: { height: 'unset', display: 'block', transitionEnd: { overflow: 'auto' } },
-            false: { height: 0, overflow: 'hidden', transitionEnd: { display: 'none' } },
+            true: { height: 'unset', visibility: 'unset', transitionEnd: { overflow: 'auto' } },
+            false: { height: 0, overflow: 'hidden', transitionEnd: { visibility: 'hidden' } },
           }}
           css={{
             'margin': 0,

@@ -1,58 +1,52 @@
-import { ValidatorStakeList } from '@components/recipes/ValidatorStake'
 import { selectedSubstrateAccountsState } from '@domains/accounts/recoils'
-import { useQueryMulti } from '@domains/common/hooks'
-import { useFastUnstakeEligibleAccounts } from '@domains/fastUnstake/hooks'
+import { useChainDeriveState, useChainQueryMultiState, useChainQueryState } from '@domains/common'
+import { useFastUnstakeEligibleAccountsState } from '@domains/fastUnstake/hooks'
 import { stakersRewardState } from '@domains/staking/recoils'
-import { constSelector, useRecoilValue, useRecoilValueLoadable } from 'recoil'
+import { useMemo } from 'react'
+import { useRecoilValue, useRecoilValueLoadable, waitForAll } from 'recoil'
 
-import useChainState from '../../domains/common/hooks/useChainState'
 import ValidatorStakeItem from './ValidatorStakeItem'
 
 const ValidatorStakings = () => {
   const accounts = useRecoilValue(selectedSubstrateAccountsState)
+  const addresses = useMemo(() => accounts.map(x => x.address), [accounts])
 
-  const queriesLoadable = useQueryMulti(['staking.activeEra', 'fastUnstake.erasToCheckPerBlock', 'fastUnstake.head'])
-
-  const queueLoadable = useChainState(
-    'query',
-    'fastUnstake',
-    'queue.multi',
-    accounts.map(x => x.address)
+  const [[activeEra, erasToCheckPerBlock, fastUnstakeHead], queues, stakes] = useRecoilValue(
+    waitForAll([
+      useChainQueryMultiState(['staking.activeEra', 'fastUnstake.erasToCheckPerBlock', 'fastUnstake.head']),
+      useChainQueryState('fastUnstake', 'queue.multi', addresses),
+      useChainDeriveState('staking', 'accounts', [addresses, undefined]),
+      useChainQueryState('fastUnstake', 'queue.multi', addresses),
+    ])
   )
 
-  const erasToCheckPerBlock = queriesLoadable.valueMaybe()?.[1]
-  const fastUnstakeHead = queriesLoadable.valueMaybe()?.[2]
-
-  const stakes = useChainState('derive', 'staking', 'accounts', [
-    accounts.map(({ address }) => address),
-    undefined,
-  ]).valueMaybe()
-
-  const stakerRewards = useRecoilValueLoadable(
-    queriesLoadable.state !== 'hasValue'
-      ? constSelector(undefined)
-      : stakersRewardState(queriesLoadable.contents[0].unwrapOrDefault().index.toNumber())
+  const slashingSpans = useRecoilValue(
+    useChainQueryState(
+      'staking',
+      'slashingSpans.multi',
+      useMemo(() => stakes.map(staking => staking.stashId), [stakes])
+    )
   )
 
-  const fastUnstakeEligibleAccounts = useFastUnstakeEligibleAccounts()
+  // Long running operations
+  const stakerRewards = useRecoilValueLoadable(stakersRewardState(activeEra.unwrapOrDefault().index.toNumber()))
+  const fastUnstakeEligibleAccounts = useRecoilValueLoadable(useFastUnstakeEligibleAccountsState())
 
   const stakesToDisplay = stakes
-    ?.map((stake, index) => {
+    .map((stake, index) => {
       const reward = stakerRewards.valueMaybe()?.[accounts[index]?.address ?? '']
-
-      const inFastUnstakeHead = fastUnstakeHead?.unwrapOrDefault().stashes.some(x => x[0].eq(stake.accountId))
-      const inFastUnstakeQueue = !queueLoadable.valueMaybe()?.[index]?.unwrapOrDefault().isZero ?? false
 
       return {
         stake,
         account: accounts[index]!,
         reward,
+        slashingSpan: (slashingSpans[index]?.unwrapOrDefault().prior.length ?? -1) + 1,
         eligibleForFastUnstake: fastUnstakeEligibleAccounts
           .valueMaybe()
           ?.some(x => x.address === accounts[index]?.address),
         potentiallyEligibleForFastUnstake: !erasToCheckPerBlock?.isZero() && reward === 0n,
-        inFastUnstakeHead,
-        inFastUnstakeQueue,
+        inFastUnstakeHead: fastUnstakeHead.unwrapOrDefault().stashes.some(x => x[0].eq(stake.accountId)),
+        inFastUnstakeQueue: !queues[index]?.unwrapOrDefault().isZero() ?? false,
       }
     })
     .filter(
@@ -62,16 +56,16 @@ const ValidatorStakings = () => {
         inFastUnstakeQueue
     )
 
-  if (stakesToDisplay === undefined || stakesToDisplay?.length === 0) {
+  if (stakesToDisplay.length === 0) {
     return null
   }
 
   return (
-    <ValidatorStakeList>
+    <section css={{ display: 'flex', flexDirection: 'column', gap: '1.6rem' }}>
       {stakesToDisplay.map(props => (
         <ValidatorStakeItem {...props} />
       ))}
-    </ValidatorStakeList>
+    </section>
   )
 }
 

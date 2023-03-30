@@ -4,8 +4,8 @@ import { shortenAddress } from '@util/format'
 import React, { ReactElement, ReactNode, useMemo } from 'react'
 import { useMedia } from 'react-use'
 
-import { PoolStatus, PoolStatusIndicator } from '../PoolStatusIndicator'
 import StakeList from '../StakeList'
+import { StakeStatus, StakeStatusIndicator } from '../StakeStatusIndicator'
 import PoolStakeSkeleton from './PoolStake.skeleton'
 
 export type PoolStakeProps = {
@@ -23,7 +23,7 @@ export type PoolStakeProps = {
   claimState?: 'unavailable' | 'pending' | 'disabled'
   addState?: 'pending' | 'disabled'
   unstakeState?: 'unavailable' | 'pending' | 'disabled'
-  poolStatus?: PoolStatus
+  poolStatus?: StakeStatus
   variant?: 'compact'
   readonly?: boolean
 }
@@ -105,7 +105,7 @@ const PoolStake = Object.assign(
           ]}
         >
           <Text alpha="high" css={{ marginLeft: '0.8rem' }}>
-            <PoolStatusIndicator
+            <StakeStatusIndicator
               status={props.poolStatus}
               css={{ display: 'inline-block', verticalAlign: 'middle', marginRight: '0.6rem' }}
             />
