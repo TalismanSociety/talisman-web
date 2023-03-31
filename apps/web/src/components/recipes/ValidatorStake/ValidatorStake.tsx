@@ -1,5 +1,6 @@
 import { useTheme } from '@emotion/react'
-import { Button, CircularProgressIndicator, Icon, Identicon, Text } from '@talismn/ui'
+import { Lock, Zap } from '@talismn/icons'
+import { Button, CircularProgressIndicator, Identicon, Text } from '@talismn/ui'
 import { shortenAddress } from '@util/format'
 import React, { ReactElement, ReactNode, useMemo } from 'react'
 
@@ -62,8 +63,7 @@ const ValidatorStake = Object.assign(
         </Text.Body>
         <div css={{ gridArea: 'sValue', justifySelf: 'end', textAlign: 'end' }}>
           <Text.Body as="div" alpha={isFastUnstaking ? 'medium' : 'high'} css={{ fontWeight: 'bold' }}>
-            {props.stakingAmount}{' '}
-            {isFastUnstaking && <Icon.Lock width="1.2rem" height="1.2rem" css={{ marginLeft: '0.4rem' }} />}
+            {props.stakingAmount} {isFastUnstaking && <Lock size="1.2rem" css={{ marginLeft: '0.4rem' }} />}
           </Text.Body>
           <Text.Body as="div">{props.stakingAmountInFiat}</Text.Body>
         </div>
@@ -118,7 +118,7 @@ const ValidatorStake = Object.assign(
                 <Button
                   variant="outlined"
                   onClick={props.onRequestUnstake}
-                  leadingIcon={props.eligibleForFastUnstake && <Icon.Zap width="1.25em" height="1.25em" />}
+                  leadingIcon={props.eligibleForFastUnstake && <Zap size="1.25em" />}
                   loading={props.unstakeState === 'pending'}
                   hidden={props.unstakeState === 'unavailable' || props.readonly}
                   css={{ gridArea: 'uButton' }}
