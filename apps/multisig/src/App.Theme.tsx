@@ -147,6 +147,10 @@ export const globalStyle = (theme: Theme) => {
       color: inherit;
     }
 
+    #root {
+      height: 100%;
+    }
+
     body,
     html {
       font-family: 'Surt', sans-serif;

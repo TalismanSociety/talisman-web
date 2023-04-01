@@ -5,6 +5,7 @@ import TalismanLogo from '@components/TalismanLogo'
 import TwitterLogo from '@components/TwitterLogo'
 import W3FLogo from '@components/W3FLogo'
 import { css } from '@emotion/css'
+import { device } from '@util/breakpoints'
 
 const MiscLinks = () => {
   return (
@@ -77,27 +78,48 @@ const Footer = () => {
     <footer
       className={css`
         display: grid;
-        margin-top: 176px;
-        padding-left: 120px;
         background-color: var(--color-backgroundSecondary);
-        width: 100%;
-        grid-template-columns: 332px 330px 242px;
-        gap: 80px;
-        align-content: center;
+        width: 100vw;
+        height: 164px;
+        justify-content: center;
       `}
     >
-      <Logo height="100px" />
-      <p
+      <div
         className={css`
-          text-align: left;
-          color: var(--color-offWhite);
-          margin: auto;
+          display: grid;
+          gap: 80px;
+          align-content: center;
+          grid-template-columns: auto 317px 242px;
+          @media ${device.lg} {
+            padding-right: 255px;
+            grid-template-columns: auto 330px 242px;
+            margin-left: 120px;
+            gap: 35px;
+          }
         `}
       >
-        Signet is the all-in-one solution for creating and managing onchain organisations. An easy to use multi-sig
-        wallet designed for teams who value security and efficiency.
-      </p>
-      <MiscLinks />
+        <Logo
+          className={css`
+            margin: auto;
+            width: 266px;
+            height: auto;
+            @media ${device.lg} {
+              width: 333px;
+            }
+          `}
+        />
+        <p
+          className={css`
+            text-align: left;
+            color: var(--color-offWhite);
+            margin: auto;
+          `}
+        >
+          Signet is the all-in-one solution for creating and managing onchain organisations. An easy to use multi-sig
+          wallet designed for teams who value security and efficiency.
+        </p>
+        <MiscLinks />
+      </div>
     </footer>
   )
 }

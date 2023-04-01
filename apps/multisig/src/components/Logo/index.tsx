@@ -1,13 +1,11 @@
-import { css } from '@emotion/css'
+import React from 'react'
 
 import { ReactComponent as LogoSvg } from './logo.svg'
 
-export default function Logo({ height }: { height?: string }) {
+export default function Logo(props: React.HTMLAttributes<HTMLDivElement>) {
   return (
-    <LogoSvg
-      className={css`
-        height: ${height || '40px'};
-      `}
-    />
+    <div {...props}>
+      <LogoSvg />
+    </div>
   )
 }

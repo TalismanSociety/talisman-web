@@ -1,30 +1,33 @@
 import Logo from '@components/Logo'
 import { css } from '@emotion/css'
+import { device } from '@util/breakpoints'
 
 import Features from './Features'
 import Footer from './Footer'
 
 const containerStyles = css`
   display: grid;
-  grid-template-columns: 1fr;
-  grid-template-rows: 80px 234px 364px 182px 360px;
-  justify-content: center;
-  min-height: 100vh;
-  width: 100%;
+  grid-template-rows: auto auto auto auto 1fr;
   justify-items: center;
+  align-content: start;
   text-align: center;
+  height: 100%;
 `
 
 const Landing = () => (
   <div className={containerStyles}>
     <header
       className={css`
-        margin: auto;
         display: grid;
         margin-top: 40px;
       `}
     >
-      <Logo />
+      <Logo
+        className={css`
+          width: 133px;
+          height: auto;
+        `}
+      />
     </header>
     <h1
       className={css`
@@ -33,19 +36,36 @@ const Landing = () => (
         font-weight: 600;
         text-align: center;
         max-width: 1000px;
-        font-size: 60px;
-        line-height: 120%;
-        margin-top: 80px;
+        font-size: 48px;
+        line-height: 64px;
+        margin-top: 96px;
+        @media ${device.lg} {
+          font-size: 64px;
+          line-height: 120%;
+          margin-top: 80px;
+        }
       `}
     >
       Everything you need to run your onchain organisation
     </h1>
-    <Features />
+    <div
+      className={css`
+        margin-top: 77px;
+        @media ${device.lg} {
+          margin-top: 70px;
+        }
+      `}
+    >
+      <Features />
+    </div>
     <section
       className={css`
         display: grid;
         grid-template-rows: 56px 46px;
-        margin-top: 80px;
+        margin-top: 39px;
+        @media ${device.lg} {
+          margin-top: 80px;
+        }
         align-items: end;
       `}
     >
@@ -76,7 +96,18 @@ const Landing = () => (
         </p>
       </a>
     </section>
-    <Footer />
+    <div
+      className={css`
+        padding-top: 160px;
+        margin-top: auto;
+        align-self: end;
+        @media ${device.lg} {
+          padding-top: 176px;
+        }
+      `}
+    >
+      <Footer />
+    </div>
   </div>
 )
 

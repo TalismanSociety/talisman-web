@@ -1,5 +1,6 @@
 import FeatureIcon from '@components/FeatureIcon'
 import { css } from '@emotion/css'
+import { device } from '@util/breakpoints'
 import { ReactNode } from 'react'
 
 const Feature = ({ primary, subtitle, icon }: { primary: string; subtitle: string; icon: ReactNode }) => (
@@ -10,9 +11,13 @@ const Feature = ({ primary, subtitle, icon }: { primary: string; subtitle: strin
       gap: 24px;
       justify-items: center;
       text-align: center;
-      max-width: 366px;
+      max-width: 334px;
       line-height: 140%;
-      padding: 20px 48px;
+      padding: 24px 32px;
+      @media ${device.lg} {
+        max-width: 366px;
+        padding: 24px 48px;
+      }
     `}
   >
     {icon}
@@ -42,9 +47,11 @@ const Features = () => (
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       justify-items: center;
-      margin-top: 70px;
-      max-width: 1160px;
-      gap: 31px;
+      max-width: 1000px;
+      @media ${device.lg} {
+        gap: 31px;
+        max-width: 1160px;
+      }
     `}
   >
     <Feature
