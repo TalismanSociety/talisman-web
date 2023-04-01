@@ -1,7 +1,6 @@
 import { injectedSubstrateAccountsState } from '@domains/accounts/recoils'
 import { SubstrateApiContext, chainQueryState, substrateApiState } from '@domains/common'
 import { array, assertion, jsonParser, number, object, string } from '@recoiljs/refine'
-import { isNil } from 'lodash'
 import { useContext } from 'react'
 import { selectorFamily, waitForAll } from 'recoil'
 // @ts-expect-error
@@ -11,11 +10,13 @@ import { WorkerModule } from './worker'
 
 const STORAGE_KEY = 'fast-unstake-exposure'
 
-const fastUnstakeExposureChecker = object({
-  genesisHash: string(),
-  era: number(),
-  exposed: array(string()),
-})
+const fastUnstakeExposureChecker = array(
+  object({
+    genesisHash: string(),
+    era: number(),
+    exposed: array(string()),
+  })
+)
 
 const fastUnstakeExposureAsssertion = assertion(fastUnstakeExposureChecker)
 
@@ -32,8 +33,10 @@ const exposedAccountsState = selectorFamily({
       const genesisHash = api.genesisHash.toHex()
       const storedValue = fastUnstakeExposureJsonParser(sessionStorage.getItem(STORAGE_KEY))
 
-      if (!isNil(storedValue) && storedValue.era === activeEra && storedValue.genesisHash === genesisHash) {
-        return new Set(storedValue.exposed)
+      const precomputedExposure = storedValue?.find(x => x.genesisHash === genesisHash && x.era === activeEra)
+
+      if (precomputedExposure !== undefined) {
+        return new Set(precomputedExposure.exposed)
       }
 
       const worker = await spawn<WorkerModule>(new Worker(new URL('./worker', import.meta.url)))
@@ -41,10 +44,11 @@ const exposedAccountsState = selectorFamily({
 
       Thread.terminate(worker)
 
-      sessionStorage.setItem(
-        STORAGE_KEY,
-        JSON.stringify(fastUnstakeExposureAsssertion({ genesisHash, era: activeEra, exposed: Array.from(exposed) }))
-      )
+      const newStoredValue = (storedValue ?? [])
+        .filter(x => x.genesisHash !== genesisHash)
+        .concat([{ genesisHash, era: activeEra, exposed: Array.from(exposed) }])
+
+      sessionStorage.setItem(STORAGE_KEY, JSON.stringify(newStoredValue))
 
       return exposed
     },
