@@ -35,10 +35,13 @@ const Landing = () => (
         color: var(--color-offWhite);
         font-weight: 600;
         text-align: center;
-        max-width: 567px;
+        max-width: 327px;
         line-height: auto;
         margin-top: 64px;
         font-size: 32px;
+        @media ${device.sm} {
+          max-width: 567px;
+        }
         @media ${device.md} {
           font-size: 48px;
           line-height: 64px;
@@ -56,7 +59,7 @@ const Landing = () => (
     </h1>
     <div
       className={css`
-        margin-top: 64px;
+        margin-top: 57px;
         @media ${device.md} {
           margin-top: 77px;
         }

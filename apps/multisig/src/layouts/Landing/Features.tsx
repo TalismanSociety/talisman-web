@@ -13,9 +13,10 @@ const Feature = ({ primary, subtitle, icon }: { primary: string; subtitle: strin
       text-align: center;
       max-width: 286px;
       line-height: 140%;
-      padding: 8px;
-      padding-bottom: 50px;
-      margin: 8px 30px 8px 30px;
+      margin-bottom: 50px;
+      @media ${device.sm} {
+        margin: 16px 38px 66px 38px;
+      }
       @media ${device.md} {
         margin: 0;
         max-width: 334px;

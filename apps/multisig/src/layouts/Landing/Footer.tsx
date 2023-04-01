@@ -13,7 +13,6 @@ const MiscLinks = () => {
       className={css`
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: 24px;
         max-width: 242px;
         gap: 67px;
       `}
@@ -80,8 +79,11 @@ const Footer = () => {
         display: grid;
         background-color: var(--color-backgroundSecondary);
         width: 100vw;
-        height: 246px;
         justify-content: center;
+        @media ${device.sm} {
+          height: 246px;
+          height: 246px;
+        }
         @media ${device.md} {
           height: 164px;
         }
@@ -90,11 +92,19 @@ const Footer = () => {
       <div
         className={css`
           display: grid;
-          gap: 48px 84px;
           align-content: center;
-          grid-template-columns: 266px 242px;
-          grid-template-rows: 100px 1fr;
-          margin: 32px 64px;
+          margin: 32px 48px;
+          grid-template-columns: 1fr;
+          grid-template-rows: auto auto auto;
+          gap: 32px;
+          max-width: 360px;
+          @media ${device.sm} {
+            max-width: 100%;
+            gap: 48px 84px;
+            margin: 32px 64px;
+            grid-template-columns: 266px 242px;
+            grid-template-rows: 100px 1fr;
+          }
           @media ${device.md} {
             gap: 80px;
             grid-template-columns: auto 317px 242px;
@@ -110,7 +120,7 @@ const Footer = () => {
       >
         <Logo
           className={css`
-            margin: auto;
+            margin-right: auto;
             width: 266px;
             height: auto;
             @media ${device.lg} {
@@ -123,8 +133,11 @@ const Footer = () => {
             text-align: left;
             color: var(--color-offWhite);
             margin: auto;
-            grid-column: 1 / -1;
-            grid-row: 2;
+            grid-row: 3;
+            @media ${device.sm} {
+              grid-column: 1 / -1;
+              grid-row: 2;
+            }
             @media ${device.md} {
               grid-row: 1;
               grid-column: 2;
