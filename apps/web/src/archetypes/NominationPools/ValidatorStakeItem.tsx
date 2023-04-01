@@ -8,7 +8,7 @@ import BN from 'bn.js'
 import { useCallback, useMemo, useState } from 'react'
 import { useRecoilValue, waitForAll } from 'recoil'
 
-import { nativeTokenDecimalState, nativeTokenPriceState } from '../../domains/chains/recoils'
+import { nativeTokenPriceState, useNativeTokenDecimalState } from '../../domains/chains/recoils'
 import ValidatorUnstakeDialog from './ValidatorUnstakeDialog'
 
 const ValidatorStakeItem = (props: {
@@ -22,7 +22,7 @@ const ValidatorStakeItem = (props: {
   const [isUnstakeDialogOpen, setIsUnstakeDialogOpen] = useState(false)
 
   const [decimal, nativeTokenPrice] = useRecoilValue(
-    waitForAll([nativeTokenDecimalState, nativeTokenPriceState('usd')])
+    waitForAll([useNativeTokenDecimalState(), nativeTokenPriceState('usd')])
   )
 
   const active = decimal.fromPlanck(props.stake.stakingLedger.active)
@@ -36,7 +36,7 @@ const ValidatorStakeItem = (props: {
   const eraEtaFormatter = useEraEtaFormatter()
   const unlocks = props.stake.unlocking?.map(x => ({
     amount: decimal.fromPlanck(x.value).toHuman(),
-    eta: eraEtaFormatter.valueMaybe()?.(x.remainingEras) ?? <CircularProgressIndicator size="1em" />,
+    eta: eraEtaFormatter(x.remainingEras) ?? <CircularProgressIndicator size="1em" />,
   }))
 
   return (

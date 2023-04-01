@@ -1,56 +1,55 @@
 import { injectedSubstrateAccountsState } from '@domains/accounts/recoils'
-import { apiState, chainRpcState } from '@domains/chains/recoils'
+import { SubstrateApiContext, substrateApiState } from '@domains/common'
 import { useChainState } from '@domains/common/hooks'
-import { ApiPromise, WsProvider } from '@polkadot/api'
 import { range } from 'lodash/fp'
+import { useContext } from 'react'
 import {
   RecoilLoadable,
   constSelector,
-  selector,
   selectorFamily,
   useRecoilValue,
   useRecoilValueLoadable,
   waitForAll,
 } from 'recoil'
 
-// Can't re-use global api because fast unstake eligibility check is very resource intensive and will congest all other subscriptions
-const fastUnstakeApiState = selector({
-  key: 'FastUnstakeApi',
-  get: ({ get }) => ApiPromise.create({ provider: new WsProvider(get(chainRpcState)) }),
-})
-
 const eraExposedAccountsState = selectorFamily({
   key: 'EraExposedAccounts',
   get:
-    (era: number) =>
-    async ({ get }) =>
-      get(fastUnstakeApiState)
+    ({ endpoint, era }: { endpoint: string; era: number }) =>
+    ({ get }) =>
+      get(substrateApiState(endpoint))
         .query.staking.erasStakers.entries(era)
-        .then(x => x.flatMap(([_, exposure]) => (exposure as any).others.flatMap(({ who }: any) => who.toString())))
+        .then(x =>
+          x.flatMap(([_, exposure]) => (exposure as any).others.flatMap(({ who }: any) => who.toString() as string))
+        )
         .then(array => new Set(array)),
 })
 
 const exposedAccountsState = selectorFamily({
   key: 'ExposedAccount',
   get:
-    (activeEra: number) =>
+    ({ endpoint, activeEra }: { endpoint: string; activeEra: number }) =>
     ({ get }) => {
-      const api = get(apiState)
+      const api = get(substrateApiState(endpoint))
       const startEraToCheck = activeEra - api.consts.staking.bondingDuration.toNumber()
 
-      return get(waitForAll(range(startEraToCheck, activeEra).map(eraExposedAccountsState))).reduce(
-        (prev, curr) => new Set([...prev, ...curr])
-      )
+      return get(
+        waitForAll(range(startEraToCheck, activeEra).map(era => eraExposedAccountsState({ endpoint, era })))
+      ).reduce((prev, curr) => new Set([...prev, ...curr]))
     },
 })
 
 export const useExposedAccounts = () => {
+  const apiEndpoint = useContext(SubstrateApiContext).endpoint
   const activeEra = useChainState('query', 'staking', 'activeEra', [])
 
   const loadable = useRecoilValueLoadable(
     activeEra.state !== 'hasValue'
       ? constSelector(new Set([]))
-      : exposedAccountsState(activeEra.contents.unwrapOrDefault().index.toNumber())
+      : exposedAccountsState({
+          endpoint: apiEndpoint,
+          activeEra: activeEra.contents.unwrapOrDefault().index.toNumber(),
+        })
   )
 
   if (activeEra.state !== 'hasValue') {
