@@ -15,7 +15,7 @@ const Feature = ({ primary, subtitle, icon }: { primary: string; subtitle: strin
       line-height: 140%;
       margin-bottom: 50px;
       @media ${device.sm} {
-        margin: 16px 38px 66px 38px;
+        gap: 32px;
       }
       @media ${device.md} {
         margin: 0;
@@ -56,6 +56,7 @@ const Features = () => (
       flex-wrap: wrap;
       justify-content: center;
       max-width: 1000px;
+      margin: 0 60px;
       @media ${device.md} {
         flex-wrap: nowrap;
       }
