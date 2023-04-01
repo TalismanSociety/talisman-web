@@ -44,6 +44,7 @@ const Features = () => (
       justify-items: center;
       margin-top: 70px;
       max-width: 1160px;
+      gap: 31px;
     `}
   >
     <Feature
