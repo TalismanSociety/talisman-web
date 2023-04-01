@@ -68,6 +68,7 @@ const Landing = () => (
           font-size: 16px;
           line-height: 140%;
           color: #9d9d9d;
+          cursor: pointer;
         `}
       >
         Learn more
