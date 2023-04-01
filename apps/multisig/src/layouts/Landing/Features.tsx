@@ -17,6 +17,7 @@ const Feature = ({ primary, subtitle, icon }: { primary: string; subtitle: strin
       padding-bottom: 50px;
       margin: 8px 30px 8px 30px;
       @media ${device.md} {
+        margin: 0;
         max-width: 334px;
         padding: 24px 32px;
       }
