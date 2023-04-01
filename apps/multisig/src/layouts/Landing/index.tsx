@@ -63,16 +63,17 @@ const Landing = () => (
       >
         <h3>Connect Wallet</h3>
       </div>
-      <p
-        className={css`
-          font-size: 16px;
-          line-height: 140%;
-          color: #9d9d9d;
-          cursor: pointer;
-        `}
-      >
-        Learn more
-      </p>
+      <a href="https://talisman.xyz" target="_blank" rel="noreferrer">
+        <p
+          className={css`
+            font-size: 16px;
+            line-height: 140%;
+            color: #9d9d9d;
+          `}
+        >
+          Learn more
+        </p>
+      </a>
     </section>
     <Footer />
   </div>
