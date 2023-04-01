@@ -1,6 +1,7 @@
 import '@talismn/ui/assets/css/talismn.css'
 
 import SurtRegular from '@assets/fonts/AT_Surt_Regular.woff2'
+import SurtExtendedSemiBold from '@assets/fonts/AT_Surt_SemiBold_Extd.woff2'
 import SurtSemiBold from '@assets/fonts/AT_Surt_SemiBold.woff2'
 import StandardBook from '@assets/fonts/standard-book-webfont.woff2'
 import { Global, Theme, ThemeProvider, css } from '@emotion/react'
@@ -122,6 +123,14 @@ export const globalStyle = (theme: Theme) => {
       font-weight: 600;
       font-display: auto;
       src: url(${SurtSemiBold}) format('woff2');
+    }
+
+    @font-face {
+      font-family: 'SurtExt';
+      font-style: normal;
+      font-weight: 600;
+      font-display: auto;
+      src: url(${SurtExtendedSemiBold}) format('woff2');
     }
 
     @font-face {

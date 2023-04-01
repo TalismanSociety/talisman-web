@@ -28,8 +28,9 @@ const Landing = () => (
     </header>
     <h1
       className={css`
-        font-family: 'Standard';
+        font-family: 'SurtExt';
         color: var(--color-offWhite);
+        font-weight: 600;
         text-align: center;
         max-width: 1000px;
         font-size: 60px;
