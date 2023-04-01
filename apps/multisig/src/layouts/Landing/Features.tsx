@@ -11,9 +11,15 @@ const Feature = ({ primary, subtitle, icon }: { primary: string; subtitle: strin
       gap: 24px;
       justify-items: center;
       text-align: center;
-      max-width: 334px;
+      max-width: 286px;
       line-height: 140%;
-      padding: 24px 32px;
+      padding: 8px;
+      padding-bottom: 50px;
+      margin: 8px 30px 8px 30px;
+      @media ${device.md} {
+        max-width: 334px;
+        padding: 24px 32px;
+      }
       @media ${device.lg} {
         max-width: 366px;
         padding: 24px 48px;
@@ -44,10 +50,13 @@ const Feature = ({ primary, subtitle, icon }: { primary: string; subtitle: strin
 const Features = () => (
   <section
     className={css`
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      justify-items: center;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
       max-width: 1000px;
+      @media ${device.md} {
+        flex-wrap: nowrap;
+      }
       @media ${device.lg} {
         gap: 31px;
         max-width: 1160px;

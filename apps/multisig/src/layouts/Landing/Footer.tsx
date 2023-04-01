@@ -80,16 +80,26 @@ const Footer = () => {
         display: grid;
         background-color: var(--color-backgroundSecondary);
         width: 100vw;
-        height: 164px;
+        height: 246px;
         justify-content: center;
+        @media ${device.md} {
+          height: 164px;
+        }
       `}
     >
       <div
         className={css`
           display: grid;
-          gap: 80px;
+          gap: 48px 84px;
           align-content: center;
-          grid-template-columns: auto 317px 242px;
+          grid-template-columns: 266px 242px;
+          grid-template-rows: 100px 1fr;
+          margin: 32px 64px;
+          @media ${device.md} {
+            gap: 80px;
+            grid-template-columns: auto 317px 242px;
+            grid-template-rows: auto;
+          }
           @media ${device.lg} {
             padding-right: 255px;
             grid-template-columns: auto 330px 242px;
@@ -113,6 +123,12 @@ const Footer = () => {
             text-align: left;
             color: var(--color-offWhite);
             margin: auto;
+            grid-column: 1 / -1;
+            grid-row: 2;
+            @media ${device.md} {
+              grid-row: 1;
+              grid-column: 2;
+            }
           `}
         >
           Signet is the all-in-one solution for creating and managing onchain organisations. An easy to use multi-sig

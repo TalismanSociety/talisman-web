@@ -35,10 +35,16 @@ const Landing = () => (
         color: var(--color-offWhite);
         font-weight: 600;
         text-align: center;
-        max-width: 1000px;
-        font-size: 48px;
-        line-height: 64px;
-        margin-top: 96px;
+        max-width: 567px;
+        line-height: auto;
+        margin-top: 64px;
+        font-size: 32px;
+        @media ${device.md} {
+          font-size: 48px;
+          line-height: 64px;
+          max-width: 1000px;
+          margin-top: 96px;
+        }
         @media ${device.lg} {
           font-size: 64px;
           line-height: 120%;
@@ -50,7 +56,10 @@ const Landing = () => (
     </h1>
     <div
       className={css`
-        margin-top: 77px;
+        margin-top: 64px;
+        @media ${device.md} {
+          margin-top: 77px;
+        }
         @media ${device.lg} {
           margin-top: 70px;
         }
@@ -62,7 +71,10 @@ const Landing = () => (
       className={css`
         display: grid;
         grid-template-rows: 56px 46px;
-        margin-top: 39px;
+        margin-top: 47px;
+        @media ${device.lg} {
+          margin-top: 39px;
+        }
         @media ${device.lg} {
           margin-top: 80px;
         }
