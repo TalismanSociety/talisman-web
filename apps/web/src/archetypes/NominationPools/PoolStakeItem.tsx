@@ -63,11 +63,7 @@ const PoolStakeItem = ({
   return (
     <>
       <PoolStakeItemComponent
-        readonly={
-          item.account?.readonly ||
-          // Fully unbonding pool can't be interacted with
-          item.poolMember.points.isZero()
-        }
+        readonly={item.account?.readonly}
         hideIdenticon={hideIdenticon}
         stakeStatus={item.status}
         accountName={item.account?.name ?? ''}
@@ -87,9 +83,17 @@ const PoolStakeItem = ({
             />
           )
         }
-        unstakeChip={<PoolStakeItemComponent.UnstakeChip onClick={useCallback(() => setIsUnstaking(true), [])} />}
+        unstakeChip={
+          // Fully unbonding pool can't be interacted with
+          !item.poolMember.points.isZero() && (
+            <PoolStakeItemComponent.UnstakeChip onClick={() => setIsUnstaking(true)} />
+          )
+        }
         increaseStakeChip={
-          <PoolStakeItemComponent.IncreaseStakeChip onClick={useCallback(() => setIsAddingStake(true), [])} />
+          // Fully unbonding pool can't be interacted with
+          !item.poolMember.points.isZero() && (
+            <PoolStakeItemComponent.IncreaseStakeChip onClick={() => setIsAddingStake(true)} />
+          )
         }
         withdrawChip={
           item.withdrawable > 0n && (
