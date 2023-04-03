@@ -5,8 +5,8 @@ import { NFTDetail } from '../../types'
 import { NFTInterface } from '../NFTInterface'
 
 const QUERY = gql`
-  query ($address: String!) {
-    nfts(where: { owner: { _eq: $address }, burned: { _eq: "" } }) {
+  query ($address: String!, $offset: Int) {
+    nfts(limit: 10, offset: $offset, where: { owner: { _eq: $address }, burned: { _eq: "" } }) {
       id
       symbol
       metadata
@@ -35,6 +35,16 @@ const QUERY = gql`
   }
 `
 
+const QUERY_AGGREGATE = gql`
+  query ($address: String!) {
+    nfts_aggregate(where: { owner: { _eq: $address }, burned: { _eq: "" } }) {
+      aggregate {
+        count
+      }
+    }
+  }
+`
+
 export class Rmrk2Provider extends NFTInterface {
   name = 'RMRK2'
   uri = 'https://gql-rmrk2-prod.graphcdn.app'
@@ -43,13 +53,13 @@ export class Rmrk2Provider extends NFTInterface {
   collectionUri = 'https://singular.app/api/stats/collection/'
   storageProvider = ''
   detailedItems: { [key: string]: any } = {}
-  client: any
+  client?: ApolloClient<any>
   tokenCurrency = 'KSM'
 
   async getClient() {
     if (this.client) return this.client
 
-    this.client = await new ApolloClient({
+    this.client = new ApolloClient({
       link: createHttpLink({ uri: this.uri }),
       cache: new InMemoryCache(),
       headers: {
@@ -74,10 +84,19 @@ export class Rmrk2Provider extends NFTInterface {
     const client = await this.getClient()
     const encodedAddress = encodeAddress(address, 2)
 
-    await client.query({ query: QUERY, variables: { address: encodedAddress } }).then(({ data }: any) => {
-      this.count[address] = data.nfts.length
+    const queryAggregate = await client.query({ query: QUERY_AGGREGATE, variables: { address: encodedAddress } })
 
-      data.nfts.map(async (nft: any) => {
+    this.count[address] = queryAggregate.data.nfts_aggregate.aggregate.count
+
+    let offset = 0
+    while (true) {
+      const { data } = await client.query({ query: QUERY, variables: { address: encodedAddress, offset } })
+
+      if (data.nfts.length === 0) {
+        break
+      }
+
+      data.nfts.forEach(async (nft: any) => {
         const mediaUri = !!nft?.resources[0]?.src
           ? this.toIPFSUrl(nft?.resources[0]?.src)
           : !!nft?.metadata_image
@@ -123,7 +142,9 @@ export class Rmrk2Provider extends NFTInterface {
         this.setItem(item)
         this.detailedItems[item.id] = item
       })
-    })
+
+      offset += data.nfts.length
+    }
 
     this.isFetching = false
   }
