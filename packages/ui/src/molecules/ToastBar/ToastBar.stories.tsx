@@ -1,8 +1,9 @@
-import { ComponentMeta, Story } from '@storybook/react'
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+import { type ComponentMeta, type Story } from '@storybook/react'
 import toast, { Toaster } from 'react-hot-toast'
 
 import { Button, Text } from '../../atoms'
-import ToastBar, { ToastBarProps } from './ToastBar'
+import ToastBar, { type ToastBarProps } from './ToastBar'
 
 export default {
   title: 'Molecules/ToastBar',

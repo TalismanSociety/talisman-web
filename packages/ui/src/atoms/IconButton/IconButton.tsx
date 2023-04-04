@@ -1,6 +1,6 @@
 import { useTheme } from '@emotion/react'
 import Color from 'colorjs.io'
-import { ComponentPropsWithoutRef, ElementType, useMemo } from 'react'
+import { type ComponentPropsWithoutRef, type ElementType, useMemo } from 'react'
 
 type IconButtonElementType = Extract<ElementType, 'button' | 'a' | 'figure'> | ElementType<any>
 

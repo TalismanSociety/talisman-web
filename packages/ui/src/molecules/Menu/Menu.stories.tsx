@@ -1,10 +1,10 @@
-import { ComponentMeta, Story } from '@storybook/react'
+import { type ComponentMeta, type Story } from '@storybook/react'
 import { ChevronDown } from '@talismn/icons'
 import { motion } from 'framer-motion'
 
 import { Button, Identicon } from '../../atoms'
 import ListItem from '../ListItem'
-import Menu, { MenuProps, OFFSET } from './Menu'
+import Menu, { type MenuProps, OFFSET } from './Menu'
 
 export default {
   title: 'Molecules/Menu',
@@ -32,12 +32,12 @@ const AnimatedChevron = motion(ChevronDown)
 
 Default.args = {
   children: [
-    <Menu.Button>
+    <Menu.Button key={0}>
       <Button trailingIcon={<AnimatedChevron variants={{ true: { transform: 'rotate(180deg)' }, false: {} }} />}>
         Toggle
       </Button>
     </Menu.Button>,
-    <Menu.Items>
+    <Menu.Items key={1}>
       <Menu.Item>
         <ListItem
           headlineText="Polkadot.js import"

@@ -1,5 +1,5 @@
 import { useTheme } from '@emotion/react'
-import { ReactNode, useId } from 'react'
+import { type ReactNode, useId } from 'react'
 
 import { Text } from '../../atoms'
 

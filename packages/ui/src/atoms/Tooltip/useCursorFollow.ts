@@ -1,5 +1,6 @@
-import { FloatingContext } from '@floating-ui/react'
-import React, { useCallback } from 'react'
+import { type FloatingContext } from '@floating-ui/react'
+import type React from 'react'
+import { useCallback } from 'react'
 
 const useCursorFollow = (context: FloatingContext, options: { enabled: boolean }) => {
   const { onOpenChange, reference } = context

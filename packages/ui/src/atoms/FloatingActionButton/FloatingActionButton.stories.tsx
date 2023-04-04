@@ -1,7 +1,7 @@
-import { ComponentMeta, Story } from '@storybook/react'
+import { type ComponentMeta, type Story } from '@storybook/react'
 import { Union } from '@talismn/icons'
 
-import FloatingActionButton, { FloatingActionButtonProps } from './FloatingActionButton'
+import FloatingActionButton, { type FloatingActionButtonProps } from './FloatingActionButton'
 
 export default {
   title: 'Atoms/FloatingActionButton',

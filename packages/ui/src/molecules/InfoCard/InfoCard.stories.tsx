@@ -1,6 +1,6 @@
-import { ComponentMeta, Story } from '@storybook/react'
+import { type ComponentMeta, type Story } from '@storybook/react'
 
-import InfoCard, { InfoCardProps } from './InfoCard'
+import InfoCard, { type InfoCardProps } from './InfoCard'
 
 export default {
   title: 'Molecules/InfoCard',

@@ -3,7 +3,7 @@ import { Check, X } from '@talismn/icons'
 import { formatDistanceToNowStrict } from 'date-fns'
 import { motion } from 'framer-motion'
 import React, { Fragment, useEffect, useMemo, useState } from 'react'
-import { Toast, resolveValue } from 'react-hot-toast'
+import { type Toast, resolveValue } from 'react-hot-toast'
 
 import { CircularProgressIndicator, Text } from '../../atoms'
 

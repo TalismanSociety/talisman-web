@@ -1,6 +1,6 @@
-import { ComponentMeta, Story } from '@storybook/react'
+import { type ComponentMeta, type Story } from '@storybook/react'
 
-import TextInput, { LabelButton, TextInputProps } from './TextInput'
+import TextInput, { LabelButton, type TextInputProps } from './TextInput'
 
 export default {
   title: 'Molecules/TextInput',

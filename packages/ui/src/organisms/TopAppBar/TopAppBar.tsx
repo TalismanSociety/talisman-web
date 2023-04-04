@@ -1,5 +1,5 @@
 import { useTheme } from '@emotion/react'
-import { DetailedHTMLProps, HTMLAttributes, PropsWithChildren, ReactNode } from 'react'
+import { type DetailedHTMLProps, type HTMLAttributes, type ReactNode } from 'react'
 
 import { Button, IconButton, Text } from '../../atoms'
 

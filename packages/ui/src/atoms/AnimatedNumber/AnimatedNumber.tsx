@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import CountUp, { CountUpProps } from 'react-countup'
+import CountUp, { type CountUpProps } from 'react-countup'
 
 export type AnimatedNumberProps = Pick<CountUpProps, 'start' | 'end'> & {
   decimals?: number

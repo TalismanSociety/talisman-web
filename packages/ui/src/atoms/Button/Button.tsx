@@ -1,6 +1,6 @@
 import { useTheme } from '@emotion/react'
 import { IconContext } from '@talismn/icons/utils'
-import { ElementType, ReactNode, useMemo } from 'react'
+import { type ElementType, type ReactNode, useMemo } from 'react'
 
 import CircularProgressIndicator from '../CircularProgressIndicator'
 

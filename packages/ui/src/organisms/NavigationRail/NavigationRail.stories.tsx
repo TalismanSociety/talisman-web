@@ -1,8 +1,8 @@
-import { ComponentMeta, Story } from '@storybook/react'
+import { type ComponentMeta, type Story } from '@storybook/react'
 import { Compass, CreditCard, Eye, RefreshCcw, Union, Zap } from '@talismn/icons'
 
 import { IconButton } from '../../atoms'
-import NavigationRail, { NavigationRailItem, NavigationRailProps } from './NavigationRail'
+import NavigationRail, { NavigationRailItem, type NavigationRailProps } from './NavigationRail'
 
 export default {
   title: 'Organisms/NavigationRail',
