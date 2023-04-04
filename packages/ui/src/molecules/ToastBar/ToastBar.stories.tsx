@@ -46,7 +46,7 @@ export const Error = Default.bind({})
 
 Error.args = { toast: { ...Default.args.toast!, type: 'error' } }
 
-export const Demo: Story<ToastBarProps> = (args: any) => (
+export const Demo: Story<ToastBarProps> = () => (
   <div css={{ display: 'flex', gap: '1rem' }}>
     <Toaster position="top-right">{t => <ToastBar toast={t} />}</Toaster>
     <Button onClick={() => toast(Default.args?.toast?.message ?? '')}>Blank</Button>

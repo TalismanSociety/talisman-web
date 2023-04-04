@@ -11,7 +11,7 @@ export default {
   },
 } as ComponentMeta<typeof DescriptionList>
 
-export const Default: Story = args => (
+export const Default: Story = () => (
   <DescriptionList>
     <DescriptionList.Description>
       <DescriptionList.Term>Unstake amount</DescriptionList.Term>
