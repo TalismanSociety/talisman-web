@@ -7306,8 +7306,6 @@ __metadata:
 "@talismn/development@workspace:^, @talismn/development@workspace:packages/development":
   version: 0.0.0-use.local
   resolution: "@talismn/development@workspace:packages/development"
-  dependencies:
-    "@tsconfig/create-react-app": ^1.0.3
   languageName: unknown
   linkType: soft
 
@@ -7344,6 +7342,7 @@ __metadata:
   resolution: "@talismn/icons@workspace:packages/icons"
   dependencies:
     "@svgr/cli": ^6.5.1
+    "@talismn/tsconfig": "workspace:^"
     "@types/react": ^18.0.28
     react: ^18.2.0
     react-dom: ^18.2.0
@@ -7375,6 +7374,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@talismn/tsconfig@workspace:^, @talismn/tsconfig@workspace:packages/tsconfig":
+  version: 0.0.0-use.local
+  resolution: "@talismn/tsconfig@workspace:packages/tsconfig"
+  dependencies:
+    "@tsconfig/esm": ^1.0.2
+    "@tsconfig/strictest": ^2.0.0
+  languageName: unknown
+  linkType: soft
+
 "@talismn/ui@workspace:^, @talismn/ui@workspace:packages/ui":
   version: 0.0.0-use.local
   resolution: "@talismn/ui@workspace:packages/ui"
@@ -7395,6 +7403,7 @@ __metadata:
     "@talismn/development": "workspace:^"
     "@talismn/eslint-config": "workspace:^"
     "@talismn/icons": "workspace:^"
+    "@talismn/tsconfig": "workspace:^"
     "@types/react": ^18.0.28
     babel-loader: ^8.3.0
     colorjs.io: ^0.4.3
@@ -7633,10 +7642,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tsconfig/create-react-app@npm:^1.0.3":
-  version: 1.0.3
-  resolution: "@tsconfig/create-react-app@npm:1.0.3"
-  checksum: df945bed7a802f38ca63ae373670f445e8bfec74ccb2cdd4b9eca7b76e1b3dd74994c7b59040fd6374136a9f7353d6eb45e4363e6588015317c4e86779172a5f
+"@tsconfig/esm@npm:^1.0.2":
+  version: 1.0.2
+  resolution: "@tsconfig/esm@npm:1.0.2"
+  checksum: 2954a27be73b6a13fbba2d07a1924b3918be9cf4cf9e3a582b942eb0ca043481794b16a8209584c75853aa2c162bdd1cef7e68ffdf782537a9694194eea199c6
   languageName: node
   linkType: hard
 
@@ -7665,6 +7674,13 @@ __metadata:
   version: 1.0.3
   resolution: "@tsconfig/node16@npm:1.0.3"
   checksum: 3a8b657dd047495b7ad23437d6afd20297ce90380ff0bdee93fc7d39a900dbd8d9e26e53ff6b465e7967ce2adf0b218782590ce9013285121e6a5928fbd6819f
+  languageName: node
+  linkType: hard
+
+"@tsconfig/strictest@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "@tsconfig/strictest@npm:2.0.0"
+  checksum: a21d79fb3eb587e3e61b5bf3e4f52bc2a4f471ca4f3b1effe93849b97a36723cecfbef8181bac2c68cba9b44ef6b220cbe64194d17826622402de144383440f3
   languageName: node
   linkType: hard
 

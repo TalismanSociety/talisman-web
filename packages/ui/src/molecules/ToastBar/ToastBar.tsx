@@ -121,6 +121,8 @@ const ToastBar = ({ toast }: ToastBarProps) => {
               </div>
             )
         }
+
+        return undefined
       }, [toast])}
       <Text.Body as="div">
         <Text.Body css={{ display: 'flex', justifyContent: 'space-between', gap: '1rem' }}>

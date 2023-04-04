@@ -1,7 +1,4 @@
 {
   "private": true,
-  "name": "@talismn/development",
-  "devDependencies": {
-    "@tsconfig/create-react-app": "^1.0.3"
-  }
+  "name": "@talismn/development"
 }

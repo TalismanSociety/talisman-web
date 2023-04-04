@@ -8,8 +8,8 @@
     "./assets/css/talismn.css": "./assets/css/talismn.css"
   },
   "scripts": {
-    "dev": "tsc --build --watch tsconfig.build.json",
-    "build": "tsc --build tsconfig.build.json",
+    "dev": "tsc --build --watch tsconfig.json",
+    "build": "rm -rf build && tsc --build tsconfig.json",
     "lint": "eslint src",
     "check-types": "tsc --noEmit",
     "storybook": "start-storybook -p 6007",
@@ -35,6 +35,7 @@
     "@storybook/testing-library": "^0.0.13",
     "@talismn/development": "workspace:^",
     "@talismn/eslint-config": "workspace:^",
+    "@talismn/tsconfig": "workspace:^",
     "@types/react": "^18.0.28",
     "babel-loader": "^8.3.0",
     "eslint": "^8.37.0",

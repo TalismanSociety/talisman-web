@@ -61,7 +61,7 @@ const IconButton = <T extends IconButtonElementType = 'button'>({
           overflow: 'hidden',
           transition: '.25s',
         },
-        props.onClick !== undefined && {
+        props['onClick'] !== undefined && {
           'cursor': 'pointer',
           ':hover': {
             filter: 'brightness(1.2)',
