@@ -1,4 +1,5 @@
-import { useChainDeriveState, useSubstrateApiState } from '@domains/common'
+import { useSubstrateApiState } from '@domains/common'
+import { useChainDeriveState } from '@talismn/polkadot-api-react'
 import { useMemo } from 'react'
 import { useRecoilValueLoadable, waitForAll } from 'recoil'
 

@@ -2,8 +2,8 @@ import BN from 'bn.js'
 import { addMilliseconds, formatDistanceToNow } from 'date-fns'
 import { useCallback } from 'react'
 import { useRecoilValue, waitForAll } from 'recoil'
-
-import { useChainDeriveState, useSubstrateApiState } from '..'
+import { useSubstrateApiState } from '..'
+import { useChainDeriveState } from '@talismn/polkadot-api-react'
 
 const erasToMilliseconds = (eras: BN, eraLength: BN, eraProgress: BN, expectedBlockTime: BN) =>
   eras.subn(1).mul(eraLength).add(eraLength).sub(eraProgress).mul(expectedBlockTime).toNumber()
