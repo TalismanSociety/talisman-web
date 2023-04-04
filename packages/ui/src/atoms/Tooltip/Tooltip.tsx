@@ -13,8 +13,7 @@ import {
   useRole,
 } from '@floating-ui/react'
 import { motion } from 'framer-motion'
-import { ReactNode, useState } from 'react'
-import ReactDOM from 'react-dom'
+import { useState, type ReactNode } from 'react'
 
 import Text from '../Text'
 import useCursorFollow from './useCursorFollow'
@@ -30,7 +29,7 @@ const Tooltip = ({ placement = 'right', ...props }: TooltipProps) => {
   const [open, setOpen] = useState(false)
 
   const { x, y, strategy, refs, context } = useFloating({
-    open: open,
+    open,
     onOpenChange: setOpen,
     placement,
     strategy: 'fixed',

@@ -1,8 +1,8 @@
 import { keyframes, useTheme } from '@emotion/react'
 import { X } from '@talismn/icons'
-import { ReactNode } from 'react'
+import { type ReactNode } from 'react'
 
-import { Dialog, DialogProps, IconButton, Text } from '../../atoms'
+import { Dialog, type DialogProps, IconButton, Text } from '../../atoms'
 
 export type FullScreenDialogProps = Omit<DialogProps, 'title'> & {
   title: ReactNode

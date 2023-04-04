@@ -1,8 +1,9 @@
-import { ComponentMeta, Story } from '@storybook/react'
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+import { type ComponentMeta, type Story } from '@storybook/react'
 import toast, { Toaster } from 'react-hot-toast'
 
 import { Button, Text } from '../../atoms'
-import ToastBar, { ToastBarProps } from './ToastBar'
+import ToastBar, { type ToastBarProps } from './ToastBar'
 
 export default {
   title: 'Molecules/ToastBar',
@@ -45,7 +46,7 @@ export const Error = Default.bind({})
 
 Error.args = { toast: { ...Default.args.toast!, type: 'error' } }
 
-export const Demo: Story<ToastBarProps> = (args: any) => (
+export const Demo: Story<ToastBarProps> = () => (
   <div css={{ display: 'flex', gap: '1rem' }}>
     <Toaster position="top-right">{t => <ToastBar toast={t} />}</Toaster>
     <Button onClick={() => toast(Default.args?.toast?.message ?? '')}>Blank</Button>

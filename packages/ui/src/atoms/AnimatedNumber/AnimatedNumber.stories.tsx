@@ -1,6 +1,6 @@
-import { ComponentMeta, Story } from '@storybook/react'
+import { type ComponentMeta, type Story } from '@storybook/react'
 
-import AnimatedNumber, { AnimatedNumberProps } from './AnimatedNumber'
+import AnimatedNumber, { type AnimatedNumberProps } from './AnimatedNumber'
 
 export default {
   title: 'Atoms/AnimatedNumber',

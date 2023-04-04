@@ -1,9 +1,9 @@
 import { useTheme } from '@emotion/react'
-import { PropsWithChildren, ReactNode } from 'react'
+import { type PropsWithChildren, type ReactNode } from 'react'
 
 import { Button, IconButton, Text } from '../../atoms'
 
-export type NavigationBarProps = PropsWithChildren<{}>
+export type NavigationBarProps = PropsWithChildren
 
 export type NavigationBarItemProps = {
   label: ReactNode

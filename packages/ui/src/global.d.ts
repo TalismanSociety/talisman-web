@@ -1,5 +1,5 @@
-import { TalismanTheme } from './theme'
+import { type TalismanTheme } from './theme'
 
 declare module '@emotion/react' {
-  export interface Theme extends TalismanTheme {}
+  export type Theme = TalismanTheme
 }

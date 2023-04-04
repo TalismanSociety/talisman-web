@@ -1,5 +1,5 @@
 import { css } from '@emotion/react'
-import { PropsWithChildren, ReactNode } from 'react'
+import { type PropsWithChildren, type ReactNode } from 'react'
 
 type Breakpoint = 'narrow' | 'wide' | undefined
 

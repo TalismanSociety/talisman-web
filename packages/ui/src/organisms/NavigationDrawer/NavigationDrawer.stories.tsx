@@ -1,5 +1,5 @@
 import { Global, css } from '@emotion/react'
-import { ComponentMeta, Story } from '@storybook/react'
+import { type ComponentMeta, type Story } from '@storybook/react'
 import {
   Book,
   Compass,
@@ -13,7 +13,7 @@ import {
   Zap,
 } from '@talismn/icons'
 
-import NavigationDrawer, { NavigationDrawerProps } from './NavigationDrawer'
+import NavigationDrawer, { type NavigationDrawerProps } from './NavigationDrawer'
 
 export default {
   title: 'Organisms/NavigationDrawer',

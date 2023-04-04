@@ -1,12 +1,12 @@
 import { useTheme } from '@emotion/react'
 import { IconContext } from '@talismn/icons/utils'
-import { ElementType, ReactNode, useMemo } from 'react'
+import { type ElementType, type ReactNode, useMemo, type PropsWithChildren } from 'react'
 
 import CircularProgressIndicator from '../CircularProgressIndicator'
 
 type ButtonElementType = Extract<React.ElementType, 'button' | 'a'> | ElementType<any>
 
-type PolymorphicButtonProps<T extends ButtonElementType = 'button'> = {
+type PolymorphicButtonProps<T extends ButtonElementType = 'button'> = PropsWithChildren<{
   as?: T
   variant?:
     | 'outlined'
@@ -18,7 +18,7 @@ type PolymorphicButtonProps<T extends ButtonElementType = 'button'> = {
   disabled?: boolean
   hidden?: boolean
   loading?: boolean
-}
+}>
 
 export type ButtonProps<T extends ButtonElementType = 'button'> = PolymorphicButtonProps<T> &
   Omit<React.ComponentPropsWithoutRef<T>, keyof PolymorphicButtonProps<T>>
@@ -139,6 +139,8 @@ const Button = <T extends ButtonElementType = 'button'>({
                 if (leadingIcon) {
                   return leadingIcon
                 }
+
+                return undefined
               })()}
             </IconContext.Provider>
           </span>

@@ -1,6 +1,6 @@
-import { ComponentMeta, Story } from '@storybook/react'
+import { type ComponentMeta, type Story } from '@storybook/react'
 
-import Button, { ButtonProps } from './Button'
+import Button, { type ButtonProps } from './Button'
 
 export default {
   title: 'Atoms/Button',

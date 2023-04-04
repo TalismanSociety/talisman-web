@@ -13,8 +13,8 @@ import {
 import { ChevronDown } from '@talismn/icons'
 import { motion } from 'framer-motion'
 import React, {
-  ReactElement,
-  ReactNode,
+  type ReactElement,
+  type ReactNode,
   forwardRef,
   useCallback,
   useEffect,
@@ -31,7 +31,7 @@ export type SelectProps = {
   value?: Value
   placeholder?: ReactNode
   width?: string | number
-  children: ReactElement<SelectItemProps> | ReactElement<SelectItemProps>[]
+  children: ReactElement<SelectItemProps> | Array<ReactElement<SelectItemProps>>
   onChange?: (value: string | undefined) => unknown
 }
 
@@ -229,7 +229,9 @@ const Select = Object.assign(
               key={child.key}
               role="option"
               ref={node => {
-                listRef.current[index] = node!
+                if (node !== null) {
+                  listRef.current[index] = node
+                }
               }}
               tabIndex={!open ? -1 : index === activeIndex ? 0 : 1}
               aria-selected={index === activeIndex}

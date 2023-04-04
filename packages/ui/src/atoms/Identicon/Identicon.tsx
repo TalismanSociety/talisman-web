@@ -48,7 +48,7 @@ const Identicon = ({ value: seed, size = '2.4rem', className }: IdenticonProps) 
     // the 2 darkest ones will be used as gradient BG
     // the lightest one will be used as gradient circle, to mimic a 3D lighting effect
     const colors = [colorFromHash(hash1), colorFromHash(hash2), colorFromHash(hash3)].sort(
-      (c1, c2) => (c1.hsl?.l ?? 0) - (c2.hsl?.l ?? 0)
+      (c1, c2) => (c1.hsl?.['l'] ?? 0) - (c2.hsl?.['l'] ?? 0)
     )
 
     // random location in top left corner, avoid being to close from the center

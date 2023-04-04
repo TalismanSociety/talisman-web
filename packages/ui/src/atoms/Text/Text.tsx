@@ -1,6 +1,7 @@
 import { useTheme } from '@emotion/react'
 import Color from 'colorjs.io'
-import React, { useMemo } from 'react'
+import type React from 'react'
+import { useMemo } from 'react'
 
 export type TextAlpha = 'disabled' | 'medium' | 'high'
 
@@ -13,6 +14,7 @@ type PolymorphicTextProps<T extends React.ElementType> = {
 export type TextProps<T extends React.ElementType> = PolymorphicTextProps<T> &
   Omit<React.ComponentPropsWithoutRef<T>, keyof PolymorphicTextProps<T>>
 
+// eslint-disable-next-line @typescript-eslint/ban-types
 const decorateText = <T extends Object>(element: T) =>
   Object.assign(element, {
     A: <T extends React.ElementType = 'a'>(props: TextProps<T>) => (

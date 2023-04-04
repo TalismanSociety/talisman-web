@@ -1,13 +1,13 @@
 import { useTheme } from '@emotion/react'
 import styled from '@emotion/styled'
-import { ReactElement, ReactNode } from 'react'
+import { type ReactElement, type ReactNode } from 'react'
 
 const Navbar = styled.section`
   display: flex;
   border-bottom: 1px solid #262626;
 `
 
-interface NavItemProps {
+type NavItemProps = {
   className?: string
   selected?: boolean
   children?: ReactNode

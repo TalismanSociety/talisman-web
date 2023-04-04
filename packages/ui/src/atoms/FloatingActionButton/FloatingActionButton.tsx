@@ -1,6 +1,6 @@
 import { useTheme } from '@emotion/react'
 import Color from 'colorjs.io'
-import { ElementType, useMemo } from 'react'
+import { useMemo } from 'react'
 
 type FloatingActionButtonElementType = Extract<React.ElementType, 'button' | 'a' | 'figure'>
 
@@ -35,7 +35,7 @@ const FloatingActionButton = <T extends FloatingActionButtonElementType = 'butto
 
   containerColor = containerColor ?? theme.color.primary
   hoverContainerColor = useMemo(
-    () => hoverContainerColor ?? new Color(containerColor!).darken(0.15).display().toString(),
+    () => hoverContainerColor ?? new Color(containerColor ?? '').darken(0.15).display().toString(),
     []
   )
   contentColor = contentColor ?? theme.color.onPrimary

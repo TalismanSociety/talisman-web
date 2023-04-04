@@ -1,9 +1,9 @@
 import { Global, css } from '@emotion/react'
-import { ComponentMeta, Story } from '@storybook/react'
+import { type ComponentMeta, type Story } from '@storybook/react'
 
 import { Text } from '../../atoms'
 import TextInput from '../TextInput'
-import FullScreenDialog, { FulScreenDialogQuarterSelector, FullScreenDialogProps } from './FullScreenDialog'
+import FullScreenDialog, { FulScreenDialogQuarterSelector, type FullScreenDialogProps } from './FullScreenDialog'
 
 export default {
   title: 'Molecules/FullScreenDialog',

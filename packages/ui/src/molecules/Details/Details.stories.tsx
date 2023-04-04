@@ -1,6 +1,6 @@
-import { ComponentMeta, Story } from '@storybook/react'
+import { type ComponentMeta, type Story } from '@storybook/react'
 
-import Details, { DetailsProps } from './Details'
+import Details, { type DetailsProps } from './Details'
 
 export default {
   title: 'Molecules/Details',
