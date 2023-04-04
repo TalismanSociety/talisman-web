@@ -1,6 +1,7 @@
 import { injectedSubstrateAccountsState } from '@domains/accounts/recoils'
-import { SubstrateApiContext, substrateApiState } from '@domains/common'
+import { substrateApiState } from '@domains/common'
 import { useChainState } from '@domains/common/hooks'
+import { PolkadotApiEndpointContext } from '@talismn/polkadot-api-react'
 import { range } from 'lodash/fp'
 import { useContext } from 'react'
 import {
@@ -40,7 +41,7 @@ const exposedAccountsState = selectorFamily({
 })
 
 export const useExposedAccounts = () => {
-  const apiEndpoint = useContext(SubstrateApiContext).endpoint
+  const apiEndpoint = useContext(PolkadotApiEndpointContext)
   const activeEra = useChainState('query', 'staking', 'activeEra', [])
 
   const loadable = useRecoilValueLoadable(

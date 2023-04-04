@@ -5,7 +5,7 @@ import { StakeStatus } from '@components/recipes/StakeStatusIndicator'
 import StakingInput from '@components/recipes/StakingInput'
 import { injectedSubstrateAccountsState } from '@domains/accounts/recoils'
 import { chainState, useNativeTokenDecimalState } from '@domains/chains/recoils'
-import { SubstrateApiContext, useSubstrateApiState } from '@domains/common'
+import { useSubstrateApiState } from '@domains/common'
 import { useChainState, useEraEtaFormatter, useExtrinsic, useTokenAmountFromPlanck } from '@domains/common/hooks'
 import { useInflation, usePoolAddForm } from '@domains/nominationPools/hooks'
 import { eraStakersState, useAllPendingRewardsState, useRecommendedPoolsState } from '@domains/nominationPools/recoils'
@@ -20,6 +20,7 @@ import { useLocation } from 'react-use'
 import { constSelector, useRecoilValue, useRecoilValueLoadable, waitForAll } from 'recoil'
 
 import AccountSelector from './AccountSelector'
+import { PolkadotApiEndpointContext } from '@talismn/polkadot-api-react'
 
 const PoolSelector = (props: {
   open: boolean
@@ -84,7 +85,7 @@ const StakeInput = () => {
     [location.search]
   )
 
-  const apiEndpoint = useContext(SubstrateApiContext).endpoint
+  const apiEndpoint = useContext(PolkadotApiEndpointContext)
 
   const [api, accounts, recommendedPools, pendingRewards] = useRecoilValue(
     waitForAll([

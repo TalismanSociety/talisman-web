@@ -9,8 +9,8 @@ import { useContext } from 'react'
 import { Loadable, RecoilLoadable, constSelector, useRecoilValueLoadable } from 'recoil'
 import { Observable } from 'rxjs'
 
-import { chainState } from '../recoils'
-import { SubstrateApiContext } from '..'
+import { PolkadotApiEndpointContext } from '@talismn/polkadot-api-react'
+import { chainStorageState } from '../recoils'
 
 /**
  * @deprecated use `useChainQueryState` or `useChainDeriveState` instead
@@ -47,18 +47,18 @@ export const useChainState = <
       : Result[]
     : never
 
-  const endpoint = useContext(SubstrateApiContext).endpoint
+  const endpoint = useContext(PolkadotApiEndpointContext)
 
   const loadable = useRecoilValueLoadable<TResult>(
     typeName === 'query'
       ? !options.enabled
         ? (constSelector(undefined) as any)
         : // @ts-expect-error
-          chainState([endpoint, typeName, moduleName, sectionName, params])
+          chainStorageState([endpoint, typeName, moduleName, sectionName, params])
       : !options.enabled
       ? (constSelector(undefined) as any)
       : // @ts-expect-error
-        chainState([endpoint, typeName, moduleName, sectionName, params])
+        chainStorageState([endpoint, typeName, moduleName, sectionName, params])
   )
 
   return !options.enabled ? (RecoilLoadable.loading() as Loadable<TResult>) : loadable

@@ -1,6 +1,6 @@
 import { chainState } from '@domains/chains/recoils'
-import { useChainQueryMultiState, useChainQueryState } from '@domains/common/recoils'
 import { BN } from '@polkadot/util'
+import { useChainQueryMultiState, useChainQueryState } from '@talismn/polkadot-api-react'
 import { useMemo } from 'react'
 import { useRecoilValue, waitForAll } from 'recoil'
 

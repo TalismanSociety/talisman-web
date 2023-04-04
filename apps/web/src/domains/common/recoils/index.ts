@@ -6,7 +6,6 @@ import { substrateApiState } from '..'
 
 export * from './api'
 export * from './chain'
-export * from './queryMulti'
 
 export const paymentInfoState = selectorFamily({
   key: 'PaymentInfo',

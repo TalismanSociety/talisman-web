@@ -1,4 +1,3 @@
-import { SubstrateApiContext } from '@domains/common'
 import {
   useChainState,
   useQueryMulti,
@@ -8,6 +7,7 @@ import {
 } from '@domains/common/hooks'
 import { paymentInfoState, useSubstrateApiState } from '@domains/common/recoils'
 import { BN } from '@polkadot/util'
+import { PolkadotApiEndpointContext } from '@talismn/polkadot-api-react'
 import usePrevious from '@util/usePrevious'
 import { useContext, useEffect, useMemo } from 'react'
 import { constSelector, useRecoilValue, useRecoilValueLoadable } from 'recoil'
@@ -16,7 +16,7 @@ const ESTIMATED_FEE_MARGIN_OF_ERROR = 0.25
 
 export const usePoolAddForm = (action: 'bondExtra' | 'join', account?: string) => {
   const api = useRecoilValue(useSubstrateApiState())
-  const apiEndpoint = useContext(SubstrateApiContext).endpoint
+  const apiEndpoint = useContext(PolkadotApiEndpointContext)
 
   const prevAccount = usePrevious(account)
 

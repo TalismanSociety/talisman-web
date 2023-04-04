@@ -5,10 +5,11 @@ import { ISubmittableResult } from '@polkadot/types/types'
 import { useCallback, useContext, useState } from 'react'
 import { useRecoilCallback, useRecoilValueLoadable } from 'recoil'
 
+import { PolkadotApiEndpointContext } from '@talismn/polkadot-api-react'
+import { substrateApiState } from '..'
 import { chainIdState, chainState } from '../../chains/recoils'
 import { extrinsicMiddleware } from '../extrinsicMiddleware'
 import { toastExtrinsic } from '../utils'
-import { SubstrateApiContext, substrateApiState } from '..'
 
 type ExtrinsicMap = PickKnownKeys<{
   // @ts-ignore
@@ -33,7 +34,7 @@ export const useExtrinsicBatch = <
 >(
   extrinsics: TExtrinsics
 ) => {
-  const apiEndpoint = useContext(SubstrateApiContext).endpoint
+  const apiEndpoint = useContext(PolkadotApiEndpointContext)
   const chainLoadable = useRecoilValueLoadable(chainState)
 
   const [loadable, setLoadable] = useState<

@@ -1,4 +1,4 @@
-import { SubstrateApiContext, substrateApiState } from '@domains/common'
+import { substrateApiState } from '@domains/common'
 import { storageEffect } from '@domains/common/effects'
 import { BN } from '@polkadot/util'
 import { ToBn } from '@polkadot/util/types'
@@ -8,6 +8,7 @@ import { atom, selector, selectorFamily } from 'recoil'
 
 import { chains } from './config'
 import { ChainId, chainParams, defaultParams } from './consts'
+import { PolkadotApiEndpointContext } from '@talismn/polkadot-api-react'
 
 // Getting these value locally right now since chaindata squid is not too stable
 export const chainsState = selector({
@@ -97,4 +98,4 @@ export const nativeTokenDecimalState = selectorFamily({
     },
 })
 
-export const useNativeTokenDecimalState = () => nativeTokenDecimalState(useContext(SubstrateApiContext).endpoint)
+export const useNativeTokenDecimalState = () => nativeTokenDecimalState(useContext(PolkadotApiEndpointContext))

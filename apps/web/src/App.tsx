@@ -7,7 +7,7 @@ import { TalismanHandLoader } from '@components/TalismanHandLoader'
 import ErrorBoundary from '@components/widgets/ErrorBoundary'
 import { LegacyBalancesWatcher } from '@domains/balances/recoils'
 import { chainRpcState } from '@domains/chains/recoils'
-import { SUBSTRATE_API_STATE_GARBAGE_COLLECTOR_UNSTABLE, SubstrateApiContext } from '@domains/common'
+import { chainQueryMultiState, chainStorageState } from '@domains/common'
 import { ExtensionWatcher } from '@domains/extension/recoils'
 import NftProvider from '@libs/@talisman-nft/provider'
 import * as MoonbeamContributors from '@libs/moonbeam-contributors'
@@ -20,6 +20,7 @@ import { Toaster } from 'react-hot-toast'
 import { RouterProvider } from 'react-router-dom'
 import { RecoilRoot, useRecoilValue } from 'recoil'
 
+import { PolkadotApiEndpointContext, PolkadotApiRecoilProvider } from '@talismn/polkadot-api-react'
 import ThemeProvider from './App.Theme'
 
 const Loader = () => {
@@ -43,33 +44,34 @@ const Loader = () => {
 // TODO: this is for backward compatibility only, will be remove
 // after multi chain support
 const LegacyApiProvider = (props: PropsWithChildren) => (
-  <SubstrateApiContext.Provider value={{ endpoint: useRecoilValue(chainRpcState) }}>
+  <PolkadotApiEndpointContext.Provider value={useRecoilValue(chainRpcState)}>
     {props.children}
-  </SubstrateApiContext.Provider>
+  </PolkadotApiEndpointContext.Provider>
 )
 
 const App = () => (
   <ThemeProvider>
     <ErrorBoundary>
       <RecoilRoot>
-        <SUBSTRATE_API_STATE_GARBAGE_COLLECTOR_UNSTABLE />
-        <Suspense fallback={<Loader />}>
-          <LegacyApiProvider>
-            <Portfolio.Provider>
-              <TalismanProvider>
-                <ExtensionWatcher />
-                <LegacyBalancesWatcher />
-                <MoonbeamContributors.Provider>
-                  <Development />
-                  <NftProvider />
-                  <RouterProvider router={router} />
-                  <Toaster position="top-right">{t => <ToastBar toast={t} />}</Toaster>
-                  <CookieBanner />
-                </MoonbeamContributors.Provider>
-              </TalismanProvider>
-            </Portfolio.Provider>
-          </LegacyApiProvider>
-        </Suspense>
+        <PolkadotApiRecoilProvider value={{ chainStorageState, chainQueryMultiState }}>
+          <Suspense fallback={<Loader />}>
+            <LegacyApiProvider>
+              <Portfolio.Provider>
+                <TalismanProvider>
+                  <ExtensionWatcher />
+                  <LegacyBalancesWatcher />
+                  <MoonbeamContributors.Provider>
+                    <Development />
+                    <NftProvider />
+                    <RouterProvider router={router} />
+                    <Toaster position="top-right">{t => <ToastBar toast={t} />}</Toaster>
+                    <CookieBanner />
+                  </MoonbeamContributors.Provider>
+                </TalismanProvider>
+              </Portfolio.Provider>
+            </LegacyApiProvider>
+          </Suspense>
+        </PolkadotApiRecoilProvider>
       </RecoilRoot>
     </ErrorBoundary>
   </ThemeProvider>

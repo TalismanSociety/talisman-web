@@ -64,12 +64,16 @@ export const RECOIL_GARBAGE_COLLECTOR_UNSTABLE = (props: RECOIL_GARBAGE_COLLECTO
 /**
  * TODO: remove after `retainedBy` support is implemented on recoil
  */
-export const SUBSTRATE_API_STATE_GARBAGE_COLLECTOR_UNSTABLE = () => (
-  <RECOIL_GARBAGE_COLLECTOR_UNSTABLE
-    interval={5_000}
-    shouldCheckForGarbageCollection={useCallback(
-      node => node.startsWith('ChainState') || node.startsWith('QueryMulti'),
-      []
-    )}
-  />
-)
+export const POLKADOT_API_STATE_GARBAGE_COLLECTOR_UNSTABLE = () => {
+  return (
+    <RECOIL_GARBAGE_COLLECTOR_UNSTABLE
+      interval={5_000}
+      shouldCheckForGarbageCollection={useCallback(
+        (node: string) =>
+          node.startsWith('@talismn/polkadot-api-react/ChainStorage') ||
+          node.startsWith('@talismn/polkadot-api-react/QueryMulti'),
+        []
+      )}
+    />
+  )
+}
