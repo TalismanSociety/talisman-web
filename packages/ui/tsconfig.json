@@ -3,11 +3,5 @@
   "compilerOptions": {
     "jsxImportSource": "@emotion/react",
     "outDir": "build"
-  },
-  "include": [
-    "src"
-  ],
-  "exclude": [
-    "**/*.stories.*"
-  ]
+  }
 }

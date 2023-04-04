@@ -7342,8 +7342,10 @@ __metadata:
   resolution: "@talismn/icons@workspace:packages/icons"
   dependencies:
     "@svgr/cli": ^6.5.1
+    "@talismn/eslint-config": "workspace:^"
     "@talismn/tsconfig": "workspace:^"
     "@types/react": ^18.0.28
+    eslint: ^8.37.0
     react: ^18.2.0
     react-dom: ^18.2.0
     typescript: ^5.0.2
