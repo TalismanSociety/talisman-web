@@ -34,7 +34,7 @@ const Button = <T extends ButtonElementType = 'button'>({
 }: ButtonProps<T>) => {
   const theme = useTheme()
 
-  const disabled = props.disabled || hidden || loading
+  const disabled = Boolean(props.disabled) || Boolean(hidden) || Boolean(loading)
 
   const variantStyle = useMemo(() => {
     switch (variant) {
@@ -94,7 +94,7 @@ const Button = <T extends ButtonElementType = 'button'>({
 
   const Component = as
 
-  const hasLeadingIcon = loading || leadingIcon !== undefined
+  const hasLeadingIcon = Boolean(loading) || leadingIcon !== undefined
 
   return (
     <Component

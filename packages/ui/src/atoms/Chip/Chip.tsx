@@ -30,7 +30,7 @@ const Chip = ({ size = 'md', containerColor, contentColor, leadingContent, loadi
     }
   }, [size])
 
-  const functionallyDisabled = props.disabled || loading
+  const functionallyDisabled = Boolean(props.disabled) || Boolean(loading)
 
   return (
     <Container
