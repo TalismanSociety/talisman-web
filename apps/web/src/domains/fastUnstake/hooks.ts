@@ -48,7 +48,7 @@ const exposedAccountsState = selectorFamily({
         .filter(x => x.genesisHash !== genesisHash)
         .concat([{ genesisHash, era: activeEra, exposed: Array.from(exposed) }])
 
-      sessionStorage.setItem(STORAGE_KEY, JSON.stringify(newStoredValue))
+      sessionStorage.setItem(STORAGE_KEY, JSON.stringify(fastUnstakeExposureAsssertion(newStoredValue)))
 
       return exposed
     },
