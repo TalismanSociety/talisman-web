@@ -9,7 +9,7 @@ import { useContext } from 'react'
 import { Loadable, RecoilLoadable, constSelector, useRecoilValueLoadable } from 'recoil'
 import { Observable } from 'rxjs'
 
-import { chainState } from '../recoils'
+import { chainQueryState, chainDeriveState } from '../recoils'
 import { SubstrateApiContext } from '..'
 
 /**
@@ -54,11 +54,11 @@ export const useChainState = <
       ? !options.enabled
         ? (constSelector(undefined) as any)
         : // @ts-expect-error
-          chainState([endpoint, typeName, moduleName, sectionName, params])
+          chainQueryState(endpoint, moduleName, sectionName, params)
       : !options.enabled
       ? (constSelector(undefined) as any)
       : // @ts-expect-error
-        chainState([endpoint, typeName, moduleName, sectionName, params])
+        chainDeriveState(endpoint, moduleName, sectionName, params)
   )
 
   return !options.enabled ? (RecoilLoadable.loading() as Loadable<TResult>) : loadable

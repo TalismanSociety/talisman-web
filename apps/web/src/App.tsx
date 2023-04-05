@@ -13,11 +13,10 @@ import * as MoonbeamContributors from '@libs/moonbeam-contributors'
 import * as Portfolio from '@libs/portfolio'
 import TalismanProvider from '@libs/talisman'
 import router from '@routes'
-import { PropsWithChildren, Suspense } from 'react'
+import { Suspense } from 'react'
 import { RouterProvider } from 'react-router-dom'
 import { RecoilRoot } from 'recoil'
 
-import { ChainProvider, chains } from '@domains/chains'
 import ThemeProvider from './App.Theme'
 
 const Loader = () => {
@@ -38,32 +37,24 @@ const Loader = () => {
   )
 }
 
-// TODO: this is for backward compatibility only, will be remove
-// after multi chain support
-const LegacyChainProvider = (props: PropsWithChildren) => (
-  <ChainProvider value={chains[0]}>{props.children}</ChainProvider>
-)
-
 const App = () => (
   <ThemeProvider>
     <ErrorBoundary>
       <RecoilRoot>
         <SUBSTRATE_API_STATE_GARBAGE_COLLECTOR_UNSTABLE />
         <Suspense fallback={<Loader />}>
-          <LegacyChainProvider>
-            <Portfolio.Provider>
-              <TalismanProvider>
-                <ExtensionWatcher />
-                <LegacyBalancesWatcher />
-                <MoonbeamContributors.Provider>
-                  <Development />
-                  <NftProvider />
-                  <RouterProvider router={router} />
-                  <CookieBanner />
-                </MoonbeamContributors.Provider>
-              </TalismanProvider>
-            </Portfolio.Provider>
-          </LegacyChainProvider>
+          <Portfolio.Provider>
+            <TalismanProvider>
+              <ExtensionWatcher />
+              <LegacyBalancesWatcher />
+              <MoonbeamContributors.Provider>
+                <Development />
+                <NftProvider />
+                <RouterProvider router={router} />
+                <CookieBanner />
+              </MoonbeamContributors.Provider>
+            </TalismanProvider>
+          </Portfolio.Provider>
         </Suspense>
       </RecoilRoot>
     </ErrorBoundary>

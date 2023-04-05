@@ -5,7 +5,7 @@ import { useRecoilValue, useRecoilValueLoadable, waitForAll } from 'recoil'
 import { useChainDeriveState, useChainQueryState } from '@domains/common'
 import ValidatorStakeItem from './ValidatorStakeItem'
 
-const ValidatorStakings = () => {
+const ValidatorStakes = () => {
   const accounts = useRecoilValue(selectedSubstrateAccountsState)
 
   const [activeEra, stakes] = useRecoilValue(
@@ -34,12 +34,12 @@ const ValidatorStakings = () => {
   }
 
   return (
-    <section css={{ display: 'flex', flexDirection: 'column', gap: '1.6rem' }}>
+    <>
       {stakesToDisplay.map(({ stake, account, reward, slashingSpan }) => (
         <ValidatorStakeItem account={account!} stake={stake} reward={reward} slashingSpan={slashingSpan} />
       ))}
-    </section>
+    </>
   )
 }
 
-export default ValidatorStakings
+export default ValidatorStakes

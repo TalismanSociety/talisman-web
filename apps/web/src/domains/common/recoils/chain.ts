@@ -1,3 +1,6 @@
+// TODO: lots of duplicate type definitions
+// but already super burned out, need to de-duplication
+
 import { ApiPromise } from '@polkadot/api'
 import type {
   GenericStorageEntryFunction,
@@ -12,7 +15,7 @@ import { Observable } from 'rxjs'
 
 import { SubstrateApiContext, substrateApiState } from '..'
 
-export const chainState = atomFamily({
+export const _chainState = atomFamily({
   key: 'ChainState',
   effects: ([endpoint, typeName, moduleName, sectionName, params]: [string, string, string, string, any[]]) => [
     ({ setSelf, getPromise }) => {
@@ -41,6 +44,61 @@ export const chainState = atomFamily({
   ],
   dangerouslyAllowMutability: true,
 })
+
+export const chainQueryState = <
+  TModule extends keyof PickKnownKeys<ApiPromise['query']>,
+  TSection extends Extract<keyof PickKnownKeys<ApiPromise['query'][TModule]>, string>,
+  TAugmentedSection extends TSection | `${TSection}.multi`,
+  TExtractedSection extends TAugmentedSection extends `${infer Section}.multi` ? Section : TAugmentedSection,
+  TMethod extends Diverge<
+    // @ts-ignore
+    ApiPromise['query'][TModule][TExtractedSection],
+    StorageEntryPromiseOverloads & QueryableStorageEntry<any, any> & PromiseResult<GenericStorageEntryFunction>
+  >
+>(
+  endpoint: string,
+  moduleName: TModule,
+  sectionName: TAugmentedSection,
+  params: TMethod extends (...args: any) => any
+    ? // @ts-ignore
+      TAugmentedSection extends TSection
+      ? Leading<Parameters<TMethod>>
+      : Leading<Parameters<TMethod>> extends [infer Head]
+      ? Head[]
+      : Array<Readonly<Leading<Parameters<TMethod>>>>
+    : never
+) =>
+  _chainState([endpoint, 'query', moduleName, sectionName, params]) as RecoilState<
+    TMethod extends PromiseResult<(...args: any) => Observable<infer Result>>
+      ? TAugmentedSection extends TSection
+        ? Result
+        : Result[]
+      : never
+  >
+
+export const chainDeriveState = <
+  TModule extends keyof PickKnownKeys<ApiPromise['derive']>,
+  TSection extends Extract<keyof PickKnownKeys<ApiPromise['derive'][TModule]>, string>,
+  TAugmentedSection extends TSection | `${TSection}.multi`,
+  TExtractedSection extends TAugmentedSection extends `${infer Section}.multi` ? Section : TAugmentedSection,
+  TMethod extends Diverge<
+    // @ts-ignore
+    ApiPromise['derive'][TModule][TExtractedSection],
+    StorageEntryPromiseOverloads & QueryableStorageEntry<any, any> & PromiseResult<GenericStorageEntryFunction>
+  >
+>(
+  endpoint: string,
+  moduleName: TModule,
+  sectionName: TAugmentedSection,
+  params: TMethod extends (...args: any) => any
+    ? // @ts-ignore
+      TAugmentedSection extends TSection
+      ? Leading<Parameters<TMethod>>
+      : Leading<Parameters<TMethod>> extends [infer Head]
+      ? Head[]
+      : Array<Readonly<Leading<Parameters<TMethod>>>>
+    : never
+) => _chainState([endpoint, 'derive', moduleName, sectionName, params])
 
 export const useChainQueryState = <
   TModule extends keyof PickKnownKeys<ApiPromise['query']>,
@@ -83,7 +141,7 @@ export const useChainQueryState = <
     return constSelector(undefined) as TReturn
   }
 
-  return chainState([endpoint, 'query', String(moduleName), sectionName, params]) as TReturn
+  return _chainState([endpoint, 'query', String(moduleName), sectionName, params]) as TReturn
 }
 
 export const useChainDeriveState = <
@@ -126,5 +184,5 @@ export const useChainDeriveState = <
     return constSelector(undefined) as TReturn
   }
 
-  return chainState([endpoint, 'derive', String(moduleName), sectionName, params]) as any as TReturn
+  return _chainState([endpoint, 'derive', String(moduleName), sectionName, params]) as any as TReturn
 }

@@ -1,10 +1,9 @@
-import PoolStakeItem from '@archetypes/NominationPools/PoolStakeItem'
 import PoolSelectorDialog from '@components/recipes/PoolSelectorDialog'
 import StakeDialogComponent from '@components/recipes/StakeDialog'
 import { StakeStatus } from '@components/recipes/StakeStatusIndicator'
 import StakingInput from '@components/recipes/StakingInput'
 import { injectedSubstrateAccountsState } from '@domains/accounts/recoils'
-import { useNativeTokenDecimalState } from '@domains/chains/recoils'
+import { chainsState, useNativeTokenDecimalState } from '@domains/chains/recoils'
 import { SubstrateApiContext, useSubstrateApiState } from '@domains/common'
 import { useChainState, useEraEtaFormatter, useExtrinsic, useTokenAmountFromPlanck } from '@domains/common/hooks'
 import { useInflation, usePoolAddForm } from '@domains/nominationPools/hooks'
@@ -19,8 +18,9 @@ import { useSearchParams } from 'react-router-dom'
 import { useLocation } from 'react-use'
 import { constSelector, useRecoilValue, useRecoilValueLoadable, waitForAll } from 'recoil'
 
-import AccountSelector from './AccountSelector'
-import { ChainContext } from '@domains/chains'
+import AccountSelector from '../AccountSelector'
+import { ChainContext, ChainProvider } from '@domains/chains'
+import PoolStakeItem from './PoolStakeItem'
 
 const PoolSelector = (props: {
   open: boolean
@@ -311,7 +311,7 @@ const StakeInput = () => {
             <PoolStakeItem
               hideIdenticon
               item={{
-                status: existingPoolStatus,
+                status: existingPoolStatus as any,
                 account: selectedAccount,
                 poolName: poolMetadataLoadable.valueMaybe()?.[1]?.toUtf8() ?? '',
                 poolMember: existingPool,
@@ -381,4 +381,11 @@ const StakeDialog = () => {
   )
 }
 
-export default StakeDialog
+export default () => {
+  const chains = useRecoilValue(chainsState)
+  return (
+    <ChainProvider value={chains[0]}>
+      <StakeDialog />
+    </ChainProvider>
+  )
+}

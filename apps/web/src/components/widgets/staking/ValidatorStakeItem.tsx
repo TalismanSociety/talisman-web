@@ -1,5 +1,6 @@
 import { ValidatorStakeItem as ValidatorStakeItemComponent } from '@components/recipes/StakeItem'
 import { Account } from '@domains/accounts/recoils'
+import { useNativeTokenDecimalState, useNativeTokenPriceState } from '@domains/chains'
 import { useExtrinsic } from '@domains/common/hooks'
 import { useEraEtaFormatter } from '@domains/common/hooks/useEraEta'
 import { DeriveStakingAccount } from '@polkadot/api-derive/types'
@@ -7,8 +8,6 @@ import { CircularProgressIndicator } from '@talismn/ui'
 import BN from 'bn.js'
 import { useCallback, useMemo, useState } from 'react'
 import { useRecoilValue, waitForAll } from 'recoil'
-
-import { useNativeTokenDecimalState, useNativeTokenPriceState } from '../../domains/chains/recoils'
 import ValidatorUnstakeDialog from './ValidatorUnstakeDialog'
 
 const ValidatorStakeItem = (props: {

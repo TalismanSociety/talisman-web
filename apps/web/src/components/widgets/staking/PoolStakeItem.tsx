@@ -1,18 +1,12 @@
 import ClaimStakeDialog from '@components/recipes/ClaimStakeDialog'
 import { PoolStakeItem as PoolStakeItemComponent, WithdrawChip } from '@components/recipes/StakeItem'
-import { StakeStatus } from '@components/recipes/StakeStatusIndicator'
-import { Account } from '@domains/accounts/recoils'
-import { useTokenAmountFromPlanck } from '@domains/common/hooks'
-import { useEraEtaFormatter } from '@domains/common/hooks/useEraEta'
-import { UInt } from '@polkadot/types-codec'
-import { PalletNominationPoolsPoolMember } from '@polkadot/types/lookup'
+import { useEraEtaFormatter, useExtrinsic, useTokenAmountFromPlanck } from '@domains/common'
 import { CircularProgressIndicator } from '@talismn/ui'
-import BN from 'bn.js'
-import { ReactNode, useCallback, useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { useRecoilValue, waitForAll } from 'recoil'
 
-import { useNativeTokenDecimalState, useNativeTokenPriceState } from '../../domains/chains/recoils'
-import useExtrinsic from '../../domains/common/hooks/useExtrinsic'
+import { useNativeTokenDecimalState, useNativeTokenPriceState } from '@domains/chains'
+import { usePoolStakes } from '@domains/nominationPools'
 import AddStakeDialog from './AddStakeDialog'
 import UnstakeDialog from './UnstakeDialog'
 
@@ -21,19 +15,7 @@ const PoolStakeItem = ({
   hideIdenticon,
 }: {
   hideIdenticon?: boolean
-  item: {
-    status?: StakeStatus
-    account?: Account
-    poolName?: ReactNode
-    poolMember: PalletNominationPoolsPoolMember
-    pendingRewards?: UInt
-    withdrawable: bigint
-    unbondings: {
-      amount: bigint
-      erasTilWithdrawable: BN
-    }[]
-    slashingSpan: number
-  }
+  item: ReturnType<typeof usePoolStakes>[number]
 }) => {
   const [decimal, nativeTokenPrice] = useRecoilValue(
     waitForAll([useNativeTokenDecimalState(), useNativeTokenPriceState()])
