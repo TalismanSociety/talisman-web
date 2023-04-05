@@ -4,7 +4,7 @@ import StakeDialogComponent from '@components/recipes/StakeDialog'
 import { StakeStatus } from '@components/recipes/StakeStatusIndicator'
 import StakingInput from '@components/recipes/StakingInput'
 import { injectedSubstrateAccountsState } from '@domains/accounts/recoils'
-import { chainState, useNativeTokenDecimalState } from '@domains/chains/recoils'
+import { useNativeTokenDecimalState } from '@domains/chains/recoils'
 import { SubstrateApiContext, useSubstrateApiState } from '@domains/common'
 import { useChainState, useEraEtaFormatter, useExtrinsic, useTokenAmountFromPlanck } from '@domains/common/hooks'
 import { useInflation, usePoolAddForm } from '@domains/nominationPools/hooks'
@@ -20,6 +20,7 @@ import { useLocation } from 'react-use'
 import { constSelector, useRecoilValue, useRecoilValueLoadable, waitForAll } from 'recoil'
 
 import AccountSelector from './AccountSelector'
+import { ChainContext } from '@domains/chains'
 
 const PoolSelector = (props: {
   open: boolean
@@ -27,9 +28,10 @@ const PoolSelector = (props: {
   onChangePoolId: (poolId: number) => unknown
   onDismiss: () => unknown
 }) => {
+  const currentChain = useContext(ChainContext)
   const [newPoolId, setNewPoolId] = useState<number>()
-  const [recommendedPools, nativeTokenDecimal, currentChain] = useRecoilValue(
-    waitForAll([useRecommendedPoolsState(), useNativeTokenDecimalState(), chainState])
+  const [recommendedPools, nativeTokenDecimal] = useRecoilValue(
+    waitForAll([useRecommendedPoolsState(), useNativeTokenDecimalState()])
   )
 
   return (

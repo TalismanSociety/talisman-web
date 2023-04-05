@@ -1,11 +1,12 @@
-import { chainState } from '@domains/chains/recoils'
+import { ChainContext } from '@domains/chains'
 import { useChainQueryMultiState, useChainQueryState } from '@domains/common/recoils'
 import { BN } from '@polkadot/util'
-import { useMemo } from 'react'
-import { useRecoilValue, waitForAll } from 'recoil'
+import { useContext, useMemo } from 'react'
+import { useRecoilValue } from 'recoil'
 
 export const useInflation = () => {
-  const [chain, activeEra] = useRecoilValue(waitForAll([chainState, useChainQueryState('staking', 'activeEra', [])]))
+  const chain = useContext(ChainContext)
+  const activeEra = useRecoilValue(useChainQueryState('staking', 'activeEra', []))
 
   const [totalIssuance, lastTotalStake, auctionCounter] = useRecoilValue(
     useChainQueryMultiState([
@@ -16,8 +17,7 @@ export const useInflation = () => {
   )
 
   return useMemo(() => {
-    const { auctionAdjust, auctionMax, falloff, maxInflation, minInflation, stakeTarget } = chain.params
-
+    const { auctionAdjust, auctionMax, falloff, maxInflation, minInflation, stakeTarget } = chain.stakingParams
     const BN_MILLION = new BN(1_000_000)
 
     const stakedFraction =
@@ -39,5 +39,5 @@ export const useInflation = () => {
       stakedFraction,
       stakedReturn: stakedFraction ? inflation / stakedFraction : 0,
     }
-  }, [auctionCounter, chain.params, lastTotalStake, totalIssuance])
+  }, [auctionCounter, chain.stakingParams, lastTotalStake, totalIssuance])
 }

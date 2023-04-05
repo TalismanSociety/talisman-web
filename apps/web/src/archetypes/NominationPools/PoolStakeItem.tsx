@@ -11,7 +11,7 @@ import BN from 'bn.js'
 import { ReactNode, useCallback, useMemo, useState } from 'react'
 import { useRecoilValue, waitForAll } from 'recoil'
 
-import { nativeTokenPriceState, useNativeTokenDecimalState } from '../../domains/chains/recoils'
+import { useNativeTokenDecimalState, useNativeTokenPriceState } from '../../domains/chains/recoils'
 import useExtrinsic from '../../domains/common/hooks/useExtrinsic'
 import AddStakeDialog from './AddStakeDialog'
 import UnstakeDialog from './UnstakeDialog'
@@ -36,7 +36,7 @@ const PoolStakeItem = ({
   }
 }) => {
   const [decimal, nativeTokenPrice] = useRecoilValue(
-    waitForAll([useNativeTokenDecimalState(), nativeTokenPriceState('usd')])
+    waitForAll([useNativeTokenDecimalState(), useNativeTokenPriceState()])
   )
 
   const [isUnstaking, setIsUnstaking] = useState(false)

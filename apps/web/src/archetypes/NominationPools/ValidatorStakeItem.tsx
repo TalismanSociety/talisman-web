@@ -8,7 +8,7 @@ import BN from 'bn.js'
 import { useCallback, useMemo, useState } from 'react'
 import { useRecoilValue, waitForAll } from 'recoil'
 
-import { nativeTokenPriceState, useNativeTokenDecimalState } from '../../domains/chains/recoils'
+import { useNativeTokenDecimalState, useNativeTokenPriceState } from '../../domains/chains/recoils'
 import ValidatorUnstakeDialog from './ValidatorUnstakeDialog'
 
 const ValidatorStakeItem = (props: {
@@ -22,7 +22,7 @@ const ValidatorStakeItem = (props: {
   const [isUnstakeDialogOpen, setIsUnstakeDialogOpen] = useState(false)
 
   const [decimal, nativeTokenPrice] = useRecoilValue(
-    waitForAll([useNativeTokenDecimalState(), nativeTokenPriceState('usd')])
+    waitForAll([useNativeTokenDecimalState(), useNativeTokenPriceState()])
   )
 
   const active = decimal.fromPlanck(props.stake.stakingLedger.active)

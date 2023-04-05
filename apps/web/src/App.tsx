@@ -6,8 +6,7 @@ import Development from '@archetypes/Development'
 import { TalismanHandLoader } from '@components/TalismanHandLoader'
 import ErrorBoundary from '@components/widgets/ErrorBoundary'
 import { LegacyBalancesWatcher } from '@domains/balances/recoils'
-import { chainRpcState } from '@domains/chains/recoils'
-import { SUBSTRATE_API_STATE_GARBAGE_COLLECTOR_UNSTABLE, SubstrateApiContext } from '@domains/common'
+import { SUBSTRATE_API_STATE_GARBAGE_COLLECTOR_UNSTABLE } from '@domains/common'
 import { ExtensionWatcher } from '@domains/extension/recoils'
 import NftProvider from '@libs/@talisman-nft/provider'
 import * as MoonbeamContributors from '@libs/moonbeam-contributors'
@@ -16,8 +15,9 @@ import TalismanProvider from '@libs/talisman'
 import router from '@routes'
 import { PropsWithChildren, Suspense } from 'react'
 import { RouterProvider } from 'react-router-dom'
-import { RecoilRoot, useRecoilValue } from 'recoil'
+import { RecoilRoot } from 'recoil'
 
+import { ChainProvider, chains } from '@domains/chains'
 import ThemeProvider from './App.Theme'
 
 const Loader = () => {
@@ -40,10 +40,8 @@ const Loader = () => {
 
 // TODO: this is for backward compatibility only, will be remove
 // after multi chain support
-const LegacyApiProvider = (props: PropsWithChildren) => (
-  <SubstrateApiContext.Provider value={{ endpoint: useRecoilValue(chainRpcState) }}>
-    {props.children}
-  </SubstrateApiContext.Provider>
+const LegacyChainProvider = (props: PropsWithChildren) => (
+  <ChainProvider value={chains[0]}>{props.children}</ChainProvider>
 )
 
 const App = () => (
@@ -52,7 +50,7 @@ const App = () => (
       <RecoilRoot>
         <SUBSTRATE_API_STATE_GARBAGE_COLLECTOR_UNSTABLE />
         <Suspense fallback={<Loader />}>
-          <LegacyApiProvider>
+          <LegacyChainProvider>
             <Portfolio.Provider>
               <TalismanProvider>
                 <ExtensionWatcher />
@@ -65,7 +63,7 @@ const App = () => (
                 </MoonbeamContributors.Provider>
               </TalismanProvider>
             </Portfolio.Provider>
-          </LegacyApiProvider>
+          </LegacyChainProvider>
         </Suspense>
       </RecoilRoot>
     </ErrorBoundary>

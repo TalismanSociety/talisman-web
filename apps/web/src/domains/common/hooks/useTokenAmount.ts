@@ -1,4 +1,4 @@
-import { nativeTokenPriceState, useNativeTokenDecimalState } from '@domains/chains/recoils'
+import { useNativeTokenDecimalState, useNativeTokenPriceState } from '@domains/chains/recoils'
 import { BN } from '@polkadot/util'
 import { useMemo, useState } from 'react'
 import { useRecoilValue, waitForAll } from 'recoil'
@@ -9,7 +9,7 @@ export const useTokenAmount = (amount?: string | (() => string), options: Option
   const stringAmount = typeof amount === 'function' ? amount() : amount
 
   const [nativeTokenDecimal, nativeTokenPrice] = useRecoilValue(
-    waitForAll([useNativeTokenDecimalState(), nativeTokenPriceState(options.fiatCurrency ?? 'usd')])
+    waitForAll([useNativeTokenDecimalState(), useNativeTokenPriceState(options.fiatCurrency)])
   )
 
   const decimalAmount = useMemo(() => {
