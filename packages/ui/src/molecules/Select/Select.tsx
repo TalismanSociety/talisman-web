@@ -13,14 +13,14 @@ import {
 import { ChevronDown } from '@talismn/icons'
 import { motion } from 'framer-motion'
 import React, {
-  type ReactElement,
-  type ReactNode,
   forwardRef,
   useCallback,
   useEffect,
   useLayoutEffect,
   useRef,
   useState,
+  type ReactElement,
+  type ReactNode,
 } from 'react'
 
 import { Text } from '../../atoms'
@@ -139,12 +139,28 @@ const Select = Object.assign(
     }, [open, activeIndex, pointer])
 
     return (
-      <motion.div initial={String(false)} animate={String(open)} css={{ width }}>
+      <motion.div
+        initial={String(false)}
+        animate={String(open)}
+        variants={{
+          true: { zIndex: 1, filter: 'drop-shadow(0 1px 3px rgba(0, 0, 0, 0.25))' },
+          false: { filter: 'drop-shadow(0 0 0 rgba(0, 0, 0, 0.25))' },
+        }}
+        css={{ width }}
+      >
         <motion.button
           ref={reference}
           variants={{
-            true: { transitionEnd: { borderBottomLeftRadius: 0, borderBottomRightRadius: 0 } },
-            false: { transitionEnd: { borderBottomLeftRadius: '0.8rem', borderBottomRightRadius: '0.8rem' } },
+            true: {
+              border: `solid ${theme.color.border}`,
+              borderWidth: '1px 1px 0 1px',
+              transitionEnd: { borderBottomLeftRadius: 0, borderBottomRightRadius: 0 },
+            },
+            false: {
+              border: 'solid transparent',
+              borderWidth: '1px 1px 0 1px',
+              transitionEnd: { borderBottomLeftRadius: '0.8rem', borderBottomRightRadius: '0.8rem' },
+            },
           }}
           css={{
             position: 'relative',
@@ -155,7 +171,6 @@ const Select = Object.assign(
             textAlign: 'start',
             backgroundColor: theme.color.foreground,
             padding: '0.75rem 1.25rem',
-            border: 'none',
             borderRadius: '0.8rem',
             cursor: 'pointer',
             width: '100%',
@@ -170,8 +185,20 @@ const Select = Object.assign(
         <motion.ul
           ref={floating}
           variants={{
-            true: { height: 'unset', visibility: 'unset', transitionEnd: { overflow: 'auto' } },
-            false: { height: 0, overflow: 'hidden', transitionEnd: { visibility: 'hidden' } },
+            true: {
+              height: 'unset',
+              visibility: 'unset',
+              border: `solid ${theme.color.border}`,
+              borderWidth: '0 1px 1px 1px',
+              transitionEnd: { overflow: 'auto' },
+            },
+            false: {
+              height: 0,
+              border: 'solid transparent',
+              borderWidth: '0 1px 1px 1px',
+              overflow: 'hidden',
+              transitionEnd: { visibility: 'hidden' },
+            },
           }}
           css={{
             'margin': 0,
@@ -201,7 +228,6 @@ const Select = Object.assign(
               top: 0,
               height: OVERLAP,
               backgroundColor: theme.color.foreground,
-              zIndex: 1,
             },
           }}
           {...getFloatingProps({
@@ -210,7 +236,6 @@ const Select = Object.assign(
               top: y ?? 0,
               left: x ?? 0,
               width: 'max-content',
-              zIndex: 1,
             },
             onPointerMove: () => {
               setPointer(true)

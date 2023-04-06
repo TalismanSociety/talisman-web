@@ -15,9 +15,7 @@ const Description = (props: React.DetailedHTMLProps<React.HTMLAttributes<HTMLDiv
 )
 
 const DescriptionList = Object.assign(
-  (props: DescriptionListProps) => {
-    return <dl {...props} />
-  },
+  (props: DescriptionListProps) => <dl {...props} css={{ '> * + *': { marginTop: '1.6rem' } }} />,
   { Description, Term, Details }
 )
 

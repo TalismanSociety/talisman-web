@@ -1,0 +1,280 @@
+import { useTheme } from '@emotion/react'
+import { ChevronRight, Info } from '@talismn/icons'
+import { Button, ButtonProps, Chip, DescriptionList, Text, TextInput } from '@talismn/ui'
+import { AnimatePresence, LayoutGroup, motion } from 'framer-motion'
+import { ReactNode, createContext, useContext, useId, useState } from 'react'
+import { StakeStatus, StakeStatusIndicator } from '../StakeStatusIndicator'
+
+const AssetSelectorContext = createContext<ReactNode>(null)
+
+type AmountInputProps = {
+  amount: string
+  onChangeAmount: (amount: string) => unknown
+  fiatAmount: ReactNode
+  availableToStake: ReactNode
+}
+
+const AmountInput = (props: AmountInputProps) => (
+  <TextInput
+    value={props.amount}
+    onChange={event => props.onChangeAmount(event.target.value)}
+    trailingIcon={useContext(AssetSelectorContext)}
+    leadingLabel="Available to stake"
+    trailingLabel="3,250 KSM"
+    leadingSupportingText="$0.00"
+    trailingSupportingText={<Chip>Max</Chip>}
+  />
+)
+
+type PoolInfoProps = {
+  name: ReactNode
+  status: StakeStatus
+  totalStaked: ReactNode
+  memberCount: ReactNode
+  onRequestPoolChange: () => unknown
+  noPoolsAvailable?: boolean
+}
+
+const PoolInfo = (props: PoolInfoProps) => {
+  const theme = useTheme()
+  const [expanded, setExpanded] = useState(false)
+  return (
+    <motion.div
+      animate={String(expanded)}
+      initial="false"
+      variants={{ true: { backgroundColor: theme.color.foreground }, false: { backgroundColor: 'transparent' } }}
+      whileHover={{ backgroundColor: theme.color.foreground }}
+      css={{ padding: '0.8rem', borderRadius: '0.8rem' }}
+    >
+      <div
+        role="button"
+        aria-label="Show pool detail"
+        onClick={props.noPoolsAvailable ? undefined : () => setExpanded(x => !x)}
+        css={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          cursor: props.noPoolsAvailable ? undefined : 'pointer',
+        }}
+      >
+        <div css={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
+          <StakeStatusIndicator status={props.status} />
+          <Text.Body css={{ fontSize: '1.4rem' }} alpha={expanded ? 'high' : 'medium'}>
+            {props.noPoolsAvailable ? 'No pools available' : props.name}
+          </Text.Body>
+        </div>
+        {props.noPoolsAvailable ? (
+          <Info size="1.4rem" />
+        ) : (
+          <motion.div animate={String(expanded)} variants={{ true: { transform: 'rotate(90deg)' }, false: {} }}>
+            <ChevronRight />
+          </motion.div>
+        )}
+      </div>
+      <motion.div
+        variants={{ true: { opacity: 1, height: 'auto' }, false: { opacity: 0, height: 0 } }}
+        css={{ overflow: 'hidden' }}
+      >
+        <dl
+          css={{
+            '> div': {
+              display: 'flex',
+            },
+            'dd': {
+              marginLeft: '1.6rem',
+            },
+          }}
+        >
+          <div>
+            <Text.Body as="dt">Total Staked</Text.Body>
+            <Text.Body as="dd" alpha="high">
+              {props.totalStaked}
+            </Text.Body>
+          </div>
+          <div>
+            <Text.Body as="dt">Members</Text.Body>
+            <Text.Body as="dd" alpha="high">
+              {props.memberCount}
+            </Text.Body>
+          </div>
+        </dl>
+        <Text.Body as="p" role="button">
+          Talisman automatically finds you the best available nomination pool
+        </Text.Body>
+        <Text.Body
+          as="div"
+          role="button"
+          alpha="high"
+          css={{ textDecoration: 'underline', cursor: 'pointer', marginBottom: '0.8rem' }}
+          onClick={props.onRequestPoolChange}
+        >
+          Pick a different pool
+        </Text.Body>
+      </motion.div>
+    </motion.div>
+  )
+}
+
+type EstimatedYieldProps = {
+  amount: ReactNode
+  fiatAmount: ReactNode
+}
+
+const EstimatedYield = (props: EstimatedYieldProps) => (
+  <DescriptionList>
+    <DescriptionList.Description>
+      <DescriptionList.Term>Estimated earnings</DescriptionList.Term>
+      <DescriptionList.Details css={{ wordBreak: 'break-all' }}>
+        <Text.Body alpha="high">{props.amount}</Text.Body>
+        <Text.Body>{props.fiatAmount}</Text.Body>
+      </DescriptionList.Details>
+    </DescriptionList.Description>
+  </DescriptionList>
+)
+
+type ExistingPoolProps = {
+  name: ReactNode
+  status: StakeStatus
+  amount: ReactNode
+  fiatAmount: ReactNode
+  rewards: ReactNode
+  rewardsFiatAmount: ReactNode
+  addButton: ReactNode
+  claimButton: ReactNode
+  unstakeButton: ReactNode
+}
+
+const ExistingPool = Object.assign(
+  (props: ExistingPoolProps) => (
+    <div>
+      <DescriptionList>
+        <DescriptionList.Description css={{ alignItems: 'center' }}>
+          <DescriptionList.Term>Asset</DescriptionList.Term>
+          <DescriptionList.Details>{useContext(AssetSelectorContext)}</DescriptionList.Details>
+        </DescriptionList.Description>
+        <DescriptionList.Description>
+          <DescriptionList.Term>Pool</DescriptionList.Term>
+          <DescriptionList.Details>
+            <div css={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
+              <StakeStatusIndicator status={props.status} />
+              <Text.Body css={{ fontSize: '1.4rem' }}>{props.name}</Text.Body>
+            </div>
+          </DescriptionList.Details>
+        </DescriptionList.Description>
+        <DescriptionList.Description>
+          <DescriptionList.Term>Staking</DescriptionList.Term>
+          <DescriptionList.Details>
+            <Text.Body as="div" alpha="high">
+              {props.amount}
+            </Text.Body>
+            <Text.Body as="div">{props.fiatAmount}</Text.Body>
+          </DescriptionList.Details>
+        </DescriptionList.Description>
+        <DescriptionList.Description>
+          <DescriptionList.Term>Rewards</DescriptionList.Term>
+          <DescriptionList.Details>
+            <Text.Body as="div" alpha="high">
+              {props.rewards}
+            </Text.Body>
+            <Text.Body as="div">{props.rewardsFiatAmount}</Text.Body>
+          </DescriptionList.Details>
+        </DescriptionList.Description>
+      </DescriptionList>
+      <div css={{ display: 'flex', gap: '0.8rem' }}>
+        {props.addButton}
+        {props.claimButton}
+        {props.unstakeButton}
+      </div>
+    </div>
+  ),
+  {
+    AddButton: (props: ButtonProps) => (
+      <Button variant="outlined" {...props} css={{ flex: 1 }}>
+        Add
+      </Button>
+    ),
+    ClaimButton: (props: ButtonProps) => (
+      <Button variant="outlined" {...props} css={{ flex: 1 }}>
+        Claim
+      </Button>
+    ),
+    UnstakeButton: (props: ButtonProps) => (
+      <Button variant="outlined" {...props} css={{ flex: 1 }}>
+        Unstake
+      </Button>
+    ),
+  }
+)
+
+export type StakeFormProps = {
+  assetSelector: ReactNode
+  accountSelector: ReactNode
+  amountInput: ReactNode
+  poolInfo: ReactNode
+  estimatedYield: ReactNode
+  stakeButton: ReactNode
+  existingPool: ReactNode
+}
+
+const StakeForm = Object.assign(
+  (props: StakeFormProps) => {
+    const id = useId()
+    const theme = useTheme()
+
+    return (
+      <LayoutGroup id={id}>
+        <AssetSelectorContext.Provider value={<motion.div layoutId="asset-selector">{props.assetSelector}</motion.div>}>
+          <div
+            css={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '1.6rem',
+              borderRadius: '1.6rem',
+              padding: '1.6rem',
+              backgroundColor: theme.color.surface,
+            }}
+          >
+            {props.accountSelector}
+            <AnimatePresence mode="popLayout">
+              <motion.div
+                key={String(Boolean(props.existingPool))}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                css={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '1.6rem',
+                }}
+              >
+                {props.existingPool ? (
+                  props.existingPool
+                ) : (
+                  <>
+                    {props.amountInput}
+                    {props.poolInfo}
+                    {props.estimatedYield}
+                    {props.stakeButton}
+                  </>
+                )}
+              </motion.div>
+            </AnimatePresence>
+          </div>
+        </AssetSelectorContext.Provider>
+      </LayoutGroup>
+    )
+  },
+  {
+    AmountInput,
+    PoolInfo,
+    EstimatedYield,
+    StakeButton: (props: ButtonProps) => (
+      <Button {...props} css={{ width: '100%' }}>
+        Stake
+      </Button>
+    ),
+    ExistingPool,
+  }
+)
+
+export default StakeForm
