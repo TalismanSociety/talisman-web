@@ -1,7 +1,7 @@
 import { useTheme } from '@emotion/react'
-import { ChevronRight, Info } from '@talismn/icons'
-import { Button, ButtonProps, Chip, DescriptionList, Text, TextInput } from '@talismn/ui'
-import { AnimatePresence, LayoutGroup, motion } from 'framer-motion'
+import { ChevronRight, Clock, Info } from '@talismn/icons'
+import { Button, ButtonProps, Chip, ChipProps, DescriptionList, Hr, Text, TextInput, Tooltip } from '@talismn/ui'
+import { LayoutGroup, motion } from 'framer-motion'
 import { ReactNode, createContext, useContext, useId, useState } from 'react'
 import { StakeStatus, StakeStatusIndicator } from '../StakeStatusIndicator'
 
@@ -10,6 +10,7 @@ const AssetSelectorContext = createContext<ReactNode>(null)
 type AmountInputProps = {
   amount: string
   onChangeAmount: (amount: string) => unknown
+  onRequestMaxAmount: () => unknown
   fiatAmount: ReactNode
   availableToStake: ReactNode
 }
@@ -20,9 +21,9 @@ const AmountInput = (props: AmountInputProps) => (
     onChange={event => props.onChangeAmount(event.target.value)}
     trailingIcon={useContext(AssetSelectorContext)}
     leadingLabel="Available to stake"
-    trailingLabel="3,250 KSM"
-    leadingSupportingText="$0.00"
-    trailingSupportingText={<Chip>Max</Chip>}
+    trailingLabel={props.availableToStake}
+    leadingSupportingText={props.fiatAmount}
+    trailingSupportingText={<Chip onClick={props.onRequestMaxAmount}>Max</Chip>}
   />
 )
 
@@ -139,9 +140,16 @@ type ExistingPoolProps = {
   fiatAmount: ReactNode
   rewards: ReactNode
   rewardsFiatAmount: ReactNode
+  claimChip: ReactNode
+  unlocks?: Array<{ amount: ReactNode; eta: ReactNode }>
+  unlocking?: ReactNode
+  unlockingFiatAmount?: ReactNode
+  withdrawable?: ReactNode
+  withdrawableFiatAmount?: ReactNode
+  withdrawChip: ReactNode
   addButton: ReactNode
-  claimButton: ReactNode
   unstakeButton: ReactNode
+  readonly?: boolean
 }
 
 const ExistingPool = Object.assign(
@@ -173,29 +181,72 @@ const ExistingPool = Object.assign(
         <DescriptionList.Description>
           <DescriptionList.Term>Rewards</DescriptionList.Term>
           <DescriptionList.Details>
-            <Text.Body as="div" alpha="high">
+            <Text.Body as="div" alpha="high" css={{ display: 'flex', alignItems: 'center', gap: '0.5em' }}>
+              {props.claimChip}
               {props.rewards}
             </Text.Body>
             <Text.Body as="div">{props.rewardsFiatAmount}</Text.Body>
           </DescriptionList.Details>
         </DescriptionList.Description>
+        {props.unlocking && (
+          <DescriptionList.Description>
+            <DescriptionList.Term>Unstaking</DescriptionList.Term>
+            <DescriptionList.Details>
+              <Tooltip
+                placement="bottom"
+                content={
+                  <div>
+                    {props.unlocks?.map((x, index, array) => (
+                      <>
+                        <Text.Body as="div" alpha="high">
+                          {x.amount}
+                        </Text.Body>
+                        <Text.Body as="div">{x.eta}</Text.Body>
+                        {index < array.length - 1 && <Hr />}
+                      </>
+                    ))}
+                  </div>
+                }
+              >
+                {tooltipProps => (
+                  <div {...tooltipProps} css={{ display: 'flex', alignItems: 'center', gap: '0.5em' }}>
+                    <Clock size="1em" />
+                    <Text.Body as="div" alpha="high">
+                      {props.unlocking}
+                    </Text.Body>
+                  </div>
+                )}
+              </Tooltip>
+              <Text.Body as="div">{props.unlockingFiatAmount}</Text.Body>
+            </DescriptionList.Details>
+          </DescriptionList.Description>
+        )}
+        {props.withdrawable && (
+          <DescriptionList.Description>
+            <DescriptionList.Term>Withdrawable</DescriptionList.Term>
+            <DescriptionList.Details>
+              <Text.Body as="div" alpha="high" css={{ display: 'flex', alignItems: 'center', gap: '0.5em' }}>
+                {props.withdrawChip} {props.withdrawable}
+              </Text.Body>
+              <Text.Body as="div">{props.withdrawableFiatAmount}</Text.Body>
+            </DescriptionList.Details>
+          </DescriptionList.Description>
+        )}
       </DescriptionList>
-      <div css={{ display: 'flex', gap: '0.8rem' }}>
-        {props.addButton}
-        {props.claimButton}
-        {props.unstakeButton}
-      </div>
+      {!props.readonly && (
+        <div css={{ display: 'flex', gap: '0.8rem' }}>
+          {props.addButton}
+          {props.unstakeButton}
+        </div>
+      )}
     </div>
   ),
   {
+    ClaimChip: (props: ChipProps) => <Chip {...props}>Claim</Chip>,
+    WithdrawChip: (props: ChipProps) => <Chip {...props}>Withdraw</Chip>,
     AddButton: (props: ButtonProps) => (
       <Button variant="outlined" {...props} css={{ flex: 1 }}>
         Add
-      </Button>
-    ),
-    ClaimButton: (props: ButtonProps) => (
-      <Button variant="outlined" {...props} css={{ flex: 1 }}>
-        Claim
       </Button>
     ),
     UnstakeButton: (props: ButtonProps) => (
@@ -235,30 +286,16 @@ const StakeForm = Object.assign(
             }}
           >
             {props.accountSelector}
-            <AnimatePresence mode="popLayout">
-              <motion.div
-                key={String(Boolean(props.existingPool))}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                css={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '1.6rem',
-                }}
-              >
-                {props.existingPool ? (
-                  props.existingPool
-                ) : (
-                  <>
-                    {props.amountInput}
-                    {props.poolInfo}
-                    {props.estimatedYield}
-                    {props.stakeButton}
-                  </>
-                )}
-              </motion.div>
-            </AnimatePresence>
+            {props.existingPool ? (
+              props.existingPool
+            ) : (
+              <>
+                {props.amountInput}
+                {props.poolInfo}
+                {props.estimatedYield}
+                {props.stakeButton}
+              </>
+            )}
           </div>
         </AssetSelectorContext.Provider>
       </LayoutGroup>

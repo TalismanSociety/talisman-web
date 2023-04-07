@@ -29,7 +29,13 @@ Default.args = {
     </Select>
   ),
   amountInput: (
-    <StakeForm.AmountInput amount="1000" onChangeAmount={() => {}} fiatAmount="$0.00" availableToStake="3,250 KSM" />
+    <StakeForm.AmountInput
+      amount="1000"
+      onChangeAmount={() => {}}
+      onRequestMaxAmount={() => {}}
+      fiatAmount="$0.00"
+      availableToStake="3,250 KSM"
+    />
   ),
   poolInfo: (
     <StakeForm.PoolInfo
@@ -50,8 +56,12 @@ Default.args = {
       fiatAmount="$14,715.55"
       rewards="+0.124 KSM"
       rewardsFiatAmount="$2,203.74"
+      claimChip={<StakeForm.ExistingPool.ClaimChip />}
+      unlocks={[]}
+      unlocking="1 KSM"
+      unlockingFiatAmount="$1.1234"
+      withdrawChip={<StakeForm.ExistingPool.WithdrawChip />}
       addButton={<StakeForm.ExistingPool.AddButton />}
-      claimButton={<StakeForm.ExistingPool.ClaimButton />}
       unstakeButton={<StakeForm.ExistingPool.UnstakeButton />}
     />
   ),

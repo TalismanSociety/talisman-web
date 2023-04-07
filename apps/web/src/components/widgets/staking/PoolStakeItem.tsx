@@ -1,10 +1,10 @@
 import ClaimStakeDialog from '@components/recipes/ClaimStakeDialog'
 import { PoolStakeItem as PoolStakeItemComponent, WithdrawChip } from '@components/recipes/StakeItem'
 import { useEraEtaFormatter, useExtrinsic, useTokenAmountFromPlanck } from '@domains/common'
-import { CircularProgressIndicator } from '@talismn/ui'
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useState } from 'react'
 import { useRecoilValue, waitForAll } from 'recoil'
 
+import { Account } from '@domains/accounts'
 import { useNativeTokenDecimalState, useNativeTokenPriceState } from '@domains/chains'
 import { usePoolStakes } from '@domains/nominationPools'
 import AddStakeDialog from './AddStakeDialog'
@@ -15,7 +15,7 @@ const PoolStakeItem = ({
   hideIdenticon,
 }: {
   hideIdenticon?: boolean
-  item: ReturnType<typeof usePoolStakes>[number]
+  item: ReturnType<typeof usePoolStakes<Account[]>>[number]
 }) => {
   const [decimal, nativeTokenPrice] = useRecoilValue(
     waitForAll([useNativeTokenDecimalState(), useNativeTokenPriceState()])
@@ -31,15 +31,10 @@ const PoolStakeItem = ({
 
   const pendingRewards = useTokenAmountFromPlanck(item.pendingRewards)
 
-  const totalUnlocking = useMemo(
-    () => item.unbondings?.reduce((previous, current) => previous + current.amount, 0n),
-    [item.unbondings]
-  )
-
   const eraEtaFormatter = useEraEtaFormatter()
-  const unlocks = item.unbondings?.map(x => ({
+  const unlocks = item.unlockings?.map(x => ({
     amount: decimal.fromPlanck(x.amount).toHuman(),
-    eta: eraEtaFormatter(x.erasTilWithdrawable) ?? <CircularProgressIndicator size="1em" />,
+    eta: eraEtaFormatter(x.erasTilWithdrawable),
   }))
 
   return (
@@ -93,9 +88,9 @@ const PoolStakeItem = ({
           )
         }
         status={
-          totalUnlocking > 0n && (
+          item.totalUnlocking > 0n && (
             <PoolStakeItemComponent.UnstakingStatus
-              amount={decimal.fromPlanck(totalUnlocking).toHuman()}
+              amount={decimal.fromPlanck(item.totalUnlocking).toHuman()}
               unlocks={unlocks ?? []}
             />
           )

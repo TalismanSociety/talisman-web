@@ -36,6 +36,7 @@
     "@talismn/api-react-hooks": "~0.0.25",
     "@talismn/balances-default-modules": "0.4.0",
     "@talismn/balances-react": "0.4.0",
+    "@talismn/chaindata-provider": "^0.4.3",
     "@talismn/connect-components": "^1.1.7",
     "@talismn/connect-ui": "^1.1.2",
     "@talismn/dot-pool-selector": "snapshot",

@@ -6,7 +6,9 @@ import { useRecoilValue, useRecoilValue_TRANSITION_SUPPORT_UNSTABLE, waitForAll 
 import { useAllPendingRewardsState, useEraStakersState } from '../recoils'
 import { createAccounts, getPoolUnbonding } from '../utils'
 
-export const usePoolStakes = (accounts: Account[]) => {
+export const usePoolStakes = <T extends Account | Account[]>(account: T) => {
+  const accounts = useMemo(() => (Array.isArray(account) ? account : [account]), [account])
+
   const [api, pendingRewards] = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
     waitForAll([useSubstrateApiState(), useAllPendingRewardsState()])
   )
@@ -39,7 +41,7 @@ export const usePoolStakes = (accounts: Account[]) => {
   const _eraStakers = useRecoilValue(useEraStakersState(activeEra.unwrapOrDefault().index))
   const eraStakers = useMemo(() => new Set(_eraStakers.map(x => x[0].args[1].toHuman())), [_eraStakers])
 
-  return useMemo(
+  const pools = useMemo(
     () =>
       poolMembers
         // Calculate unbondings
@@ -67,9 +69,16 @@ export const usePoolStakes = (accounts: Account[]) => {
             poolName: poolMetadatum[index]?.toUtf8(),
             poolMember,
             pendingRewards: pendingRewards.find(rewards => rewards[0] === accounts[index]?.address)?.[1],
+            totalUnlocking: rest.unlockings.reduce((previous, current) => previous + current.amount, 0n),
             slashingSpan,
           }
         }),
     [accounts, eraStakers, pendingRewards, poolMembers, poolMetadatum, poolNominators, sessionProgress, slashingSpans]
   )
+
+  type Result = typeof pools
+
+  type Return = T extends Account[] ? Result : Result[number] | undefined
+
+  return useMemo(() => (Array.isArray(account) ? pools : pools.at(0)) as Return, [account, pools])
 }

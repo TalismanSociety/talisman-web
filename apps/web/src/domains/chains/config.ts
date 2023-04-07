@@ -1,3 +1,4 @@
+import { githubChainLogoUrl, githubTokenLogoUrl } from '@talismn/chaindata-provider'
 import { defaultParams } from './consts'
 
 export const chains = [
@@ -26,7 +27,9 @@ export const chains = [
       },
     ],
     nativeToken: {
+      symbol: 'DOT',
       coingeckoId: 'polkadot',
+      logo: githubTokenLogoUrl('dot'),
     },
     subscanUrl: 'https://polkadot.subscan.io/',
     /**
@@ -60,7 +63,9 @@ export const chains = [
       },
     ],
     nativeToken: {
+      symbol: 'KSM',
       coingeckoId: 'kusama',
+      logo: githubTokenLogoUrl('ksm'),
     },
     subscanUrl: 'https://kusama.subscan.io/',
     /**
@@ -79,7 +84,9 @@ export const chains = [
       },
     ],
     nativeToken: {
+      symbol: 'AZERO',
       coingeckoId: 'aleph-zero',
+      logo: githubChainLogoUrl('aleph'),
     },
     subscanUrl: 'https://alephzero.subscan.io/',
     stakingParams: defaultParams,
@@ -103,7 +110,9 @@ export const chains = [
       },
     ],
     nativeToken: {
+      symbol: 'WND',
       coingeckoId: undefined,
+      logo: githubChainLogoUrl('westend-testnet'),
     },
     subscanUrl: 'https://westend.subscan.io/',
     /**
@@ -115,3 +124,5 @@ export const chains = [
 ] as const
 
 export type Chain = (typeof chains)[number]
+
+export type Chains = typeof chains

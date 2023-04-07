@@ -1,48 +1,79 @@
 import { useNativeTokenDecimalState, useNativeTokenPriceState } from '@domains/chains/recoils'
 import { BN } from '@polkadot/util'
+import Decimal from '@util/Decimal'
 import { useMemo, useState } from 'react'
 import { useRecoilValue, waitForAll } from 'recoil'
 
 type Options = { fiatCurrency?: string }
 
-export const useTokenAmount = (amount?: string | (() => string), options: Options = { fiatCurrency: 'usd' }) => {
-  const stringAmount = typeof amount === 'function' ? amount() : amount
-
+export const useTokenAmount = <T extends string | undefined>(
+  amount?: T,
+  options: Options = { fiatCurrency: 'usd' }
+) => {
   const [nativeTokenDecimal, nativeTokenPrice] = useRecoilValue(
     waitForAll([useNativeTokenDecimalState(), useNativeTokenPriceState(options.fiatCurrency)])
   )
 
-  const decimalAmount = useMemo(() => {
-    if (stringAmount === undefined) return undefined
+  const decimalAmount = useMemo<T extends undefined ? Decimal | undefined : Decimal>(() => {
+    if (amount === undefined) return undefined
     try {
-      return nativeTokenDecimal.fromUserInput(stringAmount)
+      return nativeTokenDecimal.fromUserInput(amount)
     } catch {
-      return undefined
+      return undefined as any
     }
-  }, [stringAmount, nativeTokenDecimal])
+  }, [amount, nativeTokenDecimal])
 
-  const fiatAmount = useMemo(
-    () => (decimalAmount === undefined ? undefined : decimalAmount.toNumber() * nativeTokenPrice),
+  const fiatAmount = useMemo<T extends undefined ? number | undefined : number>(
+    () => (decimalAmount === undefined ? (undefined as any) : decimalAmount.toNumber() * nativeTokenPrice),
     [decimalAmount, nativeTokenPrice]
   )
 
-  const localizedFiatAmount = useMemo(
+  const localizedFiatAmount = useMemo<T extends undefined ? string | undefined : string>(
     () =>
       fiatAmount?.toLocaleString(undefined, {
         style: 'currency',
         currency: options.fiatCurrency ?? 'usd',
         currencyDisplay: 'narrowSymbol',
-      }),
+      }) as any,
     [fiatAmount, options?.fiatCurrency]
   )
 
   return { decimalAmount, fiatAmount, localizedFiatAmount } as const
 }
 
-export const useTokenAmountFromPlanck = (planck?: string | BN, options: Options = { fiatCurrency: 'usd' }) => {
-  const nativeTokenDecimal = useRecoilValue(useNativeTokenDecimalState())
+export const useTokenAmountFromPlanck = <T extends string | BN | bigint | undefined>(
+  planck?: T,
+  options: Options = { fiatCurrency: 'usd' }
+) => {
+  const [nativeTokenDecimal, nativeTokenPrice] = useRecoilValue(
+    waitForAll([useNativeTokenDecimalState(), useNativeTokenPriceState(options.fiatCurrency)])
+  )
 
-  return useTokenAmount(planck === undefined ? undefined : nativeTokenDecimal.fromPlanck(planck).toString(), options)
+  const decimalAmount = useMemo<T extends undefined ? Decimal | undefined : Decimal>(() => {
+    if (planck === undefined) return undefined
+    try {
+      return nativeTokenDecimal.fromPlanck(planck)
+    } catch {
+      return undefined as any
+    }
+  }, [nativeTokenDecimal, planck])
+
+  const fiatAmount = useMemo<T extends undefined ? number | undefined : number>(
+    () => (decimalAmount === undefined ? (undefined as any) : decimalAmount.toNumber() * nativeTokenPrice),
+    [decimalAmount, nativeTokenPrice]
+  )
+
+  const localizedFiatAmount = useMemo<T extends undefined ? string | undefined : string>(
+    () =>
+      fiatAmount?.toLocaleString(undefined, {
+        style: 'currency',
+        currency: options.fiatCurrency ?? 'usd',
+        currencyDisplay: 'narrowSymbol',
+      }) as any,
+    [fiatAmount, options?.fiatCurrency]
+  )
+
+  return { decimalAmount, fiatAmount, localizedFiatAmount } as const
 }
 
 export const useTokenAmountState = (

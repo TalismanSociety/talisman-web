@@ -1,18 +1,31 @@
 import { ChainContext } from '@domains/chains'
-import { useChainQueryMultiState, useChainQueryState } from '@domains/common/recoils'
+import { SubstrateApiContext } from '@domains/common'
+import {
+  chainQueryState,
+  useChainQueryMultiState,
+  useChainQueryState,
+  useSubstrateApiState,
+} from '@domains/common/recoils'
 import { BN } from '@polkadot/util'
 import { useContext, useMemo } from 'react'
-import { useRecoilValue } from 'recoil'
+import { constSelector, useRecoilValue } from 'recoil'
 
 export const useInflation = () => {
   const chain = useContext(ChainContext)
-  const activeEra = useRecoilValue(useChainQueryState('staking', 'activeEra', []))
+  const endpoint = useContext(SubstrateApiContext).endpoint
+  const api = useRecoilValue(useSubstrateApiState())
 
-  const [totalIssuance, lastTotalStake, auctionCounter] = useRecoilValue(
+  const activeEra = useRecoilValue(useChainQueryState('staking', 'activeEra', []))
+  const auctionCounter = useRecoilValue(
+    api.query.auctions !== undefined
+      ? chainQueryState(endpoint, 'auctions', 'auctionCounter', [])
+      : constSelector(undefined)
+  )
+
+  const [totalIssuance, lastTotalStake] = useRecoilValue(
     useChainQueryMultiState([
       'balances.totalIssuance',
       ['staking.erasTotalStake', activeEra.unwrapOrDefault().index.subn(1)],
-      'auctions.auctionCounter',
     ])
   )
 
@@ -24,7 +37,7 @@ export const useInflation = () => {
       lastTotalStake.isZero() || totalIssuance.isZero()
         ? 0
         : lastTotalStake.mul(BN_MILLION).div(totalIssuance).toNumber() / BN_MILLION.toNumber()
-    const idealStake = stakeTarget - Math.min(auctionMax, auctionCounter.toNumber()) * auctionAdjust
+    const idealStake = stakeTarget - Math.min(auctionMax, auctionCounter?.toNumber() ?? 0) * auctionAdjust
     const idealInterest = maxInflation / idealStake
     const inflation =
       minInflation +

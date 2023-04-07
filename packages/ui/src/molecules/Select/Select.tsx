@@ -25,18 +25,16 @@ import React, {
 
 import { Text } from '../../atoms'
 
-type Value = string | number | undefined
-
-export type SelectProps = {
-  value?: Value
+export type SelectProps<T extends string | number> = {
+  value?: T
   placeholder?: ReactNode
   width?: string | number
   children: ReactElement<SelectItemProps> | Array<ReactElement<SelectItemProps>>
-  onChange?: (value: string | undefined) => unknown
+  onChange?: (value: T) => unknown
 }
 
 type SelectItemProps = {
-  value?: Value
+  value?: string | number
   leadingIcon?: ReactNode
   headlineText: ReactNode
   supportingText?: ReactNode
@@ -60,7 +58,7 @@ const SelectItem = forwardRef<HTMLDivElement, SelectItemProps>((props, ref) => (
 const OVERLAP = 6
 
 const Select = Object.assign(
-  ({ width = '100%', children, ...props }: SelectProps) => {
+  <T extends string | number>({ width = '100%', children, ...props }: SelectProps<T>) => {
     const theme = useTheme()
     const listRef = useRef<HTMLLIElement[]>([])
     const [open, setOpen] = useState(false)
@@ -114,9 +112,10 @@ const Select = Object.assign(
     ])
 
     const select = useCallback(
-      (value: Value) => {
+      (value: string | number) => {
         setOpen(false)
         setActiveIndex(null)
+        // @ts-expect-error
         props.onChange?.(value?.toString())
       },
       [props]
@@ -262,11 +261,17 @@ const Select = Object.assign(
               aria-selected={index === activeIndex}
               css={{ cursor: 'pointer' }}
               {...getItemProps({
-                onClick: () => select(child.props.value),
+                onClick: () => {
+                  if (child.props.value !== undefined) {
+                    select(child.props.value)
+                  }
+                },
                 onKeyDown: event => {
                   if (event.key === 'Enter') {
                     event.preventDefault()
-                    select(child.props.value)
+                    if (child.props.value !== undefined) {
+                      select(child.props.value)
+                    }
                   }
                 },
               })}
