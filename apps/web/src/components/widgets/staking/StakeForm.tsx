@@ -13,18 +13,29 @@ import {
 } from '@domains/chains'
 import { SubstrateApiContext, useSubstrateApiState } from '@domains/common'
 import { useChainState, useEraEtaFormatter, useExtrinsic, useTokenAmountFromPlanck } from '@domains/common/hooks'
-import { usePoolAddForm, usePoolStakes } from '@domains/nominationPools/hooks'
+import { useInflation, usePoolAddForm, usePoolStakes } from '@domains/nominationPools/hooks'
 import { eraStakersState, useRecommendedPoolsState } from '@domains/nominationPools/recoils'
 import { createAccounts } from '@domains/nominationPools/utils'
 import { Select } from '@talismn/ui'
 import { Maybe } from '@util/monads'
 import BN from 'bn.js'
-import { ReactNode, useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import {
+  ReactNode,
+  Suspense,
+  memo,
+  useCallback,
+  useContext,
+  useDeferredValue,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
 import { useLocation } from 'react-use'
 import { constSelector, useRecoilValue, useRecoilValueLoadable, waitForAll } from 'recoil'
 import AccountSelector from '../AccountSelector'
 import AddStakeDialog from './AddStakeDialog'
 import UnstakeDialog from './UnstakeDialog'
+import Decimal from '@util/Decimal'
 
 const ExistingPool = (props: { account: Account }) => {
   const pool = usePoolStakes({ address: props.account.address })
@@ -204,6 +215,26 @@ export const AssetSelect = (props: {
   </Select>
 )
 
+const EstimatedYield = memo(
+  (props: { amount: Decimal }) => {
+    const { stakedReturn } = useInflation()
+    const annualReturn = useMemo(() => props.amount.planck.muln(stakedReturn), [props.amount.planck, stakedReturn])
+    const parsedAnnualReturn = useTokenAmountFromPlanck(annualReturn)
+
+    return (
+      <StakeFormComponent.EstimatedYield
+        amount={`${parsedAnnualReturn.decimalAmount.toHuman()} / Year`}
+        fiatAmount={parsedAnnualReturn.localizedFiatAmount}
+      />
+    )
+  },
+  (previous, current) => previous.amount.planck.eq(current.amount.planck)
+)
+
+const DeferredEstimatedYield = (props: { amount: Decimal }) => (
+  <EstimatedYield amount={useDeferredValue(props.amount)} />
+)
+
 export const ControlledStakeForm = (props: { assetSelector: ReactNode }) => {
   const joinPoolExtrinsic = useExtrinsic('nominationPools', 'join')
 
@@ -352,7 +383,13 @@ export const ControlledStakeForm = (props: { assetSelector: ReactNode }) => {
             onRequestPoolChange={useCallback(() => setShowPoolSelector(true), [])}
           />
         }
-        estimatedYield={<StakeFormComponent.EstimatedYield amount="" fiatAmount="" />}
+        estimatedYield={
+          amount && (
+            <Suspense>
+              <DeferredEstimatedYield amount={decimalAmount} />
+            </Suspense>
+          )
+        }
         stakeButton={
           <StakeFormComponent.StakeButton
             loading={joinPoolExtrinsic.state === 'loading'}
