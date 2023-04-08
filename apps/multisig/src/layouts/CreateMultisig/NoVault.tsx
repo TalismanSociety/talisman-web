@@ -24,6 +24,7 @@ const NoVault = (props: { setStep: React.Dispatch<React.SetStateAction<Step>> })
       <p
         className={css`
           margin-top: 16px;
+          font-size: 16px;
         `}
       >
         Launch a multi-signature wallet for your organisation

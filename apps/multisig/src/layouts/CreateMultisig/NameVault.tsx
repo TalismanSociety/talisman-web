@@ -1,5 +1,6 @@
 import { css } from '@emotion/css'
 import { Button, TextInput } from '@talismn/ui'
+import { device } from '@util/breakpoints'
 
 import { Step } from '.'
 
@@ -26,6 +27,7 @@ const NameVault = (props: {
       <p
         className={css`
           margin-top: 16px;
+          font-size: 16px;
         `}
       >
         Give your vault a name. You can always change this later.
@@ -36,6 +38,9 @@ const NameVault = (props: {
           width: 490px;
           height: 56px;
           color: var(--color-offWhite);
+          @media ${device.lg} {
+            width: 623px;
+          }
         `}
       >
         <TextInput
@@ -61,6 +66,9 @@ const NameVault = (props: {
             margin-top: 48px;
             width: 240px;
             height: 56px;
+            @media ${device.lg} {
+              width: 303px;
+            }
           `}
           children={<h3>Back</h3>}
           variant="outlined"
@@ -74,6 +82,9 @@ const NameVault = (props: {
             margin-top: 48px;
             width: 240px;
             height: 56px;
+            @media ${device.lg} {
+              width: 303px;
+            }
           `}
           children={<h3>Next</h3>}
         />
