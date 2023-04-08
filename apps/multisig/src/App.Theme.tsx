@@ -187,6 +187,7 @@ export const globalStyle = (theme: Theme) => {
       font-weight: var(--font-weight-regular);
       font-size: 32px;
       line-height: 120%;
+      color: var(--color-offWhite);
     }
 
     h2 {
@@ -222,7 +223,8 @@ export const globalStyle = (theme: Theme) => {
       border-bottom: 1px solid currentColor;
     }
 
-    button {
+    button,
+    input {
       font: inherit;
     }
 

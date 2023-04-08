@@ -9,6 +9,7 @@ import { RouterProvider } from 'react-router-dom'
 import { RecoilRoot } from 'recoil'
 
 import ThemeProvider from './App.Theme'
+import { ExtensionWatcher } from './domain/extension'
 import router from './routes'
 
 const Loader = () => {
@@ -33,6 +34,7 @@ const App: React.FC = () => (
   <ThemeProvider>
     <RecoilRoot>
       <Suspense fallback={<Loader />}>
+        <ExtensionWatcher />
         <RouterProvider router={router} />
         <Toaster position="top-right" containerStyle={{ top: '6.4rem' }}>
           {t => <ToastBar toast={t} />}

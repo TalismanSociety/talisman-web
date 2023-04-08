@@ -8125,6 +8125,7 @@ __metadata:
     react-use: ^17.4.0
     react-winbox: ^1.5.0
     recoil: ^0.7.6
+    recoil-persist: ^4.2.0
     rmrk-tools: ^1.0.64
     safety-match: ^0.4.4
     storybook-preset-craco: artisanofcode/storybook-preset-craco
@@ -23760,6 +23761,15 @@ __metadata:
   dependencies:
     picomatch: ^2.2.1
   checksum: 1ced032e6e45670b6d7352d71d21ce7edf7b9b928494dcaba6f11fba63180d9da6cd7061ebc34175ffda6ff529f481818c962952004d273178acd70f7059b320
+  languageName: node
+  linkType: hard
+
+"recoil-persist@npm:^4.2.0":
+  version: 4.2.0
+  resolution: "recoil-persist@npm:4.2.0"
+  peerDependencies:
+    recoil: ^0.7.2
+  checksum: 1c8a6be4bb914b383429603e910aba80734311d8657ddf9f94a39513da0eb41fd6a2b74439f93658daf465d2e66a2d890e9f6b2f8a047e4fb99dc5b31f301515
   languageName: node
   linkType: hard
 
