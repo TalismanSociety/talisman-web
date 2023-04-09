@@ -60,7 +60,7 @@ const SelectThreshold = (props: {
         </div>
         <Slider
           value={props.threshold}
-          min={1}
+          min={2}
           max={props.max}
           step={1}
           onChange={t => {

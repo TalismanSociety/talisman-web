@@ -15,7 +15,7 @@ const Slider = (props: SliderProps) => (
         className={css`
           display: flex;
           justify-content: space-between;
-          margin: 10px 5px;
+          margin: 10px 0;
         `}
       >
         <span>{props.leftLabel}</span>
