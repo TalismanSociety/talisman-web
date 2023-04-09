@@ -14,6 +14,7 @@ declare module '@emotion/react' {
     primary: string
     secondary: string
     background: string
+    backgroundLight: string
     foreground: string
     mid: string
     dim: string
@@ -272,6 +273,7 @@ const appTheme = {
   secondary: '0,0,255',
   background: '18,18,18',
   backgroundSecondary: '27,27,27', // #1b1b1b
+  backgroundLight: '47,47,47', // #2f2f2f
   foreground: '165,165,165', // #a5a5a5
   mid: '150,150,150',
   dim: '90,90,90', // #5a5a5a

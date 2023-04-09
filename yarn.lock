@@ -8092,6 +8092,7 @@ __metadata:
     "@types/react-dom": ^18.0.10
     "@types/react-infinite-scroller": ^1.2.3
     "@types/react-router-dom": ^5.3.3
+    "@types/truncate-middle": ^1.0.1
     babel-jest: ^29.4.3
     bignumber.js: ^9.1.1
     colorjs.io: ^0.4.3
@@ -8132,6 +8133,7 @@ __metadata:
     stream-browserify: ^3.0.0
     swr: ^1.3.0
     threads: ^1.7.0
+    truncate-middle: ^1.0.6
     typescript: ^4.9.5
     uuid: ^9.0.0
     web-vitals: ^2.1.4
@@ -9166,6 +9168,13 @@ __metadata:
   version: 1.3.2
   resolution: "@types/triple-beam@npm:1.3.2"
   checksum: dd7b4a563fb710abc992e5d59eac481bed9e303fada2e276e37b00be31c392e03300ee468e57761e616512872e77935f92472877d0704a19688d15a726cee17b
+  languageName: node
+  linkType: hard
+
+"@types/truncate-middle@npm:^1.0.1":
+  version: 1.0.1
+  resolution: "@types/truncate-middle@npm:1.0.1"
+  checksum: 47c7f22b664254b62e415a8c5eefbc37b8b7c72b9dcc5871e05c48d00af6641b799dbf4c43244fc27d90801c4d3c9a04cf091667eab31b01113fb2433fe5d7c9
   languageName: node
   linkType: hard
 
@@ -26624,6 +26633,13 @@ storybook-preset-craco@artisanofcode/storybook-preset-craco:
   version: 1.0.5
   resolution: "trough@npm:1.0.5"
   checksum: d6c8564903ed00e5258bab92134b020724dbbe83148dc72e4bf6306c03ed8843efa1bcc773fa62410dd89161ecb067432dd5916501793508a9506cacbc408e25
+  languageName: node
+  linkType: hard
+
+"truncate-middle@npm:^1.0.6":
+  version: 1.0.6
+  resolution: "truncate-middle@npm:1.0.6"
+  checksum: 5f366ff69b1f794f6f9314f34178aff446d38c7b576b1d484ec562e9e27e36a7c970abdf202201709fd9d89d0db051698838b79e5eec491bff2c268e5d776b25
   languageName: node
   linkType: hard
 
