@@ -17,13 +17,7 @@ const NameVault = (props: {
         align-content: center;
       `}
     >
-      <h1
-        className={css`
-          margin-top: 37px;
-        `}
-      >
-        Name your vault
-      </h1>
+      <h1>Name your vault</h1>
       <p
         className={css`
           margin-top: 16px;

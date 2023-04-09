@@ -53,6 +53,7 @@
     "lodash": "^4.17.21",
     "md5": "^2.3.0",
     "posthog-js": "^1.42.3",
+    "rc-slider": "^10.1.1",
     "react": "^18.2.0",
     "react-apollo-network-status": "^5.2.1",
     "react-countup": "^6.4.1",

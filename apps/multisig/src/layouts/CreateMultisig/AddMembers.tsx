@@ -214,7 +214,7 @@ const AddMembers = (props: {
         <Button
           disabled={props.augmentedAccounts.length < 3}
           onClick={() => {
-            props.setStep('confirmation')
+            props.setStep('selectThreshold')
           }}
           className={css`
             margin-top: 48px;

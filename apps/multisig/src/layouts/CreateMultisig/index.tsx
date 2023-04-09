@@ -8,8 +8,9 @@ import { accountsState } from '../../domain/extension'
 import AddMembers from './AddMembers'
 import NameVault from './NameVault'
 import NoVault from './NoVault'
+import SelectThreshold from './SelectThreshold'
 
-export type Step = 'noVault' | 'nameVault' | 'addMembers' | 'confirmation' | 'transactions'
+export type Step = 'noVault' | 'nameVault' | 'addMembers' | 'selectThreshold' | 'confirmation' | 'transactions'
 
 export interface AugmentedAccount {
   address: string
@@ -20,6 +21,7 @@ export interface AugmentedAccount {
 
 function calcContentHeight(step: Step, nAccounts: number): { md: string; lg: string } {
   if (step === 'noVault') return { md: '557px', lg: '601px' }
+  if (step === 'selectThreshold') return { md: '568px', lg: '568px' }
   if (step === 'nameVault') return { md: '429px', lg: '461px' }
   return { md: 541 + nAccounts * 40 + 'px', lg: 541 + nAccounts * 40 + 'px' }
 }
@@ -41,6 +43,8 @@ const CreateMultisig = () => {
   const [name, setName] = useState<string>('')
   const [extensionAccounts] = useRecoilState(accountsState)
   const [externalAccounts, setExternalAccounts] = useState<string[]>([])
+  const [threshold, setThreshold] = useState<number>(2)
+
   const augmentedAccounts: AugmentedAccount[] = useMemo(() => {
     // TODO allow 'deselecting' extension accounts in the creation phase
     return [
@@ -101,6 +105,13 @@ const CreateMultisig = () => {
             setExternalAccounts={setExternalAccounts}
             augmentedAccounts={augmentedAccounts}
             externalAccounts={externalAccounts}
+          />
+        ) : step === 'selectThreshold' ? (
+          <SelectThreshold
+            setStep={setStep}
+            setThreshold={setThreshold}
+            threshold={threshold}
+            max={augmentedAccounts.length}
           />
         ) : null}
       </div>
