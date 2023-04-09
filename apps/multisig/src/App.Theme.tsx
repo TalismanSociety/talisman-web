@@ -208,7 +208,7 @@ export const globalStyle = (theme: Theme) => {
     p {
       font-family: 'Surt', sans-serif;
       font-weight: var(--font-weight-regular);
-      font-size: 14px;
+      font-size: 16px;
       line-height: 140%;
     }
 

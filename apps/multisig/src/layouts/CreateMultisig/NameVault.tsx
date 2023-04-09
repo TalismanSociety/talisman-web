@@ -21,7 +21,6 @@ const NameVault = (props: {
       <p
         className={css`
           margin-top: 16px;
-          font-size: 16px;
         `}
       >
         Give your vault a name. You can always change this later.

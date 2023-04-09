@@ -7,15 +7,15 @@ import Overview from '../layouts/Overview'
 
 const router = createBrowserRouter([
   {
+    path: '/',
+    element: <Landing />,
+  },
+  {
     path: '/create',
     element: <CreateMultisig />,
   },
   {
-    path: '/landing',
-    element: <Landing />,
-  },
-  {
-    path: '/',
+    path: '/overview',
     element: <Overview />,
   },
 ])

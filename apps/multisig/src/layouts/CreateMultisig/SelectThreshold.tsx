@@ -24,7 +24,6 @@ const SelectThreshold = (props: {
       <p
         className={css`
           margin-top: 16px;
-          font-size: 16px;
         `}
       >
         Select the amount of approvals required to execute a transaction.

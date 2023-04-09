@@ -6,6 +6,7 @@ import { useRecoilState } from 'recoil'
 
 import { accountsState } from '../../domain/extension'
 import AddMembers from './AddMembers'
+import Confirmation from './Confirmation'
 import NameVault from './NameVault'
 import NoVault from './NoVault'
 import SelectThreshold from './SelectThreshold'
@@ -23,12 +24,14 @@ function calcContentHeight(step: Step, nAccounts: number): { md: string; lg: str
   if (step === 'noVault') return { md: '557px', lg: '601px' }
   if (step === 'selectThreshold') return { md: '568px', lg: '568px' }
   if (step === 'nameVault') return { md: '429px', lg: '461px' }
-  return { md: 541 + nAccounts * 40 + 'px', lg: 541 + nAccounts * 40 + 'px' }
+  if (step === 'addMembers') return { md: 541 + nAccounts * 40 + 'px', lg: 541 + nAccounts * 40 + 'px' }
+  return { md: 681 + nAccounts * 40 + 'px', lg: 641 + nAccounts * 40 + 'px' }
 }
 
 function calcContentMargin(step: Step): { md: string; lg: string } {
   if (step === 'noVault') return { md: '100px 0', lg: '84px 0' }
   if (step === 'nameVault') return { md: '100px 0', lg: '155px 0' }
+  if (step === 'confirmation') return { md: '26px 0', lg: '26px 0' }
   return { md: '100px 0', lg: '63px 0' }
 }
 
@@ -66,11 +69,13 @@ const CreateMultisig = () => {
       className={css`
         display: grid;
         justify-items: center;
+        min-height: 100vh;
       `}
     >
       <header>
         <Logo
           className={css`
+            display: ${step === 'confirmation' ? 'none' : 'block'};
             margin-top: 25px;
             width: 133px;
           `}
@@ -113,6 +118,8 @@ const CreateMultisig = () => {
             threshold={threshold}
             max={augmentedAccounts.length}
           />
+        ) : step === 'confirmation' ? (
+          <Confirmation setStep={setStep} augmentedAccounts={augmentedAccounts} threshold={threshold} name={name} />
         ) : null}
       </div>
     </div>

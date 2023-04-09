@@ -1,84 +1,14 @@
+import MemberRow from '@components/MemberRow'
 import { css } from '@emotion/css'
 import { useTheme } from '@emotion/react'
-import { ExternalLink, Plus, Trash } from '@talismn/icons'
-import { Button, IconButton, Identicon, TextInput } from '@talismn/ui'
+import { Plus } from '@talismn/icons'
+import { Button, IconButton, TextInput } from '@talismn/ui'
 import { device } from '@util/breakpoints'
 import { useState } from 'react'
 import { toast } from 'react-hot-toast'
-import truncateMiddle from 'truncate-middle'
 
 import toSs52Address from '../../util/toSs52Address'
 import { AugmentedAccount, Step } from '.'
-
-const MemberRow = (props: { member: AugmentedAccount; onDelete: () => void }) => {
-  const theme = useTheme()
-  return (
-    <div
-      className={css`
-        display: grid;
-        grid-template-columns: 24px 1fr 16px 16px;
-        gap: 8px;
-        justify-items: flex-start;
-        align-items: flex-start;
-      `}
-    >
-      <Identicon
-        className={css`
-          width: 24px;
-          height: auto;
-        `}
-        value={props.member.address}
-      />
-      {props.member.you ? (
-        <>
-          <span
-            className={css`
-              display: flex;
-            `}
-          >
-            <p>{props.member.nickname}</p>
-            &nbsp;
-            <p
-              className={css`
-                color: var(--color-offWhite);
-              `}
-            >
-              (You)
-            </p>
-          </span>
-          <div></div>
-        </>
-      ) : (
-        <>
-          <p>{truncateMiddle(props.member.address, 22, 22, '...')}</p>
-          <IconButton
-            onClick={props.onDelete}
-            className={css`
-              cursor: pointer;
-            `}
-            as="button"
-            size="16px"
-            contentColor={`rgb(${theme.foreground})`}
-          >
-            <Trash />
-          </IconButton>
-        </>
-      )}
-      <a href={`https://subscan.io/account/${props.member.address}`} target="_blank" rel="noreferrer">
-        <IconButton
-          className={css`
-            cursor: pointer;
-          `}
-          as="button"
-          size="16px"
-          contentColor={`rgb(${theme.foreground})`}
-        >
-          <ExternalLink />
-        </IconButton>
-      </a>
-    </div>
-  )
-}
 
 const AddMembers = (props: {
   setStep: React.Dispatch<React.SetStateAction<Step>>
@@ -103,7 +33,6 @@ const AddMembers = (props: {
         className={css`
           text-align: center;
           margin-top: 16px;
-          font-size: 16px;
         `}
       >
         Select the addresses that you would like to act as members of this vault.

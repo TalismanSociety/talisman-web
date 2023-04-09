@@ -113,7 +113,6 @@ const Landing = () => {
         <a href="https://talisman.xyz" target="_blank" rel="noreferrer">
           <p
             className={css`
-              font-size: 16px;
               line-height: 140%;
               color: #9d9d9d;
             `}

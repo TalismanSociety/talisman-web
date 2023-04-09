@@ -40,7 +40,6 @@ const Feature = ({ primary, subtitle, icon }: { primary: string; subtitle: strin
     </p>
     <p
       className={css`
-        font-size: 16px;
         line-height: 140%;
       `}
     >
