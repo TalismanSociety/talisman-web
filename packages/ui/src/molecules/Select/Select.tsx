@@ -27,6 +27,7 @@ import { Text } from '../../atoms'
 
 export type SelectProps<T extends string | number> = {
   value?: T
+  renderSelected?: (value: T | undefined) => ReactNode
   placeholder?: ReactNode
   width?: string | number
   children: ReactElement<SelectItemProps> | Array<ReactElement<SelectItemProps>>
@@ -58,7 +59,7 @@ const SelectItem = forwardRef<HTMLDivElement, SelectItemProps>((props, ref) => (
 const OVERLAP = 6
 
 const Select = Object.assign(
-  <T extends string | number>({ width = '100%', children, ...props }: SelectProps<T>) => {
+  <T extends string | number>({ width = '100%', children, renderSelected, ...props }: SelectProps<T>) => {
     const theme = useTheme()
     const listRef = useRef<HTMLLIElement[]>([])
     const [open, setOpen] = useState(false)
@@ -74,7 +75,8 @@ const Select = Object.assign(
             .filter((x): x is ReactElement<SelectItemProps> => x as any)
             .findIndex(x => x.props.value !== undefined && x.props.value.toString() === props.value?.toString())
 
-    const selectedChild = selectedIndex === undefined ? undefined : childrenArray[selectedIndex]
+    const selectedChild =
+      renderSelected?.(props.value) ?? (selectedIndex === undefined ? undefined : childrenArray[selectedIndex])
 
     const { context, x, y, reference, floating, strategy } = useFloating({
       open,

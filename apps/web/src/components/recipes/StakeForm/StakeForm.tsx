@@ -2,8 +2,9 @@ import { useTheme } from '@emotion/react'
 import { ChevronRight, Clock, Info } from '@talismn/icons'
 import { Button, ButtonProps, Chip, ChipProps, DescriptionList, Hr, Text, TextInput, Tooltip } from '@talismn/ui'
 import { LayoutGroup, motion } from 'framer-motion'
-import { ReactNode, createContext, useContext, useId, useState } from 'react'
+import { ReactNode, createContext, useContext, useId, useMemo, useState } from 'react'
 import { StakeStatus, StakeStatusIndicator } from '../StakeStatusIndicator'
+import Color from 'colorjs.io'
 
 const AssetSelectorContext = createContext<ReactNode>(null)
 
@@ -242,7 +243,20 @@ const ExistingPool = Object.assign(
     </div>
   ),
   {
-    ClaimChip: (props: ChipProps) => <Chip {...props}>Claim</Chip>,
+    ClaimChip: (props: ChipProps) => {
+      const theme = useTheme()
+      const claimChipContainerColor = useMemo(() => {
+        const color = new Color(theme.color.primary)
+        color.alpha = 0.125
+        return color.display().toString()
+      }, [theme.color.primary])
+
+      return (
+        <Chip {...props} containerColor={claimChipContainerColor} contentColor={theme.color.primary}>
+          Claim
+        </Chip>
+      )
+    },
     WithdrawChip: (props: ChipProps) => <Chip {...props}>Withdraw</Chip>,
     AddButton: (props: ButtonProps) => (
       <Button variant="outlined" {...props} css={{ flex: 1 }}>

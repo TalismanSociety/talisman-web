@@ -16,7 +16,7 @@ import { useChainState, useEraEtaFormatter, useExtrinsic, useTokenAmountFromPlan
 import { useInflation, usePoolAddForm, usePoolStakes } from '@domains/nominationPools/hooks'
 import { eraStakersState, useRecommendedPoolsState } from '@domains/nominationPools/recoils'
 import { createAccounts } from '@domains/nominationPools/utils'
-import { Select } from '@talismn/ui'
+import { CircularProgressIndicator, Select } from '@talismn/ui'
 import { Maybe } from '@util/monads'
 import BN from 'bn.js'
 import {
@@ -29,6 +29,7 @@ import {
   useEffect,
   useMemo,
   useState,
+  useTransition,
 } from 'react'
 import { useLocation } from 'react-use'
 import { constSelector, useRecoilValue, useRecoilValueLoadable, waitForAll } from 'recoil'
@@ -86,11 +87,9 @@ const ExistingPool = (props: { account: Account }) => {
         withdrawableFiatAmount={withdrawable.localizedFiatAmount}
         withdrawChip={
           <StakeFormComponent.ExistingPool.WithdrawChip
-            onClick={useCallback(
-              () =>
-                withdrawExtrinsic.signAndSend(props.account.address, props.account.address, pool?.slashingSpan ?? 0),
-              [pool?.slashingSpan, props.account.address, withdrawExtrinsic]
-            )}
+            onClick={() =>
+              withdrawExtrinsic.signAndSend(props.account.address, props.account.address, pool?.slashingSpan ?? 0)
+            }
             loading={withdrawExtrinsic.state === 'loading'}
           />
         }
@@ -113,25 +112,22 @@ const ExistingPool = (props: { account: Account }) => {
         }
         readonly={props.account.readonly}
       />
-      <AddStakeDialog account={addStakeAddress} onDismiss={useCallback(() => setAddStakeAddress(undefined), [])} />
+      <AddStakeDialog account={addStakeAddress} onDismiss={() => setAddStakeAddress(undefined)} />
       <ClaimStakeDialog
         open={claimDialogOpen}
         amount={pendingRewards.decimalAmount?.toHuman() ?? '...'}
         fiatAmount={pendingRewards.localizedFiatAmount ?? '...'}
-        onRequestDismiss={useCallback(() => setClaimDialogOpen(false), [])}
-        onRequestClaim={useCallback(() => {
+        onRequestDismiss={() => setClaimDialogOpen(false)}
+        onRequestClaim={() => {
           claimPayoutExtrinsic.signAndSend(props.account.address)
           setClaimDialogOpen(false)
-        }, [claimPayoutExtrinsic, props.account.address])}
-        onRequestReStake={useCallback(() => {
+        }}
+        onRequestReStake={() => {
           restakeExtrinsic.signAndSend(props.account.address, { Rewards: pendingRewards })
           setClaimDialogOpen(false)
-        }, [pendingRewards, props.account.address, restakeExtrinsic])}
+        }}
       />
-      <UnstakeDialog
-        account={unstakeDialogAddress}
-        onDismiss={useCallback(() => setUnstakeDialogAddress(undefined), [])}
-      />
+      <UnstakeDialog account={unstakeDialogAddress} onDismiss={() => setUnstakeDialogAddress(undefined)} />
     </>
   )
 }
@@ -189,19 +185,27 @@ export const AssetSelect = (props: {
   selectedChain: Chain
   onSelectChain: (chain: Chain) => unknown
   chains: Chains
+  inTransition: boolean
 }) => (
   <Select
     width="100%"
     value={props.selectedChain.id}
-    onChange={useCallback(
-      (id: string) => {
-        const chain = props.chains.find(x => x.id === id)
-        if (chain !== undefined) {
-          props.onSelectChain(chain)
-        }
-      },
-      [props]
-    )}
+    renderSelected={
+      props.inTransition
+        ? id => (
+            <Select.Item
+              leadingIcon={<CircularProgressIndicator size="2.4rem" />}
+              headlineText={props.chains.find(x => x.id === id)?.nativeToken.symbol}
+            />
+          )
+        : undefined
+    }
+    onChange={(id: string) => {
+      const chain = props.chains.find(x => x.id === id)
+      if (chain !== undefined) {
+        props.onSelectChain(chain)
+      }
+    }}
   >
     {props.chains.map(x => (
       <Select.Item
@@ -236,6 +240,8 @@ const DeferredEstimatedYield = (props: { amount: Decimal }) => (
 )
 
 export const ControlledStakeForm = (props: { assetSelector: ReactNode }) => {
+  const [_, startTransition] = useTransition()
+
   const joinPoolExtrinsic = useExtrinsic('nominationPools', 'join')
 
   const location = useLocation()
@@ -354,22 +360,25 @@ export const ControlledStakeForm = (props: { assetSelector: ReactNode }) => {
         open={showPoolSelector}
         selectedPoolId={selectedPoolId}
         onChangePoolId={setSelectedPoolId}
-        onDismiss={useCallback(() => setShowPoolSelector(false), [])}
+        onDismiss={() => setShowPoolSelector(false)}
       />
       <StakeFormComponent
         assetSelector={props.assetSelector}
         accountSelector={
-          <AccountSelector selectedAccount={selectedAccount?.address} onChangeSelectedAccount={setSelectedAccount} />
+          <AccountSelector
+            selectedAccount={selectedAccount?.address}
+            onChangeSelectedAccount={account => startTransition(() => setSelectedAccount(account))}
+          />
         }
         amountInput={
           <StakeFormComponent.AmountInput
             amount={amount}
             onChangeAmount={setAmount}
-            onRequestMaxAmount={useCallback(() => {
+            onRequestMaxAmount={() => {
               if (availableBalance.decimalAmount !== undefined) {
                 setAmount(availableBalance.decimalAmount.toString())
               }
-            }, [availableBalance.decimalAmount, setAmount])}
+            }}
             fiatAmount={localizedFiatAmount}
             availableToStake={availableBalance.decimalAmount?.toHuman() ?? '...'}
           />
@@ -380,7 +389,7 @@ export const ControlledStakeForm = (props: { assetSelector: ReactNode }) => {
             status={poolStatus}
             totalStaked={poolTotalStaked?.toHuman() ?? ''}
             memberCount={bondedPoolLoadable.valueMaybe()?.unwrapOrDefault().memberCounter.toString() ?? ''}
-            onRequestPoolChange={useCallback(() => setShowPoolSelector(true), [])}
+            onRequestPoolChange={() => setShowPoolSelector(true)}
           />
         }
         estimatedYield={
@@ -394,7 +403,7 @@ export const ControlledStakeForm = (props: { assetSelector: ReactNode }) => {
           <StakeFormComponent.StakeButton
             loading={joinPoolExtrinsic.state === 'loading'}
             disabled={!isReady || inputError !== undefined || decimalAmount.planck.isZero()}
-            onClick={useCallback(() => {
+            onClick={() => {
               if (
                 selectedAccount !== undefined &&
                 decimalAmount?.planck !== undefined &&
@@ -402,7 +411,7 @@ export const ControlledStakeForm = (props: { assetSelector: ReactNode }) => {
               ) {
                 joinPoolExtrinsic.signAndSend(selectedAccount.address, decimalAmount.planck.toString(), selectedPoolId)
               }
-            }, [decimalAmount?.planck, joinPoolExtrinsic, selectedAccount, selectedPoolId])}
+            }}
           />
         }
         existingPool={
@@ -415,12 +424,21 @@ export const ControlledStakeForm = (props: { assetSelector: ReactNode }) => {
 
 const StakeForm = () => {
   const chains = useRecoilValue(chainsState)
+
+  const [inTransition, startTransition] = useTransition()
   const [selectedChain, setSelectedChain] = useState<Chain>(chains[0])
 
   return (
     <ChainProvider value={selectedChain}>
       <ControlledStakeForm
-        assetSelector={<AssetSelect chains={chains} selectedChain={selectedChain} onSelectChain={setSelectedChain} />}
+        assetSelector={
+          <AssetSelect
+            chains={chains}
+            selectedChain={selectedChain}
+            onSelectChain={chain => startTransition(() => setSelectedChain(chain))}
+            inTransition={inTransition}
+          />
+        }
       />
     </ChainProvider>
   )

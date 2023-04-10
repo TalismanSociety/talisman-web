@@ -5,7 +5,7 @@ import { useEraEtaFormatter } from '@domains/common/hooks'
 import { useInflation } from '@domains/nominationPools/hooks'
 import { CircularProgressIndicator } from '@talismn/ui'
 import BN from 'bn.js'
-import { Suspense, useCallback, useState } from 'react'
+import { Suspense, useCallback, useState, useTransition } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useRecoilValue } from 'recoil'
 
@@ -28,6 +28,8 @@ const StakeDialog = () => {
 
   const chains = useRecoilValue(chainsState)
   const [chain, setChain] = useState<Chain>(chains[0])
+
+  const [inTransition, startTransition] = useTransition()
 
   return (
     <ChainProvider value={chain}>
@@ -57,7 +59,14 @@ const StakeDialog = () => {
         stakeInput={
           <Suspense fallback={<StakingInput.Skeleton />}>
             <ControlledStakeForm
-              assetSelector={<AssetSelect chains={chains} selectedChain={chain} onSelectChain={setChain} />}
+              assetSelector={
+                <AssetSelect
+                  chains={chains}
+                  selectedChain={chain}
+                  onSelectChain={useCallback(chain => startTransition(() => setChain(chain)), [])}
+                  inTransition={inTransition}
+                />
+              }
             />
           </Suspense>
         }
