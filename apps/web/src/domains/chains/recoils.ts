@@ -3,11 +3,18 @@ import { BN } from '@polkadot/util'
 import { ToBn } from '@polkadot/util/types'
 import Decimal from '@util/Decimal'
 import { useContext } from 'react'
-import { atom, selectorFamily } from 'recoil'
+import { atom, selector, selectorFamily } from 'recoil'
 import { ChainContext } from '.'
 import { Chain, chains } from './config'
 
-export const chainsState = atom({ key: 'Chains', default: chains })
+export const _chainsState = atom({ key: '_Chains', default: chains })
+
+export const enableTestnetsState = atom({ key: 'EnableTestnets', default: false })
+
+export const chainsState = selector({
+  key: 'Chains',
+  get: ({ get }) => (get(enableTestnetsState) ? get(_chainsState) : get(_chainsState).filter(x => !x.isTestnet)),
+})
 
 export const tokenPriceState = selectorFamily({
   key: 'TokenPrice',
