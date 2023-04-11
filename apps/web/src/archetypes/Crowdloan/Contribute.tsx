@@ -1,16 +1,17 @@
-import { Account, Parachain } from '@archetypes'
+import { Parachain } from '@archetypes'
 import { ReactComponent as XCircle } from '@assets/icons/x-circle.svg'
-import { Button, DesktopRequired, Field, MaterialLoader, Pendor, useModal } from '@components'
+import { Button, DesktopRequired, Field, MaterialLoader, useModal } from '@components'
 import { TalismanHandLike } from '@components/TalismanHandLike'
 import { TalismanHandLoader } from '@components/TalismanHandLoader'
+import AccountSelector from '@components/widgets/AccountSelector'
+import { useTheme } from '@emotion/react'
 import styled from '@emotion/styled'
 import { ContributeEvent, useCrowdloanContribute } from '@libs/crowdloans'
 import { Acala, Moonbeam, Polkadex, overrideByIds } from '@libs/crowdloans/crowdloanOverrides'
-import { useActiveAccount, useCrowdloanById } from '@libs/talisman'
-import { useTokenPrice } from '@libs/tokenprices'
+import { useCrowdloanById } from '@libs/talisman'
+import { CircularProgressIndicator, Text } from '@talismn/ui'
 import { isMobileBrowser } from '@util/helpers'
-import { formatCurrency, truncateString } from '@util/helpers'
-import BigNumber from 'bignumber.js'
+import { Maybe } from '@util/monads'
 import { MouseEventHandler, useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -111,38 +112,31 @@ const ContributeTo = styled(
     parachainName,
 
     contributionAmount,
+    accountBalance,
     email,
     memoAddress,
 
-    txFee,
     validationError,
     submissionRequested,
   }: any) => {
+    const theme = useTheme()
     const { t } = useTranslation()
     const { t: tError } = useTranslation('errors')
 
     const [chainHasTerms, termsAgreed, onTermsCheckboxClick] = useTerms(relayChainId, parachainId)
 
-    const { price: tokenPrice, loading: priceLoading } = useTokenPrice(relayNativeToken)
-    const usd = useMemo(
-      () =>
-        !Number.isNaN(Number(contributionAmount)) &&
-        new BigNumber(Number(contributionAmount)).times(tokenPrice ?? 0).toString(),
-      [contributionAmount, tokenPrice]
-    )
-
-    const txFeeUsd = useMemo(
-      () => !Number.isNaN(Number(txFee)) && new BigNumber(Number(txFee)).times(tokenPrice ?? 0),
-      [txFee, tokenPrice]
-    )
-
-    const { address } = useActiveAccount()
+    const [address, setAddress] = useState<string>()
     useEffect(() => {
       dispatch(ContributeEvent.setAccount(address))
     }, [dispatch, address])
 
     return (
       <form
+        css={{
+          '@media(min-width: 44rem)': {
+            width: '40rem',
+          },
+        }}
         className={className}
         onSubmit={event => {
           event.preventDefault()
@@ -155,7 +149,12 @@ const ContributeTo = styled(
           <h3>{parachainName}</h3>
         </header>
         <main>
-          <div className="row split">
+          <div css={{ display: 'flex', flexDirection: 'column', gap: '1.6rem', marginBottom: '2.4rem' }}>
+            <AccountSelector
+              selectedAccount={address}
+              onChangeSelectedAccount={useCallback(account => setAddress(account?.address), [])}
+              defaultToFirstAddress
+            />
             <div className="amount-input">
               <Field.Input
                 value={contributionAmount}
@@ -167,32 +166,26 @@ const ContributeTo = styled(
                 suffix={relayNativeToken}
                 disabled={submissionRequested}
               />
-              <div className="info-row usd-and-error">
-                <Pendor prefix={!usd && '-'} require={!priceLoading}>
-                  {usd && truncateString(formatCurrency(usd), '$9,999,999,999.99'.length)}
-                </Pendor>
+              <Text.BodySmall
+                className="info-row usd-and-error"
+                css={{ height: '1.25em', display: 'flex', justifyContent: 'space-between', marginTop: '0.6rem' }}
+              >
+                {
+                  <span>
+                    {Maybe.of(accountBalance).mapOr<any>(<CircularProgressIndicator size="1em" />, x =>
+                      Number(x).toFixed(2)
+                    )}{' '}
+                    available
+                  </span>
+                }
                 {validationError && (
-                  <span className="error">{tError(validationError.i18nCode, validationError.vars)}</span>
+                  <span className="error" css={{ color: theme.color.onError }}>
+                    {tError(validationError.i18nCode, validationError.vars)}
+                  </span>
                 )}
-              </div>
-            </div>
-            <div className="switcher-column">
-              <Account.Button narrow showValue closeParent={closeModal} fixedDropdown />
-              <div className="tx-fee">
-                <Pendor suffix={txFee === null ? '-' : null} require={txFee !== undefined}>
-                  {txFee ? (
-                    <>
-                      <span>
-                        {`${t('Fee')}: ${truncateString(formatCurrency(txFeeUsd), '$9,999,999,999.99'.length)}`}
-                      </span>
-                      {/* <span>{` = ${shortNumber(txFee)}${relayNativeToken}`}</span> */}
-                    </>
-                  ) : null}
-                </Pendor>
-              </div>
+              </Text.BodySmall>
             </div>
           </div>
-
           {Moonbeam.is(relayChainId, parachainId) && (
             <div className="row">
               <div className="memo-address-input">

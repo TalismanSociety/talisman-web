@@ -1,0 +1,10 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "extends": ["@tsconfig/strictest/tsconfig", "@tsconfig/esm/tsconfig.json"],
+  "compilerOptions": {
+    "moduleResolution": "bundler",
+    "jsx": "react-jsx",
+    "declaration": true,
+    "exactOptionalPropertyTypes": false
+  }
+}

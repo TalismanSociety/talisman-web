@@ -2,30 +2,27 @@ import '@polkadot/api-augment/polkadot'
 import '@polkadot/api-augment/substrate'
 
 import CookieBanner from '@archetypes/CookieBanner'
-import DevMenu from '@archetypes/DevMenu'
-import ToastBar from '@components/molecules/ToastBar'
-import Cryptoticon from '@components/recipes/Cryptoticon'
+import Development from '@archetypes/Development'
 import { TalismanHandLoader } from '@components/TalismanHandLoader'
-import { AccountsWatcher } from '@domains/accounts/recoils'
+
+import ErrorBoundary from '@components/widgets/ErrorBoundary'
+import { LegacyBalancesWatcher } from '@domains/balances/recoils'
+import { chainRpcState } from '@domains/chains/recoils'
+import { SUBSTRATE_API_STATE_GARBAGE_COLLECTOR_UNSTABLE, SubstrateApiContext } from '@domains/common'
+import { ExtensionWatcher } from '@domains/extension/recoils'
+import NftProvider from '@libs/@talisman-nft/provider'
 import * as MoonbeamContributors from '@libs/moonbeam-contributors'
 import * as Portfolio from '@libs/portfolio'
 import TalismanProvider from '@libs/talisman'
-import * as Tokenprices from '@libs/tokenprices'
 import router from '@routes'
 import { WayfinderProvider } from '@talismn/wayfinder-react'
-import posthog from 'posthog-js'
-import React, { Suspense } from 'react'
+import { PropsWithChildren, Suspense } from 'react'
 import { Toaster } from 'react-hot-toast'
 import { RouterProvider } from 'react-router-dom'
-import { RecoilRoot } from 'recoil'
+import { RecoilRoot, useRecoilValue } from 'recoil'
+import { ToastBar } from '@talismn/ui'
 
 import ThemeProvider from './App.Theme'
-
-if (process.env.REACT_APP_POSTHOG_AUTH_TOKEN) {
-  posthog.init(process.env.REACT_APP_POSTHOG_AUTH_TOKEN)
-  // eslint-disable-next-line
-  posthog.debug(process.env.NODE_ENV === 'development')
-}
 
 const Loader = () => {
   return (
@@ -45,32 +42,41 @@ const Loader = () => {
   )
 }
 
-const App: React.FC = () => (
-  <RecoilRoot>
-    <Portfolio.Provider>
-      <Tokenprices.Provider>
-        <Cryptoticon.Provider>
-          <TalismanProvider>
-            <WayfinderProvider>
-              <AccountsWatcher />
-              <MoonbeamContributors.Provider>
-                <ThemeProvider>
-                  <DevMenu />
-                  <Suspense fallback={<Loader />}>
+// TODO: this is for backward compatibility only, will be remove
+// after multi chain support
+const LegacyApiProvider = (props: PropsWithChildren) => (
+  <SubstrateApiContext.Provider value={{ endpoint: useRecoilValue(chainRpcState) }}>
+    {props.children}
+  </SubstrateApiContext.Provider>
+)
+
+const App = () => (
+  <ThemeProvider>
+    <ErrorBoundary>
+      <RecoilRoot>
+        <SUBSTRATE_API_STATE_GARBAGE_COLLECTOR_UNSTABLE />
+        <Suspense fallback={<Loader />}>
+          <LegacyApiProvider>
+            <Portfolio.Provider>
+              <TalismanProvider>
+                <WayfinderProvider>
+                  <ExtensionWatcher />
+                  <LegacyBalancesWatcher />
+                  <MoonbeamContributors.Provider>
+                    <Development />
+                    <NftProvider />
                     <RouterProvider router={router} />
-                    <Toaster position="top-right" containerStyle={{ top: '6.4rem' }}>
-                      {t => <ToastBar toast={t} />}
-                    </Toaster>
+                    <Toaster position="top-right">{t => <ToastBar toast={t} />}</Toaster>
                     <CookieBanner />
-                  </Suspense>
-                </ThemeProvider>
-              </MoonbeamContributors.Provider>
-            </WayfinderProvider>
-          </TalismanProvider>
-        </Cryptoticon.Provider>
-      </Tokenprices.Provider>
-    </Portfolio.Provider>
-  </RecoilRoot>
+                  </MoonbeamContributors.Provider>
+                </WayfinderProvider>
+              </TalismanProvider>
+            </Portfolio.Provider>
+          </LegacyApiProvider>
+        </Suspense>
+      </RecoilRoot>
+    </ErrorBoundary>
+  </ThemeProvider>
 )
 
 export default App

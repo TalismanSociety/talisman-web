@@ -1,5 +1,5 @@
-import Text from '@components/atoms/Text'
 import { css } from '@emotion/react'
+import { Text } from '@talismn/ui'
 
 type PlaceholderPreviewProps = {
   icon: any

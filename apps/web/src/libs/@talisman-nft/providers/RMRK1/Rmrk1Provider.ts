@@ -5,8 +5,8 @@ import { NFTDetail, NFTShort } from '../../types'
 import { NFTInterface } from '../NFTInterface'
 
 const QUERY_SHORT = gql`
-  query ($address: String!) {
-    nfts(where: { owner: { _eq: $address }, burned: { _eq: "" } }) {
+  query ($address: String!, $offset: Int) {
+    nfts(limit: 10, offset: $offset, where: { owner: { _eq: $address }, burned: { _eq: "" } }) {
       id
       metadata
       metadata_name
@@ -17,6 +17,16 @@ const QUERY_SHORT = gql`
         id
         name
         max
+      }
+    }
+  }
+`
+
+const QUERY_AGGREGATE = gql`
+  query ($address: String!) {
+    nfts_aggregate(where: { owner: { _eq: $address }, burned: { _eq: "" } }) {
+      aggregate {
+        count
       }
     }
   }
@@ -84,14 +94,23 @@ export class Rmrk1Provider extends NFTInterface {
     const itemIndex = await fetch(`${this.indexUri}${encodedAddress}`).then((res: any) => res.json())
 
     // set this count based on length
-    this.count = itemIndex.length
 
     // set all the item media mappings
     const idImageMap: { [key: string]: string | null } = {}
     itemIndex.forEach((item: any) => (idImageMap[item.id] = this.toIPFSUrl(item?.metadata_image)))
 
-    // fetch and set all items
-    await client.query({ query: QUERY_SHORT, variables: { address: encodedAddress } }).then(({ data }: any) => {
+    const aggregateQuery = await client.query({ query: QUERY_AGGREGATE, variables: { address: encodedAddress } })
+    this.count[address] = aggregateQuery.data.nfts_aggregate.aggregate.count
+
+    let offset = 0
+    while (true) {
+      // fetch and set all items
+      const { data } = await client.query({ query: QUERY_SHORT, variables: { address: encodedAddress, offset } })
+
+      if (data.nfts.length === 0) {
+        break
+      }
+
       data.nfts.forEach(async (nft: any) => {
         const thumb = this.toIPFSUrl(nft?.metadata_image || nft?.metadata_animation_url)
         const mediaUri = this.toIPFSUrl(nft?.metadata_animation_url || nft?.metadata_image || idImageMap[nft?.id])
@@ -117,7 +136,9 @@ export class Rmrk1Provider extends NFTInterface {
         // se the item
         this.setItem(item)
       })
-    })
+
+      offset += data.nfts.length
+    }
 
     this.isFetching = false
   }

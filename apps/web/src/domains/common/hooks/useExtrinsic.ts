@@ -1,13 +1,14 @@
 import { ApiPromise } from '@polkadot/api'
 import { AddressOrPair } from '@polkadot/api/types'
+import { web3FromAddress } from '@polkadot/extension-dapp'
 import { ISubmittableResult } from '@polkadot/types/types'
-import { useCallback, useState } from 'react'
+import { useCallback, useContext, useState } from 'react'
 import { useRecoilCallback, useRecoilValueLoadable } from 'recoil'
 
-import { apiState, chainState } from '../../chains/recoils'
-import { extensionState } from '../../extension/recoils'
-import { extrinsicMiddleWare } from '../extrinsicMiddleware'
+import { chainIdState, chainState } from '../../chains/recoils'
+import { extrinsicMiddleware } from '../extrinsicMiddleware'
 import { toastExtrinsic } from '../utils'
+import { SubstrateApiContext, substrateApiState } from '..'
 
 export const useExtrinsic = <
   TModule extends keyof PickKnownKeys<ApiPromise['tx']>,
@@ -18,6 +19,7 @@ export const useExtrinsic = <
 ) => {
   type TExtrinsic = ApiPromise['tx'][TModule][TSection]
 
+  const apiEndpoint = useContext(SubstrateApiContext).endpoint
   const chainLoadable = useRecoilValueLoadable(chainState)
 
   const [loadable, setLoadable] = useState<
@@ -39,8 +41,11 @@ export const useExtrinsic = <
         setParameters([account, ...params])
 
         const promiseFunc = async () => {
-          const api = await snapshot.getPromise(apiState)
-          const extension = await snapshot.getPromise(extensionState)
+          const [chainId, api, extension] = await Promise.all([
+            snapshot.getPromise(chainIdState),
+            snapshot.getPromise(substrateApiState(apiEndpoint)),
+            web3FromAddress(account.toString()),
+          ])
 
           let resolve = (value: ISubmittableResult) => {}
           let reject = (value: unknown) => {}
@@ -51,28 +56,25 @@ export const useExtrinsic = <
           })
 
           try {
-            const unsubscribe = await api.tx[module]?.[section]?.(...params).signAndSend(
-              account,
-              { signer: extension?.signer },
-              result => {
-                extrinsicMiddleWare(module, section as any, result, callbackInterface)
+            const extrinsic = api.tx[module]?.[section]?.(...params)
+            const unsubscribe = await extrinsic?.signAndSend(account, { signer: extension?.signer }, result => {
+              extrinsicMiddleware(chainId, extrinsic, result, callbackInterface)
 
-                if (result.isError) {
-                  unsubscribe?.()
+              if (result.isError) {
+                unsubscribe?.()
+                reject(result)
+              } else if (result.isFinalized) {
+                unsubscribe?.()
+
+                if (result.dispatchError !== undefined) {
                   reject(result)
-                } else if (result.isFinalized) {
-                  unsubscribe?.()
-
-                  if (result.dispatchError !== undefined) {
-                    reject(result)
-                  } else {
-                    resolve(result)
-                  }
                 } else {
-                  setLoadable({ state: 'loading', contents: result })
+                  resolve(result)
                 }
+              } else {
+                setLoadable({ state: 'loading', contents: result })
               }
-            )
+            })
           } catch (error) {
             reject(error)
           }
@@ -97,7 +99,7 @@ export const useExtrinsic = <
           setLoadable({ state: 'hasError', contents: error })
         }
       },
-    [chainLoadable, module, section]
+    [apiEndpoint, chainLoadable, module, section]
   )
 
   return { ...loadable, parameters, signAndSend, reset }

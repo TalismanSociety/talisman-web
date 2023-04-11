@@ -1,9 +1,9 @@
 import { Crowdloan, Parachain } from '@archetypes'
 import { Panel, PanelSection, Poster, useModal } from '@components'
-import Button from '@components/atoms/Button'
 import styled from '@emotion/styled'
 import { useCrowdloanContributions } from '@libs/crowdloans'
 import { useCrowdloanByParachainId, useParachainAssets, useParachainDetailsBySlug } from '@libs/talisman'
+import { Button } from '@talismn/ui'
 import { useTranslation } from 'react-i18next'
 import { useParams } from 'react-router-dom'
 
@@ -47,9 +47,11 @@ const CrowdloanDetail = styled(({ className }: { className?: string }) => {
             </PanelSection>
             <PanelSection>
               <Crowdloan.Bonus full id={id ?? ''} prefix={<Parachain.Asset id={parachainId ?? ''} type="logo" />} />
-              <Button onClick={() => openModal(<Crowdloan.Contribute id={id} />)} disabled={uiStatus !== 'active'}>
-                {t('Contribute')}
-              </Button>
+              {parachainDetails?.allowContribute && (
+                <Button onClick={() => openModal(<Crowdloan.Contribute id={id} />)} disabled={uiStatus !== 'active'}>
+                  {t('Contribute')}
+                </Button>
+              )}
             </PanelSection>
           </Panel>
 
@@ -74,13 +76,11 @@ const CrowdloanDetail = styled(({ className }: { className?: string }) => {
 
   > .content {
     width: 100%;
-    max-width: 1280px;
     margin: 0 auto;
 
     padding: 0 5vw;
     display: flex;
     justify-content: space-between;
-    z-index: 1;
     position: relative;
 
     > article {

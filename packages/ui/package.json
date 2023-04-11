@@ -1,0 +1,55 @@
+{
+  "private": true,
+  "name": "@talismn/ui",
+  "packageManager": "yarn@3.4.1",
+  "main": "build/commonjs/index.js",
+  "exports": {
+    ".": "./build/index.js",
+    "./assets/css/talismn.css": "./assets/css/talismn.css"
+  },
+  "scripts": {
+    "dev": "tsc --build --watch tsconfig.build.json",
+    "build": "rm -rf build && tsc --build tsconfig.build.json",
+    "lint": "eslint src",
+    "check-types": "tsc --noEmit",
+    "storybook": "start-storybook -p 6007",
+    "build-storybook": "build-storybook"
+  },
+  "dependencies": {
+    "@floating-ui/react": "^0.20.1",
+    "@lottiefiles/react-lottie-player": "^3.5.2",
+    "@talismn/icons": "workspace:^",
+    "colorjs.io": "^0.4.3"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.21.0",
+    "@mdx-js/react": "^1.6.22",
+    "@storybook/addon-actions": "^6.5.16",
+    "@storybook/addon-docs": "^6.5.16",
+    "@storybook/addon-essentials": "^6.5.16",
+    "@storybook/addon-interactions": "^6.5.16",
+    "@storybook/addon-links": "^6.5.16",
+    "@storybook/builder-webpack5": "^6.5.16",
+    "@storybook/manager-webpack5": "^6.5.16",
+    "@storybook/react": "^6.5.16",
+    "@storybook/testing-library": "^0.0.13",
+    "@talismn/development": "workspace:^",
+    "@talismn/eslint-config": "workspace:^",
+    "@talismn/tsconfig": "workspace:^",
+    "@types/react": "^18.0.28",
+    "babel-loader": "^8.3.0",
+    "eslint": "^8.37.0",
+    "framer-motion": "^10.2.3",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-hot-toast": "^2.4.0",
+    "typescript": "^5.0.2"
+  },
+  "peerDependencies": {
+    "@emotion/react": "11.x",
+    "@talismn/icons": "*",
+    "framer-motion": "10.x",
+    "react": "18.x",
+    "react-hot-toast": "2.x"
+  }
+}

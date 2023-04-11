@@ -1,32 +1,40 @@
 import styled from '@emotion/styled'
 import { device } from '@util/breakpoints'
-import posthog from 'posthog-js'
+import { usePostHog } from 'posthog-js/react'
+import { useCallback } from 'react'
+
+import { Dapp } from './hooks'
 
 type CardProps = {
   className?: string
-  dapp: any
+  dapp: Dapp
   setSelectedTag: (tag: string) => unknown
 }
 
-const toExternalDapp = (dapp: any) => {
-  const categories = dapp.tags.reduce(
-    (acc: any, tag: string) => ({
-      ...acc,
-      [`category_${tag.replace(/[^\w]/, '')}'`]: true,
-    }),
-    {}
+const Card = ({ className, dapp, setSelectedTag }: CardProps) => {
+  const posthog = usePostHog()
+
+  const toExternalDapp = useCallback(
+    (dapp: any) => {
+      const categories = dapp.tags.reduce(
+        (acc: any, tag: string) => ({
+          ...acc,
+          [`category_${tag.replace(/[^\w]/, '')}'`]: true,
+        }),
+        {}
+      )
+
+      posthog?.capture('Goto Dapp', { dappName: dapp.name, dappUrl: dapp.url, ...categories })
+      window.open(dapp.url, '_blank', 'noopener,noreferrer')
+    },
+    [posthog]
   )
 
-  posthog.capture('Goto Dapp', { dappName: dapp.name, dappUrl: dapp.url, ...categories })
-  window.open(dapp.url, '_blank', 'noopener,noreferrer')
-}
-
-const Card = ({ className, dapp, setSelectedTag }: CardProps) => {
   return (
     <div className={className} key={dapp.id} onClick={() => toExternalDapp(dapp)}>
       <div className="card__header">
-        <img src={dapp.logoUrl} alt={dapp.name + ' logo'} className="logo" />
         <img src={dapp.logoUrl} alt={dapp.name + ' logo'} className="logoBG" />
+        <img src={dapp.logoUrl} alt={dapp.name + ' logo'} className="logo" />
       </div>
       <div className="card-body">
         <span>
@@ -76,14 +84,12 @@ const StyledCard = styled(Card)`
     height: 100%;
     object-fit: contain;
     padding: 1.5em;
-    z-index: 2;
   }
   .logoBG {
     position: absolute;
     top: 0;
     left: 0;
     filter: blur(150px) saturate(3);
-    z-index: 1;
     height: 100%;
     width: 100%;
   }

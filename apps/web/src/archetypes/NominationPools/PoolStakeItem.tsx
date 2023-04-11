@@ -1,74 +1,123 @@
-import PoolStake, { PoolStakeProps } from '@components/recipes/PoolStake/PoolStake'
-import { PoolStatus } from '@components/recipes/PoolStatusIndicator'
+import ClaimStakeDialog from '@components/recipes/ClaimStakeDialog'
+import { PoolStakeItem as PoolStakeItemComponent, WithdrawChip } from '@components/recipes/StakeItem'
+import { StakeStatus } from '@components/recipes/StakeStatusIndicator'
+import { Account } from '@domains/accounts/recoils'
+import { useTokenAmountFromPlanck } from '@domains/common/hooks'
+import { useEraEtaFormatter } from '@domains/common/hooks/useEraEta'
 import { UInt } from '@polkadot/types-codec'
 import { PalletNominationPoolsPoolMember } from '@polkadot/types/lookup'
-import { ReactNode, useCallback, useState } from 'react'
+import { CircularProgressIndicator } from '@talismn/ui'
+import BN from 'bn.js'
+import { ReactNode, useCallback, useMemo, useState } from 'react'
 import { useRecoilValue, waitForAll } from 'recoil'
 
-import { nativeTokenDecimalState, nativeTokenPriceState } from '../../domains/chains/recoils'
+import { nativeTokenPriceState, useNativeTokenDecimalState } from '../../domains/chains/recoils'
 import useExtrinsic from '../../domains/common/hooks/useExtrinsic'
 import AddStakeDialog from './AddStakeDialog'
 import UnstakeDialog from './UnstakeDialog'
 
 const PoolStakeItem = ({
-  className,
-  variant,
   item,
+  hideIdenticon,
 }: {
-  className?: string
-  variant?: PoolStakeProps['variant']
+  hideIdenticon?: boolean
   item: {
-    status?: PoolStatus
-    account?: {
-      address: string
-      name?: string
-    }
+    status?: StakeStatus
+    account?: Account
     poolName?: ReactNode
     poolMember: PalletNominationPoolsPoolMember
     pendingRewards?: UInt
+    withdrawable: bigint
+    unbondings: {
+      amount: bigint
+      erasTilWithdrawable: BN
+    }[]
+    slashingSpan: number
   }
 }) => {
-  const [decimalFromPlanck, nativeTokenPrice] = useRecoilValue(
-    waitForAll([nativeTokenDecimalState, nativeTokenPriceState('usd')])
+  const [decimal, nativeTokenPrice] = useRecoilValue(
+    waitForAll([useNativeTokenDecimalState(), nativeTokenPriceState('usd')])
   )
-
-  const claimPayoutExtrinsic = useExtrinsic('nominationPools', 'claimPayout')
 
   const [isUnstaking, setIsUnstaking] = useState(false)
   const [isAddingStake, setIsAddingStake] = useState(false)
 
+  const [claimDialogOpen, setClaimDialogOpen] = useState(false)
+  const claimPayoutExtrinsic = useExtrinsic('nominationPools', 'claimPayout')
+  const restakeExtrinsic = useExtrinsic('nominationPools', 'bondExtra')
+  const withdrawExtrinsic = useExtrinsic('nominationPools', 'withdrawUnbonded')
+
+  const pendingRewards = useTokenAmountFromPlanck(item.pendingRewards)
+
+  const totalUnlocking = useMemo(
+    () => item.unbondings?.reduce((previous, current) => previous + current.amount, 0n),
+    [item.unbondings]
+  )
+
+  const eraEtaFormatter = useEraEtaFormatter()
+  const unlocks = item.unbondings?.map(x => ({
+    amount: decimal.fromPlanck(x.amount).toHuman(),
+    eta: eraEtaFormatter(x.erasTilWithdrawable) ?? <CircularProgressIndicator size="1em" />,
+  }))
+
   return (
     <>
-      <PoolStake
-        className={className}
-        variant={variant}
-        poolStatus={item.status}
+      <PoolStakeItemComponent
+        readonly={item.account?.readonly}
+        hideIdenticon={hideIdenticon}
+        stakeStatus={item.status}
         accountName={item.account?.name ?? ''}
         accountAddress={item.account?.address ?? ''}
-        stakingAmount={decimalFromPlanck.fromPlanck(item.poolMember.points).toHuman()}
-        stakingAmountInFiat={(
-          decimalFromPlanck.fromPlanck(item.poolMember.points).toNumber() * nativeTokenPrice
-        ).toLocaleString(undefined, { style: 'currency', currency: 'usd', currencyDisplay: 'narrowSymbol' })}
-        rewardsAmount={'+' + decimalFromPlanck.fromPlanck(item.pendingRewards?.toString()).toHuman()}
-        rewardsAmountInFiat={
-          '+' +
-          (decimalFromPlanck.fromPlanck(item.pendingRewards).toNumber() * nativeTokenPrice).toLocaleString(undefined, {
-            style: 'currency',
-            currency: 'usd',
-            currencyDisplay: 'narrowSymbol',
-          })
-        }
+        stakingAmount={decimal.fromPlanck(item.poolMember.points).toHuman()}
+        stakingFiatAmount={(decimal.fromPlanck(item.poolMember.points).toNumber() * nativeTokenPrice).toLocaleString(
+          undefined,
+          { style: 'currency', currency: 'usd', currencyDisplay: 'narrowSymbol' }
+        )}
         poolName={item.poolName ?? ''}
-        onRequestClaim={() => claimPayoutExtrinsic.signAndSend(item.account?.address ?? '')}
-        claimState={
-          item.pendingRewards?.isZero() ?? true
-            ? 'unavailable'
-            : claimPayoutExtrinsic.state === 'loading'
-            ? 'pending'
-            : undefined
+        claimChip={
+          item.pendingRewards?.isZero() === false && (
+            <PoolStakeItemComponent.ClaimChip
+              amount={decimal.fromPlanck(item.pendingRewards).toHuman()}
+              onClick={() => setClaimDialogOpen(true)}
+              loading={claimPayoutExtrinsic.state === 'loading' || restakeExtrinsic.state === 'loading'}
+            />
+          )
         }
-        onRequestUnstake={() => setIsUnstaking(true)}
-        onRequestAdd={() => setIsAddingStake(true)}
+        unstakeChip={
+          // Fully unbonding pool can't be interacted with
+          !item.poolMember.points.isZero() && (
+            <PoolStakeItemComponent.UnstakeChip onClick={() => setIsUnstaking(true)} />
+          )
+        }
+        increaseStakeChip={
+          // Fully unbonding pool can't be interacted with
+          !item.poolMember.points.isZero() && (
+            <PoolStakeItemComponent.IncreaseStakeChip onClick={() => setIsAddingStake(true)} />
+          )
+        }
+        withdrawChip={
+          item.withdrawable > 0n && (
+            <WithdrawChip
+              amount={decimal.fromPlanck(item.withdrawable).toHuman()}
+              onClick={() =>
+                withdrawExtrinsic.signAndSend(
+                  item.account?.address ?? '',
+                  item.account?.address ?? '',
+                  item.slashingSpan
+                )
+              }
+              loading={withdrawExtrinsic.state === 'loading'}
+            />
+          )
+        }
+        status={
+          totalUnlocking > 0n && (
+            <PoolStakeItemComponent.UnstakingStatus
+              amount={decimal.fromPlanck(totalUnlocking).toHuman()}
+              unlocks={unlocks ?? []}
+            />
+          )
+        }
       />
       <AddStakeDialog
         account={isAddingStake ? item.account?.address : undefined}
@@ -77,6 +126,20 @@ const PoolStakeItem = ({
       <UnstakeDialog
         account={isUnstaking ? item.account?.address : undefined}
         onDismiss={useCallback(() => setIsUnstaking(false), [])}
+      />
+      <ClaimStakeDialog
+        open={claimDialogOpen}
+        amount={pendingRewards.decimalAmount?.toHuman() ?? '...'}
+        fiatAmount={pendingRewards.localizedFiatAmount ?? '...'}
+        onRequestDismiss={useCallback(() => setClaimDialogOpen(false), [])}
+        onRequestClaim={useCallback(() => {
+          claimPayoutExtrinsic.signAndSend(item.account?.address ?? '')
+          setClaimDialogOpen(false)
+        }, [claimPayoutExtrinsic, item.account?.address])}
+        onRequestReStake={useCallback(() => {
+          restakeExtrinsic.signAndSend(item.account?.address ?? '', { Rewards: item.pendingRewards })
+          setClaimDialogOpen(false)
+        }, [item.account?.address, item.pendingRewards, restakeExtrinsic])}
       />
     </>
   )

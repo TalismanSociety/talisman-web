@@ -1,19 +1,15 @@
-import StyledPreview from '@archetypes/NFT/Modal/Preview'
-import Button from '@components/atoms/Button'
-import Dialog, { DialogProps } from '@components/atoms/Dialog'
-import { ExternalLink, Layers, X } from '@components/atoms/Icon'
-import Text from '@components/atoms/Text'
-import InfoWithHeader from '@components/molecules/InfoWithHeader/InfoWithHeader'
-import Pill from '@components/molecules/Pill'
+import { NFTPreview } from '@components/recipes/NFTPreview'
 import { keyframes } from '@emotion/react'
 import { useNftById } from '@libs/@talisman-nft'
-import { NFTDetail } from '@libs/@talisman-nft/types'
+import { NFTShort } from '@libs/@talisman-nft/types'
+import { ExternalLink, Layers, X } from '@talismn/icons'
+import { Button, Dialog, DialogProps, InfoWithHeader, Tag, Text } from '@talismn/ui'
 
 import { NFTChild } from '../types'
 import InfoSkeleton from './InfoSkeleton'
 
 export type NftDialogProps = DialogProps & {
-  nft: NFTDetail
+  nft: NFTShort
   open?: boolean
   onRequestDismiss: () => void
 }
@@ -36,15 +32,15 @@ const backdropKeyframes = keyframes`
   }
 `
 
-const NftDialog = (props: NftDialogProps) => {
+const NftDialog = ({ onRequestDismiss, ...props }: NftDialogProps) => {
   const { nft, loading } = useNftById(props.nft.id)
 
   return (
     <Dialog
       {...props}
-      onClickBackdrop={props.onRequestDismiss}
-      onClose={props.onRequestDismiss}
-      onCancel={props.onRequestDismiss}
+      onClickBackdrop={onRequestDismiss}
+      onClose={onRequestDismiss}
+      onCancel={onRequestDismiss}
       css={{
         'width': '108rem',
         'maxHeight': '66rem',
@@ -64,7 +60,7 @@ const NftDialog = (props: NftDialogProps) => {
     >
       <Button
         variant="noop"
-        onClick={props.onRequestDismiss}
+        onClick={onRequestDismiss}
         css={{
           'position': 'absolute',
           'top': '2.8rem',
@@ -75,7 +71,7 @@ const NftDialog = (props: NftDialogProps) => {
           },
         }}
       >
-        <X width="24px" height="24px" />
+        <X />
       </Button>
       <div
         css={{
@@ -92,6 +88,7 @@ const NftDialog = (props: NftDialogProps) => {
         <section
           css={{
             'width': '50rem',
+            'height': '50rem',
             'display': 'flex',
             'flexDirection': 'column',
             'justifyContent': 'center',
@@ -100,20 +97,14 @@ const NftDialog = (props: NftDialogProps) => {
             '@media (max-width: 1024px)': {
               width: '100%',
             },
+            '> *': {
+              width: '100%',
+              height: '100%',
+              objectFit: 'contain',
+            },
           }}
         >
-          <StyledPreview
-            css={{
-              'width': '50rem',
-              'height': '50rem',
-              '@media (max-width: 1024px)': {
-                width: '100%',
-                height: '100%',
-              },
-            }}
-            nft={nft}
-            loading={loading}
-          />
+          <NFTPreview nft={nft} loading={loading} isFull />
         </section>
 
         {/* Details Section */}
@@ -157,7 +148,7 @@ const NftDialog = (props: NftDialogProps) => {
                   >
                     {props.nft?.name}{' '}
                     {!!props.nft?.nftSpecificData?.isComposable && (
-                      <Layers css={{ color: 'var(--color-primary)', width: '0.75em' }} title="Composable" />
+                      <Layers css={{ color: 'var(--color-primary)', width: '0.75em' }} />
                     )}
                   </Text.H3>
                 }
@@ -189,7 +180,7 @@ const NftDialog = (props: NftDialogProps) => {
                     <Text.Body css={{ color: '#d2fb5b' }}>Migrated NFT</Text.Body>
                   ) : (
                     Object.keys(nft?.attributes)?.map((attribute: any) => (
-                      <Pill
+                      <Tag
                         key={attribute}
                         header={
                           nft?.nftSpecificData?.isEvm
@@ -263,7 +254,7 @@ const NftDialog = (props: NftDialogProps) => {
                       <a href={nft?.platformUri} target="_blank" rel="noreferrer" css={{ color: '#fff' }}>
                         {nft?.provider}
                       </a>
-                      <ExternalLink height={'0.75em'} />
+                      <ExternalLink size="0.75em" />
                     </span>
                   }
                 />

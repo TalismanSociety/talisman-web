@@ -1,4 +1,4 @@
-import { nativeTokenDecimalState, nativeTokenPriceState } from '@domains/chains/recoils'
+import { nativeTokenPriceState, useNativeTokenDecimalState } from '@domains/chains/recoils'
 import { BN } from '@polkadot/util'
 import { useMemo, useState } from 'react'
 import { useRecoilValue, waitForAll } from 'recoil'
@@ -9,7 +9,7 @@ export const useTokenAmount = (amount?: string | (() => string), options: Option
   const stringAmount = typeof amount === 'function' ? amount() : amount
 
   const [nativeTokenDecimal, nativeTokenPrice] = useRecoilValue(
-    waitForAll([nativeTokenDecimalState, nativeTokenPriceState(options.fiatCurrency ?? 'usd')])
+    waitForAll([useNativeTokenDecimalState(), nativeTokenPriceState(options.fiatCurrency ?? 'usd')])
   )
 
   const decimalAmount = useMemo(() => {
@@ -40,7 +40,7 @@ export const useTokenAmount = (amount?: string | (() => string), options: Option
 }
 
 export const useTokenAmountFromPlanck = (planck?: string | BN, options: Options = { fiatCurrency: 'usd' }) => {
-  const nativeTokenDecimal = useRecoilValue(nativeTokenDecimalState)
+  const nativeTokenDecimal = useRecoilValue(useNativeTokenDecimalState())
 
   return useTokenAmount(planck === undefined ? undefined : nativeTokenDecimal.fromPlanck(planck).toString(), options)
 }

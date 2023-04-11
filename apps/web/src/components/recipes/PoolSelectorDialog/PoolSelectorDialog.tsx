@@ -1,7 +1,5 @@
-import Button from '@components/atoms/Button'
-import { ChevronLeft, ChevronRight } from '@components/atoms/Icon'
-import Text from '@components/atoms/Text'
-import AlertDialog from '@components/molecules/AlertDialog'
+import { ChevronLeft, ChevronRight } from '@talismn/icons'
+import { AlertDialog, Button, Text } from '@talismn/ui'
 import { motion } from 'framer-motion'
 import React, { ReactElement, useState } from 'react'
 
@@ -64,6 +62,7 @@ const PoolSelectorDialog = Object.assign(
             <motion.div
               css={{
                 'display': 'grid',
+                'gridTemplateColumns': 'minmax(0, 1fr)',
                 'gap': '1.6rem',
                 '@media (min-width: 768px)': {
                   display: 'grid',

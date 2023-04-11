@@ -44,8 +44,13 @@ export const Panel = styled(({ title, subtitle, children, className, ...rest }: 
     display: block;
     border-radius: 1.6rem;
     user-select: none;
-    background: rgb(${({ theme }) => theme.controlBackground});
+    background: #1b1b1b;
     color: rgb(${({ theme }) => theme.foreground});
+
+    // add a bottom border to every row except the last one
+    > .panel-section:not(:last-child) {
+      border-bottom: 1px solid rgba(${({ theme }) => theme.foreground}, 0.05);
+    }
 
     .panel-section + .panel-section {
       border-top: 1px solid rgba(${({ theme }) => theme.foreground}, 0.05);

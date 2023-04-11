@@ -8,7 +8,9 @@ export class NFTInterface extends SubscriptionService<NFTData> {
   name: string = ''
   baseIPFSUrl: string = 'https://talisman.mypinata.cloud/ipfs/'
   tokenCurrency: string = ''
-  _count: number = 0
+  _count: {
+    [key: string]: number
+  } = {}
   _isFetching: boolean = false
   _items: { [key: string]: NFTShort } = {}
 
@@ -73,10 +75,10 @@ export class NFTInterface extends SubscriptionService<NFTData> {
   protected reset() {
     this.isFetching = false
     this.items = {}
-    this.count = 0
+    this.count = {}
   }
 
-  set count(count: number) {
+  set count(count: { [key: string]: number }) {
     this._count = count
     this.triggerCallback()
   }
@@ -110,8 +112,6 @@ export class NFTInterface extends SubscriptionService<NFTData> {
       id: `${this.name}.${item.id}`,
       fetchDetail: () => this.fetchDetail(item.id),
     }
-
-    // c
 
     this.triggerCallback()
   }

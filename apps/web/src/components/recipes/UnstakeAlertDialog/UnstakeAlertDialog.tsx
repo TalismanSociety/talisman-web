@@ -1,6 +1,4 @@
-import Button from '../../atoms/Button'
-import Text from '../../atoms/Text'
-import AlertDialog from '../../molecules/AlertDialog'
+import { AlertDialog, Button, Text } from '@talismn/ui'
 
 export type UnstakeAlertDialogProps = {
   open: boolean
@@ -19,22 +17,22 @@ const UnstakeAlertDialog = (props: UnstakeAlertDialogProps) => (
     title="Unstake"
     width="48rem"
     content={
-      <>
+      <Text.Body>
         You are unstaking{' '}
-        <Text alpha="high">
+        <Text.Body alpha="high">
           <strong>
             ${props.amount} ({props.fiatAmount})
           </strong>
-        </Text>
+        </Text.Body>
         .
         <br />
         <br />
         Please note that when unstaking there is a{' '}
-        <Text alpha="high">
+        <Text.Body alpha="high">
           <strong>{props.lockDuration} unstaking period</strong>
-        </Text>{' '}
+        </Text.Body>{' '}
         before your funds become available.
-      </>
+      </Text.Body>
     }
     dismissButton={
       <Button variant="outlined" onClick={props.onDismiss}>

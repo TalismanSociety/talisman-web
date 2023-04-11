@@ -1,15 +1,16 @@
 import { Info, PanelSection } from '@components'
-import Identicon from '@components/atoms/Identicon'
+import { selectedAccountsState } from '@domains/accounts/recoils'
 import { css } from '@emotion/react'
 import styled from '@emotion/styled'
 import { ReactComponent as ExternalLink } from '@icons/external-link.svg'
-import { useAccounts } from '@libs/talisman'
+import { Identicon } from '@talismn/ui'
 import { encodeAnyAddress } from '@talismn/util'
 import { truncateAddress } from '@util/helpers'
 import intlFormat from 'date-fns/intlFormat'
 import parseISO from 'date-fns/parseISO'
 import startCase from 'lodash/startCase'
 import { useMemo } from 'react'
+import { useRecoilValue } from 'recoil'
 
 import { ClickToCopy } from './ClickToCopy'
 import { ItemDetails } from './ItemDetails'
@@ -23,7 +24,7 @@ type Props = {
   selectedAccount?: string
 }
 export const Item = styled(({ className, transaction, addresses, selectedAccount }: Props) => {
-  const accounts = useAccounts()
+  const accounts = useRecoilValue(selectedAccountsState)
   const genericAddresses = useMemo(() => addresses.map(formatGenericAddress), [addresses])
 
   const { name, ss58Format, timestamp, explorerUrl, parsed, relatedAddresses, signer } = transaction
@@ -41,7 +42,7 @@ export const Item = styled(({ className, transaction, addresses, selectedAccount
     // if tx type is not parsed, use the event name as a fallback (e.g. Staking.Bonded, Dex.Swap)
     if (typeof parsed?.__typename !== 'string') return name ?? undefined
 
-    switch (parsed.__typename) {
+    switch (parsed?.__typename) {
       // Special case: show 'Send' / 'Receive' / 'Transfer' for transfers, depending on whether
       // the user's connected accounts include the sender, the receiver, or both
       case 'ParsedTransfer': {
@@ -60,13 +61,13 @@ export const Item = styled(({ className, transaction, addresses, selectedAccount
       // For all other cases, just strip off the Parsed prefix and startCase the rest
       // i.e. ParsedSwap -> Swap
       default:
-        return startCase(parsed.__typename.replace(/^Parsed/, ''))
+        return startCase(parsed?.__typename.replace(/^Parsed/, ''))
     }
   }
 
   const isDevMode = process.env.NODE_ENV === 'development'
   const isParsed = typeof parsed?.__typename === 'string'
-  const isTransfer = isParsed && parsed.__typename === 'ParsedTransfer'
+  const isTransfer = isParsed && parsed?.__typename === 'ParsedTransfer'
   const hasTokenSymbol = isTransfer && parsed.tokenSymbol !== '???'
 
   const showDebugInfo = (isDevMode && !isParsed) || (isDevMode && isTransfer && !hasTokenSymbol)

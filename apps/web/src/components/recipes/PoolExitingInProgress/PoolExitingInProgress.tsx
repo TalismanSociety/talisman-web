@@ -1,6 +1,6 @@
-import { Info } from '@components/atoms/Icon'
-import Text from '@components/atoms/Text'
 import { useTheme } from '@emotion/react'
+import { Info } from '@talismn/icons'
+import { Text } from '@talismn/ui'
 
 const PoolExitingInProgress = () => {
   const theme = useTheme()
@@ -25,7 +25,7 @@ const PoolExitingInProgress = () => {
           marginBottom: '2.4rem',
         }}
       >
-        <Info width="1em" height="1em" css={{ verticalAlign: 'middle' }} /> You are currently unstaking
+        <Info size="1em" css={{ verticalAlign: 'middle' }} /> You are currently unstaking
       </Text.Body>
       <Text.Body>
         Please select a different account to continue staking.

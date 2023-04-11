@@ -1,9 +1,9 @@
 import { Info, TokenLogo } from '@components'
-import Identicon from '@components/atoms/Identicon'
+import { Account } from '@domains/accounts/recoils'
 import { css } from '@emotion/react'
 import styled from '@emotion/styled'
 import { ReactComponent as _ArrowRight } from '@icons/arrow-right.svg'
-import { Account } from '@libs/talisman/extension'
+import { Identicon } from '@talismn/ui'
 import { formatDecimals } from '@talismn/util'
 import { truncateAddress } from '@util/helpers'
 import startCase from 'lodash/startCase'
@@ -29,7 +29,7 @@ export const ItemDetails = ({ parsed, addresses, accounts }: Props) => {
     return addressBook
   }, {} as Record<string, string>)
 
-  switch (parsed.__typename) {
+  switch (parsed?.__typename) {
     case 'ParsedTransfer':
     case 'ParsedEthereumExec': {
       const genericAddresses = addresses.map(formatGenericAddress)
@@ -525,7 +525,7 @@ export const ItemDetails = ({ parsed, addresses, accounts }: Props) => {
     }
 
     default:
-      const exhaustiveCheck: never = parsed.__typename
+      const exhaustiveCheck = parsed?.__typename
       console.error(`Unhandled transaction type ${exhaustiveCheck}`)
       return <div className="details" />
   }

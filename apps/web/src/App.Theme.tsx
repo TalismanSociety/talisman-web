@@ -1,5 +1,4 @@
-// import '@talismn/connect-components/talisman-connect-components.esm.css'
-// import '@talismn/connect-ui/talisman-connect-ui.esm.css'
+import '@talismn/ui/assets/css/talismn.css'
 
 import ATApocRevelations from '@assets/fonts/AT-Apoc-Revelations.woff'
 import SurtRegular from '@assets/fonts/Surt-Regular.woff'
@@ -7,7 +6,25 @@ import SurtSemiBold from '@assets/fonts/Surt-SemiBold.woff2'
 import SurtSemiBoldExpanded from '@assets/fonts/Surt-SemiBoldExp.woff2'
 import SurtSemiBoldExtended from '@assets/fonts/Surt-SemiBoldExtended.woff2'
 import { Global, Theme, ThemeProvider, css } from '@emotion/react'
-import { PropsWithChildren, createContext, useContext } from 'react'
+import { TalismanTheme, theme } from '@talismn/ui'
+import { PropsWithChildren } from 'react'
+
+declare module '@emotion/react' {
+  export interface Theme extends TalismanTheme {
+    // Deprecated styling
+    primary: string
+    secondary: string
+    background: string
+    foreground: string
+    mid: string
+    dim: string
+    light: string
+    dark: string
+    text: string
+    activeBackground: string
+    controlBackground: string
+  }
+}
 
 /*
   base style definitions
@@ -138,8 +155,6 @@ export const globalStyle = (theme: Theme) => css`
     margin: 0;
     scroll-behavior: smooth;
     font-size: 10px;
-    min-height: 100%;
-    height: 100vh;
     font-weight: var(--font-weight-regular);
   }
 
@@ -238,49 +253,8 @@ export const globalStyle = (theme: Theme) => css`
   }
 `
 
-/* theming options */
-// declare all theme based colors in rgb
-// when using in component, need to wrap in rgb(...) declaration
-// can also use rgba to define opacity
-
-declare module '@emotion/react' {
-  export interface Theme {
-    // Deprecated styling
-    primary: string
-    secondary: string
-    background: string
-    foreground: string
-    mid: string
-    dim: string
-    light: string
-    dark: string
-    text: string
-    activeBackground: string
-    controlBackground: string
-    // New styling with generic color names & alphas
-    color: {
-      primary: string
-      onPrimary: string
-      background: string
-      onBackground: string
-      surface: string
-      onSurface: string
-      foreground: string
-      onForeground: string
-      foregroundVariant: string
-      onForegroundVariant: string
-      error: string
-      onError: string
-    }
-    contentAlpha: {
-      disabled: number
-      medium: number
-      high: number
-    }
-  }
-}
-
-export const greenDark: Theme = {
+const appTheme = {
+  ...theme.greenDark,
   primary: '213,255,92',
   secondary: '0,0,255',
   background: '18,18,18',
@@ -292,35 +266,10 @@ export const greenDark: Theme = {
   text: '250,250,250', // #fafafa
   activeBackground: '56,56,56', // #383838
   controlBackground: '38,38,38',
-  color: {
-    primary: 'rgb(213,255,92)',
-    onPrimary: 'rgb(18,18,18)',
-    background: 'rgb(18,18,18)',
-    onBackground: 'rgb(250,250,250)',
-    surface: '#1B1B1B',
-    onSurface: 'rgb(250,250,250)',
-    foreground: '#262626',
-    onForeground: 'rgb(250,250,250)',
-    foregroundVariant: '#3F3F3F',
-    onForegroundVariant: 'rgb(250,250,250)',
-    error: 'rgba(253, 72, 72, 0.25)',
-    onError: '#D22424',
-  },
-  contentAlpha: {
-    disabled: 0.5,
-    medium: 0.7,
-    high: 1,
-  },
 }
 
-/* style context */
-
-const Context = createContext({})
-
-export const useTheme = () => useContext(Context)
-
 const Provider = ({ children }: PropsWithChildren<{}>) => (
-  <ThemeProvider theme={greenDark}>
+  <ThemeProvider theme={appTheme}>
     <Global styles={globalStyle} />
     {children}
   </ThemeProvider>

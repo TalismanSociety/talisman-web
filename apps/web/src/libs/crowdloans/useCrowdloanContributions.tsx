@@ -1,5 +1,5 @@
 import { substrateAccountsState } from '@domains/accounts/recoils'
-import { chainApiState } from '@domains/chains/recoils'
+import { substrateApiState } from '@domains/common'
 import { SupportedRelaychains } from '@libs/talisman/util/_config'
 import { u8aToHex } from '@polkadot/util'
 import { decodeAddress } from '@polkadot/util-crypto'
@@ -28,7 +28,9 @@ export function useCrowdloanContributions({
   hydrated: boolean
 } {
   // TODO: clean me or kill me
-  const apiLoadable = useRecoilValueLoadable(waitForAll([chainApiState('polkadot'), chainApiState('kusama')]))
+  const apisLoadable = useRecoilValueLoadable(
+    waitForAll([substrateApiState('wss://rpc.polkadot.io'), substrateApiState('wss://kusama-rpc.polkadot.io')])
+  )
 
   const allAccounts = useRecoilValue(substrateAccountsState)
   const [contributions, setContributions] = useState<CrowdloanContribution[]>([])
@@ -40,7 +42,7 @@ export function useCrowdloanContributions({
         setHydrated(false)
         const results = await Promise.all(
           Object.values(SupportedRelaychains).map(async relayChain => {
-            const apis = await apiLoadable.toPromise()
+            const apis = await apisLoadable.toPromise()
             const api = relayChain.id === 0 ? apis[0] : apis[1]
 
             const paraIds =

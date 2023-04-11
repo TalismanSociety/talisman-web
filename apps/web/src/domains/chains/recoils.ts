@@ -1,56 +1,22 @@
+import { SubstrateApiContext, substrateApiState } from '@domains/common'
 import { storageEffect } from '@domains/common/effects'
-import { ApiPromise, WsProvider } from '@polkadot/api'
 import { BN } from '@polkadot/util'
 import { ToBn } from '@polkadot/util/types'
 import Decimal from '@util/Decimal'
-import { gql, request } from 'graphql-request'
+import { useContext } from 'react'
 import { atom, selector, selectorFamily } from 'recoil'
 
-import { ChainId, chainParams, defaultParams, supportedChainIds } from './consts'
+import { chains } from './config'
+import { ChainId, chainParams, defaultParams } from './consts'
 
-export type Chain = {
-  id: string
-  rpcs: Array<{ url: string; isHealthy: true }>
-  isTestnet: boolean
-  nativeToken: {
-    data: {
-      symbol: string
-      decimals: number
-      coingeckoId: string
-    }
-  }
-  subscanUrl: string | null
-}
-
+// Getting these value locally right now since chaindata squid is not too stable
 export const chainsState = selector({
   key: 'Chains',
-  get: async () => {
-    const response = await request<{ chains: Chain[] }>(
-      'https://app.gc.subsquid.io/beta/chaindata/v3/graphql',
-      gql`
-        query getChains($ids: [String!]!) {
-          chains(where: { id_in: $ids }) {
-            id
-            isTestnet
-            rpcs {
-              url
-              isHealthy
-            }
-            nativeToken {
-              data
-            }
-            subscanUrl
-          }
-        }
-      `,
-      { ids: supportedChainIds }
-    )
-
-    return response.chains.map(x => ({
+  get: () =>
+    chains.map(x => ({
       ...x,
       params: chainParams[x.id as ChainId] ?? defaultParams,
-    }))
-  },
+    })),
 })
 
 export const chainIdState = atom<ChainId>({
@@ -63,7 +29,7 @@ export const chainRpcState = atom({
   key: 'ChainRpc',
   default: selector({
     key: 'ChainRpc/Default',
-    get: ({ get }) => get(chainState).rpcs.find(rpc => rpc.isHealthy)?.url,
+    get: ({ get }) => get(chainState).rpcs[0]?.url ?? '',
   }),
 })
 
@@ -80,6 +46,25 @@ export const chainState = selector({
   },
 })
 
+export const tokenPriceState = selectorFamily({
+  key: 'TokenPrice',
+  get:
+    ({ coingeckoId, fiat }: { coingeckoId: string; fiat: string }) =>
+    async () => {
+      try {
+        const result = await fetch(
+          `https://api.coingecko.com/api/v3/simple/price?ids=${coingeckoId}&vs_currencies=${fiat}`
+        ).then(x => x.json())
+
+        return result[coingeckoId][fiat] as number
+      } catch {
+        // Coingecko has rate limit, better to return 0 than to crash the session
+        // TODO: find alternative or purchase Coingecko subscription
+        return 0
+      }
+    },
+})
+
 export const nativeTokenPriceState = selectorFamily({
   key: 'NativeTokenPrice',
   get:
@@ -89,59 +74,27 @@ export const nativeTokenPriceState = selectorFamily({
 
       if (chain.isTestnet) return 1
 
-      try {
-        const result = await fetch(
-          `https://api.coingecko.com/api/v3/simple/price?ids=${chain.nativeToken.data.coingeckoId}&vs_currencies=${fiat}`
-        ).then(x => x.json())
-
-        return result[chain.nativeToken.data.coingeckoId][fiat] as number
-      } catch {
-        // Coingecko has rate limit, better to return 0 than to crash the session
-        // TODO: find alternative or purchase Coingecko subscription
+      if (chain.nativeToken.coingeckoId === undefined) {
         return 0
       }
+
+      return get(tokenPriceState({ coingeckoId: chain.nativeToken.coingeckoId, fiat }))
     },
 })
 
-export const apiState = selector({
-  key: 'PolkadotApi',
-  get: async ({ get }) => {
-    const wsProvider = new WsProvider(get(chainRpcState))
-    return ApiPromise.create({ provider: wsProvider })
-  },
-  dangerouslyAllowMutability: true,
-})
-
-// TODO: this hasn't been thought through, right now is a dirty hack for concurrent chain access
-// need to rethink how we want to tackle this
-export const chainApiState = selectorFamily({
-  key: 'ChainApi',
-  get:
-    (id: ChainId) =>
-    ({ get }) => {
-      const allChains = get(chainsState)
-      const chain = allChains.find(x => x.id === id)
-
-      if (chain === undefined) {
-        throw new Error(`Can't find chain with id: ${id}`)
-      }
-
-      return ApiPromise.create({
-        provider: new WsProvider(chain.rpcs.find(x => x.isHealthy)?.url ?? chain.rpcs[0]?.url),
-      })
-    },
-  dangerouslyAllowMutability: true,
-})
-
-export const nativeTokenDecimalState = selector({
+export const nativeTokenDecimalState = selectorFamily({
   key: 'NativeTokenDecimal',
-  get: ({ get }) => {
-    const chain = get(chainState)
-    return {
-      fromPlanck: (value: string | number | bigint | BN | ToBn | undefined) =>
-        Decimal.fromPlanck(value, chain.nativeToken.data.decimals, chain.nativeToken.data.symbol),
-      fromUserInput: (input: string) =>
-        Decimal.fromUserInput(input, chain.nativeToken.data.decimals, chain.nativeToken.data.symbol),
-    }
-  },
+  get:
+    (apiEndpoint: string) =>
+    ({ get }) => {
+      const api = get(substrateApiState(apiEndpoint))
+      return {
+        fromPlanck: (value: string | number | bigint | BN | ToBn | undefined) =>
+          Decimal.fromPlanck(value, api.registry.chainDecimals[0] ?? 0, api.registry.chainTokens[0] ?? ''),
+        fromUserInput: (input: string) =>
+          Decimal.fromUserInput(input, api.registry.chainDecimals[0] ?? 0, api.registry.chainTokens[0] ?? ''),
+      }
+    },
 })
+
+export const useNativeTokenDecimalState = () => nativeTokenDecimalState(useContext(SubstrateApiContext).endpoint)

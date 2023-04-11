@@ -1,14 +1,17 @@
 import { ChainLogo, ExtensionStatusGate, Info, Panel, PanelSection, Pendor } from '@components'
+import SectionHeader from '@components/molecules/SectionHeader'
+import AnimatedFiatNumber from '@components/widgets/AnimatedFiatNumber'
 import { selectedSubstrateAccountsState } from '@domains/accounts/recoils'
+import { tokenPriceState } from '@domains/chains/recoils'
 import { useTotalCrowdloanTotalFiatAmount } from '@domains/crowdloans/hooks'
 import styled from '@emotion/styled'
+import crowdloanDataState from '@libs/@talisman-crowdloans/provider'
 import { CrowdloanContribution, useCrowdloanContributions } from '@libs/crowdloans'
 import { Moonbeam } from '@libs/crowdloans/crowdloanOverrides'
 import { MoonbeamPortfolioTag } from '@libs/moonbeam-contributors'
 import { calculateCrowdloanPortfolioAmounts, useTaggedAmountsInPortfolio } from '@libs/portfolio'
 import { useCrowdloanById, useParachainAssets, useParachainDetailsById } from '@libs/talisman'
-import { SupportedRelaychains, parachainDetails } from '@libs/talisman/util/_config'
-import { useTokenPrice } from '@libs/tokenprices'
+import { SupportedRelaychains } from '@libs/talisman/util/_config'
 import { planckToTokens } from '@talismn/util'
 import { formatCommas, formatCurrency } from '@util/helpers'
 import { Maybe } from '@util/monads'
@@ -16,7 +19,7 @@ import BigNumber from 'bignumber.js'
 import { Suspense, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
-import { useRecoilValue } from 'recoil'
+import { useRecoilValue, useRecoilValueLoadable } from 'recoil'
 
 const CrowdloanItem = styled(
   ({ contribution, className }: { contribution: CrowdloanContribution; className?: string }) => {
@@ -26,13 +29,19 @@ const CrowdloanItem = styled(
 
     const asset = useParachainAssets(id)
 
+    const crowdloans = useRecoilValue(crowdloanDataState)
+
     const relayChainId = contribution.parachain.paraId.split('-')[0]
     const relayChain = Maybe.of(relayChainId).mapOrUndefined(x => SupportedRelaychains[x]!)
-    const chain = parachainDetails.find(x => x.id === id)
+    const chain = crowdloans.find(x => x.id === id)
 
-    const { tokenSymbol: relayNativeToken, tokenDecimals: relayTokenDecimals } = relayChain ?? {}
+    const { tokenSymbol: relayNativeToken, coingeckoId, tokenDecimals: relayTokenDecimals } = relayChain ?? {}
     const { name } = chain ?? {}
-    const { price: relayTokenPrice, loading: relayPriceLoading } = useTokenPrice(relayNativeToken!)
+
+    const priceLoadable = useRecoilValueLoadable(tokenPriceState({ coingeckoId: coingeckoId!, fiat: 'usd' }))
+
+    const relayTokenPrice = priceLoadable.valueMaybe()?.toString()
+    const relayPriceLoading = priceLoadable.state === 'loading'
 
     const relayTokenSymbol = relayNativeToken ?? 'Planck'
     const contributedTokens = planckToTokens(contribution.amount, relayTokenDecimals!)
@@ -101,16 +110,27 @@ const CrowdloanItemWithLink = styled((props: { contribution: CrowdloanContributi
     </Link>
   )
 })`
-  :first-of-type .panel-section:hover {
+  .panel-section {
+    overflow: hidden;
+  }
+  :first-of-type .panel-section {
     border-radius: 1.6rem 1.6rem 0 0;
   }
 
-  :last-of-type .panel-section:hover {
+  :last-of-type .panel-section {
     border-radius: 0 0 1.6rem 1.6rem;
   }
 
+  :only-of-type .panel-section {
+    border-radius: 1.6rem;
+  }
+
   .panel-section:hover {
-    background-color: var(--color-activeBackground);
+    background-color: rgb(38, 38, 38);
+  }
+
+  :not(:last-of-type) .panel-section {
+    border-bottom: 1px solid #2a2a2a;
   }
 `
 
@@ -143,15 +163,23 @@ const ExtensionUnavailable = styled((props: any) => {
   }
 `
 
-const Crowdloans = ({ className }: { className?: string }) => {
+const SuspendableCrowdloans = ({ className }: { className?: string }) => {
   const { t } = useTranslation()
-  const accounts = useRecoilValue(selectedSubstrateAccountsState).map(x => x.address)
-  const { contributions, hydrated: contributionsHydrated } = useCrowdloanContributions({ accounts })
+  const accounts = useRecoilValue(selectedSubstrateAccountsState)
+  const { contributions, hydrated: contributionsHydrated } = useCrowdloanContributions({
+    accounts: useMemo(() => accounts.map(x => x.address), [accounts]),
+  })
   const crowdloansUsd = useTotalCrowdloanTotalFiatAmount()
 
+  // Temporary disable crowdloan skeleton
+  if (!contributionsHydrated || contributions.length === 0) {
+    return null
+  }
+
   return (
-    <section className={`wallet-crowdloans ${className}`}>
-      <Panel title={t('Crowdloans')} subtitle={crowdloansUsd && formatCurrency(crowdloansUsd)}>
+    <section className={`wallet-crowdloans ${className}`} css={{ marginBottom: '2rem' }}>
+      <SectionHeader headlineText={t('Crowdloans')} supportingText={<AnimatedFiatNumber end={crowdloansUsd} />} />
+      <Panel>
         {!contributionsHydrated ? (
           <PanelSection comingSoon>
             <div>{t('Summoning Crowdloan Contributions...')}</div>
@@ -170,5 +198,11 @@ const Crowdloans = ({ className }: { className?: string }) => {
     </section>
   )
 }
+
+export const Crowdloans = ({ className }: { className?: string }) => (
+  <Suspense>
+    <SuspendableCrowdloans className={className} />
+  </Suspense>
+)
 
 export default Crowdloans

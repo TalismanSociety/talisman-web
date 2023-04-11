@@ -1,8 +1,7 @@
-import Button from '@components/atoms/Button'
-import { Lock } from '@components/atoms/Icon'
-import Identicon from '@components/atoms/Identicon'
-import Text from '@components/atoms/Text'
 import { useTheme } from '@emotion/react'
+import { Lock } from '@talismn/icons'
+import { Button, Identicon, Text } from '@talismn/ui'
+import { shortenAddress } from '@util/format'
 import React, { ReactElement } from 'react'
 
 import StakeList from '../StakeList'
@@ -16,6 +15,7 @@ export type PoolUnstakeProps = {
   onRequestWithdraw: () => unknown
   withdrawState?: 'pending' | 'disabled'
   variant?: 'compact'
+  readonly?: boolean
 }
 
 const PoolUnstake = (props: PoolUnstakeProps) => {
@@ -106,9 +106,7 @@ const PoolUnstake = (props: PoolUnstakeProps) => {
                 </Text.Body>
               </div>
               <div>
-                <Text.Body>
-                  ({props.accountAddress.slice(0, 4)}...{props.accountAddress.slice(-4)})
-                </Text.Body>
+                <Text.Body>({shortenAddress(props.accountAddress)})</Text.Body>
               </div>
             </dd>
           </div>
@@ -119,9 +117,7 @@ const PoolUnstake = (props: PoolUnstakeProps) => {
             <div>
               <Text.Body css={{ fontSize: '1.6rem', fontWeight: 'bold' }}>
                 {props.unstakingAmount}
-                {props.timeTilWithdrawable !== undefined && (
-                  <Lock width="1.2rem" height="1.2rem" css={{ marginLeft: '0.4rem' }} />
-                )}
+                {props.timeTilWithdrawable !== undefined && <Lock size="1.2rem" css={{ marginLeft: '0.4rem' }} />}
               </Text.Body>
             </div>
             <div>
@@ -160,6 +156,7 @@ const PoolUnstake = (props: PoolUnstakeProps) => {
           <Button
             variant="outlined"
             onClick={props.onRequestWithdraw}
+            hidden={props.readonly}
             disabled={props.withdrawState === 'disabled'}
             loading={props.withdrawState === 'pending'}
           >

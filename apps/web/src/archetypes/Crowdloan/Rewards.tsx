@@ -4,25 +4,28 @@ import { useCrowdloanById } from '@libs/talisman'
 
 const Rewards = styled(({ id, className }: { id?: string; className?: string }) => {
   const { crowdloan } = useCrowdloanById(id)
-  const rewards = crowdloan?.details?.rewards
+  const details = crowdloan?.details
 
   return (
     <div className={`crowdloan-rewards ${className}`}>
-      {rewards?.tokens?.map(({ symbol, perKSM }, index) => (
-        <Stat key={index} title={`${symbol} per KSM`}>
-          {perKSM}
+      {details?.rewards?.tokens && (
+        <Stat
+          title={`${details?.token} per ${
+            details?.relayId === '0' ? 'DOT' : details?.relayId === '2' ? 'KSM' : 'Unknown'
+          }`}
+        >
+          {details?.rewards?.tokens}
         </Stat>
-      ))}
-      {rewards?.custom?.map(({ title, value }, index) => (
+      )}
+      {details?.customRewards?.map(({ title, value }, index) => (
         <Stat key={index} title={title}>
           {value}
         </Stat>
       ))}
-
-      {rewards?.info && (
+      {details?.rewards?.info && (
         <>
           <hr />
-          <p dangerouslySetInnerHTML={{ __html: rewards?.info }}></p>
+          <p dangerouslySetInnerHTML={{ __html: details?.rewards?.info }}></p>
         </>
       )}
     </div>

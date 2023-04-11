@@ -1,7 +1,8 @@
-import { Field, MaterialLoader, Panel, PanelSection } from '@components'
-import * as Icon from '@components/atoms/Icon'
+import { Button, Field, MaterialLoader, Panel, PanelSection } from '@components'
+import { legacySelectedAccountState } from '@domains/accounts/recoils'
+import ExportTxHistoryWidget from '@domains/txHistory/widgets/ExportTxHistoryWidget'
 import { css } from '@emotion/react'
-import { useActiveAccount } from '@libs/talisman'
+import { AlertCircle } from '@talismn/icons'
 import format from 'date-fns/format'
 import parseISO from 'date-fns/parseISO'
 import startOfDay from 'date-fns/startOfDay'
@@ -12,6 +13,7 @@ import { useTranslation } from 'react-i18next'
 import InfiniteScroll from 'react-infinite-scroller'
 import { useSearchParams } from 'react-router-dom'
 import { useDebounce } from 'react-use'
+import { useRecoilValue } from 'recoil'
 
 import { Item } from './Item'
 import { useTransactions } from './lib'
@@ -25,7 +27,8 @@ export const List = ({ addresses = [], className }: Props) => {
 
   const [searchParams, setSearchParams] = useSearchParams()
   const urlAddresses = useMemo(() => searchParams.getAll('address'), [searchParams])
-  const { hasActiveAccount, address: selectedAddress } = useActiveAccount()
+  const selectedAddress = useRecoilValue(legacySelectedAccountState)?.address
+  const hasActiveAccount = selectedAddress !== undefined
 
   // remove urlAddresses when selectedAddress changes
   useEffect(() => {
@@ -69,18 +72,26 @@ export const List = ({ addresses = [], className }: Props) => {
   return (
     <section className={`transaction-list ${className}`}>
       <header
-        css={css`
-          margin-bottom: 1rem;
-          padding-bottom: 1rem;
-
-          .field-search {
-            max-width: 500px;
-          }
-        `}
+        css={{
+          'marginBottom': '1rem',
+          'paddingBottom': '1rem',
+          'display': 'flex',
+          'justifyContent': 'space-between',
+          'gap': '1.6rem',
+          '.field-search': {
+            width: '35rem',
+          },
+        }}
       >
         <Field.Search value={searchQuery} onChange={setSearchQuery} placeholder="Filter by Chain, Address, Type..." />
+        <ExportTxHistoryWidget>
+          {({ onToggleOpen }) => (
+            <Button variant="outlined" onClick={onToggleOpen}>
+              Export
+            </Button>
+          )}
+        </ExportTxHistoryWidget>
       </header>
-
       <Panel
         css={css`
           > .inner {
@@ -144,7 +155,7 @@ export const List = ({ addresses = [], className }: Props) => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1, transition: { ease: [0.78, 0.14, 0.15, 0.86] } }}
             >
-              <Icon.AlertCircle
+              <AlertCircle
                 css={css`
                   display: block;
                   width: 1.2em;
@@ -161,7 +172,7 @@ export const List = ({ addresses = [], className }: Props) => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1, transition: { ease: [0.78, 0.14, 0.15, 0.86] } }}
             >
-              <Icon.AlertCircle
+              <AlertCircle
                 css={css`
                   display: block;
                   width: 1.2em;

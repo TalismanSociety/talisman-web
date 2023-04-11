@@ -1,21 +1,22 @@
 import { chainState } from '@domains/chains/recoils'
-import { useChainState, useQueryMulti } from '@domains/common/hooks'
+import { useChainQueryMultiState, useChainQueryState } from '@domains/common/recoils'
 import { BN } from '@polkadot/util'
-import { useRecoilValueLoadable } from 'recoil'
+import { useMemo } from 'react'
+import { useRecoilValue, waitForAll } from 'recoil'
 
 export const useInflation = () => {
-  const chainLoadable = useRecoilValueLoadable(chainState)
-  const activeEraLoadable = useChainState('query', 'staking', 'activeEra', [])
-  return useQueryMulti(
-    [
+  const [chain, activeEra] = useRecoilValue(waitForAll([chainState, useChainQueryState('staking', 'activeEra', [])]))
+
+  const [totalIssuance, lastTotalStake, auctionCounter] = useRecoilValue(
+    useChainQueryMultiState([
       'balances.totalIssuance',
-      ['staking.erasTotalStake', activeEraLoadable.valueMaybe()?.unwrapOrDefault().index.subn(1)],
-      'auctions.auctionCounter' as any,
-    ],
-    { enabled: activeEraLoadable.state === 'hasValue' && chainLoadable.state === 'hasValue' }
-  ).map(([totalIssuance, lastTotalStake, auctionCounter]) => {
-    const { auctionAdjust, auctionMax, falloff, maxInflation, minInflation, stakeTarget } =
-      chainLoadable.valueOrThrow().params
+      ['staking.erasTotalStake', activeEra.unwrapOrDefault().index.subn(1)],
+      'auctions.auctionCounter',
+    ])
+  )
+
+  return useMemo(() => {
+    const { auctionAdjust, auctionMax, falloff, maxInflation, minInflation, stakeTarget } = chain.params
 
     const BN_MILLION = new BN(1_000_000)
 
@@ -38,5 +39,5 @@ export const useInflation = () => {
       stakedFraction,
       stakedReturn: stakedFraction ? inflation / stakedFraction : 0,
     }
-  })
+  }, [auctionCounter, chain.params, lastTotalStake, totalIssuance])
 }

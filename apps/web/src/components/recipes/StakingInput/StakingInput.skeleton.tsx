@@ -1,5 +1,5 @@
-import Skeleton, { SkeletonProps } from '@components/atoms/Skeleton'
 import { useTheme } from '@emotion/react'
+import { Skeleton, SkeletonProps } from '@talismn/ui'
 
 const StakingInputSkeleton = (props: SkeletonProps) => {
   const theme = useTheme()

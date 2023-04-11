@@ -1,5 +1,5 @@
-import Skeleton, { SkeletonProps } from '@components/atoms/Skeleton'
 import { useTheme } from '@emotion/react'
+import { Skeleton, SkeletonProps } from '@talismn/ui'
 
 const InfoSkeleton = (props: SkeletonProps) => {
   const theme = useTheme()
@@ -38,6 +38,7 @@ const InfoSkeleton = (props: SkeletonProps) => {
         .fill(undefined)
         .map((_, index) => (
           <Skeleton.Surface
+            key={index}
             animate={props.animate}
             css={{
               'borderRadius': '1rem',
