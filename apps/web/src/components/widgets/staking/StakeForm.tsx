@@ -3,14 +3,7 @@ import PoolSelectorDialog from '@components/recipes/PoolSelectorDialog'
 import StakeFormComponent from '@components/recipes/StakeForm'
 import { StakeStatus } from '@components/recipes/StakeStatusIndicator'
 import { Account, injectedSubstrateAccountsState } from '@domains/accounts/recoils'
-import {
-  ChainContext,
-  ChainProvider,
-  chainsState,
-  useNativeTokenDecimalState,
-  type Chain,
-  type Chains,
-} from '@domains/chains'
+import { ChainContext, ChainProvider, chainsState, useNativeTokenDecimalState, type Chain } from '@domains/chains'
 import { SubstrateApiContext, useSubstrateApiState } from '@domains/common'
 import { useChainState, useEraEtaFormatter, useExtrinsic, useTokenAmountFromPlanck } from '@domains/common/hooks'
 import { useInflation, usePoolAddForm, usePoolStakes } from '@domains/nominationPools/hooks'
@@ -184,7 +177,7 @@ const PoolSelector = (props: {
 export const AssetSelect = (props: {
   selectedChain: Chain
   onSelectChain: (chain: Chain) => unknown
-  chains: Chains
+  chains: Chain[]
   inTransition: boolean
 }) => (
   <Select
@@ -426,7 +419,7 @@ const StakeForm = () => {
   const chains = useRecoilValue(chainsState)
 
   const [inTransition, startTransition] = useTransition()
-  const [selectedChain, setSelectedChain] = useState<Chain>(chains[0])
+  const [selectedChain, setSelectedChain] = useState<Chain>(chains[0]!)
 
   return (
     <ChainProvider value={selectedChain}>

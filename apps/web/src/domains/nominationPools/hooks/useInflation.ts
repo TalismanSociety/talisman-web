@@ -30,7 +30,7 @@ export const useInflation = () => {
   )
 
   return useMemo(() => {
-    const { auctionAdjust, auctionMax, falloff, maxInflation, minInflation, stakeTarget } = chain.stakingParams
+    const { auctionAdjust, auctionMax, falloff, maxInflation, minInflation, stakeTarget } = chain.parameters
     const BN_MILLION = new BN(1_000_000)
 
     const stakedFraction =
@@ -52,5 +52,5 @@ export const useInflation = () => {
       stakedFraction,
       stakedReturn: stakedFraction ? inflation / stakedFraction : 0,
     }
-  }, [auctionCounter, chain.stakingParams, lastTotalStake, totalIssuance])
+  }, [auctionCounter, chain.parameters, lastTotalStake, totalIssuance])
 }
