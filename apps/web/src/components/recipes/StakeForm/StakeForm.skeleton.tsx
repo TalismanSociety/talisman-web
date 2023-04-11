@@ -1,7 +1,7 @@
 import { useTheme } from '@emotion/react'
 import { Skeleton, SkeletonProps } from '@talismn/ui'
 
-const StakingInputSkeleton = (props: SkeletonProps) => {
+const StakeFormSkeleton = (props: SkeletonProps) => {
   const theme = useTheme()
   return (
     <Skeleton.Surface
@@ -29,4 +29,4 @@ const StakingInputSkeleton = (props: SkeletonProps) => {
   )
 }
 
-export default StakingInputSkeleton
+export default StakeFormSkeleton

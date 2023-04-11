@@ -5,6 +5,7 @@ import { LayoutGroup, motion } from 'framer-motion'
 import { ReactNode, createContext, useContext, useId, useMemo, useState } from 'react'
 import { StakeStatus, StakeStatusIndicator } from '../StakeStatusIndicator'
 import Color from 'colorjs.io'
+import StakeFormSkeleton from './StakeForm.skeleton'
 
 const AssetSelectorContext = createContext<ReactNode>(null)
 
@@ -325,6 +326,7 @@ const StakeForm = Object.assign(
       </Button>
     ),
     ExistingPool,
+    Skeleton: StakeFormSkeleton,
   }
 )
 

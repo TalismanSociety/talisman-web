@@ -1,5 +1,4 @@
 import StakeDialogComponent from '@components/recipes/StakeDialog'
-import StakingInput from '@components/recipes/StakingInput'
 import { chainsState } from '@domains/chains/recoils'
 import { useEraEtaFormatter } from '@domains/common/hooks'
 import { useInflation } from '@domains/nominationPools/hooks'
@@ -9,6 +8,7 @@ import { Suspense, useCallback, useState, useTransition } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useRecoilValue } from 'recoil'
 
+import StakeForm from '@components/recipes/StakeForm/StakeForm'
 import { Chain, ChainProvider } from '@domains/chains'
 import { AssetSelect, ControlledStakeForm } from './StakeForm'
 
@@ -57,7 +57,7 @@ const StakeDialog = () => {
           </StakeDialogComponent.Stats>
         }
         stakeInput={
-          <Suspense fallback={<StakingInput.Skeleton />}>
+          <Suspense fallback={<StakeForm.Skeleton />}>
             <ControlledStakeForm
               assetSelector={
                 <AssetSelect
