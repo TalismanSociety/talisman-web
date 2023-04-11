@@ -24,6 +24,7 @@ import React, {
 } from 'react'
 
 import { Text } from '../../atoms'
+import FloatingPortal from '../../atoms/FloatingPortal'
 
 export type SelectProps<T extends string | number> = {
   value?: T
@@ -144,7 +145,7 @@ const Select = Object.assign(
         initial={String(false)}
         animate={String(open)}
         variants={{
-          true: { zIndex: 1, filter: 'drop-shadow(0 1px 3px rgba(0, 0, 0, 0.25))' },
+          true: { filter: 'drop-shadow(0 1px 3px rgba(0, 0, 0, 0.25))' },
           false: { filter: 'drop-shadow(0 0 0 rgba(0, 0, 0, 0.25))' },
         }}
         css={{ width }}
@@ -168,7 +169,7 @@ const Select = Object.assign(
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            gap: '2rem',
+            gap: '1.6rem',
             textAlign: 'start',
             backgroundColor: theme.color.foreground,
             padding: '0.75rem 1.25rem',
@@ -183,105 +184,107 @@ const Select = Object.assign(
           </Text.Body>
           <ChevronDown css={{ transform: open ? 'rotate(180deg)' : undefined, transition: 'ease 0.25s' }} />
         </motion.button>
-        <motion.ul
-          ref={floating}
-          variants={{
-            true: {
-              height: 'unset',
-              visibility: 'unset',
-              border: `solid ${theme.color.border}`,
-              borderWidth: '0 1px 1px 1px',
-              transitionEnd: { overflow: 'auto' },
-            },
-            false: {
-              height: 0,
-              border: 'solid transparent',
-              borderWidth: '0 1px 1px 1px',
-              overflow: 'hidden',
-              transitionEnd: { visibility: 'hidden' },
-            },
-          }}
-          css={{
-            'margin': 0,
-            'padding': 0,
-            'borderBottomLeftRadius': '0.5rem',
-            'borderBottomRightRadius': '0.5rem',
-            'backgroundColor': theme.color.foreground,
-            'listStyle': 'none',
-            'li': {
-              'padding': '1.5rem 1.25rem',
+        <FloatingPortal>
+          <motion.ul
+            ref={floating}
+            variants={{
+              true: {
+                height: 'unset',
+                visibility: 'unset',
+                border: `solid ${theme.color.border}`,
+                borderWidth: '0 1px 1px 1px',
+                transitionEnd: { overflow: 'auto' },
+              },
+              false: {
+                height: 0,
+                border: 'solid transparent',
+                borderWidth: '0 1px 1px 1px',
+                overflow: 'hidden',
+                transitionEnd: { visibility: 'hidden' },
+              },
+            }}
+            css={{
+              'margin': 0,
+              'padding': 0,
+              'borderBottomLeftRadius': '0.5rem',
+              'borderBottomRightRadius': '0.5rem',
               'backgroundColor': theme.color.foreground,
-              ':hover': {
-                filter: 'brightness(1.2)',
-              },
-              ':focus-visible': {
-                filter: 'brightness(1.2)',
-              },
-              ':last-child': {
-                padding: '1.5rem 1.25rem 1rem 1.25rem',
-              },
-            },
-            // Top spacer for animation overlap
-            '::before': {
-              content: '""',
-              display: 'block',
-              position: 'sticky',
-              top: 0,
-              height: OVERLAP,
-              backgroundColor: theme.color.foreground,
-            },
-          }}
-          {...getFloatingProps({
-            style: {
-              position: strategy,
-              top: y ?? 0,
-              left: x ?? 0,
-              width: 'max-content',
-            },
-            onPointerMove: () => {
-              setPointer(true)
-            },
-            onKeyDown: event => {
-              setPointer(false)
-
-              if (event.key === 'Tab') {
-                setOpen(false)
-              }
-            },
-          })}
-        >
-          {React.Children.map(children, (child, index) => (
-            <li
-              key={child.key}
-              role="option"
-              ref={node => {
-                if (node !== null) {
-                  listRef.current[index] = node
-                }
-              }}
-              tabIndex={!open ? -1 : index === activeIndex ? 0 : 1}
-              aria-selected={index === activeIndex}
-              css={{ cursor: 'pointer' }}
-              {...getItemProps({
-                onClick: () => {
-                  if (child.props.value !== undefined) {
-                    select(child.props.value)
-                  }
+              'listStyle': 'none',
+              'li': {
+                'padding': '1.5rem 1.25rem',
+                'backgroundColor': theme.color.foreground,
+                ':hover': {
+                  filter: 'brightness(1.2)',
                 },
-                onKeyDown: event => {
-                  if (event.key === 'Enter') {
-                    event.preventDefault()
+                ':focus-visible': {
+                  filter: 'brightness(1.2)',
+                },
+                ':last-child': {
+                  padding: '1.5rem 1.25rem 1rem 1.25rem',
+                },
+              },
+              // Top spacer for animation overlap
+              '::before': {
+                content: '""',
+                display: 'block',
+                position: 'sticky',
+                top: 0,
+                height: OVERLAP,
+                backgroundColor: theme.color.foreground,
+              },
+            }}
+            {...getFloatingProps({
+              style: {
+                position: strategy,
+                top: y ?? 0,
+                left: x ?? 0,
+                width: 'max-content',
+              },
+              onPointerMove: () => {
+                setPointer(true)
+              },
+              onKeyDown: event => {
+                setPointer(false)
+
+                if (event.key === 'Tab') {
+                  setOpen(false)
+                }
+              },
+            })}
+          >
+            {React.Children.map(children, (child, index) => (
+              <li
+                key={child.key}
+                role="option"
+                ref={node => {
+                  if (node !== null) {
+                    listRef.current[index] = node
+                  }
+                }}
+                tabIndex={!open ? -1 : index === activeIndex ? 0 : 1}
+                aria-selected={index === activeIndex}
+                css={{ cursor: 'pointer' }}
+                {...getItemProps({
+                  onClick: () => {
                     if (child.props.value !== undefined) {
                       select(child.props.value)
                     }
-                  }
-                },
-              })}
-            >
-              {child}
-            </li>
-          ))}
-        </motion.ul>
+                  },
+                  onKeyDown: event => {
+                    if (event.key === 'Enter') {
+                      event.preventDefault()
+                      if (child.props.value !== undefined) {
+                        select(child.props.value)
+                      }
+                    }
+                  },
+                })}
+              >
+                {child}
+              </li>
+            ))}
+          </motion.ul>
+        </FloatingPortal>
       </motion.div>
     )
   },

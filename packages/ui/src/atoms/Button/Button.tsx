@@ -117,7 +117,7 @@ const Button = <T extends ButtonElementType = 'button'>({
         hidden && { cursor: 'default', pointerEvent: 'none', opacity: 0 },
       ]}
     >
-      <div css={{ width: '100%' }}>
+      <div css={{ position: 'relative', width: '100%' }}>
         {(leadingIcon || loading) && (
           <span
             css={{
