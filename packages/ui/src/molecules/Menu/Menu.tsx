@@ -1,6 +1,5 @@
 import { useTheme } from '@emotion/react'
 import {
-  FloatingPortal,
   type Placement,
   type ReferenceType,
   type Strategy,
@@ -28,10 +27,11 @@ import {
   useMemo,
   useState,
 } from 'react'
+import FloatingPortal from '../../atoms/FloatingPortal'
 
-export const OFFSET = 12
+export const MENU_OFFSET = 12
 
-export const BORDER_RADIUS = '1.2rem'
+export const MENU_BORDER_RADIUS = '1.2rem'
 
 export type MenuProps = {
   children: [ReactElement<MenuButtonProps>, ReactElement<MenuItemsProps>]
@@ -90,15 +90,15 @@ const MenuItems = (props: MenuItemsProps) => {
   const closedClipPath = useMemo(() => {
     switch (placement) {
       case 'top-start':
-        return `inset(100% 100% 0 0 round ${BORDER_RADIUS})`
+        return `inset(100% 100% 0 0 round ${MENU_BORDER_RADIUS})`
       case 'top-end':
-        return `inset(100% 0 0 100% round ${BORDER_RADIUS})`
+        return `inset(100% 0 0 100% round ${MENU_BORDER_RADIUS})`
       case 'bottom-start':
-        return `inset(0 100% 100% 0 round ${BORDER_RADIUS})`
+        return `inset(0 100% 100% 0 round ${MENU_BORDER_RADIUS})`
       case 'bottom-end':
-        return `inset(0 0 100% 100% round ${BORDER_RADIUS})`
+        return `inset(0 0 100% 100% round ${MENU_BORDER_RADIUS})`
       default:
-        return `inset(0 50% 100% 50% round ${BORDER_RADIUS})`
+        return `inset(0 50% 100% 50% round ${MENU_BORDER_RADIUS})`
     }
   }, [placement])
 
@@ -111,7 +111,7 @@ const MenuItems = (props: MenuItemsProps) => {
           onAnimationComplete={() => setAnimating(false)}
           variants={{
             true: {
-              clipPath: `inset(0% 0% 0% 0% round ${BORDER_RADIUS})`,
+              clipPath: `inset(0% 0% 0% 0% round ${MENU_BORDER_RADIUS})`,
               transitionEnd: {
                 overflow: 'auto',
               },
@@ -186,7 +186,7 @@ const Menu = (props: MenuProps) => {
     onOpenChange: setOpen,
     whileElementsMounted: autoUpdate,
     middleware: [
-      offset(OFFSET),
+      offset(MENU_OFFSET),
       autoPlacement({ allowedPlacements: ['top-start', 'top-end', 'bottom-start', 'bottom-end'] }),
       shift(),
       size({
