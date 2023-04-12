@@ -1,6 +1,6 @@
-import { ComponentMeta, Story } from '@storybook/react'
+import { type ComponentMeta, type Story } from '@storybook/react'
 
-import BottomBorderNav, { BottomBorderNavProps } from './BottomBorderNav'
+import BottomBorderNav, { type BottomBorderNavProps } from './BottomBorderNav'
 
 export default {
   title: 'Molecules/BottomBorderNav',

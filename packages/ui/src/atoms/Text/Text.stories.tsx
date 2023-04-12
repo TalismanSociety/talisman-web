@@ -1,6 +1,6 @@
-import { ComponentMeta, Story } from '@storybook/react'
+import { type ComponentMeta, type Story } from '@storybook/react'
 
-import Text, { TextProps } from './Text'
+import Text, { type TextProps } from './Text'
 
 export default {
   title: 'Atoms/Text',

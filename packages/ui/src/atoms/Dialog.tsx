@@ -1,5 +1,5 @@
 import { useMergeRefs } from '@floating-ui/react'
-import React, { MouseEventHandler, useCallback, useEffect, useRef } from 'react'
+import React, { useEffect, useRef } from 'react'
 
 export type DialogProps = Omit<
   React.DetailedHTMLProps<React.DialogHTMLAttributes<HTMLDialogElement>, HTMLDialogElement>,

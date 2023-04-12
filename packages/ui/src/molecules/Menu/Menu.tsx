@@ -1,9 +1,9 @@
 import { useTheme } from '@emotion/react'
 import {
   FloatingPortal,
-  Placement,
-  ReferenceType,
-  Strategy,
+  type Placement,
+  type ReferenceType,
+  type Strategy,
   autoPlacement,
   autoUpdate,
   offset,
@@ -18,11 +18,11 @@ import {
 } from '@floating-ui/react'
 import { motion } from 'framer-motion'
 import {
-  DetailedHTMLProps,
-  HTMLAttributes,
-  HTMLProps,
-  ReactElement,
-  ReactNode,
+  type DetailedHTMLProps,
+  type HTMLAttributes,
+  type HTMLProps,
+  type ReactElement,
+  type ReactNode,
   createContext,
   useContext,
   useMemo,

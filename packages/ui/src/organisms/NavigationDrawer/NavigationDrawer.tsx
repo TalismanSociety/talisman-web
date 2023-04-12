@@ -3,10 +3,10 @@ import { X } from '@talismn/icons'
 import { IconContext } from '@talismn/icons/utils'
 import Color from 'colorjs.io'
 import {
-  AnchorHTMLAttributes,
-  DetailedHTMLProps,
-  PropsWithChildren,
-  ReactNode,
+  type AnchorHTMLAttributes,
+  type DetailedHTMLProps,
+  type PropsWithChildren,
+  type ReactNode,
   createContext,
   useCallback,
   useContext,

@@ -1,7 +1,7 @@
-import { ComponentMeta, Story } from '@storybook/react'
+import { type ComponentMeta, type Story } from '@storybook/react'
 import { Union } from '@talismn/icons'
 
-import Chip, { ChipProps } from './Chip'
+import Chip, { type ChipProps } from './Chip'
 
 export default {
   title: 'Atoms/Chip',

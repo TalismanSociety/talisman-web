@@ -1,8 +1,8 @@
-import { ComponentMeta, Story } from '@storybook/react'
+import { type ComponentMeta, type Story } from '@storybook/react'
 import { useState } from 'react'
 
 import { Identicon } from '../../atoms'
-import Select, { SelectProps } from './Select'
+import Select, { type SelectProps } from './Select'
 
 export default {
   title: 'Molecules/Select',
@@ -57,6 +57,7 @@ export const Overflow = () => {
         <Select placeholder="Select account" value={selected} onChange={value => setSelected(value)}>
           {Array.from({ length: 50 }, (_, index) => (
             <Select.Item
+              key={index}
               value={index}
               leadingIcon={<Identicon value="5CcU6DRpocLUWYJHuNLjB4gGyHJrkWuruQD5XFbRYffCfSAP" size={40} />}
               headlineText="Polkadot.js Import"

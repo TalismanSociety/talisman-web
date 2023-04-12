@@ -1,5 +1,5 @@
 import { useTheme } from '@emotion/react'
-import { ComponentMeta, Story } from '@storybook/react'
+import { type ComponentMeta, type Story } from '@storybook/react'
 import * as Icon from '@talismn/icons'
 
 export default {
@@ -19,6 +19,7 @@ export const Default: Story<React.SVGProps<SVGSVGElement> & { title?: string }> 
         .filter(([name]) => name !== 'IconContext')
         .map(([name, Icon]) => (
           <figure
+            key={name}
             css={{
               display: 'flex',
               flexDirection: 'column',

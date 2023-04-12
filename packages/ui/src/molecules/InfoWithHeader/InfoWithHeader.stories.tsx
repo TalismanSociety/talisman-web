@@ -1,7 +1,7 @@
-import { ComponentMeta, Story } from '@storybook/react'
+import { type ComponentMeta, type Story } from '@storybook/react'
 
 import { Text } from '../../atoms'
-import InfoWithHeader, { InfoWithHeaderProps } from './InfoWithHeader'
+import InfoWithHeader, { type InfoWithHeaderProps } from './InfoWithHeader'
 
 export default {
   title: 'Molecules/InfoWithHeader',

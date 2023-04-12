@@ -1,5 +1,5 @@
 import { useTheme } from '@emotion/react'
-import { PropsWithChildren, ReactNode } from 'react'
+import { type PropsWithChildren, type ReactNode } from 'react'
 
 import { Tooltip } from '../../atoms'
 import FloatingActionButton from '../../atoms/FloatingActionButton'

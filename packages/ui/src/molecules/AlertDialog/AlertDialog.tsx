@@ -1,8 +1,8 @@
 import { Global, keyframes, useTheme } from '@emotion/react'
 import { X } from '@talismn/icons'
-import { ReactNode } from 'react'
+import { type ReactNode } from 'react'
 
-import { Button, Dialog, DialogProps, Text } from '../../atoms'
+import { Button, Dialog, type DialogProps, Text } from '../../atoms'
 
 export type AlertDialogProps = DialogProps & {
   title?: string
@@ -65,7 +65,7 @@ const AlertDialog = ({
             },
           },
           '@media (min-width: 768px)': {
-            width: width,
+            width,
           },
         }}
       >

@@ -1,9 +1,9 @@
-import { ComponentMeta, Story } from '@storybook/react'
+import { type ComponentMeta, type Story } from '@storybook/react'
 import { TalismanHand } from '@talismn/icons'
-import { JSXElementConstructor } from 'react'
+import { type JSXElementConstructor } from 'react'
 
 import { Text } from './atoms'
-import { TalismanTheme, theme } from './theme'
+import { type TalismanTheme, theme } from './theme'
 
 export default {
   title: 'Theme/Color',
@@ -29,6 +29,7 @@ export const DarkGreen: Story<Props> = args => {
                 args.theme.color[`on${key.charAt(0).toUpperCase() + key.slice(1)}` as keyof TalismanTheme['color']]
               return (
                 <figcaption
+                  key={key}
                   css={{
                     padding: '2.5rem 0',
                   }}
@@ -64,6 +65,7 @@ export const DarkGreen: Story<Props> = args => {
             .map(([key, value]) => {
               return (
                 <figcaption
+                  key={key}
                   css={{
                     padding: '2.5rem 0',
                   }}

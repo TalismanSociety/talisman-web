@@ -1,7 +1,7 @@
 import { ApiPromise, WsProvider } from '@polkadot/api'
 import { encodeAddress } from '@polkadot/util-crypto'
 
-import { NFTCategory, NFTDetail, NFTDetailArray, NFTShort } from '../../types'
+import { NFTCategory, NFTDetail, NFTShort } from '../../types'
 import { NFTInterface } from '../NFTInterface'
 
 export class StatemineProvider extends NFTInterface {
@@ -112,64 +112,66 @@ export class StatemineProvider extends NFTInterface {
 
     const encodedAddress = encodeAddress(address, 2)
 
-    const nfts = await this.webSocket.query.uniques.account.keys(encodedAddress) // CollectionID, NFTID
-    this.count[address] = nfts.length
+    this.count[address] = 0
 
-    return this.useCache(address, this.name, nfts)
-      .then((items: NFTDetailArray) => {
-        // store the current set of items in this provider as a variable
-        // so we can look up the details when needed
-        items.forEach(item => {
-          this.setItem(item)
-          this.detailedItems[item.id] = item
-        })
-        this.isFetching = false
-      })
-      .catch(async store => {
-        let nftRawAssetDetails: any = []
-        for (let key of nfts) {
-          const data = key.toHuman() as string[]
-          nftRawAssetDetails.push({ collectionId: data[1], nftTokenId: data[2] })
-        }
+    let startKey: string | undefined
+    while (true) {
+      const nfts = await this.webSocket.query.uniques.account.keysPaged({
+        args: [encodedAddress],
+        pageSize: 10,
+        startKey,
+      }) // CollectionID, NFTID
 
-        nftRawAssetDetails.map(async (assetId: any): Promise<any> => {
-          const tokenDetails = await this.getTokenDetails(assetId)
+      this.count[address] += nfts.length
 
-          // If there is no token details, disregard the NFT and remove it from the count.
-          if (!tokenDetails) this.count[address] -= 1
+      if (nfts.length === 0) {
+        break
+      }
 
-          if (tokenDetails) {
-            const nftDetail = {
-              id: tokenDetails?.id,
-              name: tokenDetails?.name,
-              thumb: tokenDetails?.mediaUri,
-              type: undefined,
-              metadata: undefined,
-              mediaUri: tokenDetails?.mediaUri,
-              provider: this.name,
-              address,
-              collection: {
-                id: tokenDetails.collectionId,
-                totalCount: undefined,
-                floorPrice: undefined,
-              },
-              description: tokenDetails?.description,
-              serialNumber: assetId.nftTokenId,
-              attributes: {},
-              nftSpecificData: undefined,
-              platformUri: `${this.platformUri}${assetId.collectionId.replaceAll(',', '')}/${assetId.nftTokenId}`,
-              tokenCurrency: this.tokenCurrency,
-            }
+      let nftRawAssetDetails: any[] = []
+      for (let key of nfts) {
+        const data = key.toHuman() as string[]
+        nftRawAssetDetails.push({ collectionId: data[1], nftTokenId: data[2] })
+      }
 
-            this.setItem(this.parseShort(nftDetail))
-            this.detailedItems[nftDetail.id] = nftDetail
+      nftRawAssetDetails.forEach(async (assetId: any): Promise<any> => {
+        const tokenDetails = await this.getTokenDetails(assetId)
 
-            store(Object.values(this.detailedItems))
+        // If there is no token details, disregard the NFT and remove it from the count.
+        if (!tokenDetails) this.count[address] -= 1
+
+        if (tokenDetails) {
+          const nftDetail = {
+            id: tokenDetails?.id,
+            name: tokenDetails?.name,
+            thumb: tokenDetails?.mediaUri,
+            type: undefined,
+            metadata: undefined,
+            mediaUri: tokenDetails?.mediaUri,
+            provider: this.name,
+            address,
+            collection: {
+              id: tokenDetails.collectionId,
+              totalCount: undefined,
+              floorPrice: undefined,
+            },
+            description: tokenDetails?.description,
+            serialNumber: assetId.nftTokenId,
+            attributes: {},
+            nftSpecificData: undefined,
+            platformUri: `${this.platformUri}${assetId.collectionId.replaceAll(',', '')}/${assetId.nftTokenId}`,
+            tokenCurrency: this.tokenCurrency,
           }
-        })
 
-        this.isFetching = false
+          this.setItem(this.parseShort(nftDetail))
+          this.detailedItems[nftDetail.id] = nftDetail
+        }
       })
+
+      startKey = this.webSocket.query.uniques.account.key(...(nfts.at(-1)?.args ?? []))
+    }
+
+    this.isFetching = false
   }
 
   fetchOneById(id: string) {

@@ -1,7 +1,7 @@
 import { useTheme } from '@emotion/react'
 import { ChevronRight } from '@talismn/icons'
 import { motion } from 'framer-motion'
-import { MouseEventHandler, ReactEventHandler, ReactNode, useCallback, useState } from 'react'
+import { type MouseEventHandler, type ReactEventHandler, type ReactNode, useCallback, useState } from 'react'
 
 import { Text } from '../../atoms'
 

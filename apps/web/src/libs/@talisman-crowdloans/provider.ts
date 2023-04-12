@@ -4,6 +4,7 @@ import { selector } from 'recoil'
 export type CrowdloanDetail = {
   id: string
   name: string
+  allowContribute: boolean
   image?: string
   headerImage?: string
   token: string
@@ -77,6 +78,7 @@ const crowdloanDataState = selector<CrowdloanDetail[]>({
         return {
           id: crowdloan?.crowdloanId,
           name: crowdloan?.name,
+          allowContribute: crowdloan?.allowContribute,
           token: crowdloan?.token,
           slug: crowdloan?.slug,
           relayId: crowdloan?.relayId,

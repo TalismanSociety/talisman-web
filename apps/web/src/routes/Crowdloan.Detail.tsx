@@ -47,9 +47,11 @@ const CrowdloanDetail = styled(({ className }: { className?: string }) => {
             </PanelSection>
             <PanelSection>
               <Crowdloan.Bonus full id={id ?? ''} prefix={<Parachain.Asset id={parachainId ?? ''} type="logo" />} />
-              <Button onClick={() => openModal(<Crowdloan.Contribute id={id} />)} disabled={uiStatus !== 'active'}>
-                {t('Contribute')}
-              </Button>
+              {parachainDetails?.allowContribute && (
+                <Button onClick={() => openModal(<Crowdloan.Contribute id={id} />)} disabled={uiStatus !== 'active'}>
+                  {t('Contribute')}
+                </Button>
+              )}
             </PanelSection>
           </Panel>
 

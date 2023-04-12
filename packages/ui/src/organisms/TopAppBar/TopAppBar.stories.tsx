@@ -1,8 +1,8 @@
-import { ComponentMeta, Story } from '@storybook/react'
+import { type ComponentMeta, type Story } from '@storybook/react'
 import { MoreHorizontal, TalismanHand } from '@talismn/icons'
 
 import { IconButton, Identicon } from '../../atoms'
-import TopAppBar, { TopAppBarItem, TopAppBarProps } from './TopAppBar'
+import TopAppBar, { TopAppBarItem, type TopAppBarProps } from './TopAppBar'
 
 export default {
   title: 'Organisms/TopAppBar',

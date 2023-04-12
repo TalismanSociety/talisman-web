@@ -13,7 +13,7 @@ const Assets = () => {
   const navigate = useNavigate()
 
   const [search, setSearch] = useState('')
-  const { tokens, balances, isLoading } = useAssetsFiltered({ size: 0, search })
+  const { tokens, balances, isLoading } = useAssetsFiltered({ size: undefined, search })
   const { lockedTotal } = useAssets()
 
   return (

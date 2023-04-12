@@ -8,14 +8,18 @@
     "./utils": "./build/utils.js"
   },
   "scripts": {
-    "dev": "tsc --build --watch tsconfig.build.json",
-    "build": "tsc --build tsconfig.build.json",
+    "dev": "tsc --build --watch tsconfig.json",
+    "build": "rm -rf build && tsc --build tsconfig.json",
     "codegen": "npx @svgr/cli -- src/svgs",
+    "lint": "eslint src",
     "check-types": "tsc --noEmit"
   },
   "devDependencies": {
     "@svgr/cli": "^6.5.1",
+    "@talismn/eslint-config": "workspace:^",
+    "@talismn/tsconfig": "workspace:^",
     "@types/react": "^18.0.28",
+    "eslint": "^8.37.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "typescript": "^5.0.2"

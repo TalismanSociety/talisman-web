@@ -1,7 +1,7 @@
-import { ComponentMeta, Story } from '@storybook/react'
+import { type ComponentMeta, type Story } from '@storybook/react'
 
 import { Button, Text } from '../../atoms'
-import HiddenDetails, { HiddenDetailsProps } from './HiddenDetails'
+import HiddenDetails, { type HiddenDetailsProps } from './HiddenDetails'
 
 export default {
   title: 'Molecules/HiddenDetails',
