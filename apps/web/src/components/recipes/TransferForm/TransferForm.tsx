@@ -1,23 +1,16 @@
-import Button, { ButtonProps } from '@components/atoms/Button'
-import CircularProgressIndicator from '@components/atoms/CircularProgressIndicator'
-import { ArrowRight, ChevronRight, Repeat } from '@components/atoms/Icon'
-import Identicon from '@components/atoms/Identicon'
-import Skeleton from '@components/atoms/Skeleton'
-import Select from '@components/molecules/Select'
-import TextInput from '@components/molecules/TextInput'
 import { useTheme } from '@emotion/react'
 import { Maybe } from '@util/monads'
 import Color from 'colorjs.io'
 import { motion } from 'framer-motion'
-import { useCallback, useMemo, useState } from 'react'
+import { ReactNode, useCallback, useMemo, useState } from 'react'
 
+import { ArrowRight, ChevronRight, Repeat } from '@talismn/icons'
+import { Button, ButtonProps, CircularProgressIndicator, Select, Skeleton, TextInput } from '@talismn/ui'
 import Cryptoticon from '../Cryptoticon'
 
-export type TransferProps = {
+export type TransferFormProps = {
   loading?: boolean
-  accounts: Array<{ name: string; address: string; balance: string }>
-  selectedAccountIndex: number
-  onSelectAccountIndex: (value: number | undefined) => unknown
+  accountSelector: ReactNode
   fromNetworks: Array<{ name: string; logoSrc: string }>
   selectedFromNetworkIndex: number
   onSelectFromNetworkIndex: (value: number | undefined) => unknown
@@ -36,7 +29,7 @@ export type TransferProps = {
   inputError?: string
 }
 
-const TransferNetworksButton = (props: Pick<ButtonProps<'button'>, 'onClick' | 'disabled'>) => {
+const TransferFormNetworksButton = (props: Pick<ButtonProps<'button'>, 'onClick' | 'disabled'>) => {
   return (
     <Button variant="noop" {...props}>
       <motion.div
@@ -49,20 +42,20 @@ const TransferNetworksButton = (props: Pick<ButtonProps<'button'>, 'onClick' | '
           variants={{ false: { display: 'none' }, true: { display: 'unset' } }}
           css={{ position: 'absolute', inset: 0 }}
         >
-          <Repeat width="3.2rem" height="3.2rem" css={{ transform: 'rotate(90deg)' }} />
+          <Repeat size="3.2rem" css={{ transform: 'rotate(90deg)' }} />
         </motion.div>
         <motion.div
           variants={{ false: { display: 'unset' }, true: { display: 'none' } }}
           css={{ position: 'absolute', inset: 0 }}
         >
-          <ArrowRight width="3.2rem" height="3.2rem" />
+          <ArrowRight size="3.2rem" />
         </motion.div>
       </motion.div>
     </Button>
   )
 }
 
-const Transfer = (props: TransferProps) => {
+const TransferForm = (props: TransferFormProps) => {
   const theme = useTheme()
   const [networksSwapped, setNetworkSwapped] = useState(false)
 
@@ -139,21 +132,7 @@ const Transfer = (props: TransferProps) => {
           backgroundColor: theme.color.surface,
         }}
       >
-        <Select
-          width="100%"
-          placeholder="Select account"
-          value={props.selectedAccountIndex}
-          onChange={props.onSelectAccountIndex}
-        >
-          {props.accounts.map((account, index) => (
-            <Select.Item
-              value={index}
-              leadingIcon={<Identicon value={account.address} size={40} />}
-              headlineText={account.name}
-              supportingText={account.balance}
-            />
-          ))}
-        </Select>
+        {props.accountSelector}
         <TextInput
           type="number"
           placeholder="0.00"
@@ -176,11 +155,7 @@ const Transfer = (props: TransferProps) => {
               >
                 <div css={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                   <div>Choose token</div>
-                  {props.loading ? (
-                    <CircularProgressIndicator size="1.5em" />
-                  ) : (
-                    <ChevronRight width="1.5em" height="1.5em" />
-                  )}
+                  {props.loading ? <CircularProgressIndicator size="1.5em" /> : <ChevronRight size="1.5em" />}
                 </div>
               </Button>
             ) : (
@@ -211,7 +186,7 @@ const Transfer = (props: TransferProps) => {
         >
           <motion.div layout>{networksSwapped ? toNetworkSelect : fromNetworkSelect}</motion.div>
           <div css={{ margin: '0 3rem', color: theme.color.primary }}>
-            <TransferNetworksButton
+            <TransferFormNetworksButton
               onClick={useCallback(() => {
                 props.onReverseNetworkRoute()
                 setNetworkSwapped(x => !x)
@@ -228,10 +203,10 @@ const Transfer = (props: TransferProps) => {
         loading={props.confirmTransferState === 'pending'}
         disabled={props.confirmTransferState === 'disabled'}
       >
-        Transfer
+        Teleport
       </Button>
     </div>
   )
 }
 
-export default Transfer
+export default TransferForm

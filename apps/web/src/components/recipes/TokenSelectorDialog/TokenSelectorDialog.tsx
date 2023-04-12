@@ -1,11 +1,7 @@
-import Hr from '@components/atoms/Hr'
-import Text from '@components/atoms/Text'
-import AlertDialog, { AlertDialogProps, PADDING } from '@components/molecules/AlertDialog'
-import TextInput from '@components/molecules/TextInput'
 import { useTheme } from '@emotion/react'
-import React from 'react'
-import { ChangeEventHandler, ReactElement, useCallback, useState } from 'react'
+import React, { ChangeEventHandler, ReactElement, useCallback, useState } from 'react'
 
+import { ALERT_DIALOG_PADDING, AlertDialog, AlertDialogProps, Hr, Text, TextInput } from '@talismn/ui'
 import Cryptoticon from '../Cryptoticon'
 
 export type TokenSelectorItemProps = {
@@ -79,7 +75,7 @@ const TokenSelectorDialog = Object.assign(
               value={query}
               onChange={useCallback<ChangeEventHandler<HTMLInputElement>>(event => setQuery(event.target.value), [])}
             />
-            <div css={{ marginLeft: `-${PADDING}`, marginRight: `-${PADDING}` }}>
+            <div css={{ marginLeft: `-${ALERT_DIALOG_PADDING}`, marginRight: `-${ALERT_DIALOG_PADDING}` }}>
               <Hr css={{ marginBottom: 0 }} />
               <ul
                 css={{

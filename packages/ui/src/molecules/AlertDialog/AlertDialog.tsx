@@ -13,7 +13,7 @@ export type AlertDialogProps = DialogProps & {
   width?: string | number
 }
 
-export const PADDING = '2.4rem'
+export const ALERT_DIALOG_PADDING = '2.4rem'
 
 const show = keyframes`
   from {
@@ -54,7 +54,7 @@ const AlertDialog = ({
         onClose={onRequestDismiss}
         onCancel={onRequestDismiss}
         css={{
-          'padding': PADDING,
+          'padding': ALERT_DIALOG_PADDING,
           'background': theme.color.surface,
           'border': 'none',
           'borderRadius': '1.6rem',

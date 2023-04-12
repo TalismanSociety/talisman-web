@@ -1,6 +1,6 @@
-import CircularProgressIndicator from '@components/atoms/CircularProgressIndicator'
 import { useTheme } from '@emotion/react'
-import { useChaindata, useTokens } from '@talismn/balances-react'
+import { useTokens } from '@talismn/balances-react'
+import { CircularProgressIndicator } from '@talismn/ui'
 import { PropsWithChildren, createContext, useContext } from 'react'
 
 export type CryptoticonProps = {
@@ -63,8 +63,7 @@ const Token = ({ id, size = '6.4rem' }: TokenProps) => {
 
 export default Object.assign(Cryptoticon, {
   Provider: (props: PropsWithChildren) => {
-    const chaindata = useChaindata()
-    const tokens = useTokens(chaindata)
+    const tokens = useTokens()
 
     return <CryptoticonContext.Provider value={{ tokens }}>{props.children}</CryptoticonContext.Provider>
   },

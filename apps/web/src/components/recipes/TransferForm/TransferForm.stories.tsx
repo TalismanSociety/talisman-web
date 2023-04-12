@@ -1,23 +1,24 @@
 import { ComponentMeta, Story } from '@storybook/react'
 
-import Transfer, { TransferProps } from './Transfer'
+import TransferForm, { TransferFormProps } from './TransferForm'
+import { Select } from '@talismn/ui'
 
 export default {
-  title: 'Recipes/Transfer',
-  component: Transfer,
+  title: 'Recipes/TransferForm',
+  component: TransferForm,
   parameters: {
     layout: 'centered',
   },
-} as ComponentMeta<typeof Transfer>
+} as ComponentMeta<typeof TransferForm>
 
-export const Default: Story<TransferProps> = args => <Transfer {...args} />
+export const Default: Story<TransferFormProps> = args => <TransferForm {...args} />
 
 Default.args = {
-  accounts: [
-    { address: '143wN4e1nTTWJZHy1CFVXDHpAg6YJsNn2jDN52J2Xfjf8MWs', name: 'Yeet account', balance: '' },
-    { address: '143wN4e1nTTWJZHy1CFVXDHpAg6YJsNn2jDN52J2Xfjf8MWs', name: 'Yeet account', balance: '' },
-    { address: '143wN4e1nTTWJZHy1CFVXDHpAg6YJsNn2jDN52J2Xfjf8MWs', name: 'Yeet account', balance: '' },
-  ],
+  accountSelector: (
+    <Select width="100%" placeholder="Select account">
+      <Select.Item headlineText="foo" />
+    </Select>
+  ),
   fromNetworks: [
     { name: 'Polkadot', logoSrc: '' },
     { name: 'Kusama', logoSrc: '' },
@@ -34,7 +35,6 @@ export const WithSelection = Default.bind({})
 
 WithSelection.args = {
   ...Default.args,
-  selectedAccountIndex: 0,
   selectedFromNetworkIndex: 0,
   selectedToNetworkIndex: 0,
   token: { name: 'DOT', logoSrc: '' },
