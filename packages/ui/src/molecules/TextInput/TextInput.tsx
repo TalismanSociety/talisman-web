@@ -41,11 +41,11 @@ const TextInput = ({
             marginBottom: '0.8rem',
           }}
         >
-          <Text as="label" htmlFor={inputId}>
+          <Text.BodySmall as="label" htmlFor={inputId}>
             {leadingLabel}
-          </Text>
+          </Text.BodySmall>
           <div>
-            <Text>{trailingLabel}</Text>
+            <Text.BodySmall>{trailingLabel}</Text.BodySmall>
           </div>
         </div>
       )}
@@ -89,10 +89,10 @@ const TextInput = ({
             },
           }}
         >
-          <Text as="label">{leadingSupportingText}</Text>
-          <Text as="label" css={isError && { color: theme.color.onError }}>
+          <Text.BodySmall as="label">{leadingSupportingText}</Text.BodySmall>
+          <Text.BodySmall as="label" css={isError && { color: theme.color.onError }}>
             {trailingSupportingText}
-          </Text>
+          </Text.BodySmall>
         </div>
       )}
     </div>

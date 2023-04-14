@@ -341,41 +341,43 @@ const StakeDialog = () => {
   const open = searchParams.get('action') === 'stake'
 
   return (
-    <StakeDialogComponent
-      open={open}
-      onRequestDismiss={useCallback(() => setSearchParams(new URLSearchParams()), [setSearchParams])}
-      stats={
-        <StakeDialogComponent.Stats>
-          <StakeDialogComponent.Stats.Item
-            headlineText="Rewards"
-            text={
-              <Suspense fallback={<CircularProgressIndicator size="1em" />}>
-                <Rewards />
-              </Suspense>
-            }
+    open && (
+      <StakeDialogComponent
+        open={open}
+        onRequestDismiss={() => setSearchParams(new URLSearchParams())}
+        stats={
+          <StakeDialogComponent.Stats>
+            <StakeDialogComponent.Stats.Item
+              headlineText="Rewards"
+              text={
+                <Suspense fallback={<CircularProgressIndicator size="1em" />}>
+                  <Rewards />
+                </Suspense>
+              }
+            />
+            <StakeDialogComponent.Stats.Item
+              headlineText="Current era ends"
+              text={
+                <Suspense fallback={<CircularProgressIndicator size="1em" />}>
+                  <EraEta />
+                </Suspense>
+              }
+            />
+          </StakeDialogComponent.Stats>
+        }
+        stakeInput={
+          <Suspense fallback={<StakingInput.Skeleton />}>
+            <StakeInput />
+          </Suspense>
+        }
+        learnMoreAnchor={
+          <StakeDialogComponent.LearnMore
+            href="https://docs.talisman.xyz/talisman/navigating-the-paraverse/using-the-talisman-portal/one-click-staking"
+            target="_blank"
           />
-          <StakeDialogComponent.Stats.Item
-            headlineText="Current era ends"
-            text={
-              <Suspense fallback={<CircularProgressIndicator size="1em" />}>
-                <EraEta />
-              </Suspense>
-            }
-          />
-        </StakeDialogComponent.Stats>
-      }
-      stakeInput={
-        <Suspense fallback={<StakingInput.Skeleton />}>
-          <StakeInput />
-        </Suspense>
-      }
-      learnMoreAnchor={
-        <StakeDialogComponent.LearnMore
-          href="https://docs.talisman.xyz/talisman/navigating-the-paraverse/using-the-talisman-portal/one-click-staking"
-          target="_blank"
-        />
-      }
-    />
+        }
+      />
+    )
   )
 }
 

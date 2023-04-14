@@ -40,7 +40,7 @@ import NFTsPage from './NFTsPage'
 import Overview from './Overview'
 import Portfolio from './Portfolio'
 import TransactionHistory from './TransactionHistory'
-import TransferDialog from '@components/widgets/TransferDialog'
+import TeleportDialog from '@components/widgets/TeleportDialog'
 
 const Header = () => {
   const shouldShowAccountConnectionGuard = useShouldShowAccountConnectionGuard()
@@ -277,7 +277,7 @@ const Main = () => {
           <Header />
           <Outlet />
           <StakeDialog />
-          <TransferDialog />
+          <TeleportDialog />
         </MoonbeamContributors.PopupProvider>
       </ModalProvider>
     </Scaffold>

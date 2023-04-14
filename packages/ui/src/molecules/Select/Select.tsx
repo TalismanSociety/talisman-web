@@ -13,16 +13,15 @@ import {
 import { ChevronDown, X } from '@talismn/icons'
 import { motion } from 'framer-motion'
 import React, {
-  type ReactElement,
-  type ReactNode,
   forwardRef,
   useCallback,
   useEffect,
   useLayoutEffect,
   useRef,
   useState,
+  type ReactElement,
+  type ReactNode,
 } from 'react'
-
 import { Text } from '../../atoms'
 
 type Value = string | number | undefined
@@ -32,7 +31,7 @@ export type SelectProps<T extends string | number | undefined> = {
   placeholder?: ReactNode
   width?: string | number
   children: ReactElement<SelectItemProps> | Array<ReactElement<SelectItemProps>>
-  onChange?: (value: string | undefined) => unknown
+  onChange?: (value: T) => unknown
   clearRequired?: boolean
 }
 
@@ -85,7 +84,7 @@ const Select = Object.assign(
       open,
       onOpenChange: open => {
         if (clearRequired) {
-          props.onChange?.(undefined)
+          props.onChange?.(undefined as T)
         }
         setOpen(open)
       },

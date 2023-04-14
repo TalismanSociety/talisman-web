@@ -15,7 +15,6 @@ import * as MoonbeamContributors from '@libs/moonbeam-contributors'
 import * as Portfolio from '@libs/portfolio'
 import TalismanProvider from '@libs/talisman'
 import router from '@routes'
-import { WayfinderProvider } from '@talismn/wayfinder-react'
 import { PropsWithChildren, Suspense } from 'react'
 import { Toaster } from 'react-hot-toast'
 import { RouterProvider } from 'react-router-dom'
@@ -59,17 +58,15 @@ const App = () => (
           <LegacyApiProvider>
             <Portfolio.Provider>
               <TalismanProvider>
-                <WayfinderProvider>
-                  <ExtensionWatcher />
-                  <LegacyBalancesWatcher />
-                  <MoonbeamContributors.Provider>
-                    <Development />
-                    <NftProvider />
-                    <RouterProvider router={router} />
-                    <Toaster position="top-right">{t => <ToastBar toast={t} />}</Toaster>
-                    <CookieBanner />
-                  </MoonbeamContributors.Provider>
-                </WayfinderProvider>
+                <ExtensionWatcher />
+                <LegacyBalancesWatcher />
+                <MoonbeamContributors.Provider>
+                  <Development />
+                  <NftProvider />
+                  <RouterProvider router={router} />
+                  <Toaster position="top-right">{t => <ToastBar toast={t} />}</Toaster>
+                  <CookieBanner />
+                </MoonbeamContributors.Provider>
               </TalismanProvider>
             </Portfolio.Provider>
           </LegacyApiProvider>
