@@ -32,55 +32,57 @@ const StakeDialog = () => {
 
   const [inTransition, startTransition] = useTransition()
 
+  if (!open) {
+    return null
+  }
+
   return (
-    open && (
-      <ChainProvider value={chain}>
-        <StakeDialogComponent
-          open={open}
-          onRequestDismiss={() => setSearchParams(new URLSearchParams())}
-          stats={
-            <StakeDialogComponent.Stats>
-              <StakeDialogComponent.Stats.Item
-                headlineText="Rewards"
-                text={
-                  <Suspense fallback={<CircularProgressIndicator size="1em" />}>
-                    <Rewards />
-                  </Suspense>
-                }
-              />
-              <StakeDialogComponent.Stats.Item
-                headlineText="Current era ends"
-                text={
-                  <Suspense fallback={<CircularProgressIndicator size="1em" />}>
-                    <EraEta />
-                  </Suspense>
-                }
-              />
-            </StakeDialogComponent.Stats>
-          }
-          stakeInput={
-            <Suspense fallback={<StakeForm.Skeleton />}>
-              <ControlledStakeForm
-                assetSelector={
-                  <AssetSelect
-                    chains={chains}
-                    selectedChain={chain}
-                    onSelectChain={chain => startTransition(() => setChain(chain))}
-                    inTransition={inTransition}
-                  />
-                }
-              />
-            </Suspense>
-          }
-          learnMoreAnchor={
-            <StakeDialogComponent.LearnMore
-              href="https://docs.talisman.xyz/talisman/navigating-the-paraverse/using-the-talisman-portal/one-click-staking"
-              target="_blank"
+    <ChainProvider value={chain}>
+      <StakeDialogComponent
+        open={open}
+        onRequestDismiss={() => setSearchParams(new URLSearchParams())}
+        stats={
+          <StakeDialogComponent.Stats>
+            <StakeDialogComponent.Stats.Item
+              headlineText="Rewards"
+              text={
+                <Suspense fallback={<CircularProgressIndicator size="1em" />}>
+                  <Rewards />
+                </Suspense>
+              }
             />
-          }
-        />
-      </ChainProvider>
-    )
+            <StakeDialogComponent.Stats.Item
+              headlineText="Current era ends"
+              text={
+                <Suspense fallback={<CircularProgressIndicator size="1em" />}>
+                  <EraEta />
+                </Suspense>
+              }
+            />
+          </StakeDialogComponent.Stats>
+        }
+        stakeInput={
+          <Suspense fallback={<StakeForm.Skeleton />}>
+            <ControlledStakeForm
+              assetSelector={
+                <AssetSelect
+                  chains={chains}
+                  selectedChain={chain}
+                  onSelectChain={chain => startTransition(() => setChain(chain))}
+                  inTransition={inTransition}
+                />
+              }
+            />
+          </Suspense>
+        }
+        learnMoreAnchor={
+          <StakeDialogComponent.LearnMore
+            href="https://docs.talisman.xyz/talisman/navigating-the-paraverse/using-the-talisman-portal/one-click-staking"
+            target="_blank"
+          />
+        }
+      />
+    </ChainProvider>
   )
 }
 
