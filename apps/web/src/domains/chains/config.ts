@@ -34,6 +34,7 @@ export type Chain = {
   }
   subscanUrl: string
   parameters: ChainParameters
+  priorityPool?: number
 }
 
 export const chains: Chain[] = [
@@ -70,6 +71,7 @@ export const chains: Chain[] = [
      * https://github.com/paritytech/polkadot-staking-dashboard/blob/8c136141141e6a74ddd838aa20df48a20a35749e/src/config/networks.ts
      */
     parameters: { ...defaultParams, auctionAdjust: 0.3 / 60, auctionMax: 60, stakeTarget: 0.75 },
+    priorityPool: 15,
   },
   {
     id: 'aleph',
@@ -83,6 +85,7 @@ export const chains: Chain[] = [
     },
     subscanUrl: 'https://alephzero.subscan.io/',
     parameters: defaultParams,
+    priorityPool: 47,
   },
   {
     id: 'westend-testnet',

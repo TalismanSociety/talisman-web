@@ -1,4 +1,5 @@
 import { substrateAccountsState } from '@domains/accounts/recoils'
+import { chainsState } from '@domains/chains'
 import { SubstrateApiContext } from '@domains/common'
 import { chainReadIdState, substrateApiState } from '@domains/common/recoils'
 import type { AnyNumber } from '@polkadot/types-codec/types'
@@ -48,7 +49,10 @@ export const recommendedPoolsState = selectorFamily({
   get:
     (endpoint: string) =>
     async ({ get }) => {
+      const chains = get(chainsState)
       const api = get(substrateApiState(endpoint))
+
+      const chain = chains.find(x => x.genesisHash === api.genesisHash.toHex())
 
       const recommendedPoolIds = await new DotPoolSelector(new ValidatorSelector(api), api, {
         ...defaultOptions,
@@ -68,7 +72,11 @@ export const recommendedPoolsState = selectorFamily({
         .filter(pool => pool.bondedPool.isSome)
         .map(pool => ({ ...pool, bondedPool: pool.bondedPool.unwrap() }))
         .sort((a, b) =>
-          recommendedPoolIds.includes(a.poolId) && !recommendedPoolIds.includes(b.poolId)
+          a.poolId === chain?.priorityPool && b.poolId !== chain.priorityPool
+            ? -1
+            : b.poolId === chain?.priorityPool && a.poolId !== chain.priorityPool
+            ? 1
+            : recommendedPoolIds.includes(a.poolId) && !recommendedPoolIds.includes(b.poolId)
             ? -1
             : recommendedPoolIds.includes(b.poolId) && !recommendedPoolIds.includes(a.poolId)
             ? 1

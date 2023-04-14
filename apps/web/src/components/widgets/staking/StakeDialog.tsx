@@ -4,7 +4,7 @@ import { useEraEtaFormatter } from '@domains/common/hooks'
 import { useInflation } from '@domains/nominationPools/hooks'
 import { CircularProgressIndicator } from '@talismn/ui'
 import BN from 'bn.js'
-import { Suspense, useCallback, useState, useTransition } from 'react'
+import { Suspense, useState, useTransition } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useRecoilValue } from 'recoil'
 
@@ -32,52 +32,54 @@ const StakeDialog = () => {
   const [inTransition, startTransition] = useTransition()
 
   return (
-    <ChainProvider value={chain}>
-      <StakeDialogComponent
-        open={open}
-        onRequestDismiss={useCallback(() => setSearchParams(new URLSearchParams()), [setSearchParams])}
-        stats={
-          <StakeDialogComponent.Stats>
-            <StakeDialogComponent.Stats.Item
-              headlineText="Rewards"
-              text={
-                <Suspense fallback={<CircularProgressIndicator size="1em" />}>
-                  <Rewards />
-                </Suspense>
-              }
+    open && (
+      <ChainProvider value={chain}>
+        <StakeDialogComponent
+          open={open}
+          onRequestDismiss={() => setSearchParams(new URLSearchParams())}
+          stats={
+            <StakeDialogComponent.Stats>
+              <StakeDialogComponent.Stats.Item
+                headlineText="Rewards"
+                text={
+                  <Suspense fallback={<CircularProgressIndicator size="1em" />}>
+                    <Rewards />
+                  </Suspense>
+                }
+              />
+              <StakeDialogComponent.Stats.Item
+                headlineText="Current era ends"
+                text={
+                  <Suspense fallback={<CircularProgressIndicator size="1em" />}>
+                    <EraEta />
+                  </Suspense>
+                }
+              />
+            </StakeDialogComponent.Stats>
+          }
+          stakeInput={
+            <Suspense fallback={<StakeForm.Skeleton />}>
+              <ControlledStakeForm
+                assetSelector={
+                  <AssetSelect
+                    chains={chains}
+                    selectedChain={chain}
+                    onSelectChain={chain => startTransition(() => setChain(chain))}
+                    inTransition={inTransition}
+                  />
+                }
+              />
+            </Suspense>
+          }
+          learnMoreAnchor={
+            <StakeDialogComponent.LearnMore
+              href="https://docs.talisman.xyz/talisman/navigating-the-paraverse/using-the-talisman-portal/one-click-staking"
+              target="_blank"
             />
-            <StakeDialogComponent.Stats.Item
-              headlineText="Current era ends"
-              text={
-                <Suspense fallback={<CircularProgressIndicator size="1em" />}>
-                  <EraEta />
-                </Suspense>
-              }
-            />
-          </StakeDialogComponent.Stats>
-        }
-        stakeInput={
-          <Suspense fallback={<StakeForm.Skeleton />}>
-            <ControlledStakeForm
-              assetSelector={
-                <AssetSelect
-                  chains={chains}
-                  selectedChain={chain}
-                  onSelectChain={useCallback(chain => startTransition(() => setChain(chain)), [])}
-                  inTransition={inTransition}
-                />
-              }
-            />
-          </Suspense>
-        }
-        learnMoreAnchor={
-          <StakeDialogComponent.LearnMore
-            href="https://docs.talisman.xyz/talisman/navigating-the-paraverse/using-the-talisman-portal/one-click-staking"
-            target="_blank"
-          />
-        }
-      />
-    </ChainProvider>
+          }
+        />
+      </ChainProvider>
+    )
   )
 }
 
