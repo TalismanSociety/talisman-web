@@ -25,9 +25,10 @@ const StakeDialog = () => {
   const [searchParams, setSearchParams] = useSearchParams()
 
   const open = searchParams.get('action') === 'stake'
+  const initialChain = searchParams.get('chain')
 
   const chains = useRecoilValue(chainsState)
-  const [chain, setChain] = useState<Chain>(chains[0]!)
+  const [chain, setChain] = useState<Chain>(chains.find(x => x.id === initialChain) ?? chains[0]!)
 
   const [inTransition, startTransition] = useTransition()
 

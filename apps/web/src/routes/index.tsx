@@ -28,7 +28,7 @@ import {
 import { shortenAddress } from '@util/format'
 import { usePostHog } from 'posthog-js/react'
 import { useCallback, useEffect, useState } from 'react'
-import { Link, Navigate, Outlet, createBrowserRouter, useLocation } from 'react-router-dom'
+import { Link, Navigate, Outlet, createBrowserRouter, useLocation, useSearchParams } from 'react-router-dom'
 import { useRecoilValue, useRecoilValueLoadable, waitForAll } from 'recoil'
 
 import AssetItem from './AssetItem'
@@ -276,6 +276,13 @@ const Main = () => {
   )
 }
 
+const NavigateToStaking = () => {
+  const [search] = useSearchParams()
+  search.set('action', 'stake')
+  search.sort()
+  return <Navigate to={{ pathname: '/portfolio', search: search.toString() }} />
+}
+
 export default Sentry.wrapCreateBrowserRouter(createBrowserRouter)([
   {
     path: '/',
@@ -322,7 +329,10 @@ export default Sentry.wrapCreateBrowserRouter(createBrowserRouter)([
       { path: 'history', element: <Navigate to="/portfolio/history" /> },
       { path: 'nfts', element: <Navigate to="/portfolio/nfts" /> },
       { path: 'explore', element: <Explore /> },
-      { path: 'staking', element: <Navigate to="/portfolio?action=stake" /> },
+      {
+        path: 'staking',
+        element: <NavigateToStaking />,
+      },
       {
         path: 'crowdloans',
         children: [
