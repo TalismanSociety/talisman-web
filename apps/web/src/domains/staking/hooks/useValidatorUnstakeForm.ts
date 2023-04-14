@@ -13,7 +13,7 @@ export const useValidatorUnstakeForm = (account?: string) => {
 
   const [input, setAmount] = useTokenAmountState('')
 
-  const minNeededForMembership = useTokenAmountFromPlanck(queriesLoadable.contents[0])
+  const minNeededForMembership = useTokenAmountFromPlanck(queriesLoadable.valueMaybe()?.[0])
 
   const available = useTokenAmountFromPlanck(queriesLoadable.valueMaybe()?.[1]?.unwrapOrDefault().active.unwrap())
 

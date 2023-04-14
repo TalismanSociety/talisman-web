@@ -76,7 +76,7 @@ const ExistingPool = (props: { account: Account }) => {
         unlocks={unlocks ?? []}
         unlocking={!unlocking.decimalAmount.planck.isZero() && unlocking.decimalAmount.toHuman()}
         unlockingFiatAmount={unlocking.localizedFiatAmount}
-        withdrawable={!withdrawable.decimalAmount.planck.isZero() && withdrawable.decimalAmount.toHuman()}
+        withdrawable={!withdrawable.decimalAmount?.planck.isZero() && withdrawable.decimalAmount?.toHuman()}
         withdrawableFiatAmount={withdrawable.localizedFiatAmount}
         withdrawChip={
           <StakeFormComponent.ExistingPool.WithdrawChip
@@ -386,7 +386,7 @@ export const ControlledStakeForm = (props: { assetSelector: ReactNode }) => {
           />
         }
         estimatedYield={
-          amount && (
+          decimalAmount && (
             <Suspense>
               <DeferredEstimatedYield amount={decimalAmount} />
             </Suspense>
