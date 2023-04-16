@@ -1,17 +1,50 @@
 import MemberRow from '@components/MemberRow'
 import { css } from '@emotion/css'
-import { CheckCircle, Info } from '@talismn/icons'
+import { Info } from '@talismn/icons'
 import { Button, IconButton } from '@talismn/ui'
-import { device } from '@util/breakpoints'
+import { Skeleton } from '@talismn/ui'
+import { formatUsd } from '@util/numbers'
+import { Loadable } from 'recoil'
 
+import { ChainSummary, Token } from '../../domain/chains'
 import { AugmentedAccount, Step } from '.'
+
+const Cost = (props: { amount: number; symbol: string; price: number }) => (
+  <p>
+    {props.amount} {props.symbol} ({formatUsd(props.amount * props.price)})
+  </p>
+)
 
 const Confirmation = (props: {
   setStep: React.Dispatch<React.SetStateAction<Step>>
   augmentedAccounts: AugmentedAccount[]
   threshold: number
   name: string
+  chain: ChainSummary
+  tokenWithPrice: Loadable<{ token: Token; price: number }>
+  reserveAmount: number
+  fee: number
 }) => {
+  const { tokenWithPrice, reserveAmount, fee, chain } = props
+
+  const reserveAmountComponent =
+    tokenWithPrice.state === 'hasValue' ? (
+      <Cost
+        amount={reserveAmount}
+        symbol={tokenWithPrice.contents.token.symbol}
+        price={tokenWithPrice.contents.price}
+      />
+    ) : (
+      <Skeleton.Surface css={{ height: '14px', minWidth: '125px' }} />
+    )
+
+  const feeAmountComponent =
+    tokenWithPrice.state === 'hasValue' ? (
+      <Cost amount={fee} symbol={tokenWithPrice.contents.token.symbol} price={tokenWithPrice.contents.price} />
+    ) : (
+      <Skeleton.Surface css={{ height: '14px', minWidth: '125px' }} />
+    )
+
   return (
     <div
       className={css`
@@ -57,11 +90,7 @@ const Confirmation = (props: {
           `}
         >
           <div css={{ width: '1em', height: '1em' }}>
-            <img
-              src={`https://raw.githubusercontent.com/TalismanSociety/chaindata/v3/assets/chains/polkadot.svg`}
-              css={{ width: '100%', height: '100%', borderRadius: '50%' }}
-              alt="DOT"
-            />
+            <img src={chain.logo} css={{ width: '100%', height: '100%', borderRadius: '50%' }} alt={chain.chainName} />
           </div>
           <p
             className={css`
@@ -69,7 +98,7 @@ const Confirmation = (props: {
               font-size: 14px;
             `}
           >
-            Polkadot
+            {chain.chainName}
           </p>
         </div>
         <div
@@ -117,15 +146,17 @@ const Confirmation = (props: {
           margin-top: 24px;
           grid-template-columns: 1fr auto;
           grid-template-rows: 1fr 1fr;
-          justify-items: space-around;
-          justify-content: space-around;
+          justify-content: space-between;
           width: 100%;
+          p:nth-child(even) {
+            margin-left: auto;
+          }
         `}
       >
         <p>Reserved Amount</p>
-        <p>XX DOT ($XX.XX)</p>
+        {reserveAmountComponent}
         <p>Estimated Fee</p>
-        <p>XX DOT ($XX.XX)</p>
+        {feeAmountComponent}
       </div>
       <div
         className={css`
@@ -144,44 +175,34 @@ const Confirmation = (props: {
           <Info />
         </IconButton>
         <p>
-          To operate your vault Polkadot requires some funds to be reserved as a deposit. This will be fully refunded
-          when you wind down your vault.
+          To operate your vault {chain.chainName} requires some funds to be reserved as a deposit. This will be fully
+          refunded when you wind down your vault.
         </p>
       </div>
       <div
         className={css`
-          display: flex;
+          display: grid;
+          grid-template-columns: 1fr 1fr;
           gap: 16px;
+          margin-top: 48px;
+          width: 100%;
+          button {
+            height: 56px;
+          }
         `}
       >
         <Button
           onClick={() => {
-            props.setStep('selectThreshold')
+            props.setStep('selectFirstChain')
           }}
-          className={css`
-            margin-top: 48px;
-            width: 240px;
-            height: 56px;
-            @media ${device.lg} {
-              width: 303px;
-            }
-          `}
           children={<h3>Back</h3>}
           variant="outlined"
         />
         <Button
-          disabled={props.augmentedAccounts.length < 3}
+          disabled={tokenWithPrice.state !== 'hasValue' || props.augmentedAccounts.length < 2}
           onClick={() => {
-            props.setStep('selectThreshold')
+            props.setStep('selectFirstChain')
           }}
-          className={css`
-            margin-top: 48px;
-            width: 240px;
-            height: 56px;
-            @media ${device.lg} {
-              width: 303px;
-            }
-          `}
           children={<h3>Create Vault</h3>}
         />
       </div>

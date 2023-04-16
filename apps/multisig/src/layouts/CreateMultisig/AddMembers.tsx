@@ -78,7 +78,7 @@ const AddMembers = (props: {
           onChange={event => setNewAddress(event.target.value)}
         />
       </div>
-      <Button
+      <div
         onClick={() => {
           const validAddress = toSs52Address(newAddress)
           if (!validAddress) {
@@ -101,6 +101,7 @@ const AddMembers = (props: {
           width: 176px;
           height: 40px;
           padding: 0 !important;
+          cursor: pointer;
         `}
       >
         <div
@@ -118,41 +119,31 @@ const AddMembers = (props: {
           </IconButton>
           <span>Add member</span>
         </div>
-      </Button>
+      </div>
       <div
         className={css`
-          display: flex;
+          display: grid;
+          grid-template-columns: 1fr 1fr;
           gap: 16px;
+          margin-top: 48px;
+          width: 100%;
+          button {
+            height: 56px;
+          }
         `}
       >
         <Button
           onClick={() => {
             props.setStep('nameVault')
           }}
-          className={css`
-            margin-top: 48px;
-            width: 240px;
-            height: 56px;
-            @media ${device.lg} {
-              width: 303px;
-            }
-          `}
           children={<h3>Back</h3>}
           variant="outlined"
         />
         <Button
-          disabled={props.augmentedAccounts.length < 3}
+          disabled={props.augmentedAccounts.length < 2}
           onClick={() => {
             props.setStep('selectThreshold')
           }}
-          className={css`
-            margin-top: 48px;
-            width: 240px;
-            height: 56px;
-            @media ${device.lg} {
-              width: 303px;
-            }
-          `}
           children={<h3>Next</h3>}
         />
       </div>

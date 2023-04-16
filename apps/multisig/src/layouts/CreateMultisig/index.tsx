@@ -2,16 +2,25 @@ import Logo from '@components/Logo'
 import { css } from '@emotion/css'
 import { device } from '@util/breakpoints'
 import { useEffect, useMemo, useState } from 'react'
-import { useRecoilState } from 'recoil'
+import { useRecoilState, useRecoilValueLoadable } from 'recoil'
 
+import { ChainSummary, supportedChains, tokenByIdWithPrice } from '../../domain/chains'
 import { accountsState } from '../../domain/extension'
 import AddMembers from './AddMembers'
 import Confirmation from './Confirmation'
 import NameVault from './NameVault'
 import NoVault from './NoVault'
+import SelectFirstChain from './SelectFirstChain'
 import SelectThreshold from './SelectThreshold'
 
-export type Step = 'noVault' | 'nameVault' | 'addMembers' | 'selectThreshold' | 'confirmation' | 'transactions'
+export type Step =
+  | 'noVault'
+  | 'nameVault'
+  | 'addMembers'
+  | 'selectThreshold'
+  | 'selectFirstChain'
+  | 'confirmation'
+  | 'transactions'
 
 export interface AugmentedAccount {
   address: string
@@ -24,6 +33,7 @@ function calcContentHeight(step: Step, nAccounts: number): { md: string; lg: str
   if (step === 'noVault') return { md: '557px', lg: '601px' }
   if (step === 'selectThreshold') return { md: '568px', lg: '568px' }
   if (step === 'nameVault') return { md: '429px', lg: '461px' }
+  if (step === 'selectFirstChain') return { md: '400px', lg: '461px' }
   if (step === 'addMembers') return { md: 541 + nAccounts * 40 + 'px', lg: 541 + nAccounts * 40 + 'px' }
   return { md: 681 + nAccounts * 40 + 'px', lg: 641 + nAccounts * 40 + 'px' }
 }
@@ -42,11 +52,19 @@ const CreateMultisig = () => {
     setIsVisible(true)
   }, [])
 
+  let firstChain = supportedChains[0]
+  if (!firstChain) throw Error('no supported chains')
+
   const [step, setStep] = useState<Step>('noVault')
   const [name, setName] = useState<string>('')
+  const [chain, setChain] = useState<ChainSummary>(firstChain)
   const [extensionAccounts] = useRecoilState(accountsState)
   const [externalAccounts, setExternalAccounts] = useState<string[]>([])
   const [threshold, setThreshold] = useState<number>(2)
+  const tokenWithPrice = useRecoilValueLoadable(tokenByIdWithPrice(chain.nativeToken.id))
+  // TODO: replace this with a query once lib is avail
+  const reserveAmount = 20.041
+  const fee = 0.0125628761
 
   const augmentedAccounts: AugmentedAccount[] = useMemo(() => {
     // TODO allow 'deselecting' extension accounts in the creation phase
@@ -118,8 +136,19 @@ const CreateMultisig = () => {
             threshold={threshold}
             max={augmentedAccounts.length}
           />
+        ) : step === 'selectFirstChain' ? (
+          <SelectFirstChain setStep={setStep} setChain={setChain} chain={chain} chains={supportedChains} />
         ) : step === 'confirmation' ? (
-          <Confirmation setStep={setStep} augmentedAccounts={augmentedAccounts} threshold={threshold} name={name} />
+          <Confirmation
+            setStep={setStep}
+            augmentedAccounts={augmentedAccounts}
+            threshold={threshold}
+            name={name}
+            chain={chain}
+            reserveAmount={reserveAmount}
+            fee={fee}
+            tokenWithPrice={tokenWithPrice}
+          />
         ) : null}
       </div>
     </div>

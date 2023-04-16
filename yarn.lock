@@ -1692,7 +1692,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/runtime@npm:^7.0.0, @babel/runtime@npm:^7.1.2, @babel/runtime@npm:^7.10.1, @babel/runtime@npm:^7.10.2, @babel/runtime@npm:^7.11.2, @babel/runtime@npm:^7.12.5, @babel/runtime@npm:^7.14.5, @babel/runtime@npm:^7.16.3, @babel/runtime@npm:^7.17.2, @babel/runtime@npm:^7.17.8, @babel/runtime@npm:^7.18.3, @babel/runtime@npm:^7.19.0, @babel/runtime@npm:^7.20.13, @babel/runtime@npm:^7.20.6, @babel/runtime@npm:^7.20.7, @babel/runtime@npm:^7.5.0, @babel/runtime@npm:^7.7.6, @babel/runtime@npm:^7.8.4, @babel/runtime@npm:^7.9.2":
+"@babel/runtime@npm:^7.0.0, @babel/runtime@npm:^7.1.2, @babel/runtime@npm:^7.10.1, @babel/runtime@npm:^7.10.2, @babel/runtime@npm:^7.11.2, @babel/runtime@npm:^7.12.5, @babel/runtime@npm:^7.14.5, @babel/runtime@npm:^7.16.3, @babel/runtime@npm:^7.17.2, @babel/runtime@npm:^7.17.8, @babel/runtime@npm:^7.18.3, @babel/runtime@npm:^7.19.0, @babel/runtime@npm:^7.20.13, @babel/runtime@npm:^7.20.6, @babel/runtime@npm:^7.20.7, @babel/runtime@npm:^7.5.0, @babel/runtime@npm:^7.7.2, @babel/runtime@npm:^7.7.6, @babel/runtime@npm:^7.8.4, @babel/runtime@npm:^7.9.2":
   version: 7.21.0
   resolution: "@babel/runtime@npm:7.21.0"
   dependencies:
@@ -8091,9 +8091,11 @@ __metadata:
     "@types/react": ^18.0.27
     "@types/react-dom": ^18.0.10
     "@types/react-infinite-scroller": ^1.2.3
+    "@types/react-relay": ^14.1.3
     "@types/react-router-dom": ^5.3.3
     "@types/truncate-middle": ^1.0.1
     babel-jest: ^29.4.3
+    babel-plugin-relay: ^15.0.0
     bignumber.js: ^9.1.1
     colorjs.io: ^0.4.3
     crypto-browserify: ^3.12.0
@@ -8106,6 +8108,7 @@ __metadata:
     framer-motion: ^10.0.1
     graphql: ^16.6.0
     graphql-request: ^5.1.0
+    graphql-tag: ^2.12.6
     i18next: ^21.10.0
     i18next-browser-languagedetector: ^6.1.8
     i18next-http-backend: ^1.4.5
@@ -8122,12 +8125,17 @@ __metadata:
     react-i18next: ^11.18.6
     react-infinite-scroller: ^1.2.6
     react-is: ^17.0.2
+    react-loading-skeleton: ^3.2.0
+    react-relay: ^15.0.0
     react-router-dom: ^6.8.1
     react-scripts: 5.0.1
     react-use: ^17.4.0
     react-winbox: ^1.5.0
     recoil: ^0.7.6
     recoil-persist: ^4.2.0
+    recoil-relay: ^0.1.0
+    relay-compiler: ^15.0.0
+    relay-runtime: ^15.0.0
     rmrk-tools: ^1.0.64
     safety-match: ^0.4.4
     storybook-preset-craco: artisanofcode/storybook-preset-craco
@@ -9045,6 +9053,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/react-relay@npm:^14.1.3":
+  version: 14.1.3
+  resolution: "@types/react-relay@npm:14.1.3"
+  dependencies:
+    "@types/react": "*"
+    "@types/relay-runtime": "*"
+  checksum: b161e5dd1328159b64f6875a9a0595d3f7ce5e8216bdf17bf1d188c544e675c44bb6cf368cf4c9e6e90d0a4a9f10a1dc38cb068004024c4489f84491d0551390
+  languageName: node
+  linkType: hard
+
 "@types/react-router-dom@npm:^5.3.3":
   version: 5.3.3
   resolution: "@types/react-router-dom@npm:5.3.3"
@@ -9074,6 +9092,13 @@ __metadata:
     "@types/scheduler": "*"
     csstype: ^3.0.2
   checksum: 6befbd5587e266905b50fd6bbd7c1cacd557bddf99e6a9862ca2f1d06df3dca71b9d485a37d010479730f021aab93b852d417c714de5efc2f41be0ff4c09b4db
+  languageName: node
+  linkType: hard
+
+"@types/relay-runtime@npm:*":
+  version: 14.1.10
+  resolution: "@types/relay-runtime@npm:14.1.10"
+  checksum: 498af0a8b6521edcf3c2945bbd126167ffe29d18505085527641ba5d617533e37f356af17ec8d1ea7192fa1d398da116b9457d5a5c054d9b2f9ea2542adec61d
   languageName: node
   linkType: hard
 
@@ -10812,6 +10837,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"babel-plugin-macros@npm:^2.0.0":
+  version: 2.8.0
+  resolution: "babel-plugin-macros@npm:2.8.0"
+  dependencies:
+    "@babel/runtime": ^7.7.2
+    cosmiconfig: ^6.0.0
+    resolve: ^1.12.0
+  checksum: 59b09a21cf3ae1e14186c1b021917d004b49b953824b24953a54c6502da79e8051d4ac31cfd4a0ae7f6ea5ddf1f7edd93df4895dd3c3982a5b2431859c2889ac
+  languageName: node
+  linkType: hard
+
 "babel-plugin-macros@npm:^3.0.1, babel-plugin-macros@npm:^3.1.0":
   version: 3.1.0
   resolution: "babel-plugin-macros@npm:3.1.0"
@@ -10895,6 +10931,17 @@ __metadata:
     lodash: ^4.17.15
     react-docgen: ^5.0.0
   checksum: 6126d358ac2cb27a9a7f145ab586b7a28cb19ef09ca37c4f08a853246a101328ffe6c87813e95b1b4ba05beb627285199f7d0ba16abfb61b35cc4febb6d5eabd
+  languageName: node
+  linkType: hard
+
+"babel-plugin-relay@npm:^15.0.0":
+  version: 15.0.0
+  resolution: "babel-plugin-relay@npm:15.0.0"
+  dependencies:
+    babel-plugin-macros: ^2.0.0
+    cosmiconfig: ^5.0.5
+    graphql: 15.3.0
+  checksum: e3e245c8902a38b54ac084b32f079db318ff257e03d026957ee1b34d3df4a0ca2e6b11eb5d2e4d4f32fe55deac930888bd51e8de8af02cc6bffff31218155f9a
   languageName: node
   linkType: hard
 
@@ -15279,7 +15326,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fbjs@npm:^3.0.0":
+"fbjs@npm:^3.0.0, fbjs@npm:^3.0.2":
   version: 3.0.4
   resolution: "fbjs@npm:3.0.4"
   dependencies:
@@ -16303,6 +16350,13 @@ __metadata:
   peerDependencies:
     graphql: ">=0.11 <=16"
   checksum: 5c683e2d5bdadfcfec0639eda69b8a66ef275e68e64f662bd75da6779a87b34395cbce8e37cb66830a9febca1871f7dc2575e6814f6f6e899904fe72e245f216
+  languageName: node
+  linkType: hard
+
+"graphql@npm:15.3.0":
+  version: 15.3.0
+  resolution: "graphql@npm:15.3.0"
+  checksum: df18079e3a1ecb875821a71531b74eb1e6099ec1fb8d6e79faff4b43561cb23acbb80c9e05845292e08b6321d507e55dc7d5a60d72cdd093720a6f0f00983d1e
   languageName: node
   linkType: hard
 
@@ -23548,6 +23602,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-loading-skeleton@npm:^3.2.0":
+  version: 3.2.0
+  resolution: "react-loading-skeleton@npm:3.2.0"
+  peerDependencies:
+    react: ">=16.8.0"
+  checksum: 0da0d6747191696aee37aa202bb09af72316f7ddb6b5e7c7d82beaa7f06a6e931814f0f0d8e4536524985cb9c26f15ec95420e0463d8e9a3698dfdade20eb4ee
+  languageName: node
+  linkType: hard
+
 "react-merge-refs@npm:^1.0.0":
   version: 1.1.0
   resolution: "react-merge-refs@npm:1.1.0"
@@ -23559,6 +23622,21 @@ __metadata:
   version: 0.11.0
   resolution: "react-refresh@npm:0.11.0"
   checksum: 112178a05b1e0ffeaf5d9fb4e56b4410a34a73adeb04dbf13abdc50d9ac9df2ada83e81485156cca0b3fa296aa3612751b3d6cd13be4464642a43679b819cbc7
+  languageName: node
+  linkType: hard
+
+"react-relay@npm:^15.0.0":
+  version: 15.0.0
+  resolution: "react-relay@npm:15.0.0"
+  dependencies:
+    "@babel/runtime": ^7.0.0
+    fbjs: ^3.0.2
+    invariant: ^2.2.4
+    nullthrows: ^1.1.1
+    relay-runtime: 15.0.0
+  peerDependencies:
+    react: ^16.9.0 || ^17 || ^18
+  checksum: d318c3b153f193e1b93fb5d8501426f7a9eb2e013407cbfadc1cbc17e319d99dad9c145147c0cea194eeb6ffbb4fc6d41914ad69db0d589808d4484e4a6fd718
   languageName: node
   linkType: hard
 
@@ -23817,6 +23895,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"recoil-relay@npm:^0.1.0":
+  version: 0.1.0
+  resolution: "recoil-relay@npm:0.1.0"
+  peerDependencies:
+    react-relay: ">=13.2.0"
+    recoil: ">=0.7.3"
+    relay-runtime: ">=13.2.0"
+  checksum: c210bf9c3b0a2c7ce2fb130b6eb2b5d1d63680fca549b013c0b00b40b81dc15c3ff43389e6f069a17a7bdbb710f4a055bd754342eb445ce094d9b27ad006bfb6
+  languageName: node
+  linkType: hard
+
 "recoil@npm:0.7.7, recoil@npm:^0.7.6":
   version: 0.7.7
   resolution: "recoil@npm:0.7.7"
@@ -23970,6 +24059,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"relay-compiler@npm:^15.0.0":
+  version: 15.0.0
+  resolution: "relay-compiler@npm:15.0.0"
+  bin:
+    relay-compiler: cli.js
+  checksum: 8e452544d17ff433b933d89102e54eb99f8c76de4f0acc414f4a3df8aab73e2355cd40b87f93941af4204fdba98083018b9cca0525ba8e50c94fcf00fd33c886
+  languageName: node
+  linkType: hard
+
 "relay-runtime@npm:12.0.0":
   version: 12.0.0
   resolution: "relay-runtime@npm:12.0.0"
@@ -23978,6 +24076,17 @@ __metadata:
     fbjs: ^3.0.0
     invariant: ^2.2.4
   checksum: 51cdc8a5e04188982452ae4e7c6ac7d6375ee769130d24ce8e8f9cdd45aa7e11ecd68670f56e30dcee1b4974585e88ecce19e69a9868b80cda0db7678c3b8f0a
+  languageName: node
+  linkType: hard
+
+"relay-runtime@npm:15.0.0, relay-runtime@npm:^15.0.0":
+  version: 15.0.0
+  resolution: "relay-runtime@npm:15.0.0"
+  dependencies:
+    "@babel/runtime": ^7.0.0
+    fbjs: ^3.0.2
+    invariant: ^2.2.4
+  checksum: ccf41ac4778b54560ea35901076a00eaa60597a89c908f6fb7b15812b76aad6aa57bfe81fe5af159dd6aaf716eb46208ec6e77cf8357c479d288af6f5a04698d
   languageName: node
   linkType: hard
 
@@ -24267,6 +24376,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"resolve@npm:^1.12.0":
+  version: 1.22.2
+  resolution: "resolve@npm:1.22.2"
+  dependencies:
+    is-core-module: ^2.11.0
+    path-parse: ^1.0.7
+    supports-preserve-symlinks-flag: ^1.0.0
+  bin:
+    resolve: bin/resolve
+  checksum: 7e5df75796ebd429445d102d5824482ee7e567f0070b2b45897b29bb4f613dcbc262e0257b8aeedb3089330ccaea0d6a0464df1a77b2992cf331dcda0f4cb549
+  languageName: node
+  linkType: hard
+
 "resolve@npm:^2.0.0-next.4":
   version: 2.0.0-next.4
   resolution: "resolve@npm:2.0.0-next.4"
@@ -24290,6 +24412,19 @@ __metadata:
   bin:
     resolve: bin/resolve
   checksum: 5656f4d0bedcf8eb52685c1abdf8fbe73a1603bb1160a24d716e27a57f6cecbe2432ff9c89c2bd57542c3a7b9d14b1882b73bfe2e9d7849c9a4c0b8b39f02b8b
+  languageName: node
+  linkType: hard
+
+"resolve@patch:resolve@^1.12.0#~builtin<compat/resolve>":
+  version: 1.22.2
+  resolution: "resolve@patch:resolve@npm%3A1.22.2#~builtin<compat/resolve>::version=1.22.2&hash=c3c19d"
+  dependencies:
+    is-core-module: ^2.11.0
+    path-parse: ^1.0.7
+    supports-preserve-symlinks-flag: ^1.0.0
+  bin:
+    resolve: bin/resolve
+  checksum: 66cc788f13b8398de18eb4abb3aed90435c84bb8935953feafcf7231ba4cd191b2c10b4a87b1e9681afc34fb138c705f91f7330ff90bfa36f457e5584076a2b8
   languageName: node
   linkType: hard
 

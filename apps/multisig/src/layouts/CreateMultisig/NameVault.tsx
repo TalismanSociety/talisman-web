@@ -47,22 +47,20 @@ const NameVault = (props: {
       </div>
       <div
         className={css`
-          display: flex;
+          display: grid;
+          grid-template-columns: 1fr 1fr;
           gap: 16px;
+          margin-top: 48px;
+          width: 100%;
+          button {
+            height: 56px;
+          }
         `}
       >
         <Button
           onClick={() => {
             props.setStep('noVault')
           }}
-          className={css`
-            margin-top: 48px;
-            width: 240px;
-            height: 56px;
-            @media ${device.lg} {
-              width: 303px;
-            }
-          `}
           children={<h3>Back</h3>}
           variant="outlined"
         />
@@ -71,14 +69,6 @@ const NameVault = (props: {
           onClick={() => {
             props.setStep('addMembers')
           }}
-          className={css`
-            margin-top: 48px;
-            width: 240px;
-            height: 56px;
-            @media ${device.lg} {
-              width: 303px;
-            }
-          `}
           children={<h3>Next</h3>}
         />
       </div>

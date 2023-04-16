@@ -1,0 +1,1081 @@
+"""
+Exposes a URL that specifies the behaviour of this scalar.
+"""
+directive @specifiedBy(
+  """
+  The URL that specifies the behaviour of this scalar.
+  """
+  url: String!
+) on SCALAR
+
+type BalanceModuleConfig {
+  moduleType: String!
+  moduleConfig: JSON!
+}
+
+type BalanceModuleMetadata {
+  moduleType: String!
+  metadata: JSON!
+}
+
+type CachedCoingeckoLogo {
+  id: String!
+  url: String!
+  lastUpdated: String!
+}
+
+type CachedCoingeckoLogoEdge {
+  node: CachedCoingeckoLogo!
+  cursor: String!
+}
+
+enum CachedCoingeckoLogoOrderByInput {
+  id_ASC
+  id_DESC
+  url_ASC
+  url_DESC
+  lastUpdated_ASC
+  lastUpdated_DESC
+}
+
+type CachedCoingeckoLogosConnection {
+  edges: [CachedCoingeckoLogoEdge!]!
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+input CachedCoingeckoLogoWhereInput {
+  id_isNull: Boolean
+  id_eq: String
+  id_not_eq: String
+  id_gt: String
+  id_gte: String
+  id_lt: String
+  id_lte: String
+  id_in: [String!]
+  id_not_in: [String!]
+  id_contains: String
+  id_not_contains: String
+  id_containsInsensitive: String
+  id_not_containsInsensitive: String
+  id_startsWith: String
+  id_not_startsWith: String
+  id_endsWith: String
+  id_not_endsWith: String
+  url_isNull: Boolean
+  url_eq: String
+  url_not_eq: String
+  url_gt: String
+  url_gte: String
+  url_lt: String
+  url_lte: String
+  url_in: [String!]
+  url_not_in: [String!]
+  url_contains: String
+  url_not_contains: String
+  url_containsInsensitive: String
+  url_not_containsInsensitive: String
+  url_startsWith: String
+  url_not_startsWith: String
+  url_endsWith: String
+  url_not_endsWith: String
+  lastUpdated_isNull: Boolean
+  lastUpdated_eq: String
+  lastUpdated_not_eq: String
+  lastUpdated_gt: String
+  lastUpdated_gte: String
+  lastUpdated_lt: String
+  lastUpdated_lte: String
+  lastUpdated_in: [String!]
+  lastUpdated_not_in: [String!]
+  lastUpdated_contains: String
+  lastUpdated_not_contains: String
+  lastUpdated_containsInsensitive: String
+  lastUpdated_not_containsInsensitive: String
+  lastUpdated_startsWith: String
+  lastUpdated_not_startsWith: String
+  lastUpdated_endsWith: String
+  lastUpdated_not_endsWith: String
+  AND: [CachedCoingeckoLogoWhereInput!]
+  OR: [CachedCoingeckoLogoWhereInput!]
+}
+
+type Chain {
+  """
+  talisman-defined id for this substrate chain
+  """
+  id: String!
+
+  """
+  is chain this a testnet?
+  """
+  isTestnet: Boolean!
+
+  """
+  index for sorting chains and evm networks in a user-friendly way
+  """
+  sortIndex: Int
+
+  """
+  hash of the first block on this chain
+  """
+  genesisHash: String
+
+  """
+  ss58 prefix for this chain
+  """
+  prefix: Int
+
+  """
+  talisman-defined name for this chain
+  """
+  name: String
+
+  """
+  a theme color for this chain
+  """
+  themeColor: String
+
+  """
+  url of the logo for this chain
+  """
+  logo: String
+
+  """
+  chain-specified name of this chain
+  """
+  chainName: String
+
+  """
+  implementation name for this chain
+  """
+  implName: String
+
+  """
+  specification name for this chain
+  """
+  specName: String
+
+  """
+  specification version for this chain
+  """
+  specVersion: String
+
+  """
+  native token for this chain
+  """
+  nativeToken: Token
+
+  """
+  other tokens on this chain
+  """
+  tokens(where: TokenWhereInput, orderBy: [TokenOrderByInput!], offset: Int, limit: Int): [Token!]!
+
+  """
+  account format for this chain
+  """
+  account: String
+
+  """
+  subscan endpoint for this chain
+  """
+  subscanUrl: String
+
+  """
+  chainspec qr url for this chain
+  """
+  chainspecQrUrl: String
+
+  """
+  latest metadata qr url for this chain
+  """
+  latestMetadataQrUrl: String
+
+  """
+  talisman-defined substrate rpcs for this chain
+  """
+  rpcs: [SubstrateRpc!]!
+
+  """
+  health status of this chain
+  """
+  isHealthy: Boolean!
+
+  """
+  balance metadata for this chain
+  """
+  balanceMetadata: [BalanceModuleMetadata!]!
+
+  """
+  balance module configs for this chain
+  """
+  balanceModuleConfigs: [BalanceModuleConfig!]!
+
+  """
+  evm networks on this chain
+  """
+  evmNetworks(where: EvmNetworkWhereInput, orderBy: [EvmNetworkOrderByInput!], offset: Int, limit: Int): [EvmNetwork!]!
+
+  """
+  parathreads of this chain (if this chain is a relaychain)
+  """
+  parathreads(where: ChainWhereInput, orderBy: [ChainOrderByInput!], offset: Int, limit: Int): [Chain!]!
+
+  """
+  paraId of this chain (if this chain is a parachain for another chain)
+  """
+  paraId: Int
+
+  """
+  relaychain of this chain (if this chain is a parachain for another chain)
+  """
+  relay: Chain
+}
+
+type ChainEdge {
+  node: Chain!
+  cursor: String!
+}
+
+enum ChainOrderByInput {
+  id_ASC
+  id_DESC
+  isTestnet_ASC
+  isTestnet_DESC
+  sortIndex_ASC
+  sortIndex_DESC
+  genesisHash_ASC
+  genesisHash_DESC
+  prefix_ASC
+  prefix_DESC
+  name_ASC
+  name_DESC
+  themeColor_ASC
+  themeColor_DESC
+  logo_ASC
+  logo_DESC
+  chainName_ASC
+  chainName_DESC
+  implName_ASC
+  implName_DESC
+  specName_ASC
+  specName_DESC
+  specVersion_ASC
+  specVersion_DESC
+  nativeToken_id_ASC
+  nativeToken_id_DESC
+  account_ASC
+  account_DESC
+  subscanUrl_ASC
+  subscanUrl_DESC
+  chainspecQrUrl_ASC
+  chainspecQrUrl_DESC
+  latestMetadataQrUrl_ASC
+  latestMetadataQrUrl_DESC
+  isHealthy_ASC
+  isHealthy_DESC
+  paraId_ASC
+  paraId_DESC
+  relay_id_ASC
+  relay_id_DESC
+  relay_isTestnet_ASC
+  relay_isTestnet_DESC
+  relay_sortIndex_ASC
+  relay_sortIndex_DESC
+  relay_genesisHash_ASC
+  relay_genesisHash_DESC
+  relay_prefix_ASC
+  relay_prefix_DESC
+  relay_name_ASC
+  relay_name_DESC
+  relay_themeColor_ASC
+  relay_themeColor_DESC
+  relay_logo_ASC
+  relay_logo_DESC
+  relay_chainName_ASC
+  relay_chainName_DESC
+  relay_implName_ASC
+  relay_implName_DESC
+  relay_specName_ASC
+  relay_specName_DESC
+  relay_specVersion_ASC
+  relay_specVersion_DESC
+  relay_account_ASC
+  relay_account_DESC
+  relay_subscanUrl_ASC
+  relay_subscanUrl_DESC
+  relay_chainspecQrUrl_ASC
+  relay_chainspecQrUrl_DESC
+  relay_latestMetadataQrUrl_ASC
+  relay_latestMetadataQrUrl_DESC
+  relay_isHealthy_ASC
+  relay_isHealthy_DESC
+  relay_paraId_ASC
+  relay_paraId_DESC
+}
+
+type ChainsConnection {
+  edges: [ChainEdge!]!
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+input ChainWhereInput {
+  id_isNull: Boolean
+  id_eq: String
+  id_not_eq: String
+  id_gt: String
+  id_gte: String
+  id_lt: String
+  id_lte: String
+  id_in: [String!]
+  id_not_in: [String!]
+  id_contains: String
+  id_not_contains: String
+  id_containsInsensitive: String
+  id_not_containsInsensitive: String
+  id_startsWith: String
+  id_not_startsWith: String
+  id_endsWith: String
+  id_not_endsWith: String
+  isTestnet_isNull: Boolean
+  isTestnet_eq: Boolean
+  isTestnet_not_eq: Boolean
+  sortIndex_isNull: Boolean
+  sortIndex_eq: Int
+  sortIndex_not_eq: Int
+  sortIndex_gt: Int
+  sortIndex_gte: Int
+  sortIndex_lt: Int
+  sortIndex_lte: Int
+  sortIndex_in: [Int!]
+  sortIndex_not_in: [Int!]
+  genesisHash_isNull: Boolean
+  genesisHash_eq: String
+  genesisHash_not_eq: String
+  genesisHash_gt: String
+  genesisHash_gte: String
+  genesisHash_lt: String
+  genesisHash_lte: String
+  genesisHash_in: [String!]
+  genesisHash_not_in: [String!]
+  genesisHash_contains: String
+  genesisHash_not_contains: String
+  genesisHash_containsInsensitive: String
+  genesisHash_not_containsInsensitive: String
+  genesisHash_startsWith: String
+  genesisHash_not_startsWith: String
+  genesisHash_endsWith: String
+  genesisHash_not_endsWith: String
+  prefix_isNull: Boolean
+  prefix_eq: Int
+  prefix_not_eq: Int
+  prefix_gt: Int
+  prefix_gte: Int
+  prefix_lt: Int
+  prefix_lte: Int
+  prefix_in: [Int!]
+  prefix_not_in: [Int!]
+  name_isNull: Boolean
+  name_eq: String
+  name_not_eq: String
+  name_gt: String
+  name_gte: String
+  name_lt: String
+  name_lte: String
+  name_in: [String!]
+  name_not_in: [String!]
+  name_contains: String
+  name_not_contains: String
+  name_containsInsensitive: String
+  name_not_containsInsensitive: String
+  name_startsWith: String
+  name_not_startsWith: String
+  name_endsWith: String
+  name_not_endsWith: String
+  themeColor_isNull: Boolean
+  themeColor_eq: String
+  themeColor_not_eq: String
+  themeColor_gt: String
+  themeColor_gte: String
+  themeColor_lt: String
+  themeColor_lte: String
+  themeColor_in: [String!]
+  themeColor_not_in: [String!]
+  themeColor_contains: String
+  themeColor_not_contains: String
+  themeColor_containsInsensitive: String
+  themeColor_not_containsInsensitive: String
+  themeColor_startsWith: String
+  themeColor_not_startsWith: String
+  themeColor_endsWith: String
+  themeColor_not_endsWith: String
+  logo_isNull: Boolean
+  logo_eq: String
+  logo_not_eq: String
+  logo_gt: String
+  logo_gte: String
+  logo_lt: String
+  logo_lte: String
+  logo_in: [String!]
+  logo_not_in: [String!]
+  logo_contains: String
+  logo_not_contains: String
+  logo_containsInsensitive: String
+  logo_not_containsInsensitive: String
+  logo_startsWith: String
+  logo_not_startsWith: String
+  logo_endsWith: String
+  logo_not_endsWith: String
+  chainName_isNull: Boolean
+  chainName_eq: String
+  chainName_not_eq: String
+  chainName_gt: String
+  chainName_gte: String
+  chainName_lt: String
+  chainName_lte: String
+  chainName_in: [String!]
+  chainName_not_in: [String!]
+  chainName_contains: String
+  chainName_not_contains: String
+  chainName_containsInsensitive: String
+  chainName_not_containsInsensitive: String
+  chainName_startsWith: String
+  chainName_not_startsWith: String
+  chainName_endsWith: String
+  chainName_not_endsWith: String
+  implName_isNull: Boolean
+  implName_eq: String
+  implName_not_eq: String
+  implName_gt: String
+  implName_gte: String
+  implName_lt: String
+  implName_lte: String
+  implName_in: [String!]
+  implName_not_in: [String!]
+  implName_contains: String
+  implName_not_contains: String
+  implName_containsInsensitive: String
+  implName_not_containsInsensitive: String
+  implName_startsWith: String
+  implName_not_startsWith: String
+  implName_endsWith: String
+  implName_not_endsWith: String
+  specName_isNull: Boolean
+  specName_eq: String
+  specName_not_eq: String
+  specName_gt: String
+  specName_gte: String
+  specName_lt: String
+  specName_lte: String
+  specName_in: [String!]
+  specName_not_in: [String!]
+  specName_contains: String
+  specName_not_contains: String
+  specName_containsInsensitive: String
+  specName_not_containsInsensitive: String
+  specName_startsWith: String
+  specName_not_startsWith: String
+  specName_endsWith: String
+  specName_not_endsWith: String
+  specVersion_isNull: Boolean
+  specVersion_eq: String
+  specVersion_not_eq: String
+  specVersion_gt: String
+  specVersion_gte: String
+  specVersion_lt: String
+  specVersion_lte: String
+  specVersion_in: [String!]
+  specVersion_not_in: [String!]
+  specVersion_contains: String
+  specVersion_not_contains: String
+  specVersion_containsInsensitive: String
+  specVersion_not_containsInsensitive: String
+  specVersion_startsWith: String
+  specVersion_not_startsWith: String
+  specVersion_endsWith: String
+  specVersion_not_endsWith: String
+  nativeToken_isNull: Boolean
+  nativeToken: TokenWhereInput
+  tokens_every: TokenWhereInput
+  tokens_some: TokenWhereInput
+  tokens_none: TokenWhereInput
+  account_isNull: Boolean
+  account_eq: String
+  account_not_eq: String
+  account_gt: String
+  account_gte: String
+  account_lt: String
+  account_lte: String
+  account_in: [String!]
+  account_not_in: [String!]
+  account_contains: String
+  account_not_contains: String
+  account_containsInsensitive: String
+  account_not_containsInsensitive: String
+  account_startsWith: String
+  account_not_startsWith: String
+  account_endsWith: String
+  account_not_endsWith: String
+  subscanUrl_isNull: Boolean
+  subscanUrl_eq: String
+  subscanUrl_not_eq: String
+  subscanUrl_gt: String
+  subscanUrl_gte: String
+  subscanUrl_lt: String
+  subscanUrl_lte: String
+  subscanUrl_in: [String!]
+  subscanUrl_not_in: [String!]
+  subscanUrl_contains: String
+  subscanUrl_not_contains: String
+  subscanUrl_containsInsensitive: String
+  subscanUrl_not_containsInsensitive: String
+  subscanUrl_startsWith: String
+  subscanUrl_not_startsWith: String
+  subscanUrl_endsWith: String
+  subscanUrl_not_endsWith: String
+  chainspecQrUrl_isNull: Boolean
+  chainspecQrUrl_eq: String
+  chainspecQrUrl_not_eq: String
+  chainspecQrUrl_gt: String
+  chainspecQrUrl_gte: String
+  chainspecQrUrl_lt: String
+  chainspecQrUrl_lte: String
+  chainspecQrUrl_in: [String!]
+  chainspecQrUrl_not_in: [String!]
+  chainspecQrUrl_contains: String
+  chainspecQrUrl_not_contains: String
+  chainspecQrUrl_containsInsensitive: String
+  chainspecQrUrl_not_containsInsensitive: String
+  chainspecQrUrl_startsWith: String
+  chainspecQrUrl_not_startsWith: String
+  chainspecQrUrl_endsWith: String
+  chainspecQrUrl_not_endsWith: String
+  latestMetadataQrUrl_isNull: Boolean
+  latestMetadataQrUrl_eq: String
+  latestMetadataQrUrl_not_eq: String
+  latestMetadataQrUrl_gt: String
+  latestMetadataQrUrl_gte: String
+  latestMetadataQrUrl_lt: String
+  latestMetadataQrUrl_lte: String
+  latestMetadataQrUrl_in: [String!]
+  latestMetadataQrUrl_not_in: [String!]
+  latestMetadataQrUrl_contains: String
+  latestMetadataQrUrl_not_contains: String
+  latestMetadataQrUrl_containsInsensitive: String
+  latestMetadataQrUrl_not_containsInsensitive: String
+  latestMetadataQrUrl_startsWith: String
+  latestMetadataQrUrl_not_startsWith: String
+  latestMetadataQrUrl_endsWith: String
+  latestMetadataQrUrl_not_endsWith: String
+  rpcs_isNull: Boolean
+  isHealthy_isNull: Boolean
+  isHealthy_eq: Boolean
+  isHealthy_not_eq: Boolean
+  balanceMetadata_isNull: Boolean
+  balanceModuleConfigs_isNull: Boolean
+  evmNetworks_every: EvmNetworkWhereInput
+  evmNetworks_some: EvmNetworkWhereInput
+  evmNetworks_none: EvmNetworkWhereInput
+  parathreads_every: ChainWhereInput
+  parathreads_some: ChainWhereInput
+  parathreads_none: ChainWhereInput
+  paraId_isNull: Boolean
+  paraId_eq: Int
+  paraId_not_eq: Int
+  paraId_gt: Int
+  paraId_gte: Int
+  paraId_lt: Int
+  paraId_lte: Int
+  paraId_in: [Int!]
+  paraId_not_in: [Int!]
+  relay_isNull: Boolean
+  relay: ChainWhereInput
+  AND: [ChainWhereInput!]
+  OR: [ChainWhereInput!]
+}
+
+type EthereumRpc {
+  """
+  url of this ethereum rpc
+  """
+  url: String!
+
+  """
+  health status of this ethereum rpc
+  """
+  isHealthy: Boolean!
+}
+
+type EvmNetwork {
+  """
+  the chain identifier used for signing ethereum transactions
+  """
+  id: String!
+
+  """
+  is this network a testnet?
+  """
+  isTestnet: Boolean!
+
+  """
+  index for sorting chains and evm networks in a user-friendly way
+  """
+  sortIndex: Int
+
+  """
+  talisman-defined name for this network
+  """
+  name: String
+
+  """
+  a theme color for this network
+  """
+  themeColor: String
+
+  """
+  url of the logo for this network
+  """
+  logo: String
+
+  """
+  native token for this network
+  """
+  nativeToken: Token
+
+  """
+  other tokens on this network
+  """
+  tokens(where: TokenWhereInput, orderBy: [TokenOrderByInput!], offset: Int, limit: Int): [Token!]!
+
+  """
+  block explorer url for this network
+  """
+  explorerUrl: String
+
+  """
+  talisman-defined ethereum rpcs for this network
+  """
+  rpcs: [EthereumRpc!]!
+
+  """
+  health status of this network
+  """
+  isHealthy: Boolean!
+
+  """
+  balance metadata for this network
+  """
+  balanceMetadata: [BalanceModuleMetadata!]!
+
+  """
+  balance module configs for this network
+  """
+  balanceModuleConfigs: [BalanceModuleConfig!]!
+
+  """
+  substrate chain this evm network runs on
+  """
+  substrateChain: Chain
+}
+
+type EvmNetworkEdge {
+  node: EvmNetwork!
+  cursor: String!
+}
+
+enum EvmNetworkOrderByInput {
+  id_ASC
+  id_DESC
+  isTestnet_ASC
+  isTestnet_DESC
+  sortIndex_ASC
+  sortIndex_DESC
+  name_ASC
+  name_DESC
+  themeColor_ASC
+  themeColor_DESC
+  logo_ASC
+  logo_DESC
+  nativeToken_id_ASC
+  nativeToken_id_DESC
+  explorerUrl_ASC
+  explorerUrl_DESC
+  isHealthy_ASC
+  isHealthy_DESC
+  substrateChain_id_ASC
+  substrateChain_id_DESC
+  substrateChain_isTestnet_ASC
+  substrateChain_isTestnet_DESC
+  substrateChain_sortIndex_ASC
+  substrateChain_sortIndex_DESC
+  substrateChain_genesisHash_ASC
+  substrateChain_genesisHash_DESC
+  substrateChain_prefix_ASC
+  substrateChain_prefix_DESC
+  substrateChain_name_ASC
+  substrateChain_name_DESC
+  substrateChain_themeColor_ASC
+  substrateChain_themeColor_DESC
+  substrateChain_logo_ASC
+  substrateChain_logo_DESC
+  substrateChain_chainName_ASC
+  substrateChain_chainName_DESC
+  substrateChain_implName_ASC
+  substrateChain_implName_DESC
+  substrateChain_specName_ASC
+  substrateChain_specName_DESC
+  substrateChain_specVersion_ASC
+  substrateChain_specVersion_DESC
+  substrateChain_account_ASC
+  substrateChain_account_DESC
+  substrateChain_subscanUrl_ASC
+  substrateChain_subscanUrl_DESC
+  substrateChain_chainspecQrUrl_ASC
+  substrateChain_chainspecQrUrl_DESC
+  substrateChain_latestMetadataQrUrl_ASC
+  substrateChain_latestMetadataQrUrl_DESC
+  substrateChain_isHealthy_ASC
+  substrateChain_isHealthy_DESC
+  substrateChain_paraId_ASC
+  substrateChain_paraId_DESC
+}
+
+type EvmNetworksConnection {
+  edges: [EvmNetworkEdge!]!
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+input EvmNetworkWhereInput {
+  id_isNull: Boolean
+  id_eq: String
+  id_not_eq: String
+  id_gt: String
+  id_gte: String
+  id_lt: String
+  id_lte: String
+  id_in: [String!]
+  id_not_in: [String!]
+  id_contains: String
+  id_not_contains: String
+  id_containsInsensitive: String
+  id_not_containsInsensitive: String
+  id_startsWith: String
+  id_not_startsWith: String
+  id_endsWith: String
+  id_not_endsWith: String
+  isTestnet_isNull: Boolean
+  isTestnet_eq: Boolean
+  isTestnet_not_eq: Boolean
+  sortIndex_isNull: Boolean
+  sortIndex_eq: Int
+  sortIndex_not_eq: Int
+  sortIndex_gt: Int
+  sortIndex_gte: Int
+  sortIndex_lt: Int
+  sortIndex_lte: Int
+  sortIndex_in: [Int!]
+  sortIndex_not_in: [Int!]
+  name_isNull: Boolean
+  name_eq: String
+  name_not_eq: String
+  name_gt: String
+  name_gte: String
+  name_lt: String
+  name_lte: String
+  name_in: [String!]
+  name_not_in: [String!]
+  name_contains: String
+  name_not_contains: String
+  name_containsInsensitive: String
+  name_not_containsInsensitive: String
+  name_startsWith: String
+  name_not_startsWith: String
+  name_endsWith: String
+  name_not_endsWith: String
+  themeColor_isNull: Boolean
+  themeColor_eq: String
+  themeColor_not_eq: String
+  themeColor_gt: String
+  themeColor_gte: String
+  themeColor_lt: String
+  themeColor_lte: String
+  themeColor_in: [String!]
+  themeColor_not_in: [String!]
+  themeColor_contains: String
+  themeColor_not_contains: String
+  themeColor_containsInsensitive: String
+  themeColor_not_containsInsensitive: String
+  themeColor_startsWith: String
+  themeColor_not_startsWith: String
+  themeColor_endsWith: String
+  themeColor_not_endsWith: String
+  logo_isNull: Boolean
+  logo_eq: String
+  logo_not_eq: String
+  logo_gt: String
+  logo_gte: String
+  logo_lt: String
+  logo_lte: String
+  logo_in: [String!]
+  logo_not_in: [String!]
+  logo_contains: String
+  logo_not_contains: String
+  logo_containsInsensitive: String
+  logo_not_containsInsensitive: String
+  logo_startsWith: String
+  logo_not_startsWith: String
+  logo_endsWith: String
+  logo_not_endsWith: String
+  nativeToken_isNull: Boolean
+  nativeToken: TokenWhereInput
+  tokens_every: TokenWhereInput
+  tokens_some: TokenWhereInput
+  tokens_none: TokenWhereInput
+  explorerUrl_isNull: Boolean
+  explorerUrl_eq: String
+  explorerUrl_not_eq: String
+  explorerUrl_gt: String
+  explorerUrl_gte: String
+  explorerUrl_lt: String
+  explorerUrl_lte: String
+  explorerUrl_in: [String!]
+  explorerUrl_not_in: [String!]
+  explorerUrl_contains: String
+  explorerUrl_not_contains: String
+  explorerUrl_containsInsensitive: String
+  explorerUrl_not_containsInsensitive: String
+  explorerUrl_startsWith: String
+  explorerUrl_not_startsWith: String
+  explorerUrl_endsWith: String
+  explorerUrl_not_endsWith: String
+  rpcs_isNull: Boolean
+  isHealthy_isNull: Boolean
+  isHealthy_eq: Boolean
+  isHealthy_not_eq: Boolean
+  balanceMetadata_isNull: Boolean
+  balanceModuleConfigs_isNull: Boolean
+  substrateChain_isNull: Boolean
+  substrateChain: ChainWhereInput
+  AND: [EvmNetworkWhereInput!]
+  OR: [EvmNetworkWhereInput!]
+}
+
+"""
+A scalar that can represent any JSON value
+"""
+scalar JSON
+
+type PageInfo {
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+  startCursor: String!
+  endCursor: String!
+}
+
+type Query {
+  chains(where: ChainWhereInput, orderBy: [ChainOrderByInput!], offset: Int, limit: Int): [Chain!]!
+  chainById(id: String!): Chain
+  chainByUniqueInput(where: WhereIdInput!): Chain @deprecated(reason: "Use chainById")
+  chainsConnection(orderBy: [ChainOrderByInput!]!, after: String, first: Int, where: ChainWhereInput): ChainsConnection!
+  evmNetworks(where: EvmNetworkWhereInput, orderBy: [EvmNetworkOrderByInput!], offset: Int, limit: Int): [EvmNetwork!]!
+  evmNetworkById(id: String!): EvmNetwork
+  evmNetworkByUniqueInput(where: WhereIdInput!): EvmNetwork @deprecated(reason: "Use evmNetworkById")
+  evmNetworksConnection(
+    orderBy: [EvmNetworkOrderByInput!]!
+    after: String
+    first: Int
+    where: EvmNetworkWhereInput
+  ): EvmNetworksConnection!
+  tokens(where: TokenWhereInput, orderBy: [TokenOrderByInput!], offset: Int, limit: Int): [Token!]!
+  tokenById(id: String!): Token
+  tokenByUniqueInput(where: WhereIdInput!): Token @deprecated(reason: "Use tokenById")
+  tokensConnection(orderBy: [TokenOrderByInput!]!, after: String, first: Int, where: TokenWhereInput): TokensConnection!
+  cachedCoingeckoLogos(
+    where: CachedCoingeckoLogoWhereInput
+    orderBy: [CachedCoingeckoLogoOrderByInput!]
+    offset: Int
+    limit: Int
+  ): [CachedCoingeckoLogo!]!
+  cachedCoingeckoLogoById(id: String!): CachedCoingeckoLogo
+  cachedCoingeckoLogoByUniqueInput(where: WhereIdInput!): CachedCoingeckoLogo
+    @deprecated(reason: "Use cachedCoingeckoLogoById")
+  cachedCoingeckoLogosConnection(
+    orderBy: [CachedCoingeckoLogoOrderByInput!]!
+    after: String
+    first: Int
+    where: CachedCoingeckoLogoWhereInput
+  ): CachedCoingeckoLogosConnection!
+  squidStatus: SquidStatus
+}
+
+type SquidStatus {
+  """
+  The height of the processed part of the chain
+  """
+  height: Int
+}
+
+type SubstrateRpc {
+  """
+  url of this substrate rpc
+  """
+  url: String!
+
+  """
+  health status of this substrate rpc
+  """
+  isHealthy: Boolean!
+}
+
+type Token {
+  """
+  talisman-defined id for this token
+  """
+  id: String!
+
+  """
+  TODO: Put all token data into here (because we have plugins now)
+  """
+  data: JSON
+
+  """
+  implementation detail for relation lookups, can be removed once https://github.com/subsquid/squid/issues/41 is merged
+  """
+  squidImplementationDetailNativeToChains(
+    where: ChainWhereInput
+    orderBy: [ChainOrderByInput!]
+    offset: Int
+    limit: Int
+  ): [Chain!]!
+
+  """
+  implementation detail for relation lookups, can be removed once https://github.com/subsquid/squid/issues/41 is merged
+  """
+  squidImplementationDetailNativeToEvmNetworks(
+    where: EvmNetworkWhereInput
+    orderBy: [EvmNetworkOrderByInput!]
+    offset: Int
+    limit: Int
+  ): [EvmNetwork!]!
+
+  """
+  implementation detail for relation lookups, can be removed once https://github.com/subsquid/squid/issues/41 is merged
+  """
+  squidImplementationDetailChain: Chain
+
+  """
+  implementation detail for relation lookups, can be removed once https://github.com/subsquid/squid/issues/41 is merged
+  """
+  squidImplementationDetailEvmNetwork: EvmNetwork
+}
+
+type TokenEdge {
+  node: Token!
+  cursor: String!
+}
+
+enum TokenOrderByInput {
+  id_ASC
+  id_DESC
+  squidImplementationDetailChain_id_ASC
+  squidImplementationDetailChain_id_DESC
+  squidImplementationDetailChain_isTestnet_ASC
+  squidImplementationDetailChain_isTestnet_DESC
+  squidImplementationDetailChain_sortIndex_ASC
+  squidImplementationDetailChain_sortIndex_DESC
+  squidImplementationDetailChain_genesisHash_ASC
+  squidImplementationDetailChain_genesisHash_DESC
+  squidImplementationDetailChain_prefix_ASC
+  squidImplementationDetailChain_prefix_DESC
+  squidImplementationDetailChain_name_ASC
+  squidImplementationDetailChain_name_DESC
+  squidImplementationDetailChain_themeColor_ASC
+  squidImplementationDetailChain_themeColor_DESC
+  squidImplementationDetailChain_logo_ASC
+  squidImplementationDetailChain_logo_DESC
+  squidImplementationDetailChain_chainName_ASC
+  squidImplementationDetailChain_chainName_DESC
+  squidImplementationDetailChain_implName_ASC
+  squidImplementationDetailChain_implName_DESC
+  squidImplementationDetailChain_specName_ASC
+  squidImplementationDetailChain_specName_DESC
+  squidImplementationDetailChain_specVersion_ASC
+  squidImplementationDetailChain_specVersion_DESC
+  squidImplementationDetailChain_account_ASC
+  squidImplementationDetailChain_account_DESC
+  squidImplementationDetailChain_subscanUrl_ASC
+  squidImplementationDetailChain_subscanUrl_DESC
+  squidImplementationDetailChain_chainspecQrUrl_ASC
+  squidImplementationDetailChain_chainspecQrUrl_DESC
+  squidImplementationDetailChain_latestMetadataQrUrl_ASC
+  squidImplementationDetailChain_latestMetadataQrUrl_DESC
+  squidImplementationDetailChain_isHealthy_ASC
+  squidImplementationDetailChain_isHealthy_DESC
+  squidImplementationDetailChain_paraId_ASC
+  squidImplementationDetailChain_paraId_DESC
+  squidImplementationDetailEvmNetwork_id_ASC
+  squidImplementationDetailEvmNetwork_id_DESC
+  squidImplementationDetailEvmNetwork_isTestnet_ASC
+  squidImplementationDetailEvmNetwork_isTestnet_DESC
+  squidImplementationDetailEvmNetwork_sortIndex_ASC
+  squidImplementationDetailEvmNetwork_sortIndex_DESC
+  squidImplementationDetailEvmNetwork_name_ASC
+  squidImplementationDetailEvmNetwork_name_DESC
+  squidImplementationDetailEvmNetwork_themeColor_ASC
+  squidImplementationDetailEvmNetwork_themeColor_DESC
+  squidImplementationDetailEvmNetwork_logo_ASC
+  squidImplementationDetailEvmNetwork_logo_DESC
+  squidImplementationDetailEvmNetwork_explorerUrl_ASC
+  squidImplementationDetailEvmNetwork_explorerUrl_DESC
+  squidImplementationDetailEvmNetwork_isHealthy_ASC
+  squidImplementationDetailEvmNetwork_isHealthy_DESC
+}
+
+type TokensConnection {
+  edges: [TokenEdge!]!
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+input TokenWhereInput {
+  id_isNull: Boolean
+  id_eq: String
+  id_not_eq: String
+  id_gt: String
+  id_gte: String
+  id_lt: String
+  id_lte: String
+  id_in: [String!]
+  id_not_in: [String!]
+  id_contains: String
+  id_not_contains: String
+  id_containsInsensitive: String
+  id_not_containsInsensitive: String
+  id_startsWith: String
+  id_not_startsWith: String
+  id_endsWith: String
+  id_not_endsWith: String
+  data_isNull: Boolean
+  data_eq: JSON
+  data_not_eq: JSON
+  data_jsonContains: JSON
+  data_jsonHasKey: JSON
+  squidImplementationDetailNativeToChains_every: ChainWhereInput
+  squidImplementationDetailNativeToChains_some: ChainWhereInput
+  squidImplementationDetailNativeToChains_none: ChainWhereInput
+  squidImplementationDetailNativeToEvmNetworks_every: EvmNetworkWhereInput
+  squidImplementationDetailNativeToEvmNetworks_some: EvmNetworkWhereInput
+  squidImplementationDetailNativeToEvmNetworks_none: EvmNetworkWhereInput
+  squidImplementationDetailChain_isNull: Boolean
+  squidImplementationDetailChain: ChainWhereInput
+  squidImplementationDetailEvmNetwork_isNull: Boolean
+  squidImplementationDetailEvmNetwork: EvmNetworkWhereInput
+  AND: [TokenWhereInput!]
+  OR: [TokenWhereInput!]
+}
+
+input WhereIdInput {
+  id: String!
+}

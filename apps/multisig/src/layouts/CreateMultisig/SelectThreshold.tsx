@@ -18,6 +18,9 @@ const SelectThreshold = (props: {
         grid-template-rows: 1fr;
         justify-items: center;
         align-content: center;
+        @media ${device.lg} {
+          width: 623px;
+        }
       `}
     >
       <h1>Select threshold</h1>
@@ -73,38 +76,28 @@ const SelectThreshold = (props: {
       </div>
       <div
         className={css`
-          display: flex;
+          display: grid;
+          grid-template-columns: 1fr 1fr;
           gap: 16px;
+          margin-top: 48px;
+          width: 100%;
+          button {
+            height: 56px;
+          }
         `}
       >
         <Button
           onClick={() => {
             props.setStep('addMembers')
           }}
-          className={css`
-            margin-top: 48px;
-            width: 240px;
-            height: 56px;
-            @media ${device.lg} {
-              width: 303px;
-            }
-          `}
           children={<h3>Back</h3>}
           variant="outlined"
         />
         <Button
           disabled={props.threshold < 2}
           onClick={() => {
-            props.setStep('confirmation')
+            props.setStep('selectFirstChain')
           }}
-          className={css`
-            margin-top: 48px;
-            width: 240px;
-            height: 56px;
-            @media ${device.lg} {
-              width: 303px;
-            }
-          `}
           children={<h3>Next</h3>}
         />
       </div>
