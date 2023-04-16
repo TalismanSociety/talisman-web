@@ -1,9 +1,11 @@
 import MemberRow from '@components/MemberRow'
 import { css } from '@emotion/css'
 import { Info } from '@talismn/icons'
-import { Button, IconButton } from '@talismn/ui'
+import { Button, IconButton, Identicon, Select } from '@talismn/ui'
 import { Skeleton } from '@talismn/ui'
+import { device } from '@util/breakpoints'
 import { formatUsd } from '@util/numbers'
+import { useState } from 'react'
 import { Loadable } from 'recoil'
 
 import { ChainSummary, Token } from '../../domain/chains'
@@ -26,6 +28,10 @@ const Confirmation = (props: {
   fee: number
 }) => {
   const { tokenWithPrice, reserveAmount, fee, chain } = props
+  const externalAccounts = props.augmentedAccounts.filter(a => a.you)
+  if (externalAccounts.length === 0) throw Error('Please connect an address')
+  const [selectedSigner, setSelectedSigner] = useState<AugmentedAccount>(externalAccounts[0] as AugmentedAccount)
+  // const [signing, setSigning] = useState<boolean>(false)
 
   const reserveAmountComponent =
     tokenWithPrice.state === 'hasValue' ? (
@@ -143,7 +149,74 @@ const Confirmation = (props: {
       <div
         className={css`
           display: grid;
+          grid-template-rows: auto auto;
+          background: var(--color-controlBackground);
+          border-radius: 16px;
+          padding: 16px;
           margin-top: 24px;
+          width: 100%;
+          gap: 8px;
+          div {
+            gap: 16px;
+          }
+        `}
+      >
+        <div
+          className={css`
+            button {
+              padding: 6px 0px;
+              @media ${device.lg} {
+                padding: 6px 6px;
+              }
+            }
+          `}
+        >
+          <h2
+            className={css`
+              font-size: 20px;
+              margin-bottom: 8px;
+            `}
+          >
+            Depositor
+          </h2>
+          <Select
+            placeholder="Select account"
+            value={selectedSigner.address}
+            onChange={value =>
+              setSelectedSigner(props.augmentedAccounts.find(a => a.address === value) as AugmentedAccount)
+            }
+            {...props}
+          >
+            {props.augmentedAccounts.map(account => (
+              <Select.Item
+                key={account.address}
+                leadingIcon={<Identicon value={account.address} />}
+                value={account.address}
+                headlineText={account.nickname}
+                supportingText={'1 DOT'}
+              />
+            ))}
+          </Select>
+        </div>
+        <div
+          className={css`
+            display: flex;
+            align-items: center;
+          `}
+        >
+          <IconButton size="54px" contentColor={'#d5ff5c'}>
+            <Info />
+          </IconButton>
+          <p>
+            To operate your vault {chain.chainName} requires some funds to be reserved as a deposit. This will be fully
+            refunded when you wind down your vault.
+          </p>
+        </div>
+      </div>
+      <div
+        className={css`
+          display: grid;
+          margin-top: 16px;
           grid-template-columns: 1fr auto;
           grid-template-rows: 1fr 1fr;
           justify-content: space-between;
@@ -153,38 +226,17 @@ const Confirmation = (props: {
           }
         `}
       >
-        <p>Reserved Amount</p>
+        <p>Deposit Amount (Reserved)</p>
         {reserveAmountComponent}
-        <p>Estimated Fee</p>
+        <p>Estimated Transaction Fee</p>
         {feeAmountComponent}
-      </div>
-      <div
-        className={css`
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          background: var(--color-controlBackground);
-          border-radius: 16px;
-          padding: 16px;
-          margin-top: 8px;
-          width: 100%;
-          gap: 16px;
-        `}
-      >
-        <IconButton size="54px" contentColor={'#d5ff5c'}>
-          <Info />
-        </IconButton>
-        <p>
-          To operate your vault {chain.chainName} requires some funds to be reserved as a deposit. This will be fully
-          refunded when you wind down your vault.
-        </p>
       </div>
       <div
         className={css`
           display: grid;
           grid-template-columns: 1fr 1fr;
           gap: 16px;
-          margin-top: 48px;
+          margin-top: 24px;
           width: 100%;
           button {
             height: 56px;
@@ -201,7 +253,7 @@ const Confirmation = (props: {
         <Button
           disabled={tokenWithPrice.state !== 'hasValue' || props.augmentedAccounts.length < 2}
           onClick={() => {
-            props.setStep('selectFirstChain')
+            props.setStep('transactions')
           }}
           children={<h3>Create Vault</h3>}
         />

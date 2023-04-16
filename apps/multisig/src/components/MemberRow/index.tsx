@@ -46,7 +46,7 @@ const MemberRow = (props: { member: AugmentedAccount; onDelete?: () => void }) =
       ) : (
         <>
           <p>{truncateMiddle(props.member.address, 22, 22, '...')}</p>
-          {props.onDelete && (
+          {props.onDelete ? (
             <IconButton
               onClick={props.onDelete}
               className={css`
@@ -58,6 +58,8 @@ const MemberRow = (props: { member: AugmentedAccount; onDelete?: () => void }) =
             >
               <Trash />
             </IconButton>
+          ) : (
+            <div></div>
           )}
         </>
       )}

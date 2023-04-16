@@ -12,6 +12,7 @@ import NameVault from './NameVault'
 import NoVault from './NoVault'
 import SelectFirstChain from './SelectFirstChain'
 import SelectThreshold from './SelectThreshold'
+import SignTransactions from './SignTransactions'
 
 export type Step =
   | 'noVault'
@@ -31,11 +32,12 @@ export interface AugmentedAccount {
 
 function calcContentHeight(step: Step, nAccounts: number): { md: string; lg: string } {
   if (step === 'noVault') return { md: '557px', lg: '601px' }
-  if (step === 'selectThreshold') return { md: '568px', lg: '568px' }
+  if (step === 'selectThreshold') return { md: '518px', lg: '518px' }
   if (step === 'nameVault') return { md: '429px', lg: '461px' }
   if (step === 'selectFirstChain') return { md: '400px', lg: '461px' }
-  if (step === 'addMembers') return { md: 541 + nAccounts * 40 + 'px', lg: 541 + nAccounts * 40 + 'px' }
-  return { md: 681 + nAccounts * 40 + 'px', lg: 641 + nAccounts * 40 + 'px' }
+  if (step === 'transactions') return { md: '420px', lg: '420px' }
+  if (step === 'addMembers') return { md: 521 + nAccounts * 40 + 'px', lg: 521 + nAccounts * 40 + 'px' }
+  return { md: 741 + nAccounts * 40 + 'px', lg: 721 + nAccounts * 40 + 'px' }
 }
 
 function calcContentMargin(step: Step): { md: string; lg: string } {
@@ -61,6 +63,8 @@ const CreateMultisig = () => {
   const [extensionAccounts] = useRecoilState(accountsState)
   const [externalAccounts, setExternalAccounts] = useState<string[]>([])
   const [threshold, setThreshold] = useState<number>(2)
+  const [proxyCreated] = useState<boolean>(false)
+  const [proxySetupCompleted] = useState<boolean>(false)
   const tokenWithPrice = useRecoilValueLoadable(tokenByIdWithPrice(chain.nativeToken.id))
   // TODO: replace this with a query once lib is avail
   const reserveAmount = 20.041
@@ -104,7 +108,7 @@ const CreateMultisig = () => {
           display: grid;
           justify-items: center;
           align-content: center;
-          margin: ${contentMargin.md};
+          margin: 50px 0;
           height: ${contentHeight.md};
           width: 586px;
           background: var(--color-backgroundSecondary);
@@ -113,7 +117,7 @@ const CreateMultisig = () => {
           opacity: ${isVisible ? 1 : 0};
           @media ${device.lg} {
             height: ${contentHeight.lg};
-            margin: ${contentMargin.lg};
+            /* margin: ${contentMargin.lg}; */
             width: 863px;
           }
         `}
@@ -149,6 +153,8 @@ const CreateMultisig = () => {
             fee={fee}
             tokenWithPrice={tokenWithPrice}
           />
+        ) : step === 'transactions' ? (
+          <SignTransactions proxyCreated={proxyCreated} proxySetupCompleted={proxySetupCompleted} />
         ) : null}
       </div>
     </div>
