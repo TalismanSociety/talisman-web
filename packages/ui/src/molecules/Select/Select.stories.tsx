@@ -15,7 +15,7 @@ export default {
   },
 } as ComponentMeta<typeof Select>
 
-export const Default: Story<Partial<SelectProps>> = props => {
+export const Default: Story<Partial<SelectProps<string>>> = props => {
   const [selected, setSelected] = useState<string | undefined>(undefined)
 
   return (
