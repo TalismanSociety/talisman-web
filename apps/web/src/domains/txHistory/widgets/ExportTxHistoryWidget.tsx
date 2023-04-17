@@ -1,11 +1,11 @@
 import { Query } from '@archetypes/Transaction/lib'
 import DialogComponent from '@components/recipes/ExportTxHistoryDialog'
 import { substrateAccountsState } from '@domains/accounts/recoils'
+import { toast } from '@talismn/ui'
 import { stringify } from 'csv-stringify/browser/esm'
 import { subMonths } from 'date-fns'
 import { gql, request } from 'graphql-request'
 import { ReactNode, useCallback, useState } from 'react'
-import toast from 'react-hot-toast'
 import { useRecoilValue } from 'recoil'
 
 export type ExportTxHistoryWidgetProps = {

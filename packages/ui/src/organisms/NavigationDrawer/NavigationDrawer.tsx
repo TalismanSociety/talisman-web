@@ -61,7 +61,7 @@ const NavigationDrawerItem = (props: NavigationDrawerItemProps) => {
       onClick={useCallback(() => {
         props.onClick?.()
         context.onRequestDismiss?.()
-      }, [])}
+      }, [context, props])}
       css={{
         'border': 'none',
         'borderRadius': '2.4rem',

@@ -3,12 +3,12 @@ import { Check, X } from '@talismn/icons'
 import { formatDistanceToNowStrict } from 'date-fns'
 import { motion } from 'framer-motion'
 import React, { Fragment, useEffect, useMemo, useState } from 'react'
-import { type Toast, resolveValue } from 'react-hot-toast'
-
+import { resolveValue, type Toast, type ToastPosition } from 'react-hot-toast/headless'
 import { CircularProgressIndicator, Text } from '../../atoms'
 
 export type ToastBarProps = {
   toast: Toast
+  position?: ToastPosition
 }
 
 const ToastBar = ({ toast }: ToastBarProps) => {

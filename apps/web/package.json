@@ -58,7 +58,6 @@
     "react-apollo-network-status": "^5.2.1",
     "react-countup": "^6.4.1",
     "react-dom": "^18.2.0",
-    "react-hot-toast": "^2.4.0",
     "react-i18next": "^11.18.6",
     "react-infinite-scroller": "^1.2.6",
     "react-is": "^17.0.2",

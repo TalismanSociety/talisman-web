@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { type ComponentMeta, type Story } from '@storybook/react'
-import toast, { Toaster } from 'react-hot-toast'
 
 import { Button, Text } from '../../atoms'
+import Toaster, { toast } from '../../organisms/Toaster'
 import ToastBar, { type ToastBarProps } from './ToastBar'
 
 export default {
@@ -48,7 +48,7 @@ Error.args = { toast: { ...Default.args.toast!, type: 'error' } }
 
 export const Demo: Story<ToastBarProps> = () => (
   <div css={{ display: 'flex', gap: '1rem' }}>
-    <Toaster position="top-right">{t => <ToastBar toast={t} />}</Toaster>
+    <Toaster />
     <Button onClick={() => toast(Default.args?.toast?.message ?? '')}>Blank</Button>
     <Button onClick={() => toast.loading(Loading.args?.toast?.message ?? '', { duration: 4000 })}>Loading</Button>
     <Button onClick={() => toast.success(Success.args?.toast?.message ?? '')}>Success</Button>
