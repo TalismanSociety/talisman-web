@@ -10,7 +10,7 @@ import { chainReadIdState } from './recoils'
 export type ExtrinsicMiddleware = {
   (
     chainId: string,
-    extrinsic: SubmittableExtrinsic<'promise', ISubmittableResult>,
+    extrinsic: SubmittableExtrinsic<'promise', ISubmittableResult> | SubmittableExtrinsic<'rxjs', ISubmittableResult>,
     result: ISubmittableResult,
     callbackInterface: CallbackInterface
   ): unknown

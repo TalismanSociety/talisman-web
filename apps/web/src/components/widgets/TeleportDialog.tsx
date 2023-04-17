@@ -4,6 +4,8 @@ import TeleportFormComponent from '@components/recipes/TeleportForm'
 import TokenSelectorDialog, { TokenSelectorItem } from '@components/recipes/TokenSelectorDialog'
 import { Account } from '@domains/accounts'
 import { selectedBalancesState } from '@domains/balances/recoils'
+import { extrinsicMiddleware } from '@domains/common/extrinsicMiddleware'
+import { toastExtrinsic } from '@domains/common/utils'
 import { bridgeApiProvider, bridgeState } from '@domains/teleport'
 import { type SubmittableExtrinsic } from '@polkadot/api/types'
 import { web3FromAddress } from '@polkadot/extension-dapp'
@@ -15,10 +17,9 @@ import { Maybe } from '@util/monads'
 import { isEmpty, uniqBy } from 'lodash'
 import { Suspense, useCallback, useEffect, useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { Loadable, RecoilLoadable, useRecoilValue, waitForAll } from 'recoil'
-import { Observable, switchMap } from 'rxjs'
+import { Loadable, RecoilLoadable, useRecoilCallback, useRecoilValue, waitForAll } from 'recoil'
+import { Observable, firstValueFrom, switchMap } from 'rxjs'
 import AccountSelector from './AccountSelector'
-import { ApiRx } from '@polkadot/api'
 
 const TeleportForm = () => {
   const [_balances, bridge] = useRecoilValue(waitForAll([selectedBalancesState, bridgeState]))
@@ -217,10 +218,11 @@ const TeleportForm = () => {
     [amount, inputError, parsedInputConfigLoadable?.state]
   )
 
+  const [extrinsicInProgress, setExtrinsicInProgress] = useState(false)
+
   return (
     <>
       <TeleportFormComponent
-        loading={false}
         accountSelector={
           <AccountSelector selectedAccount={sender} onChangeSelectedAccount={setSender} defaultToFirstAddress />
         }
@@ -266,32 +268,43 @@ const TeleportForm = () => {
           fee => `~${fee.estimateFee.toHuman()}`
         )}
         destinationFee={parsedInputConfigLoadable?.valueMaybe()?.destFee.toHuman()}
-        onConfirmTransfer={() => {
-          if (
-            adapter === undefined ||
-            decimalAmount === undefined ||
-            toChain === undefined ||
-            token === undefined ||
-            sender === undefined
-          ) {
-            return
-          }
+        onConfirmTransfer={
+          // TODO: extrinsic middleware logic to domains similar to `useExtrinsic`
+          useRecoilCallback(callbackInterface => () => {
+            if (
+              adapter === undefined ||
+              decimalAmount === undefined ||
+              fromChain === undefined ||
+              toChain === undefined ||
+              token === undefined ||
+              sender === undefined
+            ) {
+              return
+            }
 
-          const tx: SubmittableExtrinsic<'rxjs', ISubmittableResult> = adapter.createTx({
-            amount: FixedPointNumber.fromInner(decimalAmount.planck.toString(), decimalAmount?.decimals),
-            to: toChain.id,
-            token,
-            address: sender.address,
-            signer: sender.address,
-          }) as any
+            const tx = adapter.createTx({
+              amount: FixedPointNumber.fromInner(decimalAmount.planck.toString(), decimalAmount?.decimals),
+              to: toChain.id,
+              token,
+              address: sender.address,
+              signer: sender.address,
+            }) as SubmittableExtrinsic<'rxjs', ISubmittableResult>
 
-          web3FromAddress(sender.address).then(web3 => {
-            const result = tx.signAndSend(sender.address, { signer: web3.signer })
+            web3FromAddress(sender.address).then(web3 => {
+              const result = tx.signAndSend(sender.address, { signer: web3.signer })
 
-            result.subscribe()
+              setExtrinsicInProgress(true)
+
+              result.subscribe({
+                next: result => extrinsicMiddleware(fromChain.id, tx, result, callbackInterface),
+                complete: () => setExtrinsicInProgress(false),
+              })
+
+              toastExtrinsic([[tx.method.section, tx.method.method]], firstValueFrom(result))
+            })
           })
-        }}
-        confirmTransferState={ready ? undefined : 'disabled'}
+        }
+        confirmTransferState={extrinsicInProgress ? 'pending' : ready ? undefined : 'disabled'}
         inputError={inputError}
       />
       <TokenSelectorDialog
