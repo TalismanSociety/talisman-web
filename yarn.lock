@@ -7331,6 +7331,7 @@ __metadata:
     eslint-plugin-n: ^15.0.0
     eslint-plugin-promise: ^6.0.0
     eslint-plugin-react: latest
+    eslint-plugin-react-hooks: ^4.6.0
   peerDependencies:
     eslint: "*"
     typescript: "*"
@@ -7420,7 +7421,6 @@ __metadata:
     "@talismn/icons": "*"
     framer-motion: 10.x
     react: 18.x
-    react-hot-toast: 2.x
   languageName: unknown
   linkType: soft
 
@@ -7512,7 +7512,6 @@ __metadata:
     react-app-alias: ^2.2.2
     react-countup: ^6.4.1
     react-dom: ^18.2.0
-    react-hot-toast: ^2.4.0
     react-i18next: ^11.18.6
     react-infinite-scroller: ^1.2.6
     react-is: ^17.0.2
@@ -14220,7 +14219,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-react-hooks@npm:^4.3.0":
+"eslint-plugin-react-hooks@npm:^4.3.0, eslint-plugin-react-hooks@npm:^4.6.0":
   version: 4.6.0
   resolution: "eslint-plugin-react-hooks@npm:4.6.0"
   peerDependencies:

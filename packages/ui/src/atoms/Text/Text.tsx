@@ -30,7 +30,7 @@ const useAlpha = (color: string, alpha: TextAlpha) => {
     textColor.alpha = theme.contentAlpha[alpha ?? 'medium']
 
     return textColor.display().toString()
-  }, [alpha, color, theme.color.onBackground])
+  }, [alpha, color, theme.color.onBackground, theme.contentAlpha])
 }
 
 const BaseText = <T extends React.ElementType = 'span'>({

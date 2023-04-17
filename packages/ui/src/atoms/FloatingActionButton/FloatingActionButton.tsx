@@ -36,7 +36,7 @@ const FloatingActionButton = <T extends FloatingActionButtonElementType = 'butto
   containerColor = containerColor ?? theme.color.primary
   hoverContainerColor = useMemo(
     () => hoverContainerColor ?? new Color(containerColor ?? '').darken(0.15).display().toString(),
-    []
+    [containerColor, hoverContainerColor]
   )
   contentColor = contentColor ?? theme.color.onPrimary
   hoverContentColor = hoverContentColor ?? contentColor

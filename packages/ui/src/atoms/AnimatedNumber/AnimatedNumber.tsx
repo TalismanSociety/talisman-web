@@ -13,7 +13,7 @@ const AnimatedNumber = (props: AnimatedNumberProps) => {
     }
 
     return props.formatter instanceof Intl.NumberFormat ? props.formatter.format.bind(props.formatter) : props.formatter
-  }, [])
+  }, [props.formatter])
 
   return <CountUp duration={0.4} preserveValue formattingFn={formatter} {...props} />
 }

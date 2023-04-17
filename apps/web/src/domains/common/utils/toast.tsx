@@ -2,14 +2,13 @@ import { Chain } from '@domains/chains/config'
 import RpcError from '@polkadot/rpc-provider/coder/error'
 import { ISubmittableResult } from '@polkadot/types/types'
 import { ExternalLink } from '@talismn/icons'
-import { Text } from '@talismn/ui'
-import toast from 'react-hot-toast'
+import { Text, toast } from '@talismn/ui'
 import { Loadable } from 'recoil'
 
 export const toastExtrinsic = (
   extrinsics: [string, string][],
   promise: Promise<ISubmittableResult>,
-  chainLoadable: Loadable<Chain>
+  chainLoadable?: Loadable<Chain>
 ) => {
   const message = (() => {
     if (extrinsics.length === 1) {
@@ -37,7 +36,7 @@ export const toastExtrinsic = (
   })()
 
   toast.promise(
-    Promise.allSettled([promise, chainLoadable.toPromise()]).then(([data, chain]) => {
+    Promise.allSettled([promise, chainLoadable?.toPromise()]).then(([data, chain]) => {
       if (data.status === 'fulfilled') {
         return chain.status === 'fulfilled' ? ([data.value, chain.value] as const) : ([data.value] as const)
       } else {
@@ -51,7 +50,7 @@ export const toastExtrinsic = (
           <Text.Body as="div" alpha="high">
             Your transaction is pending...
           </Text.Body>
-          <Text.Body as="div">Your staking transaction has been confirmed</Text.Body>
+          <Text.Body as="div">Your transaction has been confirmed</Text.Body>
         </>
       ),
       success: ([data, chain]) => (
