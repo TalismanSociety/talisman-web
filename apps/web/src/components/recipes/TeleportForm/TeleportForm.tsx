@@ -3,8 +3,8 @@ import Color from 'colorjs.io'
 import { AnimatePresence, motion } from 'framer-motion'
 import { ReactNode, useCallback, useMemo, useState } from 'react'
 
-import { ArrowRight, ChevronRight, Repeat } from '@talismn/icons'
-import { Button, ButtonProps, CircularProgressIndicator, Select, Text, TextInput } from '@talismn/ui'
+import { ArrowRight, Repeat } from '@talismn/icons'
+import { Button, ButtonProps, Select, Text, TextInput } from '@talismn/ui'
 import Cryptoticon from '../Cryptoticon'
 import TeleportFormSkeleton from './TeleportForm.skeleton'
 

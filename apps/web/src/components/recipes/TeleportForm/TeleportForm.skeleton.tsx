@@ -1,10 +1,13 @@
 import { useTheme } from '@emotion/react'
 import { Skeleton, SkeletonProps } from '@talismn/ui'
 
+// TODO: copy of `StakeForm` skeleton
+// implement better skeleton once we have time
 const TeleportFormSkeleton = (props: SkeletonProps) => {
   const theme = useTheme()
   return (
     <Skeleton.Surface
+      {...props}
       css={{
         display: 'flex',
         flexDirection: 'column',
@@ -13,6 +16,8 @@ const TeleportFormSkeleton = (props: SkeletonProps) => {
         borderRadius: '1.6rem',
         padding: '3.2rem',
         minHeight: '33.8rem',
+        width: '47rem',
+        maxWidth: '100%',
       }}
     >
       <div>

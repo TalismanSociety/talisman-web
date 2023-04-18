@@ -18,7 +18,6 @@ import router from '@routes'
 import { PropsWithChildren, Suspense } from 'react'
 import { RouterProvider } from 'react-router-dom'
 import { RecoilRoot, useRecoilValue } from 'recoil'
-import { ToastBar } from '@talismn/ui'
 
 import ThemeProvider from './App.Theme'
 
