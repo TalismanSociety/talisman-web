@@ -1,5 +1,7 @@
 import { css } from '@emotion/react'
 import { type PropsWithChildren, type ReactNode } from 'react'
+import { Toaster } from '..'
+import useMediaQuery from '../../utils/useMediaQuery'
 
 type Breakpoint = 'narrow' | 'wide' | undefined
 
@@ -96,6 +98,10 @@ const Scaffold = (props: ScaffoldProps) => (
       {props.footer}
     </footer>
     <div css={breakpointToCss(props.breakpoints?.drawer)}>{props.drawer}</div>
+    <Toaster
+      position={useMediaQuery(SCAFFOLD_WIDE_VIEW_MEDIA_SELECTOR) ? 'top-right' : 'top-center'}
+      css={{ zIndex: 2 }}
+    />
   </div>
 )
 

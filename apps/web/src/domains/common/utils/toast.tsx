@@ -2,8 +2,7 @@ import { Chain } from '@domains/chains/config'
 import RpcError from '@polkadot/rpc-provider/coder/error'
 import { ISubmittableResult } from '@polkadot/types/types'
 import { ExternalLink } from '@talismn/icons'
-import { Text } from '@talismn/ui'
-import toast from 'react-hot-toast'
+import { Text, toast } from '@talismn/ui'
 import { Loadable } from 'recoil'
 
 export const toastExtrinsic = (
@@ -51,7 +50,7 @@ export const toastExtrinsic = (
           <Text.Body as="div" alpha="high">
             Your transaction is pending...
           </Text.Body>
-          <Text.Body as="div">Your staking transaction has been confirmed</Text.Body>
+          <Text.Body as="div">Your transaction has been confirmed</Text.Body>
         </>
       ),
       success: ([data, chain]) => (

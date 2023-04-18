@@ -1,5 +1,5 @@
 module.exports = {
-  extends: ['@talismn', 'plugin:react/recommended', 'plugin:react/jsx-runtime'],
+  extends: ['@talismn', 'plugin:react/recommended', 'plugin:react/jsx-runtime', 'plugin:react-hooks/recommended'],
   plugins: ['react'],
   settings: {
     react: {

@@ -16,7 +16,6 @@ import * as Portfolio from '@libs/portfolio'
 import TalismanProvider from '@libs/talisman'
 import router from '@routes'
 import { PropsWithChildren, Suspense } from 'react'
-import { Toaster } from 'react-hot-toast'
 import { RouterProvider } from 'react-router-dom'
 import { RecoilRoot, useRecoilValue } from 'recoil'
 import { ToastBar } from '@talismn/ui'
@@ -64,7 +63,6 @@ const App = () => (
                   <Development />
                   <NftProvider />
                   <RouterProvider router={router} />
-                  <Toaster position="top-right">{t => <ToastBar toast={t} />}</Toaster>
                   <CookieBanner />
                 </MoonbeamContributors.Provider>
               </TalismanProvider>
