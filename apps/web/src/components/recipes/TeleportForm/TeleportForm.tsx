@@ -140,7 +140,6 @@ const TeleportForm = Object.assign(
                 props.token === undefined ? (
                   <Button
                     onClick={props.onRequestTokenChange}
-                    disabled={props.loading}
                     css={{
                       padding: '1.1rem 0.8rem',
                       color: theme.color.primary,
@@ -153,7 +152,6 @@ const TeleportForm = Object.assign(
                   >
                     <div css={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                       <div>Choose token</div>
-                      {props.loading ? <CircularProgressIndicator size="1.5em" /> : <ChevronRight size="1.5em" />}
                     </div>
                   </Button>
                 ) : (

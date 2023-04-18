@@ -9,7 +9,7 @@ import { Loadable } from 'recoil'
 export const toastExtrinsic = (
   extrinsics: [string, string][],
   promise: Promise<ISubmittableResult>,
-  chainLoadable: Loadable<Chain>
+  chainLoadable?: Loadable<Chain>
 ) => {
   const message = (() => {
     if (extrinsics.length === 1) {
@@ -37,7 +37,7 @@ export const toastExtrinsic = (
   })()
 
   toast.promise(
-    Promise.allSettled([promise, chainLoadable.toPromise()]).then(([data, chain]) => {
+    Promise.allSettled([promise, chainLoadable?.toPromise()]).then(([data, chain]) => {
       if (data.status === 'fulfilled') {
         return chain.status === 'fulfilled' ? ([data.value, chain.value] as const) : ([data.value] as const)
       } else {
