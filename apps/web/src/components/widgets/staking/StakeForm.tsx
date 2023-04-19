@@ -349,6 +349,8 @@ export const ControlledStakeForm = (props: { assetSelector: ReactNode }) => {
     setSelectedPoolId(initialPoolId)
   }, [initialPoolId, recommendedPools])
 
+  console.log(isReady, inputError, decimalAmount?.toHuman())
+
   return (
     <>
       <PoolSelector
@@ -376,6 +378,7 @@ export const ControlledStakeForm = (props: { assetSelector: ReactNode }) => {
             }}
             fiatAmount={localizedFiatAmount}
             availableToStake={availableBalance.decimalAmount?.toHuman() ?? '...'}
+            error={inputError?.message}
           />
         }
         poolInfo={

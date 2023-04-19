@@ -6,6 +6,7 @@ import { ReactNode, createContext, useContext, useId, useMemo, useState } from '
 import { StakeStatus, StakeStatusIndicator } from '../StakeStatusIndicator'
 import Color from 'colorjs.io'
 import StakeFormSkeleton from './StakeForm.skeleton'
+import { isNilOrWhitespace } from '@util/nil'
 
 const AssetSelectorContext = createContext<ReactNode>(null)
 
@@ -15,6 +16,7 @@ type AmountInputProps = {
   onRequestMaxAmount: () => unknown
   fiatAmount: ReactNode
   availableToStake: ReactNode
+  error?: string
 }
 
 const AmountInput = (props: AmountInputProps) => (
@@ -24,7 +26,9 @@ const AmountInput = (props: AmountInputProps) => (
     trailingIcon={useContext(AssetSelectorContext)}
     leadingLabel="Available to stake"
     trailingLabel={props.availableToStake}
-    leadingSupportingText={props.fiatAmount}
+    leadingSupportingText={
+      isNilOrWhitespace(props.error) ? props.fiatAmount : <TextInput.ErrorLabel>{props.error}</TextInput.ErrorLabel>
+    }
     trailingSupportingText={<Chip onClick={props.onRequestMaxAmount}>Max</Chip>}
   />
 )

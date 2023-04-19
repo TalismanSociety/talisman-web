@@ -9,7 +9,7 @@ const FloatingPortal = (props: Exclude<Parameters<typeof BaseFloatingPortal>['0'
       Array.from(document.querySelectorAll('dialog[open]'))
         .filter(x => x.contains(dummyRef.current))
         .at(-1) ?? document.body,
-    [dummyRef.current]
+    []
   )
 
   return (
