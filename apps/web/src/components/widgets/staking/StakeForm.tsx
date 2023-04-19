@@ -89,10 +89,7 @@ const ExistingPool = (props: { account: Account }) => {
         addButton={
           // Fully unbonding pool can't be interacted with
           !pool?.poolMember.points.isZero() && (
-            <StakeFormComponent.ExistingPool.AddButton
-              onClick={() => setAddStakeAddress(props.account.address)}
-              loading={withdrawExtrinsic.state === 'loading'}
-            />
+            <StakeFormComponent.ExistingPool.AddButton onClick={() => setAddStakeAddress(props.account.address)} />
           )
         }
         unstakeButton={
