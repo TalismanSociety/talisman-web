@@ -304,16 +304,21 @@ export const ControlledStakeForm = (props: { assetSelector: ReactNode }) => {
     { enabled: selectedPoolId !== undefined }
   )
 
-  const poolStatus = useMemo<StakeStatus>(
-    () =>
-      poolNominatorsLoadable
-        .valueMaybe()
-        ?.unwrapOrDefault()
-        .targets.some((x: { toHuman: () => any }) => eraStakersLoadable.valueMaybe()?.has(x.toHuman()))
-        ? 'earning_rewards'
-        : 'waiting',
-    [eraStakersLoadable, poolNominatorsLoadable]
-  )
+  const poolStatus = useMemo<StakeStatus>(() => {
+    if (poolNominatorsLoadable.state !== 'hasValue' || eraStakersLoadable.state !== 'hasValue') {
+      return
+    }
+
+    if (poolNominatorsLoadable.contents.unwrapOrDefault().targets.length === 0) {
+      return 'not_nominating'
+    }
+
+    return poolNominatorsLoadable.contents
+      .unwrapOrDefault()
+      .targets.some(x => eraStakersLoadable.contents.has(x.toHuman()))
+      ? 'earning_rewards'
+      : 'waiting'
+  }, [eraStakersLoadable, poolNominatorsLoadable])
 
   const bondedPoolLoadable = useChainState('query', 'nominationPools', 'bondedPools', [selectedPoolId!], {
     enabled: selectedPoolId !== undefined,
