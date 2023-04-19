@@ -53,6 +53,9 @@ export const useTokenAmountFromPlanck = <T extends string | BN | bigint | undefi
     waitForAll([useNativeTokenDecimalState(), useNativeTokenPriceState(options.fiatCurrency)])
   )
 
+  // to ensure no wasteful re-render
+  const planckKey = planck?.toString()
+
   const decimalAmount = useMemo<undefined extends T ? Decimal | undefined : Decimal>(() => {
     if (planck === undefined) return undefined as any
     try {
@@ -64,7 +67,8 @@ export const useTokenAmountFromPlanck = <T extends string | BN | bigint | undefi
 
       return undefined as any
     }
-  }, [nativeTokenDecimal, options.allowInvalidValue, planck])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [nativeTokenDecimal, options.allowInvalidValue, planckKey])
 
   const fiatAmount = useMemo<undefined extends T ? number | undefined : number>(
     () => (decimalAmount === undefined ? (undefined as any) : decimalAmount.toNumber() * nativeTokenPrice),
