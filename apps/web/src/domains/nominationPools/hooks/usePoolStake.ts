@@ -20,9 +20,19 @@ export const usePoolStakes = <T extends Account | Account[]>(account: T) => {
       accounts.map(({ address }) => address)
     )
   )
-  const poolMembers = useMemo(() => _poolMembers.filter(x => x.isSome).map(x => x.unwrap()), [_poolMembers])
+  const accountPools = useMemo(
+    () =>
+      _poolMembers
+        .map((x, index) => ({ account: accounts[index], poolMembers: x }))
+        .filter(x => x.poolMembers.isSome)
+        .map(x => ({ ...x, poolMember: x.poolMembers.unwrap() })),
+    [_poolMembers, accounts]
+  )
 
-  const stashIds = useMemo(() => poolMembers.map(x => createAccounts(api, x.poolId).stashId), [api, poolMembers])
+  const stashIds = useMemo(
+    () => accountPools.map(x => createAccounts(api, x.poolMember.poolId).stashId),
+    [api, accountPools]
+  )
 
   const [poolNominators, slashingSpans, poolMetadatum, activeEra, sessionProgress] = useRecoilValue(
     waitForAll([
@@ -31,7 +41,7 @@ export const usePoolStakes = <T extends Account | Account[]>(account: T) => {
       useChainQueryState(
         'nominationPools',
         'metadata.multi',
-        useMemo(() => poolMembers.map(x => x.poolId), [poolMembers])
+        useMemo(() => accountPools.map(x => x.poolMember.poolId), [accountPools])
       ),
       useChainQueryState('staking', 'activeEra', []),
       useChainDeriveState('session', 'progress', []),
@@ -43,10 +53,10 @@ export const usePoolStakes = <T extends Account | Account[]>(account: T) => {
 
   const pools = useMemo(
     () =>
-      poolMembers
+      accountPools
         // Calculate unbondings
-        .map((poolMember, index) => ({
-          account: accounts[index],
+        .map(({ account, poolMember }) => ({
+          account,
           poolMember,
           ...getPoolUnbonding(poolMember, sessionProgress),
         }))
@@ -73,7 +83,7 @@ export const usePoolStakes = <T extends Account | Account[]>(account: T) => {
             slashingSpan,
           }
         }),
-    [accounts, eraStakers, pendingRewards, poolMembers, poolMetadatum, poolNominators, sessionProgress, slashingSpans]
+    [accounts, eraStakers, pendingRewards, accountPools, poolMetadatum, poolNominators, sessionProgress, slashingSpans]
   )
 
   type Result = typeof pools
