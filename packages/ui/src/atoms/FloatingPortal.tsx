@@ -1,21 +1,24 @@
 import { FloatingPortal as BaseFloatingPortal } from '@floating-ui/react'
-import { useMemo, useRef } from 'react'
+import { useCallback, useState, type RefCallback } from 'react'
 
 const FloatingPortal = (props: Exclude<Parameters<typeof BaseFloatingPortal>['0'], 'root'>) => {
-  const dummyRef = useRef<HTMLDivElement>(null)
-
-  const root = useMemo(
-    () =>
-      Array.from(document.querySelectorAll('dialog[open]'))
-        .filter(x => x.contains(dummyRef.current))
-        .at(-1) ?? document.body,
-    []
-  )
+  const [root, setRoot] = useState<Element>(document.body)
 
   return (
     <>
-      <div ref={dummyRef} css={{ display: 'none' }} />
-      <BaseFloatingPortal {...props} root={root as any} />
+      <div
+        ref={useCallback<RefCallback<HTMLDivElement>>(
+          element =>
+            setRoot(
+              Array.from(document.querySelectorAll('dialog[open]'))
+                .filter(x => x.contains(element))
+                .at(-1) ?? document.body
+            ),
+          []
+        )}
+        css={{ display: 'none' }}
+      />
+      <BaseFloatingPortal {...props} root={root as HTMLElement} />
     </>
   )
 }
