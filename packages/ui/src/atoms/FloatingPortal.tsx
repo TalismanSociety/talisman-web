@@ -4,12 +4,12 @@ import { useMemo, useRef } from 'react'
 const FloatingPortal = (props: Exclude<Parameters<typeof BaseFloatingPortal>['0'], 'root'>) => {
   const dummyRef = useRef<HTMLDivElement>(null)
 
-  const openDialogs = document.querySelectorAll('dialog[open]')
-  const topMostDialog: Element | null = openDialogs.item(openDialogs.length - 1)
-
   const root = useMemo(
-    () => (topMostDialog?.contains(dummyRef.current) ? topMostDialog : document.body),
-    [dummyRef.current, topMostDialog]
+    () =>
+      Array.from(document.querySelectorAll('dialog[open]'))
+        .filter(x => x.contains(dummyRef.current))
+        .at(-1) ?? document.body,
+    [dummyRef.current]
   )
 
   return (
