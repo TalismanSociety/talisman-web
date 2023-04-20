@@ -46,6 +46,7 @@ function calcContentHeight(step: Step, nAccounts: number): { md: string; lg: str
   if (step === Step.NameVault) return { md: '429px', lg: '461px' }
   if (step === Step.SelectFirstChain) return { md: '400px', lg: '461px' }
   if (step === Step.Transactions) return { md: '420px', lg: '420px' }
+  if (step === Step.VaultCreated) return { md: '485px', lg: '485px' }
   if (step === Step.AddMembers) return { md: 521 + nAccounts * 40 + 'px', lg: 521 + nAccounts * 40 + 'px' }
   return { md: 741 + nAccounts * 40 + 'px', lg: 721 + nAccounts * 40 + 'px' }
 }
@@ -68,17 +69,34 @@ const CreateMultisig = () => {
   if (!firstChain) throw Error('no supported chains')
 
   const navigate = useNavigate()
-  const [step, setStep] = useState<Step>(Step.NoVault)
-  const [createTransctionStatus] = useState<CreateTransactionsStatus>(CreateTransactionsStatus.NotStarted)
+  const [step, setStep] = useState<Step>(Step.VaultCreated)
+  const [createTransctionStatus, setCreateTransactionsStatus] = useState<CreateTransactionsStatus>(
+    CreateTransactionsStatus.NotStarted
+  )
   const [name, setName] = useState<string>('')
   const [chain, setChain] = useState<ChainSummary>(firstChain)
   const [extensionAccounts] = useRecoilState(accountsState)
   const [externalAccounts, setExternalAccounts] = useState<string[]>([])
   const [threshold, setThreshold] = useState<number>(2)
   const tokenWithPrice = useRecoilValueLoadable(tokenByIdWithPrice(chain.nativeToken.id))
+  // TODO: replace this with value from on-chain
+  const [proxyAccount] = useState<string>('5CfQ7R2JjfxS2qJUSoUfpFPtvoraronPkkjK96ED1kgcYzd5')
   // TODO: replace this with a query once lib is avail
   const reserveAmount = 20.041
   const fee = 0.0125628761
+
+  useEffect(() => {
+    if (step === Step.Transactions && createTransctionStatus === CreateTransactionsStatus.NotStarted) {
+      // TODO: Add real transactions here
+      setCreateTransactionsStatus(CreateTransactionsStatus.CreatingProxy)
+      setTimeout(() => {
+        setCreateTransactionsStatus(CreateTransactionsStatus.TransferringProxy)
+        setTimeout(() => {
+          setStep(Step.VaultCreated)
+        }, 3000)
+      }, 3000)
+    }
+  }, [createTransctionStatus, step])
 
   const augmentedAccounts: AugmentedAccount[] = useMemo(() => {
     // TODO allow 'deselecting' extension accounts in the creation phase
@@ -178,9 +196,9 @@ const CreateMultisig = () => {
             tokenWithPrice={tokenWithPrice}
           />
         ) : step === Step.Transactions ? (
-          <SignTransactions status={createTransctionStatus} onDone={() => setStep(Step.VaultCreated)} />
+          <SignTransactions status={createTransctionStatus} />
         ) : step === Step.VaultCreated ? (
-          <VaultCreated goToVault={() => navigate('/overview')} />
+          <VaultCreated goToVault={() => navigate('/overview')} proxyAccount={proxyAccount} name={name} />
         ) : null}
       </div>
     </div>

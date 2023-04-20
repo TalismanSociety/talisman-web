@@ -61,7 +61,7 @@ const Step = ({ name, description, status }: { name: string; description: string
   )
 }
 
-const SignTransactions = (props: { status: CreateTransactionsStatus; onDone: () => void }) => {
+const SignTransactions = (props: { status: CreateTransactionsStatus }) => {
   const createProxyStatus =
     props.status === CreateTransactionsStatus.CreatingProxy ? StepStatus.InProgress : StepStatus.Done
   const transferProxyStatus =

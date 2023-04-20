@@ -1,13 +1,13 @@
-const size = {
-  xs: '375px',
-  sm: '720px',
-  md: '1024px',
-  lg: '1440px',
+export const size = {
+  xs: 375,
+  sm: 720,
+  md: 1024,
+  lg: 1440,
 }
 
 export const device = {
-  xs: `(min-width: ${size.xs})`,
-  sm: `(min-width: ${size.sm})`,
-  md: `(min-width: ${size.md})`,
-  lg: `(min-width: ${size.lg})`,
+  xs: `(min-width: ${size.xs}px)`,
+  sm: `(min-width: ${size.sm}px)`,
+  md: `(min-width: ${size.md}px)`,
+  lg: `(min-width: ${size.lg}px)`,
 }

@@ -8127,6 +8127,7 @@ __metadata:
     react-is: ^17.0.2
     react-loading-skeleton: ^3.2.0
     react-relay: ^15.0.0
+    react-rewards: ^2.0.4
     react-router-dom: ^6.8.1
     react-scripts: 5.0.1
     react-use: ^17.4.0
@@ -23637,6 +23638,16 @@ __metadata:
   peerDependencies:
     react: ^16.9.0 || ^17 || ^18
   checksum: d318c3b153f193e1b93fb5d8501426f7a9eb2e013407cbfadc1cbc17e319d99dad9c145147c0cea194eeb6ffbb4fc6d41914ad69db0d589808d4484e4a6fd718
+  languageName: node
+  linkType: hard
+
+"react-rewards@npm:^2.0.4":
+  version: 2.0.4
+  resolution: "react-rewards@npm:2.0.4"
+  peerDependencies:
+    react: ^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0
+    react-dom: ^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0
+  checksum: 7796d4bab724b69bf0263c0964d2ef3e41ef93bca7d332c4652f39cd2cc4054f9b19f7dac93ec5734632377c5e77d2f5251fb0992aaeeed92fde132f5ea5fd68
   languageName: node
   linkType: hard
 
