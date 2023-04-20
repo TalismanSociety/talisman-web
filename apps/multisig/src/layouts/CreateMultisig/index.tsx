@@ -2,6 +2,7 @@ import Logo from '@components/Logo'
 import { css } from '@emotion/css'
 import { device } from '@util/breakpoints'
 import { useEffect, useMemo, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useRecoilState, useRecoilValueLoadable } from 'recoil'
 
 import { ChainSummary, supportedChains, tokenByIdWithPrice } from '../../domain/chains'
@@ -13,6 +14,9 @@ import NoVault from './NoVault'
 import SelectFirstChain from './SelectFirstChain'
 import SelectThreshold from './SelectThreshold'
 import SignTransactions from './SignTransactions'
+import VaultCreated from './VaultCreated'
+
+export type TransactionStatus = 'waiting' | 'inprogress' | 'done'
 
 export type Step =
   | 'noVault'
@@ -58,6 +62,7 @@ const CreateMultisig = () => {
   let firstChain = supportedChains[0]
   if (!firstChain) throw Error('no supported chains')
 
+  const navigate = useNavigate()
   const [step, setStep] = useState<Step>('noVault')
   const [name, setName] = useState<string>('')
   const [chain, setChain] = useState<ChainSummary>(firstChain)
@@ -170,10 +175,12 @@ const CreateMultisig = () => {
           />
         ) : step === 'transactions' ? (
           <SignTransactions
-            proxyCreated={proxyCreated}
-            proxySetupCompleted={proxySetupCompleted}
+            proxyCreationStatus={'inprogress'}
+            proxySetupStatus={'waiting'}
             onDone={() => setStep('vaultCreated')}
           />
+        ) : step === 'vaultCreated' ? (
+          <VaultCreated goToVault={() => navigate('/overview')} />
         ) : null}
       </div>
     </div>
