@@ -77,19 +77,18 @@ const TeleportForm = () => {
       return false
     }
 
-    if (fromChain !== undefined && routes.some(x => x.to.id === fromChain.id)) {
+    if (fromChain !== undefined && toChain === undefined && routes.some(x => x.to.id === fromChain.id)) {
       return true
     }
 
-    if (toChain !== undefined && routes.some(x => x.from.id === toChain.id)) {
+    if (toChain !== undefined && fromChain === undefined && routes.some(x => x.from.id === toChain.id)) {
       return true
     }
 
     if (
       toChain !== undefined &&
       fromChain !== undefined &&
-      routes.some(x => x.to.id === fromChain.id) &&
-      routes.some(x => x.from.id === toChain.id)
+      routes.some(x => x.to.id === fromChain.id && x.from.id === toChain.id)
     ) {
       return true
     }
