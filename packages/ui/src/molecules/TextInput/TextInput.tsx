@@ -37,7 +37,6 @@ const TextInput = ({
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
-            fontSize: '1.12rem',
             marginBottom: '0.8rem',
           }}
         >
@@ -82,7 +81,6 @@ const TextInput = ({
             'display': 'flex',
             'justifyContent': 'space-between',
             'alignItems': 'center',
-            'fontSize': '1.12rem',
             'marginTop': '0.8rem',
             '> *:empty::after': {
               content: `"\u200B"`,

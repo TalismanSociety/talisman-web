@@ -297,6 +297,10 @@ const TeleportForm = () => {
 
               result.subscribe({
                 next: result => extrinsicMiddleware(fromChain.id, tx, result, callbackInterface),
+                error: error => {
+                  toastExtrinsic([[tx.method.section, tx.method.method]], Promise.reject(error))
+                  setExtrinsicInProgress(false)
+                },
                 complete: () => setExtrinsicInProgress(false),
               })
 

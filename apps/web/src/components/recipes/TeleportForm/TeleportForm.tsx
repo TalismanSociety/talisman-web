@@ -3,7 +3,7 @@ import Color from 'colorjs.io'
 import { AnimatePresence, motion } from 'framer-motion'
 import { ReactNode, useCallback, useMemo, useState } from 'react'
 
-import { ArrowRight, Repeat } from '@talismn/icons'
+import { ArrowDown, Repeat } from '@talismn/icons'
 import { Button, ButtonProps, Select, Text, TextInput } from '@talismn/ui'
 import Cryptoticon from '../Cryptoticon'
 import TeleportFormSkeleton from './TeleportForm.skeleton'
@@ -32,7 +32,7 @@ export type TeleportFormProps = {
 
 const TeleportFormNetworkButton = (props: Pick<ButtonProps<'button'>, 'onClick' | 'disabled'>) => {
   return (
-    <Button variant="noop" {...props}>
+    <Button variant="noop" {...props} css={{ '@media(min-width: 600px)': { rotate: '-90deg' } }}>
       <motion.div
         initial="false"
         whileHover={props.disabled ? 'false' : 'true'}
@@ -43,13 +43,13 @@ const TeleportFormNetworkButton = (props: Pick<ButtonProps<'button'>, 'onClick' 
           variants={{ false: { display: 'none' }, true: { display: 'unset' } }}
           css={{ position: 'absolute', inset: 0 }}
         >
-          <Repeat size="3.2rem" css={{ transform: 'rotate(90deg)' }} />
+          <Repeat size="3.2rem" />
         </motion.div>
         <motion.div
           variants={{ false: { display: 'unset' }, true: { display: 'none' } }}
           css={{ position: 'absolute', inset: 0 }}
         >
-          <ArrowRight size="3.2rem" />
+          <ArrowDown size="3.2rem" />
         </motion.div>
       </motion.div>
     </Button>
@@ -74,44 +74,46 @@ const TeleportForm = Object.assign(
 
     const fromNetworkSelect = useMemo(
       () => (
-        <Select
-          width="16rem"
-          placeholder="From network"
-          value={props.selectedFromNetworkIndex}
-          onChange={props.onSelectFromNetworkIndex}
-          clearRequired
-        >
-          {props.fromNetworks.map((network, index) => (
-            <Select.Item
-              key={index}
-              value={index}
-              headlineText={network.name}
-              leadingIcon={<Cryptoticon src={network.logoSrc} alt={network.name} size="2rem" />}
-            />
-          ))}
-        </Select>
+        <div css={{ '@media(min-width: 600px)': { width: '16rem' } }}>
+          <Select
+            placeholder="From network"
+            value={props.selectedFromNetworkIndex}
+            onChange={props.onSelectFromNetworkIndex}
+            clearRequired
+          >
+            {props.fromNetworks.map((network, index) => (
+              <Select.Item
+                key={index}
+                value={index}
+                headlineText={network.name}
+                leadingIcon={<Cryptoticon src={network.logoSrc} alt={network.name} size="2rem" />}
+              />
+            ))}
+          </Select>
+        </div>
       ),
       [props.fromNetworks, props.onSelectFromNetworkIndex, props.selectedFromNetworkIndex]
     )
 
     const toNetworkSelect = useMemo(
       () => (
-        <Select
-          width="16rem"
-          placeholder="To network"
-          value={props.selectedToNetworkIndex}
-          onChange={props.onSelectToNetworkIndex}
-          clearRequired
-        >
-          {props.toNetworks.map((network, index) => (
-            <Select.Item
-              key={index}
-              value={index}
-              headlineText={network.name}
-              leadingIcon={<Cryptoticon src={network.logoSrc} alt={network.name} size="2rem" />}
-            />
-          ))}
-        </Select>
+        <div css={{ '@media(min-width: 600px)': { width: '16rem' } }}>
+          <Select
+            placeholder="To network"
+            value={props.selectedToNetworkIndex}
+            onChange={props.onSelectToNetworkIndex}
+            clearRequired
+          >
+            {props.toNetworks.map((network, index) => (
+              <Select.Item
+                key={index}
+                value={index}
+                headlineText={network.name}
+                leadingIcon={<Cryptoticon src={network.logoSrc} alt={network.name} size="2rem" />}
+              />
+            ))}
+          </Select>
+        </div>
       ),
       [props.onSelectToNetworkIndex, props.selectedToNetworkIndex, props.toNetworks]
     )
@@ -136,13 +138,13 @@ const TeleportForm = Object.assign(
               placeholder="0.00"
               value={props.amount}
               onChange={event => props.onChangeAmount(event.target.value)}
+              width="10rem"
               trailingIcon={
                 props.token === undefined ? (
                   <Button
                     onClick={props.onRequestTokenChange}
                     css={{
-                      padding: '1.1rem 0.8rem',
-                      color: theme.color.primary,
+                      padding: '1rem',
                       backgroundColor: (() => {
                         const color = new Color(theme.color.primary)
                         color.alpha = 0.1
@@ -150,14 +152,18 @@ const TeleportForm = Object.assign(
                       })(),
                     }}
                   >
-                    <div css={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                      <div>Choose token</div>
-                    </div>
+                    <Text.BodySmall
+                      color={theme.color.primary}
+                      css={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}
+                    >
+                      Choose token
+                    </Text.BodySmall>
                   </Button>
                 ) : (
                   <Button
                     onClick={props.onRequestTokenChange}
                     css={{
+                      padding: '1rem',
                       backgroundColor: theme.color.foregroundVariant,
                       color: (() => {
                         const color = new Color(theme.color.onForegroundVariant)
@@ -166,10 +172,10 @@ const TeleportForm = Object.assign(
                       })(),
                     }}
                   >
-                    <div css={{ display: 'flex', alignItems: 'center', gap: '0.9rem' }}>
+                    <Text.BodySmall as="div" css={{ display: 'flex', alignItems: 'center', gap: '0.9rem' }}>
                       <Cryptoticon src={props.token.logoSrc} alt={props.token.name} size="2rem" />
                       <div>{props.token.name}</div>
-                    </div>
+                    </Text.BodySmall>
                   </Button>
                 )
               }
@@ -177,10 +183,20 @@ const TeleportForm = Object.assign(
               {...errorProps}
             />
             <div
-              style={{ flexDirection: networksSwapped ? 'row-reverse' : 'row' }}
-              css={{ display: 'flex', alignItems: 'center' }}
+              css={[
+                { display: 'flex', alignItems: 'center', gap: '1rem' },
+                {
+                  'flexDirection': networksSwapped ? 'column' : 'column-reverse',
+                  '@media(min-width: 600px)': {
+                    justifyContent: 'space-between',
+                    flexDirection: networksSwapped ? 'row' : 'row-reverse',
+                  },
+                },
+              ]}
             >
-              <motion.div layout>{networksSwapped ? toNetworkSelect : fromNetworkSelect}</motion.div>
+              <motion.div layout css={{ alignSelf: 'stretch' }}>
+                {networksSwapped ? toNetworkSelect : fromNetworkSelect}
+              </motion.div>
               <div css={{ margin: '0 3rem', color: theme.color.primary }}>
                 <TeleportFormNetworkButton
                   onClick={useCallback(() => {
@@ -190,7 +206,9 @@ const TeleportForm = Object.assign(
                   disabled={!props.canReverseNetworkRoute}
                 />
               </div>
-              <motion.div layout>{networksSwapped ? fromNetworkSelect : toNetworkSelect}</motion.div>
+              <motion.div layout css={{ alignSelf: 'stretch' }}>
+                {networksSwapped ? fromNetworkSelect : toNetworkSelect}
+              </motion.div>
             </div>
           </motion.div>
           <AnimatePresence>
