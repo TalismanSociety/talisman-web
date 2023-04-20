@@ -18,7 +18,7 @@ import { HeikoAdapter, ParallelAdapter } from '@polkawallet/bridge/adapters/para
 import { KhalaAdapter } from '@polkawallet/bridge/adapters/phala'
 import { KusamaAdapter, PolkadotAdapter } from '@polkawallet/bridge/adapters/polkadot'
 import { StatemineAdapter } from '@polkawallet/bridge/adapters/statemint'
-import { QuartzAdapter } from '@polkawallet/bridge/adapters/unique'
+import { QuartzAdapter, UniqueAdapter } from '@polkawallet/bridge/adapters/unique'
 import { selector } from 'recoil'
 
 export const availableAdapters = {
@@ -49,6 +49,7 @@ export const availableAdapters = {
   shiden: new ShidenAdapter(),
   statemine: new StatemineAdapter(),
   turing: new TuringAdapter(),
+  unique: new UniqueAdapter(),
 } as const
 
 export const bridgeApiProvider = new ApiProvider()
