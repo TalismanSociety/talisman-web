@@ -1,6 +1,6 @@
 import { useTheme } from '@emotion/react'
 import { ChevronRight, Info } from '@talismn/icons'
-import { Button, LabelButton, Text, TextInput } from '@talismn/ui'
+import { Button, Text, TextInput } from '@talismn/ui'
 import { AnimatePresence, AnimationProps, motion } from 'framer-motion'
 import { ReactNode, useState } from 'react'
 
@@ -74,7 +74,7 @@ const StakingInput = Object.assign(
             trailingLabel={props.availableToStake}
             leadingSupportingText={props.fiatAmount}
             trailingSupportingText={props.inputSupportingText}
-            trailingIcon={<LabelButton onClick={props.onRequestMaxAmount}>MAX</LabelButton>}
+            trailingIcon={<TextInput.LabelButton onClick={props.onRequestMaxAmount}>MAX</TextInput.LabelButton>}
             value={props.amount}
             onChange={event => props.onChangeAmount(event.target.value)}
           />
