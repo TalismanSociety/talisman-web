@@ -1,4 +1,4 @@
-import { AlertDialog, Button, LabelButton, Text, TextInput } from '@talismn/ui'
+import { AlertDialog, Button, Text, TextInput } from '@talismn/ui'
 
 export type UnstakeDialogProps = {
   open: boolean
@@ -38,7 +38,7 @@ const UnstakeDialog = (props: UnstakeDialogProps) => (
           trailingLabel={props.availableAmount}
           leadingSupportingText={props.fiatAmount}
           trailingSupportingText={props.inputSupportingText}
-          trailingIcon={<LabelButton onClick={props.onRequestMaxAmount}>MAX</LabelButton>}
+          trailingIcon={<TextInput.LabelButton onClick={props.onRequestMaxAmount}>MAX</TextInput.LabelButton>}
           value={props.amount}
           onChange={event => props.onChangeAmount(event.target.value)}
         />
