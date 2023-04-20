@@ -61,17 +61,6 @@ const TeleportForm = Object.assign(
     const theme = useTheme()
     const [networksSwapped, setNetworkSwapped] = useState(false)
 
-    const errorProps = useMemo(() => {
-      if (props.inputError !== undefined) {
-        return {
-          isError: true,
-          leadingSupportingText: props.inputError,
-        }
-      }
-
-      return {}
-    }, [props.inputError])
-
     const fromNetworkSelect = useMemo(
       () => (
         <div css={{ '@media(min-width: 600px)': { width: '16rem' } }}>
@@ -180,7 +169,9 @@ const TeleportForm = Object.assign(
                 )
               }
               trailingSupportingText={props.transferableAmount && <>Transferable: {props.transferableAmount}</>}
-              {...errorProps}
+              leadingSupportingText={
+                props.inputError && <TextInput.ErrorLabel>{props.inputError}</TextInput.ErrorLabel>
+              }
             />
             <div
               css={[
@@ -197,7 +188,7 @@ const TeleportForm = Object.assign(
               <motion.div layout css={{ alignSelf: 'stretch' }}>
                 {networksSwapped ? toNetworkSelect : fromNetworkSelect}
               </motion.div>
-              <div css={{ margin: '0 3rem', color: theme.color.primary }}>
+              <div css={{ color: theme.color.primary }}>
                 <TeleportFormNetworkButton
                   onClick={useCallback(() => {
                     props.onReverseNetworkRoute()
