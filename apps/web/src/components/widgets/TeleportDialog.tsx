@@ -232,24 +232,24 @@ const TeleportForm = () => {
             parsedInputConfigLoadable?.contents?.maxInput.toHuman()
           ) : undefined
         }
-        fromNetworks={originChains.map(x => ({ name: x.id, logoSrc: x.icon }))}
-        selectedFromNetworkIndex={useMemo(
+        fromChains={originChains.map(x => ({ name: x.id, logoSrc: x.icon }))}
+        selectedFromChainIndex={useMemo(
           () => originChains.findIndex(x => x.id === fromChain?.id),
           [fromChain?.id, originChains]
         )}
-        onSelectFromNetworkIndex={index =>
+        onSelectFromChainIndex={index =>
           setFromChain(Maybe.of(index).mapOrUndefined(originChains.at.bind(originChains)))
         }
-        toNetworks={destinationChains.map(x => ({ name: x.id, logoSrc: x.icon }))}
-        selectedToNetworkIndex={useMemo(
+        toChains={destinationChains.map(x => ({ name: x.id, logoSrc: x.icon }))}
+        selectedToChainIndex={useMemo(
           () => destinationChains.findIndex(x => x.id === toChain?.id),
           [destinationChains, toChain?.id]
         )}
-        onSelectToNetworkIndex={index =>
+        onSelectToChainIndex={index =>
           setToChain(Maybe.of(index).mapOrUndefined(destinationChains.at.bind(destinationChains)))
         }
-        canReverseNetworkRoute={routeReversible}
-        onReverseNetworkRoute={() => {
+        canReverseChainRoute={routeReversible}
+        onReverseChainRoute={() => {
           setFromChain(toChain)
           setToChain(fromChain)
         }}

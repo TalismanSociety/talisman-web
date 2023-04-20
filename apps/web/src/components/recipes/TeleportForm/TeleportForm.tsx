@@ -1,7 +1,7 @@
 import { useTheme } from '@emotion/react'
 import Color from 'colorjs.io'
-import { AnimatePresence, motion } from 'framer-motion'
-import { ReactNode, useCallback, useMemo, useState } from 'react'
+import { AnimatePresence, LayoutGroup, motion } from 'framer-motion'
+import { ReactNode, useCallback, useId, useMemo, useState } from 'react'
 
 import { ArrowDown, Repeat } from '@talismn/icons'
 import { Button, ButtonProps, Select, Text, TextInput } from '@talismn/ui'
@@ -10,14 +10,14 @@ import TeleportFormSkeleton from './TeleportForm.skeleton'
 
 export type TeleportFormProps = {
   accountSelector: ReactNode
-  fromNetworks: Array<{ name: string; logoSrc: string }>
-  selectedFromNetworkIndex: number
-  onSelectFromNetworkIndex: (value: number | undefined) => unknown
-  toNetworks: Array<{ name: string; logoSrc: string }>
-  selectedToNetworkIndex: number
-  onSelectToNetworkIndex: (value: number | undefined) => unknown
-  canReverseNetworkRoute?: boolean
-  onReverseNetworkRoute: () => unknown
+  fromChains: Array<{ name: string; logoSrc: string }>
+  selectedFromChainIndex: number
+  onSelectFromChainIndex: (value: number | undefined) => unknown
+  toChains: Array<{ name: string; logoSrc: string }>
+  selectedToChainIndex: number
+  onSelectToChainIndex: (value: number | undefined) => unknown
+  canReverseChainRoute?: boolean
+  onReverseChainRoute: () => unknown
   token?: { name: string; logoSrc: string }
   onRequestTokenChange: () => unknown
   transferableAmount?: ReactNode
@@ -59,53 +59,8 @@ const TeleportFormNetworkButton = (props: Pick<ButtonProps<'button'>, 'onClick' 
 const TeleportForm = Object.assign(
   (props: TeleportFormProps) => {
     const theme = useTheme()
-    const [networksSwapped, setNetworkSwapped] = useState(false)
 
-    const fromNetworkSelect = useMemo(
-      () => (
-        <div css={{ '@media(min-width: 600px)': { width: '16rem' } }}>
-          <Select
-            placeholder="From network"
-            value={props.selectedFromNetworkIndex}
-            onChange={props.onSelectFromNetworkIndex}
-            clearRequired
-          >
-            {props.fromNetworks.map((network, index) => (
-              <Select.Item
-                key={index}
-                value={index}
-                headlineText={network.name}
-                leadingIcon={<Cryptoticon src={network.logoSrc} alt={network.name} size="2rem" />}
-              />
-            ))}
-          </Select>
-        </div>
-      ),
-      [props.fromNetworks, props.onSelectFromNetworkIndex, props.selectedFromNetworkIndex]
-    )
-
-    const toNetworkSelect = useMemo(
-      () => (
-        <div css={{ '@media(min-width: 600px)': { width: '16rem' } }}>
-          <Select
-            placeholder="To network"
-            value={props.selectedToNetworkIndex}
-            onChange={props.onSelectToNetworkIndex}
-            clearRequired
-          >
-            {props.toNetworks.map((network, index) => (
-              <Select.Item
-                key={index}
-                value={index}
-                headlineText={network.name}
-                leadingIcon={<Cryptoticon src={network.logoSrc} alt={network.name} size="2rem" />}
-              />
-            ))}
-          </Select>
-        </div>
-      ),
-      [props.onSelectToNetworkIndex, props.selectedToNetworkIndex, props.toNetworks]
-    )
+    const [chainSwapped, setChainSwapped] = useState(false)
 
     return (
       <div>
@@ -177,29 +132,71 @@ const TeleportForm = Object.assign(
               css={[
                 { display: 'flex', alignItems: 'center', gap: '1rem' },
                 {
-                  'flexDirection': networksSwapped ? 'column' : 'column-reverse',
+                  'flexDirection': 'column',
                   '@media(min-width: 600px)': {
                     justifyContent: 'space-between',
-                    flexDirection: networksSwapped ? 'row' : 'row-reverse',
+                    flexDirection: 'row',
                   },
                 },
               ]}
             >
-              <motion.div layout css={{ alignSelf: 'stretch' }}>
-                {networksSwapped ? toNetworkSelect : fromNetworkSelect}
-              </motion.div>
-              <div css={{ color: theme.color.primary }}>
-                <TeleportFormNetworkButton
-                  onClick={useCallback(() => {
-                    props.onReverseNetworkRoute()
-                    setNetworkSwapped(x => !x)
-                  }, [props])}
-                  disabled={!props.canReverseNetworkRoute}
-                />
-              </div>
-              <motion.div layout css={{ alignSelf: 'stretch' }}>
-                {networksSwapped ? fromNetworkSelect : toNetworkSelect}
-              </motion.div>
+              <LayoutGroup id={useId()}>
+                <motion.div
+                  key={chainSwapped ? 'a' : 'b'}
+                  layoutId={chainSwapped ? 'a' : 'b'}
+                  css={{ alignSelf: 'stretch' }}
+                >
+                  <div css={{ '@media(min-width: 600px)': { width: '16rem' } }}>
+                    <Select
+                      placeholder="From network"
+                      value={props.selectedFromChainIndex}
+                      onChange={props.onSelectFromChainIndex}
+                      clearRequired
+                    >
+                      {props.fromChains.map((network, index) => (
+                        <Select.Item
+                          key={index}
+                          value={index}
+                          headlineText={network.name}
+                          leadingIcon={<Cryptoticon src={network.logoSrc} alt={network.name} size="2rem" />}
+                        />
+                      ))}
+                    </Select>
+                  </div>
+                </motion.div>
+                <div css={{ color: theme.color.primary }}>
+                  <TeleportFormNetworkButton
+                    onClick={() => {
+                      props.onReverseChainRoute()
+                      setChainSwapped(x => !x)
+                    }}
+                    disabled={!props.canReverseChainRoute}
+                  />
+                </div>
+                <motion.div
+                  key={chainSwapped ? 'b' : 'a'}
+                  layoutId={chainSwapped ? 'b' : 'a'}
+                  css={{ alignSelf: 'stretch' }}
+                >
+                  <div css={{ '@media(min-width: 600px)': { width: '16rem' } }}>
+                    <Select
+                      placeholder="To network"
+                      value={props.selectedToChainIndex}
+                      onChange={props.onSelectToChainIndex}
+                      clearRequired
+                    >
+                      {props.toChains.map((network, index) => (
+                        <Select.Item
+                          key={index}
+                          value={index}
+                          headlineText={network.name}
+                          leadingIcon={<Cryptoticon src={network.logoSrc} alt={network.name} size="2rem" />}
+                        />
+                      ))}
+                    </Select>
+                  </div>
+                </motion.div>
+              </LayoutGroup>
             </div>
           </motion.div>
           <AnimatePresence>

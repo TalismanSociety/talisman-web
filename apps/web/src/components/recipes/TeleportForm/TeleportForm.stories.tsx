@@ -19,12 +19,12 @@ Default.args = {
       <Select.Item headlineText="foo" />
     </Select>
   ),
-  fromNetworks: [
+  fromChains: [
     { name: 'Polkadot', logoSrc: '' },
     { name: 'Kusama', logoSrc: '' },
     { name: 'Westend', logoSrc: '' },
   ],
-  toNetworks: [
+  toChains: [
     { name: 'Polkadot', logoSrc: '' },
     { name: 'Kusama', logoSrc: '' },
     { name: 'Westend', logoSrc: '' },
