@@ -1,5 +1,6 @@
 import { type TalismanTheme } from './theme'
 
 declare module '@emotion/react' {
-  export type Theme = TalismanTheme
+  // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
+  export interface Theme extends TalismanTheme {}
 }
