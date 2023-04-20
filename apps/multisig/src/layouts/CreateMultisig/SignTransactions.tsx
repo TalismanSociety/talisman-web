@@ -3,19 +3,17 @@ import { Check, Send } from '@talismn/icons'
 import { CircularProgressIndicator, IconButton } from '@talismn/ui'
 import { device } from '@util/breakpoints'
 
-import { TransactionStatus } from '.'
+import { CreateTransactionsStatus } from '.'
 
-const Step = ({
-  name,
-  description,
-  stepStatus,
-}: {
-  name: string
-  description: string
-  stepStatus: TransactionStatus
-}) => {
+enum StepStatus {
+  Done,
+  InProgress,
+  NotStarted,
+}
+
+const Step = ({ name, description, status }: { name: string; description: string; status: StepStatus }) => {
   const icon =
-    stepStatus === 'done' ? <Check /> : stepStatus === 'inprogress' ? <CircularProgressIndicator /> : <Send />
+    status === StepStatus.Done ? <Check /> : status === StepStatus.InProgress ? <CircularProgressIndicator /> : <Send />
   return (
     <div
       className={css`
@@ -52,8 +50,8 @@ const Step = ({
         className={css`
           display: grid;
           gap: 4px;
-          ${!(stepStatus === 'inprogress') ? 'color: var(--color-dim)' : ''}
-          ${stepStatus === 'inprogress' ? 'p:nth-child(1) { color: white; }' : ''}
+          ${!(status === StepStatus.InProgress) ? 'color: var(--color-dim)' : ''}
+          ${status === StepStatus.InProgress ? 'p:nth-child(1) { color: white; }' : ''}
         `}
       >
         <p>{name}</p>
@@ -63,11 +61,11 @@ const Step = ({
   )
 }
 
-const SignTransactions = (props: {
-  proxyCreationStatus: TransactionStatus
-  proxySetupStatus: TransactionStatus
-  onDone: () => void
-}) => {
+const SignTransactions = (props: { status: CreateTransactionsStatus; onDone: () => void }) => {
+  const createProxyStatus =
+    props.status === CreateTransactionsStatus.CreatingProxy ? StepStatus.InProgress : StepStatus.Done
+  const transferProxyStatus =
+    props.status === CreateTransactionsStatus.TransferringProxy ? StepStatus.InProgress : StepStatus.NotStarted
   return (
     <div
       className={css`
@@ -84,12 +82,8 @@ const SignTransactions = (props: {
       <p>
         Last step, you'll need to sign a couple transactions with your wallet to complete the creation of your Vault.
       </p>
-      <Step
-        name="Create proxy"
-        description="Create a pure proxy for your Vault."
-        stepStatus={props.proxyCreationStatus}
-      />
-      <Step name="Transfer proxy" description="Assign the proxy to your Vault." stepStatus={props.proxySetupStatus} />
+      <Step name="Create proxy" description="Create a pure proxy for your Vault." status={createProxyStatus} />
+      <Step name="Transfer proxy" description="Assign the proxy to your Vault." status={transferProxyStatus} />
     </div>
   )
 }

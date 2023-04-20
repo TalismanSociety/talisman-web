@@ -16,17 +16,22 @@ import SelectThreshold from './SelectThreshold'
 import SignTransactions from './SignTransactions'
 import VaultCreated from './VaultCreated'
 
-export type TransactionStatus = 'waiting' | 'inprogress' | 'done'
+export enum CreateTransactionsStatus {
+  NotStarted,
+  CreatingProxy,
+  TransferringProxy,
+}
 
-export type Step =
-  | 'noVault'
-  | 'nameVault'
-  | 'addMembers'
-  | 'selectThreshold'
-  | 'selectFirstChain'
-  | 'confirmation'
-  | 'transactions'
-  | 'vaultCreated'
+export enum Step {
+  NoVault,
+  NameVault,
+  AddMembers,
+  SelectThreshold,
+  SelectFirstChain,
+  Confirmation,
+  Transactions,
+  VaultCreated,
+}
 
 export interface AugmentedAccount {
   address: string
@@ -36,19 +41,19 @@ export interface AugmentedAccount {
 }
 
 function calcContentHeight(step: Step, nAccounts: number): { md: string; lg: string } {
-  if (step === 'noVault') return { md: '557px', lg: '601px' }
-  if (step === 'selectThreshold') return { md: '518px', lg: '518px' }
-  if (step === 'nameVault') return { md: '429px', lg: '461px' }
-  if (step === 'selectFirstChain') return { md: '400px', lg: '461px' }
-  if (step === 'transactions') return { md: '420px', lg: '420px' }
-  if (step === 'addMembers') return { md: 521 + nAccounts * 40 + 'px', lg: 521 + nAccounts * 40 + 'px' }
+  if (step === Step.NoVault) return { md: '557px', lg: '601px' }
+  if (step === Step.SelectThreshold) return { md: '518px', lg: '518px' }
+  if (step === Step.NameVault) return { md: '429px', lg: '461px' }
+  if (step === Step.SelectFirstChain) return { md: '400px', lg: '461px' }
+  if (step === Step.Transactions) return { md: '420px', lg: '420px' }
+  if (step === Step.AddMembers) return { md: 521 + nAccounts * 40 + 'px', lg: 521 + nAccounts * 40 + 'px' }
   return { md: 741 + nAccounts * 40 + 'px', lg: 721 + nAccounts * 40 + 'px' }
 }
 
 function calcContentMargin(step: Step): { md: string; lg: string } {
-  if (step === 'noVault') return { md: '100px 0', lg: '84px 0' }
-  if (step === 'nameVault') return { md: '100px 0', lg: '155px 0' }
-  if (step === 'confirmation') return { md: '26px 0', lg: '26px 0' }
+  if (step === Step.NoVault) return { md: '100px 0', lg: '84px 0' }
+  if (step === Step.NameVault) return { md: '100px 0', lg: '155px 0' }
+  if (step === Step.Confirmation) return { md: '26px 0', lg: '26px 0' }
   return { md: '100px 0', lg: '63px 0' }
 }
 
@@ -63,14 +68,13 @@ const CreateMultisig = () => {
   if (!firstChain) throw Error('no supported chains')
 
   const navigate = useNavigate()
-  const [step, setStep] = useState<Step>('noVault')
+  const [step, setStep] = useState<Step>(Step.NoVault)
+  const [createTransctionStatus] = useState<CreateTransactionsStatus>(CreateTransactionsStatus.NotStarted)
   const [name, setName] = useState<string>('')
   const [chain, setChain] = useState<ChainSummary>(firstChain)
   const [extensionAccounts] = useRecoilState(accountsState)
   const [externalAccounts, setExternalAccounts] = useState<string[]>([])
   const [threshold, setThreshold] = useState<number>(2)
-  const [proxyCreated] = useState<boolean>(false)
-  const [proxySetupCompleted] = useState<boolean>(false)
   const tokenWithPrice = useRecoilValueLoadable(tokenByIdWithPrice(chain.nativeToken.id))
   // TODO: replace this with a query once lib is avail
   const reserveAmount = 20.041
@@ -103,7 +107,7 @@ const CreateMultisig = () => {
       <header>
         <Logo
           className={css`
-            display: ${step === 'confirmation' ? 'none' : 'block'};
+            display: ${step === Step.Confirmation ? 'none' : 'block'};
             margin-top: 25px;
             width: 133px;
           `}
@@ -128,43 +132,43 @@ const CreateMultisig = () => {
           }
         `}
       >
-        {step === 'noVault' ? (
-          <NoVault onCreate={() => setStep('nameVault')} />
-        ) : step === 'nameVault' ? (
+        {step === Step.NoVault ? (
+          <NoVault onCreate={() => setStep(Step.NameVault)} />
+        ) : step === Step.NameVault ? (
           <NameVault
-            onBack={() => setStep('noVault')}
-            onNext={() => setStep('addMembers')}
+            onBack={() => setStep(Step.NoVault)}
+            onNext={() => setStep(Step.AddMembers)}
             setName={setName}
             name={name}
           />
-        ) : step === 'addMembers' ? (
+        ) : step === Step.AddMembers ? (
           <AddMembers
-            onBack={() => setStep('nameVault')}
-            onNext={() => setStep('selectThreshold')}
+            onBack={() => setStep(Step.NameVault)}
+            onNext={() => setStep(Step.SelectThreshold)}
             setExternalAccounts={setExternalAccounts}
             augmentedAccounts={augmentedAccounts}
             externalAccounts={externalAccounts}
           />
-        ) : step === 'selectThreshold' ? (
+        ) : step === Step.SelectThreshold ? (
           <SelectThreshold
-            onBack={() => setStep('addMembers')}
-            onNext={() => setStep('selectFirstChain')}
+            onBack={() => setStep(Step.AddMembers)}
+            onNext={() => setStep(Step.SelectFirstChain)}
             setThreshold={setThreshold}
             threshold={threshold}
             max={augmentedAccounts.length}
           />
-        ) : step === 'selectFirstChain' ? (
+        ) : step === Step.SelectFirstChain ? (
           <SelectFirstChain
-            onBack={() => setStep('selectThreshold')}
-            onNext={() => setStep('confirmation')}
+            onBack={() => setStep(Step.SelectThreshold)}
+            onNext={() => setStep(Step.Confirmation)}
             setChain={setChain}
             chain={chain}
             chains={supportedChains}
           />
-        ) : step === 'confirmation' ? (
+        ) : step === Step.Confirmation ? (
           <Confirmation
-            onBack={() => setStep('selectFirstChain')}
-            onCreateVault={() => setStep('transactions')}
+            onBack={() => setStep(Step.SelectFirstChain)}
+            onCreateVault={() => setStep(Step.Transactions)}
             augmentedAccounts={augmentedAccounts}
             threshold={threshold}
             name={name}
@@ -173,13 +177,9 @@ const CreateMultisig = () => {
             fee={fee}
             tokenWithPrice={tokenWithPrice}
           />
-        ) : step === 'transactions' ? (
-          <SignTransactions
-            proxyCreationStatus={'inprogress'}
-            proxySetupStatus={'waiting'}
-            onDone={() => setStep('vaultCreated')}
-          />
-        ) : step === 'vaultCreated' ? (
+        ) : step === Step.Transactions ? (
+          <SignTransactions status={createTransctionStatus} onDone={() => setStep(Step.VaultCreated)} />
+        ) : step === Step.VaultCreated ? (
           <VaultCreated goToVault={() => navigate('/overview')} />
         ) : null}
       </div>
