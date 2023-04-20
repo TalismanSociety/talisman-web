@@ -29,7 +29,7 @@
     "@polkadot/types": "^9.14.2",
     "@polkadot/types-augment": "^9.14.2",
     "@polkadot/types-known": "^9.14.2",
-    "@polkawallet/bridge": "^0.0.6-14",
+    "@polkawallet/bridge": "^0.0.6-15",
     "@ramp-network/ramp-instant-sdk": "^2.5.2",
     "@recoiljs/refine": "^0.1.1",
     "@sentry/react": "^7.37.2",
