@@ -22,6 +22,7 @@ export type Step =
   | 'selectFirstChain'
   | 'confirmation'
   | 'transactions'
+  | 'vaultCreated'
 
 export interface AugmentedAccount {
   address: string
@@ -123,28 +124,42 @@ const CreateMultisig = () => {
         `}
       >
         {step === 'noVault' ? (
-          <NoVault setStep={setStep} />
+          <NoVault onCreate={() => setStep('nameVault')} />
         ) : step === 'nameVault' ? (
-          <NameVault setStep={setStep} setName={setName} name={name} />
+          <NameVault
+            onBack={() => setStep('noVault')}
+            onNext={() => setStep('addMembers')}
+            setName={setName}
+            name={name}
+          />
         ) : step === 'addMembers' ? (
           <AddMembers
-            setStep={setStep}
+            onBack={() => setStep('nameVault')}
+            onNext={() => setStep('selectThreshold')}
             setExternalAccounts={setExternalAccounts}
             augmentedAccounts={augmentedAccounts}
             externalAccounts={externalAccounts}
           />
         ) : step === 'selectThreshold' ? (
           <SelectThreshold
-            setStep={setStep}
+            onBack={() => setStep('addMembers')}
+            onNext={() => setStep('selectFirstChain')}
             setThreshold={setThreshold}
             threshold={threshold}
             max={augmentedAccounts.length}
           />
         ) : step === 'selectFirstChain' ? (
-          <SelectFirstChain setStep={setStep} setChain={setChain} chain={chain} chains={supportedChains} />
+          <SelectFirstChain
+            onBack={() => setStep('selectThreshold')}
+            onNext={() => setStep('confirmation')}
+            setChain={setChain}
+            chain={chain}
+            chains={supportedChains}
+          />
         ) : step === 'confirmation' ? (
           <Confirmation
-            setStep={setStep}
+            onBack={() => setStep('selectFirstChain')}
+            onCreateVault={() => setStep('transactions')}
             augmentedAccounts={augmentedAccounts}
             threshold={threshold}
             name={name}
@@ -154,7 +169,11 @@ const CreateMultisig = () => {
             tokenWithPrice={tokenWithPrice}
           />
         ) : step === 'transactions' ? (
-          <SignTransactions proxyCreated={proxyCreated} proxySetupCompleted={proxySetupCompleted} />
+          <SignTransactions
+            proxyCreated={proxyCreated}
+            proxySetupCompleted={proxySetupCompleted}
+            onDone={() => setStep('vaultCreated')}
+          />
         ) : null}
       </div>
     </div>

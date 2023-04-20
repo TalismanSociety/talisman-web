@@ -9,7 +9,7 @@ import { useState } from 'react'
 import { Loadable } from 'recoil'
 
 import { ChainSummary, Token } from '../../domain/chains'
-import { AugmentedAccount, Step } from '.'
+import { AugmentedAccount } from '.'
 
 const Cost = (props: { amount: number; symbol: string; price: number }) => (
   <p>
@@ -18,7 +18,8 @@ const Cost = (props: { amount: number; symbol: string; price: number }) => (
 )
 
 const Confirmation = (props: {
-  setStep: React.Dispatch<React.SetStateAction<Step>>
+  onBack: () => void
+  onCreateVault: () => void
   augmentedAccounts: AugmentedAccount[]
   threshold: number
   name: string
@@ -243,18 +244,10 @@ const Confirmation = (props: {
           }
         `}
       >
-        <Button
-          onClick={() => {
-            props.setStep('selectFirstChain')
-          }}
-          children={<h3>Back</h3>}
-          variant="outlined"
-        />
+        <Button onClick={props.onBack} children={<h3>Back</h3>} variant="outlined" />
         <Button
           disabled={tokenWithPrice.state !== 'hasValue' || props.augmentedAccounts.length < 2}
-          onClick={() => {
-            props.setStep('transactions')
-          }}
+          onClick={props.onCreateVault}
           children={<h3>Create Vault</h3>}
         />
       </div>

@@ -2,9 +2,7 @@ import Plant from '@components/Plant'
 import { css } from '@emotion/css'
 import { Button } from '@talismn/ui'
 
-import { Step } from '.'
-
-const NoVault = (props: { setStep: React.Dispatch<React.SetStateAction<Step>> }) => {
+const NoVault = (props: { onCreate: () => void }) => {
   return (
     <div
       className={css`
@@ -30,9 +28,7 @@ const NoVault = (props: { setStep: React.Dispatch<React.SetStateAction<Step>> })
       </p>
       <div>
         <Button
-          onClick={() => {
-            props.setStep('nameVault')
-          }}
+          onClick={props.onCreate}
           className={css`
             margin-top: 48px;
             width: 240px;

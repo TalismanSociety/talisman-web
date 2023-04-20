@@ -2,10 +2,10 @@ import { css } from '@emotion/css'
 import { Button, Select } from '@talismn/ui'
 
 import { ChainSummary } from '../../domain/chains'
-import { Step } from '.'
 
 const SelectFirstChain = (props: {
-  setStep: React.Dispatch<React.SetStateAction<Step>>
+  onNext: () => void
+  onBack: () => void
   setChain: React.Dispatch<React.SetStateAction<ChainSummary>>
   chain: ChainSummary
   chains: ChainSummary[]
@@ -67,19 +67,8 @@ const SelectFirstChain = (props: {
           }
         `}
       >
-        <Button
-          onClick={() => {
-            props.setStep('addMembers')
-          }}
-          children={<h3>Back</h3>}
-          variant="outlined"
-        />
-        <Button
-          onClick={() => {
-            props.setStep('confirmation')
-          }}
-          children={<h3>Next</h3>}
-        />
+        <Button onClick={props.onBack} children={<h3>Back</h3>} variant="outlined" />
+        <Button onClick={props.onNext} children={<h3>Next</h3>} />
       </div>
     </div>
   )

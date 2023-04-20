@@ -8,10 +8,11 @@ import { useState } from 'react'
 import { toast } from 'react-hot-toast'
 
 import toSs52Address from '../../util/toSs52Address'
-import { AugmentedAccount, Step } from '.'
+import { AugmentedAccount } from '.'
 
 const AddMembers = (props: {
-  setStep: React.Dispatch<React.SetStateAction<Step>>
+  onBack: () => void
+  onNext: () => void
   setExternalAccounts: React.Dispatch<React.SetStateAction<string[]>>
   augmentedAccounts: AugmentedAccount[]
   externalAccounts: string[]
@@ -132,20 +133,8 @@ const AddMembers = (props: {
           }
         `}
       >
-        <Button
-          onClick={() => {
-            props.setStep('nameVault')
-          }}
-          children={<h3>Back</h3>}
-          variant="outlined"
-        />
-        <Button
-          disabled={props.augmentedAccounts.length < 2}
-          onClick={() => {
-            props.setStep('selectThreshold')
-          }}
-          children={<h3>Next</h3>}
-        />
+        <Button onClick={props.onBack} children={<h3>Back</h3>} variant="outlined" />
+        <Button disabled={props.augmentedAccounts.length < 2} onClick={props.onNext} children={<h3>Next</h3>} />
       </div>
     </div>
   )

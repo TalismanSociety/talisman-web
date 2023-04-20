@@ -2,10 +2,9 @@ import { css } from '@emotion/css'
 import { Button, TextInput } from '@talismn/ui'
 import { device } from '@util/breakpoints'
 
-import { Step } from '.'
-
 const NameVault = (props: {
-  setStep: React.Dispatch<React.SetStateAction<Step>>
+  onBack: () => void
+  onNext: () => void
   setName: React.Dispatch<React.SetStateAction<string>>
   name: string
 }) => {
@@ -57,20 +56,8 @@ const NameVault = (props: {
           }
         `}
       >
-        <Button
-          onClick={() => {
-            props.setStep('noVault')
-          }}
-          children={<h3>Back</h3>}
-          variant="outlined"
-        />
-        <Button
-          disabled={props.name.length === 0}
-          onClick={() => {
-            props.setStep('addMembers')
-          }}
-          children={<h3>Next</h3>}
-        />
+        <Button onClick={props.onBack} children={<h3>Back</h3>} variant="outlined" />
+        <Button disabled={props.name.length === 0} onClick={props.onNext} children={<h3>Next</h3>} />
       </div>
     </div>
   )

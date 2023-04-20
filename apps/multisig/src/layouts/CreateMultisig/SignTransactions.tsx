@@ -51,7 +51,7 @@ const Step = (props: { name: string; description: string; completed: boolean }) 
   )
 }
 
-const SignTransactions = (props: { proxyCreated: boolean; proxySetupCompleted: boolean }) => {
+const SignTransactions = (props: { proxyCreated: boolean; proxySetupCompleted: boolean; onDone: () => void }) => {
   return (
     <div
       className={css`

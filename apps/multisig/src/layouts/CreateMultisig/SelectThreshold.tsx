@@ -3,10 +3,9 @@ import { css } from '@emotion/css'
 import { Button } from '@talismn/ui'
 import { device } from '@util/breakpoints'
 
-import { Step } from '.'
-
 const SelectThreshold = (props: {
-  setStep: React.Dispatch<React.SetStateAction<Step>>
+  onBack: () => void
+  onNext: () => void
   setThreshold: React.Dispatch<React.SetStateAction<number>>
   threshold: number
   max: number
@@ -86,20 +85,8 @@ const SelectThreshold = (props: {
           }
         `}
       >
-        <Button
-          onClick={() => {
-            props.setStep('addMembers')
-          }}
-          children={<h3>Back</h3>}
-          variant="outlined"
-        />
-        <Button
-          disabled={props.threshold < 2}
-          onClick={() => {
-            props.setStep('selectFirstChain')
-          }}
-          children={<h3>Next</h3>}
-        />
+        <Button onClick={props.onBack} children={<h3>Back</h3>} variant="outlined" />
+        <Button disabled={props.threshold < 2} onClick={props.onNext} children={<h3>Next</h3>} />
       </div>
     </div>
   )
