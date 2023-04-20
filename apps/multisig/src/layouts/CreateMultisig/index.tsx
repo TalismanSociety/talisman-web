@@ -69,7 +69,7 @@ const CreateMultisig = () => {
   if (!firstChain) throw Error('no supported chains')
 
   const navigate = useNavigate()
-  const [step, setStep] = useState<Step>(Step.VaultCreated)
+  const [step, setStep] = useState<Step>(Step.NoVault)
   const [createTransctionStatus, setCreateTransactionsStatus] = useState<CreateTransactionsStatus>(
     CreateTransactionsStatus.NotStarted
   )
