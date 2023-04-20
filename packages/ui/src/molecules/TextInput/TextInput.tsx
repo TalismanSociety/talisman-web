@@ -99,9 +99,7 @@ const TextInput = Object.assign(
     )
   },
   {
-    ErrorLabel: (props: PropsWithChildren) => (
-      <Text.BodySmall css={theme => ({ color: theme.color.onError })} {...props} />
-    ),
+    ErrorLabel: (props: PropsWithChildren) => <Text.BodySmall color={theme => theme.color.onError} {...props} />,
     LabelButton: (props: DetailedHTMLProps<ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement>) => {
       const theme = useTheme()
       return (

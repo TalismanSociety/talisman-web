@@ -1,4 +1,4 @@
-import { useTheme } from '@emotion/react'
+import { useTheme, type Theme } from '@emotion/react'
 import Color from 'colorjs.io'
 import type React from 'react'
 import { useMemo } from 'react'
@@ -7,7 +7,7 @@ export type TextAlpha = 'disabled' | 'medium' | 'high'
 
 type PolymorphicTextProps<T extends React.ElementType> = {
   as?: T
-  color?: string
+  color?: string | ((theme: Theme) => string)
   alpha?: TextAlpha | ((props: { hover: boolean }) => TextAlpha)
 }
 
@@ -22,15 +22,17 @@ const decorateText = <T extends Object>(element: T) =>
     ),
   })
 
-const useAlpha = (color: string, alpha: TextAlpha) => {
+const useAlpha = (color: string | ((theme: Theme) => string), alpha: TextAlpha) => {
   const theme = useTheme()
 
+  const parsedColor = typeof color === 'string' ? color : color(theme)
+
   return useMemo(() => {
-    const textColor = new Color(color ?? theme.color.onBackground)
+    const textColor = new Color(parsedColor)
     textColor.alpha = theme.contentAlpha[alpha ?? 'medium']
 
     return textColor.display().toString()
-  }, [alpha, color, theme.color.onBackground, theme.contentAlpha])
+  }, [alpha, parsedColor, theme.contentAlpha])
 }
 
 const BaseText = <T extends React.ElementType = 'span'>({
