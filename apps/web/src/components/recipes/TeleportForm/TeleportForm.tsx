@@ -1,7 +1,7 @@
 import { useTheme } from '@emotion/react'
 import Color from 'colorjs.io'
 import { AnimatePresence, LayoutGroup, motion } from 'framer-motion'
-import { ReactNode, useCallback, useId, useMemo, useState } from 'react'
+import { ReactNode, useId, useState } from 'react'
 
 import { ArrowDown, Repeat } from '@talismn/icons'
 import { Button, ButtonProps, Select, Text, TextInput } from '@talismn/ui'
