@@ -1,6 +1,13 @@
+import { css } from '@emotion/css'
+
 const Header = () => {
   return (
-    <header>
+    <header
+      className={css`
+        grid-area: header;
+        background-color: red;
+      `}
+    >
       header
       <>select wallet btn</>
     </header>
