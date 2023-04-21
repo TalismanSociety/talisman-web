@@ -12,7 +12,7 @@ const Overview = () => (
     className={css`
       display: grid;
       grid-template-columns: 70px 1fr;
-      grid-template-rows: 100px auto auto 84px;
+      grid-template-rows: 87px auto auto 84px;
       height: 100%;
       width: 100%;
       gap: 16px;

@@ -2,7 +2,7 @@
   "private": true,
   "name": "@talismn/ui",
   "packageManager": "yarn@3.4.1",
-  "main": "build/commonjs/index.js",
+  "main": "build/index.js",
   "exports": {
     ".": "./build/index.js",
     "./assets/css/talismn.css": "./assets/css/talismn.css"

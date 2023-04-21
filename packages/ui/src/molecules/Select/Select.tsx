@@ -30,6 +30,7 @@ type Value = string | number | undefined
 export type SelectProps = {
   value?: Value
   placeholder?: ReactNode
+  placeholderPointerEvents?: boolean
   width?: string | number
   children: ReactElement<SelectItemProps> | ReactElement<SelectItemProps>[]
   onChange?: (value: string | undefined) => unknown
@@ -162,7 +163,13 @@ const Select = Object.assign(
           }}
           {...getReferenceProps()}
         >
-          <Text.Body as="div" css={{ pointerEvents: 'none', userSelect: 'none' }}>
+          <Text.Body
+            as="div"
+            css={{
+              pointerEvents: props.placeholderPointerEvents ? 'all' : 'none',
+              userSelect: props.placeholderPointerEvents ? 'all' : 'none',
+            }}
+          >
             {selectedChild ?? props.placeholder}
           </Text.Body>
           <ChevronDown css={{ transform: open ? 'rotate(180deg)' : undefined, transition: 'ease 0.25s' }} />

@@ -49,7 +49,6 @@ export function Provider({ children }: PropsWithChildren<ProviderProps>): JSX.El
 
 export const Modal = styled(function Modal({ className, closable }: { className?: string; closable: boolean }) {
   const { open, content, closeModal } = useModal()
-  const useKeyPress
 
   useKeyDown(
     'Escape',
