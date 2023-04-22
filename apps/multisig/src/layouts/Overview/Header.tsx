@@ -93,7 +93,7 @@ const Header = () => {
                     height: 18px;
                     transition: 100ms ease-in-out;
                     :hover {
-                      color: #bdbdbd;
+                      color: #d4d4d4;
                     }
                   `}
                   onClick={e => {
