@@ -11,8 +11,6 @@ const getStakersReward = async (endpoints: string | string[], addresses: string[
 
   const stakerRewards = await api.derive.staking.stakerRewardsMultiEras(
     addresses,
-    // @ts-expect-error
-    // try again once @polkadot/api is updated
     eras.map(x => api.createType('EraIndex', x))
   )
 
