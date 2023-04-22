@@ -37,6 +37,9 @@ export interface Token {
   type: string
   symbol: string
   decimals: number
+  chain: {
+    id: string
+  }
 }
 
 export const tokenByIdQuery = graphQLSelectorFamily({
