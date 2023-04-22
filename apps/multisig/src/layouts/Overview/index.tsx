@@ -1,4 +1,5 @@
 import { css } from '@emotion/css'
+import { Eye, Settings, Users } from '@talismn/icons'
 import { device } from '@util/breakpoints'
 
 import Assets from './Assets'
@@ -43,7 +44,32 @@ const Overview = () => (
     `}
   >
     <Header />
-    <Sidebar />
+    <Sidebar
+      selected="Overview"
+      options={[
+        {
+          name: 'Overview',
+          icon: <Eye />,
+          onClick: () => {
+            console.log('click')
+          },
+        },
+        {
+          name: 'Address book',
+          icon: <Users />,
+          onClick: () => {
+            console.log('click')
+          },
+        },
+        {
+          name: 'Settings',
+          icon: <Settings />,
+          onClick: () => {
+            console.log('click')
+          },
+        },
+      ]}
+    />
     <Assets />
     <Transactions />
     <Footer />

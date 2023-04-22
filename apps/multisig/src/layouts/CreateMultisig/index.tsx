@@ -51,13 +51,6 @@ function calcContentHeight(step: Step, nAccounts: number): { md: string; lg: str
   return { md: 741 + nAccounts * 40 + 'px', lg: 721 + nAccounts * 40 + 'px' }
 }
 
-function calcContentMargin(step: Step): { md: string; lg: string } {
-  if (step === Step.NoVault) return { md: '100px 0', lg: '84px 0' }
-  if (step === Step.NameVault) return { md: '100px 0', lg: '155px 0' }
-  if (step === Step.Confirmation) return { md: '26px 0', lg: '26px 0' }
-  return { md: '100px 0', lg: '63px 0' }
-}
-
 const CreateMultisig = () => {
   // Fade-in effect
   const [isVisible, setIsVisible] = useState(false)
@@ -113,7 +106,6 @@ const CreateMultisig = () => {
   // TODO: if wallet has vaults already skip the no_vault and display an 'x'
 
   const contentHeight = calcContentHeight(step, augmentedAccounts.length)
-  const contentMargin = calcContentMargin(step)
   return (
     <div
       className={css`
@@ -145,7 +137,6 @@ const CreateMultisig = () => {
           opacity: ${isVisible ? 1 : 0};
           @media ${device.lg} {
             height: ${contentHeight.lg};
-            /* margin: ${contentMargin.lg}; */
             width: 863px;
           }
         `}

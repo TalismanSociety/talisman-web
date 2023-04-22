@@ -2,6 +2,8 @@ export type TalismanTheme = {
   color: {
     primary: string
     onPrimary: string
+    offWhite: string
+    lightGrey: string
     background: string
     onBackground: string
     surface: string
@@ -27,6 +29,8 @@ const greenDark: TalismanTheme = {
     onPrimary: '#121212',
     background: '#121212',
     onBackground: '#fafafa',
+    offWhite: '#f2f2f2',
+    lightGrey: '#a5a5a5',
     surface: '#1B1B1B',
     onSurface: '#fafafa',
     foreground: '#262626',

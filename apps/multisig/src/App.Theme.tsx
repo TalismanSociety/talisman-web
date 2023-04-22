@@ -283,6 +283,7 @@ const appTheme = {
   activeBackground: '56,56,56', // #383838
   controlBackground: '38,38,38',
   offWhite: '242,242,242', // #f2f2f2
+  grey800: '38,38,38', // #262626
 }
 
 const Provider = ({ children }: PropsWithChildren<{}>) => (
