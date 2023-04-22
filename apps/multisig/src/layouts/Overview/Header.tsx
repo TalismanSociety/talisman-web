@@ -89,7 +89,13 @@ const Header = () => {
                   Paraverse Foundation
                 </p>
                 <Copy
-                  css={{ height: '18px' }}
+                  className={css`
+                    height: 18px;
+                    transition: 100ms ease-in-out;
+                    :hover {
+                      color: #bdbdbd;
+                    }
+                  `}
                   onClick={e => {
                     copyToClipboard('0x123', 'Address copied to clipboard')
                     e.stopPropagation()
