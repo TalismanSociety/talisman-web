@@ -153,7 +153,7 @@ const StakeInput = () => {
     'query',
     'staking',
     'slashingSpans',
-    [Maybe.of(existingPool).mapOrUndefined(x => createAccounts(api, x.poolId).stashId)],
+    [Maybe.of(existingPool).mapOr('', x => createAccounts(api, x.poolId).stashId)],
     { enabled: existingPool !== undefined }
   )
 
