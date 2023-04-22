@@ -5,104 +5,13 @@ import { device } from '@util/breakpoints'
 import Assets, { TokenAugmented } from './Assets'
 import Footer from './Footer'
 import Header from './Header'
+import { mockTokensAugmented, mockTransactions } from './mocks'
 import Sidebar from './Sidebar'
-import Transactions from './Transactions'
-
-const tokensAugmented: TokenAugmented[] = [
-  {
-    details: {
-      id: 'para',
-      coingeckoId: 'para',
-      logo: 'https://i.imgur.com/bDMbwM7.png',
-      type: 'custom',
-      symbol: 'PARA',
-      decimals: 18,
-      chain: {
-        id: 'statemint',
-      },
-    },
-    balance: {
-      free: 325206,
-      locked: 0,
-    },
-    price: 2.15,
-  },
-  {
-    details: {
-      id: 'polkadot',
-      coingeckoId: 'polkadot',
-      logo: 'https://raw.githubusercontent.com/TalismanSociety/chaindata/v3/assets/chains/polkadot.svg',
-      type: 'native',
-      symbol: 'DOT',
-      decimals: 10,
-      chain: {
-        id: 'polkadot',
-      },
-    },
-    balance: {
-      free: 420,
-      locked: 0,
-    },
-    price: 6.128,
-  },
-  {
-    details: {
-      id: 'kusama',
-      coingeckoId: 'kusama',
-      logo: 'https://raw.githubusercontent.com/TalismanSociety/chaindata/v3/assets/chains/kusama.svg',
-      type: 'native',
-      symbol: 'KSM',
-      decimals: 12,
-      chain: {
-        id: 'kusama',
-      },
-    },
-    balance: {
-      free: 42.69,
-      locked: 0,
-    },
-    price: 400.21,
-  },
-  {
-    details: {
-      id: 'ausd',
-      coingeckoId: 'ausd',
-      logo: 'https://raw.githubusercontent.com/TalismanSociety/chaindata/v3/assets/tokens/ausd.svg',
-      type: 'stablecoin',
-      symbol: 'aUSD',
-      decimals: 18,
-      chain: {
-        id: 'acala',
-      },
-    },
-    balance: {
-      free: 125000,
-      locked: 0,
-    },
-    price: 1.0,
-  },
-  {
-    details: {
-      id: 'acala',
-      coingeckoId: 'ausd',
-      logo: 'https://raw.githubusercontent.com/TalismanSociety/chaindata/v3/assets/chains/acala.svg',
-      type: 'stablecoin',
-      symbol: 'ACA',
-      decimals: 18,
-      chain: {
-        id: 'acala',
-      },
-    },
-    balance: {
-      free: 13.88799,
-      locked: 42069,
-    },
-    price: 0.08,
-  },
-]
+import Transactions, { Transaction } from './Transactions'
 
 const Overview = () => {
-  const augmentedTokens: TokenAugmented[] = tokensAugmented
+  const transactions: Transaction[] = mockTransactions
+  const augmentedTokens: TokenAugmented[] = mockTokensAugmented
   return (
     <div
       className={css`
@@ -166,7 +75,7 @@ const Overview = () => {
         ]}
       />
       <Assets augmentedTokens={augmentedTokens} />
-      <Transactions />
+      <Transactions transactions={transactions} />
       <Footer />
     </div>
   )
