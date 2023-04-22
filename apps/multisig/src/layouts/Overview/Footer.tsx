@@ -39,20 +39,44 @@ const Footer = () => {
       <a href="https://talisman.xyz" target="_blank" rel="noreferrer">
         Privacy Policy
       </a>
-      <a
-        href="https://talisman.xyz"
-        target="_blank"
+      <div
         className={css`
-          flex-grow: 1;
           margin-left: auto;
-          text-align: right;
-          color: var(--color-foreground) !important;
-          color: red;
+          > a {
+            color: var(--color-foreground) !important;
+          }
+          > a:first-child {
+            background: linear-gradient(90deg, #ed726d, #ee94f9);
+            background-clip: text;
+            -webkit-background-clip: text;
+          }
+          > a:last-child {
+            background: linear-gradient(90deg, #918ff8, #cefd9c);
+            background-clip: text;
+            -webkit-background-clip: text;
+          }
+          :hover {
+            > a {
+              font-size: 16px;
+              transition: 300ms ease-in-out;
+            }
+            > a:first-child,
+            > a:last-child {
+              color: transparent !important;
+            }
+          }
         `}
-        rel="noreferrer"
       >
-        {'Made with ♥️ by Talisman'}
-      </a>
+        <a href="https://talisman.xyz" target="_blank" rel="noreferrer">
+          {'Made with'}
+        </a>
+        <a href="https://talisman.xyz" target="_blank" rel="noreferrer">
+          {' ♥️ '}
+        </a>
+        <a href="https://talisman.xyz" target="_blank" rel="noreferrer">
+          {'by Talisman'}
+        </a>
+      </div>
     </footer>
   )
 }
