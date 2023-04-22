@@ -2,8 +2,7 @@ import { type Chain } from '@domains/chains'
 import RpcError from '@polkadot/rpc-provider/coder/error'
 import { ISubmittableResult } from '@polkadot/types/types'
 import { ExternalLink } from '@talismn/icons'
-import { Text } from '@talismn/ui'
-import toast from 'react-hot-toast'
+import { Text, toast } from '@talismn/ui'
 
 export const toastExtrinsic = (extrinsics: [string, string][], promise: Promise<ISubmittableResult>, chain?: Chain) => {
   const message = (() => {
