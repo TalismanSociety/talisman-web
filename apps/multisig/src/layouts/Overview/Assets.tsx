@@ -96,16 +96,18 @@ const Assets = ({ augmentedTokens }: { augmentedTokens: TokenAugmented[] }) => {
             >
               Avaliable
             </p>
-            {augmentedTokens.map(augmentedToken => {
-              if (augmentedToken.balance.free === 0) return <></>
-              return (
-                <TokenRow
-                  key={augmentedToken.details.id}
-                  augmentedToken={augmentedToken}
-                  balance={augmentedToken.balance.free}
-                />
-              )
-            })}
+            {augmentedTokens
+              .sort((a1, a2) => a2.balance.free - a1.balance.free)
+              .map(augmentedToken => {
+                if (augmentedToken.balance.free === 0) return <></>
+                return (
+                  <TokenRow
+                    key={augmentedToken.details.id}
+                    augmentedToken={augmentedToken}
+                    balance={augmentedToken.balance.free}
+                  />
+                )
+              })}
           </div>
         </div>
       )}
@@ -132,16 +134,18 @@ const Assets = ({ augmentedTokens }: { augmentedTokens: TokenAugmented[] }) => {
                 <Lock />
               </div>
             </p>
-            {augmentedTokens.map(augmentedToken => {
-              if (augmentedToken.balance.locked === 0) return <></>
-              return (
-                <TokenRow
-                  key={augmentedToken.details.id}
-                  augmentedToken={augmentedToken}
-                  balance={augmentedToken.balance.locked}
-                />
-              )
-            })}
+            {augmentedTokens
+              .sort((a1, a2) => a2.balance.locked - a1.balance.locked)
+              .map(augmentedToken => {
+                if (augmentedToken.balance.locked === 0) return <></>
+                return (
+                  <TokenRow
+                    key={augmentedToken.details.id}
+                    augmentedToken={augmentedToken}
+                    balance={augmentedToken.balance.locked}
+                  />
+                )
+              })}
           </div>
         </div>
       )}
