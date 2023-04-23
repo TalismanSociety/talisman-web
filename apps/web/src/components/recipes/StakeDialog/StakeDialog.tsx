@@ -1,5 +1,11 @@
 import { Zap } from '@talismn/icons'
-import { FulScreenDialogQuarterSelector, FullScreenDialog, InfoCard, InfoCardProps, Text } from '@talismn/ui'
+import {
+  FULL_SCREEN_DIALOG_WIDE_BREAK_POINT_SELECTOR,
+  FullScreenDialog,
+  InfoCard,
+  InfoCardProps,
+  Text,
+} from '@talismn/ui'
 import { AnchorHTMLAttributes, DetailedHTMLProps, PropsWithChildren, ReactNode } from 'react'
 
 export type StakeDialogProps = {
@@ -24,7 +30,7 @@ const StakeDialog = Object.assign(
         </div>
       }
       css={{
-        [`${FulScreenDialogQuarterSelector}`]: {
+        [`${FULL_SCREEN_DIALOG_WIDE_BREAK_POINT_SELECTOR}`]: {
           minWidth: '51.2rem',
         },
       }}

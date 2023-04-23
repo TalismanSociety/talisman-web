@@ -1,8 +1,9 @@
 import { keyframes, useTheme } from '@emotion/react'
 import { X } from '@talismn/icons'
 import { type ReactNode } from 'react'
-
-import { Dialog, type DialogProps, IconButton, Text } from '../../atoms'
+import { Dialog, IconButton, Text, type DialogProps } from '../../atoms'
+import { Toaster } from '../../organisms'
+import useMediaQuery from '../../utils/useMediaQuery'
 
 export type FullScreenDialogProps = Omit<DialogProps, 'title'> & {
   title: ReactNode
@@ -32,9 +33,9 @@ const backdropKeyframes = keyframes`
   }
 `
 
-export const FullScreenDialogQuarterBreakPoint = '768px'
+export const FULL_SCREEN_DIALOG_WIDE_BREAK_POINT = '768px'
 
-export const FulScreenDialogQuarterSelector = `@media(min-width: ${FullScreenDialogQuarterBreakPoint})`
+export const FULL_SCREEN_DIALOG_WIDE_BREAK_POINT_SELECTOR = `@media(min-width: ${FULL_SCREEN_DIALOG_WIDE_BREAK_POINT})`
 
 const FullScreenDialog = ({ title, children, ...props }: FullScreenDialogProps) => {
   const theme = useTheme()
@@ -58,7 +59,7 @@ const FullScreenDialog = ({ title, children, ...props }: FullScreenDialogProps) 
             animation: `${backdropKeyframes} .5s forwards`,
           },
         },
-        [`${FulScreenDialogQuarterSelector}`]: {
+        [`${FULL_SCREEN_DIALOG_WIDE_BREAK_POINT_SELECTOR}`]: {
           'width': 'min-content',
           'marginLeft': 'auto',
           'marginRight': 0,
@@ -76,7 +77,7 @@ const FullScreenDialog = ({ title, children, ...props }: FullScreenDialogProps) 
           alignItems: 'center',
           gap: '1rem',
           marginBottom: '5.2rem',
-          [`${FulScreenDialogQuarterSelector}`]: {
+          [`${FULL_SCREEN_DIALOG_WIDE_BREAK_POINT_SELECTOR}`]: {
             marginBottom: '4.8rem',
           },
         }}
@@ -87,6 +88,9 @@ const FullScreenDialog = ({ title, children, ...props }: FullScreenDialogProps) 
         </IconButton>
       </header>
       {children}
+      <Toaster
+        position={useMediaQuery(FULL_SCREEN_DIALOG_WIDE_BREAK_POINT_SELECTOR) ? 'bottom-right' : 'bottom-center'}
+      />
     </Dialog>
   )
 }
