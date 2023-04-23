@@ -8,11 +8,11 @@ export const substrateApiState = atomFamily<ApiPromise, string>({
   key: 'SubstrateApiState',
   effects: endpoint => [
     ({ setSelf }) => {
-      const api = new ApiPromise({ provider: new WsProvider(endpoint) })
+      const apiPromise = ApiPromise.create({ provider: new WsProvider(endpoint) })
 
-      setSelf(api.isReadyOrError)
+      setSelf(apiPromise)
 
-      return api.disconnect
+      return () => apiPromise.then(api => api.disconnect())
     },
   ],
   dangerouslyAllowMutability: true,
