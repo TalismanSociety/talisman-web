@@ -274,6 +274,7 @@ const appTheme = {
   background: '18,18,18',
   backgroundSecondary: '27,27,27', // #1b1b1b
   backgroundLight: '47,47,47', // #2f2f2f
+  backgroundLighter: '63,63,63', // #3f3f3f
   foreground: '165,165,165', // #a5a5a5
   mid: '150,150,150',
   dim: '90,90,90', // #5a5a5a

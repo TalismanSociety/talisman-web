@@ -24,8 +24,8 @@ const Overview = () => {
         padding: 28px 28px 0 28px;
         grid-template-areas:
           'header header'
-          'sidebar assets'
           'sidebar transactions'
+          'sidebar assets'
           'footer footer';
         @media ${device.md} {
           grid-template-columns: 177px 45fr 55fr;
