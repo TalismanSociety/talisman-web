@@ -61,7 +61,6 @@ const Assets = ({ augmentedTokens }: { augmentedTokens: TokenAugmented[] }) => {
     return augmentedTokens.reduce((acc, { balance }) => acc + balance.free, 0)
   }, [augmentedTokens])
 
-  console.log(totalFiatBalance)
   return (
     <section
       className={css`
@@ -80,8 +79,8 @@ const Assets = ({ augmentedTokens }: { augmentedTokens: TokenAugmented[] }) => {
           justify-content: space-between;
         `}
       >
-        <h2 css={{ color: 'var(--color-offWhite)' }}>Assets</h2>
-        <h2>
+        <h2 css={{ color: 'var(--color-offWhite)', fontWeight: 'bold' }}>Assets</h2>
+        <h2 css={{ fontWeight: 'bold' }}>
           <AnimatedNumber formatter={formatUsd} end={totalFiatBalance} decimals={2} />
         </h2>
       </div>
@@ -99,7 +98,7 @@ const Assets = ({ augmentedTokens }: { augmentedTokens: TokenAugmented[] }) => {
             {augmentedTokens
               .sort((a1, a2) => a2.balance.free - a1.balance.free)
               .map(augmentedToken => {
-                if (augmentedToken.balance.free === 0) return <></>
+                if (augmentedToken.balance.free === 0) return null
                 return (
                   <TokenRow
                     key={augmentedToken.details.id}
@@ -114,30 +113,28 @@ const Assets = ({ augmentedTokens }: { augmentedTokens: TokenAugmented[] }) => {
       {totalLockedBalance > 0 && (
         <div>
           <div css={{ display: 'grid', gap: '16px' }}>
-            <p
+            <div
               className={css`
+                display: flex;
+                align-items: center;
                 color: var(--color-dim);
                 font-weight: bold;
+                svg {
+                  height: 15px;
+                  margin-bottom: 3px;
+                }
+                p {
+                  font-weight: bold;
+                }
               `}
             >
-              <div
-                className={css`
-                  display: flex;
-                  align-items: center;
-                  svg {
-                    height: 15px;
-                    margin-bottom: 3px;
-                  }
-                `}
-              >
-                Locked
-                <Lock />
-              </div>
-            </p>
+              <p>Locked</p>
+              <Lock />
+            </div>
             {augmentedTokens
               .sort((a1, a2) => a2.balance.locked - a1.balance.locked)
               .map(augmentedToken => {
-                if (augmentedToken.balance.locked === 0) return <></>
+                if (augmentedToken.balance.locked === 0) return null
                 return (
                   <TokenRow
                     key={augmentedToken.details.id}

@@ -70,6 +70,7 @@ const Header = () => {
                   justify-content: center;
                   gap: 12px;
                   height: 41px;
+                  width: 250px;
                 `}
               >
                 <Identicon

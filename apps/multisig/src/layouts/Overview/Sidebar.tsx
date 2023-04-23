@@ -29,6 +29,7 @@ const Sidebar = (props: { options: { name: string; icon: ReactNode; onClick: () 
     >
       {props.options.map(({ name, icon, onClick }) => (
         <div
+          key={name}
           onClick={onClick}
           className={css`
             display: flex;
