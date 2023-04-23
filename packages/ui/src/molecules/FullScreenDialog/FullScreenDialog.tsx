@@ -3,10 +3,12 @@ import { X } from '@talismn/icons'
 import { type ReactNode } from 'react'
 
 import { Dialog, type DialogProps, IconButton, Text } from '../../atoms'
+import FullScreenDialogToast from './Toast'
 
 export type FullScreenDialogProps = Omit<DialogProps, 'title'> & {
   title: ReactNode
   onRequestDismiss: () => unknown
+  toast?: ReactNode
 }
 
 const slideInRight = keyframes`
@@ -36,59 +38,75 @@ export const FullScreenDialogQuarterBreakPoint = '768px'
 
 export const FulScreenDialogQuarterSelector = `@media(min-width: ${FullScreenDialogQuarterBreakPoint})`
 
-const FullScreenDialog = ({ title, children, ...props }: FullScreenDialogProps) => {
-  const theme = useTheme()
-  return (
-    <Dialog
-      {...props}
-      onClickBackdrop={props.onRequestDismiss}
-      css={{
-        'background': theme.color.background,
-        'border': 'none',
-        'width': '100%',
-        'maxWidth': '100%',
-        'height': '100%',
-        'maxHeight': '100%',
-        'padding': '2.4rem',
-        '&[open]': {
-          'animation': `${slideUp} .5s`,
-          '::backdrop': {
-            background: 'rgba(0,0,0,0.6)',
-            backdropFilter: 'blur(16px)',
-            animation: `${backdropKeyframes} .5s forwards`,
-          },
-        },
-        [`${FulScreenDialogQuarterSelector}`]: {
-          'width': 'min-content',
-          'marginLeft': 'auto',
-          'marginRight': 0,
-          'padding': '4.8rem',
-          '&[open]': {
-            animation: `${slideInRight} .5s`,
-          },
-        },
-      }}
-    >
-      <header
+const FullScreenDialog = Object.assign(
+  ({ title, children, toast, ...props }: FullScreenDialogProps) => {
+    const theme = useTheme()
+    return (
+      <Dialog
+        {...props}
+        onClickBackdrop={props.onRequestDismiss}
         css={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          gap: '1rem',
-          marginBottom: '5.2rem',
+          'display': 'flex',
+          'flexDirection': 'column',
+          'background': theme.color.background,
+          'border': 'none',
+          'width': '100%',
+          'maxWidth': '100%',
+          'height': '100%',
+          'maxHeight': '100%',
+          'padding': '2.4rem',
+          'overflow': 'auto',
+          '&[open]': {
+            'animation': `${slideUp} .5s`,
+            '::backdrop': {
+              background: 'rgba(0,0,0,0.6)',
+              backdropFilter: 'blur(16px)',
+              animation: `${backdropKeyframes} .5s forwards`,
+            },
+          },
           [`${FulScreenDialogQuarterSelector}`]: {
-            marginBottom: '4.8rem',
+            'width': 'min-content',
+            'marginLeft': 'auto',
+            'marginRight': 0,
+            'padding': '4.8rem',
+            '&[open]': {
+              animation: `${slideInRight} .5s`,
+            },
           },
         }}
       >
-        <Text.H2 css={{ margin: 0 }}>{title}</Text.H2>
-        <IconButton onClick={props.onRequestDismiss}>
-          <X />
-        </IconButton>
-      </header>
-      {children}
-    </Dialog>
-  )
-}
+        <header
+          css={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            gap: '1rem',
+            marginBottom: '5.2rem',
+            [`${FulScreenDialogQuarterSelector}`]: {
+              marginBottom: '4.8rem',
+            },
+          }}
+        >
+          <Text.H2 css={{ margin: 0 }}>{title}</Text.H2>
+          <IconButton onClick={props.onRequestDismiss}>
+            <X />
+          </IconButton>
+        </header>
+        {children}
+        {toast && (
+          <div
+            css={{
+              position: 'sticky',
+              top: '100%',
+            }}
+          >
+            {toast}
+          </div>
+        )}
+      </Dialog>
+    )
+  },
+  { Toast: FullScreenDialogToast }
+)
 
 export default FullScreenDialog

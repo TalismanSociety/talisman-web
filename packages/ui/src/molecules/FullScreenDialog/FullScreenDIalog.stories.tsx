@@ -8,6 +8,9 @@ import FullScreenDialog, { FulScreenDialogQuarterSelector, type FullScreenDialog
 export default {
   title: 'Molecules/FullScreenDialog',
   component: FullScreenDialog,
+  subcomponents: {
+    Toast: FullScreenDialog.Toast,
+  },
   parameters: {
     layout: 'fullscreen',
   },
@@ -40,3 +43,21 @@ Default.args = {
     </div>
   ),
 }
+
+export const Pending = Default.bind({})
+
+Pending.args = {
+  ...Default.args,
+  toast: <FullScreenDialog.Toast type="loading" headlineText="Your transaction is pending..." />,
+}
+
+export const Success = Default.bind({})
+
+Success.args = {
+  ...Default.args,
+  toast: <FullScreenDialog.Toast type="success" headlineText="Your transaction was successful" />,
+}
+
+export const Error = Default.bind({})
+
+Error.args = { ...Default.args, toast: <FullScreenDialog.Toast type="error" headlineText=" Your transaction failed" /> }
