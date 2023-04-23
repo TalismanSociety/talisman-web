@@ -3,7 +3,10 @@ import { type ComponentMeta, type Story } from '@storybook/react'
 
 import { Text } from '../../atoms'
 import TextInput from '../TextInput'
-import FullScreenDialog, { FulScreenDialogQuarterSelector, type FullScreenDialogProps } from './FullScreenDialog'
+import FullScreenDialog, {
+  FULL_SCREEN_DIALOG_WIDE_BREAK_POINT_SELECTOR,
+  type FullScreenDialogProps,
+} from './FullScreenDialog'
 
 export default {
   title: 'Molecules/FullScreenDialog',
@@ -31,7 +34,7 @@ Default.args = {
   open: true,
   title: 'Unstake',
   children: (
-    <div css={{ [`${FulScreenDialogQuarterSelector}`]: { minWidth: 412 } }}>
+    <div css={{ [`${FULL_SCREEN_DIALOG_WIDE_BREAK_POINT_SELECTOR}`]: { minWidth: 412 } }}>
       <TextInput leadingLabel="Unstaking amount" />
       <Text.Body as="p">You are unstaking 4000 DOT ($23,988.55).</Text.Body>
       <Text.Body as="p">
