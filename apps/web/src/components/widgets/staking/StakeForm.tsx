@@ -174,7 +174,7 @@ const PoolSelector = (props: {
 export const AssetSelect = (props: {
   selectedChain: Chain
   onSelectChain: (chain: Chain) => unknown
-  chains: Chain[]
+  chains: readonly Chain[]
   inTransition: boolean
 }) => (
   <Select
@@ -424,7 +424,7 @@ const StakeForm = () => {
   const chains = useRecoilValue(chainsState)
 
   const [inTransition, startTransition] = useTransition()
-  const [selectedChain, setSelectedChain] = useState<Chain>(chains[0]!)
+  const [selectedChain, setSelectedChain] = useState<Chain>(chains[0])
 
   return (
     <ChainProvider value={selectedChain}>

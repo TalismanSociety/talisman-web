@@ -34,10 +34,10 @@ export type Chain = {
   }
   subscanUrl: string
   parameters: ChainParameters
-  priorityPool?: number
+  priorityPool: number | undefined
 }
 
-export const chains: Chain[] = [
+export const chains = [
   {
     id: 'polkadot',
     genesisHash: '0x91b171bb158e2d3848fa23a9f1c25182fb8e20313b2c1eb49219da7a70ce90c3',
@@ -54,6 +54,7 @@ export const chains: Chain[] = [
      * https://github.com/paritytech/polkadot-staking-dashboard/blob/8c136141141e6a74ddd838aa20df48a20a35749e/src/config/networks.ts
      */
     parameters: { ...defaultParams, stakeTarget: 0.75 },
+    priorityPool: undefined,
   },
   {
     id: 'kusama',
@@ -103,5 +104,6 @@ export const chains: Chain[] = [
      * https://github.com/paritytech/polkadot-staking-dashboard/blob/8c136141141e6a74ddd838aa20df48a20a35749e/src/config/networks.ts
      */
     parameters: { ...defaultParams, stakeTarget: 0.75 },
+    priorityPool: undefined,
   },
-]
+] as const satisfies readonly Chain[]

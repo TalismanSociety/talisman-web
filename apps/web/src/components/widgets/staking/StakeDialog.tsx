@@ -28,7 +28,7 @@ const StakeDialog = () => {
   const initialChain = searchParams.get('chain')
 
   const chains = useRecoilValue(chainsState)
-  const [chain, setChain] = useState<Chain>(chains.find(x => x.id === initialChain) ?? chains[0]!)
+  const [chain, setChain] = useState<Chain>(chains.find(x => x.id === initialChain) ?? chains[0])
 
   const [inTransition, startTransition] = useTransition()
 
