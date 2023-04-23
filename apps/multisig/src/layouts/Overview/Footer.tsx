@@ -12,12 +12,14 @@ const Footer = () => {
         height: 100%;
         gap: 18px;
         padding: 0 40px;
+        padding-bottom: 16px;
         a {
           color: var(--color-offWhite);
           font-size: 14px;
         }
         @media ${device.lg} {
           padding: 0 96px;
+          padding-bottom: 16px;
         }
       `}
     >

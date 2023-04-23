@@ -17,7 +17,7 @@ const Overview = () => {
       className={css`
         display: grid;
         grid-template-columns: 70px 1fr;
-        grid-template-rows: 87px auto auto 84px;
+        grid-template-rows: 84px auto auto 84px;
         height: 100%;
         width: 100%;
         gap: 16px;
@@ -29,7 +29,7 @@ const Overview = () => {
           'footer footer';
         @media ${device.md} {
           grid-template-columns: 177px 45fr 55fr;
-          grid-template-rows: 100px auto 84px;
+          grid-template-rows: 84px auto 84px;
           grid-template-areas:
             'header header header'
             'sidebar assets transactions'
@@ -39,7 +39,7 @@ const Overview = () => {
           margin: auto;
           max-width: 1600px;
           grid-template-columns: 248px 38fr 62fr;
-          grid-template-rows: 100px auto 84px;
+          grid-template-rows: 84px auto 84px;
           grid-template-areas:
             'header header header'
             'sidebar assets transactions'
