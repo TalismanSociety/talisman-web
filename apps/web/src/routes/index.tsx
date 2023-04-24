@@ -35,7 +35,7 @@ import Assets from './Assets'
 import CrowdloanDetail from './Crowdloan.Detail'
 import CrowdloanIndex from './Crowdloan.Index'
 import Explore from './Explore'
-import NFTsPage from './NFTsPage'
+import Nfts from './Nfts'
 import Overview from './Overview'
 import Portfolio from './Portfolio'
 import TransactionHistory from './TransactionHistory'
@@ -309,7 +309,7 @@ export default Sentry.wrapCreateBrowserRouter(createBrowserRouter)([
             path: 'nfts',
             element: (
               <AccountConnectionGuard>
-                <NFTsPage />
+                <Nfts />
               </AccountConnectionGuard>
             ),
           },

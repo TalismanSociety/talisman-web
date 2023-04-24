@@ -2,6 +2,7 @@
   "$schema": "https://json.schemastore.org/tsconfig",
   "extends": ["@tsconfig/strictest/tsconfig", "@tsconfig/esm/tsconfig.json"],
   "compilerOptions": {
+    "target": "ESNext",
     "moduleResolution": "bundler",
     "jsx": "react-jsx",
     "declaration": true,

@@ -41,6 +41,7 @@
     "@talismn/dot-pool-selector": "0.0.0-snapshot.940501",
     "@talismn/icons": "workspace:^",
     "@talismn/math": "workspace:^",
+    "@talismn/nft": "workspace:^",
     "@talismn/ui": "workspace:^",
     "@talismn/util": "0.0.0-pr677-20230414083406",
     "bignumber.js": "^9.1.1",
@@ -76,6 +77,7 @@
     "threads": "^1.7.0",
     "uuid": "^9.0.0",
     "victory": "^36.6.8",
+    "viem": "^0.3.10",
     "web-vitals": "^2.1.4"
   },
   "devDependencies": {
