@@ -4,9 +4,9 @@ import TeleportFormComponent from '@components/recipes/TeleportForm'
 import TokenSelectorDialog, { TokenSelectorItem } from '@components/recipes/TokenSelectorDialog'
 import { Account } from '@domains/accounts'
 import { selectedBalancesState } from '@domains/balances/recoils'
+import { bridgeApiProvider, bridgeState } from '@domains/bridge'
 import { extrinsicMiddleware } from '@domains/common/extrinsicMiddleware'
 import { toastExtrinsic } from '@domains/common/utils'
-import { bridgeApiProvider, bridgeState } from '@domains/bridge'
 import { type SubmittableExtrinsic } from '@polkadot/api/types'
 import { web3FromAddress } from '@polkadot/extension-dapp'
 import { type ISubmittableResult } from '@polkadot/types/types'
@@ -18,7 +18,7 @@ import { isEmpty, uniqBy } from 'lodash'
 import { Suspense, useCallback, useEffect, useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { Loadable, RecoilLoadable, useRecoilCallback, useRecoilValue, waitForAll } from 'recoil'
-import { Observable, firstValueFrom, switchMap } from 'rxjs'
+import { Observable, switchMap } from 'rxjs'
 import AccountSelector from './AccountSelector'
 
 const TeleportForm = () => {
@@ -294,16 +294,29 @@ const TeleportForm = () => {
 
               setExtrinsicInProgress(true)
 
-              result.subscribe({
-                next: result => extrinsicMiddleware(fromChain.id, tx, result, callbackInterface),
-                error: error => {
-                  toastExtrinsic([[tx.method.section, tx.method.method]], Promise.reject(error))
-                  setExtrinsicInProgress(false)
-                },
-                complete: () => setExtrinsicInProgress(false),
+              let resolve = (_: ISubmittableResult) => {}
+              let reject = (_: any) => {}
+              const promise = new Promise<ISubmittableResult>((_resolve, _reject) => {
+                resolve = _resolve
+                reject = _reject
               })
 
-              toastExtrinsic([[tx.method.section, tx.method.method]], firstValueFrom(result))
+              const subscription = result.subscribe({
+                next: result => {
+                  extrinsicMiddleware(fromChain.id, tx, result, callbackInterface)
+                  if (result.isFinalized) {
+                    resolve(result)
+                    setExtrinsicInProgress(false)
+                    subscription.unsubscribe()
+                  }
+                },
+                error: error => {
+                  reject(error)
+                  setExtrinsicInProgress(false)
+                },
+              })
+
+              toastExtrinsic([[tx.method.section, tx.method.method]], promise)
             })
           })
         }
