@@ -1,4 +1,3 @@
-import OwnPools from '@archetypes/NominationPools/OwnPools'
 import useAssets, { useAssetsFiltered } from '@archetypes/Portfolio/Assets'
 import { Crowdloans } from '@archetypes/Wallet'
 import { Search } from '@components/Field'
@@ -6,6 +5,7 @@ import SectionHeader from '@components/molecules/SectionHeader'
 import Asset, { AssetsList, AssetsListLocked } from '@components/recipes/Asset'
 import AnimatedFiatNumber from '@components/widgets/AnimatedFiatNumber'
 import PortfolioAllocationGraph from '@components/widgets/PortfolioAllocationGraph'
+import Stakes from '@components/widgets/staking/Stakes'
 import { Button } from '@talismn/ui'
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
@@ -128,7 +128,7 @@ const Overview = () => (
       <AssetsOverview />
     </div>
     <div css={{ gridArea: 'staking' }}>
-      <OwnPools />
+      <Stakes />
     </div>
     <div css={{ 'gridArea': 'crowdloans', ':empty': { display: 'none' } }}>
       <Crowdloans />

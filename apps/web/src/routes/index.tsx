@@ -8,9 +8,9 @@ import AccountValueInfo from '@components/recipes/AccountValueInfo'
 import AccountConnectionGuard, { useShouldShowAccountConnectionGuard } from '@components/widgets/AccountConnectionGuard'
 import AccountsManagementMenu from '@components/widgets/AccountsManagementMenu'
 import { RouteErrorElement } from '@components/widgets/ErrorBoundary'
-import StakeDialog from '@components/widgets/StakeDialog'
+import StakeDialog from '@components/widgets/staking/StakeDialog'
 import { accountsState, selectedAccountsState } from '@domains/accounts/recoils'
-import { nativeTokenPriceState, useNativeTokenDecimalState } from '@domains/chains/recoils'
+import { useNativeTokenDecimalState, useNativeTokenPriceState } from '@domains/chains/recoils'
 import { useRecommendedPoolsState } from '@domains/nominationPools/recoils'
 import * as MoonbeamContributors from '@libs/moonbeam-contributors'
 import * as Sentry from '@sentry/react'
@@ -28,7 +28,7 @@ import {
 import { shortenAddress } from '@util/format'
 import { usePostHog } from 'posthog-js/react'
 import { useCallback, useEffect, useState } from 'react'
-import { Link, Navigate, Outlet, createBrowserRouter, useLocation } from 'react-router-dom'
+import { Link, Navigate, Outlet, createBrowserRouter, useLocation, useSearchParams } from 'react-router-dom'
 import { useRecoilValue, useRecoilValueLoadable, waitForAll } from 'recoil'
 
 import AssetItem from './AssetItem'
@@ -67,7 +67,7 @@ const Header = () => {
 const Main = () => {
   // Pre-loading
   useRecoilValueLoadable(
-    waitForAll([accountsState, useNativeTokenDecimalState(), nativeTokenPriceState('usd'), useRecommendedPoolsState()])
+    waitForAll([accountsState, useNativeTokenDecimalState(), useNativeTokenPriceState(), useRecommendedPoolsState()])
   )
 
   const posthog = usePostHog()
@@ -276,6 +276,13 @@ const Main = () => {
   )
 }
 
+const NavigateToStaking = () => {
+  const [search] = useSearchParams()
+  search.set('action', 'stake')
+  search.sort()
+  return <Navigate to={{ pathname: '/portfolio', search: search.toString() }} />
+}
+
 export default Sentry.wrapCreateBrowserRouter(createBrowserRouter)([
   {
     path: '/',
@@ -322,7 +329,10 @@ export default Sentry.wrapCreateBrowserRouter(createBrowserRouter)([
       { path: 'history', element: <Navigate to="/portfolio/history" /> },
       { path: 'nfts', element: <Navigate to="/portfolio/nfts" /> },
       { path: 'explore', element: <Explore /> },
-      { path: 'staking', element: <Navigate to="/portfolio?action=stake" /> },
+      {
+        path: 'staking',
+        element: <NavigateToStaking />,
+      },
       {
         path: 'crowdloans',
         children: [

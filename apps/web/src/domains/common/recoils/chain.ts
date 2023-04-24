@@ -1,3 +1,6 @@
+// TODO: lots of duplicate type definitions
+// but already super burned out, need to de-duplication
+
 import { ApiPromise } from '@polkadot/api'
 import type {
   GenericStorageEntryFunction,
@@ -7,30 +10,41 @@ import type {
   UnsubscribePromise,
 } from '@polkadot/api/types'
 import { useContext } from 'react'
-import { RecoilState, RecoilValueReadOnly, atomFamily, constSelector, errorSelector } from 'recoil'
+import { RecoilState, RecoilValueReadOnly, atomFamily, constSelector } from 'recoil'
 import { Observable } from 'rxjs'
 
 import { SubstrateApiContext, substrateApiState } from '..'
 
-export const chainState = atomFamily({
+export const _chainState = atomFamily({
   key: 'ChainState',
   effects: ([endpoint, typeName, moduleName, sectionName, params]: [string, string, string, string, any[]]) => [
     ({ setSelf, getPromise }) => {
       const apiPromise = getPromise(substrateApiState(endpoint))
 
+      let initialResolve = (value: unknown) => {}
+      let initialReject = (reason?: any) => {}
+
+      setSelf(
+        new Promise((resolve, reject) => {
+          initialResolve = resolve
+          initialReject = reject
+        })
+      )
+
       const unsubscribePromise = apiPromise.then(api => {
         const [section, multi] = (sectionName as string).split('.')
 
         const func =
-          // @ts-ignore
+          // @ts-expect-error
           multi === undefined ? api[typeName][moduleName][section] : api[typeName][moduleName][section][multi]
 
         const parsedParams = multi === undefined ? params : [params]
 
         const unsubscribePromise: UnsubscribePromise = func(...parsedParams, (result: any) => {
+          initialResolve(result)
           setSelf(result)
         }).catch((error: any) => {
-          setSelf(errorSelector(error))
+          initialReject(error)
         })
 
         return unsubscribePromise
@@ -41,6 +55,61 @@ export const chainState = atomFamily({
   ],
   dangerouslyAllowMutability: true,
 })
+
+export const chainQueryState = <
+  TModule extends keyof PickKnownKeys<ApiPromise['query']>,
+  TSection extends Extract<keyof PickKnownKeys<ApiPromise['query'][TModule]>, string>,
+  TAugmentedSection extends TSection | `${TSection}.multi`,
+  TExtractedSection extends TAugmentedSection extends `${infer Section}.multi` ? Section : TAugmentedSection,
+  TMethod extends Diverge<
+    // @ts-ignore
+    ApiPromise['query'][TModule][TExtractedSection],
+    StorageEntryPromiseOverloads & QueryableStorageEntry<any, any> & PromiseResult<GenericStorageEntryFunction>
+  >
+>(
+  endpoint: string,
+  moduleName: TModule,
+  sectionName: TAugmentedSection,
+  params: TMethod extends (...args: any) => any
+    ? // @ts-ignore
+      TAugmentedSection extends TSection
+      ? Leading<Parameters<TMethod>>
+      : Leading<Parameters<TMethod>> extends [infer Head]
+      ? Head[]
+      : Array<Readonly<Leading<Parameters<TMethod>>>>
+    : never
+) =>
+  _chainState([endpoint, 'query', moduleName, sectionName, params]) as RecoilState<
+    TMethod extends PromiseResult<(...args: any) => Observable<infer Result>>
+      ? TAugmentedSection extends TSection
+        ? Result
+        : Result[]
+      : never
+  >
+
+export const chainDeriveState = <
+  TModule extends keyof PickKnownKeys<ApiPromise['derive']>,
+  TSection extends Extract<keyof PickKnownKeys<ApiPromise['derive'][TModule]>, string>,
+  TAugmentedSection extends TSection | `${TSection}.multi`,
+  TExtractedSection extends TAugmentedSection extends `${infer Section}.multi` ? Section : TAugmentedSection,
+  TMethod extends Diverge<
+    // @ts-ignore
+    ApiPromise['derive'][TModule][TExtractedSection],
+    StorageEntryPromiseOverloads & QueryableStorageEntry<any, any> & PromiseResult<GenericStorageEntryFunction>
+  >
+>(
+  endpoint: string,
+  moduleName: TModule,
+  sectionName: TAugmentedSection,
+  params: TMethod extends (...args: any) => any
+    ? // @ts-ignore
+      TAugmentedSection extends TSection
+      ? Leading<Parameters<TMethod>>
+      : Leading<Parameters<TMethod>> extends [infer Head]
+      ? Head[]
+      : Array<Readonly<Leading<Parameters<TMethod>>>>
+    : never
+) => _chainState([endpoint, 'derive', moduleName, sectionName, params])
 
 export const useChainQueryState = <
   TModule extends keyof PickKnownKeys<ApiPromise['query']>,
@@ -83,7 +152,7 @@ export const useChainQueryState = <
     return constSelector(undefined) as TReturn
   }
 
-  return chainState([endpoint, 'query', String(moduleName), sectionName, params]) as TReturn
+  return _chainState([endpoint, 'query', String(moduleName), sectionName, params]) as TReturn
 }
 
 export const useChainDeriveState = <
@@ -126,5 +195,5 @@ export const useChainDeriveState = <
     return constSelector(undefined) as TReturn
   }
 
-  return chainState([endpoint, 'derive', String(moduleName), sectionName, params]) as any as TReturn
+  return _chainState([endpoint, 'derive', String(moduleName), sectionName, params]) as any as TReturn
 }

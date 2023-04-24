@@ -1,6 +1,5 @@
 import { useTheme } from '@emotion/react'
 import {
-  FloatingPortal,
   autoUpdate,
   flip,
   offset,
@@ -17,6 +16,7 @@ import { useState, type ReactNode } from 'react'
 
 import Text from '../Text'
 import useCursorFollow from './useCursorFollow'
+import FloatingPortal from '../FloatingPortal'
 
 export type TooltipProps = {
   content: ReactNode
@@ -45,12 +45,10 @@ const Tooltip = ({ placement = 'right', ...props }: TooltipProps) => {
     useRole(context, { role: 'tooltip' }),
   ])
 
-  const openDialogs = document.querySelectorAll('dialog[open]')
-
   return (
     <>
       {props.children(getReferenceProps({}))}
-      <FloatingPortal root={(openDialogs.item(openDialogs.length - 1) as any) ?? (document.body as any)}>
+      <FloatingPortal>
         {open && Boolean(props.content) && (
           <motion.div
             ref={refs.setFloating}

@@ -1,43 +1,47 @@
 import { StakeStatus } from '@components/recipes/StakeStatusIndicator'
-import { selectedSubstrateAccountsState } from '@domains/accounts/recoils'
+import { Account } from '@domains/accounts/recoils'
 import { useChainDeriveState, useChainQueryState, useSubstrateApiState } from '@domains/common'
-import { createAccounts, getPoolUnbonding } from '@domains/nominationPools/utils'
-import { CircularProgressIndicator } from '@talismn/ui'
 import { useMemo } from 'react'
 import { useRecoilValue, useRecoilValue_TRANSITION_SUPPORT_UNSTABLE, waitForAll } from 'recoil'
+import { useAllPendingRewardsState, useEraStakersState } from '../recoils'
+import { createAccounts, getPoolUnbonding } from '../utils'
 
-import { useAllPendingRewardsState, useEraStakersState } from '../../domains/nominationPools/recoils'
-import PoolStakeItem from './PoolStakeItem'
+export const usePoolStakes = <T extends Account | Account[]>(account: T) => {
+  const accounts = useMemo(() => (Array.isArray(account) ? account : [account]), [account])
 
-const Stakings = () => {
-  const [api, pendingRewards, accounts] = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
-    waitForAll([useSubstrateApiState(), useAllPendingRewardsState(), selectedSubstrateAccountsState])
+  const [api, pendingRewards] = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
+    waitForAll([useSubstrateApiState(), useAllPendingRewardsState()])
   )
 
-  const poolMembers = useRecoilValue(
+  const _poolMembers = useRecoilValue(
     useChainQueryState(
       'nominationPools',
       'poolMembers.multi',
       accounts.map(({ address }) => address)
     )
   )
+  const accountPools = useMemo(
+    () =>
+      _poolMembers
+        .map((x, index) => ({ account: accounts[index], poolMembers: x }))
+        .filter(x => x.poolMembers.isSome)
+        .map(x => ({ ...x, poolMember: x.poolMembers.unwrap() })),
+    [_poolMembers, accounts]
+  )
+
+  const stashIds = useMemo(
+    () => accountPools.map(x => createAccounts(api, x.poolMember.poolId).stashId),
+    [api, accountPools]
+  )
 
   const [poolNominators, slashingSpans, poolMetadatum, activeEra, sessionProgress] = useRecoilValue(
     waitForAll([
-      useChainQueryState(
-        'staking',
-        'nominators.multi',
-        poolMembers.map(x => createAccounts(api, x.unwrapOrDefault().poolId).stashId)
-      ),
-      useChainQueryState(
-        'staking',
-        'slashingSpans.multi',
-        poolMembers.map(x => createAccounts(api, x.unwrapOrDefault().poolId).stashId)
-      ),
+      useChainQueryState('staking', 'nominators.multi', stashIds),
+      useChainQueryState('staking', 'slashingSpans.multi', stashIds),
       useChainQueryState(
         'nominationPools',
         'metadata.multi',
-        poolMembers.map(x => x.unwrapOrDefault().poolId)
+        useMemo(() => accountPools.map(x => x.poolMember.poolId), [accountPools])
       ),
       useChainQueryState('staking', 'activeEra', []),
       useChainDeriveState('session', 'progress', []),
@@ -49,12 +53,12 @@ const Stakings = () => {
 
   const pools = useMemo(
     () =>
-      poolMembers
+      accountPools
         // Calculate unbondings
-        .map((poolMember, index) => ({
-          account: accounts[index],
+        .map(({ account, poolMember }) => ({
+          account,
           poolMember,
-          ...getPoolUnbonding(poolMember.unwrapOrDefault(), sessionProgress),
+          ...getPoolUnbonding(poolMember, sessionProgress),
         }))
         // Calculate remaining values
         .map(({ poolMember, ...rest }, index) => {
@@ -72,24 +76,19 @@ const Stakings = () => {
           return {
             ...rest,
             status,
-            poolName: poolMetadatum[index]?.toUtf8() ?? <CircularProgressIndicator size="1em" />,
+            poolName: poolMetadatum[index]?.toUtf8(),
             poolMember,
             pendingRewards: pendingRewards.find(rewards => rewards[0] === accounts[index]?.address)?.[1],
+            totalUnlocking: rest.unlockings.reduce((previous, current) => previous + current.amount, 0n),
             slashingSpan,
           }
-        })
-        .filter(x => x.poolMember.isSome)
-        .map(x => ({ ...x, poolMember: x.poolMember.unwrapOrDefault() })),
-    [accounts, eraStakers, pendingRewards, poolMembers, poolMetadatum, poolNominators, sessionProgress, slashingSpans]
+        }),
+    [accounts, eraStakers, pendingRewards, accountPools, poolMetadatum, poolNominators, sessionProgress, slashingSpans]
   )
 
-  return (
-    <section css={{ display: 'flex', flexDirection: 'column', gap: '1.6rem' }}>
-      {pools?.map((pool, index) => (
-        <PoolStakeItem key={index} item={pool} />
-      ))}
-    </section>
-  )
+  type Result = typeof pools
+
+  type Return = T extends Account[] ? Result : Result[number] | undefined
+
+  return useMemo(() => (Array.isArray(account) ? pools : pools.at(0)) as Return, [account, pools])
 }
-
-export default Stakings

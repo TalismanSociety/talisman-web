@@ -13,9 +13,16 @@ export default {
   parameters: {
     layout: 'centered',
   },
+  decorators: [
+    Story => (
+      <div css={{ width: '30rem' }}>
+        <Story />
+      </div>
+    ),
+  ],
 } as ComponentMeta<typeof Select>
 
-export const Default: Story<Partial<SelectProps>> = props => {
+export const Default: Story<Partial<SelectProps<string>>> = props => {
   const [selected, setSelected] = useState<string | undefined>(undefined)
 
   return (

@@ -7,7 +7,7 @@ const Term = (props: React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, 
 )
 
 const Details = (props: React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement>) => (
-  <dd css={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }} {...props} />
+  <dd css={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', textAlign: 'end' }} {...props} />
 )
 
 const Description = (props: React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>) => (
@@ -15,9 +15,7 @@ const Description = (props: React.DetailedHTMLProps<React.HTMLAttributes<HTMLDiv
 )
 
 const DescriptionList = Object.assign(
-  (props: DescriptionListProps) => {
-    return <dl {...props} />
-  },
+  (props: DescriptionListProps) => <dl {...props} css={{ '> * + *': { marginTop: '1.6rem' } }} />,
   { Description, Term, Details }
 )
 

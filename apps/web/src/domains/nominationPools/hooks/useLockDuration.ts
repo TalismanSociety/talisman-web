@@ -1,4 +1,4 @@
-import { useChainDeriveState, useSubstrateApiState } from '@domains/common'
+import { useChainDeriveState, useSubstrateApiState, expectedBlockTime } from '@domains/common'
 import { useMemo } from 'react'
 import { useRecoilValueLoadable, waitForAll } from 'recoil'
 
@@ -13,6 +13,6 @@ export const useLockDuration = () => {
     }
     const [api, eraLength] = loadable.contents
 
-    return eraLength.mul(api.consts.staking.bondingDuration).mul(api.consts.babe.expectedBlockTime)
+    return eraLength.mul(api.consts.staking.bondingDuration).mul(expectedBlockTime(api))
   }, [loadable.contents, loadable.state])
 }

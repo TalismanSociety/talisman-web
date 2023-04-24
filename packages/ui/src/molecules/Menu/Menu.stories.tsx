@@ -4,7 +4,7 @@ import { motion } from 'framer-motion'
 
 import { Button, Identicon } from '../../atoms'
 import ListItem from '../ListItem'
-import Menu, { type MenuProps, OFFSET } from './Menu'
+import Menu, { type MenuProps, MENU_OFFSET } from './Menu'
 
 export default {
   title: 'Molecules/Menu',
@@ -13,16 +13,16 @@ export default {
 
 export const Default: Story<MenuProps> = args => (
   <div>
-    <div css={{ position: 'fixed', top: OFFSET, left: OFFSET }}>
+    <div css={{ position: 'fixed', top: MENU_OFFSET, left: MENU_OFFSET }}>
       <Menu {...args} />
     </div>
-    <div css={{ position: 'fixed', top: OFFSET, right: OFFSET }}>
+    <div css={{ position: 'fixed', top: MENU_OFFSET, right: MENU_OFFSET }}>
       <Menu {...args} />
     </div>
-    <div css={{ position: 'fixed', bottom: OFFSET, left: OFFSET }}>
+    <div css={{ position: 'fixed', bottom: MENU_OFFSET, left: MENU_OFFSET }}>
       <Menu {...args} />
     </div>
-    <div css={{ position: 'fixed', bottom: OFFSET, right: OFFSET }}>
+    <div css={{ position: 'fixed', bottom: MENU_OFFSET, right: MENU_OFFSET }}>
       <Menu {...args} />
     </div>
   </div>

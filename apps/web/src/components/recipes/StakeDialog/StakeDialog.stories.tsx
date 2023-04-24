@@ -1,7 +1,5 @@
 import { ComponentMeta, Story } from '@storybook/react'
-
-import StakingInput from '../StakingInput'
-import { Default as StakeInputStory } from '../StakingInput/StakingInput.stories'
+import { Default as StakeFormStory } from '@components/recipes/StakeForm/StakeForm.stories'
 import StakeDialog, { StakeDialogProps } from './StakeDialog'
 
 export default {
@@ -19,6 +17,6 @@ Default.args = {
       <StakeDialog.Stats.Item headlineText="Current era ends" text="9h 24min" />
     </StakeDialog.Stats>
   ),
-  stakeInput: <StakingInput {...(StakeInputStory.args as any)} />,
+  stakeInput: <StakeFormStory {...(StakeFormStory.args as any)} />,
   learnMoreAnchor: <StakeDialog.LearnMore />,
 }
