@@ -21,6 +21,7 @@ type AmountInputProps = {
 
 const AmountInput = (props: AmountInputProps) => (
   <TextInput
+    width="10rem"
     value={props.amount}
     onChange={event => props.onChangeAmount(event.target.value)}
     trailingIcon={useContext(AssetSelectorContext)}
