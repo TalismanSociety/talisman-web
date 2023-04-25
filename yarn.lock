@@ -8255,11 +8255,12 @@ __metadata:
     "@talismn/icons": "workspace:^"
     "@talismn/tsconfig": "workspace:^"
     "@types/react": ^18.0.28
+    "@use-gesture/react": ^10.2.26
     babel-loader: ^8.3.0
     colorjs.io: ^0.4.3
     eslint: ^8.37.0
     eslint-plugin-storybook: ^0.6.12
-    framer-motion: ^10.2.3
+    framer-motion: ^10.12.4
     prop-types: ^15.8.1
     react: ^18.2.0
     react-dom: ^18.2.0
@@ -8363,7 +8364,7 @@ __metadata:
     eslint-config-prettier: ^8.6.0
     eslint-plugin-storybook: ^0.6.10
     ethers: ^5.7.2
-    framer-motion: ^10.2.3
+    framer-motion: ^10.12.4
     graphql: ^16.6.0
     graphql-request: ^5.1.0
     i18next: ^21.10.0
@@ -9342,6 +9343,24 @@ __metadata:
     "@polkadot/api": ^9.10.2
     "@polkadot/types": ^9.10.2
   checksum: e29eb28371596aa4d92170bc53fde98eec439bdba768d0198c4519d359497f95b4f24344454f19e3bb7d1561665e67d4a0fa9245c10d5ba648cc54272450cef5
+  languageName: node
+  linkType: hard
+
+"@use-gesture/core@npm:10.2.26":
+  version: 10.2.26
+  resolution: "@use-gesture/core@npm:10.2.26"
+  checksum: 8a000d715034f8e3e767042f8290c446f4544d94b57c94cf3027fd55f842cd8842a946a48d816b7dafcfd6bdec40219e2c9d8577785b8a0a5ed1fd5970b9de4b
+  languageName: node
+  linkType: hard
+
+"@use-gesture/react@npm:^10.2.26":
+  version: 10.2.26
+  resolution: "@use-gesture/react@npm:10.2.26"
+  dependencies:
+    "@use-gesture/core": 10.2.26
+  peerDependencies:
+    react: ">= 16.8.0"
+  checksum: e9f74ab42fe817a098772abf94d313a870f240a91c85a7dc18ddc8e155ca9e2eddbdf059dce5efe4922a3b4852266d5c43efde8d72a27c07b8932a90596a8c94
   languageName: node
   linkType: hard
 
@@ -13989,9 +14008,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"framer-motion@npm:^10.2.3":
-  version: 10.2.3
-  resolution: "framer-motion@npm:10.2.3"
+"framer-motion@npm:^10.12.4":
+  version: 10.12.4
+  resolution: "framer-motion@npm:10.12.4"
   dependencies:
     "@emotion/is-prop-valid": ^0.8.2
     tslib: ^2.4.0
@@ -14006,7 +14025,7 @@ __metadata:
       optional: true
     react-dom:
       optional: true
-  checksum: 7c4178227bfded58e7d992b81b41eacbefd420ed3850fad867d6b00e6feed4b480bcf5938c1a30b977bd9a213037ded162faee490205b12d20cd168629c4fe9e
+  checksum: c131b546539937b5dbec6a89f2e3db946d5127f1cbf2f88268ef75089df30e81cdd0f4a5786f84b1bc98397d43a99aa6f7e187e6bba178548a9eeb3d39df7b91
   languageName: node
   linkType: hard
 

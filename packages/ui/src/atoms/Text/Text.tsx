@@ -97,13 +97,13 @@ const Text = Object.assign(BaseText, {
     <BaseHeaderText {...props} as={props.as ?? 'h4'} css={{ fontSize: 18 }} />
   ),
   BodyLarge: decorateText(<T extends React.ElementType = 'span'>(props: TextProps<T>) => (
-    <BaseText {...props} as={props.as ?? 'span'} css={{ fontSize: 16 }} />
+    <BaseText {...props} as={props.as ?? 'span'} css={{ fontSize: 16, fontWeight: 'normal', margin: 0 }} />
   )),
   Body: decorateText(<T extends React.ElementType = 'span'>(props: TextProps<T>) => (
-    <BaseText {...props} as={props.as ?? 'span'} css={{ fontSize: 14 }} />
+    <BaseText {...props} as={props.as ?? 'span'} css={{ fontSize: 14, fontWeight: 'normal', margin: 0 }} />
   )),
   BodySmall: decorateText(<T extends React.ElementType = 'span'>(props: TextProps<T>) => (
-    <BaseText {...props} as={props.as ?? 'span'} css={{ fontSize: 12 }} />
+    <BaseText {...props} as={props.as ?? 'span'} css={{ fontSize: 12, fontWeight: 'normal', margin: 0 }} />
   )),
 })
 

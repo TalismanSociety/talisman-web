@@ -65,9 +65,10 @@ export const createAcalaNftAsyncGenerator: CreateNftAsyncGenerator<AcalaNft> = a
           return {
             type: 'acala',
             id: `${classId.toString()}-${tokenId.toString()}`,
-            name: tokenMetadata?.name ?? classMetadata?.name ?? '',
-            description: tokenMetadata?.name ?? classMetadata?.name ?? '',
-            media: tokenMetadata?.image ?? classMetadata?.image,
+            name: tokenMetadata?.name || classMetadata?.name,
+            description: tokenMetadata?.name || classMetadata?.name,
+            media: tokenMetadata?.image || classMetadata?.image,
+            thumbnail: tokenMetadata?.image || classMetadata?.image,
             serialNumber: tokenId.toNumber(),
             collection: {
               id: classId.toString(),

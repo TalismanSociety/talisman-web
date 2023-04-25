@@ -43,7 +43,7 @@ export type EvmNft = BaseNft & {
   chain: string
 }
 
-export type Nft = SubstrateNft | AcalaNft | Rmrk2Nft
+export type Nft = SubstrateNft | AcalaNft | Rmrk1Nft | Rmrk2Nft | EvmNft
 
 export type CreateNftAsyncGenerator<T extends BaseNft = BaseNft> = {
   (address: string, options: { batchSize: number }): AsyncGenerator<T>
