@@ -236,6 +236,8 @@ export const ControlledStakeForm = (props: { assetSelector: ReactNode }) => {
 
   const location = useLocation()
 
+  const currentChain = useContext(ChainContext)
+
   const poolIdFromSearch = useMemo(
     () =>
       Maybe.of(new URLSearchParams(location.search).get('poolId')).mapOrUndefined(x => {
@@ -388,6 +390,7 @@ export const ControlledStakeForm = (props: { assetSelector: ReactNode }) => {
             totalStaked={poolTotalStaked?.toHuman() ?? ''}
             memberCount={bondedPoolLoadable.valueMaybe()?.unwrapOrDefault().memberCounter.toString() ?? ''}
             onRequestPoolChange={() => setShowPoolSelector(true)}
+            chain={currentChain.id.toString() ?? ''}
           />
         }
         estimatedYield={
