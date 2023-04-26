@@ -7,7 +7,6 @@ import { StakeStatus, StakeStatusIndicator } from '../StakeStatusIndicator'
 import Color from 'colorjs.io'
 import StakeFormSkeleton from './StakeForm.skeleton'
 import { isNilOrWhitespace } from '@util/nil'
-import { Chain } from '@domains/chains'
 
 const AssetSelectorContext = createContext<ReactNode>(null)
 
