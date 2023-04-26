@@ -57,8 +57,8 @@ export const createRmrk2NftAsyncGenerator: CreateNftAsyncGenerator<Rmrk2Nft> = a
         id: nft.id,
         name: nft.metadata_name ?? undefined,
         description: nft.metadata_description ?? undefined,
-        media: (nft.metadata_image || nft.resources[0]?.thumb) ?? undefined,
-        thumbnail: nft.resources[0]?.thumb ?? undefined,
+        media: nft.metadata_image || nft.resources[0]?.thumb || undefined,
+        thumbnail: nft.resources[0]?.thumb || nft.metadata_image || undefined,
         serialNumber: Number(nft.sn),
         collection: !nft.collection
           ? undefined

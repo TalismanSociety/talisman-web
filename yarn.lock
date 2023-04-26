@@ -8301,6 +8301,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@talismn/utils@workspace:^, @talismn/utils@workspace:packages/utils":
+  version: 0.0.0-use.local
+  resolution: "@talismn/utils@workspace:packages/utils"
+  dependencies:
+    "@talismn/tsconfig": "workspace:^"
+    "@types/react": ^18.2.0
+    typescript: ^5.0.4
+  languageName: unknown
+  linkType: soft
+
 "@talismn/web@workspace:apps/web":
   version: 0.0.0-use.local
   resolution: "@talismn/web@workspace:apps/web"
@@ -8347,6 +8357,7 @@ __metadata:
     "@talismn/tsconfig": "workspace:^"
     "@talismn/ui": "workspace:^"
     "@talismn/util": 0.0.0-pr677-20230414083406
+    "@talismn/utils": "workspace:^"
     "@types/lodash": ^4.14.191
     "@types/md5": ^2.3.2
     "@types/node": ^18.11.19
@@ -9077,6 +9088,17 @@ __metadata:
     "@types/scheduler": "*"
     csstype: ^3.0.2
   checksum: dea9d232d8df7ac357367a69dcb557711ab3d5501807ffa77cebeee73d49ee94d095f298e36853c63ed47cce097eee4c7eae2aaa8c02fac3f0171ec1b523a819
+  languageName: node
+  linkType: hard
+
+"@types/react@npm:^18.2.0":
+  version: 18.2.0
+  resolution: "@types/react@npm:18.2.0"
+  dependencies:
+    "@types/prop-types": "*"
+    "@types/scheduler": "*"
+    csstype: ^3.0.2
+  checksum: db3d92b423150222a666329f7aa3023e3e942044700557b8a7d161530847e621aec9f56c9e7f71761b06dd164c8a7b17ad52355863efe80963dffa5537e8e5fd
   languageName: node
   linkType: hard
 

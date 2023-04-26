@@ -1,0 +1,17 @@
+{
+  "name": "@talismn/utils",
+  "exports": {
+    ".": "./build/index.js",
+    "./react": "./build/react/index.js"
+  },
+  "scripts": {
+    "dev": "tsc --build --watch",
+    "build": "rm -rf build && yarn tsc --build"
+  },
+  "packageManager": "yarn@3.4.1",
+  "devDependencies": {
+    "@talismn/tsconfig": "workspace:^",
+    "@types/react": "^18.2.0",
+    "typescript": "^5.0.4"
+  }
+}

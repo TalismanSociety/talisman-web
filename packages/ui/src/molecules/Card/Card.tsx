@@ -1,25 +1,34 @@
 import { useTheme } from '@emotion/react'
 import { useGesture } from '@use-gesture/react'
 import { motion, useMotionTemplate, useSpring, useTransform } from 'framer-motion'
-import type { DetailedHTMLProps, ImgHTMLAttributes, ReactElement, ReactNode } from 'react'
+import type { DetailedHTMLProps, ImgHTMLAttributes, ReactNode } from 'react'
 import { Text } from '../..'
+import React from 'react'
 
 export type CardProps = {
-  media: ReactElement<any> | [ReactElement<any>, ReactElement<any>, ReactElement<any>, ReactElement<any>]
+  media?: ReactNode
   headlineText: ReactNode
-  overlineText: ReactNode
+  overlineText?: ReactNode
   mediaLabel?: ReactNode
+  onClick?: () => unknown
 }
 
 const Image = (props: DetailedHTMLProps<ImgHTMLAttributes<HTMLImageElement>, HTMLImageElement>) => (
   <img {...props} css={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }} />
 )
 
-const MultiMedia = (props: { children: [ReactNode, ReactNode, ReactNode, ReactNode] }) => (
-  <div css={{ display: 'flex', height: 'inherit' }}>
+const MultiMedia = (props: {
+  children:
+    | ReactNode
+    | [ReactNode, ReactNode]
+    | [ReactNode, ReactNode, ReactNode]
+    | [ReactNode, ReactNode, ReactNode, ReactNode]
+}) => (
+  <div css={{ display: 'flex', height: '100%' }}>
     <div
       css={{
         display: 'grid',
+        gridTemplateRows: '1fr 1fr',
         gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1fr)',
         gap: '1.6rem',
         margin: '1.6rem',
@@ -27,7 +36,7 @@ const MultiMedia = (props: { children: [ReactNode, ReactNode, ReactNode, ReactNo
         alignSelf: 'stretch',
       }}
     >
-      {props.children.map((child, index) => (
+      {React.Children.map(props.children, (child, index) => (
         <div key={index} css={{ position: 'relative', borderRadius: '0.8rem', overflow: 'hidden' }}>
           {child}
         </div>
@@ -93,7 +102,7 @@ const Card = Object.assign(
     return (
       <motion.article
         {...(cardBind() as any)}
-        style={{ transform }}
+        style={{ transform, cursor: props.onClick !== undefined ? 'pointer' : undefined }}
         css={{
           position: 'relative',
           opacity: 0.95,
@@ -103,6 +112,7 @@ const Card = Object.assign(
           backdropFilter: 'blur(16px)',
           overflow: 'hidden',
         }}
+        onClick={props.onClick}
       >
         <div css={{ position: 'relative', width: 'auto', aspectRatio: '1 / 1' }}>
           {props.media}

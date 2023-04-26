@@ -44,6 +44,7 @@
     "@talismn/nft": "workspace:^",
     "@talismn/ui": "workspace:^",
     "@talismn/util": "0.0.0-pr677-20230414083406",
+    "@talismn/utils": "workspace:^",
     "bignumber.js": "^9.1.1",
     "colorjs.io": "^0.4.3",
     "crypto-browserify": "^3.12.0",
