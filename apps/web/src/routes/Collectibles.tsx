@@ -9,7 +9,7 @@ import {
 } from '@domains/nfts'
 import { ChevronLeft, ChevronRight } from '@talismn/icons'
 import { type Nft } from '@talismn/nft'
-import { Button, Card, Hr, IconButton, Identicon, ListItem, MediaDialog, SegmentedButton, Text } from '@talismn/ui'
+import { Button, Card, Hr, Identicon, ListItem, MediaDialog, SegmentedButton, Text } from '@talismn/ui'
 import { usePagination } from '@talismn/utils/react'
 import { RefCallback, Suspense, useCallback, useMemo, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
