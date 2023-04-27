@@ -41,6 +41,7 @@ type PoolInfoProps = {
   memberCount: ReactNode
   onRequestPoolChange: () => unknown
   noPoolsAvailable?: boolean
+  chain: ReactNode
 }
 
 const PoolInfo = (props: PoolInfoProps) => {
@@ -107,7 +108,9 @@ const PoolInfo = (props: PoolInfoProps) => {
           </div>
         </dl>
         <Text.Body as="p" role="button">
-          Talisman automatically finds you the best available nomination pool
+          {props.chain !== 'polkadot'
+            ? `We recommend joining the Talisman Pool, which curates a selection of high quality validators.`
+            : `Talisman automatically finds you the best available nomination pool.`}
         </Text.Body>
         <Text.Body
           as="div"

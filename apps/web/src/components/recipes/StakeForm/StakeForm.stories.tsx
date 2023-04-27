@@ -44,6 +44,7 @@ Default.args = {
       totalStaked="24,054.55 DOT"
       memberCount="17"
       onRequestPoolChange={() => {}}
+      chain="polkadot"
     />
   ),
   estimatedYield: <StakeForm.EstimatedYield amount="63.33 DOT / Year" fiatAmount="$369.42" />,
