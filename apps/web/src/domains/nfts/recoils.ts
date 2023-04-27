@@ -4,13 +4,11 @@ import { spawn, Thread } from 'threads'
 import { type SubscribeNfts } from './worker'
 import { Observable, tap, catchError, bufferTime, filter } from 'rxjs'
 
-export type NftCollection = NonNullable<Nft['collection']> & { items: Nft[] }
-
 export const nftsState = atomFamily<Nft[], string>({
   key: 'Nfts',
   effects: (address: string) => [
     ({ setSelf }) => {
-      const batchSize = 50
+      const batchSize = 100
 
       let initialResolve = (value: Nft[]) => {}
       let initialReject = (reason?: any) => {}
@@ -57,24 +55,68 @@ export const nftsState = atomFamily<Nft[], string>({
   ],
 })
 
-export const nftCollectionsState = selectorFamily({
-  key: 'NftCollections',
+type Type = string
+type Chain = string | 'unknown'
+type CollectionId = string
+export type CollectionKey = `${Type}-${CollectionId}` | `${Type}-${Chain}-${CollectionId}`
+export type NftCollection = NonNullable<Nft['collection']> & { key: CollectionKey; items: Nft[] }
+type CollectionMap = ReadonlyMap<CollectionKey, NftCollection>
+
+export const getNftCollectionKey = (nft: Nft) =>
+  ('chain' in nft
+    ? `${nft.type}-${nft.chain}-${nft.collection?.id}`
+    : `${nft.type}-${nft.collection?.id}`) satisfies CollectionKey
+
+export const nftCollectionMapState = selectorFamily({
+  key: 'NftCollectionMap',
   get:
     (address: string) =>
     ({ get }) => {
-      const map = new Map<string, NftCollection>()
+      const map = new Map<CollectionKey, NftCollection>()
 
       for (const nft of get(nftsState(address))) {
         if (nft.collection !== undefined) {
-          if (map.has(nft.collection.id)) {
-            map.get(nft.collection.id)?.items.push(nft)
+          const key = getNftCollectionKey(nft)
+
+          if (map.has(key)) {
+            map.get(key)?.items.push(nft)
           } else {
-            map.set(nft.collection.id, { ...nft.collection, items: [nft] })
+            map.set(key, { ...nft.collection, key, items: [nft] })
           }
         }
       }
 
-      return map
+      return map as CollectionMap
     },
+  cachePolicy_UNSTABLE: { eviction: 'most-recent' },
+})
+
+export const nftCollectionsState = selectorFamily({
+  key: `NftCollections`,
+  get:
+    (address: string) =>
+    ({ get }) =>
+      Array.from(get(nftCollectionMapState(address)).values()),
+  cachePolicy_UNSTABLE: { eviction: 'most-recent' },
+})
+
+export const nftCollectionState = selectorFamily<
+  NftCollection | undefined,
+  { address: string; collectionKey: CollectionKey }
+>({
+  key: 'NftCollection',
+  get:
+    ({ address, collectionKey }) =>
+    ({ get }) =>
+      get(nftCollectionMapState(address)).get(collectionKey),
+  cachePolicy_UNSTABLE: { eviction: 'most-recent' },
+})
+
+export const nftCollectionItemsState = selectorFamily<Nft[], { address: string; collectionKey: CollectionKey }>({
+  key: 'NftCollectionItems',
+  get:
+    ({ address, collectionKey }) =>
+    ({ get }) =>
+      get(nftCollectionState({ address, collectionKey }))?.items ?? [],
   cachePolicy_UNSTABLE: { eviction: 'most-recent' },
 })

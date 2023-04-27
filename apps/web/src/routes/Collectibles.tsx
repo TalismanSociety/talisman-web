@@ -1,11 +1,18 @@
 import { TalismanHandLoader } from '@components/TalismanHandLoader'
 import { Account, selectedAccountsState } from '@domains/accounts'
-import { nftCollectionsState, nftsState, type NftCollection } from '@domains/nfts'
+import {
+  CollectionKey,
+  nftCollectionItemsState,
+  nftCollectionsState,
+  nftsState,
+  type NftCollection,
+} from '@domains/nfts'
 import { ChevronLeft, ChevronRight } from '@talismn/icons'
 import { type Nft } from '@talismn/nft'
-import { Button, Card, Hr, Identicon, ListItem, MediaDialog, SegmentedButton, Text } from '@talismn/ui'
+import { Button, Card, Hr, IconButton, Identicon, ListItem, MediaDialog, SegmentedButton, Text } from '@talismn/ui'
 import { usePagination } from '@talismn/utils/react'
 import { RefCallback, Suspense, useCallback, useMemo, useState } from 'react'
+import { Link, useSearchParams } from 'react-router-dom'
 import { useRecoilValue } from 'recoil'
 
 const NftCard = ({ nft }: { nft: Nft }) => {
@@ -44,28 +51,30 @@ const NftCard = ({ nft }: { nft: Nft }) => {
 }
 
 const NftCollectionCard = ({ collection }: { collection: NftCollection }) => (
-  <Card
-    media={
-      <Card.MultiMedia>
-        {collection.items
-          .map(nft => (
-            <Card.Image
-              key={nft.id}
-              src={nft.thumbnail?.replace(/ipfs:\/\/(ipfs\/)?/, 'https://talisman.mypinata.cloud/ipfs/')}
-            />
-          ))
-          .slice(0, 4)}
-      </Card.MultiMedia>
-    }
-    mediaLabel={`+${collection.items.length}`}
-    headlineText={collection.name}
-  />
+  <Link to={`/portfolio/collectibles?collectionKey=${collection.key}`}>
+    <Card
+      media={
+        <Card.MultiMedia>
+          {collection.items
+            .map(nft => (
+              <Card.Image
+                key={nft.id}
+                src={nft.thumbnail?.replace(/ipfs:\/\/(ipfs\/)?/, 'https://talisman.mypinata.cloud/ipfs/')}
+              />
+            ))
+            .slice(0, 4)}
+        </Card.MultiMedia>
+      }
+      mediaLabel={`+${collection.items.length}`}
+      headlineText={collection.name}
+    />
+  </Link>
 )
 
-const PolymorphicNftCard = ({ item }: { item: Nft | NftCollection }) =>
-  'items' in item ? <NftCollectionCard collection={item} /> : <NftCard nft={item} />
-
 const AccountNfts = (props: { account: Account; view: 'collections' | 'items' }) => {
+  const [searchParams] = useSearchParams()
+  const collectionKey = searchParams.get('collectionKey') as CollectionKey | null
+
   const targetWidth = 290
   const gap = 8
   const targetRows = 3
@@ -79,15 +88,18 @@ const AccountNfts = (props: { account: Account; view: 'collections' | 'items' })
     [availableWidth]
   )
 
-  const collections = useRecoilValue(
+  const view = collectionKey !== null ? ('items' as const) : props.view
+
+  const nftsOrCollections: Array<NftCollection | Nft> = useRecoilValue(
     // @ts-expect-error
-    props.view === 'collections' ? nftCollectionsState(props.account.address) : nftsState(props.account.address)
+    view === 'collections'
+      ? nftCollectionsState(props.account.address)
+      : collectionKey !== null
+      ? nftCollectionItemsState({ address: props.account.address, collectionKey })
+      : nftsState(props.account.address)
   )
 
-  const [items, { page, pageCount, previous, next }] = usePagination(
-    useMemo(() => Array.from(collections.values()), [collections]),
-    { limit }
-  )
+  const [items, { page, pageCount, previous, next }] = usePagination(nftsOrCollections, { limit })
 
   const ref = useCallback<RefCallback<HTMLElement>>(
     element => setAvailableWidth(element?.getBoundingClientRect().width),
@@ -160,9 +172,9 @@ const AccountNfts = (props: { account: Account; view: 'collections' | 'items' })
             },
           }}
         >
-          {items.map((nft, index) => (
+          {items.map((item, index) => (
             <div key={`${page}-${index}`}>
-              <PolymorphicNftCard item={nft} />
+              {'items' in item ? <NftCollectionCard collection={item} /> : <NftCard nft={item} />}
             </div>
           ))}
         </div>
@@ -174,16 +186,34 @@ const AccountNfts = (props: { account: Account; view: 'collections' | 'items' })
 }
 
 const Nfts = () => {
+  const [searchParams] = useSearchParams()
+  const collectionKey = searchParams.get('collectionKey')
+
   const [view, setView] = useState<'collections' | 'items'>('items')
   const accounts = useRecoilValue(selectedAccountsState)
 
   return (
     <div>
-      <div css={{ display: 'flex', justifyContent: 'flex-end' }}>
-        <SegmentedButton value={view} onChange={setView}>
-          <SegmentedButton.ButtonSegment value="collections">Collections</SegmentedButton.ButtonSegment>
-          <SegmentedButton.ButtonSegment value="items">Items</SegmentedButton.ButtonSegment>
-        </SegmentedButton>
+      <div css={{ display: 'flex' }}>
+        {collectionKey === null ? (
+          <SegmentedButton value={view} onChange={setView} css={{ marginLeft: 'auto' }}>
+            <SegmentedButton.ButtonSegment value="collections">Collections</SegmentedButton.ButtonSegment>
+            <SegmentedButton.ButtonSegment value="items">Items</SegmentedButton.ButtonSegment>
+          </SegmentedButton>
+        ) : (
+          <div css={{ flex: 1 }}>
+            <Button
+              as={Link}
+              variant="secondary"
+              leadingIcon={<ChevronLeft />}
+              to="/portfolio/collectibles"
+              css={{ marginBottom: '2rem' }}
+            >
+              Back
+            </Button>
+            <Hr />
+          </div>
+        )}
       </div>
       <Suspense fallback={<TalismanHandLoader />}>
         <section>

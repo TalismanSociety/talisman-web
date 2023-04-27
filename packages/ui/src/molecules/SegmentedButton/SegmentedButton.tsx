@@ -39,6 +39,7 @@ const ButtonSegment = (props: ButtonSegmentProps) => (
 )
 
 export type SegmentedButtonProps<T extends string | number> = PropsWithChildren<{
+  className?: string
   value: T | undefined
   onChange: (value: T) => unknown
 }>
@@ -52,7 +53,10 @@ const SegmentedButton = Object.assign(
         onChange: props.onChange,
       }}
     >
-      <section css={theme => ({ borderRadius: '1.4rem', padding: '0.4rem', backgroundColor: theme.color.surface })}>
+      <section
+        className={props.className}
+        css={theme => ({ borderRadius: '1.4rem', padding: '0.4rem', backgroundColor: theme.color.surface })}
+      >
         {props.children}
       </section>
     </SegmentedButtonContext.Provider>

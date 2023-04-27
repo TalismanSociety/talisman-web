@@ -24,14 +24,24 @@ const AccountSelector = (props: AccountSelectorProps) => {
 
   if (!useIsWeb3Injected()) {
     return (
-      <Button as="a" href="https://talisman.xyz/download" target="_blank" trailingIcon={<Download />}>
+      <Button
+        as="a"
+        href="https://talisman.xyz/download"
+        target="_blank"
+        trailingIcon={<Download />}
+        css={{ width: 'auto' }}
+      >
         Install wallet
       </Button>
     )
   }
 
   if (!allowExtensionConnection) {
-    return <Button onClick={() => setAllowExtensionConnection(true)}>Connect wallet</Button>
+    return (
+      <Button onClick={() => setAllowExtensionConnection(true)} css={{ width: 'auto' }}>
+        Connect wallet
+      </Button>
+    )
   }
 
   return (
