@@ -1,6 +1,5 @@
 import { selectedSubstrateAccountsState } from '@domains/accounts/recoils'
 import { selectorFamily } from 'recoil'
-// @ts-expect-error
 import { Thread, spawn } from 'threads'
 
 import { SubstrateApiContext } from '@domains/common'

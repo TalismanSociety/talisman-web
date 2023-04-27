@@ -21433,7 +21433,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"threads@npm:^1.7.0":
+"threads@npm:1.7.0":
   version: 1.7.0
   resolution: "threads@npm:1.7.0"
   dependencies:
@@ -21446,6 +21446,22 @@ __metadata:
     tiny-worker:
       optional: true
   checksum: 253574bc5c70d0663756d74c7a438ced64f9c6746ff550abea18b11919a24cc6b1be3322b4d0bdb8c6077e52774eb65f49549bb9deec24e693f149470c316ee1
+  languageName: node
+  linkType: hard
+
+"threads@patch:threads@npm%3A1.7.0#./.yarn/patches/threads-npm-1.7.0-c432dbb3e9.patch::locator=talisman-web%40workspace%3A.":
+  version: 1.7.0
+  resolution: "threads@patch:threads@npm%3A1.7.0#./.yarn/patches/threads-npm-1.7.0-c432dbb3e9.patch::version=1.7.0&hash=f2c7a7&locator=talisman-web%40workspace%3A."
+  dependencies:
+    callsites: ^3.1.0
+    debug: ^4.2.0
+    is-observable: ^2.1.0
+    observable-fns: ^0.6.1
+    tiny-worker: ">= 2"
+  dependenciesMeta:
+    tiny-worker:
+      optional: true
+  checksum: 7717ee8877b3ea9cea1019fb85365bcc77635358cb9232b4b7f0bed0a347725e529cac9f9c08bd2c8e97703c2c0f20adc38d74e03f5691da0cb29d0bdedae67a
   languageName: node
   linkType: hard
 

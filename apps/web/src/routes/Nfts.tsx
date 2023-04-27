@@ -1,79 +1,12 @@
 import { TalismanHandLoader } from '@components/TalismanHandLoader'
 import { Account, selectedAccountsState } from '@domains/accounts'
+import { nftCollectionsState, nftsState, type NftCollection } from '@domains/nfts'
 import { ChevronLeft, ChevronRight } from '@talismn/icons'
-import {
-  Nft,
-  createAcalaNftAsyncGenerator,
-  createEvmNftAsyncGenerator,
-  createRmrk1NftAsyncGenerator,
-  createRmrk2NftAsyncGenerator,
-  createStatemineNftAsyncGenerator,
-} from '@talismn/nft'
+import { type Nft } from '@talismn/nft'
 import { Button, Card, Hr, Identicon, ListItem, MediaDialog, SegmentedButton, Text } from '@talismn/ui'
 import { usePagination } from '@talismn/utils/react'
 import { RefCallback, Suspense, useCallback, useMemo, useState } from 'react'
-import { DefaultValue, atomFamily, selectorFamily, useRecoilValue } from 'recoil'
-
-const nftsState = atomFamily<Nft[], string>({
-  key: 'Nfts',
-  effects: (address: string) => [
-    ({ setSelf }) => {
-      let resolve = (_: Nft[]) => {}
-      let reject = (_: any) => {}
-
-      setSelf(
-        new Promise<Nft[]>((_resolve, _reject) => {
-          resolve = _resolve
-          reject = _reject
-        })
-      )
-      ;(address.startsWith('0x')
-        ? [createEvmNftAsyncGenerator]
-        : [
-            createAcalaNftAsyncGenerator,
-            createRmrk1NftAsyncGenerator,
-            createRmrk2NftAsyncGenerator,
-            createStatemineNftAsyncGenerator,
-          ]
-      ).map(async createNftAsyncGenerator => {
-        try {
-          for await (const nft of createNftAsyncGenerator(address, { batchSize: 50 })) {
-            resolve([nft])
-            setSelf(self => [...(self instanceof DefaultValue ? [] : self), nft])
-          }
-          resolve([])
-          setSelf(self => (self instanceof DefaultValue || self.length === 0 ? [] : self))
-        } catch (error) {
-          reject(error)
-        }
-      })
-    },
-  ],
-})
-
-type NftCollection = NonNullable<Nft['collection']> & { items: Nft[] }
-
-const nftCollectionsState = selectorFamily({
-  key: 'NftCollections',
-  get:
-    (address: string) =>
-    ({ get }) => {
-      const map = new Map<string, NftCollection>()
-
-      for (const nft of get(nftsState(address))) {
-        if (nft.collection !== undefined) {
-          if (map.has(nft.collection.id)) {
-            map.get(nft.collection.id)?.items.push(nft)
-          } else {
-            map.set(nft.collection.id, { ...nft.collection, items: [nft] })
-          }
-        }
-      }
-
-      return map
-    },
-  cachePolicy_UNSTABLE: { eviction: 'most-recent' },
-})
+import { useRecoilValue } from 'recoil'
 
 const NftCard = ({ nft }: { nft: Nft }) => {
   const [dialogOpen, setDialogOpen] = useState(false)
