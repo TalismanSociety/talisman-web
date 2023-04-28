@@ -117,11 +117,12 @@ const MediaDialog = Object.assign(
               gridTemplateRows: 'min-content minmax(0, 1fr)',
               gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1fr)',
               margin: 'auto',
-              width: 'revert',
-              maxWidth: '80%',
+              width: '80%',
+              maxWidth: 'revert',
               height: 'revert',
               maxHeight: 'revert',
               borderRadius: '2.4rem',
+              overflow: 'unset',
             },
           }}
         >
@@ -131,7 +132,6 @@ const MediaDialog = Object.assign(
               display: 'flex',
               justifyContent: 'space-between',
               alignItems: 'baseline',
-              marginBottom: '2.6rem',
               padding: '2.4rem',
             }}
           >
@@ -146,8 +146,10 @@ const MediaDialog = Object.assign(
             </Button>
           </div>
           <div css={{ gridArea: 'media', aspectRatio: '1 / 1' }}>{media}</div>
-          <div css={{ 'gridArea': 'content', 'padding': '2.4rem', '@media(min-width: 1024px)': { overflow: 'auto' } }}>
-            {content}
+          <div css={{ gridArea: 'content', display: 'flex', flexDirection: 'column' }}>
+            <div css={{ 'padding': '2.4rem', '@media(min-width: 1024px)': { flex: '1 1 0', overflow: 'auto' } }}>
+              {content}
+            </div>
           </div>
         </Dialog>
       </>

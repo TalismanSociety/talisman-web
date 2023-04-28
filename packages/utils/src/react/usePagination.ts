@@ -1,9 +1,9 @@
-import { useState, useEffect, useMemo, useCallback } from 'react'
+import { useState, useEffect, useMemo, useCallback, type DependencyList } from 'react'
 
-export const usePagination = <T>(items: T[], { limit }: { limit: number }) => {
+export const usePagination = <T>(items: T[], { limit }: { limit: number }, deps?: DependencyList) => {
   const [offset, setOffset] = useState(0)
 
-  useEffect(() => setOffset(0), [items])
+  useEffect(() => setOffset(0), deps ?? [items])
 
   const pageCount = Math.ceil(items.length / limit)
   const page = (offset + limit) / limit - 1

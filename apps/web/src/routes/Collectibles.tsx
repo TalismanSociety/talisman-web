@@ -99,7 +99,10 @@ const AccountNfts = (props: { account: Account; view: 'collections' | 'items' })
       : nftsState(props.account.address)
   )
 
-  const [items, { page, pageCount, previous, next }] = usePagination(nftsOrCollections, { limit })
+  const [items, { page, pageCount, previous, next }] = usePagination(nftsOrCollections, { limit }, [
+    view,
+    props.account.address,
+  ])
 
   const ref = useCallback<RefCallback<HTMLElement>>(
     element => setAvailableWidth(element?.getBoundingClientRect().width),

@@ -63,3 +63,16 @@ Pdf.args = {
   ...Default.args,
   media: <MediaDialog.Player src="https://assets.polkadot.network/Polkadot-whitepaper.pdf" />,
 }
+
+export const Overflow = Default.bind({})
+
+Overflow.args = {
+  ...Default.args,
+  content: Array.from({ length: 20 }).map((_, index) => (
+    <Text.Body key={index} as="p">
+      Vitae ullamcorper egestas est tellus vitae. Tincidunt in sagittis vulputate velit porttitor in scelerisque eget
+      egestas. Non lobortis risus integer erat nec ac viverra nisl. In risus interdum faucibus purus commodo netus in
+      lectus enim. Neque slds dsakdk loo...
+    </Text.Body>
+  )),
+}
