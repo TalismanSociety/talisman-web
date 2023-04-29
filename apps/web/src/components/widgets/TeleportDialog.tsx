@@ -49,7 +49,12 @@ const TeleportForm = () => {
   }
 
   const routes = useMemo(
-    () => bridge.router.getRouters(filterParams({ from: fromChain, to: toChain, token })),
+    () =>
+      bridge.router
+        .getAvailableRouters()
+        .filter(x => fromChain === undefined || x.from.id === fromChain.id)
+        .filter(x => toChain === undefined || x.to.id === toChain.id)
+        .filter(x => token === undefined || x.token === token),
     [bridge.router, toChain, fromChain, token]
   )
 

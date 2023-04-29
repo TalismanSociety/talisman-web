@@ -57,7 +57,11 @@ export const bridgeApiProvider = new ApiProvider()
 export const bridgeState = selector({
   key: 'Bridge',
   get: async () => {
-    const bridge = new Bridge({ adapters: Object.values(availableAdapters) })
+    const bridge = new Bridge({
+      adapters: Object.values(availableAdapters),
+      // TODO: re-enable once we have custom recipient address, to target EVM addresses
+      disabledRouters: [{ to: 'moonbeam' }, { to: 'moonriver' }],
+    })
     await bridge.isReady
     return bridge
   },
