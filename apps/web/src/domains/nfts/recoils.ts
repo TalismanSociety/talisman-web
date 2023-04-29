@@ -1,8 +1,8 @@
 import { type Nft } from '@talismn/nft'
 import { atomFamily, DefaultValue, selectorFamily } from 'recoil'
+import { bufferTime, filter, Observable, tap } from 'rxjs'
 import { spawn, Thread } from 'threads'
 import { type SubscribeNfts } from './worker'
-import { Observable, tap, catchError, bufferTime, filter } from 'rxjs'
 
 export const nftsState = atomFamily<Nft[], string>({
   key: 'Nfts',
@@ -31,10 +31,6 @@ export const nftsState = atomFamily<Nft[], string>({
               initialResolve(nfts)
               await initialPromise
               setSelf(self => [...(self instanceof DefaultValue ? [] : self), ...nfts])
-            }),
-            catchError((error, caught) => {
-              initialReject(error)
-              return caught
             })
           )
           .subscribe({
@@ -42,6 +38,10 @@ export const nftsState = atomFamily<Nft[], string>({
               initialResolve([])
               await initialPromise
               setSelf(self => (self instanceof DefaultValue || self.length === 0 ? [] : self))
+              Thread.terminate(worker)
+            },
+            error: error => {
+              initialReject(error)
               Thread.terminate(worker)
             },
           })
