@@ -112,7 +112,7 @@ const Overview = () => (
         'crowdloans'
       `,
       '@media(min-width: 1024px)': {
-        gridTemplateColumns: '1fr 1fr',
+        gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1fr)',
         gridTemplateAreas: `
           'assets allocation'
           'assets staking'
