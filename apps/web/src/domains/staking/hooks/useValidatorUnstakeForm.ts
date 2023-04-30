@@ -24,23 +24,40 @@ export const useValidatorUnstakeForm = (account?: string) => {
     )
   )
 
+  const isLeaving = useMemo(
+    () =>
+      input.decimalAmount !== undefined &&
+      available.decimalAmount !== undefined &&
+      input.decimalAmount.toString() === input.amount &&
+      input.decimalAmount.toString() === available.decimalAmount.toString(),
+    [available.decimalAmount, input.amount, input.decimalAmount]
+  )
+
   const error = useMemo(() => {
     if (queriesLoadable.state !== 'hasValue') return
 
-    if (available.decimalAmount !== undefined && input.decimalAmount?.planck.gt(available.decimalAmount.planck)) {
-      return new Error('Insufficient balance')
-    }
+    if (!isLeaving) {
+      if (available.decimalAmount !== undefined && input.decimalAmount?.planck.gt(available.decimalAmount.planck)) {
+        return new Error('Insufficient balance')
+      }
 
-    if (
-      available.decimalAmount !== undefined &&
-      input.decimalAmount !== undefined &&
-      !input.decimalAmount.planck.eq(available.decimalAmount.planck) &&
-      minNeededForMembership.decimalAmount !== undefined &&
-      available.decimalAmount.planck.sub(input.decimalAmount.planck).lt(minNeededForMembership.decimalAmount.planck)
-    ) {
-      return new Error(`Need ${minNeededForMembership.decimalAmount?.toHuman()} to stay active`)
+      if (
+        available.decimalAmount !== undefined &&
+        input.decimalAmount !== undefined &&
+        !input.decimalAmount.planck.eq(available.decimalAmount.planck) &&
+        minNeededForMembership.decimalAmount !== undefined &&
+        available.decimalAmount.planck.sub(input.decimalAmount.planck).lt(minNeededForMembership.decimalAmount.planck)
+      ) {
+        return new Error(`Need ${minNeededForMembership.decimalAmount?.toHuman()} to stay active`)
+      }
     }
-  }, [queriesLoadable.state, available.decimalAmount, input.decimalAmount, minNeededForMembership.decimalAmount])
+  }, [
+    queriesLoadable.state,
+    isLeaving,
+    available.decimalAmount,
+    input.decimalAmount,
+    minNeededForMembership.decimalAmount,
+  ])
 
   return {
     extrinsic: {
@@ -68,6 +85,7 @@ export const useValidatorUnstakeForm = (account?: string) => {
     resulting,
     setAmount,
     error,
+    isLeaving,
     isReady: queriesLoadable.state === 'hasValue',
   }
 }
