@@ -14,6 +14,7 @@ const UnstakeDialog = (props: { account?: string; onDismiss: () => unknown }) =>
     available,
     resulting,
     setAmount,
+    isLeaving,
     error: inputError,
   } = usePoolUnstakeForm(props.account)
 
@@ -26,8 +27,6 @@ const UnstakeDialog = (props: { account?: string; onDismiss: () => unknown }) =>
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [unbondExtrinsic.contents?.status?.isInBlock]
   )
-
-  const isLeaving = available.decimalAmount !== undefined && decimalAmount?.planck.eq(available.decimalAmount.planck)
 
   return (
     <BaseUnstakeDialog
