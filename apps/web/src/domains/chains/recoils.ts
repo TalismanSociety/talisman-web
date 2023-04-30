@@ -1,11 +1,11 @@
 import { SubstrateApiContext, substrateApiState } from '@domains/common'
 import { BN } from '@polkadot/util'
 import { ToBn } from '@polkadot/util/types'
-import Decimal from '@util/Decimal'
 import { useContext } from 'react'
 import { atom, selector, selectorFamily } from 'recoil'
 import { ChainContext } from '.'
 import { Chain, chains } from './config'
+import { Decimal } from '@talismn/math'
 
 export const _chainsState = atom({ key: '_Chains', default: chains })
 

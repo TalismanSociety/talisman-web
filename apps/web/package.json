@@ -41,6 +41,7 @@
     "@talismn/connect-ui": "^1.1.2",
     "@talismn/dot-pool-selector": "snapshot",
     "@talismn/icons": "workspace:^",
+    "@talismn/math": "workspace:^",
     "@talismn/ui": "workspace:^",
     "@talismn/util": "0.1.8",
     "bignumber.js": "^9.1.1",

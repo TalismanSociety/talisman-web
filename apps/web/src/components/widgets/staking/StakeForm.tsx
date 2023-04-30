@@ -9,6 +9,7 @@ import { useChainState, useEraEtaFormatter, useExtrinsic, useTokenAmountFromPlan
 import { useInflation, usePoolAddForm, usePoolStakes } from '@domains/nominationPools/hooks'
 import { eraStakersState, useRecommendedPoolsState } from '@domains/nominationPools/recoils'
 import { createAccounts } from '@domains/nominationPools/utils'
+import { Decimal } from '@talismn/math'
 import { CircularProgressIndicator, Select } from '@talismn/ui'
 import { Maybe } from '@util/monads'
 import BN from 'bn.js'
@@ -29,7 +30,6 @@ import { constSelector, useRecoilValue, useRecoilValueLoadable, waitForAll } fro
 import AccountSelector from '../AccountSelector'
 import AddStakeDialog from './AddStakeDialog'
 import UnstakeDialog from './UnstakeDialog'
-import Decimal from '@util/Decimal'
 
 const ExistingPool = (props: { account: Account }) => {
   const pool = usePoolStakes({ address: props.account.address })

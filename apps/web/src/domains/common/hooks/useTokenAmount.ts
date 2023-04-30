@@ -1,6 +1,6 @@
 import { useNativeTokenDecimalState, useNativeTokenPriceState } from '@domains/chains/recoils'
 import { BN } from '@polkadot/util'
-import Decimal from '@util/Decimal'
+import { Decimal } from '@talismn/math'
 import { useMemo, useState } from 'react'
 import { useRecoilValue, waitForAll } from 'recoil'
 

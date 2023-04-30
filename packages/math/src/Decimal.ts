@@ -1,5 +1,5 @@
 import { BN, bnToBn, formatBalance } from '@polkadot/util'
-import { ToBn } from '@polkadot/util/types'
+import { type ToBn } from '@polkadot/util/types'
 
 export default class Decimal {
   // Too large values lead to massive memory usage. Limit to something sensible.
@@ -14,7 +14,7 @@ export default class Decimal {
 
     const badCharacter = input.match(/[^0-9.]/)
     if (badCharacter) {
-      throw new Error(`Invalid character at position ${badCharacter.index! + 1}`)
+      throw new Error(`Invalid character at position ${(badCharacter.index ?? 0) + 1}`)
     }
 
     let whole: string
@@ -32,6 +32,7 @@ export default class Decimal {
           throw new Error('Fewer than two elements in split result. This must not happen here.')
         case 2:
           if (!parts[1]) throw new Error('Fractional part missing')
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
           whole = parts[0]!
           fractional = parts[1].replace(/0+$/, '')
           break
@@ -52,26 +53,21 @@ export default class Decimal {
   private constructor(public planck: BN, public decimals: number, public unit?: string) {}
 
   toNumber() {
-    return Number(
-      formatBalance(this.planck, {
-        forceUnit: '-',
-        withSi: false,
-        withUnit: false,
-        decimals: this.decimals,
-      }).replaceAll(',', '')
-    )
+    return Number(this.toString())
   }
 
-  // TODO: improve precision
-  // but to be honest maybe we shouldn't expect
-  // precision from a string representation?
   toString() {
-    return formatBalance(this.planck, {
-      forceUnit: '-',
-      withSi: false,
-      withUnit: false,
-      decimals: this.decimals,
-    }).replaceAll(',', '')
+    const factor = new BN(10).pow(new BN(this.decimals))
+    const whole = this.planck.div(factor)
+    const fractional = this.planck.mod(factor)
+
+    if (fractional.isZero()) {
+      return whole.toString()
+    } else {
+      const fullFractionalPart = fractional.toString().padStart(this.decimals, '0')
+      const trimmedFractionalPart = fullFractionalPart.replace(/0+$/, '')
+      return `${whole.toString()}.${trimmedFractionalPart}`
+    }
   }
 
   toHuman(options = { withUnit: true }) {
@@ -83,7 +79,10 @@ export default class Decimal {
 
     const stringWithoutUnit = raw.includes('.') ? raw.replace(/0+$/, '') : raw
 
-    return stringWithoutUnit.replace(/\.0*$/, '') + (options.withUnit ? ` ${this.unit?.toUpperCase()}` : '')
+    return (
+      stringWithoutUnit.replace(/\.0*$/, '') +
+      (options.withUnit && this.unit !== undefined ? ` ${this.unit?.toUpperCase()}` : '')
+    )
   }
 
   static #verifyDecimals(fractionalDigits: number): void {

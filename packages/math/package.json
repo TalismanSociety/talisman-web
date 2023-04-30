@@ -1,0 +1,18 @@
+{
+  "name": "@talismn/math",
+  "exports": "./build/index.js",
+  "scripts": {
+    "dev": "tsc --build --watch tsconfig.json",
+    "build": "rm -rf build && tsc --build tsconfig.json",
+    "lint": "eslint src",
+    "check-types": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@polkadot/util": "^10.4.2",
+    "eslint": "^8.39.0",
+    "typescript": "^5.0.4"
+  },
+  "peerDependencies": {
+    "@polkadot/util": "*"
+  }
+}
