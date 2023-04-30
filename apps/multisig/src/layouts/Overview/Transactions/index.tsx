@@ -52,10 +52,14 @@ const TransactionsList = ({ transactions }: { transactions: Transaction[] }) => 
       `}
     >
       {groupedTransactions.map(([day, transactions]) => (
-        <div>
+        <div key={day}>
           <p>{day}</p>
           {transactions.map(t => {
-            return <TransactionSummaryRow onClick={() => setOpenTransaction(t)} t={t} />
+            return (
+              <motion.div key={t.hash} whileHover={{ scale: 1.03 }} css={{ padding: '12px 16px', cursor: 'pointer' }}>
+                <TransactionSummaryRow onClick={() => setOpenTransaction(t)} t={t} />
+              </motion.div>
+            )
           })}
         </div>
       ))}
@@ -63,8 +67,18 @@ const TransactionsList = ({ transactions }: { transactions: Transaction[] }) => 
         onRequestDismiss={() => {
           setOpenTransaction(undefined)
         }}
+        onClose={() => {
+          setOpenTransaction(undefined)
+        }}
         title={<FullScreenDialogTitle t={openTransaction} />}
-        css={{ maxWidth: '781px', minWidth: '700px', width: '100%' }}
+        css={{
+          header: {
+            marginBottom: '32px',
+          },
+          maxWidth: '781px',
+          minWidth: '700px',
+          width: '100%',
+        }}
         open={!!openTransaction}
       >
         <FullScreenDialogContents t={openTransaction} />

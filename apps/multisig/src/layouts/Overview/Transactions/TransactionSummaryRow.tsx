@@ -2,7 +2,6 @@ import { css } from '@emotion/css'
 import { ArrowUp, Check, Share2 } from '@talismn/icons'
 import { Tooltip } from '@talismn/ui'
 import { formatUsd } from '@util/numbers'
-import { motion } from 'framer-motion'
 
 import { formattedHhMm } from './utils'
 import { Transaction, TransactionType } from '.'
@@ -11,15 +10,11 @@ const TransactionSummaryRow = ({ t, onClick }: { t: Transaction; onClick?: () =>
   const threshold = 2
   const signedCount = Object.values(t.approvals).filter(Boolean).length
   return (
-    <motion.div
-      key={t.hash}
-      whileHover={{ scale: 1.03 }}
+    <div
       onClick={onClick}
       className={css`
-        cursor: pointer;
         display: grid;
         align-items: center;
-        padding: 12px 16px;
         grid-template-columns: 44px 1fr auto auto;
         grid-template-rows: 16px 16px;
         grid-template-areas:
@@ -118,7 +113,7 @@ const TransactionSummaryRow = ({ t, onClick }: { t: Transaction; onClick?: () =>
           )}
         </Tooltip>
       )}
-    </motion.div>
+    </div>
   )
 }
 

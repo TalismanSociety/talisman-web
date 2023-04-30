@@ -7,6 +7,7 @@ import { Dialog, DialogProps, IconButton, Text } from '../../atoms'
 export type FullScreenDialogProps = Omit<DialogProps, 'title'> & {
   title: ReactNode
   onRequestDismiss: () => unknown
+  onClose?: () => unknown
 }
 
 const slideInRight = keyframes`
@@ -34,14 +35,15 @@ const backdropKeyframes = keyframes`
 
 export const FullScreenDialogQuarterBreakPoint = '768px'
 
-export const FulScreenDialogQuarterSelector = `@media(min-width: ${FullScreenDialogQuarterBreakPoint})`
+export const FullScreenDialogQuarterSelector = `@media(min-width: ${FullScreenDialogQuarterBreakPoint})`
 
 const FullScreenDialog = ({ title, children, ...props }: FullScreenDialogProps) => {
+  const { onRequestDismiss, ...rest } = props
   const theme = useTheme()
   return (
     <Dialog
-      {...props}
-      onClickBackdrop={props.onRequestDismiss}
+      {...rest}
+      onClickBackdrop={onRequestDismiss}
       css={{
         'background': theme.color.background,
         'border': 'none',
@@ -58,7 +60,7 @@ const FullScreenDialog = ({ title, children, ...props }: FullScreenDialogProps) 
             animation: `${backdropKeyframes} .5s forwards`,
           },
         },
-        [`${FulScreenDialogQuarterSelector}`]: {
+        [`${FullScreenDialogQuarterSelector}`]: {
           'width': 'min-content',
           'marginLeft': 'auto',
           'marginRight': 0,
@@ -76,7 +78,7 @@ const FullScreenDialog = ({ title, children, ...props }: FullScreenDialogProps) 
           alignItems: 'center',
           gap: '1rem',
           marginBottom: '5.2rem',
-          [`${FulScreenDialogQuarterSelector}`]: {
+          [`${FullScreenDialogQuarterSelector}`]: {
             marginBottom: '4.8rem',
           },
         }}
