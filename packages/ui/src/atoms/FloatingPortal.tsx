@@ -8,7 +8,7 @@ const FloatingPortal = (props: Exclude<Parameters<typeof BaseFloatingPortal>['0'
   useLayoutEffect(
     () =>
       setRoot(
-        Array.from(document.querySelectorAll('dialog[open]'))
+        Array.from(document.querySelectorAll('dialog'))
           .filter(x => x.contains(element))
           .at(-1) ?? document.body
       ),
