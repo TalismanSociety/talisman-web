@@ -4,6 +4,7 @@ import {
   createRmrk1NftAsyncGenerator,
   createRmrk2NftAsyncGenerator,
   createStatemineNftAsyncGenerator,
+  createUniqueNetworkNftAsyncGenerator,
   type Nft,
 } from '@talismn/nft'
 import { Observable } from 'rxjs'
@@ -19,6 +20,7 @@ const subscribeNfts = (address: string, options: { batchSize: number }) =>
             createRmrk1NftAsyncGenerator,
             createRmrk2NftAsyncGenerator,
             createStatemineNftAsyncGenerator,
+            createUniqueNetworkNftAsyncGenerator,
           ]
     ).map(async createNftAsyncGenerator => {
       try {

@@ -33,6 +33,10 @@ export type Rmrk2Nft = BaseNft & {
   children?: Rmrk2Nft[]
 }
 
+export type UniqueNetworkNft = BaseNft & {
+  type: 'unique-network'
+}
+
 export type EvmNftAttribute = {
   trait_type: string
   value: string
@@ -43,7 +47,7 @@ export type EvmNft = BaseNft & {
   chain: string
 }
 
-export type Nft = SubstrateNft | AcalaNft | Rmrk1Nft | Rmrk2Nft | EvmNft
+export type Nft = SubstrateNft | AcalaNft | Rmrk1Nft | Rmrk2Nft | EvmNft | UniqueNetworkNft
 
 export type CreateNftAsyncGenerator<T extends BaseNft = BaseNft> = {
   (address: string, options: { batchSize: number }): AsyncGenerator<T>

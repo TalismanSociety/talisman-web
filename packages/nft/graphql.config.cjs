@@ -30,5 +30,11 @@ module.exports = {
       documents: 'src/rmrk2.ts',
       extensions: extensions('src/gql/rmrk2/'),
     },
+    unique: {
+      overwrite: true,
+      schema: 'https://api-unique.uniquescan.io/v1/graphql',
+      documents: 'src/unique.ts',
+      extensions: extensions('src/gql/unique/'),
+    },
   },
 }

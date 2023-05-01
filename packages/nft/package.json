@@ -2,7 +2,7 @@
   "name": "@talismn/nft",
   "exports": "./build/index.js",
   "scripts": {
-    "codegen": "yarn graphql-codegen --config graphql.config.cjs --project statemine && yarn graphql-codegen --config graphql.config.cjs --project rmrk1 && yarn graphql-codegen --config graphql.config.cjs --project rmrk2",
+    "codegen": "yarn graphql-codegen --config graphql.config.cjs --project statemine && yarn graphql-codegen --config graphql.config.cjs --project rmrk1 && yarn graphql-codegen --config graphql.config.cjs --project rmrk2 && yarn graphql-codegen --config graphql.config.cjs --project unique",
     "dev": "tsc --build --watch",
     "build": "rm -rf build && yarn tsc --build"
   },
