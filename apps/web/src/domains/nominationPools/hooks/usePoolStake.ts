@@ -23,10 +23,14 @@ export const usePoolStakes = <T extends Account | Account[]>(account: T) => {
   const accountPools = useMemo(
     () =>
       _poolMembers
-        .map((x, index) => ({ account: accounts[index], poolMembers: x }))
+        .map((x, index) => ({
+          account: accounts[index],
+          poolMembers: x,
+          pendingRewards: pendingRewards.find(rewards => rewards[0] === accounts[index]?.address)?.[1],
+        }))
         .filter(x => x.poolMembers.isSome)
         .map(x => ({ ...x, poolMember: x.poolMembers.unwrap() })),
-    [_poolMembers, accounts]
+    [_poolMembers, accounts, pendingRewards]
   )
 
   const stashIds = useMemo(
@@ -55,9 +59,10 @@ export const usePoolStakes = <T extends Account | Account[]>(account: T) => {
     () =>
       accountPools
         // Calculate unbondings
-        .map(({ account, poolMember }) => ({
+        .map(({ account, poolMember, pendingRewards }) => ({
           account,
           poolMember,
+          pendingRewards,
           ...getPoolUnbonding(poolMember, sessionProgress),
         }))
         // Calculate remaining values
@@ -78,12 +83,11 @@ export const usePoolStakes = <T extends Account | Account[]>(account: T) => {
             status,
             poolName: poolMetadatum[index]?.toUtf8(),
             poolMember,
-            pendingRewards: pendingRewards.find(rewards => rewards[0] === accounts[index]?.address)?.[1],
             totalUnlocking: rest.unlockings.reduce((previous, current) => previous + current.amount, 0n),
             slashingSpan,
           }
         }),
-    [accounts, eraStakers, pendingRewards, accountPools, poolMetadatum, poolNominators, sessionProgress, slashingSpans]
+    [eraStakers, accountPools, poolMetadatum, poolNominators, sessionProgress, slashingSpans]
   )
 
   type Result = typeof pools
