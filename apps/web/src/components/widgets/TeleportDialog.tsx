@@ -333,7 +333,7 @@ const TeleportForm = () => {
         onRequestDismiss={useCallback(() => setTokenSelectorOpen(false), [])}
       >
         {tokensWithBalance
-          .sort((a, b) => b.fiatAmount - a.fiatAmount)
+          .sort((a, b) => b.fiatAmount - a.fiatAmount || b.amount.planck.cmp(a.amount.planck))
           .map(x => (
             <TokenSelectorItem
               logoSrc={x.logo ?? ''}
@@ -344,7 +344,6 @@ const TeleportForm = () => {
                 currency: 'usd',
                 compactDisplay: 'short',
               })}
-              disabled={x.amount.planck.isZero()}
               onClick={() => {
                 setToken(x.symbol)
                 setTokenSelectorOpen(false)
