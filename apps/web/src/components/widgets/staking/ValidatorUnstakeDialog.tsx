@@ -14,6 +14,7 @@ const ValidatorUnstakeDialog = (props: { accountAddress: string; open: boolean; 
     available,
     resulting,
     setAmount,
+    isLeaving,
     error: inputError,
   } = useValidatorUnstakeForm(props.open ? props.accountAddress : undefined)
 
@@ -26,9 +27,6 @@ const ValidatorUnstakeDialog = (props: { accountAddress: string; open: boolean; 
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [unbondExtrinsic.contents?.status?.isInBlock]
   )
-
-  const isLeaving = available.decimalAmount !== undefined && decimalAmount?.planck.eq(available.decimalAmount.planck)
-
   return (
     <BaseUnstakeDialog
       isError={inputError !== undefined}

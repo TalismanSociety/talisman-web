@@ -1,8 +1,7 @@
 import BaseAddStakeDialog from '@components/recipes/AddStakeDialog'
+import { useExtrinsic } from '@domains/common'
 import { usePoolAddForm } from '@domains/nominationPools/hooks'
 import { useCallback, useEffect } from 'react'
-
-import useExtrinsic from '../../domains/common/hooks/useExtrinsic'
 
 const AddStakeDialog = (props: { account?: string; onDismiss: () => unknown }) => {
   const bondExtraExtrinsic = useExtrinsic('nominationPools', 'bondExtra')

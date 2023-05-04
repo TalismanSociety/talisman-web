@@ -1,18 +1,12 @@
 import ClaimStakeDialog from '@components/recipes/ClaimStakeDialog'
 import { PoolStakeItem as PoolStakeItemComponent, WithdrawChip } from '@components/recipes/StakeItem'
-import { StakeStatus } from '@components/recipes/StakeStatusIndicator'
-import { Account } from '@domains/accounts/recoils'
-import { useTokenAmountFromPlanck } from '@domains/common/hooks'
-import { useEraEtaFormatter } from '@domains/common/hooks/useEraEta'
-import { UInt } from '@polkadot/types-codec'
-import { PalletNominationPoolsPoolMember } from '@polkadot/types/lookup'
-import { CircularProgressIndicator } from '@talismn/ui'
-import BN from 'bn.js'
-import { ReactNode, useCallback, useMemo, useState } from 'react'
+import { useEraEtaFormatter, useExtrinsic, useTokenAmountFromPlanck } from '@domains/common'
+import { useCallback, useState } from 'react'
 import { useRecoilValue, waitForAll } from 'recoil'
 
-import { nativeTokenPriceState, useNativeTokenDecimalState } from '../../domains/chains/recoils'
-import useExtrinsic from '../../domains/common/hooks/useExtrinsic'
+import { Account } from '@domains/accounts'
+import { useNativeTokenDecimalState, useNativeTokenPriceState } from '@domains/chains'
+import { usePoolStakes } from '@domains/nominationPools'
 import AddStakeDialog from './AddStakeDialog'
 import UnstakeDialog from './UnstakeDialog'
 
@@ -21,22 +15,10 @@ const PoolStakeItem = ({
   hideIdenticon,
 }: {
   hideIdenticon?: boolean
-  item: {
-    status?: StakeStatus
-    account?: Account
-    poolName?: ReactNode
-    poolMember: PalletNominationPoolsPoolMember
-    pendingRewards?: UInt
-    withdrawable: bigint
-    unbondings: {
-      amount: bigint
-      erasTilWithdrawable: BN
-    }[]
-    slashingSpan: number
-  }
+  item: ReturnType<typeof usePoolStakes<Account[]>>[number]
 }) => {
   const [decimal, nativeTokenPrice] = useRecoilValue(
-    waitForAll([useNativeTokenDecimalState(), nativeTokenPriceState('usd')])
+    waitForAll([useNativeTokenDecimalState(), useNativeTokenPriceState()])
   )
 
   const [isUnstaking, setIsUnstaking] = useState(false)
@@ -49,15 +31,10 @@ const PoolStakeItem = ({
 
   const pendingRewards = useTokenAmountFromPlanck(item.pendingRewards)
 
-  const totalUnlocking = useMemo(
-    () => item.unbondings?.reduce((previous, current) => previous + current.amount, 0n),
-    [item.unbondings]
-  )
-
   const eraEtaFormatter = useEraEtaFormatter()
-  const unlocks = item.unbondings?.map(x => ({
+  const unlocks = item.unlockings?.map(x => ({
     amount: decimal.fromPlanck(x.amount).toHuman(),
-    eta: eraEtaFormatter(x.erasTilWithdrawable) ?? <CircularProgressIndicator size="1em" />,
+    eta: eraEtaFormatter(x.erasTilWithdrawable),
   }))
 
   return (
@@ -111,9 +88,9 @@ const PoolStakeItem = ({
           )
         }
         status={
-          totalUnlocking > 0n && (
+          item.totalUnlocking > 0n && (
             <PoolStakeItemComponent.UnstakingStatus
-              amount={decimal.fromPlanck(totalUnlocking).toHuman()}
+              amount={decimal.fromPlanck(item.totalUnlocking).toHuman()}
               unlocks={unlocks ?? []}
             />
           )

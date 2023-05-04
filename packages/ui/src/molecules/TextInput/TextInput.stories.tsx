@@ -6,6 +6,7 @@ export default {
   title: 'Molecules/TextInput',
   component: TextInput,
   subcomponents: {
+    ErrorLabel: TextInput.ErrorLabel,
     LabelButton: TextInput.LabelButton,
   },
   parameters: {

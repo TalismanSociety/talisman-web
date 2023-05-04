@@ -15,9 +15,9 @@ export const getPoolUnbonding = (
     .filter(x => x.erasTilWithdrawable === undefined)
     .reduce((previous, current) => previous + current.amount, 0n)
 
-  const unbondings = all.filter(
+  const unlockings = all.filter(
     (x): x is { amount: bigint; erasTilWithdrawable: BN } => x.erasTilWithdrawable !== undefined
   )
 
-  return { withdrawable, unbondings }
+  return { withdrawable, unlockings }
 }

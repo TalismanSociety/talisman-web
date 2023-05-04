@@ -1,14 +1,13 @@
+import { ChainContext } from '@domains/chains'
 import { ApiPromise } from '@polkadot/api'
 import { AddressOrPair } from '@polkadot/api/types'
 import { web3FromAddress } from '@polkadot/extension-dapp'
 import { ISubmittableResult } from '@polkadot/types/types'
 import { useCallback, useContext, useState } from 'react'
-import { useRecoilCallback, useRecoilValueLoadable } from 'recoil'
-
-import { chainIdState, chainState } from '../../chains/recoils'
+import { useRecoilCallback } from 'recoil'
+import { SubstrateApiContext, substrateApiState } from '..'
 import { extrinsicMiddleware } from '../extrinsicMiddleware'
 import { toastExtrinsic } from '../utils'
-import { SubstrateApiContext, substrateApiState } from '..'
 
 type ExtrinsicMap = PickKnownKeys<{
   // @ts-ignore
@@ -33,8 +32,8 @@ export const useExtrinsicBatch = <
 >(
   extrinsics: TExtrinsics
 ) => {
+  const chain = useContext(ChainContext)
   const apiEndpoint = useContext(SubstrateApiContext).endpoint
-  const chainLoadable = useRecoilValueLoadable(chainState)
 
   const [loadable, setLoadable] = useState<
     | { state: 'idle'; contents: undefined }
@@ -50,8 +49,7 @@ export const useExtrinsicBatch = <
       const { snapshot } = callbackInterface
 
       const promiseFunc = async () => {
-        const [chainId, api, extension] = await Promise.all([
-          snapshot.getPromise(chainIdState),
+        const [api, extension] = await Promise.all([
           snapshot.getPromise(substrateApiState(apiEndpoint)),
           web3FromAddress(account.toString()),
         ])
@@ -77,7 +75,7 @@ export const useExtrinsicBatch = <
             .batchAll(extrinsics)
             .signAndSend(account, { signer: extension?.signer }, result => {
               extrinsics.forEach((extrinsic, index) =>
-                extrinsicMiddleware(chainId, extrinsic, result, callbackInterface)
+                extrinsicMiddleware(chain.id, extrinsic, result, callbackInterface)
               )
 
               if (result.isError) {
@@ -117,7 +115,7 @@ export const useExtrinsicBatch = <
           return [module!, section!]
         }),
         promise,
-        chainLoadable
+        chain
       )
 
       try {

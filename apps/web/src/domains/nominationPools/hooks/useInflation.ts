@@ -1,30 +1,43 @@
-import { chainState } from '@domains/chains/recoils'
-import { useChainQueryMultiState, useChainQueryState } from '@domains/common/recoils'
+import { ChainContext } from '@domains/chains'
+import { SubstrateApiContext } from '@domains/common'
+import {
+  chainQueryState,
+  useChainQueryMultiState,
+  useChainQueryState,
+  useSubstrateApiState,
+} from '@domains/common/recoils'
 import { BN } from '@polkadot/util'
-import { useMemo } from 'react'
-import { useRecoilValue, waitForAll } from 'recoil'
+import { useContext, useMemo } from 'react'
+import { constSelector, useRecoilValue } from 'recoil'
 
 export const useInflation = () => {
-  const [chain, activeEra] = useRecoilValue(waitForAll([chainState, useChainQueryState('staking', 'activeEra', [])]))
+  const chain = useContext(ChainContext)
+  const endpoint = useContext(SubstrateApiContext).endpoint
+  const api = useRecoilValue(useSubstrateApiState())
 
-  const [totalIssuance, lastTotalStake, auctionCounter] = useRecoilValue(
+  const activeEra = useRecoilValue(useChainQueryState('staking', 'activeEra', []))
+  const auctionCounter = useRecoilValue(
+    api.query.auctions !== undefined
+      ? chainQueryState(endpoint, 'auctions', 'auctionCounter', [])
+      : constSelector(undefined)
+  )
+
+  const [totalIssuance, lastTotalStake] = useRecoilValue(
     useChainQueryMultiState([
       'balances.totalIssuance',
       ['staking.erasTotalStake', activeEra.unwrapOrDefault().index.subn(1)],
-      'auctions.auctionCounter',
     ])
   )
 
   return useMemo(() => {
-    const { auctionAdjust, auctionMax, falloff, maxInflation, minInflation, stakeTarget } = chain.params
-
+    const { auctionAdjust, auctionMax, falloff, maxInflation, minInflation, stakeTarget } = chain.parameters
     const BN_MILLION = new BN(1_000_000)
 
     const stakedFraction =
       lastTotalStake.isZero() || totalIssuance.isZero()
         ? 0
         : lastTotalStake.mul(BN_MILLION).div(totalIssuance).toNumber() / BN_MILLION.toNumber()
-    const idealStake = stakeTarget - Math.min(auctionMax, auctionCounter.toNumber()) * auctionAdjust
+    const idealStake = stakeTarget - Math.min(auctionMax, auctionCounter?.toNumber() ?? 0) * auctionAdjust
     const idealInterest = maxInflation / idealStake
     const inflation =
       minInflation +
@@ -39,5 +52,5 @@ export const useInflation = () => {
       stakedFraction,
       stakedReturn: stakedFraction ? inflation / stakedFraction : 0,
     }
-  }, [auctionCounter, chain.params, lastTotalStake, totalIssuance])
+  }, [auctionCounter, chain.parameters, lastTotalStake, totalIssuance])
 }

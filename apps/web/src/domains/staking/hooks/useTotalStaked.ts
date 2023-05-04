@@ -1,5 +1,5 @@
 import { Account, selectedSubstrateAccountsState } from '@domains/accounts/recoils'
-import { nativeTokenPriceState } from '@domains/chains/recoils'
+import { useNativeTokenPriceState } from '@domains/chains/recoils'
 import { useChainState, useTokenAmountFromPlanck } from '@domains/common/hooks'
 import BN from 'bn.js'
 import { useMemo } from 'react'
@@ -32,7 +32,7 @@ export const useTotalStaked = () => {
 
 export const useStakedBalances = () => {
   const accounts: Account[] = useRecoilValue(selectedSubstrateAccountsState)
-  const price = useRecoilValue(nativeTokenPriceState('usd'))
+  const price = useRecoilValue(useNativeTokenPriceState())
 
   const poolMembersLoadable = useChainState(
     'query',

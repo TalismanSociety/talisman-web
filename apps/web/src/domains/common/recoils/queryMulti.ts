@@ -6,7 +6,7 @@ import type {
   StorageEntryPromiseOverloads,
 } from '@polkadot/api/types'
 import { useContext } from 'react'
-import { RecoilValueReadOnly, atomFamily, constSelector, errorSelector } from 'recoil'
+import { RecoilValueReadOnly, atomFamily, constSelector } from 'recoil'
 import { Observable } from 'rxjs'
 
 import { SubstrateApiContext, substrateApiState } from '..'
@@ -35,6 +35,16 @@ const _chainQueryMultiState = atomFamily({
   key: 'ChainQueryMulti',
   effects: ({ endpoint, queries }: { endpoint: string; queries: any[] }) => [
     ({ setSelf, getPromise }) => {
+      let initialResolve = (value: unknown) => {}
+      let initialReject = (reason?: any) => {}
+
+      setSelf(
+        new Promise((resolve, reject) => {
+          initialResolve = resolve
+          initialReject = reject
+        })
+      )
+
       const unsubscribePromise = getPromise(substrateApiState(endpoint)).then(api => {
         const params = queries.map(x => {
           if (typeof x === 'string') {
@@ -50,10 +60,11 @@ const _chainQueryMultiState = atomFamily({
 
         return api
           .queryMulti(params as any, result => {
+            initialResolve(result)
             setSelf(result)
           })
           .catch((error: any) => {
-            setSelf(errorSelector(error))
+            initialReject(error)
           })
       })
 
