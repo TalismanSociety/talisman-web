@@ -24,6 +24,7 @@ export default [
       exiledRacerPilots: '0x515e20e6275ceefe19221fc53e77e38cc32b80fb',
       exiledRacers: '0x104b904e19fBDa76bb864731A2C9E01E6b41f855',
       canaryNetworkAgency: '0x139e9BA28D64da245ddB4cF9943aA34f6d5aBFc5',
+      crest: '0x8417F77904a86436223942a516f00F8aDF933B70',
       moonFitMintPass: '0x6758053c0b27E478edE1E4882adFF708Fc4FA72D',
       moonfitBeastAndBeauty: '0x02a6dec99b2ca768d638fcd87a96f6069f91287c',
       moonMonkeys: '0xCc1A7573C8f10d0df7Ee4d57cc958C8Df4a5Aca9',
