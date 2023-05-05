@@ -67,12 +67,12 @@ export const createStatemineNftAsyncGenerator: CreateNftAsyncGenerator<Substrate
           media: instanceMetadata?.image,
           thumbnail: instanceMetadata?.image,
           serialNumber: nft.node.innerID,
+          properties: undefined,
           collection: {
             id: nft.node.uniqueClass.id,
             name: classMetadata?.name,
             maxSupply: nft.node.uniqueClass.maxSupply ?? undefined,
           },
-          attributes: undefined,
         }
       })
     )

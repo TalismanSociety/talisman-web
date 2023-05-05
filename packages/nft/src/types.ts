@@ -3,9 +3,9 @@ type BaseNft = {
   name: string | undefined
   description: string | undefined
   media: string | undefined
-  thumbnail?: string | undefined
+  thumbnail: string | undefined
   serialNumber: number | undefined
-  attributes: { [key: string | number]: any } | undefined
+  properties: Record<string, unknown> | undefined
   collection:
     | {
         id: string
@@ -35,11 +35,6 @@ export type Rmrk2Nft = BaseNft & {
 
 export type UniqueNetworkNft = BaseNft & {
   type: 'unique-network'
-}
-
-export type EvmNftAttribute = {
-  trait_type: string
-  value: string
 }
 
 export type EvmNft = BaseNft & {

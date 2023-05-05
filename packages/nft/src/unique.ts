@@ -52,6 +52,7 @@ export const createUniqueNetworkNftAsyncGenerator: CreateNftAsyncGenerator<Uniqu
           media: nft.image.fullUrl,
           thumbnail: nft.image.fullUrl,
           serialNumber: nft.token_id,
+          properties: undefined,
           collection: !nft.collection
             ? undefined
             : {
@@ -59,7 +60,6 @@ export const createUniqueNetworkNftAsyncGenerator: CreateNftAsyncGenerator<Uniqu
                 name: nft.collection.name,
                 maxSupply: undefined,
               },
-          attributes: undefined,
         }
       }) ?? []
     )

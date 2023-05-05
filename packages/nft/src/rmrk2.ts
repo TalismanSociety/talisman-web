@@ -60,6 +60,7 @@ export const createRmrk2NftAsyncGenerator: CreateNftAsyncGenerator<Rmrk2Nft> = a
         media: nft.metadata_image || nft.resources[0]?.thumb || undefined,
         thumbnail: nft.resources[0]?.thumb || nft.metadata_image || undefined,
         serialNumber: Number(nft.sn),
+        properties: nft.metadata_properties,
         collection: !nft.collection
           ? undefined
           : {
@@ -67,7 +68,6 @@ export const createRmrk2NftAsyncGenerator: CreateNftAsyncGenerator<Rmrk2Nft> = a
               name: nft.collection.metadata_name ?? undefined,
               maxSupply: nft.collection.max,
             },
-        attributes: nft.metadata_properties,
       })
     )
 

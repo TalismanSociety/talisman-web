@@ -64,24 +64,36 @@ export const createEvmNftAsyncGenerator: CreateNftAsyncGenerator<EvmNft> = async
           allowFailure: false,
         })
 
-        const metadata = await Promise.all(
+        const metadatum: Array<{
+          name: string
+          description: string
+          image: string
+          animation_url?: string
+          attributes?: Array<{ trait_type: string; value: unknown }>
+        }> = await Promise.all(
           tokenUris.map(uri =>
             fetch(uri.replace('ipfs://', 'https://talisman.mypinata.cloud/ipfs/')).then(x => x.json())
           )
         )
 
-        yield* tokenIds.map((tokenId, index) => ({
-          type: 'evm' as const,
-          chain: config.chain.name,
-          id: `${erc721Address}-${tokenId.toString()}`,
-          name: metadata[index].name,
-          description: metadata[index].description,
-          media: metadata[index].animation_url || metadata[index].image || undefined,
-          thumbnail: metadata[index].image || undefined,
-          serialNumber: Number(tokenId),
-          attributes: metadata[index].attributes,
-          collection: { id: erc721Address, name: collectionName, maxSupply: Number(totalSupply) },
-        }))
+        yield* tokenIds.map((tokenId, index) => {
+          const metadata = metadatum[index]
+
+          return {
+            type: 'evm' as const,
+            chain: config.chain.name,
+            id: `${erc721Address}-${tokenId.toString()}`,
+            name: metadata?.name,
+            description: metadata?.description,
+            media: metadata?.animation_url || metadata?.image || undefined,
+            thumbnail: metadata?.image || undefined,
+            serialNumber: Number(tokenId),
+            properties: !metadata?.attributes
+              ? undefined
+              : Object.fromEntries(metadata.attributes?.map(x => [x.trait_type, x.value])),
+            collection: { id: erc721Address, name: collectionName, maxSupply: Number(totalSupply) },
+          }
+        })
       }
     }
   }

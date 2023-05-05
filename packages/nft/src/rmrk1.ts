@@ -45,6 +45,7 @@ export const createRmrk1NftAsyncGenerator: CreateNftAsyncGenerator<Rmrk1Nft> = a
         description: nft.metadata_description ?? undefined,
         media: (nft.metadata_animation_url || nft.metadata_image) ?? undefined,
         thumbnail: (nft.metadata_image || nft.metadata_animation_url) ?? undefined,
+        properties: undefined,
         collection: !nft.collection
           ? undefined
           : {
@@ -53,7 +54,6 @@ export const createRmrk1NftAsyncGenerator: CreateNftAsyncGenerator<Rmrk1Nft> = a
               maxSupply: nft.collection.max,
             },
         serialNumber: Number(nft.sn),
-        attributes: undefined,
       })
     )
 

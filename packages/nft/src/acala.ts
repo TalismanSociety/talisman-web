@@ -70,12 +70,12 @@ export const createAcalaNftAsyncGenerator: CreateNftAsyncGenerator<AcalaNft> = a
             media: tokenMetadata?.image || classMetadata?.image,
             thumbnail: tokenMetadata?.image || classMetadata?.image,
             serialNumber: tokenId.toNumber(),
+            properties: undefined,
             collection: {
               id: classId.toString(),
               name: classMetadata?.name,
               maxSupply: ormlNftClass.totalIssuance.toNumber(),
             },
-            attributes: undefined,
           }
         })
       ).then(x => x.filter((y): y is Exclude<typeof y, undefined> => x !== undefined))
