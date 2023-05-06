@@ -183,7 +183,8 @@ const TeleportForm = () => {
         ...x,
         estimateFee: Decimal.fromPlanck(
           x.estimateFee,
-          x.maxInput.getPrecision(),
+          // @ts-expect-error
+          adapter?.api?.registry.chainDecimals[0] ?? 0,
           // @ts-expect-error
           adapter?.api?.registry.chainTokens[0]
         ),
@@ -192,6 +193,8 @@ const TeleportForm = () => {
         destFee: fixedPointNumberToDecimal(x.destFee.balance, x.destFee.token),
       })),
     [
+      // @ts-expect-error
+      adapter?.api?.registry.chainDecimals,
       // @ts-expect-error
       adapter?.api?.registry.chainTokens,
       inputConfigLoadable,
