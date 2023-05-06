@@ -4,8 +4,8 @@ import { bufferTime, filter, Observable, tap } from 'rxjs'
 import { spawn, Thread } from 'threads'
 import { type SubscribeNfts } from './worker'
 
-export const nftsState = atomFamily<Nft[], string>({
-  key: 'Nfts',
+const _nftsState = atomFamily<Nft[], string>({
+  key: '_Nfts',
   effects: (address: string) => [
     ({ setSelf }) => {
       const batchSize = 100
@@ -55,6 +55,15 @@ export const nftsState = atomFamily<Nft[], string>({
   ],
 })
 
+export const nftsState = selectorFamily({
+  key: 'Nfts',
+  get:
+    (address: string) =>
+    ({ get }) =>
+      [...get(_nftsState(address))].sort((a, b) => (a.name ?? '').localeCompare(b.name ?? '')),
+  cachePolicy_UNSTABLE: { eviction: 'most-recent' },
+})
+
 type Type = string
 type Chain = string | 'unknown'
 type CollectionId = string
@@ -96,7 +105,9 @@ export const nftCollectionsState = selectorFamily({
   get:
     (address: string) =>
     ({ get }) =>
-      Array.from(get(nftCollectionMapState(address)).values()),
+      Array.from(get(nftCollectionMapState(address)).values()).sort(
+        (a, b) => b.items.length - a.items.length || (a.name ?? '').localeCompare(b.name ?? '')
+      ),
   cachePolicy_UNSTABLE: { eviction: 'most-recent' },
 })
 
