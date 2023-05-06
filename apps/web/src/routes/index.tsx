@@ -14,7 +14,7 @@ import { useNativeTokenDecimalState, useNativeTokenPriceState } from '@domains/c
 import { useRecommendedPoolsState } from '@domains/nominationPools/recoils'
 import * as MoonbeamContributors from '@libs/moonbeam-contributors'
 import * as Sentry from '@sentry/react'
-import { Compass, CreditCard, Eye, MoreHorizontal, Star, TalismanHand, Zap } from '@talismn/icons'
+import { Compass, CreditCard, Eye, MoreHorizontal, RefreshCcw, Star, TalismanHand, Zap } from '@talismn/icons'
 import {
   IconButton,
   NavigationBar,
@@ -40,6 +40,7 @@ import NFTsPage from './NFTsPage'
 import Overview from './Overview'
 import Portfolio from './Portfolio'
 import TransactionHistory from './TransactionHistory'
+import TeleportDialog from '@components/widgets/TeleportDialog'
 
 const Header = () => {
   const shouldShowAccountConnectionGuard = useShouldShowAccountConnectionGuard()
@@ -130,14 +131,14 @@ const Main = () => {
           <Link to="/portfolio?action=stake">
             <NavigationBar.Item label="Staking" icon={<Zap />} />
           </Link>
+          <Link to="/portfolio?action=teleport">
+            <NavigationBar.Item label="Teleport" icon={<RefreshCcw />} />
+          </Link>
           <Link to="/explore">
             <NavigationBar.Item label="Explore" icon={<Compass />} />
           </Link>
           <Link to="/crowdloans">
             <NavigationBar.Item label="Crowdloans" icon={<Star />} />
-          </Link>
-          <Link to="https://talisman.banxa.com/" target="_blank">
-            <NavigationBar.Item label="Buy" icon={<CreditCard />} />
           </Link>
         </NavigationBar>
       }
@@ -154,6 +155,9 @@ const Main = () => {
           </Link>
           <Link to="/portfolio?action=stake">
             <NavigationRail.Item label="Staking" icon={<Zap />} />
+          </Link>
+          <Link to="/portfolio?action=teleport">
+            <NavigationRail.Item label="Teleport" icon={<RefreshCcw />} />
           </Link>
           <Link to="/explore">
             <NavigationRail.Item label="Explore" icon={<Compass />} />
@@ -211,8 +215,11 @@ const Main = () => {
           <Link to="/portfolio">
             <NavigationDrawer.Item label="Portfolio" icon={<Eye />} />
           </Link>
-          <Link to="/staking">
+          <Link to="/portfolio?action=stake">
             <NavigationDrawer.Item label="Staking" icon={<Zap />} />
+          </Link>
+          <Link to="/portfolio?action=teleport">
+            <NavigationDrawer.Item label="Teleport" icon={<RefreshCcw />} />
           </Link>
           <Link to="/crowdloans">
             <NavigationDrawer.Item label="Crowdloans" icon={<Star />} />
@@ -270,6 +277,7 @@ const Main = () => {
           <Header />
           <Outlet />
           <StakeDialog />
+          <TeleportDialog />
         </MoonbeamContributors.PopupProvider>
       </ModalProvider>
     </Scaffold>
@@ -329,6 +337,11 @@ export default Sentry.wrapCreateBrowserRouter(createBrowserRouter)([
       { path: 'history', element: <Navigate to="/portfolio/history" /> },
       { path: 'nfts', element: <Navigate to="/portfolio/nfts" /> },
       { path: 'explore', element: <Explore /> },
+      {
+        path: 'staking',
+        element: <NavigateToStaking />,
+      },
+      { path: 'teleport', element: <Navigate to="/portfolio?action=teleport" /> },
       {
         path: 'staking',
         element: <NavigateToStaking />,

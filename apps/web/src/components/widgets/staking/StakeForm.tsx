@@ -190,7 +190,7 @@ export const AssetSelect = (props: {
           )
         : undefined
     }
-    onChange={(id: string) => {
+    onChange={id => {
       const chain = props.chains.find(x => x.id === id)
       if (chain !== undefined) {
         props.onSelectChain(chain)

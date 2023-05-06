@@ -10,7 +10,7 @@ import {
   useListNavigation,
   useRole,
 } from '@floating-ui/react'
-import { ChevronDown } from '@talismn/icons'
+import { ChevronDown, X } from '@talismn/icons'
 import { motion } from 'framer-motion'
 import React, {
   forwardRef,
@@ -22,7 +22,6 @@ import React, {
   type ReactElement,
   type ReactNode,
 } from 'react'
-
 import { Text } from '../../atoms'
 import FloatingPortal from '../../atoms/FloatingPortal'
 
@@ -32,7 +31,8 @@ export type SelectProps<T extends string | number> = {
   placeholder?: ReactNode
   width?: string | number
   children: ReactElement<SelectItemProps> | Array<ReactElement<SelectItemProps>>
-  onChange?: (value: T) => unknown
+  onChange?: (value: T | undefined) => unknown
+  clearRequired?: boolean
 }
 
 type SelectItemProps = {
@@ -79,9 +79,16 @@ const Select = Object.assign(
     const selectedChild =
       renderSelected?.(props.value) ?? (selectedIndex === undefined ? undefined : childrenArray[selectedIndex])
 
+    const clearRequired = !open && props.clearRequired && selectedChild !== undefined
+
     const { context, x, y, reference, floating, strategy } = useFloating({
       open,
-      onOpenChange: setOpen,
+      onOpenChange: open => {
+        if (clearRequired) {
+          props.onChange?.(undefined)
+        }
+        setOpen(open)
+      },
       whileElementsMounted: autoUpdate,
       middleware: [
         // TODO: right now only work for bottom overflow
@@ -119,7 +126,7 @@ const Select = Object.assign(
         setOpen(false)
         setActiveIndex(null)
         // @ts-expect-error
-        props.onChange?.(value?.toString())
+        props.onChange?.(value)
       },
       [props]
     )
@@ -179,10 +186,14 @@ const Select = Object.assign(
           }}
           {...getReferenceProps()}
         >
-          <Text.Body as="div" css={{ pointerEvents: 'none', userSelect: 'none' }}>
+          <Text.Body as="div" css={{ pointerEvents: 'none', userSelect: 'none', overflow: 'hidden' }}>
             {selectedChild ?? props.placeholder}
           </Text.Body>
-          <ChevronDown css={{ transform: open ? 'rotate(180deg)' : undefined, transition: 'ease 0.25s' }} />
+          {clearRequired ? (
+            <X />
+          ) : (
+            <ChevronDown css={{ transform: open ? 'rotate(180deg)' : undefined, transition: 'ease 0.25s' }} />
+          )}
         </motion.button>
         <FloatingPortal>
           <motion.ul

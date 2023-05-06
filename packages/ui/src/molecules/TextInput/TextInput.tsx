@@ -4,6 +4,7 @@ import { Text } from '../../atoms'
 
 export type TextInputProps = React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement> & {
   type?: 'text' | 'number'
+  fontSize?: string | number
   leadingLabel?: ReactNode
   trailingLabel?: ReactNode
   trailingIcon?: ReactNode

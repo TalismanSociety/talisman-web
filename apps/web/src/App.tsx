@@ -4,6 +4,7 @@ import '@polkadot/api-augment/substrate'
 import CookieBanner from '@archetypes/CookieBanner'
 import Development from '@archetypes/Development'
 import { TalismanHandLoader } from '@components/TalismanHandLoader'
+
 import ErrorBoundary from '@components/widgets/ErrorBoundary'
 import { LegacyBalancesWatcher } from '@domains/balances/recoils'
 import { SUBSTRATE_API_STATE_GARBAGE_COLLECTOR_UNSTABLE } from '@domains/common'
