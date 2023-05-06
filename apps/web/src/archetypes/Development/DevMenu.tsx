@@ -7,6 +7,7 @@ import { useSessionStorage } from 'react-use'
 import WinBox, { WinBoxPropType } from 'react-winbox'
 import { useRecoilState } from 'recoil'
 import { enableTestnetsState } from '@domains/chains'
+import { includeDisabledRoutesState } from '@domains/bridge'
 
 const DevMenu = () => {
   const theme = useTheme()
@@ -17,6 +18,7 @@ const DevMenu = () => {
   const [hidden, setHidden] = useSessionStorage('dev-menu-hidden', false)
 
   const [enableTestnets, setEnableTestnets] = useRecoilState(enableTestnetsState)
+  const [includeDisabledRoute, setIncludeDisabledRoute] = useRecoilState(includeDisabledRoutesState)
 
   return (
     <WinBox
@@ -41,6 +43,10 @@ const DevMenu = () => {
       <form css={{ 'label': { display: 'block' }, 'label + label': { marginTop: '1.6rem' } }}>
         <label>
           <input type="checkbox" checked={enableTestnets} onChange={() => setEnableTestnets(x => !x)} /> Enable testnets
+        </label>
+        <label>
+          <input type="checkbox" checked={includeDisabledRoute} onChange={() => setIncludeDisabledRoute(x => !x)} />{' '}
+          Enable all XCM routes
         </label>
       </form>
     </WinBox>
