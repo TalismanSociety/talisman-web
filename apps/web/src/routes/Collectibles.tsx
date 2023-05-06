@@ -91,7 +91,7 @@ const NftCollectionCard = ({ collection }: { collection: NftCollection }) => (
             .slice(0, 4)}
         </Card.MultiMedia>
       }
-      mediaLabel={`+${collection.items.length}`}
+      mediaLabel={collection.items.length <= 4 ? undefined : `+${collection.items.length - 4}`}
       headlineText={collection.name}
     />
   </Link>
