@@ -1,4 +1,3 @@
-import { TalismanHandLoader } from '@components/TalismanHandLoader'
 import { Account, selectedAccountsState } from '@domains/accounts'
 import {
   CollectionKey,
@@ -245,11 +244,44 @@ const Nfts = () => {
           </div>
         )}
       </div>
-      <Suspense fallback={<TalismanHandLoader />}>
+      <Suspense
+        fallback={
+          <div css={{ 'marginTop': '1.6rem', '@media(min-width: 425px)': { maxWidth: 290 } }}>
+            <Card.Skeleton />
+          </div>
+        }
+      >
         <section>
           {accounts.map(account => (
             <AccountNfts key={account.address} account={account} view={view} />
           ))}
+          <section
+            css={[
+              {
+                textAlign: 'center',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '0.8rem',
+                marginTop: '1.6rem',
+              },
+              { ':not(:only-child)': { display: 'none' } },
+            ]}
+          >
+            <Text.H2>No collectibles found</Text.H2>
+            <Text.Body>
+              Talisman currently supports RMRK 2, Astar,
+              <br />
+              Moonriver, Moonbeam, Statemine and Acala NFTs
+            </Text.Body>
+            <Text.Body>
+              Start your collection with a{' '}
+              <Text.Body.A href="https://singular.rmrk.app/collections/b6e98494bff52d3b1e-SPIRIT" target="_blank">
+                Spirit Key <ExternalLink size="1em" />
+              </Text.Body.A>
+            </Text.Body>
+          </section>
         </section>
       </Suspense>
     </div>

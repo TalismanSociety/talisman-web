@@ -2,7 +2,7 @@ import { useTheme } from '@emotion/react'
 import { useGesture } from '@use-gesture/react'
 import { motion, useMotionTemplate, useSpring, useTransform } from 'framer-motion'
 import type { DetailedHTMLProps, ImgHTMLAttributes, ReactNode } from 'react'
-import { Text } from '../..'
+import { Skeleton, Text } from '../..'
 import React from 'react'
 
 export type CardProps = {
@@ -43,6 +43,29 @@ const MultiMedia = (props: {
       ))}
     </div>
   </div>
+)
+
+const CardSkeleton = () => (
+  <Skeleton.Surface
+    css={{
+      position: 'relative',
+      opacity: 0.95,
+      border: ' 1px solid rgba(200 200 200 / 0.2)',
+      borderRadius: '1.5rem',
+      backdropFilter: 'blur(16px)',
+      overflow: 'hidden',
+    }}
+  >
+    <Skeleton.Surface css={{ position: 'relative', width: 'auto', aspectRatio: '1 / 1' }} />
+    <Skeleton.Foreground css={{ padding: '1.6rem 2.4rem', borderRadius: 0 }}>
+      <Text.Body as="h4" css={{ marginBottom: '0.8rem' }}>
+        <wbr />
+      </Text.Body>
+      <Text.BodyLarge as="h3" alpha="high">
+        <wbr />
+      </Text.BodyLarge>
+    </Skeleton.Foreground>
+  </Skeleton.Surface>
 )
 
 const Card = Object.assign(
@@ -149,7 +172,7 @@ const Card = Object.assign(
       </motion.article>
     )
   },
-  { Image, MultiMedia }
+  { Image, MultiMedia, Skeleton: CardSkeleton }
 )
 
 export default Card

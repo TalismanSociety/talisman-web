@@ -8,6 +8,13 @@ export default {
   parameters: {
     layout: 'centered',
   },
+  decorators: [
+    Story => (
+      <div css={{ width: 300, height: 300 }}>
+        <Story />
+      </div>
+    ),
+  ],
 } as ComponentMeta<typeof Card>
 
 export const Default: Story<CardProps> = args => <Card {...args} />
@@ -34,3 +41,5 @@ MultiMedia.args = {
     </Card.MultiMedia>
   ),
 }
+
+export const Skeleton = () => <Card.Skeleton />
