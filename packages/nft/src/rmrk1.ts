@@ -45,7 +45,9 @@ export const createRmrk1NftAsyncGenerator: CreateNftAsyncGenerator<Rmrk1Nft> = a
         description: nft.metadata_description ?? undefined,
         media: (nft.metadata_animation_url || nft.metadata_image) ?? undefined,
         thumbnail: (nft.metadata_image || nft.metadata_animation_url) ?? undefined,
+        serialNumber: Number(nft.sn),
         properties: undefined,
+        externalLinks: [{ name: 'Singular', url: `https://singular.rmrk.app/collectibles/${nft.id}` }],
         collection: !nft.collection
           ? undefined
           : {
@@ -53,7 +55,6 @@ export const createRmrk1NftAsyncGenerator: CreateNftAsyncGenerator<Rmrk1Nft> = a
               name: nft.collection.name,
               maxSupply: nft.collection.max,
             },
-        serialNumber: Number(nft.sn),
       })
     )
 

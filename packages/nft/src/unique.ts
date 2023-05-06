@@ -53,6 +53,12 @@ export const createUniqueNetworkNftAsyncGenerator: CreateNftAsyncGenerator<Uniqu
           thumbnail: nft.image.fullUrl,
           serialNumber: nft.token_id,
           properties: undefined,
+          externalLinks: [
+            {
+              name: 'Unique Scan',
+              url: `https://uniquescan.io/unique/tokens/${nft.collection_id}/${nft.token_id}`,
+            },
+          ],
           collection: !nft.collection
             ? undefined
             : {

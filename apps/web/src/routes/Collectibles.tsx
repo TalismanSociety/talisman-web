@@ -7,7 +7,7 @@ import {
   nftsState,
   type NftCollection,
 } from '@domains/nfts'
-import { ChevronLeft, ChevronRight } from '@talismn/icons'
+import { ChevronLeft, ChevronRight, ExternalLink } from '@talismn/icons'
 import { type Nft } from '@talismn/nft'
 import { Button, Card, Hr, Identicon, ListItem, MediaDialog, SegmentedButton, Text } from '@talismn/ui'
 import { usePagination } from '@talismn/utils/react'
@@ -43,7 +43,34 @@ const NftCard = ({ nft }: { nft: Nft }) => {
               src={nft.media?.replace(/ipfs:\/\/(ipfs\/)?/, 'https://talisman.mypinata.cloud/ipfs/')}
             />
           }
-          content={<Text.Body as="p">{nft.description}</Text.Body>}
+          content={
+            <div>
+              <Text.Body as="p" css={{ whiteSpace: 'pre-wrap' }}>
+                {nft.description}
+              </Text.Body>
+              <div css={{ display: 'flex', gap: '3.2rem', marginTop: '3.2rem' }}>
+                {(nft.externalLinks?.length ?? 0) > 0 && (
+                  <article>
+                    <Text.BodyLarge as="div">View on</Text.BodyLarge>
+                    {nft.externalLinks?.map(link => (
+                      <Text.BodyLarge.A target="_blank" href={link.url}>
+                        {link.name} <ExternalLink size="1em" css={{ verticalAlign: 'middle' }} />
+                      </Text.BodyLarge.A>
+                    ))}
+                  </article>
+                )}
+                {nft.serialNumber && (
+                  <article>
+                    <Text.BodyLarge as="div">Edition</Text.BodyLarge>
+                    <Text.BodyLarge alpha="high">
+                      #{nft.serialNumber}
+                      {nft.collection?.maxSupply && ` / ${nft.collection.maxSupply}`}
+                    </Text.BodyLarge>
+                  </article>
+                )}
+              </div>
+            </div>
+          }
         />
       )}
     </>

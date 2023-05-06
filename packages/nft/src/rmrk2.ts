@@ -61,6 +61,7 @@ export const createRmrk2NftAsyncGenerator: CreateNftAsyncGenerator<Rmrk2Nft> = a
         thumbnail: nft.resources[0]?.thumb || nft.metadata_image || undefined,
         serialNumber: Number(nft.sn),
         properties: nft.metadata_properties,
+        externalLinks: [{ name: 'Singular', url: `https://singular.app/collectibles/${nft.id}` }],
         collection: !nft.collection
           ? undefined
           : {

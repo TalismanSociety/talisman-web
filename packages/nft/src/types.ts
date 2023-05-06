@@ -6,6 +6,7 @@ type BaseNft = {
   thumbnail: string | undefined
   serialNumber: number | undefined
   properties: Record<string, unknown> | undefined
+  externalLinks: Array<{ name: string; url: string }> | undefined
   collection:
     | {
         id: string

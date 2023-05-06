@@ -71,6 +71,7 @@ export const createAcalaNftAsyncGenerator: CreateNftAsyncGenerator<AcalaNft> = a
             thumbnail: tokenMetadata?.image || classMetadata?.image,
             serialNumber: tokenId.toNumber(),
             properties: undefined,
+            externalLinks: undefined,
             collection: {
               id: classId.toString(),
               name: classMetadata?.name,

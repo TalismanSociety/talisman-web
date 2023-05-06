@@ -91,6 +91,15 @@ export const createEvmNftAsyncGenerator: CreateNftAsyncGenerator<EvmNft> = async
             properties: !metadata?.attributes
               ? undefined
               : Object.fromEntries(metadata.attributes?.map(x => [x.trait_type, x.value])),
+            externalLinks:
+              'etherscan' in config.chain.blockExplorers
+                ? [
+                    {
+                      name: config.chain.blockExplorers.etherscan.name,
+                      url: `${config.chain.blockExplorers.etherscan.url}/nft/${erc721Address}/${tokenId}`,
+                    },
+                  ]
+                : undefined,
             collection: { id: erc721Address, name: collectionName, maxSupply: Number(totalSupply) },
           }
         })
