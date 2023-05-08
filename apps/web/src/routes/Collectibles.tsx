@@ -10,9 +10,29 @@ import { ChevronLeft, ChevronRight, ExternalLink } from '@talismn/icons'
 import { type Nft } from '@talismn/nft'
 import { Button, Card, Hr, Identicon, ListItem, MediaDialog, SegmentedButton, Text } from '@talismn/ui'
 import { usePagination } from '@talismn/utils/react'
+import { Maybe } from '@util/monads'
 import { RefCallback, Suspense, useCallback, useMemo, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { useRecoilValue } from 'recoil'
+
+const NFT_CARD_WIDTH = 290
+
+const toIpfsCompatibleUrl = (url: string, options?: { imgWidth?: number }) => {
+  const pattern = /ipfs:\/\/(ipfs\/)?/
+
+  if (!url.match(pattern)) {
+    return url
+  }
+
+  const gatewayUrl = new URL(url.replace(/ipfs:\/\/(ipfs\/)?/, 'https://talisman.mypinata.cloud/ipfs/'))
+
+  if (options?.imgWidth !== undefined) {
+    // x3 for high DPI display
+    gatewayUrl.searchParams.set('img-width', String(options.imgWidth * 3))
+  }
+
+  return gatewayUrl.toString()
+}
 
 const NftCard = ({ nft }: { nft: Nft }) => {
   const [dialogOpen, setDialogOpen] = useState(false)
@@ -22,7 +42,7 @@ const NftCard = ({ nft }: { nft: Nft }) => {
       <Card
         media={
           <Card.Image
-            src={nft.thumbnail?.replace(/ipfs:\/\/(ipfs\/)?/, 'https://talisman.mypinata.cloud/ipfs/')}
+            src={Maybe.of(nft.thumbnail).mapOrUndefined(x => toIpfsCompatibleUrl(x, { imgWidth: NFT_CARD_WIDTH }))}
             loading="lazy"
           />
         }
@@ -37,11 +57,7 @@ const NftCard = ({ nft }: { nft: Nft }) => {
           onRequestDismiss={() => setDialogOpen(false)}
           title={nft.name}
           overline={nft.collection?.name}
-          media={
-            <MediaDialog.Player
-              src={nft.media?.replace(/ipfs:\/\/(ipfs\/)?/, 'https://talisman.mypinata.cloud/ipfs/')}
-            />
-          }
+          media={<MediaDialog.Player src={Maybe.of(nft.media).mapOrUndefined(toIpfsCompatibleUrl)} />}
           content={
             <div>
               <Text.Body as="p" css={{ whiteSpace: 'pre-wrap' }}>
@@ -85,7 +101,9 @@ const NftCollectionCard = ({ collection }: { collection: NftCollection }) => (
             .map(nft => (
               <Card.Image
                 key={nft.id}
-                src={nft.thumbnail?.replace(/ipfs:\/\/(ipfs\/)?/, 'https://talisman.mypinata.cloud/ipfs/')}
+                src={Maybe.of(nft.thumbnail).mapOrUndefined(x =>
+                  toIpfsCompatibleUrl(x, { imgWidth: NFT_CARD_WIDTH / 4 })
+                )}
               />
             ))
             .slice(0, 4)}
@@ -101,16 +119,15 @@ const AccountNfts = (props: { account: Account; view: 'collections' | 'items' })
   const [searchParams] = useSearchParams()
   const collectionKey = searchParams.get('collectionKey') as CollectionKey | null
 
-  const targetWidth = 290
   const gap = 8
   const targetRows = 3
   const [availableWidth, setAvailableWidth] = useState<number>()
 
   const limit = useMemo(
     () =>
-      (availableWidth === undefined || targetWidth >= availableWidth
+      (availableWidth === undefined || NFT_CARD_WIDTH >= availableWidth
         ? 10
-        : Math.floor(availableWidth / (targetWidth + gap))) * targetRows,
+        : Math.floor(availableWidth / (NFT_CARD_WIDTH + gap))) * targetRows,
     [availableWidth]
   )
 
@@ -197,7 +214,7 @@ const AccountNfts = (props: { account: Account; view: 'collections' | 'items' })
             'display': 'grid',
             'gap': '2.4rem',
             '@media(min-width: 425px)': {
-              gridTemplateColumns: `repeat(auto-fill, minmax(${targetWidth}px, 1fr))`,
+              gridTemplateColumns: `repeat(auto-fill, minmax(${NFT_CARD_WIDTH}px, 1fr))`,
             },
           }}
         >
