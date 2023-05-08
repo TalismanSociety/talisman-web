@@ -3,6 +3,7 @@ import { atomFamily, DefaultValue, selectorFamily } from 'recoil'
 import { bufferTime, filter, Observable, tap } from 'rxjs'
 import { spawn, Thread } from 'threads'
 import { type SubscribeNfts } from './worker'
+import * as Sentry from '@sentry/react'
 
 const _nftsState = atomFamily<Nft[], string>({
   key: '_Nfts',
@@ -41,6 +42,7 @@ const _nftsState = atomFamily<Nft[], string>({
               Thread.terminate(worker)
             },
             error: error => {
+              Sentry.captureException(error)
               initialReject(error)
               Thread.terminate(worker)
             },
