@@ -64,7 +64,7 @@ export const createUniqueNetworkNftAsyncGenerator: CreateNftAsyncGenerator<Uniqu
             : {
                 id: nft.collection_id.toString(),
                 name: nft.collection.name,
-                maxSupply: undefined,
+                totalSupply: undefined,
               },
         }
       }) ?? []

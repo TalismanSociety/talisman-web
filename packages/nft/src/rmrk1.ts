@@ -53,7 +53,7 @@ export const createRmrk1NftAsyncGenerator: CreateNftAsyncGenerator<Rmrk1Nft> = a
           : {
               id: nft.collection.id,
               name: nft.collection.name,
-              maxSupply: nft.collection.max,
+              totalSupply: nft.collection.max,
             },
       })
     )

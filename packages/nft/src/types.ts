@@ -11,7 +11,7 @@ type BaseNft = {
     | {
         id: string
         name: string | undefined
-        maxSupply: number | undefined
+        totalSupply: number | undefined
       }
     | undefined
 }

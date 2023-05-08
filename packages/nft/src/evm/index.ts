@@ -100,7 +100,7 @@ export const createEvmNftAsyncGenerator: CreateNftAsyncGenerator<EvmNft> = async
                     },
                   ]
                 : undefined,
-            collection: { id: erc721Address, name: collectionName, maxSupply: Number(totalSupply) },
+            collection: { id: erc721Address, name: collectionName, totalSupply: Number(totalSupply) },
           }
         })
       }

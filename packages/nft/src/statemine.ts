@@ -78,7 +78,7 @@ export const createStatemineNftAsyncGenerator: CreateNftAsyncGenerator<Substrate
           collection: {
             id: nft.node.uniqueClass.id,
             name: classMetadata?.name,
-            maxSupply: nft.node.uniqueClass.maxSupply ?? undefined,
+            totalSupply: nft.node.uniqueClass.maxSupply ?? undefined,
           },
         }
       })

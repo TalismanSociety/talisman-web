@@ -85,7 +85,7 @@ const NftCard = ({ nft }: { nft: Nft }) => {
                     <Text.BodyLarge as="div">Edition</Text.BodyLarge>
                     <Text.BodyLarge alpha="high">
                       #{nft.serialNumber}
-                      {nft.collection?.maxSupply && ` / ${nft.collection.maxSupply}`}
+                      {nft.collection?.totalSupply && ` / ${nft.collection.totalSupply}`}
                     </Text.BodyLarge>
                   </article>
                 )}

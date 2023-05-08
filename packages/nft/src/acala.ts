@@ -75,7 +75,7 @@ export const createAcalaNftAsyncGenerator: CreateNftAsyncGenerator<AcalaNft> = a
             collection: {
               id: classId.toString(),
               name: classMetadata?.name,
-              maxSupply: ormlNftClass.totalIssuance.toNumber(),
+              totalSupply: ormlNftClass.totalIssuance.toNumber(),
             },
           }
         })

@@ -67,7 +67,7 @@ export const createRmrk2NftAsyncGenerator: CreateNftAsyncGenerator<Rmrk2Nft> = a
           : {
               id: nft.collection.id,
               name: nft.collection.metadata_name ?? undefined,
-              maxSupply: nft.collection.max,
+              totalSupply: nft.collection.max,
             },
       })
     )
