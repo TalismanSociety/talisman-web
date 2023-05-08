@@ -64,6 +64,12 @@ const NftCard = ({ nft }: { nft: Nft }) => {
                 {nft.description}
               </Text.Body>
               <div css={{ display: 'flex', gap: '3.2rem', marginTop: '3.2rem' }}>
+                <article>
+                  <Text.BodyLarge as="div">Source</Text.BodyLarge>
+                  <Text.BodyLarge alpha="high" css={{ textTransform: 'capitalize' }}>
+                    {nft.type.replace('-', ' ')}
+                  </Text.BodyLarge>
+                </article>
                 {(nft.externalLinks?.length ?? 0) > 0 && (
                   <article>
                     <Text.BodyLarge as="div">View on</Text.BodyLarge>
