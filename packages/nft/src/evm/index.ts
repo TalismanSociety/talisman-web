@@ -96,7 +96,7 @@ export const createEvmNftAsyncGenerator: CreateNftAsyncGenerator<EvmNft> = async
                 ? [
                     {
                       name: config.chain.blockExplorers.etherscan.name,
-                      url: `${config.chain.blockExplorers.etherscan.url}/nft/${erc721Address}/${tokenId}`,
+                      url: `${config.chain.blockExplorers.etherscan.url}/token/${erc721Address}?a=${tokenId}`,
                     },
                   ]
                 : undefined,
