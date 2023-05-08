@@ -1,6 +1,7 @@
+import StatusCircle, { StatusCircleType } from '@components/StatusCircle'
 import { css } from '@emotion/css'
 import { ArrowUp, Check, Share2 } from '@talismn/icons'
-import { Tooltip } from '@talismn/ui'
+// import { Tooltip } from '@talismn/ui'
 import { formatUsd } from '@util/numbers'
 
 import { formattedHhMm } from './utils'
@@ -82,36 +83,21 @@ const TransactionSummaryRow = ({ t, onClick }: { t: Transaction; onClick?: () =>
         {formatUsd(t.decoded.outgoingToken.amount * t.decoded.outgoingToken.price)}
       </p>
       {t.executedTimestamp && (
-        <Tooltip content={`Executed: ${t.executedTimestamp}`}>
-          {tooltipProps => (
-            <a
-              {...tooltipProps}
-              href="https://subscan.com/tx123"
-              target="_blank"
-              rel="noreferrer"
-              className={css`
-                height: 100%;
-                grid-area: executedInfo;
-                color: #38d448;
-                background: #345132;
-                margin-left: 24px;
-                display: grid;
-                align-items: center;
-                justify-content: center;
-                height: 24px;
-                width: 24px;
-                border-radius: 100px;
-                svg {
-                  width: 11px;
-                  height: auto;
-                  color: var(--color-primary);
-                }
-              `}
-            >
-              <Check />
-            </a>
-          )}
-        </Tooltip>
+        <a
+          className={css`
+            grid-area: executedInfo;
+            margin-left: 24px;
+          `}
+          href="https://subscan.com/tx123"
+          target="_blank"
+          rel="noreferrer"
+        >
+          <StatusCircle
+            type={StatusCircleType.Success}
+            circleDiameter="24px"
+            iconDimentions={{ width: '11px', height: 'auto' }}
+          />
+        </a>
       )}
     </div>
   )

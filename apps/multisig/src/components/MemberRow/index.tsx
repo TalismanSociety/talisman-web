@@ -5,7 +5,7 @@ import { IconButton, Identicon } from '@talismn/ui'
 import { AugmentedAccount } from 'layouts/CreateMultisig'
 import truncateMiddle from 'truncate-middle'
 
-const MemberRow = (props: { member: AugmentedAccount; onDelete?: () => void }) => {
+const MemberRow = (props: { member: AugmentedAccount; onDelete?: () => void; truncate?: boolean }) => {
   const theme = useTheme()
   return (
     <div
@@ -14,7 +14,11 @@ const MemberRow = (props: { member: AugmentedAccount; onDelete?: () => void }) =
         grid-template-columns: 24px 1fr 16px 16px;
         gap: 8px;
         justify-items: flex-start;
-        align-items: flex-start;
+        align-items: center;
+        > p {
+          font-size: 16px !important;
+          color: var(--color-offWhite) !important;
+        }
       `}
     >
       <Identicon
@@ -26,7 +30,7 @@ const MemberRow = (props: { member: AugmentedAccount; onDelete?: () => void }) =
       />
       {props.member.you ? (
         <>
-          <span
+          <div
             className={css`
               display: flex;
             `}
@@ -40,12 +44,12 @@ const MemberRow = (props: { member: AugmentedAccount; onDelete?: () => void }) =
             >
               (You)
             </p>
-          </span>
+          </div>
           <div></div>
         </>
       ) : (
         <>
-          <p>{truncateMiddle(props.member.address, 22, 22, '...')}</p>
+          <p>{props.truncate ? truncateMiddle(props.member.address, 22, 22, '...') : props.member.address}</p>
           {props.onDelete ? (
             <IconButton
               onClick={props.onDelete}

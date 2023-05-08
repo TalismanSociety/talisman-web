@@ -4,7 +4,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { useMemo, useState } from 'react'
 
 import { Token } from '../../../domain/chains'
-import { FullScreenDialogContents, FullScreenDialogTitle } from './Summary'
+import { FullScreenDialogContents, FullScreenDialogTitle } from './FullScreenSummary'
 import TransactionSummaryRow from './TransactionSummaryRow'
 import { groupTransactionsByDay } from './utils'
 
@@ -16,6 +16,7 @@ enum Mode {
 export enum TransactionType {
   MultiSend,
   Transfer,
+  Custom,
 }
 
 export interface Transaction {
@@ -25,7 +26,7 @@ export interface Transaction {
   hash: string
   chainId: number
   approvals: {
-    [key: string]: boolean
+    [key: string]: string | undefined
   }
   decoded: {
     type: TransactionType
@@ -75,6 +76,7 @@ const TransactionsList = ({ transactions }: { transactions: Transaction[] }) => 
           header: {
             marginBottom: '32px',
           },
+          background: 'var(--color-grey800)',
           maxWidth: '781px',
           minWidth: '700px',
           width: '100%',

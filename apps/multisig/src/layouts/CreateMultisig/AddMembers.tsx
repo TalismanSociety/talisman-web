@@ -51,6 +51,7 @@ const AddMembers = (props: {
           return (
             <MemberRow
               key={account.address}
+              truncate={true}
               member={account}
               onDelete={() => {
                 props.setExternalAccounts(props.externalAccounts.filter(a => a !== account.address))

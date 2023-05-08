@@ -144,7 +144,7 @@ const Confirmation = (props: {
           Members
         </h2>
         {props.augmentedAccounts.map(account => {
-          return <MemberRow key={account.address} member={account} />
+          return <MemberRow key={account.address} member={account} truncate={true} />
         })}
       </div>
       <div

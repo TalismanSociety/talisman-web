@@ -22,8 +22,8 @@ export const mockTransactions: Transaction[] = [
     hash: '0x113b3c4d5e6f7g8h9i0j1k2l3m4n5o6p7q8r9s0t',
     chainId: 1,
     approvals: {
-      '0x1234abcd5678efgh9012ijkl3456mnop': false,
-      '0x2345bcde6789fghi0123jklm4567nopq': true,
+      '5D4yToYC7DqgHJ3PT7afS6FZ2X8uHzNP6Uym7ko4w4dJW8Vn': undefined,
+      '5FSPS8eH2Xm69TjT2QZeTukw1NjnWxTgCpMnY1eaBvtykzW9': '0x113b3c4d5e6f7g8h9i0j1k2l3m4n5o6p7q8r9s0t',
     },
     decoded: {
       type: TransactionType.MultiSend,
@@ -33,9 +33,9 @@ export const mockTransactions: Transaction[] = [
         price: 30,
       },
       recipients: [
-        ['0xabcdef1234567890abcdef1234567890abcdef12', 100],
-        ['0xbcdefa2345678901bcdefa2345678901bcdefa2', 200],
-        ['0xcdefab3456789012cdefab3456789012cdefab3', 300],
+        ['5Gw3s7q4Xq7kMSKU5r5BpKkULK1tMmMjNC8jZZoYJ27kLguY', 100],
+        ['5CZz1FxoHm3qzPwkmxTwgQmPxL5sqkC7vZZ9Y6a1L6SugG6H', 200],
+        ['5Ejg6Uzj6rgZbUNU17ThFqQEfurq3jf6pU6VuRdq6JkU6FT8', 300],
       ],
     },
     raw: '0x...',
@@ -46,7 +46,7 @@ export const mockTransactions: Transaction[] = [
     hash: '0x123c4d5e6f7g8h9i0c1k2l3m4n5o6p7q8r9s0t1a',
     chainId: 1,
     approvals: {
-      '0x3456cdef7890ghij1234klmn5678opqr': false,
+      '5GZvM8XJYq3zCq3QrxsmoDJvJ8WpkLpDtDzzcnjXTnBZvX9Y': undefined,
     },
     decoded: {
       type: TransactionType.Transfer,
@@ -64,9 +64,10 @@ export const mockTransactions: Transaction[] = [
     hash: '0x8c4d5e6f7g8h9i0j1a2l3m4n5o6p7q8r9s0t1a2b',
     chainId: 1,
     approvals: {
-      '0x4567defg8901hijk2345lmno6789pqrst': false,
-      '0x5678efgh9012ijkl3456mnop7890qrstu': true,
+      '5H3sN2umuE7fDZMtYj9q3aHJQKgaPdu5MzWyp8Hh4i4FGM': undefined,
+      '5DxqH7BqSf2Qj1DfcNNdUksctU92JjEFU6nEW8RUXSnU6gj': '0x8c4d5e6f7g8h9i0j1a2l3m4n5o6p7q8r9s0t1a2b',
     },
+
     decoded: {
       type: TransactionType.Transfer,
       outgoingToken: {
@@ -84,8 +85,8 @@ export const mockTransactions: Transaction[] = [
     hash: '0x9d5e6f7g8h9i0j1k2l3m4n5o6p7q8r9s0t1a2b3c',
     chainId: 1,
     approvals: {
-      '0x6789fghi0123jklm4567nopq8901rstu': true,
-      '0x7890ghij1234klmn5678opqr9012stuv': true,
+      '5He7n5y6MXxrohUXJ1wja4C4mZj4oX9cYx4JaKmDpWK4Bm4q': '0x9d5e6f7g8h9i0j1k2l3m4n5o6p7q8r9s0t1a2b3c',
+      '5FmDzNqnAp87dxJumDvt8MscxwxZz1Q2FBUAdFi9X8JT5pr6': '0x9d5e6f7g8h9i0j1k2l3m4n5o6p7q8r9s0t1a2b3c',
     },
     decoded: {
       type: TransactionType.MultiSend,
@@ -95,9 +96,9 @@ export const mockTransactions: Transaction[] = [
         price: 30,
       },
       recipients: [
-        ['0xdefabc1234567890defabc1234567890defabc1', 150],
-        ['0xefabcd2345678901efabcd2345678901efabcd2', 250],
-        ['0xfabcde3456789012fabcde3456789012fabcde3', 350],
+        ['5Hv5RhoRz7Dnys8b1yVpLwEovwniu3r3QRCWQ7VynvRjopH7', 150],
+        ['5DyV5wvvmYkbJTJU65P8B5TxwpUvNx6U5df6E5oAYyTFzs6y', 250],
+        ['5EYxYPZscKzZ1Q2eLLXC9X9Q8WgScT33TzHkRiLhSg8n1Dox', 350],
       ],
     },
     raw: '0x...',
@@ -109,8 +110,8 @@ export const mockTransactions: Transaction[] = [
     hash: '0x106f7g8h9i0j1k2l3m4n5o6p7q8r9s0t1a2b3c4d',
     chainId: 1,
     approvals: {
-      '0x8901hijk2345lmno6789pqrst0123tuvw': true,
-      '0x9012ijkl3456mnop7890qrst1234uvwx': true,
+      '5FZ1nHXiU9C6yW8Fyry6CQYQwDJKKkdnt1xGxvsJ7M1TPvYX': '0x106f7g8h9i0j1k2l3m4n5o6p7q8r9s0t1a2b3c4d',
+      '5FqW7g8LvnRTEH7R6QxR1Ef8WzKX2rEiVzP6nT8pW7mFjKf1': '0x106f7g8h9i0j1k2l3m4n5o6p7q8r9s0t1a2b3c4d',
     },
     decoded: {
       type: TransactionType.Transfer,
