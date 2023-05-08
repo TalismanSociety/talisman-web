@@ -2,6 +2,7 @@ import MemberRow from '@components/MemberRow'
 import StatusCircle, { StatusCircleType } from '@components/StatusCircle'
 import { css } from '@emotion/css'
 import { Share2, Users } from '@talismn/icons'
+import { Button } from '@talismn/ui'
 
 import TransactionSummaryRow from './TransactionSummaryRow'
 import { Transaction } from '.'
@@ -160,17 +161,62 @@ export const FullScreenDialogTitle = ({ t }: { t?: Transaction }) => {
 export const FullScreenDialogContents = ({ t }: { t?: Transaction }) => {
   if (!t) return null
 
+  // TODO: this should check if any of the users connected wallets have not approved. if
+  // multiple, show selector for user to decide which wallet to sign with
+  const userCanApprove = Object.values(t.approvals).filter(Boolean).length < Object.values(t.approvals).length
   return (
-    <div css={{ display: 'grid', gap: '32px' }}>
-      <TransactionSummaryRow t={t} />
-      <div css={{ display: 'grid', gap: '13px' }}>
-        <h3>Details</h3>
-        <MultiSendDetails t={t} />
+    <div
+      className={css`
+        display: grid;
+        align-items: start;
+        height: calc(100% - 40px * 3);
+      `}
+    >
+      <div
+        className={css`
+          display: grid;
+          align-content: start;
+          gap: 32px;
+          padding: 0 42px;
+          height: 100%;
+          overflow-x: visible;
+          overflow-y: auto;
+        `}
+      >
+        <TransactionSummaryRow t={t} />
+        <div css={{ display: 'grid', gap: '32px', alignItems: 'start' }}>
+          <div css={{ display: 'grid', gap: '13px' }}>
+            <h3>Details</h3>
+            <MultiSendDetails t={t} />
+          </div>
+          <div css={{ display: 'grid', gap: '13px' }}>
+            <h3>Approvals</h3>
+            <Approvals t={t} />
+          </div>
+        </div>
       </div>
-      <div css={{ display: 'grid', gap: '13px' }}>
-        <h3>Approvals</h3>
-        <Approvals t={t} />
-      </div>
+      {userCanApprove && (
+        <div
+          className={css`
+            display: grid;
+            margin-top: auto;
+            border-top: 1px solid var(--color-backgroundLighter);
+            gap: 16px;
+            padding: 32px;
+          `}
+        >
+          <div css={{ display: 'flex', justifyContent: 'space-between' }}>
+            <p>Fees</p>
+            <p>{'>0.01 DOT ($0.69)'}</p>
+          </div>
+          <div css={{ display: 'flex', height: '56px', gap: '16px' }}>
+            <Button css={{ flexGrow: '1' }} variant="outlined">
+              Reject
+            </Button>
+            <Button css={{ flexGrow: '1' }}>Approve</Button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

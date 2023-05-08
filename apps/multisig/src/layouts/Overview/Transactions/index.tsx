@@ -74,12 +74,14 @@ const TransactionsList = ({ transactions }: { transactions: Transaction[] }) => 
         title={<FullScreenDialogTitle t={openTransaction} />}
         css={{
           header: {
-            marginBottom: '32px',
+            margin: '32px 48px',
           },
+          height: '100vh',
           background: 'var(--color-grey800)',
           maxWidth: '781px',
           minWidth: '700px',
           width: '100%',
+          padding: '0 !important',
         }}
         open={!!openTransaction}
       >
