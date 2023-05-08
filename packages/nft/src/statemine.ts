@@ -5,7 +5,13 @@ import { graphql } from './gql/statemine/index'
 import type { CreateNftAsyncGenerator, IpfsMetadata, SubstrateNft } from './types'
 
 const fetchIpfsMetadata = (metadata: string): Promise<IpfsMetadata> =>
-  fetch(new URL(metadata, 'https://talisman.mypinata.cloud/ipfs/')).then(res => res.json())
+  fetch(
+    new URL(
+      // Some metadata are corrupted and contains an actual IPFS link
+      metadata.replace('ipfs://ipfs/', ''),
+      'https://talisman.mypinata.cloud/ipfs/'
+    )
+  ).then(res => res.json())
 
 export const createStatemineNftAsyncGenerator: CreateNftAsyncGenerator<SubstrateNft> = async function* (
   address,
