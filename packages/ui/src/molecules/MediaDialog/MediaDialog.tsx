@@ -55,7 +55,8 @@ const MediaPlayer = (props: MediaPlayerProps) => {
         </div>
       )
     case 'application':
-      return <embed src={props.src} css={{ width: '100%', height: '100%' }} />
+    // return <embed src={props.src} css={{ width: '100%', height: '100%' }} />
+    // eslint-disable-next-line no-fallthrough
     case null:
     case undefined:
     default:

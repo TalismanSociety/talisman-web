@@ -8,7 +8,8 @@
   },
   "dependencies": {
     "graphql": "^16.6.0",
-    "graphql-request": "^5.2.0"
+    "graphql-request": "^5.2.0",
+    "multiformats": "^11.0.2"
   },
   "devDependencies": {
     "@acala-network/types": "^4.1.8-2.3",

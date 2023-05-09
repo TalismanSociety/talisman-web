@@ -63,13 +63,21 @@ const NftCard = ({ nft }: { nft: Nft }) => {
               <Text.Body as="p" css={{ whiteSpace: 'pre-wrap' }}>
                 {nft.description}
               </Text.Body>
-              <div css={{ display: 'flex', gap: '3.2rem', marginTop: '3.2rem' }}>
+              <div css={{ display: 'flex', gap: '3.2rem', marginTop: '3.2rem', flexWrap: 'wrap' }}>
                 <article>
-                  <Text.BodyLarge as="div">Source</Text.BodyLarge>
+                  <Text.BodyLarge as="div">Type</Text.BodyLarge>
                   <Text.BodyLarge alpha="high" css={{ textTransform: 'capitalize' }}>
                     {nft.type.replace('-', ' ')}
                   </Text.BodyLarge>
                 </article>
+                {'chain' in nft && (
+                  <article>
+                    <Text.BodyLarge as="div">Chain</Text.BodyLarge>
+                    <Text.BodyLarge alpha="high" css={{ textTransform: 'capitalize' }}>
+                      {nft.chain.replace('-', ' ')}
+                    </Text.BodyLarge>
+                  </article>
+                )}
                 {(nft.externalLinks?.length ?? 0) > 0 && (
                   <article>
                     <Text.BodyLarge as="div">View on</Text.BodyLarge>

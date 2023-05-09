@@ -21,9 +21,14 @@ export type SubstrateNft = BaseNft & {
   chain: 'statemint' | 'statemine'
 }
 
-export type AcalaNft = BaseNft & {
-  type: 'acala'
+export type OrmlNft<T extends string> = BaseNft & {
+  type: 'orml'
+  chain: T
 }
+
+export type AcalaNft = OrmlNft<'acala'>
+
+export type BitCountryNft = OrmlNft<'bit-country'>
 
 export type Rmrk1Nft = BaseNft & {
   type: 'rmrk1'
@@ -31,7 +36,6 @@ export type Rmrk1Nft = BaseNft & {
 
 export type Rmrk2Nft = BaseNft & {
   type: 'rmrk2'
-  children?: Rmrk2Nft[]
 }
 
 export type UniqueNetworkNft = BaseNft & {
@@ -43,7 +47,7 @@ export type EvmNft = BaseNft & {
   chain: string
 }
 
-export type Nft = SubstrateNft | AcalaNft | Rmrk1Nft | Rmrk2Nft | EvmNft | UniqueNetworkNft
+export type Nft = SubstrateNft | AcalaNft | BitCountryNft | Rmrk1Nft | Rmrk2Nft | EvmNft | UniqueNetworkNft
 
 export type CreateNftAsyncGenerator<T extends BaseNft = BaseNft> = {
   (address: string, options: { batchSize: number }): AsyncGenerator<T>
