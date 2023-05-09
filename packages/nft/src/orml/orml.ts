@@ -11,14 +11,14 @@ type Config<T> = {
   chain: T
   endpoint: string
   getMetadata: (classId: u32, tokenId: u64, metadata: Bytes) => Promise<IpfsMetadata | undefined>
-  getExternalLink: (classId: u32, tokenId: u64) => Array<{ name: string; url: string }>
+  getExternalLinks: (classId: u32, tokenId: u64) => Array<{ name: string; url: string }>
 }
 
 export const createOrmlNftAsyncGenerator = <const T extends string>({
   chain: chainId,
   endpoint,
   getMetadata,
-  getExternalLink,
+  getExternalLinks: getExternalLink,
 }: Config<T>): CreateNftAsyncGenerator<OrmlNft<T>> =>
   async function* (address, { batchSize }) {
     const apiPromise = new ApiPromise({ provider: new WsProvider(endpoint) })

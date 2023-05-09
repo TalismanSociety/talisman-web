@@ -26,7 +26,7 @@ export const createAcalaNftAsyncGenerator = createOrmlNftAsyncGenerator({
       res.json()
     )
   },
-  getExternalLink: (_, __) => [{ name: 'Acala', url: 'https://apps.acala.network/' }],
+  getExternalLinks: (_, __) => [{ name: 'Acala', url: 'https://apps.acala.network/' }],
 })
 
 export const createBitCountryNftAsyncGenerator = createOrmlNftAsyncGenerator({
@@ -45,7 +45,7 @@ export const createBitCountryNftAsyncGenerator = createOrmlNftAsyncGenerator({
       .then(res => res.json())
       .then(x => ({ ...x, image: x.image_url ? `https://ipfs-cdn.bit.country/${x.image_url}` : undefined }))
   },
-  getExternalLink: (classId, __) => [
+  getExternalLinks: (classId, __) => [
     { name: 'Pioneer', url: `https://pioneer.bit.country/marketplace/browse?collection=${classId}` },
   ],
 })
