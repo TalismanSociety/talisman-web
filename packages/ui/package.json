@@ -20,6 +20,7 @@
     "@lottiefiles/react-lottie-player": "^3.5.2",
     "@talismn/icons": "workspace:^",
     "colorjs.io": "^0.4.3",
+    "lodash.debounce": "^4.0.8",
     "react-hot-toast": "^2.4.0"
   },
   "devDependencies": {
@@ -37,6 +38,7 @@
     "@talismn/development": "workspace:^",
     "@talismn/eslint-config": "workspace:^",
     "@talismn/tsconfig": "workspace:^",
+    "@types/lodash.debounce": "^4.0.7",
     "@types/react": "^18.0.28",
     "babel-loader": "^8.3.0",
     "eslint": "^8.37.0",
