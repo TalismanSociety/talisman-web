@@ -104,7 +104,7 @@ const Button = <T extends ButtonElementType = 'button'>({
         {
           textAlign: 'center',
           display: 'block',
-          padding: '1.156rem 0',
+          padding: '1.156rem 2.4rem',
           border: 'none',
           borderRadius: '1rem',
           cursor: 'pointer',
@@ -139,7 +139,7 @@ const Button = <T extends ButtonElementType = 'button'>({
         )}
         <span
           css={[
-            { textAlign: 'center', margin: '0 2.4rem', width: 'stretch' },
+            { textAlign: 'center', width: 'stretch' },
             hasLeadingIcon && { translate: '0.8rem' },
             trailingIcon && { translate: '-0.8rem' },
           ]}
