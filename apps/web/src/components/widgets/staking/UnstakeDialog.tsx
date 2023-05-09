@@ -1,11 +1,10 @@
 import BaseUnstakeDialog from '@components/recipes/UnstakeDialog'
 import { usePoolUnstakeForm } from '@domains/nominationPools/hooks'
-import { useLockDuration } from '@domains/nominationPools/hooks/useLockDuration'
-import { formatDistance } from 'date-fns'
+import { useLocalizedLockDuration } from '@domains/nominationPools/hooks/useLockDuration'
 import { useCallback, useEffect } from 'react'
 
 const UnstakeDialog = (props: { account?: string; onDismiss: () => unknown }) => {
-  const lockDuration = useLockDuration()
+  const lockDuration = useLocalizedLockDuration()
 
   const {
     extrinsic: unbondExtrinsic,
@@ -40,7 +39,7 @@ const UnstakeDialog = (props: { account?: string; onDismiss: () => unknown }) =>
       newAmount={resulting.decimalAmount?.toHuman() ?? '...'}
       newFiatAmount={resulting.localizedFiatAmount ?? '...'}
       inputSupportingText={inputError?.message}
-      lockDuration={lockDuration === undefined ? '...' : formatDistance(0, lockDuration.toNumber())}
+      lockDuration={lockDuration}
       onDismiss={props.onDismiss}
       onConfirm={useCallback(() => {
         if (props.account !== undefined && decimalAmount !== undefined) {

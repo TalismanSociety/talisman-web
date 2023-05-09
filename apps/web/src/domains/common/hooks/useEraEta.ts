@@ -15,13 +15,18 @@ export const useEraEtaFormatter = () => {
   )
 
   return useCallback(
-    (era: BN) =>
-      formatDistanceToNow(
+    (era: BN) => {
+      if (!sessionProgress.isEpoch) {
+        return `${era.mul(sessionProgress.eraLength)} sessions`
+      }
+
+      return formatDistanceToNow(
         addMilliseconds(
           new Date(),
           erasToMilliseconds(era, sessionProgress.eraLength, sessionProgress.eraProgress, expectedBlockTime(api))
         )
-      ),
-    [api, sessionProgress.eraLength, sessionProgress.eraProgress]
+      )
+    },
+    [api, sessionProgress.eraLength, sessionProgress.eraProgress, sessionProgress.isEpoch]
   )
 }

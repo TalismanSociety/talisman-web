@@ -1,18 +1,17 @@
-import { useChainDeriveState, useSubstrateApiState, expectedBlockTime } from '@domains/common'
-import { useMemo } from 'react'
-import { useRecoilValueLoadable, waitForAll } from 'recoil'
+import { expectedBlockTime, useChainDeriveState, useSubstrateApiState } from '@domains/common'
+import { formatDistance } from 'date-fns'
+import { useRecoilValue, waitForAll } from 'recoil'
 
-export const useLockDuration = () => {
-  const loadable = useRecoilValueLoadable(
-    waitForAll([useSubstrateApiState(), useChainDeriveState('session', 'eraLength', [])])
+export const useLocalizedLockDuration = () => {
+  const [api, sessionProgress] = useRecoilValue(
+    waitForAll([useSubstrateApiState(), useChainDeriveState('session', 'progress', [])])
   )
 
-  return useMemo(() => {
-    if (loadable.state !== 'hasValue') {
-      return undefined
-    }
-    const [api, eraLength] = loadable.contents
+  if (!sessionProgress.isEpoch) {
+    return `${sessionProgress.eraLength.mul(api.consts.staking.bondingDuration)} sessions`
+  }
 
-    return eraLength.mul(api.consts.staking.bondingDuration).mul(expectedBlockTime(api))
-  }, [loadable.contents, loadable.state])
+  const ms = sessionProgress.eraLength.mul(api.consts.staking.bondingDuration).mul(expectedBlockTime(api))
+
+  return formatDistance(0, ms.toNumber())
 }
