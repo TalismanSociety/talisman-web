@@ -11,7 +11,7 @@ import { type Nft } from '@talismn/nft'
 import { Button, Card, Hr, Identicon, ListItem, MediaDialog, SegmentedButton, Text } from '@talismn/ui'
 import { usePagination } from '@talismn/utils/react'
 import { Maybe } from '@util/monads'
-import { RefCallback, Suspense, useCallback, useMemo, useState } from 'react'
+import { PropsWithChildren, RefCallback, Suspense, useCallback, useMemo, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { useRecoilValue } from 'recoil'
 
@@ -33,6 +33,19 @@ const toIpfsCompatibleUrl = (url: string, options?: { imgWidth?: number }) => {
 
   return gatewayUrl.toString()
 }
+
+const NftGrid = (props: PropsWithChildren) => (
+  <div
+    {...props}
+    css={{
+      'display': 'grid',
+      'gap': '2.4rem',
+      '@media(min-width: 425px)': {
+        gridTemplateColumns: `repeat(auto-fill, minmax(${NFT_CARD_WIDTH}px, 1fr))`,
+      },
+    }}
+  />
+)
 
 const NftCard = ({ nft }: { nft: Nft }) => {
   const [dialogOpen, setDialogOpen] = useState(false)
@@ -223,21 +236,13 @@ const AccountNfts = (props: { account: Account; view: 'collections' | 'items' })
     <>
       <section ref={ref}>
         <PaginationControls showAccount />
-        <div
-          css={{
-            'display': 'grid',
-            'gap': '2.4rem',
-            '@media(min-width: 425px)': {
-              gridTemplateColumns: `repeat(auto-fill, minmax(${NFT_CARD_WIDTH}px, 1fr))`,
-            },
-          }}
-        >
+        <NftGrid>
           {items.map((item, index) => (
             <div key={`${page}-${index}`}>
               {'items' in item ? <NftCollectionCard collection={item} /> : <NftCard nft={item} />}
             </div>
           ))}
-        </div>
+        </NftGrid>
         <PaginationControls />
       </section>
       <Hr />
@@ -277,9 +282,9 @@ const Nfts = () => {
       </div>
       <Suspense
         fallback={
-          <div css={{ 'marginTop': '1.6rem', '@media(min-width: 425px)': { maxWidth: 290 } }}>
+          <NftGrid>
             <Card.Skeleton />
-          </div>
+          </NftGrid>
         }
       >
         <section>
