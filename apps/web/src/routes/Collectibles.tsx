@@ -11,9 +11,11 @@ import { type Nft } from '@talismn/nft'
 import { Button, Card, Hr, Identicon, ListItem, MediaDialog, SegmentedButton, Text } from '@talismn/ui'
 import { usePagination } from '@talismn/utils/react'
 import { Maybe } from '@util/monads'
-import { PropsWithChildren, RefCallback, Suspense, useCallback, useMemo, useState } from 'react'
+import { PropsWithChildren, RefCallback, Suspense, useCallback, useEffect, useMemo, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { useRecoilValue } from 'recoil'
+
+const COLLECTION_KEY = 'collectionKey'
 
 const NFT_CARD_WIDTH = 290
 
@@ -144,7 +146,7 @@ const NftCollectionCard = ({ collection }: { collection: NftCollection }) => (
 
 const AccountNfts = (props: { account: Account; view: 'collections' | 'items' }) => {
   const [searchParams] = useSearchParams()
-  const collectionKey = searchParams.get('collectionKey') as CollectionKey | null
+  const collectionKey = searchParams.get(COLLECTION_KEY) as CollectionKey | null
 
   const gap = 8
   const targetRows = 3
@@ -251,11 +253,22 @@ const AccountNfts = (props: { account: Account; view: 'collections' | 'items' })
 }
 
 const Nfts = () => {
-  const [searchParams] = useSearchParams()
-  const collectionKey = searchParams.get('collectionKey')
+  const [searchParams, setSearchParams] = useSearchParams()
+  const collectionKey = searchParams.get(COLLECTION_KEY)
 
   const [view, setView] = useState<'collections' | 'items'>('items')
   const accounts = useRecoilValue(selectedAccountsState)
+
+  // When account selections change, remove detailed collection view
+  // because new account selections might not have that collection
+  useEffect(
+    () => {
+      const newSearchParams = new URLSearchParams(searchParams)
+      newSearchParams.delete(COLLECTION_KEY)
+      setSearchParams(newSearchParams)
+    }, // eslint-disable-next-line react-hooks/exhaustive-deps
+    [accounts]
+  )
 
   return (
     <div>
