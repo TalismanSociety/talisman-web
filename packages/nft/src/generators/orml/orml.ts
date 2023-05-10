@@ -2,10 +2,10 @@ import '@acala-network/types'
 import '@acala-network/types/lookup/types-acala'
 
 import { ApiPromise, WsProvider } from '@polkadot/api'
-import { type Option, type Bytes, type u32, type u64 } from '@polkadot/types-codec'
+import { type Bytes, type Option, type u32, type u64 } from '@polkadot/types-codec'
 import { OrmlNftClassInfo } from '@polkadot/types/lookup'
 
-import type { CreateNftAsyncGenerator, IpfsMetadata, OrmlNft } from '../types'
+import type { CreateNftAsyncGenerator, IpfsMetadata, Nft } from '../../types'
 
 type Config<T> = {
   chain: T
@@ -19,7 +19,7 @@ export const createOrmlNftAsyncGenerator = <const T extends string>({
   endpoint,
   getMetadata,
   getExternalLinks: getExternalLink,
-}: Config<T>): CreateNftAsyncGenerator<OrmlNft<T>> =>
+}: Config<T>): CreateNftAsyncGenerator<Nft<'orml', T>> =>
   async function* (address, { batchSize }) {
     const apiPromise = new ApiPromise({ provider: new WsProvider(endpoint) })
     try {
@@ -43,7 +43,7 @@ export const createOrmlNftAsyncGenerator = <const T extends string>({
         const classMap = new Map<string, Option<OrmlNftClassInfo>>()
 
         yield* await Promise.all(
-          storageKey.map(async ({ args: [_, classId, tokenId] }): Promise<OrmlNft<T> | undefined> => {
+          storageKey.map(async ({ args: [_, classId, tokenId] }) => {
             const [ormlNftClassOption, ormlNftTokenOption] = await Promise.all([
               classMap.get(classId.toString()) ??
                 api.query.ormlNFT.classes(classId).then(x => {
@@ -66,7 +66,7 @@ export const createOrmlNftAsyncGenerator = <const T extends string>({
             ])
 
             return {
-              type: 'orml',
+              type: 'orml' as const,
               chain: chainId,
               id: `${classId.toString()}-${tokenId.toString()}`,
               name: tokenMetadata?.name || classMetadata?.name,

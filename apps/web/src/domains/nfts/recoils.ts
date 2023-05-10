@@ -1,9 +1,9 @@
+import * as Sentry from '@sentry/react'
 import { type Nft } from '@talismn/nft'
 import { atomFamily, DefaultValue, selectorFamily } from 'recoil'
 import { bufferTime, filter, Observable, tap } from 'rxjs'
 import { spawn, Thread } from 'threads'
 import { type SubscribeNfts } from './worker'
-import * as Sentry from '@sentry/react'
 
 const _nftsState = atomFamily<Nft[], string>({
   key: '_Nfts',
@@ -69,14 +69,12 @@ export const nftsState = selectorFamily({
 type Type = string
 type Chain = string
 type CollectionId = string
-export type CollectionKey = `${Type}-${CollectionId}` | `${Type}-${Chain}-${CollectionId}` | 'unknown'
+export type CollectionKey = `${Type}-${Chain}-${CollectionId}` | 'unknown'
 export type NftCollection = NonNullable<Nft['collection']> & { key: CollectionKey; items: Nft[] }
 type CollectionMap = ReadonlyMap<CollectionKey, NftCollection>
 
 export const getNftCollectionKey = (nft: Nft) =>
-  ('chain' in nft
-    ? `${nft.type}-${nft.chain}-${nft.collection?.id}`
-    : `${nft.type}-${nft.collection?.id}`) satisfies CollectionKey
+  `${nft.type}-${nft.chain}-${nft.collection?.id}` satisfies CollectionKey
 
 export const nftCollectionMapState = selectorFamily({
   key: 'NftCollectionMap',

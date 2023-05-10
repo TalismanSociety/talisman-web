@@ -2,10 +2,10 @@ import '@polkadot/api-augment/substrate'
 import { encodeAddress } from '@polkadot/util-crypto'
 import { request } from 'graphql-request'
 
-import { graphql } from './gql/rmrk2/index'
-import type { CreateNftAsyncGenerator, Rmrk2Nft } from './types'
+import { graphql } from '../gql/rmrk2/index'
+import type { CreateNftAsyncGenerator, Nft } from '../types'
 
-export const createRmrk2NftAsyncGenerator: CreateNftAsyncGenerator<Rmrk2Nft> = async function* (
+export const createRmrk2NftAsyncGenerator: CreateNftAsyncGenerator<Nft<'rmrk2', 'kusama'>> = async function* (
   address,
   { batchSize }
 ) {
@@ -51,26 +51,25 @@ export const createRmrk2NftAsyncGenerator: CreateNftAsyncGenerator<Rmrk2Nft> = a
       break
     }
 
-    yield* response.nfts.map(
-      (nft): Rmrk2Nft => ({
-        type: 'rmrk2',
-        id: nft.id,
-        name: nft.metadata_name ?? undefined,
-        description: nft.metadata_description ?? undefined,
-        media: nft.metadata_image || nft.resources[0]?.thumb || undefined,
-        thumbnail: nft.resources[0]?.thumb || nft.metadata_image || undefined,
-        serialNumber: Number(nft.sn),
-        properties: nft.metadata_properties,
-        externalLinks: [{ name: 'Singular', url: `https://singular.app/collectibles/${nft.id}` }],
-        collection: !nft.collection
-          ? undefined
-          : {
-              id: nft.collection.id,
-              name: nft.collection.metadata_name ?? undefined,
-              totalSupply: nft.collection.max,
-            },
-      })
-    )
+    yield* response.nfts.map(nft => ({
+      id: nft.id,
+      type: 'rmrk2' as const,
+      chain: 'kusama' as const,
+      name: nft.metadata_name ?? undefined,
+      description: nft.metadata_description ?? undefined,
+      media: nft.metadata_image || nft.resources[0]?.thumb || undefined,
+      thumbnail: nft.resources[0]?.thumb || nft.metadata_image || undefined,
+      serialNumber: Number(nft.sn),
+      properties: nft.metadata_properties,
+      externalLinks: [{ name: 'Singular', url: `https://singular.app/collectibles/${nft.id}` }],
+      collection: !nft.collection
+        ? undefined
+        : {
+            id: nft.collection.id,
+            name: nft.collection.metadata_name ?? undefined,
+            totalSupply: nft.collection.max,
+          },
+    }))
 
     offset += batchSize
   }

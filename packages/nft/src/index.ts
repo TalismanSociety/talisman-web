@@ -1,7 +1,10 @@
-export { createEvmNftAsyncGenerator } from './evm'
-export { createAcalaNftAsyncGenerator, createBitCountryNftAsyncGenerator } from './orml'
-export { createRmrk1NftAsyncGenerator } from './rmrk1'
-export { createRmrk2NftAsyncGenerator } from './rmrk2'
-export { createStatemineNftAsyncGenerator } from './statemine'
-export * from './types'
-export { createUniqueNetworkNftAsyncGenerator } from './unique'
+import type * as generators from './generators'
+import { type CreateNftAsyncGenerator } from './types'
+
+type NftMap = {
+  [P in keyof typeof generators]: (typeof generators)[P] extends CreateNftAsyncGenerator<infer R> ? R : never
+}
+
+export type Nft = NftMap[keyof NftMap]
+
+export * from './generators'

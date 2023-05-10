@@ -1,9 +1,9 @@
 import '@polkadot/api-augment/substrate'
 import { request } from 'graphql-request'
-import { graphql } from './gql/unique/index'
-import type { CreateNftAsyncGenerator, UniqueNetworkNft } from './types'
+import { graphql } from '../gql/unique/index'
+import type { CreateNftAsyncGenerator, Nft } from '../types'
 
-export const createUniqueNetworkNftAsyncGenerator: CreateNftAsyncGenerator<UniqueNetworkNft> = async function* (
+export const createUniqueNetworkNftAsyncGenerator: CreateNftAsyncGenerator<Nft<'unique', 'unique'>> = async function* (
   address,
   { batchSize }
 ) {
@@ -43,9 +43,10 @@ export const createUniqueNetworkNftAsyncGenerator: CreateNftAsyncGenerator<Uniqu
     }
 
     yield* await Promise.all(
-      response.tokens.data?.map(async (nft): Promise<UniqueNetworkNft> => {
+      response.tokens.data?.map(async nft => {
         return {
-          type: 'unique-network',
+          type: 'unique' as const,
+          chain: 'unique' as const,
           id: nft.token_id.toString(),
           name: nft.token_name ?? undefined,
           description: nft.collection?.description ?? undefined,

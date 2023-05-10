@@ -1,5 +1,5 @@
 import { createPublicClient, http } from 'viem'
-import { CreateNftAsyncGenerator, EvmNft } from '../types'
+import { CreateNftAsyncGenerator, Nft } from '../../types'
 import { erc721Abi } from './abi'
 import chains from './chains'
 
@@ -8,7 +8,10 @@ const range = (start: number, stop: number, step = 1) =>
 
 const isEvmAddress = (address: string): address is `0x${string}` => address.startsWith('0x')
 
-export const createEvmNftAsyncGenerator: CreateNftAsyncGenerator<EvmNft> = async function* (address, { batchSize }) {
+export const createEvmNftAsyncGenerator: CreateNftAsyncGenerator<Nft<'erc721', string>> = async function* (
+  address,
+  { batchSize }
+) {
   if (!isEvmAddress(address)) {
     throw new Error(`Invalid EVM address: ${address}`)
   }
@@ -80,7 +83,7 @@ export const createEvmNftAsyncGenerator: CreateNftAsyncGenerator<EvmNft> = async
           const metadata = metadatum[index]
 
           return {
-            type: 'evm' as const,
+            type: 'erc721' as const,
             chain: config.chain.name,
             id: `${erc721Address}-${tokenId.toString()}`,
             name: metadata?.name,
