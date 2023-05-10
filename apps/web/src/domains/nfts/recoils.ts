@@ -67,9 +67,9 @@ export const nftsState = selectorFamily({
 })
 
 type Type = string
-type Chain = string | 'unknown'
+type Chain = string
 type CollectionId = string
-export type CollectionKey = `${Type}-${CollectionId}` | `${Type}-${Chain}-${CollectionId}`
+export type CollectionKey = `${Type}-${CollectionId}` | `${Type}-${Chain}-${CollectionId}` | 'unknown'
 export type NftCollection = NonNullable<Nft['collection']> & { key: CollectionKey; items: Nft[] }
 type CollectionMap = ReadonlyMap<CollectionKey, NftCollection>
 
@@ -93,6 +93,18 @@ export const nftCollectionMapState = selectorFamily({
             map.get(key)?.items.push(nft)
           } else {
             map.set(key, { ...nft.collection, key, items: [nft] })
+          }
+        } else {
+          if (map.has('unknown')) {
+            map.get('unknown')?.items.push(nft)
+          } else {
+            map.set('unknown', {
+              key: 'unknown',
+              id: 'unknown',
+              name: 'Unknown',
+              totalSupply: undefined,
+              items: [nft],
+            })
           }
         }
       }
