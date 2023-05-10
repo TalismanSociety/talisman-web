@@ -88,7 +88,7 @@ const NftCard = ({ nft }: { nft: Nft }) => {
                     ))}
                   </article>
                 )}
-                {nft.serialNumber && (
+                {nft.serialNumber !== undefined && (
                   <article>
                     <Text.BodyLarge as="div">Edition</Text.BodyLarge>
                     <Text.BodyLarge alpha="high">
