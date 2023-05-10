@@ -1,6 +1,6 @@
 import { useTheme } from '@emotion/react'
 import { Clock, Lock, Rocket } from '@talismn/icons'
-import { Chip, ChipProps, Hr, Identicon, ListItem, Text, Tooltip } from '@talismn/ui'
+import { Chip, ChipProps, CircularProgressIndicator, Hr, Identicon, ListItem, Text, Tooltip } from '@talismn/ui'
 import Color from 'colorjs.io'
 import { ReactNode, useMemo } from 'react'
 
@@ -79,6 +79,13 @@ export const UnstakingStatus = (props: {
       </div>
     )}
   </Tooltip>
+)
+
+export const FastUnstakingStatus = (props: { amount: ReactNode; status: 'in-head' | 'in-queue' | undefined }) => (
+  <div css={{ display: 'flex', alignItems: 'center', gap: '0.5em' }}>
+    <CircularProgressIndicator size="1em" />
+    <Text.Body>Fast unstaking {props.amount}</Text.Body>
+  </div>
 )
 
 const StakeItem = Object.assign(

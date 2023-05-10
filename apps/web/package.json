@@ -33,6 +33,7 @@
     "@recoiljs/refine": "^0.1.1",
     "@sentry/react": "^7.37.2",
     "@sentry/tracing": "^7.37.2",
+    "@shopify/web-worker": "^6.0.1",
     "@substrate/txwrapper-core": "^5.0.0",
     "@talismn/api-react-hooks": "~0.0.25",
     "@talismn/balances-default-modules": "0.0.0-pr677-20230414083406",
