@@ -31,6 +31,7 @@ const AmountInput = (props: AmountInputProps) => (
       isNilOrWhitespace(props.error) ? props.fiatAmount : <TextInput.ErrorLabel>{props.error}</TextInput.ErrorLabel>
     }
     trailingSupportingText={<Chip onClick={props.onRequestMaxAmount}>Max</Chip>}
+    css={{ fontSize: '3rem' }}
   />
 )
 

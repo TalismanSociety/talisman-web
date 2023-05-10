@@ -70,11 +70,9 @@ const TokenSelectorDialog = Object.assign(
         content={
           <div>
             <TextInput
-              fontSize="1.6rem"
               placeholder="🔍 Search by network"
               value={query}
               onChange={useCallback<ChangeEventHandler<HTMLInputElement>>(event => setQuery(event.target.value), [])}
-              css={{ fontSize: '1.5rem' }}
             />
             <div css={{ marginLeft: `-${ALERT_DIALOG_PADDING}`, marginRight: `-${ALERT_DIALOG_PADDING}` }}>
               <Hr css={{ marginBottom: 0 }} />
