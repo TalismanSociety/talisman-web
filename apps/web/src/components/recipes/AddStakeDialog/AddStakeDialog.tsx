@@ -31,7 +31,7 @@ const AddStakeDialog = (props: AddStakeDialogProps) => (
           min={0}
           step="any"
           isError={props.isError}
-          placeholder="0 DOT"
+          placeholder="0.00"
           leadingLabel="Available to stake"
           trailingLabel={props.availableToStake}
           leadingSupportingText={props.fiatAmount}
