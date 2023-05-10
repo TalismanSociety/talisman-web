@@ -15,12 +15,7 @@ const module = {
       range(startEraToCheck, activeEra).map(era =>
         api.query.staking.erasStakers
           .entries(era)
-          .then(x =>
-            x.flatMap(([_, exposure]) =>
-              // @ts-expect-error
-              exposure.others.flatMap(({ who }) => who.toString())
-            )
-          )
+          .then(x => x.flatMap(([_, exposure]) => exposure.others.flatMap(({ who }) => who.toString())))
           .then(array => new Set(array))
       )
     ).then(x => x.reduce((prev, curr) => new Set([...prev, ...curr])))

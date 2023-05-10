@@ -5,6 +5,7 @@ const StakeItemSkeleton = (props: SkeletonProps) => {
   const theme = useTheme()
   return (
     <Skeleton.Surface
+      {...props}
       animate={props.animate}
       css={{
         borderRadius: '0.8rem',

@@ -33,7 +33,7 @@ const greenDark: TalismanTheme = {
     onForeground: '#fafafa',
     foregroundVariant: '#3f3f3f',
     onForegroundVariant: '#fafafa',
-    border: '#262626',
+    border: '#2F2F2F',
     error: '#fd48483e',
     onError: '#d22424',
   },

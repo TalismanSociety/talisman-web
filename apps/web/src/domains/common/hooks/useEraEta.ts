@@ -4,6 +4,7 @@ import { useCallback } from 'react'
 import { useRecoilValue, waitForAll } from 'recoil'
 
 import { useChainDeriveState, useSubstrateApiState } from '..'
+import { expectedBlockTime } from '../utils/substratePolyfills'
 
 const erasToMilliseconds = (eras: BN, eraLength: BN, eraProgress: BN, expectedBlockTime: BN) =>
   eras.subn(1).mul(eraLength).add(eraLength).sub(eraProgress).mul(expectedBlockTime).toNumber()
@@ -14,18 +15,18 @@ export const useEraEtaFormatter = () => {
   )
 
   return useCallback(
-    (era: BN) =>
-      formatDistanceToNow(
+    (era: BN) => {
+      if (!sessionProgress.isEpoch) {
+        return `${era.mul(sessionProgress.eraLength)} sessions`
+      }
+
+      return formatDistanceToNow(
         addMilliseconds(
           new Date(),
-          erasToMilliseconds(
-            era,
-            sessionProgress.eraLength,
-            sessionProgress.eraProgress,
-            api.consts.babe.expectedBlockTime
-          )
+          erasToMilliseconds(era, sessionProgress.eraLength, sessionProgress.eraProgress, expectedBlockTime(api))
         )
-      ),
-    [api.consts.babe.expectedBlockTime, sessionProgress.eraLength, sessionProgress.eraProgress]
+      )
+    },
+    [api, sessionProgress.eraLength, sessionProgress.eraProgress, sessionProgress.isEpoch]
   )
 }

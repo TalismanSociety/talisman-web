@@ -92,9 +92,9 @@ const Button = <T extends ButtonElementType = 'button'>({
     }
   }, [theme.color.foreground, theme.contentAlpha.disabled, variant])
 
-  const Component = as
-
   const hasLeadingIcon = Boolean(loading) || leadingIcon !== undefined
+
+  const Component = as
 
   return (
     <Component
@@ -117,18 +117,10 @@ const Button = <T extends ButtonElementType = 'button'>({
         hidden && { cursor: 'default', pointerEvent: 'none', opacity: 0 },
       ]}
     >
-      <div css={{ position: 'relative', width: '100%' }}>
-        {(leadingIcon || loading) && (
+      <div css={{ position: 'relative', display: 'flex' }}>
+        {hasLeadingIcon && (
           <span
-            css={{
-              position: 'absolute',
-              left: '-1.2rem',
-              top: 0,
-              bottom: 0,
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}
+            css={{ position: 'absolute', top: 0, bottom: 0, left: '-1.6rem', display: 'flex', alignItems: 'center' }}
           >
             <IconContext.Provider value={{ size: '1.6rem' }}>
               {(() => {
@@ -147,29 +139,23 @@ const Button = <T extends ButtonElementType = 'button'>({
         )}
         <span
           css={[
-            { display: 'inline-block' },
-            hasLeadingIcon && !trailingIcon && { transform: 'translateX(1rem)' },
-            trailingIcon && !hasLeadingIcon && { transform: 'translateX(-1rem)' },
-            hasLeadingIcon && trailingIcon && { padding: '0 2rem' },
+            { textAlign: 'center', width: 'stretch' },
+            hasLeadingIcon && { translate: '0.8rem' },
+            trailingIcon && { translate: '-0.8rem' },
+            hasLeadingIcon && trailingIcon && { translate: 'revert' },
           ]}
         >
           {props.children}
         </span>
-        {trailingIcon && (
-          <span
-            css={{
-              position: 'absolute',
-              right: '-1.6rem',
-              top: 0,
-              bottom: 0,
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}
-          >
-            {trailingIcon}
-          </span>
-        )}
+        <IconContext.Provider value={{ size: '1.6rem' }}>
+          {trailingIcon && (
+            <span
+              css={{ position: 'absolute', top: 0, bottom: 0, right: '-1.6rem', display: 'flex', alignItems: 'center' }}
+            >
+              {trailingIcon}
+            </span>
+          )}
+        </IconContext.Provider>
       </div>
     </Component>
   )

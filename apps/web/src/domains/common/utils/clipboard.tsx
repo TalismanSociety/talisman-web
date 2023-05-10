@@ -1,6 +1,5 @@
 import { Copy } from '@talismn/icons'
-import { Text } from '@talismn/ui'
-import toast from 'react-hot-toast'
+import { Text, toast } from '@talismn/ui'
 
 export const copyAddressToClipboard = (address: string) => {
   navigator.clipboard.writeText(address)
@@ -11,6 +10,6 @@ export const copyAddressToClipboard = (address: string) => {
       </Text.Body>
       <Text.Body as="div">{address}</Text.Body>
     </>,
-    { position: 'bottom-right', icon: <Copy /> }
+    { icon: <Copy /> }
   )
 }

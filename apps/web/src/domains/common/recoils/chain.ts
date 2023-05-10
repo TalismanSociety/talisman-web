@@ -10,7 +10,7 @@ import type {
   UnsubscribePromise,
 } from '@polkadot/api/types'
 import { useContext } from 'react'
-import { RecoilState, RecoilValueReadOnly, atomFamily, constSelector, errorSelector } from 'recoil'
+import { RecoilState, RecoilValueReadOnly, atomFamily, constSelector } from 'recoil'
 import { Observable } from 'rxjs'
 
 import { SubstrateApiContext, substrateApiState } from '..'
@@ -21,19 +21,30 @@ export const _chainState = atomFamily({
     ({ setSelf, getPromise }) => {
       const apiPromise = getPromise(substrateApiState(endpoint))
 
+      let initialResolve = (value: unknown) => {}
+      let initialReject = (reason?: any) => {}
+
+      setSelf(
+        new Promise((resolve, reject) => {
+          initialResolve = resolve
+          initialReject = reject
+        })
+      )
+
       const unsubscribePromise = apiPromise.then(api => {
         const [section, multi] = (sectionName as string).split('.')
 
         const func =
-          // @ts-ignore
+          // @ts-expect-error
           multi === undefined ? api[typeName][moduleName][section] : api[typeName][moduleName][section][multi]
 
         const parsedParams = multi === undefined ? params : [params]
 
         const unsubscribePromise: UnsubscribePromise = func(...parsedParams, (result: any) => {
+          initialResolve(result)
           setSelf(result)
         }).catch((error: any) => {
-          setSelf(errorSelector(error))
+          initialReject(error)
         })
 
         return unsubscribePromise

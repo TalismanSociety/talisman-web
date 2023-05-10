@@ -3,12 +3,12 @@ import { AddressOrPair } from '@polkadot/api/types'
 import { web3FromAddress } from '@polkadot/extension-dapp'
 import { ISubmittableResult } from '@polkadot/types/types'
 import { useCallback, useContext, useState } from 'react'
-import { useRecoilCallback, useRecoilValueLoadable } from 'recoil'
+import { useRecoilCallback } from 'recoil'
 
-import { chainIdState, chainState } from '../../chains/recoils'
+import { ChainContext } from '@domains/chains'
+import { SubstrateApiContext, substrateApiState } from '..'
 import { extrinsicMiddleware } from '../extrinsicMiddleware'
 import { toastExtrinsic } from '../utils'
-import { SubstrateApiContext, substrateApiState } from '..'
 
 export const useExtrinsic = <
   TModule extends keyof PickKnownKeys<ApiPromise['tx']>,
@@ -19,8 +19,8 @@ export const useExtrinsic = <
 ) => {
   type TExtrinsic = ApiPromise['tx'][TModule][TSection]
 
+  const chain = useContext(ChainContext)
   const apiEndpoint = useContext(SubstrateApiContext).endpoint
-  const chainLoadable = useRecoilValueLoadable(chainState)
 
   const [loadable, setLoadable] = useState<
     | { state: 'idle'; contents: undefined }
@@ -41,8 +41,7 @@ export const useExtrinsic = <
         setParameters([account, ...params])
 
         const promiseFunc = async () => {
-          const [chainId, api, extension] = await Promise.all([
-            snapshot.getPromise(chainIdState),
+          const [api, extension] = await Promise.all([
             snapshot.getPromise(substrateApiState(apiEndpoint)),
             web3FromAddress(account.toString()),
           ])
@@ -58,7 +57,7 @@ export const useExtrinsic = <
           try {
             const extrinsic = api.tx[module]?.[section]?.(...params)
             const unsubscribe = await extrinsic?.signAndSend(account, { signer: extension?.signer }, result => {
-              extrinsicMiddleware(chainId, extrinsic, result, callbackInterface)
+              extrinsicMiddleware(chain.id, extrinsic, result, callbackInterface)
 
               if (result.isError) {
                 unsubscribe?.()
@@ -89,7 +88,7 @@ export const useExtrinsic = <
           contents: loadable.state === 'loading' ? loadable.contents : undefined,
         }))
 
-        toastExtrinsic([[module, String(section)]], promise, chainLoadable)
+        toastExtrinsic([[module, String(section)]], promise, chain)
 
         try {
           const result = await promise
@@ -99,7 +98,7 @@ export const useExtrinsic = <
           setLoadable({ state: 'hasError', contents: error })
         }
       },
-    [apiEndpoint, chainLoadable, module, section]
+    [apiEndpoint, chain, module, section]
   )
 
   return { ...loadable, parameters, signAndSend, reset }

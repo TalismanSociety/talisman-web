@@ -2,7 +2,5 @@
 . "$(dirname -- "$0")/_/husky.sh"
 
 yarn pretty-quick --staged
-
-yarn lint &
-yarn check-types &
-wait
+yarn lint
+yarn check-types

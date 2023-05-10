@@ -40,7 +40,7 @@ const AccountSelector = ({
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [props.defaultToFirstAddress]
+    [props.defaultToFirstAddress, accounts.length === 0]
   )
 
   const onChange = useCallback(

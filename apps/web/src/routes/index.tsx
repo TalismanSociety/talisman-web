@@ -8,13 +8,13 @@ import AccountValueInfo from '@components/recipes/AccountValueInfo'
 import AccountConnectionGuard, { useShouldShowAccountConnectionGuard } from '@components/widgets/AccountConnectionGuard'
 import AccountsManagementMenu from '@components/widgets/AccountsManagementMenu'
 import { RouteErrorElement } from '@components/widgets/ErrorBoundary'
-import StakeDialog from '@components/widgets/StakeDialog'
+import StakeDialog from '@components/widgets/staking/StakeDialog'
 import { accountsState, selectedAccountsState } from '@domains/accounts/recoils'
-import { nativeTokenPriceState, useNativeTokenDecimalState } from '@domains/chains/recoils'
+import { useNativeTokenDecimalState, useNativeTokenPriceState } from '@domains/chains/recoils'
 import { useRecommendedPoolsState } from '@domains/nominationPools/recoils'
 import * as MoonbeamContributors from '@libs/moonbeam-contributors'
 import * as Sentry from '@sentry/react'
-import { Compass, CreditCard, Eye, MoreHorizontal, Star, TalismanHand, Zap } from '@talismn/icons'
+import { Compass, CreditCard, Eye, MoreHorizontal, RefreshCcw, Star, TalismanHand, Zap } from '@talismn/icons'
 import {
   IconButton,
   NavigationBar,
@@ -28,7 +28,7 @@ import {
 import { shortenAddress } from '@util/format'
 import { usePostHog } from 'posthog-js/react'
 import { useCallback, useEffect, useState } from 'react'
-import { Link, Navigate, Outlet, createBrowserRouter, useLocation } from 'react-router-dom'
+import { Link, Navigate, Outlet, createBrowserRouter, useLocation, useSearchParams } from 'react-router-dom'
 import { useRecoilValue, useRecoilValueLoadable, waitForAll } from 'recoil'
 
 import AssetItem from './AssetItem'
@@ -40,6 +40,7 @@ import NFTsPage from './NFTsPage'
 import Overview from './Overview'
 import Portfolio from './Portfolio'
 import TransactionHistory from './TransactionHistory'
+import TeleportDialog from '@components/widgets/TeleportDialog'
 
 const Header = () => {
   const shouldShowAccountConnectionGuard = useShouldShowAccountConnectionGuard()
@@ -67,7 +68,7 @@ const Header = () => {
 const Main = () => {
   // Pre-loading
   useRecoilValueLoadable(
-    waitForAll([accountsState, useNativeTokenDecimalState(), nativeTokenPriceState('usd'), useRecommendedPoolsState()])
+    waitForAll([accountsState, useNativeTokenDecimalState(), useNativeTokenPriceState(), useRecommendedPoolsState()])
   )
 
   const posthog = usePostHog()
@@ -130,14 +131,14 @@ const Main = () => {
           <Link to="/portfolio?action=stake">
             <NavigationBar.Item label="Staking" icon={<Zap />} />
           </Link>
+          <Link to="/portfolio?action=teleport">
+            <NavigationBar.Item label="Teleport" icon={<RefreshCcw />} />
+          </Link>
           <Link to="/explore">
             <NavigationBar.Item label="Explore" icon={<Compass />} />
           </Link>
           <Link to="/crowdloans">
             <NavigationBar.Item label="Crowdloans" icon={<Star />} />
-          </Link>
-          <Link to="https://talisman.banxa.com/" target="_blank">
-            <NavigationBar.Item label="Buy" icon={<CreditCard />} />
           </Link>
         </NavigationBar>
       }
@@ -154,6 +155,9 @@ const Main = () => {
           </Link>
           <Link to="/portfolio?action=stake">
             <NavigationRail.Item label="Staking" icon={<Zap />} />
+          </Link>
+          <Link to="/portfolio?action=teleport">
+            <NavigationRail.Item label="Teleport" icon={<RefreshCcw />} />
           </Link>
           <Link to="/explore">
             <NavigationRail.Item label="Explore" icon={<Compass />} />
@@ -211,8 +215,11 @@ const Main = () => {
           <Link to="/portfolio">
             <NavigationDrawer.Item label="Portfolio" icon={<Eye />} />
           </Link>
-          <Link to="/staking">
+          <Link to="/portfolio?action=stake">
             <NavigationDrawer.Item label="Staking" icon={<Zap />} />
+          </Link>
+          <Link to="/portfolio?action=teleport">
+            <NavigationDrawer.Item label="Teleport" icon={<RefreshCcw />} />
           </Link>
           <Link to="/crowdloans">
             <NavigationDrawer.Item label="Crowdloans" icon={<Star />} />
@@ -270,10 +277,18 @@ const Main = () => {
           <Header />
           <Outlet />
           <StakeDialog />
+          <TeleportDialog />
         </MoonbeamContributors.PopupProvider>
       </ModalProvider>
     </Scaffold>
   )
+}
+
+const NavigateToStaking = () => {
+  const [search] = useSearchParams()
+  search.set('action', 'stake')
+  search.sort()
+  return <Navigate to={{ pathname: '/portfolio', search: search.toString() }} />
 }
 
 export default Sentry.wrapCreateBrowserRouter(createBrowserRouter)([
@@ -322,7 +337,15 @@ export default Sentry.wrapCreateBrowserRouter(createBrowserRouter)([
       { path: 'history', element: <Navigate to="/portfolio/history" /> },
       { path: 'nfts', element: <Navigate to="/portfolio/nfts" /> },
       { path: 'explore', element: <Explore /> },
-      { path: 'staking', element: <Navigate to="/portfolio?action=stake" /> },
+      {
+        path: 'staking',
+        element: <NavigateToStaking />,
+      },
+      { path: 'teleport', element: <Navigate to="/portfolio?action=teleport" /> },
+      {
+        path: 'staking',
+        element: <NavigateToStaking />,
+      },
       {
         path: 'crowdloans',
         children: [

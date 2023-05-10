@@ -19,7 +19,8 @@
     "@floating-ui/react": "^0.20.1",
     "@lottiefiles/react-lottie-player": "^3.5.2",
     "@talismn/icons": "workspace:^",
-    "colorjs.io": "^0.4.3"
+    "colorjs.io": "^0.4.3",
+    "react-hot-toast": "^2.4.0"
   },
   "devDependencies": {
     "@babel/core": "^7.21.0",
@@ -42,14 +43,12 @@
     "framer-motion": "^10.2.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-hot-toast": "^2.4.0",
     "typescript": "^5.0.2"
   },
   "peerDependencies": {
     "@emotion/react": "11.x",
     "@talismn/icons": "*",
     "framer-motion": "10.x",
-    "react": "18.x",
-    "react-hot-toast": "2.x"
+    "react": "18.x"
   }
 }
