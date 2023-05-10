@@ -146,6 +146,7 @@ const ValidatorStakeItem = (props: {
             setIsUnstakeDialogOpen(true)
           }
         }, [fastUnstake, props.account.address, props.eligibleForFastUnstake])}
+        learnMoreHref="https://wiki.polkadot.network/docs/learn-staking#fast-unstake"
       />
     </>
   )

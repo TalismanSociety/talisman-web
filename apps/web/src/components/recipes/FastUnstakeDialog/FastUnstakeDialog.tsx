@@ -10,6 +10,7 @@ export type FastUnstakeDialogProps = {
   fastUnstakeEligibility?: 'pending' | 'eligible' | 'ineligible'
   onDismiss: () => unknown
   onConfirm: () => unknown
+  learnMoreHref: string
 }
 
 const FastUnstakeDialog = (props: FastUnstakeDialogProps) => (
@@ -21,7 +22,10 @@ const FastUnstakeDialog = (props: FastUnstakeDialogProps) => (
       <>
         <Text.Body as="p" css={{ textAlign: 'center', marginBottom: '4rem' }}>
           Fast unstaking allows you to bypass the {props.lockDuration} unstaking period, however you cannot have earned
-          rewards within the past {props.lockDuration} to be eligible. <Text.Body.A href="#">Learn more</Text.Body.A>
+          rewards within the past {props.lockDuration} to be eligible.{' '}
+          <Text.Body.A href={props.learnMoreHref} target="_blank">
+            Learn more
+          </Text.Body.A>
         </Text.Body>
         <EyeOfSauronProgressIndicator
           state={useMemo(() => {
