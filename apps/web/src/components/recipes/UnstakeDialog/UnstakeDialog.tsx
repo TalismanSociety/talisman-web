@@ -33,7 +33,7 @@ const UnstakeDialog = (props: UnstakeDialogProps) => (
           min={0}
           step="any"
           isError={props.isError}
-          placeholder="0 DOT"
+          placeholder="0.00"
           leadingLabel="Available to unstake"
           trailingLabel={props.availableAmount}
           leadingSupportingText={props.fiatAmount}

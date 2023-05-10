@@ -20,7 +20,7 @@ Default.args = {
   type: 'text',
   leadingLabel: 'Available to stake',
   trailingLabel: '420 DOT',
-  placeholder: '0 DOT',
+  placeholder: '0.00',
   trailingIcon: <TextInput.LabelButton>MAX</TextInput.LabelButton>,
   leadingSupportingText: '$99,999.99',
   trailingSupportingText: 'Good to go',
