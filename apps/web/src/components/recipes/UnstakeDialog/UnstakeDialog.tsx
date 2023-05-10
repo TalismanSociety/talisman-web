@@ -41,6 +41,7 @@ const UnstakeDialog = (props: UnstakeDialogProps) => (
           trailingIcon={<TextInput.LabelButton onClick={props.onRequestMaxAmount}>MAX</TextInput.LabelButton>}
           value={props.amount}
           onChange={event => props.onChangeAmount(event.target.value)}
+          css={{ fontSize: '3rem' }}
         />
         <div css={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '1.6rem' }}>
           <Text.Body alpha="high">New staked total</Text.Body>

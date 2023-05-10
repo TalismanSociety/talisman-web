@@ -4,7 +4,6 @@ import { Text } from '../../atoms'
 
 export type TextInputProps = React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement> & {
   type?: 'text' | 'number'
-  fontSize?: string | number
   leadingLabel?: ReactNode
   trailingLabel?: ReactNode
   trailingIcon?: ReactNode
@@ -38,16 +37,15 @@ const TextInput = Object.assign(
               display: 'flex',
               justifyContent: 'space-between',
               alignItems: 'center',
-              fontSize: '1.12rem',
               marginBottom: '0.8rem',
             }}
           >
-            <Text as="label" htmlFor={inputId}>
+            <Text.BodySmall as="label" htmlFor={inputId}>
               {leadingLabel}
-            </Text>
-            <div>
-              <Text>{trailingLabel}</Text>
-            </div>
+            </Text.BodySmall>
+            <Text.BodySmall as="label" htmlFor={inputId}>
+              {trailingLabel}
+            </Text.BodySmall>
           </div>
         )}
         <div
@@ -59,12 +57,12 @@ const TextInput = Object.assign(
             backgroundColor: theme.color.foreground,
           }}
         >
-          <input
+          <Text.Body
             {...props}
+            as="input"
             id={inputId}
             css={{
               'flex': 1,
-              'fontSize': '3rem',
               'width': props.width ?? '20rem',
               'background': 'transparent',
               'border': 'none',
@@ -83,17 +81,18 @@ const TextInput = Object.assign(
               'display': 'flex',
               'justifyContent': 'space-between',
               'alignItems': 'center',
-              'fontSize': '1.12rem',
               'marginTop': '0.8rem',
               '> *:empty::after': {
                 content: `"\u200B"`,
               },
             }}
           >
-            <Text as="label">{leadingSupportingText}</Text>
-            <Text as="label" css={isError && { color: theme.color.onError }}>
+            <Text.BodySmall as="label" htmlFor={inputId}>
+              {leadingSupportingText}
+            </Text.BodySmall>
+            <Text.BodySmall as="label" htmlFor={inputId} css={isError && { color: theme.color.onError }}>
               {trailingSupportingText}
-            </Text>
+            </Text.BodySmall>
           </div>
         )}
       </div>

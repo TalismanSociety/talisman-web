@@ -31,7 +31,6 @@ const AddReadOnlyAccountDialog = (props: AddReadOnlyAccountDialogProps) => {
             onChange={event => props.onChangeName(event.target.value)}
             leadingLabel="Name"
             placeholder="Add a name"
-            css={{ fontSize: '1.8rem' }}
           />
           <TextInput
             value={props.address}
@@ -40,7 +39,6 @@ const AddReadOnlyAccountDialog = (props: AddReadOnlyAccountDialogProps) => {
             placeholder="Enter wallet address"
             trailingSupportingText={props.addressError}
             isError={props.addressError !== undefined}
-            css={{ fontSize: '1.8rem' }}
           />
           {props.resultingAddress && (
             <ListItem

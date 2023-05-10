@@ -127,6 +127,7 @@ const TeleportForm = Object.assign(
               leadingSupportingText={
                 props.inputError && <TextInput.ErrorLabel>{props.inputError}</TextInput.ErrorLabel>
               }
+              css={{ fontSize: '3rem' }}
             />
             <div
               css={[
