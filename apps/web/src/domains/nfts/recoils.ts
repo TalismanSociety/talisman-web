@@ -9,7 +9,7 @@ const _nftsState = atomFamily<Nft[], string>({
   key: '_Nfts',
   effects: (address: string) => [
     ({ setSelf }) => {
-      const batchSize = 25
+      const batchSize = 100
 
       let initialResolve = (value: Nft[]) => {}
       let initialReject = (reason?: any) => {}
