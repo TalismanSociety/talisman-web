@@ -56,7 +56,7 @@ export const useQueryMulti = <
   const api = useRecoilValue(useSubstrateApiState())
 
   const { promise, resolve, reject } = useDeferred<TResult>(
-    options.keepPreviousData ? undefined : [api, JSON.stringify(queries)]
+    options.keepPreviousData ? undefined : [JSON.stringify(queries)]
   )
 
   // Reference to be compared, to prevent old promise from resolving after new one

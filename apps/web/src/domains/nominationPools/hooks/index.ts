@@ -1,5 +1,4 @@
 export * from './useInflation'
-export * from './useLockDuration'
 export * from './usePoolAddForm'
-export * from './usePoolStake'
 export * from './usePoolUnstakeForm'
+export * from './usePoolStake'

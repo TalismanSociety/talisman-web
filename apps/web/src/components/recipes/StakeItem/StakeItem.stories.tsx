@@ -70,12 +70,4 @@ ValidatorStakeWithFastUnstake.args = {
   ),
 }
 
-export const ValidatorStakeWithFastUnstakeQueue = ValidatorStake.bind({})
-
-ValidatorStakeWithFastUnstake.args = {
-  ...defaultProps,
-  unstakeChip: <ValidatorStakeItem.FastUnstakeChip />,
-  status: <ValidatorStakeItem.FastUnstakingStatus amount="1 DOT" status="in-head" />,
-}
-
 export const Skeleton = () => <StakeItem.Skeleton />

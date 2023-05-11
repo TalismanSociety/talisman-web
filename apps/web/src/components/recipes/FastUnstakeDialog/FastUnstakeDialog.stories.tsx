@@ -12,21 +12,18 @@ export const Default: Story<FastUnstakeDialogProps> = args => <FastUnstakeDialog
 Default.args = {
   open: true,
   fastUnstakeEligibility: 'pending',
-  amount: '3244.69 DOT',
-  fiatAmount: '$214,544.55',
-  lockDuration: '28 days',
 }
 
 export const Eligible = Default.bind({})
 
 Eligible.args = {
-  ...Default.args,
+  open: true,
   fastUnstakeEligibility: 'eligible',
 }
 
 export const Ineligible = Default.bind({})
 
 Ineligible.args = {
-  ...Default.args,
+  open: true,
   fastUnstakeEligibility: 'ineligible',
 }

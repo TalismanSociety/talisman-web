@@ -1,87 +1,81 @@
 import { injectedSubstrateAccountsState } from '@domains/accounts/recoils'
-import { SubstrateApiContext, chainQueryState, substrateApiState } from '@domains/common'
-import { array, assertion, jsonParser, number, object, string } from '@recoiljs/refine'
+import { SubstrateApiContext, substrateApiState } from '@domains/common'
+import { useChainState } from '@domains/common/hooks'
+import { range } from 'lodash/fp'
 import { useContext } from 'react'
-import { selectorFamily, waitForAll } from 'recoil'
-// @ts-expect-error
-import { Thread, spawn } from 'threads'
+import {
+  RecoilLoadable,
+  constSelector,
+  selectorFamily,
+  useRecoilValue,
+  useRecoilValueLoadable,
+  waitForAll,
+} from 'recoil'
 
-import { WorkerModule } from './worker'
-
-const STORAGE_KEY = 'fast-unstake-exposure'
-
-const fastUnstakeExposureChecker = array(
-  object({
-    genesisHash: string(),
-    era: number(),
-    exposed: array(string()),
-  })
-)
-
-const fastUnstakeExposureAsssertion = assertion(fastUnstakeExposureChecker)
-
-const fastUnstakeExposureJsonParser = jsonParser(fastUnstakeExposureChecker)
+const eraExposedAccountsState = selectorFamily({
+  key: 'EraExposedAccounts',
+  get:
+    ({ endpoint, era }: { endpoint: string; era: number }) =>
+    ({ get }) =>
+      get(substrateApiState(endpoint))
+        .query.staking.erasStakers.entries(era)
+        .then(x =>
+          x.flatMap(([_, exposure]) => (exposure as any).others.flatMap(({ who }: any) => who.toString() as string))
+        )
+        .then(array => new Set(array)),
+})
 
 const exposedAccountsState = selectorFamily({
   key: 'ExposedAccount',
   get:
-    (endpoint: string) =>
-    async ({ get }): Promise<Set<string>> => {
+    ({ endpoint, activeEra }: { endpoint: string; activeEra: number }) =>
+    ({ get }) => {
       const api = get(substrateApiState(endpoint))
-      const activeEra = get(chainQueryState(endpoint, 'staking', 'activeEra', [])).unwrapOrDefault().index.toNumber()
+      const startEraToCheck = activeEra - api.consts.staking.bondingDuration.toNumber()
 
-      const genesisHash = api.genesisHash.toHex()
-      const storedValue = fastUnstakeExposureJsonParser(sessionStorage.getItem(STORAGE_KEY))
-
-      const precomputedExposure = storedValue?.find(x => x.genesisHash === genesisHash && x.era === activeEra)
-
-      if (precomputedExposure !== undefined) {
-        return new Set(precomputedExposure.exposed)
-      }
-
-      const worker = await spawn<WorkerModule>(new Worker(new URL('./worker', import.meta.url)))
-      const exposed = await worker.getExposedAccounts(endpoint, activeEra)
-
-      Thread.terminate(worker)
-
-      const newStoredValue = (storedValue ?? [])
-        .filter(x => x.genesisHash !== genesisHash)
-        .concat([{ genesisHash, era: activeEra, exposed: Array.from(exposed) }])
-
-      sessionStorage.setItem(STORAGE_KEY, JSON.stringify(fastUnstakeExposureAsssertion(newStoredValue)))
-
-      return exposed
+      return get(
+        waitForAll(range(startEraToCheck, activeEra).map(era => eraExposedAccountsState({ endpoint, era })))
+      ).reduce((prev, curr) => new Set([...prev, ...curr]))
     },
-  cachePolicy_UNSTABLE: { eviction: 'most-recent' },
 })
 
-const fastUnstakeEligibleAccountsState = selectorFamily({
-  key: 'FastUnstakeEligibleAccounts',
-  get:
-    (endpoint: string) =>
-    async ({ get }) => {
-      const [accounts, exposedAccounts] = get(
-        waitForAll([injectedSubstrateAccountsState, exposedAccountsState(endpoint)])
-      )
+export const useExposedAccounts = () => {
+  const apiEndpoint = useContext(SubstrateApiContext).endpoint
+  const activeEra = useChainState('query', 'staking', 'activeEra', [])
 
-      const ledgers = get(
-        chainQueryState(
-          endpoint,
-          'staking',
-          'ledger.multi',
-          accounts.map(x => x.address)
-        )
-      )
+  const loadable = useRecoilValueLoadable(
+    activeEra.state !== 'hasValue'
+      ? constSelector(new Set([]))
+      : exposedAccountsState({
+          endpoint: apiEndpoint,
+          activeEra: activeEra.contents.unwrapOrDefault().index.toNumber(),
+        })
+  )
 
-      return accounts.filter(
-        account =>
-          !exposedAccounts.has(account.address) &&
-          ledgers?.find(ledger => ledger.unwrapOrDefault().stash.toString() === account.address)?.unwrapOrDefault()
-            .unlocking.length === 0
-      )
-    },
-  cachePolicy_UNSTABLE: { eviction: 'most-recent' },
-})
+  if (activeEra.state !== 'hasValue') {
+    return RecoilLoadable.loading() as typeof loadable
+  }
 
-export const useFastUnstakeEligibleAccountsState = () =>
-  fastUnstakeEligibleAccountsState(useContext(SubstrateApiContext).endpoint)
+  return loadable
+}
+
+export const useFastUnstakeEligibleAccounts = () => {
+  const accounts = useRecoilValue(injectedSubstrateAccountsState)
+
+  const exposedAccountsLoadable = useExposedAccounts()
+  const ledgersLoadable = useChainState(
+    'query',
+    'staking',
+    'ledger.multi',
+    accounts.map(x => x.address)
+  )
+
+  return RecoilLoadable.all([exposedAccountsLoadable, ledgersLoadable]).map(([exposedAccounts, ledgers]) =>
+    accounts.filter(
+      account =>
+        !exposedAccounts.has(account.address) &&
+        ledgers.find(ledger => ledger.unwrapOrDefault().stash.toString() === account.address)?.unwrapOrDefault()
+          .unlocking.length === 0
+    )
+  )
+}
