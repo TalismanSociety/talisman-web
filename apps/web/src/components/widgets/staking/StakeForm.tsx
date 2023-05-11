@@ -183,7 +183,7 @@ export const AssetSelect = (props: {
     renderSelected={
       props.inTransition
         ? id => (
-            <Select.Item
+            <Select.Option
               leadingIcon={<CircularProgressIndicator size="2.4rem" />}
               headlineText={props.chains.find(x => x.id === id)?.nativeToken.symbol}
             />
@@ -198,7 +198,7 @@ export const AssetSelect = (props: {
     }}
   >
     {props.chains.map(x => (
-      <Select.Item
+      <Select.Option
         value={x.id}
         leadingIcon={
           <img alt={x.nativeToken.symbol} src={x.nativeToken.logo} css={{ width: '2.4rem', height: '2.4rem' }} />

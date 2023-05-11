@@ -20,12 +20,12 @@ export const Default: Story<StakeFormProps & { showExistingPool: boolean }> = ({
 Default.args = {
   assetSelector: (
     <Select width="100%" placeholder="DOT">
-      <Select.Item headlineText="KSM" />
+      <Select.Option headlineText="KSM" />
     </Select>
   ),
   accountSelector: (
     <Select width="100%" placeholder="Select account">
-      <Select.Item headlineText="foo" />
+      <Select.Option headlineText="foo" />
     </Select>
   ),
   amountInput: (
