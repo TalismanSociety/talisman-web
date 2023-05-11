@@ -28,6 +28,7 @@ const AddStakeDialog = (props: AddStakeDialogProps) => (
         </Text.Body>
         <TextInput
           type="number"
+          inputMode="decimal"
           min={0}
           step="any"
           isError={props.isError}
