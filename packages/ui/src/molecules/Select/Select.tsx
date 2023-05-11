@@ -25,14 +25,14 @@ import React, {
 import { Text } from '../../atoms'
 import FloatingPortal from '../../atoms/FloatingPortal'
 
-export type SelectProps<T extends string | number> = {
-  value?: T
-  renderSelected?: (value: T | undefined) => ReactNode
+export type SelectProps<TValue extends string | number, TClear extends boolean = false> = {
+  value?: TValue
+  renderSelected?: (value: TValue | undefined) => ReactNode
   placeholder?: ReactNode
   width?: string | number
   children: ReactElement<SelectItemProps> | Array<ReactElement<SelectItemProps>>
-  onChange?: (value: T | undefined) => unknown
-  clearRequired?: boolean
+  onChange?: (value: TClear extends false ? TValue : TValue | undefined) => unknown
+  clearRequired?: TClear
 }
 
 type SelectItemProps = {
@@ -60,7 +60,13 @@ const SelectItem = forwardRef<HTMLDivElement, SelectItemProps>((props, ref) => (
 const OVERLAP = 6
 
 const Select = Object.assign(
-  <T extends string | number>({ width = '100%', children, renderSelected, ...props }: SelectProps<T>) => {
+  <TValue extends string | number, TClear extends boolean = false>({
+    width = '100%',
+    children,
+    renderSelected,
+    clearRequired: _clearRequired,
+    ...props
+  }: SelectProps<TValue, TClear>) => {
     const theme = useTheme()
     const listRef = useRef<HTMLLIElement[]>([])
     const [open, setOpen] = useState(false)
@@ -79,12 +85,13 @@ const Select = Object.assign(
     const selectedChild =
       renderSelected?.(props.value) ?? (selectedIndex === undefined ? undefined : childrenArray[selectedIndex])
 
-    const clearRequired = !open && props.clearRequired && selectedChild !== undefined
+    const clearRequired = !open && _clearRequired && selectedChild !== undefined
 
     const { context, x, y, reference, floating, strategy } = useFloating({
       open,
       onOpenChange: open => {
         if (clearRequired) {
+          // @ts-expect-error
           props.onChange?.(undefined)
         }
         setOpen(open)
@@ -299,7 +306,13 @@ const Select = Object.assign(
       </motion.div>
     )
   },
-  { Item: SelectItem }
+  {
+    /**
+     * @deprecated
+     */
+    Item: SelectItem,
+    Option: SelectItem,
+  }
 )
 
 export default Select

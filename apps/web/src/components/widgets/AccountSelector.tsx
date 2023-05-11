@@ -69,7 +69,7 @@ const AccountSelector = ({
       onChange={onChange}
     >
       {accounts.map(x => (
-        <Select.Item
+        <Select.Option
           key={x.address}
           value={x.address}
           leadingIcon={<Identicon value={x.address} size={40} />}

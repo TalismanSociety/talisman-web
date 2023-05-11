@@ -156,7 +156,7 @@ const TeleportForm = Object.assign(
                       clearRequired
                     >
                       {props.fromChains.map((network, index) => (
-                        <Select.Item
+                        <Select.Option
                           key={index}
                           value={index}
                           headlineText={network.name}
@@ -188,7 +188,7 @@ const TeleportForm = Object.assign(
                       clearRequired
                     >
                       {props.toChains.map((network, index) => (
-                        <Select.Item
+                        <Select.Option
                           key={index}
                           value={index}
                           headlineText={network.name}

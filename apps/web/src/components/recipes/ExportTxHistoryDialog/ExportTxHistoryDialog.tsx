@@ -44,7 +44,7 @@ const ExportTxHistoryDialog = ({
             }
           >
             {accounts.map((account, index) => (
-              <Select.Item
+              <Select.Option
                 key={index}
                 value={index}
                 leadingIcon={<Identicon value={account.address} size={40} />}
