@@ -79,6 +79,7 @@ const TeleportForm = Object.assign(
             {props.accountSelector}
             <TextInput
               type="number"
+              inputMode="decimal"
               placeholder="0.00"
               value={props.amount}
               onChange={event => props.onChangeAmount(event.target.value)}
