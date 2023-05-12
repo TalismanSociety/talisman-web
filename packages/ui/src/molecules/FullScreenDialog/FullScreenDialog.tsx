@@ -3,7 +3,7 @@ import { X } from '@talismn/icons'
 import { type ReactNode } from 'react'
 import { Dialog, IconButton, Text, type DialogProps } from '../../atoms'
 import { Toaster } from '../../organisms'
-import useMediaQuery from '../../utils/useMediaQuery'
+import { useMediaQuery } from '../../utils'
 
 export type FullScreenDialogProps = Omit<DialogProps, 'title'> & {
   title: ReactNode

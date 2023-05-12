@@ -1,7 +1,7 @@
 import { css } from '@emotion/react'
 import { type PropsWithChildren, type ReactNode } from 'react'
 import { Toaster } from '..'
-import useMediaQuery from '../../utils/useMediaQuery'
+import { useMediaQuery } from '../../utils'
 
 type Breakpoint = 'narrow' | 'wide' | undefined
 

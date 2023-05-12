@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 
-const useMediaQuery = (query: string) => {
+export const useMediaQuery = (query: string) => {
   const matchMedia = useMemo(() => window.matchMedia(query.replace('@media', '')), [query])
 
   const [matches, setMatches] = useState(matchMedia.matches)
@@ -15,5 +15,3 @@ const useMediaQuery = (query: string) => {
 
   return matches
 }
-
-export default useMediaQuery

@@ -1,9 +1,9 @@
 import { useTheme } from '@emotion/react'
 import { useGesture } from '@use-gesture/react'
 import { motion, useMotionTemplate, useSpring, useTransform } from 'framer-motion'
-import { useState, type DetailedHTMLProps, type ImgHTMLAttributes, type ReactNode } from 'react'
+import { useState, type ReactNode } from 'react'
 import { Skeleton, Text } from '../..'
-import React from 'react'
+import { MultiPreview, Preview } from './Preview'
 
 export type CardProps = {
   media?: ReactNode
@@ -12,38 +12,6 @@ export type CardProps = {
   mediaLabel?: ReactNode
   onClick?: () => unknown
 }
-
-const Image = (props: DetailedHTMLProps<ImgHTMLAttributes<HTMLImageElement>, HTMLImageElement>) => (
-  <img {...props} css={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }} />
-)
-
-const MultiMedia = (props: {
-  children:
-    | ReactNode
-    | [ReactNode, ReactNode]
-    | [ReactNode, ReactNode, ReactNode]
-    | [ReactNode, ReactNode, ReactNode, ReactNode]
-}) => (
-  <div css={{ display: 'flex', height: '100%' }}>
-    <div
-      css={{
-        display: 'grid',
-        gridTemplateRows: '1fr 1fr',
-        gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1fr)',
-        gap: '1.6rem',
-        margin: '1.6rem',
-        width: 'stretch',
-        alignSelf: 'stretch',
-      }}
-    >
-      {React.Children.map(props.children, (child, index) => (
-        <div key={index} css={{ position: 'relative', borderRadius: '0.8rem', overflow: 'hidden' }}>
-          {child}
-        </div>
-      ))}
-    </div>
-  </div>
-)
 
 const CardSkeleton = () => (
   <Skeleton.Surface
@@ -182,7 +150,7 @@ const Card = Object.assign(
       </motion.article>
     )
   },
-  { Image, MultiMedia, Skeleton: CardSkeleton }
+  { Preview, MultiPreview, Skeleton: CardSkeleton }
 )
 
 export default Card

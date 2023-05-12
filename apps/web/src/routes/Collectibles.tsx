@@ -56,9 +56,12 @@ const NftCard = ({ nft }: { nft: Nft }) => {
     <>
       <Card
         media={
-          <Card.Image
-            src={Maybe.of(nft.thumbnail).mapOrUndefined(x => toIpfsCompatibleUrl(x, { imgWidth: NFT_CARD_WIDTH }))}
-            loading="lazy"
+          <Card.Preview
+            src={Maybe.of(nft.thumbnail ?? nft.media).mapOrUndefined(x => [
+              toIpfsCompatibleUrl(x, { imgWidth: NFT_CARD_WIDTH }),
+              toIpfsCompatibleUrl(x),
+            ])}
+            fetchMime
           />
         }
         headlineText={nft.name}
@@ -125,18 +128,20 @@ const NftCollectionCard = ({ collection }: { collection: NftCollection }) => (
   <Link to={`/portfolio/collectibles?collectionKey=${collection.key}`}>
     <Card
       media={
-        <Card.MultiMedia>
+        <Card.MultiPreview>
           {collection.items
             .map(nft => (
-              <Card.Image
+              <Card.Preview
                 key={nft.id}
-                src={Maybe.of(nft.thumbnail).mapOrUndefined(x =>
-                  toIpfsCompatibleUrl(x, { imgWidth: NFT_CARD_WIDTH / 4 })
-                )}
+                src={Maybe.of(nft.thumbnail ?? nft.media).mapOrUndefined(x => [
+                  toIpfsCompatibleUrl(x, { imgWidth: NFT_CARD_WIDTH / 4 }),
+                  toIpfsCompatibleUrl(x),
+                ])}
+                fetchMime
               />
             ))
             .slice(0, 4)}
-        </Card.MultiMedia>
+        </Card.MultiPreview>
       }
       mediaLabel={collection.items.length <= 4 ? undefined : `+${collection.items.length - 4}`}
       headlineText={collection.name}
