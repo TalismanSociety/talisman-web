@@ -1,27 +1,26 @@
 import '@acala-network/types'
 import '@acala-network/types/lookup/types-acala'
-
-import { ApiPromise, WsProvider } from '@polkadot/api'
+import { ApiPromise } from '@polkadot/api'
+import { type ProviderInterface } from '@polkadot/rpc-provider/types'
 import { type Bytes, type Option, type u32, type u64 } from '@polkadot/types-codec'
 import { OrmlNftClassInfo } from '@polkadot/types/lookup'
-
 import type { CreateNftAsyncGenerator, IpfsMetadata, Nft } from '../../types'
 
 type Config<T> = {
   chain: T
-  endpoint: string
+  provider: ProviderInterface
   getMetadata: (classId: u32, tokenId: u64, metadata: Bytes) => Promise<IpfsMetadata | undefined>
   getExternalLinks: (classId: u32, tokenId: u64) => Array<{ name: string; url: string }>
 }
 
 export const createOrmlNftAsyncGenerator = <const T extends string>({
   chain: chainId,
-  endpoint,
+  provider,
   getMetadata,
   getExternalLinks: getExternalLink,
 }: Config<T>): CreateNftAsyncGenerator<Nft<'orml', T>> =>
   async function* (address, { batchSize }) {
-    const apiPromise = new ApiPromise({ provider: new WsProvider(endpoint) })
+    const apiPromise = new ApiPromise({ provider, initWasm: false })
     try {
       let startKey: string
       while (true) {

@@ -1,8 +1,8 @@
+import { HttpProvider } from '@polkadot/api'
 import { type Bytes } from '@polkadot/types-codec'
 import { hexToString } from '@polkadot/util'
-import { createOrmlNftAsyncGenerator } from './orml'
-
 import { CID } from 'multiformats'
+import { createOrmlNftAsyncGenerator } from './orml'
 
 const parseCid = (bytes: Bytes) => {
   try {
@@ -14,7 +14,7 @@ const parseCid = (bytes: Bytes) => {
 
 export const createAcalaNftAsyncGenerator = createOrmlNftAsyncGenerator({
   chain: 'acala',
-  endpoint: 'wss://acala-rpc-0.aca-api.network',
+  provider: new HttpProvider('https://acala-rpc-0.aca-api.network'),
   getMetadata: async (_, __, metadata) => {
     const ipfsCid = parseCid(metadata)
 
@@ -31,7 +31,7 @@ export const createAcalaNftAsyncGenerator = createOrmlNftAsyncGenerator({
 
 export const createBitCountryNftAsyncGenerator = createOrmlNftAsyncGenerator({
   chain: 'bit-country',
-  endpoint: 'wss://pioneer.api.onfinality.io/public-ws',
+  provider: new HttpProvider('https://pioneer.api.onfinality.io/public-ws'),
   getMetadata: async (classId, tokenId, metadata) => {
     const ipfsCid = parseCid(metadata)
 
