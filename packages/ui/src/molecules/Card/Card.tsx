@@ -1,7 +1,7 @@
 import { useTheme } from '@emotion/react'
 import { useGesture } from '@use-gesture/react'
 import { motion, useMotionTemplate, useSpring, useTransform } from 'framer-motion'
-import type { DetailedHTMLProps, ImgHTMLAttributes, ReactNode } from 'react'
+import { useState, type DetailedHTMLProps, type ImgHTMLAttributes, type ReactNode } from 'react'
 import { Skeleton, Text } from '../..'
 import React from 'react'
 
@@ -72,6 +72,10 @@ const Card = Object.assign(
   (props: CardProps) => {
     const theme = useTheme()
 
+    // Disable all animation instantly on hover end
+    // critical for performance if lots of cards are rendered
+    const [hover, setHover] = useState(false)
+
     const width = useSpring(0)
     const scale = useSpring(1)
     const rotateX = useSpring(0)
@@ -79,9 +83,11 @@ const Card = Object.assign(
 
     const cardBind = useGesture({
       onHover: event => {
+        setHover(true)
         const rect = (event.currentTarget as EventTarget & HTMLElement).getBoundingClientRect()
 
         if (!event.hovering) {
+          setHover(false)
           width.set(rect.width)
           scale.set(1)
           rotateX.set(0)
@@ -125,14 +131,15 @@ const Card = Object.assign(
     return (
       <motion.article
         {...(cardBind() as any)}
-        style={{ transform, cursor: props.onClick !== undefined ? 'pointer' : undefined }}
+        style={{
+          transform: hover ? transform : 'revert',
+          cursor: props.onClick !== undefined ? 'pointer' : undefined,
+        }}
         css={{
           position: 'relative',
-          opacity: 0.95,
           border: ' 1px solid rgba(200 200 200 / 0.2)',
           borderRadius: '1.5rem',
           backgroundColor: theme.color.foreground,
-          backdropFilter: 'blur(16px)',
           overflow: 'hidden',
         }}
         onClick={props.onClick}
@@ -165,10 +172,12 @@ const Card = Object.assign(
             {props.headlineText}
           </Text.BodyLarge>
         </header>
-        <motion.div
-          css={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}
-          style={{ backgroundImage: sheenGradient }}
-        />
+        {hover && (
+          <motion.div
+            css={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}
+            style={{ backgroundImage: sheenGradient }}
+          />
+        )}
       </motion.article>
     )
   },
