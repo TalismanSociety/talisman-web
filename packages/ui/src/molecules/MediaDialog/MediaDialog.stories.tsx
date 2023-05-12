@@ -54,7 +54,7 @@ export const Audio = Default.bind({})
 
 Audio.args = {
   ...Default.args,
-  media: <MediaDialog.Player src={testTrack} type="audio" />,
+  media: <MediaDialog.Player src={testTrack} type="audio" subType="mp3" />,
 }
 
 export const Pdf = Default.bind({})
@@ -62,6 +62,18 @@ export const Pdf = Default.bind({})
 Pdf.args = {
   ...Default.args,
   media: <MediaDialog.Player src="https://assets.polkadot.network/Polkadot-whitepaper.pdf" />,
+}
+
+export const Model = Default.bind({})
+
+Model.args = {
+  ...Default.args,
+  media: (
+    <MediaDialog.Player
+      src="https://ipfs-cdn.bit.country/Qma9i9246AsSjGvjsutaxpnSPHF2LxDLCo37UmBkxfJyYW"
+      type="model"
+    />
+  ),
 }
 
 export const Overflow = Default.bind({})

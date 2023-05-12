@@ -1,8 +1,8 @@
 import { Global, keyframes, useTheme } from '@emotion/react'
 import { Volume2, X } from '@talismn/icons'
-import { useEffect, type ReactNode, useState, useMemo } from 'react'
-
-import { Button, Dialog, type DialogProps, Text } from '../../atoms'
+import { type ReactNode } from 'react'
+import { Button, Dialog, Text, type DialogProps } from '../../atoms'
+import { useMimeType, type MimeTypeSubType, type MimeTypeType } from '../../utils'
 
 const show = keyframes`
   from {
@@ -22,25 +22,13 @@ const backdropKeyframes = keyframes`
   }
 `
 
-type MediaPlayerProps = { src: string | undefined; type?: 'image' | 'video' | 'audio' | 'application' }
+type MediaPlayerProps = { src: string | undefined; type?: MimeTypeType; subType?: MimeTypeSubType }
 
 const MediaPlayer = (props: MediaPlayerProps) => {
-  const [contentType, setContentType] = useState<string | null>()
+  const [_type, _subType] = useMimeType(props.src, props.type === undefined)
 
-  useEffect(() => {
-    if (props.src === undefined) {
-      setContentType(null)
-    } else {
-      void fetch(props.src, { method: 'HEAD' }).then(response => setContentType(response.headers.get('Content-Type')))
-    }
-  }, [props.src])
-
-  const type = useMemo(
-    () =>
-      props.type ??
-      (contentType === null || contentType === undefined ? contentType : contentType.replace(/\/.*$/, '')),
-    [contentType, props.type]
-  )
+  const type = props.type ?? _type
+  const subType = props.subType ?? _subType
 
   switch (type) {
     case 'image':
@@ -54,9 +42,21 @@ const MediaPlayer = (props: MediaPlayerProps) => {
           <audio src={props.src} css={{ width: '100%', height: '100%' }} controls />
         </div>
       )
+    case 'model':
+      import('@google/model-viewer/dist/model-viewer')
+      return (
+        <model-viewer
+          src={props.src}
+          camera-controls
+          // @ts-expect-error
+          style={{ width: '100%', height: '100%' }}
+        />
+      )
     case 'application':
-    // return <embed src={props.src} css={{ width: '100%', height: '100%' }} />
-    // eslint-disable-next-line no-fallthrough
+      if (subType === 'pdf') {
+        return <embed src={props.src} css={{ width: '100%', height: '100%' }} />
+      }
+      return null
     case null:
     case undefined:
     default:
