@@ -72,7 +72,7 @@ const Card = Object.assign(
   (props: CardProps) => {
     const theme = useTheme()
 
-    // Disable all animation instantly on hover end
+    // Disable heavy animations instantly when not hovering
     // critical for performance if lots of cards are rendered
     const [hover, setHover] = useState(false)
 
@@ -83,10 +83,12 @@ const Card = Object.assign(
 
     const cardBind = useGesture({
       onHover: event => {
-        setHover(true)
-        const rect = (event.currentTarget as EventTarget & HTMLElement).getBoundingClientRect()
+        if (event.hovering) {
+          setHover(true)
+          scale.set(1.025)
+        } else {
+          const rect = (event.currentTarget as EventTarget & HTMLElement).getBoundingClientRect()
 
-        if (!event.hovering) {
           setHover(false)
           width.set(rect.width)
           scale.set(1)
@@ -108,7 +110,6 @@ const Card = Object.assign(
         const _rotateY = vertical * threshold - threshold / 2
 
         width.set(rect.width)
-        scale.set(1.025)
         rotateX.set(_rotateX)
         rotateY.set(_rotateY)
       },
@@ -131,6 +132,7 @@ const Card = Object.assign(
     return (
       <motion.article
         {...(cardBind() as any)}
+        whileHover="hover"
         style={{
           transform: hover ? transform : 'revert',
           cursor: props.onClick !== undefined ? 'pointer' : undefined,
@@ -172,12 +174,11 @@ const Card = Object.assign(
             {props.headlineText}
           </Text.BodyLarge>
         </header>
-        {hover && (
-          <motion.div
-            css={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}
-            style={{ backgroundImage: sheenGradient }}
-          />
-        )}
+        <motion.div
+          variants={{ hover: { opacity: 1 } }}
+          style={{ backgroundImage: hover ? sheenGradient : 'revert' }}
+          css={{ position: 'absolute', inset: 0, opacity: 0, pointerEvents: 'none' }}
+        />
       </motion.article>
     )
   },
