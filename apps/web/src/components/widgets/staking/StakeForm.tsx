@@ -2,7 +2,7 @@ import ClaimStakeDialog from '@components/recipes/ClaimStakeDialog'
 import PoolSelectorDialog from '@components/recipes/PoolSelectorDialog'
 import StakeFormComponent from '@components/recipes/StakeForm'
 import { StakeStatus } from '@components/recipes/StakeStatusIndicator'
-import { Account } from '@domains/accounts/recoils'
+import { Account, injectedSubstrateAccountsState } from '@domains/accounts/recoils'
 import { ChainContext, ChainProvider, chainsState, useNativeTokenDecimalState, type Chain } from '@domains/chains'
 import { SubstrateApiContext, useSubstrateApiState } from '@domains/common'
 import { useChainState, useEraEtaFormatter, useExtrinsic, useTokenAmountFromPlanck } from '@domains/common/hooks'
@@ -27,7 +27,7 @@ import {
 } from 'react'
 import { useLocation } from 'react-use'
 import { constSelector, useRecoilValue, useRecoilValueLoadable, waitForAll } from 'recoil'
-import AccountSelector from '../AccountSelector'
+import { useAccountSelector } from '../AccountSelector'
 import AddStakeDialog from './AddStakeDialog'
 import UnstakeDialog from './UnstakeDialog'
 
@@ -230,8 +230,6 @@ const DeferredEstimatedYield = (props: { amount: Decimal }) => (
 )
 
 export const ControlledStakeForm = (props: { assetSelector: ReactNode }) => {
-  const [_, startTransition] = useTransition()
-
   const joinPoolExtrinsic = useExtrinsic('nominationPools', 'join')
 
   const location = useLocation()
@@ -257,7 +255,12 @@ export const ControlledStakeForm = (props: { assetSelector: ReactNode }) => {
   const [selectedPoolId, setSelectedPoolId] = useState(initialPoolId)
   const [showPoolSelector, setShowPoolSelector] = useState(false)
 
-  const [selectedAccount, setSelectedAccount] = useState<Account>()
+  const [selectedAccount, accountSelector] = useAccountSelector(
+    useRecoilValue(injectedSubstrateAccountsState),
+    // We don't want to select the first account when poolId is present in the URL
+    // because we want to showcase that pool & the first account might have already joined one
+    poolIdFromSearch === undefined ? 0 : undefined
+  )
 
   const {
     input: { amount, decimalAmount, localizedFiatAmount },
@@ -351,15 +354,7 @@ export const ControlledStakeForm = (props: { assetSelector: ReactNode }) => {
       />
       <StakeFormComponent
         assetSelector={props.assetSelector}
-        accountSelector={
-          <AccountSelector
-            selectedAccount={selectedAccount?.address}
-            onChangeSelectedAccount={account => startTransition(() => setSelectedAccount(account))}
-            // We want to showcase the pool when poolId is present in the URL
-            // the first address might have already joined a pool
-            defaultToFirstAddress={poolIdFromSearch === undefined}
-          />
-        }
+        accountSelector={accountSelector}
         amountInput={
           <StakeFormComponent.AmountInput
             amount={amount}

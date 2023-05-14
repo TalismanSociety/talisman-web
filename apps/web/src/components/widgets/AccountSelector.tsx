@@ -1,51 +1,23 @@
-import { Account, accountsState, substrateAccountsState } from '@domains/accounts/recoils'
+import { Account } from '@domains/accounts/recoils'
 import { useIsWeb3Injected } from '@domains/extension/hooks'
 import { allowExtensionConnectionState } from '@domains/extension/recoils'
 import { Download } from '@talismn/icons'
 import { Button, Identicon, Select } from '@talismn/ui'
 import { shortenAddress } from '@util/format'
-import { useCallback, useEffect, useMemo } from 'react'
-import { useRecoilState, useRecoilValue } from 'recoil'
+import { useCallback, useState, useTransition } from 'react'
+import { useRecoilState } from 'recoil'
 
 export type AccountSelectorProps = {
   width?: number | string
+  accounts: Account[]
   selectedAccount?: Account | string
   onChangeSelectedAccount: (account: Account | undefined) => unknown
-  defaultToFirstAddress?: boolean
-  includeReadonlyAccounts?: boolean
-  includeEthereumAccounts?: boolean
 }
 
-const AccountSelector = ({
-  includeReadonlyAccounts = false,
-  includeEthereumAccounts = false,
-  ...props
-}: AccountSelectorProps) => {
-  const _accounts = useRecoilValue(includeEthereumAccounts ? accountsState : substrateAccountsState)
-  const accounts = useMemo(
-    () =>
-      _accounts.filter(x => {
-        if (!includeReadonlyAccounts) {
-          return x.readonly !== true
-        }
-        return true
-      }),
-    [_accounts, includeReadonlyAccounts]
-  )
-
-  useEffect(
-    () => {
-      if (props.defaultToFirstAddress && accounts[0] !== undefined) {
-        props.onChangeSelectedAccount(accounts[0])
-      }
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [props.defaultToFirstAddress, accounts.length === 0]
-  )
-
+const AccountSelector = (props: AccountSelectorProps) => {
   const onChange = useCallback(
-    (address: string | undefined) => props.onChangeSelectedAccount(accounts.find(x => x.address === address)),
-    [accounts, props]
+    (address: string | undefined) => props.onChangeSelectedAccount(props.accounts.find(x => x.address === address)),
+    [props]
   )
 
   const [allowExtensionConnection, setAllowExtensionConnection] = useRecoilState(allowExtensionConnectionState)
@@ -68,7 +40,7 @@ const AccountSelector = ({
       value={typeof props.selectedAccount === 'string' ? props.selectedAccount : props.selectedAccount?.address}
       onChange={onChange}
     >
-      {accounts.map(x => (
+      {props.accounts.map(x => (
         <Select.Option
           key={x.address}
           value={x.address}
@@ -79,6 +51,33 @@ const AccountSelector = ({
       ))}
     </Select>
   )
+}
+
+export const useAccountSelector = (
+  accounts: Account[],
+  initialAccount?: Account | number | ((accounts?: Account[]) => Account),
+  accountSelectorProps?: Omit<AccountSelectorProps, 'accounts' | 'selectedAccount' | 'onChangeSelectedAccount'>
+) => {
+  const [isTransitioning, startTransition] = useTransition()
+
+  const [account, setAccount] = useState(
+    typeof initialAccount === 'function'
+      ? initialAccount(accounts)
+      : typeof initialAccount === 'number'
+      ? accounts.at(initialAccount)
+      : initialAccount
+  )
+
+  return [
+    account,
+    <AccountSelector
+      {...accountSelectorProps}
+      accounts={accounts}
+      selectedAccount={account}
+      onChangeSelectedAccount={account => startTransition(() => setAccount(account))}
+    />,
+    isTransitioning,
+  ] as const
 }
 
 export default AccountSelector
