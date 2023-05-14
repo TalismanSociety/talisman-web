@@ -32,7 +32,7 @@ const SyncPreview = (props: Pick<PreviewProps, 'src'> & { type: MimeTypeType | u
           {srcs?.map((x, index) => (
             <source key={index} srcSet={x} />
           ))}
-          <img css={css} />
+          <img css={[css, { objectFit: 'cover' }]} />
         </picture>
       )
     case 'video':
