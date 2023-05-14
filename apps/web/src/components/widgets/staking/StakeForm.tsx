@@ -2,7 +2,7 @@ import ClaimStakeDialog from '@components/recipes/ClaimStakeDialog'
 import PoolSelectorDialog from '@components/recipes/PoolSelectorDialog'
 import StakeFormComponent from '@components/recipes/StakeForm'
 import { StakeStatus } from '@components/recipes/StakeStatusIndicator'
-import { Account, injectedSubstrateAccountsState } from '@domains/accounts/recoils'
+import { Account } from '@domains/accounts/recoils'
 import { ChainContext, ChainProvider, chainsState, useNativeTokenDecimalState, type Chain } from '@domains/chains'
 import { SubstrateApiContext, useSubstrateApiState } from '@domains/common'
 import { useChainState, useEraEtaFormatter, useExtrinsic, useTokenAmountFromPlanck } from '@domains/common/hooks'
@@ -250,20 +250,14 @@ export const ControlledStakeForm = (props: { assetSelector: ReactNode }) => {
 
   const apiEndpoint = useContext(SubstrateApiContext).endpoint
 
-  const [api, accounts, recommendedPools] = useRecoilValue(
-    waitForAll([useSubstrateApiState(), injectedSubstrateAccountsState, useRecommendedPoolsState()])
-  )
+  const [api, recommendedPools] = useRecoilValue(waitForAll([useSubstrateApiState(), useRecommendedPoolsState()]))
 
   const initialPoolId = poolIdFromSearch ?? recommendedPools[0]?.poolId
 
   const [selectedPoolId, setSelectedPoolId] = useState(initialPoolId)
   const [showPoolSelector, setShowPoolSelector] = useState(false)
 
-  const [selectedAccount, setSelectedAccount] = useState(accounts[0])
-  const selectedAccountIndex = useMemo(
-    () => accounts.findIndex(x => x.address === selectedAccount?.address),
-    [accounts, selectedAccount?.address]
-  )
+  const [selectedAccount, setSelectedAccount] = useState<Account>()
 
   const {
     input: { amount, decimalAmount, localizedFiatAmount },
@@ -276,11 +270,9 @@ export const ControlledStakeForm = (props: { assetSelector: ReactNode }) => {
   const poolMembersLoadable = useChainState(
     'query',
     'nominationPools',
-    'poolMembers.multi',
-    accounts.map(({ address }) => address),
-    {
-      enabled: accounts.length > 0,
-    }
+    'poolMembers',
+    [selectedAccount?.address ?? ''],
+    { enabled: selectedAccount !== undefined }
   )
 
   const activeEraLoadable = useChainState('query', 'staking', 'activeEra', [])
@@ -291,9 +283,7 @@ export const ControlledStakeForm = (props: { assetSelector: ReactNode }) => {
   ).map(value => new Set(value?.map(x => x[0].args[1].toHuman())))
 
   const existingPool =
-    poolMembersLoadable.state === 'hasValue' && poolMembersLoadable.contents[selectedAccountIndex]?.isSome
-      ? poolMembersLoadable.contents[selectedAccountIndex]!.unwrap()
-      : undefined
+    poolMembersLoadable.state === 'hasValue' ? poolMembersLoadable.contents.unwrapOr(undefined) : undefined
 
   const poolNominatorsLoadable = useChainState(
     'query',
@@ -351,8 +341,6 @@ export const ControlledStakeForm = (props: { assetSelector: ReactNode }) => {
     setSelectedPoolId(initialPoolId)
   }, [initialPoolId, recommendedPools])
 
-  console.log(isReady, inputError, decimalAmount?.toHuman())
-
   return (
     <>
       <PoolSelector
@@ -367,6 +355,9 @@ export const ControlledStakeForm = (props: { assetSelector: ReactNode }) => {
           <AccountSelector
             selectedAccount={selectedAccount?.address}
             onChangeSelectedAccount={account => startTransition(() => setSelectedAccount(account))}
+            // We want to showcase the pool when poolId is present in the URL
+            // the first address might have already joined a pool
+            defaultToFirstAddress={poolIdFromSearch === undefined}
           />
         }
         amountInput={
