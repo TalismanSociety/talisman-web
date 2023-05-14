@@ -1,12 +1,12 @@
 import crowdloanDataState, { CrowdloanDetail } from '@libs/@talisman-crowdloans/provider'
-import { ApiPromise, WsProvider } from '@polkadot/api'
 import type { AccountId } from '@polkadot/types/interfaces'
 import { stringToU8a, u8aEq } from '@polkadot/util'
 import { planckToTokens } from '@talismn/util'
 import { find, get } from 'lodash'
 import { PropsWithChildren, useContext as _useContext, createContext, useEffect, useMemo, useState } from 'react'
-import { useRecoilValue } from 'recoil'
+import { useRecoilValue, useRecoilValueLoadable, waitForAll } from 'recoil'
 
+import { substrateApiState } from '@domains/common'
 import { SupportedRelaychains } from './util/_config'
 
 export type Crowdloan = {
@@ -115,15 +115,24 @@ function hasCrowdloadPrefix(accountId: AccountId): boolean {
 }
 
 export const Provider = ({ children }: PropsWithChildren) => {
-  const crowdloanData = useRecoilValue(crowdloanDataState)
   const [crowdloans, setCrowdloans] = useState<Crowdloan[]>([])
   const [hydrated, setHydrated] = useState(false)
 
-  useEffect(() => {
-    const resultPromise = Promise.all(
-      Object.values(SupportedRelaychains).flatMap(async relayChain => {
-        const api = await ApiPromise.create({ provider: new WsProvider(relayChain.rpc) })
+  const loadable = useRecoilValueLoadable(
+    waitForAll([
+      crowdloanDataState,
+      substrateApiState(SupportedRelaychains[0]!.rpc),
+      substrateApiState(SupportedRelaychains[2]!.rpc),
+    ])
+  )
 
+  useEffect(() => {
+    if (loadable.state === 'hasValue') {
+      const [crowdloanData, polkadot, kusama] = loadable.contents
+      const promises = [
+        { api: polkadot, chain: SupportedRelaychains[0]! },
+        { api: kusama, chain: SupportedRelaychains[2]! },
+      ].map(async ({ api, chain }) => {
         const bestNumber = await api.derive.chain.bestNumber()
         const funds = await api.query.crowdloan.funds.entries()
 
@@ -135,7 +144,7 @@ export const Provider = ({ children }: PropsWithChildren) => {
 
         return funds.map(([fundId, maybeFund]) => {
           const fund = maybeFund.unwrapOrDefault()
-          const tokenDecimals = relayChain.id === 2 ? 12 : 10
+          const tokenDecimals = chain.id === 2 ? 12 : 10
 
           const isCapped = fund.cap.sub(fund.raised).lt(api.consts.crowdloan.minContribution)
           const isEnded = bestNumber.gt(fund.end)
@@ -143,31 +152,31 @@ export const Provider = ({ children }: PropsWithChildren) => {
 
           return {
             ...fund.toJSON(),
-            id: `${relayChain.id}-${fundId.args[0].toNumber()}`,
+            id: `${chain.id}-${fundId.args[0].toNumber()}`,
             raised: Number(planckToTokens(fund.raised.toString(), tokenDecimals)),
             cap: Number(planckToTokens(fund.cap.toString(), tokenDecimals)),
             parachain: {
-              paraId: `${relayChain.id}-${fundId.args[0].toNumber()}`,
+              paraId: `${chain.id}-${fundId.args[0].toNumber()}`,
             },
-            relayChainId: relayChain.id,
+            relayChainId: chain.id,
             percentRaised:
               (100 / Number(planckToTokens(fund.cap.toString(), tokenDecimals))) *
               Number(planckToTokens(fund.raised.toString(), tokenDecimals)),
             details: find(crowdloanData, {
-              relayId: relayChain.id.toString(),
+              relayId: chain.id.toString(),
               paraId: fundId.args[0].toNumber().toString(),
-            }),
+            })!,
             uiStatus: isWinner ? 'winner' : isCapped ? 'capped' : isEnded ? 'ended' : 'active',
-          }
+          } as Crowdloan
         })
       })
-    )
 
-    resultPromise.then(result => {
-      setCrowdloans(result.flat() as any)
-      setHydrated(true)
-    })
-  }, [crowdloanData])
+      Promise.all(promises).then(result => {
+        setCrowdloans(result.flat())
+        setHydrated(true)
+      })
+    }
+  }, [loadable.contents, loadable.state])
 
   const value = useMemo(
     () => ({
