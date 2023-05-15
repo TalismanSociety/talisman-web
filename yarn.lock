@@ -8799,13 +8799,11 @@ __metadata:
     "@talismn/eslint-config": "workspace:^"
     "@talismn/icons": "workspace:^"
     "@talismn/tsconfig": "workspace:^"
-    "@types/lodash.debounce": ^4.0.7
     "@types/react": ^18.0.28
     babel-loader: ^8.3.0
     colorjs.io: ^0.4.3
     eslint: ^8.37.0
     framer-motion: ^10.2.3
-    lodash.debounce: ^4.0.8
     react: ^18.2.0
     react-dom: ^18.2.0
     react-hot-toast: ^2.4.0
@@ -9512,22 +9510,6 @@ __metadata:
   dependencies:
     "@types/node": "*"
   checksum: a7f0925e9a42ad3ae970364c63c5986d40da5c83d51d3f4e624eb0f064a380376f9e3fb3f2f837390a9ab80143f5d75fd51866da30e110f6b486a3379e1c768f
-  languageName: node
-  linkType: hard
-
-"@types/lodash.debounce@npm:^4.0.7":
-  version: 4.0.7
-  resolution: "@types/lodash.debounce@npm:4.0.7"
-  dependencies:
-    "@types/lodash": "*"
-  checksum: e873b2d77f89010876baba3437ef826b17221b98948e00b5590828334a481dea1c8f9d28543210e564adc53199584f42c3cb171f8b6c3614fefc0b4e0888679c
-  languageName: node
-  linkType: hard
-
-"@types/lodash@npm:*":
-  version: 4.14.194
-  resolution: "@types/lodash@npm:4.14.194"
-  checksum: 113f34831c461469d91feca2dde737f88487732898b4d25e9eb23b087bb193985f864d1e1e0f3b777edc5022e460443588b6000a3b2348c966f72d17eedc35ea
   languageName: node
   linkType: hard
 
