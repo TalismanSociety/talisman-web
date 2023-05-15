@@ -1,3 +1,4 @@
+import { chains } from '@domains/chains'
 import { substrateApiState } from '@domains/common'
 import crowdloanDataState, { CrowdloanDetail } from '@libs/@talisman-crowdloans/provider'
 import { find } from 'lodash'
@@ -80,7 +81,7 @@ export const Provider = ({ children }: PropsWithChildren) => {
   const crowdloans = useRecoilValue(crowdloanDataState)
 
   const apisLoadable = useRecoilValueLoadable(
-    waitForAll([substrateApiState('wss://rpc.polkadot.io'), substrateApiState('wss://kusama-rpc.polkadot.io')])
+    waitForAll([substrateApiState(chains[0].rpc), substrateApiState(chains[1].rpc)])
   )
 
   useEffect(
