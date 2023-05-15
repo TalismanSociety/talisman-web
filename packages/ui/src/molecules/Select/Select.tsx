@@ -12,7 +12,6 @@ import {
 } from '@floating-ui/react'
 import { ChevronDown } from '@talismn/icons'
 import { motion } from 'framer-motion'
-import debounce from 'lodash.debounce'
 import React, {
   ReactElement,
   ReactNode,
@@ -89,15 +88,18 @@ const Select = Object.assign(
       middleware: [
         // TODO: right now only work for bottom overflow
         // which is what we need. Implement support for top overflow later
-        // Debounce to fix annoying ResizeObserver loop limit exceeded error
-        // https://github.com/floating-ui/floating-ui/issues/1740
         size({
-          apply: debounce(({ rects, availableHeight, elements }) => {
-            Object.assign(elements.floating.style, {
-              width: `${rects.reference.width}px`,
-              maxHeight: `${availableHeight}px`,
+          apply: ({ rects, availableHeight, elements }) => {
+            // Execute this inside requestAnimationFrame to avoid annoying
+            // ResizeObserver loop limit exceeded error
+            // https://github.com/floating-ui/floating-ui/issues/1740#issuecomment-1540639488
+            requestAnimationFrame(() => {
+              Object.assign(elements.floating.style, {
+                width: `${rects.reference.width}px`,
+                maxHeight: `${availableHeight}px`,
+              })
             })
-          }, 1),
+          },
         }),
         offset(-OVERLAP),
       ],
