@@ -115,7 +115,7 @@ export const useExtrinsicBatch = <
           return [module!, section!]
         }),
         promise,
-        chain
+        chain.subscanUrl
       )
 
       try {

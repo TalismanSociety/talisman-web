@@ -1,10 +1,13 @@
-import { type Chain } from '@domains/chains'
 import RpcError from '@polkadot/rpc-provider/coder/error'
 import { ISubmittableResult } from '@polkadot/types/types'
 import { ExternalLink } from '@talismn/icons'
 import { Text, toast } from '@talismn/ui'
 
-export const toastExtrinsic = (extrinsics: [string, string][], promise: Promise<ISubmittableResult>, chain?: Chain) => {
+export const toastExtrinsic = (
+  extrinsics: [string, string][],
+  promise: Promise<ISubmittableResult>,
+  subscanUrl?: string
+) => {
   const message = (() => {
     if (extrinsics.length === 1) {
       return (
@@ -44,13 +47,13 @@ export const toastExtrinsic = (extrinsics: [string, string][], promise: Promise<
       success: data => (
         <>
           {message}
-          {chain !== undefined && (
+          {subscanUrl !== undefined && (
             <Text.Body as="div">
               View details on{' '}
               <Text.Body
                 as="a"
                 alpha="high"
-                href={chain.subscanUrl + 'extrinsic/' + data?.txHash?.toString()}
+                href={subscanUrl + 'extrinsic/' + data?.txHash?.toString()}
                 target="_blank"
               >
                 Subscan
@@ -68,13 +71,13 @@ export const toastExtrinsic = (extrinsics: [string, string][], promise: Promise<
           {('data' in error || 'message' in error) && (
             <Text.Body as="div">{(error as RpcError)?.data ?? (error as Error)?.message}</Text.Body>
           )}
-          {chain !== undefined && error?.txHash !== undefined && (
+          {subscanUrl && error?.txHash !== undefined && (
             <Text.Body as="div">
               View details on{' '}
               <Text.Body
                 as="a"
                 alpha="high"
-                href={chain.subscanUrl + 'extrinsic/' + error?.txHash?.toString()}
+                href={subscanUrl + 'extrinsic/' + error?.txHash?.toString()}
                 target="_blank"
               >
                 Subscan <ExternalLink size="1.2rem" />

@@ -1,4 +1,4 @@
-import { ApiProvider, Bridge } from '@polkawallet/bridge'
+import { ApiProvider, Bridge, type ChainId } from '@polkawallet/bridge'
 import { AcalaAdapter, KaruraAdapter } from '@polkawallet/bridge/adapters/acala'
 import { AstarAdapter, ShidenAdapter } from '@polkawallet/bridge/adapters/astar'
 import { BifrostAdapter } from '@polkawallet/bridge/adapters/bifrost'
@@ -19,38 +19,40 @@ import { KhalaAdapter } from '@polkawallet/bridge/adapters/phala'
 import { KusamaAdapter, PolkadotAdapter } from '@polkawallet/bridge/adapters/polkadot'
 import { StatemineAdapter } from '@polkawallet/bridge/adapters/statemint'
 import { QuartzAdapter, UniqueAdapter } from '@polkawallet/bridge/adapters/unique'
+import { type BaseCrossChainAdapter } from '@polkawallet/bridge/base-chain-adapter'
 import { atom, selector } from 'recoil'
 
-export const availableAdapters = {
-  polkadot: new PolkadotAdapter(),
-  kusama: new KusamaAdapter(),
-  acala: new AcalaAdapter(),
-  karura: new KaruraAdapter(),
-  altair: new AltairAdapter(),
-  astar: new AstarAdapter(),
-  basilisk: new BasiliskAdapter(),
-  bifrost: new BifrostAdapter(),
-  calamari: new CalamariAdapter(),
-  crab: new CrabAdapter(),
-  heiko: new HeikoAdapter(),
-  hydra: new HydraAdapter(),
-  integritee: new IntegriteeAdapter(),
-  interlay: new InterlayAdapter(),
-  khala: new KhalaAdapter(),
-  kintsugi: new KintsugiAdapter(),
-  kico: new KicoAdapter(),
-  listen: new ListenAdapter(),
-  moonbeam: new MoonbeamAdapter(),
-  moonriver: new MoonriverAdapter(),
-  parallel: new ParallelAdapter(),
-  pichiu: new PichiuAdapter(),
-  quartz: new QuartzAdapter(),
-  shadow: new ShadowAdapter(),
-  shiden: new ShidenAdapter(),
-  statemine: new StatemineAdapter(),
-  turing: new TuringAdapter(),
-  unique: new UniqueAdapter(),
-} as const
+export const bridgeConfig = {
+  polkadot: { adapter: new PolkadotAdapter(), subscanUrl: 'https://polkadot.subscan.io/' },
+  kusama: { adapter: new KusamaAdapter(), subscanUrl: 'https://kusama.subscan.io/' },
+  acala: { adapter: new AcalaAdapter(), subscanUrl: 'https://acala.subscan.io/' },
+  karura: { adapter: new KaruraAdapter(), subscanUrl: 'https://karura.subscan.io/' },
+  altair: { adapter: new AltairAdapter(), subscanUrl: 'https://altair.subscan.io/' },
+  astar: { adapter: new AstarAdapter(), subscanUrl: 'https://astar.subscan.io/' },
+  basilisk: { adapter: new BasiliskAdapter(), subscanUrl: 'https://basilisk.subscan.io/' },
+  bifrost: { adapter: new BifrostAdapter(), subscanUrl: 'https://bifrost.subscan.io/' },
+  calamari: { adapter: new CalamariAdapter(), subscanUrl: 'https://calamari.subscan.io/' },
+  crab: { adapter: new CrabAdapter(), subscanUrl: 'https://crab.subscan.io/' },
+  heiko: { adapter: new HeikoAdapter(), subscanUrl: 'https://parallel-heiko.subscan.io/' },
+  hydradx: { adapter: new HydraAdapter(), subscanUrl: 'https://hydradx.subscan.io/' },
+  integritee: { adapter: new IntegriteeAdapter(), subscanUrl: 'https://integritee.subscan.io/' },
+  interlay: { adapter: new InterlayAdapter(), subscanUrl: 'https://interlay.subscan.io/' },
+  khala: { adapter: new KhalaAdapter(), subscanUrl: 'https://khala.subscan.io/' },
+  kintsugi: { adapter: new KintsugiAdapter(), subscanUrl: 'https://kintsugi.subscan.io/' },
+  kico: { adapter: new KicoAdapter(), subscanUrl: undefined },
+  listen: { adapter: new ListenAdapter(), subscanUrl: undefined },
+  moonbeam: { adapter: new MoonbeamAdapter(), subscanUrl: 'https://moonbeam.subscan.io/' },
+  moonriver: { adapter: new MoonriverAdapter(), subscanUrl: 'https://moonriver.subscan.io/' },
+  parallel: { adapter: new ParallelAdapter(), subscanUrl: 'https://parallel.subscan.io/' },
+  pichiu: { adapter: new PichiuAdapter(), subscanUrl: undefined },
+  quartz: { adapter: new QuartzAdapter(), subscanUrl: 'https://quartz.subscan.io/' },
+  shadow: { adapter: new ShadowAdapter(), subscanUrl: 'https://shadow.subscan.io/' },
+  shiden: { adapter: new ShidenAdapter(), subscanUrl: 'https://shiden.subscan.io/' },
+  statemine: { adapter: new StatemineAdapter(), subscanUrl: 'https://statemine.subscan.io/' },
+  statemint: undefined,
+  turing: { adapter: new TuringAdapter(), subscanUrl: 'https://turing.subscan.io/' },
+  unique: { adapter: new UniqueAdapter(), subscanUrl: 'https://unique.subscan.io/' },
+} as const satisfies Record<ChainId, { adapter: BaseCrossChainAdapter; subscanUrl: string | undefined } | undefined>
 
 export const bridgeApiProvider = new ApiProvider()
 
@@ -63,7 +65,9 @@ export const bridgeState = selector({
   key: 'Bridge',
   get: async ({ get }) => {
     const bridge = new Bridge({
-      adapters: Object.values(availableAdapters),
+      adapters: Object.values(bridgeConfig)
+        .filter((x): x is NonNullable<typeof x> => x !== undefined)
+        .map(x => x.adapter),
       disabledRouters: get(includeDisabledRoutesState)
         ? undefined
         : [

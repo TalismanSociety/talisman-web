@@ -88,7 +88,7 @@ export const useExtrinsic = <
           contents: loadable.state === 'loading' ? loadable.contents : undefined,
         }))
 
-        toastExtrinsic([[module, String(section)]], promise, chain)
+        toastExtrinsic([[module, String(section)]], promise, chain.subscanUrl)
 
         try {
           const result = await promise

@@ -4,7 +4,7 @@ import TeleportFormComponent from '@components/recipes/TeleportForm'
 import TokenSelectorDialog, { TokenSelectorItem } from '@components/recipes/TokenSelectorDialog'
 import { injectedSubstrateAccountsState } from '@domains/accounts'
 import { selectedBalancesState } from '@domains/balances/recoils'
-import { bridgeApiProvider, bridgeState } from '@domains/bridge'
+import { bridgeApiProvider, bridgeConfig, bridgeState } from '@domains/bridge'
 import { extrinsicMiddleware } from '@domains/common/extrinsicMiddleware'
 import { toastExtrinsic } from '@domains/common/utils'
 import { type SubmittableExtrinsic } from '@polkadot/api/types'
@@ -322,7 +322,11 @@ const TeleportForm = () => {
                 },
               })
 
-              toastExtrinsic([[tx.method.section, tx.method.method]], promise)
+              toastExtrinsic(
+                [[tx.method.section, tx.method.method]],
+                promise,
+                bridgeConfig[adapter.chain.id]?.subscanUrl
+              )
             })
           })
         }
