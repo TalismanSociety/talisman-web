@@ -2,10 +2,59 @@ import Logo from '@components/Logo'
 import { css } from '@emotion/css'
 import { Copy, Plus } from '@talismn/icons'
 import { Button, Identicon, Select } from '@talismn/ui'
+import { useState } from 'react'
 
 import { copyToClipboard } from '../../domain/common'
 
+interface Multisig {
+  name: string
+  signers: string[]
+  threshold: number
+  networks: {
+    [key: string]: {
+      proxy: string
+      multisig: string
+    }
+  }
+}
+
+const mockMultisigs: Multisig[] = [
+  {
+    name: 'Mu',
+    signers: ['5FmE1Adpwp1bT1oY95w59RiSPVu9LmJ8y7u4yK8Zi5vznv5Y', '5DLfh24Fy7xhDf4dj4E4M4D4ewhRJi29v5A9X9uKXCf1QxQ3'],
+    threshold: 2,
+    networks: {
+      polkadot: {
+        proxy: '5Cf9PXqb7Wp8QBBoC3NRS1iMnaVGU8WCCnZUcBnv9Pp9d8NZ',
+        multisig: '5E2iJwFrcK8WUBn1jvYc9rYFxJGSM8jKkzUvEczQ2BwSnDZ6',
+      },
+      kusama: {
+        proxy: 'Ez8WgjKToXYT6TJw6F76R8B7DhjfSJY9qv7KuBsaFJgQq3h',
+        multisig: 'F4aNh6qxPPJXQobU6S5U5JwDz3q3qVQjrrYciZ7Q97CgJkA',
+      },
+    },
+  },
+  {
+    name: 'Multisig ----------------3',
+    signers: [
+      '5Dy7YpGw3Nn8WDEeNWntvRk9XQ2kQmnsbYZQ2n6nEkT6CwT6',
+      '5FmPy6kM4fU4Mz7UyT52T6T8b2aL4BAvP4Z9z4f4sUUN4eU6',
+      '5GJpzMh8UkMqUWoHjzXZwbRgC8EEMco1JvDjqVQAXwfsR5Kr',
+      '5DvFd3q9GZa3g8VjWnRWv5MkdnrBFRk21J1GmDVpEj7ZC9eq',
+    ],
+    threshold: 3,
+    networks: {
+      polkadot: {
+        proxy: 'EF4SKSX7D8Rv9H7FfnzS5bS7W8zvQ2Q4g4A4YJMXyW8Dv1b',
+        multisig: 'H1e7Z8EoPz5hVY5Yf2Q7VtkGv5u5nV6hcQmQfjGZDCxrnJu',
+      },
+    },
+  },
+]
+
 const Header = () => {
+  const [selectedMultisig, setSelectedMultisig] = useState(mockMultisigs[0] as Multisig)
+
   return (
     <header
       className={css`
@@ -58,6 +107,14 @@ const Header = () => {
             button > svg {
               color: var(--color-offWhite);
             }
+            figure > svg {
+              height: 40px;
+              width: 40px;
+            }
+            span {
+              color: var(--color-offWhite) !important;
+              font-size: 16px;
+            }
           `}
         >
           <Select
@@ -65,12 +122,13 @@ const Header = () => {
             placeholder={
               <div
                 className={css`
+                  width: max-content;
                   display: flex;
                   align-items: center;
                   justify-content: center;
                   gap: 12px;
                   height: 41px;
-                  width: 250px;
+                  /* width: auto; */
                 `}
               >
                 <Identicon
@@ -78,7 +136,7 @@ const Header = () => {
                     height: 40px;
                     width: 40px;
                   `}
-                  value={'5Casdf'}
+                  value={selectedMultisig.networks.polkadot?.proxy as string}
                 />
                 <p
                   className={css`
@@ -87,7 +145,7 @@ const Header = () => {
                     user-select: none;
                   `}
                 >
-                  Paraverse Foundation
+                  {selectedMultisig.name}
                 </p>
                 <Copy
                   className={css`
@@ -98,27 +156,30 @@ const Header = () => {
                     }
                   `}
                   onClick={e => {
-                    copyToClipboard('0x123', 'Address copied to clipboard')
+                    copyToClipboard(selectedMultisig.networks.polkadot?.proxy as string, 'Address copied to clipboard')
                     e.stopPropagation()
                   }}
                 />
               </div>
             }
-            value={1}
-            // onChange={value =>
-            //   setSelectedSigner(props.augmentedAccounts.find(a => a.address === value) as AugmentedAccount)
-            // }
-            // {...props}
+            value={selectedMultisig.networks.polkadot?.proxy}
+            onChange={key => {
+              setSelectedMultisig(
+                mockMultisigs.find(m => {
+                  return m.networks.polkadot?.proxy === key
+                }) as Multisig
+              )
+            }}
           >
-            {/* {props.augmentedAccounts.map(account => (
-          <Select.Item
-            key={account.address}
-            leadingIcon={<Identicon value={account.address} />}
-            value={account.address}
-            headlineText={account.nickname}
-            supportingText={'1 DOT'}
-          />
-        ))} */}
+            {mockMultisigs.map(multisig => (
+              <Select.Item
+                key={multisig.networks.polkadot?.proxy}
+                leadingIcon={<Identicon value={multisig.networks.polkadot?.proxy as string} />}
+                value={multisig.networks.polkadot?.proxy}
+                headlineText={multisig.name}
+                supportingText={''}
+              />
+            ))}
           </Select>
         </div>
       </div>

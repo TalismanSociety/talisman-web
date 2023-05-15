@@ -1,7 +1,6 @@
 import StatusCircle, { StatusCircleType } from '@components/StatusCircle'
 import { css } from '@emotion/css'
-import { ArrowUp, Check, Share2 } from '@talismn/icons'
-// import { Tooltip } from '@talismn/ui'
+import { ArrowUp, Share2 } from '@talismn/icons'
 import { formatUsd } from '@util/numbers'
 
 import { formattedHhMm } from './utils'
