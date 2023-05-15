@@ -102,9 +102,14 @@ const Select = Object.assign(
         // which is what we need. Implement support for top overflow later
         size({
           apply: ({ rects, availableHeight, elements }) => {
-            Object.assign(elements.floating.style, {
-              width: `${rects.reference.width}px`,
-              maxHeight: `${availableHeight}px`,
+            // Execute this inside requestAnimationFrame to avoid annoying
+            // ResizeObserver loop limit exceeded error
+            // https://github.com/floating-ui/floating-ui/issues/1740#issuecomment-1540639488
+            requestAnimationFrame(() => {
+              Object.assign(elements.floating.style, {
+                width: `${rects.reference.width}px`,
+                maxHeight: `${availableHeight}px`,
+              })
             })
           },
         }),
