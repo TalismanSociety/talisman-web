@@ -1,6 +1,7 @@
 import { Box, Unknown, Video, Volume2 } from '@talismn/icons'
 import React, { useState, type ReactNode } from 'react'
 import { useMimeType, type MimeTypeType } from '../../utils'
+import type { Interpolation, Theme } from '@emotion/react'
 
 type PreviewProps = {
   src?: string | readonly string[] | undefined
@@ -21,7 +22,9 @@ const css = {
   margin: 0,
   width: '100%',
   height: '100%',
-} as const
+} satisfies Interpolation<Theme>
+
+const imgCss = [css, { objectFit: 'cover' }] satisfies Interpolation<Theme>
 
 const SyncPreview = (props: Pick<PreviewProps, 'src'> & { type: MimeTypeType | undefined }) => {
   const srcs = typeof props.src === 'string' ? [props.src] : props.src
@@ -32,7 +35,7 @@ const SyncPreview = (props: Pick<PreviewProps, 'src'> & { type: MimeTypeType | u
           {srcs?.map((x, index) => (
             <source key={index} srcSet={x} />
           ))}
-          <img css={[css, { objectFit: 'cover' }]} />
+          <img css={imgCss} />
         </picture>
       )
     case 'video':
@@ -94,7 +97,7 @@ export const Preview = (props: PreviewProps) => {
       {srcs?.map((x, index) => (
         <source key={index} srcSet={x} />
       ))}
-      <img onError={() => setShouldTryFetchingMimeType(true)} css={css} />
+      <img onError={() => setShouldTryFetchingMimeType(true)} css={imgCss} />
     </picture>
   )
 }
