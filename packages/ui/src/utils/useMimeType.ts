@@ -10,12 +10,18 @@ export type MimeTypeType = TypeDetail[0]
 
 export type MimeTypeSubType = TypeDetail[1]
 
+// Quick temporary solution for now
+// a UI library should probably not have caching logic
+const storageKey = (url: string) => `@talismn/ui/mime/${url}`
+
 export const useMimeType = (src: string | readonly string[] | undefined, fetchMime = false) => {
   const referenceSrc = typeof src === 'string' ? src : src?.at(0)
   const contentTypeFromSrc = mime.getType(referenceSrc ?? '') as MimeType | null
 
   const [mimeType, setMimeType] = useState<MimeType | undefined>(
-    contentTypeFromSrc === null ? undefined : contentTypeFromSrc
+    contentTypeFromSrc === null
+      ? (sessionStorage.getItem(storageKey(referenceSrc ?? '')) as MimeType) ?? undefined
+      : contentTypeFromSrc
   )
 
   useEffect(() => {
@@ -38,12 +44,18 @@ export const useMimeType = (src: string | readonly string[] | undefined, fetchMi
             continue
           }
 
-          setMimeType((response.headers.get('Content-Type') as MimeType) ?? undefined)
+          const contentType = response.headers.get('Content-Type') as MimeType | null
+
+          setMimeType(contentType ?? undefined)
+
+          if (referenceSrc !== undefined && contentType !== null) {
+            sessionStorage.setItem(storageKey(referenceSrc), contentType)
+          }
           break
         } catch {}
       }
     })()
-  }, [fetchMime, mimeType, src])
+  }, [fetchMime, mimeType, referenceSrc, src])
 
   type TypeDetail = MimeType extends `${infer Type}/${infer SubType}` ? [Type, SubType] : never
   const [type, subType]: TypeDetail | [undefined, undefined] = (mimeType?.split('/') ?? [undefined, undefined]) as [
