@@ -194,7 +194,7 @@ const Select = Object.assign(
           {...getReferenceProps()}
         >
           <Text.Body as="div" css={{ pointerEvents: 'none', userSelect: 'none', overflow: 'hidden' }}>
-            {selectedChild ?? props.placeholder}
+            {selectedChild ?? <Text.Body alpha="disabled">{props.placeholder}</Text.Body>}
           </Text.Body>
           {clearRequired ? (
             <X />

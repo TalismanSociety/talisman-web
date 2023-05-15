@@ -37,6 +37,7 @@ const AccountSelector = (props: AccountSelectorProps) => {
   return (
     <Select
       width={props.width}
+      placeholder="Select an account"
       value={typeof props.selectedAccount === 'string' ? props.selectedAccount : props.selectedAccount?.address}
       onChange={onChange}
     >
@@ -46,7 +47,6 @@ const AccountSelector = (props: AccountSelectorProps) => {
           value={x.address}
           leadingIcon={<Identicon value={x.address} size={40} />}
           headlineText={x.name ?? shortenAddress(x.address)}
-          supportingText=""
         />
       ))}
     </Select>
