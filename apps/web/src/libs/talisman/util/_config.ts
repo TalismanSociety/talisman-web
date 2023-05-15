@@ -1,3 +1,5 @@
+import { chains } from '@domains/chains'
+
 export const statusOptions = {
   INITIALIZED: 'INITIALIZED',
   PROCESSING: 'PROCESSING',
@@ -22,7 +24,7 @@ export const SupportedRelaychains: { [key: number | string]: Relaychain } = {
   0: {
     id: 0,
     name: 'Polkadot',
-    rpc: 'wss://rpc.polkadot.io',
+    rpc: chains[0].rpc,
     genesisHash: '0x91b171bb158e2d3848fa23a9f1c25182fb8e20313b2c1eb49219da7a70ce90c3',
     subscanUrl: 'https://polkadot.subscan.io',
     tokenDecimals: 10,
@@ -33,7 +35,7 @@ export const SupportedRelaychains: { [key: number | string]: Relaychain } = {
   2: {
     id: 2,
     name: 'Kusama',
-    rpc: 'wss://kusama-rpc.polkadot.io',
+    rpc: chains[1].rpc,
     genesisHash: '0xb0a8d493285c2df73290dfb7e61f870f17b41801197a149ca93654499ea3dafe',
     subscanUrl: 'https://kusama.subscan.io',
     tokenDecimals: 12,
