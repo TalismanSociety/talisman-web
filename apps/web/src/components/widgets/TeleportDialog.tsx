@@ -4,7 +4,7 @@ import TeleportFormComponent from '@components/recipes/TeleportForm'
 import TokenSelectorDialog, { TokenSelectorItem } from '@components/recipes/TokenSelectorDialog'
 import { injectedSubstrateAccountsState } from '@domains/accounts'
 import { selectedBalancesState } from '@domains/balances/recoils'
-import { bridgeApiProvider, bridgeState } from '@domains/bridge'
+import { bridgeApiProvider, bridgeConfig, bridgeNodeList, bridgeState } from '@domains/bridge'
 import { extrinsicMiddleware } from '@domains/common/extrinsicMiddleware'
 import { toastExtrinsic } from '@domains/common/utils'
 import { type SubmittableExtrinsic } from '@polkadot/api/types'
@@ -12,7 +12,7 @@ import { web3FromAddress } from '@polkadot/extension-dapp'
 import { type ISubmittableResult } from '@polkadot/types/types'
 import { Chain, InputConfig } from '@polkawallet/bridge'
 import { Decimal } from '@talismn/math'
-import { CircularProgressIndicator } from '@talismn/ui'
+import { CircularProgressIndicator, toast } from '@talismn/ui'
 import { Maybe } from '@util/monads'
 import { isEmpty, uniqBy } from 'lodash'
 import { Suspense, useCallback, useEffect, useMemo, useState } from 'react'
@@ -138,11 +138,17 @@ const TeleportForm = () => {
   const [inputConfigLoadable, setInputConfigLoadable] = useState<Loadable<InputConfig>>()
 
   useEffect(() => {
+    if (inputConfigLoadable?.state === 'hasError') {
+      toast.error('Failed to get transferable amount')
+    }
+  }, [inputConfigLoadable?.state])
+
+  useEffect(() => {
     setInputConfigLoadable(undefined)
     if (adapter !== undefined && sender !== undefined && toChain !== undefined && token !== undefined) {
       setInputConfigLoadable(RecoilLoadable.loading())
       const subscription = bridgeApiProvider
-        .connectFromChain([adapter.chain.id], undefined)
+        .connectFromChain([adapter.chain.id], bridgeNodeList)
         .pipe(
           switchMap(() => adapter.init(bridgeApiProvider.getApi(adapter.chain.id))),
           switchMap(
@@ -162,7 +168,10 @@ const TeleportForm = () => {
               )
           )
         )
-        .subscribe(x => setInputConfigLoadable(RecoilLoadable.of(x)))
+        .subscribe({
+          next: x => setInputConfigLoadable(RecoilLoadable.of(x)),
+          error: error => setInputConfigLoadable(RecoilLoadable.error(error)),
+        })
 
       return subscription.unsubscribe.bind(subscription)
     }
@@ -322,7 +331,13 @@ const TeleportForm = () => {
                 },
               })
 
-              toastExtrinsic([[tx.method.section, tx.method.method]], promise)
+              const config = bridgeConfig[adapter.chain.id]
+
+              toastExtrinsic(
+                [[tx.method.section, tx.method.method]],
+                promise,
+                config !== undefined && 'subscanUrl' in config ? config.subscanUrl : undefined
+              )
             })
           })
         }
