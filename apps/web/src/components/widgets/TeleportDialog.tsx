@@ -12,7 +12,7 @@ import { web3FromAddress } from '@polkadot/extension-dapp'
 import { type ISubmittableResult } from '@polkadot/types/types'
 import { Chain, InputConfig } from '@polkawallet/bridge'
 import { Decimal } from '@talismn/math'
-import { CircularProgressIndicator } from '@talismn/ui'
+import { CircularProgressIndicator, toast } from '@talismn/ui'
 import { Maybe } from '@util/monads'
 import { isEmpty, uniqBy } from 'lodash'
 import { Suspense, useCallback, useEffect, useMemo, useState } from 'react'
@@ -138,6 +138,12 @@ const TeleportForm = () => {
   const [inputConfigLoadable, setInputConfigLoadable] = useState<Loadable<InputConfig>>()
 
   useEffect(() => {
+    if (inputConfigLoadable?.state === 'hasError') {
+      toast.error('Failed to get transferable amount')
+    }
+  }, [inputConfigLoadable?.state])
+
+  useEffect(() => {
     setInputConfigLoadable(undefined)
     if (adapter !== undefined && sender !== undefined && toChain !== undefined && token !== undefined) {
       setInputConfigLoadable(RecoilLoadable.loading())
@@ -162,7 +168,10 @@ const TeleportForm = () => {
               )
           )
         )
-        .subscribe(x => setInputConfigLoadable(RecoilLoadable.of(x)))
+        .subscribe({
+          next: x => setInputConfigLoadable(RecoilLoadable.of(x)),
+          error: error => setInputConfigLoadable(RecoilLoadable.error(error)),
+        })
 
       return subscription.unsubscribe.bind(subscription)
     }
