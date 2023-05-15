@@ -4,7 +4,7 @@ import TeleportFormComponent from '@components/recipes/TeleportForm'
 import TokenSelectorDialog, { TokenSelectorItem } from '@components/recipes/TokenSelectorDialog'
 import { injectedSubstrateAccountsState } from '@domains/accounts'
 import { selectedBalancesState } from '@domains/balances/recoils'
-import { bridgeApiProvider, bridgeConfig, bridgeState } from '@domains/bridge'
+import { bridgeApiProvider, bridgeConfig, bridgeNodeList, bridgeState } from '@domains/bridge'
 import { extrinsicMiddleware } from '@domains/common/extrinsicMiddleware'
 import { toastExtrinsic } from '@domains/common/utils'
 import { type SubmittableExtrinsic } from '@polkadot/api/types'
@@ -148,7 +148,7 @@ const TeleportForm = () => {
     if (adapter !== undefined && sender !== undefined && toChain !== undefined && token !== undefined) {
       setInputConfigLoadable(RecoilLoadable.loading())
       const subscription = bridgeApiProvider
-        .connectFromChain([adapter.chain.id], undefined)
+        .connectFromChain([adapter.chain.id], bridgeNodeList)
         .pipe(
           switchMap(() => adapter.init(bridgeApiProvider.getApi(adapter.chain.id))),
           switchMap(
@@ -331,10 +331,12 @@ const TeleportForm = () => {
                 },
               })
 
+              const config = bridgeConfig[adapter.chain.id]
+
               toastExtrinsic(
                 [[tx.method.section, tx.method.method]],
                 promise,
-                bridgeConfig[adapter.chain.id]?.subscanUrl
+                config !== undefined && 'subscanUrl' in config ? config.subscanUrl : undefined
               )
             })
           })
