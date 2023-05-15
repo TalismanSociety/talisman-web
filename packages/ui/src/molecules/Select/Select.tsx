@@ -91,6 +91,8 @@ const Select = Object.assign(
       },
       whileElementsMounted: autoUpdate,
       middleware: [
+        // TODO: right now only work for bottom overflow
+        // which is what we need. Implement support for top overflow later
         size({
           apply: ({ rects, availableHeight, elements }) => {
             // Execute this inside requestAnimationFrame to avoid annoying
