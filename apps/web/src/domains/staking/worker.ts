@@ -7,7 +7,7 @@ export type WorkerFunction = typeof getStakersReward
 // Needed to extract to a worker since this calculation is very CPU heavy
 // and will slow down the UI thread
 const getStakersReward = async (endpoints: string | string[], addresses: string[], eras: number[]) => {
-  const api = await ApiPromise.create({ provider: new WsProvider(endpoints) })
+  const api = await ApiPromise.create({ provider: new WsProvider(endpoints), initWasm: false })
 
   const stakerRewards = await api.derive.staking.stakerRewardsMultiEras(
     addresses,

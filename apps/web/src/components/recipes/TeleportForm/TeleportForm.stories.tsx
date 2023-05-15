@@ -16,7 +16,7 @@ export const Default: Story<TeleportFormProps> = args => <TeleportForm {...args}
 Default.args = {
   accountSelector: (
     <Select width="100%" placeholder="Select account">
-      <Select.Item headlineText="foo" />
+      <Select.Option headlineText="foo" />
     </Select>
   ),
   fromChains: [

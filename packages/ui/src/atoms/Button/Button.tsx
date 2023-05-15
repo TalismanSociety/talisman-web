@@ -120,7 +120,7 @@ const Button = <T extends ButtonElementType = 'button'>({
       <div css={{ position: 'relative', display: 'flex' }}>
         {hasLeadingIcon && (
           <span
-            css={{ position: 'absolute', top: 0, bottom: 0, left: '0.8rem', display: 'flex', alignItems: 'center' }}
+            css={{ position: 'absolute', top: 0, bottom: 0, left: '-1.6rem', display: 'flex', alignItems: 'center' }}
           >
             <IconContext.Provider value={{ size: '1.6rem' }}>
               {(() => {
@@ -142,6 +142,7 @@ const Button = <T extends ButtonElementType = 'button'>({
             { textAlign: 'center', width: 'stretch' },
             hasLeadingIcon && { translate: '0.8rem' },
             trailingIcon && { translate: '-0.8rem' },
+            hasLeadingIcon && trailingIcon && { translate: 'revert' },
           ]}
         >
           {props.children}
@@ -149,7 +150,7 @@ const Button = <T extends ButtonElementType = 'button'>({
         <IconContext.Provider value={{ size: '1.6rem' }}>
           {trailingIcon && (
             <span
-              css={{ position: 'absolute', top: 0, bottom: 0, right: '0.8rem', display: 'flex', alignItems: 'center' }}
+              css={{ position: 'absolute', top: 0, bottom: 0, right: '-1.6rem', display: 'flex', alignItems: 'center' }}
             >
               {trailingIcon}
             </span>

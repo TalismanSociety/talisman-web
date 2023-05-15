@@ -9,9 +9,7 @@ import AccountConnectionGuard, { useShouldShowAccountConnectionGuard } from '@co
 import AccountsManagementMenu from '@components/widgets/AccountsManagementMenu'
 import { RouteErrorElement } from '@components/widgets/ErrorBoundary'
 import StakeDialog from '@components/widgets/staking/StakeDialog'
-import { accountsState, selectedAccountsState } from '@domains/accounts/recoils'
-import { useNativeTokenDecimalState, useNativeTokenPriceState } from '@domains/chains/recoils'
-import { useRecommendedPoolsState } from '@domains/nominationPools/recoils'
+import { selectedAccountsState } from '@domains/accounts/recoils'
 import * as MoonbeamContributors from '@libs/moonbeam-contributors'
 import * as Sentry from '@sentry/react'
 import { Compass, CreditCard, Eye, MoreHorizontal, RefreshCcw, Star, TalismanHand, Zap } from '@talismn/icons'
@@ -29,8 +27,9 @@ import { shortenAddress } from '@util/format'
 import { usePostHog } from 'posthog-js/react'
 import { useCallback, useEffect, useState } from 'react'
 import { Link, Navigate, Outlet, createBrowserRouter, useLocation, useSearchParams } from 'react-router-dom'
-import { useRecoilValue, useRecoilValueLoadable, waitForAll } from 'recoil'
+import { useRecoilValue } from 'recoil'
 
+import TeleportDialog from '@components/widgets/TeleportDialog'
 import AssetItem from './AssetItem'
 import Assets from './Assets'
 import CrowdloanDetail from './Crowdloan.Detail'
@@ -40,7 +39,6 @@ import NFTsPage from './NFTsPage'
 import Overview from './Overview'
 import Portfolio from './Portfolio'
 import TransactionHistory from './TransactionHistory'
-import TeleportDialog from '@components/widgets/TeleportDialog'
 
 const Header = () => {
   const shouldShowAccountConnectionGuard = useShouldShowAccountConnectionGuard()
@@ -66,11 +64,6 @@ const Header = () => {
 }
 
 const Main = () => {
-  // Pre-loading
-  useRecoilValueLoadable(
-    waitForAll([accountsState, useNativeTokenDecimalState(), useNativeTokenPriceState(), useRecommendedPoolsState()])
-  )
-
   const posthog = usePostHog()
   const location = useLocation()
 

@@ -27,7 +27,7 @@ import {
 } from 'react'
 import { useLocation } from 'react-use'
 import { constSelector, useRecoilValue, useRecoilValueLoadable, waitForAll } from 'recoil'
-import AccountSelector from '../AccountSelector'
+import { useAccountSelector } from '../AccountSelector'
 import AddStakeDialog from './AddStakeDialog'
 import UnstakeDialog from './UnstakeDialog'
 
@@ -183,7 +183,7 @@ export const AssetSelect = (props: {
     renderSelected={
       props.inTransition
         ? id => (
-            <Select.Item
+            <Select.Option
               leadingIcon={<CircularProgressIndicator size="2.4rem" />}
               headlineText={props.chains.find(x => x.id === id)?.nativeToken.symbol}
             />
@@ -198,7 +198,7 @@ export const AssetSelect = (props: {
     }}
   >
     {props.chains.map(x => (
-      <Select.Item
+      <Select.Option
         value={x.id}
         leadingIcon={
           <img alt={x.nativeToken.symbol} src={x.nativeToken.logo} css={{ width: '2.4rem', height: '2.4rem' }} />
@@ -230,8 +230,6 @@ const DeferredEstimatedYield = (props: { amount: Decimal }) => (
 )
 
 export const ControlledStakeForm = (props: { assetSelector: ReactNode }) => {
-  const [_, startTransition] = useTransition()
-
   const joinPoolExtrinsic = useExtrinsic('nominationPools', 'join')
 
   const location = useLocation()
@@ -250,19 +248,18 @@ export const ControlledStakeForm = (props: { assetSelector: ReactNode }) => {
 
   const apiEndpoint = useContext(SubstrateApiContext).endpoint
 
-  const [api, accounts, recommendedPools] = useRecoilValue(
-    waitForAll([useSubstrateApiState(), injectedSubstrateAccountsState, useRecommendedPoolsState()])
-  )
+  const [api, recommendedPools] = useRecoilValue(waitForAll([useSubstrateApiState(), useRecommendedPoolsState()]))
 
   const initialPoolId = poolIdFromSearch ?? recommendedPools[0]?.poolId
 
   const [selectedPoolId, setSelectedPoolId] = useState(initialPoolId)
   const [showPoolSelector, setShowPoolSelector] = useState(false)
 
-  const [selectedAccount, setSelectedAccount] = useState(accounts[0])
-  const selectedAccountIndex = useMemo(
-    () => accounts.findIndex(x => x.address === selectedAccount?.address),
-    [accounts, selectedAccount?.address]
+  const [selectedAccount, accountSelector] = useAccountSelector(
+    useRecoilValue(injectedSubstrateAccountsState),
+    // We don't want to select the first account when poolId is present in the URL
+    // because we want to showcase that pool & the first account might have already joined one
+    poolIdFromSearch === undefined ? 0 : undefined
   )
 
   const {
@@ -276,11 +273,9 @@ export const ControlledStakeForm = (props: { assetSelector: ReactNode }) => {
   const poolMembersLoadable = useChainState(
     'query',
     'nominationPools',
-    'poolMembers.multi',
-    accounts.map(({ address }) => address),
-    {
-      enabled: accounts.length > 0,
-    }
+    'poolMembers',
+    [selectedAccount?.address ?? ''],
+    { enabled: selectedAccount !== undefined }
   )
 
   const activeEraLoadable = useChainState('query', 'staking', 'activeEra', [])
@@ -291,9 +286,7 @@ export const ControlledStakeForm = (props: { assetSelector: ReactNode }) => {
   ).map(value => new Set(value?.map(x => x[0].args[1].toHuman())))
 
   const existingPool =
-    poolMembersLoadable.state === 'hasValue' && poolMembersLoadable.contents[selectedAccountIndex]?.isSome
-      ? poolMembersLoadable.contents[selectedAccountIndex]!.unwrap()
-      : undefined
+    poolMembersLoadable.state === 'hasValue' ? poolMembersLoadable.contents.unwrapOr(undefined) : undefined
 
   const poolNominatorsLoadable = useChainState(
     'query',
@@ -351,8 +344,6 @@ export const ControlledStakeForm = (props: { assetSelector: ReactNode }) => {
     setSelectedPoolId(initialPoolId)
   }, [initialPoolId, recommendedPools])
 
-  console.log(isReady, inputError, decimalAmount?.toHuman())
-
   return (
     <>
       <PoolSelector
@@ -363,12 +354,7 @@ export const ControlledStakeForm = (props: { assetSelector: ReactNode }) => {
       />
       <StakeFormComponent
         assetSelector={props.assetSelector}
-        accountSelector={
-          <AccountSelector
-            selectedAccount={selectedAccount?.address}
-            onChangeSelectedAccount={account => startTransition(() => setSelectedAccount(account))}
-          />
-        }
+        accountSelector={accountSelector}
         amountInput={
           <StakeFormComponent.AmountInput
             amount={amount}

@@ -21,7 +21,10 @@ type AmountInputProps = {
 
 const AmountInput = (props: AmountInputProps) => (
   <TextInput
+    type="number"
+    inputMode="decimal"
     width="10rem"
+    placeholder="0.00"
     value={props.amount}
     onChange={event => props.onChangeAmount(event.target.value)}
     trailingIcon={useContext(AssetSelectorContext)}
@@ -31,6 +34,7 @@ const AmountInput = (props: AmountInputProps) => (
       isNilOrWhitespace(props.error) ? props.fiatAmount : <TextInput.ErrorLabel>{props.error}</TextInput.ErrorLabel>
     }
     trailingSupportingText={<Chip onClick={props.onRequestMaxAmount}>Max</Chip>}
+    css={{ fontSize: '3rem' }}
   />
 )
 

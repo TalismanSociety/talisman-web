@@ -79,6 +79,7 @@ const TeleportForm = Object.assign(
             {props.accountSelector}
             <TextInput
               type="number"
+              inputMode="decimal"
               placeholder="0.00"
               value={props.amount}
               onChange={event => props.onChangeAmount(event.target.value)}
@@ -127,6 +128,7 @@ const TeleportForm = Object.assign(
               leadingSupportingText={
                 props.inputError && <TextInput.ErrorLabel>{props.inputError}</TextInput.ErrorLabel>
               }
+              css={{ fontSize: '3rem' }}
             />
             <div
               css={[
@@ -154,7 +156,7 @@ const TeleportForm = Object.assign(
                       clearRequired
                     >
                       {props.fromChains.map((network, index) => (
-                        <Select.Item
+                        <Select.Option
                           key={index}
                           value={index}
                           headlineText={network.name}
@@ -186,7 +188,7 @@ const TeleportForm = Object.assign(
                       clearRequired
                     >
                       {props.toChains.map((network, index) => (
-                        <Select.Item
+                        <Select.Option
                           key={index}
                           value={index}
                           headlineText={network.name}

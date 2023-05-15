@@ -2,7 +2,7 @@ import { FixedPointNumber } from '@acala-network/sdk-core'
 import TeleportFormDialogComponent from '@components/recipes/TeleportDialog'
 import TeleportFormComponent from '@components/recipes/TeleportForm'
 import TokenSelectorDialog, { TokenSelectorItem } from '@components/recipes/TokenSelectorDialog'
-import { Account } from '@domains/accounts'
+import { injectedSubstrateAccountsState } from '@domains/accounts'
 import { selectedBalancesState } from '@domains/balances/recoils'
 import { bridgeApiProvider, bridgeState } from '@domains/bridge'
 import { extrinsicMiddleware } from '@domains/common/extrinsicMiddleware'
@@ -19,14 +19,14 @@ import { Suspense, useCallback, useEffect, useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { Loadable, RecoilLoadable, useRecoilCallback, useRecoilValue, waitForAll } from 'recoil'
 import { Observable, switchMap } from 'rxjs'
-import AccountSelector from './AccountSelector'
+import { useAccountSelector } from './AccountSelector'
 
 const TeleportForm = () => {
   const [_balances, bridge] = useRecoilValue(waitForAll([selectedBalancesState, bridgeState]))
 
   const [amount, setAmount] = useState('')
+  const [sender, senderSelector] = useAccountSelector(useRecoilValue(injectedSubstrateAccountsState), 0)
 
-  const [sender, setSender] = useState<Account>()
   const balances = useMemo(
     () => (sender === undefined ? _balances : _balances.find(x => x.address === sender.address)),
     [_balances, sender]
@@ -230,9 +230,7 @@ const TeleportForm = () => {
   return (
     <>
       <TeleportFormComponent
-        accountSelector={
-          <AccountSelector selectedAccount={sender} onChangeSelectedAccount={setSender} defaultToFirstAddress />
-        }
+        accountSelector={senderSelector}
         transferableAmount={
           parsedInputConfigLoadable?.state === 'loading' ? (
             <CircularProgressIndicator size="1em" />
