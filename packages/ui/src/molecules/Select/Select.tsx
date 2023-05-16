@@ -31,6 +31,7 @@ type Value = string | number | undefined
 export type SelectProps = {
   value?: Value
   placeholder?: ReactNode
+  beforeOptionsNode?: ReactNode
   placeholderPointerEvents?: boolean
   width?: string | number
   children: ReactElement<SelectItemProps> | ReactElement<SelectItemProps>[]
@@ -238,29 +239,32 @@ const Select = Object.assign(
             },
           })}
         >
-          {React.Children.map(children, (child, index) => (
-            <li
-              key={child.key}
-              role="option"
-              ref={node => {
-                listRef.current[index] = node!
-              }}
-              tabIndex={!open ? -1 : index === activeIndex ? 0 : 1}
-              aria-selected={index === activeIndex}
-              css={{ cursor: 'pointer' }}
-              {...getItemProps({
-                onClick: () => select(child.props.value),
-                onKeyDown: event => {
-                  if (event.key === 'Enter') {
-                    event.preventDefault()
-                    select(child.props.value)
-                  }
-                },
-              })}
-            >
-              {child}
-            </li>
-          ))}
+          <>
+            {props.beforeOptionsNode ? props.beforeOptionsNode : null}
+            {React.Children.map(children, (child, index) => (
+              <li
+                key={child.key}
+                role="option"
+                ref={node => {
+                  listRef.current[index] = node!
+                }}
+                tabIndex={!open ? -1 : index === activeIndex ? 0 : 1}
+                aria-selected={index === activeIndex}
+                css={{ cursor: 'pointer' }}
+                {...getItemProps({
+                  onClick: () => select(child.props.value),
+                  onKeyDown: event => {
+                    if (event.key === 'Enter') {
+                      event.preventDefault()
+                      select(child.props.value)
+                    }
+                  },
+                })}
+              >
+                {child}
+              </li>
+            ))}
+          </>
         </motion.ul>
       </motion.div>
     )

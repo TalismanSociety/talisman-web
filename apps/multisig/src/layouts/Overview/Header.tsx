@@ -1,7 +1,8 @@
 import Logo from '@components/Logo'
 import { css } from '@emotion/css'
-import { Copy, Plus } from '@talismn/icons'
-import { Button, Identicon, Select } from '@talismn/ui'
+import { useTheme } from '@emotion/react'
+import { Copy, Plus, TalismanHand } from '@talismn/icons'
+import { Button, IconButton, Identicon, Select } from '@talismn/ui'
 import { useState } from 'react'
 
 import { copyToClipboard } from '../../domain/common'
@@ -20,7 +21,7 @@ interface Multisig {
 
 const mockMultisigs: Multisig[] = [
   {
-    name: 'Mu',
+    name: 'Paraverse Foundation',
     signers: ['5FmE1Adpwp1bT1oY95w59RiSPVu9LmJ8y7u4yK8Zi5vznv5Y', '5DLfh24Fy7xhDf4dj4E4M4D4ewhRJi29v5A9X9uKXCf1QxQ3'],
     threshold: 2,
     networks: {
@@ -35,7 +36,7 @@ const mockMultisigs: Multisig[] = [
     },
   },
   {
-    name: 'Multisig ----------------3',
+    name: 'Centrifuge Pty Ltd',
     signers: [
       '5Dy7YpGw3Nn8WDEeNWntvRk9XQ2kQmnsbYZQ2n6nEkT6CwT6',
       '5FmPy6kM4fU4Mz7UyT52T6T8b2aL4BAvP4Z9z4f4sUUN4eU6',
@@ -53,6 +54,7 @@ const mockMultisigs: Multisig[] = [
 ]
 
 const Header = () => {
+  const theme = useTheme()
   const [selectedMultisig, setSelectedMultisig] = useState(mockMultisigs[0] as Multisig)
 
   return (
@@ -104,9 +106,6 @@ const Header = () => {
             button {
               border-radius: 12px;
             }
-            button > svg {
-              color: var(--color-offWhite);
-            }
             figure > svg {
               height: 40px;
               width: 40px;
@@ -115,10 +114,31 @@ const Header = () => {
               color: var(--color-offWhite) !important;
               font-size: 16px;
             }
+            ul {
+              box-shadow: 5px 5px 10px 0 rgba(0, 0, 0, 0.15);
+            }
           `}
         >
           <Select
             placeholderPointerEvents={true}
+            beforeOptionsNode={
+              <div
+                css={{
+                  fontWeight: 'bold',
+                  color: 'var(--color-dim)',
+                  height: '38px',
+                  margin: '0 16px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                }}
+              >
+                <IconButton size={'16px'} contentColor={`rgb(${theme.dim})`}>
+                  <TalismanHand />
+                </IconButton>
+                Connected Vaults
+              </div>
+            }
             placeholder={
               <div
                 className={css`
@@ -128,7 +148,6 @@ const Header = () => {
                   justify-content: center;
                   gap: 12px;
                   height: 41px;
-                  /* width: auto; */
                 `}
               >
                 <Identicon
@@ -171,15 +190,37 @@ const Header = () => {
               )
             }}
           >
-            {mockMultisigs.map(multisig => (
-              <Select.Item
-                key={multisig.networks.polkadot?.proxy}
-                leadingIcon={<Identicon value={multisig.networks.polkadot?.proxy as string} />}
-                value={multisig.networks.polkadot?.proxy}
-                headlineText={multisig.name}
-                supportingText={''}
-              />
-            ))}
+            {mockMultisigs.reduce((accumulator, multisig) => {
+              if ((selectedMultisig.networks.polkadot?.proxy as string) === multisig.networks.polkadot?.proxy)
+                return accumulator
+
+              return accumulator.concat(
+                <Select.Item
+                  key={multisig.networks.polkadot?.proxy}
+                  leadingIcon={<Identicon value={multisig.networks.polkadot?.proxy as string} />}
+                  value={multisig.networks.polkadot?.proxy}
+                  headlineText={
+                    <div
+                      css={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '9px',
+                        fontSize: '14px',
+                        color: 'var(--color-foreground)',
+                      }}
+                    >
+                      {multisig.name}
+                    </div>
+                  }
+                  supportingText={
+                    <div css={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px' }}>
+                      <Identicon value={(multisig.networks.polkadot?.proxy as string) + 'something'} size={'16px'} />
+                      <div css={{ color: 'var(--color-foreground)', marginTop: '3px' }}>My Piping Hot Ledger</div>
+                    </div>
+                  }
+                />
+              )
+            }, [] as any)}
           </Select>
         </div>
       </div>
