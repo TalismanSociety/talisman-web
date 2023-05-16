@@ -20,6 +20,7 @@ import { useSearchParams } from 'react-router-dom'
 import { Loadable, RecoilLoadable, useRecoilCallback, useRecoilValue, waitForAll } from 'recoil'
 import { Observable, switchMap } from 'rxjs'
 import { useAccountSelector } from './AccountSelector'
+import ErrorBoundary from './ErrorBoundary'
 
 const TeleportForm = () => {
   const [_balances, bridge] = useRecoilValue(waitForAll([selectedBalancesState, bridgeState]))
@@ -376,11 +377,21 @@ const TeleportDialog = () => {
 
   const open = searchParams.get('action') === 'teleport'
 
+  if (!open) {
+    return null
+  }
+
   return (
     <TeleportFormDialogComponent
       open={open}
       onRequestDismiss={() => setSearchParams(new URLSearchParams())}
-      teleportForm={<Suspense fallback={<TeleportFormComponent.Skeleton />}>{open && <TeleportForm />}</Suspense>}
+      teleportForm={
+        <ErrorBoundary renderFallback={fallback => <div css={{ width: 'max-content' }}>{fallback}</div>}>
+          <Suspense fallback={<TeleportFormComponent.Skeleton />}>
+            <TeleportForm />
+          </Suspense>
+        </ErrorBoundary>
+      }
     />
   )
 }
