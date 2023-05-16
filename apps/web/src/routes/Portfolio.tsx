@@ -1,3 +1,4 @@
+import ErrorBoundary from '@components/widgets/ErrorBoundary'
 import { BottomBorderNav } from '@talismn/ui'
 import { Outlet } from 'react-router'
 import { Link, useMatch } from 'react-router-dom'
@@ -29,7 +30,9 @@ const Portfolio = () => {
           </BottomBorderNav.Item>
         ))}
       </BottomBorderNav>
-      <Outlet />
+      <ErrorBoundary>
+        <Outlet />
+      </ErrorBoundary>
     </div>
   )
 }

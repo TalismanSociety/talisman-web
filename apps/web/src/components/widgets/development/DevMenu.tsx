@@ -8,6 +8,7 @@ import WinBox, { WinBoxPropType } from 'react-winbox'
 import { useRecoilState } from 'recoil'
 import { enableTestnetsState } from '@domains/chains'
 import { includeDisabledRoutesState } from '@domains/bridge'
+import { debugErrorBoundaryState } from '../ErrorBoundary'
 
 const DevMenu = () => {
   const theme = useTheme()
@@ -19,6 +20,7 @@ const DevMenu = () => {
 
   const [enableTestnets, setEnableTestnets] = useRecoilState(enableTestnetsState)
   const [includeDisabledRoute, setIncludeDisabledRoute] = useRecoilState(includeDisabledRoutesState)
+  const [debugErrorBoundary, setDebugErrorBoundary] = useRecoilState(debugErrorBoundaryState)
 
   return (
     <WinBox
@@ -47,6 +49,10 @@ const DevMenu = () => {
         <label>
           <input type="checkbox" checked={includeDisabledRoute} onChange={() => setIncludeDisabledRoute(x => !x)} />{' '}
           Enable all XCM routes
+        </label>
+        <label>
+          <input type="checkbox" checked={debugErrorBoundary} onChange={() => setDebugErrorBoundary(x => !x)} /> Debug
+          error boundary (right click to trigger error)
         </label>
       </form>
     </WinBox>

@@ -2,10 +2,9 @@ import '@polkadot/api-augment/polkadot'
 import '@polkadot/api-augment/substrate'
 
 import CookieBanner from '@archetypes/CookieBanner'
-import Development from '@archetypes/Development'
 import { TalismanHandLoader } from '@components/TalismanHandLoader'
-
 import ErrorBoundary from '@components/widgets/ErrorBoundary'
+import Development from '@components/widgets/development'
 import { LegacyBalancesWatcher } from '@domains/balances/recoils'
 import { SUBSTRATE_API_STATE_GARBAGE_COLLECTOR_UNSTABLE } from '@domains/common'
 import { ExtensionWatcher } from '@domains/extension/recoils'
@@ -40,8 +39,15 @@ const Loader = () => {
 
 const App = () => (
   <ThemeProvider>
-    <ErrorBoundary>
-      <RecoilRoot>
+    <RecoilRoot>
+      <ErrorBoundary
+        orientation="vertical"
+        renderFallback={fallback => (
+          <div css={{ height: '100dvh', display: 'flex' }}>
+            <div css={{ margin: 'auto' }}>{fallback}</div>
+          </div>
+        )}
+      >
         <SUBSTRATE_API_STATE_GARBAGE_COLLECTOR_UNSTABLE />
         <Suspense fallback={<Loader />}>
           <Portfolio.Provider>
@@ -57,8 +63,8 @@ const App = () => (
             </TalismanProvider>
           </Portfolio.Provider>
         </Suspense>
-      </RecoilRoot>
-    </ErrorBoundary>
+      </ErrorBoundary>
+    </RecoilRoot>
   </ThemeProvider>
 )
 

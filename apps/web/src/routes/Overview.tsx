@@ -9,6 +9,7 @@ import Stakes from '@components/widgets/staking/Stakes'
 import { Button } from '@talismn/ui'
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
+import ErrorBoundary from '@components/widgets/ErrorBoundary'
 
 const AssetsOverview = () => {
   const [search, setSearch] = useState('')
@@ -122,16 +123,24 @@ const Overview = () => (
     }}
   >
     <div css={{ gridArea: 'allocation' }}>
-      <PortfolioAllocationGraph />
+      <ErrorBoundary>
+        <PortfolioAllocationGraph />
+      </ErrorBoundary>
     </div>
     <div css={{ gridArea: 'assets' }}>
-      <AssetsOverview />
+      <ErrorBoundary>
+        <AssetsOverview />
+      </ErrorBoundary>
     </div>
     <div css={{ gridArea: 'staking' }}>
-      <Stakes />
+      <ErrorBoundary>
+        <Stakes />
+      </ErrorBoundary>
     </div>
     <div css={{ 'gridArea': 'crowdloans', ':empty': { display: 'none' } }}>
-      <Crowdloans />
+      <ErrorBoundary>
+        <Crowdloans />
+      </ErrorBoundary>
     </div>
   </div>
 )

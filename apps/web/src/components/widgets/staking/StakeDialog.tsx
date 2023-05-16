@@ -11,6 +11,7 @@ import { useRecoilValue } from 'recoil'
 import StakeForm from '@components/recipes/StakeForm/StakeForm'
 import { Chain, ChainProvider } from '@domains/chains'
 import { AssetSelect, ControlledStakeForm } from './StakeForm'
+import ErrorBoundary from '../ErrorBoundary'
 
 const Rewards = () => {
   const { stakedReturn } = useInflation()
@@ -42,38 +43,42 @@ const StakeDialog = () => {
         open={open}
         onRequestDismiss={() => setSearchParams(new URLSearchParams())}
         stats={
-          <StakeDialogComponent.Stats>
-            <StakeDialogComponent.Stats.Item
-              headlineText="Rewards"
-              text={
-                <Suspense fallback={<CircularProgressIndicator size="1em" />}>
-                  <Rewards />
-                </Suspense>
-              }
-            />
-            <StakeDialogComponent.Stats.Item
-              headlineText="Current era ends"
-              text={
-                <Suspense fallback={<CircularProgressIndicator size="1em" />}>
-                  <EraEta />
-                </Suspense>
-              }
-            />
-          </StakeDialogComponent.Stats>
+          <ErrorBoundary>
+            <StakeDialogComponent.Stats>
+              <StakeDialogComponent.Stats.Item
+                headlineText="Rewards"
+                text={
+                  <Suspense fallback={<CircularProgressIndicator size="1em" />}>
+                    <Rewards />
+                  </Suspense>
+                }
+              />
+              <StakeDialogComponent.Stats.Item
+                headlineText="Current era ends"
+                text={
+                  <Suspense fallback={<CircularProgressIndicator size="1em" />}>
+                    <EraEta />
+                  </Suspense>
+                }
+              />
+            </StakeDialogComponent.Stats>
+          </ErrorBoundary>
         }
         stakeInput={
-          <Suspense fallback={<StakeForm.Skeleton />}>
-            <ControlledStakeForm
-              assetSelector={
-                <AssetSelect
-                  chains={chains}
-                  selectedChain={chain}
-                  onSelectChain={chain => startTransition(() => setChain(chain))}
-                  inTransition={inTransition}
-                />
-              }
-            />
-          </Suspense>
+          <ErrorBoundary>
+            <Suspense fallback={<StakeForm.Skeleton />}>
+              <ControlledStakeForm
+                assetSelector={
+                  <AssetSelect
+                    chains={chains}
+                    selectedChain={chain}
+                    onSelectChain={chain => startTransition(() => setChain(chain))}
+                    inTransition={inTransition}
+                  />
+                }
+              />
+            </Suspense>
+          </ErrorBoundary>
         }
         learnMoreAnchor={
           <StakeDialogComponent.LearnMore
