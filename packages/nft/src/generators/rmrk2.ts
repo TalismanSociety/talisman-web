@@ -1,9 +1,10 @@
 import '@polkadot/api-augment/substrate'
+// @ts-expect-error
 import { encodeAddress } from '@polkadot/util-crypto'
 import { request } from 'graphql-request'
 
-import { graphql } from '../gql/rmrk2/index'
-import type { CreateNftAsyncGenerator, Nft } from '../types'
+import { graphql } from '../../generated/gql/rmrk2/index.js'
+import type { CreateNftAsyncGenerator, Nft } from '../types.js'
 
 export const createRmrk2NftAsyncGenerator: CreateNftAsyncGenerator<Nft<'rmrk2', 'kusama'>> = async function* (
   address,

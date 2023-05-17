@@ -1,7 +1,7 @@
 import { createPublicClient, http } from 'viem'
-import { CreateNftAsyncGenerator, Nft } from '../../types'
-import { erc721Abi } from './abi'
-import chains from './chains'
+import { type CreateNftAsyncGenerator, type Nft } from '../../types.js'
+import { erc721Abi } from './abi.js'
+import chains from './chains.js'
 
 const range = (start: number, stop: number, step = 1) =>
   Array.from({ length: (stop - start) / step + 1 }, (_, i) => start + i * step)

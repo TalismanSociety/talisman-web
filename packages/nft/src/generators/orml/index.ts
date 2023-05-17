@@ -1,8 +1,9 @@
 import { HttpProvider } from '@polkadot/api'
 import { type Bytes } from '@polkadot/types-codec'
+// @ts-expect-error
 import { hexToString } from '@polkadot/util'
 import { CID } from 'multiformats'
-import { createOrmlNftAsyncGenerator } from './orml'
+import { createOrmlNftAsyncGenerator } from './orml.js'
 
 const parseCid = (bytes: Bytes) => {
   try {

@@ -1,10 +1,14 @@
 {
-  "extends": "@talismn/tsconfig/react-library",
+  "extends": "@talismn/tsconfig/library",
   "compilerOptions": {
-    "outDir": "build",
-    "verbatimModuleSyntax": false
+    "outDir": "build/src"
   },
   "include": [
     "src"
+  ],
+  "references": [
+    {
+      "path": "./tsconfig.codegen.json"
+    }
   ]
 }

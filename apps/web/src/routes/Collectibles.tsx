@@ -1,7 +1,7 @@
 import ErrorBoundary from '@components/widgets/ErrorBoundary'
-import { Account, selectedAccountsState } from '@domains/accounts'
+import { type Account, selectedAccountsState } from '@domains/accounts'
 import {
-  CollectionKey,
+  type CollectionKey,
   nftCollectionItemsState,
   nftCollectionsState,
   nftsState,
@@ -12,7 +12,7 @@ import { type Nft } from '@talismn/nft'
 import { Button, Card, Hr, Identicon, ListItem, MediaDialog, SegmentedButton, Text } from '@talismn/ui'
 import { usePagination } from '@talismn/utils/react'
 import { Maybe } from '@util/monads'
-import { PropsWithChildren, RefCallback, Suspense, useCallback, useEffect, useMemo, useState } from 'react'
+import { type PropsWithChildren, type RefCallback, Suspense, useCallback, useEffect, useMemo, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { useRecoilValue } from 'recoil'
 
@@ -100,8 +100,8 @@ const NftCard = ({ nft }: { nft: Nft }) => {
                 {(nft.externalLinks?.length ?? 0) > 0 && (
                   <article>
                     <Text.BodyLarge as="div">View on</Text.BodyLarge>
-                    {nft.externalLinks?.map(link => (
-                      <Text.BodyLarge.A target="_blank" href={link.url}>
+                    {nft.externalLinks?.map((link, index) => (
+                      <Text.BodyLarge.A key={index} target="_blank" href={link.url}>
                         {link.name} <ExternalLink size="1em" css={{ verticalAlign: 'middle' }} />
                       </Text.BodyLarge.A>
                     ))}

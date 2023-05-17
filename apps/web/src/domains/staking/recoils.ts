@@ -17,7 +17,7 @@ export const stakersRewardState = selectorFamily({
 
       const stakerRewards = await worker(endpoint, addresses, [activeEra - 1, activeEra])
 
-      Thread.terminate(worker)
+      void Thread.terminate(worker)
 
       return stakerRewards
     },

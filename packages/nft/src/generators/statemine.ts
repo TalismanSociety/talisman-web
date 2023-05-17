@@ -1,8 +1,9 @@
 import '@polkadot/api-augment/substrate'
+// @ts-expect-error
 import { encodeAddress } from '@polkadot/util-crypto'
 import { request } from 'graphql-request'
-import { graphql } from '../gql/statemine/index'
-import type { CreateNftAsyncGenerator, IpfsMetadata, Nft } from '../types'
+import { graphql } from '../../generated/gql/statemine/index.js'
+import type { CreateNftAsyncGenerator, IpfsMetadata, Nft } from '../types.js'
 
 const fetchIpfsMetadata = (metadata: string): Promise<IpfsMetadata> =>
   fetch(

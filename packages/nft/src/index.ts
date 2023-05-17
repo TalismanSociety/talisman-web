@@ -1,5 +1,5 @@
-import type * as generators from './generators'
-import { type CreateNftAsyncGenerator } from './types'
+import type * as generators from './generators/index.js'
+import { type CreateNftAsyncGenerator } from './types.js'
 
 type NftMap = {
   [P in keyof typeof generators]: (typeof generators)[P] extends CreateNftAsyncGenerator<infer R> ? R : never
@@ -7,4 +7,4 @@ type NftMap = {
 
 export type Nft = NftMap[keyof NftMap]
 
-export * from './generators'
+export * from './generators/index.js'

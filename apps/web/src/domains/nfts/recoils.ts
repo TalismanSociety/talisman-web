@@ -11,8 +11,8 @@ const _nftsState = atomFamily<Nft[], string>({
     ({ setSelf }) => {
       const batchSize = 100
 
-      let initialResolve = (value: Nft[]) => {}
-      let initialReject = (reason?: any) => {}
+      let initialResolve = (_value: Nft[]) => {}
+      let initialReject = (_reason?: any) => {}
 
       const initialPromise = new Promise<Nft[]>((resolve, reject) => {
         initialResolve = resolve
@@ -28,6 +28,7 @@ const _nftsState = atomFamily<Nft[], string>({
           .pipe(
             bufferTime(1000, null, batchSize),
             filter(nfts => nfts.length > 0),
+            // eslint-disable-next-line @typescript-eslint/no-misused-promises
             tap(async nfts => {
               initialResolve(nfts)
               await initialPromise
@@ -35,23 +36,24 @@ const _nftsState = atomFamily<Nft[], string>({
             })
           )
           .subscribe({
+            // eslint-disable-next-line @typescript-eslint/no-misused-promises
             complete: async () => {
               initialResolve([])
               await initialPromise
               setSelf(self => (self instanceof DefaultValue || self.length === 0 ? [] : self))
-              Thread.terminate(worker)
+              void Thread.terminate(worker)
             },
             error: error => {
               Sentry.captureException(error)
               initialReject(error)
-              Thread.terminate(worker)
+              void Thread.terminate(worker)
             },
           })
       )
 
       return () => {
-        workerPromise.then(worker => Thread.terminate(worker))
-        subscriptionPromise.then(subscription => subscription.unsubscribe())
+        void workerPromise.then(async worker => await Thread.terminate(worker))
+        void subscriptionPromise.then(subscription => subscription.unsubscribe())
       }
     },
   ],
@@ -74,7 +76,7 @@ export type NftCollection = NonNullable<Nft['collection']> & { key: CollectionKe
 type CollectionMap = ReadonlyMap<CollectionKey, NftCollection>
 
 export const getNftCollectionKey = (nft: Nft) =>
-  `${nft.type}-${nft.chain}-${nft.collection?.id}` satisfies CollectionKey
+  `${nft.type}-${nft.chain}-${nft.collection?.id ?? ''}` satisfies CollectionKey
 
 export const nftCollectionMapState = selectorFamily({
   key: 'NftCollectionMap',

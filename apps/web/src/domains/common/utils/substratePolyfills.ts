@@ -17,7 +17,7 @@ export const expectedBlockTime = (api: ApiPromise) =>
   (api.consts.timestamp?.minimumPeriod.gte(THRESHOLD)
     ? // Default minimum period config
       api.consts.timestamp.minimumPeriod.muln(2)
-    : api.query.parachainSystem
+    : api.query['parachainSystem']
     ? // default guess for a parachain
       DEFAULT_TIME.muln(2)
     : // default guess for others
