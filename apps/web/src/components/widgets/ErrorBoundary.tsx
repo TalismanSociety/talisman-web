@@ -3,14 +3,15 @@ import * as Sentry from '@sentry/react'
 import { Button } from '@talismn/ui'
 import { PropsWithChildren, ReactElement, ReactNode, createContext, useContext, useState } from 'react'
 import { useRouteError } from 'react-router-dom'
-import { atom, useRecoilValue } from 'recoil'
+import { atom, useRecoilCallback, useRecoilValue } from 'recoil'
 
 const OrientationContext = createContext<ErrorMessageProps['orientation']>(undefined)
 
 type ErrorElementProps = {
   error: Error
-  componentStack?: string | null
-  resetError?: () => void
+  componentStack: string | null
+  eventId: string | null
+  resetError: () => void
 }
 
 const ErrorElement = (props: ErrorElementProps) => {
@@ -24,11 +25,23 @@ const ErrorElement = (props: ErrorElementProps) => {
     <ErrorMessage
       orientation={useContext(OrientationContext)}
       title="Oops!"
-      message="Sorry, an error occurred in Talisman."
+      message={
+        <span>
+          Sorry, an error occurred in Talisman.
+          {props.eventId ? (
+            <>
+              <br />
+              {props.eventId}
+            </>
+          ) : (
+            ''
+          )}
+        </span>
+      }
       actions={
         <ErrorMessage.Actions>
           {props.error !== undefined && <Button onClick={() => alert(message)}>Show error</Button>}
-          {props.resetError !== undefined && <Button onClick={props.resetError}>Retry</Button>}
+          {props.resetError !== undefined && <Button onClick={props.resetError}>Refresh</Button>}
         </ErrorMessage.Actions>
       }
     />
@@ -75,7 +88,13 @@ const ErrorBoundaryDebugger = ({ children, ...props }: Sentry.ErrorBoundaryProps
   const [error, setError] = useState<Error>()
 
   return (
-    <Sentry.ErrorBoundary onReset={() => setError(undefined)} {...props}>
+    <Sentry.ErrorBoundary
+      {...props}
+      onReset={(...args) => {
+        props.onReset?.(...args)
+        setError(undefined)
+      }}
+    >
       <ErrorBoundaryDebuggerChildren error={error} onTriggerError={() => setError(new Error('This is a mock error'))}>
         {typeof children === 'function' ? children() : children}
       </ErrorBoundaryDebuggerChildren>
@@ -92,12 +111,34 @@ const ErrorBoundary = ({ orientation, renderFallback, ...props }: ErrorBoundaryP
   const fallback = (errorProps: ErrorElementProps) =>
     renderFallback?.(<ErrorElement {...errorProps} />) ?? <ErrorElement {...errorProps} />
 
+  const resetError = useRecoilCallback(
+    ({ snapshot, refresh }) =>
+      (error: Error | null) => {
+        for (const node of snapshot.getNodes_UNSTABLE({ isInitialized: true })) {
+          const { loadable, type } = snapshot.getInfo_UNSTABLE(node)
+          if (loadable?.state === 'hasError' && loadable.contents === error) {
+            switch (type) {
+              case 'atom':
+                // As of now Recoil doesn't have the ability to refresh & rerun atom effect
+                // https://github.com/facebookexperimental/Recoil/issues/1685
+                // https://github.com/facebookexperimental/Recoil/issues/2183
+                window.location.reload()
+                break
+              case 'selector':
+                return refresh(node)
+            }
+          }
+        }
+      },
+    []
+  )
+
   return (
     <OrientationContext.Provider value={orientation}>
       {useRecoilValue(debugErrorBoundaryState) ? (
-        <ErrorBoundaryDebugger fallback={fallback} {...props} />
+        <ErrorBoundaryDebugger {...props} fallback={fallback} onReset={resetError} />
       ) : (
-        <Sentry.ErrorBoundary fallback={fallback} onReset={() => {}} {...props} />
+        <Sentry.ErrorBoundary {...props} fallback={fallback} onReset={resetError} />
       )}
     </OrientationContext.Provider>
   )

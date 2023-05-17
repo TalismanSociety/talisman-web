@@ -41,7 +41,6 @@ const App = () => (
   <ThemeProvider>
     <RecoilRoot>
       <ErrorBoundary
-        orientation="vertical"
         renderFallback={fallback => (
           <div css={{ height: '100dvh', display: 'flex' }}>
             <div css={{ margin: 'auto' }}>{fallback}</div>

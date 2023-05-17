@@ -14,7 +14,7 @@ const ErrorMessage = Object.assign(
     <article
       css={[
         { display: 'flex', alignItems: 'center', gap: '1.6rem' },
-        props.orientation === 'horizontal' ? {} : { flexDirection: 'column' },
+        props.orientation === 'horizontal' ? {} : { flexDirection: 'column', textAlign: 'center' },
       ]}
     >
       <figure css={{ margin: 0 }}>
