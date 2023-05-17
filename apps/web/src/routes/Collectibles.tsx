@@ -1,3 +1,4 @@
+import ErrorBoundary from '@components/widgets/ErrorBoundary'
 import { Account, selectedAccountsState } from '@domains/accounts'
 import {
   CollectionKey,
@@ -307,7 +308,9 @@ const Nfts = () => {
       >
         <section>
           {accounts.map(account => (
-            <AccountNfts key={account.address} account={account} view={view} />
+            <ErrorBoundary key={account.address} orientation="horizontal">
+              <AccountNfts account={account} view={view} />
+            </ErrorBoundary>
           ))}
           <section
             css={[
