@@ -1,4 +1,4 @@
 module.exports = {
   root: true,
-  extends: '@talismn/eslint-config/react',
+  extends: ['@talismn/eslint-config/react', 'plugin:storybook/recommended'],
 }
