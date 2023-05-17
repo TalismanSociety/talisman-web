@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 
 export const useInterval = (cb = () => {}, ms = 1000) => {
-  const savedCallback = useRef()
-  const [id, setId] = useState(null)
+  const savedCallback = useRef<() => void>()
+  const [id, setId] = useState<NodeJS.Timer | null>(null)
 
   useEffect(() => {
     savedCallback.current = cb

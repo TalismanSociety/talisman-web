@@ -65,7 +65,7 @@ export const Item = styled(({ className, transaction, addresses, selectedAccount
     }
   }
 
-  const isDevMode = process.env.NODE_ENV === 'development'
+  const isDevMode = import.meta.env.DEV
   const isParsed = typeof parsed?.__typename === 'string'
   const isTransfer = isParsed && parsed?.__typename === 'ParsedTransfer'
   const hasTokenSymbol = isTransfer && parsed.tokenSymbol !== '???'

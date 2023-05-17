@@ -215,11 +215,7 @@ export const ItemDetails = ({ parsed, addresses, accounts }: Props) => {
     case 'ParsedRemoveLiquidity':
     case 'ParsedAddProvision':
     case 'ParsedRefundProvision': {
-      return (
-        <div className="details">
-          {process.env.NODE_ENV === 'development' && <pre>{JSON.stringify(parsed, null, 2)}</pre>}
-        </div>
-      )
+      return <div className="details">{import.meta.env.DEV && <pre>{JSON.stringify(parsed, null, 2)}</pre>}</div>
     }
 
     case 'ParsedSwap': {

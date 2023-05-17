@@ -3,7 +3,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 export const useBoolean = <T>(init: T) => {
   const [value, setValue] = useState(init || false)
   const toggle = useCallback(() => setValue(!value), [value])
-  return [value, toggle]
+  return [value, toggle] as const
 }
 
 export const useSet = <T>(initialSet: T[] = []) => {

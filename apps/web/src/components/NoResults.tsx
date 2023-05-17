@@ -1,7 +1,13 @@
 import styled from '@emotion/styled'
-import React from 'react'
+import React, { type PropsWithChildren } from 'react'
 
-const NoResultsMessage = styled(({ subtitle, text, className }) => (
+type NoResultsMessageProps = {
+  className?: string
+  subtitle: string
+  text: string
+}
+
+const NoResultsMessage = styled(({ subtitle, text, className }: NoResultsMessageProps) => (
   <div className={className}>
     {subtitle && <h2>{subtitle}</h2>}
     {text && <p>{text}</p>}
@@ -13,7 +19,12 @@ const NoResultsMessage = styled(({ subtitle, text, className }) => (
   width: 100%;
 `
 
-const NoResults = ({ require, children, ...props }) => {
+export type NoResultProps = PropsWithChildren<{
+  require: boolean
+}> &
+  NoResultsMessageProps
+
+const NoResults = ({ require, children, ...props }: NoResultProps) => {
   // undefined not set? await children
   // require is explicitly set to false
   return (require === undefined && !React.Children.count(children)) || require === false ? (

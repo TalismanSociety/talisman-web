@@ -7,7 +7,7 @@ i18n
   .use(initReactI18next)
   .init({
     fallbackLng: ['en', 'cn', 'fr', 'ru', 'es', 'th', 'ptbr', 'de', 'vie', 'tr', 'jp', 'ko', 'it'],
-    //debug: process.env.NODE_ENV !== 'production',
+    //debug: import.meta.env.NODE_ENV !== 'production',
     interpolation: {
       escapeValue: false, // not needed for react as it escapes by default
     },
