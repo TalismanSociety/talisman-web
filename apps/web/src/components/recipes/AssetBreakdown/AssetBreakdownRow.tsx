@@ -1,4 +1,4 @@
-import { Account } from '@domains/accounts/recoils'
+import { type Account } from '@domains/accounts/recoils'
 import { keyframes } from '@emotion/react'
 import styled from '@emotion/styled'
 import { Identicon, Text, Tooltip } from '@talismn/ui'
@@ -40,7 +40,9 @@ export const AssetBreakdownRowHeader = ({ token, isOrml }: { token: any; isOrml?
                 src={
                   token?.tokenDetails?.evmNetwork
                     ? token?.tokenDetails?.logo
-                    : `https://raw.githubusercontent.com/TalismanSociety/chaindata/v3/assets/chains/${token?.tokenDetails?.chain?.id}.svg`
+                    : `https://raw.githubusercontent.com/TalismanSociety/chaindata/v3/assets/chains/${
+                        token?.tokenDetails?.chain?.id as string
+                      }.svg`
                 }
                 alt={token?.name}
                 css={{

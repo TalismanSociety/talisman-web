@@ -10,14 +10,14 @@ import { toastExtrinsic } from '@domains/common/utils'
 import { type SubmittableExtrinsic } from '@polkadot/api/types'
 import { web3FromAddress } from '@polkadot/extension-dapp'
 import { type ISubmittableResult } from '@polkadot/types/types'
-import { Chain, InputConfig } from '@polkawallet/bridge'
+import { type Chain, type InputConfig } from '@polkawallet/bridge'
 import { Decimal } from '@talismn/math'
 import { CircularProgressIndicator, toast } from '@talismn/ui'
 import { Maybe } from '@util/monads'
 import { isEmpty, uniqBy } from 'lodash'
 import { Suspense, useCallback, useEffect, useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { Loadable, RecoilLoadable, useRecoilCallback, useRecoilValue, waitForAll } from 'recoil'
+import { RecoilLoadable, useRecoilCallback, useRecoilValue, waitForAll, type Loadable } from 'recoil'
 import { Observable, switchMap } from 'rxjs'
 import { useAccountSelector } from './AccountSelector'
 import ErrorBoundary from './ErrorBoundary'
@@ -39,7 +39,7 @@ const TeleportForm = () => {
 
   const [tokenSelectorOpen, setTokenSelectorOpen] = useState(false)
 
-  const filterParams = <T extends Object>(object: T) => {
+  const filterParams = <T extends Record<string, unknown>>(object: T) => {
     const params = Object.fromEntries(Object.entries(object).filter(([_, value]) => value !== undefined))
 
     if (isEmpty(params)) {
@@ -151,7 +151,7 @@ const TeleportForm = () => {
       const subscription = bridgeApiProvider
         .connectFromChain([adapter.chain.id], bridgeNodeList)
         .pipe(
-          switchMap(() => adapter.init(bridgeApiProvider.getApi(adapter.chain.id))),
+          switchMap(async () => await adapter.init(bridgeApiProvider.getApi(adapter.chain.id))),
           switchMap(
             () =>
               // Observable returned from `@polkawallet/bridge` is not instance of `Observable` for some reason
@@ -176,6 +176,7 @@ const TeleportForm = () => {
 
       return subscription.unsubscribe.bind(subscription)
     }
+    return undefined
   }, [adapter, sender, toChain, token])
 
   const tokenInfo = useMemo(() => Maybe.of(token).mapOrUndefined(x => adapter?.getToken(x)), [adapter, token])
@@ -228,6 +229,8 @@ const TeleportForm = () => {
     if (decimalAmount.planck.lte(parsedInputConfigLoadable.contents.minInput.planck)) {
       return `Minimum ${parsedInputConfigLoadable.contents.minInput.toHuman()}`
     }
+
+    return undefined
   }, [amount, decimalAmount, parsedInputConfigLoadable])
 
   const ready = useMemo(
@@ -305,7 +308,7 @@ const TeleportForm = () => {
               signer: sender.address,
             }) as SubmittableExtrinsic<'rxjs', ISubmittableResult>
 
-            web3FromAddress(sender.address).then(web3 => {
+            void web3FromAddress(sender.address).then(web3 => {
               const result = tx.signAndSend(sender.address, { signer: web3.signer })
 
               setExtrinsicInProgress(true)
@@ -351,8 +354,9 @@ const TeleportForm = () => {
       >
         {tokensWithBalance
           .sort((a, b) => b.fiatAmount - a.fiatAmount || b.amount.planck.cmp(a.amount.planck))
-          .map(x => (
+          .map((x, index) => (
             <TokenSelectorItem
+              key={index}
               logoSrc={x.logo ?? ''}
               name={x.symbol}
               amount={x.amount.toHuman()}

@@ -39,7 +39,7 @@ export function useCrowdloanContributions({
 
   useEffect(
     () => {
-      ;(async () => {
+      void (async () => {
         setHydrated(false)
         const results = await Promise.all(
           Object.values(SupportedRelaychains).map(async relayChain => {
@@ -54,22 +54,22 @@ export function useCrowdloanContributions({
             const accountsHex = (accounts ?? allAccounts.map(x => x.address)).map(a => u8aToHex(decodeAddress(a))) ?? []
 
             const contributions = await Promise.all(
-              paraIds.map(id => api.derive.crowdloan.ownContributions(id, accountsHex))
+              paraIds.map(async id => await api.derive.crowdloan.ownContributions(id, accountsHex))
             )
 
             // TODO: axe everything this is only to support legacy UI
             return contributions
               .flatMap((x, index) =>
                 Object.entries(x).map(([account, contributed]) => ({
-                  id: `${relayChain.id}-${paraIds[index]}`,
+                  id: `${relayChain.id}-${paraIds[index] ?? ''}`,
                   account: account.toString(),
                   amount: contributed.toString(),
                   parachain: {
-                    paraId: `${relayChain.id}-${paraIds[index]}`,
+                    paraId: `${relayChain.id}-${paraIds[index] ?? ''}`,
                   },
-                  fundId: `${relayChain.id}-${paraIds[index]}`,
+                  fundId: `${relayChain.id}-${paraIds[index] ?? ''}`,
                   fund: {
-                    id: `${relayChain.id}-${paraIds[index]}`,
+                    id: `${relayChain.id}-${paraIds[index] ?? ''}`,
                   },
                 }))
               )
@@ -96,13 +96,13 @@ export function useCrowdloanContributions({
 //
 
 export function groupTotalContributionsByCrowdloan(contributions: CrowdloanContribution[]) {
-  return contributions.reduce((perCrowdloan, contribution) => {
+  return contributions.reduce<Record<string, string>>((perCrowdloan, contribution) => {
     if (!perCrowdloan[contribution.fund.id]) perCrowdloan[contribution.fund.id] = '0'
     perCrowdloan[contribution.fund.id] =
       new BigNumber(perCrowdloan[contribution.fund.id] ?? 0).plus(contribution.amount).toString() ??
       perCrowdloan[contribution.fund.id]
     return perCrowdloan
-  }, {} as { [key: string]: string })
+  }, {})
 }
 
 export function getTotalContributionForCrowdloan(crowdloan: string, contributions: CrowdloanContribution[]) {

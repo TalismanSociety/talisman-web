@@ -4,9 +4,9 @@ import { useEraEtaFormatter, useExtrinsic, useTokenAmountFromPlanck } from '@dom
 import { useCallback, useState } from 'react'
 import { useRecoilValue, waitForAll } from 'recoil'
 
-import { Account } from '@domains/accounts'
+import { type Account } from '@domains/accounts'
 import { useNativeTokenDecimalState, useNativeTokenPriceState } from '@domains/chains'
-import { usePoolStakes } from '@domains/nominationPools'
+import { type usePoolStakes } from '@domains/nominationPools'
 import AddStakeDialog from './AddStakeDialog'
 import UnstakeDialog from './UnstakeDialog'
 
@@ -76,13 +76,13 @@ const PoolStakeItem = ({
           item.withdrawable > 0n && (
             <WithdrawChip
               amount={decimal.fromPlanck(item.withdrawable).toHuman()}
-              onClick={() =>
-                withdrawExtrinsic.signAndSend(
+              onClick={() => {
+                void withdrawExtrinsic.signAndSend(
                   item.account?.address ?? '',
                   item.account?.address ?? '',
                   item.slashingSpan
                 )
-              }
+              }}
               loading={withdrawExtrinsic.state === 'loading'}
             />
           )
@@ -110,11 +110,11 @@ const PoolStakeItem = ({
         fiatAmount={pendingRewards.localizedFiatAmount ?? '...'}
         onRequestDismiss={useCallback(() => setClaimDialogOpen(false), [])}
         onRequestClaim={useCallback(() => {
-          claimPayoutExtrinsic.signAndSend(item.account?.address ?? '')
+          void claimPayoutExtrinsic.signAndSend(item.account?.address ?? '')
           setClaimDialogOpen(false)
         }, [claimPayoutExtrinsic, item.account?.address])}
         onRequestReStake={useCallback(() => {
-          restakeExtrinsic.signAndSend(item.account?.address ?? '', { Rewards: item.pendingRewards })
+          void restakeExtrinsic.signAndSend(item.account?.address ?? '', { Rewards: item.pendingRewards })
           setClaimDialogOpen(false)
         }, [item.account?.address, item.pendingRewards, restakeExtrinsic])}
       />

@@ -1,7 +1,7 @@
 import { useTheme } from '@emotion/react'
 import { useTokens } from '@talismn/balances-react'
 import { CircularProgressIndicator } from '@talismn/ui'
-import { PropsWithChildren, createContext, useContext } from 'react'
+import { type PropsWithChildren, createContext, useContext } from 'react'
 
 export type CryptoticonProps = {
   src?: string
@@ -52,6 +52,7 @@ const Token = ({ id, size = '6.4rem' }: TokenProps) => {
   if (token === undefined) {
     return (
       <Cryptoticon
+        size={size}
         alt={id}
         src="https://raw.githubusercontent.com/TalismanSociety/chaindata/v3/assets/tokens/unknown.svg"
       />

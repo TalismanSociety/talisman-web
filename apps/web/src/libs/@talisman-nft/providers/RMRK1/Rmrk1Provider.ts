@@ -1,7 +1,7 @@
 import { ApolloClient, InMemoryCache, createHttpLink, gql } from '@apollo/client'
 import { encodeAddress } from '@polkadot/util-crypto'
 
-import { NFTDetail, NFTShort } from '../../types'
+import { type NFTDetail, type NFTShort } from '../../types'
 import { NFTInterface } from '../NFTInterface'
 
 const QUERY_SHORT = gql`
@@ -53,19 +53,19 @@ const QUERY_DETAIL = gql`
 `
 
 export class Rmrk1Provider extends NFTInterface {
-  name = 'RMRK1'
+  override name = 'RMRK1'
   uri = 'https://gql-rmrk1.rmrk.link/v1/graphql'
   collectionUri = 'https://singular.rmrk.app/api/stats/collection/'
   indexUri = 'https://singular.rmrk-api.xyz/api/account-rmrk1/'
   platformUri = 'https://singular.rmrk.app/collectibles/'
   storageProvider = ''
   client: any
-  tokenCurrency = 'KSM'
+  override tokenCurrency = 'KSM'
 
   async getClient() {
     if (this.client) return this.client
 
-    this.client = await new ApolloClient({
+    this.client = new ApolloClient({
       link: createHttpLink({ uri: this.uri }),
       cache: new InMemoryCache(),
       headers: {
@@ -78,7 +78,7 @@ export class Rmrk1Provider extends NFTInterface {
     return this.client
   }
 
-  async hydrateNftsByAddress(address: string) {
+  override async hydrateNftsByAddress(address: string) {
     this.reset()
     this.isFetching = true
 
@@ -96,7 +96,7 @@ export class Rmrk1Provider extends NFTInterface {
     // set this count based on length
 
     // set all the item media mappings
-    const idImageMap: { [key: string]: string | null } = {}
+    const idImageMap: Record<string, string | null> = {}
     itemIndex.forEach((item: any) => (idImageMap[item.id] = this.toIPFSUrl(item?.metadata_image)))
 
     const aggregateQuery = await client.query({ query: QUERY_AGGREGATE, variables: { address: encodedAddress } })
@@ -137,20 +137,21 @@ export class Rmrk1Provider extends NFTInterface {
         this.setItem(item)
       })
 
-      offset += data.nfts.length
+      offset += data.nfts.length as number
     }
 
     this.isFetching = false
   }
 
-  fetchOneById(id: string) {
+  override fetchOneById(id: string) {
     const internalId = id.split('.').slice(1).join('.')
     return this.items[internalId]
   }
 
-  protected async fetchDetail(id: string): Promise<NFTDetail> {
+  protected override async fetchDetail(id: string): Promise<NFTDetail> {
     const client = await this.getClient()
 
+    // eslint-disable-next-line @typescript-eslint/return-await
     return await client
       .query({ query: QUERY_DETAIL, variables: { id } })
       .then(async (res: any) => {
@@ -173,7 +174,7 @@ export class Rmrk1Provider extends NFTInterface {
           type,
           mediaUri,
           provider: this.name,
-          platformUri: this.platformUri + nft?.id,
+          platformUri: this.platformUri + (nft?.id as string),
           attributes: nft?.metadata_properties || [],
           collection: {
             id: nft?.collection?.id,
@@ -184,6 +185,6 @@ export class Rmrk1Provider extends NFTInterface {
           tokenCurrency: this.tokenCurrency,
         } as NFTDetail
       })
-      .catch((e: any) => {})
+      .catch(() => {})
   }
 }

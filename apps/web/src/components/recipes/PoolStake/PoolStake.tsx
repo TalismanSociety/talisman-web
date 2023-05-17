@@ -1,11 +1,11 @@
 import { useTheme } from '@emotion/react'
 import { Button, Identicon, Text, Tooltip } from '@talismn/ui'
 import { shortenAddress } from '@util/format'
-import React, { ReactElement, ReactNode, useMemo } from 'react'
+import React, { type ReactElement, type ReactNode, useMemo } from 'react'
 import { useMedia } from 'react-use'
 
 import StakeList from '../StakeList'
-import { StakeStatus, StakeStatusIndicator } from '../StakeStatusIndicator'
+import { type StakeStatus, StakeStatusIndicator } from '../StakeStatusIndicator'
 import PoolStakeSkeleton from './PoolStake.skeleton'
 
 export type PoolStakeProps = {
@@ -181,7 +181,7 @@ const PoolStake = Object.assign(
 )
 
 export type PoolStakeListProps = {
-  children?: ReactElement<PoolStakeProps> | ReactElement<PoolStakeProps>[]
+  children?: ReactElement<PoolStakeProps> | Array<ReactElement<PoolStakeProps>>
 }
 
 export const PoolStakeList = (props: PoolStakeListProps) => (

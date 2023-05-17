@@ -70,7 +70,7 @@ export const List = ({ addresses = [], className }: Props) => {
   )
 
   return (
-    <section className={`transaction-list ${className}`}>
+    <section className={`transaction-list ${className ?? ''}`}>
       <header
         css={{
           'marginBottom': '1rem',
@@ -123,7 +123,7 @@ export const List = ({ addresses = [], className }: Props) => {
           }
         >
           {Object.entries(dayGroupedTransactions).map(([day, transactions]) => (
-            <Fragment key={`${day}-${selectedAddress}`}>
+            <Fragment key={`${day}-${selectedAddress ?? ''}`}>
               <motion.h3
                 css={css`
                   margin: 1.4rem;
@@ -140,7 +140,7 @@ export const List = ({ addresses = [], className }: Props) => {
               </motion.h3>
               {transactions.map(transaction => (
                 <Item
-                  key={`${transaction.id}-${selectedAddress}`}
+                  key={`${transaction.id}-${selectedAddress ?? ''}`}
                   transaction={transaction}
                   addresses={fetchAddresses}
                   selectedAccount={selectedAddress}

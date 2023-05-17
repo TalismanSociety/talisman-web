@@ -1,11 +1,11 @@
-import { Query } from '@archetypes/Transaction/lib'
+import { type Query } from '@archetypes/Transaction/lib'
 import DialogComponent from '@components/recipes/ExportTxHistoryDialog'
 import { substrateAccountsState } from '@domains/accounts/recoils'
 import { toast } from '@talismn/ui'
 import { stringify } from 'csv-stringify/browser/esm'
 import { subMonths } from 'date-fns'
 import { gql, request } from 'graphql-request'
-import { ReactNode, useCallback, useState } from 'react'
+import { type ReactNode, useCallback, useState } from 'react'
 import { useRecoilValue } from 'recoil'
 
 export type ExportTxHistoryWidgetProps = {
@@ -70,8 +70,8 @@ const ExportTxHistoryWidget = (props: ExportTxHistoryWidgetProps) => {
         ]) ?? []),
       ])
       .then(
-        x =>
-          new Promise<void>((resolve, reject) =>
+        async x =>
+          await new Promise<void>((resolve, reject) =>
             stringify(x ?? [], (error, output) => {
               if (error !== undefined) {
                 reject(error)
@@ -86,7 +86,7 @@ const ExportTxHistoryWidget = (props: ExportTxHistoryWidgetProps) => {
 
     setOpen(false)
 
-    toast.promise(promise, {
+    void toast.promise(promise, {
       loading: 'Generating CSV',
       error: 'An error has occurred while generating CSV',
       success: 'Successfully generated CSV',
@@ -105,7 +105,7 @@ const ExportTxHistoryWidget = (props: ExportTxHistoryWidgetProps) => {
           balance: '',
         }))}
         onSelectAccount={useCallback(
-          x => setSelectedAccount(accounts.find(account => account.address === x.address)!),
+          x => setSelectedAccount(accounts.find(account => account.address === x.address)),
           [accounts, setSelectedAccount]
         )}
         fromDate={fromDate}

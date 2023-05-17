@@ -26,7 +26,7 @@ const FilterBar = styled(
   }: any) => {
     const { t } = useTranslation()
     return (
-      <div className={`${className} filterbar`} {...rest}>
+      <div className={`${className as string} filterbar`} {...rest}>
         <Field.Search
           className="searchbar"
           value={search}
@@ -88,7 +88,7 @@ const Index = styled(({ withFilter, className }: { withFilter: boolean; classNam
   const { contributions } = useCrowdloanContributions()
 
   return (
-    <div className={`crowdloan-index ${className}`}>
+    <div className={`crowdloan-index ${className ?? ''}`}>
       {/* TODO: Remove for now as no Learn more link yet. */}
       {/* <UnlockTalismanBanner /> */}
       {withFilter && <FilterBar {...filterProps} count={count} />}

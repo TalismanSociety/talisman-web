@@ -1,11 +1,11 @@
-import { ComponentMeta, Story } from '@storybook/react'
+import { type ComponentMeta, type Story } from '@storybook/react'
 
 import PoolSelectorItem from '../PoolSelectorItem/PoolSelectorItem'
 import {
   Selected as SelectedPoolSelectorItem,
   UnSelected as UnSelectedPoolSelectorItem,
 } from '../PoolSelectorItem/PoolSelectorItem.stories'
-import PoolSelectorDialog, { PoolSelectorDialogProps } from './PoolSelectorDialog'
+import PoolSelectorDialog, { type PoolSelectorDialogProps } from './PoolSelectorDialog'
 
 export default {
   title: 'Recipes/PoolSelectorDialog',

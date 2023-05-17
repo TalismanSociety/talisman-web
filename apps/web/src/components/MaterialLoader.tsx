@@ -3,7 +3,7 @@ import styled from '@emotion/styled'
 export default styled((props: any) => (
   <div {...props}>
     <svg viewBox="25 25 50 50">
-      <circle cx="50" cy="50" r="20" fill="none" stroke-width="4" stroke-miterlimit="10" />
+      <circle cx="50" cy="50" r="20" fill="none" strokeWidth="4" strokeMiterlimit="10" />
     </svg>
   </div>
 ))`

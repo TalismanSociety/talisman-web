@@ -13,7 +13,7 @@ import { useCrowdloanById } from '@libs/talisman'
 import { CircularProgressIndicator, Text } from '@talismn/ui'
 import { isMobileBrowser } from '@util/helpers'
 import { Maybe } from '@util/monads'
-import { MouseEventHandler, useCallback, useEffect, useMemo, useState } from 'react'
+import { type MouseEventHandler, useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useRecoilValue } from 'recoil'
 
@@ -148,7 +148,7 @@ const ContributeTo = styled(
       >
         <header>
           <h2>{t('Contribute to')}</h2>
-          <Parachain.Asset className="logo" id={`${relayChainId}-${parachainId}`} type="logo" />
+          <Parachain.Asset className="logo" id={`${relayChainId as string}-${parachainId as string}`} type="logo" />
           <h3>{parachainName}</h3>
         </header>
         <main>

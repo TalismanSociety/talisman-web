@@ -1,6 +1,6 @@
 import { useTheme } from '@emotion/react'
-import { Chip, ChipProps, Skeleton, Text } from '@talismn/ui'
-import { ReactNode } from 'react'
+import { Chip, type ChipProps, Skeleton, Text } from '@talismn/ui'
+import { type ReactNode } from 'react'
 import { VictoryPie, VictoryTooltip } from 'victory'
 
 type Data = { label: string; value: number; color: string }
@@ -110,8 +110,8 @@ const PortfolioAllocationGraph = Object.assign(
             </div>
           </div>
           <ul css={{ display: 'flex', flexDirection: 'column', gap: '0.8rem', margin: 0, padding: 0 }}>
-            {props.data.map(data => (
-              <Legend {...data} type={props.valueType} />
+            {props.data.map((data, index) => (
+              <Legend key={index} {...data} type={props.valueType} />
             ))}
           </ul>
         </div>

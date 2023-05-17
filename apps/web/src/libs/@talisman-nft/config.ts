@@ -1,4 +1,4 @@
-import { NFTData } from './types'
+import { type NFTData } from './types'
 
 export const defaultNftFactoryCallbackData: NFTData = {
   count: {},

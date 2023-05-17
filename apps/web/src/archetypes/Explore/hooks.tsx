@@ -1,8 +1,6 @@
 import { useEffect, useState } from 'react'
 
-export interface Dapp {
-  [key: string]: any
-}
+export type Dapp = { id: string; name: string; description: string; logoUrl: string; tags: string[] }
 
 export const useFetchDapps = () => {
   const [dapps, setDapps] = useState<Dapp[]>([])
@@ -13,13 +11,13 @@ export const useFetchDapps = () => {
   useEffect(() => {
     const fetchDapps = async () => {
       try {
-        fetch(`https://api.baserow.io/api/database/rows/table/141541/?user_field_names=true`, {
+        void fetch(`https://api.baserow.io/api/database/rows/table/141541/?user_field_names=true`, {
           method: 'GET',
           headers: {
             Authorization: `Token ${import.meta.env.REACT_APP_BASEROW_EXPLORE_AUTH}`,
           },
         })
-          .then(res => res.json())
+          .then(async res => await res.json())
           .then((data: { results: any[] }) => {
             // Define a type for each item
             const items = data?.results
@@ -69,7 +67,7 @@ export const useFetchDapps = () => {
       }
     }
 
-    fetchDapps()
+    void fetchDapps()
   }, [])
 
   return { dapps, loading, error, tags }

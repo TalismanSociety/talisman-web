@@ -1,7 +1,7 @@
-import { ComponentMeta, Story } from '@storybook/react'
+import { type ComponentMeta, type Story } from '@storybook/react'
 
 import { Default as TeleportFormStory } from '../TeleportForm/TeleportForm.stories'
-import TeleportDialog, { TeleportDialogProps } from './TeleportDialog'
+import TeleportDialog, { type TeleportDialogProps } from './TeleportDialog'
 
 export default {
   title: 'Recipes/TeleportDialog',

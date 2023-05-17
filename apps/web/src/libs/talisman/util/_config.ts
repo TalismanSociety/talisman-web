@@ -20,7 +20,7 @@ export type Relaychain = {
 }
 
 // https://wiki.polkadot.network/docs/build-ss58-registry
-export const SupportedRelaychains: { [key: number | string]: Relaychain } = {
+export const SupportedRelaychains: Record<number | string, Relaychain> = {
   0: {
     id: 0,
     name: 'Polkadot',
@@ -52,7 +52,7 @@ export type ParachainDetails = {
   token: string
   subtitle: string
   info: string
-  links: { [key: string]: string }
+  links: Record<string, string>
   tags?: string[]
 }
 

@@ -1,7 +1,8 @@
 import styled from '@emotion/styled'
 
 const Pill = styled(({ children, className, small, large, primary, secondary, active, ...rest }: any) => (
-  <span className={`pill ${className}`} {...rest}>
+  // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+  <span className={`pill ${className ?? ''}`} {...rest}>
     {children}
   </span>
 ))`
@@ -41,13 +42,14 @@ const Pill = styled(({ children, className, small, large, primary, secondary, ac
       padding: 0.6em 1.4em;
     `}
 
-    ${({ primary, theme, onClick }) =>
+    ${({ primary, onClick }) =>
     !!primary &&
     `
       background: var(--color-controlBackground);
       color: var(--color-foreground);
       box-shadow: none;
       ${
+        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
         !!onClick &&
         `
         &:hover{
@@ -65,6 +67,7 @@ const Pill = styled(({ children, className, small, large, primary, secondary, ac
       color: var(--color-foreground);
       box-shadow: none;
       ${
+        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
         !!onClick &&
         `
         &:hover{
@@ -78,8 +81,8 @@ const Pill = styled(({ children, className, small, large, primary, secondary, ac
     ${({ active, secondary, theme }) =>
     !!active &&
     `
-      background: ${secondary ? `var(--color-activeBackground)` : `rgb(${theme?.primary})`};
-      color: ${secondary ? `var(--color-text)` : `rgb(${theme?.background})`};
+      background: ${secondary ? `var(--color-activeBackground)` : `rgb(${theme?.primary as string})`};
+      color: ${secondary ? `var(--color-text)` : `rgb(${theme?.background as string})`};
       box-shadow: none;
     `}
 `

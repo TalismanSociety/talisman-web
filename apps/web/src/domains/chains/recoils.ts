@@ -1,10 +1,10 @@
 import { SubstrateApiContext, substrateApiState } from '@domains/common'
-import { BN } from '@polkadot/util'
-import { ToBn } from '@polkadot/util/types'
+import { type BN } from '@polkadot/util'
+import { type ToBn } from '@polkadot/util/types'
 import { useContext } from 'react'
 import { atom, selector, selectorFamily } from 'recoil'
 import { ChainContext } from '.'
-import { Chain, chains } from './config'
+import { type Chain, chains } from './config'
 import { Decimal } from '@talismn/math'
 
 export const _chainsState = atom({ key: '_Chains', default: chains })
@@ -24,7 +24,7 @@ export const tokenPriceState = selectorFamily({
       try {
         const result = await fetch(
           `https://api.coingecko.com/api/v3/simple/price?ids=${coingeckoId}&vs_currencies=${fiat}`
-        ).then(x => x.json())
+        ).then(async x => await x.json())
 
         return result[coingeckoId][fiat] as number
       } catch {

@@ -6,7 +6,7 @@ export function useAudio(src: string, play?: boolean) {
 
   useEffect(() => {
     if (isPlaying) {
-      audioRef.current.play()
+      void audioRef.current.play()
     } else {
       audioRef.current.pause()
     }

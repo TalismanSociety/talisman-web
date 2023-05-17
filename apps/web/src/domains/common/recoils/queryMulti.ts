@@ -1,4 +1,4 @@
-import { ApiPromise } from '@polkadot/api'
+import { type ApiPromise } from '@polkadot/api'
 import type {
   GenericStorageEntryFunction,
   PromiseResult,
@@ -6,12 +6,12 @@ import type {
   StorageEntryPromiseOverloads,
 } from '@polkadot/api/types'
 import { useContext } from 'react'
-import { RecoilValueReadOnly, atomFamily, constSelector } from 'recoil'
-import { Observable } from 'rxjs'
+import { type RecoilValueReadOnly, atomFamily, constSelector } from 'recoil'
+import { type Observable } from 'rxjs'
 
 import { SubstrateApiContext, substrateApiState } from '..'
 
-type QueryMap = PickKnownKeys<// @ts-ignore
+type QueryMap = PickKnownKeys<// @ts-expect-error
 { [P in keyof ApiPromise['query']]: `${P}.${keyof PickKnownKeys<ApiPromise['query'][P]>}` }>
 
 type Query = QueryMap[keyof QueryMap]
@@ -35,8 +35,8 @@ const _chainQueryMultiState = atomFamily({
   key: 'ChainQueryMulti',
   effects: ({ endpoint, queries }: { endpoint: string; queries: any[] }) => [
     ({ setSelf, getPromise }) => {
-      let initialResolve = (value: unknown) => {}
-      let initialReject = (reason?: any) => {}
+      let initialResolve = (_value: unknown) => {}
+      let initialReject = (_reason?: any) => {}
 
       setSelf(
         new Promise((resolve, reject) => {
@@ -45,20 +45,21 @@ const _chainQueryMultiState = atomFamily({
         })
       )
 
-      const unsubscribePromise = getPromise(substrateApiState(endpoint)).then(api => {
+      const unsubscribePromise = getPromise(substrateApiState(endpoint)).then(async api => {
         const params = queries.map(x => {
           if (typeof x === 'string') {
             const [module, section] = x.split('.')
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             return api.query[module!]?.[section!]
           }
 
           const [query, ...params] = x
           const [module, section] = query.split('.')
 
-          return [api.query[module!]?.[section!], ...params]
+          return [api.query[module]?.[section], ...params]
         })
 
-        return api
+        return await api
           .queryMulti(params as any, result => {
             initialResolve(result)
             setSelf(result)
@@ -68,12 +69,13 @@ const _chainQueryMultiState = atomFamily({
           })
       })
 
-      return () =>
-        unsubscribePromise.then(unsubscribe => {
+      return () => {
+        void unsubscribePromise.then(unsubscribe => {
           if (typeof unsubscribe === 'function') {
             unsubscribe()
           }
         })
+      }
     },
   ],
   dangerouslyAllowMutability: true,
@@ -98,6 +100,7 @@ export const useChainQueryMultiState = <
       : any
   }>
 
+  // eslint-disable-next-line @typescript-eslint/no-invalid-void-type
   type TReturn = TEnabled extends true | void ? TResult : TResult | RecoilValueReadOnly<undefined>
 
   const endpoint = useContext(SubstrateApiContext).endpoint

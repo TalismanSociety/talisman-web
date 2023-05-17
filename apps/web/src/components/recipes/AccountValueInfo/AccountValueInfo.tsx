@@ -1,7 +1,7 @@
 import { useTheme } from '@emotion/react'
 import { ChevronDown, Users } from '@talismn/icons'
 import { IconButton, Identicon, Text } from '@talismn/ui'
-import { ReactNode } from 'react'
+import { type ReactNode } from 'react'
 
 export type AccountValueInfoProps = {
   address: string

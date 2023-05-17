@@ -12,7 +12,9 @@ export const substrateApiState = atomFamily<ApiPromise, string>({
 
       setSelf(apiPromise)
 
-      return () => apiPromise.then(api => api.disconnect())
+      return () => {
+        void apiPromise.then(async api => await api.disconnect())
+      }
     },
   ],
   dangerouslyAllowMutability: true,

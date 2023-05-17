@@ -1,6 +1,6 @@
 import { useRef } from 'react'
 
-const uniqueIds: { [key: string]: true } = {}
+const uniqueIds: Record<string, true> = {}
 
 export default function useUniqueId(): string {
   const idRef = useRef<null | string>(null)

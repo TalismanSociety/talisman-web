@@ -1,20 +1,18 @@
-import { SubmittableExtrinsic } from '@polkadot/api/types'
+import { type SubmittableExtrinsic } from '@polkadot/api/types'
 import { isKeyringPair } from '@polkadot/api/util'
-import { ISubmittableResult } from '@polkadot/types/types'
+import { type ISubmittableResult } from '@polkadot/types/types'
 import posthog from 'posthog-js'
 import { startTransition } from 'react'
-import { CallbackInterface } from 'recoil'
+import { type CallbackInterface } from 'recoil'
 
 import { chainReadIdState } from './recoils'
 
-export type ExtrinsicMiddleware = {
-  (
-    chainId: string,
-    extrinsic: SubmittableExtrinsic<'promise', ISubmittableResult> | SubmittableExtrinsic<'rxjs', ISubmittableResult>,
-    result: ISubmittableResult,
-    callbackInterface: CallbackInterface
-  ): unknown
-}
+export type ExtrinsicMiddleware = (
+  chainId: string,
+  extrinsic: SubmittableExtrinsic<'promise', ISubmittableResult> | SubmittableExtrinsic<'rxjs', ISubmittableResult>,
+  result: ISubmittableResult,
+  callbackInterface: CallbackInterface
+) => unknown
 
 const combineMiddleware =
   (...middleware: ExtrinsicMiddleware[]): ExtrinsicMiddleware =>

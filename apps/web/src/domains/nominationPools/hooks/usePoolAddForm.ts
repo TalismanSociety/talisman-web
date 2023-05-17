@@ -20,6 +20,7 @@ export const usePoolAddForm = (action: 'bondExtra' | 'join', account?: string) =
   const prevAccount = usePrevious(account)
 
   const balancesLoadable = useRecoilValueLoadable(
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     useChainDeriveState('balances', 'all', [account!], { enabled: account !== undefined })
   )
 
@@ -102,6 +103,8 @@ export const usePoolAddForm = (action: 'bondExtra' | 'join', account?: string) =
     ) {
       return new Error(`Minimum ${minimum.decimalAmount.toHuman()} needed`)
     }
+
+    return undefined
   }, [
     balancesLoadable.state,
     input.amount,

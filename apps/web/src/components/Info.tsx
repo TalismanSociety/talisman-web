@@ -9,7 +9,7 @@ type Props = {
   rest?: any
 }
 const Info = styled(({ title, subtitle, invert, graphic, className, ...rest }: Props) => (
-  <div className={`info ${invert ? 'style-invert' : ''} ${className}`} {...rest}>
+  <div className={`info ${invert ? 'style-invert' : ''} ${className ?? ''}`} {...rest}>
     {graphic && <span className="graphic">{graphic}</span>}
     <span className="text">
       {!!title && <span className="title">{title}</span>}

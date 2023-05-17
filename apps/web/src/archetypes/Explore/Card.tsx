@@ -3,7 +3,7 @@ import { device } from '@util/breakpoints'
 import { usePostHog } from 'posthog-js/react'
 import { useCallback } from 'react'
 
-import { Dapp } from './hooks'
+import { type Dapp } from './hooks'
 
 type CardProps = {
   className?: string

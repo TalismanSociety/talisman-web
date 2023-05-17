@@ -1,4 +1,4 @@
-import { ApiPromise } from '@polkadot/api'
+import { type ApiPromise } from '@polkadot/api'
 import { web3FromAddress } from '@polkadot/extension-dapp'
 import { atom, selectorFamily } from 'recoil'
 
@@ -20,7 +20,7 @@ export const paymentInfoState = selectorFamily({
       const api = get(substrateApiState(endpoint))
       const extension = await web3FromAddress(account)
 
-      return api.tx[module]?.[section]?.(...params).paymentInfo(account, { signer: extension?.signer })
+      return await api.tx[module]?.[section]?.(...params).paymentInfo(account, { signer: extension?.signer })
     },
 })
 

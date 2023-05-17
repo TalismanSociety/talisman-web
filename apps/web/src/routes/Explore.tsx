@@ -1,9 +1,8 @@
 import { Card, CardLoading, TagLoading } from '@archetypes/Explore'
-import { Dapp, useFetchDapps } from '@archetypes/Explore/hooks'
+import { type Dapp, useFetchDapps } from '@archetypes/Explore/hooks'
 import { Search } from '@components/Field'
 import styled from '@emotion/styled'
-import { HiddenDetails } from '@talismn/ui'
-import { Text } from '@talismn/ui'
+import { HiddenDetails, Text } from '@talismn/ui'
 import { device } from '@util/breakpoints'
 import { useState } from 'react'
 import { useDebounce } from 'react-use'
@@ -15,13 +14,11 @@ const ExploreGrid = ({ className }: { className?: string }) => {
   const { dapps, loading, tags } = useFetchDapps()
   const [selectedTag, setSelectedTag] = useState<string>('All')
 
-  const filteredDapps =
-    dapps &&
-    dapps.filter(
-      (dapp: Dapp) =>
-        dapp.name.toLowerCase().includes(searchQueryDebounced.toLowerCase()) &&
-        (dapp.tags.includes(selectedTag) || selectedTag === 'All')
-    )
+  const filteredDapps = dapps?.filter(
+    (dapp: Dapp) =>
+      dapp.name.toLowerCase().includes(searchQueryDebounced.toLowerCase()) &&
+      (dapp.tags.includes(selectedTag) || selectedTag === 'All')
+  )
 
   return (
     <div className={className}>

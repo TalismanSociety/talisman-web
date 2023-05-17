@@ -1,7 +1,13 @@
 import { WsProvider } from '@polkadot/api'
 import { get } from 'lodash'
-import { useReducer } from 'react'
-import { PropsWithChildren, useContext as _useContext, createContext, useEffect, useState } from 'react'
+import {
+  useReducer,
+  type PropsWithChildren,
+  useContext as _useContext,
+  createContext,
+  useEffect,
+  useState,
+} from 'react'
 
 import { SupportedRelaychains } from './util/_config'
 
@@ -74,14 +80,14 @@ const ParachainReducer = (state: any = {}, data: any) => {
   return { ...state }
 }
 
-export const Provider = ({ children }: PropsWithChildren<{}>) => {
+export const Provider = ({ children }: PropsWithChildren) => {
   const [chains, dispatch] = useReducer(ParachainReducer, {})
 
   const hydrateBlock = async (chain: any) => {
     const wsProvider = new WsProvider(chain.rpc)
 
     wsProvider.on('connected', () => {
-      const cb = (error: Error | null, result: any) => {
+      const cb = (_error: Error | null, result: any) => {
         dispatch({
           id: chain?.id,
           blockNumber: result.number,
@@ -89,14 +95,14 @@ export const Provider = ({ children }: PropsWithChildren<{}>) => {
         })
       }
 
-      wsProvider.subscribe('chain_newHead', 'chain_subscribeNewHeads', [], cb)
+      void wsProvider.subscribe('chain_newHead', 'chain_subscribeNewHeads', [], cb)
     })
   }
 
   useEffect(() => {
     Object.values(SupportedRelaychains).forEach(chain => {
       dispatch(chain)
-      hydrateBlock(chain)
+      void hydrateBlock(chain)
     })
   }, [])
 

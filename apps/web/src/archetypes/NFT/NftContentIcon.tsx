@@ -1,8 +1,8 @@
 import styled from '@emotion/styled'
-import { NFTCategory } from '@libs/@talisman-nft/types'
+import { type NFTCategory } from '@libs/@talisman-nft/types'
 import { Box, File, Video, Volume2 } from '@talismn/icons'
 
-const NftContentIcon = ({ type, className }: { type: NFTCategory; className?: string }) => {
+const NftContentIcon = ({ type }: { type: NFTCategory; className?: string }) => {
   switch (type) {
     case 'audio':
       return <Volume2 />

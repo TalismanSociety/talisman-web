@@ -38,8 +38,8 @@ const AddStakeDialog = (props: { account?: string; onDismiss: () => unknown }) =
       inputSupportingText={inputError?.message}
       onDismiss={props.onDismiss}
       onConfirm={useCallback(
-        () =>
-          bondExtraExtrinsic
+        async () =>
+          await bondExtraExtrinsic
             .signAndSend(props.account ?? '', {
               FreeBalance: decimalAmount?.planck?.toString() ?? '0',
             })

@@ -33,16 +33,16 @@ export const useMediaQuery = (query: string) => {
     const handler = () => setMatch(Boolean(mediaQueryList?.matches))
 
     try {
-      mediaQueryList && mediaQueryList.addEventListener('change', handler)
+      mediaQueryList?.addEventListener('change', handler)
     } catch {
-      mediaQueryList && mediaQueryList.addListener(handler)
+      mediaQueryList?.addListener(handler)
     }
 
     return () => {
       try {
-        mediaQueryList && mediaQueryList.removeEventListener('change', handler)
+        mediaQueryList?.removeEventListener('change', handler)
       } catch {
-        mediaQueryList && mediaQueryList.removeListener(handler)
+        mediaQueryList?.removeListener(handler)
       }
     }
   }, [mediaQueryList])

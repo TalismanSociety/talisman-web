@@ -1,11 +1,11 @@
 import AnimatedFiatNumber from '@components/widgets/AnimatedFiatNumber'
 import { keyframes, useTheme } from '@emotion/react'
 import styled from '@emotion/styled'
-import { Balances } from '@talismn/balances'
+import { type Balances } from '@talismn/balances'
 import { Lock } from '@talismn/icons'
 import { HiddenDetails, Text, Tooltip } from '@talismn/ui'
 import { isEmpty, startCase } from 'lodash'
-import { Children, ReactElement, ReactNode } from 'react'
+import { Children, type ReactElement, type ReactNode } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 type AssetBalanceProps = {
@@ -200,7 +200,7 @@ const Asset = Object.assign((props: AssetProps) => {
         animation: `${slideDown} 0.3s ease-in-out`,
       }}
       onClick={() => {
-        navigate('/portfolio/assets/' + token?.tokenDetails?.symbol)
+        navigate('/portfolio/assets/' + ((token?.tokenDetails?.symbol as string | undefined) ?? ''))
       }}
     >
       <td valign="top">
@@ -242,7 +242,7 @@ const Asset = Object.assign((props: AssetProps) => {
                       {...tooltipProps}
                       src={token?.tokenDetails?.logo}
                       css={{ width: '100%', height: '100%', borderRadius: '50%' }}
-                      alt={token?.tokenDetails?.name + ' logo'}
+                      alt={(token?.tokenDetails?.name as string | undefined) ?? '' + ' logo'}
                     />
                   )}
                 </Tooltip>
@@ -256,10 +256,12 @@ const Asset = Object.assign((props: AssetProps) => {
                         src={
                           token?.tokenDetails?.evmNetwork
                             ? token?.tokenDetails?.logo
-                            : `https://raw.githubusercontent.com/TalismanSociety/chaindata/v3/assets/chains/${token?.tokenDetails?.chain?.id}.svg`
+                            : `https://raw.githubusercontent.com/TalismanSociety/chaindata/v3/assets/chains/${
+                                token?.tokenDetails?.chain?.id as string
+                              }.svg`
                         }
                         css={{ width: '100%', height: '100%', borderRadius: '50%' }}
-                        alt={token?.tokenDetails?.name + ' logo'}
+                        alt={(token?.tokenDetails?.name as string | undefined) ?? '' + ' logo'}
                       />
                     )}
                   </Tooltip>
@@ -404,7 +406,7 @@ const Table = styled.table`
 
 export type AssetsListProps = {
   isLoading?: boolean
-  children?: ReactElement<AssetProps> | ReactElement<AssetProps>[]
+  children?: ReactElement<AssetProps> | Array<ReactElement<AssetProps>>
 }
 
 export const AssetsList = (props: AssetsListProps) => {

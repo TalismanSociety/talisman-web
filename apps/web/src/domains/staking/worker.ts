@@ -18,6 +18,7 @@ const getStakersReward = async (endpoints: string | string[], addresses: string[
 
   return Object.fromEntries(
     stakerRewards.map((x, index) => [
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       addresses[index]!,
       x
         .map(y => Object.values(y.validators).reduce((previous, current) => previous + current.value.toBigInt(), 0n))

@@ -1,6 +1,6 @@
 import styled from '@emotion/styled'
 import useImageWithFallback from '@util/useImageWithFallback'
-import { PropsWithChildren } from 'react'
+import { type PropsWithChildren } from 'react'
 
 const Poster = styled(
   ({
@@ -21,9 +21,9 @@ const Poster = styled(
 
     return (
       <section
-        className={`${className} poster`}
+        className={`${className ?? ''} poster`}
         style={{
-          backgroundImage: `url(${imageSrc})`,
+          backgroundImage: `url(${imageSrc ?? ''})`,
         }}
       >
         <span className="content">

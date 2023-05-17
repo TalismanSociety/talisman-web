@@ -1,5 +1,8 @@
+/* eslint-disable @typescript-eslint/triple-slash-reference */
 /// <reference types="vite/client" />
+/// <reference types="vite-plugin-svgr/client" />
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 interface ImportMetaEnv {
   REACT_APP_APPLICATION_NAME: string
   REACT_APP_ONFINALITY_API_KEY?: string
@@ -12,6 +15,7 @@ interface ImportMetaEnv {
 }
 
 declare namespace JSX {
+  // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
   interface IntrinsicElements {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     'model-viewer': any

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/restrict-template-expressions */
 import { ReactComponent as IconLoading } from '@assets/icons/loader.svg'
 import { css } from '@emotion/react'
 import styled from '@emotion/styled'
@@ -7,7 +8,7 @@ import { Link, NavLink } from 'react-router-dom'
 
 export const ButtonIcon = styled(
   ({ children, className, ...rest }: { children: any; className?: string; onClick?: (e: any) => void }) => (
-    <button className={`button icon-button ${className}`} {...rest}>
+    <button className={`button icon-button ${className ?? ''}`} {...rest}>
       {children}
     </button>
   )
@@ -31,7 +32,7 @@ export const ButtonIcon = styled(
 `
 
 export const Button = styled(({ loading, children, variant = '', className, ...props }: any) => {
-  const wrappedChildren = !!loading ? (
+  const wrappedChildren = loading ? (
     <Fragment>
       <IconLoading data-spin="true" />
       &nbsp;{loading}
@@ -44,18 +45,18 @@ export const Button = styled(({ loading, children, variant = '', className, ...p
 
   const _props: any = omit(props, ['loading', 'boxed', 'round', 'primary', 'tight', 'loose', 'small'])
 
-  return !!props?.to ? (
-    !!props?.navlink ? (
-      <NavLink {..._props} className={`button ${className}`}>
+  return props?.to ? (
+    props?.navlink ? (
+      <NavLink {..._props} className={`button ${className ?? ''}`}>
         {wrappedChildren}
       </NavLink>
     ) : (
-      <Link {..._props} className={`button ${className}`}>
+      <Link {..._props} className={`button ${className ?? ''}`}>
         {wrappedChildren}
       </Link>
     )
   ) : (
-    <button {..._props} className={`button ${variant} ${className}`}>
+    <button {..._props} className={`button ${variant ?? ''} ${className ?? ''}`}>
       {wrappedChildren}
     </button>
   )

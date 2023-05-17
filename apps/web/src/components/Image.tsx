@@ -3,8 +3,8 @@ import type { DetailedHTMLProps, ImgHTMLAttributes } from 'react'
 
 const Image = styled(
   ({ src, alt, className, ...rest }: DetailedHTMLProps<ImgHTMLAttributes<HTMLImageElement>, HTMLImageElement>) => (
-    <div className={`image ${className}`} {...rest}>
-      <img src={src || ''} alt={alt} />
+    <div className={`image ${className ?? ''}`} {...rest}>
+      <img src={src ?? ''} alt={alt} />
     </div>
   )
 )`

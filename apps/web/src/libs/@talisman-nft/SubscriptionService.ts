@@ -5,13 +5,14 @@ type CallBackType<T> = (params: T) => void
 
 class SubscriptionService<CbResultType> {
   // a store of callbacks triggered when this instance updates
-  private callbackStore: { [id: string]: CallBackType<CbResultType> } = {}
+  private callbackStore: Record<string, CallBackType<CbResultType>> = {}
 
   // keep a state hash in order to minimise callbacks
   private stateHash: string = ''
 
   // fire all subscriptions
   public fire(data: CbResultType) {
+    // eslint-disable-next-line prefer-const
     let timeoutId: any
     // ensure sure the state has changed before firing
     const newStateHash = md5(JSON.stringify(data))
@@ -31,6 +32,7 @@ class SubscriptionService<CbResultType> {
     const uuid = uuidv4()
     this.callbackStore[uuid] = cb
     return () => {
+      // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
       delete this.callbackStore[uuid]
     }
   }

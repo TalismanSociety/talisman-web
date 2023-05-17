@@ -1,7 +1,7 @@
 import { useTheme } from '@emotion/react'
-import { Skeleton, SkeletonProps } from '@talismn/ui'
+import { Skeleton, type SkeletonProps } from '@talismn/ui'
 
-const StakeFormSkeleton = (props: SkeletonProps) => {
+const StakeFormSkeleton = (_props: SkeletonProps) => {
   const theme = useTheme()
   return (
     <Skeleton.Surface

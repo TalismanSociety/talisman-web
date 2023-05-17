@@ -7,7 +7,7 @@ const Rewards = styled(({ id, className }: { id?: string; className?: string }) 
   const details = crowdloan?.details
 
   return (
-    <div className={`crowdloan-rewards ${className}`}>
+    <div className={`crowdloan-rewards ${className ?? ''}`}>
       {details?.rewards?.tokens && (
         <Stat
           title={`${details?.token} per ${

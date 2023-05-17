@@ -1,7 +1,7 @@
 // TODO: lots of duplicate type definitions
 // but already super burned out, need to de-duplication
 
-import { ApiPromise } from '@polkadot/api'
+import { type ApiPromise } from '@polkadot/api'
 import type {
   GenericStorageEntryFunction,
   PromiseResult,
@@ -10,8 +10,8 @@ import type {
   UnsubscribePromise,
 } from '@polkadot/api/types'
 import { useContext } from 'react'
-import { RecoilState, RecoilValueReadOnly, atomFamily, constSelector } from 'recoil'
-import { Observable } from 'rxjs'
+import { type RecoilState, type RecoilValueReadOnly, atomFamily, constSelector } from 'recoil'
+import { type Observable } from 'rxjs'
 
 import { SubstrateApiContext, substrateApiState } from '..'
 
@@ -21,8 +21,8 @@ export const _chainState = atomFamily({
     ({ setSelf, getPromise }) => {
       const apiPromise = getPromise(substrateApiState(endpoint))
 
-      let initialResolve = (value: unknown) => {}
-      let initialReject = (reason?: any) => {}
+      let initialResolve = (_value: unknown) => {}
+      let initialReject = (_reason?: any) => {}
 
       setSelf(
         new Promise((resolve, reject) => {
@@ -31,8 +31,8 @@ export const _chainState = atomFamily({
         })
       )
 
-      const unsubscribePromise = apiPromise.then(api => {
-        const [section, multi] = (sectionName as string).split('.')
+      const unsubscribePromise = apiPromise.then(async api => {
+        const [section, multi] = sectionName.split('.')
 
         const func =
           // @ts-expect-error
@@ -47,10 +47,12 @@ export const _chainState = atomFamily({
           initialReject(error)
         })
 
-        return unsubscribePromise
+        return await unsubscribePromise
       })
 
-      return () => unsubscribePromise.then(unsubscribe => unsubscribe())
+      return () => {
+        void unsubscribePromise.then(unsubscribe => unsubscribe())
+      }
     },
   ],
   dangerouslyAllowMutability: true,
@@ -62,7 +64,6 @@ export const chainQueryState = <
   TAugmentedSection extends TSection | `${TSection}.multi`,
   TExtractedSection extends TAugmentedSection extends `${infer Section}.multi` ? Section : TAugmentedSection,
   TMethod extends Diverge<
-    // @ts-ignore
     ApiPromise['query'][TModule][TExtractedSection],
     StorageEntryPromiseOverloads & QueryableStorageEntry<any, any> & PromiseResult<GenericStorageEntryFunction>
   >
@@ -71,8 +72,7 @@ export const chainQueryState = <
   moduleName: TModule,
   sectionName: TAugmentedSection,
   params: TMethod extends (...args: any) => any
-    ? // @ts-ignore
-      TAugmentedSection extends TSection
+    ? TAugmentedSection extends TSection
       ? Leading<Parameters<TMethod>>
       : Leading<Parameters<TMethod>> extends [infer Head]
       ? Head[]
@@ -93,7 +93,7 @@ export const chainDeriveState = <
   TAugmentedSection extends TSection | `${TSection}.multi`,
   TExtractedSection extends TAugmentedSection extends `${infer Section}.multi` ? Section : TAugmentedSection,
   TMethod extends Diverge<
-    // @ts-ignore
+    // @ts-expect-error
     ApiPromise['derive'][TModule][TExtractedSection],
     StorageEntryPromiseOverloads & QueryableStorageEntry<any, any> & PromiseResult<GenericStorageEntryFunction>
   >
@@ -102,8 +102,7 @@ export const chainDeriveState = <
   moduleName: TModule,
   sectionName: TAugmentedSection,
   params: TMethod extends (...args: any) => any
-    ? // @ts-ignore
-      TAugmentedSection extends TSection
+    ? TAugmentedSection extends TSection
       ? Leading<Parameters<TMethod>>
       : Leading<Parameters<TMethod>> extends [infer Head]
       ? Head[]
@@ -117,18 +116,15 @@ export const useChainQueryState = <
   TAugmentedSection extends TSection | `${TSection}.multi`,
   TExtractedSection extends TAugmentedSection extends `${infer Section}.multi` ? Section : TAugmentedSection,
   TMethod extends Diverge<
-    // @ts-ignore
     ApiPromise['query'][TModule][TExtractedSection],
     StorageEntryPromiseOverloads & QueryableStorageEntry<any, any> & PromiseResult<GenericStorageEntryFunction>
   >,
   TEnabled = void
 >(
   moduleName: TModule,
-  // @ts-ignore
   sectionName: TAugmentedSection,
   params: TMethod extends (...args: any) => any
-    ? // @ts-ignore
-      TAugmentedSection extends TSection
+    ? TAugmentedSection extends TSection
       ? Leading<Parameters<TMethod>>
       : Leading<Parameters<TMethod>> extends [infer Head]
       ? Head[]
@@ -144,6 +140,7 @@ export const useChainQueryState = <
       : never
   >
 
+  // eslint-disable-next-line @typescript-eslint/no-invalid-void-type
   type TReturn = TEnabled extends true | void ? TResult : TResult | RecoilState<undefined>
 
   const endpoint = useContext(SubstrateApiContext).endpoint
@@ -161,7 +158,7 @@ export const useChainDeriveState = <
   TAugmentedSection extends TSection | `${TSection}.multi`,
   TExtractedSection extends TAugmentedSection extends `${infer Section}.multi` ? Section : TAugmentedSection,
   TMethod extends Diverge<
-    // @ts-ignore
+    // @ts-expect-error
     ApiPromise['derive'][TModule][TExtractedSection],
     StorageEntryPromiseOverloads & QueryableStorageEntry<any, any> & PromiseResult<GenericStorageEntryFunction>
   >,
@@ -170,8 +167,7 @@ export const useChainDeriveState = <
   moduleName: TModule,
   sectionName: TAugmentedSection,
   params: TMethod extends (...args: any) => any
-    ? // @ts-ignore
-      TAugmentedSection extends TSection
+    ? TAugmentedSection extends TSection
       ? Leading<Parameters<TMethod>>
       : Leading<Parameters<TMethod>> extends [infer Head]
       ? Head[]
@@ -187,6 +183,7 @@ export const useChainDeriveState = <
       : never
   >
 
+  // eslint-disable-next-line @typescript-eslint/no-invalid-void-type
   type TReturn = TEnabled extends true | void ? TResult : TResult | RecoilValueReadOnly<undefined>
 
   const endpoint = useContext(SubstrateApiContext).endpoint

@@ -53,8 +53,10 @@ const Header = () => {
       <AccountsManagementMenu
         button={
           <AccountValueInfo
-            address={accounts.length === 1 ? accounts[0]!.address : ''}
-            name={accounts.length === 1 ? accounts[0]!.name ?? shortenAddress(accounts[0]!.address) : 'All accounts'}
+            address={accounts.length === 1 ? accounts[0]?.address ?? '' : ''}
+            name={
+              accounts.length === 1 ? accounts[0]?.name ?? shortenAddress(accounts[0]?.address ?? '') : 'All accounts'
+            }
             balance={<Total />}
           />
         }
@@ -82,6 +84,8 @@ const Main = () => {
 
       return observer.disconnect.bind(observer)
     }
+
+    return undefined
   }, [location])
 
   useEffect(() => {

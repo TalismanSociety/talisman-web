@@ -16,7 +16,7 @@ const Teaser = styled(({ id, contributed, className }: { id: string; contributed
   const { parachainDetails } = useParachainDetailsById(parachainId)
 
   return (
-    <Link to={`/crowdloans/${parachainDetails?.slug}`} className={`crowdloan-teaser ${className}`}>
+    <Link to={`/crowdloans/${parachainDetails?.slug ?? ''}`} className={`crowdloan-teaser ${className ?? ''}`}>
       <Parachain.Asset id={parachainId ?? ''} type="card" />
       <div className="content">
         <div className="header">

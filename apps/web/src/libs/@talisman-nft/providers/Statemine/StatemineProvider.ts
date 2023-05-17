@@ -1,23 +1,23 @@
 import { ApiPromise, WsProvider } from '@polkadot/api'
 import { encodeAddress } from '@polkadot/util-crypto'
 
-import { NFTCategory, NFTDetail, NFTShort } from '../../types'
+import { type NFTCategory, type NFTDetail, type NFTShort } from '../../types'
 import { NFTInterface } from '../NFTInterface'
 
 export class StatemineProvider extends NFTInterface {
-  name = 'StateMine'
+  override name = 'StateMine'
   uri = 'wss://statemine.api.onfinality.io/public-ws'
   platformUri = 'https://singular.app/collectibles/statemine/'
   storageProvider = ''
-  detailedItems: { [key: string]: any } = {}
-  tokenCurrency = 'KSM'
+  detailedItems: Record<string, any> = {}
+  override tokenCurrency = 'KSM'
 
   webSocket: ApiPromise | null = null
 
   // Start the websocket
   async wsProvider() {
     const wsProvider = new WsProvider(this.uri)
-    return ApiPromise.create({ provider: wsProvider })
+    return await ApiPromise.create({ provider: wsProvider })
   }
 
   // Get token detials from the raw data (collection ID & NFT item number) provided by the websocket
@@ -26,8 +26,8 @@ export class StatemineProvider extends NFTInterface {
 
     const { collectionId, nftTokenId } = assetId
     // For some reason, there are commas in the collection ID and NFTTokenID, removed them.
-    let collectionIdFixed = collectionId.replaceAll(',', '')
-    let nftTokenIdFixed = nftTokenId.replaceAll(',', '')
+    const collectionIdFixed = collectionId.replaceAll(',', '')
+    const nftTokenIdFixed = nftTokenId.replaceAll(',', '')
 
     // Fetch the metadata of the NFT by querying the collection ID and NFT item number. Since the return is toHuman(). We are unsure of the return type, so we use any.
     const metadataNft: any = (
@@ -42,8 +42,8 @@ export class StatemineProvider extends NFTInterface {
     const metadata = await this.fetchNFTs_Metadata(metadataNft.data)
 
     // Return the promised data for token details
-    return Promise.resolve({
-      id: `${collectionIdFixed}-${nftTokenId}`,
+    return await Promise.resolve({
+      id: `${collectionIdFixed as string}-${nftTokenId as string}`,
       name: metadata?.name,
       description: metadata?.description,
       mediaUri: metadata?.mediaUri,
@@ -54,8 +54,8 @@ export class StatemineProvider extends NFTInterface {
 
   async fetchNFTs_Metadata(metadataId: string) {
     if (metadataId == null) return
-    return fetch(this.baseIPFSUrl + metadataId)
-      .then(res => res.json())
+    return await fetch(this.baseIPFSUrl + metadataId)
+      .then(async res => await res.json())
       .then(data => {
         return {
           name: data.name,
@@ -98,7 +98,7 @@ export class StatemineProvider extends NFTInterface {
     } as NFTShort
   }
 
-  async hydrateNftsByAddress(address: string) {
+  override async hydrateNftsByAddress(address: string) {
     this.reset()
     this.isFetching = true
 
@@ -128,12 +128,13 @@ export class StatemineProvider extends NFTInterface {
         break
       }
 
-      let nftRawAssetDetails: any[] = []
-      for (let key of nfts) {
+      const nftRawAssetDetails: any[] = []
+      for (const key of nfts) {
         const data = key.toHuman() as string[]
         nftRawAssetDetails.push({ collectionId: data[1], nftTokenId: data[2] })
       }
 
+      // eslint-disable-next-line @typescript-eslint/no-misused-promises
       nftRawAssetDetails.forEach(async (assetId: any): Promise<any> => {
         const tokenDetails = await this.getTokenDetails(assetId)
 
@@ -159,6 +160,7 @@ export class StatemineProvider extends NFTInterface {
             serialNumber: assetId.nftTokenId,
             attributes: {},
             nftSpecificData: undefined,
+            // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
             platformUri: `${this.platformUri}${assetId.collectionId.replaceAll(',', '')}/${assetId.nftTokenId}`,
             tokenCurrency: this.tokenCurrency,
           }
@@ -172,14 +174,16 @@ export class StatemineProvider extends NFTInterface {
     }
 
     this.isFetching = false
+
+    return undefined
   }
 
-  fetchOneById(id: string) {
+  override fetchOneById(id: string) {
     const internalId = id.split('.').slice(1).join('.')
     return this.items[internalId]
   }
 
-  protected async fetchDetail(id: string): Promise<NFTDetail> {
+  protected override async fetchDetail(id: string): Promise<NFTDetail> {
     const item = this.detailedItems[id]
     return item
   }

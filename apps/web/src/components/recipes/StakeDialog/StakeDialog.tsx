@@ -3,10 +3,10 @@ import {
   FULL_SCREEN_DIALOG_WIDE_BREAK_POINT_SELECTOR,
   FullScreenDialog,
   InfoCard,
-  InfoCardProps,
+  type InfoCardProps,
   Text,
 } from '@talismn/ui'
-import { AnchorHTMLAttributes, DetailedHTMLProps, PropsWithChildren, ReactNode } from 'react'
+import { type AnchorHTMLAttributes, type DetailedHTMLProps, type PropsWithChildren, type ReactNode } from 'react'
 
 export type StakeDialogProps = {
   open?: boolean

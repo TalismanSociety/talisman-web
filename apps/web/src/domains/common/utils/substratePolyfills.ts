@@ -1,4 +1,4 @@
-import { ApiPromise } from '@polkadot/api'
+import { type ApiPromise } from '@polkadot/api'
 import BN from 'bn.js'
 
 // Some chains incorrectly use these, i.e. it is set to values such as 0 or even 2
@@ -10,9 +10,9 @@ export const expectedBlockTime = (api: ApiPromise) =>
   // Babe, e.g. Relay chains (Substrate defaults)
   api.consts.babe?.expectedBlockTime ??
   // POW, eg. Kulupu
-  api.consts.difficulty?.targetBlockTime ??
+  api.consts['difficulty']?.['targetBlockTime'] ??
   // Subspace
-  api.consts.subspace?.expectedBlockTime ??
+  api.consts['subspace']?.['expectedBlockTime'] ??
   // Check against threshold to determine value validity
   (api.consts.timestamp?.minimumPeriod.gte(THRESHOLD)
     ? // Default minimum period config

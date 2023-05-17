@@ -1,7 +1,7 @@
-import ErrorMessage, { ErrorMessageProps } from '@components/recipes/ErrorMessage'
+import ErrorMessage, { type ErrorMessageProps } from '@components/recipes/ErrorMessage'
 import * as Sentry from '@sentry/react'
 import { Button } from '@talismn/ui'
-import { PropsWithChildren, ReactElement, ReactNode, createContext, useContext, useState } from 'react'
+import { type PropsWithChildren, type ReactElement, type ReactNode, createContext, useContext, useState } from 'react'
 import { useRouteError } from 'react-router-dom'
 import { atom, useRecoilCallback, useRecoilValue } from 'recoil'
 
@@ -17,6 +17,7 @@ type ErrorElementProps = {
 const ErrorElement = (props: ErrorElementProps) => {
   const message =
     `${props.error.name}\n\n${props.error.message}` +
+    // eslint-disable-next-line @typescript-eslint/no-base-to-string, @typescript-eslint/restrict-template-expressions
     (props.error.cause ? `\n\n${props.error.cause}` : '') +
     (props.error.stack ? `\n\n${props.error.stack}` : '') +
     (props.componentStack ? `\n\n${props.componentStack}` : '')
@@ -54,6 +55,7 @@ export const RouteErrorElement = () => {
   // let the root error boundary handle it instead
   // https://github.com/remix-run/react-router/discussions/10494
   if (error) {
+    // eslint-disable-next-line @typescript-eslint/no-throw-literal
     throw error
   }
 

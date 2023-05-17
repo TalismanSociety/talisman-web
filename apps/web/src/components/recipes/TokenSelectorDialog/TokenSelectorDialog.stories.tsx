@@ -1,7 +1,7 @@
-import { ComponentMeta, Story } from '@storybook/react'
+import { type ComponentMeta, type Story } from '@storybook/react'
 
 import Cryptoticon from '../Cryptoticon'
-import TokenSelectorDialog, { TokenSelectorDialogProps } from './TokenSelectorDialog'
+import TokenSelectorDialog, { type TokenSelectorDialogProps } from './TokenSelectorDialog'
 
 export default {
   title: 'Recipes/TokenSelectorDialog',

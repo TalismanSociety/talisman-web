@@ -1,7 +1,17 @@
 import { useTheme } from '@emotion/react'
-import { Button, ButtonProps, Clickable, Hr, Identicon, ListItem, Text, TextInput, TextInputProps } from '@talismn/ui'
+import {
+  Button,
+  type ButtonProps,
+  Clickable,
+  Hr,
+  Identicon,
+  ListItem,
+  Text,
+  TextInput,
+  type TextInputProps,
+} from '@talismn/ui'
 import { shortenAddress } from '@util/format'
-import { ReactNode } from 'react'
+import { type ReactNode } from 'react'
 
 export type WelcomeProps = {
   className?: string

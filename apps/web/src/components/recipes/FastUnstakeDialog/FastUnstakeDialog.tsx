@@ -29,6 +29,8 @@ const FastUnstakeDialog = (props: FastUnstakeDialogProps) => (
                 return 'fulfilled'
               case 'ineligible':
                 return 'rejected'
+              case undefined:
+                return undefined
             }
           }, [props.fastUnstakeEligibility])}
         />
@@ -81,6 +83,8 @@ const FastUnstakeDialog = (props: FastUnstakeDialogProps) => (
                         You can still unstake below as normal and start earning rewards after 28 days.
                       </Text.Body>
                     )
+                  case undefined:
+                    return undefined
                 }
               }, [props.fastUnstakeEligibility])}
             </motion.div>

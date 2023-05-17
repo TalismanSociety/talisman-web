@@ -26,7 +26,7 @@ type NoCrowdloansProps = {
 }
 
 const NoCrowdloans = ({ require, children, ...props }: NoCrowdloansProps) => {
-  return (require === undefined && !React.Children.count(children)) || require === false ? (
+  return (require === undefined && !React.Children.count(children)) || !require ? (
     <NoCrowdloansPlaceholder {...props} />
   ) : (
     children

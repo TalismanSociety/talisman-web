@@ -18,7 +18,7 @@ export const ClickToCopy = styled(({ className, copy, message, children }: Props
   }, [copied])
 
   const onClick = useCallback(() => {
-    typeof copy === 'string' && navigator.clipboard.writeText(copy).then(() => setCopied(true))
+    void (typeof copy === 'string' && navigator.clipboard.writeText(copy).then(() => setCopied(true)))
   }, [copy])
 
   return (
@@ -31,7 +31,7 @@ export const ClickToCopy = styled(({ className, copy, message, children }: Props
             animate={{ opacity: 1, transition: { ease: [0.78, 0.14, 0.15, 0.86] } }}
             exit={{ opacity: 0, transition: { duration: 0.15 } }}
           >
-            {message ? message : 'Copied to clipboard'}
+            {message ?? 'Copied to clipboard'}
           </motion.div>
         )}
       </AnimatePresence>

@@ -5,11 +5,12 @@ import SurtRegular from '@assets/fonts/Surt-Regular.woff'
 import SurtSemiBold from '@assets/fonts/Surt-SemiBold.woff2'
 import SurtSemiBoldExpanded from '@assets/fonts/Surt-SemiBoldExp.woff2'
 import SurtSemiBoldExtended from '@assets/fonts/Surt-SemiBoldExtended.woff2'
-import { Global, Theme, ThemeProvider, css } from '@emotion/react'
-import { TalismanTheme, theme } from '@talismn/ui'
-import { PropsWithChildren } from 'react'
+import { Global, type Theme, ThemeProvider, css } from '@emotion/react'
+import { type TalismanTheme, theme } from '@talismn/ui'
+import { type PropsWithChildren } from 'react'
 
 declare module '@emotion/react' {
+  // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
   export interface Theme extends TalismanTheme {
     // Deprecated styling
     primary: string
@@ -268,7 +269,7 @@ const appTheme = {
   controlBackground: '38,38,38',
 }
 
-const Provider = ({ children }: PropsWithChildren<{}>) => (
+const Provider = ({ children }: PropsWithChildren) => (
   <ThemeProvider theme={appTheme}>
     <Global styles={globalStyle} />
     {children}

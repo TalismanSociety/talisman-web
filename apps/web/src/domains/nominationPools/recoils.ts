@@ -5,21 +5,22 @@ import { chainReadIdState, substrateApiState } from '@domains/common/recoils'
 import type { AnyNumber } from '@polkadot/types-codec/types'
 import DotPoolSelector, { ValidatorSelector, defaultOptions } from '@talismn/dot-pool-selector'
 import { useContext } from 'react'
-import { SerializableParam, selectorFamily } from 'recoil'
+import { type SerializableParam, selectorFamily } from 'recoil'
 
 export const allPendingPoolRewardsState = selectorFamily({
   key: 'AllPendingRewards',
   get:
     (endpoint: string) =>
-    ({ get }) => {
+    async ({ get }) => {
       get(chainReadIdState)
 
       const api = get(substrateApiState(endpoint))
       const accounts = get(substrateAccountsState)
 
-      return Promise.all(
-        accounts.map(({ address }) =>
-          api.call.nominationPoolsApi.pendingRewards(address).then(result => [address, result] as const)
+      return await Promise.all(
+        accounts.map(
+          async ({ address }) =>
+            await api.call.nominationPoolsApi.pendingRewards(address).then(result => [address, result] as const)
         )
       )
     },
@@ -33,10 +34,10 @@ export const eraStakersState = selectorFamily({
   key: 'EraStakers',
   get:
     ({ endpoint, era }: { endpoint: string; era: Extract<AnyNumber, SerializableParam> }) =>
-    ({ get }) => {
+    async ({ get }) => {
       const api = get(substrateApiState(endpoint))
 
-      return api.query.staking.erasStakers.entries(era)
+      return await api.query.staking.erasStakers.entries(era)
     },
   cachePolicy_UNSTABLE: { eviction: 'most-recent' },
 })

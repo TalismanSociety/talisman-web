@@ -8,7 +8,7 @@ export const useLocalizedLockDuration = () => {
   )
 
   if (!sessionProgress.isEpoch) {
-    return `${sessionProgress.eraLength.mul(api.consts.staking.bondingDuration)} sessions`
+    return `${sessionProgress.eraLength.mul(api.consts.staking.bondingDuration).toString()} sessions`
   }
 
   const ms = sessionProgress.eraLength.mul(api.consts.staking.bondingDuration).mul(expectedBlockTime(api))

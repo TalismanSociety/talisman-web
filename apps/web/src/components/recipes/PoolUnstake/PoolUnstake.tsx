@@ -2,7 +2,7 @@ import { useTheme } from '@emotion/react'
 import { Lock } from '@talismn/icons'
 import { Button, Identicon, Text } from '@talismn/ui'
 import { shortenAddress } from '@util/format'
-import React, { ReactElement } from 'react'
+import React, { type ReactElement } from 'react'
 
 import StakeList from '../StakeList'
 

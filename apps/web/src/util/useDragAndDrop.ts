@@ -1,6 +1,6 @@
-import { RefObject, useEffect, useState } from 'react'
+import { type RefObject, useEffect, useState } from 'react'
 
-export interface DragAndDropCallbacks {
+export type DragAndDropCallbacks = {
   onDragStart?: (e?: DragEvent) => void
   onDragEnd?: (e?: DragEvent) => void
   onDragEnter?: (e?: DragEvent) => void

@@ -19,7 +19,7 @@ const slideDown = keyframes`
 `
 
 const AssetItem = () => {
-  //Get the assetId from the url
+  // Get the assetId from the url
   const navigate = useNavigate()
   const { assetId } = useParams()
   const { token, balances, isLoading } = useSingleAsset({ symbol: assetId })
@@ -88,7 +88,7 @@ const AssetItem = () => {
                             width: '2em',
                             height: '2em',
                           }}
-                          alt={token?.tokenDetails?.chain?.id ?? token?.tokenDetails?.coingeckoId + ' logo'}
+                          alt={token?.tokenDetails?.chain?.id ?? (token?.tokenDetails?.coingeckoId ?? '') + ' logo'}
                         />
                       )}
                     </Tooltip>
@@ -106,11 +106,11 @@ const AssetItem = () => {
                         color: 'var(--color-dim)',
                       }}
                     >
-                      {`(${token?.tokenDetails?.symbol})`}
+                      {`(${token?.tokenDetails?.symbol ?? ''})`}
                     </Text.Body>
                   </div>
                 }
-                text={token?.overallTokenAmount + ' ' + token?.tokenDetails?.symbol}
+                text={(token?.overallTokenAmount ?? '') + ' ' + (token?.tokenDetails?.symbol ?? '')}
                 supportingText={<AnimatedFiatNumber end={token?.overallFiatAmount ?? 0} />}
               />
               <InfoCard
@@ -126,7 +126,7 @@ const AssetItem = () => {
                     <span>Locked</span>
                   </div>
                 }
-                text={token?.overallLockedAmount + ' ' + token?.tokenDetails?.symbol}
+                text={(token?.overallLockedAmount ?? '') + ' ' + (token?.tokenDetails?.symbol ?? '')}
                 supportingText={<AnimatedFiatNumber end={token?.overallLockedFiatAmount ?? 0} />}
               />
               <InfoCard
@@ -142,7 +142,7 @@ const AssetItem = () => {
                     <span>Available</span>
                   </div>
                 }
-                text={token?.amount + ' ' + token?.tokenDetails?.symbol}
+                text={(token?.amount ?? '') + ' ' + (token?.tokenDetails?.symbol ?? '')}
                 supportingText={<AnimatedFiatNumber end={token?.fiatAmount ?? 0} />}
               />
             </div>

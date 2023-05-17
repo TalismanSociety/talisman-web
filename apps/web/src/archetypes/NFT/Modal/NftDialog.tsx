@@ -1,11 +1,11 @@
 import { NFTPreview } from '@components/recipes/NFTPreview'
 import { keyframes } from '@emotion/react'
 import { useNftById } from '@libs/@talisman-nft'
-import { NFTShort } from '@libs/@talisman-nft/types'
+import { type NFTShort } from '@libs/@talisman-nft/types'
 import { ExternalLink, Layers, X } from '@talismn/icons'
-import { Button, Dialog, DialogProps, InfoWithHeader, Tag, Text } from '@talismn/ui'
+import { Button, Dialog, type DialogProps, InfoWithHeader, Tag, Text } from '@talismn/ui'
 
-import { NFTChild } from '../types'
+import { type NFTChild } from '../types'
 import InfoSkeleton from './InfoSkeleton'
 
 export type NftDialogProps = DialogProps & {
@@ -189,7 +189,7 @@ const NftDialog = ({ onRequestDismiss, ...props }: NftDialogProps) => {
                         }
                         content={
                           <Text.Body css={{ fontSize: '14px', color: '#FAFAFA' }}>
-                            {typeof nft?.attributes[attribute]?.value == 'string'
+                            {typeof nft?.attributes[attribute]?.value === 'string'
                               ? nft?.attributes[attribute]?.value
                               : 'Unknown'}
                           </Text.Body>
@@ -209,8 +209,9 @@ const NftDialog = ({ onRequestDismiss, ...props }: NftDialogProps) => {
                     gap: '1rem',
                   }}
                 >
-                  {nft?.nftSpecificData?.children?.map((child: NFTChild) => (
+                  {nft?.nftSpecificData?.children?.map((child: NFTChild, index: number) => (
                     <div
+                      key={index}
                       css={{
                         'width': '6rem',
                         'height': '6rem',

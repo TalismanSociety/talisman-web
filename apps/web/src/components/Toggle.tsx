@@ -11,11 +11,11 @@ export type ToggleProps = {
 }
 
 const Toggle = styled(({ value = false, onChange = () => {}, off, on, className, ...rest }: ToggleProps) => {
-  let [isActive, toggleActive] = useBoolean(value)
+  const [isActive, toggleActive] = useBoolean(value)
   useEffect(() => onChange(isActive), [isActive]) // eslint-disable-line
 
   return (
-    <span className={`${className} toggle`} onClick={toggleActive} data-active={isActive} {...rest}>
+    <span className={`${className ?? ''} toggle`} onClick={toggleActive} data-active={isActive} {...rest}>
       <span className="toggle-indicator" />
     </span>
   )

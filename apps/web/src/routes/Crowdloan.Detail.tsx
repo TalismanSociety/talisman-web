@@ -59,11 +59,11 @@ const CrowdloanDetail = styled(({ className }: { className?: string }) => {
             <Crowdloan.Rewards id={id} />
           </Panel>
 
-          {/*<Panel
+          {/* <Panel
             title='Contributors'
             >
             <Crowdloan.Contributors id={id}/>
-          </Panel>*/}
+          </Panel> */}
         </aside>
       </div>
     </section>

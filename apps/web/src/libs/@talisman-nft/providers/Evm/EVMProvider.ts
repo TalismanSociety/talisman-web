@@ -1,10 +1,10 @@
 import { ethers } from 'ethers'
 
-import { Contract, EVMChain, NFTDetail, NFTShort } from '../../types'
+import { type Contract, type EVMChain, type NFTDetail, type NFTShort } from '../../types'
 import { NFTInterface } from '../NFTInterface'
 
 export class EVMProvider extends NFTInterface {
-  name: string = ''
+  override name: string = ''
   rpc: string[] = []
   contracts: Contract = {}
   chainId: number
@@ -41,13 +41,14 @@ export class EVMProvider extends NFTInterface {
       type: 'function',
     },
   ]
+
   platformUri = ''
   storageProvider = ''
   web3: ethers.providers.JsonRpcProvider | undefined = undefined
 
   storedAddress: string | undefined = undefined
 
-  detailedItems: { [key: string]: any } = {}
+  detailedItems: Record<string, any> = {}
 
   constructor(config: EVMChain) {
     super()
@@ -74,7 +75,7 @@ export class EVMProvider extends NFTInterface {
       },
       address: item.address,
       provider: item?.provider,
-      fetchDetail: () => this.fetchDetail(item.id),
+      fetchDetail: async () => await this.fetchDetail(item.id),
       nftSpecificData: null,
     }
   }
@@ -92,7 +93,7 @@ export class EVMProvider extends NFTInterface {
     return undefined
   }
 
-  async hydrateNftsByAddress(address: string) {
+  override async hydrateNftsByAddress(address: string) {
     if (this.storedAddress === address) {
       return
     }
@@ -143,12 +144,13 @@ export class EVMProvider extends NFTInterface {
     // we need to ...
     await Promise.all(
       Object.values(this.contracts).map(
-        (contract: any) =>
-          new Promise(async resolve => {
+        async (contract: any) =>
+          // eslint-disable-next-line @typescript-eslint/no-misused-promises, no-async-promise-executor
+          await new Promise(async resolve => {
             try {
               const contractInstance = new ethers.Contract(contract.address, this.abi, this.web3)
-              const balance = await contractInstance.balanceOf(address)
-              const totalCount = await contractInstance.totalSupply()
+              const balance = await contractInstance['balanceOf'](address)
+              const totalCount = await contractInstance['totalSupply']()
 
               const bnBalance = ethers.BigNumber.from(balance).toNumber()
               const bnTotalCount = ethers.BigNumber.from(totalCount).toNumber()
@@ -157,17 +159,18 @@ export class EVMProvider extends NFTInterface {
 
               await Promise.all(
                 Array.from(Array(bnBalance).keys()).map(
-                  i =>
-                    new Promise(async resolve => {
-                      const tokenId = await contractInstance.tokenOfOwnerByIndex(address, i)
+                  async i =>
+                    // eslint-disable-next-line @typescript-eslint/no-misused-promises, no-async-promise-executor
+                    await new Promise(async resolve => {
+                      const tokenId = await contractInstance['tokenOfOwnerByIndex'](address, i)
                       const bnTokenId = ethers.BigNumber.from(tokenId).toNumber()
-                      const tokenURI = await contractInstance.tokenURI(tokenId)
+                      const tokenURI = await contractInstance['tokenURI'](tokenId)
 
                       const response = await fetch(tokenURI.replace('ipfs://', 'https://talisman.mypinata.cloud/ipfs/'))
                       const data = await response.json()
 
                       const nftItem = {
-                        id: bnTokenId + '-' + contract.name,
+                        id: bnTokenId.toString() + '-' + (contract.name as string),
                         name: data.name,
                         thumb: this.toIPFSUrl(data.image),
                         description: data?.description,
@@ -177,7 +180,7 @@ export class EVMProvider extends NFTInterface {
                         mediaUri: this.toIPFSUrl(data?.animation_url) ?? this.toIPFSUrl(data.image),
                         address,
                         provider: this.name,
-                        platformUri: `${this.platformUri}${contract.address}`,
+                        platformUri: `${this.platformUri}${contract.address as string}`,
                         attributes: data?.attributes,
                         collection: {
                           id: contract.address,
@@ -211,12 +214,12 @@ export class EVMProvider extends NFTInterface {
     this.isFetching = false
   }
 
-  fetchOneById(id: string) {
+  override fetchOneById(id: string) {
     const internalId = id.split('.').slice(1).join('.')
     return this.items[internalId]
   }
 
-  protected async fetchDetail(id: string): Promise<NFTDetail> {
+  protected override async fetchDetail(id: string): Promise<NFTDetail> {
     const item = this.detailedItems[id]
     return item
   }

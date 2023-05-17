@@ -3,28 +3,28 @@ import '@acala-network/types'
 import { ApiPromise, WsProvider } from '@polkadot/api'
 import { encodeAddress } from '@polkadot/util-crypto'
 
-import { NFTCategory, NFTDetail, NFTShort } from '../../types'
+import { type NFTCategory, type NFTDetail, type NFTShort } from '../../types'
 import { NFTInterface } from '../NFTInterface'
 
 export class AcalaProvider extends NFTInterface {
-  name = 'Acala'
+  override name = 'Acala'
   uri = 'wss://acala-rpc-0.aca-api.network'
   platformUri = 'https://apps.acala.network/portfolio/nft/'
   storageProvider = ''
-  detailedItems: { [key: string]: any } = {}
-  tokenCurrency = 'ACA'
+  detailedItems: Record<string, any> = {}
+  override tokenCurrency = 'ACA'
 
   webSocket: ApiPromise | null = null
 
   // Start the websocket
   async wsProvider() {
     const wsProvider = new WsProvider(this.uri)
-    return ApiPromise.create({ provider: wsProvider })
+    return await ApiPromise.create({ provider: wsProvider })
   }
 
   public async fetchCollectionData(IPFSUrl: string) {
-    return fetch(IPFSUrl)
-      .then(res => res.json())
+    return await fetch(IPFSUrl)
+      .then(async res => await res.json())
       .then(data => {
         return {
           name: data.name,
@@ -47,12 +47,14 @@ export class AcalaProvider extends NFTInterface {
     const collectionDetails = (await this.webSocket.query.ormlNFT.classes(collectionIdFixed)).unwrapOr(null)?.toHuman()
     if (!collectionDetails) return null
 
-    const metadata = await this.fetchCollectionData(this.baseIPFSUrl + collectionDetails?.metadata + '/metadata.json')
+    const metadata = await this.fetchCollectionData(
+      this.baseIPFSUrl + ((collectionDetails?.metadata as string | undefined) ?? '') + '/metadata.json'
+    )
       .then(res => res)
       .catch(err => console.log(err))
 
     // // Return the promised data for token details
-    return Promise.resolve({
+    return await Promise.resolve({
       id: `${collectionIdFixed}-${nftTokenIdFixed}`,
       name: metadata?.name,
       description: metadata?.description,
@@ -64,8 +66,8 @@ export class AcalaProvider extends NFTInterface {
 
   async fetchNFTs_Metadata(metadataId: string) {
     if (metadataId == null) return
-    return fetch(this.baseIPFSUrl + metadataId)
-      .then(res => res.json())
+    return await fetch(this.baseIPFSUrl + metadataId)
+      .then(async res => await res.json())
       .then(data => {
         return {
           name: data.name,
@@ -108,7 +110,7 @@ export class AcalaProvider extends NFTInterface {
     } as NFTShort
   }
 
-  async hydrateNftsByAddress(address: string) {
+  override async hydrateNftsByAddress(address: string) {
     this.reset()
     this.isFetching = true
 
@@ -141,12 +143,13 @@ export class AcalaProvider extends NFTInterface {
         break
       }
 
-      let nftRawAssetDetails: any[] = []
-      for (let key of nfts) {
+      const nftRawAssetDetails: any[] = []
+      for (const key of nfts) {
         const data = key.toHuman() as string[]
         nftRawAssetDetails.push({ collectionId: data[1], nftTokenId: data[2] })
       }
 
+      // eslint-disable-next-line @typescript-eslint/no-misused-promises
       nftRawAssetDetails.forEach(async (assetId: any) => {
         const tokenDetails = await this.getTokenDetails(assetId)
 
@@ -189,12 +192,12 @@ export class AcalaProvider extends NFTInterface {
     this.isFetching = false
   }
 
-  fetchOneById(id: string) {
+  override fetchOneById(id: string) {
     const internalId = id.split('.').slice(1).join('.')
     return this.items[internalId]
   }
 
-  protected async fetchDetail(id: string): Promise<NFTDetail> {
+  protected override async fetchDetail(id: string): Promise<NFTDetail> {
     const item = this.detailedItems[id]
     return item
   }

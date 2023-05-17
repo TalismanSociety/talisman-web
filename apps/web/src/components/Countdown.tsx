@@ -35,7 +35,13 @@ const hour = 60 * minute
 const day = 24 * hour
 const week = 7 * day
 
-const Countdown = ({ seconds: countdownSeconds = 10, showSeconds = true }) => {
+const Countdown = ({
+  seconds: countdownSeconds = 10,
+  showSeconds = true,
+}: {
+  seconds: number
+  showSeconds: boolean
+}) => {
   const remaining = useCountdown(countdownSeconds)
 
   const weeks = Math.max(0, Math.floor(remaining / week))

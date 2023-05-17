@@ -1,5 +1,5 @@
-import { StakeStatus } from '@components/recipes/StakeStatusIndicator'
-import { Account } from '@domains/accounts/recoils'
+import { type StakeStatus } from '@components/recipes/StakeStatusIndicator'
+import { type Account } from '@domains/accounts/recoils'
 import { useChainDeriveState, useChainQueryState, useSubstrateApiState } from '@domains/common'
 import { useMemo } from 'react'
 import { useRecoilValue, useRecoilValue_TRANSITION_SUPPORT_UNSTABLE, waitForAll } from 'recoil'

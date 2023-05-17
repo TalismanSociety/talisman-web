@@ -1,10 +1,10 @@
-import RpcError from '@polkadot/rpc-provider/coder/error'
-import { ISubmittableResult } from '@polkadot/types/types'
+import type RpcError from '@polkadot/rpc-provider/coder/error'
+import { type ISubmittableResult } from '@polkadot/types/types'
 import { ExternalLink } from '@talismn/icons'
 import { Text, toast } from '@talismn/ui'
 
 export const toastExtrinsic = (
-  extrinsics: [string, string][],
+  extrinsics: Array<[string, string]>,
   promise: Promise<ISubmittableResult>,
   subscanUrl?: string
 ) => {
@@ -33,7 +33,7 @@ export const toastExtrinsic = (
     }
   })()
 
-  toast.promise(
+  void toast.promise(
     promise,
     {
       loading: (
@@ -77,7 +77,7 @@ export const toastExtrinsic = (
               <Text.Body
                 as="a"
                 alpha="high"
-                href={subscanUrl + 'extrinsic/' + error?.txHash?.toString()}
+                href={subscanUrl + 'extrinsic/' + ((error?.txHash?.toString() as string | undefined) ?? '')}
                 target="_blank"
               >
                 Subscan <ExternalLink size="1.2rem" />
