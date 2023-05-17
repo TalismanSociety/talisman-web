@@ -21,7 +21,7 @@ const _nftsState = atomFamily<Nft[], string>({
 
       setSelf(initialPromise)
 
-      const workerPromise = spawn<SubscribeNfts>(new Worker(new URL('./worker', import.meta.url)))
+      const workerPromise = spawn<SubscribeNfts>(new Worker(new URL('./worker', import.meta.url), { type: 'module' }))
 
       const subscriptionPromise = workerPromise.then(worker =>
         new Observable<Nft>(observer => worker(address, { batchSize }).subscribe(observer))
