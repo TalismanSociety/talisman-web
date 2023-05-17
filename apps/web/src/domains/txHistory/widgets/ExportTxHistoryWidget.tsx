@@ -23,7 +23,7 @@ const ExportTxHistoryWidget = (props: ExportTxHistoryWidgetProps) => {
 
   const onRequestExport = useCallback(() => {
     const promise = request<Pick<Query, 'addressById'>>(
-      process.env.REACT_APP_TX_HISTORY_INDEXER,
+      import.meta.env.REACT_APP_TX_HISTORY_INDEXER,
       gql`
         query ($address: String!, $fromDate: DateTime!, $toDate: DateTime!) {
           addressById(id: $address) {

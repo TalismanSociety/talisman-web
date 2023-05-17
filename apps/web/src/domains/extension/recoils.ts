@@ -21,7 +21,7 @@ export const ExtensionWatcher = () => {
       return setAccounts([])
     }
 
-    const unsubscribePromise = web3Enable(process.env.REACT_APP_APPLICATION_NAME ?? 'Talisman').then(() =>
+    const unsubscribePromise = web3Enable(import.meta.env.REACT_APP_APPLICATION_NAME ?? 'Talisman').then(() =>
       web3AccountsSubscribe(accounts =>
         setAccounts(uniqBy(accounts, account => account.address).map(account => ({ ...account, ...account.meta })))
       )

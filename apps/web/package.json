@@ -7,13 +7,11 @@
   "bugs": "https://github.com/TalismanSociety/talisman-web/issues",
   "license": "GPL-3.0-or-later",
   "scripts": {
-    "dev": "craco start",
-    "build": "REACT_APP_SENTRY_RELEASE=$(git rev-parse --verify HEAD) craco build",
-    "test": "craco test --watchAll=false",
+    "dev": "vite",
+    "build": "REACT_APP_SENTRY_RELEASE=$(git rev-parse --verify HEAD) vite build",
     "lint": "eslint src",
     "check-types": "tsc --noEmit",
     "e2e": "playwright test",
-    "eject": "craco eject",
     "storybook": "start-storybook -p 6006 -s public",
     "build-storybook": "build-storybook -s public",
     "tx-history:graphql:codegen": "graphql-codegen -c src/archetypes/Transaction/lib/codegen.ts"
@@ -40,7 +38,7 @@
     "@talismn/chaindata-provider": "0.0.0-pr677-20230414083406",
     "@talismn/connect-components": "^1.1.7",
     "@talismn/connect-ui": "^1.1.2",
-    "@talismn/dot-pool-selector": "snapshot",
+    "@talismn/dot-pool-selector": "0.0.0-snapshot.940501",
     "@talismn/icons": "workspace:^",
     "@talismn/math": "workspace:^",
     "@talismn/ui": "workspace:^",
@@ -82,7 +80,6 @@
   },
   "devDependencies": {
     "@acala-network/types": "^4.1.8-2.3",
-    "@craco/craco": "^7.1.0",
     "@graphql-codegen/cli": "^2.16.5",
     "@graphql-codegen/client-preset": "^1.3.0",
     "@playwright/test": "^1.31.2",
@@ -97,10 +94,7 @@
     "@storybook/react": "^6.5.16",
     "@storybook/testing-library": "^0.0.13",
     "@talismn/development": "workspace:^",
-    "@testing-library/jest-dom": "^5.16.5",
-    "@testing-library/react": "^13.4.0",
-    "@testing-library/user-event": "^14.4.3",
-    "@types/jest": "^27.5.2",
+    "@talismn/tsconfig": "workspace:^",
     "@types/lodash": "^4.14.191",
     "@types/md5": "^2.3.2",
     "@types/node": "^18.11.19",
@@ -108,25 +102,13 @@
     "@types/react-dom": "^18.0.10",
     "@types/react-infinite-scroller": "^1.2.3",
     "@types/react-router-dom": "^5.3.3",
-    "babel-jest": "^29.4.3",
+    "@vitejs/plugin-react": "^4.0.0",
     "eslint": "^8.33.0",
     "eslint-config-prettier": "^8.6.0",
     "eslint-plugin-storybook": "^0.6.10",
-    "react-app-alias": "^2.2.2",
-    "react-scripts": "5.0.1",
-    "storybook-preset-craco": "artisanofcode/storybook-preset-craco",
-    "typescript": "^5.0.2"
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
+    "typescript": "^5.0.2",
+    "vite": "^4.3.7",
+    "vite-plugin-svgr": "^3.2.0",
+    "vite-tsconfig-paths": "^4.2.0"
   }
 }
