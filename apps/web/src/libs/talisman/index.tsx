@@ -1,6 +1,6 @@
 import { balanceModules } from '@talismn/balances-default-modules'
 import { BalancesProvider } from '@talismn/balances-react'
-import { PropsWithChildren } from 'react'
+import { type PropsWithChildren } from 'react'
 
 import * as Chainmeta from './chainmeta'
 import * as Crowdloan from './crowdloan'

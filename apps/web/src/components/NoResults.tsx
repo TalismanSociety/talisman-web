@@ -27,10 +27,10 @@ export type NoResultProps = PropsWithChildren<{
 const NoResults = ({ require, children, ...props }: NoResultProps) => {
   // undefined not set? await children
   // require is explicitly set to false
-  return (require === undefined && !React.Children.count(children)) || require === false ? (
+  return (require === undefined && !React.Children.count(children)) || !require ? (
     <NoResultsMessage {...props} />
   ) : (
-    children
+    <>{children}</>
   )
 }
 

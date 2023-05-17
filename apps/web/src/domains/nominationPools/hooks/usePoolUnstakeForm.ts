@@ -49,6 +49,8 @@ export const usePoolUnstakeForm = (account?: string) => {
         return new Error(`Need ${minNeededForMembership.decimalAmount?.toHuman()} to stay in pool`)
       }
     }
+
+    return undefined
   }, [
     available.decimalAmount,
     input.decimalAmount,
@@ -60,14 +62,14 @@ export const usePoolUnstakeForm = (account?: string) => {
   return {
     extrinsic: {
       ...unbondExtrinsic,
-      unbondMax: (account: string, memberAccount: string) => {
+      unbondMax: async (account: string, memberAccount: string) => {
         const pool = queriesLoadable.valueMaybe()?.[1]
 
         if (pool === undefined) {
           throw new Error('Extrinsic not ready yet')
         }
 
-        return unbondExtrinsic.signAndSend(account, memberAccount, pool.unwrapOrDefault().points)
+        return await unbondExtrinsic.signAndSend(account, memberAccount, pool.unwrapOrDefault().points)
       },
     },
     input,

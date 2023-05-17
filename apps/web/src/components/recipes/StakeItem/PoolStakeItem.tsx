@@ -1,9 +1,9 @@
-import { ReactNode } from 'react'
+import { type ReactNode } from 'react'
 
 import StakeItem, {
   ClaimChip,
   IncreaseStakeChip,
-  StakeItemProps,
+  type StakeItemProps,
   UnstakeChip,
   UnstakingStatus,
   WithdrawChip,

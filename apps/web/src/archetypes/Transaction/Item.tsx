@@ -14,7 +14,7 @@ import { useRecoilValue } from 'recoil'
 
 import { ClickToCopy } from './ClickToCopy'
 import { ItemDetails } from './ItemDetails'
-import { Transaction, formatGenericAddress } from './lib'
+import { type Transaction, formatGenericAddress } from './lib'
 import { TransactionLogo } from './TransactionLogo'
 
 type Props = {
@@ -75,7 +75,9 @@ export const Item = styled(({ className, transaction, addresses, selectedAccount
   return (
     <>
       <PanelSection
-        className={`transaction-item ${typeof selectedAccount === 'string' ? 'selected-account' : ''} ${className}`}
+        className={`transaction-item ${typeof selectedAccount === 'string' ? 'selected-account' : ''} ${
+          className ?? ''
+        }`}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1, transition: { ease: [0.78, 0.14, 0.15, 0.86] } }}
       >
@@ -130,7 +132,7 @@ export const Item = styled(({ className, transaction, addresses, selectedAccount
         </div>
       </PanelSection>
       {showDebugInfo && (
-        <pre className={`${className} debug`}>
+        <pre className={`${className ?? ''} debug`}>
           {JSON.stringify({ ...transaction, args: JSON.parse(transaction.args ?? '{}') }, null, 2)}
         </pre>
       )}

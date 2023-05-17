@@ -1,15 +1,13 @@
-import { NFTInterface } from './providers/NFTInterface'
+import { type NFTInterface } from './providers/NFTInterface'
 import SubscriptionService from './SubscriptionService'
-import { NFTData, NFTShort } from './types'
+import { type NFTData, type NFTShort } from './types'
 
-type nftPlatformMapping = {
-  [key: string]: string
-}
+type nftPlatformMapping = Record<string, string>
 
 export class NFTFactory extends SubscriptionService<NFTData> {
   providers: NFTInterface[]
   nftPlatformMapping: nftPlatformMapping = {}
-  private providerData: { [providerName: string]: NFTData } = {}
+
   private addresses: string[] = []
 
   constructor(providers: NFTInterface[]) {
@@ -40,9 +38,9 @@ export class NFTFactory extends SubscriptionService<NFTData> {
   // create a return object & fire subscriptions
   private triggerCallback() {
     // init array
-    let count: { [key: string]: number } = {}
-    let fetchingArray: boolean[] = []
-    let items: { [key: string]: NFTShort } = {}
+    const count: Record<string, number> = {}
+    const fetchingArray: boolean[] = []
+    let items: Record<string, NFTShort> = {}
 
     // iterate through the providers and parse info
     this.providers.forEach(provider => {

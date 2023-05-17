@@ -1,7 +1,7 @@
 import { ApolloClient, InMemoryCache, createHttpLink, gql } from '@apollo/client'
 import { encodeAddress } from '@polkadot/util-crypto'
 
-import { NFTDetail } from '../../types'
+import { type NFTDetail } from '../../types'
 import { NFTInterface } from '../NFTInterface'
 
 const QUERY = gql`
@@ -46,15 +46,15 @@ const QUERY_AGGREGATE = gql`
 `
 
 export class Rmrk2Provider extends NFTInterface {
-  name = 'RMRK2'
+  override name = 'RMRK2'
   uri = 'https://gql-rmrk2-prod.graphcdn.app'
   platformUri = 'https://singular.app/collectibles/'
   indexUri = 'https://singular.rmrk-api.xyz/api/account/'
   collectionUri = 'https://singular.app/api/stats/collection/'
   storageProvider = ''
-  detailedItems: { [key: string]: any } = {}
+  detailedItems: Record<string, any> = {}
   client?: ApolloClient<any>
-  tokenCurrency = 'KSM'
+  override tokenCurrency = 'KSM'
 
   async getClient() {
     if (this.client) return this.client
@@ -72,7 +72,7 @@ export class Rmrk2Provider extends NFTInterface {
     return this.client
   }
 
-  async hydrateNftsByAddress(address: string) {
+  override async hydrateNftsByAddress(address: string) {
     this.reset()
     this.isFetching = true
 
@@ -97,13 +97,13 @@ export class Rmrk2Provider extends NFTInterface {
       }
 
       data.nfts.forEach(async (nft: any) => {
-        const mediaUri = !!nft?.resources[0]?.src
+        const mediaUri = nft?.resources[0]?.src
           ? this.toIPFSUrl(nft?.resources[0]?.src)
-          : !!nft?.metadata_image
+          : nft?.metadata_image
           ? this.toIPFSUrl(nft?.metadata_image)
           : await this.fetchMediaFromMetadata(nft?.metadata)
 
-        const thumb = this.toIPFSUrl(nft?.resources[0]?.thumb) || undefined
+        const thumb = this.toIPFSUrl(nft?.resources[0]?.thumb) ?? undefined
         const type = nft?.resources[0]?.metadata_content_type
         const collectionInfo = await this.fetchNFTs_CollectionInfo(nft?.collection?.id, this.collectionUri)
 
@@ -124,7 +124,7 @@ export class Rmrk2Provider extends NFTInterface {
           type,
           mediaUri,
           provider: this.name,
-          platformUri: this.platformUri + nft?.id,
+          platformUri: this.platformUri + (nft?.id as string),
           attributes: nft?.metadata_properties || [],
           collection: {
             id: nft?.collection?.id,
@@ -143,18 +143,18 @@ export class Rmrk2Provider extends NFTInterface {
         this.detailedItems[item.id] = item
       })
 
-      offset += data.nfts.length
+      offset += data.nfts.length as number
     }
 
     this.isFetching = false
   }
 
-  fetchOneById(id: string) {
+  override fetchOneById(id: string) {
     const internalId = id.split('.').slice(1).join('.')
     return this.items[internalId]
   }
 
-  protected async fetchDetail(id: string): Promise<NFTDetail> {
+  protected override async fetchDetail(id: string): Promise<NFTDetail> {
     const item = this.detailedItems[id]
     return item
   }

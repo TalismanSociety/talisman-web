@@ -1,7 +1,7 @@
 import { useTheme } from '@emotion/react'
-import React, { ChangeEventHandler, ReactElement, useCallback, useState } from 'react'
+import React, { type ChangeEventHandler, type ReactElement, useCallback, useState } from 'react'
 
-import { ALERT_DIALOG_PADDING, AlertDialog, AlertDialogProps, Hr, Text, TextInput } from '@talismn/ui'
+import { ALERT_DIALOG_PADDING, AlertDialog, type AlertDialogProps, Hr, Text, TextInput } from '@talismn/ui'
 import Cryptoticon from '../Cryptoticon'
 
 export type TokenSelectorItemProps = {
@@ -55,7 +55,7 @@ export const TokenSelectorItem = (props: TokenSelectorItemProps) => {
 }
 
 export type TokenSelectorDialogProps = Pick<AlertDialogProps, 'open' | 'onRequestDismiss'> & {
-  children?: undefined | ReactElement<TokenSelectorItemProps> | ReactElement<TokenSelectorItemProps>[]
+  children?: undefined | ReactElement<TokenSelectorItemProps> | Array<ReactElement<TokenSelectorItemProps>>
 }
 
 const TokenSelectorDialog = Object.assign(

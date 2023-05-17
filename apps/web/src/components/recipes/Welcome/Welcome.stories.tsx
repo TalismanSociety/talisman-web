@@ -1,6 +1,6 @@
-import { ComponentMeta, Story } from '@storybook/react'
+import { type ComponentMeta, type Story } from '@storybook/react'
 
-import Welcome, { WelcomeProps } from './Welcome'
+import Welcome, { type WelcomeProps } from './Welcome'
 import AccountConnectionDialog from '.'
 
 export default {

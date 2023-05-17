@@ -1,4 +1,4 @@
-import { DependencyList, useMemo } from 'react'
+import { type DependencyList, useMemo } from 'react'
 
 const useDeferred = <T>(deps: DependencyList = []) => {
   const resolver = useMemo<{ resolve?: (value: T) => unknown; reject?: (value: any) => unknown }>(
@@ -8,14 +8,15 @@ const useDeferred = <T>(deps: DependencyList = []) => {
   )
 
   const promise = useMemo(
-    () =>
-      new Promise<T>((resolve, reject) => {
+    async () =>
+      await new Promise<T>((resolve, reject) => {
         resolver.resolve = resolve
         resolver.reject = reject
       }),
     [resolver]
   )
 
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   return { promise, resolve: resolver.resolve!, reject: resolver.reject! }
 }
 

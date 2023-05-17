@@ -1,4 +1,4 @@
-import { ComponentMeta, Story } from '@storybook/react'
+import { type ComponentMeta, type Story } from '@storybook/react'
 
 import MainBanner from './MainBanner'
 

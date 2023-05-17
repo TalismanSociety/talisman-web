@@ -1,6 +1,6 @@
-import { ComponentMeta, Story } from '@storybook/react'
+import { type ComponentMeta, type Story } from '@storybook/react'
 
-import CookieBanner, { CookieBannerProps } from './CookieBanner'
+import CookieBanner, { type CookieBannerProps } from './CookieBanner'
 
 export default {
   title: 'Recipes/CookieBanner',

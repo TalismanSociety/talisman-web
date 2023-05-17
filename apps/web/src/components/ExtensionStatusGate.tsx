@@ -1,7 +1,7 @@
 import { accountsState } from '@domains/accounts/recoils'
 import { allowExtensionConnectionState } from '@domains/extension/recoils'
 import { isWeb3Injected } from '@polkadot/extension-dapp'
-import { PropsWithChildren } from 'react'
+import { type PropsWithChildren } from 'react'
 import { useRecoilValue } from 'recoil'
 
 type ExtensionStatusGateProps = {

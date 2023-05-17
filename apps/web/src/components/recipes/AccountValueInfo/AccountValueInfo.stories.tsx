@@ -1,6 +1,6 @@
-import { ComponentMeta, Story } from '@storybook/react'
+import { type ComponentMeta, type Story } from '@storybook/react'
 
-import AccountValueInfo, { AccountValueInfoProps } from './AccountValueInfo'
+import AccountValueInfo, { type AccountValueInfoProps } from './AccountValueInfo'
 
 export default {
   title: 'Recipes/AccountValueInfo',

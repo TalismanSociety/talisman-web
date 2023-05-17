@@ -51,6 +51,8 @@ export const useValidatorUnstakeForm = (account?: string) => {
         return new Error(`Need ${minNeededForMembership.decimalAmount?.toHuman()} to stay active`)
       }
     }
+
+    return undefined
   }, [
     queriesLoadable.state,
     isLeaving,
@@ -65,16 +67,15 @@ export const useValidatorUnstakeForm = (account?: string) => {
       // TODO: clean up this dirty hack
       // maybe create a hook or function to combine status of multiple distinct extrinsic
       state: unbondExtrinsic.state === 'loading' || unbondAllExtrinsic.state === 'loading' ? 'loading' : 'idle',
-      unbondAll: (account: string) => {
+      unbondAll: async (account: string) => {
         const stake = queriesLoadable.valueMaybe()?.[1]
 
         if (stake === undefined) {
           throw new Error('Extrinsic not ready yet')
         }
 
-        return unbondAllExtrinsic.signAndSend(account, [
+        return await unbondAllExtrinsic.signAndSend(account, [
           [],
-          // @ts-ignore
           // Internal @polkadot type error
           [queriesLoadable.valueMaybe()?.[1].unwrapOrDefault().active ?? 0],
         ])

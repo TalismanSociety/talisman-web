@@ -1,7 +1,7 @@
 import { Countdown as Cd, Pendor } from '@components'
 import styled from '@emotion/styled'
 import { useChainmetaValue, useCrowdloanById } from '@libs/talisman'
-import { ReactNode, useEffect, useState } from 'react'
+import { type ReactNode, useEffect, useState } from 'react'
 
 type OngoingProps = {
   end?: number
@@ -12,7 +12,9 @@ type OngoingProps = {
 
 const Ongoing = ({ end, showSeconds, relayChainId, className = '' }: OngoingProps) => {
   const [secondsRemaining, setSecondsRemaining] = useState<number>()
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const blockNumber = useChainmetaValue(relayChainId!, 'blockNumber')
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const blockPeriod = useChainmetaValue(relayChainId!, 'blockPeriod')
 
   useEffect(() => {
@@ -23,14 +25,14 @@ const Ongoing = ({ end, showSeconds, relayChainId, className = '' }: OngoingProp
   return (
     <Pendor require={!!secondsRemaining}>
       <div className={`crowdloan-countdown ongoing ${className}`}>
-        <Cd showSeconds={showSeconds} seconds={secondsRemaining} />
+        <Cd showSeconds={Boolean(showSeconds)} seconds={secondsRemaining ?? 0} />
       </div>
     </Pendor>
   )
 }
 
 const Generic = styled(({ text, className }: { className?: string; text: ReactNode }) => (
-  <span className={`crowdloan-countdown finished ${className}`}>{text}</span>
+  <span className={`crowdloan-countdown finished ${className ?? ''}`}>{text}</span>
 ))`
   display: flex;
   align-items: center;
@@ -43,7 +45,7 @@ type CountdownProps = {
   className?: string
 }
 
-const Countdown: React.FC<CountdownProps> = ({ id, showSeconds, className, ...rest }) => {
+const Countdown = ({ id, showSeconds, className, ...rest }: CountdownProps) => {
   const { crowdloan } = useCrowdloanById(id)
 
   // Pendor

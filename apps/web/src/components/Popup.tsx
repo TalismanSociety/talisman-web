@@ -7,7 +7,7 @@ export type InfoProps = PropsWithChildren<{
 }>
 
 const Info = styled(({ text, children, className }: InfoProps) => (
-  <div className={`popup ${className}`}>
+  <div className={`popup ${className ?? ''}`}>
     <div className="trigger">{children}</div>
     <div className="content" dangerouslySetInnerHTML={{ __html: text }} />
   </div>

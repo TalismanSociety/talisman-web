@@ -1,6 +1,12 @@
-import { ReactNode } from 'react'
+import { type ReactNode } from 'react'
 
-import StakeItem, { FastUnstakeChip, StakeItemProps, UnstakeChip, UnstakingStatus, WithdrawChip } from './StakeItem'
+import StakeItem, {
+  FastUnstakeChip,
+  type StakeItemProps,
+  UnstakeChip,
+  UnstakingStatus,
+  WithdrawChip,
+} from './StakeItem'
 
 export type ValidatorStakeItemProps = Omit<StakeItemProps, 'poolName' | 'actions'> & {
   unstakeChip?: ReactNode

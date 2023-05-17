@@ -7,7 +7,7 @@ import { planckToTokens } from '@talismn/util'
 import { truncateString } from '@util/helpers'
 import { useEffect } from 'react'
 
-import { ContributorWithName, moonbeamRelaychain, useSetMoonbeamRewardsAddress } from '.'
+import { type ContributorWithName, moonbeamRelaychain, useSetMoonbeamRewardsAddress } from '.'
 
 export type AccountModalProps = {
   className?: string
@@ -36,7 +36,7 @@ export const AccountModal = styled(({ className, account, selectAccount, refetch
       className={className}
       onSubmit={event => {
         event.preventDefault()
-        send()
+        void send()
       }}
     >
       <h3>{hasRewardsAddress ? 'Linked Address' : 'Link Ethereum address'}</h3>

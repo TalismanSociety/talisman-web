@@ -1,6 +1,6 @@
-import { ComponentMeta, Story } from '@storybook/react'
+import { type ComponentMeta, type Story } from '@storybook/react'
 
-import PoolSelectorItem, { PoolSelectorItemProps } from './PoolSelectorItem'
+import PoolSelectorItem, { type PoolSelectorItemProps } from './PoolSelectorItem'
 
 export default {
   title: 'Recipes/PoolSelectorItem',

@@ -5,7 +5,7 @@ import { Thread, spawn } from 'threads'
 
 import { SubstrateApiContext } from '@domains/common'
 import { useContext } from 'react'
-import { WorkerFunction } from './worker'
+import { type WorkerFunction } from './worker'
 
 export const stakersRewardState = selectorFamily({
   key: 'StakersRewardState',

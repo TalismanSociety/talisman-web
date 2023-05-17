@@ -1,6 +1,6 @@
-import { ComponentMeta, Story } from '@storybook/react'
+import { type ComponentMeta, type Story } from '@storybook/react'
 
-import ExportTxHistoryDialog, { ExportTxHistoryDialogProps } from './ExportTxHistoryDialog'
+import ExportTxHistoryDialog, { type ExportTxHistoryDialogProps } from './ExportTxHistoryDialog'
 
 export default {
   title: 'Recipes/ExportTxHistoryDialog',

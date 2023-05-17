@@ -1,8 +1,8 @@
-import { ComponentMeta, Story } from '@storybook/react'
+import { type ComponentMeta, type Story } from '@storybook/react'
 
-import PoolStakeItem, { PoolStakeItemProps } from './PoolStakeItem'
+import PoolStakeItem, { type PoolStakeItemProps } from './PoolStakeItem'
 import StakeItem from './StakeItem'
-import ValidatorStakeItem, { ValidatorStakeItemProps } from './ValidatorStakeItem'
+import ValidatorStakeItem, { type ValidatorStakeItemProps } from './ValidatorStakeItem'
 
 export default {
   title: 'Recipes/StakeItem',

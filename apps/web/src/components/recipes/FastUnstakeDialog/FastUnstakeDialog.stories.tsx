@@ -1,6 +1,6 @@
-import { ComponentMeta, Story } from '@storybook/react'
+import { type ComponentMeta, type Story } from '@storybook/react'
 
-import FastUnstakeDialog, { FastUnstakeDialogProps } from './FastUnstakeDialog'
+import FastUnstakeDialog, { type FastUnstakeDialogProps } from './FastUnstakeDialog'
 
 export default {
   title: 'Recipes/FastUnstakeDialog',

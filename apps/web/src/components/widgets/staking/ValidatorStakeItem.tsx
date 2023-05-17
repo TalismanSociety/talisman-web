@@ -1,9 +1,9 @@
 import { ValidatorStakeItem as ValidatorStakeItemComponent } from '@components/recipes/StakeItem'
-import { Account } from '@domains/accounts/recoils'
+import { type Account } from '@domains/accounts/recoils'
 import { useNativeTokenDecimalState, useNativeTokenPriceState } from '@domains/chains'
 import { useExtrinsic } from '@domains/common/hooks'
 import { useEraEtaFormatter } from '@domains/common/hooks/useEraEta'
-import { DeriveStakingAccount } from '@polkadot/api-derive/types'
+import { type DeriveStakingAccount } from '@polkadot/api-derive/types'
 import { CircularProgressIndicator } from '@talismn/ui'
 import BN from 'bn.js'
 import { useCallback, useMemo, useState } from 'react'
@@ -60,7 +60,9 @@ const ValidatorStakeItem = (props: {
           props.stake.redeemable?.isZero() === false && (
             <ValidatorStakeItemComponent.WithdrawChip
               amount={decimal.fromPlanck(props.stake.redeemable).toHuman()}
-              onClick={() => withdrawExtrinsic.signAndSend(props.stake.controllerId ?? '', props.slashingSpan)}
+              onClick={() => {
+                void withdrawExtrinsic.signAndSend(props.stake.controllerId ?? '', props.slashingSpan)
+              }}
               loading={withdrawExtrinsic.state === 'loading'}
             />
           )

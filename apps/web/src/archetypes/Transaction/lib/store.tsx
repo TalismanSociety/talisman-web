@@ -1,9 +1,8 @@
-import { useQuery } from '@apollo/client'
-import { ApolloClient, InMemoryCache, NormalizedCacheObject, createHttpLink } from '@apollo/client'
+import { useQuery, ApolloClient, InMemoryCache, type NormalizedCacheObject, createHttpLink } from '@apollo/client'
 import { useCallback, useEffect, useMemo, useReducer, useState } from 'react'
 
 import { FETCH_LIMIT, latestTxQuery, txQuery } from './consts'
-import { Transaction } from './graphql-codegen/graphql'
+import { type Transaction } from './graphql-codegen/graphql'
 
 type TransactionsStatus = 'INITIALISED' | 'PROCESSING' | 'ERROR' | 'SUCCESS'
 type TransactionMap = Record<string, Transaction>
@@ -42,16 +41,18 @@ const transactionReducer = (state: ReducerState, action: ReducerAction): Reducer
 
   // handle all actions
   switch (action.type) {
-    case 'ADD':
+    case 'ADD': {
       const txs = addTxs(state.txs, Array.isArray(action.data) ? action.data : [action.data])
       return { txs, ...sortIds(txs) }
+    }
     case 'CLEAR':
       return reducerInitState
 
-    default:
+    default: {
       // force compilation error if any action types don't have a case
-      const exhaustiveCheck: never = action
+      const exhaustiveCheck: string = action
       throw new Error(`Unhandled action type ${exhaustiveCheck}`)
+    }
   }
 }
 
@@ -134,7 +135,6 @@ export const useTransactions = (_addresses: string[], searchQuery?: string) => {
         setHasMore(false)
         setWantMore(false)
         setStatus('ERROR')
-        return
       })
 
     return () => {

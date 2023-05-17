@@ -21,14 +21,15 @@ export const ExtensionWatcher = () => {
       return setAccounts([])
     }
 
-    const unsubscribePromise = web3Enable(import.meta.env.REACT_APP_APPLICATION_NAME ?? 'Talisman').then(() =>
-      web3AccountsSubscribe(accounts =>
-        setAccounts(uniqBy(accounts, account => account.address).map(account => ({ ...account, ...account.meta })))
-      )
+    const unsubscribePromise = web3Enable(import.meta.env.REACT_APP_APPLICATION_NAME ?? 'Talisman').then(
+      async () =>
+        await web3AccountsSubscribe(accounts =>
+          setAccounts(uniqBy(accounts, account => account.address).map(account => ({ ...account, ...account.meta })))
+        )
     )
 
     return () => {
-      unsubscribePromise.then(unsubscribe => unsubscribe())
+      void unsubscribePromise.then(unsubscribe => unsubscribe())
     }
   }, [allowExtensionConnection, setAccounts])
 
@@ -36,7 +37,10 @@ export const ExtensionWatcher = () => {
   // and user has not explicitly disable wallet connection
   useEffect(
     () => {
-      if ((globalThis as InjectedWindow).injectedWeb3?.talisman !== undefined && allowExtensionConnection !== false) {
+      if (
+        (globalThis as InjectedWindow).injectedWeb3?.['talisman'] !== undefined &&
+        allowExtensionConnection !== false
+      ) {
         setAllowExtensionConnection(true)
       }
     },

@@ -1,5 +1,5 @@
 import { ReactComponent as Loader } from '@icons/loader.svg'
-import { PropsWithChildren, ReactElement } from 'react'
+import { type PropsWithChildren, type ReactElement } from 'react'
 
 export type PendorProps = {
   prefix?: React.ReactNode
@@ -17,7 +17,7 @@ export default function Pendor({
 }: PropsWithChildren<PendorProps>): ReactElement {
   // undefined not set? await children
   // require is explicitly set to false
-  if ((require === undefined && !children) || require === false) return loader || <Loader />
+  if ((require === undefined && !children) || require === false) return loader ?? <Loader />
 
   return (
     <>

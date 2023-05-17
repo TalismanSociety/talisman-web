@@ -1,8 +1,7 @@
 import { find, get } from 'lodash'
 import { useEffect, useState } from 'react'
 
-import { statusOptions as baseStatusOptions } from './_config'
-import { SupportedRelaychains } from './_config'
+import { statusOptions as baseStatusOptions, SupportedRelaychains } from './_config'
 
 export const useStatus = (props: { status?: string; message?: string | null; customOptions?: any } = {}) => {
   const { status = baseStatusOptions.INITIALIZED, message = null, customOptions = {} } = props
@@ -40,10 +39,10 @@ export const useStatus = (props: { status?: string; message?: string | null; cus
   }
 }
 
-export const useAwaitObjectValue = (object: any, key: string, cb = (value: any) => {}, timeout = 500) => {
+export const useAwaitObjectValue = (object: any, key: string, cb = (_value: any) => {}, timeout = 500) => {
   useEffect(() => {
-    let _id = setInterval(() => {
-      if (!!get(object, key)) {
+    const _id = setInterval(() => {
+      if (get(object, key)) {
         clearInterval(_id)
         cb(get(object, key))
       }
@@ -53,5 +52,5 @@ export const useAwaitObjectValue = (object: any, key: string, cb = (value: any) 
 }
 
 export const useChainByGenesis = (genesisHash: any) => {
-  return find(SupportedRelaychains, { genesisHash: genesisHash }) || { id: undefined }
+  return find(SupportedRelaychains, { genesisHash }) ?? { id: undefined }
 }

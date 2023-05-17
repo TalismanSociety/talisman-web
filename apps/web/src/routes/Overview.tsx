@@ -20,7 +20,7 @@ const AssetsOverview = () => {
     () =>
       tokens
         ?.filter(token => token.locked)
-        ?.map((token, i) => <Asset key={token?.tokenDetails?.id} token={token} balances={balances} lockedAsset />),
+        ?.map(token => <Asset key={token?.tokenDetails?.id} token={token} balances={balances} lockedAsset />),
     [balances, tokens]
   )
 
@@ -77,7 +77,7 @@ const AssetsOverview = () => {
           />
         </div>
         <AssetsList isLoading={isLoading}>
-          {tokens?.map((token, i) => (
+          {tokens?.map(token => (
             <Asset key={token?.tokenDetails?.id} token={token} balances={balances} />
           ))}
         </AssetsList>

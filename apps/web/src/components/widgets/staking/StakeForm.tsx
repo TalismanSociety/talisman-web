@@ -1,20 +1,20 @@
 import ClaimStakeDialog from '@components/recipes/ClaimStakeDialog'
 import PoolSelectorDialog from '@components/recipes/PoolSelectorDialog'
 import StakeFormComponent from '@components/recipes/StakeForm'
-import { StakeStatus } from '@components/recipes/StakeStatusIndicator'
-import { Account, injectedSubstrateAccountsState } from '@domains/accounts/recoils'
+import { type StakeStatus } from '@components/recipes/StakeStatusIndicator'
+import { type Account, injectedSubstrateAccountsState } from '@domains/accounts/recoils'
 import { ChainContext, ChainProvider, chainsState, useNativeTokenDecimalState, type Chain } from '@domains/chains'
 import { SubstrateApiContext, useSubstrateApiState } from '@domains/common'
 import { useChainState, useEraEtaFormatter, useExtrinsic, useTokenAmountFromPlanck } from '@domains/common/hooks'
 import { useInflation, usePoolAddForm, usePoolStakes } from '@domains/nominationPools/hooks'
 import { eraStakersState, useRecommendedPoolsState } from '@domains/nominationPools/recoils'
 import { createAccounts } from '@domains/nominationPools/utils'
-import { Decimal } from '@talismn/math'
+import { type Decimal } from '@talismn/math'
 import { CircularProgressIndicator, Select } from '@talismn/ui'
 import { Maybe } from '@util/monads'
 import BN from 'bn.js'
 import {
-  ReactNode,
+  type ReactNode,
   Suspense,
   memo,
   useCallback,
@@ -80,9 +80,9 @@ const ExistingPool = (props: { account: Account }) => {
         withdrawableFiatAmount={withdrawable.localizedFiatAmount}
         withdrawChip={
           <StakeFormComponent.ExistingPool.WithdrawChip
-            onClick={() =>
-              withdrawExtrinsic.signAndSend(props.account.address, props.account.address, pool?.slashingSpan ?? 0)
-            }
+            onClick={() => {
+              void withdrawExtrinsic.signAndSend(props.account.address, props.account.address, pool?.slashingSpan ?? 0)
+            }}
             loading={withdrawExtrinsic.state === 'loading'}
           />
         }
@@ -109,11 +109,11 @@ const ExistingPool = (props: { account: Account }) => {
         fiatAmount={pendingRewards.localizedFiatAmount ?? '...'}
         onRequestDismiss={() => setClaimDialogOpen(false)}
         onRequestClaim={() => {
-          claimPayoutExtrinsic.signAndSend(props.account.address)
+          void claimPayoutExtrinsic.signAndSend(props.account.address)
           setClaimDialogOpen(false)
         }}
         onRequestReStake={() => {
-          restakeExtrinsic.signAndSend(props.account.address, { Rewards: pendingRewards })
+          void restakeExtrinsic.signAndSend(props.account.address, { Rewards: pendingRewards })
           setClaimDialogOpen(false)
         }}
       />
@@ -197,8 +197,9 @@ export const AssetSelect = (props: {
       }
     }}
   >
-    {props.chains.map(x => (
+    {props.chains.map((x, index) => (
       <Select.Option
+        key={index}
         value={x.id}
         leadingIcon={
           <img alt={x.nativeToken.symbol} src={x.nativeToken.logo} css={{ width: '2.4rem', height: '2.4rem' }} />
@@ -241,7 +242,9 @@ export const ControlledStakeForm = (props: { assetSelector: ReactNode }) => {
       Maybe.of(new URLSearchParams(location.search).get('poolId')).mapOrUndefined(x => {
         try {
           return parseInt(x)
-        } catch {}
+        } catch {
+          return undefined
+        }
       }),
     [location.search]
   )
@@ -312,6 +315,7 @@ export const ControlledStakeForm = (props: { assetSelector: ReactNode }) => {
       : 'waiting'
   }, [eraStakersLoadable, poolNominatorsLoadable])
 
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const bondedPoolLoadable = useChainState('query', 'nominationPools', 'bondedPools', [selectedPoolId!], {
     enabled: selectedPoolId !== undefined,
   })
@@ -325,10 +329,11 @@ export const ControlledStakeForm = (props: { assetSelector: ReactNode }) => {
     'nominationPools',
     'metadata.multi',
     existingPool === undefined
-      ? [selectedPoolId!]
+      ? // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        [selectedPoolId!]
       : selectedPoolId === undefined
       ? [existingPool.poolId, existingPool.poolId]
-      : [selectedPoolId!, existingPool.poolId],
+      : [selectedPoolId, existingPool.poolId],
     {
       enabled: selectedPoolId !== undefined || existingPool !== undefined,
     }
@@ -396,7 +401,11 @@ export const ControlledStakeForm = (props: { assetSelector: ReactNode }) => {
                 decimalAmount?.planck !== undefined &&
                 selectedPoolId !== undefined
               ) {
-                joinPoolExtrinsic.signAndSend(selectedAccount.address, decimalAmount.planck.toString(), selectedPoolId)
+                void joinPoolExtrinsic.signAndSend(
+                  selectedAccount.address,
+                  decimalAmount.planck.toString(),
+                  selectedPoolId
+                )
               }
             }}
           />

@@ -1,5 +1,5 @@
 import { Info, TokenLogo } from '@components'
-import { Account } from '@domains/accounts/recoils'
+import { type Account } from '@domains/accounts/recoils'
 import { css } from '@emotion/react'
 import styled from '@emotion/styled'
 import { ReactComponent as _ArrowRight } from '@icons/arrow-right.svg'
@@ -7,12 +7,12 @@ import { Identicon } from '@talismn/ui'
 import { formatDecimals } from '@talismn/util'
 import { truncateAddress } from '@util/helpers'
 import startCase from 'lodash/startCase'
-import { ReactNode } from 'react'
+import { type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { ClickToCopy } from './ClickToCopy'
 import { ItemNoDetails } from './ItemNoDetails'
-import { ParsedTransaction, formatGenericAddress } from './lib'
+import { type ParsedTransaction, formatGenericAddress } from './lib'
 
 type Props = {
   parsed: ParsedTransaction | null | undefined
@@ -24,10 +24,10 @@ export const ItemDetails = ({ parsed, addresses, accounts }: Props) => {
 
   if (typeof parsed?.__typename !== 'string') return <ItemNoDetails />
 
-  const addressBook = accounts.reduce((addressBook, account) => {
+  const addressBook = accounts.reduce<Record<string, string>>((addressBook, account) => {
     if (account.name) addressBook[formatGenericAddress(account.address)] = account.name
     return addressBook
-  }, {} as Record<string, string>)
+  }, {})
 
   switch (parsed?.__typename) {
     case 'ParsedTransfer':
@@ -236,8 +236,8 @@ export const ItemDetails = ({ parsed, addresses, accounts }: Props) => {
             // title={`${formatDecimals(from.liquidityChange)} ${from.symbol}`}
             // subtitle="$xx.xx"
             title={startCase(parsed.chainId)}
-            subtitle={`${formatDecimals(from!.liquidityChange)} ${from!.symbol}`}
-            graphic={<TokenLogo token={{ symbol: from!.symbol, logo: from!.logo }} />}
+            subtitle={`${formatDecimals(from?.liquidityChange)} ${from?.symbol ?? ''}`}
+            graphic={<TokenLogo token={{ symbol: from?.symbol ?? '', logo: from?.logo ?? '' }} />}
             invert
           />
 
@@ -248,8 +248,8 @@ export const ItemDetails = ({ parsed, addresses, accounts }: Props) => {
             // title={`${formatDecimals(to.liquidityChange)} ${to.symbol}`}
             // subtitle="$xx.xx"
             title={startCase(parsed.chainId)}
-            subtitle={`${formatDecimals(to!.liquidityChange)} ${to!.symbol}`}
-            graphic={<TokenLogo token={{ symbol: to!.symbol, logo: to!.logo }} />}
+            subtitle={`${formatDecimals(to?.liquidityChange)} ${to?.symbol ?? ''}`}
+            graphic={<TokenLogo token={{ symbol: to?.symbol ?? '', logo: to?.logo ?? '' }} />}
             invert
           />
         </div>
@@ -309,7 +309,7 @@ export const ItemDetails = ({ parsed, addresses, accounts }: Props) => {
       )
     }
 
-    case 'ParsedPoolUnstake':
+    case 'ParsedPoolUnstake': {
       const tokenInfo = (
         <Info
           // TODO: Add fiat prices
@@ -347,6 +347,7 @@ export const ItemDetails = ({ parsed, addresses, accounts }: Props) => {
           {tokenInfo}
         </div>
       )
+    }
 
     case 'ParsedPoolPaidOut': {
       const tokenInfo = (
@@ -520,10 +521,11 @@ export const ItemDetails = ({ parsed, addresses, accounts }: Props) => {
       )
     }
 
-    default:
-      const exhaustiveCheck = parsed?.__typename
+    default: {
+      const exhaustiveCheck: string = parsed?.__typename
       console.error(`Unhandled transaction type ${exhaustiveCheck}`)
       return <div className="details" />
+    }
   }
 }
 

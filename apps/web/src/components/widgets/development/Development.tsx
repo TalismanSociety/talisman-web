@@ -1,6 +1,6 @@
 import React, { Suspense, useEffect, useState } from 'react'
 
-const DevMenu = React.lazy(() => import('./DevMenu'))
+const DevMenu = React.lazy(async () => await import('./DevMenu'))
 
 const Development = () => {
   const [isDevelopment, setIsDevelopment] = useState(false)

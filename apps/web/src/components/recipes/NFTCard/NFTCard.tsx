@@ -1,7 +1,7 @@
 import { NFTIcon } from '@archetypes/NFT'
 import NftDialog from '@archetypes/NFT/Modal/NftDialog'
 import styled from '@emotion/styled'
-import { NFTShort } from '@libs/@talisman-nft/types'
+import { type NFTShort } from '@libs/@talisman-nft/types'
 import { Text } from '@talismn/ui'
 import { useState } from 'react'
 

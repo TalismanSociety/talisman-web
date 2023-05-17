@@ -7,7 +7,7 @@ import { useRecoilValue } from 'recoil'
 
 import { AccountModal } from './AccountModal'
 import { AccountsModal } from './AccountsModal'
-import { ContributorWithName, moonbeamRelaychain, useMoonbeamContributors } from '.'
+import { type ContributorWithName, moonbeamRelaychain, useMoonbeamContributors } from '.'
 
 type ModalState = { type: 'allAccounts' } | { type: 'selectedAccount'; contributor: ContributorWithName }
 

@@ -1,7 +1,7 @@
 import { useTheme } from '@emotion/react'
 import { Button, Identicon, Text } from '@talismn/ui'
 import { shortenAddress } from '@util/format'
-import React, { ReactElement, ReactNode } from 'react'
+import React, { type ReactElement, type ReactNode } from 'react'
 
 import StakeList from '../StakeList'
 import ValidatorStakeSkeleton from './ValidatorStake.skeleton'
@@ -125,7 +125,7 @@ const ValidatorStake = Object.assign(
 )
 
 export type ValidatorStakeListProps = {
-  children?: ReactElement<ValidatorStakeProps> | ReactElement<ValidatorStakeProps>[]
+  children?: ReactElement<ValidatorStakeProps> | Array<ReactElement<ValidatorStakeProps>>
 }
 
 export const ValidatorStakeList = (props: ValidatorStakeListProps) => (

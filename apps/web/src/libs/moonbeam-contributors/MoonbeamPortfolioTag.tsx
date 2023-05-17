@@ -19,7 +19,7 @@ export const MoonbeamPortfolioTag = styled(({ className }: { className?: string 
   if (loading) return null
   return (
     <div
-      className={className + (hasUnlinked ? ' hasUnlinked' : '')}
+      className={(className ?? '') + (hasUnlinked ? ' hasUnlinked' : '')}
       onClick={event => {
         event.preventDefault()
         openModal(<MoonbeamContributionModal />)

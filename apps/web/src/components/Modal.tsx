@@ -2,7 +2,7 @@ import styled from '@emotion/styled'
 import { ReactComponent as IconClose } from '@icons/x.svg'
 import useKeyDown from '@util/useKeyDown'
 import { AnimatePresence } from 'framer-motion'
-import { PropsWithChildren, Suspense, createContext, useCallback, useContext, useMemo, useState } from 'react'
+import { type PropsWithChildren, Suspense, createContext, useCallback, useContext, useMemo, useState } from 'react'
 
 type OpenModalOptions = {
   closable: boolean
@@ -23,7 +23,7 @@ export function useModal(): ContextProps {
   return context
 }
 
-type ProviderProps = {}
+type ProviderProps = PropsWithChildren
 export function Provider({ children }: PropsWithChildren<ProviderProps>): JSX.Element {
   const [content, setContent] = useState<JSX.Element | null>(null)
   const [closable, setClosable] = useState(true)

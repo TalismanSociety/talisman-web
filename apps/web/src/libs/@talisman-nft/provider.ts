@@ -3,7 +3,7 @@ import { useEffect, useMemo } from 'react'
 import { atom, selector, useRecoilValue, useSetRecoilState } from 'recoil'
 
 import { useNFTData } from './hooks'
-import { NFTData } from './types'
+import { type NFTData } from './types'
 
 export const nftDataState = atom<NFTData>({
   key: 'NftData',

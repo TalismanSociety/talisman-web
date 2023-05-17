@@ -1,9 +1,10 @@
-import crowdloanDataState, { CrowdloanDetail } from '@libs/@talisman-crowdloans/provider'
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+import crowdloanDataState, { type CrowdloanDetail } from '@libs/@talisman-crowdloans/provider'
 import type { AccountId } from '@polkadot/types/interfaces'
 import { stringToU8a, u8aEq } from '@polkadot/util'
 import { planckToTokens } from '@talismn/util'
 import { find, get } from 'lodash'
-import { PropsWithChildren, useContext as _useContext, createContext, useEffect, useMemo, useState } from 'react'
+import { type PropsWithChildren, useContext as _useContext, createContext, useEffect, useMemo, useState } from 'react'
 import { useRecoilValue, useRecoilValueLoadable, waitForAll } from 'recoil'
 
 import { substrateApiState } from '@domains/common'
@@ -70,7 +71,7 @@ export const useLatestCrowdloans = (): { crowdloans: Crowdloan[]; hydrated: bool
   const { crowdloans, hydrated } = useCrowdloans()
 
   const crowdloansFiltered = useMemo(() => {
-    const foundParachainIds: { [key: string]: boolean } = {}
+    const foundParachainIds: Record<string, boolean> = {}
     return crowdloans.filter(crowdloan => {
       if (foundParachainIds[crowdloan.parachain.paraId]) return false
       foundParachainIds[crowdloan.parachain.paraId] = true
@@ -165,13 +166,13 @@ export const Provider = ({ children }: PropsWithChildren) => {
             details: find(crowdloanData, {
               relayId: chain.id.toString(),
               paraId: fundId.args[0].toNumber().toString(),
-            })!,
+            }),
             uiStatus: isWinner ? 'winner' : isCapped ? 'capped' : isEnded ? 'ended' : 'active',
           } as Crowdloan
         })
       })
 
-      Promise.all(promises).then(result => {
+      void Promise.all(promises).then(result => {
         setCrowdloans(result.flat())
         setHydrated(true)
       })

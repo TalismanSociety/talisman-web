@@ -1,6 +1,6 @@
 import { useCrowdloanById } from '@libs/talisman'
 import { Maybe } from '@util/monads'
-import { ReactNode, useMemo } from 'react'
+import { type ReactNode, useMemo } from 'react'
 
 export type BonusProps = {
   id: string
@@ -18,9 +18,10 @@ const Bonus = ({ id, short, full, info, prefix }: BonusProps) => {
     if (short) return bonus?.short
     if (full) return Maybe.ofFalsy(bonus?.full).mapOrUndefined(x => <span>{x}</span>)
     if (info) return bonus?.info
+    return undefined
   }, [bonus, full, info, short])
 
-  if (!Boolean(content) || type === undefined) return null
+  if (!content || type === undefined) return null
 
   return (
     <span

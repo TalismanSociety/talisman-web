@@ -1,6 +1,6 @@
-import { ComponentMeta, Story } from '@storybook/react'
+import { type ComponentMeta, type Story } from '@storybook/react'
 
-import Cryptoticon, { CryptoticonProps } from './Cryptoticon'
+import Cryptoticon, { type CryptoticonProps } from './Cryptoticon'
 
 export default {
   title: 'Recipes/Cryptoticon',
@@ -18,7 +18,7 @@ const decorators = [
   ),
 ]
 
-export const Default: Story<CryptoticonProps> = args => <Cryptoticon.Token id="polkadot-substrate-native-dot" />
+export const Default: Story<CryptoticonProps> = () => <Cryptoticon.Token id="polkadot-substrate-native-dot" />
 
 Default.decorators = decorators
 

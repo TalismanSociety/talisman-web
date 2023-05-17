@@ -1,6 +1,6 @@
-import { ComponentMeta, Story } from '@storybook/react'
+import { type ComponentMeta, type Story } from '@storybook/react'
 
-import TeleportForm, { TeleportFormProps } from './TeleportForm'
+import TeleportForm, { type TeleportFormProps } from './TeleportForm'
 import { Select } from '@talismn/ui'
 
 export default {

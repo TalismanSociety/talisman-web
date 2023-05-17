@@ -1,10 +1,10 @@
 import { useTheme } from '@emotion/react'
 import Color from 'colorjs.io'
 import { AnimatePresence, LayoutGroup, motion } from 'framer-motion'
-import { ReactNode, useId, useState } from 'react'
+import { type ReactNode, useId, useState } from 'react'
 
 import { ArrowDown, Repeat } from '@talismn/icons'
-import { Button, ButtonProps, Select, Text, TextInput } from '@talismn/ui'
+import { Button, type ButtonProps, Select, Text, TextInput } from '@talismn/ui'
 import Cryptoticon from '../Cryptoticon'
 import TeleportFormSkeleton from './TeleportForm.skeleton'
 

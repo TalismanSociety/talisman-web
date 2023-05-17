@@ -98,11 +98,11 @@ export const useFilter = () => {
     if (!hydrated) return
 
     // filter by status
-    const byStatus = find(statusOptions, { key: statusFilter })?.cb(items) || []
+    const byStatus = find(statusOptions, { key: statusFilter })?.cb(items) ?? []
 
     // filter by network
     const networkFilterCb = find(networkOptions, { key: networkFilter })?.cb
-    const byNetwork = !!networkFilterCb ? networkFilterCb(byStatus) : byStatus
+    const byNetwork = networkFilterCb ? networkFilterCb(byStatus) : byStatus
 
     // searching
     const bySearch =
@@ -112,7 +112,7 @@ export const useFilter = () => {
 
     // ordering
     const orderCallback = find(orderOptions, { key: orderFilter })?.cb
-    const byOrder = !!orderCallback ? orderCallback(bySearch) : bySearch
+    const byOrder = orderCallback ? orderCallback(bySearch) : bySearch
 
     setFilteredItems(byOrder)
     setLoading(false)

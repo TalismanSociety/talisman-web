@@ -2,7 +2,7 @@ import '@google/model-viewer'
 
 import PlaceholderPreview from '@archetypes/NFT/PlaceholderPreview'
 import { getNFTType } from '@libs/@talisman-nft'
-import { NFTShort } from '@libs/@talisman-nft/types'
+import { type NFTShort } from '@libs/@talisman-nft/types'
 import { Box, File, Image, Unknown, Video, Volume2 } from '@talismn/icons'
 import { CircularProgressIndicator } from '@talismn/ui'
 import { useEffect, useMemo, useState } from 'react'
@@ -21,7 +21,7 @@ const NFTPreview = ({ nft, isFull = false, loading, isBlank = false }: NFTPrevie
   useEffect(() => {
     if (!fetchedType && nft?.mediaUri !== undefined) {
       setIsLoading(true)
-      getNFTType(nft?.mediaUri).then(type => {
+      void getNFTType(nft?.mediaUri).then(type => {
         setFetchedType(type)
         setIsLoading(false)
       })
@@ -57,7 +57,7 @@ const NFTPreview = ({ nft, isFull = false, loading, isBlank = false }: NFTPrevie
         <video
           src={nft?.thumb ?? `${nft?.mediaUri}?stream=true`}
           onMouseOver={event => {
-            !isFull && event.currentTarget.play()
+            void (!isFull && event.currentTarget.play())
           }}
           onMouseOut={event => {
             if (!isFull) {
@@ -107,7 +107,7 @@ const NFTPreview = ({ nft, isFull = false, loading, isBlank = false }: NFTPrevie
       ) : (
         <PlaceholderPreview icon={<Volume2 />} text={'Audio'} />
       )
-    case 'model':
+    case 'model': {
       if (!nft?.mediaUri) return <PlaceholderPreview icon={<Box />} text={'Model'} />
       const modelProps = {
         'src': nft?.mediaUri,
@@ -120,6 +120,7 @@ const NFTPreview = ({ nft, isFull = false, loading, isBlank = false }: NFTPrevie
         ...(isFull ? { 'camera-controls': 'true' } : {}),
       }
       return <model-viewer {...modelProps} />
+    }
     case 'loading':
       return (
         <div

@@ -18,15 +18,14 @@ const useFetchAssets = (address: string | undefined) => {
     return isEmpty(chains) || isEmpty(evmNetworks) || isEmpty(tokens) || isNil(balances)
   }, [chains, evmNetworks, tokens, balances])
 
-  const fiatTotal =
-    address !== undefined ? balances?.find({ address: address }).sum.fiat('usd').total ?? 0 : assetsOverallValue
+  const fiatTotal = address !== undefined ? balances?.find({ address }).sum.fiat('usd').total ?? 0 : assetsOverallValue
 
   const lockedTotal =
     address !== undefined
-      ? balances?.find({ address: address }).sum.fiat('usd').locked ?? 0
+      ? balances?.find({ address }).sum.fiat('usd').locked ?? 0
       : balances?.sum.fiat('usd').locked ?? 0
 
-  const value = balances?.find({ address: address })?.sum?.fiat('usd').transferable
+  const value = balances?.find({ address })?.sum?.fiat('usd').transferable
 
   const assetBalances = useMemo(
     () =>
@@ -52,8 +51,8 @@ const useFetchAssets = (address: string | undefined) => {
         const aChain = a.chain?.id ? chains[a.chain.id] : a.evmNetwork?.id ? evmNetworks[a.evmNetwork.id] : null
         const bChain = b.chain?.id ? chains[b.chain.id] : b.evmNetwork?.id ? evmNetworks[b.evmNetwork.id] : null
 
-        const aCmp = aChain?.name?.toLowerCase() || a.chain?.id || a.evmNetwork?.id
-        const bCmp = bChain?.name?.toLowerCase() || b.chain?.id || b.evmNetwork?.id
+        const aCmp = aChain?.name?.toLowerCase() ?? a.chain?.id ?? a.evmNetwork?.id
+        const bCmp = bChain?.name?.toLowerCase() ?? b.chain?.id ?? b.evmNetwork?.id
 
         if (aCmp === undefined && bCmp === undefined) return 0
         if (aCmp === undefined) return 1
@@ -92,11 +91,9 @@ const useAssets = (customAddress?: string) => {
       value: undefined,
     }
 
-  const tokens = assetBalances?.map((token, index) => {
+  const tokens = assetBalances?.map(token => {
     const tokenBalances =
-      address !== undefined
-        ? balances?.find([{ address: address, tokenId: token.id }])
-        : balances?.find({ tokenId: token.id })
+      address !== undefined ? balances?.find([{ address, tokenId: token.id }]) : balances?.find({ tokenId: token.id })
     if (!tokenBalances) return undefined
 
     const totalPlanckAmount = tokenBalances.sorted.reduce((sum, balance) => sum + balance.total.planck, 0n)
@@ -110,7 +107,7 @@ const useAssets = (customAddress?: string) => {
 
     const fiatAmount =
       address !== undefined
-        ? balances?.find([{ address: address, tokenId: token.id }])?.sum.fiat('usd').transferable ?? 0
+        ? balances?.find([{ address, tokenId: token.id }])?.sum.fiat('usd').transferable ?? 0
         : address === undefined
         ? balances?.find({ tokenId: token.id })?.sum.fiat('usd').transferable ?? 0
         : 0
@@ -191,7 +188,7 @@ const useAssets = (customAddress?: string) => {
     // if there is no substrate native token, then make the first token in the group the substrate native token
     // and add the other tokens to the ormlTokens array
 
-    const ormlTokens = group && group.filter(token => token.tokenDetails.id !== group[0]?.tokenDetails.id)
+    const ormlTokens = group?.filter(token => token.tokenDetails.id !== group[0]?.tokenDetails.id)
 
     if (group[0]) {
       return {

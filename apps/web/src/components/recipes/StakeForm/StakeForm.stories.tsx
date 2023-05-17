@@ -1,7 +1,7 @@
-import { ComponentMeta, Story } from '@storybook/react'
+import { type ComponentMeta, type Story } from '@storybook/react'
 import { Select } from '@talismn/ui'
 
-import StakeForm, { StakeFormProps } from './StakeForm'
+import StakeForm, { type StakeFormProps } from './StakeForm'
 
 export default {
   title: 'Recipes/StakeForm',
@@ -11,6 +11,7 @@ export default {
   },
 } as ComponentMeta<typeof StakeForm>
 
+// eslint-disable-next-line react/prop-types
 export const Default: Story<StakeFormProps & { showExistingPool: boolean }> = ({ showExistingPool, ...args }) => (
   <div css={{ width: '40rem' }}>
     <StakeForm {...args} existingPool={showExistingPool ? args.existingPool : undefined} />

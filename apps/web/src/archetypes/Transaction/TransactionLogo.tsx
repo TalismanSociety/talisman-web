@@ -1,7 +1,7 @@
 import { css } from '@emotion/react'
 import * as Icon from '@talismn/icons'
 
-import { ParsedTransaction, formatGenericAddress } from './lib'
+import { type ParsedTransaction, formatGenericAddress } from './lib'
 
 // exported tx logo component
 
@@ -12,7 +12,7 @@ type Props = {
 }
 export const TransactionLogo = ({ className, parsed, addresses }: Props) => {
   switch (parsed?.__typename) {
-    case 'ParsedTransfer':
+    case 'ParsedTransfer': {
       const genericAddresses = addresses.map(formatGenericAddress)
       const from = formatGenericAddress(parsed.from)
       const to = formatGenericAddress(parsed.to)
@@ -24,6 +24,7 @@ export const TransactionLogo = ({ className, parsed, addresses }: Props) => {
       })()
 
       return <TransactionIconLogo className={className} logo={type} error={!parsed.success} />
+    }
 
     case 'ParsedCrowdloanContribute':
       return <TransactionIconLogo className={className} logo="Contribute" error={!parsed.success} />

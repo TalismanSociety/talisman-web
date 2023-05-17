@@ -13,11 +13,11 @@ export type CrowdloanDetail = {
   paraId: string
   subtitle: string
   info: string
-  links: { [key: string]: string }
-  customRewards?: {
+  links: Record<string, string>
+  customRewards?: Array<{
     title: string
     value: string
-  }[]
+  }>
   rewards: {
     tokens?: string
     info?: string
@@ -31,7 +31,7 @@ export type CrowdloanDetail = {
 
 const crowdloanDataState = selector<CrowdloanDetail[]>({
   key: 'CrowdloanData',
-  get: async ({ get }) => {
+  get: async () => {
     try {
       const response = await fetch(`https://api.baserow.io/api/database/rows/table/146542/?user_field_names=true`, {
         method: 'GET',
@@ -43,7 +43,7 @@ const crowdloanDataState = selector<CrowdloanDetail[]>({
       if (!Array.isArray(data?.results)) throw new Error('Incorrectly formatted crowdloans baserow result')
 
       const crowdloans: CrowdloanDetail[] = data.results.map((crowdloan: any) => {
-        const links: { [key: string]: string } = Object.keys(crowdloan).reduce(
+        const links: Record<string, string> = Object.keys(crowdloan).reduce(
           (acc: Record<string, string>, key: string) => {
             if (key.startsWith('links.')) {
               const value = crowdloan[key]

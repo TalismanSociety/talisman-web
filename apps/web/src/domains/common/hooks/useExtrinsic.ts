@@ -1,7 +1,7 @@
-import { ApiPromise } from '@polkadot/api'
-import { AddressOrPair } from '@polkadot/api/types'
+import { type ApiPromise } from '@polkadot/api'
+import { type AddressOrPair } from '@polkadot/api/types'
 import { web3FromAddress } from '@polkadot/extension-dapp'
-import { ISubmittableResult } from '@polkadot/types/types'
+import { type ISubmittableResult } from '@polkadot/types/types'
 import { useCallback, useContext, useState } from 'react'
 import { useRecoilCallback } from 'recoil'
 
@@ -43,11 +43,12 @@ export const useExtrinsic = <
         const promiseFunc = async () => {
           const [api, extension] = await Promise.all([
             snapshot.getPromise(substrateApiState(apiEndpoint)),
+            // eslint-disable-next-line @typescript-eslint/no-base-to-string
             web3FromAddress(account.toString()),
           ])
 
-          let resolve = (value: ISubmittableResult) => {}
-          let reject = (value: unknown) => {}
+          let resolve = (_value: ISubmittableResult) => {}
+          let reject = (_value: unknown) => {}
 
           const deferred = new Promise<ISubmittableResult>((_resolve, _reject) => {
             resolve = _resolve
@@ -78,7 +79,7 @@ export const useExtrinsic = <
             reject(error)
           }
 
-          return deferred
+          return await deferred
         }
 
         const promise = promiseFunc()
@@ -96,6 +97,7 @@ export const useExtrinsic = <
           return result
         } catch (error) {
           setLoadable({ state: 'hasError', contents: error })
+          return undefined
         }
       },
     [apiEndpoint, chain, module, section]

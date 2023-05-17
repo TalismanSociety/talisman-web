@@ -53,8 +53,11 @@ const Stakes = () => {
           [`[class~="${skeletonId}"]:first-of-type`]: { display: 'revert' },
         }}
       >
-        {chains.map(chain => (
-          <Suspense fallback={<StakeItem.Skeleton className={skeletonId} css={{ order: 1, display: 'none' }} />}>
+        {chains.map((chain, index) => (
+          <Suspense
+            key={index}
+            fallback={<StakeItem.Skeleton className={skeletonId} css={{ order: 1, display: 'none' }} />}
+          >
             <ChainProvider value={chain}>
               <PoolStakes />
               <ValidatorStakes />

@@ -3,7 +3,7 @@
 import { accountsState, injectedAccountsState, selectedAccountsState } from '@domains/accounts/recoils'
 import { Balances } from '@talismn/balances'
 import { useBalances as _useBalances, useAllAddresses, useChaindata, useTokens } from '@talismn/balances-react'
-import { ChaindataProvider, TokenList } from '@talismn/chaindata-provider'
+import { type ChaindataProvider, type TokenList } from '@talismn/chaindata-provider'
 import { groupBy, isNil } from 'lodash'
 import { useEffect, useMemo } from 'react'
 import { atom, selector, useRecoilCallback, useRecoilValue, useSetRecoilState } from 'recoil'

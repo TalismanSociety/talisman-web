@@ -1,7 +1,7 @@
-export const truncateAddress = (addr, start = 6, end = 4) =>
+export const truncateAddress = (addr: string | null | undefined, start = 6, end = 4) =>
   addr ? `${addr.substring(0, start)}...${addr.substring(addr.length - end)}` : null
 export const truncateString = (str = '', start = 10, end = 0) =>
-  str && str.length
+  str?.length
     ? str.length <= start + end
       ? str
       : `${str.substring(0, start)}...` + (end > 0 ? str.substring(str.length - end) : '')
@@ -25,7 +25,7 @@ export const unitPrefixes = [
   { multiplier: 1e21, symbol: 'Z' },
   { multiplier: 1e24, symbol: 'Y' },
 ]
-export const shortNumber = (num, decimals = 2) => {
+export const shortNumber = (num: number, decimals = 2) => {
   const prefix = unitPrefixes
     .slice()
     .reverse()
@@ -35,7 +35,14 @@ export const shortNumber = (num, decimals = 2) => {
 
   return (num / prefix.multiplier).toFixed(decimals).replace(/\.0+$|(\.[0-9]*[1-9])0+$/, '$1') + prefix.symbol
 }
-export const shortCurrency = (val, props) => {
+
+type FormatProperties = {
+  locale?: string
+  currency?: string
+  maximumFractionDigits?: number
+}
+
+export const shortCurrency = (val: number, props?: FormatProperties) => {
   const prefix = unitPrefixes
     .slice()
     .reverse()
@@ -51,20 +58,25 @@ export const shortCurrency = (val, props) => {
 
   return parts.map(({ value }) => value).join('')
 }
-export const formatCurrency = (val, props) =>
+export const formatCurrency = (val: number, props?: FormatProperties) =>
   formatCurrencyToParts(val, props)
     .map(({ value }) => value)
     .join('')
-export const formatCurrencyToParts = (val, props) =>
-  new Intl.NumberFormat(props?.locale || 'en-US', {
+export const formatCurrencyToParts = (val: number, props?: FormatProperties) =>
+  new Intl.NumberFormat(props?.locale ?? 'en-US', {
     style: 'currency',
-    currency: props?.currency || 'USD',
+    currency: props?.currency ?? 'USD',
     currencyDisplay: 'symbol',
   }).formatToParts(val || 0)
-export const formatCommas = (val, props) =>
-  new Intl.NumberFormat(props?.locale || 'en-US', {
-    maximumFractionDigits: props?.maximumFractionDigits || 4,
+export const formatCommas = (val: number, props?: FormatProperties) =>
+  new Intl.NumberFormat(props?.locale ?? 'en-US', {
+    maximumFractionDigits: props?.maximumFractionDigits ?? 4,
   }).format(val)
 export const isMobileBrowser = () =>
   // Method taken from https://developer.mozilla.org/en-US/docs/Web/HTTP/Browser_detection_using_the_user_agent#mobile_tablet_or_desktop
-  (navigator.userAgent || navigator.vendor || window.opera).includes('Mobi')
+  (
+    navigator.userAgent ||
+    navigator.vendor ||
+    // @ts-expect-error
+    window.opera
+  ).includes('Mobi')

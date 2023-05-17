@@ -1,6 +1,6 @@
-import { EVMChain } from '@libs/@talisman-nft/types'
+import { type EVMChain } from '@libs/@talisman-nft/types'
 
-export const EVMChains: { [key: string]: EVMChain } = {
+export const EVMChains: Record<string, EVMChain> = {
   moonriver: {
     contracts: {
       damnedPiratesSociety: {

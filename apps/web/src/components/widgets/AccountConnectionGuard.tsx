@@ -1,10 +1,10 @@
 import Welcome from '@components/recipes/Welcome'
 import { useAddReadonlyAccountForm, useSetReadonlyAccounts } from '@domains/accounts/hooks'
-import { ReadonlyAccount, readOnlyAccountsState } from '@domains/accounts/recoils'
+import { type ReadonlyAccount, readOnlyAccountsState } from '@domains/accounts/recoils'
 import { useIsWeb3Injected } from '@domains/extension/hooks'
 import { allowExtensionConnectionState } from '@domains/extension/recoils'
 import { shortenAddress } from '@util/format'
-import { PropsWithChildren, useCallback } from 'react'
+import { type PropsWithChildren, useCallback } from 'react'
 import { useRecoilValue, useSetRecoilState } from 'recoil'
 
 export type AccountConnectionGuardProps = PropsWithChildren
@@ -58,8 +58,9 @@ const AccountConnectionGuard = (props: AccountConnectionGuardProps) => {
         addressInputConfirmButton={
           <Welcome.AddressInputConfirmButton disabled={confirmState === 'disabled'} onClick={submit} />
         }
-        popularAccounts={POPULAR_ACCOUNTS.map(x => (
+        popularAccounts={POPULAR_ACCOUNTS.map((x, index) => (
           <Welcome.PopularAccount
+            key={index}
             name={x.name ?? shortenAddress(x.address)}
             address={x.address}
             description={x.description}

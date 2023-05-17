@@ -1,9 +1,19 @@
 import { useTheme } from '@emotion/react'
 import { ChevronRight, Clock, Info } from '@talismn/icons'
-import { Button, ButtonProps, Chip, ChipProps, DescriptionList, Hr, Text, TextInput, Tooltip } from '@talismn/ui'
+import {
+  Button,
+  type ButtonProps,
+  Chip,
+  type ChipProps,
+  DescriptionList,
+  Hr,
+  Text,
+  TextInput,
+  Tooltip,
+} from '@talismn/ui'
 import { LayoutGroup, motion } from 'framer-motion'
-import { ReactNode, createContext, useContext, useId, useMemo, useState } from 'react'
-import { StakeStatus, StakeStatusIndicator } from '../StakeStatusIndicator'
+import { type ReactNode, createContext, useContext, useId, useMemo, useState } from 'react'
+import { type StakeStatus, StakeStatusIndicator } from '../StakeStatusIndicator'
 import Color from 'colorjs.io'
 import StakeFormSkeleton from './StakeForm.skeleton'
 import { isNilOrWhitespace } from '@util/nil'

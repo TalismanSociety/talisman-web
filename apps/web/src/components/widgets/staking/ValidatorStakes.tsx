@@ -35,8 +35,9 @@ const ValidatorStakes = () => {
 
   return (
     <>
-      {stakesToDisplay.map(({ stake, account, reward, slashingSpan }) => (
-        <ValidatorStakeItem account={account!} stake={stake} reward={reward} slashingSpan={slashingSpan} />
+      {stakesToDisplay.map(({ stake, account, reward, slashingSpan }, index) => (
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        <ValidatorStakeItem key={index} account={account!} stake={stake} reward={reward} slashingSpan={slashingSpan} />
       ))}
     </>
   )

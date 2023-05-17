@@ -1,5 +1,5 @@
 import { useTheme } from '@emotion/react'
-import { Skeleton, SkeletonProps } from '@talismn/ui'
+import { Skeleton, type SkeletonProps } from '@talismn/ui'
 
 // TODO: copy of `StakeForm` skeleton
 // implement better skeleton once we have time

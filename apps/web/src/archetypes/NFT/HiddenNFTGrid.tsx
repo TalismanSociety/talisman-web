@@ -2,7 +2,7 @@ import { NFTCard } from '@components/recipes/NFTCard'
 import styled from '@emotion/styled'
 import { HiddenDetails } from '@talismn/ui'
 import { device } from '@util/breakpoints'
-import { ReactNode } from 'react'
+import { type ReactNode } from 'react'
 
 const ListGrid = styled.div`
   display: grid;

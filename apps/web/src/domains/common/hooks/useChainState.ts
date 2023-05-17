@@ -1,4 +1,4 @@
-import { ApiPromise } from '@polkadot/api'
+import { type ApiPromise } from '@polkadot/api'
 import type {
   GenericStorageEntryFunction,
   PromiseResult,
@@ -6,8 +6,8 @@ import type {
   StorageEntryPromiseOverloads,
 } from '@polkadot/api/types'
 import { useContext } from 'react'
-import { Loadable, RecoilLoadable, constSelector, useRecoilValueLoadable } from 'recoil'
-import { Observable } from 'rxjs'
+import { type Loadable, RecoilLoadable, constSelector, useRecoilValueLoadable } from 'recoil'
+import { type Observable } from 'rxjs'
 
 import { chainQueryState, chainDeriveState } from '../recoils'
 import { SubstrateApiContext } from '..'
@@ -22,18 +22,17 @@ export const useChainState = <
   TAugmentedSection extends TType extends 'query' ? TSection | `${TSection}.multi` : TSection,
   TExtractedSection extends TAugmentedSection extends `${infer Section}.multi` ? Section : TAugmentedSection,
   TMethod extends Diverge<
-    // @ts-ignore
+    // @ts-expect-error
     ApiPromise[TType][TModule][TExtractedSection],
     StorageEntryPromiseOverloads & QueryableStorageEntry<any, any> & PromiseResult<GenericStorageEntryFunction>
   >
 >(
   typeName: TType,
   moduleName: TModule,
-  // @ts-ignore
+
   sectionName: TAugmentedSection,
   params: TMethod extends (...args: any) => any
-    ? // @ts-ignore
-      TAugmentedSection extends TSection
+    ? TAugmentedSection extends TSection
       ? Leading<Parameters<TMethod>>
       : Leading<Parameters<TMethod>> extends [infer Head]
       ? Head[]

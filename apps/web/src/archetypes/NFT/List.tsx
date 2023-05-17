@@ -5,7 +5,7 @@ import { copyAddressToClipboard } from '@domains/common/utils'
 import { css } from '@emotion/react'
 import styled from '@emotion/styled'
 import { nftDataState } from '@libs/@talisman-nft/provider'
-import { NFTShort } from '@libs/@talisman-nft/types'
+import { type NFTShort } from '@libs/@talisman-nft/types'
 import { ExternalLink } from '@talismn/icons'
 import { Identicon, Text } from '@talismn/ui'
 import { device } from '@util/breakpoints'
@@ -23,7 +23,9 @@ type ListItemProps = {
 const ListItems = ({ nfts, isFetching, count }: ListItemProps) => {
   return (
     <>
-      {nfts && nfts.map((nft: any) => <NFTCard key={nft.id} nft={nft} />)}
+      {nfts?.map((nft: any) => (
+        <NFTCard key={nft.id} nft={nft} />
+      ))}
       {/* based on the count, compare the number of nfts, and whether is fetching, then show loading cards, based on the difference */}
       {count > nfts.length && isFetching && (
         <>
@@ -51,9 +53,7 @@ export const ListGrid = styled.div`
   }
 `
 
-type AccType = {
-  [key: string]: NFTShort[]
-}
+type AccType = Record<string, NFTShort[]>
 
 const List = () => {
   const { items, isFetching, count } = useRecoilValue(nftDataState)
@@ -115,11 +115,11 @@ const List = () => {
     )
 
   // filter items by address and order based on accounts
-  const nfts = accounts.reduce((acc: any, account: any) => {
+  const nfts = accounts.reduce<AccType>((acc: any, account: any) => {
     const nfts = items.filter((nft: any) => nft?.address === account.address)
     if (nfts.length) acc[account.address] = nfts
     return acc
-  }, {} as AccType)
+  }, {})
 
   // turn nfts into array of objects and put the account name per address
   const nftsArray = Object.keys(nfts).map((address: string) => {
@@ -174,7 +174,7 @@ const List = () => {
               <CopyButton
                 text={address}
                 onCopied={(text: string) => {
-                  copyAddressToClipboard(text)
+                  void copyAddressToClipboard(text)
                 }}
                 onFailed={(text: string) => {
                   console.log(`>>> failed`, text)
@@ -182,7 +182,7 @@ const List = () => {
               />
             </div>
             <ListGrid>
-              <ListItems nfts={nfts} isFetching={isFetching} count={count[address]!!} />
+              <ListItems nfts={nfts} isFetching={isFetching} count={count[address] ?? 0} />
             </ListGrid>
           </>
         ))}
@@ -191,7 +191,7 @@ const List = () => {
 
   return (
     <ListGrid>
-      <ListItems nfts={nfts[address] ?? []} isFetching={isFetching} count={count[address]!!} />
+      <ListItems nfts={nfts[address] ?? []} isFetching={isFetching} count={count[address] ?? 0} />
     </ListGrid>
   )
 }

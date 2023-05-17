@@ -12,7 +12,7 @@ import { useTheme } from '@emotion/react'
 import { Copy, Download, Eye, EyePlus, Link, PlusCircle, Power, TalismanHand, Trash2, Users } from '@talismn/icons'
 import { CircularProgressIndicator, IconButton, Identicon, ListItem, Menu, Text } from '@talismn/ui'
 import { shortenAddress } from '@util/format'
-import { ReactNode, useMemo } from 'react'
+import { type ReactNode, useMemo } from 'react'
 import { useRecoilState, useRecoilValue, useRecoilValueLoadable, useSetRecoilState } from 'recoil'
 
 import AddReadOnlyAccountDialog from './AddReadOnlyAccountDialog'
@@ -40,7 +40,9 @@ const AccountsManagementIconButton = (props: { size?: number | string }) => {
   }
 
   if (selectedAccounts.length === 1) {
-    return <Identicon value={selectedAccounts[0]!.address} size={props.size ?? '2.4rem'} css={{ cursor: 'pointer' }} />
+    return (
+      <Identicon value={selectedAccounts[0]?.address ?? ''} size={props.size ?? '2.4rem'} css={{ cursor: 'pointer' }} />
+    )
   }
 
   return (
@@ -165,8 +167,8 @@ const AccountsManagementMenu = (props: { button: ReactNode }) => {
               <TalismanHand size="1em" /> My accounts
             </Text.Body>
             {leadingMenuItem}
-            {injectedAccounts.map(x => (
-              <Menu.Item onClick={() => setSelectedAccountAddresses(() => [x.address])}>
+            {injectedAccounts.map((x, index) => (
+              <Menu.Item key={index} onClick={() => setSelectedAccountAddresses(() => [x.address])}>
                 <ListItem
                   headlineText={x.name ?? shortenAddress(x.address)}
                   overlineText={
@@ -183,7 +185,7 @@ const AccountsManagementMenu = (props: { button: ReactNode }) => {
                       containerColor={theme.color.foreground}
                       onClick={(event: any) => {
                         event.stopPropagation()
-                        copyAddressToClipboard(x.address)
+                        void copyAddressToClipboard(x.address)
                       }}
                       css={{ cursor: 'copy' }}
                     >
@@ -202,8 +204,8 @@ const AccountsManagementMenu = (props: { button: ReactNode }) => {
             >
               <Eye size="1em" /> Watched accounts
             </Text.Body>
-            {readonlyAccounts.map(x => (
-              <RemoveWatchedAccountConfirmationDialog account={x}>
+            {readonlyAccounts.map((x, index) => (
+              <RemoveWatchedAccountConfirmationDialog key={index} account={x}>
                 {({ onToggleOpen: toggleRemoveDialog }) => (
                   <Menu.Item onClick={() => setSelectedAccountAddresses(() => [x.address])}>
                     <ListItem
@@ -223,7 +225,7 @@ const AccountsManagementMenu = (props: { button: ReactNode }) => {
                             containerColor={theme.color.foreground}
                             onClick={(event: any) => {
                               event.stopPropagation()
-                              copyAddressToClipboard(x.address)
+                              void copyAddressToClipboard(x.address)
                             }}
                             css={{ cursor: 'copy' }}
                           >

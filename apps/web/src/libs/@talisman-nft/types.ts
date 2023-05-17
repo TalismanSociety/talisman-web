@@ -47,27 +47,22 @@ export type EVMChain = {
   tokenCurrency: string
   rpc: string[] // Multiple RPC's incase one doesn't work.
   platformUri: string
-  other: {
-    [key: string]: any
-  }
+  other: Record<string, any>
 }
 
-export type EVMChains = {
-  [key: string]: EVMChain
-}
+export type EVMChains = Record<string, EVMChain>
 
-export type Contract = {
-  [key: string]: {
+export type Contract = Record<
+  string,
+  {
     address: string
     name: string
     symbol: string
   }
-}
+>
 
 export type NFTData = {
-  count: {
-    [key: string]: number
-  }
+  count: Record<string, number>
   isFetching: boolean
   items: NFTShort[]
 }

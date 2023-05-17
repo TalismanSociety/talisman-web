@@ -1,4 +1,4 @@
-import { Account } from '@domains/accounts/recoils'
+import { type Account } from '@domains/accounts/recoils'
 import { useIsWeb3Injected } from '@domains/extension/hooks'
 import { allowExtensionConnectionState } from '@domains/extension/recoils'
 import { Download } from '@talismn/icons'
@@ -70,6 +70,7 @@ export const useAccountSelector = (
 
   return [
     account,
+    // eslint-disable-next-line react/jsx-key
     <AccountSelector
       {...accountSelectorProps}
       accounts={accounts}

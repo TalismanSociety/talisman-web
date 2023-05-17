@@ -1,4 +1,4 @@
-import { StatusIndicator, StatusIndicatorProps } from '@talismn/ui'
+import { StatusIndicator, type StatusIndicatorProps } from '@talismn/ui'
 import { useMemo } from 'react'
 
 export type StakeStatus = 'earning_rewards' | 'waiting' | 'not_nominating' | 'not_earning_rewards' | undefined

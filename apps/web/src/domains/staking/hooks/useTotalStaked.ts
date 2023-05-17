@@ -1,4 +1,4 @@
-import { Account, selectedSubstrateAccountsState } from '@domains/accounts/recoils'
+import { type Account, selectedSubstrateAccountsState } from '@domains/accounts/recoils'
 import { useNativeTokenPriceState } from '@domains/chains/recoils'
 import { useChainState, useTokenAmountFromPlanck } from '@domains/common/hooks'
 import BN from 'bn.js'

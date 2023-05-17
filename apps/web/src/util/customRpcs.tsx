@@ -1,4 +1,4 @@
-const customRpcs: { [key: string]: string[] } = {
+const customRpcs: Record<string, string[]> = {
   '0': [], // ['wss://polkadot.api.onfinality.io/ws?apikey=e1b2f3ea-f003-42f5-adf6-d2e6aa3ecfe4'], // Polkadot Relay
   '0-1000': [], // ['wss://statemine.api.onfinality.io/ws?apikey=e1b2f3ea-f003-42f5-adf6-d2e6aa3ecfe4'], // Statemint
   '0-2000': [], // ['wss://acal.api.onfinality.io/ws?apikey=e1b2f3ea-f003-42f5-adf6-d2e6aa3ecfe4'], // Acala

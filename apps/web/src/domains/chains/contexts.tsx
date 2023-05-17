@@ -1,8 +1,8 @@
-import { PropsWithChildren, createContext } from 'react'
-import { Chain, chains } from './config'
+import { type PropsWithChildren, createContext } from 'react'
+import { type Chain, chains } from './config'
 import { SubstrateApiContext } from '@domains/common'
 
-export const ChainContext = createContext<Chain>(chains[0]!)
+export const ChainContext = createContext<Chain>(chains[0])
 
 export const ChainProvider = (props: PropsWithChildren<{ value: Chain }>) => (
   <ChainContext.Provider value={props.value}>

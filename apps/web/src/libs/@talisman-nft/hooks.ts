@@ -4,8 +4,8 @@ import { defaultNftFactoryCallbackData } from './config'
 import { NFTFactory } from './nftFactory'
 import { AcalaProvider, EVMProvider, Rmrk1Provider, Rmrk2Provider, StatemineProvider } from './providers'
 import { EVMChains } from './providers/Evm/EVMChains'
-import { NFTInterface } from './providers/NFTInterface'
-import { EVMChain, NFTData, NFTDetail, NFTShort } from './types'
+import { type NFTInterface } from './providers/NFTInterface'
+import { type EVMChain, type NFTData, type NFTDetail, type NFTShort } from './types'
 
 // Base providers
 const providers: NFTInterface[] = [
@@ -59,7 +59,7 @@ export const useNftById = (id?: string) => {
     }
 
     // setNft(short)
-    short?.fetchDetail().then((nft: NFTDetail) => {
+    void short?.fetchDetail().then((nft: NFTDetail) => {
       setNft(nft)
       setLoading(false)
     })
@@ -80,7 +80,7 @@ export const useNFTData = (addresses: string[]) => {
     return {
       ...nftData,
       // count: items.length,
-      items: items,
+      items,
     }
   }, [addresses, nftData])
 }

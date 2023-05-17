@@ -1,5 +1,5 @@
 import { useTheme } from '@emotion/react'
-import { Skeleton, SkeletonProps } from '@talismn/ui'
+import { Skeleton, type SkeletonProps } from '@talismn/ui'
 
 const InfoSkeleton = (props: SkeletonProps) => {
   const theme = useTheme()

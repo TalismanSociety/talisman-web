@@ -8501,6 +8501,7 @@ __metadata:
     "@talismn/connect-ui": ^1.1.2
     "@talismn/development": "workspace:^"
     "@talismn/dot-pool-selector": 0.0.0-snapshot.940501
+    "@talismn/eslint-config": "workspace:^"
     "@talismn/icons": "workspace:^"
     "@talismn/math": "workspace:^"
     "@talismn/tsconfig": "workspace:^"

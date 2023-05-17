@@ -1,4 +1,4 @@
-import BN from 'bn.js'
+import type BN from 'bn.js'
 import { addMilliseconds, formatDistanceToNow } from 'date-fns'
 import { useCallback } from 'react'
 import { useRecoilValue, waitForAll } from 'recoil'
@@ -17,7 +17,7 @@ export const useEraEtaFormatter = () => {
   return useCallback(
     (era: BN) => {
       if (!sessionProgress.isEpoch) {
-        return `${era.mul(sessionProgress.eraLength)} sessions`
+        return `${era.mul(sessionProgress.eraLength).toString()} sessions`
       }
 
       return formatDistanceToNow(
