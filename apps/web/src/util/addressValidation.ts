@@ -1,9 +1,9 @@
 import { decodeAddress, encodeAddress } from '@polkadot/keyring'
 import { hexToU8a, isHex } from '@polkadot/util'
-import { ethers } from 'ethers'
+import { isAddress as isEvmAddress } from 'viem'
 
 export const tryParseSubstrateOrEthereumAddress = (address: string) => {
-  if (ethers.utils.isAddress(address)) {
+  if (isEvmAddress(address)) {
     return address
   }
 
