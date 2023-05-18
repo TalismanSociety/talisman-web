@@ -18,4 +18,8 @@ export default defineConfig({
   build: {
     outDir: 'build',
   },
+  worker: {
+    // https://github.com/vitejs/vite/pull/12629
+    format: 'es',
+  },
 })
