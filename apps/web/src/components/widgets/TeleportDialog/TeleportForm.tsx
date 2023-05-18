@@ -1,5 +1,4 @@
 import { FixedPointNumber } from '@acala-network/sdk-core'
-import TeleportFormDialogComponent from '@components/recipes/TeleportDialog'
 import TeleportFormComponent from '@components/recipes/TeleportForm'
 import TokenSelectorDialog, { TokenSelectorItem } from '@components/recipes/TokenSelectorDialog'
 import { injectedSubstrateAccountsState } from '@domains/accounts'
@@ -15,12 +14,10 @@ import { Decimal } from '@talismn/math'
 import { CircularProgressIndicator, toast } from '@talismn/ui'
 import { Maybe } from '@util/monads'
 import { isEmpty, uniqBy } from 'lodash'
-import { Suspense, useCallback, useEffect, useMemo, useState } from 'react'
-import { useSearchParams } from 'react-router-dom'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { RecoilLoadable, useRecoilCallback, useRecoilValue, waitForAll, type Loadable } from 'recoil'
 import { Observable, switchMap } from 'rxjs'
-import { useAccountSelector } from './AccountSelector'
-import ErrorBoundary from './ErrorBoundary'
+import { useAccountSelector } from '../AccountSelector'
 
 const TeleportForm = () => {
   const [_balances, bridge] = useRecoilValue(waitForAll([selectedBalancesState, bridgeState]))
@@ -376,28 +373,4 @@ const TeleportForm = () => {
   )
 }
 
-const TeleportDialog = () => {
-  const [searchParams, setSearchParams] = useSearchParams()
-
-  const open = searchParams.get('action') === 'teleport'
-
-  if (!open) {
-    return null
-  }
-
-  return (
-    <TeleportFormDialogComponent
-      open={open}
-      onRequestDismiss={() => setSearchParams(new URLSearchParams())}
-      teleportForm={
-        <ErrorBoundary renderFallback={fallback => <div css={{ width: 'max-content' }}>{fallback}</div>}>
-          <Suspense fallback={<TeleportFormComponent.Skeleton />}>
-            <TeleportForm />
-          </Suspense>
-        </ErrorBoundary>
-      }
-    />
-  )
-}
-
-export default TeleportDialog
+export default TeleportForm
