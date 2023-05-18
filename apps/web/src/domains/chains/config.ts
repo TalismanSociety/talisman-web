@@ -42,9 +42,7 @@ export const chains = [
     id: 'polkadot',
     genesisHash: '0x91b171bb158e2d3848fa23a9f1c25182fb8e20313b2c1eb49219da7a70ce90c3',
     isTestnet: false,
-    rpc: import.meta.env.REACT_APP_ONFINALITY_API_KEY
-      ? `wss://polkadot.api.onfinality.io/ws?apikey=${import.meta.env.REACT_APP_ONFINALITY_API_KEY}`
-      : 'wss://rpc.polkadot.io',
+    rpc: 'wss://rpc.polkadot.io',
     nativeToken: {
       symbol: 'DOT',
       coingeckoId: 'polkadot',
@@ -62,9 +60,7 @@ export const chains = [
     id: 'kusama',
     genesisHash: '0xb0a8d493285c2df73290dfb7e61f870f17b41801197a149ca93654499ea3dafe',
     isTestnet: false,
-    rpc: import.meta.env.REACT_APP_ONFINALITY_API_KEY
-      ? `wss://kusama.api.onfinality.io/ws?apikey=${import.meta.env.REACT_APP_ONFINALITY_API_KEY}`
-      : 'wss://kusama-rpc.polkadot.io',
+    rpc: 'wss://kusama-rpc.polkadot.io',
     nativeToken: {
       symbol: 'KSM',
       coingeckoId: 'kusama',
@@ -96,9 +92,7 @@ export const chains = [
     id: 'westend-testnet',
     genesisHash: '0xe143f23803ac50e8f6f8e62695d1ce9e4e1d68aa36c1cd2cfd15340213f3423e',
     isTestnet: true,
-    rpc: import.meta.env.REACT_APP_ONFINALITY_API_KEY
-      ? `wss://westend.api.onfinality.io/ws?apikey=${import.meta.env.REACT_APP_ONFINALITY_API_KEY}`
-      : 'wss://westend-rpc.polkadot.io',
+    rpc: 'wss://westend-rpc.polkadot.io',
     nativeToken: {
       symbol: 'WND',
       coingeckoId: undefined,
