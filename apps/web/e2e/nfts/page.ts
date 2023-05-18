@@ -10,6 +10,6 @@ export default class NftsPage {
   }
 
   async goto() {
-    await this.page.goto('/nfts')
+    await this.page.goto('/collectibles')
   }
 }

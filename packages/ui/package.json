@@ -17,9 +17,12 @@
   },
   "dependencies": {
     "@floating-ui/react": "^0.20.1",
+    "@google/model-viewer": "^3.1.1",
     "@lottiefiles/react-lottie-player": "^3.5.2",
     "@talismn/icons": "workspace:^",
+    "@use-gesture/react": "^10.2.26",
     "colorjs.io": "^0.4.3",
+    "mime": "^3.0.0",
     "react-hot-toast": "^2.4.0"
   },
   "devDependencies": {
@@ -36,11 +39,14 @@
     "@talismn/development": "workspace:^",
     "@talismn/eslint-config": "workspace:^",
     "@talismn/tsconfig": "workspace:^",
+    "@types/mime": "^3.0.1",
+    "@types/mime-types": "^2.1.1",
     "@types/react": "^18.0.28",
     "babel-loader": "^8.3.0",
     "eslint": "^8.37.0",
     "eslint-plugin-storybook": "^0.6.12",
-    "framer-motion": "^10.2.3",
+    "framer-motion": "^10.12.4",
+    "mime-db": "^1.52.0",
     "prop-types": "^15.8.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

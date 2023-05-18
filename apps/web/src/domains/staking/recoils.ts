@@ -1,6 +1,5 @@
 import { selectedSubstrateAccountsState } from '@domains/accounts/recoils'
 import { selectorFamily } from 'recoil'
-// @ts-expect-error
 import { Thread, spawn } from 'threads'
 
 import { SubstrateApiContext } from '@domains/common'
@@ -18,7 +17,7 @@ export const stakersRewardState = selectorFamily({
 
       const stakerRewards = await worker(endpoint, addresses, [activeEra - 1, activeEra])
 
-      Thread.terminate(worker)
+      void Thread.terminate(worker)
 
       return stakerRewards
     },

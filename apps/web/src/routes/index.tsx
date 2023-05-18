@@ -35,7 +35,7 @@ import Assets from './Assets'
 import CrowdloanDetail from './Crowdloan.Detail'
 import CrowdloanIndex from './Crowdloan.Index'
 import Explore from './Explore'
-import NFTsPage from './NFTsPage'
+import Collectibles from './Collectibles'
 import Overview from './Overview'
 import Portfolio from './Portfolio'
 import TransactionHistory from './TransactionHistory'
@@ -306,10 +306,10 @@ export default Sentry.wrapCreateBrowserRouter(createBrowserRouter)([
           { path: '', element: <Overview /> },
           { path: 'assets', element: <Assets /> },
           {
-            path: 'nfts',
+            path: 'collectibles',
             element: (
               <AccountConnectionGuard>
-                <NFTsPage />
+                <Collectibles />
               </AccountConnectionGuard>
             ),
           },
@@ -332,7 +332,7 @@ export default Sentry.wrapCreateBrowserRouter(createBrowserRouter)([
         ],
       },
       { path: 'history', element: <Navigate to="/portfolio/history" /> },
-      { path: 'nfts', element: <Navigate to="/portfolio/nfts" /> },
+      { path: 'nfts', element: <Navigate to="/portfolio/collectibles" /> },
       { path: 'explore', element: <Explore /> },
       {
         path: 'staking',

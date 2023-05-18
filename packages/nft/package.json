@@ -1,0 +1,30 @@
+{
+  "name": "@talismn/nft",
+  "type": "module",
+  "exports": "./build/src/index.js",
+  "scripts": {
+    "codegen": "yarn graphql-codegen --config graphql.config.cjs --project statemine && yarn graphql-codegen --config graphql.config.cjs --project rmrk1 && yarn graphql-codegen --config graphql.config.cjs --project rmrk2 && yarn graphql-codegen --config graphql.config.cjs --project unique",
+    "dev": "tsc --build --watch",
+    "build": "rm -rf build && yarn tsc --build",
+    "check-types": "yarn tsc --build"
+  },
+  "dependencies": {
+    "graphql": "^16.6.0",
+    "graphql-request": "^5.2.0",
+    "multiformats": "^11.0.2"
+  },
+  "devDependencies": {
+    "@acala-network/types": "^4.1.8-2.3",
+    "@graphql-codegen/cli": "^3.2.2",
+    "@polkadot/api": "^10.2.1",
+    "ethers": "^6.2.3",
+    "prettier": "^2.8.8",
+    "typescript": "^5.0.2",
+    "viem": "^0.2.0"
+  },
+  "peerDependencies": {
+    "@polkadot/api": ">= 9.x",
+    "ethers": "6.x",
+    "viem": "0.x"
+  }
+}

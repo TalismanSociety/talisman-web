@@ -8,7 +8,6 @@ import Development from '@components/widgets/development'
 import { LegacyBalancesWatcher } from '@domains/balances/recoils'
 import { SUBSTRATE_API_STATE_GARBAGE_COLLECTOR_UNSTABLE } from '@domains/common'
 import { ExtensionWatcher } from '@domains/extension/recoils'
-import NftProvider from '@libs/@talisman-nft/provider'
 import * as MoonbeamContributors from '@libs/moonbeam-contributors'
 import * as Portfolio from '@libs/portfolio'
 import TalismanProvider from '@libs/talisman'
@@ -55,7 +54,6 @@ const App = () => (
               <LegacyBalancesWatcher />
               <MoonbeamContributors.Provider>
                 <Development />
-                <NftProvider />
                 <RouterProvider router={router} />
                 <CookieBanner />
               </MoonbeamContributors.Provider>

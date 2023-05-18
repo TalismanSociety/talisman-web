@@ -1,0 +1,9 @@
+{
+  "extends": "@talismn/tsconfig/library",
+  "compilerOptions": {
+    "composite": true,
+    "outDir": "build",
+    "verbatimModuleSyntax": false
+  },
+  "include": ["generated"]
+}

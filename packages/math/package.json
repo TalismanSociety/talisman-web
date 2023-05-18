@@ -1,6 +1,7 @@
 {
   "name": "@talismn/math",
   "exports": "./build/index.js",
+  "type": "module",
   "scripts": {
     "dev": "tsc --build --watch tsconfig.json",
     "build": "rm -rf build && tsc --build tsconfig.json",
