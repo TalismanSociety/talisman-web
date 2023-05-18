@@ -14,7 +14,7 @@ export const stakersRewardState = selectorFamily({
     async ({ get }) => {
       const addresses = get(selectedSubstrateAccountsState).map(x => x.address)
 
-      const worker = await spawn<WorkerFunction>(new Worker(new URL('./worker', import.meta.url)))
+      const worker = await spawn<WorkerFunction>(new Worker(new URL('./worker', import.meta.url), { type: 'module' }))
 
       const stakerRewards = await worker(endpoint, addresses, [activeEra - 1, activeEra])
 
