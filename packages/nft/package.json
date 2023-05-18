@@ -17,14 +17,12 @@
     "@acala-network/types": "^4.1.8-2.3",
     "@graphql-codegen/cli": "^3.2.2",
     "@polkadot/api": "^10.2.1",
-    "ethers": "^6.2.3",
     "prettier": "^2.8.8",
     "typescript": "^5.0.2",
-    "viem": "^0.2.0"
+    "viem": "^0.3.30"
   },
   "peerDependencies": {
     "@polkadot/api": ">= 9.x",
-    "ethers": "6.x",
     "viem": "0.x"
   }
 }

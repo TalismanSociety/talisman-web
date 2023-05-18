@@ -2,8 +2,8 @@ import { storageEffect } from '@domains/common/effects'
 import type { InjectedAccount } from '@polkadot/extension-inject/types'
 import { array, jsonParser, object, optional, string } from '@recoiljs/refine'
 import { Maybe } from '@util/monads'
-import { ethers } from 'ethers'
 import { DefaultValue, atom, selector, waitForAll } from 'recoil'
+import { isAddress as isEvmAddress } from 'viem'
 
 export type Account = InjectedAccount & {
   readonly?: boolean
@@ -44,7 +44,7 @@ export const readOnlyAccountsState = selector<Account[]>({
     const injectedAddresses = get(injectedAccountsState).map(x => x.address)
     return get(_readOnlyAccountsState)
       .filter(x => !injectedAddresses.includes(x.address))
-      .map(x => ({ ...x, readonly: true, type: ethers.utils.isAddress(x.address) ? 'ethereum' : undefined }))
+      .map(x => ({ ...x, readonly: true, type: isEvmAddress(x.address) ? 'ethereum' : undefined }))
   },
   set: ({ set, reset }, newValue) => {
     if (newValue instanceof DefaultValue) {
