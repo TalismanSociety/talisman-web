@@ -25,6 +25,9 @@ export const allPendingPoolRewardsState = selectorFamily({
       )
     },
   cachePolicy_UNSTABLE: { eviction: 'most-recent' },
+  // NOTE: polkadot.js returned codec object includes reference to the registry
+  // which shouldn't be freezed
+  dangerouslyAllowMutability: true,
 })
 
 export const useAllPendingRewardsState = () => allPendingPoolRewardsState(useContext(SubstrateApiContext).endpoint)
@@ -40,6 +43,9 @@ export const eraStakersState = selectorFamily({
       return await api.query.staking.erasStakers.entries(era)
     },
   cachePolicy_UNSTABLE: { eviction: 'most-recent' },
+  // NOTE: polkadot.js returned codec object includes reference to the registry
+  // which shouldn't be freezed
+  dangerouslyAllowMutability: true,
 })
 
 export const useEraStakersState = (era: Extract<AnyNumber, SerializableParam>) =>
@@ -85,6 +91,9 @@ export const recommendedPoolsState = selectorFamily({
         )
     },
   cachePolicy_UNSTABLE: { eviction: 'most-recent' },
+  // NOTE: polkadot.js returned codec object includes reference to the registry
+  // which shouldn't be freezed
+  dangerouslyAllowMutability: true,
 })
 
 export const useRecommendedPoolsState = () => recommendedPoolsState(useContext(SubstrateApiContext).endpoint)

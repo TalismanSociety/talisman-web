@@ -9,7 +9,7 @@
     "check-types": "tsc --noEmit"
   },
   "devDependencies": {
-    "@polkadot/util": "^10.4.2",
+    "@polkadot/util": "^12.2.1",
     "eslint": "^8.39.0",
     "typescript": "^5.0.4"
   },
