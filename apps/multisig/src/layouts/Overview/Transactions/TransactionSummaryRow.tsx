@@ -90,6 +90,7 @@ const TransactionSummaryRow = ({ t, onClick }: { t: Transaction; onClick?: () =>
           href="https://subscan.com/tx123"
           target="_blank"
           rel="noreferrer"
+          onClick={e => e.stopPropagation()}
         >
           <StatusCircle
             type={StatusCircleType.Success}
