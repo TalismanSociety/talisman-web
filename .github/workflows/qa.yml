@@ -24,8 +24,6 @@ jobs:
     permissions:
       contents: read
 
-    needs: [validate]
-
     steps:
       - uses: actions/checkout@v3
       - uses: ./.github/actions/setup
