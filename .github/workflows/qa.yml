@@ -10,6 +10,7 @@ jobs:
       contents: read
 
     steps:
+      - uses: actions/checkout@v3
       - uses: ./.github/actions/setup
       - run: yarn install --immutable
       - run: yarn prettier --check .
@@ -26,6 +27,7 @@ jobs:
     needs: [validate]
 
     steps:
+      - uses: actions/checkout@v3
       - uses: ./.github/actions/setup
       - run: npx playwright install --with-deps
       - run: yarn e2e
