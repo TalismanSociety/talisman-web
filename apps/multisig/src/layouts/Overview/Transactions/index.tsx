@@ -1,7 +1,8 @@
 import { css } from '@emotion/css'
 import { FullScreenDialog } from '@talismn/ui'
 import { AnimatePresence, motion } from 'framer-motion'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import { Route, Routes, useLocation, useNavigate } from 'react-router-dom'
 
 import { Token } from '../../../domain/chains'
 import { FullScreenDialogContents, FullScreenDialogTitle } from './FullScreenSummary'
@@ -40,11 +41,31 @@ export interface Transaction {
   raw: string
 }
 
+function extractHash(url: string) {
+  const parts = url.split('/')
+  const txIndex = parts.indexOf('tx')
+  if (txIndex === -1 || txIndex + 1 >= parts.length) {
+    return null
+  }
+  return parts[txIndex + 1]
+}
+
 const TransactionsList = ({ transactions }: { transactions: Transaction[] }) => {
-  const [openTransaction, setOpenTransaction] = useState<undefined | Transaction>(undefined)
+  let location = useLocation().pathname
+  const navigate = useNavigate()
   const groupedTransactions = useMemo(() => {
     return groupTransactionsByDay(transactions)
   }, [transactions])
+
+  const openTransaction = transactions.find(t => t.hash === extractHash(location))
+
+  // Handle if user clicks a link to a tx that doesn't exist for them
+  useEffect(() => {
+    if (!openTransaction && location.includes('tx')) {
+      navigate('/overview')
+    }
+  }, [location, openTransaction, navigate])
+
   return (
     <div
       className={css`
@@ -58,35 +79,42 @@ const TransactionsList = ({ transactions }: { transactions: Transaction[] }) => 
           {transactions.map(t => {
             return (
               <motion.div key={t.hash} whileHover={{ scale: 1.015 }} css={{ padding: '12px 16px', cursor: 'pointer' }}>
-                <TransactionSummaryRow onClick={() => setOpenTransaction(t)} t={t} />
+                <TransactionSummaryRow onClick={() => navigate(`/overview/tx/${t.hash}`)} t={t} />
               </motion.div>
             )
           })}
         </div>
       ))}
-      <FullScreenDialog
-        onRequestDismiss={() => {
-          setOpenTransaction(undefined)
-        }}
-        onClose={() => {
-          setOpenTransaction(undefined)
-        }}
-        title={<FullScreenDialogTitle t={openTransaction} />}
-        css={{
-          header: {
-            margin: '32px 48px',
-          },
-          height: '100vh',
-          background: 'var(--color-grey800)',
-          maxWidth: '781px',
-          minWidth: '700px',
-          width: '100%',
-          padding: '0 !important',
-        }}
-        open={!!openTransaction}
-      >
-        <FullScreenDialogContents t={openTransaction} />
-      </FullScreenDialog>
+      <Routes>
+        <Route
+          path="/tx/:hash"
+          element={
+            <FullScreenDialog
+              onRequestDismiss={() => {
+                navigate('/overview')
+              }}
+              onClose={() => {
+                navigate('/overview')
+              }}
+              title={<FullScreenDialogTitle t={openTransaction} />}
+              css={{
+                header: {
+                  margin: '32px 48px',
+                },
+                height: '100vh',
+                background: 'var(--color-grey800)',
+                maxWidth: '781px',
+                minWidth: '700px',
+                width: '100%',
+                padding: '0 !important',
+              }}
+              open={!!openTransaction}
+            >
+              <FullScreenDialogContents t={openTransaction} />
+            </FullScreenDialog>
+          }
+        />
+      </Routes>
     </div>
   )
 }

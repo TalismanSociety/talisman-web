@@ -15,7 +15,7 @@ const router = createBrowserRouter([
     element: <CreateMultisig />,
   },
   {
-    path: '/overview',
+    path: '/overview/*',
     element: <Overview />,
   },
 ])
