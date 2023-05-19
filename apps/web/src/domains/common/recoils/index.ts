@@ -22,6 +22,9 @@ export const paymentInfoState = selectorFamily({
 
       return await api.tx[module]?.[section]?.(...params).paymentInfo(account, { signer: extension?.signer })
     },
+  // NOTE: polkadot.js returned codec object includes reference to the registry
+  // which shouldn't be freezed
+  dangerouslyAllowMutability: true,
 })
 
 /**

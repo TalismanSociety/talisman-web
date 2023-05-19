@@ -1,5 +1,4 @@
 import '@polkadot/api-augment/substrate'
-// @ts-expect-error
 import { encodeAddress } from '@polkadot/util-crypto'
 import { request } from 'graphql-request'
 import { graphql } from '../../generated/gql/statemine/index.js'

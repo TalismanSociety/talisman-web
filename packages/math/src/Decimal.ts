@@ -1,4 +1,3 @@
-// @ts-expect-error
 import { BN, bnToBn, formatBalance } from '@polkadot/util'
 import { type ToBn } from '@polkadot/util/types'
 
@@ -67,8 +66,6 @@ export default class Decimal {
     } else {
       const fullFractionalPart = fractional.toString().padStart(this.decimals, '0')
       const trimmedFractionalPart = fullFractionalPart.replace(/0+$/, '')
-      // TODO: remove after @polkadot.js update
-      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
       return `${whole.toString()}.${trimmedFractionalPart}`
     }
   }
@@ -83,8 +80,6 @@ export default class Decimal {
     const stringWithoutUnit = raw.includes('.') ? raw.replace(/0+$/, '') : raw
 
     return (
-      // TODO: remove after @polkadot.js update
-      // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
       stringWithoutUnit.replace(/\.0*$/, '') +
       (options.withUnit && this.unit !== undefined ? ` ${this.unit?.toUpperCase()}` : '')
     )
