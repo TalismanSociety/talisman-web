@@ -1,0 +1,35 @@
+name: Deploy Cloudflare Pages
+
+on:
+  workflow_call:
+    inputs:
+      projectName:
+        required: true
+        type: string
+      buildCommand:
+        required: true
+        type: string
+      outputDirectory:
+        required: true
+        type: string
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    environment: ${{ inputs.projectName }} (${{ fromJSON('["Preview", "Production"]')[github.ref_name == github.event.repository.default_branch] }})
+
+    permissions:
+      contents: read
+      deployments: write
+
+    steps:
+      - uses: ./.github/actions/setup
+      - run: ${{ inputs.buildCommand }}
+      - uses: cloudflare/pages-action@v1
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          projectName: ${{ inputs.projectName }}
+          directory: ${{ inputs.outputDirectory }}
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}

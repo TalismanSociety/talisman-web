@@ -1,0 +1,29 @@
+name: Portal
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  qa:
+    uses: ./.github/workflows/qa.yml
+
+  deploy-storybook:
+    needs: [qa]
+    uses: ./.github/workflows/deploy-cloudflare-pages.yml
+    with:
+      projectName: ${{ vars.PORTAL_STORYBOOK_PROJECT_NAME }}
+      buildCommand: yarn turbo run build-storybook --filter=web
+      outputDirectory: apps/web/storybook-static
+    secrets: inherit
+
+  deploy-portal:
+    needs: [qa]
+    uses: ./.github/workflows/deploy-cloudflare-pages.yml
+    with:
+      projectName: ${{ vars.PORTAL_PROJECT_NAME }}
+      buildCommand: yarn turbo run build --filter=web
+      outputDirectory: apps/web/build
+    secrets: inherit

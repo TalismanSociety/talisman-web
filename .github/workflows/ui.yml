@@ -1,0 +1,20 @@
+name: UI library
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  qa:
+    uses: ./.github/workflows/qa.yml
+
+  deploy-storybook:
+    needs: [qa]
+    uses: ./.github/workflows/deploy-cloudflare-pages.yml
+    with:
+      projectName: ${{ vars.UI_PROJECT_NAME }}
+      buildCommand: yarn turbo run build-storybook --filter=ui
+      outputDirectory: packages/ui/storybook-static
+    secrets: inherit
