@@ -32,6 +32,7 @@ export type SelectProps = {
   value?: Value
   placeholder?: ReactNode
   beforeOptionsNode?: ReactNode
+  afterOptionsNode?: ReactNode
   placeholderPointerEvents?: boolean
   width?: string | number
   children: ReactElement<SelectItemProps> | ReactElement<SelectItemProps>[]
@@ -264,6 +265,7 @@ const Select = Object.assign(
                 {child}
               </li>
             ))}
+            {props.afterOptionsNode ? props.afterOptionsNode : null}
           </>
         </motion.ul>
       </motion.div>

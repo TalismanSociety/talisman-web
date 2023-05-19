@@ -1,9 +1,10 @@
 import Logo from '@components/Logo'
 import { css } from '@emotion/css'
 import { useTheme } from '@emotion/react'
-import { Copy, Plus, TalismanHand } from '@talismn/icons'
+import { Copy, Plus, PlusCircle, TalismanHand } from '@talismn/icons'
 import { Button, IconButton, Identicon, Select } from '@talismn/ui'
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 import { copyToClipboard } from '../../domain/common'
 
@@ -51,10 +52,27 @@ const mockMultisigs: Multisig[] = [
       },
     },
   },
+  {
+    name: 'Chaos DAO Primary',
+    signers: [
+      '5Ay7YpGw3Nn8WDEeNWntvRk9XQ2kQmnsbYZQ2n6nEkT6CwT6',
+      '5FmPy6kM4fU4Mz7UyT52T6T8b2aL4BAvP4Z9z4f4sUUN4eU6',
+      '5GJpzMh8UkMqUWoHjzXZwbRgC8EEMco1JvDjqVQAXwfsR5Kr',
+      '5DvFd3q9GZa3g8VjWnRWv5MkdnrBFRk21J1GmDVpEj7ZC9eq',
+    ],
+    threshold: 3,
+    networks: {
+      polkadot: {
+        proxy: 'CF4SKSX7D8Rv9H7FfnzS5bS7W8zvQ2Q4g4A4YJMXyW8Dv1b',
+        multisig: 'D1e7Z8EoPz5hVY5Yf2Q7VtkGv5u5nV6hcQmQfjGZDCxrnJu',
+      },
+    },
+  },
 ]
 
 const Header = () => {
   const theme = useTheme()
+  const navigate = useNavigate()
   const [selectedMultisig, setSelectedMultisig] = useState(mockMultisigs[0] as Multisig)
 
   return (
@@ -121,6 +139,30 @@ const Header = () => {
         >
           <Select
             placeholderPointerEvents={true}
+            afterOptionsNode={
+              <div
+                css={{
+                  'display': 'flex',
+                  'alignItems': 'center',
+                  'fontWeight': 'bold',
+                  'padding': '15px 12.5px',
+                  'gap': '8px',
+                  'backgroundColor': theme.color.foreground,
+                  ':hover': {
+                    filter: 'brightness(1.2)',
+                  },
+                  'cursor': 'pointer',
+                }}
+                onClick={() => {
+                  navigate('/create/name-vault')
+                }}
+              >
+                <IconButton size={'40px'} contentColor={theme.color.primary}>
+                  <PlusCircle size="40px" />
+                </IconButton>
+                New Vault
+              </div>
+            }
             beforeOptionsNode={
               <div
                 css={{
@@ -213,7 +255,9 @@ const Header = () => {
                     </div>
                   }
                   supportingText={
-                    <div css={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px' }}>
+                    <div
+                      css={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px', marginTop: '3px' }}
+                    >
                       <Identicon value={(multisig.networks.polkadot?.proxy as string) + 'something'} size={'16px'} />
                       <div css={{ color: 'var(--color-foreground)', marginTop: '3px' }}>My Piping Hot Ledger</div>
                     </div>
