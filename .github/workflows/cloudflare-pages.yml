@@ -11,6 +11,8 @@ on:
         type: string
       environmentVariableSecrets:
         type: string
+      environmentVariableVariables:
+        type: string
       environmentVariablePrefix:
         type: string
       outputDirectory:
@@ -36,6 +38,13 @@ jobs:
         with:
           secrets: ${{ toJSON(secrets) }}
           include: ${{ inputs.environmentVariableSecrets }}
+          prefix: ${{ inputs.environmentVariablePrefix }}
+
+      - if: ${{ inputs.environmentVariableVariables != '' }}
+        uses: oNaiPs/secrets-to-env-action@v1
+        with:
+          secrets: ${{ toJSON(vars) }}
+          include: ${{ inputs.environmentVariableVariables }}
           prefix: ${{ inputs.environmentVariablePrefix }}
 
       - run: ${{ inputs.buildCommand }}

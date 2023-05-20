@@ -36,12 +36,13 @@ jobs:
       buildCommand: yarn turbo run build --filter=web
       outputDirectory: apps/web/build
       environmentVariableSecrets: >-
-        APPLICATION_NAME,
         ONFINALITY_API_KEY,
         SENTRY_DSN,
         POSTHOG_AUTH_TOKEN,
         TX_HISTORY_INDEXER,
         BASEROW_EXPLORE_AUTH,
         BASEROW_CROWDLOANS_AUTH
+      environmentVariableVariables: >-
+        APPLICATION_NAME
       environmentVariablePrefix: REACT_APP_
     secrets: inherit
