@@ -1,4 +1,4 @@
-name: Portal
+name: Applications
 
 on:
   push:
@@ -10,7 +10,16 @@ jobs:
   qa:
     uses: ./.github/workflows/qa.yml
 
-  deploy-storybook:
+  deploy-ui-storybook:
+    needs: [qa]
+    uses: ./.github/workflows/cloudflare-pages.yml
+    with:
+      projectName: ${{ vars.UI_PROJECT_NAME }}
+      buildCommand: yarn turbo run build-storybook --filter=ui
+      outputDirectory: packages/ui/storybook-static
+    secrets: inherit
+
+  deploy-portal-storybook:
     needs: [qa]
     uses: ./.github/workflows/cloudflare-pages.yml
     with:
