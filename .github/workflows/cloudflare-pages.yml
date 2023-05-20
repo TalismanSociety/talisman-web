@@ -9,6 +9,10 @@ on:
       buildCommand:
         required: true
         type: string
+      environmentVariableSecrets:
+        type: string
+      environmentVariablePrefix:
+        type: string
       outputDirectory:
         required: true
         type: string
@@ -26,7 +30,16 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: ./.github/actions/setup
+
+      - if: ${{ inputs.environmentVariableSecrets != '' }}
+        uses: oNaiPs/secrets-to-env-action@v1
+        with:
+          secrets: ${{ toJSON(secrets) }}
+          include: ${{ inputs.environmentVariableSecrets }}
+          prefix: ${{ inputs.environmentVariablePrefix }}
+
       - run: ${{ inputs.buildCommand }}
+
       - uses: cloudflare/pages-action@v1
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}

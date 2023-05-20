@@ -12,7 +12,7 @@ jobs:
 
   deploy-storybook:
     needs: [qa]
-    uses: ./.github/workflows/deploy-cloudflare-pages.yml
+    uses: ./.github/workflows/cloudflare-pages.yml
     with:
       projectName: ${{ vars.PORTAL_STORYBOOK_PROJECT_NAME }}
       buildCommand: yarn turbo run build-storybook --filter=web
@@ -21,9 +21,18 @@ jobs:
 
   deploy-portal:
     needs: [qa]
-    uses: ./.github/workflows/deploy-cloudflare-pages.yml
+    uses: ./.github/workflows/cloudflare-pages.yml
     with:
       projectName: ${{ vars.PORTAL_PROJECT_NAME }}
       buildCommand: yarn turbo run build --filter=web
       outputDirectory: apps/web/build
+      environmentVariableSecrets: >-
+        APPLICATION_NAME,
+        ONFINALITY_API_KEY,
+        SENTRY_DSN,
+        POSTHOG_AUTH_TOKEN,
+        TX_HISTORY_INDEXER,
+        BASEROW_EXPLORE_AUTH,
+        BASEROW_CROWDLOANS_AUTH
+      environmentVariablePrefix: REACT_APP_
     secrets: inherit
