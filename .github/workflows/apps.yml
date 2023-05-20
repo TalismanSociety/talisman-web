@@ -14,7 +14,7 @@ jobs:
     needs: [qa]
     uses: ./.github/workflows/cloudflare-pages.yml
     with:
-      projectName: ${{ vars.UI_PROJECT_NAME }}
+      projectName: ${{ vars.UI_STORYBOOK_PROJECT_NAME }}
       buildCommand: yarn turbo run build-storybook --filter=ui
       outputDirectory: packages/ui/storybook-static
     secrets: inherit
