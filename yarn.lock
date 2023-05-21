@@ -8091,6 +8091,7 @@ __metadata:
     "@types/md5": ^2.3.2
     "@types/node": ^18.11.19
     "@types/react": ^18.0.27
+    "@types/react-collapse": ^5.0.1
     "@types/react-dom": ^18.0.10
     "@types/react-infinite-scroller": ^1.2.3
     "@types/react-relay": ^14.1.3
@@ -8121,6 +8122,7 @@ __metadata:
     react: ^18.2.0
     react-apollo-network-status: ^5.2.1
     react-app-alias: ^2.2.2
+    react-collapse: ^5.1.1
     react-countup: ^6.4.1
     react-dom: ^18.2.0
     react-hot-toast: ^2.4.0
@@ -8215,12 +8217,10 @@ __metadata:
     "@storybook/testing-library": ^0.0.13
     "@talismn/development": "workspace:^"
     "@talismn/icons": "workspace:^"
-    "@types/lodash.debounce": ^4.0.7
     "@types/react": ^18.0.28
     babel-loader: ^8.3.0
     colorjs.io: ^0.4.3
     framer-motion: ^10.2.3
-    lodash.debounce: ^4.0.8
     react: ^18.2.0
     react-dom: ^18.2.0
     react-hot-toast: ^2.4.0
@@ -8906,16 +8906,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/lodash.debounce@npm:^4.0.7":
-  version: 4.0.7
-  resolution: "@types/lodash.debounce@npm:4.0.7"
-  dependencies:
-    "@types/lodash": "*"
-  checksum: e873b2d77f89010876baba3437ef826b17221b98948e00b5590828334a481dea1c8f9d28543210e564adc53199584f42c3cb171f8b6c3614fefc0b4e0888679c
-  languageName: node
-  linkType: hard
-
-"@types/lodash@npm:*, @types/lodash@npm:^4.14.167, @types/lodash@npm:^4.14.172, @types/lodash@npm:^4.14.191":
+"@types/lodash@npm:^4.14.167, @types/lodash@npm:^4.14.172, @types/lodash@npm:^4.14.191":
   version: 4.14.194
   resolution: "@types/lodash@npm:4.14.194"
   checksum: 113f34831c461469d91feca2dde737f88487732898b4d25e9eb23b087bb193985f864d1e1e0f3b777edc5022e460443588b6000a3b2348c966f72d17eedc35ea
@@ -9057,6 +9048,15 @@ __metadata:
   version: 1.2.4
   resolution: "@types/range-parser@npm:1.2.4"
   checksum: b7c0dfd5080a989d6c8bb0b6750fc0933d9acabeb476da6fe71d8bdf1ab65e37c136169d84148034802f48378ab94e3c37bb4ef7656b2bec2cb9c0f8d4146a95
+  languageName: node
+  linkType: hard
+
+"@types/react-collapse@npm:^5.0.1":
+  version: 5.0.1
+  resolution: "@types/react-collapse@npm:5.0.1"
+  dependencies:
+    "@types/react": "*"
+  checksum: 8fb28c98ba49710fdd95601786ec4a5e1fca043de470446081152f8681128a12bc2db1544dfbb3cc38fe434e47922ee660e5a9e21f24fa7913e729730b8bc03d
   languageName: node
   linkType: hard
 
@@ -23438,6 +23438,15 @@ __metadata:
     regenerator-runtime: ^0.13.9
     whatwg-fetch: ^3.6.2
   checksum: 1bb031080af15397d6eb9c69a0c2e93799991f7197a086e4409ba719398f1256b542a3d6c9a34673d516c684eef3e8226c99b335982593851f58f65f6e43571b
+  languageName: node
+  linkType: hard
+
+"react-collapse@npm:^5.1.1":
+  version: 5.1.1
+  resolution: "react-collapse@npm:5.1.1"
+  peerDependencies:
+    react: ">=16.3.0"
+  checksum: 3c215cf38782bfce2b2a9fccac22d77ce945ceb5b4866bfb9abf33eecb9d1e40555c4d076ae6648d7f1765164e083e1f74a458aeb7f8e74c23ce1bf7bf20d996
   languageName: node
   linkType: hard
 

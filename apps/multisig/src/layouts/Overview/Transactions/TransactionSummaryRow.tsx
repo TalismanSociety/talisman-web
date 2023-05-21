@@ -76,10 +76,10 @@ const TransactionSummaryRow = ({ t, onClick }: { t: Transaction; onClick?: () =>
       </span>
       <p css={{ gridArea: 'time', fontSize: '14px', paddingTop: '4px' }}>{formattedHhMm(t.createdTimestamp)}</p>
       <p css={{ gridArea: 'tokenAmount', textAlign: 'right', color: 'var(--color-offWhite)' }}>
-        {t.decoded.outgoingToken.amount} {t.decoded.outgoingToken.token.symbol}
+        {t.decoded.outgoingToken?.amount} {t.decoded.outgoingToken?.token.symbol}
       </p>
       <p css={{ gridArea: 'usdAmount', textAlign: 'right', fontSize: '14px', paddingTop: '4px' }}>
-        {formatUsd(t.decoded.outgoingToken.amount * t.decoded.outgoingToken.price)}
+        {formatUsd((t.decoded.outgoingToken?.amount || 0) * (t.decoded.outgoingToken?.price || 0))}
       </p>
       {t.executedTimestamp && (
         <a

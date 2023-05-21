@@ -1,9 +1,9 @@
 import MemberRow from '@components/MemberRow'
 import StatusCircle, { StatusCircleType } from '@components/StatusCircle'
 import { css } from '@emotion/css'
-import { Share2, Users } from '@talismn/icons'
 import { Button } from '@talismn/ui'
 
+import TransactionDetailsExpandable from './TransactionDetailsExpandable'
 import TransactionSummaryRow from './TransactionSummaryRow'
 import { Transaction } from '.'
 
@@ -57,75 +57,6 @@ const Approvals = ({ t }: { t: Transaction }) => {
           </a>
         </div>
       ))}
-    </div>
-  )
-}
-
-const MultiSendDetails = ({ t }: { t: Transaction }) => {
-  const recipients = t.decoded.recipients || []
-  return (
-    <div
-      className={css`
-        display: flex;
-        height: 57px;
-        align-items: center;
-        padding: 16px 24px;
-        border-radius: 16px;
-        color: var(--color-offWhite);
-        background-color: var(--color-backgroundLight);
-        > svg {
-          color: var(--color-primary);
-          height: 20px;
-          margin-left: 8px;
-        }
-      `}
-    >
-      <p css={{ marginTop: '4px' }}>Multi-Send</p>
-      <Share2 />
-      <div
-        className={css`
-          display: flex;
-          margin-left: auto;
-          align-items: center;
-          gap: 4px;
-          height: 25px;
-          background-color: var(--color-backgroundLighter);
-          color: var(--color-foreground);
-          border-radius: 12px;
-          padding: 5px 8px;
-        `}
-      >
-        <div
-          className={css`
-            display: flex;
-            align-items: center;
-            height: 16px;
-            width: 16px;
-            border-radius: 100px;
-            background-color: var(--color-dim);
-            svg {
-              color: var(--color-primary);
-              height: 8px;
-            }
-          `}
-        >
-          <Users />
-        </div>
-        <p css={{ fontSize: '14px', marginTop: '4px' }}>{recipients.length} Recipients</p>
-      </div>
-      <div
-        className={css`
-          margin-left: 16px;
-          display: flex;
-          gap: 8px;
-          align-items: center;
-          color: var(--color-foreground);
-        `}
-      >
-        <p css={{ fontSize: '18px', marginTop: '4px' }}>{t.decoded.outgoingToken.amount}</p>
-        <img css={{ height: '20px' }} src={t.decoded.outgoingToken.token.logo} alt="token logo" />
-        <p css={{ fontSize: '18px', marginTop: '4px' }}>{t.decoded.outgoingToken.token.symbol}</p>
-      </div>
     </div>
   )
 }
@@ -187,7 +118,7 @@ export const FullScreenDialogContents = ({ t }: { t?: Transaction }) => {
         <div css={{ display: 'grid', gap: '32px', alignItems: 'start' }}>
           <div css={{ display: 'grid', gap: '13px' }}>
             <h3>Details</h3>
-            <MultiSendDetails t={t} />
+            <TransactionDetailsExpandable t={t} />
           </div>
           <div css={{ display: 'grid', gap: '13px' }}>
             <h3>Approvals</h3>

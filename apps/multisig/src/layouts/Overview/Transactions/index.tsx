@@ -17,7 +17,7 @@ enum Mode {
 export enum TransactionType {
   MultiSend,
   Transfer,
-  Custom,
+  Other,
 }
 
 export interface Transaction {
@@ -31,7 +31,7 @@ export interface Transaction {
   }
   decoded: {
     type: TransactionType
-    outgoingToken: {
+    outgoingToken?: {
       token: Token
       amount: number
       price: number
