@@ -24,7 +24,9 @@ jobs:
     uses: ./.github/workflows/cloudflare-pages.yml
     with:
       projectName: ${{ vars.PORTAL_STORYBOOK_PROJECT_NAME }}
-      buildCommand: NODE_OPTIONS=--max_old_space_size=4096 yarn turbo run build-storybook --filter=web
+      buildCommand: >-
+        NODE_OPTIONS=--max_old_space_size=4096
+        yarn turbo run build-storybook --filter=web
       outputDirectory: apps/web/storybook-static
     secrets: inherit
 
@@ -33,8 +35,12 @@ jobs:
     uses: ./.github/workflows/cloudflare-pages.yml
     with:
       projectName: ${{ vars.PORTAL_PROJECT_NAME }}
-      buildCommand: yarn turbo run build --filter=web
+      buildCommand: >-
+        NODE_OPTIONS=--max_old_space_size=10240
+        REACT_APP_SENTRY_RELEASE=${{ github.sha }}
+        yarn turbo run build --filter=web -- --sourcemap
       outputDirectory: apps/web/build
+      artifactName: portal
       environmentVariableSecrets: >-
         ONFINALITY_API_KEY,
         SENTRY_DSN,
@@ -46,3 +52,14 @@ jobs:
         APPLICATION_NAME
       environmentVariablePrefix: REACT_APP_
     secrets: inherit
+
+  create-portal-sentry-release:
+    needs: [deploy-portal]
+    uses: ./.github/workflows/sentry-release.yml
+    with:
+      environment: ${{ needs.deploy-portal.outputs.environment }}
+      environmentType: ${{ needs.deploy-portal.outputs.environmentType }}
+      version: ${{ github.sha }}
+      artifactName: ${{ needs.deploy-portal.outputs.artifactName }}
+    secrets:
+      SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}

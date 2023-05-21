@@ -1,4 +1,4 @@
-name: Deploy Cloudflare Pages
+name: Build & deploy to Cloudflare Pages
 
 on:
   workflow_call:
@@ -9,15 +9,24 @@ on:
       buildCommand:
         required: true
         type: string
+      outputDirectory:
+        required: true
+        type: string
+      artifactName:
+        type: string
       environmentVariableSecrets:
         type: string
       environmentVariableVariables:
         type: string
       environmentVariablePrefix:
         type: string
-      outputDirectory:
-        required: true
-        type: string
+    outputs:
+      artifactName:
+        value: ${{ inputs.artifactName }}
+      environment:
+        value: ${{ inputs.projectName }} (${{ fromJSON('["Preview", "Production"]')[github.ref_name == github.event.repository.default_branch] }})
+      environmentType:
+        value: ${{ fromJSON('["preview", "production"]')[github.ref_name == github.event.repository.default_branch] }}
 
 jobs:
   deploy:
@@ -26,6 +35,7 @@ jobs:
     environment: ${{ inputs.projectName }} (${{ fromJSON('["Preview", "Production"]')[github.ref_name == github.event.repository.default_branch] }})
 
     permissions:
+      actions: read
       contents: read
       deployments: write
 
@@ -48,6 +58,12 @@ jobs:
           prefix: ${{ inputs.environmentVariablePrefix }}
 
       - run: ${{ inputs.buildCommand }}
+
+      - if: inputs.artifactName != ''
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ inputs.artifactName }}
+          path: ${{ inputs.outputDirectory }}
 
       # There's a bug on version 1.4.1
       # change this back to latest version after
