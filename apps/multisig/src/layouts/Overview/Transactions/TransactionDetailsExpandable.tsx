@@ -1,11 +1,33 @@
+import { Token } from 'domain/chains'
+
 import { css } from '@emotion/css'
 import { useTheme } from '@emotion/react'
-import { ArrowUp, ChevronRight, List, Share2, Users } from '@talismn/icons'
-import { IconButton } from '@talismn/ui'
+import { ChevronRight, List, Send, Share2, Users } from '@talismn/icons'
+import { IconButton, Identicon } from '@talismn/ui'
+import { formatUsd } from '@util/numbers'
 import { useState } from 'react'
 import { Collapse } from 'react-collapse'
+import truncateMiddle from 'truncate-middle'
 
 import { Transaction, TransactionType } from '.'
+
+const AmountRow = ({ amount, token, price }: { amount: number; token?: Token; price: number }) => {
+  return (
+    <div
+      className={css`
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        color: var(--color-foreground);
+      `}
+    >
+      <p css={{ fontSize: '18px', marginTop: '4px' }}>{amount}</p>
+      <img css={{ height: '20px' }} src={token?.logo} alt="token logo" />
+      <p css={{ fontSize: '18px', marginTop: '4px' }}>{token?.symbol}</p>
+      <p css={{ fontSize: '18px', marginTop: '4px' }}>{`(${formatUsd(amount * price)})`}</p>
+    </div>
+  )
+}
 
 const TransactionDetailsExpandable = ({ t }: { t: Transaction }) => {
   const theme = useTheme()
@@ -15,7 +37,6 @@ const TransactionDetailsExpandable = ({ t }: { t: Transaction }) => {
     <div
       className={css`
         padding: 8px 24px;
-        padding-bottom: 16px;
         border-radius: 16px;
         background-color: var(--color-backgroundLight);
         height: auto;
@@ -41,7 +62,7 @@ const TransactionDetailsExpandable = ({ t }: { t: Transaction }) => {
         ) : t.decoded.type === TransactionType.Transfer ? (
           <>
             <p css={{ marginTop: '4px' }}>Transfer</p>
-            <ArrowUp />
+            <Send />
           </>
         ) : t.decoded.type === TransactionType.Other ? (
           <>
@@ -60,6 +81,7 @@ const TransactionDetailsExpandable = ({ t }: { t: Transaction }) => {
             color: var(--color-foreground);
             border-radius: 12px;
             padding: 5px 8px;
+            margin-right: 16px;
           `}
         >
           <div
@@ -82,19 +104,11 @@ const TransactionDetailsExpandable = ({ t }: { t: Transaction }) => {
             {recipients.length} Recipient{recipients.length !== 1 && 's'}
           </p>
         </div>
-        <div
-          className={css`
-            margin-left: 16px;
-            display: flex;
-            gap: 8px;
-            align-items: center;
-            color: var(--color-foreground);
-          `}
-        >
-          <p css={{ fontSize: '18px', marginTop: '4px' }}>{t.decoded.outgoingToken?.amount}</p>
-          <img css={{ height: '20px' }} src={t.decoded.outgoingToken?.token.logo} alt="token logo" />
-          <p css={{ fontSize: '18px', marginTop: '4px' }}>{t.decoded.outgoingToken?.token.symbol}</p>
-        </div>
+        <AmountRow
+          amount={t.decoded.outgoingToken?.amount || 0}
+          token={t.decoded.outgoingToken?.token}
+          price={t.decoded.outgoingToken?.price || 0}
+        />
         <div>
           <IconButton
             contentColor={`rgb(${theme.foreground})`}
@@ -112,11 +126,70 @@ const TransactionDetailsExpandable = ({ t }: { t: Transaction }) => {
       <div
         className={css`
           .ReactCollapse--collapse {
-            transition: height 100ms;
+            transition: height 300ms;
           }
         `}
       >
-        <Collapse isOpened={expanded}>hello here is more content!</Collapse>
+        <Collapse isOpened={expanded}>
+          <div css={{ paddingBottom: '8px' }}>
+            {t.decoded.recipients.map(([addr, amt], i) => {
+              return (
+                <div>
+                  <div css={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <span css={{ color: 'var(--color-offWhite)' }}>Send</span>
+                    <IconButton contentColor={`rgb(${theme.primary})`} size={'20px'}>
+                      <Send size={'16px'} />
+                    </IconButton>
+                    <div
+                      className={css`
+                        display: flex;
+                        align-items: center;
+                        height: 25px;
+                        border-radius: 100px;
+                        background-color: var(--color-backgroundLighter);
+                        padding: 8px 14px;
+                        font-size: 14px;
+                        gap: 4px;
+                        margin-left: 8px;
+                      `}
+                    >
+                      <span css={{ marginTop: '3px' }}>
+                        {i + 1} of {recipients.length}
+                      </span>
+                    </div>
+                  </div>
+                  <AmountRow
+                    amount={amt}
+                    token={t.decoded?.outgoingToken?.token}
+                    price={t.decoded.outgoingToken?.price || 0}
+                  />
+                  <div css={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    Destination
+                    <a
+                      className={css`
+                        display: flex;
+                        align-items: center;
+                        height: 25px;
+                        width: 138px;
+                        border-radius: 100px;
+                        background-color: var(--color-backgroundLighter);
+                        padding-left: 8px;
+                        font-size: 14px;
+                        gap: 4px;
+                      `}
+                      href={`https://subscan.io/address/${addr}`}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      <Identicon value={addr} size={'16px'} />
+                      <span css={{ marginTop: '3px' }}>{truncateMiddle(addr, 5, 5, '...')}</span>
+                    </a>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        </Collapse>
       </div>
     </div>
   )

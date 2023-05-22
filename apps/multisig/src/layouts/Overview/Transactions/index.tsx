@@ -36,7 +36,7 @@ export interface Transaction {
       amount: number
       price: number
     }
-    recipients?: [string, number][]
+    recipients: [string, number][]
   }
   raw: string
 }
