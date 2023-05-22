@@ -1,0 +1,54 @@
+name: Applications
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  qa:
+    uses: ./.github/workflows/qa.yml
+
+  deploy-ui-storybook:
+    needs: [qa]
+    uses: ./.github/workflows/deploy.yml
+    with:
+      projectName: ${{ vars.UI_STORYBOOK_PROJECT_NAME }}
+      buildCommand: yarn turbo run build-storybook --filter=ui
+      outputDirectory: packages/ui/storybook-static
+    secrets: inherit
+
+  deploy-portal-storybook:
+    needs: [qa]
+    uses: ./.github/workflows/deploy.yml
+    with:
+      projectName: ${{ vars.PORTAL_STORYBOOK_PROJECT_NAME }}
+      buildCommand: >-
+        NODE_OPTIONS=--max_old_space_size=4096
+        yarn turbo run build-storybook --filter=web
+      outputDirectory: apps/web/storybook-static
+    secrets: inherit
+
+  deploy-portal:
+    needs: [qa]
+    uses: ./.github/workflows/deploy.yml
+    with:
+      projectName: ${{ vars.PORTAL_PROJECT_NAME }}
+      buildCommand: >-
+        NODE_OPTIONS=--max_old_space_size=10240
+        REACT_APP_SENTRY_RELEASE=${{ github.sha }}
+        yarn turbo run build --filter=web -- --sourcemap
+      outputDirectory: apps/web/build
+      sentryReleaseVersion: ${{ github.sha }}
+      environmentVariableSecrets: >-
+        ONFINALITY_API_KEY,
+        SENTRY_DSN,
+        POSTHOG_AUTH_TOKEN,
+        TX_HISTORY_INDEXER,
+        BASEROW_EXPLORE_AUTH,
+        BASEROW_CROWDLOANS_AUTH
+      environmentVariableVariables: >-
+        APPLICATION_NAME
+      environmentVariablePrefix: REACT_APP_
+    secrets: inherit

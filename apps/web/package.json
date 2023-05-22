@@ -8,7 +8,7 @@
   "license": "GPL-3.0-or-later",
   "scripts": {
     "dev": "vite",
-    "build": "REACT_APP_SENTRY_RELEASE=$(git rev-parse --verify HEAD) vite build",
+    "build": "vite build",
     "lint": "eslint src",
     "check-types": "tsc --noEmit",
     "e2e": "playwright test",

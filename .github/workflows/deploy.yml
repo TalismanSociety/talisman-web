@@ -1,0 +1,76 @@
+name: Build & deploy to Cloudflare Pages
+
+on:
+  workflow_call:
+    inputs:
+      projectName:
+        required: true
+        type: string
+      buildCommand:
+        required: true
+        type: string
+      outputDirectory:
+        required: true
+        type: string
+      sentryReleaseVersion:
+        type: string
+        default: ${{ github.sha }}
+      environmentVariableSecrets:
+        type: string
+      environmentVariableVariables:
+        type: string
+      environmentVariablePrefix:
+        type: string
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    environment: ${{ inputs.projectName }} (${{ fromJSON('["Preview", "Production"]')[github.ref_name == github.event.repository.default_branch] }})
+
+    permissions:
+      actions: read
+      contents: read
+      deployments: write
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/setup
+
+      - if: inputs.environmentVariableSecrets != ''
+        uses: oNaiPs/secrets-to-env-action@v1
+        with:
+          secrets: ${{ toJSON(secrets) }}
+          include: ${{ inputs.environmentVariableSecrets }}
+          prefix: ${{ inputs.environmentVariablePrefix }}
+
+      - if: inputs.environmentVariableVariables != ''
+        uses: oNaiPs/secrets-to-env-action@v1
+        with:
+          secrets: ${{ toJSON(vars) }}
+          include: ${{ inputs.environmentVariableVariables }}
+          prefix: ${{ inputs.environmentVariablePrefix }}
+
+      - run: ${{ inputs.buildCommand }}
+
+      # There's a bug on version 1.4.1
+      # change this back to latest version after
+      # https://github.com/cloudflare/pages-action/commit/586d3c53b9daa978dfb149a41a624f9311ebf5c9
+      - uses: cloudflare/pages-action@v1.4.0
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          projectName: ${{ inputs.projectName }}
+          directory: ${{ inputs.outputDirectory }}
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+
+      - if: vars.SENTRY_PROJECT != null
+        uses: getsentry/action-release@v1
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_ORG: ${{ vars.SENTRY_ORG }}
+          SENTRY_PROJECT: ${{ vars.SENTRY_PROJECT }}
+        with:
+          environment: ${{ fromJSON('["preview", "production"]')[github.ref_name == github.event.repository.default_branch] }}
+          version: ${{ inputs.sentryReleaseVersion }}
+          sourcemaps: ${{ inputs.outputDirectory }}
