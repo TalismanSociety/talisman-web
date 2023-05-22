@@ -19,12 +19,6 @@ module.exports = {
       documents: 'src/generators/statemine.ts',
       extensions: extensions('generated/gql/statemine/'),
     },
-    rmrk1: {
-      overwrite: true,
-      schema: 'https://gql-rmrk1.rmrk.link/v1/graphql',
-      documents: 'src/generators/rmrk1.ts',
-      extensions: extensions('generated/gql/rmrk1/'),
-    },
     rmrk2: {
       overwrite: true,
       schema: 'https://gql-rmrk2-prod.graphcdn.app/',
