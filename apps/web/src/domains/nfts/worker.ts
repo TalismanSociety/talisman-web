@@ -2,7 +2,6 @@ import {
   createAcalaNftAsyncGenerator,
   createBitCountryNftAsyncGenerator,
   createEvmNftAsyncGenerator,
-  createRmrk1NftAsyncGenerator,
   createRmrk2NftAsyncGenerator,
   createStatemineNftAsyncGenerator,
   createUniqueNetworkNftAsyncGenerator,
@@ -19,7 +18,6 @@ const subscribeNfts = (address: string, options: { batchSize: number }) =>
         : [
             createAcalaNftAsyncGenerator,
             createBitCountryNftAsyncGenerator,
-            createRmrk1NftAsyncGenerator,
             createRmrk2NftAsyncGenerator,
             createStatemineNftAsyncGenerator,
             createUniqueNetworkNftAsyncGenerator,
