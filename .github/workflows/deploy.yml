@@ -12,21 +12,15 @@ on:
       outputDirectory:
         required: true
         type: string
-      artifactName:
+      sentryReleaseVersion:
         type: string
+        default: ${{ github.sha }}
       environmentVariableSecrets:
         type: string
       environmentVariableVariables:
         type: string
       environmentVariablePrefix:
         type: string
-    outputs:
-      artifactName:
-        value: ${{ inputs.artifactName }}
-      environment:
-        value: ${{ inputs.projectName }} (${{ fromJSON('["Preview", "Production"]')[github.ref_name == github.event.repository.default_branch] }})
-      environmentType:
-        value: ${{ fromJSON('["preview", "production"]')[github.ref_name == github.event.repository.default_branch] }}
 
 jobs:
   deploy:
@@ -59,12 +53,6 @@ jobs:
 
       - run: ${{ inputs.buildCommand }}
 
-      - if: inputs.artifactName != ''
-        uses: actions/upload-artifact@v3
-        with:
-          name: ${{ inputs.artifactName }}
-          path: ${{ inputs.outputDirectory }}
-
       # There's a bug on version 1.4.1
       # change this back to latest version after
       # https://github.com/cloudflare/pages-action/commit/586d3c53b9daa978dfb149a41a624f9311ebf5c9
@@ -75,3 +63,14 @@ jobs:
           projectName: ${{ inputs.projectName }}
           directory: ${{ inputs.outputDirectory }}
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+
+      - if: vars.SENTRY_PROJECT != null
+        uses: getsentry/action-release@v1
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_ORG: ${{ vars.SENTRY_ORG }}
+          SENTRY_PROJECT: ${{ vars.SENTRY_PROJECT }}
+        with:
+          environment: ${{ fromJSON('["preview", "production"]')[github.ref_name == github.event.repository.default_branch] }}
+          version: ${{ inputs.sentryReleaseVersion }}
+          sourcemaps: ${{ inputs.outputDirectory }}

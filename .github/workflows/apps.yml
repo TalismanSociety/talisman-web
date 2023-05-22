@@ -12,7 +12,7 @@ jobs:
 
   deploy-ui-storybook:
     needs: [qa]
-    uses: ./.github/workflows/cloudflare-pages.yml
+    uses: ./.github/workflows/deploy.yml
     with:
       projectName: ${{ vars.UI_STORYBOOK_PROJECT_NAME }}
       buildCommand: yarn turbo run build-storybook --filter=ui
@@ -21,7 +21,7 @@ jobs:
 
   deploy-portal-storybook:
     needs: [qa]
-    uses: ./.github/workflows/cloudflare-pages.yml
+    uses: ./.github/workflows/deploy.yml
     with:
       projectName: ${{ vars.PORTAL_STORYBOOK_PROJECT_NAME }}
       buildCommand: >-
@@ -32,7 +32,7 @@ jobs:
 
   deploy-portal:
     needs: [qa]
-    uses: ./.github/workflows/cloudflare-pages.yml
+    uses: ./.github/workflows/deploy.yml
     with:
       projectName: ${{ vars.PORTAL_PROJECT_NAME }}
       buildCommand: >-
@@ -40,7 +40,7 @@ jobs:
         REACT_APP_SENTRY_RELEASE=${{ github.sha }}
         yarn turbo run build --filter=web -- --sourcemap
       outputDirectory: apps/web/build
-      artifactName: portal
+      sentryReleaseVersion: ${{ github.sha }}
       environmentVariableSecrets: >-
         ONFINALITY_API_KEY,
         SENTRY_DSN,
@@ -52,14 +52,3 @@ jobs:
         APPLICATION_NAME
       environmentVariablePrefix: REACT_APP_
     secrets: inherit
-
-  create-portal-sentry-release:
-    needs: [deploy-portal]
-    uses: ./.github/workflows/sentry-release.yml
-    with:
-      environment: ${{ needs.deploy-portal.outputs.environment }}
-      environmentType: ${{ needs.deploy-portal.outputs.environmentType }}
-      version: ${{ github.sha }}
-      artifactName: ${{ needs.deploy-portal.outputs.artifactName }}
-    secrets:
-      SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
