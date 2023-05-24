@@ -1,7 +1,8 @@
 import * as Sentry from '@sentry/react'
 import { type Nft } from '@talismn/nft'
+import { toast } from '@talismn/ui'
 import { atomFamily, DefaultValue, selectorFamily } from 'recoil'
-import { bufferTime, filter, Observable, tap } from 'rxjs'
+import { bufferTime, filter, from, tap, scan, reduce } from 'rxjs'
 import { spawn, Thread } from 'threads'
 import { type SubscribeNfts } from './worker'
 
@@ -24,15 +25,35 @@ const _nftsState = atomFamily<Nft[], string>({
       const workerPromise = spawn<SubscribeNfts>(new Worker(new URL('./worker', import.meta.url), { type: 'module' }))
 
       const subscriptionPromise = workerPromise.then(worker =>
-        new Observable<Nft>(observer => worker(address, { batchSize }).subscribe(observer))
+        from(worker(address, { batchSize }))
           .pipe(
             bufferTime(1000, null, batchSize),
             filter(nfts => nfts.length > 0),
+            scan(
+              (prev, nftsOrErrors) => {
+                const errors = nftsOrErrors.filter((nft): nft is { error: unknown } => 'error' in nft).map(x => x.error)
+                const nfts = nftsOrErrors.filter((nft): nft is Nft => !('error' in nft))
+
+                return { nfts: [...prev.nfts, ...nfts], errors: [...prev.errors, ...errors] }
+              },
+              { nfts: [] as Nft[], errors: [] as unknown[] }
+            ),
             // eslint-disable-next-line @typescript-eslint/no-misused-promises
-            tap(async nfts => {
+            tap(async ({ nfts, errors }) => {
+              errors.forEach(error => Sentry.captureException(error))
+
               initialResolve(nfts)
               await initialPromise
               setSelf(self => [...(self instanceof DefaultValue ? [] : self), ...nfts])
+            }),
+            reduce((prev, curr) => ({ nfts: [...prev.nfts, ...curr.nfts], errors: [...prev.errors, ...curr.errors] })),
+            tap(({ errors }) => {
+              if (errors.length > 0) {
+                toast.error('Failed to fetch some NFTs', {
+                  // Prevent spamming of toasts when multiple accounts fail to fetch NFTs
+                  id: 'nfts-fetching-error',
+                })
+              }
             })
           )
           .subscribe({
