@@ -11,7 +11,7 @@ import { Observable } from 'rxjs'
 import { expose } from 'threads/worker'
 
 const subscribeNfts = (address: string, options: { batchSize: number }) =>
-  new Observable<Nft>(observer => {
+  new Observable<Nft | { error: unknown }>(observer => {
     const promises = (
       address.startsWith('0x')
         ? [createEvmNftAsyncGenerator]
@@ -27,8 +27,8 @@ const subscribeNfts = (address: string, options: { batchSize: number }) =>
         for await (const nft of createNftAsyncGenerator(address, { batchSize: options.batchSize })) {
           observer.next(nft)
         }
-      } catch (error) {
-        observer.error(error)
+      } catch (error: unknown) {
+        observer.next({ error })
       }
     })
 
