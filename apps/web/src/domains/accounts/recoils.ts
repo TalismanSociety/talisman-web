@@ -69,8 +69,9 @@ export const substrateAccountsState = selector({
 })
 
 export const selectedAccountAddressesState = atom<string[] | undefined>({
-  key: 'SelectedAccountAddresses',
+  key: 'selected_account_addresses',
   default: undefined,
+  effects: [storageEffect(localStorage, { parser: jsonParser(array(string())) })],
 })
 
 export const selectedAccountsState = selector({
