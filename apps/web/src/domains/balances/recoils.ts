@@ -101,7 +101,8 @@ export const LegacyBalancesWatcher = () => {
     [JSON.stringify(addresses), JSON.stringify(tokenIds)]
   )
 
-  const balances = _useBalances(addressesByToken)
+  const unfilteredBalances = _useBalances(addressesByToken)
+  const balances = useMemo(() => unfilteredBalances.filterMirrorTokens(), [unfilteredBalances])
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(
