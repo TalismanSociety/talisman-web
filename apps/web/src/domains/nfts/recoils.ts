@@ -2,7 +2,7 @@ import * as Sentry from '@sentry/react'
 import { type Nft } from '@talismn/nft'
 import { toast } from '@talismn/ui'
 import { atomFamily, DefaultValue, selectorFamily } from 'recoil'
-import { bufferTime, filter, from, tap, scan, reduce } from 'rxjs'
+import { bufferTime, filter, Observable, reduce, scan, tap } from 'rxjs'
 import { spawn, Thread } from 'threads'
 import { type SubscribeNfts } from './worker'
 
@@ -25,7 +25,7 @@ const _nftsState = atomFamily<Nft[], string>({
       const workerPromise = spawn<SubscribeNfts>(new Worker(new URL('./worker', import.meta.url), { type: 'module' }))
 
       const subscriptionPromise = workerPromise.then(worker =>
-        from(worker(address, { batchSize }))
+        new Observable<Nft | { error: unknown }>(observer => worker(address, { batchSize }).subscribe(observer))
           .pipe(
             bufferTime(1000, null, batchSize),
             filter(nfts => nfts.length > 0),
