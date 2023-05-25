@@ -6,7 +6,7 @@ export const usePagination = <T>(items: T[], { limit }: { limit: number }, deps?
   useEffect(() => setOffset(0), deps ?? [items])
 
   const pageCount = Math.ceil(items.length / limit)
-  const page = (offset + limit) / limit - 1
+  const page = Math.ceil(offset / limit)
   const paginatedItems = useMemo(() => items.slice(offset, offset + limit), [items, offset, limit])
 
   const next = useCallback(() => setOffset(x => x + limit), [limit])
@@ -17,8 +17,8 @@ export const usePagination = <T>(items: T[], { limit }: { limit: number }, deps?
     {
       page,
       pageCount,
-      previous: offset <= 0 ? undefined : previous,
-      next: offset + limit >= items.length - 1 ? undefined : next,
+      previous: page <= 0 ? undefined : previous,
+      next: page >= pageCount - 1 ? undefined : next,
     },
   ] as const
 }
