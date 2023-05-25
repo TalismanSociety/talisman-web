@@ -15,6 +15,8 @@ declare module '@emotion/react' {
     secondary: string
     background: string
     backgroundLight: string
+    backgroundLighter: string
+    offWhite: string
     foreground: string
     mid: string
     dim: string

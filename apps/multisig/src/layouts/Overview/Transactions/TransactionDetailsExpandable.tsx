@@ -109,9 +109,9 @@ const TransactionDetailsExpandable = ({ t }: { t: Transaction }) => {
           token={t.decoded.outgoingToken?.token}
           price={t.decoded.outgoingToken?.price || 0}
         />
-        <div>
+        <div css={{ width: '28px' }}>
           <IconButton
-            contentColor={`rgb(${theme.foreground})`}
+            contentColor={`rgb(${theme.offWhite})`}
             onClick={() => {
               setExpanded(!expanded)
             }}
@@ -133,8 +133,16 @@ const TransactionDetailsExpandable = ({ t }: { t: Transaction }) => {
         <Collapse isOpened={expanded}>
           <div css={{ paddingBottom: '8px' }}>
             {t.decoded.recipients.map(([addr, amt], i) => {
+              const last = i === recipients.length - 1
               return (
-                <div>
+                <div
+                  css={{
+                    display: 'grid',
+                    gap: '16px',
+                    borderBottom: `${last ? '0px' : '1px'} solid rgb(${theme.backgroundLighter})`,
+                    padding: `${last ? '24px 0 0 0' : '24px 0'}`,
+                  }}
+                >
                   <div css={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                     <span css={{ color: 'var(--color-offWhite)' }}>Send</span>
                     <IconButton contentColor={`rgb(${theme.primary})`} size={'20px'}>
@@ -157,12 +165,14 @@ const TransactionDetailsExpandable = ({ t }: { t: Transaction }) => {
                         {i + 1} of {recipients.length}
                       </span>
                     </div>
+                    <div css={{ marginLeft: 'auto' }}>
+                      <AmountRow
+                        amount={amt}
+                        token={t.decoded?.outgoingToken?.token}
+                        price={t.decoded.outgoingToken?.price || 0}
+                      />
+                    </div>
                   </div>
-                  <AmountRow
-                    amount={amt}
-                    token={t.decoded?.outgoingToken?.token}
-                    price={t.decoded.outgoingToken?.price || 0}
-                  />
                   <div css={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                     Destination
                     <a
