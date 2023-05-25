@@ -11,7 +11,7 @@
       "persistent": true
     },
     "storybook": {
-      "dependsOn": ["^dev"],
+      "dependsOn": ["^build"],
       "cache": false,
       "persistent": true
     },

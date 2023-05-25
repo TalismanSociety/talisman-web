@@ -9,6 +9,8 @@ import { useNativeTokenDecimalState, useNativeTokenPriceState } from '@domains/c
 import { type usePoolStakes } from '@domains/nominationPools'
 import AddStakeDialog from './AddStakeDialog'
 import UnstakeDialog from './UnstakeDialog'
+import RedactableBalance from '../RedactableBalance'
+import AnimatedFiatNumber from '../AnimatedFiatNumber'
 
 const PoolStakeItem = ({
   item,
@@ -33,7 +35,7 @@ const PoolStakeItem = ({
 
   const eraEtaFormatter = useEraEtaFormatter()
   const unlocks = item.unlockings?.map(x => ({
-    amount: decimal.fromPlanck(x.amount).toHuman(),
+    amount: <RedactableBalance>{decimal.fromPlanck(x.amount).toHuman()}</RedactableBalance>,
     eta: eraEtaFormatter(x.erasTilWithdrawable),
   }))
 
@@ -45,16 +47,15 @@ const PoolStakeItem = ({
         stakeStatus={item.status}
         accountName={item.account?.name ?? ''}
         accountAddress={item.account?.address ?? ''}
-        stakingAmount={decimal.fromPlanck(item.poolMember.points).toHuman()}
-        stakingFiatAmount={(decimal.fromPlanck(item.poolMember.points).toNumber() * nativeTokenPrice).toLocaleString(
-          undefined,
-          { style: 'currency', currency: 'usd', currencyDisplay: 'narrowSymbol' }
-        )}
+        stakingAmount={<RedactableBalance>{decimal.fromPlanck(item.poolMember.points).toHuman()}</RedactableBalance>}
+        stakingFiatAmount={
+          <AnimatedFiatNumber end={decimal.fromPlanck(item.poolMember.points).toNumber() * nativeTokenPrice} />
+        }
         poolName={item.poolName ?? ''}
         claimChip={
           item.pendingRewards?.isZero() === false && (
             <PoolStakeItemComponent.ClaimChip
-              amount={decimal.fromPlanck(item.pendingRewards).toHuman()}
+              amount={<RedactableBalance>{decimal.fromPlanck(item.pendingRewards).toHuman()}</RedactableBalance>}
               onClick={() => setClaimDialogOpen(true)}
               loading={claimPayoutExtrinsic.state === 'loading' || restakeExtrinsic.state === 'loading'}
             />
@@ -75,7 +76,7 @@ const PoolStakeItem = ({
         withdrawChip={
           item.withdrawable > 0n && (
             <WithdrawChip
-              amount={decimal.fromPlanck(item.withdrawable).toHuman()}
+              amount={<RedactableBalance>{decimal.fromPlanck(item.withdrawable).toHuman()}</RedactableBalance>}
               onClick={() => {
                 void withdrawExtrinsic.signAndSend(
                   item.account?.address ?? '',
@@ -90,7 +91,7 @@ const PoolStakeItem = ({
         status={
           item.totalUnlocking > 0n && (
             <PoolStakeItemComponent.UnstakingStatus
-              amount={decimal.fromPlanck(item.totalUnlocking).toHuman()}
+              amount={<RedactableBalance>{decimal.fromPlanck(item.totalUnlocking).toHuman()}</RedactableBalance>}
               unlocks={unlocks ?? []}
             />
           )

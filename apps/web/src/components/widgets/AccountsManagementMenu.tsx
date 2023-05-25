@@ -4,7 +4,7 @@ import {
   selectedAccountAddressesState,
   selectedAccountsState,
 } from '@domains/accounts/recoils'
-import { fiatBalancesState, totalLocalizedFiatBalanceState } from '@domains/balances/recoils'
+import { fiatBalancesState, totalInjectedAccountsFiatBalance } from '@domains/balances/recoils'
 import { copyAddressToClipboard } from '@domains/common/utils'
 import { useIsWeb3Injected } from '@domains/extension/hooks'
 import { allowExtensionConnectionState } from '@domains/extension/recoils'
@@ -12,10 +12,11 @@ import { useTheme } from '@emotion/react'
 import { Copy, Download, Eye, EyePlus, Link, PlusCircle, Power, TalismanHand, Trash2, Users } from '@talismn/icons'
 import { CircularProgressIndicator, IconButton, Identicon, ListItem, Menu, Text } from '@talismn/ui'
 import { shortenAddress } from '@util/format'
-import { type ReactNode, useMemo } from 'react'
+import { Maybe } from '@util/monads'
+import { useMemo, type ReactNode } from 'react'
 import { useRecoilState, useRecoilValue, useRecoilValueLoadable, useSetRecoilState } from 'recoil'
-
 import AddReadOnlyAccountDialog from './AddReadOnlyAccountDialog'
+import AnimatedFiatNumber from './AnimatedFiatNumber'
 import RemoveWatchedAccountConfirmationDialog from './RemoveWatchedAccountConfirmationDialog'
 
 const AccountsManagementIconButton = (props: { size?: number | string }) => {
@@ -61,7 +62,7 @@ const AccountsManagementIconButton = (props: { size?: number | string }) => {
 const AccountsManagementMenu = (props: { button: ReactNode }) => {
   const theme = useTheme()
 
-  const totalBalance = useRecoilValueLoadable(totalLocalizedFiatBalanceState)
+  const totalBalance = useRecoilValueLoadable(totalInjectedAccountsFiatBalance)
 
   const setSelectedAccountAddresses = useSetRecoilState(selectedAccountAddressesState)
   const injectedAccounts = useRecoilValue(injectedAccountsState)
@@ -109,7 +110,9 @@ const AccountsManagementMenu = (props: { button: ReactNode }) => {
       <Menu.Item onClick={() => setSelectedAccountAddresses(undefined)}>
         <ListItem
           headlineText="All accounts"
-          overlineText={totalBalance.valueMaybe() ?? <CircularProgressIndicator size="1em" />}
+          overlineText={Maybe.of(totalBalance.valueMaybe()).mapOr(<CircularProgressIndicator size="1em" />, amount => (
+            <AnimatedFiatNumber end={amount} />
+          ))}
           leadingContent={
             <IconButton as="figure" containerColor={theme.color.foreground} contentColor={theme.color.primary}>
               <Users />
@@ -171,13 +174,12 @@ const AccountsManagementMenu = (props: { button: ReactNode }) => {
               <Menu.Item key={index} onClick={() => setSelectedAccountAddresses(() => [x.address])}>
                 <ListItem
                   headlineText={x.name ?? shortenAddress(x.address)}
-                  overlineText={
-                    fiatBalances.valueMaybe()?.[x.address]?.toLocaleString(undefined, {
-                      style: 'currency',
-                      currency: 'usd',
-                      currencyDisplay: 'narrowSymbol',
-                    }) ?? <CircularProgressIndicator size="1em" />
-                  }
+                  overlineText={Maybe.of(fiatBalances.valueMaybe()).mapOr(
+                    <CircularProgressIndicator size="1em" />,
+                    balances => (
+                      <AnimatedFiatNumber end={balances[x.address] ?? 0} />
+                    )
+                  )}
                   leadingContent={<Identicon value={x.address} size="4rem" />}
                   revealTrailingContentOnHover
                   trailingContent={
@@ -210,13 +212,12 @@ const AccountsManagementMenu = (props: { button: ReactNode }) => {
                   <Menu.Item onClick={() => setSelectedAccountAddresses(() => [x.address])}>
                     <ListItem
                       headlineText={x.name ?? shortenAddress(x.address)}
-                      overlineText={
-                        fiatBalances.valueMaybe()?.[x.address]?.toLocaleString(undefined, {
-                          style: 'currency',
-                          currency: 'usd',
-                          currencyDisplay: 'narrowSymbol',
-                        }) ?? <CircularProgressIndicator size="1em" />
-                      }
+                      overlineText={Maybe.of(fiatBalances.valueMaybe()).mapOr(
+                        <CircularProgressIndicator size="1em" />,
+                        balances => (
+                          <AnimatedFiatNumber end={balances[x.address] ?? 0} />
+                        )
+                      )}
                       leadingContent={<Identicon value={x.address} size="4rem" />}
                       revealTrailingContentOnHover
                       trailingContent={

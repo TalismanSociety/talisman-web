@@ -4,6 +4,7 @@ import { HiddenDetails, Text } from '@talismn/ui'
 import { groupBy } from 'lodash'
 import { Suspense, useCallback, useMemo, useState } from 'react'
 import { selector, useRecoilValue } from 'recoil'
+import AnimatedFiatNumber from './AnimatedFiatNumber'
 
 const assetDataState = selector({
   key: 'PortfolioAllocationGraph/AssetData',
@@ -63,22 +64,27 @@ const SuspendablePortfolioAllocationGraph = () => {
 
   const [displayData, setDisplayData] = useState<'asset' | 'state'>()
 
+  const renderPercent = (value: number) => value.toLocaleString(undefined, { style: 'percent' })
+
   const parsedAssetData = useMemo(
     () =>
       assetData.map(x => ({
         label: x.symbol,
         value: x.percent,
+        renderValue: renderPercent,
         color: x.color ?? '#5A5A5A',
       })) ?? [],
     [assetData]
   )
 
+  const renderFiat = (value: number) => <AnimatedFiatNumber end={value} />
+
   const parsedStateData = useMemo(
     () =>
       [
-        { label: 'Available', value: stateData.transferable ?? 0, color: '#FD8FFF' },
-        { label: 'Reserved', value: stateData.reserved ?? 0, color: '#FD4848' },
-        { label: 'Locked', value: stateData.locked ?? 0, color: '#D5FF5C' },
+        { label: 'Available', value: stateData.transferable ?? 0, renderValue: renderFiat, color: '#FD8FFF' },
+        { label: 'Reserved', value: stateData.reserved ?? 0, renderValue: renderFiat, color: '#FD4848' },
+        { label: 'Locked', value: stateData.locked ?? 0, renderValue: renderFiat, color: '#D5FF5C' },
       ].filter(x => x.value > 0),
     [stateData.locked, stateData.reserved, stateData.transferable]
   )
@@ -92,7 +98,6 @@ const SuspendablePortfolioAllocationGraph = () => {
         stateChip={
           <PortfolioAllocationGraphComponent.StateChip onClick={useCallback(() => setDisplayData('state'), [])} />
         }
-        valueType={displayData === 'state' ? 'currency' : 'percent'}
         data={displayData === 'state' ? parsedStateData : parsedAssetData}
       />
     </HiddenDetails>

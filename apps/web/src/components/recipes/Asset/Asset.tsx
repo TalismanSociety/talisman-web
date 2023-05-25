@@ -1,4 +1,5 @@
 import AnimatedFiatNumber from '@components/widgets/AnimatedFiatNumber'
+import RedactableBalance from '@components/widgets/RedactableBalance'
 import { keyframes, useTheme } from '@emotion/react'
 import styled from '@emotion/styled'
 import { type Balances } from '@talismn/balances'
@@ -42,7 +43,7 @@ export const AssetBalance = ({ locked, planck, fiat, symbol }: AssetBalanceProps
             fontSize: '16px',
           }}
         >
-          {planck ? `${planck} ${symbol} ` : '- ' + symbol}
+          <RedactableBalance>{planck ? `${planck} ${symbol} ` : '- ' + symbol}</RedactableBalance>
         </Text.Body>
         {locked ? <Lock css={{ width: '16px', height: '16px' }} /> : ''}
       </div>

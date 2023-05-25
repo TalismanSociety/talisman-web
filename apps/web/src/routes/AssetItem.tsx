@@ -1,6 +1,7 @@
 import { useSingleAsset } from '@archetypes/Portfolio/Assets'
 import { AssetBreakdownList } from '@components/recipes/AssetBreakdown/AssetBreakdownList'
 import AnimatedFiatNumber from '@components/widgets/AnimatedFiatNumber'
+import RedactableBalance from '@components/widgets/RedactableBalance'
 import { keyframes } from '@emotion/react'
 import { ChevronLeft } from '@talismn/icons'
 import { Button, HiddenDetails, InfoCard, Text, Tooltip } from '@talismn/ui'
@@ -110,7 +111,11 @@ const AssetItem = () => {
                     </Text.Body>
                   </div>
                 }
-                text={(token?.overallTokenAmount ?? '') + ' ' + (token?.tokenDetails?.symbol ?? '')}
+                text={
+                  <RedactableBalance>
+                    {token?.overallTokenAmount ?? ''} {token?.tokenDetails?.symbol ?? ''}
+                  </RedactableBalance>
+                }
                 supportingText={<AnimatedFiatNumber end={token?.overallFiatAmount ?? 0} />}
               />
               <InfoCard
@@ -126,7 +131,11 @@ const AssetItem = () => {
                     <span>Locked</span>
                   </div>
                 }
-                text={(token?.overallLockedAmount ?? '') + ' ' + (token?.tokenDetails?.symbol ?? '')}
+                text={
+                  <RedactableBalance>
+                    {token?.overallLockedAmount ?? ''} ' ' {token?.tokenDetails?.symbol ?? ''}
+                  </RedactableBalance>
+                }
                 supportingText={<AnimatedFiatNumber end={token?.overallLockedFiatAmount ?? 0} />}
               />
               <InfoCard
@@ -142,7 +151,11 @@ const AssetItem = () => {
                     <span>Available</span>
                   </div>
                 }
-                text={(token?.amount ?? '') + ' ' + (token?.tokenDetails?.symbol ?? '')}
+                text={
+                  <RedactableBalance>
+                    {token?.amount ?? ''} {token?.tokenDetails?.symbol ?? ''}
+                  </RedactableBalance>
+                }
                 supportingText={<AnimatedFiatNumber end={token?.fiatAmount ?? 0} />}
               />
             </div>

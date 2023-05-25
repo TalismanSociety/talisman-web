@@ -13,6 +13,7 @@ import { useTranslation } from 'react-i18next'
 import { ClickToCopy } from './ClickToCopy'
 import { ItemNoDetails } from './ItemNoDetails'
 import { type ParsedTransaction, formatGenericAddress } from './lib'
+import RedactableBalance from '@components/widgets/RedactableBalance'
 
 type Props = {
   parsed: ParsedTransaction | null | undefined
@@ -43,10 +44,10 @@ export const ItemDetails = ({ parsed, addresses, accounts }: Props) => {
       const tokenInfo = (
         <Info
           // TODO: Add fiat prices
-          // title={`${formatDecimals(parsed.amount)} ${parsed.tokenSymbol}`}
+          // title={<RedactableBalance>{`${formatDecimals(parsed.amount)} ${parsed.tokenSymbol}`}</RedactableBalance>}
           // subtitle="$xx.xx"
           title={startCase(parsed.chainId)}
-          subtitle={`${formatDecimals(parsed.amount)} ${parsed.tokenSymbol}`}
+          subtitle={<RedactableBalance>{`${formatDecimals(parsed.amount)} ${parsed.tokenSymbol}`}</RedactableBalance>}
           graphic={<TokenLogo token={{ symbol: parsed.tokenSymbol, logo: parsed.tokenLogo }} />}
           invert
         />
@@ -98,10 +99,10 @@ export const ItemDetails = ({ parsed, addresses, accounts }: Props) => {
       const tokenInfo = (
         <Info
           // TODO: Add fiat prices
-          // title={`${formatDecimals(parsed.amount)} ${parsed.tokenSymbol}`}
+          // title={<RedactableBalance>{`${formatDecimals(parsed.amount)} ${parsed.tokenSymbol}`}</RedactableBalance>}
           // subtitle="$xx.xx"
           title={startCase(parsed.chainId)}
-          subtitle={`${formatDecimals(parsed.amount)} ${parsed.tokenSymbol}`}
+          subtitle={<RedactableBalance>{`${formatDecimals(parsed.amount)} ${parsed.tokenSymbol}`}</RedactableBalance>}
           graphic={<TokenLogo token={{ symbol: parsed.tokenSymbol, logo: parsed.tokenLogo }} />}
           invert
         />
@@ -137,10 +138,10 @@ export const ItemDetails = ({ parsed, addresses, accounts }: Props) => {
       const tokenInfo = (
         <Info
           // TODO: Add fiat prices
-          // title={`${formatDecimals(parsed.amount)} ${parsed.tokenSymbol}`}
+          // title={<RedactableBalance>{`${formatDecimals(parsed.amount)} ${parsed.tokenSymbol}`}</RedactableBalance>}
           // subtitle="$xx.xx"
           title={startCase(parsed.chainId)}
-          subtitle={`${formatDecimals(parsed.amount)} ${parsed.tokenSymbol}`}
+          subtitle={<RedactableBalance>{`${formatDecimals(parsed.amount)} ${parsed.tokenSymbol}`}</RedactableBalance>}
           graphic={<TokenLogo token={{ symbol: parsed.tokenSymbol, logo: parsed.tokenLogo }} />}
           invert
         />
@@ -176,10 +177,10 @@ export const ItemDetails = ({ parsed, addresses, accounts }: Props) => {
       const tokenInfo = (
         <Info
           // TODO: Add fiat prices
-          // title={`${formatDecimals(parsed.amount)} ${parsed.tokenSymbol}`}
+          // title={<RedactableBalance>{`${formatDecimals(parsed.amount)} ${parsed.tokenSymbol}`}</RedactableBalance>}
           // subtitle="$xx.xx"
           title={startCase(parsed.chainId)}
-          subtitle={`${formatDecimals(parsed.amount)} ${parsed.tokenSymbol}`}
+          subtitle={<RedactableBalance>{`${formatDecimals(parsed.amount)} ${parsed.tokenSymbol}`}</RedactableBalance>}
           graphic={<TokenLogo token={{ symbol: parsed.tokenSymbol, logo: parsed.tokenLogo }} />}
           invert
         />
@@ -233,10 +234,12 @@ export const ItemDetails = ({ parsed, addresses, accounts }: Props) => {
         >
           <Info
             // TODO: Add fiat prices
-            // title={`${formatDecimals(from.liquidityChange)} ${from.symbol}`}
+            // title={<RedactableBalance>{`${formatDecimals(from.liquidityChange)} ${from.symbol}`}</RedactableBalance>}
             // subtitle="$xx.xx"
             title={startCase(parsed.chainId)}
-            subtitle={`${formatDecimals(from?.liquidityChange)} ${from?.symbol ?? ''}`}
+            subtitle={
+              <RedactableBalance>{`${formatDecimals(from?.liquidityChange)} ${from?.symbol ?? ''}`}</RedactableBalance>
+            }
             graphic={<TokenLogo token={{ symbol: from?.symbol ?? '', logo: from?.logo ?? '' }} />}
             invert
           />
@@ -245,10 +248,12 @@ export const ItemDetails = ({ parsed, addresses, accounts }: Props) => {
 
           <Info
             // TODO: Add fiat prices
-            // title={`${formatDecimals(to.liquidityChange)} ${to.symbol}`}
+            // title={<RedactableBalance>{`${formatDecimals(to.liquidityChange)} ${to.symbol}`}</RedactableBalance>}
             // subtitle="$xx.xx"
             title={startCase(parsed.chainId)}
-            subtitle={`${formatDecimals(to?.liquidityChange)} ${to?.symbol ?? ''}`}
+            subtitle={
+              <RedactableBalance>{`${formatDecimals(to?.liquidityChange)} ${to?.symbol ?? ''}`}</RedactableBalance>
+            }
             graphic={<TokenLogo token={{ symbol: to?.symbol ?? '', logo: to?.logo ?? '' }} />}
             invert
           />
@@ -274,10 +279,10 @@ export const ItemDetails = ({ parsed, addresses, accounts }: Props) => {
       const tokenInfo = (
         <Info
           // TODO: Add fiat prices
-          // title={`${formatDecimals(parsed.amount)} ${parsed.tokenSymbol}`}
+          // title={<RedactableBalance>{`${formatDecimals(parsed.amount)} ${parsed.tokenSymbol}`}</RedactableBalance>}
           // subtitle="$xx.xx"
           title={startCase(parsed.chainId)}
-          subtitle={`${formatDecimals(parsed.bonded)} ${parsed.tokenSymbol}`}
+          subtitle={<RedactableBalance>{`${formatDecimals(parsed.bonded)} ${parsed.tokenSymbol}`}</RedactableBalance>}
           graphic={<TokenLogo token={{ symbol: parsed.tokenSymbol, logo: parsed.tokenLogo }} />}
           invert
         />
@@ -313,11 +318,11 @@ export const ItemDetails = ({ parsed, addresses, accounts }: Props) => {
       const tokenInfo = (
         <Info
           // TODO: Add fiat prices
-          // title={`${formatDecimals(parsed.amount)} ${parsed.tokenSymbol}`}
+          // title={<RedactableBalance>{`${formatDecimals(parsed.amount)} ${parsed.tokenSymbol}`}</RedactableBalance>}
           // subtitle="$xx.xx"
           title={startCase(parsed.chainId)}
           // TODO: Determine what to show when parsed.balance !== parsed.points (a slash has occurred)
-          subtitle={`${formatDecimals(parsed.points)} ${parsed.tokenSymbol}`}
+          subtitle={<RedactableBalance>{`${formatDecimals(parsed.points)} ${parsed.tokenSymbol}`}</RedactableBalance>}
           graphic={<TokenLogo token={{ symbol: parsed.tokenSymbol, logo: parsed.tokenLogo }} />}
           invert
         />
@@ -353,10 +358,10 @@ export const ItemDetails = ({ parsed, addresses, accounts }: Props) => {
       const tokenInfo = (
         <Info
           // TODO: Add fiat prices
-          // title={`${formatDecimals(parsed.amount)} ${parsed.tokenSymbol}`}
+          // title={<RedactableBalance>{`${formatDecimals(parsed.amount)} ${parsed.tokenSymbol}`}</RedactableBalance>}
           // subtitle="$xx.xx"
           title={startCase(parsed.chainId)}
-          subtitle={`${formatDecimals(parsed.payout)} ${parsed.tokenSymbol}`}
+          subtitle={<RedactableBalance>{`${formatDecimals(parsed.payout)} ${parsed.tokenSymbol}`}</RedactableBalance>}
           graphic={<TokenLogo token={{ symbol: parsed.tokenSymbol, logo: parsed.tokenLogo }} />}
           invert
         />
@@ -391,11 +396,11 @@ export const ItemDetails = ({ parsed, addresses, accounts }: Props) => {
       const tokenInfo = (
         <Info
           // TODO: Add fiat prices
-          // title={`${formatDecimals(parsed.amount)} ${parsed.tokenSymbol}`}
+          // title={<RedactableBalance>{`${formatDecimals(parsed.amount)} ${parsed.tokenSymbol}`}</RedactableBalance>}
           // subtitle="$xx.xx"
           title={startCase(parsed.chainId)}
           // TODO: Determine what to show when parsed.balance !== parsed.points (a slash has occurred)
-          subtitle={`${formatDecimals(parsed.points)} ${parsed.tokenSymbol}`}
+          subtitle={<RedactableBalance>{`${formatDecimals(parsed.points)} ${parsed.tokenSymbol}`}</RedactableBalance>}
           graphic={<TokenLogo token={{ symbol: parsed.tokenSymbol, logo: parsed.tokenLogo }} />}
           invert
         />
@@ -473,10 +478,10 @@ export const ItemDetails = ({ parsed, addresses, accounts }: Props) => {
       const tokenInfo = (
         <Info
           // TODO: Add fiat prices
-          // title={`${formatDecimals(parsed.amount)} ${parsed.tokenSymbol}`}
+          // title={<RedactableBalance>{`${formatDecimals(parsed.amount)} ${parsed.tokenSymbol}`}</RedactableBalance>}
           // subtitle="$xx.xx"
           title={startCase(parsed.chainId)}
-          subtitle={`${formatDecimals(parsed.amount)} ${parsed.tokenSymbol}`}
+          subtitle={<RedactableBalance>{`${formatDecimals(parsed.amount)} ${parsed.tokenSymbol}`}</RedactableBalance>}
           graphic={<TokenLogo token={{ symbol: parsed.tokenSymbol, logo: parsed.tokenLogo }} />}
           invert
         />

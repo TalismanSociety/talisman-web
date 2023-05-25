@@ -10,8 +10,8 @@ import StakeItemSkeleton from './StakeItemSkeleton'
 export type StakeItemProps = {
   accountName: string
   accountAddress: string
-  stakingAmount: string
-  stakingFiatAmount: string
+  stakingAmount: ReactNode
+  stakingFiatAmount: ReactNode
   poolName: ReactNode
   stakeStatus?: StakeStatus
   actions?: ReactNode
