@@ -85,3 +85,11 @@ export const Default: Story<TextProps<'span'>> = (args: any) => (
 Default.args = {
   children: 'The quick brown fox jumps over the lazy dog',
 }
+
+export const Redacted: Story<TextProps<'del'>> = args => <Text.H1.Redacted {...args} />
+
+Redacted.parameters = {
+  layout: 'centered',
+}
+
+Redacted.args = { ...Default.args, as: 'del' }

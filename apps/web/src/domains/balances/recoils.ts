@@ -69,16 +69,6 @@ export const totalSelectedAccountsFiatBalance = selector({
   },
 })
 
-export const totalLocalizedFiatBalanceState = selector({
-  key: 'TotalLocalizedFiatBalanceState',
-  get: ({ get }) =>
-    get(totalInjectedAccountsFiatBalance).toLocaleString(undefined, {
-      style: 'currency',
-      currency: 'usd',
-      currencyDisplay: 'narrowSymbol',
-    }),
-})
-
 export const LegacyBalancesWatcher = () => {
   const setLegacyBalances = useSetRecoilState(legacyBalancesState)
 

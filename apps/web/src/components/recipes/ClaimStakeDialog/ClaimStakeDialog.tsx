@@ -1,9 +1,10 @@
 import { AlertDialog, Button, Text } from '@talismn/ui'
+import type { ReactNode } from 'react'
 
 export type ClaimStakeDialogProps = {
   open?: boolean
-  amount: string
-  fiatAmount: string
+  amount: ReactNode
+  fiatAmount: ReactNode
   onRequestDismiss: () => unknown
   onRequestReStake: () => unknown
   onRequestClaim: () => unknown

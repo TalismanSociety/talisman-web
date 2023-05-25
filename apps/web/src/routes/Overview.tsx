@@ -4,12 +4,15 @@ import { Search } from '@components/Field'
 import SectionHeader from '@components/molecules/SectionHeader'
 import Asset, { AssetsList, AssetsListLocked } from '@components/recipes/Asset'
 import AnimatedFiatNumber from '@components/widgets/AnimatedFiatNumber'
+import ErrorBoundary from '@components/widgets/ErrorBoundary'
 import PortfolioAllocationGraph from '@components/widgets/PortfolioAllocationGraph'
 import Stakes from '@components/widgets/staking/Stakes'
-import { Button } from '@talismn/ui'
+import { Eye, EyeOff } from '@talismn/icons'
+import { Button, IconButton } from '@talismn/ui'
+import { redactBalanceState } from '@talismn/web/src/components/widgets/RedactableBalance'
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import ErrorBoundary from '@components/widgets/ErrorBoundary'
+import { useRecoilState } from 'recoil'
 
 const AssetsOverview = () => {
   const [search, setSearch] = useState('')
@@ -23,6 +26,8 @@ const AssetsOverview = () => {
         ?.map(token => <Asset key={token?.tokenDetails?.id} token={token} balances={balances} lockedAsset />),
     [balances, tokens]
   )
+
+  const [redactBalance, setRedactBalance] = useRecoilState(redactBalanceState)
 
   return (
     <div css={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '1.6rem' }}>
@@ -56,10 +61,14 @@ const AssetsOverview = () => {
             },
           }}
         >
-          {/* Make this into a component */}
           <SectionHeader
             headlineText="Assets"
-            supportingText={<AnimatedFiatNumber end={fiatTotal} />}
+            supportingText={<AnimatedFiatNumber end={fiatTotal} animate={false} />}
+            supportingTextIcon={
+              <IconButton size="0.75em" onClick={() => setRedactBalance(x => !x)}>
+                {redactBalance ? <Eye /> : <EyeOff />}
+              </IconButton>
+            }
             css={{ marginBottom: 0 }}
           />
           <Search

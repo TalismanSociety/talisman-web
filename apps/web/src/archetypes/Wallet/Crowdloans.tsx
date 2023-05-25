@@ -1,19 +1,20 @@
 import { ChainLogo, ExtensionStatusGate, Info, Panel, PanelSection, Pendor } from '@components'
 import SectionHeader from '@components/molecules/SectionHeader'
 import AnimatedFiatNumber from '@components/widgets/AnimatedFiatNumber'
+import RedactableBalance from '@components/widgets/RedactableBalance'
 import { selectedSubstrateAccountsState } from '@domains/accounts/recoils'
 import { tokenPriceState } from '@domains/chains/recoils'
 import { useTotalCrowdloanTotalFiatAmount } from '@domains/crowdloans/hooks'
 import styled from '@emotion/styled'
 import crowdloanDataState from '@libs/@talisman-crowdloans/provider'
-import { type CrowdloanContribution, useCrowdloanContributions } from '@libs/crowdloans'
+import { useCrowdloanContributions, type CrowdloanContribution } from '@libs/crowdloans'
 import { Moonbeam } from '@libs/crowdloans/crowdloanOverrides'
 import { MoonbeamPortfolioTag } from '@libs/moonbeam-contributors'
 import { calculateCrowdloanPortfolioAmounts, useTaggedAmountsInPortfolio } from '@libs/portfolio'
 import { useCrowdloanById, useParachainAssets, useParachainDetailsById } from '@libs/talisman'
 import { SupportedRelaychains } from '@libs/talisman/util/_config'
 import { planckToTokens } from '@talismn/util'
-import { formatCommas, formatCurrency } from '@util/helpers'
+import { formatCommas } from '@util/helpers'
 import { Maybe } from '@util/monads'
 import BigNumber from 'bignumber.js'
 import { Suspense, useMemo } from 'react'
@@ -66,14 +67,16 @@ const CrowdloanItem = styled(
         <span className="right">
           <Info
             title={
-              <Pendor suffix={` ${relayTokenSymbol} ${t('Contributed')}`}>
-                {contributedTokens && formatCommas(Number(contributedTokens))}
-              </Pendor>
+              <RedactableBalance>
+                <Pendor suffix={` ${relayTokenSymbol} ${t('Contributed')}`}>
+                  {contributedTokens && formatCommas(Number(contributedTokens))}
+                </Pendor>
+              </RedactableBalance>
             }
             subtitle={
               contributedTokens ? (
                 <Pendor prefix={!contributedUsd && '-'} require={!relayPriceLoading}>
-                  {contributedUsd && formatCurrency(Number(contributedUsd))}
+                  {contributedUsd && <AnimatedFiatNumber end={Number(contributedUsd)} />}
                 </Pendor>
               ) : null
             }

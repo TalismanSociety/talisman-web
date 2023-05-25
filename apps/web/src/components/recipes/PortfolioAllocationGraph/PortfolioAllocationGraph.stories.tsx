@@ -15,7 +15,6 @@ export const Default: Story<PortfolioAllocationGraphProps> = args => <PortfolioA
 Default.args = {
   assetChip: <PortfolioAllocationGraph.AssetChip />,
   stateChip: <PortfolioAllocationGraph.StateChip />,
-  valueType: 'percent',
   data: [
     { label: 'GLMR', value: 0.55, color: '#6A7AEB' },
     { label: 'DOT', value: 0.36, color: '#E6007A' },

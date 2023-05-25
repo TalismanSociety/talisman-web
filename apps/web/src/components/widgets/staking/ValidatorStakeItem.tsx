@@ -9,6 +9,8 @@ import BN from 'bn.js'
 import { useCallback, useMemo, useState } from 'react'
 import { useRecoilValue, waitForAll } from 'recoil'
 import ValidatorUnstakeDialog from './ValidatorUnstakeDialog'
+import AnimatedFiatNumber from '../AnimatedFiatNumber'
+import RedactableBalance from '../RedactableBalance'
 
 const ValidatorStakeItem = (props: {
   account: Account
@@ -47,19 +49,15 @@ const ValidatorStakeItem = (props: {
         readonly={props.account.readonly}
         accountName={props.account.name ?? ''}
         accountAddress={props.account.address}
-        stakingAmount={active.toHuman()}
-        stakingFiatAmount={(active.toNumber() * nativeTokenPrice).toLocaleString(undefined, {
-          style: 'currency',
-          currency: 'usd',
-          currencyDisplay: 'narrowSymbol',
-        })}
+        stakingAmount={<RedactableBalance>{active.toHuman()}</RedactableBalance>}
+        stakingFiatAmount={<AnimatedFiatNumber end={active.toNumber() * nativeTokenPrice} />}
         unstakeChip={
           <ValidatorStakeItemComponent.UnstakeChip onClick={useCallback(() => setIsUnstakeDialogOpen(true), [])} />
         }
         withdrawChip={
           props.stake.redeemable?.isZero() === false && (
             <ValidatorStakeItemComponent.WithdrawChip
-              amount={decimal.fromPlanck(props.stake.redeemable).toHuman()}
+              amount={<RedactableBalance>{decimal.fromPlanck(props.stake.redeemable).toHuman()}</RedactableBalance>}
               onClick={() => {
                 void withdrawExtrinsic.signAndSend(props.stake.controllerId ?? '', props.slashingSpan)
               }}
@@ -70,7 +68,7 @@ const ValidatorStakeItem = (props: {
         status={
           totalUnlocking?.isZero() === false && (
             <ValidatorStakeItemComponent.UnstakingStatus
-              amount={decimal.fromPlanck(totalUnlocking).toHuman()}
+              amount={<RedactableBalance>{decimal.fromPlanck(totalUnlocking).toHuman()}</RedactableBalance>}
               unlocks={unlocks ?? []}
             />
           )
