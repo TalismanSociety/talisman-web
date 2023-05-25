@@ -2,7 +2,7 @@ import * as Sentry from '@sentry/react'
 import { type Nft } from '@talismn/nft'
 import { toast } from '@talismn/ui'
 import { atomFamily, DefaultValue, selectorFamily } from 'recoil'
-import { bufferTime, filter, Observable, reduce, scan, tap } from 'rxjs'
+import { bufferTime, filter, last, Observable, scan, tap } from 'rxjs'
 import { spawn, Thread } from 'threads'
 import { type SubscribeNfts } from './worker'
 
@@ -34,19 +34,19 @@ const _nftsState = atomFamily<Nft[], string>({
                 const errors = nftsOrErrors.filter((nft): nft is { error: unknown } => 'error' in nft).map(x => x.error)
                 const nfts = nftsOrErrors.filter((nft): nft is Nft => !('error' in nft))
 
+                errors.forEach(error => Sentry.captureException(error))
+
                 return { nfts: [...prev.nfts, ...nfts], errors: [...prev.errors, ...errors] }
               },
               { nfts: [] as Nft[], errors: [] as unknown[] }
             ),
             // eslint-disable-next-line @typescript-eslint/no-misused-promises
-            tap(async ({ nfts, errors }) => {
-              errors.forEach(error => Sentry.captureException(error))
-
+            tap(async ({ nfts }) => {
               initialResolve(nfts)
               await initialPromise
-              setSelf(self => [...(self instanceof DefaultValue ? [] : self), ...nfts])
+              setSelf(nfts)
             }),
-            reduce((prev, curr) => ({ nfts: [...prev.nfts, ...curr.nfts], errors: [...prev.errors, ...curr.errors] })),
+            last(),
             tap(({ errors }) => {
               if (errors.length > 0) {
                 toast.error('Failed to fetch some NFTs', {
