@@ -108,7 +108,7 @@ export const FullScreenDialogContents = ({ t }: { t?: Transaction }) => {
           display: grid;
           align-content: start;
           gap: 32px;
-          padding: 0 42px;
+          padding: 0 42px 24px 42px;
           height: 100%;
           overflow-x: visible;
           overflow-y: auto;
