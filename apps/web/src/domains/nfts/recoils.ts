@@ -46,7 +46,7 @@ const _nftsState = atomFamily<Nft[], string>({
               await initialPromise
               setSelf(nfts)
             }),
-            last(),
+            last(null, { nfts: [], errors: [] }),
             tap(({ errors }) => {
               if (errors.length > 0) {
                 toast.error('Failed to fetch some NFTs', {
