@@ -68,6 +68,10 @@ export const usePoolStakes = <T extends Account | Account[]>(account: T) => {
         // Calculate remaining values
         .map(({ poolMember, ...rest }, index) => {
           const status: StakeStatus = (() => {
+            if (poolMember.points.isZero()) {
+              return 'not_earning_rewards'
+            }
+
             const targets = poolNominators[index]?.unwrapOrDefault().targets
 
             if (targets?.length === 0) return 'not_nominating'
