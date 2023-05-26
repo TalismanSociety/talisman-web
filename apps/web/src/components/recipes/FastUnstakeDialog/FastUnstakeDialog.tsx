@@ -3,22 +3,30 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { useMemo } from 'react'
 
 export type FastUnstakeDialogProps = {
-  open: boolean
+  open?: boolean
+  amount: string
+  fiatAmount: string
+  lockDuration: string
+  fastUnstakeEligibility?: 'pending' | 'eligible' | 'ineligible'
   onDismiss: () => unknown
   onConfirm: () => unknown
-  fastUnstakeEligibility?: 'pending' | 'eligible' | 'ineligible'
-  confirmState?: 'pending' | 'disabled'
+  onSkip: () => unknown
+  learnMoreHref: string
 }
 
 const FastUnstakeDialog = (props: FastUnstakeDialogProps) => (
   <AlertDialog
     open={props.open}
+    width="48rem"
     title="Fast unstake"
     content={
       <>
         <Text.Body as="p" css={{ textAlign: 'center', marginBottom: '4rem' }}>
-          Fast unstaking allows you to bypass the 28 day unstaking period, however you cannot have earned rewards within
-          the past 28 days to be eligible. <Text.Body.A href="#">Learn more</Text.Body.A>
+          Fast unstaking allows you to bypass the {props.lockDuration} unstaking period, however you cannot have earned
+          rewards within the past {props.lockDuration} to be eligible.{' '}
+          <Text.Body.A href={props.learnMoreHref} target="_blank">
+            Learn more
+          </Text.Body.A>
         </Text.Body>
         <EyeOfSauronProgressIndicator
           state={useMemo(() => {
@@ -49,9 +57,7 @@ const FastUnstakeDialog = (props: FastUnstakeDialogProps) => (
                       <Text.Body as="p" css={{ textAlign: 'center', marginTop: '2.4rem' }}>
                         Checking eligibility
                         <br />
-                        This may take upto 30 seconds
-                        <br />
-                        Checked 1 of 28 days....
+                        This may take up to 30 seconds
                       </Text.Body>
                     )
                   case 'eligible':
@@ -65,10 +71,8 @@ const FastUnstakeDialog = (props: FastUnstakeDialogProps) => (
                           <DescriptionList.Description>
                             <DescriptionList.Term>Unstake amount</DescriptionList.Term>
                             <DescriptionList.Details>
-                              <Text.Body as="div" alpha="high">
-                                3244.69 DOT
-                              </Text.Body>
-                              <Text.Body as="div">$214,544.55</Text.Body>
+                              <Text.Body alpha="high">{props.amount}</Text.Body>
+                              <Text.Body>{props.fiatAmount}</Text.Body>
                             </DescriptionList.Details>
                           </DescriptionList.Description>
                         </DescriptionList>
@@ -80,31 +84,38 @@ const FastUnstakeDialog = (props: FastUnstakeDialogProps) => (
                         Unfortunately, you’re not eligible for fast unstaking.
                         <br />
                         <br />
-                        You can still unstake below as normal and start earning rewards after 28 days.
+                        You can still unstake below as normal and start earning rewards after {props.lockDuration}.
                       </Text.Body>
                     )
                   case undefined:
                     return undefined
                 }
-              }, [props.fastUnstakeEligibility])}
+              }, [props.amount, props.fastUnstakeEligibility, props.fiatAmount, props.lockDuration])}
             </motion.div>
           </AnimatePresence>
         </div>
       </>
     }
-    dismissButton={
-      props.fastUnstakeEligibility === 'ineligible' && (
-        <Button variant="outlined" onClick={props.onDismiss}>
-          Close
-        </Button>
-      )
-    }
+    dismissButton={useMemo(() => {
+      switch (props.fastUnstakeEligibility) {
+        case 'ineligible':
+          return (
+            <Button variant="outlined" onClick={props.onDismiss}>
+              Close
+            </Button>
+          )
+        case 'pending':
+          return (
+            <Button variant="outlined" onClick={props.onSkip}>
+              Skip
+            </Button>
+          )
+        default:
+          return null
+      }
+    }, [props.fastUnstakeEligibility, props.onDismiss, props.onSkip])}
     confirmButton={
-      <Button
-        onClick={props.onConfirm}
-        disabled={props.fastUnstakeEligibility === 'pending'}
-        loading={props.confirmState === 'pending'}
-      >
+      <Button onClick={props.onConfirm} disabled={props.fastUnstakeEligibility === 'pending'}>
         {props.fastUnstakeEligibility === 'ineligible' ? 'Unstake' : 'Fast unstake'}
       </Button>
     }
