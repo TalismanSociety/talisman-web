@@ -1,18 +1,19 @@
 import ErrorBoundary from '@components/widgets/ErrorBoundary'
-import { type Account, selectedAccountsState } from '@domains/accounts'
+import { selectedAccountsState, type Account } from '@domains/accounts'
 import {
-  type CollectionKey,
   nftCollectionItemsState,
   nftCollectionsState,
   nftsState,
+  type CollectionKey,
   type NftCollection,
 } from '@domains/nfts'
 import { ChevronLeft, ChevronRight, ExternalLink } from '@talismn/icons'
 import { type Nft } from '@talismn/nft'
 import { Button, Card, Hr, Identicon, ListItem, MediaDialog, SegmentedButton, Text } from '@talismn/ui'
 import { usePagination } from '@talismn/utils/react'
+import { shortenAddress } from '@util/format'
 import { Maybe } from '@util/monads'
-import { type PropsWithChildren, type RefCallback, Suspense, useCallback, useEffect, useMemo, useState } from 'react'
+import { Suspense, useCallback, useEffect, useMemo, useState, type PropsWithChildren, type RefCallback } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { useRecoilValue } from 'recoil'
 
@@ -36,6 +37,14 @@ const toIpfsCompatibleUrl = (url: string, options?: { imgWidth?: number }) => {
 
   return gatewayUrl.toString()
 }
+
+const AccountHeader = (props: { className?: string; account: Account }) => (
+  <ListItem
+    className={props.className}
+    leadingContent={<Identicon value={props.account.address} size="4rem" />}
+    headlineText={props.account.name ?? shortenAddress(props.account.address)}
+  />
+)
 
 const NftGrid = (props: PropsWithChildren) => (
   <div
@@ -198,11 +207,7 @@ const AccountNfts = (props: { account: Account; view: 'collections' | 'items' })
         }}
       >
         {showAccount ? (
-          <ListItem
-            leadingContent={<Identicon value={props.account.address} size="4rem" />}
-            headlineText={props.account.name ?? props.account.address}
-            css={{ flex: 1, padding: 0 }}
-          />
+          <AccountHeader account={props.account} css={{ flex: 1, padding: 0 }} />
         ) : (
           <div css={{ flex: 1 }} />
         )}
@@ -233,7 +238,7 @@ const AccountNfts = (props: { account: Account; view: 'collections' | 'items' })
         </div>
       </header>
     ),
-    [next, page, pageCount, previous, props.account.address, props.account.name]
+    [next, page, pageCount, previous, props.account]
   )
 
   if (items.length === 0) {
@@ -299,48 +304,52 @@ const Nfts = () => {
           </div>
         )}
       </div>
-      <Suspense
-        fallback={
-          <NftGrid>
-            <Card.Skeleton />
-          </NftGrid>
-        }
-      >
-        <section>
-          {accounts.map(account => (
-            <ErrorBoundary key={account.address} orientation="horizontal">
+      <section>
+        {accounts.map(account => (
+          <ErrorBoundary key={account.address} orientation="horizontal">
+            <Suspense
+              fallback={
+                <div>
+                  <AccountHeader account={account} />
+                  <NftGrid>
+                    <Card.Skeleton />
+                  </NftGrid>
+                  <Hr css={{ marginTop: '4.4rem' }} />
+                </div>
+              }
+            >
               <AccountNfts account={account} view={view} />
-            </ErrorBoundary>
-          ))}
-          <section
-            css={[
-              {
-                textAlign: 'center',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '0.8rem',
-                marginTop: '1.6rem',
-              },
-              { ':not(:only-child)': { display: 'none' } },
-            ]}
-          >
-            <Text.H2>No collectibles found</Text.H2>
-            <Text.Body>
-              Talisman currently supports RMRK 2, Astar,
-              <br />
-              Moonriver, Moonbeam, Statemine and Acala NFTs
-            </Text.Body>
-            <Text.Body>
-              Start your collection with a{' '}
-              <Text.Body.A href="https://singular.rmrk.app/collections/b6e98494bff52d3b1e-SPIRIT" target="_blank">
-                Spirit Key <ExternalLink size="1em" />
-              </Text.Body.A>
-            </Text.Body>
-          </section>
+            </Suspense>
+          </ErrorBoundary>
+        ))}
+        <section
+          css={[
+            {
+              textAlign: 'center',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '0.8rem',
+              marginTop: '1.6rem',
+            },
+            { ':not(:only-child)': { display: 'none' } },
+          ]}
+        >
+          <Text.H2>No collectibles found</Text.H2>
+          <Text.Body>
+            Talisman currently supports RMRK 2, Astar,
+            <br />
+            Moonriver, Moonbeam, Statemine and Acala NFTs
+          </Text.Body>
+          <Text.Body>
+            Start your collection with a{' '}
+            <Text.Body.A href="https://singular.rmrk.app/collections/b6e98494bff52d3b1e-SPIRIT" target="_blank">
+              Spirit Key <ExternalLink size="1em" />
+            </Text.Body.A>
+          </Text.Body>
         </section>
-      </Suspense>
+      </section>
     </div>
   )
 }
