@@ -1,4 +1,4 @@
-import { substrateAccountsState } from '@domains/accounts/recoils'
+import { selectedSubstrateAccountsState } from '@domains/accounts'
 import { chains } from '@domains/chains'
 import { substrateApiState } from '@domains/common'
 import { SupportedRelaychains } from '@libs/talisman/util/_config'
@@ -33,7 +33,7 @@ export function useCrowdloanContributions({
     waitForAll([substrateApiState(chains[0].rpc), substrateApiState(chains[1].rpc)])
   )
 
-  const allAccounts = useRecoilValue(substrateAccountsState)
+  const allAccounts = useRecoilValue(selectedSubstrateAccountsState)
   const [contributions, setContributions] = useState<CrowdloanContribution[]>([])
   const [hydrated, setHydrated] = useState(false)
 
