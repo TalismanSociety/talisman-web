@@ -1,4 +1,4 @@
-import { accountsState } from '@domains/accounts/recoils'
+import { DANGEROUS_ACCOUNTS_STATE } from '@domains/accounts/recoils'
 import { allowExtensionConnectionState } from '@domains/extension/recoils'
 import { isWeb3Injected } from '@polkadot/extension-dapp'
 import { type PropsWithChildren } from 'react'
@@ -18,7 +18,7 @@ export default function ExtensionStatusGate({
   unauthorized,
   noaccount,
 }: PropsWithChildren<ExtensionStatusGateProps>): JSX.Element | null {
-  const accounts = useRecoilValue(accountsState)
+  const accounts = useRecoilValue(DANGEROUS_ACCOUNTS_STATE)
   const allowExtensionConnection = useRecoilValue(allowExtensionConnectionState)
 
   if (!isWeb3Injected && unavailable !== undefined) return unavailable

@@ -1,4 +1,4 @@
-import { selectedAccountsState } from '@domains/accounts/recoils'
+import { DANGEROUS_SELECTED_ACCOUNTS_STATE } from '@domains/accounts/recoils'
 import styled from '@emotion/styled'
 import { BalanceFormatter, type Balances } from '@talismn/balances'
 import { formatDecimals } from '@talismn/util'
@@ -73,7 +73,7 @@ type AssetBreakdownListProps = {
 
 export const AssetBreakdownList = (props: AssetBreakdownListProps) => {
   const { token, balances } = props
-  const accounts = useRecoilValue(selectedAccountsState)
+  const accounts = useRecoilValue(DANGEROUS_SELECTED_ACCOUNTS_STATE)
 
   return (
     <Table>

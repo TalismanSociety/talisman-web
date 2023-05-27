@@ -11,14 +11,17 @@ export type Account = InjectedAccount & {
 
 export type ReadonlyAccount = Pick<Account, 'address' | 'name'>
 
-export const injectedAccountsState = atom<Account[]>({
+/**
+ * Includes both EVM & Substrate accounts
+ */
+export const DANGEROUS_INJECTED_ACCOUNTS_STATE = atom<Account[]>({
   key: 'InjectedAccounts',
   default: [],
 })
 
 export const injectedSubstrateAccountsState = selector({
   key: 'InjectedSubstrateAccountsState',
-  get: ({ get }) => get(injectedAccountsState).filter(x => x.type !== 'ethereum'),
+  get: ({ get }) => get(DANGEROUS_INJECTED_ACCOUNTS_STATE).filter(x => x.type !== 'ethereum'),
 })
 
 const _readOnlyAccountsState = atom<ReadonlyAccount[]>({
@@ -41,7 +44,7 @@ const _readOnlyAccountsState = atom<ReadonlyAccount[]>({
 export const readOnlyAccountsState = selector<Account[]>({
   key: 'ReadonlyAccounts',
   get: ({ get }) => {
-    const injectedAddresses = get(injectedAccountsState).map(x => x.address)
+    const injectedAddresses = get(DANGEROUS_INJECTED_ACCOUNTS_STATE).map(x => x.address)
     return get(_readOnlyAccountsState)
       .filter(x => !injectedAddresses.includes(x.address))
       .map(x => ({ ...x, readonly: true, type: isEvmAddress(x.address) ? 'ethereum' : undefined }))
@@ -55,15 +58,21 @@ export const readOnlyAccountsState = selector<Account[]>({
   },
 })
 
-export const accountsState = selector({
+/**
+ * Includes EVM, Substrate, readonly & non-selected accounts
+ */
+export const DANGEROUS_ACCOUNTS_STATE = selector({
   key: 'Accounts',
-  get: ({ get }) => [...get(injectedAccountsState), ...get(readOnlyAccountsState)],
+  get: ({ get }) => [...get(DANGEROUS_INJECTED_ACCOUNTS_STATE), ...get(readOnlyAccountsState)],
 })
 
-export const substrateAccountsState = selector({
+/**
+ * Includes readonly accounts
+ */
+export const DANGEROUS_SUBSTRATE_ACCOUNTS_STATE = selector({
   key: 'SubstrateAccounts',
   get: ({ get }) => {
-    const accounts = get(accountsState)
+    const accounts = get(DANGEROUS_ACCOUNTS_STATE)
     return accounts.filter(x => x.type !== 'ethereum')
   },
 })
@@ -73,11 +82,19 @@ export const selectedAccountAddressesState = atom<string[] | undefined>({
   default: undefined,
 })
 
-export const selectedAccountsState = selector({
+/**
+ * Includes EVM, Substrate & readonly accounts
+ */
+export const DANGEROUS_SELECTED_ACCOUNTS_STATE = selector({
   key: 'SelectedAccounts',
   get: ({ get }) => {
     const [accounts, injectedAccounts, readOnlyAccounts, selectedAddresses] = get(
-      waitForAll([accountsState, injectedAccountsState, readOnlyAccountsState, selectedAccountAddressesState])
+      waitForAll([
+        DANGEROUS_ACCOUNTS_STATE,
+        DANGEROUS_INJECTED_ACCOUNTS_STATE,
+        readOnlyAccountsState,
+        selectedAccountAddressesState,
+      ])
     )
 
     const onlyHasReadonlyAccounts = injectedAccounts.length === 0 && readOnlyAccounts.length > 0
@@ -100,7 +117,7 @@ export const selectedAccountsState = selector({
 export const legacySelectedAccountState = selector({
   key: 'LegacySelectedAccounts',
   get: ({ get }) => {
-    const [accounts, selectedAddresses] = get(waitForAll([accountsState, selectedAccountAddressesState]))
+    const [accounts, selectedAddresses] = get(waitForAll([DANGEROUS_ACCOUNTS_STATE, selectedAccountAddressesState]))
 
     if (selectedAddresses === undefined) return undefined
 
@@ -108,9 +125,12 @@ export const legacySelectedAccountState = selector({
   },
 })
 
-export const selectedSubstrateAccountsState = selector({
+/**
+ * Includes readonly accounts
+ */
+export const DANGEROUS_SELECTED_SUBSTRATE_ACCOUNTS_STATE = selector({
   key: 'SelectedSubstrateAccounts',
   get: ({ get }) => {
-    return get(selectedAccountsState).filter(x => x.type !== 'ethereum')
+    return get(DANGEROUS_SELECTED_ACCOUNTS_STATE).filter(x => x.type !== 'ethereum')
   },
 })

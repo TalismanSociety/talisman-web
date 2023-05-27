@@ -1,5 +1,5 @@
 import { Info, PanelSection } from '@components'
-import { selectedAccountsState } from '@domains/accounts/recoils'
+import { DANGEROUS_SELECTED_ACCOUNTS_STATE } from '@domains/accounts/recoils'
 import { css } from '@emotion/react'
 import styled from '@emotion/styled'
 import { ReactComponent as ExternalLink } from '@icons/external-link.svg'
@@ -24,7 +24,7 @@ type Props = {
   selectedAccount?: string
 }
 export const Item = styled(({ className, transaction, addresses, selectedAccount }: Props) => {
-  const accounts = useRecoilValue(selectedAccountsState)
+  const accounts = useRecoilValue(DANGEROUS_SELECTED_ACCOUNTS_STATE)
   const genericAddresses = useMemo(() => addresses.map(formatGenericAddress), [addresses])
 
   const { name, ss58Format, timestamp, explorerUrl, parsed, relatedAddresses, signer } = transaction

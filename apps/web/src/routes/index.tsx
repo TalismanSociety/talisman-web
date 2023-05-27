@@ -10,7 +10,7 @@ import AccountsManagementMenu from '@components/widgets/AccountsManagementMenu'
 import { RouteErrorElement } from '@components/widgets/ErrorBoundary'
 import TeleportDialog from '@components/widgets/TeleportDialog'
 import StakeDialog from '@components/widgets/staking/StakeDialog'
-import { selectedAccountsState } from '@domains/accounts/recoils'
+import { DANGEROUS_SELECTED_ACCOUNTS_STATE } from '@domains/accounts/recoils'
 import * as MoonbeamContributors from '@libs/moonbeam-contributors'
 import * as Sentry from '@sentry/react'
 import { Compass, CreditCard, Eye, MoreHorizontal, RefreshCcw, Star, TalismanHand, Zap } from '@talismn/icons'
@@ -41,7 +41,7 @@ import TransactionHistory from './TransactionHistory'
 
 const Header = () => {
   const shouldShowAccountConnectionGuard = useShouldShowAccountConnectionGuard()
-  const accounts = useRecoilValue(selectedAccountsState)
+  const accounts = useRecoilValue(DANGEROUS_SELECTED_ACCOUNTS_STATE)
 
   if (shouldShowAccountConnectionGuard) {
     return null

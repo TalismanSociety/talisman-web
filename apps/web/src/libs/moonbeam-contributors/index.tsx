@@ -2,7 +2,7 @@
 import { ApolloClient, InMemoryCache, type NormalizedCacheObject, gql, useQuery } from '@apollo/client'
 import { BatchHttpLink } from '@apollo/client/link/batch-http'
 import { useModal } from '@components'
-import { accountsState } from '@domains/accounts/recoils'
+import { DANGEROUS_ACCOUNTS_STATE } from '@domains/accounts/recoils'
 import { deriveExplorerUrl } from '@libs/crowdloans'
 import { Moonbeam } from '@libs/crowdloans/crowdloanOverrides'
 import { SupportedRelaychains } from '@libs/talisman/util/_config'
@@ -239,7 +239,7 @@ export function Provider({ children }: PropsWithChildren) {
 
 export function PopupProvider({ children }: PropsWithChildren) {
   const { openModal } = useModal()
-  const accounts = useRecoilValue(accountsState)
+  const accounts = useRecoilValue(DANGEROUS_ACCOUNTS_STATE)
   const { contributors, loading } = useMoonbeamContributors(accounts.map(({ address }) => address))
 
   const [showPopup, setShowPopup] = useState(false)

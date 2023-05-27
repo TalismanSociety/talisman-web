@@ -1,4 +1,4 @@
-import { type Account, selectedSubstrateAccountsState } from '@domains/accounts/recoils'
+import { type Account, DANGEROUS_SELECTED_SUBSTRATE_ACCOUNTS_STATE } from '@domains/accounts/recoils'
 import { useNativeTokenPriceState } from '@domains/chains/recoils'
 import { useChainState, useTokenAmountFromPlanck } from '@domains/common/hooks'
 import BN from 'bn.js'
@@ -6,7 +6,7 @@ import { useMemo } from 'react'
 import { useRecoilValue } from 'recoil'
 
 export const useTotalStaked = () => {
-  const accounts: Account[] = useRecoilValue(selectedSubstrateAccountsState)
+  const accounts: Account[] = useRecoilValue(DANGEROUS_SELECTED_SUBSTRATE_ACCOUNTS_STATE)
   const poolMembersLoadable = useChainState(
     'query',
     'nominationPools',
@@ -31,7 +31,7 @@ export const useTotalStaked = () => {
 }
 
 export const useStakedBalances = () => {
-  const accounts: Account[] = useRecoilValue(selectedSubstrateAccountsState)
+  const accounts: Account[] = useRecoilValue(DANGEROUS_SELECTED_SUBSTRATE_ACCOUNTS_STATE)
   const price = useRecoilValue(useNativeTokenPriceState())
 
   const poolMembersLoadable = useChainState(

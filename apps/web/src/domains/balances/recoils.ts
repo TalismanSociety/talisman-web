@@ -1,6 +1,10 @@
 // TODO: nuke everything and re-write balances lib integration
 
-import { accountsState, injectedAccountsState, selectedAccountsState } from '@domains/accounts/recoils'
+import {
+  DANGEROUS_ACCOUNTS_STATE,
+  DANGEROUS_INJECTED_ACCOUNTS_STATE,
+  DANGEROUS_SELECTED_ACCOUNTS_STATE,
+} from '@domains/accounts/recoils'
 import { Balances } from '@talismn/balances'
 import { useBalances as _useBalances, useAllAddresses, useChaindata, useTokens } from '@talismn/balances-react'
 import { type ChaindataProvider, type TokenList } from '@talismn/chaindata-provider'
@@ -35,7 +39,7 @@ export const balancesState = atom<Balances>({ key: 'Balances', dangerouslyAllowM
 export const selectedBalancesState = selector({
   key: 'SelectedBalances',
   get: ({ get }) => {
-    const selectedAddresses = get(selectedAccountsState).map(x => x.address)
+    const selectedAddresses = get(DANGEROUS_SELECTED_ACCOUNTS_STATE).map(x => x.address)
     return new Balances(get(balancesState).sorted.filter(x => selectedAddresses.includes(x.address)))
   },
   dangerouslyAllowMutability: true,
@@ -48,7 +52,7 @@ export const fiatBalancesState = atom<Record<string, number>>({
 export const totalInjectedAccountsFiatBalance = selector({
   key: 'TotalInjectedAccountsFiatBalance',
   get: ({ get }) => {
-    const injecteds = get(injectedAccountsState).map(x => x.address)
+    const injecteds = get(DANGEROUS_INJECTED_ACCOUNTS_STATE).map(x => x.address)
     const fiatBalances = get(fiatBalancesState)
 
     return Object.entries(fiatBalances)
@@ -60,7 +64,7 @@ export const totalInjectedAccountsFiatBalance = selector({
 export const totalSelectedAccountsFiatBalance = selector({
   key: 'TotalSelectedAccountsFiatBalance',
   get: ({ get }) => {
-    const selecteds = get(selectedAccountsState).map(x => x.address)
+    const selecteds = get(DANGEROUS_SELECTED_ACCOUNTS_STATE).map(x => x.address)
     const fiatBalances = get(fiatBalancesState)
 
     return Object.entries(fiatBalances)
@@ -83,7 +87,7 @@ export const LegacyBalancesWatcher = () => {
   const setLegacyBalances = useSetRecoilState(legacyBalancesState)
 
   const chaindata = useChaindata()
-  const accounts = useRecoilValue(accountsState)
+  const accounts = useRecoilValue(DANGEROUS_ACCOUNTS_STATE)
   const addresses = useMemo(() => accounts.map(x => x.address), [accounts])
 
   const [, setAllAddresses] = useAllAddresses()
@@ -112,7 +116,7 @@ export const LegacyBalancesWatcher = () => {
     [balances]
   )
 
-  const selectedAccounts = useRecoilValue(selectedAccountsState)
+  const selectedAccounts = useRecoilValue(DANGEROUS_SELECTED_ACCOUNTS_STATE)
   const selectedAddresses = useMemo(() => selectedAccounts.map(x => x.address), [selectedAccounts])
 
   const balancesGroupByAddress = useMemo(() => groupBy(balances?.sorted, 'address'), [balances?.sorted])

@@ -1,8 +1,8 @@
 import {
-  injectedAccountsState,
+  DANGEROUS_INJECTED_ACCOUNTS_STATE,
   readOnlyAccountsState,
   selectedAccountAddressesState,
-  selectedAccountsState,
+  DANGEROUS_SELECTED_ACCOUNTS_STATE,
 } from '@domains/accounts/recoils'
 import { fiatBalancesState, totalLocalizedFiatBalanceState } from '@domains/balances/recoils'
 import { copyAddressToClipboard } from '@domains/common/utils'
@@ -21,7 +21,7 @@ import RemoveWatchedAccountConfirmationDialog from './RemoveWatchedAccountConfir
 const AccountsManagementIconButton = (props: { size?: number | string }) => {
   const theme = useTheme()
   const allowExtensionConnection = useRecoilValue(allowExtensionConnectionState)
-  const selectedAccounts = useRecoilValue(selectedAccountsState)
+  const selectedAccounts = useRecoilValue(DANGEROUS_SELECTED_ACCOUNTS_STATE)
   const readonlyAccounts = useRecoilValue(readOnlyAccountsState)
   const isWeb3Injected = useIsWeb3Injected()
 
@@ -64,7 +64,7 @@ const AccountsManagementMenu = (props: { button: ReactNode }) => {
   const totalBalance = useRecoilValueLoadable(totalLocalizedFiatBalanceState)
 
   const setSelectedAccountAddresses = useSetRecoilState(selectedAccountAddressesState)
-  const injectedAccounts = useRecoilValue(injectedAccountsState)
+  const injectedAccounts = useRecoilValue(DANGEROUS_INJECTED_ACCOUNTS_STATE)
   const readonlyAccounts = useRecoilValue(readOnlyAccountsState)
 
   const fiatBalances = useRecoilValueLoadable(fiatBalancesState)

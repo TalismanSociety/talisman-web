@@ -1,5 +1,5 @@
 import { MaterialLoader } from '@components'
-import { accountsState } from '@domains/accounts/recoils'
+import { DANGEROUS_ACCOUNTS_STATE } from '@domains/accounts/recoils'
 import styled from '@emotion/styled'
 import { encodeAnyAddress } from '@talismn/util'
 import { useCallback, useMemo, useState } from 'react'
@@ -12,7 +12,7 @@ import { type ContributorWithName, moonbeamRelaychain, useMoonbeamContributors }
 type ModalState = { type: 'allAccounts' } | { type: 'selectedAccount'; contributor: ContributorWithName }
 
 export default function MoonbeamContributionModal() {
-  const accounts = useRecoilValue(accountsState)
+  const accounts = useRecoilValue(DANGEROUS_ACCOUNTS_STATE)
   const { contributors, loading, refetch } = useMoonbeamContributors(accounts.map(({ address }) => address))
   const contributorsWithNames: ContributorWithName[] = useMemo(
     () =>

@@ -1,10 +1,10 @@
-import { selectedSubstrateAccountsState } from '@domains/accounts'
+import { DANGEROUS_SELECTED_SUBSTRATE_ACCOUNTS_STATE } from '@domains/accounts'
 import { usePoolStakes } from '@domains/nominationPools/hooks'
 import { useRecoilValue } from 'recoil'
 import PoolStakeItem from './PoolStakeItem'
 
 const PoolStakes = () => {
-  const pools = usePoolStakes(useRecoilValue(selectedSubstrateAccountsState))
+  const pools = usePoolStakes(useRecoilValue(DANGEROUS_SELECTED_SUBSTRATE_ACCOUNTS_STATE))
 
   return (
     <>

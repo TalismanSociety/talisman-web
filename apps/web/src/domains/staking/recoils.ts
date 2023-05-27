@@ -1,4 +1,4 @@
-import { selectedSubstrateAccountsState } from '@domains/accounts/recoils'
+import { DANGEROUS_SELECTED_SUBSTRATE_ACCOUNTS_STATE } from '@domains/accounts/recoils'
 import { selectorFamily } from 'recoil'
 import { Thread, spawn } from 'threads'
 
@@ -11,7 +11,7 @@ export const stakersRewardState = selectorFamily({
   get:
     ({ endpoint, activeEra }: { endpoint: string; activeEra: number }) =>
     async ({ get }) => {
-      const addresses = get(selectedSubstrateAccountsState).map(x => x.address)
+      const addresses = get(DANGEROUS_SELECTED_SUBSTRATE_ACCOUNTS_STATE).map(x => x.address)
 
       const worker = await spawn<WorkerFunction>(new Worker(new URL('./worker', import.meta.url), { type: 'module' }))
 

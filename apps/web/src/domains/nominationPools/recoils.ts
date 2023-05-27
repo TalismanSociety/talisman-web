@@ -1,4 +1,4 @@
-import { substrateAccountsState } from '@domains/accounts/recoils'
+import { DANGEROUS_SUBSTRATE_ACCOUNTS_STATE } from '@domains/accounts/recoils'
 import { chainsState } from '@domains/chains'
 import { SubstrateApiContext } from '@domains/common'
 import { chainReadIdState, substrateApiState } from '@domains/common/recoils'
@@ -15,7 +15,7 @@ export const allPendingPoolRewardsState = selectorFamily({
       get(chainReadIdState)
 
       const api = get(substrateApiState(endpoint))
-      const accounts = get(substrateAccountsState)
+      const accounts = get(DANGEROUS_SUBSTRATE_ACCOUNTS_STATE)
 
       return await Promise.all(
         accounts.map(

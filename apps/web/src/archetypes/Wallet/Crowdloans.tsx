@@ -1,7 +1,7 @@
 import { ChainLogo, ExtensionStatusGate, Info, Panel, PanelSection, Pendor } from '@components'
 import SectionHeader from '@components/molecules/SectionHeader'
 import AnimatedFiatNumber from '@components/widgets/AnimatedFiatNumber'
-import { selectedSubstrateAccountsState } from '@domains/accounts/recoils'
+import { DANGEROUS_SELECTED_SUBSTRATE_ACCOUNTS_STATE } from '@domains/accounts/recoils'
 import { tokenPriceState } from '@domains/chains/recoils'
 import { useTotalCrowdloanTotalFiatAmount } from '@domains/crowdloans/hooks'
 import styled from '@emotion/styled'
@@ -166,7 +166,7 @@ const ExtensionUnavailable = styled((props: any) => {
 
 const SuspendableCrowdloans = ({ className }: { className?: string }) => {
   const { t } = useTranslation()
-  const accounts = useRecoilValue(selectedSubstrateAccountsState)
+  const accounts = useRecoilValue(DANGEROUS_SELECTED_SUBSTRATE_ACCOUNTS_STATE)
   const { contributions, hydrated: contributionsHydrated } = useCrowdloanContributions({
     accounts: useMemo(() => accounts.map(x => x.address), [accounts]),
   })

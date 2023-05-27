@@ -1,5 +1,5 @@
 import ErrorBoundary from '@components/widgets/ErrorBoundary'
-import { type Account, selectedAccountsState } from '@domains/accounts'
+import { type Account, DANGEROUS_SELECTED_ACCOUNTS_STATE } from '@domains/accounts'
 import {
   type CollectionKey,
   nftCollectionItemsState,
@@ -263,7 +263,7 @@ const Nfts = () => {
   const collectionKey = searchParams.get(COLLECTION_KEY)
 
   const [view, setView] = useState<'collections' | 'items'>('items')
-  const accounts = useRecoilValue(selectedAccountsState)
+  const accounts = useRecoilValue(DANGEROUS_SELECTED_ACCOUNTS_STATE)
 
   // When account selections change, remove detailed collection view
   // because new account selections might not have that collection

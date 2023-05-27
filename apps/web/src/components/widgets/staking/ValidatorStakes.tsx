@@ -1,4 +1,4 @@
-import { selectedSubstrateAccountsState } from '@domains/accounts/recoils'
+import { DANGEROUS_SELECTED_SUBSTRATE_ACCOUNTS_STATE } from '@domains/accounts/recoils'
 import { useStakersRewardState } from '@domains/staking/recoils'
 import { useRecoilValue, useRecoilValueLoadable, waitForAll } from 'recoil'
 
@@ -6,7 +6,7 @@ import { useChainDeriveState, useChainQueryState } from '@domains/common'
 import ValidatorStakeItem from './ValidatorStakeItem'
 
 const ValidatorStakes = () => {
-  const accounts = useRecoilValue(selectedSubstrateAccountsState)
+  const accounts = useRecoilValue(DANGEROUS_SELECTED_SUBSTRATE_ACCOUNTS_STATE)
 
   const [activeEra, stakes] = useRecoilValue(
     waitForAll([

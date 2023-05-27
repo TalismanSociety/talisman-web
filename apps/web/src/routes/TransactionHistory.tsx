@@ -1,5 +1,5 @@
 import { List } from '@archetypes/Transaction'
-import { selectedAccountsState } from '@domains/accounts/recoils'
+import { DANGEROUS_SELECTED_ACCOUNTS_STATE } from '@domains/accounts/recoils'
 import styled from '@emotion/styled'
 import { useMemo } from 'react'
 import { useRecoilValue } from 'recoil'
@@ -38,7 +38,7 @@ import { useRecoilValue } from 'recoil'
 // `
 
 const TransactionHistory = styled(({ className }: { className?: string }) => {
-  const addresses = useRecoilValue(selectedAccountsState)
+  const addresses = useRecoilValue(DANGEROUS_SELECTED_ACCOUNTS_STATE)
 
   return (
     <section className={className}>

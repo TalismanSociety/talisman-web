@@ -1,6 +1,6 @@
 import { type Query } from '@archetypes/Transaction/lib'
 import DialogComponent from '@components/recipes/ExportTxHistoryDialog'
-import { substrateAccountsState } from '@domains/accounts/recoils'
+import { DANGEROUS_SUBSTRATE_ACCOUNTS_STATE } from '@domains/accounts/recoils'
 import { toast } from '@talismn/ui'
 import { stringify } from 'csv-stringify/browser/esm'
 import { subMonths } from 'date-fns'
@@ -15,7 +15,7 @@ export type ExportTxHistoryWidgetProps = {
 const ExportTxHistoryWidget = (props: ExportTxHistoryWidgetProps) => {
   const [open, setOpen] = useState(false)
 
-  const accounts = useRecoilValue(substrateAccountsState)
+  const accounts = useRecoilValue(DANGEROUS_SUBSTRATE_ACCOUNTS_STATE)
   const [selectedAccount, setSelectedAccount] = useState(accounts[0])
 
   const [fromDate, setFromDate] = useState(subMonths(new Date(), 1))

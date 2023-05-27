@@ -1,7 +1,7 @@
 import { ReactComponent as AlertCircle } from '@assets/icons/alert-circle-bg.svg'
 import { ReactComponent as LinkCircle } from '@assets/icons/link-circle-bg.svg'
 import { useModal } from '@components'
-import { accountsState } from '@domains/accounts/recoils'
+import { DANGEROUS_ACCOUNTS_STATE } from '@domains/accounts/recoils'
 import styled from '@emotion/styled'
 import { useTranslation } from 'react-i18next'
 import { useRecoilValue } from 'recoil'
@@ -12,7 +12,7 @@ import { useMoonbeamContributors } from '.'
 export const MoonbeamPortfolioTag = styled(({ className }: { className?: string }) => {
   const { t } = useTranslation('crowdloan', { keyPrefix: 'moonbeamPortflioTag' })
   const { openModal } = useModal()
-  const accounts = useRecoilValue(accountsState)
+  const accounts = useRecoilValue(DANGEROUS_ACCOUNTS_STATE)
   const { contributors, loading } = useMoonbeamContributors(accounts.map(({ address }) => address))
   const hasUnlinked = contributors.some(contributor => contributor.rewardsAddress === null)
 

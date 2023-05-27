@@ -1,4 +1,4 @@
-import { injectedAccountsState } from '@domains/accounts/recoils'
+import { DANGEROUS_INJECTED_ACCOUNTS_STATE } from '@domains/accounts/recoils'
 import { storageEffect } from '@domains/common/effects'
 import { web3AccountsSubscribe, web3Enable } from '@polkadot/extension-dapp'
 import type { InjectedWindow } from '@polkadot/extension-inject/types'
@@ -14,7 +14,7 @@ export const allowExtensionConnectionState = atom<boolean | null>({
 
 export const ExtensionWatcher = () => {
   const [allowExtensionConnection, setAllowExtensionConnection] = useRecoilState(allowExtensionConnectionState)
-  const setAccounts = useSetRecoilState(injectedAccountsState)
+  const setAccounts = useSetRecoilState(DANGEROUS_INJECTED_ACCOUNTS_STATE)
 
   useEffect(() => {
     if (!allowExtensionConnection) {
