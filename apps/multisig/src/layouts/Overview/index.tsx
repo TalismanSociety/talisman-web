@@ -6,6 +6,7 @@ import Assets, { TokenAugmented } from './Assets'
 import Footer from './Footer'
 import Header from './Header'
 import { mockTokensAugmented, mockTransactions } from './mocks'
+import NewTransactionModal from './NewTransactionModal'
 import Sidebar from './Sidebar'
 import Transactions, { Transaction } from './Transactions'
 
@@ -77,6 +78,7 @@ const Overview = () => {
       <Assets augmentedTokens={augmentedTokens} />
       <Transactions transactions={transactions} />
       <Footer />
+      <NewTransactionModal />
     </div>
   )
 }

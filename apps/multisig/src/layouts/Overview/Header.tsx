@@ -92,6 +92,9 @@ const Header = () => {
         `}
       />
       <Button
+        onClick={() => {
+          navigate('/overview/new-transaction')
+        }}
         className={css`
           display: flex;
           align-items: center;
@@ -154,7 +157,7 @@ const Header = () => {
                   'cursor': 'pointer',
                 }}
                 onClick={() => {
-                  navigate('/create/name-vault')
+                  navigate('/create')
                 }}
               >
                 <IconButton size={'40px'} contentColor={theme.color.primary}>

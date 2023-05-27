@@ -2,6 +2,8 @@ import '@polkadot/api-augment/polkadot'
 import '@polkadot/api-augment/substrate'
 import 'react-loading-skeleton/dist/skeleton.css'
 
+import './index.css'
+
 import { EyeOfSauronProgressIndicator } from '@talismn/ui'
 import { ToastBar } from '@talismn/ui'
 import React, { Suspense } from 'react'
