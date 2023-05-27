@@ -1,4 +1,4 @@
-import { DANGEROUS_SUBSTRATE_ACCOUNTS_STATE } from '@domains/accounts/recoils'
+import { DANGEROUS_SELECTED_SUBSTRATE_ACCOUNTS_STATE } from '@domains/accounts/recoils'
 import { chains } from '@domains/chains'
 import { substrateApiState } from '@domains/common'
 import { SupportedRelaychains } from '@libs/talisman/util/_config'
@@ -33,7 +33,7 @@ export function useCrowdloanContributions({
     waitForAll([substrateApiState(chains[0].rpc), substrateApiState(chains[1].rpc)])
   )
 
-  const allAccounts = useRecoilValue(DANGEROUS_SUBSTRATE_ACCOUNTS_STATE)
+  const allAccounts = useRecoilValue(DANGEROUS_SELECTED_SUBSTRATE_ACCOUNTS_STATE)
   const [contributions, setContributions] = useState<CrowdloanContribution[]>([])
   const [hydrated, setHydrated] = useState(false)
 
