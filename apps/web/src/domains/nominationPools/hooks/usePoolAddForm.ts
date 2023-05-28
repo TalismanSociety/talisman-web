@@ -1,31 +1,26 @@
-import { SubstrateApiContext } from '@domains/common'
-import { useTokenAmountFromPlanck, useTokenAmountState } from '@domains/common/hooks'
-import {
-  paymentInfoState,
-  useChainDeriveState,
-  useChainQueryMultiState,
-  useSubstrateApiState,
-} from '@domains/common/recoils'
+import { useSubstrateApiEndpoint, useTokenAmountFromPlanck, useTokenAmountState } from '@domains/common/hooks'
+import { paymentInfoState, useSubstrateApiState } from '@domains/common/recoils'
 import { BN } from '@polkadot/util'
+import { useDeriveState, useQueryMultiState } from '@talismn/react-polkadot-api'
 import usePrevious from '@util/usePrevious'
-import { useContext, useEffect, useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import { constSelector, useRecoilValue, useRecoilValueLoadable } from 'recoil'
 
 const ESTIMATED_FEE_MARGIN_OF_ERROR = 0.25
 
 export const usePoolAddForm = (action: 'bondExtra' | 'join', account?: string) => {
   const api = useRecoilValue(useSubstrateApiState())
-  const apiEndpoint = useContext(SubstrateApiContext).endpoint
+  const apiEndpoint = useSubstrateApiEndpoint()
 
   const prevAccount = usePrevious(account)
 
   const balancesLoadable = useRecoilValueLoadable(
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    useChainDeriveState('balances', 'all', [account!], { enabled: account !== undefined })
+    useDeriveState('balances', 'all', [account!], { enabled: account !== undefined })
   )
 
   const queriesLoadable = useRecoilValueLoadable(
-    useChainQueryMultiState([['nominationPools.poolMembers', account], 'nominationPools.minJoinBond'], {
+    useQueryMultiState([['nominationPools.poolMembers', account], 'nominationPools.minJoinBond'], {
       enabled: account !== undefined,
     })
   )

@@ -1,21 +1,17 @@
 import { ChainContext } from '@domains/chains'
-import { SubstrateApiContext } from '@domains/common'
-import {
-  chainQueryState,
-  useChainQueryMultiState,
-  useChainQueryState,
-  useSubstrateApiState,
-} from '@domains/common/recoils'
+import { chainQueryState, useSubstrateApiEndpoint, useSubstrateApiState } from '@domains/common'
+
 import { BN } from '@polkadot/util'
+import { useQueryMultiState, useQueryState } from '@talismn/react-polkadot-api'
 import { useContext, useMemo } from 'react'
 import { constSelector, useRecoilValue } from 'recoil'
 
 export const useInflation = () => {
   const chain = useContext(ChainContext)
-  const endpoint = useContext(SubstrateApiContext).endpoint
+  const endpoint = useSubstrateApiEndpoint()
   const api = useRecoilValue(useSubstrateApiState())
 
-  const activeEra = useRecoilValue(useChainQueryState('staking', 'activeEra', []))
+  const activeEra = useRecoilValue(useQueryState('staking', 'activeEra', []))
   const auctionCounter = useRecoilValue(
     api.query.auctions !== undefined
       ? chainQueryState(endpoint, 'auctions', 'auctionCounter', [])
@@ -23,7 +19,7 @@ export const useInflation = () => {
   )
 
   const [totalIssuance, lastTotalStake] = useRecoilValue(
-    useChainQueryMultiState([
+    useQueryMultiState([
       'balances.totalIssuance',
       ['staking.erasTotalStake', activeEra.unwrapOrDefault().index.subn(1)],
     ])

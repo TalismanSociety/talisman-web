@@ -2,10 +2,16 @@ import ClaimStakeDialog from '@components/recipes/ClaimStakeDialog'
 import PoolSelectorDialog from '@components/recipes/PoolSelectorDialog'
 import StakeFormComponent from '@components/recipes/StakeForm'
 import { type StakeStatus } from '@components/recipes/StakeStatusIndicator'
-import { type Account, injectedSubstrateAccountsState } from '@domains/accounts/recoils'
+import { injectedSubstrateAccountsState, type Account } from '@domains/accounts/recoils'
 import { ChainContext, ChainProvider, chainsState, useNativeTokenDecimalState, type Chain } from '@domains/chains'
-import { SubstrateApiContext, useSubstrateApiState } from '@domains/common'
-import { useChainState, useEraEtaFormatter, useExtrinsic, useTokenAmountFromPlanck } from '@domains/common/hooks'
+import {
+  useChainState,
+  useEraEtaFormatter,
+  useExtrinsic,
+  useSubstrateApiEndpoint,
+  useSubstrateApiState,
+  useTokenAmountFromPlanck,
+} from '@domains/common'
 import { useInflation, usePoolAddForm, usePoolStakes } from '@domains/nominationPools/hooks'
 import { eraStakersState, useRecommendedPoolsState } from '@domains/nominationPools/recoils'
 import { createAccounts } from '@domains/nominationPools/utils'
@@ -14,7 +20,6 @@ import { CircularProgressIndicator, Select } from '@talismn/ui'
 import { Maybe } from '@util/monads'
 import BN from 'bn.js'
 import {
-  type ReactNode,
   Suspense,
   memo,
   useCallback,
@@ -24,6 +29,7 @@ import {
   useMemo,
   useState,
   useTransition,
+  type ReactNode,
 } from 'react'
 import { useLocation } from 'react-use'
 import { constSelector, useRecoilValue, useRecoilValueLoadable, waitForAll } from 'recoil'
@@ -249,7 +255,7 @@ export const ControlledStakeForm = (props: { assetSelector: ReactNode }) => {
     [location.search]
   )
 
-  const apiEndpoint = useContext(SubstrateApiContext).endpoint
+  const apiEndpoint = useSubstrateApiEndpoint()
 
   const [api, recommendedPools] = useRecoilValue(waitForAll([useSubstrateApiState(), useRecommendedPoolsState()]))
 

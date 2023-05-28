@@ -38,6 +38,7 @@
     "@talismn/icons": "workspace:^",
     "@talismn/math": "workspace:^",
     "@talismn/nft": "workspace:^",
+    "@talismn/react-polkadot-api": "workspace:^",
     "@talismn/ui": "workspace:^",
     "@talismn/util": "^0.1.9",
     "@talismn/utils": "workspace:^",

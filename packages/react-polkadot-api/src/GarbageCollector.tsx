@@ -1,5 +1,8 @@
-import { useCallback, useEffect } from 'react'
+import { useCallback, useContext, useEffect } from 'react'
 import { releaseNode, useGetRecoilValueInfo_UNSTABLE, useRecoilCallback, useStoreRef } from 'recoil'
+import { RecoilStateContext } from './Context.js'
+
+export const garbageCollectionKey = Symbol('garbageCollectionKey')
 
 type RECOIL_GARBAGE_COLLECTOR_UNSTABLE_Props = {
   shouldCheckForGarbageCollection: (key: string) => boolean
@@ -64,12 +67,18 @@ export const RECOIL_GARBAGE_COLLECTOR_UNSTABLE = (props: RECOIL_GARBAGE_COLLECTO
 /**
  * TODO: remove after `retainedBy` support is implemented on recoil
  */
-export const SUBSTRATE_API_STATE_GARBAGE_COLLECTOR_UNSTABLE = () => (
-  <RECOIL_GARBAGE_COLLECTOR_UNSTABLE
-    interval={5_000}
-    shouldCheckForGarbageCollection={useCallback(
-      node => node.startsWith('ChainState') || node.startsWith('QueryMulti'),
-      []
-    )}
-  />
-)
+export const POLKADOT_API_STATE_GARBAGE_COLLECTOR_UNSTABLE = () => {
+  const states = useContext(RecoilStateContext)
+  return (
+    <RECOIL_GARBAGE_COLLECTOR_UNSTABLE
+      interval={5_000}
+      shouldCheckForGarbageCollection={useCallback(
+        node =>
+          node.startsWith(states.queryState[garbageCollectionKey]) ||
+          node.startsWith(states.deriveState[garbageCollectionKey]) ||
+          node.startsWith(states.queryMultiState[garbageCollectionKey]),
+        []
+      )}
+    />
+  )
+}

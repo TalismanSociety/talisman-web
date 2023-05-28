@@ -1,9 +1,9 @@
+import { useDeriveState } from '@talismn/react-polkadot-api'
 import type BN from 'bn.js'
 import { addMilliseconds, formatDistanceToNow } from 'date-fns'
 import { useCallback } from 'react'
 import { useRecoilValue, waitForAll } from 'recoil'
-
-import { useChainDeriveState, useSubstrateApiState } from '..'
+import { useSubstrateApiState } from '..'
 import { expectedBlockTime } from '../utils/substratePolyfills'
 
 const erasToMilliseconds = (eras: BN, eraLength: BN, eraProgress: BN, expectedBlockTime: BN) =>
@@ -11,7 +11,7 @@ const erasToMilliseconds = (eras: BN, eraLength: BN, eraProgress: BN, expectedBl
 
 export const useEraEtaFormatter = () => {
   const [api, sessionProgress] = useRecoilValue(
-    waitForAll([useSubstrateApiState(), useChainDeriveState('session', 'progress', [])])
+    waitForAll([useSubstrateApiState(), useDeriveState('session', 'progress', [])])
   )
 
   return useCallback(

@@ -1,8 +1,7 @@
 import { injectedSubstrateAccountsState } from '@domains/accounts/recoils'
-import { SubstrateApiContext, substrateApiState } from '@domains/common'
-import { useChainState } from '@domains/common/hooks'
+import { substrateApiState } from '@domains/common'
+import { useChainState, useSubstrateApiEndpoint } from '@domains/common/hooks'
 import { range } from 'lodash/fp'
-import { useContext } from 'react'
 import {
   RecoilLoadable,
   constSelector,
@@ -40,7 +39,7 @@ const exposedAccountsState = selectorFamily({
 })
 
 export const useExposedAccounts = () => {
-  const apiEndpoint = useContext(SubstrateApiContext).endpoint
+  const apiEndpoint = useSubstrateApiEndpoint()
   const activeEra = useChainState('query', 'staking', 'activeEra', [])
 
   const loadable = useRecoilValueLoadable(

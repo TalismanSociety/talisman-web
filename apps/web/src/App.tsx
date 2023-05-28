@@ -6,7 +6,6 @@ import { TalismanHandLoader } from '@components/TalismanHandLoader'
 import ErrorBoundary from '@components/widgets/ErrorBoundary'
 import Development from '@components/widgets/development'
 import { LegacyBalancesWatcher } from '@domains/balances/recoils'
-import { SUBSTRATE_API_STATE_GARBAGE_COLLECTOR_UNSTABLE } from '@domains/common'
 import { ExtensionWatcher } from '@domains/extension/recoils'
 import * as MoonbeamContributors from '@libs/moonbeam-contributors'
 import * as Portfolio from '@libs/portfolio'
@@ -17,6 +16,8 @@ import { RouterProvider } from 'react-router-dom'
 import { RecoilRoot } from 'recoil'
 
 import ThemeProvider from './App.Theme'
+import { PolkadotApiProvider } from '@talismn/react-polkadot-api'
+import { chainDeriveState, chainQueryMultiState, chainQueryState } from '@domains/common/recoils/query'
 
 const Loader = () => {
   return (
@@ -46,19 +47,24 @@ const App = () => (
           </div>
         )}
       >
-        <SUBSTRATE_API_STATE_GARBAGE_COLLECTOR_UNSTABLE />
         <Suspense fallback={<Loader />}>
-          <Portfolio.Provider>
-            <TalismanProvider>
-              <ExtensionWatcher />
-              <LegacyBalancesWatcher />
-              <MoonbeamContributors.Provider>
-                <Development />
-                <RouterProvider router={router} />
-                <CookieBanner />
-              </MoonbeamContributors.Provider>
-            </TalismanProvider>
-          </Portfolio.Provider>
+          <PolkadotApiProvider
+            queryState={chainQueryState}
+            deriveState={chainDeriveState}
+            queryMultiState={chainQueryMultiState}
+          >
+            <Portfolio.Provider>
+              <TalismanProvider>
+                <ExtensionWatcher />
+                <LegacyBalancesWatcher />
+                <MoonbeamContributors.Provider>
+                  <Development />
+                  <RouterProvider router={router} />
+                  <CookieBanner />
+                </MoonbeamContributors.Provider>
+              </TalismanProvider>
+            </Portfolio.Provider>
+          </PolkadotApiProvider>
         </Suspense>
       </ErrorBoundary>
     </RecoilRoot>

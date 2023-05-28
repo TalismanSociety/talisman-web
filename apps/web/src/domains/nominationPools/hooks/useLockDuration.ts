@@ -1,10 +1,11 @@
-import { expectedBlockTime, useChainDeriveState, useSubstrateApiState } from '@domains/common'
+import { expectedBlockTime, useSubstrateApiState } from '@domains/common'
+import { useDeriveState } from '@talismn/react-polkadot-api'
 import { formatDistance } from 'date-fns'
 import { useRecoilValue, waitForAll } from 'recoil'
 
 export const useLocalizedLockDuration = () => {
   const [api, sessionProgress] = useRecoilValue(
-    waitForAll([useSubstrateApiState(), useChainDeriveState('session', 'progress', [])])
+    waitForAll([useSubstrateApiState(), useDeriveState('session', 'progress', [])])
   )
 
   if (!sessionProgress.isEpoch) {
