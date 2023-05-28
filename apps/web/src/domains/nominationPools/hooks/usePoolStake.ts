@@ -1,6 +1,7 @@
 import { type StakeStatus } from '@components/recipes/StakeStatusIndicator'
 import { type Account } from '@domains/accounts/recoils'
-import { useChainDeriveState, useChainQueryState, useSubstrateApiState } from '@domains/common'
+import { useSubstrateApiState } from '@domains/common'
+import { useDeriveState, useQueryState } from '@talismn/react-polkadot-api'
 import { useMemo } from 'react'
 import { useRecoilValue, useRecoilValue_TRANSITION_SUPPORT_UNSTABLE, waitForAll } from 'recoil'
 import { useAllPendingRewardsState, useEraStakersState } from '../recoils'
@@ -14,7 +15,7 @@ export const usePoolStakes = <T extends Account | Account[]>(account: T) => {
   )
 
   const _poolMembers = useRecoilValue(
-    useChainQueryState(
+    useQueryState(
       'nominationPools',
       'poolMembers.multi',
       accounts.map(({ address }) => address)
@@ -40,15 +41,15 @@ export const usePoolStakes = <T extends Account | Account[]>(account: T) => {
 
   const [poolNominators, slashingSpans, poolMetadatum, activeEra, sessionProgress] = useRecoilValue(
     waitForAll([
-      useChainQueryState('staking', 'nominators.multi', stashIds),
-      useChainQueryState('staking', 'slashingSpans.multi', stashIds),
-      useChainQueryState(
+      useQueryState('staking', 'nominators.multi', stashIds),
+      useQueryState('staking', 'slashingSpans.multi', stashIds),
+      useQueryState(
         'nominationPools',
         'metadata.multi',
         useMemo(() => accountPools.map(x => x.poolMember.poolId), [accountPools])
       ),
-      useChainQueryState('staking', 'activeEra', []),
-      useChainDeriveState('session', 'progress', []),
+      useQueryState('staking', 'activeEra', []),
+      useDeriveState('session', 'progress', []),
     ])
   )
 

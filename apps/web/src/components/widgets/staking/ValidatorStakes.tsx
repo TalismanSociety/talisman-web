@@ -1,8 +1,7 @@
 import { selectedSubstrateAccountsState } from '@domains/accounts/recoils'
 import { useStakersRewardState } from '@domains/staking/recoils'
+import { useDeriveState, useQueryState } from '@talismn/react-polkadot-api'
 import { useRecoilValue, useRecoilValueLoadable, waitForAll } from 'recoil'
-
-import { useChainDeriveState, useChainQueryState } from '@domains/common'
 import ValidatorStakeItem from './ValidatorStakeItem'
 
 const ValidatorStakes = () => {
@@ -10,12 +9,12 @@ const ValidatorStakes = () => {
 
   const [activeEra, stakes] = useRecoilValue(
     waitForAll([
-      useChainQueryState('staking', 'activeEra', []),
-      useChainDeriveState('staking', 'accounts', [accounts.map(({ address }) => address), undefined]),
+      useQueryState('staking', 'activeEra', []),
+      useDeriveState('staking', 'accounts', [accounts.map(({ address }) => address), undefined]),
     ])
   )
   const slashingSpansLoadable = useRecoilValue(
-    useChainQueryState('staking', 'slashingSpans.multi', stakes.map(staking => staking.stashId) ?? [])
+    useQueryState('staking', 'slashingSpans.multi', stakes.map(staking => staking.stashId) ?? [])
   )
 
   const stakerRewards = useRecoilValueLoadable(useStakersRewardState(activeEra.unwrapOrDefault().index.toNumber()))

@@ -1,9 +1,7 @@
 import { selectedSubstrateAccountsState } from '@domains/accounts/recoils'
+import { useSubstrateApiEndpoint } from '@domains/common'
 import { selectorFamily } from 'recoil'
 import { Thread, spawn } from 'threads'
-
-import { SubstrateApiContext } from '@domains/common'
-import { useContext } from 'react'
 import { type WorkerFunction } from './worker'
 
 export const stakersRewardState = selectorFamily({
@@ -24,4 +22,4 @@ export const stakersRewardState = selectorFamily({
 })
 
 export const useStakersRewardState = (activeEra: number) =>
-  stakersRewardState({ endpoint: useContext(SubstrateApiContext).endpoint, activeEra })
+  stakersRewardState({ endpoint: useSubstrateApiEndpoint(), activeEra })

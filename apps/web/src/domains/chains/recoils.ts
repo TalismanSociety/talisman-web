@@ -1,11 +1,11 @@
-import { SubstrateApiContext, substrateApiState } from '@domains/common'
+import { substrateApiState, useSubstrateApiEndpoint } from '@domains/common'
 import { type BN } from '@polkadot/util'
 import { type ToBn } from '@polkadot/util/types'
+import { Decimal } from '@talismn/math'
 import { useContext } from 'react'
 import { atom, selector, selectorFamily } from 'recoil'
 import { ChainContext } from '.'
-import { type Chain, chains } from './config'
-import { Decimal } from '@talismn/math'
+import { chains, type Chain } from './config'
 
 export const _chainsState = atom({ key: '_Chains', default: chains })
 
@@ -72,4 +72,4 @@ export const nativeTokenDecimalState = selectorFamily({
     },
 })
 
-export const useNativeTokenDecimalState = () => nativeTokenDecimalState(useContext(SubstrateApiContext).endpoint)
+export const useNativeTokenDecimalState = () => nativeTokenDecimalState(useSubstrateApiEndpoint())

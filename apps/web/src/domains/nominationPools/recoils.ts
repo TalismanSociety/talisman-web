@@ -1,11 +1,10 @@
 import { substrateAccountsState } from '@domains/accounts/recoils'
 import { chainsState } from '@domains/chains'
-import { SubstrateApiContext } from '@domains/common'
+import { useSubstrateApiEndpoint } from '@domains/common'
 import { chainReadIdState, substrateApiState } from '@domains/common/recoils'
 import type { AnyNumber } from '@polkadot/types-codec/types'
 import DotPoolSelector, { ValidatorSelector, defaultOptions } from '@talismn/dot-pool-selector'
-import { useContext } from 'react'
-import { type SerializableParam, selectorFamily } from 'recoil'
+import { selectorFamily, type SerializableParam } from 'recoil'
 
 export const allPendingPoolRewardsState = selectorFamily({
   key: 'AllPendingRewards',
@@ -30,7 +29,7 @@ export const allPendingPoolRewardsState = selectorFamily({
   dangerouslyAllowMutability: true,
 })
 
-export const useAllPendingRewardsState = () => allPendingPoolRewardsState(useContext(SubstrateApiContext).endpoint)
+export const useAllPendingRewardsState = () => allPendingPoolRewardsState(useSubstrateApiEndpoint())
 
 // TODO: refactor to selector that can read all storage entries
 export const eraStakersState = selectorFamily({
@@ -49,7 +48,7 @@ export const eraStakersState = selectorFamily({
 })
 
 export const useEraStakersState = (era: Extract<AnyNumber, SerializableParam>) =>
-  eraStakersState({ endpoint: useContext(SubstrateApiContext).endpoint, era })
+  eraStakersState({ endpoint: useSubstrateApiEndpoint(), era })
 
 export const recommendedPoolsState = selectorFamily({
   key: 'Staking/BondedPools',
@@ -96,4 +95,4 @@ export const recommendedPoolsState = selectorFamily({
   dangerouslyAllowMutability: true,
 })
 
-export const useRecommendedPoolsState = () => recommendedPoolsState(useContext(SubstrateApiContext).endpoint)
+export const useRecommendedPoolsState = () => recommendedPoolsState(useSubstrateApiEndpoint())

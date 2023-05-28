@@ -7225,6 +7225,22 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@talismn/react-polkadot-api@workspace:^, @talismn/react-polkadot-api@workspace:packages/react-polkadot-api":
+  version: 0.0.0-use.local
+  resolution: "@talismn/react-polkadot-api@workspace:packages/react-polkadot-api"
+  dependencies:
+    "@polkadot/api": ^10.7.2
+    "@talismn/eslint-config": "workspace:^"
+    "@talismn/tsconfig": "workspace:^"
+    "@types/react": ^18.2.7
+    typescript: ^5.0.4
+  peerDependencies:
+    "@polkadot/api": ">= 9.x"
+    react: ">= 18.x"
+    recoil: ">= 0.7.x"
+  languageName: unknown
+  linkType: soft
+
 "@talismn/token-rates@npm:0.1.16":
   version: 0.1.16
   resolution: "@talismn/token-rates@npm:0.1.16"
@@ -7354,6 +7370,7 @@ __metadata:
     "@talismn/icons": "workspace:^"
     "@talismn/math": "workspace:^"
     "@talismn/nft": "workspace:^"
+    "@talismn/react-polkadot-api": "workspace:^"
     "@talismn/tsconfig": "workspace:^"
     "@talismn/ui": "workspace:^"
     "@talismn/util": ^0.1.9
@@ -8076,6 +8093,17 @@ __metadata:
     "@types/scheduler": "*"
     csstype: ^3.0.2
   checksum: e752df961105e5127652460504785897ca6e77259e0da8f233f694f9e8f451cde7fa0709d4456ade0ff600c8ce909cfe29f9b08b9c247fa9b734e126ec53edd7
+  languageName: node
+  linkType: hard
+
+"@types/react@npm:^18.2.7":
+  version: 18.2.7
+  resolution: "@types/react@npm:18.2.7"
+  dependencies:
+    "@types/prop-types": "*"
+    "@types/scheduler": "*"
+    csstype: ^3.0.2
+  checksum: caa5da4cf929766738ec789301dc6fb6624bd48dd317d851c4c9b84b1f47cd8ebe17fe01398cadaa0bc938cd4d502d67f4b9de9ff771dc132096bdc86228efba
   languageName: node
   linkType: hard
 

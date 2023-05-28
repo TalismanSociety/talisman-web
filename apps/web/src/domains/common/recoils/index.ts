@@ -5,8 +5,7 @@ import { atom, selectorFamily } from 'recoil'
 import { substrateApiState } from '..'
 
 export * from './api'
-export * from './chain'
-export * from './queryMulti'
+export * from './query'
 
 export const paymentInfoState = selectorFamily({
   key: 'PaymentInfo',

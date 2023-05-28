@@ -6,7 +6,7 @@ import { useCallback, useContext, useState } from 'react'
 import { useRecoilCallback } from 'recoil'
 
 import { ChainContext } from '@domains/chains'
-import { SubstrateApiContext, substrateApiState } from '..'
+import { substrateApiState, useSubstrateApiEndpoint } from '..'
 import { extrinsicMiddleware } from '../extrinsicMiddleware'
 import { toastExtrinsic } from '../utils'
 
@@ -20,7 +20,7 @@ export const useExtrinsic = <
   type TExtrinsic = ApiPromise['tx'][TModule][TSection]
 
   const chain = useContext(ChainContext)
-  const apiEndpoint = useContext(SubstrateApiContext).endpoint
+  const apiEndpoint = useSubstrateApiEndpoint()
 
   const [loadable, setLoadable] = useState<
     | { state: 'idle'; contents: undefined }

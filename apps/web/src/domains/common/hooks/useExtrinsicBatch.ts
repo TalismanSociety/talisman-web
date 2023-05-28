@@ -5,7 +5,7 @@ import { web3FromAddress } from '@polkadot/extension-dapp'
 import { type ISubmittableResult } from '@polkadot/types/types'
 import { useCallback, useContext, useState } from 'react'
 import { useRecoilCallback } from 'recoil'
-import { SubstrateApiContext, substrateApiState } from '..'
+import { substrateApiState, useSubstrateApiEndpoint } from '..'
 import { extrinsicMiddleware } from '../extrinsicMiddleware'
 import { toastExtrinsic } from '../utils'
 
@@ -33,7 +33,7 @@ export const useExtrinsicBatch = <
   extrinsics: TExtrinsics
 ) => {
   const chain = useContext(ChainContext)
-  const apiEndpoint = useContext(SubstrateApiContext).endpoint
+  const apiEndpoint = useSubstrateApiEndpoint()
 
   const [loadable, setLoadable] = useState<
     | { state: 'idle'; contents: undefined }
