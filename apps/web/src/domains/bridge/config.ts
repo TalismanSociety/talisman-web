@@ -17,10 +17,10 @@ import { MoonbeamAdapter, MoonriverAdapter } from '@polkawallet/bridge/adapters/
 import { TuringAdapter } from '@polkawallet/bridge/adapters/oak'
 import { HeikoAdapter, ParallelAdapter } from '@polkawallet/bridge/adapters/parallel'
 import { KhalaAdapter } from '@polkawallet/bridge/adapters/phala'
-import { KusamaAdapter, PolkadotAdapter } from '@polkawallet/bridge/adapters/polkadot'
-import { StatemineAdapter } from '@polkawallet/bridge/adapters/statemint'
 import { QuartzAdapter, UniqueAdapter } from '@polkawallet/bridge/adapters/unique'
 import { type BaseCrossChainAdapter } from '@polkawallet/bridge/base-chain-adapter'
+import { KusamaAdapter, PolkadotAdapter } from './adapters/polkadot'
+import { StatemineAdapter } from './adapters/statemint'
 
 export const bridgeConfig = {
   polkadot: { adapter: new PolkadotAdapter(), rpc: chains[0].rpc, subscanUrl: 'https://polkadot.subscan.io/' },
