@@ -3,20 +3,17 @@ import { type ComponentMeta, type Story } from '@storybook/react'
 
 import { Text } from '../../atoms'
 import TextInput from '../TextInput'
-import FullScreenDialog, {
-  FULL_SCREEN_DIALOG_WIDE_BREAK_POINT_SELECTOR,
-  type FullScreenDialogProps,
-} from './FullScreenDialog'
+import SideSheet, { SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR, type SideSheetProps } from './SideSheet'
 
 export default {
-  title: 'Molecules/FullScreenDialog',
-  component: FullScreenDialog,
+  title: 'Molecules/SideSheet',
+  component: SideSheet,
   parameters: {
     layout: 'fullscreen',
   },
-} as ComponentMeta<typeof FullScreenDialog>
+} as ComponentMeta<typeof SideSheet>
 
-export const Default: Story<FullScreenDialogProps> = (args: any) => (
+export const Default: Story<SideSheetProps> = (args: any) => (
   <>
     <Global
       styles={css`
@@ -26,7 +23,7 @@ export const Default: Story<FullScreenDialogProps> = (args: any) => (
         }
       `}
     />
-    <FullScreenDialog {...args} />
+    <SideSheet {...args} />
   </>
 )
 
@@ -34,7 +31,7 @@ Default.args = {
   open: true,
   title: 'Unstake',
   children: (
-    <div css={{ [`${FULL_SCREEN_DIALOG_WIDE_BREAK_POINT_SELECTOR}`]: { minWidth: 412 } }}>
+    <div css={{ [`${SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR}`]: { minWidth: 412 } }}>
       <TextInput leadingLabel="Unstaking amount" />
       <Text.Body as="p">You are unstaking 4000 DOT ($23,988.55).</Text.Body>
       <Text.Body as="p">
