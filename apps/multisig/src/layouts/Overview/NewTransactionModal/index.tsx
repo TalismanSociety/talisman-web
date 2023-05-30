@@ -3,8 +3,11 @@ import { IconButton } from '@talismn/ui'
 import { useState } from 'react'
 import Modal from 'react-modal'
 import { useLocation, useNavigate } from 'react-router-dom'
+import { animated, useSpring } from 'react-spring'
+import { useMeasure } from 'react-use'
 
 import ActionsMenu from './ActionsMenu'
+import SendAction from './SendAction'
 
 export enum Action {
   Send,
@@ -19,6 +22,18 @@ const NewTransactionModal = () => {
   const close = () => {
     navigate('/overview')
   }
+
+  // get ref for the content div and the height from useMeasure
+  const [contentRef, { height }] = useMeasure<HTMLDivElement>()
+
+  const springStyle = useSpring({
+    height: height + 32 + 80, // adding padding (top and bottom) to content's height
+    overflow: 'auto',
+    padding: '32px 32px 80px 32px',
+    config: { tension: 170, friction: 26 }, // these values are recommended for height transition
+  })
+
+  console.log(height)
 
   Modal.setAppElement('#root')
   return (
@@ -55,7 +70,6 @@ const NewTransactionModal = () => {
           borderRadius: '32px',
           outline: 'none',
           padding: '0',
-          height: '653px',
           width: 'calc(100% - 24px)',
           maxWidth: '1024px',
         },
@@ -63,22 +77,24 @@ const NewTransactionModal = () => {
       contentLabel="Example Modal"
       closeTimeoutMS={150}
     >
-      <div css={{ padding: '32px' }}>
-        <IconButton css={{ marginLeft: 'auto' }} onClick={close}>
-          <X />
-        </IconButton>
-        {action === undefined ? (
-          <ActionsMenu
-            onActionClick={(a: Action) => {
-              setAction(a)
-            }}
-          />
-        ) : action === Action.Send ? (
-          <div>Send</div>
-        ) : action === Action.Advanced ? (
-          <div>Advanced</div>
-        ) : null}
-      </div>
+      <animated.div style={springStyle}>
+        <div ref={contentRef}>
+          <IconButton css={{ marginLeft: 'auto' }} onClick={close}>
+            <X />
+          </IconButton>
+          {action === undefined ? (
+            <ActionsMenu
+              onActionClick={(a: Action) => {
+                setAction(a)
+              }}
+            />
+          ) : action === Action.Send ? (
+            <SendAction onCancel={() => setAction(undefined)} />
+          ) : action === Action.Advanced ? (
+            <div>Advanced</div>
+          ) : null}
+        </div>
+      </animated.div>
     </Modal>
   )
 }
