@@ -19,6 +19,14 @@ import { ApiNotFound, InvalidAddress, TokenNotFound } from '@polkawallet/bridge/
 
 export const polkadotRoutersConfig = [
   {
+    to: 'statemint',
+    token: 'DOT',
+    xcm: {
+      fee: { token: 'DOT', amount: '15800000' },
+      weightLimit: 'Unlimited',
+    },
+  },
+  {
     to: 'acala',
     token: 'DOT',
     xcm: { fee: { token: 'DOT', amount: '3549633' }, weightLimit: 'Unlimited' },

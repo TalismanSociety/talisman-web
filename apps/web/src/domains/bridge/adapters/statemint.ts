@@ -50,7 +50,10 @@ export const statemineRoutersConfig = [
   },
 ] satisfies Array<Omit<RouteConfigs, 'from'>>
 
-export const statemineTokensConfig = {
+export const statemintTokensConfig = {
+  statemint: {
+    DOT: { name: 'DOT', symbol: 'DOT', decimals: 11, ed: '10000000000' },
+  },
   statemine: {
     KSM: { name: 'KSM', symbol: 'KSM', decimals: 12, ed: '79999999' },
     RMRK: { name: 'RMRK', symbol: 'RMRK', decimals: 10, ed: '100000000' },
@@ -58,6 +61,14 @@ export const statemineTokensConfig = {
     USDT: { name: 'USDT', symbol: 'USDT', decimals: 6, ed: '1000' },
   },
 } satisfies Record<string, Record<string, BasicToken>>
+
+export const statemintRoutersConfig = [
+  {
+    to: 'polkadot',
+    token: 'DOT',
+    xcm: { fee: { token: 'DOT', amount: '15900000' }, weightLimit: 'Unlimited' },
+  },
+] satisfies Array<Omit<RouteConfigs, 'from'>>
 
 export const SUPPORTED_TOKENS = {
   RMRK: new BN(8),
@@ -156,7 +167,7 @@ class BaseStatemintAdapter extends BaseCrossChainAdapter {
     this.balanceAdapter = new StatemintBalanceAdapter({
       api,
       chain,
-      tokens: statemineTokensConfig[chain as keyof typeof statemineTokensConfig],
+      tokens: statemintTokensConfig[chain as keyof typeof statemintTokensConfig],
     })
   }
 
@@ -197,6 +208,19 @@ class BaseStatemintAdapter extends BaseCrossChainAdapter {
     )
   }
 
+  // TODO: should remove after statemint upgrade
+  private get isV0V1() {
+    try {
+      const keys = (this.api?.createType('XcmVersionedMultiLocation') as any).defKeys as string[]
+
+      return keys.includes('V0')
+    } catch (e) {
+      // ignore error
+    }
+
+    return false
+  }
+
   public createTx(
     params: TransferParams
   ): SubmittableExtrinsic<'promise', ISubmittableResult> | SubmittableExtrinsic<'rxjs', ISubmittableResult> {
@@ -231,11 +255,13 @@ class BaseStatemintAdapter extends BaseCrossChainAdapter {
         },
       ]
 
+      const isV0V1Support = this.isV0V1
+
       return this.api?.tx.polkadotXcm.limitedTeleportAssets(
         // @ts-expect-error
-        { V3: dst },
-        { V3: acc },
-        { V3: ass },
+        { [isV0V1Support ? 'V1' : 'V3']: dst },
+        { [isV0V1Support ? 'V1' : 'V3']: acc },
+        { [isV0V1Support ? 'V1' : 'V3']: ass },
         0,
         this.getDestWeight(token, to)?.toString()
       )
@@ -285,6 +311,12 @@ class BaseStatemintAdapter extends BaseCrossChainAdapter {
 
 export class StatemineAdapter extends BaseStatemintAdapter {
   constructor() {
-    super(chains.statemine, statemineRoutersConfig, statemineTokensConfig.statemine)
+    super(chains.statemine, statemineRoutersConfig, statemintTokensConfig.statemine)
+  }
+}
+
+export class StatemintAdapter extends BaseStatemintAdapter {
+  constructor() {
+    super(chains.statemint, statemintRoutersConfig, statemintTokensConfig.statemint)
   }
 }
