@@ -19001,12 +19001,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rxjs@npm:^7.2.0, rxjs@npm:^7.5.5, rxjs@npm:^7.5.7, rxjs@npm:^7.8.0, rxjs@npm:^7.8.1":
+"rxjs@npm:7.8.1":
   version: 7.8.1
   resolution: "rxjs@npm:7.8.1"
   dependencies:
     tslib: ^2.1.0
   checksum: de4b53db1063e618ec2eca0f7965d9137cabe98cf6be9272efe6c86b47c17b987383df8574861bcced18ebd590764125a901d5506082be84a8b8e364bf05f119
+  languageName: node
+  linkType: hard
+
+"rxjs@patch:rxjs@npm%3A7.8.1#./.yarn/patches/rxjs-npm-7.8.1-41c443a75b.patch::locator=talisman-web%40workspace%3A.":
+  version: 7.8.1
+  resolution: "rxjs@patch:rxjs@npm%3A7.8.1#./.yarn/patches/rxjs-npm-7.8.1-41c443a75b.patch::version=7.8.1&hash=8b7138&locator=talisman-web%40workspace%3A."
+  dependencies:
+    tslib: ^2.1.0
+  checksum: 4f0a2e0f57e28f5ffd7e6ea0edd3531057af10ef582589916f3159013811a9d706dea5b81228b0f6767122cc2b25bb58113b3a7d35fdc5c902ab25ba75e89117
   languageName: node
   linkType: hard
 

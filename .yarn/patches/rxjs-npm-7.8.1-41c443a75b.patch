@@ -1,0 +1,51 @@
+diff --git a/dist/cjs/internal/observable/innerFrom.js b/dist/cjs/internal/observable/innerFrom.js
+index f25d71befdcc2530bce6aa34b4b38e878eab2037..fbd0d6b04069e8fc520929dd2665e7b87121bd2d 100644
+--- a/dist/cjs/internal/observable/innerFrom.js
++++ b/dist/cjs/internal/observable/innerFrom.js
+@@ -64,10 +64,11 @@ var throwUnobservableError_1 = require("../util/throwUnobservableError");
+ var isIterable_1 = require("../util/isIterable");
+ var isReadableStreamLike_1 = require("../util/isReadableStreamLike");
+ var isFunction_1 = require("../util/isFunction");
++var isObservable_1 = require("../util/isObservable");
+ var reportUnhandledError_1 = require("../util/reportUnhandledError");
+ var observable_1 = require("../symbol/observable");
+ function innerFrom(input) {
+-    if (input instanceof Observable_1.Observable) {
++    if (isObservable_1.isObservable(input)) {
+         return input;
+     }
+     if (input != null) {
+diff --git a/dist/esm/internal/observable/innerFrom.js b/dist/esm/internal/observable/innerFrom.js
+index f315ce5b1eb7ea3addbaa628650a14b846f0bc02..9a17a3a8b8d062daaa21f1f561a1da8c46502266 100644
+--- a/dist/esm/internal/observable/innerFrom.js
++++ b/dist/esm/internal/observable/innerFrom.js
+@@ -8,10 +8,11 @@ import { createInvalidObservableTypeError } from '../util/throwUnobservableError
+ import { isIterable } from '../util/isIterable';
+ import { isReadableStreamLike, readableStreamLikeToAsyncGenerator } from '../util/isReadableStreamLike';
+ import { isFunction } from '../util/isFunction';
++import { isObservable } from "../util/isObservable";
+ import { reportUnhandledError } from '../util/reportUnhandledError';
+ import { observable as Symbol_observable } from '../symbol/observable';
+ export function innerFrom(input) {
+-    if (input instanceof Observable) {
++    if (isObservable(input)) {
+         return input;
+     }
+     if (input != null) {
+diff --git a/dist/esm5/internal/observable/innerFrom.js b/dist/esm5/internal/observable/innerFrom.js
+index ac77ca7d6da046a31b28b9ade1211ec98b407bfd..9d8caec71f4037e34f4f7697a87102ee8da11fbb 100644
+--- a/dist/esm5/internal/observable/innerFrom.js
++++ b/dist/esm5/internal/observable/innerFrom.js
+@@ -8,10 +8,11 @@ import { createInvalidObservableTypeError } from '../util/throwUnobservableError
+ import { isIterable } from '../util/isIterable';
+ import { isReadableStreamLike, readableStreamLikeToAsyncGenerator } from '../util/isReadableStreamLike';
+ import { isFunction } from '../util/isFunction';
++import { isObservable } from "../util/isObservable";
+ import { reportUnhandledError } from '../util/reportUnhandledError';
+ import { observable as Symbol_observable } from '../symbol/observable';
+ export function innerFrom(input) {
+-    if (input instanceof Observable) {
++    if (isObservable(input)) {
+         return input;
+     }
+     if (input != null) {
