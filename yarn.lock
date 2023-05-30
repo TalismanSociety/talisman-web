@@ -7291,7 +7291,7 @@ __metadata:
     colorjs.io: ^0.4.3
     eslint: ^8.37.0
     eslint-plugin-storybook: ^0.6.12
-    framer-motion: ^10.12.4
+    framer-motion: ^10.12.16
     mime: ^3.0.0
     mime-db: ^1.52.0
     prop-types: ^15.8.1
@@ -7391,7 +7391,7 @@ __metadata:
     eslint: ^8.33.0
     eslint-config-prettier: ^8.6.0
     eslint-plugin-storybook: ^0.6.10
-    framer-motion: ^10.12.4
+    framer-motion: ^10.12.16
     graphql: ^16.6.0
     graphql-request: ^5.1.0
     i18next: ^21.10.0
@@ -12907,9 +12907,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"framer-motion@npm:^10.12.4":
-  version: 10.12.4
-  resolution: "framer-motion@npm:10.12.4"
+"framer-motion@npm:^10.12.16":
+  version: 10.12.16
+  resolution: "framer-motion@npm:10.12.16"
   dependencies:
     "@emotion/is-prop-valid": ^0.8.2
     tslib: ^2.4.0
@@ -12924,7 +12924,7 @@ __metadata:
       optional: true
     react-dom:
       optional: true
-  checksum: c131b546539937b5dbec6a89f2e3db946d5127f1cbf2f88268ef75089df30e81cdd0f4a5786f84b1bc98397d43a99aa6f7e187e6bba178548a9eeb3d39df7b91
+  checksum: 0ba346fd6e64688ea5e64f9e353af6202b42d59e309ac32daca7fc07dc1dad9136dd2c18017a85ac76d01becb7f4683fc92dedbfce3e44831ea0c47bdc73e812
   languageName: node
   linkType: hard
 
