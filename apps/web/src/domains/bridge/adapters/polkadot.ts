@@ -31,6 +31,14 @@ export const polkadotRoutersConfig = [
     token: 'DOT',
     xcm: { fee: { token: 'DOT', amount: '3549633' }, weightLimit: 'Unlimited' },
   },
+  {
+    to: 'hydradx',
+    token: 'DOT',
+    xcm: {
+      fee: { token: 'DOT', amount: '21711791' },
+      weightLimit: 'Unlimited',
+    },
+  },
 ] satisfies Array<Omit<RouteConfigs, 'from'>>
 
 // TODO: should remove after kusama upgrade
