@@ -1,5 +1,5 @@
 import { RefreshCw } from '@talismn/icons'
-import { FullScreenDialog } from '@talismn/ui'
+import { SideSheet } from '@talismn/ui'
 import { type ReactNode } from 'react'
 
 export type TeleportDialogProps = {
@@ -9,7 +9,7 @@ export type TeleportDialogProps = {
 }
 
 const TeleportDialog = (props: TeleportDialogProps) => (
-  <FullScreenDialog
+  <SideSheet
     title={
       <div>
         <RefreshCw /> Teleport
@@ -18,7 +18,7 @@ const TeleportDialog = (props: TeleportDialogProps) => (
     {...props}
   >
     {props.teleportForm}
-  </FullScreenDialog>
+  </SideSheet>
 )
 
 export default TeleportDialog

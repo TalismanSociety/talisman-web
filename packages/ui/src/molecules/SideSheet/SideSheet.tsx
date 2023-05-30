@@ -5,7 +5,7 @@ import { Dialog, IconButton, Text, type DialogProps } from '../../atoms'
 import { Toaster } from '../../organisms'
 import { useMediaQuery } from '../../utils'
 
-export type FullScreenDialogProps = Omit<DialogProps, 'title'> & {
+export type SideSheetProps = Omit<DialogProps, 'title'> & {
   title: ReactNode
   onRequestDismiss: () => unknown
 }
@@ -33,11 +33,11 @@ const backdropKeyframes = keyframes`
   }
 `
 
-export const FULL_SCREEN_DIALOG_WIDE_BREAK_POINT = '768px'
+export const SIDE_SHEET_WIDE_BREAK_POINT = '768px'
 
-export const FULL_SCREEN_DIALOG_WIDE_BREAK_POINT_SELECTOR = `@media(min-width: ${FULL_SCREEN_DIALOG_WIDE_BREAK_POINT})`
+export const SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR = `@media(min-width: ${SIDE_SHEET_WIDE_BREAK_POINT})`
 
-const FullScreenDialog = ({ title, children, ...props }: FullScreenDialogProps) => {
+const SideSheet = ({ title, children, ...props }: SideSheetProps) => {
   const theme = useTheme()
   return (
     <Dialog
@@ -59,7 +59,7 @@ const FullScreenDialog = ({ title, children, ...props }: FullScreenDialogProps) 
             animation: `${backdropKeyframes} .5s forwards`,
           },
         },
-        [`${FULL_SCREEN_DIALOG_WIDE_BREAK_POINT_SELECTOR}`]: {
+        [`${SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR}`]: {
           'width': 'min-content',
           'marginLeft': 'auto',
           'marginRight': 0,
@@ -77,7 +77,7 @@ const FullScreenDialog = ({ title, children, ...props }: FullScreenDialogProps) 
           alignItems: 'center',
           gap: '1rem',
           marginBottom: '5.2rem',
-          [`${FULL_SCREEN_DIALOG_WIDE_BREAK_POINT_SELECTOR}`]: {
+          [`${SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR}`]: {
             marginBottom: '4.8rem',
           },
         }}
@@ -88,11 +88,9 @@ const FullScreenDialog = ({ title, children, ...props }: FullScreenDialogProps) 
         </IconButton>
       </header>
       {children}
-      <Toaster
-        position={useMediaQuery(FULL_SCREEN_DIALOG_WIDE_BREAK_POINT_SELECTOR) ? 'bottom-right' : 'bottom-center'}
-      />
+      <Toaster position={useMediaQuery(SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR) ? 'bottom-right' : 'bottom-center'} />
     </Dialog>
   )
 }
 
-export default FullScreenDialog
+export default SideSheet
