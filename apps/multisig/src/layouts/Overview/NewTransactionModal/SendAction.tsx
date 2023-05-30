@@ -1,10 +1,20 @@
 import { css } from '@emotion/css'
-import { Button, TextInput } from '@talismn/ui'
 import { useState } from 'react'
 
+import { ChainSummary, supportedChains } from '../../../domain/chains'
+import { ChooseChain, NameTransaction } from './generic-steps'
+
+enum Step {
+  Name,
+  Chain,
+  Details,
+  Review,
+}
+
 const SendAction = (props: { onCancel: () => void }) => {
+  const [step, setStep] = useState(Step.Name)
   const [name, setName] = useState('')
-  const [network, setNetwork] = useState('')
+  const [chain, setChain] = useState<ChainSummary>(supportedChains[0] as ChainSummary)
   return (
     <div
       className={css`
@@ -14,40 +24,24 @@ const SendAction = (props: { onCancel: () => void }) => {
         height: 100%;
       `}
     >
-      <h1>What's this transaction for?</h1>
-      <span css={{ paddingTop: '24px' }}>Give your transaction a description</span>
-      <div
-        className={css`
-          margin-top: 48px;
-          width: 490px;
-          height: 56px;
-          color: var(--color-offWhite);
-        `}
-      >
-        <TextInput
-          className={css`
-            font-size: 18px !important;
-          `}
-          placeholder='e.g. "Reimburse transaction fees"'
-          value={name}
-          onChange={event => setName(event.target.value)}
+      {step === Step.Name ? (
+        <NameTransaction
+          name={name}
+          setName={setName}
+          onCancel={props.onCancel}
+          onNext={() => {
+            setStep(Step.Chain)
+          }}
         />
-      </div>
-      <div
-        className={css`
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 16px;
-          margin-top: 48px;
-          width: 490px;
-          button {
-            height: 56px;
-          }
-        `}
-      >
-        <Button onClick={props.onCancel} children={<h3>Cancel</h3>} variant="outlined" />
-        <Button disabled={name.length === 0} onClick={() => {}} children={<h3>Next</h3>} />
-      </div>
+      ) : step === Step.Chain ? (
+        <ChooseChain
+          chain={chain}
+          setChain={setChain}
+          chains={supportedChains}
+          onBack={() => setStep(Step.Name)}
+          onNext={() => setStep(Step.Details)}
+        />
+      ) : null}
     </div>
   )
 }

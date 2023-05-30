@@ -33,8 +33,6 @@ const NewTransactionModal = () => {
     config: { tension: 170, friction: 26 }, // these values are recommended for height transition
   })
 
-  console.log(height)
-
   Modal.setAppElement('#root')
   return (
     <Modal
