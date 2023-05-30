@@ -52,7 +52,7 @@ export const statemineRoutersConfig = [
 
 export const statemintTokensConfig = {
   statemint: {
-    DOT: { name: 'DOT', symbol: 'DOT', decimals: 11, ed: '10000000000' },
+    DOT: { name: 'DOT', symbol: 'DOT', decimals: 10, ed: '10000000000' },
   },
   statemine: {
     KSM: { name: 'KSM', symbol: 'KSM', decimals: 12, ed: '79999999' },
@@ -66,7 +66,7 @@ export const statemintRoutersConfig = [
   {
     to: 'polkadot',
     token: 'DOT',
-    xcm: { fee: { token: 'DOT', amount: '15900000' }, weightLimit: 'Unlimited' },
+    xcm: { fee: { token: 'DOT', amount: '421500000' }, weightLimit: 'Unlimited' },
   },
 ] satisfies Array<Omit<RouteConfigs, 'from'>>
 
