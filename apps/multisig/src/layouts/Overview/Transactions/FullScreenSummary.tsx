@@ -89,7 +89,15 @@ export const FullScreenDialogTitle = ({ t }: { t?: Transaction }) => {
   )
 }
 
-export const FullScreenDialogContents = ({ t }: { t?: Transaction }) => {
+export const FullScreenDialogContents = ({
+  t,
+  onReject,
+  onApprove,
+}: {
+  t?: Transaction
+  onReject: () => void
+  onApprove: () => void
+}) => {
   if (!t) return null
 
   // TODO: this should check if any of the users connected wallets have not approved. if
@@ -141,10 +149,12 @@ export const FullScreenDialogContents = ({ t }: { t?: Transaction }) => {
             <p>{'>0.01 DOT ($0.69)'}</p>
           </div>
           <div css={{ display: 'flex', height: '56px', gap: '16px' }}>
-            <Button css={{ flexGrow: '1' }} variant="outlined">
+            <Button css={{ flexGrow: '1' }} variant="outlined" onClick={onReject}>
               Reject
             </Button>
-            <Button css={{ flexGrow: '1' }}>Approve</Button>
+            <Button css={{ flexGrow: '1' }} onClick={onApprove}>
+              Approve
+            </Button>
           </div>
         </div>
       )}

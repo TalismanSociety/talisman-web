@@ -1,9 +1,13 @@
 import { css } from '@emotion/css'
-import { Button, Select, TextInput } from '@talismn/ui'
+import { Button, FullScreenDialog, Select, TextInput } from '@talismn/ui'
 import toSs52Address from '@util/toSs52Address'
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 import { ChainSummary, supportedChains } from '../../../domain/chains'
+import { mockTransactions } from '../mocks'
+import { Transaction } from '../Transactions'
+import { FullScreenDialogContents, FullScreenDialogTitle } from '../Transactions/FullScreenSummary'
 import { ChooseChain, NameTransaction } from './generic-steps'
 
 enum Step {
@@ -136,9 +140,11 @@ const DetailsForm = (props: {
 const SendAction = (props: { onCancel: () => void }) => {
   const [step, setStep] = useState(Step.Name)
   const [name, setName] = useState('')
-  const [destination, setDestination] = useState('')
+  const [destination, setDestination] = useState('14JVAWDg9h2iMqZgmiRpvZd8aeJ3TvANMCv6V5Te4N4Vkbg5')
   const [amount, setAmount] = useState(0)
   const [chain, setChain] = useState<ChainSummary>(supportedChains[0] as ChainSummary)
+  const navigate = useNavigate()
+
   return (
     <div
       className={css`
@@ -175,6 +181,37 @@ const SendAction = (props: { onCancel: () => void }) => {
           setAmount={setAmount}
         />
       ) : null}
+      <FullScreenDialog
+        onRequestDismiss={() => {
+          setStep(Step.Details)
+        }}
+        onClose={() => {
+          setStep(Step.Details)
+        }}
+        title={<FullScreenDialogTitle t={mockTransactions[1] as Transaction} />}
+        css={{
+          header: {
+            margin: '32px 48px',
+          },
+          height: '100vh',
+          background: 'var(--color-grey800)',
+          maxWidth: '781px',
+          minWidth: '700px',
+          width: '100%',
+          padding: '0 !important',
+        }}
+        open={step === Step.Review}
+      >
+        <FullScreenDialogContents
+          t={mockTransactions[1] as Transaction}
+          onApprove={() => {
+            navigate('/overview')
+          }}
+          onReject={() => {
+            setStep(Step.Details)
+          }}
+        />
+      </FullScreenDialog>
     </div>
   )
 }
