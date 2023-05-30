@@ -1,7 +1,7 @@
 import { css } from '@emotion/css'
 import { useTheme } from '@emotion/react'
 import { List, Send, Share2, X, Zap } from '@talismn/icons'
-import { IconButton } from '@talismn/ui'
+import { IconButton, Tooltip } from '@talismn/ui'
 import { ReactNode } from 'react'
 import Modal from 'react-modal'
 import { useLocation, useNavigate } from 'react-router-dom'
@@ -24,13 +24,15 @@ const ActionButton = ({
         display: grid;
         grid-template-rows: 1fr auto;
         height: 180px;
-        cursor: pointer;
         min-width: 300px;
         max-width: 380px;
         padding: 32px;
         border-radius: 16px;
         background: rgba(250, 250, 250, 0.05);
         transition: all 150ms ease-in-out;
+        opacity: ${disabled ? '0.5' : '1'};
+        pointer-events: ${disabled ? 'none' : 'all'};
+        cursor: pointer;
         :hover {
           * > h1,
           span,
@@ -42,7 +44,6 @@ const ActionButton = ({
       `}
     >
       <div css={{ display: 'flex', justifyContent: 'space-between' }}>
-        {/* <span css={{ color: 'var(--color-offWhite)', fontSize: '32px' }}>{name}</span> */}
         <h1>{name}</h1>
         <IconButton size={40} contentColor={`rgb(${theme.offWhite})`}>
           {icon}
@@ -66,14 +67,31 @@ const ModalContent = () => {
         <span css={{ color: 'var(--color-offWhite)', fontSize: '32px' }}>Select an action</span>
         <div css={{ display: 'grid', gap: '24px', marginTop: '64px', gridTemplateColumns: 'repeat(2, 1fr)' }}>
           <ActionButton name="Send" description="Transfer funds to a single address" icon={<Send size={33} />} />
-          <ActionButton
-            name="Multi-send"
-            description="Transfer funds to a multiple addresses"
-            disabled={true}
-            icon={<Share2 size={33} />}
-          />
-          <ActionButton name="Stake" description="Stake your vaults assets" icon={<Zap size={33} />} disabled={true} />
           <ActionButton name="Advanced" description="Craft a custom transaction" icon={<List size={33} />} />
+          <Tooltip content={'Multi-send action coming soon'}>
+            {tooltipProps => (
+              <div {...tooltipProps} css={{ display: 'inline' }}>
+                <ActionButton
+                  name="Multi-send"
+                  description="Transfer funds to a multiple addresses"
+                  disabled={true}
+                  icon={<Share2 size={33} />}
+                />
+              </div>
+            )}
+          </Tooltip>
+          <Tooltip content={'Stake action coming soon'}>
+            {tooltipProps => (
+              <div {...tooltipProps} css={{ display: 'inline' }}>
+                <ActionButton
+                  name="Stake"
+                  description="Stake your vaults assets"
+                  icon={<Zap size={33} />}
+                  disabled={true}
+                />
+              </div>
+            )}
+          </Tooltip>
         </div>
       </div>
     </div>
