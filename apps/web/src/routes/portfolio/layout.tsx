@@ -1,5 +1,5 @@
 import ErrorBoundary from '@components/widgets/ErrorBoundary'
-import { BottomBorderNav } from '@talismn/ui'
+import { Tab } from '@talismn/ui'
 import { Outlet } from 'react-router'
 import { Link, useMatch } from 'react-router-dom'
 
@@ -23,13 +23,13 @@ const Layout = () => {
         width: '100%',
       }}
     >
-      <BottomBorderNav>
+      <Tab>
         {paths.map(path => (
-          <BottomBorderNav.Item key={path.path} selected={path.path === currentPath}>
-            <Link to={path.path}>{path.name}</Link>
-          </BottomBorderNav.Item>
+          <Tab.Item key={path.path} as={Link} to={path.path} selected={path.path === currentPath}>
+            {path.name}
+          </Tab.Item>
         ))}
-      </BottomBorderNav>
+      </Tab>
       <ErrorBoundary>
         <Outlet />
       </ErrorBoundary>
