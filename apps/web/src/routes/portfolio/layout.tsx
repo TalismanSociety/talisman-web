@@ -3,7 +3,7 @@ import { BottomBorderNav } from '@talismn/ui'
 import { Outlet } from 'react-router'
 import { Link, useMatch } from 'react-router-dom'
 
-const Portfolio = () => {
+const Layout = () => {
   // useMatch
   const paths = [
     { path: '', name: 'Overview' },
@@ -37,4 +37,4 @@ const Portfolio = () => {
   )
 }
 
-export default Portfolio
+export default Layout
