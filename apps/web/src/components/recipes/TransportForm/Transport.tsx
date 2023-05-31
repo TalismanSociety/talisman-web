@@ -6,9 +6,9 @@ import { type ReactNode, useId, useState } from 'react'
 import { ArrowDown, Repeat } from '@talismn/icons'
 import { Button, type ButtonProps, Select, Text, TextInput } from '@talismn/ui'
 import Cryptoticon from '../Cryptoticon'
-import TeleportFormSkeleton from './TeleportForm.skeleton'
+import TransportFormSkeleton from './TransportForm.skeleton'
 
-export type TeleportFormProps = {
+export type TransportFormProps = {
   accountSelector: ReactNode
   fromChains: Array<{ name: string; logoSrc: string }>
   selectedFromChainIndex: number
@@ -30,7 +30,7 @@ export type TeleportFormProps = {
   inputError?: string
 }
 
-const TeleportFormNetworkButton = (props: Pick<ButtonProps<'button'>, 'onClick' | 'disabled'>) => {
+const TransportFormNetworkButton = (props: Pick<ButtonProps<'button'>, 'onClick' | 'disabled'>) => {
   return (
     <Button variant="noop" {...props} css={{ '@media(min-width: 600px)': { rotate: '-90deg' } }}>
       <motion.div
@@ -56,8 +56,8 @@ const TeleportFormNetworkButton = (props: Pick<ButtonProps<'button'>, 'onClick' 
   )
 }
 
-const TeleportForm = Object.assign(
-  (props: TeleportFormProps) => {
+const TransportForm = Object.assign(
+  (props: TransportFormProps) => {
     const theme = useTheme()
 
     const [chainSwapped, setChainSwapped] = useState(false)
@@ -167,7 +167,7 @@ const TeleportForm = Object.assign(
                   </div>
                 </motion.div>
                 <div css={{ color: theme.color.primary }}>
-                  <TeleportFormNetworkButton
+                  <TransportFormNetworkButton
                     onClick={() => {
                       props.onReverseChainRoute()
                       setChainSwapped(x => !x)
@@ -216,12 +216,12 @@ const TeleportForm = Object.assign(
           loading={props.confirmTransferState === 'pending'}
           disabled={props.confirmTransferState === 'disabled'}
         >
-          Teleport
+          Transport
         </Button>
       </div>
     )
   },
-  { Skeleton: TeleportFormSkeleton }
+  { Skeleton: TransportFormSkeleton }
 )
 
-export default TeleportForm
+export default TransportForm

@@ -32,7 +32,7 @@ export default Sentry.wrapCreateBrowserRouter(createBrowserRouter)([
       { path: 'history', element: <Navigate to="/portfolio/history" /> },
       { path: 'nfts', element: <Navigate to="/portfolio/collectibles" /> },
       { path: 'staking', element: <NavigateToStaking /> },
-      { path: 'teleport', element: <Navigate to="/portfolio?action=teleport" /> },
+      { path: 'transport', element: <Navigate to="/portfolio?action=transport" /> },
     ],
   },
   { path: '*', element: <Navigate to="/" /> },
