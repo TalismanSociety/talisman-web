@@ -1,5 +1,5 @@
 import { FixedPointNumber } from '@acala-network/sdk-core'
-import TeleportFormComponent from '@components/recipes/TeleportForm'
+import TransportFormComponent from '@components/recipes/TransportForm'
 import TokenSelectorDialog, { TokenSelectorItem } from '@components/recipes/TokenSelectorDialog'
 import { injectedSubstrateAccountsState } from '@domains/accounts'
 import { selectedBalancesState } from '@domains/balances/recoils'
@@ -19,7 +19,7 @@ import { RecoilLoadable, useRecoilCallback, useRecoilValue, waitForAll, type Loa
 import { Observable, switchMap } from 'rxjs'
 import { useAccountSelector } from '../AccountSelector'
 
-const TeleportForm = () => {
+const TransportForm = () => {
   const [_balances, bridge] = useRecoilValue(waitForAll([selectedBalancesState, bridgeState]))
 
   const [amount, setAmount] = useState('')
@@ -239,7 +239,7 @@ const TeleportForm = () => {
 
   return (
     <>
-      <TeleportFormComponent
+      <TransportFormComponent
         accountSelector={senderSelector}
         transferableAmount={
           parsedInputConfigLoadable?.state === 'loading' ? (
@@ -373,4 +373,4 @@ const TeleportForm = () => {
   )
 }
 
-export default TeleportForm
+export default TransportForm
