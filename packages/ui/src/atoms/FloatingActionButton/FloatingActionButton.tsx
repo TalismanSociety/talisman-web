@@ -1,6 +1,4 @@
 import { useTheme } from '@emotion/react'
-import Color from 'colorjs.io'
-import { useMemo } from 'react'
 
 type FloatingActionButtonElementType = Extract<React.ElementType, 'button' | 'a' | 'figure'>
 
@@ -34,22 +32,13 @@ const FloatingActionButton = <T extends FloatingActionButtonElementType = 'butto
   const theme = useTheme()
 
   containerColor = containerColor ?? theme.color.primary
-  hoverContainerColor = useMemo(
-    () => hoverContainerColor ?? new Color(containerColor ?? '').darken(0.15).display().toString(),
-    [containerColor, hoverContainerColor]
-  )
+  hoverContainerColor = hoverContainerColor ?? `color-mix(in srgb, ${containerColor}, black 15%)`
   contentColor = contentColor ?? theme.color.onPrimary
   hoverContentColor = hoverContentColor ?? contentColor
-  disabledContentColor = useMemo(() => {
-    if (disabledContentColor !== undefined) {
-      return disabledContentColor
-    }
-
-    const color = new Color(contentColor ?? theme.color.onBackground)
-    color.alpha = theme.contentAlpha.disabled
-
-    return color.display().toString()
-  }, [contentColor, disabledContentColor, theme.color.onBackground, theme.contentAlpha.disabled])
+  disabledContentColor =
+    disabledContentColor !== undefined
+      ? disabledContentColor
+      : `color-mix(in srgb, ${contentColor}, transparent ${Math.round((1 - theme.contentAlpha.disabled) * 100)}%)`
 
   const Component = as
 

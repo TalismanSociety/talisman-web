@@ -1,16 +1,14 @@
 import { keyframes, useTheme } from '@emotion/react'
 import { X } from '@talismn/icons'
 import { IconContext } from '@talismn/icons/utils'
-import Color from 'colorjs.io'
 import {
+  createContext,
+  useCallback,
+  useContext,
   type AnchorHTMLAttributes,
   type DetailedHTMLProps,
   type PropsWithChildren,
   type ReactNode,
-  createContext,
-  useCallback,
-  useContext,
-  useMemo,
 } from 'react'
 
 import { Dialog, IconButton, Text } from '../../atoms'
@@ -50,12 +48,6 @@ const NavigationDrawerItem = (props: NavigationDrawerItemProps) => {
   const theme = useTheme()
   const context = useContext(Context)
 
-  const backgroundColor = useMemo(() => {
-    const color = new Color(theme.color.foregroundVariant)
-    color.alpha = 0.4
-    return color.display().toString()
-  }, [theme.color.foregroundVariant])
-
   return (
     <button
       onClick={useCallback(() => {
@@ -68,7 +60,7 @@ const NavigationDrawerItem = (props: NavigationDrawerItemProps) => {
         'boxShadow': '0px 2px 2px rgba(0, 0, 0, 0.25)',
         'width': '100%',
         'padding': '2.4rem 4rem',
-        backgroundColor,
+        'backgroundColor': `color-mix(in srgb, ${theme.color.foregroundVariant}, transparent 60%)`,
         'cursor': 'pointer',
         ':hover': { filter: 'brightness(1.2)' },
       }}

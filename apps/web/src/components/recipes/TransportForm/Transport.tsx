@@ -1,5 +1,4 @@
 import { useTheme } from '@emotion/react'
-import Color from 'colorjs.io'
 import { AnimatePresence, LayoutGroup, motion } from 'framer-motion'
 import { type ReactNode, useId, useState } from 'react'
 
@@ -90,11 +89,7 @@ const TransportForm = Object.assign(
                     onClick={props.onRequestTokenChange}
                     css={{
                       padding: '1rem',
-                      backgroundColor: (() => {
-                        const color = new Color(theme.color.primary)
-                        color.alpha = 0.1
-                        return color.display().toString()
-                      })(),
+                      backgroundColor: `color-mix(in srgb, ${theme.color.primary}, transparent 90%)`,
                     }}
                   >
                     <Text.BodySmall
@@ -110,11 +105,9 @@ const TransportForm = Object.assign(
                     css={{
                       padding: '1rem',
                       backgroundColor: theme.color.foregroundVariant,
-                      color: (() => {
-                        const color = new Color(theme.color.onForegroundVariant)
-                        color.alpha = theme.contentAlpha.medium
-                        return color.display().toString()
-                      })(),
+                      color: `color-mix(in srgb, ${theme.color.onForegroundVariant}, transparent ${Math.round(
+                        (1 - theme.contentAlpha.medium) * 100
+                      )}%)`,
                     }}
                   >
                     <Text.BodySmall as="div" css={{ display: 'flex', alignItems: 'center', gap: '0.9rem' }}>
