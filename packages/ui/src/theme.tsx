@@ -10,6 +10,8 @@ export type TalismanTheme = {
     border: string
     error: string
     onError: string
+    errorContainer: string
+    onErrorContainer: string
     /**
      * @deprecated use surface & surface tint (via Surface component)
      */
@@ -43,8 +45,10 @@ const greenDark: TalismanTheme = {
     surface: '#1B1B1B',
     onSurface: '#fafafa',
     surfaceTint: '#fafafa',
-    error: '#fd48483e',
-    onError: '#d22424',
+    error: '#d22424',
+    onError: '#fafafa',
+    errorContainer: '#fd48483e',
+    onErrorContainer: '#d22424',
     foreground: '#262626',
     onForeground: '#fafafa',
     foregroundVariant: '#3f3f3f',

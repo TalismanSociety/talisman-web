@@ -90,7 +90,7 @@ const TextInput = Object.assign(
             <Text.BodySmall as="label" htmlFor={inputId}>
               {leadingSupportingText}
             </Text.BodySmall>
-            <Text.BodySmall as="label" htmlFor={inputId} css={isError && { color: theme.color.onError }}>
+            <Text.BodySmall as="label" htmlFor={inputId} css={isError && { color: theme.color.onErrorContainer }}>
               {trailingSupportingText}
             </Text.BodySmall>
           </div>
@@ -99,7 +99,9 @@ const TextInput = Object.assign(
     )
   },
   {
-    ErrorLabel: (props: PropsWithChildren) => <Text.BodySmall color={theme => theme.color.onError} {...props} />,
+    ErrorLabel: (props: PropsWithChildren) => (
+      <Text.BodySmall color={theme => theme.color.onErrorContainer} {...props} />
+    ),
     LabelButton: (props: DetailedHTMLProps<ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement>) => {
       const theme = useTheme()
       return (

@@ -22,7 +22,7 @@ const Surface = <T extends ElementType = 'div'>({ as = 'div' as T, ...props }: S
         <Element
           {...(props as any)}
           css={(theme: Theme) => ({
-            background: `color-mix(in srgb, ${theme.color.surface}, ${theme.color.surfaceTint} calc(4% * ${layer}))`,
+            background: `color-mix(in srgb, ${theme.color.surface}, ${theme.color.surfaceTint} calc(4.75% * ${layer}))`,
           })}
         >
           {props['children'] && (
