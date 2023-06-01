@@ -77,8 +77,8 @@ const ValidatorStake = Object.assign(
             <Text.Body
               alpha="high"
               css={{
-                color: theme.color.onError,
-                backgroundColor: theme.color.error,
+                color: theme.color.onErrorContainer,
+                backgroundColor: theme.color.errorContainer,
                 padding: '1rem 1.3rem',
                 borderRadius: '1.2rem',
               }}
