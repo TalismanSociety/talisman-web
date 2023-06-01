@@ -2,21 +2,20 @@ import { useTheme } from '@emotion/react'
 import { ChevronRight, Clock, Info } from '@talismn/icons'
 import {
   Button,
-  type ButtonProps,
   Chip,
-  type ChipProps,
   DescriptionList,
   Hr,
   Text,
   TextInput,
   Tooltip,
+  type ButtonProps,
+  type ChipProps,
 } from '@talismn/ui'
-import { LayoutGroup, motion } from 'framer-motion'
-import { type ReactNode, createContext, useContext, useId, useMemo, useState } from 'react'
-import { type StakeStatus, StakeStatusIndicator } from '../StakeStatusIndicator'
-import Color from 'colorjs.io'
-import StakeFormSkeleton from './StakeForm.skeleton'
 import { isNilOrWhitespace } from '@util/nil'
+import { LayoutGroup, motion } from 'framer-motion'
+import { createContext, useContext, useId, useState, type ReactNode } from 'react'
+import { StakeStatusIndicator, type StakeStatus } from '../StakeStatusIndicator'
+import StakeFormSkeleton from './StakeForm.skeleton'
 
 const AssetSelectorContext = createContext<ReactNode>(null)
 
@@ -268,14 +267,12 @@ const ExistingPool = Object.assign(
   {
     ClaimChip: (props: ChipProps) => {
       const theme = useTheme()
-      const claimChipContainerColor = useMemo(() => {
-        const color = new Color(theme.color.primary)
-        color.alpha = 0.125
-        return color.display().toString()
-      }, [theme.color.primary])
-
       return (
-        <Chip {...props} containerColor={claimChipContainerColor} contentColor={theme.color.primary}>
+        <Chip
+          {...props}
+          containerColor={`color-mix(in srgb, ${theme.color.primary}, transparent 88%)`}
+          contentColor={theme.color.primary}
+        >
           Claim
         </Chip>
       )

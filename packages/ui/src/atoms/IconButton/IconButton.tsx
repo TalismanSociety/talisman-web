@@ -1,6 +1,5 @@
 import { useTheme } from '@emotion/react'
-import Color from 'colorjs.io'
-import { type ComponentPropsWithoutRef, type ElementType, useMemo } from 'react'
+import { type ComponentPropsWithoutRef, type ElementType } from 'react'
 
 type IconButtonElementType = Extract<ElementType, 'button' | 'a' | 'figure'> | ElementType<any>
 
@@ -29,16 +28,10 @@ const IconButton = <T extends IconButtonElementType = 'button'>({
   const theme = useTheme()
 
   contentColor = contentColor ?? theme.color.onBackground
-  disabledContentColor = useMemo(() => {
-    if (disabledContentColor !== undefined) {
-      return disabledContentColor
-    }
-
-    const color = new Color(contentColor ?? theme.color.onBackground)
-    color.alpha = theme.contentAlpha.disabled
-
-    return color.display().toString()
-  }, [contentColor, disabledContentColor, theme.color.onBackground, theme.contentAlpha.disabled])
+  disabledContentColor =
+    disabledContentColor !== undefined
+      ? disabledContentColor
+      : `color-mix(in srgb, ${contentColor}, transparent ${Math.round((1 - theme.contentAlpha.disabled) * 100)}%)`
 
   const Component = as
 

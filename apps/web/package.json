@@ -43,7 +43,6 @@
     "@talismn/util": "^0.1.9",
     "@talismn/utils": "workspace:^",
     "bignumber.js": "^9.1.1",
-    "colorjs.io": "^0.4.3",
     "crypto-browserify": "^3.12.0",
     "csv-stringify": "^6.2.3",
     "date-fns": "^2.29.3",

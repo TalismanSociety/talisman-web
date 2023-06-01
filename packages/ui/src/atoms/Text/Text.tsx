@@ -1,7 +1,5 @@
 import { useTheme, type Theme } from '@emotion/react'
-import Color from 'colorjs.io'
 import type React from 'react'
-import { useMemo } from 'react'
 
 export type TextAlpha = 'disabled' | 'medium' | 'high'
 
@@ -18,17 +16,9 @@ const useAlpha = (color: string | ((theme: Theme) => string), alpha: TextAlpha) 
   const theme = useTheme()
 
   const parsedColor = typeof color === 'string' ? color : color(theme)
+  const alphaValue = theme.contentAlpha[alpha ?? 'medium']
 
-  return useMemo(() => {
-    if (parsedColor === 'transparent') {
-      return parsedColor
-    }
-
-    const textColor = new Color(parsedColor)
-    textColor.alpha = theme.contentAlpha[alpha ?? 'medium']
-
-    return textColor.display().toString()
-  }, [alpha, parsedColor, theme.contentAlpha])
+  return `color-mix(in srgb, ${parsedColor}, transparent ${Math.round((1 - alphaValue) * 100)}%)`
 }
 
 const NoopText = <T extends React.ElementType = 'span'>({

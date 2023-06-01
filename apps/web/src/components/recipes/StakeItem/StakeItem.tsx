@@ -1,10 +1,9 @@
 import { useTheme } from '@emotion/react'
 import { Clock, Lock, Rocket } from '@talismn/icons'
-import { Chip, type ChipProps, Hr, Identicon, ListItem, Text, Tooltip } from '@talismn/ui'
-import Color from 'colorjs.io'
-import { type ReactNode, useMemo } from 'react'
+import { Chip, Hr, Identicon, ListItem, Text, Tooltip, type ChipProps } from '@talismn/ui'
+import { type ReactNode } from 'react'
 
-import { type StakeStatus, StakeStatusIndicator } from '../StakeStatusIndicator'
+import { StakeStatusIndicator, type StakeStatus } from '../StakeStatusIndicator'
 import StakeItemSkeleton from './StakeItemSkeleton'
 
 export type StakeItemProps = {
@@ -30,13 +29,12 @@ export const UnstakeChip = (props: Omit<ChipProps, 'children'>) => <Chip {...pro
 
 export const ClaimChip = ({ amount, ...props }: Omit<ChipProps, 'children'> & { amount: ReactNode }) => {
   const theme = useTheme()
-  const claimChipContainerColor = useMemo(() => {
-    const color = new Color(theme.color.primary)
-    color.alpha = 0.125
-    return color.display().toString()
-  }, [theme.color.primary])
   return (
-    <Chip {...props} containerColor={claimChipContainerColor} contentColor={theme.color.primary}>
+    <Chip
+      {...props}
+      containerColor={`color-mix(in srgb, ${theme.color.primary}, transparent 88%)`}
+      contentColor={theme.color.primary}
+    >
       Claim {amount}
     </Chip>
   )

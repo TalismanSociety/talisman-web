@@ -1,5 +1,5 @@
 import { encodeAnyAddress } from '@talismn/util'
-import Color from 'colorjs.io'
+import { HSL, HSV, display as asCssColor, to as toColorSpace } from 'colorjs.io/fn'
 import md5 from 'md5'
 import { useId, useMemo } from 'react'
 
@@ -13,10 +13,8 @@ const valueFromHash = (hash: string, max: number) => {
   return (max + djb2(hash)) % max
 }
 
-const colorFromHash = (hash: string) => {
-  const hue = valueFromHash(hash, 360)
-  return new Color('hsv', [hue, 100, 100], 1)
-}
+const colorFromHash = (hash: string) =>
+  toColorSpace({ space: HSV, coords: [valueFromHash(hash, 360), 100, 100] as [number, number, number], alpha: 1 }, HSL)
 
 const rotateText = (text: string, nbChars = 0) => text.slice(nbChars) + text.slice(0, nbChars)
 
@@ -47,9 +45,9 @@ const Identicon = ({ value: seed, size = '2.4rem', className }: IdenticonProps) 
 
     // the 2 darkest ones will be used as gradient BG
     // the lightest one will be used as gradient circle, to mimic a 3D lighting effect
-    const colors = [colorFromHash(hash1), colorFromHash(hash2), colorFromHash(hash3)].sort(
-      (c1, c2) => (c1.hsl?.['l'] ?? 0) - (c2.hsl?.['l'] ?? 0)
-    )
+    const colors = [colorFromHash(hash1), colorFromHash(hash2), colorFromHash(hash3)]
+      .sort((c1, c2) => (c1.coords[2] ?? 0) - (c2.coords[2] ?? 0))
+      .map(x => asCssColor(x))
 
     // random location in top left corner, avoid being to close from the center
     const dotX = 10 + valueFromHash(hash1, 10)
@@ -59,9 +57,9 @@ const Identicon = ({ value: seed, size = '2.4rem', className }: IdenticonProps) 
     const rotation = valueFromHash(hash1, 360)
 
     return {
-      bgColor1: colors[0]?.display(),
-      bgColor2: colors[1]?.display(),
-      glowColor: colors[2]?.display(),
+      bgColor1: colors[0],
+      bgColor2: colors[1],
+      glowColor: colors[2],
       transform: `rotate(${rotation} 32 32)`,
       cx: dotX,
       cy: dotY,
