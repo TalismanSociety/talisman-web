@@ -1,26 +1,26 @@
 import { type ComponentMeta, type Story } from '@storybook/react'
 import { useState } from 'react'
-import Tab, { type TabProps } from './Tab'
+import Tabs, { type TabsProps } from './Tabs'
 
 export default {
-  title: 'Molecules/Tab',
-  component: Tab,
+  title: 'Molecules/Tabs',
+  component: Tabs,
   parameters: {
     layout: 'centered',
   },
-} as ComponentMeta<typeof Tab>
+} as ComponentMeta<typeof Tabs>
 
-export const Default: Story<TabProps> = () => {
+export const Default: Story<TabsProps> = () => {
   const [selected, setSelected] = useState('Assets')
   const items = ['Assets', 'Collectibles', 'History']
 
   return (
-    <Tab>
+    <Tabs>
       {items.map(x => (
-        <Tab.Item key={x} selected={x === selected} onClick={() => setSelected(x)}>
+        <Tabs.Item key={x} selected={x === selected} onClick={() => setSelected(x)}>
           {x}
-        </Tab.Item>
+        </Tabs.Item>
       ))}
-    </Tab>
+    </Tabs>
   )
 }
