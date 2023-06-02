@@ -3,17 +3,17 @@ import { motion } from 'framer-motion'
 import { type ElementType, type PropsWithChildren, type ReactElement } from 'react'
 import { Text } from '../..'
 
-type TabItemElementType = React.ElementType | ElementType<any>
+type TabElementType = React.ElementType | ElementType<any>
 
-type PolymorphicTabItemProps<T extends TabItemElementType = 'li'> = PropsWithChildren<{
+type PolymorphicTabProps<T extends TabElementType = 'li'> = PropsWithChildren<{
   as?: T
   selected?: boolean
 }>
 
-export type TabItemProps<T extends TabItemElementType = 'button'> = PolymorphicTabItemProps<T> &
-  Omit<React.ComponentPropsWithoutRef<T>, keyof PolymorphicTabItemProps<T>>
+export type TabProps<T extends TabElementType = 'button'> = PolymorphicTabProps<T> &
+  Omit<React.ComponentPropsWithoutRef<T>, keyof PolymorphicTabProps<T>>
 
-const TabItem = <T extends TabItemElementType = 'li'>({ as = 'li' as T, ...props }: TabItemProps<T>) => {
+const Tab = <T extends TabElementType = 'li'>({ as = 'li' as T, ...props }: TabProps<T>) => {
   const theme = useTheme()
   const Element = as
 
@@ -43,13 +43,13 @@ const TabItem = <T extends TabItemElementType = 'li'>({ as = 'li' as T, ...props
   )
 }
 
-export type TabProps = {
+export type TabsProps = {
   className?: string
   children?: ReactElement | ReactElement[]
 }
 
-const Tab = Object.assign(
-  (props: TabProps) => {
+const Tabs = Object.assign(
+  (props: TabsProps) => {
     const theme = useTheme()
     return (
       <ul
@@ -65,7 +65,7 @@ const Tab = Object.assign(
       />
     )
   },
-  { Item: TabItem }
+  { Item: Tab }
 )
 
-export default Tab
+export default Tabs
