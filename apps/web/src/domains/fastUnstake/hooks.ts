@@ -1,80 +1,122 @@
 import { injectedSubstrateAccountsState } from '@domains/accounts/recoils'
-import { substrateApiState } from '@domains/common'
-import { useChainState, useSubstrateApiEndpoint } from '@domains/common/hooks'
-import { range } from 'lodash/fp'
-import {
-  RecoilLoadable,
-  constSelector,
-  selectorFamily,
-  useRecoilValue,
-  useRecoilValueLoadable,
-  waitForAll,
-} from 'recoil'
+import { useSubstrateApiEndpoint, useSubstrateApiState } from '@domains/common'
+import { encodeAddress } from '@polkadot/util-crypto'
+import { bool, coercion, jsonParser, writableDict } from '@recoiljs/refine'
+import { useQueryState } from '@talismn/react-polkadot-api'
+import { useMemo } from 'react'
+import { DefaultValue, atomFamily, useRecoilValue } from 'recoil'
+import { Thread, spawn } from 'threads'
+import { getErasToCheck } from './utils'
+import { type WorkerFunction } from './worker'
 
-const eraExposedAccountsState = selectorFamily({
-  key: 'EraExposedAccounts',
-  get:
-    ({ endpoint, era }: { endpoint: string; era: number }) =>
-    async ({ get }) =>
-      await get(substrateApiState(endpoint))
-        .query.staking.erasStakers.entries(era)
-        .then(x =>
-          x.flatMap(([_, exposure]) => (exposure as any).others.flatMap(({ who }: any) => who.toString() as string))
-        )
-        .then(array => new Set(array)),
-})
+const getExposureKey = (genesisHash: string) => `fast-unstake-exposure/${genesisHash}`
 
-const exposedAccountsState = selectorFamily({
-  key: 'ExposedAccount',
-  get:
-    ({ endpoint, activeEra }: { endpoint: string; activeEra: number }) =>
-    ({ get }) => {
-      const api = get(substrateApiState(endpoint))
-      const startEraToCheck = activeEra - api.consts.staking.bondingDuration.toNumber()
+const exposureChecker = writableDict(writableDict(bool()))
+const exposureCoercion = coercion(exposureChecker)
+const exposureJsonParser = jsonParser(exposureChecker)
 
-      return get(
-        waitForAll(range(startEraToCheck, activeEra).map(era => eraExposedAccountsState({ endpoint, era })))
-      ).reduce((prev, curr) => new Set([...prev, ...curr]))
-    },
-})
+const unexposedAddressesState = atomFamily<
+  Record<string, boolean | undefined>,
+  { endpoint: string; genesisHash: string; activeEra: number; bondingDuration: number; addresses: string[] }
+>({
+  default: ({ addresses }) => Object.fromEntries(addresses.map(x => [x, undefined])),
+  key: 'UnexposedAddresses',
+  effects: ({ endpoint, genesisHash, activeEra, bondingDuration, addresses }) => [
+    ({ setSelf }) => {
+      if (addresses.length === 0) {
+        return
+      }
 
-export const useExposedAccounts = () => {
-  const apiEndpoint = useSubstrateApiEndpoint()
-  const activeEra = useChainState('query', 'staking', 'activeEra', [])
+      const exposure = exposureJsonParser(localStorage.getItem(getExposureKey(genesisHash))) ?? {}
 
-  const loadable = useRecoilValueLoadable(
-    activeEra.state !== 'hasValue'
-      ? constSelector(new Set([]))
-      : exposedAccountsState({
-          endpoint: apiEndpoint,
-          activeEra: activeEra.contents.unwrapOrDefault().index.toNumber(),
+      const storeExposure = () => {
+        const coercedExposure = exposureCoercion(exposure)
+
+        if (coercedExposure !== undefined && coercedExposure !== null) {
+          localStorage.setItem(getExposureKey(genesisHash), JSON.stringify(coercedExposure))
+        }
+      }
+
+      // Remove old precomputed eras
+      const erasToCheck = new Set(getErasToCheck(activeEra, bondingDuration))
+      for (const era of Object.keys(exposure)) {
+        if (!erasToCheck.has(Number(era))) {
+          // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+          delete exposure[era]
+        }
+      }
+
+      storeExposure()
+
+      const subscriptionPromise = spawn<WorkerFunction>(
+        new Worker(new URL('./worker', import.meta.url), { type: 'module' })
+      ).then(worker =>
+        worker(endpoint, activeEra, addresses, exposure).subscribe({
+          next: ({ era, address, exposed }) => {
+            if (exposed) {
+              setSelf(x => ({ ...x, [encodeAddress(address)]: !exposed }))
+            }
+
+            if (era in exposure) {
+              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+              exposure[era]![address] = exposed
+            } else {
+              exposure[era] = { [address]: exposed }
+            }
+
+            storeExposure()
+          },
+          error: () => {
+            void Thread.terminate(worker)
+          },
+          complete: () => {
+            void Thread.terminate(worker)
+            storeExposure()
+            setSelf(x => {
+              if (x instanceof DefaultValue) {
+                return x
+              }
+
+              return Object.fromEntries(Object.entries(x).map(([key, value]) => [key, value ?? true]))
+            })
+          },
         })
+      )
+
+      return () => {
+        void subscriptionPromise.then(subscription => subscription.unsubscribe())
+      }
+    },
+  ],
+})
+
+export const useInjectedAccountFastUnstakeEligibility = () => {
+  const api = useRecoilValue(useSubstrateApiState())
+
+  const addresses = useRecoilValue(injectedSubstrateAccountsState).map(x => x.address)
+  const bondedAccounts = useRecoilValue(useQueryState('staking', 'bonded.multi', addresses))
+
+  const addressesToRunExposureCheck = useMemo(
+    () => addresses.filter((_, index) => bondedAccounts[index]?.isSome),
+    [addresses, bondedAccounts]
   )
 
-  if (activeEra.state !== 'hasValue') {
-    return RecoilLoadable.loading() as typeof loadable
+  return {
+    ...useMemo(
+      () =>
+        Object.fromEntries(
+          addresses.filter(address => !addressesToRunExposureCheck.includes(address)).map(address => [address, false])
+        ),
+      [addresses, addressesToRunExposureCheck]
+    ),
+    ...useRecoilValue(
+      unexposedAddressesState({
+        endpoint: useSubstrateApiEndpoint(),
+        genesisHash: api.genesisHash.toHex(),
+        activeEra: useRecoilValue(useQueryState('staking', 'activeEra', [])).unwrapOrDefault().index.toNumber(),
+        bondingDuration: api.consts.staking.bondingDuration.toNumber(),
+        addresses: addressesToRunExposureCheck,
+      })
+    ),
   }
-
-  return loadable
-}
-
-export const useFastUnstakeEligibleAccounts = () => {
-  const accounts = useRecoilValue(injectedSubstrateAccountsState)
-
-  const exposedAccountsLoadable = useExposedAccounts()
-  const ledgersLoadable = useChainState(
-    'query',
-    'staking',
-    'ledger.multi',
-    accounts.map(x => x.address)
-  )
-
-  return RecoilLoadable.all([exposedAccountsLoadable, ledgersLoadable]).map(([exposedAccounts, ledgers]) =>
-    accounts.filter(
-      account =>
-        !exposedAccounts.has(account.address) &&
-        ledgers.find(ledger => ledger.unwrapOrDefault().stash.toString() === account.address)?.unwrapOrDefault()
-          .unlocking.length === 0
-    )
-  )
 }

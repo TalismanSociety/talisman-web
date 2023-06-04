@@ -2,10 +2,11 @@ import { type ReactNode } from 'react'
 
 import StakeItem, {
   FastUnstakeChip,
-  type StakeItemProps,
+  FastUnstakingStatus,
   UnstakeChip,
   UnstakingStatus,
   WithdrawChip,
+  type StakeItemProps,
 } from './StakeItem'
 
 export type ValidatorStakeItemProps = Omit<StakeItemProps, 'poolName' | 'actions'> & {
@@ -28,7 +29,7 @@ const ValidatorStakeItem = Object.assign(
       />
     )
   },
-  { UnstakeChip, FastUnstakeChip, WithdrawChip, UnstakingStatus }
+  { UnstakeChip, FastUnstakeChip, WithdrawChip, UnstakingStatus, FastUnstakingStatus }
 )
 
 export default ValidatorStakeItem
