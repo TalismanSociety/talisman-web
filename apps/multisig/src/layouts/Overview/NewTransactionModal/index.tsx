@@ -7,6 +7,7 @@ import { animated, useSpring } from 'react-spring'
 import { useMeasure } from 'react-use'
 
 import ActionsMenu from './ActionsMenu'
+import AdvancedAction from './AdvancedAction'
 import SendAction from './SendAction'
 
 export enum Action {
@@ -89,7 +90,7 @@ const NewTransactionModal = () => {
           ) : action === Action.Send ? (
             <SendAction onCancel={() => setAction(undefined)} />
           ) : action === Action.Advanced ? (
-            <div>Advanced</div>
+            <AdvancedAction onCancel={() => setAction(undefined)} />
           ) : null}
         </div>
       </animated.div>

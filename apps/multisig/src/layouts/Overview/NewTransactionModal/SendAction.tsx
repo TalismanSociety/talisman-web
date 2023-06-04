@@ -171,7 +171,7 @@ const SendAction = (props: { onCancel: () => void }) => {
           onBack={() => setStep(Step.Name)}
           onNext={() => setStep(Step.Details)}
         />
-      ) : step === Step.Details ? (
+      ) : step === Step.Details || step === Step.Review ? (
         <DetailsForm
           onBack={() => setStep(Step.Chain)}
           onNext={() => setStep(Step.Review)}

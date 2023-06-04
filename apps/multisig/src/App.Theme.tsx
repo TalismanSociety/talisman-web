@@ -25,6 +25,7 @@ declare module '@emotion/react' {
     text: string
     activeBackground: string
     controlBackground: string
+    grey800: string
   }
 }
 
