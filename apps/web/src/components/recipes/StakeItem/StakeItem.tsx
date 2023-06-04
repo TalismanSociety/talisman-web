@@ -2,8 +2,7 @@ import { useTheme } from '@emotion/react'
 import { Clock, Lock, Rocket } from '@talismn/icons'
 
 import { Chip, CircularProgressIndicator, Hr, Identicon, ListItem, Text, Tooltip, type ChipProps } from '@talismn/ui'
-import Color from 'colorjs.io'
-import { useMemo, type ReactNode } from 'react'
+import { type ReactNode } from 'react'
 import { StakeStatusIndicator, type StakeStatus } from '../StakeStatusIndicator'
 import StakeItemSkeleton from './StakeItemSkeleton'
 
