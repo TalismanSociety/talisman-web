@@ -3,7 +3,7 @@ import { Skeleton, type SkeletonProps } from '@talismn/ui'
 
 // TODO: copy of `StakeForm` skeleton
 // implement better skeleton once we have time
-const TeleportFormSkeleton = (props: SkeletonProps) => {
+const TransportFormSkeleton = (props: SkeletonProps) => {
   const theme = useTheme()
   return (
     <Skeleton.Surface
@@ -28,4 +28,4 @@ const TeleportFormSkeleton = (props: SkeletonProps) => {
   )
 }
 
-export default TeleportFormSkeleton
+export default TransportFormSkeleton

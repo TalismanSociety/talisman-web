@@ -2,23 +2,23 @@ import { RefreshCw } from '@talismn/icons'
 import { SideSheet } from '@talismn/ui'
 import { type ReactNode } from 'react'
 
-export type TeleportDialogProps = {
+export type TransportDialogProps = {
   open?: boolean
   onRequestDismiss: () => unknown
-  teleportForm: ReactNode
+  transportForm: ReactNode
 }
 
-const TeleportDialog = (props: TeleportDialogProps) => (
+const TransportDialog = (props: TransportDialogProps) => (
   <SideSheet
     title={
       <div>
-        <RefreshCw /> Teleport
+        <RefreshCw /> Transport
       </div>
     }
     {...props}
   >
-    {props.teleportForm}
+    {props.transportForm}
   </SideSheet>
 )
 
-export default TeleportDialog
+export default TransportDialog

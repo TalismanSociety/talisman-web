@@ -1,9 +1,9 @@
 import ErrorBoundary from '@components/widgets/ErrorBoundary'
-import { BottomBorderNav } from '@talismn/ui'
+import { Tabs } from '@talismn/ui'
 import { Outlet } from 'react-router'
 import { Link, useMatch } from 'react-router-dom'
 
-const Portfolio = () => {
+const Layout = () => {
   // useMatch
   const paths = [
     { path: '', name: 'Overview' },
@@ -23,13 +23,13 @@ const Portfolio = () => {
         width: '100%',
       }}
     >
-      <BottomBorderNav>
+      <Tabs>
         {paths.map(path => (
-          <BottomBorderNav.Item key={path.path} selected={path.path === currentPath}>
-            <Link to={path.path}>{path.name}</Link>
-          </BottomBorderNav.Item>
+          <Tabs.Item key={path.path} as={Link} to={path.path} selected={path.path === currentPath}>
+            {path.name}
+          </Tabs.Item>
         ))}
-      </BottomBorderNav>
+      </Tabs>
       <ErrorBoundary>
         <Outlet />
       </ErrorBoundary>
@@ -37,4 +37,4 @@ const Portfolio = () => {
   )
 }
 
-export default Portfolio
+export default Layout

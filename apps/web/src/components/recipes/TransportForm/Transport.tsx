@@ -1,14 +1,13 @@
 import { useTheme } from '@emotion/react'
-import Color from 'colorjs.io'
 import { AnimatePresence, LayoutGroup, motion } from 'framer-motion'
 import { type ReactNode, useId, useState } from 'react'
 
 import { ArrowDown, Repeat } from '@talismn/icons'
 import { Button, type ButtonProps, Select, Text, TextInput } from '@talismn/ui'
 import Cryptoticon from '../Cryptoticon'
-import TeleportFormSkeleton from './TeleportForm.skeleton'
+import TransportFormSkeleton from './TransportForm.skeleton'
 
-export type TeleportFormProps = {
+export type TransportFormProps = {
   accountSelector: ReactNode
   fromChains: Array<{ name: string; logoSrc: string }>
   selectedFromChainIndex: number
@@ -30,7 +29,7 @@ export type TeleportFormProps = {
   inputError?: string
 }
 
-const TeleportFormNetworkButton = (props: Pick<ButtonProps<'button'>, 'onClick' | 'disabled'>) => {
+const TransportFormNetworkButton = (props: Pick<ButtonProps<'button'>, 'onClick' | 'disabled'>) => {
   return (
     <Button variant="noop" {...props} css={{ '@media(min-width: 600px)': { rotate: '-90deg' } }}>
       <motion.div
@@ -56,8 +55,8 @@ const TeleportFormNetworkButton = (props: Pick<ButtonProps<'button'>, 'onClick' 
   )
 }
 
-const TeleportForm = Object.assign(
-  (props: TeleportFormProps) => {
+const TransportForm = Object.assign(
+  (props: TransportFormProps) => {
     const theme = useTheme()
 
     const [chainSwapped, setChainSwapped] = useState(false)
@@ -90,11 +89,7 @@ const TeleportForm = Object.assign(
                     onClick={props.onRequestTokenChange}
                     css={{
                       padding: '1rem',
-                      backgroundColor: (() => {
-                        const color = new Color(theme.color.primary)
-                        color.alpha = 0.1
-                        return color.display().toString()
-                      })(),
+                      backgroundColor: `color-mix(in srgb, ${theme.color.primary}, transparent 90%)`,
                     }}
                   >
                     <Text.BodySmall
@@ -110,11 +105,9 @@ const TeleportForm = Object.assign(
                     css={{
                       padding: '1rem',
                       backgroundColor: theme.color.foregroundVariant,
-                      color: (() => {
-                        const color = new Color(theme.color.onForegroundVariant)
-                        color.alpha = theme.contentAlpha.medium
-                        return color.display().toString()
-                      })(),
+                      color: `color-mix(in srgb, ${theme.color.onForegroundVariant}, transparent ${Math.round(
+                        (1 - theme.contentAlpha.medium) * 100
+                      )}%)`,
                     }}
                   >
                     <Text.BodySmall as="div" css={{ display: 'flex', alignItems: 'center', gap: '0.9rem' }}>
@@ -167,7 +160,7 @@ const TeleportForm = Object.assign(
                   </div>
                 </motion.div>
                 <div css={{ color: theme.color.primary }}>
-                  <TeleportFormNetworkButton
+                  <TransportFormNetworkButton
                     onClick={() => {
                       props.onReverseChainRoute()
                       setChainSwapped(x => !x)
@@ -216,12 +209,12 @@ const TeleportForm = Object.assign(
           loading={props.confirmTransferState === 'pending'}
           disabled={props.confirmTransferState === 'disabled'}
         >
-          Teleport
+          Transport
         </Button>
       </div>
     )
   },
-  { Skeleton: TeleportFormSkeleton }
+  { Skeleton: TransportFormSkeleton }
 )
 
-export default TeleportForm
+export default TransportForm

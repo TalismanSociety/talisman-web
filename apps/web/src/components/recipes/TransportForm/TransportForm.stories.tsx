@@ -1,17 +1,17 @@
 import { type ComponentMeta, type Story } from '@storybook/react'
 
-import TeleportForm, { type TeleportFormProps } from './TeleportForm'
+import TransportForm, { type TransportFormProps } from './Transport'
 import { Select } from '@talismn/ui'
 
 export default {
-  title: 'Recipes/TeleportForm',
-  component: TeleportForm,
+  title: 'Recipes/TransportForm',
+  component: TransportForm,
   parameters: {
     layout: 'centered',
   },
-} as ComponentMeta<typeof TeleportForm>
+} as ComponentMeta<typeof TransportForm>
 
-export const Default: Story<TeleportFormProps> = args => <TeleportForm {...args} />
+export const Default: Story<TransportFormProps> = args => <TransportForm {...args} />
 
 Default.args = {
   accountSelector: (
@@ -33,4 +33,4 @@ Default.args = {
   destinationFee: '1 KSM',
 }
 
-export const Skeleton = () => <TeleportForm.Skeleton />
+export const Skeleton = () => <TransportForm.Skeleton />

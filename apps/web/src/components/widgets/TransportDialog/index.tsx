@@ -1,28 +1,28 @@
-import TeleportFormDialogComponent from '@components/recipes/TeleportDialog'
-import TeleportFormComponent from '@components/recipes/TeleportForm'
+import TransportFormDialogComponent from '@components/recipes/TransportDialog'
+import TransportFormComponent from '@components/recipes/TransportForm'
 import React, { Suspense } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import ErrorBoundary from '../ErrorBoundary'
 
-const TeleportForm = React.lazy(async () => await import('./TeleportForm'))
+const TransportForm = React.lazy(async () => await import('./TransportForm'))
 
-const TeleportDialog = () => {
+const TransportDialog = () => {
   const [searchParams, setSearchParams] = useSearchParams()
 
-  const open = searchParams.get('action') === 'teleport'
+  const open = searchParams.get('action') === 'transport'
 
   if (!open) {
     return null
   }
 
   return (
-    <TeleportFormDialogComponent
+    <TransportFormDialogComponent
       open={open}
       onRequestDismiss={() => setSearchParams(new URLSearchParams())}
-      teleportForm={
+      transportForm={
         <ErrorBoundary renderFallback={fallback => <div css={{ width: 'max-content' }}>{fallback}</div>}>
-          <Suspense fallback={<TeleportFormComponent.Skeleton />}>
-            <TeleportForm />
+          <Suspense fallback={<TransportFormComponent.Skeleton />}>
+            <TransportForm />
           </Suspense>
         </ErrorBoundary>
       }
@@ -30,4 +30,4 @@ const TeleportDialog = () => {
   )
 }
 
-export default TeleportDialog
+export default TransportDialog
