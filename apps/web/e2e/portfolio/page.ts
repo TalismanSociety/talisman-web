@@ -14,7 +14,6 @@ export default class PortfolioPage {
     this.inputWalletAddress = page.getByPlaceholder('Enter wallet address')
   }
   
-  // spanAddress = (wallet: string) => this.page.locator(`span >> text = ${this.formatWallet(wallet)}`)
   spanAddress = (wallet: string) => this.page.locator('#root').getByText(this.formatWallet(wallet))
   divAddress = (wallet: string) => this.page.getByRole('article').filter({ hasText: this.formatWallet(wallet) })
   
