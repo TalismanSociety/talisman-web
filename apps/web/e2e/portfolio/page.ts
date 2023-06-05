@@ -1,5 +1,4 @@
 import type { Locator, Page } from '@playwright/test'
-import { wallet1 } from '../fixtures/data.json'
 
 export default class PortfolioPage {
   readonly inputAnyAddress: Locator
