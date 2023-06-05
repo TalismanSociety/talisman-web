@@ -44,3 +44,25 @@ cp apps/web/.env.example apps/web/.env
 ```sh
 yarn dev
 ```
+
+## Test Automation Challenge
+
+Directory of test data:
+```sh
+apps/web/e2e/fixtures
+```
+
+Directory of portfolio test:
+```sh
+apps/web/e2e/portfolio
+```
+
+Run e2e for portfolio test:
+```sh
+yarn e2e:portfolio
+```
+
+Open playwright test report:
+```sh
+cd apps/web yarn e2e:report
+```

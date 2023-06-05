@@ -30,6 +30,10 @@
     "e2e": {
       "dependsOn": ["^build"],
       "cache": false
+    },
+    "e2e:portfolio": {
+      "dependsOn": ["^build"],
+      "cache": false
     }
   }
 }

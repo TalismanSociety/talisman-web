@@ -16,6 +16,12 @@ const projects = [
       ...devices['Desktop Firefox'],
     },
   },
+  {
+    name: 'edge',
+    use: {
+      ...devices['Desktop Edge'],
+    }
+  }
 ]
 
 const config: PlaywrightTestConfig = {
