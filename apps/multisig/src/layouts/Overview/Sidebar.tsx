@@ -5,7 +5,7 @@ import { device, size } from '@util/breakpoints'
 import { ReactNode } from 'react'
 import { useWindowSize } from 'react-use'
 
-const Sidebar = (props: { options: { name: string; icon: ReactNode; onClick: () => void }[]; selected: string }) => {
+const Sidebar = (props: { options: { name: string; icon: ReactNode; onClick?: () => void }[]; selected: string }) => {
   const theme = useTheme()
   const width = useWindowSize().width
   return (

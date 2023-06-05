@@ -1,20 +1,17 @@
 import { css } from '@emotion/css'
-import { Eye, Settings } from '@talismn/icons'
+import { Eye, Settings as SettingsIcon } from '@talismn/icons'
 import { device } from '@util/breakpoints'
-import { useNavigate } from 'react-router-dom'
+import { Route, Routes, useNavigate } from 'react-router-dom'
 
-import Assets, { TokenAugmented } from './Assets'
-import Footer from './Footer'
-import Header from './Header'
-import { mockTokensAugmented, mockTransactions } from './mocks'
-import NewTransactionModal from './NewTransactionModal'
-import Sidebar from './Sidebar'
-import Transactions, { Transaction } from './Transactions'
+import Footer from '../Overview/Footer'
+import Header from '../Overview/Header'
+import Sidebar from '../Overview/Sidebar'
+import AddNetwork from './AddNetwork'
+import ManageSigners from './ManageSigners'
+import SettingsList from './SettingsList'
 
-const Overview = () => {
+const Settings = () => {
   const navigate = useNavigate()
-  const transactions: Transaction[] = mockTransactions
-  const augmentedTokens: TokenAugmented[] = mockTokensAugmented
   return (
     <div
       className={css`
@@ -27,15 +24,15 @@ const Overview = () => {
         padding: 28px 28px 0 28px;
         grid-template-areas:
           'header header'
-          'sidebar transactions'
-          'sidebar assets'
+          'sidebar settings'
+          'sidebar settings'
           'footer footer';
         @media ${device.md} {
           grid-template-columns: 177px 45fr 55fr;
           grid-template-rows: 84px auto 84px;
           grid-template-areas:
             'header header header'
-            'sidebar assets transactions'
+            'sidebar settings settings'
             'footer footer footer';
         }
         @media ${device.lg} {
@@ -45,34 +42,38 @@ const Overview = () => {
           grid-template-rows: 84px auto 84px;
           grid-template-areas:
             'header header header'
-            'sidebar assets transactions'
+            'sidebar settings settings'
             'footer footer footer';
         }
       `}
     >
       <Header />
       <Sidebar
-        selected="Overview"
+        selected="Settings"
         options={[
           {
             name: 'Overview',
             icon: <Eye />,
+            onClick: () => {
+              navigate('/overview')
+            },
           },
           {
             name: 'Settings',
-            icon: <Settings />,
-            onClick: () => {
-              navigate('/settings')
-            },
+            icon: <SettingsIcon />,
           },
         ]}
       />
-      <Assets augmentedTokens={augmentedTokens} />
-      <Transactions transactions={transactions} />
+      <div css={{ gridArea: 'settings' }}>
+        <Routes>
+          <Route path="/" element={<SettingsList />} />
+          <Route path="/add-network" element={<AddNetwork />} />
+          <Route path="/signers" element={<ManageSigners />} />
+        </Routes>
+      </div>
       <Footer />
-      <NewTransactionModal />
     </div>
   )
 }
 
-export default Overview
+export default Settings
