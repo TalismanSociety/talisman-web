@@ -1,6 +1,6 @@
 import StatusCircle, { StatusCircleType } from '@components/StatusCircle'
 import { css } from '@emotion/css'
-import { ArrowUp, Share2 } from '@talismn/icons'
+import { ArrowUp, List, Share2 } from '@talismn/icons'
 import { formatUsd } from '@util/numbers'
 
 import { formattedHhMm } from './utils'
@@ -9,6 +9,14 @@ import { Transaction, TransactionType } from '.'
 const TransactionSummaryRow = ({ t, onClick }: { t: Transaction; onClick?: () => void }) => {
   const threshold = 2
   const signedCount = Object.values(t.approvals).filter(Boolean).length
+  const txIcon =
+    t.decoded.type === TransactionType.Transfer ? (
+      <ArrowUp />
+    ) : t.decoded.type === TransactionType.MultiSend ? (
+      <Share2 />
+    ) : (
+      <List />
+    )
   return (
     <div
       onClick={onClick}
@@ -42,7 +50,7 @@ const TransactionSummaryRow = ({ t, onClick }: { t: Transaction; onClick?: () =>
           }
         `}
       >
-        {t.decoded.type === TransactionType.MultiSend ? <Share2 /> : <ArrowUp />}
+        {txIcon}
       </div>
       <span
         css={{

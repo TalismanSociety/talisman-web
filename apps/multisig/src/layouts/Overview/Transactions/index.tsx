@@ -17,7 +17,7 @@ enum Mode {
 export enum TransactionType {
   MultiSend,
   Transfer,
-  Other,
+  Advanced,
 }
 
 export interface Transaction {
@@ -37,6 +37,7 @@ export interface Transaction {
       price: number
     }
     recipients: [string, number][]
+    yaml: string
   }
   raw: string
 }

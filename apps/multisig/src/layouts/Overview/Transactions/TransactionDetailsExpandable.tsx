@@ -1,3 +1,8 @@
+import 'ace-builds/src-noconflict/ace'
+import 'ace-builds/src-noconflict/mode-yaml'
+import 'ace-builds/src-noconflict/theme-twilight'
+import 'ace-builds/src-noconflict/ext-language_tools'
+
 import { Token } from 'domain/chains'
 
 import { css } from '@emotion/css'
@@ -6,6 +11,7 @@ import { ChevronRight, List, Send, Share2, Users } from '@talismn/icons'
 import { IconButton, Identicon } from '@talismn/ui'
 import { formatUsd } from '@util/numbers'
 import { useState } from 'react'
+import AceEditor from 'react-ace'
 import { Collapse } from 'react-collapse'
 import truncateMiddle from 'truncate-middle'
 
@@ -110,6 +116,22 @@ const MultiSendExpendedDetails = ({ t }: { t: Transaction }) => {
   )
 }
 
+const AdvancedExpendedDetails = ({ t }: { t: Transaction }) => {
+  return (
+    <div css={{ paddingBottom: '8px' }}>
+      <AceEditor
+        mode="yaml"
+        theme="twilight"
+        value={t.decoded.yaml}
+        readOnly={true}
+        name="yaml"
+        setOptions={{ useWorker: false }}
+        style={{ width: '100%', border: '1px solid #232323' }}
+      />
+    </div>
+  )
+}
+
 const TransactionDetailsExpandable = ({ t }: { t: Transaction }) => {
   const theme = useTheme()
   const [expanded, setExpanded] = useState(false)
@@ -148,9 +170,9 @@ const TransactionDetailsExpandable = ({ t }: { t: Transaction }) => {
             <p css={{ marginTop: '4px' }}>Send</p>
             <Send />
           </>
-        ) : t.decoded.type === TransactionType.Other ? (
+        ) : t.decoded.type === TransactionType.Advanced ? (
           <>
-            <p css={{ marginTop: '4px' }}>Other</p>
+            <p css={{ marginTop: '4px' }}>Advanced</p>
             <List />
           </>
         ) : null}
@@ -200,13 +222,15 @@ const TransactionDetailsExpandable = ({ t }: { t: Transaction }) => {
             <AddressPill a={(recipients[0] || ['', 0])[0]} />
           </div>
         ) : null}
-        <AmountRow
-          amount={t.decoded.outgoingToken?.amount || 0}
-          token={t.decoded.outgoingToken?.token}
-          price={t.decoded.outgoingToken?.price || 0}
-        />
-        {t.decoded.type === TransactionType.MultiSend ? (
-          <div css={{ width: '28px' }}>
+        {t.decoded.type !== TransactionType.Advanced && (
+          <AmountRow
+            amount={t.decoded.outgoingToken?.amount || 0}
+            token={t.decoded.outgoingToken?.token}
+            price={t.decoded.outgoingToken?.price || 0}
+          />
+        )}
+        {t.decoded.type === TransactionType.MultiSend || t.decoded.type === TransactionType.Advanced ? (
+          <div css={{ width: '28px', marginLeft: 'auto' }}>
             <IconButton
               contentColor={`rgb(${theme.offWhite})`}
               onClick={() => {
@@ -229,7 +253,11 @@ const TransactionDetailsExpandable = ({ t }: { t: Transaction }) => {
         `}
       >
         <Collapse isOpened={expanded}>
-          {t.decoded.type === TransactionType.MultiSend ? <MultiSendExpendedDetails t={t} /> : null}
+          {t.decoded.type === TransactionType.MultiSend ? (
+            <MultiSendExpendedDetails t={t} />
+          ) : t.decoded.type === TransactionType.Advanced ? (
+            <AdvancedExpendedDetails t={t} />
+          ) : null}
         </Collapse>
       </div>
     </div>
