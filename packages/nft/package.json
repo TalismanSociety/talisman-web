@@ -14,7 +14,7 @@
     "multiformats": "^11.0.2"
   },
   "devDependencies": {
-    "@acala-network/types": "^5.0.2",
+    "@acala-network/types": "^5.1.1",
     "@graphql-codegen/cli": "^3.2.2",
     "@polkadot/api": "^10.8.1",
     "prettier": "^2.8.8",

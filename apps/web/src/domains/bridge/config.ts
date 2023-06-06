@@ -18,7 +18,7 @@ import { TuringAdapter } from '@polkawallet/bridge/adapters/oak'
 import { HeikoAdapter, ParallelAdapter } from '@polkawallet/bridge/adapters/parallel'
 import { KhalaAdapter } from '@polkawallet/bridge/adapters/phala'
 import { KusamaAdapter, PolkadotAdapter } from '@polkawallet/bridge/adapters/polkadot'
-import { StatemineAdapter } from '@polkawallet/bridge/adapters/statemint'
+import { StatemineAdapter, StatemintAdapter } from '@polkawallet/bridge/adapters/statemint'
 import { QuartzAdapter, UniqueAdapter } from '@polkawallet/bridge/adapters/unique'
 import { type BaseCrossChainAdapter } from '@polkawallet/bridge/base-chain-adapter'
 
@@ -53,7 +53,11 @@ export const bridgeConfig = {
   shadow: { adapter: new ShadowAdapter(), subscanUrl: 'https://shadow.subscan.io/' },
   shiden: { adapter: new ShidenAdapter(), subscanUrl: 'https://shiden.subscan.io/' },
   statemine: { adapter: new StatemineAdapter(), subscanUrl: 'https://statemine.subscan.io/' },
-  statemint: undefined,
+  statemint: {
+    adapter: new StatemintAdapter(),
+    rpc: 'wss://statemint-rpc.polkadot.io',
+    subscanUrl: 'https://statemint.subscan.io/',
+  },
   turing: { adapter: new TuringAdapter(), subscanUrl: 'https://turing.subscan.io/' },
   unique: { adapter: new UniqueAdapter(), subscanUrl: 'https://unique.subscan.io/' },
 } as const satisfies Record<
