@@ -68,10 +68,10 @@ const SettingsList = () => {
     >
       <SettingOption
         icon={<Globe size={32} />}
-        title={'Add network'}
-        description={'Add another network to your multisig'}
+        title={'Manage networks'}
+        description={'View existing and add new networks'}
         onClick={() => {
-          navigate('/settings/add-network')
+          navigate('/settings/manage-networks')
         }}
       />
       <SettingOption

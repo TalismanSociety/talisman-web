@@ -4,11 +4,12 @@ import AddressInput from '@components/AddressInput'
 import Slider from '@components/Slider'
 import { css } from '@emotion/css'
 import { useTheme } from '@emotion/react'
-import { ChevronLeft, ExternalLink, Trash } from '@talismn/icons'
+import { ExternalLink, Trash } from '@talismn/icons'
 import { Button, IconButton, Identicon } from '@talismn/ui'
 import { useMemo, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 import truncateMiddle from 'truncate-middle'
+
+import { BackButton } from '.'
 
 const mockCurrentMembers: AugmentedAccount[] = [
   {
@@ -73,8 +74,6 @@ const Member = ({ m, onDelete }: { m: AugmentedAccount; onDelete?: () => void })
 }
 
 const ManageSignerConfiguration = () => {
-  const theme = useTheme()
-
   // TODO: Fetch these from recoil or whatever
   const vaultName = 'Paraverse Foundation'
   const currentMembers = mockCurrentMembers
@@ -82,7 +81,6 @@ const ManageSignerConfiguration = () => {
 
   const [newMembers, setNewMembers] = useState(mockCurrentMembers)
   const [newThreshold, setNewThreshold] = useState(mockThreshold)
-  const navigate = useNavigate()
 
   const membersDiffExists = useMemo(() => {
     return (
@@ -94,20 +92,7 @@ const ManageSignerConfiguration = () => {
 
   return (
     <div css={{ margin: '32px' }}>
-      <Button
-        css={{ height: '32px', width: '78px', marginBottom: '56px', padding: '8px' }}
-        variant="secondary"
-        onClick={() => {
-          navigate('/settings')
-        }}
-      >
-        <div css={{ display: 'flex', gap: '4px' }}>
-          <IconButton size={16} contentColor={`rgb(${theme.dim})`}>
-            <ChevronLeft size={16} />
-          </IconButton>
-          <span css={{ fontSize: '16px', color: 'var(--color-dim)' }}>Back</span>
-        </div>
-      </Button>
+      <BackButton />
       <div
         css={{
           display: 'flex',

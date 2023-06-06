@@ -1,14 +1,37 @@
 import { css } from '@emotion/css'
-import { Eye, Settings as SettingsIcon } from '@talismn/icons'
+import { useTheme } from '@emotion/react'
+import { ChevronLeft, Eye, Settings as SettingsIcon } from '@talismn/icons'
+import { Button, IconButton } from '@talismn/ui'
 import { device } from '@util/breakpoints'
 import { Route, Routes, useNavigate } from 'react-router-dom'
 
 import Footer from '../Overview/Footer'
 import Header from '../Overview/Header'
 import Sidebar from '../Overview/Sidebar'
-import AddNetwork from './AddNetwork'
+import ManageChains from './ManageChains'
 import SettingsList from './SettingsList'
 import ManageSignerConfiguration from './SignerConfiguration'
+
+export const BackButton = () => {
+  const theme = useTheme()
+  const navigate = useNavigate()
+  return (
+    <Button
+      css={{ height: '32px', width: '78px', marginBottom: '56px', padding: '8px' }}
+      variant="secondary"
+      onClick={() => {
+        navigate('/settings')
+      }}
+    >
+      <div css={{ display: 'flex', gap: '4px' }}>
+        <IconButton size={16} contentColor={`rgb(${theme.dim})`}>
+          <ChevronLeft size={16} />
+        </IconButton>
+        <span css={{ fontSize: '16px', color: 'var(--color-dim)' }}>Back</span>
+      </div>
+    </Button>
+  )
+}
 
 const Settings = () => {
   const navigate = useNavigate()
@@ -70,7 +93,7 @@ const Settings = () => {
       <div css={{ gridArea: 'settings' }}>
         <Routes>
           <Route path="/" element={<SettingsList />} />
-          <Route path="/add-network" element={<AddNetwork />} />
+          <Route path="/manage-networks" element={<ManageChains />} />
           <Route path="/signer-configuration" element={<ManageSignerConfiguration />} />
         </Routes>
       </div>
