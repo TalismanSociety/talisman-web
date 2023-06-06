@@ -18,6 +18,7 @@ import { RecoilRoot } from 'recoil'
 import ThemeProvider from './App.Theme'
 import { PolkadotApiProvider } from '@talismn/react-polkadot-api'
 import { chainDeriveState, chainQueryMultiState, chainQueryState } from '@domains/common/recoils/query'
+import { TalismanExtensionSynchronizer } from '@domains/extension'
 
 const Loader = () => {
   return (
@@ -56,6 +57,7 @@ const App = () => (
             <Portfolio.Provider>
               <TalismanProvider>
                 <ExtensionWatcher />
+                <TalismanExtensionSynchronizer />
                 <LegacyBalancesWatcher />
                 <MoonbeamContributors.Provider>
                   <Development />
