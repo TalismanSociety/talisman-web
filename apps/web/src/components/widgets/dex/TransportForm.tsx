@@ -1,8 +1,6 @@
 import { FixedPointNumber } from '@acala-network/sdk-core'
-import TransportFormComponent from '@components/recipes/TransportForm'
-import TokenSelectorDialog, { TokenSelectorItem } from '@components/recipes/TokenSelectorDialog'
+import DexForm from '@components/recipes/DexForm/DexForm'
 import { injectedSubstrateAccountsState } from '@domains/accounts'
-import { selectedBalancesState } from '@domains/balances/recoils'
 import { bridgeApiProvider, bridgeConfig, bridgeNodeList, bridgeState } from '@domains/bridge'
 import { extrinsicMiddleware } from '@domains/common/extrinsicMiddleware'
 import { toastExtrinsic } from '@domains/common/utils'
@@ -14,27 +12,22 @@ import { Decimal } from '@talismn/math'
 import { CircularProgressIndicator, toast } from '@talismn/ui'
 import { Maybe } from '@util/monads'
 import { isEmpty, uniqBy } from 'lodash'
-import { useCallback, useEffect, useMemo, useState } from 'react'
-import { RecoilLoadable, useRecoilCallback, useRecoilValue, waitForAll, type Loadable } from 'recoil'
+import { useEffect, useMemo, useState } from 'react'
+import { Link } from 'react-router-dom'
+import { RecoilLoadable, useRecoilCallback, useRecoilValue, type Loadable } from 'recoil'
 import { Observable, switchMap } from 'rxjs'
 import { useAccountSelector } from '../AccountSelector'
+import TokenSelectorButton from '../TokenSelectorButton'
 
 const TransportForm = () => {
-  const [_balances, bridge] = useRecoilValue(waitForAll([selectedBalancesState, bridgeState]))
+  const bridge = useRecoilValue(bridgeState)
 
   const [amount, setAmount] = useState('')
   const [sender, senderSelector] = useAccountSelector(useRecoilValue(injectedSubstrateAccountsState), 0)
 
-  const balances = useMemo(
-    () => (sender === undefined ? _balances : _balances.find(x => x.address === sender.address)),
-    [_balances, sender]
-  )
-
   const [fromChain, setFromChain] = useState<Chain>()
   const [toChain, setToChain] = useState<Chain>()
   const [token, setToken] = useState<string>()
-
-  const [tokenSelectorOpen, setTokenSelectorOpen] = useState(false)
 
   const filterParams = <T extends Record<string, unknown>>(object: T) => {
     const params = Object.fromEntries(Object.entries(object).filter(([_, value]) => value !== undefined))
@@ -55,6 +48,18 @@ const TransportForm = () => {
         .filter(x => token === undefined || x.token === token),
     [bridge.router, toChain, fromChain, token]
   )
+
+  const tokens = useMemo(() => Array.from(new Set(bridge.router.getRouters().map(x => x.token))), [bridge.router])
+  const routeTokens = useMemo(() => new Set(routes.map(x => x.token)), [routes])
+
+  const onChangeToken = (token: string) => {
+    setToken(token)
+
+    if (!routeTokens.has(token)) {
+      setFromChain(undefined)
+      setToChain(undefined)
+    }
+  }
 
   const originChains = useMemo(
     () =>
@@ -98,35 +103,6 @@ const TransportForm = () => {
 
     return false
   }, [bridge.router, fromChain, toChain, token])
-
-  const tokens = useMemo(() => [...new Set(routes.map(x => x.token))], [routes])
-  const tokensWithBalance = useMemo(
-    () =>
-      tokens.map(symbol => {
-        const tokenBalances = balances.find(x => x.token?.symbol !== undefined && x.token.symbol === symbol)
-
-        return {
-          symbol,
-          logo: tokenBalances.each.at(0)?.token?.logo,
-          amount: Decimal.fromUserInput(
-            tokenBalances.each
-              .reduce(
-                (previous, current) =>
-                  previous +
-                  Decimal.fromPlanck(current.free.planck, current.decimals ?? 0, current.token?.symbol).toNumber(),
-                0
-              )
-              .toFixed(2),
-            2,
-            tokenBalances.each.at(0)?.token?.symbol
-          ),
-          fiatAmount: tokenBalances.sum.fiat('usd').free,
-        }
-      }),
-    [balances, tokens]
-  )
-
-  const tokenBalance = useMemo(() => tokensWithBalance.find(x => x.symbol === token), [token, tokensWithBalance])
 
   const adapter = useMemo(
     () => Maybe.of(fromChain).mapOrUndefined(bridge.findAdapter.bind(bridge)),
@@ -238,54 +214,65 @@ const TransportForm = () => {
   const [extrinsicInProgress, setExtrinsicInProgress] = useState(false)
 
   return (
-    <>
-      <TransportFormComponent
-        accountSelector={senderSelector}
-        transferableAmount={
-          parsedInputConfigLoadable?.state === 'loading' ? (
-            <CircularProgressIndicator size="1em" />
-          ) : parsedInputConfigLoadable?.state === 'hasValue' ? (
-            parsedInputConfigLoadable?.contents?.maxInput.toHuman()
-          ) : undefined
-        }
-        fromChains={originChains.map(x => ({ name: x.id, logoSrc: x.icon }))}
-        selectedFromChainIndex={useMemo(
-          () => originChains.findIndex(x => x.id === fromChain?.id),
-          [fromChain?.id, originChains]
-        )}
-        onSelectFromChainIndex={index =>
-          setFromChain(Maybe.of(index).mapOrUndefined(originChains.at.bind(originChains)))
-        }
-        toChains={destinationChains.map(x => ({ name: x.id, logoSrc: x.icon }))}
-        selectedToChainIndex={useMemo(
-          () => destinationChains.findIndex(x => x.id === toChain?.id),
-          [destinationChains, toChain?.id]
-        )}
-        onSelectToChainIndex={index =>
-          setToChain(Maybe.of(index).mapOrUndefined(destinationChains.at.bind(destinationChains)))
-        }
-        canReverseChainRoute={routeReversible}
-        onReverseChainRoute={() => {
-          setFromChain(toChain)
-          setToChain(fromChain)
-        }}
-        token={Maybe.of(tokenBalance).mapOrUndefined(x => ({ name: x.symbol, logoSrc: x.logo ?? '' }))}
-        onRequestTokenChange={() => {
-          if (token === undefined) {
-            setTokenSelectorOpen(true)
-          } else {
-            setToken(undefined)
+    <DexForm
+      swapLink={<DexForm.SwapTab as={Link} to="/dex/swap" />}
+      transportLink={<DexForm.TransportTab as={Link} to="/dex/transport" selected />}
+      form={
+        <DexForm.Transport
+          accountSelector={senderSelector}
+          transferableAmount={
+            parsedInputConfigLoadable?.state === 'loading' ? (
+              <CircularProgressIndicator size="1em" />
+            ) : parsedInputConfigLoadable?.state === 'hasValue' ? (
+              parsedInputConfigLoadable?.contents?.maxInput.toHuman()
+            ) : undefined
           }
-        }}
-        amount={amount}
-        onChangeAmount={setAmount}
-        originFee={Maybe.of(parsedInputConfigLoadable?.valueMaybe()).mapOrUndefined(
-          fee => `~${fee.estimateFee.toHuman()}`
-        )}
-        destinationFee={parsedInputConfigLoadable?.valueMaybe()?.destFee.toHuman()}
-        onConfirmTransfer={
-          // TODO: extrinsic middleware logic to domains similar to `useExtrinsic`
-          useRecoilCallback(callbackInterface => () => {
+          fromChains={originChains.map(x => ({ name: x.id, logoSrc: x.icon }))}
+          selectedFromChainIndex={useMemo(
+            () => originChains.findIndex(x => x.id === fromChain?.id),
+            [fromChain?.id, originChains]
+          )}
+          onSelectFromChainIndex={index =>
+            setFromChain(Maybe.of(index).mapOrUndefined(originChains.at.bind(originChains)))
+          }
+          toChains={destinationChains.map(x => ({ name: x.id, logoSrc: x.icon }))}
+          selectedToChainIndex={useMemo(
+            () => destinationChains.findIndex(x => x.id === toChain?.id),
+            [destinationChains, toChain?.id]
+          )}
+          onSelectToChainIndex={index =>
+            setToChain(Maybe.of(index).mapOrUndefined(destinationChains.at.bind(destinationChains)))
+          }
+          canReverseChainRoute={routeReversible}
+          onReverseChainRoute={() => {
+            setFromChain(toChain)
+            setToChain(fromChain)
+          }}
+          tokenSelector={<TokenSelectorButton tokens={tokens} selectedToken={token} onChangeToken={onChangeToken} />}
+          amount={amount}
+          onChangeAmount={setAmount}
+          originFee={Maybe.of(parsedInputConfigLoadable?.valueMaybe()).mapOrUndefined(
+            fee => `~${fee.estimateFee.toHuman()}`
+          )}
+          destinationFee={parsedInputConfigLoadable?.valueMaybe()?.destFee.toHuman()}
+          inputError={inputError}
+        />
+      }
+      fees={[
+        Maybe.of(parsedInputConfigLoadable?.valueMaybe()).mapOrUndefined(fee => ({
+          name: 'Origin fee',
+          amount: `~${fee.estimateFee.toHuman()}`,
+        })),
+        Maybe.of(parsedInputConfigLoadable?.valueMaybe()).mapOrUndefined(fee => ({
+          name: 'Destination fee',
+          amount: `~${fee.destFee.toHuman()}`,
+        })),
+      ]}
+      submitButton={
+        <DexForm.Transport.SubmitButton
+          loading={extrinsicInProgress}
+          disabled={!ready}
+          onClick={useRecoilCallback(callbackInterface => () => {
             if (
               adapter === undefined ||
               decimalAmount === undefined ||
@@ -340,36 +327,10 @@ const TransportForm = () => {
                 config !== undefined && 'subscanUrl' in config ? config.subscanUrl : undefined
               )
             })
-          })
-        }
-        confirmTransferState={extrinsicInProgress ? 'pending' : ready ? undefined : 'disabled'}
-        inputError={inputError}
-      />
-      <TokenSelectorDialog
-        open={tokenSelectorOpen}
-        onRequestDismiss={useCallback(() => setTokenSelectorOpen(false), [])}
-      >
-        {tokensWithBalance
-          .sort((a, b) => b.fiatAmount - a.fiatAmount || b.amount.planck.cmp(a.amount.planck))
-          .map((x, index) => (
-            <TokenSelectorItem
-              key={index}
-              logoSrc={x.logo ?? ''}
-              name={x.symbol}
-              amount={x.amount.toHuman()}
-              fiatAmount={x.fiatAmount.toLocaleString(undefined, {
-                style: 'currency',
-                currency: 'usd',
-                compactDisplay: 'short',
-              })}
-              onClick={() => {
-                setToken(x.symbol)
-                setTokenSelectorOpen(false)
-              }}
-            />
-          ))}
-      </TokenSelectorDialog>
-    </>
+          })}
+        />
+      }
+    />
   )
 }
 

@@ -10,6 +10,7 @@ import {
   Tooltip,
   type ButtonProps,
   type ChipProps,
+  Surface,
 } from '@talismn/ui'
 import { isNilOrWhitespace } from '@util/nil'
 import { LayoutGroup, motion } from 'framer-motion'
@@ -309,14 +310,13 @@ const StakeForm = Object.assign(
     return (
       <LayoutGroup id={id}>
         <AssetSelectorContext.Provider value={<motion.div layoutId="asset-selector">{props.assetSelector}</motion.div>}>
-          <div
+          <Surface
             css={{
               display: 'flex',
               flexDirection: 'column',
               gap: '1.6rem',
               borderRadius: '1.6rem',
               padding: '1.6rem',
-              backgroundColor: theme.color.surface,
             }}
           >
             {props.accountSelector}
@@ -330,7 +330,7 @@ const StakeForm = Object.assign(
                 {props.stakeButton}
               </>
             )}
-          </div>
+          </Surface>
         </AssetSelectorContext.Provider>
       </LayoutGroup>
     )

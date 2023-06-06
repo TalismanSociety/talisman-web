@@ -1,10 +1,10 @@
 import { type ComponentMeta, type Story } from '@storybook/react'
 
-import TransportForm, { type TransportFormProps } from './Transport'
+import TransportForm, { type TransportFormProps } from './TransportForm'
 import { Select } from '@talismn/ui'
 
 export default {
-  title: 'Recipes/TransportForm',
+  title: 'Recipes/DexForm/TransportForm',
   component: TransportForm,
   parameters: {
     layout: 'centered',
@@ -32,5 +32,3 @@ Default.args = {
   originFee: '1 DOT',
   destinationFee: '1 KSM',
 }
-
-export const Skeleton = () => <TransportForm.Skeleton />

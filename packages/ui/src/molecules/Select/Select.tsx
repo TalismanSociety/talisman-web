@@ -22,7 +22,7 @@ import React, {
   type ReactElement,
   type ReactNode,
 } from 'react'
-import { Text } from '../../atoms'
+import { Surface, Text, useSurfaceColor } from '../../atoms'
 import FloatingPortal from '../../atoms/FloatingPortal'
 
 export type SelectProps<TValue extends string | number, TClear extends boolean = false> = {
@@ -68,6 +68,8 @@ const Select = Object.assign(
     ...props
   }: SelectProps<TValue, TClear>) => {
     const theme = useTheme()
+    const surfaceColor = useSurfaceColor()
+
     const listRef = useRef<HTMLLIElement[]>([])
     const [open, setOpen] = useState(false)
     const [pointer, setPointer] = useState(false)
@@ -169,7 +171,8 @@ const Select = Object.assign(
         }}
         css={{ width }}
       >
-        <motion.button
+        <Surface
+          as={motion.button}
           ref={reference}
           variants={{
             true: {
@@ -190,7 +193,6 @@ const Select = Object.assign(
             justifyContent: 'space-between',
             gap: '1.6rem',
             textAlign: 'start',
-            backgroundColor: theme.color.foreground,
             padding: '0.75rem 1.25rem',
             borderRadius: '0.8rem',
             cursor: 'pointer',
@@ -206,7 +208,7 @@ const Select = Object.assign(
           ) : (
             <ChevronDown css={{ transform: open ? 'rotate(180deg)' : undefined, transition: 'ease 0.25s' }} />
           )}
-        </motion.button>
+        </Surface>
         <FloatingPortal>
           <motion.ul
             ref={floating}
@@ -231,11 +233,11 @@ const Select = Object.assign(
               'padding': 0,
               'borderBottomLeftRadius': '0.5rem',
               'borderBottomRightRadius': '0.5rem',
-              'backgroundColor': theme.color.foreground,
+              'backgroundColor': surfaceColor,
               'listStyle': 'none',
               'li': {
                 'padding': '1.5rem 1.25rem',
-                'backgroundColor': theme.color.foreground,
+                'backgroundColor': surfaceColor,
                 ':hover': {
                   filter: 'brightness(1.2)',
                 },
@@ -253,7 +255,7 @@ const Select = Object.assign(
                 position: 'sticky',
                 top: 0,
                 height: OVERLAP,
-                backgroundColor: theme.color.foreground,
+                backgroundColor: surfaceColor,
               },
             }}
             {...getFloatingProps({

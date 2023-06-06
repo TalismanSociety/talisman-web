@@ -31,7 +31,7 @@ const WalletButton = <T extends 'a' | 'button'>({
 )
 
 const AddressInput = (props: Omit<TextInputProps, 'placeholder' | 'width' | 'noLabel'>) => (
-  <TextInput {...props} placeholder="Enter any address" width="100%" noLabel css={{ fontSize: '1.6rem' }} />
+  <TextInput {...props} placeholder="Enter any address" width="100%" css={{ fontSize: '1.6rem' }} />
 )
 
 const AddressInputConfirmButton = (props: Omit<ButtonProps, 'variant' | 'children'>) => (
