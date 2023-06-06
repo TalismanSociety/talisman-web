@@ -7,8 +7,8 @@ import Footer from '../Overview/Footer'
 import Header from '../Overview/Header'
 import Sidebar from '../Overview/Sidebar'
 import AddNetwork from './AddNetwork'
-import ManageSigners from './ManageSigners'
 import SettingsList from './SettingsList'
+import ManageSignerConfiguration from './SignerConfiguration'
 
 const Settings = () => {
   const navigate = useNavigate()
@@ -61,6 +61,9 @@ const Settings = () => {
           {
             name: 'Settings',
             icon: <SettingsIcon />,
+            onClick: () => {
+              navigate('/settings')
+            },
           },
         ]}
       />
@@ -68,7 +71,7 @@ const Settings = () => {
         <Routes>
           <Route path="/" element={<SettingsList />} />
           <Route path="/add-network" element={<AddNetwork />} />
-          <Route path="/signers" element={<ManageSigners />} />
+          <Route path="/signer-configuration" element={<ManageSignerConfiguration />} />
         </Routes>
       </div>
       <Footer />

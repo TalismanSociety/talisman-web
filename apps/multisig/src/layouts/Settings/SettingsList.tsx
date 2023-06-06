@@ -2,10 +2,22 @@ import { css } from '@emotion/css'
 import { Globe, Users } from '@talismn/icons'
 import { IconButton } from '@talismn/ui'
 import { ReactElement } from 'react'
+import { useNavigate } from 'react-router-dom'
 
-const SettingOption = ({ icon, title, description }: { icon: ReactElement; title: string; description: string }) => {
+const SettingOption = ({
+  icon,
+  title,
+  description,
+  onClick,
+}: {
+  icon: ReactElement
+  title: string
+  description: string
+  onClick?: () => void
+}) => {
   return (
     <div
+      onClick={onClick}
       className={css`
         align-items: center;
         display: flex;
@@ -40,6 +52,7 @@ const SettingOption = ({ icon, title, description }: { icon: ReactElement; title
 }
 
 const SettingsList = () => {
+  const navigate = useNavigate()
   return (
     <div
       className={css`
@@ -57,11 +70,17 @@ const SettingsList = () => {
         icon={<Globe size={32} />}
         title={'Add network'}
         description={'Add another network to your multisig'}
+        onClick={() => {
+          navigate('/settings/add-network')
+        }}
       />
       <SettingOption
         icon={<Users size={32} />}
-        title={'Manage members'}
+        title={'Manage signer configuration'}
         description={'Change multisig members or approval threshold'}
+        onClick={() => {
+          navigate('/settings/signer-configuration')
+        }}
       />
     </div>
   )

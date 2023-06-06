@@ -1,14 +1,14 @@
+import { AugmentedAccount } from 'domain/multisig'
+
+import AddressInput from '@components/AddressInput'
 import MemberRow from '@components/MemberRow'
 import { css } from '@emotion/css'
-import { useTheme } from '@emotion/react'
-import { Plus } from '@talismn/icons'
-import { Button, IconButton, TextInput } from '@talismn/ui'
+import { Button, TextInput } from '@talismn/ui'
 import { device } from '@util/breakpoints'
 import { useState } from 'react'
 import { toast } from 'react-hot-toast'
 
 import toSs52Address from '../../util/toSs52Address'
-import { AugmentedAccount } from '.'
 
 const AddMembers = (props: {
   onBack: () => void
@@ -18,8 +18,6 @@ const AddMembers = (props: {
   externalAccounts: string[]
 }) => {
   const [newAddress, setNewAddress] = useState('')
-  const theme = useTheme()
-
   return (
     <div
       className={css`
@@ -60,11 +58,20 @@ const AddMembers = (props: {
           )
         })}
       </div>
-      <div
+      <AddressInput
+        additionalValidation={(a: string) => {
+          if (props.augmentedAccounts.map(a => toSs52Address(a.address)).includes(a)) {
+            toast.error('Duplicate address')
+            return false
+          }
+          return true
+        }}
+        onNewAddress={(a: string) => {
+          props.setExternalAccounts([...props.externalAccounts, a])
+        }}
         className={css`
           margin-top: 48px;
           width: 490px;
-          height: 56px;
           color: var(--color-offWhite);
           @media ${device.lg} {
             width: 623px;
@@ -79,49 +86,7 @@ const AddMembers = (props: {
           value={newAddress}
           onChange={event => setNewAddress(event.target.value)}
         />
-      </div>
-      <div
-        onClick={() => {
-          const validAddress = toSs52Address(newAddress)
-          if (!validAddress) {
-            toast.error('Invalid address')
-          } else if (props.augmentedAccounts.map(a => toSs52Address(a.address)).includes(newAddress)) {
-            toast.error('Duplicate address')
-          } else {
-            if (validAddress !== newAddress) {
-              toast.success('Added address as SS58')
-            }
-            props.setExternalAccounts([...props.externalAccounts, validAddress])
-            setNewAddress('')
-          }
-        }}
-        className={css`
-          background: var(--color-backgroundLight) !important;
-          color: var(--color-offWhite) !important;
-          border-radius: 24px !important;
-          margin-top: 24px;
-          width: 176px;
-          height: 40px;
-          padding: 0 !important;
-          cursor: pointer;
-        `}
-      >
-        <div
-          className={css`
-            display: flex;
-            gap: 8px;
-            height: 40px;
-            display: flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-          `}
-        >
-          <IconButton as="button" size="24px" contentColor={`rgb(${theme.primary})`}>
-            <Plus />
-          </IconButton>
-          <span>Add member</span>
-        </div>
-      </div>
+      </AddressInput>
       <div
         className={css`
           display: grid;

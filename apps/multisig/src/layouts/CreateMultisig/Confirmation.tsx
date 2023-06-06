@@ -1,3 +1,5 @@
+import { AugmentedAccount } from 'domain/multisig'
+
 import MemberRow from '@components/MemberRow'
 import { css } from '@emotion/css'
 import { Info } from '@talismn/icons'
@@ -9,7 +11,6 @@ import { useState } from 'react'
 import { Loadable } from 'recoil'
 
 import { ChainSummary, Token } from '../../domain/chains'
-import { AugmentedAccount } from '.'
 
 const Cost = (props: { amount: number; symbol: string; price: number }) => (
   <p>

@@ -1,8 +1,9 @@
+import { AugmentedAccount } from 'domain/multisig'
+
 import { css } from '@emotion/css'
 import { useTheme } from '@emotion/react'
 import { ExternalLink, Trash } from '@talismn/icons'
 import { IconButton, Identicon } from '@talismn/ui'
-import { AugmentedAccount } from 'layouts/CreateMultisig'
 import truncateMiddle from 'truncate-middle'
 
 const MemberRow = (props: { member: AugmentedAccount; onDelete?: () => void; truncate?: boolean }) => {
@@ -49,7 +50,7 @@ const MemberRow = (props: { member: AugmentedAccount; onDelete?: () => void; tru
         </>
       ) : (
         <>
-          <p>{props.truncate ? truncateMiddle(props.member.address, 22, 22, '...') : props.member.address}</p>
+          <p>{props.truncate ? truncateMiddle(props.member.address, 19, 19, '...') : props.member.address}</p>
           {props.onDelete ? (
             <IconButton
               onClick={props.onDelete}

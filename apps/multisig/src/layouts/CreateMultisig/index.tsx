@@ -1,3 +1,5 @@
+import { AugmentedAccount } from 'domain/multisig'
+
 import Logo from '@components/Logo'
 import { css } from '@emotion/css'
 import { device } from '@util/breakpoints'
@@ -31,13 +33,6 @@ export enum Step {
   Confirmation,
   Transactions,
   VaultCreated,
-}
-
-export interface AugmentedAccount {
-  address: string
-  you?: boolean
-  nickname?: string
-  enabled?: boolean
 }
 
 function calcContentHeight(step: Step, nAccounts: number): { md: string; lg: string } {
