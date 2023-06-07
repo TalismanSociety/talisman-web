@@ -1,10 +1,9 @@
-import { ApiProvider, Bridge } from '@polkawallet/bridge'
-import { atom, selector } from 'recoil'
+import { Bridge, type ChainId } from '@polkawallet/bridge'
+import { atom, selector, selectorFamily } from 'recoil'
 import { bridgeConfig } from './config'
+import { substrateApiState } from '@domains/common'
 
-export { bridgeConfig, bridgeNodeList } from './config'
-
-export const bridgeApiProvider = new ApiProvider()
+export { bridgeConfig } from './config'
 
 export const includeDisabledRoutesState = atom({
   key: 'IncludeDisabledRoutes',
@@ -39,5 +38,19 @@ export const bridgeState = selector({
     await bridge.isReady
     return bridge
   },
+  dangerouslyAllowMutability: true,
+})
+
+export const bridgeAdapterState = selectorFamily({
+  key: 'BridgeAdapter',
+  get:
+    (chainId: ChainId) =>
+    async ({ get }) => {
+      const api = get(substrateApiState(bridgeConfig[chainId].rpc))
+      const adapter = get(bridgeState).findAdapter(chainId)
+      await adapter.init(api)
+
+      return adapter
+    },
   dangerouslyAllowMutability: true,
 })

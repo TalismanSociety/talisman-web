@@ -1,33 +1,39 @@
 import { FixedPointNumber } from '@acala-network/sdk-core'
 import DexForm from '@components/recipes/DexForm/DexForm'
 import { injectedSubstrateAccountsState } from '@domains/accounts'
-import { bridgeApiProvider, bridgeConfig, bridgeNodeList, bridgeState } from '@domains/bridge'
-import { extrinsicMiddleware } from '@domains/common/extrinsicMiddleware'
-import { toastExtrinsic } from '@domains/common/utils'
+import { bridgeAdapterState, bridgeState } from '@domains/bridge'
+import { useExtrinsic } from '@domains/common'
 import { type SubmittableExtrinsic } from '@polkadot/api/types'
-import { web3FromAddress } from '@polkadot/extension-dapp'
 import { type ISubmittableResult } from '@polkadot/types/types'
 import { type Chain, type InputConfig } from '@polkawallet/bridge'
+import * as Sentry from '@sentry/react'
 import { Decimal } from '@talismn/math'
 import { CircularProgressIndicator, toast } from '@talismn/ui'
 import { Maybe } from '@util/monads'
 import { isEmpty, uniqBy } from 'lodash'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState, useTransition } from 'react'
 import { Link } from 'react-router-dom'
-import { RecoilLoadable, useRecoilCallback, useRecoilValue, type Loadable } from 'recoil'
-import { Observable, switchMap } from 'rxjs'
+import { RecoilLoadable, constSelector, useRecoilValue_TRANSITION_SUPPORT_UNSTABLE, type Loadable } from 'recoil'
+import { Observable } from 'rxjs'
 import { useAccountSelector } from '../AccountSelector'
 import TokenSelectorButton from '../TokenSelectorButton'
 
 const TransportForm = () => {
-  const bridge = useRecoilValue(bridgeState)
+  const [_, startTransition] = useTransition()
+
+  const bridge = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(bridgeState)
 
   const [amount, setAmount] = useState('')
-  const [sender, senderSelector] = useAccountSelector(useRecoilValue(injectedSubstrateAccountsState), 0)
+  const [sender, senderSelector] = useAccountSelector(
+    useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(injectedSubstrateAccountsState),
+    0
+  )
 
-  const [fromChain, setFromChain] = useState<Chain>()
+  const [fromChain, _setFromChain] = useState<Chain>()
   const [toChain, setToChain] = useState<Chain>()
   const [token, setToken] = useState<string>()
+
+  const setFromChain = (chain: Chain | undefined) => startTransition(() => _setFromChain(chain))
 
   const filterParams = <T extends Record<string, unknown>>(object: T) => {
     const params = Object.fromEntries(Object.entries(object).filter(([_, value]) => value !== undefined))
@@ -104,9 +110,8 @@ const TransportForm = () => {
     return false
   }, [bridge.router, fromChain, toChain, token])
 
-  const adapter = useMemo(
-    () => Maybe.of(fromChain).mapOrUndefined(bridge.findAdapter.bind(bridge)),
-    [bridge, fromChain]
+  const adapter = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
+    fromChain === undefined ? constSelector(undefined) : bridgeAdapterState(fromChain.id)
   )
 
   const [inputConfigLoadable, setInputConfigLoadable] = useState<Loadable<InputConfig>>()
@@ -114,41 +119,32 @@ const TransportForm = () => {
   useEffect(() => {
     if (inputConfigLoadable?.state === 'hasError') {
       toast.error('Failed to get transferable amount')
+      Sentry.captureException(inputConfigLoadable.contents)
     }
-  }, [inputConfigLoadable?.state])
+  }, [inputConfigLoadable?.contents, inputConfigLoadable?.state])
 
   useEffect(() => {
     setInputConfigLoadable(undefined)
     if (adapter !== undefined && sender !== undefined && toChain !== undefined && token !== undefined) {
       setInputConfigLoadable(RecoilLoadable.loading())
-      const subscription = bridgeApiProvider
-        .connectFromChain([adapter.chain.id], bridgeNodeList)
-        .pipe(
-          switchMap(async () => await adapter.init(bridgeApiProvider.getApi(adapter.chain.id))),
-          switchMap(
-            () =>
-              // Observable returned from `@polkawallet/bridge` is not instance of `Observable` for some reason
-              // might be a webpack issue where 2 instances of rxjs library are created
-              // https://github.com/ReactiveX/rxjs/issues/6628
-              new Observable<InputConfig>(observer =>
-                adapter
-                  .subscribeInputConfig({
-                    address: sender.address,
-                    signer: sender.address,
-                    to: toChain.id,
-                    token,
-                  })
-                  .subscribe(observer)
-              )
-          )
-        )
-        .subscribe({
-          next: x => setInputConfigLoadable(RecoilLoadable.of(x)),
-          error: error => setInputConfigLoadable(RecoilLoadable.error(error)),
-        })
 
-      return subscription.unsubscribe.bind(subscription)
+      const subscription = new Observable<InputConfig>(observer =>
+        adapter
+          .subscribeInputConfig({
+            address: sender.address,
+            signer: sender.address,
+            to: toChain.id,
+            token,
+          })
+          .subscribe(observer)
+      ).subscribe({
+        next: x => setInputConfigLoadable(RecoilLoadable.of(x)),
+        error: error => setInputConfigLoadable(RecoilLoadable.error(error)),
+      })
+
+      return () => subscription.unsubscribe()
     }
+
     return undefined
   }, [adapter, sender, toChain, token])
 
@@ -211,7 +207,32 @@ const TransportForm = () => {
     [amount, inputError, parsedInputConfigLoadable?.state]
   )
 
-  const [extrinsicInProgress, setExtrinsicInProgress] = useState(false)
+  const extrinsic = useExtrinsic(
+    useMemo(() => {
+      // @ts-expect-error
+      if (adapter?.api === undefined) {
+        return
+      }
+
+      if (
+        adapter === undefined ||
+        token === undefined ||
+        decimalAmount === undefined ||
+        toChain === undefined ||
+        sender === undefined
+      ) {
+        return
+      }
+
+      return adapter.createTx({
+        amount: FixedPointNumber.fromInner(decimalAmount.planck.toString(), decimalAmount?.decimals),
+        to: toChain.id,
+        token,
+        address: sender.address,
+        signer: sender.address,
+      }) as SubmittableExtrinsic<'promise', ISubmittableResult> | undefined
+    }, [adapter, decimalAmount, sender, toChain, token])
+  )
 
   return (
     <DexForm
@@ -270,64 +291,13 @@ const TransportForm = () => {
       ]}
       submitButton={
         <DexForm.Transport.SubmitButton
-          loading={extrinsicInProgress}
+          loading={extrinsic?.state === 'loading'}
           disabled={!ready}
-          onClick={useRecoilCallback(callbackInterface => () => {
-            if (
-              adapter === undefined ||
-              decimalAmount === undefined ||
-              fromChain === undefined ||
-              toChain === undefined ||
-              token === undefined ||
-              sender === undefined
-            ) {
-              return
+          onClick={() => {
+            if (sender !== undefined) {
+              void extrinsic?.signAndSend(sender.address)
             }
-
-            const tx = adapter.createTx({
-              amount: FixedPointNumber.fromInner(decimalAmount.planck.toString(), decimalAmount?.decimals),
-              to: toChain.id,
-              token,
-              address: sender.address,
-              signer: sender.address,
-            }) as SubmittableExtrinsic<'rxjs', ISubmittableResult>
-
-            void web3FromAddress(sender.address).then(web3 => {
-              const result = tx.signAndSend(sender.address, { signer: web3.signer })
-
-              setExtrinsicInProgress(true)
-
-              let resolve = (_: ISubmittableResult) => {}
-              let reject = (_: any) => {}
-              const promise = new Promise<ISubmittableResult>((_resolve, _reject) => {
-                resolve = _resolve
-                reject = _reject
-              })
-
-              const subscription = result.subscribe({
-                next: result => {
-                  extrinsicMiddleware(fromChain.id, tx, result, callbackInterface)
-                  if (result.isFinalized) {
-                    resolve(result)
-                    setExtrinsicInProgress(false)
-                    subscription.unsubscribe()
-                  }
-                },
-                error: error => {
-                  reject(error)
-                  setExtrinsicInProgress(false)
-                },
-              })
-
-              const config = bridgeConfig[adapter.chain.id]
-
-              toastExtrinsic(
-                [[tx.method.section, tx.method.method]],
-                promise,
-                config !== undefined && 'subscanUrl' in config ? config.subscanUrl : undefined
-              )
-            })
-          })}
+          }}
         />
       }
     />

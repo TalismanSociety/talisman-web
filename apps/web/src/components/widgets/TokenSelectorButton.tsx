@@ -41,8 +41,6 @@ const TokenSelectorButton = <T extends IToken | string>(props: TokenSelectorProp
     [balances, props.selectedToken]
   )
 
-  console.debug(selectedToken)
-
   return (
     <>
       {selectedToken === undefined ? (
