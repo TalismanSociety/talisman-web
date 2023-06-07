@@ -19,7 +19,7 @@ import { useAccountSelector } from '../AccountSelector'
 import TokenSelectorButton from '../TokenSelectorButton'
 
 const TransportForm = () => {
-  const [_, startTransition] = useTransition()
+  const [isPending, startTransition] = useTransition()
 
   const bridge = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(bridgeState)
 
@@ -29,11 +29,9 @@ const TransportForm = () => {
     0
   )
 
-  const [fromChain, _setFromChain] = useState<Chain>()
+  const [fromChain, setFromChain] = useState<Chain>()
   const [toChain, setToChain] = useState<Chain>()
   const [token, setToken] = useState<string>()
-
-  const setFromChain = (chain: Chain | undefined) => startTransition(() => _setFromChain(chain))
 
   const filterParams = <T extends Record<string, unknown>>(object: T) => {
     const params = Object.fromEntries(Object.entries(object).filter(([_, value]) => value !== undefined))
@@ -58,14 +56,15 @@ const TransportForm = () => {
   const tokens = useMemo(() => Array.from(new Set(bridge.router.getRouters().map(x => x.token))), [bridge.router])
   const routeTokens = useMemo(() => new Set(routes.map(x => x.token)), [routes])
 
-  const onChangeToken = (token: string) => {
-    setToken(token)
+  const onChangeToken = (token: string) =>
+    startTransition(() => {
+      setToken(token)
 
-    if (!routeTokens.has(token)) {
-      setFromChain(undefined)
-      setToChain(undefined)
-    }
-  }
+      if (!routeTokens.has(token)) {
+        setFromChain(undefined)
+        setToChain(undefined)
+      }
+    })
 
   const originChains = useMemo(
     () =>
@@ -159,25 +158,28 @@ const TransportForm = () => {
 
   const parsedInputConfigLoadable = useMemo(
     () =>
-      inputConfigLoadable?.map(x => ({
-        ...x,
-        estimateFee: Decimal.fromPlanck(
-          x.estimateFee,
-          // @ts-expect-error
-          adapter?.api?.registry.chainDecimals[0] ?? 0,
-          // @ts-expect-error
-          adapter?.api?.registry.chainTokens[0]
-        ),
-        minInput: fixedPointNumberToDecimal(x.minInput, token),
-        maxInput: fixedPointNumberToDecimal(x.maxInput, token),
-        destFee: fixedPointNumberToDecimal(x.destFee.balance, x.destFee.token),
-      })),
+      isPending
+        ? undefined
+        : inputConfigLoadable?.map(x => ({
+            ...x,
+            estimateFee: Decimal.fromPlanck(
+              x.estimateFee,
+              // @ts-expect-error
+              adapter?.api?.registry.chainDecimals[0] ?? 0,
+              // @ts-expect-error
+              adapter?.api?.registry.chainTokens[0]
+            ),
+            minInput: fixedPointNumberToDecimal(x.minInput, token),
+            maxInput: fixedPointNumberToDecimal(x.maxInput, token),
+            destFee: fixedPointNumberToDecimal(x.destFee.balance, x.destFee.token),
+          })),
     [
       // @ts-expect-error
       adapter?.api?.registry.chainDecimals,
       // @ts-expect-error
       adapter?.api?.registry.chainTokens,
       inputConfigLoadable,
+      isPending,
       token,
     ]
   )
@@ -203,28 +205,17 @@ const TransportForm = () => {
   }, [amount, decimalAmount, parsedInputConfigLoadable])
 
   const ready = useMemo(
-    () => amount !== '' && parsedInputConfigLoadable?.state === 'hasValue' && inputError === undefined,
-    [amount, inputError, parsedInputConfigLoadable?.state]
+    () => !isPending && amount !== '' && parsedInputConfigLoadable?.state === 'hasValue' && inputError === undefined,
+    [amount, inputError, isPending, parsedInputConfigLoadable?.state]
   )
 
   const extrinsic = useExtrinsic(
     useMemo(() => {
-      // @ts-expect-error
-      if (adapter?.api === undefined) {
+      if (token === undefined || decimalAmount === undefined || toChain === undefined || sender === undefined) {
         return
       }
 
-      if (
-        adapter === undefined ||
-        token === undefined ||
-        decimalAmount === undefined ||
-        toChain === undefined ||
-        sender === undefined
-      ) {
-        return
-      }
-
-      return adapter.createTx({
+      return adapter?.createTx({
         amount: FixedPointNumber.fromInner(decimalAmount.planck.toString(), decimalAmount?.decimals),
         to: toChain.id,
         token,
@@ -254,7 +245,7 @@ const TransportForm = () => {
             [fromChain?.id, originChains]
           )}
           onSelectFromChainIndex={index =>
-            setFromChain(Maybe.of(index).mapOrUndefined(originChains.at.bind(originChains)))
+            startTransition(() => setFromChain(Maybe.of(index).mapOrUndefined(originChains.at.bind(originChains))))
           }
           toChains={destinationChains.map(x => ({ name: x.id, logoSrc: x.icon }))}
           selectedToChainIndex={useMemo(
@@ -265,10 +256,12 @@ const TransportForm = () => {
             setToChain(Maybe.of(index).mapOrUndefined(destinationChains.at.bind(destinationChains)))
           }
           canReverseChainRoute={routeReversible}
-          onReverseChainRoute={() => {
-            setFromChain(toChain)
-            setToChain(fromChain)
-          }}
+          onReverseChainRoute={() =>
+            startTransition(() => {
+              setFromChain(toChain)
+              setToChain(fromChain)
+            })
+          }
           tokenSelector={<TokenSelectorButton tokens={tokens} selectedToken={token} onChangeToken={onChangeToken} />}
           amount={amount}
           onChangeAmount={setAmount}
