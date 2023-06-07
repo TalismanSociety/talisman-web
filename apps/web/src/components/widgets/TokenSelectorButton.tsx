@@ -20,7 +20,9 @@ const TokenSelectorButton = <T extends IToken | string>(props: TokenSelectorProp
   const tokensWithBalance = useMemo(
     () =>
       props.tokens.map(x => {
-        const balance = balances.find(typeof x === 'string' ? y => y.token?.symbol === x : { id: x.id })
+        const balance = balances.find(
+          typeof x === 'string' ? y => y.token?.symbol.toLowerCase() === x.toLowerCase() : { id: x.id }
+        )
         const free = Decimal.fromPlanck(balance.sum.planck.free, balance.each.at(0)?.decimals ?? 9)
         return {
           token: x,
@@ -32,12 +34,12 @@ const TokenSelectorButton = <T extends IToken | string>(props: TokenSelectorProp
       }),
     [balances, props.tokens]
   )
-
-  const selectedToken = useMemo<IToken | undefined>(
+  const selectedToken = useMemo<{ symbol: string; logo?: string }>(
     () =>
       typeof props.selectedToken === 'string'
-        ? balances.find(x => x.token?.symbol === props.selectedToken).each.at(0)?.token ?? undefined
-        : props.selectedToken,
+        ? balances.find(x => x.token?.symbol.toLowerCase() === props.selectedToken?.toString().toLowerCase()).each.at(0)
+            ?.token ?? { symbol: props.selectedToken, logo: undefined }
+        : (props.selectedToken as IToken),
     [balances, props.selectedToken]
   )
 
