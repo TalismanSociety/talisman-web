@@ -305,7 +305,6 @@ export type StakeFormProps = {
 const StakeForm = Object.assign(
   (props: StakeFormProps) => {
     const id = useId()
-    const theme = useTheme()
 
     return (
       <LayoutGroup id={id}>

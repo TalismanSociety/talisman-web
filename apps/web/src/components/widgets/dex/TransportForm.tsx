@@ -158,28 +158,25 @@ const TransportForm = () => {
 
   const parsedInputConfigLoadable = useMemo(
     () =>
-      isPending
-        ? undefined
-        : inputConfigLoadable?.map(x => ({
-            ...x,
-            estimateFee: Decimal.fromPlanck(
-              x.estimateFee,
-              // @ts-expect-error
-              adapter?.api?.registry.chainDecimals[0] ?? 0,
-              // @ts-expect-error
-              adapter?.api?.registry.chainTokens[0]
-            ),
-            minInput: fixedPointNumberToDecimal(x.minInput, token),
-            maxInput: fixedPointNumberToDecimal(x.maxInput, token),
-            destFee: fixedPointNumberToDecimal(x.destFee.balance, x.destFee.token),
-          })),
+      inputConfigLoadable?.map(x => ({
+        ...x,
+        estimateFee: Decimal.fromPlanck(
+          x.estimateFee,
+          // @ts-expect-error
+          adapter?.api?.registry.chainDecimals[0] ?? 0,
+          // @ts-expect-error
+          adapter?.api?.registry.chainTokens[0]
+        ),
+        minInput: fixedPointNumberToDecimal(x.minInput, token),
+        maxInput: fixedPointNumberToDecimal(x.maxInput, token),
+        destFee: fixedPointNumberToDecimal(x.destFee.balance, x.destFee.token),
+      })),
     [
       // @ts-expect-error
       adapter?.api?.registry.chainDecimals,
       // @ts-expect-error
       adapter?.api?.registry.chainTokens,
       inputConfigLoadable,
-      isPending,
       token,
     ]
   )
@@ -211,7 +208,13 @@ const TransportForm = () => {
 
   const extrinsic = useExtrinsic(
     useMemo(() => {
-      if (token === undefined || decimalAmount === undefined || toChain === undefined || sender === undefined) {
+      if (
+        isPending ||
+        token === undefined ||
+        decimalAmount === undefined ||
+        toChain === undefined ||
+        sender === undefined
+      ) {
         return
       }
 
@@ -222,7 +225,7 @@ const TransportForm = () => {
         address: sender.address,
         signer: sender.address,
       }) as SubmittableExtrinsic<'promise', ISubmittableResult> | undefined
-    }, [adapter, decimalAmount, sender, toChain, token])
+    }, [adapter, decimalAmount, isPending, sender, toChain, token])
   )
 
   return (
@@ -233,7 +236,7 @@ const TransportForm = () => {
         <DexForm.Transport
           accountSelector={senderSelector}
           transferableAmount={
-            parsedInputConfigLoadable?.state === 'loading' ? (
+            isPending || parsedInputConfigLoadable?.state === 'loading' ? (
               <CircularProgressIndicator size="1em" />
             ) : parsedInputConfigLoadable?.state === 'hasValue' ? (
               parsedInputConfigLoadable?.contents?.maxInput.toHuman()

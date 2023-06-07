@@ -14,6 +14,7 @@ const SwapForm = () => {
       swapLink={<DexForm.SwapTab as={Link} to="/dex/swap" selected />}
       transportLink={<DexForm.TransportTab as={Link} to="/dex/transport" />}
       form={
+        // @ts-expect-error
         <DexForm.Swap
           accountSelector={
             <AccountSelector
@@ -22,7 +23,9 @@ const SwapForm = () => {
               onChangeSelectedAccount={setAccount}
             />
           }
+          // @ts-expect-error
           fromTokenSelector={<TokenSelectorButton tokens={[]} />}
+          // @ts-expect-error
           toTokenSelector={<TokenSelectorButton tokens={[]} />}
         />
       }

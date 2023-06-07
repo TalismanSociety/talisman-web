@@ -30,6 +30,7 @@ const TransportFormNetworkButton = (props: Pick<ButtonProps<'button'>, 'onClick'
     <IconButton
       {...props}
       contentColor={theme.color.primary}
+      disabledContentColor={theme.color.onSurface}
       css={{ '@media(min-width: 600px)': { rotate: '-90deg' } }}
     >
       <motion.div

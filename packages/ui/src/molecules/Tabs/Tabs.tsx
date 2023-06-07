@@ -1,6 +1,6 @@
 import { useTheme } from '@emotion/react'
 import { motion } from 'framer-motion'
-import { createContext, useContext, type ElementType, type PropsWithChildren, type ReactElement } from 'react'
+import { createContext, useContext, type ElementType, type PropsWithChildren } from 'react'
 import { Text } from '../..'
 
 const TabsContext = createContext({ noBottomBorder: false })
@@ -46,11 +46,10 @@ const Tab = <T extends TabElementType = 'li'>({ as = 'li' as T, ...props }: TabP
   )
 }
 
-export type TabsProps = {
+export type TabsProps = PropsWithChildren<{
   className?: string
-  children?: ReactElement | ReactElement[]
   noBottomBorder?: boolean
-}
+}>
 
 const Tabs = Object.assign(
   ({ noBottomBorder, ...props }: TabsProps) => {

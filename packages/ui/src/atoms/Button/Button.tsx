@@ -144,7 +144,7 @@ const Button = <T extends ButtonElementType = 'button'>({
       ]}
     >
       <Text.Body
-        color={disabled ? variantDisabledStyle.color : variantStyle.color}
+        color={props.disabled ? variantDisabledStyle.color : variantStyle.color}
         alpha="high"
         css={{ position: 'relative', display: 'flex' }}
       >
