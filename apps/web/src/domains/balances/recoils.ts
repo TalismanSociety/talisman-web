@@ -30,7 +30,11 @@ export const legacyBalancesState = atom<LegacyBalances>({
   dangerouslyAllowMutability: true,
 })
 
-export const balancesState = atom<Balances>({ key: 'Balances', dangerouslyAllowMutability: true })
+export const balancesState = atom<Balances>({
+  key: 'Balances',
+  default: new Balances([]),
+  dangerouslyAllowMutability: true,
+})
 
 export const selectedBalancesState = selector({
   key: 'SelectedBalances',
