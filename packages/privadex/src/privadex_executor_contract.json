@@ -1,0 +1,3391 @@
+{
+  "source": {
+    "hash": "0x6168d18590d9237022fd02af5776ee3526598d92382674af0b3c2ed20a25205f",
+    "language": "ink! 4.1.0",
+    "compiler": "rustc 1.68.2",
+    "build_info": {
+      "build_mode": "Release",
+      "cargo_contract_version": "2.1.0",
+      "rust_toolchain": "stable-x86_64-unknown-linux-gnu",
+      "wasm_opt_settings": {
+        "keep_debug_symbols": false,
+        "optimization_passes": "Z"
+      }
+    }
+  },
+  "contract": {
+    "name": "privadex_executor",
+    "version": "0.1.0",
+    "authors": ["Kap"]
+  },
+  "spec": {
+    "constructors": [
+      {
+        "args": [],
+        "docs": [],
+        "label": "new",
+        "payable": false,
+        "returnType": {
+          "displayName": ["ink_primitives", "ConstructorResult"],
+          "type": 4
+        },
+        "selector": "0x9bae9d5e"
+      }
+    ],
+    "docs": [],
+    "events": [],
+    "lang_error": {
+      "displayName": ["ink", "LangError"],
+      "type": 6
+    },
+    "messages": [
+      {
+        "args": [
+          {
+            "label": "escrow_eth_private_key",
+            "type": {
+              "displayName": ["HexStrNo0x"],
+              "type": 3
+            }
+          },
+          {
+            "label": "escrow_substrate_private_key",
+            "type": {
+              "displayName": ["HexStrNo0x"],
+              "type": 3
+            }
+          },
+          {
+            "label": "dynamodb_access_key",
+            "type": {
+              "displayName": ["String"],
+              "type": 3
+            }
+          },
+          {
+            "label": "dynamodb_secret_key",
+            "type": {
+              "displayName": ["String"],
+              "type": 3
+            }
+          },
+          {
+            "label": "s3_secret_key",
+            "type": {
+              "displayName": ["String"],
+              "type": 3
+            }
+          },
+          {
+            "label": "s3_access_key",
+            "type": {
+              "displayName": ["String"],
+              "type": 3
+            }
+          }
+        ],
+        "docs": [],
+        "label": "init_secret_keys",
+        "mutates": true,
+        "payable": false,
+        "returnType": {
+          "displayName": ["ink", "MessageResult"],
+          "type": 7
+        },
+        "selector": "0xa904456d"
+      },
+      {
+        "args": [],
+        "docs": [],
+        "label": "get_admin",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": ["ink", "MessageResult"],
+          "type": 11
+        },
+        "selector": "0x57b8a8a7"
+      },
+      {
+        "args": [
+          {
+            "label": "network_name",
+            "type": {
+              "displayName": ["String"],
+              "type": 3
+            }
+          }
+        ],
+        "docs": [],
+        "label": "get_escrow_account_address",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": ["ink", "MessageResult"],
+          "type": 12
+        },
+        "selector": "0x5a8249da"
+      },
+      {
+        "args": [
+          {
+            "label": "exec_plan_uuid_str",
+            "type": {
+              "displayName": ["HexStrNo0x"],
+              "type": 3
+            }
+          }
+        ],
+        "docs": [],
+        "label": "get_exec_plan",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": ["ink", "MessageResult"],
+          "type": 15
+        },
+        "selector": "0xf6381b35"
+      },
+      {
+        "args": [
+          {
+            "label": "exec_plan_uuid_str",
+            "type": {
+              "displayName": ["HexStrNo0x"],
+              "type": 3
+            }
+          }
+        ],
+        "docs": [],
+        "label": "execution_plan_step_forward",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": ["ink", "MessageResult"],
+          "type": 72
+        },
+        "selector": "0x2ec57244"
+      },
+      {
+        "args": [
+          {
+            "label": "user_to_escrow_transfer_txn_hash",
+            "type": {
+              "displayName": ["HexStrNo0xAddress32"],
+              "type": 3
+            }
+          },
+          {
+            "label": "src_network_name",
+            "type": {
+              "displayName": ["String"],
+              "type": 3
+            }
+          },
+          {
+            "label": "dest_network_name",
+            "type": {
+              "displayName": ["String"],
+              "type": 3
+            }
+          },
+          {
+            "label": "src_addr",
+            "type": {
+              "displayName": ["HexStrNo0xAddress20orAddress32"],
+              "type": 3
+            }
+          },
+          {
+            "label": "dest_addr",
+            "type": {
+              "displayName": ["HexStrNo0xAddress20orAddress32"],
+              "type": 3
+            }
+          },
+          {
+            "label": "src_token",
+            "type": {
+              "displayName": ["String"],
+              "type": 3
+            }
+          },
+          {
+            "label": "dest_token",
+            "type": {
+              "displayName": ["String"],
+              "type": 3
+            }
+          },
+          {
+            "label": "amount_in_str",
+            "type": {
+              "displayName": ["String"],
+              "type": 3
+            }
+          }
+        ],
+        "docs": [],
+        "label": "start_swap",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": ["ink", "MessageResult"],
+          "type": 74
+        },
+        "selector": "0x0c221ee8"
+      },
+      {
+        "args": [
+          {
+            "label": "src_network_name",
+            "type": {
+              "displayName": ["String"],
+              "type": 3
+            }
+          },
+          {
+            "label": "dest_network_name",
+            "type": {
+              "displayName": ["String"],
+              "type": 3
+            }
+          },
+          {
+            "label": "src_addr",
+            "type": {
+              "displayName": ["HexStrNo0xAddress20orAddress32"],
+              "type": 3
+            }
+          },
+          {
+            "label": "dest_addr",
+            "type": {
+              "displayName": ["HexStrNo0xAddress20orAddress32"],
+              "type": 3
+            }
+          },
+          {
+            "label": "src_token",
+            "type": {
+              "displayName": ["String"],
+              "type": 3
+            }
+          },
+          {
+            "label": "dest_token",
+            "type": {
+              "displayName": ["String"],
+              "type": 3
+            }
+          },
+          {
+            "label": "amount_in_str",
+            "type": {
+              "displayName": ["String"],
+              "type": 3
+            }
+          }
+        ],
+        "docs": [],
+        "label": "compute_execution_plan",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": ["ink", "MessageResult"],
+          "type": 15
+        },
+        "selector": "0xc4498510"
+      },
+      {
+        "args": [
+          {
+            "label": "src_network_name",
+            "type": {
+              "displayName": ["String"],
+              "type": 3
+            }
+          },
+          {
+            "label": "dest_network_name",
+            "type": {
+              "displayName": ["String"],
+              "type": 3
+            }
+          },
+          {
+            "label": "src_token",
+            "type": {
+              "displayName": ["String"],
+              "type": 3
+            }
+          },
+          {
+            "label": "dest_token",
+            "type": {
+              "displayName": ["String"],
+              "type": 3
+            }
+          },
+          {
+            "label": "amount_in_str",
+            "type": {
+              "displayName": ["String"],
+              "type": 3
+            }
+          }
+        ],
+        "docs": [],
+        "label": "quote",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": ["ink", "MessageResult"],
+          "type": 76
+        },
+        "selector": "0xff7b33a5"
+      },
+      {
+        "args": [],
+        "docs": [],
+        "label": "get_execplan_ids",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": ["ink", "MessageResult"],
+          "type": 79
+        },
+        "selector": "0xc38a3287"
+      }
+    ]
+  },
+  "storage": {
+    "root": {
+      "layout": {
+        "struct": {
+          "fields": [
+            {
+              "layout": {
+                "leaf": {
+                  "key": "0x00000000",
+                  "ty": 0
+                }
+              },
+              "name": "admin"
+            },
+            {
+              "layout": {
+                "enum": {
+                  "dispatchKey": "0x00000000",
+                  "name": "Option",
+                  "variants": {
+                    "0": {
+                      "fields": [],
+                      "name": "None"
+                    },
+                    "1": {
+                      "fields": [
+                        {
+                          "layout": {
+                            "array": {
+                              "layout": {
+                                "leaf": {
+                                  "key": "0x00000000",
+                                  "ty": 2
+                                }
+                              },
+                              "len": 32,
+                              "offset": "0x00000000"
+                            }
+                          },
+                          "name": "0"
+                        }
+                      ],
+                      "name": "Some"
+                    }
+                  }
+                }
+              },
+              "name": "escrow_eth_private_key"
+            },
+            {
+              "layout": {
+                "enum": {
+                  "dispatchKey": "0x00000000",
+                  "name": "Option",
+                  "variants": {
+                    "0": {
+                      "fields": [],
+                      "name": "None"
+                    },
+                    "1": {
+                      "fields": [
+                        {
+                          "layout": {
+                            "array": {
+                              "layout": {
+                                "leaf": {
+                                  "key": "0x00000000",
+                                  "ty": 2
+                                }
+                              },
+                              "len": 32,
+                              "offset": "0x00000000"
+                            }
+                          },
+                          "name": "0"
+                        }
+                      ],
+                      "name": "Some"
+                    }
+                  }
+                }
+              },
+              "name": "escrow_substrate_private_key"
+            },
+            {
+              "layout": {
+                "enum": {
+                  "dispatchKey": "0x00000000",
+                  "name": "Option",
+                  "variants": {
+                    "0": {
+                      "fields": [],
+                      "name": "None"
+                    },
+                    "1": {
+                      "fields": [
+                        {
+                          "layout": {
+                            "leaf": {
+                              "key": "0x00000000",
+                              "ty": 3
+                            }
+                          },
+                          "name": "0"
+                        }
+                      ],
+                      "name": "Some"
+                    }
+                  }
+                }
+              },
+              "name": "dynamodb_access_key"
+            },
+            {
+              "layout": {
+                "enum": {
+                  "dispatchKey": "0x00000000",
+                  "name": "Option",
+                  "variants": {
+                    "0": {
+                      "fields": [],
+                      "name": "None"
+                    },
+                    "1": {
+                      "fields": [
+                        {
+                          "layout": {
+                            "leaf": {
+                              "key": "0x00000000",
+                              "ty": 3
+                            }
+                          },
+                          "name": "0"
+                        }
+                      ],
+                      "name": "Some"
+                    }
+                  }
+                }
+              },
+              "name": "dynamodb_secret_key"
+            },
+            {
+              "layout": {
+                "enum": {
+                  "dispatchKey": "0x00000000",
+                  "name": "Option",
+                  "variants": {
+                    "0": {
+                      "fields": [],
+                      "name": "None"
+                    },
+                    "1": {
+                      "fields": [
+                        {
+                          "layout": {
+                            "leaf": {
+                              "key": "0x00000000",
+                              "ty": 3
+                            }
+                          },
+                          "name": "0"
+                        }
+                      ],
+                      "name": "Some"
+                    }
+                  }
+                }
+              },
+              "name": "s3_access_key"
+            },
+            {
+              "layout": {
+                "enum": {
+                  "dispatchKey": "0x00000000",
+                  "name": "Option",
+                  "variants": {
+                    "0": {
+                      "fields": [],
+                      "name": "None"
+                    },
+                    "1": {
+                      "fields": [
+                        {
+                          "layout": {
+                            "leaf": {
+                              "key": "0x00000000",
+                              "ty": 3
+                            }
+                          },
+                          "name": "0"
+                        }
+                      ],
+                      "name": "Some"
+                    }
+                  }
+                }
+              },
+              "name": "s3_secret_key"
+            }
+          ],
+          "name": "PrivaDex"
+        }
+      },
+      "root_key": "0x00000000"
+    }
+  },
+  "types": [
+    {
+      "id": 0,
+      "type": {
+        "def": {
+          "composite": {
+            "fields": [
+              {
+                "type": 1,
+                "typeName": "[u8; 32]"
+              }
+            ]
+          }
+        },
+        "path": ["ink_primitives", "types", "AccountId"]
+      }
+    },
+    {
+      "id": 1,
+      "type": {
+        "def": {
+          "array": {
+            "len": 32,
+            "type": 2
+          }
+        }
+      }
+    },
+    {
+      "id": 2,
+      "type": {
+        "def": {
+          "primitive": "u8"
+        }
+      }
+    },
+    {
+      "id": 3,
+      "type": {
+        "def": {
+          "primitive": "str"
+        }
+      }
+    },
+    {
+      "id": 4,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "fields": [
+                  {
+                    "type": 5
+                  }
+                ],
+                "index": 0,
+                "name": "Ok"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 6
+                  }
+                ],
+                "index": 1,
+                "name": "Err"
+              }
+            ]
+          }
+        },
+        "params": [
+          {
+            "name": "T",
+            "type": 5
+          },
+          {
+            "name": "E",
+            "type": 6
+          }
+        ],
+        "path": ["Result"]
+      }
+    },
+    {
+      "id": 5,
+      "type": {
+        "def": {
+          "tuple": []
+        }
+      }
+    },
+    {
+      "id": 6,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "index": 1,
+                "name": "CouldNotReadInput"
+              }
+            ]
+          }
+        },
+        "path": ["ink_primitives", "LangError"]
+      }
+    },
+    {
+      "id": 7,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "fields": [
+                  {
+                    "type": 8
+                  }
+                ],
+                "index": 0,
+                "name": "Ok"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 6
+                  }
+                ],
+                "index": 1,
+                "name": "Err"
+              }
+            ]
+          }
+        },
+        "params": [
+          {
+            "name": "T",
+            "type": 8
+          },
+          {
+            "name": "E",
+            "type": 6
+          }
+        ],
+        "path": ["Result"]
+      }
+    },
+    {
+      "id": 8,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "fields": [
+                  {
+                    "type": 5
+                  }
+                ],
+                "index": 0,
+                "name": "Ok"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 9
+                  }
+                ],
+                "index": 1,
+                "name": "Err"
+              }
+            ]
+          }
+        },
+        "params": [
+          {
+            "name": "T",
+            "type": 5
+          },
+          {
+            "name": "E",
+            "type": 9
+          }
+        ],
+        "path": ["Result"]
+      }
+    },
+    {
+      "id": 9,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "index": 0,
+                "name": "AlreadyInitialized"
+              },
+              {
+                "index": 1,
+                "name": "DbRequestFailed"
+              },
+              {
+                "index": 2,
+                "name": "ExecutionPlanClaimedByAnotherWorker"
+              },
+              {
+                "index": 3,
+                "name": "FailedToCreateExecutionPlan"
+              },
+              {
+                "index": 4,
+                "name": "FailedToCreateGraph"
+              },
+              {
+                "index": 5,
+                "name": "FailedToPullExecutionPlan"
+              },
+              {
+                "index": 6,
+                "name": "FailedToSaveExecutionPlan"
+              },
+              {
+                "index": 7,
+                "name": "NoPathFound"
+              },
+              {
+                "index": 8,
+                "name": "NoPermissions"
+              },
+              {
+                "index": 9,
+                "name": "PrestartTxnIsAlreadyUsed"
+              },
+              {
+                "index": 10,
+                "name": "PrestartTxnIsTooOld"
+              },
+              {
+                "index": 11,
+                "name": "InvalidAddress"
+              },
+              {
+                "index": 12,
+                "name": "InvalidNumber"
+              },
+              {
+                "index": 13,
+                "name": "InvalidExecutionPlanUuid"
+              },
+              {
+                "index": 14,
+                "name": "InvalidUserToEscrowTxn"
+              },
+              {
+                "index": 15,
+                "name": "InvalidHexAddrString"
+              },
+              {
+                "index": 16,
+                "name": "InvalidTokenString"
+              },
+              {
+                "index": 17,
+                "name": "RpcRequestFailed"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 10,
+                    "typeName": "ExecutableError"
+                  }
+                ],
+                "index": 18,
+                "name": "StepForwardFailed"
+              },
+              {
+                "index": 19,
+                "name": "UninitializedEscrow"
+              },
+              {
+                "index": 20,
+                "name": "UnsupportedNetwork"
+              }
+            ]
+          }
+        },
+        "path": ["privadex_executor", "privadex_phat", "Error"]
+      }
+    },
+    {
+      "id": 10,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "index": 0,
+                "name": "UnknownBadState"
+              },
+              {
+                "index": 1,
+                "name": "CalledStepForwardOnFinishedStep"
+              },
+              {
+                "index": 2,
+                "name": "CalledStepForwardOnFinishedPlan"
+              },
+              {
+                "index": 3,
+                "name": "EthTxnDropped"
+              },
+              {
+                "index": 4,
+                "name": "FailedToCreateTxn"
+              },
+              {
+                "index": 5,
+                "name": "FailedToDeserializeFromS3"
+              },
+              {
+                "index": 6,
+                "name": "FailedToFindChainInfo"
+              },
+              {
+                "index": 7,
+                "name": "FailedToGetAmountOut"
+              },
+              {
+                "index": 8,
+                "name": "FailedToGetNonce"
+              },
+              {
+                "index": 9,
+                "name": "FailedToPullCachedTxn"
+              },
+              {
+                "index": 10,
+                "name": "FailedToLoadAstarPrecompileContract"
+              },
+              {
+                "index": 11,
+                "name": "FailedToLoadWethContract"
+              },
+              {
+                "index": 12,
+                "name": "FailedToPullFromS3"
+              },
+              {
+                "index": 13,
+                "name": "FailedToSaveToS3"
+              },
+              {
+                "index": 14,
+                "name": "FailedToUpdateDynamoDb"
+              },
+              {
+                "index": 15,
+                "name": "PrestartStepNotStarted"
+              },
+              {
+                "index": 16,
+                "name": "PrestartTxnIsAlreadyUsed"
+              },
+              {
+                "index": 17,
+                "name": "RpcRequestFailed"
+              },
+              {
+                "index": 18,
+                "name": "SecretNotFound"
+              },
+              {
+                "index": 19,
+                "name": "Ss58AddressFormatNotFound"
+              },
+              {
+                "index": 20,
+                "name": "SubstrateIndexerLookupFailed"
+              },
+              {
+                "index": 21,
+                "name": "UnexpectedEthAddress"
+              },
+              {
+                "index": 22,
+                "name": "UnexpectedNonEthAddress"
+              },
+              {
+                "index": 23,
+                "name": "UnexpectedNullAmount"
+              },
+              {
+                "index": 24,
+                "name": "UnexpectedNullEvmChainId"
+              },
+              {
+                "index": 25,
+                "name": "UnexpectedStepStatus"
+              },
+              {
+                "index": 26,
+                "name": "UnsupportedChain"
+              }
+            ]
+          }
+        },
+        "path": ["privadex_executor", "executable", "traits", "ExecutableError"]
+      }
+    },
+    {
+      "id": 11,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "fields": [
+                  {
+                    "type": 0
+                  }
+                ],
+                "index": 0,
+                "name": "Ok"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 6
+                  }
+                ],
+                "index": 1,
+                "name": "Err"
+              }
+            ]
+          }
+        },
+        "params": [
+          {
+            "name": "T",
+            "type": 0
+          },
+          {
+            "name": "E",
+            "type": 6
+          }
+        ],
+        "path": ["Result"]
+      }
+    },
+    {
+      "id": 12,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "fields": [
+                  {
+                    "type": 13
+                  }
+                ],
+                "index": 0,
+                "name": "Ok"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 6
+                  }
+                ],
+                "index": 1,
+                "name": "Err"
+              }
+            ]
+          }
+        },
+        "params": [
+          {
+            "name": "T",
+            "type": 13
+          },
+          {
+            "name": "E",
+            "type": 6
+          }
+        ],
+        "path": ["Result"]
+      }
+    },
+    {
+      "id": 13,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "fields": [
+                  {
+                    "type": 14
+                  }
+                ],
+                "index": 0,
+                "name": "Ok"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 9
+                  }
+                ],
+                "index": 1,
+                "name": "Err"
+              }
+            ]
+          }
+        },
+        "params": [
+          {
+            "name": "T",
+            "type": 14
+          },
+          {
+            "name": "E",
+            "type": 9
+          }
+        ],
+        "path": ["Result"]
+      }
+    },
+    {
+      "id": 14,
+      "type": {
+        "def": {
+          "tuple": [3, 3]
+        }
+      }
+    },
+    {
+      "id": 15,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "fields": [
+                  {
+                    "type": 16
+                  }
+                ],
+                "index": 0,
+                "name": "Ok"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 6
+                  }
+                ],
+                "index": 1,
+                "name": "Err"
+              }
+            ]
+          }
+        },
+        "params": [
+          {
+            "name": "T",
+            "type": 16
+          },
+          {
+            "name": "E",
+            "type": 6
+          }
+        ],
+        "path": ["Result"]
+      }
+    },
+    {
+      "id": 16,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "fields": [
+                  {
+                    "type": 17
+                  }
+                ],
+                "index": 0,
+                "name": "Ok"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 9
+                  }
+                ],
+                "index": 1,
+                "name": "Err"
+              }
+            ]
+          }
+        },
+        "params": [
+          {
+            "name": "T",
+            "type": 17
+          },
+          {
+            "name": "E",
+            "type": 9
+          }
+        ],
+        "path": ["Result"]
+      }
+    },
+    {
+      "id": 17,
+      "type": {
+        "def": {
+          "composite": {
+            "fields": [
+              {
+                "name": "uuid",
+                "type": 18,
+                "typeName": "Uuid"
+              },
+              {
+                "name": "paths",
+                "type": 20,
+                "typeName": "Vec<ExecutionPath>"
+              },
+              {
+                "name": "prestart_user_to_escrow_transfer",
+                "type": 23,
+                "typeName": "ExecutionStep"
+              },
+              {
+                "name": "postend_escrow_to_user_transfer",
+                "type": 23,
+                "typeName": "ExecutionStep"
+              }
+            ]
+          }
+        },
+        "path": ["privadex_execution_plan", "execution_plan", "ExecutionPlan"]
+      }
+    },
+    {
+      "id": 18,
+      "type": {
+        "def": {
+          "composite": {
+            "fields": [
+              {
+                "type": 19,
+                "typeName": "uuid::Bytes"
+              }
+            ]
+          }
+        },
+        "path": ["privadex_common", "uuid", "Uuid"]
+      }
+    },
+    {
+      "id": 19,
+      "type": {
+        "def": {
+          "array": {
+            "len": 16,
+            "type": 2
+          }
+        }
+      }
+    },
+    {
+      "id": 20,
+      "type": {
+        "def": {
+          "sequence": {
+            "type": 21
+          }
+        }
+      }
+    },
+    {
+      "id": 21,
+      "type": {
+        "def": {
+          "composite": {
+            "fields": [
+              {
+                "name": "steps",
+                "type": 22,
+                "typeName": "Vec<ExecutionStep>"
+              },
+              {
+                "name": "amount_out",
+                "type": 37,
+                "typeName": "Option<Amount>"
+              }
+            ]
+          }
+        },
+        "path": ["privadex_execution_plan", "execution_plan", "ExecutionPath"]
+      }
+    },
+    {
+      "id": 22,
+      "type": {
+        "def": {
+          "sequence": {
+            "type": 23
+          }
+        }
+      }
+    },
+    {
+      "id": 23,
+      "type": {
+        "def": {
+          "composite": {
+            "fields": [
+              {
+                "name": "inner",
+                "type": 24,
+                "typeName": "ExecutionStepEnum"
+              }
+            ]
+          }
+        },
+        "path": ["privadex_execution_plan", "execution_plan", "ExecutionStep"]
+      }
+    },
+    {
+      "id": 24,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "fields": [
+                  {
+                    "type": 25,
+                    "typeName": "SubstrateTokenTransferStep"
+                  }
+                ],
+                "index": 0,
+                "name": "SubstrateTokenTransfer"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 44,
+                    "typeName": "EthSendStep"
+                  }
+                ],
+                "index": 1,
+                "name": "EthSend"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 47,
+                    "typeName": "ERC20TransferStep"
+                  }
+                ],
+                "index": 2,
+                "name": "ERC20Transfer"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 48,
+                    "typeName": "EthWrapStep"
+                  }
+                ],
+                "index": 3,
+                "name": "EthWrap"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 49,
+                    "typeName": "EthUnwrapStep"
+                  }
+                ],
+                "index": 4,
+                "name": "EthUnwrap"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 50,
+                    "typeName": "EthDexSwapStep"
+                  }
+                ],
+                "index": 5,
+                "name": "EthDexSwap"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 53,
+                    "typeName": "OmnipoolSwapStep"
+                  }
+                ],
+                "index": 6,
+                "name": "OmnipoolSwap"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 54,
+                    "typeName": "XCMTransferStep"
+                  }
+                ],
+                "index": 7,
+                "name": "XCMTransfer"
+              }
+            ]
+          }
+        },
+        "path": ["privadex_execution_plan", "execution_plan", "ExecutionStepEnum"]
+      }
+    },
+    {
+      "id": 25,
+      "type": {
+        "def": {
+          "composite": {
+            "fields": [
+              {
+                "name": "uuid",
+                "type": 18,
+                "typeName": "Uuid"
+              },
+              {
+                "name": "token",
+                "type": 26,
+                "typeName": "UniversalTokenId"
+              },
+              {
+                "name": "amount",
+                "type": 37,
+                "typeName": "Option<Amount>"
+              },
+              {
+                "name": "common",
+                "type": 38,
+                "typeName": "CommonExecutionMeta"
+              },
+              {
+                "name": "status",
+                "type": 41,
+                "typeName": "SubstrateStepStatus"
+              }
+            ]
+          }
+        },
+        "path": ["privadex_execution_plan", "execution_plan", "SubstrateTokenTransferStep"]
+      }
+    },
+    {
+      "id": 26,
+      "type": {
+        "def": {
+          "composite": {
+            "fields": [
+              {
+                "name": "chain",
+                "type": 27,
+                "typeName": "UniversalChainId"
+              },
+              {
+                "name": "id",
+                "type": 30,
+                "typeName": "ChainTokenId"
+              }
+            ]
+          }
+        },
+        "path": ["privadex_chain_metadata", "common", "UniversalTokenId"]
+      }
+    },
+    {
+      "id": 27,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "fields": [
+                  {
+                    "type": 28,
+                    "typeName": "RelayChain"
+                  }
+                ],
+                "index": 0,
+                "name": "SubstrateRelayChain"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 28,
+                    "typeName": "RelayChain"
+                  },
+                  {
+                    "type": 29,
+                    "typeName": "ParachainId"
+                  }
+                ],
+                "index": 1,
+                "name": "SubstrateParachain"
+              }
+            ]
+          }
+        },
+        "path": ["privadex_chain_metadata", "common", "UniversalChainId"]
+      }
+    },
+    {
+      "id": 28,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "index": 0,
+                "name": "Polkadot"
+              },
+              {
+                "index": 1,
+                "name": "Kusama"
+              },
+              {
+                "index": 2,
+                "name": "Westend"
+              },
+              {
+                "index": 3,
+                "name": "Rococo"
+              },
+              {
+                "index": 4,
+                "name": "MoonbaseRelay"
+              }
+            ]
+          }
+        },
+        "path": ["privadex_chain_metadata", "registry", "chain", "RelayChain"]
+      }
+    },
+    {
+      "id": 29,
+      "type": {
+        "def": {
+          "primitive": "u32"
+        }
+      }
+    },
+    {
+      "id": 30,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "index": 0,
+                "name": "Native"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 31,
+                    "typeName": "ERC20Token"
+                  }
+                ],
+                "index": 1,
+                "name": "ERC20"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 34,
+                    "typeName": "XC20Token"
+                  }
+                ],
+                "index": 2,
+                "name": "XC20"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 36,
+                    "typeName": "SubstrateToken"
+                  }
+                ],
+                "index": 3,
+                "name": "Substrate"
+              }
+            ]
+          }
+        },
+        "path": ["privadex_chain_metadata", "common", "ChainTokenId"]
+      }
+    },
+    {
+      "id": 31,
+      "type": {
+        "def": {
+          "composite": {
+            "fields": [
+              {
+                "name": "addr",
+                "type": 32,
+                "typeName": "EthAddress"
+              }
+            ]
+          }
+        },
+        "path": ["privadex_chain_metadata", "common", "ERC20Token"]
+      }
+    },
+    {
+      "id": 32,
+      "type": {
+        "def": {
+          "composite": {
+            "fields": [
+              {
+                "type": 33,
+                "typeName": "[u8; 20]"
+              }
+            ]
+          }
+        },
+        "path": ["primitive_types", "H160"]
+      }
+    },
+    {
+      "id": 33,
+      "type": {
+        "def": {
+          "array": {
+            "len": 20,
+            "type": 2
+          }
+        }
+      }
+    },
+    {
+      "id": 34,
+      "type": {
+        "def": {
+          "composite": {
+            "fields": [
+              {
+                "name": "asset_id",
+                "type": 35,
+                "typeName": "AssetId"
+              }
+            ]
+          }
+        },
+        "path": ["privadex_chain_metadata", "common", "XC20Token"]
+      }
+    },
+    {
+      "id": 35,
+      "type": {
+        "def": {
+          "primitive": "u128"
+        }
+      }
+    },
+    {
+      "id": 36,
+      "type": {
+        "def": {
+          "composite": {
+            "fields": [
+              {
+                "name": "asset_id",
+                "type": 35,
+                "typeName": "AssetId"
+              }
+            ]
+          }
+        },
+        "path": ["privadex_chain_metadata", "common", "SubstrateToken"]
+      }
+    },
+    {
+      "id": 37,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "index": 0,
+                "name": "None"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 35
+                  }
+                ],
+                "index": 1,
+                "name": "Some"
+              }
+            ]
+          }
+        },
+        "params": [
+          {
+            "name": "T",
+            "type": 35
+          }
+        ],
+        "path": ["Option"]
+      }
+    },
+    {
+      "id": 38,
+      "type": {
+        "def": {
+          "composite": {
+            "fields": [
+              {
+                "name": "src_addr",
+                "type": 39,
+                "typeName": "UniversalAddress"
+              },
+              {
+                "name": "dest_addr",
+                "type": 39,
+                "typeName": "UniversalAddress"
+              },
+              {
+                "name": "gas_fee_native",
+                "type": 35,
+                "typeName": "Amount"
+              },
+              {
+                "name": "gas_fee_usd",
+                "type": 35,
+                "typeName": "Amount"
+              }
+            ]
+          }
+        },
+        "path": ["privadex_execution_plan", "execution_plan", "CommonExecutionMeta"]
+      }
+    },
+    {
+      "id": 39,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "fields": [
+                  {
+                    "type": 32,
+                    "typeName": "EthAddress"
+                  }
+                ],
+                "index": 0,
+                "name": "Ethereum"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 40,
+                    "typeName": "SubstratePublicKey"
+                  }
+                ],
+                "index": 1,
+                "name": "Substrate"
+              }
+            ]
+          }
+        },
+        "path": ["privadex_chain_metadata", "common", "UniversalAddress"]
+      }
+    },
+    {
+      "id": 40,
+      "type": {
+        "def": {
+          "composite": {
+            "fields": [
+              {
+                "type": 1,
+                "typeName": "[u8; 32]"
+              }
+            ]
+          }
+        },
+        "path": ["primitive_types", "H256"]
+      }
+    },
+    {
+      "id": 41,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "index": 0,
+                "name": "NotStarted"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 42,
+                    "typeName": "SubstratePendingExtrinsicId"
+                  }
+                ],
+                "index": 1,
+                "name": "Submitted"
+              },
+              {
+                "index": 2,
+                "name": "Dropped"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 43,
+                    "typeName": "SubstrateFinalizedExtrinsicId"
+                  }
+                ],
+                "index": 3,
+                "name": "Failed"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 43,
+                    "typeName": "SubstrateFinalizedExtrinsicId"
+                  }
+                ],
+                "index": 4,
+                "name": "Confirmed"
+              }
+            ]
+          }
+        },
+        "path": ["privadex_execution_plan", "execution_plan", "SubstrateStepStatus"]
+      }
+    },
+    {
+      "id": 42,
+      "type": {
+        "def": {
+          "composite": {
+            "fields": [
+              {
+                "name": "start_block_num",
+                "type": 29,
+                "typeName": "BlockNum"
+              },
+              {
+                "name": "end_block_num",
+                "type": 29,
+                "typeName": "BlockNum"
+              },
+              {
+                "name": "extrinsic_hash",
+                "type": 40,
+                "typeName": "SubstrateExtrinsicHash"
+              }
+            ]
+          }
+        },
+        "path": ["privadex_execution_plan", "execution_plan", "SubstratePendingExtrinsicId"]
+      }
+    },
+    {
+      "id": 43,
+      "type": {
+        "def": {
+          "composite": {
+            "fields": [
+              {
+                "name": "block_num",
+                "type": 29,
+                "typeName": "BlockNum"
+              },
+              {
+                "name": "extrinsic_index",
+                "type": 29,
+                "typeName": "Nonce"
+              }
+            ]
+          }
+        },
+        "path": ["privadex_execution_plan", "execution_plan", "SubstrateFinalizedExtrinsicId"]
+      }
+    },
+    {
+      "id": 44,
+      "type": {
+        "def": {
+          "composite": {
+            "fields": [
+              {
+                "name": "uuid",
+                "type": 18,
+                "typeName": "Uuid"
+              },
+              {
+                "name": "chain",
+                "type": 27,
+                "typeName": "UniversalChainId"
+              },
+              {
+                "name": "amount",
+                "type": 37,
+                "typeName": "Option<Amount>"
+              },
+              {
+                "name": "common",
+                "type": 38,
+                "typeName": "CommonExecutionMeta"
+              },
+              {
+                "name": "status",
+                "type": 45,
+                "typeName": "EthStepStatus"
+              }
+            ]
+          }
+        },
+        "path": ["privadex_execution_plan", "execution_plan", "EthSendStep"]
+      }
+    },
+    {
+      "id": 45,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "index": 0,
+                "name": "NotStarted"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 46,
+                    "typeName": "EthPendingTxnId"
+                  }
+                ],
+                "index": 1,
+                "name": "Submitted"
+              },
+              {
+                "index": 2,
+                "name": "Dropped"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 40,
+                    "typeName": "EthTxnHash"
+                  }
+                ],
+                "index": 3,
+                "name": "Failed"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 40,
+                    "typeName": "EthTxnHash"
+                  }
+                ],
+                "index": 4,
+                "name": "Confirmed"
+              }
+            ]
+          }
+        },
+        "path": ["privadex_execution_plan", "execution_plan", "EthStepStatus"]
+      }
+    },
+    {
+      "id": 46,
+      "type": {
+        "def": {
+          "composite": {
+            "fields": [
+              {
+                "name": "txn_hash",
+                "type": 40,
+                "typeName": "EthTxnHash"
+              },
+              {
+                "name": "end_block_num",
+                "type": 29,
+                "typeName": "BlockNum"
+              }
+            ]
+          }
+        },
+        "path": ["privadex_execution_plan", "execution_plan", "EthPendingTxnId"]
+      }
+    },
+    {
+      "id": 47,
+      "type": {
+        "def": {
+          "composite": {
+            "fields": [
+              {
+                "name": "uuid",
+                "type": 18,
+                "typeName": "Uuid"
+              },
+              {
+                "name": "token",
+                "type": 26,
+                "typeName": "UniversalTokenId"
+              },
+              {
+                "name": "amount",
+                "type": 37,
+                "typeName": "Option<Amount>"
+              },
+              {
+                "name": "common",
+                "type": 38,
+                "typeName": "CommonExecutionMeta"
+              },
+              {
+                "name": "status",
+                "type": 45,
+                "typeName": "EthStepStatus"
+              }
+            ]
+          }
+        },
+        "path": ["privadex_execution_plan", "execution_plan", "ERC20TransferStep"]
+      }
+    },
+    {
+      "id": 48,
+      "type": {
+        "def": {
+          "composite": {
+            "fields": [
+              {
+                "name": "uuid",
+                "type": 18,
+                "typeName": "Uuid"
+              },
+              {
+                "name": "chain",
+                "type": 27,
+                "typeName": "UniversalChainId"
+              },
+              {
+                "name": "amount",
+                "type": 37,
+                "typeName": "Option<Amount>"
+              },
+              {
+                "name": "common",
+                "type": 38,
+                "typeName": "CommonExecutionMeta"
+              },
+              {
+                "name": "status",
+                "type": 45,
+                "typeName": "EthStepStatus"
+              }
+            ]
+          }
+        },
+        "path": ["privadex_execution_plan", "execution_plan", "EthWrapStep"]
+      }
+    },
+    {
+      "id": 49,
+      "type": {
+        "def": {
+          "composite": {
+            "fields": [
+              {
+                "name": "uuid",
+                "type": 18,
+                "typeName": "Uuid"
+              },
+              {
+                "name": "chain",
+                "type": 27,
+                "typeName": "UniversalChainId"
+              },
+              {
+                "name": "amount",
+                "type": 37,
+                "typeName": "Option<Amount>"
+              },
+              {
+                "name": "common",
+                "type": 38,
+                "typeName": "CommonExecutionMeta"
+              },
+              {
+                "name": "status",
+                "type": 45,
+                "typeName": "EthStepStatus"
+              }
+            ]
+          }
+        },
+        "path": ["privadex_execution_plan", "execution_plan", "EthUnwrapStep"]
+      }
+    },
+    {
+      "id": 50,
+      "type": {
+        "def": {
+          "composite": {
+            "fields": [
+              {
+                "name": "uuid",
+                "type": 18,
+                "typeName": "Uuid"
+              },
+              {
+                "name": "dex_router_addr",
+                "type": 32,
+                "typeName": "EthAddress"
+              },
+              {
+                "name": "dex_router_func",
+                "type": 51,
+                "typeName": "DexRouterFunction"
+              },
+              {
+                "name": "token_path",
+                "type": 52,
+                "typeName": "Vec<UniversalTokenId>"
+              },
+              {
+                "name": "amount_in",
+                "type": 37,
+                "typeName": "Option<Amount>"
+              },
+              {
+                "name": "common",
+                "type": 38,
+                "typeName": "CommonExecutionMeta"
+              },
+              {
+                "name": "status",
+                "type": 45,
+                "typeName": "EthStepStatus"
+              }
+            ]
+          }
+        },
+        "path": ["privadex_execution_plan", "execution_plan", "EthDexSwapStep"]
+      }
+    },
+    {
+      "id": 51,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "index": 0,
+                "name": "SwapExactETHForTokens"
+              },
+              {
+                "index": 1,
+                "name": "SwapExactTokensForTokens"
+              },
+              {
+                "index": 2,
+                "name": "SwapExactTokensForETH"
+              }
+            ]
+          }
+        },
+        "path": ["privadex_execution_plan", "execution_plan", "DexRouterFunction"]
+      }
+    },
+    {
+      "id": 52,
+      "type": {
+        "def": {
+          "sequence": {
+            "type": 26
+          }
+        }
+      }
+    },
+    {
+      "id": 53,
+      "type": {
+        "def": {
+          "composite": {
+            "fields": [
+              {
+                "name": "uuid",
+                "type": 18,
+                "typeName": "Uuid"
+              },
+              {
+                "name": "src_token",
+                "type": 30,
+                "typeName": "ChainTokenId"
+              },
+              {
+                "name": "dest_token",
+                "type": 30,
+                "typeName": "ChainTokenId"
+              },
+              {
+                "name": "amount_in",
+                "type": 37,
+                "typeName": "Option<Amount>"
+              },
+              {
+                "name": "common",
+                "type": 38,
+                "typeName": "CommonExecutionMeta"
+              },
+              {
+                "name": "status",
+                "type": 41,
+                "typeName": "SubstrateStepStatus"
+              }
+            ]
+          }
+        },
+        "path": ["privadex_execution_plan", "execution_plan", "OmnipoolSwapStep"]
+      }
+    },
+    {
+      "id": 54,
+      "type": {
+        "def": {
+          "composite": {
+            "fields": [
+              {
+                "name": "uuid",
+                "type": 18,
+                "typeName": "Uuid"
+              },
+              {
+                "name": "src_token",
+                "type": 26,
+                "typeName": "UniversalTokenId"
+              },
+              {
+                "name": "dest_token",
+                "type": 26,
+                "typeName": "UniversalTokenId"
+              },
+              {
+                "name": "token_asset_multilocation",
+                "type": 55,
+                "typeName": "MultiLocation"
+              },
+              {
+                "name": "full_dest_multilocation",
+                "type": 55,
+                "typeName": "MultiLocation"
+              },
+              {
+                "name": "amount_in",
+                "type": 37,
+                "typeName": "Option<Amount>"
+              },
+              {
+                "name": "bridge_fee_native",
+                "type": 35,
+                "typeName": "Amount"
+              },
+              {
+                "name": "bridge_fee_usd",
+                "type": 35,
+                "typeName": "Amount"
+              },
+              {
+                "name": "common",
+                "type": 38,
+                "typeName": "CommonExecutionMeta"
+              },
+              {
+                "name": "status",
+                "type": 67,
+                "typeName": "CrossChainStepStatus"
+              }
+            ]
+          }
+        },
+        "path": ["privadex_execution_plan", "execution_plan", "XCMTransferStep"]
+      }
+    },
+    {
+      "id": 55,
+      "type": {
+        "def": {
+          "composite": {
+            "fields": [
+              {
+                "name": "parents",
+                "type": 2,
+                "typeName": "u8"
+              },
+              {
+                "name": "interior",
+                "type": 56,
+                "typeName": "Junctions"
+              }
+            ]
+          }
+        },
+        "path": ["xcm", "v2", "multilocation", "MultiLocation"]
+      }
+    },
+    {
+      "id": 56,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "index": 0,
+                "name": "Here"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 57,
+                    "typeName": "Junction"
+                  }
+                ],
+                "index": 1,
+                "name": "X1"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 57,
+                    "typeName": "Junction"
+                  },
+                  {
+                    "type": 57,
+                    "typeName": "Junction"
+                  }
+                ],
+                "index": 2,
+                "name": "X2"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 57,
+                    "typeName": "Junction"
+                  },
+                  {
+                    "type": 57,
+                    "typeName": "Junction"
+                  },
+                  {
+                    "type": 57,
+                    "typeName": "Junction"
+                  }
+                ],
+                "index": 3,
+                "name": "X3"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 57,
+                    "typeName": "Junction"
+                  },
+                  {
+                    "type": 57,
+                    "typeName": "Junction"
+                  },
+                  {
+                    "type": 57,
+                    "typeName": "Junction"
+                  },
+                  {
+                    "type": 57,
+                    "typeName": "Junction"
+                  }
+                ],
+                "index": 4,
+                "name": "X4"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 57,
+                    "typeName": "Junction"
+                  },
+                  {
+                    "type": 57,
+                    "typeName": "Junction"
+                  },
+                  {
+                    "type": 57,
+                    "typeName": "Junction"
+                  },
+                  {
+                    "type": 57,
+                    "typeName": "Junction"
+                  },
+                  {
+                    "type": 57,
+                    "typeName": "Junction"
+                  }
+                ],
+                "index": 5,
+                "name": "X5"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 57,
+                    "typeName": "Junction"
+                  },
+                  {
+                    "type": 57,
+                    "typeName": "Junction"
+                  },
+                  {
+                    "type": 57,
+                    "typeName": "Junction"
+                  },
+                  {
+                    "type": 57,
+                    "typeName": "Junction"
+                  },
+                  {
+                    "type": 57,
+                    "typeName": "Junction"
+                  },
+                  {
+                    "type": 57,
+                    "typeName": "Junction"
+                  }
+                ],
+                "index": 6,
+                "name": "X6"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 57,
+                    "typeName": "Junction"
+                  },
+                  {
+                    "type": 57,
+                    "typeName": "Junction"
+                  },
+                  {
+                    "type": 57,
+                    "typeName": "Junction"
+                  },
+                  {
+                    "type": 57,
+                    "typeName": "Junction"
+                  },
+                  {
+                    "type": 57,
+                    "typeName": "Junction"
+                  },
+                  {
+                    "type": 57,
+                    "typeName": "Junction"
+                  },
+                  {
+                    "type": 57,
+                    "typeName": "Junction"
+                  }
+                ],
+                "index": 7,
+                "name": "X7"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 57,
+                    "typeName": "Junction"
+                  },
+                  {
+                    "type": 57,
+                    "typeName": "Junction"
+                  },
+                  {
+                    "type": 57,
+                    "typeName": "Junction"
+                  },
+                  {
+                    "type": 57,
+                    "typeName": "Junction"
+                  },
+                  {
+                    "type": 57,
+                    "typeName": "Junction"
+                  },
+                  {
+                    "type": 57,
+                    "typeName": "Junction"
+                  },
+                  {
+                    "type": 57,
+                    "typeName": "Junction"
+                  },
+                  {
+                    "type": 57,
+                    "typeName": "Junction"
+                  }
+                ],
+                "index": 8,
+                "name": "X8"
+              }
+            ]
+          }
+        },
+        "path": ["xcm", "v2", "multilocation", "Junctions"]
+      }
+    },
+    {
+      "id": 57,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "fields": [
+                  {
+                    "type": 58,
+                    "typeName": "u32"
+                  }
+                ],
+                "index": 0,
+                "name": "Parachain"
+              },
+              {
+                "fields": [
+                  {
+                    "name": "network",
+                    "type": 59,
+                    "typeName": "NetworkId"
+                  },
+                  {
+                    "name": "id",
+                    "type": 1,
+                    "typeName": "[u8; 32]"
+                  }
+                ],
+                "index": 1,
+                "name": "AccountId32"
+              },
+              {
+                "fields": [
+                  {
+                    "name": "network",
+                    "type": 59,
+                    "typeName": "NetworkId"
+                  },
+                  {
+                    "name": "index",
+                    "type": 62,
+                    "typeName": "u64"
+                  }
+                ],
+                "index": 2,
+                "name": "AccountIndex64"
+              },
+              {
+                "fields": [
+                  {
+                    "name": "network",
+                    "type": 59,
+                    "typeName": "NetworkId"
+                  },
+                  {
+                    "name": "key",
+                    "type": 33,
+                    "typeName": "[u8; 20]"
+                  }
+                ],
+                "index": 3,
+                "name": "AccountKey20"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 2,
+                    "typeName": "u8"
+                  }
+                ],
+                "index": 4,
+                "name": "PalletInstance"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 64,
+                    "typeName": "u128"
+                  }
+                ],
+                "index": 5,
+                "name": "GeneralIndex"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 60,
+                    "typeName": "WeakBoundedVec<u8, ConstU32<32>>"
+                  }
+                ],
+                "index": 6,
+                "name": "GeneralKey"
+              },
+              {
+                "index": 7,
+                "name": "OnlyChild"
+              },
+              {
+                "fields": [
+                  {
+                    "name": "id",
+                    "type": 65,
+                    "typeName": "BodyId"
+                  },
+                  {
+                    "name": "part",
+                    "type": 66,
+                    "typeName": "BodyPart"
+                  }
+                ],
+                "index": 8,
+                "name": "Plurality"
+              }
+            ]
+          }
+        },
+        "path": ["xcm", "v2", "junction", "Junction"]
+      }
+    },
+    {
+      "id": 58,
+      "type": {
+        "def": {
+          "compact": {
+            "type": 29
+          }
+        }
+      }
+    },
+    {
+      "id": 59,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "index": 0,
+                "name": "Any"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 60,
+                    "typeName": "WeakBoundedVec<u8, ConstU32<32>>"
+                  }
+                ],
+                "index": 1,
+                "name": "Named"
+              },
+              {
+                "index": 2,
+                "name": "Polkadot"
+              },
+              {
+                "index": 3,
+                "name": "Kusama"
+              }
+            ]
+          }
+        },
+        "path": ["xcm", "v2", "NetworkId"]
+      }
+    },
+    {
+      "id": 60,
+      "type": {
+        "def": {
+          "composite": {
+            "fields": [
+              {
+                "type": 61,
+                "typeName": "Vec<T>"
+              }
+            ]
+          }
+        },
+        "params": [
+          {
+            "name": "T",
+            "type": 2
+          },
+          {
+            "name": "S",
+            "type": null
+          }
+        ],
+        "path": ["bounded_collections", "weak_bounded_vec", "WeakBoundedVec"]
+      }
+    },
+    {
+      "id": 61,
+      "type": {
+        "def": {
+          "sequence": {
+            "type": 2
+          }
+        }
+      }
+    },
+    {
+      "id": 62,
+      "type": {
+        "def": {
+          "compact": {
+            "type": 63
+          }
+        }
+      }
+    },
+    {
+      "id": 63,
+      "type": {
+        "def": {
+          "primitive": "u64"
+        }
+      }
+    },
+    {
+      "id": 64,
+      "type": {
+        "def": {
+          "compact": {
+            "type": 35
+          }
+        }
+      }
+    },
+    {
+      "id": 65,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "index": 0,
+                "name": "Unit"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 60,
+                    "typeName": "WeakBoundedVec<u8, ConstU32<32>>"
+                  }
+                ],
+                "index": 1,
+                "name": "Named"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 58,
+                    "typeName": "u32"
+                  }
+                ],
+                "index": 2,
+                "name": "Index"
+              },
+              {
+                "index": 3,
+                "name": "Executive"
+              },
+              {
+                "index": 4,
+                "name": "Technical"
+              },
+              {
+                "index": 5,
+                "name": "Legislative"
+              },
+              {
+                "index": 6,
+                "name": "Judicial"
+              },
+              {
+                "index": 7,
+                "name": "Defense"
+              },
+              {
+                "index": 8,
+                "name": "Administration"
+              },
+              {
+                "index": 9,
+                "name": "Treasury"
+              }
+            ]
+          }
+        },
+        "path": ["xcm", "v2", "BodyId"]
+      }
+    },
+    {
+      "id": 66,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "index": 0,
+                "name": "Voice"
+              },
+              {
+                "fields": [
+                  {
+                    "name": "count",
+                    "type": 58,
+                    "typeName": "u32"
+                  }
+                ],
+                "index": 1,
+                "name": "Members"
+              },
+              {
+                "fields": [
+                  {
+                    "name": "nom",
+                    "type": 58,
+                    "typeName": "u32"
+                  },
+                  {
+                    "name": "denom",
+                    "type": 58,
+                    "typeName": "u32"
+                  }
+                ],
+                "index": 2,
+                "name": "Fraction"
+              },
+              {
+                "fields": [
+                  {
+                    "name": "nom",
+                    "type": 58,
+                    "typeName": "u32"
+                  },
+                  {
+                    "name": "denom",
+                    "type": 58,
+                    "typeName": "u32"
+                  }
+                ],
+                "index": 3,
+                "name": "AtLeastProportion"
+              },
+              {
+                "fields": [
+                  {
+                    "name": "nom",
+                    "type": 58,
+                    "typeName": "u32"
+                  },
+                  {
+                    "name": "denom",
+                    "type": 58,
+                    "typeName": "u32"
+                  }
+                ],
+                "index": 4,
+                "name": "MoreThanProportion"
+              }
+            ]
+          }
+        },
+        "path": ["xcm", "v2", "BodyPart"]
+      }
+    },
+    {
+      "id": 67,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "index": 0,
+                "name": "NotStarted"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 68,
+                    "typeName": "PendingTxnId"
+                  },
+                  {
+                    "type": 69,
+                    "typeName": "SubstratePendingEventId"
+                  }
+                ],
+                "index": 1,
+                "name": "Submitted"
+              },
+              {
+                "index": 2,
+                "name": "Dropped"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 70,
+                    "typeName": "FinalizedTxnId"
+                  }
+                ],
+                "index": 3,
+                "name": "Failed"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 70,
+                    "typeName": "FinalizedTxnId"
+                  },
+                  {
+                    "type": 69,
+                    "typeName": "SubstratePendingEventId"
+                  }
+                ],
+                "index": 4,
+                "name": "LocalConfirmed"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 70,
+                    "typeName": "FinalizedTxnId"
+                  },
+                  {
+                    "type": 71,
+                    "typeName": "SubstrateEventId"
+                  }
+                ],
+                "index": 5,
+                "name": "Confirmed"
+              }
+            ]
+          }
+        },
+        "path": ["privadex_execution_plan", "execution_plan", "CrossChainStepStatus"]
+      }
+    },
+    {
+      "id": 68,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "fields": [
+                  {
+                    "type": 46,
+                    "typeName": "EthPendingTxnId"
+                  }
+                ],
+                "index": 0,
+                "name": "Ethereum"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 42,
+                    "typeName": "SubstratePendingExtrinsicId"
+                  }
+                ],
+                "index": 1,
+                "name": "Substrate"
+              }
+            ]
+          }
+        },
+        "path": ["privadex_execution_plan", "execution_plan", "PendingTxnId"]
+      }
+    },
+    {
+      "id": 69,
+      "type": {
+        "def": {
+          "composite": {
+            "fields": [
+              {
+                "name": "start_block_num",
+                "type": 29,
+                "typeName": "BlockNum"
+              }
+            ]
+          }
+        },
+        "path": ["privadex_execution_plan", "execution_plan", "SubstratePendingEventId"]
+      }
+    },
+    {
+      "id": 70,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "fields": [
+                  {
+                    "type": 40,
+                    "typeName": "EthTxnHash"
+                  }
+                ],
+                "index": 0,
+                "name": "Ethereum"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 43,
+                    "typeName": "SubstrateFinalizedExtrinsicId"
+                  }
+                ],
+                "index": 1,
+                "name": "Substrate"
+              }
+            ]
+          }
+        },
+        "path": ["privadex_execution_plan", "execution_plan", "FinalizedTxnId"]
+      }
+    },
+    {
+      "id": 71,
+      "type": {
+        "def": {
+          "composite": {
+            "fields": [
+              {
+                "name": "block_num",
+                "type": 29,
+                "typeName": "BlockNum"
+              },
+              {
+                "name": "event_index",
+                "type": 29,
+                "typeName": "Nonce"
+              }
+            ]
+          }
+        },
+        "path": ["privadex_execution_plan", "execution_plan", "SubstrateEventId"]
+      }
+    },
+    {
+      "id": 72,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "fields": [
+                  {
+                    "type": 73
+                  }
+                ],
+                "index": 0,
+                "name": "Ok"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 6
+                  }
+                ],
+                "index": 1,
+                "name": "Err"
+              }
+            ]
+          }
+        },
+        "params": [
+          {
+            "name": "T",
+            "type": 73
+          },
+          {
+            "name": "E",
+            "type": 6
+          }
+        ],
+        "path": ["Result"]
+      }
+    },
+    {
+      "id": 73,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "fields": [
+                  {
+                    "type": 37
+                  }
+                ],
+                "index": 0,
+                "name": "Ok"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 9
+                  }
+                ],
+                "index": 1,
+                "name": "Err"
+              }
+            ]
+          }
+        },
+        "params": [
+          {
+            "name": "T",
+            "type": 37
+          },
+          {
+            "name": "E",
+            "type": 9
+          }
+        ],
+        "path": ["Result"]
+      }
+    },
+    {
+      "id": 74,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "fields": [
+                  {
+                    "type": 75
+                  }
+                ],
+                "index": 0,
+                "name": "Ok"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 6
+                  }
+                ],
+                "index": 1,
+                "name": "Err"
+              }
+            ]
+          }
+        },
+        "params": [
+          {
+            "name": "T",
+            "type": 75
+          },
+          {
+            "name": "E",
+            "type": 6
+          }
+        ],
+        "path": ["Result"]
+      }
+    },
+    {
+      "id": 75,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "fields": [
+                  {
+                    "type": 18
+                  }
+                ],
+                "index": 0,
+                "name": "Ok"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 9
+                  }
+                ],
+                "index": 1,
+                "name": "Err"
+              }
+            ]
+          }
+        },
+        "params": [
+          {
+            "name": "T",
+            "type": 18
+          },
+          {
+            "name": "E",
+            "type": 9
+          }
+        ],
+        "path": ["Result"]
+      }
+    },
+    {
+      "id": 76,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "fields": [
+                  {
+                    "type": 77
+                  }
+                ],
+                "index": 0,
+                "name": "Ok"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 6
+                  }
+                ],
+                "index": 1,
+                "name": "Err"
+              }
+            ]
+          }
+        },
+        "params": [
+          {
+            "name": "T",
+            "type": 77
+          },
+          {
+            "name": "E",
+            "type": 6
+          }
+        ],
+        "path": ["Result"]
+      }
+    },
+    {
+      "id": 77,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "fields": [
+                  {
+                    "type": 78
+                  }
+                ],
+                "index": 0,
+                "name": "Ok"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 9
+                  }
+                ],
+                "index": 1,
+                "name": "Err"
+              }
+            ]
+          }
+        },
+        "params": [
+          {
+            "name": "T",
+            "type": 78
+          },
+          {
+            "name": "E",
+            "type": 9
+          }
+        ],
+        "path": ["Result"]
+      }
+    },
+    {
+      "id": 78,
+      "type": {
+        "def": {
+          "tuple": [35, 35, 35]
+        }
+      }
+    },
+    {
+      "id": 79,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "fields": [
+                  {
+                    "type": 80
+                  }
+                ],
+                "index": 0,
+                "name": "Ok"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 6
+                  }
+                ],
+                "index": 1,
+                "name": "Err"
+              }
+            ]
+          }
+        },
+        "params": [
+          {
+            "name": "T",
+            "type": 80
+          },
+          {
+            "name": "E",
+            "type": 6
+          }
+        ],
+        "path": ["Result"]
+      }
+    },
+    {
+      "id": 80,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "fields": [
+                  {
+                    "type": 81
+                  }
+                ],
+                "index": 0,
+                "name": "Ok"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 9
+                  }
+                ],
+                "index": 1,
+                "name": "Err"
+              }
+            ]
+          }
+        },
+        "params": [
+          {
+            "name": "T",
+            "type": 81
+          },
+          {
+            "name": "E",
+            "type": 9
+          }
+        ],
+        "path": ["Result"]
+      }
+    },
+    {
+      "id": 81,
+      "type": {
+        "def": {
+          "sequence": {
+            "type": 18
+          }
+        }
+      }
+    }
+  ],
+  "version": "4"
+}
