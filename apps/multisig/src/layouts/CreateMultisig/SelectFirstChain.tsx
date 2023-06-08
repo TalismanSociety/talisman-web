@@ -1,7 +1,6 @@
+import { Chain } from '@domains/chains'
 import { css } from '@emotion/css'
 import { Button, Select } from '@talismn/ui'
-
-import { Chain } from '../../domain/chains'
 
 const SelectFirstChain = (props: {
   onNext: () => void

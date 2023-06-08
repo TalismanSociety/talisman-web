@@ -3,8 +3,8 @@ import 'ace-builds/src-noconflict/mode-yaml'
 import 'ace-builds/src-noconflict/theme-twilight'
 import 'ace-builds/src-noconflict/ext-language_tools'
 
-import { Token } from 'domain/chains'
-
+import { Token } from '@domains/chains'
+import { TransactionType } from '@domains/multisig'
 import { css } from '@emotion/css'
 import { useTheme } from '@emotion/react'
 import { ChevronRight, List, Send, Share2, Users } from '@talismn/icons'
@@ -15,7 +15,7 @@ import AceEditor from 'react-ace'
 import { Collapse } from 'react-collapse'
 import truncateMiddle from 'truncate-middle'
 
-import { Transaction, TransactionType } from '.'
+import { Transaction__deprecated } from '.'
 
 const AmountRow = ({ amount, token, price }: { amount: number; token?: Token; price: number }) => {
   return (
@@ -59,7 +59,7 @@ const AddressPill = ({ a }: { a: string }) => {
   )
 }
 
-const MultiSendExpendedDetails = ({ t }: { t: Transaction }) => {
+const MultiSendExpendedDetails = ({ t }: { t: Transaction__deprecated }) => {
   const theme = useTheme()
   const recipients = t.decoded.recipients || []
   return (
@@ -116,7 +116,7 @@ const MultiSendExpendedDetails = ({ t }: { t: Transaction }) => {
   )
 }
 
-const AdvancedExpendedDetails = ({ t }: { t: Transaction }) => {
+const AdvancedExpendedDetails = ({ t }: { t: Transaction__deprecated }) => {
   return (
     <div css={{ paddingBottom: '8px' }}>
       <AceEditor
@@ -132,7 +132,7 @@ const AdvancedExpendedDetails = ({ t }: { t: Transaction }) => {
   )
 }
 
-const TransactionDetailsExpandable = ({ t }: { t: Transaction }) => {
+const TransactionDetailsExpandable = ({ t }: { t: Transaction__deprecated }) => {
   const theme = useTheme()
   const [expanded, setExpanded] = useState(false)
   const recipients = t.decoded.recipients || []

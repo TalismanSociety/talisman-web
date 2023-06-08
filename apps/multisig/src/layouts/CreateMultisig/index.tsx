@@ -1,14 +1,13 @@
-import { AugmentedAccount } from 'domain/multisig'
-
 import Logo from '@components/Logo'
+import { Chain, supportedChains, tokenByIdWithPrice } from '@domains/chains'
+import { accountsState } from '@domains/extension'
+import { AugmentedAccount } from '@domains/multisig'
 import { css } from '@emotion/css'
 import { device } from '@util/breakpoints'
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useRecoilState, useRecoilValueLoadable } from 'recoil'
 
-import { Chain, supportedChains, tokenByIdWithPrice } from '../../domain/chains'
-import { accountsState } from '../../domain/extension'
 import AddMembers from './AddMembers'
 import Confirmation from './Confirmation'
 import NameVault from './NameVault'

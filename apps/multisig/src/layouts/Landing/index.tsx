@@ -1,14 +1,15 @@
 import Logo from '@components/Logo'
+import { accountsState, extensionAllowedState, extensionLoadingState } from '@domains/extension'
+import { activeMultisigsState } from '@domains/multisig'
 import { css } from '@emotion/css'
 import { Button } from '@talismn/ui'
 import { device } from '@util/breakpoints'
-import { NavigateFunction, useNavigate } from 'react-router-dom'
+import { useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { useRecoilState, useRecoilValue } from 'recoil'
 
-// import { accountsState, extensionLoadingState } from '../../domain/extension'
 import Features from './Features'
 import Footer from './Footer'
-
-// import { useRecoilState } from 'recoil'
 
 const containerStyles = css`
   display: grid;
@@ -19,15 +20,30 @@ const containerStyles = css`
   height: 100%;
 `
 
-const handleConnectWalletClick = async (navigate: NavigateFunction) => {
-  navigate('/create')
-}
-
 const Landing = () => {
-  // const [extensionAccounts] = useRecoilState(accountsState)
-  // const [extensionLoading] = useRecoilState(extensionLoadingState)
-  // const [allowExtension, setAllowExtension] = useRecoilState(extensionLoadingState)
+  const [extensionAccounts] = useRecoilState(accountsState)
+  const [extensionLoading] = useRecoilState(extensionLoadingState)
+  const [extensionAllowed] = useRecoilState(extensionAllowedState)
+  const [allowExtension, setAllowExtension] = useRecoilState(extensionLoadingState)
+  const activeMultisigs = useRecoilValue(activeMultisigsState)
   const navigate = useNavigate()
+
+  console.log({
+    extensionAccounts,
+    extensionLoading,
+    allowExtension,
+    activeMultisigs,
+  })
+
+  // Handle redirecting once account/s are connected
+  useEffect(() => {
+    if (!allowExtension || extensionLoading || extensionAccounts.length === 0) return
+    if (activeMultisigs.length > 0) {
+      navigate('/overview')
+    } else {
+      navigate('/create')
+    }
+  }, [extensionAccounts, activeMultisigs, navigate, extensionLoading, allowExtension])
 
   return (
     <div className={containerStyles}>
@@ -99,9 +115,17 @@ const Landing = () => {
             width: 240px;
             height: 56px;
           `}
-          children={<h3>Connect Wallet</h3>}
+          children={
+            !allowExtension ? (
+              <h3>Connect Wallet</h3>
+            ) : extensionLoading ? (
+              <h3>Loading...</h3>
+            ) : (
+              <h3>No Accounts Connected</h3>
+            )
+          }
           onClick={() => {
-            handleConnectWalletClick(navigate)
+            setAllowExtension(true)
           }}
         />
         <a href="https://talisman.xyz" target="_blank" rel="noreferrer">

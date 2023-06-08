@@ -1,10 +1,10 @@
+import { Chain as ChainT, supportedChains } from '@domains/chains'
+import { copyToClipboard } from '@domains/common'
 import { css } from '@emotion/css'
 import { useTheme } from '@emotion/react'
 import { Copy, ExternalLink, Plus } from '@talismn/icons'
 import { Button, IconButton, Identicon } from '@talismn/ui'
 
-import { Chain as ChainT, supportedChains } from '../../domain/chains'
-import { copyToClipboard } from '../../domain/common'
 import { BackButton } from '.'
 
 const Chain = ({ address, chain, onDelete }: { address: string; chain: ChainT; onDelete?: () => void }) => {

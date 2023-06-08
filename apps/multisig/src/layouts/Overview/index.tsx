@@ -9,11 +9,11 @@ import Header from './Header'
 import { mockTokensAugmented, mockTransactions } from './mocks'
 import NewTransactionModal from './NewTransactionModal'
 import Sidebar from './Sidebar'
-import Transactions, { Transaction } from './Transactions'
+import Transactions, { Transaction__deprecated } from './Transactions'
 
 const Overview = () => {
   const navigate = useNavigate()
-  const transactions: Transaction[] = mockTransactions
+  const transactions: Transaction__deprecated[] = mockTransactions
   const augmentedTokens: TokenAugmented[] = mockTokensAugmented
   return (
     <div

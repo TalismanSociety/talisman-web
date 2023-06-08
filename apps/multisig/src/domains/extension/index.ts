@@ -7,16 +7,16 @@ import { recoilPersist } from 'recoil-persist'
 
 const { persistAtom } = recoilPersist()
 
-export type Account = InjectedAccount & {
+export type ExternalAccount = InjectedAccount & {
   readonly?: boolean
 }
 
-export const accountsState = atom<Account[]>({
+export const accountsState = atom<ExternalAccount[]>({
   key: 'Accounts',
   default: [],
 })
 
-export const allowExtensionState = atom<boolean>({
+export const extensionAllowedState = atom<boolean>({
   key: 'AllowExtension',
   default: false,
   effects_UNSTABLE: [persistAtom],
@@ -28,12 +28,12 @@ export const extensionLoadingState = atom<boolean>({
 })
 
 export const ExtensionWatcher = () => {
-  const [allowExtension] = useRecoilState(allowExtensionState)
+  const [extensionAllowed] = useRecoilState(extensionAllowedState)
   const setExtensionLoading = useSetRecoilState(extensionLoadingState)
   const setAccounts = useSetRecoilState(accountsState)
 
   useEffect(() => {
-    if (!allowExtension) {
+    if (!extensionAllowed) {
       return setAccounts([])
     }
 

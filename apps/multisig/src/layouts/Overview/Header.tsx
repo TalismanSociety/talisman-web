@@ -1,12 +1,11 @@
 import Logo from '@components/Logo'
+import { copyToClipboard } from '@domains/common'
 import { css } from '@emotion/css'
 import { useTheme } from '@emotion/react'
 import { Copy, Plus, PlusCircle, TalismanHand } from '@talismn/icons'
 import { Button, IconButton, Identicon, Select } from '@talismn/ui'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-
-import { copyToClipboard } from '../../domain/common'
 
 interface Multisig {
   name: string

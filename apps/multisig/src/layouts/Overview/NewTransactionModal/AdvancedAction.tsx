@@ -3,6 +3,7 @@ import 'ace-builds/src-noconflict/mode-yaml'
 import 'ace-builds/src-noconflict/theme-twilight'
 import 'ace-builds/src-noconflict/ext-language_tools'
 
+import { Chain, supportedChains } from '@domains/chains'
 import { css } from '@emotion/css'
 import { Button, FullScreenDialog } from '@talismn/ui'
 import { debounce } from 'lodash'
@@ -10,9 +11,8 @@ import { useState } from 'react'
 import AceEditor from 'react-ace'
 import { useNavigate } from 'react-router-dom'
 
-import { Chain, supportedChains } from '../../../domain/chains'
 import { mockTransactions } from '../mocks'
-import { Transaction } from '../Transactions'
+import { Transaction__deprecated } from '../Transactions'
 import { FullScreenDialogContents, FullScreenDialogTitle } from '../Transactions/FullScreenSummary'
 import { ChooseChain, NameTransaction } from './generic-steps'
 
@@ -174,7 +174,7 @@ const AdvancedAction = (props: { onCancel: () => void }) => {
         onClose={() => {
           setStep(Step.Details)
         }}
-        title={<FullScreenDialogTitle t={mockTransactions[1] as Transaction} />}
+        title={<FullScreenDialogTitle t={mockTransactions[1] as Transaction__deprecated} />}
         css={{
           header: {
             margin: '32px 48px',
@@ -189,7 +189,7 @@ const AdvancedAction = (props: { onCancel: () => void }) => {
         open={step === Step.Review}
       >
         <FullScreenDialogContents
-          t={mockTransactions[1] as Transaction}
+          t={mockTransactions[1] as Transaction__deprecated}
           onApprove={() => {
             navigate('/overview')
           }}

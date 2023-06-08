@@ -4,6 +4,7 @@ import 'react-loading-skeleton/dist/skeleton.css'
 
 import './index.css'
 
+import { ExtensionWatcher } from '@domains/extension'
 import { EyeOfSauronProgressIndicator } from '@talismn/ui'
 import { ToastBar } from '@talismn/ui'
 import React, { Suspense } from 'react'
@@ -13,7 +14,6 @@ import { RecoilRoot } from 'recoil'
 import { RecoilRelayEnvironmentProvider } from 'recoil-relay'
 
 import ThemeProvider from './App.Theme'
-import { ExtensionWatcher } from './domain/extension'
 import RelayEnvironment, { chainDataSquidEnvKey } from './graphql/relay-environment'
 import router from './routes'
 

@@ -1,10 +1,11 @@
+import { Token } from '@domains/chains'
+import { TransactionType } from '@domains/multisig'
 import { css } from '@emotion/css'
 import { FullScreenDialog } from '@talismn/ui'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useEffect, useMemo, useState } from 'react'
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom'
 
-import { Token } from '../../../domain/chains'
 import { FullScreenDialogContents, FullScreenDialogTitle } from './FullScreenSummary'
 import TransactionSummaryRow from './TransactionSummaryRow'
 import { groupTransactionsByDay } from './utils'
@@ -14,13 +15,7 @@ enum Mode {
   History,
 }
 
-export enum TransactionType {
-  MultiSend,
-  Transfer,
-  Advanced,
-}
-
-export interface Transaction {
+export interface Transaction__deprecated {
   createdTimestamp: Date
   executedTimestamp?: Date
   description: string
@@ -51,7 +46,7 @@ function extractHash(url: string) {
   return parts[txIndex + 1]
 }
 
-const TransactionsList = ({ transactions }: { transactions: Transaction[] }) => {
+const TransactionsList = ({ transactions }: { transactions: Transaction__deprecated[] }) => {
   let location = useLocation().pathname
   const navigate = useNavigate()
   const groupedTransactions = useMemo(() => {
@@ -124,7 +119,7 @@ const TransactionsList = ({ transactions }: { transactions: Transaction[] }) => 
   )
 }
 
-const Transactions = ({ transactions }: { transactions: Transaction[] }) => {
+const Transactions = ({ transactions }: { transactions: Transaction__deprecated[] }) => {
   const pendingTransactions = useMemo(() => {
     return transactions.filter(t => Object.values(t.approvals).some(a => !a))
   }, [transactions])

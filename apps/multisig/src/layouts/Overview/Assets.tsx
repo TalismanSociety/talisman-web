@@ -1,3 +1,4 @@
+import { Token } from '@domains/chains'
 import { css } from '@emotion/css'
 import { Lock } from '@talismn/icons'
 import { AnimatedNumber } from '@talismn/ui'
@@ -5,8 +6,6 @@ import { formatDecimals } from '@talismn/util'
 import { formatUsd } from '@util/numbers'
 import { capitalizeFirstLetter } from '@util/strings'
 import { useMemo } from 'react'
-
-import { Token } from '../../domain/chains'
 
 export interface TokenAugmented {
   details: Token

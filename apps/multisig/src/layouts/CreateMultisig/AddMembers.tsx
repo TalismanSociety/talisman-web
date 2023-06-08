@@ -1,7 +1,6 @@
-import { AugmentedAccount } from 'domain/multisig'
-
 import AddressInput from '@components/AddressInput'
 import MemberRow from '@components/MemberRow'
+import { AugmentedAccount } from '@domains/multisig'
 import { css } from '@emotion/css'
 import { Button, TextInput } from '@talismn/ui'
 import { device } from '@util/breakpoints'

@@ -1,12 +1,12 @@
+import { Chain, supportedChains } from '@domains/chains'
 import { css } from '@emotion/css'
 import { Button, FullScreenDialog, Select, TextInput } from '@talismn/ui'
 import toSs52Address from '@util/toSs52Address'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-import { Chain, supportedChains } from '../../../domain/chains'
 import { mockTransactions } from '../mocks'
-import { Transaction } from '../Transactions'
+import { Transaction__deprecated } from '../Transactions'
 import { FullScreenDialogContents, FullScreenDialogTitle } from '../Transactions/FullScreenSummary'
 import { ChooseChain, NameTransaction } from './generic-steps'
 
@@ -188,7 +188,7 @@ const SendAction = (props: { onCancel: () => void }) => {
         onClose={() => {
           setStep(Step.Details)
         }}
-        title={<FullScreenDialogTitle t={mockTransactions[1] as Transaction} />}
+        title={<FullScreenDialogTitle t={mockTransactions[1] as Transaction__deprecated} />}
         css={{
           header: {
             margin: '32px 48px',
@@ -203,7 +203,7 @@ const SendAction = (props: { onCancel: () => void }) => {
         open={step === Step.Review}
       >
         <FullScreenDialogContents
-          t={mockTransactions[1] as Transaction}
+          t={mockTransactions[1] as Transaction__deprecated}
           onApprove={() => {
             navigate('/overview')
           }}

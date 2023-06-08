@@ -1,7 +1,9 @@
-import { Transaction } from '.'
+import { Transaction__deprecated } from '.'
 
-export function groupTransactionsByDay(transactions: Transaction[]): Array<[string, Transaction[]]> {
-  const groupedTransactions: Record<string, Transaction[]> = {}
+export function groupTransactionsByDay(
+  transactions: Transaction__deprecated[]
+): Array<[string, Transaction__deprecated[]]> {
+  const groupedTransactions: Record<string, Transaction__deprecated[]> = {}
 
   for (const transaction of transactions) {
     const date = new Date(transaction.createdTimestamp)
@@ -17,7 +19,7 @@ export function groupTransactionsByDay(transactions: Transaction[]): Array<[stri
       groupedTransactions[dayFormatted] = []
     }
 
-    ;(groupedTransactions[dayFormatted] as Transaction[]).push(transaction)
+    ;(groupedTransactions[dayFormatted] as Transaction__deprecated[]).push(transaction)
   }
 
   const sortedEntries = Object.entries(groupedTransactions).sort((a, b) => {

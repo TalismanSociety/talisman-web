@@ -1,3 +1,4 @@
+import { copyToClipboard } from '@domains/common'
 import { css } from '@emotion/css'
 import { useTheme } from '@emotion/react'
 import { Copy } from '@talismn/icons'
@@ -6,8 +7,6 @@ import { device, size } from '@util/breakpoints'
 import { useReward } from 'react-rewards'
 import { useEffectOnce, useWindowSize } from 'react-use'
 import truncateMiddle from 'truncate-middle'
-
-import { copyToClipboard } from '../../domain/common'
 
 const MagicLink = ({ proxyAccount, name }: { proxyAccount: string; name: string }) => {
   const width = useWindowSize().width

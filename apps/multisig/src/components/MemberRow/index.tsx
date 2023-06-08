@@ -1,5 +1,4 @@
-import { AugmentedAccount } from 'domain/multisig'
-
+import { AugmentedAccount } from '@domains/multisig'
 import { css } from '@emotion/css'
 import { useTheme } from '@emotion/react'
 import { ExternalLink, Trash } from '@talismn/icons'

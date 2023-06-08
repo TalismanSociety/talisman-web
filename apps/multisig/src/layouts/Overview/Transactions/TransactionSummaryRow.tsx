@@ -1,12 +1,13 @@
 import StatusCircle, { StatusCircleType } from '@components/StatusCircle'
+import { TransactionType } from '@domains/multisig'
 import { css } from '@emotion/css'
 import { ArrowUp, List, Share2 } from '@talismn/icons'
 import { formatUsd } from '@util/numbers'
 
 import { formattedHhMm } from './utils'
-import { Transaction, TransactionType } from '.'
+import { Transaction__deprecated } from '.'
 
-const TransactionSummaryRow = ({ t, onClick }: { t: Transaction; onClick?: () => void }) => {
+const TransactionSummaryRow = ({ t, onClick }: { t: Transaction__deprecated; onClick?: () => void }) => {
   const threshold = 2
   const signedCount = Object.values(t.approvals).filter(Boolean).length
   const txIcon =

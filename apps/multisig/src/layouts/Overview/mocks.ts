@@ -1,6 +1,8 @@
-import { Token } from '../../domain/chains'
+import { Token } from '@domains/chains'
+import { TransactionType } from '@domains/multisig'
+
 import { TokenAugmented } from './Assets'
-import { Transaction, TransactionType } from './Transactions'
+import { Transaction__deprecated } from './Transactions'
 
 const DOT: Token = {
   id: 'polkadot',
@@ -14,7 +16,7 @@ const DOT: Token = {
   },
 }
 
-export const mockTransactions: Transaction[] = [
+export const mockTransactions: Transaction__deprecated[] = [
   // Transactions without all approvals
   {
     createdTimestamp: new Date(Date.parse('03 Feb 2023 08:01:06 GMT')),

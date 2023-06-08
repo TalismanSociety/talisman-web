@@ -5,7 +5,7 @@ import { Button } from '@talismn/ui'
 
 import TransactionDetailsExpandable from './TransactionDetailsExpandable'
 import TransactionSummaryRow from './TransactionSummaryRow'
-import { Transaction } from '.'
+import { Transaction__deprecated } from '.'
 
 enum PillType {
   Pending,
@@ -32,7 +32,7 @@ const Pill = ({ children, type }: { children: React.ReactNode; type: PillType })
   )
 }
 
-const Approvals = ({ t }: { t: Transaction }) => {
+const Approvals = ({ t }: { t: Transaction__deprecated }) => {
   return (
     <div css={{ display: 'grid', gap: '14px' }}>
       {Object.entries(t.approvals).map(([address, approval]) => (
@@ -61,7 +61,7 @@ const Approvals = ({ t }: { t: Transaction }) => {
   )
 }
 
-export const FullScreenDialogTitle = ({ t }: { t?: Transaction }) => {
+export const FullScreenDialogTitle = ({ t }: { t?: Transaction__deprecated }) => {
   if (!t) return null
 
   const pillType =
@@ -94,7 +94,7 @@ export const FullScreenDialogContents = ({
   onReject,
   onApprove,
 }: {
-  t?: Transaction
+  t?: Transaction__deprecated
   onReject: () => void
   onApprove: () => void
 }) => {

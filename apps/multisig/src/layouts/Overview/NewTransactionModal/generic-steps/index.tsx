@@ -1,7 +1,6 @@
+import { Chain } from '@domains/chains'
 import { css } from '@emotion/css'
 import { Button, Select, TextInput } from '@talismn/ui'
-
-import { Chain } from '../../../../domain/chains'
 
 export const NameTransaction = (props: {
   onCancel: () => void
