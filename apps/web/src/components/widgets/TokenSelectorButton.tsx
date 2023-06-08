@@ -24,10 +24,13 @@ const TokenSelectorButton = <T extends IToken | string>(props: TokenSelectorProp
           typeof x === 'string' ? y => y.token?.symbol.toLowerCase() === x.toLowerCase() : { id: x.id }
         )
         const free = Decimal.fromPlanck(balance.sum.planck.free, balance.each.at(0)?.decimals ?? 9)
+        const symbol = typeof x === 'string' ? x : x.symbol
+
         return {
           token: x,
-          symbol: typeof x === 'string' ? x : x.symbol,
-          logo: balance.each.at(0)?.token?.logo,
+          symbol,
+          logo:
+            balance.each.at(0)?.token?.logo ?? `https://token-resources.vercel.app/tokens/${symbol.toUpperCase()}.png`,
           free,
           freeFiat: balance.sum.fiat('usd').free,
         }
