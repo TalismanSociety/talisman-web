@@ -12,7 +12,6 @@ import { CircularProgressIndicator, toast } from '@talismn/ui'
 import { Maybe } from '@util/monads'
 import { isEmpty, uniqBy } from 'lodash'
 import { useEffect, useMemo, useState } from 'react'
-import { Link } from 'react-router-dom'
 import { RecoilLoadable, constSelector, useRecoilValue, useRecoilValueLoadable, type Loadable } from 'recoil'
 import { Observable } from 'rxjs'
 import { useAccountSelector } from '../AccountSelector'
@@ -226,8 +225,9 @@ const TransportForm = () => {
   return (
     <DexForm
       // swapLink={<DexForm.SwapTab as={Link} to="/dex/swap" />}
+      // transportLink={<DexForm.TransportTab as={Link} to="/dex/transport" selected />}
       swapLink={undefined}
-      transportLink={<DexForm.TransportTab as={Link} to="/dex/transport" selected />}
+      transportLink={undefined}
       form={
         <DexForm.Transport
           accountSelector={senderSelector}
