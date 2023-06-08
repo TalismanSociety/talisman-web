@@ -7,7 +7,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useRecoilState, useRecoilValueLoadable } from 'recoil'
 
-import { ChainSummary, supportedChains, tokenByIdWithPrice } from '../../domain/chains'
+import { Chain, supportedChains, tokenByIdWithPrice } from '../../domain/chains'
 import { accountsState } from '../../domain/extension'
 import AddMembers from './AddMembers'
 import Confirmation from './Confirmation'
@@ -62,7 +62,7 @@ const CreateMultisig = () => {
     CreateTransactionsStatus.NotStarted
   )
   const [name, setName] = useState<string>('')
-  const [chain, setChain] = useState<ChainSummary>(firstChain)
+  const [chain, setChain] = useState<Chain>(firstChain)
   const [extensionAccounts] = useRecoilState(accountsState)
   const [externalAccounts, setExternalAccounts] = useState<string[]>([])
   const [threshold, setThreshold] = useState<number>(2)

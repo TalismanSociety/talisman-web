@@ -1,7 +1,7 @@
 import { css } from '@emotion/css'
 import { Button, Select, TextInput } from '@talismn/ui'
 
-import { ChainSummary } from '../../../../domain/chains'
+import { Chain } from '../../../../domain/chains'
 
 export const NameTransaction = (props: {
   onCancel: () => void
@@ -52,9 +52,9 @@ export const NameTransaction = (props: {
 export const ChooseChain = (props: {
   onNext: () => void
   onBack: () => void
-  setChain: React.Dispatch<React.SetStateAction<ChainSummary>>
-  chain: ChainSummary
-  chains: ChainSummary[]
+  setChain: React.Dispatch<React.SetStateAction<Chain>>
+  chain: Chain
+  chains: Chain[]
 }) => {
   return (
     <>
@@ -64,7 +64,7 @@ export const ChooseChain = (props: {
         <Select
           placeholder="Select account"
           value={props.chain.id}
-          onChange={value => props.setChain(props.chains.find(chain => chain.id === value) as ChainSummary)}
+          onChange={value => props.setChain(props.chains.find(chain => chain.id === value) as Chain)}
           {...props}
         >
           {props.chains.map(chain => (

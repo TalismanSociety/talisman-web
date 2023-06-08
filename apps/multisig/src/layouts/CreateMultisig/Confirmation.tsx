@@ -10,7 +10,7 @@ import { formatUsd } from '@util/numbers'
 import { useState } from 'react'
 import { Loadable } from 'recoil'
 
-import { ChainSummary, Token } from '../../domain/chains'
+import { Chain, Token } from '../../domain/chains'
 
 const Cost = (props: { amount: number; symbol: string; price: number }) => (
   <p>
@@ -24,7 +24,7 @@ const Confirmation = (props: {
   augmentedAccounts: AugmentedAccount[]
   threshold: number
   name: string
-  chain: ChainSummary
+  chain: Chain
   tokenWithPrice: Loadable<{ token: Token; price: number }>
   reserveAmount: number
   fee: number

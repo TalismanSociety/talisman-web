@@ -97,17 +97,7 @@ export const chainByIdQuery = graphQLSelectorFamily({
   mapResponse: res => res.chainById as Chain,
 })
 
-export interface ChainSummary {
-  id: string
-  chainName: string
-  logo: string
-  isTestnet: boolean
-  nativeToken: {
-    id: string
-  }
-}
-
-export const supportedChains: ChainSummary[] = [
+export const supportedChains: Chain[] = [
   {
     id: 'polkadot',
     chainName: 'Polkadot',
@@ -162,5 +152,5 @@ export const supportedChains: ChainSummary[] = [
 //     }
 //   `,
 //   variables: {},
-//   mapResponse: res => res.chains as ChainSummary[],
+//   mapResponse: res => res.chains as Chain[],
 // })

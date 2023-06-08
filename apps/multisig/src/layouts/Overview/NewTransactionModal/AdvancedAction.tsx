@@ -10,7 +10,7 @@ import { useState } from 'react'
 import AceEditor from 'react-ace'
 import { useNavigate } from 'react-router-dom'
 
-import { ChainSummary, supportedChains } from '../../../domain/chains'
+import { Chain, supportedChains } from '../../../domain/chains'
 import { mockTransactions } from '../mocks'
 import { Transaction } from '../Transactions'
 import { FullScreenDialogContents, FullScreenDialogTitle } from '../Transactions/FullScreenSummary'
@@ -130,7 +130,7 @@ const AdvancedAction = (props: { onCancel: () => void }) => {
   const [step, setStep] = useState(Step.Name)
   const [name, setName] = useState('')
   const [calldata, setCalldata] = useState('')
-  const [chain, setChain] = useState<ChainSummary>(supportedChains[0] as ChainSummary)
+  const [chain, setChain] = useState<Chain>(supportedChains[0] as Chain)
   const navigate = useNavigate()
 
   return (

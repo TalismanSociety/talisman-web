@@ -3,11 +3,11 @@ import { useTheme } from '@emotion/react'
 import { Copy, ExternalLink, Plus } from '@talismn/icons'
 import { Button, IconButton, Identicon } from '@talismn/ui'
 
-import { ChainSummary, supportedChains } from '../../domain/chains'
+import { Chain as ChainT, supportedChains } from '../../domain/chains'
 import { copyToClipboard } from '../../domain/common'
 import { BackButton } from '.'
 
-const Chain = ({ address, chain, onDelete }: { address: string; chain: ChainSummary; onDelete?: () => void }) => {
+const Chain = ({ address, chain, onDelete }: { address: string; chain: ChainT; onDelete?: () => void }) => {
   const theme = useTheme()
 
   return (
@@ -53,9 +53,9 @@ const Chain = ({ address, chain, onDelete }: { address: string; chain: ChainSumm
 const ManageChains = () => {
   // TODO: Fetch these from recoil or whatever
   const vaultName = 'Paraverse Foundation'
-  const proxyAddresses: [ChainSummary, string][] = [
-    [supportedChains[0] as ChainSummary, '14ApALYpTuNfHgyCNYkMsuwWtuqPBbE5QRmRswmXS8GwxWUt'],
-    [supportedChains[1] as ChainSummary, 'Hh2GWcmfgGaAWCNhHupJShnFzFU36WXhciesL1pu7G9MVHs'],
+  const proxyAddresses: [ChainT, string][] = [
+    [supportedChains[0] as ChainT, '14ApALYpTuNfHgyCNYkMsuwWtuqPBbE5QRmRswmXS8GwxWUt'],
+    [supportedChains[1] as ChainT, 'Hh2GWcmfgGaAWCNhHupJShnFzFU36WXhciesL1pu7G9MVHs'],
   ]
   return (
     <div css={{ margin: '32px', paddingLeft: '32px', width: '586px' }}>

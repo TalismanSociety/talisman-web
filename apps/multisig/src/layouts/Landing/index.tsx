@@ -4,11 +4,11 @@ import { Button } from '@talismn/ui'
 import { device } from '@util/breakpoints'
 import { NavigateFunction, useNavigate } from 'react-router-dom'
 
+// import { accountsState, extensionLoadingState } from '../../domain/extension'
 import Features from './Features'
 import Footer from './Footer'
 
 // import { useRecoilState } from 'recoil'
-// import { accountsState } from '../../domain/extension'
 
 const containerStyles = css`
   display: grid;
@@ -20,19 +20,13 @@ const containerStyles = css`
 `
 
 const handleConnectWalletClick = async (navigate: NavigateFunction) => {
-  // TODO logic:
-  // connect the extension
-  // no accounts? tell user
-  // check if any of the connected wallets have multisigs
-  // no multisigs? redirect to 'create'
-  // multisigs? redirect to overview
   navigate('/create')
 }
 
 const Landing = () => {
-  // const [accounts] = useRecoilState(accountsState)
+  // const [extensionAccounts] = useRecoilState(accountsState)
   // const [extensionLoading] = useRecoilState(extensionLoadingState)
-  // const [allowExtension, setAllowExtension] = useRecoilState(allowExtensionState)
+  // const [allowExtension, setAllowExtension] = useRecoilState(extensionLoadingState)
   const navigate = useNavigate()
 
   return (

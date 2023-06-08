@@ -4,7 +4,7 @@ import toSs52Address from '@util/toSs52Address'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-import { ChainSummary, supportedChains } from '../../../domain/chains'
+import { Chain, supportedChains } from '../../../domain/chains'
 import { mockTransactions } from '../mocks'
 import { Transaction } from '../Transactions'
 import { FullScreenDialogContents, FullScreenDialogTitle } from '../Transactions/FullScreenSummary'
@@ -142,7 +142,7 @@ const SendAction = (props: { onCancel: () => void }) => {
   const [name, setName] = useState('')
   const [destination, setDestination] = useState('14JVAWDg9h2iMqZgmiRpvZd8aeJ3TvANMCv6V5Te4N4Vkbg5')
   const [amount, setAmount] = useState(0)
-  const [chain, setChain] = useState<ChainSummary>(supportedChains[0] as ChainSummary)
+  const [chain, setChain] = useState<Chain>(supportedChains[0] as Chain)
   const navigate = useNavigate()
 
   return (
