@@ -1,13 +1,22 @@
 import Cryptoticon from '@components/recipes/Cryptoticon'
 import { useTheme } from '@emotion/react'
 import { ArrowDown, Repeat } from '@talismn/icons'
-import { Button, ContainedTextInput, IconButton, Select, TextInput, type ButtonProps } from '@talismn/ui'
+import {
+  Button,
+  ContainedTextInput,
+  IconButton,
+  Select,
+  TextInput,
+  type ButtonProps,
+  CircularProgressIndicator,
+} from '@talismn/ui'
 import { LayoutGroup, motion } from 'framer-motion'
 import { useId, useState, type ReactNode } from 'react'
 
 export type TransportFormProps = {
   accountSelector: ReactNode
   fromChains: Array<{ name: string; logoSrc: string }>
+  selectedFromChainInitializing?: boolean
   selectedFromChainIndex: number
   onSelectFromChainIndex: (value: number | undefined) => unknown
   toChains: Array<{ name: string; logoSrc: string }>
@@ -115,7 +124,13 @@ const TransportForm = Object.assign(
                       key={index}
                       value={index}
                       headlineText={network.name}
-                      leadingIcon={<Cryptoticon src={network.logoSrc} alt={network.name} size="2rem" />}
+                      leadingIcon={
+                        props.selectedFromChainInitializing ? (
+                          <CircularProgressIndicator size="2rem" />
+                        ) : (
+                          <Cryptoticon src={network.logoSrc} alt={network.name} size="2rem" />
+                        )
+                      }
                     />
                   ))}
                 </Select>

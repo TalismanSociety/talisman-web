@@ -238,6 +238,7 @@ const TransportForm = () => {
             ) : undefined
           }
           fromChains={originChains.map(x => ({ name: x.id, logoSrc: x.icon }))}
+          selectedFromChainInitializing={adapterLoadable.state === 'loading'}
           selectedFromChainIndex={useMemo(
             () => originChains.findIndex(x => x.id === fromChain?.id),
             [fromChain?.id, originChains]
