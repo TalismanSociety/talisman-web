@@ -1,3 +1,4 @@
+import ErrorBoundary from '@components/widgets/ErrorBoundary'
 import type { ReactNode } from 'react'
 import { Outlet } from 'react-router-dom'
 
@@ -27,7 +28,9 @@ export const FaqLayout = (props: FaqLayoutProps) => (
       },
     }}
   >
-    <section css={{ flex: 1 }}>{props.content}</section>
+    <section css={{ flex: 1 }}>
+      <ErrorBoundary>{props.content}</ErrorBoundary>
+    </section>
     <section css={{ flex: 1 }}>{props.faq}</section>
   </div>
 )
