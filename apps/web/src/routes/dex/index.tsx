@@ -7,7 +7,7 @@ const routes = {
   children: [
     { path: 'swap', element: <Swap /> },
     { path: 'transport', lazy: async () => ({ Component: (await import('./transport')).default }) },
-    { path: '', element: <Navigate to="swap" /> },
+    { path: '', element: <Navigate to="transport" /> },
   ],
 } satisfies RouteObject
 

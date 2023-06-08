@@ -225,7 +225,8 @@ const TransportForm = () => {
 
   return (
     <DexForm
-      swapLink={<DexForm.SwapTab as={Link} to="/dex/swap" />}
+      // swapLink={<DexForm.SwapTab as={Link} to="/dex/swap" />}
+      swapLink={undefined}
       transportLink={<DexForm.TransportTab as={Link} to="/dex/transport" selected />}
       form={
         <DexForm.Transport
