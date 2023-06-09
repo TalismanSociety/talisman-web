@@ -1,6 +1,7 @@
 import { Surface, Tabs, Text, type TabProps } from '@talismn/ui'
 import { AnimatePresence, LayoutGroup, motion } from 'framer-motion'
 import type { ElementType, ReactNode } from 'react'
+import DexFormSkeleton from './DexForm.skeleton'
 import SwapForm from './SwapForm'
 import TransportForm from './TransportForm'
 
@@ -61,6 +62,7 @@ const DexForm = Object.assign(
     SwapTab: <T extends ElementType>(props: TabProps<T>) => <Tabs.Item {...props}>Swap</Tabs.Item>,
     Transport: TransportForm,
     TransportTab: <T extends ElementType>(props: TabProps<T>) => <Tabs.Item {...props}>Transport</Tabs.Item>,
+    Skeleton: DexFormSkeleton,
   }
 )
 

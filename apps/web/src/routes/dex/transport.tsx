@@ -1,12 +1,19 @@
 import SectionHeader from '@components/molecules/SectionHeader'
-import TransportForm from '@components/widgets/dex/TransportForm'
+import DexForm from '@components/recipes/DexForm/DexForm'
 import { Details, OrderedDetailsList, Text } from '@talismn/ui'
+import React, { Suspense } from 'react'
 import { FaqLayout } from './layout'
+
+const TransportForm = React.lazy(async () => await import('@components/widgets/dex/TransportForm'))
 
 const Transport = () => {
   return (
     <FaqLayout
-      content={<TransportForm />}
+      content={
+        <Suspense fallback={<DexForm.Skeleton />}>
+          <TransportForm />
+        </Suspense>
+      }
       faq={
         <>
           <SectionHeader headlineText={<>About Cross-Chain Transfers</>} />
