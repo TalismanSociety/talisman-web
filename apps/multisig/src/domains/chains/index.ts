@@ -75,26 +75,24 @@ export interface Chain {
   nativeToken: {
     id: string
   }
+  rpc: string
+  decimals: number
 }
 
-export const chainByIdQuery = graphQLSelectorFamily({
-  key: 'ChainById',
+export const chainTokensByIdQuery = graphQLSelectorFamily({
+  key: 'ChainTokensById',
   environment: RelayEnvironment,
   query: graphql`
-    query chainsChainByIdQuery($id: String!) {
+    query chainsChainTokensByIdQuery($id: String!) {
       chainById(id: $id) {
-        id
-        chainName
-        logo
-        isTestnet
-        nativeToken {
-          id
+        tokens {
+          data
         }
       }
     }
   `,
   variables: id => ({ id }),
-  mapResponse: res => res.chainById as Chain,
+  mapResponse: res => res.chainById.tokens as Token[],
 })
 
 export const supportedChains: Chain[] = [
@@ -106,6 +104,8 @@ export const supportedChains: Chain[] = [
     nativeToken: {
       id: 'polkadot-substrate-native-dot',
     },
+    rpc: 'wss://rpc.polkadot.io',
+    decimals: 10,
   },
   {
     id: 'kusama',
@@ -115,15 +115,8 @@ export const supportedChains: Chain[] = [
     nativeToken: {
       id: 'kusama-substrate-native-ksm',
     },
-  },
-  {
-    id: 'rococo-testnet',
-    chainName: 'Rococo',
-    logo: 'https://raw.githubusercontent.com/TalismanSociety/chaindata/v3/assets/chains/rococo-testnet.svg',
-    isTestnet: true,
-    nativeToken: {
-      id: 'rococo-testnet-substrate-native-roc',
-    },
+    rpc: 'wss://kusama-rpc.polkadot.io',
+    decimals: 12,
   },
   {
     id: 'westend-testnet',
@@ -133,24 +126,18 @@ export const supportedChains: Chain[] = [
     nativeToken: {
       id: 'westend-testnet-substrate-native-wnd',
     },
+    rpc: 'wss://westend-rpc.polkadot.io',
+    decimals: 12,
+  },
+  {
+    id: 'rococo-testnet',
+    chainName: 'Rococo',
+    logo: 'https://raw.githubusercontent.com/TalismanSociety/chaindata/v3/assets/chains/rococo-testnet.svg',
+    isTestnet: true,
+    nativeToken: {
+      id: 'rococo-testnet-substrate-native-roc',
+    },
+    rpc: 'wss://rococo-rpc.polkadot.io',
+    decimals: 12,
   },
 ]
-
-// TODO: Replace hard coded supported chains with something from GraphQL,
-// once we figure out how to filter for multisig supported chains.
-// export const allChainsQuery = graphQLSelector({
-//   key: 'AllChains',
-//   environment: RelayEnvironment,
-//   query: graphql`
-//     query chainsQuery {
-//       chains {
-//         id
-//         chainName
-//         logo
-//         isTestnet
-//       }
-//     }
-//   `,
-//   variables: {},
-//   mapResponse: res => res.chains as Chain[],
-// })

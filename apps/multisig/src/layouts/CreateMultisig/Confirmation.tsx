@@ -1,5 +1,6 @@
 import MemberRow from '@components/MemberRow'
 import { Chain, Token } from '@domains/chains'
+import { InjectedAccount } from '@domains/extension'
 import { AugmentedAccount } from '@domains/multisig'
 import { css } from '@emotion/css'
 import { Info } from '@talismn/icons'
@@ -7,7 +8,6 @@ import { Button, IconButton, Identicon, Select } from '@talismn/ui'
 import { Skeleton } from '@talismn/ui'
 import { device } from '@util/breakpoints'
 import { formatUsd } from '@util/numbers'
-import { useState } from 'react'
 import { Loadable } from 'recoil'
 
 const Cost = (props: { amount: number; symbol: string; price: number }) => (
@@ -19,6 +19,8 @@ const Cost = (props: { amount: number; symbol: string; price: number }) => (
 const Confirmation = (props: {
   onBack: () => void
   onCreateVault: () => void
+  selectedSigner: InjectedAccount
+  setSelectedSigner: (signer: InjectedAccount) => void
   augmentedAccounts: AugmentedAccount[]
   threshold: number
   name: string
@@ -30,8 +32,6 @@ const Confirmation = (props: {
   const { tokenWithPrice, reserveAmount, fee, chain } = props
   const externalAccounts = props.augmentedAccounts.filter(a => a.you)
   if (externalAccounts.length === 0) throw Error('Please connect an address')
-  const [selectedSigner, setSelectedSigner] = useState<AugmentedAccount>(externalAccounts[0] as AugmentedAccount)
-  // const [signing, setSigning] = useState<boolean>(false)
 
   const reserveAmountComponent =
     tokenWithPrice.state === 'hasValue' ? (
@@ -181,9 +181,9 @@ const Confirmation = (props: {
           </h2>
           <Select
             placeholder="Select account"
-            value={selectedSigner.address}
+            value={props.selectedSigner.address}
             onChange={value =>
-              setSelectedSigner(props.augmentedAccounts.find(a => a.address === value) as AugmentedAccount)
+              props.setSelectedSigner(props.augmentedAccounts.find(a => a.address === value) as AugmentedAccount)
             }
             {...props}
           >

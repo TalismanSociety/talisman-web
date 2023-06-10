@@ -1,10 +1,13 @@
 import Logo from '@components/Logo'
 import { Chain, supportedChains, tokenByIdWithPrice } from '@domains/chains'
-import { accountsState } from '@domains/extension'
+import { InjectedAccount, accountsState } from '@domains/extension'
+import { createProxy, transferProxyToMultisig } from '@domains/extension/extrinsics'
 import { AugmentedAccount, activeMultisigsState } from '@domains/multisig'
 import { css } from '@emotion/css'
+import { createKeyMulti, encodeAddress, sortAddresses } from '@polkadot/util-crypto'
 import { device } from '@util/breakpoints'
 import { useEffect, useMemo, useState } from 'react'
+import { toast } from 'react-hot-toast'
 import { useNavigate } from 'react-router-dom'
 import { useRecoilState, useRecoilValue, useRecoilValueLoadable } from 'recoil'
 
@@ -46,12 +49,29 @@ function calcContentHeight(step: Step, nAccounts: number): { md: string; lg: str
 }
 
 const CreateMultisig = () => {
+  let firstChain = supportedChains[0]
+  if (!firstChain) throw Error('no supported chains')
+  const [createTransctionStatus, setCreateTransactionsStatus] = useState<CreateTransactionsStatus>(
+    CreateTransactionsStatus.NotStarted
+  )
+  const [name, setName] = useState<string>('')
+  const [chain, setChain] = useState<Chain>(firstChain)
+  const [externalAccounts, setExternalAccounts] = useState<string[]>([])
+  const [extensionAccounts] = useRecoilState(accountsState)
+  const [selectedSigner, setSelectedSigner] = useState<InjectedAccount>(extensionAccounts[0] as InjectedAccount)
+  const [threshold, setThreshold] = useState<number>(2)
+  const tokenWithPrice = useRecoilValueLoadable(tokenByIdWithPrice(chain.nativeToken.id))
+  const [proxyAddress, setProxyAddress] = useState<string | undefined>()
+  // TODO: replace this with a query once lib is avail
+  const reserveAmount = '20041000000000'
+  const reserveAmountNumber = 20.041
+  const fee = 0.0125628761
+
   const navigate = useNavigate()
   const [step, setStep] = useState<Step>(Step.NoVault)
   const skipNoVault = window.location.href.includes('skipNoVault')
 
   // Redirect to landing if user disconnects all accounts
-  const [extensionAccounts] = useRecoilState(accountsState)
   useEffect(() => {
     if (extensionAccounts.length === 0) {
       navigate('/')
@@ -80,35 +100,6 @@ const CreateMultisig = () => {
     setIsVisible(true)
   }, [])
 
-  let firstChain = supportedChains[0]
-  if (!firstChain) throw Error('no supported chains')
-  const [createTransctionStatus, setCreateTransactionsStatus] = useState<CreateTransactionsStatus>(
-    CreateTransactionsStatus.NotStarted
-  )
-  const [name, setName] = useState<string>('')
-  const [chain, setChain] = useState<Chain>(firstChain)
-  const [externalAccounts, setExternalAccounts] = useState<string[]>([])
-  const [threshold, setThreshold] = useState<number>(2)
-  const tokenWithPrice = useRecoilValueLoadable(tokenByIdWithPrice(chain.nativeToken.id))
-  // TODO: replace this with value from on-chain
-  const [proxyAccount] = useState<string>('5CfQ7R2JjfxS2qJUSoUfpFPtvoraronPkkjK96ED1kgcYzd5')
-  // TODO: replace this with a query once lib is avail
-  const reserveAmount = 20.041
-  const fee = 0.0125628761
-
-  useEffect(() => {
-    if (step === Step.Transactions && createTransctionStatus === CreateTransactionsStatus.NotStarted) {
-      // TODO: Add real transactions here
-      setCreateTransactionsStatus(CreateTransactionsStatus.CreatingProxy)
-      setTimeout(() => {
-        setCreateTransactionsStatus(CreateTransactionsStatus.TransferringProxy)
-        setTimeout(() => {
-          setStep(Step.VaultCreated)
-        }, 3000)
-      }, 3000)
-    }
-  }, [createTransctionStatus, step])
-
   const augmentedAccounts: AugmentedAccount[] = useMemo(() => {
     // TODO allow 'deselecting' extension accounts in the creation phase
     return [
@@ -120,6 +111,47 @@ const CreateMultisig = () => {
       ...externalAccounts.map(a => ({ address: a })),
     ]
   }, [extensionAccounts, externalAccounts])
+
+  useEffect(() => {
+    if (step === Step.Transactions && createTransctionStatus === CreateTransactionsStatus.NotStarted) {
+      createProxy(
+        selectedSigner.address,
+        chain,
+        proxyAddress => {
+          setProxyAddress(proxyAddress)
+          setCreateTransactionsStatus(CreateTransactionsStatus.TransferringProxy)
+          // Address as a byte array.
+          const multiAddressBytes = createKeyMulti(sortAddresses(augmentedAccounts.map(a => a.address)), threshold)
+          // Convert byte array to SS58 encoding.
+          const multiAddress = encodeAddress(multiAddressBytes, 0)
+          console.log({ multiAddress })
+          transferProxyToMultisig(
+            selectedSigner.address,
+            chain,
+            proxyAddress,
+            multiAddress,
+            reserveAmount,
+            success => {
+              setStep(Step.VaultCreated)
+            },
+            e => {
+              console.error(e)
+              toast.error(e)
+              setStep(Step.Confirmation)
+              setCreateTransactionsStatus(CreateTransactionsStatus.NotStarted)
+            }
+          )
+        },
+        e => {
+          console.error(e)
+          toast.error(e)
+          setStep(Step.Confirmation)
+          setCreateTransactionsStatus(CreateTransactionsStatus.NotStarted)
+        }
+      )
+      setCreateTransactionsStatus(CreateTransactionsStatus.CreatingProxy)
+    }
+  }, [createTransctionStatus, step, selectedSigner?.address, chain, augmentedAccounts, threshold])
 
   // TODO: if wallet has vaults already skip the no_vault and display an 'x'
 
@@ -196,18 +228,20 @@ const CreateMultisig = () => {
           <Confirmation
             onBack={() => setStep(Step.SelectFirstChain)}
             onCreateVault={() => setStep(Step.Transactions)}
+            selectedSigner={selectedSigner}
+            setSelectedSigner={setSelectedSigner}
             augmentedAccounts={augmentedAccounts}
             threshold={threshold}
             name={name}
             chain={chain}
-            reserveAmount={reserveAmount}
+            reserveAmount={reserveAmountNumber}
             fee={fee}
             tokenWithPrice={tokenWithPrice}
           />
         ) : step === Step.Transactions ? (
           <SignTransactions status={createTransctionStatus} />
         ) : step === Step.VaultCreated ? (
-          <VaultCreated goToVault={() => navigate('/overview')} proxyAccount={proxyAccount} name={name} />
+          <VaultCreated goToVault={() => navigate('/overview')} proxyAccount={proxyAddress as string} name={name} />
         ) : null}
       </div>
     </div>

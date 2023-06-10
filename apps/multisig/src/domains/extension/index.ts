@@ -1,15 +1,13 @@
 import { web3AccountsSubscribe, web3Enable } from '@polkadot/extension-dapp'
-import type { InjectedAccount } from '@polkadot/extension-inject/types'
+import type { InjectedAccount as InjectedAccountPjs } from '@polkadot/extension-inject/types'
 import type { InjectedWindow } from '@polkadot/extension-inject/types'
 import { uniqBy } from 'lodash'
 import { useEffect } from 'react'
 import { atom, useRecoilState, useSetRecoilState } from 'recoil'
 
-export type ExternalAccount = InjectedAccount & {
-  readonly?: boolean
-}
+export type InjectedAccount = InjectedAccountPjs
 
-export const accountsState = atom<ExternalAccount[]>({
+export const accountsState = atom<InjectedAccount[]>({
   key: 'Accounts',
   default: [],
 })
