@@ -3,7 +3,7 @@ import { Button, TextInput } from '@talismn/ui'
 import { device } from '@util/breakpoints'
 
 const NameVault = (props: {
-  onBack: () => void
+  onBack?: () => void
   onNext: () => void
   setName: React.Dispatch<React.SetStateAction<string>>
   name: string
@@ -46,17 +46,17 @@ const NameVault = (props: {
       </div>
       <div
         className={css`
-          display: grid;
-          grid-template-columns: 1fr 1fr;
+          display: flex;
           gap: 16px;
           margin-top: 48px;
           width: 100%;
           button {
             height: 56px;
+            width: 100%;
           }
         `}
       >
-        <Button onClick={props.onBack} children={<h3>Back</h3>} variant="outlined" />
+        <Button onClick={props.onBack} disabled={!props.onBack} children={<h3>Back</h3>} variant="outlined" />
         <Button disabled={props.name.length === 0} onClick={props.onNext} children={<h3>Next</h3>} />
       </div>
     </div>

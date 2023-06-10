@@ -156,7 +156,7 @@ const Header = () => {
                   'cursor': 'pointer',
                 }}
                 onClick={() => {
-                  navigate('/create')
+                  navigate('/create?skipNoVault')
                 }}
               >
                 <IconButton size={'40px'} contentColor={theme.color.primary}>

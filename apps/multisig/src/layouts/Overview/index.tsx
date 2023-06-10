@@ -1,7 +1,10 @@
+import { activeMultisigsState } from '@domains/multisig'
 import { css } from '@emotion/css'
 import { Eye, Settings } from '@talismn/icons'
 import { device } from '@util/breakpoints'
+import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useRecoilValue } from 'recoil'
 
 import Assets, { TokenAugmented } from './Assets'
 import Footer from './Footer'
@@ -13,6 +16,15 @@ import Transactions, { Transaction__deprecated } from './Transactions'
 
 const Overview = () => {
   const navigate = useNavigate()
+
+  // Redirect to landing if no connected accounts have multisig
+  const activeMultisigs = useRecoilValue(activeMultisigsState)
+  useEffect(() => {
+    if (activeMultisigs.length === 0) {
+      navigate('/')
+    }
+  }, [activeMultisigs, navigate])
+
   const transactions: Transaction__deprecated[] = mockTransactions
   const augmentedTokens: TokenAugmented[] = mockTokensAugmented
   return (

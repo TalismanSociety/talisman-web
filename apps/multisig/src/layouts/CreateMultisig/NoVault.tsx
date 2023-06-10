@@ -22,9 +22,12 @@ const NoVault = (props: { onCreate: () => void }) => {
       <p
         className={css`
           margin-top: 16px;
+          padding: 0 64px;
+          text-align: center;
         `}
       >
-        Launch a multi-signature wallet for your organisation
+        Launch a new multi-signature wallet for your organisation, or connect an account that is already part of a
+        multisig.
       </p>
       <div>
         <Button

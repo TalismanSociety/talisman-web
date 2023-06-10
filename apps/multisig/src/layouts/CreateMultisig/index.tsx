@@ -1,12 +1,12 @@
 import Logo from '@components/Logo'
 import { Chain, supportedChains, tokenByIdWithPrice } from '@domains/chains'
 import { accountsState } from '@domains/extension'
-import { AugmentedAccount } from '@domains/multisig'
+import { AugmentedAccount, activeMultisigsState } from '@domains/multisig'
 import { css } from '@emotion/css'
 import { device } from '@util/breakpoints'
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useRecoilState, useRecoilValueLoadable } from 'recoil'
+import { useRecoilState, useRecoilValue, useRecoilValueLoadable } from 'recoil'
 
 import AddMembers from './AddMembers'
 import Confirmation from './Confirmation'
@@ -46,6 +46,34 @@ function calcContentHeight(step: Step, nAccounts: number): { md: string; lg: str
 }
 
 const CreateMultisig = () => {
+  const navigate = useNavigate()
+  const [step, setStep] = useState<Step>(Step.NoVault)
+  const skipNoVault = window.location.href.includes('skipNoVault')
+
+  // Redirect to landing if user disconnects all accounts
+  const [extensionAccounts] = useRecoilState(accountsState)
+  useEffect(() => {
+    if (extensionAccounts.length === 0) {
+      navigate('/')
+    }
+  })
+
+  const activeMultisigs = useRecoilValue(activeMultisigsState)
+  useEffect(() => {
+    if (step === Step.NoVault) {
+      // If there is skipNoVault in the url, skip the NoVault page
+      if (skipNoVault) {
+        setStep(Step.NameVault)
+        return
+      }
+
+      // If user connects an active multisig, redirect to overview
+      if (activeMultisigs.length > 0) {
+        navigate('/overview')
+      }
+    }
+  }, [activeMultisigs, navigate, step, skipNoVault])
+
   // Fade-in effect
   const [isVisible, setIsVisible] = useState(false)
   useEffect(() => {
@@ -54,15 +82,11 @@ const CreateMultisig = () => {
 
   let firstChain = supportedChains[0]
   if (!firstChain) throw Error('no supported chains')
-
-  const navigate = useNavigate()
-  const [step, setStep] = useState<Step>(Step.NoVault)
   const [createTransctionStatus, setCreateTransactionsStatus] = useState<CreateTransactionsStatus>(
     CreateTransactionsStatus.NotStarted
   )
   const [name, setName] = useState<string>('')
   const [chain, setChain] = useState<Chain>(firstChain)
-  const [extensionAccounts] = useRecoilState(accountsState)
   const [externalAccounts, setExternalAccounts] = useState<string[]>([])
   const [threshold, setThreshold] = useState<number>(2)
   const tokenWithPrice = useRecoilValueLoadable(tokenByIdWithPrice(chain.nativeToken.id))
@@ -139,7 +163,7 @@ const CreateMultisig = () => {
           <NoVault onCreate={() => setStep(Step.NameVault)} />
         ) : step === Step.NameVault ? (
           <NameVault
-            onBack={() => setStep(Step.NoVault)}
+            onBack={activeMultisigs.length === 0 && !skipNoVault ? () => setStep(Step.NoVault) : undefined}
             onNext={() => setStep(Step.AddMembers)}
             setName={setName}
             name={name}

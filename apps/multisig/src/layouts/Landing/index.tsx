@@ -2,6 +2,8 @@ import Logo from '@components/Logo'
 import { accountsState, extensionAllowedState, extensionLoadingState } from '@domains/extension'
 import { activeMultisigsState } from '@domains/multisig'
 import { css } from '@emotion/css'
+import { keyframes } from '@emotion/react'
+import { Loader } from '@talismn/icons'
 import { Button } from '@talismn/ui'
 import { device } from '@util/breakpoints'
 import { useEffect } from 'react'
@@ -10,6 +12,12 @@ import { useRecoilState, useRecoilValue } from 'recoil'
 
 import Features from './Features'
 import Footer from './Footer'
+
+const spin = keyframes`
+  to {
+    transform: rotate(360deg);
+  }
+`
 
 const containerStyles = css`
   display: grid;
@@ -23,27 +31,19 @@ const containerStyles = css`
 const Landing = () => {
   const [extensionAccounts] = useRecoilState(accountsState)
   const [extensionLoading] = useRecoilState(extensionLoadingState)
-  const [extensionAllowed] = useRecoilState(extensionAllowedState)
-  const [allowExtension, setAllowExtension] = useRecoilState(extensionLoadingState)
+  const [extensionAllowed, setExtensionAllowed] = useRecoilState(extensionAllowedState)
   const activeMultisigs = useRecoilValue(activeMultisigsState)
   const navigate = useNavigate()
 
-  console.log({
-    extensionAccounts,
-    extensionLoading,
-    allowExtension,
-    activeMultisigs,
-  })
-
   // Handle redirecting once account/s are connected
   useEffect(() => {
-    if (!allowExtension || extensionLoading || extensionAccounts.length === 0) return
+    if (!extensionAllowed || extensionLoading || extensionAccounts.length === 0) return
     if (activeMultisigs.length > 0) {
       navigate('/overview')
     } else {
       navigate('/create')
     }
-  }, [extensionAccounts, activeMultisigs, navigate, extensionLoading, allowExtension])
+  }, [extensionAccounts, activeMultisigs, navigate, extensionLoading, extensionAllowed])
 
   return (
     <div className={containerStyles}>
@@ -108,6 +108,15 @@ const Landing = () => {
             margin-top: 80px;
           }
           align-items: end;
+          button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            svg {
+              animation: ${spin} 5s linear infinite;
+              color: var(--color-background);
+            }
+          }
         `}
       >
         <Button
@@ -116,17 +125,12 @@ const Landing = () => {
             height: 56px;
           `}
           children={
-            !allowExtension ? (
-              <h3>Connect Wallet</h3>
-            ) : extensionLoading ? (
-              <h3>Loading...</h3>
-            ) : (
-              <h3>No Accounts Connected</h3>
-            )
+            !extensionAllowed ? <h3>Connect Wallet</h3> : extensionLoading ? <Loader /> : <h3>No Accounts Connected</h3>
           }
           onClick={() => {
-            setAllowExtension(true)
+            setExtensionAllowed(true)
           }}
+          disabled={extensionAllowed && !extensionLoading && extensionAccounts.length === 0}
         />
         <a href="https://talisman.xyz" target="_blank" rel="noreferrer">
           <p

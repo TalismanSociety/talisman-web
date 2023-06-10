@@ -1,13 +1,25 @@
-import { Chain, Token } from '@domains/chains'
+import { Chain, Token, supportedChains } from '@domains/chains'
 import { accountsState } from '@domains/extension'
 import { atom, selector } from 'recoil'
 import { recoilPersist } from 'recoil-persist'
 
 const { persistAtom } = recoilPersist()
 
+const mockMultisig: Multisig = {
+  name: 'mock multisig',
+  chain: supportedChains[0] as Chain,
+  multisigAddress: '0x000',
+  proxyAddress: '0x00000',
+  signers: ['5CfQ7R2JjfxS2qJUSoUfpFPtvoraronPkkjK96ED1kgcYzd5'],
+  threshold: 3,
+  balances: [],
+  pendingTransactions: [],
+  confirmedTransactions: [],
+}
+
 export const multisigsState = atom<Multisig[]>({
   key: 'Multisigs',
-  default: [],
+  default: [mockMultisig],
   effects_UNSTABLE: [persistAtom],
 })
 
@@ -17,9 +29,9 @@ export const activeMultisigsState = selector({
     const multisigs = get(multisigsState)
     const accounts = get(accountsState)
 
-    return multisigs.filter(multisig =>
-      multisig.signers.some(signer => accounts.some(account => account.address === signer))
-    )
+    return multisigs.filter(multisig => {
+      return multisig.signers.some(signer => accounts.some(account => account.address === signer))
+    })
   },
 })
 
