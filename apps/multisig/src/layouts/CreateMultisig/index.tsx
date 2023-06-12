@@ -1,7 +1,7 @@
 import Logo from '@components/Logo'
 import { Chain, supportedChains, tokenByIdWithPrice } from '@domains/chains'
+import { useCreateProxy, useTransferProxyToMultisig } from '@domains/chains/extrinsics'
 import { InjectedAccount, accountsState } from '@domains/extension'
-import { createProxy, transferProxyToMultisig } from '@domains/extension/extrinsics'
 import { AugmentedAccount, activeMultisigsState } from '@domains/multisig'
 import { css } from '@emotion/css'
 import { createKeyMulti, encodeAddress, sortAddresses } from '@polkadot/util-crypto'
@@ -59,6 +59,8 @@ const CreateMultisig = () => {
   const [externalAccounts, setExternalAccounts] = useState<string[]>([])
   const [extensionAccounts] = useRecoilState(accountsState)
   const [selectedSigner, setSelectedSigner] = useState<InjectedAccount>(extensionAccounts[0] as InjectedAccount)
+  const { createProxy, ready: createProxyIsReady } = useCreateProxy(chain)
+  const { transferProxyToMultisig, ready: transferProxyToMultisigIsReady } = useTransferProxyToMultisig(chain)
   const [threshold, setThreshold] = useState<number>(2)
   const tokenWithPrice = useRecoilValueLoadable(tokenByIdWithPrice(chain.nativeToken.id))
   const [proxyAddress, setProxyAddress] = useState<string | undefined>()
@@ -116,7 +118,6 @@ const CreateMultisig = () => {
     if (step === Step.Transactions && createTransctionStatus === CreateTransactionsStatus.NotStarted) {
       createProxy(
         selectedSigner.address,
-        chain,
         proxyAddress => {
           setProxyAddress(proxyAddress)
           setCreateTransactionsStatus(CreateTransactionsStatus.TransferringProxy)
@@ -127,7 +128,6 @@ const CreateMultisig = () => {
           console.log({ multiAddress })
           transferProxyToMultisig(
             selectedSigner.address,
-            chain,
             proxyAddress,
             multiAddress,
             reserveAmount,
@@ -151,7 +151,16 @@ const CreateMultisig = () => {
       )
       setCreateTransactionsStatus(CreateTransactionsStatus.CreatingProxy)
     }
-  }, [createTransctionStatus, step, selectedSigner?.address, chain, augmentedAccounts, threshold])
+  }, [
+    createTransctionStatus,
+    step,
+    selectedSigner?.address,
+    chain,
+    augmentedAccounts,
+    threshold,
+    createProxy,
+    transferProxyToMultisig,
+  ])
 
   // TODO: if wallet has vaults already skip the no_vault and display an 'x'
 
@@ -237,6 +246,7 @@ const CreateMultisig = () => {
             reserveAmount={reserveAmountNumber}
             fee={fee}
             tokenWithPrice={tokenWithPrice}
+            extrinsicsReady={transferProxyToMultisigIsReady && createProxyIsReady}
           />
         ) : step === Step.Transactions ? (
           <SignTransactions status={createTransctionStatus} />

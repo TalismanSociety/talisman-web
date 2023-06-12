@@ -28,6 +28,7 @@ const Confirmation = (props: {
   tokenWithPrice: Loadable<{ token: Token; price: number }>
   reserveAmount: number
   fee: number
+  extrinsicsReady: boolean
 }) => {
   const { tokenWithPrice, reserveAmount, fee, chain } = props
   const externalAccounts = props.augmentedAccounts.filter(a => a.you)
@@ -245,7 +246,7 @@ const Confirmation = (props: {
       >
         <Button onClick={props.onBack} children={<h3>Back</h3>} variant="outlined" />
         <Button
-          disabled={tokenWithPrice.state !== 'hasValue' || props.augmentedAccounts.length < 2}
+          disabled={tokenWithPrice.state !== 'hasValue' || props.augmentedAccounts.length < 2 || !props.extrinsicsReady}
           onClick={props.onCreateVault}
           children={<h3>Create Vault</h3>}
         />
