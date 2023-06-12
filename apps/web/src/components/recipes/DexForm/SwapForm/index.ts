@@ -1,2 +1,2 @@
-export * from './Swap'
-export { default } from './Swap'
+export * from './SwapForm'
+export { default } from './SwapForm'
