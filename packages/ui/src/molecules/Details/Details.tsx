@@ -37,7 +37,6 @@ const Details = Object.assign(
         animate={JSON.stringify(open)}
         initial={JSON.stringify(false)}
         css={{
-          padding: '2.2rem 3.2rem',
           borderRadius: '1.6rem',
           backgroundColor: theme.color.surface,
         }}
@@ -73,13 +72,14 @@ const Details = Object.assign(
               'display': 'flex',
               'alignItems': 'center',
               'gap': '1.6rem',
+              'padding': '2.2rem 3.2rem',
               'cursor': 'pointer',
               '::-webkit-details-marker': {
                 display: 'none',
               },
             }}
           >
-            <Text.Body as="span" alpha="high" css={{ flex: 1, fontFamily: "'Surt', sans-serif", marginRight: '2rem' }}>
+            <Text.Body as="span" alpha="high" css={{ flex: 1, marginRight: '2rem' }}>
               {props.children}
             </Text.Body>
             <motion.div variants={{ true: { transform: 'rotate(90deg)' } }}>
@@ -95,7 +95,7 @@ const Details = Object.assign(
         variants={{ true: { opacity: 1, height: 'auto' }, false: { opacity: 0, height: 0 } }}
         css={{ overflow: 'hidden' }}
       >
-        <Text.Body as="div" css={{ marginTop: '2.2rem' }}>
+        <Text.Body as="div" css={{ padding: '0 3.2rem 2.2rem 3.2rem' }}>
           {props.children}
         </Text.Body>
       </motion.div>
