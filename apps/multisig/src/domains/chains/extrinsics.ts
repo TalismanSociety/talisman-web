@@ -7,21 +7,43 @@
 import { pjsApiSelector } from '@domains/chains/pjs-api'
 import { SubmittableResult } from '@polkadot/api'
 import { web3FromAddress } from '@polkadot/extension-dapp'
-import { useCallback } from 'react'
+import { Balance } from '@polkadot/types/interfaces'
+import BN from 'bn.js'
+import { useCallback, useEffect, useState } from 'react'
 import { useRecoilValueLoadable } from 'recoil'
 
 import { Chain } from './tokens'
 
-export const useCreateProxy = (chain: Chain) => {
+export const useCreateProxy = (chain: Chain, extensionAddress: string | undefined) => {
   const apiLoadable = useRecoilValueLoadable(pjsApiSelector(chain.rpc))
+  const [estimatedFee, setEstimatedFee] = useState<Balance | undefined>()
+
+  const estimateFee = useCallback(async () => {
+    if (apiLoadable.state !== 'hasValue' || !extensionAddress) {
+      return
+    }
+
+    const api = apiLoadable.contents
+    // @ts-ignore
+    const tx = api.tx.proxy.createPure('Any', 0, 0)
+
+    // Fee estimation
+    const paymentInfo = await tx.paymentInfo(extensionAddress)
+    setEstimatedFee(paymentInfo.partialFee as unknown as Balance)
+  }, [apiLoadable, extensionAddress])
+
+  // Estimate the fee as soon as the hook is used and the extensionAddress or apiLoadable changes
+  useEffect(() => {
+    estimateFee()
+  }, [estimateFee])
 
   const createProxy = useCallback(
     async (
-      extensionAddress: string,
+      extensionAddress: string | undefined,
       onSuccess: (proxyAddress: string) => void,
       onFailure: (message: string) => void
     ) => {
-      if (apiLoadable.state !== 'hasValue') {
+      if (apiLoadable.state !== 'hasValue' || !extensionAddress) {
         return
       }
 
@@ -73,7 +95,7 @@ export const useCreateProxy = (chain: Chain) => {
     [apiLoadable]
   )
 
-  return { createProxy, ready: apiLoadable.state === 'hasValue' }
+  return { createProxy, ready: apiLoadable.state === 'hasValue' && !!estimatedFee, estimatedFee }
 }
 
 // utils.batchAll(
@@ -90,14 +112,14 @@ export const useTransferProxyToMultisig = (chain: Chain) => {
 
   const transferProxyToMultisig = useCallback(
     async (
-      extensionAddress: string,
+      extensionAddress: string | undefined,
       proxyAddress: string,
       multisigAddress: string,
-      existentialDeposit: string,
+      existentialDeposit: Balance,
       onSuccess: (r: SubmittableResult) => void,
       onFailure: (message: string) => void
     ) => {
-      if (apiLoadable.state !== 'hasValue') {
+      if (apiLoadable.state !== 'hasValue' || !extensionAddress) {
         return
       }
 
@@ -120,8 +142,10 @@ export const useTransferProxyToMultisig = (chain: Chain) => {
       // Define the outer batch call
       // @ts-ignore
       const signerBatchCall = api.tx.utility.batchAll([
+        // Add extra planks onto existential deposit to avoid weird 'InsufficientBalance' error
+        // TODO: Look into how to compute a more sensible amount to add on.
         // @ts-ignore
-        api.tx.balances.transferKeepAlive(proxyAddress, existentialDeposit),
+        api.tx.balances.transfer(proxyAddress, existentialDeposit.add(new BN(1_000_000_000))),
         proxyCall,
       ])
 

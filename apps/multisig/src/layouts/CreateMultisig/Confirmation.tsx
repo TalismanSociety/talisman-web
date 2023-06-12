@@ -3,41 +3,55 @@ import { Chain, Token } from '@domains/chains'
 import { InjectedAccount } from '@domains/extension'
 import { AugmentedAccount } from '@domains/multisig'
 import { css } from '@emotion/css'
+import { Balance } from '@polkadot/types/interfaces'
 import { Info } from '@talismn/icons'
 import { Button, IconButton, Identicon, Select } from '@talismn/ui'
 import { Skeleton } from '@talismn/ui'
 import { device } from '@util/breakpoints'
-import { formatUsd } from '@util/numbers'
+import { Decimal, formatUsd } from '@util/numbers'
+import BN from 'bn.js'
 import { Loadable } from 'recoil'
 
-const Cost = (props: { amount: number; symbol: string; price: number }) => (
-  <p>
-    {props.amount} {props.symbol} ({formatUsd(props.amount * props.price)})
-  </p>
-)
+const Cost = (props: { amount: Decimal; symbol: string; price: number }) => {
+  return (
+    <p>
+      {props.amount.toString()} {props.symbol} ({formatUsd(props.amount.toNumber() * props.price)})
+    </p>
+  )
+}
 
 const Confirmation = (props: {
   onBack: () => void
   onCreateVault: () => void
-  selectedSigner: InjectedAccount
+  selectedSigner: InjectedAccount | undefined
   setSelectedSigner: (signer: InjectedAccount) => void
   augmentedAccounts: AugmentedAccount[]
   threshold: number
   name: string
   chain: Chain
   tokenWithPrice: Loadable<{ token: Token; price: number }>
-  reserveAmount: number
-  fee: number
+  reserveAmount: Loadable<BN>
+  existentialDeposit: Loadable<Balance>
+  estimatedFee: Balance | undefined
   extrinsicsReady: boolean
 }) => {
-  const { tokenWithPrice, reserveAmount, fee, chain } = props
-  const externalAccounts = props.augmentedAccounts.filter(a => a.you)
-  if (externalAccounts.length === 0) throw Error('Please connect an address')
+  const { tokenWithPrice, reserveAmount, estimatedFee, chain, existentialDeposit } = props
+
+  const existentialDepositComponent =
+    tokenWithPrice.state === 'hasValue' && existentialDeposit.state === 'hasValue' ? (
+      <Cost
+        amount={Decimal.fromPlanck(existentialDeposit.contents.toString(), tokenWithPrice.contents.token.decimals)}
+        symbol={tokenWithPrice.contents.token.symbol}
+        price={tokenWithPrice.contents.price}
+      />
+    ) : (
+      <Skeleton.Surface css={{ height: '14px', minWidth: '125px' }} />
+    )
 
   const reserveAmountComponent =
-    tokenWithPrice.state === 'hasValue' ? (
+    tokenWithPrice.state === 'hasValue' && reserveAmount.state === 'hasValue' ? (
       <Cost
-        amount={reserveAmount}
+        amount={Decimal.fromPlanck(reserveAmount.contents.toString(), tokenWithPrice.contents.token.decimals)}
         symbol={tokenWithPrice.contents.token.symbol}
         price={tokenWithPrice.contents.price}
       />
@@ -46,8 +60,12 @@ const Confirmation = (props: {
     )
 
   const feeAmountComponent =
-    tokenWithPrice.state === 'hasValue' ? (
-      <Cost amount={fee} symbol={tokenWithPrice.contents.token.symbol} price={tokenWithPrice.contents.price} />
+    tokenWithPrice.state === 'hasValue' && estimatedFee ? (
+      <Cost
+        amount={Decimal.fromPlanck(estimatedFee, tokenWithPrice.contents.token.decimals)}
+        symbol={tokenWithPrice.contents.token.symbol}
+        price={tokenWithPrice.contents.price}
+      />
     ) : (
       <Skeleton.Surface css={{ height: '14px', minWidth: '125px' }} />
     )
@@ -182,7 +200,7 @@ const Confirmation = (props: {
           </h2>
           <Select
             placeholder="Select account"
-            value={props.selectedSigner.address}
+            value={props?.selectedSigner?.address}
             onChange={value =>
               props.setSelectedSigner(props.augmentedAccounts.find(a => a.address === value) as AugmentedAccount)
             }
@@ -231,6 +249,8 @@ const Confirmation = (props: {
         {reserveAmountComponent}
         <p>Estimated Transaction Fee</p>
         {feeAmountComponent}
+        <p>Existential Deposit</p>
+        {existentialDepositComponent}
       </div>
       <div
         className={css`

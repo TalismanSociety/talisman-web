@@ -57,7 +57,7 @@ export const tokenByIdWithPrice = selectorFamily({
     id =>
     async ({ get }) => {
       const token = get(tokenByIdQuery(id))
-      const price = await get(tokenPriceState({ coingeckoId: token.coingeckoId }))
+      const price = get(tokenPriceState({ coingeckoId: token.coingeckoId }))
       return { token, price }
     },
 })

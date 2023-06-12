@@ -1,6 +1,13 @@
 import Logo from '@components/Logo'
-import { Chain, supportedChains, tokenByIdWithPrice } from '@domains/chains'
+import {
+  Chain,
+  existentialDepositSelector,
+  proxyDepositTotalSelector,
+  supportedChains,
+  tokenByIdWithPrice,
+} from '@domains/chains'
 import { useCreateProxy, useTransferProxyToMultisig } from '@domains/chains/extrinsics'
+import { useProxiesProxies } from '@domains/chains/storage-getters'
 import { InjectedAccount, accountsState } from '@domains/extension'
 import { AugmentedAccount, activeMultisigsState } from '@domains/multisig'
 import { css } from '@emotion/css'
@@ -45,7 +52,7 @@ function calcContentHeight(step: Step, nAccounts: number): { md: string; lg: str
   if (step === Step.Transactions) return { md: '420px', lg: '420px' }
   if (step === Step.VaultCreated) return { md: '485px', lg: '485px' }
   if (step === Step.AddMembers) return { md: 521 + nAccounts * 40 + 'px', lg: 521 + nAccounts * 40 + 'px' }
-  return { md: 741 + nAccounts * 40 + 'px', lg: 721 + nAccounts * 40 + 'px' }
+  return { md: 747 + nAccounts * 40 + 'px', lg: 727 + nAccounts * 40 + 'px' }
 }
 
 const CreateMultisig = () => {
@@ -58,16 +65,15 @@ const CreateMultisig = () => {
   const [chain, setChain] = useState<Chain>(firstChain)
   const [externalAccounts, setExternalAccounts] = useState<string[]>([])
   const [extensionAccounts] = useRecoilState(accountsState)
-  const [selectedSigner, setSelectedSigner] = useState<InjectedAccount>(extensionAccounts[0] as InjectedAccount)
-  const { createProxy, ready: createProxyIsReady } = useCreateProxy(chain)
+  const [selectedSigner, setSelectedSigner] = useState<InjectedAccount | undefined>(extensionAccounts[0])
+  const { createProxy, ready: createProxyIsReady, estimatedFee } = useCreateProxy(chain, selectedSigner?.address)
   const { transferProxyToMultisig, ready: transferProxyToMultisigIsReady } = useTransferProxyToMultisig(chain)
   const [threshold, setThreshold] = useState<number>(2)
   const tokenWithPrice = useRecoilValueLoadable(tokenByIdWithPrice(chain.nativeToken.id))
   const [proxyAddress, setProxyAddress] = useState<string | undefined>()
-  // TODO: replace this with a query once lib is avail
-  const reserveAmount = '20041000000000'
-  const reserveAmountNumber = 20.041
-  const fee = 0.0125628761
+  const existentialDepositLoadable = useRecoilValueLoadable(existentialDepositSelector(chain.rpc))
+  const proxyDepositTotalLoadable = useRecoilValueLoadable(proxyDepositTotalSelector(chain.rpc))
+  const { proxyProxies } = useProxiesProxies(chain)
 
   const navigate = useNavigate()
   const [step, setStep] = useState<Step>(Step.NoVault)
@@ -117,21 +123,39 @@ const CreateMultisig = () => {
   useEffect(() => {
     if (step === Step.Transactions && createTransctionStatus === CreateTransactionsStatus.NotStarted) {
       createProxy(
-        selectedSigner.address,
+        selectedSigner?.address,
         proxyAddress => {
           setProxyAddress(proxyAddress)
           setCreateTransactionsStatus(CreateTransactionsStatus.TransferringProxy)
           // Address as a byte array.
           const multiAddressBytes = createKeyMulti(sortAddresses(augmentedAccounts.map(a => a.address)), threshold)
           // Convert byte array to SS58 encoding.
-          const multiAddress = encodeAddress(multiAddressBytes, 0)
-          console.log({ multiAddress })
+          const multiAddress = encodeAddress(multiAddressBytes)
           transferProxyToMultisig(
-            selectedSigner.address,
+            selectedSigner?.address,
             proxyAddress,
             multiAddress,
-            reserveAmount,
-            success => {
+            existentialDepositLoadable.contents,
+            async _success => {
+              const res = await proxyProxies(proxyAddress)
+              if (
+                res.length !== 2 ||
+                res[0]?.length !== 1 ||
+                res[0][0]?.delegate === undefined ||
+                encodeAddress(res[0][0].delegate) !== multiAddress
+              ) {
+                console.error(
+                  'There was an issue configuring your proxy. Please submit a bug report with your signer address and any relevant transaction hashes.'
+                )
+                console.error(res)
+                toast.error(
+                  'There was an issue configuring your proxy. Please submit a bug report with your signer address and any relevant transaction hashes.'
+                )
+                setStep(Step.Confirmation)
+                return
+              }
+
+              // Woohoo!
               setStep(Step.VaultCreated)
             },
             e => {
@@ -152,6 +176,7 @@ const CreateMultisig = () => {
       setCreateTransactionsStatus(CreateTransactionsStatus.CreatingProxy)
     }
   }, [
+    existentialDepositLoadable.contents,
     createTransctionStatus,
     step,
     selectedSigner?.address,
@@ -160,6 +185,7 @@ const CreateMultisig = () => {
     threshold,
     createProxy,
     transferProxyToMultisig,
+    proxyProxies,
   ])
 
   // TODO: if wallet has vaults already skip the no_vault and display an 'x'
@@ -243,10 +269,11 @@ const CreateMultisig = () => {
             threshold={threshold}
             name={name}
             chain={chain}
-            reserveAmount={reserveAmountNumber}
-            fee={fee}
+            reserveAmount={proxyDepositTotalLoadable}
+            estimatedFee={estimatedFee}
             tokenWithPrice={tokenWithPrice}
             extrinsicsReady={transferProxyToMultisigIsReady && createProxyIsReady}
+            existentialDeposit={existentialDepositLoadable}
           />
         ) : step === Step.Transactions ? (
           <SignTransactions status={createTransctionStatus} />
