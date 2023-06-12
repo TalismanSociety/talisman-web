@@ -1,8 +1,9 @@
 import { useTheme } from '@emotion/react'
 import { IconContext } from '@talismn/icons/utils'
-import { type ElementType, type ReactNode, useMemo, type PropsWithChildren } from 'react'
+import { useMemo, type ElementType, type PropsWithChildren, type ReactNode } from 'react'
 
 import CircularProgressIndicator from '../CircularProgressIndicator'
+import { Text, useSurfaceColor } from '..'
 
 type ButtonElementType = Extract<React.ElementType, 'button' | 'a'> | ElementType<any>
 
@@ -10,8 +11,14 @@ type PolymorphicButtonProps<T extends ButtonElementType = 'button'> = PropsWithC
   as?: T
   variant?:
     | 'outlined'
+    | 'surface'
+    /**
+     * @deprecated use "surface" variant instead
+     */
     | 'secondary'
-    // Deprecated
+    /**
+     * @deprecated use `Clickable` instead
+     */
     | 'noop'
   leadingIcon?: ReactNode
   trailingIcon?: ReactNode
@@ -36,8 +43,18 @@ const Button = <T extends ButtonElementType = 'button'>({
 
   const disabled = Boolean(props.disabled) || Boolean(hidden) || Boolean(loading)
 
+  const surfaceColor = useSurfaceColor()
+
   const variantStyle = useMemo(() => {
     switch (variant) {
+      case 'surface':
+        return {
+          'backgroundColor': surfaceColor,
+          'color': theme.color.onSurface,
+          ':hover': {
+            opacity: 0.6,
+          },
+        }
       case 'outlined':
         return {
           'backgroundColor': 'transparent',
@@ -74,11 +91,19 @@ const Button = <T extends ButtonElementType = 'button'>({
           'backgroundColor': theme.color.primary,
           'color': theme.color.onPrimary,
           ':hover': {
-            opacity: 0.8,
+            opacity: 0.6,
           },
         }
     }
-  }, [theme.color.background, theme.color.onBackground, theme.color.onPrimary, theme.color.primary, variant])
+  }, [
+    surfaceColor,
+    theme.color.background,
+    theme.color.onBackground,
+    theme.color.onPrimary,
+    theme.color.onSurface,
+    theme.color.primary,
+    variant,
+  ])
 
   const variantDisabledStyle = useMemo(() => {
     switch (variant) {
@@ -118,7 +143,11 @@ const Button = <T extends ButtonElementType = 'button'>({
         hidden && { cursor: 'default', pointerEvent: 'none', opacity: 0 },
       ]}
     >
-      <div css={{ position: 'relative', display: 'flex' }}>
+      <Text.Body
+        color={props.disabled ? variantDisabledStyle.color : variantStyle.color}
+        alpha="high"
+        css={{ position: 'relative', display: 'flex' }}
+      >
         {hasLeadingIcon && (
           <span
             css={{ position: 'absolute', top: 0, bottom: 0, left: '-1.6rem', display: 'flex', alignItems: 'center' }}
@@ -157,7 +186,7 @@ const Button = <T extends ButtonElementType = 'button'>({
             </span>
           )}
         </IconContext.Provider>
-      </div>
+      </Text.Body>
     </Component>
   )
 }

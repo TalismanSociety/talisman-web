@@ -1,6 +1,5 @@
-import { type ComponentMeta, type Story } from '@storybook/react'
-
-import Details, { type DetailsProps } from './Details'
+import { type Meta, type StoryObj } from '@storybook/react'
+import Details, { OrderedDetailsList } from './Details'
 
 export default {
   title: 'Molecules/Details',
@@ -8,20 +7,57 @@ export default {
   parameters: {
     layout: 'centered',
   },
-} as ComponentMeta<typeof Details>
+} satisfies Meta<typeof Details>
 
-export const Default: Story<DetailsProps> = args => <Details {...args} />
+type Story = StoryObj<typeof Details>
 
-Default.args = {
-  summary: 'What is nomination pool staking?',
-  content:
-    'Unlike nominating staking using pools requires a smaller amount of DOT, and the pool manages nominees on your behalf.',
+export const Default: Story = {
+  args: {
+    children: (
+      <>
+        <Details.Summary>What is nomination pool staking?</Details.Summary>
+        <Details.Content>
+          Unlike nominating staking using pools requires a smaller amount of DOT, and the pool manages nominees on your
+          behalf.
+        </Details.Content>
+      </>
+    ),
+  },
 }
 
-export const WithMaxWidth: Story<DetailsProps> = args => <Details {...args} css={{ maxWidth: '400px' }} />
+export const OrderedList: Story = {
+  render: args => (
+    <OrderedDetailsList>
+      <Details {...args} />
+      <Details {...args} />
+      <Details {...args} />
+      <Details {...args} />
+    </OrderedDetailsList>
+  ),
+  args: {
+    children: (
+      <>
+        <Details.Summary>What is nomination pool staking?</Details.Summary>
+        <Details.Content>
+          Unlike nominating staking using pools requires a smaller amount of DOT, and the pool manages nominees on your
+          behalf.
+        </Details.Content>
+      </>
+    ),
+  },
+}
 
-WithMaxWidth.args = {
-  summary: 'What is nomination pool staking?',
-  content:
-    'Unlike nominating staking using pools requires a smaller amount of DOT, and the pool manages nominees on your behalf.',
+export const WithMaxWidth: Story = {
+  render: args => <Details {...args} css={{ maxWidth: '400px' }} />,
+  args: {
+    children: (
+      <>
+        <Details.Summary>What is nomination pool staking?</Details.Summary>
+        <Details.Content>
+          Unlike nominating staking using pools requires a smaller amount of DOT, and the pool manages nominees on your
+          behalf.
+        </Details.Content>
+      </>
+    ),
+  },
 }

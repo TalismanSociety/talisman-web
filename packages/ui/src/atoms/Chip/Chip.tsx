@@ -40,16 +40,16 @@ const Chip = ({ size = 'md', containerColor, contentColor, leadingContent, loadi
       disabled={functionallyDisabled}
       css={[
         {
-          'display': 'flex',
-          'alignItems': 'center',
-          'gap': '0.25em',
-          'border': 'none',
-          'borderRadius': '1em',
-          'padding': '0.2rem 0.8rem',
-          'backgroundColor': containerColor,
-          'cursor': 'pointer',
-          ':hover': { opacity: 0.9 },
+          lineHeight: '1em',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '0.25em',
+          border: 'none',
+          borderRadius: '2em',
+          padding: '0.2rem 0.8rem',
+          backgroundColor: containerColor,
         },
+        props.onClick && { 'cursor': 'pointer', ':hover': { opacity: 0.9 } },
         loading && { cursor: 'progress' },
       ]}
     >

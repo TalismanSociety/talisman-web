@@ -7,7 +7,6 @@ import { ModalProvider } from '@components'
 import AccountValueInfo from '@components/recipes/AccountValueInfo'
 import { useShouldShowAccountConnectionGuard } from '@components/widgets/AccountConnectionGuard'
 import AccountsManagementMenu from '@components/widgets/AccountsManagementMenu'
-import TransportDialog from '@components/widgets/TransportDialog'
 import StakeDialog from '@components/widgets/staking/StakeDialog'
 import { selectedAccountsState } from '@domains/accounts/recoils'
 import * as MoonbeamContributors from '@libs/moonbeam-contributors'
@@ -116,8 +115,8 @@ const Layout = () => {
           <Link to="/portfolio?action=stake">
             <NavigationBar.Item label="Staking" icon={<Zap />} />
           </Link>
-          <Link to="/portfolio?action=transport">
-            <NavigationBar.Item label="Transport" icon={<RefreshCcw />} />
+          <Link to="/dex">
+            <NavigationBar.Item label="DEX" icon={<RefreshCcw />} />
           </Link>
           <Link to="/explore">
             <NavigationBar.Item label="Explore" icon={<Compass />} />
@@ -141,8 +140,8 @@ const Layout = () => {
           <Link to="/portfolio?action=stake">
             <NavigationRail.Item label="Staking" icon={<Zap />} />
           </Link>
-          <Link to="/portfolio?action=transport">
-            <NavigationRail.Item label="Transport" icon={<RefreshCcw />} />
+          <Link to="/dex">
+            <NavigationRail.Item label="DEX" icon={<RefreshCcw />} />
           </Link>
           <Link to="/explore">
             <NavigationRail.Item label="Explore" icon={<Compass />} />
@@ -203,8 +202,8 @@ const Layout = () => {
           <Link to="/portfolio?action=stake">
             <NavigationDrawer.Item label="Staking" icon={<Zap />} />
           </Link>
-          <Link to="/portfolio?action=transport">
-            <NavigationDrawer.Item label="Transport" icon={<RefreshCcw />} />
+          <Link to="/dex">
+            <NavigationDrawer.Item label="DEX" icon={<RefreshCcw />} />
           </Link>
           <Link to="/crowdloans">
             <NavigationDrawer.Item label="Crowdloans" icon={<Star />} />
@@ -262,7 +261,6 @@ const Layout = () => {
           <Header />
           <Outlet />
           <StakeDialog />
-          <TransportDialog />
         </MoonbeamContributors.PopupProvider>
       </ModalProvider>
     </Scaffold>

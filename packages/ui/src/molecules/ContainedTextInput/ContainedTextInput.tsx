@@ -1,40 +1,54 @@
-import { useTheme } from '@emotion/react'
-import { useId, type ButtonHTMLAttributes, type DetailedHTMLProps, type PropsWithChildren, type ReactNode } from 'react'
-import { Text, Surface } from '../../atoms'
+import { useId, type PropsWithChildren, type ReactNode } from 'react'
+import { Surface, Text } from '../../atoms'
 
-export type TextInputProps = React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement> & {
+export type ContainedTextInputProps = React.DetailedHTMLProps<
+  React.InputHTMLAttributes<HTMLInputElement>,
+  HTMLInputElement
+> & {
   type?: 'text' | 'number'
   leadingLabel?: ReactNode
   trailingLabel?: ReactNode
+  leadingIcon?: ReactNode
   trailingIcon?: ReactNode
+  /**
+   * Ensure placeholder space
+   */
+  hasSupportingText?: boolean
   trailingSupportingText?: ReactNode
   leadingSupportingText?: ReactNode
-  /** @deprecated */
-  isError?: boolean
 }
 
-const TextInput = Object.assign(
+const ContainedTextInput = Object.assign(
   ({
     leadingLabel,
     trailingLabel,
+    leadingIcon,
     trailingIcon,
+    hasSupportingText,
     trailingSupportingText,
     leadingSupportingText,
-    isError,
+    width,
     ...props
-  }: TextInputProps) => {
-    const theme = useTheme()
+  }: ContainedTextInputProps) => {
     const inputId = useId()
 
     return (
-      <div>
+      <Surface
+        css={{
+          padding: '1.5rem',
+          borderRadius: '1.25rem',
+          width,
+        }}
+      >
         {(leadingLabel || trailingLabel) && (
           <div
             css={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              marginBottom: '0.8rem',
+              'display': 'flex',
+              'justifyContent': 'space-between',
+              'alignItems': 'center',
+              '> *:empty::after': {
+                content: `"\u200B"`,
+              },
             }}
           >
             <Text.BodySmall as="label" htmlFor={inputId}>
@@ -45,23 +59,27 @@ const TextInput = Object.assign(
             </Text.BodySmall>
           </div>
         )}
-        <Surface
+        <div
           css={{
             display: 'flex',
             alignItems: 'center',
-            padding: '1.5rem',
-            borderRadius: '1.25rem',
+            margin: '1.6rem 0',
           }}
         >
-          <Text.Body
+          {leadingIcon}
+          <Text.BodyLarge
             {...props}
             as="input"
             id={inputId}
+            alpha="high"
             css={{
               'flex': 1,
-              'width': props.width ?? '20rem',
-              'background': 'transparent',
+              // If container width is defined set width to 0 to expand with flex
+              'width': width !== undefined ? 0 : '20rem',
               'border': 'none',
+              'background': 'transparent',
+              'fontSize': '3.2rem',
+              'textAlign': 'end',
               '&[type=number]': {
                 '::-webkit-outer-spin-button': { display: 'none' },
                 '::-webkit-inner-spin-button': { display: 'none' },
@@ -70,14 +88,13 @@ const TextInput = Object.assign(
             }}
           />
           {trailingIcon}
-        </Surface>
-        {(leadingSupportingText || trailingSupportingText) && (
+        </div>
+        {(hasSupportingText || leadingSupportingText || trailingSupportingText) && (
           <div
             css={{
               'display': 'flex',
               'justifyContent': 'space-between',
               'alignItems': 'center',
-              'marginTop': '0.8rem',
               '> *:empty::after': {
                 content: `"\u200B"`,
               },
@@ -86,37 +103,17 @@ const TextInput = Object.assign(
             <Text.BodySmall as="label" htmlFor={inputId}>
               {leadingSupportingText}
             </Text.BodySmall>
-            <Text.BodySmall as="label" htmlFor={inputId} css={isError && { color: theme.color.onErrorContainer }}>
+            <Text.BodySmall as="label" htmlFor={inputId}>
               {trailingSupportingText}
             </Text.BodySmall>
           </div>
         )}
-      </div>
+      </Surface>
     )
   },
   {
-    ErrorLabel: (props: PropsWithChildren) => (
-      <Text.BodySmall color={theme => theme.color.onErrorContainer} {...props} />
-    ),
-    LabelButton: (props: DetailedHTMLProps<ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement>) => {
-      const theme = useTheme()
-      return (
-        <button
-          {...props}
-          css={{
-            'padding': '0.5rem',
-            'border': 'none',
-            'borderRadius': '1rem',
-            'background': theme.color.foregroundVariant,
-            'cursor': 'pointer',
-            ':hover': {
-              filter: 'brightness(1.4)',
-            },
-          }}
-        />
-      )
-    },
+    ErrorLabel: (props: PropsWithChildren) => <Text.BodySmall color={theme => theme.color.onError} {...props} />,
   }
 )
 
-export default TextInput
+export default ContainedTextInput

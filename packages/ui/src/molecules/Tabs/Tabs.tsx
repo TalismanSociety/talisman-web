@@ -1,7 +1,9 @@
 import { useTheme } from '@emotion/react'
 import { motion } from 'framer-motion'
-import { type ElementType, type PropsWithChildren, type ReactElement } from 'react'
+import { createContext, useContext, type ElementType, type PropsWithChildren } from 'react'
 import { Text } from '../..'
+
+const TabsContext = createContext({ noBottomBorder: false })
 
 type TabElementType = React.ElementType | ElementType<any>
 
@@ -16,6 +18,7 @@ export type TabProps<T extends TabElementType = 'button'> = PolymorphicTabProps<
 const Tab = <T extends TabElementType = 'li'>({ as = 'li' as T, ...props }: TabProps<T>) => {
   const theme = useTheme()
   const Element = as
+  const { noBottomBorder } = useContext(TabsContext)
 
   return (
     <Element
@@ -33,7 +36,7 @@ const Tab = <T extends TabElementType = 'li'>({ as = 'li' as T, ...props }: TabP
       >
         {props.children}
       </Text.BodyLarge>
-      {props.selected && (
+      {!noBottomBorder && props.selected && (
         <motion.div
           layoutId="foo"
           css={{ position: 'absolute', right: 0, bottom: -1, left: 0, height: 1, backgroundColor: theme.color.primary }}
@@ -43,13 +46,13 @@ const Tab = <T extends TabElementType = 'li'>({ as = 'li' as T, ...props }: TabP
   )
 }
 
-export type TabsProps = {
+export type TabsProps = PropsWithChildren<{
   className?: string
-  children?: ReactElement | ReactElement[]
-}
+  noBottomBorder?: boolean
+}>
 
 const Tabs = Object.assign(
-  (props: TabsProps) => {
+  ({ noBottomBorder, ...props }: TabsProps) => {
     const theme = useTheme()
     return (
       <ul
@@ -58,11 +61,15 @@ const Tabs = Object.assign(
           display: 'flex',
           gap: '2.4rem',
           margin: 0,
-          borderBottom: `1px solid ${theme.color.border}`,
+          borderBottom: noBottomBorder ? undefined : `1px solid ${theme.color.border}`,
           padding: 0,
           listStyle: 'none',
         }}
-      />
+      >
+        <TabsContext.Provider value={{ noBottomBorder: noBottomBorder === true }}>
+          {props.children}
+        </TabsContext.Provider>
+      </ul>
     )
   },
   { Item: Tab }

@@ -5,12 +5,12 @@ import { ALERT_DIALOG_PADDING, AlertDialog, type AlertDialogProps, Hr, Text, Tex
 import Cryptoticon from '../Cryptoticon'
 
 export type TokenSelectorItemProps = {
-  logoSrc: string
+  logoSrc?: string
   name: string
   networkLogoSrc?: string
   network?: string
-  amount: string
-  fiatAmount: string
+  amount?: string
+  fiatAmount?: string
   disabled?: boolean
   onClick: () => unknown
 }

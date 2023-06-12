@@ -1,8 +1,8 @@
 import { type ApiPromise } from '@polkadot/api'
-import { type AddressOrPair } from '@polkadot/api/types'
+import { type AddressOrPair, type SubmittableExtrinsic } from '@polkadot/api/types'
 import { web3FromAddress } from '@polkadot/extension-dapp'
 import { type ISubmittableResult } from '@polkadot/types/types'
-import { useCallback, useContext, useState } from 'react'
+import { useContext, useState } from 'react'
 import { useRecoilCallback } from 'recoil'
 
 import { ChainContext } from '@domains/chains'
@@ -10,17 +10,41 @@ import { substrateApiState, useSubstrateApiEndpoint } from '..'
 import { extrinsicMiddleware } from '../extrinsicMiddleware'
 import { toastExtrinsic } from '../utils'
 
-export const useExtrinsic = <
+type ExtrinsicLoadable = (
+  | { state: 'idle'; contents: undefined }
+  | { state: 'loading'; contents: ISubmittableResult | undefined }
+  | { state: 'hasValue'; contents: ISubmittableResult }
+  | { state: 'hasError'; contents: any }
+) & {
+  signAndSend: (account: AddressOrPair) => Promise<ISubmittableResult>
+}
+
+export function useExtrinsic<T extends SubmittableExtrinsic<'promise', ISubmittableResult> | undefined>(
+  submittable: T
+): T extends undefined ? ExtrinsicLoadable | undefined : ExtrinsicLoadable
+export function useExtrinsic<
   TModule extends keyof PickKnownKeys<ApiPromise['tx']>,
   TSection extends keyof PickKnownKeys<ApiPromise['tx'][TModule]>
 >(
   module: TModule,
   section: TSection
-) => {
-  type TExtrinsic = ApiPromise['tx'][TModule][TSection]
-
+): ExtrinsicLoadable & {
+  signAndSend: (
+    account: AddressOrPair,
+    ...params: Parameters<ApiPromise['tx'][TModule][TSection]>
+  ) => Promise<ISubmittableResult>
+}
+export function useExtrinsic<
+  TModule extends keyof PickKnownKeys<ApiPromise['tx']>,
+  TSection extends keyof PickKnownKeys<ApiPromise['tx'][TModule]>
+>(module: TModule, section: TSection, ...params: Parameters<ApiPromise['tx'][TModule][TSection]>): ExtrinsicLoadable
+export function useExtrinsic(
+  moduleOrSubmittable: string | SubmittableExtrinsic<'promise', ISubmittableResult> | undefined,
+  section?: string,
+  ...params: unknown[]
+): ExtrinsicLoadable | undefined {
   const chain = useContext(ChainContext)
-  const apiEndpoint = useSubstrateApiEndpoint()
+  const endpoint = useSubstrateApiEndpoint()
 
   const [loadable, setLoadable] = useState<
     | { state: 'idle'; contents: undefined }
@@ -29,23 +53,29 @@ export const useExtrinsic = <
     | { state: 'hasError'; contents: any }
   >({ state: 'idle', contents: undefined })
 
-  const [parameters, setParameters] = useState<[AddressOrPair, ...Parameters<TExtrinsic>]>()
-
-  const reset = useCallback(() => setLoadable({ state: 'idle', contents: undefined }), [])
-
   const signAndSend = useRecoilCallback(
     callbackInterface =>
-      async (account: AddressOrPair, ...params: Parameters<TExtrinsic>) => {
-        const { snapshot } = callbackInterface
+      async (account: AddressOrPair, ...innerParams: unknown[]) => {
+        const submittable = await (async () => {
+          if (typeof moduleOrSubmittable === 'string') {
+            const api = await callbackInterface.snapshot.getPromise(substrateApiState(endpoint))
+            const submittable = api.tx[moduleOrSubmittable]?.[section ?? '']?.(
+              ...(innerParams.length > 0 ? innerParams : params)
+            )
 
-        setParameters([account, ...params])
+            if (submittable === undefined) {
+              throw new Error(`Unable to construct extrinsic ${moduleOrSubmittable}:${section ?? ''}`)
+            }
+
+            return submittable
+          } else {
+            return moduleOrSubmittable
+          }
+        })()
 
         const promiseFunc = async () => {
-          const [api, extension] = await Promise.all([
-            snapshot.getPromise(substrateApiState(apiEndpoint)),
-            // eslint-disable-next-line @typescript-eslint/no-base-to-string
-            web3FromAddress(account.toString()),
-          ])
+          // eslint-disable-next-line @typescript-eslint/no-base-to-string
+          const web3 = await web3FromAddress(account.toString())
 
           let resolve = (_value: ISubmittableResult) => {}
           let reject = (_value: unknown) => {}
@@ -56,9 +86,8 @@ export const useExtrinsic = <
           })
 
           try {
-            const extrinsic = api.tx[module]?.[section]?.(...params)
-            const unsubscribe = await extrinsic?.signAndSend(account, { signer: extension?.signer }, result => {
-              extrinsicMiddleware(chain.id, extrinsic, result, callbackInterface)
+            const unsubscribe = await submittable?.signAndSend(account, { signer: web3?.signer }, result => {
+              extrinsicMiddleware(chain.id, submittable, result, callbackInterface)
 
               if (result.isError) {
                 unsubscribe?.()
@@ -89,7 +118,9 @@ export const useExtrinsic = <
           contents: loadable.state === 'loading' ? loadable.contents : undefined,
         }))
 
-        toastExtrinsic([[module, String(section)]], promise, chain.subscanUrl)
+        if (submittable !== undefined) {
+          toastExtrinsic([[submittable.method.section, submittable.method.method]], promise, chain.subscanUrl)
+        }
 
         try {
           const result = await promise
@@ -97,13 +128,17 @@ export const useExtrinsic = <
           return result
         } catch (error) {
           setLoadable({ state: 'hasError', contents: error })
-          return undefined
+          throw error
         }
       },
-    [apiEndpoint, chain, module, section]
+    [chain.id, chain.subscanUrl, endpoint, moduleOrSubmittable, params, section]
   )
 
-  return { ...loadable, parameters, signAndSend, reset }
+  if (moduleOrSubmittable === undefined) {
+    return undefined
+  }
+
+  return { ...loadable, signAndSend }
 }
 
 export default useExtrinsic

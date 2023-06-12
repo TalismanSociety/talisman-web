@@ -10,7 +10,7 @@ export type DialogProps = Omit<
 }
 
 export const Dialog = React.forwardRef<HTMLDialogElement, DialogProps>(function Dialog(
-  { open, isModal = true, onClickBackdrop, ...props },
+  { open = true, isModal = true, onClickBackdrop, ...props },
   ref
 ) {
   const innerRef = useRef<HTMLDialogElement>()

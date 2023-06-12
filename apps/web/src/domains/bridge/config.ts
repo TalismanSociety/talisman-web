@@ -23,51 +23,149 @@ import { QuartzAdapter, UniqueAdapter } from '@polkawallet/bridge/adapters/uniqu
 import { type BaseCrossChainAdapter } from '@polkawallet/bridge/base-chain-adapter'
 
 export const bridgeConfig = {
-  polkadot: { adapter: new PolkadotAdapter(), rpc: chains[0].rpc, subscanUrl: 'https://polkadot.subscan.io/' },
-  kusama: { adapter: new KusamaAdapter(), rpc: chains[1].rpc, subscanUrl: 'https://kusama.subscan.io/' },
-  acala: { adapter: new AcalaAdapter(), subscanUrl: 'https://acala.subscan.io/' },
-  karura: { adapter: new KaruraAdapter(), subscanUrl: 'https://karura.subscan.io/' },
-  altair: { adapter: new AltairAdapter(), subscanUrl: 'https://altair.subscan.io/' },
-  astar: { adapter: new AstarAdapter(), subscanUrl: 'https://astar.subscan.io/' },
-  basilisk: { adapter: new BasiliskAdapter(), subscanUrl: 'https://basilisk.subscan.io/' },
-  bifrost: { adapter: new BifrostAdapter(), subscanUrl: 'https://bifrost.subscan.io/' },
+  polkadot: {
+    adapter: new PolkadotAdapter(),
+    rpc: chains[0].rpc,
+    subscanUrl: 'https://polkadot.subscan.io/',
+  },
+  kusama: {
+    adapter: new KusamaAdapter(),
+    rpc: chains[1].rpc,
+    subscanUrl: 'https://kusama.subscan.io/',
+  },
+  acala: {
+    adapter: new AcalaAdapter(),
+    rpc: 'wss://acala-rpc.dwellir.com',
+    subscanUrl: 'https://acala.subscan.io/',
+  },
+  karura: {
+    adapter: new KaruraAdapter(),
+    rpc: 'wss://karura-rpc.dwellir.com',
+    subscanUrl: 'https://karura.subscan.io/',
+  },
+  altair: {
+    adapter: new AltairAdapter(),
+    rpc: 'wss://fullnode.altair.centrifuge.io',
+    subscanUrl: 'https://altair.subscan.io/',
+  },
+  astar: {
+    adapter: new AstarAdapter(),
+    rpc: 'wss://rpc.astar.network',
+    subscanUrl: 'https://astar.subscan.io/',
+  },
+  basilisk: {
+    adapter: new BasiliskAdapter(),
+    rpc: 'wss://rpc-01.basilisk.hydradx.io',
+    subscanUrl: 'https://basilisk.subscan.io/',
+  },
+  bifrost: {
+    adapter: new BifrostAdapter(),
+    rpc: 'wss://bifrost-parachain.api.onfinality.io/public-ws',
+    subscanUrl: 'https://bifrost.subscan.io/',
+  },
   calamari: {
     adapter: new CalamariAdapter(),
     rpc: 'wss://calamari.systems',
     subscanUrl: 'https://calamari.subscan.io/',
   },
-  crab: { adapter: new CrabAdapter(), subscanUrl: 'https://crab.subscan.io/' },
-  heiko: { adapter: new HeikoAdapter(), subscanUrl: 'https://parallel-heiko.subscan.io/' },
-  hydradx: { adapter: new HydraAdapter(), subscanUrl: 'https://hydradx.subscan.io/' },
-  integritee: { adapter: new IntegriteeAdapter(), subscanUrl: 'https://integritee.subscan.io/' },
-  interlay: { adapter: new InterlayAdapter(), subscanUrl: 'https://interlay.subscan.io/' },
-  khala: { adapter: new KhalaAdapter(), subscanUrl: 'https://khala.subscan.io/' },
-  kintsugi: { adapter: new KintsugiAdapter(), subscanUrl: 'https://kintsugi.subscan.io/' },
-  kico: { adapter: new KicoAdapter() },
-  listen: { adapter: new ListenAdapter() },
-  moonbeam: { adapter: new MoonbeamAdapter(), subscanUrl: 'https://moonbeam.subscan.io/' },
-  moonriver: { adapter: new MoonriverAdapter(), subscanUrl: 'https://moonriver.subscan.io/' },
-  parallel: { adapter: new ParallelAdapter(), subscanUrl: 'https://parallel.subscan.io/' },
-  pichiu: { adapter: new PichiuAdapter() },
-  quartz: { adapter: new QuartzAdapter(), subscanUrl: 'https://quartz.subscan.io/' },
-  shadow: { adapter: new ShadowAdapter(), subscanUrl: 'https://shadow.subscan.io/' },
-  shiden: { adapter: new ShidenAdapter(), subscanUrl: 'https://shiden.subscan.io/' },
-  statemine: { adapter: new StatemineAdapter(), subscanUrl: 'https://statemine.subscan.io/' },
+  crab: {
+    adapter: new CrabAdapter(),
+    rpc: 'wss://crab-rpc.darwinia.network',
+    subscanUrl: 'https://crab.subscan.io/',
+  },
+  heiko: {
+    adapter: new HeikoAdapter(),
+    rpc: 'wss://heiko-rpc.parallel.fi',
+    subscanUrl: 'https://parallel-heiko.subscan.io/',
+  },
+  hydradx: {
+    adapter: new HydraAdapter(),
+    rpc: 'wss://rpc.hydradx.cloud',
+    subscanUrl: 'https://hydradx.subscan.io/',
+  },
+  integritee: {
+    adapter: new IntegriteeAdapter(),
+    rpc: 'wss://kusama.api.integritee.network',
+    subscanUrl: 'https://integritee.subscan.io/',
+  },
+  interlay: {
+    adapter: new InterlayAdapter(),
+    rpc: 'wss://api.interlay.io/parachain',
+    subscanUrl: 'https://interlay.subscan.io/',
+  },
+  khala: {
+    adapter: new KhalaAdapter(),
+    rpc: 'wss://khala-api.phala.network/ws',
+    subscanUrl: 'https://khala.subscan.io/',
+  },
+  kintsugi: {
+    adapter: new KintsugiAdapter(),
+    rpc: 'wss://api-kusama.interlay.io/parachain',
+    subscanUrl: 'https://kintsugi.subscan.io/',
+  },
+  kico: {
+    adapter: new KicoAdapter(),
+    rpc: 'wss://rpc.kico.dico.io',
+  },
+  listen: {
+    adapter: new ListenAdapter(),
+    rpc: 'wss://rpc.mainnet.listen.io',
+  },
+  moonbeam: {
+    adapter: new MoonbeamAdapter(),
+    rpc: 'wss://wss.api.moonbeam.network',
+    subscanUrl: 'https://moonbeam.subscan.io/',
+  },
+  moonriver: {
+    adapter: new MoonriverAdapter(),
+    rpc: 'wss://wss.api.moonriver.moonbeam.network',
+    subscanUrl: 'https://moonriver.subscan.io/',
+  },
+  parallel: {
+    adapter: new ParallelAdapter(),
+    rpc: 'wss://rpc.parallel.fi',
+    subscanUrl: 'https://parallel.subscan.io/',
+  },
+  pichiu: {
+    adapter: new PichiuAdapter(),
+    rpc: 'wss://kusama.kylin-node.co.uk',
+  },
+  quartz: {
+    adapter: new QuartzAdapter(),
+    rpc: 'wss://ws-quartz.unique.network',
+    subscanUrl: 'https://quartz.subscan.io/',
+  },
+  shadow: {
+    adapter: new ShadowAdapter(),
+    rpc: 'wss://rpc-shadow.crust.network/',
+    subscanUrl: 'https://shadow.subscan.io/',
+  },
+  shiden: {
+    adapter: new ShidenAdapter(),
+    rpc: 'wss://rpc.shiden.astar.network',
+    subscanUrl: 'https://shiden.subscan.io/',
+  },
+  statemine: {
+    adapter: new StatemineAdapter(),
+    rpc: 'wss://statemine-rpc.polkadot.io',
+    subscanUrl: 'https://statemine.subscan.io/',
+  },
   statemint: {
     adapter: new StatemintAdapter(),
     rpc: 'wss://statemint-rpc.polkadot.io',
     subscanUrl: 'https://statemint.subscan.io/',
   },
-  turing: { adapter: new TuringAdapter(), subscanUrl: 'https://turing.subscan.io/' },
-  unique: { adapter: new UniqueAdapter(), subscanUrl: 'https://unique.subscan.io/' },
+  turing: {
+    adapter: new TuringAdapter(),
+    rpc: 'wss://rpc.turing.oak.tech',
+    subscanUrl: 'https://turing.subscan.io/',
+  },
+  unique: {
+    adapter: new UniqueAdapter(),
+    rpc: 'wss://ws.unique.network',
+    subscanUrl: 'https://unique.subscan.io/',
+  },
 } as const satisfies Record<
   ChainId,
-  { adapter: BaseCrossChainAdapter; rpc?: string | undefined; subscanUrl?: string | undefined } | undefined
+  { adapter: BaseCrossChainAdapter; rpc: string; subscanUrl?: string | undefined } | undefined
 >
-
-export const bridgeNodeList = Object.fromEntries(
-  Object.entries(bridgeConfig).map(([key, value]) => [
-    key,
-    value !== undefined && 'rpc' in value ? [value.rpc] : undefined,
-  ])
-)
