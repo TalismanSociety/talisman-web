@@ -64,10 +64,13 @@ export const createOrmlNftAsyncGenerator = <const T extends string>({
               getMetadata(classId, tokenId, ormlNftToken.metadata),
             ])
 
+            const type = 'orml' as const
+            const chain = chainId
+
             return {
-              type: 'orml' as const,
-              chain: chainId,
-              id: `${classId.toString()}-${tokenId.toString()}`,
+              type,
+              chain,
+              id: `${type}-${chain}-${classId.toString()}-${tokenId.toString()}`,
               name: tokenMetadata?.name || classMetadata?.name,
               description: tokenMetadata?.name || classMetadata?.name,
               media: tokenMetadata?.image || classMetadata?.image,

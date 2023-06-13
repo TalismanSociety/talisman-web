@@ -20,7 +20,6 @@
     "@google/model-viewer": "^3.1.1",
     "@lottiefiles/react-lottie-player": "^3.5.2",
     "@talismn/icons": "workspace:^",
-    "@use-gesture/react": "^10.2.26",
     "colorjs.io": "^0.4.4-patch.1",
     "mime": "^3.0.0",
     "react-hot-toast": "^2.4.0"

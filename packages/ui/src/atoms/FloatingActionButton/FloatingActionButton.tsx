@@ -32,7 +32,7 @@ const FloatingActionButton = <T extends FloatingActionButtonElementType = 'butto
   const theme = useTheme()
 
   containerColor = containerColor ?? theme.color.primary
-  hoverContainerColor = hoverContainerColor ?? `color-mix(in srgb, ${containerColor}, black 15%)`
+  hoverContainerColor = hoverContainerColor ?? `color-mix(in srgb, ${containerColor}, black 25%)`
   contentColor = contentColor ?? theme.color.onPrimary
   hoverContentColor = hoverContentColor ?? contentColor
   disabledContentColor =

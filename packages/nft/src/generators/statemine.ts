@@ -64,10 +64,13 @@ export const createStatemineNftAsyncGenerator: CreateNftAsyncGenerator<Nft<'subs
             nft.node.metadata ? fetchIpfsMetadata(nft.node.metadata) : Promise.resolve(undefined),
           ])
 
+          const type = 'substrate-unique' as const
+          const chain = 'statemine' as const
+
           return {
-            type: 'substrate-unique' as const,
-            chain: 'statemine' as const,
-            id: nft.node.id,
+            type,
+            chain,
+            id: `${type}-${chain}-${nft.node.id}`,
             name: instanceMetadata?.name || nft.node.innerID.toString(),
             description: instanceMetadata?.description || classMetadata?.description,
             media: instanceMetadata?.image || classMetadata?.image,

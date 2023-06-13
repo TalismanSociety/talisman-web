@@ -15,7 +15,7 @@ export const Default: Story<SwapFormProps> = args => <SwapForm {...args} />
 
 Default.args = {
   accountSelector: (
-    <Select width="100%" placeholder="Select account">
+    <Select css={{ width: '100%' }} placeholder="Select account">
       <Select.Option headlineText="foo" />
     </Select>
   ),

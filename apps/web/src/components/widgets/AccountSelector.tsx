@@ -46,7 +46,7 @@ const AccountSelector = (props: AccountSelectorProps) => {
 
   return (
     <Select
-      width={props.width}
+      css={{ width: '100%' }}
       placeholder="Select an account"
       value={typeof props.selectedAccount === 'string' ? props.selectedAccount : props.selectedAccount?.address}
       onChange={onChange}
