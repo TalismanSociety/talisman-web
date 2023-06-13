@@ -4,7 +4,7 @@ import { toast } from '@talismn/ui'
 import { atomFamily, DefaultValue, selectorFamily } from 'recoil'
 import { bufferTime, filter, last, Observable, scan, tap } from 'rxjs'
 import { spawn, Thread } from 'threads'
-import { favoriteNftIdsState, hiddenNftIdsState } from './tags'
+import { favoriteNftIdsState, hiddenNftIdsState, nftsByTagState } from './tags'
 import { type SubscribeNfts } from './worker'
 
 export type NftTag = 'favorite' | 'hidden'
@@ -131,7 +131,7 @@ export const nftCollectionMapState = selectorFamily({
     ({ get }) => {
       const map = new Map<CollectionKey, NftCollection>()
 
-      for (const nft of get(nftsState(address))) {
+      for (const nft of get(nftsByTagState({ address, blacklist: 'hidden' }))) {
         if (nft.collection !== undefined) {
           const key = getNftCollectionKey(nft)
 

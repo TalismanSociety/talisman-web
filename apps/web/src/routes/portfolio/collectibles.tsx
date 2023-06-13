@@ -246,7 +246,6 @@ const AccountNfts = (props: { account: Account; view: 'collections' | 'items' })
 
   const nftTag = useContext(NftTagContext)
   const nftsOrCollections = useRecoilValue<ReadonlyArray<NftCollection | Nft>>(
-    // @ts-expect-error
     view === 'collections'
       ? nftCollectionsState(props.account.address)
       : collectionKey !== null
@@ -359,19 +358,21 @@ const Nfts = () => {
       <div css={{ display: 'flex' }}>
         {collectionKey === null ? (
           <>
-            <Text.Body as="label" css={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
-              Show:
-              <Select value={tag} onChange={setTag}>
-                <Select.Option value={undefined} headlineText="All" />
-                {['favorite', 'hidden'].map(x => (
-                  <Select.Option
-                    key={x}
-                    value={x}
-                    headlineText={<span css={{ textTransform: 'capitalize' }}>{x}</span>}
-                  />
-                ))}
-              </Select>
-            </Text.Body>
+            {view === 'items' && (
+              <Text.Body as="label" css={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
+                Show:
+                <Select value={tag} onChange={setTag}>
+                  <Select.Option value={undefined} headlineText="All" />
+                  {['favorite', 'hidden'].map(x => (
+                    <Select.Option
+                      key={x}
+                      value={x}
+                      headlineText={<span css={{ textTransform: 'capitalize' }}>{x}</span>}
+                    />
+                  ))}
+                </Select>
+              </Text.Body>
+            )}
             <SegmentedButton value={view} onChange={setView} css={{ marginLeft: 'auto' }}>
               <SegmentedButton.ButtonSegment value="collections">Collections</SegmentedButton.ButtonSegment>
               <SegmentedButton.ButtonSegment value="items">Items</SegmentedButton.ButtonSegment>

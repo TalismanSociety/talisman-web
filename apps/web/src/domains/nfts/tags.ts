@@ -1,19 +1,18 @@
 import { selectedAccountsState } from '@domains/accounts'
 import { storageEffect } from '@domains/common/effects'
 import { array, jsonParser, string } from '@recoiljs/refine'
-import type { Nft } from '@talismn/nft'
 import { partial } from 'lodash'
 import { useCallback, useMemo } from 'react'
 import {
   atom,
   selector,
+  selectorFamily,
   useRecoilValue,
   useSetRecoilState,
   waitForNone,
   type SetterOrUpdater,
-  selectorFamily,
 } from 'recoil'
-import { nftsState, type NftTag } from '.'
+import { nftsState, type Nft, type NftTag } from '.'
 
 export const favoriteNftIdsState = atom<readonly string[]>({
   key: 'favorite-nft-ids',
