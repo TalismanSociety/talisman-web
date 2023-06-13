@@ -257,6 +257,7 @@ const AccountNfts = (props: { account: Account; view: 'collections' | 'items' })
 
   const [items, { page, pageCount, previous, next }] = usePagination(nftsOrCollections, { limit }, [
     view,
+    nftTag,
     props.account.address,
   ])
 
