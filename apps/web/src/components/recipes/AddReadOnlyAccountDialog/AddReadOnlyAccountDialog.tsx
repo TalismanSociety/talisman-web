@@ -25,7 +25,10 @@ const AddReadOnlyAccountDialog = (props: AddReadOnlyAccountDialogProps) => {
       width="42rem"
       title="Add contact"
       content={
-        <form onSubmit={event => event.preventDefault()}>
+        <form
+          onSubmit={event => event.preventDefault()}
+          css={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}
+        >
           <TextInput
             value={props.name}
             onChange={event => props.onChangeName(event.target.value)}
@@ -45,7 +48,7 @@ const AddReadOnlyAccountDialog = (props: AddReadOnlyAccountDialogProps) => {
               leadingContent={<Identicon value={props.resultingAddress} size="4rem" />}
               headlineText={isNilOrWhitespace(props.name) ? undefined : props.name}
               supportingText={shortenAddress(props.resultingAddress)}
-              css={{ marginTop: '1.6rem', border: `2px solid ${theme.color.border}`, borderRadius: '0.8rem' }}
+              css={{ marginTop: '0.8rem', border: `2px solid ${theme.color.border}`, borderRadius: '0.8rem' }}
             />
           )}
         </form>
