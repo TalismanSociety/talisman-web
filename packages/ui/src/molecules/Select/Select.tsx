@@ -26,11 +26,11 @@ import { Surface, Text, useSurfaceColor } from '../../atoms'
 import FloatingPortal from '../../atoms/FloatingPortal'
 
 export type SelectProps<TValue extends string | number, TClear extends boolean = false> = {
+  className?: string
   value?: TValue
   renderSelected?: (value: TValue | undefined) => ReactNode
   placeholder?: ReactNode
-  width?: string | number
-  children: ReactElement<SelectItemProps> | Array<ReactElement<SelectItemProps>>
+  children: ReactNode
   onChange?: (value: TClear extends false ? TValue : TValue | undefined) => unknown
   clearRequired?: TClear
 }
@@ -61,7 +61,6 @@ const OVERLAP = 6
 
 const Select = Object.assign(
   <TValue extends string | number, TClear extends boolean = false>({
-    width = '100%',
     children,
     renderSelected,
     clearRequired: _clearRequired,
@@ -77,12 +76,9 @@ const Select = Object.assign(
 
     const childrenArray = React.Children.toArray(children)
 
-    const selectedIndex =
-      props.value === undefined
-        ? undefined
-        : childrenArray
-            .filter((x): x is ReactElement<SelectItemProps> => x as any)
-            .findIndex(x => x.props.value !== undefined && x.props.value.toString() === props.value?.toString())
+    const selectedIndex = childrenArray
+      .filter((x): x is ReactElement<SelectItemProps> => x as any)
+      .findIndex(x => x.props.value?.toString() === props.value?.toString())
 
     const selectedChild =
       renderSelected?.(props.value) ?? (selectedIndex === undefined ? undefined : childrenArray[selectedIndex])
@@ -136,7 +132,7 @@ const Select = Object.assign(
     ])
 
     const select = useCallback(
-      (value: string | number) => {
+      (value: string | number | undefined) => {
         setOpen(false)
         setActiveIndex(null)
         // @ts-expect-error
@@ -163,13 +159,13 @@ const Select = Object.assign(
 
     return (
       <motion.div
+        className={props.className}
         initial={String(false)}
         animate={String(open)}
         variants={{
           true: { filter: 'drop-shadow(0 1px 3px rgba(0, 0, 0, 0.25))' },
           false: { filter: 'drop-shadow(0 0 0 rgba(0, 0, 0, 0.25))' },
         }}
-        css={{ width }}
       >
         <Surface
           as={motion.button}
@@ -277,7 +273,7 @@ const Select = Object.assign(
               },
             })}
           >
-            {React.Children.map(children, (child, index) => (
+            {React.Children.map(children as any, (child: ReactElement<SelectItemProps>, index) => (
               <li
                 key={child.key}
                 role="option"
@@ -290,11 +286,8 @@ const Select = Object.assign(
                 aria-selected={index === activeIndex}
                 css={{ cursor: 'pointer' }}
                 {...getItemProps({
-                  onClick: () => {
-                    if (child.props.value !== undefined) {
-                      select(child.props.value)
-                    }
-                  },
+                  onClick: () => select(child.props.value),
+
                   onKeyDown: event => {
                     if (event.key === 'Enter') {
                       event.preventDefault()

@@ -3,23 +3,51 @@ import { selectedAccountsState, type Account } from '@domains/accounts'
 import {
   nftCollectionItemsState,
   nftCollectionsState,
-  nftsState,
+  nftsByTagState,
+  useSetFavoriteNft,
+  useSetHiddenNft,
   type CollectionKey,
+  type Nft,
   type NftCollection,
+  type NftTag,
 } from '@domains/nfts'
-import { ChevronLeft, ChevronRight, ExternalLink } from '@talismn/icons'
-import { type Nft } from '@talismn/nft'
-import { Button, Card, Hr, Identicon, ListItem, MediaDialog, SegmentedButton, Text } from '@talismn/ui'
+import { useTheme } from '@emotion/react'
+import { ChevronLeft, ChevronRight, ExternalLink, Eye, EyeOff, Heart } from '@talismn/icons'
+import {
+  Button,
+  Card,
+  FloatingActionButton,
+  Hr,
+  Identicon,
+  ListItem,
+  MediaDialog,
+  SegmentedButton,
+  Select,
+  Text,
+} from '@talismn/ui'
 import { usePagination } from '@talismn/utils/react'
 import { shortenAddress } from '@util/format'
 import { Maybe } from '@util/monads'
-import { Suspense, useCallback, useEffect, useMemo, useState, type PropsWithChildren, type RefCallback } from 'react'
+import { AnimatePresence, motion } from 'framer-motion'
+import {
+  Suspense,
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+  type PropsWithChildren,
+  type RefCallback,
+} from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { useRecoilValue } from 'recoil'
 
 const COLLECTION_KEY = 'collectionKey'
 
 const NFT_CARD_WIDTH = 290
+
+const NftTagContext = createContext<NftTag | undefined>(undefined)
 
 const toIpfsCompatibleUrl = (url: string, options?: { imgWidth?: number }) => {
   const pattern = /ipfs:\/\/(ipfs\/)?/
@@ -60,7 +88,14 @@ const NftGrid = (props: PropsWithChildren) => (
 )
 
 const NftCard = ({ nft }: { nft: Nft }) => {
+  const theme = useTheme()
+
   const [dialogOpen, setDialogOpen] = useState(false)
+  const { toggle: toggleFavorite } = useSetFavoriteNft(nft)
+  const { toggle: toggleHidden } = useSetHiddenNft(nft)
+
+  const favorite = nft.tags.has('favorite')
+  const hidden = nft.tags.has('hidden')
 
   return (
     <>
@@ -73,6 +108,38 @@ const NftCard = ({ nft }: { nft: Nft }) => {
             ])}
             fetchMime
           />
+        }
+        actions={
+          <Card.Actions>
+            {({ hover }) => (
+              <>
+                {hover && (
+                  <FloatingActionButton
+                    containerColor={theme.color.surface}
+                    contentColor={theme.color.onSurface}
+                    onClick={event => {
+                      event.stopPropagation()
+                      toggleHidden()
+                    }}
+                  >
+                    {hidden ? <Eye /> : <EyeOff />}
+                  </FloatingActionButton>
+                )}
+                {(hover || favorite) && (
+                  <FloatingActionButton
+                    containerColor={theme.color.surface}
+                    contentColor={favorite ? theme.color.primary : theme.color.onSurface}
+                    onClick={event => {
+                      event.stopPropagation()
+                      toggleFavorite()
+                    }}
+                  >
+                    <Heart fill={favorite ? theme.color.primary : 'transparent'} />
+                  </FloatingActionButton>
+                )}
+              </>
+            )}
+          </Card.Actions>
         }
         headlineText={nft.name}
         overlineText={nft.collection?.name}
@@ -177,13 +244,15 @@ const AccountNfts = (props: { account: Account; view: 'collections' | 'items' })
 
   const view = collectionKey !== null ? ('items' as const) : props.view
 
-  const nftsOrCollections: Array<NftCollection | Nft> = useRecoilValue(
-    // @ts-expect-error
+  const nftTag = useContext(NftTagContext)
+  const nftsOrCollections = useRecoilValue<ReadonlyArray<NftCollection | Nft>>(
     view === 'collections'
       ? nftCollectionsState(props.account.address)
       : collectionKey !== null
       ? nftCollectionItemsState({ address: props.account.address, collectionKey })
-      : nftsState(props.account.address)
+      : nftTag === 'hidden'
+      ? nftsByTagState({ address: props.account.address, whitelist: 'hidden' })
+      : nftsByTagState({ address: props.account.address, whitelist: nftTag, blacklist: 'hidden' })
   )
 
   const [items, { page, pageCount, previous, next }] = usePagination(nftsOrCollections, { limit }, [
@@ -250,11 +319,13 @@ const AccountNfts = (props: { account: Account; view: 'collections' | 'items' })
       <section ref={ref}>
         <PaginationControls showAccount />
         <NftGrid>
-          {items.map((item, index) => (
-            <div key={`${page}-${index}`}>
-              {'items' in item ? <NftCollectionCard collection={item} /> : <NftCard nft={item} />}
-            </div>
-          ))}
+          <AnimatePresence mode="popLayout">
+            {items.map(item => (
+              <motion.div key={item.id} layout exit={{ opacity: 0, scale: 0.8 }}>
+                {'items' in item ? <NftCollectionCard collection={item} /> : <NftCard nft={item} />}
+              </motion.div>
+            ))}
+          </AnimatePresence>
         </NftGrid>
         <PaginationControls />
       </section>
@@ -266,6 +337,7 @@ const AccountNfts = (props: { account: Account; view: 'collections' | 'items' })
 const Nfts = () => {
   const [searchParams, setSearchParams] = useSearchParams()
   const collectionKey = searchParams.get(COLLECTION_KEY)
+  const [tag, setTag] = useState<NftTag>()
 
   const [view, setView] = useState<'collections' | 'items'>('items')
   const accounts = useRecoilValue(selectedAccountsState)
@@ -285,10 +357,27 @@ const Nfts = () => {
     <div>
       <div css={{ display: 'flex' }}>
         {collectionKey === null ? (
-          <SegmentedButton value={view} onChange={setView} css={{ marginLeft: 'auto' }}>
-            <SegmentedButton.ButtonSegment value="collections">Collections</SegmentedButton.ButtonSegment>
-            <SegmentedButton.ButtonSegment value="items">Items</SegmentedButton.ButtonSegment>
-          </SegmentedButton>
+          <>
+            {view === 'items' && (
+              <Text.Body as="label" css={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
+                Show:
+                <Select value={tag} onChange={setTag}>
+                  <Select.Option value={undefined} headlineText="All" />
+                  {['favorite', 'hidden'].map(x => (
+                    <Select.Option
+                      key={x}
+                      value={x}
+                      headlineText={<span css={{ textTransform: 'capitalize' }}>{x}</span>}
+                    />
+                  ))}
+                </Select>
+              </Text.Body>
+            )}
+            <SegmentedButton value={view} onChange={setView} css={{ marginLeft: 'auto' }}>
+              <SegmentedButton.ButtonSegment value="collections">Collections</SegmentedButton.ButtonSegment>
+              <SegmentedButton.ButtonSegment value="items">Items</SegmentedButton.ButtonSegment>
+            </SegmentedButton>
+          </>
         ) : (
           <div css={{ flex: 1 }}>
             <Button
@@ -318,7 +407,9 @@ const Nfts = () => {
                 </div>
               }
             >
-              <AccountNfts account={account} view={view} />
+              <NftTagContext.Provider value={tag}>
+                <AccountNfts account={account} view={view} />
+              </NftTagContext.Provider>
             </Suspense>
           </ErrorBoundary>
         ))}

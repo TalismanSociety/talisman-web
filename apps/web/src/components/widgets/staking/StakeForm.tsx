@@ -184,7 +184,7 @@ export const AssetSelect = (props: {
   inTransition: boolean
 }) => (
   <Select
-    width="100%"
+    css={{ width: '100%' }}
     value={props.selectedChain.id}
     renderSelected={
       props.inTransition

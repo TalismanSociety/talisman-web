@@ -34,7 +34,7 @@ const ExportTxHistoryDialog = ({
         </Text.Body>
         <div css={{ marginBottom: '1.6rem' }}>
           <Select
-            width="100%"
+            css={{ width: '100%' }}
             placeholder="Select account"
             value={accounts.findIndex(x => x.selected)}
             onChange={value =>

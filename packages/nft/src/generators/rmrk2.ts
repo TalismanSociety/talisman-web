@@ -51,25 +51,29 @@ export const createRmrk2NftAsyncGenerator: CreateNftAsyncGenerator<Nft<'rmrk2', 
       break
     }
 
-    yield* response.nfts.map(nft => ({
-      id: nft.id,
-      type: 'rmrk2' as const,
-      chain: 'kusama' as const,
-      name: nft.metadata_name ?? undefined,
-      description: nft.metadata_description ?? undefined,
-      media: nft.metadata_image || nft.resources[0]?.thumb || undefined,
-      thumbnail: nft.resources[0]?.thumb || nft.metadata_image || undefined,
-      serialNumber: Number(nft.sn),
-      properties: nft.metadata_properties,
-      externalLinks: [{ name: 'Singular', url: `https://singular.app/collectibles/${nft.id}` }],
-      collection: !nft.collection
-        ? undefined
-        : {
-            id: nft.collection.id,
-            name: nft.collection.metadata_name ?? undefined,
-            totalSupply: nft.collection.max,
-          },
-    }))
+    yield* response.nfts.map(nft => {
+      const type = 'rmrk2' as const
+      const chain = 'kusama' as const
+      return {
+        type,
+        chain,
+        id: `${type}-${chain}-${nft.id}`,
+        name: nft.metadata_name ?? undefined,
+        description: nft.metadata_description ?? undefined,
+        media: nft.metadata_image || nft.resources[0]?.thumb || undefined,
+        thumbnail: nft.resources[0]?.thumb || nft.metadata_image || undefined,
+        serialNumber: Number(nft.sn),
+        properties: nft.metadata_properties,
+        externalLinks: [{ name: 'Singular', url: `https://singular.app/collectibles/${nft.id}` }],
+        collection: !nft.collection
+          ? undefined
+          : {
+              id: nft.collection.id,
+              name: nft.collection.metadata_name ?? undefined,
+              totalSupply: nft.collection.max,
+            },
+      }
+    })
 
     offset += batchSize
   }

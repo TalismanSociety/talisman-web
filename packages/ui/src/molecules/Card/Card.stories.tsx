@@ -1,5 +1,7 @@
 import { type ComponentMeta, type Story } from '@storybook/react'
 
+import { EyeOff, Heart } from '@talismn/icons'
+import { FloatingActionButton, theme } from '../..'
 import Card, { type CardProps } from './Card'
 
 export default {
@@ -29,6 +31,22 @@ Default.args = {
     />
   ),
   mediaLabel: '+3',
+  actions: (
+    <Card.Actions>
+      <FloatingActionButton
+        containerColor={theme.greenDark.color.surface}
+        contentColor={theme.greenDark.color.onSurface}
+      >
+        <EyeOff />
+      </FloatingActionButton>
+      <FloatingActionButton
+        containerColor={theme.greenDark.color.surface}
+        contentColor={theme.greenDark.color.onSurface}
+      >
+        <Heart />
+      </FloatingActionButton>
+    </Card.Actions>
+  ),
 }
 
 export const Video = Default.bind({})

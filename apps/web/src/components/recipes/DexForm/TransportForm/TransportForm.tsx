@@ -114,6 +114,7 @@ const TransportForm = Object.assign(
             >
               <div css={{ '@media(min-width: 600px)': { width: '16rem' } }}>
                 <Select
+                  css={{ width: '100%' }}
                   placeholder="From network"
                   value={props.selectedFromChainIndex}
                   onChange={props.onSelectFromChainIndex}
@@ -152,6 +153,7 @@ const TransportForm = Object.assign(
             >
               <div css={{ '@media(min-width: 600px)': { width: '16rem' } }}>
                 <Select
+                  css={{ width: '100%' }}
                   placeholder="To network"
                   value={props.selectedToChainIndex}
                   onChange={props.onSelectToChainIndex}

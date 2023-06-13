@@ -44,10 +44,12 @@ export const createUniqueNetworkNftAsyncGenerator: CreateNftAsyncGenerator<Nft<'
 
     yield* await Promise.all(
       response.tokens.data?.map(async nft => {
+        const type = 'unique' as const
+        const chain = 'unique' as const
         return {
           type: 'unique' as const,
           chain: 'unique' as const,
-          id: nft.token_id.toString(),
+          id: `${type}-${chain}-${nft.collection_id}-${nft.token_id}`,
           name: nft.token_name ?? undefined,
           description: nft.collection?.description ?? undefined,
           media: nft.image.fullUrl,

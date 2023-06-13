@@ -1,21 +1,28 @@
 import * as Sentry from '@sentry/react'
-import { type Nft } from '@talismn/nft'
+import { type Nft as BaseNft } from '@talismn/nft'
 import { toast } from '@talismn/ui'
 import { atomFamily, DefaultValue, selectorFamily } from 'recoil'
 import { bufferTime, filter, last, Observable, scan, tap } from 'rxjs'
 import { spawn, Thread } from 'threads'
+import { favoriteNftIdsState, hiddenNftIdsState, nftsByTagState } from './tags'
 import { type SubscribeNfts } from './worker'
 
-const _nftsState = atomFamily<Nft[], string>({
+export type NftTag = 'favorite' | 'hidden'
+
+export type Nft = BaseNft & {
+  tags: Set<NftTag>
+}
+
+const _nftsState = atomFamily<BaseNft[], string>({
   key: '_Nfts',
   effects: (address: string) => [
     ({ setSelf }) => {
       const batchSize = 100
 
-      let initialResolve = (_value: Nft[]) => {}
+      let initialResolve = (_value: BaseNft[]) => {}
       let initialReject = (_reason?: any) => {}
 
-      const initialPromise = new Promise<Nft[]>((resolve, reject) => {
+      const initialPromise = new Promise<BaseNft[]>((resolve, reject) => {
         initialResolve = resolve
         initialReject = reject
       })
@@ -25,20 +32,20 @@ const _nftsState = atomFamily<Nft[], string>({
       const workerPromise = spawn<SubscribeNfts>(new Worker(new URL('./worker', import.meta.url), { type: 'module' }))
 
       const subscriptionPromise = workerPromise.then(worker =>
-        new Observable<Nft | { error: unknown }>(observer => worker(address, { batchSize }).subscribe(observer))
+        new Observable<BaseNft | { error: unknown }>(observer => worker(address, { batchSize }).subscribe(observer))
           .pipe(
             bufferTime(1000, null, batchSize),
             filter(nfts => nfts.length > 0),
             scan(
               (prev, nftsOrErrors) => {
                 const errors = nftsOrErrors.filter((nft): nft is { error: unknown } => 'error' in nft).map(x => x.error)
-                const nfts = nftsOrErrors.filter((nft): nft is Nft => !('error' in nft))
+                const nfts = nftsOrErrors.filter((nft): nft is BaseNft => !('error' in nft))
 
                 errors.forEach(error => Sentry.captureException(error))
 
                 return { nfts: [...prev.nfts, ...nfts], errors: [...prev.errors, ...errors] }
               },
-              { nfts: [] as Nft[], errors: [] as unknown[] }
+              { nfts: [] as BaseNft[], errors: [] as unknown[] }
             ),
             // eslint-disable-next-line @typescript-eslint/no-misused-promises
             tap(async ({ nfts }) => {
@@ -84,8 +91,26 @@ export const nftsState = selectorFamily({
   key: 'Nfts',
   get:
     (address: string) =>
-    ({ get }) =>
-      [...get(_nftsState(address))].sort((a, b) => (a.name ?? '').localeCompare(b.name ?? '')),
+    ({ get }): Nft[] =>
+      [...get(_nftsState(address))]
+        .map(x => {
+          const tags = new Set<'favorite' | 'hidden'>()
+
+          if (get(favoriteNftIdsState).includes(x.id)) {
+            tags.add('favorite')
+          }
+
+          if (get(hiddenNftIdsState).includes(x.id)) {
+            tags.add('hidden')
+          }
+
+          return { ...x, tags }
+        })
+        .sort(
+          (a, b) =>
+            Number(get(favoriteNftIdsState).includes(b.id)) - Number(get(favoriteNftIdsState).includes(a.id)) ||
+            (a.name ?? '').localeCompare(b.name ?? '')
+        ),
   cachePolicy_UNSTABLE: { eviction: 'most-recent' },
 })
 
@@ -106,7 +131,7 @@ export const nftCollectionMapState = selectorFamily({
     ({ get }) => {
       const map = new Map<CollectionKey, NftCollection>()
 
-      for (const nft of get(nftsState(address))) {
+      for (const nft of get(nftsByTagState({ address, blacklist: 'hidden' }))) {
         if (nft.collection !== undefined) {
           const key = getNftCollectionKey(nft)
 
@@ -135,10 +160,10 @@ export const nftCollectionMapState = selectorFamily({
   cachePolicy_UNSTABLE: { eviction: 'most-recent' },
 })
 
-export const nftCollectionsState = selectorFamily({
+export const nftCollectionsState = selectorFamily<readonly NftCollection[], string>({
   key: `NftCollections`,
   get:
-    (address: string) =>
+    address =>
     ({ get }) =>
       Array.from(get(nftCollectionMapState(address)).values()).sort(
         (a, b) => b.items.length - a.items.length || (a.name ?? '').localeCompare(b.name ?? '')

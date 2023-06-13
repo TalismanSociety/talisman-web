@@ -1,7 +1,6 @@
 import { useTheme } from '@emotion/react'
-import { useGesture } from '@use-gesture/react'
 import { motion, useMotionTemplate, useSpring, useTransform } from 'framer-motion'
-import { useState, type ReactNode } from 'react'
+import { createContext, useState, type ReactNode } from 'react'
 import { Skeleton, Text } from '../..'
 import { MultiPreview, Preview } from './Preview'
 
@@ -10,8 +9,11 @@ export type CardProps = {
   headlineText: ReactNode
   overlineText?: ReactNode
   mediaLabel?: ReactNode
+  actions?: ReactNode
   onClick?: () => unknown
 }
+
+const CardContext = createContext({ hover: false })
 
 const CardSkeleton = () => (
   <Skeleton.Surface
@@ -49,40 +51,6 @@ const Card = Object.assign(
     const rotateX = useSpring(0)
     const rotateY = useSpring(0)
 
-    const cardBind = useGesture({
-      onHover: event => {
-        if (event.hovering) {
-          setHover(true)
-          scale.set(1.025)
-        } else {
-          const rect = (event.currentTarget as EventTarget & HTMLElement).getBoundingClientRect()
-
-          setHover(false)
-          width.set(rect.width)
-          scale.set(1)
-          rotateX.set(0)
-          rotateY.set(0)
-        }
-      },
-      onMove: event => {
-        const threshold = 2
-        const {
-          currentTarget,
-          xy: [x, y],
-        } = event
-        const rect = (currentTarget as EventTarget & HTMLElement).getBoundingClientRect()
-
-        const horizontal = (x - rect.left) / rect.width
-        const vertical = (y - rect.top) / rect.height
-        const _rotateX = threshold / 2 - horizontal * threshold
-        const _rotateY = vertical * threshold - threshold / 2
-
-        width.set(rect.width)
-        rotateX.set(_rotateX)
-        rotateY.set(_rotateY)
-      },
-    })
-
     const transform = useMotionTemplate`perspective(${width}px) scale3d(${scale},${scale},${scale}) rotateX(${rotateY}deg) rotateY(${rotateX}deg)`
 
     const diagonalMovement = useTransform<number, number>([rotateX, rotateY], ([newRotateX, newRotateY]) => {
@@ -99,8 +67,33 @@ const Card = Object.assign(
 
     return (
       <motion.article
-        {...(cardBind() as any)}
         whileHover="hover"
+        onMouseEnter={() => {
+          setHover(true)
+          scale.set(1.025)
+        }}
+        onMouseLeave={event => {
+          const rect = event.currentTarget.getBoundingClientRect()
+
+          setHover(false)
+          width.set(rect.width)
+          scale.set(1)
+          rotateX.set(0)
+          rotateY.set(0)
+        }}
+        onMouseMove={event => {
+          const threshold = 2
+          const rect = event.currentTarget.getBoundingClientRect()
+
+          const horizontal = (event.clientX - rect.left) / rect.width
+          const vertical = (event.clientY - rect.top) / rect.height
+          const _rotateX = threshold / 2 - horizontal * threshold
+          const _rotateY = vertical * threshold - threshold / 2
+
+          width.set(rect.width)
+          rotateX.set(_rotateX)
+          rotateY.set(_rotateY)
+        }}
         style={{
           transform: hover ? transform : 'revert',
           cursor: props.onClick !== undefined ? 'pointer' : undefined,
@@ -116,6 +109,7 @@ const Card = Object.assign(
       >
         <div css={{ position: 'relative', width: 'auto', aspectRatio: '1 / 1' }}>
           {props.media}
+          <CardContext.Provider value={{ hover }}>{props.actions}</CardContext.Provider>
           {props.mediaLabel && (
             <Text.BodyLarge
               as="div"
@@ -150,7 +144,20 @@ const Card = Object.assign(
       </motion.article>
     )
   },
-  { Preview, MultiPreview, Skeleton: CardSkeleton }
+  {
+    Preview,
+    MultiPreview,
+    Actions: ({ children }: { children: ReactNode | ((props: { hover: boolean }) => ReactNode) }) => (
+      <motion.div css={{ display: 'flex', position: 'absolute', top: '1rem', right: '1rem', gap: '0.4rem' }}>
+        {typeof children === 'function' ? (
+          <CardContext.Consumer>{({ hover }) => children({ hover })}</CardContext.Consumer>
+        ) : (
+          children
+        )}
+      </motion.div>
+    ),
+    Skeleton: CardSkeleton,
+  }
 )
 
 export default Card
