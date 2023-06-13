@@ -122,7 +122,7 @@ const NftCard = ({ nft }: { nft: Nft }) => {
                       toggleHidden()
                     }}
                   >
-                    {hidden ? <EyeOff /> : <Eye />}
+                    {hidden ? <Eye /> : <EyeOff />}
                   </FloatingActionButton>
                 )}
                 {(hover || favorite) && (
@@ -245,7 +245,7 @@ const AccountNfts = (props: { account: Account; view: 'collections' | 'items' })
   const view = collectionKey !== null ? ('items' as const) : props.view
 
   const nftTag = useContext(NftTagContext)
-  const nftsOrCollections = useRecoilValue(
+  const nftsOrCollections = useRecoilValue<ReadonlyArray<NftCollection | Nft>>(
     // @ts-expect-error
     view === 'collections'
       ? nftCollectionsState(props.account.address)
@@ -254,7 +254,7 @@ const AccountNfts = (props: { account: Account; view: 'collections' | 'items' })
       : nftTag === 'hidden'
       ? nftsByTagState({ address: props.account.address, whitelist: 'hidden' })
       : nftsByTagState({ address: props.account.address, whitelist: nftTag, blacklist: 'hidden' })
-  ) as ReadonlyArray<NftCollection | Nft>
+  )
 
   const [items, { page, pageCount, previous, next }] = usePagination(nftsOrCollections, { limit }, [
     view,

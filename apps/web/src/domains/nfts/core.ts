@@ -160,10 +160,10 @@ export const nftCollectionMapState = selectorFamily({
   cachePolicy_UNSTABLE: { eviction: 'most-recent' },
 })
 
-export const nftCollectionsState = selectorFamily({
+export const nftCollectionsState = selectorFamily<readonly NftCollection[], string>({
   key: `NftCollections`,
   get:
-    (address: string) =>
+    address =>
     ({ get }) =>
       Array.from(get(nftCollectionMapState(address)).values()).sort(
         (a, b) => b.items.length - a.items.length || (a.name ?? '').localeCompare(b.name ?? '')
