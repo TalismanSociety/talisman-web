@@ -2,7 +2,6 @@
 // When CAPI is ready, the internals of these hooks can be replaced without needing to make many
 // changes in other areas of the codebase.
 // TODO: refactor code to remove repititon
-// TODO: use pjs types instead of @ts-ignoring everything
 
 import { pjsApiSelector } from '@domains/chains/pjs-api'
 import { Balance } from '@domains/multisig'
@@ -25,7 +24,9 @@ export const useCreateProxy = (chain: Chain, extensionAddress: string | undefine
     }
 
     const api = apiLoadable.contents
-    // @ts-ignore
+    if (!api.tx.proxy?.createPure) {
+      throw new Error('chain missing balances or utility or proxy pallet')
+    }
     const tx = api.tx.proxy.createPure('Any', 0, 0)
 
     // Fee estimation
@@ -51,7 +52,10 @@ export const useCreateProxy = (chain: Chain, extensionAddress: string | undefine
       const api = apiLoadable.contents
       const { signer } = await web3FromAddress(extensionAddress)
 
-      // @ts-ignore
+      if (!api.tx.proxy?.createPure) {
+        throw new Error('chain missing balances or utility or proxy pallet')
+      }
+
       api.tx.proxy
         .createPure('Any', 0, 0)
         .signAndSend(
@@ -71,9 +75,12 @@ export const useCreateProxy = (chain: Chain, extensionAddress: string | undefine
                   const { method, data } = event
 
                   if (method === 'PureCreated') {
-                    // @ts-ignore
-                    const pure = data[0].toString()
-                    onSuccess(pure)
+                    if (data[0]) {
+                      const pure = data[0].toString()
+                      onSuccess(pure)
+                    } else {
+                      onFailure('No proxies exist')
+                    }
                   }
                 })
 
@@ -127,26 +134,30 @@ export const useTransferProxyToMultisig = (chain: Chain) => {
       const api = apiLoadable.contents
       const { signer } = await web3FromAddress(extensionAddress)
 
+      if (
+        !api.tx.balances?.transfer ||
+        !api.tx.utility?.batchAll ||
+        !api.tx.proxy?.proxy ||
+        !api.tx.proxy?.addProxy ||
+        !api.tx.proxy?.removeProxy
+      ) {
+        throw new Error('chain missing balances or utility or proxy pallet')
+      }
+
       // Define the inner batch call
-      // @ts-ignore
       const proxyBatchCall = api.tx.utility.batchAll([
-        // @ts-ignore
         api.tx.proxy.addProxy(multisigAddress, 'Any', 0),
-        // @ts-ignore
         api.tx.proxy.removeProxy(extensionAddress, 'Any', 0),
       ])
 
-      // Create the outer call
-      // @ts-ignore
+      // Define the inner proxy call
       const proxyCall = api.tx.proxy.proxy(proxyAddress, undefined, proxyBatchCall)
 
       // Define the outer batch call
-      // @ts-ignore
-      const signerBatchCall = api.tx.utility.batchAll([
+      const signerBatchCall = api?.tx?.utility?.batchAll([
         // Add extra planks onto existential deposit to avoid weird 'InsufficientBalance' error
         // TODO: Look into how to compute a more sensible amount to add on.
-        // @ts-ignore
-        api.tx.balances.transfer(proxyAddress, existentialDeposit.add(new BN(1_000_000_000))),
+        api.tx.balances.transfer(proxyAddress, existentialDeposit.amount.add(new BN(1_000_000_000))),
         proxyCall,
       ])
 

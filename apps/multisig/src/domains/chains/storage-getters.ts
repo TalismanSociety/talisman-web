@@ -71,7 +71,7 @@ export const useAddressIsProxyDelegatee = (chain: Chain) => {
         throw Error('proxy.proxies must exist on api')
       }
       const res = (await api.query.proxy.proxies(proxy)) as unknown as ProxyDefinition[][]
-      // @ts-ignore
+      if (!res[0]) throw Error('invalid proxy.proxies return value')
       return res[0].some(d => d.delegate.toString() === address && d.proxyType.toString() === 'Any')
     },
     [apiLoadable]
