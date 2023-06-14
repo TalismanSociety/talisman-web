@@ -3,16 +3,27 @@ import { css } from '@emotion/css'
 import { useTheme } from '@emotion/react'
 import { Copy } from '@talismn/icons'
 import { Button, IconButton } from '@talismn/ui'
-import { device, size } from '@util/breakpoints'
+import { device } from '@util/breakpoints'
 import { useReward } from 'react-rewards'
-import { useEffectOnce, useWindowSize } from 'react-use'
-import truncateMiddle from 'truncate-middle'
+import { useEffectOnce } from 'react-use'
 
-const MagicLink = ({ proxyAccount, name }: { proxyAccount: string; name: string }) => {
-  const width = useWindowSize().width
-  const urlChars = width > size.lg ? 60 : 47
+const MagicLink = ({
+  name,
+  signers,
+  threshold,
+  proxy,
+  chainId,
+}: {
+  proxy: string
+  name: string
+  signers: string[]
+  threshold: number
+  chainId: string
+}) => {
   const theme = useTheme()
-  const url = `https://signet.talisman.xyz/import?proxyAccount=${proxyAccount}&name=${name}`
+  const url = `${window.location.origin}/import?name=${name}&signers=${signers.join(
+    ','
+  )}&threshold=${threshold}&proxy=${proxy}&chain_id=${chainId}`
   return (
     <div
       className={css`
@@ -25,9 +36,10 @@ const MagicLink = ({ proxyAccount, name }: { proxyAccount: string; name: string 
         color: var(--color-offWhite);
         border-radius: 8px;
         width: 100%;
+        max-width: 500px;
       `}
     >
-      <p>{truncateMiddle(url, urlChars, 0, '...')}</p>
+      <p css={{ display: 'flex', flex: '1', overflow: 'scroll', whiteSpace: 'nowrap' }}>{url}</p>
       <IconButton
         contentColor={`rgb(${theme.primary})`}
         onClick={() => copyToClipboard(url, 'Magic link copied to clipboard ✨')}
@@ -47,7 +59,14 @@ const rewardConfig = {
   decay: 0.9,
 }
 
-const VaultCreated = (props: { goToVault: () => void; proxyAccount: string; name: string }) => {
+const VaultCreated = (props: {
+  goToVault: () => void
+  proxy: string
+  name: string
+  signers: string[]
+  threshold: number
+  chainId: string
+}) => {
   const { reward } = useReward('rewardId', 'confetti', rewardConfig)
   useEffectOnce(() => {
     reward()
@@ -84,7 +103,13 @@ const VaultCreated = (props: { goToVault: () => void; proxyAccount: string; name
           width: 100%;
         `}
       >
-        <MagicLink proxyAccount={props.proxyAccount} name={props.name} />
+        <MagicLink
+          proxy={props.proxy}
+          name={props.name}
+          signers={props.signers}
+          chainId={props.chainId}
+          threshold={props.threshold}
+        />
       </div>
       <div>
         <Button

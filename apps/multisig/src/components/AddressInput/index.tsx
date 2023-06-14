@@ -2,7 +2,7 @@ import { css } from '@emotion/css'
 import { useTheme } from '@emotion/react'
 import { Plus } from '@talismn/icons'
 import { IconButton, TextInput } from '@talismn/ui'
-import toSs52Address from '@util/toSs52Address'
+import { toSs52Address } from '@util/addresses'
 import { useState } from 'react'
 import { toast } from 'react-hot-toast'
 

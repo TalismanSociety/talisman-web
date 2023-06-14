@@ -1,7 +1,7 @@
 import { Chain, supportedChains } from '@domains/chains'
 import { css } from '@emotion/css'
 import { Button, FullScreenDialog, Select, TextInput } from '@talismn/ui'
-import toSs52Address from '@util/toSs52Address'
+import { toSs52Address } from '@util/addresses'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 

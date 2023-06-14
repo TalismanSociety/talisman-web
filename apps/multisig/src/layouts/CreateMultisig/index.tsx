@@ -8,6 +8,7 @@ import {
 } from '@domains/chains'
 import { useCreateProxy, useTransferProxyToMultisig } from '@domains/chains/extrinsics'
 import { useProxiesProxies } from '@domains/chains/storage-getters'
+import { useAddressIsProxyDelegatee } from '@domains/chains/storage-getters'
 import { InjectedAccount, accountsState } from '@domains/extension'
 import { AugmentedAccount, activeMultisigsState } from '@domains/multisig'
 import { css } from '@emotion/css'
@@ -73,6 +74,7 @@ const CreateMultisig = () => {
   const [proxyAddress, setProxyAddress] = useState<string | undefined>()
   const existentialDepositLoadable = useRecoilValueLoadable(existentialDepositSelector(chain.rpc))
   const proxyDepositTotalLoadable = useRecoilValueLoadable(proxyDepositTotalSelector(chain.rpc))
+  const { addressIsProxyDelegatee } = useAddressIsProxyDelegatee(chain)
   const { proxyProxies } = useProxiesProxies(chain)
 
   const navigate = useNavigate()
@@ -136,18 +138,13 @@ const CreateMultisig = () => {
             proxyAddress,
             multiAddress,
             existentialDepositLoadable.contents,
-            async _success => {
-              const res = await proxyProxies(proxyAddress)
-              if (
-                res.length !== 2 ||
-                res[0]?.length !== 1 ||
-                res[0][0]?.delegate === undefined ||
-                encodeAddress(res[0][0].delegate) !== multiAddress
-              ) {
+            async _ => {
+              const multisigIsProxyDeletatee = await addressIsProxyDelegatee(proxyAddress, multiAddress)
+
+              if (!multisigIsProxyDeletatee) {
                 console.error(
                   'There was an issue configuring your proxy. Please submit a bug report with your signer address and any relevant transaction hashes.'
                 )
-                console.error(res)
                 toast.error(
                   'There was an issue configuring your proxy. Please submit a bug report with your signer address and any relevant transaction hashes.'
                 )
@@ -176,6 +173,7 @@ const CreateMultisig = () => {
       setCreateTransactionsStatus(CreateTransactionsStatus.CreatingProxy)
     }
   }, [
+    addressIsProxyDelegatee,
     existentialDepositLoadable.contents,
     createTransctionStatus,
     step,
@@ -278,7 +276,14 @@ const CreateMultisig = () => {
         ) : step === Step.Transactions ? (
           <SignTransactions status={createTransctionStatus} />
         ) : step === Step.VaultCreated ? (
-          <VaultCreated goToVault={() => navigate('/overview')} proxyAccount={proxyAddress as string} name={name} />
+          <VaultCreated
+            goToVault={() => navigate('/overview')}
+            proxy={proxyAddress as string}
+            name={name}
+            threshold={threshold}
+            signers={augmentedAccounts.map(a => a.address)}
+            chainId={chain.id}
+          />
         ) : null}
       </div>
     </div>

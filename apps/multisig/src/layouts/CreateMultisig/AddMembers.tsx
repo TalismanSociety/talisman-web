@@ -3,11 +3,10 @@ import MemberRow from '@components/MemberRow'
 import { AugmentedAccount } from '@domains/multisig'
 import { css } from '@emotion/css'
 import { Button, TextInput } from '@talismn/ui'
+import { toSs52Address } from '@util/addresses'
 import { device } from '@util/breakpoints'
 import { useState } from 'react'
 import { toast } from 'react-hot-toast'
-
-import toSs52Address from '../../util/toSs52Address'
 
 const AddMembers = (props: {
   onBack: () => void

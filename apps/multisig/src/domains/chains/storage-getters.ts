@@ -56,3 +56,26 @@ export const useProxiesProxies = (chain: Chain) => {
 
   return { proxyProxies, ready: apiLoadable.state === 'hasValue' }
 }
+
+export const useAddressIsProxyDelegatee = (chain: Chain) => {
+  const apiLoadable = useRecoilValueLoadable(pjsApiSelector(chain.rpc))
+
+  const addressIsProxyDelegatee = useCallback(
+    async (proxy: string, address: string) => {
+      if (apiLoadable.state !== 'hasValue') {
+        throw Error('apiLoadable must be ready')
+      }
+
+      const api = apiLoadable.contents
+      if (!api.query.proxy || !api.query.proxy.proxies) {
+        throw Error('proxy.proxies must exist on api')
+      }
+      const res = (await api.query.proxy.proxies(proxy)) as unknown as ProxyDefinition[][]
+      // @ts-ignore
+      return res[0].some(d => d.delegate.toString() === address && d.proxyType.toString() === 'Any')
+    },
+    [apiLoadable]
+  )
+
+  return { addressIsProxyDelegatee, ready: apiLoadable.state === 'hasValue' }
+}
