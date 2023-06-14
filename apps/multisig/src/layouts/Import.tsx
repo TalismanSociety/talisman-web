@@ -2,7 +2,7 @@ import { Member } from '@components/Member'
 import { Chain, supportedChains } from '@domains/chains'
 import { useAddressIsProxyDelegatee } from '@domains/chains/storage-getters'
 import { accountsState, extensionAllowedState, extensionLoadingState } from '@domains/extension'
-import { Multisig, multisigsState } from '@domains/multisig'
+import { Multisig, multisigsState, userSelectedMultisigState } from '@domains/multisig'
 import { css } from '@emotion/css'
 import { createKeyMulti, encodeAddress, sortAddresses } from '@polkadot/util-crypto'
 import { Loader } from '@talismn/icons'
@@ -13,12 +13,13 @@ import queryString from 'query-string'
 import { useEffect, useMemo, useState } from 'react'
 import toast from 'react-hot-toast'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { useRecoilState } from 'recoil'
+import { useRecoilState, useSetRecoilState } from 'recoil'
 
 const Import = () => {
   const navigate = useNavigate()
   const location = useLocation()
   const [multisigs, setMultisigs] = useRecoilState(multisigsState)
+  const setUserSelectedMultisig = useSetRecoilState(userSelectedMultisigState)
   const [extensionAccounts] = useRecoilState(accountsState)
   const [extensionLoading] = useRecoilState(extensionLoadingState)
   const [extensionAllowed, setExtensionAllowed] = useRecoilState(extensionAllowedState)
@@ -106,11 +107,13 @@ const Import = () => {
         confirmedTransactions: [],
       }
       setMultisigs([...multisigs, multisig])
+      setUserSelectedMultisig(multisig)
       navigate('/overview')
       toast.success('Multisig imported successfully! 🥳', { duration: 5000 })
     }
   }, [
     setMultisigs,
+    setUserSelectedMultisig,
     multisigs,
     chain,
     name,

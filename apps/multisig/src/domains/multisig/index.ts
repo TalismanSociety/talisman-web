@@ -1,26 +1,19 @@
-import { Chain, Token, supportedChains } from '@domains/chains'
+import { Chain, Token } from '@domains/chains'
 import { accountsState } from '@domains/extension'
 import { atom, selector } from 'recoil'
 import { recoilPersist } from 'recoil-persist'
 
 const { persistAtom } = recoilPersist()
 
-const mockMultisig: Multisig = {
-  name: 'mock multisig',
-  chain: supportedChains[0] as Chain,
-  multisigAddress: '0x000',
-  proxyAddress: '0x00000',
-  signers: ['5CfQ7R2JjfxS2qJUSoUfpFPtvoraronPkkjK96ED1kgcYzd5'],
-  threshold: 3,
-  balances: [],
-  pendingTransactions: [],
-  confirmedTransactions: [],
-}
-
 export const multisigsState = atom<Multisig[]>({
   key: 'Multisigs',
-  default: [mockMultisig],
+  default: [],
   effects_UNSTABLE: [persistAtom],
+})
+
+export const userSelectedMultisigState = atom<Multisig | undefined>({
+  key: 'UserSelectedMultisig',
+  default: undefined,
 })
 
 export const activeMultisigsState = selector({
@@ -32,6 +25,24 @@ export const activeMultisigsState = selector({
     return multisigs.filter(multisig => {
       return multisig.signers.some(signer => accounts.some(account => account.address === signer))
     })
+  },
+})
+
+export const selectedMultisigState = selector<Multisig>({
+  key: 'SelectedMultisig',
+  get: ({ get }) => {
+    const userSelected = get(userSelectedMultisigState)
+    if (userSelected !== undefined) {
+      return userSelected
+    }
+
+    const activeMultisigs = get(activeMultisigsState)
+    if (activeMultisigs.length > 0) {
+      return activeMultisigs[0] as Multisig
+    } else {
+      console.error('No active multisigs found!')
+      throw Error('No active multisigs found!')
+    }
   },
 })
 

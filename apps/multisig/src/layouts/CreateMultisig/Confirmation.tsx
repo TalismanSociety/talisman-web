@@ -11,6 +11,7 @@ import { device } from '@util/breakpoints'
 import { Decimal, formatUsd } from '@util/numbers'
 import BN from 'bn.js'
 import { Loadable } from 'recoil'
+import truncateMiddle from 'truncate-middle'
 
 const Cost = (props: { amount: Decimal; symbol: string; price: number }) => {
   return (
@@ -212,7 +213,7 @@ const Confirmation = (props: {
                 leadingIcon={<Identicon value={account.address} />}
                 value={account.address}
                 headlineText={account.nickname}
-                supportingText={'1 DOT'}
+                supportingText={truncateMiddle(account.address, 5, 4, '...')}
               />
             ))}
           </Select>

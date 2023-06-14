@@ -1,78 +1,19 @@
 import Logo from '@components/Logo'
 import { copyToClipboard } from '@domains/common'
+import { activeMultisigsState, selectedMultisigState, userSelectedMultisigState } from '@domains/multisig'
 import { css } from '@emotion/css'
 import { useTheme } from '@emotion/react'
 import { Copy, Plus, PlusCircle, TalismanHand } from '@talismn/icons'
 import { Button, IconButton, Identicon, Select } from '@talismn/ui'
-import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-
-interface Multisig {
-  name: string
-  signers: string[]
-  threshold: number
-  networks: {
-    [key: string]: {
-      proxy: string
-      multisig: string
-    }
-  }
-}
-
-const mockMultisigs: Multisig[] = [
-  {
-    name: 'Paraverse Foundation',
-    signers: ['5FmE1Adpwp1bT1oY95w59RiSPVu9LmJ8y7u4yK8Zi5vznv5Y', '5DLfh24Fy7xhDf4dj4E4M4D4ewhRJi29v5A9X9uKXCf1QxQ3'],
-    threshold: 2,
-    networks: {
-      polkadot: {
-        proxy: '5Cf9PXqb7Wp8QBBoC3NRS1iMnaVGU8WCCnZUcBnv9Pp9d8NZ',
-        multisig: '5E2iJwFrcK8WUBn1jvYc9rYFxJGSM8jKkzUvEczQ2BwSnDZ6',
-      },
-      kusama: {
-        proxy: 'Ez8WgjKToXYT6TJw6F76R8B7DhjfSJY9qv7KuBsaFJgQq3h',
-        multisig: 'F4aNh6qxPPJXQobU6S5U5JwDz3q3qVQjrrYciZ7Q97CgJkA',
-      },
-    },
-  },
-  {
-    name: 'Centrifuge Pty Ltd',
-    signers: [
-      '5Dy7YpGw3Nn8WDEeNWntvRk9XQ2kQmnsbYZQ2n6nEkT6CwT6',
-      '5FmPy6kM4fU4Mz7UyT52T6T8b2aL4BAvP4Z9z4f4sUUN4eU6',
-      '5GJpzMh8UkMqUWoHjzXZwbRgC8EEMco1JvDjqVQAXwfsR5Kr',
-      '5DvFd3q9GZa3g8VjWnRWv5MkdnrBFRk21J1GmDVpEj7ZC9eq',
-    ],
-    threshold: 3,
-    networks: {
-      polkadot: {
-        proxy: 'EF4SKSX7D8Rv9H7FfnzS5bS7W8zvQ2Q4g4A4YJMXyW8Dv1b',
-        multisig: 'H1e7Z8EoPz5hVY5Yf2Q7VtkGv5u5nV6hcQmQfjGZDCxrnJu',
-      },
-    },
-  },
-  {
-    name: 'Chaos DAO Primary',
-    signers: [
-      '5Ay7YpGw3Nn8WDEeNWntvRk9XQ2kQmnsbYZQ2n6nEkT6CwT6',
-      '5FmPy6kM4fU4Mz7UyT52T6T8b2aL4BAvP4Z9z4f4sUUN4eU6',
-      '5GJpzMh8UkMqUWoHjzXZwbRgC8EEMco1JvDjqVQAXwfsR5Kr',
-      '5DvFd3q9GZa3g8VjWnRWv5MkdnrBFRk21J1GmDVpEj7ZC9eq',
-    ],
-    threshold: 3,
-    networks: {
-      polkadot: {
-        proxy: 'CF4SKSX7D8Rv9H7FfnzS5bS7W8zvQ2Q4g4A4YJMXyW8Dv1b',
-        multisig: 'D1e7Z8EoPz5hVY5Yf2Q7VtkGv5u5nV6hcQmQfjGZDCxrnJu',
-      },
-    },
-  },
-]
+import { useRecoilValue, useSetRecoilState } from 'recoil'
 
 const Header = () => {
   const theme = useTheme()
   const navigate = useNavigate()
-  const [selectedMultisig, setSelectedMultisig] = useState(mockMultisigs[0] as Multisig)
+  const activeMultisigs = useRecoilValue(activeMultisigsState)
+  const selectedMultisig = useRecoilValue(selectedMultisigState)
+  const setUserSelectedMultisig = useSetRecoilState(userSelectedMultisigState)
 
   return (
     <header
@@ -199,17 +140,25 @@ const Header = () => {
                     height: 40px;
                     width: 40px;
                   `}
-                  value={selectedMultisig.networks.polkadot?.proxy as string}
+                  value={selectedMultisig.proxyAddress as string}
                 />
-                <p
+                <div
                   className={css`
                     color: var(--color-offWhite) !important;
                     pointer-events: none;
                     user-select: none;
                   `}
                 >
-                  {selectedMultisig.name}
-                </p>
+                  <div css={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                    <p>{selectedMultisig.name}</p>
+                    <img
+                      css={{ marginBottom: '2px' }}
+                      height={16}
+                      src={selectedMultisig.chain.logo}
+                      alt={selectedMultisig.chain.chainName}
+                    />
+                  </div>
+                </div>
                 <Copy
                   className={css`
                     height: 18px;
@@ -219,49 +168,50 @@ const Header = () => {
                     }
                   `}
                   onClick={e => {
-                    copyToClipboard(selectedMultisig.networks.polkadot?.proxy as string, 'Address copied to clipboard')
+                    copyToClipboard(selectedMultisig.proxyAddress, 'Address copied to clipboard')
                     e.stopPropagation()
                   }}
                 />
               </div>
             }
-            value={selectedMultisig.networks.polkadot?.proxy}
+            value={selectedMultisig.proxyAddress}
             onChange={key => {
-              setSelectedMultisig(
-                mockMultisigs.find(m => {
-                  return m.networks.polkadot?.proxy === key
-                }) as Multisig
-              )
+              setUserSelectedMultisig(activeMultisigs.find(m => m.proxyAddress === key))
             }}
           >
-            {mockMultisigs.reduce((accumulator, multisig) => {
-              if ((selectedMultisig.networks.polkadot?.proxy as string) === multisig.networks.polkadot?.proxy)
-                return accumulator
+            {activeMultisigs.reduce((accumulator, multisig) => {
+              if (selectedMultisig.proxyAddress === multisig.proxyAddress) return accumulator
 
               return accumulator.concat(
                 <Select.Item
-                  key={multisig.networks.polkadot?.proxy}
-                  leadingIcon={<Identicon value={multisig.networks.polkadot?.proxy as string} />}
-                  value={multisig.networks.polkadot?.proxy}
+                  key={multisig.proxyAddress}
+                  leadingIcon={<Identicon value={multisig.proxyAddress} />}
+                  value={multisig.proxyAddress}
                   headlineText={
                     <div
                       css={{
                         display: 'flex',
                         alignItems: 'center',
-                        gap: '9px',
+                        gap: '4px',
                         fontSize: '14px',
                         color: 'var(--color-foreground)',
                       }}
                     >
-                      {multisig.name}
+                      <p>{multisig.name}</p>
                     </div>
                   }
                   supportingText={
-                    <div
-                      css={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px', marginTop: '3px' }}
-                    >
-                      <Identicon value={(multisig.networks.polkadot?.proxy as string) + 'something'} size={'16px'} />
-                      <div css={{ color: 'var(--color-foreground)', marginTop: '3px' }}>My Piping Hot Ledger</div>
+                    <div css={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px' }}>
+                      {/* This was originally in the spec, maybe want to enable it later. but for now, seems to make most sense to display the network. */}
+                      {/* <Identicon value={multisig.proxyAddress} size={'16px'} /> */}
+                      {/* <div css={{ color: 'var(--color-foreground)', marginTop: '3px' }}>My Piping Hot Ledger</div> */}
+                      <img
+                        css={{ marginBottom: '2px' }}
+                        height={16}
+                        src={multisig.chain.logo}
+                        alt={multisig.chain.chainName}
+                      />
+                      <div css={{ color: 'var(--color-foreground)', marginTop: '3px' }}>{multisig.chain.chainName}</div>
                     </div>
                   }
                 />
