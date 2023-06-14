@@ -1,9 +1,23 @@
-import { Chain, Token } from '@domains/chains'
+import { Chain, Token, chainTokensByIdQuery, supportedChains } from '@domains/chains'
 import { accountsState } from '@domains/extension'
+import { formatBalance } from '@polkadot/util'
+import BN from 'bn.js'
 import { atom, selector } from 'recoil'
 import { recoilPersist } from 'recoil-persist'
 
 const { persistAtom } = recoilPersist()
+
+const dummyMultisig: Multisig = {
+  name: 'Dummy Multisig',
+  chain: supportedChains[0] as Chain,
+  signers: [],
+  threshold: 0,
+  multisigAddress: '',
+  proxyAddress: '',
+  balances: [],
+  pendingTransactions: [],
+  confirmedTransactions: [],
+}
 
 export const multisigsState = atom<Multisig[]>({
   key: 'Multisigs',
@@ -40,9 +54,18 @@ export const selectedMultisigState = selector<Multisig>({
     if (activeMultisigs.length > 0) {
       return activeMultisigs[0] as Multisig
     } else {
-      console.error('No active multisigs found!')
-      throw Error('No active multisigs found!')
+      // Tmp return value so it doesn't crash when it navigates back to the create or landing page
+      return dummyMultisig
     }
+  },
+})
+
+export const selectedMultisigChainTokensState = selector<Token[]>({
+  key: 'SelectedMultisigChainTokens',
+  get: ({ get }) => {
+    const multisig = get(selectedMultisigState)
+    const tokens = get(chainTokensByIdQuery(multisig.chain.id))
+    return tokens
   },
 })
 
@@ -72,16 +95,15 @@ export interface Multisig {
 
 export interface Balance {
   token: Token
-  amount: string
+  amount: BN
 }
 
-interface TransactionRecipient {
+export interface TransactionRecipient {
   address: string
   balance: Balance
 }
 
 export interface Transaction {
-  multisig: Multisig
   createdTimestamp: Date
   executedTimestamp?: Date
   description: string
@@ -100,4 +122,50 @@ export interface Transaction {
     }
   }
   raw: string
+}
+
+export const calcSumOutgoing = (t: Transaction): Balance[] => {
+  return t.decoded.recipients.reduce((acc: Balance[], r) => {
+    const tokenId = r.balance.token.id
+    const existingIndex = acc.findIndex(a => a.token.id === tokenId)
+    if (existingIndex !== -1) {
+      const existing = acc[existingIndex] as Balance
+      const updatedBalance = {
+        ...existing,
+        amount: existing.amount.add(r.balance.amount),
+      }
+      acc[existingIndex] = updatedBalance
+    } else {
+      acc.push({ ...r.balance })
+    }
+    return acc
+  }, [])
+}
+
+export const balanceToFloat = (b: Balance | undefined): number => {
+  const balance = b ?? EMPTY_BALANCE
+  return parseFloat(
+    formatBalance(balance.amount, {
+      decimals: balance.token.decimals,
+      withAll: true,
+      forceUnit: '-',
+      withSi: false,
+      withUnit: false,
+    })
+  )
+}
+
+export const EMPTY_BALANCE: Balance = {
+  token: {
+    id: 'polkadot',
+    coingeckoId: 'polkadot',
+    logo: 'https://raw.githubusercontent.com/TalismanSociety/chaindata/v3/assets/chains/polkadot.svg',
+    type: 'native',
+    symbol: 'DOT',
+    decimals: 10,
+    chain: {
+      id: 'polkadot',
+    },
+  },
+  amount: new BN(0),
 }

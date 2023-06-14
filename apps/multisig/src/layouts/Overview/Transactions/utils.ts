@@ -1,9 +1,7 @@
-import { Transaction__deprecated } from '.'
+import { Transaction } from '@domains/multisig'
 
-export function groupTransactionsByDay(
-  transactions: Transaction__deprecated[]
-): Array<[string, Transaction__deprecated[]]> {
-  const groupedTransactions: Record<string, Transaction__deprecated[]> = {}
+export function groupTransactionsByDay(transactions: Transaction[]): Array<[string, Transaction[]]> {
+  const groupedTransactions: Record<string, Transaction[]> = {}
 
   for (const transaction of transactions) {
     const date = new Date(transaction.createdTimestamp)
@@ -19,7 +17,7 @@ export function groupTransactionsByDay(
       groupedTransactions[dayFormatted] = []
     }
 
-    ;(groupedTransactions[dayFormatted] as Transaction__deprecated[]).push(transaction)
+    ;(groupedTransactions[dayFormatted] as Transaction[]).push(transaction)
   }
 
   const sortedEntries = Object.entries(groupedTransactions).sort((a, b) => {

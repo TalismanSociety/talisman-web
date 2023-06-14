@@ -1,14 +1,29 @@
 import StatusCircle, { StatusCircleType } from '@components/StatusCircle'
-import { TransactionType } from '@domains/multisig'
+import { tokenPricesState } from '@domains/chains'
+import { Balance, Transaction, TransactionType, balanceToFloat, calcSumOutgoing } from '@domains/multisig'
 import { css } from '@emotion/css'
 import { ArrowUp, List, Share2 } from '@talismn/icons'
+import { Skeleton } from '@talismn/ui'
 import { formatUsd } from '@util/numbers'
+import { useMemo } from 'react'
+import { useRecoilValueLoadable } from 'recoil'
 
 import { formattedHhMm } from './utils'
-import { Transaction__deprecated } from '.'
 
-const TransactionSummaryRow = ({ t, onClick }: { t: Transaction__deprecated; onClick?: () => void }) => {
+const TransactionSummaryRow = ({ t, onClick }: { t: Transaction; onClick?: () => void }) => {
+  const sumOutgoing: Balance[] = useMemo(() => calcSumOutgoing(t), [t])
+  const tokenPrices = useRecoilValueLoadable(tokenPricesState(sumOutgoing.map(b => b.token.coingeckoId)))
   const threshold = 2
+  const sumPriceUsd: number | undefined = useMemo(() => {
+    if (tokenPrices.state === 'hasValue') {
+      return sumOutgoing.reduce((acc, b) => {
+        const price = tokenPrices.contents[b.token.coingeckoId] || 0
+        return acc + balanceToFloat(b) * price
+      }, 0)
+    }
+    return undefined
+  }, [sumOutgoing, tokenPrices])
+
   const signedCount = Object.values(t.approvals).filter(Boolean).length
   const txIcon =
     t.decoded.type === TransactionType.Transfer ? (
@@ -18,6 +33,8 @@ const TransactionSummaryRow = ({ t, onClick }: { t: Transaction__deprecated; onC
     ) : (
       <List />
     )
+
+  const tokenBreakdown = sumOutgoing.map(b => `${balanceToFloat(b)} ${b.token.symbol}`).join(' + ')
   return (
     <div
       onClick={onClick}
@@ -84,12 +101,16 @@ const TransactionSummaryRow = ({ t, onClick }: { t: Transaction__deprecated; onC
         )}
       </span>
       <p css={{ gridArea: 'time', fontSize: '14px', paddingTop: '4px' }}>{formattedHhMm(t.createdTimestamp)}</p>
-      <p css={{ gridArea: 'tokenAmount', textAlign: 'right', color: 'var(--color-offWhite)' }}>
-        {t.decoded.outgoingToken?.amount} {t.decoded.outgoingToken?.token.symbol}
+      <p css={{ gridArea: 'tokenAmount', textAlign: 'right', color: 'var(--color-offWhite)', gridTemplateRows: '1fr' }}>
+        {tokenBreakdown}
       </p>
-      <p css={{ gridArea: 'usdAmount', textAlign: 'right', fontSize: '14px', paddingTop: '4px' }}>
-        {formatUsd((t.decoded.outgoingToken?.amount || 0) * (t.decoded.outgoingToken?.price || 0))}
-      </p>
+      <div css={{ gridArea: 'usdAmount', textAlign: 'right', fontSize: '14px', paddingTop: '10px' }}>
+        {sumPriceUsd ? (
+          <>{formatUsd(sumPriceUsd)}</>
+        ) : sumPriceUsd === 0 ? null : (
+          <Skeleton.Surface css={{ height: '14px', minWidth: '30px' }} />
+        )}
+      </div>
       {t.executedTimestamp && (
         <a
           className={css`

@@ -3,21 +3,24 @@ import 'ace-builds/src-noconflict/mode-yaml'
 import 'ace-builds/src-noconflict/theme-twilight'
 import 'ace-builds/src-noconflict/ext-language_tools'
 
-import { Token } from '@domains/chains'
-import { TransactionType } from '@domains/multisig'
+import { tokenPriceState } from '@domains/chains'
+import { Balance, Transaction, TransactionType, calcSumOutgoing } from '@domains/multisig'
 import { css } from '@emotion/css'
 import { useTheme } from '@emotion/react'
 import { ChevronRight, List, Send, Share2, Users } from '@talismn/icons'
-import { IconButton, Identicon } from '@talismn/ui'
+import { IconButton, Identicon, Skeleton } from '@talismn/ui'
 import { formatUsd } from '@util/numbers'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import AceEditor from 'react-ace'
 import { Collapse } from 'react-collapse'
+import { useRecoilValueLoadable } from 'recoil'
 import truncateMiddle from 'truncate-middle'
 
-import { Transaction__deprecated } from '.'
-
-const AmountRow = ({ amount, token, price }: { amount: number; token?: Token; price: number }) => {
+const AmountRow = ({ balance }: { balance: Balance }) => {
+  const price = useRecoilValueLoadable(tokenPriceState(balance.token.coingeckoId))
+  const balanceDecimal = useMemo(() => {
+    return balance.amount.toNumber() / Math.pow(10, balance.token.decimals)
+  }, [balance])
   return (
     <div
       className={css`
@@ -27,10 +30,14 @@ const AmountRow = ({ amount, token, price }: { amount: number; token?: Token; pr
         color: var(--color-foreground);
       `}
     >
-      <p css={{ fontSize: '18px', marginTop: '4px' }}>{amount}</p>
-      <img css={{ height: '20px' }} src={token?.logo} alt="token logo" />
-      <p css={{ fontSize: '18px', marginTop: '4px' }}>{token?.symbol}</p>
-      <p css={{ fontSize: '18px', marginTop: '4px' }}>{`(${formatUsd(amount * price)})`}</p>
+      <p css={{ fontSize: '18px', marginTop: '4px' }}>{balanceDecimal}</p>
+      <img css={{ height: '20px' }} src={balance.token.logo} alt="token logo" />
+      <p css={{ fontSize: '18px', marginTop: '4px' }}>{balance.token.symbol}</p>
+      {price.state === 'hasValue' ? (
+        <p css={{ fontSize: '18px', marginTop: '4px' }}>{`(${formatUsd(balanceDecimal * price.contents)})`}</p>
+      ) : (
+        <Skeleton.Surface css={{ height: '14px', minWidth: '125px' }} />
+      )}
     </div>
   )
 }
@@ -59,15 +66,17 @@ const AddressPill = ({ a }: { a: string }) => {
   )
 }
 
-const MultiSendExpendedDetails = ({ t }: { t: Transaction__deprecated }) => {
+const MultiSendExpendedDetails = ({ t }: { t: Transaction }) => {
   const theme = useTheme()
   const recipients = t.decoded.recipients || []
   return (
     <div css={{ paddingBottom: '8px' }}>
-      {t.decoded.recipients.map(([addr, amt], i) => {
+      {t.decoded.recipients.map((r, i) => {
+        const { address, balance } = r
         const last = i === recipients.length - 1
         return (
           <div
+            key={address}
             css={{
               display: 'grid',
               gap: '16px',
@@ -98,16 +107,12 @@ const MultiSendExpendedDetails = ({ t }: { t: Transaction__deprecated }) => {
                 </span>
               </div>
               <div css={{ marginLeft: 'auto' }}>
-                <AmountRow
-                  amount={amt}
-                  token={t.decoded?.outgoingToken?.token}
-                  price={t.decoded.outgoingToken?.price || 0}
-                />
+                <AmountRow balance={balance} />
               </div>
             </div>
             <div css={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               Destination
-              <AddressPill a={addr} />
+              <AddressPill a={address} />
             </div>
           </div>
         )
@@ -116,7 +121,7 @@ const MultiSendExpendedDetails = ({ t }: { t: Transaction__deprecated }) => {
   )
 }
 
-const AdvancedExpendedDetails = ({ t }: { t: Transaction__deprecated }) => {
+const AdvancedExpendedDetails = ({ t }: { t: Transaction }) => {
   return (
     <div css={{ paddingBottom: '8px' }}>
       <AceEditor
@@ -132,9 +137,11 @@ const AdvancedExpendedDetails = ({ t }: { t: Transaction__deprecated }) => {
   )
 }
 
-const TransactionDetailsExpandable = ({ t }: { t: Transaction__deprecated }) => {
+const TransactionDetailsExpandable = ({ t }: { t: Transaction }) => {
   const theme = useTheme()
   const [expanded, setExpanded] = useState(false)
+  const sumOutgoing: Balance[] = useMemo(() => calcSumOutgoing(t), [t])
+
   const recipients = t.decoded.recipients || []
   return (
     <div
@@ -214,23 +221,22 @@ const TransactionDetailsExpandable = ({ t }: { t: Transaction__deprecated }) => 
         ) : t.decoded.type === TransactionType.Transfer ? (
           <div
             className={css`
-              margin-left: auto;
               color: var(--color-foreground);
               margin-right: 16px;
             `}
           >
-            <AddressPill a={(recipients[0] || ['', 0])[0]} />
+            <AddressPill a={recipients[0]?.address || ''} />
           </div>
         ) : null}
         {t.decoded.type !== TransactionType.Advanced && (
-          <AmountRow
-            amount={t.decoded.outgoingToken?.amount || 0}
-            token={t.decoded.outgoingToken?.token}
-            price={t.decoded.outgoingToken?.price || 0}
-          />
+          <div css={{ display: 'flex', alignItems: 'flex-end', flexDirection: 'column', marginLeft: 'auto' }}>
+            {sumOutgoing.map(b => {
+              return <AmountRow key={b.token.id} balance={b} />
+            })}
+          </div>
         )}
         {t.decoded.type === TransactionType.MultiSend || t.decoded.type === TransactionType.Advanced ? (
-          <div css={{ width: '28px', marginLeft: 'auto' }}>
+          <div css={{ width: '28px', marginLeft: t.decoded.type === TransactionType.MultiSend ? '0' : 'auto' }}>
             <IconButton
               contentColor={`rgb(${theme.offWhite})`}
               onClick={() => {

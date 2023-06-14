@@ -1,4 +1,4 @@
-import { activeMultisigsState } from '@domains/multisig'
+import { Transaction, activeMultisigsState } from '@domains/multisig'
 import { css } from '@emotion/css'
 import { Eye, Settings } from '@talismn/icons'
 import { device } from '@util/breakpoints'
@@ -12,7 +12,7 @@ import Header from './Header'
 import { mockTokensAugmented, mockTransactions } from './mocks'
 import NewTransactionModal from './NewTransactionModal'
 import Sidebar from './Sidebar'
-import Transactions, { Transaction__deprecated } from './Transactions'
+import Transactions from './Transactions'
 
 const Overview = () => {
   const navigate = useNavigate()
@@ -25,7 +25,7 @@ const Overview = () => {
     }
   }, [activeMultisigs, navigate])
 
-  const transactions: Transaction__deprecated[] = mockTransactions
+  const transactions: Transaction[] = mockTransactions
   const augmentedTokens: TokenAugmented[] = mockTokensAugmented
   return (
     <div

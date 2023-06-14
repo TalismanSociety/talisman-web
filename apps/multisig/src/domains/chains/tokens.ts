@@ -8,20 +8,32 @@ import RelayEnvironment from '../../graphql/relay-environment'
 // (can include multiple ids)
 export const tokenPriceState = selectorFamily({
   key: 'TokenPrice',
-  get:
-    ({ coingeckoId }: { coingeckoId: string }) =>
-    async () => {
-      try {
-        const result = await fetch(
-          `https://api.coingecko.com/api/v3/simple/price?ids=${coingeckoId}&vs_currencies=usd`
-        ).then(x => x.json())
+  get: (coingeckoId: string) => async () => {
+    try {
+      const result = await fetch(
+        `https://api.coingecko.com/api/v3/simple/price?ids=${coingeckoId}&vs_currencies=usd`
+      ).then(x => x.json())
 
-        return result[coingeckoId].usd as number
-      } catch {
-        // Coingecko has rate limit, better to return 0 than to crash the session
-        // TODO: find alternative or purchase Coingecko subscription
-        return 0
-      }
+      return result[coingeckoId].usd as number
+    } catch {
+      // Coingecko has rate limit, better to return 0 than to crash the session
+      // TODO: find alternative or purchase Coingecko subscription
+      return 0
+    }
+  },
+})
+
+export const tokenPricesState = selectorFamily({
+  key: 'TokenPrices',
+  get:
+    (coingeckoIds: string[]) =>
+    async ({ get }) => {
+      const res: { [key: string]: number } = {}
+      coingeckoIds.forEach(id => {
+        let price = get(tokenPriceState(id))
+        res[id] = price
+      })
+      return res
     },
 })
 
@@ -57,7 +69,7 @@ export const tokenByIdWithPrice = selectorFamily({
     id =>
     async ({ get }) => {
       const token = get(tokenByIdQuery(id))
-      const price = get(tokenPriceState({ coingeckoId: token.coingeckoId }))
+      const price = get(tokenPriceState(token.coingeckoId))
       return { token, price }
     },
 })
@@ -87,5 +99,7 @@ export const chainTokensByIdQuery = graphQLSelectorFamily({
     }
   `,
   variables: id => ({ id }),
-  mapResponse: res => res.chainById.tokens as Token[],
+  mapResponse: res => {
+    return res.chainById.tokens.map((item: { data: Token }) => item.data) as Token[]
+  },
 })

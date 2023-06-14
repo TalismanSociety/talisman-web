@@ -1,11 +1,11 @@
 import MemberRow from '@components/MemberRow'
 import StatusCircle, { StatusCircleType } from '@components/StatusCircle'
+import { Transaction } from '@domains/multisig'
 import { css } from '@emotion/css'
 import { Button } from '@talismn/ui'
 
 import TransactionDetailsExpandable from './TransactionDetailsExpandable'
 import TransactionSummaryRow from './TransactionSummaryRow'
-import { Transaction__deprecated } from '.'
 
 enum PillType {
   Pending,
@@ -32,11 +32,11 @@ const Pill = ({ children, type }: { children: React.ReactNode; type: PillType })
   )
 }
 
-const Approvals = ({ t }: { t: Transaction__deprecated }) => {
+const Approvals = ({ t }: { t: Transaction }) => {
   return (
     <div css={{ display: 'grid', gap: '14px' }}>
       {Object.entries(t.approvals).map(([address, approval]) => (
-        <div css={{ display: 'flex', width: '100%', justifyContent: 'space-between' }}>
+        <div key={address} css={{ display: 'flex', width: '100%', justifyContent: 'space-between' }}>
           <div css={{ width: '100%' }}>
             <MemberRow member={{ address }} />
           </div>
@@ -61,7 +61,7 @@ const Approvals = ({ t }: { t: Transaction__deprecated }) => {
   )
 }
 
-export const FullScreenDialogTitle = ({ t }: { t?: Transaction__deprecated }) => {
+export const FullScreenDialogTitle = ({ t }: { t?: Transaction }) => {
   if (!t) return null
 
   const pillType =
@@ -94,7 +94,7 @@ export const FullScreenDialogContents = ({
   onReject,
   onApprove,
 }: {
-  t?: Transaction__deprecated
+  t?: Transaction
   onReject: () => void
   onApprove: () => void
 }) => {

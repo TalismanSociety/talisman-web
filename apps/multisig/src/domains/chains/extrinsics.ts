@@ -5,21 +5,22 @@
 // TODO: use pjs types instead of @ts-ignoring everything
 
 import { pjsApiSelector } from '@domains/chains/pjs-api'
+import { Balance } from '@domains/multisig'
 import { SubmittableResult } from '@polkadot/api'
 import { web3FromAddress } from '@polkadot/extension-dapp'
-import { Balance } from '@polkadot/types/interfaces'
 import BN from 'bn.js'
 import { useCallback, useEffect, useState } from 'react'
 import { useRecoilValueLoadable } from 'recoil'
 
-import { Chain } from './tokens'
+import { Chain, tokenByIdQuery } from './tokens'
 
 export const useCreateProxy = (chain: Chain, extensionAddress: string | undefined) => {
   const apiLoadable = useRecoilValueLoadable(pjsApiSelector(chain.rpc))
+  const nativeToken = useRecoilValueLoadable(tokenByIdQuery(chain.nativeToken.id))
   const [estimatedFee, setEstimatedFee] = useState<Balance | undefined>()
 
   const estimateFee = useCallback(async () => {
-    if (apiLoadable.state !== 'hasValue' || !extensionAddress) {
+    if (apiLoadable.state !== 'hasValue' || !extensionAddress || nativeToken.state !== 'hasValue') {
       return
     }
 
@@ -29,8 +30,8 @@ export const useCreateProxy = (chain: Chain, extensionAddress: string | undefine
 
     // Fee estimation
     const paymentInfo = await tx.paymentInfo(extensionAddress)
-    setEstimatedFee(paymentInfo.partialFee as unknown as Balance)
-  }, [apiLoadable, extensionAddress])
+    setEstimatedFee({ token: nativeToken.contents, amount: paymentInfo.partialFee as unknown as BN })
+  }, [apiLoadable, extensionAddress, nativeToken])
 
   // Estimate the fee as soon as the hook is used and the extensionAddress or apiLoadable changes
   useEffect(() => {

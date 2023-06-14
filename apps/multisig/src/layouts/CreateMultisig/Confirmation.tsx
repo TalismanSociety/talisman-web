@@ -1,22 +1,20 @@
 import MemberRow from '@components/MemberRow'
 import { Chain, Token } from '@domains/chains'
 import { InjectedAccount } from '@domains/extension'
-import { AugmentedAccount } from '@domains/multisig'
+import { AugmentedAccount, Balance, balanceToFloat } from '@domains/multisig'
 import { css } from '@emotion/css'
-import { Balance } from '@polkadot/types/interfaces'
 import { Info } from '@talismn/icons'
 import { Button, IconButton, Identicon, Select } from '@talismn/ui'
 import { Skeleton } from '@talismn/ui'
 import { device } from '@util/breakpoints'
-import { Decimal, formatUsd } from '@util/numbers'
-import BN from 'bn.js'
+import { formatUsd } from '@util/numbers'
 import { Loadable } from 'recoil'
 import truncateMiddle from 'truncate-middle'
 
-const Cost = (props: { amount: Decimal; symbol: string; price: number }) => {
+const Cost = (props: { amount: Balance; symbol: string; price: number }) => {
   return (
     <p>
-      {props.amount.toString()} {props.symbol} ({formatUsd(props.amount.toNumber() * props.price)})
+      {balanceToFloat(props.amount)} {props.symbol} ({formatUsd(balanceToFloat(props.amount) * props.price)})
     </p>
   )
 }
@@ -31,7 +29,7 @@ const Confirmation = (props: {
   name: string
   chain: Chain
   tokenWithPrice: Loadable<{ token: Token; price: number }>
-  reserveAmount: Loadable<BN>
+  reserveAmount: Loadable<Balance>
   existentialDeposit: Loadable<Balance>
   estimatedFee: Balance | undefined
   extrinsicsReady: boolean
@@ -41,7 +39,7 @@ const Confirmation = (props: {
   const existentialDepositComponent =
     tokenWithPrice.state === 'hasValue' && existentialDeposit.state === 'hasValue' ? (
       <Cost
-        amount={Decimal.fromPlanck(existentialDeposit.contents.toString(), tokenWithPrice.contents.token.decimals)}
+        amount={existentialDeposit.contents}
         symbol={tokenWithPrice.contents.token.symbol}
         price={tokenWithPrice.contents.price}
       />
@@ -52,7 +50,7 @@ const Confirmation = (props: {
   const reserveAmountComponent =
     tokenWithPrice.state === 'hasValue' && reserveAmount.state === 'hasValue' ? (
       <Cost
-        amount={Decimal.fromPlanck(reserveAmount.contents.toString(), tokenWithPrice.contents.token.decimals)}
+        amount={reserveAmount.contents}
         symbol={tokenWithPrice.contents.token.symbol}
         price={tokenWithPrice.contents.price}
       />
@@ -62,11 +60,7 @@ const Confirmation = (props: {
 
   const feeAmountComponent =
     tokenWithPrice.state === 'hasValue' && estimatedFee ? (
-      <Cost
-        amount={Decimal.fromPlanck(estimatedFee, tokenWithPrice.contents.token.decimals)}
-        symbol={tokenWithPrice.contents.token.symbol}
-        price={tokenWithPrice.contents.price}
-      />
+      <Cost amount={estimatedFee} symbol={tokenWithPrice.contents.token.symbol} price={tokenWithPrice.contents.price} />
     ) : (
       <Skeleton.Surface css={{ height: '14px', minWidth: '125px' }} />
     )

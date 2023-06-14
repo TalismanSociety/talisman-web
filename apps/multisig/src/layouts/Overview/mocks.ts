@@ -1,10 +1,10 @@
 import { Token } from '@domains/chains'
-import { TransactionType } from '@domains/multisig'
+import { Transaction, TransactionType } from '@domains/multisig'
+import BN from 'bn.js'
 
 import { TokenAugmented } from './Assets'
-import { Transaction__deprecated } from './Transactions'
 
-const DOT: Token = {
+export const DOT: Token = {
   id: 'polkadot',
   coingeckoId: 'polkadot',
   logo: 'https://raw.githubusercontent.com/TalismanSociety/chaindata/v3/assets/chains/polkadot.svg',
@@ -16,7 +16,19 @@ const DOT: Token = {
   },
 }
 
-export const mockTransactions: Transaction__deprecated[] = [
+export const KSM: Token = {
+  id: 'kusama',
+  coingeckoId: 'kusama',
+  logo: 'https://raw.githubusercontent.com/TalismanSociety/chaindata/v3/assets/chains/kusama.svg',
+  type: 'native',
+  symbol: 'KSM',
+  decimals: 12,
+  chain: {
+    id: 'kusama',
+  },
+}
+
+export const mockTransactions: Transaction[] = [
   // Transactions without all approvals
   {
     createdTimestamp: new Date(Date.parse('03 Feb 2023 08:01:06 GMT')),
@@ -81,15 +93,28 @@ transaction:
     },
     decoded: {
       type: TransactionType.MultiSend,
-      outgoingToken: {
-        token: DOT,
-        amount: 500,
-        price: 30,
-      },
       recipients: [
-        ['5Gw3s7q4Xq7kMSKU5r5BpKkULK1tMmMjNC8jZZoYJ27kLguY', 100],
-        ['5CZz1FxoHm3qzPwkmxTwgQmPxL5sqkC7vZZ9Y6a1L6SugG6H', 200],
-        ['5Ejg6Uzj6rgZbUNU17ThFqQEfurq3jf6pU6VuRdq6JkU6FT8', 300],
+        {
+          address: '5Gw3s7q4Xq7kMSKU5r5BpKkULK1tMmMjNC8jZZoYJ27kLguY',
+          balance: {
+            token: DOT,
+            amount: new BN('100').mul(new BN('10').pow(new BN('10'))),
+          },
+        },
+        {
+          address: '5CZz1FxoHm3qzPwkmxTwgQmPxL5sqkC7vZZ9Y6a1L6SugG6H',
+          balance: {
+            token: KSM,
+            amount: new BN('200').mul(new BN('10').pow(new BN('10'))),
+          },
+        },
+        {
+          address: '5Ejg6Uzj6rgZbUNU17ThFqQEfurq3jf6pU6VuRdq6JkU6FT8',
+          balance: {
+            token: DOT,
+            amount: new BN('300').mul(new BN('10').pow(new BN('10'))),
+          },
+        },
       ],
       yaml: '0x',
     },
@@ -105,12 +130,15 @@ transaction:
     },
     decoded: {
       type: TransactionType.Transfer,
-      outgoingToken: {
-        token: DOT,
-        amount: 0.5,
-        price: 30,
-      },
-      recipients: [['5Ejg6Uzj6rgZbUNU17ThFqQEfurq3jf6pU6VuRdq6JkU6FT8', 0.5]],
+      recipients: [
+        {
+          address: '5Ejg6Uzj6rgZbUNU17ThFqQEfurq3jf6pU6VuRdq6JkU6FT8',
+          balance: {
+            token: DOT,
+            amount: new BN('5').mul(new BN('10').pow(new BN('10'))),
+          },
+        },
+      ],
       yaml: '0x',
     },
     raw: '0x...',
@@ -127,12 +155,15 @@ transaction:
 
     decoded: {
       type: TransactionType.Transfer,
-      outgoingToken: {
-        token: DOT,
-        amount: 100,
-        price: 30,
-      },
-      recipients: [['5Ejg6Uzj6rgZbUNU17ThFqQEfurq3jf6pU6VuRdq6JkU6FT8', 100]],
+      recipients: [
+        {
+          address: '5Ejg6Uzj6rgZbUNU17ThFqQEfurq3jf6pU6VuRdq6JkU6FT8',
+          balance: {
+            token: DOT,
+            amount: new BN('100').mul(new BN('10').pow(new BN('10'))),
+          },
+        },
+      ],
       yaml: '0x',
     },
     raw: '0x...',
@@ -149,15 +180,28 @@ transaction:
     },
     decoded: {
       type: TransactionType.MultiSend,
-      outgoingToken: {
-        token: DOT,
-        amount: 1000,
-        price: 30,
-      },
       recipients: [
-        ['5Hv5RhoRz7Dnys8b1yVpLwEovwniu3r3QRCWQ7VynvRjopH7', 150],
-        ['5DyV5wvvmYkbJTJU65P8B5TxwpUvNx6U5df6E5oAYyTFzs6y', 250],
-        ['5EYxYPZscKzZ1Q2eLLXC9X9Q8WgScT33TzHkRiLhSg8n1Dox', 350],
+        {
+          address: '5Hv5RhoRz7Dnys8b1yVpLwEovwniu3r3QRCWQ7VynvRjopH7',
+          balance: {
+            token: DOT,
+            amount: new BN('150').mul(new BN('10').pow(new BN('10'))),
+          },
+        },
+        {
+          address: '5DyV5wvvmYkbJTJU65P8B5TxwpUvNx6U5df6E5oAYyTFzs6y',
+          balance: {
+            token: DOT,
+            amount: new BN('250').mul(new BN('10').pow(new BN('10'))),
+          },
+        },
+        {
+          address: '5EYxYPZscKzZ1Q2eLLXC9X9Q8WgScT33TzHkRiLhSg8n1Dox',
+          balance: {
+            token: DOT,
+            amount: new BN('350').mul(new BN('10').pow(new BN('10'))),
+          },
+        },
       ],
       yaml: '0x',
     },
@@ -175,12 +219,15 @@ transaction:
     },
     decoded: {
       type: TransactionType.Transfer,
-      outgoingToken: {
-        token: DOT,
-        amount: 50,
-        price: 30,
-      },
-      recipients: [['5Ejg6Uzj6rgZbUNU17ThFqQEfurq3jf6pU6VuRdq6JkU6FT8', 50]],
+      recipients: [
+        {
+          address: '5Ejg6Uzj6rgZbUNU17ThFqQEfurq3jf6pU6VuRdq6JkU6FT8',
+          balance: {
+            token: DOT,
+            amount: new BN('50').mul(new BN('10').pow(new BN('10'))),
+          },
+        },
+      ],
       yaml: '0x',
     },
     raw: '0x...',

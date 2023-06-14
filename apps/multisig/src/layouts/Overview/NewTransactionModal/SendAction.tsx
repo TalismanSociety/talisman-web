@@ -1,27 +1,29 @@
-import { Chain, supportedChains } from '@domains/chains'
+import { Token } from '@domains/chains'
+import { Transaction, selectedMultisigChainTokensState } from '@domains/multisig'
 import { css } from '@emotion/css'
 import { Button, FullScreenDialog, Select, TextInput } from '@talismn/ui'
 import { toSs52Address } from '@util/addresses'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useRecoilValueLoadable } from 'recoil'
 
 import { mockTransactions } from '../mocks'
-import { Transaction__deprecated } from '../Transactions'
 import { FullScreenDialogContents, FullScreenDialogTitle } from '../Transactions/FullScreenSummary'
-import { ChooseChain, NameTransaction } from './generic-steps'
+import { NameTransaction } from './generic-steps'
 
 enum Step {
   Name,
-  Chain,
   Details,
   Review,
 }
 
 const DetailsForm = (props: {
   destination: string
-  amount: number
+  amount: string
+  selectedToken: Token | undefined
+  tokens: Token[]
   setDestination: (d: string) => void
-  setAmount: (a: number) => void
+  setAmount: (a: string) => void
   onBack: () => void
   onNext: () => void
 }) => {
@@ -48,14 +50,14 @@ const DetailsForm = (props: {
               className={css`
                 font-size: 18px !important;
               `}
-              placeholder="0 DOT"
-              leadingSupportingText={'$234.00 USD'}
+              placeholder={`0 ${props.selectedToken?.symbol}`}
               leadingLabel={'Amount to send'}
-              trailingLabel={'420 DOT'}
               value={props.amount}
               onChange={event => {
-                const number = parseFloat(event.target.value)
-                props.setAmount(isNaN(number) ? 0 : number)
+                // Regex for number
+                if (/^\d+(\.)?\d*$/.test(event.target.value) || event.target.value === '') {
+                  props.setAmount(event.target.value)
+                }
               }}
             />
           </div>
@@ -78,22 +80,26 @@ const DetailsForm = (props: {
               }
             `}
           >
-            <Select placeholder="Select token" value={'DOT'} {...props}>
-              <Select.Item
-                key={'DOT'}
-                value={'DOT'}
-                leadingIcon={
-                  <div
-                    className={css`
-                      width: 24px;
-                      height: auto;
-                    `}
-                  >
-                    <img src={supportedChains[0]?.logo} alt={'DOT'} />
-                  </div>
-                }
-                headlineText={'DOT'}
-              />
+            <Select placeholder="Select token" value={props.selectedToken?.id} {...props}>
+              {props.tokens.map(t => {
+                return (
+                  <Select.Item
+                    key={t.id}
+                    value={t.id}
+                    leadingIcon={
+                      <div
+                        className={css`
+                          width: 24px;
+                          height: auto;
+                        `}
+                      >
+                        <img src={t.logo} alt={t.symbol} />
+                      </div>
+                    }
+                    headlineText={t.symbol}
+                  />
+                )
+              })}
             </Select>
           </div>
         </div>
@@ -141,9 +147,16 @@ const SendAction = (props: { onCancel: () => void }) => {
   const [step, setStep] = useState(Step.Name)
   const [name, setName] = useState('')
   const [destination, setDestination] = useState('14JVAWDg9h2iMqZgmiRpvZd8aeJ3TvANMCv6V5Te4N4Vkbg5')
-  const [amount, setAmount] = useState(0)
-  const [chain, setChain] = useState<Chain>(supportedChains[0] as Chain)
+  const [amount, setAmount] = useState('0')
+  const tokens = useRecoilValueLoadable(selectedMultisigChainTokensState)
+  const [selectedToken, setSelectedToken] = useState<Token | undefined>()
   const navigate = useNavigate()
+
+  useEffect(() => {
+    if (!selectedToken && tokens.state === 'hasValue' && tokens.contents.length > 0) {
+      setSelectedToken(tokens.contents[0])
+    }
+  }, [tokens, selectedToken])
 
   return (
     <div
@@ -160,21 +173,15 @@ const SendAction = (props: { onCancel: () => void }) => {
           setName={setName}
           onCancel={props.onCancel}
           onNext={() => {
-            setStep(Step.Chain)
+            setStep(Step.Details)
           }}
-        />
-      ) : step === Step.Chain ? (
-        <ChooseChain
-          chain={chain}
-          setChain={setChain}
-          chains={supportedChains}
-          onBack={() => setStep(Step.Name)}
-          onNext={() => setStep(Step.Details)}
         />
       ) : step === Step.Details || step === Step.Review ? (
         <DetailsForm
-          onBack={() => setStep(Step.Chain)}
+          onBack={() => setStep(Step.Name)}
           onNext={() => setStep(Step.Review)}
+          selectedToken={selectedToken}
+          tokens={tokens.state === 'hasValue' ? tokens.contents : []}
           destination={destination}
           amount={amount}
           setDestination={setDestination}
@@ -188,7 +195,7 @@ const SendAction = (props: { onCancel: () => void }) => {
         onClose={() => {
           setStep(Step.Details)
         }}
-        title={<FullScreenDialogTitle t={mockTransactions[1] as Transaction__deprecated} />}
+        title={<FullScreenDialogTitle t={mockTransactions[1] as Transaction} />}
         css={{
           header: {
             margin: '32px 48px',
@@ -203,7 +210,7 @@ const SendAction = (props: { onCancel: () => void }) => {
         open={step === Step.Review}
       >
         <FullScreenDialogContents
-          t={mockTransactions[1] as Transaction__deprecated}
+          t={mockTransactions[1] as Transaction}
           onApprove={() => {
             navigate('/overview')
           }}

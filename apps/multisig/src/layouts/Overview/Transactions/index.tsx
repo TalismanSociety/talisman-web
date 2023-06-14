@@ -1,5 +1,4 @@
-import { Token } from '@domains/chains'
-import { TransactionType } from '@domains/multisig'
+import { Transaction } from '@domains/multisig'
 import { css } from '@emotion/css'
 import { FullScreenDialog } from '@talismn/ui'
 import { AnimatePresence, motion } from 'framer-motion'
@@ -15,28 +14,6 @@ enum Mode {
   History,
 }
 
-export interface Transaction__deprecated {
-  createdTimestamp: Date
-  executedTimestamp?: Date
-  description: string
-  hash: string
-  chainId: number
-  approvals: {
-    [key: string]: string | undefined
-  }
-  decoded: {
-    type: TransactionType
-    outgoingToken?: {
-      token: Token
-      amount: number
-      price: number
-    }
-    recipients: [string, number][]
-    yaml: string
-  }
-  raw: string
-}
-
 function extractHash(url: string) {
   const parts = url.split('/')
   const txIndex = parts.indexOf('tx')
@@ -46,7 +23,7 @@ function extractHash(url: string) {
   return parts[txIndex + 1]
 }
 
-const TransactionsList = ({ transactions }: { transactions: Transaction__deprecated[] }) => {
+const TransactionsList = ({ transactions }: { transactions: Transaction[] }) => {
   let location = useLocation().pathname
   const navigate = useNavigate()
   const groupedTransactions = useMemo(() => {
@@ -119,7 +96,7 @@ const TransactionsList = ({ transactions }: { transactions: Transaction__depreca
   )
 }
 
-const Transactions = ({ transactions }: { transactions: Transaction__deprecated[] }) => {
+const Transactions = ({ transactions }: { transactions: Transaction[] }) => {
   const pendingTransactions = useMemo(() => {
     return transactions.filter(t => Object.values(t.approvals).some(a => !a))
   }, [transactions])
