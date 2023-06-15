@@ -9,7 +9,7 @@ import {
 import { useCreateProxy, useTransferProxyToMultisig } from '@domains/chains/extrinsics'
 import { useProxiesProxies } from '@domains/chains/storage-getters'
 import { useAddressIsProxyDelegatee } from '@domains/chains/storage-getters'
-import { InjectedAccount, accountsState } from '@domains/extension'
+import { accountsState, useSelectedSigner } from '@domains/extension'
 import {
   AugmentedAccount,
   Multisig,
@@ -74,7 +74,7 @@ const CreateMultisig = () => {
   const [multisigs, setMultisigs] = useRecoilState(multisigsState)
   const setUserSelectedMultisig = useSetRecoilState(userSelectedMultisigState)
   const [extensionAccounts] = useRecoilState(accountsState)
-  const [selectedSigner, setSelectedSigner] = useState<InjectedAccount | undefined>(extensionAccounts[0])
+  const [selectedSigner, setSelectedSigner] = useSelectedSigner()
   const { createProxy, ready: createProxyIsReady, estimatedFee } = useCreateProxy(chain, selectedSigner?.address)
   const { transferProxyToMultisig, ready: transferProxyToMultisigIsReady } = useTransferProxyToMultisig(chain)
   const [threshold, setThreshold] = useState<number>(2)
@@ -95,13 +95,6 @@ const CreateMultisig = () => {
       navigate('/')
     }
   })
-
-  // Ensure selected signer gets set if it is disconnected
-  useEffect(() => {
-    if (!extensionAccounts.map(a => a.address).includes(selectedSigner?.address || 'invalid-address')) {
-      setSelectedSigner(extensionAccounts[0])
-    }
-  }, [selectedSigner, extensionAccounts])
 
   const activeMultisigs = useRecoilValue(activeMultisigsState)
   useEffect(() => {
@@ -140,7 +133,6 @@ const CreateMultisig = () => {
   useEffect(() => {
     if (step === Step.Transactions && createTransctionStatus === CreateTransactionsStatus.NotStarted) {
       createProxy(
-        selectedSigner?.address,
         proxyAddress => {
           setProxyAddress(proxyAddress)
           setCreateTransactionsStatus(CreateTransactionsStatus.TransferringProxy)

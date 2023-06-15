@@ -15,7 +15,7 @@ export const substrateApiState = atomFamily<ApiPromise, string>({
       return api.disconnect
     },
   ],
-  dangerouslyAllowMutability: true,
+  dangerouslyAllowMutability: true, // pjs wsprovider mutates itself to track connection msg stats
 })
 
 export const useSubstrateApiState = () => substrateApiState(useContext(SubstrateApiContext).endpoint)

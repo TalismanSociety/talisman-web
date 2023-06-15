@@ -33,6 +33,7 @@ export const existentialDepositSelector = selectorFamily({
         amount: api.consts.balances.existentialDeposit as unknown as PjsBalance,
       }
     },
+  dangerouslyAllowMutability: true, // pjs wsprovider mutates itself to track connection msg stats
 })
 
 const proxyDepositBaseSelector = selectorFamily({
@@ -52,6 +53,7 @@ const proxyDepositBaseSelector = selectorFamily({
       }
       return { token: nativeToken, amount: api.consts.proxy.proxyDepositBase as unknown as PjsBalance }
     },
+  dangerouslyAllowMutability: true, // pjs wsprovider mutates itself to track connection msg stats
 })
 
 const proxyDepositFactorSelector = selectorFamily({
@@ -71,6 +73,7 @@ const proxyDepositFactorSelector = selectorFamily({
       }
       return { token: nativeToken, amount: api.consts.proxy.proxyDepositFactor as unknown as PjsBalance }
     },
+  dangerouslyAllowMutability: true, // pjs wsprovider mutates itself to track connection msg stats
 })
 
 export const proxyDepositTotalSelector = selectorFamily({
@@ -92,4 +95,5 @@ export const proxyDepositTotalSelector = selectorFamily({
         amount: proxyDepositBase.amount.add(proxyDepositFactor.amount),
       }
     },
+  dangerouslyAllowMutability: true, // pjs wsprovider mutates itself to track connection msg stats
 })

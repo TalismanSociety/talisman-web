@@ -1,11 +1,12 @@
-import { Token } from '@domains/chains'
-import { Transaction, selectedMultisigChainTokensState } from '@domains/multisig'
+import { Token, useApproveAsMulti } from '@domains/chains'
+import { pjsApiSelector } from '@domains/chains/pjs-api'
+import { useSelectedSigner } from '@domains/extension'
+import { Transaction, selectedMultisigChainTokensState, selectedMultisigState } from '@domains/multisig'
 import { css } from '@emotion/css'
 import { Button, FullScreenDialog, Select, TextInput } from '@talismn/ui'
 import { toSs52Address } from '@util/addresses'
 import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { useRecoilValueLoadable } from 'recoil'
+import { useRecoilValue, useRecoilValueLoadable } from 'recoil'
 
 import { mockTransactions } from '../mocks'
 import { FullScreenDialogContents, FullScreenDialogTitle } from '../Transactions/FullScreenSummary'
@@ -148,15 +149,33 @@ const SendAction = (props: { onCancel: () => void }) => {
   const [name, setName] = useState('')
   const [destination, setDestination] = useState('14JVAWDg9h2iMqZgmiRpvZd8aeJ3TvANMCv6V5Te4N4Vkbg5')
   const [amount, setAmount] = useState('0')
+  const [callHash, setCallData] = useState<`0x${string}` | undefined>()
   const tokens = useRecoilValueLoadable(selectedMultisigChainTokensState)
   const [selectedToken, setSelectedToken] = useState<Token | undefined>()
-  const navigate = useNavigate()
+  const [selectedSigner] = useSelectedSigner()
+  const multisig = useRecoilValue(selectedMultisigState)
+  const apiLoadable = useRecoilValueLoadable(pjsApiSelector(multisig.chain.rpc))
+  const { approveAsMulti, ready: asMultiReady } = useApproveAsMulti(selectedSigner?.address, callHash)
 
   useEffect(() => {
     if (!selectedToken && tokens.state === 'hasValue' && tokens.contents.length > 0) {
       setSelectedToken(tokens.contents[0])
     }
   }, [tokens, selectedToken])
+
+  useEffect(() => {
+    if (destination && amount && selectedToken && apiLoadable.state === 'hasValue') {
+      if (!apiLoadable.contents.tx.balances?.transferKeepAlive) {
+        throw Error('chain missing balances pallet')
+      }
+      try {
+        const calldata = apiLoadable.contents.tx.balances.transferKeepAlive(destination, amount).toHex()
+        setCallData(calldata)
+      } catch (error) {
+        console.log(error)
+      }
+    }
+  }, [destination, amount, selectedToken, apiLoadable, multisig, asMultiReady])
 
   return (
     <div
@@ -212,7 +231,14 @@ const SendAction = (props: { onCancel: () => void }) => {
         <FullScreenDialogContents
           t={mockTransactions[1] as Transaction}
           onApprove={() => {
-            navigate('/overview')
+            approveAsMulti(
+              () => {
+                console.log('success')
+              },
+              () => {
+                console.log('fail')
+              }
+            )
           }}
           onReject={() => {
             setStep(Step.Details)

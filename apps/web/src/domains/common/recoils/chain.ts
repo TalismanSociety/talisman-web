@@ -39,7 +39,7 @@ export const chainState = atomFamily({
       return () => unsubscribePromise.then(unsubscribe => unsubscribe())
     },
   ],
-  dangerouslyAllowMutability: true,
+  dangerouslyAllowMutability: true, // pjs wsprovider mutates itself to track connection msg stats
 })
 
 export const useChainQueryState = <

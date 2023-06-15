@@ -27,7 +27,7 @@ export const legacyBalancesState = atom<LegacyBalances>({
     tokens: [],
     chaindata: undefined,
   },
-  dangerouslyAllowMutability: true,
+  dangerouslyAllowMutability: true, // pjs wsprovider mutates itself to track connection msg stats
 })
 
 export const balancesState = atom<Balances>({ key: 'Balances', dangerouslyAllowMutability: true })
@@ -38,7 +38,7 @@ export const selectedBalancesState = selector({
     const selectedAddresses = get(selectedAccountsState).map(x => x.address)
     return new Balances(get(balancesState).sorted.filter(x => selectedAddresses.includes(x.address)))
   },
-  dangerouslyAllowMutability: true,
+  dangerouslyAllowMutability: true, // pjs wsprovider mutates itself to track connection msg stats
 })
 
 export const fiatBalancesState = atom<Record<string, number>>({

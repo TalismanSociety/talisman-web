@@ -6,7 +6,8 @@ import { selectorFamily } from 'recoil'
 export const pjsApiSelector = selectorFamily({
   key: 'PjsApi',
   get: (rpc: string) => () => {
-    const provider = new WsProvider(rpc)
+    const provider = new WsProvider(rpc, 1000)
     return ApiPromise.create({ provider })
   },
+  dangerouslyAllowMutability: true, // pjs wsprovider mutates itself to track connection msg stats
 })
