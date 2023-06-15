@@ -84,18 +84,18 @@ export const useApproveAsMulti = (extensionAddress: string | undefined, callData
               .filter(({ event: { section } }) => section === 'system')
               .forEach(({ event: { method } }): void => {
                 if (method === 'ExtrinsicFailed') {
-                  onFailure(result.toString())
+                  onFailure(JSON.stringify(result))
                 }
                 if (method === 'ExtrinsicSuccess') {
                   onSuccess()
                 }
               })
           } else if (result.isError) {
-            onFailure(result.toString())
+            onFailure(JSON.stringify(result))
           }
         }
       ).catch(e => {
-        onFailure(e.toString())
+        onFailure(JSON.stringify(e))
       })
     },
     [extensionAddress, createTx]
@@ -172,7 +172,7 @@ export const useCreateProxy = (chain: Chain, extensionAddress: string | undefine
               .filter(({ event: { section } }) => section === 'system')
               .forEach(({ event: { method } }): void => {
                 if (method === 'ExtrinsicFailed') {
-                  onFailure(result.toString())
+                  onFailure(JSON.stringify(result))
                 }
               })
           } else if (result.isError) {
@@ -238,9 +238,7 @@ export const useTransferProxyToMultisig = (chain: Chain) => {
 
       // Define the outer batch call
       const signerBatchCall = api?.tx?.utility?.batchAll([
-        // Add extra planks onto existential deposit to avoid weird 'InsufficientBalance' error
-        // TODO: Look into how to compute a more sensible amount to add on.
-        api.tx.balances.transferKeepAlive(proxyAddress, existentialDeposit.amount.add(new BN(1_000_000_000))),
+        api.tx.balances.transferKeepAlive(proxyAddress, getInitialProxyBalance(existentialDeposit).amount),
         proxyCall,
       ])
 
@@ -263,7 +261,6 @@ export const useTransferProxyToMultisig = (chain: Chain) => {
                   if (event.method === 'ExtrinsicFailed') {
                     onFailure(result.toString())
                   } else if (event.method === 'ExtrinsicSuccess') {
-                    // TODO: make sure this doesnt fire if any inner calls fail
                     onSuccess(result)
                   }
                 })
@@ -281,3 +278,10 @@ export const useTransferProxyToMultisig = (chain: Chain) => {
 
   return { transferProxyToMultisig, ready: apiLoadable.state === 'hasValue' }
 }
+
+// Add 1 whole token onto the ED to make sure there're no weird issues creating the multisig
+// TODO: Look into how to compute an exact initial balance.
+export const getInitialProxyBalance = (ed: Balance) => ({
+  token: ed.token,
+  amount: ed.amount.add(new BN(10).pow(new BN(ed.token.decimals))),
+})

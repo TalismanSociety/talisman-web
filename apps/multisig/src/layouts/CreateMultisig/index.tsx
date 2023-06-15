@@ -149,12 +149,10 @@ const CreateMultisig = () => {
               const multisigIsProxyDeletatee = await addressIsProxyDelegatee(proxyAddress, multiAddress)
 
               if (!multisigIsProxyDeletatee) {
-                console.error(
+                const msg =
                   'There was an issue configuring your proxy. Please submit a bug report with your signer address and any relevant transaction hashes.'
-                )
-                toast.error(
-                  'There was an issue configuring your proxy. Please submit a bug report with your signer address and any relevant transaction hashes.'
-                )
+                console.error(msg)
+                toast.error(msg)
                 setStep(Step.Confirmation)
                 return
               }

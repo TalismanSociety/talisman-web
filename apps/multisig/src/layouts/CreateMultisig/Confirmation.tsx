@@ -1,5 +1,5 @@
 import MemberRow from '@components/MemberRow'
-import { Chain, Token } from '@domains/chains'
+import { Chain, Token, getInitialProxyBalance } from '@domains/chains'
 import { InjectedAccount } from '@domains/extension'
 import { AugmentedAccount, Balance, balanceToFloat } from '@domains/multisig'
 import { css } from '@emotion/css'
@@ -39,7 +39,7 @@ const Confirmation = (props: {
   const existentialDepositComponent =
     tokenWithPrice.state === 'hasValue' && existentialDeposit.state === 'hasValue' ? (
       <Cost
-        amount={existentialDeposit.contents}
+        amount={getInitialProxyBalance(existentialDeposit.contents)}
         symbol={tokenWithPrice.contents.token.symbol}
         price={tokenWithPrice.contents.price}
       />
@@ -244,7 +244,7 @@ const Confirmation = (props: {
         {reserveAmountComponent}
         <p>Estimated Transaction Fee</p>
         {feeAmountComponent}
-        <p>Existential Deposit</p>
+        <p>Initial Vault Funds</p>
         {existentialDepositComponent}
       </div>
       <div
