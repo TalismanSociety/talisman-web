@@ -107,22 +107,24 @@ const Header = () => {
               </div>
             }
             beforeOptionsNode={
-              <div
-                css={{
-                  fontWeight: 'bold',
-                  color: 'var(--color-dim)',
-                  height: '38px',
-                  margin: '0 16px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                }}
-              >
-                <IconButton size={'16px'} contentColor={`rgb(${theme.dim})`}>
-                  <TalismanHand />
-                </IconButton>
-                Connected Vaults
-              </div>
+              activeMultisigs.length > 1 && (
+                <div
+                  css={{
+                    fontWeight: 'bold',
+                    color: 'var(--color-dim)',
+                    height: '38px',
+                    margin: '0 16px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                  }}
+                >
+                  <IconButton size={'16px'} contentColor={`rgb(${theme.dim})`}>
+                    <TalismanHand />
+                  </IconButton>
+                  Connected Vaults
+                </div>
+              )
             }
             placeholder={
               <div
