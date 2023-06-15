@@ -81,7 +81,7 @@ export const createEvmNftAsyncGenerator: CreateNftAsyncGenerator<Nft<'erc721', s
           const metadata = metadatum[index]
 
           const type = 'erc721' as const
-          const chain = config.chain.name
+          const chain = config.chain.id.toString()
 
           return {
             type,
