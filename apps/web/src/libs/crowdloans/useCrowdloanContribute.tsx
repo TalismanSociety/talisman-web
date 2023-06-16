@@ -179,10 +179,6 @@ export function useCrowdloanContribute(): [ContributeState, DispatchContributeEv
 // it receives the current state and an event
 // it then returns the new state
 function contributeEventReducer(state: ContributeState, event: ContributeEvent): ContributeState {
-  if (import.meta.env.DEV) {
-    console.log(`Dispatching event ${event.variant} with data ${JSON.stringify(event.data, null, 2)}`)
-  }
-
   const ignoreWithWarning = () => {
     console.warn(`Ignoring ContributeEvent.${event.variant}`)
     return state
