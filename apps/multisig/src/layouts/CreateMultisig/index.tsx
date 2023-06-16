@@ -9,7 +9,7 @@ import {
 import { useCreateProxy, useTransferProxyToMultisig } from '@domains/chains/extrinsics'
 import { useProxiesProxies } from '@domains/chains/storage-getters'
 import { useAddressIsProxyDelegatee } from '@domains/chains/storage-getters'
-import { accountsState, useSelectedSigner } from '@domains/extension'
+import { InjectedAccount, accountsState } from '@domains/extension'
 import {
   AugmentedAccount,
   Multisig,
@@ -33,6 +33,20 @@ import SelectFirstChain from './SelectFirstChain'
 import SelectThreshold from './SelectThreshold'
 import SignTransactions from './SignTransactions'
 import VaultCreated from './VaultCreated'
+
+const useSelectedSigner = () => {
+  const [extensionAccounts] = useRecoilState(accountsState)
+  const [selectedSigner, setSelectedSigner] = useState<InjectedAccount | undefined>(extensionAccounts[0])
+
+  // Ensure selected signer gets set if it is disconnected
+  useEffect(() => {
+    if (!extensionAccounts.map(a => a.address).includes(selectedSigner?.address || 'invalid-address')) {
+      setSelectedSigner(extensionAccounts[0])
+    }
+  }, [selectedSigner, extensionAccounts])
+
+  return [selectedSigner, setSelectedSigner] as const
+}
 
 export enum CreateTransactionsStatus {
   NotStarted,

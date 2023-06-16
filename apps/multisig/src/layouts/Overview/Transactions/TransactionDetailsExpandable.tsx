@@ -9,7 +9,7 @@ import { css } from '@emotion/css'
 import { useTheme } from '@emotion/react'
 import { ChevronRight, List, Send, Share2, Users } from '@talismn/icons'
 import { IconButton, Identicon, Skeleton } from '@talismn/ui'
-import { formatUsd } from '@util/numbers'
+import { balanceToFloat, formatUsd } from '@util/numbers'
 import { useMemo, useState } from 'react'
 import AceEditor from 'react-ace'
 import { Collapse } from 'react-collapse'
@@ -18,9 +18,7 @@ import truncateMiddle from 'truncate-middle'
 
 const AmountRow = ({ balance }: { balance: Balance }) => {
   const price = useRecoilValueLoadable(tokenPriceState(balance.token.coingeckoId))
-  const balanceDecimal = useMemo(() => {
-    return balance.amount.toNumber() / Math.pow(10, balance.token.decimals)
-  }, [balance])
+  const balanceFloat = balanceToFloat(balance)
   return (
     <div
       className={css`
@@ -30,11 +28,11 @@ const AmountRow = ({ balance }: { balance: Balance }) => {
         color: var(--color-foreground);
       `}
     >
-      <p css={{ fontSize: '18px', marginTop: '4px' }}>{balanceDecimal}</p>
+      <p css={{ fontSize: '18px', marginTop: '4px' }}>{balanceFloat}</p>
       <img css={{ height: '20px' }} src={balance.token.logo} alt="token logo" />
       <p css={{ fontSize: '18px', marginTop: '4px' }}>{balance.token.symbol}</p>
       {price.state === 'hasValue' ? (
-        <p css={{ fontSize: '18px', marginTop: '4px' }}>{`(${formatUsd(balanceDecimal * price.contents)})`}</p>
+        <p css={{ fontSize: '18px', marginTop: '4px' }}>{`(${formatUsd(balanceFloat * price.contents)})`}</p>
       ) : (
         <Skeleton.Surface css={{ height: '14px', minWidth: '125px' }} />
       )}
@@ -223,13 +221,14 @@ const TransactionDetailsExpandable = ({ t }: { t: Transaction }) => {
             className={css`
               color: var(--color-foreground);
               margin-right: 16px;
+              margin-left: auto;
             `}
           >
             <AddressPill a={recipients[0]?.address || ''} />
           </div>
         ) : null}
         {t.decoded.type !== TransactionType.Advanced && (
-          <div css={{ display: 'flex', alignItems: 'flex-end', flexDirection: 'column', marginLeft: 'auto' }}>
+          <div css={{ display: 'flex', alignItems: 'flex-end', flexDirection: 'column' }}>
             {sumOutgoing.map(b => {
               return <AmountRow key={b.token.id} balance={b} />
             })}

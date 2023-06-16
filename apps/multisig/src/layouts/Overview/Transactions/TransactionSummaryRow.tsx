@@ -1,10 +1,10 @@
 import StatusCircle, { StatusCircleType } from '@components/StatusCircle'
 import { tokenPricesState } from '@domains/chains'
-import { Balance, Transaction, TransactionType, balanceToFloat, calcSumOutgoing } from '@domains/multisig'
+import { Balance, Transaction, TransactionType, calcSumOutgoing } from '@domains/multisig'
 import { css } from '@emotion/css'
 import { ArrowUp, List, Share2 } from '@talismn/icons'
 import { Skeleton } from '@talismn/ui'
-import { formatUsd } from '@util/numbers'
+import { balanceToFloat, formatUsd } from '@util/numbers'
 import { useMemo } from 'react'
 import { useRecoilValueLoadable } from 'recoil'
 

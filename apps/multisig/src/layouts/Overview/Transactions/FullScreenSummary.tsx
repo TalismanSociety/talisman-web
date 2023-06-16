@@ -1,8 +1,12 @@
 import MemberRow from '@components/MemberRow'
 import StatusCircle, { StatusCircleType } from '@components/StatusCircle'
-import { Transaction } from '@domains/multisig'
+import { tokenPriceState } from '@domains/chains'
+import { Balance, Transaction } from '@domains/multisig'
 import { css } from '@emotion/css'
-import { Button } from '@talismn/ui'
+import { Button, CircularProgressIndicator, Skeleton } from '@talismn/ui'
+import { balanceToFloat, formatUsd } from '@util/numbers'
+import { useMemo } from 'react'
+import { useRecoilValueLoadable } from 'recoil'
 
 import TransactionDetailsExpandable from './TransactionDetailsExpandable'
 import TransactionSummaryRow from './TransactionSummaryRow'
@@ -91,18 +95,37 @@ export const FullScreenDialogTitle = ({ t }: { t?: Transaction }) => {
 
 export const FullScreenDialogContents = ({
   t,
+  loading,
+  rejectButtonTextOverride,
+  fee,
   onReject,
   onApprove,
 }: {
   t?: Transaction
+  loading?: boolean
+  rejectButtonTextOverride?: string
+  fee: Balance | undefined
   onReject: () => void
   onApprove: () => void
 }) => {
+  const feeTokenPrice = useRecoilValueLoadable(tokenPriceState(fee?.token?.coingeckoId || ''))
+  const feeComponent = useMemo(() => {
+    if (feeTokenPrice.state === 'loading' || !fee) {
+      return <Skeleton.Surface css={{ width: '150px', height: '16px' }} />
+    }
+    return (
+      <p>{`${balanceToFloat(fee)} ${fee?.token.symbol} (${formatUsd(
+        balanceToFloat(fee) * feeTokenPrice.contents
+      )})`}</p>
+    )
+  }, [feeTokenPrice, fee])
+
   if (!t) return null
 
   // TODO: this should check if any of the users connected wallets have not approved. if
   // multiple, show selector for user to decide which wallet to sign with
   const userCanApprove = Object.values(t.approvals).filter(Boolean).length < Object.values(t.approvals).length
+
   return (
     <div
       className={css`
@@ -146,14 +169,14 @@ export const FullScreenDialogContents = ({
         >
           <div css={{ display: 'flex', justifyContent: 'space-between' }}>
             <p>Fees</p>
-            <p>{'>0.01 DOT ($0.69)'}</p>
+            {feeComponent}
           </div>
-          <div css={{ display: 'flex', height: '56px', gap: '16px' }}>
-            <Button css={{ flexGrow: '1' }} variant="outlined" onClick={onReject}>
-              Reject
+          <div css={{ display: 'grid', height: '56px', gap: '16px', gridTemplateColumns: '1fr 1fr' }}>
+            <Button variant="outlined" onClick={onReject} disabled={loading}>
+              {rejectButtonTextOverride || 'Reject'}
             </Button>
-            <Button css={{ flexGrow: '1' }} onClick={onApprove}>
-              Approve
+            <Button onClick={onApprove} disabled={loading || !fee}>
+              {loading ? <CircularProgressIndicator /> : 'Approve'}
             </Button>
           </div>
         </div>

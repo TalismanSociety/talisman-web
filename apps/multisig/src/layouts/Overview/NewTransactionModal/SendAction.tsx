@@ -1,14 +1,23 @@
 import { Token, useApproveAsMulti } from '@domains/chains'
 import { pjsApiSelector } from '@domains/chains/pjs-api'
-import { useSelectedSigner } from '@domains/extension'
-import { Transaction, selectedMultisigChainTokensState, selectedMultisigState } from '@domains/multisig'
+import {
+  Transaction,
+  TransactionApprovals,
+  TransactionType,
+  selectedMultisigChainTokensState,
+  selectedMultisigState,
+  useNextTransactionSigner,
+} from '@domains/multisig'
 import { css } from '@emotion/css'
 import { Button, FullScreenDialog, Select, TextInput } from '@talismn/ui'
 import { toSs52Address } from '@util/addresses'
-import { useEffect, useState } from 'react'
+import BN from 'bn.js'
+import Decimal from 'decimal.js'
+import { useEffect, useMemo, useState } from 'react'
+import toast from 'react-hot-toast'
+import { useNavigate } from 'react-router-dom'
 import { useRecoilValue, useRecoilValueLoadable } from 'recoil'
 
-import { mockTransactions } from '../mocks'
 import { FullScreenDialogContents, FullScreenDialogTitle } from '../Transactions/FullScreenSummary'
 import { NameTransaction } from './generic-steps'
 
@@ -55,8 +64,28 @@ const DetailsForm = (props: {
               leadingLabel={'Amount to send'}
               value={props.amount}
               onChange={event => {
-                // Regex for number
-                if (/^\d+(\.)?\d*$/.test(event.target.value) || event.target.value === '') {
+                if (!props.selectedToken) return
+
+                // Create a dynamic regular expression.
+                // This regex will:
+                // - Match any string of up to `digits` count of digits, optionally separated by a decimal point.
+                // - The total count of digits, either side of the decimal point, can't exceed `digits`.
+                // - It will also match an empty string, making it a valid input.
+                const digits = props.selectedToken.decimals
+                let regex = new RegExp(
+                  '^(?:(\\d{1,' +
+                    digits +
+                    '})|(\\d{0,' +
+                    (digits - 1) +
+                    '}\\.\\d{1,' +
+                    (digits - 1) +
+                    '})|(\\d{1,' +
+                    (digits - 1) +
+                    '}\\.\\d{0,' +
+                    (digits - 1) +
+                    '})|^$)$'
+                )
+                if (regex.test(event.target.value)) {
                   props.setAmount(event.target.value)
                 }
               }}
@@ -138,7 +167,16 @@ const DetailsForm = (props: {
         `}
       >
         <Button onClick={props.onBack} children={<h3>Back</h3>} variant="outlined" />
-        <Button disabled={toSs52Address(props.destination) === false} onClick={props.onNext} children={<h3>Next</h3>} />
+        <Button
+          disabled={
+            toSs52Address(props.destination) === false ||
+            isNaN(parseFloat(props.amount)) ||
+            props.amount.endsWith('.') ||
+            !props.selectedToken
+          }
+          onClick={props.onNext}
+          children={<h3>Next</h3>}
+        />
       </div>
     </>
   )
@@ -148,14 +186,14 @@ const SendAction = (props: { onCancel: () => void }) => {
   const [step, setStep] = useState(Step.Name)
   const [name, setName] = useState('')
   const [destination, setDestination] = useState('14JVAWDg9h2iMqZgmiRpvZd8aeJ3TvANMCv6V5Te4N4Vkbg5')
-  const [amount, setAmount] = useState('0')
-  const [callHash, setCallData] = useState<`0x${string}` | undefined>()
+  const [callData, setCallData] = useState<`0x${string}` | undefined>()
+  const [extensionPopupOpen, setExtensionPopupOpen] = useState(false)
   const tokens = useRecoilValueLoadable(selectedMultisigChainTokensState)
   const [selectedToken, setSelectedToken] = useState<Token | undefined>()
-  const [selectedSigner] = useSelectedSigner()
+  const [amountInput, setAmountInput] = useState('')
   const multisig = useRecoilValue(selectedMultisigState)
   const apiLoadable = useRecoilValueLoadable(pjsApiSelector(multisig.chain.rpc))
-  const { approveAsMulti, ready: asMultiReady } = useApproveAsMulti(selectedSigner?.address, callHash)
+  const navigate = useNavigate()
 
   useEffect(() => {
     if (!selectedToken && tokens.state === 'hasValue' && tokens.contents.length > 0) {
@@ -163,19 +201,53 @@ const SendAction = (props: { onCancel: () => void }) => {
     }
   }, [tokens, selectedToken])
 
+  const amountBn: BN | undefined = useMemo(() => {
+    if (!selectedToken || isNaN(parseFloat(amountInput))) return
+
+    let stringValueRounded = new Decimal(amountInput)
+      .mul(Decimal.pow(10, selectedToken.decimals))
+      .toDecimalPlaces(0) // to round it
+      .toFixed() // convert it back to string
+    return new BN(stringValueRounded)
+  }, [amountInput, selectedToken])
+
   useEffect(() => {
-    if (destination && amount && selectedToken && apiLoadable.state === 'hasValue') {
+    if (destination && selectedToken && apiLoadable.state === 'hasValue' && amountBn && toSs52Address(destination)) {
       if (!apiLoadable.contents.tx.balances?.transferKeepAlive) {
         throw Error('chain missing balances pallet')
       }
       try {
-        const calldata = apiLoadable.contents.tx.balances.transferKeepAlive(destination, amount).toHex()
+        const calldata = apiLoadable.contents.tx.balances.transferKeepAlive(destination, amountBn).toHex()
         setCallData(calldata)
       } catch (error) {
         console.log(error)
       }
     }
-  }, [destination, amount, selectedToken, apiLoadable, multisig, asMultiReady])
+  }, [destination, selectedToken, apiLoadable, amountBn])
+
+  const t: Transaction | undefined = useMemo(() => {
+    if (selectedToken && callData) {
+      return {
+        createdTimestamp: new Date(),
+        executedTimestamp: undefined,
+        hash: '',
+        description: name,
+        chainId: multisig.chain.id,
+        approvals: multisig.signers.reduce((acc, key) => {
+          acc[key] = false
+          return acc
+        }, {} as TransactionApprovals),
+        decoded: {
+          type: TransactionType.Transfer,
+          recipients: [{ address: destination, balance: { amount: amountBn || new BN(0), token: selectedToken } }],
+          yaml: '',
+        },
+        callData,
+      }
+    }
+  }, [amountBn, destination, multisig, name, selectedToken, callData])
+  const signer = useNextTransactionSigner(t?.approvals)
+  const { approveAsMulti, estimatedFee } = useApproveAsMulti(signer?.address, callData)
 
   return (
     <div
@@ -202,9 +274,9 @@ const SendAction = (props: { onCancel: () => void }) => {
           selectedToken={selectedToken}
           tokens={tokens.state === 'hasValue' ? tokens.contents : []}
           destination={destination}
-          amount={amount}
+          amount={amountInput}
           setDestination={setDestination}
-          setAmount={setAmount}
+          setAmount={setAmountInput}
         />
       ) : null}
       <FullScreenDialog
@@ -214,7 +286,7 @@ const SendAction = (props: { onCancel: () => void }) => {
         onClose={() => {
           setStep(Step.Details)
         }}
-        title={<FullScreenDialogTitle t={mockTransactions[1] as Transaction} />}
+        title={<FullScreenDialogTitle t={t} />}
         css={{
           header: {
             margin: '32px 48px',
@@ -229,14 +301,25 @@ const SendAction = (props: { onCancel: () => void }) => {
         open={step === Step.Review}
       >
         <FullScreenDialogContents
-          t={mockTransactions[1] as Transaction}
+          t={t}
+          fee={estimatedFee}
+          loading={extensionPopupOpen}
+          rejectButtonTextOverride="Back"
           onApprove={() => {
+            setExtensionPopupOpen(true)
             approveAsMulti(
               () => {
-                console.log('success')
+                navigate('/overview')
+                toast.success(
+                  "Transaction sent! It will appear in your 'Pending' transactions as soon as it lands in a finalized block.",
+                  { duration: 5000, position: 'bottom-right' }
+                )
               },
-              () => {
-                console.log('fail')
+              () => {},
+              e => {
+                toast.error('Transaction failed')
+                console.error(e)
+                setExtensionPopupOpen(false)
               }
             )
           }}

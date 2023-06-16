@@ -1,8 +1,7 @@
 import { Chain, Token, chainTokensByIdQuery, supportedChains } from '@domains/chains'
 import { accountsState } from '@domains/extension'
-import { formatBalance } from '@polkadot/util'
 import BN from 'bn.js'
-import { atom, selector } from 'recoil'
+import { atom, selector, useRecoilState } from 'recoil'
 import { recoilPersist } from 'recoil-persist'
 
 const { persistAtom } = recoilPersist()
@@ -46,11 +45,11 @@ export const selectedMultisigState = selector<Multisig>({
   key: 'SelectedMultisig',
   get: ({ get }) => {
     const userSelected = get(userSelectedMultisigState)
-    if (userSelected !== undefined) {
+    const activeMultisigs = get(activeMultisigsState)
+    if (userSelected !== undefined && activeMultisigs.find(multisig => multisig === userSelected)) {
       return userSelected
     }
 
-    const activeMultisigs = get(activeMultisigsState)
     if (activeMultisigs.length > 0) {
       return activeMultisigs[0] as Multisig
     } else {
@@ -68,6 +67,15 @@ export const selectedMultisigChainTokensState = selector<Token[]>({
     return tokens
   },
 })
+
+// Returns the next connected signer that needs to sign the transaction,
+// or undefined if there are none that can sign
+export const useNextTransactionSigner = (approvals: TransactionApprovals | undefined) => {
+  const [extensionAccounts] = useRecoilState(accountsState)
+
+  if (!approvals) return
+  return extensionAccounts.find(account => approvals[account.address] === false)
+}
 
 export enum TransactionType {
   MultiSend,
@@ -103,15 +111,17 @@ export interface TransactionRecipient {
   balance: Balance
 }
 
+export interface TransactionApprovals {
+  [key: string]: string | false
+}
+
 export interface Transaction {
   createdTimestamp: Date
   executedTimestamp?: Date
   description: string
   hash: string
-  chainId: number
-  approvals: {
-    [key: string]: string | undefined
-  }
+  chainId: string
+  approvals: TransactionApprovals
   decoded: {
     type: TransactionType
     recipients: TransactionRecipient[]
@@ -121,7 +131,7 @@ export interface Transaction {
       threshold: number
     }
   }
-  raw: string
+  callData: `0x${string}`
 }
 
 export const calcSumOutgoing = (t: Transaction): Balance[] => {
@@ -140,19 +150,6 @@ export const calcSumOutgoing = (t: Transaction): Balance[] => {
     }
     return acc
   }, [])
-}
-
-export const balanceToFloat = (b: Balance | undefined): number => {
-  const balance = b ?? EMPTY_BALANCE
-  return parseFloat(
-    formatBalance(balance.amount, {
-      decimals: balance.token.decimals,
-      withAll: true,
-      forceUnit: '-',
-      withSi: false,
-      withUnit: false,
-    })
-  )
 }
 
 export const EMPTY_BALANCE: Balance = {

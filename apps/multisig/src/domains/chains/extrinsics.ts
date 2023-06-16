@@ -7,7 +7,7 @@ import { pjsApiSelector } from '@domains/chains/pjs-api'
 import { Balance, selectedMultisigState } from '@domains/multisig'
 import { SubmittableResult } from '@polkadot/api'
 import { web3FromAddress } from '@polkadot/extension-dapp'
-import { blake2AsHex, sortAddresses } from '@polkadot/util-crypto'
+import { sortAddresses } from '@polkadot/util-crypto'
 import BN from 'bn.js'
 import { useCallback, useEffect, useState } from 'react'
 import { useRecoilValue, useRecoilValueLoadable } from 'recoil'
@@ -39,12 +39,13 @@ export const useApproveAsMulti = (extensionAddress: string | undefined, callData
       refTime: api.createType('Compact<u64>', Math.ceil(weightEstimation.refTime * 1.1)),
       proofSize: api.createType('Compact<u64>', Math.ceil(weightEstimation.proofSize * 1.1)),
     })
-    const callHash = blake2AsHex(callData)
+    const callTx = api.tx(callData)
+    const hash = callTx.registry.hash(callTx.method.toU8a()).toHex()
     return api.tx.multisig.approveAsMulti(
       multisig.threshold,
       sortAddresses(multisig.signers).filter(s => s !== extensionAddress),
       null,
-      callHash,
+      hash,
       weight
     )
   }, [apiLoadable, extensionAddress, nativeToken, callData, multisig])
@@ -64,7 +65,7 @@ export const useApproveAsMulti = (extensionAddress: string | undefined, callData
   }, [estimateFee])
 
   const approveAsMulti = useCallback(
-    async (onSuccess: () => void, onFailure: (message: string) => void) => {
+    async (onSubmit: () => void, onSuccess: (r: SubmittableResult) => void, onFailure: (message: string) => void) => {
       const tx = await createTx()
       if (!tx || !extensionAddress) return
 
@@ -87,16 +88,18 @@ export const useApproveAsMulti = (extensionAddress: string | undefined, callData
                   onFailure(JSON.stringify(result))
                 }
                 if (method === 'ExtrinsicSuccess') {
-                  onSuccess()
+                  onSuccess(result)
                 }
               })
           } else if (result.isError) {
             onFailure(JSON.stringify(result))
           }
         }
-      ).catch(e => {
-        onFailure(JSON.stringify(e))
-      })
+      )
+        .then(onSubmit)
+        .catch(e => {
+          onFailure(JSON.stringify(e))
+        })
     },
     [extensionAddress, createTx]
   )

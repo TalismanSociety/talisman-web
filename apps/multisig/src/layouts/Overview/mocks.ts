@@ -34,9 +34,9 @@ export const mockTransactions: Transaction[] = [
     createdTimestamp: new Date(Date.parse('03 Feb 2023 08:01:06 GMT')),
     description: 'Make Remarks',
     hash: '0x003b3c4d5e6f7g8h9i0j1k2l3m4n5o6p7q8r9s0t',
-    chainId: 1,
+    chainId: 'polkadot',
     approvals: {
-      '5D4yToYC7DqgHJ3PT7afS6FZ2X8uHzNP6Uym7ko4w4dJW8Vn': undefined,
+      '5D4yToYC7DqgHJ3PT7afS6FZ2X8uHzNP6Uym7ko4w4dJW8Vn': false,
       '5FSPS8eH2Xm69TjT2QZeTukw1NjnWxTgCpMnY1eaBvtykzW9': '0x113b3c4d5e6f7g8h9i0j1k2l3m4n5o6p7q8r9s0t',
     },
     decoded: {
@@ -80,15 +80,15 @@ transaction:
     genesisHash: '0x91b171bb158e2d3848fa23a9f1c25182fb8e20313b2c1eb49219da7a70ce90c3'
     blockHash: '0x30d2d88d02ce0099914966134ec3c0913db755fc7f90be1b74d06f5072d76c4e'`,
     },
-    raw: '0x...',
+    callData: '0x0000',
   },
   {
     createdTimestamp: new Date(Date.parse('06 Feb 2023 07:33:38 GMT')),
     description: 'Pay Feb Contributors',
     hash: '0x113b3c4d5e6f7g8h9i0j1k2l3m4n5o6p7q8r9s0t',
-    chainId: 1,
+    chainId: 'polkadot',
     approvals: {
-      '5D4yToYC7DqgHJ3PT7afS6FZ2X8uHzNP6Uym7ko4w4dJW8Vn': undefined,
+      '5D4yToYC7DqgHJ3PT7afS6FZ2X8uHzNP6Uym7ko4w4dJW8Vn': false,
       '5FSPS8eH2Xm69TjT2QZeTukw1NjnWxTgCpMnY1eaBvtykzW9': '0x113b3c4d5e6f7g8h9i0j1k2l3m4n5o6p7q8r9s0t',
     },
     decoded: {
@@ -118,15 +118,15 @@ transaction:
       ],
       yaml: '0x',
     },
-    raw: '0x...',
+    callData: '0x0000',
   },
   {
     createdTimestamp: new Date(Date.parse('05 Feb 2023 17:03:00 GMT')),
     description: 'Admin Fees',
     hash: '0x123c4d5e6f7g8h9i0c1k2l3m4n5o6p7q8r9s0t1a',
-    chainId: 1,
+    chainId: 'polkadot',
     approvals: {
-      '5GZvM8XJYq3zCq3QrxsmoDJvJ8WpkLpDtDzzcnjXTnBZvX9Y': undefined,
+      '5GZvM8XJYq3zCq3QrxsmoDJvJ8WpkLpDtDzzcnjXTnBZvX9Y': false,
     },
     decoded: {
       type: TransactionType.Transfer,
@@ -141,15 +141,15 @@ transaction:
       ],
       yaml: '0x',
     },
-    raw: '0x...',
+    callData: '0x0000',
   },
   {
     createdTimestamp: new Date(Date.parse('04 Feb 2023 07:03:00 GMT')),
     description: 'Offsite Expenses',
     hash: '0x8c4d5e6f7g8h9i0j1a2l3m4n5o6p7q8r9s0t1a2b',
-    chainId: 1,
+    chainId: 'polkadot',
     approvals: {
-      '5H3sN2umuE7fDZMtYj9q3aHJQKgaPdu5MzWyp8Hh4i4FGM': undefined,
+      '5H3sN2umuE7fDZMtYj9q3aHJQKgaPdu5MzWyp8Hh4i4FGM': false,
       '5DxqH7BqSf2Qj1DfcNNdUksctU92JjEFU6nEW8RUXSnU6gj': '0x8c4d5e6f7g8h9i0j1a2l3m4n5o6p7q8r9s0t1a2b',
     },
 
@@ -166,14 +166,14 @@ transaction:
       ],
       yaml: '0x',
     },
-    raw: '0x...',
+    callData: '0x0000',
   },
   {
     createdTimestamp: new Date(Date.parse('06 Jan 2023 20:53:00 GMT')),
     executedTimestamp: new Date(Date.parse('06 Jan 2023 21:53:00 GMT')),
     description: 'Pay Jan Contributors',
     hash: '0x9d5e6f7g8h9i0j1k2l3m4n5o6p7q8r9s0t1a2b3c',
-    chainId: 1,
+    chainId: 'polkadot',
     approvals: {
       '5He7n5y6MXxrohUXJ1wja4C4mZj4oX9cYx4JaKmDpWK4Bm4q': '0x9d5e6f7g8h9i0j1k2l3m4n5o6p7q8r9s0t1a2b3c',
       '5FmDzNqnAp87dxJumDvt8MscxwxZz1Q2FBUAdFi9X8JT5pr6': '0x9d5e6f7g8h9i0j1k2l3m4n5o6p7q8r9s0t1a2b3c',
@@ -205,14 +205,14 @@ transaction:
       ],
       yaml: '0x',
     },
-    raw: '0x...',
+    callData: '0x0000',
   },
   {
     createdTimestamp: new Date(Date.parse('05 Jan 2023 02:10:00 GMT')),
     executedTimestamp: new Date(Date.parse('05 Jan 2023 21:53:00 GMT')),
     description: 'Jan Software Subscription',
     hash: '0x106f7g8h9i0j1k2l3m4n5o6p7q8r9s0t1a2b3c4d',
-    chainId: 1,
+    chainId: 'polkadot',
     approvals: {
       '5FZ1nHXiU9C6yW8Fyry6CQYQwDJKKkdnt1xGxvsJ7M1TPvYX': '0x106f7g8h9i0j1k2l3m4n5o6p7q8r9s0t1a2b3c4d',
       '5FqW7g8LvnRTEH7R6QxR1Ef8WzKX2rEiVzP6nT8pW7mFjKf1': '0x106f7g8h9i0j1k2l3m4n5o6p7q8r9s0t1a2b3c4d',
@@ -230,7 +230,7 @@ transaction:
       ],
       yaml: '0x',
     },
-    raw: '0x...',
+    callData: '0x0000',
   },
 ]
 

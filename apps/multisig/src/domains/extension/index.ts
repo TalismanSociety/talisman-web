@@ -2,7 +2,7 @@ import { web3AccountsSubscribe, web3Enable } from '@polkadot/extension-dapp'
 import type { InjectedAccount as InjectedAccountPjs } from '@polkadot/extension-inject/types'
 import type { InjectedWindow } from '@polkadot/extension-inject/types'
 import { uniqBy } from 'lodash'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { atom, useRecoilState, useSetRecoilState } from 'recoil'
 
 export type InjectedAccount = InjectedAccountPjs
@@ -21,20 +21,6 @@ export const extensionLoadingState = atom<boolean>({
   key: 'ExtensionLoading',
   default: false,
 })
-
-export const useSelectedSigner = () => {
-  const [extensionAccounts] = useRecoilState(accountsState)
-  const [selectedSigner, setSelectedSigner] = useState<InjectedAccount | undefined>(extensionAccounts[0])
-
-  // Ensure selected signer gets set if it is disconnected
-  useEffect(() => {
-    if (!extensionAccounts.map(a => a.address).includes(selectedSigner?.address || 'invalid-address')) {
-      setSelectedSigner(extensionAccounts[0])
-    }
-  }, [selectedSigner, extensionAccounts])
-
-  return [selectedSigner, setSelectedSigner] as const
-}
 
 export const ExtensionWatcher = () => {
   const [extensionAllowed, setExtensionAllowed] = useRecoilState(extensionAllowedState)

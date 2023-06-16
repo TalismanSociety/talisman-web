@@ -84,6 +84,7 @@ const TransactionsList = ({ transactions }: { transactions: Transaction[] }) => 
               open={!!openTransaction}
             >
               <FullScreenDialogContents
+                fee={undefined}
                 t={openTransaction}
                 onApprove={() => navigate('/overview')}
                 onReject={() => navigate('/overview')}

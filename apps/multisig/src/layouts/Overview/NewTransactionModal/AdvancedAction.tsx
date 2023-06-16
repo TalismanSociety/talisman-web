@@ -189,6 +189,7 @@ const AdvancedAction = (props: { onCancel: () => void }) => {
         open={step === Step.Review}
       >
         <FullScreenDialogContents
+          fee={undefined}
           t={mockTransactions[1] as Transaction}
           onApprove={() => {
             navigate('/overview')

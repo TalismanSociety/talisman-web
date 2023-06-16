@@ -5,36 +5,11 @@
 // TODO: use pjs types instead of force casting
 
 import { pjsApiSelector } from '@domains/chains/pjs-api'
-import { Balance, ProxyDefinition } from '@polkadot/types/interfaces'
-import { useCallback, useEffect, useState } from 'react'
+import { ProxyDefinition } from '@polkadot/types/interfaces'
+import { useCallback } from 'react'
 import { useRecoilValueLoadable } from 'recoil'
 
 import { Chain } from './tokens'
-
-// Example only. replace with a state getter.
-export const useExistentialDeposit = (chain: Chain) => {
-  const apiLoadable = useRecoilValueLoadable(pjsApiSelector(chain.rpc))
-  const [existentialDeposit, setExistentialDeposit] = useState<Balance | undefined>()
-
-  useEffect(() => {
-    const getExistentialDeposit = async () => {
-      if (apiLoadable.state !== 'hasValue') {
-        setExistentialDeposit(undefined)
-        return
-      }
-
-      const api = apiLoadable.contents
-      if (!api.consts.balances) {
-        throw Error('Balances must exist on api!')
-      }
-      setExistentialDeposit(api.consts.balances.existentialDeposit as unknown as Balance)
-    }
-
-    getExistentialDeposit()
-  }, [apiLoadable.state, apiLoadable])
-
-  return existentialDeposit
-}
 
 export const useProxiesProxies = (chain: Chain) => {
   const apiLoadable = useRecoilValueLoadable(pjsApiSelector(chain.rpc))
