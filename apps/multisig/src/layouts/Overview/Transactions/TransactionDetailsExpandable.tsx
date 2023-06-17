@@ -3,7 +3,7 @@ import 'ace-builds/src-noconflict/mode-yaml'
 import 'ace-builds/src-noconflict/theme-twilight'
 import 'ace-builds/src-noconflict/ext-language_tools'
 
-import { tokenPriceState } from '@domains/chains'
+import { tokenPriceState, useDecodeCallData } from '@domains/chains'
 import { Balance, Transaction, TransactionType, calcSumOutgoing } from '@domains/multisig'
 import { css } from '@emotion/css'
 import { useTheme } from '@emotion/react'
@@ -119,13 +119,36 @@ const MultiSendExpendedDetails = ({ t }: { t: Transaction }) => {
   )
 }
 
-const AdvancedExpendedDetails = ({ t }: { t: Transaction }) => {
+function AdvancedExpendedDetails({ t }: { t: Transaction }) {
+  const { loading, decodeCallData } = useDecodeCallData()
+  const [error, setError] = useState<Error | undefined>(undefined)
+
+  const extrinsic = useMemo(() => {
+    if (!loading) {
+      try {
+        return decodeCallData(t.callData)
+      } catch (error) {
+        if (error instanceof Error) {
+          setError(error)
+        } else {
+          setError(new Error('Unknown error'))
+        }
+      }
+    }
+  }, [decodeCallData, t.callData, loading])
+
   return (
     <div css={{ paddingBottom: '8px' }}>
       <AceEditor
         mode="yaml"
         theme="twilight"
-        value={t.decoded.yaml}
+        value={
+          extrinsic
+            ? JSON.stringify(extrinsic.method.toHuman(), null, 2)
+            : error
+            ? `Failed to decode calldata, please open an issue at\nhttps://github.com/TalismanSociety/talisman-web\nwith the following details:\n\nError\n${error}\n\nCalldata\n${t.callData}`
+            : 'Loading...'
+        }
         readOnly={true}
         name="yaml"
         setOptions={{ useWorker: false }}

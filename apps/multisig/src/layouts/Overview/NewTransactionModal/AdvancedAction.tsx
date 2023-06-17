@@ -1,67 +1,58 @@
 import 'ace-builds/src-noconflict/ace'
-import 'ace-builds/src-noconflict/mode-yaml'
+import 'ace-builds/src-noconflict/mode-json'
 import 'ace-builds/src-noconflict/theme-twilight'
 import 'ace-builds/src-noconflict/ext-language_tools'
 
-import { Chain, supportedChains } from '@domains/chains'
-import { Transaction } from '@domains/multisig'
+import { useApproveAsMulti, useDecodeCallData } from '@domains/chains'
+import {
+  Transaction,
+  TransactionApprovals,
+  TransactionType,
+  selectedMultisigState,
+  useNextTransactionSigner,
+} from '@domains/multisig'
 import { css } from '@emotion/css'
+import { SubmittableExtrinsic } from '@polkadot/api/types'
 import { Button, FullScreenDialog } from '@talismn/ui'
-import { debounce } from 'lodash'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import AceEditor from 'react-ace'
+import toast from 'react-hot-toast'
 import { useNavigate } from 'react-router-dom'
+import { useRecoilValue } from 'recoil'
 
 import { mockTransactions } from '../mocks'
 import { FullScreenDialogContents, FullScreenDialogTitle } from '../Transactions/FullScreenSummary'
-import { ChooseChain, NameTransaction } from './generic-steps'
+import { NameTransaction } from './generic-steps'
 
 enum Step {
   Name,
-  Chain,
   Details,
   Review,
 }
 
-const dummyDecodedCall = `PalletCall:
-  pallet: 'pallet_example'
-  function: 'fake_function'
-  params:
-    - param1:
-        type: 'u64'
-        value: '10'
-    - param2:
-        type: 'AccountId'
-        value: '5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY'
-    - param3:
-        type: 'Option<Bytes>'
-        value: 'None'
-`
-
-// TODO
-const decodeCalldata = (s: string): string | false => {
-  return dummyDecodedCall
-}
-
 const DetailsForm = (props: {
-  calldata: string
-  setCalldata: (s: string) => void
+  extrinsic: SubmittableExtrinsic<'promise'> | undefined
+  setExtrinsic: (s: SubmittableExtrinsic<'promise'> | undefined) => void
   onBack: () => void
   onNext: () => void
 }) => {
-  const [decoded, setDecoded] = useState<string | boolean>(false)
-
-  // Debounce decoding
-  const debouncedDecode = debounce(nextValue => {
-    console.log('hello')
-    const decoded = decodeCalldata(nextValue)
-    if (decoded !== false) {
-      setDecoded(decoded)
-    }
-  }, 1000)
+  const { loading, decodeCallData } = useDecodeCallData()
 
   return (
     <div
+      onPaste={event => {
+        // User must reset extrinsic before pasting new one
+        if (props.extrinsic) return
+
+        try {
+          const extrinsic = decodeCallData(event.clipboardData.getData('text') as `0x{string}`)
+          if (!extrinsic) throw Error('extrinsic should be loaded, did you try to set before loading was ready?')
+          props.setExtrinsic(extrinsic)
+        } catch (error) {
+          if (error instanceof Error) toast.error(`Invalid calldata: ${error.message}`)
+          else toast.error(`Invalid calldata: unknown error`)
+        }
+      }}
       className={css`
         max-width: 623px;
         display: grid;
@@ -75,26 +66,22 @@ const DetailsForm = (props: {
         transaction.
       </div>
       <AceEditor
-        mode="yaml"
+        mode="json"
         theme="twilight"
-        value={decoded !== false ? (decoded as string) : props.calldata}
-        readOnly={decoded !== false}
-        onChange={s => {
-          // Don't allow it to change once it's been decoded
-          if (decoded !== false) return
-          debouncedDecode(s)
-          props.setCalldata(s)
-        }}
+        placeholder="Paste hex-encoded calldata"
+        value={
+          loading ? 'Loading...' : props.extrinsic ? JSON.stringify(props.extrinsic.method.toHuman(), null, 2) : ''
+        }
+        readOnly={true}
         name="calldata-editor"
         setOptions={{ useWorker: false }}
         style={{ width: '100%', height: '230px', marginTop: '24px', border: '1px solid #232323' }}
-        showGutter={!!decoded}
+        showGutter={!!props.extrinsic}
       />
-      {decoded && (
+      {props.extrinsic !== undefined && (
         <span
           onClick={() => {
-            setDecoded(false)
-            props.setCalldata('')
+            props.setExtrinsic(undefined)
           }}
           className={css`
             justify-self: start;
@@ -120,7 +107,7 @@ const DetailsForm = (props: {
         `}
       >
         <Button onClick={props.onBack} children={<h3>Back</h3>} variant="outlined" />
-        <Button disabled={decoded === false} onClick={props.onNext} children={<h3>Next</h3>} />
+        <Button disabled={props.extrinsic === undefined} onClick={props.onNext} children={<h3>Next</h3>} />
       </div>
     </div>
   )
@@ -129,9 +116,33 @@ const DetailsForm = (props: {
 const AdvancedAction = (props: { onCancel: () => void }) => {
   const [step, setStep] = useState(Step.Name)
   const [name, setName] = useState('')
-  const [calldata, setCalldata] = useState('')
-  const [chain, setChain] = useState<Chain>(supportedChains[0] as Chain)
+  const [extrinsic, setExtrinsic] = useState<SubmittableExtrinsic<'promise'> | undefined>()
+  const multisig = useRecoilValue(selectedMultisigState)
+  const [extensionPopupOpen, setExtensionPopupOpen] = useState(false)
   const navigate = useNavigate()
+
+  const t: Transaction | undefined = useMemo(() => {
+    if (extrinsic) {
+      return {
+        createdTimestamp: new Date(),
+        executedTimestamp: undefined,
+        hash: '',
+        description: name,
+        chainId: multisig.chain.id,
+        approvals: multisig.signers.reduce((acc, key) => {
+          acc[key] = false
+          return acc
+        }, {} as TransactionApprovals),
+        decoded: {
+          type: TransactionType.Advanced,
+          recipients: [],
+        },
+        callData: extrinsic.method.toHex(),
+      }
+    }
+  }, [multisig, name, extrinsic])
+  const signer = useNextTransactionSigner(t?.approvals)
+  const { approveAsMulti, estimatedFee } = useApproveAsMulti(signer?.address, extrinsic)
 
   return (
     <div
@@ -148,23 +159,15 @@ const AdvancedAction = (props: { onCancel: () => void }) => {
           setName={setName}
           onCancel={props.onCancel}
           onNext={() => {
-            setStep(Step.Chain)
+            setStep(Step.Details)
           }}
-        />
-      ) : step === Step.Chain ? (
-        <ChooseChain
-          chain={chain}
-          setChain={setChain}
-          chains={supportedChains}
-          onBack={() => setStep(Step.Name)}
-          onNext={() => setStep(Step.Details)}
         />
       ) : step === Step.Details || step === Step.Review ? (
         <DetailsForm
-          onBack={() => setStep(Step.Chain)}
+          onBack={() => setStep(Step.Name)}
           onNext={() => setStep(Step.Review)}
-          calldata={calldata}
-          setCalldata={setCalldata}
+          extrinsic={extrinsic}
+          setExtrinsic={setExtrinsic}
         />
       ) : null}
       <FullScreenDialog
@@ -189,10 +192,26 @@ const AdvancedAction = (props: { onCancel: () => void }) => {
         open={step === Step.Review}
       >
         <FullScreenDialogContents
-          fee={undefined}
-          t={mockTransactions[1] as Transaction}
+          fee={estimatedFee}
+          t={t}
+          loading={extensionPopupOpen}
           onApprove={() => {
-            navigate('/overview')
+            setExtensionPopupOpen(true)
+            approveAsMulti(
+              () => {
+                navigate('/overview')
+                toast.success(
+                  "Transaction sent! It will appear in your 'Pending' transactions as soon as it lands in a finalized block.",
+                  { duration: 5000, position: 'bottom-right' }
+                )
+              },
+              () => {},
+              e => {
+                toast.error('Transaction failed')
+                console.error(e)
+                setExtensionPopupOpen(false)
+              }
+            )
           }}
           onReject={() => {
             setStep(Step.Details)

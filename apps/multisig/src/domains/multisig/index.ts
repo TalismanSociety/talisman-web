@@ -125,7 +125,6 @@ export interface Transaction {
   decoded: {
     type: TransactionType
     recipients: TransactionRecipient[]
-    yaml: string
     changeMultisigAddressDetails?: {
       signers: string[]
       threshold: number

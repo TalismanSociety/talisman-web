@@ -42,45 +42,8 @@ export const mockTransactions: Transaction[] = [
     decoded: {
       type: TransactionType.Advanced,
       recipients: [],
-      yaml: `estimated_fee: 
-  DOT: 0.0127
-  USD: 0.07
-transaction:
-  from: "13TdEizVmg3aY9hNJETh3xS7Ug4mwtrvVW8tgKz4JgZMp7PG (md)"
-  network: "Polkadot"
-  fees:
-    DOT: 0.0127367863
-    USD: 0.07
-  tip: 0
-  method: "utility : batchAll"
-  description: "Send a batch of dispatch calls and atomically execute them."
-  batch_steps:
-    - "Make some on-chain remark."
-    - "Make some on-chain remark."
-  arguments:
-    calls:
-      - args:
-          remark: '0x1234'
-        method: remark
-        section: system
-      - args:
-          remark: '0x5678'
-        method: remark
-        section: system
-  payload:
-    method: '0x1a020800000812340000085678'
-    era:
-      MortalEra:
-        period: '64'
-        phase: '35'
-    nonce: '1'
-    tip: '0'
-    specVersion: 9370
-    transactionVersion: '20'
-    genesisHash: '0x91b171bb158e2d3848fa23a9f1c25182fb8e20313b2c1eb49219da7a70ce90c3'
-    blockHash: '0x30d2d88d02ce0099914966134ec3c0913db755fc7f90be1b74d06f5072d76c4e'`,
     },
-    callData: '0x0000',
+    callData: '0x0102010000000000000000000000000000000000',
   },
   {
     createdTimestamp: new Date(Date.parse('06 Feb 2023 07:33:38 GMT')),
@@ -116,7 +79,6 @@ transaction:
           },
         },
       ],
-      yaml: '0x',
     },
     callData: '0x0000',
   },
@@ -139,7 +101,6 @@ transaction:
           },
         },
       ],
-      yaml: '0x',
     },
     callData: '0x0000',
   },
@@ -164,7 +125,6 @@ transaction:
           },
         },
       ],
-      yaml: '0x',
     },
     callData: '0x0000',
   },
@@ -203,7 +163,6 @@ transaction:
           },
         },
       ],
-      yaml: '0x',
     },
     callData: '0x0000',
   },
@@ -228,7 +187,6 @@ transaction:
           },
         },
       ],
-      yaml: '0x',
     },
     callData: '0x0000',
   },

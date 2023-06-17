@@ -5,8 +5,11 @@
 
 import { pjsApiSelector } from '@domains/chains/pjs-api'
 import { Balance, selectedMultisigState } from '@domains/multisig'
-import { SubmittableResult } from '@polkadot/api'
+import { ApiPromise, SubmittableResult } from '@polkadot/api'
+import type { SubmittableExtrinsic } from '@polkadot/api/types'
 import { web3FromAddress } from '@polkadot/extension-dapp'
+import type { Call, ExtrinsicPayload } from '@polkadot/types/interfaces'
+import { assert, compactToU8a, u8aConcat, u8aEq } from '@polkadot/util'
 import { sortAddresses } from '@polkadot/util-crypto'
 import BN from 'bn.js'
 import { useCallback, useEffect, useState } from 'react'
@@ -14,7 +17,90 @@ import { useRecoilValue, useRecoilValueLoadable } from 'recoil'
 
 import { Chain, tokenByIdQuery } from './tokens'
 
-export const useApproveAsMulti = (extensionAddress: string | undefined, callData: `0x${string}` | undefined) => {
+// Sorry, not my code. Copied from p.js apps. it's not exported in any public packages.
+// https://github.com/polkadot-js/apps/blob/b6923ea003e1b043f22d3beaa685847c2bc54c24/packages/page-extrinsics/src/Decoder.tsx#L55
+export const useDecodeCallData = () => {
+  const multisig = useRecoilValue(selectedMultisigState)
+  const apiLoadable = useRecoilValueLoadable(pjsApiSelector(multisig.chain.rpc))
+
+  const decodeCallData = useCallback(
+    (hex: string) => {
+      if (apiLoadable.state !== 'hasValue') return undefined
+
+      const api = apiLoadable.contents as unknown as ApiPromise
+      try {
+        let extrinsicCall: Call
+        let extrinsicPayload: ExtrinsicPayload | null = null
+        let decoded: SubmittableExtrinsic<'promise'> | null = null
+
+        try {
+          // cater for an extrinsic input
+          const tx = api.tx(hex)
+
+          // ensure that the full data matches here
+          if (tx.toHex() !== hex) {
+            throw new Error('Cannot decode data as extrinsic, length mismatch')
+          }
+
+          decoded = tx
+          extrinsicCall = api.createType('Call', decoded.method)
+        } catch {
+          try {
+            // attempt to decode as Call
+            extrinsicCall = api.createType('Call', hex)
+
+            const callHex = extrinsicCall.toHex()
+
+            if (callHex === hex) {
+              // all good, we have a call
+            } else if (hex.startsWith(callHex)) {
+              // this could be an un-prefixed payload...
+              const prefixed = u8aConcat(compactToU8a(extrinsicCall.encodedLength), hex)
+
+              extrinsicPayload = api.createType('ExtrinsicPayload', prefixed)
+
+              assert(u8aEq(extrinsicPayload.toU8a(), prefixed), 'Unable to decode data as un-prefixed ExtrinsicPayload')
+
+              extrinsicCall = api.createType('Call', extrinsicPayload.method.toHex())
+            } else {
+              throw new Error('Unable to decode data as Call, length mismatch in supplied data')
+            }
+          } catch {
+            // final attempt, we try this as-is as a (prefixed) payload
+            extrinsicPayload = api.createType('ExtrinsicPayload', hex)
+
+            assert(
+              extrinsicPayload.toHex() === hex,
+              'Unable to decode input data as Call, Extrinsic or ExtrinsicPayload'
+            )
+
+            extrinsicCall = api.createType('Call', extrinsicPayload.method.toHex())
+          }
+        }
+
+        if (!decoded) {
+          const { method, section } = api.registry.findMetaCall(extrinsicCall.callIndex)
+          // @ts-ignore
+          const extrinsicFn = api.tx[section][method] as any
+          decoded = extrinsicFn(...extrinsicCall.args)
+
+          if (!decoded) throw Error('Unable to decode extrinsic')
+          return decoded
+        }
+      } catch (e) {
+        throw e
+      }
+    },
+    [apiLoadable]
+  )
+
+  return { loading: apiLoadable.state === 'loading', decodeCallData }
+}
+
+export const useApproveAsMulti = (
+  extensionAddress: string | undefined,
+  extrinsic: SubmittableExtrinsic<'promise'> | undefined
+) => {
   const multisig = useRecoilValue(selectedMultisigState)
   const apiLoadable = useRecoilValueLoadable(pjsApiSelector(multisig.chain.rpc))
   const nativeToken = useRecoilValueLoadable(tokenByIdQuery(multisig.chain.nativeToken.id))
@@ -22,7 +108,7 @@ export const useApproveAsMulti = (extensionAddress: string | undefined, callData
 
   // Creates some tx from calldata
   const createTx = useCallback(async () => {
-    if (apiLoadable.state !== 'hasValue' || !extensionAddress || nativeToken.state !== 'hasValue' || !callData) {
+    if (apiLoadable.state !== 'hasValue' || !extensionAddress || nativeToken.state !== 'hasValue' || !extrinsic) {
       return
     }
 
@@ -31,16 +117,14 @@ export const useApproveAsMulti = (extensionAddress: string | undefined, callData
       throw new Error('chain missing multisig pallet')
     }
 
-    // @ts-ignore
-    const weightEstimation = (await api.call.transactionPaymentApi.queryInfo(callData, null)).weight
+    const weightEstimation = (await extrinsic.paymentInfo(extensionAddress)).weight as any
 
     // Provide some buffer for the weight
     const weight = api.createType('Weight', {
       refTime: api.createType('Compact<u64>', Math.ceil(weightEstimation.refTime * 1.1)),
       proofSize: api.createType('Compact<u64>', Math.ceil(weightEstimation.proofSize * 1.1)),
     })
-    const callTx = api.tx(callData)
-    const hash = callTx.registry.hash(callTx.method.toU8a()).toHex()
+    const hash = extrinsic.registry.hash(extrinsic.method.toU8a()).toHex()
     return api.tx.multisig.approveAsMulti(
       multisig.threshold,
       sortAddresses(multisig.signers).filter(s => s !== extensionAddress),
@@ -48,7 +132,7 @@ export const useApproveAsMulti = (extensionAddress: string | undefined, callData
       hash,
       weight
     )
-  }, [apiLoadable, extensionAddress, nativeToken, callData, multisig])
+  }, [apiLoadable, extensionAddress, nativeToken, extrinsic, multisig])
 
   const estimateFee = useCallback(async () => {
     const tx = await createTx()

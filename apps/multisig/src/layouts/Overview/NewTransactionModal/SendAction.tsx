@@ -9,6 +9,7 @@ import {
   useNextTransactionSigner,
 } from '@domains/multisig'
 import { css } from '@emotion/css'
+import { SubmittableExtrinsic } from '@polkadot/api/types'
 import { Button, FullScreenDialog, Select, TextInput } from '@talismn/ui'
 import { toSs52Address } from '@util/addresses'
 import BN from 'bn.js'
@@ -185,8 +186,8 @@ const DetailsForm = (props: {
 const SendAction = (props: { onCancel: () => void }) => {
   const [step, setStep] = useState(Step.Name)
   const [name, setName] = useState('')
-  const [destination, setDestination] = useState('14JVAWDg9h2iMqZgmiRpvZd8aeJ3TvANMCv6V5Te4N4Vkbg5')
-  const [callData, setCallData] = useState<`0x${string}` | undefined>()
+  const [destination, setDestination] = useState('')
+  const [extrinsic, setExtrinsic] = useState<SubmittableExtrinsic<'promise'> | undefined>()
   const [extensionPopupOpen, setExtensionPopupOpen] = useState(false)
   const tokens = useRecoilValueLoadable(selectedMultisigChainTokensState)
   const [selectedToken, setSelectedToken] = useState<Token | undefined>()
@@ -217,8 +218,8 @@ const SendAction = (props: { onCancel: () => void }) => {
         throw Error('chain missing balances pallet')
       }
       try {
-        const calldata = apiLoadable.contents.tx.balances.transferKeepAlive(destination, amountBn).toHex()
-        setCallData(calldata)
+        const extrinsic = apiLoadable.contents.tx.balances.transferKeepAlive(destination, amountBn)
+        setExtrinsic(extrinsic)
       } catch (error) {
         console.log(error)
       }
@@ -226,7 +227,7 @@ const SendAction = (props: { onCancel: () => void }) => {
   }, [destination, selectedToken, apiLoadable, amountBn])
 
   const t: Transaction | undefined = useMemo(() => {
-    if (selectedToken && callData) {
+    if (selectedToken && extrinsic) {
       return {
         createdTimestamp: new Date(),
         executedTimestamp: undefined,
@@ -242,12 +243,12 @@ const SendAction = (props: { onCancel: () => void }) => {
           recipients: [{ address: destination, balance: { amount: amountBn || new BN(0), token: selectedToken } }],
           yaml: '',
         },
-        callData,
+        callData: extrinsic.method.toHex(),
       }
     }
-  }, [amountBn, destination, multisig, name, selectedToken, callData])
+  }, [amountBn, destination, multisig, name, selectedToken, extrinsic])
   const signer = useNextTransactionSigner(t?.approvals)
-  const { approveAsMulti, estimatedFee } = useApproveAsMulti(signer?.address, callData)
+  const { approveAsMulti, estimatedFee } = useApproveAsMulti(signer?.address, extrinsic)
 
   return (
     <div
