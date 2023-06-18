@@ -20,6 +20,7 @@ import { KhalaAdapter } from '@polkawallet/bridge/adapters/phala'
 import { KusamaAdapter, PolkadotAdapter } from '@polkawallet/bridge/adapters/polkadot'
 import { StatemineAdapter, StatemintAdapter } from '@polkawallet/bridge/adapters/statemint'
 import { QuartzAdapter, UniqueAdapter } from '@polkawallet/bridge/adapters/unique'
+import { ZeitgeistAdapter } from '@polkawallet/bridge/adapters/zeitgeist'
 import { type BaseCrossChainAdapter } from '@polkawallet/bridge/base-chain-adapter'
 
 export const bridgeConfig = {
@@ -164,6 +165,11 @@ export const bridgeConfig = {
     adapter: new UniqueAdapter(),
     rpc: 'wss://ws.unique.network',
     subscanUrl: 'https://unique.subscan.io/',
+  },
+  zeitgeist: {
+    adapter: new ZeitgeistAdapter(),
+    rpc: 'wss://main.rpc.zeitgeist.pm/ws',
+    subscanUrl: 'https://zeitgeist.subscan.io/',
   },
 } as const satisfies Record<
   ChainId,
