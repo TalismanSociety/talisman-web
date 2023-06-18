@@ -57,6 +57,7 @@ export const selectedMultisigState = selector<Multisig>({
       return dummyMultisig
     }
   },
+  dangerouslyAllowMutability: true, // pjs wsprovider mutates itself to track connection msg stats
 })
 
 export const selectedMultisigChainTokensState = selector<Token[]>({

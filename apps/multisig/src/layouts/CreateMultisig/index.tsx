@@ -7,7 +7,6 @@ import {
   tokenByIdWithPrice,
 } from '@domains/chains'
 import { useCreateProxy, useTransferProxyToMultisig } from '@domains/chains/extrinsics'
-import { useProxiesProxies } from '@domains/chains/storage-getters'
 import { useAddressIsProxyDelegatee } from '@domains/chains/storage-getters'
 import { InjectedAccount, accountsState } from '@domains/extension'
 import {
@@ -97,7 +96,6 @@ const CreateMultisig = () => {
   const existentialDepositLoadable = useRecoilValueLoadable(existentialDepositSelector(chain.rpc))
   const proxyDepositTotalLoadable = useRecoilValueLoadable(proxyDepositTotalSelector(chain.rpc))
   const { addressIsProxyDelegatee } = useAddressIsProxyDelegatee(chain)
-  const { proxyProxies } = useProxiesProxies(chain)
 
   const navigate = useNavigate()
   const [step, setStep] = useState<Step>(Step.NoVault)
@@ -219,7 +217,6 @@ const CreateMultisig = () => {
     threshold,
     createProxy,
     transferProxyToMultisig,
-    proxyProxies,
   ])
 
   // TODO: if wallet has vaults already skip the no_vault and display an 'x'

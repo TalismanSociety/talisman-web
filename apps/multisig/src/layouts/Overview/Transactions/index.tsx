@@ -1,9 +1,11 @@
+import { multisigPendingTransactionsSelector } from '@domains/chains/storage-getters'
 import { Transaction } from '@domains/multisig'
 import { css } from '@emotion/css'
 import { FullScreenDialog } from '@talismn/ui'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useEffect, useMemo, useState } from 'react'
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom'
+import { useRecoilValueLoadable } from 'recoil'
 
 import { FullScreenDialogContents, FullScreenDialogTitle } from './FullScreenSummary'
 import TransactionSummaryRow from './TransactionSummaryRow'
@@ -98,6 +100,8 @@ const TransactionsList = ({ transactions }: { transactions: Transaction[] }) => 
 }
 
 const Transactions = ({ transactions }: { transactions: Transaction[] }) => {
+  const _pendingTransactions = useRecoilValueLoadable(multisigPendingTransactionsSelector)
+  console.log({ _pendingTransactions })
   const pendingTransactions = useMemo(() => {
     return transactions.filter(t => Object.values(t.approvals).some(a => !a))
   }, [transactions])
