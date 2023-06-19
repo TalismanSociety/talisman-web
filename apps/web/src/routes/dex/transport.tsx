@@ -23,7 +23,10 @@ const Transport = () => {
           <picture>
             <source srcSet={illustrationAvif} />
             <source srcSet={illustrationWebp} />
-            <img src={illustrationPng} css={{ marginBottom: '1.6rem', borderRadius: '1.6rem', width: '100%' }} />
+            <img
+              src={illustrationPng}
+              css={{ marginBottom: '1.6rem', borderRadius: '1.6rem', width: '100%', aspectRatio: '1578 / 717' }}
+            />
           </picture>
           <OrderedDetailsList>
             <Details>
