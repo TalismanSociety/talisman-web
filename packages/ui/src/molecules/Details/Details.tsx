@@ -108,9 +108,10 @@ export const OrderedDetailsList = (props: DetailedHTMLProps<HTMLAttributes<HTMLU
     {...props}
     css={{
       'counterReset': 'details-list',
+      'margin': 0,
       'padding': 0,
       '> * + *': {
-        marginTop: '1.2rem',
+        marginTop: '1.6rem',
       },
       'summary': {
         '::before': {
