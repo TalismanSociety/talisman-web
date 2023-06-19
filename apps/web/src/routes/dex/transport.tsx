@@ -3,7 +3,7 @@ import DexForm from '@components/recipes/DexForm/DexForm'
 import { Details, OrderedDetailsList, Text } from '@talismn/ui'
 import React, { Suspense } from 'react'
 import { FaqLayout } from './layout'
-import { ReactComponent as Illustration } from './transport-illustration.svg'
+import illustration from './transport-illustration.webp'
 
 const TransportForm = React.lazy(async () => await import('@components/widgets/dex/TransportForm'))
 
@@ -17,8 +17,8 @@ const Transport = () => {
       }
       faq={
         <>
-          <SectionHeader headlineText={<>About Cross-Chain Transfers</>} />
-          <Illustration css={{ borderRadius: '1.6rem' }} />
+          <SectionHeader headlineText="About Cross-Chain Transfers" />
+          <img src={illustration} css={{ borderRadius: '1.6rem', width: '100%' }} />
           <OrderedDetailsList>
             <Details>
               <Details.Summary>How does transport work?</Details.Summary>
