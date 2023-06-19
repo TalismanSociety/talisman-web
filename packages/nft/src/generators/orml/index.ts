@@ -22,8 +22,8 @@ export const createAcalaNftAsyncGenerator = createOrmlNftAsyncGenerator({
       return
     }
 
-    return fetch(new URL(ipfsCid.toString() + '/metadata.json', 'https://talisman.mypinata.cloud/ipfs/')).then(res =>
-      res.json()
+    return await fetch(new URL(ipfsCid.toString() + '/metadata.json', 'https://talisman.mypinata.cloud/ipfs/')).then(
+      async res => await res.json()
     )
   },
   getExternalLinks: (_, __) => [{ name: 'Acala', url: 'https://apps.acala.network/' }],
@@ -36,16 +36,16 @@ export const createBitCountryNftAsyncGenerator = createOrmlNftAsyncGenerator({
     const ipfsCid = parseCid(metadata)
 
     if (!ipfsCid) {
-      return fetch(
-        `https://pioneer-api.bit.country/metadata/landTokenUriPioneer/${classId}/${tokenId}/metadata.json`
-      ).then(x => x.json())
+      return await fetch(
+        `https://pioneer-api.bit.country/metadata/landTokenUriPioneer/${classId.toString()}/${tokenId.toString()}/metadata.json`
+      ).then(async x => await x.json())
     }
 
-    return fetch(new URL(ipfsCid.toString(), 'https://ipfs-cdn.bit.country'))
-      .then(res => res.json())
-      .then(x => ({ ...x, image: x.image_url ? `https://ipfs-cdn.bit.country/${x.image_url}` : undefined }))
+    return await fetch(new URL(ipfsCid.toString(), 'https://ipfs-cdn.bit.country'))
+      .then(async res => await res.json())
+      .then(x => ({ ...x, image: x.image_url ? `https://ipfs-cdn.bit.country/${x.image_url as string}` : undefined }))
   },
   getExternalLinks: (classId, __) => [
-    { name: 'Pioneer', url: `https://pioneer.bit.country/marketplace/browse?collection=${classId}` },
+    { name: 'Pioneer', url: `https://pioneer.bit.country/marketplace/browse?collection=${classId.toString()}` },
   ],
 })

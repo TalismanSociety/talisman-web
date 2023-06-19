@@ -1,9 +1,12 @@
 {
-  "extends": "@talismn/tsconfig/library",
   "compilerOptions": {
     "composite": true,
+    "target": "ESNext",
+    "moduleResolution": "nodenext",
     "outDir": "build",
-    "verbatimModuleSyntax": false
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true
   },
-  "include": ["generated"]
+  "include": ["generated", "generated/**/*.json"]
 }

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/prefer-nullish-coalescing */
 import '@polkadot/api-augment/substrate'
 import { encodeAddress } from '@polkadot/util-crypto'
 import { request } from 'graphql-request'
@@ -62,7 +63,7 @@ export const createRmrk2NftAsyncGenerator: CreateNftAsyncGenerator<Nft<'rmrk2', 
         description: nft.metadata_description ?? undefined,
         media: nft.metadata_image || nft.resources[0]?.thumb || undefined,
         thumbnail: nft.resources[0]?.thumb || nft.metadata_image || undefined,
-        serialNumber: Number(nft.sn),
+        serialNumber: BigInt(nft.sn),
         properties: nft.metadata_properties,
         externalLinks: [{ name: 'Singular', url: `https://singular.app/collectibles/${nft.id}` }],
         collection: !nft.collection

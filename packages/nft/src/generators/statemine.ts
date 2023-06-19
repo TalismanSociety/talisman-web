@@ -1,17 +1,18 @@
+/* eslint-disable @typescript-eslint/prefer-nullish-coalescing */
 import '@polkadot/api-augment/substrate'
 import { encodeAddress } from '@polkadot/util-crypto'
 import { request } from 'graphql-request'
 import { graphql } from '../../generated/gql/statemine/index.js'
 import type { CreateNftAsyncGenerator, IpfsMetadata, Nft } from '../types.js'
 
-const fetchIpfsMetadata = (metadata: string): Promise<IpfsMetadata> =>
-  fetch(
+const fetchIpfsMetadata = async (metadata: string): Promise<IpfsMetadata> =>
+  await fetch(
     new URL(
       // Some metadata are corrupted and contains an actual IPFS link
       metadata.replace('ipfs://ipfs/', ''),
       'https://talisman.mypinata.cloud/ipfs/'
     )
-  ).then(res => res.json())
+  ).then(async res => await res.json())
 
 export const createStatemineNftAsyncGenerator: CreateNftAsyncGenerator<Nft<'substrate-unique', 'statemine'>> =
   async function* (address, { batchSize }) {

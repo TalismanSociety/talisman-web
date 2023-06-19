@@ -1,0 +1,462 @@
+{
+  "0": {
+    "name": "AccountId",
+    "body": "string | number[]",
+    "isResult": false,
+    "isPrimitive": true,
+    "isConvertable": false
+  },
+  "1": {
+    "name": "Array",
+    "body": { "0": { "name": "number", "isResult": false, "isPrimitive": true, "isConvertable": false } },
+    "isResult": false,
+    "isPrimitive": false,
+    "isConvertable": false
+  },
+  "2": { "name": "number", "isResult": false, "isPrimitive": true, "isConvertable": false },
+  "3": { "name": "null", "isResult": false, "isPrimitive": true, "isConvertable": false },
+  "4": { "name": "number", "isResult": false, "isPrimitive": true, "isConvertable": false },
+  "5": { "name": "number", "isResult": false, "isPrimitive": true, "isConvertable": false },
+  "6": { "name": "number", "isResult": false, "isPrimitive": true, "isConvertable": false },
+  "7": { "name": "ReturnNumber", "isResult": false, "isPrimitive": false, "isConvertable": true },
+  "8": {
+    "name": "Array",
+    "body": { "0": { "name": "number", "isResult": false, "isPrimitive": true, "isConvertable": false } },
+    "isResult": false,
+    "isPrimitive": false,
+    "isConvertable": false
+  },
+  "9": { "name": "string", "isResult": false, "isPrimitive": true, "isConvertable": false },
+  "10": {
+    "name": "Result<null, LangError",
+    "body": {
+      "ok": { "name": "null", "isResult": false, "isPrimitive": true, "isConvertable": false },
+      "err": {
+        "name": "LangError",
+        "body": { "CouldNotReadInput": null },
+        "isResult": false,
+        "isPrimitive": false,
+        "isConvertable": false
+      }
+    },
+    "isResult": true,
+    "isPrimitive": false,
+    "isConvertable": false
+  },
+  "11": {
+    "name": "LangError",
+    "body": { "CouldNotReadInput": null },
+    "isResult": false,
+    "isPrimitive": false,
+    "isConvertable": false
+  },
+  "12": {
+    "name": "Result<ReturnNumber, LangError",
+    "body": {
+      "ok": { "name": "ReturnNumber", "isResult": false, "isPrimitive": false, "isConvertable": true },
+      "err": {
+        "name": "LangError",
+        "body": { "CouldNotReadInput": null },
+        "isResult": false,
+        "isPrimitive": false,
+        "isConvertable": false
+      }
+    },
+    "isResult": true,
+    "isPrimitive": false,
+    "isConvertable": false
+  },
+  "13": {
+    "name": "Result<number, LangError",
+    "body": {
+      "ok": { "name": "number", "isResult": false, "isPrimitive": true, "isConvertable": false },
+      "err": {
+        "name": "LangError",
+        "body": { "CouldNotReadInput": null },
+        "isResult": false,
+        "isPrimitive": false,
+        "isConvertable": false
+      }
+    },
+    "isResult": true,
+    "isPrimitive": false,
+    "isConvertable": false
+  },
+  "14": {
+    "name": "Id",
+    "body": {
+      "u8": { "name": "number", "isResult": false, "isPrimitive": true, "isConvertable": false },
+      "u16": { "name": "number", "isResult": false, "isPrimitive": true, "isConvertable": false },
+      "u32": { "name": "number", "isResult": false, "isPrimitive": true, "isConvertable": false },
+      "u64": { "name": "number", "isResult": false, "isPrimitive": true, "isConvertable": false },
+      "u128": { "name": "ReturnNumber", "isResult": false, "isPrimitive": false, "isConvertable": true },
+      "bytes": {
+        "name": "Array",
+        "body": { "0": { "name": "number", "isResult": false, "isPrimitive": true, "isConvertable": false } },
+        "isResult": false,
+        "isPrimitive": false,
+        "isConvertable": false
+      }
+    },
+    "isResult": false,
+    "isPrimitive": false,
+    "isConvertable": false
+  },
+  "15": {
+    "name": "Result<Option, LangError",
+    "body": {
+      "ok": {
+        "name": "Option",
+        "body": {
+          "0": {
+            "name": "AccountId",
+            "body": "string | number[]",
+            "isResult": false,
+            "isPrimitive": true,
+            "isConvertable": false
+          },
+          "1": { "name": "null", "isResult": false, "isPrimitive": true, "isConvertable": false }
+        },
+        "isResult": false,
+        "isPrimitive": false,
+        "isConvertable": false
+      },
+      "err": {
+        "name": "LangError",
+        "body": { "CouldNotReadInput": null },
+        "isResult": false,
+        "isPrimitive": false,
+        "isConvertable": false
+      }
+    },
+    "isResult": true,
+    "isPrimitive": false,
+    "isConvertable": false
+  },
+  "16": {
+    "name": "Option",
+    "body": {
+      "0": {
+        "name": "AccountId",
+        "body": "string | number[]",
+        "isResult": false,
+        "isPrimitive": true,
+        "isConvertable": false
+      },
+      "1": { "name": "null", "isResult": false, "isPrimitive": true, "isConvertable": false }
+    },
+    "isResult": false,
+    "isPrimitive": false,
+    "isConvertable": false
+  },
+  "17": {
+    "name": "Result<Id, LangError",
+    "body": {
+      "ok": {
+        "name": "Id",
+        "body": {
+          "u8": { "name": "number", "isResult": false, "isPrimitive": true, "isConvertable": false },
+          "u16": { "name": "number", "isResult": false, "isPrimitive": true, "isConvertable": false },
+          "u32": { "name": "number", "isResult": false, "isPrimitive": true, "isConvertable": false },
+          "u64": { "name": "number", "isResult": false, "isPrimitive": true, "isConvertable": false },
+          "u128": { "name": "ReturnNumber", "isResult": false, "isPrimitive": false, "isConvertable": true },
+          "bytes": {
+            "name": "Array",
+            "body": { "0": { "name": "number", "isResult": false, "isPrimitive": true, "isConvertable": false } },
+            "isResult": false,
+            "isPrimitive": false,
+            "isConvertable": false
+          }
+        },
+        "isResult": false,
+        "isPrimitive": false,
+        "isConvertable": false
+      },
+      "err": {
+        "name": "LangError",
+        "body": { "CouldNotReadInput": null },
+        "isResult": false,
+        "isPrimitive": false,
+        "isConvertable": false
+      }
+    },
+    "isResult": true,
+    "isPrimitive": false,
+    "isConvertable": false
+  },
+  "18": {
+    "name": "Option",
+    "body": {
+      "0": {
+        "name": "Id",
+        "body": {
+          "u8": { "name": "number", "isResult": false, "isPrimitive": true, "isConvertable": false },
+          "u16": { "name": "number", "isResult": false, "isPrimitive": true, "isConvertable": false },
+          "u32": { "name": "number", "isResult": false, "isPrimitive": true, "isConvertable": false },
+          "u64": { "name": "number", "isResult": false, "isPrimitive": true, "isConvertable": false },
+          "u128": { "name": "ReturnNumber", "isResult": false, "isPrimitive": false, "isConvertable": true },
+          "bytes": {
+            "name": "Array",
+            "body": { "0": { "name": "number", "isResult": false, "isPrimitive": true, "isConvertable": false } },
+            "isResult": false,
+            "isPrimitive": false,
+            "isConvertable": false
+          }
+        },
+        "isResult": false,
+        "isPrimitive": false,
+        "isConvertable": false
+      },
+      "1": { "name": "null", "isResult": false, "isPrimitive": true, "isConvertable": false }
+    },
+    "isResult": false,
+    "isPrimitive": false,
+    "isConvertable": false
+  },
+  "19": {
+    "name": "Result<boolean, LangError",
+    "body": {
+      "ok": { "name": "boolean", "isResult": false, "isPrimitive": true, "isConvertable": false },
+      "err": {
+        "name": "LangError",
+        "body": { "CouldNotReadInput": null },
+        "isResult": false,
+        "isPrimitive": false,
+        "isConvertable": false
+      }
+    },
+    "isResult": true,
+    "isPrimitive": false,
+    "isConvertable": false
+  },
+  "20": { "name": "boolean", "isResult": false, "isPrimitive": true, "isConvertable": false },
+  "21": {
+    "name": "Result<Result<null, PSP34Error, LangError",
+    "body": {
+      "ok": {
+        "name": "Result<null, PSP34Error",
+        "body": {
+          "ok": { "name": "null", "isResult": false, "isPrimitive": true, "isConvertable": false },
+          "err": {
+            "name": "PSP34Error",
+            "body": {
+              "custom": { "name": "string", "isResult": false, "isPrimitive": true, "isConvertable": false },
+              "selfApprove": null,
+              "notApproved": null,
+              "tokenExists": null,
+              "tokenNotExists": null,
+              "safeTransferCheckFailed": {
+                "name": "string",
+                "isResult": false,
+                "isPrimitive": true,
+                "isConvertable": false
+              }
+            },
+            "isResult": false,
+            "isPrimitive": false,
+            "isConvertable": false
+          }
+        },
+        "isResult": true,
+        "isPrimitive": false,
+        "isConvertable": false
+      },
+      "err": {
+        "name": "LangError",
+        "body": { "CouldNotReadInput": null },
+        "isResult": false,
+        "isPrimitive": false,
+        "isConvertable": false
+      }
+    },
+    "isResult": true,
+    "isPrimitive": false,
+    "isConvertable": false
+  },
+  "22": {
+    "name": "Result<null, PSP34Error",
+    "body": {
+      "ok": { "name": "null", "isResult": false, "isPrimitive": true, "isConvertable": false },
+      "err": {
+        "name": "PSP34Error",
+        "body": {
+          "custom": { "name": "string", "isResult": false, "isPrimitive": true, "isConvertable": false },
+          "selfApprove": null,
+          "notApproved": null,
+          "tokenExists": null,
+          "tokenNotExists": null,
+          "safeTransferCheckFailed": {
+            "name": "string",
+            "isResult": false,
+            "isPrimitive": true,
+            "isConvertable": false
+          }
+        },
+        "isResult": false,
+        "isPrimitive": false,
+        "isConvertable": false
+      }
+    },
+    "isResult": true,
+    "isPrimitive": false,
+    "isConvertable": false
+  },
+  "23": {
+    "name": "PSP34Error",
+    "body": {
+      "custom": { "name": "string", "isResult": false, "isPrimitive": true, "isConvertable": false },
+      "selfApprove": null,
+      "notApproved": null,
+      "tokenExists": null,
+      "tokenNotExists": null,
+      "safeTransferCheckFailed": { "name": "string", "isResult": false, "isPrimitive": true, "isConvertable": false }
+    },
+    "isResult": false,
+    "isPrimitive": false,
+    "isConvertable": false
+  },
+  "24": {
+    "name": "Result<Result<Id, PSP34Error, LangError",
+    "body": {
+      "ok": {
+        "name": "Result<Id, PSP34Error",
+        "body": {
+          "ok": {
+            "name": "Id",
+            "body": {
+              "u8": { "name": "number", "isResult": false, "isPrimitive": true, "isConvertable": false },
+              "u16": { "name": "number", "isResult": false, "isPrimitive": true, "isConvertable": false },
+              "u32": { "name": "number", "isResult": false, "isPrimitive": true, "isConvertable": false },
+              "u64": { "name": "number", "isResult": false, "isPrimitive": true, "isConvertable": false },
+              "u128": { "name": "ReturnNumber", "isResult": false, "isPrimitive": false, "isConvertable": true },
+              "bytes": {
+                "name": "Array",
+                "body": { "0": { "name": "number", "isResult": false, "isPrimitive": true, "isConvertable": false } },
+                "isResult": false,
+                "isPrimitive": false,
+                "isConvertable": false
+              }
+            },
+            "isResult": false,
+            "isPrimitive": false,
+            "isConvertable": false
+          },
+          "err": {
+            "name": "PSP34Error",
+            "body": {
+              "custom": { "name": "string", "isResult": false, "isPrimitive": true, "isConvertable": false },
+              "selfApprove": null,
+              "notApproved": null,
+              "tokenExists": null,
+              "tokenNotExists": null,
+              "safeTransferCheckFailed": {
+                "name": "string",
+                "isResult": false,
+                "isPrimitive": true,
+                "isConvertable": false
+              }
+            },
+            "isResult": false,
+            "isPrimitive": false,
+            "isConvertable": false
+          }
+        },
+        "isResult": true,
+        "isPrimitive": false,
+        "isConvertable": false
+      },
+      "err": {
+        "name": "LangError",
+        "body": { "CouldNotReadInput": null },
+        "isResult": false,
+        "isPrimitive": false,
+        "isConvertable": false
+      }
+    },
+    "isResult": true,
+    "isPrimitive": false,
+    "isConvertable": false
+  },
+  "25": {
+    "name": "Result<Id, PSP34Error",
+    "body": {
+      "ok": {
+        "name": "Id",
+        "body": {
+          "u8": { "name": "number", "isResult": false, "isPrimitive": true, "isConvertable": false },
+          "u16": { "name": "number", "isResult": false, "isPrimitive": true, "isConvertable": false },
+          "u32": { "name": "number", "isResult": false, "isPrimitive": true, "isConvertable": false },
+          "u64": { "name": "number", "isResult": false, "isPrimitive": true, "isConvertable": false },
+          "u128": { "name": "ReturnNumber", "isResult": false, "isPrimitive": false, "isConvertable": true },
+          "bytes": {
+            "name": "Array",
+            "body": { "0": { "name": "number", "isResult": false, "isPrimitive": true, "isConvertable": false } },
+            "isResult": false,
+            "isPrimitive": false,
+            "isConvertable": false
+          }
+        },
+        "isResult": false,
+        "isPrimitive": false,
+        "isConvertable": false
+      },
+      "err": {
+        "name": "PSP34Error",
+        "body": {
+          "custom": { "name": "string", "isResult": false, "isPrimitive": true, "isConvertable": false },
+          "selfApprove": null,
+          "notApproved": null,
+          "tokenExists": null,
+          "tokenNotExists": null,
+          "safeTransferCheckFailed": {
+            "name": "string",
+            "isResult": false,
+            "isPrimitive": true,
+            "isConvertable": false
+          }
+        },
+        "isResult": false,
+        "isPrimitive": false,
+        "isConvertable": false
+      }
+    },
+    "isResult": true,
+    "isPrimitive": false,
+    "isConvertable": false
+  },
+  "26": {
+    "name": "Result<Option, LangError",
+    "body": {
+      "ok": {
+        "name": "Option",
+        "body": {
+          "0": { "name": "string", "isResult": false, "isPrimitive": true, "isConvertable": false },
+          "1": { "name": "null", "isResult": false, "isPrimitive": true, "isConvertable": false }
+        },
+        "isResult": false,
+        "isPrimitive": false,
+        "isConvertable": false
+      },
+      "err": {
+        "name": "LangError",
+        "body": { "CouldNotReadInput": null },
+        "isResult": false,
+        "isPrimitive": false,
+        "isConvertable": false
+      }
+    },
+    "isResult": true,
+    "isPrimitive": false,
+    "isConvertable": false
+  },
+  "27": {
+    "name": "Option",
+    "body": {
+      "0": { "name": "string", "isResult": false, "isPrimitive": true, "isConvertable": false },
+      "1": { "name": "null", "isResult": false, "isPrimitive": true, "isConvertable": false }
+    },
+    "isResult": false,
+    "isPrimitive": false,
+    "isConvertable": false
+  }
+}
