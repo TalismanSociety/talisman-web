@@ -177,9 +177,6 @@ const CreateMultisig = () => {
                 proxyAddress,
                 signers: augmentedAccounts.map(a => a.address) as string[],
                 threshold,
-                balances: [],
-                pendingTransactions: [],
-                confirmedTransactions: [],
               }
               setMultisigs([...multisigs, multisig])
               setUserSelectedMultisig(multisig)

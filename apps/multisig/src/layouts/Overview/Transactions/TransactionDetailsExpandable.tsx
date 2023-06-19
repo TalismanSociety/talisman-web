@@ -3,11 +3,12 @@ import 'ace-builds/src-noconflict/mode-yaml'
 import 'ace-builds/src-noconflict/theme-twilight'
 import 'ace-builds/src-noconflict/ext-language_tools'
 
+import { CallDataPasteForm } from '@components/CallDataPasteForm'
 import { tokenPriceState, useDecodeCallData } from '@domains/chains'
 import { Balance, Transaction, TransactionType, calcSumOutgoing } from '@domains/multisig'
 import { css } from '@emotion/css'
 import { useTheme } from '@emotion/react'
-import { ChevronRight, List, Send, Share2, Users } from '@talismn/icons'
+import { ChevronRight, List, Send, Share2, Unknown, Users } from '@talismn/icons'
 import { IconButton, Identicon, Skeleton } from '@talismn/ui'
 import { balanceToFloat, formatUsd } from '@util/numbers'
 import { useMemo, useState } from 'react'
@@ -66,10 +67,10 @@ const AddressPill = ({ a }: { a: string }) => {
 
 const MultiSendExpendedDetails = ({ t }: { t: Transaction }) => {
   const theme = useTheme()
-  const recipients = t.decoded.recipients || []
+  const recipients = t.decoded?.recipients || []
   return (
     <div css={{ paddingBottom: '8px' }}>
-      {t.decoded.recipients.map((r, i) => {
+      {t.decoded?.recipients.map((r, i) => {
         const { address, balance } = r
         const last = i === recipients.length - 1
         return (
@@ -119,14 +120,14 @@ const MultiSendExpendedDetails = ({ t }: { t: Transaction }) => {
   )
 }
 
-function AdvancedExpendedDetails({ t }: { t: Transaction }) {
+function AdvancedExpendedDetails({ callData }: { callData: `0x${string}` | undefined }) {
   const { loading, decodeCallData } = useDecodeCallData()
   const [error, setError] = useState<Error | undefined>(undefined)
 
   const extrinsic = useMemo(() => {
-    if (!loading) {
+    if (!loading && callData) {
       try {
-        return decodeCallData(t.callData)
+        return decodeCallData(callData)
       } catch (error) {
         if (error instanceof Error) {
           setError(error)
@@ -135,7 +136,9 @@ function AdvancedExpendedDetails({ t }: { t: Transaction }) {
         }
       }
     }
-  }, [decodeCallData, t.callData, loading])
+  }, [decodeCallData, callData, loading])
+
+  if (!callData) return null
 
   return (
     <div css={{ paddingBottom: '8px' }}>
@@ -146,7 +149,7 @@ function AdvancedExpendedDetails({ t }: { t: Transaction }) {
           extrinsic
             ? JSON.stringify(extrinsic.method.toHuman(), null, 2)
             : error
-            ? `Failed to decode calldata, please open an issue at\nhttps://github.com/TalismanSociety/talisman-web\nwith the following details:\n\nError\n${error}\n\nCalldata\n${t.callData}`
+            ? `Failed to decode calldata, please open an issue at\nhttps://github.com/TalismanSociety/talisman-web\nwith the following details:\n\nError\n${error}\n\nCalldata\n${callData}`
             : 'Loading...'
         }
         readOnly={true}
@@ -163,7 +166,7 @@ const TransactionDetailsExpandable = ({ t }: { t: Transaction }) => {
   const [expanded, setExpanded] = useState(false)
   const sumOutgoing: Balance[] = useMemo(() => calcSumOutgoing(t), [t])
 
-  const recipients = t.decoded.recipients || []
+  const recipients = t.decoded?.recipients || []
   return (
     <div
       className={css`
@@ -188,10 +191,49 @@ const TransactionDetailsExpandable = ({ t }: { t: Transaction }) => {
           }
         `}
       >
-        {t.decoded.type === TransactionType.MultiSend ? (
+        {!t.decoded ? (
+          <>
+            <p css={{ marginTop: '4px' }}>Unknown Transaction</p>
+            <Unknown />
+          </>
+        ) : t.decoded.type === TransactionType.MultiSend ? (
           <>
             <p css={{ marginTop: '4px' }}>Multi-Send</p>
             <Share2 />
+            <div
+              className={css`
+                display: flex;
+                margin-left: auto;
+                align-items: center;
+                gap: 4px;
+                height: 25px;
+                background-color: var(--color-backgroundLighter);
+                color: var(--color-foreground);
+                border-radius: 12px;
+                padding: 5px 8px;
+                margin-right: 16px;
+              `}
+            >
+              <div
+                className={css`
+                  display: flex;
+                  align-items: center;
+                  height: 16px;
+                  width: 16px;
+                  border-radius: 100px;
+                  background-color: var(--color-dim);
+                  svg {
+                    color: var(--color-primary);
+                    height: 8px;
+                  }
+                `}
+              >
+                <Users />
+              </div>
+              <p css={{ fontSize: '14px', marginTop: '4px' }}>
+                {recipients.length} Recipient{recipients.length !== 1 && 's'}
+              </p>
+            </div>
           </>
         ) : t.decoded.type === TransactionType.Transfer ? (
           <>
@@ -204,42 +246,7 @@ const TransactionDetailsExpandable = ({ t }: { t: Transaction }) => {
             <List />
           </>
         ) : null}
-        {t.decoded.type === TransactionType.MultiSend ? (
-          <div
-            className={css`
-              display: flex;
-              margin-left: auto;
-              align-items: center;
-              gap: 4px;
-              height: 25px;
-              background-color: var(--color-backgroundLighter);
-              color: var(--color-foreground);
-              border-radius: 12px;
-              padding: 5px 8px;
-              margin-right: 16px;
-            `}
-          >
-            <div
-              className={css`
-                display: flex;
-                align-items: center;
-                height: 16px;
-                width: 16px;
-                border-radius: 100px;
-                background-color: var(--color-dim);
-                svg {
-                  color: var(--color-primary);
-                  height: 8px;
-                }
-              `}
-            >
-              <Users />
-            </div>
-            <p css={{ fontSize: '14px', marginTop: '4px' }}>
-              {recipients.length} Recipient{recipients.length !== 1 && 's'}
-            </p>
-          </div>
-        ) : t.decoded.type === TransactionType.Transfer ? (
+        {t.decoded?.type === TransactionType.Transfer ? (
           <div
             className={css`
               color: var(--color-foreground);
@@ -250,14 +257,16 @@ const TransactionDetailsExpandable = ({ t }: { t: Transaction }) => {
             <AddressPill a={recipients[0]?.address || ''} />
           </div>
         ) : null}
-        {t.decoded.type !== TransactionType.Advanced && (
+        {/* Show the token amounts being sent in this transaction */}
+        {t.decoded && t.decoded.type !== TransactionType.Advanced && (
           <div css={{ display: 'flex', alignItems: 'flex-end', flexDirection: 'column' }}>
             {sumOutgoing.map(b => {
               return <AmountRow key={b.token.id} balance={b} />
             })}
           </div>
         )}
-        {t.decoded.type === TransactionType.MultiSend || t.decoded.type === TransactionType.Advanced ? (
+        {/* Show the collapse btn */}
+        {t.decoded?.type === TransactionType.MultiSend || t.decoded?.type === TransactionType.Advanced ? (
           <div css={{ width: '28px', marginLeft: t.decoded.type === TransactionType.MultiSend ? '0' : 'auto' }}>
             <IconButton
               contentColor={`rgb(${theme.offWhite})`}
@@ -280,11 +289,31 @@ const TransactionDetailsExpandable = ({ t }: { t: Transaction }) => {
           }
         `}
       >
-        <Collapse isOpened={expanded}>
-          {t.decoded.type === TransactionType.MultiSend ? (
+        <Collapse isOpened={expanded || !t.decoded}>
+          {t.decoded?.type === TransactionType.MultiSend ? (
             <MultiSendExpendedDetails t={t} />
-          ) : t.decoded.type === TransactionType.Advanced ? (
-            <AdvancedExpendedDetails t={t} />
+          ) : t.decoded?.type === TransactionType.Advanced ? (
+            <AdvancedExpendedDetails callData={t.callData} />
+          ) : !t.decoded ? (
+            <div css={{ margin: '8px 0', display: 'grid', gap: '8px' }}>
+              <p css={{ fontSize: '14px' }}>
+                Signet was unable to automatically determine the calldata for this transaction. Perhaps it was created
+                outside of Signet, or the Signet metadata sharing service is down.
+              </p>
+              <p css={{ fontSize: '14px' }}>
+                Thankfully, that's not a problem! Ask someone in your vault to share the calldata and paste it below, or
+                approve as-is <b>if and only if you are sure you know what it is doing</b>.
+              </p>
+              <CallDataPasteForm
+                extrinsic={undefined}
+                setExtrinsic={e => {
+                  console.log('paste')
+                }}
+              />
+              <p css={{ fontSize: '11px' }}>
+                Call Hash <code>{t.hash}</code>
+              </p>
+            </div>
           ) : null}
         </Collapse>
       </div>

@@ -102,9 +102,6 @@ const Import = () => {
         proxyAddress: proxy,
         signers: signersArray as string[],
         threshold: thresholdNumber,
-        balances: [],
-        pendingTransactions: [],
-        confirmedTransactions: [],
       }
       setMultisigs([...multisigs, multisig])
       setUserSelectedMultisig(multisig)

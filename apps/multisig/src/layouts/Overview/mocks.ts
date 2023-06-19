@@ -37,7 +37,7 @@ export const mockTransactions: Transaction[] = [
     chainId: 'polkadot',
     approvals: {
       '5D4yToYC7DqgHJ3PT7afS6FZ2X8uHzNP6Uym7ko4w4dJW8Vn': false,
-      '5FSPS8eH2Xm69TjT2QZeTukw1NjnWxTgCpMnY1eaBvtykzW9': '0x113b3c4d5e6f7g8h9i0j1k2l3m4n5o6p7q8r9s0t',
+      '5FSPS8eH2Xm69TjT2QZeTukw1NjnWxTgCpMnY1eaBvtykzW9': true,
     },
     decoded: {
       type: TransactionType.Advanced,
@@ -52,7 +52,7 @@ export const mockTransactions: Transaction[] = [
     chainId: 'polkadot',
     approvals: {
       '5D4yToYC7DqgHJ3PT7afS6FZ2X8uHzNP6Uym7ko4w4dJW8Vn': false,
-      '5FSPS8eH2Xm69TjT2QZeTukw1NjnWxTgCpMnY1eaBvtykzW9': '0x113b3c4d5e6f7g8h9i0j1k2l3m4n5o6p7q8r9s0t',
+      '5FSPS8eH2Xm69TjT2QZeTukw1NjnWxTgCpMnY1eaBvtykzW9': true,
     },
     decoded: {
       type: TransactionType.MultiSend,
@@ -111,7 +111,7 @@ export const mockTransactions: Transaction[] = [
     chainId: 'polkadot',
     approvals: {
       '5H3sN2umuE7fDZMtYj9q3aHJQKgaPdu5MzWyp8Hh4i4FGM': false,
-      '5DxqH7BqSf2Qj1DfcNNdUksctU92JjEFU6nEW8RUXSnU6gj': '0x8c4d5e6f7g8h9i0j1a2l3m4n5o6p7q8r9s0t1a2b',
+      '5DxqH7BqSf2Qj1DfcNNdUksctU92JjEFU6nEW8RUXSnU6gj': true,
     },
 
     decoded: {
@@ -135,8 +135,8 @@ export const mockTransactions: Transaction[] = [
     hash: '0x9d5e6f7g8h9i0j1k2l3m4n5o6p7q8r9s0t1a2b3c',
     chainId: 'polkadot',
     approvals: {
-      '5He7n5y6MXxrohUXJ1wja4C4mZj4oX9cYx4JaKmDpWK4Bm4q': '0x9d5e6f7g8h9i0j1k2l3m4n5o6p7q8r9s0t1a2b3c',
-      '5FmDzNqnAp87dxJumDvt8MscxwxZz1Q2FBUAdFi9X8JT5pr6': '0x9d5e6f7g8h9i0j1k2l3m4n5o6p7q8r9s0t1a2b3c',
+      '5He7n5y6MXxrohUXJ1wja4C4mZj4oX9cYx4JaKmDpWK4Bm4q': true,
+      '5FmDzNqnAp87dxJumDvt8MscxwxZz1Q2FBUAdFi9X8JT5pr6': true,
     },
     decoded: {
       type: TransactionType.MultiSend,
@@ -173,8 +173,8 @@ export const mockTransactions: Transaction[] = [
     hash: '0x106f7g8h9i0j1k2l3m4n5o6p7q8r9s0t1a2b3c4d',
     chainId: 'polkadot',
     approvals: {
-      '5FZ1nHXiU9C6yW8Fyry6CQYQwDJKKkdnt1xGxvsJ7M1TPvYX': '0x106f7g8h9i0j1k2l3m4n5o6p7q8r9s0t1a2b3c4d',
-      '5FqW7g8LvnRTEH7R6QxR1Ef8WzKX2rEiVzP6nT8pW7mFjKf1': '0x106f7g8h9i0j1k2l3m4n5o6p7q8r9s0t1a2b3c4d',
+      '5FZ1nHXiU9C6yW8Fyry6CQYQwDJKKkdnt1xGxvsJ7M1TPvYX': true,
+      '5FqW7g8LvnRTEH7R6QxR1Ef8WzKX2rEiVzP6nT8pW7mFjKf1': true,
     },
     decoded: {
       type: TransactionType.Transfer,

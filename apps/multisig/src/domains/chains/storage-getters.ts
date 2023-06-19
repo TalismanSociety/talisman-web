@@ -5,10 +5,10 @@
 // TODO: use pjs types instead of force casting
 
 import { pjsApiSelector } from '@domains/chains/pjs-api'
-import { selectedMultisigState } from '@domains/multisig'
+import { TransactionApprovals, selectedMultisigState } from '@domains/multisig'
 import { StorageKey } from '@polkadot/types'
 import { Option } from '@polkadot/types-codec'
-import { BlockHash, Multisig, ProxyDefinition } from '@polkadot/types/interfaces'
+import { BlockHash, BlockNumber, Multisig, ProxyDefinition } from '@polkadot/types/interfaces'
 import { useCallback } from 'react'
 import { selector, selectorFamily, useRecoilValueLoadable } from 'recoil'
 
@@ -37,9 +37,17 @@ export const useAddressIsProxyDelegatee = (chain: Chain) => {
   return { addressIsProxyDelegatee, ready: apiLoadable.state === 'hasValue' }
 }
 
-export const multisigPendingTransactionsSelector = selector({
-  key: 'multisigPendingTransactionsSelector',
-  get: async ({ get }) => {
+export interface RawMultisigPendingTransaction {
+  callHash: `0x{string}`
+  multisigTx: Multisig
+  date: Date
+  approvals: TransactionApprovals
+}
+
+// fetches the raw txs from the chain
+export const rawMultisigPendingTransactionsSelector = selector({
+  key: 'rawMultisigPendingTransactionsSelector',
+  get: async ({ get }): Promise<RawMultisigPendingTransaction[]> => {
     const selectedMultisig = get(selectedMultisigState)
     const api = get(pjsApiSelector(selectedMultisig.chain.rpc))
     await api.isReady
@@ -48,11 +56,11 @@ export const multisigPendingTransactionsSelector = selector({
       throw Error('multisig.multisigs must exist on api')
     }
     const keys = (await api.query.multisig.multisigs.keys(selectedMultisig.multisigAddress)) as unknown as StorageKey[]
-    const pendingTransactions = await Promise.all(
-      keys
-        .map(async key => {
+    const pendingTransactions = (
+      await Promise.all(
+        keys.map(async key => {
           if (!api.query.multisig?.multisigs) {
-            throw Error('timestamp.now must exist on api')
+            throw Error('multisig.multisigs must exist on api')
           }
           const opt = (await api.query.multisig.multisigs(...key.args)) as unknown as Option<Multisig>
           if (!opt.isSome) {
@@ -63,23 +71,31 @@ export const multisigPendingTransactionsSelector = selector({
           }
           // attach the date to tx details
           const multisigTx = opt.unwrap()
-          const hash = await api.rpc.chain.getBlockHash(multisigTx.when.height)
-          const date = new Date(get(getBlockHashSelector(hash)))
+          const hash = get(blockHashSelector(multisigTx.when.height))
+          const date = new Date(get(blockTimestampSelector(hash)))
+          if (!key.args[1]) throw Error('args is length 2; qed.')
           const callHash = key.args[1]
-          return [callHash, opt.unwrap(), date]
+          return {
+            callHash: callHash.toHex(),
+            multisigTx,
+            date,
+            approvals: selectedMultisig.signers.reduce((acc, cur) => {
+              const approved = multisigTx.approvals.some(a => a.toString() === cur)
+              return { ...acc, [cur]: approved }
+            }, {} as TransactionApprovals),
+          }
         })
-        .filter(v => v !== null)
-    )
+      )
+    ).filter((transaction): transaction is RawMultisigPendingTransaction => transaction !== null)
     return pendingTransactions
   },
   dangerouslyAllowMutability: true, // pjs wsprovider mutates itself to track connection msg stats
 })
 
-// put this in a selector so it gets cached
-export const getBlockHashSelector = selectorFamily({
-  key: 'getBlockHashSelector',
+export const blockTimestampSelector = selectorFamily({
+  key: 'blockTimestampSelector',
   get:
-    (hash: BlockHash | string) =>
+    (hash: BlockHash) =>
     async ({ get }): Promise<number> => {
       const selectedMultisig = get(selectedMultisigState)
       const api = get(pjsApiSelector(selectedMultisig.chain.rpc))
@@ -89,5 +105,17 @@ export const getBlockHashSelector = selectorFamily({
         throw Error('timestamp.now must exist on api')
       }
       return (await api.query.timestamp.now.at(hash)).toPrimitive() as number
+    },
+})
+
+export const blockHashSelector = selectorFamily({
+  key: 'blockHashSelector',
+  get:
+    (height: BlockNumber) =>
+    async ({ get }): Promise<BlockHash> => {
+      const selectedMultisig = get(selectedMultisigState)
+      const api = get(pjsApiSelector(selectedMultisig.chain.rpc))
+      await api.isReady
+      return api.rpc.chain.getBlockHash(height)
     },
 })

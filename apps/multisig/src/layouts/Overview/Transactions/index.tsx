@@ -1,11 +1,9 @@
-import { multisigPendingTransactionsSelector } from '@domains/chains/storage-getters'
-import { Transaction } from '@domains/multisig'
+import { Transaction, usePendingTransaction } from '@domains/multisig'
 import { css } from '@emotion/css'
-import { FullScreenDialog } from '@talismn/ui'
+import { EyeOfSauronProgressIndicator, FullScreenDialog } from '@talismn/ui'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useEffect, useMemo, useState } from 'react'
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom'
-import { useRecoilValueLoadable } from 'recoil'
 
 import { FullScreenDialogContents, FullScreenDialogTitle } from './FullScreenSummary'
 import TransactionSummaryRow from './TransactionSummaryRow'
@@ -100,11 +98,11 @@ const TransactionsList = ({ transactions }: { transactions: Transaction[] }) => 
 }
 
 const Transactions = ({ transactions }: { transactions: Transaction[] }) => {
-  const _pendingTransactions = useRecoilValueLoadable(multisigPendingTransactionsSelector)
-  console.log({ _pendingTransactions })
-  const pendingTransactions = useMemo(() => {
-    return transactions.filter(t => Object.values(t.approvals).some(a => !a))
-  }, [transactions])
+  const { transactions: pendingTransactions, loading: pendingLoading } = usePendingTransaction()
+  // mocks below
+  // const pendingTransactions = useMemo(() => {
+  //   return transactions.filter(t => Object.values(t.approvals).some(a => !a))
+  // }, [transactions])
   const completedTransactions = useMemo(() => {
     return transactions.filter(t => Object.values(t.approvals).every(a => a))
   }, [transactions])
@@ -153,7 +151,13 @@ const Transactions = ({ transactions }: { transactions: Transaction[] }) => {
           exit={{ y: 10, opacity: 0 }}
           transition={{ duration: 0.2 }}
         >
-          <TransactionsList transactions={mode === Mode.Pending ? pendingTransactions : completedTransactions} />
+          {mode === Mode.Pending && pendingLoading ? (
+            <div css={{ margin: '24px 0' }}>
+              <EyeOfSauronProgressIndicator />
+            </div>
+          ) : (
+            <TransactionsList transactions={mode === Mode.Pending ? pendingTransactions : completedTransactions} />
+          )}
         </motion.div>
       </AnimatePresence>
     </section>

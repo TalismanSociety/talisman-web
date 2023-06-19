@@ -2,7 +2,7 @@ import StatusCircle, { StatusCircleType } from '@components/StatusCircle'
 import { tokenPricesState } from '@domains/chains'
 import { Balance, Transaction, TransactionType, calcSumOutgoing } from '@domains/multisig'
 import { css } from '@emotion/css'
-import { ArrowUp, List, Share2 } from '@talismn/icons'
+import { ArrowUp, List, Share2, Unknown } from '@talismn/icons'
 import { Skeleton } from '@talismn/ui'
 import { balanceToFloat, formatUsd } from '@util/numbers'
 import { useMemo } from 'react'
@@ -25,14 +25,15 @@ const TransactionSummaryRow = ({ t, onClick }: { t: Transaction; onClick?: () =>
   }, [sumOutgoing, tokenPrices])
 
   const signedCount = Object.values(t.approvals).filter(Boolean).length
-  const txIcon =
-    t.decoded.type === TransactionType.Transfer ? (
-      <ArrowUp />
-    ) : t.decoded.type === TransactionType.MultiSend ? (
-      <Share2 />
-    ) : (
-      <List />
-    )
+  const txIcon = !t.decoded ? (
+    <Unknown />
+  ) : t.decoded.type === TransactionType.Transfer ? (
+    <ArrowUp />
+  ) : t.decoded.type === TransactionType.MultiSend ? (
+    <Share2 />
+  ) : (
+    <List />
+  )
 
   const tokenBreakdown = sumOutgoing.map(b => `${balanceToFloat(b)} ${b.token.symbol}`).join(' + ')
   return (

@@ -3,7 +3,8 @@ import 'ace-builds/src-noconflict/mode-json'
 import 'ace-builds/src-noconflict/theme-twilight'
 import 'ace-builds/src-noconflict/ext-language_tools'
 
-import { useApproveAsMulti, useDecodeCallData } from '@domains/chains'
+import { CallDataPasteForm } from '@components/CallDataPasteForm'
+import { useApproveAsMulti } from '@domains/chains'
 import {
   Transaction,
   TransactionApprovals,
@@ -15,7 +16,6 @@ import { css } from '@emotion/css'
 import { SubmittableExtrinsic } from '@polkadot/api/types'
 import { Button, FullScreenDialog } from '@talismn/ui'
 import { useMemo, useState } from 'react'
-import AceEditor from 'react-ace'
 import toast from 'react-hot-toast'
 import { useNavigate } from 'react-router-dom'
 import { useRecoilValue } from 'recoil'
@@ -36,23 +36,8 @@ const DetailsForm = (props: {
   onBack: () => void
   onNext: () => void
 }) => {
-  const { loading, decodeCallData } = useDecodeCallData()
-
   return (
     <div
-      onPaste={event => {
-        // User must reset extrinsic before pasting new one
-        if (props.extrinsic) return
-
-        try {
-          const extrinsic = decodeCallData(event.clipboardData.getData('text') as `0x{string}`)
-          if (!extrinsic) throw Error('extrinsic should be loaded, did you try to set before loading was ready?')
-          props.setExtrinsic(extrinsic)
-        } catch (error) {
-          if (error instanceof Error) toast.error(`Invalid calldata: ${error.message}`)
-          else toast.error(`Invalid calldata: unknown error`)
-        }
-      }}
       className={css`
         max-width: 623px;
         display: grid;
@@ -61,39 +46,11 @@ const DetailsForm = (props: {
       `}
     >
       <h1 css={{ marginBottom: '32px' }}>Transaction details</h1>
-      <div>
-        Create your extrinsic using Polkadot.js or any other app, and simply paste the calldata here to execute your
+      <div css={{ marginBottom: '24px' }}>
+        Create your extrinsic using Polkadot.js or any other app, and simply paste the calldata below to execute your
         transaction.
       </div>
-      <AceEditor
-        mode="json"
-        theme="twilight"
-        placeholder="Paste hex-encoded calldata"
-        value={
-          loading ? 'Loading...' : props.extrinsic ? JSON.stringify(props.extrinsic.method.toHuman(), null, 2) : ''
-        }
-        readOnly={true}
-        name="calldata-editor"
-        setOptions={{ useWorker: false }}
-        style={{ width: '100%', height: '230px', marginTop: '24px', border: '1px solid #232323' }}
-        showGutter={!!props.extrinsic}
-      />
-      {props.extrinsic !== undefined && (
-        <span
-          onClick={() => {
-            props.setExtrinsic(undefined)
-          }}
-          className={css`
-            justify-self: start;
-            margin-top: 8px;
-            font-size: small;
-            text-decoration: underline dotted;
-            cursor: pointer;
-          `}
-        >
-          Reset
-        </span>
-      )}
+      <CallDataPasteForm extrinsic={props.extrinsic} setExtrinsic={props.setExtrinsic} />
       <div
         className={css`
           display: grid;
