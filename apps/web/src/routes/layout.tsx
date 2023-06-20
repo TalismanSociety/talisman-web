@@ -115,8 +115,8 @@ const Layout = () => {
           <Link to="/portfolio?action=stake">
             <NavigationBar.Item label="Staking" icon={<Zap />} />
           </Link>
-          <Link to="/dex">
-            <NavigationBar.Item label="DEX" icon={<RefreshCcw />} />
+          <Link to="/transfer">
+            <NavigationBar.Item label="Transfer" icon={<RefreshCcw />} />
           </Link>
           <Link to="/explore">
             <NavigationBar.Item label="Explore" icon={<Compass />} />
@@ -140,8 +140,8 @@ const Layout = () => {
           <Link to="/portfolio?action=stake">
             <NavigationRail.Item label="Staking" icon={<Zap />} />
           </Link>
-          <Link to="/dex">
-            <NavigationRail.Item label="DEX" icon={<RefreshCcw />} />
+          <Link to="/transfer">
+            <NavigationRail.Item label="Transfer" icon={<RefreshCcw />} />
           </Link>
           <Link to="/explore">
             <NavigationRail.Item label="Explore" icon={<Compass />} />
@@ -202,8 +202,8 @@ const Layout = () => {
           <Link to="/portfolio?action=stake">
             <NavigationDrawer.Item label="Staking" icon={<Zap />} />
           </Link>
-          <Link to="/dex">
-            <NavigationDrawer.Item label="DEX" icon={<RefreshCcw />} />
+          <Link to="/transfer">
+            <NavigationDrawer.Item label="Transfer" icon={<RefreshCcw />} />
           </Link>
           <Link to="/crowdloans">
             <NavigationDrawer.Item label="Crowdloans" icon={<Star />} />
