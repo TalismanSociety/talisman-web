@@ -25,7 +25,7 @@ export default Sentry.wrapCreateBrowserRouter(createBrowserRouter)([
         path: 'portfolio',
         ...portfolioRoutes,
       },
-      { path: 'dex', ...dexRoutes },
+      { path: 'transfer', ...dexRoutes },
       { path: 'explore', element: <Explore /> },
       {
         path: 'crowdloans',
