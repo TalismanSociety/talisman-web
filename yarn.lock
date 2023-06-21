@@ -7429,7 +7429,7 @@ __metadata:
     i18next-http-backend: ^1.4.5
     lodash: ^4.17.21
     md5: ^2.3.0
-    posthog-js: ^1.59.0
+    posthog-js: ^1.68.2
     prop-types: ^15.8.1
     react: ^18.2.0
     react-apollo-network-status: ^5.2.1
@@ -19314,13 +19314,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"posthog-js@npm:^1.59.0":
-  version: 1.59.0
-  resolution: "posthog-js@npm:1.59.0"
+"posthog-js@npm:^1.68.2":
+  version: 1.68.2
+  resolution: "posthog-js@npm:1.68.2"
   dependencies:
     fflate: ^0.4.1
-    rrweb-snapshot: ^1.1.14
-  checksum: a9036545a920903d9ff4e597f4c39b845971bfdcab63165c3f193f140189502dc4c39236f28d9adb825e59cac8f7a2dd586d78bb74eea3d6f4e4fc7e693c7ef9
+  checksum: 390ff6368b834ca9db5d3a55168d5099c852e7fac6f2bcdcd704136c9478e31195c79471bd7964f716250ace934a421fb1d48288932e7d2b4b3e11e8b4d11e80
   languageName: node
   linkType: hard
 
@@ -20797,13 +20796,6 @@ __metadata:
   bin:
     rollup: dist/bin/rollup
   checksum: 6da2bfe1eb16714ccd4bf56ca92430309dc71b4492a3c38502f68f645433dcc789fb79f3761fc2269aa0cf20ece7821c4d7c95b860b7343c2ed52ed1c36c9a90
-  languageName: node
-  linkType: hard
-
-"rrweb-snapshot@npm:^1.1.14":
-  version: 1.1.14
-  resolution: "rrweb-snapshot@npm:1.1.14"
-  checksum: 2e9a30233b542824bbca46af5588d1d7c909efafa00b38fb79d59637af17ec0f3fbe60ed37c4195448804a22aea0f47531da25a42af6ac9dc6281c3c6e5693db
   languageName: node
   linkType: hard
 
