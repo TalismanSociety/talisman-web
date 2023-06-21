@@ -3,6 +3,7 @@ import { storageEffect } from '@domains/common/effects'
 import { web3AccountsSubscribe, web3Enable } from '@polkadot/extension-dapp'
 import type { InjectedWindow } from '@polkadot/extension-inject/types'
 import { uniqBy } from 'lodash'
+import { usePostHog } from 'posthog-js/react'
 import { useEffect } from 'react'
 import { atom, useRecoilState, useSetRecoilState } from 'recoil'
 
@@ -13,6 +14,7 @@ export const allowExtensionConnectionState = atom<boolean | null>({
 })
 
 export const ExtensionWatcher = () => {
+  const posthog = usePostHog()
   const [allowExtensionConnection, setAllowExtensionConnection] = useRecoilState(allowExtensionConnectionState)
   const setAccounts = useSetRecoilState(injectedAccountsState)
 
@@ -22,16 +24,21 @@ export const ExtensionWatcher = () => {
     }
 
     const unsubscribePromise = web3Enable(import.meta.env.REACT_APP_APPLICATION_NAME ?? 'Talisman').then(
-      async () =>
-        await web3AccountsSubscribe(accounts =>
+      async extensions => {
+        posthog?.capture('Substrate extensions connected', {
+          $set: { substrateExtensions: extensions.map(x => x.name) },
+        })
+
+        return await web3AccountsSubscribe(accounts =>
           setAccounts(uniqBy(accounts, account => account.address).map(account => ({ ...account, ...account.meta })))
         )
+      }
     )
 
     return () => {
       void unsubscribePromise.then(unsubscribe => unsubscribe())
     }
-  }, [allowExtensionConnection, setAccounts])
+  }, [allowExtensionConnection, posthog, setAccounts])
 
   // Auto connect on launch if Talisman extension is installed
   // and user has not explicitly disable wallet connection
