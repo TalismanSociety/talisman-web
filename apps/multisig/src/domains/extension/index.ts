@@ -4,6 +4,9 @@ import type { InjectedWindow } from '@polkadot/extension-inject/types'
 import { uniqBy } from 'lodash'
 import { useEffect } from 'react'
 import { atom, useRecoilState, useSetRecoilState } from 'recoil'
+import { recoilPersist } from 'recoil-persist'
+
+const { persistAtom } = recoilPersist()
 
 export type InjectedAccount = InjectedAccountPjs
 
@@ -15,6 +18,7 @@ export const accountsState = atom<InjectedAccount[]>({
 export const extensionAllowedState = atom<boolean>({
   key: 'AllowExtension',
   default: false,
+  effects_UNSTABLE: [persistAtom],
 })
 
 export const extensionLoadingState = atom<boolean>({
@@ -24,8 +28,16 @@ export const extensionLoadingState = atom<boolean>({
 
 export const ExtensionWatcher = () => {
   const [extensionAllowed, setExtensionAllowed] = useRecoilState(extensionAllowedState)
-  const setExtensionLoading = useSetRecoilState(extensionLoadingState)
+  const [extensionLoading, setExtensionLoading] = useRecoilState(extensionLoadingState)
   const setAccounts = useSetRecoilState(accountsState)
+
+  useEffect(() => {
+    if (extensionLoading) {
+      setTimeout(() => {
+        setExtensionLoading(false)
+      }, 1000)
+    }
+  }, [extensionLoading, setExtensionLoading])
 
   useEffect(() => {
     if (!extensionAllowed) {
@@ -34,12 +46,12 @@ export const ExtensionWatcher = () => {
 
     setExtensionLoading(true)
     const unsubscribePromise = web3Enable(process.env.REACT_APP_APPLICATION_NAME ?? 'Talisman')
-      .then(() =>
-        web3AccountsSubscribe(accounts => {
+      .then(() => {
+        return web3AccountsSubscribe(accounts => {
           setAccounts(uniqBy(accounts, account => account.address).map(account => ({ ...account, ...account.meta })))
           setExtensionLoading(false)
         })
-      )
+      })
       .catch(e => {
         console.error(e)
         setExtensionLoading(false)

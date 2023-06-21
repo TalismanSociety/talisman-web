@@ -8,9 +8,17 @@ import { balanceToFloat, formatUsd } from '@util/numbers'
 import { useMemo } from 'react'
 import { useRecoilValueLoadable } from 'recoil'
 
-import { formattedHhMm } from './utils'
+import { formattedDate, formattedHhMm } from './utils'
 
-const TransactionSummaryRow = ({ t, onClick }: { t: Transaction; onClick?: () => void }) => {
+const TransactionSummaryRow = ({
+  t,
+  onClick,
+  shortDate,
+}: {
+  t: Transaction
+  onClick?: () => void
+  shortDate: boolean
+}) => {
   const sumOutgoing: Balance[] = useMemo(() => calcSumOutgoing(t), [t])
   const tokenPrices = useRecoilValueLoadable(tokenPricesState(sumOutgoing.map(b => b.token.coingeckoId)))
   const threshold = 2
@@ -101,7 +109,9 @@ const TransactionSummaryRow = ({ t, onClick }: { t: Transaction; onClick?: () =>
           </div>
         )}
       </span>
-      <p css={{ gridArea: 'time', fontSize: '14px', paddingTop: '4px' }}>{formattedHhMm(t.createdTimestamp)}</p>
+      <p css={{ gridArea: 'time', fontSize: '14px', paddingTop: '4px' }}>
+        {shortDate ? formattedHhMm(t.date) : formattedDate(t.date)}
+      </p>
       <p css={{ gridArea: 'tokenAmount', textAlign: 'right', color: 'var(--color-offWhite)', gridTemplateRows: '1fr' }}>
         {tokenBreakdown}
       </p>
@@ -112,7 +122,7 @@ const TransactionSummaryRow = ({ t, onClick }: { t: Transaction; onClick?: () =>
           <Skeleton.Surface css={{ height: '14px', minWidth: '30px' }} />
         )}
       </div>
-      {t.executedTimestamp && (
+      {signedCount >= threshold && (
         <a
           className={css`
             grid-area: executedInfo;

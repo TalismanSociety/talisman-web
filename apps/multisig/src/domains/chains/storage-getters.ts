@@ -37,17 +37,18 @@ export const useAddressIsProxyDelegatee = (chain: Chain) => {
   return { addressIsProxyDelegatee, ready: apiLoadable.state === 'hasValue' }
 }
 
-export interface RawMultisigPendingTransaction {
-  callHash: `0x{string}`
-  multisigTx: Multisig
+// The chain `Multisig` storage entry with some augmented data for easier usage.
+export interface RawPendingTransaction {
+  multisig: Multisig
+  callHash: `0x${string}`
   date: Date
   approvals: TransactionApprovals
 }
 
 // fetches the raw txs from the chain
-export const rawMultisigPendingTransactionsSelector = selector({
+export const rawPendingTransactionsSelector = selector({
   key: 'rawMultisigPendingTransactionsSelector',
-  get: async ({ get }): Promise<RawMultisigPendingTransaction[]> => {
+  get: async ({ get }): Promise<RawPendingTransaction[]> => {
     const selectedMultisig = get(selectedMultisigState)
     const api = get(pjsApiSelector(selectedMultisig.chain.rpc))
     await api.isReady
@@ -70,23 +71,24 @@ export const rawMultisigPendingTransactionsSelector = selector({
             return null
           }
           // attach the date to tx details
-          const multisigTx = opt.unwrap()
-          const hash = get(blockHashSelector(multisigTx.when.height))
+          const multisig = opt.unwrap()
+          const hash = get(blockHashSelector(multisig.when.height))
           const date = new Date(get(blockTimestampSelector(hash)))
           if (!key.args[1]) throw Error('args is length 2; qed.')
           const callHash = key.args[1]
           return {
             callHash: callHash.toHex(),
-            multisigTx,
+            multisig,
             date,
             approvals: selectedMultisig.signers.reduce((acc, cur) => {
-              const approved = multisigTx.approvals.some(a => a.toString() === cur)
+              const approved = multisig.approvals.some(a => a.toString() === cur)
               return { ...acc, [cur]: approved }
             }, {} as TransactionApprovals),
           }
         })
       )
-    ).filter((transaction): transaction is RawMultisigPendingTransaction => transaction !== null)
+    ).filter((transaction): transaction is RawPendingTransaction => transaction !== null)
+
     return pendingTransactions
   },
   dangerouslyAllowMutability: true, // pjs wsprovider mutates itself to track connection msg stats

@@ -14,7 +14,7 @@ import {
   Multisig,
   activeMultisigsState,
   multisigsState,
-  userSelectedMultisigState,
+  selectedMultisigState,
 } from '@domains/multisig'
 import { css } from '@emotion/css'
 import { createKeyMulti, encodeAddress, sortAddresses } from '@polkadot/util-crypto'
@@ -85,7 +85,7 @@ const CreateMultisig = () => {
   const [chain, setChain] = useState<Chain>(firstChain)
   const [externalAccounts, setExternalAccounts] = useState<string[]>([])
   const [multisigs, setMultisigs] = useRecoilState(multisigsState)
-  const setUserSelectedMultisig = useSetRecoilState(userSelectedMultisigState)
+  const setSelectedMultisig = useSetRecoilState(selectedMultisigState)
   const [extensionAccounts] = useRecoilState(accountsState)
   const [selectedSigner, setSelectedSigner] = useSelectedSigner()
   const { createProxy, ready: createProxyIsReady, estimatedFee } = useCreateProxy(chain, selectedSigner?.address)
@@ -144,8 +144,8 @@ const CreateMultisig = () => {
 
   useEffect(() => {
     if (step === Step.Transactions && createTransctionStatus === CreateTransactionsStatus.NotStarted) {
-      createProxy(
-        proxyAddress => {
+      createProxy({
+        onSuccess: proxyAddress => {
           setProxyAddress(proxyAddress)
           setCreateTransactionsStatus(CreateTransactionsStatus.TransferringProxy)
           // Address as a byte array.
@@ -179,7 +179,7 @@ const CreateMultisig = () => {
                 threshold,
               }
               setMultisigs([...multisigs, multisig])
-              setUserSelectedMultisig(multisig)
+              setSelectedMultisig(multisig)
               setStep(Step.VaultCreated)
             },
             e => {
@@ -190,18 +190,18 @@ const CreateMultisig = () => {
             }
           )
         },
-        e => {
+        onFailure: e => {
           console.error(e)
           toast.error(e)
           setStep(Step.Confirmation)
           setCreateTransactionsStatus(CreateTransactionsStatus.NotStarted)
-        }
-      )
+        },
+      })
       setCreateTransactionsStatus(CreateTransactionsStatus.CreatingProxy)
     }
   }, [
     name,
-    setUserSelectedMultisig,
+    setSelectedMultisig,
     setMultisigs,
     multisigs,
     addressIsProxyDelegatee,

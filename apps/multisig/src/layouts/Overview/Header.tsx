@@ -1,19 +1,29 @@
 import Logo from '@components/Logo'
 import { copyToClipboard } from '@domains/common'
-import { activeMultisigsState, selectedMultisigState, userSelectedMultisigState } from '@domains/multisig'
+import { Multisig, activeMultisigsState, selectedMultisigState } from '@domains/multisig'
 import { css } from '@emotion/css'
 import { useTheme } from '@emotion/react'
 import { Copy, Plus, PlusCircle, TalismanHand } from '@talismn/icons'
 import { Button, IconButton, Identicon, Select } from '@talismn/ui'
+import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useRecoilValue, useSetRecoilState } from 'recoil'
+import { useRecoilState, useRecoilValue } from 'recoil'
 
 const Header = () => {
   const theme = useTheme()
   const navigate = useNavigate()
+
+  // Manage switching to active multisig if the selected one becomes inactive
+  const [selectedMultisig, setSelectedMultisig] = useRecoilState(selectedMultisigState)
   const activeMultisigs = useRecoilValue(activeMultisigsState)
-  const selectedMultisig = useRecoilValue(selectedMultisigState)
-  const setUserSelectedMultisig = useSetRecoilState(userSelectedMultisigState)
+  useEffect(() => {
+    if (
+      activeMultisigs[0] &&
+      !activeMultisigs.find(multisig => multisig.proxyAddress === selectedMultisig?.proxyAddress)
+    ) {
+      setSelectedMultisig(activeMultisigs[0])
+    }
+  })
 
   return (
     <header
@@ -178,7 +188,7 @@ const Header = () => {
             }
             value={selectedMultisig.proxyAddress}
             onChange={key => {
-              setUserSelectedMultisig(activeMultisigs.find(m => m.proxyAddress === key))
+              setSelectedMultisig(activeMultisigs.find(m => m.proxyAddress === key) as Multisig)
             }}
           >
             {activeMultisigs.reduce((accumulator, multisig) => {

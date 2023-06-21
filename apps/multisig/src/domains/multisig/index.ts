@@ -1,16 +1,17 @@
 import { Chain, Token, chainTokensByIdQuery, supportedChains, useDecodeCallData } from '@domains/chains'
 import { pjsApiSelector } from '@domains/chains/pjs-api'
-import { rawMultisigPendingTransactionsSelector } from '@domains/chains/storage-getters'
+import { RawPendingTransaction, rawPendingTransactionsSelector } from '@domains/chains/storage-getters'
 import { accountsState } from '@domains/extension'
 import BN from 'bn.js'
 import { useCallback, useEffect, useState } from 'react'
 import { atom, selector, useRecoilState, useRecoilValue, useRecoilValueLoadable } from 'recoil'
 import { recoilPersist } from 'recoil-persist'
+import truncateMiddle from 'truncate-middle'
 
 const { persistAtom } = recoilPersist()
 
-const dummyMultisig: Multisig = {
-  name: 'Dummy Multisig',
+const DUMMY_MULTISIG: Multisig = {
+  name: 'DUMMY_MULTISIG',
   chain: supportedChains[0] as Chain,
   signers: [],
   threshold: 0,
@@ -32,9 +33,10 @@ export const callDataState = atom<{ [key: string]: [string, Date] }>({
   effects_UNSTABLE: [persistAtom],
 })
 
-export const userSelectedMultisigState = atom<Multisig | undefined>({
-  key: 'UserSelectedMultisig',
-  default: undefined,
+// Selecting one of these happens in the Overview Header.
+export const selectedMultisigState = atom<Multisig>({
+  key: 'SelectedMultisig',
+  default: DUMMY_MULTISIG,
 })
 
 export const activeMultisigsState = selector({
@@ -47,25 +49,6 @@ export const activeMultisigsState = selector({
       return multisig.signers.some(signer => accounts.some(account => account.address === signer))
     })
   },
-})
-
-export const selectedMultisigState = selector<Multisig>({
-  key: 'SelectedMultisig',
-  get: ({ get }) => {
-    const userSelected = get(userSelectedMultisigState)
-    const activeMultisigs = get(activeMultisigsState)
-    if (userSelected !== undefined && activeMultisigs.find(multisig => multisig === userSelected)) {
-      return userSelected
-    }
-
-    if (activeMultisigs.length > 0) {
-      return activeMultisigs[0] as Multisig
-    } else {
-      // Tmp return value so it doesn't crash when it navigates back to the create or landing page
-      return dummyMultisig
-    }
-  },
-  dangerouslyAllowMutability: true, // pjs wsprovider mutates itself to track connection msg stats
 })
 
 export const selectedMultisigChainTokensState = selector<Token[]>({
@@ -122,12 +105,12 @@ export interface TransactionApprovals {
 }
 
 export interface Transaction {
-  createdTimestamp: Date
-  executedTimestamp?: Date
   description: string
   hash: string
   chainId: string
   approvals: TransactionApprovals
+  date: Date
+  rawPending?: RawPendingTransaction
   decoded?: {
     type: TransactionType
     recipients: TransactionRecipient[]
@@ -162,7 +145,7 @@ export const calcSumOutgoing = (t: Transaction): Balance[] => {
 // transforms raw transaction from the chain into a full Transaction
 export const usePendingTransaction = () => {
   const selectedMultisig = useRecoilValue(selectedMultisigState)
-  const rawPending = useRecoilValueLoadable(rawMultisigPendingTransactionsSelector)
+  const allRawPending = useRecoilValueLoadable(rawPendingTransactionsSelector)
   const apiLoadable = useRecoilValueLoadable(pjsApiSelector(selectedMultisig.chain.rpc))
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { decodeCallData, loading: decodeCallDataLoading } = useDecodeCallData()
@@ -170,15 +153,15 @@ export const usePendingTransaction = () => {
   const [callDataCache, setCallDataCache] = useRecoilState(callDataState)
   const [transactions, setTransactions] = useState<Transaction[]>([])
 
-  const ready = rawPending.state === 'hasValue' && apiLoadable.state === 'hasValue' && !decodeCallDataLoading
+  const ready = allRawPending.state === 'hasValue' && apiLoadable.state === 'hasValue' && !decodeCallDataLoading
   const api = apiLoadable.contents
   const loadTransactions = useCallback(async () => {
     if (!ready) return
 
     const transactions = await Promise.all(
-      rawPending.contents.map(async raw => {
+      allRawPending.contents.map(async rawPending => {
         await api.isReady
-        let callData = callDataCache[raw.callHash]
+        let callData = callDataCache[rawPending.callHash]
 
         if (!callData) {
           try {
@@ -193,10 +176,10 @@ export const usePendingTransaction = () => {
             // eslint-disable-next-line no-unreachable
             setCallDataCache({
               ...callDataCache,
-              [raw.callHash]: ['0x123', new Date()],
+              [rawPending.callHash]: ['0x123', new Date()],
             })
           } catch (error) {
-            console.error(`Failed to fetch callData for callHash ${raw.callHash}:`, error)
+            console.error(`Failed to fetch callData for callHash ${rawPending.callHash}:`, error)
           }
         }
 
@@ -207,11 +190,12 @@ export const usePendingTransaction = () => {
         } else {
           // still no calldata. return unknown transaction
           return {
-            createdTimestamp: raw.date,
-            description: 'Transaction details unavailable',
-            hash: raw.callHash,
+            date: rawPending.date,
+            description: `Transaction ${truncateMiddle(rawPending.callHash, 6, 4, '...')}`,
+            hash: rawPending.callHash,
+            rawPending: rawPending,
             chainId: selectedMultisig.chain.id,
-            approvals: raw.approvals,
+            approvals: rawPending.approvals,
           }
         }
       })
@@ -219,7 +203,7 @@ export const usePendingTransaction = () => {
 
     setLoading(false)
     setTransactions(transactions)
-  }, [rawPending, selectedMultisig, callDataCache, setCallDataCache, api.isReady, ready])
+  }, [allRawPending, selectedMultisig, callDataCache, setCallDataCache, api.isReady, ready])
 
   useEffect(() => {
     loadTransactions()

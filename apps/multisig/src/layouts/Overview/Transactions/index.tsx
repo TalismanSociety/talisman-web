@@ -1,8 +1,10 @@
+import { useCancelAsMulti } from '@domains/chains'
 import { Transaction, usePendingTransaction } from '@domains/multisig'
 import { css } from '@emotion/css'
 import { EyeOfSauronProgressIndicator, FullScreenDialog } from '@talismn/ui'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useEffect, useMemo, useState } from 'react'
+import { toast } from 'react-hot-toast'
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom'
 
 import { FullScreenDialogContents, FullScreenDialogTitle } from './FullScreenSummary'
@@ -29,8 +31,8 @@ const TransactionsList = ({ transactions }: { transactions: Transaction[] }) => 
   const groupedTransactions = useMemo(() => {
     return groupTransactionsByDay(transactions)
   }, [transactions])
-
   const openTransaction = transactions.find(t => t.hash === extractHash(location))
+  const { cancelAsMulti, estimatedFee, canCancel } = useCancelAsMulti(openTransaction)
 
   // Handle if user clicks a link to a tx that doesn't exist for them
   useEffect(() => {
@@ -52,12 +54,13 @@ const TransactionsList = ({ transactions }: { transactions: Transaction[] }) => 
           {transactions.map(t => {
             return (
               <motion.div key={t.hash} whileHover={{ scale: 1.015 }} css={{ padding: '12px 16px', cursor: 'pointer' }}>
-                <TransactionSummaryRow onClick={() => navigate(`/overview/tx/${t.hash}`)} t={t} />
+                <TransactionSummaryRow onClick={() => navigate(`/overview/tx/${t.hash}`)} t={t} shortDate={true} />
               </motion.div>
             )
           })}
         </div>
       ))}
+      {groupedTransactions.length === 0 && <div>All caught up 🏖️</div>}
       <Routes>
         <Route
           path="/tx/:hash"
@@ -84,10 +87,31 @@ const TransactionsList = ({ transactions }: { transactions: Transaction[] }) => 
               open={!!openTransaction}
             >
               <FullScreenDialogContents
-                fee={undefined}
+                canCancel={canCancel}
+                fee={estimatedFee}
                 t={openTransaction}
-                onApprove={() => navigate('/overview')}
-                onReject={() => navigate('/overview')}
+                onApprove={() =>
+                  new Promise((resolve, reject) => {
+                    navigate('/overview')
+                    resolve()
+                  })
+                }
+                onCancel={() =>
+                  new Promise((resolve, reject) => {
+                    cancelAsMulti({
+                      onSuccess: () => {
+                        navigate('/overview')
+                        toast.success('Transaction cancelled.', { duration: 5000, position: 'bottom-right' })
+                        resolve()
+                      },
+                      onFailure: e => {
+                        toast.error('Failed to cancel transaction.')
+                        console.error(e)
+                        reject()
+                      },
+                    })
+                  })
+                }
               />
             </FullScreenDialog>
           }

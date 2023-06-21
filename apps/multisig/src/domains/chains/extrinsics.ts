@@ -4,7 +4,8 @@
 // TODO: refactor code to remove repititon
 
 import { pjsApiSelector } from '@domains/chains/pjs-api'
-import { Balance, selectedMultisigState } from '@domains/multisig'
+import { accountsState } from '@domains/extension'
+import { Balance, Transaction, selectedMultisigState } from '@domains/multisig'
 import { ApiPromise, SubmittableResult } from '@polkadot/api'
 import type { SubmittableExtrinsic } from '@polkadot/api/types'
 import { web3FromAddress } from '@polkadot/extension-dapp'
@@ -12,9 +13,10 @@ import type { Call, ExtrinsicPayload } from '@polkadot/types/interfaces'
 import { assert, compactToU8a, u8aConcat, u8aEq } from '@polkadot/util'
 import { sortAddresses } from '@polkadot/util-crypto'
 import BN from 'bn.js'
-import { useCallback, useEffect, useState } from 'react'
-import { useRecoilValue, useRecoilValueLoadable } from 'recoil'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useRecoilRefresher_UNSTABLE, useRecoilValue, useRecoilValueLoadable } from 'recoil'
 
+import { rawPendingTransactionsSelector } from './storage-getters'
 import { Chain, tokenByIdQuery } from './tokens'
 
 // Sorry, not my code. Copied from p.js apps. it's not exported in any public packages.
@@ -97,20 +99,124 @@ export const useDecodeCallData = () => {
   return { loading: apiLoadable.state === 'loading', decodeCallData }
 }
 
+export const useCancelAsMulti = (tx: Transaction | undefined) => {
+  const multisig = useRecoilValue(selectedMultisigState)
+  const extensionAddresses = useRecoilValue(accountsState)
+  const apiLoadable = useRecoilValueLoadable(pjsApiSelector(multisig.chain.rpc))
+  const nativeToken = useRecoilValueLoadable(tokenByIdQuery(multisig.chain.nativeToken.id))
+  const reloadPending = useRecoilRefresher_UNSTABLE(rawPendingTransactionsSelector)
+  const [estimatedFee, setEstimatedFee] = useState<Balance | undefined>()
+
+  // Only the original signer can cancel
+  const depositorAddress = tx?.rawPending?.multisig.depositor.toString()
+  const loading = apiLoadable.state === 'loading' || nativeToken.state === 'loading' || !tx || !depositorAddress
+  const canCancel = useMemo(() => {
+    if (!depositorAddress || extensionAddresses.map(a => a.address).includes(depositorAddress)) return true
+    return false
+  }, [extensionAddresses, depositorAddress])
+
+  // Creates cancel tx
+  const createTx = useCallback(async (): Promise<SubmittableExtrinsic<'promise'> | undefined> => {
+    if (loading) return
+    if (!tx.rawPending) throw Error('Missing expected pendingData!')
+
+    const api = apiLoadable.contents
+    if (!api.tx.multisig?.cancelAsMulti) {
+      throw new Error('chain missing multisig pallet')
+    }
+
+    return api.tx.multisig.cancelAsMulti(
+      multisig.threshold,
+      sortAddresses(multisig.signers).filter(s => s !== depositorAddress),
+      tx.rawPending.multisig.when,
+      tx.hash
+    )
+  }, [apiLoadable, multisig, tx, loading, depositorAddress])
+
+  const estimateFee = useCallback(async () => {
+    const tx = await createTx()
+    if (!tx || !depositorAddress) return
+
+    // Fee estimation
+    const paymentInfo = await tx.paymentInfo(depositorAddress)
+    setEstimatedFee({ token: nativeToken.contents, amount: paymentInfo.partialFee as unknown as BN })
+  }, [depositorAddress, nativeToken, createTx])
+
+  // Estimate the fee as soon as the hook is used and the extensionAddress or apiLoadable changes
+  useEffect(() => {
+    estimateFee()
+  }, [estimateFee])
+
+  const cancelAsMulti = useCallback(
+    async ({
+      onSuccess,
+      onFailure,
+    }: {
+      onSuccess: (r: SubmittableResult) => void
+      onFailure: (message: string) => void
+    }) => {
+      const tx = await createTx()
+      if (loading || !tx || !depositorAddress || !canCancel) {
+        console.error('tried to call cancelAsMulti before it was ready')
+        return
+      }
+
+      const { signer } = await web3FromAddress(depositorAddress)
+      tx.signAndSend(
+        depositorAddress,
+        {
+          signer,
+        },
+        result => {
+          if (!result || !result.status) {
+            return
+          }
+
+          if (result.status.isFinalized) {
+            result.events.forEach(({ event: { method } }): void => {
+              if (method === 'ExtrinsicFailed') {
+                onFailure(JSON.stringify(result))
+              }
+              if (method === 'ExtrinsicSuccess') {
+                reloadPending()
+                onSuccess(result)
+              }
+            })
+          } else if (result.isError) {
+            onFailure(JSON.stringify(result))
+          }
+        }
+      ).catch(e => {
+        onFailure(JSON.stringify(e))
+      })
+    },
+    [depositorAddress, createTx, loading, reloadPending, canCancel]
+  )
+
+  return { cancelAsMulti, ready: !loading && !!estimatedFee, estimatedFee, canCancel }
+}
+
 export const useApproveAsMulti = (
   extensionAddress: string | undefined,
   extrinsic: SubmittableExtrinsic<'promise'> | undefined
 ) => {
   const multisig = useRecoilValue(selectedMultisigState)
   const apiLoadable = useRecoilValueLoadable(pjsApiSelector(multisig.chain.rpc))
+  const rawPending = useRecoilValueLoadable(rawPendingTransactionsSelector)
   const nativeToken = useRecoilValueLoadable(tokenByIdQuery(multisig.chain.nativeToken.id))
+  const reloadPending = useRecoilRefresher_UNSTABLE(rawPendingTransactionsSelector)
   const [estimatedFee, setEstimatedFee] = useState<Balance | undefined>()
+
+  const ready =
+    apiLoadable.state === 'hasValue' &&
+    extensionAddress &&
+    nativeToken.state === 'hasValue' &&
+    !!extrinsic &&
+    rawPending.state === 'hasValue'
 
   // Creates some tx from calldata
   const createTx = useCallback(async () => {
-    if (apiLoadable.state !== 'hasValue' || !extensionAddress || nativeToken.state !== 'hasValue' || !extrinsic) {
-      return
-    }
+    if (!ready) return
 
     const api = apiLoadable.contents
     if (!api.tx.multisig?.approveAsMulti) {
@@ -132,7 +238,7 @@ export const useApproveAsMulti = (
       hash,
       weight
     )
-  }, [apiLoadable, extensionAddress, nativeToken, extrinsic, multisig])
+  }, [apiLoadable, extensionAddress, extrinsic, multisig, ready])
 
   const estimateFee = useCallback(async () => {
     const tx = await createTx()
@@ -149,9 +255,18 @@ export const useApproveAsMulti = (
   }, [estimateFee])
 
   const approveAsMulti = useCallback(
-    async (onSubmit: () => void, onSuccess: (r: SubmittableResult) => void, onFailure: (message: string) => void) => {
+    async ({
+      onSuccess,
+      onFailure,
+    }: {
+      onSuccess: (r: SubmittableResult) => void
+      onFailure: (message: string) => void
+    }) => {
       const tx = await createTx()
-      if (!tx || !extensionAddress) return
+      if (!tx || !extensionAddress) {
+        console.error('tried to call approveAsMulti before it was ready')
+        return
+      }
 
       const { signer } = await web3FromAddress(extensionAddress)
       tx.signAndSend(
@@ -172,6 +287,7 @@ export const useApproveAsMulti = (
                   onFailure(JSON.stringify(result))
                 }
                 if (method === 'ExtrinsicSuccess') {
+                  reloadPending()
                   onSuccess(result)
                 }
               })
@@ -179,21 +295,20 @@ export const useApproveAsMulti = (
             onFailure(JSON.stringify(result))
           }
         }
-      )
-        .then(onSubmit)
-        .catch(e => {
-          onFailure(JSON.stringify(e))
-        })
+      ).catch(e => {
+        onFailure(JSON.stringify(e))
+      })
     },
-    [extensionAddress, createTx]
+    [extensionAddress, createTx, reloadPending]
   )
 
-  return { approveAsMulti, ready: apiLoadable.state === 'hasValue' && !!estimatedFee, estimatedFee }
+  return { approveAsMulti, ready: ready && !!estimatedFee, estimatedFee }
 }
 
 export const useCreateProxy = (chain: Chain, extensionAddress: string | undefined) => {
   const apiLoadable = useRecoilValueLoadable(pjsApiSelector(chain.rpc))
   const nativeToken = useRecoilValueLoadable(tokenByIdQuery(chain.nativeToken.id))
+  const reloadPending = useRecoilRefresher_UNSTABLE(rawPendingTransactionsSelector)
   const [estimatedFee, setEstimatedFee] = useState<Balance | undefined>()
 
   const createTx = useCallback(async () => {
@@ -223,7 +338,13 @@ export const useCreateProxy = (chain: Chain, extensionAddress: string | undefine
   }, [estimateFee])
 
   const createProxy = useCallback(
-    async (onSuccess: (proxyAddress: string) => void, onFailure: (message: string) => void) => {
+    async ({
+      onSuccess,
+      onFailure,
+    }: {
+      onSuccess: (proxyAddress: string) => void
+      onFailure: (message: string) => void
+    }) => {
       const tx = await createTx()
       if (!tx || !extensionAddress) return
 
@@ -248,6 +369,7 @@ export const useCreateProxy = (chain: Chain, extensionAddress: string | undefine
                 if (method === 'PureCreated') {
                   if (data[0]) {
                     const pure = data[0].toString()
+                    reloadPending()
                     onSuccess(pure)
                   } else {
                     onFailure('No proxies exist')
@@ -270,7 +392,7 @@ export const useCreateProxy = (chain: Chain, extensionAddress: string | undefine
         onFailure(e.toString())
       })
     },
-    [extensionAddress, createTx]
+    [extensionAddress, createTx, reloadPending]
   )
 
   return { createProxy, ready: apiLoadable.state === 'hasValue' && !!estimatedFee, estimatedFee }

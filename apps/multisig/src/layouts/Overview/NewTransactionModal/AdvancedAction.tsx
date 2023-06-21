@@ -75,14 +75,12 @@ const AdvancedAction = (props: { onCancel: () => void }) => {
   const [name, setName] = useState('')
   const [extrinsic, setExtrinsic] = useState<SubmittableExtrinsic<'promise'> | undefined>()
   const multisig = useRecoilValue(selectedMultisigState)
-  const [extensionPopupOpen, setExtensionPopupOpen] = useState(false)
   const navigate = useNavigate()
 
   const t: Transaction | undefined = useMemo(() => {
     if (extrinsic) {
       return {
-        createdTimestamp: new Date(),
-        executedTimestamp: undefined,
+        date: new Date(),
         hash: '',
         description: name,
         chainId: multisig.chain.id,
@@ -149,29 +147,32 @@ const AdvancedAction = (props: { onCancel: () => void }) => {
         open={step === Step.Review}
       >
         <FullScreenDialogContents
+          canCancel={true}
+          cancelButtonTextOverride="Back"
           fee={estimatedFee}
           t={t}
-          loading={extensionPopupOpen}
-          onApprove={() => {
-            setExtensionPopupOpen(true)
-            approveAsMulti(
-              () => {
-                navigate('/overview')
-                toast.success(
-                  "Transaction sent! It will appear in your 'Pending' transactions as soon as it lands in a finalized block.",
-                  { duration: 5000, position: 'bottom-right' }
-                )
-              },
-              () => {},
-              e => {
-                toast.error('Transaction failed')
-                console.error(e)
-                setExtensionPopupOpen(false)
-              }
-            )
-          }}
-          onReject={() => {
+          onApprove={() =>
+            new Promise((resolve, reject) => {
+              approveAsMulti({
+                onSuccess: () => {
+                  navigate('/overview')
+                  toast.success(
+                    "Transaction sent! It will appear in your 'Pending' transactions as soon as it lands in a finalized block.",
+                    { duration: 5000, position: 'bottom-right' }
+                  )
+                  resolve()
+                },
+                onFailure: e => {
+                  toast.error('Transaction failed')
+                  console.error(e)
+                  reject()
+                },
+              })
+            })
+          }
+          onCancel={() => {
             setStep(Step.Details)
+            return Promise.resolve()
           }}
         />
       </FullScreenDialog>

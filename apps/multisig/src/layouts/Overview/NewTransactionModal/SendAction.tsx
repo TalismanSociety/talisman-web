@@ -188,7 +188,6 @@ const SendAction = (props: { onCancel: () => void }) => {
   const [name, setName] = useState('')
   const [destination, setDestination] = useState('')
   const [extrinsic, setExtrinsic] = useState<SubmittableExtrinsic<'promise'> | undefined>()
-  const [extensionPopupOpen, setExtensionPopupOpen] = useState(false)
   const tokens = useRecoilValueLoadable(selectedMultisigChainTokensState)
   const [selectedToken, setSelectedToken] = useState<Token | undefined>()
   const [amountInput, setAmountInput] = useState('')
@@ -214,23 +213,23 @@ const SendAction = (props: { onCancel: () => void }) => {
 
   useEffect(() => {
     if (destination && selectedToken && apiLoadable.state === 'hasValue' && amountBn && toSs52Address(destination)) {
-      if (!apiLoadable.contents.tx.balances?.transferKeepAlive) {
+      if (!apiLoadable.contents.tx.balances?.transferKeepAlive || !apiLoadable.contents.tx.proxy?.proxy) {
         throw Error('chain missing balances pallet')
       }
       try {
-        const extrinsic = apiLoadable.contents.tx.balances.transferKeepAlive(destination, amountBn)
+        const innerExtrinsic = apiLoadable.contents.tx.balances.transferKeepAlive(destination, amountBn)
+        const extrinsic = apiLoadable.contents.tx.proxy.proxy(multisig.proxyAddress, null, innerExtrinsic)
         setExtrinsic(extrinsic)
       } catch (error) {
-        console.log(error)
+        console.error(error)
       }
     }
-  }, [destination, selectedToken, apiLoadable, amountBn])
+  }, [destination, selectedToken, apiLoadable, amountBn, multisig.proxyAddress])
 
   const t: Transaction | undefined = useMemo(() => {
     if (selectedToken && extrinsic) {
       return {
-        createdTimestamp: new Date(),
-        executedTimestamp: undefined,
+        date: new Date(),
         hash: '',
         description: name,
         chainId: multisig.chain.id,
@@ -304,28 +303,27 @@ const SendAction = (props: { onCancel: () => void }) => {
         <FullScreenDialogContents
           t={t}
           fee={estimatedFee}
-          loading={extensionPopupOpen}
-          rejectButtonTextOverride="Back"
-          onApprove={() => {
-            setExtensionPopupOpen(true)
-            approveAsMulti(
-              () => {
-                navigate('/overview')
-                toast.success(
-                  "Transaction sent! It will appear in your 'Pending' transactions as soon as it lands in a finalized block.",
-                  { duration: 5000, position: 'bottom-right' }
-                )
-              },
-              () => {},
-              e => {
-                toast.error('Transaction failed')
-                console.error(e)
-                setExtensionPopupOpen(false)
-              }
-            )
-          }}
-          onReject={() => {
+          canCancel={true}
+          cancelButtonTextOverride="Back"
+          onApprove={() =>
+            new Promise((resolve, reject) => {
+              approveAsMulti({
+                onSuccess: () => {
+                  navigate('/overview')
+                  toast.success('Transaction successful!', { duration: 5000, position: 'bottom-right' })
+                  resolve()
+                },
+                onFailure: e => {
+                  toast.error('Transaction failed')
+                  console.error(e)
+                  reject()
+                },
+              })
+            })
+          }
+          onCancel={() => {
             setStep(Step.Details)
+            return Promise.resolve()
           }}
         />
       </FullScreenDialog>

@@ -5,7 +5,7 @@ import { Balance, Transaction } from '@domains/multisig'
 import { css } from '@emotion/css'
 import { Button, CircularProgressIndicator, Skeleton } from '@talismn/ui'
 import { balanceToFloat, formatUsd } from '@util/numbers'
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { useRecoilValueLoadable } from 'recoil'
 
 import TransactionDetailsExpandable from './TransactionDetailsExpandable'
@@ -95,19 +95,21 @@ export const FullScreenDialogTitle = ({ t }: { t?: Transaction }) => {
 
 export const FullScreenDialogContents = ({
   t,
-  loading,
-  rejectButtonTextOverride,
+  cancelButtonTextOverride,
+  canCancel,
   fee,
-  onReject,
+  onCancel,
   onApprove,
 }: {
   t?: Transaction
-  loading?: boolean
-  rejectButtonTextOverride?: string
+  cancelButtonTextOverride?: string
+  canCancel: boolean
   fee: Balance | undefined
-  onReject: () => void
-  onApprove: () => void
+  onCancel: () => Promise<void>
+  onApprove: () => Promise<void>
 }) => {
+  const [cancelInFlight, setCancelInFlight] = useState(false)
+  const [approveInFlight, setApproveInFlight] = useState(false)
   const feeTokenPrice = useRecoilValueLoadable(tokenPriceState(fee?.token?.coingeckoId || ''))
   const feeComponent = useMemo(() => {
     if (feeTokenPrice.state === 'loading' || !fee) {
@@ -145,7 +147,7 @@ export const FullScreenDialogContents = ({
           overflow-y: auto;
         `}
       >
-        <TransactionSummaryRow t={t} />
+        <TransactionSummaryRow t={t} shortDate={false} />
         <div css={{ display: 'grid', gap: '32px', alignItems: 'start' }}>
           <div css={{ display: 'grid', gap: '13px' }}>
             <h3>Details</h3>
@@ -172,11 +174,34 @@ export const FullScreenDialogContents = ({
             {feeComponent}
           </div>
           <div css={{ display: 'grid', height: '56px', gap: '16px', gridTemplateColumns: '1fr 1fr' }}>
-            <Button variant="outlined" onClick={onReject} disabled={loading}>
-              {rejectButtonTextOverride || 'Reject'}
+            <Button
+              variant="outlined"
+              onClick={() => {
+                setCancelInFlight(true)
+                onCancel().finally(() => {
+                  setCancelInFlight(false)
+                })
+              }}
+              disabled={approveInFlight || cancelInFlight || !canCancel}
+            >
+              {cancelInFlight ? (
+                <CircularProgressIndicator />
+              ) : !canCancel ? (
+                'Only originator can cancel'
+              ) : (
+                cancelButtonTextOverride || 'Cancel'
+              )}
             </Button>
-            <Button onClick={onApprove} disabled={loading || !fee}>
-              {loading ? <CircularProgressIndicator /> : 'Approve'}
+            <Button
+              onClick={() => {
+                setApproveInFlight(true)
+                onApprove().finally(() => {
+                  setApproveInFlight(false)
+                })
+              }}
+              disabled={approveInFlight || cancelInFlight || !fee}
+            >
+              {approveInFlight ? <CircularProgressIndicator /> : 'Approve'}
             </Button>
           </div>
         </div>
