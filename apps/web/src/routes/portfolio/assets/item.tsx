@@ -133,7 +133,7 @@ const AssetItem = () => {
                 }
                 text={
                   <RedactableBalance>
-                    {token?.overallLockedAmount ?? ''} ' ' {token?.tokenDetails?.symbol ?? ''}
+                    {token?.overallLockedAmount ?? ''} {token?.tokenDetails?.symbol ?? ''}
                   </RedactableBalance>
                 }
                 supportingText={<AnimatedFiatNumber end={token?.overallLockedFiatAmount ?? 0} />}
