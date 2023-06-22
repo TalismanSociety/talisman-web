@@ -10,6 +10,7 @@ import {
   TransactionApprovals,
   TransactionType,
   selectedMultisigState,
+  txOffchainMetadataState,
   useNextTransactionSigner,
 } from '@domains/multisig'
 import { css } from '@emotion/css'
@@ -18,7 +19,7 @@ import { Button, FullScreenDialog } from '@talismn/ui'
 import { useMemo, useState } from 'react'
 import toast from 'react-hot-toast'
 import { useNavigate } from 'react-router-dom'
-import { useRecoilValue } from 'recoil'
+import { useRecoilState, useRecoilValue } from 'recoil'
 
 import { mockTransactions } from '../mocks'
 import { FullScreenDialogContents, FullScreenDialogTitle } from '../Transactions/FullScreenSummary'
@@ -75,13 +76,15 @@ const AdvancedAction = (props: { onCancel: () => void }) => {
   const [name, setName] = useState('')
   const [extrinsic, setExtrinsic] = useState<SubmittableExtrinsic<'promise'> | undefined>()
   const multisig = useRecoilValue(selectedMultisigState)
+  const [metadataCache, setMetadataCache] = useRecoilState(txOffchainMetadataState)
   const navigate = useNavigate()
 
+  const hash = extrinsic?.registry.hash(extrinsic.method.toU8a()).toHex()
   const t: Transaction | undefined = useMemo(() => {
     if (extrinsic) {
       return {
         date: new Date(),
-        hash: '',
+        hash: hash || '0x',
         description: name,
         chainId: multisig.chain.id,
         approvals: multisig.signers.reduce((acc, key) => {
@@ -95,9 +98,9 @@ const AdvancedAction = (props: { onCancel: () => void }) => {
         callData: extrinsic.method.toHex(),
       }
     }
-  }, [multisig, name, extrinsic])
+  }, [multisig, name, extrinsic, hash])
   const signer = useNextTransactionSigner(t?.approvals)
-  const { approveAsMulti, estimatedFee } = useApproveAsMulti(signer?.address, extrinsic)
+  const { approveAsMulti, estimatedFee } = useApproveAsMulti(signer?.address, hash, null)
 
   return (
     <div
@@ -160,6 +163,14 @@ const AdvancedAction = (props: { onCancel: () => void }) => {
                     "Transaction sent! It will appear in your 'Pending' transactions as soon as it lands in a finalized block.",
                     { duration: 5000, position: 'bottom-right' }
                   )
+                  if (!hash || !extrinsic) {
+                    console.error("Couldn't get hash or extrinsic")
+                    return
+                  }
+                  setMetadataCache({
+                    ...metadataCache,
+                    [hash]: [{ callData: extrinsic.method.toHex(), description: name }, new Date()],
+                  })
                   resolve()
                 },
                 onFailure: e => {

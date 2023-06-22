@@ -9,7 +9,7 @@ import { Balance, Transaction, selectedMultisigState } from '@domains/multisig'
 import { ApiPromise, SubmittableResult } from '@polkadot/api'
 import type { SubmittableExtrinsic } from '@polkadot/api/types'
 import { web3FromAddress } from '@polkadot/extension-dapp'
-import type { Call, ExtrinsicPayload } from '@polkadot/types/interfaces'
+import type { Call, ExtrinsicPayload, Timepoint } from '@polkadot/types/interfaces'
 import { assert, compactToU8a, u8aConcat, u8aEq } from '@polkadot/util'
 import { sortAddresses } from '@polkadot/util-crypto'
 import BN from 'bn.js'
@@ -196,9 +196,10 @@ export const useCancelAsMulti = (tx: Transaction | undefined) => {
   return { cancelAsMulti, ready: !loading && !!estimatedFee, estimatedFee, canCancel }
 }
 
-export const useApproveAsMulti = (
+export const useAsMulti = (
   extensionAddress: string | undefined,
-  extrinsic: SubmittableExtrinsic<'promise'> | undefined
+  extrinsic: SubmittableExtrinsic<'promise'> | undefined,
+  timepoint: Timepoint | null | undefined
 ) => {
   const multisig = useRecoilValue(selectedMultisigState)
   const apiLoadable = useRecoilValueLoadable(pjsApiSelector(multisig.chain.rpc))
@@ -212,6 +213,7 @@ export const useApproveAsMulti = (
     extensionAddress &&
     nativeToken.state === 'hasValue' &&
     !!extrinsic &&
+    timepoint !== undefined &&
     rawPending.state === 'hasValue'
 
   // Creates some tx from calldata
@@ -219,7 +221,7 @@ export const useApproveAsMulti = (
     if (!ready) return
 
     const api = apiLoadable.contents
-    if (!api.tx.multisig?.approveAsMulti) {
+    if (!api.tx.multisig?.asMulti) {
       throw new Error('chain missing multisig pallet')
     }
 
@@ -230,15 +232,123 @@ export const useApproveAsMulti = (
       refTime: api.createType('Compact<u64>', Math.ceil(weightEstimation.refTime * 1.1)),
       proofSize: api.createType('Compact<u64>', Math.ceil(weightEstimation.proofSize * 1.1)),
     })
-    const hash = extrinsic.registry.hash(extrinsic.method.toU8a()).toHex()
+
+    return api.tx.multisig.asMulti(
+      multisig.threshold,
+      sortAddresses(multisig.signers).filter(s => s !== extensionAddress),
+      timepoint,
+      extrinsic.method.toHex(),
+      weight
+    )
+  }, [apiLoadable, extensionAddress, extrinsic, multisig, ready, timepoint])
+
+  const estimateFee = useCallback(async () => {
+    const tx = await createTx()
+    if (!tx || !extensionAddress) return
+
+    // Fee estimation
+    const paymentInfo = await tx.paymentInfo(extensionAddress)
+    setEstimatedFee({ token: nativeToken.contents, amount: paymentInfo.partialFee as unknown as BN })
+  }, [extensionAddress, nativeToken, createTx])
+
+  // Estimate the fee as soon as the hook is used and the extensionAddress or apiLoadable changes
+  useEffect(() => {
+    estimateFee()
+  }, [estimateFee])
+
+  const asMulti = useCallback(
+    async ({
+      onSuccess,
+      onFailure,
+    }: {
+      onSuccess: (r: SubmittableResult) => void
+      onFailure: (message: string) => void
+    }) => {
+      const tx = await createTx()
+      if (!tx || !extensionAddress) {
+        console.error('tried to call approveAsMulti before it was ready')
+        return
+      }
+
+      const { signer } = await web3FromAddress(extensionAddress)
+      tx.signAndSend(
+        extensionAddress,
+        {
+          signer,
+        },
+        result => {
+          if (!result || !result.status) {
+            return
+          }
+
+          if (result.status.isFinalized) {
+            result.events
+              .filter(({ event: { section } }) => section === 'system')
+              .forEach(({ event: { method } }): void => {
+                if (method === 'ExtrinsicFailed') {
+                  onFailure(JSON.stringify(result))
+                }
+                if (method === 'ExtrinsicSuccess') {
+                  reloadPending()
+                  onSuccess(result)
+                }
+              })
+          } else if (result.isError) {
+            onFailure(JSON.stringify(result))
+          }
+        }
+      ).catch(e => {
+        onFailure(JSON.stringify(e))
+      })
+    },
+    [extensionAddress, createTx, reloadPending]
+  )
+
+  return { asMulti, ready: ready && !!estimatedFee, estimatedFee }
+}
+
+export const useApproveAsMulti = (
+  extensionAddress: string | undefined,
+  hash: `0x${string}` | undefined,
+  timepoint: Timepoint | null | undefined
+) => {
+  const multisig = useRecoilValue(selectedMultisigState)
+  const apiLoadable = useRecoilValueLoadable(pjsApiSelector(multisig.chain.rpc))
+  const rawPending = useRecoilValueLoadable(rawPendingTransactionsSelector)
+  const nativeToken = useRecoilValueLoadable(tokenByIdQuery(multisig.chain.nativeToken.id))
+  const reloadPending = useRecoilRefresher_UNSTABLE(rawPendingTransactionsSelector)
+  const [estimatedFee, setEstimatedFee] = useState<Balance | undefined>()
+
+  const ready =
+    apiLoadable.state === 'hasValue' &&
+    extensionAddress &&
+    nativeToken.state === 'hasValue' &&
+    !!hash &&
+    timepoint !== undefined &&
+    rawPending.state === 'hasValue'
+
+  // Creates some tx from callhash
+  const createTx = useCallback(async () => {
+    if (!ready) return
+
+    const api = apiLoadable.contents
+    if (!api.tx.multisig?.approveAsMulti) {
+      throw new Error('chain missing multisig pallet')
+    }
+
+    // Weight of approveAsMulti is a noop -- only matters when we execute the tx with asMulti.
+    const weight = api.createType('Weight', {
+      refTime: api.createType('Compact<u64>', 0),
+      proofSize: api.createType('Compact<u64>', 0),
+    })
     return api.tx.multisig.approveAsMulti(
       multisig.threshold,
       sortAddresses(multisig.signers).filter(s => s !== extensionAddress),
-      null,
+      timepoint,
       hash,
       weight
     )
-  }, [apiLoadable, extensionAddress, extrinsic, multisig, ready])
+  }, [apiLoadable, extensionAddress, hash, multisig, ready, timepoint])
 
   const estimateFee = useCallback(async () => {
     const tx = await createTx()

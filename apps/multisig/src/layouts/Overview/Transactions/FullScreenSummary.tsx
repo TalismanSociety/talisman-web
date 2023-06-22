@@ -97,12 +97,14 @@ export const FullScreenDialogContents = ({
   t,
   cancelButtonTextOverride,
   canCancel,
+  readyToExecute,
   fee,
   onCancel,
   onApprove,
 }: {
   t?: Transaction
   cancelButtonTextOverride?: string
+  readyToExecute?: boolean
   canCancel: boolean
   fee: Balance | undefined
   onCancel: () => Promise<void>
@@ -170,8 +172,14 @@ export const FullScreenDialogContents = ({
           `}
         >
           <div css={{ display: 'flex', justifyContent: 'space-between' }}>
-            <p>Fees</p>
-            {feeComponent}
+            {readyToExecute && !t.callData ? (
+              'Cannot execute transaction without calldata'
+            ) : (
+              <>
+                <p>Fees</p>
+                {feeComponent}
+              </>
+            )}
           </div>
           <div css={{ display: 'grid', height: '56px', gap: '16px', gridTemplateColumns: '1fr 1fr' }}>
             <Button
@@ -201,7 +209,7 @@ export const FullScreenDialogContents = ({
               }}
               disabled={approveInFlight || cancelInFlight || !fee}
             >
-              {approveInFlight ? <CircularProgressIndicator /> : 'Approve'}
+              {approveInFlight ? <CircularProgressIndicator /> : readyToExecute ? 'Approve & Execute' : 'Approve'}
             </Button>
           </div>
         </div>

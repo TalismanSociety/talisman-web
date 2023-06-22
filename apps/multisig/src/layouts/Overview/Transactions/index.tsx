@@ -1,11 +1,12 @@
-import { useCancelAsMulti } from '@domains/chains'
-import { Transaction, usePendingTransaction } from '@domains/multisig'
+import { useApproveAsMulti, useAsMulti, useCancelAsMulti, useDecodeCallData } from '@domains/chains'
+import { Transaction, selectedMultisigState, useNextTransactionSigner, usePendingTransaction } from '@domains/multisig'
 import { css } from '@emotion/css'
 import { EyeOfSauronProgressIndicator, FullScreenDialog } from '@talismn/ui'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useEffect, useMemo, useState } from 'react'
 import { toast } from 'react-hot-toast'
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom'
+import { useRecoilValue } from 'recoil'
 
 import { FullScreenDialogContents, FullScreenDialogTitle } from './FullScreenSummary'
 import TransactionSummaryRow from './TransactionSummaryRow'
@@ -31,8 +32,22 @@ const TransactionsList = ({ transactions }: { transactions: Transaction[] }) => 
   const groupedTransactions = useMemo(() => {
     return groupTransactionsByDay(transactions)
   }, [transactions])
+  const selectedMultisig = useRecoilValue(selectedMultisigState)
   const openTransaction = transactions.find(t => t.hash === extractHash(location))
-  const { cancelAsMulti, estimatedFee, canCancel } = useCancelAsMulti(openTransaction)
+  const nextSigner = useNextTransactionSigner(openTransaction?.approvals)
+  const { approveAsMulti, estimatedFee: approveAsMultiEstimatedFee } = useApproveAsMulti(
+    nextSigner?.address,
+    openTransaction?.hash,
+    openTransaction?.rawPending?.multisig.when
+  )
+  const { decodeCallData } = useDecodeCallData()
+  const maybeCallData = (openTransaction?.callData && decodeCallData(openTransaction.callData)) || undefined
+  const { asMulti, estimatedFee: asMultiEstimatedFee } = useAsMulti(
+    nextSigner?.address,
+    maybeCallData,
+    openTransaction?.rawPending?.multisig.when
+  )
+  const { cancelAsMulti, canCancel } = useCancelAsMulti(openTransaction)
 
   // Handle if user clicks a link to a tx that doesn't exist for them
   useEffect(() => {
@@ -40,6 +55,12 @@ const TransactionsList = ({ transactions }: { transactions: Transaction[] }) => 
       navigate('/overview')
     }
   }, [location, openTransaction, navigate])
+
+  const readyToExecute = useMemo(() => {
+    const nApprovals = Object.values(openTransaction?.approvals || {}).filter(a => a).length
+    const threshold = selectedMultisig.threshold
+    return nApprovals >= threshold - 1
+  }, [openTransaction, selectedMultisig.threshold])
 
   return (
     <div
@@ -88,12 +109,40 @@ const TransactionsList = ({ transactions }: { transactions: Transaction[] }) => 
             >
               <FullScreenDialogContents
                 canCancel={canCancel}
-                fee={estimatedFee}
+                readyToExecute={readyToExecute}
+                fee={readyToExecute ? asMultiEstimatedFee : approveAsMultiEstimatedFee}
                 t={openTransaction}
                 onApprove={() =>
                   new Promise((resolve, reject) => {
-                    navigate('/overview')
-                    resolve()
+                    if (readyToExecute) {
+                      asMulti({
+                        onSuccess: () => {
+                          navigate('/overview')
+                          toast.success('Transaction executed.', { duration: 5000, position: 'bottom-right' })
+                          resolve()
+                        },
+                        onFailure: e => {
+                          navigate('/overview')
+                          toast.error('Failed to execute transaction.')
+                          console.error(e)
+                          reject()
+                        },
+                      })
+                    } else {
+                      approveAsMulti({
+                        onSuccess: () => {
+                          navigate('/overview')
+                          toast.success('Transaction approved.', { duration: 5000, position: 'bottom-right' })
+                          resolve()
+                        },
+                        onFailure: e => {
+                          navigate('/overview')
+                          toast.error('Failed to approve transaction.')
+                          console.error(e)
+                          reject()
+                        },
+                      })
+                    }
                   })
                 }
                 onCancel={() =>
@@ -123,7 +172,7 @@ const TransactionsList = ({ transactions }: { transactions: Transaction[] }) => 
 
 const Transactions = ({ transactions }: { transactions: Transaction[] }) => {
   const { transactions: pendingTransactions, loading: pendingLoading } = usePendingTransaction()
-  // mocks below
+  // Mocks below
   // const pendingTransactions = useMemo(() => {
   //   return transactions.filter(t => Object.values(t.approvals).some(a => !a))
   // }, [transactions])

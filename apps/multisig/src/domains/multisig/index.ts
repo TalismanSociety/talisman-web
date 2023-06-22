@@ -1,7 +1,8 @@
-import { Chain, Token, chainTokensByIdQuery, supportedChains, useDecodeCallData } from '@domains/chains'
+import { Chain, Token, chainTokensByIdQuery, supportedChains, tokenByIdQuery, useDecodeCallData } from '@domains/chains'
 import { pjsApiSelector } from '@domains/chains/pjs-api'
 import { RawPendingTransaction, rawPendingTransactionsSelector } from '@domains/chains/storage-getters'
 import { accountsState } from '@domains/extension'
+import { SubmittableExtrinsic } from '@polkadot/api/types'
 import BN from 'bn.js'
 import { useCallback, useEffect, useState } from 'react'
 import { atom, selector, useRecoilState, useRecoilValue, useRecoilValueLoadable } from 'recoil'
@@ -25,10 +26,10 @@ export const multisigsState = atom<Multisig[]>({
   effects_UNSTABLE: [persistAtom],
 })
 
-// Map of call hashes to their call data and the date the calldata was set
-// todo: use the date to clear out really old call data from this cache
-export const callDataState = atom<{ [key: string]: [string, Date] }>({
-  key: 'CallDataState',
+// Map of call hashes to their metadata.
+// todo: use the date to clear out really old metadata from this cache
+export const txOffchainMetadataState = atom<{ [key: string]: [TxOffchainMetadata, Date] }>({
+  key: 'TxOffchainMetadata',
   default: {},
   effects_UNSTABLE: [persistAtom],
 })
@@ -75,6 +76,11 @@ export enum TransactionType {
   Advanced,
 }
 
+export interface TxOffchainMetadata {
+  description: string
+  callData: `0x${string}`
+}
+
 export interface AugmentedAccount {
   address: string
   you?: boolean
@@ -104,21 +110,23 @@ export interface TransactionApprovals {
   [key: string]: boolean
 }
 
+export interface TransactionDecoded {
+  type: TransactionType
+  recipients: TransactionRecipient[]
+  changeMultisigAddressDetails?: {
+    signers: string[]
+    threshold: number
+  }
+}
+
 export interface Transaction {
   description: string
-  hash: string
+  hash: `0x${string}`
   chainId: string
   approvals: TransactionApprovals
   date: Date
   rawPending?: RawPendingTransaction
-  decoded?: {
-    type: TransactionType
-    recipients: TransactionRecipient[]
-    changeMultisigAddressDetails?: {
-      signers: string[]
-      threshold: number
-    }
-  }
+  decoded?: TransactionDecoded
   callData?: `0x${string}`
 }
 
@@ -142,18 +150,60 @@ export const calcSumOutgoing = (t: Transaction): Balance[] => {
   }, [])
 }
 
+export const extrinsicToDecoded = (
+  extrinsic: SubmittableExtrinsic<'promise'>,
+  nativeToken: Token
+): TransactionDecoded => {
+  try {
+    const { method, section, args } = extrinsic.method
+    // If it's not a proxy call, just return advanced
+    if (section !== 'proxy' || method !== 'proxy')
+      return {
+        type: TransactionType.Advanced,
+        recipients: [],
+      }
+
+    // Got proxy call. Check if it's one of our recognised ones.
+    const recipients: TransactionRecipient[] = []
+    for (const arg of args) {
+      const obj: any = arg.toHuman()
+      if (obj?.section === 'balances' && obj?.method?.startsWith('transfer')) {
+        recipients.push({
+          address: obj.args.dest.Id,
+          balance: { token: nativeToken, amount: new BN(obj.args.value.replaceAll(',', '')) },
+        })
+      }
+    }
+
+    if (recipients.length === 1) {
+      return {
+        type: TransactionType.Transfer,
+        recipients,
+      }
+    }
+  } catch (error) {}
+  return {
+    type: TransactionType.Advanced,
+    recipients: [],
+  }
+}
+
 // transforms raw transaction from the chain into a full Transaction
 export const usePendingTransaction = () => {
   const selectedMultisig = useRecoilValue(selectedMultisigState)
   const allRawPending = useRecoilValueLoadable(rawPendingTransactionsSelector)
   const apiLoadable = useRecoilValueLoadable(pjsApiSelector(selectedMultisig.chain.rpc))
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { decodeCallData, loading: decodeCallDataLoading } = useDecodeCallData()
+  const nativeToken = useRecoilValueLoadable(tokenByIdQuery(selectedMultisig.chain.nativeToken.id))
   const [loading, setLoading] = useState(true)
-  const [callDataCache, setCallDataCache] = useRecoilState(callDataState)
+  const [metadataCache, setMetadataCache] = useRecoilState(txOffchainMetadataState)
   const [transactions, setTransactions] = useState<Transaction[]>([])
 
-  const ready = allRawPending.state === 'hasValue' && apiLoadable.state === 'hasValue' && !decodeCallDataLoading
+  const ready =
+    allRawPending.state === 'hasValue' &&
+    apiLoadable.state === 'hasValue' &&
+    !decodeCallDataLoading &&
+    nativeToken.state === 'hasValue'
   const api = apiLoadable.contents
   const loadTransactions = useCallback(async () => {
     if (!ready) return
@@ -161,11 +211,11 @@ export const usePendingTransaction = () => {
     const transactions = await Promise.all(
       allRawPending.contents.map(async rawPending => {
         await api.isReady
-        let callData = callDataCache[rawPending.callHash]
+        let metadata = metadataCache[rawPending.callHash]
 
-        if (!callData) {
+        if (!metadata) {
           try {
-            // Fetch callData from your backend
+            // Fetch metadata from the backend
             // todo: replace with magic calldata sharing
 
             // todo: cache magic calldata sharing to storage
@@ -174,19 +224,29 @@ export const usePendingTransaction = () => {
             throw Error('unimplemented')
 
             // eslint-disable-next-line no-unreachable
-            setCallDataCache({
-              ...callDataCache,
-              [rawPending.callHash]: ['0x123', new Date()],
+            setMetadataCache({
+              ...metadataCache,
+              [rawPending.callHash]: [{ callData: '0x123', description: 'example' }, new Date()],
             })
           } catch (error) {
             console.error(`Failed to fetch callData for callHash ${rawPending.callHash}:`, error)
           }
         }
 
-        if (callData) {
-          // Assuming you have a createTransaction function
-          // const call = decodeCallData(callData[0])
-          throw Error('unimplemented')
+        if (metadata) {
+          // got calldata!
+          const extrinsic = decodeCallData(metadata[0].callData)
+          const decoded = extrinsic ? extrinsicToDecoded(extrinsic, nativeToken.contents) : undefined
+          return {
+            date: rawPending.date,
+            description: metadata[0].description,
+            callData: metadata[0].callData,
+            hash: rawPending.callHash,
+            decoded,
+            rawPending: rawPending,
+            chainId: selectedMultisig.chain.id,
+            approvals: rawPending.approvals,
+          }
         } else {
           // still no calldata. return unknown transaction
           return {
@@ -203,13 +263,22 @@ export const usePendingTransaction = () => {
 
     setLoading(false)
     setTransactions(transactions)
-  }, [allRawPending, selectedMultisig, callDataCache, setCallDataCache, api.isReady, ready])
+  }, [
+    allRawPending,
+    selectedMultisig,
+    metadataCache,
+    setMetadataCache,
+    api.isReady,
+    ready,
+    decodeCallData,
+    nativeToken,
+  ])
 
   useEffect(() => {
     loadTransactions()
   }, [loadTransactions])
 
-  return { loading, transactions }
+  return { loading, transactions, ready }
 }
 
 export const EMPTY_BALANCE: Balance = {

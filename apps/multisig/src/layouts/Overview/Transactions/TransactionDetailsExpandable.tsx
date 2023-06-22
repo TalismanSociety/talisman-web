@@ -5,7 +5,7 @@ import 'ace-builds/src-noconflict/ext-language_tools'
 
 import { CallDataPasteForm } from '@components/CallDataPasteForm'
 import { tokenPriceState, useDecodeCallData } from '@domains/chains'
-import { Balance, Transaction, TransactionType, calcSumOutgoing } from '@domains/multisig'
+import { Balance, Transaction, TransactionType, calcSumOutgoing, txOffchainMetadataState } from '@domains/multisig'
 import { css } from '@emotion/css'
 import { useTheme } from '@emotion/react'
 import { ChevronRight, List, Send, Share2, Unknown, Users } from '@talismn/icons'
@@ -14,7 +14,7 @@ import { balanceToFloat, formatUsd } from '@util/numbers'
 import { useMemo, useState } from 'react'
 import AceEditor from 'react-ace'
 import { Collapse } from 'react-collapse'
-import { useRecoilValueLoadable } from 'recoil'
+import { useRecoilState, useRecoilValueLoadable } from 'recoil'
 import truncateMiddle from 'truncate-middle'
 
 const AmountRow = ({ balance }: { balance: Balance }) => {
@@ -164,6 +164,7 @@ function AdvancedExpendedDetails({ callData }: { callData: `0x${string}` | undef
 const TransactionDetailsExpandable = ({ t }: { t: Transaction }) => {
   const theme = useTheme()
   const [expanded, setExpanded] = useState(false)
+  const [metadata, setMetadata] = useRecoilState(txOffchainMetadataState)
   const sumOutgoing: Balance[] = useMemo(() => calcSumOutgoing(t), [t])
 
   const recipients = t.decoded?.recipients || []
@@ -301,13 +302,28 @@ const TransactionDetailsExpandable = ({ t }: { t: Transaction }) => {
                 outside of Signet, or the Signet metadata sharing service is down.
               </p>
               <p css={{ fontSize: '14px' }}>
-                Thankfully, that's not a problem! Ask someone in your vault to share the calldata and paste it below, or
-                approve as-is <b>if and only if you are sure you know what it is doing</b>.
+                Don't worry though, it's not a problem. Ask someone to share the calldata with you and paste it below,
+                or approve as-is <b>if and only if</b> you are sure you know what it is doing.
               </p>
               <CallDataPasteForm
                 extrinsic={undefined}
                 setExtrinsic={e => {
-                  console.log('paste')
+                  if (!e) return
+                  const expectedHash = t.hash
+                  const extrinsicHash = e.registry.hash(e.method.toU8a()).toHex()
+                  if (expectedHash === extrinsicHash) {
+                    setMetadata({
+                      ...metadata,
+                      [expectedHash]: [
+                        {
+                          callData: e.method.toHex(),
+                          description: `Transaction ${truncateMiddle(expectedHash, 6, 4, '...')}`,
+                        },
+                        new Date(),
+                      ],
+                    })
+                    setExpanded(true)
+                  }
                 }}
               />
               <p css={{ fontSize: '11px' }}>

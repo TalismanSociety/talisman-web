@@ -1,12 +1,12 @@
 import StatusCircle, { StatusCircleType } from '@components/StatusCircle'
 import { tokenPricesState } from '@domains/chains'
-import { Balance, Transaction, TransactionType, calcSumOutgoing } from '@domains/multisig'
+import { Balance, Transaction, TransactionType, calcSumOutgoing, selectedMultisigState } from '@domains/multisig'
 import { css } from '@emotion/css'
 import { ArrowUp, List, Share2, Unknown } from '@talismn/icons'
 import { Skeleton } from '@talismn/ui'
 import { balanceToFloat, formatUsd } from '@util/numbers'
 import { useMemo } from 'react'
-import { useRecoilValueLoadable } from 'recoil'
+import { useRecoilValue, useRecoilValueLoadable } from 'recoil'
 
 import { formattedDate, formattedHhMm } from './utils'
 
@@ -19,9 +19,10 @@ const TransactionSummaryRow = ({
   onClick?: () => void
   shortDate: boolean
 }) => {
+  const selectedMultisig = useRecoilValue(selectedMultisigState)
   const sumOutgoing: Balance[] = useMemo(() => calcSumOutgoing(t), [t])
   const tokenPrices = useRecoilValueLoadable(tokenPricesState(sumOutgoing.map(b => b.token.coingeckoId)))
-  const threshold = 2
+  const { threshold } = selectedMultisig
   const sumPriceUsd: number | undefined = useMemo(() => {
     if (tokenPrices.state === 'hasValue') {
       return sumOutgoing.reduce((acc, b) => {
