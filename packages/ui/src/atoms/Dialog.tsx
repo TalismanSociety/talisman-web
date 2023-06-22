@@ -1,40 +1,47 @@
-import { useMergeRefs } from '@floating-ui/react'
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useState } from 'react'
 
 export type DialogProps = Omit<
   React.DetailedHTMLProps<React.DialogHTMLAttributes<HTMLDialogElement>, HTMLDialogElement>,
   'ref'
 > & {
   isModal?: boolean
+  /**
+   * The content of dialog is unmounted when closed.
+   * If you need to make the content available to search engines
+   * or render expensive component trees inside your dialog
+   * while optimizing for interaction responsiveness
+   * it might be a good idea to change this default behavior
+   * by enabling the `keepMounted` prop
+   */
+  keepMounted?: boolean
   onClickBackdrop?: () => unknown
 }
 
 export const Dialog = React.forwardRef<HTMLDialogElement, DialogProps>(function Dialog(
-  { open = true, isModal = true, onClickBackdrop, ...props },
+  { open = true, isModal = true, keepMounted = false, onClickBackdrop, ...props },
   ref
 ) {
-  const innerRef = useRef<HTMLDialogElement>()
-  const mergedRef = useMergeRefs([ref, innerRef])
+  const [element, setElement] = useState<HTMLDialogElement | null>(null)
 
   useEffect(() => {
     if (open) {
-      if (innerRef.current?.open === false) {
+      if (element?.open === false) {
         if (isModal) {
-          innerRef.current?.showModal()
+          element.showModal()
         } else {
-          innerRef.current?.show()
+          element.show()
         }
       }
     } else {
-      if (innerRef.current?.open) {
-        innerRef.current?.close()
+      if (element?.open) {
+        element.close()
       }
     }
-  }, [isModal, open])
+  }, [element, isModal, open])
 
   useEffect(() => {
     const listener = function (this: HTMLDialogElement, event: MouseEvent) {
-      if (event.target !== innerRef.current) {
+      if (event.target !== element) {
         return
       }
 
@@ -49,14 +56,29 @@ export const Dialog = React.forwardRef<HTMLDialogElement, DialogProps>(function 
       }
     }
 
-    const dialog = innerRef.current
+    element?.addEventListener('click', listener)
 
-    dialog?.addEventListener('click', listener)
+    return () => element?.removeEventListener('click', listener)
+  }, [element, onClickBackdrop])
 
-    return () => dialog?.removeEventListener('click', listener)
-  }, [onClickBackdrop])
+  if (!open && !keepMounted) {
+    return null
+  }
 
-  return <dialog ref={mergedRef} {...props} />
+  return (
+    <dialog
+      ref={element => {
+        if (typeof ref === 'function') {
+          ref(element)
+        } else if (ref !== null) {
+          ref.current = element
+        }
+
+        setElement(element)
+      }}
+      {...props}
+    />
+  )
 })
 
 export default Dialog

@@ -145,58 +145,55 @@ const NftCard = ({ nft }: { nft: Nft }) => {
         overlineText={nft.collection?.name}
         onClick={() => setDialogOpen(true)}
       />
-      {/* Unmount completely to help with performance */}
-      {dialogOpen && (
-        <MediaDialog
-          open={dialogOpen}
-          onRequestDismiss={() => setDialogOpen(false)}
-          title={nft.name}
-          overline={nft.collection?.name}
-          media={<MediaDialog.Player src={Maybe.of(nft.media).mapOrUndefined(toIpfsCompatibleUrl)} />}
-          content={
-            <div>
-              <Text.Body as="p" css={{ whiteSpace: 'pre-wrap' }}>
-                {nft.description}
-              </Text.Body>
-              <div css={{ display: 'flex', gap: '3.2rem', marginTop: '3.2rem', flexWrap: 'wrap' }}>
+      <MediaDialog
+        open={dialogOpen}
+        onRequestDismiss={() => setDialogOpen(false)}
+        title={nft.name}
+        overline={nft.collection?.name}
+        media={<MediaDialog.Player src={Maybe.of(nft.media).mapOrUndefined(toIpfsCompatibleUrl)} />}
+        content={
+          <div>
+            <Text.Body as="p" css={{ whiteSpace: 'pre-wrap' }}>
+              {nft.description}
+            </Text.Body>
+            <div css={{ display: 'flex', gap: '3.2rem', marginTop: '3.2rem', flexWrap: 'wrap' }}>
+              <article>
+                <Text.BodyLarge as="div">Type</Text.BodyLarge>
+                <Text.BodyLarge alpha="high" css={{ textTransform: 'capitalize' }}>
+                  {nft.type.replace('-', ' ')}
+                </Text.BodyLarge>
+              </article>
+              {'chain' in nft && (
                 <article>
-                  <Text.BodyLarge as="div">Type</Text.BodyLarge>
+                  <Text.BodyLarge as="div">Chain</Text.BodyLarge>
                   <Text.BodyLarge alpha="high" css={{ textTransform: 'capitalize' }}>
-                    {nft.type.replace('-', ' ')}
+                    {nft.chain.replace('-', ' ')}
                   </Text.BodyLarge>
                 </article>
-                {'chain' in nft && (
-                  <article>
-                    <Text.BodyLarge as="div">Chain</Text.BodyLarge>
-                    <Text.BodyLarge alpha="high" css={{ textTransform: 'capitalize' }}>
-                      {nft.chain.replace('-', ' ')}
-                    </Text.BodyLarge>
-                  </article>
-                )}
-                {(nft.externalLinks?.length ?? 0) > 0 && (
-                  <article>
-                    <Text.BodyLarge as="div">View on</Text.BodyLarge>
-                    {nft.externalLinks?.map((link, index) => (
-                      <Text.BodyLarge.A key={index} target="_blank" href={link.url}>
-                        {link.name} <ExternalLink size="1em" css={{ verticalAlign: 'middle' }} />
-                      </Text.BodyLarge.A>
-                    ))}
-                  </article>
-                )}
-                {nft.serialNumber !== undefined && (
-                  <article>
-                    <Text.BodyLarge as="div">Edition</Text.BodyLarge>
-                    <Text.BodyLarge alpha="high">
-                      #{nft.serialNumber}
-                      {nft.collection?.totalSupply && ` / ${nft.collection.totalSupply}`}
-                    </Text.BodyLarge>
-                  </article>
-                )}
-              </div>
+              )}
+              {(nft.externalLinks?.length ?? 0) > 0 && (
+                <article>
+                  <Text.BodyLarge as="div">View on</Text.BodyLarge>
+                  {nft.externalLinks?.map((link, index) => (
+                    <Text.BodyLarge.A key={index} target="_blank" href={link.url}>
+                      {link.name} <ExternalLink size="1em" css={{ verticalAlign: 'middle' }} />
+                    </Text.BodyLarge.A>
+                  ))}
+                </article>
+              )}
+              {nft.serialNumber !== undefined && (
+                <article>
+                  <Text.BodyLarge as="div">Edition</Text.BodyLarge>
+                  <Text.BodyLarge alpha="high">
+                    #{nft.serialNumber}
+                    {nft.collection?.totalSupply && ` / ${nft.collection.totalSupply}`}
+                  </Text.BodyLarge>
+                </article>
+              )}
             </div>
-          }
-        />
-      )}
+          </div>
+        }
+      />
     </>
   )
 }

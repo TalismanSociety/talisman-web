@@ -56,11 +56,8 @@ export const Modal = function Modal({ className, closable }: { className?: strin
       open && closable && closeModal()
     }, [open, closable, closeModal])
   )
-  if (!open) {
-    return null
-  }
 
-  return <AlertDialog open className={className} onRequestDismiss={closeModal} content={content} />
+  return <AlertDialog open={open} className={className} onRequestDismiss={closeModal} content={content} />
 }
 
 export default Modal
