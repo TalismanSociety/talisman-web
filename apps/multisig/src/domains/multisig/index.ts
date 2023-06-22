@@ -199,6 +199,10 @@ export const usePendingTransaction = () => {
   const [metadataCache, setMetadataCache] = useRecoilState(txOffchainMetadataState)
   const [transactions, setTransactions] = useState<Transaction[]>([])
 
+  useEffect(() => {
+    setLoading(true)
+  }, [selectedMultisig.multisigAddress])
+
   const ready =
     allRawPending.state === 'hasValue' &&
     apiLoadable.state === 'hasValue' &&
