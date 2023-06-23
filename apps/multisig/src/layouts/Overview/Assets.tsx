@@ -1,7 +1,7 @@
 import { Token } from '@domains/chains'
 import { css } from '@emotion/css'
 import { Lock } from '@talismn/icons'
-import { AnimatedNumber } from '@talismn/ui'
+import { AnimatedNumber, HiddenDetails } from '@talismn/ui'
 import { formatDecimals } from '@talismn/util'
 import { formatUsd } from '@util/numbers'
 import { capitalizeFirstLetter } from '@util/strings'
@@ -72,79 +72,101 @@ const Assets = ({ augmentedTokens }: { augmentedTokens: TokenAugmented[] }) => {
         padding: 24px;
       `}
     >
-      <div
-        className={css`
-          display: flex;
-          justify-content: space-between;
-        `}
-      >
-        <h2 css={{ color: 'var(--color-offWhite)', fontWeight: 'bold' }}>Assets</h2>
-        <h2 css={{ fontWeight: 'bold' }}>
-          <AnimatedNumber formatter={formatUsd} end={totalFiatBalance} decimals={2} />
-        </h2>
-      </div>
-      {totalFreeBalance > 0 && (
-        <div>
-          <div css={{ display: 'grid', gap: '16px' }}>
+      <HiddenDetails
+        hidden={true}
+        overlay={
+          <div css={{ backgroundColor: 'rgba(0,0,0,0.5)', padding: '12px', borderRadius: '8px' }}>
             <p
-              className={css`
-                color: var(--color-dim);
-                font-weight: bold;
-              `}
+              css={{
+                fontSize: '18px',
+                fontWeight: 'bold',
+                color: 'var(--color-primary)',
+                opacity: '0.8',
+                pointerEvents: 'none',
+              }}
             >
-              Avaliable
+              Portfolio view coming soon
             </p>
-            {augmentedTokens
-              .sort((a1, a2) => a2.balance.free - a1.balance.free)
-              .map(augmentedToken => {
-                if (augmentedToken.balance.free === 0) return null
-                return (
-                  <TokenRow
-                    key={augmentedToken.details.id}
-                    augmentedToken={augmentedToken}
-                    balance={augmentedToken.balance.free}
-                  />
-                )
-              })}
           </div>
-        </div>
-      )}
-      {totalLockedBalance > 0 && (
-        <div>
-          <div css={{ display: 'grid', gap: '16px' }}>
+        }
+        children={
+          <>
             <div
               className={css`
                 display: flex;
-                align-items: center;
-                color: var(--color-dim);
-                font-weight: bold;
-                svg {
-                  height: 15px;
-                  margin-bottom: 3px;
-                }
-                p {
-                  font-weight: bold;
-                }
+                justify-content: space-between;
               `}
             >
-              <p>Locked</p>
-              <Lock />
+              <h2 css={{ color: 'var(--color-offWhite)', fontWeight: 'bold' }}>Assets</h2>
+              <h2 css={{ fontWeight: 'bold' }}>
+                <AnimatedNumber formatter={formatUsd} end={totalFiatBalance} decimals={2} />
+              </h2>
             </div>
-            {augmentedTokens
-              .sort((a1, a2) => a2.balance.locked - a1.balance.locked)
-              .map(augmentedToken => {
-                if (augmentedToken.balance.locked === 0) return null
-                return (
-                  <TokenRow
-                    key={augmentedToken.details.id}
-                    augmentedToken={augmentedToken}
-                    balance={augmentedToken.balance.locked}
-                  />
-                )
-              })}
-          </div>
-        </div>
-      )}
+            {totalFreeBalance > 0 && (
+              <div>
+                <div css={{ display: 'grid', gap: '16px' }}>
+                  <p
+                    className={css`
+                      color: var(--color-dim);
+                      font-weight: bold;
+                    `}
+                  >
+                    Avaliable
+                  </p>
+                  {augmentedTokens
+                    .sort((a1, a2) => a2.balance.free - a1.balance.free)
+                    .map(augmentedToken => {
+                      if (augmentedToken.balance.free === 0) return null
+                      return (
+                        <TokenRow
+                          key={augmentedToken.details.id}
+                          augmentedToken={augmentedToken}
+                          balance={augmentedToken.balance.free}
+                        />
+                      )
+                    })}
+                </div>
+              </div>
+            )}
+            {totalLockedBalance > 0 && (
+              <div>
+                <div css={{ display: 'grid', gap: '16px' }}>
+                  <div
+                    className={css`
+                      display: flex;
+                      align-items: center;
+                      color: var(--color-dim);
+                      font-weight: bold;
+                      svg {
+                        height: 15px;
+                        margin-bottom: 3px;
+                      }
+                      p {
+                        font-weight: bold;
+                      }
+                    `}
+                  >
+                    <p>Locked</p>
+                    <Lock />
+                  </div>
+                  {augmentedTokens
+                    .sort((a1, a2) => a2.balance.locked - a1.balance.locked)
+                    .map(augmentedToken => {
+                      if (augmentedToken.balance.locked === 0) return null
+                      return (
+                        <TokenRow
+                          key={augmentedToken.details.id}
+                          augmentedToken={augmentedToken}
+                          balance={augmentedToken.balance.locked}
+                        />
+                      )
+                    })}
+                </div>
+              </div>
+            )}
+          </>
+        }
+      />
     </section>
   )
 }

@@ -1,7 +1,7 @@
 import { useApproveAsMulti, useAsMulti, useCancelAsMulti, useDecodeCallData } from '@domains/chains'
 import { Transaction, selectedMultisigState, useNextTransactionSigner, usePendingTransaction } from '@domains/multisig'
 import { css } from '@emotion/css'
-import { EyeOfSauronProgressIndicator, FullScreenDialog } from '@talismn/ui'
+import { EyeOfSauronProgressIndicator, FullScreenDialog, HiddenDetails } from '@talismn/ui'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useEffect, useMemo, useState } from 'react'
 import { toast } from 'react-hot-toast'
@@ -230,7 +230,34 @@ const Transactions = ({ transactions }: { transactions: Transaction[] }) => {
               <EyeOfSauronProgressIndicator />
             </div>
           ) : (
-            <TransactionsList transactions={mode === Mode.Pending ? pendingTransactions : completedTransactions} />
+            <HiddenDetails
+              hidden={mode === Mode.History}
+              overlay={
+                <div
+                  css={{
+                    backgroundColor: 'rgba(0,0,0,0.5)',
+                    padding: '12px',
+                    borderRadius: '8px',
+                    marginTop: '-37px',
+                  }}
+                >
+                  <p
+                    css={{
+                      fontSize: '18px',
+                      fontWeight: 'bold',
+                      color: 'var(--color-primary)',
+                      opacity: '0.8',
+                      pointerEvents: 'none',
+                    }}
+                  >
+                    Transaction history coming soon
+                  </p>
+                </div>
+              }
+              children={
+                <TransactionsList transactions={mode === Mode.Pending ? pendingTransactions : completedTransactions} />
+              }
+            />
           )}
         </motion.div>
       </AnimatePresence>
