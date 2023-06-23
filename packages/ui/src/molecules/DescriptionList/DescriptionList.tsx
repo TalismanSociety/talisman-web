@@ -7,7 +7,11 @@ const Term = (props: React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, 
 )
 
 const Details = (props: React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement>) => (
-  <dd css={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', textAlign: 'end' }} {...props} />
+  <Text.Body
+    as="dd"
+    css={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', textAlign: 'end' }}
+    {...props}
+  />
 )
 
 const Description = (props: React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>) => (

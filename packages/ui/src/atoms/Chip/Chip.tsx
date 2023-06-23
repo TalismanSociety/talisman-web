@@ -46,7 +46,7 @@ const Chip = ({ size = 'md', containerColor, contentColor, leadingContent, loadi
           gap: '0.25em',
           border: 'none',
           borderRadius: '2em',
-          padding: '0.2rem 0.8rem',
+          padding: '0.2em 0.8em',
           backgroundColor: containerColor,
         },
         props.onClick && { 'cursor': 'pointer', ':hover': { opacity: 0.9 } },
