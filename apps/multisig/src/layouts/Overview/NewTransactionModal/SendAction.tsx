@@ -6,7 +6,6 @@ import {
   TransactionType,
   selectedMultisigChainTokensState,
   selectedMultisigState,
-  txOffchainMetadataState,
   useNextTransactionSigner,
 } from '@domains/multisig'
 import { css } from '@emotion/css'
@@ -18,7 +17,7 @@ import Decimal from 'decimal.js'
 import { useEffect, useMemo, useState } from 'react'
 import toast from 'react-hot-toast'
 import { useNavigate } from 'react-router-dom'
-import { useRecoilState, useRecoilValue, useRecoilValueLoadable } from 'recoil'
+import { useRecoilValue, useRecoilValueLoadable } from 'recoil'
 
 import { FullScreenDialogContents, FullScreenDialogTitle } from '../Transactions/FullScreenSummary'
 import { NameTransaction } from './generic-steps'
@@ -194,7 +193,6 @@ const SendAction = (props: { onCancel: () => void }) => {
   const [amountInput, setAmountInput] = useState('')
   const multisig = useRecoilValue(selectedMultisigState)
   const apiLoadable = useRecoilValueLoadable(pjsApiSelector(multisig.chain.rpc))
-  const [metadataCache, setMetadataCache] = useRecoilState(txOffchainMetadataState)
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -311,21 +309,22 @@ const SendAction = (props: { onCancel: () => void }) => {
           cancelButtonTextOverride="Back"
           onApprove={() =>
             new Promise((resolve, reject) => {
+              if (!hash || !extrinsic) {
+                toast.error("Couldn't get hash or extrinsic")
+                return
+              }
               approveAsMulti({
+                metadata: {
+                  description: name,
+                  callData: extrinsic.method.toHex(),
+                },
                 onSuccess: () => {
                   navigate('/overview')
                   toast.success('Transaction successful!', { duration: 5000, position: 'bottom-right' })
                   resolve()
-                  if (!hash || !extrinsic) {
-                    console.error("Couldn't get hash or extrinsic")
-                    return
-                  }
-                  setMetadataCache({
-                    ...metadataCache,
-                    [hash]: [{ callData: extrinsic.method.toHex(), description: name }, new Date()],
-                  })
                 },
                 onFailure: e => {
+                  navigate('/overview')
                   toast.error('Transaction failed')
                   console.error(e)
                   reject()

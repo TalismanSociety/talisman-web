@@ -5,13 +5,14 @@ import 'ace-builds/src-noconflict/ext-language_tools'
 
 import { CallDataPasteForm } from '@components/CallDataPasteForm'
 import { tokenPriceState, useDecodeCallData } from '@domains/chains'
+import { copyToClipboard } from '@domains/common'
 import { Balance, Transaction, TransactionType, calcSumOutgoing, txOffchainMetadataState } from '@domains/multisig'
 import { css } from '@emotion/css'
 import { useTheme } from '@emotion/react'
-import { ChevronRight, List, Send, Share2, Unknown, Users } from '@talismn/icons'
+import { Check, ChevronRight, Copy, List, Send, Share2, Unknown, Users } from '@talismn/icons'
 import { IconButton, Identicon, Skeleton } from '@talismn/ui'
 import { balanceToFloat, formatUsd } from '@util/numbers'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import AceEditor from 'react-ace'
 import { Collapse } from 'react-collapse'
 import { useRecoilState, useRecoilValueLoadable } from 'recoil'
@@ -124,10 +125,13 @@ function AdvancedExpendedDetails({ callData }: { callData: `0x${string}` | undef
   const { loading, decodeCallData } = useDecodeCallData()
   const [error, setError] = useState<Error | undefined>(undefined)
 
-  const extrinsic = useMemo(() => {
+  const { extrinsic, human, lines } = useMemo(() => {
     if (!loading && callData) {
       try {
-        return decodeCallData(callData)
+        const extrinsic = decodeCallData(callData)
+        const human = JSON.stringify(extrinsic?.method.toHuman(), null, 2)
+        const lines = human.split(/\r\n|\r|\n/).length
+        return { extrinsic, human, lines }
       } catch (error) {
         if (error instanceof Error) {
           setError(error)
@@ -136,6 +140,7 @@ function AdvancedExpendedDetails({ callData }: { callData: `0x${string}` | undef
         }
       }
     }
+    return { extrinsic: undefined, human: '', lines: 0 }
   }, [decodeCallData, callData, loading])
 
   if (!callData) return null
@@ -147,7 +152,7 @@ function AdvancedExpendedDetails({ callData }: { callData: `0x${string}` | undef
         theme="twilight"
         value={
           extrinsic
-            ? JSON.stringify(extrinsic.method.toHuman(), null, 2)
+            ? human
             : error
             ? `Failed to decode calldata, please open an issue at\nhttps://github.com/TalismanSociety/talisman-web\nwith the following details:\n\nError\n${error}\n\nCalldata\n${callData}`
             : 'Loading...'
@@ -156,6 +161,8 @@ function AdvancedExpendedDetails({ callData }: { callData: `0x${string}` | undef
         name="yaml"
         setOptions={{ useWorker: false }}
         style={{ width: '100%', border: '1px solid #232323' }}
+        minLines={lines + 1}
+        maxLines={lines + 1}
       />
     </div>
   )
@@ -166,6 +173,24 @@ const TransactionDetailsExpandable = ({ t }: { t: Transaction }) => {
   const [expanded, setExpanded] = useState(false)
   const [metadata, setMetadata] = useRecoilState(txOffchainMetadataState)
   const sumOutgoing: Balance[] = useMemo(() => calcSumOutgoing(t), [t])
+  const [copiedCallData, setCopiedCallData] = useState(false)
+  const [copiedCallHash, setCopiedCallHash] = useState(false)
+
+  useEffect(() => {
+    if (copiedCallHash) {
+      setTimeout(() => {
+        setCopiedCallHash(false)
+      }, 500)
+    }
+  }, [copiedCallHash, setCopiedCallHash])
+
+  useEffect(() => {
+    if (copiedCallData) {
+      setTimeout(() => {
+        setCopiedCallData(false)
+      }, 500)
+    }
+  }, [copiedCallData, setCopiedCallData])
 
   const recipients = t.decoded?.recipients || []
   return (
@@ -267,8 +292,8 @@ const TransactionDetailsExpandable = ({ t }: { t: Transaction }) => {
           </div>
         )}
         {/* Show the collapse btn */}
-        {t.decoded?.type === TransactionType.MultiSend || t.decoded?.type === TransactionType.Advanced ? (
-          <div css={{ width: '28px', marginLeft: t.decoded.type === TransactionType.MultiSend ? '0' : 'auto' }}>
+        {t.decoded ? (
+          <div css={{ width: '28px', marginLeft: t.decoded.type === TransactionType.Advanced ? 'auto' : '0' }}>
             <IconButton
               contentColor={`rgb(${theme.offWhite})`}
               onClick={() => {
@@ -331,6 +356,48 @@ const TransactionDetailsExpandable = ({ t }: { t: Transaction }) => {
               </p>
             </div>
           ) : null}
+          {t.callData && (
+            <div
+              css={{
+                margin: '8px 0',
+                display: 'grid',
+                gap: '16px',
+                borderTop: '1px solid var(--color-backgroundLighter)',
+                paddingTop: '16px',
+              }}
+            >
+              <p>Multisig call data</p>
+              <div css={{ backgroundColor: 'var(--color-grey800)', padding: '16px', borderRadius: '8px' }}>
+                <div css={{ display: 'flex', gap: '18px', alignItems: 'center', justifyContent: 'center' }}>
+                  <p css={{ overflowWrap: 'break-word', maxWidth: '450px' }}>{t.callData}</p>
+                  <IconButton
+                    css={{ cursor: 'pointer' }}
+                    onClick={() => {
+                      setCopiedCallData(true)
+                      copyToClipboard(t.callData as string, 'Call data copied to clipboard.')
+                    }}
+                  >
+                    {copiedCallData ? <Check /> : <Copy />}
+                  </IconButton>
+                </div>
+              </div>
+              <p>Call hash</p>
+              <div css={{ backgroundColor: 'var(--color-grey800)', padding: '16px', borderRadius: '8px' }}>
+                <div css={{ display: 'flex', gap: '18px', alignItems: 'center', justifyContent: 'center' }}>
+                  <p css={{ overflowWrap: 'break-word', maxWidth: '450px' }}>{t.hash}</p>
+                  <IconButton
+                    css={{ cursor: 'pointer' }}
+                    onClick={() => {
+                      setCopiedCallHash(true)
+                      copyToClipboard(t.hash as string, 'Call hash copied to clipboard.')
+                    }}
+                  >
+                    {copiedCallHash ? <Check /> : <Copy />}
+                  </IconButton>
+                </div>
+              </div>
+            </div>
+          )}
         </Collapse>
       </div>
     </div>

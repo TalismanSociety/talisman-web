@@ -10,7 +10,6 @@ import {
   TransactionApprovals,
   TransactionType,
   selectedMultisigState,
-  txOffchainMetadataState,
   useNextTransactionSigner,
 } from '@domains/multisig'
 import { css } from '@emotion/css'
@@ -19,7 +18,7 @@ import { Button, FullScreenDialog } from '@talismn/ui'
 import { useMemo, useState } from 'react'
 import toast from 'react-hot-toast'
 import { useNavigate } from 'react-router-dom'
-import { useRecoilState, useRecoilValue } from 'recoil'
+import { useRecoilValue } from 'recoil'
 
 import { mockTransactions } from '../mocks'
 import { FullScreenDialogContents, FullScreenDialogTitle } from '../Transactions/FullScreenSummary'
@@ -76,7 +75,6 @@ const AdvancedAction = (props: { onCancel: () => void }) => {
   const [name, setName] = useState('')
   const [extrinsic, setExtrinsic] = useState<SubmittableExtrinsic<'promise'> | undefined>()
   const multisig = useRecoilValue(selectedMultisigState)
-  const [metadataCache, setMetadataCache] = useRecoilState(txOffchainMetadataState)
   const navigate = useNavigate()
 
   const hash = extrinsic?.registry.hash(extrinsic.method.toU8a()).toHex()
@@ -156,7 +154,15 @@ const AdvancedAction = (props: { onCancel: () => void }) => {
           t={t}
           onApprove={() =>
             new Promise((resolve, reject) => {
+              if (!hash || !extrinsic) {
+                toast.error("Couldn't get hash or extrinsic")
+                return
+              }
               approveAsMulti({
+                metadata: {
+                  description: name,
+                  callData: extrinsic.method.toHex(),
+                },
                 onSuccess: () => {
                   navigate('/overview')
                   toast.success(
@@ -167,10 +173,6 @@ const AdvancedAction = (props: { onCancel: () => void }) => {
                     console.error("Couldn't get hash or extrinsic")
                     return
                   }
-                  setMetadataCache({
-                    ...metadataCache,
-                    [hash]: [{ callData: extrinsic.method.toHex(), description: name }, new Date()],
-                  })
                   resolve()
                 },
                 onFailure: e => {

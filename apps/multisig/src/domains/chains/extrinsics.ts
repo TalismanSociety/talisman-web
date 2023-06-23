@@ -5,7 +5,8 @@
 
 import { pjsApiSelector } from '@domains/chains/pjs-api'
 import { accountsState } from '@domains/extension'
-import { Balance, Transaction, selectedMultisigState } from '@domains/multisig'
+import { insertTxMetadata } from '@domains/metadata-service'
+import { Balance, Transaction, selectedMultisigState, txOffchainMetadataState } from '@domains/multisig'
 import { ApiPromise, SubmittableResult } from '@polkadot/api'
 import type { SubmittableExtrinsic } from '@polkadot/api/types'
 import { web3FromAddress } from '@polkadot/extension-dapp'
@@ -14,7 +15,7 @@ import { assert, compactToU8a, u8aConcat, u8aEq } from '@polkadot/util'
 import { sortAddresses } from '@polkadot/util-crypto'
 import BN from 'bn.js'
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { useRecoilRefresher_UNSTABLE, useRecoilValue, useRecoilValueLoadable } from 'recoil'
+import { useRecoilRefresher_UNSTABLE, useRecoilState, useRecoilValue, useRecoilValueLoadable } from 'recoil'
 
 import { rawPendingTransactionsSelector } from './storage-getters'
 import { Chain, tokenByIdQuery } from './tokens'
@@ -317,6 +318,7 @@ export const useApproveAsMulti = (
   const rawPending = useRecoilValueLoadable(rawPendingTransactionsSelector)
   const nativeToken = useRecoilValueLoadable(tokenByIdQuery(multisig.chain.nativeToken.id))
   const reloadPending = useRecoilRefresher_UNSTABLE(rawPendingTransactionsSelector)
+  const [metadataCache, setMetadataCache] = useRecoilState(txOffchainMetadataState)
   const [estimatedFee, setEstimatedFee] = useState<Balance | undefined>()
 
   const ready =
@@ -368,9 +370,11 @@ export const useApproveAsMulti = (
     async ({
       onSuccess,
       onFailure,
+      metadata,
     }: {
       onSuccess: (r: SubmittableResult) => void
       onFailure: (message: string) => void
+      metadata?: { description: string; callData: `0x${string}` }
     }) => {
       const tx = await createTx()
       if (!tx || !extensionAddress) {
@@ -390,17 +394,40 @@ export const useApproveAsMulti = (
           }
 
           if (result.status.isFinalized) {
-            result.events
-              .filter(({ event: { section } }) => section === 'system')
-              .forEach(({ event: { method } }): void => {
-                if (method === 'ExtrinsicFailed') {
-                  onFailure(JSON.stringify(result))
+            result.events.forEach(async ({ event: { method, ...rest } }): Promise<void> => {
+              if (method === 'ExtrinsicFailed') {
+                onFailure(JSON.stringify(result))
+              }
+              if (method === 'ExtrinsicSuccess') {
+                const hash = tx.registry.hash(tx.method.toU8a()).toHex()
+                // if there's a description, it means we want to post to the metadata service
+                if (metadata) {
+                  // Disable this line to test the metadata service
+                  setMetadataCache({
+                    ...metadataCache,
+                    [hash]: [{ callData: metadata.callData, description: metadata.description }, new Date()],
+                  })
+                  // @ts-ignore
+                  const timepoint_height = result.blockNumber.toNumber() as number
+                  insertTxMetadata({
+                    multisig: multisig.multisigAddress,
+                    chain: multisig.chain.id,
+                    call_data: metadata.callData,
+                    description: metadata.description,
+                    timepoint_height,
+                    timepoint_index: result.txIndex as number,
+                  })
+                    .then(() => {
+                      console.log(`Successfully POSTed metadata for ${hash} to metadata service`)
+                    })
+                    .catch(e => {
+                      console.error('Failed to POST tx metadata sharing service: ', e)
+                    })
                 }
-                if (method === 'ExtrinsicSuccess') {
-                  reloadPending()
-                  onSuccess(result)
-                }
-              })
+                reloadPending()
+                onSuccess(result)
+              }
+            })
           } else if (result.isError) {
             onFailure(JSON.stringify(result))
           }
@@ -409,7 +436,15 @@ export const useApproveAsMulti = (
         onFailure(JSON.stringify(e))
       })
     },
-    [extensionAddress, createTx, reloadPending]
+    [
+      extensionAddress,
+      createTx,
+      reloadPending,
+      metadataCache,
+      setMetadataCache,
+      multisig.chain.id,
+      multisig.multisigAddress,
+    ]
   )
 
   return { approveAsMulti, ready: ready && !!estimatedFee, estimatedFee }

@@ -5683,7 +5683,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@recoiljs/refine@npm:^0.1.1":
+"@recoiljs/refine@npm:0.1.1, @recoiljs/refine@npm:^0.1.1":
   version: 0.1.1
   resolution: "@recoiljs/refine@npm:0.1.1"
   checksum: 63b3e468f4ce7417cd13470f39a85a7318b902d411121759fc0a7ee427cd8882328a2c999ef0913e086f0c99f732e5478378b4ebe514bd811bb6e96333c747c3
@@ -8308,7 +8308,7 @@ __metadata:
     "@polkadot/api": 10.9.1
     "@polkadot/extension-dapp": 0.46.5
     "@ramp-network/ramp-instant-sdk": ^2.5.2
-    "@recoiljs/refine": ^0.1.1
+    "@recoiljs/refine": 0.1.1
     "@sentry/react": ^7.37.2
     "@sentry/tracing": ^7.37.2
     "@storybook/addon-actions": ^6.5.16
@@ -8363,7 +8363,7 @@ __metadata:
     ethers: ^5.7.2
     framer-motion: ^10.0.1
     graphql: ^16.6.0
-    graphql-request: ^5.1.0
+    graphql-request: ^6.1.0
     graphql-tag: ^2.12.6
     i18next: ^21.10.0
     i18next-browser-languagedetector: ^6.1.8
@@ -8393,9 +8393,9 @@ __metadata:
     react-spring: ^9.7.1
     react-use: ^17.4.0
     react-winbox: ^1.5.0
-    recoil: ^0.7.7
-    recoil-persist: ^4.2.0
-    recoil-relay: ^0.1.0
+    recoil: 0.7.7
+    recoil-persist: 4.2.0
+    recoil-relay: 0.1.0
     relay-compiler: ^15.0.0
     relay-runtime: ^15.0.0
     rmrk-tools: ^1.0.64
@@ -16678,6 +16678,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"graphql-request@npm:^6.1.0":
+  version: 6.1.0
+  resolution: "graphql-request@npm:6.1.0"
+  dependencies:
+    "@graphql-typed-document-node/core": ^3.2.0
+    cross-fetch: ^3.1.5
+  peerDependencies:
+    graphql: 14 - 16
+  checksum: 6d62630a0169574442320651c1f7626c0c602025c3c46b19e09417c9579bb209306ee63de9793a03be2e1701bb7f13971f8545d99bc6573e340f823af0ad35b2
+  languageName: node
+  linkType: hard
+
 "graphql-tag@npm:^2.11.0, graphql-tag@npm:^2.12.6":
   version: 2.12.6
   resolution: "graphql-tag@npm:2.12.6"
@@ -24343,7 +24355,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"recoil-persist@npm:^4.2.0":
+"recoil-persist@npm:4.2.0":
   version: 4.2.0
   resolution: "recoil-persist@npm:4.2.0"
   peerDependencies:
@@ -24352,7 +24364,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"recoil-relay@npm:^0.1.0":
+"recoil-relay@npm:0.1.0":
   version: 0.1.0
   resolution: "recoil-relay@npm:0.1.0"
   peerDependencies:

@@ -154,6 +154,7 @@ const TransactionsList = ({ transactions }: { transactions: Transaction[] }) => 
                         resolve()
                       },
                       onFailure: e => {
+                        navigate('/overview')
                         toast.error('Failed to cancel transaction.')
                         console.error(e)
                         reject()

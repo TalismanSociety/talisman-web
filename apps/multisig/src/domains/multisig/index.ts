@@ -2,6 +2,7 @@ import { Chain, Token, chainTokensByIdQuery, supportedChains, tokenByIdQuery, us
 import { pjsApiSelector } from '@domains/chains/pjs-api'
 import { RawPendingTransaction, rawPendingTransactionsSelector } from '@domains/chains/storage-getters'
 import { accountsState } from '@domains/extension'
+import { getTxMetadataByPk } from '@domains/metadata-service'
 import { SubmittableExtrinsic } from '@polkadot/api/types'
 import BN from 'bn.js'
 import { useCallback, useEffect, useState } from 'react'
@@ -219,19 +220,38 @@ export const usePendingTransaction = () => {
 
         if (!metadata) {
           try {
-            // Fetch metadata from the backend
-            // todo: replace with magic calldata sharing
-
-            // todo: cache magic calldata sharing to storage
-            // updateCallData(callHash, callData)
-
-            throw Error('unimplemented')
-
-            // eslint-disable-next-line no-unreachable
-            setMetadataCache({
-              ...metadataCache,
-              [rawPending.callHash]: [{ callData: '0x123', description: 'example' }, new Date()],
+            const metadataValues = await getTxMetadataByPk({
+              multisig: selectedMultisig.multisigAddress,
+              chain: selectedMultisig.chain.id,
+              timepoint_height: rawPending.multisig.when.height.toNumber(),
+              timepoint_index: rawPending.multisig.when.index.toNumber(),
             })
+
+            if (metadataValues) {
+              // Validate calldata from the metadata service matches the hash from the chain
+              const extrinsic = decodeCallData(metadataValues.callData)
+              if (!extrinsic) {
+                throw new Error(
+                  `Failed to create extrinsic from callData recieved from metadata sharing service for hash ${rawPending.callHash}`
+                )
+              }
+
+              const derivedHash = extrinsic.registry.hash(extrinsic.method.toU8a()).toHex()
+              if (derivedHash !== rawPending.callHash) {
+                throw new Error(
+                  `CallData from metadata sharing service for hash ${rawPending.callHash} does not match hash from chain. Expected ${rawPending.callHash}, got ${derivedHash}`
+                )
+              }
+
+              console.log(`Loaded metadata for callHash ${rawPending.callHash} from sharing service`)
+              metadata = [metadataValues, new Date()]
+              setMetadataCache({
+                ...metadataCache,
+                [rawPending.callHash]: metadata,
+              })
+            } else {
+              console.warn(`Metadata service has no value for callHash ${rawPending.callHash}`)
+            }
           } catch (error) {
             console.error(`Failed to fetch callData for callHash ${rawPending.callHash}:`, error)
           }
