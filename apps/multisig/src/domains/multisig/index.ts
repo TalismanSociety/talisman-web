@@ -5,6 +5,7 @@ import { accountsState } from '@domains/extension'
 import { getTxMetadataByPk } from '@domains/metadata-service'
 import { SubmittableExtrinsic } from '@polkadot/api/types'
 import BN from 'bn.js'
+import queryString from 'query-string'
 import { useCallback, useEffect, useState } from 'react'
 import { atom, selector, useRecoilState, useRecoilValue, useRecoilValueLoadable } from 'recoil'
 import { recoilPersist } from 'recoil-persist'
@@ -318,4 +319,15 @@ export const EMPTY_BALANCE: Balance = {
     },
   },
   amount: new BN(0),
+}
+
+export const createImportUrl = (name: string, signers: string[], threshold: number, proxy: string, chainId: string) => {
+  const params = {
+    name,
+    signers: signers.join(','),
+    threshold,
+    proxy,
+    chain_id: chainId,
+  }
+  return `${window.location.origin}/import?${queryString.stringify(params)}`
 }

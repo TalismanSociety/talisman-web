@@ -4,12 +4,13 @@ import { css } from '@emotion/css'
 import { useTheme } from '@emotion/react'
 import { ExternalLink, Trash } from '@talismn/icons'
 import { IconButton, Identicon } from '@talismn/ui'
-import { toSubscanUrl } from '@util/addresses'
+import { toSs52Address, toSubscanUrl } from '@util/addresses'
 import truncateMiddle from 'truncate-middle'
 
 export const Member = ({ m, chain, onDelete }: { m: AugmentedAccount; onDelete?: () => void; chain: Chain | null }) => {
   const theme = useTheme()
 
+  const ss52Address = toSs52Address(m.address, chain) as string
   return (
     <div
       className={css`
@@ -28,7 +29,7 @@ export const Member = ({ m, chain, onDelete }: { m: AugmentedAccount; onDelete?:
           {m.nickname ? (
             <span>{m.nickname}</span>
           ) : (
-            <span css={{ color: 'var(--color-offWhite)' }}>{truncateMiddle(m.address, 12, 13, '...')}</span>
+            <span css={{ color: 'var(--color-offWhite)' }}>{truncateMiddle(ss52Address, 12, 13, '...')}</span>
           )}
           &nbsp;
           {m.you && <span css={{ color: 'var(--color-offWhite)' }}>(You)</span>}

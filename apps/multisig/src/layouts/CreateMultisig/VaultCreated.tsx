@@ -1,10 +1,10 @@
 import { copyToClipboard } from '@domains/common'
+import { createImportUrl } from '@domains/multisig'
 import { css } from '@emotion/css'
 import { useTheme } from '@emotion/react'
 import { Copy } from '@talismn/icons'
 import { Button, IconButton } from '@talismn/ui'
 import { device } from '@util/breakpoints'
-import queryString from 'query-string'
 import { useReward } from 'react-rewards'
 import { useEffectOnce } from 'react-use'
 
@@ -22,14 +22,7 @@ const MagicLink = ({
   chainId: string
 }) => {
   const theme = useTheme()
-  const params = {
-    name,
-    signers: signers.join(','),
-    threshold,
-    proxy,
-    chain_id: chainId,
-  }
-  const url = `${window.location.origin}/import?${queryString.stringify(params)}`
+  const url = createImportUrl(name, signers, threshold, proxy, chainId)
   return (
     <div
       className={css`
