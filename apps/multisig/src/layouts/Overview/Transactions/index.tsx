@@ -1,4 +1,5 @@
 import { useApproveAsMulti, useAsMulti, useCancelAsMulti, useDecodeCallData } from '@domains/chains'
+import { rawPendingTransactionsDependency } from '@domains/chains/storage-getters'
 import { Transaction, selectedMultisigState, useNextTransactionSigner, usePendingTransaction } from '@domains/multisig'
 import { css } from '@emotion/css'
 import { EyeOfSauronProgressIndicator, FullScreenDialog, HiddenDetails } from '@talismn/ui'
@@ -6,7 +7,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { useEffect, useMemo, useState } from 'react'
 import { toast } from 'react-hot-toast'
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom'
-import { useRecoilValue } from 'recoil'
+import { useRecoilValue, useSetRecoilState } from 'recoil'
 
 import { FullScreenDialogContents, FullScreenDialogTitle } from './FullScreenSummary'
 import TransactionSummaryRow from './TransactionSummaryRow'
@@ -48,6 +49,14 @@ const TransactionsList = ({ transactions }: { transactions: Transaction[] }) => 
     openTransaction?.rawPending?.multisig.when
   )
   const { cancelAsMulti, canCancel } = useCancelAsMulti(openTransaction)
+  const setRawPendingTransactionDependency = useSetRecoilState(rawPendingTransactionsDependency)
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setRawPendingTransactionDependency(new Date())
+    }, 5000)
+    return () => clearInterval(interval)
+  })
 
   // Handle if user clicks a link to a tx that doesn't exist for them
   useEffect(() => {

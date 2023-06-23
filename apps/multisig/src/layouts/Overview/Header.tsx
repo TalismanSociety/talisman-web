@@ -5,6 +5,7 @@ import { css } from '@emotion/css'
 import { useTheme } from '@emotion/react'
 import { Copy, Plus, PlusCircle, TalismanHand } from '@talismn/icons'
 import { Button, IconButton, Identicon, Select } from '@talismn/ui'
+import { toSs52Address } from '@util/addresses'
 import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useRecoilState, useRecoilValue } from 'recoil'
@@ -180,7 +181,10 @@ const Header = () => {
                     }
                   `}
                   onClick={e => {
-                    copyToClipboard(selectedMultisig.proxyAddress, 'Address copied to clipboard')
+                    copyToClipboard(
+                      toSs52Address(selectedMultisig.proxyAddress, selectedMultisig.chain) as string,
+                      'Proxy address copied to clipboard'
+                    )
                     e.stopPropagation()
                   }}
                 />

@@ -10,7 +10,7 @@ import { StorageKey } from '@polkadot/types'
 import { Option } from '@polkadot/types-codec'
 import { BlockHash, BlockNumber, Multisig, ProxyDefinition } from '@polkadot/types/interfaces'
 import { useCallback } from 'react'
-import { selector, selectorFamily, useRecoilValueLoadable } from 'recoil'
+import { atom, selector, selectorFamily, useRecoilValueLoadable } from 'recoil'
 
 import { Chain } from './tokens'
 
@@ -37,6 +37,12 @@ export const useAddressIsProxyDelegatee = (chain: Chain) => {
   return { addressIsProxyDelegatee, ready: apiLoadable.state === 'hasValue' }
 }
 
+// Change this value to the current date to trigger a reload of pending txs
+export const rawPendingTransactionsDependency = atom<Date>({
+  key: 'RawPendingTransactionsDependency',
+  default: new Date(),
+})
+
 // The chain `Multisig` storage entry with some augmented data for easier usage.
 export interface RawPendingTransaction {
   multisig: Multisig
@@ -49,6 +55,9 @@ export interface RawPendingTransaction {
 export const rawPendingTransactionsSelector = selector({
   key: 'rawMultisigPendingTransactionsSelector',
   get: async ({ get }): Promise<RawPendingTransaction[]> => {
+    // This dependency allows effectively clearing the cache of this selector
+    get(rawPendingTransactionsDependency)
+
     const selectedMultisig = get(selectedMultisigState)
     const api = get(pjsApiSelector(selectedMultisig.chain.rpc))
     await api.isReady

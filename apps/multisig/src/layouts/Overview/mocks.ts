@@ -168,7 +168,7 @@ export const mockTransactions: Transaction[] = [
   {
     date: new Date(Date.parse('05 Jan 2023 02:10:00 GMT')),
     description: 'Kitty Litter',
-    hash: '0x106f7g8h9i0j1k2l3m4n5o6p7q8r9s0t1a2b3c4d',
+    hash: '0xx06f7g8h9i0j1k2l3m4n5o6p7q8r9s0t1a2b3c4d',
     chain: supportedChains.find(chain => chain.id === 'polkadot') as Chain,
     approvals: {
       '5FZ1nHXiU9C6yW8Fyry6CQYQwDJKKkdnt1xGxvsJ7M1TPvYX': true,
@@ -191,7 +191,7 @@ export const mockTransactions: Transaction[] = [
   {
     date: new Date(Date.parse('05 Jan 2023 02:10:00 GMT')),
     description: 'Paying off mum',
-    hash: '0x106f7g8h9i0j1k2l3m4n5o6p7q8r9s0t1a2b3c4d',
+    hash: '0xz06f7g8h9i0j1k2l3m4n5o6p7q8r9s0t1a2b3c4d',
     chain: supportedChains.find(chain => chain.id === 'polkadot') as Chain,
     approvals: {
       '5FZ1nHXiU9C6yW8Fyry6CQYQwDJKKkdnt1xGxvsJ7M1TPvYX': true,
@@ -214,7 +214,7 @@ export const mockTransactions: Transaction[] = [
   {
     date: new Date(Date.parse('04 Jan 2023 02:10:00 GMT')),
     description: 'Pokies',
-    hash: '0x106f7g8h9i0j1k2l3m4n5o6p7q8r9s0t1a2b3c4d',
+    hash: '0x096f7g8h9i0j1k2l3m4n5o6p7q8r9s0t1a2b3c4d',
     chain: supportedChains.find(chain => chain.id === 'polkadot') as Chain,
     approvals: {
       '5FZ1nHXiU9C6yW8Fyry6CQYQwDJKKkdnt1xGxvsJ7M1TPvYX': true,
@@ -237,7 +237,7 @@ export const mockTransactions: Transaction[] = [
   {
     date: new Date(Date.parse('04 Jan 2023 02:10:00 GMT')),
     description: 'Salary March',
-    hash: '0x106f7g8h9i0j1k2l3m4n5o6p7q8r9s0t1a2b3c4d',
+    hash: '0xg06f7g8h9i0j1k2l3m4n5o6p7q8r9s0t1a2b3c4d',
     chain: supportedChains.find(chain => chain.id === 'polkadot') as Chain,
     approvals: {
       '5FZ1nHXiU9C6yW8Fyry6CQYQwDJKKkdnt1xGxvsJ7M1TPvYX': true,

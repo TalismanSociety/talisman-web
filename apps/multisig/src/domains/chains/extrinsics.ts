@@ -15,9 +15,9 @@ import { assert, compactToU8a, u8aConcat, u8aEq } from '@polkadot/util'
 import { sortAddresses } from '@polkadot/util-crypto'
 import BN from 'bn.js'
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { useRecoilRefresher_UNSTABLE, useRecoilState, useRecoilValue, useRecoilValueLoadable } from 'recoil'
+import { useRecoilState, useRecoilValue, useRecoilValueLoadable, useSetRecoilState } from 'recoil'
 
-import { rawPendingTransactionsSelector } from './storage-getters'
+import { rawPendingTransactionsDependency, rawPendingTransactionsSelector } from './storage-getters'
 import { Chain, tokenByIdQuery } from './tokens'
 
 // Sorry, not my code. Copied from p.js apps. it's not exported in any public packages.
@@ -105,7 +105,7 @@ export const useCancelAsMulti = (tx: Transaction | undefined) => {
   const extensionAddresses = useRecoilValue(accountsState)
   const apiLoadable = useRecoilValueLoadable(pjsApiSelector(multisig.chain.rpc))
   const nativeToken = useRecoilValueLoadable(tokenByIdQuery(multisig.chain.nativeToken.id))
-  const reloadPending = useRecoilRefresher_UNSTABLE(rawPendingTransactionsSelector)
+  const setRawPendingTransactionDependency = useSetRecoilState(rawPendingTransactionsDependency)
   const [estimatedFee, setEstimatedFee] = useState<Balance | undefined>()
 
   // Only the original signer can cancel
@@ -179,7 +179,7 @@ export const useCancelAsMulti = (tx: Transaction | undefined) => {
                 onFailure(JSON.stringify(result))
               }
               if (method === 'ExtrinsicSuccess') {
-                reloadPending()
+                setRawPendingTransactionDependency(new Date())
                 onSuccess(result)
               }
             })
@@ -191,7 +191,7 @@ export const useCancelAsMulti = (tx: Transaction | undefined) => {
         onFailure(JSON.stringify(e))
       })
     },
-    [depositorAddress, createTx, loading, reloadPending, canCancel]
+    [depositorAddress, createTx, loading, setRawPendingTransactionDependency, canCancel]
   )
 
   return { cancelAsMulti, ready: !loading && !!estimatedFee, estimatedFee, canCancel }
@@ -206,7 +206,7 @@ export const useAsMulti = (
   const apiLoadable = useRecoilValueLoadable(pjsApiSelector(multisig.chain.rpc))
   const rawPending = useRecoilValueLoadable(rawPendingTransactionsSelector)
   const nativeToken = useRecoilValueLoadable(tokenByIdQuery(multisig.chain.nativeToken.id))
-  const reloadPending = useRecoilRefresher_UNSTABLE(rawPendingTransactionsSelector)
+  const setRawPendingTransactionDependency = useSetRecoilState(rawPendingTransactionsDependency)
   const [estimatedFee, setEstimatedFee] = useState<Balance | undefined>()
 
   const ready =
@@ -290,7 +290,7 @@ export const useAsMulti = (
                   onFailure(JSON.stringify(result))
                 }
                 if (method === 'ExtrinsicSuccess') {
-                  reloadPending()
+                  setRawPendingTransactionDependency(new Date())
                   onSuccess(result)
                 }
               })
@@ -302,7 +302,7 @@ export const useAsMulti = (
         onFailure(JSON.stringify(e))
       })
     },
-    [extensionAddress, createTx, reloadPending]
+    [extensionAddress, createTx, setRawPendingTransactionDependency]
   )
 
   return { asMulti, ready: ready && !!estimatedFee, estimatedFee }
@@ -317,7 +317,7 @@ export const useApproveAsMulti = (
   const apiLoadable = useRecoilValueLoadable(pjsApiSelector(multisig.chain.rpc))
   const rawPending = useRecoilValueLoadable(rawPendingTransactionsSelector)
   const nativeToken = useRecoilValueLoadable(tokenByIdQuery(multisig.chain.nativeToken.id))
-  const reloadPending = useRecoilRefresher_UNSTABLE(rawPendingTransactionsSelector)
+  const setRawPendingTransactionDependency = useSetRecoilState(rawPendingTransactionsDependency)
   const [metadataCache, setMetadataCache] = useRecoilState(txOffchainMetadataState)
   const [estimatedFee, setEstimatedFee] = useState<Balance | undefined>()
 
@@ -424,7 +424,7 @@ export const useApproveAsMulti = (
                       console.error('Failed to POST tx metadata sharing service: ', e)
                     })
                 }
-                reloadPending()
+                setRawPendingTransactionDependency(new Date())
                 onSuccess(result)
               }
             })
@@ -439,7 +439,7 @@ export const useApproveAsMulti = (
     [
       extensionAddress,
       createTx,
-      reloadPending,
+      setRawPendingTransactionDependency,
       metadataCache,
       setMetadataCache,
       multisig.chain.id,
@@ -453,7 +453,7 @@ export const useApproveAsMulti = (
 export const useCreateProxy = (chain: Chain, extensionAddress: string | undefined) => {
   const apiLoadable = useRecoilValueLoadable(pjsApiSelector(chain.rpc))
   const nativeToken = useRecoilValueLoadable(tokenByIdQuery(chain.nativeToken.id))
-  const reloadPending = useRecoilRefresher_UNSTABLE(rawPendingTransactionsSelector)
+  const setRawPendingTransactionDependency = useSetRecoilState(rawPendingTransactionsDependency)
   const [estimatedFee, setEstimatedFee] = useState<Balance | undefined>()
 
   const createTx = useCallback(async () => {
@@ -514,7 +514,7 @@ export const useCreateProxy = (chain: Chain, extensionAddress: string | undefine
                 if (method === 'PureCreated') {
                   if (data[0]) {
                     const pure = data[0].toString()
-                    reloadPending()
+                    setRawPendingTransactionDependency(new Date())
                     onSuccess(pure)
                   } else {
                     onFailure('No proxies exist')
@@ -537,7 +537,7 @@ export const useCreateProxy = (chain: Chain, extensionAddress: string | undefine
         onFailure(e.toString())
       })
     },
-    [extensionAddress, createTx, reloadPending]
+    [extensionAddress, createTx, setRawPendingTransactionDependency]
   )
 
   return { createProxy, ready: apiLoadable.state === 'hasValue' && !!estimatedFee, estimatedFee }

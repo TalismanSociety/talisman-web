@@ -204,7 +204,7 @@ export const FullScreenDialogContents = ({
                   setApproveInFlight(false)
                 })
               }}
-              disabled={approveInFlight || cancelInFlight || !fee}
+              disabled={approveInFlight || cancelInFlight || !fee || (readyToExecute && !t.callData)}
             >
               {approveInFlight ? <CircularProgressIndicator /> : readyToExecute ? 'Approve & Execute' : 'Approve'}
             </Button>

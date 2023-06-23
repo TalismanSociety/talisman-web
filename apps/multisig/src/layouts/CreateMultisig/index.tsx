@@ -258,7 +258,13 @@ const CreateMultisig = () => {
           <NoVault onCreate={() => setStep(Step.NameVault)} />
         ) : step === Step.NameVault ? (
           <NameVault
-            onBack={activeMultisigs.length === 0 && !skipNoVault ? () => setStep(Step.NoVault) : undefined}
+            onBack={
+              activeMultisigs.length === 0 && !skipNoVault
+                ? () => setStep(Step.NoVault)
+                : () => {
+                    navigate('/overview')
+                  }
+            }
             onNext={() => setStep(Step.AddMembers)}
             setName={setName}
             name={name}
