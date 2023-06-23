@@ -55,26 +55,52 @@ export const createPsp34NftsAsyncGenerator: <T extends string>(options: {
     const contractsWithNonZeroBalance = contractBalances.filter((x): x is [(typeof x)[0], number] => (x[1] ?? 0) > 0)
 
     for (const [contract, balance] of contractsWithNonZeroBalance) {
+      const collectionIdPromise = contract.query.collectionId()
+      const totalSupplyPromise = contract.query.totalSupply()
+      const collectionNamePromise = collectionIdPromise.then(idResult =>
+        contract.query.getAttribute(returnIdToArgumentId(idResult.value.unwrap()), 'name')
+      )
+
+      // NOTE: Paras & ArtZero fuckery
+      // need to remove support for both when better PSP34 collections are available
+      const baseUriPromise = Promise.all([
+        collectionIdPromise.then(idResult =>
+          contract.query.getAttribute(returnIdToArgumentId(idResult.value.unwrap()), 'baseUri')
+        ),
+        contract.query.getAttribute(returnIdToArgumentId({ u8: 0 }), 'baseURI'),
+      ]).then(
+        ([collectionBaseUrl, madeUpZeroIdCollectionBaseUri]) =>
+          collectionBaseUrl.value.ok ?? madeUpZeroIdCollectionBaseUri.value.ok
+      )
+
       for (const tokenIndexes of partition(batchSize, batchSize, range(0, balance), true)) {
         yield* await Promise.all(
           tokenIndexes.map(async tokenIndex => {
-            const [tokenIdResult, collectionIdResult, totalSupplyResult] = await Promise.all([
-              contract.query.ownersTokenByIndex(address, tokenIndex),
-              contract.query.collectionId(),
-              contract.query.totalSupply(),
-            ])
-
+            const tokenIdResult = await contract.query.ownersTokenByIndex(address, tokenIndex)
             const tokenId = tokenIdResult.value.unwrap().unwrap()
-            const collectionId = collectionIdResult.value.unwrap()
-            const totalSupply = totalSupplyResult.value.unwrap()
 
-            const [collectionNameResult, tokenNameResult] = await Promise.all([
-              contract.query.getAttribute(returnIdToArgumentId(collectionId), 'name'),
-              contract.query.getAttribute(returnIdToArgumentId(tokenId), 'name'),
+            const tokenNameResult = await contract.query.getAttribute(returnIdToArgumentId(tokenId), 'name')
+            const tokenName = tokenNameResult.value.ok ?? undefined
+
+            const [collectionId, totalSupply, collectionName, baseUri] = await Promise.all([
+              collectionIdPromise.then(x => x.value.unwrap()),
+              totalSupplyPromise.then(x => x.value.unwrap()),
+              collectionNamePromise.then(x => x.value.ok),
+              baseUriPromise,
             ])
 
-            const collectionName = collectionNameResult.value.ok ?? undefined
-            const tokenName = tokenNameResult.value.ok ?? undefined
+            const metadata = !baseUri
+              ? undefined
+              : await fetch(
+                  new URL(
+                    'ipfs/' +
+                      baseUri.replace('ipfs://', '').replaceAll('ipfs', '').replaceAll('/', '') +
+                      `/${stringFromId(tokenId)}.json`,
+                    'https://talisman.mypinata.cloud'
+                  )
+                )
+                  .then(x => x.json())
+                  .catch(() => undefined)
 
             const type = 'psp34' as const
 
@@ -82,16 +108,16 @@ export const createPsp34NftsAsyncGenerator: <T extends string>(options: {
               type,
               chain: chainId,
               id: `${type}-${chainId}-${stringFromId(collectionId)}-${stringFromId(tokenId)}`,
-              name: tokenName,
-              description: undefined,
-              media: undefined,
-              thumbnail: undefined,
+              name: tokenName || metadata?.name,
+              description: metadata?.description,
+              media: metadata?.image,
+              thumbnail: metadata?.image,
               serialNumber: BigInt(stringFromId(tokenId)),
               properties: undefined,
               externalLinks: getExternalLink(contract.address),
               collection: {
                 id: stringFromId(collectionId),
-                name: collectionName,
+                name: collectionName ?? undefined,
                 totalSupply: BigInt(totalSupply.rawNumber.toString()),
               },
             }
