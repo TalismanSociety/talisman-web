@@ -4,6 +4,7 @@ import { css } from '@emotion/css'
 import { useTheme } from '@emotion/react'
 import { Copy, ExternalLink, Plus } from '@talismn/icons'
 import { Button, IconButton, Identicon } from '@talismn/ui'
+import { toSubscanUrl } from '@util/addresses'
 
 import { BackButton } from '.'
 
@@ -40,7 +41,7 @@ const Chain = ({ address, chain, onDelete }: { address: string; chain: ChainT; o
         >
           <Copy size={16} />
         </IconButton>
-        <a href={`https://subscan.io/address/${address}`}>
+        <a href={toSubscanUrl(address, chain)}>
           <IconButton size={16} contentColor={`rgb(${theme.foreground})`} css={{ cursor: 'pointer' }}>
             <ExternalLink size={16} />
           </IconButton>

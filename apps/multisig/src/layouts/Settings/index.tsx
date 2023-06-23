@@ -24,7 +24,7 @@ export const BackButton = () => {
       }}
     >
       <div css={{ display: 'flex', gap: '4px' }}>
-        <IconButton size={16} contentColor={`rgb(${theme.dim})`}>
+        <IconButton as={'div'} size={16} contentColor={`rgb(${theme.dim})`}>
           <ChevronLeft size={16} />
         </IconButton>
         <span css={{ fontSize: '16px', color: 'var(--color-dim)' }}>Back</span>

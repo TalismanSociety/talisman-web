@@ -123,7 +123,7 @@ export interface TransactionDecoded {
 export interface Transaction {
   description: string
   hash: `0x${string}`
-  chainId: string
+  chain: Chain
   approvals: TransactionApprovals
   date: Date
   rawPending?: RawPendingTransaction
@@ -268,7 +268,7 @@ export const usePendingTransaction = () => {
             hash: rawPending.callHash,
             decoded,
             rawPending: rawPending,
-            chainId: selectedMultisig.chain.id,
+            chain: selectedMultisig.chain,
             approvals: rawPending.approvals,
           }
         } else {
@@ -278,7 +278,7 @@ export const usePendingTransaction = () => {
             description: `Transaction ${truncateMiddle(rawPending.callHash, 6, 4, '...')}`,
             hash: rawPending.callHash,
             rawPending: rawPending,
-            chainId: selectedMultisig.chain.id,
+            chain: selectedMultisig.chain,
             approvals: rawPending.approvals,
           }
         }

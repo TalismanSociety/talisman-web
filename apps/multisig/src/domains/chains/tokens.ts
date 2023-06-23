@@ -84,6 +84,7 @@ export interface Chain {
   }
   rpc: string
   decimals: number
+  ss58Prefix: number
 }
 
 export const chainTokensByIdQuery = graphQLSelectorFamily({

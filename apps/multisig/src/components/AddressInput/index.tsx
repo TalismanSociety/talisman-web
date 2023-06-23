@@ -28,7 +28,7 @@ const AddressInput = (
         />
         <div
           onClick={() => {
-            const validAddress = toSs52Address(address)
+            const validAddress = toSs52Address(address, null)
             if (!validAddress) {
               toast.error('Invalid address')
             } else {

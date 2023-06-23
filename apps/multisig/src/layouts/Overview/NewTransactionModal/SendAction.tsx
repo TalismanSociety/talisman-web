@@ -170,7 +170,7 @@ const DetailsForm = (props: {
         <Button onClick={props.onBack} children={<h3>Back</h3>} variant="outlined" />
         <Button
           disabled={
-            toSs52Address(props.destination) === false ||
+            toSs52Address(props.destination, null) === false ||
             isNaN(parseFloat(props.amount)) ||
             props.amount.endsWith('.') ||
             !props.selectedToken
@@ -212,7 +212,13 @@ const SendAction = (props: { onCancel: () => void }) => {
   }, [amountInput, selectedToken])
 
   useEffect(() => {
-    if (destination && selectedToken && apiLoadable.state === 'hasValue' && amountBn && toSs52Address(destination)) {
+    if (
+      destination &&
+      selectedToken &&
+      apiLoadable.state === 'hasValue' &&
+      amountBn &&
+      toSs52Address(destination, multisig.chain)
+    ) {
       if (!apiLoadable.contents.tx.balances?.transferKeepAlive || !apiLoadable.contents.tx.proxy?.proxy) {
         throw Error('chain missing balances pallet')
       }
@@ -224,7 +230,7 @@ const SendAction = (props: { onCancel: () => void }) => {
         console.error(error)
       }
     }
-  }, [destination, selectedToken, apiLoadable, amountBn, multisig.proxyAddress])
+  }, [destination, selectedToken, apiLoadable, amountBn, multisig])
 
   const t: Transaction | undefined = useMemo(() => {
     if (selectedToken && extrinsic) {
@@ -233,7 +239,7 @@ const SendAction = (props: { onCancel: () => void }) => {
         date: new Date(),
         hash,
         description: name,
-        chainId: multisig.chain.id,
+        chain: multisig.chain,
         approvals: multisig.signers.reduce((acc, key) => {
           acc[key] = false
           return acc

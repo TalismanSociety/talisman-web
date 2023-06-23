@@ -42,23 +42,20 @@ const Approvals = ({ t }: { t: Transaction }) => {
       {Object.entries(t.approvals).map(([address, approval]) => (
         <div key={address} css={{ display: 'flex', width: '100%', justifyContent: 'space-between' }}>
           <div css={{ width: '100%' }}>
-            <MemberRow member={{ address }} />
+            <MemberRow member={{ address }} chain={t.chain} />
           </div>
-          <a
+          <div
             className={css`
               grid-area: executedInfo;
               margin-left: 24px;
             `}
-            href={`https://subscan.com/${approval ? approval : address}`}
-            target="_blank"
-            rel="noreferrer"
           >
             <StatusCircle
               type={approval ? StatusCircleType.Success : StatusCircleType.Unknown}
               circleDiameter="24px"
               iconDimentions={{ width: '11px', height: 'auto' }}
             />
-          </a>
+          </div>
         </div>
       ))}
     </div>

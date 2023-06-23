@@ -4,13 +4,14 @@ import 'ace-builds/src-noconflict/theme-twilight'
 import 'ace-builds/src-noconflict/ext-language_tools'
 
 import { CallDataPasteForm } from '@components/CallDataPasteForm'
-import { tokenPriceState, useDecodeCallData } from '@domains/chains'
+import { Chain, tokenPriceState, useDecodeCallData } from '@domains/chains'
 import { copyToClipboard } from '@domains/common'
 import { Balance, Transaction, TransactionType, calcSumOutgoing, txOffchainMetadataState } from '@domains/multisig'
 import { css } from '@emotion/css'
 import { useTheme } from '@emotion/react'
 import { Check, ChevronRight, Copy, List, Send, Share2, Unknown, Users } from '@talismn/icons'
 import { IconButton, Identicon, Skeleton } from '@talismn/ui'
+import { toSubscanUrl } from '@util/addresses'
 import { balanceToFloat, formatUsd } from '@util/numbers'
 import { useEffect, useMemo, useState } from 'react'
 import AceEditor from 'react-ace'
@@ -42,7 +43,7 @@ const AmountRow = ({ balance }: { balance: Balance }) => {
   )
 }
 
-const AddressPill = ({ a }: { a: string }) => {
+const AddressPill = ({ a, c }: { a: string; c: Chain }) => {
   return (
     <a
       className={css`
@@ -56,7 +57,7 @@ const AddressPill = ({ a }: { a: string }) => {
         font-size: 14px;
         gap: 4px;
       `}
-      href={`https://subscan.io/address/${a}`}
+      href={toSubscanUrl(a, c)}
       target="_blank"
       rel="noreferrer"
     >
@@ -112,7 +113,7 @@ const MultiSendExpendedDetails = ({ t }: { t: Transaction }) => {
             </div>
             <div css={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               Destination
-              <AddressPill a={address} />
+              <AddressPill a={address} c={t.chain} />
             </div>
           </div>
         )
@@ -180,7 +181,7 @@ const TransactionDetailsExpandable = ({ t }: { t: Transaction }) => {
     if (copiedCallHash) {
       setTimeout(() => {
         setCopiedCallHash(false)
-      }, 500)
+      }, 1000)
     }
   }, [copiedCallHash, setCopiedCallHash])
 
@@ -188,7 +189,7 @@ const TransactionDetailsExpandable = ({ t }: { t: Transaction }) => {
     if (copiedCallData) {
       setTimeout(() => {
         setCopiedCallData(false)
-      }, 500)
+      }, 1000)
     }
   }, [copiedCallData, setCopiedCallData])
 
@@ -280,7 +281,7 @@ const TransactionDetailsExpandable = ({ t }: { t: Transaction }) => {
               margin-left: auto;
             `}
           >
-            <AddressPill a={recipients[0]?.address || ''} />
+            <AddressPill a={recipients[0]?.address || ''} c={t.chain} />
           </div>
         ) : null}
         {/* Show the token amounts being sent in this transaction */}
@@ -371,7 +372,8 @@ const TransactionDetailsExpandable = ({ t }: { t: Transaction }) => {
                 <div css={{ display: 'flex', gap: '18px', alignItems: 'center', justifyContent: 'center' }}>
                   <p css={{ overflowWrap: 'break-word', maxWidth: '450px' }}>{t.callData}</p>
                   <IconButton
-                    css={{ cursor: 'pointer' }}
+                    contentColor={copiedCallData ? `rgb(${theme.primary})` : `rgb(${theme.offWhite})`}
+                    css={{ cursor: 'pointer', pointerEvents: copiedCallData ? 'none' : 'auto' }}
                     onClick={() => {
                       setCopiedCallData(true)
                       copyToClipboard(t.callData as string, 'Call data copied to clipboard.')
@@ -386,7 +388,8 @@ const TransactionDetailsExpandable = ({ t }: { t: Transaction }) => {
                 <div css={{ display: 'flex', gap: '18px', alignItems: 'center', justifyContent: 'center' }}>
                   <p css={{ overflowWrap: 'break-word', maxWidth: '450px' }}>{t.hash}</p>
                   <IconButton
-                    css={{ cursor: 'pointer' }}
+                    contentColor={copiedCallHash ? `rgb(${theme.primary})` : `rgb(${theme.offWhite})`}
+                    css={{ cursor: 'pointer', pointerEvents: copiedCallHash ? 'none' : 'auto' }}
                     onClick={() => {
                       setCopiedCallHash(true)
                       copyToClipboard(t.hash as string, 'Call hash copied to clipboard.')

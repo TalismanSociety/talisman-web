@@ -47,6 +47,7 @@ const AddMembers = (props: {
           return (
             <MemberRow
               key={account.address}
+              chain={null}
               truncate={true}
               member={account}
               onDelete={() => {
@@ -58,7 +59,7 @@ const AddMembers = (props: {
       </div>
       <AddressInput
         additionalValidation={(a: string) => {
-          if (props.augmentedAccounts.map(a => toSs52Address(a.address)).includes(a)) {
+          if (props.augmentedAccounts.map(a => toSs52Address(a.address, null)).includes(a)) {
             toast.error('Duplicate address')
             return false
           }

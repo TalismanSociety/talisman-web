@@ -36,7 +36,7 @@ const Import = () => {
     if (!ready || valid === false) return
 
     // Basic query param validation
-    if (typeof proxy !== 'string' || toSs52Address(proxy) === false) {
+    if (typeof proxy !== 'string' || toSs52Address(proxy, null) === false) {
       toast.error('Invalid or missing proxy')
       setValid(false)
       return
@@ -56,7 +56,7 @@ const Import = () => {
 
     if (
       !Array.isArray(signersArray) ||
-      !signersArray.every(signer => typeof signer === 'string' && toSs52Address(signer) !== false)
+      !signersArray.every(signer => typeof signer === 'string' && toSs52Address(signer, chain) !== false)
     ) {
       toast.error('Invalid or missing signers')
       setValid(false)
@@ -157,7 +157,7 @@ const Import = () => {
           <br />
           {(signers as string[]).map((signer: string) => (
             <div css={{ width: '400px' }}>
-              <Member m={{ address: signer }} />
+              <Member m={{ address: signer }} chain={chain} />
             </div>
           ))}
           <br />

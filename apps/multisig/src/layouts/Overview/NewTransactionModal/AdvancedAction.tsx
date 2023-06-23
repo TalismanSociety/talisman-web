@@ -84,7 +84,7 @@ const AdvancedAction = (props: { onCancel: () => void }) => {
         date: new Date(),
         hash: hash || '0x',
         description: name,
-        chainId: multisig.chain.id,
+        chain: multisig.chain,
         approvals: multisig.signers.reduce((acc, key) => {
           acc[key] = false
           return acc

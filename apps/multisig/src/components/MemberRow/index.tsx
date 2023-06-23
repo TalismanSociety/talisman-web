@@ -1,11 +1,18 @@
+import { Chain } from '@domains/chains'
 import { AugmentedAccount } from '@domains/multisig'
 import { css } from '@emotion/css'
 import { useTheme } from '@emotion/react'
 import { ExternalLink, Trash } from '@talismn/icons'
 import { IconButton, Identicon } from '@talismn/ui'
+import { toSubscanUrl } from '@util/addresses'
 import truncateMiddle from 'truncate-middle'
 
-const MemberRow = (props: { member: AugmentedAccount; onDelete?: () => void; truncate?: boolean }) => {
+const MemberRow = (props: {
+  member: AugmentedAccount
+  chain: Chain | null
+  onDelete?: () => void
+  truncate?: boolean
+}) => {
   const theme = useTheme()
   return (
     <div
@@ -67,7 +74,7 @@ const MemberRow = (props: { member: AugmentedAccount; onDelete?: () => void; tru
           )}
         </>
       )}
-      <a href={`https://subscan.io/account/${props.member.address}`} target="_blank" rel="noreferrer">
+      <a href={toSubscanUrl(props.member.address, props.chain)} target="_blank" rel="noreferrer">
         <IconButton
           className={css`
             cursor: pointer;

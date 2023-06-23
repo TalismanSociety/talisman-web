@@ -11,6 +11,7 @@ export const supportedChains: Chain[] = [
     },
     rpc: 'wss://rpc.polkadot.io',
     decimals: 10,
+    ss58Prefix: 0,
   },
   {
     id: 'kusama',
@@ -22,6 +23,7 @@ export const supportedChains: Chain[] = [
     },
     rpc: 'wss://kusama-rpc.polkadot.io',
     decimals: 12,
+    ss58Prefix: 2,
   },
   {
     id: 'westend-testnet',
@@ -33,6 +35,7 @@ export const supportedChains: Chain[] = [
     },
     rpc: 'wss://westend-rpc.polkadot.io',
     decimals: 12,
+    ss58Prefix: 42,
   },
   {
     id: 'rococo-testnet',
@@ -44,5 +47,6 @@ export const supportedChains: Chain[] = [
     },
     rpc: 'wss://rococo-rpc.polkadot.io',
     decimals: 12,
+    ss58Prefix: 42,
   },
 ]

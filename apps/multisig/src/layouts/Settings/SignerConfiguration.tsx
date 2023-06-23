@@ -1,46 +1,31 @@
 import AddressInput from '@components/AddressInput'
 import { Member } from '@components/Member'
 import Slider from '@components/Slider'
-import { AugmentedAccount } from '@domains/multisig'
+import { selectedMultisigState } from '@domains/multisig'
 import { css } from '@emotion/css'
 import { Button } from '@talismn/ui'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import { useRecoilValue } from 'recoil'
 
 import { BackButton } from '.'
 
-const mockCurrentMembers: AugmentedAccount[] = [
-  {
-    address: '1nmiDTJWNCAUpeaVcRJPbnKAqNhFyVQeFAwbwTR6aSkkhCG',
-    you: true,
-    nickname: 'My Ledger 1',
-  },
-  {
-    address: '15crUBZ46oZZMeyULKFvCqybQC2HkXJZJcsFhcGN91HqDRuM',
-    you: true,
-    nickname: 'My Hot Wallet',
-  },
-  {
-    address: '12ud6X3HTfWmV6rYZxiFo6f6QEDc1FF74k91vF76AmCDMT4j',
-  },
-]
-
-const mockThreshold = 3
-
 const ManageSignerConfiguration = () => {
-  // TODO: Fetch these from recoil or whatever
-  const vaultName = 'Paraverse Foundation'
-  const currentMembers = mockCurrentMembers
-  const currentThreshold = mockThreshold
+  const multisig = useRecoilValue(selectedMultisigState)
+  const [newMembers, setNewMembers] = useState(multisig.signers)
+  const [newThreshold, setNewThreshold] = useState(multisig.threshold)
 
-  const [newMembers, setNewMembers] = useState(mockCurrentMembers)
-  const [newThreshold, setNewThreshold] = useState(mockThreshold)
+  useEffect(() => {
+    setNewMembers(multisig.signers)
+    setNewThreshold(multisig.threshold)
+  }, [multisig])
 
   const membersDiffExists = useMemo(() => {
     return (
-      currentMembers.length !== newMembers.length || currentMembers.some((value, index) => value !== newMembers[index])
+      multisig.signers.length !== newMembers.length ||
+      multisig.signers.some((value, index) => value !== newMembers[index])
     )
-  }, [currentMembers, newMembers])
-  const thresholdDiffExists = newThreshold !== currentThreshold
+  }, [multisig.signers, newMembers])
+  const thresholdDiffExists = newThreshold !== multisig.threshold
   const diffExists = membersDiffExists || thresholdDiffExists
 
   return (
@@ -63,17 +48,18 @@ const ManageSignerConfiguration = () => {
           <div css={{ display: 'grid', gap: '16px' }}>
             <h2 css={{ color: 'var(--color-offWhite)' }}>Vault Members</h2>
             <div css={{ display: 'flex' }}>
-              <span>Members of</span>&nbsp;<span css={{ color: 'var(--color-primary)' }}>{vaultName}</span>
+              <span>Members of</span>&nbsp;<span css={{ color: 'var(--color-primary)' }}>{multisig.name}</span>
             </div>
             <div css={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '40px' }}>
               {newMembers.map(m => (
                 <Member
-                  key={m.address}
-                  m={m}
+                  chain={multisig.chain}
+                  key={m}
+                  m={{ address: m }}
                   onDelete={
                     newMembers.length > 2
                       ? () => {
-                          setNewMembers(newMembers.filter(nm => nm.address !== m.address))
+                          setNewMembers(newMembers.filter(nm => nm !== m))
                         }
                       : undefined
                   }
@@ -84,7 +70,7 @@ const ManageSignerConfiguration = () => {
           <AddressInput
             css={{ marginTop: '24px' }}
             onNewAddress={(a: string) => {
-              setNewMembers([...newMembers, { address: a }])
+              setNewMembers([...newMembers, a])
             }}
           />
         </div>
@@ -135,30 +121,31 @@ const ManageSignerConfiguration = () => {
           </div>
         </div>
       </div>
-      {diffExists && (
-        <div
-          css={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            width: '100%',
-            marginTop: '32px',
-            gap: '24px',
+      <div
+        css={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          width: '100%',
+          marginTop: '32px',
+          gap: '24px',
+        }}
+      >
+        <Button
+          disabled={!diffExists}
+          variant={'outlined'}
+          css={{ maxWidth: '180px' }}
+          onClick={() => {
+            setNewMembers(multisig.signers)
+            setNewThreshold(multisig.threshold)
           }}
         >
-          <Button
-            variant={'outlined'}
-            css={{ maxWidth: '180px' }}
-            onClick={() => {
-              setNewMembers(currentMembers)
-              setNewThreshold(currentThreshold)
-            }}
-          >
-            Reset
-          </Button>
-          <Button css={{ maxWidth: '180px' }}>Apply Changes</Button>
-        </div>
-      )}
+          Reset
+        </Button>
+        <Button css={{ maxWidth: '180px' }} disabled={!diffExists}>
+          Apply Changes
+        </Button>
+      </div>
     </div>
   )
 }
