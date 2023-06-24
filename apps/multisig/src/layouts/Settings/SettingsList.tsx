@@ -1,7 +1,8 @@
 import { copyToClipboard } from '@domains/common'
 import { createImportUrl, multisigsState, selectedMultisigState } from '@domains/multisig'
 import { css } from '@emotion/css'
-import { Globe, Users } from '@talismn/icons'
+import { Users } from '@talismn/icons'
+// import { Globe } from '@talismn/icons'
 import { Button, IconButton } from '@talismn/ui'
 import { ReactElement } from 'react'
 import toast from 'react-hot-toast'
@@ -73,14 +74,14 @@ const SettingsList = () => {
         padding-left: 120px;
       `}
     >
-      <SettingOption
+      {/* <SettingOption
         icon={<Globe size={32} />}
         title={'Manage networks'}
         description={'View existing and add new networks'}
         onClick={() => {
           navigate('/settings/manage-networks')
         }}
-      />
+      /> */}
       <SettingOption
         icon={<Users size={32} />}
         title={'Manage signer configuration'}
