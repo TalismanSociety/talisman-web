@@ -1,13 +1,20 @@
 import { useApproveAsMulti, useAsMulti, useCancelAsMulti, useDecodeCallData } from '@domains/chains'
-import { rawPendingTransactionsDependency } from '@domains/chains/storage-getters'
-import { Transaction, selectedMultisigState, useNextTransactionSigner, usePendingTransaction } from '@domains/multisig'
+import { rawPendingTransactionsDependency, useAddressIsProxyDelegatee } from '@domains/chains/storage-getters'
+import {
+  Transaction,
+  multisigsState,
+  selectedMultisigState,
+  useNextTransactionSigner,
+  usePendingTransactions,
+} from '@domains/multisig'
 import { css } from '@emotion/css'
 import { EyeOfSauronProgressIndicator, FullScreenDialog, HiddenDetails } from '@talismn/ui'
+import { toMultisigAddress } from '@util/addresses'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useEffect, useMemo, useState } from 'react'
 import { toast } from 'react-hot-toast'
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom'
-import { useRecoilValue, useSetRecoilState } from 'recoil'
+import { useRecoilState, useSetRecoilState } from 'recoil'
 
 import { FullScreenDialogContents, FullScreenDialogTitle } from './FullScreenSummary'
 import TransactionSummaryRow from './TransactionSummaryRow'
@@ -33,14 +40,19 @@ const TransactionsList = ({ transactions }: { transactions: Transaction[] }) => 
   const groupedTransactions = useMemo(() => {
     return groupTransactionsByDay(transactions)
   }, [transactions])
-  const selectedMultisig = useRecoilValue(selectedMultisigState)
-  const openTransaction = transactions.find(t => t.hash === extractHash(location))
+  const [selectedMultisig, setSelectedMultisig] = useRecoilState(selectedMultisigState)
+  const openTransaction = useMemo(
+    () => transactions.find(t => t.hash === extractHash(location)),
+    [transactions, location]
+  )
+  const [multisigs, setMultisigs] = useRecoilState(multisigsState)
   const nextSigner = useNextTransactionSigner(openTransaction?.approvals)
   const { approveAsMulti, estimatedFee: approveAsMultiEstimatedFee } = useApproveAsMulti(
     nextSigner?.address,
     openTransaction?.hash,
     openTransaction?.rawPending?.multisig.when
   )
+  const { addressIsProxyDelegatee } = useAddressIsProxyDelegatee(selectedMultisig.chain)
   const { decodeCallData } = useDecodeCallData()
   const maybeCallData = (openTransaction?.callData && decodeCallData(openTransaction.callData)) || undefined
   const { asMulti, estimatedFee: asMultiEstimatedFee } = useAsMulti(
@@ -125,9 +137,39 @@ const TransactionsList = ({ transactions }: { transactions: Transaction[] }) => 
                   new Promise((resolve, reject) => {
                     if (readyToExecute) {
                       asMulti({
-                        onSuccess: () => {
+                        onSuccess: async () => {
+                          // Handle execution of the multisig configuration change
+                          if (openTransaction?.decoded?.changeConfigDetails) {
+                            const expectedNewMultisigAddress = toMultisigAddress(
+                              openTransaction.decoded.changeConfigDetails.signers,
+                              openTransaction.decoded.changeConfigDetails.threshold
+                            )
+                            const { isProxyDelegatee } = await addressIsProxyDelegatee(
+                              selectedMultisig.proxyAddress,
+                              expectedNewMultisigAddress
+                            )
+                            if (isProxyDelegatee) {
+                              const otherMultisigs = multisigs.filter(
+                                m => m.multisigAddress !== selectedMultisig.multisigAddress
+                              )
+                              const newMultisig = {
+                                ...selectedMultisig,
+                                multisigAddress: expectedNewMultisigAddress,
+                                threshold: openTransaction.decoded.changeConfigDetails.threshold,
+                                signers: openTransaction.decoded.changeConfigDetails.signers,
+                              }
+                              // Disable these to test that updating from the metadata service works
+                              setMultisigs([...otherMultisigs, newMultisig])
+                              setSelectedMultisig(newMultisig)
+                            } else {
+                              toast.error(
+                                'It appears there was an issue updating your multisig configuration. Please check the transaction output.'
+                              )
+                            }
+                          } else {
+                            toast.success('Transaction executed.', { duration: 5000, position: 'bottom-right' })
+                          }
                           navigate('/overview')
-                          toast.success('Transaction executed.', { duration: 5000, position: 'bottom-right' })
                           resolve()
                         },
                         onFailure: e => {
@@ -181,7 +223,7 @@ const TransactionsList = ({ transactions }: { transactions: Transaction[] }) => 
 }
 
 const Transactions = ({ transactions }: { transactions: Transaction[] }) => {
-  const { transactions: pendingTransactions, loading: pendingLoading } = usePendingTransaction()
+  const { transactions: pendingTransactions, loading: pendingLoading } = usePendingTransactions()
   // Mocks below
   // const pendingTransactions = useMemo(() => {
   //   return transactions.filter(t => Object.values(t.approvals).some(a => !a))

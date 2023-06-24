@@ -32,77 +32,82 @@ const Import = () => {
   }, [signers])
 
   useEffect(() => {
-    if (!ready || valid === false) return
+    async function validate() {
+      if (!ready || valid === false) return
 
-    // Basic query param validation
-    if (typeof proxy !== 'string' || toSs52Address(proxy, null) === false) {
-      toast.error('Invalid or missing proxy')
-      setValid(false)
-      return
-    }
-
-    if (typeof name !== 'string') {
-      toast.error('Invalid or missing name')
-      setValid(false)
-      return
-    }
-
-    if (supportedChains.every(c => c.id !== chain_id)) {
-      toast.error('Invalid or missing chain')
-      setValid(false)
-      return
-    }
-
-    if (
-      !Array.isArray(signersArray) ||
-      !signersArray.every(signer => typeof signer === 'string' && toSs52Address(signer, chain) !== false)
-    ) {
-      toast.error('Invalid or missing signers')
-      setValid(false)
-      return
-    }
-
-    if (isNaN(thresholdNumber)) {
-      toast.error('Invalid or missing threshold')
-      setValid(false)
-      return
-    }
-
-    const multisigAddress = toMultisigAddress(signersArray as string[], thresholdNumber)
-
-    // Get the actual on-chain address that controls the proxy, make sure it matches the multisig address
-    if (!addressIsProxyDelegatee(proxy as string, multisigAddress)) {
-      toast.error('Invalid multisig/proxy configuration. This link may be outdated.')
-      return
-    }
-
-    setValid(true)
-
-    // Check for overlap between the multisig signers and the connected wallet
-    const overlap = arrayIntersection<string>(
-      signersArray as string[],
-      extensionAccounts.map(a => a.address)
-    )
-    if (overlap.length > 0) {
-      if (!multisigs.every(({ proxyAddress }) => proxyAddress !== proxy)) {
-        toast.error('Import failed: Multisig already imported', { duration: 5000 })
-        navigate('/overview')
+      // Basic query param validation
+      if (typeof proxy !== 'string' || toSs52Address(proxy, null) === false) {
+        toast.error('Invalid or missing proxy')
+        setValid(false)
         return
       }
 
-      const multisig: Multisig = {
-        name,
-        chain,
-        multisigAddress,
-        proxyAddress: proxy,
-        signers: signersArray as string[],
-        threshold: thresholdNumber,
+      if (typeof name !== 'string') {
+        toast.error('Invalid or missing name')
+        setValid(false)
+        return
       }
-      setMultisigs([...multisigs, multisig])
-      setSelectedMultisig(multisig)
-      navigate('/overview')
-      toast.success('Multisig imported successfully! 🥳', { duration: 5000 })
+
+      if (supportedChains.every(c => c.id !== chain_id)) {
+        toast.error('Invalid or missing chain')
+        setValid(false)
+        return
+      }
+
+      if (
+        !Array.isArray(signersArray) ||
+        !signersArray.every(signer => typeof signer === 'string' && toSs52Address(signer, chain) !== false)
+      ) {
+        toast.error('Invalid or missing signers')
+        setValid(false)
+        return
+      }
+
+      if (isNaN(thresholdNumber)) {
+        toast.error('Invalid or missing threshold')
+        setValid(false)
+        return
+      }
+
+      const multisigAddress = toMultisigAddress(signersArray as string[], thresholdNumber)
+
+      // Get the actual on-chain address that controls the proxy, make sure it matches the multisig address
+      const res = await addressIsProxyDelegatee(proxy as string, multisigAddress)
+      if (!res.isProxyDelegatee) {
+        toast.error('Invalid multisig/proxy configuration. This link may be outdated, please ask for a new one.')
+        return
+      }
+
+      setValid(true)
+
+      // Check for overlap between the multisig signers and the connected wallet
+      const overlap = arrayIntersection<string>(
+        signersArray as string[],
+        extensionAccounts.map(a => a.address)
+      )
+      if (overlap.length > 0) {
+        if (!multisigs.every(({ proxyAddress }) => proxyAddress !== proxy)) {
+          toast.error('Import failed: Multisig already imported', { duration: 5000 })
+          navigate('/overview')
+          return
+        }
+
+        const multisig: Multisig = {
+          name,
+          chain,
+          multisigAddress,
+          proxyAddress: proxy,
+          signers: signersArray as string[],
+          threshold: thresholdNumber,
+        }
+        setMultisigs([...multisigs, multisig])
+        setSelectedMultisig(multisig)
+        navigate('/overview')
+        toast.success('Multisig imported successfully! 🥳', { duration: 5000 })
+      }
     }
+
+    validate()
   }, [
     setMultisigs,
     setSelectedMultisig,
@@ -151,7 +156,7 @@ const Import = () => {
           <h1>Connect a signer from this multisig to continue</h1>
           <br />
           {(signers as string[]).map((signer: string) => (
-            <div css={{ width: '400px' }}>
+            <div key={signer} css={{ width: '400px' }}>
               <Member m={{ address: signer }} chain={chain} />
             </div>
           ))}

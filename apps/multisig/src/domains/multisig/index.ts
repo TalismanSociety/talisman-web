@@ -162,12 +162,14 @@ export const calcSumOutgoing = (t: Transaction): Balance[] => {
 }
 
 export const extrinsicToDecoded = (
+  multisig: Multisig,
   extrinsic: SubmittableExtrinsic<'promise'>,
   nativeToken: Token,
   changeConfigDetails: ChangeConfigDetails | null
-): TransactionDecoded => {
+): TransactionDecoded | 'not_ours' => {
   try {
     const { method, section, args } = extrinsic.method
+
     // If it's not a proxy call, just return advanced
     if (section !== 'proxy' || method !== 'proxy')
       return {
@@ -175,7 +177,11 @@ export const extrinsicToDecoded = (
         recipients: [],
       }
 
-    // Got proxy call. Check if it's a Transfer type
+    // Got proxy call. Check that it's for our proxy.
+    // @ts-ignore
+    const proxy = extrinsic?.method?.toHuman()?.args?.real?.Id
+    if (proxy !== multisig.proxyAddress) return 'not_ours'
+
     const recipients: TransactionRecipient[] = []
     for (const arg of args) {
       const obj: any = arg.toHuman()
@@ -236,7 +242,7 @@ export const extrinsicToDecoded = (
 }
 
 // transforms raw transaction from the chain into a full Transaction
-export const usePendingTransaction = () => {
+export const usePendingTransactions = () => {
   const selectedMultisig = useRecoilValue(selectedMultisigState)
   const allRawPending = useRecoilValueLoadable(rawPendingTransactionsSelector)
   const apiLoadable = useRecoilValueLoadable(pjsApiSelector(selectedMultisig.chain.rpc))
@@ -259,82 +265,92 @@ export const usePendingTransaction = () => {
   const loadTransactions = useCallback(async () => {
     if (!ready) return
 
-    const transactions = await Promise.all(
-      allRawPending.contents.map(async rawPending => {
-        await api.isReady
-        let metadata = metadataCache[rawPending.callHash]
+    const transactions = (
+      await Promise.all(
+        allRawPending.contents.map(async rawPending => {
+          await api.isReady
+          let metadata = metadataCache[rawPending.callHash]
 
-        if (!metadata) {
-          try {
-            const metadataValues = await getTxMetadataByPk({
-              multisig: selectedMultisig.multisigAddress,
-              chain: selectedMultisig.chain.id,
-              timepoint_height: rawPending.multisig.when.height.toNumber(),
-              timepoint_index: rawPending.multisig.when.index.toNumber(),
-            })
-
-            if (metadataValues) {
-              // Validate calldata from the metadata service matches the hash from the chain
-              const extrinsic = decodeCallData(metadataValues.callData)
-              if (!extrinsic) {
-                throw new Error(
-                  `Failed to create extrinsic from callData recieved from metadata sharing service for hash ${rawPending.callHash}`
-                )
-              }
-
-              const derivedHash = extrinsic.registry.hash(extrinsic.method.toU8a()).toHex()
-              if (derivedHash !== rawPending.callHash) {
-                throw new Error(
-                  `CallData from metadata sharing service for hash ${rawPending.callHash} does not match hash from chain. Expected ${rawPending.callHash}, got ${derivedHash}`
-                )
-              }
-
-              console.log(`Loaded metadata for callHash ${rawPending.callHash} from sharing service`)
-              metadata = [metadataValues, new Date()]
-              setMetadataCache({
-                ...metadataCache,
-                [rawPending.callHash]: metadata,
+          if (!metadata) {
+            try {
+              const metadataValues = await getTxMetadataByPk({
+                multisig: selectedMultisig.multisigAddress,
+                chain: selectedMultisig.chain.id,
+                timepoint_height: rawPending.multisig.when.height.toNumber(),
+                timepoint_index: rawPending.multisig.when.index.toNumber(),
               })
-            } else {
-              console.warn(`Metadata service has no value for callHash ${rawPending.callHash}`)
-            }
-          } catch (error) {
-            console.error(`Failed to fetch callData for callHash ${rawPending.callHash}:`, error)
-          }
-        }
 
-        if (metadata) {
-          // got calldata!
-          const extrinsic = decodeCallData(metadata[0].callData)
-          const decoded = extrinsic
-            ? extrinsicToDecoded(extrinsic, nativeToken.contents, metadata[0].changeConfigDetails || null)
-            : undefined
-          return {
-            date: rawPending.date,
-            description: metadata[0].description,
-            callData: metadata[0].callData,
-            hash: rawPending.callHash,
-            decoded,
-            rawPending: rawPending,
-            chain: selectedMultisig.chain,
-            approvals: rawPending.approvals,
+              if (metadataValues) {
+                // Validate calldata from the metadata service matches the hash from the chain
+                const extrinsic = decodeCallData(metadataValues.callData)
+                if (!extrinsic) {
+                  throw new Error(
+                    `Failed to create extrinsic from callData recieved from metadata sharing service for hash ${rawPending.callHash}`
+                  )
+                }
+
+                const derivedHash = extrinsic.registry.hash(extrinsic.method.toU8a()).toHex()
+                if (derivedHash !== rawPending.callHash) {
+                  throw new Error(
+                    `CallData from metadata sharing service for hash ${rawPending.callHash} does not match hash from chain. Expected ${rawPending.callHash}, got ${derivedHash}`
+                  )
+                }
+
+                console.log(`Loaded metadata for callHash ${rawPending.callHash} from sharing service`)
+                metadata = [metadataValues, new Date()]
+                setMetadataCache({
+                  ...metadataCache,
+                  [rawPending.callHash]: metadata,
+                })
+              } else {
+                console.warn(`Metadata service has no value for callHash ${rawPending.callHash}`)
+              }
+            } catch (error) {
+              console.error(`Failed to fetch callData for callHash ${rawPending.callHash}:`, error)
+            }
           }
-        } else {
-          // still no calldata. return unknown transaction
-          return {
-            date: rawPending.date,
-            description: `Transaction ${truncateMiddle(rawPending.callHash, 6, 4, '...')}`,
-            hash: rawPending.callHash,
-            rawPending: rawPending,
-            chain: selectedMultisig.chain,
-            approvals: rawPending.approvals,
+
+          if (metadata) {
+            // got calldata!
+            const extrinsic = decodeCallData(metadata[0].callData)
+            const decoded = extrinsic
+              ? extrinsicToDecoded(
+                  selectedMultisig,
+                  extrinsic,
+                  nativeToken.contents,
+                  metadata[0].changeConfigDetails || null
+                )
+              : undefined
+
+            // If decoded returns none, it means the transaction was for a different proxy.
+            if (decoded === 'not_ours') return null
+            return {
+              date: rawPending.date,
+              description: metadata[0].description,
+              callData: metadata[0].callData,
+              hash: rawPending.callHash,
+              decoded,
+              rawPending: rawPending,
+              chain: selectedMultisig.chain,
+              approvals: rawPending.approvals,
+            }
+          } else {
+            // still no calldata. return unknown transaction
+            return {
+              date: rawPending.date,
+              description: `Transaction ${truncateMiddle(rawPending.callHash, 6, 4, '...')}`,
+              hash: rawPending.callHash,
+              rawPending: rawPending,
+              chain: selectedMultisig.chain,
+              approvals: rawPending.approvals,
+            }
           }
-        }
-      })
-    )
+        })
+      )
+    ).filter(tx => tx !== null)
 
     setLoading(false)
-    setTransactions(transactions)
+    setTransactions(transactions as Transaction[])
   }, [
     allRawPending,
     selectedMultisig,

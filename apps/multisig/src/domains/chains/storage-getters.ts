@@ -29,7 +29,10 @@ export const useAddressIsProxyDelegatee = (chain: Chain) => {
       }
       const res = (await api.query.proxy.proxies(proxy)) as unknown as ProxyDefinition[][]
       if (!res[0]) throw Error('invalid proxy.proxies return value')
-      return res[0].some(d => d.delegate.toString() === address && d.proxyType.toString() === 'Any')
+      return {
+        isProxyDelegatee: res[0].some(d => d.delegate.toString() === address && d.proxyType.toString() === 'Any'),
+        proxyDelegatees: res[0].filter(d => d.proxyType.toString() === 'Any').map(d => d.delegate.toString()),
+      }
     },
     [apiLoadable]
   )

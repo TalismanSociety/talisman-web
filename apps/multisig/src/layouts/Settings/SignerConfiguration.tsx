@@ -17,16 +17,16 @@ import { toMultisigAddress } from '@util/addresses'
 import { useEffect, useMemo, useState } from 'react'
 import toast from 'react-hot-toast'
 import { useNavigate } from 'react-router-dom'
-import { useRecoilValue, useRecoilValueLoadable } from 'recoil'
+import { useRecoilState, useRecoilValueLoadable } from 'recoil'
 
 import { FullScreenDialogContents, FullScreenDialogTitle } from '../../layouts/Overview/Transactions/FullScreenSummary'
 import { BackButton } from '.'
 
 const ManageSignerConfiguration = () => {
-  const multisig = useRecoilValue(selectedMultisigState)
-  const [newMembers, setNewMembers] = useState(multisig.signers)
-  const [newThreshold, setNewThreshold] = useState(multisig.threshold)
-  const apiLoadable = useRecoilValueLoadable(pjsApiSelector(multisig.chain.rpc))
+  const [selectedMultisig] = useRecoilState(selectedMultisigState)
+  const [newMembers, setNewMembers] = useState(selectedMultisig.signers)
+  const [newThreshold, setNewThreshold] = useState(selectedMultisig.threshold)
+  const apiLoadable = useRecoilValueLoadable(pjsApiSelector(selectedMultisig.chain.rpc))
   const [extrinsic, setExtrinsic] = useState<SubmittableExtrinsic<'promise'> | undefined>()
   const navigate = useNavigate()
 
@@ -37,8 +37,8 @@ const ManageSignerConfiguration = () => {
         date: new Date(),
         hash,
         description: 'Change Signer Configuration',
-        chain: multisig.chain,
-        approvals: multisig.signers.reduce((acc, key) => {
+        chain: selectedMultisig.chain,
+        approvals: selectedMultisig.signers.reduce((acc, key) => {
           acc[key] = false
           return acc
         }, {} as TransactionApprovals),
@@ -53,24 +53,24 @@ const ManageSignerConfiguration = () => {
         callData: extrinsic.method.toHex(),
       }
     }
-  }, [multisig, extrinsic, newMembers, newThreshold])
+  }, [selectedMultisig, extrinsic, newMembers, newThreshold])
   const signer = useNextTransactionSigner(t?.approvals)
   const hash = extrinsic?.registry.hash(extrinsic.method.toU8a()).toHex()
 
   const { approveAsMulti, estimatedFee } = useApproveAsMulti(signer?.address, hash, null)
 
   useEffect(() => {
-    setNewMembers(multisig.signers)
-    setNewThreshold(multisig.threshold)
-  }, [multisig])
+    setNewMembers(selectedMultisig.signers)
+    setNewThreshold(selectedMultisig.threshold)
+  }, [selectedMultisig])
 
   const membersDiffExists = useMemo(() => {
     return (
-      multisig.signers.length !== newMembers.length ||
-      multisig.signers.some((value, index) => value !== newMembers[index])
+      selectedMultisig.signers.length !== newMembers.length ||
+      selectedMultisig.signers.some((value, index) => value !== newMembers[index])
     )
-  }, [multisig.signers, newMembers])
-  const thresholdDiffExists = newThreshold !== multisig.threshold
+  }, [selectedMultisig.signers, newMembers])
+  const thresholdDiffExists = newThreshold !== selectedMultisig.threshold
   const diffExists = membersDiffExists || thresholdDiffExists
   const [confirmationDialogOpen, setConfirmationDialogOpen] = useState(false)
 
@@ -94,12 +94,12 @@ const ManageSignerConfiguration = () => {
           <div css={{ display: 'grid', gap: '16px' }}>
             <h2 css={{ color: 'var(--color-offWhite)' }}>Vault Members</h2>
             <div css={{ display: 'flex' }}>
-              <span>Members of</span>&nbsp;<span css={{ color: 'var(--color-primary)' }}>{multisig.name}</span>
+              <span>Members of</span>&nbsp;<span css={{ color: 'var(--color-primary)' }}>{selectedMultisig.name}</span>
             </div>
             <div css={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '40px' }}>
               {newMembers.map(m => (
                 <Member
-                  chain={multisig.chain}
+                  chain={selectedMultisig.chain}
                   key={m}
                   m={{ address: m }}
                   onDelete={
@@ -183,8 +183,8 @@ const ManageSignerConfiguration = () => {
           css={{ maxWidth: '180px' }}
           onClick={() => {
             setExtrinsic(undefined)
-            setNewMembers(multisig.signers)
-            setNewThreshold(multisig.threshold)
+            setNewMembers(selectedMultisig.signers)
+            setNewThreshold(selectedMultisig.threshold)
           }}
         >
           Reset
@@ -206,9 +206,9 @@ const ManageSignerConfiguration = () => {
             const newMultisigAddress = toMultisigAddress(newMembers, newThreshold)
             const batchCall = api.tx.utility.batchAll([
               api.tx.proxy.addProxy(newMultisigAddress, 'Any', 0),
-              api.tx.proxy.removeProxy(multisig.multisigAddress, 'Any', 0),
+              api.tx.proxy.removeProxy(selectedMultisig.multisigAddress, 'Any', 0),
             ])
-            const proxyCall = api.tx.proxy.proxy(multisig.proxyAddress, undefined, batchCall)
+            const proxyCall = api.tx.proxy.proxy(selectedMultisig.proxyAddress, undefined, batchCall)
             setExtrinsic(proxyCall)
             setConfirmationDialogOpen(true)
           }}
@@ -259,7 +259,7 @@ const ManageSignerConfiguration = () => {
                 },
                 onSuccess: () => {
                   navigate('/overview')
-                  toast.success('Transaction successful!', { duration: 5000, position: 'bottom-right' })
+                  toast.success('Approved.', { duration: 5000, position: 'bottom-right' })
                   resolve()
                 },
                 onFailure: e => {

@@ -156,9 +156,9 @@ const CreateMultisig = () => {
             multiAddress,
             existentialDepositLoadable.contents,
             async _ => {
-              const multisigIsProxyDeletatee = await addressIsProxyDelegatee(proxyAddress, multiAddress)
+              const { isProxyDelegatee } = await addressIsProxyDelegatee(proxyAddress, multiAddress)
 
-              if (!multisigIsProxyDeletatee) {
+              if (!isProxyDelegatee) {
                 const msg =
                   'There was an issue configuring your proxy. Please submit a bug report with your signer address and any relevant transaction hashes.'
                 console.error(msg)

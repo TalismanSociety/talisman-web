@@ -1,7 +1,7 @@
 import MemberRow from '@components/MemberRow'
 import StatusCircle, { StatusCircleType } from '@components/StatusCircle'
 import { tokenPriceState } from '@domains/chains'
-import { Balance, Transaction } from '@domains/multisig'
+import { Balance, Transaction, TransactionType, usePendingTransactions } from '@domains/multisig'
 import { css } from '@emotion/css'
 import { Button, CircularProgressIndicator, Skeleton } from '@talismn/ui'
 import { balanceToFloat, formatUsd } from '@util/numbers'
@@ -110,6 +110,7 @@ export const FullScreenDialogContents = ({
   const [cancelInFlight, setCancelInFlight] = useState(false)
   const [approveInFlight, setApproveInFlight] = useState(false)
   const feeTokenPrice = useRecoilValueLoadable(tokenPriceState(fee?.token?.coingeckoId || ''))
+  const { transactions: pendingTransactions, loading: pendingLoading } = usePendingTransactions()
   const feeComponent = useMemo(() => {
     if (feeTokenPrice.state === 'loading' || !fee) {
       return <Skeleton.Surface css={{ width: '150px', height: '16px' }} />
@@ -171,6 +172,10 @@ export const FullScreenDialogContents = ({
           <div css={{ display: 'flex', justifyContent: 'space-between' }}>
             {readyToExecute && !t.callData ? (
               'Cannot execute transaction without calldata'
+            ) : t.decoded?.type === TransactionType.ChangeConfig && pendingTransactions.length > 1 ? (
+              `You must execute or cancel all pending transactions (${
+                pendingTransactions.length - 1
+              } remaining) before changing the signer configuration`
             ) : (
               <>
                 <p>Fees</p>
@@ -194,7 +199,7 @@ export const FullScreenDialogContents = ({
               ) : !canCancel ? (
                 'Only originator can cancel'
               ) : (
-                cancelButtonTextOverride || 'Cancel'
+                cancelButtonTextOverride || 'Reject'
               )}
             </Button>
             <Button
@@ -204,7 +209,14 @@ export const FullScreenDialogContents = ({
                   setApproveInFlight(false)
                 })
               }}
-              disabled={approveInFlight || cancelInFlight || !fee || (readyToExecute && !t.callData)}
+              disabled={
+                pendingLoading ||
+                approveInFlight ||
+                cancelInFlight ||
+                !fee ||
+                (readyToExecute && !t.callData) ||
+                (t.decoded?.type === TransactionType.ChangeConfig && pendingTransactions.length > 1)
+              }
             >
               {approveInFlight ? <CircularProgressIndicator /> : readyToExecute ? 'Approve & Execute' : 'Approve'}
             </Button>
