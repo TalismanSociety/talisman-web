@@ -2,7 +2,7 @@ import StatusCircle, { StatusCircleType } from '@components/StatusCircle'
 import { tokenPricesState } from '@domains/chains'
 import { Balance, Transaction, TransactionType, calcSumOutgoing, selectedMultisigState } from '@domains/multisig'
 import { css } from '@emotion/css'
-import { ArrowUp, List, Share2, Unknown } from '@talismn/icons'
+import { ArrowUp, List, Settings, Share2, Unknown } from '@talismn/icons'
 import { Skeleton } from '@talismn/ui'
 import { balanceToFloat, formatUsd } from '@util/numbers'
 import { useMemo } from 'react'
@@ -40,6 +40,8 @@ const TransactionSummaryRow = ({
     <ArrowUp />
   ) : t.decoded.type === TransactionType.MultiSend ? (
     <Share2 />
+  ) : t.decoded.type === TransactionType.ChangeConfig ? (
+    <Settings />
   ) : (
     <List />
   )

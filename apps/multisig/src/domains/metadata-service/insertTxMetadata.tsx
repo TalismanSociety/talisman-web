@@ -1,3 +1,4 @@
+import { ChangeConfigDetails } from '@domains/multisig'
 import { gql, request } from 'graphql-request'
 
 import { METADATA_SERVICE_URL } from '.'
@@ -9,6 +10,7 @@ interface InsertTxMetadataVariables {
   chain: string
   multisig: string
   description: string
+  change_config_details?: ChangeConfigDetails
 }
 
 interface InsertTxMetadataResponse {
@@ -29,6 +31,7 @@ export async function insertTxMetadata(variables: InsertTxMetadataVariables): Pr
       $chain: String!
       $multisig: String!
       $description: String!
+      $change_config_details: json
     ) {
       insert_tx_metadata(
         objects: {
@@ -38,6 +41,7 @@ export async function insertTxMetadata(variables: InsertTxMetadataVariables): Pr
           chain: $chain
           multisig: $multisig
           description: $description
+          change_config_details: $change_config_details
         }
       ) {
         affected_rows

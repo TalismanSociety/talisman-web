@@ -1,4 +1,4 @@
-import { TxOffchainMetadata } from '@domains/multisig'
+import { ChangeConfigDetails, TxOffchainMetadata } from '@domains/multisig'
 import { gql, request } from 'graphql-request'
 
 import { METADATA_SERVICE_URL } from '.'
@@ -14,6 +14,7 @@ interface TxMetadataByPkResponseRaw {
   tx_metadata_by_pk: {
     call_data: string
     description: string
+    change_config_details?: ChangeConfigDetails
   } | null
 }
 
@@ -28,6 +29,7 @@ export async function getTxMetadataByPk(variables: TxMetadataByPkVariables): Pro
       ) {
         call_data
         description
+        change_config_details
       }
     }
   `
@@ -41,5 +43,6 @@ export async function getTxMetadataByPk(variables: TxMetadataByPkVariables): Pro
   return {
     callData: res.tx_metadata_by_pk.call_data as `0x${string}`,
     description: res.tx_metadata_by_pk.description,
+    changeConfigDetails: res.tx_metadata_by_pk.change_config_details,
   }
 }

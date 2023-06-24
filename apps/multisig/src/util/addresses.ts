@@ -1,5 +1,5 @@
 import { Chain } from '@domains/chains'
-
+import { createKeyMulti, sortAddresses } from '@polkadot/util-crypto'
 const { decodeAddress, encodeAddress } = require('@polkadot/keyring')
 const { hexToU8a, isHex } = require('@polkadot/util')
 
@@ -29,4 +29,12 @@ export const toSubscanUrl = (inputAddress: string, chain: Chain | null): string 
     console.error('Tried to create a Subscan URL with an invalid address.')
     return `https://subscan.io/account/${inputAddress}`
   }
+}
+
+export const toMultisigAddress = (signers: string[], threshold: number): string => {
+  // Derive the multisig address
+  const multiAddressBytes = createKeyMulti(sortAddresses(signers as string[]), threshold)
+
+  // Convert byte array to SS58 encoding.
+  return encodeAddress(multiAddressBytes)
 }

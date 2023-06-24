@@ -4,19 +4,27 @@ import 'ace-builds/src-noconflict/theme-twilight'
 import 'ace-builds/src-noconflict/ext-language_tools'
 
 import { CallDataPasteForm } from '@components/CallDataPasteForm'
+import MemberRow from '@components/MemberRow'
 import { Chain, tokenPriceState, useDecodeCallData } from '@domains/chains'
 import { copyToClipboard } from '@domains/common'
-import { Balance, Transaction, TransactionType, calcSumOutgoing, txOffchainMetadataState } from '@domains/multisig'
+import {
+  Balance,
+  Transaction,
+  TransactionType,
+  calcSumOutgoing,
+  selectedMultisigState,
+  txOffchainMetadataState,
+} from '@domains/multisig'
 import { css } from '@emotion/css'
 import { useTheme } from '@emotion/react'
-import { Check, ChevronRight, Copy, List, Send, Share2, Unknown, Users } from '@talismn/icons'
+import { Check, ChevronRight, Copy, List, Send, Settings, Share2, Unknown, Users } from '@talismn/icons'
 import { IconButton, Identicon, Skeleton } from '@talismn/ui'
 import { toSubscanUrl } from '@util/addresses'
 import { balanceToFloat, formatUsd } from '@util/numbers'
 import { useEffect, useMemo, useState } from 'react'
 import AceEditor from 'react-ace'
 import { Collapse } from 'react-collapse'
-import { useRecoilState, useRecoilValueLoadable } from 'recoil'
+import { useRecoilState, useRecoilValue, useRecoilValueLoadable } from 'recoil'
 import truncateMiddle from 'truncate-middle'
 
 const AmountRow = ({ balance }: { balance: Balance }) => {
@@ -67,7 +75,27 @@ const AddressPill = ({ a, c }: { a: string; c: Chain }) => {
   )
 }
 
-const MultiSendExpendedDetails = ({ t }: { t: Transaction }) => {
+const ChangeConfigExpandedDetails = ({ t }: { t: Transaction }) => {
+  const multisig = useRecoilValue(selectedMultisigState)
+  return (
+    <div>
+      <div css={{ display: 'grid', gap: '8px', marginTop: '8px' }}>
+        <p css={{ fontWeight: 'bold' }}>Current Signers</p>
+        {multisig.signers.map(s => (
+          <MemberRow key={s} member={{ address: s }} chain={multisig.chain} />
+        ))}
+        <p>Threshold: {multisig.threshold}</p>
+        <p css={{ fontWeight: 'bold', marginTop: '8px' }}>Proposed New Signers</p>
+        {t.decoded?.changeConfigDetails?.signers.map(s => (
+          <MemberRow key={s} member={{ address: s }} chain={multisig.chain} />
+        ))}
+        <p>Threshold: {t.decoded?.changeConfigDetails?.threshold}</p>
+      </div>
+    </div>
+  )
+}
+
+const MultiSendExpandedDetails = ({ t }: { t: Transaction }) => {
   const theme = useTheme()
   const recipients = t.decoded?.recipients || []
   return (
@@ -171,7 +199,7 @@ function AdvancedExpendedDetails({ callData }: { callData: `0x${string}` | undef
 
 const TransactionDetailsExpandable = ({ t }: { t: Transaction }) => {
   const theme = useTheme()
-  const [expanded, setExpanded] = useState(false)
+  const [expanded, setExpanded] = useState(t.decoded?.type !== TransactionType.Transfer)
   const [metadata, setMetadata] = useRecoilState(txOffchainMetadataState)
   const sumOutgoing: Balance[] = useMemo(() => calcSumOutgoing(t), [t])
   const [copiedCallData, setCopiedCallData] = useState(false)
@@ -272,6 +300,11 @@ const TransactionDetailsExpandable = ({ t }: { t: Transaction }) => {
             <p css={{ marginTop: '4px' }}>Advanced</p>
             <List />
           </>
+        ) : t.decoded.type === TransactionType.ChangeConfig ? (
+          <>
+            <p css={{ marginTop: '4px' }}>Change Signer Configuration</p>
+            <Settings css={{ marginRight: 'auto' }} />
+          </>
         ) : null}
         {t.decoded?.type === TransactionType.Transfer ? (
           <div
@@ -318,7 +351,9 @@ const TransactionDetailsExpandable = ({ t }: { t: Transaction }) => {
       >
         <Collapse isOpened={expanded || !t.decoded}>
           {t.decoded?.type === TransactionType.MultiSend ? (
-            <MultiSendExpendedDetails t={t} />
+            <MultiSendExpandedDetails t={t} />
+          ) : t.decoded?.type === TransactionType.ChangeConfig ? (
+            <ChangeConfigExpandedDetails t={t} />
           ) : t.decoded?.type === TransactionType.Advanced ? (
             <AdvancedExpendedDetails callData={t.callData} />
           ) : !t.decoded ? (

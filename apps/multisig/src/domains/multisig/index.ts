@@ -4,6 +4,7 @@ import { RawPendingTransaction, rawPendingTransactionsSelector } from '@domains/
 import { accountsState } from '@domains/extension'
 import { getTxMetadataByPk } from '@domains/metadata-service'
 import { SubmittableExtrinsic } from '@polkadot/api/types'
+import { toMultisigAddress, toSs52Address } from '@util/addresses'
 import BN from 'bn.js'
 import queryString from 'query-string'
 import { useCallback, useEffect, useState } from 'react'
@@ -40,6 +41,7 @@ export const txOffchainMetadataState = atom<{ [key: string]: [TxOffchainMetadata
 export const selectedMultisigState = atom<Multisig>({
   key: 'SelectedMultisig',
   default: DUMMY_MULTISIG,
+  effects_UNSTABLE: [persistAtom],
 })
 
 export const activeMultisigsState = selector({
@@ -75,12 +77,19 @@ export const useNextTransactionSigner = (approvals: TransactionApprovals | undef
 export enum TransactionType {
   MultiSend,
   Transfer,
+  ChangeConfig,
   Advanced,
+}
+
+export interface ChangeConfigDetails {
+  newThreshold: number
+  newMembers: string[]
 }
 
 export interface TxOffchainMetadata {
   description: string
   callData: `0x${string}`
+  changeConfigDetails?: ChangeConfigDetails
 }
 
 export interface AugmentedAccount {
@@ -115,7 +124,7 @@ export interface TransactionApprovals {
 export interface TransactionDecoded {
   type: TransactionType
   recipients: TransactionRecipient[]
-  changeMultisigAddressDetails?: {
+  changeConfigDetails?: {
     signers: string[]
     threshold: number
   }
@@ -154,7 +163,8 @@ export const calcSumOutgoing = (t: Transaction): Balance[] => {
 
 export const extrinsicToDecoded = (
   extrinsic: SubmittableExtrinsic<'promise'>,
-  nativeToken: Token
+  nativeToken: Token,
+  changeConfigDetails: ChangeConfigDetails | null
 ): TransactionDecoded => {
   try {
     const { method, section, args } = extrinsic.method
@@ -165,7 +175,7 @@ export const extrinsicToDecoded = (
         recipients: [],
       }
 
-    // Got proxy call. Check if it's one of our recognised ones.
+    // Got proxy call. Check if it's a Transfer type
     const recipients: TransactionRecipient[] = []
     for (const arg of args) {
       const obj: any = arg.toHuman()
@@ -181,6 +191,41 @@ export const extrinsicToDecoded = (
       return {
         type: TransactionType.Transfer,
         recipients,
+      }
+    }
+
+    // Check if it's a ChangeConfig type
+    for (const arg of args) {
+      const obj: any = arg.toHuman()
+      if (
+        changeConfigDetails &&
+        obj?.section === 'utility' &&
+        obj?.method === 'batchAll' &&
+        obj?.args?.calls.length === 2 &&
+        obj?.args?.calls[0]?.method === 'addProxy' &&
+        obj?.args?.calls[1]?.method === 'removeProxy' &&
+        obj.args?.calls[0]?.args?.proxy_type === 'Any' &&
+        obj.args?.calls[1]?.args?.proxy_type === 'Any'
+      ) {
+        // Validate that the metadata 'new configuration' info matches the
+        // actual multisig that is being set on chain.
+        const derivedNewMultisigAddress = toMultisigAddress(
+          changeConfigDetails.newMembers,
+          changeConfigDetails.newThreshold
+        )
+        const actualNewMultisigAddress = toSs52Address(obj?.args?.calls[0]?.args.delegate.Id, null)
+        if (derivedNewMultisigAddress !== actualNewMultisigAddress) {
+          throw Error("Derived multisig address doesn't match actual multisig address")
+        }
+
+        return {
+          type: TransactionType.ChangeConfig,
+          recipients: [],
+          changeConfigDetails: {
+            signers: changeConfigDetails.newMembers,
+            threshold: changeConfigDetails.newThreshold,
+          },
+        }
       }
     }
   } catch (error) {}
@@ -261,7 +306,9 @@ export const usePendingTransaction = () => {
         if (metadata) {
           // got calldata!
           const extrinsic = decodeCallData(metadata[0].callData)
-          const decoded = extrinsic ? extrinsicToDecoded(extrinsic, nativeToken.contents) : undefined
+          const decoded = extrinsic
+            ? extrinsicToDecoded(extrinsic, nativeToken.contents, metadata[0].changeConfigDetails || null)
+            : undefined
           return {
             date: rawPending.date,
             description: metadata[0].description,

@@ -17,7 +17,7 @@ import {
   selectedMultisigState,
 } from '@domains/multisig'
 import { css } from '@emotion/css'
-import { createKeyMulti, encodeAddress, sortAddresses } from '@polkadot/util-crypto'
+import { toMultisigAddress } from '@util/addresses'
 import { device } from '@util/breakpoints'
 import { useEffect, useMemo, useState } from 'react'
 import { toast } from 'react-hot-toast'
@@ -149,9 +149,7 @@ const CreateMultisig = () => {
           setProxyAddress(proxyAddress)
           setCreateTransactionsStatus(CreateTransactionsStatus.TransferringProxy)
           // Address as a byte array.
-          const multiAddressBytes = createKeyMulti(sortAddresses(augmentedAccounts.map(a => a.address)), threshold)
-          // Convert byte array to SS58 encoding.
-          const multiAddress = encodeAddress(multiAddressBytes)
+          const multiAddress = toMultisigAddress(augmentedAccounts.map(a => a.address) as string[], threshold)
           transferProxyToMultisig(
             selectedSigner?.address,
             proxyAddress,

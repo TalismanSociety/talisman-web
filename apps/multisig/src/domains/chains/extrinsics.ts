@@ -6,7 +6,13 @@
 import { pjsApiSelector } from '@domains/chains/pjs-api'
 import { accountsState } from '@domains/extension'
 import { insertTxMetadata } from '@domains/metadata-service'
-import { Balance, Transaction, selectedMultisigState, txOffchainMetadataState } from '@domains/multisig'
+import {
+  Balance,
+  Transaction,
+  TxOffchainMetadata,
+  selectedMultisigState,
+  txOffchainMetadataState,
+} from '@domains/multisig'
 import { ApiPromise, SubmittableResult } from '@polkadot/api'
 import type { SubmittableExtrinsic } from '@polkadot/api/types'
 import { web3FromAddress } from '@polkadot/extension-dapp'
@@ -374,7 +380,7 @@ export const useApproveAsMulti = (
     }: {
       onSuccess: (r: SubmittableResult) => void
       onFailure: (message: string) => void
-      metadata?: { description: string; callData: `0x${string}` }
+      metadata?: TxOffchainMetadata
     }) => {
       const tx = await createTx()
       if (!tx || !extensionAddress) {
@@ -405,7 +411,7 @@ export const useApproveAsMulti = (
                   // Disable this line to test the metadata service
                   setMetadataCache({
                     ...metadataCache,
-                    [hash]: [{ callData: metadata.callData, description: metadata.description }, new Date()],
+                    [hash]: [metadata, new Date()],
                   })
                   // @ts-ignore
                   const timepoint_height = result.blockNumber.toNumber() as number
@@ -416,6 +422,7 @@ export const useApproveAsMulti = (
                     description: metadata.description,
                     timepoint_height,
                     timepoint_index: result.txIndex as number,
+                    change_config_details: metadata.changeConfigDetails,
                   })
                     .then(() => {
                       console.log(`Successfully POSTed metadata for ${hash} to metadata service`)

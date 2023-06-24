@@ -4,10 +4,9 @@ import { useAddressIsProxyDelegatee } from '@domains/chains/storage-getters'
 import { accountsState, extensionAllowedState, extensionLoadingState } from '@domains/extension'
 import { Multisig, multisigsState, selectedMultisigState } from '@domains/multisig'
 import { css } from '@emotion/css'
-import { createKeyMulti, encodeAddress, sortAddresses } from '@polkadot/util-crypto'
 import { Loader } from '@talismn/icons'
 import { Button, EyeOfSauronProgressIndicator } from '@talismn/ui'
-import { toSs52Address } from '@util/addresses'
+import { toMultisigAddress, toSs52Address } from '@util/addresses'
 import { arrayIntersection } from '@util/misc'
 import queryString from 'query-string'
 import { useEffect, useMemo, useState } from 'react'
@@ -69,11 +68,7 @@ const Import = () => {
       return
     }
 
-    // Derive the multisig address
-    const multiAddressBytes = createKeyMulti(sortAddresses(signersArray as string[]), thresholdNumber)
-
-    // Convert byte array to SS58 encoding.
-    const multisigAddress = encodeAddress(multiAddressBytes)
+    const multisigAddress = toMultisigAddress(signersArray as string[], thresholdNumber)
 
     // Get the actual on-chain address that controls the proxy, make sure it matches the multisig address
     if (!addressIsProxyDelegatee(proxy as string, multisigAddress)) {
