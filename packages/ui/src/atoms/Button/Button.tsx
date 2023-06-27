@@ -144,9 +144,12 @@ const Button = <T extends ButtonElementType = 'button'>({
       ]}
     >
       <Text.Body
-        color={props.disabled ? variantDisabledStyle.color : variantStyle.color}
         alpha="high"
-        css={{ position: 'relative', display: 'flex' }}
+        css={{
+          position: 'relative',
+          display: 'flex',
+          color: 'inherit',
+        }}
       >
         {hasLeadingIcon && (
           <span
