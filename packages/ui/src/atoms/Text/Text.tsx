@@ -1,21 +1,24 @@
-import { useTheme } from '@emotion/react'
+import { useTheme, type Theme } from '@emotion/react'
 import type React from 'react'
 
 export type TextAlpha = 'disabled' | 'medium' | 'high'
 
 type PolymorphicTextProps<T extends React.ElementType> = {
   as?: T
+  color?: string | ((theme: Theme) => string)
   alpha?: TextAlpha | ((props: { hover: boolean }) => TextAlpha)
 }
 
 export type TextProps<T extends React.ElementType> = PolymorphicTextProps<T> &
   Omit<React.ComponentPropsWithoutRef<T>, keyof PolymorphicTextProps<T>>
 
-const useAlpha = (alpha: TextAlpha) => {
+const useAlpha = (color: string | ((theme: Theme) => string), alpha: TextAlpha) => {
   const theme = useTheme()
+
+  const parsedColor = typeof color === 'string' ? color : color(theme)
   const alphaValue = theme.contentAlpha[alpha ?? 'medium']
 
-  return `color-mix(in srgb, currentcolor, transparent ${Math.round((1 - alphaValue) * 100)}%) !important`
+  return `color-mix(in srgb, ${parsedColor}, transparent ${Math.round((1 - alphaValue) * 100)}%)`
 }
 
 const NoopText = <T extends React.ElementType = 'span'>({
@@ -28,49 +31,51 @@ const NoopText = <T extends React.ElementType = 'span'>({
   return <Component {...props} />
 }
 
-const BaseText = <T extends React.ElementType = 'span'>({ as, alpha = 'medium', ...props }: TextProps<T>) => {
+const BaseText = <T extends React.ElementType = 'span'>({
+  as,
+  color: _color,
+  alpha = 'medium',
+  ...props
+}: TextProps<T>) => {
   const theme = useTheme()
   const Component = as ?? 'span'
+  const color = _color ?? theme.color.onBackground
 
   return (
-    <div
-      className={props['className']}
-      css={{ display: 'contents !important', color: theme.color.onBackground, fontSize: 'revert !important' }}
-    >
-      <Component
-        {...props}
-        css={{
-          'color': useAlpha(typeof alpha === 'function' ? alpha({ hover: false }) : alpha),
-          'fontFamily': "'Surt', sans-serif",
-          ':hover': {
-            color: useAlpha(typeof alpha === 'function' ? alpha({ hover: true }) : alpha),
-          },
-        }}
-      />
-    </div>
+    <Component
+      {...props}
+      css={{
+        'color': useAlpha(color, typeof alpha === 'function' ? alpha({ hover: false }) : alpha),
+        'fontFamily': "'Surt', sans-serif",
+        ':hover': {
+          color: useAlpha(color, typeof alpha === 'function' ? alpha({ hover: true }) : alpha),
+        },
+      }}
+    />
   )
 }
 
-const BaseHeaderText = <T extends React.ElementType = 'h1'>({ as, alpha = 'high', ...props }: TextProps<T>) => {
+const BaseHeaderText = <T extends React.ElementType = 'h1'>({
+  as,
+  color: _color,
+  alpha = 'high',
+  ...props
+}: TextProps<T>) => {
   const theme = useTheme()
   const Component = as ?? 'span'
+  const color = _color ?? theme.color.onBackground
 
   return (
-    <div
-      className={props['className']}
-      css={{ display: 'contents !important', color: theme.color.onBackground, fontSize: 'revert !important' }}
-    >
-      <Component
-        {...props}
-        css={{
-          'color': useAlpha(typeof alpha === 'function' ? alpha({ hover: false }) : alpha),
-          'fontFamily': "'SurtExpanded', sans-serif",
-          ':hover': {
-            color: useAlpha(typeof alpha === 'function' ? alpha({ hover: true }) : alpha),
-          },
-        }}
-      />
-    </div>
+    <Component
+      {...props}
+      css={{
+        'color': useAlpha(color, typeof alpha === 'function' ? alpha({ hover: false }) : alpha),
+        'fontFamily': "'SurtExpanded', sans-serif",
+        ':hover': {
+          color: useAlpha(color, typeof alpha === 'function' ? alpha({ hover: true }) : alpha),
+        },
+      }}
+    />
   )
 }
 

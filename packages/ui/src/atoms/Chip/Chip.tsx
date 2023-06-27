@@ -35,11 +35,11 @@ const Chip = ({ size = 'md', containerColor, contentColor, leadingContent, loadi
   return (
     <Container
       as="button"
+      color={contentColor}
       {...props}
       disabled={functionallyDisabled}
       css={[
         {
-          color: contentColor,
           lineHeight: '1em',
           display: 'flex',
           alignItems: 'center',
