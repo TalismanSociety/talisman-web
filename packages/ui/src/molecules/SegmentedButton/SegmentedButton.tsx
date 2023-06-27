@@ -17,8 +17,11 @@ const ButtonSegment = (props: ButtonSegmentProps) => (
       <Text.Body
         as={Clickable}
         {...props}
-        color={selectedValue === props.value ? theme => theme.color.onPrimary : undefined}
-        css={{ position: 'relative', padding: '1rem 1.2rem' }}
+        css={theme => ({
+          color: selectedValue === props.value ? theme.color.onPrimary : undefined,
+          position: 'relative',
+          padding: '1rem 1.2rem',
+        })}
         onClick={() => onChange(props.value)}
       >
         {selectedValue === props.value && (
