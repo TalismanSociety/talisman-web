@@ -1,5 +1,4 @@
 import StakeBanner from '@components/recipes/StakeBanner'
-import StakeDetails from '@components/recipes/StakeDetails'
 import { Select, Text } from '@talismn/ui'
 import type { ReactNode } from 'react'
 
@@ -34,21 +33,21 @@ const StakeDashboard = (props: StakeDashboardProps) => (
       <StakeBanner css={{ gridArea: 'banner' }} />
       <div css={{ gridArea: 'selector', display: 'flex', flexDirection: 'column', gap: '3.2rem' }}>
         <section>
-          <header css={{ display: 'flex', flexDirection: 'column-reverse' }}>
+          <header css={{ display: 'flex', flexDirection: 'column-reverse', gap: '0.8rem' }}>
             <Text.H3>Assets</Text.H3>
             <Text.BodySmall>1. Select asset to stake</Text.BodySmall>
           </header>
           <Select placeholder="Select account"></Select>
         </section>
         <section>
-          <header css={{ display: 'flex', flexDirection: 'column-reverse' }}>
+          <header css={{ display: 'flex', flexDirection: 'column-reverse', gap: '0.8rem' }}>
             <Text.H3>Accounts</Text.H3>
             <Text.BodySmall>2. Select account</Text.BodySmall>
           </header>
           <Select placeholder="Select account"></Select>
         </section>
       </div>
-      <StakeDetails css={{ gridArea: 'details' }} />
+      <div css={{ gridArea: 'details' }}>{props.details}</div>
     </main>
   </div>
 )

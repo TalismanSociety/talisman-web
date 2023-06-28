@@ -1,5 +1,4 @@
-import { Zap } from '@talismn/icons'
-import { Chip, ListItem, Text } from '@talismn/ui'
+import { Button, ListItem, Text } from '@talismn/ui'
 
 export type StakeBannerProps = { className?: string }
 
@@ -40,12 +39,8 @@ const StakeBanner = (props: StakeBannerProps) => (
           '@container(min-width: 60rem)': { placeSelf: 'end' },
         }}
       >
-        <Chip size="lg" leadingContent={<Zap />}>
-          Simulate rewards
-        </Chip>
-        <Chip size="lg" leadingContent={<Zap />}>
-          Stake
-        </Chip>
+        <Button variant="outlined">Simulate rewards</Button>
+        <Button>Stake</Button>
       </div>
       <ListItem
         css={{ gridArea: 'stake-balance', padding: 0 }}
