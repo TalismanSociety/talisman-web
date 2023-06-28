@@ -2,17 +2,19 @@ import FastUnstakeDialog from '@components/recipes/FastUnstakeDialog'
 import { ValidatorStakeItem as ValidatorStakeItemComponent } from '@components/recipes/StakeItem'
 import { type Account } from '@domains/accounts/recoils'
 import { useNativeTokenDecimalState, useNativeTokenPriceState } from '@domains/chains'
+import { useSubstrateApiState } from '@domains/common'
 import { useExtrinsic, useTokenAmountFromPlanck } from '@domains/common/hooks'
 import { useEraEtaFormatter } from '@domains/common/hooks/useEraEta'
 import { useLocalizedLockDuration } from '@domains/nominationPools'
 import { type DeriveStakingAccount } from '@polkadot/api-derive/types'
+import { useDeriveState } from '@talismn/react-polkadot-api'
 import { CircularProgressIndicator } from '@talismn/ui'
 import BN from 'bn.js'
 import { useMemo, useState } from 'react'
 import { useRecoilValue, waitForAll } from 'recoil'
-import ValidatorUnstakeDialog from './ValidatorUnstakeDialog'
 import AnimatedFiatNumber from '../AnimatedFiatNumber'
 import RedactableBalance from '../RedactableBalance'
+import ValidatorUnstakeDialog from './ValidatorUnstakeDialog'
 
 const ValidatorStakeItem = (props: {
   account: Account
@@ -31,8 +33,13 @@ const ValidatorStakeItem = (props: {
 
   const lockDuration = useLocalizedLockDuration()
 
-  const [decimal, nativeTokenPrice] = useRecoilValue(
-    waitForAll([useNativeTokenDecimalState(), useNativeTokenPriceState()])
+  const [api, balances, decimal, nativeTokenPrice] = useRecoilValue(
+    waitForAll([
+      useSubstrateApiState(),
+      useDeriveState('balances', 'all', [props.account.address]),
+      useNativeTokenDecimalState(),
+      useNativeTokenPriceState(),
+    ])
   )
 
   const amount = useTokenAmountFromPlanck(
@@ -48,6 +55,10 @@ const ValidatorStakeItem = (props: {
   const totalUnlocking = useMemo(
     () => props.stake.unlocking?.reduce((previous, current) => previous.add(current.value), new BN(0)),
     [props.stake.unlocking]
+  )
+
+  const hasEnoughDepositForFastUnstake = balances.availableBalance.gte(
+    api.consts.fastUnstake.deposit.add(api.consts.balances.existentialDeposit)
   )
 
   const eraEtaFormatter = useEraEtaFormatter()
@@ -122,14 +133,15 @@ const ValidatorStakeItem = (props: {
             case undefined:
               return 'pending'
             case true:
-              return 'eligible'
+              return hasEnoughDepositForFastUnstake ? 'eligible' : 'insufficient-balance-for-deposit'
             case false:
               return 'ineligible'
           }
-        }, [props.eligibleForFastUnstake])}
+        }, [hasEnoughDepositForFastUnstake, props.eligibleForFastUnstake])}
         amount={amount.decimalAmount?.toHuman() ?? '...'}
         fiatAmount={amount.localizedFiatAmount ?? '...'}
         lockDuration={lockDuration}
+        depositAmount={decimal.fromPlanck(api.consts.fastUnstake.deposit).toHuman()}
         onDismiss={() => {
           setIsFastUnstakeDialogOpen(false)
         }}
@@ -138,7 +150,7 @@ const ValidatorStakeItem = (props: {
           setIsUnstakeDialogOpen(true)
         }}
         onConfirm={() => {
-          if (props.eligibleForFastUnstake) {
+          if (props.eligibleForFastUnstake && hasEnoughDepositForFastUnstake) {
             void fastUnstake.signAndSend(props.account.address)
             setIsFastUnstakeDialogOpen(false)
           } else {

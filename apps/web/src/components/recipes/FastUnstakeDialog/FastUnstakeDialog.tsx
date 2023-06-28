@@ -1,13 +1,14 @@
 import { AlertDialog, Button, DescriptionList, EyeOfSauronProgressIndicator, Hr, Text } from '@talismn/ui'
 import { AnimatePresence, motion } from 'framer-motion'
-import { useMemo } from 'react'
+import { useMemo, type ReactNode } from 'react'
 
 export type FastUnstakeDialogProps = {
   open?: boolean
   amount: string
   fiatAmount: string
   lockDuration: string
-  fastUnstakeEligibility?: 'pending' | 'eligible' | 'ineligible'
+  depositAmount: ReactNode
+  fastUnstakeEligibility?: 'pending' | 'eligible' | 'ineligible' | 'insufficient-balance-for-deposit'
   onDismiss: () => unknown
   onConfirm: () => unknown
   onSkip: () => unknown
@@ -36,6 +37,8 @@ const FastUnstakeDialog = (props: FastUnstakeDialogProps) => (
               case 'eligible':
                 return 'fulfilled'
               case 'ineligible':
+                return 'rejected'
+              case 'insufficient-balance-for-deposit':
                 return 'rejected'
               case undefined:
                 return undefined
@@ -87,10 +90,26 @@ const FastUnstakeDialog = (props: FastUnstakeDialogProps) => (
                         You can still unstake below as normal and start earning rewards after {props.lockDuration}.
                       </Text.Body>
                     )
+                  case 'insufficient-balance-for-deposit':
+                    return (
+                      <Text.Body as="p" alpha="high" css={{ textAlign: 'center', marginTop: '2.4rem' }}>
+                        You do not have enough free balance to register for fast unstake. Fast unstake requires a
+                        deposit of {props.depositAmount}
+                        <br />
+                        <br />
+                        You can still unstake below as normal and start earning rewards after {props.lockDuration}.
+                      </Text.Body>
+                    )
                   case undefined:
                     return undefined
                 }
-              }, [props.amount, props.fastUnstakeEligibility, props.fiatAmount, props.lockDuration])}
+              }, [
+                props.amount,
+                props.depositAmount,
+                props.fastUnstakeEligibility,
+                props.fiatAmount,
+                props.lockDuration,
+              ])}
             </motion.div>
           </AnimatePresence>
         </div>
@@ -116,7 +135,10 @@ const FastUnstakeDialog = (props: FastUnstakeDialogProps) => (
     }, [props.fastUnstakeEligibility, props.onDismiss, props.onSkip])}
     confirmButton={
       <Button onClick={props.onConfirm} disabled={props.fastUnstakeEligibility === 'pending'}>
-        {props.fastUnstakeEligibility === 'ineligible' ? 'Unstake' : 'Fast unstake'}
+        {props.fastUnstakeEligibility === 'ineligible' ||
+        props.fastUnstakeEligibility === 'insufficient-balance-for-deposit'
+          ? 'Unstake'
+          : 'Fast unstake'}
       </Button>
     }
     onRequestDismiss={props.onDismiss}
