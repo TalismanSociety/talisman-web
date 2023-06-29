@@ -1,4 +1,3 @@
-import StakeBanner from '@components/recipes/StakeBanner'
 import { Text } from '@talismn/ui'
 import type { ReactNode } from 'react'
 
@@ -30,7 +29,7 @@ const StakeDashboard = (props: StakeDashboardProps) => (
         },
       }}
     >
-      <StakeBanner css={{ gridArea: 'banner' }} />
+      <div css={{ gridArea: 'banner' }}>{props.banner}</div>
       <div css={{ gridArea: 'selector', display: 'flex', flexDirection: 'column', gap: '3.2rem' }}>
         <section>
           <header css={{ display: 'flex', flexDirection: 'column-reverse', gap: '0.8rem' }}>

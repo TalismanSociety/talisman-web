@@ -104,4 +104,4 @@ export const usePoolStakes = <T extends Account | Account[]>(account: T) => {
   return useMemo(() => (Array.isArray(account) ? pools : pools.at(0)) as Return, [account, pools])
 }
 
-export type DerivedPool = ReturnType<typeof usePoolStakes<Account>>
+export type DerivedPool = NonNullable<ReturnType<typeof usePoolStakes<Account>>>

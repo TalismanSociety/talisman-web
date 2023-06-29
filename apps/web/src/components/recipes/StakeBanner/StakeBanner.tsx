@@ -1,6 +1,13 @@
 import { Button, ListItem, Text } from '@talismn/ui'
+import type { ReactNode } from 'react'
 
-export type StakeBannerProps = { className?: string }
+export type StakeBannerProps = {
+  className?: string
+  balance?: ReactNode
+  rewards?: ReactNode
+  onClickSimulateRewards: () => unknown
+  onClickStake: () => unknown
+}
 
 const StakeBanner = (props: StakeBannerProps) => (
   <div className={props.className} css={{ containerType: 'inline-size' }}>
@@ -43,28 +50,44 @@ const StakeBanner = (props: StakeBannerProps) => (
         <Button>Stake</Button>
       </div>
       <ListItem
-        css={{ gridArea: 'stake-balance', padding: 0 }}
+        css={{ gridArea: 'stake-balance', padding: 0, visibility: props.balance ? 'visible' : 'hidden' }}
         overlineText={
           <Text.BodyLarge as="div" css={{ marginBottom: '0.8rem' }}>
             Staking balance
           </Text.BodyLarge>
         }
         headlineText={
-          <Text.H3 css={{ marginBottom: 0 }} alpha="high">
-            $495.11
+          <Text.H3
+            css={{
+              'marginBottom': 0,
+              ':empty::after': {
+                content: `"\u200B"`,
+              },
+            }}
+            alpha="high"
+          >
+            {props.balance}
           </Text.H3>
         }
       />
       <ListItem
-        css={{ gridArea: 'rewards', placeSelf: 'end', padding: 0 }}
+        css={{ gridArea: 'rewards', placeSelf: 'end', padding: 0, visibility: props.rewards ? 'visible' : 'hidden' }}
         overlineText={
           <Text.BodyLarge as="div" css={{ marginBottom: '0.8rem' }}>
             Total rewards
           </Text.BodyLarge>
         }
         headlineText={
-          <Text.H3 css={{ marginBottom: 0 }} alpha="high">
-            $495.11
+          <Text.H3
+            css={{
+              'marginBottom': 0,
+              ':empty::after': {
+                content: `"\u200B"`,
+              },
+            }}
+            alpha="high"
+          >
+            {props.rewards}
           </Text.H3>
         }
       />

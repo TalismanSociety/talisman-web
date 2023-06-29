@@ -1,22 +1,12 @@
 import type { Account } from '@domains/accounts'
 import { useTheme } from '@emotion/react'
 import { Clock, Percent, Zap } from '@talismn/icons'
-import {
-  Button,
-  DescriptionList,
-  Icon,
-  Identicon,
-  ListItem,
-  StatusIndicator,
-  Surface,
-  Text,
-  type ButtonProps,
-} from '@talismn/ui'
+import { Button, DescriptionList, Identicon, ListItem, Surface, Text, TonalIcon, type ButtonProps } from '@talismn/ui'
 import { shortenAddress } from '@util/format'
 import { eachDayOfInterval, isSameDay, max as maxDate, min as minDate } from 'date-fns'
 import { useMemo, type ReactNode } from 'react'
 import { VictoryAxis, VictoryBar, VictoryChart, VictoryLabel, VictoryTooltip } from 'victory'
-import type { StakeStatus } from '../StakeStatusIndicator'
+import { StakeStatusIndicator, type StakeStatus } from '../StakeStatusIndicator'
 
 type PayoutEntry = { date: Date; amount: number; displayAmount: string }
 
@@ -82,7 +72,7 @@ const StakeDetails = Object.assign(
               headlineText={props.account.name ?? shortenAddress(props.account.address)}
               supportingText={
                 <>
-                  <StatusIndicator css={{ display: 'inline-block' }} status={props.poolStatus} /> {props.poolName}
+                  <StakeStatusIndicator css={{ display: 'inline-block' }} status={props.poolStatus} /> {props.poolName}
                 </>
               }
             />
@@ -111,9 +101,9 @@ const StakeDetails = Object.assign(
             <ListItem
               css={{ padding: 0 }}
               leadingContent={
-                <Icon>
+                <TonalIcon>
                   <Zap />
-                </Icon>
+                </TonalIcon>
               }
               overlineText="Total balance"
               headlineText={props.balance}
@@ -121,9 +111,9 @@ const StakeDetails = Object.assign(
             <ListItem
               css={{ padding: 0 }}
               leadingContent={
-                <Icon>
+                <TonalIcon>
                   <Zap />
-                </Icon>
+                </TonalIcon>
               }
               overlineText="Earned rewards"
               headlineText={props.rewards}
@@ -131,9 +121,9 @@ const StakeDetails = Object.assign(
             <ListItem
               css={{ padding: 0 }}
               leadingContent={
-                <Icon>
+                <TonalIcon>
                   <Percent />
-                </Icon>
+                </TonalIcon>
               }
               overlineText="APY"
               headlineText={props.apy}
@@ -141,9 +131,9 @@ const StakeDetails = Object.assign(
             <ListItem
               css={{ padding: 0 }}
               leadingContent={
-                <Icon>
+                <TonalIcon>
                   <Clock />
-                </Icon>
+                </TonalIcon>
               }
               overlineText="Current era ends"
               headlineText={props.nextEraEta}

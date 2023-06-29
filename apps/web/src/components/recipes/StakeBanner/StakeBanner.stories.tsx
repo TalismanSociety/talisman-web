@@ -9,4 +9,6 @@ export default {
 
 type Story = StoryObj<typeof StakeBanner>
 
-export const Default: Story = {}
+export const Default: Story = {
+  args: { balance: '$69', rewards: '$69' },
+}

@@ -1,4 +1,4 @@
-import StakeBanner from '@components/recipes/StakeBanner/StakeBanner'
+import StakeBannerComponent, { type StakeBannerProps } from '@components/recipes/StakeBanner/StakeBanner'
 import { EmptyStakeDetails } from '@components/recipes/StakeDetails'
 import StakeDetailsComponent from '@components/recipes/StakeDetails/StakeDetails'
 import StakeDashboard from '@components/templates/StakeDashboard/StakeDashboard'
@@ -15,7 +15,7 @@ import {
   useSubmittableResultLoadableState,
   useTokenAmountFromPlanck,
 } from '@domains/common'
-import { poolPayoutsState, useInflation, usePoolStakes } from '@domains/nominationPools'
+import { poolPayoutsState, useInflation, usePoolStakes, type DerivedPool } from '@domains/nominationPools'
 import { useQueryState } from '@talismn/react-polkadot-api'
 import { useCallback, useContext, useMemo, useState, useTransition } from 'react'
 import { useSearchParams } from 'react-router-dom'
@@ -36,13 +36,35 @@ const useOpenStakeModal = () => {
   )
 }
 
-const StakeDetailsActive = ({
-  account,
-  pool,
-}: {
-  account: Account
-  pool: NonNullable<ReturnType<typeof usePoolStakes<Account>>>
-}) => {
+const BaseStakeBanner = (props: Omit<StakeBannerProps, 'onClickSimulateRewards' | 'onClickStake'>) => {
+  return <StakeBannerComponent {...props} onClickSimulateRewards={() => {}} onClickStake={() => {}} />
+}
+
+const ActiveStakeBanner = (props: { pool: DerivedPool }) => {
+  return <BaseStakeBanner balance={useTokenAmountFromPlanck(props.pool?.poolMember.points).localizedFiatAmount} />
+}
+
+const StakeBannerWithChainSelected = (props: { account: Account }) => {
+  const pool = usePoolStakes(props.account)
+
+  if (pool === undefined) {
+    return <BaseStakeBanner />
+  }
+
+  return <ActiveStakeBanner pool={pool} />
+}
+
+const StakeBanner = (props: { account?: Account }) => {
+  const chain = useContext(ChainContext)
+
+  if (chain === undefined || props.account === undefined) {
+    return <BaseStakeBanner />
+  }
+
+  return <StakeBannerWithChainSelected account={props.account} />
+}
+
+const StakeDetailsActive = ({ account, pool }: { account: Account; pool: DerivedPool }) => {
   const { stakedReturn } = useInflation()
 
   const balance = useTokenAmountFromPlanck(pool.poolMember.points)
@@ -179,7 +201,11 @@ const Staking = () => {
 
   return (
     <StakeDashboard
-      banner={<StakeBanner />}
+      banner={
+        <ChainProvider chain={chain}>
+          <StakeBanner account={account} />
+        </ChainProvider>
+      }
       chainSelector={
         <AssetSelect
           iconSize="4rem"
