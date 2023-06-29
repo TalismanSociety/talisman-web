@@ -2,8 +2,8 @@ import { useTheme } from '@emotion/react'
 import { IconContext } from '@talismn/icons/utils'
 import { useMemo, type ElementType, type PropsWithChildren, type ReactNode } from 'react'
 
+import { useSurfaceColor } from '..'
 import CircularProgressIndicator from '../CircularProgressIndicator'
-import { Text, useSurfaceColor } from '..'
 
 type ButtonElementType = Extract<React.ElementType, 'button' | 'a'> | ElementType<any>
 
@@ -143,11 +143,7 @@ const Button = <T extends ButtonElementType = 'button'>({
         hidden && { cursor: 'default', pointerEvent: 'none', opacity: 0 },
       ]}
     >
-      <Text.Body
-        color={props.disabled ? variantDisabledStyle.color : variantStyle.color}
-        alpha="high"
-        css={{ position: 'relative', display: 'flex' }}
-      >
+      <div css={{ position: 'relative', display: 'flex' }}>
         {hasLeadingIcon && (
           <span
             css={{ position: 'absolute', top: 0, bottom: 0, left: '-1.6rem', display: 'flex', alignItems: 'center' }}
@@ -186,7 +182,7 @@ const Button = <T extends ButtonElementType = 'button'>({
             </span>
           )}
         </IconContext.Provider>
-      </Text.Body>
+      </div>
     </Component>
   )
 }
