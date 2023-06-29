@@ -1,7 +1,7 @@
 import { useTheme } from '@emotion/react'
 import { type ComponentPropsWithoutRef, type ElementType } from 'react'
 
-type IconElementType = Extract<ElementType, 'button' | 'a' | 'figure'> | ElementType<any>
+export type IconElementType = Extract<ElementType, 'button' | 'a' | 'figure'> | ElementType<any>
 
 type PolymorphicIconProps<T extends IconElementType> = {
   as?: T

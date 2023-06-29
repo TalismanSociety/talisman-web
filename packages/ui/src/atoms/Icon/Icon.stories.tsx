@@ -1,6 +1,6 @@
 import { type ComponentMeta, type Story } from '@storybook/react'
 import { TalismanHand } from '@talismn/icons'
-
+import { TonalIcon } from '.'
 import Icon, { type IconProps } from './Icon'
 
 export default {
@@ -16,3 +16,7 @@ export const Default: Story<IconProps<'button'>> = args => <Icon {...args} />
 Default.args = {
   children: <TalismanHand />,
 }
+
+export const Tonal: Story<IconProps<'button'>> = args => <TonalIcon {...args} />
+
+Tonal.args = Default.args
