@@ -1,16 +1,16 @@
-import ClaimStakeDialog from '@components/recipes/ClaimStakeDialog'
 import { PoolStakeItem as PoolStakeItemComponent, WithdrawChip } from '@components/recipes/StakeItem'
-import { useEraEtaFormatter, useExtrinsic, useTokenAmountFromPlanck } from '@domains/common'
+import { useEraEtaFormatter, useExtrinsic, useSubmittableResultLoadableState } from '@domains/common'
 import { useCallback, useState } from 'react'
 import { useRecoilValue, waitForAll } from 'recoil'
 
 import { type Account } from '@domains/accounts'
 import { useNativeTokenDecimalState, useNativeTokenPriceState } from '@domains/chains'
 import { type usePoolStakes } from '@domains/nominationPools'
-import AddStakeDialog from './AddStakeDialog'
-import UnstakeDialog from './UnstakeDialog'
-import RedactableBalance from '../RedactableBalance'
 import AnimatedFiatNumber from '../AnimatedFiatNumber'
+import RedactableBalance from '../RedactableBalance'
+import AddStakeDialog from './AddStakeDialog'
+import ClaimStakeDialog from './ClaimStakeDialog'
+import UnstakeDialog from './UnstakeDialog'
 
 const PoolStakeItem = ({
   item,
@@ -27,11 +27,10 @@ const PoolStakeItem = ({
   const [isAddingStake, setIsAddingStake] = useState(false)
 
   const [claimDialogOpen, setClaimDialogOpen] = useState(false)
-  const claimPayoutExtrinsic = useExtrinsic('nominationPools', 'claimPayout')
-  const restakeExtrinsic = useExtrinsic('nominationPools', 'bondExtra')
-  const withdrawExtrinsic = useExtrinsic('nominationPools', 'withdrawUnbonded')
+  const [claimPayoutLoadable, setClaimPayoutLoadable] = useSubmittableResultLoadableState()
+  const [restakeLoadable, setRestakeLoadable] = useSubmittableResultLoadableState()
 
-  const pendingRewards = useTokenAmountFromPlanck(item.pendingRewards)
+  const withdrawExtrinsic = useExtrinsic('nominationPools', 'withdrawUnbonded')
 
   const eraEtaFormatter = useEraEtaFormatter()
   const unlocks = item.unlockings?.map(x => ({
@@ -57,7 +56,7 @@ const PoolStakeItem = ({
             <PoolStakeItemComponent.ClaimChip
               amount={<RedactableBalance>{decimal.fromPlanck(item.pendingRewards).toHuman()}</RedactableBalance>}
               onClick={() => setClaimDialogOpen(true)}
-              loading={claimPayoutExtrinsic.state === 'loading' || restakeExtrinsic.state === 'loading'}
+              loading={claimPayoutLoadable.state === 'loading' || restakeLoadable.state === 'loading'}
             />
           )
         }
@@ -107,17 +106,10 @@ const PoolStakeItem = ({
       />
       <ClaimStakeDialog
         open={claimDialogOpen}
-        amount={pendingRewards.decimalAmount?.toHuman() ?? '...'}
-        fiatAmount={pendingRewards.localizedFiatAmount ?? '...'}
-        onRequestDismiss={useCallback(() => setClaimDialogOpen(false), [])}
-        onRequestClaim={useCallback(() => {
-          void claimPayoutExtrinsic.signAndSend(item.account?.address ?? '')
-          setClaimDialogOpen(false)
-        }, [claimPayoutExtrinsic, item.account?.address])}
-        onRequestReStake={useCallback(() => {
-          void restakeExtrinsic.signAndSend(item.account?.address ?? '', { Rewards: item.pendingRewards })
-          setClaimDialogOpen(false)
-        }, [item.account?.address, item.pendingRewards, restakeExtrinsic])}
+        onRequestDismiss={() => setClaimDialogOpen(false)}
+        account={item.account}
+        onChangeClaimPayoutLoadable={setClaimPayoutLoadable}
+        onChangeRestakeLoadable={setRestakeLoadable}
       />
     </>
   )

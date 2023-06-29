@@ -12,7 +12,7 @@ type Story = StoryObj<typeof StakeDashboard>
 
 export const Default: Story = {
   args: {
-    assetSelector: <Select placeholder="Select asset" />,
+    chainSelector: <Select placeholder="Select asset" />,
     accountSelector: <Select placeholder="Select account" />,
     // TODO: https://github.com/storybookjs/storybook/issues/15954
     // @ts-expect-error

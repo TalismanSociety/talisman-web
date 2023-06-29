@@ -2,6 +2,7 @@ import { type Meta, type StoryObj } from '@storybook/react'
 import { addDays } from 'date-fns'
 import { range } from 'lodash'
 import StakeDetails from './StakeDetails'
+import EmptyStakeDetails from './EmptyStakeDetails'
 
 export default {
   title: 'Recipes/StakeDetails',
@@ -14,6 +15,8 @@ export const Default: Story = {
   // TODO: https://github.com/storybookjs/storybook/issues/15954
   render: props => <StakeDetails {...props} />,
   args: {
+    account: { name: 'Bing bong', address: 'foo' },
+    poolName: 'Lit 🔥',
     claimButton: <StakeDetails.ClaimButton amount="1.2 DOT" />,
     addButton: <StakeDetails.AddButton />,
     unbondButton: <StakeDetails.UnbondButton />,
@@ -28,4 +31,8 @@ export const Default: Story = {
       { eta: '2 days', amount: '2 DOT' },
     ],
   },
+}
+
+export const EmptyState = {
+  render: () => <EmptyStakeDetails minJoinBond="1 DOT" onClickSimulateRewards={() => {}} onClickStake={() => {}} />,
 }

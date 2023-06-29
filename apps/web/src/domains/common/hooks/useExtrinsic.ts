@@ -2,7 +2,7 @@ import { type ApiPromise } from '@polkadot/api'
 import { type AddressOrPair, type SubmittableExtrinsic } from '@polkadot/api/types'
 import { web3FromAddress } from '@polkadot/extension-dapp'
 import { type ISubmittableResult } from '@polkadot/types/types'
-import { useContext, useState } from 'react'
+import { useContext, useMemo, useState } from 'react'
 import { useRecoilCallback } from 'recoil'
 
 import { ChainContext } from '@domains/chains'
@@ -11,7 +11,13 @@ import { skipErrorReporting } from '../consts'
 import { extrinsicMiddleware } from '../extrinsicMiddleware'
 import { toastExtrinsic } from '../utils'
 
-type ExtrinsicLoadable = (
+export type SubmittableResultLoadable =
+  | { state: 'idle'; contents: undefined }
+  | { state: 'loading'; contents: ISubmittableResult | undefined }
+  | { state: 'hasValue'; contents: ISubmittableResult }
+  | { state: 'hasError'; contents: any }
+
+export type ExtrinsicLoadable = (
   | { state: 'idle'; contents: undefined }
   | { state: 'loading'; contents: ISubmittableResult | undefined }
   | { state: 'hasValue'; contents: ISubmittableResult }
@@ -19,6 +25,9 @@ type ExtrinsicLoadable = (
 ) & {
   signAndSend: (account: AddressOrPair) => Promise<ISubmittableResult>
 }
+
+export const useSubmittableResultLoadableState = () =>
+  useState<SubmittableResultLoadable>({ state: 'idle', contents: undefined })
 
 export function useExtrinsic<T extends SubmittableExtrinsic<'promise', ISubmittableResult> | undefined>(
   submittable: T
@@ -38,21 +47,16 @@ export function useExtrinsic<
 export function useExtrinsic<
   TModule extends keyof PickKnownKeys<ApiPromise['tx']>,
   TSection extends keyof PickKnownKeys<ApiPromise['tx'][TModule]>
->(module: TModule, section: TSection, ...params: Parameters<ApiPromise['tx'][TModule][TSection]>): ExtrinsicLoadable
+>(module: TModule, section: TSection, params: Parameters<ApiPromise['tx'][TModule][TSection]>): ExtrinsicLoadable
 export function useExtrinsic(
   moduleOrSubmittable: string | SubmittableExtrinsic<'promise', ISubmittableResult> | undefined,
   section?: string,
-  ...params: unknown[]
+  params: unknown[] = []
 ): ExtrinsicLoadable | undefined {
   const chain = useContext(ChainContext)
   const endpoint = useSubstrateApiEndpoint()
 
-  const [loadable, setLoadable] = useState<
-    | { state: 'idle'; contents: undefined }
-    | { state: 'loading'; contents: ISubmittableResult | undefined }
-    | { state: 'hasValue'; contents: ISubmittableResult }
-    | { state: 'hasError'; contents: any }
-  >({ state: 'idle', contents: undefined })
+  const [loadable, setLoadable] = useSubmittableResultLoadableState()
 
   const signAndSend = useRecoilCallback(
     callbackInterface =>
@@ -137,14 +141,14 @@ export function useExtrinsic(
           }
         }
       },
-    [chain.id, chain.subscanUrl, endpoint, moduleOrSubmittable, params, section]
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [chain.id, chain.subscanUrl, endpoint, moduleOrSubmittable, JSON.stringify(params), section, setLoadable]
   )
 
-  if (moduleOrSubmittable === undefined) {
-    return undefined
-  }
-
-  return { ...loadable, signAndSend }
+  return useMemo(
+    () => (moduleOrSubmittable === undefined ? undefined : { ...loadable, signAndSend }),
+    [loadable, moduleOrSubmittable, signAndSend]
+  )
 }
 
 export default useExtrinsic

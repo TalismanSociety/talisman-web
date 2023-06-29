@@ -1,10 +1,13 @@
 import { substrateAccountsState } from '@domains/accounts/recoils'
-import { chainsState } from '@domains/chains'
+import { chainsState, type Chain } from '@domains/chains'
 import { useSubstrateApiEndpoint } from '@domains/common'
 import { chainReadIdState, substrateApiState } from '@domains/common/recoils'
 import type { AnyNumber } from '@polkadot/types-codec/types'
+import { encodeAddress } from '@polkadot/util-crypto'
 import DotPoolSelector, { ValidatorSelector, defaultOptions } from '@talismn/dot-pool-selector'
-import { selectorFamily, type SerializableParam } from 'recoil'
+import { Decimal } from '@talismn/math'
+import { fromUnixTime } from 'date-fns'
+import { selectorFamily, waitForAll, type SerializableParam } from 'recoil'
 
 export const allPendingPoolRewardsState = selectorFamily({
   key: 'AllPendingRewards',
@@ -96,3 +99,62 @@ export const recommendedPoolsState = selectorFamily({
 })
 
 export const useRecommendedPoolsState = () => recommendedPoolsState(useSubstrateApiEndpoint())
+
+const subscanPoolPayoutsState = selectorFamily<
+  {
+    code: number
+    message: string
+    generated_at: number
+    data: {
+      count: number
+      list: ReadonlyArray<{
+        pool_id: number
+        module_id: string
+        event_id: string
+        extrinsic_index: string
+        event_index: string
+        block_timestamp: number
+        amount: string
+        account_display: {
+          address: string
+        }
+      }>
+    }
+  },
+  { account: string; poolId: number; chain: Chain }
+>({
+  key: 'SubscanPayouts',
+  get:
+    ({ account, poolId, chain }) =>
+    async ({ get }) => {
+      const api = get(substrateApiState(chain.rpc))
+
+      return await fetch(
+        new URL('api/scan/nomination_pool/rewards', chain.subscanUrl.replace('subscan', 'api.subscan')),
+        {
+          method: 'POST',
+          headers: { 'X-API-Key': '6543451cf4d8429f9767c6b5026b349d' },
+          body: JSON.stringify({
+            address: encodeAddress(account, api.registry.chainSS58),
+            pool_id: poolId,
+            row: 100,
+            page: 0,
+          }),
+        }
+      ).then(async x => await x.json())
+    },
+})
+
+export const poolPayoutsState = selectorFamily({
+  key: 'Payouts',
+  get:
+    (params: { account: string; poolId: number; chain: Chain }) =>
+    ({ get }) => {
+      const [api, response] = get(waitForAll([substrateApiState(params.chain.rpc), subscanPoolPayoutsState(params)]))
+
+      return response.data.list.map(x => ({
+        date: fromUnixTime(x.block_timestamp),
+        amount: Decimal.fromPlanck(x.amount, api.registry.chainDecimals.at(0) ?? 0, api.registry.chainTokens.at(0)),
+      }))
+    },
+})

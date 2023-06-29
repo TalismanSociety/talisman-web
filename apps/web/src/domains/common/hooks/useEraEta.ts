@@ -1,5 +1,5 @@
 import { useDeriveState } from '@talismn/react-polkadot-api'
-import type BN from 'bn.js'
+import BN from 'bn.js'
 import { addMilliseconds, formatDistanceToNow } from 'date-fns'
 import { useCallback } from 'react'
 import { useRecoilValue, waitForAll } from 'recoil'
@@ -15,15 +15,20 @@ export const useEraEtaFormatter = () => {
   )
 
   return useCallback(
-    (era: BN) => {
+    (era: BN | number) => {
       if (!sessionProgress.isEpoch) {
-        return `${era.mul(sessionProgress.eraLength).toString()} sessions`
+        return `${new BN(era).mul(sessionProgress.eraLength).toString()} sessions`
       }
 
       return formatDistanceToNow(
         addMilliseconds(
           new Date(),
-          erasToMilliseconds(era, sessionProgress.eraLength, sessionProgress.eraProgress, expectedBlockTime(api))
+          erasToMilliseconds(
+            new BN(era),
+            sessionProgress.eraLength,
+            sessionProgress.eraProgress,
+            expectedBlockTime(api)
+          )
         )
       )
     },

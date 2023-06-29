@@ -58,7 +58,7 @@ const Stakes = () => {
             key={index}
             fallback={<StakeItem.Skeleton className={skeletonId} css={{ order: 1, display: 'none' }} />}
           >
-            <ChainProvider value={chain}>
+            <ChainProvider chain={chain}>
               <ErrorBoundary orientation="horizontal">
                 <PoolStakes />
               </ErrorBoundary>

@@ -12,14 +12,19 @@ import {
   Text,
   type ButtonProps,
 } from '@talismn/ui'
-import type { ReactNode } from 'react'
+import { shortenAddress } from '@util/format'
+import { eachDayOfInterval, isSameDay, max as maxDate, min as minDate } from 'date-fns'
+import { useMemo, type ReactNode } from 'react'
 import { VictoryAxis, VictoryBar, VictoryChart, VictoryLabel, VictoryTooltip } from 'victory'
+import type { StakeStatus } from '../StakeStatusIndicator'
 
-type BalanceEntry = { date: Date; value: number }
+type PayoutEntry = { date: Date; amount: number; displayAmount: string }
 
 export type StakeDetailsProps = {
   className?: string
   account: Account
+  poolName: ReactNode
+  poolStatus: StakeStatus
   claimButton?: ReactNode
   addButton?: ReactNode
   unbondButton?: ReactNode
@@ -28,7 +33,7 @@ export type StakeDetailsProps = {
   rewards: ReactNode
   apy: ReactNode
   nextEraEta: ReactNode
-  payouts: Array<{ date: Date; amount: number; displayAmount: string }>
+  payouts: readonly PayoutEntry[]
   unbondings: Array<{ eta: string; amount: string }>
   readonly?: boolean
 }
@@ -36,6 +41,21 @@ export type StakeDetailsProps = {
 const StakeDetails = Object.assign(
   (props: StakeDetailsProps) => {
     const theme = useTheme()
+
+    const groupedPayouts = useMemo(() => {
+      const dateFormat = new Intl.DateTimeFormat(undefined, { day: 'numeric', month: 'numeric', year: '2-digit' })
+
+      const dates = props.payouts.map(x => x.date)
+      const days = eachDayOfInterval({ start: minDate(dates), end: maxDate(dates) })
+        .sort((a, b) => a.getTime() - b.getTime())
+        .slice(-15)
+
+      return days.map(x => ({
+        date: dateFormat.format(x),
+        amount: props.payouts.filter(y => isSameDay(x, y.date)).reduce((prev, curr) => prev + curr.amount, 0),
+      }))
+    }, [props.payouts])
+
     return (
       <div className={props.className} css={{ containerType: 'inline-size' }}>
         <Surface
@@ -58,11 +78,11 @@ const StakeDetails = Object.assign(
           >
             <ListItem
               css={{ padding: 0 }}
-              leadingContent={<Identicon value="foo" size="3.2rem" />}
-              headlineText="Account 1"
+              leadingContent={<Identicon value={props.account.address} size="3.2rem" />}
+              headlineText={props.account.name ?? shortenAddress(props.account.address)}
               supportingText={
                 <>
-                  <StatusIndicator css={{ display: 'inline-block' }} status="success" /> Talisman pool 1
+                  <StatusIndicator css={{ display: 'inline-block' }} status={props.poolStatus} /> {props.poolName}
                 </>
               }
             />
@@ -144,13 +164,13 @@ const StakeDetails = Object.assign(
                 <Text.H3>Payouts</Text.H3>
               </header>
               <div css={{ flex: 1 }}>
-                <VictoryChart domainPadding={25}>
+                <VictoryChart domainPadding={25} height={225} padding={{ top: 5, right: 50, bottom: 50, left: 50 }}>
                   <VictoryAxis
                     tickLabelComponent={
                       <VictoryLabel
                         angle={-35}
                         textAnchor="end"
-                        style={{ fill: `color-mix(in srgb, ${theme.color.onSurface}, transparent 50%)` }}
+                        style={{ fill: `color-mix(in srgb, ${theme.color.onSurface}, transparent 50%)`, padding: 1000 }}
                       />
                     }
                     style={{
@@ -172,14 +192,10 @@ const StakeDetails = Object.assign(
                   />
                   <VictoryBar
                     style={{ data: { fill: '#E6007A' } }}
-                    data={props.payouts}
-                    x={({ date }: BalanceEntry) =>
-                      new Intl.DateTimeFormat(undefined, { dateStyle: 'short' }).format(date)
-                    }
+                    data={groupedPayouts}
+                    x="date"
                     y="amount"
-                    labels={({ datum }) =>
-                      `Payout: ${datum.displayAmount as string}\nDate: ${new Intl.DateTimeFormat().format(datum.date)}`
-                    }
+                    labels={({ datum }) => datum.amount}
                     cornerRadius={2}
                     labelComponent={<VictoryTooltip />}
                   />
@@ -187,28 +203,39 @@ const StakeDetails = Object.assign(
               </div>
             </Surface>
             <div css={{ flex: '33rem' }}>
-              <section>
-                <Text.H4>Unbondings</Text.H4>
-                <DescriptionList>
-                  {props.unbondings.map((x, index) => (
-                    <DescriptionList.Description key={index}>
-                      <DescriptionList.Term>{x.amount}</DescriptionList.Term>
-                      <DescriptionList.Details>{x.eta}</DescriptionList.Details>
-                    </DescriptionList.Description>
-                  ))}
-                </DescriptionList>
-              </section>
+              {props.unbondings.length > 0 && (
+                <section>
+                  <Text.H4>Unbondings</Text.H4>
+                  <DescriptionList>
+                    {props.unbondings.map((x, index) => (
+                      <DescriptionList.Description key={index} className="payout">
+                        <DescriptionList.Term>{x.amount}</DescriptionList.Term>
+                        <DescriptionList.Details>{x.eta}</DescriptionList.Details>
+                      </DescriptionList.Description>
+                    ))}
+                  </DescriptionList>
+                </section>
+              )}
               <section>
                 <Text.H4>Latest payouts</Text.H4>
                 <DescriptionList>
-                  {[...props.payouts]
-                    .sort((a, b) => b.date.getTime() - a.date.getTime())
-                    .map((x, index) => (
-                      <DescriptionList.Description key={index}>
-                        <DescriptionList.Term>{x.displayAmount}</DescriptionList.Term>
-                        <DescriptionList.Details>{new Intl.DateTimeFormat().format(x.date)}</DescriptionList.Details>
-                      </DescriptionList.Description>
-                    ))}
+                  {useMemo(
+                    () =>
+                      [...props.payouts]
+                        .slice(0, 6)
+                        .sort((a, b) => b.date.getTime() - a.date.getTime())
+                        .map((x, index) => (
+                          <DescriptionList.Description key={index}>
+                            <DescriptionList.Term>{x.displayAmount}</DescriptionList.Term>
+                            <DescriptionList.Details>
+                              {new Intl.DateTimeFormat(undefined, { timeStyle: 'short', dateStyle: 'short' }).format(
+                                x.date
+                              )}
+                            </DescriptionList.Details>
+                          </DescriptionList.Description>
+                        )),
+                    [props.payouts]
+                  )}
                 </DescriptionList>
               </section>
             </div>

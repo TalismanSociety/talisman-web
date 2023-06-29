@@ -22,7 +22,7 @@ const EraEta = () => {
   return <>{useEraEtaFormatter()(new BN(1))}</>
 }
 
-const StakeDialog = () => {
+const InnerStakeDialog = () => {
   const [searchParams, setSearchParams] = useSearchParams()
 
   const open = searchParams.get('action') === 'stake'
@@ -38,7 +38,7 @@ const StakeDialog = () => {
   }
 
   return (
-    <ChainProvider value={chain}>
+    <ChainProvider chain={chain}>
       <StakeDialogComponent
         open={open}
         onRequestDismiss={() => setSearchParams(new URLSearchParams())}
@@ -89,6 +89,20 @@ const StakeDialog = () => {
       />
     </ChainProvider>
   )
+}
+
+// TODO: Clean this up
+// we use a wrapper component to reset the dialog state on close
+// this is right now the safest change
+const StakeDialog = () => {
+  const [searchParams] = useSearchParams()
+  const open = searchParams.get('action') === 'stake'
+
+  if (!open) {
+    return null
+  }
+
+  return <InnerStakeDialog />
 }
 
 export default StakeDialog

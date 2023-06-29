@@ -1,10 +1,10 @@
 import StakeBanner from '@components/recipes/StakeBanner'
-import { Select, Text } from '@talismn/ui'
+import { Text } from '@talismn/ui'
 import type { ReactNode } from 'react'
 
 export type StakeDashboardProps = {
   banner: ReactNode
-  assetSelector: ReactNode
+  chainSelector: ReactNode
   accountSelector: ReactNode
   details: ReactNode
 }
@@ -37,14 +37,14 @@ const StakeDashboard = (props: StakeDashboardProps) => (
             <Text.H3>Assets</Text.H3>
             <Text.BodySmall>1. Select asset to stake</Text.BodySmall>
           </header>
-          <Select placeholder="Select account"></Select>
+          {props.chainSelector}
         </section>
         <section>
           <header css={{ display: 'flex', flexDirection: 'column-reverse', gap: '0.8rem' }}>
             <Text.H3>Accounts</Text.H3>
             <Text.BodySmall>2. Select account</Text.BodySmall>
           </header>
-          <Select placeholder="Select account"></Select>
+          {props.accountSelector}
         </section>
       </div>
       <div css={{ gridArea: 'details' }}>{props.details}</div>

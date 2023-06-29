@@ -128,7 +128,7 @@ const Button = <T extends ButtonElementType = 'button'>({
       css={[
         {
           textAlign: 'center',
-          display: 'block',
+          display: 'inline-block',
           padding: '1.156rem 2.4rem',
           width: 'fit-content',
           border: 'none',

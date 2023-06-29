@@ -24,14 +24,20 @@ import {
 import { shortenAddress } from '@util/format'
 import { usePostHog } from 'posthog-js/react'
 import { useCallback, useEffect, useState } from 'react'
-import { Link, Outlet, useLocation } from 'react-router-dom'
+import { Link, Outlet, useLocation, useMatches } from 'react-router-dom'
 import { useRecoilValue } from 'recoil'
 
 const Header = () => {
   const shouldShowAccountConnectionGuard = useShouldShowAccountConnectionGuard()
   const accounts = useRecoilValue(selectedAccountsState)
 
+  const matches = useMatches()
+
   if (shouldShowAccountConnectionGuard) {
+    return null
+  }
+
+  if (matches.some(x => x.pathname.endsWith('staking'))) {
     return null
   }
 
@@ -112,7 +118,7 @@ const Layout = () => {
           <Link to="/portfolio">
             <NavigationBar.Item label="Portfolio" icon={<Eye />} />
           </Link>
-          <Link to="/portfolio?action=stake">
+          <Link to="/staking">
             <NavigationBar.Item label="Staking" icon={<Zap />} />
           </Link>
           <Link to="/transfer">
@@ -137,7 +143,7 @@ const Layout = () => {
           <Link to="/portfolio">
             <NavigationRail.Item label="Portfolio" icon={<Eye />} />
           </Link>
-          <Link to="/portfolio?action=stake">
+          <Link to="/staking">
             <NavigationRail.Item label="Staking" icon={<Zap />} />
           </Link>
           <Link to="/transfer">
@@ -199,7 +205,7 @@ const Layout = () => {
           <Link to="/portfolio">
             <NavigationDrawer.Item label="Portfolio" icon={<Eye />} />
           </Link>
-          <Link to="/portfolio?action=stake">
+          <Link to="/staking">
             <NavigationDrawer.Item label="Staking" icon={<Zap />} />
           </Link>
           <Link to="/transfer">

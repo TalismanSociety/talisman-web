@@ -6,6 +6,7 @@ import dexRoutes from './dex'
 import Explore from './explore'
 import Layout from './layout'
 import portfolioRoutes from './portfolio'
+import Staking from './staking'
 
 const NavigateToStaking = () => {
   const [search] = useSearchParams()
@@ -33,7 +34,7 @@ export default Sentry.wrapCreateBrowserRouter(createBrowserRouter)([
       },
       { path: 'history', element: <Navigate to="/portfolio/history" /> },
       { path: 'nfts', element: <Navigate to="/portfolio/collectibles" /> },
-      { path: 'staking', element: <NavigateToStaking /> },
+      { path: 'staking', element: <Staking /> },
       { path: 'transport', element: <Navigate to="/portfolio?action=transport" /> },
     ],
   },
