@@ -1,8 +1,7 @@
 import * as React from 'react'
-import { Ref, SVGProps, forwardRef } from 'react'
-
+import type { SVGProps } from 'react'
+import { Ref, forwardRef } from 'react'
 import { IconContext } from '../context'
-
 const SvgCloudSnow = (
   props: Omit<SVGProps<SVGSVGElement>, 'width' | 'height'> & {
     size?: number | string
@@ -12,21 +11,21 @@ const SvgCloudSnow = (
   const iconContext = React.useContext(IconContext)
   return (
     <svg
+      xmlns="http://www.w3.org/2000/svg"
       width={props.size ?? iconContext.size ?? 24}
       height={props.size ?? iconContext.size ?? 24}
-      viewBox="0 0 24 24"
       fill="none"
-      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
       ref={ref}
       {...props}
     >
       <g clipPath="url(#a)">
         <path
-          d="M20 17.58A5 5 0 0 0 18 8h-1.26A7.998 7.998 0 0 0 2.063 6.005 8 8 0 0 0 4 16.25"
-          stroke="currentColor"
-          strokeWidth={2}
+          stroke="currentcolor"
           strokeLinecap="round"
           strokeLinejoin="round"
+          strokeWidth={2}
+          d="M20 17.58A5 5 0 0 0 18 8h-1.26A7.998 7.998 0 0 0 2.063 6.005 8 8 0 0 0 4 16.25"
         />
       </g>
       <defs>

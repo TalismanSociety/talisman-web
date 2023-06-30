@@ -1,8 +1,7 @@
 import * as React from 'react'
-import { Ref, SVGProps, forwardRef } from 'react'
-
+import type { SVGProps } from 'react'
+import { Ref, forwardRef } from 'react'
 import { IconContext } from '../context'
-
 const SvgWifiOff = (
   props: Omit<SVGProps<SVGSVGElement>, 'width' | 'height'> & {
     size?: number | string
@@ -12,15 +11,15 @@ const SvgWifiOff = (
   const iconContext = React.useContext(IconContext)
   return (
     <svg
+      xmlns="http://www.w3.org/2000/svg"
       width={props.size ?? iconContext.size ?? 24}
       height={props.size ?? iconContext.size ?? 24}
-      viewBox="0 0 24 24"
       fill="none"
-      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
       ref={ref}
       {...props}
     >
-      <g clipPath="url(#a)" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+      <g stroke="currentcolor" strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} clipPath="url(#a)">
         <path d="m1 1 22 22" />
         <path d="M16.72 11.06c.82.4 1.585.9 2.28 1.49" />
         <path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39" />

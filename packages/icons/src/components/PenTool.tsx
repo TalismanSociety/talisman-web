@@ -1,8 +1,7 @@
 import * as React from 'react'
-import { Ref, SVGProps, forwardRef } from 'react'
-
+import type { SVGProps } from 'react'
+import { Ref, forwardRef } from 'react'
 import { IconContext } from '../context'
-
 const SvgPenTool = (
   props: Omit<SVGProps<SVGSVGElement>, 'width' | 'height'> & {
     size?: number | string
@@ -12,30 +11,30 @@ const SvgPenTool = (
   const iconContext = React.useContext(IconContext)
   return (
     <svg
+      xmlns="http://www.w3.org/2000/svg"
       width={props.size ?? iconContext.size ?? 24}
       height={props.size ?? iconContext.size ?? 24}
-      viewBox="0 0 24 24"
       fill="none"
-      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
       ref={ref}
       {...props}
     >
       <path
-        d="m12 19 7-7 3 3-7 7-3-3Z"
-        stroke="currentColor"
-        strokeWidth={2}
+        stroke="currentcolor"
         strokeLinecap="round"
         strokeLinejoin="round"
+        strokeWidth={2}
+        d="m12 19 7-7 3 3-7 7-3-3Z"
       />
       <path
-        d="m18 13-1.5-7.5L2 2l3.5 14.5L13 18l5-5Z"
-        stroke="currentColor"
-        strokeWidth={2}
+        stroke="currentcolor"
         strokeLinecap="round"
         strokeLinejoin="round"
+        strokeWidth={2}
+        d="m18 13-1.5-7.5L2 2l3.5 14.5L13 18l5-5Z"
       />
-      <path d="m2 2 7.586 7.586" stroke="currentColor" strokeWidth={2} />
-      <circle cx={11} cy={11} r={2} stroke="currentColor" strokeWidth={2} />
+      <path stroke="currentcolor" strokeWidth={2} d="m2 2 7.586 7.586" />
+      <circle cx={11} cy={11} r={2} stroke="currentcolor" strokeWidth={2} />
     </svg>
   )
 }
