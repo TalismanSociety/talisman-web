@@ -19,8 +19,16 @@ import {
   useSubmittableResultLoadableState,
   useTokenAmountFromPlanck,
 } from '@domains/common'
-import { poolPayoutsState, useInflation, usePoolStakes, type DerivedPool } from '@domains/nominationPools'
+import {
+  poolPayoutsState,
+  useInflation,
+  usePoolStakes,
+  type DerivedPool,
+  totalPoolPayoutsState,
+  mostRecentPoolPayoutsState,
+} from '@domains/nominationPools'
 import { useQueryState } from '@talismn/react-polkadot-api'
+import { subDays } from 'date-fns'
 import { Suspense, useCallback, useContext, useMemo, useState, useTransition } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useRecoilValue, useRecoilValueLoadable, waitForAll } from 'recoil'
@@ -88,14 +96,22 @@ const StakeDetailsActive = ({ account, pool }: { account: Account; pool: Derived
   const [addStakeDialogOpen, setAddStakeDialogOpen] = useState(false)
   const [unstakeDialogOpen, setUnstakeDialogOpen] = useState(false)
 
-  const [decimal, payouts] = useRecoilValue(
+  const today = useMemo(() => new Date(), [])
+
+  const payoutsStateParams = {
+    account: account.address,
+    poolId: pool.poolMember.poolId.toNumber(),
+    chain: useContext(ChainContext),
+    fromDate: subDays(today, 15),
+    toDate: today,
+  }
+
+  const [decimal, last15DaysPayouts, last15DaysTotalPayouts, mostRecentPayouts] = useRecoilValue(
     waitForAll([
       useNativeTokenDecimalState(),
-      poolPayoutsState({
-        account: account.address,
-        poolId: pool.poolMember.poolId.toNumber(),
-        chain: useContext(ChainContext),
-      }),
+      poolPayoutsState(payoutsStateParams),
+      totalPoolPayoutsState(payoutsStateParams),
+      mostRecentPoolPayoutsState(payoutsStateParams),
     ])
   )
 
@@ -140,7 +156,7 @@ const StakeDetailsActive = ({ account, pool }: { account: Account; pool: Derived
           )
         }
         balance={balance.decimalAmount.toHuman()}
-        rewards={'A lot'}
+        rewards={last15DaysTotalPayouts.toHuman()}
         apy={stakedReturn.toLocaleString(undefined, { style: 'percent' })}
         nextEraEta={useEraEtaFormatter()(1)}
         unbondings={useMemo(
@@ -151,9 +167,23 @@ const StakeDetailsActive = ({ account, pool }: { account: Account; pool: Derived
             })),
           [decimal, eraEtaFormatter, pool.unlockings]
         )}
-        payouts={useMemo(
-          () => payouts.map(x => ({ date: x.date, amount: x.amount.toNumber(), displayAmount: x.amount.toHuman() })),
-          [payouts]
+        last15DaysPayouts={useMemo(
+          () =>
+            last15DaysPayouts.map(x => ({
+              date: x.date,
+              amount: x.amount.toNumber(),
+              displayAmount: x.amount.toHuman(),
+            })),
+          [last15DaysPayouts]
+        )}
+        mostRecentPayouts={useMemo(
+          () =>
+            mostRecentPayouts.map(x => ({
+              date: x.date,
+              amount: x.amount.toNumber(),
+              displayAmount: x.amount.toHuman(),
+            })),
+          [mostRecentPayouts]
         )}
         readonly={account.readonly}
       />

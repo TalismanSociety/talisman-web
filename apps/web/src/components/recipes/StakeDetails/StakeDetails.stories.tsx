@@ -11,6 +11,12 @@ export default {
 
 type Story = StoryObj<typeof StakeDetails>
 
+const payouts = range(0, 8).map(x => ({
+  date: addDays(new Date(), x),
+  amount: x + 10,
+  displayAmount: `${x + 10} DOT`,
+}))
+
 export const Default: Story = {
   // TODO: https://github.com/storybookjs/storybook/issues/15954
   render: props => <StakeDetails {...props} />,
@@ -25,7 +31,8 @@ export const Default: Story = {
     rewards: '34234.12 DOT',
     apy: '5.5%',
     nextEraEta: '4 hours',
-    payouts: range(0, 8).map(x => ({ date: addDays(new Date(), x), amount: x + 10, displayAmount: `${x + 10} DOT` })),
+    last15DaysPayouts: payouts,
+    mostRecentPayouts: payouts,
     unbondings: [
       { eta: '1 hour', amount: '1 DOT' },
       { eta: '2 days', amount: '2 DOT' },

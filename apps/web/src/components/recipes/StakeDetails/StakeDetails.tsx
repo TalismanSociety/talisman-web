@@ -9,12 +9,11 @@ import {
   Surface,
   Text,
   TonalIcon,
-  type ButtonProps,
-  useSurfaceColor,
   useSurfaceColorAtElevation,
+  type ButtonProps,
 } from '@talismn/ui'
 import { shortenAddress } from '@util/format'
-import { eachDayOfInterval, isSameDay, max as maxDate, min as minDate } from 'date-fns'
+import { eachDayOfInterval, isSameDay, subDays } from 'date-fns'
 import { useMemo, type ReactNode } from 'react'
 import { VictoryAxis, VictoryBar, VictoryChart, VictoryLabel, VictoryTooltip } from 'victory'
 import { StakeStatusIndicator, type StakeStatus } from '../StakeStatusIndicator'
@@ -34,7 +33,9 @@ export type StakeDetailsProps = {
   rewards: ReactNode
   apy: ReactNode
   nextEraEta: ReactNode
-  payouts: readonly PayoutEntry[]
+  currentDate?: Date
+  last15DaysPayouts: readonly PayoutEntry[]
+  mostRecentPayouts: readonly PayoutEntry[]
   unbondings: Array<{ eta: string; amount: string }>
   readonly?: boolean
 }
@@ -43,19 +44,24 @@ const StakeDetails = Object.assign(
   (props: StakeDetailsProps) => {
     const theme = useTheme()
 
+    const now = useMemo(
+      () => props.currentDate ?? new Date(),
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      [props.currentDate?.getTime()]
+    )
+
     const groupedPayouts = useMemo(() => {
       const dateFormat = new Intl.DateTimeFormat(undefined, { day: 'numeric', month: 'numeric', year: '2-digit' })
 
-      const dates = props.payouts.map(x => x.date)
-      const days = eachDayOfInterval({ start: minDate(dates), end: maxDate(dates) })
+      const days = eachDayOfInterval({ start: subDays(now, 15), end: now })
         .sort((a, b) => a.getTime() - b.getTime())
         .slice(-15)
 
       return days.map(x => ({
         date: dateFormat.format(x),
-        amount: props.payouts.filter(y => isSameDay(x, y.date)).reduce((prev, curr) => prev + curr.amount, 0),
+        amount: props.last15DaysPayouts.filter(y => isSameDay(x, y.date)).reduce((prev, curr) => prev + curr.amount, 0),
       }))
-    }, [props.payouts])
+    }, [now, props.last15DaysPayouts])
 
     return (
       <div className={props.className} css={{ containerType: 'inline-size' }}>
@@ -126,7 +132,7 @@ const StakeDetails = Object.assign(
                   <Zap />
                 </TonalIcon>
               }
-              overlineText="Earned rewards"
+              overlineText="15 days rewards"
               headlineText={props.rewards}
             />
             <ListItem
@@ -162,7 +168,7 @@ const StakeDetails = Object.assign(
               }}
             >
               <header css={{ display: 'contents' }}>
-                <Text.H3>Payouts</Text.H3>
+                <Text.H4>Payouts over last 15 days</Text.H4>
               </header>
               <div css={{ flex: 1 }}>
                 <VictoryChart domainPadding={25} height={225} padding={{ top: 5, right: 50, bottom: 50, left: 50 }}>
@@ -214,7 +220,7 @@ const StakeDetails = Object.assign(
                 <DescriptionList>
                   {useMemo(
                     () =>
-                      [...props.payouts]
+                      [...props.mostRecentPayouts]
                         .sort((a, b) => b.date.getTime() - a.date.getTime())
                         .slice(0, 5)
                         .map((x, index) => (
@@ -227,7 +233,7 @@ const StakeDetails = Object.assign(
                             </DescriptionList.Details>
                           </DescriptionList.Description>
                         )),
-                    [props.payouts]
+                    [props.mostRecentPayouts]
                   )}
                 </DescriptionList>
               </section>
