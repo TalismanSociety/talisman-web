@@ -6,7 +6,7 @@ import { useRecoilValue, waitForAll } from 'recoil'
 
 type Options<TAllowInvalid extends boolean = boolean> = { fiatCurrency?: string; allowInvalidValue?: TAllowInvalid }
 
-export const useTokenAmount = <TAllowInvalid extends boolean = false>(
+export const useTokenAmount = <TAllowInvalid extends boolean = true>(
   amount: string,
   options: Options<TAllowInvalid> = { fiatCurrency: 'usd', allowInvalidValue: true as TAllowInvalid }
 ) => {

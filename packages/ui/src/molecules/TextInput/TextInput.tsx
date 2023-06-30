@@ -9,6 +9,7 @@ export type TextInputProps = React.DetailedHTMLProps<React.InputHTMLAttributes<H
   trailingIcon?: ReactNode
   trailingSupportingText?: ReactNode
   leadingSupportingText?: ReactNode
+  containerClassName?: string
   /** @deprecated */
   isError?: boolean
 }
@@ -20,6 +21,7 @@ const TextInput = Object.assign(
     trailingIcon,
     trailingSupportingText,
     leadingSupportingText,
+    containerClassName,
     isError,
     ...props
   }: TextInputProps) => {
@@ -27,7 +29,7 @@ const TextInput = Object.assign(
     const inputId = useId()
 
     return (
-      <div>
+      <div className={containerClassName}>
         {(leadingLabel || trailingLabel) && (
           <div
             css={{

@@ -67,6 +67,7 @@ const AlertDialog = ({
               animation: `${backdropKeyframes} .5s ease forwards`,
             },
           },
+          'width': 'auto',
           '@media (min-width: 768px)': {
             width,
           },
