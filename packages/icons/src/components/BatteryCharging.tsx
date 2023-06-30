@@ -1,8 +1,7 @@
 import * as React from 'react'
-import { Ref, SVGProps, forwardRef } from 'react'
-
+import type { SVGProps } from 'react'
+import { Ref, forwardRef } from 'react'
 import { IconContext } from '../context'
-
 const SvgBatteryCharging = (
   props: Omit<SVGProps<SVGSVGElement>, 'width' | 'height'> & {
     size?: number | string
@@ -12,23 +11,23 @@ const SvgBatteryCharging = (
   const iconContext = React.useContext(IconContext)
   return (
     <svg
+      xmlns="http://www.w3.org/2000/svg"
       width={props.size ?? iconContext.size ?? 24}
       height={props.size ?? iconContext.size ?? 24}
-      viewBox="0 0 24 24"
       fill="none"
-      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
       ref={ref}
       {...props}
     >
       <path
-        d="M5 18H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h3.19M15 6h2a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-3.19"
-        stroke="currentColor"
-        strokeWidth={2}
+        stroke="currentcolor"
         strokeLinecap="round"
         strokeLinejoin="round"
+        strokeWidth={2}
+        d="M5 18H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h3.19M15 6h2a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-3.19"
       />
-      <path d="M23 13v-2" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
-      <path d="m11 6-4 6h6l-4 6" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+      <path stroke="currentcolor" strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M23 13v-2" />
+      <path stroke="currentcolor" strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="m11 6-4 6h6l-4 6" />
     </svg>
   )
 }

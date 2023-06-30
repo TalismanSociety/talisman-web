@@ -1,8 +1,7 @@
 import * as React from 'react'
-import { Ref, SVGProps, forwardRef } from 'react'
-
+import type { SVGProps } from 'react'
+import { Ref, forwardRef } from 'react'
 import { IconContext } from '../context'
-
 const SvgVolumeX = (
   props: Omit<SVGProps<SVGSVGElement>, 'width' | 'height'> & {
     size?: number | string
@@ -12,23 +11,23 @@ const SvgVolumeX = (
   const iconContext = React.useContext(IconContext)
   return (
     <svg
+      xmlns="http://www.w3.org/2000/svg"
       width={props.size ?? iconContext.size ?? 24}
       height={props.size ?? iconContext.size ?? 24}
-      viewBox="0 0 24 24"
       fill="none"
-      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
       ref={ref}
       {...props}
     >
       <path
-        d="M11 5 6 9H2v6h4l5 4V5Z"
-        stroke="currentColor"
-        strokeWidth={2}
+        stroke="currentcolor"
         strokeLinecap="round"
         strokeLinejoin="round"
+        strokeWidth={2}
+        d="M11 5 6 9H2v6h4l5 4V5Z"
       />
-      <path d="m23 9-6 6" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
-      <path d="m17 9 6 6" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+      <path stroke="currentcolor" strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="m23 9-6 6" />
+      <path stroke="currentcolor" strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="m17 9 6 6" />
     </svg>
   )
 }

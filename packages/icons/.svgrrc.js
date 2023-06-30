@@ -4,7 +4,8 @@ module.exports = {
   prettier: true,
   ref: true,
   replaceAttrValues: {
-    '#000': 'currentColor',
+    '#000': 'currentcolor',
+    '#121212': 'currentcolor',
   },
   template: require('./template'),
   svgProps: {
