@@ -1,4 +1,4 @@
-import StakeBannerComponent, { type StakeBannerProps } from '@components/recipes/StakeBanner/StakeBanner'
+import StakeBannerComponent from '@components/recipes/StakeBanner/StakeBanner'
 import { EmptyStakeDetails } from '@components/recipes/StakeDetails'
 import StakeDetailsComponent from '@components/recipes/StakeDetails/StakeDetails'
 import StakeDashboard from '@components/templates/StakeDashboard/StakeDashboard'
@@ -8,6 +8,7 @@ import ClaimStakeDialog from '@components/widgets/staking/ClaimStakeDialog'
 import { AssetSelect } from '@components/widgets/staking/StakeForm'
 import UnstakeDialog from '@components/widgets/staking/UnstakeDialog'
 import { injectedSubstrateAccountsState, type Account } from '@domains/accounts'
+import { injectedBalancesState } from '@domains/balances/recoils'
 import { ChainContext, ChainProvider, chainsState, useNativeTokenDecimalState, type Chain } from '@domains/chains'
 import {
   useEraEtaFormatter,
@@ -36,32 +37,27 @@ const useOpenStakeModal = () => {
   )
 }
 
-const BaseStakeBanner = (props: Omit<StakeBannerProps, 'onClickSimulateRewards' | 'onClickStake'>) => {
-  return <StakeBannerComponent {...props} onClickSimulateRewards={() => {}} onClickStake={() => {}} />
-}
+const StakeBanner = () => {
+  const balances = useRecoilValue(injectedBalancesState)
 
-const ActiveStakeBanner = (props: { pool: DerivedPool }) => {
-  return <BaseStakeBanner balance={useTokenAmountFromPlanck(props.pool?.poolMember.points).localizedFiatAmount} />
-}
-
-const StakeBannerWithChainSelected = (props: { account: Account }) => {
-  const pool = usePoolStakes(props.account)
-
-  if (pool === undefined) {
-    return <BaseStakeBanner />
-  }
-
-  return <ActiveStakeBanner pool={pool} />
-}
-
-const StakeBanner = (props: { account?: Account }) => {
-  const chain = useContext(ChainContext)
-
-  if (chain === undefined || props.account === undefined) {
-    return <BaseStakeBanner />
-  }
-
-  return <StakeBannerWithChainSelected account={props.account} />
+  return (
+    <StakeBannerComponent
+      balance={useMemo(
+        () =>
+          balances
+            .find(balance => balance.source === 'substrate-native' && balance.toJSON().subSource === 'nompools-staking')
+            .sum.fiat('usd')
+            .total.toLocaleString(undefined, {
+              style: 'currency',
+              currency: 'usd',
+              currencyDisplay: 'narrowSymbol',
+            }),
+        [balances]
+      )}
+      onClickSimulateRewards={() => {}}
+      onClickStake={useOpenStakeModal()}
+    />
+  )
 }
 
 const StakeDetailsActive = ({ account, pool }: { account: Account; pool: DerivedPool }) => {
@@ -201,11 +197,7 @@ const Staking = () => {
 
   return (
     <StakeDashboard
-      banner={
-        <ChainProvider chain={chain}>
-          <StakeBanner account={account} />
-        </ChainProvider>
-      }
+      banner={<StakeBanner />}
       chainSelector={
         <AssetSelect
           iconSize="4rem"

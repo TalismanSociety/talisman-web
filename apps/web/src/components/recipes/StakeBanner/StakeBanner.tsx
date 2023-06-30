@@ -46,8 +46,10 @@ const StakeBanner = (props: StakeBannerProps) => (
           '@container(min-width: 60rem)': { placeSelf: 'end' },
         }}
       >
-        <Button variant="outlined">Simulate rewards</Button>
-        <Button>Stake</Button>
+        <Button variant="outlined" onClick={props.onClickSimulateRewards}>
+          Simulate rewards
+        </Button>
+        <Button onClick={props.onClickStake}>Stake</Button>
       </div>
       <ListItem
         css={{ gridArea: 'stake-balance', padding: 0, visibility: props.balance ? 'visible' : 'hidden' }}

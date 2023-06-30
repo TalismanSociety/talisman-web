@@ -36,6 +36,15 @@ export const balancesState = atom<Balances>({
   dangerouslyAllowMutability: true,
 })
 
+export const injectedBalancesState = selector({
+  key: 'InjectedBalances',
+  get: ({ get }) => {
+    const injectedAddresses = get(injectedAccountsState).map(x => x.address)
+    return new Balances(get(balancesState).each.filter(x => injectedAddresses.includes(x.address)))
+  },
+  dangerouslyAllowMutability: true,
+})
+
 export const selectedBalancesState = selector({
   key: 'SelectedBalances',
   get: ({ get }) => {

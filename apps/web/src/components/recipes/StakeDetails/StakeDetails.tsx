@@ -193,27 +193,14 @@ const StakeDetails = Object.assign(
               </div>
             </Surface>
             <div css={{ flex: '33rem' }}>
-              {props.unbondings.length > 0 && (
-                <section>
-                  <Text.H4>Unbondings</Text.H4>
-                  <DescriptionList>
-                    {props.unbondings.map((x, index) => (
-                      <DescriptionList.Description key={index} className="payout">
-                        <DescriptionList.Term>{x.amount}</DescriptionList.Term>
-                        <DescriptionList.Details>{x.eta}</DescriptionList.Details>
-                      </DescriptionList.Description>
-                    ))}
-                  </DescriptionList>
-                </section>
-              )}
               <section>
                 <Text.H4>Latest payouts</Text.H4>
                 <DescriptionList>
                   {useMemo(
                     () =>
                       [...props.payouts]
-                        .slice(0, 6)
                         .sort((a, b) => b.date.getTime() - a.date.getTime())
+                        .slice(0, 5)
                         .map((x, index) => (
                           <DescriptionList.Description key={index}>
                             <DescriptionList.Term>{x.displayAmount}</DescriptionList.Term>
@@ -228,6 +215,19 @@ const StakeDetails = Object.assign(
                   )}
                 </DescriptionList>
               </section>
+              {props.unbondings.length > 0 && (
+                <section>
+                  <Text.H4>Unbondings</Text.H4>
+                  <DescriptionList>
+                    {props.unbondings.map((x, index) => (
+                      <DescriptionList.Description key={index} className="payout">
+                        <DescriptionList.Term>{x.amount}</DescriptionList.Term>
+                        <DescriptionList.Details>{x.eta}</DescriptionList.Details>
+                      </DescriptionList.Description>
+                    ))}
+                  </DescriptionList>
+                </section>
+              )}
             </div>
           </div>
         </Surface>
