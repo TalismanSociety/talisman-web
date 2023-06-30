@@ -1,7 +1,18 @@
 import type { Account } from '@domains/accounts'
 import { useTheme } from '@emotion/react'
 import { Clock, Percent, Zap } from '@talismn/icons'
-import { Button, DescriptionList, Identicon, ListItem, Surface, Text, TonalIcon, type ButtonProps } from '@talismn/ui'
+import {
+  Button,
+  DescriptionList,
+  Identicon,
+  ListItem,
+  Surface,
+  Text,
+  TonalIcon,
+  type ButtonProps,
+  useSurfaceColor,
+  useSurfaceColorAtElevation,
+} from '@talismn/ui'
 import { shortenAddress } from '@util/format'
 import { eachDayOfInterval, isSameDay, max as maxDate, min as minDate } from 'date-fns'
 import { useMemo, type ReactNode } from 'react'
@@ -83,6 +94,7 @@ const StakeDetails = Object.assign(
                 'gap': '0.8rem',
                 '@container(min-width: 80rem)': { justifySelf: 'end' },
               }}
+              style={{ visibility: props.readonly ? 'hidden' : 'visible' }}
             >
               {props.claimButton}
               {props.withdrawButton}
@@ -92,10 +104,9 @@ const StakeDetails = Object.assign(
           </div>
           <div
             css={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              flexWrap: 'wrap',
-              gap: '0.5rem 2.4rem',
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(min(15rem, 100%), 1fr))',
+              gap: '2.4rem 0.8rem',
             }}
           >
             <ListItem
@@ -187,7 +198,12 @@ const StakeDetails = Object.assign(
                     y="amount"
                     labels={({ datum }) => datum.amount}
                     cornerRadius={2}
-                    labelComponent={<VictoryTooltip />}
+                    labelComponent={
+                      <VictoryTooltip
+                        flyoutStyle={{ fill: useSurfaceColorAtElevation(x => x + 2) }}
+                        labelComponent={<VictoryLabel style={{ fill: theme.color.onSurface }} />}
+                      />
+                    }
                   />
                 </VictoryChart>
               </div>
@@ -216,7 +232,7 @@ const StakeDetails = Object.assign(
                 </DescriptionList>
               </section>
               {props.unbondings.length > 0 && (
-                <section>
+                <section css={{ marginTop: '2.4rem' }}>
                   <Text.H4>Unbondings</Text.H4>
                   <DescriptionList>
                     {props.unbondings.map((x, index) => (

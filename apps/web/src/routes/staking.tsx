@@ -4,12 +4,13 @@ import { EmptyStakeDetails } from '@components/recipes/StakeDetails'
 import StakeDetailsComponent from '@components/recipes/StakeDetails/StakeDetails'
 import StakeDashboard from '@components/templates/StakeDashboard/StakeDashboard'
 import { useAccountSelector } from '@components/widgets/AccountSelector'
+import ErrorBoundary from '@components/widgets/ErrorBoundary'
 import AddStakeDialog from '@components/widgets/staking/AddStakeDialog'
 import ClaimStakeDialog from '@components/widgets/staking/ClaimStakeDialog'
 import StakeCalculatorDialog from '@components/widgets/staking/StakeCalculatorDialog'
 import { AssetSelect } from '@components/widgets/staking/StakeForm'
 import UnstakeDialog from '@components/widgets/staking/UnstakeDialog'
-import { injectedSubstrateAccountsState, type Account } from '@domains/accounts'
+import { substrateAccountsState, type Account } from '@domains/accounts'
 import { injectedBalancesState } from '@domains/balances/recoils'
 import { ChainContext, ChainProvider, chainsState, useNativeTokenDecimalState, type Chain } from '@domains/chains'
 import {
@@ -212,7 +213,7 @@ const Staking = () => {
   const chains = useRecoilValue(chainsState)
   const [chain, setChain] = useState<Chain>(chains[0])
 
-  const [account, accountSelector] = useAccountSelector(useRecoilValue(injectedSubstrateAccountsState))
+  const [account, accountSelector] = useAccountSelector(useRecoilValue(substrateAccountsState), 0)
 
   return (
     <StakeDashboard
@@ -229,11 +230,19 @@ const Staking = () => {
       accountSelector={accountSelector}
       details={
         chain === undefined || account === undefined ? undefined : (
-          <ChainProvider chain={chain}>
-            <Suspense fallback={<TalismanHandLoader />}>
-              <StakeDetails account={account} />
-            </Suspense>
-          </ChainProvider>
+          <ErrorBoundary>
+            <ChainProvider chain={chain}>
+              <Suspense
+                fallback={
+                  <div css={{ display: 'flex', height: '100%' }}>
+                    <TalismanHandLoader css={{ margin: 'auto' }} />
+                  </div>
+                }
+              >
+                <StakeDetails account={account} />
+              </Suspense>
+            </ChainProvider>
+          </ErrorBoundary>
         )
       }
     />

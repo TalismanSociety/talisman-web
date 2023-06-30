@@ -5,6 +5,7 @@ import { useInflation } from '@domains/nominationPools'
 import { Suspense, useDeferredValue, useMemo, useState, useTransition } from 'react'
 import { useRecoilValue } from 'recoil'
 import { AssetSelect } from './StakeForm'
+import ErrorBoundary from '../ErrorBoundary'
 
 type StakeCalculatorDialogProps = { open?: boolean; onRequestDismiss: () => unknown }
 
@@ -60,11 +61,13 @@ const StakeCalculatorDialog = (props: StakeCalculatorDialogProps) => {
       amount={amount}
       onChangeAmount={setAmount}
       yield={
-        <Suspense fallback={<StakeCalculatorDialogComponent.EstimatedYield />}>
-          <ChainProvider chain={chain}>
-            <EstimatedYield amount={useDeferredValue(amount)} />
-          </ChainProvider>
-        </Suspense>
+        <ErrorBoundary>
+          <Suspense fallback={<StakeCalculatorDialogComponent.EstimatedYield />}>
+            <ChainProvider chain={chain}>
+              <EstimatedYield amount={useDeferredValue(amount)} />
+            </ChainProvider>
+          </Suspense>
+        </ErrorBoundary>
       }
     />
   )

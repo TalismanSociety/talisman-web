@@ -4,7 +4,7 @@ import { allowExtensionConnectionState } from '@domains/extension/recoils'
 import { Download } from '@talismn/icons'
 import { Button, CircularProgressIndicator, Identicon, Select } from '@talismn/ui'
 import { shortenAddress } from '@util/format'
-import { useCallback, useState, useTransition } from 'react'
+import { useCallback, useEffect, useState, useTransition } from 'react'
 import { useRecoilState } from 'recoil'
 
 export type AccountSelectorProps = {
@@ -89,13 +89,23 @@ export const useAccountSelector = (
 ) => {
   const [inTransition, startTransition] = useTransition()
 
-  const [account, setAccount] = useState(
-    typeof initialAccount === 'function'
-      ? initialAccount(accounts)
-      : typeof initialAccount === 'number'
-      ? accounts.at(initialAccount)
-      : initialAccount
+  const getInitialAccount = useCallback(
+    (accounts: Account[]) =>
+      typeof initialAccount === 'function'
+        ? initialAccount(accounts)
+        : typeof initialAccount === 'number'
+        ? accounts.at(initialAccount)
+        : initialAccount,
+    [initialAccount]
   )
+
+  const [account, setAccount] = useState(getInitialAccount(accounts))
+
+  useEffect(() => {
+    if (account === undefined && accounts.length > 0) {
+      setAccount(getInitialAccount(accounts))
+    }
+  }, [account, accounts, getInitialAccount])
 
   return [
     account,
