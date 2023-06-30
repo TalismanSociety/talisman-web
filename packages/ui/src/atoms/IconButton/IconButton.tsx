@@ -4,7 +4,10 @@ import Icon from '../Icon'
 
 type IconButtonElementType = Extract<ElementType, 'button' | 'a' | 'figure'> | ElementType<any>
 
-type IconButtonProps<T extends IconButtonElementType = 'button'> = IconProps<T>
+export type IconButtonProps<T extends IconButtonElementType = 'button'> = IconProps<T> & {
+  disabledContainerColor?: string
+  disabledContentColor?: string
+}
 
 const IconButton = <T extends IconButtonElementType = 'button'>(props: IconButtonProps<T>) => (
   <Icon

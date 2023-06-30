@@ -9,8 +9,6 @@ type PolymorphicIconProps<T extends IconElementType> = {
   disabled?: boolean
   containerColor?: string
   contentColor?: string
-  disabledContainerColor?: string
-  disabledContentColor?: string
 }
 
 export type IconProps<T extends IconElementType> = PolymorphicIconProps<T> &
@@ -21,17 +19,12 @@ const Icon = <T extends IconElementType = 'button'>({
   size = '4rem',
   containerColor = 'transparent',
   contentColor,
-  disabledContainerColor,
-  disabledContentColor,
+
   ...props
 }: IconProps<T>) => {
   const theme = useTheme()
 
   contentColor = contentColor ?? theme.color.onBackground
-  disabledContentColor =
-    disabledContentColor !== undefined
-      ? disabledContentColor
-      : `color-mix(in srgb, ${contentColor}, transparent ${Math.round((1 - theme.contentAlpha.disabled) * 100)}%)`
 
   const Component = as
 

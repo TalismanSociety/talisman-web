@@ -103,7 +103,7 @@ const StakeCalculatorDialog = Object.assign(
       }
     />
   ),
-  { EstimatedYield: EstimatedYield }
+  { EstimatedYield }
 )
 
 export default StakeCalculatorDialog

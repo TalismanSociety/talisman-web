@@ -13,9 +13,11 @@ const AddStakeDialog = (props: { account?: string; onDismiss: () => unknown }) =
     error: inputError,
   } = usePoolAddForm('bondExtra', props.account)
 
-  const bondExtraExtrinsic = useExtrinsic('nominationPools', 'bondExtra', {
-    FreeBalance: decimalAmount?.planck?.toString() ?? '0',
-  })
+  const bondExtraExtrinsic = useExtrinsic('nominationPools', 'bondExtra', [
+    {
+      FreeBalance: decimalAmount?.planck?.toString() ?? '0',
+    },
+  ])
 
   useEffect(
     () => {
