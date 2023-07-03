@@ -1,6 +1,6 @@
 import type { Account } from '@domains/accounts'
 import { useTheme } from '@emotion/react'
-import { Clock, Percent, Zap } from '@talismn/icons'
+import { Clock, Earn, Percent, Zap } from '@talismn/icons'
 import {
   Button,
   DescriptionList,
@@ -100,7 +100,7 @@ const StakeDetails = Object.assign(
                 'gap': '0.8rem',
                 '@container(min-width: 80rem)': { justifySelf: 'end' },
               }}
-              style={{ visibility: props.readonly ? 'hidden' : 'visible' }}
+              style={{ display: props.readonly ? 'none' : undefined }}
             >
               {props.claimButton}
               {props.withdrawButton}
@@ -129,7 +129,7 @@ const StakeDetails = Object.assign(
               css={{ padding: 0 }}
               leadingContent={
                 <TonalIcon>
-                  <Zap />
+                  <Earn />
                 </TonalIcon>
               }
               overlineText="15 days rewards"
@@ -187,6 +187,10 @@ const StakeDetails = Object.assign(
                   />
                   <VictoryAxis
                     dependentAxis
+                    tickValues={useMemo(
+                      () => (groupedPayouts.every(x => x.amount === 0) ? [0.2, 0.4, 0.6, 0.8] : undefined),
+                      [groupedPayouts]
+                    )}
                     style={{
                       axis: { stroke: 'transparent' },
                       ticks: { stroke: 'transparent' },

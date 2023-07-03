@@ -14,7 +14,7 @@ const StakeBanner = (props: StakeBannerProps) => (
     <div
       css={{
         'display': 'grid',
-        'gridAutoColumns': 'max-content',
+        'gridAutoColumns': 'fit-content',
         'gridTemplateAreas': `
           'header        actions'
           'stake-balance rewards'
@@ -30,7 +30,7 @@ const StakeBanner = (props: StakeBannerProps) => (
             'header        header  header'
             'stake-balance rewards actions'
           `,
-          gridTemplateColumns: 'repeat(2, max-content) 1fr',
+          gridTemplateColumns: 'repeat(2, fit-content) 1fr',
           gap: '4rem',
         },
       }}
@@ -41,8 +41,10 @@ const StakeBanner = (props: StakeBannerProps) => (
           'gridArea': 'actions',
           'placeSelf': 'start end',
           'display': 'flex',
+          'justifyContent': 'flex-end',
           'alignItems': 'center',
           'gap': '0.8rem',
+          'flexWrap': 'wrap-reverse',
           '@container(min-width: 60rem)': { placeSelf: 'end' },
         }}
       >

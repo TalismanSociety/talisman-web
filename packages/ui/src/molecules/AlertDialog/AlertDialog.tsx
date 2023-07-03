@@ -4,8 +4,8 @@ import { type ReactNode } from 'react'
 
 import { Button, Dialog, type DialogProps, Text, Surface } from '../../atoms'
 
-export type AlertDialogProps = DialogProps & {
-  title?: string
+export type AlertDialogProps = Omit<DialogProps, 'title'> & {
+  title?: ReactNode
   content: ReactNode
   confirmButton?: ReactNode
   dismissButton?: ReactNode

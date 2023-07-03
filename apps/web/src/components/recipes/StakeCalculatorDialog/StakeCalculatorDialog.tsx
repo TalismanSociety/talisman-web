@@ -1,5 +1,6 @@
 import { ClassNames } from '@emotion/react'
-import { AlertDialog, Hr, ListItem, TextInput, TonalIcon } from '@talismn/ui'
+import { Calculate, Earn } from '@talismn/icons'
+import { AlertDialog, Hr, ListItem, Text, TextInput, TonalIcon } from '@talismn/ui'
 import type { ReactNode } from 'react'
 
 export type StakeCalculatorDialogProps = {
@@ -19,39 +20,44 @@ type EstimatedYieldProps = {
 }
 
 const EstimatedYield = (props: EstimatedYieldProps) => (
-  <section
-    css={{
-      'display': 'grid',
-      '@container(min-width: 40rem)': {
-        gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
-      },
-      'gap': '3.2rem',
-    }}
-  >
-    <ListItem
-      leadingContent={<TonalIcon>1D</TonalIcon>}
-      overlineText="1 day earnings"
-      headlineText={props.dailyYield ?? '...'}
-      css={{ padding: 0 }}
-    />
-    <ListItem
-      leadingContent={<TonalIcon>1W</TonalIcon>}
-      overlineText="1 week earnings"
-      headlineText={props.weeklyYield ?? '...'}
-      css={{ padding: 0 }}
-    />
-    <ListItem
-      leadingContent={<TonalIcon>1M</TonalIcon>}
-      overlineText="1 month earnings"
-      headlineText={props.monthlyYield ?? '...'}
-      css={{ padding: 0 }}
-    />
-    <ListItem
-      leadingContent={<TonalIcon>1Y</TonalIcon>}
-      overlineText="1 year earnings"
-      headlineText={props.annualYield ?? '...'}
-      css={{ padding: 0 }}
-    />
+  <section>
+    <Text.Body as="header" css={{ marginBottom: '2.4rem' }}>
+      <Earn size="1em" css={{ verticalAlign: 'middle' }} /> Projected earnings
+    </Text.Body>
+    <div
+      css={{
+        'display': 'grid',
+        '@container(min-width: 40rem)': {
+          gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
+        },
+        'gap': '3.2rem',
+      }}
+    >
+      <ListItem
+        leadingContent={<TonalIcon>1D</TonalIcon>}
+        overlineText="1 day earnings"
+        headlineText={props.dailyYield ?? '...'}
+        css={{ padding: 0 }}
+      />
+      <ListItem
+        leadingContent={<TonalIcon>1W</TonalIcon>}
+        overlineText="1 week earnings"
+        headlineText={props.weeklyYield ?? '...'}
+        css={{ padding: 0 }}
+      />
+      <ListItem
+        leadingContent={<TonalIcon>1M</TonalIcon>}
+        overlineText="1 month earnings"
+        headlineText={props.monthlyYield ?? '...'}
+        css={{ padding: 0 }}
+      />
+      <ListItem
+        leadingContent={<TonalIcon>1Y</TonalIcon>}
+        overlineText="1 year earnings"
+        headlineText={props.annualYield ?? '...'}
+        css={{ padding: 0 }}
+      />
+    </div>
   </section>
 )
 
@@ -60,7 +66,11 @@ const StakeCalculatorDialog = Object.assign(
     <AlertDialog
       {...props}
       width="48rem"
-      title="Staking calculator"
+      title={
+        <span>
+          <Calculate size="1em" css={{ verticalAlign: 'middle' }} /> Staking calculator
+        </span>
+      }
       content={
         <div css={{ containerType: 'inline-size' }}>
           <section
@@ -99,6 +109,10 @@ const StakeCalculatorDialog = Object.assign(
           </section>
           <Hr css={{ marginTop: '2.4rem', marginBottom: '2.4rem' }} />
           {props.yield}
+          <Text.BodySmall as="footer" alpha="disabled" css={{ marginTop: '2.4rem' }}>
+            The values displayed by our staking calculator are projections and should not be considered as guarantees.
+            Actual results may differ.
+          </Text.BodySmall>
         </div>
       }
     />
