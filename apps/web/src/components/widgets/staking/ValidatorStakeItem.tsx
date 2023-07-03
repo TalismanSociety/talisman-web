@@ -24,6 +24,7 @@ const ValidatorStakeItem = (props: {
   eligibleForFastUnstake?: boolean
   inFastUnstakeHead?: boolean
   inFastUnstakeQueue?: boolean
+  fastUnstakeDeposit?: BN
 }) => {
   const withdrawExtrinsic = useExtrinsic('staking', 'withdrawUnbonded')
   const fastUnstake = useExtrinsic('fastUnstake', 'registerFastUnstake')
@@ -57,8 +58,10 @@ const ValidatorStakeItem = (props: {
     [props.stake.unlocking]
   )
 
-  const hasEnoughDepositForFastUnstake = balances.availableBalance.gte(
-    api.consts.fastUnstake.deposit.add(api.consts.balances.existentialDeposit)
+  const hasEnoughDepositForFastUnstake = useMemo(
+    () =>
+      balances.availableBalance.gte(api.consts.balances.existentialDeposit.add(props.fastUnstakeDeposit ?? new BN(0))),
+    [api.consts.balances.existentialDeposit, balances.availableBalance, props.fastUnstakeDeposit]
   )
 
   const eraEtaFormatter = useEraEtaFormatter()
@@ -141,7 +144,7 @@ const ValidatorStakeItem = (props: {
         amount={amount.decimalAmount?.toHuman() ?? '...'}
         fiatAmount={amount.localizedFiatAmount ?? '...'}
         lockDuration={lockDuration}
-        depositAmount={decimal.fromPlanck(api.consts.fastUnstake.deposit).toHuman()}
+        depositAmount={decimal.fromPlanck(props.fastUnstakeDeposit).toHuman()}
         onDismiss={() => {
           setIsFastUnstakeDialogOpen(false)
         }}
