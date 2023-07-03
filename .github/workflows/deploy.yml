@@ -53,7 +53,10 @@ jobs:
 
       - run: ${{ inputs.buildCommand }}
 
-      - uses: cloudflare/pages-action@v1
+      # There's a bug on version 1.4.1
+      # change this back to latest version after
+      # https://github.com/cloudflare/pages-action/commit/586d3c53b9daa978dfb149a41a624f9311ebf5c9
+      - uses: cloudflare/pages-action@v1.4.0
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
