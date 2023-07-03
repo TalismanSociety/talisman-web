@@ -1,10 +1,10 @@
 import AccountConnectionGuard from '@components/widgets/AccountConnectionGuard'
+import { Text } from '@talismn/ui'
 import type { RouteObject } from 'react-router-dom'
 import assetRoutes from './assets'
 import Collectibles from './collectibles'
 import Layout from './layout'
 import Overview from './overview'
-import TransactionHistory from './transactionHistory'
 
 const routes = {
   element: (
@@ -21,7 +21,12 @@ const routes = {
     },
     {
       path: 'history',
-      element: <TransactionHistory />,
+      element: (
+        <div css={{ textAlign: 'center', margin: '5rem 0' }}>
+          <Text.H2>Transaction history is currently under maintenance</Text.H2>
+          <Text.H3>Please check back again later</Text.H3>
+        </div>
+      ),
     },
   ],
 } satisfies RouteObject
