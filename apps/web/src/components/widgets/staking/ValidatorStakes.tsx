@@ -42,8 +42,9 @@ const useStakes = () => {
 const useStakesWithFastUnstake = () => {
   const stakes = useStakes()
 
-  const [[erasToCheckPerBlock, fastUnstakeHead], queues] = useRecoilValue(
+  const [api, [erasToCheckPerBlock, fastUnstakeHead], queues] = useRecoilValue(
     waitForAll([
+      useSubstrateApiState(),
       useQueryMultiState(['fastUnstake.erasToCheckPerBlock', 'fastUnstake.head']),
       useQueryState(
         'fastUnstake',
@@ -64,6 +65,7 @@ const useStakesWithFastUnstake = () => {
       (x.stake.unlocking?.length ?? 0) === 0,
     inFastUnstakeHead: fastUnstakeHead.unwrapOrDefault().stashes.some(y => y[0].eq(x.stake.accountId)),
     inFastUnstakeQueue: !queues[index]?.unwrapOrDefault().isZero() ?? false,
+    fastUnstakeDeposit: api.consts.fastUnstake.deposit,
   }))
 }
 
