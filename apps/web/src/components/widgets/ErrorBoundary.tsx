@@ -74,7 +74,7 @@ const ErrorBoundaryDebuggerChildren = (props: PropsWithChildren<{ error?: Error;
 
   return (
     <div
-      css={{ border: '1px dotted red' }}
+      css={{ 'display': 'contents', '> *': { outline: '1px dotted red' } }}
       onContextMenu={event => {
         event.preventDefault()
         event.stopPropagation()

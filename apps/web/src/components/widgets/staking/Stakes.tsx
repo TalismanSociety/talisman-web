@@ -1,11 +1,11 @@
 import SectionHeader from '@components/molecules/SectionHeader'
 import StakeItem from '@components/recipes/StakeItem'
+import { ChainProvider, chainsState } from '@domains/chains'
 import { Button, HiddenDetails, Text } from '@talismn/ui'
 import { Suspense, useId } from 'react'
 import { Link } from 'react-router-dom'
 import { useRecoilValue } from 'recoil'
-
-import { ChainProvider, chainsState } from '@domains/chains'
+import ErrorBoundary from '../ErrorBoundary'
 import PoolStakes from './PoolStakes'
 import ValidatorStakes from './ValidatorStakes'
 
@@ -59,8 +59,12 @@ const Stakes = () => {
             fallback={<StakeItem.Skeleton className={skeletonId} css={{ order: 1, display: 'none' }} />}
           >
             <ChainProvider value={chain}>
-              <PoolStakes />
-              <ValidatorStakes />
+              <ErrorBoundary orientation="horizontal">
+                <PoolStakes />
+              </ErrorBoundary>
+              <ErrorBoundary orientation="horizontal">
+                <ValidatorStakes />
+              </ErrorBoundary>
             </ChainProvider>
           </Suspense>
         ))}

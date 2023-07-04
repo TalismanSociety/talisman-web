@@ -2,6 +2,7 @@ import { selectedSubstrateAccountsState } from '@domains/accounts'
 import { usePoolStakes } from '@domains/nominationPools/hooks'
 import { useRecoilValue } from 'recoil'
 import PoolStakeItem from './PoolStakeItem'
+import ErrorBoundary from '../ErrorBoundary'
 
 const PoolStakes = () => {
   const pools = usePoolStakes(useRecoilValue(selectedSubstrateAccountsState))
@@ -9,7 +10,9 @@ const PoolStakes = () => {
   return (
     <>
       {pools?.map((pool, index) => (
-        <PoolStakeItem key={index} item={pool} />
+        <ErrorBoundary key={index} orientation="horizontal">
+          <PoolStakeItem item={pool} />
+        </ErrorBoundary>
       ))}
     </>
   )
