@@ -6,6 +6,7 @@ import { useDeriveState, useQueryMultiState, useQueryState } from '@talismn/reac
 import { useMemo } from 'react'
 import { useRecoilValue, useRecoilValueLoadable, waitForAll } from 'recoil'
 import ValidatorStakeItem from './ValidatorStakeItem'
+import ErrorBoundary from '../ErrorBoundary'
 
 const useStakes = () => {
   const accounts = useRecoilValue(selectedSubstrateAccountsState)
@@ -79,7 +80,9 @@ const BaseValidatorStakes = () => {
   return (
     <>
       {stakes.map((props, index) => (
-        <ValidatorStakeItem key={index} {...props} />
+        <ErrorBoundary key={index} orientation="horizontal">
+          <ValidatorStakeItem {...props} />
+        </ErrorBoundary>
       ))}
     </>
   )
@@ -95,7 +98,9 @@ const ValidatorStakesWithFastUnstake = () => {
   return (
     <>
       {stakes.map((props, index) => (
-        <ValidatorStakeItem key={index} {...props} />
+        <ErrorBoundary key={index} orientation="horizontal">
+          <ValidatorStakeItem key={index} {...props} />
+        </ErrorBoundary>
       ))}
     </>
   )
