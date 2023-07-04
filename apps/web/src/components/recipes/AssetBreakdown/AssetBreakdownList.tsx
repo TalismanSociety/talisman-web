@@ -134,7 +134,7 @@ export const AssetBreakdownList = (props: AssetBreakdownListProps) => {
             fiatAmount,
             account,
             symbol: token?.tokenDetails?.symbol,
-            variant: 'governance',
+            variant: 'locked',
           }
 
           return <AssetBreakdownRow key={index} assetSummary={assetSummary} />
