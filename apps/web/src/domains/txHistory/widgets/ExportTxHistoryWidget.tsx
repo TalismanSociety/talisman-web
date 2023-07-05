@@ -1,11 +1,12 @@
 import { type Query } from '@archetypes/Transaction/lib'
 import DialogComponent from '@components/recipes/ExportTxHistoryDialog'
 import { substrateAccountsState } from '@domains/accounts/recoils'
+import * as Sentry from '@sentry/react'
 import { toast } from '@talismn/ui'
 import { stringify } from 'csv-stringify/browser/esm'
 import { subMonths } from 'date-fns'
 import { gql, request } from 'graphql-request'
-import { type ReactNode, useCallback, useState } from 'react'
+import { useCallback, useState, type ReactNode } from 'react'
 import { useRecoilValue } from 'recoil'
 
 export type ExportTxHistoryWidgetProps = {
@@ -83,6 +84,10 @@ const ExportTxHistoryWidget = (props: ExportTxHistoryWidgetProps) => {
             })
           )
       )
+      .catch(error => {
+        Sentry.captureException(error)
+        throw error
+      })
 
     setOpen(false)
 
