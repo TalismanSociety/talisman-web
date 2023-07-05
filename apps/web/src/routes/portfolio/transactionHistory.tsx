@@ -1,6 +1,7 @@
 import { List } from '@archetypes/Transaction'
 import { selectedAccountsState } from '@domains/accounts/recoils'
 import styled from '@emotion/styled'
+import { Text } from '@talismn/ui'
 import { useMemo } from 'react'
 import { useRecoilValue } from 'recoil'
 
@@ -42,6 +43,10 @@ const TransactionHistory = styled(({ className }: { className?: string }) => {
 
   return (
     <section className={className}>
+      <Text.BodySmall as="div" alpha="disabled" css={{ textAlign: 'center', marginBottom: '2.6rem' }}>
+        Transaction history is currently being re-indexed. Please be aware that until this process is complete, some
+        transactions may not be visible.
+      </Text.BodySmall>
       <List addresses={useMemo(() => addresses.map(x => x.address), [addresses])} />
     </section>
   )
