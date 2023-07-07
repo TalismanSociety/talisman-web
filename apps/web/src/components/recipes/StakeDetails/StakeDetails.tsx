@@ -31,7 +31,7 @@ export type StakeDetailsProps = {
   withdrawButton?: ReactNode
   balance: ReactNode
   rewards: ReactNode
-  apy: ReactNode
+  apr: ReactNode
   nextEraEta: ReactNode
   currentDate?: Date
   last15DaysPayouts: readonly PayoutEntry[]
@@ -142,8 +142,8 @@ const StakeDetails = Object.assign(
                   <Percent />
                 </TonalIcon>
               }
-              overlineText="APY"
-              headlineText={props.apy}
+              overlineText="APR"
+              headlineText={props.apr}
             />
             <ListItem
               css={{ padding: 0 }}

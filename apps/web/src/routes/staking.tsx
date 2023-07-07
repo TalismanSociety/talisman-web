@@ -157,7 +157,7 @@ const StakeDetailsActive = ({ account, pool }: { account: Account; pool: Derived
         }
         balance={balance.decimalAmount.toHuman()}
         rewards={last15DaysTotalPayouts.toHuman()}
-        apy={stakedReturn.toLocaleString(undefined, { style: 'percent' })}
+        apr={stakedReturn.toLocaleString(undefined, { style: 'percent' })}
         nextEraEta={useEraEtaFormatter()(1)}
         unbondings={useMemo(
           () =>

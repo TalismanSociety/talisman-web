@@ -29,7 +29,7 @@ export const Default: Story = {
     withdrawButton: <StakeDetails.WithdrawButton amount="2 DOT" />,
     balance: '34234.12 DOT',
     rewards: '34234.12 DOT',
-    apy: '5.5%',
+    apr: '5.5%',
     nextEraEta: '4 hours',
     last15DaysPayouts: payouts,
     mostRecentPayouts: payouts,
