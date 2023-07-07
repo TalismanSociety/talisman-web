@@ -5275,9 +5275,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@polkawallet/bridge@npm:^0.1.4-0":
-  version: 0.1.4-0
-  resolution: "@polkawallet/bridge@npm:0.1.4-0"
+"@polkawallet/bridge@npm:^0.1.5-4":
+  version: 0.1.5-4
+  resolution: "@polkawallet/bridge@npm:0.1.5-4"
   dependencies:
     "@acala-network/api": ^5
     "@acala-network/sdk": ^4.1.9-2
@@ -5292,7 +5292,7 @@ __metadata:
     "@acala-network/api": ^5
     "@polkadot/api": ^10
     ethers: ^5
-  checksum: 4fd6bc5310f3854a7319b0196da0e1d14ff788f814527e61ab301277d1e347e1cb7b4757c9513783438b7b48d75029746849d9014aeb6f1862d24f5081239829
+  checksum: c72e7864fd4090d71de03237f992c7b683f3ebd832a666f08b02c441e85612914eca145a78df6073ef1dbbe3177a5e00cb4dc968de654f369d868a22f75b6e53
   languageName: node
   linkType: hard
 
@@ -7398,7 +7398,7 @@ __metadata:
     "@playwright/test": ^1.31.2
     "@polkadot/api": ^10.9.1
     "@polkadot/extension-dapp": ^0.46.5
-    "@polkawallet/bridge": ^0.1.4-0
+    "@polkawallet/bridge": ^0.1.5-4
     "@ramp-network/ramp-instant-sdk": ^2.5.2
     "@recoiljs/refine": ^0.1.1
     "@sentry/react": ^7.37.2
