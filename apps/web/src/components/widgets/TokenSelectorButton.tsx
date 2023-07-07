@@ -1,6 +1,6 @@
 import Cryptoticon from '@components/recipes/Cryptoticon/Cryptoticon'
 import TokenSelectorDialog from '@components/recipes/TokenSelectorDialog'
-import { balancesState } from '@domains/balances/recoils'
+import { selectedBalancesState } from '@domains/balances/recoils'
 import type { IToken } from '@talismn/chaindata-provider'
 import { Decimal } from '@talismn/math'
 import { Button } from '@talismn/ui'
@@ -15,7 +15,7 @@ export type TokenSelectorProps<T extends IToken | string> = {
 
 const TokenSelectorButton = <T extends IToken | string>(props: TokenSelectorProps<T>) => {
   const [tokenSelectorDialogOpen, setTokenSelectorDialogOpen] = useState(false)
-  const balances = useRecoilValue(balancesState)
+  const balances = useRecoilValue(selectedBalancesState)
 
   const tokensWithBalance = useMemo(
     () =>
