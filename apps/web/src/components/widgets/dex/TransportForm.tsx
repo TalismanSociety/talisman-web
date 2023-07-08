@@ -112,6 +112,7 @@ const TransportForm = () => {
     if (inputConfigLoadable?.state === 'hasError') {
       toast.error('Failed to get transferable amount')
       Sentry.captureException(inputConfigLoadable.contents)
+      console.error(inputConfigLoadable.contents)
     }
   }, [inputConfigLoadable?.contents, inputConfigLoadable?.state])
 
@@ -217,7 +218,6 @@ const TransportForm = () => {
         to: toChain.id,
         token,
         address: sender.address,
-        signer: sender.address,
       }) as SubmittableExtrinsic<'promise', ISubmittableResult> | undefined
     }, [adapterLoadable, decimalAmount, sender, toChain, token])
   )

@@ -3,10 +3,10 @@ import { type ChainId } from '@polkawallet/bridge'
 import { AcalaAdapter, KaruraAdapter } from '@polkawallet/bridge/adapters/acala'
 import { AstarAdapter, ShidenAdapter } from '@polkawallet/bridge/adapters/astar'
 import { BifrostAdapter } from '@polkawallet/bridge/adapters/bifrost'
-import { AltairAdapter } from '@polkawallet/bridge/adapters/centrifuge'
+import { AltairAdapter, CentrifugeAdapter } from '@polkawallet/bridge/adapters/centrifuge'
 import { ShadowAdapter } from '@polkawallet/bridge/adapters/crust'
 import { CrabAdapter } from '@polkawallet/bridge/adapters/darwinia'
-import { BasiliskAdapter, HydraAdapter } from '@polkawallet/bridge/adapters/hydradx'
+import { BasiliskAdapter, HydraDxAdapter } from '@polkawallet/bridge/adapters/hydradx'
 import { IntegriteeAdapter } from '@polkawallet/bridge/adapters/integritee'
 import { InterlayAdapter, KintsugiAdapter } from '@polkawallet/bridge/adapters/interlay'
 import { KicoAdapter } from '@polkawallet/bridge/adapters/kico'
@@ -18,8 +18,11 @@ import { TuringAdapter } from '@polkawallet/bridge/adapters/oak'
 import { HeikoAdapter, ParallelAdapter } from '@polkawallet/bridge/adapters/parallel'
 import { KhalaAdapter } from '@polkawallet/bridge/adapters/phala'
 import { KusamaAdapter, PolkadotAdapter } from '@polkawallet/bridge/adapters/polkadot'
+import { RobonomicsAdapter } from '@polkawallet/bridge/adapters/robonomics'
 import { StatemineAdapter, StatemintAdapter } from '@polkawallet/bridge/adapters/statemint'
+import { TinkernetAdapter } from '@polkawallet/bridge/adapters/tinkernet'
 import { QuartzAdapter, UniqueAdapter } from '@polkawallet/bridge/adapters/unique'
+import { ZeitgeistAdapter } from '@polkawallet/bridge/adapters/zeitgeist'
 import { type BaseCrossChainAdapter } from '@polkawallet/bridge/base-chain-adapter'
 
 export const bridgeConfig = {
@@ -68,6 +71,11 @@ export const bridgeConfig = {
     rpc: 'wss://calamari.systems',
     subscanUrl: 'https://calamari.subscan.io/',
   },
+  centrifuge: {
+    adapter: new CentrifugeAdapter(),
+    rpc: 'wss://fullnode.centrifuge.io',
+    subscanUrl: 'https://centrifuge.subscan.io/',
+  },
   crab: {
     adapter: new CrabAdapter(),
     rpc: 'wss://crab-rpc.darwinia.network',
@@ -79,7 +87,7 @@ export const bridgeConfig = {
     subscanUrl: 'https://parallel-heiko.subscan.io/',
   },
   hydradx: {
-    adapter: new HydraAdapter(),
+    adapter: new HydraDxAdapter(),
     rpc: 'wss://rpc.hydradx.cloud',
     subscanUrl: 'https://hydradx.subscan.io/',
   },
@@ -135,6 +143,11 @@ export const bridgeConfig = {
     rpc: 'wss://ws-quartz.unique.network',
     subscanUrl: 'https://quartz.subscan.io/',
   },
+  robonomics: {
+    adapter: new RobonomicsAdapter(),
+    rpc: 'wss://kusama.rpc.robonomics.network',
+    subscanUrl: 'https://robonomics.subscan.io/',
+  },
   shadow: {
     adapter: new ShadowAdapter(),
     rpc: 'wss://rpc-shadow.crust.network/',
@@ -155,6 +168,11 @@ export const bridgeConfig = {
     rpc: 'wss://statemint-rpc.polkadot.io',
     subscanUrl: 'https://statemint.subscan.io/',
   },
+  tinkernet: {
+    adapter: new TinkernetAdapter(),
+    rpc: 'wss://invarch-tinkernet.api.onfinality.io/public-ws',
+    subscanUrl: undefined,
+  },
   turing: {
     adapter: new TuringAdapter(),
     rpc: 'wss://rpc.turing.oak.tech',
@@ -164,6 +182,11 @@ export const bridgeConfig = {
     adapter: new UniqueAdapter(),
     rpc: 'wss://ws.unique.network',
     subscanUrl: 'https://unique.subscan.io/',
+  },
+  zeitgeist: {
+    adapter: new ZeitgeistAdapter(),
+    rpc: 'wss://main.rpc.zeitgeist.pm/ws',
+    subscanUrl: 'https://zeitgeist.subscan.io/',
   },
 } as const satisfies Record<
   ChainId,
