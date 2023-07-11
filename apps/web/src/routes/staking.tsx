@@ -4,7 +4,9 @@ import { EmptyStakeDetails } from '@components/recipes/StakeDetails'
 import StakeDetailsComponent from '@components/recipes/StakeDetails/StakeDetails'
 import StakeDashboard from '@components/templates/StakeDashboard/StakeDashboard'
 import { useAccountSelector } from '@components/widgets/AccountSelector'
+import AnimatedFiatNumber from '@components/widgets/AnimatedFiatNumber'
 import ErrorBoundary from '@components/widgets/ErrorBoundary'
+import RedactableBalance from '@components/widgets/RedactableBalance'
 import AddStakeDialog from '@components/widgets/staking/AddStakeDialog'
 import ClaimStakeDialog from '@components/widgets/staking/ClaimStakeDialog'
 import StakeCalculatorDialog from '@components/widgets/staking/StakeCalculatorDialog'
@@ -57,15 +59,7 @@ const StakeBanner = () => {
   return (
     <>
       <StakeBannerComponent
-        balance={useMemo(
-          () =>
-            balances.sum.fiat('usd').total.toLocaleString(undefined, {
-              style: 'currency',
-              currency: 'usd',
-              currencyDisplay: 'narrowSymbol',
-            }),
-          [balances]
-        )}
+        balance={<AnimatedFiatNumber end={useMemo(() => balances.sum.fiat('usd').total, [balances])} />}
         onClickSimulateRewards={() => setStakeCalculatorDialogOpen(true)}
         onClickStake={useOpenStakeModal()}
       />
@@ -155,8 +149,8 @@ const StakeDetailsActive = ({ account, pool }: { account: Account; pool: Derived
             <StakeDetailsComponent.UnbondButton onClick={() => setUnstakeDialogOpen(true)} />
           )
         }
-        balance={balance.decimalAmount.toHuman()}
-        rewards={last15DaysTotalPayouts.toHuman()}
+        balance={<RedactableBalance>{balance.decimalAmount.toHuman()}</RedactableBalance>}
+        rewards={<RedactableBalance>{last15DaysTotalPayouts.toHuman()}</RedactableBalance>}
         apr={stakedReturn.toLocaleString(undefined, { style: 'percent' })}
         nextEraEta={useEraEtaFormatter()(1)}
         unbondings={useMemo(
@@ -172,7 +166,7 @@ const StakeDetailsActive = ({ account, pool }: { account: Account; pool: Derived
             last15DaysPayouts.map(x => ({
               date: x.date,
               amount: x.amount.toNumber(),
-              displayAmount: x.amount.toHuman(),
+              displayAmount: <RedactableBalance>{x.amount.toHuman()}</RedactableBalance>,
             })),
           [last15DaysPayouts]
         )}
@@ -181,7 +175,7 @@ const StakeDetailsActive = ({ account, pool }: { account: Account; pool: Derived
             mostRecentPayouts.map(x => ({
               date: x.date,
               amount: x.amount.toNumber(),
-              displayAmount: x.amount.toHuman(),
+              displayAmount: <RedactableBalance>{x.amount.toHuman()}</RedactableBalance>,
             })),
           [mostRecentPayouts]
         )}

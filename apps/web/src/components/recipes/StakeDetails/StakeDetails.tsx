@@ -18,7 +18,7 @@ import { useMemo, type ReactNode } from 'react'
 import { VictoryAxis, VictoryBar, VictoryChart, VictoryLabel, VictoryTooltip } from 'victory'
 import { StakeStatusIndicator, type StakeStatus } from '../StakeStatusIndicator'
 
-type PayoutEntry = { date: Date; amount: number; displayAmount: string }
+type PayoutEntry = { date: Date; amount: number; displayAmount: ReactNode }
 
 export type StakeDetailsProps = {
   className?: string
