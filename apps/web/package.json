@@ -99,14 +99,14 @@
     "@types/react-dom": "^18.0.10",
     "@types/react-infinite-scroller": "^1.2.3",
     "@types/react-router-dom": "^5.3.3",
-    "@vitejs/plugin-react": "^4.0.0",
+    "@vitejs/plugin-react": "^4.0.3",
     "eslint": "^8.33.0",
     "eslint-config-prettier": "^8.6.0",
     "eslint-plugin-storybook": "^0.6.10",
     "prop-types": "^15.8.1",
     "storybook": "^7.0.12",
     "typescript": "^5.0.2",
-    "vite": "^4.3.7",
+    "vite": "^4.4.2",
     "vite-plugin-svgr": "^3.2.0",
     "vite-tsconfig-paths": "^4.2.0"
   }
