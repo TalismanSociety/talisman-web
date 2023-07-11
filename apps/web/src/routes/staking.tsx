@@ -11,7 +11,7 @@ import StakeCalculatorDialog from '@components/widgets/staking/StakeCalculatorDi
 import { AssetSelect } from '@components/widgets/staking/StakeForm'
 import UnstakeDialog from '@components/widgets/staking/UnstakeDialog'
 import { substrateAccountsState, type Account } from '@domains/accounts'
-import { injectedBalancesState } from '@domains/balances/recoils'
+import { injectedNominationPoolBalances } from '@domains/balances/recoils'
 import { ChainContext, ChainProvider, chainsState, useNativeTokenDecimalState, type Chain } from '@domains/chains'
 import {
   useEraEtaFormatter,
@@ -20,12 +20,12 @@ import {
   useTokenAmountFromPlanck,
 } from '@domains/common'
 import {
+  mostRecentPoolPayoutsState,
   poolPayoutsState,
+  totalPoolPayoutsState,
   useInflation,
   usePoolStakes,
   type DerivedPool,
-  totalPoolPayoutsState,
-  mostRecentPoolPayoutsState,
 } from '@domains/nominationPools'
 import { useQueryState } from '@talismn/react-polkadot-api'
 import { subDays } from 'date-fns'
@@ -49,7 +49,7 @@ const useOpenStakeModal = () => {
 }
 
 const StakeBanner = () => {
-  const balances = useRecoilValue(injectedBalancesState)
+  const balances = useRecoilValue(injectedNominationPoolBalances)
   const [stakeCalculatorDialogOpen, setStakeCalculatorDialogOpen] = useState(false)
 
   return (
@@ -57,16 +57,11 @@ const StakeBanner = () => {
       <StakeBannerComponent
         balance={useMemo(
           () =>
-            balances
-              .find(
-                balance => balance.source === 'substrate-native' && balance.toJSON().subSource === 'nompools-staking'
-              )
-              .sum.fiat('usd')
-              .total.toLocaleString(undefined, {
-                style: 'currency',
-                currency: 'usd',
-                currencyDisplay: 'narrowSymbol',
-              }),
+            balances.sum.fiat('usd').total.toLocaleString(undefined, {
+              style: 'currency',
+              currency: 'usd',
+              currencyDisplay: 'narrowSymbol',
+            }),
           [balances]
         )}
         onClickSimulateRewards={() => setStakeCalculatorDialogOpen(true)}

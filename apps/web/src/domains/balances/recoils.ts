@@ -45,6 +45,15 @@ export const injectedBalancesState = selector({
   dangerouslyAllowMutability: true,
 })
 
+export const injectedNominationPoolBalances = selector({
+  key: 'InjectedNominationPoolFiatBalance',
+  get: ({ get }) =>
+    get(injectedBalancesState).find(
+      balance => balance.source === 'substrate-native' && balance.toJSON().subSource === 'nompools-staking'
+    ),
+  dangerouslyAllowMutability: true,
+})
+
 export const selectedBalancesState = selector({
   key: 'SelectedBalances',
   get: ({ get }) => {
