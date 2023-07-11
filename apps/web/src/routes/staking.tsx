@@ -17,6 +17,7 @@ import {
   useEraEtaFormatter,
   useExtrinsic,
   useSubmittableResultLoadableState,
+  useSubstrateApiState,
   useTokenAmountFromPlanck,
 } from '@domains/common'
 import {
@@ -27,6 +28,7 @@ import {
   usePoolStakes,
   type DerivedPool,
 } from '@domains/nominationPools'
+import { encodeAddress } from '@polkadot/util-crypto'
 import { useQueryState } from '@talismn/react-polkadot-api'
 import { subDays } from 'date-fns'
 import { Suspense, useCallback, useContext, useMemo, useState, useTransition } from 'react'
@@ -76,6 +78,8 @@ const StakeBanner = () => {
 }
 
 const StakeDetailsActive = ({ account, pool }: { account: Account; pool: DerivedPool }) => {
+  const chain = useContext(ChainContext)
+
   const { stakedReturn } = useInflation()
 
   const balance = useTokenAmountFromPlanck(pool.poolMember.points)
@@ -101,8 +105,9 @@ const StakeDetailsActive = ({ account, pool }: { account: Account; pool: Derived
     toDate: today,
   }
 
-  const [decimal, last15DaysPayouts, last15DaysTotalPayouts, mostRecentPayouts] = useRecoilValue(
+  const [api, decimal, last15DaysPayouts, last15DaysTotalPayouts, mostRecentPayouts] = useRecoilValue(
     waitForAll([
+      useSubstrateApiState(),
       useNativeTokenDecimalState(),
       poolPayoutsState(payoutsStateParams),
       totalPoolPayoutsState(payoutsStateParams),
@@ -179,6 +184,14 @@ const StakeDetailsActive = ({ account, pool }: { account: Account; pool: Derived
               displayAmount: x.amount.toHuman(),
             })),
           [mostRecentPayouts]
+        )}
+        subscanPayoutsUrl={useMemo(
+          () =>
+            new URL(
+              `account/${encodeAddress(account.address, api.registry.chainSS58)}?tab=paidout`,
+              chain.subscanUrl
+            ).toString(),
+          [account.address, api.registry.chainSS58, chain.subscanUrl]
         )}
         readonly={account.readonly}
       />

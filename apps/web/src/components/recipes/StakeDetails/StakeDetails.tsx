@@ -1,6 +1,6 @@
 import type { Account } from '@domains/accounts'
 import { useTheme } from '@emotion/react'
-import { Clock, Earn, Percent, Zap } from '@talismn/icons'
+import { Clock, Earn, ExternalLink, Percent, Zap } from '@talismn/icons'
 import {
   Button,
   DescriptionList,
@@ -36,6 +36,7 @@ export type StakeDetailsProps = {
   currentDate?: Date
   last15DaysPayouts: readonly PayoutEntry[]
   mostRecentPayouts: readonly PayoutEntry[]
+  subscanPayoutsUrl?: string
   unbondings: Array<{ eta: string; amount: string }>
   readonly?: boolean
 }
@@ -222,6 +223,7 @@ const StakeDetails = Object.assign(
               <section>
                 <Text.H4>Latest payouts</Text.H4>
                 <DescriptionList>
+                  {props.mostRecentPayouts.length <= 0 && <Text.Body>No payouts found</Text.Body>}
                   {useMemo(
                     () =>
                       [...props.mostRecentPayouts]
@@ -239,6 +241,14 @@ const StakeDetails = Object.assign(
                         )),
                     [props.mostRecentPayouts]
                   )}
+                  <DescriptionList.Description>
+                    <DescriptionList.Term></DescriptionList.Term>
+                    <DescriptionList.Details>
+                      <Text.Noop.A color={theme => theme.color.primary} href={props.subscanPayoutsUrl} target="_blank">
+                        View all on Subscan <ExternalLink size="1em" />
+                      </Text.Noop.A>
+                    </DescriptionList.Details>
+                  </DescriptionList.Description>
                 </DescriptionList>
               </section>
               {props.unbondings.length > 0 && (
