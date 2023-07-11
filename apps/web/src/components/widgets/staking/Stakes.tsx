@@ -1,10 +1,11 @@
 import SectionHeader from '@components/molecules/SectionHeader'
 import StakeItem from '@components/recipes/StakeItem'
+import { injectedNominationPoolBalances } from '@domains/balances/recoils'
 import { ChainProvider, chainsState } from '@domains/chains'
 import { Button, HiddenDetails, Text } from '@talismn/ui'
-import { Suspense, useId } from 'react'
+import { Suspense, useId, useMemo } from 'react'
 import { Link } from 'react-router-dom'
-import { useRecoilValue } from 'recoil'
+import { useRecoilValue, waitForAll } from 'recoil'
 import ErrorBoundary from '../ErrorBoundary'
 import PoolStakes from './PoolStakes'
 import ValidatorStakes from './ValidatorStakes'
@@ -39,12 +40,23 @@ const NoStakePrompt = (props: { className?: string }) => (
 )
 
 const Stakes = () => {
-  const chains = useRecoilValue(chainsState)
+  const [chains, balances] = useRecoilValue(waitForAll([chainsState, injectedNominationPoolBalances]))
   const skeletonId = useId()
 
   return (
     <div id="staking">
-      <SectionHeader headlineText="Staking" />
+      <SectionHeader
+        headlineText="Staking"
+        supportingText={useMemo(
+          () =>
+            balances.sum.fiat('usd').total.toLocaleString(undefined, {
+              style: 'currency',
+              currency: 'usd',
+              currencyDisplay: 'narrowSymbol',
+            }),
+          [balances.sum]
+        )}
+      />
       <div
         css={{
           display: 'flex',
