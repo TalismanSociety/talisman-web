@@ -1,7 +1,7 @@
 import * as Sentry from '@sentry/react'
 import { type Nft as BaseNft } from '@talismn/nft'
 import { toast } from '@talismn/ui'
-import { atomFamily, DefaultValue, selectorFamily } from 'recoil'
+import { atomFamily, selectorFamily } from 'recoil'
 import { bufferTime, filter, last, Observable, scan, tap } from 'rxjs'
 import { spawn, Thread } from 'threads'
 import { favoriteNftIdsState, hiddenNftIdsState, nftsByTagState } from './tags'
@@ -47,10 +47,8 @@ const _nftsState = atomFamily<BaseNft[], string>({
               },
               { nfts: [] as BaseNft[], errors: [] as unknown[] }
             ),
-            // eslint-disable-next-line @typescript-eslint/no-misused-promises
-            tap(async ({ nfts }) => {
+            tap(({ nfts }) => {
               initialResolve(nfts)
-              await initialPromise
               setSelf(nfts)
             }),
             last(null, { nfts: [], errors: [] }),
@@ -64,11 +62,8 @@ const _nftsState = atomFamily<BaseNft[], string>({
             })
           )
           .subscribe({
-            // eslint-disable-next-line @typescript-eslint/no-misused-promises
-            complete: async () => {
+            complete: () => {
               initialResolve([])
-              await initialPromise
-              setSelf(self => (self instanceof DefaultValue || self.length === 0 ? [] : self))
               void Thread.terminate(worker)
             },
             error: error => {
