@@ -7,6 +7,7 @@ import { useRecoilCallback } from 'recoil'
 
 import { ChainContext } from '@domains/chains'
 import { substrateApiState, useSubstrateApiEndpoint } from '..'
+import { skipErrorReporting } from '../consts'
 import { extrinsicMiddleware } from '../extrinsicMiddleware'
 import { toastExtrinsic } from '../utils'
 
@@ -128,7 +129,12 @@ export function useExtrinsic(
           return result
         } catch (error) {
           setLoadable({ state: 'hasError', contents: error })
-          throw error
+
+          if (error instanceof Error && error.message === 'Cancelled') {
+            throw Object.assign(error, { [skipErrorReporting]: true })
+          } else {
+            throw error
+          }
         }
       },
     [chain.id, chain.subscanUrl, endpoint, moduleOrSubmittable, params, section]
