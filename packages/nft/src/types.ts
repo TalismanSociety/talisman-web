@@ -6,21 +6,22 @@ export type Nft<TType extends string, TChain extends string> = {
   description: string | undefined
   media: string | undefined
   thumbnail: string | undefined
-  serialNumber: number | undefined
+  serialNumber: number | bigint | undefined
   properties: Record<string, unknown> | undefined
   externalLinks: Array<{ name: string; url: string }> | undefined
   collection:
     | {
         id: string
         name: string | undefined
-        totalSupply: number | undefined
+        totalSupply: number | bigint | undefined
       }
     | undefined
 }
 
-export type CreateNftAsyncGenerator<T extends Nft<any, any>> = {
-  (address: string, options: { batchSize: number }): AsyncGenerator<T>
-}
+export type CreateNftAsyncGenerator<T extends Nft<any, any>> = (
+  address: string,
+  options: { batchSize: number }
+) => AsyncGenerator<T>
 
 export type IpfsMetadata = {
   name: string

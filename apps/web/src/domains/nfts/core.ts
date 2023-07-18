@@ -17,7 +17,7 @@ const _nftsState = atomFamily<BaseNft[], string>({
   key: '_Nfts',
   effects: (address: string) => [
     ({ setSelf }) => {
-      const batchSize = 100
+      const batchSize = 50
 
       let initialResolve = (_value: BaseNft[]) => {}
       let initialReject = (_reason?: any) => {}
@@ -42,6 +42,7 @@ const _nftsState = atomFamily<BaseNft[], string>({
                 const nfts = nftsOrErrors.filter((nft): nft is BaseNft => !('error' in nft))
 
                 errors.forEach(error => Sentry.captureException(error))
+                errors.forEach(console.error)
 
                 return { nfts: [...prev.nfts, ...nfts], errors: [...prev.errors, ...errors] }
               },

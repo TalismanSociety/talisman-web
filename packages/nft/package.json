@@ -3,17 +3,20 @@
   "type": "module",
   "exports": "./build/src/index.js",
   "scripts": {
-    "codegen": "yarn graphql-codegen --config graphql.config.cjs --project statemine && yarn graphql-codegen --config graphql.config.cjs --project rmrk2 && yarn graphql-codegen --config graphql.config.cjs --project unique",
+    "codegen": "sh scripts/codegen.sh",
     "dev": "tsc --build --watch",
     "build": "rm -rf build && yarn tsc --build",
     "check-types": "yarn tsc --build"
   },
   "dependencies": {
+    "@thi.ng/iterators": "^6.1.50",
     "graphql": "^16.6.0",
     "graphql-request": "^5.2.0",
     "multiformats": "^11.0.2"
   },
   "devDependencies": {
+    "@727-ventures/typechain-polkadot": "^1.1.0",
+    "@727-ventures/typechain-types": "^1.1.0",
     "@acala-network/types": "^5.1.1",
     "@graphql-codegen/cli": "^3.2.2",
     "@polkadot/api": "^10.9.1",

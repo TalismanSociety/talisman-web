@@ -1,10 +1,9 @@
+/* eslint-disable @typescript-eslint/prefer-nullish-coalescing */
+import { range } from '@thi.ng/iterators'
 import { createPublicClient, http, isAddress as isEvmAddress } from 'viem'
 import { type CreateNftAsyncGenerator, type Nft } from '../../types.js'
 import { erc721Abi } from './abi.js'
 import chains from './chains.js'
-
-const range = (start: number, stop: number, step = 1) =>
-  Array.from({ length: (stop - start) / step + 1 }, (_, i) => start + i * step)
 
 export const createEvmNftAsyncGenerator: CreateNftAsyncGenerator<Nft<'erc721', string>> = async function* (
   address,
@@ -28,6 +27,7 @@ export const createEvmNftAsyncGenerator: CreateNftAsyncGenerator<Nft<'erc721', s
     })
     const erc721AddressesWithBalance = balances
       .map((balance, index) => ({
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         erc721Address: Object.values(config.erc721ContractAddress)[index]!,
         balance,
       }))
@@ -49,10 +49,10 @@ export const createEvmNftAsyncGenerator: CreateNftAsyncGenerator<Nft<'erc721', s
 
       for (let start = 0; start < Number(balance); start += batchSize) {
         const target = start + batchSize
-        const end = target < Number(balance) ? target : Number(balance) - 1
+        const end = target < Number(balance) ? target : Number(balance)
 
         const tokenIds = await publicClient.multicall({
-          contracts: range(start, end).map(index => ({
+          contracts: Array.from(range(start, end)).map(index => ({
             ...wagmiContract,
             functionName: 'tokenOfOwnerByIndex',
             args: [address, BigInt(index)],
@@ -72,8 +72,11 @@ export const createEvmNftAsyncGenerator: CreateNftAsyncGenerator<Nft<'erc721', s
           animation_url?: string
           attributes?: Array<{ trait_type: string; value: unknown }>
         }> = await Promise.all(
-          tokenUris.map(uri =>
-            fetch(uri.replace('ipfs://', 'https://talisman.mypinata.cloud/ipfs/')).then(x => x.json())
+          tokenUris.map(
+            async uri =>
+              await fetch(uri.replace('ipfs://', 'https://talisman.mypinata.cloud/ipfs/')).then(
+                async x => await x.json()
+              )
           )
         )
 
@@ -91,7 +94,7 @@ export const createEvmNftAsyncGenerator: CreateNftAsyncGenerator<Nft<'erc721', s
             description: metadata?.description,
             media: metadata?.animation_url || metadata?.image || undefined,
             thumbnail: metadata?.image || undefined,
-            serialNumber: Number(tokenId),
+            serialNumber: tokenId,
             properties: !metadata?.attributes
               ? undefined
               : Object.fromEntries(metadata.attributes?.map(x => [x.trait_type, x.value])),
@@ -104,7 +107,7 @@ export const createEvmNftAsyncGenerator: CreateNftAsyncGenerator<Nft<'erc721', s
                     },
                   ]
                 : undefined,
-            collection: { id: erc721Address, name: collectionName, totalSupply: Number(totalSupply) },
+            collection: { id: erc721Address, name: collectionName, totalSupply },
           }
         })
       }

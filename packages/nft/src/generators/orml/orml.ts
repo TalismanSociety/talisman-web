@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/prefer-nullish-coalescing */
 import '@acala-network/types/index.js'
 import '@acala-network/types/lookup/types-acala.js'
 import { ApiPromise } from '@polkadot/api'
@@ -75,13 +76,13 @@ export const createOrmlNftAsyncGenerator = <const T extends string>({
               description: tokenMetadata?.name || classMetadata?.name,
               media: tokenMetadata?.image || classMetadata?.image,
               thumbnail: tokenMetadata?.image || classMetadata?.image,
-              serialNumber: tokenId.toNumber(),
+              serialNumber: tokenId.toBigInt(),
               properties: undefined,
               externalLinks: getExternalLink(classId, tokenId),
               collection: {
                 id: classId.toString(),
                 name: classMetadata?.name,
-                totalSupply: ormlNftClass.totalIssuance.toNumber(),
+                totalSupply: ormlNftClass.totalIssuance.toBigInt(),
               },
             }
           })

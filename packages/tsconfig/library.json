@@ -5,6 +5,7 @@
     "target": "ESNext",
     "moduleResolution": "nodenext",
     "skipLibCheck": true,
-    "declaration": true
+    "declaration": true,
+    "exactOptionalPropertyTypes": false
   }
 }
