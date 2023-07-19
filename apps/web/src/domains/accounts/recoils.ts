@@ -5,9 +5,7 @@ import { Maybe } from '@util/monads'
 import { DefaultValue, atom, selector, waitForAll } from 'recoil'
 import { isAddress as isEvmAddress } from 'viem'
 
-export type Account = InjectedAccount & {
-  readonly?: boolean
-}
+export type Account = InjectedAccount & ({ readonly?: false } | { readonly: true; partOfPortfolio: boolean })
 
 export type ReadonlyAccount = Pick<Account, 'address' | 'name'>
 
@@ -16,12 +14,7 @@ export const injectedAccountsState = atom<Account[]>({
   default: [],
 })
 
-export const injectedSubstrateAccountsState = selector({
-  key: 'InjectedSubstrateAccountsState',
-  get: ({ get }) => get(injectedAccountsState).filter(x => x.type !== 'ethereum'),
-})
-
-const _readOnlyAccountsState = atom<ReadonlyAccount[]>({
+const localReadonlyAccountsState = atom<ReadonlyAccount[]>({
   key: 'readonly_accounts',
   default: [],
   effects: [
@@ -41,16 +34,25 @@ const _readOnlyAccountsState = atom<ReadonlyAccount[]>({
 export const readOnlyAccountsState = selector<Account[]>({
   key: 'ReadonlyAccounts',
   get: ({ get }) => {
-    const injectedAddresses = get(injectedAccountsState).map(x => x.address)
-    return get(_readOnlyAccountsState)
-      .filter(x => !injectedAddresses.includes(x.address))
-      .map(x => ({ ...x, readonly: true, type: isEvmAddress(x.address) ? 'ethereum' : undefined }))
+    const injectedAccounts = get(injectedAccountsState)
+    const injectedAddresses = injectedAccounts.map(x => x.address)
+    return [
+      ...injectedAccounts.filter(x => x.readonly && !x.partOfPortfolio),
+      ...get(localReadonlyAccountsState)
+        .filter(x => !injectedAddresses.includes(x.address))
+        .map(x => ({
+          ...x,
+          readonly: true,
+          partOfPortfolio: false,
+          type: isEvmAddress(x.address) ? ('ethereum' as const) : undefined,
+        })),
+    ]
   },
   set: ({ set, reset }, newValue) => {
     if (newValue instanceof DefaultValue) {
-      reset(_readOnlyAccountsState)
+      reset(localReadonlyAccountsState)
     } else {
-      set(_readOnlyAccountsState, newValue)
+      set(localReadonlyAccountsState, newValue)
     }
   },
 })
@@ -58,6 +60,21 @@ export const readOnlyAccountsState = selector<Account[]>({
 export const accountsState = selector({
   key: 'Accounts',
   get: ({ get }) => [...get(injectedAccountsState), ...get(readOnlyAccountsState)],
+})
+
+export const portfolioAccountsState = selector({
+  key: 'PortfolioAccounts',
+  get: ({ get }) => get(accountsState).filter(x => !x.readonly || x.partOfPortfolio),
+})
+
+export const writeableAccountsState = selector({
+  key: 'WriteableAccounts',
+  get: ({ get }) => get(accountsState).filter(x => !x.readonly),
+})
+
+export const writeableSubstrateAccountsState = selector({
+  key: 'WriteableSubstrateAccounts',
+  get: ({ get }) => get(writeableAccountsState).filter(x => x.type !== 'ethereum'),
 })
 
 export const substrateAccountsState = selector({
@@ -73,6 +90,7 @@ export const selectedAccountAddressesState = atom<string[] | undefined>({
   default: undefined,
 })
 
+// TODO: either clean this up or add some tests
 export const selectedAccountsState = selector({
   key: 'SelectedAccounts',
   get: ({ get }) => {

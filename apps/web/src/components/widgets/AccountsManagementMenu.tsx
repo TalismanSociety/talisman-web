@@ -1,10 +1,10 @@
 import {
-  injectedAccountsState,
+  portfolioAccountsState,
   readOnlyAccountsState,
   selectedAccountAddressesState,
   selectedAccountsState,
 } from '@domains/accounts/recoils'
-import { fiatBalancesState, totalInjectedAccountsFiatBalance } from '@domains/balances/recoils'
+import { fiatBalancesState, totalPortfolioFiatBalance } from '@domains/balances/recoils'
 import { copyAddressToClipboard } from '@domains/common/utils'
 import { useIsWeb3Injected } from '@domains/extension/hooks'
 import { allowExtensionConnectionState } from '@domains/extension/recoils'
@@ -62,10 +62,10 @@ const AccountsManagementIconButton = (props: { size?: number | string }) => {
 const AccountsManagementMenu = (props: { button: ReactNode }) => {
   const theme = useTheme()
 
-  const totalBalance = useRecoilValueLoadable(totalInjectedAccountsFiatBalance)
+  const totalBalance = useRecoilValueLoadable(totalPortfolioFiatBalance)
 
   const setSelectedAccountAddresses = useSetRecoilState(selectedAccountAddressesState)
-  const injectedAccounts = useRecoilValue(injectedAccountsState)
+  const portfolioAccounts = useRecoilValue(portfolioAccountsState)
   const readonlyAccounts = useRecoilValue(readOnlyAccountsState)
 
   const fiatBalances = useRecoilValueLoadable(fiatBalancesState)
@@ -170,7 +170,7 @@ const AccountsManagementMenu = (props: { button: ReactNode }) => {
               <TalismanHand size="1em" /> My accounts
             </Text.Body>
             {leadingMenuItem}
-            {injectedAccounts.map((x, index) => (
+            {portfolioAccounts.map((x, index) => (
               <Menu.Item key={index} onClick={() => setSelectedAccountAddresses(() => [x.address])}>
                 <ListItem
                   headlineText={x.name ?? shortenAddress(x.address)}

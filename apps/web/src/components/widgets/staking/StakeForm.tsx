@@ -2,7 +2,7 @@ import ClaimStakeDialog from '@components/recipes/ClaimStakeDialog'
 import PoolSelectorDialog from '@components/recipes/PoolSelectorDialog'
 import StakeFormComponent from '@components/recipes/StakeForm'
 import { type StakeStatus } from '@components/recipes/StakeStatusIndicator'
-import { injectedSubstrateAccountsState, type Account } from '@domains/accounts/recoils'
+import { writeableSubstrateAccountsState, type Account } from '@domains/accounts/recoils'
 import { ChainContext, ChainProvider, chainsState, useNativeTokenDecimalState, type Chain } from '@domains/chains'
 import {
   useChainState,
@@ -265,7 +265,7 @@ export const ControlledStakeForm = (props: { assetSelector: ReactNode }) => {
   const [showPoolSelector, setShowPoolSelector] = useState(false)
 
   const [selectedAccount, accountSelector] = useAccountSelector(
-    useRecoilValue(injectedSubstrateAccountsState),
+    useRecoilValue(writeableSubstrateAccountsState),
     // We don't want to select the first account when poolId is present in the URL
     // because we want to showcase that pool & the first account might have already joined one
     poolIdFromSearch === undefined ? 0 : undefined
