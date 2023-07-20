@@ -2,6 +2,7 @@ import { storageEffect } from '@domains/common/effects'
 import type { InjectedAccount } from '@polkadot/extension-inject/types'
 import { array, jsonParser, object, optional, string } from '@recoiljs/refine'
 import { Maybe } from '@util/monads'
+import { uniqBy } from 'lodash'
 import { DefaultValue, atom, selector, waitForAll } from 'recoil'
 import { isAddress as isEvmAddress } from 'viem'
 
@@ -59,7 +60,7 @@ export const readOnlyAccountsState = selector<Account[]>({
 
 export const accountsState = selector({
   key: 'Accounts',
-  get: ({ get }) => [...get(injectedAccountsState), ...get(readOnlyAccountsState)],
+  get: ({ get }) => uniqBy([...get(injectedAccountsState), ...get(readOnlyAccountsState)], x => x.address),
 })
 
 export const portfolioAccountsState = selector({
