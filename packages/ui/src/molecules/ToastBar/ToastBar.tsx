@@ -64,16 +64,21 @@ const ToastBar = ({ toast }: ToastBarProps) => {
       {...toast.ariaProps}
     >
       {useMemo(() => {
+        const commonCss = {
+          flexShrink: 0,
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          width: '4rem',
+          height: '4rem',
+          borderRadius: '2rem',
+        }
+
         if (toast.icon !== undefined) {
           return (
             <div
               css={{
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                width: '4rem',
-                height: '4rem',
-                borderRadius: '2rem',
+                ...commonCss,
                 backgroundColor: toast.iconTheme?.primary,
                 color: toast.iconTheme?.secondary,
               }}
@@ -90,12 +95,7 @@ const ToastBar = ({ toast }: ToastBarProps) => {
             return (
               <div
                 css={{
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  width: '4rem',
-                  height: '4rem',
-                  borderRadius: '2rem',
+                  ...commonCss,
                   backgroundColor: 'rgba(56, 212, 72, 0.25)',
                   color: '#38D448',
                 }}
@@ -107,12 +107,7 @@ const ToastBar = ({ toast }: ToastBarProps) => {
             return (
               <div
                 css={{
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  width: '4rem',
-                  height: '4rem',
-                  borderRadius: '2rem',
+                  ...commonCss,
                   backgroundColor: 'rgba(210, 36, 36, 0.25)',
                   color: '#D22424',
                 }}
