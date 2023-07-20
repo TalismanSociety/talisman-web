@@ -3,19 +3,29 @@ import type { InjectedAccount } from '@polkadot/extension-inject/types'
 import { array, jsonParser, object, optional, string } from '@recoiljs/refine'
 import { Maybe } from '@util/monads'
 import { uniqBy } from 'lodash'
-import { DefaultValue, atom, selector, waitForAll } from 'recoil'
+import { atom, selector, waitForAll } from 'recoil'
 import { isAddress as isEvmAddress } from 'viem'
 
-export type Account = InjectedAccount & ({ readonly?: false } | { readonly: true; partOfPortfolio: boolean })
+type AccountWithOrigin = InjectedAccount & { origin?: 'injected' | 'local' }
+
+type AccountWithReadonlyInfo = InjectedAccount & ({ readonly?: false } | { readonly: true; partOfPortfolio: boolean })
+
+export type Account = AccountWithOrigin & AccountWithReadonlyInfo
 
 export type ReadonlyAccount = Pick<Account, 'address' | 'name'>
 
-export const injectedAccountsState = atom<Account[]>({
-  key: 'InjectedAccounts',
+const _injectedAccountsState = atom<AccountWithReadonlyInfo[]>({
+  key: '_InjectedAccounts',
   default: [],
 })
 
-const localReadonlyAccountsState = atom<ReadonlyAccount[]>({
+export const injectedAccountsState = selector<Account[]>({
+  key: 'InjectedAccounts',
+  get: ({ get }) => get(_injectedAccountsState).map(x => ({ ...x, origin: 'injected' })),
+  set: ({ set }, newValue) => set(_injectedAccountsState, newValue),
+})
+
+const _readonlyAccountsState = atom<ReadonlyAccount[]>({
   key: 'readonly_accounts',
   default: [],
   effects: [
@@ -39,23 +49,18 @@ export const readOnlyAccountsState = selector<Account[]>({
     const injectedAddresses = injectedAccounts.map(x => x.address)
     return [
       ...injectedAccounts.filter(x => x.readonly && !x.partOfPortfolio),
-      ...get(localReadonlyAccountsState)
+      ...get(_readonlyAccountsState)
         .filter(x => !injectedAddresses.includes(x.address))
         .map(x => ({
           ...x,
+          origin: 'local' as const,
           readonly: true,
           partOfPortfolio: false,
           type: isEvmAddress(x.address) ? ('ethereum' as const) : undefined,
         })),
     ]
   },
-  set: ({ set, reset }, newValue) => {
-    if (newValue instanceof DefaultValue) {
-      reset(localReadonlyAccountsState)
-    } else {
-      set(localReadonlyAccountsState, newValue)
-    }
-  },
+  set: ({ set }, newValue) => set(_readonlyAccountsState, newValue),
 })
 
 export const accountsState = selector({
