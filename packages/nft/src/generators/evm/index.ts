@@ -82,11 +82,12 @@ export const createEvmNftAsyncGenerator: CreateNftAsyncGenerator<Nft<'erc721', s
 
           const type = 'erc721' as const
           const chain = config.chain.network
+          const chainId = config.chain.id
 
           return {
             type,
             chain,
-            id: `${type}-${chain}-${erc721Address}-${tokenId.toString()}`,
+            id: `${type}-${chainId}-${erc721Address}-${tokenId.toString()}`,
             name: metadata?.name,
             description: metadata?.description,
             media: metadata?.animation_url || metadata?.image || undefined,
