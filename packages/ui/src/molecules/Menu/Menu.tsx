@@ -1,8 +1,5 @@
 import { useTheme } from '@emotion/react'
 import {
-  type Placement,
-  type ReferenceType,
-  type Strategy,
   autoPlacement,
   autoUpdate,
   offset,
@@ -14,19 +11,23 @@ import {
   useFloatingNodeId,
   useInteractions,
   useRole,
+  type Placement,
+  type ReferenceType,
+  type Strategy,
 } from '@floating-ui/react'
 import { motion } from 'framer-motion'
 import {
+  createContext,
+  useContext,
+  useMemo,
+  useState,
   type DetailedHTMLProps,
   type HTMLAttributes,
   type HTMLProps,
   type ReactElement,
   type ReactNode,
-  createContext,
-  useContext,
-  useMemo,
-  useState,
 } from 'react'
+import { useSurfaceColorAtElevation } from '../..'
 import FloatingPortal from '../../atoms/FloatingPortal'
 
 export const MENU_OFFSET = 12
@@ -109,6 +110,8 @@ const MenuItems = (props: MenuItemsProps) => {
       ? props.children({ open, toggleOpen: () => setOpen(open => !open) })
       : props.children
 
+  const surfaceColor = useSurfaceColorAtElevation(x => x + 1)
+
   return (
     <FloatingPortal id={nodeId}>
       {(open || animating) && (
@@ -143,7 +146,7 @@ const MenuItems = (props: MenuItemsProps) => {
           css={{
             border: `1px solid ${theme.color.border}`,
             borderRadius: '1.2rem',
-            backgroundColor: theme.color.surface,
+            backgroundColor: surfaceColor,
           }}
           {...getFloatingProps({
             ...props,
