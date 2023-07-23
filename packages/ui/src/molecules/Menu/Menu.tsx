@@ -39,7 +39,9 @@ export type MenuProps = {
 
 export type MenuButtonProps = { children: ReactNode | ((props: { open: boolean }) => ReactNode) }
 
-export type MenuItemsProps = DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement>
+export type MenuItemsProps = Omit<DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement>, 'children'> & {
+  children: ReactNode | ((props: { open: boolean; toggleOpen: () => unknown }) => ReactNode)
+}
 
 export type MenuItemProps = DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> & {
   dismissAfterSelection?: boolean
@@ -57,7 +59,7 @@ const MenuContext = createContext<{
   getFloatingProps: (props?: HTMLProps<HTMLElement>) => any
   getItemProps: (props?: HTMLProps<HTMLElement>) => any
   open: boolean
-  setOpen: (value: boolean) => unknown
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>
 }>({
   nodeId: '',
   x: 0,
@@ -85,7 +87,7 @@ const MenuButton = ({ children, ...props }: MenuButtonProps) => {
 const MenuItems = (props: MenuItemsProps) => {
   const theme = useTheme()
   const [animating, setAnimating] = useState(false)
-  const { nodeId, x, y, strategy, placement, floating, getFloatingProps, open } = useContext(MenuContext)
+  const { nodeId, x, y, strategy, placement, floating, getFloatingProps, open, setOpen } = useContext(MenuContext)
 
   const closedClipPath = useMemo(() => {
     switch (placement) {
@@ -101,6 +103,11 @@ const MenuItems = (props: MenuItemsProps) => {
         return `inset(0 50% 100% 50% round ${MENU_BORDER_RADIUS})`
     }
   }, [placement])
+
+  const children =
+    typeof props.children === 'function'
+      ? props.children({ open, toggleOpen: () => setOpen(open => !open) })
+      : props.children
 
   return (
     <FloatingPortal id={nodeId}>
@@ -141,6 +148,7 @@ const MenuItems = (props: MenuItemsProps) => {
           {...getFloatingProps({
             ...props,
             style: { ...props.style, position: strategy, top: y ?? 0, left: x ?? 0, width: 'max-content' },
+            children,
           })}
         />
       )}
