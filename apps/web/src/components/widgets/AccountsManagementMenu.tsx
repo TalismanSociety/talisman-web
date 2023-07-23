@@ -109,10 +109,10 @@ const AccountsManagementMenu = (props: { button: ReactNode }) => {
     return (
       <Menu.Item onClick={() => setSelectedAccountAddresses(undefined)}>
         <ListItem
-          headlineText="All accounts"
-          overlineText={Maybe.of(totalBalance.valueMaybe()).mapOr(<CircularProgressIndicator size="1em" />, amount => (
+          headlineText={Maybe.of(totalBalance.valueMaybe()).mapOr(<CircularProgressIndicator size="1em" />, amount => (
             <AnimatedFiatNumber end={amount} />
           ))}
+          overlineText="All accounts"
           leadingContent={
             <IconButton as="figure" containerColor={theme.color.foreground} contentColor={theme.color.primary}>
               <Users />
@@ -180,13 +180,13 @@ const AccountsManagementMenu = (props: { button: ReactNode }) => {
               {portfolioAccounts.map((x, index) => (
                 <Menu.Item key={index} onClick={() => setSelectedAccountAddresses(() => [x.address])}>
                   <ListItem
-                    headlineText={x.name ?? shortenAddress(x.address)}
-                    overlineText={Maybe.of(fiatBalances.valueMaybe()).mapOr(
+                    headlineText={Maybe.of(fiatBalances.valueMaybe()).mapOr(
                       <CircularProgressIndicator size="1em" />,
                       balances => (
                         <AnimatedFiatNumber end={balances[x.address] ?? 0} />
                       )
                     )}
+                    overlineText={x.name ?? shortenAddress(x.address)}
                     leadingContent={<Identicon value={x.address} size="4rem" />}
                     revealTrailingContentOnHover
                     trailingContent={
@@ -218,13 +218,13 @@ const AccountsManagementMenu = (props: { button: ReactNode }) => {
                   {({ onToggleOpen: toggleRemoveDialog }) => (
                     <Menu.Item onClick={() => setSelectedAccountAddresses(() => [account.address])}>
                       <ListItem
-                        headlineText={account.name ?? shortenAddress(account.address)}
-                        overlineText={Maybe.of(fiatBalances.valueMaybe()).mapOr(
+                        headlineText={Maybe.of(fiatBalances.valueMaybe()).mapOr(
                           <CircularProgressIndicator size="1em" />,
                           balances => (
                             <AnimatedFiatNumber end={balances[account.address] ?? 0} />
                           )
                         )}
+                        overlineText={account.name ?? shortenAddress(account.address)}
                         leadingContent={<Identicon value={account.address} size="4rem" />}
                         revealTrailingContentOnHover
                         trailingContent={
