@@ -155,7 +155,7 @@ const AccountsManagementMenu = (props: { button: ReactNode }) => {
       <Menu.Button>{props.button}</Menu.Button>
       <Menu.Items>
         {({ toggleOpen }) => (
-          <section css={{ width: '34rem' }}>
+          <section css={{ width: 'min(36.2rem, 100vw)' }}>
             <section css={{ margin: '1.6rem 0' }}>
               <Text.Body
                 as="header"
