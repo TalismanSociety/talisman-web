@@ -4,7 +4,9 @@ import type { ReactNode } from 'react'
 export type StakeDashboardProps = {
   banner: ReactNode
   chainSelector: ReactNode
+  chainCount?: number
   accountSelector: ReactNode
+  accountCount?: number
   details: ReactNode
 }
 
@@ -33,14 +35,20 @@ const StakeDashboard = (props: StakeDashboardProps) => (
       <div css={{ gridArea: 'selector', display: 'flex', flexDirection: 'column', gap: '3.2rem' }}>
         <section>
           <header css={{ display: 'flex', flexDirection: 'column-reverse', gap: '0.8rem' }}>
-            <Text.H3>Assets</Text.H3>
+            <div css={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: '0.4rem' }}>
+              <Text.H3>Assets</Text.H3>
+              <Text.BodyLarge>{props.chainCount && `(${props.chainCount})`}</Text.BodyLarge>
+            </div>
             <Text.BodySmall>1. Select asset to stake</Text.BodySmall>
           </header>
           {props.chainSelector}
         </section>
         <section>
           <header css={{ display: 'flex', flexDirection: 'column-reverse', gap: '0.8rem' }}>
-            <Text.H3>Accounts</Text.H3>
+            <div css={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: '0.4rem' }}>
+              <Text.H3>Accounts</Text.H3>
+              <Text.BodyLarge>{props.accountCount && `(${props.accountCount})`}</Text.BodyLarge>
+            </div>
             <Text.BodySmall>2. Select account</Text.BodySmall>
           </header>
           {props.accountSelector}

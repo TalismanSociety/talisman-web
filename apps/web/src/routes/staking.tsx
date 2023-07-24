@@ -245,7 +245,8 @@ const Staking = () => {
   const chains = useRecoilValue(chainsState)
   const [chain, setChain] = useState<Chain>(chains[0])
 
-  const [account, accountSelector] = useAccountSelector(useRecoilValue(substrateAccountsState), 0)
+  const accounts = useRecoilValue(substrateAccountsState)
+  const [account, accountSelector] = useAccountSelector(accounts, 0)
 
   return (
     <StakeDashboard
@@ -259,7 +260,9 @@ const Staking = () => {
           inTransition={inTransition}
         />
       }
+      chainCount={chains.length}
       accountSelector={accountSelector}
+      accountCount={accounts.length}
       details={
         chain === undefined || account === undefined ? undefined : (
           <ErrorBoundary>
