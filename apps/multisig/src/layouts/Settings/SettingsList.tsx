@@ -1,5 +1,5 @@
 import { copyToClipboard } from '@domains/common'
-import { createImportUrl, multisigsState, selectedMultisigState } from '@domains/multisig'
+import { createImportPath, multisigsState, selectedMultisigState } from '@domains/multisig'
 import { css } from '@emotion/css'
 import { Users } from '@talismn/icons'
 // import { Globe } from '@talismn/icons'
@@ -93,13 +93,13 @@ const SettingsList = () => {
       <Button
         variant="outlined"
         onClick={() => {
-          const url = createImportUrl(
+          const url = `${window.location.origin}/${createImportPath(
             multisig.name,
             multisig.signers,
             multisig.threshold,
             multisig.proxyAddress,
             multisig.chain.id
-          )
+          )}`
           copyToClipboard(url, 'Vault import link copied to clipboard')
         }}
       >

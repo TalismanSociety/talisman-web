@@ -22,6 +22,7 @@ const Cost = (props: { amount: Balance; symbol: string; price: number }) => {
 const Confirmation = (props: {
   onBack: () => void
   onCreateVault: () => void
+  onAlreadyHaveAnyProxy: () => void
   selectedSigner: InjectedAccount | undefined
   setSelectedSigner: (signer: InjectedAccount) => void
   augmentedAccounts: AugmentedAccount[]
@@ -260,11 +261,19 @@ const Confirmation = (props: {
         `}
       >
         <Button onClick={props.onBack} children={<h3>Back</h3>} variant="outlined" />
-        <Button
-          disabled={tokenWithPrice.state !== 'hasValue' || props.augmentedAccounts.length < 2 || !props.extrinsicsReady}
-          onClick={props.onCreateVault}
-          children={<h3>Create Vault</h3>}
-        />
+        <div css={{ display: 'grid' }}>
+          <Button
+            css={{ width: '100%' }}
+            disabled={
+              tokenWithPrice.state !== 'hasValue' || props.augmentedAccounts.length < 2 || !props.extrinsicsReady
+            }
+            onClick={props.onCreateVault}
+            children={<h3>Create Vault</h3>}
+          />
+          <Button onClick={props.onAlreadyHaveAnyProxy} variant="noop" css={{ fontSize: '14px' }}>
+            Use already configured 'Any' proxy (advanced)
+          </Button>
+        </div>
       </div>
     </div>
   )

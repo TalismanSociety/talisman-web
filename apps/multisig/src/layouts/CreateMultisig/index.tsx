@@ -13,11 +13,12 @@ import {
   AugmentedAccount,
   Multisig,
   activeMultisigsState,
+  createImportPath,
   multisigsState,
   selectedMultisigState,
 } from '@domains/multisig'
 import { css } from '@emotion/css'
-import { toMultisigAddress } from '@util/addresses'
+import { toMultisigAddress, toSs52Address } from '@util/addresses'
 import { device } from '@util/breakpoints'
 import { useEffect, useMemo, useState } from 'react'
 import { toast } from 'react-hot-toast'
@@ -72,7 +73,7 @@ function calcContentHeight(step: Step, nAccounts: number): { md: string; lg: str
   if (step === Step.Transactions) return { md: '420px', lg: '420px' }
   if (step === Step.VaultCreated) return { md: '485px', lg: '485px' }
   if (step === Step.AddMembers) return { md: 521 + nAccounts * 40 + 'px', lg: 521 + nAccounts * 40 + 'px' }
-  return { md: 747 + nAccounts * 40 + 'px', lg: 727 + nAccounts * 40 + 'px' }
+  return { md: 787 + nAccounts * 40 + 'px', lg: 767 + nAccounts * 40 + 'px' }
 }
 
 const CreateMultisig = () => {
@@ -295,6 +296,32 @@ const CreateMultisig = () => {
           <Confirmation
             onBack={() => setStep(Step.SelectFirstChain)}
             onCreateVault={() => setStep(Step.Transactions)}
+            onAlreadyHaveAnyProxy={async () => {
+              const proxyAddress = prompt('Enter proxy address')
+              if (!proxyAddress) return
+
+              // validate the proxy address
+              const ss58Address = toSs52Address(proxyAddress, null)
+              if (!ss58Address) toast.error('Please enter a valid SS58 address')
+
+              // check if the multisig controls the proxy
+              const multisigAddress = toMultisigAddress(augmentedAccounts.map(a => a.address) as string[], threshold)
+              const res = await addressIsProxyDelegatee(proxyAddress as string, multisigAddress)
+              if (!res.isProxyDelegatee) {
+                toast.error("This multisig configuration is not an 'Any' delegatee for the entered address.")
+                return
+              }
+
+              // we're good! import
+              const path = createImportPath(
+                proxyAddress,
+                augmentedAccounts.map(a => a.address) as string[],
+                threshold,
+                proxyAddress,
+                chain.id
+              )
+              navigate(`/${path}`)
+            }}
             selectedSigner={selectedSigner}
             setSelectedSigner={setSelectedSigner}
             augmentedAccounts={augmentedAccounts}

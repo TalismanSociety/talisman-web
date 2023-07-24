@@ -384,7 +384,13 @@ export const EMPTY_BALANCE: Balance = {
   amount: new BN(0),
 }
 
-export const createImportUrl = (name: string, signers: string[], threshold: number, proxy: string, chainId: string) => {
+export const createImportPath = (
+  name: string,
+  signers: string[],
+  threshold: number,
+  proxy: string,
+  chainId: string
+) => {
   const params = {
     name,
     signers: signers.join(','),
@@ -392,5 +398,5 @@ export const createImportUrl = (name: string, signers: string[], threshold: numb
     proxy,
     chain_id: chainId,
   }
-  return `${window.location.origin}/import?${queryString.stringify(params)}`
+  return `import?${queryString.stringify(params)}`
 }

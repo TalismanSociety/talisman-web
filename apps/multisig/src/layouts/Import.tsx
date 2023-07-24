@@ -22,7 +22,7 @@ const Import = () => {
   const [extensionAccounts] = useRecoilState(accountsState)
   const [extensionLoading] = useRecoilState(extensionLoadingState)
   const [extensionAllowed, setExtensionAllowed] = useRecoilState(extensionAllowedState)
-  const [valid, setValid] = useState<boolean | undefined>(true)
+  const [valid, setValid] = useState<boolean | undefined>(undefined)
   const { proxy, signers, threshold, chain_id, name } = queryString.parse(location.search, { arrayFormat: 'comma' })
   const chain = supportedChains.find(c => c.id === chain_id) || (supportedChains[0] as Chain)
   const { addressIsProxyDelegatee, ready } = useAddressIsProxyDelegatee(chain)
@@ -147,7 +147,7 @@ const Import = () => {
           <br />
           <h1>🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨</h1>
           <br />
-          <p>Ask your team for a new import link.</p>
+          <p>Ask your team for a new import link or try again.</p>
         </>
       ) : valid === undefined ? (
         <EyeOfSauronProgressIndicator />

@@ -1,5 +1,5 @@
 import { copyToClipboard } from '@domains/common'
-import { createImportUrl } from '@domains/multisig'
+import { createImportPath } from '@domains/multisig'
 import { css } from '@emotion/css'
 import { useTheme } from '@emotion/react'
 import { Copy } from '@talismn/icons'
@@ -22,7 +22,7 @@ const MagicLink = ({
   chainId: string
 }) => {
   const theme = useTheme()
-  const url = createImportUrl(name, signers, threshold, proxy, chainId)
+  const url = `${window.location.origin}/${createImportPath(name, signers, threshold, proxy, chainId)}`
   return (
     <div
       className={css`
