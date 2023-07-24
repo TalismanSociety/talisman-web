@@ -38,7 +38,9 @@ const StakeBanner = (props: StakeBannerProps) => (
     >
       <header>
         <Text.H2 css={{ gridArea: 'header', marginBottom: 0 }}>Staking</Text.H2>
-        <Text.Body>Stake your favorite assets in one click and start earning rewards</Text.Body>
+        <Text.Body css={{ 'display': 'none', '@container(min-width: 60rem)': { visibility: 'revert' } }}>
+          Stake your favorite assets in one click and start earning rewards
+        </Text.Body>
       </header>
       <div
         css={{
@@ -53,7 +55,10 @@ const StakeBanner = (props: StakeBannerProps) => (
         }}
       >
         <Button variant="outlined" leadingIcon={<Calculate />} onClick={props.onClickSimulateRewards}>
-          Simulate rewards
+          <span css={{ '@container(min-width: 60rem)': { display: 'none' } }}>Calculate</span>
+          <span css={{ 'display': 'none', '@container(min-width: 60rem)': { display: 'revert' } }}>
+            Simulate rewards
+          </span>
         </Button>
         <Button leadingIcon={<Zap />} onClick={props.onClickStake}>
           Stake
@@ -62,7 +67,10 @@ const StakeBanner = (props: StakeBannerProps) => (
       <ListItem
         css={{ gridArea: 'stake-balance', padding: 0, visibility: props.balance ? 'visible' : 'hidden' }}
         leadingContent={
-          <TonalIcon size="5.6rem">
+          <TonalIcon
+            size="5.6rem"
+            css={{ 'display': 'none', '@container(min-width: 60rem)': { visibility: 'revert' } }}
+          >
             <Zap />
           </TonalIcon>
         }
