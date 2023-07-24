@@ -211,6 +211,7 @@ const AccountsManagementMenu = (props: { button: ReactNode }) => {
                     revealTrailingContentOnHover
                     trailingContent={
                       <SurfaceIconButton
+                        size="3.5rem"
                         containerColor={theme.color.foreground}
                         onClick={(event: any) => {
                           event.stopPropagation()
@@ -257,6 +258,7 @@ const AccountsManagementMenu = (props: { button: ReactNode }) => {
                         trailingContent={
                           <div css={{ display: 'flex' }}>
                             <SurfaceIconButton
+                              size="3.5rem"
                               containerColor={theme.color.foreground}
                               onClick={(event: any) => {
                                 event.stopPropagation()
@@ -273,6 +275,7 @@ const AccountsManagementMenu = (props: { button: ReactNode }) => {
                               {tooltipProps => (
                                 <div {...tooltipProps}>
                                   <SurfaceIconButton
+                                    size="3.5rem"
                                     containerColor={theme.color.foreground}
                                     onClick={(event: any) => {
                                       event.stopPropagation()

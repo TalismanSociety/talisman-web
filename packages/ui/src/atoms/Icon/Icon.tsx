@@ -1,4 +1,5 @@
 import { useTheme } from '@emotion/react'
+import { IconContext } from '@talismn/icons/utils'
 import { type ComponentPropsWithoutRef, type ElementType } from 'react'
 
 export type IconElementType = Extract<ElementType, 'button' | 'a' | 'figure'> | ElementType<any>
@@ -46,7 +47,9 @@ const Icon = <T extends IconElementType = 'button'>({
         overflow: 'hidden',
         transition: '.25s',
       }}
-    />
+    >
+      <IconContext.Provider value={{ size: `calc(${size} * 0.6)` }}>{props['children']}</IconContext.Provider>
+    </Component>
   )
 }
 
