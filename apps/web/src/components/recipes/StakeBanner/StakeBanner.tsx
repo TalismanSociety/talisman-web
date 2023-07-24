@@ -1,4 +1,5 @@
-import { Button, ListItem, Text } from '@talismn/ui'
+import { Calculate, Zap } from '@talismn/icons'
+import { Button, ListItem, Text, TonalIcon } from '@talismn/ui'
 import type { ReactNode } from 'react'
 
 export type StakeBannerProps = {
@@ -22,7 +23,7 @@ const StakeBanner = (props: StakeBannerProps) => (
         'justifyContent': 'space-between',
         'gap': '2.4rem',
         'borderRadius': '1.6rem',
-        'background': 'rgba(0, 0, 0, 0.5) linear-gradient(125deg, #182F4F, #445587, #C36A9B, #974570)',
+        'background': 'rgba(0, 0, 0, 0.55) linear-gradient(125deg, #182F4F, #445587, #C36A9B, #974570)',
         'backgroundBlendMode': 'darken',
         'padding': '2.4rem',
         '@container(min-width: 60rem)': {
@@ -35,7 +36,10 @@ const StakeBanner = (props: StakeBannerProps) => (
         },
       }}
     >
-      <Text.H2 css={{ gridArea: 'header', marginBottom: 0 }}>Staking</Text.H2>
+      <header>
+        <Text.H2 css={{ gridArea: 'header', marginBottom: 0 }}>Staking</Text.H2>
+        <Text.Body>Stake your favorite assets in one click and start earning rewards</Text.Body>
+      </header>
       <div
         css={{
           'gridArea': 'actions',
@@ -48,13 +52,20 @@ const StakeBanner = (props: StakeBannerProps) => (
           '@container(min-width: 60rem)': { placeSelf: 'end' },
         }}
       >
-        <Button variant="outlined" onClick={props.onClickSimulateRewards}>
+        <Button variant="outlined" leadingIcon={<Calculate />} onClick={props.onClickSimulateRewards}>
           Simulate rewards
         </Button>
-        <Button onClick={props.onClickStake}>Stake</Button>
+        <Button leadingIcon={<Zap />} onClick={props.onClickStake}>
+          Stake
+        </Button>
       </div>
       <ListItem
         css={{ gridArea: 'stake-balance', padding: 0, visibility: props.balance ? 'visible' : 'hidden' }}
+        leadingContent={
+          <TonalIcon size="5.6rem">
+            <Zap />
+          </TonalIcon>
+        }
         overlineText={
           <Text.BodyLarge as="div" css={{ marginBottom: '0.8rem' }}>
             Staking balance

@@ -1,6 +1,6 @@
 import type { Account } from '@domains/accounts'
 import { useTheme } from '@emotion/react'
-import { Clock, Earn, ExternalLink, Percent, Zap } from '@talismn/icons'
+import { Clock, Earn, ExternalLink, Percent, Zap, ZapOff } from '@talismn/icons'
 import {
   Button,
   DescriptionList,
@@ -158,13 +158,13 @@ const StakeDetails = Object.assign(
             />
           </div>
           <div css={{ display: 'flex', flexWrap: 'wrap', gap: '2.4rem' }}>
-            <Surface
-              as="section"
+            <section
               css={{
                 flex: '2 1 auto',
                 display: 'flex',
                 flexDirection: 'column',
                 borderRadius: '0.8rem',
+                border: `solid 2px ${useSurfaceColorAtElevation(x => x + 1)}`,
                 padding: '1.6rem',
               }}
             >
@@ -218,7 +218,7 @@ const StakeDetails = Object.assign(
                   />
                 </VictoryChart>
               </div>
-            </Surface>
+            </section>
             <div css={{ flex: '33rem' }}>
               <section>
                 <Text.H4>Latest payouts</Text.H4>
@@ -273,12 +273,12 @@ const StakeDetails = Object.assign(
   {
     ClaimButton: (props: ButtonProps & { amount: string }) => <Button {...props}>Claim {props.amount}</Button>,
     AddButton: (props: ButtonProps) => (
-      <Button {...props} variant="surface">
-        Add stake
+      <Button {...props} leadingIcon={<Zap />} variant="surface">
+        Stake
       </Button>
     ),
     UnbondButton: (props: ButtonProps) => (
-      <Button {...props} variant="surface">
+      <Button {...props} leadingIcon={<ZapOff />} variant="surface">
         Unstake
       </Button>
     ),
