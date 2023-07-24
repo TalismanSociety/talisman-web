@@ -13,6 +13,9 @@ const Footer = () => {
         gap: 18px;
         padding: 0 40px;
         padding-bottom: 16px;
+        p {
+          font-size: 14px;
+        }
         a {
           color: var(--color-offWhite);
           font-size: 14px;
@@ -23,22 +26,25 @@ const Footer = () => {
         }
       `}
     >
-      <a href="https://talisman.xyz" target="_blank" rel="noreferrer">
-        FAQ
-      </a>
-      <a href="https://talisman.xyz" target="_blank" rel="noreferrer">
-        Docs
-      </a>
-      <a href="https://talisman.xyz" target="_blank" rel="noreferrer">
+      <p>Signet (Beta)</p>
+      <a href="https://twitter.com/wearetalisman" target="_blank" rel="noreferrer">
         Twitter
       </a>
-      <a href="https://talisman.xyz" target="_blank" rel="noreferrer">
+      <a href="https://discord.gg/talisman" target="_blank" rel="noreferrer">
         Discord
       </a>
-      <a href="https://talisman.xyz" target="_blank" rel="noreferrer">
+      <a
+        href="https://docs.talisman.xyz/talisman/prepare-for-your-journey/terms-of-use"
+        target="_blank"
+        rel="noreferrer"
+      >
         Terms
       </a>
-      <a href="https://talisman.xyz" target="_blank" rel="noreferrer">
+      <a
+        href="https://docs.talisman.xyz/talisman/prepare-for-your-journey/privacy-policy"
+        target="_blank"
+        rel="noreferrer"
+      >
         Privacy Policy
       </a>
       <div

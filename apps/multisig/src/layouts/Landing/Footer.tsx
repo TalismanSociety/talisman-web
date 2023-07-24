@@ -40,13 +40,24 @@ const MiscLinks = () => {
           color: var(--color-offWhite);
           grid-template-rows: 20px 20px 18px;
           gap: 18px;
+          p {
+            white-space: nowrap;
+          }
         `}
       >
-        <a href="https://talisman.xyz" target="_blank" rel="noreferrer">
-          <p>Docs</p>
+        <a
+          href="https://docs.talisman.xyz/talisman/prepare-for-your-journey/terms-of-use"
+          target="_blank"
+          rel="noreferrer"
+        >
+          <p>Terms of Service</p>
         </a>
-        <a href="https://talisman.xyz" target="_blank" rel="noreferrer">
-          <p>FAQ</p>
+        <a
+          href="https://docs.talisman.xyz/talisman/prepare-for-your-journey/privacy-policy"
+          target="_blank"
+          rel="noreferrer"
+        >
+          <p>Privacy Policy</p>
         </a>
         <div
           className={css`
@@ -111,9 +122,7 @@ const Footer = () => {
             grid-template-rows: auto;
           }
           @media ${device.lg} {
-            padding-right: 255px;
             grid-template-columns: auto 330px 242px;
-            margin-left: 120px;
             gap: 35px;
           }
         `}
@@ -144,8 +153,8 @@ const Footer = () => {
             }
           `}
         >
-          Signet is the all-in-one solution for creating and managing onchain organisations. An easy to use multi-sig
-          wallet designed for teams who value security and efficiency.
+          Signet (Beta) is the all-in-one solution for creating and managing onchain organisations. An easy to use
+          multi-sig wallet designed for teams who value security and efficiency.
         </p>
         <MiscLinks />
       </div>
