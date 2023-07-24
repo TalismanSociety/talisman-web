@@ -38,7 +38,7 @@ const StakeBanner = (props: StakeBannerProps) => (
     >
       <header>
         <Text.H2 css={{ gridArea: 'header', marginBottom: 0 }}>Staking</Text.H2>
-        <Text.Body css={{ 'display': 'none', '@container(min-width: 60rem)': { visibility: 'revert' } }}>
+        <Text.Body css={{ 'display': 'none', '@container(min-width: 60rem)': { display: 'revert' } }}>
           Stake your favorite assets in one click and start earning rewards
         </Text.Body>
       </header>
@@ -67,10 +67,7 @@ const StakeBanner = (props: StakeBannerProps) => (
       <ListItem
         css={{ gridArea: 'stake-balance', padding: 0, visibility: props.balance ? 'visible' : 'hidden' }}
         leadingContent={
-          <TonalIcon
-            size="5.6rem"
-            css={{ 'display': 'none', '@container(min-width: 60rem)': { visibility: 'revert' } }}
-          >
+          <TonalIcon size="5.6rem" css={{ 'display': 'none', '@container(min-width: 60rem)': { display: 'flex' } }}>
             <Zap />
           </TonalIcon>
         }
