@@ -239,7 +239,8 @@ const AccountsManagementMenu = (props: { button: ReactNode }) => {
                   padding: '1.6rem',
                 }}
               >
-                <Eye size="1em" /> Watched accounts
+                <Eye size="1em" />
+                Followed accounts
               </Text.Body>
               {readonlyAccounts.map((account, index) => (
                 <RemoveWatchedAccountConfirmationDialog key={index} account={account}>
@@ -299,7 +300,7 @@ const AccountsManagementMenu = (props: { button: ReactNode }) => {
                 {({ onToggleOpen }) => (
                   <Menu.Item onClick={onToggleOpen} dismissAfterSelection={false}>
                     <ListItem
-                      headlineText="Add watch only address"
+                      headlineText="Follow account"
                       leadingContent={
                         <SurfaceIconButton as="figure" containerColor={theme.color.foreground}>
                           <EyePlus />

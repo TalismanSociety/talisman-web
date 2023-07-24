@@ -69,7 +69,7 @@ const AlertDialog = ({
           },
           'width': 'auto',
           '@media (min-width: 768px)': {
-            width,
+            width: width ?? 'revert',
           },
         }}
       >
