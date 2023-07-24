@@ -10,16 +10,32 @@ import { useIsWeb3Injected } from '@domains/extension/hooks'
 import { allowExtensionConnectionState } from '@domains/extension/recoils'
 import { useTheme } from '@emotion/react'
 import { Copy, Download, Eye, EyePlus, Link, PlusCircle, Power, TalismanHand, Trash2, Users, X } from '@talismn/icons'
-import { CircularProgressIndicator, IconButton, Identicon, ListItem, Menu, Text, Tooltip } from '@talismn/ui'
+import {
+  CircularProgressIndicator,
+  Hr,
+  IconButton,
+  Identicon,
+  ListItem,
+  Menu,
+  Text,
+  Tooltip,
+  useSurfaceColor,
+  type IconButtonProps,
+} from '@talismn/ui'
 import { shortenAddress } from '@util/format'
 import { Maybe } from '@util/monads'
-import { useMemo, type ReactNode } from 'react'
+import { useMemo, type ElementType, type ReactNode } from 'react'
 import { useRecoilState, useRecoilValue, useRecoilValueLoadable, useSetRecoilState } from 'recoil'
 import AddReadOnlyAccountDialog from './AddReadOnlyAccountDialog'
 import AnimatedFiatNumber from './AnimatedFiatNumber'
 import RemoveWatchedAccountConfirmationDialog from './RemoveWatchedAccountConfirmationDialog'
 
-const AccountsManagementIconButton = (props: { size?: number | string }) => {
+// TODO: probably have this as part of the UI lib
+const SurfaceIconButton = <T extends Extract<ElementType, 'button' | 'a' | 'figure'> | ElementType<any>>(
+  props: IconButtonProps<T>
+) => <IconButton {...props} containerColor={useSurfaceColor()} />
+
+const AccountsManagementSurfaceIconButton = (props: { size?: number | string }) => {
   const theme = useTheme()
   const allowExtensionConnection = useRecoilValue(allowExtensionConnectionState)
   const selectedAccounts = useRecoilValue(selectedAccountsState)
@@ -28,7 +44,7 @@ const AccountsManagementIconButton = (props: { size?: number | string }) => {
 
   if ((!isWeb3Injected || !allowExtensionConnection) && readonlyAccounts.length === 0) {
     return (
-      <IconButton
+      <SurfaceIconButton
         as="figure"
         size={props.size}
         containerColor={theme.color.foreground}
@@ -36,7 +52,7 @@ const AccountsManagementIconButton = (props: { size?: number | string }) => {
         css={{ cursor: 'pointer' }}
       >
         <Link />
-      </IconButton>
+      </SurfaceIconButton>
     )
   }
 
@@ -47,7 +63,7 @@ const AccountsManagementIconButton = (props: { size?: number | string }) => {
   }
 
   return (
-    <IconButton
+    <SurfaceIconButton
       as="figure"
       size={props.size}
       containerColor={theme.color.foreground}
@@ -55,7 +71,7 @@ const AccountsManagementIconButton = (props: { size?: number | string }) => {
       css={{ cursor: 'pointer' }}
     >
       <Users />
-    </IconButton>
+    </SurfaceIconButton>
   )
 }
 
@@ -80,9 +96,13 @@ const AccountsManagementMenu = (props: { button: ReactNode }) => {
           <a href="https://talisman.xyz/download" target="_blank" rel="noreferrer">
             <ListItem
               leadingContent={
-                <IconButton as="figure" containerColor={theme.color.foreground} contentColor={theme.color.primary}>
+                <SurfaceIconButton
+                  as="figure"
+                  containerColor={theme.color.foreground}
+                  contentColor={theme.color.primary}
+                >
                   <Download />
-                </IconButton>
+                </SurfaceIconButton>
               }
               headlineText="Install wallet"
             />
@@ -96,9 +116,9 @@ const AccountsManagementMenu = (props: { button: ReactNode }) => {
         <Menu.Item onClick={() => setAllowExtensionConnection(true)}>
           <ListItem
             leadingContent={
-              <IconButton as="figure" containerColor={theme.color.foreground} contentColor={theme.color.primary}>
+              <SurfaceIconButton as="figure" containerColor={theme.color.foreground} contentColor={theme.color.primary}>
                 <PlusCircle />
-              </IconButton>
+              </SurfaceIconButton>
             }
             headlineText="Connect wallet"
           />
@@ -114,9 +134,9 @@ const AccountsManagementMenu = (props: { button: ReactNode }) => {
           ))}
           overlineText="All accounts"
           leadingContent={
-            <IconButton as="figure" containerColor={theme.color.foreground} contentColor={theme.color.primary}>
+            <SurfaceIconButton as="figure" containerColor={theme.color.foreground} contentColor={theme.color.primary}>
               <Users />
-            </IconButton>
+            </SurfaceIconButton>
           }
         />
       </Menu.Item>
@@ -140,9 +160,9 @@ const AccountsManagementMenu = (props: { button: ReactNode }) => {
       <Menu.Item onClick={() => setAllowExtensionConnection(false)}>
         <ListItem
           leadingContent={
-            <IconButton containerColor={theme.color.foreground}>
+            <SurfaceIconButton containerColor={theme.color.foreground}>
               <Power />
-            </IconButton>
+            </SurfaceIconButton>
           }
           headlineText="Disconnect wallet"
         />
@@ -156,7 +176,7 @@ const AccountsManagementMenu = (props: { button: ReactNode }) => {
       <Menu.Items>
         {({ toggleOpen }) => (
           <section css={{ width: 'min(36.2rem, 100vw)' }}>
-            <section css={{ margin: '1.6rem 0' }}>
+            <section css={{ marginTop: '1.6rem' }}>
               <Text.Body
                 as="header"
                 css={{
@@ -190,7 +210,7 @@ const AccountsManagementMenu = (props: { button: ReactNode }) => {
                     leadingContent={<Identicon value={x.address} size="4rem" />}
                     revealTrailingContentOnHover
                     trailingContent={
-                      <IconButton
+                      <SurfaceIconButton
                         containerColor={theme.color.foreground}
                         onClick={(event: any) => {
                           event.stopPropagation()
@@ -199,17 +219,24 @@ const AccountsManagementMenu = (props: { button: ReactNode }) => {
                         css={{ cursor: 'copy' }}
                       >
                         <Copy />
-                      </IconButton>
+                      </SurfaceIconButton>
                     }
                   />
                 </Menu.Item>
               ))}
               {disconnectButton}
             </section>
+            <Hr />
             <section>
               <Text.Body
                 as="header"
-                css={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 'bold', padding: '1.6rem' }}
+                css={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.5rem',
+                  fontWeight: 'bold',
+                  padding: '1.6rem',
+                }}
               >
                 <Eye size="1em" /> Watched accounts
               </Text.Body>
@@ -229,7 +256,7 @@ const AccountsManagementMenu = (props: { button: ReactNode }) => {
                         revealTrailingContentOnHover
                         trailingContent={
                           <div css={{ display: 'flex' }}>
-                            <IconButton
+                            <SurfaceIconButton
                               containerColor={theme.color.foreground}
                               onClick={(event: any) => {
                                 event.stopPropagation()
@@ -238,14 +265,14 @@ const AccountsManagementMenu = (props: { button: ReactNode }) => {
                               css={{ cursor: 'copy' }}
                             >
                               <Copy />
-                            </IconButton>
+                            </SurfaceIconButton>
                             <Tooltip
                               content="This account can be managed via the extension"
                               disabled={account.origin === 'local'}
                             >
                               {tooltipProps => (
                                 <div {...tooltipProps}>
-                                  <IconButton
+                                  <SurfaceIconButton
                                     containerColor={theme.color.foreground}
                                     onClick={(event: any) => {
                                       event.stopPropagation()
@@ -254,7 +281,7 @@ const AccountsManagementMenu = (props: { button: ReactNode }) => {
                                     disabled={account.origin !== 'local'}
                                   >
                                     <Trash2 />
-                                  </IconButton>
+                                  </SurfaceIconButton>
                                 </div>
                               )}
                             </Tooltip>
@@ -271,9 +298,9 @@ const AccountsManagementMenu = (props: { button: ReactNode }) => {
                     <ListItem
                       headlineText="Add watch only address"
                       leadingContent={
-                        <IconButton as="figure" containerColor={theme.color.foreground}>
+                        <SurfaceIconButton as="figure" containerColor={theme.color.foreground}>
                           <EyePlus />
-                        </IconButton>
+                        </SurfaceIconButton>
                       }
                     />
                   </Menu.Item>
@@ -287,4 +314,4 @@ const AccountsManagementMenu = (props: { button: ReactNode }) => {
   )
 }
 
-export default Object.assign(AccountsManagementMenu, { IconButton: AccountsManagementIconButton })
+export default Object.assign(AccountsManagementMenu, { IconButton: AccountsManagementSurfaceIconButton })

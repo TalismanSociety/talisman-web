@@ -27,7 +27,7 @@ import {
   type ReactElement,
   type ReactNode,
 } from 'react'
-import { useSurfaceColorAtElevation } from '../..'
+import { Surface, useSurfaceColor } from '../..'
 import FloatingPortal from '../../atoms/FloatingPortal'
 
 export const MENU_OFFSET = 12
@@ -110,13 +110,13 @@ const MenuItems = (props: MenuItemsProps) => {
       ? props.children({ open, toggleOpen: () => setOpen(open => !open) })
       : props.children
 
-  const surfaceColor = useSurfaceColorAtElevation(x => x + 1)
-
   return (
     <FloatingPortal id={nodeId}>
       {(open || animating) && (
-        <motion.section
+        <Surface
+          as={motion.section}
           ref={floating}
+          elevation={x => x + 1}
           onAnimationStart={() => setAnimating(true)}
           onAnimationComplete={() => setAnimating(false)}
           variants={{
@@ -146,7 +146,6 @@ const MenuItems = (props: MenuItemsProps) => {
           css={{
             border: `1px solid ${theme.color.border}`,
             borderRadius: '1.2rem',
-            backgroundColor: surfaceColor,
           }}
           {...getFloatingProps({
             ...props,
@@ -160,7 +159,6 @@ const MenuItems = (props: MenuItemsProps) => {
 }
 
 const MenuItem = ({ dismissAfterSelection = true, ...props }: MenuItemProps) => {
-  const theme = useTheme()
   const { getItemProps, setOpen } = useContext(MenuContext)
   return (
     <motion.div
@@ -171,7 +169,7 @@ const MenuItem = ({ dismissAfterSelection = true, ...props }: MenuItemProps) => 
       css={{
         'cursor': 'pointer',
         ':hover': {
-          backgroundColor: theme.color.foreground,
+          backgroundColor: useSurfaceColor(),
         },
       }}
       {...getItemProps({
