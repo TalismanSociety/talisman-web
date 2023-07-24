@@ -251,19 +251,18 @@ const StakeDetails = Object.assign(
                   </DescriptionList.Description>
                 </DescriptionList>
               </section>
-              {props.unbondings.length > 0 && (
-                <section css={{ marginTop: '2.4rem' }}>
-                  <Text.H4>Unbondings</Text.H4>
-                  <DescriptionList>
-                    {props.unbondings.map((x, index) => (
-                      <DescriptionList.Description key={index} className="payout">
-                        <DescriptionList.Term>{x.amount}</DescriptionList.Term>
-                        <DescriptionList.Details>{x.eta}</DescriptionList.Details>
-                      </DescriptionList.Description>
-                    ))}
-                  </DescriptionList>
-                </section>
-              )}
+              <section css={{ marginTop: '2.4rem' }}>
+                <Text.H4>Unbondings</Text.H4>
+                <DescriptionList>
+                  {props.unbondings.length <= 0 && <Text.Body>No active unbonding</Text.Body>}
+                  {props.unbondings.map((x, index) => (
+                    <DescriptionList.Description key={index} className="payout">
+                      <DescriptionList.Term>{x.amount}</DescriptionList.Term>
+                      <DescriptionList.Details>{x.eta}</DescriptionList.Details>
+                    </DescriptionList.Description>
+                  ))}
+                </DescriptionList>
+              </section>
             </div>
           </div>
         </Surface>
