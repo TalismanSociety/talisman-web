@@ -1,0 +1,32 @@
+{
+  "empty": {
+    "header": "Ваши сумки пусты!",
+    "description": "Покупайте DOT и KSM с помощью кредитной карты или криптовалюты",
+    "primaryCta": "Купить DOT/KSM"
+  },
+  "soon": {
+    "header": "Скоро появится",
+    "description": "А пока вы можете проверить Crowdloans.",
+    "primaryCta": "Изучите Crowdloans"
+  },
+  "buy": {
+    "header": "купить DOT/KSM",
+    "description": "Покажите мне деньги",
+    "primaryCta": "Купить"
+  },
+  "unlockTalisman": {
+    "header": "Разблокируйте талисман",
+    "description": "Внесите вклад в любой коллективный заем и получите Spirit Key, он понадобится вам позже ...",
+    "primaryCta": "Подробнее"
+  },
+  "noWallet": {
+    "header": "О нет!",
+    "description": "Похоже, у вас не установлено расширение кошелька.<br>Мы рекомендуем загрузить <1>Talisman Wallet.</1>",
+    "description2": "А пока вы можете проверить Crowdloans.",
+    "primaryCta": "Установить Талисман"
+  },
+  "noNfts": {
+    "description": "У вас еще нет NFT! Начните с Духовного ключа.",
+    "primaryCta": "Купить Духовный ключ"
+  }
+}

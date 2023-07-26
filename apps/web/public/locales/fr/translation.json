@@ -1,0 +1,48 @@
+{
+  "Portfolio value": "Valeur totale du portefeuille",
+  "Assets": "Actifs",
+  "All Accounts": "Tous les comptes",
+  "Crowdloans": "Crowdloans",
+  "Staking": "Staking",
+  "This door will be unlocked soon": "Cette fonctionnalité sera bientôt disponible...",
+  "You have not contributed to any Crowdloans": "Aucune contribution de Crowdloan n'a été trouvée parmi vos comptes",
+  "Summoning Crowdloan Contributions...": "Invocation des contributions aux Crowdloans...",
+  "Search Crowdloans": "Rechercher",
+  "Raised": "Fonds collectés",
+  "Ends in": "Termine dans",
+  "Contribute": "Contribuer",
+  "Contributed": "Contribué",
+  "Rewards": "Récompense",
+  "Cancel": "Annuler",
+  "Contribute to": "Contribuer à la Crowdloan",
+  "Sort by": "trier par",
+  "noResult": {
+    "title": "Désolé",
+    "subtitle": "Talisman ne peut pas invoquer ce à quoi vous vous attendiez.",
+    "text": "Essayer autre chose..."
+  },
+  "You have no": "Vous n'avez aucun",
+  "Buy": "Acheter",
+  "Fee": "Frais",
+  "Add {{asset}} Balance": "Ajouter le solde de {{asset}}",
+  "Unavailable": "Indisponible",
+  "extensionUnavailable": {
+    "title": "Oh non !",
+    "subtitle": "Il semble que vous n'ayez pas encore installé une extension de portefeuille sur votre navigateur.",
+    "text": "nous vous recommandons de télécharger Talisman"
+  },
+  "Install Talisman Extension": "Installer l'extension Talisman",
+  "Requires Configuration": "Nécessite une configuration",
+  "desktopRequired": {
+    "title": "Désolé!",
+    "subtitle": "Cette fonctionnalité n'est actuellement disponible que sur ordinateur, mais nous lancerons bientôt une version adaptée aux mobiles.",
+    "text": "En attendant, n'hésitez pas à consulter notre tableau de bord des Crowdloans",
+    "primaryCta": "Voir les Crowdloans"
+  },
+  "No wallet found": "Aucun portefeuille trouvé",
+  "Connect wallet": "Connecter le portefeuille",
+  "Switch wallet": "Changer de portefeuille",
+  "Goal reached": "Objectif atteint",
+  "Spirit Key": "Spirit Key",
+  "View all": "Voir tout"
+}

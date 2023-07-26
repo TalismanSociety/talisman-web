@@ -1,0 +1,53 @@
+{
+  "intro": "Özel avantajlara erişmek için bir Spirit Key bulun ve Talisman cüzdan eklentisini ilk deneyenlerden biri olun.",
+  "Drag to unlock": "Kilidi açmak için sürükleyin",
+  "no": "hayır",
+  "Done": "Tamamlandı",
+  "Send": "Gönder",
+  "altDownload": "İndirme 10 saniye sonra başlamazsa buraya tıklayın.",
+  "ownershipText_one": "<1>{{total}}</1> Spirit Key'iniz var.",
+  "ownershipText_other": "<1>{{total}}</1> Spirit Key'iniz var.",
+  "Send to a friend": "Bir arkadaşına gönder",
+  "Explore Crowdloans": "Crowdloanları Keşfedin.",
+  "Error sending NFT": "NFT gönderilirken hata oluştu.",
+  "Enter Kusama Address": "Kusama Adresini Girin.",
+  "willTakeFewMins": "Transferin senkronize olması birkaç dakika sürecektir, bu nedenle lütfen tekrar göndermekten kaçının.",
+  "whatIsInfo": {
+    "title": "Spirit Key nedir?",
+    "description": "Spirit Key, yalnızca 3333 adet bulunan özel bir RMRK NFT'dir. Sahipleri bunlar da dahil olmak üzere özel avantajlara erişebilecekler:",
+    "list": [
+      "Cüzdan eklentimizin Alfa sürümüne katılma fırsatı.",
+      "Spirit Clan üyeleri için Discord'umuzda izin verilen kanallar.",
+      "Talisman web uygulamasındaki yeni özelliklere erken erişim."
+    ]
+  },
+  "howToGetInfo": {
+    "title": "Spirit Key'i nasıl alabilirim?",
+    "description": "Spirit Keys çeşitli yerlerde görüldü, ancak asla çok uzun sürmedi. Şu anda onları bulmanın en iyi yolları:",
+    "list": [
+      "The Talisman <1>Discord kanalı</1>",
+      "Topluluk çağrılarına ve etkinliklere katılım",
+      "<1>Twitter</1>'daki çekilişlere göz kulak olmak",
+      "İnceleme yazısı hazırlamak, yayınlamak veya Talisman hakkında medya ürünü üretmek"
+    ]
+  },
+  "spiritClan": {
+    "poem": [
+      "Talisman Seeker, anahtar olan senin ruhun.",
+      "Arayışının sonunda, sonunda özgür olacaksın.",
+      "Yeni dünyanın anahtarı zor bir şeydir.",
+      "Kendine dürüstçe sormalısın, \"Tanrı aşkına ne getirmeliyim?\"",
+      "Getirilip getirilemeyeceğine dair bir an düşün.",
+      "Garanti edebileceğim tek şey, hiçbir şeyin boşuna olmadığı."
+    ],
+    "title": "Spirit Clan'a katılmak için Spirit Key'i keşfedin",
+    "info": [
+      "Spirit Key <a>Spirit Clan</a>'a katılmanıza izin veren bir NFT'dir.",
+      "Spirit Clan üyeleri, Talisman'ı şekillendirmeye yardım etme fırsatına sahip olacakları özel bir Discord kanalına erişebilir.",
+      "Spirit Clan üyeleri yeni ürünlere, etkinliklere, NFT ödüllerine ve daha fazlasına erken erişim elde eder."
+    ],
+    "noKeyPlaceholder": "Henüz bir anahtarınız yok. <a>Singular</a>'da bir tane edinin.",
+    "alreadyHaveOne": "Zaten bir tane var mı?",
+    "joinSpiritClan": "Spirit Clan'a katıl"
+  }
+}

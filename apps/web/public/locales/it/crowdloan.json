@@ -1,0 +1,31 @@
+{
+  "inProgress": {
+    "header": "In Elaborazione",
+    "description": "La tua transazione è in corso. Potrebbero essere necessari un paio di minuti per la conferma",
+    "primaryCta": "Controlla su Subscan",
+    "secondaryCta": "Chiudi"
+  },
+  "success": {
+    "header": "Completata",
+    "description": "La tua transazione è stata completata. Grazie per il tuo contributo",
+    "primaryCta": "Controlla su Subscan",
+    "secondaryCta": "Vai al tuo portafoglio"
+  },
+  "failed": {
+    "header": "Fallita",
+    "description": "La tua transazione non è andata a buon fine.",
+    "primaryCta": "Controlla su Subscan",
+    "secondaryCta": "Chiudi"
+  },
+  "registeringUser": {
+    "header": "Firma Termini e Condizioni",
+    "description": "Cliccando su \"Firma & Invia\", la tua autorizzazione alle condizioni del crowdloan di Moonbeam sarà salvata on-chain, nella forma di una transazione extrinstic firmata con il tuo DOT account.",
+    "feeNote": "Nota che per firmare la transazioni è necessario pagare i costi di trasmissione su Polkadot network (circa 0.0411 DOT), ed avere un bilancio minimo di 1 DOT sul tuo account Polkadot.",
+    "termsNote": "[Vedi i termini]",
+    "primaryCta": "Firma & Invia"
+  },
+  "moonbeamPortflioTag": {
+    "You have unlinked addresses": "Il tuo indirizzo non è collegato",
+    "View linked addresses": "Vedi indirizzi collegati"
+  }
+}

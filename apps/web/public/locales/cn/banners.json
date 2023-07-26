@@ -1,0 +1,32 @@
+{
+  "empty": {
+    "header": "钱包暂无余额！",
+    "description": "使用信用卡或加密货币购买 DOT 和 KSM",
+    "primaryCta": "购买 DOT 或 KSM"
+  },
+  "soon": {
+    "header": "即将推出",
+    "description": "在此期间，您可以查看众贷信息",
+    "primaryCta": "探索众贷"
+  },
+  "buy": {
+    "header": "购买 DOT 或 KSM",
+    "description": "输入您要购买的金额或数量",
+    "primaryCta": "购买"
+  },
+  "unlockTalisman": {
+    "header": "解锁 Talisman",
+    "description": "为任意众贷做出贡献并获得 Spirit Key，后续您将会需要它...",
+    "primaryCta": "了解更多"
+  },
+  "noWallet": {
+    "header": "解锁平行宇宙",
+    "description": "看起来您没有安装钱包扩展。<br>建议下载 <1>Talisman Wallet.</1>",
+    "description2": "在此期间，您可以查看众贷信息",
+    "primaryCta": "下载钱包扩展"
+  },
+  "noNfts": {
+    "description": "您还没有任何 NFT！开始使用 Spirit Key。",
+    "primaryCta": "购买 Spirit Key"
+  }
+}

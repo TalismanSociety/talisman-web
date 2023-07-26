@@ -1,0 +1,31 @@
+{
+  "inProgress": {
+    "header": "진행중",
+    "description": "당신의 트랜잭션이 진행중입니다. 확인을 마치기 까지 몇 분 정도 소요될 수 있습니다.",
+    "primaryCta": "Subscan에서 살펴보기",
+    "secondaryCta": "닫기"
+  },
+  "success": {
+    "header": "성공",
+    "description": "트랜잭션이 성공적으로 완료되었습니다. 기여해주셔서 감사합니다",
+    "primaryCta": "Subscan에서 살펴보기",
+    "secondaryCta": "포트폴리오 확인하기"
+  },
+  "failed": {
+    "header": "실패",
+    "description": "트랜잭션이 실패하였습니다.",
+    "primaryCta": "Subscan에서 살펴보기",
+    "secondaryCta": "닫기"
+  },
+  "registeringUser": {
+    "header": "계약 조건에 서명하십시오",
+    "description": "아래의 \"서명 후 전송하기\" 를 클릭함으로써, 문빔 크라우드론 이용 약관에 대한 동의서가 당신의 DOT 계정에 저장될 것입니다. 이것은 당신의 계정에 의해 서명된 외적 발언의 형태로 작성될 것입니다.",
+    "feeNote": "이 서명 트랜잭션에는 폴카닷 네트워크의 거래 수수료(약 0.0411 DOT)가 적용되며, 폴카닷은 최소 잔액으로 1 DOT이상 보유되어야 합니다.",
+    "termsNote": "[약관 확인]",
+    "primaryCta": "서명 후 전송하기"
+  },
+  "moonbeamPortflioTag": {
+    "You have unlinked addresses": "연결되어 있지 않은 주소입니다.",
+    "View linked addresses": "연결된 주소 확인하기"
+  }
+}

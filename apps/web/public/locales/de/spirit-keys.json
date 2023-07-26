@@ -1,0 +1,53 @@
+{
+  "intro": "Finde einen Spirit Key um Zugang zu besonderen Funktionen zu erhalten und als einer der Ersten die Talisman-Wallet-Erweiterung zu nutzen.",
+  "Drag to unlock": "Ziehe zum Öffnen",
+  "no": "Nein",
+  "Done": "Fertig",
+  "Send": "Senden",
+  "altDownload": "Hier klicken, falls der Download nicht nach 10 Sekunden gestartet wurde.",
+  "ownershipText_one": "Du besitzt <1>{{total}}</1> Spirit Key",
+  "ownershipText_other": "Du besitzt <1>{{total}}</1> Spirit Keys",
+  "Send to a friend": "Einem Freund schicken",
+  "Explore Crowdloans": "Erkunde Crowdloans",
+  "Error sending NFT": "Fehler beim Versenden des NFT",
+  "Enter Kusama Address": "Kusama Addresse eingeben",
+  "willTakeFewMins": "Die Transaktion wird ein paar Minuten zum Synchronisieren benötigen. Bitte nicht mehrmals versenden.",
+  "whatIsInfo": {
+    "title": "Was ist ein Spirit Key?",
+    "description": "Ein Spirit Key ist ein besonderes und auf 3333 Stück limitiertes RMRK NFT. Die Besitzer erhalten besondere Vorzüge. Unter anderem:",
+    "list": [
+      "Die Gelegenheit die Alpha Version von unserer Wallet-Erweiterung zu nutzen",
+      "Exklusive Kanäle in unserem Discord für Spirit Clan Mitglieder",
+      "Early Access zu neuen Funktionen in der Talisman Web App"
+    ]
+  },
+  "howToGetInfo": {
+    "title": "Wie bekomme ich einen Spirit Key?",
+    "description": "Die Keys wurden an verschiedenen Orten gesichtet, aber nie lange. Die besten Möglichkeiten um sie aktuell zu finden sind:",
+    "list": [
+      "Der Talisman <1>Discord Server</1>",
+      "Teilnahme an Community Calls und Events",
+      "Ein Auge auf die Giveaways auf <1>Twitter</1> zu haben",
+      "Durch dein Beitragen zu Inhalten über Talisman. Viele Wege sind möglich!"
+    ]
+  },
+  "spiritClan": {
+    "poem": [
+      "Sucher des Talisman, dein Geist ist der Schlüssel.",
+      "Am Ende deiner Suche wirst du endlich frei sein.",
+      "Ein Schlüssel zur neuen Welt ist eine schwierige Sache.",
+      "Du solltest dich ehrlich fragen, \"was um alles in der Welt soll ich erbringen?\"",
+      "Denke einen Moment darüber nach, ob es erbracht werden kann.",
+      "Ich kann nur garantieren, dass nichts umsonst ist."
+    ],
+    "title": "Entdecke einen Spirit Key, um dem Spirit Clan beizutreten.",
+    "info": [
+      "Ein Spirit Key ist ein NFT, mit dem Sie dem <a>Spirit-Clan</a> beitreten können.",
+      "Mitglieder des Spirit-Clans können auf einen zugelassenen Discord-Kanal zugreifen, wo sie die Möglichkeit haben, Talisman mitzugestalten.",
+      "Spirit Clan-Mitglieder erhalten frühzeitig Zugang zu neuen Produkten, Events, NFT-Drops und mehr."
+    ],
+    "noKeyPlaceholder": "Du hast noch keinen Spirit Key. Hol dir einen auf <a>Singular</a>.",
+    "alreadyHaveOne": "Hast du schon einen?",
+    "joinSpiritClan": "Spirit-Clan beitreten"
+  }
+}

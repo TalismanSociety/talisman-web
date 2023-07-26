@@ -1,0 +1,48 @@
+{
+  "Portfolio value": "Valore del Portafoglio",
+  "Assets": "Assets",
+  "All Accounts": "Tutti gli Accounts",
+  "Crowdloans": "Crowdloans",
+  "Staking": "Staking",
+  "This door will be unlocked soon": "Questa porta verrà aperta tra poco",
+  "You have not contributed to any Crowdloans": "Non hai ancora contribuito a nessun Crowdloan",
+  "Summoning Crowdloan Contributions...": "Raccolta contribuzioni alle Crowdloan...",
+  "Search Crowdloans": "Cerca Crowdloans",
+  "Raised": "Raccolti",
+  "Ends in": "Finisce in",
+  "Contribute": "Contributo",
+  "Contributed": "Contribuito",
+  "Rewards": "Rewards",
+  "Cancel": "Cancella",
+  "Contribute to": "Contribuisci ad",
+  "Sort by": "Organizza per",
+  "noResult": {
+    "title": "Mi dispiace",
+    "subtitle": "Talisman non è riuscito a trovare quello che cerchi.",
+    "text": "Prova qualcos'altro."
+  },
+  "You have no": "Non ne hai",
+  "Buy": "Compra",
+  "Fee": "Costi",
+  "Add {{asset}} Balance": "Aggiungi {{asset}}",
+  "Unavailable": "Non disponibile",
+  "extensionUnavailable": {
+    "title": "Oh no!",
+    "subtitle": "Hmm... Non sembra che tu abbia installato l'estensione del wallet.",
+    "text": "Raccomandiamo di installare l'estensione Talisman"
+  },
+  "Install Talisman Extension": "Installa l'estensione Talisman",
+  "Requires Configuration": "Necessita essere configurata",
+  "desktopRequired": {
+    "title": "Mi dispiace!",
+    "subtitle": "Questa funzione è al momento disponibile solo su desktop, ma tra poco verrà rilasciata anche la versione mobile.",
+    "text": "Nel frattempo dai un'occhiata alla nostra schermata delle Crowdloan",
+    "primaryCta": "Vedi le Crowdloans"
+  },
+  "No wallet found": "Non è stato trovato il wallet",
+  "Connect wallet": "Connetti wallet",
+  "Switch wallet": "Cambia wallet",
+  "Goal reached": "Traguardo raggiunto",
+  "Spirit Key": "Spirit Key",
+  "View all": "Guarda tutto"
+}

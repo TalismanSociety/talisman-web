@@ -1,0 +1,32 @@
+{
+  "empty": {
+    "header": "Suas sacolas estão vazias!",
+    "description": "Compre DOT e KSM com seu cartão de crédito ou cripto",
+    "primaryCta": "Buy DOT/KSM"
+  },
+  "soon": {
+    "header": "Em breve",
+    "description": "Por enquanto, você pode checar os Crowdloans.",
+    "primaryCta": "Explore os Crowdloans"
+  },
+  "buy": {
+    "header": "Compre DOT/KSM",
+    "description": "Mostre-me o dinheiro",
+    "primaryCta": "Compre"
+  },
+  "unlockTalisman": {
+    "header": "Destrave a Talisman",
+    "description": "Contribua com qualquer Crowdloan DOT e receba uma \"Spirit Key NFT\", você precisará dela depois...",
+    "primaryCta": "Mais informação"
+  },
+  "noWallet": {
+    "header": "Destrave o Paraverse",
+    "description": "Parece que voce não tem a extensão de carteira instalada.<br>Faça o download <1>Talisman Wallet.</1>",
+    "description2": "Por enquanto, voce pode checar os Crowdloans.",
+    "primaryCta": "Download da Extensão Talisman"
+  },
+  "noNfts": {
+    "description": "Você ainda não tem NFTs! Comece com uma Spirit Key.",
+    "primaryCta": "Comprar Spirit Key"
+  }
+}

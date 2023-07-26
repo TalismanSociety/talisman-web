@@ -1,0 +1,32 @@
+{
+  "empty": {
+    "header": "C'est vide !",
+    "description": "Achetez des DOT ou des KSM par carte de crédit ou en crypto",
+    "primaryCta": "Acheter DOT/KSM"
+  },
+  "soon": {
+    "header": "Prochainement",
+    "description": "En attendant, vous pouvez voir ce qui ce passe du côté des Crowdloans.",
+    "primaryCta": "Voir les Crowdloans"
+  },
+  "buy": {
+    "header": "Acheter des DOT/KSM",
+    "description": "Pour obtenir des DOT ou des KSM, simplement et rapidement",
+    "primaryCta": "Acheter"
+  },
+  "unlockTalisman": {
+    "header": "Révélez le Talisman",
+    "description": "Contribuez à n'importe quelle Crowdloan et recevez une “Spirit Key”, vous en aurez besoin plus tard...",
+    "primaryCta": "En savoir plus"
+  },
+  "noWallet": {
+    "header": "Oh non!",
+    "description": "Il ne semble pas que vous ayez installé une extension de portefeuille.<br>Nous vous recommandons de télécharger <1>Talisman.</1>",
+    "description2": "En attendant, vous pouvez voir ce qui ce passe du côté des Crowdloans.",
+    "primaryCta": "Installer Talisman"
+  },
+  "noNfts": {
+    "description": "Vous n'avez pas encore de NFT ! Commencez avec une Spirit Key.",
+    "primaryCta": "Acheter la Spirit Key"
+  }
+}

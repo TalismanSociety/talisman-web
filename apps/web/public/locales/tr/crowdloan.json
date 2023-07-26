@@ -1,0 +1,31 @@
+{
+  "inProgress": {
+    "header": "İşlem sürüyor",
+    "description": "İşleminiz devam ediyor. Bunun onaylanması birkaç dakika sürebilir",
+    "primaryCta": "Subscan'da görüntüle",
+    "secondaryCta": "Kapat"
+  },
+  "success": {
+    "header": "Success",
+    "description": "İşleminiz başarılı oldu. Katkınız için teşekkürler",
+    "primaryCta": "Subscan'da görüntüle",
+    "secondaryCta": "Portföyüne git"
+  },
+  "failed": {
+    "header": "Başarısız oldu",
+    "description": "İşleminiz başarılı olmadı.",
+    "primaryCta": "Subscan'da görüntüle",
+    "secondaryCta": "Kapat"
+  },
+  "registeringUser": {
+    "header": "Hüküm ve Koşulları imzalayın",
+    "description": "Aşağıdaki \"İmzala ve Gönder\"i tıkladığınızda, Moonbeam Crowdloan Hüküm ve Koşullarına ilişkin anlaşmanız zincirde, DOT hesabınızda saklanacaktır. Bu, hesabınız tarafından imzalanmış harici bir açıklama şeklinde olacaktır.",
+    "feeNote": "Lütfen bu imzalama işleminin Polkadot ağındaki işlem ücretlerine tabi olacağını (yaklaşık 0.0411 DOT) ve Polkadot'un minimum 1 DOT bakiyesine sahip olduğunu unutmayın.",
+    "termsNote": "[Şartları görüntüle]",
+    "primaryCta": "İmzala ve Gönder"
+  },
+  "moonbeamPortflioTag": {
+    "You have unlinked addresses": "Bağlantısı kaldırılmış adresleriniz var",
+    "View linked addresses": "Bağlı adresleri görüntüleyin"
+  }
+}

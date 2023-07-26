@@ -1,0 +1,31 @@
+{
+  "inProgress": {
+    "header": "In Progress",
+    "description": "Your transaction is in progress. This may take a few minutes to confirm",
+    "primaryCta": "View on Subscan",
+    "secondaryCta": "Close"
+  },
+  "success": {
+    "header": "Success",
+    "description": "Your transaction was successful. Thank you for your contribution",
+    "primaryCta": "View on Subscan",
+    "secondaryCta": "Go to your portfolio"
+  },
+  "failed": {
+    "header": "Failed",
+    "description": "Your transaction was not successful.",
+    "primaryCta": "View on Subscan",
+    "secondaryCta": "Close"
+  },
+  "registeringUser": {
+    "header": "Sign the Terms & Conditions",
+    "description": "By clicking \"Sign and Send\" below, your agreement to the Moonbeam Crowdloan Terms and Conditions will be stored on chain, to your DOT account. This will be in the form of a remark extrinstic signed by your account.",
+    "feeNote": "Please note that this signing transaction will be subject to transaction fees on the Polkadot network (around 0.0411 DOT), and Polkadot has a minimum balance of 1 DOT.",
+    "termsNote": "[View terms]",
+    "primaryCta": "Sign and Send"
+  },
+  "moonbeamPortflioTag": {
+    "You have unlinked addresses": "You have unlinked addresses",
+    "View linked addresses": "View linked addresses"
+  }
+}

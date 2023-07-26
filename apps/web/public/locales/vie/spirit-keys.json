@@ -1,0 +1,53 @@
+{
+  "intro": "Khám phá Chìa khóa  để nhận các đặc quyền đặc biệt và là một trong những người đầu tiên dùng thử tiện ích mở rộng ví Talisman",
+  "Drag to unlock": "Kéo để mở khóa",
+  "no": "no",
+  "Done": "Hoàn thành",
+  "Send": "Gửi",
+  "altDownload": "Nhấp vào đây nếu quá trình tải xuống không thể bắt đầu sau 10 giây.",
+  "ownershipText_one": "Bạn sở hữu <1>{{total}}</1> Chìa khóa Spirit",
+  "ownershipText_other": "Bạn sở hữu <1>{{total}}</1> Chìa khóa Spirit",
+  "Send to a friend": "Gửi tới bạn bè",
+  "Explore Crowdloans": "Khám  Crowdloans",
+  "Error sending NFT": "Lỗi gửi NFT",
+  "Enter Kusama Address": "Nhập địa chỉ Kusama",
+  "willTakeFewMins": "Quá trình chuyển sẽ mất vài phút, vì vậy vui lòng tránh gửi lại.",
+  "whatIsInfo": {
+    "title": "Chìa khóa Spirit là gì?",
+    "description": "Spirit Key là một RMRK NFT đặc biệt, trong đó chỉ có 3333 chiếc. Người sở hữu sẽ có thể nhận các đặc quyền bao gồm:",
+    "list": [
+      "Cơ hội tham gia vào đợt phát hành Alpha của tiện ích mở rộng ví của chúng tôi",
+      "Các kênh được phép trong Discord của chúng tôi dành cho các thành viên Spirit Clan",
+      "Quyền truy cập sớm vào các tính năng mới trong ứng dụng web Talisman"
+    ]
+  },
+  "howToGetInfo": {
+    "title": "Tôi có thể tìm một cái ở đâu?",
+    "description": "Chìa khóa đã được thấy ở nhiều nơi khác nhau. Những nơi tốt nhất hiện tại để tìm chúng là:",
+    "list": [
+      "Talisman <1>Discord server</1>",
+      "Tham gia community call và sự kiện của cộng đồng",
+      "Theo dõi giveaways trên <1>Twitter</1>",
+      "Bằng cách review, sáng tạo nội dung hoặc truyền thông về Talisman"
+    ]
+  },
+  "spiritClan": {
+    "poem": [
+      "Talisman Seeker, chính là tinh thần của bạn, đó là chìa khóa.",
+      "Khi bạn thật sự tìm kiếm, cuối cùng bạn sẽ được tự do.",
+      "Chìa khóa sẽ mở ra thế giới mới.",
+      "Bạn nên tự hỏi bản thân một cách thành thật, \" tôi nên mang theo cái gì? \"",
+      "Hãy dành một chút thời gian để suy nghĩ xem liệu bạn nên làm gì ?",
+      "Tất cả những gì tôi có thể đảm bảo, đó là không có gì là vô ích."
+    ],
+    "title": "Khám phá Spirit Key để tham gia Spirit Clan.",
+    "info": [
+      "Spirit Key là một NFT cho phép bạn tham gia <a> Spirit Clan </a>.",
+      "Các thành viên của Spirit Clan có thể truy cập kênh Discord được cấp phép, nơi họ sẽ có cơ hội giúp xây dựng Talisman.",
+      "Các thành viên Spirit Clan sẽ nhận được quyền truy cập sớm vào các sản phẩm, sự kiện mới, nhận NFT và hơn thế nữa."
+    ],
+    "noKeyPlaceholder": "Bạn chưa có khóa. Hãy mua một khóa trên <a> Số ít </a>.",
+    "alreadyHaveOne": "Đã có một?",
+    "joinSpiritClan": "Tham gia Spirit Clan"
+  }
+}
