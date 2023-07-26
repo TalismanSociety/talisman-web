@@ -23,53 +23,52 @@ const ExportTxHistoryDialog = ({
   onRequestExport,
   ...props
 }: ExportTxHistoryDialogProps) => (
-  <div></div>
-  // <AlertDialog
-  //   {...props}
-  //   title="Export CSV"
-  //   confirmButton={<Button onClick={onRequestExport}>Export</Button>}
-  //   content={
-  //     <div>
-  //       <Text.Body as="p" css={{ marginBottom: '2.4rem' }}>
-  //         Export your Transaction History
-  //       </Text.Body>
-  //       <div css={{ marginBottom: '1.6rem' }}>
-  //         <Select
-  //           width="100%"
-  //           placeholder="Select account"
-  //           value={accounts.findIndex(x => x.selected)}
-  //           onChange={value =>
-  //             Maybe.of(value)
-  //               .map(x => accounts[Number(x)])
-  //               .map(onSelectAccount)
-  //           }
-  //         >
-  //           {accounts.map((account, index) => (
-  //             <Select.Item
-  //               key={index}
-  //               value={index}
-  //               leadingIcon={<Identicon value={account.address} size={40} />}
-  //               headlineText={account.name}
-  //               supportingText={account.balance}
-  //             />
-  //           ))}
-  //         </Select>
-  //       </div>
-  //       <div css={{ display: 'flex', gap: '0.8rem' }}>
-  //         <DateInput
-  //           leadingLabel="Start date"
-  //           value={fromDate.toISOString().split('T')[0]}
-  //           onChange={x => onChangeFromDate(new Date(x.target.value))}
-  //         />
-  //         <DateInput
-  //           leadingLabel="End date"
-  //           value={toDate.toISOString().split('T')[0]}
-  //           onChange={x => onChangeToDate(new Date(x.target.value))}
-  //         />
-  //       </div>
-  //     </div>
-  //   }
-  // />
+  <AlertDialog
+    {...props}
+    title="Export CSV"
+    confirmButton={<Button onClick={onRequestExport}>Export</Button>}
+    content={
+      <div>
+        <Text.Body as="p" css={{ marginBottom: '2.4rem' }}>
+          Export your Transaction History
+        </Text.Body>
+        <div css={{ marginBottom: '1.6rem' }}>
+          <Select
+            width="100%"
+            placeholder="Select account"
+            value={accounts.findIndex(x => x.selected)}
+            onChange={value =>
+              Maybe.of(value)
+                .map(x => accounts[Number(x)])
+                .map(onSelectAccount)
+            }
+          >
+            {accounts.map((account, index) => (
+              <Select.Item
+                key={index}
+                value={index}
+                leadingIcon={<Identicon value={account.address} size={40} />}
+                headlineText={account.name}
+                supportingText={account.balance}
+              />
+            ))}
+          </Select>
+        </div>
+        <div css={{ display: 'flex', gap: '0.8rem' }}>
+          <DateInput
+            leadingLabel="Start date"
+            value={fromDate.toISOString().split('T')[0]}
+            onChange={x => onChangeFromDate(new Date(x.target.value))}
+          />
+          <DateInput
+            leadingLabel="End date"
+            value={toDate.toISOString().split('T')[0]}
+            onChange={x => onChangeToDate(new Date(x.target.value))}
+          />
+        </div>
+      </div>
+    }
+  />
 )
 
 export default ExportTxHistoryDialog
