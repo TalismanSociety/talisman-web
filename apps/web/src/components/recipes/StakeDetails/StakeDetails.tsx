@@ -52,14 +52,12 @@ const StakeDetails = Object.assign(
     )
 
     const groupedPayouts = useMemo(() => {
-      const dateFormat = new Intl.DateTimeFormat(undefined, { day: 'numeric', month: 'numeric', year: '2-digit' })
-
       const days = eachDayOfInterval({ start: subDays(now, 15), end: now })
         .sort((a, b) => a.getTime() - b.getTime())
         .slice(-15)
 
       return days.map(x => ({
-        date: dateFormat.format(x),
+        date: x.toISOString(),
         amount: props.last15DaysPayouts.filter(y => isSameDay(x, y.date)).reduce((prev, curr) => prev + curr.amount, 0),
       }))
     }, [now, props.last15DaysPayouts])
@@ -172,13 +170,21 @@ const StakeDetails = Object.assign(
                 <Text.H4>Payouts over last 15 days</Text.H4>
               </header>
               <div css={{ flex: 1 }}>
-                <VictoryChart domainPadding={25} height={225} padding={{ top: 5, right: 50, bottom: 50, left: 50 }}>
+                <VictoryChart domainPadding={25} height={225} padding={{ top: 5, right: 0, bottom: 50, left: 50 }}>
                   <VictoryAxis
+                    tickFormat={x =>
+                      new Intl.DateTimeFormat(undefined, { day: 'numeric', month: 'short' }).format(new Date(x))
+                    }
                     tickLabelComponent={
                       <VictoryLabel
                         angle={-35}
                         textAnchor="end"
-                        style={{ fill: `color-mix(in srgb, ${theme.color.onSurface}, transparent 50%)`, padding: 1000 }}
+                        style={{
+                          fontFamily: 'Surt',
+                          fontSize: 10,
+                          fill: `color-mix(in srgb, ${theme.color.onSurface}, transparent 50%)`,
+                          padding: 1000,
+                        }}
                       />
                     }
                     style={{
@@ -195,7 +201,7 @@ const StakeDetails = Object.assign(
                     style={{
                       axis: { stroke: 'transparent' },
                       ticks: { stroke: 'transparent' },
-                      tickLabels: { fill: theme.color.onSurface },
+                      tickLabels: { fill: theme.color.onSurface, fontFamily: 'Surt', fontSize: 12 },
                       grid: {
                         stroke: `color-mix(in srgb, ${theme.color.onSurface}, transparent 90%)`,
                         strokeDasharray: 4,
@@ -212,7 +218,9 @@ const StakeDetails = Object.assign(
                     labelComponent={
                       <VictoryTooltip
                         flyoutStyle={{ fill: useSurfaceColorAtElevation(x => x + 2) }}
-                        labelComponent={<VictoryLabel style={{ fill: theme.color.onSurface }} />}
+                        labelComponent={
+                          <VictoryLabel style={{ fill: theme.color.onSurface, fontFamily: 'Surt', fontSize: 10 }} />
+                        }
                       />
                     }
                   />
