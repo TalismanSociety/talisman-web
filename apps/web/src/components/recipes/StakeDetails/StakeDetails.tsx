@@ -170,7 +170,7 @@ const StakeDetails = Object.assign(
                 <Text.H4>Payouts over last 15 days</Text.H4>
               </header>
               <div css={{ flex: 1 }}>
-                <VictoryChart domainPadding={25} height={225} padding={{ top: 5, right: 0, bottom: 50, left: 50 }}>
+                <VictoryChart domainPadding={25} height={225} padding={{ top: 5, right: 0, bottom: 40, left: 50 }}>
                   <VictoryAxis
                     tickFormat={x =>
                       new Intl.DateTimeFormat(undefined, { day: 'numeric', month: 'short' }).format(new Date(x))
