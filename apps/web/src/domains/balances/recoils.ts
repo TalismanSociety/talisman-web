@@ -27,7 +27,6 @@ export const legacyBalancesState = atom<LegacyBalances>({
     tokens: [],
     chaindata: undefined,
   },
-  dangerouslyAllowMutability: true, // pjs wsprovider mutates itself to track connection msg stats
 })
 
 export const balancesState = atom<Balances>({ key: 'Balances', dangerouslyAllowMutability: true })

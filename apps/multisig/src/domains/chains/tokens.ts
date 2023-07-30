@@ -8,7 +8,8 @@ import RelayEnvironment from '../../graphql/relay-environment'
 // (can include multiple ids)
 export const tokenPriceState = selectorFamily({
   key: 'TokenPrice',
-  get: (coingeckoId: string) => async () => {
+  get: (coingeckoId?: string) => async () => {
+    if (!coingeckoId) return 0
     try {
       const result = await fetch(
         `https://api.coingecko.com/api/v3/simple/price?ids=${coingeckoId}&vs_currencies=usd`
@@ -26,10 +27,11 @@ export const tokenPriceState = selectorFamily({
 export const tokenPricesState = selectorFamily({
   key: 'TokenPrices',
   get:
-    (coingeckoIds: string[]) =>
+    (coingeckoIds: (string | undefined)[]) =>
     async ({ get }) => {
       const res: { [key: string]: number } = {}
       coingeckoIds.forEach(id => {
+        if (id === undefined) return
         let price = get(tokenPriceState(id))
         res[id] = price
       })
@@ -39,7 +41,7 @@ export const tokenPricesState = selectorFamily({
 
 export interface Token {
   id: string
-  coingeckoId: string
+  coingeckoId?: string
   logo: string
   type: string
   symbol: string
@@ -69,6 +71,7 @@ export const tokenByIdWithPrice = selectorFamily({
     id =>
     async ({ get }) => {
       const token = get(tokenByIdQuery(id))
+      if (!token.coingeckoId) return { token, price: 0 }
       const price = get(tokenPriceState(token.coingeckoId))
       return { token, price }
     },

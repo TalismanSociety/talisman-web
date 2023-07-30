@@ -1,3 +1,4 @@
+import { useAugmentedBalances } from '@domains/balances'
 import { useAddressIsProxyDelegatee } from '@domains/chains/storage-getters'
 import { getAllChangeAttempts } from '@domains/metadata-service/getAllChangeAttempts'
 import { Transaction, activeMultisigsState, multisigsState, selectedMultisigState } from '@domains/multisig'
@@ -13,7 +14,9 @@ import { useRecoilState, useRecoilValue } from 'recoil'
 import Assets, { TokenAugmented } from './Assets'
 import Footer from './Footer'
 import Header from './Header'
-import { mockTokensAugmented, mockTransactions } from './mocks'
+import { mockTransactions } from './mocks'
+// to use mocked tokens:
+// import { mockTokensAugmented } from './mocks'
 import NewTransactionModal from './NewTransactionModal'
 import Sidebar from './Sidebar'
 import Transactions from './Transactions'
@@ -97,7 +100,7 @@ const Overview = () => {
   }, [activeMultisigs, navigate])
 
   const transactions: Transaction[] = mockTransactions
-  const augmentedTokens: TokenAugmented[] = mockTokensAugmented
+  const augmentedTokens: TokenAugmented[] = useAugmentedBalances()
   return (
     <div
       className={css`

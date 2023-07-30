@@ -26,7 +26,7 @@ const TransactionSummaryRow = ({
   const sumPriceUsd: number | undefined = useMemo(() => {
     if (tokenPrices.state === 'hasValue') {
       return sumOutgoing.reduce((acc, b) => {
-        const price = tokenPrices.contents[b.token.coingeckoId] || 0
+        const price = b.token.coingeckoId ? tokenPrices.contents[b.token.coingeckoId] || 0 : 0
         return acc + balanceToFloat(b) * price
       }, 0)
     }

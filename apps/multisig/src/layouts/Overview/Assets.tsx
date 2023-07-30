@@ -1,7 +1,7 @@
 import { Token } from '@domains/chains'
 import { css } from '@emotion/css'
 import { Lock } from '@talismn/icons'
-import { AnimatedNumber, HiddenDetails } from '@talismn/ui'
+import { AnimatedNumber } from '@talismn/ui'
 import { formatDecimals } from '@talismn/util'
 import { formatUsd } from '@util/numbers'
 import { capitalizeFirstLetter } from '@util/strings'
@@ -10,8 +10,8 @@ import { useMemo } from 'react'
 export interface TokenAugmented {
   details: Token
   balance: {
-    free: number
-    locked: number
+    avaliable: number
+    unavaliable: number
   }
   price: number
 }
@@ -51,13 +51,28 @@ const TokenRow = ({ augmentedToken, balance }: { augmentedToken: TokenAugmented;
 
 const Assets = ({ augmentedTokens }: { augmentedTokens: TokenAugmented[] }) => {
   const totalFiatBalance = useMemo(() => {
-    return augmentedTokens.reduce((acc, { balance, price }) => acc + (balance.free + balance.locked) * price, 0)
+    return augmentedTokens.reduce(
+      (acc, { balance, price }) => acc + (balance.avaliable + balance.unavaliable) * price,
+      0
+    )
   }, [augmentedTokens])
-  const totalLockedBalance = useMemo(() => {
-    return augmentedTokens.reduce((acc, { balance }) => acc + balance.locked, 0)
+  const totalUnavaliableBalance = useMemo(() => {
+    return augmentedTokens.reduce((acc, { balance }) => acc + balance.unavaliable, 0)
   }, [augmentedTokens])
-  const totalFreeBalance = useMemo(() => {
-    return augmentedTokens.reduce((acc, { balance }) => acc + balance.free, 0)
+  const totalAvaliableBalance = useMemo(() => {
+    return augmentedTokens.reduce((acc, { balance }) => acc + balance.avaliable, 0)
+  }, [augmentedTokens])
+
+  const avaliableSorted = useMemo(() => {
+    return augmentedTokens
+      .filter(({ balance }) => balance.avaliable > 0)
+      .sort((a1, a2) => a2.balance.avaliable * a2.price - a1.balance.avaliable * a1.price)
+  }, [augmentedTokens])
+
+  const unavaliableSorted = useMemo(() => {
+    return augmentedTokens
+      .filter(({ balance }) => balance.unavaliable > 0)
+      .sort((a1, a2) => a2.balance.unavaliable * a2.price - a1.balance.unavaliable * a1.price)
   }, [augmentedTokens])
 
   return (
@@ -72,101 +87,75 @@ const Assets = ({ augmentedTokens }: { augmentedTokens: TokenAugmented[] }) => {
         padding: 24px;
       `}
     >
-      <HiddenDetails
-        hidden={true}
-        overlay={
-          <div css={{ backgroundColor: 'rgba(0,0,0,0.5)', padding: '12px', borderRadius: '8px' }}>
-            <p
-              css={{
-                fontSize: '18px',
-                fontWeight: 'bold',
-                color: 'var(--color-primary)',
-                opacity: '0.8',
-                pointerEvents: 'none',
-              }}
-            >
-              Portfolio view coming soon
-            </p>
-          </div>
-        }
-        children={
-          <>
-            <div
-              className={css`
-                display: flex;
-                justify-content: space-between;
-              `}
-            >
-              <h2 css={{ color: 'var(--color-offWhite)', fontWeight: 'bold' }}>Assets</h2>
-              <h2 css={{ fontWeight: 'bold' }}>
-                <AnimatedNumber formatter={formatUsd} end={totalFiatBalance} decimals={2} />
-              </h2>
+      <>
+        <div
+          className={css`
+            display: flex;
+            justify-content: space-between;
+          `}
+        >
+          <h2 css={{ color: 'var(--color-offWhite)', fontWeight: 'bold' }}>Assets</h2>
+          <h2 css={{ fontWeight: 'bold' }}>
+            <AnimatedNumber formatter={formatUsd} end={totalFiatBalance} decimals={2} />
+          </h2>
+        </div>
+        {totalAvaliableBalance > 0 ? (
+          <div>
+            <div css={{ display: 'grid', gap: '16px' }}>
+              <p
+                className={css`
+                  color: var(--color-dim);
+                  font-weight: bold;
+                `}
+              >
+                Avaliable
+              </p>
+              {avaliableSorted.map(augmentedToken => {
+                return (
+                  <TokenRow
+                    key={augmentedToken.details.id}
+                    augmentedToken={augmentedToken}
+                    balance={augmentedToken.balance.avaliable}
+                  />
+                )
+              })}
             </div>
-            {totalFreeBalance > 0 && (
-              <div>
-                <div css={{ display: 'grid', gap: '16px' }}>
-                  <p
-                    className={css`
-                      color: var(--color-dim);
-                      font-weight: bold;
-                    `}
-                  >
-                    Avaliable
-                  </p>
-                  {augmentedTokens
-                    .sort((a1, a2) => a2.balance.free - a1.balance.free)
-                    .map(augmentedToken => {
-                      if (augmentedToken.balance.free === 0) return null
-                      return (
-                        <TokenRow
-                          key={augmentedToken.details.id}
-                          augmentedToken={augmentedToken}
-                          balance={augmentedToken.balance.free}
-                        />
-                      )
-                    })}
-                </div>
+          </div>
+        ) : null}
+        {totalUnavaliableBalance > 0 ? (
+          <div>
+            <div css={{ display: 'grid', gap: '16px' }}>
+              <div
+                className={css`
+                  display: flex;
+                  align-items: center;
+                  color: var(--color-dim);
+                  font-weight: bold;
+                  svg {
+                    height: 15px;
+                    margin-bottom: 3px;
+                  }
+                  p {
+                    font-weight: bold;
+                  }
+                `}
+              >
+                <p>Unavaliable</p>
+                <Lock />
               </div>
-            )}
-            {totalLockedBalance > 0 && (
-              <div>
-                <div css={{ display: 'grid', gap: '16px' }}>
-                  <div
-                    className={css`
-                      display: flex;
-                      align-items: center;
-                      color: var(--color-dim);
-                      font-weight: bold;
-                      svg {
-                        height: 15px;
-                        margin-bottom: 3px;
-                      }
-                      p {
-                        font-weight: bold;
-                      }
-                    `}
-                  >
-                    <p>Locked</p>
-                    <Lock />
-                  </div>
-                  {augmentedTokens
-                    .sort((a1, a2) => a2.balance.locked - a1.balance.locked)
-                    .map(augmentedToken => {
-                      if (augmentedToken.balance.locked === 0) return null
-                      return (
-                        <TokenRow
-                          key={augmentedToken.details.id}
-                          augmentedToken={augmentedToken}
-                          balance={augmentedToken.balance.locked}
-                        />
-                      )
-                    })}
-                </div>
-              </div>
-            )}
-          </>
-        }
-      />
+              {unavaliableSorted.map(augmentedToken => {
+                return (
+                  <TokenRow
+                    key={augmentedToken.details.id}
+                    augmentedToken={augmentedToken}
+                    balance={augmentedToken.balance.unavaliable}
+                  />
+                )
+              })}
+            </div>
+          </div>
+        ) : null}
+      </>
     </section>
   )
 }

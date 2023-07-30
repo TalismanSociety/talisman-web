@@ -4,7 +4,10 @@ import 'react-loading-skeleton/dist/skeleton.css'
 
 import './index.css'
 
+import { BalancesWatcher } from '@domains/balances'
 import { ExtensionWatcher } from '@domains/extension'
+import { balanceModules } from '@talismn/balances-default-modules'
+import { BalancesProvider } from '@talismn/balances-react'
 import { EyeOfSauronProgressIndicator } from '@talismn/ui'
 import { ToastBar } from '@talismn/ui'
 import React, { Suspense } from 'react'
@@ -39,13 +42,16 @@ const App: React.FC = () => (
   <ThemeProvider>
     <RecoilRoot>
       <RecoilRelayEnvironmentProvider environment={RelayEnvironment} environmentKey={chainDataSquidEnvKey}>
-        <Suspense fallback={<Loader />}>
-          <ExtensionWatcher />
-          <RouterProvider router={router} />
-          <Toaster position="top-right" containerStyle={{ top: '6.4rem' }}>
-            {t => <ToastBar toast={t} />}
-          </Toaster>
-        </Suspense>
+        <BalancesProvider balanceModules={balanceModules} withTestnets={true}>
+          <Suspense fallback={<Loader />}>
+            <BalancesWatcher />
+            <ExtensionWatcher />
+            <RouterProvider router={router} />
+            <Toaster position="top-right" containerStyle={{ top: '6.4rem' }}>
+              {t => <ToastBar toast={t} />}
+            </Toaster>
+          </Suspense>
+        </BalancesProvider>
       </RecoilRelayEnvironmentProvider>
     </RecoilRoot>
   </ThemeProvider>
