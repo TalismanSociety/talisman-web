@@ -178,7 +178,7 @@ export const FullScreenDialogContents = ({
               } remaining) before changing the signer configuration`
             ) : (
               <>
-                <p>Fees</p>
+                <p>Estimated Fee</p>
                 {feeComponent}
               </>
             )}
@@ -218,7 +218,16 @@ export const FullScreenDialogContents = ({
                 (t.decoded?.type === TransactionType.ChangeConfig && pendingTransactions.length > 1)
               }
             >
-              {approveInFlight ? <CircularProgressIndicator /> : readyToExecute ? 'Approve & Execute' : 'Approve'}
+              {approveInFlight ? (
+                <div css={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  Signing and sending transaction...
+                  <CircularProgressIndicator />
+                </div>
+              ) : readyToExecute ? (
+                'Approve & Execute'
+              ) : (
+                'Approve'
+              )}
             </Button>
           </div>
         </div>

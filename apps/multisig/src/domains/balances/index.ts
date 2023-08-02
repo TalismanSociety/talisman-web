@@ -2,6 +2,7 @@ import { Token } from '@domains/chains'
 import { activeMultisigsState, selectedMultisigState } from '@domains/multisig'
 import { Balances } from '@talismn/balances'
 import { useAllAddresses, useBalances, useTokens } from '@talismn/balances-react'
+import { groupBy } from 'lodash'
 import { useEffect, useMemo } from 'react'
 import { atom, useRecoilValue, useSetRecoilState } from 'recoil'
 
@@ -51,22 +52,35 @@ export const BalancesWatcher = () => {
   const setBalances = useSetRecoilState(balancesState)
   const [, setAllAddresses] = useAllAddresses()
 
-  const addresses = useMemo(() => {
-    if (showAllBalances) return activeMultisigs.map(({ proxyAddress }) => proxyAddress)
-    return [selectedMultisig.proxyAddress]
-  }, [showAllBalances, selectedMultisig, activeMultisigs])
+  const multisigs = useMemo(
+    () => (showAllBalances ? activeMultisigs : [selectedMultisig]).filter(({ proxyAddress }) => proxyAddress),
+    [showAllBalances, activeMultisigs, selectedMultisig]
+  )
+  const addresses = useMemo(() => multisigs.map(({ proxyAddress }) => proxyAddress), [multisigs])
 
   useEffect(() => {
     setAllAddresses(addresses)
   }, [setAllAddresses, addresses])
 
-  const addressesByToken = useMemo(() => {
-    const tokenIds = Object.values(tokens).map(({ id }) => id)
-    return Object.fromEntries(tokenIds.map(tokenId => [tokenId, addresses]))
-  }, [addresses, tokens])
+  const multisigsByChain = useMemo(() => groupBy(multisigs, ({ chain }) => chain.id), [multisigs])
+  const addressesByToken = useMemo(
+    () =>
+      Object.fromEntries(
+        Object.values(tokens).flatMap(token => {
+          if (!token.chain) return []
+          const multisigs = multisigsByChain[token.chain.id]
+
+          if (!multisigs) return []
+          return [[token.id, multisigs.map(({ proxyAddress }) => proxyAddress)]]
+        })
+      ),
+    [multisigsByChain, tokens]
+  )
 
   const balances = useBalances(addressesByToken)
-  setBalances(balances.filterNonZero('total'))
+  useEffect(() => {
+    setBalances(balances.filterNonZero('total'))
+  }, [balances, setBalances])
 
   return null
 }

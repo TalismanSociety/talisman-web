@@ -182,7 +182,8 @@ export const extrinsicToDecoded = (
     const proxy = extrinsic?.method?.toHuman()?.args?.real?.Id
     if (proxy !== multisig.proxyAddress) return 'not_ours'
 
-    const recipients: TransactionRecipient[] = []
+    // Check for Transfer
+    let recipients: TransactionRecipient[] = []
     for (const arg of args) {
       const obj: any = arg.toHuman()
       if (obj?.section === 'balances' && obj?.method?.startsWith('transfer')) {
@@ -192,11 +193,32 @@ export const extrinsicToDecoded = (
         })
       }
     }
-
     if (recipients.length === 1) {
       return {
         type: TransactionType.Transfer,
         recipients,
+      }
+    }
+
+    // Check for MultiSend
+    for (const arg of args) {
+      const obj: any = arg.toHuman()
+      if (obj?.section === 'utility' && obj?.method?.startsWith('batch')) {
+        const recipients: (TransactionRecipient | null)[] = obj.args.calls.map((call: any) => {
+          if (call.section === 'balances' && call.method?.startsWith('transfer')) {
+            return {
+              address: call.args.dest.Id,
+              balance: { token: nativeToken, amount: new BN(call.args.value.replaceAll(',', '')) },
+            }
+          }
+          return null
+        })
+        if (!recipients.includes(null) && recipients.length > 1) {
+          return {
+            type: TransactionType.MultiSend,
+            recipients: recipients as TransactionRecipient[],
+          }
+        }
       }
     }
 

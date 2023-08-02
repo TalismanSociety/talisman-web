@@ -57,7 +57,7 @@ const ManageSignerConfiguration = () => {
   const signer = useNextTransactionSigner(t?.approvals)
   const hash = extrinsic?.registry.hash(extrinsic.method.toU8a()).toHex()
 
-  const { approveAsMulti, estimatedFee } = useApproveAsMulti(signer?.address, hash, null)
+  const { approveAsMulti, estimatedFee, ready: approveAsMultiReady } = useApproveAsMulti(signer?.address, hash, null)
 
   useEffect(() => {
     setNewMembers(selectedMultisig.signers)
@@ -239,7 +239,7 @@ const ManageSignerConfiguration = () => {
       >
         <FullScreenDialogContents
           t={t}
-          fee={estimatedFee}
+          fee={approveAsMultiReady ? estimatedFee : undefined}
           canCancel={true}
           cancelButtonTextOverride="Back"
           onApprove={() =>

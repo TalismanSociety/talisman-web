@@ -98,7 +98,7 @@ const AdvancedAction = (props: { onCancel: () => void }) => {
     }
   }, [multisig, name, extrinsic, hash])
   const signer = useNextTransactionSigner(t?.approvals)
-  const { approveAsMulti, estimatedFee } = useApproveAsMulti(signer?.address, hash, null)
+  const { approveAsMulti, estimatedFee, ready: approveAsMultiReady } = useApproveAsMulti(signer?.address, hash, null)
 
   return (
     <div
@@ -150,7 +150,7 @@ const AdvancedAction = (props: { onCancel: () => void }) => {
         <FullScreenDialogContents
           canCancel={true}
           cancelButtonTextOverride="Back"
-          fee={estimatedFee}
+          fee={approveAsMultiReady ? estimatedFee : undefined}
           t={t}
           onApprove={() =>
             new Promise((resolve, reject) => {

@@ -3,9 +3,10 @@ import 'ace-builds/src-noconflict/mode-yaml'
 import 'ace-builds/src-noconflict/theme-twilight'
 import 'ace-builds/src-noconflict/ext-language_tools'
 
+import AddressPill from '@components/AddressPill'
 import { CallDataPasteForm } from '@components/CallDataPasteForm'
 import MemberRow from '@components/MemberRow'
-import { Chain, tokenPriceState, useDecodeCallData } from '@domains/chains'
+import { tokenPriceState, useDecodeCallData } from '@domains/chains'
 import { copyToClipboard } from '@domains/common'
 import {
   Balance,
@@ -18,8 +19,7 @@ import {
 import { css } from '@emotion/css'
 import { useTheme } from '@emotion/react'
 import { Check, ChevronRight, Copy, List, Send, Settings, Share2, Unknown, Users } from '@talismn/icons'
-import { IconButton, Identicon, Skeleton } from '@talismn/ui'
-import { toSubscanUrl } from '@util/addresses'
+import { IconButton, Skeleton } from '@talismn/ui'
 import { balanceToFloat, formatUsd } from '@util/numbers'
 import { useEffect, useMemo, useState } from 'react'
 import AceEditor from 'react-ace'
@@ -48,30 +48,6 @@ const AmountRow = ({ balance }: { balance: Balance }) => {
         <Skeleton.Surface css={{ height: '14px', minWidth: '125px' }} />
       )}
     </div>
-  )
-}
-
-const AddressPill = ({ a, c }: { a: string; c: Chain }) => {
-  return (
-    <a
-      className={css`
-        display: flex;
-        align-items: center;
-        height: 25px;
-        width: 138px;
-        border-radius: 100px;
-        background-color: var(--color-backgroundLighter);
-        padding-left: 8px;
-        font-size: 14px;
-        gap: 4px;
-      `}
-      href={toSubscanUrl(a, c)}
-      target="_blank"
-      rel="noreferrer"
-    >
-      <Identicon value={a} size={'16px'} />
-      <span css={{ marginTop: '3px' }}>{truncateMiddle(a, 5, 5, '...')}</span>
-    </a>
   )
 }
 
@@ -105,7 +81,7 @@ const MultiSendExpandedDetails = ({ t }: { t: Transaction }) => {
         const last = i === recipients.length - 1
         return (
           <div
-            key={address}
+            key={`${address}-${JSON.stringify(balance.amount)}`}
             css={{
               display: 'grid',
               gap: '16px',
@@ -141,7 +117,7 @@ const MultiSendExpandedDetails = ({ t }: { t: Transaction }) => {
             </div>
             <div css={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               Destination
-              <AddressPill a={address} c={t.chain} />
+              <AddressPill address={address} chain={t.chain} />
             </div>
           </div>
         )
@@ -314,7 +290,7 @@ const TransactionDetailsExpandable = ({ t }: { t: Transaction }) => {
               margin-left: auto;
             `}
           >
-            <AddressPill a={recipients[0]?.address || ''} c={t.chain} />
+            <AddressPill address={recipients[0]?.address || ''} chain={t.chain} />
           </div>
         ) : null}
         {/* Show the token amounts being sent in this transaction */}

@@ -81,18 +81,12 @@ const ActionsMenu = (props: { onActionClick: (action: Action) => void }) => {
             icon={<List size={33} />}
             onClick={() => props.onActionClick(Action.Advanced)}
           />
-          <Tooltip content={'Multi-send action coming soon'}>
-            {tooltipProps => (
-              <div {...tooltipProps} css={{ display: 'inline' }}>
-                <ActionButton
-                  name="Multi-send"
-                  description="Transfer funds to a multiple addresses"
-                  disabled={true}
-                  icon={<Share2 size={33} />}
-                />
-              </div>
-            )}
-          </Tooltip>
+          <ActionButton
+            name="Multi-send"
+            description="Transfer funds to a multiple addresses"
+            icon={<Share2 size={33} />}
+            onClick={() => props.onActionClick(Action.MultiSend)}
+          />
           <Tooltip content={'Stake action coming soon'}>
             {tooltipProps => (
               <div {...tooltipProps} css={{ display: 'inline' }}>

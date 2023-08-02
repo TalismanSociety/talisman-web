@@ -8,11 +8,13 @@ import { useMeasure } from 'react-use'
 
 import ActionsMenu from './ActionsMenu'
 import AdvancedAction from './AdvancedAction'
+import MultiSendAction from './MultiSendAction'
 import SendAction from './SendAction'
 
 export enum Action {
   Send,
   Advanced,
+  MultiSend,
 }
 
 const NewTransactionModal = () => {
@@ -73,7 +75,7 @@ const NewTransactionModal = () => {
           maxWidth: '1024px',
         },
       }}
-      contentLabel="Example Modal"
+      contentLabel="New Transaction Modal"
       closeTimeoutMS={150}
     >
       <animated.div style={springStyle}>
@@ -91,6 +93,8 @@ const NewTransactionModal = () => {
             <SendAction onCancel={() => setAction(undefined)} />
           ) : action === Action.Advanced ? (
             <AdvancedAction onCancel={() => setAction(undefined)} />
+          ) : action === Action.MultiSend ? (
+            <MultiSendAction onCancel={() => setAction(undefined)} />
           ) : null}
         </div>
       </animated.div>

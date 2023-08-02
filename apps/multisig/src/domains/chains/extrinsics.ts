@@ -321,7 +321,6 @@ export const useApproveAsMulti = (
 ) => {
   const multisig = useRecoilValue(selectedMultisigState)
   const apiLoadable = useRecoilValueLoadable(pjsApiSelector(multisig.chain.rpc))
-  const rawPending = useRecoilValueLoadable(rawPendingTransactionsSelector)
   const nativeToken = useRecoilValueLoadable(tokenByIdQuery(multisig.chain.nativeToken.id))
   const setRawPendingTransactionDependency = useSetRecoilState(rawPendingTransactionsDependency)
   const [metadataCache, setMetadataCache] = useRecoilState(txOffchainMetadataState)
@@ -332,8 +331,7 @@ export const useApproveAsMulti = (
     extensionAddress &&
     nativeToken.state === 'hasValue' &&
     !!hash &&
-    timepoint !== undefined &&
-    rawPending.state === 'hasValue'
+    timepoint !== undefined
 
   // Creates some tx from callhash
   const createTx = useCallback(async () => {
@@ -383,7 +381,7 @@ export const useApproveAsMulti = (
       metadata?: TxOffchainMetadata
     }) => {
       const tx = await createTx()
-      if (!tx || !extensionAddress) {
+      if (!tx || !extensionAddress || !hash) {
         console.error('tried to call approveAsMulti before it was ready')
         return
       }
@@ -405,7 +403,6 @@ export const useApproveAsMulti = (
                 onFailure(JSON.stringify(result))
               }
               if (method === 'ExtrinsicSuccess') {
-                const hash = tx.registry.hash(tx.method.toU8a()).toHex()
                 // if there's a description, it means we want to post to the metadata service
                 if (metadata) {
                   // Disable this line to test the metadata service
@@ -451,6 +448,7 @@ export const useApproveAsMulti = (
       setMetadataCache,
       multisig.chain.id,
       multisig.multisigAddress,
+      hash,
     ]
   )
 
