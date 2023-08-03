@@ -1,6 +1,6 @@
 // TODO: nuke everything and re-write balances lib integration
 
-import { accountsState, injectedAccountsState, selectedAccountsState } from '@domains/accounts/recoils'
+import { accountsState, portfolioAccountsState, selectedAccountsState } from '@domains/accounts/recoils'
 import { Balances } from '@talismn/balances'
 import { useBalances as _useBalances, useAllAddresses, useChaindata, useTokens } from '@talismn/balances-react'
 import { type ChaindataProvider, type TokenList } from '@talismn/chaindata-provider'
@@ -49,14 +49,14 @@ export const fiatBalancesState = atom<Record<string, number>>({
   key: 'FiatBalances',
 })
 
-export const totalInjectedAccountsFiatBalance = selector({
-  key: 'TotalInjectedAccountsFiatBalance',
+export const totalPortfolioFiatBalance = selector({
+  key: 'TotalPortfolioFiatBalance',
   get: ({ get }) => {
-    const injecteds = get(injectedAccountsState).map(x => x.address)
+    const accounts = get(portfolioAccountsState).map(x => x.address)
     const fiatBalances = get(fiatBalancesState)
 
     return Object.entries(fiatBalances)
-      .filter(([key]) => injecteds.includes(key))
+      .filter(([key]) => accounts.includes(key))
       .reduce((previous, current) => previous + current[1], 0)
   },
 })

@@ -22,6 +22,7 @@ export type TooltipProps = {
   content: ReactNode
   placement?: 'bottom' | 'left' | 'right' | 'top'
   children: (props: Record<string, unknown>) => ReactNode
+  disabled?: boolean
 }
 
 const Tooltip = ({ placement = 'right', ...props }: TooltipProps) => {
@@ -44,6 +45,10 @@ const Tooltip = ({ placement = 'right', ...props }: TooltipProps) => {
     useDismiss(context),
     useRole(context, { role: 'tooltip' }),
   ])
+
+  if (props.disabled) {
+    return <>{props.children(getReferenceProps({}))}</>
+  }
 
   return (
     <>

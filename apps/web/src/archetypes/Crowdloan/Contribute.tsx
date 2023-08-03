@@ -4,7 +4,7 @@ import { Button, DesktopRequired, Field, MaterialLoader, useModal } from '@compo
 import { TalismanHandLike } from '@components/TalismanHandLike'
 import { TalismanHandLoader } from '@components/TalismanHandLoader'
 import { useAccountSelector } from '@components/widgets/AccountSelector'
-import { injectedSubstrateAccountsState } from '@domains/accounts'
+import { writeableSubstrateAccountsState } from '@domains/accounts'
 import { useTheme } from '@emotion/react'
 import styled from '@emotion/styled'
 import { ContributeEvent, useCrowdloanContribute } from '@libs/crowdloans'
@@ -13,7 +13,7 @@ import { useCrowdloanById } from '@libs/talisman'
 import { CircularProgressIndicator, Text } from '@talismn/ui'
 import { isMobileBrowser } from '@util/helpers'
 import { Maybe } from '@util/monads'
-import { type MouseEventHandler, useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState, type MouseEventHandler } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useRecoilValue } from 'recoil'
 
@@ -127,7 +127,7 @@ const ContributeTo = styled(
 
     const [chainHasTerms, termsAgreed, onTermsCheckboxClick] = useTerms(relayChainId, parachainId)
 
-    const [account, accountSelector] = useAccountSelector(useRecoilValue(injectedSubstrateAccountsState), 0)
+    const [account, accountSelector] = useAccountSelector(useRecoilValue(writeableSubstrateAccountsState), 0)
 
     useEffect(() => {
       dispatch(ContributeEvent.setAccount(account?.address))

@@ -1,16 +1,16 @@
 import {
-  injectedAccountsState,
+  portfolioAccountsState,
   readOnlyAccountsState,
   selectedAccountAddressesState,
   selectedAccountsState,
 } from '@domains/accounts/recoils'
-import { fiatBalancesState, totalInjectedAccountsFiatBalance } from '@domains/balances/recoils'
+import { fiatBalancesState, totalPortfolioFiatBalance } from '@domains/balances/recoils'
 import { copyAddressToClipboard } from '@domains/common/utils'
 import { useIsWeb3Injected } from '@domains/extension/hooks'
 import { allowExtensionConnectionState } from '@domains/extension/recoils'
 import { useTheme } from '@emotion/react'
 import { Copy, Download, Eye, EyePlus, Link, PlusCircle, Power, TalismanHand, Trash2, Users } from '@talismn/icons'
-import { CircularProgressIndicator, IconButton, Identicon, ListItem, Menu, Text } from '@talismn/ui'
+import { CircularProgressIndicator, IconButton, Identicon, ListItem, Menu, Text, Tooltip } from '@talismn/ui'
 import { shortenAddress } from '@util/format'
 import { Maybe } from '@util/monads'
 import { useMemo, type ReactNode } from 'react'
@@ -62,10 +62,10 @@ const AccountsManagementIconButton = (props: { size?: number | string }) => {
 const AccountsManagementMenu = (props: { button: ReactNode }) => {
   const theme = useTheme()
 
-  const totalBalance = useRecoilValueLoadable(totalInjectedAccountsFiatBalance)
+  const totalBalance = useRecoilValueLoadable(totalPortfolioFiatBalance)
 
   const setSelectedAccountAddresses = useSetRecoilState(selectedAccountAddressesState)
-  const injectedAccounts = useRecoilValue(injectedAccountsState)
+  const portfolioAccounts = useRecoilValue(portfolioAccountsState)
   const readonlyAccounts = useRecoilValue(readOnlyAccountsState)
 
   const fiatBalances = useRecoilValueLoadable(fiatBalancesState)
@@ -170,7 +170,7 @@ const AccountsManagementMenu = (props: { button: ReactNode }) => {
               <TalismanHand size="1em" /> My accounts
             </Text.Body>
             {leadingMenuItem}
-            {injectedAccounts.map((x, index) => (
+            {portfolioAccounts.map((x, index) => (
               <Menu.Item key={index} onClick={() => setSelectedAccountAddresses(() => [x.address])}>
                 <ListItem
                   headlineText={x.name ?? shortenAddress(x.address)}
@@ -206,19 +206,19 @@ const AccountsManagementMenu = (props: { button: ReactNode }) => {
             >
               <Eye size="1em" /> Watched accounts
             </Text.Body>
-            {readonlyAccounts.map((x, index) => (
-              <RemoveWatchedAccountConfirmationDialog key={index} account={x}>
+            {readonlyAccounts.map((account, index) => (
+              <RemoveWatchedAccountConfirmationDialog key={index} account={account}>
                 {({ onToggleOpen: toggleRemoveDialog }) => (
-                  <Menu.Item onClick={() => setSelectedAccountAddresses(() => [x.address])}>
+                  <Menu.Item onClick={() => setSelectedAccountAddresses(() => [account.address])}>
                     <ListItem
-                      headlineText={x.name ?? shortenAddress(x.address)}
+                      headlineText={account.name ?? shortenAddress(account.address)}
                       overlineText={Maybe.of(fiatBalances.valueMaybe()).mapOr(
                         <CircularProgressIndicator size="1em" />,
                         balances => (
-                          <AnimatedFiatNumber end={balances[x.address] ?? 0} />
+                          <AnimatedFiatNumber end={balances[account.address] ?? 0} />
                         )
                       )}
-                      leadingContent={<Identicon value={x.address} size="4rem" />}
+                      leadingContent={<Identicon value={account.address} size="4rem" />}
                       revealTrailingContentOnHover
                       trailingContent={
                         <div css={{ display: 'flex' }}>
@@ -226,21 +226,31 @@ const AccountsManagementMenu = (props: { button: ReactNode }) => {
                             containerColor={theme.color.foreground}
                             onClick={(event: any) => {
                               event.stopPropagation()
-                              void copyAddressToClipboard(x.address)
+                              void copyAddressToClipboard(account.address)
                             }}
                             css={{ cursor: 'copy' }}
                           >
                             <Copy />
                           </IconButton>
-                          <IconButton
-                            containerColor={theme.color.foreground}
-                            onClick={(event: any) => {
-                              event.stopPropagation()
-                              toggleRemoveDialog()
-                            }}
+                          <Tooltip
+                            content="This account can be managed via the extension"
+                            disabled={account.origin === 'local'}
                           >
-                            <Trash2 />
-                          </IconButton>
+                            {tooltipProps => (
+                              <div {...tooltipProps}>
+                                <IconButton
+                                  containerColor={theme.color.foreground}
+                                  onClick={(event: any) => {
+                                    event.stopPropagation()
+                                    toggleRemoveDialog()
+                                  }}
+                                  disabled={account.origin !== 'local'}
+                                >
+                                  <Trash2 />
+                                </IconButton>
+                              </div>
+                            )}
+                          </Tooltip>
                         </div>
                       }
                     />

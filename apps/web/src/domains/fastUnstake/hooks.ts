@@ -1,4 +1,4 @@
-import { injectedSubstrateAccountsState } from '@domains/accounts/recoils'
+import { writeableSubstrateAccountsState } from '@domains/accounts/recoils'
 import { useSubstrateApiEndpoint, useSubstrateApiState } from '@domains/common'
 import { encodeAddress } from '@polkadot/util-crypto'
 import { bool, coercion, jsonParser, writableDict } from '@recoiljs/refine'
@@ -93,7 +93,8 @@ const unexposedAddressesState = atomFamily<
 export const useInjectedAccountFastUnstakeEligibility = () => {
   const api = useRecoilValue(useSubstrateApiState())
 
-  const addresses = useRecoilValue(injectedSubstrateAccountsState).map(x => x.address)
+  const accounts = useRecoilValue(writeableSubstrateAccountsState)
+  const addresses = useMemo(() => accounts.map(x => x.address), [accounts])
   const bondedAccounts = useRecoilValue(useQueryState('staking', 'bonded.multi', addresses))
 
   const addressesToRunExposureCheck = useMemo(

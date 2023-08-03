@@ -1,5 +1,5 @@
 import DexForm from '@components/recipes/DexForm/DexForm'
-import { injectedAccountsState } from '@domains/accounts'
+import { writeableAccountsState } from '@domains/accounts'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useRecoilValue } from 'recoil'
@@ -7,7 +7,7 @@ import AccountSelector from '../AccountSelector'
 import TokenSelectorButton from '../TokenSelectorButton'
 
 const SwapForm = () => {
-  const [account, setAccount] = useState(useRecoilValue(injectedAccountsState).at(0))
+  const [account, setAccount] = useState(useRecoilValue(writeableAccountsState).at(0))
 
   return (
     <DexForm
@@ -18,7 +18,7 @@ const SwapForm = () => {
         <DexForm.Swap
           accountSelector={
             <AccountSelector
-              accounts={useRecoilValue(injectedAccountsState)}
+              accounts={useRecoilValue(writeableAccountsState)}
               selectedAccount={account}
               onChangeSelectedAccount={setAccount}
             />

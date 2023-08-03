@@ -2,26 +2,30 @@ import { storageEffect } from '@domains/common/effects'
 import type { InjectedAccount } from '@polkadot/extension-inject/types'
 import { array, jsonParser, object, optional, string } from '@recoiljs/refine'
 import { Maybe } from '@util/monads'
-import { DefaultValue, atom, selector, waitForAll } from 'recoil'
+import { uniqBy } from 'lodash'
+import { atom, selector, waitForAll } from 'recoil'
 import { isAddress as isEvmAddress } from 'viem'
 
-export type Account = InjectedAccount & {
-  readonly?: boolean
-}
+type AccountWithOrigin = InjectedAccount & { origin?: 'injected' | 'local' }
+
+type AccountWithReadonlyInfo = InjectedAccount & ({ readonly?: false } | { readonly: true; partOfPortfolio: boolean })
+
+export type Account = AccountWithOrigin & AccountWithReadonlyInfo
 
 export type ReadonlyAccount = Pick<Account, 'address' | 'name'>
 
-export const injectedAccountsState = atom<Account[]>({
-  key: 'InjectedAccounts',
+const _injectedAccountsState = atom<AccountWithReadonlyInfo[]>({
+  key: '_InjectedAccounts',
   default: [],
 })
 
-export const injectedSubstrateAccountsState = selector({
-  key: 'InjectedSubstrateAccountsState',
-  get: ({ get }) => get(injectedAccountsState).filter(x => x.type !== 'ethereum'),
+export const injectedAccountsState = selector<Account[]>({
+  key: 'InjectedAccounts',
+  get: ({ get }) => get(_injectedAccountsState).map(x => ({ ...x, origin: 'injected' })),
+  set: ({ set }, newValue) => set(_injectedAccountsState, newValue),
 })
 
-const _readOnlyAccountsState = atom<ReadonlyAccount[]>({
+const _readonlyAccountsState = atom<ReadonlyAccount[]>({
   key: 'readonly_accounts',
   default: [],
   effects: [
@@ -41,23 +45,42 @@ const _readOnlyAccountsState = atom<ReadonlyAccount[]>({
 export const readOnlyAccountsState = selector<Account[]>({
   key: 'ReadonlyAccounts',
   get: ({ get }) => {
-    const injectedAddresses = get(injectedAccountsState).map(x => x.address)
-    return get(_readOnlyAccountsState)
-      .filter(x => !injectedAddresses.includes(x.address))
-      .map(x => ({ ...x, readonly: true, type: isEvmAddress(x.address) ? 'ethereum' : undefined }))
+    const injectedAccounts = get(injectedAccountsState)
+    const injectedAddresses = injectedAccounts.map(x => x.address)
+    return [
+      ...injectedAccounts.filter(x => x.readonly && !x.partOfPortfolio),
+      ...get(_readonlyAccountsState)
+        .filter(x => !injectedAddresses.includes(x.address))
+        .map(x => ({
+          ...x,
+          origin: 'local' as const,
+          readonly: true,
+          partOfPortfolio: false,
+          type: isEvmAddress(x.address) ? ('ethereum' as const) : undefined,
+        })),
+    ]
   },
-  set: ({ set, reset }, newValue) => {
-    if (newValue instanceof DefaultValue) {
-      reset(_readOnlyAccountsState)
-    } else {
-      set(_readOnlyAccountsState, newValue)
-    }
-  },
+  set: ({ set }, newValue) => set(_readonlyAccountsState, newValue),
 })
 
 export const accountsState = selector({
   key: 'Accounts',
-  get: ({ get }) => [...get(injectedAccountsState), ...get(readOnlyAccountsState)],
+  get: ({ get }) => uniqBy([...get(injectedAccountsState), ...get(readOnlyAccountsState)], x => x.address),
+})
+
+export const portfolioAccountsState = selector({
+  key: 'PortfolioAccounts',
+  get: ({ get }) => get(accountsState).filter(x => !x.readonly || x.partOfPortfolio),
+})
+
+export const writeableAccountsState = selector({
+  key: 'WriteableAccounts',
+  get: ({ get }) => get(accountsState).filter(x => !x.readonly),
+})
+
+export const writeableSubstrateAccountsState = selector({
+  key: 'WriteableSubstrateAccounts',
+  get: ({ get }) => get(writeableAccountsState).filter(x => x.type !== 'ethereum'),
 })
 
 export const substrateAccountsState = selector({
@@ -73,6 +96,7 @@ export const selectedAccountAddressesState = atom<string[] | undefined>({
   default: undefined,
 })
 
+// TODO: either clean this up or add some tests
 export const selectedAccountsState = selector({
   key: 'SelectedAccounts',
   get: ({ get }) => {
