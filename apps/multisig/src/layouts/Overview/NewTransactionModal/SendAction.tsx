@@ -28,10 +28,172 @@ enum Step {
   Review,
 }
 
+enum AmountUnit {
+  Token,
+  UsdMarket,
+  Usd7DayEma,
+  Usd30DayEma,
+}
+
+const AmountInput = (props: {
+  tokens: Token[]
+  selectedToken: Token | undefined
+  amount: string
+  setAmount: (a: string) => void
+  setSelectedToken: (t: Token) => void
+}) => {
+  const [amountUnit, setAmountUnit] = useState<AmountUnit>(AmountUnit.Token)
+  return (
+    <div css={{ display: 'flex', width: '100%', gap: '12px' }}>
+      <div
+        className={css`
+          display: 'flex';
+          flex-grow: 1;
+          align-items: center;
+        `}
+      >
+        <TextInput
+          className={css`
+            font-size: 18px !important;
+          `}
+          placeholder={`0 ${props.selectedToken?.symbol}`}
+          leadingLabel={'Amount to send'}
+          leadingSupportingText={
+            <div
+              className={css`
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                p {
+                  font-size: 11px;
+                  cursor: pointer;
+                }
+              `}
+            >
+              <p>Input:</p>
+              &nbsp;
+              <p
+                onClick={() => setAmountUnit(AmountUnit.Token)}
+                css={{ fontWeight: amountUnit === AmountUnit.Token ? 'bold' : 'normal' }}
+              >
+                Tokens
+              </p>
+              <div>&nbsp;{'|'}&nbsp;</div>
+              <p
+                onClick={() => setAmountUnit(AmountUnit.UsdMarket)}
+                css={{ fontWeight: amountUnit === AmountUnit.UsdMarket ? 'bold' : 'normal' }}
+              >
+                Market (USD)
+              </p>
+              <div>&nbsp;{'|'}&nbsp;</div>
+              <p
+                onClick={() => setAmountUnit(AmountUnit.Usd7DayEma)}
+                css={{ fontWeight: amountUnit === AmountUnit.Usd7DayEma ? 'bold' : 'normal' }}
+              >
+                7D EMA (USD)
+              </p>
+              <div>&nbsp;{'|'}&nbsp;</div>
+              <p
+                onClick={() => setAmountUnit(AmountUnit.Usd30DayEma)}
+                css={{ fontWeight: amountUnit === AmountUnit.Usd30DayEma ? 'bold' : 'normal' }}
+              >
+                30D EMA (USD)
+              </p>
+            </div>
+          }
+          // trailingSupportingText={
+          //   <div
+          //     className={css`
+          //       display: flex;
+          //       p {
+          //         font-size: 11px;
+          //       }
+          //     `}
+          //   >
+          //     <p>Market </p>
+          //     <p>7D EMA</p>
+          //     <p>30D EMA</p>
+          //   </div>
+          // }
+          value={props.amount}
+          onChange={event => {
+            if (!props.selectedToken) return
+
+            // Create a dynamic regular expression.
+            // This regex will:
+            // - Match any string of up to `digits` count of digits, optionally separated by a decimal point.
+            // - The total count of digits, either side of the decimal point, can't exceed `digits`.
+            // - It will also match an empty string, making it a valid input.
+            const digits = props.selectedToken.decimals
+            let regex = new RegExp(
+              '^(?:(\\d{1,' +
+                digits +
+                '})|(\\d{0,' +
+                (digits - 1) +
+                '}\\.\\d{1,' +
+                (digits - 1) +
+                '})|(\\d{1,' +
+                (digits - 1) +
+                '}\\.\\d{0,' +
+                (digits - 1) +
+                '})|^$)$'
+            )
+            if (regex.test(event.target.value)) {
+              props.setAmount(event.target.value)
+            }
+          }}
+        />
+      </div>
+      <div
+        className={css`
+          display: flex;
+          height: 100%;
+          align-items: center;
+          justify-content: center;
+          height: 95.5px;
+          button {
+            height: 51.5px;
+            gap: 8px;
+            div {
+              margin-top: 2px;
+            }
+            svg {
+              display: none;
+            }
+          }
+        `}
+      >
+        <Select placeholder="Select token" value={props.selectedToken?.id} {...props}>
+          {props.tokens.map(t => {
+            return (
+              <Select.Item
+                key={t.id}
+                value={t.id}
+                leadingIcon={
+                  <div
+                    className={css`
+                      width: 24px;
+                      height: auto;
+                    `}
+                  >
+                    <img src={t.logo} alt={t.symbol} />
+                  </div>
+                }
+                headlineText={t.symbol}
+              />
+            )
+          })}
+        </Select>
+      </div>
+    </div>
+  )
+}
+
 const DetailsForm = (props: {
   destination: string
   amount: string
   selectedToken: Token | undefined
+  setSelectedToken: (t: Token) => void
   tokens: Token[]
   setDestination: (d: string) => void
   setAmount: (a: string) => void
@@ -49,91 +211,13 @@ const DetailsForm = (props: {
           color: var(--color-offWhite);
         `}
       >
-        <div css={{ display: 'flex', width: '100%', gap: '12px' }}>
-          <div
-            className={css`
-              display: 'flex';
-              flex-grow: 1;
-              align-items: center;
-            `}
-          >
-            <TextInput
-              className={css`
-                font-size: 18px !important;
-              `}
-              placeholder={`0 ${props.selectedToken?.symbol}`}
-              leadingLabel={'Amount to send'}
-              value={props.amount}
-              onChange={event => {
-                if (!props.selectedToken) return
-
-                // Create a dynamic regular expression.
-                // This regex will:
-                // - Match any string of up to `digits` count of digits, optionally separated by a decimal point.
-                // - The total count of digits, either side of the decimal point, can't exceed `digits`.
-                // - It will also match an empty string, making it a valid input.
-                const digits = props.selectedToken.decimals
-                let regex = new RegExp(
-                  '^(?:(\\d{1,' +
-                    digits +
-                    '})|(\\d{0,' +
-                    (digits - 1) +
-                    '}\\.\\d{1,' +
-                    (digits - 1) +
-                    '})|(\\d{1,' +
-                    (digits - 1) +
-                    '}\\.\\d{0,' +
-                    (digits - 1) +
-                    '})|^$)$'
-                )
-                if (regex.test(event.target.value)) {
-                  props.setAmount(event.target.value)
-                }
-              }}
-            />
-          </div>
-          <div
-            className={css`
-              display: flex;
-              height: 100%;
-              align-items: center;
-              justify-content: center;
-              height: 95.5px;
-              button {
-                height: 51.5px;
-                gap: 8px;
-                div {
-                  margin-top: 2px;
-                }
-                svg {
-                  display: none;
-                }
-              }
-            `}
-          >
-            <Select placeholder="Select token" value={props.selectedToken?.id} {...props}>
-              {props.tokens.map(t => {
-                return (
-                  <Select.Item
-                    key={t.id}
-                    value={t.id}
-                    leadingIcon={
-                      <div
-                        className={css`
-                          width: 24px;
-                          height: auto;
-                        `}
-                      >
-                        <img src={t.logo} alt={t.symbol} />
-                      </div>
-                    }
-                    headlineText={t.symbol}
-                  />
-                )
-              })}
-            </Select>
-          </div>
-        </div>
+        <AmountInput
+          tokens={props.tokens}
+          selectedToken={props.selectedToken}
+          setSelectedToken={props.setSelectedToken}
+          amount={props.amount}
+          setAmount={props.setAmount}
+        />
       </div>
       <div
         className={css`
@@ -285,6 +369,7 @@ const SendAction = (props: { onCancel: () => void }) => {
           amount={amountInput}
           setDestination={setDestination}
           setAmount={setAmountInput}
+          setSelectedToken={setSelectedToken}
         />
       ) : null}
       <FullScreenDialog
