@@ -1,6 +1,11 @@
 // TODO: nuke everything and re-write balances lib integration
 
-import { accountsState, portfolioAccountsState, selectedAccountsState } from '@domains/accounts/recoils'
+import {
+  accountsState,
+  injectedAccountsState,
+  portfolioAccountsState,
+  selectedAccountsState,
+} from '@domains/accounts/recoils'
 import { Balances } from '@talismn/balances'
 import { useBalances as _useBalances, useAllAddresses, useChaindata, useTokens } from '@talismn/balances-react'
 import { type ChaindataProvider, type TokenList } from '@talismn/chaindata-provider'
