@@ -37,7 +37,7 @@ import { Suspense, useCallback, useContext, useMemo, useState, useTransition } f
 import { useSearchParams } from 'react-router-dom'
 import { useRecoilValue, useRecoilValueLoadable, waitForAll } from 'recoil'
 
-const useOpenStakeModal = () => {
+const useOpenStakeModal = (account?: Account) => {
   const chain = useContext(ChainContext)
   const [_, setSearchParams] = useSearchParams()
 
@@ -46,9 +46,13 @@ const useOpenStakeModal = () => {
       setSearchParams(params => {
         params.set('action', 'stake')
         params.set('chain', chain.id)
+        if (account !== undefined) {
+          params.set('account', account.address)
+        }
+
         return params
       }),
-    [chain.id, setSearchParams]
+    [account, chain.id, setSearchParams]
   )
 }
 
@@ -63,10 +67,13 @@ const StakeBanner = () => {
         onClickSimulateRewards={() => setStakeCalculatorDialogOpen(true)}
         onClickStake={useOpenStakeModal()}
       />
-      <StakeCalculatorDialog
-        open={stakeCalculatorDialogOpen}
-        onRequestDismiss={() => setStakeCalculatorDialogOpen(false)}
-      />
+      {/* To reset the dialog state */}
+      {stakeCalculatorDialogOpen && (
+        <StakeCalculatorDialog
+          open={stakeCalculatorDialogOpen}
+          onRequestDismiss={() => setStakeCalculatorDialogOpen(false)}
+        />
+      )}
     </>
   )
 }
@@ -208,7 +215,7 @@ const StakeDetailsActive = ({ account, pool }: { account: Account; pool: Derived
   )
 }
 
-const NoStake = () => {
+const NoStake = (props: { account?: Account }) => {
   const minJoinBondLoadable = useRecoilValueLoadable(useQueryState('nominationPools', 'minJoinBond', []))
   const minJoinBond = useTokenAmountFromPlanck(minJoinBondLoadable.valueMaybe())
 
@@ -219,12 +226,15 @@ const NoStake = () => {
       <EmptyStakeDetails
         minJoinBond={minJoinBond.decimalAmount?.toHuman()}
         onClickSimulateRewards={() => setStakeCalculatorDialogOpen(true)}
-        onClickStake={useOpenStakeModal()}
+        onClickStake={useOpenStakeModal(props.account)}
       />
-      <StakeCalculatorDialog
-        open={stakeCalculatorDialogOpen}
-        onRequestDismiss={() => setStakeCalculatorDialogOpen(false)}
-      />
+      {/* To reset the dialog state */}
+      {stakeCalculatorDialogOpen && (
+        <StakeCalculatorDialog
+          open={stakeCalculatorDialogOpen}
+          onRequestDismiss={() => setStakeCalculatorDialogOpen(false)}
+        />
+      )}
     </>
   )
 }
@@ -233,7 +243,7 @@ const StakeDetails = (props: { account: Account }) => {
   const pool = usePoolStakes(props.account)
 
   if (pool === undefined) {
-    return <NoStake />
+    return <NoStake account={props.account} />
   }
 
   return <StakeDetailsActive account={props.account} pool={pool} />

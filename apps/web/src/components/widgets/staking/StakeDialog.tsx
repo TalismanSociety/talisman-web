@@ -27,6 +27,7 @@ const InnerStakeDialog = () => {
 
   const open = searchParams.get('action') === 'stake'
   const initialChain = searchParams.get('chain')
+  const account = searchParams.get('account') ?? undefined
 
   const chains = useRecoilValue(chainsState)
   const [chain, setChain] = useState<Chain>(chains.find(x => x.id === initialChain) ?? chains[0])
@@ -68,6 +69,7 @@ const InnerStakeDialog = () => {
           <ErrorBoundary>
             <Suspense fallback={<StakeForm.Skeleton />}>
               <ControlledStakeForm
+                account={account}
                 assetSelector={
                   <AssetSelect
                     chains={chains}

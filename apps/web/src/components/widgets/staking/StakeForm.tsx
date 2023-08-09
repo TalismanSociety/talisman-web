@@ -235,7 +235,7 @@ const DeferredEstimatedYield = (props: { amount: Decimal }) => (
   <EstimatedYield amount={useDeferredValue(props.amount)} />
 )
 
-export const ControlledStakeForm = (props: { assetSelector: ReactNode }) => {
+export const ControlledStakeForm = (props: { assetSelector: ReactNode; account?: string }) => {
   const joinPoolExtrinsic = useExtrinsic('nominationPools', 'join')
 
   const location = useLocation()
@@ -265,9 +265,14 @@ export const ControlledStakeForm = (props: { assetSelector: ReactNode }) => {
 
   const [selectedAccount, accountSelector] = useAccountSelector(
     useRecoilValue(writeableSubstrateAccountsState),
-    // We don't want to select the first account when poolId is present in the URL
-    // because we want to showcase that pool & the first account might have already joined one
-    poolIdFromSearch === undefined ? 0 : undefined
+    accounts =>
+      props.account !== undefined
+        ? accounts?.find(account => account.address === props.account)
+        : // We don't want to select the first account when poolId is present in the URL
+        // because we want to showcase that pool & the first account might have already joined one
+        poolIdFromSearch === undefined
+        ? accounts?.[0]
+        : undefined
   )
 
   const {

@@ -84,7 +84,7 @@ const AccountSelector = (props: AccountSelectorProps) => {
 
 export const useAccountSelector = (
   accounts: Account[],
-  initialAccount?: Account | number | ((accounts?: Account[]) => Account),
+  initialAccount?: Account | number | ((accounts?: Account[]) => Account | undefined),
   accountSelectorProps?: Omit<AccountSelectorProps, 'accounts' | 'selectedAccount' | 'onChangeSelectedAccount'>
 ) => {
   const [inTransition, startTransition] = useTransition()

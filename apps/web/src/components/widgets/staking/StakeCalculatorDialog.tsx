@@ -1,8 +1,8 @@
 import StakeCalculatorDialogComponent from '@components/recipes/StakeCalculatorDialog'
-import { chainsState, type Chain, ChainProvider } from '@domains/chains'
+import { chainsState, type Chain, ChainProvider, ChainContext } from '@domains/chains'
 import { useTokenAmount, useTokenAmountFromPlanck } from '@domains/common'
 import { useInflation } from '@domains/nominationPools'
-import { Suspense, useDeferredValue, useMemo, useState, useTransition } from 'react'
+import { Suspense, useContext, useDeferredValue, useMemo, useState, useTransition } from 'react'
 import { useRecoilValue } from 'recoil'
 import { AssetSelect } from './StakeForm'
 import ErrorBoundary from '../ErrorBoundary'
@@ -43,7 +43,7 @@ const EstimatedYield = (props: { amount: string }) => {
 const StakeCalculatorDialog = (props: StakeCalculatorDialogProps) => {
   const [inTransition, startTransition] = useTransition()
   const chains = useRecoilValue(chainsState)
-  const [chain, setChain] = useState<Chain>(chains[0])
+  const [chain, setChain] = useState<Chain>(useContext(ChainContext) ?? chains[0])
   const [amount, setAmount] = useState('')
 
   return (
