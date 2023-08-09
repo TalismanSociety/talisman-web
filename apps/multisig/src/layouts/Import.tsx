@@ -6,7 +6,7 @@ import { Multisig, multisigsState, selectedMultisigState } from '@domains/multis
 import { css } from '@emotion/css'
 import { Loader } from '@talismn/icons'
 import { Button, EyeOfSauronProgressIndicator } from '@talismn/ui'
-import { toMultisigAddress, toSs52Address } from '@util/addresses'
+import { Address, toMultisigAddress } from '@util/addresses'
 import { arrayIntersection } from '@util/misc'
 import queryString from 'query-string'
 import { useEffect, useMemo, useState } from 'react'
@@ -36,7 +36,7 @@ const Import = () => {
       if (!ready || valid === false) return
 
       // Basic query param validation
-      if (typeof proxy !== 'string' || toSs52Address(proxy, null) === false) {
+      if (typeof proxy !== 'string' || Address.fromSs58(proxy) === false) {
         toast.error('Invalid or missing proxy')
         setValid(false)
         return
@@ -56,7 +56,7 @@ const Import = () => {
 
       if (
         !Array.isArray(signersArray) ||
-        !signersArray.every(signer => typeof signer === 'string' && toSs52Address(signer, chain) !== false)
+        !signersArray.every(signer => typeof signer === 'string' && Address.fromSs58(signer) !== false)
       ) {
         toast.error('Invalid or missing signers')
         setValid(false)
@@ -69,10 +69,14 @@ const Import = () => {
         return
       }
 
-      const multisigAddress = toMultisigAddress(signersArray as string[], thresholdNumber)
+      // We validated above that all signers are valid, so we can cast them here.
+      const signerAddressesArray = signersArray.map(signer => Address.fromSs58(signer as string)) as Address[]
+      const multisigAddress = toMultisigAddress(signerAddressesArray, thresholdNumber)
 
       // Get the actual on-chain address that controls the proxy, make sure it matches the multisig address
-      const res = await addressIsProxyDelegatee(proxy as string, multisigAddress)
+      const proxyAddress = Address.fromSs58(proxy)
+      if (!proxyAddress) throw Error('Somehow proxy address is false when it was checked earlier.')
+      const res = await addressIsProxyDelegatee(proxyAddress, multisigAddress)
       if (!res.isProxyDelegatee) {
         toast.error('Invalid multisig/proxy configuration. This link may be outdated, please ask for a new one.')
         return
@@ -82,11 +86,11 @@ const Import = () => {
 
       // Check for overlap between the multisig signers and the connected wallet
       const overlap = arrayIntersection<string>(
-        signersArray as string[],
-        extensionAccounts.map(a => a.address)
+        signerAddressesArray.map(a => a.encode()),
+        extensionAccounts.map(a => a.address.encode())
       )
       if (overlap.length > 0) {
-        if (!multisigs.every(({ proxyAddress }) => proxyAddress !== proxy)) {
+        if (!multisigs.every(({ proxyAddress: _proxyAddress }) => !_proxyAddress.isEqual(proxyAddress))) {
           toast.error('Import failed: Multisig already imported', { duration: 5000 })
           navigate('/overview')
           return
@@ -96,8 +100,8 @@ const Import = () => {
           name,
           chain,
           multisigAddress,
-          proxyAddress: proxy,
-          signers: signersArray as string[],
+          proxyAddress,
+          signers: signerAddressesArray,
           threshold: thresholdNumber,
         }
         setMultisigs([...multisigs, multisig])
@@ -157,7 +161,7 @@ const Import = () => {
           <br />
           {(signers as string[]).map((signer: string) => (
             <div key={signer} css={{ width: '400px' }}>
-              <Member m={{ address: signer }} chain={chain} />
+              <Member m={{ address: Address.fromSs58(signer) as Address }} chain={chain} />
             </div>
           ))}
           <br />

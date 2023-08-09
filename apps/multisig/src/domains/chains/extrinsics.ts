@@ -18,7 +18,7 @@ import type { SubmittableExtrinsic } from '@polkadot/api/types'
 import { web3FromAddress } from '@polkadot/extension-dapp'
 import type { Call, ExtrinsicPayload, Timepoint } from '@polkadot/types/interfaces'
 import { assert, compactToU8a, u8aConcat, u8aEq } from '@polkadot/util'
-import { sortAddresses } from '@polkadot/util-crypto'
+import { Address } from '@util/addresses'
 import BN from 'bn.js'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useRecoilState, useRecoilValue, useRecoilValueLoadable, useSetRecoilState } from 'recoil'
@@ -115,10 +115,19 @@ export const useCancelAsMulti = (tx: Transaction | undefined) => {
   const [estimatedFee, setEstimatedFee] = useState<Balance | undefined>()
 
   // Only the original signer can cancel
-  const depositorAddress = tx?.rawPending?.multisig.depositor.toString()
+  const depositorAddress: Address | undefined = useMemo(() => {
+    const depositorAddressString = tx?.rawPending?.multisig.depositor.toString()
+    if (!depositorAddressString) return undefined
+    const depositorAddress = Address.fromSs58(depositorAddressString)
+    if (!depositorAddress) throw Error('rawPending multisig depositor is not valid ss52')
+    return depositorAddress
+  }, [tx?.rawPending?.multisig.depositor])
+
   const loading = apiLoadable.state === 'loading' || nativeToken.state === 'loading' || !tx || !depositorAddress
   const canCancel = useMemo(() => {
-    if (!depositorAddress || extensionAddresses.map(a => a.address).includes(depositorAddress)) return true
+    if (!depositorAddress) return false
+
+    if (extensionAddresses.some(a => a.address.isEqual(depositorAddress))) return true
     return false
   }, [extensionAddresses, depositorAddress])
 
@@ -134,7 +143,9 @@ export const useCancelAsMulti = (tx: Transaction | undefined) => {
 
     return api.tx.multisig.cancelAsMulti(
       multisig.threshold,
-      sortAddresses(multisig.signers).filter(s => s !== depositorAddress),
+      Address.sortAddresses(multisig.signers)
+        .filter(s => !s.isEqual(depositorAddress))
+        .map(s => s.bytes),
       tx.rawPending.multisig.when,
       tx.hash
     )
@@ -145,9 +156,9 @@ export const useCancelAsMulti = (tx: Transaction | undefined) => {
     if (!tx || !depositorAddress) return
 
     // Fee estimation
-    const paymentInfo = await tx.paymentInfo(depositorAddress)
+    const paymentInfo = await tx.paymentInfo(depositorAddress.toSs52(multisig.chain))
     setEstimatedFee({ token: nativeToken.contents, amount: paymentInfo.partialFee as unknown as BN })
-  }, [depositorAddress, nativeToken, createTx])
+  }, [depositorAddress, nativeToken, createTx, multisig.chain])
 
   // Estimate the fee as soon as the hook is used and the extensionAddress or apiLoadable changes
   useEffect(() => {
@@ -168,9 +179,9 @@ export const useCancelAsMulti = (tx: Transaction | undefined) => {
         return
       }
 
-      const { signer } = await web3FromAddress(depositorAddress)
+      const { signer } = await web3FromAddress(depositorAddress.toSs52(multisig.chain))
       tx.signAndSend(
-        depositorAddress,
+        depositorAddress.toSs52(multisig.chain),
         {
           signer,
         },
@@ -197,14 +208,14 @@ export const useCancelAsMulti = (tx: Transaction | undefined) => {
         onFailure(JSON.stringify(e))
       })
     },
-    [depositorAddress, createTx, loading, setRawPendingTransactionDependency, canCancel]
+    [depositorAddress, createTx, loading, setRawPendingTransactionDependency, canCancel, multisig.chain]
   )
 
   return { cancelAsMulti, ready: !loading && !!estimatedFee, estimatedFee, canCancel }
 }
 
 export const useAsMulti = (
-  extensionAddress: string | undefined,
+  extensionAddress: Address | undefined,
   extrinsic: SubmittableExtrinsic<'promise'> | undefined,
   timepoint: Timepoint | null | undefined
 ) => {
@@ -232,7 +243,7 @@ export const useAsMulti = (
       throw new Error('chain missing multisig pallet')
     }
 
-    const weightEstimation = (await extrinsic.paymentInfo(extensionAddress)).weight as any
+    const weightEstimation = (await extrinsic.paymentInfo(extensionAddress.toSs52(multisig.chain))).weight as any
 
     // Provide some buffer for the weight
     const weight = api.createType('Weight', {
@@ -242,7 +253,9 @@ export const useAsMulti = (
 
     return api.tx.multisig.asMulti(
       multisig.threshold,
-      sortAddresses(multisig.signers).filter(s => s !== extensionAddress),
+      Address.sortAddresses(multisig.signers)
+        .filter(s => s && !s.isEqual(extensionAddress))
+        .map(s => s.bytes),
       timepoint,
       extrinsic.method.toHex(),
       weight
@@ -254,9 +267,9 @@ export const useAsMulti = (
     if (!tx || !extensionAddress) return
 
     // Fee estimation
-    const paymentInfo = await tx.paymentInfo(extensionAddress)
+    const paymentInfo = await tx.paymentInfo(extensionAddress.toSs52(multisig.chain))
     setEstimatedFee({ token: nativeToken.contents, amount: paymentInfo.partialFee as unknown as BN })
-  }, [extensionAddress, nativeToken, createTx])
+  }, [extensionAddress, nativeToken, createTx, multisig.chain])
 
   // Estimate the fee as soon as the hook is used and the extensionAddress or apiLoadable changes
   useEffect(() => {
@@ -277,9 +290,9 @@ export const useAsMulti = (
         return
       }
 
-      const { signer } = await web3FromAddress(extensionAddress)
+      const { signer } = await web3FromAddress(extensionAddress.toSs52(multisig.chain))
       tx.signAndSend(
-        extensionAddress,
+        extensionAddress.toSs52(multisig.chain),
         {
           signer,
         },
@@ -308,14 +321,14 @@ export const useAsMulti = (
         onFailure(JSON.stringify(e))
       })
     },
-    [extensionAddress, createTx, setRawPendingTransactionDependency]
+    [extensionAddress, createTx, setRawPendingTransactionDependency, multisig.chain]
   )
 
   return { asMulti, ready: ready && !!estimatedFee, estimatedFee }
 }
 
 export const useApproveAsMulti = (
-  extensionAddress: string | undefined,
+  extensionAddress: Address | undefined,
   hash: `0x${string}` | undefined,
   timepoint: Timepoint | null | undefined
 ) => {
@@ -349,7 +362,9 @@ export const useApproveAsMulti = (
     })
     return api.tx.multisig.approveAsMulti(
       multisig.threshold,
-      sortAddresses(multisig.signers).filter(s => s !== extensionAddress),
+      Address.sortAddresses(multisig.signers)
+        .filter(s => !s.isEqual(extensionAddress))
+        .map(s => s.bytes),
       timepoint,
       hash,
       weight
@@ -361,9 +376,9 @@ export const useApproveAsMulti = (
     if (!tx || !extensionAddress) return
 
     // Fee estimation
-    const paymentInfo = await tx.paymentInfo(extensionAddress)
+    const paymentInfo = await tx.paymentInfo(extensionAddress.toSs52(multisig.chain))
     setEstimatedFee({ token: nativeToken.contents, amount: paymentInfo.partialFee as unknown as BN })
-  }, [extensionAddress, nativeToken, createTx])
+  }, [extensionAddress, nativeToken, createTx, multisig.chain])
 
   // Estimate the fee as soon as the hook is used and the extensionAddress or apiLoadable changes
   useEffect(() => {
@@ -386,9 +401,9 @@ export const useApproveAsMulti = (
         return
       }
 
-      const { signer } = await web3FromAddress(extensionAddress)
+      const { signer } = await web3FromAddress(extensionAddress.toSs52(multisig.chain))
       tx.signAndSend(
-        extensionAddress,
+        extensionAddress.toSs52(multisig.chain),
         {
           signer,
         },
@@ -414,7 +429,7 @@ export const useApproveAsMulti = (
                   const timepoint_height = result.blockNumber.toNumber() as number
                   insertTxMetadata({
                     multisig: multisig.multisigAddress,
-                    chain: multisig.chain.id,
+                    chain: multisig.chain,
                     call_data: metadata.callData,
                     description: metadata.description,
                     timepoint_height,
@@ -440,22 +455,13 @@ export const useApproveAsMulti = (
         onFailure(JSON.stringify(e))
       })
     },
-    [
-      extensionAddress,
-      createTx,
-      setRawPendingTransactionDependency,
-      metadataCache,
-      setMetadataCache,
-      multisig.chain.id,
-      multisig.multisigAddress,
-      hash,
-    ]
+    [extensionAddress, createTx, setRawPendingTransactionDependency, metadataCache, setMetadataCache, multisig, hash]
   )
 
   return { approveAsMulti, ready: ready && !!estimatedFee, estimatedFee }
 }
 
-export const useCreateProxy = (chain: Chain, extensionAddress: string | undefined) => {
+export const useCreateProxy = (chain: Chain, extensionAddress: Address | undefined) => {
   const apiLoadable = useRecoilValueLoadable(pjsApiSelector(chain.rpc))
   const nativeToken = useRecoilValueLoadable(tokenByIdQuery(chain.nativeToken.id))
   const setRawPendingTransactionDependency = useSetRecoilState(rawPendingTransactionsDependency)
@@ -478,9 +484,9 @@ export const useCreateProxy = (chain: Chain, extensionAddress: string | undefine
     if (!tx || !extensionAddress || nativeToken.state !== 'hasValue') return
 
     // Fee estimation
-    const paymentInfo = await tx.paymentInfo(extensionAddress)
+    const paymentInfo = await tx.paymentInfo(extensionAddress.toSs52(chain))
     setEstimatedFee({ token: nativeToken.contents, amount: paymentInfo.partialFee as unknown as BN })
-  }, [extensionAddress, createTx, nativeToken])
+  }, [extensionAddress, createTx, nativeToken, chain])
 
   // Estimate the fee as soon as the hook is used and the extensionAddress or apiLoadable changes
   useEffect(() => {
@@ -492,16 +498,16 @@ export const useCreateProxy = (chain: Chain, extensionAddress: string | undefine
       onSuccess,
       onFailure,
     }: {
-      onSuccess: (proxyAddress: string) => void
+      onSuccess: (proxyAddress: Address) => void
       onFailure: (message: string) => void
     }) => {
       const tx = await createTx()
       if (!tx || !extensionAddress) return
 
-      const { signer } = await web3FromAddress(extensionAddress)
+      const { signer } = await web3FromAddress(extensionAddress.toSs52(chain))
 
       tx.signAndSend(
-        extensionAddress,
+        extensionAddress.toSs52(chain),
         {
           signer,
         },
@@ -518,7 +524,9 @@ export const useCreateProxy = (chain: Chain, extensionAddress: string | undefine
 
                 if (method === 'PureCreated') {
                   if (data[0]) {
-                    const pure = data[0].toString()
+                    const pureStr = data[0].toString()
+                    const pure = Address.fromSs58(pureStr)
+                    if (!pure) throw Error(`chain returned invalid address ${pureStr}`)
                     setRawPendingTransactionDependency(new Date())
                     onSuccess(pure)
                   } else {
@@ -542,7 +550,7 @@ export const useCreateProxy = (chain: Chain, extensionAddress: string | undefine
         onFailure(e.toString())
       })
     },
-    [extensionAddress, createTx, setRawPendingTransactionDependency]
+    [extensionAddress, createTx, setRawPendingTransactionDependency, chain]
   )
 
   return { createProxy, ready: apiLoadable.state === 'hasValue' && !!estimatedFee, estimatedFee }
@@ -562,9 +570,9 @@ export const useTransferProxyToMultisig = (chain: Chain) => {
 
   const transferProxyToMultisig = useCallback(
     async (
-      extensionAddress: string | undefined,
-      proxyAddress: string,
-      multisigAddress: string,
+      extensionAddress: Address | undefined,
+      proxyAddress: Address,
+      multisigAddress: Address,
       existentialDeposit: Balance,
       onSuccess: (r: SubmittableResult) => void,
       onFailure: (message: string) => void
@@ -574,7 +582,7 @@ export const useTransferProxyToMultisig = (chain: Chain) => {
       }
 
       const api = apiLoadable.contents
-      const { signer } = await web3FromAddress(extensionAddress)
+      const { signer } = await web3FromAddress(extensionAddress.toSs52(chain))
 
       if (
         !api.tx.balances?.transferKeepAlive ||
@@ -588,23 +596,23 @@ export const useTransferProxyToMultisig = (chain: Chain) => {
 
       // Define the inner batch call
       const proxyBatchCall = api.tx.utility.batchAll([
-        api.tx.proxy.addProxy(multisigAddress, 'Any', 0),
-        api.tx.proxy.removeProxy(extensionAddress, 'Any', 0),
+        api.tx.proxy.addProxy(multisigAddress.bytes, 'Any', 0),
+        api.tx.proxy.removeProxy(extensionAddress.bytes, 'Any', 0),
       ])
 
       // Define the inner proxy call
-      const proxyCall = api.tx.proxy.proxy(proxyAddress, undefined, proxyBatchCall)
+      const proxyCall = api.tx.proxy.proxy(proxyAddress.bytes, undefined, proxyBatchCall)
 
       // Define the outer batch call
       const signerBatchCall = api?.tx?.utility?.batchAll([
-        api.tx.balances.transferKeepAlive(proxyAddress, getInitialProxyBalance(existentialDeposit).amount),
+        api.tx.balances.transferKeepAlive(proxyAddress.bytes, getInitialProxyBalance(existentialDeposit).amount),
         proxyCall,
       ])
 
       // Send the batch call
       signerBatchCall
         .signAndSend(
-          extensionAddress,
+          extensionAddress.toSs52(chain),
           {
             signer,
           },
@@ -632,7 +640,7 @@ export const useTransferProxyToMultisig = (chain: Chain) => {
           onFailure(e.toString())
         })
     },
-    [apiLoadable]
+    [apiLoadable, chain]
   )
 
   return { transferProxyToMultisig, ready: apiLoadable.state === 'hasValue' }

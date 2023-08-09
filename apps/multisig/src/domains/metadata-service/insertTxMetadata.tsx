@@ -1,16 +1,31 @@
+import { Chain } from '@domains/chains'
 import { ChangeConfigDetails } from '@domains/multisig'
+import { Address } from '@util/addresses'
 import { gql, request } from 'graphql-request'
 
 import { METADATA_SERVICE_URL } from '.'
 
-interface InsertTxMetadataVariables {
+interface InsertTxMetadataArgs {
+  timepoint_height: number
+  timepoint_index: number
+  call_data: string
+  chain: Chain
+  multisig: Address
+  description: string
+  change_config_details?: ChangeConfigDetails
+}
+
+interface InsertTxMetadataGqlVariables {
   timepoint_height: number
   timepoint_index: number
   call_data: string
   chain: string
   multisig: string
   description: string
-  change_config_details?: ChangeConfigDetails
+  change_config_details?: {
+    newThreshold: number
+    newMembers: string[]
+  }
 }
 
 interface InsertTxMetadataResponse {
@@ -22,7 +37,22 @@ interface InsertTxMetadataResponse {
   }
 }
 
-export async function insertTxMetadata(variables: InsertTxMetadataVariables): Promise<InsertTxMetadataResponse> {
+export async function insertTxMetadata(args: InsertTxMetadataArgs): Promise<InsertTxMetadataResponse> {
+  const variables: InsertTxMetadataGqlVariables = {
+    timepoint_height: args.timepoint_height,
+    timepoint_index: args.timepoint_index,
+    call_data: args.call_data,
+    chain: args.chain.id,
+    multisig: args.multisig.toSs52(args.chain),
+    description: args.description,
+    change_config_details: args.change_config_details
+      ? {
+          newThreshold: args.change_config_details.newThreshold,
+          newMembers: args.change_config_details.newMembers.map(address => address.toSs52(args.chain)),
+        }
+      : undefined,
+  }
+
   const mutation = gql`
     mutation InsertTxMetadata(
       $timepoint_height: Int!

@@ -13,7 +13,7 @@ import { css } from '@emotion/css'
 import { SubmittableExtrinsic } from '@polkadot/api/types'
 import { Plus, Send, Trash } from '@talismn/icons'
 import { Button, FullScreenDialog, Select, TextInput } from '@talismn/ui'
-import { toSs52Address } from '@util/addresses'
+import { Address } from '@util/addresses'
 import BN from 'bn.js'
 import Decimal from 'decimal.js'
 import { useEffect, useMemo, useState } from 'react'
@@ -32,7 +32,7 @@ enum Step {
 
 interface MultiSendSend {
   token: Token
-  address: string
+  address: Address
   amount: string
 }
 
@@ -45,7 +45,7 @@ const DetailsForm = (props: {
 }) => {
   const selectedMultisig = useRecoilValue(selectedMultisigState)
   const [amount, setAmount] = useState('')
-  const [destination, setDestination] = useState('')
+  const [destinationInput, setDestinationInput] = useState('')
   const [selectedToken, setSelectedToken] = useState<Token | undefined>()
 
   useEffect(() => {
@@ -198,9 +198,9 @@ const DetailsForm = (props: {
           `}
           leadingLabel={'Recipient'}
           placeholder="14JVAWDg9h2iMqZgmiRpvZd8aeJ3TvANMCv6V5Te4N4Vkbg5"
-          value={destination}
+          value={destinationInput}
           onChange={event => {
-            setDestination(event.target.value)
+            setDestinationInput(event.target.value)
           }}
         />
       </div>
@@ -232,14 +232,14 @@ const DetailsForm = (props: {
             alignItems: 'center',
           }}
           onClick={() => {
-            const address = toSs52Address(destination, selectedMultisig.chain)
+            const address = Address.fromSs58(destinationInput)
             if (!selectedToken || !address) return
             props.setSends([...props.sends, { address, amount, token: selectedToken }])
             setAmount('')
-            setDestination('')
+            setDestinationInput('')
           }}
           disabled={
-            toSs52Address(destination, null) === false ||
+            Address.fromSs58(destinationInput) === false ||
             isNaN(parseFloat(amount)) ||
             amount.endsWith('.') ||
             !selectedToken
@@ -301,11 +301,11 @@ const MultiSendAction = (props: { onCancel: () => void }) => {
         const sendExtrinsics = sends.map(send => {
           if (!apiLoadable.contents.tx.balances?.transferKeepAlive) throw Error('missing balances.transferKeepAlive')
           const amountBn = toBn(send.amount, send.token.decimals)
-          return apiLoadable.contents.tx.balances.transferKeepAlive(send.address, amountBn)
+          return apiLoadable.contents.tx.balances.transferKeepAlive(send.address.bytes, amountBn)
         })
 
         const batchAllExtrinsic = apiLoadable.contents.tx.utility.batchAll(sendExtrinsics)
-        const extrinsic = apiLoadable.contents.tx.proxy.proxy(multisig.proxyAddress, null, batchAllExtrinsic)
+        const extrinsic = apiLoadable.contents.tx.proxy.proxy(multisig.proxyAddress.bytes, null, batchAllExtrinsic)
         setExtrinsic(extrinsic)
       } catch (error) {
         console.error(error)
@@ -322,7 +322,7 @@ const MultiSendAction = (props: { onCancel: () => void }) => {
         description: name,
         chain: multisig.chain,
         approvals: multisig.signers.reduce((acc, key) => {
-          acc[key] = false
+          acc[key.encode()] = false
           return acc
         }, {} as TransactionApprovals),
         decoded: {

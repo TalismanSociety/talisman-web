@@ -1,40 +1,57 @@
 import { Chain } from '@domains/chains'
-import { createKeyMulti, sortAddresses } from '@polkadot/util-crypto'
-const { decodeAddress, encodeAddress } = require('@polkadot/keyring')
+import { createKeyMulti, decodeAddress, encodeAddress, sortAddresses } from '@polkadot/util-crypto'
 const { hexToU8a, isHex } = require('@polkadot/util')
 
-export const toSs52Address = (addressCandidate: string, chain: Chain | null): string | false => {
-  try {
-    const address = encodeAddress(
-      isHex(addressCandidate) ? hexToU8a(addressCandidate) : decodeAddress(addressCandidate),
-      chain?.ss58Prefix
-    )
+// Represent addresses as bytes except for when we need to display them to the user.
+// Allows us to confidently do stuff like equality checks, don't need to worry about SS52 encoding.
+export class Address {
+  readonly bytes: Uint8Array
 
-    return address
-  } catch (error) {
-    return false
+  constructor(bytes: Uint8Array) {
+    if (bytes.length !== 32) throw new Error('Address must be 32 bytes!')
+    this.bytes = bytes
   }
-}
 
-export const toSubscanUrl = (inputAddress: string, chain: Chain | null): string => {
-  try {
-    const ss52Address = toSs52Address(inputAddress, chain)
-    if (!ss52Address) throw new Error('Invalid address')
-    if (chain) {
-      return `https://${chain?.chainName.toLowerCase()}.subscan.io/account/${ss52Address}`
-    } else {
-      return `https://subscan.io/account/${ss52Address}`
+  static fromSs58(addressCandidate: string): Address | false {
+    try {
+      const bytes = isHex(addressCandidate)
+        ? (hexToU8a(addressCandidate) as Uint8Array)
+        : decodeAddress(addressCandidate, false)
+      return new Address(bytes)
+    } catch (error) {
+      return false
     }
-  } catch (error) {
-    console.error('Tried to create a Subscan URL with an invalid address.')
-    return `https://subscan.io/account/${inputAddress}`
+  }
+
+  static fromEncoded(encoded: string): Address | false {
+    const bytes = new Uint8Array(encoded.split(',').map(s => Number(s)))
+    if (bytes.length !== 32) return false
+    return new Address(bytes)
+  }
+
+  static sortAddresses(addresses: Address[]): Address[] {
+    return sortAddresses(addresses.map(a => a.bytes)).map(a => Address.fromSs58(a) as Address)
+  }
+
+  isEqual(other: Address): boolean {
+    return this.bytes.every((byte, index) => byte === other.bytes[index])
+  }
+
+  toSs52(chain: Chain): string {
+    return encodeAddress(this.bytes, chain.ss58Prefix)
+  }
+
+  encode(): string {
+    return this.bytes.toString()
   }
 }
 
-export const toMultisigAddress = (signers: string[], threshold: number): string => {
-  // Derive the multisig address
-  const multiAddressBytes = createKeyMulti(sortAddresses(signers as string[]), threshold)
+export const toSubscanUrl = (address: Address, chain: Chain): string => {
+  return `https://${chain.chainName.toLowerCase()}.subscan.io/account/${address.toSs52(chain)}`
+}
 
-  // Convert byte array to SS58 encoding.
-  return encodeAddress(multiAddressBytes)
+export const toMultisigAddress = (signers: Address[], threshold: number): Address => {
+  // Derive the multisig address
+  const multiAddressBytes = createKeyMulti(sortAddresses(signers.map(s => s.bytes)), threshold)
+  return new Address(multiAddressBytes)
 }

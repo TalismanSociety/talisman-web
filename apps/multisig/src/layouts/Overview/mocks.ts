@@ -1,5 +1,6 @@
 import { Chain, Token, supportedChains } from '@domains/chains'
 import { Transaction, TransactionType } from '@domains/multisig'
+import { Address } from '@util/addresses'
 import BN from 'bn.js'
 
 import { TokenAugmented } from './Assets'
@@ -58,21 +59,24 @@ export const mockTransactions: Transaction[] = [
       type: TransactionType.MultiSend,
       recipients: [
         {
-          address: '5Gw3s7q4Xq7kMSKU5r5BpKkULK1tMmMjNC8jZZoYJ27kLguY',
+          address:
+            Address.fromSs58('5Gw3s7q4Xq7kMSKU5r5BpKkULK1tMmMjNC8jZZoYJ27kLguY') || new Address(new Uint8Array(32)),
           balance: {
             token: DOT,
             amount: new BN('100').mul(new BN('10').pow(new BN('10'))),
           },
         },
         {
-          address: '5CZz1FxoHm3qzPwkmxTwgQmPxL5sqkC7vZZ9Y6a1L6SugG6H',
+          address:
+            Address.fromSs58('5CZz1FxoHm3qzPwkmxTwgQmPxL5sqkC7vZZ9Y6a1L6SugG6H') || new Address(new Uint8Array(32)),
           balance: {
             token: KSM,
             amount: new BN('200').mul(new BN('10').pow(new BN('10'))),
           },
         },
         {
-          address: '5Ejg6Uzj6rgZbUNU17ThFqQEfurq3jf6pU6VuRdq6JkU6FT8',
+          address:
+            Address.fromSs58('5Ejg6Uzj6rgZbUNU17ThFqQEfurq3jf6pU6VuRdq6JkU6FT8') || new Address(new Uint8Array(32)),
           balance: {
             token: DOT,
             amount: new BN('300').mul(new BN('10').pow(new BN('10'))),
@@ -94,7 +98,8 @@ export const mockTransactions: Transaction[] = [
       type: TransactionType.Transfer,
       recipients: [
         {
-          address: '5Ejg6Uzj6rgZbUNU17ThFqQEfurq3jf6pU6VuRdq6JkU6FT8',
+          address:
+            Address.fromSs58('5Ejg6Uzj6rgZbUNU17ThFqQEfurq3jf6pU6VuRdq6JkU6FT8') || new Address(new Uint8Array(32)),
           balance: {
             token: DOT,
             amount: new BN('5').mul(new BN('10').pow(new BN('10'))),
@@ -118,7 +123,8 @@ export const mockTransactions: Transaction[] = [
       type: TransactionType.Transfer,
       recipients: [
         {
-          address: '5Ejg6Uzj6rgZbUNU17ThFqQEfurq3jf6pU6VuRdq6JkU6FT8',
+          address:
+            Address.fromSs58('5Ejg6Uzj6rgZbUNU17ThFqQEfurq3jf6pU6VuRdq6JkU6FT8') || new Address(new Uint8Array(32)),
           balance: {
             token: DOT,
             amount: new BN('100').mul(new BN('10').pow(new BN('10'))),
@@ -141,21 +147,24 @@ export const mockTransactions: Transaction[] = [
       type: TransactionType.MultiSend,
       recipients: [
         {
-          address: '5Hv5RhoRz7Dnys8b1yVpLwEovwniu3r3QRCWQ7VynvRjopH7',
+          address:
+            Address.fromSs58('5Hv5RhoRz7Dnys8b1yVpLwEovwniu3r3QRCWQ7VynvRjopH7') || new Address(new Uint8Array(32)),
           balance: {
             token: DOT,
             amount: new BN('150').mul(new BN('10').pow(new BN('10'))),
           },
         },
         {
-          address: '5DyV5wvvmYkbJTJU65P8B5TxwpUvNx6U5df6E5oAYyTFzs6y',
+          address:
+            Address.fromSs58('5DyV5wvvmYkbJTJU65P8B5TxwpUvNx6U5df6E5oAYyTFzs6y') || new Address(new Uint8Array(32)),
           balance: {
             token: DOT,
             amount: new BN('250').mul(new BN('10').pow(new BN('10'))),
           },
         },
         {
-          address: '5EYxYPZscKzZ1Q2eLLXC9X9Q8WgScT33TzHkRiLhSg8n1Dox',
+          address:
+            Address.fromSs58('5EYxYPZscKzZ1Q2eLLXC9X9Q8WgScT33TzHkRiLhSg8n1Dox') || new Address(new Uint8Array(32)),
           balance: {
             token: DOT,
             amount: new BN('350').mul(new BN('10').pow(new BN('10'))),
@@ -178,7 +187,8 @@ export const mockTransactions: Transaction[] = [
       type: TransactionType.Transfer,
       recipients: [
         {
-          address: '5Ejg6Uzj6rgZbUNU17ThFqQEfurq3jf6pU6VuRdq6JkU6FT8',
+          address:
+            Address.fromSs58('5Ejg6Uzj6rgZbUNU17ThFqQEfurq3jf6pU6VuRdq6JkU6FT8') || new Address(new Uint8Array(32)),
           balance: {
             token: DOT,
             amount: new BN('980388').mul(new BN('10').pow(new BN('10'))),
@@ -201,7 +211,8 @@ export const mockTransactions: Transaction[] = [
       type: TransactionType.Transfer,
       recipients: [
         {
-          address: '5Ejg6Uzj6rgZbUNU17ThFqQEfurq3jf6pU6VuRdq6JkU6FT8',
+          address:
+            Address.fromSs58('5Ejg6Uzj6rgZbUNU17ThFqQEfurq3jf6pU6VuRdq6JkU6FT8') || new Address(new Uint8Array(32)),
           balance: {
             token: DOT,
             amount: new BN('138').mul(new BN('10').pow(new BN('10'))),
@@ -224,7 +235,8 @@ export const mockTransactions: Transaction[] = [
       type: TransactionType.Transfer,
       recipients: [
         {
-          address: '5Ejg6Uzj6rgZbUNU17ThFqQEfurq3jf6pU6VuRdq6JkU6FT8',
+          address:
+            Address.fromSs58('5EYxYPZscKzZ1Q2eLLXC9X9Q8WgScT33TzHkRiLhSg8n1Dox') || new Address(new Uint8Array(32)),
           balance: {
             token: DOT,
             amount: new BN('56').mul(new BN('10').pow(new BN('10'))),
@@ -247,7 +259,8 @@ export const mockTransactions: Transaction[] = [
       type: TransactionType.Transfer,
       recipients: [
         {
-          address: '5Ejg6Uzj6rgZbUNU17ThFqQEfurq3jf6pU6VuRdq6JkU6FT8',
+          address:
+            Address.fromSs58('5Ejg6Uzj6rgZbUNU17ThFqQEfurq3jf6pU6VuRdq6JkU6FT8') || new Address(new Uint8Array(32)),
           balance: {
             token: DOT,
             amount: new BN('1139099').mul(new BN('10').pow(new BN('10'))),

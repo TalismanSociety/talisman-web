@@ -8,7 +8,6 @@ import { Route, Routes, useNavigate } from 'react-router-dom'
 import Footer from '../Overview/Footer'
 import Header from '../Overview/Header'
 import Sidebar from '../Overview/Sidebar'
-import ManageChains from './ManageChains'
 import SettingsList from './SettingsList'
 import ManageSignerConfiguration from './SignerConfiguration'
 
@@ -93,7 +92,6 @@ const Settings = () => {
       <div css={{ gridArea: 'settings' }}>
         <Routes>
           <Route path="/" element={<SettingsList />} />
-          <Route path="/manage-networks" element={<ManageChains />} />
           <Route path="/signer-configuration" element={<ManageSignerConfiguration />} />
         </Routes>
       </div>

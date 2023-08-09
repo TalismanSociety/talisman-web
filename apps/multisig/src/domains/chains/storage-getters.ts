@@ -9,6 +9,7 @@ import { TransactionApprovals, selectedMultisigState } from '@domains/multisig'
 import { StorageKey } from '@polkadot/types'
 import { Option } from '@polkadot/types-codec'
 import { BlockHash, BlockNumber, Multisig, ProxyDefinition } from '@polkadot/types/interfaces'
+import { Address } from '@util/addresses'
 import { useCallback } from 'react'
 import { atom, selector, selectorFamily, useRecoilValueLoadable } from 'recoil'
 
@@ -18,7 +19,7 @@ export const useAddressIsProxyDelegatee = (chain: Chain) => {
   const apiLoadable = useRecoilValueLoadable(pjsApiSelector(chain.rpc))
 
   const addressIsProxyDelegatee = useCallback(
-    async (proxy: string, address: string) => {
+    async (proxy: Address, address: Address) => {
       if (apiLoadable.state !== 'hasValue') {
         throw Error('apiLoadable must be ready')
       }
@@ -27,11 +28,27 @@ export const useAddressIsProxyDelegatee = (chain: Chain) => {
       if (!api.query.proxy || !api.query.proxy.proxies) {
         throw Error('proxy.proxies must exist on api')
       }
-      const res = (await api.query.proxy.proxies(proxy)) as unknown as ProxyDefinition[][]
+      const res = (await api.query.proxy.proxies(proxy.bytes)) as unknown as ProxyDefinition[][]
       if (!res[0]) throw Error('invalid proxy.proxies return value')
       return {
-        isProxyDelegatee: res[0].some(d => d.delegate.toString() === address && d.proxyType.toString() === 'Any'),
-        proxyDelegatees: res[0].filter(d => d.proxyType.toString() === 'Any').map(d => d.delegate.toString()),
+        isProxyDelegatee: res[0].some(d => {
+          let delegateAddress = Address.fromSs58(d.delegate.toString())
+          if (!delegateAddress) {
+            console.warn("chain returned a delegate that isn't a valid ss52 address. this should be investigated.")
+            return false
+          }
+          return delegateAddress.isEqual(address) && d.proxyType.toString() === 'Any'
+        }),
+        proxyDelegatees: res[0]
+          .filter(d => d.proxyType.toString() === 'Any')
+          .map(d => {
+            const a = Address.fromSs58(d.delegate.toString())
+            if (!a) {
+              console.error("chain returned a delegate that isn't a valid ss52 address. this must be investigated.")
+              return new Address(new Uint8Array(32))
+            }
+            return a
+          }),
       }
     },
     [apiLoadable]
@@ -68,7 +85,9 @@ export const rawPendingTransactionsSelector = selector({
     if (!api.query.multisig?.multisigs) {
       throw Error('multisig.multisigs must exist on api')
     }
-    const keys = (await api.query.multisig.multisigs.keys(selectedMultisig.multisigAddress)) as unknown as StorageKey[]
+    const keys = (await api.query.multisig.multisigs.keys(
+      selectedMultisig.multisigAddress.bytes
+    )) as unknown as StorageKey[]
     const pendingTransactions = (
       await Promise.all(
         keys.map(async key => {
@@ -93,8 +112,18 @@ export const rawPendingTransactionsSelector = selector({
             multisig,
             date,
             approvals: selectedMultisig.signers.reduce((acc, cur) => {
-              const approved = multisig.approvals.some(a => a.toString() === cur)
-              return { ...acc, [cur]: approved }
+              const approved = multisig.approvals.some(a => {
+                const ss52ApprovalAddress = Address.fromSs58(a.toString())
+                if (!ss52ApprovalAddress) {
+                  console.warn(
+                    "chain returned an approval that isn't a valid ss52 address. this should be investigated."
+                  )
+                  return false
+                } else {
+                  return cur.isEqual(ss52ApprovalAddress)
+                }
+              })
+              return { ...acc, [cur.encode()]: approved }
             }, {} as TransactionApprovals),
           }
         })

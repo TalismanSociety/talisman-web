@@ -6,6 +6,7 @@ import { css } from '@emotion/css'
 import { Info } from '@talismn/icons'
 import { Button, IconButton, Identicon, Select } from '@talismn/ui'
 import { Skeleton } from '@talismn/ui'
+import { Address } from '@util/addresses'
 import { device } from '@util/breakpoints'
 import { balanceToFloat, formatUsd } from '@util/numbers'
 import { Loadable } from 'recoil'
@@ -158,7 +159,7 @@ const Confirmation = (props: {
           Members
         </h2>
         {props.augmentedAccounts.map(account => {
-          return <MemberRow key={account.address} member={account} truncate={true} chain={chain} />
+          return <MemberRow key={account.address.encode()} member={account} truncate={true} chain={chain} />
         })}
       </div>
       <div
@@ -196,19 +197,22 @@ const Confirmation = (props: {
           </h2>
           <Select
             placeholder="Select account"
-            value={props?.selectedSigner?.address}
-            onChange={value =>
-              props.setSelectedSigner(props.augmentedAccounts.find(a => a.address === value) as AugmentedAccount)
-            }
+            value={props?.selectedSigner?.address.encode()}
+            onChange={value => {
+              if (!value) return
+              const a = Address.fromEncoded(value)
+              if (!a) return
+              props.setSelectedSigner(props.augmentedAccounts.find(_a => _a.address.isEqual(a)) as AugmentedAccount)
+            }}
             {...props}
           >
             {props.augmentedAccounts.map(account => (
               <Select.Item
-                key={account.address}
-                leadingIcon={<Identicon value={account.address} />}
-                value={account.address}
+                key={account.address.encode()}
+                leadingIcon={<Identicon value={account.address.toSs52(chain)} />}
+                value={account.address.encode()}
                 headlineText={account.nickname}
-                supportingText={truncateMiddle(account.address, 5, 4, '...')}
+                supportingText={truncateMiddle(account.address.toSs52(chain), 5, 4, '...')}
               />
             ))}
           </Select>

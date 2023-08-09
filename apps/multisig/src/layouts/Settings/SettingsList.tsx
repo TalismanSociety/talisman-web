@@ -98,7 +98,7 @@ const SettingsList = () => {
             multisig.signers,
             multisig.threshold,
             multisig.proxyAddress,
-            multisig.chain.id
+            multisig.chain
           )}`
           copyToClipboard(url, 'Vault import link copied to clipboard')
         }}
@@ -113,7 +113,7 @@ const SettingsList = () => {
           if (!confirmed) return
           if (confirmed) {
             const name = multisig.name
-            setMultisigState(multisigState.filter(m => m.proxyAddress !== multisig.proxyAddress))
+            setMultisigState(multisigState.filter(m => !m.proxyAddress.isEqual(multisig.proxyAddress)))
             toast.success(`Forgot ${name}`)
             navigate('/overview')
           }

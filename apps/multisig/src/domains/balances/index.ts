@@ -59,8 +59,8 @@ export const BalancesWatcher = () => {
   const addresses = useMemo(() => multisigs.map(({ proxyAddress }) => proxyAddress), [multisigs])
 
   useEffect(() => {
-    setAllAddresses(addresses)
-  }, [setAllAddresses, addresses])
+    setAllAddresses(addresses.map(a => a.toSs52(selectedMultisig.chain)))
+  }, [setAllAddresses, addresses, selectedMultisig])
 
   const multisigsByChain = useMemo(() => groupBy(multisigs, ({ chain }) => chain.id), [multisigs])
   const addressesByToken = useMemo(
@@ -71,10 +71,10 @@ export const BalancesWatcher = () => {
           const multisigs = multisigsByChain[token.chain.id]
 
           if (!multisigs) return []
-          return [[token.id, multisigs.map(({ proxyAddress }) => proxyAddress)]]
+          return [[token.id, multisigs.map(({ proxyAddress }) => proxyAddress.toSs52(selectedMultisig.chain))]]
         })
       ),
-    [multisigsByChain, tokens]
+    [multisigsByChain, tokens, selectedMultisig]
   )
 
   const balances = useBalances(addressesByToken)

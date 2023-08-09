@@ -11,7 +11,7 @@ import {
 import { css } from '@emotion/css'
 import { SubmittableExtrinsic } from '@polkadot/api/types'
 import { Button, FullScreenDialog, Select, TextInput } from '@talismn/ui'
-import { toSs52Address } from '@util/addresses'
+import { Address } from '@util/addresses'
 import BN from 'bn.js'
 import Decimal from 'decimal.js'
 import { useEffect, useMemo, useState } from 'react'
@@ -190,12 +190,12 @@ const AmountInput = (props: {
 }
 
 const DetailsForm = (props: {
-  destination: string
+  destinationInput: string
   amount: string
   selectedToken: Token | undefined
   setSelectedToken: (t: Token) => void
   tokens: Token[]
-  setDestination: (d: string) => void
+  setDestinationInput: (d: string) => void
   setAmount: (a: string) => void
   onBack: () => void
   onNext: () => void
@@ -233,9 +233,9 @@ const DetailsForm = (props: {
           `}
           leadingLabel={'Recipient'}
           placeholder="14JVAWDg9h2iMqZgmiRpvZd8aeJ3TvANMCv6V5Te4N4Vkbg5"
-          value={props.destination}
+          value={props.destinationInput}
           onChange={event => {
-            props.setDestination(event.target.value)
+            props.setDestinationInput(event.target.value)
           }}
         />
       </div>
@@ -254,7 +254,7 @@ const DetailsForm = (props: {
         <Button onClick={props.onBack} children={<h3>Back</h3>} variant="outlined" />
         <Button
           disabled={
-            toSs52Address(props.destination, null) === false ||
+            Address.fromSs58(props.destinationInput) === false ||
             isNaN(parseFloat(props.amount)) ||
             props.amount.endsWith('.') ||
             !props.selectedToken
@@ -270,7 +270,7 @@ const DetailsForm = (props: {
 const SendAction = (props: { onCancel: () => void }) => {
   const [step, setStep] = useState(Step.Name)
   const [name, setName] = useState('')
-  const [destination, setDestination] = useState('')
+  const [destinationInput, setDestinationInput] = useState('')
   const [extrinsic, setExtrinsic] = useState<SubmittableExtrinsic<'promise'> | undefined>()
   const tokens = useRecoilValueLoadable(selectedMultisigChainTokensState)
   const [selectedToken, setSelectedToken] = useState<Token | undefined>()
@@ -285,6 +285,10 @@ const SendAction = (props: { onCancel: () => void }) => {
     }
   }, [tokens, selectedToken])
 
+  const destinationAddress = useMemo(() => {
+    return Address.fromSs58(destinationInput)
+  }, [destinationInput])
+
   const amountBn: BN | undefined = useMemo(() => {
     if (!selectedToken || isNaN(parseFloat(amountInput))) return
 
@@ -296,28 +300,22 @@ const SendAction = (props: { onCancel: () => void }) => {
   }, [amountInput, selectedToken])
 
   useEffect(() => {
-    if (
-      destination &&
-      selectedToken &&
-      apiLoadable.state === 'hasValue' &&
-      amountBn &&
-      toSs52Address(destination, multisig.chain)
-    ) {
+    if (selectedToken && apiLoadable.state === 'hasValue' && amountBn && destinationAddress) {
       if (!apiLoadable.contents.tx.balances?.transferKeepAlive || !apiLoadable.contents.tx.proxy?.proxy) {
         throw Error('chain missing balances pallet')
       }
       try {
-        const innerExtrinsic = apiLoadable.contents.tx.balances.transferKeepAlive(destination, amountBn)
-        const extrinsic = apiLoadable.contents.tx.proxy.proxy(multisig.proxyAddress, null, innerExtrinsic)
+        const innerExtrinsic = apiLoadable.contents.tx.balances.transferKeepAlive(destinationAddress.bytes, amountBn)
+        const extrinsic = apiLoadable.contents.tx.proxy.proxy(multisig.proxyAddress.bytes, null, innerExtrinsic)
         setExtrinsic(extrinsic)
       } catch (error) {
         console.error(error)
       }
     }
-  }, [destination, selectedToken, apiLoadable, amountBn, multisig])
+  }, [destinationAddress, selectedToken, apiLoadable, amountBn, multisig])
 
   const t: Transaction | undefined = useMemo(() => {
-    if (selectedToken && extrinsic) {
+    if (selectedToken && extrinsic && destinationAddress) {
       const hash = extrinsic.registry.hash(extrinsic.method.toU8a()).toHex()
       return {
         date: new Date(),
@@ -325,18 +323,20 @@ const SendAction = (props: { onCancel: () => void }) => {
         description: name,
         chain: multisig.chain,
         approvals: multisig.signers.reduce((acc, key) => {
-          acc[key] = false
+          acc[key.encode()] = false
           return acc
         }, {} as TransactionApprovals),
         decoded: {
           type: TransactionType.Transfer,
-          recipients: [{ address: destination, balance: { amount: amountBn || new BN(0), token: selectedToken } }],
+          recipients: [
+            { address: destinationAddress, balance: { amount: amountBn || new BN(0), token: selectedToken } },
+          ],
           yaml: '',
         },
         callData: extrinsic.method.toHex(),
       }
     }
-  }, [amountBn, destination, multisig, name, selectedToken, extrinsic])
+  }, [amountBn, destinationAddress, multisig, name, selectedToken, extrinsic])
   const signer = useNextTransactionSigner(t?.approvals)
   const hash = extrinsic?.registry.hash(extrinsic.method.toU8a()).toHex()
   const { approveAsMulti, estimatedFee, ready: approveAsMultiReady } = useApproveAsMulti(signer?.address, hash, null)
@@ -365,9 +365,9 @@ const SendAction = (props: { onCancel: () => void }) => {
           onNext={() => setStep(Step.Review)}
           selectedToken={selectedToken}
           tokens={tokens.state === 'hasValue' ? tokens.contents : []}
-          destination={destination}
+          destinationInput={destinationInput}
           amount={amountInput}
-          setDestination={setDestination}
+          setDestinationInput={setDestinationInput}
           setAmount={setAmountInput}
           setSelectedToken={setSelectedToken}
         />

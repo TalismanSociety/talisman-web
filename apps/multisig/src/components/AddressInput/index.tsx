@@ -2,18 +2,18 @@ import { css } from '@emotion/css'
 import { useTheme } from '@emotion/react'
 import { Plus } from '@talismn/icons'
 import { IconButton, TextInput } from '@talismn/ui'
-import { toSs52Address } from '@util/addresses'
+import { Address } from '@util/addresses'
 import { useState } from 'react'
 import { toast } from 'react-hot-toast'
 
 const AddressInput = (
   props: {
-    onNewAddress: (a: string) => void
+    onNewAddress: (a: Address) => void
     additionalValidation?: (a: string) => boolean
   } & React.HTMLAttributes<HTMLDivElement>
 ) => {
   const theme = useTheme()
-  const [address, setAddress] = useState('')
+  const [addressInput, setAddressInput] = useState('')
   return (
     <div className={props.className}>
       <div css={{ display: 'grid', gridTemplateColumns: '1fr' }}>
@@ -23,17 +23,17 @@ const AddressInput = (
             font-size: 18px !important;
           `}
           placeholder="e.g. 13DgtSygjb8UeF41B5H25khiczEw2sHXeuWUgzVWrFjfwcUH"
-          value={address}
-          onChange={event => setAddress(event.target.value)}
+          value={addressInput}
+          onChange={event => setAddressInput(event.target.value)}
         />
         <div
           onClick={() => {
-            const validAddress = toSs52Address(address, null)
+            const validAddress = Address.fromSs58(addressInput)
             if (!validAddress) {
-              toast.error('Invalid address')
+              toast.error('Invalid SS52 address')
             } else {
               props.onNewAddress(validAddress)
-              setAddress('')
+              setAddressInput('')
             }
           }}
           className={css`

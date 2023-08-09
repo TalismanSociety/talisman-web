@@ -18,7 +18,7 @@ import {
   selectedMultisigState,
 } from '@domains/multisig'
 import { css } from '@emotion/css'
-import { toMultisigAddress, toSs52Address } from '@util/addresses'
+import { Address, toMultisigAddress } from '@util/addresses'
 import { device } from '@util/breakpoints'
 import { useEffect, useMemo, useState } from 'react'
 import { toast } from 'react-hot-toast'
@@ -40,7 +40,9 @@ const useSelectedSigner = () => {
 
   // Ensure selected signer gets set if it is disconnected
   useEffect(() => {
-    if (!extensionAccounts.map(a => a.address).includes(selectedSigner?.address || 'invalid-address')) {
+    if (
+      !extensionAccounts.map(a => a.address).some(a => selectedSigner?.address && a.isEqual(selectedSigner.address))
+    ) {
       setSelectedSigner(extensionAccounts[0])
     }
   }, [selectedSigner, extensionAccounts])
@@ -84,7 +86,7 @@ const CreateMultisig = () => {
   )
   const [name, setName] = useState<string>('')
   const [chain, setChain] = useState<Chain>(firstChain)
-  const [externalAccounts, setExternalAccounts] = useState<string[]>([])
+  const [externalAccounts, setExternalAccounts] = useState<Address[]>([])
   const [multisigs, setMultisigs] = useRecoilState(multisigsState)
   const setSelectedMultisig = useSetRecoilState(selectedMultisigState)
   const [extensionAccounts] = useRecoilState(accountsState)
@@ -93,7 +95,7 @@ const CreateMultisig = () => {
   const { transferProxyToMultisig, ready: transferProxyToMultisigIsReady } = useTransferProxyToMultisig(chain)
   const [threshold, setThreshold] = useState<number>(2)
   const tokenWithPrice = useRecoilValueLoadable(tokenByIdWithPrice(chain.nativeToken.id))
-  const [proxyAddress, setProxyAddress] = useState<string | undefined>()
+  const [proxyAddress, setProxyAddress] = useState<Address | undefined>()
   const existentialDepositLoadable = useRecoilValueLoadable(existentialDepositSelector(chain.rpc))
   const proxyDepositTotalLoadable = useRecoilValueLoadable(proxyDepositTotalSelector(chain.rpc))
   const { addressIsProxyDelegatee } = useAddressIsProxyDelegatee(chain)
@@ -150,7 +152,10 @@ const CreateMultisig = () => {
           setProxyAddress(proxyAddress)
           setCreateTransactionsStatus(CreateTransactionsStatus.TransferringProxy)
           // Address as a byte array.
-          const multiAddress = toMultisigAddress(augmentedAccounts.map(a => a.address) as string[], threshold)
+          const multiAddress = toMultisigAddress(
+            augmentedAccounts.map(a => a.address),
+            threshold
+          )
           transferProxyToMultisig(
             selectedSigner?.address,
             proxyAddress,
@@ -174,7 +179,7 @@ const CreateMultisig = () => {
                 chain,
                 multisigAddress: multiAddress,
                 proxyAddress,
-                signers: augmentedAccounts.map(a => a.address) as string[],
+                signers: augmentedAccounts.map(a => a.address),
                 threshold,
               }
               setMultisigs([...multisigs, multisig])
@@ -275,6 +280,7 @@ const CreateMultisig = () => {
             setExternalAccounts={setExternalAccounts}
             augmentedAccounts={augmentedAccounts}
             externalAccounts={externalAccounts}
+            chain={chain}
           />
         ) : step === Step.SelectThreshold ? (
           <SelectThreshold
@@ -297,16 +303,22 @@ const CreateMultisig = () => {
             onBack={() => setStep(Step.SelectFirstChain)}
             onCreateVault={() => setStep(Step.Transactions)}
             onAlreadyHaveAnyProxy={async () => {
-              const proxyAddress = prompt('Enter proxy address')
-              if (!proxyAddress) return
+              const proxyAddressInput = prompt('Enter proxy address')
+              if (!proxyAddressInput) return
 
               // validate the proxy address
-              const ss58Address = toSs52Address(proxyAddress, null)
-              if (!ss58Address) toast.error('Please enter a valid SS58 address')
+              const proxyAddress = Address.fromSs58(proxyAddressInput)
+              if (!proxyAddress) {
+                toast.error('Please enter a valid SS58 address')
+                return
+              }
 
               // check if the multisig controls the proxy
-              const multisigAddress = toMultisigAddress(augmentedAccounts.map(a => a.address) as string[], threshold)
-              const res = await addressIsProxyDelegatee(proxyAddress as string, multisigAddress)
+              const multisigAddress = toMultisigAddress(
+                augmentedAccounts.map(a => a.address),
+                threshold
+              )
+              const res = await addressIsProxyDelegatee(proxyAddress, multisigAddress)
               if (!res.isProxyDelegatee) {
                 toast.error("This multisig configuration is not an 'Any' delegatee for the entered address.")
                 return
@@ -314,11 +326,11 @@ const CreateMultisig = () => {
 
               // we're good! import
               const path = createImportPath(
-                proxyAddress,
-                augmentedAccounts.map(a => a.address) as string[],
+                proxyAddressInput,
+                augmentedAccounts.map(a => a.address),
                 threshold,
                 proxyAddress,
-                chain.id
+                chain
               )
               navigate(`/${path}`)
             }}
@@ -339,11 +351,11 @@ const CreateMultisig = () => {
         ) : step === Step.VaultCreated ? (
           <VaultCreated
             goToVault={() => navigate('/overview')}
-            proxy={proxyAddress as string}
+            proxy={proxyAddress as Address}
             name={name}
             threshold={threshold}
             signers={augmentedAccounts.map(a => a.address)}
-            chainId={chain.id}
+            chain={chain}
           />
         ) : null}
       </div>

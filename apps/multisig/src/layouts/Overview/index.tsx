@@ -42,22 +42,21 @@ const Overview = () => {
       if (isProxyDelegatee) return
 
       console.log(
-        `Detected change in multisig configuration. Outdated multisig address ${selectedMultisig.multisigAddress}, current delegatees: ${proxyDelegatees}`
+        `Detected change in multisig configuration. Outdated multisig address ${selectedMultisig.multisigAddress.toSs52(
+          selectedMultisig.chain
+        )}, current delegatees: ${proxyDelegatees.map(d => d.toSs52(selectedMultisig.chain))}`
       )
 
       // Try to find the new multisig details in the metadata service.
       try {
-        const allChangeAttempts = await getAllChangeAttempts({
-          multisig: selectedMultisig.multisigAddress,
-          chain: selectedMultisig.chain.id,
-        })
+        const allChangeAttempts = await getAllChangeAttempts(selectedMultisig.multisigAddress, selectedMultisig.chain)
         for (const changeAttempt of allChangeAttempts) {
           const changeMultisigAddress = toMultisigAddress(changeAttempt.newMembers, changeAttempt.newThreshold)
-          if (proxyDelegatees.some(delegatee => delegatee === changeMultisigAddress)) {
+          if (proxyDelegatees.some(delegatee => delegatee.isEqual(changeMultisigAddress))) {
             toast.success('Multisig signer configuration update detected and automatically applied.', {
               duration: 5000,
             })
-            const otherMultisigs = multisigs.filter(m => m.multisigAddress !== selectedMultisig.multisigAddress)
+            const otherMultisigs = multisigs.filter(m => !m.multisigAddress.isEqual(selectedMultisig.multisigAddress))
             const newMultisig = {
               ...selectedMultisig,
               multisigAddress: changeMultisigAddress,
@@ -77,7 +76,7 @@ const Overview = () => {
         `Multisig configuration for "${selectedMultisig.name}" was changed and signet was unable to automatically determine the new details. Please re-import the multisig using an updated link.`,
         { duration: 30_000 }
       )
-      setMultisigs(multisigs => multisigs.filter(m => m.multisigAddress !== selectedMultisig.multisigAddress))
+      setMultisigs(multisigs => multisigs.filter(m => !m.multisigAddress.isEqual(selectedMultisig.multisigAddress)))
     }, 10_000)
 
     return () => clearInterval(interval)

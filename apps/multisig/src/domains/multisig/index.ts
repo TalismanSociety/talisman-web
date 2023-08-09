@@ -4,23 +4,22 @@ import { RawPendingTransaction, rawPendingTransactionsSelector } from '@domains/
 import { accountsState } from '@domains/extension'
 import { getTxMetadataByPk } from '@domains/metadata-service'
 import { SubmittableExtrinsic } from '@polkadot/api/types'
-import { toMultisigAddress, toSs52Address } from '@util/addresses'
+import { Address, toMultisigAddress } from '@util/addresses'
 import BN from 'bn.js'
 import queryString from 'query-string'
 import { useCallback, useEffect, useState } from 'react'
 import { atom, selector, useRecoilState, useRecoilValue, useRecoilValueLoadable } from 'recoil'
-import { recoilPersist } from 'recoil-persist'
 import truncateMiddle from 'truncate-middle'
 
-const { persistAtom } = recoilPersist()
+import persistAtom from '../persist'
 
 const DUMMY_MULTISIG: Multisig = {
   name: 'DUMMY_MULTISIG',
   chain: supportedChains[0] as Chain,
   signers: [],
   threshold: 0,
-  multisigAddress: '',
-  proxyAddress: '',
+  multisigAddress: new Address(new Uint8Array(32)),
+  proxyAddress: new Address(new Uint8Array(32)),
 }
 
 export const multisigsState = atom<Multisig[]>({
@@ -51,7 +50,7 @@ export const activeMultisigsState = selector({
     const accounts = get(accountsState)
 
     return multisigs.filter(multisig => {
-      return multisig.signers.some(signer => accounts.some(account => account.address === signer))
+      return multisig.signers.some(signer => accounts.some(account => account.address.isEqual(signer)))
     })
   },
 })
@@ -71,7 +70,7 @@ export const useNextTransactionSigner = (approvals: TransactionApprovals | undef
   const [extensionAccounts] = useRecoilState(accountsState)
 
   if (!approvals) return
-  return extensionAccounts.find(account => approvals[account.address] === false)
+  return extensionAccounts.find(account => approvals[account.address.encode()] === false)
 }
 
 export enum TransactionType {
@@ -83,7 +82,7 @@ export enum TransactionType {
 
 export interface ChangeConfigDetails {
   newThreshold: number
-  newMembers: string[]
+  newMembers: Address[]
 }
 
 export interface TxOffchainMetadata {
@@ -93,7 +92,7 @@ export interface TxOffchainMetadata {
 }
 
 export interface AugmentedAccount {
-  address: string
+  address: Address
   you?: boolean
   nickname?: string
 }
@@ -101,9 +100,9 @@ export interface AugmentedAccount {
 export interface Multisig {
   name: string
   chain: Chain
-  multisigAddress: string
-  proxyAddress: string
-  signers: string[]
+  multisigAddress: Address
+  proxyAddress: Address
+  signers: Address[]
   threshold: number
 }
 
@@ -113,7 +112,7 @@ export interface Balance {
 }
 
 export interface TransactionRecipient {
-  address: string
+  address: Address
   balance: Balance
 }
 
@@ -125,7 +124,7 @@ export interface TransactionDecoded {
   type: TransactionType
   recipients: TransactionRecipient[]
   changeConfigDetails?: {
-    signers: string[]
+    signers: Address[]
     threshold: number
   }
 }
@@ -179,16 +178,21 @@ export const extrinsicToDecoded = (
 
     // Got proxy call. Check that it's for our proxy.
     // @ts-ignore
-    const proxy = extrinsic?.method?.toHuman()?.args?.real?.Id
-    if (proxy !== multisig.proxyAddress) return 'not_ours'
+    const proxyString = extrinsic?.method?.toHuman()?.args?.real?.Id
+    const proxyAddress = Address.fromSs58(proxyString)
+    if (!proxyAddress) throw Error('Chain returned invalid SS58 address for proxy')
+    if (!proxyAddress.isEqual(multisig.proxyAddress)) return 'not_ours'
 
     // Check for Transfer
     let recipients: TransactionRecipient[] = []
     for (const arg of args) {
       const obj: any = arg.toHuman()
       if (obj?.section === 'balances' && obj?.method?.startsWith('transfer')) {
+        const destString = obj.args.dest.Id
+        const dest = Address.fromSs58(destString)
+        if (!dest) throw Error('Chain returned invalid SS58 address for transfer destination')
         recipients.push({
-          address: obj.args.dest.Id,
+          address: dest,
           balance: { token: nativeToken, amount: new BN(obj.args.value.replaceAll(',', '')) },
         })
       }
@@ -206,8 +210,11 @@ export const extrinsicToDecoded = (
       if (obj?.section === 'utility' && obj?.method?.startsWith('batch')) {
         const recipients: (TransactionRecipient | null)[] = obj.args.calls.map((call: any) => {
           if (call.section === 'balances' && call.method?.startsWith('transfer')) {
+            const destString = obj.args.dest.Id
+            const dest = Address.fromSs58(destString)
+            if (!dest) throw Error('Chain returned invalid SS58 address for transfer destination')
             return {
-              address: call.args.dest.Id,
+              address: dest,
               balance: { token: nativeToken, amount: new BN(call.args.value.replaceAll(',', '')) },
             }
           }
@@ -241,8 +248,9 @@ export const extrinsicToDecoded = (
           changeConfigDetails.newMembers,
           changeConfigDetails.newThreshold
         )
-        const actualNewMultisigAddress = toSs52Address(obj?.args?.calls[0]?.args.delegate.Id, null)
-        if (derivedNewMultisigAddress !== actualNewMultisigAddress) {
+        const actualNewMultisigAddress = Address.fromSs58(obj?.args?.calls[0]?.args.delegate.Id)
+        if (actualNewMultisigAddress === false) throw Error('got an invalid ss52Address back from the chain!')
+        if (!derivedNewMultisigAddress.isEqual(actualNewMultisigAddress)) {
           throw Error("Derived multisig address doesn't match actual multisig address")
         }
 
@@ -297,7 +305,7 @@ export const usePendingTransactions = () => {
             try {
               const metadataValues = await getTxMetadataByPk({
                 multisig: selectedMultisig.multisigAddress,
-                chain: selectedMultisig.chain.id,
+                chain: selectedMultisig.chain,
                 timepoint_height: rawPending.multisig.when.height.toNumber(),
                 timepoint_index: rawPending.multisig.when.index.toNumber(),
               })
@@ -406,19 +414,13 @@ export const EMPTY_BALANCE: Balance = {
   amount: new BN(0),
 }
 
-export const createImportPath = (
-  name: string,
-  signers: string[],
-  threshold: number,
-  proxy: string,
-  chainId: string
-) => {
+export const createImportPath = (name: string, signers: Address[], threshold: number, proxy: Address, chain: Chain) => {
   const params = {
     name,
-    signers: signers.join(','),
+    signers: signers.map(a => a.toSs52(chain)).join(','),
     threshold,
-    proxy,
-    chain_id: chainId,
+    proxy: proxy.toSs52(chain),
+    chain_id: chain.id,
   }
   return `import?${queryString.stringify(params)}`
 }

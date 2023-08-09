@@ -1,9 +1,11 @@
+import { Chain } from '@domains/chains'
 import { copyToClipboard } from '@domains/common'
 import { createImportPath } from '@domains/multisig'
 import { css } from '@emotion/css'
 import { useTheme } from '@emotion/react'
 import { Copy } from '@talismn/icons'
 import { Button, IconButton } from '@talismn/ui'
+import { Address } from '@util/addresses'
 import { device } from '@util/breakpoints'
 import { useReward } from 'react-rewards'
 import { useEffectOnce } from 'react-use'
@@ -13,16 +15,16 @@ const MagicLink = ({
   signers,
   threshold,
   proxy,
-  chainId,
+  chain,
 }: {
-  proxy: string
+  proxy: Address
   name: string
-  signers: string[]
+  signers: Address[]
   threshold: number
-  chainId: string
+  chain: Chain
 }) => {
   const theme = useTheme()
-  const url = `${window.location.origin}/${createImportPath(name, signers, threshold, proxy, chainId)}`
+  const url = `${window.location.origin}/${createImportPath(name, signers, threshold, proxy, chain)}`
   return (
     <div
       className={css`
@@ -60,11 +62,11 @@ const rewardConfig = {
 
 const VaultCreated = (props: {
   goToVault: () => void
-  proxy: string
+  proxy: Address
   name: string
-  signers: string[]
+  signers: Address[]
   threshold: number
-  chainId: string
+  chain: Chain
 }) => {
   const { reward } = useReward('rewardId', 'confetti', rewardConfig)
   useEffectOnce(() => {
@@ -106,7 +108,7 @@ const VaultCreated = (props: {
           proxy={props.proxy}
           name={props.name}
           signers={props.signers}
-          chainId={props.chainId}
+          chain={props.chain}
           threshold={props.threshold}
         />
       </div>

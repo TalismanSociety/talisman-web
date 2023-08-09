@@ -150,7 +150,7 @@ const TransactionsList = ({ transactions }: { transactions: Transaction[] }) => 
                             )
                             if (isProxyDelegatee) {
                               const otherMultisigs = multisigs.filter(
-                                m => m.multisigAddress !== selectedMultisig.multisigAddress
+                                m => !m.multisigAddress.isEqual(selectedMultisig.multisigAddress)
                               )
                               const newMultisig = {
                                 ...selectedMultisig,

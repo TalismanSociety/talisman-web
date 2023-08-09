@@ -1,14 +1,19 @@
 import { web3AccountsSubscribe, web3Enable } from '@polkadot/extension-dapp'
-import type { InjectedAccount as InjectedAccountPjs } from '@polkadot/extension-inject/types'
 import type { InjectedWindow } from '@polkadot/extension-inject/types'
+import type { KeypairType } from '@polkadot/util-crypto/types'
+import { Address } from '@util/addresses'
 import { uniqBy } from 'lodash'
 import { useEffect } from 'react'
 import { atom, useRecoilState, useSetRecoilState } from 'recoil'
-import { recoilPersist } from 'recoil-persist'
 
-const { persistAtom } = recoilPersist()
+import persistAtom from '../persist'
 
-export type InjectedAccount = InjectedAccountPjs
+export interface InjectedAccount {
+  address: Address
+  genesisHash?: string | null
+  name?: string
+  type?: KeypairType
+}
 
 export const accountsState = atom<InjectedAccount[]>({
   key: 'Accounts',
@@ -48,7 +53,18 @@ export const ExtensionWatcher = () => {
     const unsubscribePromise = web3Enable(process.env.REACT_APP_APPLICATION_NAME ?? 'Talisman')
       .then(() => {
         return web3AccountsSubscribe(accounts => {
-          setAccounts(uniqBy(accounts, account => account.address).map(account => ({ ...account, ...account.meta })))
+          setAccounts(
+            uniqBy(accounts, account => account.address).map(account => {
+              const address = Address.fromSs58(account.address)
+              if (!address) throw Error("Can't parse address from web3AccountsSubscribe!")
+              return {
+                ...account,
+                ...account.meta,
+                address,
+              }
+            })
+          )
+
           setExtensionLoading(false)
         })
       })

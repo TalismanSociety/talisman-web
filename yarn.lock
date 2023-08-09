@@ -8466,7 +8466,7 @@ __metadata:
     react-use: ^17.4.0
     react-winbox: ^1.5.0
     recoil: 0.7.7
-    recoil-persist: 4.2.0
+    recoil-persist: 5.1.0
     recoil-relay: 0.1.0
     relay-compiler: ^15.0.0
     relay-runtime: ^15.0.0
@@ -24484,12 +24484,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"recoil-persist@npm:4.2.0":
-  version: 4.2.0
-  resolution: "recoil-persist@npm:4.2.0"
+"recoil-persist@npm:5.1.0":
+  version: 5.1.0
+  resolution: "recoil-persist@npm:5.1.0"
   peerDependencies:
     recoil: ^0.7.2
-  checksum: 1c8a6be4bb914b383429603e910aba80734311d8657ddf9f94a39513da0eb41fd6a2b74439f93658daf465d2e66a2d890e9f6b2f8a047e4fb99dc5b31f301515
+  checksum: 03ee8417b9bfcb1e5d61af373a304437190da394bf42b0979cf54ec4edeb27e7577f76ae4f9348d131865b87b19dc8dedc158e2bacd3976d4b936be1ab005d18
   languageName: node
   linkType: hard
 

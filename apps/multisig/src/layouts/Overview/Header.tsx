@@ -5,7 +5,6 @@ import { css } from '@emotion/css'
 import { useTheme } from '@emotion/react'
 import { Copy, Plus, PlusCircle, TalismanHand } from '@talismn/icons'
 import { Button, IconButton, Identicon, Select } from '@talismn/ui'
-import { toSs52Address } from '@util/addresses'
 import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useRecoilState, useRecoilValue } from 'recoil'
@@ -20,7 +19,7 @@ const Header = () => {
   useEffect(() => {
     if (
       activeMultisigs[0] &&
-      !activeMultisigs.find(multisig => multisig.proxyAddress === selectedMultisig?.proxyAddress)
+      !activeMultisigs.find(multisig => multisig.proxyAddress.isEqual(selectedMultisig?.proxyAddress))
     ) {
       setSelectedMultisig(activeMultisigs[0])
     }
@@ -153,7 +152,7 @@ const Header = () => {
                     height: 40px;
                     width: 40px;
                   `}
-                  value={selectedMultisig.proxyAddress as string}
+                  value={selectedMultisig.proxyAddress.toSs52(selectedMultisig.chain)}
                 />
                 <div
                   className={css`
@@ -182,7 +181,7 @@ const Header = () => {
                   `}
                   onClick={e => {
                     copyToClipboard(
-                      toSs52Address(selectedMultisig.proxyAddress, selectedMultisig.chain) as string,
+                      selectedMultisig.proxyAddress.toSs52(selectedMultisig.chain),
                       'Proxy address copied to clipboard'
                     )
                     e.stopPropagation()
@@ -190,19 +189,19 @@ const Header = () => {
                 />
               </div>
             }
-            value={selectedMultisig.proxyAddress}
-            onChange={key => {
-              setSelectedMultisig(activeMultisigs.find(m => m.proxyAddress === key) as Multisig)
+            value={selectedMultisig.proxyAddress.encode()}
+            onChange={value => {
+              setSelectedMultisig(activeMultisigs.find(m => m.proxyAddress.encode() === value) as Multisig)
             }}
           >
             {activeMultisigs.reduce((accumulator, multisig) => {
-              if (selectedMultisig.proxyAddress === multisig.proxyAddress) return accumulator
+              if (selectedMultisig.proxyAddress.isEqual(multisig.proxyAddress)) return accumulator
 
               return accumulator.concat(
                 <Select.Item
-                  key={multisig.proxyAddress}
-                  leadingIcon={<Identicon value={multisig.proxyAddress} />}
-                  value={multisig.proxyAddress}
+                  key={multisig.proxyAddress.encode()}
+                  leadingIcon={<Identicon value={multisig.proxyAddress.toSs52(selectedMultisig.chain)} />}
+                  value={multisig.proxyAddress.encode()}
                   headlineText={
                     <div
                       css={{

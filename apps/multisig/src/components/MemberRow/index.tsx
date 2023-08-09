@@ -7,12 +7,7 @@ import { IconButton, Identicon } from '@talismn/ui'
 import { toSubscanUrl } from '@util/addresses'
 import truncateMiddle from 'truncate-middle'
 
-const MemberRow = (props: {
-  member: AugmentedAccount
-  chain: Chain | null
-  onDelete?: () => void
-  truncate?: boolean
-}) => {
+const MemberRow = (props: { member: AugmentedAccount; chain: Chain; onDelete?: () => void; truncate?: boolean }) => {
   const theme = useTheme()
   return (
     <div
@@ -33,7 +28,7 @@ const MemberRow = (props: {
           width: 24px;
           height: auto;
         `}
-        value={props.member.address}
+        value={props.member.address.toSs52(props.chain)}
       />
       {props.member.you ? (
         <>
@@ -56,7 +51,11 @@ const MemberRow = (props: {
         </>
       ) : (
         <>
-          <p>{props.truncate ? truncateMiddle(props.member.address, 19, 19, '...') : props.member.address}</p>
+          <p>
+            {props.truncate
+              ? truncateMiddle(props.member.address.toSs52(props.chain), 19, 19, '...')
+              : props.member.address.toSs52(props.chain)}
+          </p>
           {props.onDelete ? (
             <IconButton
               onClick={props.onDelete}

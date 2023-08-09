@@ -20,6 +20,7 @@ import { css } from '@emotion/css'
 import { useTheme } from '@emotion/react'
 import { Check, ChevronRight, Copy, List, Send, Settings, Share2, Unknown, Users } from '@talismn/icons'
 import { IconButton, Skeleton } from '@talismn/ui'
+import { Address } from '@util/addresses'
 import { balanceToFloat, formatUsd } from '@util/numbers'
 import { useEffect, useMemo, useState } from 'react'
 import AceEditor from 'react-ace'
@@ -58,12 +59,12 @@ const ChangeConfigExpandedDetails = ({ t }: { t: Transaction }) => {
       <div css={{ display: 'grid', gap: '8px', marginTop: '8px' }}>
         <p css={{ fontWeight: 'bold' }}>Current Signers</p>
         {multisig.signers.map(s => (
-          <MemberRow key={s} member={{ address: s }} chain={multisig.chain} />
+          <MemberRow key={s.encode()} member={{ address: s }} chain={multisig.chain} />
         ))}
         <p>Threshold: {multisig.threshold}</p>
         <p css={{ fontWeight: 'bold', marginTop: '8px' }}>Proposed New Signers</p>
         {t.decoded?.changeConfigDetails?.signers.map(s => (
-          <MemberRow key={s} member={{ address: s }} chain={multisig.chain} />
+          <MemberRow key={s.encode()} member={{ address: s }} chain={multisig.chain} />
         ))}
         <p>Threshold: {t.decoded?.changeConfigDetails?.threshold}</p>
       </div>
@@ -290,7 +291,7 @@ const TransactionDetailsExpandable = ({ t }: { t: Transaction }) => {
               margin-left: auto;
             `}
           >
-            <AddressPill address={recipients[0]?.address || ''} chain={t.chain} />
+            <AddressPill address={recipients[0]?.address as Address} chain={t.chain} />
           </div>
         ) : null}
         {/* Show the token amounts being sent in this transaction */}

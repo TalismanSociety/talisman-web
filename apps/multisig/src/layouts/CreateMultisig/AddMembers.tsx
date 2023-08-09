@@ -1,9 +1,10 @@
 import AddressInput from '@components/AddressInput'
 import MemberRow from '@components/MemberRow'
+import { Chain } from '@domains/chains'
 import { AugmentedAccount } from '@domains/multisig'
 import { css } from '@emotion/css'
 import { Button, TextInput } from '@talismn/ui'
-import { toSs52Address } from '@util/addresses'
+import { Address } from '@util/addresses'
 import { device } from '@util/breakpoints'
 import { useState } from 'react'
 import { toast } from 'react-hot-toast'
@@ -11,9 +12,10 @@ import { toast } from 'react-hot-toast'
 const AddMembers = (props: {
   onBack: () => void
   onNext: () => void
-  setExternalAccounts: React.Dispatch<React.SetStateAction<string[]>>
+  setExternalAccounts: React.Dispatch<React.SetStateAction<Address[]>>
   augmentedAccounts: AugmentedAccount[]
-  externalAccounts: string[]
+  externalAccounts: Address[]
+  chain: Chain
 }) => {
   const [newAddress, setNewAddress] = useState('')
   return (
@@ -46,26 +48,28 @@ const AddMembers = (props: {
         {props.augmentedAccounts.map(account => {
           return (
             <MemberRow
-              key={account.address}
-              chain={null}
+              key={account.address.encode()}
+              chain={props.chain}
               truncate={true}
               member={account}
               onDelete={() => {
-                props.setExternalAccounts(props.externalAccounts.filter(a => a !== account.address))
+                props.setExternalAccounts(props.externalAccounts.filter(a => !a.isEqual(account.address)))
               }}
             />
           )
         })}
       </div>
       <AddressInput
-        additionalValidation={(a: string) => {
-          if (props.augmentedAccounts.map(a => toSs52Address(a.address, null)).includes(a)) {
+        additionalValidation={(str: string) => {
+          const a = Address.fromSs58(str)
+          if (a === false) return false
+          if (props.augmentedAccounts.some(_a => _a.address.isEqual(a))) {
             toast.error('Duplicate address')
             return false
           }
           return true
         }}
-        onNewAddress={(a: string) => {
+        onNewAddress={(a: Address) => {
           props.setExternalAccounts([...props.externalAccounts, a])
         }}
         className={css`

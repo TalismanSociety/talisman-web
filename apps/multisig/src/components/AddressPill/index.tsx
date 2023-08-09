@@ -1,10 +1,11 @@
 import { Chain } from '@domains/chains'
 import { css } from '@emotion/css'
 import { Identicon } from '@talismn/ui'
-import { toSubscanUrl } from '@util/addresses'
+import { Address, toSubscanUrl } from '@util/addresses'
 import truncateMiddle from 'truncate-middle'
 
-const AddressPill = ({ address, chain }: { address: string; chain: Chain }) => {
+const AddressPill = ({ address, chain }: { address: Address; chain: Chain }) => {
+  const ss52Address = address.toSs52(chain)
   return (
     <a
       className={css`
@@ -22,8 +23,8 @@ const AddressPill = ({ address, chain }: { address: string; chain: Chain }) => {
       target="_blank"
       rel="noreferrer"
     >
-      <Identicon value={address} size={'16px'} />
-      <span css={{ marginTop: '3px' }}>{truncateMiddle(address, 5, 5, '...')}</span>
+      <Identicon value={ss52Address} size={'16px'} />
+      <span css={{ marginTop: '3px' }}>{truncateMiddle(ss52Address, 5, 5, '...')}</span>
     </a>
   )
 }

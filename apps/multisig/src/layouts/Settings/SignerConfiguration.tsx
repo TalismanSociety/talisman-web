@@ -13,7 +13,7 @@ import {
 import { css } from '@emotion/css'
 import { SubmittableExtrinsic } from '@polkadot/api/types'
 import { Button, FullScreenDialog } from '@talismn/ui'
-import { toMultisigAddress } from '@util/addresses'
+import { Address, toMultisigAddress } from '@util/addresses'
 import { useEffect, useMemo, useState } from 'react'
 import toast from 'react-hot-toast'
 import { useNavigate } from 'react-router-dom'
@@ -39,7 +39,7 @@ const ManageSignerConfiguration = () => {
         description: 'Change Signer Configuration',
         chain: selectedMultisig.chain,
         approvals: selectedMultisig.signers.reduce((acc, key) => {
-          acc[key] = false
+          acc[key.encode()] = false
           return acc
         }, {} as TransactionApprovals),
         decoded: {
@@ -100,12 +100,12 @@ const ManageSignerConfiguration = () => {
               {newMembers.map(m => (
                 <Member
                   chain={selectedMultisig.chain}
-                  key={m}
+                  key={m.encode()}
                   m={{ address: m }}
                   onDelete={
                     newMembers.length > 2
                       ? () => {
-                          setNewMembers(newMembers.filter(nm => nm !== m))
+                          setNewMembers(newMembers.filter(nm => !nm.isEqual(m)))
                         }
                       : undefined
                   }
@@ -115,7 +115,7 @@ const ManageSignerConfiguration = () => {
           </div>
           <AddressInput
             css={{ marginTop: '24px' }}
-            onNewAddress={(a: string) => {
+            onNewAddress={(a: Address) => {
               setNewMembers([...newMembers, a])
             }}
           />
@@ -205,10 +205,10 @@ const ManageSignerConfiguration = () => {
             }
             const newMultisigAddress = toMultisigAddress(newMembers, newThreshold)
             const batchCall = api.tx.utility.batchAll([
-              api.tx.proxy.addProxy(newMultisigAddress, 'Any', 0),
-              api.tx.proxy.removeProxy(selectedMultisig.multisigAddress, 'Any', 0),
+              api.tx.proxy.addProxy(newMultisigAddress.bytes, 'Any', 0),
+              api.tx.proxy.removeProxy(selectedMultisig.multisigAddress.bytes, 'Any', 0),
             ])
-            const proxyCall = api.tx.proxy.proxy(selectedMultisig.proxyAddress, undefined, batchCall)
+            const proxyCall = api.tx.proxy.proxy(selectedMultisig.proxyAddress.bytes, undefined, batchCall)
             setExtrinsic(proxyCall)
             setConfirmationDialogOpen(true)
           }}

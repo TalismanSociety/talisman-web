@@ -86,7 +86,7 @@ const AdvancedAction = (props: { onCancel: () => void }) => {
         description: name,
         chain: multisig.chain,
         approvals: multisig.signers.reduce((acc, key) => {
-          acc[key] = false
+          acc[key.encode()] = false
           return acc
         }, {} as TransactionApprovals),
         decoded: {

@@ -1,4 +1,6 @@
+import { Chain } from '@domains/chains'
 import { ChangeConfigDetails } from '@domains/multisig'
+import { Address } from '@util/addresses'
 import { gql, request } from 'graphql-request'
 
 import { METADATA_SERVICE_URL } from '.'
@@ -17,7 +19,12 @@ interface TxMetadataByPkResponseRaw {
   }[]
 }
 
-export async function getAllChangeAttempts(variables: GetAllChangeAttemptsVariables): Promise<ChangeConfigDetails[]> {
+export async function getAllChangeAttempts(multisig: Address, chain: Chain): Promise<ChangeConfigDetails[]> {
+  const variables: GetAllChangeAttemptsVariables = {
+    multisig: multisig.toSs52(chain),
+    chain: chain.id,
+  }
+
   const query = gql`
     query AllChangeConfigAttempts($multisig: String!, $chain: String!) {
       tx_metadata(
@@ -33,5 +40,14 @@ export async function getAllChangeAttempts(variables: GetAllChangeAttemptsVariab
     query,
     variables as Record<string, any>
   )) as TxMetadataByPkResponseRaw
-  return res.tx_metadata.map(tx => tx.change_config_details)
+  return res.tx_metadata.map(tx => {
+    return {
+      newThreshold: tx.change_config_details.newThreshold,
+      newMembers: tx.change_config_details.newMembers.map(m => {
+        const address = Address.fromSs58(m)
+        if (!address) throw new Error(`Invalid address returned from tx_metadata!`)
+        return address
+      }),
+    }
+  })
 }
