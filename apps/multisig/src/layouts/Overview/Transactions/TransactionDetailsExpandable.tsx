@@ -29,7 +29,7 @@ import { useRecoilState, useRecoilValue, useRecoilValueLoadable } from 'recoil'
 import truncateMiddle from 'truncate-middle'
 
 const AmountRow = ({ balance }: { balance: Balance }) => {
-  const price = useRecoilValueLoadable(tokenPriceState(balance.token.coingeckoId))
+  const price = useRecoilValueLoadable(tokenPriceState(balance.token))
   const balanceFloat = balanceToFloat(balance)
   return (
     <div
@@ -44,7 +44,7 @@ const AmountRow = ({ balance }: { balance: Balance }) => {
       <img css={{ height: '20px' }} src={balance.token.logo} alt="token logo" />
       <p css={{ fontSize: '18px', marginTop: '4px' }}>{balance.token.symbol}</p>
       {price.state === 'hasValue' ? (
-        <p css={{ fontSize: '18px', marginTop: '4px' }}>{`(${formatUsd(balanceFloat * price.contents)})`}</p>
+        <p css={{ fontSize: '18px', marginTop: '4px' }}>{`(${formatUsd(balanceFloat * price.contents.current)})`}</p>
       ) : (
         <Skeleton.Surface css={{ height: '14px', minWidth: '125px' }} />
       )}

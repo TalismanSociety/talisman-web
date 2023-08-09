@@ -21,13 +21,13 @@ const TransactionSummaryRow = ({
 }) => {
   const selectedMultisig = useRecoilValue(selectedMultisigState)
   const sumOutgoing: Balance[] = useMemo(() => calcSumOutgoing(t), [t])
-  const tokenPrices = useRecoilValueLoadable(tokenPricesState(sumOutgoing.map(b => b.token.coingeckoId)))
+  const tokenPrices = useRecoilValueLoadable(tokenPricesState(sumOutgoing.map(b => b.token)))
   const { threshold } = selectedMultisig
   const sumPriceUsd: number | undefined = useMemo(() => {
     if (tokenPrices.state === 'hasValue') {
       return sumOutgoing.reduce((acc, b) => {
-        const price = b.token.coingeckoId ? tokenPrices.contents[b.token.coingeckoId] || 0 : 0
-        return acc + balanceToFloat(b) * price
+        const price = b.token.coingeckoId ? tokenPrices.contents[b.token.coingeckoId] || { current: 0 } : { current: 0 }
+        return acc + balanceToFloat(b) * price.current
       }, 0)
     }
     return undefined

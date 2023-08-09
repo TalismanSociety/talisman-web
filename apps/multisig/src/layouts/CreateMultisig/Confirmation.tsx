@@ -1,5 +1,5 @@
 import MemberRow from '@components/MemberRow'
-import { Chain, Token, getInitialProxyBalance } from '@domains/chains'
+import { Chain, Price, Token, getInitialProxyBalance } from '@domains/chains'
 import { InjectedAccount } from '@domains/extension'
 import { AugmentedAccount, Balance } from '@domains/multisig'
 import { css } from '@emotion/css'
@@ -30,7 +30,7 @@ const Confirmation = (props: {
   threshold: number
   name: string
   chain: Chain
-  tokenWithPrice: Loadable<{ token: Token; price: number }>
+  tokenWithPrice: Loadable<{ token: Token; price: Price }>
   reserveAmount: Loadable<Balance>
   existentialDeposit: Loadable<Balance>
   estimatedFee: Balance | undefined
@@ -43,7 +43,7 @@ const Confirmation = (props: {
       <Cost
         amount={getInitialProxyBalance(existentialDeposit.contents)}
         symbol={tokenWithPrice.contents.token.symbol}
-        price={tokenWithPrice.contents.price}
+        price={tokenWithPrice.contents.price.current}
       />
     ) : (
       <Skeleton.Surface css={{ height: '14px', minWidth: '125px' }} />
@@ -54,7 +54,7 @@ const Confirmation = (props: {
       <Cost
         amount={reserveAmount.contents}
         symbol={tokenWithPrice.contents.token.symbol}
-        price={tokenWithPrice.contents.price}
+        price={tokenWithPrice.contents.price.current}
       />
     ) : (
       <Skeleton.Surface css={{ height: '14px', minWidth: '125px' }} />
@@ -62,7 +62,11 @@ const Confirmation = (props: {
 
   const feeAmountComponent =
     tokenWithPrice.state === 'hasValue' && estimatedFee ? (
-      <Cost amount={estimatedFee} symbol={tokenWithPrice.contents.token.symbol} price={tokenWithPrice.contents.price} />
+      <Cost
+        amount={estimatedFee}
+        symbol={tokenWithPrice.contents.token.symbol}
+        price={tokenWithPrice.contents.price.current}
+      />
     ) : (
       <Skeleton.Surface css={{ height: '14px', minWidth: '125px' }} />
     )

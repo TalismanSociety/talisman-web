@@ -4,22 +4,104 @@ import { graphql } from 'relay-runtime'
 
 import RelayEnvironment from '../../graphql/relay-environment'
 
+export type Price = {
+  current: number
+  averages?: {
+    ema30: number
+    ema7: number
+  }
+}
+
 // TODO: batch request all token prices we care about in the session in one request
 // (can include multiple ids)
 export const tokenPriceState = selectorFamily({
   key: 'TokenPrice',
-  get: (coingeckoId?: string) => async () => {
-    if (!coingeckoId) return 0
+  get: (token?: Token) => async (): Promise<Price> => {
+    if (!token || !token.coingeckoId) return { current: 0 }
+
+    const { coingeckoId, symbol } = token
+
+    const now = new Date()
+    const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
+
+    // get both in format YYYY-MM-DD
+    const nowString = now.toISOString().split('T')[0]
+    const thirtyDaysAgoString = thirtyDaysAgo.toISOString().split('T')[0]
+
     try {
-      const result = await fetch(
+      // always try to get from coingecko
+      const coingeckoPromise = fetch(
         `https://api.coingecko.com/api/v3/simple/price?ids=${coingeckoId}&vs_currencies=usd`
       ).then(x => x.json())
 
-      return result[coingeckoId].usd as number
-    } catch {
+      // if the token is DOT, we can also get moving average info from subscan
+      let subscanHistoryPromise: Promise<any> = Promise.reject().catch(() => {})
+      let subscanCurrentPricePromise: Promise<any> = Promise.reject().catch(() => {})
+      if (token.symbol === 'DOT') {
+        subscanCurrentPricePromise = fetch('https://polkadot.api.subscan.io/api/open/price', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            base: symbol,
+            quote: 'USD',
+            time: now.getTime(),
+          }),
+        }).then(x => x.json())
+        subscanHistoryPromise = fetch('https://polkadot.api.subscan.io/api/scan/price/history', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            start: thirtyDaysAgoString,
+            end: nowString,
+            currency: symbol,
+          }),
+        }).then(x => x.json())
+      }
+
+      const [cgCurrentPrice, ssCurrentPrice, ssHistorical] = await Promise.allSettled([
+        coingeckoPromise,
+        subscanCurrentPricePromise,
+        subscanHistoryPromise,
+      ])
+
+      // if all are fufilled, we should be able to get the emas
+      if (
+        cgCurrentPrice.status === 'fulfilled' &&
+        ssCurrentPrice.status === 'fulfilled' &&
+        ssHistorical.status === 'fulfilled'
+      ) {
+        const coingeckoCurPrice = cgCurrentPrice.value[coingeckoId].usd as number
+        const subscanCurPrice = ssCurrentPrice.value.data.price as number
+        // sanity check that the prices are close (in case subscan is giving us info for the wrong token)
+        if (Math.abs(coingeckoCurPrice - subscanCurPrice) / coingeckoCurPrice > 0.1) {
+          console.log('coingecko and subscan prices are too different')
+          return { current: coingeckoCurPrice }
+        }
+
+        const ema30 = ssHistorical.value.data.ema30_average as number
+        const ema7 = ssHistorical.value.data.ema7_average as number
+        return {
+          current: coingeckoCurPrice,
+          averages: {
+            ema30,
+            ema7,
+          },
+        }
+      }
+
+      if (cgCurrentPrice.status === 'fulfilled') {
+        return { current: cgCurrentPrice.value[coingeckoId].usd as number }
+      }
+
+      return { current: 0 }
+    } catch (e) {
       // Coingecko has rate limit, better to return 0 than to crash the session
       // TODO: find alternative or purchase Coingecko subscription
-      return 0
+      return { current: 0 }
     }
   },
 })
@@ -27,19 +109,19 @@ export const tokenPriceState = selectorFamily({
 export const tokenPricesState = selectorFamily({
   key: 'TokenPrices',
   get:
-    (coingeckoIds: (string | undefined)[]) =>
+    (tokens: (Token | undefined)[]) =>
     async ({ get }) => {
-      const res: { [key: string]: number } = {}
-      coingeckoIds.forEach(id => {
-        if (id === undefined) return
-        let price = get(tokenPriceState(id))
-        res[id] = price
+      const res: { [key: string]: Price } = {}
+      tokens.forEach(t => {
+        if (t?.coingeckoId === undefined) return
+        let price = get(tokenPriceState(t))
+        res[t.coingeckoId] = price
       })
       return res
     },
 })
 
-export interface Token {
+export type Token = {
   id: string
   coingeckoId?: string
   logo: string
@@ -69,10 +151,10 @@ export const tokenByIdWithPrice = selectorFamily({
   key: 'TokenByIdWithPrice',
   get:
     id =>
-    async ({ get }) => {
+    async ({ get }): Promise<{ token: Token; price: Price }> => {
       const token = get(tokenByIdQuery(id))
-      if (!token.coingeckoId) return { token, price: 0 }
-      const price = get(tokenPriceState(token.coingeckoId))
+      if (!token.coingeckoId) return { token, price: { current: 0 } }
+      const price = get(tokenPriceState(token))
       return { token, price }
     },
 })

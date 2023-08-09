@@ -1,30 +1,30 @@
 import { Chain } from '.'
 
 export const supportedChains: Chain[] = [
-  // {
-  //   id: 'polkadot',
-  //   chainName: 'Polkadot',
-  //   logo: 'https://raw.githubusercontent.com/TalismanSociety/chaindata/v3/assets/chains/polkadot.svg',
-  //   isTestnet: false,
-  //   nativeToken: {
-  //     id: 'polkadot-substrate-native-dot',
-  //   },
-  //   rpc: 'wss://rpc.polkadot.io',
-  //   decimals: 10,
-  //   ss58Prefix: 0,
-  // },
-  // {
-  //   id: 'kusama',
-  //   chainName: 'Kusama',
-  //   logo: 'https://raw.githubusercontent.com/TalismanSociety/chaindata/v3/assets/chains/kusama.svg',
-  //   isTestnet: false,
-  //   nativeToken: {
-  //     id: 'kusama-substrate-native-ksm',
-  //   },
-  //   rpc: 'wss://kusama-rpc.polkadot.io',
-  //   decimals: 12,
-  //   ss58Prefix: 2,
-  // },
+  {
+    id: 'polkadot',
+    chainName: 'Polkadot',
+    logo: 'https://raw.githubusercontent.com/TalismanSociety/chaindata/v3/assets/chains/polkadot.svg',
+    isTestnet: false,
+    nativeToken: {
+      id: 'polkadot-substrate-native-dot',
+    },
+    rpc: 'wss://rpc.polkadot.io',
+    decimals: 10,
+    ss58Prefix: 0,
+  },
+  {
+    id: 'kusama',
+    chainName: 'Kusama',
+    logo: 'https://raw.githubusercontent.com/TalismanSociety/chaindata/v3/assets/chains/kusama.svg',
+    isTestnet: false,
+    nativeToken: {
+      id: 'kusama-substrate-native-ksm',
+    },
+    rpc: 'wss://kusama-rpc.polkadot.io',
+    decimals: 12,
+    ss58Prefix: 2,
+  },
   {
     id: 'westend-testnet',
     chainName: 'Westend',

@@ -119,7 +119,7 @@ export const FullScreenDialogContents = ({
   const [cancelInFlight, setCancelInFlight] = useState(false)
   const [approveInFlight, setApproveInFlight] = useState(false)
   const extensionAccounts = useRecoilValue(accountsState)
-  const feeTokenPrice = useRecoilValueLoadable(tokenPriceState(fee?.token?.coingeckoId || ''))
+  const feeTokenPrice = useRecoilValueLoadable(tokenPriceState(fee?.token))
   const { transactions: pendingTransactions, loading: pendingLoading } = usePendingTransactions()
 
   // Check if the user has an account connected which can approve the transaction
@@ -136,12 +136,15 @@ export const FullScreenDialogContents = ({
     if (!connectedAccountCanApprove) return null
     if (feeTokenPrice.state === 'loading' || !fee) {
       return <Skeleton.Surface css={{ width: '150px', height: '16px' }} />
+    } else if (feeTokenPrice.state === 'hasValue') {
+      return (
+        <p>{`${balanceToFloat(fee)} ${fee?.token.symbol} (${formatUsd(
+          balanceToFloat(fee) * feeTokenPrice.contents.current
+        )})`}</p>
+      )
+    } else {
+      return <p>Error loading fee</p>
     }
-    return (
-      <p>{`${balanceToFloat(fee)} ${fee?.token.symbol} (${formatUsd(
-        balanceToFloat(fee) * feeTokenPrice.contents
-      )})`}</p>
-    )
   }, [feeTokenPrice, fee, connectedAccountCanApprove])
 
   if (!t) return null

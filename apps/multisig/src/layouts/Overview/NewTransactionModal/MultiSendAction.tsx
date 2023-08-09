@@ -1,5 +1,6 @@
 import AddressPill from '@components/AddressPill'
-import { Token, useApproveAsMulti } from '@domains/chains'
+import { AmountFlexibleInput } from '@components/AmountFlexibleInput'
+import { Token, tokenPriceState, useApproveAsMulti } from '@domains/chains'
 import { pjsApiSelector } from '@domains/chains/pjs-api'
 import {
   Transaction,
@@ -12,7 +13,7 @@ import {
 import { css } from '@emotion/css'
 import { SubmittableExtrinsic } from '@polkadot/api/types'
 import { Plus, Send, Trash } from '@talismn/icons'
-import { Button, FullScreenDialog, Select, TextInput } from '@talismn/ui'
+import { Button, FullScreenDialog, TextInput } from '@talismn/ui'
 import { Address } from '@util/addresses'
 import BN from 'bn.js'
 import Decimal from 'decimal.js'
@@ -47,6 +48,7 @@ const DetailsForm = (props: {
   const [amount, setAmount] = useState('')
   const [destinationInput, setDestinationInput] = useState('')
   const [selectedToken, setSelectedToken] = useState<Token | undefined>()
+  const tokenPrices = useRecoilValueLoadable(tokenPriceState(selectedToken))
 
   useEffect(() => {
     if (!selectedToken && props.tokens.state === 'hasValue' && props.tokens.contents.length > 0) {
@@ -73,9 +75,12 @@ const DetailsForm = (props: {
               <Send size={18} css={{ marginTop: '2px' }} />
               <AddressPill address={send.address} chain={selectedMultisig.chain} />
               <div css={{ display: 'flex', gap: '8px', marginLeft: 'auto' }}>
-                <p>{send.amount}</p>
+                <p>{Number(send.amount).toFixed(4)}</p>
                 <img src={send.token.logo} alt={send.token.symbol} css={{ height: '18px' }} />
                 <p>{send.token.symbol}</p>
+                {tokenPrices.state === 'hasValue' && (
+                  <p>({(tokenPrices.contents.current * parseFloat(send.amount)).toFixed(2)} USD)</p>
+                )}
                 <Trash
                   css={{ cursor: 'pointer' }}
                   onClick={() => {
@@ -96,97 +101,17 @@ const DetailsForm = (props: {
           color: var(--color-offWhite);
         `}
       >
-        <div css={{ display: 'flex', width: '100%', gap: '12px' }}>
-          <div
-            className={css`
-              display: 'flex';
-              flex-grow: 1;
-              align-items: center;
-            `}
-          >
-            <TextInput
-              className={css`
-                font-size: 18px !important;
-              `}
-              placeholder={`0 ${selectedToken?.symbol}`}
-              leadingLabel={'Amount to send'}
-              value={amount}
-              onChange={event => {
-                if (!selectedToken) return
-
-                // Create a dynamic regular expression.
-                // This regex will:
-                // - Match any string of up to `digits` count of digits, optionally separated by a decimal point.
-                // - The total count of digits, either side of the decimal point, can't exceed `digits`.
-                // - It will also match an empty string, making it a valid input.
-                const digits = selectedToken.decimals
-                let regex = new RegExp(
-                  '^(?:(\\d{1,' +
-                    digits +
-                    '})|(\\d{0,' +
-                    (digits - 1) +
-                    '}\\.\\d{1,' +
-                    (digits - 1) +
-                    '})|(\\d{1,' +
-                    (digits - 1) +
-                    '}\\.\\d{0,' +
-                    (digits - 1) +
-                    '})|^$)$'
-                )
-                if (regex.test(event.target.value)) {
-                  setAmount(event.target.value)
-                }
-              }}
-            />
-          </div>
-          <div
-            className={css`
-              display: flex;
-              height: 100%;
-              align-items: center;
-              justify-content: center;
-              height: 95.5px;
-              button {
-                height: 51.5px;
-                gap: 8px;
-                div {
-                  margin-top: 2px;
-                }
-                svg {
-                  display: none;
-                }
-              }
-            `}
-          >
-            <Select placeholder="Select token" value={selectedToken?.id} {...props}>
-              {props.tokens.state === 'hasValue'
-                ? props.tokens.contents.map(t => {
-                    return (
-                      <Select.Item
-                        key={t.id}
-                        value={t.id}
-                        leadingIcon={
-                          <div
-                            className={css`
-                              width: 24px;
-                              height: auto;
-                            `}
-                          >
-                            <img src={t.logo} alt={t.symbol} />
-                          </div>
-                        }
-                        headlineText={t.symbol}
-                      />
-                    )
-                  })
-                : []}
-            </Select>
-          </div>
-        </div>
+        <AmountFlexibleInput
+          tokens={props.tokens.state === 'hasValue' ? props.tokens.contents : []}
+          selectedToken={selectedToken}
+          setSelectedToken={setSelectedToken}
+          amount={amount}
+          setAmount={setAmount}
+        />
       </div>
       <div
         className={css`
-          margin-top: 32px;
+          margin-top: 64px;
           width: 490px;
           height: 56px;
           color: var(--color-offWhite);

@@ -1,0 +1,199 @@
+import { Token, tokenPriceState } from '@domains/chains'
+import { css } from '@emotion/css'
+import { Select, TextInput } from '@talismn/ui'
+import { useEffect, useMemo, useState } from 'react'
+import { useRecoilValueLoadable } from 'recoil'
+
+enum AmountUnit {
+  Token,
+  UsdMarket,
+  Usd7DayEma,
+  Usd30DayEma,
+}
+
+export const AmountFlexibleInput = (props: {
+  tokens: Token[]
+  selectedToken: Token | undefined
+  amount: string
+  setAmount: (a: string) => void
+  setSelectedToken: (t: Token) => void
+}) => {
+  const [input, setInput] = useState<string>('')
+  const [amountUnit, setAmountUnit] = useState<AmountUnit>(AmountUnit.Token)
+  const tokenPrices = useRecoilValueLoadable(tokenPriceState(props.selectedToken))
+
+  const calculatedTokenAmount = useMemo((): string | undefined => {
+    if (amountUnit === AmountUnit.Token) {
+      return input
+    }
+
+    if (tokenPrices.state === 'hasValue') {
+      if (amountUnit === AmountUnit.UsdMarket) {
+        return (parseFloat(input) / tokenPrices.contents.current).toString()
+      } else if (amountUnit === AmountUnit.Usd7DayEma) {
+        if (!tokenPrices.contents.averages?.ema7) throw Error('Unexpected missing ema7!')
+        return (parseFloat(input) / tokenPrices.contents.averages.ema7).toString()
+      } else if (amountUnit === AmountUnit.Usd30DayEma) {
+        if (!tokenPrices.contents.averages?.ema30) throw Error('Unexpected missing ema30!')
+        return (parseFloat(input) / tokenPrices.contents.averages.ema30).toString()
+      }
+      throw Error('Unexpected amount unit')
+    }
+
+    return '0'
+  }, [amountUnit, input, tokenPrices])
+
+  useEffect(() => {
+    if (calculatedTokenAmount) {
+      props.setAmount(calculatedTokenAmount)
+    }
+  }, [calculatedTokenAmount, props])
+
+  const unit = useMemo(() => {
+    if (amountUnit === AmountUnit.Token) {
+      return props.selectedToken?.symbol
+    } else {
+      return 'USD'
+    }
+  }, [amountUnit, props.selectedToken])
+
+  return (
+    <div css={{ display: 'flex', width: '100%', gap: '12px' }}>
+      <div
+        className={css`
+          display: 'flex';
+          flex-grow: 1;
+          align-items: center;
+        `}
+      >
+        <TextInput
+          className={css`
+            font-size: 18px !important;
+          `}
+          placeholder={`0 ${unit}`}
+          leadingLabel={`Amount to send`}
+          trailingLabel={
+            calculatedTokenAmount && calculatedTokenAmount !== 'NaN' && amountUnit !== AmountUnit.Token
+              ? `Amount in ${props.selectedToken?.symbol}: ${calculatedTokenAmount}`
+              : ''
+          }
+          leadingSupportingText={
+            tokenPrices.state === 'hasValue' && tokenPrices.contents.averages ? (
+              <div
+                className={css`
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  p {
+                    font-size: 11px;
+                    cursor: pointer;
+                  }
+                `}
+              >
+                <div>Input Unit:</div>
+                <div>&nbsp;</div>
+                <p
+                  onClick={() => setAmountUnit(AmountUnit.Token)}
+                  css={{ fontWeight: amountUnit === AmountUnit.Token ? 'bold' : 'normal' }}
+                >
+                  Tokens
+                </p>
+                <div>&nbsp;{'|'}&nbsp;</div>
+                <p
+                  onClick={() => setAmountUnit(AmountUnit.UsdMarket)}
+                  css={{ fontWeight: amountUnit === AmountUnit.UsdMarket ? 'bold' : 'normal' }}
+                >
+                  Market (USD)
+                </p>
+                <div>&nbsp;{'|'}&nbsp;</div>
+                <p
+                  onClick={() => setAmountUnit(AmountUnit.Usd7DayEma)}
+                  css={{ fontWeight: amountUnit === AmountUnit.Usd7DayEma ? 'bold' : 'normal' }}
+                >
+                  7D EMA (USD)
+                </p>
+                <div>&nbsp;{'|'}&nbsp;</div>
+                <p
+                  onClick={() => setAmountUnit(AmountUnit.Usd30DayEma)}
+                  css={{ fontWeight: amountUnit === AmountUnit.Usd30DayEma ? 'bold' : 'normal' }}
+                >
+                  30D EMA (USD)
+                </p>
+              </div>
+            ) : (
+              ''
+            )
+          }
+          value={input}
+          onChange={event => {
+            if (!props.selectedToken) return
+
+            // Create a dynamic regular expression.
+            // This regex will:
+            // - Match any string of up to `digits` count of digits, optionally separated by a decimal point.
+            // - The total count of digits, either side of the decimal point, can't exceed `digits`.
+            // - It will also match an empty string, making it a valid input.
+            const digits = props.selectedToken.decimals
+            let regex = new RegExp(
+              '^(?:(\\d{1,' +
+                digits +
+                '})|(\\d{0,' +
+                (digits - 1) +
+                '}\\.\\d{1,' +
+                (digits - 1) +
+                '})|(\\d{1,' +
+                (digits - 1) +
+                '}\\.\\d{0,' +
+                (digits - 1) +
+                '})|^$)$'
+            )
+            if (regex.test(event.target.value)) {
+              setInput(event.target.value)
+            }
+          }}
+        />
+      </div>
+      <div
+        className={css`
+          display: flex;
+          height: 100%;
+          align-items: center;
+          justify-content: center;
+          height: 95.5px;
+          button {
+            height: 51.5px;
+            gap: 8px;
+            div {
+              margin-top: 2px;
+            }
+            svg {
+              display: none;
+            }
+          }
+        `}
+      >
+        <Select placeholder="Select token" value={props.selectedToken?.id} {...props}>
+          {props.tokens.map(t => {
+            return (
+              <Select.Item
+                key={t.id}
+                value={t.id}
+                leadingIcon={
+                  <div
+                    className={css`
+                      width: 24px;
+                      height: auto;
+                    `}
+                  >
+                    <img src={t.logo} alt={t.symbol} />
+                  </div>
+                }
+                headlineText={t.symbol}
+              />
+            )
+          })}
+        </Select>
+      </div>
+    </div>
+  )
+}

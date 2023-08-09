@@ -210,7 +210,7 @@ export const extrinsicToDecoded = (
       if (obj?.section === 'utility' && obj?.method?.startsWith('batch')) {
         const recipients: (TransactionRecipient | null)[] = obj.args.calls.map((call: any) => {
           if (call.section === 'balances' && call.method?.startsWith('transfer')) {
-            const destString = obj.args.dest.Id
+            const destString = call.args.dest.Id
             const dest = Address.fromSs58(destString)
             if (!dest) throw Error('Chain returned invalid SS58 address for transfer destination')
             return {
