@@ -4,7 +4,6 @@ import assetRoutes from './assets'
 import Collectibles from './collectibles'
 import Layout from './layout'
 import Overview from './overview'
-import TransactionHistory from './transactionHistory'
 
 const routes = {
   element: (
@@ -18,10 +17,6 @@ const routes = {
     {
       path: 'collectibles',
       element: <Collectibles />,
-    },
-    {
-      path: 'history',
-      element: <TransactionHistory />,
     },
   ],
 } satisfies RouteObject

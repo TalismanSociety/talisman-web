@@ -25,7 +25,7 @@ export default Sentry.wrapCreateBrowserRouter(createBrowserRouter)([
         path: 'crowdloans',
         ...crowdloanRoutes,
       },
-      { path: 'history', element: <Navigate to="/portfolio/history" /> },
+      { path: 'history', element: <History /> },
       { path: 'nfts', element: <Navigate to="/portfolio/collectibles" /> },
       { path: 'staking', element: <Staking /> },
     ],
