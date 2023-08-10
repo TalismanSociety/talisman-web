@@ -2,8 +2,7 @@ import { tryParseSubstrateOrEthereumAddress } from '@util/addressValidation'
 import { isNilOrWhitespace } from '@util/nil'
 import { useCallback, useMemo, useState } from 'react'
 import { useRecoilValue, useSetRecoilState } from 'recoil'
-
-import { type ReadonlyAccount, readOnlyAccountsState } from './recoils'
+import { readOnlyAccountsState, type ReadonlyAccount } from './recoils'
 
 export const useSetReadonlyAccounts = () => {
   const setReadonlyAccounts = useSetRecoilState(readOnlyAccountsState)
@@ -67,6 +66,10 @@ export const useAddReadonlyAccountForm = () => {
     resultingAddress,
     confirmState,
     error,
-    submit: useCallback(() => add({ address, name }), [add, address, name]),
+    submit: useCallback(() => {
+      if (resultingAddress !== undefined) {
+        add({ address: resultingAddress, name })
+      }
+    }, [add, name, resultingAddress]),
   }
 }
