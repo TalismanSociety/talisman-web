@@ -8,6 +8,7 @@ import { Button, IconButton, Identicon, Select } from '@talismn/ui'
 import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useRecoilState, useRecoilValue } from 'recoil'
+import truncateMiddle from 'truncate-middle'
 
 const Header = () => {
   const theme = useTheme()
@@ -162,7 +163,7 @@ const Header = () => {
                   `}
                 >
                   <div css={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-                    <p>{selectedMultisig.name}</p>
+                    <p>{truncateMiddle(selectedMultisig.name, 24, 0, '...')}</p>
                     <img
                       css={{ marginBottom: '2px' }}
                       height={16}
@@ -212,7 +213,7 @@ const Header = () => {
                         color: 'var(--color-foreground)',
                       }}
                     >
-                      <p>{multisig.name}</p>
+                      <p>{truncateMiddle(multisig.name, 12, 0, '...')}</p>
                     </div>
                   }
                   supportingText={

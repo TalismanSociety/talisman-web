@@ -326,7 +326,7 @@ const CreateMultisig = () => {
 
               // we're good! import
               const path = createImportPath(
-                proxyAddressInput,
+                name,
                 augmentedAccounts.map(a => a.address),
                 threshold,
                 proxyAddress,
