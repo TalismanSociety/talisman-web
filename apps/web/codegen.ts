@@ -2,7 +2,7 @@ import type { CodegenConfig } from '@graphql-codegen/cli'
 
 const config: CodegenConfig = {
   overwrite: true,
-  schema: 'http://localhost:4350/graphql',
+  schema: process.env.REACT_APP_EX_HISTORY_INDEXER,
   documents: 'src/routes/history.tsx',
   generates: {
     'generated/gql/extrinsicHistory/gql/': {

@@ -21,11 +21,12 @@ export type TransactionLineItemProps = {
   timestamp: Date
   subscanUrl?: string
   chainLogo?: string
+  onClick?: () => unknown
 }
 
 const WIDE_CONTAINER_QUERY = '@container(min-width: 70rem)'
 
-const Grid = (props: PropsWithChildren) => (
+const Grid = (props: PropsWithChildren<{ className?: string }>) => (
   <div
     css={{
       display: 'grid',
@@ -51,7 +52,10 @@ const TransactionLineItem = (props: TransactionLineItemProps) => {
   const IdText = props.subscanUrl !== undefined ? Text.Body.A : Text.Body
 
   return (
-    <div css={{ containerType: 'inline-size' }}>
+    <div
+      css={{ containerType: 'inline-size', cursor: props.onClick !== undefined ? 'pointer' : undefined }}
+      onClick={props.onClick}
+    >
       <Grid>
         <IdText
           alpha="high"
@@ -158,7 +162,7 @@ export const TransactionList = <T,>(props: TransactionListProps<T>) => {
   return (
     <section>
       <div css={{ containerType: 'inline-size' }}>
-        <Grid>
+        <Grid css={{ display: 'none', [WIDE_CONTAINER_QUERY]: { display: 'grid' } }}>
           <Identicon value="spacer" css={{ gridArea: 'identicon', visibility: 'hidden' }} />
           <Text.BodyLarge css={{ gridArea: 'account' }}>Signer</Text.BodyLarge>
           <Text.BodyLarge css={{ gridArea: 'type' }}>Module</Text.BodyLarge>

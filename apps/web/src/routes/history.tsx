@@ -1,38 +1,35 @@
-import TransactionLineItem, {
-  TransactionList,
-  type TransactionLineItemProps,
-} from '@components/recipes/TransactionLineItem'
-import { accountsState, selectedAccountsState } from '@domains/accounts'
-import { ArrowRight, CheckCircle } from '@talismn/icons'
-import { DescriptionList, SideSheet, Surface, Text, SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR, Identicon } from '@talismn/ui'
+import {
+  ExtrinsicDetailsSideSheet,
+  type ExtrinsicDetailsSideSheetProps,
+} from '@components/recipes/ExtrinsicDetailsSideSheet'
+import TransactionLineItem, { TransactionList } from '@components/recipes/TransactionLineItem'
+import { accountsState, selectedAccountsState, type Account } from '@domains/accounts'
+import { CircularProgressIndicator, Text } from '@talismn/ui'
 import { encodeAnyAddress } from '@talismn/util'
-import { shortenAddress } from '@util/format'
 import { Maybe } from '@util/monads'
 import request from 'graphql-request'
 import { isNil } from 'lodash'
-import { useEffect, useMemo, useState } from 'react'
-import { ObjectView } from 'react-object-view'
+import { useCallback, useMemo, useState } from 'react'
+import InfiniteScroll from 'react-infinite-scroller'
 import { useRecoilValue } from 'recoil'
 import { graphql } from '../../generated/gql/extrinsicHistory/gql'
+import type { ExtrinsicsQuery } from '../../generated/gql/extrinsicHistory/gql/graphql'
 
-const History = () => {
+type HistoryResultProps = {
+  accounts: Account[]
+}
+
+// TODO: lots of repetitive account look up using `encodeAnyAddress`
+
+const HistoryResult = (props: HistoryResultProps) => {
+  type ExtrinsicNode = ExtrinsicsQuery['extrinsics']['edges'][number]['node']
+
   const accounts = useRecoilValue(accountsState)
-  const selectedAccounts = useRecoilValue(selectedAccountsState)
-  const selectedAccountAddresses = useMemo(
-    () => selectedAccounts.map(x => encodeAnyAddress(x.address)),
-    [selectedAccounts]
-  )
 
-  const [items, setItems] = useState<TransactionLineItemProps[]>([])
+  const [items, setItems] = useState<ExtrinsicNode[]>([])
+  const [viewingItem, setViewingItem] = useState<Omit<ExtrinsicDetailsSideSheetProps, 'onRequestDismiss'>>()
 
-  const generatorKey = useMemo(
-    () =>
-      selectedAccounts
-        .map(x => x.address)
-        .sort()
-        .join(),
-    [selectedAccounts]
-  )
+  const [hasNextPage, setHasNextPage] = useState(true)
 
   const generator = useMemo(
     () =>
@@ -40,9 +37,11 @@ const History = () => {
         let after: string | undefined
         let hasNextPage = true
 
+        let items: ExtrinsicNode[] = []
+
         while (hasNextPage) {
           const response = await request(
-            'http://localhost:4350/graphql',
+            import.meta.env.REACT_APP_EX_HISTORY_INDEXER,
             graphql(`
               query extrinsics($after: String, $first: Int!, $addresses: [String!]!) {
                 extrinsics(after: $after, first: $first, where: { addressIn: $addresses }) {
@@ -105,7 +104,7 @@ const History = () => {
                 }
               }
             `),
-            { after, first: 25, addresses: selectedAccounts.map(x => x.address) }
+            { after, first: 10, addresses: props.accounts.map(x => x.address) }
           )
 
           hasNextPage = response.extrinsics.pageInfo.hasNextPage
@@ -115,200 +114,156 @@ const History = () => {
             after = endCursor
           }
 
-          const newItems = response.extrinsics.edges
-            .map(edge => edge.node)
-            .map(extrinsic => {
-              const [module, call] = extrinsic.call.name.split('.')
-              const totalAmountOfInterest = [...extrinsic.transfers.edges, ...extrinsic.rewards.edges]
-                .map(x => x.node)
-                .filter(
-                  x =>
-                    selectedAccountAddresses.includes(encodeAnyAddress(x.debit)) ||
-                    (x.credit !== 'reserve' && selectedAccountAddresses.includes(encodeAnyAddress(x.credit)))
-                )
-                .reduce((prev, curr) => prev + parseFloat(curr.amount.value), 0)
+          items = [...items, ...response.extrinsics.edges.map(edge => edge.node)]
 
-              const transfer =
-                totalAmountOfInterest === 0
-                  ? undefined
-                  : {
-                      amount: totalAmountOfInterest.toLocaleString(undefined, { maximumFractionDigits: 4 }),
-                      symbol:
-                        extrinsic.transfers.edges.at(0)?.node.amount.symbol ??
-                        extrinsic.rewards.edges.at(0)?.node.amount.symbol,
-                    }
-
-              return {
-                id: extrinsic.subscanLink?.id,
-                signer: Maybe.of(extrinsic.signer).mapOrUndefined(signer => ({
-                  address: signer,
-                  name: accounts.find(account => encodeAnyAddress(account.address) === encodeAnyAddress(signer))?.name,
-                })),
-                module,
-                call,
-                transfer,
-                fee: isNil(extrinsic.fee)
-                  ? undefined
-                  : {
-                      amount: Number(extrinsic.fee.value).toLocaleString(undefined, { maximumFractionDigits: 4 }),
-                      symbol: extrinsic.fee.symbol,
-                    },
-                timestamp: new Date(extrinsic.block.timestamp),
-                subscanUrl: extrinsic.subscanLink?.url,
-                chainLogo: extrinsic.chain.logo,
-              }
-            })
-
-          setItems(items => [...items, ...newItems])
-
-          yield
+          yield items
         }
       })(),
-    [generatorKey]
+    [props.accounts]
   )
 
-  const sortedItems = useMemo(() => items.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime()), [items])
+  const loadMore = useCallback(async () => {
+    const next = await generator.next()
 
-  useEffect(() => {
-    console.log('fetch')
-    setItems([])
-    void (async () => {
-      await generator.next()
-      await generator.next()
-      await generator.next()
-    })()
+    if (!next.done) {
+      setItems(next.value)
+    } else {
+      setHasNextPage(false)
+    }
   }, [generator])
 
-  console.log(items)
+  return (
+    <div>
+      <InfiniteScroll
+        loadMore={() => {
+          void loadMore()
+        }}
+        hasMore={hasNextPage}
+        loader={
+          <div
+            css={{
+              textAlign: 'center',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              gap: '0.25em',
+              marginTop: '0.8rem',
+            }}
+          >
+            <Text.BodyLarge as="div" css={{ textAlign: 'center', display: 'flex', alignItems: 'center' }}>
+              Searching the Paraverse
+            </Text.BodyLarge>{' '}
+            <CircularProgressIndicator size="1em" />
+          </div>
+        }
+      >
+        <TransactionList
+          data={items}
+          renderItem={extrinsic => {
+            const [module, call] = extrinsic.call.name.split('.')
+            const encodedAddresses = props.accounts.map(x => encodeAnyAddress(x.address))
+            const totalAmountOfInterest = [...extrinsic.transfers.edges, ...extrinsic.rewards.edges]
+              .map(x => x.node)
+              .filter(
+                x =>
+                  encodedAddresses.includes(encodeAnyAddress(x.debit)) ||
+                  (x.credit !== 'reserve' && encodedAddresses.includes(encodeAnyAddress(x.credit)))
+              )
+              .reduce((prev, curr) => prev + parseFloat(curr.amount.value), 0)
+
+            const signer = Maybe.of(extrinsic.signer).mapOrUndefined(signer => ({
+              address: signer,
+              name: accounts.find(account => encodeAnyAddress(account.address) === encodeAnyAddress(signer))?.name,
+            }))
+
+            const transfer =
+              totalAmountOfInterest === 0
+                ? undefined
+                : {
+                    amount: totalAmountOfInterest.toLocaleString(undefined, { maximumFractionDigits: 4 }),
+                    symbol:
+                      extrinsic.transfers.edges.at(0)?.node.amount.symbol ??
+                      extrinsic.rewards.edges.at(0)?.node.amount.symbol ??
+                      '',
+                  }
+
+            return (
+              <TransactionLineItem
+                id={extrinsic.subscanLink?.id ?? ''}
+                signer={signer}
+                module={module ?? ''}
+                call={call ?? ''}
+                transfer={transfer}
+                fee={
+                  isNil(extrinsic.fee)
+                    ? undefined
+                    : {
+                        amount: Number(extrinsic.fee.value).toLocaleString(undefined, { maximumFractionDigits: 4 }),
+                        symbol: extrinsic.fee.symbol ?? '',
+                      }
+                }
+                timestamp={new Date(extrinsic.block.timestamp)}
+                subscanUrl={extrinsic.subscanLink?.url}
+                chainLogo={extrinsic.chain.logo ?? undefined}
+                onClick={() =>
+                  setViewingItem({
+                    id: extrinsic.subscanLink?.id ?? '',
+                    subscanUrl: extrinsic.subscanLink?.url,
+                    blockHeight: extrinsic.block.height,
+                    hash: extrinsic.hash,
+                    module: module ?? '',
+                    call: call ?? '',
+                    signer,
+                    date: new Date(extrinsic.block.timestamp),
+                    success: extrinsic.success,
+                    arguments: extrinsic.call.args,
+                    transfers: extrinsic.transfers.edges
+                      .map(x => x.node)
+                      .map(({ debit, credit, amount }) => ({
+                        debit: {
+                          address: debit,
+                          name: accounts.find(x => encodeAnyAddress(x.address) === encodeAnyAddress(debit))?.name,
+                        },
+                        credit: {
+                          address: credit,
+                          name: accounts.find(x => encodeAnyAddress(x.address) === encodeAnyAddress(credit))?.name,
+                        },
+                        amount: `${parseFloat(amount.value)} ${amount.symbol ?? ''}`,
+                      })),
+                    rewards: extrinsic.rewards.edges
+                      .map(x => x.node)
+                      .map(({ debit, amount }) => ({
+                        debit: {
+                          address: debit,
+                          name: accounts.find(x => encodeAnyAddress(x.address) === encodeAnyAddress(debit))?.name,
+                        },
+                        amount: `${parseFloat(amount.value)} ${amount.symbol ?? ''}`,
+                      })),
+                  })
+                }
+              />
+            )
+          }}
+          keyExtractor={(_, index) => index.toString()}
+        />
+      </InfiniteScroll>
+      {viewingItem && <ExtrinsicDetailsSideSheet {...viewingItem} onRequestDismiss={() => setViewingItem(undefined)} />}
+    </div>
+  )
+}
+
+const History = () => {
+  const selectedAccounts = useRecoilValue(selectedAccountsState)
+
+  // To invalidate page after query changes
+  const key = useMemo(() => selectedAccounts.map(x => x.address).join(), [selectedAccounts])
 
   return (
     <section>
       <header>
         <Text.H2>Transaction history</Text.H2>
       </header>
-      <TransactionList
-        data={sortedItems}
-        renderItem={props => <TransactionLineItem {...props} />}
-        keyExtractor={(_, index) => index.toString()}
-      />
-      <SideSheet open={false} title="Extrinsic details">
-        <DescriptionList>
-          <DescriptionList.Description>
-            <DescriptionList.Term>Extrinsic ID</DescriptionList.Term>
-            <DescriptionList.Details>16682150-7</DescriptionList.Details>
-          </DescriptionList.Description>
-          <DescriptionList.Description>
-            <DescriptionList.Term>Block</DescriptionList.Term>
-            <DescriptionList.Details>16682150</DescriptionList.Details>
-          </DescriptionList.Description>
-          <DescriptionList.Description>
-            <DescriptionList.Term>Extrinsic hash</DescriptionList.Term>
-            <DescriptionList.Details>
-              {shortenAddress('0xbae40a865e1b719d7c0e076c935de340c4b9759fbb1362415e87feb33353fcd2')}
-            </DescriptionList.Details>
-          </DescriptionList.Description>
-          <DescriptionList.Description>
-            <DescriptionList.Term>Time</DescriptionList.Term>
-            <DescriptionList.Details>6 days 15 hrs ago</DescriptionList.Details>
-          </DescriptionList.Description>
-          <DescriptionList.Description>
-            <DescriptionList.Term>Result</DescriptionList.Term>
-            <DescriptionList.Details>
-              <CheckCircle size="1em" />
-            </DescriptionList.Details>
-          </DescriptionList.Description>
-        </DescriptionList>
-        <section css={{ marginTop: '4.8rem' }}>
-          <header>
-            <Text.H4 alpha="high" css={{ marginBottom: '1.6rem' }}>
-              Transfers
-            </Text.H4>
-          </header>
-          <table
-            css={{
-              'width': '100%',
-              '*:is(th,td)': { textAlign: 'start' },
-              '*:is(th,td):last-child': { textAlign: 'end' },
-            }}
-          >
-            <thead>
-              <tr>
-                <Text.BodySmall as="th">From</Text.BodySmall>
-                <Text.BodySmall as="th">To</Text.BodySmall>
-                <Text.BodySmall as="th">Amount</Text.BodySmall>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <Text.Body as="td" alpha="high">
-                  <Identicon value="foo" size="1em" /> 13Kcw...ZQ4K
-                </Text.Body>
-                <Text.Body as="td" alpha="high">
-                  <Identicon value="foo" size="1em" /> 13Kcw...ZQ4K
-                </Text.Body>
-                <Text.Body as="td" alpha="high">
-                  1 DOT
-                </Text.Body>
-              </tr>
-            </tbody>
-          </table>
-        </section>
-        <section css={{ marginTop: '4.8rem' }}>
-          <header>
-            <Text.H4 alpha="high" css={{ marginBottom: '1.6rem' }}>
-              Rewards
-            </Text.H4>
-          </header>
-          <table
-            css={{
-              'width': '100%',
-              '*:is(th,td)': { textAlign: 'start' },
-              '*:is(th,td):last-child': { textAlign: 'end' },
-            }}
-          >
-            <thead>
-              <tr>
-                <Text.BodySmall as="th">For</Text.BodySmall>
-                <Text.BodySmall as="th">Amount</Text.BodySmall>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <Text.Body as="td" alpha="high">
-                  <Identicon value="foo" size="1em" /> 13Kcw...ZQ4K
-                </Text.Body>
-                <Text.Body as="td" alpha="high">
-                  1 DOT
-                </Text.Body>
-              </tr>
-            </tbody>
-          </table>
-        </section>
-        <Surface
-          css={{ marginTop: '4.8rem', borderRadius: '1.6rem', padding: '1.6rem', ol: { margin: '0 !important' } }}
-        >
-          <Text.Body as="header" alpha="high" css={{ marginBottom: '1.6rem' }}>
-            Parameters
-          </Text.Body>
-          <Surface
-            css={{
-              borderRadius: '0.8rem',
-              padding: '1rem',
-              overflow: 'auto',
-              [SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR]: { maxWidth: '40rem' },
-            }}
-          >
-            <ObjectView
-              data={{
-                dest: '0x20a7ba7956bfd969c6c8b945ebfede70fa58ba7c2f9fd4ac6b4e3c7255ea1c52',
-                value: '116358000000000000',
-              }}
-              palette={{ base00: 'transparent' }}
-              options={{ expandLevel: 10 }}
-            />
-          </Surface>
-        </Surface>
-      </SideSheet>
+      <HistoryResult key={key} accounts={selectedAccounts} />
     </section>
   )
 }
