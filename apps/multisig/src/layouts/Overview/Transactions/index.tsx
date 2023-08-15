@@ -7,14 +7,15 @@ import {
   useNextTransactionSigner,
   usePendingTransactions,
 } from '@domains/multisig'
+import { confirmedTransactionsSelector } from '@domains/tx-history'
 import { css } from '@emotion/css'
-import { EyeOfSauronProgressIndicator, FullScreenDialog, HiddenDetails } from '@talismn/ui'
+import { EyeOfSauronProgressIndicator, FullScreenDialog } from '@talismn/ui'
 import { toMultisigAddress } from '@util/addresses'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useEffect, useMemo, useState } from 'react'
 import { toast } from 'react-hot-toast'
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom'
-import { useRecoilState, useSetRecoilState } from 'recoil'
+import { useRecoilState, useRecoilValueLoadable, useSetRecoilState } from 'recoil'
 
 import { FullScreenDialogContents, FullScreenDialogTitle } from './FullScreenSummary'
 import TransactionSummaryRow from './TransactionSummaryRow'
@@ -222,15 +223,9 @@ const TransactionsList = ({ transactions }: { transactions: Transaction[] }) => 
   )
 }
 
-const Transactions = ({ transactions }: { transactions: Transaction[] }) => {
+const Transactions = () => {
   const { transactions: pendingTransactions, loading: pendingLoading } = usePendingTransactions()
-  // Mocks below
-  // const pendingTransactions = useMemo(() => {
-  //   return transactions.filter(t => Object.values(t.approvals).some(a => !a))
-  // }, [transactions])
-  const completedTransactions = useMemo(() => {
-    return transactions.filter(t => Object.values(t.approvals).every(a => a))
-  }, [transactions])
+  const confirmedTransactions = useRecoilValueLoadable(confirmedTransactionsSelector)
 
   const [mode, setMode] = useState(Mode.Pending)
   return (
@@ -276,38 +271,14 @@ const Transactions = ({ transactions }: { transactions: Transaction[] }) => {
           exit={{ y: 10, opacity: 0 }}
           transition={{ duration: 0.2 }}
         >
-          {mode === Mode.Pending && pendingLoading ? (
+          {(mode === Mode.Pending && pendingLoading) ||
+          (mode === Mode.History && confirmedTransactions.state === 'loading') ? (
             <div css={{ margin: '24px 0' }}>
               <EyeOfSauronProgressIndicator />
             </div>
           ) : (
-            <HiddenDetails
-              hidden={mode === Mode.History}
-              overlay={
-                <div
-                  css={{
-                    backgroundColor: 'rgba(0,0,0,0.5)',
-                    padding: '12px',
-                    borderRadius: '8px',
-                    marginTop: '-37px',
-                  }}
-                >
-                  <p
-                    css={{
-                      fontSize: '18px',
-                      fontWeight: 'bold',
-                      color: 'var(--color-primary)',
-                      opacity: '0.8',
-                      pointerEvents: 'none',
-                    }}
-                  >
-                    Transaction history coming soon
-                  </p>
-                </div>
-              }
-              children={
-                <TransactionsList transactions={mode === Mode.Pending ? pendingTransactions : completedTransactions} />
-              }
+            <TransactionsList
+              transactions={mode === Mode.Pending ? pendingTransactions : confirmedTransactions.contents}
             />
           )}
         </motion.div>

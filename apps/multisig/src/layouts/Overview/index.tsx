@@ -1,7 +1,7 @@
 import { useAugmentedBalances } from '@domains/balances'
 import { useAddressIsProxyDelegatee } from '@domains/chains/storage-getters'
 import { getAllChangeAttempts } from '@domains/metadata-service/getAllChangeAttempts'
-import { Transaction, activeMultisigsState, multisigsState, selectedMultisigState } from '@domains/multisig'
+import { activeMultisigsState, multisigsState, selectedMultisigState } from '@domains/multisig'
 import { css } from '@emotion/css'
 import { Eye, Settings } from '@talismn/icons'
 import { toMultisigAddress } from '@util/addresses'
@@ -14,9 +14,6 @@ import { useRecoilState, useRecoilValue } from 'recoil'
 import Assets, { TokenAugmented } from './Assets'
 import Footer from './Footer'
 import Header from './Header'
-import { mockTransactions } from './mocks'
-// to use mocked tokens:
-// import { mockTokensAugmented } from './mocks'
 import NewTransactionModal from './NewTransactionModal'
 import Sidebar from './Sidebar'
 import Transactions from './Transactions'
@@ -42,9 +39,9 @@ const Overview = () => {
       if (isProxyDelegatee) return
 
       console.log(
-        `Detected change in multisig configuration. Outdated multisig address ${selectedMultisig.multisigAddress.toSs52(
+        `Detected change in multisig configuration. Outdated multisig address ${selectedMultisig.multisigAddress.toSs58(
           selectedMultisig.chain
-        )}, current delegatees: ${proxyDelegatees.map(d => d.toSs52(selectedMultisig.chain))}`
+        )}, current delegatees: ${proxyDelegatees.map(d => d.toSs58(selectedMultisig.chain))}`
       )
 
       // Try to find the new multisig details in the metadata service.
@@ -98,7 +95,6 @@ const Overview = () => {
     }
   }, [activeMultisigs, navigate])
 
-  const transactions: Transaction[] = mockTransactions
   const augmentedTokens: TokenAugmented[] = useAugmentedBalances()
   return (
     <div
@@ -153,7 +149,7 @@ const Overview = () => {
         ]}
       />
       <Assets augmentedTokens={augmentedTokens} />
-      <Transactions transactions={transactions} />
+      <Transactions />
       <Footer />
       <NewTransactionModal />
     </div>
