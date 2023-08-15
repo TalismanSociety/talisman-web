@@ -123,7 +123,7 @@ export const rawPendingTransactionsSelector = selector({
                   return cur.isEqual(ss52ApprovalAddress)
                 }
               })
-              return { ...acc, [cur.encode()]: approved }
+              return { ...acc, [cur.toPubKey()]: approved }
             }, {} as TransactionApprovals),
           }
         })

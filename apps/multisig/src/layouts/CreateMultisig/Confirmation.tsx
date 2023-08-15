@@ -163,7 +163,7 @@ const Confirmation = (props: {
           Members
         </h2>
         {props.augmentedAccounts.map(account => {
-          return <MemberRow key={account.address.encode()} member={account} truncate={true} chain={chain} />
+          return <MemberRow key={account.address.toPubKey()} member={account} truncate={true} chain={chain} />
         })}
       </div>
       <div
@@ -201,10 +201,10 @@ const Confirmation = (props: {
           </h2>
           <Select
             placeholder="Select account"
-            value={props?.selectedSigner?.address.encode()}
+            value={props?.selectedSigner?.address.toPubKey()}
             onChange={value => {
               if (!value) return
-              const a = Address.fromEncoded(value)
+              const a = Address.fromPubKey(value)
               if (!a) return
               props.setSelectedSigner(props.augmentedAccounts.find(_a => _a.address.isEqual(a)) as AugmentedAccount)
             }}
@@ -212,11 +212,11 @@ const Confirmation = (props: {
           >
             {props.augmentedAccounts.map(account => (
               <Select.Item
-                key={account.address.encode()}
-                leadingIcon={<Identicon value={account.address.toSs52(chain)} />}
-                value={account.address.encode()}
+                key={account.address.toPubKey()}
+                leadingIcon={<Identicon value={account.address.toSs58(chain)} />}
+                value={account.address.toPubKey()}
                 headlineText={account.nickname}
-                supportingText={truncateMiddle(account.address.toSs52(chain), 5, 4, '...')}
+                supportingText={truncateMiddle(account.address.toSs58(chain), 5, 4, '...')}
               />
             ))}
           </Select>

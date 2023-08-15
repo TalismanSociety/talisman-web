@@ -48,7 +48,7 @@ const AddMembers = (props: {
         {props.augmentedAccounts.map(account => {
           return (
             <MemberRow
-              key={account.address.encode()}
+              key={account.address.toPubKey()}
               chain={props.chain}
               truncate={true}
               member={account}

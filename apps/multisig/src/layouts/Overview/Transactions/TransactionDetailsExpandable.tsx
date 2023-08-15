@@ -59,12 +59,12 @@ const ChangeConfigExpandedDetails = ({ t }: { t: Transaction }) => {
       <div css={{ display: 'grid', gap: '8px', marginTop: '8px' }}>
         <p css={{ fontWeight: 'bold' }}>Current Signers</p>
         {multisig.signers.map(s => (
-          <MemberRow key={s.encode()} member={{ address: s }} chain={multisig.chain} />
+          <MemberRow key={s.toPubKey()} member={{ address: s }} chain={multisig.chain} />
         ))}
         <p>Threshold: {multisig.threshold}</p>
         <p css={{ fontWeight: 'bold', marginTop: '8px' }}>Proposed New Signers</p>
         {t.decoded?.changeConfigDetails?.signers.map(s => (
-          <MemberRow key={s.encode()} member={{ address: s }} chain={multisig.chain} />
+          <MemberRow key={s.toPubKey()} member={{ address: s }} chain={multisig.chain} />
         ))}
         <p>Threshold: {t.decoded?.changeConfigDetails?.threshold}</p>
       </div>

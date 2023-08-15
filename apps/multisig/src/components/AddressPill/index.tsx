@@ -5,7 +5,7 @@ import { Address, toSubscanUrl } from '@util/addresses'
 import truncateMiddle from 'truncate-middle'
 
 const AddressPill = ({ address, chain }: { address: Address; chain: Chain }) => {
-  const ss52Address = address.toSs52(chain)
+  const ss52Address = address.toSs58(chain)
   return (
     <a
       className={css`

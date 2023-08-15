@@ -70,7 +70,7 @@ export const useNextTransactionSigner = (approvals: TransactionApprovals | undef
   const [extensionAccounts] = useRecoilState(accountsState)
 
   if (!approvals) return
-  return extensionAccounts.find(account => approvals[account.address.encode()] === false)
+  return extensionAccounts.find(account => approvals[account.address.toPubKey()] === false)
 }
 
 export enum TransactionType {
@@ -417,9 +417,9 @@ export const EMPTY_BALANCE: Balance = {
 export const createImportPath = (name: string, signers: Address[], threshold: number, proxy: Address, chain: Chain) => {
   const params = {
     name,
-    signers: signers.map(a => a.toSs52(chain)).join(','),
+    signers: signers.map(a => a.toSs58(chain)).join(','),
     threshold,
-    proxy: proxy.toSs52(chain),
+    proxy: proxy.toSs58(chain),
     chain_id: chain.id,
   }
   return `import?${queryString.stringify(params)}`

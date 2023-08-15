@@ -43,12 +43,12 @@ export async function insertTxMetadata(args: InsertTxMetadataArgs): Promise<Inse
     timepoint_index: args.timepoint_index,
     call_data: args.call_data,
     chain: args.chain.id,
-    multisig: args.multisig.toSs52(args.chain),
+    multisig: args.multisig.toSs58(args.chain),
     description: args.description,
     change_config_details: args.change_config_details
       ? {
           newThreshold: args.change_config_details.newThreshold,
-          newMembers: args.change_config_details.newMembers.map(address => address.toSs52(args.chain)),
+          newMembers: args.change_config_details.newMembers.map(address => address.toSs58(args.chain)),
         }
       : undefined,
   }

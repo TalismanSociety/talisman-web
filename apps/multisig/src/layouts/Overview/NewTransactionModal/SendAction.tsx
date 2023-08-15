@@ -163,7 +163,7 @@ const SendAction = (props: { onCancel: () => void }) => {
         description: name,
         chain: multisig.chain,
         approvals: multisig.signers.reduce((acc, key) => {
-          acc[key.encode()] = false
+          acc[key.toPubKey()] = false
           return acc
         }, {} as TransactionApprovals),
         decoded: {

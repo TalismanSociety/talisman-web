@@ -153,7 +153,7 @@ const Header = () => {
                     height: 40px;
                     width: 40px;
                   `}
-                  value={selectedMultisig.proxyAddress.toSs52(selectedMultisig.chain)}
+                  value={selectedMultisig.proxyAddress.toSs58(selectedMultisig.chain)}
                 />
                 <div
                   className={css`
@@ -182,7 +182,7 @@ const Header = () => {
                   `}
                   onClick={e => {
                     copyToClipboard(
-                      selectedMultisig.proxyAddress.toSs52(selectedMultisig.chain),
+                      selectedMultisig.proxyAddress.toSs58(selectedMultisig.chain),
                       'Proxy address copied to clipboard'
                     )
                     e.stopPropagation()
@@ -190,9 +190,9 @@ const Header = () => {
                 />
               </div>
             }
-            value={selectedMultisig.proxyAddress.encode()}
+            value={selectedMultisig.proxyAddress.toPubKey()}
             onChange={value => {
-              setSelectedMultisig(activeMultisigs.find(m => m.proxyAddress.encode() === value) as Multisig)
+              setSelectedMultisig(activeMultisigs.find(m => m.proxyAddress.toPubKey() === value) as Multisig)
             }}
           >
             {activeMultisigs.reduce((accumulator, multisig) => {
@@ -200,9 +200,9 @@ const Header = () => {
 
               return accumulator.concat(
                 <Select.Item
-                  key={multisig.proxyAddress.encode()}
-                  leadingIcon={<Identicon value={multisig.proxyAddress.toSs52(selectedMultisig.chain)} />}
-                  value={multisig.proxyAddress.encode()}
+                  key={multisig.proxyAddress.toPubKey()}
+                  leadingIcon={<Identicon value={multisig.proxyAddress.toSs58(selectedMultisig.chain)} />}
+                  value={multisig.proxyAddress.toPubKey()}
                   headlineText={
                     <div
                       css={{

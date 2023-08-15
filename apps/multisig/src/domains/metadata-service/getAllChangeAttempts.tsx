@@ -21,7 +21,7 @@ interface TxMetadataByPkResponseRaw {
 
 export async function getAllChangeAttempts(multisig: Address, chain: Chain): Promise<ChangeConfigDetails[]> {
   const variables: GetAllChangeAttemptsVariables = {
-    multisig: multisig.toSs52(chain),
+    multisig: multisig.toSs58(chain),
     chain: chain.id,
   }
 

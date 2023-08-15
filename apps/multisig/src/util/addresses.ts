@@ -1,6 +1,6 @@
 import { Chain } from '@domains/chains'
-import { createKeyMulti, decodeAddress, encodeAddress, sortAddresses } from '@polkadot/util-crypto'
-const { hexToU8a, isHex } = require('@polkadot/util')
+import { createKeyDerived, createKeyMulti, decodeAddress, encodeAddress, sortAddresses } from '@polkadot/util-crypto'
+const { hexToU8a, isHex, u8aToHex } = require('@polkadot/util')
 
 // Represent addresses as bytes except for when we need to display them to the user.
 // Allows us to confidently do stuff like equality checks, don't need to worry about SS52 encoding.
@@ -23,8 +23,8 @@ export class Address {
     }
   }
 
-  static fromEncoded(encoded: string): Address | false {
-    const bytes = new Uint8Array(encoded.split(',').map(s => Number(s)))
+  static fromPubKey(pubKey: string): Address | false {
+    const bytes = new Uint8Array(hexToU8a(pubKey))
     if (bytes.length !== 32) return false
     return new Address(bytes)
   }
@@ -37,17 +37,17 @@ export class Address {
     return this.bytes.every((byte, index) => byte === other.bytes[index])
   }
 
-  toSs52(chain: Chain): string {
+  toSs58(chain: Chain): string {
     return encodeAddress(this.bytes, chain.ss58Prefix)
   }
 
-  encode(): string {
-    return this.bytes.toString()
+  toPubKey(): string {
+    return u8aToHex(this.bytes)
   }
 }
 
 export const toSubscanUrl = (address: Address, chain: Chain): string => {
-  return `https://${chain.chainName.toLowerCase()}.subscan.io/account/${address.toSs52(chain)}`
+  return `https://${chain.chainName.toLowerCase()}.subscan.io/account/${address.toSs58(chain)}`
 }
 
 export const toMultisigAddress = (signers: Address[], threshold: number): Address => {

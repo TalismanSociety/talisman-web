@@ -86,8 +86,8 @@ const Import = () => {
 
       // Check for overlap between the multisig signers and the connected wallet
       const overlap = arrayIntersection<string>(
-        signerAddressesArray.map(a => a.encode()),
-        extensionAccounts.map(a => a.address.encode())
+        signerAddressesArray.map(a => a.toPubKey()),
+        extensionAccounts.map(a => a.address.toPubKey())
       )
       if (overlap.length > 0) {
         if (!multisigs.every(({ proxyAddress: _proxyAddress }) => !_proxyAddress.isEqual(proxyAddress))) {

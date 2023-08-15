@@ -42,7 +42,7 @@ const Approvals = ({ t }: { t: Transaction }) => {
   return (
     <div css={{ display: 'grid', gap: '14px' }}>
       {Object.entries(t.approvals).map(([encodedAddress, approval]) => {
-        const decodedAddress = Address.fromEncoded(encodedAddress)
+        const decodedAddress = Address.fromPubKey(encodedAddress)
         if (!decodedAddress) {
           console.error(`Could not decode address in t.approvals!`)
           return null
@@ -128,7 +128,7 @@ export const FullScreenDialogContents = ({
 
     return Object.entries(t.approvals).some(([encodedAddress, signed]) => {
       if (signed) return false
-      return extensionAccounts.some(account => account.address.encode() === encodedAddress)
+      return extensionAccounts.some(account => account.address.toPubKey() === encodedAddress)
     })
   }, [t, extensionAccounts])
 

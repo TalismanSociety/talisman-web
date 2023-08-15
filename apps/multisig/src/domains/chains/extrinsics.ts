@@ -156,7 +156,7 @@ export const useCancelAsMulti = (tx: Transaction | undefined) => {
     if (!tx || !depositorAddress) return
 
     // Fee estimation
-    const paymentInfo = await tx.paymentInfo(depositorAddress.toSs52(multisig.chain))
+    const paymentInfo = await tx.paymentInfo(depositorAddress.toSs58(multisig.chain))
     setEstimatedFee({ token: nativeToken.contents, amount: paymentInfo.partialFee as unknown as BN })
   }, [depositorAddress, nativeToken, createTx, multisig.chain])
 
@@ -179,9 +179,9 @@ export const useCancelAsMulti = (tx: Transaction | undefined) => {
         return
       }
 
-      const { signer } = await web3FromAddress(depositorAddress.toSs52(multisig.chain))
+      const { signer } = await web3FromAddress(depositorAddress.toSs58(multisig.chain))
       tx.signAndSend(
-        depositorAddress.toSs52(multisig.chain),
+        depositorAddress.toSs58(multisig.chain),
         {
           signer,
         },
@@ -243,7 +243,7 @@ export const useAsMulti = (
       throw new Error('chain missing multisig pallet')
     }
 
-    const weightEstimation = (await extrinsic.paymentInfo(extensionAddress.toSs52(multisig.chain))).weight as any
+    const weightEstimation = (await extrinsic.paymentInfo(extensionAddress.toSs58(multisig.chain))).weight as any
 
     // Provide some buffer for the weight
     const weight = api.createType('Weight', {
@@ -267,7 +267,7 @@ export const useAsMulti = (
     if (!tx || !extensionAddress) return
 
     // Fee estimation
-    const paymentInfo = await tx.paymentInfo(extensionAddress.toSs52(multisig.chain))
+    const paymentInfo = await tx.paymentInfo(extensionAddress.toSs58(multisig.chain))
     setEstimatedFee({ token: nativeToken.contents, amount: paymentInfo.partialFee as unknown as BN })
   }, [extensionAddress, nativeToken, createTx, multisig.chain])
 
@@ -290,9 +290,9 @@ export const useAsMulti = (
         return
       }
 
-      const { signer } = await web3FromAddress(extensionAddress.toSs52(multisig.chain))
+      const { signer } = await web3FromAddress(extensionAddress.toSs58(multisig.chain))
       tx.signAndSend(
-        extensionAddress.toSs52(multisig.chain),
+        extensionAddress.toSs58(multisig.chain),
         {
           signer,
         },
@@ -376,7 +376,7 @@ export const useApproveAsMulti = (
     if (!tx || !extensionAddress) return
 
     // Fee estimation
-    const paymentInfo = await tx.paymentInfo(extensionAddress.toSs52(multisig.chain))
+    const paymentInfo = await tx.paymentInfo(extensionAddress.toSs58(multisig.chain))
     setEstimatedFee({ token: nativeToken.contents, amount: paymentInfo.partialFee as unknown as BN })
   }, [extensionAddress, nativeToken, createTx, multisig.chain])
 
@@ -401,9 +401,9 @@ export const useApproveAsMulti = (
         return
       }
 
-      const { signer } = await web3FromAddress(extensionAddress.toSs52(multisig.chain))
+      const { signer } = await web3FromAddress(extensionAddress.toSs58(multisig.chain))
       tx.signAndSend(
-        extensionAddress.toSs52(multisig.chain),
+        extensionAddress.toSs58(multisig.chain),
         {
           signer,
         },
@@ -484,7 +484,7 @@ export const useCreateProxy = (chain: Chain, extensionAddress: Address | undefin
     if (!tx || !extensionAddress || nativeToken.state !== 'hasValue') return
 
     // Fee estimation
-    const paymentInfo = await tx.paymentInfo(extensionAddress.toSs52(chain))
+    const paymentInfo = await tx.paymentInfo(extensionAddress.toSs58(chain))
     setEstimatedFee({ token: nativeToken.contents, amount: paymentInfo.partialFee as unknown as BN })
   }, [extensionAddress, createTx, nativeToken, chain])
 
@@ -504,10 +504,10 @@ export const useCreateProxy = (chain: Chain, extensionAddress: Address | undefin
       const tx = await createTx()
       if (!tx || !extensionAddress) return
 
-      const { signer } = await web3FromAddress(extensionAddress.toSs52(chain))
+      const { signer } = await web3FromAddress(extensionAddress.toSs58(chain))
 
       tx.signAndSend(
-        extensionAddress.toSs52(chain),
+        extensionAddress.toSs58(chain),
         {
           signer,
         },
@@ -582,7 +582,7 @@ export const useTransferProxyToMultisig = (chain: Chain) => {
       }
 
       const api = apiLoadable.contents
-      const { signer } = await web3FromAddress(extensionAddress.toSs52(chain))
+      const { signer } = await web3FromAddress(extensionAddress.toSs58(chain))
 
       if (
         !api.tx.balances?.transferKeepAlive ||
@@ -612,7 +612,7 @@ export const useTransferProxyToMultisig = (chain: Chain) => {
       // Send the batch call
       signerBatchCall
         .signAndSend(
-          extensionAddress.toSs52(chain),
+          extensionAddress.toSs58(chain),
           {
             signer,
           },

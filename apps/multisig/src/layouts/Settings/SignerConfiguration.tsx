@@ -39,7 +39,7 @@ const ManageSignerConfiguration = () => {
         description: 'Change Signer Configuration',
         chain: selectedMultisig.chain,
         approvals: selectedMultisig.signers.reduce((acc, key) => {
-          acc[key.encode()] = false
+          acc[key.toPubKey()] = false
           return acc
         }, {} as TransactionApprovals),
         decoded: {
@@ -100,7 +100,7 @@ const ManageSignerConfiguration = () => {
               {newMembers.map(m => (
                 <Member
                   chain={selectedMultisig.chain}
-                  key={m.encode()}
+                  key={m.toPubKey()}
                   m={{ address: m }}
                   onDelete={
                     newMembers.length > 2

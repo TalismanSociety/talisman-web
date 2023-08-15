@@ -34,7 +34,7 @@ export async function getTxMetadataByPk(args: TxMetadataByPkArgs): Promise<TxOff
   const variables: TxMetadataByPkVariables = {
     timepoint_height: args.timepoint_height,
     timepoint_index: args.timepoint_index,
-    multisig: args.multisig.toSs52(args.chain),
+    multisig: args.multisig.toSs58(args.chain),
     chain: args.chain.id,
   }
 

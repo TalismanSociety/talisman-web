@@ -10,7 +10,7 @@ import truncateMiddle from 'truncate-middle'
 export const Member = ({ m, chain, onDelete }: { m: AugmentedAccount; onDelete?: () => void; chain: Chain }) => {
   const theme = useTheme()
 
-  const ss58Address = m.address.toSs52(chain)
+  const ss58Address = m.address.toSs58(chain)
   return (
     <div
       className={css`

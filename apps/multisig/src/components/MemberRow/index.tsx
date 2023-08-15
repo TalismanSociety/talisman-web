@@ -28,7 +28,7 @@ const MemberRow = (props: { member: AugmentedAccount; chain: Chain; onDelete?: (
           width: 24px;
           height: auto;
         `}
-        value={props.member.address.toSs52(props.chain)}
+        value={props.member.address.toSs58(props.chain)}
       />
       {props.member.you ? (
         <>
@@ -53,8 +53,8 @@ const MemberRow = (props: { member: AugmentedAccount; chain: Chain; onDelete?: (
         <>
           <p>
             {props.truncate
-              ? truncateMiddle(props.member.address.toSs52(props.chain), 19, 19, '...')
-              : props.member.address.toSs52(props.chain)}
+              ? truncateMiddle(props.member.address.toSs58(props.chain), 19, 19, '...')
+              : props.member.address.toSs58(props.chain)}
           </p>
           {props.onDelete ? (
             <IconButton
