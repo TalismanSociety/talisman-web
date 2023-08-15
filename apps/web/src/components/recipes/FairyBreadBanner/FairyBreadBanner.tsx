@@ -3,7 +3,7 @@ import { X } from '@talismn/icons'
 import { Button, Text } from '@talismn/ui'
 import { AnimatePresence, motion } from 'framer-motion'
 
-export type CookieBannerProps = {
+export type FairyBreadBannerProps = {
   visible?: boolean
   onAccept: () => unknown
   onReject: () => unknown
@@ -11,7 +11,7 @@ export type CookieBannerProps = {
   privacyPolicyHref?: string
 }
 
-const CookieBanner = (props: CookieBannerProps) => {
+const FairyBreadBanner = (props: FairyBreadBannerProps) => {
   const theme = useTheme()
 
   return (
@@ -69,4 +69,4 @@ const CookieBanner = (props: CookieBannerProps) => {
   )
 }
 
-export default CookieBanner
+export default FairyBreadBanner

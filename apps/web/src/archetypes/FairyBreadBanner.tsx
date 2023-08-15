@@ -1,4 +1,4 @@
-import BaseCookieBanner from '@components/recipes/CookieBanner'
+import BaseFairyBreadBanner from '@components/recipes/FairyBreadBanner'
 import { usePostHog } from 'posthog-js/react'
 import { useCallback, useEffect, useState } from 'react'
 
@@ -40,7 +40,7 @@ const GDPR_TIMEZONES = [
 
 const isGdprComplianceRequired = GDPR_TIMEZONES.includes(Intl.DateTimeFormat().resolvedOptions().timeZone)
 
-const CookieBanner = () => {
+const FairyBreadBanner = () => {
   const posthog = usePostHog()
   const [visible, setVisible] = useState(
     isGdprComplianceRequired && !posthog?.has_opted_in_capturing() && !posthog?.has_opted_out_capturing()
@@ -55,7 +55,7 @@ const CookieBanner = () => {
 
   return (
     <div css={{ position: 'fixed', right: '1.5rem', bottom: '2.4rem', zIndex: 11 }}>
-      <BaseCookieBanner
+      <BaseFairyBreadBanner
         privacyPolicyHref="https://docs.talisman.xyz/talisman/prepare-for-your-journey/privacy-policy"
         visible={visible}
         onAccept={useCallback(() => {
@@ -72,4 +72,4 @@ const CookieBanner = () => {
   )
 }
 
-export default CookieBanner
+export default FairyBreadBanner
