@@ -30,6 +30,12 @@ const ManageSignerConfiguration = () => {
   const [extrinsic, setExtrinsic] = useState<SubmittableExtrinsic<'promise'> | undefined>()
   const navigate = useNavigate()
 
+  useEffect(() => {
+    if (newMembers.length > newThreshold) {
+      setNewThreshold(newMembers.length)
+    }
+  }, [newMembers.length, newThreshold])
+
   const t: Transaction | undefined = useMemo(() => {
     if (extrinsic) {
       const hash = extrinsic.registry.hash(extrinsic.method.toU8a()).toHex()
