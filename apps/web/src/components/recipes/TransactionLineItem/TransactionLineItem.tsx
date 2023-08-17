@@ -1,9 +1,9 @@
 import type { Account } from '@domains/accounts'
 import { useTheme } from '@emotion/react'
-import { ChevronRight } from '@talismn/icons'
-import { Identicon, Surface, Text, useSurfaceColor, useSurfaceColorAtElevation } from '@talismn/ui'
+import { ArrowDown, ArrowUp, ChevronRight } from '@talismn/icons'
+import { Identicon, Surface, Text, Tooltip, useSurfaceColorAtElevation } from '@talismn/ui'
 import { shortenAddress } from '@util/format'
-import React, { useMemo, type ReactElement, type PropsWithChildren } from 'react'
+import React, { useMemo, type PropsWithChildren, type ReactElement } from 'react'
 import { getSubstrateModuleColor } from '../extrinsicColor'
 
 type TokenAmount = {
@@ -13,6 +13,7 @@ type TokenAmount = {
 
 export type TransactionLineItemProps = {
   id: string
+  origin: 'self' | 'others'
   signer?: Account
   module: string
   call: string
@@ -31,15 +32,16 @@ const Grid = (props: PropsWithChildren<{ className?: string }>) => (
     css={{
       display: 'grid',
       gridTemplateAreas: `
-    'identicon account amount see-more'
-    'identicon type    time   see-more'
+    'origin identicon account amount see-more'
+    'origin identicon type    time   see-more'
   `,
-      gridTemplateColumns: 'min-content repeat(2, minmax(0, 1fr))',
+      gridTemplateColumns: 'repeat(2, min-content) repeat(2, minmax(0, 1fr))',
       gap: '0 0.8rem',
       padding: '1.6rem',
       [WIDE_CONTAINER_QUERY]: {
-        gridTemplateAreas: `'identicon account type amount fee id time see-more'`,
-        gridTemplateColumns: 'min-content minmax(0, 0.5fr) minmax(0, 1fr) repeat(4, minmax(0, 0.75fr)) min-content',
+        gridTemplateAreas: `'origin identicon account type amount fee id time see-more'`,
+        gridTemplateColumns:
+          'repeat(2, min-content) minmax(0, 0.5fr) minmax(0, 1fr) repeat(4, minmax(0, 0.75fr)) min-content',
         alignItems: 'center',
       },
     }}
@@ -57,6 +59,20 @@ const TransactionLineItem = (props: TransactionLineItemProps) => {
       onClick={props.onClick}
     >
       <Grid>
+        <div
+          css={{ gridArea: 'origin', display: 'flex', alignItems: 'center' }}
+          style={{ visibility: props.signer === undefined ? 'hidden' : undefined }}
+        >
+          <Tooltip content={props.origin === 'self' ? 'Incoming transaction' : 'Outgoing transaction'}>
+            {tooltipProps =>
+              props.origin === 'self' ? (
+                <ArrowUp size="1.5rem" css={{ color: '#D5FF5C' }} {...tooltipProps} />
+              ) : (
+                <ArrowDown size="1.5rem" css={{ color: '#F48F45' }} {...tooltipProps} />
+              )
+            }
+          </Tooltip>
+        </div>
         <IdText
           alpha="high"
           css={{ gridArea: 'id', display: 'none', [WIDE_CONTAINER_QUERY]: { display: 'revert' } }}
@@ -163,6 +179,7 @@ export const TransactionList = <T,>(props: TransactionListProps<T>) => {
     <section>
       <div css={{ containerType: 'inline-size' }}>
         <Grid css={{ display: 'none', [WIDE_CONTAINER_QUERY]: { display: 'grid' } }}>
+          <div css={{ gridArea: 'origin', width: '1.5rem' }} />
           <Identicon value="spacer" css={{ gridArea: 'identicon', visibility: 'hidden' }} />
           <Text.BodyLarge css={{ gridArea: 'account' }}>Signer</Text.BodyLarge>
           <Text.BodyLarge css={{ gridArea: 'type' }}>Module</Text.BodyLarge>

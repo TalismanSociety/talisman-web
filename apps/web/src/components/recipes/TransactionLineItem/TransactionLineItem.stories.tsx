@@ -1,5 +1,4 @@
 import { type Meta, type StoryObj } from '@storybook/react'
-
 import TransactionLineItem, { TransactionList } from './TransactionLineItem'
 
 export default {
@@ -25,10 +24,7 @@ export const Default: Story = {
 export const List: Story = {
   render: () => (
     <TransactionList
-      sections={[
-        { title: 'Thur 17 February 2022', data: [1, 2, 3, 4] },
-        { title: 'Mon 14 February 2022', data: [1, 2, 3] },
-      ]}
+      data={[1, 2, 3, 4]}
       keyExtractor={x => String(x)}
       // @ts-expect-error
       renderItem={() => Default.render(Default.args, undefined)}

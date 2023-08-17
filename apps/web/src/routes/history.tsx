@@ -223,6 +223,11 @@ const HistoryResult = (props: HistoryResultProps) => {
             return (
               <TransactionLineItem
                 id={extrinsic.subscanLink?.id ?? ''}
+                origin={
+                  !isNil(extrinsic.signer) && encodedAddresses.includes(encodeAnyAddress(extrinsic.signer))
+                    ? 'self'
+                    : 'others'
+                }
                 signer={signer}
                 module={module ?? ''}
                 call={call ?? ''}
@@ -307,73 +312,75 @@ const History = () => {
 
   // To invalidate page after query changes
   const key = useMemo(
-    () => [selectedAccounts.map(x => x.address).join(), search, chain, module].join(),
-    [chain, module, search, selectedAccounts]
+    () => [selectedAccounts.map(x => x.address).join(), search, chain, module, date?.getTime()].join(),
+    [chain, date, module, search, selectedAccounts]
   )
 
   return (
     <section>
-      <header
-        css={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          flexWrap: 'wrap',
-          gap: '0.8rem',
-          marginBottom: '2.4rem',
-        }}
-      >
-        <Text.H2 css={{ marginBottom: 0 }}>Transaction history</Text.H2>
-        <ExportTxHistoryWidget>
-          {({ onToggleOpen }) => (
-            <Button variant="surface" onClick={onToggleOpen}>
-              Export
-            </Button>
-          )}
-        </ExportTxHistoryWidget>
-      </header>
-      <div
-        css={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          flexWrap: 'wrap',
-          gap: '0.8rem',
-        }}
-      >
-        <TextInput
-          placeholder="Search for TX hash or account address"
-          value={search}
-          onChange={event => setSearch(event.target.value)}
-        />
-        <div css={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '0.8rem' }}>
-          <DateInput
-            value={date}
-            onChange={event => setDate(new Date(event.target.value))}
-            // TODO: better to sync size between all input component
-            css={{ padding: '1.1rem' }}
+      <div css={{ marginBottom: '1.6rem' }}>
+        <header
+          css={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            flexWrap: 'wrap',
+            gap: '0.8rem',
+            marginBottom: '2.4rem',
+          }}
+        >
+          <Text.H2 css={{ marginBottom: 0 }}>Transaction history</Text.H2>
+          <ExportTxHistoryWidget>
+            {({ onToggleOpen }) => (
+              <Button variant="surface" onClick={onToggleOpen}>
+                Export
+              </Button>
+            )}
+          </ExportTxHistoryWidget>
+        </header>
+        <div
+          css={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            flexWrap: 'wrap',
+            gap: '0.8rem',
+          }}
+        >
+          <TextInput
+            placeholder="Search for TX hash or account address"
+            value={search}
+            onChange={event => setSearch(event.target.value)}
           />
-          <Select placeholder="Chain" value={chain} onChange={setChain} clearRequired>
-            {chains.map(x => (
-              <Select.Option
-                key={x.genesisHash}
-                value={x.genesisHash}
-                leadingIcon={
-                  <img
-                    alt={x.name ?? undefined}
-                    src={x.logo ?? undefined}
-                    css={{ width: '1.6rem', height: '1.6rem' }}
-                  />
-                }
-                headlineText={x.name}
-              />
-            ))}
-          </Select>
-          <Select placeholder="Module" value={module} onChange={setModule} clearRequired>
-            {modules.map(x => (
-              <Select.Option key={x} value={x} headlineText={x} />
-            ))}
-          </Select>
+          <div css={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '0.8rem' }}>
+            <DateInput
+              value={date}
+              onChange={event => setDate(new Date(event.target.value))}
+              // TODO: better to sync size between all input component
+              css={{ padding: '1.1rem' }}
+            />
+            <Select placeholder="Chain" value={chain} onChange={setChain} clearRequired>
+              {chains.map(x => (
+                <Select.Option
+                  key={x.genesisHash}
+                  value={x.genesisHash}
+                  leadingIcon={
+                    <img
+                      alt={x.name ?? undefined}
+                      src={x.logo ?? undefined}
+                      css={{ width: '1.6rem', height: '1.6rem' }}
+                    />
+                  }
+                  headlineText={x.name}
+                />
+              ))}
+            </Select>
+            <Select placeholder="Module" value={module} onChange={setModule} clearRequired>
+              {modules.map(x => (
+                <Select.Option key={x} value={x} headlineText={x} />
+              ))}
+            </Select>
+          </div>
         </div>
       </div>
       <HistoryResult key={key} {...searchAddressOrHash} chain={chain} module={module} timestampLte={date} />
