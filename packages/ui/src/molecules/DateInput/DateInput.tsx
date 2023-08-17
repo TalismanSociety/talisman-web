@@ -1,14 +1,27 @@
-import { useTheme } from '@emotion/react'
-import type { DetailedHTMLProps, InputHTMLAttributes, ReactNode } from 'react'
+import { useMemo, type DetailedHTMLProps, type InputHTMLAttributes, type ReactNode } from 'react'
 
-import { Text } from '../../atoms'
+import { Surface, Text } from '../../atoms'
 
-export type DateInputProps = DetailedHTMLProps<InputHTMLAttributes<HTMLInputElement>, HTMLInputElement> & {
+export type DateInputProps = Omit<
+  DetailedHTMLProps<InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>,
+  'value'
+> & {
+  value?: DetailedHTMLProps<InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>['value'] | Date
   leadingLabel?: ReactNode
 }
 
 const DateInput = ({ leadingLabel, ...props }: DateInputProps) => {
-  const theme = useTheme()
+  const value = useMemo(() => {
+    if (props.value instanceof Date) {
+      try {
+        return props.value.toISOString().split('T')[0]
+      } catch {
+        return undefined
+      }
+    }
+
+    return props.value
+  }, [props.value])
 
   return (
     <label>
@@ -17,15 +30,17 @@ const DateInput = ({ leadingLabel, ...props }: DateInputProps) => {
           {leadingLabel}
         </Text.Body>
       )}
-      <input
+      {/* @ts-expect-error */}
+      <Surface
+        as="input"
         {...props}
+        value={value}
         type="date"
         css={{
           outline: 'none',
           border: 'none',
           padding: '1.6rem',
           borderRadius: '0.8rem',
-          backgroundColor: theme.color.foreground,
           colorScheme: 'dark',
         }}
       />

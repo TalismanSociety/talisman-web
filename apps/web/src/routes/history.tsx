@@ -4,23 +4,46 @@ import {
 } from '@components/recipes/ExtrinsicDetailsSideSheet'
 import TransactionLineItem, { TransactionList } from '@components/recipes/TransactionLineItem'
 import { accountsState, selectedAccountsState, type Account } from '@domains/accounts'
-import { CircularProgressIndicator, Text } from '@talismn/ui'
+import { Button, CircularProgressIndicator, DateInput, Select, Text, TextInput } from '@talismn/ui'
 import { encodeAnyAddress } from '@talismn/util'
+import { tryParseSubstrateOrEthereumAddress } from '@util/addressValidation'
 import { Maybe } from '@util/monads'
 import request from 'graphql-request'
 import { isNil } from 'lodash'
 import { useCallback, useMemo, useState } from 'react'
 import InfiniteScroll from 'react-infinite-scroller'
-import { useRecoilValue } from 'recoil'
+import { selector, useRecoilValue } from 'recoil'
 import { graphql } from '../../generated/gql/extrinsicHistory/gql'
 import type { ExtrinsicsQuery } from '../../generated/gql/extrinsicHistory/gql/graphql'
+import ExportTxHistoryWidget from '@components/widgets/ExportTxHistoryWidget'
+
+const filtersState = selector({
+  key: 'History/Filters',
+  get: async () =>
+    await request(
+      import.meta.env.REACT_APP_EX_HISTORY_INDEXER,
+      graphql(`
+        query filters {
+          modules
+          chains {
+            genesisHash
+            name
+            logo
+          }
+        }
+      `)
+    ),
+})
 
 type HistoryResultProps = {
-  accounts: Account[]
+  accounts?: Account[]
+  hash?: string
+  chain?: string
+  module?: string
+  timestampLte?: Date
 }
 
 // TODO: lots of repetitive account look up using `encodeAnyAddress`
-
 const HistoryResult = (props: HistoryResultProps) => {
   type ExtrinsicNode = ExtrinsicsQuery['extrinsics']['edges'][number]['node']
 
@@ -43,8 +66,8 @@ const HistoryResult = (props: HistoryResultProps) => {
           const response = await request(
             import.meta.env.REACT_APP_EX_HISTORY_INDEXER,
             graphql(`
-              query extrinsics($after: String, $first: Int!, $addresses: [String!]!) {
-                extrinsics(after: $after, first: $first, where: { addressIn: $addresses }) {
+              query extrinsics($after: String, $first: Int!, $where: ExtrinsicWhereInput) {
+                extrinsics(after: $after, first: $first, where: $where) {
                   edges {
                     node {
                       chain {
@@ -104,7 +127,17 @@ const HistoryResult = (props: HistoryResultProps) => {
                 }
               }
             `),
-            { after, first: 10, addresses: props.accounts.map(x => x.address) }
+            {
+              after,
+              first: 10,
+              where: {
+                addressIn: props.accounts?.map(x => x.address),
+                chainEq: props.chain,
+                hashEq: props.hash,
+                moduleEq: props.module,
+                timestampLte: props.timestampLte,
+              },
+            }
           )
 
           hasNextPage = response.extrinsics.pageInfo.hasNextPage
@@ -119,7 +152,7 @@ const HistoryResult = (props: HistoryResultProps) => {
           yield items
         }
       })(),
-    [props.accounts]
+    [props.accounts, props.chain, props.timestampLte, props.hash, props.module]
   )
 
   const loadMore = useCallback(async () => {
@@ -161,7 +194,7 @@ const HistoryResult = (props: HistoryResultProps) => {
           data={items}
           renderItem={extrinsic => {
             const [module, call] = extrinsic.call.name.split('.')
-            const encodedAddresses = props.accounts.map(x => encodeAnyAddress(x.address))
+            const encodedAddresses = props.accounts?.map(x => encodeAnyAddress(x.address)) ?? []
             const totalAmountOfInterest = [...extrinsic.transfers.edges, ...extrinsic.rewards.edges]
               .map(x => x.node)
               .filter(
@@ -254,16 +287,96 @@ const HistoryResult = (props: HistoryResultProps) => {
 
 const History = () => {
   const selectedAccounts = useRecoilValue(selectedAccountsState)
+  const { chains, modules } = useRecoilValue(filtersState)
+
+  const [search, setSearch] = useState('')
+  const [chain, setChain] = useState<string>()
+  const [module, setModule] = useState<string>()
+  const [date, setDate] = useState<Date>()
+
+  const searchAddress = useMemo(() => tryParseSubstrateOrEthereumAddress(search), [search])
+  const searchAddressOrHash = useMemo(
+    () =>
+      searchAddress !== undefined
+        ? { accounts: [{ address: searchAddress }] }
+        : search.startsWith('0x')
+        ? { hash: search }
+        : { accounts: selectedAccounts },
+    [search, searchAddress, selectedAccounts]
+  )
 
   // To invalidate page after query changes
-  const key = useMemo(() => selectedAccounts.map(x => x.address).join(), [selectedAccounts])
+  const key = useMemo(
+    () => [selectedAccounts.map(x => x.address).join(), search, chain, module].join(),
+    [chain, module, search, selectedAccounts]
+  )
 
   return (
     <section>
-      <header>
-        <Text.H2>Transaction history</Text.H2>
+      <header
+        css={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          flexWrap: 'wrap',
+          gap: '0.8rem',
+          marginBottom: '2.4rem',
+        }}
+      >
+        <Text.H2 css={{ marginBottom: 0 }}>Transaction history</Text.H2>
+        <ExportTxHistoryWidget>
+          {({ onToggleOpen }) => (
+            <Button variant="surface" onClick={onToggleOpen}>
+              Export
+            </Button>
+          )}
+        </ExportTxHistoryWidget>
       </header>
-      <HistoryResult key={key} accounts={selectedAccounts} />
+      <div
+        css={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          flexWrap: 'wrap',
+          gap: '0.8rem',
+        }}
+      >
+        <TextInput
+          placeholder="Search for TX hash or account address"
+          value={search}
+          onChange={event => setSearch(event.target.value)}
+        />
+        <div css={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '0.8rem' }}>
+          <DateInput
+            value={date}
+            onChange={event => setDate(new Date(event.target.value))}
+            // TODO: better to sync size between all input component
+            css={{ padding: '1.1rem' }}
+          />
+          <Select placeholder="Chain" value={chain} onChange={setChain} clearRequired>
+            {chains.map(x => (
+              <Select.Option
+                key={x.genesisHash}
+                value={x.genesisHash}
+                leadingIcon={
+                  <img
+                    alt={x.name ?? undefined}
+                    src={x.logo ?? undefined}
+                    css={{ width: '1.6rem', height: '1.6rem' }}
+                  />
+                }
+                headlineText={x.name}
+              />
+            ))}
+          </Select>
+          <Select placeholder="Module" value={module} onChange={setModule} clearRequired>
+            {modules.map(x => (
+              <Select.Option key={x} value={x} headlineText={x} />
+            ))}
+          </Select>
+        </div>
+      </div>
+      <HistoryResult key={key} {...searchAddressOrHash} chain={chain} module={module} timestampLte={date} />
     </section>
   )
 }

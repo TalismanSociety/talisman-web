@@ -44,14 +44,14 @@ type SelectItemProps = {
 
 const SelectItem = forwardRef<HTMLDivElement, SelectItemProps>((props, ref) => (
   <div ref={ref} css={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-    <figure css={{ maxWidth: 40, maxHeight: 40, margin: 0 }}>{props.leadingIcon}</figure>
+    {props.leadingIcon && (
+      <figure css={{ display: 'flex', alignItems: 'center', maxWidth: 40, maxHeight: 40, margin: 0 }}>
+        {props.leadingIcon}
+      </figure>
+    )}
     <div>
-      <div>
-        <Text.Body>{props.headlineText}</Text.Body>
-      </div>
-      <div>
-        <Text.Body>{props.supportingText}</Text.Body>
-      </div>
+      <Text.Body as="div">{props.headlineText}</Text.Body>
+      <Text.Body as="div">{props.supportingText}</Text.Body>
     </div>
   </div>
 ))
@@ -166,6 +166,7 @@ const Select = Object.assign(
           true: { filter: 'drop-shadow(0 1px 3px rgba(0, 0, 0, 0.25))' },
           false: { filter: 'drop-shadow(0 0 0 rgba(0, 0, 0, 0.25))' },
         }}
+        css={{ display: 'inline-block' }}
       >
         <Surface
           as={motion.button}

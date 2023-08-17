@@ -1,13 +1,13 @@
-import { type Query } from '@archetypes/Transaction/lib'
 import DialogComponent from '@components/recipes/ExportTxHistoryDialog'
 import { substrateAccountsState } from '@domains/accounts/recoils'
 import * as Sentry from '@sentry/react'
 import { toast } from '@talismn/ui'
 import { stringify } from 'csv-stringify/browser/esm'
-import { subMonths } from 'date-fns'
-import { gql, request } from 'graphql-request'
-import { useCallback, useState, type ReactNode } from 'react'
+import { differenceInYears, subMonths } from 'date-fns'
+import { request } from 'graphql-request'
+import { useCallback, useState, type ReactNode, useMemo } from 'react'
 import { useRecoilValue } from 'recoil'
+import { graphql } from '../../../generated/gql/extrinsicHistory/gql'
 
 export type ExportTxHistoryWidgetProps = {
   children: (props: { onToggleOpen: () => unknown }) => ReactNode
@@ -23,57 +23,23 @@ const ExportTxHistoryWidget = (props: ExportTxHistoryWidgetProps) => {
   const [toDate, setToDate] = useState(new Date())
 
   const onRequestExport = useCallback(() => {
-    const promise = request<Pick<Query, 'addressById'>>(
-      import.meta.env.REACT_APP_TX_HISTORY_INDEXER,
-      gql`
-        query ($address: String!, $fromDate: DateTime!, $toDate: DateTime!) {
-          addressById(id: $address) {
-            events(
-              where: {
-                event: { extrinsic: { success_eq: true }, block: { timestamp_gte: $fromDate, timestamp_lte: $toDate } }
-              }
-              orderBy: event_id_ASC
-            ) {
-              id
-              event {
-                name
-                args
-                extrinsic {
-                  hash
-                  fee
-                  tip
-                  signer
-                }
-                block {
-                  blockNumber
-                  chainId
-                  timestamp
-                }
-              }
-            }
-          }
+    const promise = request(
+      import.meta.env.REACT_APP_EX_HISTORY_INDEXER,
+      graphql(`
+        query extrinsicCsv($address: String!, $timestampGte: DateTime!, $timestampLte: DateTime!) {
+          extrinsicCsv(where: { addressIn: [$address], timestampGte: $timestampGte, timestampLte: $timestampLte })
         }
-      `,
-      { address: selectedAccount?.address ?? '', fromDate: fromDate.toISOString(), toDate: toDate.toISOString() }
+      `),
+      {
+        address: selectedAccount?.address ?? '',
+        timestampGte: fromDate.toISOString(),
+        timestampLte: toDate.toISOString(),
+      }
     )
-      .then(x => [
-        ['Date', 'Chain ID', 'Transaction Name', 'Hash', 'Block', 'Signer', 'Fee', 'Tip', 'Arguments'],
-        ...(x.addressById?.events?.map(addressEvent => [
-          addressEvent.event.block.timestamp,
-          addressEvent.event.block.chainId,
-          addressEvent.event.name,
-          addressEvent.event.extrinsic?.hash,
-          addressEvent.event.block.blockNumber,
-          addressEvent.event.extrinsic?.signer,
-          addressEvent.event.extrinsic?.fee,
-          addressEvent.event.extrinsic?.tip,
-          addressEvent.event.args,
-        ]) ?? []),
-      ])
       .then(
         async x =>
           await new Promise<void>((resolve, reject) =>
-            stringify(x ?? [], (error, output) => {
+            stringify(x.extrinsicCsv, (error, output) => {
               if (error !== undefined) {
                 reject(error)
               } else {
@@ -98,6 +64,11 @@ const ExportTxHistoryWidget = (props: ExportTxHistoryWidgetProps) => {
     })
   }, [fromDate, selectedAccount?.address, toDate])
 
+  const error = useMemo(
+    () => (Math.abs(differenceInYears(fromDate, toDate)) > 1 ? "Can't export more than 1 year" : undefined),
+    [fromDate, toDate]
+  )
+
   return (
     <>
       <DialogComponent
@@ -118,6 +89,7 @@ const ExportTxHistoryWidget = (props: ExportTxHistoryWidgetProps) => {
         toDate={toDate}
         onChangeToDate={setToDate}
         onRequestExport={onRequestExport}
+        error={error}
       />
       {props.children({ onToggleOpen: useCallback(() => setOpen(x => !x), []) })}
     </>

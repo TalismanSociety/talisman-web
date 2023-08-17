@@ -11,6 +11,7 @@ export type ExportTxHistoryDialogProps = Pick<AlertDialogProps, 'open' | 'onRequ
   toDate: Date
   onChangeToDate: (date: Date) => unknown
   onRequestExport: () => unknown
+  error?: string
 }
 
 const ExportTxHistoryDialog = ({
@@ -26,7 +27,11 @@ const ExportTxHistoryDialog = ({
   <AlertDialog
     {...props}
     title="Export CSV"
-    confirmButton={<Button onClick={onRequestExport}>Export</Button>}
+    confirmButton={
+      <Button onClick={onRequestExport} disabled={props.error !== undefined}>
+        Export
+      </Button>
+    }
     content={
       <div>
         <Text.Body as="p" css={{ marginBottom: '2.4rem' }}>
@@ -57,15 +62,12 @@ const ExportTxHistoryDialog = ({
         <div css={{ display: 'flex', gap: '0.8rem' }}>
           <DateInput
             leadingLabel="Start date"
-            value={fromDate.toISOString().split('T')[0]}
+            value={fromDate}
             onChange={x => onChangeFromDate(new Date(x.target.value))}
           />
-          <DateInput
-            leadingLabel="End date"
-            value={toDate.toISOString().split('T')[0]}
-            onChange={x => onChangeToDate(new Date(x.target.value))}
-          />
+          <DateInput leadingLabel="End date" value={toDate} onChange={x => onChangeToDate(new Date(x.target.value))} />
         </div>
+        {props.error !== undefined && <Text.BodySmall color={theme => theme.color.error}>{props.error}</Text.BodySmall>}
       </div>
     }
   />
