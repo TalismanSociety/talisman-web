@@ -1,8 +1,8 @@
 import MemberRow from '@components/MemberRow'
 import StatusCircle, { StatusCircleType } from '@components/StatusCircle'
-import { tokenPriceState } from '@domains/chains'
+import { multisigDepositTotalSelector, tokenPriceState } from '@domains/chains'
 import { accountsState } from '@domains/extension'
-import { Balance, Transaction, TransactionType, usePendingTransactions } from '@domains/multisig'
+import { Balance, Transaction, TransactionType, selectedMultisigState, usePendingTransactions } from '@domains/multisig'
 import { css } from '@emotion/css'
 import { Button, CircularProgressIndicator, Skeleton } from '@talismn/ui'
 import { Address } from '@util/addresses'
@@ -15,7 +15,7 @@ import TransactionSummaryRow from './TransactionSummaryRow'
 
 enum PillType {
   Pending,
-  Approved,
+  Executed,
 }
 
 const Pill = ({ children, type }: { children: React.ReactNode; type: PillType }) => {
@@ -76,7 +76,7 @@ export const FullScreenDialogTitle = ({ t }: { t?: Transaction }) => {
 
   const pillType =
     Object.values(t.approvals).filter(Boolean).length === Object.values(t.approvals).length
-      ? PillType.Approved
+      ? PillType.Executed
       : PillType.Pending
   return (
     <div
@@ -93,7 +93,7 @@ export const FullScreenDialogTitle = ({ t }: { t?: Transaction }) => {
     >
       <h2>Transaction Summary</h2>
       <Pill type={pillType}>
-        <p css={{ fontSize: '12px', marginTop: '3px' }}>{pillType === PillType.Approved ? 'Approved' : 'Pending'}</p>
+        <p css={{ fontSize: '12px', marginTop: '3px' }}>{pillType === PillType.Executed ? 'Executed' : 'Pending'}</p>
       </Pill>
     </div>
   )
@@ -120,7 +120,18 @@ export const FullScreenDialogContents = ({
   const [approveInFlight, setApproveInFlight] = useState(false)
   const extensionAccounts = useRecoilValue(accountsState)
   const feeTokenPrice = useRecoilValueLoadable(tokenPriceState(fee?.token))
+  const selectedMultisig = useRecoilValue(selectedMultisigState)
+  const multisigDepositTotal = useRecoilValueLoadable(
+    multisigDepositTotalSelector({
+      rpc: selectedMultisig.chain.rpc,
+      signatories: t?.approvals ? Object.keys(t.approvals).length : 0,
+    })
+  )
   const { transactions: pendingTransactions, loading: pendingLoading } = usePendingTransactions()
+  const firstApproval = useMemo(() => {
+    if (!t) return null
+    return !Object.values(t.approvals).find(v => v === true)
+  }, [t])
 
   // Check if the user has an account connected which can approve the transaction
   const connectedAccountCanApprove: boolean = useMemo(() => {
@@ -132,10 +143,25 @@ export const FullScreenDialogContents = ({
     })
   }, [t, extensionAccounts])
 
+  const reserveComponent = useMemo(() => {
+    if (!connectedAccountCanApprove) return null
+    if (multisigDepositTotal.state === 'loading' || !fee) {
+      return <Skeleton.Surface css={{ width: '32px', height: '16px' }} />
+    } else if (multisigDepositTotal.state === 'hasValue') {
+      return (
+        <p>{`${balanceToFloat(multisigDepositTotal.contents)} ${fee?.token.symbol} (${formatUsd(
+          balanceToFloat(multisigDepositTotal.contents) * feeTokenPrice.contents.current
+        )})`}</p>
+      )
+    } else {
+      return <p>Error reserve amount</p>
+    }
+  }, [multisigDepositTotal, fee, connectedAccountCanApprove, feeTokenPrice])
+
   const feeComponent = useMemo(() => {
     if (!connectedAccountCanApprove) return null
     if (feeTokenPrice.state === 'loading' || !fee) {
-      return <Skeleton.Surface css={{ width: '150px', height: '16px' }} />
+      return <Skeleton.Surface css={{ width: '32px', height: '16px' }} />
     } else if (feeTokenPrice.state === 'hasValue') {
       return (
         <p>{`${balanceToFloat(fee)} ${fee?.token.symbol} (${formatUsd(
@@ -174,89 +200,101 @@ export const FullScreenDialogContents = ({
             <h3>Details</h3>
             <TransactionDetailsExpandable t={t} />
           </div>
-          <div css={{ display: 'grid', gap: '13px' }}>
-            <h3>Approvals</h3>
-            <Approvals t={t} />
+          {!t.executedAt ? (
+            <div css={{ display: 'grid', gap: '13px' }}>
+              <h3>Approvals</h3>
+              <Approvals t={t} />
+            </div>
+          ) : null}
+        </div>
+      </div>
+      {!t.executedAt ? (
+        <div
+          className={css`
+            display: grid;
+            margin-top: auto;
+            border-top: 1px solid var(--color-backgroundLighter);
+            gap: 16px;
+            padding: 32px;
+          `}
+        >
+          <div css={{ display: 'flex', justifyContent: 'space-between' }}>
+            {readyToExecute && !t.callData ? (
+              'Cannot execute transaction without calldata'
+            ) : !connectedAccountCanApprove ? (
+              'All connected extension accounts have already signed this transaction'
+            ) : t.decoded?.type === TransactionType.ChangeConfig && pendingTransactions.length > 1 ? (
+              `You must execute or cancel all pending transactions (${
+                pendingTransactions.length - 1
+              } remaining) before changing the signer configuration`
+            ) : (
+              <div css={{ width: '100%' }}>
+                <div css={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+                  <p>Estimated Fee</p>
+                  {feeComponent}
+                </div>
+                {firstApproval && (
+                  <div css={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+                    <p>Reserve Amount (Refunded on execution or cancellation)</p>
+                    {reserveComponent}
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+          <div css={{ display: 'grid', height: '56px', gap: '16px', gridTemplateColumns: '1fr 1fr' }}>
+            <Button
+              variant="outlined"
+              onClick={() => {
+                setCancelInFlight(true)
+                onCancel().finally(() => {
+                  setCancelInFlight(false)
+                })
+              }}
+              disabled={approveInFlight || cancelInFlight || !canCancel}
+            >
+              {cancelInFlight ? (
+                <div css={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  Signing and sending cancelation...
+                  <CircularProgressIndicator />
+                </div>
+              ) : !canCancel ? (
+                'Only originator can cancel'
+              ) : (
+                cancelButtonTextOverride || 'Reject'
+              )}
+            </Button>
+            <Button
+              onClick={() => {
+                setApproveInFlight(true)
+                onApprove().finally(() => {
+                  setApproveInFlight(false)
+                })
+              }}
+              disabled={
+                pendingLoading ||
+                approveInFlight ||
+                cancelInFlight ||
+                !connectedAccountCanApprove ||
+                !fee ||
+                (readyToExecute && !t.callData) ||
+                (t.decoded?.type === TransactionType.ChangeConfig && pendingTransactions.length > 1)
+              }
+            >
+              {approveInFlight ? (
+                <div css={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  Signing and sending approval...
+                  <CircularProgressIndicator />
+                </div>
+              ) : readyToExecute ? (
+                'Approve & Execute'
+              ) : (
+                'Approve'
+              )}
+            </Button>
           </div>
         </div>
-      </div>
-      <div
-        className={css`
-          display: grid;
-          margin-top: auto;
-          border-top: 1px solid var(--color-backgroundLighter);
-          gap: 16px;
-          padding: 32px;
-        `}
-      >
-        <div css={{ display: 'flex', justifyContent: 'space-between' }}>
-          {readyToExecute && !t.callData ? (
-            'Cannot execute transaction without calldata'
-          ) : !connectedAccountCanApprove ? (
-            'All connected extension accounts have already signed this transaction'
-          ) : t.decoded?.type === TransactionType.ChangeConfig && pendingTransactions.length > 1 ? (
-            `You must execute or cancel all pending transactions (${
-              pendingTransactions.length - 1
-            } remaining) before changing the signer configuration`
-          ) : (
-            <>
-              <p>Estimated Fee</p>
-              {feeComponent}
-            </>
-          )}
-        </div>
-        <div css={{ display: 'grid', height: '56px', gap: '16px', gridTemplateColumns: '1fr 1fr' }}>
-          <Button
-            variant="outlined"
-            onClick={() => {
-              setCancelInFlight(true)
-              onCancel().finally(() => {
-                setCancelInFlight(false)
-              })
-            }}
-            disabled={approveInFlight || cancelInFlight || !canCancel}
-          >
-            {cancelInFlight ? (
-              <div css={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                Signing and sending cancelation...
-                <CircularProgressIndicator />
-              </div>
-            ) : !canCancel ? (
-              'Only originator can cancel'
-            ) : (
-              cancelButtonTextOverride || 'Reject'
-            )}
-          </Button>
-          <Button
-            onClick={() => {
-              setApproveInFlight(true)
-              onApprove().finally(() => {
-                setApproveInFlight(false)
-              })
-            }}
-            disabled={
-              pendingLoading ||
-              approveInFlight ||
-              cancelInFlight ||
-              !connectedAccountCanApprove ||
-              !fee ||
-              (readyToExecute && !t.callData) ||
-              (t.decoded?.type === TransactionType.ChangeConfig && pendingTransactions.length > 1)
-            }
-          >
-            {approveInFlight ? (
-              <div css={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                Signing and sending approval...
-                <CircularProgressIndicator />
-              </div>
-            ) : readyToExecute ? (
-              'Approve & Execute'
-            ) : (
-              'Approve'
-            )}
-          </Button>
-        </div>
-      </div>
+      ) : null}
     </div>
   )
 }

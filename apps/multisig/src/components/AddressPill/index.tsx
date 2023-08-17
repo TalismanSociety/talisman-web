@@ -1,7 +1,7 @@
 import { Chain } from '@domains/chains'
 import { css } from '@emotion/css'
 import { Identicon } from '@talismn/ui'
-import { Address, toSubscanUrl } from '@util/addresses'
+import { Address } from '@util/addresses'
 import truncateMiddle from 'truncate-middle'
 
 const AddressPill = ({ address, chain }: { address: Address; chain: Chain }) => {
@@ -19,7 +19,7 @@ const AddressPill = ({ address, chain }: { address: Address; chain: Chain }) => 
         font-size: 14px;
         gap: 4px;
       `}
-      href={toSubscanUrl(address, chain)}
+      href={address.toSubscanUrl(chain)}
       target="_blank"
       rel="noreferrer"
     >

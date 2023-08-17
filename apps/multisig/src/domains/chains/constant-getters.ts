@@ -8,6 +8,7 @@ import { pjsApiSelector } from '@domains/chains/pjs-api'
 import { Balance } from '@domains/multisig'
 import { ApiPromise } from '@polkadot/api'
 import { Balance as PjsBalance } from '@polkadot/types/interfaces'
+import BN from 'bn.js'
 import { selectorFamily } from 'recoil'
 
 import { supportedChains } from './supported-chains'
@@ -93,6 +94,68 @@ export const proxyDepositTotalSelector = selectorFamily({
       return {
         token: nativeToken,
         amount: proxyDepositBase.amount.add(proxyDepositFactor.amount),
+      }
+    },
+  dangerouslyAllowMutability: true, // pjs wsprovider mutates itself to track connection msg stats
+})
+
+const multisigDepositBaseSelector = selectorFamily({
+  key: 'multisigDepositBaseSelector',
+  get:
+    (rpc: string) =>
+    async ({ get }): Promise<Balance> => {
+      const nativeTokenId = supportedChains.find(chain => chain.rpc === rpc)?.nativeToken.id
+      if (!nativeTokenId) throw Error('invalid rpc, this should never happen')
+
+      const nativeToken = get(tokenByIdQuery(nativeTokenId))
+      const apiLoadable = get(pjsApiSelector(rpc))
+      const api = apiLoadable as unknown as ApiPromise
+      await api.isReady
+      if (!api.consts.multisig) {
+        throw Error('Multisig module must exist on api!')
+      }
+      return { token: nativeToken, amount: api.consts.multisig.depositBase as unknown as PjsBalance }
+    },
+  dangerouslyAllowMutability: true, // pjs wsprovider mutates itself to track connection msg stats
+})
+
+const multisigDepositFactorSelector = selectorFamily({
+  key: 'multisigDepositFactorSelector',
+  get:
+    (rpc: string) =>
+    async ({ get }): Promise<Balance> => {
+      const nativeTokenId = supportedChains.find(chain => chain.rpc === rpc)?.nativeToken.id
+      if (!nativeTokenId) throw Error('invalid rpc, this should never happen')
+
+      const nativeToken = get(tokenByIdQuery(nativeTokenId))
+      const apiLoadable = get(pjsApiSelector(rpc))
+      const api = apiLoadable as unknown as ApiPromise
+      await api.isReady
+      if (!api.consts.multisig) {
+        throw Error('Multisig module must exist on api!')
+      }
+      return { token: nativeToken, amount: api.consts.multisig.depositFactor as unknown as PjsBalance }
+    },
+  dangerouslyAllowMutability: true, // pjs wsprovider mutates itself to track connection msg stats
+})
+
+export const multisigDepositTotalSelector = selectorFamily({
+  key: 'multisigDepositTotalSelector',
+  get:
+    ({ rpc, signatories }: { rpc: string; signatories: number }) =>
+    async ({ get }): Promise<Balance> => {
+      const nativeTokenId = supportedChains.find(chain => chain.rpc === rpc)?.nativeToken.id
+      if (!nativeTokenId) throw Error('invalid rpc, this should never happen')
+
+      const nativeToken = get(tokenByIdQuery(nativeTokenId))
+      const apiLoadable = get(pjsApiSelector(rpc))
+      const api = apiLoadable as unknown as ApiPromise
+      await api.isReady
+      const depositBase = get(multisigDepositBaseSelector(rpc))
+      const depositFactor = get(multisigDepositFactorSelector(rpc))
+      return {
+        token: nativeToken,
+        amount: depositBase.amount.add(depositFactor.amount.mul(new BN(signatories))),
       }
     },
   dangerouslyAllowMutability: true, // pjs wsprovider mutates itself to track connection msg stats

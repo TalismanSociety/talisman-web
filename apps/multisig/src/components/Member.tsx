@@ -4,7 +4,6 @@ import { css } from '@emotion/css'
 import { useTheme } from '@emotion/react'
 import { ExternalLink, Trash } from '@talismn/icons'
 import { IconButton, Identicon } from '@talismn/ui'
-import { toSubscanUrl } from '@util/addresses'
 import truncateMiddle from 'truncate-middle'
 
 export const Member = ({ m, chain, onDelete }: { m: AugmentedAccount; onDelete?: () => void; chain: Chain }) => {
@@ -42,7 +41,7 @@ export const Member = ({ m, chain, onDelete }: { m: AugmentedAccount; onDelete?:
             <Trash size={16} />
           </IconButton>
         )}
-        <a href={toSubscanUrl(m.address, chain)} target="_blank" rel="noreferrer">
+        <a href={m.address.toSubscanUrl(chain)} target="_blank" rel="noreferrer">
           <IconButton size={16} contentColor={`rgb(${theme.foreground})`} css={{ cursor: 'pointer' }}>
             <ExternalLink size={16} />
           </IconButton>

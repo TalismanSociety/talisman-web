@@ -1,6 +1,13 @@
 import StatusCircle, { StatusCircleType } from '@components/StatusCircle'
 import { tokenPricesState } from '@domains/chains'
-import { Balance, Transaction, TransactionType, calcSumOutgoing, selectedMultisigState } from '@domains/multisig'
+import {
+  Balance,
+  Transaction,
+  TransactionType,
+  calcSumOutgoing,
+  selectedMultisigState,
+  toConfirmedTxUrl,
+} from '@domains/multisig'
 import { css } from '@emotion/css'
 import { ArrowUp, List, Settings, Share2, Unknown } from '@talismn/icons'
 import { Skeleton } from '@talismn/ui'
@@ -92,7 +99,7 @@ const TransactionSummaryRow = ({
         }}
       >
         <p>{t.description}</p>
-        {threshold !== signedCount && (
+        {!t.executedAt && threshold !== signedCount && (
           <div
             className={css`
               display: flex;
@@ -119,19 +126,19 @@ const TransactionSummaryRow = ({
         {tokenBreakdown}
       </p>
       <div css={{ gridArea: 'usdAmount', textAlign: 'right', fontSize: '14px', paddingTop: '10px' }}>
-        {sumPriceUsd ? (
+        {tokenBreakdown.length === 0 ? null : sumPriceUsd !== undefined ? (
           <>{formatUsd(sumPriceUsd)}</>
-        ) : sumPriceUsd === 0 ? null : (
-          <Skeleton.Surface css={{ height: '14px', minWidth: '30px' }} />
+        ) : (
+          <Skeleton.Surface css={{ height: '14px', width: '42px' }} />
         )}
       </div>
-      {signedCount >= threshold && (
+      {t.executedAt && (
         <a
           className={css`
             grid-area: executedInfo;
             margin-left: 24px;
           `}
-          href="https://subscan.com/tx123"
+          href={toConfirmedTxUrl(t)}
           target="_blank"
           rel="noreferrer"
           onClick={e => e.stopPropagation()}

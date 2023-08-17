@@ -159,7 +159,7 @@ export const tokenByIdWithPrice = selectorFamily({
     },
 })
 
-export interface Chain {
+export type Chain = {
   id: string
   chainName: string
   logo: string

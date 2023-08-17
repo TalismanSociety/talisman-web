@@ -13,6 +13,7 @@ import {
   selectedMultisigState,
   txOffchainMetadataState,
 } from '@domains/multisig'
+import { rawConfirmedTransactionsDependency } from '@domains/tx-history'
 import { ApiPromise, SubmittableResult } from '@polkadot/api'
 import type { SubmittableExtrinsic } from '@polkadot/api/types'
 import { web3FromAddress } from '@polkadot/extension-dapp'
@@ -342,6 +343,7 @@ export const useApproveAsMulti = (
   const apiLoadable = useRecoilValueLoadable(pjsApiSelector(multisig.chain.rpc))
   const nativeToken = useRecoilValueLoadable(tokenByIdQuery(multisig.chain.nativeToken.id))
   const setRawPendingTransactionDependency = useSetRecoilState(rawPendingTransactionsDependency)
+  const setRawConfirmedTransactionDependency = useSetRecoilState(rawConfirmedTransactionsDependency)
   const [metadataCache, setMetadataCache] = useRecoilState(txOffchainMetadataState)
   const [estimatedFee, setEstimatedFee] = useState<Balance | undefined>()
 
@@ -450,6 +452,7 @@ export const useApproveAsMulti = (
                     })
                 }
                 setRawPendingTransactionDependency(new Date())
+                setRawConfirmedTransactionDependency(new Date())
                 onSuccess(result)
               }
             })
@@ -461,7 +464,16 @@ export const useApproveAsMulti = (
         onFailure(JSON.stringify(e))
       })
     },
-    [extensionAddress, createTx, setRawPendingTransactionDependency, metadataCache, setMetadataCache, multisig, hash]
+    [
+      extensionAddress,
+      createTx,
+      setRawPendingTransactionDependency,
+      setRawConfirmedTransactionDependency,
+      metadataCache,
+      setMetadataCache,
+      multisig,
+      hash,
+    ]
   )
 
   return { approveAsMulti, ready: ready && !!estimatedFee, estimatedFee }

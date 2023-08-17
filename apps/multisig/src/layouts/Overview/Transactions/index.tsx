@@ -7,7 +7,7 @@ import {
   useNextTransactionSigner,
   usePendingTransactions,
 } from '@domains/multisig'
-import { confirmedTransactionsSelector } from '@domains/tx-history'
+import { rawConfirmedTransactionsDependency, useConfirmedTransactions } from '@domains/tx-history'
 import { css } from '@emotion/css'
 import { EyeOfSauronProgressIndicator, FullScreenDialog } from '@talismn/ui'
 import { toMultisigAddress } from '@util/addresses'
@@ -15,7 +15,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { useEffect, useMemo, useState } from 'react'
 import { toast } from 'react-hot-toast'
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom'
-import { useRecoilState, useRecoilValueLoadable, useSetRecoilState } from 'recoil'
+import { useRecoilState, useSetRecoilState } from 'recoil'
 
 import { FullScreenDialogContents, FullScreenDialogTitle } from './FullScreenSummary'
 import TransactionSummaryRow from './TransactionSummaryRow'
@@ -63,10 +63,12 @@ const TransactionsList = ({ transactions }: { transactions: Transaction[] }) => 
   )
   const { cancelAsMulti, canCancel } = useCancelAsMulti(openTransaction)
   const setRawPendingTransactionDependency = useSetRecoilState(rawPendingTransactionsDependency)
+  const setRawConfirmedTransactionDependency = useSetRecoilState(rawConfirmedTransactionsDependency)
 
   useEffect(() => {
     const interval = setInterval(() => {
       setRawPendingTransactionDependency(new Date())
+      setRawConfirmedTransactionDependency(new Date())
     }, 5000)
     return () => clearInterval(interval)
   })
@@ -225,7 +227,7 @@ const TransactionsList = ({ transactions }: { transactions: Transaction[] }) => 
 
 const Transactions = () => {
   const { transactions: pendingTransactions, loading: pendingLoading } = usePendingTransactions()
-  const confirmedTransactions = useRecoilValueLoadable(confirmedTransactionsSelector)
+  const { transactions: confirmedTransactions, loading: confirmedLoading } = useConfirmedTransactions()
 
   const [mode, setMode] = useState(Mode.Pending)
   return (
@@ -271,15 +273,12 @@ const Transactions = () => {
           exit={{ y: 10, opacity: 0 }}
           transition={{ duration: 0.2 }}
         >
-          {(mode === Mode.Pending && pendingLoading) ||
-          (mode === Mode.History && confirmedTransactions.state === 'loading') ? (
+          {(mode === Mode.Pending && pendingLoading) || (mode === Mode.History && confirmedLoading) ? (
             <div css={{ margin: '24px 0' }}>
               <EyeOfSauronProgressIndicator />
             </div>
           ) : (
-            <TransactionsList
-              transactions={mode === Mode.Pending ? pendingTransactions : confirmedTransactions.contents}
-            />
+            <TransactionsList transactions={mode === Mode.Pending ? pendingTransactions : confirmedTransactions} />
           )}
         </motion.div>
       </AnimatePresence>

@@ -1,5 +1,5 @@
 import { Chain } from '@domains/chains'
-import { createKeyDerived, createKeyMulti, decodeAddress, encodeAddress, sortAddresses } from '@polkadot/util-crypto'
+import { createKeyMulti, decodeAddress, encodeAddress, sortAddresses } from '@polkadot/util-crypto'
 const { hexToU8a, isHex, u8aToHex } = require('@polkadot/util')
 
 // Represent addresses as bytes except for when we need to display them to the user.
@@ -44,10 +44,10 @@ export class Address {
   toPubKey(): string {
     return u8aToHex(this.bytes)
   }
-}
 
-export const toSubscanUrl = (address: Address, chain: Chain): string => {
-  return `https://${chain.chainName.toLowerCase()}.subscan.io/account/${address.toSs58(chain)}`
+  toSubscanUrl(chain: Chain): string {
+    return `https://${chain.chainName.toLowerCase()}.subscan.io/account/${this.toSs58(chain)}`
+  }
 }
 
 export const toMultisigAddress = (signers: Address[], threshold: number): Address => {

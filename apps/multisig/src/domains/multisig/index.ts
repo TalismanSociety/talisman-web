@@ -120,6 +120,12 @@ export interface TransactionApprovals {
   [key: string]: boolean
 }
 
+export interface ExecutedAt {
+  block: number
+  index: number
+  by: Address
+}
+
 export interface TransactionDecoded {
   type: TransactionType
   recipients: TransactionRecipient[]
@@ -134,11 +140,15 @@ export interface Transaction {
   hash: `0x${string}`
   chain: Chain
   approvals: TransactionApprovals
+  executedAt?: ExecutedAt
   date: Date
   rawPending?: RawPendingTransaction
   decoded?: TransactionDecoded
   callData?: `0x${string}`
 }
+
+export const toConfirmedTxUrl = (t: Transaction) =>
+  `https://${t.chain.chainName}.subscan.io/extrinsic/${t.executedAt?.block}-${t.executedAt?.index}`
 
 export const calcSumOutgoing = (t: Transaction): Balance[] => {
   if (!t.decoded) return []

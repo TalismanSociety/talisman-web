@@ -31,7 +31,7 @@ const ManageSignerConfiguration = () => {
   const navigate = useNavigate()
 
   useEffect(() => {
-    if (newMembers.length > newThreshold) {
+    if (newThreshold > newMembers.length) {
       setNewThreshold(newMembers.length)
     }
   }, [newMembers.length, newThreshold])
@@ -122,6 +122,7 @@ const ManageSignerConfiguration = () => {
           <AddressInput
             css={{ marginTop: '24px' }}
             onNewAddress={(a: Address) => {
+              if (newMembers.some(m => m.isEqual(a))) return
               setNewMembers([...newMembers, a])
             }}
           />

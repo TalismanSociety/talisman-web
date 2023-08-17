@@ -4,7 +4,6 @@ import { css } from '@emotion/css'
 import { useTheme } from '@emotion/react'
 import { ExternalLink, Trash } from '@talismn/icons'
 import { IconButton, Identicon } from '@talismn/ui'
-import { toSubscanUrl } from '@util/addresses'
 import truncateMiddle from 'truncate-middle'
 
 const MemberRow = (props: { member: AugmentedAccount; chain: Chain; onDelete?: () => void; truncate?: boolean }) => {
@@ -73,7 +72,7 @@ const MemberRow = (props: { member: AugmentedAccount; chain: Chain; onDelete?: (
           )}
         </>
       )}
-      <a href={toSubscanUrl(props.member.address, props.chain)} target="_blank" rel="noreferrer">
+      <a href={props.member.address.toSubscanUrl(props.chain)} target="_blank" rel="noreferrer">
         <IconButton
           className={css`
             cursor: pointer;
