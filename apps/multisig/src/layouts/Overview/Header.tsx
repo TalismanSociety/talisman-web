@@ -1,6 +1,6 @@
 import Logo from '@components/Logo'
 import { copyToClipboard } from '@domains/common'
-import { Multisig, activeMultisigsState, selectedMultisigState } from '@domains/multisig'
+import { Multisig, activeMultisigsState, combinedViewState, selectedMultisigState } from '@domains/multisig'
 import { css } from '@emotion/css'
 import { useTheme } from '@emotion/react'
 import { Copy, Plus, PlusCircle, TalismanHand } from '@talismn/icons'
@@ -17,6 +17,7 @@ const Header = () => {
   // Manage switching to active multisig if the selected one becomes inactive
   const [selectedMultisig, setSelectedMultisig] = useRecoilState(selectedMultisigState)
   const activeMultisigs = useRecoilValue(activeMultisigsState)
+  const [combinedView, setCombinedView] = useRecoilState(combinedViewState)
   useEffect(() => {
     if (
       activeMultisigs[0] &&
@@ -42,6 +43,17 @@ const Header = () => {
           margin-right: auto;
         `}
       />
+      <Button
+        variant="secondary"
+        className={css`
+          height: 100%;
+        `}
+        onClick={() => {
+          setCombinedView(!combinedView)
+        }}
+      >
+        <div>{combinedView ? 'Combined' : 'Selected'} Vault View</div>
+      </Button>
       <Button
         onClick={() => {
           navigate('/overview/new-transaction')

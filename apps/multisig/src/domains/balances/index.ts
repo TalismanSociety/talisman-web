@@ -1,5 +1,5 @@
 import { Token } from '@domains/chains'
-import { activeMultisigsState, selectedMultisigState } from '@domains/multisig'
+import { activeMultisigsState, combinedViewState, selectedMultisigState } from '@domains/multisig'
 import { Balances } from '@talismn/balances'
 import { useAllAddresses, useBalances, useTokens } from '@talismn/balances-react'
 import { groupBy } from 'lodash'
@@ -7,12 +7,6 @@ import { useEffect, useMemo } from 'react'
 import { atom, useRecoilValue, useSetRecoilState } from 'recoil'
 
 import { TokenAugmented } from '../../layouts/Overview/Assets'
-
-// create a new atom for deciding whether to show all balances or just the selected multisig
-export const showAllBalancesState = atom<boolean>({
-  key: 'ShowAllBalances',
-  default: false,
-})
 
 export const balancesState = atom<Balances | undefined>({
   key: 'Balances',
@@ -46,15 +40,15 @@ export const useAugmentedBalances = () => {
 
 export const BalancesWatcher = () => {
   const tokens = useTokens(true)
-  const showAllBalances = useRecoilValue(showAllBalancesState)
+  const combinedView = useRecoilValue(combinedViewState)
   const selectedMultisig = useRecoilValue(selectedMultisigState)
   const activeMultisigs = useRecoilValue(activeMultisigsState)
   const setBalances = useSetRecoilState(balancesState)
   const [, setAllAddresses] = useAllAddresses()
 
   const multisigs = useMemo(
-    () => (showAllBalances ? activeMultisigs : [selectedMultisig]).filter(({ proxyAddress }) => proxyAddress),
-    [showAllBalances, activeMultisigs, selectedMultisig]
+    () => (combinedView ? activeMultisigs : [selectedMultisig]),
+    [combinedView, activeMultisigs, selectedMultisig]
   )
   const addresses = useMemo(() => multisigs.map(({ proxyAddress }) => proxyAddress), [multisigs])
 

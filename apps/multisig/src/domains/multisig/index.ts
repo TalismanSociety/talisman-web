@@ -13,6 +13,13 @@ import truncateMiddle from 'truncate-middle'
 
 import persistAtom from '../persist'
 
+// create a new atom for deciding whether to show all balances and txns or just for the selected
+// multisig
+export const combinedViewState = atom<boolean>({
+  key: 'CombinedViewState',
+  default: false,
+})
+
 const DUMMY_MULTISIG: Multisig = {
   name: 'DUMMY_MULTISIG',
   chain: supportedChains[0] as Chain,
