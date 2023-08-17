@@ -1,14 +1,17 @@
 import { decodeAddress, encodeAddress } from '@polkadot/keyring'
-import { hexToU8a, isHex } from '@polkadot/util'
-import { isAddress as isEvmAddress } from 'viem'
+import { isAddress as isEvmAddress, isHex } from 'viem'
 
-export const tryParseSubstrateOrEthereumAddress = (address: string) => {
+export const tryParseSubstrateOrEthereumAddress = (address: string, options = { acceptSubstratePublicKey: true }) => {
   if (isEvmAddress(address)) {
     return address
   }
 
+  if (isHex(address) && !options.acceptSubstratePublicKey) {
+    return undefined
+  }
+
   try {
-    return encodeAddress(isHex(address) ? hexToU8a(address) : decodeAddress(address))
+    return encodeAddress(decodeAddress(address))
   } catch (error) {
     return undefined
   }

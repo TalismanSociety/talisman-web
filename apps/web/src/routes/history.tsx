@@ -1,8 +1,11 @@
+import { TalismanHandLoader } from '@components/TalismanHandLoader'
 import {
   ExtrinsicDetailsSideSheet,
   type ExtrinsicDetailsSideSheetProps,
 } from '@components/recipes/ExtrinsicDetailsSideSheet'
 import TransactionLineItem, { TransactionList } from '@components/recipes/TransactionLineItem'
+import ErrorBoundary from '@components/widgets/ErrorBoundary'
+import ExportTxHistoryWidget from '@components/widgets/ExportTxHistoryWidget'
 import { accountsState, selectedAccountsState, type Account } from '@domains/accounts'
 import { Button, CircularProgressIndicator, DateInput, Select, Text, TextInput } from '@talismn/ui'
 import { encodeAnyAddress } from '@talismn/util'
@@ -13,11 +16,9 @@ import { isNil } from 'lodash'
 import { Suspense, useCallback, useMemo, useState } from 'react'
 import InfiniteScroll from 'react-infinite-scroller'
 import { selector, useRecoilValue } from 'recoil'
+import { isHex } from 'viem'
 import { graphql } from '../../generated/gql/extrinsicHistory/gql'
 import type { ExtrinsicsQuery } from '../../generated/gql/extrinsicHistory/gql/graphql'
-import ExportTxHistoryWidget from '@components/widgets/ExportTxHistoryWidget'
-import { TalismanHandLoader } from '@components/TalismanHandLoader'
-import ErrorBoundary from '@components/widgets/ErrorBoundary'
 
 const filtersState = selector({
   key: 'History/Filters',
@@ -301,12 +302,15 @@ const History = () => {
   const [module, setModule] = useState<string>()
   const [date, setDate] = useState<Date>()
 
-  const searchAddress = useMemo(() => tryParseSubstrateOrEthereumAddress(search), [search])
+  const searchAddress = useMemo(
+    () => tryParseSubstrateOrEthereumAddress(search, { acceptSubstratePublicKey: false }),
+    [search]
+  )
   const searchAddressOrHash = useMemo(
     () =>
       searchAddress !== undefined
         ? { accounts: [{ address: searchAddress }] }
-        : search.startsWith('0x')
+        : isHex(search)
         ? { hash: search }
         : { accounts: selectedAccounts },
     [search, searchAddress, selectedAccounts]
