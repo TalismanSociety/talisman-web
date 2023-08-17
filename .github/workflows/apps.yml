@@ -49,7 +49,7 @@ jobs:
         ONFINALITY_API_KEY,
         SENTRY_DSN,
         POSTHOG_AUTH_TOKEN,
-        TX_HISTORY_INDEXER,
+        EX_HISTORY_INDEXER,
         BASEROW_EXPLORE_AUTH,
         BASEROW_CROWDLOANS_AUTH
       environmentVariableVariables: >-
