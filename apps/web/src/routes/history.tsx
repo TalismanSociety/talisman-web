@@ -10,12 +10,14 @@ import { tryParseSubstrateOrEthereumAddress } from '@util/addressValidation'
 import { Maybe } from '@util/monads'
 import request from 'graphql-request'
 import { isNil } from 'lodash'
-import { useCallback, useMemo, useState } from 'react'
+import { Suspense, useCallback, useMemo, useState } from 'react'
 import InfiniteScroll from 'react-infinite-scroller'
 import { selector, useRecoilValue } from 'recoil'
 import { graphql } from '../../generated/gql/extrinsicHistory/gql'
 import type { ExtrinsicsQuery } from '../../generated/gql/extrinsicHistory/gql/graphql'
 import ExportTxHistoryWidget from '@components/widgets/ExportTxHistoryWidget'
+import { TalismanHandLoader } from '@components/TalismanHandLoader'
+import ErrorBoundary from '@components/widgets/ErrorBoundary'
 
 const filtersState = selector({
   key: 'History/Filters',
@@ -388,4 +390,16 @@ const History = () => {
   )
 }
 
-export default History
+export default () => (
+  <ErrorBoundary>
+    <Suspense
+      fallback={
+        <div css={{ display: 'flex', justifyContent: 'center' }}>
+          <TalismanHandLoader />
+        </div>
+      }
+    >
+      <History />
+    </Suspense>
+  </ErrorBoundary>
+)

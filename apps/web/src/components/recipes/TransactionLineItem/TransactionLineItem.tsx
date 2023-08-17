@@ -63,12 +63,12 @@ const TransactionLineItem = (props: TransactionLineItemProps) => {
           css={{ gridArea: 'origin', display: 'flex', alignItems: 'center' }}
           style={{ visibility: props.signer === undefined ? 'hidden' : undefined }}
         >
-          <Tooltip content={props.origin === 'self' ? 'Incoming transaction' : 'Outgoing transaction'}>
+          <Tooltip content={props.origin === 'self' ? 'Outgoing transaction' : 'Incoming transaction'}>
             {tooltipProps =>
               props.origin === 'self' ? (
-                <ArrowUp size="1.5rem" css={{ color: '#D5FF5C' }} {...tooltipProps} />
+                <ArrowUp size="1.5rem" css={{ color: '#F48F45' }} {...tooltipProps} />
               ) : (
-                <ArrowDown size="1.5rem" css={{ color: '#F48F45' }} {...tooltipProps} />
+                <ArrowDown size="1.5rem" css={{ color: '#D5FF5C' }} {...tooltipProps} />
               )
             }
           </Tooltip>
