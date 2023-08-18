@@ -5,15 +5,21 @@
 // TODO: use pjs types instead of force casting
 
 import { pjsApiSelector } from '@domains/chains/pjs-api'
-import { TransactionApprovals, selectedMultisigState } from '@domains/multisig'
+import {
+  Multisig,
+  TransactionApprovals,
+  activeMultisigsState,
+  combinedViewState,
+  selectedMultisigState,
+} from '@domains/multisig'
 import { StorageKey } from '@polkadot/types'
 import { Option } from '@polkadot/types-codec'
-import { BlockHash, BlockNumber, Multisig, ProxyDefinition } from '@polkadot/types/interfaces'
+import { BlockHash, BlockNumber, Multisig as OnChainMultisig, ProxyDefinition } from '@polkadot/types/interfaces'
 import { Address } from '@util/addresses'
 import { useCallback } from 'react'
 import { atom, selector, selectorFamily, useRecoilValueLoadable } from 'recoil'
 
-import { Chain } from './tokens'
+import { Chain, Token, tokenByIdQuery } from './tokens'
 
 export const useAddressIsProxyDelegatee = (chain: Chain) => {
   const apiLoadable = useRecoilValueLoadable(pjsApiSelector(chain.rpc))
@@ -65,7 +71,9 @@ export const rawPendingTransactionsDependency = atom<Date>({
 
 // The chain `Multisig` storage entry with some augmented data for easier usage.
 export interface RawPendingTransaction {
+  nativeToken: Token
   multisig: Multisig
+  onChainMultisig: OnChainMultisig
   callHash: `0x${string}`
   date: Date
   approvals: TransactionApprovals
@@ -78,59 +86,71 @@ export const rawPendingTransactionsSelector = selector({
     // This dependency allows effectively clearing the cache of this selector
     get(rawPendingTransactionsDependency)
 
+    const combinedView = get(combinedViewState)
     const selectedMultisig = get(selectedMultisigState)
-    const api = get(pjsApiSelector(selectedMultisig.chain.rpc))
-    await api.isReady
+    const activeMultisigs = get(activeMultisigsState)
+    const multisigs = combinedView ? activeMultisigs : [selectedMultisig]
 
-    if (!api.query.multisig?.multisigs) {
-      throw Error('multisig.multisigs must exist on api')
-    }
-    const keys = (await api.query.multisig.multisigs.keys(
-      selectedMultisig.multisigAddress.bytes
-    )) as unknown as StorageKey[]
-    const pendingTransactions = (
-      await Promise.all(
-        keys.map(async key => {
-          if (!api.query.multisig?.multisigs) {
-            throw Error('multisig.multisigs must exist on api')
-          }
-          const opt = (await api.query.multisig.multisigs(...key.args)) as unknown as Option<Multisig>
-          if (!opt.isSome) {
-            console.warn(
-              'multisig.multisigs return value is not Some. This may happen in the extremely rare case that a multisig tx is executed between the .keys query and the .multisigs query, but should be investigated if it is reoccuring.'
-            )
-            return null
-          }
-          // attach the date to tx details
-          const multisig = opt.unwrap()
-          const hash = get(blockHashSelector(multisig.when.height))
-          const date = new Date(get(blockTimestampSelector(hash)))
-          if (!key.args[1]) throw Error('args is length 2; qed.')
-          const callHash = key.args[1]
-          return {
-            callHash: callHash.toHex(),
-            multisig,
-            date,
-            approvals: selectedMultisig.signers.reduce((acc, cur) => {
-              const approved = multisig.approvals.some(a => {
-                const ss52ApprovalAddress = Address.fromSs58(a.toString())
-                if (!ss52ApprovalAddress) {
-                  console.warn(
-                    "chain returned an approval that isn't a valid ss52 address. this should be investigated."
-                  )
-                  return false
-                } else {
-                  return cur.isEqual(ss52ApprovalAddress)
-                }
-              })
-              return { ...acc, [cur.toPubKey()]: approved }
-            }, {} as TransactionApprovals),
-          }
-        })
-      )
-    ).filter((transaction): transaction is RawPendingTransaction => transaction !== null)
+    const pendingTransactions = await Promise.all(
+      multisigs.map(async curMultisig => {
+        const api = get(pjsApiSelector(curMultisig.chain.rpc))
+        await api.isReady
+        const nativeToken = get(tokenByIdQuery(curMultisig.chain.nativeToken.id))
 
-    return pendingTransactions
+        if (!api.query.multisig?.multisigs) {
+          throw Error('multisig.multisigs must exist on api')
+        }
+        const keys = (await api.query.multisig.multisigs.keys(
+          curMultisig.multisigAddress.bytes
+        )) as unknown as StorageKey[]
+        const pendingTransactions = (
+          await Promise.all(
+            keys.map(async key => {
+              if (!api.query.multisig?.multisigs) {
+                throw Error('multisig.multisigs must exist on api')
+              }
+              const opt = (await api.query.multisig.multisigs(...key.args)) as unknown as Option<OnChainMultisig>
+              if (!opt.isSome) {
+                console.warn(
+                  'multisig.multisigs return value is not Some. This may happen in the extremely rare case that a multisig tx is executed between the .keys query and the .multisigs query, but should be investigated if it is reoccuring.'
+                )
+                return null
+              }
+              // attach the date to tx details
+              const onChainMultisig = opt.unwrap()
+              const hash = get(blockHashSelector({ height: onChainMultisig.when.height, rpc: curMultisig.chain.rpc }))
+              const date = new Date(get(blockTimestampSelector({ hash, rpc: curMultisig.chain.rpc })))
+              if (!key.args[1]) throw Error('args is length 2; qed.')
+              const callHash = key.args[1]
+              return {
+                nativeToken,
+                callHash: callHash.toHex(),
+                onChainMultisig,
+                multisig: curMultisig,
+                date,
+                approvals: curMultisig.signers.reduce((acc, cur) => {
+                  const approved = onChainMultisig.approvals.some(a => {
+                    const ss52ApprovalAddress = Address.fromSs58(a.toString())
+                    if (!ss52ApprovalAddress) {
+                      console.warn(
+                        "chain returned an approval that isn't a valid ss52 address. this should be investigated."
+                      )
+                      return false
+                    } else {
+                      return cur.isEqual(ss52ApprovalAddress)
+                    }
+                  })
+                  return { ...acc, [cur.toPubKey()]: approved }
+                }, {} as TransactionApprovals),
+              }
+            })
+          )
+        ).filter((transaction): transaction is RawPendingTransaction => transaction !== null)
+        return pendingTransactions
+      })
+    )
+
+    return pendingTransactions.flat()
   },
   dangerouslyAllowMutability: true, // pjs wsprovider mutates itself to track connection msg stats
 })
@@ -138,12 +158,10 @@ export const rawPendingTransactionsSelector = selector({
 export const blockTimestampSelector = selectorFamily({
   key: 'blockTimestampSelector',
   get:
-    (hash: BlockHash) =>
+    ({ hash, rpc }: { hash: BlockHash; rpc: string }) =>
     async ({ get }): Promise<number> => {
-      const selectedMultisig = get(selectedMultisigState)
-      const api = get(pjsApiSelector(selectedMultisig.chain.rpc))
+      const api = get(pjsApiSelector(rpc))
       await api.isReady
-
       if (!api.query.timestamp?.now) {
         throw Error('timestamp.now must exist on api')
       }
@@ -154,10 +172,9 @@ export const blockTimestampSelector = selectorFamily({
 export const blockHashSelector = selectorFamily({
   key: 'blockHashSelector',
   get:
-    (height: BlockNumber) =>
+    ({ height, rpc }: { height: BlockNumber; rpc: string }) =>
     async ({ get }): Promise<BlockHash> => {
-      const selectedMultisig = get(selectedMultisigState)
-      const api = get(pjsApiSelector(selectedMultisig.chain.rpc))
+      const api = get(pjsApiSelector(rpc))
       await api.isReady
       return api.rpc.chain.getBlockHash(height)
     },

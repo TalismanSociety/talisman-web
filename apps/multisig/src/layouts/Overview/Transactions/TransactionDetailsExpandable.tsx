@@ -6,16 +6,10 @@ import 'ace-builds/src-noconflict/ext-language_tools'
 import AddressPill from '@components/AddressPill'
 import { CallDataPasteForm } from '@components/CallDataPasteForm'
 import MemberRow from '@components/MemberRow'
-import { tokenPriceState, useDecodeCallData } from '@domains/chains'
+import { decodeCallData, tokenPriceState } from '@domains/chains'
+import { pjsApiSelector } from '@domains/chains/pjs-api'
 import { copyToClipboard } from '@domains/common'
-import {
-  Balance,
-  Transaction,
-  TransactionType,
-  calcSumOutgoing,
-  selectedMultisigState,
-  txOffchainMetadataState,
-} from '@domains/multisig'
+import { Balance, Transaction, TransactionType, calcSumOutgoing, txOffchainMetadataState } from '@domains/multisig'
 import { css } from '@emotion/css'
 import { useTheme } from '@emotion/react'
 import { Check, ChevronRight, Copy, List, Send, Settings, Share2, Unknown, Users } from '@talismn/icons'
@@ -25,7 +19,7 @@ import { balanceToFloat, formatUsd } from '@util/numbers'
 import { useEffect, useMemo, useState } from 'react'
 import AceEditor from 'react-ace'
 import { Collapse } from 'react-collapse'
-import { useRecoilState, useRecoilValue, useRecoilValueLoadable } from 'recoil'
+import { useRecoilState, useRecoilValueLoadable } from 'recoil'
 import truncateMiddle from 'truncate-middle'
 
 const AmountRow = ({ balance }: { balance: Balance }) => {
@@ -53,22 +47,21 @@ const AmountRow = ({ balance }: { balance: Balance }) => {
 }
 
 const ChangeConfigExpandedDetails = ({ t }: { t: Transaction }) => {
-  const multisig = useRecoilValue(selectedMultisigState)
   return (
     <div>
       <div css={{ display: 'grid', gap: '8px', marginTop: '8px' }}>
         {!t.executedAt && (
           <>
             <p css={{ fontWeight: 'bold' }}>Current Signers</p>
-            {multisig.signers.map(s => (
-              <MemberRow key={s.toPubKey()} member={{ address: s }} chain={multisig.chain} />
+            {t.multisig.signers.map(s => (
+              <MemberRow key={s.toPubKey()} member={{ address: s }} chain={t.multisig.chain} />
             ))}
-            <p>Threshold: {multisig.threshold}</p>
+            <p>Threshold: {t.multisig.threshold}</p>
           </>
         )}
         <p css={{ fontWeight: 'bold', marginTop: '8px' }}>{!t.executedAt ? 'Proposed ' : ''}New Signers</p>
         {t.decoded?.changeConfigDetails?.signers.map(s => (
-          <MemberRow key={s.toPubKey()} member={{ address: s }} chain={multisig.chain} />
+          <MemberRow key={s.toPubKey()} member={{ address: s }} chain={t.multisig.chain} />
         ))}
         <p>Threshold: {t.decoded?.changeConfigDetails?.threshold}</p>
       </div>
@@ -122,7 +115,7 @@ const MultiSendExpandedDetails = ({ t }: { t: Transaction }) => {
             </div>
             <div css={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               Destination
-              <AddressPill address={address} chain={t.chain} />
+              <AddressPill address={address} chain={t.multisig.chain} />
             </div>
           </div>
         )
@@ -131,14 +124,15 @@ const MultiSendExpandedDetails = ({ t }: { t: Transaction }) => {
   )
 }
 
-function AdvancedExpendedDetails({ callData }: { callData: `0x${string}` | undefined }) {
-  const { loading, decodeCallData } = useDecodeCallData()
+function AdvancedExpendedDetails({ callData, rpc }: { callData: `0x${string}` | undefined; rpc: string }) {
+  const apiLoadable = useRecoilValueLoadable(pjsApiSelector(rpc))
   const [error, setError] = useState<Error | undefined>(undefined)
 
   const { extrinsic, human, lines } = useMemo(() => {
-    if (!loading && callData) {
+    if (apiLoadable.state === 'hasValue' && callData) {
+      const api = apiLoadable.contents
       try {
-        const extrinsic = decodeCallData(callData)
+        const extrinsic = decodeCallData(api, callData)
         const human = JSON.stringify(extrinsic?.method.toHuman(), null, 2)
         const lines = human.split(/\r\n|\r|\n/).length
         return { extrinsic, human, lines }
@@ -151,7 +145,7 @@ function AdvancedExpendedDetails({ callData }: { callData: `0x${string}` | undef
       }
     }
     return { extrinsic: undefined, human: '', lines: 0 }
-  }, [decodeCallData, callData, loading])
+  }, [callData, apiLoadable])
 
   if (!callData) return null
 
@@ -295,7 +289,7 @@ const TransactionDetailsExpandable = ({ t }: { t: Transaction }) => {
               margin-left: auto;
             `}
           >
-            <AddressPill address={recipients[0]?.address as Address} chain={t.chain} />
+            <AddressPill address={recipients[0]?.address as Address} chain={t.multisig.chain} />
           </div>
         ) : null}
         {/* Show the token amounts being sent in this transaction */}
@@ -336,7 +330,7 @@ const TransactionDetailsExpandable = ({ t }: { t: Transaction }) => {
           ) : t.decoded?.type === TransactionType.ChangeConfig ? (
             <ChangeConfigExpandedDetails t={t} />
           ) : t.decoded?.type === TransactionType.Advanced ? (
-            <AdvancedExpendedDetails callData={t.callData} />
+            <AdvancedExpendedDetails callData={t.callData} rpc={t.multisig.chain.rpc} />
           ) : !t.decoded ? (
             <div css={{ margin: '8px 0', display: 'grid', gap: '8px' }}>
               <p css={{ fontSize: '14px' }}>

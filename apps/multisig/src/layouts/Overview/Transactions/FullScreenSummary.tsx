@@ -1,8 +1,8 @@
 import MemberRow from '@components/MemberRow'
 import StatusCircle, { StatusCircleType } from '@components/StatusCircle'
-import { multisigDepositTotalSelector, tokenPriceState } from '@domains/chains'
+import { Chain, multisigDepositTotalSelector, supportedChains, tokenPriceState } from '@domains/chains'
 import { accountsState } from '@domains/extension'
-import { Balance, Transaction, TransactionType, selectedMultisigState, usePendingTransactions } from '@domains/multisig'
+import { Balance, Transaction, TransactionType, usePendingTransactions } from '@domains/multisig'
 import { css } from '@emotion/css'
 import { Button, CircularProgressIndicator, Skeleton } from '@talismn/ui'
 import { Address } from '@util/addresses'
@@ -50,7 +50,7 @@ const Approvals = ({ t }: { t: Transaction }) => {
         return (
           <div key={encodedAddress} css={{ display: 'flex', width: '100%', justifyContent: 'space-between' }}>
             <div css={{ width: '100%' }}>
-              <MemberRow member={{ address: decodedAddress }} chain={t.chain} />
+              <MemberRow member={{ address: decodedAddress }} chain={t.multisig.chain} />
             </div>
             <div
               className={css`
@@ -120,10 +120,10 @@ export const FullScreenDialogContents = ({
   const [approveInFlight, setApproveInFlight] = useState(false)
   const extensionAccounts = useRecoilValue(accountsState)
   const feeTokenPrice = useRecoilValueLoadable(tokenPriceState(fee?.token))
-  const selectedMultisig = useRecoilValue(selectedMultisigState)
+  const defaultChain = supportedChains[0] as Chain
   const multisigDepositTotal = useRecoilValueLoadable(
     multisigDepositTotalSelector({
-      rpc: selectedMultisig.chain.rpc,
+      rpc: t?.multisig.chain.rpc || defaultChain.rpc,
       signatories: t?.approvals ? Object.keys(t.approvals).length : 0,
     })
   )

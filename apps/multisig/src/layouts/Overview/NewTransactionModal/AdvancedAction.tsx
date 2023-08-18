@@ -20,7 +20,6 @@ import toast from 'react-hot-toast'
 import { useNavigate } from 'react-router-dom'
 import { useRecoilValue } from 'recoil'
 
-import { mockTransactions } from '../mocks'
 import { FullScreenDialogContents, FullScreenDialogTitle } from '../Transactions/FullScreenSummary'
 import { NameTransaction } from './generic-steps'
 
@@ -84,7 +83,7 @@ const AdvancedAction = (props: { onCancel: () => void }) => {
         date: new Date(),
         hash: hash || '0x',
         description: name,
-        chain: multisig.chain,
+        multisig,
         approvals: multisig.signers.reduce((acc, key) => {
           acc[key.toPubKey()] = false
           return acc
@@ -133,7 +132,7 @@ const AdvancedAction = (props: { onCancel: () => void }) => {
         onClose={() => {
           setStep(Step.Details)
         }}
-        title={<FullScreenDialogTitle t={mockTransactions[1] as Transaction} />}
+        title={<FullScreenDialogTitle t={t} />}
         css={{
           header: {
             margin: '32px 48px',

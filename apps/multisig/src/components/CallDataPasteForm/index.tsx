@@ -3,17 +3,22 @@ import 'ace-builds/src-noconflict/mode-json'
 import 'ace-builds/src-noconflict/theme-twilight'
 import 'ace-builds/src-noconflict/ext-language_tools'
 
-import { useDecodeCallData } from '@domains/chains'
+import { decodeCallData } from '@domains/chains'
+import { pjsApiSelector } from '@domains/chains/pjs-api'
+import { selectedMultisigState } from '@domains/multisig'
 import { css } from '@emotion/css'
 import { SubmittableExtrinsic } from '@polkadot/api/types'
 import AceEditor from 'react-ace'
 import toast from 'react-hot-toast'
+import { useRecoilValue, useRecoilValueLoadable } from 'recoil'
 
 export const CallDataPasteForm = (props: {
   extrinsic: SubmittableExtrinsic<'promise'> | undefined
   setExtrinsic: (s: SubmittableExtrinsic<'promise'> | undefined) => void
 }) => {
-  const { loading, decodeCallData } = useDecodeCallData()
+  const selectedMultisig = useRecoilValue(selectedMultisigState)
+  const apiLoadable = useRecoilValueLoadable(pjsApiSelector(selectedMultisig.chain.rpc))
+  const loading = apiLoadable.state === 'loading'
 
   return (
     <div
@@ -23,7 +28,7 @@ export const CallDataPasteForm = (props: {
         if (props.extrinsic) return
 
         try {
-          const extrinsic = decodeCallData(event.clipboardData.getData('text') as `0x{string}`)
+          const extrinsic = decodeCallData(apiLoadable.contents, event.clipboardData.getData('text') as `0x{string}`)
           if (!extrinsic) throw Error('extrinsic should be loaded, did you try to set before loading was ready?')
           props.setExtrinsic(extrinsic)
         } catch (error) {

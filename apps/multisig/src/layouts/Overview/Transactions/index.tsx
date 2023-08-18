@@ -1,4 +1,5 @@
-import { useApproveAsMulti, useAsMulti, useCancelAsMulti, useDecodeCallData } from '@domains/chains'
+import { decodeCallData, useApproveAsMulti, useAsMulti, useCancelAsMulti } from '@domains/chains'
+import { pjsApiSelector } from '@domains/chains/pjs-api'
 import { rawPendingTransactionsDependency, useAddressIsProxyDelegatee } from '@domains/chains/storage-getters'
 import {
   Transaction,
@@ -15,7 +16,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { useEffect, useMemo, useState } from 'react'
 import { toast } from 'react-hot-toast'
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom'
-import { useRecoilState, useSetRecoilState } from 'recoil'
+import { useRecoilState, useRecoilValueLoadable, useSetRecoilState } from 'recoil'
 
 import { FullScreenDialogContents, FullScreenDialogTitle } from './FullScreenSummary'
 import TransactionSummaryRow from './TransactionSummaryRow'
@@ -41,25 +42,32 @@ const TransactionsList = ({ transactions }: { transactions: Transaction[] }) => 
   const groupedTransactions = useMemo(() => {
     return groupTransactionsByDay(transactions)
   }, [transactions])
-  const [selectedMultisig, setSelectedMultisig] = useRecoilState(selectedMultisigState)
+  const [_selectedMultisig, setSelectedMultisig] = useRecoilState(selectedMultisigState)
   const openTransaction = useMemo(
     () => transactions.find(t => t.hash === extractHash(location)),
     [transactions, location]
   )
   const [multisigs, setMultisigs] = useRecoilState(multisigsState)
+  const multisig = openTransaction?.multisig || _selectedMultisig
   const nextSigner = useNextTransactionSigner(openTransaction?.approvals)
   const { approveAsMulti, estimatedFee: approveAsMultiEstimatedFee } = useApproveAsMulti(
     nextSigner?.address,
     openTransaction?.hash,
-    openTransaction?.rawPending?.multisig.when
+    openTransaction?.rawPending?.onChainMultisig.when,
+    multisig
   )
-  const { addressIsProxyDelegatee } = useAddressIsProxyDelegatee(selectedMultisig.chain)
-  const { decodeCallData } = useDecodeCallData()
-  const maybeCallData = (openTransaction?.callData && decodeCallData(openTransaction.callData)) || undefined
+  const { addressIsProxyDelegatee } = useAddressIsProxyDelegatee(multisig.chain)
+  const apiLoadable = useRecoilValueLoadable(pjsApiSelector(openTransaction?.multisig.chain.rpc || ''))
+  const maybeCallData =
+    (apiLoadable.state === 'hasValue' &&
+      openTransaction?.callData &&
+      decodeCallData(apiLoadable.contents, openTransaction.callData)) ||
+    undefined
   const { asMulti, estimatedFee: asMultiEstimatedFee } = useAsMulti(
     nextSigner?.address,
     maybeCallData,
-    openTransaction?.rawPending?.multisig.when
+    openTransaction?.rawPending?.onChainMultisig.when,
+    multisig
   )
   const { cancelAsMulti, canCancel } = useCancelAsMulti(openTransaction)
   const setRawPendingTransactionDependency = useSetRecoilState(rawPendingTransactionsDependency)
@@ -82,9 +90,9 @@ const TransactionsList = ({ transactions }: { transactions: Transaction[] }) => 
 
   const readyToExecute = useMemo(() => {
     const nApprovals = Object.values(openTransaction?.approvals || {}).filter(a => a).length
-    const threshold = selectedMultisig.threshold
+    const threshold = multisig.threshold
     return nApprovals >= threshold - 1
-  }, [openTransaction, selectedMultisig.threshold])
+  }, [openTransaction, multisig.threshold])
 
   return (
     <div
@@ -148,15 +156,15 @@ const TransactionsList = ({ transactions }: { transactions: Transaction[] }) => 
                               openTransaction.decoded.changeConfigDetails.threshold
                             )
                             const { isProxyDelegatee } = await addressIsProxyDelegatee(
-                              selectedMultisig.proxyAddress,
+                              multisig.proxyAddress,
                               expectedNewMultisigAddress
                             )
                             if (isProxyDelegatee) {
                               const otherMultisigs = multisigs.filter(
-                                m => !m.multisigAddress.isEqual(selectedMultisig.multisigAddress)
+                                m => !m.multisigAddress.isEqual(multisig.multisigAddress)
                               )
                               const newMultisig = {
-                                ...selectedMultisig,
+                                ...multisig,
                                 multisigAddress: expectedNewMultisigAddress,
                                 threshold: openTransaction.decoded.changeConfigDetails.threshold,
                                 signers: openTransaction.decoded.changeConfigDetails.signers,

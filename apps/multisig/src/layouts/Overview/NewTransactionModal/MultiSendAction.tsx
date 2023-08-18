@@ -246,6 +246,7 @@ const MultiSendAction = (props: { onCancel: () => void }) => {
         hash,
         description: name,
         chain: multisig.chain,
+        multisig,
         approvals: multisig.signers.reduce((acc, key) => {
           acc[key.toPubKey()] = false
           return acc
@@ -265,7 +266,11 @@ const MultiSendAction = (props: { onCancel: () => void }) => {
   }, [extrinsic, multisig, sends, name])
   const signer = useNextTransactionSigner(t?.approvals)
   const hash = extrinsic?.registry.hash(extrinsic.method.toU8a()).toHex()
-  const { approveAsMulti, estimatedFee, ready: approveAsMultiReady } = useApproveAsMulti(signer?.address, hash, null)
+  const {
+    approveAsMulti,
+    estimatedFee,
+    ready: approveAsMultiReady,
+  } = useApproveAsMulti(signer?.address, hash, null, t?.multisig)
 
   return (
     <div

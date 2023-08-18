@@ -43,7 +43,7 @@ const ManageSignerConfiguration = () => {
         date: new Date(),
         hash,
         description: 'Change Signer Configuration',
-        chain: selectedMultisig.chain,
+        multisig: selectedMultisig,
         approvals: selectedMultisig.signers.reduce((acc, key) => {
           acc[key.toPubKey()] = false
           return acc
@@ -63,7 +63,11 @@ const ManageSignerConfiguration = () => {
   const signer = useNextTransactionSigner(t?.approvals)
   const hash = extrinsic?.registry.hash(extrinsic.method.toU8a()).toHex()
 
-  const { approveAsMulti, estimatedFee, ready: approveAsMultiReady } = useApproveAsMulti(signer?.address, hash, null)
+  const {
+    approveAsMulti,
+    estimatedFee,
+    ready: approveAsMultiReady,
+  } = useApproveAsMulti(signer?.address, hash, null, selectedMultisig)
 
   useEffect(() => {
     setNewMembers(selectedMultisig.signers)

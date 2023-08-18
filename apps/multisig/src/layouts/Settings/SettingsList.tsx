@@ -74,14 +74,6 @@ const SettingsList = () => {
         padding-left: 120px;
       `}
     >
-      {/* <SettingOption
-        icon={<Globe size={32} />}
-        title={'Manage networks'}
-        description={'View existing and add new networks'}
-        onClick={() => {
-          navigate('/settings/manage-networks')
-        }}
-      /> */}
       <SettingOption
         icon={<Users size={32} />}
         title={'Manage signer configuration'}

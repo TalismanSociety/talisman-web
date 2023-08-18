@@ -6,13 +6,7 @@
 import { pjsApiSelector } from '@domains/chains/pjs-api'
 import { accountsState } from '@domains/extension'
 import { insertTxMetadata } from '@domains/metadata-service'
-import {
-  Balance,
-  Transaction,
-  TxOffchainMetadata,
-  selectedMultisigState,
-  txOffchainMetadataState,
-} from '@domains/multisig'
+import { Balance, Multisig, Transaction, TxOffchainMetadata, txOffchainMetadataState } from '@domains/multisig'
 import { rawConfirmedTransactionsDependency } from '@domains/tx-history'
 import { ApiPromise, SubmittableResult } from '@polkadot/api'
 import type { SubmittableExtrinsic } from '@polkadot/api/types'
@@ -96,39 +90,21 @@ export const decodeCallData = (api: ApiPromise, callData: string) => {
   }
 }
 
-export const useDecodeCallData = () => {
-  const multisig = useRecoilValue(selectedMultisigState)
-  const apiLoadable = useRecoilValueLoadable(pjsApiSelector(multisig.chain.rpc))
-
-  const _decodeCallData = useCallback(
-    (hex: string) => {
-      if (apiLoadable.state !== 'hasValue') return undefined
-
-      const api = apiLoadable.contents as unknown as ApiPromise
-      return decodeCallData(api, hex)
-    },
-    [apiLoadable]
-  )
-
-  return { loading: apiLoadable.state === 'loading', decodeCallData: _decodeCallData }
-}
-
-export const useCancelAsMulti = (tx: Transaction | undefined) => {
-  const multisig = useRecoilValue(selectedMultisigState)
+export const useCancelAsMulti = (tx?: Transaction) => {
   const extensionAddresses = useRecoilValue(accountsState)
-  const apiLoadable = useRecoilValueLoadable(pjsApiSelector(multisig.chain.rpc))
-  const nativeToken = useRecoilValueLoadable(tokenByIdQuery(multisig.chain.nativeToken.id))
+  const apiLoadable = useRecoilValueLoadable(pjsApiSelector(tx?.multisig.chain.rpc))
+  const nativeToken = useRecoilValueLoadable(tokenByIdQuery(tx?.multisig.chain.nativeToken.id))
   const setRawPendingTransactionDependency = useSetRecoilState(rawPendingTransactionsDependency)
   const [estimatedFee, setEstimatedFee] = useState<Balance | undefined>()
 
   // Only the original signer can cancel
   const depositorAddress: Address | undefined = useMemo(() => {
-    const depositorAddressString = tx?.rawPending?.multisig.depositor.toString()
+    const depositorAddressString = tx?.rawPending?.onChainMultisig.depositor.toString()
     if (!depositorAddressString) return undefined
     const depositorAddress = Address.fromSs58(depositorAddressString)
     if (!depositorAddress) throw Error('rawPending multisig depositor is not valid ss52')
     return depositorAddress
-  }, [tx?.rawPending?.multisig.depositor])
+  }, [tx?.rawPending?.onChainMultisig.depositor])
 
   const loading = apiLoadable.state === 'loading' || nativeToken.state === 'loading' || !tx || !depositorAddress
   const canCancel = useMemo(() => {
@@ -138,8 +114,8 @@ export const useCancelAsMulti = (tx: Transaction | undefined) => {
     return false
   }, [extensionAddresses, depositorAddress])
 
-  // Creates cancel tx
-  const createTx = useCallback(async (): Promise<SubmittableExtrinsic<'promise'> | undefined> => {
+  // Creates cancel extrinsic
+  const createExtrinsic = useCallback(async (): Promise<SubmittableExtrinsic<'promise'> | undefined> => {
     if (loading) return
     if (!tx.rawPending) throw Error('Missing expected pendingData!')
 
@@ -149,23 +125,23 @@ export const useCancelAsMulti = (tx: Transaction | undefined) => {
     }
 
     return api.tx.multisig.cancelAsMulti(
-      multisig.threshold,
-      Address.sortAddresses(multisig.signers)
+      tx.multisig.threshold,
+      Address.sortAddresses(tx.multisig.signers)
         .filter(s => !s.isEqual(depositorAddress))
         .map(s => s.bytes),
-      tx.rawPending.multisig.when,
+      tx.rawPending.onChainMultisig.when,
       tx.hash
     )
-  }, [apiLoadable, multisig, tx, loading, depositorAddress])
+  }, [apiLoadable, tx, loading, depositorAddress])
 
   const estimateFee = useCallback(async () => {
-    const tx = await createTx()
-    if (!tx || !depositorAddress) return
+    const extrinsic = await createExtrinsic()
+    if (!extrinsic || !depositorAddress || !tx) return
 
     // Fee estimation
-    const paymentInfo = await tx.paymentInfo(depositorAddress.toSs58(multisig.chain))
+    const paymentInfo = await extrinsic.paymentInfo(depositorAddress.toSs58(tx.multisig.chain))
     setEstimatedFee({ token: nativeToken.contents, amount: paymentInfo.partialFee as unknown as BN })
-  }, [depositorAddress, nativeToken, createTx, multisig.chain])
+  }, [depositorAddress, nativeToken, createExtrinsic, tx])
 
   // Estimate the fee as soon as the hook is used and the extensionAddress or apiLoadable changes
   useEffect(() => {
@@ -180,42 +156,44 @@ export const useCancelAsMulti = (tx: Transaction | undefined) => {
       onSuccess: (r: SubmittableResult) => void
       onFailure: (message: string) => void
     }) => {
-      const tx = await createTx()
-      if (loading || !tx || !depositorAddress || !canCancel) {
+      const extrinsic = await createExtrinsic()
+      if (loading || !extrinsic || !depositorAddress || !canCancel) {
         console.error('tried to call cancelAsMulti before it was ready')
         return
       }
 
-      const { signer } = await web3FromAddress(depositorAddress.toSs58(multisig.chain))
-      tx.signAndSend(
-        depositorAddress.toSs58(multisig.chain),
-        {
-          signer,
-        },
-        result => {
-          if (!result || !result.status) {
-            return
-          }
+      const { signer } = await web3FromAddress(depositorAddress.toSs58(tx.multisig.chain))
+      extrinsic
+        .signAndSend(
+          depositorAddress.toSs58(tx.multisig.chain),
+          {
+            signer,
+          },
+          result => {
+            if (!result || !result.status) {
+              return
+            }
 
-          if (result.status.isFinalized) {
-            result.events.forEach(({ event: { method } }): void => {
-              if (method === 'ExtrinsicFailed') {
-                onFailure(JSON.stringify(result))
-              }
-              if (method === 'ExtrinsicSuccess') {
-                setRawPendingTransactionDependency(new Date())
-                onSuccess(result)
-              }
-            })
-          } else if (result.isError) {
-            onFailure(JSON.stringify(result))
+            if (result.status.isFinalized) {
+              result.events.forEach(({ event: { method } }): void => {
+                if (method === 'ExtrinsicFailed') {
+                  onFailure(JSON.stringify(result))
+                }
+                if (method === 'ExtrinsicSuccess') {
+                  setRawPendingTransactionDependency(new Date())
+                  onSuccess(result)
+                }
+              })
+            } else if (result.isError) {
+              onFailure(JSON.stringify(result))
+            }
           }
-        }
-      ).catch(e => {
-        onFailure(JSON.stringify(e))
-      })
+        )
+        .catch(e => {
+          onFailure(JSON.stringify(e))
+        })
     },
-    [depositorAddress, createTx, loading, setRawPendingTransactionDependency, canCancel, multisig.chain]
+    [depositorAddress, createExtrinsic, loading, setRawPendingTransactionDependency, canCancel, tx?.multisig.chain]
   )
 
   return { cancelAsMulti, ready: !loading && !!estimatedFee, estimatedFee, canCancel }
@@ -224,9 +202,9 @@ export const useCancelAsMulti = (tx: Transaction | undefined) => {
 export const useAsMulti = (
   extensionAddress: Address | undefined,
   extrinsic: SubmittableExtrinsic<'promise'> | undefined,
-  timepoint: Timepoint | null | undefined
+  timepoint: Timepoint | null | undefined,
+  multisig: Multisig
 ) => {
-  const multisig = useRecoilValue(selectedMultisigState)
   const apiLoadable = useRecoilValueLoadable(pjsApiSelector(multisig.chain.rpc))
   const rawPending = useRecoilValueLoadable(rawPendingTransactionsSelector)
   const nativeToken = useRecoilValueLoadable(tokenByIdQuery(multisig.chain.nativeToken.id))
@@ -242,7 +220,7 @@ export const useAsMulti = (
     rawPending.state === 'hasValue'
 
   // Creates some tx from calldata
-  const createTx = useCallback(async () => {
+  const createExtrinsic = useCallback(async () => {
     if (!ready) return
 
     const api = apiLoadable.contents
@@ -270,13 +248,13 @@ export const useAsMulti = (
   }, [apiLoadable, extensionAddress, extrinsic, multisig, ready, timepoint])
 
   const estimateFee = useCallback(async () => {
-    const tx = await createTx()
-    if (!tx || !extensionAddress) return
+    const extrinsic = await createExtrinsic()
+    if (!extrinsic || !extensionAddress) return
 
     // Fee estimation
-    const paymentInfo = await tx.paymentInfo(extensionAddress.toSs58(multisig.chain))
+    const paymentInfo = await extrinsic.paymentInfo(extensionAddress.toSs58(multisig.chain))
     setEstimatedFee({ token: nativeToken.contents, amount: paymentInfo.partialFee as unknown as BN })
-  }, [extensionAddress, nativeToken, createTx, multisig.chain])
+  }, [extensionAddress, nativeToken, createExtrinsic, multisig.chain])
 
   // Estimate the fee as soon as the hook is used and the extensionAddress or apiLoadable changes
   useEffect(() => {
@@ -291,44 +269,46 @@ export const useAsMulti = (
       onSuccess: (r: SubmittableResult) => void
       onFailure: (message: string) => void
     }) => {
-      const tx = await createTx()
-      if (!tx || !extensionAddress) {
+      const extrinsic = await createExtrinsic()
+      if (!extrinsic || !extensionAddress) {
         console.error('tried to call approveAsMulti before it was ready')
         return
       }
 
       const { signer } = await web3FromAddress(extensionAddress.toSs58(multisig.chain))
-      tx.signAndSend(
-        extensionAddress.toSs58(multisig.chain),
-        {
-          signer,
-        },
-        result => {
-          if (!result || !result.status) {
-            return
-          }
+      extrinsic
+        .signAndSend(
+          extensionAddress.toSs58(multisig.chain),
+          {
+            signer,
+          },
+          result => {
+            if (!result || !result.status) {
+              return
+            }
 
-          if (result.status.isFinalized) {
-            result.events
-              .filter(({ event: { section } }) => section === 'system')
-              .forEach(({ event: { method } }): void => {
-                if (method === 'ExtrinsicFailed') {
-                  onFailure(JSON.stringify(result))
-                }
-                if (method === 'ExtrinsicSuccess') {
-                  setRawPendingTransactionDependency(new Date())
-                  onSuccess(result)
-                }
-              })
-          } else if (result.isError) {
-            onFailure(JSON.stringify(result))
+            if (result.status.isFinalized) {
+              result.events
+                .filter(({ event: { section } }) => section === 'system')
+                .forEach(({ event: { method } }): void => {
+                  if (method === 'ExtrinsicFailed') {
+                    onFailure(JSON.stringify(result))
+                  }
+                  if (method === 'ExtrinsicSuccess') {
+                    setRawPendingTransactionDependency(new Date())
+                    onSuccess(result)
+                  }
+                })
+            } else if (result.isError) {
+              onFailure(JSON.stringify(result))
+            }
           }
-        }
-      ).catch(e => {
-        onFailure(JSON.stringify(e))
-      })
+        )
+        .catch(e => {
+          onFailure(JSON.stringify(e))
+        })
     },
-    [extensionAddress, createTx, setRawPendingTransactionDependency, multisig.chain]
+    [extensionAddress, createExtrinsic, setRawPendingTransactionDependency, multisig.chain]
   )
 
   return { asMulti, ready: ready && !!estimatedFee, estimatedFee }
@@ -337,11 +317,11 @@ export const useAsMulti = (
 export const useApproveAsMulti = (
   extensionAddress: Address | undefined,
   hash: `0x${string}` | undefined,
-  timepoint: Timepoint | null | undefined
+  timepoint: Timepoint | null | undefined,
+  multisig?: Multisig
 ) => {
-  const multisig = useRecoilValue(selectedMultisigState)
-  const apiLoadable = useRecoilValueLoadable(pjsApiSelector(multisig.chain.rpc))
-  const nativeToken = useRecoilValueLoadable(tokenByIdQuery(multisig.chain.nativeToken.id))
+  const apiLoadable = useRecoilValueLoadable(pjsApiSelector(multisig?.chain.rpc))
+  const nativeToken = useRecoilValueLoadable(tokenByIdQuery(multisig?.chain.nativeToken.id || null))
   const setRawPendingTransactionDependency = useSetRecoilState(rawPendingTransactionsDependency)
   const setRawConfirmedTransactionDependency = useSetRecoilState(rawConfirmedTransactionsDependency)
   const [metadataCache, setMetadataCache] = useRecoilState(txOffchainMetadataState)
@@ -352,10 +332,11 @@ export const useApproveAsMulti = (
     extensionAddress &&
     nativeToken.state === 'hasValue' &&
     !!hash &&
-    timepoint !== undefined
+    timepoint !== undefined &&
+    multisig !== undefined
 
   // Creates some tx from callhash
-  const createTx = useCallback(async () => {
+  const createExtrinsic = useCallback(async () => {
     if (!ready) return
 
     const api = apiLoadable.contents
@@ -380,13 +361,13 @@ export const useApproveAsMulti = (
   }, [apiLoadable, extensionAddress, hash, multisig, ready, timepoint])
 
   const estimateFee = useCallback(async () => {
-    const tx = await createTx()
-    if (!tx || !extensionAddress) return
+    const extrinsic = await createExtrinsic()
+    if (!extrinsic || !extensionAddress || !multisig) return
 
     // Fee estimation
-    const paymentInfo = await tx.paymentInfo(extensionAddress.toSs58(multisig.chain))
+    const paymentInfo = await extrinsic.paymentInfo(extensionAddress.toSs58(multisig.chain))
     setEstimatedFee({ token: nativeToken.contents, amount: paymentInfo.partialFee as unknown as BN })
-  }, [extensionAddress, nativeToken, createTx, multisig.chain])
+  }, [extensionAddress, nativeToken, createExtrinsic, multisig])
 
   // Estimate the fee as soon as the hook is used and the extensionAddress or apiLoadable changes
   useEffect(() => {
@@ -403,70 +384,72 @@ export const useApproveAsMulti = (
       onFailure: (message: string) => void
       metadata?: TxOffchainMetadata
     }) => {
-      const tx = await createTx()
-      if (!tx || !extensionAddress || !hash) {
+      const extrinsic = await createExtrinsic()
+      if (!extrinsic || !extensionAddress || !hash || !multisig) {
         console.error('tried to call approveAsMulti before it was ready')
         return
       }
 
       const { signer } = await web3FromAddress(extensionAddress.toSs58(multisig.chain))
-      tx.signAndSend(
-        extensionAddress.toSs58(multisig.chain),
-        {
-          signer,
-        },
-        result => {
-          if (!result || !result.status) {
-            return
-          }
+      extrinsic
+        .signAndSend(
+          extensionAddress.toSs58(multisig.chain),
+          {
+            signer,
+          },
+          result => {
+            if (!result || !result.status) {
+              return
+            }
 
-          if (result.status.isFinalized) {
-            result.events.forEach(async ({ event: { method, ...rest } }): Promise<void> => {
-              if (method === 'ExtrinsicFailed') {
-                onFailure(JSON.stringify(result))
-              }
-              if (method === 'ExtrinsicSuccess') {
-                // if there's a description, it means we want to post to the metadata service
-                if (metadata) {
-                  // Disable this line to test the metadata service
-                  setMetadataCache({
-                    ...metadataCache,
-                    [hash]: [metadata, new Date()],
-                  })
-                  // @ts-ignore
-                  const timepoint_height = result.blockNumber.toNumber() as number
-                  insertTxMetadata({
-                    multisig: multisig.multisigAddress,
-                    chain: multisig.chain,
-                    call_data: metadata.callData,
-                    description: metadata.description,
-                    timepoint_height,
-                    timepoint_index: result.txIndex as number,
-                    change_config_details: metadata.changeConfigDetails,
-                  })
-                    .then(() => {
-                      console.log(`Successfully POSTed metadata for ${hash} to metadata service`)
-                    })
-                    .catch(e => {
-                      console.error('Failed to POST tx metadata sharing service: ', e)
-                    })
+            if (result.status.isFinalized) {
+              result.events.forEach(async ({ event: { method, ...rest } }): Promise<void> => {
+                if (method === 'ExtrinsicFailed') {
+                  onFailure(JSON.stringify(result))
                 }
-                setRawPendingTransactionDependency(new Date())
-                setRawConfirmedTransactionDependency(new Date())
-                onSuccess(result)
-              }
-            })
-          } else if (result.isError) {
-            onFailure(JSON.stringify(result))
+                if (method === 'ExtrinsicSuccess') {
+                  // if there's a description, it means we want to post to the metadata service
+                  if (metadata) {
+                    // Disable this line to test the metadata service
+                    setMetadataCache({
+                      ...metadataCache,
+                      [hash]: [metadata, new Date()],
+                    })
+                    // @ts-ignore
+                    const timepoint_height = result.blockNumber.toNumber() as number
+                    insertTxMetadata({
+                      multisig: multisig.multisigAddress,
+                      chain: multisig.chain,
+                      call_data: metadata.callData,
+                      description: metadata.description,
+                      timepoint_height,
+                      timepoint_index: result.txIndex as number,
+                      change_config_details: metadata.changeConfigDetails,
+                    })
+                      .then(() => {
+                        console.log(`Successfully POSTed metadata for ${hash} to metadata service`)
+                      })
+                      .catch(e => {
+                        console.error('Failed to POST tx metadata sharing service: ', e)
+                      })
+                  }
+                  setRawPendingTransactionDependency(new Date())
+                  setRawConfirmedTransactionDependency(new Date())
+                  onSuccess(result)
+                }
+              })
+            } else if (result.isError) {
+              onFailure(JSON.stringify(result))
+            }
           }
-        }
-      ).catch(e => {
-        onFailure(JSON.stringify(e))
-      })
+        )
+        .catch(e => {
+          onFailure(JSON.stringify(e))
+        })
     },
     [
       extensionAddress,
-      createTx,
+      createExtrinsic,
       setRawPendingTransactionDependency,
       setRawConfirmedTransactionDependency,
       metadataCache,

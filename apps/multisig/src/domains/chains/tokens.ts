@@ -143,7 +143,7 @@ export const tokenByIdQuery = graphQLSelectorFamily({
       }
     }
   `,
-  variables: id => ({ id }),
+  variables: id => ({ id: id || '' }),
   mapResponse: res => res.tokenById.data as Token,
 })
 
