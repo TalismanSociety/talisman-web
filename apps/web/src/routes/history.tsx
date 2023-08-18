@@ -7,7 +7,7 @@ import TransactionLineItem, { TransactionList } from '@components/recipes/Transa
 import ErrorBoundary from '@components/widgets/ErrorBoundary'
 import ExportTxHistoryWidget from '@components/widgets/ExportTxHistoryWidget'
 import { accountsState, selectedAccountsState, type Account } from '@domains/accounts'
-import { Button, CircularProgressIndicator, DateInput, Select, Text, TextInput } from '@talismn/ui'
+import { Button, CircularProgressIndicator, DateInput, IconButton, Select, Text, TextInput } from '@talismn/ui'
 import { encodeAnyAddress } from '@talismn/util'
 import { tryParseSubstrateOrEthereumAddress } from '@util/addressValidation'
 import { Maybe } from '@util/monads'
@@ -18,7 +18,8 @@ import InfiniteScroll from 'react-infinite-scroller'
 import { selector, useRecoilValue } from 'recoil'
 import { isHex } from 'viem'
 import { graphql } from '../../generated/gql/extrinsicHistory/gql'
-import type { ExtrinsicsQuery } from '../../generated/gql/extrinsicHistory/gql/graphql'
+import { ExtrinsicOrderByInput, type ExtrinsicsQuery } from '../../generated/gql/extrinsicHistory/gql/graphql'
+import { ArrowDown, ArrowUp } from '@talismn/icons'
 
 const filtersState = selector({
   key: 'History/Filters',
@@ -43,7 +44,9 @@ type HistoryResultProps = {
   hash?: string
   chain?: string
   module?: string
+  timestampGte?: Date
   timestampLte?: Date
+  timestampOrder: 'asc' | 'desc'
 }
 
 // TODO: lots of repetitive account look up using `encodeAnyAddress`
@@ -69,8 +72,13 @@ const HistoryResult = (props: HistoryResultProps) => {
           const response = await request(
             import.meta.env.REACT_APP_EX_HISTORY_INDEXER,
             graphql(`
-              query extrinsics($after: String, $first: Int!, $where: ExtrinsicWhereInput) {
-                extrinsics(after: $after, first: $first, where: $where) {
+              query extrinsics(
+                $after: String
+                $first: Int!
+                $where: ExtrinsicWhereInput
+                $orderBy: ExtrinsicOrderByInput
+              ) {
+                extrinsics(after: $after, first: $first, where: $where, orderBy: $orderBy) {
                   edges {
                     node {
                       chain {
@@ -138,8 +146,13 @@ const HistoryResult = (props: HistoryResultProps) => {
                 chainEq: props.chain,
                 hashEq: props.hash,
                 moduleEq: props.module,
+                timestampGte: props.timestampGte,
                 timestampLte: props.timestampLte,
               },
+              orderBy:
+                props.timestampOrder === 'asc'
+                  ? ExtrinsicOrderByInput.TimestampAsc
+                  : ExtrinsicOrderByInput.TimestampDesc,
             }
           )
 
@@ -155,7 +168,15 @@ const HistoryResult = (props: HistoryResultProps) => {
           yield items
         }
       })(),
-    [props.accounts, props.chain, props.timestampLte, props.hash, props.module]
+    [
+      props.accounts,
+      props.chain,
+      props.hash,
+      props.module,
+      props.timestampGte,
+      props.timestampLte,
+      props.timestampOrder,
+    ]
   )
 
   const loadMore = useCallback(async () => {
@@ -300,7 +321,9 @@ const History = () => {
   const [search, setSearch] = useState('')
   const [chain, setChain] = useState<string>()
   const [module, setModule] = useState<string>()
-  const [date, setDate] = useState<Date>()
+  const [fromDate, setFromDate] = useState<Date>()
+  const [toDate, setToDate] = useState<Date>()
+  const [dateOrder, setDateOrder] = useState<'asc' | 'desc'>('desc')
 
   const searchAddress = useMemo(
     () => tryParseSubstrateOrEthereumAddress(search, { acceptSubstratePublicKey: false }),
@@ -318,8 +341,17 @@ const History = () => {
 
   // To invalidate page after query changes
   const key = useMemo(
-    () => [selectedAccounts.map(x => x.address).join(), search, chain, module, date?.getTime()].join(),
-    [chain, date, module, search, selectedAccounts]
+    () =>
+      [
+        selectedAccounts.map(x => x.address).join(),
+        search,
+        chain,
+        module,
+        fromDate?.getTime(),
+        toDate?.getTime(),
+        dateOrder,
+      ].join(),
+    [selectedAccounts, search, chain, module, fromDate, toDate, dateOrder]
   )
 
   return (
@@ -359,12 +391,6 @@ const History = () => {
             onChange={event => setSearch(event.target.value)}
           />
           <div css={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '0.8rem' }}>
-            <DateInput
-              value={date}
-              onChange={event => setDate(new Date(event.target.value))}
-              // TODO: better to sync size between all input component
-              css={{ padding: '1.1rem' }}
-            />
             <Select placeholder="Chain" value={chain} onChange={setChain} clearRequired>
               {chains.map(x => (
                 <Select.Option
@@ -386,10 +412,34 @@ const History = () => {
                 <Select.Option key={x} value={x} headlineText={x} />
               ))}
             </Select>
+            <div css={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
+              <DateInput
+                placeholder="From"
+                value={fromDate}
+                onChange={event => setFromDate(new Date(event.target.value))}
+                css={{ padding: '1.1rem' }}
+              />
+              <DateInput
+                value={toDate}
+                onChange={event => setToDate(new Date(event.target.value))}
+                css={{ padding: '1.1rem' }}
+              />
+              <IconButton onClick={() => setDateOrder(x => (x === 'asc' ? 'desc' : 'asc'))}>
+                {dateOrder === 'desc' ? <ArrowDown /> : <ArrowUp />}
+              </IconButton>
+            </div>
           </div>
         </div>
       </div>
-      <HistoryResult key={key} {...searchAddressOrHash} chain={chain} module={module} timestampLte={date} />
+      <HistoryResult
+        key={key}
+        {...searchAddressOrHash}
+        chain={chain}
+        module={module}
+        timestampGte={fromDate}
+        timestampLte={toDate}
+        timestampOrder={dateOrder}
+      />
     </section>
   )
 }

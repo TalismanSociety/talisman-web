@@ -77,6 +77,11 @@ export type ExtrinsicEdge = {
   node: Extrinsic
 }
 
+export enum ExtrinsicOrderByInput {
+  TimestampAsc = 'timestampAsc',
+  TimestampDesc = 'timestampDesc',
+}
+
 export type ExtrinsicWhereInput = {
   addressIn?: InputMaybe<Array<Scalars['String']['input']>>
   callEq?: InputMaybe<Scalars['String']['input']>
@@ -110,7 +115,8 @@ export type QueryExtrinsicCsvArgs = {
 
 export type QueryExtrinsicsArgs = {
   after?: InputMaybe<Scalars['String']['input']>
-  first?: InputMaybe<Scalars['Int']['input']>
+  first?: Scalars['Int']['input']
+  orderBy?: ExtrinsicOrderByInput
   where?: InputMaybe<ExtrinsicWhereInput>
 }
 
@@ -181,6 +187,7 @@ export type ExtrinsicsQueryVariables = Exact<{
   after?: InputMaybe<Scalars['String']['input']>
   first: Scalars['Int']['input']
   where?: InputMaybe<ExtrinsicWhereInput>
+  orderBy?: InputMaybe<ExtrinsicOrderByInput>
 }>
 
 export type ExtrinsicsQuery = {
@@ -345,6 +352,11 @@ export const ExtrinsicsDocument = {
           variable: { kind: 'Variable', name: { kind: 'Name', value: 'where' } },
           type: { kind: 'NamedType', name: { kind: 'Name', value: 'ExtrinsicWhereInput' } },
         },
+        {
+          kind: 'VariableDefinition',
+          variable: { kind: 'Variable', name: { kind: 'Name', value: 'orderBy' } },
+          type: { kind: 'NamedType', name: { kind: 'Name', value: 'ExtrinsicOrderByInput' } },
+        },
       ],
       selectionSet: {
         kind: 'SelectionSet',
@@ -367,6 +379,11 @@ export const ExtrinsicsDocument = {
                 kind: 'Argument',
                 name: { kind: 'Name', value: 'where' },
                 value: { kind: 'Variable', name: { kind: 'Name', value: 'where' } },
+              },
+              {
+                kind: 'Argument',
+                name: { kind: 'Name', value: 'orderBy' },
+                value: { kind: 'Variable', name: { kind: 'Name', value: 'orderBy' } },
               },
             ],
             selectionSet: {
