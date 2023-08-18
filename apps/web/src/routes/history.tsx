@@ -83,6 +83,7 @@ const HistoryResult = (props: HistoryResultProps) => {
                     node {
                       chain {
                         genesisHash
+                        name
                         logo
                         subscanUrl
                       }
@@ -266,6 +267,7 @@ const HistoryResult = (props: HistoryResultProps) => {
                 }
                 timestamp={new Date(extrinsic.block.timestamp)}
                 subscanUrl={extrinsic.subscanLink?.url}
+                chain={extrinsic.chain.name ?? undefined}
                 chainLogo={extrinsic.chain.logo ?? undefined}
                 onClick={() =>
                   setViewingItem({

@@ -21,6 +21,7 @@ export type TransactionLineItemProps = {
   fee?: TokenAmount
   timestamp: Date
   subscanUrl?: string
+  chain?: string
   chainLogo?: string
   onClick?: () => unknown
 }
@@ -59,10 +60,7 @@ const TransactionLineItem = (props: TransactionLineItemProps) => {
       onClick={props.onClick}
     >
       <Grid>
-        <div
-          css={{ gridArea: 'origin', display: 'flex', alignItems: 'center' }}
-          style={{ visibility: props.signer === undefined ? 'hidden' : undefined }}
-        >
+        <div css={{ gridArea: 'origin', display: 'flex', alignItems: 'center' }}>
           <Tooltip content={props.origin === 'self' ? 'Outgoing transaction' : 'Incoming transaction'}>
             {tooltipProps =>
               props.origin === 'self' ? (
@@ -81,22 +79,29 @@ const TransactionLineItem = (props: TransactionLineItemProps) => {
         >
           {props.id}
         </IdText>
-        <div
-          css={{ gridArea: 'identicon', display: 'flex', alignItems: 'center' }}
-          style={{ visibility: props.signer === undefined ? 'hidden' : undefined }}
-        >
+        <div css={{ gridArea: 'identicon', display: 'flex', alignItems: 'center' }}>
           <div css={{ position: 'relative' }}>
-            <Identicon value={props.signer?.address ?? 'noop'} size="1.75em" />
+            {props.signer && <Identicon value={props.signer?.address ?? 'noop'} size="1.75em" />}
             {props.chainLogo && (
-              <img
-                src={props.chainLogo}
-                css={{ position: 'absolute', top: '-0.2em', right: '-0.2em', width: '1em', height: '1em' }}
-              />
+              <Tooltip content={props.chain}>
+                {tooltipProps => (
+                  <img
+                    {...tooltipProps}
+                    src={props.chainLogo}
+                    alt={props.chain}
+                    css={
+                      props.signer === undefined
+                        ? { width: '1.75em', height: '1.75em' }
+                        : { position: 'absolute', top: '-0.2em', right: '-0.2em', width: '1em', height: '1em' }
+                    }
+                  />
+                )}
+              </Tooltip>
             )}
           </div>
         </div>
         <Text.Body alpha="high" css={{ gridArea: 'account' }}>
-          {props.signer && (props.signer.name ?? shortenAddress(props.signer.address))}
+          {props.signer === undefined ? props.chain : props.signer.name ?? shortenAddress(props.signer.address)}
         </Text.Body>
         <Text.BodySmall alpha="high" css={{ gridArea: 'type', [WIDE_CONTAINER_QUERY]: theme.typography.body }}>
           <span

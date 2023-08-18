@@ -201,7 +201,13 @@ export type ExtrinsicsQuery = {
         signer?: string | null
         hash: string
         success: boolean
-        chain: { __typename?: 'Chain'; genesisHash: string; logo?: string | null; subscanUrl?: string | null }
+        chain: {
+          __typename?: 'Chain'
+          genesisHash: string
+          name?: string | null
+          logo?: string | null
+          subscanUrl?: string | null
+        }
         block: { __typename?: 'Block'; height: number; timestamp: any }
         call: { __typename?: 'Call'; name: string; args?: any | null }
         fee?: { __typename?: 'TokenAmount'; value?: any | null; symbol?: string | null } | null
@@ -408,6 +414,7 @@ export const ExtrinsicsDocument = {
                                 kind: 'SelectionSet',
                                 selections: [
                                   { kind: 'Field', name: { kind: 'Name', value: 'genesisHash' } },
+                                  { kind: 'Field', name: { kind: 'Name', value: 'name' } },
                                   { kind: 'Field', name: { kind: 'Name', value: 'logo' } },
                                   { kind: 'Field', name: { kind: 'Name', value: 'subscanUrl' } },
                                 ],
