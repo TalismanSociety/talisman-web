@@ -141,7 +141,7 @@ const HistoryResult = (props: HistoryResultProps) => {
             `),
             {
               after,
-              first: 10,
+              first: 25,
               where: {
                 addressIn: props.accounts?.map(x => x.address),
                 chainEq: props.chain,
