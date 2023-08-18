@@ -121,7 +121,7 @@ const TransactionSummaryRow = ({
         {tokenBreakdown.length === 0 ? null : sumPriceUsd !== undefined ? (
           <>{formatUsd(sumPriceUsd)}</>
         ) : (
-          <Skeleton.Surface css={{ height: '14px', width: '42px' }} />
+          <Skeleton.Surface css={{ marginLeft: 'auto', height: '14px', width: '42px' }} />
         )}
       </div>
       {t.executedAt && (

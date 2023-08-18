@@ -318,7 +318,7 @@ export const useApproveAsMulti = (
   extensionAddress: Address | undefined,
   hash: `0x${string}` | undefined,
   timepoint: Timepoint | null | undefined,
-  multisig?: Multisig
+  multisig: Multisig | undefined
 ) => {
   const apiLoadable = useRecoilValueLoadable(pjsApiSelector(multisig?.chain.rpc))
   const nativeToken = useRecoilValueLoadable(tokenByIdQuery(multisig?.chain.nativeToken.id || null))

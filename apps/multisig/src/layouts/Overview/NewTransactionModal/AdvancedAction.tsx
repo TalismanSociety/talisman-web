@@ -97,7 +97,11 @@ const AdvancedAction = (props: { onCancel: () => void }) => {
     }
   }, [multisig, name, extrinsic, hash])
   const signer = useNextTransactionSigner(t?.approvals)
-  const { approveAsMulti, estimatedFee, ready: approveAsMultiReady } = useApproveAsMulti(signer?.address, hash, null)
+  const {
+    approveAsMulti,
+    estimatedFee,
+    ready: approveAsMultiReady,
+  } = useApproveAsMulti(signer?.address, hash, null, multisig)
 
   return (
     <div

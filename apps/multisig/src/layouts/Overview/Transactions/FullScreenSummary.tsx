@@ -235,7 +235,7 @@ export const FullScreenDialogContents = ({
                 </div>
                 {firstApproval && (
                   <div css={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
-                    <p>Reserve Amount (Refunded on execution or cancellation)</p>
+                    <p>Reserve Amount</p>
                     {reserveComponent}
                   </div>
                 )}
