@@ -124,9 +124,6 @@ const Layout = () => {
           <Link to="/transfer">
             <NavigationBar.Item label="Transfer" icon={<RefreshCcw />} />
           </Link>
-          <Link to="/explore">
-            <NavigationBar.Item label="Explore" icon={<Compass />} />
-          </Link>
           <Link to="/crowdloans">
             <NavigationBar.Item label="Crowdloans" icon={<Star />} />
           </Link>
