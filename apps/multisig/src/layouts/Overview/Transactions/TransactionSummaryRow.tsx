@@ -1,12 +1,20 @@
 import StatusCircle, { StatusCircleType } from '@components/StatusCircle'
 import { tokenPricesState } from '@domains/chains'
-import { Balance, Transaction, TransactionType, calcSumOutgoing, toConfirmedTxUrl } from '@domains/multisig'
+import {
+  Balance,
+  Transaction,
+  TransactionType,
+  calcSumOutgoing,
+  combinedViewState,
+  toConfirmedTxUrl,
+} from '@domains/multisig'
 import { css } from '@emotion/css'
 import { ArrowUp, List, Settings, Share2, Unknown } from '@talismn/icons'
 import { Skeleton } from '@talismn/ui'
 import { balanceToFloat, formatUsd } from '@util/numbers'
 import { useMemo } from 'react'
-import { useRecoilValueLoadable } from 'recoil'
+import { useRecoilValue, useRecoilValueLoadable } from 'recoil'
+import truncateMiddle from 'truncate-middle'
 
 import { formattedDate, formattedHhMm } from './utils'
 
@@ -20,6 +28,7 @@ const TransactionSummaryRow = ({
   shortDate: boolean
 }) => {
   const sumOutgoing: Balance[] = useMemo(() => calcSumOutgoing(t), [t])
+  const combinedView = useRecoilValue(combinedViewState)
   const tokenPrices = useRecoilValueLoadable(tokenPricesState(sumOutgoing.map(b => b.token)))
   const { threshold } = t.multisig
   const sumPriceUsd: number | undefined = useMemo(() => {
@@ -91,6 +100,14 @@ const TransactionSummaryRow = ({
         }}
       >
         <p>{t.description}</p>
+        {combinedView ? (
+          <div css={{ display: 'flex', alignItems: 'center', color: 'var(--color-offWhite)' }}>
+            <p>(&nbsp;</p>
+            <p css={{ marginRight: '8px' }}>{truncateMiddle(t.multisig.name, 24, 0, '...')}</p>
+            <img height={16} src={t.multisig.chain.logo} alt={t.multisig.chain.chainName} />
+            <p>&nbsp;)</p>
+          </div>
+        ) : null}
         {!t.executedAt && threshold !== signedCount && (
           <div
             className={css`

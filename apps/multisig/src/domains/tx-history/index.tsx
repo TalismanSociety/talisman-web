@@ -84,6 +84,8 @@ export const rawConfirmedTransactionsSelector = selector({
   },
 })
 
+const blockCache = new Map<string, any>()
+
 // fetches the raw txs from squid
 export const useConfirmedTransactions = () => {
   const selectedMultisig = useRecoilValue(selectedMultisigState)
@@ -112,7 +114,8 @@ export const useConfirmedTransactions = () => {
         if (!api) throw Error(`api not found in allApisLoadable for rpc ${multisig.chain.rpc}!`)
 
         return rawResponse.data.extrinsics.map(async r => {
-          const block = await api.rpc.chain.getBlock(r.block.blockHash)
+          const block = blockCache.get(r.block.blockHash) || (await api.rpc.chain.getBlock(r.block.blockHash))
+          blockCache.set(r.block.blockHash, block)
           const timestamp = r.block.timestamp
           // fetch the outer ext
           const ext = block.block.extrinsics[r.indexInBlock]
