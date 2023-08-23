@@ -95,17 +95,17 @@ const TransactionSummaryRow = ({
           gridArea: 'description',
           display: 'flex',
           alignItems: 'center',
-          gap: '8px',
+          gap: '12px',
           color: 'var(--color-offWhite)',
         }}
       >
         <p>{t.description}</p>
         {combinedView ? (
-          <div css={{ display: 'flex', alignItems: 'center', color: 'var(--color-offWhite)' }}>
-            <p>(&nbsp;</p>
-            <p css={{ marginRight: '8px' }}>{truncateMiddle(t.multisig.name, 24, 0, '...')}</p>
+          <div css={{ display: 'flex', alignItems: 'center' }}>
             <img height={16} src={t.multisig.chain.logo} alt={t.multisig.chain.chainName} />
-            <p>&nbsp;)</p>
+            <p css={{ marginLeft: '4px', fontSize: '12px', color: 'var(--color-foreground)' }}>
+              {truncateMiddle(t.multisig.name, 24, 0, '...')}
+            </p>
           </div>
         ) : null}
         {!t.executedAt && threshold !== signedCount && (
