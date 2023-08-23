@@ -323,8 +323,8 @@ export const usePendingTransactions = () => {
 
               if (metadataValues) {
                 // Validate calldata from the metadata service matches the hash from the chain
-                const pjsApi = allApisLoadable.contents[rawPending.multisig.chain.rpc]
-                if (!pjsApi) throw Error(`pjsApi found for rpc ${rawPending.multisig.chain.rpc}!`)
+                const pjsApi = allApisLoadable.contents[rawPending.multisig.chain.id]
+                if (!pjsApi) throw Error(`pjsApi found for rpc ${rawPending.multisig.chain.id}!`)
 
                 const extrinsic = decodeCallData(pjsApi, metadataValues.callData)
                 if (!extrinsic) {
@@ -356,7 +356,7 @@ export const usePendingTransactions = () => {
 
           if (metadata) {
             // got calldata!
-            const pjsApi = allApisLoadable.contents[rawPending.multisig.chain.rpc]
+            const pjsApi = allApisLoadable.contents[rawPending.multisig.chain.id]
             if (!pjsApi) throw Error('Failed to load pjsApi for rpc!')
             const extrinsic = decodeCallData(pjsApi, metadata[0].callData)
             const decoded = extrinsic
@@ -411,12 +411,10 @@ export const EMPTY_BALANCE: Balance = {
     id: 'polkadot',
     coingeckoId: 'polkadot',
     logo: 'https://raw.githubusercontent.com/TalismanSociety/chaindata/v3/assets/chains/polkadot.svg',
-    type: 'native',
+    type: 'substrate-native',
     symbol: 'DOT',
     decimals: 10,
-    chain: {
-      id: 'polkadot',
-    },
+    chain: supportedChains.find(c => c.id === 'polkadot') as Chain,
   },
   amount: new BN(0),
 }

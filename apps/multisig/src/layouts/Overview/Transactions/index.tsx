@@ -57,7 +57,7 @@ const TransactionsList = ({ transactions }: { transactions: Transaction[] }) => 
     multisig
   )
   const { addressIsProxyDelegatee } = useAddressIsProxyDelegatee(multisig.chain)
-  const apiLoadable = useRecoilValueLoadable(pjsApiSelector(openTransaction?.multisig.chain.rpc || ''))
+  const apiLoadable = useRecoilValueLoadable(pjsApiSelector(openTransaction?.multisig.chain.rpcs || []))
   const maybeCallData =
     (apiLoadable.state === 'hasValue' &&
       openTransaction?.callData &&

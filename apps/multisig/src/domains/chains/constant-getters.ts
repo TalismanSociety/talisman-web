@@ -17,13 +17,14 @@ import { tokenByIdQuery } from './tokens'
 export const existentialDepositSelector = selectorFamily({
   key: 'existentialDepositSelector',
   get:
-    (rpc: string) =>
+    (chain_id: string) =>
     async ({ get }): Promise<Balance> => {
-      const nativeTokenId = supportedChains.find(chain => chain.rpc === rpc)?.nativeToken.id
-      if (!nativeTokenId) throw Error('invalid rpc, this should never happen')
+      const chain = supportedChains.find(chain => chain.id === chain_id)
+      if (!chain) throw Error(`couldnt find chain for chain id ${chain_id}, this should never happen`)
+      const nativeTokenId = chain.nativeToken.id
 
       const nativeToken = get(tokenByIdQuery(nativeTokenId))
-      const apiLoadable = get(pjsApiSelector(rpc))
+      const apiLoadable = get(pjsApiSelector(chain.rpcs))
       const api = apiLoadable as unknown as ApiPromise
       await api.isReady
       if (!api.consts.balances) {
@@ -40,13 +41,14 @@ export const existentialDepositSelector = selectorFamily({
 const proxyDepositBaseSelector = selectorFamily({
   key: 'proxyDepositBaseSelector',
   get:
-    (rpc: string) =>
+    (chain_id: string) =>
     async ({ get }): Promise<Balance> => {
-      const nativeTokenId = supportedChains.find(chain => chain.rpc === rpc)?.nativeToken.id
-      if (!nativeTokenId) throw Error('invalid rpc, this should never happen')
+      const chain = supportedChains.find(chain => chain.id === chain_id)
+      if (!chain) throw Error(`couldnt find chain for chain id ${chain_id}, this should never happen`)
+      const nativeTokenId = chain.nativeToken.id
 
       const nativeToken = get(tokenByIdQuery(nativeTokenId))
-      const apiLoadable = get(pjsApiSelector(rpc))
+      const apiLoadable = get(pjsApiSelector(chain.rpcs))
       const api = apiLoadable as unknown as ApiPromise
       await api.isReady
       if (!api.consts.proxy) {
@@ -60,13 +62,14 @@ const proxyDepositBaseSelector = selectorFamily({
 const proxyDepositFactorSelector = selectorFamily({
   key: 'proxyDepositFactorSelector',
   get:
-    (rpc: string) =>
+    (chain_id: string) =>
     async ({ get }): Promise<Balance> => {
-      const nativeTokenId = supportedChains.find(chain => chain.rpc === rpc)?.nativeToken.id
-      if (!nativeTokenId) throw Error('invalid rpc, this should never happen')
+      const chain = supportedChains.find(chain => chain.id === chain_id)
+      if (!chain) throw Error(`couldnt find chain for chain id ${chain_id}, this should never happen`)
+      const nativeTokenId = chain.nativeToken.id
 
       const nativeToken = get(tokenByIdQuery(nativeTokenId))
-      const apiLoadable = get(pjsApiSelector(rpc))
+      const apiLoadable = get(pjsApiSelector(chain.rpcs))
       const api = apiLoadable as unknown as ApiPromise
       await api.isReady
       if (!api.consts.proxy) {
@@ -80,17 +83,18 @@ const proxyDepositFactorSelector = selectorFamily({
 export const proxyDepositTotalSelector = selectorFamily({
   key: 'proxyDepositTotalSelector',
   get:
-    (rpc: string) =>
+    (chain_id: string) =>
     async ({ get }): Promise<Balance> => {
-      const nativeTokenId = supportedChains.find(chain => chain.rpc === rpc)?.nativeToken.id
-      if (!nativeTokenId) throw Error('invalid rpc, this should never happen')
+      const chain = supportedChains.find(chain => chain.id === chain_id)
+      if (!chain) throw Error(`couldnt find chain for chain id ${chain_id}, this should never happen`)
+      const nativeTokenId = chain.nativeToken.id
 
       const nativeToken = get(tokenByIdQuery(nativeTokenId))
-      const apiLoadable = get(pjsApiSelector(rpc))
+      const apiLoadable = get(pjsApiSelector(chain.rpcs))
       const api = apiLoadable as unknown as ApiPromise
       await api.isReady
-      const proxyDepositBase = get(proxyDepositBaseSelector(rpc))
-      const proxyDepositFactor = get(proxyDepositFactorSelector(rpc))
+      const proxyDepositBase = get(proxyDepositBaseSelector(chain.id))
+      const proxyDepositFactor = get(proxyDepositFactorSelector(chain.id))
       return {
         token: nativeToken,
         amount: proxyDepositBase.amount.add(proxyDepositFactor.amount),
@@ -102,13 +106,14 @@ export const proxyDepositTotalSelector = selectorFamily({
 const multisigDepositBaseSelector = selectorFamily({
   key: 'multisigDepositBaseSelector',
   get:
-    (rpc: string) =>
+    (chain_id: string) =>
     async ({ get }): Promise<Balance> => {
-      const nativeTokenId = supportedChains.find(chain => chain.rpc === rpc)?.nativeToken.id
-      if (!nativeTokenId) throw Error('invalid rpc, this should never happen')
+      const chain = supportedChains.find(chain => chain.id === chain_id)
+      if (!chain) throw Error(`couldnt find chain for chain id ${chain_id}, this should never happen`)
+      const nativeTokenId = chain.nativeToken.id
 
       const nativeToken = get(tokenByIdQuery(nativeTokenId))
-      const apiLoadable = get(pjsApiSelector(rpc))
+      const apiLoadable = get(pjsApiSelector(chain.rpcs))
       const api = apiLoadable as unknown as ApiPromise
       await api.isReady
       if (!api.consts.multisig) {
@@ -122,13 +127,14 @@ const multisigDepositBaseSelector = selectorFamily({
 const multisigDepositFactorSelector = selectorFamily({
   key: 'multisigDepositFactorSelector',
   get:
-    (rpc: string) =>
+    (chain_id: string) =>
     async ({ get }): Promise<Balance> => {
-      const nativeTokenId = supportedChains.find(chain => chain.rpc === rpc)?.nativeToken.id
-      if (!nativeTokenId) throw Error('invalid rpc, this should never happen')
+      const chain = supportedChains.find(chain => chain.id === chain_id)
+      if (!chain) throw Error(`couldnt find chain for chain id ${chain_id}, this should never happen`)
+      const nativeTokenId = chain.nativeToken.id
 
       const nativeToken = get(tokenByIdQuery(nativeTokenId))
-      const apiLoadable = get(pjsApiSelector(rpc))
+      const apiLoadable = get(pjsApiSelector(chain.rpcs))
       const api = apiLoadable as unknown as ApiPromise
       await api.isReady
       if (!api.consts.multisig) {
@@ -142,17 +148,18 @@ const multisigDepositFactorSelector = selectorFamily({
 export const multisigDepositTotalSelector = selectorFamily({
   key: 'multisigDepositTotalSelector',
   get:
-    ({ rpc, signatories }: { rpc: string; signatories: number }) =>
+    ({ chain_id, signatories }: { chain_id: string; signatories: number }) =>
     async ({ get }): Promise<Balance> => {
-      const nativeTokenId = supportedChains.find(chain => chain.rpc === rpc)?.nativeToken.id
-      if (!nativeTokenId) throw Error('invalid rpc, this should never happen')
+      const chain = supportedChains.find(chain => chain.id === chain_id)
+      if (!chain) throw Error(`couldnt find chain for chain id ${chain_id}, this should never happen`)
+      const nativeTokenId = chain.nativeToken.id
 
       const nativeToken = get(tokenByIdQuery(nativeTokenId))
-      const apiLoadable = get(pjsApiSelector(rpc))
+      const apiLoadable = get(pjsApiSelector(chain.rpcs))
       const api = apiLoadable as unknown as ApiPromise
       await api.isReady
-      const depositBase = get(multisigDepositBaseSelector(rpc))
-      const depositFactor = get(multisigDepositFactorSelector(rpc))
+      const depositBase = get(multisigDepositBaseSelector(chain.id))
+      const depositFactor = get(multisigDepositFactorSelector(chain.id))
       return {
         token: nativeToken,
         amount: depositBase.amount.add(depositFactor.amount.mul(new BN(signatories))),

@@ -2,12 +2,17 @@ import { activeMultisigsState } from '@domains/multisig'
 import { ApiPromise, WsProvider } from '@polkadot/api'
 import { selector, selectorFamily } from 'recoil'
 
+import { Rpc } from './tokens'
+
 // Grab the pjs api from a selector. The selector caches the result based on the given rpc, so an
 // api will will only be created once per rpc.
 export const pjsApiSelector = selectorFamily({
   key: 'PjsApi',
-  get: (rpc?: string) => async () => {
-    const provider = new WsProvider(rpc, 1000)
+  get: (rpcs?: Rpc[]) => async () => {
+    const provider = new WsProvider(
+      rpcs?.map(r => r.url),
+      1000
+    )
     const api = await ApiPromise.create({ provider })
     await api.isReady
     await api.isConnected
@@ -25,8 +30,7 @@ export const allPjsApisSelector = selector({
   key: 'AllPjsApis',
   get: async ({ get }): Promise<PjsApis> => {
     const activeMultisigs = get(activeMultisigsState)
-    const rpcs = activeMultisigs.map(({ chain }) => chain.rpc)
-    const entries = await Promise.all(rpcs.map(rpc => [rpc, get(pjsApiSelector(rpc))]))
+    const entries = await Promise.all(activeMultisigs.map(({ chain }) => [chain.id, get(pjsApiSelector(chain.rpcs))]))
     return Object.fromEntries(entries)
   },
   dangerouslyAllowMutability: true, // pjs wsprovider mutates itself to track connection msg stats

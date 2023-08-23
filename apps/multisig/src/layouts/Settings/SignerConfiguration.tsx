@@ -26,7 +26,7 @@ const ManageSignerConfiguration = () => {
   const [selectedMultisig] = useRecoilState(selectedMultisigState)
   const [newMembers, setNewMembers] = useState(selectedMultisig.signers)
   const [newThreshold, setNewThreshold] = useState(selectedMultisig.threshold)
-  const apiLoadable = useRecoilValueLoadable(pjsApiSelector(selectedMultisig.chain.rpc))
+  const apiLoadable = useRecoilValueLoadable(pjsApiSelector(selectedMultisig.chain.rpcs))
   const [extrinsic, setExtrinsic] = useState<SubmittableExtrinsic<'promise'> | undefined>()
   const navigate = useNavigate()
 

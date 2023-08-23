@@ -110,8 +110,8 @@ export const useConfirmedTransactions = () => {
     if (!ready) return
     const promises = rawConfirmedTransactionsResponses.contents
       .map(([rawResponse, multisig]) => {
-        const api = allApisLoadable.contents[multisig.chain.rpc]
-        if (!api) throw Error(`api not found in allApisLoadable for rpc ${multisig.chain.rpc}!`)
+        const api = allApisLoadable.contents[multisig.chain.id]
+        if (!api) throw Error(`api not found in allApisLoadable for rpc ${multisig.chain.id}!`)
 
         return rawResponse.data.extrinsics.map(async r => {
           const block = blockCache.get(r.block.blockHash) || (await api.rpc.chain.getBlock(r.block.blockHash))

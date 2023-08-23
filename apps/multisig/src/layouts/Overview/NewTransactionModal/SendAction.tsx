@@ -116,7 +116,7 @@ const SendAction = (props: { onCancel: () => void }) => {
   const [selectedToken, setSelectedToken] = useState<Token | undefined>()
   const [amountInput, setAmountInput] = useState('')
   const multisig = useRecoilValue(selectedMultisigState)
-  const apiLoadable = useRecoilValueLoadable(pjsApiSelector(multisig.chain.rpc))
+  const apiLoadable = useRecoilValueLoadable(pjsApiSelector(multisig.chain.rpcs))
   const navigate = useNavigate()
 
   useEffect(() => {

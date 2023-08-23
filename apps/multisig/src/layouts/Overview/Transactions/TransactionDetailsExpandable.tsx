@@ -6,7 +6,7 @@ import 'ace-builds/src-noconflict/ext-language_tools'
 import AddressPill from '@components/AddressPill'
 import { CallDataPasteForm } from '@components/CallDataPasteForm'
 import MemberRow from '@components/MemberRow'
-import { decodeCallData, tokenPriceState } from '@domains/chains'
+import { Rpc, decodeCallData, tokenPriceState } from '@domains/chains'
 import { pjsApiSelector } from '@domains/chains/pjs-api'
 import { copyToClipboard } from '@domains/common'
 import { Balance, Transaction, TransactionType, calcSumOutgoing, txOffchainMetadataState } from '@domains/multisig'
@@ -124,8 +124,8 @@ const MultiSendExpandedDetails = ({ t }: { t: Transaction }) => {
   )
 }
 
-function AdvancedExpendedDetails({ callData, rpc }: { callData: `0x${string}` | undefined; rpc: string }) {
-  const apiLoadable = useRecoilValueLoadable(pjsApiSelector(rpc))
+function AdvancedExpendedDetails({ callData, rpcs }: { callData: `0x${string}` | undefined; rpcs: Rpc[] }) {
+  const apiLoadable = useRecoilValueLoadable(pjsApiSelector(rpcs))
   const [error, setError] = useState<Error | undefined>(undefined)
 
   const { extrinsic, human, lines } = useMemo(() => {
@@ -330,7 +330,7 @@ const TransactionDetailsExpandable = ({ t }: { t: Transaction }) => {
           ) : t.decoded?.type === TransactionType.ChangeConfig ? (
             <ChangeConfigExpandedDetails t={t} />
           ) : t.decoded?.type === TransactionType.Advanced ? (
-            <AdvancedExpendedDetails callData={t.callData} rpc={t.multisig.chain.rpc} />
+            <AdvancedExpendedDetails callData={t.callData} rpcs={t.multisig.chain.rpcs} />
           ) : !t.decoded ? (
             <div css={{ margin: '8px 0', display: 'grid', gap: '8px' }}>
               <p css={{ fontSize: '14px' }}>

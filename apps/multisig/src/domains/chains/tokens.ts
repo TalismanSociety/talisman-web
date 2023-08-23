@@ -121,16 +121,16 @@ export const tokenPricesState = selectorFamily({
     },
 })
 
+export type TokenType = 'substrate-native' | 'substrate-assets'
+
 export type Token = {
   id: string
   coingeckoId?: string
   logo: string
-  type: string
+  type: TokenType
   symbol: string
   decimals: number
-  chain: {
-    id: string
-  }
+  chain: Chain
 }
 
 export const tokenByIdQuery = graphQLSelectorFamily({
@@ -159,6 +159,10 @@ export const tokenByIdWithPrice = selectorFamily({
     },
 })
 
+export type Rpc = {
+  url: string
+}
+
 export type Chain = {
   id: string
   chainName: string
@@ -167,8 +171,7 @@ export type Chain = {
   nativeToken: {
     id: string
   }
-  rpc: string
-  decimals: number
+  rpcs: Rpc[]
   ss58Prefix: number
 }
 

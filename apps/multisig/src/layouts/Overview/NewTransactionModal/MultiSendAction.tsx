@@ -210,7 +210,7 @@ const MultiSendAction = (props: { onCancel: () => void }) => {
   const [extrinsic, setExtrinsic] = useState<SubmittableExtrinsic<'promise'> | undefined>()
   const [sends, setSends] = useState<MultiSendSend[]>([])
   const multisig = useRecoilValue(selectedMultisigState)
-  const apiLoadable = useRecoilValueLoadable(pjsApiSelector(multisig.chain.rpc))
+  const apiLoadable = useRecoilValueLoadable(pjsApiSelector(multisig.chain.rpcs))
   const navigate = useNavigate()
 
   useEffect(() => {

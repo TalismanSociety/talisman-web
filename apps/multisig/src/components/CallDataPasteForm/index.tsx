@@ -17,7 +17,7 @@ export const CallDataPasteForm = (props: {
   setExtrinsic: (s: SubmittableExtrinsic<'promise'> | undefined) => void
 }) => {
   const selectedMultisig = useRecoilValue(selectedMultisigState)
-  const apiLoadable = useRecoilValueLoadable(pjsApiSelector(selectedMultisig.chain.rpc))
+  const apiLoadable = useRecoilValueLoadable(pjsApiSelector(selectedMultisig.chain.rpcs))
   const loading = apiLoadable.state === 'loading'
 
   return (
