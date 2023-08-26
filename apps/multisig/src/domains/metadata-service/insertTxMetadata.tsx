@@ -42,7 +42,7 @@ export async function insertTxMetadata(args: InsertTxMetadataArgs): Promise<Inse
     timepoint_height: args.timepoint_height,
     timepoint_index: args.timepoint_index,
     call_data: args.call_data,
-    chain: args.chain.id,
+    chain: args.chain.squidIds.chainData,
     multisig: args.multisig.toSs58(args.chain),
     description: args.description,
     change_config_details: args.change_config_details

@@ -1,4 +1,4 @@
-import { Token, tokenPriceState } from '@domains/chains'
+import { BaseToken, tokenPriceState } from '@domains/chains'
 import { css } from '@emotion/css'
 import { Select, TextInput } from '@talismn/ui'
 import { useEffect, useMemo, useState } from 'react'
@@ -12,15 +12,19 @@ enum AmountUnit {
 }
 
 export const AmountFlexibleInput = (props: {
-  tokens: Token[]
-  selectedToken: Token | undefined
+  tokens: BaseToken[]
+  selectedToken: BaseToken | undefined
   amount: string
   setAmount: (a: string) => void
-  setSelectedToken: (t: Token) => void
+  setSelectedToken: (t: BaseToken) => void
 }) => {
   const [input, setInput] = useState<string>('')
   const [amountUnit, setAmountUnit] = useState<AmountUnit>(AmountUnit.Token)
   const tokenPrices = useRecoilValueLoadable(tokenPriceState(props.selectedToken))
+
+  useEffect(() => {
+    setAmountUnit(AmountUnit.Token)
+  }, [props.selectedToken])
 
   const calculatedTokenAmount = useMemo((): string | undefined => {
     if (amountUnit === AmountUnit.Token) {
@@ -157,14 +161,18 @@ export const AmountFlexibleInput = (props: {
         className={css`
           display: flex;
           height: 100%;
+          min-width: 100px;
           align-items: center;
           justify-content: center;
           height: 95.5px;
           button {
             height: 51.5px;
             gap: 8px;
-            div {
+            > div {
+              display: flex;
+              justify-content: center;
               margin-top: 2px;
+              width: 100%;
             }
             svg {
               display: none;
@@ -172,7 +180,13 @@ export const AmountFlexibleInput = (props: {
           }
         `}
       >
-        <Select placeholder="Select token" value={props.selectedToken?.id} {...props}>
+        <Select
+          placeholder="Select token"
+          value={props.selectedToken?.id}
+          {...props}
+          onChange={id => props.setSelectedToken(props.tokens.find(t => t.id === id) as BaseToken)}
+          width={'100%'}
+        >
           {props.tokens.map(t => {
             return (
               <Select.Item
@@ -185,7 +199,14 @@ export const AmountFlexibleInput = (props: {
                       height: auto;
                     `}
                   >
-                    <img src={t.logo} alt={t.symbol} />
+                    <img
+                      className={css`
+                        max-width: 100%; // image width will not exceed parent's width
+                        max-height: 100%; // image height will not exceed parent's height
+                      `}
+                      src={t.logo}
+                      alt={t.symbol}
+                    />
                   </div>
                 }
                 headlineText={t.symbol}

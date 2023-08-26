@@ -185,7 +185,7 @@ const TransactionsList = ({ transactions }: { transactions: Transaction[] }) => 
                         },
                         onFailure: e => {
                           navigate('/overview')
-                          toast.error('Failed to execute transaction.')
+                          toast.error(`Failed to execute transaction: ${JSON.stringify(e)}`)
                           console.error(e)
                           reject()
                         },

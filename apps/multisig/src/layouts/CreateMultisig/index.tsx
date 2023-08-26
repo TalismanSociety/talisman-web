@@ -96,8 +96,8 @@ const CreateMultisig = () => {
   const [threshold, setThreshold] = useState<number>(2)
   const tokenWithPrice = useRecoilValueLoadable(tokenByIdWithPrice(chain.nativeToken.id))
   const [proxyAddress, setProxyAddress] = useState<Address | undefined>()
-  const existentialDepositLoadable = useRecoilValueLoadable(existentialDepositSelector(chain.id))
-  const proxyDepositTotalLoadable = useRecoilValueLoadable(proxyDepositTotalSelector(chain.id))
+  const existentialDepositLoadable = useRecoilValueLoadable(existentialDepositSelector(chain.squidIds.chainData))
+  const proxyDepositTotalLoadable = useRecoilValueLoadable(proxyDepositTotalSelector(chain.squidIds.chainData))
   const { addressIsProxyDelegatee } = useAddressIsProxyDelegatee(chain)
 
   const navigate = useNavigate()

@@ -46,7 +46,7 @@ export class Address {
   }
 
   toSubscanUrl(chain: Chain): string {
-    return `https://${chain.chainName.toLowerCase()}.subscan.io/account/${this.toSs58(chain)}`
+    return `${chain.subscanUrl}account/${this.toSs58(chain)}`
   }
 }
 

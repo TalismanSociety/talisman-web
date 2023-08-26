@@ -1,6 +1,6 @@
 import AddressPill from '@components/AddressPill'
 import { AmountFlexibleInput } from '@components/AmountFlexibleInput'
-import { Token, tokenPriceState, useApproveAsMulti } from '@domains/chains'
+import { BaseToken, buildTransferExtrinsic, tokenPriceState, useApproveAsMulti } from '@domains/chains'
 import { pjsApiSelector } from '@domains/chains/pjs-api'
 import {
   Transaction,
@@ -32,13 +32,13 @@ enum Step {
 }
 
 interface MultiSendSend {
-  token: Token
+  token: BaseToken
   address: Address
   amount: string
 }
 
 const DetailsForm = (props: {
-  tokens: Loadable<Token[]>
+  tokens: Loadable<BaseToken[]>
   sends: MultiSendSend[]
   setSends: (s: MultiSendSend[]) => void
   onBack: () => void
@@ -47,7 +47,7 @@ const DetailsForm = (props: {
   const selectedMultisig = useRecoilValue(selectedMultisigState)
   const [amount, setAmount] = useState('')
   const [destinationInput, setDestinationInput] = useState('')
-  const [selectedToken, setSelectedToken] = useState<Token | undefined>()
+  const [selectedToken, setSelectedToken] = useState<BaseToken | undefined>()
   const tokenPrices = useRecoilValueLoadable(tokenPriceState(selectedToken))
 
   useEffect(() => {
@@ -224,9 +224,12 @@ const MultiSendAction = (props: { onCancel: () => void }) => {
       }
       try {
         const sendExtrinsics = sends.map(send => {
-          if (!apiLoadable.contents.tx.balances?.transferKeepAlive) throw Error('missing balances.transferKeepAlive')
           const amountBn = toBn(send.amount, send.token.decimals)
-          return apiLoadable.contents.tx.balances.transferKeepAlive(send.address.bytes, amountBn)
+          const balance = {
+            amount: amountBn,
+            token: send.token,
+          }
+          return buildTransferExtrinsic(apiLoadable.contents, send.address, balance)
         })
 
         const batchAllExtrinsic = apiLoadable.contents.tx.utility.batchAll(sendExtrinsics)

@@ -24,7 +24,7 @@ const Import = () => {
   const [extensionAllowed, setExtensionAllowed] = useRecoilState(extensionAllowedState)
   const [valid, setValid] = useState<boolean | undefined>(undefined)
   const { proxy, signers, threshold, chain_id, name } = queryString.parse(location.search, { arrayFormat: 'comma' })
-  const chain = supportedChains.find(c => c.id === chain_id) || (supportedChains[0] as Chain)
+  const chain = supportedChains.find(c => c.squidIds.chainData === chain_id) || (supportedChains[0] as Chain)
   const { addressIsProxyDelegatee, ready } = useAddressIsProxyDelegatee(chain)
   const thresholdNumber = Number(threshold)
   const signersArray = useMemo(() => {
@@ -48,7 +48,7 @@ const Import = () => {
         return
       }
 
-      if (supportedChains.every(c => c.id !== chain_id)) {
+      if (supportedChains.every(c => c.squidIds.chainData !== chain_id)) {
         toast.error('Invalid or missing chain')
         setValid(false)
         return

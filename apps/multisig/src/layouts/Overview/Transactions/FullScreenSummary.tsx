@@ -123,7 +123,7 @@ export const FullScreenDialogContents = ({
   const defaultChain = supportedChains[0] as Chain
   const multisigDepositTotal = useRecoilValueLoadable(
     multisigDepositTotalSelector({
-      chain_id: t?.multisig.chain.id || defaultChain.id,
+      chain_id: t?.multisig.chain.squidIds.chainData || defaultChain.squidIds.chainData,
       signatories: t?.approvals ? Object.keys(t.approvals).length : 0,
     })
   )

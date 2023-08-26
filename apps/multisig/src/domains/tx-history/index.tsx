@@ -1,4 +1,4 @@
-import { decodeCallData, tokenByIdQuery } from '@domains/chains'
+import { allChainTokensSelector, decodeCallData } from '@domains/chains'
 import { allPjsApisSelector } from '@domains/chains/pjs-api'
 import { getTxMetadataByPk } from '@domains/metadata-service'
 import {
@@ -52,11 +52,10 @@ export const rawConfirmedTransactionsSelector = selector({
     const rawResponses = await Promise.all(
       multisigs.map(async multisig => {
         const query = gql`
-          query ConfirmedTransactions($signer_in: [String!], $chain_name: String!) {
+          query ConfirmedTransactions($signer_in: [String!], $chain_id: String!) {
             extrinsics(
               where: {
-                call: { data_jsonContains: "{\\"name\\":\\"Multisig.as_multi\\"}", block: { chainId_eq: $chain_name } }
-                success_eq: true
+                call: { data_jsonContains: "{\\"name\\":\\"Multisig.as_multi\\"}", block: { chainId_eq: $chain_id } }
                 signer_in: $signer_in
               }
             ) {
@@ -73,7 +72,7 @@ export const rawConfirmedTransactionsSelector = selector({
 
         const variables = {
           signer_in: multisig.signers.map(s => s.toPubKey()),
-          chain_name: multisig.chain.chainName.toLowerCase(),
+          chain_id: multisig.chain.squidIds.txHistory,
         }
 
         const r = (await fetchGraphQL(query, variables, 'tx-history')) as RawResponse
@@ -90,9 +89,9 @@ const blockCache = new Map<string, any>()
 export const useConfirmedTransactions = () => {
   const selectedMultisig = useRecoilValue(selectedMultisigState)
   const allApisLoadable = useRecoilValueLoadable(allPjsApisSelector)
+  const allActiveChainTokens = useRecoilValueLoadable(allChainTokensSelector)
   const [metadataCache, setMetadataCache] = useRecoilState(txOffchainMetadataState)
   const [transactions, setTransactions] = useState<Transaction[]>([])
-  const nativeToken = useRecoilValueLoadable(tokenByIdQuery(selectedMultisig.chain.nativeToken.id))
   const rawConfirmedTransactionsResponses = useRecoilValueLoadable(rawConfirmedTransactionsSelector)
   const combinedView = useRecoilValue(combinedViewState)
   const [loading, setLoading] = useState(true)
@@ -104,14 +103,18 @@ export const useConfirmedTransactions = () => {
   const ready =
     allApisLoadable.state === 'hasValue' &&
     rawConfirmedTransactionsResponses.state === 'hasValue' &&
-    nativeToken.state === 'hasValue'
+    allActiveChainTokens.state === 'hasValue'
 
   const loadTransactions = useCallback(async () => {
     if (!ready) return
     const promises = rawConfirmedTransactionsResponses.contents
-      .map(([rawResponse, multisig]) => {
-        const api = allApisLoadable.contents[multisig.chain.id]
-        if (!api) throw Error(`api not found in allApisLoadable for rpc ${multisig.chain.id}!`)
+      .map(([rawResponse, curMultisig]) => {
+        const curChainTokens = allActiveChainTokens.contents.get(curMultisig.chain.squidIds.chainData)
+        if (!curChainTokens)
+          throw Error(`tokens not found in allActiveChainTokens for chain ${JSON.stringify(curMultisig.chain)}!`)
+
+        const api = allApisLoadable.contents.get(curMultisig.chain.squidIds.chainData)
+        if (!api) throw Error(`api not found in allApisLoadable for rpc ${curMultisig.chain.squidIds.chainData}!`)
 
         return rawResponse.data.extrinsics.map(async r => {
           const block = blockCache.get(r.block.blockHash) || (await api.rpc.chain.getBlock(r.block.blockHash))
@@ -134,7 +137,7 @@ export const useConfirmedTransactions = () => {
             const decodedExt = decodeCallData(api, callData)
             if (!decodedExt) throw Error('failed to decode extrinsic from chain!')
             // dont waste time proceeding if it's not ours.
-            if (extrinsicToDecoded(multisig, decodedExt, nativeToken.contents, null) === 'not_ours') return null
+            if (extrinsicToDecoded(curMultisig, decodedExt, curChainTokens, null) === 'not_ours') return null
 
             const hash = decodedExt.registry.hash(decodedExt.method.toU8a()).toHex()
 
@@ -143,8 +146,8 @@ export const useConfirmedTransactions = () => {
             if (!metadata) {
               try {
                 const metadataValues = await getTxMetadataByPk({
-                  multisig: multisig.multisigAddress,
-                  chain: multisig.chain,
+                  multisig: curMultisig.multisigAddress,
+                  chain: curMultisig.chain,
                   timepoint_height: parseInt(timepoint.height.replace(/,/g, '')),
                   timepoint_index: parseInt(timepoint.index),
                 })
@@ -171,7 +174,7 @@ export const useConfirmedTransactions = () => {
                     [hash]: metadata,
                   })
                 } else {
-                  console.warn(`Metadata service has no value for callHash ${hash}`)
+                  console.warn(`tx-history: Metadata service has no value for callHash ${hash}`)
                 }
               } catch (error) {
                 console.error(`Failed to fetch callData for callHash ${hash}:`, error)
@@ -185,8 +188,7 @@ export const useConfirmedTransactions = () => {
               description = metadata[0].description
               changeConfigDetails = metadata[0].changeConfigDetails || null
             }
-
-            const decodedTx = extrinsicToDecoded(multisig, decodedExt, nativeToken.contents, changeConfigDetails)
+            const decodedTx = extrinsicToDecoded(curMultisig, decodedExt, curChainTokens, changeConfigDetails)
             if (decodedTx === 'not_ours') return null
 
             const signer = Address.fromSs58(ext.signer.toString())
@@ -200,7 +202,7 @@ export const useConfirmedTransactions = () => {
               hash,
               approvals: {},
               executedAt: executedAt,
-              multisig,
+              multisig: curMultisig,
               date: new Date(timestamp),
               callData,
               description: description || decodedExt.method.meta.name.toString(),
@@ -224,8 +226,8 @@ export const useConfirmedTransactions = () => {
     allApisLoadable,
     metadataCache,
     rawConfirmedTransactionsResponses.contents,
-    nativeToken.contents,
     setMetadataCache,
+    allActiveChainTokens.contents,
   ])
 
   useEffect(() => {

@@ -35,7 +35,7 @@ export async function getTxMetadataByPk(args: TxMetadataByPkArgs): Promise<TxOff
     timepoint_height: args.timepoint_height,
     timepoint_index: args.timepoint_index,
     multisig: args.multisig.toSs58(args.chain),
-    chain: args.chain.id,
+    chain: args.chain.squidIds.chainData,
   }
 
   const query = gql`

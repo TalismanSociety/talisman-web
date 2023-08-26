@@ -19,7 +19,7 @@ export const existentialDepositSelector = selectorFamily({
   get:
     (chain_id: string) =>
     async ({ get }): Promise<Balance> => {
-      const chain = supportedChains.find(chain => chain.id === chain_id)
+      const chain = supportedChains.find(chain => chain.squidIds.chainData === chain_id)
       if (!chain) throw Error(`couldnt find chain for chain id ${chain_id}, this should never happen`)
       const nativeTokenId = chain.nativeToken.id
 
@@ -43,7 +43,7 @@ const proxyDepositBaseSelector = selectorFamily({
   get:
     (chain_id: string) =>
     async ({ get }): Promise<Balance> => {
-      const chain = supportedChains.find(chain => chain.id === chain_id)
+      const chain = supportedChains.find(chain => chain.squidIds.chainData === chain_id)
       if (!chain) throw Error(`couldnt find chain for chain id ${chain_id}, this should never happen`)
       const nativeTokenId = chain.nativeToken.id
 
@@ -64,7 +64,7 @@ const proxyDepositFactorSelector = selectorFamily({
   get:
     (chain_id: string) =>
     async ({ get }): Promise<Balance> => {
-      const chain = supportedChains.find(chain => chain.id === chain_id)
+      const chain = supportedChains.find(chain => chain.squidIds.chainData === chain_id)
       if (!chain) throw Error(`couldnt find chain for chain id ${chain_id}, this should never happen`)
       const nativeTokenId = chain.nativeToken.id
 
@@ -85,7 +85,7 @@ export const proxyDepositTotalSelector = selectorFamily({
   get:
     (chain_id: string) =>
     async ({ get }): Promise<Balance> => {
-      const chain = supportedChains.find(chain => chain.id === chain_id)
+      const chain = supportedChains.find(chain => chain.squidIds.chainData === chain_id)
       if (!chain) throw Error(`couldnt find chain for chain id ${chain_id}, this should never happen`)
       const nativeTokenId = chain.nativeToken.id
 
@@ -93,8 +93,8 @@ export const proxyDepositTotalSelector = selectorFamily({
       const apiLoadable = get(pjsApiSelector(chain.rpcs))
       const api = apiLoadable as unknown as ApiPromise
       await api.isReady
-      const proxyDepositBase = get(proxyDepositBaseSelector(chain.id))
-      const proxyDepositFactor = get(proxyDepositFactorSelector(chain.id))
+      const proxyDepositBase = get(proxyDepositBaseSelector(chain.squidIds.chainData))
+      const proxyDepositFactor = get(proxyDepositFactorSelector(chain.squidIds.chainData))
       return {
         token: nativeToken,
         amount: proxyDepositBase.amount.add(proxyDepositFactor.amount),
@@ -108,7 +108,7 @@ const multisigDepositBaseSelector = selectorFamily({
   get:
     (chain_id: string) =>
     async ({ get }): Promise<Balance> => {
-      const chain = supportedChains.find(chain => chain.id === chain_id)
+      const chain = supportedChains.find(chain => chain.squidIds.chainData === chain_id)
       if (!chain) throw Error(`couldnt find chain for chain id ${chain_id}, this should never happen`)
       const nativeTokenId = chain.nativeToken.id
 
@@ -129,7 +129,7 @@ const multisigDepositFactorSelector = selectorFamily({
   get:
     (chain_id: string) =>
     async ({ get }): Promise<Balance> => {
-      const chain = supportedChains.find(chain => chain.id === chain_id)
+      const chain = supportedChains.find(chain => chain.squidIds.chainData === chain_id)
       if (!chain) throw Error(`couldnt find chain for chain id ${chain_id}, this should never happen`)
       const nativeTokenId = chain.nativeToken.id
 
@@ -150,7 +150,7 @@ export const multisigDepositTotalSelector = selectorFamily({
   get:
     ({ chain_id, signatories }: { chain_id: string; signatories: number }) =>
     async ({ get }): Promise<Balance> => {
-      const chain = supportedChains.find(chain => chain.id === chain_id)
+      const chain = supportedChains.find(chain => chain.squidIds.chainData === chain_id)
       if (!chain) throw Error(`couldnt find chain for chain id ${chain_id}, this should never happen`)
       const nativeTokenId = chain.nativeToken.id
 
@@ -158,8 +158,8 @@ export const multisigDepositTotalSelector = selectorFamily({
       const apiLoadable = get(pjsApiSelector(chain.rpcs))
       const api = apiLoadable as unknown as ApiPromise
       await api.isReady
-      const depositBase = get(multisigDepositBaseSelector(chain.id))
-      const depositFactor = get(multisigDepositFactorSelector(chain.id))
+      const depositBase = get(multisigDepositBaseSelector(chain.squidIds.chainData))
+      const depositFactor = get(multisigDepositFactorSelector(chain.squidIds.chainData))
       return {
         token: nativeToken,
         amount: depositBase.amount.add(depositFactor.amount.mul(new BN(signatories))),

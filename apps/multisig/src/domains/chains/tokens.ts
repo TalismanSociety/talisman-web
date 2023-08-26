@@ -1,4 +1,5 @@
-import { selectorFamily } from 'recoil'
+import { multisigsState } from '@domains/multisig'
+import { selector, selectorFamily } from 'recoil'
 import { graphQLSelectorFamily } from 'recoil-relay'
 import { graphql } from 'relay-runtime'
 
@@ -16,7 +17,7 @@ export type Price = {
 // (can include multiple ids)
 export const tokenPriceState = selectorFamily({
   key: 'TokenPrice',
-  get: (token?: Token) => async (): Promise<Price> => {
+  get: (token?: BaseToken) => async (): Promise<Price> => {
     if (!token || !token.coingeckoId) return { current: 0 }
 
     const { coingeckoId, symbol } = token
@@ -71,14 +72,16 @@ export const tokenPriceState = selectorFamily({
       // if all are fufilled, we should be able to get the emas
       if (
         cgCurrentPrice.status === 'fulfilled' &&
+        cgCurrentPrice.value !== undefined &&
         ssCurrentPrice.status === 'fulfilled' &&
-        ssHistorical.status === 'fulfilled'
+        ssCurrentPrice.value !== undefined &&
+        ssHistorical.status === 'fulfilled' &&
+        ssHistorical.value !== undefined
       ) {
         const coingeckoCurPrice = cgCurrentPrice.value[coingeckoId].usd as number
         const subscanCurPrice = ssCurrentPrice.value.data.price as number
         // sanity check that the prices are close (in case subscan is giving us info for the wrong token)
         if (Math.abs(coingeckoCurPrice - subscanCurPrice) / coingeckoCurPrice > 0.1) {
-          console.log('coingecko and subscan prices are too different')
           return { current: coingeckoCurPrice }
         }
 
@@ -93,7 +96,7 @@ export const tokenPriceState = selectorFamily({
         }
       }
 
-      if (cgCurrentPrice.status === 'fulfilled') {
+      if (cgCurrentPrice.status === 'fulfilled' && cgCurrentPrice.value !== undefined) {
         return { current: cgCurrentPrice.value[coingeckoId].usd as number }
       }
 
@@ -101,6 +104,7 @@ export const tokenPriceState = selectorFamily({
     } catch (e) {
       // Coingecko has rate limit, better to return 0 than to crash the session
       // TODO: find alternative or purchase Coingecko subscription
+      console.error(`Error fetching price for ${coingeckoId}, returning zero: ${e}`)
       return { current: 0 }
     }
   },
@@ -109,7 +113,7 @@ export const tokenPriceState = selectorFamily({
 export const tokenPricesState = selectorFamily({
   key: 'TokenPrices',
   get:
-    (tokens: (Token | undefined)[]) =>
+    (tokens: (BaseToken | undefined)[]) =>
     async ({ get }) => {
       const res: { [key: string]: Price } = {}
       tokens.forEach(t => {
@@ -121,17 +125,38 @@ export const tokenPricesState = selectorFamily({
     },
 })
 
-export type TokenType = 'substrate-native' | 'substrate-assets'
-
-export type Token = {
+export type BaseToken = {
   id: string
   coingeckoId?: string
   logo: string
-  type: TokenType
+  type: string
   symbol: string
   decimals: number
   chain: Chain
 }
+
+export type SubstrateNativeToken = {
+  type: 'substrate-native'
+} & BaseToken
+
+export type SubstrateAssetsToken = {
+  type: 'substrate-assets'
+  assetId: string
+} & BaseToken
+
+export type SubstrateTokensToken = {
+  type: 'substrate-tokens'
+  onChainId: number
+} & BaseToken
+
+export const isSubstrateNativeToken = (token: BaseToken): token is SubstrateNativeToken =>
+  token.type === 'substrate-native'
+
+export const isSubstrateAssetsToken = (token: BaseToken): token is SubstrateAssetsToken =>
+  token.type === 'substrate-assets'
+
+export const isSubstrateTokensToken = (token: BaseToken): token is SubstrateTokensToken =>
+  token.type === 'substrate-tokens'
 
 export const tokenByIdQuery = graphQLSelectorFamily({
   key: 'TokenById',
@@ -144,14 +169,14 @@ export const tokenByIdQuery = graphQLSelectorFamily({
     }
   `,
   variables: id => ({ id: id || '' }),
-  mapResponse: res => res.tokenById.data as Token,
+  mapResponse: res => res.tokenById.data as BaseToken,
 })
 
 export const tokenByIdWithPrice = selectorFamily({
   key: 'TokenByIdWithPrice',
   get:
     id =>
-    async ({ get }): Promise<{ token: Token; price: Price }> => {
+    async ({ get }): Promise<{ token: BaseToken; price: Price }> => {
       const token = get(tokenByIdQuery(id))
       if (!token.coingeckoId) return { token, price: { current: 0 } }
       const price = get(tokenPriceState(token))
@@ -164,7 +189,10 @@ export type Rpc = {
 }
 
 export type Chain = {
-  id: string
+  squidIds: {
+    chainData: string
+    txHistory: string
+  }
   chainName: string
   logo: string
   isTestnet: boolean
@@ -173,6 +201,7 @@ export type Chain = {
   }
   rpcs: Rpc[]
   ss58Prefix: number
+  subscanUrl: string
 }
 
 export const chainTokensByIdQuery = graphQLSelectorFamily({
@@ -187,8 +216,24 @@ export const chainTokensByIdQuery = graphQLSelectorFamily({
       }
     }
   `,
-  variables: id => ({ id }),
-  mapResponse: res => {
-    return res.chainById.tokens.map((item: { data: Token }) => item.data) as Token[]
+  variables: id => {
+    return { id }
   },
+  mapResponse: res => {
+    return res.chainById.tokens.map((item: { data: BaseToken }) => item.data) as BaseToken[]
+  },
+})
+
+// Get pjs apis for all active multisigs
+// returned map key is the chainData id.
+export const allChainTokensSelector = selector({
+  key: 'AllChainTokens',
+  get: async ({ get }): Promise<Map<string, BaseToken[]>> => {
+    const multisigs = get(multisigsState)
+    const entries: [string, BaseToken[]][] = await Promise.all(
+      multisigs.map(({ chain }) => [chain.squidIds.chainData, get(chainTokensByIdQuery(chain.squidIds.chainData))])
+    )
+    return new Map(entries)
+  },
+  dangerouslyAllowMutability: true, // pjs wsprovider mutates itself to track connection msg stats
 })

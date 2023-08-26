@@ -62,14 +62,14 @@ export const ChooseChain = (props: {
       <div css={{ width: '490px', marginTop: '48px' }}>
         <Select
           placeholder="Select account"
-          value={props.chain.id}
-          onChange={value => props.setChain(props.chains.find(chain => chain.id === value) as Chain)}
+          value={props.chain.squidIds.chainData}
+          onChange={value => props.setChain(props.chains.find(chain => chain.squidIds.chainData === value) as Chain)}
           {...props}
         >
           {props.chains.map(chain => (
             <Select.Item
-              key={chain.id}
-              value={chain.id}
+              key={chain.squidIds.chainData}
+              value={chain.squidIds.chainData}
               leadingIcon={
                 <div
                   className={css`

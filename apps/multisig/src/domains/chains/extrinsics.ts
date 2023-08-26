@@ -19,7 +19,29 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useRecoilState, useRecoilValue, useRecoilValueLoadable, useSetRecoilState } from 'recoil'
 
 import { rawPendingTransactionsDependency, rawPendingTransactionsSelector } from './storage-getters'
-import { Chain, tokenByIdQuery } from './tokens'
+import { Chain, isSubstrateAssetsToken, isSubstrateNativeToken, isSubstrateTokensToken, tokenByIdQuery } from './tokens'
+
+export const buildTransferExtrinsic = (api: ApiPromise, to: Address, balance: Balance) => {
+  if (isSubstrateNativeToken(balance.token)) {
+    if (!api.tx.balances?.transferKeepAlive) {
+      throw Error('trying to send chain missing balances pallet')
+    }
+    return api.tx.balances.transferKeepAlive(to.bytes, balance.amount)
+  } else if (isSubstrateAssetsToken(balance.token)) {
+    if (!api.tx.assets?.transferKeepAlive) {
+      throw Error('trying to send chain missing assets pallet')
+    }
+    return api.tx.assets.transferKeepAlive(balance.token.assetId, to.bytes, balance.amount)
+  } else if (isSubstrateTokensToken(balance.token)) {
+    if (!api.tx.tokens?.transferKeepAlive) {
+      throw Error('trying to send chain missing tokens pallet')
+    }
+    // tokens requires a string for address not bytes
+    return api.tx.tokens.transferKeepAlive(to.bytes, balance.token.onChainId, balance.amount)
+  } else {
+    throw Error('unknown token type!')
+  }
+}
 
 // Sorry, not my code. Copied from p.js apps. it's not exported in any public packages.
 // https://github.com/polkadot-js/apps/blob/b6923ea003e1b043f22d3beaa685847c2bc54c24/packages/page-extrinsics/src/Decoder.tsx#L55
@@ -92,7 +114,7 @@ export const decodeCallData = (api: ApiPromise, callData: string) => {
 
 export const useCancelAsMulti = (tx?: Transaction) => {
   const extensionAddresses = useRecoilValue(accountsState)
-  const apiLoadable = useRecoilValueLoadable(pjsApiSelector(tx?.multisig.chain.rpcs))
+  const apiLoadable = useRecoilValueLoadable(pjsApiSelector(tx?.multisig.chain.rpcs || []))
   const nativeToken = useRecoilValueLoadable(tokenByIdQuery(tx?.multisig.chain.nativeToken.id))
   const setRawPendingTransactionDependency = useSetRecoilState(rawPendingTransactionsDependency)
   const [estimatedFee, setEstimatedFee] = useState<Balance | undefined>()
@@ -177,7 +199,7 @@ export const useCancelAsMulti = (tx?: Transaction) => {
             if (result.status.isFinalized) {
               result.events.forEach(({ event: { method } }): void => {
                 if (method === 'ExtrinsicFailed') {
-                  onFailure(JSON.stringify(result))
+                  onFailure(JSON.stringify(result.toHuman()))
                 }
                 if (method === 'ExtrinsicSuccess') {
                   setRawPendingTransactionDependency(new Date())
@@ -185,7 +207,7 @@ export const useCancelAsMulti = (tx?: Transaction) => {
                 }
               })
             } else if (result.isError) {
-              onFailure(JSON.stringify(result))
+              onFailure(JSON.stringify(result.toHuman()))
             }
           }
         )
@@ -292,7 +314,7 @@ export const useAsMulti = (
                 .filter(({ event: { section } }) => section === 'system')
                 .forEach(({ event: { method } }): void => {
                   if (method === 'ExtrinsicFailed') {
-                    onFailure(JSON.stringify(result))
+                    onFailure(JSON.stringify(result.toHuman()))
                   }
                   if (method === 'ExtrinsicSuccess') {
                     setRawPendingTransactionDependency(new Date())
@@ -300,7 +322,7 @@ export const useAsMulti = (
                   }
                 })
             } else if (result.isError) {
-              onFailure(JSON.stringify(result))
+              onFailure(JSON.stringify(result.toHuman()))
             }
           }
         )
@@ -320,7 +342,7 @@ export const useApproveAsMulti = (
   timepoint: Timepoint | null | undefined,
   multisig: Multisig | undefined
 ) => {
-  const apiLoadable = useRecoilValueLoadable(pjsApiSelector(multisig?.chain.rpcs))
+  const apiLoadable = useRecoilValueLoadable(pjsApiSelector(multisig?.chain.rpcs || []))
   const nativeToken = useRecoilValueLoadable(tokenByIdQuery(multisig?.chain.nativeToken.id || null))
   const setRawPendingTransactionDependency = useSetRecoilState(rawPendingTransactionsDependency)
   const setRawConfirmedTransactionDependency = useSetRecoilState(rawConfirmedTransactionsDependency)
@@ -405,7 +427,7 @@ export const useApproveAsMulti = (
             if (result.status.isFinalized) {
               result.events.forEach(async ({ event: { method, ...rest } }): Promise<void> => {
                 if (method === 'ExtrinsicFailed') {
-                  onFailure(JSON.stringify(result))
+                  onFailure(JSON.stringify(result.toHuman()))
                 }
                 if (method === 'ExtrinsicSuccess') {
                   // if there's a description, it means we want to post to the metadata service
@@ -439,7 +461,7 @@ export const useApproveAsMulti = (
                 }
               })
             } else if (result.isError) {
-              onFailure(JSON.stringify(result))
+              onFailure(JSON.stringify(result.toHuman()))
             }
           }
         )
@@ -540,11 +562,11 @@ export const useCreateProxy = (chain: Chain, extensionAddress: Address | undefin
               .filter(({ event: { section } }) => section === 'system')
               .forEach(({ event: { method } }): void => {
                 if (method === 'ExtrinsicFailed') {
-                  onFailure(JSON.stringify(result))
+                  onFailure(JSON.stringify(result.toHuman()))
                 }
               })
           } else if (result.isError) {
-            onFailure(result.toString())
+            onFailure(JSON.stringify(result.toHuman()))
           }
         }
       ).catch(e => {
@@ -627,13 +649,13 @@ export const useTransferProxyToMultisig = (chain: Chain) => {
                 .filter(({ event: { section } }) => section === 'system')
                 .forEach(({ event }): void => {
                   if (event.method === 'ExtrinsicFailed') {
-                    onFailure(result.toString())
+                    onFailure(JSON.stringify(result.toHuman()))
                   } else if (event.method === 'ExtrinsicSuccess') {
                     onSuccess(result)
                   }
                 })
             } else if (result.isError) {
-              onFailure(result.toString())
+              onFailure(JSON.stringify(result.toHuman()))
             }
           }
         )

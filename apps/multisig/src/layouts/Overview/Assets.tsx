@@ -1,4 +1,4 @@
-import { Token } from '@domains/chains'
+import { BaseToken } from '@domains/chains'
 import { css } from '@emotion/css'
 import { Lock } from '@talismn/icons'
 import { AnimatedNumber } from '@talismn/ui'
@@ -8,7 +8,7 @@ import { capitalizeFirstLetter } from '@util/strings'
 import { useMemo } from 'react'
 
 export interface TokenAugmented {
-  details: Token
+  details: BaseToken
   balance: {
     avaliable: number
     unavaliable: number

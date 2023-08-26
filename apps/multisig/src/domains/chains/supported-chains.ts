@@ -2,14 +2,18 @@ import { Chain } from '.'
 
 export const supportedChains: Chain[] = [
   {
-    id: 'polkadot',
+    squidIds: { chainData: 'polkadot', txHistory: 'polkadot' },
     chainName: 'Polkadot',
     logo: 'https://raw.githubusercontent.com/TalismanSociety/chaindata/v3/assets/chains/polkadot.svg',
     isTestnet: false,
     nativeToken: {
       id: 'polkadot-substrate-native-dot',
     },
+    subscanUrl: 'https://polkadot.subscan.io/',
     rpcs: [
+      {
+        url: 'wss://rpc.polkadot.io',
+      },
       {
         url: 'wss://rpc.ibp.network/polkadot',
       },
@@ -35,9 +39,6 @@ export const supportedChains: Chain[] = [
         url: 'wss://rpc-polkadot.luckyfriday.io',
       },
       {
-        url: 'wss://rpc.polkadot.io',
-      },
-      {
         url: 'wss://polkadot.public.curie.radiumblock.co/ws',
       },
       {
@@ -47,14 +48,18 @@ export const supportedChains: Chain[] = [
     ss58Prefix: 0,
   },
   {
-    id: 'kusama',
+    squidIds: { chainData: 'kusama', txHistory: 'kusama' },
     chainName: 'Kusama',
     logo: 'https://raw.githubusercontent.com/TalismanSociety/chaindata/v3/assets/chains/kusama.svg',
     isTestnet: false,
     nativeToken: {
       id: 'kusama-substrate-native-ksm',
     },
+    subscanUrl: 'https://kusama.subscan.io/',
     rpcs: [
+      {
+        url: 'wss://kusama-rpc.polkadot.io',
+      },
       {
         url: 'wss://rpc.ibp.network/kusama',
       },
@@ -80,9 +85,6 @@ export const supportedChains: Chain[] = [
         url: 'wss://rpc-kusama.luckyfriday.io',
       },
       {
-        url: 'wss://kusama-rpc.polkadot.io',
-      },
-      {
         url: 'wss://kusama.public.curie.radiumblock.co/ws',
       },
       {
@@ -92,12 +94,16 @@ export const supportedChains: Chain[] = [
     ss58Prefix: 2,
   },
   {
-    id: 'polkadot-asset-hub',
+    squidIds: { chainData: 'polkadot-asset-hub', txHistory: 'statemint' },
     chainName: 'Polkadot Asset Hub',
     nativeToken: {
       id: 'polkadot-asset-hub-substrate-native-dot',
     },
+    subscanUrl: 'https://assethub-polkadot.subscan.io/',
     rpcs: [
+      {
+        url: 'wss://polkadot-asset-hub-rpc.polkadot.io',
+      },
       {
         url: 'wss://sys.ibp.network/statemint',
       },
@@ -114,9 +120,6 @@ export const supportedChains: Chain[] = [
         url: 'wss://statemint-rpc-tn.dwellir.com',
       },
       {
-        url: 'wss://polkadot-asset-hub-rpc.polkadot.io',
-      },
-      {
         url: 'wss://statemint.public.curie.radiumblock.co/ws',
       },
       {
@@ -128,12 +131,16 @@ export const supportedChains: Chain[] = [
     ss58Prefix: 0,
   },
   {
-    id: 'kusama-asset-hub',
+    squidIds: { chainData: 'kusama-asset-hub', txHistory: 'statemine' },
     chainName: 'Kusama Asset Hub',
     nativeToken: {
       id: 'kusama-asset-hub-substrate-native-ksm',
     },
+    subscanUrl: 'https://assethub-kusama.subscan.io/',
     rpcs: [
+      {
+        url: 'wss://kusama-asset-hub-rpc.polkadot.io',
+      },
       {
         url: 'wss://sys.ibp.network/statemine',
       },
@@ -153,9 +160,6 @@ export const supportedChains: Chain[] = [
         url: 'wss://rpc-statemine.luckyfriday.io',
       },
       {
-        url: 'wss://kusama-asset-hub-rpc.polkadot.io',
-      },
-      {
         url: 'wss://statemine.public.curie.radiumblock.co/ws',
       },
       {
@@ -167,14 +171,43 @@ export const supportedChains: Chain[] = [
     ss58Prefix: 2,
   },
   {
-    id: 'westend-testnet',
+    squidIds: { chainData: 'hydradx', txHistory: 'hydradx' },
+    chainName: 'HydraDX',
+    nativeToken: {
+      id: 'hydradx-substrate-native-hdx',
+    },
+    subscanUrl: 'https://hydradx.subscan.io/',
+    rpcs: [
+      {
+        url: 'wss://hydradx-rpc.dwellir.com',
+      },
+      {
+        url: 'wss://rpc.hydradx.cloud',
+      },
+      {
+        url: 'wss://rpc-lb.data6.zp-labs.net:8443/hydradx/ws/?token=2ZGuGivPJJAxXiT1hR1Yg2MXGjMrhEBYFjgbdPi',
+      },
+      {
+        url: 'wss://hydradx.api.onfinality.io/public-ws',
+      },
+    ],
+    logo: 'https://raw.githubusercontent.com/TalismanSociety/chaindata/v3/assets/chains/hydradx.svg',
+    isTestnet: false,
+    ss58Prefix: 63,
+  },
+  {
+    squidIds: { chainData: 'westend-testnet', txHistory: 'westend' },
     chainName: 'Westend',
     logo: 'https://raw.githubusercontent.com/TalismanSociety/chaindata/v3/assets/chains/westend-testnet.svg',
     isTestnet: true,
+    subscanUrl: 'https://westend.subscan.io/',
     nativeToken: {
       id: 'westend-testnet-substrate-native-wnd',
     },
     rpcs: [
+      {
+        url: 'wss://westend-rpc.polkadot.io',
+      },
       {
         url: 'wss://rpc.ibp.network/westend',
       },
@@ -197,9 +230,6 @@ export const supportedChains: Chain[] = [
         url: 'wss://rpc-westend.luckyfriday.io',
       },
       {
-        url: 'wss://westend-rpc.polkadot.io',
-      },
-      {
         url: 'wss://westend.public.curie.radiumblock.co/ws',
       },
       {
@@ -209,16 +239,20 @@ export const supportedChains: Chain[] = [
     ss58Prefix: 42,
   },
   {
-    id: 'rococo-testnet',
+    squidIds: { chainData: 'rococo-testnet', txHistory: 'rococo' },
     chainName: 'Rococo',
     logo: 'https://raw.githubusercontent.com/TalismanSociety/chaindata/v3/assets/chains/rococo-testnet.svg',
     isTestnet: true,
+    subscanUrl: 'https://rococo.subscan.io/',
     nativeToken: {
       id: 'rococo-testnet-substrate-native-roc',
     },
     rpcs: [
       {
         url: 'wss://rococo-rpc.polkadot.io',
+      },
+      {
+        url: 'wss://rpc-rococo.bajun.network',
       },
     ],
     ss58Prefix: 42,

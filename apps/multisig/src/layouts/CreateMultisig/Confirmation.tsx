@@ -1,5 +1,5 @@
 import MemberRow from '@components/MemberRow'
-import { Chain, Price, Token, getInitialProxyBalance } from '@domains/chains'
+import { BaseToken, Chain, Price, getInitialProxyBalance } from '@domains/chains'
 import { InjectedAccount } from '@domains/extension'
 import { AugmentedAccount, Balance } from '@domains/multisig'
 import { css } from '@emotion/css'
@@ -30,7 +30,7 @@ const Confirmation = (props: {
   threshold: number
   name: string
   chain: Chain
-  tokenWithPrice: Loadable<{ token: Token; price: Price }>
+  tokenWithPrice: Loadable<{ token: BaseToken; price: Price }>
   reserveAmount: Loadable<Balance>
   existentialDeposit: Loadable<Balance>
   estimatedFee: Balance | undefined

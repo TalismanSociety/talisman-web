@@ -19,7 +19,7 @@ import { Address } from '@util/addresses'
 import { useCallback } from 'react'
 import { atom, selector, selectorFamily, useRecoilValueLoadable } from 'recoil'
 
-import { Chain, Rpc, Token, tokenByIdQuery } from './tokens'
+import { BaseToken, Chain, Rpc, tokenByIdQuery } from './tokens'
 
 export const useAddressIsProxyDelegatee = (chain: Chain) => {
   const apiLoadable = useRecoilValueLoadable(pjsApiSelector(chain.rpcs))
@@ -71,7 +71,7 @@ export const rawPendingTransactionsDependency = atom<Date>({
 
 // The chain `Multisig` storage entry with some augmented data for easier usage.
 export interface RawPendingTransaction {
-  nativeToken: Token
+  nativeToken: BaseToken
   multisig: Multisig
   onChainMultisig: OnChainMultisig
   callHash: `0x${string}`

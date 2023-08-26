@@ -1,4 +1,4 @@
-import { Chain, Token } from '@domains/chains'
+import { BaseToken, supportedChains } from '@domains/chains'
 import { activeMultisigsState, combinedViewState, selectedMultisigState } from '@domains/multisig'
 import { Balances } from '@talismn/balances'
 import { useAllAddresses, useBalances, useTokens } from '@talismn/balances-react'
@@ -20,41 +20,24 @@ export const useAugmentedBalances = () => {
   return useMemo(() => {
     if (!balances) return []
     return balances.filterNonZero('total').sorted.reduce((acc: TokenAugmented[], b) => {
-      if (!b.chain || !b.token) return acc
+      if (b.chain === null || !b.token) return acc
+      const balanceChain = b.chain
 
-      if (!b.chain.nativeToken) {
-        console.error("can't process chain without native token", b.chain)
+      if (
+        b.token.type !== 'substrate-native' &&
+        b.token.type !== 'substrate-assets' &&
+        b.token.type !== 'substrate-tokens'
+      ) {
+        console.error('token has unrecognised type, skipping', b.token)
         return acc
       }
 
-      if (b.chain.rpcs === null || b.chain.rpcs.length === 0) {
-        console.error("can't process chain without rpcs", b.chain)
-        return acc
-      }
-
-      if (b.chain.prefix === null) {
-        console.error("can't process chain without prefix", b.chain)
-        return acc
-      }
-
-      if (b.token.type !== 'substrate-native' && b.token.type !== 'substrate-assets') {
-        console.warn('token has unrecognised type', b.token)
-        return acc
-      }
-
-      const chain: Chain = {
-        id: b.chain.id,
-        chainName: b.chain.chainName || 'chain-name-unknown',
-        logo: b.chain.logo || '',
-        isTestnet: b.chain.isTestnet,
-        nativeToken: b.chain.nativeToken,
-        rpcs: b.chain.rpcs,
-        ss58Prefix: b.chain.prefix,
-      }
+      const chain = supportedChains.find(c => c.squidIds.chainData === balanceChain.id)
+      if (!chain) return acc
 
       const avaliable = parseFloat(b.transferable.tokens)
       const unavaliable = parseFloat(b.total.tokens) - avaliable
-      const token: Token = {
+      const token: BaseToken = {
         id: b.tokenId,
         chain,
         symbol: b.token.symbol,
@@ -86,7 +69,7 @@ export const BalancesWatcher = () => {
     setAllAddresses(addresses.map(a => a.toSs58(selectedMultisig.chain)))
   }, [setAllAddresses, addresses, selectedMultisig])
 
-  const multisigsByChain = useMemo(() => groupBy(multisigs, ({ chain }) => chain.id), [multisigs])
+  const multisigsByChain = useMemo(() => groupBy(multisigs, ({ chain }) => chain.squidIds.chainData), [multisigs])
   const addressesByToken = useMemo(
     () =>
       Object.fromEntries(

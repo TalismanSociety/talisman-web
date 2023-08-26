@@ -1,5 +1,5 @@
 import { AmountFlexibleInput } from '@components/AmountFlexibleInput'
-import { Token, useApproveAsMulti } from '@domains/chains'
+import { BaseToken, buildTransferExtrinsic, useApproveAsMulti } from '@domains/chains'
 import { pjsApiSelector } from '@domains/chains/pjs-api'
 import {
   Transaction,
@@ -32,9 +32,9 @@ enum Step {
 const DetailsForm = (props: {
   destinationInput: string
   amount: string
-  selectedToken: Token | undefined
-  setSelectedToken: (t: Token) => void
-  tokens: Token[]
+  selectedToken: BaseToken | undefined
+  setSelectedToken: (t: BaseToken) => void
+  tokens: BaseToken[]
   setDestinationInput: (d: string) => void
   setAmount: (a: string) => void
   onBack: () => void
@@ -113,7 +113,7 @@ const SendAction = (props: { onCancel: () => void }) => {
   const [destinationInput, setDestinationInput] = useState('')
   const [extrinsic, setExtrinsic] = useState<SubmittableExtrinsic<'promise'> | undefined>()
   const tokens = useRecoilValueLoadable(selectedMultisigChainTokensState)
-  const [selectedToken, setSelectedToken] = useState<Token | undefined>()
+  const [selectedToken, setSelectedToken] = useState<BaseToken | undefined>()
   const [amountInput, setAmountInput] = useState('')
   const multisig = useRecoilValue(selectedMultisigState)
   const apiLoadable = useRecoilValueLoadable(pjsApiSelector(multisig.chain.rpcs))
@@ -145,7 +145,11 @@ const SendAction = (props: { onCancel: () => void }) => {
         throw Error('chain missing balances pallet')
       }
       try {
-        const innerExtrinsic = apiLoadable.contents.tx.balances.transferKeepAlive(destinationAddress.bytes, amountBn)
+        const balance = {
+          amount: amountBn,
+          token: selectedToken,
+        }
+        const innerExtrinsic = buildTransferExtrinsic(apiLoadable.contents, destinationAddress, balance)
         const extrinsic = apiLoadable.contents.tx.proxy.proxy(multisig.proxyAddress.bytes, null, innerExtrinsic)
         setExtrinsic(extrinsic)
       } catch (error) {

@@ -22,7 +22,7 @@ interface TxMetadataByPkResponseRaw {
 export async function getAllChangeAttempts(multisig: Address, chain: Chain): Promise<ChangeConfigDetails[]> {
   const variables: GetAllChangeAttemptsVariables = {
     multisig: multisig.toSs58(chain),
-    chain: chain.id,
+    chain: chain.squidIds.chainData,
   }
 
   const query = gql`
