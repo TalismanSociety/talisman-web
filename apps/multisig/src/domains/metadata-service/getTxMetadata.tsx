@@ -30,13 +30,21 @@ interface TxMetadataByPkResponseRaw {
   } | null
 }
 
-export async function getTxMetadataByPk(args: TxMetadataByPkArgs): Promise<TxOffchainMetadata | null> {
+// store nulls in a transient cache to avoid hitting the metadata service multiple times in the
+// same session for the same key it doesn't have
+const nulls_cache = new Set<string>()
+
+export async function getTxMetadataByPk(
+  callHash: string,
+  args: TxMetadataByPkArgs
+): Promise<TxOffchainMetadata | null> {
   const variables: TxMetadataByPkVariables = {
     timepoint_height: args.timepoint_height,
     timepoint_index: args.timepoint_index,
     multisig: args.multisig.toSs58(args.chain),
     chain: args.chain.squidIds.chainData,
   }
+  if (nulls_cache.has(callHash)) return null
 
   const query = gql`
     query TxMetadataByPk($timepoint_height: Int!, $timepoint_index: Int!, $multisig: String!, $chain: String!) {
@@ -58,7 +66,11 @@ export async function getTxMetadataByPk(args: TxMetadataByPkArgs): Promise<TxOff
     query,
     variables as Record<string, any>
   )) as TxMetadataByPkResponseRaw
-  if (res.tx_metadata_by_pk === null) return null
+  if (res.tx_metadata_by_pk === null) {
+    console.warn(`Metadata service has no value for ${callHash}`)
+    nulls_cache.add(callHash)
+    return null
+  }
 
   const changeConfigDetails: ChangeConfigDetails | undefined = res.tx_metadata_by_pk.change_config_details
     ? {

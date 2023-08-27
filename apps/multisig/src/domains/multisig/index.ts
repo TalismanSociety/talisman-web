@@ -9,7 +9,7 @@ import {
   supportedChains,
 } from '@domains/chains'
 import { allPjsApisSelector } from '@domains/chains/pjs-api'
-import { RawPendingTransaction, rawPendingTransactionsSelector } from '@domains/chains/storage-getters'
+import { RawPendingTransaction, allRawPendingTransactionsSelector } from '@domains/chains/storage-getters'
 import { accountsState } from '@domains/extension'
 import { getTxMetadataByPk } from '@domains/metadata-service'
 import { SubmittableExtrinsic } from '@polkadot/api/types'
@@ -461,9 +461,9 @@ export const extrinsicToDecoded = (
 export const usePendingTransactions = () => {
   const selectedMultisig = useRecoilValue(selectedMultisigState)
   const combinedView = useRecoilValue(combinedViewState)
-  const allRawPending = useRecoilValueLoadable(rawPendingTransactionsSelector)
+  const allRawPending = useRecoilValueLoadable(allRawPendingTransactionsSelector)
   const allApisLoadable = useRecoilValueLoadable(allPjsApisSelector)
-  const allActiveChainTokens = useRecoilValue(allChainTokensSelector)
+  const allActiveChainTokens = useRecoilValueLoadable(allChainTokensSelector)
   const [loading, setLoading] = useState(true)
   const [metadataCache, setMetadataCache] = useRecoilState(txOffchainMetadataState)
   const [transactions, setTransactions] = useState<Transaction[]>([])
@@ -472,7 +472,10 @@ export const usePendingTransactions = () => {
     setLoading(true)
   }, [selectedMultisig.multisigAddress, combinedView])
 
-  const ready = allRawPending.state === 'hasValue' && allApisLoadable.state === 'hasValue'
+  const ready =
+    allRawPending.state === 'hasValue' &&
+    allApisLoadable.state === 'hasValue' &&
+    allActiveChainTokens.state === 'hasValue'
   const loadTransactions = useCallback(async () => {
     if (!ready) return
 
@@ -483,7 +486,7 @@ export const usePendingTransactions = () => {
 
           if (!metadata) {
             try {
-              const metadataValues = await getTxMetadataByPk({
+              const metadataValues = await getTxMetadataByPk(rawPending.callHash, {
                 multisig: rawPending.multisig.multisigAddress,
                 chain: rawPending.multisig.chain,
                 timepoint_height: rawPending.onChainMultisig.when.height.toNumber(),
@@ -527,7 +530,7 @@ export const usePendingTransactions = () => {
             // got calldata!
             const pjsApi = allApisLoadable.contents.get(rawPending.multisig.chain.squidIds.chainData)
             if (!pjsApi) throw Error('Failed to load pjsApi for rpc!')
-            const chainTokens = allActiveChainTokens.get(rawPending.multisig.chain.squidIds.chainData)
+            const chainTokens = allActiveChainTokens.contents.get(rawPending.multisig.chain.squidIds.chainData)
             if (!chainTokens) throw Error('Failed to load chainTokens for chain!')
             const extrinsic = decodeCallData(pjsApi, metadata[0].callData)
             const decoded = extrinsic
@@ -561,15 +564,15 @@ export const usePendingTransactions = () => {
       )
     ).filter(tx => tx !== null)
 
-    setLoading(false)
     setTransactions(transactions as Transaction[])
+    setLoading(false)
   }, [allRawPending, metadataCache, setMetadataCache, ready, allApisLoadable.contents, allActiveChainTokens])
 
   useEffect(() => {
     loadTransactions()
   }, [loadTransactions])
 
-  return { loading, transactions, ready }
+  return { loading, transactions }
 }
 
 export const EMPTY_BALANCE: Balance = {

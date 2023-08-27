@@ -10,6 +10,7 @@ import {
   TransactionApprovals,
   activeMultisigsState,
   combinedViewState,
+  multisigsState,
   selectedMultisigState,
 } from '@domains/multisig'
 import { StorageKey } from '@polkadot/types'
@@ -80,77 +81,104 @@ export interface RawPendingTransaction {
 }
 
 // fetches the raw txs from the chain
-export const rawPendingTransactionsSelector = selector({
+export const rawPendingTransactionsSelector = selectorFamily({
   key: 'rawMultisigPendingTransactionsSelector',
+  get:
+    ({ multisigAddressPubKey, proxyAddressPubKey }: { multisigAddressPubKey: string; proxyAddressPubKey: string }) =>
+    async ({ get }): Promise<RawPendingTransaction[]> => {
+      // This dependency allows effectively clearing the cache of this selector
+      get(rawPendingTransactionsDependency)
+
+      const multisigs = get(multisigsState)
+      const multisig = multisigs.find(
+        m => m.multisigAddress.toPubKey() === multisigAddressPubKey && m.proxyAddress.toPubKey() === proxyAddressPubKey
+      )
+      if (!multisig) throw Error('multisig must exist')
+
+      const api = get(pjsApiSelector(multisig.chain.rpcs))
+      await api.isReady
+      const nativeToken = get(tokenByIdQuery(multisig.chain.nativeToken.id))
+
+      if (!api.query.multisig?.multisigs) {
+        throw Error('multisig.multisigs must exist on api')
+      }
+      const keys = (await api.query.multisig.multisigs.keys(multisig.multisigAddress.bytes)) as unknown as StorageKey[]
+      const pendingTransactions = (
+        await Promise.all(
+          keys.map(async key => {
+            if (!api.query.multisig?.multisigs) {
+              throw Error('multisig.multisigs must exist on api')
+            }
+            const opt = (await api.query.multisig.multisigs(...key.args)) as unknown as Option<OnChainMultisig>
+            if (!opt.isSome) {
+              console.warn(
+                'multisig.multisigs return value is not Some. This may happen in the extremely rare case that a multisig tx is executed between the .keys query and the .multisigs query, but should be investigated if it is reoccuring.'
+              )
+              return null
+            }
+            // attach the date to tx details
+            const onChainMultisig = opt.unwrap()
+            const hash = get(blockHashSelector({ height: onChainMultisig.when.height, rpcs: multisig.chain.rpcs }))
+            const date = new Date(get(blockTimestampSelector({ hash, rpcs: multisig.chain.rpcs })))
+            if (!key.args[1]) throw Error('args is length 2; qed.')
+            const callHash = key.args[1]
+            return {
+              nativeToken,
+              callHash: callHash.toHex(),
+              onChainMultisig,
+              multisig: multisig,
+              date,
+              approvals: multisig.signers.reduce((acc, cur) => {
+                const approved = onChainMultisig.approvals.some(a => {
+                  const ss52ApprovalAddress = Address.fromSs58(a.toString())
+                  if (!ss52ApprovalAddress) {
+                    console.warn(
+                      "chain returned an approval that isn't a valid ss52 address. this should be investigated."
+                    )
+                    return false
+                  } else {
+                    return cur.isEqual(ss52ApprovalAddress)
+                  }
+                })
+                return { ...acc, [cur.toPubKey()]: approved }
+              }, {} as TransactionApprovals),
+            }
+          })
+        )
+      ).filter((transaction): transaction is RawPendingTransaction => transaction !== null)
+      return pendingTransactions
+    },
+
+  dangerouslyAllowMutability: true, // pjs wsprovider mutates itself to track connection msg stats
+})
+
+// fetches the raw txs from the chain
+export const allRawPendingTransactionsSelector = selector({
+  key: 'allRawMultisigPendingTransactionsSelector',
   get: async ({ get }): Promise<RawPendingTransaction[]> => {
-    // This dependency allows effectively clearing the cache of this selector
-    get(rawPendingTransactionsDependency)
+    try {
+      const combinedView = get(combinedViewState)
+      const selectedMultisig = get(selectedMultisigState)
+      const activeMultisigs = get(activeMultisigsState)
+      const multisigs = combinedView ? activeMultisigs : [selectedMultisig]
 
-    const combinedView = get(combinedViewState)
-    const selectedMultisig = get(selectedMultisigState)
-    const activeMultisigs = get(activeMultisigsState)
-    const multisigs = combinedView ? activeMultisigs : [selectedMultisig]
-
-    const pendingTransactions = await Promise.all(
-      multisigs.map(async curMultisig => {
-        const api = get(pjsApiSelector(curMultisig.chain.rpcs))
-        await api.isReady
-        const nativeToken = get(tokenByIdQuery(curMultisig.chain.nativeToken.id))
-
-        if (!api.query.multisig?.multisigs) {
-          throw Error('multisig.multisigs must exist on api')
-        }
-        const keys = (await api.query.multisig.multisigs.keys(
-          curMultisig.multisigAddress.bytes
-        )) as unknown as StorageKey[]
-        const pendingTransactions = (
-          await Promise.all(
-            keys.map(async key => {
-              if (!api.query.multisig?.multisigs) {
-                throw Error('multisig.multisigs must exist on api')
-              }
-              const opt = (await api.query.multisig.multisigs(...key.args)) as unknown as Option<OnChainMultisig>
-              if (!opt.isSome) {
-                console.warn(
-                  'multisig.multisigs return value is not Some. This may happen in the extremely rare case that a multisig tx is executed between the .keys query and the .multisigs query, but should be investigated if it is reoccuring.'
-                )
-                return null
-              }
-              // attach the date to tx details
-              const onChainMultisig = opt.unwrap()
-              const hash = get(blockHashSelector({ height: onChainMultisig.when.height, rpcs: curMultisig.chain.rpcs }))
-              const date = new Date(get(blockTimestampSelector({ hash, rpcs: curMultisig.chain.rpcs })))
-              if (!key.args[1]) throw Error('args is length 2; qed.')
-              const callHash = key.args[1]
-              return {
-                nativeToken,
-                callHash: callHash.toHex(),
-                onChainMultisig,
-                multisig: curMultisig,
-                date,
-                approvals: curMultisig.signers.reduce((acc, cur) => {
-                  const approved = onChainMultisig.approvals.some(a => {
-                    const ss52ApprovalAddress = Address.fromSs58(a.toString())
-                    if (!ss52ApprovalAddress) {
-                      console.warn(
-                        "chain returned an approval that isn't a valid ss52 address. this should be investigated."
-                      )
-                      return false
-                    } else {
-                      return cur.isEqual(ss52ApprovalAddress)
-                    }
-                  })
-                  return { ...acc, [cur.toPubKey()]: approved }
-                }, {} as TransactionApprovals),
-              }
-            })
-          )
-        ).filter((transaction): transaction is RawPendingTransaction => transaction !== null)
-        return pendingTransactions
-      })
-    )
-
-    return pendingTransactions.flat()
+      const pendingTransactions = multisigs.map(curMultisig =>
+        get(
+          rawPendingTransactionsSelector({
+            multisigAddressPubKey: curMultisig.multisigAddress.toPubKey(),
+            proxyAddressPubKey: curMultisig.proxyAddress.toPubKey(),
+          })
+        )
+      )
+      return pendingTransactions.flat()
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error(error.message)
+        return []
+      }
+      // some recoil.js hackery
+      throw error
+    }
   },
   dangerouslyAllowMutability: true, // pjs wsprovider mutates itself to track connection msg stats
 })

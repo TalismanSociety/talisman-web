@@ -14,7 +14,7 @@ import {
 import { Address } from '@util/addresses'
 import { gql } from 'graphql-request'
 import { useCallback, useEffect, useState } from 'react'
-import { atom, selector, useRecoilState, useRecoilValue, useRecoilValueLoadable } from 'recoil'
+import { atom, selector, selectorFamily, useRecoilState, useRecoilValue, useRecoilValueLoadable } from 'recoil'
 
 import fetchGraphQL from '../../graphql/fetch-graphql'
 
@@ -37,48 +37,65 @@ export const rawConfirmedTransactionsDependency = atom<Date>({
   default: new Date(),
 })
 
-export const rawConfirmedTransactionsSelector = selector({
+type Variables = {
+  signer_in: string[]
+  chain_id: string
+}
+
+export const rawConfirmedTransactionsSelector = selectorFamily({
   key: 'rawConfirmedTransactionsSelector',
+  get:
+    ({ chain_id, signer_in }: Variables) =>
+    async ({ get }): Promise<RawResponse> => {
+      // This dependency allows effectively clearing the cache of this selector
+      get(rawConfirmedTransactionsDependency)
+
+      const query = gql`
+        query ConfirmedTransactions($signer_in: [String!], $chain_id: String!) {
+          extrinsics(
+            where: {
+              call: { data_jsonContains: "{\\"name\\":\\"Multisig.as_multi\\"}", block: { chainId_eq: $chain_id } }
+              signer_in: $signer_in
+            }
+          ) {
+            signer
+            fee
+            block {
+              timestamp
+              blockHash
+            }
+            indexInBlock
+          }
+        }
+      `
+
+      const variables = {
+        signer_in,
+        chain_id,
+      }
+
+      return fetchGraphQL(query, variables, 'tx-history') as Promise<RawResponse>
+    },
+})
+
+export const allRawConfirmedTransactionsSelector = selector({
+  key: 'AllRawConfirmedTransactionsSelector',
   get: async ({ get }): Promise<[RawResponse, Multisig][]> => {
     const selectedMultisig = get(selectedMultisigState)
     const activeMultisigs = get(activeMultisigsState)
     const combinedView = get(combinedViewState)
 
     const multisigs = combinedView ? activeMultisigs : [selectedMultisig]
-
-    // This dependency allows effectively clearing the cache of this selector
-    get(rawConfirmedTransactionsDependency)
-
-    const rawResponses = await Promise.all(
-      multisigs.map(async multisig => {
-        const query = gql`
-          query ConfirmedTransactions($signer_in: [String!], $chain_id: String!) {
-            extrinsics(
-              where: {
-                call: { data_jsonContains: "{\\"name\\":\\"Multisig.as_multi\\"}", block: { chainId_eq: $chain_id } }
-                signer_in: $signer_in
-              }
-            ) {
-              signer
-              fee
-              block {
-                timestamp
-                blockHash
-              }
-              indexInBlock
-            }
-          }
-        `
-
-        const variables = {
+    const rawResponses = multisigs.map(multisig => {
+      const responses = get(
+        rawConfirmedTransactionsSelector({
           signer_in: multisig.signers.map(s => s.toPubKey()),
           chain_id: multisig.chain.squidIds.txHistory,
-        }
+        })
+      )
+      return [responses, multisig] as [RawResponse, Multisig]
+    })
 
-        const r = (await fetchGraphQL(query, variables, 'tx-history')) as RawResponse
-        return [r, multisig] as [RawResponse, Multisig]
-      })
-    )
     return rawResponses
   },
 })
@@ -92,7 +109,7 @@ export const useConfirmedTransactions = () => {
   const allActiveChainTokens = useRecoilValueLoadable(allChainTokensSelector)
   const [metadataCache, setMetadataCache] = useRecoilState(txOffchainMetadataState)
   const [transactions, setTransactions] = useState<Transaction[]>([])
-  const rawConfirmedTransactionsResponses = useRecoilValueLoadable(rawConfirmedTransactionsSelector)
+  const rawConfirmedTransactionsResponses = useRecoilValueLoadable(allRawConfirmedTransactionsSelector)
   const combinedView = useRecoilValue(combinedViewState)
   const [loading, setLoading] = useState(true)
 
@@ -145,7 +162,7 @@ export const useConfirmedTransactions = () => {
             let metadata = metadataCache[hash]
             if (!metadata) {
               try {
-                const metadataValues = await getTxMetadataByPk({
+                const metadataValues = await getTxMetadataByPk(hash, {
                   multisig: curMultisig.multisigAddress,
                   chain: curMultisig.chain,
                   timepoint_height: parseInt(timepoint.height.replace(/,/g, '')),
@@ -173,8 +190,6 @@ export const useConfirmedTransactions = () => {
                     ...metadataCache,
                     [hash]: metadata,
                   })
-                } else {
-                  console.warn(`tx-history: Metadata service has no value for callHash ${hash}`)
                 }
               } catch (error) {
                 console.error(`Failed to fetch callData for callHash ${hash}:`, error)
@@ -234,5 +249,5 @@ export const useConfirmedTransactions = () => {
     loadTransactions()
   }, [loadTransactions])
 
-  return { loading, transactions, ready }
+  return { loading, transactions }
 }

@@ -18,7 +18,7 @@ import BN from 'bn.js'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useRecoilState, useRecoilValue, useRecoilValueLoadable, useSetRecoilState } from 'recoil'
 
-import { rawPendingTransactionsDependency, rawPendingTransactionsSelector } from './storage-getters'
+import { allRawPendingTransactionsSelector, rawPendingTransactionsDependency } from './storage-getters'
 import { Chain, isSubstrateAssetsToken, isSubstrateNativeToken, isSubstrateTokensToken, tokenByIdQuery } from './tokens'
 
 export const buildTransferExtrinsic = (api: ApiPromise, to: Address, balance: Balance) => {
@@ -228,7 +228,7 @@ export const useAsMulti = (
   multisig: Multisig
 ) => {
   const apiLoadable = useRecoilValueLoadable(pjsApiSelector(multisig.chain.rpcs))
-  const rawPending = useRecoilValueLoadable(rawPendingTransactionsSelector)
+  const rawPending = useRecoilValueLoadable(allRawPendingTransactionsSelector)
   const nativeToken = useRecoilValueLoadable(tokenByIdQuery(multisig.chain.nativeToken.id))
   const setRawPendingTransactionDependency = useSetRecoilState(rawPendingTransactionsDependency)
   const [estimatedFee, setEstimatedFee] = useState<Balance | undefined>()
