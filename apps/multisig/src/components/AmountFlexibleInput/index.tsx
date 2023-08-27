@@ -82,7 +82,11 @@ export const AmountFlexibleInput = (props: {
               : ''
           }
           leadingSupportingText={
-            tokenPrices.state === 'hasValue' && tokenPrices.contents.averages ? (
+            tokenPrices.state === 'hasError' ? (
+              'Error fetching EMA price info'
+            ) : tokenPrices.state === 'loading' ? (
+              'Loading...'
+            ) : tokenPrices.state === 'hasValue' && tokenPrices.contents.averages ? (
               <div
                 className={css`
                   display: flex;
@@ -94,7 +98,7 @@ export const AmountFlexibleInput = (props: {
                   }
                 `}
               >
-                <div>Input Unit:</div>
+                <div>Unit:</div>
                 <div>&nbsp;</div>
                 <p
                   onClick={() => setAmountUnit(AmountUnit.Token)}
@@ -125,7 +129,7 @@ export const AmountFlexibleInput = (props: {
                 </p>
               </div>
             ) : (
-              ''
+              'EMA input is not avaliable for this token'
             )
           }
           value={input}
