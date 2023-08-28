@@ -1,6 +1,11 @@
 // TODO: nuke everything and re-write balances lib integration
 
-import { accountsState, portfolioAccountsState, selectedAccountsState } from '@domains/accounts/recoils'
+import {
+  accountsState,
+  injectedAccountsState,
+  portfolioAccountsState,
+  selectedAccountsState,
+} from '@domains/accounts/recoils'
 import { Balances } from '@talismn/balances'
 import { useBalances as _useBalances, useAllAddresses, useChaindata, useTokens } from '@talismn/balances-react'
 import { type ChaindataProvider, type TokenList } from '@talismn/chaindata-provider'
@@ -33,6 +38,24 @@ export const legacyBalancesState = atom<LegacyBalances>({
 export const balancesState = atom<Balances>({
   key: 'Balances',
   default: new Balances([]),
+  dangerouslyAllowMutability: true,
+})
+
+export const injectedBalancesState = selector({
+  key: 'InjectedBalances',
+  get: ({ get }) => {
+    const injectedAddresses = get(injectedAccountsState).map(x => x.address)
+    return new Balances(get(balancesState).each.filter(x => injectedAddresses.includes(x.address)))
+  },
+  dangerouslyAllowMutability: true,
+})
+
+export const injectedNominationPoolBalances = selector({
+  key: 'InjectedNominationPoolFiatBalance',
+  get: ({ get }) =>
+    get(injectedBalancesState).find(
+      balance => balance.source === 'substrate-native' && balance.toJSON().subSource === 'nompools-staking'
+    ),
   dangerouslyAllowMutability: true,
 })
 

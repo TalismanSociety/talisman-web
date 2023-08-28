@@ -4,12 +4,16 @@ import { type Decimal } from '@talismn/math'
 import { useMemo, useState } from 'react'
 import { useRecoilValue, waitForAll } from 'recoil'
 
-type Options = { fiatCurrency?: string; allowInvalidValue?: boolean }
+type Options<TAllowInvalid extends boolean = boolean> = { fiatCurrency?: string; allowInvalidValue?: TAllowInvalid }
 
-export const useTokenAmount = (
+export const useTokenAmount = <TAllowInvalid extends boolean = true>(
   amount: string,
-  options: Options = { fiatCurrency: 'usd', allowInvalidValue: false }
+  options: Options<TAllowInvalid> = { fiatCurrency: 'usd', allowInvalidValue: true as TAllowInvalid }
 ) => {
+  type Return = TAllowInvalid extends true
+    ? { decimalAmount: Decimal | undefined; fiatAmount: number | undefined; localizedFiatAmount: string | undefined }
+    : { decimalAmount: Decimal; fiatAmount: number; localizedFiatAmount: string }
+
   const [nativeTokenDecimal, nativeTokenPrice] = useRecoilValue(
     waitForAll([useNativeTokenDecimalState(), useNativeTokenPriceState(options.fiatCurrency)])
   )
@@ -17,7 +21,7 @@ export const useTokenAmount = (
   const decimalAmount = useMemo(() => {
     if (amount === undefined) return undefined
     try {
-      return nativeTokenDecimal.fromUserInput(amount)
+      return nativeTokenDecimal.fromUserInput(amount) as Decimal | undefined
     } catch (error) {
       if (!options.allowInvalidValue) {
         throw error
@@ -42,13 +46,24 @@ export const useTokenAmount = (
     [fiatAmount, options?.fiatCurrency]
   )
 
-  return { decimalAmount, fiatAmount, localizedFiatAmount } as const
+  return { decimalAmount, fiatAmount, localizedFiatAmount } as Return
 }
 
-export const useTokenAmountFromPlanck = <T extends string | BN | bigint | undefined>(
+export const useTokenAmountFromPlanck = <
+  T extends string | number | BN | bigint | undefined,
+  TAllowInvalid extends boolean = false
+>(
   planck: T,
-  options: Options = { fiatCurrency: 'usd', allowInvalidValue: false }
+  options: Options<TAllowInvalid> = { fiatCurrency: 'usd', allowInvalidValue: false as TAllowInvalid }
 ) => {
+  type NullableReturn = {
+    decimalAmount: Decimal | undefined
+    fiatAmount: number | undefined
+    localizedFiatAmount: string | undefined
+  }
+  type NonNullableReturn = { decimalAmount: Decimal; fiatAmount: number; localizedFiatAmount: string }
+  type Return = T extends undefined ? NullableReturn : TAllowInvalid extends true ? NullableReturn : NonNullableReturn
+
   const [nativeTokenDecimal, nativeTokenPrice] = useRecoilValue(
     waitForAll([useNativeTokenDecimalState(), useNativeTokenPriceState(options.fiatCurrency)])
   )
@@ -85,7 +100,7 @@ export const useTokenAmountFromPlanck = <T extends string | BN | bigint | undefi
     [fiatAmount, options?.fiatCurrency]
   )
 
-  return { decimalAmount, fiatAmount, localizedFiatAmount } as const
+  return { decimalAmount, fiatAmount, localizedFiatAmount } as Return
 }
 
 export const useTokenAmountState = (

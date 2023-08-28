@@ -1,4 +1,3 @@
-import ClaimStakeDialog from '@components/recipes/ClaimStakeDialog'
 import PoolSelectorDialog from '@components/recipes/PoolSelectorDialog'
 import StakeFormComponent from '@components/recipes/StakeForm'
 import { type StakeStatus } from '@components/recipes/StakeStatusIndicator'
@@ -8,6 +7,7 @@ import {
   useChainState,
   useEraEtaFormatter,
   useExtrinsic,
+  useSubmittableResultLoadableState,
   useSubstrateApiEndpoint,
   useSubstrateApiState,
   useTokenAmountFromPlanck,
@@ -36,6 +36,7 @@ import { constSelector, useRecoilValue, useRecoilValueLoadable, waitForAll } fro
 import { useAccountSelector } from '../AccountSelector'
 import AddStakeDialog from './AddStakeDialog'
 import UnstakeDialog from './UnstakeDialog'
+import ClaimStakeDialog from './ClaimStakeDialog'
 
 const ExistingPool = (props: { account: Account }) => {
   const pool = usePoolStakes({ address: props.account.address })
@@ -46,8 +47,8 @@ const ExistingPool = (props: { account: Account }) => {
   const [addStakeAddress, setAddStakeAddress] = useState<string>()
 
   const [claimDialogOpen, setClaimDialogOpen] = useState(false)
-  const claimPayoutExtrinsic = useExtrinsic('nominationPools', 'claimPayout')
-  const restakeExtrinsic = useExtrinsic('nominationPools', 'bondExtra')
+  const [claimPayoutLoadable, setClaimPayoutLoadable] = useSubmittableResultLoadableState()
+  const [restakeLoadable, setRestakeLoadable] = useSubmittableResultLoadableState()
 
   const [unstakeDialogAddress, setUnstakeDialogAddress] = useState<string>()
   const withdrawExtrinsic = useExtrinsic('nominationPools', 'withdrawUnbonded')
@@ -75,7 +76,7 @@ const ExistingPool = (props: { account: Account }) => {
           pool?.pendingRewards?.isZero() === false && (
             <StakeFormComponent.ExistingPool.ClaimChip
               onClick={() => setClaimDialogOpen(true)}
-              loading={claimPayoutExtrinsic.state === 'loading' || restakeExtrinsic.state === 'loading'}
+              loading={claimPayoutLoadable.state === 'loading' || restakeLoadable.state === 'loading'}
             />
           )
         }
@@ -111,17 +112,10 @@ const ExistingPool = (props: { account: Account }) => {
       <AddStakeDialog account={addStakeAddress} onDismiss={() => setAddStakeAddress(undefined)} />
       <ClaimStakeDialog
         open={claimDialogOpen}
-        amount={pendingRewards.decimalAmount?.toHuman() ?? '...'}
-        fiatAmount={pendingRewards.localizedFiatAmount ?? '...'}
         onRequestDismiss={() => setClaimDialogOpen(false)}
-        onRequestClaim={() => {
-          void claimPayoutExtrinsic.signAndSend(props.account.address)
-          setClaimDialogOpen(false)
-        }}
-        onRequestReStake={() => {
-          void restakeExtrinsic.signAndSend(props.account.address, { Rewards: pendingRewards })
-          setClaimDialogOpen(false)
-        }}
+        account={props.account}
+        onChangeClaimPayoutLoadable={setClaimPayoutLoadable}
+        onChangeRestakeLoadable={setRestakeLoadable}
       />
       <UnstakeDialog account={unstakeDialogAddress} onDismiss={() => setUnstakeDialogAddress(undefined)} />
     </>
@@ -182,6 +176,7 @@ export const AssetSelect = (props: {
   onSelectChain: (chain: Chain) => unknown
   chains: readonly Chain[]
   inTransition: boolean
+  iconSize?: string | number
 }) => (
   <Select
     css={{ width: '100%' }}
@@ -190,7 +185,7 @@ export const AssetSelect = (props: {
       props.inTransition
         ? id => (
             <Select.Option
-              leadingIcon={<CircularProgressIndicator size="2.4rem" />}
+              leadingIcon={<CircularProgressIndicator size={props.iconSize ?? '2.4rem'} />}
               headlineText={props.chains.find(x => x.id === id)?.nativeToken.symbol}
             />
           )
@@ -208,7 +203,11 @@ export const AssetSelect = (props: {
         key={index}
         value={x.id}
         leadingIcon={
-          <img alt={x.nativeToken.symbol} src={x.nativeToken.logo} css={{ width: '2.4rem', height: '2.4rem' }} />
+          <img
+            alt={x.nativeToken.symbol}
+            src={x.nativeToken.logo}
+            css={{ width: props.iconSize ?? '2.4rem', height: props.iconSize ?? '2.4rem' }}
+          />
         }
         headlineText={x.nativeToken.symbol}
       />
@@ -236,7 +235,7 @@ const DeferredEstimatedYield = (props: { amount: Decimal }) => (
   <EstimatedYield amount={useDeferredValue(props.amount)} />
 )
 
-export const ControlledStakeForm = (props: { assetSelector: ReactNode }) => {
+export const ControlledStakeForm = (props: { assetSelector: ReactNode; account?: string }) => {
   const joinPoolExtrinsic = useExtrinsic('nominationPools', 'join')
 
   const location = useLocation()
@@ -266,9 +265,14 @@ export const ControlledStakeForm = (props: { assetSelector: ReactNode }) => {
 
   const [selectedAccount, accountSelector] = useAccountSelector(
     useRecoilValue(writeableSubstrateAccountsState),
-    // We don't want to select the first account when poolId is present in the URL
-    // because we want to showcase that pool & the first account might have already joined one
-    poolIdFromSearch === undefined ? 0 : undefined
+    accounts =>
+      props.account !== undefined
+        ? accounts?.find(account => account.address === props.account)
+        : // We don't want to select the first account when poolId is present in the URL
+        // because we want to showcase that pool & the first account might have already joined one
+        poolIdFromSearch === undefined
+        ? accounts?.[0]
+        : undefined
   )
 
   const {
@@ -431,7 +435,7 @@ const StakeForm = () => {
   const [selectedChain, setSelectedChain] = useState<Chain>(chains[0])
 
   return (
-    <ChainProvider value={selectedChain}>
+    <ChainProvider chain={selectedChain}>
       <ControlledStakeForm
         assetSelector={
           <AssetSelect

@@ -9,7 +9,19 @@ export default class Decimal {
     return new Decimal(bnToBn(planck), decimals, unit)
   }
 
-  public static fromUserInput(input: string, decimals: number, unit?: string): Decimal {
+  static fromPlanckOrUndefined(
+    planck: string | number | bigint | BN | ToBn | undefined,
+    decimals: number,
+    unit?: string
+  ) {
+    try {
+      return this.fromPlanck(planck, decimals, unit)
+    } catch {
+      return undefined
+    }
+  }
+
+  static fromUserInput(input: string, decimals: number, unit?: string) {
     Decimal.#verifyDecimals(decimals)
 
     const badCharacter = input.match(/[^0-9.]/)
@@ -48,6 +60,14 @@ export default class Decimal {
     const quantity = `${whole}${fractional.padEnd(decimals, '0')}`
 
     return new Decimal(bnToBn(quantity), decimals, unit)
+  }
+
+  static fromUserInputOrUndefined(input: string, decimals: number, unit?: string) {
+    try {
+      return this.fromUserInput(input, decimals, unit)
+    } catch {
+      return undefined
+    }
   }
 
   private constructor(public planck: BN, public decimals: number, public unit?: string) {}

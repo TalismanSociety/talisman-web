@@ -30,7 +30,7 @@ export type SelectProps<TValue extends string | number, TClear extends boolean =
   value?: TValue
   renderSelected?: (value: TValue | undefined) => ReactNode
   placeholder?: ReactNode
-  children: ReactNode
+  children?: ReactNode
   onChange?: (value: TClear extends false ? TValue : TValue | undefined) => unknown
   clearRequired?: TClear
 }

@@ -1,8 +1,5 @@
 import { useTheme } from '@emotion/react'
 import {
-  type Placement,
-  type ReferenceType,
-  type Strategy,
   autoPlacement,
   autoUpdate,
   offset,
@@ -14,19 +11,23 @@ import {
   useFloatingNodeId,
   useInteractions,
   useRole,
+  type Placement,
+  type ReferenceType,
+  type Strategy,
 } from '@floating-ui/react'
 import { motion } from 'framer-motion'
 import {
+  createContext,
+  useContext,
+  useMemo,
+  useState,
   type DetailedHTMLProps,
   type HTMLAttributes,
   type HTMLProps,
   type ReactElement,
   type ReactNode,
-  createContext,
-  useContext,
-  useMemo,
-  useState,
 } from 'react'
+import { Surface, useSurfaceColor } from '../..'
 import FloatingPortal from '../../atoms/FloatingPortal'
 
 export const MENU_OFFSET = 12
@@ -39,7 +40,9 @@ export type MenuProps = {
 
 export type MenuButtonProps = { children: ReactNode | ((props: { open: boolean }) => ReactNode) }
 
-export type MenuItemsProps = DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement>
+export type MenuItemsProps = Omit<DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement>, 'children'> & {
+  children: ReactNode | ((props: { open: boolean; toggleOpen: () => unknown }) => ReactNode)
+}
 
 export type MenuItemProps = DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> & {
   dismissAfterSelection?: boolean
@@ -57,7 +60,7 @@ const MenuContext = createContext<{
   getFloatingProps: (props?: HTMLProps<HTMLElement>) => any
   getItemProps: (props?: HTMLProps<HTMLElement>) => any
   open: boolean
-  setOpen: (value: boolean) => unknown
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>
 }>({
   nodeId: '',
   x: 0,
@@ -85,7 +88,7 @@ const MenuButton = ({ children, ...props }: MenuButtonProps) => {
 const MenuItems = (props: MenuItemsProps) => {
   const theme = useTheme()
   const [animating, setAnimating] = useState(false)
-  const { nodeId, x, y, strategy, placement, floating, getFloatingProps, open } = useContext(MenuContext)
+  const { nodeId, x, y, strategy, placement, floating, getFloatingProps, open, setOpen } = useContext(MenuContext)
 
   const closedClipPath = useMemo(() => {
     switch (placement) {
@@ -102,11 +105,18 @@ const MenuItems = (props: MenuItemsProps) => {
     }
   }, [placement])
 
+  const children =
+    typeof props.children === 'function'
+      ? props.children({ open, toggleOpen: () => setOpen(open => !open) })
+      : props.children
+
   return (
     <FloatingPortal id={nodeId}>
       {(open || animating) && (
-        <motion.section
+        <Surface
+          as={motion.section}
           ref={floating}
+          elevation={x => x + 1}
           onAnimationStart={() => setAnimating(true)}
           onAnimationComplete={() => setAnimating(false)}
           variants={{
@@ -136,11 +146,11 @@ const MenuItems = (props: MenuItemsProps) => {
           css={{
             border: `1px solid ${theme.color.border}`,
             borderRadius: '1.2rem',
-            backgroundColor: theme.color.surface,
           }}
           {...getFloatingProps({
             ...props,
             style: { ...props.style, position: strategy, top: y ?? 0, left: x ?? 0, width: 'max-content' },
+            children,
           })}
         />
       )}
@@ -149,7 +159,6 @@ const MenuItems = (props: MenuItemsProps) => {
 }
 
 const MenuItem = ({ dismissAfterSelection = true, ...props }: MenuItemProps) => {
-  const theme = useTheme()
   const { getItemProps, setOpen } = useContext(MenuContext)
   return (
     <motion.div
@@ -160,7 +169,7 @@ const MenuItem = ({ dismissAfterSelection = true, ...props }: MenuItemProps) => 
       css={{
         'cursor': 'pointer',
         ':hover': {
-          backgroundColor: theme.color.foreground,
+          backgroundColor: useSurfaceColor(),
         },
       }}
       {...getItemProps({

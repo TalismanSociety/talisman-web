@@ -65,7 +65,7 @@ const AssetsOverview = () => {
             headlineText="Assets"
             supportingText={<AnimatedFiatNumber end={fiatTotal} animate={false} />}
             supportingTextIcon={
-              <IconButton size="0.75em" onClick={() => setRedactBalance(x => !x)}>
+              <IconButton size="1.25em" onClick={() => setRedactBalance(x => !x)}>
                 {redactBalance ? <Eye /> : <EyeOff />}
               </IconButton>
             }

@@ -1,7 +1,7 @@
 import '@polkadot/api-augment/polkadot'
 import '@polkadot/api-augment/substrate'
 
-import CookieBanner from '@archetypes/CookieBanner'
+import FairyBreadBanner from '@archetypes/FairyBreadBanner'
 import { TalismanHandLoader } from '@components/TalismanHandLoader'
 import ErrorBoundary from '@components/widgets/ErrorBoundary'
 import Development from '@components/widgets/development'
@@ -62,7 +62,7 @@ const App = () => (
                 <MoonbeamContributors.Provider>
                   <Development />
                   <RouterProvider router={router} />
-                  <CookieBanner />
+                  <FairyBreadBanner />
                 </MoonbeamContributors.Provider>
               </TalismanProvider>
             </Portfolio.Provider>

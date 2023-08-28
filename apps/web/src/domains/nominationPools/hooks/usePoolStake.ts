@@ -8,7 +8,8 @@ import { useAllPendingRewardsState, useEraStakersState } from '../recoils'
 import { createAccounts, getPoolUnbonding } from '../utils'
 
 export const usePoolStakes = <T extends Account | Account[]>(account: T) => {
-  const accounts = useMemo(() => (Array.isArray(account) ? account : [account]), [account])
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+  const accounts = useMemo(() => (Array.isArray(account) ? (account as Account[]) : [account as Account]), [account])
 
   const [api, pendingRewards] = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
     waitForAll([useSubstrateApiState(), useAllPendingRewardsState()])
@@ -25,7 +26,8 @@ export const usePoolStakes = <T extends Account | Account[]>(account: T) => {
     () =>
       _poolMembers
         .map((x, index) => ({
-          account: accounts[index],
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+          account: accounts[index]!,
           poolMembers: x,
           pendingRewards: pendingRewards.find(rewards => rewards[0] === accounts[index]?.address)?.[1],
         }))
@@ -101,3 +103,5 @@ export const usePoolStakes = <T extends Account | Account[]>(account: T) => {
 
   return useMemo(() => (Array.isArray(account) ? pools : pools.at(0)) as Return, [account, pools])
 }
+
+export type DerivedPool = NonNullable<ReturnType<typeof usePoolStakes<Account>>>

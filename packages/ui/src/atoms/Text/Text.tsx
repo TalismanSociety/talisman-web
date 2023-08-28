@@ -86,7 +86,7 @@ const defaultProps = <T extends React.ElementType>(props: TextProps<T>) =>
     H1: { as: props.as ?? 'h1', css: { fontSize: 56 } },
     H2: { as: props.as ?? 'h2', css: { fontSize: 32 } },
     H3: { as: props.as ?? 'h3', css: { fontSize: 24 } },
-    H4: { as: props.as ?? 'h2', css: { fontSize: 18 } },
+    H4: { as: props.as ?? 'h4', css: { fontSize: 18 } },
     BodyLarge: { as: props.as ?? 'span', css: { fontSize: 16, fontWeight: 'normal', margin: 0 } },
     Body: { as: props.as ?? 'span', css: { fontSize: 14, fontWeight: 'normal', margin: 0 } },
     BodySmall: { as: props.as ?? 'span', css: { fontSize: 12, fontWeight: 'normal', margin: 0 } },

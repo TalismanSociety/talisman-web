@@ -2,9 +2,9 @@ import { type Account } from '@domains/accounts/recoils'
 import { useIsWeb3Injected } from '@domains/extension/hooks'
 import { allowExtensionConnectionState } from '@domains/extension/recoils'
 import { Download } from '@talismn/icons'
-import { Button, Identicon, Select } from '@talismn/ui'
+import { Button, CircularProgressIndicator, Identicon, Select } from '@talismn/ui'
 import { shortenAddress } from '@util/format'
-import { useCallback, useState, useTransition } from 'react'
+import { useCallback, useEffect, useState, useTransition } from 'react'
 import { useRecoilState } from 'recoil'
 
 export type AccountSelectorProps = {
@@ -12,6 +12,7 @@ export type AccountSelectorProps = {
   accounts: Account[]
   selectedAccount?: Account | string
   onChangeSelectedAccount: (account: Account | undefined) => unknown
+  inTransition?: boolean
 }
 
 const AccountSelector = (props: AccountSelectorProps) => {
@@ -44,18 +45,36 @@ const AccountSelector = (props: AccountSelectorProps) => {
     )
   }
 
+  const selectedValue =
+    typeof props.selectedAccount === 'string' ? props.selectedAccount : props.selectedAccount?.address
+
   return (
     <Select
       css={{ width: '100%' }}
       placeholder="Select an account"
-      value={typeof props.selectedAccount === 'string' ? props.selectedAccount : props.selectedAccount?.address}
+      value={selectedValue}
       onChange={onChange}
+      renderSelected={
+        props.inTransition
+          ? address => {
+              const selectedAccount = props.accounts.find(x => x.address === address)
+              return (
+                <Select.Option
+                  leadingIcon={<CircularProgressIndicator size="4rem" />}
+                  headlineText={
+                    selectedAccount === undefined ? '' : selectedAccount.name ?? shortenAddress(selectedAccount.address)
+                  }
+                />
+              )
+            }
+          : undefined
+      }
     >
       {props.accounts.map(x => (
         <Select.Option
           key={x.address}
           value={x.address}
-          leadingIcon={<Identicon value={x.address} size={40} />}
+          leadingIcon={<Identicon value={x.address} size="4rem" />}
           headlineText={x.name ?? shortenAddress(x.address)}
         />
       ))}
@@ -65,18 +84,28 @@ const AccountSelector = (props: AccountSelectorProps) => {
 
 export const useAccountSelector = (
   accounts: Account[],
-  initialAccount?: Account | number | ((accounts?: Account[]) => Account),
+  initialAccount?: Account | number | ((accounts?: Account[]) => Account | undefined),
   accountSelectorProps?: Omit<AccountSelectorProps, 'accounts' | 'selectedAccount' | 'onChangeSelectedAccount'>
 ) => {
-  const [isTransitioning, startTransition] = useTransition()
+  const [inTransition, startTransition] = useTransition()
 
-  const [account, setAccount] = useState(
-    typeof initialAccount === 'function'
-      ? initialAccount(accounts)
-      : typeof initialAccount === 'number'
-      ? accounts.at(initialAccount)
-      : initialAccount
+  const getInitialAccount = useCallback(
+    (accounts: Account[]) =>
+      typeof initialAccount === 'function'
+        ? initialAccount(accounts)
+        : typeof initialAccount === 'number'
+        ? accounts.at(initialAccount)
+        : initialAccount,
+    [initialAccount]
   )
+
+  const [account, setAccount] = useState(getInitialAccount(accounts))
+
+  useEffect(() => {
+    if (account === undefined && accounts.length > 0) {
+      setAccount(getInitialAccount(accounts))
+    }
+  }, [account, accounts, getInitialAccount])
 
   return [
     account,
@@ -86,8 +115,9 @@ export const useAccountSelector = (
       accounts={accounts}
       selectedAccount={account}
       onChangeSelectedAccount={account => startTransition(() => setAccount(account))}
+      inTransition={inTransition}
     />,
-    isTransitioning,
+    inTransition,
   ] as const
 }
 
