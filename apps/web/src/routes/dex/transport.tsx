@@ -19,7 +19,7 @@ const Transport = () => {
       }
       faq={
         <>
-          <SectionHeader headlineText="About Cross-Chain Transfers" />
+          <SectionHeader headlineText="About Cross-Chain Transport" />
           <picture>
             <source srcSet={illustrationAvif} />
             <source srcSet={illustrationWebp} />
@@ -47,7 +47,7 @@ const Transport = () => {
               <Details.Content>
                 A “teleport” is an XCM instruction that moves assets between two networks. It is implemented by networks
                 that trust one-another, e.g. Statemint & Polkadot. Performing a teleport in the Talisman Portal is like
-                performing any other cross-chain transfer in the “Transport” feature: by specifying the asset, amount,
+                performing any other cross-chain transport in the “Transport” feature: by specifying the asset, amount,
                 “from” network, and “to” network you are interested in.
               </Details.Content>
             </Details>
