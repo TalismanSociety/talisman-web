@@ -12,6 +12,7 @@ import { useNavigate } from 'react-router-dom'
 import { useRecoilState, useRecoilValue } from 'recoil'
 
 import Assets, { TokenAugmented } from './Assets'
+import BetaNotice from './BetaNotice'
 import Footer from './Footer'
 import Header from './Header'
 import NewTransactionModal from './NewTransactionModal'
@@ -152,6 +153,7 @@ const Overview = () => {
       <Transactions />
       <Footer />
       <NewTransactionModal />
+      <BetaNotice />
     </div>
   )
 }
