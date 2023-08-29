@@ -7,10 +7,12 @@ import TransactionLineItem, { TransactionList } from '@components/recipes/Transa
 import ErrorBoundary from '@components/widgets/ErrorBoundary'
 import ExportTxHistoryWidget from '@components/widgets/ExportTxHistoryWidget'
 import { accountsState, selectedAccountsState, type Account } from '@domains/accounts'
+import { ArrowDown, ArrowUp } from '@talismn/icons'
 import { Button, CircularProgressIndicator, DateInput, IconButton, Select, Text, TextInput } from '@talismn/ui'
 import { encodeAnyAddress } from '@talismn/util'
 import { tryParseSubstrateOrEthereumAddress } from '@util/addressValidation'
 import { Maybe } from '@util/monads'
+import { endOfDay, startOfDay } from 'date-fns'
 import request from 'graphql-request'
 import { isNil } from 'lodash'
 import { Suspense, useCallback, useMemo, useState } from 'react'
@@ -19,7 +21,6 @@ import { selector, useRecoilValue } from 'recoil'
 import { isHex } from 'viem'
 import { graphql } from '../../generated/gql/extrinsicHistory/gql'
 import { ExtrinsicOrderByInput, type ExtrinsicsQuery } from '../../generated/gql/extrinsicHistory/gql/graphql'
-import { ArrowDown, ArrowUp } from '@talismn/icons'
 
 const filtersState = selector({
   key: 'History/Filters',
@@ -418,12 +419,12 @@ const History = () => {
               <DateInput
                 placeholder="From"
                 value={fromDate}
-                onChange={event => setFromDate(new Date(event.target.value))}
+                onChange={event => setFromDate(startOfDay(new Date(event.target.value)))}
                 css={{ padding: '1.1rem' }}
               />
               <DateInput
                 value={toDate}
-                onChange={event => setToDate(new Date(event.target.value))}
+                onChange={event => setToDate(endOfDay(new Date(event.target.value)))}
                 css={{ padding: '1.1rem' }}
               />
               <IconButton onClick={() => setDateOrder(x => (x === 'asc' ? 'desc' : 'asc'))}>
