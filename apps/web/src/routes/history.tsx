@@ -393,7 +393,7 @@ const History = () => {
             onChange={event => setSearch(event.target.value)}
           />
           <div css={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '0.8rem' }}>
-            <Select placeholder="Chain" value={chain} onChange={setChain} clearRequired>
+            <Select placeholder="Chain" value={chain} onChange={setChain} clearRequired detached>
               {chains.map(x => (
                 <Select.Option
                   key={x.genesisHash}
@@ -409,7 +409,7 @@ const History = () => {
                 />
               ))}
             </Select>
-            <Select placeholder="Module" value={module} onChange={setModule} clearRequired>
+            <Select placeholder="Module" value={module} onChange={setModule} clearRequired detached>
               {modules.map(x => (
                 <Select.Option key={x} value={x} headlineText={x} />
               ))}

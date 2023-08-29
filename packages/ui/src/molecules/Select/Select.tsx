@@ -1,5 +1,6 @@
 import { useTheme } from '@emotion/react'
 import {
+  autoPlacement,
   autoUpdate,
   offset,
   size,
@@ -33,6 +34,7 @@ export type SelectProps<TValue extends string | number, TClear extends boolean =
   children?: ReactNode
   onChange?: (value: TClear extends false ? TValue : TValue | undefined) => unknown
   clearRequired?: TClear
+  detached?: boolean
 }
 
 type SelectItemProps = {
@@ -56,14 +58,12 @@ const SelectItem = forwardRef<HTMLDivElement, SelectItemProps>((props, ref) => (
   </div>
 ))
 
-// slight overlap for better border radius animation
-const OVERLAP = 6
-
 const Select = Object.assign(
   <TValue extends string | number, TClear extends boolean = false>({
     children,
     renderSelected,
     clearRequired: _clearRequired,
+    detached,
     ...props
   }: SelectProps<TValue, TClear>) => {
     const theme = useTheme()
@@ -85,6 +85,9 @@ const Select = Object.assign(
 
     const clearRequired = !open && _clearRequired && selectedChild !== undefined
 
+    // slight overlap for better border radius animation
+    const overlap = detached ? 0 : 6
+
     const { context, x, y, refs, strategy } = useFloating({
       open,
       onOpenChange: open => {
@@ -105,13 +108,21 @@ const Select = Object.assign(
             // https://github.com/floating-ui/floating-ui/issues/1740#issuecomment-1540639488
             requestAnimationFrame(() => {
               Object.assign(elements.floating.style, {
-                width: `${rects.reference.width}px`,
                 maxHeight: `${availableHeight}px`,
               })
+
+              if (!detached) {
+                Object.assign(elements.floating.style, {
+                  width: `${rects.reference.width}px`,
+                })
+              }
             })
           },
         }),
-        offset(-OVERLAP),
+        offset(detached ? 6 : -overlap),
+        ...(detached
+          ? [autoPlacement({ allowedPlacements: ['bottom-end', 'bottom-start', 'top-end', 'top-start'] })]
+          : []),
       ],
     })
 
@@ -175,7 +186,10 @@ const Select = Object.assign(
             true: {
               border: `solid ${theme.color.border}`,
               borderWidth: '1px 1px 0 1px',
-              transitionEnd: { borderBottomLeftRadius: 0, borderBottomRightRadius: 0 },
+              transitionEnd: {
+                borderBottomLeftRadius: detached ? '0.8rem' : 0,
+                borderBottomRightRadius: detached ? '0.8rem' : 0,
+              },
             },
             false: {
               border: 'solid transparent',
@@ -225,36 +239,39 @@ const Select = Object.assign(
                 transitionEnd: { visibility: 'hidden' },
               },
             }}
-            css={{
-              'margin': 0,
-              'padding': 0,
-              'borderBottomLeftRadius': '0.5rem',
-              'borderBottomRightRadius': '0.5rem',
-              'backgroundColor': surfaceColor,
-              'listStyle': 'none',
-              'li': {
-                'padding': '1.5rem 1.25rem',
+            css={[
+              {
+                'margin': 0,
+                'padding': 0,
                 'backgroundColor': surfaceColor,
-                ':hover': {
-                  filter: 'brightness(1.2)',
+                'listStyle': 'none',
+                'li': {
+                  'padding': '1.5rem 1.25rem',
+                  'backgroundColor': surfaceColor,
+                  ':hover': {
+                    filter: 'brightness(1.2)',
+                  },
+                  ':focus-visible': {
+                    filter: 'brightness(1.2)',
+                  },
+                  ':last-child': {
+                    padding: '1.5rem 1.25rem 1rem 1.25rem',
+                  },
                 },
-                ':focus-visible': {
-                  filter: 'brightness(1.2)',
-                },
-                ':last-child': {
-                  padding: '1.5rem 1.25rem 1rem 1.25rem',
+                // Top spacer for animation overlap
+                '::before': {
+                  content: '""',
+                  display: 'block',
+                  position: 'sticky',
+                  top: 0,
+                  height: overlap,
+                  backgroundColor: surfaceColor,
                 },
               },
-              // Top spacer for animation overlap
-              '::before': {
-                content: '""',
-                display: 'block',
-                position: 'sticky',
-                top: 0,
-                height: OVERLAP,
-                backgroundColor: surfaceColor,
-              },
-            }}
+              detached
+                ? { borderRadius: '0.5rem' }
+                : { borderBottomLeftRadius: '0.5rem', borderBottomRightRadius: '0.5rem' },
+            ]}
             {...getFloatingProps({
               style: {
                 position: strategy,
