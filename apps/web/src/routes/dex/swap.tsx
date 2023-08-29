@@ -36,8 +36,8 @@ const Swap = () => {
               <Details.Summary>How does the cross-chain swap work?</Details.Summary>
               <Details.Content>
                 Cross-Chain Swaps utilize Privadex, a third-party service that determines the optimal route for your
-                swap through a series of cross-chain transfers and DEXes, and executes that on your behalf. Swaps may be
-                routed to the same address on the destination chain, or a different address of your choosing.
+                swap through a series of cross-chain transports and DEXes, and executes that on your behalf. Swaps may
+                be routed to the same address on the destination chain, or a different address of your choosing.
               </Details.Content>
             </Details>
             <Details>
