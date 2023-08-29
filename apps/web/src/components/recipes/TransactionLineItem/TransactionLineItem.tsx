@@ -1,7 +1,7 @@
 import type { Account } from '@domains/accounts'
 import { useTheme } from '@emotion/react'
 import { ArrowDown, ArrowUp, ChevronRight } from '@talismn/icons'
-import { Identicon, Surface, Text, Tooltip, useSurfaceColorAtElevation } from '@talismn/ui'
+import { Identicon, Surface, Text, TonalIcon, Tooltip, useSurfaceColorAtElevation } from '@talismn/ui'
 import { shortenAddress } from '@util/format'
 import React, { useMemo, type PropsWithChildren, type ReactElement } from 'react'
 import { getSubstrateModuleColor } from '../extrinsicColor'
@@ -64,9 +64,13 @@ const TransactionLineItem = (props: TransactionLineItemProps) => {
           <Tooltip content={props.origin === 'self' ? 'Outgoing transaction' : 'Incoming transaction'}>
             {tooltipProps =>
               props.origin === 'self' ? (
-                <ArrowUp size="1.5rem" css={{ color: '#F48F45' }} {...tooltipProps} />
+                <TonalIcon size="1.6rem" contentColor="#F48F45" {...tooltipProps}>
+                  <ArrowUp />
+                </TonalIcon>
               ) : (
-                <ArrowDown size="1.5rem" css={{ color: '#D5FF5C' }} {...tooltipProps} />
+                <TonalIcon size="1.6rem" contentColor="#D5FF5C" {...tooltipProps}>
+                  <ArrowDown />
+                </TonalIcon>
               )
             }
           </Tooltip>
