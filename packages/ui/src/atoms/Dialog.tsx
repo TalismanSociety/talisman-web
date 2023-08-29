@@ -1,3 +1,4 @@
+import { Global } from '@emotion/react'
 import React, { useEffect, useState } from 'react'
 
 export type DialogProps = Omit<
@@ -66,18 +67,21 @@ export const Dialog = React.forwardRef<HTMLDialogElement, DialogProps>(function 
   }
 
   return (
-    <dialog
-      ref={element => {
-        if (typeof ref === 'function') {
-          ref(element)
-        } else if (ref !== null) {
-          ref.current = element
-        }
+    <>
+      {open && <Global styles={{ body: { overflow: 'hidden' } }} />}
+      <dialog
+        ref={element => {
+          if (typeof ref === 'function') {
+            ref(element)
+          } else if (ref !== null) {
+            ref.current = element
+          }
 
-        setElement(element)
-      }}
-      {...props}
-    />
+          setElement(element)
+        }}
+        {...props}
+      />
+    </>
   )
 })
 

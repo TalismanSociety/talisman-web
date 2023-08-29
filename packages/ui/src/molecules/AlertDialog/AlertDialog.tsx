@@ -1,8 +1,8 @@
-import { Global, keyframes, useTheme } from '@emotion/react'
+import { keyframes, useTheme } from '@emotion/react'
 import { X } from '@talismn/icons'
 import { type ReactNode } from 'react'
 
-import { Button, Dialog, type DialogProps, Text, Surface } from '../../atoms'
+import { Button, Dialog, Surface, Text, type DialogProps } from '../../atoms'
 
 export type AlertDialogProps = Omit<DialogProps, 'title'> & {
   title?: ReactNode
@@ -46,7 +46,6 @@ const AlertDialog = ({
 
   return (
     <>
-      {props.open && <Global styles={{ body: { overflow: 'hidden' } }} />}
       <Surface
         as={Dialog}
         {...props}
