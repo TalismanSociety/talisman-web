@@ -203,7 +203,7 @@ export const Search = styled(({ value, className, onChange = () => {}, ...rest }
   }
 `
 
-type SelectProps = {
+type UnibodySelectProps = {
   value?: string
   options?: any
   className?: string
@@ -211,8 +211,8 @@ type SelectProps = {
   onChange: (value: string) => void
 }
 
-export const Select = styled(
-  ({ value, options, className, suffix = true, onChange = (_v: string) => {}, ...rest }: SelectProps) => (
+export const UnibodySelect = styled(
+  ({ value, options, className, suffix = true, onChange = (_v: string) => {}, ...rest }: UnibodySelectProps) => (
     <FieldWrapper type="select" suffix={suffix ? <ChevronDown /> : null} className={className}>
       <select onChange={e => onChange(e?.target?.value)} {...rest}>
         {options.map(({ key, value }: { key: string; value: string }) => (

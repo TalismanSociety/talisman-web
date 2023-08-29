@@ -2,7 +2,7 @@ import { type Account } from '@domains/accounts/recoils'
 import { useIsWeb3Injected } from '@domains/extension/hooks'
 import { allowExtensionConnectionState } from '@domains/extension/recoils'
 import { Download } from '@talismn/icons'
-import { Button, CircularProgressIndicator, Identicon, Select } from '@talismn/ui'
+import { Button, CircularProgressIndicator, Identicon, UnibodySelect } from '@talismn/ui'
 import { shortenAddress } from '@util/format'
 import { useCallback, useEffect, useState, useTransition } from 'react'
 import { useRecoilState } from 'recoil'
@@ -49,7 +49,7 @@ const AccountSelector = (props: AccountSelectorProps) => {
     typeof props.selectedAccount === 'string' ? props.selectedAccount : props.selectedAccount?.address
 
   return (
-    <Select
+    <UnibodySelect
       css={{ width: '100%' }}
       placeholder="Select an account"
       value={selectedValue}
@@ -59,7 +59,7 @@ const AccountSelector = (props: AccountSelectorProps) => {
           ? address => {
               const selectedAccount = props.accounts.find(x => x.address === address)
               return (
-                <Select.Option
+                <UnibodySelect.Option
                   leadingIcon={<CircularProgressIndicator size="4rem" />}
                   headlineText={
                     selectedAccount === undefined ? '' : selectedAccount.name ?? shortenAddress(selectedAccount.address)
@@ -71,14 +71,14 @@ const AccountSelector = (props: AccountSelectorProps) => {
       }
     >
       {props.accounts.map(x => (
-        <Select.Option
+        <UnibodySelect.Option
           key={x.address}
           value={x.address}
           leadingIcon={<Identicon value={x.address} size="4rem" />}
           headlineText={x.name ?? shortenAddress(x.address)}
         />
       ))}
-    </Select>
+    </UnibodySelect>
   )
 }
 

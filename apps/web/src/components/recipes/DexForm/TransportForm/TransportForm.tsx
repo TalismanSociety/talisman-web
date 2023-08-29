@@ -5,7 +5,7 @@ import {
   Button,
   ContainedTextInput,
   IconButton,
-  Select,
+  UnibodySelect,
   TextInput,
   type ButtonProps,
   CircularProgressIndicator,
@@ -113,7 +113,7 @@ const TransportForm = Object.assign(
               css={{ alignSelf: 'stretch' }}
             >
               <div css={{ '@media(min-width: 600px)': { width: '16rem' } }}>
-                <Select
+                <UnibodySelect
                   css={{ width: '100%' }}
                   placeholder="From network"
                   value={props.selectedFromChainIndex}
@@ -121,7 +121,7 @@ const TransportForm = Object.assign(
                   clearRequired
                 >
                   {props.fromChains.map((network, index) => (
-                    <Select.Option
+                    <UnibodySelect.Option
                       key={index}
                       value={index}
                       headlineText={network.name}
@@ -134,7 +134,7 @@ const TransportForm = Object.assign(
                       }
                     />
                   ))}
-                </Select>
+                </UnibodySelect>
               </div>
             </motion.div>
             <div css={{ color: theme.color.primary }}>
@@ -152,7 +152,7 @@ const TransportForm = Object.assign(
               css={{ alignSelf: 'stretch' }}
             >
               <div css={{ '@media(min-width: 600px)': { width: '16rem' } }}>
-                <Select
+                <UnibodySelect
                   css={{ width: '100%' }}
                   placeholder="To network"
                   value={props.selectedToChainIndex}
@@ -160,14 +160,14 @@ const TransportForm = Object.assign(
                   clearRequired
                 >
                   {props.toChains.map((network, index) => (
-                    <Select.Option
+                    <UnibodySelect.Option
                       key={index}
                       value={index}
                       headlineText={network.name}
                       leadingIcon={<Cryptoticon src={network.logoSrc} alt={network.name} size="2rem" />}
                     />
                   ))}
-                </Select>
+                </UnibodySelect>
               </div>
             </motion.div>
           </LayoutGroup>

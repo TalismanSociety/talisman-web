@@ -1,4 +1,4 @@
-import { AlertDialog, type AlertDialogProps, Button, DateInput, Identicon, Select, Text } from '@talismn/ui'
+import { AlertDialog, type AlertDialogProps, Button, DateInput, Identicon, UnibodySelect, Text } from '@talismn/ui'
 import { Maybe } from '@util/monads'
 
 type Account = { selected?: boolean; name: string; address: string; balance: string }
@@ -33,7 +33,7 @@ const ExportTxHistoryDialog = ({
           Export your Transaction History
         </Text.Body>
         <div css={{ marginBottom: '1.6rem' }}>
-          <Select
+          <UnibodySelect
             css={{ width: '100%' }}
             placeholder="Select account"
             value={accounts.findIndex(x => x.selected)}
@@ -44,7 +44,7 @@ const ExportTxHistoryDialog = ({
             }
           >
             {accounts.map((account, index) => (
-              <Select.Option
+              <UnibodySelect.Option
                 key={index}
                 value={index}
                 leadingIcon={<Identicon value={account.address} size={40} />}
@@ -52,7 +52,7 @@ const ExportTxHistoryDialog = ({
                 supportingText={account.balance}
               />
             ))}
-          </Select>
+          </UnibodySelect>
         </div>
         <div css={{ display: 'flex', gap: '0.8rem' }}>
           <DateInput

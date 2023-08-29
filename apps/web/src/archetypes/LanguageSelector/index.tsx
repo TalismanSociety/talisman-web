@@ -12,7 +12,7 @@ export const LanguageSelector = styled(({ className }: { className?: string }) =
     return null
   }
   return (
-    <Field.Select
+    <Field.UnibodySelect
       className={className}
       suffix={true}
       options={i18n.languages.map(language => {

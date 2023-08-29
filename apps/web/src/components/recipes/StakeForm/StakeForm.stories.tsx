@@ -1,5 +1,5 @@
 import { type ComponentMeta, type Story } from '@storybook/react'
-import { Select } from '@talismn/ui'
+import { UnibodySelect } from '@talismn/ui'
 
 import StakeForm, { type StakeFormProps } from './StakeForm'
 
@@ -20,14 +20,14 @@ export const Default: Story<StakeFormProps & { showExistingPool: boolean }> = ({
 
 Default.args = {
   assetSelector: (
-    <Select css={{ width: '100%' }} placeholder="DOT">
-      <Select.Option headlineText="KSM" />
-    </Select>
+    <UnibodySelect css={{ width: '100%' }} placeholder="DOT">
+      <UnibodySelect.Option headlineText="KSM" />
+    </UnibodySelect>
   ),
   accountSelector: (
-    <Select css={{ width: '100%' }} placeholder="Select account">
-      <Select.Option headlineText="foo" />
-    </Select>
+    <UnibodySelect css={{ width: '100%' }} placeholder="Select account">
+      <UnibodySelect.Option headlineText="foo" />
+    </UnibodySelect>
   ),
   amountInput: (
     <StakeForm.AmountInput

@@ -1,6 +1,6 @@
 import { Default as StakeDetails } from '@components/recipes/StakeDetails/StakeDetails.stories'
 import { type Meta, type StoryObj } from '@storybook/react'
-import { Select } from '@talismn/ui'
+import { UnibodySelect } from '@talismn/ui'
 import StakeDashboard from './StakeDashboard'
 
 export default {
@@ -12,9 +12,9 @@ type Story = StoryObj<typeof StakeDashboard>
 
 export const Default: Story = {
   args: {
-    chainSelector: <Select placeholder="Select asset" />,
+    chainSelector: <UnibodySelect placeholder="Select asset" />,
     chainCount: 3,
-    accountSelector: <Select placeholder="Select account" />,
+    accountSelector: <UnibodySelect placeholder="Select account" />,
     accountCount: 3,
     // TODO: https://github.com/storybookjs/storybook/issues/15954
     // @ts-expect-error

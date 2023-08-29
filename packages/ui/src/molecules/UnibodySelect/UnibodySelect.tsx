@@ -25,7 +25,7 @@ import React, {
 import { Surface, Text, useSurfaceColor } from '../../atoms'
 import FloatingPortal from '../../atoms/FloatingPortal'
 
-export type SelectProps<TValue extends string | number, TClear extends boolean = false> = {
+export type UnibodySelectProps<TValue extends string | number, TClear extends boolean = false> = {
   className?: string
   value?: TValue
   renderSelected?: (value: TValue | undefined) => ReactNode
@@ -35,14 +35,14 @@ export type SelectProps<TValue extends string | number, TClear extends boolean =
   clearRequired?: TClear
 }
 
-type SelectItemProps = {
+type UnibodySelectItemProps = {
   value?: string | number
   leadingIcon?: ReactNode
   headlineText: ReactNode
   supportingText?: ReactNode
 }
 
-const SelectItem = forwardRef<HTMLDivElement, SelectItemProps>((props, ref) => (
+const UnibodySelectItem = forwardRef<HTMLDivElement, UnibodySelectItemProps>((props, ref) => (
   <div ref={ref} css={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
     <figure css={{ maxWidth: 40, maxHeight: 40, margin: 0 }}>{props.leadingIcon}</figure>
     <div>
@@ -59,13 +59,13 @@ const SelectItem = forwardRef<HTMLDivElement, SelectItemProps>((props, ref) => (
 // slight overlap for better border radius animation
 const OVERLAP = 6
 
-const Select = Object.assign(
+const UnibodySelect = Object.assign(
   <TValue extends string | number, TClear extends boolean = false>({
     children,
     renderSelected,
     clearRequired: _clearRequired,
     ...props
-  }: SelectProps<TValue, TClear>) => {
+  }: UnibodySelectProps<TValue, TClear>) => {
     const theme = useTheme()
     const surfaceColor = useSurfaceColor()
 
@@ -77,7 +77,7 @@ const Select = Object.assign(
     const childrenArray = React.Children.toArray(children)
 
     const selectedIndex = childrenArray
-      .filter((x): x is ReactElement<SelectItemProps> => x as any)
+      .filter((x): x is ReactElement<UnibodySelectItemProps> => x as any)
       .findIndex(x => x.props.value?.toString() === props.value?.toString())
 
     const selectedChild =
@@ -273,7 +273,7 @@ const Select = Object.assign(
               },
             })}
           >
-            {React.Children.map(children as any, (child: ReactElement<SelectItemProps>, index) => (
+            {React.Children.map(children as any, (child: ReactElement<UnibodySelectItemProps>, index) => (
               <li
                 key={child.key}
                 role="option"
@@ -310,9 +310,9 @@ const Select = Object.assign(
     /**
      * @deprecated
      */
-    Item: SelectItem,
-    Option: SelectItem,
+    Item: UnibodySelectItem,
+    Option: UnibodySelectItem,
   }
 )
 
-export default Select
+export default UnibodySelect

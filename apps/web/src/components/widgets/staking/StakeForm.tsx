@@ -16,7 +16,7 @@ import { useInflation, usePoolAddForm, usePoolStakes } from '@domains/nomination
 import { eraStakersState, useRecommendedPoolsState } from '@domains/nominationPools/recoils'
 import { createAccounts } from '@domains/nominationPools/utils'
 import { type Decimal } from '@talismn/math'
-import { CircularProgressIndicator, Select } from '@talismn/ui'
+import { CircularProgressIndicator, UnibodySelect } from '@talismn/ui'
 import { Maybe } from '@util/monads'
 import BN from 'bn.js'
 import {
@@ -178,13 +178,13 @@ export const AssetSelect = (props: {
   inTransition: boolean
   iconSize?: string | number
 }) => (
-  <Select
+  <UnibodySelect
     css={{ width: '100%' }}
     value={props.selectedChain.id}
     renderSelected={
       props.inTransition
         ? id => (
-            <Select.Option
+            <UnibodySelect.Option
               leadingIcon={<CircularProgressIndicator size={props.iconSize ?? '2.4rem'} />}
               headlineText={props.chains.find(x => x.id === id)?.nativeToken.symbol}
             />
@@ -199,7 +199,7 @@ export const AssetSelect = (props: {
     }}
   >
     {props.chains.map((x, index) => (
-      <Select.Option
+      <UnibodySelect.Option
         key={index}
         value={x.id}
         leadingIcon={
@@ -212,7 +212,7 @@ export const AssetSelect = (props: {
         headlineText={x.nativeToken.symbol}
       />
     ))}
-  </Select>
+  </UnibodySelect>
 )
 
 const EstimatedYield = memo(

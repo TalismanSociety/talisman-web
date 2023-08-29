@@ -22,7 +22,7 @@ import {
   ListItem,
   MediaDialog,
   SegmentedButton,
-  Select,
+  UnibodySelect,
   Text,
 } from '@talismn/ui'
 import { usePagination } from '@talismn/utils/react'
@@ -359,16 +359,16 @@ const Nfts = () => {
             {view === 'items' && (
               <Text.Body as="label" css={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
                 Show:
-                <Select value={tag} onChange={setTag}>
-                  <Select.Option value={undefined} headlineText="All" />
+                <UnibodySelect value={tag} onChange={setTag}>
+                  <UnibodySelect.Option value={undefined} headlineText="All" />
                   {['favorite', 'hidden'].map(x => (
-                    <Select.Option
+                    <UnibodySelect.Option
                       key={x}
                       value={x}
                       headlineText={<span css={{ textTransform: 'capitalize' }}>{x}</span>}
                     />
                   ))}
-                </Select>
+                </UnibodySelect>
               </Text.Body>
             )}
             <SegmentedButton value={view} onChange={setView} css={{ marginLeft: 'auto' }}>

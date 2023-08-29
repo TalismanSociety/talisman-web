@@ -1,7 +1,7 @@
 import { type ComponentMeta, type Story } from '@storybook/react'
 
 import TransportForm, { type TransportFormProps } from './TransportForm'
-import { Select } from '@talismn/ui'
+import { UnibodySelect } from '@talismn/ui'
 
 export default {
   title: 'Recipes/DexForm/TransportForm',
@@ -15,9 +15,9 @@ export const Default: Story<TransportFormProps> = args => <TransportForm {...arg
 
 Default.args = {
   accountSelector: (
-    <Select css={{ width: '100%' }} placeholder="Select account">
-      <Select.Option headlineText="foo" />
-    </Select>
+    <UnibodySelect css={{ width: '100%' }} placeholder="Select account">
+      <UnibodySelect.Option headlineText="foo" />
+    </UnibodySelect>
   ),
   fromChains: [
     { name: 'Polkadot', logoSrc: '' },
