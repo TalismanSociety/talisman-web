@@ -110,11 +110,7 @@ const PoolStake = Object.assign(
               css={{ display: 'inline-block', verticalAlign: 'middle', marginRight: '0.6rem' }}
             />
             <Tooltip content={props.poolName}>
-              {tooltipProps => (
-                <div {...tooltipProps} css={{ display: 'inline' }}>
-                  {props.poolName}
-                </div>
-              )}
+              <div css={{ display: 'inline' }}>{props.poolName}</div>
             </Tooltip>
           </Text>
         </div>

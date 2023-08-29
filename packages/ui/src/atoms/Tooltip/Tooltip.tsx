@@ -4,6 +4,7 @@ import {
   flip,
   offset,
   shift,
+  useClientPoint,
   useDismiss,
   useFloating,
   useFocus,
@@ -13,15 +14,13 @@ import {
 } from '@floating-ui/react'
 import { motion } from 'framer-motion'
 import { useState, type ReactNode } from 'react'
-
-import Text from '../Text'
-import useCursorFollow from './useCursorFollow'
 import FloatingPortal from '../FloatingPortal'
+import Text from '../Text'
 
 export type TooltipProps = {
   content: ReactNode
   placement?: 'bottom' | 'left' | 'right' | 'top'
-  children: (props: Record<string, unknown>) => ReactNode
+  children: ReactNode
   disabled?: boolean
 }
 
@@ -39,20 +38,22 @@ const Tooltip = ({ placement = 'right', ...props }: TooltipProps) => {
   })
 
   const { getReferenceProps, getFloatingProps } = useInteractions([
-    useHover(context, { move: false }),
-    useCursorFollow(context, { enabled: true }),
+    useHover(context),
+    useClientPoint(context),
     useFocus(context),
     useDismiss(context),
     useRole(context, { role: 'tooltip' }),
   ])
 
   if (props.disabled) {
-    return <>{props.children(getReferenceProps({}))}</>
+    return <>{props.children}</>
   }
 
   return (
     <>
-      {props.children(getReferenceProps({}))}
+      <div ref={refs.setReference} {...getReferenceProps({ style: { display: 'contents' } })}>
+        {props.children}
+      </div>
       <FloatingPortal>
         {open && Boolean(props.content) && (
           <motion.div
