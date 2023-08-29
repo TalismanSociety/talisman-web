@@ -85,29 +85,29 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@acala-network/sdk-core@npm:4.1.9-2, @acala-network/sdk-core@npm:^4.1.9-2":
-  version: 4.1.9-2
-  resolution: "@acala-network/sdk-core@npm:4.1.9-2"
+"@acala-network/sdk-core@npm:4.1.9-8, @acala-network/sdk-core@npm:^4.1.9-7":
+  version: 4.1.9-8
+  resolution: "@acala-network/sdk-core@npm:4.1.9-8"
   dependencies:
-    "@acala-network/types": ^5.1.1
-    "@polkadot/api": ^10.7.3
+    "@acala-network/types": ^6.0.0-34
+    "@polkadot/api": ^10.9.1
     bignumber.js: ^9.0.0
     lodash: ^4.17.20
   peerDependencies:
-    "@acala-network/types": ^5
+    "@acala-network/types": ^6
     "@polkadot/api": ^10
-  checksum: 76a2ce8f90929f7ce95480483fc956b9506d47ddb7ca2cf77da42af49970112319af249b13f1f9911d06789e5f99400d51c6ac04a4a704fce6333c5e5f986c31
+  checksum: a1366fc0d61c07320794aa1d067d8a3af60f97fc48f9af89c0fd68377d22394692dc620875e4a96bbeb14287439ba91b8cb185e5bd10323c204eb73fe22e0cab
   languageName: node
   linkType: hard
 
-"@acala-network/sdk@npm:^4.1.9-2":
-  version: 4.1.9-2
-  resolution: "@acala-network/sdk@npm:4.1.9-2"
+"@acala-network/sdk@npm:^4.1.9-7":
+  version: 4.1.9-8
+  resolution: "@acala-network/sdk@npm:4.1.9-8"
   dependencies:
     "@acala-network/api": ^5.1.1
     "@acala-network/eth-providers": ~2.7.3
-    "@acala-network/sdk-core": 4.1.9-2
-    "@polkadot/api": ^10.7.3
+    "@acala-network/sdk-core": 4.1.9-8
+    "@polkadot/api": ^10.9.1
     axios: ^0.24.0
     ethers: ~5.7.0
     graphql: ^16.3.0
@@ -120,7 +120,7 @@ __metadata:
     "@acala-network/eth-providers": ~2.7.3
     "@polkadot/api": ^10
     ethers: ~5.7.0
-  checksum: 169c542052177967c37fa3b551ca8271e4a86d9614fc9a992f63cefee811daf586b45b26550644cb304ecad78b0e4d0422c23a1aa2c87b86b55d9158005c6cd3
+  checksum: 9e673b6db68e52d4fcde6b2ecf2a126ff2f23b34e9845f24a19570116ff5a051c1bb1891fa24e76ed8d883f9191e2ee9091faf17230b67cdfd21856374238873
   languageName: node
   linkType: hard
 
@@ -153,6 +153,15 @@ __metadata:
   peerDependencies:
     "@polkadot/api": ^10.5.1
   checksum: e4e34d23ffbb48c5309a016fea99732e962f84f512ac4cbbe25e211793201a4baeca6c29b16923c687dbd6dba770b1b4737c393af01f3b1809b56b710eb50886
+  languageName: node
+  linkType: hard
+
+"@acala-network/types@npm:^6.0.0-34":
+  version: 6.0.0-34
+  resolution: "@acala-network/types@npm:6.0.0-34"
+  peerDependencies:
+    "@polkadot/api": ^10.9.1
+  checksum: 81ddd1a5ed760fc9a088e93293eeda477401e146bea2f3695bc9ecf4300c5b006a67fc7a695ba61fd2698d54df9fcec7e8e239c75d09aafe2296028ba0c7e626
   languageName: node
   linkType: hard
 
@@ -5264,13 +5273,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@polkawallet/bridge@npm:^0.1.5-4":
-  version: 0.1.5-4
-  resolution: "@polkawallet/bridge@npm:0.1.5-4"
+"@polkawallet/bridge@npm:^0.1.5-14":
+  version: 0.1.5-14
+  resolution: "@polkawallet/bridge@npm:0.1.5-14"
   dependencies:
     "@acala-network/api": ^5
-    "@acala-network/sdk": ^4.1.9-2
-    "@acala-network/sdk-core": ^4.1.9-2
+    "@acala-network/sdk": ^4.1.9-7
+    "@acala-network/sdk-core": ^4.1.9-7
     "@polkadot/api": ^10.9.1
     "@polkadot/apps-config": ^0.131.4
     "@polkadot/types": ^10.9.1
@@ -5281,7 +5290,7 @@ __metadata:
     "@acala-network/api": ^5
     "@polkadot/api": ^10
     ethers: ^5
-  checksum: c72e7864fd4090d71de03237f992c7b683f3ebd832a666f08b02c441e85612914eca145a78df6073ef1dbbe3177a5e00cb4dc968de654f369d868a22f75b6e53
+  checksum: 922a9c4fa5bff9ef598eb3dbe2ac4e6bb268ab6b7b56ef3bed6bc92d01b3f8bf73d93f5b42fe4ad79ac2e998dc82443d26e080075f97c2c83816002958f1df5c
   languageName: node
   linkType: hard
 
@@ -7379,7 +7388,7 @@ __metadata:
     "@playwright/test": ^1.31.2
     "@polkadot/api": ^10.9.1
     "@polkadot/extension-dapp": ^0.46.5
-    "@polkawallet/bridge": ^0.1.5-4
+    "@polkawallet/bridge": ^0.1.5-14
     "@recoiljs/refine": ^0.1.1
     "@sentry/react": ^7.37.2
     "@sentry/tracing": ^7.37.2
