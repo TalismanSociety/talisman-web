@@ -121,7 +121,7 @@ const Select = Object.assign(
         }),
         offset(detached ? 6 : -overlap),
         ...(detached
-          ? [autoPlacement({ allowedPlacements: ['bottom-end', 'bottom-start', 'top-end', 'top-start'] })]
+          ? [autoPlacement({ allowedPlacements: ['top-start', 'top-end', 'bottom-start', 'bottom-end'] })]
           : []),
       ],
     })
