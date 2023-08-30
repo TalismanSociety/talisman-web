@@ -1,7 +1,7 @@
 import type { Account } from '@domains/accounts'
 import { copyAddressToClipboard, copyExtrinsicHashToClipboard } from '@domains/common'
 import { useTheme } from '@emotion/react'
-import { CheckCircle, XCircle } from '@talismn/icons'
+import { CheckCircle, Copy, ExternalLink, XCircle } from '@talismn/icons'
 import {
   DescriptionList,
   Identicon,
@@ -73,9 +73,12 @@ const ExtrinsicDetailsSideSheet = (props: ExtrinsicDetailsSideSheetProps) => {
           <DescriptionList.Term>Extrinsic ID</DescriptionList.Term>
           <DescriptionList.Details>
             {props.subscanUrl ? (
-              <Text.Noop.A href={props.subscanUrl} target="_blank">
-                {props.id}
-              </Text.Noop.A>
+              <span>
+                <ExternalLink size="1em" />{' '}
+                <Text.Noop.A href={props.subscanUrl} target="_blank">
+                  {props.id}
+                </Text.Noop.A>
+              </span>
             ) : (
               props.id
             )}
@@ -88,12 +91,14 @@ const ExtrinsicDetailsSideSheet = (props: ExtrinsicDetailsSideSheetProps) => {
         <DescriptionList.Description>
           <DescriptionList.Term>Extrinsic hash</DescriptionList.Term>
           <DescriptionList.Details
-            css={{ textDecoration: 'underline', cursor: 'copy' }}
+            css={{ cursor: 'copy' }}
             onClick={() => {
               void copyExtrinsicHashToClipboard(props.hash)
             }}
           >
-            {shortenAddress('0xbae40a865e1b719d7c0e076c935de340c4b9759fbb1362415e87feb33353fcd2', 6)}
+            <span>
+              <Copy size="1em" /> <span css={{ textDecoration: 'underline' }}>{shortenAddress(props.hash, 6)}</span>
+            </span>
           </DescriptionList.Details>
         </DescriptionList.Description>
         <DescriptionList.Description>
@@ -108,14 +113,17 @@ const ExtrinsicDetailsSideSheet = (props: ExtrinsicDetailsSideSheetProps) => {
           <DescriptionList.Description>
             <DescriptionList.Term>Signer</DescriptionList.Term>
             <DescriptionList.Details
-              css={{ textDecoration: 'underline', cursor: 'copy' }}
+              css={{ cursor: 'copy' }}
               onClick={() => {
                 if (props.signer !== undefined) {
                   void copyAddressToClipboard(props.signer.address)
                 }
               }}
             >
-              {shortenAddress(props.signer.address)}
+              <span>
+                <Copy size="1em" />{' '}
+                <span css={{ textDecoration: 'underline' }}>{shortenAddress(props.signer.address)}</span>
+              </span>
             </DescriptionList.Details>
           </DescriptionList.Description>
         )}
