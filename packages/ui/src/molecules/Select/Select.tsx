@@ -10,6 +10,7 @@ import {
   useInteractions,
   useListNavigation,
   useRole,
+  useTypeahead,
 } from '@floating-ui/react'
 import { ChevronDown, X } from '@talismn/icons'
 import { motion } from 'framer-motion'
@@ -70,6 +71,7 @@ const Select = Object.assign(
     const surfaceColor = useSurfaceColor()
 
     const listRef = useRef<HTMLLIElement[]>([])
+    const listContentRef = useRef<Array<string | null>>([])
     const [open, setOpen] = useState(false)
     const [pointer, setPointer] = useState(false)
     const [activeIndex, setActiveIndex] = useState<number | null>(null)
@@ -130,14 +132,18 @@ const Select = Object.assign(
       useRole(context, { role: 'listbox' }),
       useClick(context),
       useListNavigation(context, {
-        // TODO: this caused element to jump a little
-        // so disabling for now, need to investigate further
-        enabled: false,
         listRef,
         activeIndex,
-        selectedIndex,
+        // TODO: disable selected index for now as
+        // as this cause weird animation on open if an item is already focused
+        // selectedIndex,
         onNavigate: setActiveIndex,
         loop: true,
+      }),
+      useTypeahead(context, {
+        listRef: listContentRef,
+        activeIndex,
+        onMatch: setActiveIndex,
       }),
       useDismiss(context),
     ])
@@ -248,12 +254,6 @@ const Select = Object.assign(
                 'li': {
                   'padding': '1.5rem 1.25rem',
                   'backgroundColor': surfaceColor,
-                  ':hover': {
-                    filter: 'brightness(1.2)',
-                  },
-                  ':focus-visible': {
-                    filter: 'brightness(1.2)',
-                  },
                   ':last-child': {
                     padding: '1.5rem 1.25rem 1rem 1.25rem',
                   },
@@ -298,14 +298,14 @@ const Select = Object.assign(
                 ref={node => {
                   if (node !== null) {
                     listRef.current[index] = node
+                    listContentRef.current[index] = node?.textContent
                   }
                 }}
-                tabIndex={!open ? -1 : index === activeIndex ? 0 : 1}
-                aria-selected={index === activeIndex}
-                css={{ cursor: 'pointer' }}
+                tabIndex={index === activeIndex ? 0 : 1}
+                aria-selected={index === selectedIndex && index === activeIndex}
+                css={[{ cursor: 'pointer' }, index === activeIndex && { filter: 'brightness(1.2)' }]}
                 {...getItemProps({
                   onClick: () => select(child.props.value),
-
                   onKeyDown: event => {
                     if (event.key === 'Enter') {
                       event.preventDefault()

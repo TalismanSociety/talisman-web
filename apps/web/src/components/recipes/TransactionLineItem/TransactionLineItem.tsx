@@ -62,17 +62,15 @@ const TransactionLineItem = (props: TransactionLineItemProps) => {
       <Grid>
         <div css={{ gridArea: 'origin', display: 'flex', alignItems: 'center' }}>
           <Tooltip content={props.origin === 'self' ? 'Outgoing transaction' : 'Incoming transaction'}>
-            {tooltipProps =>
-              props.origin === 'self' ? (
-                <TonalIcon size="1.6rem" contentColor="#F48F45" {...tooltipProps}>
-                  <ArrowUp />
-                </TonalIcon>
-              ) : (
-                <TonalIcon size="1.6rem" contentColor="#D5FF5C" {...tooltipProps}>
-                  <ArrowDown />
-                </TonalIcon>
-              )
-            }
+            {props.origin === 'self' ? (
+              <TonalIcon size="1.6rem" contentColor="#F48F45">
+                <ArrowUp />
+              </TonalIcon>
+            ) : (
+              <TonalIcon size="1.6rem" contentColor="#D5FF5C">
+                <ArrowDown />
+              </TonalIcon>
+            )}
           </Tooltip>
         </div>
         <IdText
@@ -88,18 +86,15 @@ const TransactionLineItem = (props: TransactionLineItemProps) => {
             {props.signer && <Identicon value={props.signer?.address ?? 'noop'} size="1.75em" />}
             {props.chainLogo && (
               <Tooltip content={props.chain}>
-                {tooltipProps => (
-                  <img
-                    {...tooltipProps}
-                    src={props.chainLogo}
-                    alt={props.chain}
-                    css={
-                      props.signer === undefined
-                        ? { width: '1.75em', height: '1.75em' }
-                        : { position: 'absolute', top: '-0.2em', right: '-0.2em', width: '1em', height: '1em' }
-                    }
-                  />
-                )}
+                <img
+                  src={props.chainLogo}
+                  alt={props.chain}
+                  css={
+                    props.signer === undefined
+                      ? { width: '1.75em', height: '1.75em' }
+                      : { position: 'absolute', top: '-0.2em', right: '-0.2em', width: '1em', height: '1em' }
+                  }
+                />
               </Tooltip>
             )}
           </div>
