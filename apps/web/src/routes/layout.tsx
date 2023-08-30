@@ -10,7 +10,7 @@ import AccountsManagementMenu from '@components/widgets/AccountsManagementMenu'
 import StakeDialog from '@components/widgets/staking/StakeDialog'
 import { selectedAccountsState } from '@domains/accounts/recoils'
 import * as MoonbeamContributors from '@libs/moonbeam-contributors'
-import { Compass, CreditCard, Eye, File, MoreHorizontal, RefreshCcw, Star, TalismanHand, Zap } from '@talismn/icons'
+import { Compass, CreditCard, Eye, FileText, MoreHorizontal, RefreshCcw, Star, TalismanHand, Zap } from '@talismn/icons'
 import {
   IconButton,
   NavigationBar,
@@ -128,7 +128,7 @@ const Layout = () => {
             <NavigationBar.Item label="Crowdloans" icon={<Star />} />
           </Link>
           <Link to="/history">
-            <NavigationBar.Item label="History" icon={<File />} />
+            <NavigationBar.Item label="History" icon={<FileText />} />
           </Link>
         </NavigationBar>
       }
@@ -159,7 +159,7 @@ const Layout = () => {
             <NavigationRail.Item label="Buy" icon={<CreditCard />} />
           </Link>
           <Link to="/history">
-            <NavigationRail.Item label="History" icon={<File />} />
+            <NavigationRail.Item label="History" icon={<FileText />} />
           </Link>
         </NavigationRail>
       }
@@ -224,7 +224,7 @@ const Layout = () => {
             <NavigationDrawer.Item label="Buy crypto" icon={<CreditCard />} />
           </Link>
           <Link to="/history" target="_blank">
-            <NavigationDrawer.Item label="History" icon={<File />} />
+            <NavigationDrawer.Item label="History" icon={<FileText />} />
           </Link>
         </NavigationDrawer>
       }
