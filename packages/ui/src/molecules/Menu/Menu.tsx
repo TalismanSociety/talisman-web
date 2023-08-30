@@ -14,6 +14,7 @@ import {
   type Placement,
   type ReferenceType,
   type Strategy,
+  type ExtendedRefs,
 } from '@floating-ui/react'
 import { motion } from 'framer-motion'
 import {
@@ -54,9 +55,8 @@ const MenuContext = createContext<{
   y: number | null
   strategy: Strategy
   placement: Placement
-  reference: (node: ReferenceType | null) => void
+  refs: ExtendedRefs<ReferenceType>
   getReferenceProps: (props?: HTMLProps<HTMLElement>) => any
-  floating: (node: HTMLElement | null) => void
   getFloatingProps: (props?: HTMLProps<HTMLElement>) => any
   getItemProps: (props?: HTMLProps<HTMLElement>) => any
   open: boolean
@@ -67,9 +67,8 @@ const MenuContext = createContext<{
   y: 0,
   strategy: 'absolute',
   placement: 'bottom-start',
-  reference: () => {},
+  refs: {} as any,
   getReferenceProps: props => props,
-  floating: () => {},
   getFloatingProps: props => props,
   getItemProps: props => props,
   open: false,
@@ -77,9 +76,9 @@ const MenuContext = createContext<{
 })
 
 const MenuButton = ({ children, ...props }: MenuButtonProps) => {
-  const { reference, getReferenceProps, open } = useContext(MenuContext)
+  const { refs, getReferenceProps, open } = useContext(MenuContext)
   return (
-    <div ref={reference} {...getReferenceProps(props)} css={{ width: 'fit-content' }}>
+    <div ref={refs.setReference} {...getReferenceProps(props)} css={{ width: 'fit-content' }}>
       {typeof children === 'function' ? children({ open }) : children}
     </div>
   )
@@ -88,7 +87,7 @@ const MenuButton = ({ children, ...props }: MenuButtonProps) => {
 const MenuItems = (props: MenuItemsProps) => {
   const theme = useTheme()
   const [animating, setAnimating] = useState(false)
-  const { nodeId, x, y, strategy, placement, floating, getFloatingProps, open, setOpen } = useContext(MenuContext)
+  const { nodeId, x, y, strategy, placement, refs, getFloatingProps, open, setOpen } = useContext(MenuContext)
 
   const closedClipPath = useMemo(() => {
     switch (placement) {
@@ -115,7 +114,7 @@ const MenuItems = (props: MenuItemsProps) => {
       {(open || animating) && (
         <Surface
           as={motion.section}
-          ref={floating}
+          ref={refs.setFloating}
           elevation={x => x + 1}
           onAnimationStart={() => setAnimating(true)}
           onAnimationComplete={() => setAnimating(false)}
@@ -189,7 +188,7 @@ const Menu = (props: MenuProps) => {
   const nodeId = useFloatingNodeId()
   const [open, setOpen] = useState(false)
 
-  const { context, x, y, reference, floating, strategy, placement } = useFloating({
+  const { context, x, y, refs, strategy, placement } = useFloating({
     nodeId,
     open,
     onOpenChange: setOpen,
@@ -222,9 +221,8 @@ const Menu = (props: MenuProps) => {
         y,
         strategy,
         placement,
-        reference,
+        refs,
         getReferenceProps,
-        floating,
         getFloatingProps,
         getItemProps,
         open,

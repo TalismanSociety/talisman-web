@@ -85,7 +85,7 @@ const Select = Object.assign(
 
     const clearRequired = !open && _clearRequired && selectedChild !== undefined
 
-    const { context, x, y, reference, floating, strategy } = useFloating({
+    const { context, x, y, refs, strategy } = useFloating({
       open,
       onOpenChange: open => {
         if (clearRequired) {
@@ -169,7 +169,7 @@ const Select = Object.assign(
       >
         <Surface
           as={motion.button}
-          ref={reference}
+          ref={refs.setReference}
           variants={{
             true: {
               border: `solid ${theme.color.border}`,
@@ -207,7 +207,7 @@ const Select = Object.assign(
         </Surface>
         <FloatingPortal>
           <motion.ul
-            ref={floating}
+            ref={refs.setFloating}
             variants={{
               true: {
                 height: 'unset',

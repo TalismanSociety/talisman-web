@@ -14,5 +14,5 @@ export const Default: Story<TooltipProps> = args => <Tooltip {...args} />
 
 Default.args = {
   content: 'BAM! Tooltip',
-  children: props => <div {...props}>Hover over me</div>,
+  children: <div>Hover over me</div>,
 }

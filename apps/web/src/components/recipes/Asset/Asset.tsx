@@ -208,19 +208,16 @@ const Asset = Object.assign((props: AssetProps) => {
         {/* First Column */}
         <div css={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
           <Tooltip content={startCase(token?.tokenDetails?.chain?.id ?? token?.tokenDetails?.coingeckoId)}>
-            {tooltipProps => (
-              <img
-                {...tooltipProps}
-                src={token?.tokenDetails?.logo}
-                css={{
-                  width: '2em',
-                  height: '2em',
-                  margin: '16px',
-                  borderRadius: '50%',
-                }}
-                alt={' logo'}
-              />
-            )}
+            <img
+              src={token?.tokenDetails?.logo}
+              css={{
+                width: '2em',
+                height: '2em',
+                margin: '16px',
+                borderRadius: '50%',
+              }}
+              alt="logo"
+            />
           </Tooltip>
           <div css={{ display: 'flex', flexDirection: 'column', gap: '0.4em' }}>
             <Text.Body css={{ fontWeight: 600, fontSize: '16px', color: theme.color.onSurface }}>
@@ -238,33 +235,27 @@ const Asset = Object.assign((props: AssetProps) => {
             >
               <div css={{ width: '1em', height: '1em' }}>
                 <Tooltip content={startCase(token?.tokenDetails?.chain?.id ?? token?.tokenDetails?.coingeckoId)}>
-                  {tooltipProps => (
-                    <img
-                      {...tooltipProps}
-                      src={token?.tokenDetails?.logo}
-                      css={{ width: '100%', height: '100%', borderRadius: '50%' }}
-                      alt={(token?.tokenDetails?.name as string | undefined) ?? '' + ' logo'}
-                    />
-                  )}
+                  <img
+                    src={token?.tokenDetails?.logo}
+                    css={{ width: '100%', height: '100%', borderRadius: '50%' }}
+                    alt={(token?.tokenDetails?.name as string | undefined) ?? '' + ' logo'}
+                  />
                 </Tooltip>
               </div>
               {token?.ormlTokens?.map((token: any, index: number) => (
                 <div key={index} css={{ width: '1em', height: '1em' }}>
                   <Tooltip content={startCase(token?.tokenDetails?.chain?.id ?? token?.tokenDetails?.coingeckoId)}>
-                    {tooltipProps => (
-                      <img
-                        {...tooltipProps}
-                        src={
-                          token?.tokenDetails?.evmNetwork
-                            ? token?.tokenDetails?.logo
-                            : `https://raw.githubusercontent.com/TalismanSociety/chaindata/v3/assets/chains/${
-                                token?.tokenDetails?.chain?.id as string
-                              }.svg`
-                        }
-                        css={{ width: '100%', height: '100%', borderRadius: '50%' }}
-                        alt={(token?.tokenDetails?.name as string | undefined) ?? '' + ' logo'}
-                      />
-                    )}
+                    <img
+                      src={
+                        token?.tokenDetails?.evmNetwork
+                          ? token?.tokenDetails?.logo
+                          : `https://raw.githubusercontent.com/TalismanSociety/chaindata/v3/assets/chains/${
+                              token?.tokenDetails?.chain?.id as string
+                            }.svg`
+                      }
+                      css={{ width: '100%', height: '100%', borderRadius: '50%' }}
+                      alt={(token?.tokenDetails?.name as string | undefined) ?? '' + ' logo'}
+                    />
                   </Tooltip>
                 </div>
               ))}
