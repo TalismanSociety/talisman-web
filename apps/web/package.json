@@ -45,7 +45,7 @@
     "bignumber.js": "^9.1.1",
     "csv-stringify": "^6.2.3",
     "date-fns": "^2.29.3",
-    "framer-motion": "^10.12.18",
+    "framer-motion": "^10.16.1",
     "graphql": "^16.6.0",
     "graphql-request": "^5.1.0",
     "i18next": "^21.10.0",
