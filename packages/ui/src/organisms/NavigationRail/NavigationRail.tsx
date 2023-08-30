@@ -19,21 +19,18 @@ export const NavigationRailItem = (props: NavigationRailItemProps) => {
 
   return (
     <Tooltip content={props.label}>
-      {tooltipProps => (
-        <FloatingActionButton
-          // @ts-expect-error
-          as="li"
-          aria-label={props.label}
-          containerColor={theme.color.surface}
-          hoverContainerColor={theme.color.onSurface}
-          contentColor={theme.color.onSurface}
-          hoverContentColor={theme.color.surface}
-          onClick={props.onClick}
-          {...tooltipProps}
-        >
-          {props.icon}
-        </FloatingActionButton>
-      )}
+      <FloatingActionButton
+        // @ts-expect-error
+        as="li"
+        aria-label={props.label}
+        containerColor={theme.color.surface}
+        hoverContainerColor={theme.color.onSurface}
+        contentColor={theme.color.onSurface}
+        hoverContentColor={theme.color.surface}
+        onClick={props.onClick}
+      >
+        {props.icon}
+      </FloatingActionButton>
     </Tooltip>
   )
 }

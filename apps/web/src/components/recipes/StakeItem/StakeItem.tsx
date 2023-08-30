@@ -70,12 +70,10 @@ export const UnstakingStatus = (props: {
       </div>
     }
   >
-    {tooltipProps => (
-      <div {...tooltipProps} css={{ display: 'flex', alignItems: 'center', gap: '0.5em' }}>
-        <Clock size="1em" />
-        <Text.Body>Unstaking {props.amount}</Text.Body>
-      </div>
-    )}
+    <div css={{ display: 'flex', alignItems: 'center', gap: '0.5em' }}>
+      <Clock size="1em" />
+      <Text.Body>Unstaking {props.amount}</Text.Body>
+    </div>
   </Tooltip>
 )
 

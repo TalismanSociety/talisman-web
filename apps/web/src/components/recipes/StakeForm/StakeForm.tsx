@@ -232,14 +232,12 @@ const ExistingPool = Object.assign(
                   </div>
                 }
               >
-                {tooltipProps => (
-                  <div {...tooltipProps} css={{ display: 'flex', alignItems: 'center', gap: '0.5em' }}>
-                    <Clock size="1em" />
-                    <Text.Body as="div" alpha="high">
-                      {props.unlocking}
-                    </Text.Body>
-                  </div>
-                )}
+                <div css={{ display: 'flex', alignItems: 'center', gap: '0.5em' }}>
+                  <Clock size="1em" />
+                  <Text.Body as="div" alpha="high">
+                    {props.unlocking}
+                  </Text.Body>
+                </div>
               </Tooltip>
               <Text.Body as="div">{props.unlockingFiatAmount}</Text.Body>
             </DescriptionList.Details>

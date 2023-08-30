@@ -2788,45 +2788,55 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@floating-ui/core@npm:^1.2.1":
-  version: 1.2.1
-  resolution: "@floating-ui/core@npm:1.2.1"
-  checksum: 7a263e15abad4cd98ce3938075c90f76bafef71c67964c83dd7cf1e1916c92ccfa46a4f2b95b403bb180f70b3e7ded118db1cbc3426269ec70e948edf0d19ae2
+"@floating-ui/core@npm:^1.4.1":
+  version: 1.4.1
+  resolution: "@floating-ui/core@npm:1.4.1"
+  dependencies:
+    "@floating-ui/utils": ^0.1.1
+  checksum: be4ab864fe17eeba5e205bd554c264b9a4895a57c573661bbf638357fa3108677fed7ba3269ec15b4da90e29274c9b626d5a15414e8d1fe691e210d02a03695c
   languageName: node
   linkType: hard
 
-"@floating-ui/dom@npm:^1.2.1":
-  version: 1.2.1
-  resolution: "@floating-ui/dom@npm:1.2.1"
+"@floating-ui/dom@npm:^1.5.1":
+  version: 1.5.1
+  resolution: "@floating-ui/dom@npm:1.5.1"
   dependencies:
-    "@floating-ui/core": ^1.2.1
-  checksum: ad6928d5dd934ca8b3dcffdfcacde9d147afc0db4db0c0294b23d5f897224d73c7f0ae578b46d813f0d7ae22a86e7a3f8914fdbcdf4a8d42a1b430d0518f45be
+    "@floating-ui/core": ^1.4.1
+    "@floating-ui/utils": ^0.1.1
+  checksum: ddb509030978536ba7b321cf8c764ae9d0142a3b1fefb7e6bc050a5de7e825e12131fa5089009edabf7c125fb274886da211a5220fe17a71d875a7a96eb1386c
   languageName: node
   linkType: hard
 
-"@floating-ui/react-dom@npm:^1.3.0":
-  version: 1.3.0
-  resolution: "@floating-ui/react-dom@npm:1.3.0"
+"@floating-ui/react-dom@npm:^2.0.1":
+  version: 2.0.2
+  resolution: "@floating-ui/react-dom@npm:2.0.2"
   dependencies:
-    "@floating-ui/dom": ^1.2.1
+    "@floating-ui/dom": ^1.5.1
   peerDependencies:
     react: ">=16.8.0"
     react-dom: ">=16.8.0"
-  checksum: ce0ad3e3bbe43cfd15a6a0d5cccede02175c845862bfab52027995ab99c6b29630180dc7d146f76ebb34730f90a6ab9bf193c8984fe8d7f56062308e4ca98f77
+  checksum: 4797e1f7a19c1e531ed0d578ccdcbe58970743e5a480ba30424857fc953063f36d481f8c5d69248a8f1d521b739e94bf5e1ffb35506400dea3d914f166ed2f7f
   languageName: node
   linkType: hard
 
-"@floating-ui/react@npm:^0.20.1":
-  version: 0.20.1
-  resolution: "@floating-ui/react@npm:0.20.1"
+"@floating-ui/react@npm:^0.25.2":
+  version: 0.25.2
+  resolution: "@floating-ui/react@npm:0.25.2"
   dependencies:
-    "@floating-ui/react-dom": ^1.3.0
-    aria-hidden: ^1.1.3
+    "@floating-ui/react-dom": ^2.0.1
+    "@floating-ui/utils": ^0.1.1
     tabbable: ^6.0.1
   peerDependencies:
     react: ">=16.8.0"
     react-dom: ">=16.8.0"
-  checksum: 64210e27b084bd2078efbe9c3947a4ae771d95e28e288710dc19926b9d8ff082136396f862b45a0ca4cdb96e1cecddbc0b556b8abedd49f5517f9480b20a9ee2
+  checksum: 851aedc2e327f7a82553270669ce613d1b03fbb5ea8a7137f959cf7db95ecdab05d4402320d613ad2b662f6920f2fac366fdfd82d273d83d3070de532ecb0728
+  languageName: node
+  linkType: hard
+
+"@floating-ui/utils@npm:^0.1.1":
+  version: 0.1.1
+  resolution: "@floating-ui/utils@npm:0.1.1"
+  checksum: 548acdda7902f45b0afbe34e2e7f4cbff0696b95bad8c039f80936519de24ef2ec20e79902825b7815294b37f51a7c52ee86288b0688869a57cc229a164d86b4
   languageName: node
   linkType: hard
 
@@ -7298,7 +7308,7 @@ __metadata:
   resolution: "@talismn/ui@workspace:packages/ui"
   dependencies:
     "@babel/core": ^7.21.0
-    "@floating-ui/react": ^0.20.1
+    "@floating-ui/react": ^0.25.2
     "@google/model-viewer": ^3.1.1
     "@lottiefiles/react-lottie-player": ^3.5.2
     "@mdx-js/react": ^1.6.22
@@ -9570,21 +9580,6 @@ __metadata:
   version: 2.0.1
   resolution: "argparse@npm:2.0.1"
   checksum: 83644b56493e89a254bae05702abf3a1101b4fa4d0ca31df1c9985275a5a5bd47b3c27b7fa0b71098d41114d8ca000e6ed90cad764b306f8a503665e4d517ced
-  languageName: node
-  linkType: hard
-
-"aria-hidden@npm:^1.1.3":
-  version: 1.2.1
-  resolution: "aria-hidden@npm:1.2.1"
-  dependencies:
-    tslib: ^2.0.0
-  peerDependencies:
-    "@types/react": ^16.9.0 || ^17.0.0 || ^18.0.0
-    react: ^16.9.0 || ^17.0.0 || ^18.0.0
-  peerDependenciesMeta:
-    "@types/react":
-      optional: true
-  checksum: cd8047a0113d5ecc11bce1616ae2772abcb0a6e1da5a70cbfc3555e8da063b0416d62cced3e704b6d424cbf408c1fc21225d69723cd62c3f1f0cf3b41d674c2b
   languageName: node
   linkType: hard
 

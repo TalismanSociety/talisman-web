@@ -273,21 +273,19 @@ const AccountsManagementMenu = (props: { button: ReactNode }) => {
                               content="This account can be managed via the extension"
                               disabled={account.origin === 'local'}
                             >
-                              {tooltipProps => (
-                                <div {...tooltipProps}>
-                                  <SurfaceIconButton
-                                    size="3.5rem"
-                                    containerColor={theme.color.foreground}
-                                    onClick={(event: any) => {
-                                      event.stopPropagation()
-                                      toggleRemoveDialog()
-                                    }}
-                                    disabled={account.origin !== 'local'}
-                                  >
-                                    <Trash2 />
-                                  </SurfaceIconButton>
-                                </div>
-                              )}
+                              <div>
+                                <SurfaceIconButton
+                                  size="3.5rem"
+                                  containerColor={theme.color.foreground}
+                                  onClick={(event: any) => {
+                                    event.stopPropagation()
+                                    toggleRemoveDialog()
+                                  }}
+                                  disabled={account.origin !== 'local'}
+                                >
+                                  <Trash2 />
+                                </SurfaceIconButton>
+                              </div>
                             </Tooltip>
                           </div>
                         }
