@@ -21,6 +21,7 @@ import { ObjectView } from 'react-object-view'
 export type ExtrinsicDetailsSideSheetProps = {
   onRequestDismiss: () => unknown
   id: string
+  chain: string
   subscanUrl?: string
   blockHeight: string | number
   hash: string
@@ -64,6 +65,10 @@ const ExtrinsicDetailsSideSheet = (props: ExtrinsicDetailsSideSheetProps) => {
   return (
     <SideSheet title="Extrinsic details" onRequestDismiss={props.onRequestDismiss}>
       <DescriptionList emphasis="details">
+        <DescriptionList.Description>
+          <DescriptionList.Term>Chain</DescriptionList.Term>
+          <DescriptionList.Details>{props.chain}</DescriptionList.Details>
+        </DescriptionList.Description>
         <DescriptionList.Description>
           <DescriptionList.Term>Extrinsic ID</DescriptionList.Term>
           <DescriptionList.Details>

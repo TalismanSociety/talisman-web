@@ -272,6 +272,7 @@ const HistoryResult = (props: HistoryResultProps) => {
                 chainLogo={extrinsic.chain.logo ?? undefined}
                 onClick={() =>
                   setViewingItem({
+                    chain: extrinsic.chain.name ?? '',
                     id: extrinsic.subscanLink?.id ?? '',
                     subscanUrl: extrinsic.subscanLink?.url,
                     blockHeight: extrinsic.block.height,

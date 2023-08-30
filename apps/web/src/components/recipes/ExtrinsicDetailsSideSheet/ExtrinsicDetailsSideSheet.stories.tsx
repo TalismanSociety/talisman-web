@@ -11,6 +11,7 @@ type Story = StoryObj<typeof ExtrinsicDetailsSideSheet>
 
 export const Default: Story = {
   args: {
+    chain: 'Polkadot',
     id: '16682150-7',
     blockHeight: 16682150,
     hash: '0xbae40a865e1b719d7c0e076c935de340c4b9759fbb1362415e87feb33353fcd2',
