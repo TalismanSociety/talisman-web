@@ -179,6 +179,11 @@ export type TransactionListProps<T> = {
 
 export const TransactionList = <T,>(props: TransactionListProps<T>) => {
   const borderColor = useSurfaceColorAtElevation(x => x + 1)
+
+  if (props.data.length === 0) {
+    return null
+  }
+
   return (
     <section>
       <div css={{ containerType: 'inline-size' }}>

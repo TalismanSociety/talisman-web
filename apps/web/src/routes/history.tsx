@@ -191,6 +191,22 @@ const HistoryResult = (props: HistoryResultProps) => {
     }
   }, [generator])
 
+  if (!hasNextPage && items.length === 0) {
+    return (
+      <div css={{ textAlign: 'center', marginTop: '5.6rem' }}>
+        <Text.H3>No results found.</Text.H3>
+        <Text.Body>
+          We were not able to find a match.
+          <br />
+          For help and support please visit our{' '}
+          <Text.Noop.A href="https://discord.gg/talisman" target="_blank">
+            Discord
+          </Text.Noop.A>
+        </Text.Body>
+      </div>
+    )
+  }
+
   return (
     <div>
       <InfiniteScroll
