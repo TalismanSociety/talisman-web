@@ -59,13 +59,23 @@ const ExportTxHistoryDialog = ({
             ))}
           </Select>
         </div>
-        <div css={{ display: 'flex', gap: '0.8rem' }}>
-          <DateInput
-            leadingLabel="Start date"
-            value={fromDate}
-            onChange={x => onChangeFromDate(new Date(x.target.value))}
-          />
-          <DateInput leadingLabel="End date" value={toDate} onChange={x => onChangeToDate(new Date(x.target.value))} />
+        <div css={{ 'display': 'flex', 'gap': '0.8rem', '> *': { flex: 1 } }}>
+          <Text.Body as="div" css={{ fontSize: '1.12rem' }}>
+            <div css={{ marginBottom: '0.8rem' }}>Start date</div>
+            <DateInput
+              value={fromDate}
+              onChange={x => onChangeFromDate(new Date(x.target.value))}
+              css={{ width: '100%' }}
+            />
+          </Text.Body>
+          <Text.Body as="div" css={{ fontSize: '1.12rem' }}>
+            <div css={{ marginBottom: '0.8rem' }}>End date</div>
+            <DateInput
+              value={toDate}
+              onChange={x => onChangeToDate(new Date(x.target.value))}
+              css={{ width: '100%' }}
+            />
+          </Text.Body>
         </div>
         {props.error !== undefined && <Text.BodySmall color={theme => theme.color.error}>{props.error}</Text.BodySmall>}
       </div>
