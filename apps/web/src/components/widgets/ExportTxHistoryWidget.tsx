@@ -35,31 +35,32 @@ const ExportTxHistoryWidget = (props: ExportTxHistoryWidgetProps) => {
         timestampGte: fromDate.toISOString(),
         timestampLte: toDate.toISOString(),
       }
-    )
-      .then(
-        async x =>
-          await new Promise<void>((resolve, reject) =>
-            stringify(x.extrinsicCsv, (error, output) => {
-              if (error !== undefined) {
-                reject(error)
-              } else {
-                const csv = 'data:text/csv;charset=utf-8,' + output
-                window.open(encodeURI(csv))
-                resolve()
-              }
-            })
-          )
-      )
-      .catch(error => {
+    ).then(async x => {
+      if (x.extrinsicCsv.length <= 1) {
+        throw new Error('No historical results found')
+      }
+
+      await new Promise<void>((resolve, reject) =>
+        stringify(x.extrinsicCsv, (error, output) => {
+          if (error !== undefined) {
+            reject(error)
+          } else {
+            const csv = 'data:text/csv;charset=utf-8,' + output
+            window.open(encodeURI(csv))
+            resolve()
+          }
+        })
+      ).catch(error => {
         Sentry.captureException(error)
-        throw error
+        throw new Error('An error has occurred while generating CSV')
       })
+    })
 
     setOpen(false)
 
     void toast.promise(promise, {
       loading: 'Generating CSV',
-      error: 'An error has occurred while generating CSV',
+      error: error => error.message,
       success: 'Successfully generated CSV',
     })
   }, [fromDate, selectedAccount?.address, toDate])
