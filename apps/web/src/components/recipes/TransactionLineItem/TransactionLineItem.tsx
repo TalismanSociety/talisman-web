@@ -78,6 +78,7 @@ const TransactionLineItem = (props: TransactionLineItemProps) => {
           css={{ gridArea: 'id', display: 'none', [WIDE_CONTAINER_QUERY]: { display: 'revert' } }}
           href={props.subscanUrl}
           target="_blank"
+          onClick={(event: React.MouseEvent<HTMLAnchorElement>) => event.stopPropagation()}
         >
           {props.id}
         </IdText>
