@@ -10,8 +10,18 @@ export type DateInputProps = Omit<
 }
 
 // TODO: this is currently an uncontrolled component
+// passed value will only be used as initial value
 const DateInput = (props: DateInputProps) => {
-  const [dateString, setDateString] = useState<string>()
+  const [dateString, setDateString] = useState<string>(() => {
+    if (props.value instanceof Date) {
+      const year = props.value.getFullYear().toString()
+      const month = (props.value.getMonth() + 1).toString().padStart(2, '0')
+      const day = props.value.getDate().toString().padStart(2, '0')
+      return `${year}-${month}-${day}`
+    } else {
+      return props.value ?? ''
+    }
+  })
 
   useEffect(
     () => {
@@ -26,22 +36,6 @@ const DateInput = (props: DateInputProps) => {
     // Can enter infinite loop if unstable deps is passed
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [dateString]
-  )
-
-  const propsValue = props.value?.toString()
-  useEffect(
-    () => {
-      if (props.value instanceof Date) {
-        const year = props.value.getFullYear().toString()
-        const month = (props.value.getMonth() + 1).toString().padStart(2, '0')
-        const day = props.value.getDate().toString().padStart(2, '0')
-        setDateString(`${year}-${month}-${day}`)
-      } else {
-        setDateString(props.value)
-      }
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [propsValue]
   )
 
   return (
