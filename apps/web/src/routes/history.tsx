@@ -358,6 +358,13 @@ const History = () => {
         : { accounts: selectedAccounts },
     [search, searchAddress, selectedAccounts]
   )
+  const searchValidationError = useMemo(() => {
+    if (search !== '' && searchAddress === undefined && !isHex(search)) {
+      return 'Must be valid address or hash'
+    }
+
+    return undefined
+  }, [search, searchAddress])
 
   // To invalidate page after query changes
   const key = useMemo(
@@ -400,7 +407,7 @@ const History = () => {
           css={{
             display: 'flex',
             justifyContent: 'space-between',
-            alignItems: 'center',
+            alignItems: 'flex-start',
             flexWrap: 'wrap',
             gap: '0.8rem',
           }}
@@ -409,6 +416,7 @@ const History = () => {
             placeholder="Search for TX hash or account address"
             value={search}
             onChange={event => setSearch(event.target.value)}
+            leadingSupportingText={<TextInput.ErrorLabel>{searchValidationError}</TextInput.ErrorLabel>}
           />
           <div css={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '0.8rem' }}>
             <Select placeholder="Chain" value={chain} onChange={setChain} clearRequired detached>
@@ -450,15 +458,17 @@ const History = () => {
           </div>
         </div>
       </div>
-      <HistoryResult
-        key={key}
-        {...searchAddressOrHash}
-        chain={chain}
-        module={module}
-        timestampGte={fromDate}
-        timestampLte={toDate}
-        timestampOrder={dateOrder}
-      />
+      {searchValidationError === undefined && (
+        <HistoryResult
+          key={key}
+          {...searchAddressOrHash}
+          chain={chain}
+          module={module}
+          timestampGte={fromDate}
+          timestampLte={toDate}
+          timestampOrder={dateOrder}
+        />
+      )}
     </section>
   )
 }
