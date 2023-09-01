@@ -1,15 +1,16 @@
 import { AlertDialog, type AlertDialogProps, Button, DateInput, Identicon, Select, Text } from '@talismn/ui'
 import { Maybe } from '@util/monads'
+import { endOfDay, startOfDay } from 'date-fns'
 
 type Account = { selected?: boolean; name: string; address: string; balance: string }
 
 export type ExportTxHistoryDialogProps = Pick<AlertDialogProps, 'open' | 'onRequestDismiss'> & {
   accounts: Account[]
   onSelectAccount: (account: Account) => unknown
-  fromDate: Date
-  onChangeFromDate: (date: Date) => unknown
-  toDate: Date
-  onChangeToDate: (date: Date) => unknown
+  fromDate?: Date
+  onChangeFromDate: (date: Date | undefined) => unknown
+  toDate?: Date
+  onChangeToDate: (date: Date | undefined) => unknown
   onRequestExport: () => unknown
   error?: string
 }
@@ -64,7 +65,7 @@ const ExportTxHistoryDialog = ({
             <div css={{ marginBottom: '0.8rem' }}>Start date</div>
             <DateInput
               value={fromDate}
-              onChange={x => onChangeFromDate(new Date(x.target.value))}
+              onChangeDate={x => onChangeFromDate(Maybe.of(x).mapOrUndefined(startOfDay))}
               css={{ width: '100%' }}
             />
           </Text.Body>
@@ -72,7 +73,7 @@ const ExportTxHistoryDialog = ({
             <div css={{ marginBottom: '0.8rem' }}>End date</div>
             <DateInput
               value={toDate}
-              onChange={x => onChangeToDate(new Date(x.target.value))}
+              onChangeDate={x => onChangeToDate(Maybe.of(x).mapOrUndefined(endOfDay))}
               css={{ width: '100%' }}
             />
           </Text.Body>

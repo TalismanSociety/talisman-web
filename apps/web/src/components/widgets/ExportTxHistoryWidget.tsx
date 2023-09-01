@@ -5,7 +5,7 @@ import { toast } from '@talismn/ui'
 import { stringify } from 'csv-stringify/browser/esm'
 import { differenceInYears, subMonths } from 'date-fns'
 import { request } from 'graphql-request'
-import { useCallback, useState, type ReactNode, useMemo } from 'react'
+import { useCallback, useMemo, useState, type ReactNode } from 'react'
 import { useRecoilValue } from 'recoil'
 import { graphql } from '../../../generated/gql/extrinsicHistory/gql'
 
@@ -19,8 +19,8 @@ const ExportTxHistoryWidget = (props: ExportTxHistoryWidgetProps) => {
   const accounts = useRecoilValue(substrateAccountsState)
   const [selectedAccount, setSelectedAccount] = useState(accounts[0])
 
-  const [fromDate, setFromDate] = useState(subMonths(new Date(), 1))
-  const [toDate, setToDate] = useState(new Date())
+  const [fromDate, setFromDate] = useState<Date | undefined>(subMonths(new Date(), 1))
+  const [toDate, setToDate] = useState<Date | undefined>(new Date())
 
   const onRequestExport = useCallback(() => {
     const promise = request(
@@ -32,8 +32,8 @@ const ExportTxHistoryWidget = (props: ExportTxHistoryWidgetProps) => {
       `),
       {
         address: selectedAccount?.address ?? '',
-        timestampGte: fromDate.toISOString(),
-        timestampLte: toDate.toISOString(),
+        timestampGte: fromDate?.toISOString(),
+        timestampLte: toDate?.toISOString(),
       }
     ).then(async x => {
       if (x.extrinsicCsv.length <= 1) {
@@ -65,10 +65,17 @@ const ExportTxHistoryWidget = (props: ExportTxHistoryWidgetProps) => {
     })
   }, [fromDate, selectedAccount?.address, toDate])
 
-  const error = useMemo(
-    () => (Math.abs(differenceInYears(fromDate, toDate)) > 1 ? "Can't export more than 1 year" : undefined),
-    [fromDate, toDate]
-  )
+  const error = useMemo(() => {
+    if (fromDate === undefined || toDate === undefined) {
+      return 'Must specify a date range'
+    }
+
+    if (Math.abs(differenceInYears(fromDate, toDate)) > 1) {
+      return "Can't export more than 1 year"
+    }
+
+    return undefined
+  }, [fromDate, toDate])
 
   return (
     <>

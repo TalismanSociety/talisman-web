@@ -434,14 +434,13 @@ const History = () => {
             </Select>
             <div css={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
               <DateInput
-                placeholder="From"
                 value={fromDate}
-                onChange={event => setFromDate(startOfDay(new Date(event.target.value)))}
+                onChangeDate={x => setFromDate(Maybe.of(x).mapOrUndefined(startOfDay))}
                 css={{ padding: '1.1rem' }}
               />
               <DateInput
                 value={toDate}
-                onChange={event => setToDate(endOfDay(new Date(event.target.value)))}
+                onChangeDate={x => setToDate(Maybe.of(x).mapOrUndefined(endOfDay))}
                 css={{ padding: '1.1rem' }}
               />
               <IconButton onClick={() => setDateOrder(x => (x === 'asc' ? 'desc' : 'asc'))}>
