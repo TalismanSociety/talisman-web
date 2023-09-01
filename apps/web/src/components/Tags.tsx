@@ -18,7 +18,7 @@ export default styled(
     useEffect(() => onChange(Array.from(tags)), [tags?.length]) // eslint-disable-line
 
     return (
-      <div className={`tabs ${className}`} {...rest}>
+      <div className={`tabs ${className ?? ''}`} {...rest}>
         {Object.keys(options).map(key => (
           <Pill key={key} onClick={() => (tags?.includes(key) ? remove(key) : add(key))} active={tags?.includes(key)}>
             {options[key]}

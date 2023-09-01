@@ -1,9 +1,14 @@
 // TODO: nuke everything and re-write balances lib integration
 
-import { accountsState, injectedAccountsState, selectedAccountsState } from '@domains/accounts/recoils'
+import {
+  accountsState,
+  injectedAccountsState,
+  portfolioAccountsState,
+  selectedAccountsState,
+} from '@domains/accounts/recoils'
 import { Balances } from '@talismn/balances'
 import { useBalances as _useBalances, useAllAddresses, useChaindata, useTokens } from '@talismn/balances-react'
-import { ChaindataProvider, TokenList } from '@talismn/chaindata-provider'
+import { ChaindataProvider, TokenList, type, type } from '@talismn/chaindata-provider'
 import { groupBy, isNil } from 'lodash'
 import { useEffect, useMemo } from 'react'
 import { atom, selector, useRecoilCallback, useRecoilValue, useSetRecoilState } from 'recoil'
@@ -29,7 +34,29 @@ export const legacyBalancesState = atom<LegacyBalances>({
   },
 })
 
-export const balancesState = atom<Balances>({ key: 'Balances', dangerouslyAllowMutability: true })
+export const balancesState = atom<Balances>({
+  key: 'Balances',
+  default: new Balances([]),
+  dangerouslyAllowMutability: true,
+})
+
+export const injectedBalancesState = selector({
+  key: 'InjectedBalances',
+  get: ({ get }) => {
+    const injectedAddresses = get(injectedAccountsState).map(x => x.address)
+    return new Balances(get(balancesState).each.filter(x => injectedAddresses.includes(x.address)))
+  },
+  dangerouslyAllowMutability: true,
+})
+
+export const injectedNominationPoolBalances = selector({
+  key: 'InjectedNominationPoolFiatBalance',
+  get: ({ get }) =>
+    get(injectedBalancesState).find(
+      balance => balance.source === 'substrate-native' && balance.toJSON().subSource === 'nompools-staking'
+    ),
+  dangerouslyAllowMutability: true,
+})
 
 export const selectedBalancesState = selector({
   key: 'SelectedBalances',
@@ -44,14 +71,14 @@ export const fiatBalancesState = atom<Record<string, number>>({
   key: 'FiatBalances',
 })
 
-export const totalInjectedAccountsFiatBalance = selector({
-  key: 'TotalInjectedAccountsFiatBalance',
+export const totalPortfolioFiatBalance = selector({
+  key: 'TotalPortfolioFiatBalance',
   get: ({ get }) => {
-    const injecteds = get(injectedAccountsState).map(x => x.address)
+    const accounts = get(portfolioAccountsState).map(x => x.address)
     const fiatBalances = get(fiatBalancesState)
 
     return Object.entries(fiatBalances)
-      .filter(([key]) => injecteds.includes(key))
+      .filter(([key]) => accounts.includes(key))
       .reduce((previous, current) => previous + current[1], 0)
   },
 })
@@ -66,16 +93,6 @@ export const totalSelectedAccountsFiatBalance = selector({
       .filter(([key]) => selecteds.includes(key))
       .reduce((previous, current) => previous + current[1], 0)
   },
-})
-
-export const totalLocalizedFiatBalanceState = selector({
-  key: 'TotalLocalizedFiatBalanceState',
-  get: ({ get }) =>
-    get(totalInjectedAccountsFiatBalance).toLocaleString(undefined, {
-      style: 'currency',
-      currency: 'usd',
-      currencyDisplay: 'narrowSymbol',
-    }),
 })
 
 export const LegacyBalancesWatcher = () => {
@@ -100,7 +117,8 @@ export const LegacyBalancesWatcher = () => {
     [JSON.stringify(addresses), JSON.stringify(tokenIds)]
   )
 
-  const balances = _useBalances(addressesByToken)
+  const unfilteredBalances = _useBalances(addressesByToken)
+  const balances = useMemo(() => unfilteredBalances.filterNonZero('total').filterMirrorTokens(), [unfilteredBalances])
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(

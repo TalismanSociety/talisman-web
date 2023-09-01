@@ -1,6 +1,6 @@
-import { ComponentMeta, Story } from '@storybook/react'
+import { ComponentMeta, Story, type, type } from '@storybook/react'
 
-import AddStakeDialog, { AddStakeDialogProps } from './AddStakeDialog'
+import AddStakeDialog, { AddStakeDialogProps, type } from './AddStakeDialog'
 
 export default {
   title: 'Recipes/AddStakeDialog',

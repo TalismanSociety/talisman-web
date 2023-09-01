@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next'
 export const LanguageSelector = styled(({ className }: { className?: string }) => {
   const { i18n, ready } = useTranslation('languages', { useSuspense: false })
   const changeLanguage = (language: string) => {
-    i18n?.changeLanguage(language)
+    void i18n?.changeLanguage(language)
   }
 
   if (!ready) {

@@ -1,6 +1,6 @@
-import { JSONParser } from '@recoiljs/refine'
+import { JSONParser, type } from '@recoiljs/refine'
 import { isNil } from 'lodash'
-import { AtomEffect } from 'recoil'
+import { AtomEffect, type } from 'recoil'
 
 export const storageEffect =
   <TValue, TParsedValue extends TValue>(

@@ -75,7 +75,7 @@ export const CardLoading = styled(({ className, isLoading }: { className?: strin
   grid-gap: 2.5rem;
 `
 
-const Card = styled(({ className, isLoading }: { className?: string; isLoading?: boolean }) => {
+const Card = styled(({ className }: { className?: string; isLoading?: boolean }) => {
   return (
     <div className={className}>
       <div className="card-header" />

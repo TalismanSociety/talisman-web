@@ -12,7 +12,7 @@ import {
 } from '@domains/multisig'
 import { css } from '@emotion/css'
 import { SubmittableExtrinsic } from '@polkadot/api/types'
-import { Button, FullScreenDialog } from '@talismn/ui'
+import { Button, SideSheet } from '@talismn/ui'
 import { Address, toMultisigAddress } from '@util/addresses'
 import { useEffect, useMemo, useState } from 'react'
 import toast from 'react-hot-toast'
@@ -219,7 +219,7 @@ const ManageSignerConfiguration = () => {
               api.tx.proxy.addProxy(newMultisigAddress.bytes, 'Any', 0),
               api.tx.proxy.removeProxy(selectedMultisig.multisigAddress.bytes, 'Any', 0),
             ])
-            const proxyCall = api.tx.proxy.proxy(selectedMultisig.proxyAddress.bytes, undefined, batchCall)
+            const proxyCall = api.tx.proxy.proxy(selectedMultisig.proxyAddress.bytes, null, batchCall)
             setExtrinsic(proxyCall)
             setConfirmationDialogOpen(true)
           }}
@@ -227,7 +227,7 @@ const ManageSignerConfiguration = () => {
           Apply Changes
         </Button>
       </div>
-      <FullScreenDialog
+      <SideSheet
         onRequestDismiss={() => {
           setConfirmationDialogOpen(false)
         }}
@@ -287,7 +287,7 @@ const ManageSignerConfiguration = () => {
             return Promise.resolve()
           }}
         />
-      </FullScreenDialog>
+      </SideSheet>
     </div>
   )
 }

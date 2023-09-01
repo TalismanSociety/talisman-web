@@ -1,6 +1,6 @@
-import { ComponentMeta, Story } from '@storybook/react'
+import { ComponentMeta, Story, type, type } from '@storybook/react'
 
-import AddReadOnlyAccountDialog, { AddReadOnlyAccountDialogProps } from './AddReadOnlyAccountDialog'
+import AddReadOnlyAccountDialog, { AddReadOnlyAccountDialogProps, type } from './AddReadOnlyAccountDialog'
 
 export default {
   title: 'Recipes/AddReadOnlyAccountDialog',

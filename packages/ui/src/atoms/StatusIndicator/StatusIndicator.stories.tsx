@@ -1,6 +1,6 @@
-import { ComponentMeta, Story } from '@storybook/react'
+import { type ComponentMeta, type Story } from '@storybook/react'
 
-import StatusIndicator, { StatusIndicatorProps } from './StatusIndicator'
+import StatusIndicator, { type StatusIndicatorProps } from './StatusIndicator'
 
 export default {
   title: 'Atoms/StatusIndicator',

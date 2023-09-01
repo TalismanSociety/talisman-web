@@ -1,8 +1,8 @@
 import styled from '@emotion/styled'
-import { DragAndDropCallbacks, useDragAndDrop } from '@util/useDragAndDrop'
-import { ReactNode, useRef } from 'react'
+import { DragAndDropCallbacks, type, useDragAndDrop } from '@util/useDragAndDrop'
+import { ReactNode, type, useRef } from 'react'
 
-interface DraggableProps {
+type DraggableProps = {
   children: ReactNode
   id: string
   className?: string
@@ -27,7 +27,7 @@ export const Draggable = styled(({ id, className, children, disabled }: Draggabl
   const disabledStyles = disabled ? 'disabled' : ''
 
   return (
-    <div ref={ref} draggable={!disabled} className={`${className} ${draggingStyles} ${disabledStyles}`}>
+    <div ref={ref} draggable={!disabled} className={`${className ?? ''} ${draggingStyles} ${disabledStyles}`}>
       {children}
     </div>
   )

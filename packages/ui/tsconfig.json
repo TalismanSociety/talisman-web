@@ -1,6 +1,7 @@
 {
-  "extends": "@talismn/development/tsconfig/react-library/tsconfig.json",
+  "extends": "@talismn/tsconfig/react-library",
   "compilerOptions": {
-    "jsxImportSource": "@emotion/react"
+    "jsxImportSource": "@emotion/react",
+    "outDir": "build"
   }
 }

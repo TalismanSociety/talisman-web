@@ -1,12 +1,13 @@
-import { ComponentMeta, Story } from '@storybook/react'
+import { type ComponentMeta, type Story } from '@storybook/react'
 
-import TextInput, { LabelButton, TextInputProps } from './TextInput'
+import TextInput, { type TextInputProps } from './TextInput'
 
 export default {
   title: 'Molecules/TextInput',
   component: TextInput,
   subcomponents: {
-    LabelButton,
+    ErrorLabel: TextInput.ErrorLabel,
+    LabelButton: TextInput.LabelButton,
   },
   parameters: {
     layout: 'centered',
@@ -19,8 +20,8 @@ Default.args = {
   type: 'text',
   leadingLabel: 'Available to stake',
   trailingLabel: '420 DOT',
-  placeholder: '0 DOT',
-  trailingIcon: <LabelButton>MAX</LabelButton>,
+  placeholder: '0.00',
+  trailingIcon: <TextInput.LabelButton>MAX</TextInput.LabelButton>,
   leadingSupportingText: '$99,999.99',
   trailingSupportingText: 'Good to go',
 }

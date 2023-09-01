@@ -1,6 +1,6 @@
 import { useTheme } from '@emotion/react'
 import { IconContext } from '@talismn/icons/utils'
-import { ButtonHTMLAttributes, DetailedHTMLProps, ReactNode, useMemo } from 'react'
+import { type ButtonHTMLAttributes, type DetailedHTMLProps, type ReactNode, useMemo } from 'react'
 
 import CircularProgressIndicator from '../CircularProgressIndicator'
 import Text from '../Text'
@@ -30,7 +30,7 @@ const Chip = ({ size = 'md', containerColor, contentColor, leadingContent, loadi
     }
   }, [size])
 
-  const functionallyDisabled = props.disabled || loading
+  const functionallyDisabled = Boolean(props.disabled) || Boolean(loading)
 
   return (
     <Container
@@ -40,16 +40,16 @@ const Chip = ({ size = 'md', containerColor, contentColor, leadingContent, loadi
       disabled={functionallyDisabled}
       css={[
         {
-          'display': 'flex',
-          'alignItems': 'center',
-          'gap': '0.25em',
-          'border': 'none',
-          'borderRadius': '1em',
-          'padding': '0.2rem 0.8rem',
-          'backgroundColor': containerColor,
-          'cursor': 'pointer',
-          ':hover': { opacity: 0.9 },
+          lineHeight: '1em',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '0.25em',
+          border: 'none',
+          borderRadius: '2em',
+          padding: '0.2em 0.8em',
+          backgroundColor: containerColor,
         },
+        props.onClick && { 'cursor': 'pointer', ':hover': { opacity: 0.9 } },
         loading && { cursor: 'progress' },
       ]}
     >

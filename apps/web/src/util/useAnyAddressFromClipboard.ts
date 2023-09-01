@@ -29,7 +29,7 @@ export function useAnyAddressFromClipboard(ss58format: SS58Format | number) {
   async function getClipboardData(e: ClipboardEvent) {
     let text = ''
     try {
-      text = navigator.clipboard ? await navigator.clipboard.readText() : e?.clipboardData?.getData('text/plain') || ''
+      text = navigator.clipboard ? await navigator.clipboard.readText() : e?.clipboardData?.getData('text/plain') ?? ''
       setOriginalAddress(text)
     } catch (err) {
       // NOTE: This is not supported on Firefox, so just returning as-is
@@ -48,8 +48,10 @@ export function useAnyAddressFromClipboard(ss58format: SS58Format | number) {
   }
 
   useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
     document.addEventListener('paste', getClipboardData)
     return () => {
+      // eslint-disable-next-line @typescript-eslint/no-misused-promises
       document.removeEventListener('paste', getClipboardData)
     }
   })

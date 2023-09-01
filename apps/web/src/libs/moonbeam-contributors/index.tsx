@@ -1,4 +1,5 @@
-import { ApolloClient, InMemoryCache, NormalizedCacheObject, gql, useQuery } from '@apollo/client'
+/* eslint-disable @typescript-eslint/restrict-template-expressions */
+import { ApolloClient, InMemoryCache, NormalizedCacheObject, gql, type, useQuery } from '@apollo/client'
 import { BatchHttpLink } from '@apollo/client/link/batch-http'
 import { useModal } from '@components'
 import { accountsState } from '@domains/accounts/recoils'
@@ -15,6 +16,7 @@ import {
   PropsWithChildren,
   useContext as _useContext,
   createContext,
+  type,
   useCallback,
   useEffect,
   useMemo,
@@ -66,7 +68,7 @@ export function useMoonbeamContributors(accounts?: string[]): {
 } {
   // memoize accounts so user can provide an array like [accountId] without wasting cycles
   const addresses = useMemo(
-    () => (accounts || []).map(account => encodeAnyAddress(account, moonbeamRelaychain?.id)),
+    () => (accounts ?? []).map(account => encodeAnyAddress(account, moonbeamRelaychain?.id)),
     [JSON.stringify(accounts)] // eslint-disable-line react-hooks/exhaustive-deps
   )
 
@@ -84,6 +86,7 @@ export function useMoonbeamContributors(accounts?: string[]): {
     called,
     loading,
     error,
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
     refetch,
   }
 }
@@ -106,7 +109,7 @@ export function useSetMoonbeamRewardsAddress(accountAddress?: string) {
     if (accountAddress === undefined) return
     if (!rpcs || rpcs.length < 1) return
 
-    ApiPromise.create({ provider: new WsProvider(rpcs) }).then(api => apiAwaitRef.resolve(api))
+    void ApiPromise.create({ provider: new WsProvider(rpcs) }).then(api => apiAwaitRef.resolve(api))
   }, [accountAddress, apiAwaitRef, rpcs])
 
   // callbacks
@@ -146,6 +149,7 @@ export function useSetMoonbeamRewardsAddress(accountAddress?: string) {
     try {
       const injector = await web3FromAddress(accountAddress)
 
+      // eslint-disable-next-line no-var
       var txSigned = await tx.signAsync(accountAddress, { signer: injector.signer })
     } catch (error: any) {
       return setState({ type: 'INIT', rewardsAddress, error: error?.message || error.toString() })
@@ -180,7 +184,7 @@ export function useSetMoonbeamRewardsAddress(accountAddress?: string) {
 
           // https://polkadot.js.org/docs/api/cookbook/tx#how-do-i-get-the-decoded-enum-for-an-extrinsicfailed-event
           let error
-          if (dispatchError && dispatchError.isModule && api) {
+          if (dispatchError?.isModule && api) {
             const decoded = api.registry.findMetaError(dispatchError.asModule)
             const { docs, name, section } = decoded
             error = `${section}.${name}: ${docs.join(' ')}`
@@ -221,7 +225,7 @@ function useContext() {
 // Provider
 //
 
-export function Provider({ children }: PropsWithChildren<{}>) {
+export function Provider({ children }: PropsWithChildren) {
   const apolloClient = useMemo(
     () =>
       new ApolloClient({
@@ -234,7 +238,7 @@ export function Provider({ children }: PropsWithChildren<{}>) {
   return <Context.Provider value={apolloClient}>{children}</Context.Provider>
 }
 
-export function PopupProvider({ children }: PropsWithChildren<{}>) {
+export function PopupProvider({ children }: PropsWithChildren) {
   const { openModal } = useModal()
   const accounts = useRecoilValue(accountsState)
   const { contributors, loading } = useMoonbeamContributors(accounts.map(({ address }) => address))

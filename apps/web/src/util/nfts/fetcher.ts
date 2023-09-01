@@ -1,5 +1,5 @@
-export function fetcher(url: string) {
-  return fetch(url).then(res => {
-    return res.json()
+export async function fetcher(url: string) {
+  return await fetch(url).then(async res => {
+    return await res.json()
   })
 }

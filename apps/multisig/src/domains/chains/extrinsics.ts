@@ -624,7 +624,7 @@ export const useTransferProxyToMultisig = (chain: Chain) => {
       ])
 
       // Define the inner proxy call
-      const proxyCall = api.tx.proxy.proxy(proxyAddress.bytes, undefined, proxyBatchCall)
+      const proxyCall = api.tx.proxy.proxy(proxyAddress.bytes, null, proxyBatchCall)
 
       // Define the outer batch call
       const signerBatchCall = api?.tx?.utility?.batchAll([

@@ -1,0 +1,9 @@
+{
+  "name": "@talismn/tsconfig",
+  "private": true,
+  "devDependencies": {
+    "@tsconfig/esm": "^1.0.2",
+    "@tsconfig/strictest": "^2.0.0",
+    "@tsconfig/vite-react": "^2.0.0"
+  }
+}

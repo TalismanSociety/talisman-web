@@ -1,4 +1,4 @@
-import { RefObject, useEffect } from 'react'
+import { RefObject, type, useEffect } from 'react'
 
 type AnyEvent = MouseEvent | TouchEvent
 

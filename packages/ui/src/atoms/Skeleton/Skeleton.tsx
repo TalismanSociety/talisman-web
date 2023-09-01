@@ -33,15 +33,22 @@ const Skeleton = {
       />
     )
   },
-  Foreground: (props: SkeletonProps) => {
+  Foreground: ({ animate, ...props }: SkeletonProps) => {
     const theme = useTheme()
     return (
       <div
         {...props}
-        css={{
-          backgroundColor: theme.color.foreground,
-          borderRadius: '1.2rem',
-        }}
+        css={[
+          {
+            backgroundColor: theme.color.foreground,
+            borderRadius: '1.2rem',
+          },
+          animate && {
+            animation: `${shimmer} 1s infinite`,
+            background: `linear-gradient(90deg, ${theme.color.foreground} 4%, ${theme.color.foregroundVariant} 25%, ${theme.color.foreground} 36%)`,
+            backgroundSize: '200% 100%',
+          },
+        ]}
       />
     )
   },

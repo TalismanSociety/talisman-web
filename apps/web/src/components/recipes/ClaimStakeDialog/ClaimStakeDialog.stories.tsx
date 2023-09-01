@@ -1,6 +1,6 @@
-import { ComponentMeta, Story } from '@storybook/react'
+import { ComponentMeta, Story, type, type } from '@storybook/react'
 
-import ClaimStakeDialog, { ClaimStakeDialogProps } from './ClaimStakeDialog'
+import ClaimStakeDialog, { ClaimStakeDialogProps, type } from './ClaimStakeDialog'
 
 export default {
   title: 'Recipes/ClaimStakeDialog',

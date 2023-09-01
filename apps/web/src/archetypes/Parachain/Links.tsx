@@ -11,7 +11,7 @@ const Links = styled(({ id, className }: LinksProps) => {
   const { parachainDetails: { links = {} } = {} } = useParachainDetailsById(id)
 
   return (
-    <div className={`crowdloan-links ${className}`}>
+    <div className={`crowdloan-links ${className ?? ''}`}>
       {Object.keys(links).map((name, index) => (
         <a key={index} href={links[name]} target="_blank" rel="noreferrer noopener">
           <Pill primary onClick={() => null}>

@@ -1,11 +1,12 @@
 import AnimatedFiatNumber from '@components/widgets/AnimatedFiatNumber'
+import RedactableBalance from '@components/widgets/RedactableBalance'
 import { keyframes, useTheme } from '@emotion/react'
 import styled from '@emotion/styled'
-import { Balances } from '@talismn/balances'
+import { Balances, type } from '@talismn/balances'
 import { Lock } from '@talismn/icons'
 import { HiddenDetails, Text, Tooltip } from '@talismn/ui'
 import { isEmpty, startCase } from 'lodash'
-import { Children, ReactElement, ReactNode } from 'react'
+import { Children, ReactElement, ReactNode, type, type } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 type AssetBalanceProps = {
@@ -42,7 +43,7 @@ export const AssetBalance = ({ locked, planck, fiat, symbol }: AssetBalanceProps
             fontSize: '16px',
           }}
         >
-          {planck ? `${planck} ${symbol} ` : '- ' + symbol}
+          <RedactableBalance>{planck ? `${planck} ${symbol} ` : '- ' + symbol}</RedactableBalance>
         </Text.Body>
         {locked ? <Lock css={{ width: '16px', height: '16px' }} /> : ''}
       </div>
@@ -200,26 +201,23 @@ const Asset = Object.assign((props: AssetProps) => {
         animation: `${slideDown} 0.3s ease-in-out`,
       }}
       onClick={() => {
-        navigate('/portfolio/assets/' + token?.tokenDetails?.symbol)
+        navigate('/portfolio/assets/' + ((token?.tokenDetails?.symbol as string | undefined) ?? ''))
       }}
     >
       <td valign="top">
         {/* First Column */}
         <div css={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
           <Tooltip content={startCase(token?.tokenDetails?.chain?.id ?? token?.tokenDetails?.coingeckoId)}>
-            {tooltipProps => (
-              <img
-                {...tooltipProps}
-                src={token?.tokenDetails?.logo}
-                css={{
-                  width: '2em',
-                  height: '2em',
-                  margin: '16px',
-                  borderRadius: '50%',
-                }}
-                alt={' logo'}
-              />
-            )}
+            <img
+              src={token?.tokenDetails?.logo}
+              css={{
+                width: '2em',
+                height: '2em',
+                margin: '16px',
+                borderRadius: '50%',
+              }}
+              alt="logo"
+            />
           </Tooltip>
           <div css={{ display: 'flex', flexDirection: 'column', gap: '0.4em' }}>
             <Text.Body css={{ fontWeight: 600, fontSize: '16px', color: theme.color.onSurface }}>
@@ -237,31 +235,27 @@ const Asset = Object.assign((props: AssetProps) => {
             >
               <div css={{ width: '1em', height: '1em' }}>
                 <Tooltip content={startCase(token?.tokenDetails?.chain?.id ?? token?.tokenDetails?.coingeckoId)}>
-                  {tooltipProps => (
-                    <img
-                      {...tooltipProps}
-                      src={token?.tokenDetails?.logo}
-                      css={{ width: '100%', height: '100%', borderRadius: '50%' }}
-                      alt={token?.tokenDetails?.name + ' logo'}
-                    />
-                  )}
+                  <img
+                    src={token?.tokenDetails?.logo}
+                    css={{ width: '100%', height: '100%', borderRadius: '50%' }}
+                    alt={(token?.tokenDetails?.name as string | undefined) ?? '' + ' logo'}
+                  />
                 </Tooltip>
               </div>
               {token?.ormlTokens?.map((token: any, index: number) => (
                 <div key={index} css={{ width: '1em', height: '1em' }}>
                   <Tooltip content={startCase(token?.tokenDetails?.chain?.id ?? token?.tokenDetails?.coingeckoId)}>
-                    {tooltipProps => (
-                      <img
-                        {...tooltipProps}
-                        src={
-                          token?.tokenDetails?.evmNetwork
-                            ? token?.tokenDetails?.logo
-                            : `https://raw.githubusercontent.com/TalismanSociety/chaindata/v3/assets/chains/${token?.tokenDetails?.chain?.id}.svg`
-                        }
-                        css={{ width: '100%', height: '100%', borderRadius: '50%' }}
-                        alt={token?.tokenDetails?.name + ' logo'}
-                      />
-                    )}
+                    <img
+                      src={
+                        token?.tokenDetails?.evmNetwork
+                          ? token?.tokenDetails?.logo
+                          : `https://raw.githubusercontent.com/TalismanSociety/chaindata/v3/assets/chains/${
+                              token?.tokenDetails?.chain?.id as string
+                            }.svg`
+                      }
+                      css={{ width: '100%', height: '100%', borderRadius: '50%' }}
+                      alt={(token?.tokenDetails?.name as string | undefined) ?? '' + ' logo'}
+                    />
                   </Tooltip>
                 </div>
               ))}
@@ -404,7 +398,7 @@ const Table = styled.table`
 
 export type AssetsListProps = {
   isLoading?: boolean
-  children?: ReactElement<AssetProps> | ReactElement<AssetProps>[]
+  children?: ReactElement<AssetProps> | Array<ReactElement<AssetProps>>
 }
 
 export const AssetsList = (props: AssetsListProps) => {

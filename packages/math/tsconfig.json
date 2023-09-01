@@ -1,0 +1,9 @@
+{
+  "extends": "@talismn/tsconfig/library",
+  "compilerOptions": {
+    "outDir": "build"
+  },
+  "include": [
+    "src"
+  ]
+}

@@ -1,84 +1,124 @@
-import { Account, accountsState, substrateAccountsState } from '@domains/accounts/recoils'
+import { Account, type } from '@domains/accounts/recoils'
 import { useIsWeb3Injected } from '@domains/extension/hooks'
 import { allowExtensionConnectionState } from '@domains/extension/recoils'
 import { Download } from '@talismn/icons'
-import { Button, Identicon, Select } from '@talismn/ui'
+import { Button, CircularProgressIndicator, Identicon, Select } from '@talismn/ui'
 import { shortenAddress } from '@util/format'
-import { useCallback, useEffect, useMemo } from 'react'
-import { useRecoilState, useRecoilValue } from 'recoil'
+import { useCallback, useEffect, useState, useTransition } from 'react'
+import { useRecoilState } from 'recoil'
 
 export type AccountSelectorProps = {
   width?: number | string
+  accounts: Account[]
   selectedAccount?: Account | string
   onChangeSelectedAccount: (account: Account | undefined) => unknown
-  defaultToFirstAddress?: boolean
-  includeReadonlyAccounts?: boolean
-  includeEthereumAccounts?: boolean
+  inTransition?: boolean
 }
 
-const AccountSelector = ({
-  includeReadonlyAccounts = false,
-  includeEthereumAccounts = false,
-  ...props
-}: AccountSelectorProps) => {
-  const _accounts = useRecoilValue(includeEthereumAccounts ? accountsState : substrateAccountsState)
-  const accounts = useMemo(
-    () =>
-      _accounts.filter(x => {
-        if (!includeReadonlyAccounts) {
-          return x.readonly !== true
-        }
-        return true
-      }),
-    [_accounts, includeReadonlyAccounts]
-  )
-
-  useEffect(
-    () => {
-      if (props.defaultToFirstAddress && accounts[0] !== undefined) {
-        props.onChangeSelectedAccount(accounts[0])
-      }
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [props.defaultToFirstAddress]
-  )
-
+const AccountSelector = (props: AccountSelectorProps) => {
   const onChange = useCallback(
-    (address: string | undefined) => props.onChangeSelectedAccount(accounts.find(x => x.address === address)),
-    [accounts, props]
+    (address: string | undefined) => props.onChangeSelectedAccount(props.accounts.find(x => x.address === address)),
+    [props]
   )
 
   const [allowExtensionConnection, setAllowExtensionConnection] = useRecoilState(allowExtensionConnectionState)
 
   if (!useIsWeb3Injected()) {
     return (
-      <Button as="a" href="https://talisman.xyz/download" target="_blank" trailingIcon={<Download />}>
+      <Button
+        as="a"
+        href="https://talisman.xyz/download"
+        target="_blank"
+        trailingIcon={<Download />}
+        css={{ width: 'auto' }}
+      >
         Install wallet
       </Button>
     )
   }
 
   if (!allowExtensionConnection) {
-    return <Button onClick={() => setAllowExtensionConnection(true)}>Connect wallet</Button>
+    return (
+      <Button onClick={() => setAllowExtensionConnection(true)} css={{ width: 'auto' }}>
+        Connect wallet
+      </Button>
+    )
   }
+
+  const selectedValue =
+    typeof props.selectedAccount === 'string' ? props.selectedAccount : props.selectedAccount?.address
 
   return (
     <Select
-      width={props.width}
-      value={typeof props.selectedAccount === 'string' ? props.selectedAccount : props.selectedAccount?.address}
+      css={{ width: '100%' }}
+      placeholder="Select an account"
+      value={selectedValue}
       onChange={onChange}
+      renderSelected={
+        props.inTransition
+          ? address => {
+              const selectedAccount = props.accounts.find(x => x.address === address)
+              return (
+                <Select.Option
+                  leadingIcon={<CircularProgressIndicator size="4rem" />}
+                  headlineText={
+                    selectedAccount === undefined ? '' : selectedAccount.name ?? shortenAddress(selectedAccount.address)
+                  }
+                />
+              )
+            }
+          : undefined
+      }
     >
-      {accounts.map(x => (
-        <Select.Item
+      {props.accounts.map(x => (
+        <Select.Option
           key={x.address}
           value={x.address}
-          leadingIcon={<Identicon value={x.address} size={40} />}
+          leadingIcon={<Identicon value={x.address} size="4rem" />}
           headlineText={x.name ?? shortenAddress(x.address)}
-          supportingText=""
         />
       ))}
     </Select>
   )
+}
+
+export const useAccountSelector = (
+  accounts: Account[],
+  initialAccount?: Account | number | ((accounts?: Account[]) => Account | undefined),
+  accountSelectorProps?: Omit<AccountSelectorProps, 'accounts' | 'selectedAccount' | 'onChangeSelectedAccount'>
+) => {
+  const [inTransition, startTransition] = useTransition()
+
+  const getInitialAccount = useCallback(
+    (accounts: Account[]) =>
+      typeof initialAccount === 'function'
+        ? initialAccount(accounts)
+        : typeof initialAccount === 'number'
+        ? accounts.at(initialAccount)
+        : initialAccount,
+    [initialAccount]
+  )
+
+  const [account, setAccount] = useState(getInitialAccount(accounts))
+
+  useEffect(() => {
+    if (account === undefined && accounts.length > 0) {
+      setAccount(getInitialAccount(accounts))
+    }
+  }, [account, accounts, getInitialAccount])
+
+  return [
+    account,
+    // eslint-disable-next-line react/jsx-key
+    <AccountSelector
+      {...accountSelectorProps}
+      accounts={accounts}
+      selectedAccount={account}
+      onChangeSelectedAccount={account => startTransition(() => setAccount(account))}
+      inTransition={inTransition}
+    />,
+    inTransition,
+  ] as const
 }
 
 export default AccountSelector

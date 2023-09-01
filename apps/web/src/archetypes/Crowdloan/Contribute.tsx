@@ -3,7 +3,8 @@ import { ReactComponent as XCircle } from '@assets/icons/x-circle.svg'
 import { Button, DesktopRequired, Field, MaterialLoader, useModal } from '@components'
 import { TalismanHandLike } from '@components/TalismanHandLike'
 import { TalismanHandLoader } from '@components/TalismanHandLoader'
-import AccountSelector from '@components/widgets/AccountSelector'
+import { useAccountSelector } from '@components/widgets/AccountSelector'
+import { writeableSubstrateAccountsState } from '@domains/accounts'
 import { useTheme } from '@emotion/react'
 import styled from '@emotion/styled'
 import { ContributeEvent, useCrowdloanContribute } from '@libs/crowdloans'
@@ -12,8 +13,9 @@ import { useCrowdloanById } from '@libs/talisman'
 import { CircularProgressIndicator, Text } from '@talismn/ui'
 import { isMobileBrowser } from '@util/helpers'
 import { Maybe } from '@util/monads'
-import { MouseEventHandler, useCallback, useEffect, useMemo, useState } from 'react'
+import { MouseEventHandler, type, useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useRecoilValue } from 'recoil'
 
 export type ContributeProps = {
   className?: string
@@ -125,10 +127,11 @@ const ContributeTo = styled(
 
     const [chainHasTerms, termsAgreed, onTermsCheckboxClick] = useTerms(relayChainId, parachainId)
 
-    const [address, setAddress] = useState<string>()
+    const [account, accountSelector] = useAccountSelector(useRecoilValue(writeableSubstrateAccountsState), 0)
+
     useEffect(() => {
-      dispatch(ContributeEvent.setAccount(address))
-    }, [dispatch, address])
+      dispatch(ContributeEvent.setAccount(account?.address))
+    }, [dispatch, account])
 
     return (
       <form
@@ -145,16 +148,12 @@ const ContributeTo = styled(
       >
         <header>
           <h2>{t('Contribute to')}</h2>
-          <Parachain.Asset className="logo" id={`${relayChainId}-${parachainId}`} type="logo" />
+          <Parachain.Asset className="logo" id={`${relayChainId as string}-${parachainId as string}`} type="logo" />
           <h3>{parachainName}</h3>
         </header>
         <main>
           <div css={{ display: 'flex', flexDirection: 'column', gap: '1.6rem', marginBottom: '2.4rem' }}>
-            <AccountSelector
-              selectedAccount={address}
-              onChangeSelectedAccount={useCallback(account => setAddress(account?.address), [])}
-              defaultToFirstAddress
-            />
+            {accountSelector}
             <div className="amount-input">
               <Field.Input
                 value={contributionAmount}

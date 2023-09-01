@@ -1,7 +1,8 @@
+import { chains } from '@domains/chains'
 import { substrateApiState } from '@domains/common'
-import crowdloanDataState, { CrowdloanDetail } from '@libs/@talisman-crowdloans/provider'
+import crowdloanDataState, { CrowdloanDetail, type } from '@libs/@talisman-crowdloans/provider'
 import { find } from 'lodash'
-import { PropsWithChildren, useContext as _useContext, createContext, useEffect, useMemo, useState } from 'react'
+import { PropsWithChildren, useContext as _useContext, createContext, type, useEffect, useMemo, useState } from 'react'
 import { useRecoilValue, useRecoilValueLoadable, waitForAll } from 'recoil'
 
 export type { CrowdloanDetail } from '@libs/@talisman-crowdloans/provider'
@@ -27,9 +28,9 @@ export const useParachainAssets = (
   const slug = crowdloanDetail?.slug
 
   return {
-    banner: `https://raw.githubusercontent.com/TalismanSociety/chaindata/v3/assets/promo/${slug}-banner.png`,
-    card: `https://raw.githubusercontent.com/TalismanSociety/chaindata/v3/assets/promo/${slug}-card.png`,
-    logo: `https://raw.githubusercontent.com/TalismanSociety/chaindata/v3/assets/chains/${slug}.svg`,
+    banner: `https://raw.githubusercontent.com/TalismanSociety/chaindata/v3/assets/promo/${slug ?? ''}-banner.png`,
+    card: `https://raw.githubusercontent.com/TalismanSociety/chaindata/v3/assets/promo/${slug ?? ''}-card.png`,
+    logo: `https://raw.githubusercontent.com/TalismanSociety/chaindata/v3/assets/chains/${slug ?? ''}.svg`,
   }
 }
 
@@ -80,7 +81,7 @@ export const Provider = ({ children }: PropsWithChildren) => {
   const crowdloans = useRecoilValue(crowdloanDataState)
 
   const apisLoadable = useRecoilValueLoadable(
-    waitForAll([substrateApiState('wss://rpc.polkadot.io'), substrateApiState('wss://kusama-rpc.polkadot.io')])
+    waitForAll([substrateApiState(chains[0].rpc), substrateApiState(chains[1].rpc)])
   )
 
   useEffect(
@@ -93,14 +94,14 @@ export const Provider = ({ children }: PropsWithChildren) => {
         return
       }
 
-      ;(async () => {
+      void (async () => {
         const [polkadotApi, kusamaApi] = apisLoadable.contents
 
         const polkadotFunds = await polkadotApi.query.crowdloan.funds.entries()
         const kusamaFunds = await kusamaApi.query.crowdloan.funds.entries()
 
-        const polkadotParaIds = polkadotFunds.map(x => `0-${x[0].args[0]}`)
-        const kusamaParaIds = kusamaFunds.map(x => `2-${x[0].args[0]}`)
+        const polkadotParaIds = polkadotFunds.map(x => `0-${x[0].args[0].toString()}`)
+        const kusamaParaIds = kusamaFunds.map(x => `2-${x[0].args[0].toString()}`)
 
         const paraIds = [...polkadotParaIds, ...kusamaParaIds]
 

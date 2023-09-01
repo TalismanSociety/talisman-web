@@ -1,24 +1,31 @@
 import { useTheme } from '@emotion/react'
 import { IconContext } from '@talismn/icons/utils'
-import { ElementType, ReactNode, useMemo } from 'react'
+import { useMemo, type ElementType, type PropsWithChildren, type ReactNode } from 'react'
 
+import { useSurfaceColor } from '..'
 import CircularProgressIndicator from '../CircularProgressIndicator'
 
 type ButtonElementType = Extract<React.ElementType, 'button' | 'a'> | ElementType<any>
 
-type PolymorphicButtonProps<T extends ButtonElementType = 'button'> = {
+type PolymorphicButtonProps<T extends ButtonElementType = 'button'> = PropsWithChildren<{
   as?: T
   variant?:
     | 'outlined'
+    | 'surface'
+    /**
+     * @deprecated use "surface" variant instead
+     */
     | 'secondary'
-    // Deprecated
+    /**
+     * @deprecated use `Clickable` instead
+     */
     | 'noop'
   leadingIcon?: ReactNode
   trailingIcon?: ReactNode
   disabled?: boolean
   hidden?: boolean
   loading?: boolean
-}
+}>
 
 export type ButtonProps<T extends ButtonElementType = 'button'> = PolymorphicButtonProps<T> &
   Omit<React.ComponentPropsWithoutRef<T>, keyof PolymorphicButtonProps<T>>
@@ -34,10 +41,20 @@ const Button = <T extends ButtonElementType = 'button'>({
 }: ButtonProps<T>) => {
   const theme = useTheme()
 
-  const disabled = props.disabled || hidden || loading
+  const disabled = Boolean(props.disabled) || Boolean(hidden) || Boolean(loading)
+
+  const surfaceColor = useSurfaceColor()
 
   const variantStyle = useMemo(() => {
     switch (variant) {
+      case 'surface':
+        return {
+          'backgroundColor': surfaceColor,
+          'color': theme.color.onSurface,
+          ':hover': {
+            opacity: 0.6,
+          },
+        }
       case 'outlined':
         return {
           'backgroundColor': 'transparent',
@@ -74,11 +91,19 @@ const Button = <T extends ButtonElementType = 'button'>({
           'backgroundColor': theme.color.primary,
           'color': theme.color.onPrimary,
           ':hover': {
-            opacity: 0.8,
+            opacity: 0.6,
           },
         }
     }
-  }, [theme.color.background, theme.color.onBackground, theme.color.onPrimary, theme.color.primary, variant])
+  }, [
+    surfaceColor,
+    theme.color.background,
+    theme.color.onBackground,
+    theme.color.onPrimary,
+    theme.color.onSurface,
+    theme.color.primary,
+    variant,
+  ])
 
   const variantDisabledStyle = useMemo(() => {
     switch (variant) {
@@ -92,9 +117,9 @@ const Button = <T extends ButtonElementType = 'button'>({
     }
   }, [theme.color.foreground, theme.contentAlpha.disabled, variant])
 
-  const Component = as
+  const hasLeadingIcon = Boolean(loading) || leadingIcon !== undefined
 
-  const hasLeadingIcon = loading || leadingIcon !== undefined
+  const Component = as
 
   return (
     <Component
@@ -103,8 +128,9 @@ const Button = <T extends ButtonElementType = 'button'>({
       css={[
         {
           textAlign: 'center',
-          display: 'block',
+          display: 'inline-block',
           padding: '1.156rem 2.4rem',
+          width: 'fit-content',
           border: 'none',
           borderRadius: '1rem',
           cursor: 'pointer',
@@ -117,18 +143,10 @@ const Button = <T extends ButtonElementType = 'button'>({
         hidden && { cursor: 'default', pointerEvent: 'none', opacity: 0 },
       ]}
     >
-      <div css={{ position: 'relative', width: '100%' }}>
-        {(leadingIcon || loading) && (
+      <div css={{ position: 'relative', display: 'flex' }}>
+        {hasLeadingIcon && (
           <span
-            css={{
-              position: 'absolute',
-              left: '-1.2rem',
-              top: 0,
-              bottom: 0,
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}
+            css={{ position: 'absolute', top: 0, bottom: 0, left: '-1.6rem', display: 'flex', alignItems: 'center' }}
           >
             <IconContext.Provider value={{ size: '1.6rem' }}>
               {(() => {
@@ -139,35 +157,31 @@ const Button = <T extends ButtonElementType = 'button'>({
                 if (leadingIcon) {
                   return leadingIcon
                 }
+
+                return undefined
               })()}
             </IconContext.Provider>
           </span>
         )}
         <span
           css={[
-            { display: 'inline-block' },
-            hasLeadingIcon && !trailingIcon && { transform: 'translateX(1rem)' },
-            trailingIcon && !hasLeadingIcon && { transform: 'translateX(-1rem)' },
-            hasLeadingIcon && trailingIcon && { padding: '0 2rem' },
+            { textAlign: 'center', width: 'stretch' },
+            hasLeadingIcon && { translate: '0.8rem' },
+            trailingIcon && { translate: '-0.8rem' },
+            hasLeadingIcon && trailingIcon && { translate: 'revert' },
           ]}
         >
           {props.children}
         </span>
-        {trailingIcon && (
-          <span
-            css={{
-              position: 'absolute',
-              right: '-1.6rem',
-              top: 0,
-              bottom: 0,
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}
-          >
-            {trailingIcon}
-          </span>
-        )}
+        <IconContext.Provider value={{ size: '1.6rem' }}>
+          {trailingIcon && (
+            <span
+              css={{ position: 'absolute', top: 0, bottom: 0, right: '-1.6rem', display: 'flex', alignItems: 'center' }}
+            >
+              {trailingIcon}
+            </span>
+          )}
+        </IconContext.Provider>
       </div>
     </Component>
   )

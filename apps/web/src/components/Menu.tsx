@@ -4,7 +4,7 @@ import React, { useRef, useState } from 'react'
 
 type MenuDropdownAlignment = 'left' | 'right'
 
-export interface MenuProps {
+export type MenuProps = {
   ButtonComponent: React.ReactElement
   children: React.ReactNode
   className?: string

@@ -1,17 +1,17 @@
-import { ApiPromise } from '@polkadot/api'
-import { AddressOrPair } from '@polkadot/api/types'
+import { ChainContext } from '@domains/chains'
+import { ApiPromise, type } from '@polkadot/api'
+import { AddressOrPair, type } from '@polkadot/api/types'
 import { web3FromAddress } from '@polkadot/extension-dapp'
-import { ISubmittableResult } from '@polkadot/types/types'
+import { ISubmittableResult, type } from '@polkadot/types/types'
 import { useCallback, useContext, useState } from 'react'
-import { useRecoilCallback, useRecoilValueLoadable } from 'recoil'
+import { useRecoilCallback } from 'recoil'
 
-import { chainIdState, chainState } from '../../chains/recoils'
 import { extrinsicMiddleware } from '../extrinsicMiddleware'
 import { toastExtrinsic } from '../utils'
-import { SubstrateApiContext, substrateApiState } from '..'
+import { substrateApiState, useSubstrateApiEndpoint } from '..'
 
 type ExtrinsicMap = PickKnownKeys<{
-  // @ts-ignore
+  // @ts-expect-error
   [P in keyof ApiPromise['tx']]: `${P}.${keyof PickKnownKeys<ApiPromise['tx'][P]>}`
 }>
 
@@ -33,8 +33,8 @@ export const useExtrinsicBatch = <
 >(
   extrinsics: TExtrinsics
 ) => {
-  const apiEndpoint = useContext(SubstrateApiContext).endpoint
-  const chainLoadable = useRecoilValueLoadable(chainState)
+  const chain = useContext(ChainContext)
+  const apiEndpoint = useSubstrateApiEndpoint()
 
   const [loadable, setLoadable] = useState<
     | { state: 'idle'; contents: undefined }
@@ -50,14 +50,14 @@ export const useExtrinsicBatch = <
       const { snapshot } = callbackInterface
 
       const promiseFunc = async () => {
-        const [chainId, api, extension] = await Promise.all([
-          snapshot.getPromise(chainIdState),
+        const [api, extension] = await Promise.all([
           snapshot.getPromise(substrateApiState(apiEndpoint)),
+          // eslint-disable-next-line @typescript-eslint/no-base-to-string
           web3FromAddress(account.toString()),
         ])
 
-        let resolve = (value: ISubmittableResult) => {}
-        let reject = (value: unknown) => {}
+        let resolve = (_value: ISubmittableResult) => {}
+        let reject = (_value: unknown) => {}
 
         const deferred = new Promise<ISubmittableResult>((_resolve, _reject) => {
           resolve = _resolve
@@ -66,19 +66,19 @@ export const useExtrinsicBatch = <
 
         const extrinsickeys = extrinsics.map(extrinsic => {
           const [module, section] = extrinsic.split('.')
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
           return [module!, section!] as const
         })
 
         try {
           const extrinsics = extrinsickeys.map(
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion, @typescript-eslint/no-non-null-asserted-optional-chain
             ([module, section], index) => api.tx[module]?.[section]?.(...(params[index] ?? []))!
           )
           const unsubscribe = await api.tx.utility
             .batchAll(extrinsics)
             .signAndSend(account, { signer: extension?.signer }, result => {
-              extrinsics.forEach((extrinsic, index) =>
-                extrinsicMiddleware(chainId, extrinsic, result, callbackInterface)
-              )
+              extrinsics.forEach(extrinsic => extrinsicMiddleware(chain.id, extrinsic, result, callbackInterface))
 
               if (result.isError) {
                 unsubscribe?.()
@@ -101,7 +101,7 @@ export const useExtrinsicBatch = <
           reject(error)
         }
 
-        return deferred
+        return await deferred
       }
 
       const promise = promiseFunc()
@@ -114,10 +114,11 @@ export const useExtrinsicBatch = <
       toastExtrinsic(
         extrinsics.map(extrinsic => {
           const [module, section] = extrinsic.split('.')
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
           return [module!, section!]
         }),
         promise,
-        chainLoadable
+        chain.subscanUrl
       )
 
       try {
@@ -126,6 +127,7 @@ export const useExtrinsicBatch = <
         return result
       } catch (error) {
         setLoadable({ state: 'hasError', contents: error })
+        return undefined
       }
     },
 

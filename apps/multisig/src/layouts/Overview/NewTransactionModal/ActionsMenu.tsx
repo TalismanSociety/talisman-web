@@ -88,16 +88,16 @@ const ActionsMenu = (props: { onActionClick: (action: Action) => void }) => {
             onClick={() => props.onActionClick(Action.MultiSend)}
           />
           <Tooltip content={'Stake action coming soon'}>
-            {tooltipProps => (
-              <div {...tooltipProps} css={{ display: 'inline' }}>
-                <ActionButton
-                  name="Stake"
-                  description="Stake your vaults assets"
-                  icon={<Zap size={33} />}
-                  disabled={true}
-                />
-              </div>
-            )}
+            {/* {tooltipProps => ( */}
+            <div css={{ display: 'inline' }}>
+              <ActionButton
+                name="Stake"
+                description="Stake your vaults assets"
+                icon={<Zap size={33} />}
+                disabled={true}
+              />
+            </div>
+            {/* )} */}
           </Tooltip>
         </div>
       </div>

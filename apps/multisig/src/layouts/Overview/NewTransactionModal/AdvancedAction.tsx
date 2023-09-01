@@ -14,7 +14,7 @@ import {
 } from '@domains/multisig'
 import { css } from '@emotion/css'
 import { SubmittableExtrinsic } from '@polkadot/api/types'
-import { Button, FullScreenDialog } from '@talismn/ui'
+import { Button, SideSheet } from '@talismn/ui'
 import { useMemo, useState } from 'react'
 import toast from 'react-hot-toast'
 import { useNavigate } from 'react-router-dom'
@@ -129,7 +129,7 @@ const AdvancedAction = (props: { onCancel: () => void }) => {
           setExtrinsic={setExtrinsic}
         />
       ) : null}
-      <FullScreenDialog
+      <SideSheet
         onRequestDismiss={() => {
           setStep(Step.Details)
         }}
@@ -191,7 +191,7 @@ const AdvancedAction = (props: { onCancel: () => void }) => {
             return Promise.resolve()
           }}
         />
-      </FullScreenDialog>
+      </SideSheet>
     </div>
   )
 }

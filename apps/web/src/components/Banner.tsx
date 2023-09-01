@@ -1,7 +1,7 @@
 import styled from '@emotion/styled'
 import { device } from '@util/breakpoints'
 
-interface BannerProps {
+type BannerProps = {
   backgroundImage?: string
 }
 

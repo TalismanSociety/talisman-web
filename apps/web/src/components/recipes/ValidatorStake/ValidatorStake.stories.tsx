@@ -1,6 +1,6 @@
-import { ComponentMeta, Story } from '@storybook/react'
+import { ComponentMeta, Story, type, type } from '@storybook/react'
 
-import ValidatorStake, { ValidatorStakeList, ValidatorStakeProps } from './ValidatorStake'
+import ValidatorStake, { ValidatorStakeList, ValidatorStakeProps, type } from './ValidatorStake'
 import ValidatorStakeSkeleton from './ValidatorStake.skeleton'
 
 export default {

@@ -1,7 +1,8 @@
-import { ComponentMeta, Story } from '@storybook/react'
+import { ComponentMeta, Story, type, type } from '@storybook/react'
 
 import RemoveWatchedAccountConfirmationDialog, {
   RemoveWatchedAccountConfirmationDialogProps,
+  type,
 } from './RemoveWatchedAccountConfirmationDialog'
 
 export default {

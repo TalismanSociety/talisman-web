@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Crowdloan } from '@archetypes'
 import { Await, Field, Grid, NoResults } from '@components'
 import styled from '@emotion/styled'
@@ -26,7 +27,7 @@ const FilterBar = styled(
   }: any) => {
     const { t } = useTranslation()
     return (
-      <div className={`${className} filterbar`} {...rest}>
+      <div className={`${className as string} filterbar`} {...rest}>
         <Field.Search
           className="searchbar"
           value={search}
@@ -88,7 +89,7 @@ const Index = styled(({ withFilter, className }: { withFilter: boolean; classNam
   const { contributions } = useCrowdloanContributions()
 
   return (
-    <div className={`crowdloan-index ${className}`}>
+    <div className={`crowdloan-index ${className ?? ''}`}>
       {/* TODO: Remove for now as no Learn more link yet. */}
       {/* <UnlockTalismanBanner /> */}
       {withFilter && <FilterBar {...filterProps} count={count} />}

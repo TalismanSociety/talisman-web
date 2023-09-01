@@ -3,7 +3,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 export const useBoolean = <T>(init: T) => {
   const [value, setValue] = useState(init || false)
   const toggle = useCallback(() => setValue(!value), [value])
-  return [value, toggle]
+  return [value, toggle] as const
 }
 
 export const useSet = <T>(initialSet: T[] = []) => {
@@ -33,16 +33,16 @@ export const useMediaQuery = (query: string) => {
     const handler = () => setMatch(Boolean(mediaQueryList?.matches))
 
     try {
-      mediaQueryList && mediaQueryList.addEventListener('change', handler)
+      mediaQueryList?.addEventListener('change', handler)
     } catch {
-      mediaQueryList && mediaQueryList.addListener(handler)
+      mediaQueryList?.addListener(handler)
     }
 
     return () => {
       try {
-        mediaQueryList && mediaQueryList.removeEventListener('change', handler)
+        mediaQueryList?.removeEventListener('change', handler)
       } catch {
-        mediaQueryList && mediaQueryList.removeListener(handler)
+        mediaQueryList?.removeListener(handler)
       }
     }
   }, [mediaQueryList])

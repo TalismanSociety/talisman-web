@@ -10,7 +10,7 @@ import {
 } from '@domains/multisig'
 import { rawConfirmedTransactionsDependency, useConfirmedTransactions } from '@domains/tx-history'
 import { css } from '@emotion/css'
-import { EyeOfSauronProgressIndicator, FullScreenDialog } from '@talismn/ui'
+import { EyeOfSauronProgressIndicator, SideSheet } from '@talismn/ui'
 import { toMultisigAddress } from '@util/addresses'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useEffect, useMemo, useState } from 'react'
@@ -118,7 +118,7 @@ const TransactionsList = ({ transactions }: { transactions: Transaction[] }) => 
         <Route
           path="/tx/:hash"
           element={
-            <FullScreenDialog
+            <SideSheet
               onRequestDismiss={() => {
                 navigate('/overview')
               }}
@@ -225,7 +225,7 @@ const TransactionsList = ({ transactions }: { transactions: Transaction[] }) => 
                   })
                 }
               />
-            </FullScreenDialog>
+            </SideSheet>
           }
         />
       </Routes>

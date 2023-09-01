@@ -1,21 +1,22 @@
 import { ApiPromise, WsProvider } from '@polkadot/api'
-import { useContext } from 'react'
 import { atomFamily } from 'recoil'
 
-import { SubstrateApiContext } from '..'
+import { useSubstrateApiEndpoint } from '..'
 
 export const substrateApiState = atomFamily<ApiPromise, string>({
   key: 'SubstrateApiState',
   effects: endpoint => [
     ({ setSelf }) => {
-      const api = new ApiPromise({ provider: new WsProvider(endpoint) })
+      const apiPromise = ApiPromise.create({ provider: new WsProvider(endpoint) })
 
-      setSelf(api.isReadyOrError)
+      setSelf(apiPromise)
 
-      return api.disconnect
+      return () => {
+        void apiPromise.then(async api => await api.disconnect())
+      }
     },
   ],
   dangerouslyAllowMutability: true, // pjs wsprovider mutates itself to track connection msg stats
 })
 
-export const useSubstrateApiState = () => substrateApiState(useContext(SubstrateApiContext).endpoint)
+export const useSubstrateApiState = () => substrateApiState(useSubstrateApiEndpoint())

@@ -16,11 +16,12 @@ export class Maybe<T> {
   }
 
   static ofFalsy<T>(value?: T) {
-    return new Maybe(value ? value : undefined)
+    // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
+    return new Maybe(value || undefined)
   }
 
   get isSome() {
-    return this.#isNone === false
+    return !this.#isNone
   }
 
   valueOr<U>(defaultValue: U): T | U {

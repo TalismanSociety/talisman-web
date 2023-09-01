@@ -1,10 +1,11 @@
 import { useTheme } from '@emotion/react'
-import { ListItem, Skeleton, SkeletonProps, Text } from '@talismn/ui'
+import { ListItem, Skeleton, SkeletonProps, Text, type } from '@talismn/ui'
 
 const StakeItemSkeleton = (props: SkeletonProps) => {
   const theme = useTheme()
   return (
     <Skeleton.Surface
+      {...props}
       animate={props.animate}
       css={{
         borderRadius: '0.8rem',

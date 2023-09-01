@@ -10,37 +10,30 @@ import {
   useListNavigation,
   useRole,
 } from '@floating-ui/react'
-import { ChevronDown } from '@talismn/icons'
+import { ChevronDown, X } from '@talismn/icons'
 import { motion } from 'framer-motion'
-import React, {
-  ReactElement,
-  ReactNode,
-  forwardRef,
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react'
+import type { ReactElement, ReactNode } from 'react'
+import React, { forwardRef, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 
-import { Text } from '../../atoms'
+import { Surface, Text, useSurfaceColor } from '../../atoms'
+import FloatingPortal from '../../atoms/FloatingPortal'
 
-type Value = string | number | undefined
-
-export type SelectProps = {
-  value?: Value
+export type SelectProps<TValue extends string | number, TClear extends boolean = false> = {
+  className?: string
+  value?: TValue
+  renderSelected?: (value: TValue | undefined) => ReactNode
   placeholder?: ReactNode
   beforeOptionsNode?: ReactNode
   afterOptionsNode?: ReactNode
   placeholderPointerEvents?: boolean
   width?: string | number
-  children: ReactElement<SelectItemProps> | ReactElement<SelectItemProps>[]
-  onChange?: (value: string | undefined) => unknown
+  children?: ReactNode
+  onChange?: (value: TClear extends false ? TValue : TValue | undefined) => unknown
+  clearRequired?: TClear
 }
 
 type SelectItemProps = {
-  value?: Value
+  value?: string | number
   leadingIcon?: ReactNode
   headlineText: ReactNode
   supportingText?: ReactNode
@@ -64,9 +57,15 @@ const SelectItem = forwardRef<HTMLDivElement, SelectItemProps>((props, ref) => (
 const OVERLAP = 6
 
 const Select = Object.assign(
-  ({ width = '100%', children, ...props }: SelectProps) => {
+  <TValue extends string | number, TClear extends boolean = false>({
+    children,
+    renderSelected,
+    clearRequired: _clearRequired,
+    ...props
+  }: SelectProps<TValue, TClear>) => {
     const theme = useTheme()
-    const [lastResized, setLastResized] = useState(0)
+    const surfaceColor = useSurfaceColor()
+
     const listRef = useRef<HTMLLIElement[]>([])
     const [open, setOpen] = useState(false)
     const [pointer, setPointer] = useState(false)
@@ -74,18 +73,24 @@ const Select = Object.assign(
 
     const childrenArray = React.Children.toArray(children)
 
-    const selectedIndex =
-      props.value === undefined
-        ? undefined
-        : childrenArray
-            .filter((x): x is ReactElement<SelectItemProps> => x as any)
-            .findIndex(x => x.props.value !== undefined && x.props.value.toString() === props.value?.toString())
+    const selectedIndex = childrenArray
+      .filter((x): x is ReactElement<SelectItemProps> => x as any)
+      .findIndex(x => x.props.value?.toString() === props.value?.toString())
 
-    const selectedChild = selectedIndex === undefined ? undefined : childrenArray[selectedIndex]
+    const selectedChild =
+      renderSelected?.(props.value) ?? (selectedIndex === undefined ? undefined : childrenArray[selectedIndex])
 
-    const { context, x, y, reference, floating, strategy } = useFloating({
+    const clearRequired = !open && _clearRequired && selectedChild !== undefined
+
+    const { context, x, y, refs, strategy } = useFloating({
       open,
-      onOpenChange: setOpen,
+      onOpenChange: open => {
+        if (clearRequired) {
+          // @ts-expect-error
+          props.onChange?.(undefined)
+        }
+        setOpen(open)
+      },
       whileElementsMounted: autoUpdate,
       middleware: [
         // TODO: right now only work for bottom overflow
@@ -124,10 +129,11 @@ const Select = Object.assign(
     ])
 
     const select = useCallback(
-      (value: Value) => {
+      (value: string | number | undefined) => {
         setOpen(false)
         setActiveIndex(null)
-        props.onChange?.(value?.toString())
+        // @ts-expect-error
+        props.onChange?.(value)
       },
       [props]
     )
@@ -149,23 +155,38 @@ const Select = Object.assign(
     }, [open, activeIndex, pointer])
 
     return (
-      <motion.div initial={String(false)} animate={String(open)} css={{ width }}>
-        <motion.button
-          ref={reference}
+      <motion.div
+        className={props.className}
+        initial={String(false)}
+        animate={String(open)}
+        variants={{
+          true: { filter: 'drop-shadow(0 1px 3px rgba(0, 0, 0, 0.25))' },
+          false: { filter: 'drop-shadow(0 0 0 rgba(0, 0, 0, 0.25))' },
+        }}
+      >
+        <Surface
+          as={motion.button}
+          ref={refs.setReference}
           variants={{
-            true: { transitionEnd: { borderBottomLeftRadius: 0, borderBottomRightRadius: 0 } },
-            false: { transitionEnd: { borderBottomLeftRadius: '0.8rem', borderBottomRightRadius: '0.8rem' } },
+            true: {
+              border: `solid ${theme.color.border}`,
+              borderWidth: '1px 1px 0 1px',
+              transitionEnd: { borderBottomLeftRadius: 0, borderBottomRightRadius: 0 },
+            },
+            false: {
+              border: 'solid transparent',
+              borderWidth: '1px 1px 0 1px',
+              transitionEnd: { borderBottomLeftRadius: '0.8rem', borderBottomRightRadius: '0.8rem' },
+            },
           }}
           css={{
             position: 'relative',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            gap: '2rem',
+            gap: '1.6rem',
             textAlign: 'start',
-            backgroundColor: theme.color.foreground,
             padding: '0.75rem 1.25rem',
-            border: 'none',
             borderRadius: '0.8rem',
             cursor: 'pointer',
             width: '100%',
@@ -177,87 +198,107 @@ const Select = Object.assign(
             css={{
               pointerEvents: props.placeholderPointerEvents ? 'all' : 'none',
               userSelect: props.placeholderPointerEvents ? 'all' : 'none',
+              overflow: 'hidden',
             }}
           >
-            {selectedChild ?? props.placeholder}
+            {selectedChild ?? <Text.Body alpha="disabled">{props.placeholder}</Text.Body>}
           </Text.Body>
-          <ChevronDown css={{ transform: open ? 'rotate(180deg)' : undefined, transition: 'ease 0.25s' }} />
-        </motion.button>
-        <motion.ul
-          ref={floating}
-          variants={{
-            true: { height: 'unset', visibility: 'unset', transitionEnd: { overflow: 'auto' } },
-            false: { height: 0, overflow: 'hidden', transitionEnd: { visibility: 'hidden' } },
-          }}
-          css={{
-            'margin': 0,
-            'padding': 0,
-            'borderBottomLeftRadius': '0.5rem',
-            'borderBottomRightRadius': '0.5rem',
-            'backgroundColor': theme.color.foreground,
-            'listStyle': 'none',
-            'li': {
-              'padding': '1.5rem 1.25rem',
-              'backgroundColor': theme.color.foreground,
-              ':hover': {
-                filter: 'brightness(1.2)',
+          {clearRequired ? (
+            <X />
+          ) : (
+            <ChevronDown css={{ transform: open ? 'rotate(180deg)' : undefined, transition: 'ease 0.25s' }} />
+          )}
+        </Surface>
+        <FloatingPortal>
+          <motion.ul
+            ref={refs.setFloating}
+            variants={{
+              true: {
+                height: 'unset',
+                visibility: 'unset',
+                border: `solid ${theme.color.border}`,
+                borderWidth: '0 1px 1px 1px',
+                transitionEnd: { overflow: 'auto' },
               },
-              ':focus-visible': {
-                filter: 'brightness(1.2)',
+              false: {
+                height: 0,
+                border: 'solid transparent',
+                borderWidth: '0 1px 1px 1px',
+                overflow: 'hidden',
+                transitionEnd: { visibility: 'hidden' },
               },
-              ':last-child': {
-                padding: '1.5rem 1.25rem 1rem 1.25rem',
+            }}
+            css={{
+              'margin': 0,
+              'padding': 0,
+              'borderBottomLeftRadius': '0.5rem',
+              'borderBottomRightRadius': '0.5rem',
+              'backgroundColor': surfaceColor,
+              'listStyle': 'none',
+              'li': {
+                'padding': '1.5rem 1.25rem',
+                'backgroundColor': surfaceColor,
+                ':hover': {
+                  filter: 'brightness(1.2)',
+                },
+                ':focus-visible': {
+                  filter: 'brightness(1.2)',
+                },
+                ':last-child': {
+                  padding: '1.5rem 1.25rem 1rem 1.25rem',
+                },
               },
-            },
-            // Top spacer for animation overlap
-            '::before': {
-              content: '""',
-              display: 'block',
-              position: 'sticky',
-              top: 0,
-              height: OVERLAP,
-              backgroundColor: theme.color.foreground,
-              zIndex: 1,
-            },
-          }}
-          {...getFloatingProps({
-            style: {
-              position: strategy,
-              top: y ?? 0,
-              left: x ?? 0,
-              width: 'max-content',
-              zIndex: 1,
-            },
-            onPointerMove: () => {
-              setPointer(true)
-            },
-            onKeyDown: event => {
-              setPointer(false)
+              // Top spacer for animation overlap
+              '::before': {
+                content: '""',
+                display: 'block',
+                position: 'sticky',
+                top: 0,
+                height: OVERLAP,
+                backgroundColor: surfaceColor,
+              },
+            }}
+            {...getFloatingProps({
+              style: {
+                position: strategy,
+                top: y ?? 0,
+                left: x ?? 0,
+                width: 'max-content',
+              },
+              onPointerMove: () => {
+                setPointer(true)
+              },
+              onKeyDown: event => {
+                setPointer(false)
 
-              if (event.key === 'Tab') {
-                setOpen(false)
-              }
-            },
-          })}
-        >
-          <>
+                if (event.key === 'Tab') {
+                  setOpen(false)
+                }
+              },
+            })}
+          >
             {props.beforeOptionsNode ? props.beforeOptionsNode : null}
-            {React.Children.map(children, (child, index) => (
+            {React.Children.map(children as any, (child: ReactElement<SelectItemProps>, index) => (
               <li
                 key={child.key}
                 role="option"
                 ref={node => {
-                  listRef.current[index] = node!
+                  if (node !== null) {
+                    listRef.current[index] = node
+                  }
                 }}
                 tabIndex={!open ? -1 : index === activeIndex ? 0 : 1}
                 aria-selected={index === activeIndex}
                 css={{ cursor: 'pointer' }}
                 {...getItemProps({
                   onClick: () => select(child.props.value),
+
                   onKeyDown: event => {
                     if (event.key === 'Enter') {
                       event.preventDefault()
-                      select(child.props.value)
+                      if (child.props.value !== undefined) {
+                        select(child.props.value)
+                      }
                     }
                   },
                 })}
@@ -266,12 +307,18 @@ const Select = Object.assign(
               </li>
             ))}
             {props.afterOptionsNode ? props.afterOptionsNode : null}
-          </>
-        </motion.ul>
+          </motion.ul>
+        </FloatingPortal>
       </motion.div>
     )
   },
-  { Item: SelectItem }
+  {
+    /**
+     * @deprecated
+     */
+    Item: SelectItem,
+    Option: SelectItem,
+  }
 )
 
 export default Select

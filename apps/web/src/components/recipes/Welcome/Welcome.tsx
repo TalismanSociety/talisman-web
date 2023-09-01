@@ -1,7 +1,19 @@
 import { useTheme } from '@emotion/react'
-import { Button, ButtonProps, Clickable, Hr, Identicon, ListItem, Text, TextInput, TextInputProps } from '@talismn/ui'
+import {
+  Button,
+  ButtonProps,
+  Clickable,
+  Hr,
+  Identicon,
+  ListItem,
+  Text,
+  TextInput,
+  TextInputProps,
+  type,
+  type,
+} from '@talismn/ui'
 import { shortenAddress } from '@util/format'
-import { ReactNode } from 'react'
+import { ReactNode, type } from 'react'
 
 export type WelcomeProps = {
   className?: string
@@ -21,7 +33,7 @@ const WalletButton = <T extends 'a' | 'button'>({
 )
 
 const AddressInput = (props: Omit<TextInputProps, 'placeholder' | 'width' | 'noLabel'>) => (
-  <TextInput {...props} placeholder="Enter any address" width="100%" noLabel css={{ fontSize: '1.6rem' }} />
+  <TextInput {...props} placeholder="Enter any address" width="100%" css={{ fontSize: '1.6rem' }} />
 )
 
 const AddressInputConfirmButton = (props: Omit<ButtonProps, 'variant' | 'children'>) => (

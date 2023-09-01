@@ -1,6 +1,6 @@
-import { ComponentMeta, Story } from '@storybook/react'
+import { type ComponentMeta, type Story } from '@storybook/react'
 
-import CircularProgressIndicator, { CircularProgressIndicatorProps } from './CircularProgressIndicator'
+import CircularProgressIndicator, { type CircularProgressIndicatorProps } from './CircularProgressIndicator'
 
 export default {
   title: 'Atoms/CircularProgressIndicator',

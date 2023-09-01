@@ -1,7 +1,6 @@
-import { Account, selectedAccountsState } from '@domains/accounts/recoils'
+import { selectedAccountsState } from '@domains/accounts/recoils'
 import styled from '@emotion/styled'
-import { Balances } from '@talismn/balances'
-import { BalanceFormatter } from '@talismn/balances'
+import { BalanceFormatter, Balances, type } from '@talismn/balances'
 import { formatDecimals } from '@talismn/util'
 import { useRecoilValue } from 'recoil'
 
@@ -80,7 +79,7 @@ export const AssetBreakdownList = (props: AssetBreakdownListProps) => {
     <Table>
       <tbody>
         <AssetBreakdownRowHeader token={token} isOrml />
-        {accounts.map(account => {
+        {accounts.map((account, index) => {
           const tokenBalance = balances?.find({ tokenId: token?.tokenDetails?.id, address: account.address })
 
           if (
@@ -109,9 +108,9 @@ export const AssetBreakdownList = (props: AssetBreakdownListProps) => {
             variant: 'available',
           }
 
-          return <AssetBreakdownRow assetSummary={assetSummary} />
+          return <AssetBreakdownRow key={index} assetSummary={assetSummary} />
         })}
-        {accounts.map((account: Account) => {
+        {accounts.map((account, index) => {
           const tokenBalance = balances?.find({ tokenId: token?.tokenDetails?.id, address: account.address })
 
           if (
@@ -135,10 +134,10 @@ export const AssetBreakdownList = (props: AssetBreakdownListProps) => {
             fiatAmount,
             account,
             symbol: token?.tokenDetails?.symbol,
-            variant: 'governance',
+            variant: 'locked',
           }
 
-          return <AssetBreakdownRow assetSummary={assetSummary} />
+          return <AssetBreakdownRow key={index} assetSummary={assetSummary} />
         })}
       </tbody>
     </Table>

@@ -1,17 +1,16 @@
 import { useTheme } from '@emotion/react'
 import { Clock, Lock, Rocket } from '@talismn/icons'
-import { Chip, ChipProps, Hr, Identicon, ListItem, Text, Tooltip } from '@talismn/ui'
-import Color from 'colorjs.io'
-import { ReactNode, useMemo } from 'react'
+import { Chip, ChipProps, CircularProgressIndicator, Hr, Identicon, ListItem, Text, Tooltip, type } from '@talismn/ui'
+import { ReactNode, type } from 'react'
 
-import { StakeStatus, StakeStatusIndicator } from '../StakeStatusIndicator'
+import { StakeStatus, StakeStatusIndicator, type } from '../StakeStatusIndicator'
 import StakeItemSkeleton from './StakeItemSkeleton'
 
 export type StakeItemProps = {
   accountName: string
   accountAddress: string
-  stakingAmount: string
-  stakingFiatAmount: string
+  stakingAmount: ReactNode
+  stakingFiatAmount: ReactNode
   poolName: ReactNode
   stakeStatus?: StakeStatus
   actions?: ReactNode
@@ -30,13 +29,12 @@ export const UnstakeChip = (props: Omit<ChipProps, 'children'>) => <Chip {...pro
 
 export const ClaimChip = ({ amount, ...props }: Omit<ChipProps, 'children'> & { amount: ReactNode }) => {
   const theme = useTheme()
-  const claimChipContainerColor = useMemo(() => {
-    const color = new Color(theme.color.primary)
-    color.alpha = 0.125
-    return color.display().toString()
-  }, [theme.color.primary])
   return (
-    <Chip {...props} containerColor={claimChipContainerColor} contentColor={theme.color.primary}>
+    <Chip
+      {...props}
+      containerColor={`color-mix(in srgb, ${theme.color.primary}, transparent 88%)`}
+      contentColor={theme.color.primary}
+    >
       Claim {amount}
     </Chip>
   )
@@ -72,13 +70,18 @@ export const UnstakingStatus = (props: {
       </div>
     }
   >
-    {tooltipProps => (
-      <div {...tooltipProps} css={{ display: 'flex', alignItems: 'center', gap: '0.5em' }}>
-        <Clock size="1em" />
-        <Text.Body>Unstaking {props.amount}</Text.Body>
-      </div>
-    )}
+    <div css={{ display: 'flex', alignItems: 'center', gap: '0.5em' }}>
+      <Clock size="1em" />
+      <Text.Body>Unstaking {props.amount}</Text.Body>
+    </div>
   </Tooltip>
+)
+
+export const FastUnstakingStatus = (props: { amount: ReactNode; status: 'in-head' | 'in-queue' | undefined }) => (
+  <div css={{ display: 'flex', alignItems: 'center', gap: '0.5em' }}>
+    <CircularProgressIndicator size="1em" />
+    <Text.Body>Fast unstaking {props.amount}</Text.Body>
+  </div>
 )
 
 const StakeItem = Object.assign(

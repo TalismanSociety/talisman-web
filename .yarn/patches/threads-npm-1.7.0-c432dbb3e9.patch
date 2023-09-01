@@ -1,0 +1,27 @@
+diff --git a/package.json b/package.json
+index c4ef12336424053c1d8f921d0366e36e7c12961a..9d9934f066f0946fe7d68028725a2bbc25692fb4 100644
+--- a/package.json
++++ b/package.json
+@@ -24,18 +24,22 @@
+   "exports": {
+     ".": {
+       "require": "./dist/index.js",
++      "types": "./dist/index.d.ts",
+       "default": "./index.mjs"
+     },
+     "./observable": {
+       "require": "./observable.js",
++      "types": "./observable.d.ts",
+       "default": "./observable.mjs"
+     },
+     "./register": {
+       "require": "./register.js",
++      "types": "./register.d.ts",
+       "default": "./register.mjs"
+     },
+     "./worker": {
+       "require": "./worker.js",
++      "types": "./worker.d.ts",
+       "default": "./worker.mjs"
+     }
+   },

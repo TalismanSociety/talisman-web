@@ -1,4 +1,4 @@
-import { AlertDialog, Button, LabelButton, Text, TextInput } from '@talismn/ui'
+import { AlertDialog, Button, Text, TextInput } from '@talismn/ui'
 
 export type AddStakeDialogProps = {
   open: boolean
@@ -28,17 +28,19 @@ const AddStakeDialog = (props: AddStakeDialogProps) => (
         </Text.Body>
         <TextInput
           type="number"
+          inputMode="decimal"
           min={0}
           step="any"
           isError={props.isError}
-          placeholder="0 DOT"
+          placeholder="0.00"
           leadingLabel="Available to stake"
           trailingLabel={props.availableToStake}
           leadingSupportingText={props.fiatAmount}
           trailingSupportingText={props.inputSupportingText}
-          trailingIcon={<LabelButton onClick={props.onRequestMaxAmount}>MAX</LabelButton>}
+          trailingIcon={<TextInput.LabelButton onClick={props.onRequestMaxAmount}>MAX</TextInput.LabelButton>}
           value={props.amount}
           onChange={event => props.onChangeAmount(event.target.value)}
+          css={{ fontSize: '3rem' }}
         />
         <div css={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '1.6rem' }}>
           <Text.Body alpha="high">New staked total</Text.Body>

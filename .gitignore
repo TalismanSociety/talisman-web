@@ -10,5 +10,6 @@ node_modules
 
 .turbo
 .vscode
+.dir-locals.el
 .DS_Store
 ._.DS_Store

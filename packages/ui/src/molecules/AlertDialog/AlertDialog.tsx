@@ -1,17 +1,19 @@
-import { Global, keyframes, useTheme } from '@emotion/react'
+import { keyframes, useTheme } from '@emotion/react'
 import { X } from '@talismn/icons'
-import { ReactNode } from 'react'
+import { type ReactNode } from 'react'
 
-import { Button, Dialog, DialogProps, Text } from '../../atoms'
+import { Button, Dialog, Surface, Text, type DialogProps } from '../../atoms'
 
-export type AlertDialogProps = DialogProps & {
-  title?: string
+export type AlertDialogProps = Omit<DialogProps, 'title'> & {
+  title?: ReactNode
   content: ReactNode
   confirmButton?: ReactNode
   dismissButton?: ReactNode
   onRequestDismiss: () => unknown
   width?: string | number
 }
+
+export const ALERT_DIALOG_PADDING = '2.4rem'
 
 const show = keyframes`
   from {
@@ -44,15 +46,15 @@ const AlertDialog = ({
 
   return (
     <>
-      {props.open && <Global styles={{ body: { overflow: 'hidden' } }} />}
-      <Dialog
+      <Surface
+        as={Dialog}
         {...props}
         title={undefined}
         onClickBackdrop={onRequestDismiss}
         onClose={onRequestDismiss}
         onCancel={onRequestDismiss}
         css={{
-          'padding': '2.4rem',
+          'padding': ALERT_DIALOG_PADDING,
           'background': theme.color.surface,
           'border': 'none',
           'borderRadius': '1.6rem',
@@ -64,8 +66,9 @@ const AlertDialog = ({
               animation: `${backdropKeyframes} .5s ease forwards`,
             },
           },
+          'width': 'auto',
           '@media (min-width: 768px)': {
-            width: width,
+            width: width ?? 'revert',
           },
         }}
       >
@@ -78,20 +81,22 @@ const AlertDialog = ({
           </Button>
         </header>
         {content}
-        <div
-          css={{
-            'display': 'flex',
-            'gap': '1.6rem',
-            'marginTop': '4.6rem',
-            '> *': {
-              flex: 1,
-            },
-          }}
-        >
-          {dismissButton}
-          {confirmButton}
-        </div>
-      </Dialog>
+        {(dismissButton || confirmButton) && (
+          <div
+            css={{
+              'display': 'flex',
+              'gap': '1.6rem',
+              'marginTop': '4.6rem',
+              '> *': {
+                flex: 1,
+              },
+            }}
+          >
+            {dismissButton}
+            {confirmButton}
+          </div>
+        )}
+      </Surface>
     </>
   )
 }

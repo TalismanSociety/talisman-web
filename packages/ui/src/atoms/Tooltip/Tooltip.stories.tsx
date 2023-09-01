@@ -1,6 +1,6 @@
-import { ComponentMeta, Story } from '@storybook/react'
+import { type ComponentMeta, type Story } from '@storybook/react'
 
-import Tooltip, { TooltipProps } from './Tooltip'
+import Tooltip, { type TooltipProps } from './Tooltip'
 
 export default {
   title: 'Atoms/Tooltip',
@@ -14,5 +14,5 @@ export const Default: Story<TooltipProps> = args => <Tooltip {...args} />
 
 Default.args = {
   content: 'BAM! Tooltip',
-  children: props => <div {...props}>Hover over me</div>,
+  children: <div>Hover over me</div>,
 }

@@ -1,0 +1,23 @@
+{
+  "name": "@talismn/react-polkadot-api",
+  "type": "module",
+  "exports": "./build/index.js",
+  "scripts": {
+    "dev": "tsc --build --watch tsconfig.json",
+    "build": "rm -rf build && tsc --build tsconfig.json",
+    "lint": "eslint src",
+    "check-types": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@polkadot/api": "^10.9.1",
+    "@talismn/eslint-config": "workspace:^",
+    "@talismn/tsconfig": "workspace:^",
+    "@types/react": "^18.2.7",
+    "typescript": "^5.0.4"
+  },
+  "peerDependencies": {
+    "@polkadot/api": ">= 9.x",
+    "react": ">= 18.x",
+    "recoil": ">= 0.7.x"
+  }
+}

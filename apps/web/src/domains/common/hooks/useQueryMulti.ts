@@ -1,4 +1,4 @@
-import { ApiPromise } from '@polkadot/api'
+import { ApiPromise, type } from '@polkadot/api'
 import type {
   GenericStorageEntryFunction,
   PromiseResult,
@@ -7,12 +7,12 @@ import type {
 } from '@polkadot/api/types'
 import useDeferred from '@util/useDeferred'
 import { useEffect, useRef, useState } from 'react'
-import { Loadable, RecoilLoadable, useRecoilValue } from 'recoil'
-import { Observable } from 'rxjs'
+import { Loadable, RecoilLoadable, type, useRecoilValue } from 'recoil'
+import { Observable, type } from 'rxjs'
 
 import { useSubstrateApiState } from '..'
 
-type QueryMap = PickKnownKeys<// @ts-ignore
+type QueryMap = PickKnownKeys<// @ts-expect-error
 { [P in keyof ApiPromise['query']]: `${P}.${keyof PickKnownKeys<ApiPromise['query'][P]>}` }>
 
 type Query = QueryMap[keyof QueryMap]
@@ -81,12 +81,14 @@ export const useQueryMulti = <
       const params = queries.map(x => {
         if (typeof x === 'string') {
           const [module, section] = x.split('.')
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
           return api.query[module!]?.[section!]
         }
 
         const [query, ...params] = x
         const [module, section] = query.split('.')
 
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         return [api.query[module!]?.[section!], ...params]
       })
 
@@ -109,7 +111,7 @@ export const useQueryMulti = <
         })
 
       return () => {
-        unsubscribePromise.then(unsubscribe => {
+        void unsubscribePromise.then(unsubscribe => {
           if (typeof unsubscribe === 'function') {
             unsubscribe()
           }

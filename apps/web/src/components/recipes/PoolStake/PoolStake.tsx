@@ -1,11 +1,11 @@
 import { useTheme } from '@emotion/react'
 import { Button, Identicon, Text, Tooltip } from '@talismn/ui'
 import { shortenAddress } from '@util/format'
-import React, { ReactElement, ReactNode, useMemo } from 'react'
+import React, { ReactElement, ReactNode, type, type, useMemo } from 'react'
 import { useMedia } from 'react-use'
 
 import StakeList from '../StakeList'
-import { StakeStatus, StakeStatusIndicator } from '../StakeStatusIndicator'
+import { StakeStatus, StakeStatusIndicator, type } from '../StakeStatusIndicator'
 import PoolStakeSkeleton from './PoolStake.skeleton'
 
 export type PoolStakeProps = {
@@ -110,11 +110,7 @@ const PoolStake = Object.assign(
               css={{ display: 'inline-block', verticalAlign: 'middle', marginRight: '0.6rem' }}
             />
             <Tooltip content={props.poolName}>
-              {tooltipProps => (
-                <div {...tooltipProps} css={{ display: 'inline' }}>
-                  {props.poolName}
-                </div>
-              )}
+              <div css={{ display: 'inline' }}>{props.poolName}</div>
             </Tooltip>
           </Text>
         </div>
@@ -181,7 +177,7 @@ const PoolStake = Object.assign(
 )
 
 export type PoolStakeListProps = {
-  children?: ReactElement<PoolStakeProps> | ReactElement<PoolStakeProps>[]
+  children?: ReactElement<PoolStakeProps> | Array<ReactElement<PoolStakeProps>>
 }
 
 export const PoolStakeList = (props: PoolStakeListProps) => (

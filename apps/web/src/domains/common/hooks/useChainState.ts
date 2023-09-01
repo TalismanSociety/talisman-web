@@ -1,19 +1,18 @@
-import { ApiPromise } from '@polkadot/api'
+import { ApiPromise, type } from '@polkadot/api'
 import type {
   GenericStorageEntryFunction,
   PromiseResult,
   QueryableStorageEntry,
   StorageEntryPromiseOverloads,
 } from '@polkadot/api/types'
-import { useContext } from 'react'
-import { Loadable, RecoilLoadable, constSelector, useRecoilValueLoadable } from 'recoil'
-import { Observable } from 'rxjs'
+import { Loadable, RecoilLoadable, constSelector, type, useRecoilValueLoadable } from 'recoil'
+import { Observable, type } from 'rxjs'
 
-import { chainState } from '../recoils'
-import { SubstrateApiContext } from '..'
+import { chainQueryState } from '../recoils/query'
+import { useSubstrateApiEndpoint } from '.'
 
 /**
- * @deprecated use `useChainQueryState` or `useChainDeriveState` instead
+ * @deprecated use `useQueryState` or `useDeriveState` instead
  */
 export const useChainState = <
   TType extends keyof Pick<ApiPromise, 'query' | 'derive'>,
@@ -22,18 +21,17 @@ export const useChainState = <
   TAugmentedSection extends TType extends 'query' ? TSection | `${TSection}.multi` : TSection,
   TExtractedSection extends TAugmentedSection extends `${infer Section}.multi` ? Section : TAugmentedSection,
   TMethod extends Diverge<
-    // @ts-ignore
+    // @ts-expect-error
     ApiPromise[TType][TModule][TExtractedSection],
     StorageEntryPromiseOverloads & QueryableStorageEntry<any, any> & PromiseResult<GenericStorageEntryFunction>
   >
 >(
   typeName: TType,
   moduleName: TModule,
-  // @ts-ignore
+
   sectionName: TAugmentedSection,
   params: TMethod extends (...args: any) => any
-    ? // @ts-ignore
-      TAugmentedSection extends TSection
+    ? TAugmentedSection extends TSection
       ? Leading<Parameters<TMethod>>
       : Leading<Parameters<TMethod>> extends [infer Head]
       ? Head[]
@@ -47,18 +45,18 @@ export const useChainState = <
       : Result[]
     : never
 
-  const endpoint = useContext(SubstrateApiContext).endpoint
+  const endpoint = useSubstrateApiEndpoint()
 
   const loadable = useRecoilValueLoadable<TResult>(
     typeName === 'query'
       ? !options.enabled
         ? (constSelector(undefined) as any)
         : // @ts-expect-error
-          chainState([endpoint, typeName, moduleName, sectionName, params])
+          chainQueryState(endpoint, moduleName, sectionName, params)
       : !options.enabled
       ? (constSelector(undefined) as any)
       : // @ts-expect-error
-        chainState([endpoint, typeName, moduleName, sectionName, params])
+        chainDeriveState(endpoint, moduleName, sectionName, params)
   )
 
   return !options.enabled ? (RecoilLoadable.loading() as Loadable<TResult>) : loadable

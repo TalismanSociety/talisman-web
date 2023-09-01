@@ -1,30 +1,21 @@
 import { useTheme } from '@emotion/react'
-import { Chip, ChipProps, Skeleton, Text } from '@talismn/ui'
-import { ReactNode } from 'react'
+import { Chip, ChipProps, Skeleton, Text, type } from '@talismn/ui'
+import { ReactNode, type } from 'react'
 import { VictoryPie, VictoryTooltip } from 'victory'
 
-type Data = { label: string; value: number; color: string }
+type Data = { label: string; value: number; renderValue?: (value: number) => ReactNode; color: string }
 
 export type PortfolioAllocationGraphProps = {
   assetChip: ReactNode
   stateChip: ReactNode
   data: Data[]
-  valueType: 'percent' | 'currency'
 }
 
-const Legend = (props: Data & { type: 'percent' | 'currency' }) => (
+const Legend = (props: Data) => (
   <span css={{ display: 'flex', gap: '0.8rem', alignItems: 'center' }}>
     <div css={{ width: '1.2rem', height: '1.2rem', borderRadius: '50%', backgroundColor: props.color }} />
     <Text.BodyLarge alpha="high">{props.label}</Text.BodyLarge>
-    <Text.BodyLarge>
-      {props.type === 'percent'
-        ? props.value.toLocaleString(undefined, { style: 'percent' })
-        : props.value.toLocaleString(undefined, {
-            style: 'currency',
-            currency: 'usd',
-            currencyDisplay: 'narrowSymbol',
-          })}
-    </Text.BodyLarge>
+    <Text.BodyLarge>{props.renderValue?.(props.value) ?? props.value}</Text.BodyLarge>
   </span>
 )
 
@@ -110,8 +101,8 @@ const PortfolioAllocationGraph = Object.assign(
             </div>
           </div>
           <ul css={{ display: 'flex', flexDirection: 'column', gap: '0.8rem', margin: 0, padding: 0 }}>
-            {props.data.map(data => (
-              <Legend {...data} type={props.valueType} />
+            {props.data.map((data, index) => (
+              <Legend key={index} {...data} />
             ))}
           </ul>
         </div>

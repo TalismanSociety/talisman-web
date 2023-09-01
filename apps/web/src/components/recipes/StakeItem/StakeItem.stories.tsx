@@ -1,8 +1,8 @@
-import { ComponentMeta, Story } from '@storybook/react'
+import { ComponentMeta, Story, type, type } from '@storybook/react'
 
-import PoolStakeItem, { PoolStakeItemProps } from './PoolStakeItem'
+import PoolStakeItem, { PoolStakeItemProps, type } from './PoolStakeItem'
 import StakeItem from './StakeItem'
-import ValidatorStakeItem, { ValidatorStakeItemProps } from './ValidatorStakeItem'
+import ValidatorStakeItem, { ValidatorStakeItemProps, type } from './ValidatorStakeItem'
 
 export default {
   title: 'Recipes/StakeItem',
@@ -68,6 +68,14 @@ ValidatorStakeWithFastUnstake.args = {
       ]}
     />
   ),
+}
+
+export const ValidatorStakeWithFastUnstakeQueue = ValidatorStake.bind({})
+
+ValidatorStakeWithFastUnstake.args = {
+  ...defaultProps,
+  unstakeChip: <ValidatorStakeItem.FastUnstakeChip />,
+  status: <ValidatorStakeItem.FastUnstakingStatus amount="1 DOT" status="in-head" />,
 }
 
 export const Skeleton = () => <StakeItem.Skeleton />

@@ -1,0 +1,14 @@
+name: Setup
+
+description: Checkout repository & install dependencies
+
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-node@v3
+      with:
+        node-version-file: .nvmrc
+        cache: yarn
+
+    - run: yarn install --immutable
+      shell: bash

@@ -1,29 +1,68 @@
 {
-  "extends": "./tsconfig.paths.json",
+  "extends": "@talismn/tsconfig/vite-react",
   "compilerOptions": {
-    "target": "ESNext",
-    "lib": [
-      "DOM",
-      "DOM.Iterable",
-      "ESNext"
-    ],
-    "allowJs": true,
-    "skipLibCheck": true,
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "strict": true,
-    "forceConsistentCasingInFileNames": true,
-    "noFallthroughCasesInSwitch": true,
-    "noUncheckedIndexedAccess": true,
-    "module": "ESNext",
-    "moduleResolution": "bundler",
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "noEmit": true,
-    "jsx": "react-jsx",
-    "jsxImportSource": "@emotion/react"
+    "jsxImportSource": "@emotion/react",
+    "baseUrl": "./src",
+    "paths": {
+      "@archetypes": [
+        "./archetypes"
+      ],
+      "@archetypes/*": [
+        "./archetypes/*"
+      ],
+      "@assets": [
+        "./assets"
+      ],
+      "@assets/*": [
+        "./assets/*"
+      ],
+      "@components": [
+        "./components"
+      ],
+      "@components/*": [
+        "./components/*"
+      ],
+      "@icons": [
+        "./assets/icons"
+      ],
+      "@icons/*": [
+        "./assets/icons/*"
+      ],
+      "@libs": [
+        "./libs"
+      ],
+      "@libs/*": [
+        "./libs/*"
+      ],
+      "@routes": [
+        "./routes"
+      ],
+      "@routes/*": [
+        "./routes/*"
+      ],
+      "@util": [
+        "./util"
+      ],
+      "@util/*": [
+        "./util/*"
+      ],
+      "@layout": [
+        "./layout"
+      ],
+      "@layout/*": [
+        "./layout/*"
+      ],
+      "@domains/*": [
+        "./domains/*"
+      ]
+    }
   },
   "include": [
     "src"
+  ],
+  "references": [
+    {
+      "path": "./tsconfig.node.json"
+    }
   ]
 }

@@ -1,9 +1,5 @@
 import { useTheme } from '@emotion/react'
 import {
-  FloatingPortal,
-  Placement,
-  ReferenceType,
-  Strategy,
   autoPlacement,
   autoUpdate,
   offset,
@@ -15,23 +11,29 @@ import {
   useFloatingNodeId,
   useInteractions,
   useRole,
+  type Placement,
+  type ReferenceType,
+  type Strategy,
+  type ExtendedRefs,
 } from '@floating-ui/react'
 import { motion } from 'framer-motion'
 import {
-  DetailedHTMLProps,
-  HTMLAttributes,
-  HTMLProps,
-  ReactElement,
-  ReactNode,
   createContext,
   useContext,
   useMemo,
   useState,
+  type DetailedHTMLProps,
+  type HTMLAttributes,
+  type HTMLProps,
+  type ReactElement,
+  type ReactNode,
 } from 'react'
+import { Surface, useSurfaceColor } from '../..'
+import FloatingPortal from '../../atoms/FloatingPortal'
 
-export const OFFSET = 12
+export const MENU_OFFSET = 12
 
-export const BORDER_RADIUS = '1.2rem'
+export const MENU_BORDER_RADIUS = '1.2rem'
 
 export type MenuProps = {
   children: [ReactElement<MenuButtonProps>, ReactElement<MenuItemsProps>]
@@ -39,7 +41,9 @@ export type MenuProps = {
 
 export type MenuButtonProps = { children: ReactNode | ((props: { open: boolean }) => ReactNode) }
 
-export type MenuItemsProps = DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement>
+export type MenuItemsProps = Omit<DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement>, 'children'> & {
+  children: ReactNode | ((props: { open: boolean; toggleOpen: () => unknown }) => ReactNode)
+}
 
 export type MenuItemProps = DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> & {
   dismissAfterSelection?: boolean
@@ -51,22 +55,20 @@ const MenuContext = createContext<{
   y: number | null
   strategy: Strategy
   placement: Placement
-  reference: (node: ReferenceType | null) => void
+  refs: ExtendedRefs<ReferenceType>
   getReferenceProps: (props?: HTMLProps<HTMLElement>) => any
-  floating: (node: HTMLElement | null) => void
   getFloatingProps: (props?: HTMLProps<HTMLElement>) => any
   getItemProps: (props?: HTMLProps<HTMLElement>) => any
   open: boolean
-  setOpen: (value: boolean) => unknown
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>
 }>({
   nodeId: '',
   x: 0,
   y: 0,
   strategy: 'absolute',
   placement: 'bottom-start',
-  reference: () => {},
+  refs: {} as any,
   getReferenceProps: props => props,
-  floating: () => {},
   getFloatingProps: props => props,
   getItemProps: props => props,
   open: false,
@@ -74,9 +76,9 @@ const MenuContext = createContext<{
 })
 
 const MenuButton = ({ children, ...props }: MenuButtonProps) => {
-  const { reference, getReferenceProps, open } = useContext(MenuContext)
+  const { refs, getReferenceProps, open } = useContext(MenuContext)
   return (
-    <div ref={reference} {...getReferenceProps(props)} css={{ width: 'fit-content' }}>
+    <div ref={refs.setReference} {...getReferenceProps(props)} css={{ width: 'fit-content' }}>
       {typeof children === 'function' ? children({ open }) : children}
     </div>
   )
@@ -85,33 +87,40 @@ const MenuButton = ({ children, ...props }: MenuButtonProps) => {
 const MenuItems = (props: MenuItemsProps) => {
   const theme = useTheme()
   const [animating, setAnimating] = useState(false)
-  const { nodeId, x, y, strategy, placement, floating, getFloatingProps, open } = useContext(MenuContext)
+  const { nodeId, x, y, strategy, placement, refs, getFloatingProps, open, setOpen } = useContext(MenuContext)
 
   const closedClipPath = useMemo(() => {
     switch (placement) {
       case 'top-start':
-        return `inset(100% 100% 0 0 round ${BORDER_RADIUS})`
+        return `inset(100% 100% 0 0 round ${MENU_BORDER_RADIUS})`
       case 'top-end':
-        return `inset(100% 0 0 100% round ${BORDER_RADIUS})`
+        return `inset(100% 0 0 100% round ${MENU_BORDER_RADIUS})`
       case 'bottom-start':
-        return `inset(0 100% 100% 0 round ${BORDER_RADIUS})`
+        return `inset(0 100% 100% 0 round ${MENU_BORDER_RADIUS})`
       case 'bottom-end':
-        return `inset(0 0 100% 100% round ${BORDER_RADIUS})`
+        return `inset(0 0 100% 100% round ${MENU_BORDER_RADIUS})`
       default:
-        return `inset(0 50% 100% 50% round ${BORDER_RADIUS})`
+        return `inset(0 50% 100% 50% round ${MENU_BORDER_RADIUS})`
     }
   }, [placement])
+
+  const children =
+    typeof props.children === 'function'
+      ? props.children({ open, toggleOpen: () => setOpen(open => !open) })
+      : props.children
 
   return (
     <FloatingPortal id={nodeId}>
       {(open || animating) && (
-        <motion.section
-          ref={floating}
+        <Surface
+          as={motion.section}
+          ref={refs.setFloating}
+          elevation={x => x + 1}
           onAnimationStart={() => setAnimating(true)}
           onAnimationComplete={() => setAnimating(false)}
           variants={{
             true: {
-              clipPath: `inset(0% 0% 0% 0% round ${BORDER_RADIUS})`,
+              clipPath: `inset(0% 0% 0% 0% round ${MENU_BORDER_RADIUS})`,
               transitionEnd: {
                 overflow: 'auto',
               },
@@ -136,11 +145,11 @@ const MenuItems = (props: MenuItemsProps) => {
           css={{
             border: `1px solid ${theme.color.border}`,
             borderRadius: '1.2rem',
-            backgroundColor: theme.color.surface,
           }}
           {...getFloatingProps({
             ...props,
             style: { ...props.style, position: strategy, top: y ?? 0, left: x ?? 0, width: 'max-content' },
+            children,
           })}
         />
       )}
@@ -149,7 +158,6 @@ const MenuItems = (props: MenuItemsProps) => {
 }
 
 const MenuItem = ({ dismissAfterSelection = true, ...props }: MenuItemProps) => {
-  const theme = useTheme()
   const { getItemProps, setOpen } = useContext(MenuContext)
   return (
     <motion.div
@@ -160,7 +168,7 @@ const MenuItem = ({ dismissAfterSelection = true, ...props }: MenuItemProps) => 
       css={{
         'cursor': 'pointer',
         ':hover': {
-          backgroundColor: theme.color.foreground,
+          backgroundColor: useSurfaceColor(),
         },
       }}
       {...getItemProps({
@@ -180,13 +188,13 @@ const Menu = (props: MenuProps) => {
   const nodeId = useFloatingNodeId()
   const [open, setOpen] = useState(false)
 
-  const { context, x, y, reference, floating, strategy, placement } = useFloating({
+  const { context, x, y, refs, strategy, placement } = useFloating({
     nodeId,
     open,
     onOpenChange: setOpen,
     whileElementsMounted: autoUpdate,
     middleware: [
-      offset(OFFSET),
+      offset(MENU_OFFSET),
       autoPlacement({ allowedPlacements: ['top-start', 'top-end', 'bottom-start', 'bottom-end'] }),
       shift(),
       size({
@@ -213,9 +221,8 @@ const Menu = (props: MenuProps) => {
         y,
         strategy,
         placement,
-        reference,
+        refs,
         getReferenceProps,
-        floating,
         getFloatingProps,
         getItemProps,
         open,

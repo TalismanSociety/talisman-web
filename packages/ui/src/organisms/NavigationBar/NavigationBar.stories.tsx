@@ -1,8 +1,7 @@
-import { ComponentMeta, Story } from '@storybook/react'
-import { Compass, CreditCard, Eye, RefreshCcw, Union, Zap } from '@talismn/icons'
+import { type ComponentMeta, type Story } from '@storybook/react'
+import { Compass, CreditCard, Eye, RefreshCcw, Zap } from '@talismn/icons'
 
-import { IconButton } from '../../atoms'
-import NavigationBar, { NavigationBarItem, NavigationBarProps } from './NavigationBar'
+import NavigationBar, { NavigationBarItem, type NavigationBarProps } from './NavigationBar'
 
 export default {
   title: 'Organisms/NavigationBar',

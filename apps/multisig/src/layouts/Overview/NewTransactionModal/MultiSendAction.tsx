@@ -13,7 +13,7 @@ import {
 import { css } from '@emotion/css'
 import { SubmittableExtrinsic } from '@polkadot/api/types'
 import { Plus, Send, Trash } from '@talismn/icons'
-import { Button, FullScreenDialog, TextInput } from '@talismn/ui'
+import { Button, SideSheet, TextInput } from '@talismn/ui'
 import { Address } from '@util/addresses'
 import BN from 'bn.js'
 import Decimal from 'decimal.js'
@@ -305,7 +305,7 @@ const MultiSendAction = (props: { onCancel: () => void }) => {
           />
         </>
       ) : null}
-      <FullScreenDialog
+      <SideSheet
         onRequestDismiss={() => {
           setStep(Step.Details)
         }}
@@ -361,7 +361,7 @@ const MultiSendAction = (props: { onCancel: () => void }) => {
             return Promise.resolve()
           }}
         />
-      </FullScreenDialog>
+      </SideSheet>
     </div>
   )
 }

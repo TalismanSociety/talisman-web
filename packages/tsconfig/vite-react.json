@@ -1,0 +1,8 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "extends": ["@tsconfig/strictest/tsconfig", "@tsconfig/vite-react/tsconfig.json"],
+  "compilerOptions": {
+    "checkJs": false,
+    "exactOptionalPropertyTypes": false
+  }
+}

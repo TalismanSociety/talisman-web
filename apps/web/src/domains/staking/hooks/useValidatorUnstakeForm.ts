@@ -13,7 +13,7 @@ export const useValidatorUnstakeForm = (account?: string) => {
 
   const [input, setAmount] = useTokenAmountState('')
 
-  const minNeededForMembership = useTokenAmountFromPlanck(queriesLoadable.contents[0])
+  const minNeededForMembership = useTokenAmountFromPlanck(queriesLoadable.valueMaybe()?.[0])
 
   const available = useTokenAmountFromPlanck(queriesLoadable.valueMaybe()?.[1]?.unwrapOrDefault().active.unwrap())
 
@@ -24,23 +24,42 @@ export const useValidatorUnstakeForm = (account?: string) => {
     )
   )
 
+  const isLeaving = useMemo(
+    () =>
+      input.decimalAmount !== undefined &&
+      available.decimalAmount !== undefined &&
+      input.decimalAmount.toString() === input.amount &&
+      input.decimalAmount.toString() === available.decimalAmount.toString(),
+    [available.decimalAmount, input.amount, input.decimalAmount]
+  )
+
   const error = useMemo(() => {
     if (queriesLoadable.state !== 'hasValue') return
 
-    if (available.decimalAmount !== undefined && input.decimalAmount?.planck.gt(available.decimalAmount.planck)) {
-      return new Error('Insufficient balance')
+    if (!isLeaving) {
+      if (available.decimalAmount !== undefined && input.decimalAmount?.planck.gt(available.decimalAmount.planck)) {
+        return new Error('Insufficient balance')
+      }
+
+      if (
+        available.decimalAmount !== undefined &&
+        input.decimalAmount !== undefined &&
+        !input.decimalAmount.planck.eq(available.decimalAmount.planck) &&
+        minNeededForMembership.decimalAmount !== undefined &&
+        available.decimalAmount.planck.sub(input.decimalAmount.planck).lt(minNeededForMembership.decimalAmount.planck)
+      ) {
+        return new Error(`Need ${minNeededForMembership.decimalAmount?.toHuman()} to stay active`)
+      }
     }
 
-    if (
-      available.decimalAmount !== undefined &&
-      input.decimalAmount !== undefined &&
-      !input.decimalAmount.planck.eq(available.decimalAmount.planck) &&
-      minNeededForMembership.decimalAmount !== undefined &&
-      available.decimalAmount.planck.sub(input.decimalAmount.planck).lt(minNeededForMembership.decimalAmount.planck)
-    ) {
-      return new Error(`Need ${minNeededForMembership.decimalAmount?.toHuman()} to stay active`)
-    }
-  }, [queriesLoadable.state, available.decimalAmount, input.decimalAmount, minNeededForMembership.decimalAmount])
+    return undefined
+  }, [
+    queriesLoadable.state,
+    isLeaving,
+    available.decimalAmount,
+    input.decimalAmount,
+    minNeededForMembership.decimalAmount,
+  ])
 
   return {
     extrinsic: {
@@ -48,16 +67,15 @@ export const useValidatorUnstakeForm = (account?: string) => {
       // TODO: clean up this dirty hack
       // maybe create a hook or function to combine status of multiple distinct extrinsic
       state: unbondExtrinsic.state === 'loading' || unbondAllExtrinsic.state === 'loading' ? 'loading' : 'idle',
-      unbondAll: (account: string) => {
+      unbondAll: async (account: string) => {
         const stake = queriesLoadable.valueMaybe()?.[1]
 
         if (stake === undefined) {
           throw new Error('Extrinsic not ready yet')
         }
 
-        return unbondAllExtrinsic.signAndSend(account, [
+        return await unbondAllExtrinsic.signAndSend(account, [
           [],
-          // @ts-ignore
           // Internal @polkadot type error
           [queriesLoadable.valueMaybe()?.[1].unwrapOrDefault().active ?? 0],
         ])
@@ -68,6 +86,7 @@ export const useValidatorUnstakeForm = (account?: string) => {
     resulting,
     setAmount,
     error,
+    isLeaving,
     isReady: queriesLoadable.state === 'hasValue',
   }
 }

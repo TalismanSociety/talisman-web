@@ -1,49 +1,20 @@
-import { SubstrateApiContext, substrateApiState } from '@domains/common'
-import { storageEffect } from '@domains/common/effects'
-import { BN } from '@polkadot/util'
-import { ToBn } from '@polkadot/util/types'
-import Decimal from '@util/Decimal'
+import { substrateApiState, useSubstrateApiEndpoint } from '@domains/common'
+import { BN, type } from '@polkadot/util'
+import { ToBn, type } from '@polkadot/util/types'
+import { Decimal } from '@talismn/math'
 import { useContext } from 'react'
 import { atom, selector, selectorFamily } from 'recoil'
 
-import { chains } from './config'
-import { ChainId, chainParams, defaultParams } from './consts'
+import { Chain, chains, type } from './config'
+import { ChainContext } from '.'
 
-// Getting these value locally right now since chaindata squid is not too stable
+export const _chainsState = atom({ key: '_Chains', default: chains })
+
+export const enableTestnetsState = atom({ key: 'EnableTestnets', default: false })
+
 export const chainsState = selector({
   key: 'Chains',
-  get: () =>
-    chains.map(x => ({
-      ...x,
-      params: chainParams[x.id as ChainId] ?? defaultParams,
-    })),
-})
-
-export const chainIdState = atom<ChainId>({
-  key: 'ChainId',
-  default: 'polkadot',
-  effects: [storageEffect(sessionStorage)],
-})
-
-export const chainRpcState = atom({
-  key: 'ChainRpc',
-  default: selector({
-    key: 'ChainRpc/Default',
-    get: ({ get }) => get(chainState).rpcs[0]?.url ?? '',
-  }),
-})
-
-export const chainState = selector({
-  key: 'Chain',
-  get: ({ get }) => {
-    const allChains = get(chainsState)
-    const id = get(chainIdState)
-    const chain = allChains.find(x => x.id === id)
-
-    if (chain === undefined) throw new Error(`Can't find chain with id: ${id}`)
-
-    return chain
-  },
+  get: ({ get }) => (get(enableTestnetsState) ? get(_chainsState) : get(_chainsState).filter(x => !x.isTestnet)),
 })
 
 export const tokenPriceState = selectorFamily({
@@ -54,7 +25,7 @@ export const tokenPriceState = selectorFamily({
       try {
         const result = await fetch(
           `https://api.coingecko.com/api/v3/simple/price?ids=${coingeckoId}&vs_currencies=${fiat}`
-        ).then(x => x.json())
+        ).then(async x => await x.json())
 
         return result[coingeckoId][fiat] as number
       } catch {
@@ -68,19 +39,24 @@ export const tokenPriceState = selectorFamily({
 export const nativeTokenPriceState = selectorFamily({
   key: 'NativeTokenPrice',
   get:
-    (fiat: string = 'usd') =>
+    ({ chain, fiat }: { chain: Chain; fiat: string }) =>
     async ({ get }) => {
-      const chain = get(chainState)
-
-      if (chain.isTestnet) return 1
-
-      if (chain.nativeToken.coingeckoId === undefined) {
+      if (chain?.isTestnet) {
         return 0
       }
 
-      return get(tokenPriceState({ coingeckoId: chain.nativeToken.coingeckoId, fiat }))
+      const coingeckoId = chain.nativeToken.coingeckoId
+
+      if (coingeckoId === undefined) {
+        throw new Error('Chain missing CoinGecko id')
+      }
+
+      return get(tokenPriceState({ coingeckoId, fiat }))
     },
 })
+
+export const useNativeTokenPriceState = (fiat: string = 'usd') =>
+  nativeTokenPriceState({ chain: useContext(ChainContext), fiat })
 
 export const nativeTokenDecimalState = selectorFamily({
   key: 'NativeTokenDecimal',
@@ -97,4 +73,4 @@ export const nativeTokenDecimalState = selectorFamily({
     },
 })
 
-export const useNativeTokenDecimalState = () => nativeTokenDecimalState(useContext(SubstrateApiContext).endpoint)
+export const useNativeTokenDecimalState = () => nativeTokenDecimalState(useSubstrateApiEndpoint())

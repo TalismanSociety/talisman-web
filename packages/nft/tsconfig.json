@@ -1,0 +1,14 @@
+{
+  "extends": "@talismn/tsconfig/library",
+  "compilerOptions": {
+    "outDir": "build/src"
+  },
+  "include": [
+    "src"
+  ],
+  "references": [
+    {
+      "path": "./tsconfig.codegen.json"
+    }
+  ]
+}

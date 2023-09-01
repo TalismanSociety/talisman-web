@@ -1,12 +1,11 @@
-import { ApiPromise } from '@polkadot/api'
+import { ApiPromise, type } from '@polkadot/api'
 import { web3FromAddress } from '@polkadot/extension-dapp'
 import { atom, selectorFamily } from 'recoil'
 
 import { substrateApiState } from '..'
 
 export * from './api'
-export * from './chain'
-export * from './queryMulti'
+export * from './query'
 
 export const paymentInfoState = selectorFamily({
   key: 'PaymentInfo',
@@ -20,8 +19,11 @@ export const paymentInfoState = selectorFamily({
       const api = get(substrateApiState(endpoint))
       const extension = await web3FromAddress(account)
 
-      return api.tx[module]?.[section]?.(...params).paymentInfo(account, { signer: extension?.signer })
+      return await api.tx[module]?.[section]?.(...params).paymentInfo(account, { signer: extension?.signer })
     },
+  // NOTE: polkadot.js returned codec object includes reference to the registry
+  // which shouldn't be freezed
+  dangerouslyAllowMutability: true,
 })
 
 /**

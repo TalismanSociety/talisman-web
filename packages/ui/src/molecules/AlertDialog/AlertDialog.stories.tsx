@@ -1,8 +1,8 @@
 import { Global, css } from '@emotion/react'
-import { ComponentMeta, Story } from '@storybook/react'
+import { type ComponentMeta, type Story } from '@storybook/react'
 
 import { Button, Text } from '../../atoms'
-import AlertDialog, { AlertDialogProps } from './AlertDialog'
+import AlertDialog, { type AlertDialogProps } from './AlertDialog'
 
 export default {
   title: 'Molecules/AlertDialog',

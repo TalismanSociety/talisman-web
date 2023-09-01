@@ -1,37 +1,26 @@
 import { selectedSubstrateAccountsState } from '@domains/accounts/recoils'
-import { chainIdState, chainsState } from '@domains/chains/recoils'
+import { useSubstrateApiEndpoint } from '@domains/common'
 import { selectorFamily } from 'recoil'
-// @ts-expect-error
 import { Thread, spawn } from 'threads'
 
-import { WorkerFunction } from './worker'
+import { WorkerFunction, type } from './worker'
 
 export const stakersRewardState = selectorFamily({
   key: 'StakersRewardState',
   get:
-    (activeEra: number) =>
+    ({ endpoint, activeEra }: { endpoint: string; activeEra: number }) =>
     async ({ get }) => {
-      const chains = get(chainsState)
-      const chainId = get(chainIdState)
-
-      const chain = chains.find(x => x.id === chainId)
-
-      if (chain === undefined) {
-        throw new Error(`No chain found with id: ${chainId}`)
-      }
-
       const addresses = get(selectedSubstrateAccountsState).map(x => x.address)
 
-      const worker = await spawn<WorkerFunction>(new Worker(new URL('./worker', import.meta.url)))
+      const worker = await spawn<WorkerFunction>(new Worker(new URL('./worker', import.meta.url), { type: 'module' }))
 
-      const stakerRewards = await worker(
-        chain.rpcs.map(x => x.url),
-        addresses,
-        [activeEra - 1, activeEra]
-      )
+      const stakerRewards = await worker(endpoint, addresses, [activeEra - 1, activeEra])
 
-      Thread.terminate(worker)
+      void Thread.terminate(worker)
 
       return stakerRewards
     },
 })
+
+export const useStakersRewardState = (activeEra: number) =>
+  stakersRewardState({ endpoint: useSubstrateApiEndpoint(), activeEra })

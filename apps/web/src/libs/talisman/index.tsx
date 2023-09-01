@@ -1,6 +1,6 @@
 import { balanceModules } from '@talismn/balances-default-modules'
 import { BalancesProvider } from '@talismn/balances-react'
-import { PropsWithChildren } from 'react'
+import { PropsWithChildren, type } from 'react'
 
 import * as Chainmeta from './chainmeta'
 import * as Crowdloan from './crowdloan'
@@ -38,7 +38,7 @@ const Provider = ({ children }: PropsWithChildren) => (
   <Chainmeta.Provider>
     <BalancesProvider
       balanceModules={balanceModules}
-      onfinalityApiKey={process.env.REACT_APP_ONFINALITY_API_KEY ?? undefined}
+      onfinalityApiKey={import.meta.env.REACT_APP_ONFINALITY_API_KEY ?? undefined}
     >
       <Parachain.Provider>
         <Crowdloan.Provider>{children}</Crowdloan.Provider>

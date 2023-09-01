@@ -23,15 +23,17 @@ const AddReadOnlyAccountDialog = (props: AddReadOnlyAccountDialogProps) => {
       open={props.open}
       onRequestDismiss={props.onRequestDismiss}
       width="42rem"
-      title="Add contact"
+      title="Add watched account"
       content={
-        <form onSubmit={event => event.preventDefault()}>
+        <form
+          onSubmit={event => event.preventDefault()}
+          css={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}
+        >
           <TextInput
             value={props.name}
             onChange={event => props.onChangeName(event.target.value)}
             leadingLabel="Name"
             placeholder="Add a name"
-            css={{ fontSize: '1.8rem' }}
           />
           <TextInput
             value={props.address}
@@ -40,14 +42,13 @@ const AddReadOnlyAccountDialog = (props: AddReadOnlyAccountDialogProps) => {
             placeholder="Enter wallet address"
             trailingSupportingText={props.addressError}
             isError={props.addressError !== undefined}
-            css={{ fontSize: '1.8rem' }}
           />
           {props.resultingAddress && (
             <ListItem
               leadingContent={<Identicon value={props.resultingAddress} size="4rem" />}
               headlineText={isNilOrWhitespace(props.name) ? undefined : props.name}
               supportingText={shortenAddress(props.resultingAddress)}
-              css={{ marginTop: '1.6rem', border: `2px solid ${theme.color.border}`, borderRadius: '0.8rem' }}
+              css={{ marginTop: '0.8rem', border: `2px solid ${theme.color.border}`, borderRadius: '0.8rem' }}
             />
           )}
         </form>

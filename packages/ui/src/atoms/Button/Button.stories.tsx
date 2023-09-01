@@ -1,6 +1,6 @@
-import { ComponentMeta, Story } from '@storybook/react'
-
-import Button, { ButtonProps } from './Button'
+import { type Meta, type StoryObj } from '@storybook/react'
+import Button from './Button'
+import SurfaceContainer from '../Surface'
 
 export default {
   title: 'Atoms/Button',
@@ -8,24 +8,41 @@ export default {
   parameters: {
     layout: 'centered',
   },
-} as ComponentMeta<typeof Button>
+  decorators: [
+    (Story: any) => (
+      <div css={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <div css={{ width: 300, marginBottom: '1.6rem' }}>
+          <Story />
+        </div>
+        <div css={{ width: 'fit-content' }}>
+          <Story />
+        </div>
+      </div>
+    ),
+  ],
+  args: {
+    style: { width: '100%' },
+  },
+} satisfies Meta<typeof Button>
 
-export const Default: Story<ButtonProps<'button'>> = args => <Button {...args} />
+type Story = StoryObj<typeof Button>
 
-Default.args = {
-  children: 'Click me',
+export const Primary: Story = {
+  args: { children: 'Click me' },
 }
 
-export const Secondary = Default.bind({})
-
-Secondary.args = {
-  variant: 'secondary',
-  children: 'Click me',
+export const Outlined: Story = {
+  args: { variant: 'outlined', children: 'Click me' },
 }
 
-export const Outlined = Default.bind({})
-
-Outlined.args = {
-  variant: 'outlined',
-  children: 'Click me',
+export const Surface: Story = {
+  render: args => (
+    <SurfaceContainer css={{ padding: '1.6rem' }}>
+      <Button {...args} css={{ marginBottom: '1.6rem' }} />
+      <SurfaceContainer css={{ padding: '1.6rem' }}>
+        <Button {...args} />
+      </SurfaceContainer>
+    </SurfaceContainer>
+  ),
+  args: { variant: 'surface', children: 'Click me' },
 }

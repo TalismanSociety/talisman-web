@@ -1,19 +1,20 @@
 import { ChainLogo, ExtensionStatusGate, Info, Panel, PanelSection, Pendor } from '@components'
 import SectionHeader from '@components/molecules/SectionHeader'
 import AnimatedFiatNumber from '@components/widgets/AnimatedFiatNumber'
+import RedactableBalance from '@components/widgets/RedactableBalance'
 import { selectedSubstrateAccountsState } from '@domains/accounts/recoils'
 import { tokenPriceState } from '@domains/chains/recoils'
 import { useTotalCrowdloanTotalFiatAmount } from '@domains/crowdloans/hooks'
 import styled from '@emotion/styled'
 import crowdloanDataState from '@libs/@talisman-crowdloans/provider'
-import { CrowdloanContribution, useCrowdloanContributions } from '@libs/crowdloans'
+import { CrowdloanContribution, type, useCrowdloanContributions } from '@libs/crowdloans'
 import { Moonbeam } from '@libs/crowdloans/crowdloanOverrides'
 import { MoonbeamPortfolioTag } from '@libs/moonbeam-contributors'
 import { calculateCrowdloanPortfolioAmounts, useTaggedAmountsInPortfolio } from '@libs/portfolio'
 import { useCrowdloanById, useParachainAssets, useParachainDetailsById } from '@libs/talisman'
 import { SupportedRelaychains } from '@libs/talisman/util/_config'
 import { planckToTokens } from '@talismn/util'
-import { formatCommas, formatCurrency } from '@util/helpers'
+import { formatCommas } from '@util/helpers'
 import { Maybe } from '@util/monads'
 import BigNumber from 'bignumber.js'
 import { Suspense, useMemo } from 'react'
@@ -32,19 +33,20 @@ const CrowdloanItem = styled(
     const crowdloans = useRecoilValue(crowdloanDataState)
 
     const relayChainId = contribution.parachain.paraId.split('-')[0]
-    const relayChain = Maybe.of(relayChainId).mapOrUndefined(x => SupportedRelaychains[x]!)
+    const relayChain = Maybe.of(relayChainId).mapOrUndefined(x => SupportedRelaychains[x])
     const chain = crowdloans.find(x => x.id === id)
 
     const { tokenSymbol: relayNativeToken, coingeckoId, tokenDecimals: relayTokenDecimals } = relayChain ?? {}
     const { name } = chain ?? {}
 
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const priceLoadable = useRecoilValueLoadable(tokenPriceState({ coingeckoId: coingeckoId!, fiat: 'usd' }))
 
     const relayTokenPrice = priceLoadable.valueMaybe()?.toString()
     const relayPriceLoading = priceLoadable.state === 'loading'
 
     const relayTokenSymbol = relayNativeToken ?? 'Planck'
-    const contributedTokens = planckToTokens(contribution.amount, relayTokenDecimals!)
+    const contributedTokens = planckToTokens(contribution.amount, relayTokenDecimals ?? 0)
     const contributedUsd = new BigNumber(contributedTokens).times(relayTokenPrice ?? 0).toString()
 
     const portfolioAmounts = useMemo(
@@ -55,7 +57,7 @@ const CrowdloanItem = styled(
     useTaggedAmountsInPortfolio(portfolioAmounts)
 
     return (
-      <div className={`${className} ${id}`}>
+      <div className={`${className ?? ''} ${id}`}>
         <span className="left">
           <Info title={name} subtitle={name} graphic={<ChainLogo chain={{ ...chain, asset }} type="logo" size={4} />} />
           <Suspense fallback={null}>
@@ -65,14 +67,16 @@ const CrowdloanItem = styled(
         <span className="right">
           <Info
             title={
-              <Pendor suffix={` ${relayTokenSymbol} ${t('Contributed')}`}>
-                {contributedTokens && formatCommas(contributedTokens)}
-              </Pendor>
+              <RedactableBalance>
+                <Pendor suffix={` ${relayTokenSymbol} ${t('Contributed')}`}>
+                  {contributedTokens && formatCommas(Number(contributedTokens))}
+                </Pendor>
+              </RedactableBalance>
             }
             subtitle={
               contributedTokens ? (
                 <Pendor prefix={!contributedUsd && '-'} require={!relayPriceLoading}>
-                  {contributedUsd && formatCurrency(contributedUsd)}
+                  {contributedUsd && <AnimatedFiatNumber end={Number(contributedUsd)} />}
                 </Pendor>
               ) : null
             }
@@ -177,7 +181,7 @@ const SuspendableCrowdloans = ({ className }: { className?: string }) => {
   }
 
   return (
-    <section className={`wallet-crowdloans ${className}`} css={{ marginBottom: '2rem' }}>
+    <section className={`wallet-crowdloans ${className ?? ''}`} css={{ marginBottom: '2rem' }}>
       <SectionHeader headlineText={t('Crowdloans')} supportingText={<AnimatedFiatNumber end={crowdloansUsd} />} />
       <Panel>
         {!contributionsHydrated ? (

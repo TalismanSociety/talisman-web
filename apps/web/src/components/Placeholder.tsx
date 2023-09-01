@@ -8,7 +8,7 @@ type PlaceholderProps = {
   placeholderImage?: string
 }
 
-export const Placeholder = styled(({ className, children, placeholder, placeholderImage }: PlaceholderProps) => {
+export const Placeholder = styled(({ className, children }: PlaceholderProps) => {
   return (
     <div className={className}>
       <div className="info">{children}</div>

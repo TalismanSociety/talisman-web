@@ -1,6 +1,6 @@
 import { Zap } from '@talismn/icons'
-import { FullScreenDialog, FullScreenDialogQuarterSelector, InfoCard, InfoCardProps, Text } from '@talismn/ui'
-import { AnchorHTMLAttributes, DetailedHTMLProps, PropsWithChildren, ReactNode } from 'react'
+import { InfoCard, InfoCardProps, SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR, SideSheet, Text, type } from '@talismn/ui'
+import { AnchorHTMLAttributes, DetailedHTMLProps, PropsWithChildren, ReactNode, type, type, type, type } from 'react'
 
 export type StakeDialogProps = {
   open?: boolean
@@ -16,7 +16,7 @@ const LearnMore = (props: DetailedHTMLProps<AnchorHTMLAttributes<HTMLAnchorEleme
 
 const StakeDialog = Object.assign(
   ({ stats, stakeInput, learnMoreAnchor, ...props }: StakeDialogProps) => (
-    <FullScreenDialog
+    <SideSheet
       {...props}
       title={
         <div>
@@ -24,7 +24,7 @@ const StakeDialog = Object.assign(
         </div>
       }
       css={{
-        [`${FullScreenDialogQuarterSelector}`]: {
+        [`${SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR}`]: {
           minWidth: '51.2rem',
         },
       }}
@@ -36,7 +36,7 @@ const StakeDialog = Object.assign(
         contributing your stake to a nomination pool include no staking minimum, no need for a stash and controller
         account, and the selection of validators on your behalf. {learnMoreAnchor}.
       </Text.Body>
-    </FullScreenDialog>
+    </SideSheet>
   ),
   {
     LearnMore,

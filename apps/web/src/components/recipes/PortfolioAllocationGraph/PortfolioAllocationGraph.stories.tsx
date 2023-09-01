@@ -1,6 +1,6 @@
-import { ComponentMeta, Story } from '@storybook/react'
+import { ComponentMeta, Story, type, type } from '@storybook/react'
 
-import PortfolioAllocationGraph, { PortfolioAllocationGraphProps } from './PortfolioAllocationGraph'
+import PortfolioAllocationGraph, { PortfolioAllocationGraphProps, type } from './PortfolioAllocationGraph'
 
 export default {
   title: 'Recipes/PortfolioAllocationGraph',
@@ -15,7 +15,6 @@ export const Default: Story<PortfolioAllocationGraphProps> = args => <PortfolioA
 Default.args = {
   assetChip: <PortfolioAllocationGraph.AssetChip />,
   stateChip: <PortfolioAllocationGraph.StateChip />,
-  valueType: 'percent',
   data: [
     { label: 'GLMR', value: 0.55, color: '#6A7AEB' },
     { label: 'DOT', value: 0.36, color: '#E6007A' },

@@ -3,7 +3,7 @@ import { isNilOrWhitespace } from '@util/nil'
 import { useCallback, useMemo, useState } from 'react'
 import { useRecoilValue, useSetRecoilState } from 'recoil'
 
-import { ReadonlyAccount, readOnlyAccountsState } from './recoils'
+import { ReadonlyAccount, readOnlyAccountsState, type } from './recoils'
 
 export const useSetReadonlyAccounts = () => {
   const setReadonlyAccounts = useSetRecoilState(readOnlyAccountsState)
@@ -46,6 +46,7 @@ export const useAddReadonlyAccountForm = () => {
     if (resultingAddress === undefined || hasExistingAccount) {
       return 'disabled' as const
     }
+    return undefined
   }, [hasExistingAccount, resultingAddress])
 
   const error = useMemo(() => {
@@ -56,6 +57,8 @@ export const useAddReadonlyAccountForm = () => {
     if (hasExistingAccount) {
       return 'This account has already been added'
     }
+
+    return undefined
   }, [address, hasExistingAccount, resultingAddress])
 
   return {
@@ -64,6 +67,10 @@ export const useAddReadonlyAccountForm = () => {
     resultingAddress,
     confirmState,
     error,
-    submit: useCallback(() => add({ address, name }), [add, address, name]),
+    submit: useCallback(() => {
+      if (resultingAddress !== undefined) {
+        add({ address: resultingAddress, name })
+      }
+    }, [add, name, resultingAddress]),
   }
 }

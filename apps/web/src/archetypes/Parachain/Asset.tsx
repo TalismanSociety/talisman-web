@@ -18,10 +18,10 @@ const Image = styled(({ id, type, className }: ImageProps) => {
   const imageSrc = useImageWithFallback(assets[type], fallbackMap[type as keyof typeof fallbackMap])
   return (
     <div
-      className={`crowdloan-asset crowdloan-${type} ${className}`}
+      className={`crowdloan-asset crowdloan-${type} ${className ?? ''}`}
       data-type={type}
       css={{
-        backgroundImage: `url(${imageSrc})`,
+        backgroundImage: `url(${imageSrc ?? ''})`,
         backgroundSize: 'cover',
       }}
     />

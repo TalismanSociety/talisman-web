@@ -1,6 +1,6 @@
-import { DeriveSessionProgress } from '@polkadot/api-derive/session/types'
-import { PalletNominationPoolsPoolMember } from '@polkadot/types/lookup'
-import BN from 'bn.js'
+import { DeriveSessionProgress, type } from '@polkadot/api-derive/session/types'
+import { PalletNominationPoolsPoolMember, type } from '@polkadot/types/lookup'
+import type BN from 'bn.js'
 
 export const getPoolUnbonding = (
   poolMember: PalletNominationPoolsPoolMember,
@@ -15,9 +15,9 @@ export const getPoolUnbonding = (
     .filter(x => x.erasTilWithdrawable === undefined)
     .reduce((previous, current) => previous + current.amount, 0n)
 
-  const unbondings = all.filter(
+  const unlockings = all.filter(
     (x): x is { amount: bigint; erasTilWithdrawable: BN } => x.erasTilWithdrawable !== undefined
   )
 
-  return { withdrawable, unbondings }
+  return { withdrawable, unlockings }
 }

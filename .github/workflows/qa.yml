@@ -1,0 +1,39 @@
+name: QA
+
+on: [workflow_call]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/setup
+      - run: yarn install --immutable
+      - run: yarn prettier --check .
+      - run: yarn lint -- --max-warnings=0
+      - run: yarn check-types
+      - run: yarn test
+
+  e2e:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/setup
+      - run: npx playwright install --with-deps
+      - run: yarn e2e
+
+      - name: Upload test results
+        if: failure()
+        uses: actions/upload-artifact@v3
+        with:
+          name: portal-playwright-report
+          path: apps/web/test-results
+          if-no-files-found: ignore

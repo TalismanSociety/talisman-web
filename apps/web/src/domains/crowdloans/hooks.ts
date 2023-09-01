@@ -15,7 +15,7 @@ export const useTotalCrowdloanTotalFiatAmount = () => {
   return useMemo(
     () =>
       Object.entries(totalCrowdloansUsdByAddress || {})
-        .filter(([address]) => genericAccounts && genericAccounts.includes(address))
+        .filter(([address]) => genericAccounts?.includes(address))
         .map(([, crowdloansUsd]) => crowdloansUsd)
         .reduce((prev, curr) => prev.plus(curr), new BigNumber(0))
         .toNumber(),

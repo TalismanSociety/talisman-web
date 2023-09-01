@@ -14,8 +14,12 @@ type FieldLabelProps = {
 }
 
 const FieldLabel = styled(({ children, className, ...rest }: FieldLabelProps) =>
-  !!children ? (
-    <label className={`field-label ${className}`} {...rest} dangerouslySetInnerHTML={{ __html: children }}></label>
+  children ? (
+    <label
+      className={`field-label ${className ?? ''}`}
+      {...rest}
+      dangerouslySetInnerHTML={{ __html: children }}
+    ></label>
   ) : null
 )`
   position: relative;
@@ -42,7 +46,7 @@ type FieldWrapperProps = {
 }
 
 const FieldWrapper = styled(({ type, prefix, suffix, label, dim, children, className, ...rest }: FieldWrapperProps) => (
-  <div className={`field field-${type}${dim ? ' dim' : ''} ${className}`} {...rest}>
+  <div className={`field field-${type}${dim ? ' dim' : ''} ${className ?? ''}`} {...rest}>
     {label && <FieldLabel>{label}</FieldLabel>}
     <span className="children">
       {!!prefix && <span className="prefix">{prefix}</span>}
@@ -114,7 +118,7 @@ const FieldWrapper = styled(({ type, prefix, suffix, label, dim, children, class
 
   // Where is this accessed from?
   ${({ inline }: any) =>
-    !!inline &&
+    Boolean(inline) &&
     `
       flex-direction: row;
       label{
@@ -155,7 +159,7 @@ type InputProps = {
   disabled?: boolean
 }
 
-export const Input = styled(({ className, onChange = v => {}, prefix, suffix, label, dim, ...rest }: InputProps) => (
+export const Input = styled(({ className, onChange = _v => {}, prefix, suffix, label, dim, ...rest }: InputProps) => (
   <FieldWrapper type="input" className={className} prefix={prefix} suffix={suffix} label={label} dim={dim}>
     <input type="text" onChange={e => onChange(e?.target?.value)} {...(rest as any)} />
   </FieldWrapper>
@@ -208,7 +212,7 @@ type SelectProps = {
 }
 
 export const Select = styled(
-  ({ value, options, className, suffix = true, onChange = (v: string) => {}, ...rest }: SelectProps) => (
+  ({ value, options, className, suffix = true, onChange = (_v: string) => {}, ...rest }: SelectProps) => (
     <FieldWrapper type="select" suffix={suffix ? <ChevronDown /> : null} className={className}>
       <select onChange={e => onChange(e?.target?.value)} {...rest}>
         {options.map(({ key, value }: { key: string; value: string }) => (
@@ -233,8 +237,8 @@ type ToggleProps = {
   onChange?: (value: any) => void
 }
 
-export const Toggle = styled(({ value = false, className, onChange = (value: any) => {}, ...rest }: ToggleProps) => {
-  let [isActive, toggleActive] = useBoolean(value)
+export const Toggle = styled(({ value = false, className, onChange = (_value: any) => {}, ...rest }: ToggleProps) => {
+  const [isActive, toggleActive] = useBoolean(value)
 
   useEffect(() => onChange(isActive), [isActive, onChange])
 
@@ -293,18 +297,18 @@ type RadioGroupProps = {
 }
 
 export const RadioGroup = styled(
-  ({ value, options = {}, onChange = () => {}, small, primary, secondary, className, ...rest }: RadioGroupProps) => (
+  ({ value, options = {}, onChange = () => {}, small, primary, secondary, className }: RadioGroupProps) => (
     <FieldWrapper type="radiogroup" className={className}>
-      {options.map((option: { [key: string]: any }) => (
+      {options.map((option: Record<string, any>) => (
         <Pill
-          key={option?.key}
-          onClick={() => onChange(option?.key)}
-          active={option?.key === value}
+          key={option?.['key']}
+          onClick={() => onChange(option?.['key'])}
+          active={option?.['key'] === value}
           small={small}
           primary={primary}
           secondary={secondary}
         >
-          {option?.value}
+          {option?.['value']}
         </Pill>
       ))}
     </FieldWrapper>

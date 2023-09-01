@@ -1,12 +1,12 @@
 import { Image } from '@components'
 import styled from '@emotion/styled'
 
-export default styled(({ chain, type, className }: { chain: any; type: any; size?: number; className?: string }) => {
+export default styled(({ chain, type, className }: { chain: any; type: string; size?: number; className?: string }) => {
   return (
     <Image
       src={chain?.asset?.logo}
-      alt={`${chain?.name} ${type}`}
-      className={`crowdloan-asset crowdloan-${type} ${className}`}
+      alt={`${chain?.name as string} ${type}`}
+      className={`crowdloan-asset crowdloan-${type} ${className ?? ''}`}
       data-type={type}
     />
   )

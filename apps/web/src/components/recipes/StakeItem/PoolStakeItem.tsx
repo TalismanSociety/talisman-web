@@ -1,4 +1,4 @@
-import { ReactNode } from 'react'
+import { ReactNode, type } from 'react'
 
 import StakeItem, {
   ClaimChip,
@@ -7,6 +7,7 @@ import StakeItem, {
   UnstakeChip,
   UnstakingStatus,
   WithdrawChip,
+  type,
 } from './StakeItem'
 
 export type PoolStakeItemProps = Omit<StakeItemProps, 'actions'> & {

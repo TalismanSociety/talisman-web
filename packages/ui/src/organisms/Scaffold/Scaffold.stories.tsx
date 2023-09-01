@@ -1,4 +1,4 @@
-import { ComponentMeta, Story } from '@storybook/react'
+import { type ComponentMeta, type Story } from '@storybook/react'
 import { MoreHorizontal } from '@talismn/icons'
 import { useCallback, useState } from 'react'
 
@@ -8,7 +8,7 @@ import { Default as NavigationDrawerStory } from '../NavigationDrawer/Navigation
 import { Default as NavigationRailStory } from '../NavigationRail/NavigationRail.stories'
 import TopAppBar from '../TopAppBar'
 import { Default as TopAppBarStory } from '../TopAppBar/TopAppBar.stories'
-import Scaffold, { ScaffoldProps } from './Scaffold'
+import Scaffold from './Scaffold'
 
 export default {
   title: 'Organisms/Scaffold',

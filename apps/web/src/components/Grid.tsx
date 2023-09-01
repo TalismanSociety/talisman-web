@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/restrict-template-expressions */
 import styled from '@emotion/styled'
 import { sortBy } from 'lodash'
 
@@ -19,7 +20,9 @@ type GridProps = {
   breakpoints?: any
 }
 
-const Grid = styled(({ className, children }: GridProps) => <div className={`grid ${className}`}>{children}</div>)`
+const Grid = styled(({ className, children }: GridProps) => (
+  <div className={`grid ${className ?? ''}`}>{children}</div>
+))`
   display: grid;
   grid-gap: 2.4rem;
   width: 100%;
@@ -27,7 +30,7 @@ const Grid = styled(({ className, children }: GridProps) => <div className={`gri
   margin: ${({ gap = defaultGap }) => gap} 0;
 
   > * {
-    ${({ itemHeight }: { itemHeight?: any }) => !!itemHeight && `height: ${itemHeight}`}
+    ${({ itemHeight }: { itemHeight?: any }) => !!itemHeight && `height: ${itemHeight as number}`}
   }
 
   ${({ breakpoints = defaultBreakpoints, columns = defaultColumns, itemHeight }) =>
@@ -36,7 +39,7 @@ const Grid = styled(({ className, children }: GridProps) => <div className={`gri
       .map(
         (key: any) =>
           `
-            @media only screen and (max-width: ${key[0]}px) {
+            @media only screen and (max-width: ${key[0] as string}px) {
               grid-template-columns: repeat(${key[1]?.columns || columns}, 1fr);
               >*{
                 height: ${key[1]?.itemHeight || itemHeight || 'inherit'};

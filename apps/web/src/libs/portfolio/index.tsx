@@ -1,4 +1,4 @@
-import { CrowdloanContribution } from '@libs/crowdloans'
+import { CrowdloanContribution, type } from '@libs/crowdloans'
 import type { BalanceWithTokensWithPrice } from '@talismn/api-react-hooks'
 import { groupBalancesByAddress } from '@talismn/api-react-hooks'
 import { encodeAnyAddress, planckToTokens } from '@talismn/util'
@@ -8,6 +8,7 @@ import {
   PropsWithChildren,
   useContext as _useContext,
   createContext,
+  type,
   useCallback,
   useEffect,
   useMemo,
@@ -45,7 +46,7 @@ export function calculateCrowdloanPortfolioAmounts(
 ): Array<{ tags: Tag[]; amount: string | undefined }> {
   const amounts: Array<{ tags: Tag[]; amount: string | undefined }> = []
 
-  const byAddress: { [key: string]: CrowdloanContribution[] } = {}
+  const byAddress: Record<string, CrowdloanContribution[]> = {}
   contributions.forEach(contribution => {
     if (!byAddress[encodeAnyAddress(contribution.account, 42)])
       byAddress[encodeAnyAddress(contribution.account, 42)] = []
@@ -70,13 +71,13 @@ export function calculateCrowdloanPortfolioAmounts(
 
 export type Portfolio = {
   totalUsd: string
-  totalUsdByAddress: { [key: string]: string }
+  totalUsdByAddress: Record<string, string>
   totalAssetsUsd: string
-  totalAssetsUsdByAddress: { [key: string]: string }
+  totalAssetsUsdByAddress: Record<string, string>
   totalCrowdloansUsd: string
-  totalCrowdloansUsdByAddress: { [key: string]: string }
+  totalCrowdloansUsdByAddress: Record<string, string>
   totalStakingUsd: string
-  totalStakingUsdByAddress: { [key: string]: string }
+  totalStakingUsdByAddress: Record<string, string>
 
   isLoading: boolean
   // only true if we've finished loading all amounts and they're all zero
@@ -91,9 +92,7 @@ export type Total = {
   amount: string
 }
 
-export type TotalStore = {
-  [key: string]: Total
-}
+export type TotalStore = Record<string, Total>
 
 //
 // Hooks (exported)
@@ -162,7 +161,7 @@ type ProviderProps = PropsWithChildren
 
 export const Provider = ({ children }: ProviderProps) => {
   const [totalStore, setTotalStore] = useState<TotalStore>({})
-  const [loadingList, setLoadingList] = useState<{ [key: string]: true }>({})
+  const [loadingList, setLoadingList] = useState<Record<string, true>>({})
 
   const storeTotal = useCallback(
     (uniqueId: string, tags: Tag[], amount: string) =>
@@ -172,6 +171,7 @@ export const Provider = ({ children }: ProviderProps) => {
   const clearTotal = useCallback(
     (uniqueId: string) =>
       setTotalStore(totalStore => {
+        // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
         delete totalStore[uniqueId]
         return totalStore
       }),
@@ -185,6 +185,7 @@ export const Provider = ({ children }: ProviderProps) => {
 
         const loadingListMut = { ...loadingList }
         if (loading) loadingListMut[uniqueId] = true
+        // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
         else delete loadingListMut[uniqueId]
 
         return loadingListMut
@@ -194,13 +195,13 @@ export const Provider = ({ children }: ProviderProps) => {
 
   const portfolio = useMemo<Portfolio>(() => {
     let totalUsd = new BigNumber(0)
-    let totalUsdByAddress: Record<string, BigNumber> = {}
+    const totalUsdByAddress: Record<string, BigNumber> = {}
     let totalAssetsUsd = new BigNumber(0)
-    let totalAssetsUsdByAddress: Record<string, BigNumber> = {}
+    const totalAssetsUsdByAddress: Record<string, BigNumber> = {}
     let totalCrowdloansUsd = new BigNumber(0)
-    let totalCrowdloansUsdByAddress: Record<string, BigNumber> = {}
+    const totalCrowdloansUsdByAddress: Record<string, BigNumber> = {}
     let totalStakingUsd = new BigNumber(0)
-    let totalStakingUsdByAddress: Record<string, BigNumber> = {}
+    const totalStakingUsdByAddress: Record<string, BigNumber> = {}
 
     Object.values(totalStore).forEach(({ tags, amount }) => {
       if (tags.includes('USD')) {
@@ -211,19 +212,19 @@ export const Provider = ({ children }: ProviderProps) => {
           .map(tag => tag.Address)
           .forEach(address => {
             if (!totalUsdByAddress[address]) totalUsdByAddress[address] = new BigNumber(0)
-            totalUsdByAddress[address] = totalUsdByAddress[address]!.plus(amount)
+            totalUsdByAddress[address] = totalUsdByAddress[address]?.plus(amount) ?? BigNumber(0)
 
             if (tags.includes('Assets')) {
               if (!totalAssetsUsdByAddress[address]) totalAssetsUsdByAddress[address] = new BigNumber(0)
-              totalAssetsUsdByAddress[address] = totalAssetsUsdByAddress[address]!.plus(amount)
+              totalAssetsUsdByAddress[address] = totalAssetsUsdByAddress[address]?.plus(amount) ?? BigNumber(0)
             }
             if (tags.includes('Crowdloans')) {
               if (!totalCrowdloansUsdByAddress[address]) totalCrowdloansUsdByAddress[address] = new BigNumber(0)
-              totalCrowdloansUsdByAddress[address] = totalCrowdloansUsdByAddress[address]!.plus(amount)
+              totalCrowdloansUsdByAddress[address] = totalCrowdloansUsdByAddress[address]?.plus(amount) ?? BigNumber(0)
             }
             if (tags.includes('Staking')) {
               if (!totalStakingUsdByAddress[address]) totalStakingUsdByAddress[address] = new BigNumber(0)
-              totalStakingUsdByAddress[address] = totalStakingUsdByAddress[address]!.plus(amount)
+              totalStakingUsdByAddress[address] = totalStakingUsdByAddress[address]?.plus(amount) ?? BigNumber(0)
             }
           })
 

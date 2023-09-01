@@ -12,7 +12,7 @@ const Filter = styled(({ value = [], options = {}, className, onChange = () => {
   useEffect(() => set(value), [value]) // eslint-disable-line
 
   return (
-    <div className={`filter ${className}`} {...rest}>
+    <div className={`filter ${className as string}`} {...rest}>
       {Object.keys(options).map(key => (
         <Pill
           key={key}
