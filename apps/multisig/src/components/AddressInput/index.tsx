@@ -16,7 +16,7 @@ const AddressInput = (
   const [addressInput, setAddressInput] = useState('')
   return (
     <div className={props.className}>
-      <div css={{ display: 'grid', gridTemplateColumns: '1fr' }}>
+      <div css={{ display: 'grid', gridTemplateColumns: '1fr', gap: '24px' }}>
         <TextInput
           className={css`
             width: 100% !important;
@@ -62,7 +62,7 @@ const AddressInput = (
             `}
           >
             <IconButton as="button" size="24px" contentColor={`rgb(${theme.primary})`}>
-              <Plus />
+              <Plus size={24} />
             </IconButton>
             <span>Add member</span>
           </div>

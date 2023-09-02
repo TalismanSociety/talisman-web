@@ -1,8 +1,8 @@
 import { ChainContext } from '@domains/chains'
-import { ApiPromise, type } from '@polkadot/api'
-import { AddressOrPair, type } from '@polkadot/api/types'
+import { ApiPromise } from '@polkadot/api'
+import { AddressOrPair } from '@polkadot/api/types'
 import { web3FromAddress } from '@polkadot/extension-dapp'
-import { ISubmittableResult, type } from '@polkadot/types/types'
+import { ISubmittableResult } from '@polkadot/types/types'
 import { useCallback, useContext, useState } from 'react'
 import { useRecoilCallback } from 'recoil'
 

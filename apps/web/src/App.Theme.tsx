@@ -5,9 +5,9 @@ import SurtRegular from '@assets/fonts/Surt-Regular.woff'
 import SurtSemiBold from '@assets/fonts/Surt-SemiBold.woff2'
 import SurtSemiBoldExpanded from '@assets/fonts/Surt-SemiBoldExp.woff2'
 import SurtSemiBoldExtended from '@assets/fonts/Surt-SemiBoldExtended.woff2'
-import { Global, Theme, ThemeProvider, css, type } from '@emotion/react'
-import { TalismanTheme, theme, type } from '@talismn/ui'
-import { PropsWithChildren, type } from 'react'
+import { Global, Theme, ThemeProvider, css } from '@emotion/react'
+import { TalismanTheme, theme } from '@talismn/ui'
+import { PropsWithChildren } from 'react'
 
 declare module '@emotion/react' {
   // eslint-disable-next-line @typescript-eslint/consistent-type-definitions

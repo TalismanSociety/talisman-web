@@ -1,5 +1,5 @@
-import { DeriveSessionProgress, type } from '@polkadot/api-derive/session/types'
-import { PalletNominationPoolsPoolMember, type } from '@polkadot/types/lookup'
+import { DeriveSessionProgress } from '@polkadot/api-derive/session/types'
+import { PalletNominationPoolsPoolMember } from '@polkadot/types/lookup'
 import type BN from 'bn.js'
 
 export const getPoolUnbonding = (

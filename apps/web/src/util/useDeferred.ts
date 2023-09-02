@@ -1,4 +1,4 @@
-import { DependencyList, type, useMemo } from 'react'
+import { DependencyList, useMemo } from 'react'
 
 const useDeferred = <T>(deps: DependencyList = []) => {
   const resolver = useMemo<{ resolve?: (value: T) => unknown; reject?: (value: any) => unknown }>(

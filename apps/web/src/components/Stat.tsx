@@ -1,5 +1,5 @@
 import styled from '@emotion/styled'
-import { PropsWithChildren, ReactNode, type, type } from 'react'
+import { PropsWithChildren, ReactNode } from 'react'
 
 const Pill = styled(
   ({ title, children, className, ...rest }: PropsWithChildren<{ title: ReactNode; className?: string }>) => (

@@ -1,9 +1,9 @@
-import { SubmittableExtrinsic, type } from '@polkadot/api/types'
+import { SubmittableExtrinsic } from '@polkadot/api/types'
 import { isKeyringPair } from '@polkadot/api/util'
-import { ISubmittableResult, type } from '@polkadot/types/types'
+import { ISubmittableResult } from '@polkadot/types/types'
 import posthog from 'posthog-js'
 import { startTransition } from 'react'
-import { CallbackInterface, type } from 'recoil'
+import { CallbackInterface } from 'recoil'
 
 import { chainReadIdState } from './recoils'
 

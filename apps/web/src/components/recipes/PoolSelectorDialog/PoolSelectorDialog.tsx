@@ -1,9 +1,9 @@
 import { ChevronLeft, ChevronRight } from '@talismn/icons'
 import { AlertDialog, Button, Text } from '@talismn/ui'
 import { motion } from 'framer-motion'
-import React, { ReactElement, type, useState } from 'react'
+import React, { ReactElement, useState } from 'react'
 
-import PoolSelectorItem, { PoolSelectorItemProps, type } from '../PoolSelectorItem/PoolSelectorItem'
+import PoolSelectorItem, { PoolSelectorItemProps } from '../PoolSelectorItem/PoolSelectorItem'
 
 export type PoolSelectorDialogProps = {
   open: boolean

@@ -1,6 +1,6 @@
 import StakeDialogComponent from '@components/recipes/StakeDialog'
 import StakeForm from '@components/recipes/StakeForm/StakeForm'
-import { Chain, ChainProvider, type } from '@domains/chains'
+import { Chain, ChainProvider } from '@domains/chains'
 import { chainsState } from '@domains/chains/recoils'
 import { useEraEtaFormatter } from '@domains/common/hooks'
 import { useInflation } from '@domains/nominationPools/hooks'

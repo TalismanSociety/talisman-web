@@ -53,6 +53,7 @@ const TextInput = Object.assign(
             alignItems: 'center',
             padding: '1.5rem',
             borderRadius: '1.25rem',
+            backgroundColor: theme.color.foreground,
           }}
         >
           <Text.Body

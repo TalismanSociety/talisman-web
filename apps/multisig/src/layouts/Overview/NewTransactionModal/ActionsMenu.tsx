@@ -88,7 +88,6 @@ const ActionsMenu = (props: { onActionClick: (action: Action) => void }) => {
             onClick={() => props.onActionClick(Action.MultiSend)}
           />
           <Tooltip content={'Stake action coming soon'}>
-            {/* {tooltipProps => ( */}
             <div css={{ display: 'inline' }}>
               <ActionButton
                 name="Stake"
@@ -97,7 +96,6 @@ const ActionsMenu = (props: { onActionClick: (action: Action) => void }) => {
                 disabled={true}
               />
             </div>
-            {/* )} */}
           </Tooltip>
         </div>
       </div>

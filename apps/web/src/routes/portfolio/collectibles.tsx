@@ -1,5 +1,5 @@
 import ErrorBoundary from '@components/widgets/ErrorBoundary'
-import { Account, selectedAccountsState, type } from '@domains/accounts'
+import { Account, selectedAccountsState } from '@domains/accounts'
 import {
   CollectionKey,
   Nft,
@@ -8,10 +8,6 @@ import {
   nftCollectionItemsState,
   nftCollectionsState,
   nftsByTagState,
-  type,
-  type,
-  type,
-  type,
   useSetFavoriteNft,
   useSetHiddenNft,
 } from '@domains/nfts'
@@ -38,8 +34,6 @@ import {
   RefCallback,
   Suspense,
   createContext,
-  type,
-  type,
   useCallback,
   useContext,
   useEffect,

@@ -1,10 +1,10 @@
 import Welcome from '@components/recipes/Welcome'
 import { useAddReadonlyAccountForm, useSetReadonlyAccounts } from '@domains/accounts/hooks'
-import { ReadonlyAccount, readOnlyAccountsState, type } from '@domains/accounts/recoils'
+import { ReadonlyAccount, readOnlyAccountsState } from '@domains/accounts/recoils'
 import { useIsWeb3Injected } from '@domains/extension/hooks'
 import { allowExtensionConnectionState } from '@domains/extension/recoils'
 import { shortenAddress } from '@util/format'
-import { PropsWithChildren, type, useCallback } from 'react'
+import { PropsWithChildren, useCallback } from 'react'
 import { useRecoilValue, useSetRecoilState } from 'recoil'
 
 export type AccountConnectionGuardProps = PropsWithChildren

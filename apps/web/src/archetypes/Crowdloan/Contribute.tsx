@@ -13,7 +13,7 @@ import { useCrowdloanById } from '@libs/talisman'
 import { CircularProgressIndicator, Text } from '@talismn/ui'
 import { isMobileBrowser } from '@util/helpers'
 import { Maybe } from '@util/monads'
-import { MouseEventHandler, type, useCallback, useEffect, useMemo, useState } from 'react'
+import { MouseEventHandler, useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useRecoilValue } from 'recoil'
 

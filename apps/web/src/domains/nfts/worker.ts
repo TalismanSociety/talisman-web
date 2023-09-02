@@ -6,7 +6,6 @@ import {
   createRmrk2NftAsyncGenerator,
   createStatemineNftAsyncGenerator,
   createUniqueNetworkNftAsyncGenerator,
-  type,
 } from '@talismn/nft'
 import { Observable } from 'rxjs'
 import { expose } from 'threads/worker'

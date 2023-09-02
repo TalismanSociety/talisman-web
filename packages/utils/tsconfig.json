@@ -1,7 +1,10 @@
 {
   "extends": "@talismn/tsconfig/react-library",
   "compilerOptions": {
-    "outDir": "build"
+    "outDir": "build",
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "verbatimModuleSyntax": false
   },
   "include": [
     "src"

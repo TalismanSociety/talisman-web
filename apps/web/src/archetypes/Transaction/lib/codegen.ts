@@ -1,6 +1,6 @@
 import { resolve } from 'path'
 
-import { CodegenConfig, type } from '@graphql-codegen/cli'
+import { CodegenConfig } from '@graphql-codegen/cli'
 
 const codegenOutputDir = `${resolve(__dirname, 'graphql-codegen')}/`
 const config: CodegenConfig = {

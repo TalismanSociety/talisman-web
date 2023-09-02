@@ -1,4 +1,4 @@
-import { ApiPromise, type } from '@polkadot/api'
+import { ApiPromise } from '@polkadot/api'
 import BN from 'bn.js'
 
 // Some chains incorrectly use these, i.e. it is set to values such as 0 or even 2

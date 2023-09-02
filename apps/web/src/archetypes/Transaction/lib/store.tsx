@@ -1,8 +1,8 @@
-import { ApolloClient, InMemoryCache, NormalizedCacheObject, createHttpLink, type, useQuery } from '@apollo/client'
+import { ApolloClient, InMemoryCache, NormalizedCacheObject, createHttpLink, useQuery } from '@apollo/client'
 import { useCallback, useEffect, useMemo, useReducer, useState } from 'react'
 
 import { FETCH_LIMIT, latestTxQuery, txQuery } from './consts'
-import { Transaction, type } from './graphql-codegen/graphql'
+import { Transaction } from './graphql-codegen/graphql'
 
 type TransactionsStatus = 'INITIALISED' | 'PROCESSING' | 'ERROR' | 'SUCCESS'
 type TransactionMap = Record<string, Transaction>

@@ -2,6 +2,9 @@
   "extends": "@talismn/tsconfig/react-library",
   "compilerOptions": {
     "jsxImportSource": "@emotion/react",
-    "outDir": "build"
+    "outDir": "build",
+    "verbatimModuleSyntax": false,
+    "resolveJsonModule": true,
+    "esModuleInterop": true
   }
 }

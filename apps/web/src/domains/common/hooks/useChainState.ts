@@ -1,12 +1,12 @@
-import { ApiPromise, type } from '@polkadot/api'
+import { ApiPromise } from '@polkadot/api'
 import type {
   GenericStorageEntryFunction,
   PromiseResult,
   QueryableStorageEntry,
   StorageEntryPromiseOverloads,
 } from '@polkadot/api/types'
-import { Loadable, RecoilLoadable, constSelector, type, useRecoilValueLoadable } from 'recoil'
-import { Observable, type } from 'rxjs'
+import { Loadable, RecoilLoadable, constSelector, useRecoilValueLoadable } from 'recoil'
+import { Observable } from 'rxjs'
 
 import { chainQueryState } from '../recoils/query'
 import { useSubstrateApiEndpoint } from '.'

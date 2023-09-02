@@ -4,11 +4,10 @@ import {
   ButtonProps,
   Clickable,
   ContainedTextInput,
-  type,
   useSurfaceColor,
   useSurfaceColorAtElevation,
 } from '@talismn/ui'
-import { ReactNode, type } from 'react'
+import { ReactNode } from 'react'
 
 export type SwapFormProps = {
   accountSelector: ReactNode

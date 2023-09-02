@@ -5,6 +5,7 @@ import { useMeasure } from 'react-use'
 
 interface Props extends ReactModalProps {
   children: ReactNode
+  width?: string
 }
 
 const Modal = (props: Props) => {
@@ -46,7 +47,7 @@ const Modal = (props: Props) => {
           borderRadius: '32px',
           outline: 'none',
           padding: '0',
-          width: 'calc(100% - 24px)',
+          width: props.width || 'calc(100% - 24px)',
           maxWidth: '1024px',
         },
       }}

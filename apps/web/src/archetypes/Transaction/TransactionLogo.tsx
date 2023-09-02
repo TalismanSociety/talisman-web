@@ -1,7 +1,7 @@
 import { css } from '@emotion/react'
 import * as Icon from '@talismn/icons'
 
-import { ParsedTransaction, formatGenericAddress, type } from './lib'
+import { ParsedTransaction, formatGenericAddress } from './lib'
 
 // exported tx logo component
 

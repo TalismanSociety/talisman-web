@@ -1,5 +1,5 @@
 import type RpcError from '@polkadot/rpc-provider/coder/error'
-import { ISubmittableResult, type } from '@polkadot/types/types'
+import { ISubmittableResult } from '@polkadot/types/types'
 import { ExternalLink } from '@talismn/icons'
 import { Text, toast } from '@talismn/ui'
 

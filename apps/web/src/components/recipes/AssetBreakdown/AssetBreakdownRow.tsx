@@ -1,4 +1,4 @@
-import { Account, type } from '@domains/accounts/recoils'
+import { Account } from '@domains/accounts/recoils'
 import { keyframes } from '@emotion/react'
 import styled from '@emotion/styled'
 import { Identicon, Text, Tooltip } from '@talismn/ui'

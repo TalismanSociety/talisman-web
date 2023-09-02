@@ -1,6 +1,6 @@
 import { useTheme } from '@emotion/react'
-import { Chip, ChipProps, Skeleton, Text, type } from '@talismn/ui'
-import { ReactNode, type } from 'react'
+import { Chip, ChipProps, Skeleton, Text } from '@talismn/ui'
+import { ReactNode } from 'react'
 import { VictoryPie, VictoryTooltip } from 'victory'
 
 type Data = { label: string; value: number; renderValue?: (value: number) => ReactNode; color: string }

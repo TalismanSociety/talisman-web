@@ -9,10 +9,9 @@ import {
   IconButton,
   Select,
   TextInput,
-  type,
 } from '@talismn/ui'
 import { LayoutGroup, motion } from 'framer-motion'
-import { ReactNode, type, useId, useState } from 'react'
+import { ReactNode, useId, useState } from 'react'
 
 export type TransportFormProps = {
   accountSelector: ReactNode

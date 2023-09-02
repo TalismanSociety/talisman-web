@@ -1,5 +1,5 @@
 import StakeCalculatorDialogComponent from '@components/recipes/StakeCalculatorDialog'
-import { Chain, ChainContext, ChainProvider, chainsState, type } from '@domains/chains'
+import { Chain, ChainContext, ChainProvider, chainsState } from '@domains/chains'
 import { useTokenAmount, useTokenAmountFromPlanck } from '@domains/common'
 import { useInflation } from '@domains/nominationPools'
 import { Suspense, useContext, useDeferredValue, useMemo, useState, useTransition } from 'react'

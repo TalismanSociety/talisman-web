@@ -8,6 +8,9 @@
     "lint": "eslint src",
     "check-types": "tsc --noEmit"
   },
+  "dependencies": {
+    "recoil": "^0.7.7"
+  },
   "devDependencies": {
     "@polkadot/api": "^10.9.1",
     "@talismn/eslint-config": "workspace:^",
@@ -17,7 +20,9 @@
   },
   "peerDependencies": {
     "@polkadot/api": ">= 9.x",
-    "react": ">= 18.x",
-    "recoil": ">= 0.7.x"
+    "react": ">= 18.x"
+  },
+  "resolutions": {
+    "recoil@^0.7.7": "patch:recoil@npm%3A0.7.7#./.yarn/patches/recoil-npm-0.7.7-4452f58b67.patch"
   }
 }

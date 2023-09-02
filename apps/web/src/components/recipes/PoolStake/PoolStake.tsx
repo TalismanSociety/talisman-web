@@ -1,11 +1,11 @@
 import { useTheme } from '@emotion/react'
 import { Button, Identicon, Text, Tooltip } from '@talismn/ui'
 import { shortenAddress } from '@util/format'
-import React, { ReactElement, ReactNode, type, type, useMemo } from 'react'
+import React, { ReactElement, ReactNode, useMemo } from 'react'
 import { useMedia } from 'react-use'
 
 import StakeList from '../StakeList'
-import { StakeStatus, StakeStatusIndicator, type } from '../StakeStatusIndicator'
+import { StakeStatus, StakeStatusIndicator } from '../StakeStatusIndicator'
 import PoolStakeSkeleton from './PoolStake.skeleton'
 
 export type PoolStakeProps = {

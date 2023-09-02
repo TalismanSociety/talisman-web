@@ -1,4 +1,4 @@
-import { ApiPromise, type } from '@polkadot/api'
+import { ApiPromise } from '@polkadot/api'
 import type {
   GenericStorageEntryFunction,
   PromiseResult,
@@ -7,8 +7,8 @@ import type {
 } from '@polkadot/api/types'
 import useDeferred from '@util/useDeferred'
 import { useEffect, useRef, useState } from 'react'
-import { Loadable, RecoilLoadable, type, useRecoilValue } from 'recoil'
-import { Observable, type } from 'rxjs'
+import { Loadable, RecoilLoadable, useRecoilValue } from 'recoil'
+import { Observable } from 'rxjs'
 
 import { useSubstrateApiState } from '..'
 

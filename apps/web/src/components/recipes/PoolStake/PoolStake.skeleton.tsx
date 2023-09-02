@@ -1,5 +1,5 @@
 import { useTheme } from '@emotion/react'
-import { Skeleton, SkeletonProps, type } from '@talismn/ui'
+import { Skeleton, SkeletonProps } from '@talismn/ui'
 
 const PoolStakeSkeleton = (props: SkeletonProps) => {
   const theme = useTheme()

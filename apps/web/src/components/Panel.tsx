@@ -1,7 +1,7 @@
 import { css } from '@emotion/react'
 import styled from '@emotion/styled'
-import { MotionProps, motion, type } from 'framer-motion'
-import { ReactNode, type } from 'react'
+import { MotionProps, motion } from 'framer-motion'
+import { ReactNode } from 'react'
 
 type Props = {
   title?: string

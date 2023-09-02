@@ -1,6 +1,6 @@
 import { useTheme } from '@emotion/react'
-import { ALERT_DIALOG_PADDING, AlertDialog, AlertDialogProps, Hr, Text, TextInput, type } from '@talismn/ui'
-import React, { ChangeEventHandler, ReactElement, type, type, useCallback, useState } from 'react'
+import { ALERT_DIALOG_PADDING, AlertDialog, AlertDialogProps, Hr, Text, TextInput } from '@talismn/ui'
+import React, { ChangeEventHandler, ReactElement, useCallback, useState } from 'react'
 
 import Cryptoticon from '../Cryptoticon'
 

@@ -1,6 +1,6 @@
 import { selectedAccountsState } from '@domains/accounts/recoils'
 import styled from '@emotion/styled'
-import { BalanceFormatter, Balances, type } from '@talismn/balances'
+import { BalanceFormatter, Balances } from '@talismn/balances'
 import { formatDecimals } from '@talismn/util'
 import { useRecoilValue } from 'recoil'
 

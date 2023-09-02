@@ -1,8 +1,8 @@
 import PoolSelectorDialog from '@components/recipes/PoolSelectorDialog'
 import StakeFormComponent from '@components/recipes/StakeForm'
-import { StakeStatus, type } from '@components/recipes/StakeStatusIndicator'
-import { Account, type, writeableSubstrateAccountsState } from '@domains/accounts/recoils'
-import { Chain, ChainContext, ChainProvider, chainsState, type, useNativeTokenDecimalState } from '@domains/chains'
+import { StakeStatus } from '@components/recipes/StakeStatusIndicator'
+import { Account, writeableSubstrateAccountsState } from '@domains/accounts/recoils'
+import { Chain, ChainContext, ChainProvider, chainsState, useNativeTokenDecimalState } from '@domains/chains'
 import {
   useChainState,
   useEraEtaFormatter,
@@ -15,7 +15,7 @@ import {
 import { useInflation, usePoolAddForm, usePoolStakes } from '@domains/nominationPools/hooks'
 import { eraStakersState, useRecommendedPoolsState } from '@domains/nominationPools/recoils'
 import { createAccounts } from '@domains/nominationPools/utils'
-import { Decimal, type } from '@talismn/math'
+import { Decimal } from '@talismn/math'
 import { CircularProgressIndicator, Select } from '@talismn/ui'
 import { Maybe } from '@util/monads'
 import BN from 'bn.js'
@@ -23,7 +23,6 @@ import {
   ReactNode,
   Suspense,
   memo,
-  type,
   useCallback,
   useContext,
   useDeferredValue,

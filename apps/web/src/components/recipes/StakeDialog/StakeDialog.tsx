@@ -1,6 +1,6 @@
 import { Zap } from '@talismn/icons'
-import { InfoCard, InfoCardProps, SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR, SideSheet, Text, type } from '@talismn/ui'
-import { AnchorHTMLAttributes, DetailedHTMLProps, PropsWithChildren, ReactNode, type, type, type, type } from 'react'
+import { InfoCard, InfoCardProps, SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR, SideSheet, Text } from '@talismn/ui'
+import { AnchorHTMLAttributes, DetailedHTMLProps, PropsWithChildren, ReactNode } from 'react'
 
 export type StakeDialogProps = {
   open?: boolean

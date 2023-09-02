@@ -20,12 +20,11 @@ import {
   Menu,
   Text,
   Tooltip,
-  type,
   useSurfaceColor,
 } from '@talismn/ui'
 import { shortenAddress } from '@util/format'
 import { Maybe } from '@util/monads'
-import { ElementType, ReactNode, type, type, useMemo } from 'react'
+import { ElementType, ReactNode, useMemo } from 'react'
 import { useRecoilState, useRecoilValue, useRecoilValueLoadable, useSetRecoilState } from 'recoil'
 
 import AddReadOnlyAccountDialog from './AddReadOnlyAccountDialog'

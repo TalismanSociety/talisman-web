@@ -11,14 +11,12 @@ import {
   Text,
   TextInput,
   Tooltip,
-  type,
-  type,
 } from '@talismn/ui'
 import { isNilOrWhitespace } from '@util/nil'
 import { LayoutGroup, motion } from 'framer-motion'
-import { ReactNode, createContext, type, useContext, useId, useState } from 'react'
+import { ReactNode, createContext, useContext, useId, useState } from 'react'
 
-import { StakeStatus, StakeStatusIndicator, type } from '../StakeStatusIndicator'
+import { StakeStatus, StakeStatusIndicator } from '../StakeStatusIndicator'
 import StakeFormSkeleton from './StakeForm.skeleton'
 
 const AssetSelectorContext = createContext<ReactNode>(null)

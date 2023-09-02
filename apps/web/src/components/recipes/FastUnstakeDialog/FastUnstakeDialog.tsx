@@ -1,6 +1,6 @@
 import { AlertDialog, Button, DescriptionList, EyeOfSauronProgressIndicator, Hr, Text } from '@talismn/ui'
 import { AnimatePresence, motion } from 'framer-motion'
-import { ReactNode, type, useMemo } from 'react'
+import { ReactNode, useMemo } from 'react'
 
 export type FastUnstakeDialogProps = {
   open?: boolean

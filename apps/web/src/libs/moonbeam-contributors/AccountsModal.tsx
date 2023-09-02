@@ -4,7 +4,7 @@ import styled from '@emotion/styled'
 import { Identicon } from '@talismn/ui'
 import { truncateString } from '@util/helpers'
 
-import { ContributorWithName, type } from '.'
+import { ContributorWithName } from '.'
 
 export type AccountsModalProps = {
   className?: string

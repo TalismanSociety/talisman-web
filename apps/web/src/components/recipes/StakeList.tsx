@@ -1,5 +1,5 @@
 import { useTheme } from '@emotion/react'
-import { DetailedHTMLProps, OlHTMLAttributes, type, type } from 'react'
+import { DetailedHTMLProps, OlHTMLAttributes } from 'react'
 
 const StakeList = (props: DetailedHTMLProps<OlHTMLAttributes<HTMLOListElement>, HTMLOListElement>) => {
   const theme = useTheme()

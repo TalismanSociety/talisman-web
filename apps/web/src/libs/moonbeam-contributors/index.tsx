@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
-import { ApolloClient, InMemoryCache, NormalizedCacheObject, gql, type, useQuery } from '@apollo/client'
+import { ApolloClient, InMemoryCache, NormalizedCacheObject, gql, useQuery } from '@apollo/client'
 import { BatchHttpLink } from '@apollo/client/link/batch-http'
 import { useModal } from '@components'
 import { accountsState } from '@domains/accounts/recoils'
@@ -16,7 +16,6 @@ import {
   PropsWithChildren,
   useContext as _useContext,
   createContext,
-  type,
   useCallback,
   useEffect,
   useMemo,

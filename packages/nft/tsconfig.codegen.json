@@ -2,6 +2,8 @@
   "extends": "@talismn/tsconfig/library",
   "compilerOptions": {
     "composite": true,
+    "module": "ESNext",
+    "moduleResolution": "Node",
     "outDir": "build",
     "verbatimModuleSyntax": false
   },

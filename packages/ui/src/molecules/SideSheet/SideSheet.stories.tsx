@@ -1,9 +1,9 @@
 import { Global, css } from '@emotion/react'
-import { ComponentMeta, Story, type, type } from '@storybook/react'
+import { ComponentMeta, Story } from '@storybook/react'
 
 import { Text } from '../../atoms'
 import TextInput from '../TextInput'
-import SideSheet, { SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR, SideSheetProps, type } from './SideSheet'
+import SideSheet, { SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR, SideSheetProps } from './SideSheet'
 
 export default {
   title: 'Molecules/SideSheet',

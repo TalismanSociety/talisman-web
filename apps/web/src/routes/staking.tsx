@@ -12,9 +12,9 @@ import ClaimStakeDialog from '@components/widgets/staking/ClaimStakeDialog'
 import StakeCalculatorDialog from '@components/widgets/staking/StakeCalculatorDialog'
 import { AssetSelect } from '@components/widgets/staking/StakeForm'
 import UnstakeDialog from '@components/widgets/staking/UnstakeDialog'
-import { Account, substrateAccountsState, type } from '@domains/accounts'
+import { Account, substrateAccountsState } from '@domains/accounts'
 import { injectedNominationPoolBalances } from '@domains/balances/recoils'
-import { Chain, ChainContext, ChainProvider, chainsState, type, useNativeTokenDecimalState } from '@domains/chains'
+import { Chain, ChainContext, ChainProvider, chainsState, useNativeTokenDecimalState } from '@domains/chains'
 import {
   useEraEtaFormatter,
   useExtrinsic,
@@ -27,7 +27,6 @@ import {
   mostRecentPoolPayoutsState,
   poolPayoutsState,
   totalPoolPayoutsState,
-  type,
   useInflation,
   usePoolStakes,
 } from '@domains/nominationPools'

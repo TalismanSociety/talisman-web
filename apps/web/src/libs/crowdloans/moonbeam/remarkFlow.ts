@@ -1,7 +1,7 @@
 import * as crypto from 'crypto'
 
-import { ApiPromise, type } from '@polkadot/api'
-import { Signer, type } from '@polkadot/api/types'
+import { ApiPromise } from '@polkadot/api'
+import { Signer } from '@polkadot/api/types'
 import { web3FromAddress } from '@polkadot/extension-dapp'
 
 import { Moonbeam } from '../crowdloanOverrides'

@@ -1,3 +1,4 @@
+// @ts-ignore
 const template = (variables, { tpl }) => {
   return tpl`
 ${variables.imports};

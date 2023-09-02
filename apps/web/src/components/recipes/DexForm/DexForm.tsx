@@ -1,4 +1,4 @@
-import { Surface, TabProps, Tabs, Text, type } from '@talismn/ui'
+import { Surface, TabProps, Tabs, Text } from '@talismn/ui'
 import { AnimatePresence, LayoutGroup, motion } from 'framer-motion'
 import type { ElementType, ReactNode } from 'react'
 

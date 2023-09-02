@@ -1,8 +1,8 @@
 import { useTheme } from '@emotion/react'
 import { useTokens } from '@talismn/balances-react'
-import { IconContext } from '@talismn/icons/utils'
+import { IconContext } from '@talismn/icons'
 import { CircularProgressIndicator } from '@talismn/ui'
-import { PropsWithChildren, createContext, type, useContext } from 'react'
+import { PropsWithChildren, createContext, useContext } from 'react'
 
 export type CryptoticonProps = {
   src?: string

@@ -1,5 +1,5 @@
 import { Default as StakeDetails } from '@components/recipes/StakeDetails/StakeDetails.stories'
-import { Meta, StoryObj, type, type } from '@storybook/react'
+import { Meta, StoryObj } from '@storybook/react'
 import { Select } from '@talismn/ui'
 
 import StakeDashboard from './StakeDashboard'

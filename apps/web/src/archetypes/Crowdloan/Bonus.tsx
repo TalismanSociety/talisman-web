@@ -1,6 +1,6 @@
 import { useCrowdloanById } from '@libs/talisman'
 import { Maybe } from '@util/monads'
-import { ReactNode, type, useMemo } from 'react'
+import { ReactNode, useMemo } from 'react'
 
 export type BonusProps = {
   id: string

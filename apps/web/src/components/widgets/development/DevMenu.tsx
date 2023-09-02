@@ -6,7 +6,7 @@ import { enableTestnetsState } from '@domains/chains'
 import { useTheme } from '@emotion/react'
 import { useCallback } from 'react'
 import { useSessionStorage } from 'react-use'
-import WinBox, { WinBoxPropType, type } from 'react-winbox'
+import WinBox, { WinBoxPropType } from 'react-winbox'
 import { useRecoilState } from 'recoil'
 
 import { debugErrorBoundaryState } from '../ErrorBoundary'

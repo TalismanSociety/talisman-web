@@ -1,5 +1,5 @@
 import { useTheme } from '@emotion/react'
-import { IconContext } from '@talismn/icons/utils'
+import { IconContext } from '@talismn/icons'
 import { useMemo, type ElementType, type PropsWithChildren, type ReactNode } from 'react'
 
 import { useSurfaceColor } from '..'
@@ -130,13 +130,12 @@ const Button = <T extends ButtonElementType = 'button'>({
           textAlign: 'center',
           display: 'inline-block',
           padding: '1.156rem 2.4rem',
-          width: 'fit-content',
           border: 'none',
           borderRadius: '1rem',
           cursor: 'pointer',
           transition: '.25s',
           ...variantStyle,
-          ...(disabled ? { ':hover': undefined } : {}),
+          // ...(disabled ? { ':hover': undefined } : {}),
         },
         loading && { cursor: 'wait' },
         props.disabled && [{ cursor: 'not-allowed' }, variantDisabledStyle],

@@ -7,7 +7,7 @@ import { planckToTokens } from '@talismn/util'
 import { truncateString } from '@util/helpers'
 import { useEffect } from 'react'
 
-import { ContributorWithName, moonbeamRelaychain, type, useSetMoonbeamRewardsAddress } from '.'
+import { ContributorWithName, moonbeamRelaychain, useSetMoonbeamRewardsAddress } from '.'
 
 export type AccountModalProps = {
   className?: string

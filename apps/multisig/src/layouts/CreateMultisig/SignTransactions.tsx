@@ -13,7 +13,13 @@ enum StepStatus {
 
 const Step = ({ name, description, status }: { name: string; description: string; status: StepStatus }) => {
   const icon =
-    status === StepStatus.Done ? <Check /> : status === StepStatus.InProgress ? <CircularProgressIndicator /> : <Send />
+    status === StepStatus.Done ? (
+      <Check size={12} />
+    ) : status === StepStatus.InProgress ? (
+      <CircularProgressIndicator size={12} />
+    ) : (
+      <Send size={12} />
+    )
   return (
     <div
       className={css`

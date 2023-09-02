@@ -2,7 +2,6 @@ import { copyToClipboard } from '@domains/common'
 import { createImportPath, multisigsState, selectedMultisigState } from '@domains/multisig'
 import { css } from '@emotion/css'
 import { Users } from '@talismn/icons'
-// import { Globe } from '@talismn/icons'
 import { Button, IconButton } from '@talismn/ui'
 import { ReactElement } from 'react'
 import toast from 'react-hot-toast'
@@ -65,6 +64,7 @@ const SettingsList = () => {
       className={css`
         display: grid;
         flex-direction: column;
+        justify-items: center;
         gap: 26px;
         width: 100%;
         max-width: 624px;

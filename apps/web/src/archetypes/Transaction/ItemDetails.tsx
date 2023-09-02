@@ -1,6 +1,6 @@
 import { Info, TokenLogo } from '@components'
 import RedactableBalance from '@components/widgets/RedactableBalance'
-import { Account, type } from '@domains/accounts/recoils'
+import { Account } from '@domains/accounts/recoils'
 import { css } from '@emotion/react'
 import styled from '@emotion/styled'
 import { ReactComponent as _ArrowRight } from '@icons/arrow-right.svg'
@@ -8,12 +8,12 @@ import { Identicon } from '@talismn/ui'
 import { formatDecimals } from '@talismn/util'
 import { truncateAddress } from '@util/helpers'
 import startCase from 'lodash/startCase'
-import { ReactNode, type } from 'react'
+import { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { ClickToCopy } from './ClickToCopy'
 import { ItemNoDetails } from './ItemNoDetails'
-import { ParsedTransaction, formatGenericAddress, type } from './lib'
+import { ParsedTransaction, formatGenericAddress } from './lib'
 
 type Props = {
   parsed: ParsedTransaction | null | undefined

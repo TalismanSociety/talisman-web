@@ -1,5 +1,5 @@
-import { StakeStatus, type } from '@components/recipes/StakeStatusIndicator'
-import { Account, type } from '@domains/accounts/recoils'
+import { StakeStatus } from '@components/recipes/StakeStatusIndicator'
+import { Account } from '@domains/accounts/recoils'
 import { useSubstrateApiState } from '@domains/common'
 import { useDeriveState, useQueryState } from '@talismn/react-polkadot-api'
 import { useMemo } from 'react'

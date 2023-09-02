@@ -35,7 +35,7 @@ const SyncPreview = (props: Pick<PreviewProps, 'src'> & { type: MimeTypeType | u
           {srcs?.map((x, index) => (
             <source key={index} srcSet={x} />
           ))}
-          <img css={imgCss} />
+          <img css={imgCss} alt={'Preview'} />
         </picture>
       )
     case 'video':
@@ -97,7 +97,7 @@ export const Preview = (props: PreviewProps) => {
       {srcs?.map((x, index) => (
         <source key={index} srcSet={x} />
       ))}
-      <img onError={() => setShouldTryFetchingMimeType(true)} css={imgCss} />
+      <img onError={() => setShouldTryFetchingMimeType(true)} css={imgCss} alt="Preview" />
     </picture>
   )
 }

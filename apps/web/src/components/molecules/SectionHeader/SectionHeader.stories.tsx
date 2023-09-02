@@ -1,6 +1,6 @@
-import { ComponentMeta, Story, type, type } from '@storybook/react'
+import { ComponentMeta, Story } from '@storybook/react'
 
-import SectionHeader, { SectionHeaderProps, type } from './SectionHeader'
+import SectionHeader, { SectionHeaderProps } from './SectionHeader'
 
 export default {
   title: 'Molecules/SectionHeader',

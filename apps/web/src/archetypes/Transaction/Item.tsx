@@ -14,7 +14,7 @@ import { useRecoilValue } from 'recoil'
 
 import { ClickToCopy } from './ClickToCopy'
 import { ItemDetails } from './ItemDetails'
-import { Transaction, formatGenericAddress, type } from './lib'
+import { Transaction, formatGenericAddress } from './lib'
 import { TransactionLogo } from './TransactionLogo'
 
 type Props = {

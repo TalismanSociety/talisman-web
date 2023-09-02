@@ -1,4 +1,4 @@
-import { Meta, StoryObj, type, type } from '@storybook/react'
+import { Meta, StoryObj } from '@storybook/react'
 import { addDays } from 'date-fns'
 import { range } from 'lodash'
 

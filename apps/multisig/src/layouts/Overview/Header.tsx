@@ -113,7 +113,7 @@ const Header = () => {
                   'fontWeight': 'bold',
                   'padding': '15px 12.5px',
                   'gap': '8px',
-                  'backgroundColor': theme.color.foreground,
+                  'backgroundColor': theme.color.surface,
                   ':hover': {
                     filter: 'brightness(1.2)',
                   },
@@ -143,7 +143,7 @@ const Header = () => {
                   }}
                 >
                   <IconButton size={'16px'} contentColor={`rgb(${theme.dim})`}>
-                    <TalismanHand />
+                    <TalismanHand size={16} />
                   </IconButton>
                   Connected Vaults
                 </div>

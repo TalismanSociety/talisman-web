@@ -1,6 +1,6 @@
-import { ComponentMeta, Story, type, type } from '@storybook/react'
+import { ComponentMeta, Story } from '@storybook/react'
 
-import UnstakeAlertDialog, { UnstakeAlertDialogProps, type } from './UnstakeAlertDialog'
+import UnstakeAlertDialog, { UnstakeAlertDialogProps } from './UnstakeAlertDialog'
 
 export default {
   title: 'Recipes/UnstakeAlertDialog',

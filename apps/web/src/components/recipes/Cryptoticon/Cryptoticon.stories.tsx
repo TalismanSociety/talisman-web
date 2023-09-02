@@ -1,6 +1,6 @@
-import { ComponentMeta, Story, type, type } from '@storybook/react'
+import { ComponentMeta, Story } from '@storybook/react'
 
-import Cryptoticon, { CryptoticonProps, type } from './Cryptoticon'
+import Cryptoticon, { CryptoticonProps } from './Cryptoticon'
 
 export default {
   title: 'Recipes/Cryptoticon',

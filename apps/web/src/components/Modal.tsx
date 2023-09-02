@@ -2,7 +2,7 @@
 
 import { AlertDialog } from '@talismn/ui'
 import useKeyDown from '@util/useKeyDown'
-import { PropsWithChildren, createContext, type, useCallback, useContext, useMemo, useState } from 'react'
+import { PropsWithChildren, createContext, useCallback, useContext, useMemo, useState } from 'react'
 
 type OpenModalOptions = {
   closable: boolean

@@ -1,7 +1,7 @@
-import { ComponentMeta, Story, type, type } from '@storybook/react'
+import { ComponentMeta, Story } from '@storybook/react'
 import { Select } from '@talismn/ui'
 
-import TransportForm, { TransportFormProps, type } from './TransportForm'
+import TransportForm, { TransportFormProps } from './TransportForm'
 
 export default {
   title: 'Recipes/DexForm/TransportForm',

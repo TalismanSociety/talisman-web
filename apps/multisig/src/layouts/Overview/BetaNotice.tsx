@@ -1,12 +1,19 @@
 import Modal from '@components/Modal'
 import { Button } from '@talismn/ui'
-import { useCallback, useState } from 'react'
+import { useCallback } from 'react'
+import { atom, useRecoilState } from 'recoil'
+
+// create atom to track whether it's been opened
+const betaWarningOpenedState = atom({
+  key: 'betaWarningOpenedState',
+  default: true,
+})
 
 const BetaNotice = () => {
-  const [isOpen, setIsOpen] = useState(true)
+  const [isOpen, setIsOpen] = useRecoilState(betaWarningOpenedState)
   const close = useCallback(() => {
     setIsOpen(false)
-  }, [])
+  }, [setIsOpen])
 
   return (
     <Modal
@@ -18,6 +25,7 @@ const BetaNotice = () => {
       contentLabel="Beta Notice"
       shouldCloseOnOverlayClick={false}
       shouldCloseOnEsc={false}
+      width={'auto'}
     >
       <div
         css={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '32px', textAlign: 'center' }}

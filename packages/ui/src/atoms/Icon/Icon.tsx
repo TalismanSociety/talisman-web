@@ -1,5 +1,5 @@
 import { useTheme } from '@emotion/react'
-import { IconContext } from '@talismn/icons/utils'
+import { IconContext } from '@talismn/icons'
 import { type ComponentPropsWithoutRef, type ElementType } from 'react'
 
 export type IconElementType = Extract<ElementType, 'button' | 'a' | 'figure'> | ElementType<any>

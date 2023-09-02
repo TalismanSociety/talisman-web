@@ -1,5 +1,5 @@
 import { PoolStakeItem as PoolStakeItemComponent, WithdrawChip } from '@components/recipes/StakeItem'
-import { Account, type } from '@domains/accounts'
+import { Account } from '@domains/accounts'
 import { useNativeTokenDecimalState, useNativeTokenPriceState } from '@domains/chains'
 import { useEraEtaFormatter, useExtrinsic, useSubmittableResultLoadableState } from '@domains/common'
 import { type, usePoolStakes } from '@domains/nominationPools'

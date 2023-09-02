@@ -2,11 +2,11 @@ import AnimatedFiatNumber from '@components/widgets/AnimatedFiatNumber'
 import RedactableBalance from '@components/widgets/RedactableBalance'
 import { keyframes, useTheme } from '@emotion/react'
 import styled from '@emotion/styled'
-import { Balances, type } from '@talismn/balances'
+import { Balances } from '@talismn/balances'
 import { Lock } from '@talismn/icons'
 import { HiddenDetails, Text, Tooltip } from '@talismn/ui'
 import { isEmpty, startCase } from 'lodash'
-import { Children, ReactElement, ReactNode, type, type } from 'react'
+import { Children, ReactElement, ReactNode } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 type AssetBalanceProps = {

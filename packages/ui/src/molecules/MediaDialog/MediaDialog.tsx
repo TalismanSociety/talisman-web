@@ -32,7 +32,13 @@ const MediaPlayer = (props: MediaPlayerProps) => {
 
   switch (type) {
     case 'image':
-      return <img src={props.src} css={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+      return (
+        <img
+          src={props.src}
+          css={{ width: '100%', height: '100%', objectFit: 'contain' }}
+          alt={props.subType + ' media player'}
+        />
+      )
     case 'video':
       return <video src={props.src} css={{ width: '100%', height: '100%' }} controls />
     case 'audio':

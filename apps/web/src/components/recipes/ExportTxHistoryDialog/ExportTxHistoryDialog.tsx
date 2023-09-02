@@ -1,4 +1,4 @@
-import { AlertDialog, AlertDialogProps, Button, DateInput, Identicon, Select, Text, type } from '@talismn/ui'
+import { AlertDialog, AlertDialogProps, Button, DateInput, Identicon, Select, Text } from '@talismn/ui'
 import { Maybe } from '@util/monads'
 
 type Account = { selected?: boolean; name: string; address: string; balance: string }

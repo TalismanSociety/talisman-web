@@ -1,4 +1,4 @@
-import { Query, type } from '@archetypes/Transaction/lib'
+import { Query } from '@archetypes/Transaction/lib'
 import DialogComponent from '@components/recipes/ExportTxHistoryDialog'
 import { substrateAccountsState } from '@domains/accounts/recoils'
 import * as Sentry from '@sentry/react'
@@ -6,7 +6,7 @@ import { toast } from '@talismn/ui'
 import { stringify } from 'csv-stringify/browser/esm'
 import { subMonths } from 'date-fns'
 import { gql, request } from 'graphql-request'
-import { ReactNode, type, useCallback, useState } from 'react'
+import { ReactNode, useCallback, useState } from 'react'
 import { useRecoilValue } from 'recoil'
 
 export type ExportTxHistoryWidgetProps = {

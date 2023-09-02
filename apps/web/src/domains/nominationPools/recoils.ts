@@ -1,5 +1,5 @@
 import { substrateAccountsState } from '@domains/accounts/recoils'
-import { Chain, chainsState, type } from '@domains/chains'
+import { Chain, chainsState } from '@domains/chains'
 import { useSubstrateApiEndpoint } from '@domains/common'
 import { chainReadIdState, substrateApiState } from '@domains/common/recoils'
 import type { AnyNumber } from '@polkadot/types-codec/types'
@@ -8,7 +8,7 @@ import DotPoolSelector, { ValidatorSelector, defaultOptions } from '@talismn/dot
 import { Decimal } from '@talismn/math'
 import BN from 'bn.js'
 import { fromUnixTime, isAfter, isBefore, max as maxDate, startOfDay } from 'date-fns'
-import { SerializableParam, selectorFamily, type, waitForAll } from 'recoil'
+import { SerializableParam, selectorFamily, waitForAll } from 'recoil'
 
 export const allPendingPoolRewardsState = selectorFamily({
   key: 'AllPendingRewards',

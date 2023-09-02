@@ -1,4 +1,4 @@
-import { Account, type } from '@domains/accounts/recoils'
+import { Account } from '@domains/accounts/recoils'
 import { useIsWeb3Injected } from '@domains/extension/hooks'
 import { allowExtensionConnectionState } from '@domains/extension/recoils'
 import { Download } from '@talismn/icons'

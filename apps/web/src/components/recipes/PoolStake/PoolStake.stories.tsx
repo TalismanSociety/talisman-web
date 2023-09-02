@@ -1,6 +1,6 @@
-import { ComponentMeta, Story, type, type } from '@storybook/react'
+import { ComponentMeta, Story } from '@storybook/react'
 
-import PoolStake, { PoolStakeList, PoolStakeProps, type } from './PoolStake'
+import PoolStake, { PoolStakeList, PoolStakeProps } from './PoolStake'
 import PoolStakeSkeleton from './PoolStake.skeleton'
 
 export default {

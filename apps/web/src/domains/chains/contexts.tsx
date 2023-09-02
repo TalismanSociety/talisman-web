@@ -1,7 +1,7 @@
 import { PolkadotApiIdProvider } from '@talismn/react-polkadot-api'
-import { PropsWithChildren, createContext, type } from 'react'
+import { PropsWithChildren, createContext } from 'react'
 
-import { Chain, chains, type } from './config'
+import { Chain, chains } from './config'
 
 export const ChainContext = createContext<Chain>(chains[0])
 

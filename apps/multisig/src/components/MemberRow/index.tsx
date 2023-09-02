@@ -65,7 +65,7 @@ const MemberRow = (props: { member: AugmentedAccount; chain: Chain; onDelete?: (
               size="16px"
               contentColor={`rgb(${theme.foreground})`}
             >
-              <Trash />
+              <Trash size={16} />
             </IconButton>
           ) : (
             <div></div>
@@ -81,7 +81,7 @@ const MemberRow = (props: { member: AugmentedAccount; chain: Chain; onDelete?: (
           size="16px"
           contentColor={`rgb(${theme.foreground})`}
         >
-          <ExternalLink />
+          <ExternalLink size="16px" />
         </IconButton>
       </a>
     </div>

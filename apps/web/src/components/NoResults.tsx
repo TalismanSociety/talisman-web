@@ -1,5 +1,5 @@
 import styled from '@emotion/styled'
-import React, { PropsWithChildren, type } from 'react'
+import React, { PropsWithChildren } from 'react'
 
 type NoResultsMessageProps = {
   className?: string

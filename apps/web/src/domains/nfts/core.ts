@@ -1,12 +1,12 @@
 import * as Sentry from '@sentry/react'
-import { Nft as BaseNft, type } from '@talismn/nft'
+import { Nft as BaseNft } from '@talismn/nft'
 import { toast } from '@talismn/ui'
 import { atomFamily, selectorFamily } from 'recoil'
 import { Observable, bufferTime, filter, last, scan, tap } from 'rxjs'
 import { Thread, spawn } from 'threads'
 
 import { favoriteNftIdsState, hiddenNftIdsState, nftsByTagState } from './tags'
-import { SubscribeNfts, type } from './worker'
+import { SubscribeNfts } from './worker'
 
 export type NftTag = 'favorite' | 'hidden'
 

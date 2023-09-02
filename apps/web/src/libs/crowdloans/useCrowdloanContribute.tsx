@@ -2,8 +2,8 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
 import { SupportedRelaychains, parachainDetails } from '@libs/talisman/util/_config'
-import { ApiPromise, SubmittableResult, WsProvider, type } from '@polkadot/api'
-import { SubmittableExtrinsic, type } from '@polkadot/api/submittable/types'
+import { ApiPromise, SubmittableResult, WsProvider } from '@polkadot/api'
+import { SubmittableExtrinsic } from '@polkadot/api/submittable/types'
 import { web3FromAddress } from '@polkadot/extension-dapp'
 import { isEthereumChecksum } from '@polkadot/util-crypto'
 import { encodeAnyAddress, planckToTokens, tokensToPlanck } from '@talismn/util'
@@ -11,7 +11,7 @@ import customRpcs from '@util/customRpcs'
 import { Maybe } from '@util/monads'
 import BigNumber from 'bignumber.js'
 import { useCallback, useEffect, useState } from 'react'
-import { MemberType, makeTaggedUnion, none, type } from 'safety-match'
+import { MemberType, makeTaggedUnion, none } from 'safety-match'
 import { v4 as uuidv4 } from 'uuid'
 
 import { Acala, Astar, Moonbeam, Zeitgeist } from './crowdloanOverrides'

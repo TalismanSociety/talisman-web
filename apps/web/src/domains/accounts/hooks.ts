@@ -3,7 +3,7 @@ import { isNilOrWhitespace } from '@util/nil'
 import { useCallback, useMemo, useState } from 'react'
 import { useRecoilValue, useSetRecoilState } from 'recoil'
 
-import { ReadonlyAccount, readOnlyAccountsState, type } from './recoils'
+import { ReadonlyAccount, readOnlyAccountsState } from './recoils'
 
 export const useSetReadonlyAccounts = () => {
   const setReadonlyAccounts = useSetRecoilState(readOnlyAccountsState)

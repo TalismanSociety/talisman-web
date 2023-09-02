@@ -1,6 +1,6 @@
 import { css } from '@emotion/react'
 import styled from '@emotion/styled'
-import { Token, type } from '@talismn/chaindata-provider'
+import { Token } from '@talismn/chaindata-provider'
 
 type Props = {
   token: Pick<Token, 'symbol' | 'logo'>

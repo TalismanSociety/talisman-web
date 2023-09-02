@@ -1,4 +1,4 @@
-import { ApiPromise, type } from '@polkadot/api'
+import { ApiPromise } from '@polkadot/api'
 import { web3FromAddress } from '@polkadot/extension-dapp'
 import { atom, selectorFamily } from 'recoil'
 

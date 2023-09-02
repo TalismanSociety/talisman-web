@@ -3,7 +3,7 @@ import { useSubstrateApiEndpoint } from '@domains/common'
 import { selectorFamily } from 'recoil'
 import { Thread, spawn } from 'threads'
 
-import { WorkerFunction, type } from './worker'
+import { WorkerFunction } from './worker'
 
 export const stakersRewardState = selectorFamily({
   key: 'StakersRewardState',

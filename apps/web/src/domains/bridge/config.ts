@@ -1,5 +1,5 @@
 import { chains } from '@domains/chains'
-import { ChainId, type } from '@polkawallet/bridge'
+import { ChainId } from '@polkawallet/bridge'
 import { AcalaAdapter, KaruraAdapter } from '@polkawallet/bridge/adapters/acala'
 import { AstarAdapter, ShidenAdapter } from '@polkawallet/bridge/adapters/astar'
 import { BifrostAdapter } from '@polkawallet/bridge/adapters/bifrost'
@@ -23,7 +23,7 @@ import { StatemineAdapter, StatemintAdapter } from '@polkawallet/bridge/adapters
 import { TinkernetAdapter } from '@polkawallet/bridge/adapters/tinkernet'
 import { QuartzAdapter, UniqueAdapter } from '@polkawallet/bridge/adapters/unique'
 import { ZeitgeistAdapter } from '@polkawallet/bridge/adapters/zeitgeist'
-import { BaseCrossChainAdapter, type } from '@polkawallet/bridge/base-chain-adapter'
+import { BaseCrossChainAdapter } from '@polkawallet/bridge/base-chain-adapter'
 
 export const bridgeConfig = {
   polkadot: {

@@ -8,7 +8,7 @@ import { DefaultValue, atomFamily, useRecoilValue } from 'recoil'
 import { Thread, spawn } from 'threads'
 
 import { getErasToCheck } from './utils'
-import { WorkerFunction, type } from './worker'
+import { WorkerFunction } from './worker'
 
 const getExposureKey = (genesisHash: string) => `fast-unstake-exposure/${genesisHash}`
 

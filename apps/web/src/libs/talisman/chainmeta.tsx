@@ -1,14 +1,6 @@
 import { WsProvider } from '@polkadot/api'
 import { get } from 'lodash'
-import {
-  PropsWithChildren,
-  useContext as _useContext,
-  createContext,
-  type,
-  useEffect,
-  useReducer,
-  useState,
-} from 'react'
+import { PropsWithChildren, useContext as _useContext, createContext, useEffect, useReducer, useState } from 'react'
 
 import { SupportedRelaychains } from './util/_config'
 

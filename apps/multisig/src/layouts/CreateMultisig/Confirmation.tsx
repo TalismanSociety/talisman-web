@@ -202,6 +202,11 @@ const Confirmation = (props: {
           <Select
             placeholder="Select account"
             value={props?.selectedSigner?.address.toPubKey()}
+            className={css`
+              button {
+                background: var(--color-grey800);
+              }
+            `}
             onChange={value => {
               if (!value) return
               const a = Address.fromPubKey(value)
@@ -228,7 +233,7 @@ const Confirmation = (props: {
           `}
         >
           <IconButton size="54px" contentColor={'#d5ff5c'}>
-            <Info />
+            <Info size={54} />
           </IconButton>
           <p>
             To operate your vault {chain.chainName} requires some funds to be reserved as a deposit. This will be fully

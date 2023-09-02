@@ -10,15 +10,14 @@ import {
   Surface,
   Text,
   TonalIcon,
-  type,
   useSurfaceColorAtElevation,
 } from '@talismn/ui'
 import { shortenAddress } from '@util/format'
 import { eachDayOfInterval, isSameDay, subDays } from 'date-fns'
-import { ReactNode, type, useMemo } from 'react'
+import { ReactNode, useMemo } from 'react'
 import { VictoryAxis, VictoryBar, VictoryChart, VictoryLabel, VictoryTooltip } from 'victory'
 
-import { StakeStatus, StakeStatusIndicator, type } from '../StakeStatusIndicator'
+import { StakeStatus, StakeStatusIndicator } from '../StakeStatusIndicator'
 
 type PayoutEntry = { date: Date; amount: number; displayAmount: ReactNode }
 

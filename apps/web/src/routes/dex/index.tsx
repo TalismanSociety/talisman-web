@@ -1,4 +1,4 @@
-import { Navigate, RouteObject, type } from 'react-router-dom'
+import { Navigate, RouteObject } from 'react-router-dom'
 
 import Layout from './layout'
 import Swap from './swap'

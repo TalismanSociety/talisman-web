@@ -1,4 +1,4 @@
-import { CrowdloanContribution, type } from '@libs/crowdloans'
+import { CrowdloanContribution } from '@libs/crowdloans'
 import type { BalanceWithTokensWithPrice } from '@talismn/api-react-hooks'
 import { groupBalancesByAddress } from '@talismn/api-react-hooks'
 import { encodeAnyAddress, planckToTokens } from '@talismn/util'
@@ -8,7 +8,6 @@ import {
   PropsWithChildren,
   useContext as _useContext,
   createContext,
-  type,
   useCallback,
   useEffect,
   useMemo,

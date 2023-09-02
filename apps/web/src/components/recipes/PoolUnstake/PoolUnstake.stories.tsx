@@ -1,6 +1,6 @@
-import { ComponentMeta, Story, type, type } from '@storybook/react'
+import { ComponentMeta, Story } from '@storybook/react'
 
-import PoolUnstake, { PoolUnstakeList, PoolUnstakeProps, type } from './PoolUnstake'
+import PoolUnstake, { PoolUnstakeList, PoolUnstakeProps } from './PoolUnstake'
 
 export default {
   title: 'Recipes/PoolUnstake',

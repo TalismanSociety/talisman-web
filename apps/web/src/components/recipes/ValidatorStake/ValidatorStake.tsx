@@ -2,7 +2,7 @@ import { useTheme } from '@emotion/react'
 import { Lock, Zap } from '@talismn/icons'
 import { Button, CircularProgressIndicator, Identicon, Text } from '@talismn/ui'
 import { shortenAddress } from '@util/format'
-import React, { ReactElement, ReactNode, type, type, useMemo } from 'react'
+import React, { ReactElement, ReactNode, useMemo } from 'react'
 
 import StakeList from '../StakeList'
 import ValidatorStakeSkeleton from './ValidatorStake.skeleton'
