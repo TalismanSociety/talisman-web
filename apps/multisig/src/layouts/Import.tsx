@@ -18,6 +18,7 @@ const Import = () => {
   const navigate = useNavigate()
   const location = useLocation()
   const [multisigs, setMultisigs] = useRecoilState(multisigsState)
+  const [done, setDone] = useState(false)
   const setSelectedMultisig = useSetRecoilState(selectedMultisigState)
   const [extensionAccounts] = useRecoilState(accountsState)
   const [extensionLoading] = useRecoilState(extensionLoadingState)
@@ -89,7 +90,7 @@ const Import = () => {
         signerAddressesArray.map(a => a.toPubKey()),
         extensionAccounts.map(a => a.address.toPubKey())
       )
-      if (overlap.length > 0) {
+      if (!done && overlap.length > 0) {
         if (!multisigs.every(({ proxyAddress: _proxyAddress }) => !_proxyAddress.isEqual(proxyAddress))) {
           toast.error('Import failed: Multisig already imported', { duration: 5000 })
           navigate('/overview')
@@ -106,6 +107,7 @@ const Import = () => {
         }
         setMultisigs([...multisigs, multisig])
         setSelectedMultisig(multisig)
+        setDone(true)
         navigate('/overview')
         toast.success('Multisig imported successfully! 🥳', { duration: 5000 })
       }
@@ -114,7 +116,9 @@ const Import = () => {
     validate()
   }, [
     setMultisigs,
+    setDone,
     setSelectedMultisig,
+    done,
     multisigs,
     chain,
     name,
