@@ -32,7 +32,7 @@ interface TxMetadataByPkResponseRaw {
 
 // store nulls in a transient cache to avoid hitting the metadata service multiple times in the
 // same session for the same key it doesn't have
-const nulls_cache = new Set<string>()
+const cache = new Map<string, Promise<TxOffchainMetadata | null>>()
 
 export async function getTxMetadataByPk(
   callHash: string,
@@ -44,48 +44,59 @@ export async function getTxMetadataByPk(
     multisig: args.multisig.toSs58(args.chain),
     chain: args.chain.squidIds.chainData,
   }
-  if (nulls_cache.has(callHash)) return null
+  if (cache.has(callHash)) return cache.get(callHash)!
 
-  const query = gql`
-    query TxMetadataByPk($timepoint_height: Int!, $timepoint_index: Int!, $multisig: String!, $chain: String!) {
-      tx_metadata_by_pk(
-        multisig: $multisig
-        timepoint_height: $timepoint_height
-        timepoint_index: $timepoint_index
-        chain: $chain
-      ) {
-        call_data
-        description
-        change_config_details
+  cache.set(
+    callHash,
+    new Promise(async (resolve, reject) => {
+      try {
+        const query = gql`
+          query TxMetadataByPk($timepoint_height: Int!, $timepoint_index: Int!, $multisig: String!, $chain: String!) {
+            tx_metadata_by_pk(
+              multisig: $multisig
+              timepoint_height: $timepoint_height
+              timepoint_index: $timepoint_index
+              chain: $chain
+            ) {
+              call_data
+              description
+              change_config_details
+            }
+          }
+        `
+
+        const res = (await request(
+          METADATA_SERVICE_URL,
+          query,
+          variables as Record<string, any>
+        )) as TxMetadataByPkResponseRaw
+        if (res.tx_metadata_by_pk === null) {
+          console.warn(`Metadata service has no value for ${callHash}`)
+          resolve(null)
+          return
+        }
+
+        const changeConfigDetails: ChangeConfigDetails | undefined = res.tx_metadata_by_pk.change_config_details
+          ? {
+              newThreshold: res.tx_metadata_by_pk.change_config_details.newThreshold,
+              newMembers: res.tx_metadata_by_pk.change_config_details.newMembers.map(m => {
+                const address = Address.fromSs58(m)
+                if (!address) throw new Error(`Invalid address returned from tx_metadata!`)
+                return address
+              }),
+            }
+          : undefined
+
+        resolve({
+          callData: res.tx_metadata_by_pk.call_data as `0x${string}`,
+          description: res.tx_metadata_by_pk.description,
+          changeConfigDetails,
+        })
+      } catch (error) {
+        console.error(error)
+        reject("Couldn't fetch metadata")
       }
-    }
-  `
-
-  const res = (await request(
-    METADATA_SERVICE_URL,
-    query,
-    variables as Record<string, any>
-  )) as TxMetadataByPkResponseRaw
-  if (res.tx_metadata_by_pk === null) {
-    console.warn(`Metadata service has no value for ${callHash}`)
-    nulls_cache.add(callHash)
-    return null
-  }
-
-  const changeConfigDetails: ChangeConfigDetails | undefined = res.tx_metadata_by_pk.change_config_details
-    ? {
-        newThreshold: res.tx_metadata_by_pk.change_config_details.newThreshold,
-        newMembers: res.tx_metadata_by_pk.change_config_details.newMembers.map(m => {
-          const address = Address.fromSs58(m)
-          if (!address) throw new Error(`Invalid address returned from tx_metadata!`)
-          return address
-        }),
-      }
-    : undefined
-
-  return {
-    callData: res.tx_metadata_by_pk.call_data as `0x${string}`,
-    description: res.tx_metadata_by_pk.description,
-    changeConfigDetails,
-  }
+    })
+  )
+  return cache.get(callHash)!
 }
