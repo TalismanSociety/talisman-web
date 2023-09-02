@@ -47,7 +47,7 @@ export const pjsApiSelector = selectorFamily({
         // Log the error and move to the next RPC.
         const { url: rpcUrl } = rpcs[i] as { url: string }
         console.warn(`Failed to connect to ${rpcUrl} failed: `, err)
-        toast.error(`Failed to connect to ${rpcUrl}: ${err}. Trying another the next one...}`)
+        toast.error(`Failed to connect to ${rpcUrl}: ${err}. Trying another the next one...`)
       }
     }
 
