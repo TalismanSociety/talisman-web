@@ -381,6 +381,8 @@ const History = () => {
     [selectedAccounts, search, chain, module, fromDate, toDate, dateOrder]
   )
 
+  const today = useMemo(() => new Date(), [])
+
   return (
     <section>
       <div css={{ marginBottom: '1.6rem' }}>
@@ -443,13 +445,13 @@ const History = () => {
             <div css={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
               <DateInput
                 value={fromDate}
-                max={toDate}
+                max={toDate ?? today}
                 onChangeDate={x => setFromDate(Maybe.of(x).mapOrUndefined(startOfDay))}
                 css={{ padding: '1.1rem' }}
               />
               <DateInput
                 value={toDate}
-                max={useMemo(() => new Date(), [])}
+                max={today}
                 onChangeDate={x => setToDate(Maybe.of(x).mapOrUndefined(endOfDay))}
                 css={{ padding: '1.1rem' }}
               />
