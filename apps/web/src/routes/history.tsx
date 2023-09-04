@@ -443,11 +443,13 @@ const History = () => {
             <div css={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
               <DateInput
                 value={fromDate}
+                max={toDate}
                 onChangeDate={x => setFromDate(Maybe.of(x).mapOrUndefined(startOfDay))}
                 css={{ padding: '1.1rem' }}
               />
               <DateInput
                 value={toDate}
+                max={useMemo(() => new Date(), [])}
                 onChangeDate={x => setToDate(Maybe.of(x).mapOrUndefined(endOfDay))}
                 css={{ padding: '1.1rem' }}
               />

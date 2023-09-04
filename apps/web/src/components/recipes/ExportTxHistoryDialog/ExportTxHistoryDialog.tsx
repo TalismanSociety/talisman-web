@@ -1,6 +1,7 @@
-import { AlertDialog, type AlertDialogProps, Button, DateInput, Identicon, Select, Text } from '@talismn/ui'
+import { AlertDialog, Button, DateInput, Identicon, Select, Text, type AlertDialogProps } from '@talismn/ui'
 import { Maybe } from '@util/monads'
 import { endOfDay, startOfDay } from 'date-fns'
+import { useMemo } from 'react'
 
 type Account = { selected?: boolean; name: string; address: string; balance: string }
 
@@ -65,6 +66,7 @@ const ExportTxHistoryDialog = ({
             <div css={{ marginBottom: '0.8rem' }}>Start date</div>
             <DateInput
               value={fromDate}
+              max={toDate}
               onChangeDate={x => onChangeFromDate(Maybe.of(x).mapOrUndefined(startOfDay))}
               css={{ width: '100%' }}
             />
@@ -73,6 +75,7 @@ const ExportTxHistoryDialog = ({
             <div css={{ marginBottom: '0.8rem' }}>End date</div>
             <DateInput
               value={toDate}
+              max={useMemo(() => new Date(), [])}
               onChangeDate={x => onChangeToDate(Maybe.of(x).mapOrUndefined(endOfDay))}
               css={{ width: '100%' }}
             />
