@@ -1,5 +1,5 @@
 import DialogComponent from '@components/recipes/ExportTxHistoryDialog'
-import { substrateAccountsState } from '@domains/accounts/recoils'
+import { accountsState } from '@domains/accounts/recoils'
 import * as Sentry from '@sentry/react'
 import { toast } from '@talismn/ui'
 import { stringify } from 'csv-stringify/browser/esm'
@@ -16,7 +16,7 @@ export type ExportTxHistoryWidgetProps = {
 const ExportTxHistoryWidget = (props: ExportTxHistoryWidgetProps) => {
   const [open, setOpen] = useState(false)
 
-  const accounts = useRecoilValue(substrateAccountsState)
+  const accounts = useRecoilValue(accountsState)
   const [selectedAccount, setSelectedAccount] = useState(accounts[0])
 
   const [fromDate, setFromDate] = useState<Date | undefined>(subMonths(new Date(), 1))
