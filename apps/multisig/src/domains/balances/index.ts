@@ -1,8 +1,8 @@
 import { BaseToken, supportedChains } from '@domains/chains'
-import { activeMultisigsState, combinedViewState, selectedMultisigState } from '@domains/multisig'
+// import { activeMultisigsState, combinedViewState, selectedMultisigState } from '@domains/multisig'
 import { Balances } from '@talismn/balances'
-import { useAllAddresses, useBalances, useTokens } from '@talismn/balances-react'
-import { groupBy } from 'lodash'
+// import { useAllAddresses, useBalances, useTokens } from '@talismn/balances-react'
+// import { groupBy } from 'lodash'
 import { useEffect, useMemo } from 'react'
 import { atom, useRecoilValue, useSetRecoilState } from 'recoil'
 
@@ -52,42 +52,48 @@ export const useAugmentedBalances = () => {
 }
 
 export const BalancesWatcher = () => {
-  const tokens = useTokens(true)
-  const combinedView = useRecoilValue(combinedViewState)
-  const selectedMultisig = useRecoilValue(selectedMultisigState)
-  const activeMultisigs = useRecoilValue(activeMultisigsState)
+  // const tokens = useTokens(true)
+  // const combinedView = useRecoilValue(combinedViewState)
+  // const selectedMultisig = useRecoilValue(selectedMultisigState)
+  // const activeMultisigs = useRecoilValue(activeMultisigsState)
   const setBalances = useSetRecoilState(balancesState)
-  const [, setAllAddresses] = useAllAddresses()
-
-  const multisigs = useMemo(
-    () => (combinedView ? activeMultisigs : [selectedMultisig]),
-    [combinedView, activeMultisigs, selectedMultisig]
-  )
-  const addresses = useMemo(() => multisigs.map(({ proxyAddress }) => proxyAddress), [multisigs])
+  // const [, setAllAddresses] = useAllAddresses()
 
   useEffect(() => {
-    setAllAddresses(addresses.map(a => a.toSs58(selectedMultisig.chain)))
-  }, [setAllAddresses, addresses, selectedMultisig])
-
-  const multisigsByChain = useMemo(() => groupBy(multisigs, ({ chain }) => chain.squidIds.chainData), [multisigs])
-  const addressesByToken = useMemo(
-    () =>
-      Object.fromEntries(
-        Object.values(tokens).flatMap(token => {
-          if (!token.chain) return []
-          const multisigs = multisigsByChain[token.chain.id]
-
-          if (!multisigs) return []
-          return [[token.id, multisigs.map(({ proxyAddress }) => proxyAddress.toSs58(selectedMultisig.chain))]]
-        })
-      ),
-    [multisigsByChain, tokens, selectedMultisig]
-  )
-
-  const balances = useBalances(addressesByToken)
-  useEffect(() => {
-    setBalances(balances.filterNonZero('total'))
-  }, [balances, setBalances])
+    setBalances(undefined)
+  }, [setBalances])
 
   return null
+
+  // const multisigs = useMemo(
+  //   () => (combinedView ? activeMultisigs : [selectedMultisig]),
+  //   [combinedView, activeMultisigs, selectedMultisig]
+  // )
+  // const addresses = useMemo(() => multisigs.map(({ proxyAddress }) => proxyAddress), [multisigs])
+
+  // useEffect(() => {
+  //   setAllAddresses(addresses.map(a => a.toSs58(selectedMultisig.chain)))
+  // }, [setAllAddresses, addresses, selectedMultisig])
+
+  // const multisigsByChain = useMemo(() => groupBy(multisigs, ({ chain }) => chain.squidIds.chainData), [multisigs])
+  // const addressesByToken = useMemo(
+  //   () =>
+  //     Object.fromEntries(
+  //       Object.values(tokens).flatMap(token => {
+  //         if (!token.chain) return []
+  //         const multisigs = multisigsByChain[token.chain.id]
+
+  //         if (!multisigs) return []
+  //         return [[token.id, multisigs.map(({ proxyAddress }) => proxyAddress.toSs58(selectedMultisig.chain))]]
+  //       })
+  //     ),
+  //   [multisigsByChain, tokens, selectedMultisig]
+  // )
+
+  // const balances = useBalances(addressesByToken)
+  // useEffect(() => {
+  //   setBalances(balances.filterNonZero('total'))
+  // }, [balances, setBalances])
+
+  // return null
 }

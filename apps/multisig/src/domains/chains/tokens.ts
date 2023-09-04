@@ -102,7 +102,7 @@ export const tokenPriceState = selectorFamily({
 
       return { current: 0 }
     } catch (e) {
-      // Coingecko has rate limit, better to return 0 than to crash the session
+      // apis have a rate limit. better to return 0 than to crash the session
       // TODO: find alternative or purchase Coingecko subscription
       console.error(`Error fetching price for ${coingeckoId}, returning zero: ${e}`)
       return { current: 0 }
