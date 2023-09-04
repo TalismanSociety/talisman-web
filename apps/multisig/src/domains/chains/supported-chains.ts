@@ -3,6 +3,7 @@ import { Chain } from '.'
 export const supportedChains: Chain[] = [
   {
     squidIds: { chainData: 'polkadot', txHistory: 'polkadot' },
+    genesisHash: '0x91b171bb158e2d3848fa23a9f1c25182fb8e20313b2c1eb49219da7a70ce90c3',
     chainName: 'Polkadot',
     logo: 'https://raw.githubusercontent.com/TalismanSociety/chaindata/v3/assets/chains/polkadot.svg',
     isTestnet: false,
@@ -49,6 +50,7 @@ export const supportedChains: Chain[] = [
   },
   {
     squidIds: { chainData: 'kusama', txHistory: 'kusama' },
+    genesisHash: '0xb0a8d493285c2df73290dfb7e61f870f17b41801197a149ca93654499ea3dafe',
     chainName: 'Kusama',
     logo: 'https://raw.githubusercontent.com/TalismanSociety/chaindata/v3/assets/chains/kusama.svg',
     isTestnet: false,
@@ -95,6 +97,7 @@ export const supportedChains: Chain[] = [
   },
   {
     squidIds: { chainData: 'polkadot-asset-hub', txHistory: 'statemint' },
+    genesisHash: '0x68d56f15f85d3136970ec16946040bc1752654e906147f7e43e9d539d7c3de2f',
     chainName: 'Polkadot Asset Hub',
     nativeToken: {
       id: 'polkadot-asset-hub-substrate-native-dot',
@@ -132,6 +135,7 @@ export const supportedChains: Chain[] = [
   },
   {
     squidIds: { chainData: 'kusama-asset-hub', txHistory: 'statemine' },
+    genesisHash: '0x48239ef607d7928874027a43a67689209727dfb3d3dc5e5b03a39bdc2eda771a',
     chainName: 'Kusama Asset Hub',
     nativeToken: {
       id: 'kusama-asset-hub-substrate-native-ksm',
@@ -172,6 +176,7 @@ export const supportedChains: Chain[] = [
   },
   {
     squidIds: { chainData: 'hydradx', txHistory: 'hydradx' },
+    genesisHash: '0xafdc188f45c71dacbaa0b62e16a91f726c7b8699a9748cdf715459de6b7f366d',
     chainName: 'HydraDX',
     nativeToken: {
       id: 'hydradx-substrate-native-hdx',
@@ -197,6 +202,7 @@ export const supportedChains: Chain[] = [
   },
   {
     squidIds: { chainData: 'westend-testnet', txHistory: 'westend' },
+    genesisHash: '0xe143f23803ac50e8f6f8e62695d1ce9e4e1d68aa36c1cd2cfd15340213f3423e',
     chainName: 'Westend',
     logo: 'https://raw.githubusercontent.com/TalismanSociety/chaindata/v3/assets/chains/westend-testnet.svg',
     isTestnet: true,
@@ -240,6 +246,7 @@ export const supportedChains: Chain[] = [
   },
   {
     squidIds: { chainData: 'rococo-testnet', txHistory: 'rococo' },
+    genesisHash: '0x6408de7737c59c238890533af25896a2c20608d8b380bb01029acb392781063e',
     chainName: 'Rococo',
     logo: 'https://raw.githubusercontent.com/TalismanSociety/chaindata/v3/assets/chains/rococo-testnet.svg',
     isTestnet: true,

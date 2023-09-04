@@ -193,6 +193,7 @@ export type Chain = {
     chainData: string
     txHistory: string
   }
+  genesisHash: string
   chainName: string
   logo: string
   isTestnet: boolean

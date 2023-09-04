@@ -19,6 +19,7 @@ import { RecoilRelayEnvironmentProvider } from 'recoil-relay'
 import ThemeProvider from './App.Theme'
 import RelayEnvironment, { chainDataSquidEnvKey } from './graphql/relay-environment'
 import router from './routes'
+import { supportedChains } from '@domains/chains'
 
 const Loader = () => {
   return (
@@ -42,7 +43,11 @@ const App: React.FC = () => (
   <ThemeProvider>
     <RecoilRoot>
       <RecoilRelayEnvironmentProvider environment={RelayEnvironment} environmentKey={chainDataSquidEnvKey}>
-        <BalancesProvider balanceModules={balanceModules} withTestnets={true}>
+        <BalancesProvider
+          balanceModules={balanceModules}
+          withTestnets
+          enabledChains={supportedChains.map(chain => chain.genesisHash)}
+        >
           <Suspense fallback={<Loader />}>
             <BalancesWatcher />
             <ExtensionWatcher />
