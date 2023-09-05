@@ -37,6 +37,8 @@ export default Sentry.wrapCreateBrowserRouter(createBrowserRouter)([
       },
       { path: 'nfts', element: <Navigate to="/portfolio/collectibles" /> },
       { path: 'staking', element: <Staking /> },
+      // TODO: remove once link on extension side is updated
+      { path: '/portfolio/history', element: <Navigate to="/history" /> },
     ],
   },
   { path: '*', element: <Navigate to="/" /> },
