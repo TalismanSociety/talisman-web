@@ -10,7 +10,7 @@ import AccountsManagementMenu from '@components/widgets/AccountsManagementMenu'
 import StakeDialog from '@components/widgets/staking/StakeDialog'
 import { selectedAccountsState } from '@domains/accounts/recoils'
 import * as MoonbeamContributors from '@libs/moonbeam-contributors'
-import { Compass, CreditCard, Eye, MoreHorizontal, RefreshCcw, Star, TalismanHand, Zap } from '@talismn/icons'
+import { Compass, CreditCard, Eye, FileText, MoreHorizontal, RefreshCcw, Star, TalismanHand, Zap } from '@talismn/icons'
 import {
   IconButton,
   NavigationBar,
@@ -124,11 +124,11 @@ const Layout = () => {
           <Link to="/transfer">
             <NavigationBar.Item label="Transfer" icon={<RefreshCcw />} />
           </Link>
-          <Link to="/explore">
-            <NavigationBar.Item label="Explore" icon={<Compass />} />
-          </Link>
           <Link to="/crowdloans">
             <NavigationBar.Item label="Crowdloans" icon={<Star />} />
+          </Link>
+          <Link to="/history">
+            <NavigationBar.Item label="History" icon={<FileText />} />
           </Link>
         </NavigationBar>
       }
@@ -157,6 +157,9 @@ const Layout = () => {
           </Link>
           <Link to="https://talisman.banxa.com/" target="_blank">
             <NavigationRail.Item label="Buy" icon={<CreditCard />} />
+          </Link>
+          <Link to="/history">
+            <NavigationRail.Item label="History" icon={<FileText />} />
           </Link>
         </NavigationRail>
       }
@@ -219,6 +222,9 @@ const Layout = () => {
           </Link>
           <Link to="https://talisman.banxa.com/" target="_blank">
             <NavigationDrawer.Item label="Buy crypto" icon={<CreditCard />} />
+          </Link>
+          <Link to="/history" target="_blank">
+            <NavigationDrawer.Item label="History" icon={<FileText />} />
           </Link>
         </NavigationDrawer>
       }

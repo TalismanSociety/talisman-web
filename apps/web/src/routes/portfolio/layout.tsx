@@ -8,7 +8,6 @@ const Layout = () => {
   const paths = [
     { path: '', name: 'Overview' },
     { path: 'collectibles', name: 'Collectibles' },
-    { path: 'history', name: 'History' },
   ]
 
   // get the current path that is after /portfolio/ even if there is something after it

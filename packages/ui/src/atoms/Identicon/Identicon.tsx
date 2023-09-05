@@ -1,7 +1,7 @@
 import { encodeAnyAddress } from '@talismn/util'
 import { HSL, HSV, display as asCssColor, to as toColorSpace } from 'colorjs.io/fn'
 import md5 from 'md5'
-import { useId, useMemo } from 'react'
+import { useId, useMemo, type CSSProperties } from 'react'
 
 const djb2 = (str: string) => {
   let hash = 5381
@@ -22,10 +22,11 @@ export type IdenticonProps = {
   value: string
   size?: number | string
   className?: string
+  style?: CSSProperties
   theme?: string
 }
 
-const Identicon = ({ value: seed, size = '2.4rem', className }: IdenticonProps) => {
+const Identicon = ({ value: seed, size = '2.4rem', className, style }: IdenticonProps) => {
   const id = useId()
 
   const { bgColor1, bgColor2, transform, glowColor, cx, cy, isEthereum } = useMemo(() => {
@@ -70,6 +71,7 @@ const Identicon = ({ value: seed, size = '2.4rem', className }: IdenticonProps) 
   return (
     <svg
       className={className}
+      style={style}
       width={size}
       height={size}
       viewBox={`0 0 64 64`}

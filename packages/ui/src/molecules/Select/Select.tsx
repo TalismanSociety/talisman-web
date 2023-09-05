@@ -1,5 +1,6 @@
 import { useTheme } from '@emotion/react'
 import {
+  autoPlacement,
   autoUpdate,
   offset,
   size,
@@ -9,6 +10,7 @@ import {
   useInteractions,
   useListNavigation,
   useRole,
+  useTypeahead,
 } from '@floating-ui/react'
 import { ChevronDown, X } from '@talismn/icons'
 import { motion } from 'framer-motion'
@@ -33,6 +35,7 @@ export type SelectProps<TValue extends string | number, TClear extends boolean =
   children?: ReactNode
   onChange?: (value: TClear extends false ? TValue : TValue | undefined) => unknown
   clearRequired?: TClear
+  detached?: boolean
 }
 
 type SelectItemProps = {
@@ -44,32 +47,31 @@ type SelectItemProps = {
 
 const SelectItem = forwardRef<HTMLDivElement, SelectItemProps>((props, ref) => (
   <div ref={ref} css={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-    <figure css={{ maxWidth: 40, maxHeight: 40, margin: 0 }}>{props.leadingIcon}</figure>
+    {props.leadingIcon && (
+      <figure css={{ display: 'flex', alignItems: 'center', maxWidth: 40, maxHeight: 40, margin: 0 }}>
+        {props.leadingIcon}
+      </figure>
+    )}
     <div>
-      <div>
-        <Text.Body>{props.headlineText}</Text.Body>
-      </div>
-      <div>
-        <Text.Body>{props.supportingText}</Text.Body>
-      </div>
+      <Text.Body as="div">{props.headlineText}</Text.Body>
+      <Text.Body as="div">{props.supportingText}</Text.Body>
     </div>
   </div>
 ))
-
-// slight overlap for better border radius animation
-const OVERLAP = 6
 
 const Select = Object.assign(
   <TValue extends string | number, TClear extends boolean = false>({
     children,
     renderSelected,
     clearRequired: _clearRequired,
+    detached,
     ...props
   }: SelectProps<TValue, TClear>) => {
     const theme = useTheme()
     const surfaceColor = useSurfaceColor()
 
     const listRef = useRef<HTMLLIElement[]>([])
+    const listContentRef = useRef<Array<string | null>>([])
     const [open, setOpen] = useState(false)
     const [pointer, setPointer] = useState(false)
     const [activeIndex, setActiveIndex] = useState<number | null>(null)
@@ -84,6 +86,9 @@ const Select = Object.assign(
       renderSelected?.(props.value) ?? (selectedIndex === undefined ? undefined : childrenArray[selectedIndex])
 
     const clearRequired = !open && _clearRequired && selectedChild !== undefined
+
+    // slight overlap for better border radius animation
+    const overlap = detached ? 0 : 6
 
     const { context, x, y, refs, strategy } = useFloating({
       open,
@@ -105,13 +110,21 @@ const Select = Object.assign(
             // https://github.com/floating-ui/floating-ui/issues/1740#issuecomment-1540639488
             requestAnimationFrame(() => {
               Object.assign(elements.floating.style, {
-                width: `${rects.reference.width}px`,
                 maxHeight: `${availableHeight}px`,
               })
+
+              if (!detached) {
+                Object.assign(elements.floating.style, {
+                  width: `${rects.reference.width}px`,
+                })
+              }
             })
           },
         }),
-        offset(-OVERLAP),
+        offset(detached ? 6 : -overlap),
+        ...(detached
+          ? [autoPlacement({ allowedPlacements: ['top-start', 'top-end', 'bottom-start', 'bottom-end'] })]
+          : []),
       ],
     })
 
@@ -119,14 +132,18 @@ const Select = Object.assign(
       useRole(context, { role: 'listbox' }),
       useClick(context),
       useListNavigation(context, {
-        // TODO: this caused element to jump a little
-        // so disabling for now, need to investigate further
-        enabled: false,
         listRef,
         activeIndex,
-        selectedIndex,
+        // TODO: disable selected index for now as
+        // as this cause weird animation on open if an item is already focused
+        // selectedIndex,
         onNavigate: setActiveIndex,
         loop: true,
+      }),
+      useTypeahead(context, {
+        listRef: listContentRef,
+        activeIndex,
+        onMatch: setActiveIndex,
       }),
       useDismiss(context),
     ])
@@ -166,6 +183,7 @@ const Select = Object.assign(
           true: { filter: 'drop-shadow(0 1px 3px rgba(0, 0, 0, 0.25))' },
           false: { filter: 'drop-shadow(0 0 0 rgba(0, 0, 0, 0.25))' },
         }}
+        css={{ display: 'inline-block' }}
       >
         <Surface
           as={motion.button}
@@ -174,7 +192,10 @@ const Select = Object.assign(
             true: {
               border: `solid ${theme.color.border}`,
               borderWidth: '1px 1px 0 1px',
-              transitionEnd: { borderBottomLeftRadius: 0, borderBottomRightRadius: 0 },
+              transitionEnd: {
+                borderBottomLeftRadius: detached ? '0.8rem' : 0,
+                borderBottomRightRadius: detached ? '0.8rem' : 0,
+              },
             },
             false: {
               border: 'solid transparent',
@@ -224,36 +245,33 @@ const Select = Object.assign(
                 transitionEnd: { visibility: 'hidden' },
               },
             }}
-            css={{
-              'margin': 0,
-              'padding': 0,
-              'borderBottomLeftRadius': '0.5rem',
-              'borderBottomRightRadius': '0.5rem',
-              'backgroundColor': surfaceColor,
-              'listStyle': 'none',
-              'li': {
-                'padding': '1.5rem 1.25rem',
+            css={[
+              {
+                'margin': 0,
+                'padding': 0,
                 'backgroundColor': surfaceColor,
-                ':hover': {
-                  filter: 'brightness(1.2)',
+                'listStyle': 'none',
+                'li': {
+                  'padding': '1.5rem 1.25rem',
+                  'backgroundColor': surfaceColor,
+                  ':last-child': {
+                    padding: '1.5rem 1.25rem 1rem 1.25rem',
+                  },
                 },
-                ':focus-visible': {
-                  filter: 'brightness(1.2)',
-                },
-                ':last-child': {
-                  padding: '1.5rem 1.25rem 1rem 1.25rem',
+                // Top spacer for animation overlap
+                '::before': {
+                  content: '""',
+                  display: 'block',
+                  position: 'sticky',
+                  top: 0,
+                  height: overlap,
+                  backgroundColor: surfaceColor,
                 },
               },
-              // Top spacer for animation overlap
-              '::before': {
-                content: '""',
-                display: 'block',
-                position: 'sticky',
-                top: 0,
-                height: OVERLAP,
-                backgroundColor: surfaceColor,
-              },
-            }}
+              detached
+                ? { borderRadius: '0.5rem' }
+                : { borderBottomLeftRadius: '0.5rem', borderBottomRightRadius: '0.5rem' },
+            ]}
             {...getFloatingProps({
               style: {
                 position: strategy,
@@ -280,14 +298,14 @@ const Select = Object.assign(
                 ref={node => {
                   if (node !== null) {
                     listRef.current[index] = node
+                    listContentRef.current[index] = node?.textContent
                   }
                 }}
-                tabIndex={!open ? -1 : index === activeIndex ? 0 : 1}
-                aria-selected={index === activeIndex}
-                css={{ cursor: 'pointer' }}
+                tabIndex={index === activeIndex ? 0 : 1}
+                aria-selected={index === selectedIndex && index === activeIndex}
+                css={[{ cursor: 'pointer' }, index === activeIndex && { filter: 'brightness(1.2)' }]}
                 {...getItemProps({
                   onClick: () => select(child.props.value),
-
                   onKeyDown: event => {
                     if (event.key === 'Enter') {
                       event.preventDefault()
