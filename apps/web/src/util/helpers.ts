@@ -1,11 +1,13 @@
 export const truncateAddress = (addr: string | null | undefined, start = 6, end = 4) =>
   addr ? `${addr.substring(0, start)}...${addr.substring(addr.length - end)}` : null
+
 export const truncateString = (str = '', start = 10, end = 0) =>
   str?.length
     ? str.length <= start + end
       ? str
       : `${str.substring(0, start)}...` + (end > 0 ? str.substring(str.length - end) : '')
     : null
+
 export const unitPrefixes = [
   { multiplier: 1e-24, symbol: 'y' },
   { multiplier: 1e-21, symbol: 'z' },
@@ -42,36 +44,11 @@ type FormatProperties = {
   maximumFractionDigits?: number
 }
 
-export const shortCurrency = (val: number, props?: FormatProperties) => {
-  const prefix = unitPrefixes
-    .slice()
-    .reverse()
-    .find(({ multiplier }) => multiplier <= val)
-
-  if (!prefix) return formatCurrency(val, props)
-
-  const parts = formatCurrencyToParts(val / prefix.multiplier, props)
-  for (const part of parts) {
-    if (part.type !== 'currency') continue
-    part.value = `${prefix.symbol}${part.value}`
-  }
-
-  return parts.map(({ value }) => value).join('')
-}
-export const formatCurrency = (val: number, props?: FormatProperties) =>
-  formatCurrencyToParts(val, props)
-    .map(({ value }) => value)
-    .join('')
-export const formatCurrencyToParts = (val: number, props?: FormatProperties) =>
-  new Intl.NumberFormat(props?.locale ?? 'en-US', {
-    style: 'currency',
-    currency: props?.currency ?? 'USD',
-    currencyDisplay: 'symbol',
-  }).formatToParts(val || 0)
 export const formatCommas = (val: number, props?: FormatProperties) =>
   new Intl.NumberFormat(props?.locale ?? 'en-US', {
     maximumFractionDigits: props?.maximumFractionDigits ?? 4,
   }).format(val)
+
 export const isMobileBrowser = () =>
   // Method taken from https://developer.mozilla.org/en-US/docs/Web/HTTP/Browser_detection_using_the_user_agent#mobile_tablet_or_desktop
   (

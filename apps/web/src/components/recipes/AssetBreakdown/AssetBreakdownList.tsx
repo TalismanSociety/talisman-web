@@ -2,9 +2,10 @@ import { selectedAccountsState } from '@domains/accounts/recoils'
 import styled from '@emotion/styled'
 import { BalanceFormatter, type Balances } from '@talismn/balances'
 import { formatDecimals } from '@talismn/util'
-import { useRecoilValue } from 'recoil'
+import { useRecoilValue, waitForAll } from 'recoil'
 
 import { AssetBreakdownRow, AssetBreakdownRowHeader } from './AssetBreakdownRow'
+import { selectedCurrencyState } from '@domains/balances'
 
 const Table = styled.table`
   width: 100%;
@@ -73,7 +74,7 @@ type AssetBreakdownListProps = {
 
 export const AssetBreakdownList = (props: AssetBreakdownListProps) => {
   const { token, balances } = props
-  const accounts = useRecoilValue(selectedAccountsState)
+  const [accounts, currency] = useRecoilValue(waitForAll([selectedAccountsState, selectedCurrencyState]))
 
   return (
     <Table>
@@ -97,7 +98,7 @@ export const AssetBreakdownList = (props: AssetBreakdownListProps) => {
             ).tokens
           )
 
-          const fiatAmount = tokenBalance?.sum?.fiat('usd')?.transferable
+          const fiatAmount = tokenBalance?.sum?.fiat(currency)?.transferable
 
           const assetSummary = {
             planckAmount,
@@ -127,7 +128,7 @@ export const AssetBreakdownList = (props: AssetBreakdownListProps) => {
             ).tokens
           )
 
-          const fiatAmount = tokenBalance?.sum?.fiat('usd')?.locked
+          const fiatAmount = tokenBalance?.sum?.fiat(currency)?.locked
 
           const assetSummary = {
             planckAmount,

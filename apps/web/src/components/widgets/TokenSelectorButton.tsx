@@ -1,11 +1,11 @@
 import Cryptoticon from '@components/recipes/Cryptoticon/Cryptoticon'
 import TokenSelectorDialog from '@components/recipes/TokenSelectorDialog'
-import { selectedBalancesState } from '@domains/balances/recoils'
+import { selectedBalancesState, selectedCurrencyState } from '@domains/balances'
 import type { IToken } from '@talismn/chaindata-provider'
 import { Decimal } from '@talismn/math'
 import { Button } from '@talismn/ui'
 import { useMemo, useState } from 'react'
-import { useRecoilValue } from 'recoil'
+import { useRecoilValue, waitForAll } from 'recoil'
 
 export type TokenSelectorProps<T extends IToken | string> = {
   tokens: T[]
@@ -15,7 +15,7 @@ export type TokenSelectorProps<T extends IToken | string> = {
 
 const TokenSelectorButton = <T extends IToken | string>(props: TokenSelectorProps<T>) => {
   const [tokenSelectorDialogOpen, setTokenSelectorDialogOpen] = useState(false)
-  const balances = useRecoilValue(selectedBalancesState)
+  const [balances, currency] = useRecoilValue(waitForAll([selectedBalancesState, selectedCurrencyState]))
 
   const tokensWithBalance = useMemo(
     () =>
@@ -32,10 +32,10 @@ const TokenSelectorButton = <T extends IToken | string>(props: TokenSelectorProp
           logo:
             balance.each.at(0)?.token?.logo ?? `https://token-resources.vercel.app/tokens/${symbol.toUpperCase()}.png`,
           free,
-          freeFiat: balance.sum.fiat('usd').free,
+          freeFiat: balance.sum.fiat(currency).free,
         }
       }),
-    [balances, props.tokens]
+    [balances, currency, props.tokens]
   )
   const selectedToken = useMemo<{ symbol: string; logo?: string }>(
     () =>
@@ -73,7 +73,7 @@ const TokenSelectorButton = <T extends IToken | string>(props: TokenSelectorProp
                 amount={x.free.toHuman()}
                 fiatAmount={x.freeFiat.toLocaleString(undefined, {
                   style: 'currency',
-                  currency: 'usd',
+                  currency,
                   compactDisplay: 'short',
                 })}
                 onClick={() => {

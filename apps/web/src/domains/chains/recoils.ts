@@ -1,3 +1,4 @@
+import { selectedCurrencyState } from '@domains/balances'
 import { substrateApiState, useSubstrateApiEndpoint } from '@domains/common'
 import { type BN } from '@polkadot/util'
 import { type ToBn } from '@polkadot/util/types'
@@ -19,14 +20,15 @@ export const chainsState = selector({
 export const tokenPriceState = selectorFamily({
   key: 'TokenPrice',
   get:
-    ({ coingeckoId, fiat }: { coingeckoId: string; fiat: string }) =>
-    async () => {
+    ({ coingeckoId }: { coingeckoId: string }) =>
+    async ({ get }) => {
+      const currency = get(selectedCurrencyState)
       try {
         const result = await fetch(
-          `https://api.coingecko.com/api/v3/simple/price?ids=${coingeckoId}&vs_currencies=${fiat}`
+          `https://api.coingecko.com/api/v3/simple/price?ids=${coingeckoId}&vs_currencies=${currency}`
         ).then(async x => await x.json())
 
-        return result[coingeckoId][fiat] as number
+        return result[coingeckoId][currency] as number
       } catch {
         // Coingecko has rate limit, better to return 0 than to crash the session
         // TODO: find alternative or purchase Coingecko subscription
@@ -38,7 +40,7 @@ export const tokenPriceState = selectorFamily({
 export const nativeTokenPriceState = selectorFamily({
   key: 'NativeTokenPrice',
   get:
-    ({ chain, fiat }: { chain: Chain; fiat: string }) =>
+    ({ chain }: { chain: Chain }) =>
     async ({ get }) => {
       if (chain?.isTestnet) {
         return 0
@@ -50,12 +52,11 @@ export const nativeTokenPriceState = selectorFamily({
         throw new Error('Chain missing CoinGecko id')
       }
 
-      return get(tokenPriceState({ coingeckoId, fiat }))
+      return get(tokenPriceState({ coingeckoId }))
     },
 })
 
-export const useNativeTokenPriceState = (fiat: string = 'usd') =>
-  nativeTokenPriceState({ chain: useContext(ChainContext), fiat })
+export const useNativeTokenPriceState = () => nativeTokenPriceState({ chain: useContext(ChainContext) })
 
 export const nativeTokenDecimalState = selectorFamily({
   key: 'NativeTokenDecimal',
