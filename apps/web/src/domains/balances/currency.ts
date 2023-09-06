@@ -1,3 +1,4 @@
+import { storageEffect } from '@domains/common/effects'
 import { type TokenRateCurrency } from '@talismn/token-rates'
 import { atom } from 'recoil'
 
@@ -44,4 +45,8 @@ export const currencyConfig: Partial<Record<TokenRateCurrency, { unicodeCharacte
   },
 }
 
-export const selectedCurrencyState = atom<TokenRateCurrency>({ key: 'SelectedCurrency', default: 'usd' })
+export const selectedCurrencyState = atom<TokenRateCurrency>({
+  key: 'selected-currency',
+  default: 'usd',
+  effects: [storageEffect(localStorage)],
+})
