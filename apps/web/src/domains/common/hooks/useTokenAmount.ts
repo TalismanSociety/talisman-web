@@ -44,7 +44,6 @@ export const useTokenAmount = <TAllowInvalid extends boolean = true>(
       fiatAmount?.toLocaleString(undefined, {
         style: 'currency',
         currency,
-        currencyDisplay: 'narrowSymbol',
       }),
     [currency, fiatAmount]
   )
@@ -100,7 +99,6 @@ export const useTokenAmountFromPlanck = <
       fiatAmount?.toLocaleString(undefined, {
         style: 'currency',
         currency,
-        currencyDisplay: 'narrowSymbol',
       }) as any,
     [currency, fiatAmount]
   )

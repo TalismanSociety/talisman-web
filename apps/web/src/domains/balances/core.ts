@@ -152,7 +152,6 @@ export const LegacyBalancesWatcher = () => {
     (selectedBalances?.sum.fiat(currency).transferable ?? 0).toLocaleString(undefined, {
       style: 'currency',
       currency,
-      currencyDisplay: 'narrowSymbol',
     }) ?? ' -'
 
   const assetsOverallValue = selectedBalances?.sum.fiat(currency).total ?? 0

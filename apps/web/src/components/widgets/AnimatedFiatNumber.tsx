@@ -23,7 +23,6 @@ const AnimatedFiatNumber = ({ animate = true, end, currency }: AnimatedFiatNumbe
             Intl.NumberFormat(undefined, {
               style: 'currency',
               currency: currency ?? recoilCurrency,
-              currencyDisplay: 'narrowSymbol',
             }),
           [recoilCurrency, currency]
         )}

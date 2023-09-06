@@ -75,7 +75,6 @@ export const getFiatString = (value: any, currency: string) => {
     value.toLocaleString(undefined, {
       style: 'currency',
       currency,
-      currencyDisplay: 'narrowSymbol',
     }) ?? '-'
   )
 }
