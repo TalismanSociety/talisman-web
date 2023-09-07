@@ -1,17 +1,12 @@
 import { css } from '@emotion/css'
 import { Select } from '@talismn/ui'
-import BN from 'bn.js'
 
 type Props = {
   conviction: number
   onChange: (conviction: number) => void
 }
 
-const CONVICTIONS = [1, 2, 4, 8, 16, 32].map((lock, index): [value: number, duration: number, durationBn: BN] => [
-  index + 1,
-  lock,
-  new BN(lock),
-])
+const CONVICTIONS = [1, 2, 4, 8, 16, 32].map((lock, index): [value: number, duration: number] => [index + 1, lock])
 
 function createOpts(): { headlineText: string; value: number }[] {
   return [
