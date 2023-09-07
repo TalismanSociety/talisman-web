@@ -16,7 +16,7 @@ export const AmountFlexibleInput = (props: {
   selectedToken: BaseToken | undefined
   amount: string
   setAmount: (a: string) => void
-  setSelectedToken: (t: BaseToken) => void
+  setSelectedToken?: (t: BaseToken) => void
 }) => {
   const [input, setInput] = useState<string>('')
   const [amountUnit, setAmountUnit] = useState<AmountUnit>(AmountUnit.Token)
@@ -188,7 +188,7 @@ export const AmountFlexibleInput = (props: {
           placeholder="Select token"
           value={props.selectedToken?.id}
           {...props}
-          onChange={id => props.setSelectedToken(props.tokens.find(t => t.id === id) as BaseToken)}
+          onChange={id => props.setSelectedToken?.(props.tokens.find(t => t.id === id) as BaseToken)}
           width={'100%'}
         >
           {props.tokens.map(t => {
