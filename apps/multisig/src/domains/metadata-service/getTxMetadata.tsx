@@ -35,7 +35,7 @@ interface TxMetadataByPkResponseRaw {
 const cache = new Map<string, Promise<TxOffchainMetadata | null>>()
 
 export async function getTxMetadataByPk(
-  callHash: string,
+  transactionID: string,
   args: TxMetadataByPkArgs
 ): Promise<TxOffchainMetadata | null> {
   const variables: TxMetadataByPkVariables = {
@@ -44,10 +44,10 @@ export async function getTxMetadataByPk(
     multisig: args.multisig.toSs58(args.chain),
     chain: args.chain.squidIds.chainData,
   }
-  if (cache.has(callHash)) return cache.get(callHash)!
+  if (cache.has(transactionID)) return cache.get(transactionID)!
 
   cache.set(
-    callHash,
+    transactionID,
     new Promise(async (resolve, reject) => {
       try {
         const query = gql`
@@ -71,7 +71,7 @@ export async function getTxMetadataByPk(
           variables as Record<string, any>
         )) as TxMetadataByPkResponseRaw
         if (res.tx_metadata_by_pk === null) {
-          console.warn(`Metadata service has no value for ${callHash}`)
+          console.warn(`Metadata service has no value for ${transactionID}`)
           resolve(null)
           return
         }
@@ -98,5 +98,5 @@ export async function getTxMetadataByPk(
       }
     })
   )
-  return cache.get(callHash)!
+  return cache.get(transactionID)!
 }

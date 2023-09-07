@@ -106,7 +106,7 @@ const TransactionsList = ({ transactions }: { transactions: Transaction[] }) => 
           <p>{day}</p>
           {transactions.map(t => {
             return (
-              <motion.div key={t.hash} whileHover={{ scale: 1.015 }} css={{ padding: '12px 16px', cursor: 'pointer' }}>
+              <motion.div key={t.id} whileHover={{ scale: 1.015 }} css={{ padding: '12px 16px', cursor: 'pointer' }}>
                 <TransactionSummaryRow onClick={() => navigate(`/overview/tx/${t.hash}`)} t={t} shortDate={true} />
               </motion.div>
             )

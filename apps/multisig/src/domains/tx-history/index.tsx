@@ -157,23 +157,26 @@ export const useConfirmedTransactions = () => {
             if (extrinsicToDecoded(curMultisig, decodedExt, curChainTokens, null) === 'not_ours') return null
 
             const hash = decodedExt.registry.hash(decodedExt.method.toU8a()).toHex()
+            const timepoint_height = parseInt(timepoint.height.replace(/,/g, ''))
+            const timepoint_index = parseInt(timepoint.index)
+            const transactionID = `${timepoint_height}-${timepoint_index}`
 
             // try to get metadata
-            let metadata = metadataCache[hash]
+            let metadata = metadataCache[transactionID]
             if (!metadata) {
               try {
-                const metadataValues = await getTxMetadataByPk(hash, {
+                const metadataValues = await getTxMetadataByPk(transactionID, {
                   multisig: curMultisig.multisigAddress,
                   chain: curMultisig.chain,
-                  timepoint_height: parseInt(timepoint.height.replace(/,/g, '')),
-                  timepoint_index: parseInt(timepoint.index),
+                  timepoint_height,
+                  timepoint_index,
                 })
 
                 if (metadataValues) {
                   const extrinsicDerivedFromMetadataService = decodeCallData(api, metadataValues.callData)
                   if (!extrinsicDerivedFromMetadataService) {
                     throw new Error(
-                      `Failed to create extrinsic from callData recieved from metadata sharing service for hash ${hash}`
+                      `Failed to create extrinsic from callData recieved from metadata sharing service for transactionID ${transactionID}`
                     )
                   }
                   const derivedHash = extrinsicDerivedFromMetadataService.registry
@@ -181,18 +184,18 @@ export const useConfirmedTransactions = () => {
                     .toHex()
                   if (derivedHash !== hash) {
                     throw new Error(
-                      `CallData from metadata sharing service for hash ${hash} does not match hash from chain. Expected ${hash}, got ${derivedHash}`
+                      `CallData from metadata sharing service for transactionID ${transactionID} does not match hash from chain. Expected ${hash}, got ${derivedHash}`
                     )
                   }
-                  console.log(`Loaded metadata for callHash ${hash} from sharing service`)
+                  console.log(`Loaded metadata for transactionID ${transactionID} from sharing service`)
                   metadata = [metadataValues, new Date()]
                   setMetadataCache({
                     ...metadataCache,
-                    [hash]: metadata,
+                    [transactionID]: metadata,
                   })
                 }
               } catch (error) {
-                console.error(`Failed to fetch callData for callHash ${hash}:`, error)
+                console.error(`Failed to fetch callData for transactionID ${transactionID}:`, error)
               }
             }
 
@@ -222,6 +225,7 @@ export const useConfirmedTransactions = () => {
               callData,
               description: description || decodedExt.method.meta.name.toString(),
               decoded: decodedTx,
+              id: transactionID,
             }
             return transaction
           } else {

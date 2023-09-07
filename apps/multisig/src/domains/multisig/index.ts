@@ -18,7 +18,6 @@ import BN from 'bn.js'
 import queryString from 'query-string'
 import { useCallback, useEffect, useState } from 'react'
 import { atom, selector, useRecoilState, useRecoilValue, useRecoilValueLoadable } from 'recoil'
-import truncateMiddle from 'truncate-middle'
 
 import persistAtom from '../persist'
 
@@ -162,6 +161,7 @@ export interface Transaction {
   rawPending?: RawPendingTransaction
   decoded?: TransactionDecoded
   callData?: `0x${string}`
+  id?: string
 }
 
 export const toConfirmedTxUrl = (t: Transaction) =>
@@ -482,15 +482,19 @@ export const usePendingTransactions = () => {
     const transactions = (
       await Promise.all(
         allRawPending.contents.map(async rawPending => {
-          let metadata = metadataCache[rawPending.callHash]
+          const timepoint_height = rawPending.onChainMultisig.when.height.toNumber()
+          const timepoint_index = rawPending.onChainMultisig.when.index.toNumber()
+          const transactionID = `${timepoint_height}-${timepoint_index}`
+
+          let metadata = metadataCache[transactionID]
 
           if (!metadata) {
             try {
-              const metadataValues = await getTxMetadataByPk(rawPending.callHash, {
+              const metadataValues = await getTxMetadataByPk(transactionID, {
                 multisig: rawPending.multisig.multisigAddress,
                 chain: rawPending.multisig.chain,
-                timepoint_height: rawPending.onChainMultisig.when.height.toNumber(),
-                timepoint_index: rawPending.onChainMultisig.when.index.toNumber(),
+                timepoint_height,
+                timepoint_index,
               })
 
               if (metadataValues) {
@@ -501,28 +505,28 @@ export const usePendingTransactions = () => {
                 const extrinsic = decodeCallData(pjsApi, metadataValues.callData)
                 if (!extrinsic) {
                   throw new Error(
-                    `Failed to create extrinsic from callData recieved from metadata sharing service for hash ${rawPending.callHash}`
+                    `Failed to create extrinsic from callData recieved from metadata sharing service for transactionID ${transactionID}`
                   )
                 }
 
                 const derivedHash = extrinsic.registry.hash(extrinsic.method.toU8a()).toHex()
                 if (derivedHash !== rawPending.callHash) {
                   throw new Error(
-                    `CallData from metadata sharing service for hash ${rawPending.callHash} does not match hash from chain. Expected ${rawPending.callHash}, got ${derivedHash}`
+                    `CallData from metadata sharing service for transactionID ${transactionID} does not match hash from chain. Expected ${rawPending.callHash}, got ${derivedHash}`
                   )
                 }
 
-                console.log(`Loaded metadata for callHash ${rawPending.callHash} from sharing service`)
+                console.log(`Loaded metadata for transactionID ${transactionID} from sharing service`)
                 metadata = [metadataValues, new Date()]
                 setMetadataCache({
                   ...metadataCache,
-                  [rawPending.callHash]: metadata,
+                  [transactionID]: metadata,
                 })
               } else {
-                console.warn(`allRawPending: Metadata service has no value for callHash ${rawPending.callHash}`)
+                console.warn(`allRawPending: Metadata service has no value for transactionID ${transactionID}`)
               }
             } catch (error) {
-              console.error(`Failed to fetch callData for callHash ${rawPending.callHash}:`, error)
+              console.error(`Failed to fetch callData for transactionID ${transactionID}:`, error)
             }
           }
 
@@ -548,16 +552,18 @@ export const usePendingTransactions = () => {
               rawPending: rawPending,
               multisig: rawPending.multisig,
               approvals: rawPending.approvals,
+              id: transactionID,
             }
           } else {
             // still no calldata. return unknown transaction
             return {
               date: rawPending.date,
-              description: `Transaction ${truncateMiddle(rawPending.callHash, 6, 4, '...')}`,
+              description: `Transaction ${transactionID}`,
               hash: rawPending.callHash,
               rawPending: rawPending,
               multisig: rawPending.multisig,
               approvals: rawPending.approvals,
+              id: transactionID,
             }
           }
         })
