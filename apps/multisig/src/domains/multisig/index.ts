@@ -161,7 +161,7 @@ export interface Transaction {
   rawPending?: RawPendingTransaction
   decoded?: TransactionDecoded
   callData?: `0x${string}`
-  multisigId?: string
+  id?: string
 }
 
 export const toConfirmedTxUrl = (t: Transaction) =>
@@ -484,13 +484,13 @@ export const usePendingTransactions = () => {
         allRawPending.contents.map(async rawPending => {
           const timepoint_height = rawPending.onChainMultisig.when.height.toNumber()
           const timepoint_index = rawPending.onChainMultisig.when.index.toNumber()
-          const multisigId = `${timepoint_height}-${timepoint_index}`
+          const transactionID = `${timepoint_height}-${timepoint_index}`
 
-          let metadata = metadataCache[multisigId]
+          let metadata = metadataCache[transactionID]
 
           if (!metadata) {
             try {
-              const metadataValues = await getTxMetadataByPk(multisigId, {
+              const metadataValues = await getTxMetadataByPk(transactionID, {
                 multisig: rawPending.multisig.multisigAddress,
                 chain: rawPending.multisig.chain,
                 timepoint_height,
@@ -505,28 +505,28 @@ export const usePendingTransactions = () => {
                 const extrinsic = decodeCallData(pjsApi, metadataValues.callData)
                 if (!extrinsic) {
                   throw new Error(
-                    `Failed to create extrinsic from callData recieved from metadata sharing service for multisigId ${multisigId}`
+                    `Failed to create extrinsic from callData recieved from metadata sharing service for transactionID ${transactionID}`
                   )
                 }
 
                 const derivedHash = extrinsic.registry.hash(extrinsic.method.toU8a()).toHex()
                 if (derivedHash !== rawPending.callHash) {
                   throw new Error(
-                    `CallData from metadata sharing service for multisigId ${multisigId} does not match hash from chain. Expected ${rawPending.callHash}, got ${derivedHash}`
+                    `CallData from metadata sharing service for transactionID ${transactionID} does not match hash from chain. Expected ${rawPending.callHash}, got ${derivedHash}`
                   )
                 }
 
-                console.log(`Loaded metadata for multisigId ${multisigId} from sharing service`)
+                console.log(`Loaded metadata for transactionID ${transactionID} from sharing service`)
                 metadata = [metadataValues, new Date()]
                 setMetadataCache({
                   ...metadataCache,
-                  [multisigId]: metadata,
+                  [transactionID]: metadata,
                 })
               } else {
-                console.warn(`allRawPending: Metadata service has no value for multisigId ${multisigId}`)
+                console.warn(`allRawPending: Metadata service has no value for transactionID ${transactionID}`)
               }
             } catch (error) {
-              console.error(`Failed to fetch callData for multisigId ${multisigId}:`, error)
+              console.error(`Failed to fetch callData for transactionID ${transactionID}:`, error)
             }
           }
 
@@ -552,18 +552,18 @@ export const usePendingTransactions = () => {
               rawPending: rawPending,
               multisig: rawPending.multisig,
               approvals: rawPending.approvals,
-              multisigId,
+              transactionID,
             }
           } else {
             // still no calldata. return unknown transaction
             return {
               date: rawPending.date,
-              description: `Transaction ${multisigId}`,
+              description: `Transaction ${transactionID}`,
               hash: rawPending.callHash,
               rawPending: rawPending,
               multisig: rawPending.multisig,
               approvals: rawPending.approvals,
-              multisigId,
+              transactionID,
             }
           }
         })
