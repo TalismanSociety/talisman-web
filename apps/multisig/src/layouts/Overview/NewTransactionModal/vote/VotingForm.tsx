@@ -31,6 +31,7 @@ const VotingForm: React.FC<Props> = ({ onCancel, onChange, onNext, voteDetails }
   }
 
   const isFormReady =
+    voteDetails.referendumId !== undefined &&
     !isNaN(parseFloat(voteDetails.accountVote.lockAmount)) &&
     !voteDetails.accountVote.lockAmount.endsWith('.') &&
     voteDetails.accountVote.lockAmount !== ''
