@@ -225,6 +225,7 @@ export const useConfirmedTransactions = () => {
               callData,
               description: description || decodedExt.method.meta.name.toString(),
               decoded: decodedTx,
+              id: transactionID,
             }
             return transaction
           } else {

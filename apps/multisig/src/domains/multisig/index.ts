@@ -552,7 +552,7 @@ export const usePendingTransactions = () => {
               rawPending: rawPending,
               multisig: rawPending.multisig,
               approvals: rawPending.approvals,
-              transactionID,
+              id: transactionID,
             }
           } else {
             // still no calldata. return unknown transaction
@@ -563,7 +563,7 @@ export const usePendingTransactions = () => {
               rawPending: rawPending,
               multisig: rawPending.multisig,
               approvals: rawPending.approvals,
-              transactionID,
+              id: transactionID,
             }
           }
         })
