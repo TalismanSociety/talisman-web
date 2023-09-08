@@ -20,6 +20,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { atom, selector, useRecoilState, useRecoilValue, useRecoilValueLoadable } from 'recoil'
 
 import persistAtom from '../persist'
+import { VoteDetails } from '../referenda'
 
 // create a new atom for deciding whether to show all balances and txns or just for the selected
 // multisig
@@ -94,6 +95,7 @@ export enum TransactionType {
   Transfer,
   ChangeConfig,
   Advanced,
+  Vote,
 }
 
 export interface ChangeConfigDetails {
@@ -149,6 +151,7 @@ export interface TransactionDecoded {
     signers: Address[]
     threshold: number
   }
+  voteDetails?: VoteDetails & { token: BaseToken }
 }
 
 export interface Transaction {

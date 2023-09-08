@@ -99,6 +99,16 @@ export const FullScreenDialogTitle = ({ t }: { t?: Transaction }) => {
   )
 }
 
+export type FullScreenDialogContentsProps = {
+  t?: Transaction
+  cancelButtonTextOverride?: string
+  readyToExecute?: boolean
+  canCancel: boolean
+  fee: Balance | undefined
+  onCancel: () => Promise<void>
+  onApprove: () => Promise<void>
+}
+
 export const FullScreenDialogContents = ({
   t,
   cancelButtonTextOverride,
@@ -107,15 +117,7 @@ export const FullScreenDialogContents = ({
   fee,
   onCancel,
   onApprove,
-}: {
-  t?: Transaction
-  cancelButtonTextOverride?: string
-  readyToExecute?: boolean
-  canCancel: boolean
-  fee: Balance | undefined
-  onCancel: () => Promise<void>
-  onApprove: () => Promise<void>
-}) => {
+}: FullScreenDialogContentsProps) => {
   const [cancelInFlight, setCancelInFlight] = useState(false)
   const [approveInFlight, setApproveInFlight] = useState(false)
   const extensionAccounts = useRecoilValue(accountsState)

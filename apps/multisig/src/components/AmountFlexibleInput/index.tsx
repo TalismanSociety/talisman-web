@@ -48,7 +48,7 @@ export const AmountFlexibleInput = (props: {
   }, [amountUnit, input, tokenPrices])
 
   useEffect(() => {
-    if (calculatedTokenAmount) {
+    if (calculatedTokenAmount || calculatedTokenAmount === '') {
       props.setAmount(calculatedTokenAmount)
     }
   }, [calculatedTokenAmount, props])

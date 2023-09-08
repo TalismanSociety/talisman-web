@@ -2,22 +2,40 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Chain } from '../chains'
 import { useRecoilValueLoadable } from 'recoil'
 import { pjsApiSelector } from '../chains/pjs-api'
+import { ApiPromise } from '@polkadot/api'
+import BN from 'bn.js'
 
 export enum Vote {
   Aye,
   Nay,
 }
 
-export type StandardVote = {
-  vote: Vote.Aye | Vote.Nay
-  lockAmount: string
+type ConvictionVote = {
+  isAye: boolean
   conviction: number
 }
 
+export type StandardVoteParams = {
+  balance: BN
+  vote: ConvictionVote
+}
+
+export type SplitVoteParams = {
+  aye: BN
+  nay: BN
+}
+
+export type SplitAbstainVoteParams = {
+  abstain: BN
+} & SplitVoteParams
+
 export type VoteDetails = {
   referendumId?: number
-  // TODO: Add AbstainVote and SplitVote
-  accountVote: StandardVote
+  details: {
+    Standard?: StandardVoteParams
+    Split?: SplitVoteParams
+    SplitAbstain?: SplitAbstainVoteParams
+  }
 }
 
 export interface ReferendumBasicInfo {
@@ -26,6 +44,9 @@ export interface ReferendumBasicInfo {
   isApproved: boolean
 }
 
+export const isVoteFeatureSupported = (api: ApiPromise) =>
+  !!api.query.referenda?.referendumInfoFor && !!api.tx.convictionVoting?.vote
+
 export const useReferenda = (chain: Chain) => {
   // TODO: use proper type for `referendum` if more complex use case is needed
   const [referendums, setReferendums] = useState<ReferendumBasicInfo[] | undefined>()
@@ -33,7 +54,7 @@ export const useReferenda = (chain: Chain) => {
 
   const isPalletSupported = useMemo(() => {
     if (apiLoadable.state !== 'hasValue') return undefined
-    return !!apiLoadable.contents.query.referenda?.referendumInfoFor && !!apiLoadable.contents.tx.convictionVoting?.vote
+    return isVoteFeatureSupported(apiLoadable.contents)
   }, [apiLoadable])
 
   const getReferendums = useCallback(async () => {
@@ -67,4 +88,14 @@ export const useReferenda = (chain: Chain) => {
   }, [getReferendums])
 
   return { referendums, isPalletSupported }
+}
+
+export const isVoteDetailsComplete = (voteDetails: VoteDetails) => {
+  if (voteDetails.referendumId === undefined) return false
+
+  if (voteDetails.details.Standard) {
+    const { balance } = voteDetails.details.Standard
+    return balance.gt(new BN(0))
+  }
+  return !!voteDetails.details.Split || !!voteDetails.details.SplitAbstain
 }

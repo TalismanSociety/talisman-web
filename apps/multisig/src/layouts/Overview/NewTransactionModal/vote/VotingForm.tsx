@@ -1,40 +1,28 @@
 import { Button } from '@talismn/ui'
 import { css } from '@emotion/css'
+import { BaseToken } from '@domains/chains'
 import { selectedMultisigState } from '@domains/multisig'
-import { Vote, VoteDetails } from '@domains/referenda'
+import { VoteDetails, isVoteDetailsComplete } from '@domains/referenda'
 import { useRecoilValue } from 'recoil'
 import VoteOptions from './VoteOptions'
 import VoteStandard from './mode/VoteStandard'
 import { ProposalsDropdown } from './ProposalsDropdown'
 
 type Props = {
+  token: BaseToken
   voteDetails: VoteDetails
   onCancel: () => void
   onChange: (v: VoteDetails) => void
   onNext: () => void
 }
 
-const VotingForm: React.FC<Props> = ({ onCancel, onChange, onNext, voteDetails }) => {
+const VotingForm: React.FC<Props> = ({ onCancel, onChange, onNext, token, voteDetails }) => {
   const multisig = useRecoilValue(selectedMultisigState)
+  const isFormReady = isVoteDetailsComplete(voteDetails)
 
-  const handleVoteChange = (vote: Vote) => {
-    // TODO: add custom logic for switching between vote types when Abstain or Split are added
-    // e.g. switching from Aye to Nay should not reset lockAmount and conviction
-    // but switching from Aye to Abstain should reset accountVote object
-    onChange({
-      ...voteDetails,
-      accountVote: {
-        ...voteDetails.accountVote,
-        vote,
-      },
-    })
+  const handleDetailsChange = (details: VoteDetails['details']) => {
+    onChange({ ...voteDetails, details })
   }
-
-  const isFormReady =
-    voteDetails.referendumId !== undefined &&
-    !isNaN(parseFloat(voteDetails.accountVote.lockAmount)) &&
-    !voteDetails.accountVote.lockAmount.endsWith('.') &&
-    voteDetails.accountVote.lockAmount !== ''
 
   return (
     <div
@@ -57,14 +45,11 @@ const VotingForm: React.FC<Props> = ({ onCancel, onChange, onNext, voteDetails }
           referendumId={voteDetails.referendumId}
           onChange={referendumId => onChange({ ...voteDetails, referendumId })}
         />
-        <VoteOptions onChange={handleVoteChange} value={voteDetails.accountVote.vote} />
-        <VoteStandard
-          conviction={voteDetails.accountVote.conviction}
-          lockAmount={voteDetails.accountVote.lockAmount}
-          onChange={standardVoteProps =>
-            onChange({ ...voteDetails, accountVote: { ...voteDetails.accountVote, ...standardVoteProps } })
-          }
-        />
+        <VoteOptions onChange={handleDetailsChange} value={voteDetails.details} />
+        {voteDetails.details.Standard ? (
+          <VoteStandard onChange={handleDetailsChange} token={token} params={voteDetails.details.Standard} />
+        ) : // TODO: add UI for Abstain and Split votes
+        null}
         <div
           className={css`
             display: grid;

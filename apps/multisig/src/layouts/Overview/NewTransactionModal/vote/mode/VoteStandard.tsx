@@ -1,39 +1,62 @@
-import { useRecoilValueLoadable } from 'recoil'
 import { AmountFlexibleInput } from '@components/AmountFlexibleInput'
-import { selectedMultisigChainTokensState } from '@domains/multisig'
-import { StandardVote } from '@domains/referenda'
+import { BaseToken } from '@domains/chains'
+import { StandardVoteParams, VoteDetails } from '@domains/referenda'
 import ConvictionsDropdown from '../ConvictionsDropdown'
-import { useEffect, useState } from 'react'
-
-type StandardVoteProps = Omit<StandardVote, 'vote'>
+import { useState } from 'react'
+import { parseUnits } from '@util/numbers'
+import BN from 'bn.js'
 
 type Props = {
-  onChange: (v: StandardVoteProps) => void
-} & StandardVoteProps
+  token?: BaseToken
+  onChange: (v: VoteDetails['details']) => void
+  params: StandardVoteParams
+}
 
-const VoteStandard = ({ lockAmount, conviction, onChange }: Props) => {
-  const tokens = useRecoilValueLoadable(selectedMultisigChainTokensState)
-  const [amount, setAmount] = useState(lockAmount)
+const VoteStandard = ({ params, onChange, token }: Props) => {
+  const [amount, setAmount] = useState('')
 
-  // required to prevent an infinite rerender caused by an effect inside AmountFlexibleInput
-  useEffect(() => {
-    if (lockAmount !== amount)
-      onChange({
-        lockAmount: amount,
-        conviction,
-      })
-  }, [amount, conviction, lockAmount, onChange])
+  const handleAmountChange = (amount: string) => {
+    if (!token) return
+
+    setAmount(amount)
+    let balance = new BN(0)
+    try {
+      balance = parseUnits(amount, token.decimals)
+    } catch (e) {
+      // if failed to parse, input is likely '' or invalid number, hence we default to BN(0)
+      balance = new BN(0)
+    }
+    if (balance.eq(params.balance)) return
+    onChange({
+      Standard: {
+        balance,
+        vote: params.vote,
+      },
+    })
+  }
+
+  const handleConvictionChange = (conviction: number) => {
+    onChange({
+      Standard: {
+        balance: params.balance,
+        vote: {
+          conviction,
+          isAye: params.vote.isAye,
+        },
+      },
+    })
+  }
 
   return (
     <>
       <AmountFlexibleInput
         // the tokens list should only contain the chain's native token
-        tokens={tokens.contents ? [tokens.contents[0]] : []}
-        selectedToken={tokens.contents?.[0]}
+        tokens={token ? [token] : []}
+        selectedToken={token}
         amount={amount}
-        setAmount={setAmount}
+        setAmount={handleAmountChange}
       />
-      <ConvictionsDropdown conviction={conviction} onChange={conviction => onChange({ lockAmount, conviction })} />
+      <ConvictionsDropdown conviction={params.vote.conviction} onChange={handleConvictionChange} />
     </>
   )
 }

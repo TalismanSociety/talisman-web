@@ -5,46 +5,23 @@ import 'ace-builds/src-noconflict/ext-language_tools'
 
 import AddressPill from '@components/AddressPill'
 import { CallDataPasteForm } from '@components/CallDataPasteForm'
+import AmountRow from '@components/AmountRow'
 import MemberRow from '@components/MemberRow'
-import { Rpc, decodeCallData, tokenPriceState } from '@domains/chains'
+import { Rpc, decodeCallData } from '@domains/chains'
 import { pjsApiSelector } from '@domains/chains/pjs-api'
 import { copyToClipboard } from '@domains/common'
 import { Balance, Transaction, TransactionType, calcSumOutgoing, txOffchainMetadataState } from '@domains/multisig'
 import { css } from '@emotion/css'
 import { useTheme } from '@emotion/react'
 import { Check, ChevronRight, Copy, List, Send, Settings, Share2, Unknown, Users } from '@talismn/icons'
-import { IconButton, Skeleton } from '@talismn/ui'
+import { IconButton } from '@talismn/ui'
 import { Address } from '@util/addresses'
-import { balanceToFloat, formatUsd } from '@util/numbers'
 import { useEffect, useMemo, useState } from 'react'
 import AceEditor from 'react-ace'
 import { Collapse } from 'react-collapse'
 import { useRecoilState, useRecoilValueLoadable } from 'recoil'
 import truncateMiddle from 'truncate-middle'
-
-const AmountRow = ({ balance }: { balance: Balance }) => {
-  const price = useRecoilValueLoadable(tokenPriceState(balance.token))
-  const balanceFloat = balanceToFloat(balance)
-  return (
-    <div
-      className={css`
-        display: flex;
-        gap: 8px;
-        align-items: center;
-        color: var(--color-foreground);
-      `}
-    >
-      <p css={{ fontSize: '18px', marginTop: '4px' }}>{balanceFloat}</p>
-      <img css={{ height: '20px' }} src={balance.token.logo} alt="token logo" />
-      <p css={{ fontSize: '18px', marginTop: '4px' }}>{balance.token.symbol}</p>
-      {price.state === 'hasValue' ? (
-        <p css={{ fontSize: '18px', marginTop: '4px' }}>{`(${formatUsd(balanceFloat * price.contents.current)})`}</p>
-      ) : (
-        <Skeleton.Surface css={{ height: '14px', minWidth: '125px' }} />
-      )}
-    </div>
-  )
-}
+import { VoteTransactionHeader } from './VoteTransactionDetails'
 
 const ChangeConfigExpandedDetails = ({ t }: { t: Transaction }) => {
   return (
@@ -280,6 +257,8 @@ const TransactionDetailsExpandable = ({ t }: { t: Transaction }) => {
             <p css={{ marginTop: '4px' }}>Change Signer Configuration</p>
             <Settings css={{ marginRight: 'auto' }} />
           </>
+        ) : t.decoded.type === TransactionType.Vote ? (
+          <VoteTransactionHeader t={t} />
         ) : null}
         {t.decoded?.type === TransactionType.Transfer ? (
           <div

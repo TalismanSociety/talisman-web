@@ -1,22 +1,12 @@
 import { css } from '@emotion/css'
 import { Button } from '@talismn/ui'
-import { Vote } from '@domains/referenda'
+import { VoteDetails } from '@domains/referenda'
+import BN from 'bn.js'
 
 type Props = {
-  value: Vote
-  onChange: (v: Vote) => void
+  value: VoteDetails['details']
+  onChange: (v: VoteDetails['details']) => void
 }
-
-const options = [
-  {
-    label: 'Aye',
-    value: Vote.Aye,
-  },
-  {
-    label: 'Nay',
-    value: Vote.Nay,
-  },
-]
 
 const VoteOptions: React.FC<Props> = ({ value, onChange }) => {
   return (
@@ -32,15 +22,38 @@ const VoteOptions: React.FC<Props> = ({ value, onChange }) => {
         }
       `}
     >
-      {options.map(option => (
-        <Button
-          key={option.value}
-          onClick={() => onChange(option.value)}
-          variant={value === option.value ? undefined : 'secondary'}
-        >
-          {option.label}
-        </Button>
-      ))}
+      <Button
+        onClick={() =>
+          onChange({
+            Standard: {
+              balance: value.Standard?.balance ?? new BN(0),
+              vote: {
+                conviction: value.Standard?.vote.conviction ?? 1,
+                isAye: true,
+              },
+            },
+          })
+        }
+        variant={value.Standard?.vote.isAye ? undefined : 'secondary'}
+      >
+        Aye
+      </Button>
+      <Button
+        onClick={() =>
+          onChange({
+            Standard: {
+              balance: value.Standard?.balance ?? new BN(0),
+              vote: {
+                conviction: value.Standard?.vote.conviction ?? 1,
+                isAye: false,
+              },
+            },
+          })
+        }
+        variant={value.Standard?.vote.isAye === false ? undefined : 'secondary'}
+      >
+        Nay
+      </Button>
     </div>
   )
 }
