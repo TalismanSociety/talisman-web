@@ -8,7 +8,6 @@ type Props = {
   onCancel: () => void
 }
 
-// TODO: handle constants.convictionVoting.maxVotes
 const VoteAction: React.FC<Props> = ({ onCancel }) => {
   const [reviewing, setReviewing] = useState(false)
   const [voteDetails, setVoteDetails] = useState<VoteDetails>({

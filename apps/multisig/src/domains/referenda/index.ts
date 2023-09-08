@@ -37,7 +37,7 @@ export const useReferenda = (chain: Chain) => {
   }, [apiLoadable])
 
   const getReferendums = useCallback(async () => {
-    if (apiLoadable.state !== 'hasValue') return
+    if (apiLoadable.state !== 'hasValue' || isPalletSupported === undefined) return
 
     // treat it as 0 referendum created if required pallets are not supported
     if (!isPalletSupported) {
@@ -57,7 +57,7 @@ export const useReferenda = (chain: Chain) => {
     }
   }, [apiLoadable, chain.chainName, isPalletSupported])
 
-  // reset list of referenda data if chain is changed
+  // reset list of referendums if chain is changed
   useEffect(() => {
     setReferendums(undefined)
   }, [chain.chainName])
