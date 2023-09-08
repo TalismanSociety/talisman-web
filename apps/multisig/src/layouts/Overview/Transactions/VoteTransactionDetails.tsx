@@ -1,4 +1,4 @@
-import { Transaction } from '@domains/multisig'
+import { Transaction, TransactionType } from '@domains/multisig'
 import { css } from '@emotion/css'
 import { Zap } from '@talismn/icons'
 import AmountRow from '@components/AmountRow'
@@ -8,7 +8,7 @@ type Props = {
 }
 
 export const VoteTransactionHeader: React.FC<Props> = ({ t }) => {
-  if (!t.decoded || !t.decoded.voteDetails) return null
+  if (t.decoded?.type !== TransactionType.Vote || !t.decoded.voteDetails) return null
 
   const { details, token } = t.decoded.voteDetails
 
@@ -46,5 +46,47 @@ export const VoteTransactionHeader: React.FC<Props> = ({ t }) => {
         }}
       />
     </>
+  )
+}
+
+export const VoteExpandedDetails: React.FC<Props> = ({ t }) => {
+  if (t.decoded?.type !== TransactionType.Vote || !t.decoded.voteDetails) return null
+
+  const { details, token, referendumId } = t.decoded.voteDetails
+
+  if (!details.Standard) return null
+  return (
+    <div css={{ paddingBottom: '8px' }}>
+      <div
+        className={css`
+          display: grid;
+          gap: 16px;
+          padding-top: 24px;
+          > div {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+          }
+        `}
+      >
+        <div>
+          <p css={{ color: 'var(--color-offWhite)' }}>Referendum #{referendumId}</p>
+          <div>OK</div>
+        </div>
+        <div>
+          <p>Vote value</p>
+          <AmountRow
+            balance={{
+              amount: details.Standard.balance,
+              token,
+            }}
+          />
+        </div>
+        <div>
+          <p>Conviction</p>
+          <div>OK</div>
+        </div>
+      </div>
+    </div>
   )
 }
