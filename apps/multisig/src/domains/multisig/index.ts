@@ -20,7 +20,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { atom, selector, useRecoilState, useRecoilValue, useRecoilValueLoadable } from 'recoil'
 
 import persistAtom from '../persist'
-import { VoteDetails } from '../referenda'
+import { VoteDetails, mapConvictionToIndex } from '../referenda'
 
 // create a new atom for deciding whether to show all balances and txns or just for the selected
 // multisig
@@ -448,6 +448,43 @@ export const extrinsicToDecoded = (
             signers: changeConfigDetails.newMembers,
             threshold: changeConfigDetails.newThreshold,
           },
+        }
+      }
+    }
+
+    // Check if it's a Vote type
+    for (const arg of args) {
+      const obj: any = arg.toHuman()
+      if (obj?.section === 'convictionVoting' && obj?.method === 'vote') {
+        const { poll_index, vote } = obj.args
+        let voteDetails: VoteDetails | undefined
+
+        if (vote.Standard) {
+          voteDetails = {
+            referendumId: poll_index,
+            details: {
+              Standard: {
+                balance: new BN(vote.Standard.balance.replaceAll(',', '')),
+                vote: {
+                  aye: vote.Standard.vote.vote === 'Aye',
+                  conviction: mapConvictionToIndex(vote.Standard.vote.conviction),
+                },
+              },
+            },
+          }
+        }
+
+        if (voteDetails) {
+          const token = chainTokens.find(t => t.type === 'substrate-native')
+          if (!token) throw Error(`Chain does not have a native token!`)
+          return {
+            type: TransactionType.Vote,
+            recipients: [],
+            voteDetails: {
+              ...voteDetails,
+              token,
+            },
+          }
         }
       }
     }

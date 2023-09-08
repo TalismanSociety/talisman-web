@@ -18,7 +18,6 @@ type Props = {
 
 const VotingForm: React.FC<Props> = ({ onCancel, onChange, onNext, token, voteDetails }) => {
   const multisig = useRecoilValue(selectedMultisigState)
-  const isFormReady = isVoteDetailsComplete(voteDetails)
 
   const handleDetailsChange = (details: VoteDetails['details']) => {
     onChange({ ...voteDetails, details })
@@ -64,7 +63,7 @@ const VotingForm: React.FC<Props> = ({ onCancel, onChange, onNext, token, voteDe
           <Button onClick={onCancel} variant="outlined">
             <h3>Cancel</h3>
           </Button>
-          <Button onClick={onNext} disabled={!isFormReady}>
+          <Button onClick={onNext} disabled={!isVoteDetailsComplete(voteDetails)}>
             <h3>Next</h3>
           </Button>
         </div>

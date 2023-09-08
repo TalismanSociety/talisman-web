@@ -41,7 +41,7 @@ const VoteStandard = ({ params, onChange, token }: Props) => {
         balance: params.balance,
         vote: {
           conviction,
-          isAye: params.vote.isAye,
+          aye: params.vote.aye,
         },
       },
     })

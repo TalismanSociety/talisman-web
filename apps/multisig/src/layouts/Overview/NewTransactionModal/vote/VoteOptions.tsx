@@ -29,12 +29,12 @@ const VoteOptions: React.FC<Props> = ({ value, onChange }) => {
               balance: value.Standard?.balance ?? new BN(0),
               vote: {
                 conviction: value.Standard?.vote.conviction ?? 1,
-                isAye: true,
+                aye: true,
               },
             },
           })
         }
-        variant={value.Standard?.vote.isAye ? undefined : 'secondary'}
+        variant={value.Standard?.vote.aye ? undefined : 'secondary'}
       >
         Aye
       </Button>
@@ -45,12 +45,12 @@ const VoteOptions: React.FC<Props> = ({ value, onChange }) => {
               balance: value.Standard?.balance ?? new BN(0),
               vote: {
                 conviction: value.Standard?.vote.conviction ?? 1,
-                isAye: false,
+                aye: false,
               },
             },
           })
         }
-        variant={value.Standard?.vote.isAye === false ? undefined : 'secondary'}
+        variant={value.Standard?.vote.aye === false ? undefined : 'secondary'}
       >
         Nay
       </Button>

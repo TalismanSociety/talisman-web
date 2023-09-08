@@ -432,20 +432,24 @@ export const useApproveAsMulti = (
                 if (method === 'ExtrinsicSuccess') {
                   // if there's a description, it means we want to post to the metadata service
                   if (metadata) {
+                    // @ts-ignore
+                    const timepoint_height = result.blockNumber.toNumber() as number
+                    const timepoint_index = result.txIndex as number
+                    const transactionID = `${timepoint_height}-${timepoint_index}`
+
                     // Disable this line to test the metadata service
                     setMetadataCache({
                       ...metadataCache,
-                      [hash]: [metadata, new Date()],
+                      [transactionID]: [metadata, new Date()],
                     })
-                    // @ts-ignore
-                    const timepoint_height = result.blockNumber.toNumber() as number
+
                     insertTxMetadata({
                       multisig: multisig.multisigAddress,
                       chain: multisig.chain,
                       call_data: metadata.callData,
                       description: metadata.description,
                       timepoint_height,
-                      timepoint_index: result.txIndex as number,
+                      timepoint_index,
                       change_config_details: metadata.changeConfigDetails,
                     })
                       .then(() => {

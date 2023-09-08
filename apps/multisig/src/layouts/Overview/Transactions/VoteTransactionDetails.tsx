@@ -23,13 +23,13 @@ const VotePill: React.FC<{ details: VoteDetails['details'] }> = ({ details }) =>
   >
     <div
       className={css`
-        background-color: var(--color-status-${details.Standard?.vote.isAye ? 'positive' : 'negative'});
+        background-color: var(--color-status-${details.Standard?.vote.aye ? 'positive' : 'negative'});
         border-radius: 50%;
         height: 14px;
         width: 14px;
       `}
     />
-    <p css={{ fontSize: '14px', marginTop: '4px' }}>{details.Standard?.vote.isAye ? 'Aye' : 'Nay'}</p>
+    <p css={{ fontSize: '14px', marginTop: '4px' }}>{details.Standard?.vote.aye ? 'Aye' : 'Nay'}</p>
   </div>
 )
 

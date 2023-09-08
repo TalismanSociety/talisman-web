@@ -11,7 +11,7 @@ export enum Vote {
 }
 
 type ConvictionVote = {
-  isAye: boolean
+  aye: boolean
   conviction: number
 }
 
@@ -98,4 +98,23 @@ export const isVoteDetailsComplete = (voteDetails: VoteDetails) => {
     return balance.gt(new BN(0))
   }
   return !!voteDetails.details.Split || !!voteDetails.details.SplitAbstain
+}
+
+export const mapConvictionToIndex = (conviction: string): number => {
+  switch (conviction) {
+    case 'Locked1x':
+      return 1
+    case 'Locked2x':
+      return 2
+    case 'Locked3x':
+      return 3
+    case 'Locked4x':
+      return 4
+    case 'Locked5x':
+      return 5
+    case 'Locked6x':
+      return 6
+    default:
+      return 0
+  }
 }
