@@ -2,10 +2,36 @@ import { Transaction, TransactionType } from '@domains/multisig'
 import { css } from '@emotion/css'
 import { Zap } from '@talismn/icons'
 import AmountRow from '@components/AmountRow'
+import { createConvictionsOpts } from '../NewTransactionModal/vote/ConvictionsDropdown'
+import { VoteDetails } from '../../../domains/referenda'
 
 type Props = {
   t: Transaction
 }
+
+const VotePill: React.FC<{ details: VoteDetails['details'] }> = ({ details }) => (
+  <div
+    className={css`
+      align-items: center;
+      background-color: var(--color-backgroundLighter);
+      border-radius: 12px;
+      color: var(--color-foreground);
+      display: flex;
+      gap: 8px;
+      padding: 2px 8px;
+    `}
+  >
+    <div
+      className={css`
+        background-color: var(--color-status-${details.Standard?.vote.isAye ? 'positive' : 'negative'});
+        border-radius: 50%;
+        height: 14px;
+        width: 14px;
+      `}
+    />
+    <p css={{ fontSize: '14px', marginTop: '4px' }}>{details.Standard?.vote.isAye ? 'Aye' : 'Nay'}</p>
+  </div>
+)
 
 export const VoteTransactionHeader: React.FC<Props> = ({ t }) => {
   if (t.decoded?.type !== TransactionType.Vote || !t.decoded.voteDetails) return null
@@ -13,31 +39,13 @@ export const VoteTransactionHeader: React.FC<Props> = ({ t }) => {
   const { details, token } = t.decoded.voteDetails
 
   if (!details.Standard) return null
+
   return (
     <>
       <p css={{ marginTop: '4px' }}>Vote</p>
       <Zap css={{ marginRight: 'auto' }} />
-      <div
-        className={css`
-          align-items: center;
-          background-color: var(--color-backgroundLighter);
-          border-radius: 12px;
-          color: var(--color-foreground);
-          display: flex;
-          gap: 8px;
-          margin-right: 8px;
-          padding: 4px 8px;
-        `}
-      >
-        <div
-          className={css`
-            background-color: var(--color-status-${details.Standard?.vote.isAye ? 'positive' : 'negative'});
-            border-radius: 50%;
-            height: 14px;
-            width: 14px;
-          `}
-        />
-        <p css={{ fontSize: '14px', marginTop: '4px' }}>{details.Standard?.vote.isAye ? 'Aye' : 'Nay'}</p>
+      <div css={{ marginRight: '8px' }}>
+        <VotePill details={details} />
       </div>
       <AmountRow
         balance={{
@@ -53,8 +61,10 @@ export const VoteExpandedDetails: React.FC<Props> = ({ t }) => {
   if (t.decoded?.type !== TransactionType.Vote || !t.decoded.voteDetails) return null
 
   const { details, token, referendumId } = t.decoded.voteDetails
+  const convictionsOptions = createConvictionsOpts()
 
   if (!details.Standard) return null
+
   return (
     <div css={{ paddingBottom: '8px' }}>
       <div
@@ -71,7 +81,7 @@ export const VoteExpandedDetails: React.FC<Props> = ({ t }) => {
       >
         <div>
           <p css={{ color: 'var(--color-offWhite)' }}>Referendum #{referendumId}</p>
-          <div>OK</div>
+          <VotePill details={details} />
         </div>
         <div>
           <p>Vote value</p>
@@ -84,7 +94,7 @@ export const VoteExpandedDetails: React.FC<Props> = ({ t }) => {
         </div>
         <div>
           <p>Conviction</p>
-          <div>OK</div>
+          <div>{convictionsOptions[details.Standard.vote.conviction]?.headlineText ?? 'Unknown'}</div>
         </div>
       </div>
     </div>

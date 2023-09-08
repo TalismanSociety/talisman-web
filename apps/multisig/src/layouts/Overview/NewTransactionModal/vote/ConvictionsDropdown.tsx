@@ -8,7 +8,7 @@ type Props = {
 
 const CONVICTIONS = [1, 2, 4, 8, 16, 32].map((lock, index): [value: number, duration: number] => [index + 1, lock])
 
-function createOpts(): { headlineText: string; value: number }[] {
+export function createConvictionsOpts(): { headlineText: string; value: number }[] {
   return [
     { headlineText: '0.1x voting balance, no lockup period', value: 0 },
     ...CONVICTIONS.map(([value, duration]) => ({
@@ -21,7 +21,7 @@ function createOpts(): { headlineText: string; value: number }[] {
 
 // ref: https://github.com/polkadot-js/apps/blob/master/packages/react-components/src/ConvictionDropdown.tsx
 const ConvictionsDropdown: React.FC<Props> = ({ conviction, onChange }) => {
-  const options = createOpts()
+  const options = createConvictionsOpts()
   return (
     <Select
       className={css`
