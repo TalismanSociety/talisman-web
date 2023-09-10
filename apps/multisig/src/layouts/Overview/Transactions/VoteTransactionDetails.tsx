@@ -9,6 +9,7 @@ type Props = {
   t: Transaction
 }
 
+// TODO: make this component support UI for Abstain and Split vote types
 const VotePill: React.FC<{ details: VoteDetails['details'] }> = ({ details }) => (
   <div
     className={css`

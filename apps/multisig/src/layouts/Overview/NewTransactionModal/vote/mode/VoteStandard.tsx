@@ -54,6 +54,7 @@ const VoteStandard = ({ params, onChange, token }: Props) => {
         tokens={token ? [token] : []}
         selectedToken={token}
         amount={amount}
+        leadingLabel="Amount to vote"
         setAmount={handleAmountChange}
       />
       <ConvictionsDropdown conviction={params.vote.conviction} onChange={handleConvictionChange} />

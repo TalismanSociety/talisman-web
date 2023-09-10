@@ -425,7 +425,7 @@ export const useApproveAsMulti = (
             }
 
             if (result.status.isFinalized) {
-              result.events.forEach(async ({ event: { method, ...rest } }): Promise<void> => {
+              result.events.forEach(async ({ event: { method } }): Promise<void> => {
                 if (method === 'ExtrinsicFailed') {
                   onFailure(JSON.stringify(result.toHuman()))
                 }
@@ -453,7 +453,7 @@ export const useApproveAsMulti = (
                       change_config_details: metadata.changeConfigDetails,
                     })
                       .then(() => {
-                        console.log(`Successfully POSTed metadata for ${hash} to metadata service`)
+                        console.log(`Successfully POSTed metadata for ${transactionID} to metadata service`)
                       })
                       .catch(e => {
                         console.error('Failed to POST tx metadata sharing service: ', e)

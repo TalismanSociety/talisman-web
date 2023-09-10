@@ -5,19 +5,12 @@ import { pjsApiSelector } from '../chains/pjs-api'
 import { ApiPromise } from '@polkadot/api'
 import BN from 'bn.js'
 
-export enum Vote {
-  Aye,
-  Nay,
-}
-
-type ConvictionVote = {
-  aye: boolean
-  conviction: number
-}
-
 export type StandardVoteParams = {
   balance: BN
-  vote: ConvictionVote
+  vote: {
+    aye: boolean
+    conviction: number
+  }
 }
 
 export type SplitVoteParams = {
@@ -38,17 +31,35 @@ export type VoteDetails = {
   }
 }
 
-export interface ReferendumBasicInfo {
+type ReferendumBasicInfo = {
   index: number
   isOngoing: boolean
   isApproved: boolean
+}
+
+export const defaultVoteDetails: Required<VoteDetails['details']> = {
+  Standard: {
+    balance: new BN(0),
+    vote: {
+      aye: true,
+      conviction: 1,
+    },
+  },
+  Split: {
+    aye: new BN(0),
+    nay: new BN(0),
+  },
+  SplitAbstain: {
+    aye: new BN(0),
+    nay: new BN(0),
+    abstain: new BN(0),
+  },
 }
 
 export const isVoteFeatureSupported = (api: ApiPromise) =>
   !!api.query.referenda?.referendumInfoFor && !!api.tx.convictionVoting?.vote
 
 export const useReferenda = (chain: Chain) => {
-  // TODO: use proper type for `referendum` if more complex use case is needed
   const [referendums, setReferendums] = useState<ReferendumBasicInfo[] | undefined>()
   const apiLoadable = useRecoilValueLoadable(pjsApiSelector(chain.rpcs))
 
@@ -60,9 +71,9 @@ export const useReferenda = (chain: Chain) => {
   const getReferendums = useCallback(async () => {
     if (apiLoadable.state !== 'hasValue' || isPalletSupported === undefined) return
 
-    // treat it as 0 referendum created if required pallets are not supported
     if (!isPalletSupported) {
       console.error(`referenda or conviction_voting pallets not supported on this chain ${chain.chainName}`)
+      // treat it as 0 referendum created if required pallets are not supported
       setReferendums([])
     } else {
       const referendumCount = await apiLoadable.contents.query.referenda.referendumCount()
@@ -100,21 +111,8 @@ export const isVoteDetailsComplete = (voteDetails: VoteDetails) => {
   return !!voteDetails.details.Split || !!voteDetails.details.SplitAbstain
 }
 
+/** Expects conviction string (e.g. Locked1x, Locked2x, ..., or None) */
 export const mapConvictionToIndex = (conviction: string): number => {
-  switch (conviction) {
-    case 'Locked1x':
-      return 1
-    case 'Locked2x':
-      return 2
-    case 'Locked3x':
-      return 3
-    case 'Locked4x':
-      return 4
-    case 'Locked5x':
-      return 5
-    case 'Locked6x':
-      return 6
-    default:
-      return 0
-  }
+  const convictionValue = parseInt(conviction.replace('Locked', '').replace('x', ''))
+  return isNaN(convictionValue) ? 0 : convictionValue
 }

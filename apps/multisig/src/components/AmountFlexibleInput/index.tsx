@@ -15,6 +15,7 @@ export const AmountFlexibleInput = (props: {
   tokens: BaseToken[]
   selectedToken: BaseToken | undefined
   amount: string
+  leadingLabel?: string
   setAmount: (a: string) => void
   setSelectedToken?: (t: BaseToken) => void
 }) => {
@@ -75,7 +76,7 @@ export const AmountFlexibleInput = (props: {
             font-size: 18px !important;
           `}
           placeholder={`0 ${unit}`}
-          leadingLabel={`Amount to send`}
+          leadingLabel={props.leadingLabel ?? `Amount to send`}
           trailingLabel={
             calculatedTokenAmount && calculatedTokenAmount !== 'NaN' && amountUnit !== AmountUnit.Token
               ? `Amount in ${props.selectedToken?.symbol}: ${calculatedTokenAmount}`

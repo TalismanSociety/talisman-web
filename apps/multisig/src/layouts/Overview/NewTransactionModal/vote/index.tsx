@@ -4,6 +4,7 @@ import {
   SplitAbstainVoteParams,
   StandardVoteParams,
   VoteDetails,
+  defaultVoteDetails,
   isVoteDetailsComplete,
   isVoteFeatureSupported,
 } from '@domains/referenda'
@@ -17,11 +18,10 @@ import {
   selectedMultisigState,
   useNextTransactionSigner,
 } from '@domains/multisig'
+import { SplitVoteParams } from '@domains/referenda'
 import { useApproveAsMulti } from '@domains/chains'
 import { pjsApiSelector } from '@domains/chains/pjs-api'
-import BN from 'bn.js'
 import TransactionSummarySideSheet from '../../Transactions/TransactionSummarySideSheet'
-import { SplitVoteParams } from '../../../../domains/referenda/index'
 import { toast } from 'react-hot-toast'
 import { useNavigate } from 'react-router-dom'
 
@@ -36,15 +36,7 @@ const VoteAction: React.FC<Props> = ({ onCancel }) => {
   const [reviewing, setReviewing] = useState(false)
   const navigate = useNavigate()
   const [voteDetails, setVoteDetails] = useState<VoteDetails>({
-    details: {
-      Standard: {
-        balance: new BN(0),
-        vote: {
-          conviction: 1,
-          aye: true,
-        },
-      },
-    },
+    details: { Standard: defaultVoteDetails.Standard },
   })
 
   // instead of allowing the user to select any token later on, we just use the first native token of the chain
@@ -61,7 +53,6 @@ const VoteAction: React.FC<Props> = ({ onCancel }) => {
     )
       return
     try {
-      // `as Required` to fix false positive typescript complain about referendumId being undefined, which is checked above
       const voteExtrinsic = apiLoadable.contents.tx.convictionVoting.vote(
         voteDetails.referendumId,
         voteDetails.details as
@@ -83,15 +74,14 @@ const VoteAction: React.FC<Props> = ({ onCancel }) => {
     voteDetails,
   ])
 
+  const hash = extrinsic?.registry.hash(extrinsic.method.toU8a()).toHex()
   const transactionName = useMemo(() => {
-    // leaving this in a useMemo as it will get more complex as we introduce Split and Abstain
     const vote = voteDetails.details.Standard?.vote.aye ? 'Aye' : 'Nay'
     return `Vote ${vote} on Proposal #${voteDetails.referendumId}`
   }, [voteDetails])
 
   const t: Transaction | undefined = useMemo(() => {
-    if (extrinsic && nativeToken) {
-      const hash = extrinsic.registry.hash(extrinsic.method.toU8a()).toHex()
+    if (extrinsic && nativeToken && hash) {
       return {
         date: new Date(),
         hash,
@@ -113,15 +103,10 @@ const VoteAction: React.FC<Props> = ({ onCancel }) => {
         callData: extrinsic.method.toHex(),
       }
     }
-  }, [extrinsic, nativeToken, transactionName, multisig, voteDetails])
+  }, [extrinsic, nativeToken, hash, transactionName, multisig, voteDetails])
 
   const signer = useNextTransactionSigner(t?.approvals)
-  const hash = extrinsic?.registry.hash(extrinsic.method.toU8a()).toHex()
-  const {
-    approveAsMulti,
-    estimatedFee,
-    ready: approveAsMultiReady,
-  } = useApproveAsMulti(signer?.address, hash, null, t?.multisig)
+  const { approveAsMulti, estimatedFee, ready } = useApproveAsMulti(signer?.address, hash, null, t?.multisig)
 
   return (
     <div
@@ -143,7 +128,7 @@ const VoteAction: React.FC<Props> = ({ onCancel }) => {
         onClose={() => setReviewing(false)}
         t={t}
         canCancel
-        fee={approveAsMultiReady ? estimatedFee : undefined}
+        fee={ready ? estimatedFee : undefined}
         cancelButtonTextOverride="Back"
         onApprove={() =>
           new Promise((resolve, reject) => {

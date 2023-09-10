@@ -20,7 +20,7 @@ const VotingForm: React.FC<Props> = ({ onCancel, onChange, onNext, token, voteDe
   const multisig = useRecoilValue(selectedMultisigState)
 
   const handleDetailsChange = (details: VoteDetails['details']) => {
-    onChange({ ...voteDetails, details })
+    onChange({ referendumId: voteDetails.referendumId, details })
   }
 
   return (

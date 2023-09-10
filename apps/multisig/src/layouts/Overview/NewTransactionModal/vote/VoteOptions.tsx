@@ -1,7 +1,6 @@
 import { css } from '@emotion/css'
 import { Button } from '@talismn/ui'
-import { VoteDetails } from '@domains/referenda'
-import BN from 'bn.js'
+import { VoteDetails, defaultVoteDetails } from '@domains/referenda'
 
 type Props = {
   value: VoteDetails['details']
@@ -23,33 +22,25 @@ const VoteOptions: React.FC<Props> = ({ value, onChange }) => {
       `}
     >
       <Button
-        onClick={() =>
+        onClick={() => {
+          const standardVoteDetails = value.Standard ?? defaultVoteDetails.Standard
+          standardVoteDetails.vote.aye = true
           onChange({
-            Standard: {
-              balance: value.Standard?.balance ?? new BN(0),
-              vote: {
-                conviction: value.Standard?.vote.conviction ?? 1,
-                aye: true,
-              },
-            },
+            Standard: standardVoteDetails,
           })
-        }
+        }}
         variant={value.Standard?.vote.aye ? undefined : 'secondary'}
       >
         Aye
       </Button>
       <Button
-        onClick={() =>
+        onClick={() => {
+          const standardVoteDetails = value.Standard ?? defaultVoteDetails.Standard
+          standardVoteDetails.vote.aye = false
           onChange({
-            Standard: {
-              balance: value.Standard?.balance ?? new BN(0),
-              vote: {
-                conviction: value.Standard?.vote.conviction ?? 1,
-                aye: false,
-              },
-            },
+            Standard: standardVoteDetails,
           })
-        }
+        }}
         variant={value.Standard?.vote.aye === false ? undefined : 'secondary'}
       >
         Nay
