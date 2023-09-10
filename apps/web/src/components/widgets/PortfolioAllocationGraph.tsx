@@ -1,5 +1,5 @@
 import PortfolioAllocationGraphComponent from '@components/recipes/PortfolioAllocationGraph'
-import { selectedBalancesState, totalSelectedAccountsFiatBalance } from '@domains/balances/recoils'
+import { selectedBalancesState, selectedCurrencyState, totalSelectedAccountsFiatBalance } from '@domains/balances'
 import { HiddenDetails, Text } from '@talismn/ui'
 import { groupBy } from 'lodash'
 import { Suspense, useCallback, useMemo, useState } from 'react'
@@ -10,13 +10,14 @@ const assetDataState = selector({
   key: 'PortfolioAllocationGraph/AssetData',
   get: ({ get }) => {
     const balances = get(selectedBalancesState)
+    const currency = get(selectedCurrencyState)
 
     const nonZeroBalance = Object.entries(
       groupBy(
         balances?.sorted
           .map(x => ({
             symbol: x.token?.symbol ?? x.id,
-            total: x.total.fiat('usd') ?? 0,
+            total: x.total.fiat(currency) ?? 0,
             color: x.token?.themeColor ?? x.chain?.themeColor ?? x.evmNetwork?.themeColor,
           }))
           .filter(x => x.total > 0),
@@ -52,7 +53,7 @@ const stateDataState = selector({
   key: 'PortfolioAllocationGraph/StateData',
   get: ({ get }) => {
     const balances = get(selectedBalancesState)
-    const fiatSum = balances?.sum.fiat('usd')
+    const fiatSum = balances?.sum.fiat(get(selectedCurrencyState))
 
     return { transferable: fiatSum?.transferable, reserved: fiatSum?.reserved, locked: fiatSum?.locked }
   },

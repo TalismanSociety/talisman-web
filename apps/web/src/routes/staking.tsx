@@ -13,7 +13,7 @@ import StakeCalculatorDialog from '@components/widgets/staking/StakeCalculatorDi
 import { AssetSelect } from '@components/widgets/staking/StakeForm'
 import UnstakeDialog from '@components/widgets/staking/UnstakeDialog'
 import { substrateAccountsState, type Account } from '@domains/accounts'
-import { injectedNominationPoolBalances } from '@domains/balances/recoils'
+import { injectedNominationPoolBalances, selectedCurrencyState } from '@domains/balances'
 import { ChainContext, ChainProvider, chainsState, useNativeTokenDecimalState, type Chain } from '@domains/chains'
 import {
   useEraEtaFormatter,
@@ -57,13 +57,15 @@ const useOpenStakeModal = (account?: Account) => {
 }
 
 const StakeBanner = () => {
-  const balances = useRecoilValue(injectedNominationPoolBalances)
+  const [balances, currency] = useRecoilValue(waitForAll([injectedNominationPoolBalances, selectedCurrencyState]))
   const [stakeCalculatorDialogOpen, setStakeCalculatorDialogOpen] = useState(false)
 
   return (
     <>
       <StakeBannerComponent
-        balance={<AnimatedFiatNumber end={useMemo(() => balances.sum.fiat('usd').total, [balances])} />}
+        balance={
+          <AnimatedFiatNumber end={useMemo(() => balances.sum.fiat(currency).total, [balances.sum, currency])} />
+        }
         onClickSimulateRewards={() => setStakeCalculatorDialogOpen(true)}
         onClickStake={useOpenStakeModal()}
       />

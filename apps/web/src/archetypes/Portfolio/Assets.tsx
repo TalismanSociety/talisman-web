@@ -1,4 +1,5 @@
 import { legacySelectedAccountState } from '@domains/accounts/recoils'
+import { selectedCurrencyState } from '@domains/balances'
 import { useLegacyBalances } from '@domains/balances/hooks'
 import { BalanceFormatter } from '@talismn/balances'
 import { useChains, useEvmNetworks, useTokens } from '@talismn/balances-react'
@@ -10,6 +11,8 @@ import { useRecoilValue } from 'recoil'
 const useFetchAssets = (address: string | undefined) => {
   const { balances, assetsOverallValue } = useLegacyBalances()
 
+  const currency = useRecoilValue(selectedCurrencyState)
+
   const chains = useChains()
   const evmNetworks = useEvmNetworks()
   const tokens = useTokens()
@@ -18,14 +21,15 @@ const useFetchAssets = (address: string | undefined) => {
     return isEmpty(chains) || isEmpty(evmNetworks) || isEmpty(tokens) || isNil(balances)
   }, [chains, evmNetworks, tokens, balances])
 
-  const fiatTotal = address !== undefined ? balances?.find({ address }).sum.fiat('usd').total ?? 0 : assetsOverallValue
+  const fiatTotal =
+    address !== undefined ? balances?.find({ address }).sum.fiat(currency).total ?? 0 : assetsOverallValue
 
   const lockedTotal =
     address !== undefined
-      ? balances?.find({ address }).sum.fiat('usd').locked ?? 0
-      : balances?.sum.fiat('usd').locked ?? 0
+      ? balances?.find({ address }).sum.fiat(currency).locked ?? 0
+      : balances?.sum.fiat(currency).locked ?? 0
 
-  const value = balances?.find({ address })?.sum?.fiat('usd').transferable
+  const value = balances?.find({ address })?.sum?.fiat(currency).transferable
 
   const assetBalances = useMemo(
     () =>
@@ -66,12 +70,11 @@ const useFetchAssets = (address: string | undefined) => {
   return { assetBalances, fiatTotal, lockedTotal, value, balances, chains, evmNetworks, isLoading }
 }
 
-export const convertToFiatString = (value: any) => {
+export const getFiatString = (value: any, currency: string) => {
   return (
     value.toLocaleString(undefined, {
       style: 'currency',
-      currency: 'USD',
-      currencyDisplay: 'narrowSymbol',
+      currency,
     }) ?? '-'
   )
 }
@@ -81,6 +84,7 @@ const useAssets = (customAddress?: string) => {
   const { assetBalances, fiatTotal, lockedTotal, value, balances, chains, evmNetworks, isLoading } = useFetchAssets(
     customAddress ?? address
   )
+  const currency = useRecoilValue(selectedCurrencyState)
 
   if (!assetBalances)
     return {
@@ -107,17 +111,17 @@ const useAssets = (customAddress?: string) => {
 
     const fiatAmount =
       address !== undefined
-        ? balances?.find([{ address, tokenId: token.id }])?.sum.fiat('usd').transferable ?? 0
+        ? balances?.find([{ address, tokenId: token.id }])?.sum.fiat(currency).transferable ?? 0
         : address === undefined
-        ? balances?.find({ tokenId: token.id })?.sum.fiat('usd').transferable ?? 0
+        ? balances?.find({ tokenId: token.id })?.sum.fiat(currency).transferable ?? 0
         : 0
 
-    const fiatAmountFormatted = convertToFiatString(fiatAmount)
+    const fiatAmountFormatted = getFiatString(fiatAmount, currency)
 
     const lockedAmount = tokenBalances.sorted.reduce((sum, balance) => sum + balance.locked.planck, 0n)
     const lockedAmountFormatted = formatDecimals(new BalanceFormatter(lockedAmount, token.decimals).tokens)
-    const lockedFiatAmount = balances?.find({ tokenId: token.id })?.sum.fiat('usd').locked ?? 0
-    const lockedFiatAmountFormatted = convertToFiatString(lockedFiatAmount)
+    const lockedFiatAmount = balances?.find({ tokenId: token.id })?.sum.fiat(currency).locked ?? 0
+    const lockedFiatAmountFormatted = getFiatString(lockedFiatAmount, currency)
 
     if (tokenBalances.sorted[0] === undefined) {
       return null

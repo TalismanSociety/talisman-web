@@ -12,6 +12,7 @@ import { type ChaindataProvider, type TokenList } from '@talismn/chaindata-provi
 import { groupBy, isNil } from 'lodash'
 import { useEffect, useMemo } from 'react'
 import { atom, selector, useRecoilCallback, useRecoilValue, useSetRecoilState } from 'recoil'
+import { selectedCurrencyState } from '.'
 
 export type LegacyBalances = {
   balances: Balances | undefined
@@ -145,14 +146,15 @@ export const LegacyBalancesWatcher = () => {
     return new Balances(selectedBalances)
   }, [balances, balancesGroupByAddress, selectedAddresses])
 
+  const currency = useRecoilValue(selectedCurrencyState)
+
   const assetsTransferable =
-    (selectedBalances?.sum.fiat('usd').transferable ?? 0).toLocaleString(undefined, {
+    (selectedBalances?.sum.fiat(currency).transferable ?? 0).toLocaleString(undefined, {
       style: 'currency',
-      currency: 'USD',
-      currencyDisplay: 'narrowSymbol',
+      currency,
     }) ?? ' -'
 
-  const assetsOverallValue = selectedBalances?.sum.fiat('usd').total ?? 0
+  const assetsOverallValue = selectedBalances?.sum.fiat(currency).total ?? 0
 
   const value = useMemo(
     () => ({ balances: selectedBalances, assetsTransferable, tokenIds, tokens, chaindata, assetsOverallValue }),
@@ -167,8 +169,10 @@ export const LegacyBalancesWatcher = () => {
 
   const addressesFiatBalance = useMemo(
     () =>
-      Object.fromEntries(accounts.map(x => [x.address, balances.find({ address: x.address }).sum.fiat('usd').total])),
-    [accounts, balances]
+      Object.fromEntries(
+        accounts.map(x => [x.address, balances.find({ address: x.address }).sum.fiat(currency).total])
+      ),
+    [accounts, balances, currency]
   )
 
   useEffect(() => {

@@ -1,22 +1,25 @@
+import { selectedCurrencyState } from '@domains/balances'
 import { useNativeTokenDecimalState, useNativeTokenPriceState } from '@domains/chains/recoils'
 import { type BN } from '@polkadot/util'
 import { type Decimal } from '@talismn/math'
 import { useMemo, useState } from 'react'
 import { useRecoilValue, waitForAll } from 'recoil'
 
-type Options<TAllowInvalid extends boolean = boolean> = { fiatCurrency?: string; allowInvalidValue?: TAllowInvalid }
+type Options<TAllowInvalid extends boolean = boolean> = { currency?: string; allowInvalidValue?: TAllowInvalid }
 
 export const useTokenAmount = <TAllowInvalid extends boolean = true>(
   amount: string,
-  options: Options<TAllowInvalid> = { fiatCurrency: 'usd', allowInvalidValue: true as TAllowInvalid }
+  options: Options<TAllowInvalid> = { allowInvalidValue: true as TAllowInvalid }
 ) => {
   type Return = TAllowInvalid extends true
     ? { decimalAmount: Decimal | undefined; fiatAmount: number | undefined; localizedFiatAmount: string | undefined }
     : { decimalAmount: Decimal; fiatAmount: number; localizedFiatAmount: string }
 
-  const [nativeTokenDecimal, nativeTokenPrice] = useRecoilValue(
-    waitForAll([useNativeTokenDecimalState(), useNativeTokenPriceState(options.fiatCurrency)])
+  const [nativeTokenDecimal, nativeTokenPrice, selectedCurrency] = useRecoilValue(
+    waitForAll([useNativeTokenDecimalState(), useNativeTokenPriceState(), selectedCurrencyState])
   )
+
+  const currency = options.currency ?? selectedCurrency
 
   const decimalAmount = useMemo(() => {
     if (amount === undefined) return undefined
@@ -40,10 +43,9 @@ export const useTokenAmount = <TAllowInvalid extends boolean = true>(
     () =>
       fiatAmount?.toLocaleString(undefined, {
         style: 'currency',
-        currency: options.fiatCurrency ?? 'usd',
-        currencyDisplay: 'narrowSymbol',
+        currency,
       }),
-    [fiatAmount, options?.fiatCurrency]
+    [currency, fiatAmount]
   )
 
   return { decimalAmount, fiatAmount, localizedFiatAmount } as Return
@@ -54,7 +56,7 @@ export const useTokenAmountFromPlanck = <
   TAllowInvalid extends boolean = false
 >(
   planck: T,
-  options: Options<TAllowInvalid> = { fiatCurrency: 'usd', allowInvalidValue: false as TAllowInvalid }
+  options: Options<TAllowInvalid> = { allowInvalidValue: false as TAllowInvalid }
 ) => {
   type NullableReturn = {
     decimalAmount: Decimal | undefined
@@ -64,9 +66,11 @@ export const useTokenAmountFromPlanck = <
   type NonNullableReturn = { decimalAmount: Decimal; fiatAmount: number; localizedFiatAmount: string }
   type Return = T extends undefined ? NullableReturn : TAllowInvalid extends true ? NullableReturn : NonNullableReturn
 
-  const [nativeTokenDecimal, nativeTokenPrice] = useRecoilValue(
-    waitForAll([useNativeTokenDecimalState(), useNativeTokenPriceState(options.fiatCurrency)])
+  const [nativeTokenDecimal, nativeTokenPrice, selectedCurrency] = useRecoilValue(
+    waitForAll([useNativeTokenDecimalState(), useNativeTokenPriceState(), selectedCurrencyState])
   )
+
+  const currency = options.currency ?? selectedCurrency
 
   // to ensure no wasteful re-render
   const planckKey = planck?.toString()
@@ -94,10 +98,9 @@ export const useTokenAmountFromPlanck = <
     () =>
       fiatAmount?.toLocaleString(undefined, {
         style: 'currency',
-        currency: options.fiatCurrency ?? 'usd',
-        currencyDisplay: 'narrowSymbol',
+        currency,
       }) as any,
-    [fiatAmount, options?.fiatCurrency]
+    [currency, fiatAmount]
   )
 
   return { decimalAmount, fiatAmount, localizedFiatAmount } as Return
@@ -105,7 +108,7 @@ export const useTokenAmountFromPlanck = <
 
 export const useTokenAmountState = (
   initialState: string | (() => string),
-  options: Options = { fiatCurrency: 'usd', allowInvalidValue: true }
+  options: Options = { allowInvalidValue: true }
 ) => {
   const [amount, setAmount] = useState(initialState)
 

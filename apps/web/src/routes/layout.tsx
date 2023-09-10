@@ -9,6 +9,7 @@ import { useShouldShowAccountConnectionGuard } from '@components/widgets/Account
 import AccountsManagementMenu from '@components/widgets/AccountsManagementMenu'
 import StakeDialog from '@components/widgets/staking/StakeDialog'
 import { selectedAccountsState } from '@domains/accounts/recoils'
+import { currencyConfig, selectedCurrencyState } from '@domains/balances'
 import * as MoonbeamContributors from '@libs/moonbeam-contributors'
 import { Compass, CreditCard, Eye, FileText, MoreHorizontal, RefreshCcw, Star, TalismanHand, Zap } from '@talismn/icons'
 import {
@@ -18,6 +19,7 @@ import {
   NavigationRail,
   SCAFFOLD_WIDE_VIEW_MEDIA_SELECTOR,
   Scaffold,
+  Select,
   Text,
   TopAppBar,
 } from '@talismn/ui'
@@ -25,7 +27,23 @@ import { shortenAddress } from '@util/format'
 import { usePostHog } from 'posthog-js/react'
 import { useCallback, useEffect, useState } from 'react'
 import { Link, Outlet, useLocation, useMatches } from 'react-router-dom'
-import { useRecoilValue } from 'recoil'
+import { useRecoilState, useRecoilValue } from 'recoil'
+
+const CurrencySelect = () => {
+  const [currency, setCurrency] = useRecoilState(selectedCurrencyState)
+  return (
+    <Select value={currency} onChange={setCurrency} detached>
+      {Object.entries(currencyConfig).map(([currency, config]) => (
+        <Select.Option
+          key={currency}
+          value={currency}
+          leadingIcon={config.unicodeCharacter}
+          headlineText={config.name}
+        />
+      ))}
+    </Select>
+  )
+}
 
 const Header = () => {
   const shouldShowAccountConnectionGuard = useShouldShowAccountConnectionGuard()
@@ -42,7 +60,15 @@ const Header = () => {
   }
 
   return (
-    <div css={{ [SCAFFOLD_WIDE_VIEW_MEDIA_SELECTOR]: { marginTop: '4rem' } }}>
+    <div
+      css={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        flexWrap: 'wrap-reverse',
+        gap: '0.8rem',
+        [SCAFFOLD_WIDE_VIEW_MEDIA_SELECTOR]: { marginTop: '4rem' },
+      }}
+    >
       <AccountsManagementMenu
         button={
           <AccountValueInfo
@@ -54,6 +80,7 @@ const Header = () => {
           />
         }
       />
+      <CurrencySelect />
     </div>
   )
 }

@@ -4,7 +4,7 @@ import {
   selectedAccountAddressesState,
   selectedAccountsState,
 } from '@domains/accounts/recoils'
-import { fiatBalancesState, totalPortfolioFiatBalance } from '@domains/balances/recoils'
+import { fiatBalancesState, totalPortfolioFiatBalance } from '@domains/balances'
 import { copyAddressToClipboard } from '@domains/common/utils'
 import { useIsWeb3Injected } from '@domains/extension/hooks'
 import { allowExtensionConnectionState } from '@domains/extension/recoils'
