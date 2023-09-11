@@ -55,7 +55,7 @@
     "md5": "^2.3.0",
     "posthog-js": "^1.68.2",
     "react": "^18.2.0",
-    "react-countup": "^6.4.1",
+    "react-countup": "^6.4.2",
     "react-dom": "^18.2.0",
     "react-i18next": "^11.18.6",
     "react-infinite-scroller": "^1.2.6",
