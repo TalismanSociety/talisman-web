@@ -1,4 +1,5 @@
 import { storageEffect } from '@domains/common/effects'
+import { jsonParser, stringLiterals } from '@recoiljs/refine'
 import { type TokenRateCurrency } from '@talismn/token-rates'
 import { atom } from 'recoil'
 
@@ -48,5 +49,26 @@ export const currencyConfig: Partial<Record<TokenRateCurrency, { unicodeCharacte
 export const selectedCurrencyState = atom<TokenRateCurrency>({
   key: 'selected-currency',
   default: 'usd',
-  effects: [storageEffect(localStorage)],
+  effects: [
+    storageEffect(localStorage, {
+      parser: jsonParser(
+        stringLiterals({
+          usd: 'usd',
+          aud: 'aud',
+          nzd: 'nzd',
+          cud: 'cud',
+          hkd: 'hkd',
+          eur: 'eur',
+          gbp: 'gbp',
+          jpy: 'jpy',
+          krw: 'krw',
+          cny: 'cny',
+          rub: 'rub',
+          btc: 'btc',
+          eth: 'eth',
+          dot: 'dot',
+        } satisfies Record<TokenRateCurrency, TokenRateCurrency>)
+      ),
+    }),
+  ],
 })
