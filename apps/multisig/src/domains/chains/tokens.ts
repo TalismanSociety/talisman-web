@@ -203,6 +203,7 @@ export type Chain = {
   rpcs: Rpc[]
   ss58Prefix: number
   subscanUrl: string
+  polkaAssemblyUrl?: string
 }
 
 export const chainTokensByIdQuery = graphQLSelectorFamily({

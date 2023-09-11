@@ -1,6 +1,6 @@
 import { Transaction, TransactionType } from '@domains/multisig'
 import { css } from '@emotion/css'
-import { Zap } from '@talismn/icons'
+import { ExternalLink, Zap } from '@talismn/icons'
 import AmountRow from '@components/AmountRow'
 import { createConvictionsOpts } from '../NewTransactionModal/vote/ConvictionsDropdown'
 import { VoteDetails } from '../../../domains/referenda'
@@ -66,6 +66,8 @@ export const VoteExpandedDetails: React.FC<Props> = ({ t }) => {
 
   if (!details.Standard) return null
 
+  const name = `Referendum #${referendumId}`
+
   return (
     <div css={{ paddingBottom: '8px' }}>
       <div
@@ -81,7 +83,26 @@ export const VoteExpandedDetails: React.FC<Props> = ({ t }) => {
         `}
       >
         <div>
-          <p css={{ color: 'var(--color-offWhite)' }}>Referendum #{referendumId}</p>
+          {!!t.multisig.chain.polkaAssemblyUrl ? (
+            <a
+              className={css`
+                color: var(--color-offWhite);
+                :hover {
+                  color: var(--color-primary);
+                }
+              `}
+              href={`${t.multisig.chain.polkaAssemblyUrl}/referenda/${referendumId}`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {name}
+              <span style={{ marginLeft: '8px' }}>
+                <ExternalLink size={14} />
+              </span>
+            </a>
+          ) : (
+            <p css={{ color: 'var(--color-offWhite)' }}>{name}</p>
+          )}
           <VotePill details={details} />
         </div>
         <div>
