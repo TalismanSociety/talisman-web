@@ -10,7 +10,6 @@ import AccountsManagementMenu from '@components/widgets/AccountsManagementMenu'
 import StakeDialog from '@components/widgets/staking/StakeDialog'
 import { selectedAccountsState } from '@domains/accounts/recoils'
 import { currencyConfig, selectedCurrencyState } from '@domains/balances'
-import * as MoonbeamContributors from '@libs/moonbeam-contributors'
 import { Compass, CreditCard, Eye, FileText, MoreHorizontal, RefreshCcw, Star, TalismanHand, Zap } from '@talismn/icons'
 import {
   IconButton,
@@ -296,11 +295,9 @@ const Layout = () => {
     >
       {/* TODO: remove legacy imperative modals */}
       <ModalProvider>
-        <MoonbeamContributors.PopupProvider>
-          <Header />
-          <Outlet />
-          <StakeDialog />
-        </MoonbeamContributors.PopupProvider>
+        <Header />
+        <Outlet />
+        <StakeDialog />
       </ModalProvider>
     </Scaffold>
   )
