@@ -8,8 +8,6 @@ import { useTotalCrowdloanTotalFiatAmount } from '@domains/crowdloans/hooks'
 import styled from '@emotion/styled'
 import crowdloanDataState from '@libs/@talisman-crowdloans/provider'
 import { useCrowdloanContributions, type CrowdloanContribution } from '@libs/crowdloans'
-import { Moonbeam } from '@libs/crowdloans/crowdloanOverrides'
-import { MoonbeamPortfolioTag } from '@libs/moonbeam-contributors'
 import { calculateCrowdloanPortfolioAmounts, useTaggedAmountsInPortfolio } from '@libs/portfolio'
 import { useCrowdloanById, useParachainAssets, useParachainDetailsById } from '@libs/talisman'
 import { SupportedRelaychains } from '@libs/talisman/util/_config'
@@ -60,9 +58,6 @@ const CrowdloanItem = styled(
       <div className={`${className ?? ''} ${id}`}>
         <span className="left">
           <Info title={name} subtitle={name} graphic={<ChainLogo chain={{ ...chain, asset }} type="logo" size={4} />} />
-          <Suspense fallback={null}>
-            {Moonbeam.is(Number(id.split('-')[0]), Number(id.split('-')[1])) ? <MoonbeamPortfolioTag /> : null}
-          </Suspense>
         </span>
         <span className="right">
           <Info

@@ -17,7 +17,6 @@
     "codegen:history": "graphql-codegen --require dotenv/config --config codegen.ts"
   },
   "dependencies": {
-    "@apollo/client": "^3.7.7",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
     "@polkadot/api": "^10.9.1",

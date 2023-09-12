@@ -7,7 +7,6 @@ import ErrorBoundary from '@components/widgets/ErrorBoundary'
 import Development from '@components/widgets/development'
 import { LegacyBalancesWatcher } from '@domains/balances'
 import { ExtensionWatcher } from '@domains/extension/recoils'
-import * as MoonbeamContributors from '@libs/moonbeam-contributors'
 import * as Portfolio from '@libs/portfolio'
 import TalismanProvider from '@libs/talisman'
 import router from '@routes'
@@ -59,11 +58,9 @@ const App = () => (
                 <ExtensionWatcher />
                 <TalismanExtensionSynchronizer />
                 <LegacyBalancesWatcher />
-                <MoonbeamContributors.Provider>
-                  <Development />
-                  <RouterProvider router={router} />
-                  <FairyBreadBanner />
-                </MoonbeamContributors.Provider>
+                <Development />
+                <RouterProvider router={router} />
+                <FairyBreadBanner />
               </TalismanProvider>
             </Portfolio.Provider>
           </PolkadotApiProvider>
