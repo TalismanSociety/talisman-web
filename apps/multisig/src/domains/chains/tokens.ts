@@ -108,9 +108,9 @@ export const tokenPriceState = selectorFamily({
         const price = await callPriceApis(token)
         return price
       } catch (e) {
-        // wait between 1 and 5 seconds before retrying
+        // wait between 2 and 6 seconds before retrying
         // stagger it so we don't have all the requests happening at the same time
-        const waitTime = Math.random() * 4000 + 1000
+        const waitTime = Math.random() * 4000 + 2000
         await new Promise(resolve => setTimeout(resolve, waitTime))
         tries++
       }
