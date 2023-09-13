@@ -1,10 +1,10 @@
+import AccountIcon from '@components/molecules/AccountIcon'
 import type { Account } from '@domains/accounts'
 import { useTheme } from '@emotion/react'
 import { Clock, Earn, ExternalLink, Percent, Zap, ZapOff } from '@talismn/icons'
 import {
   Button,
   DescriptionList,
-  Identicon,
   ListItem,
   Surface,
   Text,
@@ -84,7 +84,7 @@ const StakeDetails = Object.assign(
           >
             <ListItem
               css={{ padding: 0 }}
-              leadingContent={<Identicon value={props.account.address} size="3.2rem" />}
+              leadingContent={<AccountIcon account={props.account} size="3.2rem" />}
               headlineText={props.account.name ?? shortenAddress(props.account.address)}
               supportingText={
                 <>

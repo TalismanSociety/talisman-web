@@ -1,15 +1,17 @@
+import AccountIcon from '@components/molecules/AccountIcon'
+import type { Account } from '@domains/accounts'
 import { useTheme } from '@emotion/react'
 import { ChevronDown, Users } from '@talismn/icons'
-import { IconButton, Identicon, Text } from '@talismn/ui'
+import { IconButton, Text } from '@talismn/ui'
+import { shortenAddress } from '@util/format'
 import { type ReactNode } from 'react'
 
 export type AccountValueInfoProps = {
-  address: string
-  name: string
+  account?: Account
   balance: ReactNode
 }
 
-const AccountValueInfo = ({ address, name, balance }: AccountValueInfoProps) => {
+const AccountValueInfo = ({ account, balance }: AccountValueInfoProps) => {
   const theme = useTheme()
   return (
     <section
@@ -26,13 +28,13 @@ const AccountValueInfo = ({ address, name, balance }: AccountValueInfoProps) => 
         },
       }}
     >
-      {!address ? (
+      {account === undefined ? (
         <IconButton size="6.4rem" containerColor={theme.color.foreground} contentColor={theme.color.primary}>
           <Users />
         </IconButton>
       ) : (
-        <Identicon
-          value={address ?? ''}
+        <AccountIcon
+          account={account}
           size="6.4rem"
           css={{
             display: 'flex',
@@ -56,7 +58,9 @@ const AccountValueInfo = ({ address, name, balance }: AccountValueInfoProps) => 
         <div
           css={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.8rem', width: '100%' }}
         >
-          <Text.Body css={{ fontSize: '1em' }}>{name}</Text.Body>
+          <Text.Body css={{ fontSize: '1em' }}>
+            {account === undefined ? 'All accounts' : account.name ?? shortenAddress(account.address)}
+          </Text.Body>
           <ChevronDown />
         </div>
         <Text.H3 css={{ margin: '0', fontSize: '2em' }}>{balance}</Text.H3>

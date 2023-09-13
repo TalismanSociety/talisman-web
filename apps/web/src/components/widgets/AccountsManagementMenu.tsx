@@ -1,3 +1,4 @@
+import AccountIcon from '@components/molecules/AccountIcon/AccountIcon'
 import {
   portfolioAccountsState,
   readOnlyAccountsState,
@@ -14,7 +15,6 @@ import {
   CircularProgressIndicator,
   Hr,
   IconButton,
-  Identicon,
   ListItem,
   Menu,
   Text,
@@ -58,7 +58,8 @@ const AccountsManagementSurfaceIconButton = (props: { size?: number | string }) 
 
   if (selectedAccounts.length === 1) {
     return (
-      <Identicon value={selectedAccounts[0]?.address ?? ''} size={props.size ?? '2.4rem'} css={{ cursor: 'pointer' }} />
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      <AccountIcon account={selectedAccounts[0]!} size={props.size ?? '2.4rem'} css={{ cursor: 'pointer' }} />
     )
   }
 
@@ -207,7 +208,7 @@ const AccountsManagementMenu = (props: { button: ReactNode }) => {
                       )
                     )}
                     overlineText={x.name ?? shortenAddress(x.address)}
-                    leadingContent={<Identicon value={x.address} size="4rem" />}
+                    leadingContent={<AccountIcon account={x} size="4rem" />}
                     revealTrailingContentOnHover
                     trailingContent={
                       <SurfaceIconButton
@@ -254,7 +255,7 @@ const AccountsManagementMenu = (props: { button: ReactNode }) => {
                           )
                         )}
                         overlineText={account.name ?? shortenAddress(account.address)}
-                        leadingContent={<Identicon value={account.address} size="4rem" />}
+                        leadingContent={<AccountIcon account={account} size="4rem" />}
                         revealTrailingContentOnHover
                         trailingContent={
                           <div css={{ display: 'flex' }}>

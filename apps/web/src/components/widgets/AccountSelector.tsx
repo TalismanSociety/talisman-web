@@ -1,8 +1,9 @@
+import AccountIcon from '@components/molecules/AccountIcon/AccountIcon'
 import { type Account } from '@domains/accounts/recoils'
 import { useIsWeb3Injected } from '@domains/extension/hooks'
 import { allowExtensionConnectionState } from '@domains/extension/recoils'
 import { Download } from '@talismn/icons'
-import { Button, CircularProgressIndicator, Identicon, Select } from '@talismn/ui'
+import { Button, CircularProgressIndicator, Select } from '@talismn/ui'
 import { shortenAddress } from '@util/format'
 import { useCallback, useEffect, useMemo, useState, useTransition } from 'react'
 import { usePrevious } from 'react-use'
@@ -75,7 +76,7 @@ const AccountSelector = (props: AccountSelectorProps) => {
         <Select.Option
           key={x.address}
           value={x.address}
-          leadingIcon={<Identicon value={x.address} size="4rem" />}
+          leadingIcon={<AccountIcon account={x} size="4rem" />}
           headlineText={x.name ?? shortenAddress(x.address)}
         />
       ))}

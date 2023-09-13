@@ -1,14 +1,16 @@
 import { useTheme } from '@emotion/react'
 import { Clock, Lock, Rocket } from '@talismn/icons'
 
-import { Chip, CircularProgressIndicator, Hr, Identicon, ListItem, Text, Tooltip, type ChipProps } from '@talismn/ui'
+import { Chip, CircularProgressIndicator, Hr, ListItem, Text, Tooltip, type ChipProps } from '@talismn/ui'
 import { type ReactNode } from 'react'
 import { StakeStatusIndicator, type StakeStatus } from '../StakeStatusIndicator'
 import StakeItemSkeleton from './StakeItemSkeleton'
+import type { Account } from '@domains/accounts'
+import { shortenAddress } from '@util/format'
+import AccountIcon from '@components/molecules/AccountIcon'
 
 export type StakeItemProps = {
-  accountName: string
-  accountAddress: string
+  account: Account
   stakingAmount: ReactNode
   stakingFiatAmount: ReactNode
   poolName: ReactNode
@@ -91,8 +93,8 @@ const StakeItem = Object.assign(
     return (
       <article css={{ borderRadius: '0.8rem', overflow: 'hidden' }}>
         <ListItem
-          leadingContent={!props.hideIdenticon && <Identicon value={props.accountAddress} size="4rem" />}
-          headlineText={props.accountName}
+          leadingContent={!props.hideIdenticon && <AccountIcon account={props.account} size="4rem" />}
+          headlineText={props.account.name ?? shortenAddress(props.account.address)}
           supportingText={
             <Text.Body css={{ display: 'flex', alignItems: 'center', gap: '0.25em' }}>
               <StakeStatusIndicator status={props.stakeStatus} />

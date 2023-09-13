@@ -1,17 +1,18 @@
 import { useTheme } from '@emotion/react'
-import { Button, Identicon, Text, Tooltip } from '@talismn/ui'
+import { Button, Text, Tooltip } from '@talismn/ui'
 import { shortenAddress } from '@util/format'
-import React, { type ReactElement, type ReactNode, useMemo } from 'react'
+import React, { useMemo, type ReactElement, type ReactNode } from 'react'
 import { useMedia } from 'react-use'
 
+import AccountIcon from '@components/molecules/AccountIcon'
+import type { Account } from '@domains/accounts'
 import StakeList from '../StakeList'
-import { type StakeStatus, StakeStatusIndicator } from '../StakeStatusIndicator'
+import { StakeStatusIndicator, type StakeStatus } from '../StakeStatusIndicator'
 import PoolStakeSkeleton from './PoolStake.skeleton'
 
 export type PoolStakeProps = {
   className?: string
-  accountName: string
-  accountAddress: string
+  account: Account
   stakingAmount: string
   stakingAmountInFiat: string
   rewardsAmount: string
@@ -78,12 +79,12 @@ const PoolStake = Object.assign(
       >
         {props.variant !== 'compact' && (
           <div css={{ display: 'flex', gap: '1rem', gridArea: 'account' }}>
-            <Identicon value={props.accountAddress} size={40} />
+            <AccountIcon account={props.account} size={40} />
             <div>
               <Text.Body as="div" alpha="high">
-                {props.accountName}
+                {props.account.name}
               </Text.Body>
-              <Text.Body as="div">({shortenAddress(props.accountAddress)})</Text.Body>
+              <Text.Body as="div">({shortenAddress(props.account.address)})</Text.Body>
             </div>
           </div>
         )}
