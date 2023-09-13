@@ -1,14 +1,15 @@
+import AccountIcon from '@components/molecules/AccountIcon'
+import type { Account } from '@domains/accounts'
 import { useTheme } from '@emotion/react'
 import { Lock, Zap } from '@talismn/icons'
-import { Button, CircularProgressIndicator, Identicon, Text } from '@talismn/ui'
+import { Button, CircularProgressIndicator, Text } from '@talismn/ui'
 import { shortenAddress } from '@util/format'
 import React, { useMemo, type ReactElement, type ReactNode } from 'react'
 import StakeList from '../StakeList'
 import ValidatorStakeSkeleton from './ValidatorStake.skeleton'
 
 export type ValidatorStakeProps = {
-  accountName: string
-  accountAddress: string
+  account: Account
   stakingAmount: string
   stakingAmountInFiat: string
   rewardsAmount: ReactNode
@@ -49,12 +50,12 @@ const ValidatorStake = Object.assign(
         }}
       >
         <div css={{ display: 'flex', gap: '1rem', gridArea: 'account' }}>
-          <Identicon value={props.accountAddress} size={40} />
+          <AccountIcon account={props.account} size={40} />
           <div>
             <Text.Body as="div" alpha="high">
-              {props.accountName}
+              {props.account.name}
             </Text.Body>
-            <Text.Body as="div">({shortenAddress(props.accountAddress)})</Text.Body>
+            <Text.Body as="div">({shortenAddress(props.account.address)})</Text.Body>
           </div>
         </div>
         <Text.Body as="div" css={{ 'gridArea': 'sLabel', '@media (min-width: 1024px)': { display: 'none' } }}>

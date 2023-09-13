@@ -1,3 +1,4 @@
+import AccountIcon from '@components/molecules/AccountIcon/AccountIcon'
 import ErrorBoundary from '@components/widgets/ErrorBoundary'
 import { selectedAccountsState, type Account } from '@domains/accounts'
 import {
@@ -18,7 +19,6 @@ import {
   Card,
   FloatingActionButton,
   Hr,
-  Identicon,
   ListItem,
   MediaDialog,
   SegmentedButton,
@@ -69,7 +69,7 @@ const toIpfsCompatibleUrl = (url: string, options?: { imgWidth?: number }) => {
 const AccountHeader = (props: { className?: string; account: Account }) => (
   <ListItem
     className={props.className}
-    leadingContent={<Identicon value={props.account.address} size="4rem" />}
+    leadingContent={<AccountIcon account={props.account} size="4rem" />}
     headlineText={props.account.name ?? shortenAddress(props.account.address)}
   />
 )

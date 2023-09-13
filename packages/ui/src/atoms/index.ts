@@ -1,5 +1,7 @@
 export * from './AnimatedNumber'
 export { default as AnimatedNumber } from './AnimatedNumber'
+export * from './Badge'
+export { default as Badge } from './Badge'
 export * from './Button'
 export { default as Button } from './Button'
 export * from './Chip'

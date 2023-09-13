@@ -1,4 +1,5 @@
-import { AlertDialog, Button, DateInput, Identicon, Select, Text, type AlertDialogProps } from '@talismn/ui'
+import AccountIcon from '@components/molecules/AccountIcon'
+import { AlertDialog, Button, DateInput, Select, Text, type AlertDialogProps } from '@talismn/ui'
 import { Maybe } from '@util/monads'
 import { endOfDay, startOfDay } from 'date-fns'
 import { useMemo } from 'react'
@@ -56,7 +57,7 @@ const ExportTxHistoryDialog = ({
                 <Select.Option
                   key={index}
                   value={index}
-                  leadingIcon={<Identicon value={account.address} size={40} />}
+                  leadingIcon={<AccountIcon account={account} size={40} />}
                   headlineText={account.name}
                   supportingText={account.balance}
                 />

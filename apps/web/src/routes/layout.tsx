@@ -23,7 +23,6 @@ import {
   Text,
   TopAppBar,
 } from '@talismn/ui'
-import { shortenAddress } from '@util/format'
 import { usePostHog } from 'posthog-js/react'
 import { useCallback, useEffect, useState } from 'react'
 import { Link, Outlet, useLocation, useMatches } from 'react-router-dom'
@@ -70,15 +69,7 @@ const Header = () => {
       }}
     >
       <AccountsManagementMenu
-        button={
-          <AccountValueInfo
-            address={accounts.length === 1 ? accounts[0]?.address ?? '' : ''}
-            name={
-              accounts.length === 1 ? accounts[0]?.name ?? shortenAddress(accounts[0]?.address ?? '') : 'All accounts'
-            }
-            balance={<Total />}
-          />
-        }
+        button={<AccountValueInfo account={accounts.length === 1 ? accounts[0] : undefined} balance={<Total />} />}
       />
       <CurrencySelect />
     </div>

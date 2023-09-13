@@ -1,9 +1,10 @@
 import { type Account } from '@domains/accounts/recoils'
 import { keyframes } from '@emotion/react'
 import styled from '@emotion/styled'
-import { Identicon, Text, Tooltip } from '@talismn/ui'
+import { Text, Tooltip } from '@talismn/ui'
 import { startCase } from 'lodash'
 
+import AccountIcon from '@components/molecules/AccountIcon/AccountIcon'
 import { AssetBalance } from '../Asset'
 
 const slideDown = keyframes`
@@ -147,7 +148,7 @@ export const AssetBreakdownRow = ({ assetSummary }: AssetBreakdownProps) => {
                 gap: '0.5rem',
               }}
             >
-              <Identicon value={account?.address} css={{ width: '2rem', height: '2rem' }} />
+              <AccountIcon account={account} css={{ width: '2rem', height: '2rem' }} />
               <Text.Body>{account?.name}</Text.Body>
             </div>
           </div>

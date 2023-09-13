@@ -5,6 +5,7 @@ import { Identicon, Surface, Text, TonalIcon, Tooltip, useSurfaceColorAtElevatio
 import { shortenAddress } from '@util/format'
 import React, { useMemo, type PropsWithChildren, type ReactElement } from 'react'
 import { getSubstrateModuleColor } from '../extrinsicColor'
+import AccountIcon from '@components/molecules/AccountIcon/AccountIcon'
 
 type TokenAmount = {
   amount: string
@@ -84,7 +85,7 @@ const TransactionLineItem = (props: TransactionLineItemProps) => {
         </IdText>
         <div css={{ gridArea: 'identicon', display: 'flex', alignItems: 'center' }}>
           <div css={{ position: 'relative' }}>
-            {props.signer && <Identicon value={props.signer?.address ?? 'noop'} size="1.75em" />}
+            {props.signer && <AccountIcon account={props.signer} size="1.75em" />}
             {props.chainLogo && (
               <Tooltip content={props.chain}>
                 <img

@@ -1,10 +1,10 @@
+import AccountIcon from '@components/molecules/AccountIcon/AccountIcon'
 import type { Account } from '@domains/accounts'
 import { copyAddressToClipboard, copyExtrinsicHashToClipboard } from '@domains/common'
 import { useTheme } from '@emotion/react'
 import { CheckCircle, Copy, ExternalLink, XCircle } from '@talismn/icons'
 import {
   DescriptionList,
-  Identicon,
   ListItem,
   SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR,
   SideSheet,
@@ -51,7 +51,7 @@ const Table = (props: PropsWithChildren) => (
 const AccountItem = (props: { account: Account }) => (
   <ListItem
     css={{ padding: 0, cursor: 'copy' }}
-    leadingContent={<Identicon value={props.account.address} size="3.2rem" />}
+    leadingContent={<AccountIcon account={props.account} size="3.2rem" />}
     headlineText={props.account.name ?? shortenAddress(props.account.address)}
     supportingText={props.account.name !== undefined && shortenAddress(props.account.address)}
     onClick={() => {
