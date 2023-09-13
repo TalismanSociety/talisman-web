@@ -103,12 +103,11 @@ export const tokenPriceState = selectorFamily({
     if (!token || !token.coingeckoId) return { current: 0 }
 
     let tries = 0
-    while (tries < 60) {
+    while (tries < 30) {
       try {
         const price = await callPriceApis(token)
         return price
       } catch (e) {
-        console.warn(`Failed to get price for token ${token.id}, retrying`, e)
         // wait between 1 and 5 seconds before retrying
         // stagger it so we don't have all the requests happening at the same time
         const waitTime = Math.random() * 4000 + 1000
@@ -117,7 +116,7 @@ export const tokenPriceState = selectorFamily({
       }
     }
 
-    console.error(`couldn't get price for token ${token.id} after 60 tries`)
+    console.error(`couldn't get price for token ${token.id} after many retries`)
     return { current: 0 }
   },
 })
