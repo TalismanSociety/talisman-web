@@ -10962,6 +10962,7 @@ __metadata:
     eslint-config-prettier: ^8.6.0
     eslint-plugin-storybook: ^0.6.10
     ethers: ^5.7.2
+    fetch-retry: ^5.0.6
     framer-motion: ^10.0.1
     graphql: ^16.6.0
     graphql-request: ^6.1.0
@@ -11119,6 +11120,7 @@ __metadata:
     eslint: ^8.37.0
     eslint-plugin-storybook: ^0.6.12
     framer-motion: ^10.16.1
+    hex-to-rgba: ^2.0.1
     mime: ^3.0.0
     mime-db: ^1.52.0
     prop-types: ^15.8.1
@@ -20012,7 +20014,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fetch-retry@npm:^5.0.2":
+"fetch-retry@npm:^5.0.2, fetch-retry@npm:^5.0.6":
   version: 5.0.6
   resolution: "fetch-retry@npm:5.0.6"
   checksum: 4ad8bca6ec7a7b1212e636bb422a9ae8bb9dce38df0b441c9eb77a29af99b368029d6248ff69427da67e3d43c53808b121135ea395e7fe4f8f383e0ad65b4f27
@@ -21496,6 +21498,13 @@ __metadata:
     capital-case: ^1.0.4
     tslib: ^2.0.3
   checksum: 571c83eeb25e8130d172218712f807c0b96d62b020981400bccc1503a7cf14b09b8b10498a962d2739eccf231d950e3848ba7d420b58a6acd2f9283439546cd9
+  languageName: node
+  linkType: hard
+
+"hex-to-rgba@npm:^2.0.1":
+  version: 2.0.1
+  resolution: "hex-to-rgba@npm:2.0.1"
+  checksum: adbb81babe9d06cf743b925e2104968bb32d9e10f0de328b71c9e20ff52da4028fadde4623261866eaed4d9a3b975fb325fa34f2422eb035e839ed71ec462431
   languageName: node
   linkType: hard
 

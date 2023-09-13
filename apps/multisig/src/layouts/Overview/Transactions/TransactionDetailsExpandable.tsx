@@ -261,7 +261,7 @@ const TransactionDetailsExpandable = ({ t }: { t: Transaction }) => {
                 <Users />
               </div>
               <p css={{ fontSize: '14px', marginTop: '4px' }}>
-                {recipients.length} Recipient{recipients.length !== 1 && 's'}
+                {recipients.length} Send{recipients.length !== 1 && 's'}
               </p>
             </div>
           </>

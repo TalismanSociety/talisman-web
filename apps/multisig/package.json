@@ -53,6 +53,7 @@
     "csv-stringify": "^6.2.3",
     "date-fns": "^2.29.3",
     "ethers": "^5.7.2",
+    "fetch-retry": "^5.0.6",
     "framer-motion": "^10.0.1",
     "graphql": "^16.6.0",
     "graphql-request": "^6.1.0",

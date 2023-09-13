@@ -2,8 +2,13 @@ import { multisigsState } from '@domains/multisig'
 import { selector, selectorFamily } from 'recoil'
 import { graphQLSelectorFamily } from 'recoil-relay'
 import { graphql } from 'relay-runtime'
+import fetchRetryBuilder from 'fetch-retry'
 
 import RelayEnvironment from '../../graphql/relay-environment'
+import { supportedChains } from './supported-chains'
+
+// requests are ratelimited, or add some retry delay
+const fetchRetry = fetchRetryBuilder(fetch, { retries: 100, retryDelay: 5000 })
 
 export type Price = {
   current: number
@@ -31,37 +36,37 @@ export const tokenPriceState = selectorFamily({
 
     try {
       // always try to get from coingecko
-      const coingeckoPromise = fetch(
+      const coingeckoPromise = fetchRetry(
         `https://api.coingecko.com/api/v3/simple/price?ids=${coingeckoId}&vs_currencies=usd`
       ).then(x => x.json())
 
-      // if the token is DOT, we can also get moving average info from subscan
+      // try to get ema prices from subscan
+      let subscanId = token.chain.subscanUrl.split('.subscan.io')[0]?.split('https://')[1]
+      if (!subscanId) throw Error(`failed to extract subscan id from ${token.chain.subscanUrl}`)
       let subscanHistoryPromise: Promise<any> = Promise.reject().catch(() => {})
       let subscanCurrentPricePromise: Promise<any> = Promise.reject().catch(() => {})
-      if (token.symbol === 'DOT') {
-        subscanCurrentPricePromise = fetch('https://polkadot.api.subscan.io/api/open/price', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            base: symbol,
-            quote: 'USD',
-            time: now.getTime(),
-          }),
-        }).then(x => x.json())
-        subscanHistoryPromise = fetch('https://polkadot.api.subscan.io/api/scan/price/history', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            start: thirtyDaysAgoString,
-            end: nowString,
-            currency: symbol,
-          }),
-        }).then(x => x.json())
-      }
+      subscanCurrentPricePromise = fetchRetry(`https://${subscanId}.api.subscan.io/api/open/price`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          base: symbol,
+          quote: 'USD',
+          time: now.getTime(),
+        }),
+      }).then(x => x.json())
+      subscanHistoryPromise = fetchRetry(`https://${subscanId}.api.subscan.io/api/scan/price/history`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          start: thirtyDaysAgoString,
+          end: nowString,
+          currency: symbol,
+        }),
+      }).then(x => x.json())
 
       const [cgCurrentPrice, ssCurrentPrice, ssHistorical] = await Promise.allSettled([
         coingeckoPromise,
@@ -169,7 +174,13 @@ export const tokenByIdQuery = graphQLSelectorFamily({
     }
   `,
   variables: id => ({ id: id || '' }),
-  mapResponse: res => res.tokenById.data as BaseToken,
+  mapResponse: res => {
+    // by default, these tokens don't have a fully filled chain property
+    // so we need to add it
+    const chain = supportedChains.find(c => c.squidIds.chainData === res.tokenById.data.chain.id)
+    if (!chain) throw new Error(`chain ${res.tokenById.data.chainId} not found in supported chains`)
+    return { ...res.tokenById.data, chain } as BaseToken
+  },
 })
 
 export const tokenByIdWithPrice = selectorFamily({
@@ -221,12 +232,17 @@ export const chainTokensByIdQuery = graphQLSelectorFamily({
     return { id }
   },
   mapResponse: res => {
-    return res.chainById.tokens.map((item: { data: BaseToken }) => item.data) as BaseToken[]
+    // by default, these tokens don't have a fully filled chain property
+    // so we need to add it
+    return res.chainById.tokens.map((item: { data: { chain: { id: string } } }) => {
+      const chain = supportedChains.find(c => c.squidIds.chainData === item.data.chain.id)
+      if (!chain) throw new Error(`chain ${res.tokenById.data.chainId} not found in supported chains`)
+      return { ...item.data, chain }
+    }) as BaseToken[]
   },
 })
 
-// Get pjs apis for all active multisigs
-// returned map key is the chainData id.
+// Get tokens for all active chains
 export const allChainTokensSelector = selector({
   key: 'AllChainTokens',
   get: async ({ get }): Promise<Map<string, BaseToken[]>> => {

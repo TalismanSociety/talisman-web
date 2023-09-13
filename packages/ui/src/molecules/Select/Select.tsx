@@ -1,4 +1,5 @@
 import { useTheme } from '@emotion/react'
+import hexToRgba from 'hex-to-rgba'
 import {
   autoUpdate,
   offset,
@@ -169,12 +170,12 @@ const Select = Object.assign(
           ref={refs.setReference}
           variants={{
             true: {
-              border: `solid ${theme.color.border}`,
+              border: `solid ${hexToRgba(theme.color.border, 1)}`,
               borderWidth: '1px 1px 0 1px',
               transitionEnd: { borderBottomLeftRadius: 0, borderBottomRightRadius: 0 },
             },
             false: {
-              border: 'solid transparent',
+              border: `solid ${hexToRgba(theme.color.border, 0)}`,
               borderWidth: '1px 1px 0 1px',
               transitionEnd: { borderBottomLeftRadius: '0.8rem', borderBottomRightRadius: '0.8rem' },
             },
@@ -216,13 +217,13 @@ const Select = Object.assign(
               true: {
                 height: 'unset',
                 visibility: 'unset',
-                border: `solid ${theme.color.border}`,
+                border: `solid ${hexToRgba(theme.color.border, 1)}`,
                 borderWidth: '0 1px 1px 1px',
                 transitionEnd: { overflow: 'auto' },
               },
               false: {
                 height: 0,
-                border: 'solid transparent',
+                border: `solid ${hexToRgba(theme.color.border, 0)}`,
                 borderWidth: '0 1px 1px 1px',
                 overflow: 'hidden',
                 transitionEnd: { visibility: 'hidden' },
