@@ -2,13 +2,9 @@ import { multisigsState } from '@domains/multisig'
 import { selector, selectorFamily } from 'recoil'
 import { graphQLSelectorFamily } from 'recoil-relay'
 import { graphql } from 'relay-runtime'
-import fetchRetryBuilder from 'fetch-retry'
 
 import RelayEnvironment from '../../graphql/relay-environment'
 import { supportedChains } from './supported-chains'
-
-// requests are ratelimited, or add some retry delay
-const fetchRetry = fetchRetryBuilder(fetch, { retries: 100, retryDelay: 5000 })
 
 export type Price = {
   current: number
@@ -18,6 +14,87 @@ export type Price = {
   }
 }
 
+async function callPriceApis(token: BaseToken): Promise<Price> {
+  if (!token || !token.coingeckoId) return { current: 0 }
+  const { coingeckoId, symbol } = token
+
+  const now = new Date()
+  const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
+
+  // get both in format YYYY-MM-DD
+  const nowString = now.toISOString().split('T')[0]
+  const thirtyDaysAgoString = thirtyDaysAgo.toISOString().split('T')[0]
+  // always try to get from coingecko
+  const coingeckoPromise = fetch(
+    `https://api.coingecko.com/api/v3/simple/price?ids=${coingeckoId}&vs_currencies=usd`
+  ).then(x => x.json())
+
+  // try to get ema prices from subscan
+  let subscanId = token.chain.subscanUrl.split('.subscan.io')[0]?.split('https://')[1]
+  if (!subscanId) throw Error(`failed to extract subscan id from ${token.chain.subscanUrl}`)
+  const subscanCurrentPricePromise = fetch(`https://${subscanId}.api.subscan.io/api/open/price`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      base: symbol,
+      quote: 'USD',
+      time: now.getTime(),
+    }),
+  }).then(x => x.json())
+  const subscanHistoryPromise = fetch(`https://${subscanId}.api.subscan.io/api/scan/price/history`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      start: thirtyDaysAgoString,
+      end: nowString,
+      currency: symbol,
+    }),
+  }).then(x => x.json())
+
+  const [cgCurrentPrice, ssCurrentPrice, ssHistorical] = await Promise.allSettled([
+    coingeckoPromise,
+    subscanCurrentPricePromise,
+    subscanHistoryPromise,
+  ])
+
+  // if all are fufilled, we should be able to get the emas
+  if (
+    cgCurrentPrice.status === 'fulfilled' &&
+    cgCurrentPrice.value !== undefined &&
+    ssCurrentPrice.status === 'fulfilled' &&
+    ssCurrentPrice.value !== undefined &&
+    ssHistorical.status === 'fulfilled' &&
+    ssHistorical.value !== undefined
+  ) {
+    const coingeckoCurPrice = cgCurrentPrice.value[coingeckoId].usd as number
+    const subscanCurPrice = ssCurrentPrice.value.data.price as number
+    // sanity check that the prices are close (in case subscan is giving us info for the wrong token)
+    if (Math.abs(coingeckoCurPrice - subscanCurPrice) / coingeckoCurPrice > 0.1) {
+      return { current: coingeckoCurPrice }
+    }
+
+    const ema30 = ssHistorical.value.data.ema30_average as number
+    const ema7 = ssHistorical.value.data.ema7_average as number
+    return {
+      current: coingeckoCurPrice,
+      averages: {
+        ema30,
+        ema7,
+      },
+    }
+  }
+
+  if (cgCurrentPrice.status === 'fulfilled' && cgCurrentPrice.value !== undefined) {
+    return { current: cgCurrentPrice.value[coingeckoId].usd as number }
+  }
+
+  return { current: 0 }
+}
+
 // TODO: batch request all token prices we care about in the session in one request
 // (can include multiple ids)
 export const tokenPriceState = selectorFamily({
@@ -25,93 +102,23 @@ export const tokenPriceState = selectorFamily({
   get: (token?: BaseToken) => async (): Promise<Price> => {
     if (!token || !token.coingeckoId) return { current: 0 }
 
-    const { coingeckoId, symbol } = token
-
-    const now = new Date()
-    const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
-
-    // get both in format YYYY-MM-DD
-    const nowString = now.toISOString().split('T')[0]
-    const thirtyDaysAgoString = thirtyDaysAgo.toISOString().split('T')[0]
-
-    try {
-      // always try to get from coingecko
-      const coingeckoPromise = fetchRetry(
-        `https://api.coingecko.com/api/v3/simple/price?ids=${coingeckoId}&vs_currencies=usd`
-      ).then(x => x.json())
-
-      // try to get ema prices from subscan
-      let subscanId = token.chain.subscanUrl.split('.subscan.io')[0]?.split('https://')[1]
-      if (!subscanId) throw Error(`failed to extract subscan id from ${token.chain.subscanUrl}`)
-      let subscanHistoryPromise: Promise<any> = Promise.reject().catch(() => {})
-      let subscanCurrentPricePromise: Promise<any> = Promise.reject().catch(() => {})
-      subscanCurrentPricePromise = fetchRetry(`https://${subscanId}.api.subscan.io/api/open/price`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          base: symbol,
-          quote: 'USD',
-          time: now.getTime(),
-        }),
-      }).then(x => x.json())
-      subscanHistoryPromise = fetchRetry(`https://${subscanId}.api.subscan.io/api/scan/price/history`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          start: thirtyDaysAgoString,
-          end: nowString,
-          currency: symbol,
-        }),
-      }).then(x => x.json())
-
-      const [cgCurrentPrice, ssCurrentPrice, ssHistorical] = await Promise.allSettled([
-        coingeckoPromise,
-        subscanCurrentPricePromise,
-        subscanHistoryPromise,
-      ])
-
-      // if all are fufilled, we should be able to get the emas
-      if (
-        cgCurrentPrice.status === 'fulfilled' &&
-        cgCurrentPrice.value !== undefined &&
-        ssCurrentPrice.status === 'fulfilled' &&
-        ssCurrentPrice.value !== undefined &&
-        ssHistorical.status === 'fulfilled' &&
-        ssHistorical.value !== undefined
-      ) {
-        const coingeckoCurPrice = cgCurrentPrice.value[coingeckoId].usd as number
-        const subscanCurPrice = ssCurrentPrice.value.data.price as number
-        // sanity check that the prices are close (in case subscan is giving us info for the wrong token)
-        if (Math.abs(coingeckoCurPrice - subscanCurPrice) / coingeckoCurPrice > 0.1) {
-          return { current: coingeckoCurPrice }
-        }
-
-        const ema30 = ssHistorical.value.data.ema30_average as number
-        const ema7 = ssHistorical.value.data.ema7_average as number
-        return {
-          current: coingeckoCurPrice,
-          averages: {
-            ema30,
-            ema7,
-          },
-        }
+    let tries = 0
+    while (tries < 60) {
+      try {
+        const price = await callPriceApis(token)
+        return price
+      } catch (e) {
+        console.warn(`Failed to get price for token ${token.id}, retrying`, e)
+        // wait between 1 and 5 seconds before retrying
+        // stagger it so we don't have all the requests happening at the same time
+        const waitTime = Math.random() * 4000 + 1000
+        await new Promise(resolve => setTimeout(resolve, waitTime))
+        tries++
       }
-
-      if (cgCurrentPrice.status === 'fulfilled' && cgCurrentPrice.value !== undefined) {
-        return { current: cgCurrentPrice.value[coingeckoId].usd as number }
-      }
-
-      return { current: 0 }
-    } catch (e) {
-      // apis have a rate limit. better to return 0 than to crash the session
-      // TODO: find alternative or purchase Coingecko subscription
-      console.error(`Error fetching price for ${coingeckoId}, returning zero: ${e}`)
-      return { current: 0 }
     }
+
+    console.error(`couldn't get price for token ${token.id} after 60 tries`)
+    return { current: 0 }
   },
 })
 
