@@ -8,6 +8,7 @@ import { capitalizeFirstLetter } from '@util/strings'
 import { useMemo } from 'react'
 
 export interface TokenAugmented {
+  id: string
   details: BaseToken
   balance: {
     avaliable: number
@@ -20,7 +21,6 @@ const TokenRow = ({ augmentedToken, balance }: { augmentedToken: TokenAugmented;
   const { details, price } = augmentedToken
   return (
     <div
-      key={details.id}
       className={css`
         height: 43px;
         width: 100%;
@@ -113,7 +113,7 @@ const Assets = ({ augmentedTokens }: { augmentedTokens: TokenAugmented[] }) => {
               {avaliableSorted.map(augmentedToken => {
                 return (
                   <TokenRow
-                    key={augmentedToken.details.id}
+                    key={augmentedToken.id}
                     augmentedToken={augmentedToken}
                     balance={augmentedToken.balance.avaliable}
                   />
@@ -146,7 +146,7 @@ const Assets = ({ augmentedTokens }: { augmentedTokens: TokenAugmented[] }) => {
               {unavaliableSorted.map(augmentedToken => {
                 return (
                   <TokenRow
-                    key={augmentedToken.details.id}
+                    key={augmentedToken.id}
                     augmentedToken={augmentedToken}
                     balance={augmentedToken.balance.unavaliable}
                   />
