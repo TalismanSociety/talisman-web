@@ -1,6 +1,4 @@
-import AddressPill from '@components/AddressPill'
-import { AmountFlexibleInput } from '@components/AmountFlexibleInput'
-import { BaseToken, buildTransferExtrinsic, tokenPriceState, useApproveAsMulti } from '@domains/chains'
+import { BaseToken, buildTransferExtrinsic, useApproveAsMulti } from '@domains/chains'
 import { pjsApiSelector } from '@domains/chains/pjs-api'
 import {
   Transaction,
@@ -12,8 +10,7 @@ import {
 } from '@domains/multisig'
 import { css } from '@emotion/css'
 import { SubmittableExtrinsic } from '@polkadot/api/types'
-import { Plus, Send, Trash } from '@talismn/icons'
-import { Button, SideSheet, TextInput } from '@talismn/ui'
+import { Button, SideSheet } from '@talismn/ui'
 import { Address } from '@util/addresses'
 import BN from 'bn.js'
 import Decimal from 'decimal.js'
@@ -24,6 +21,7 @@ import { Loadable, useRecoilValue, useRecoilValueLoadable } from 'recoil'
 
 import { FullScreenDialogContents, FullScreenDialogTitle } from '../Transactions/FullScreenSummary'
 import { NameTransaction } from './generic-steps'
+import TokensSelect from '../../../components/TokensSelect'
 
 enum Step {
   Name,
@@ -44,11 +42,7 @@ const DetailsForm = (props: {
   onBack: () => void
   onNext: () => void
 }) => {
-  const selectedMultisig = useRecoilValue(selectedMultisigState)
-  const [amount, setAmount] = useState('')
-  const [destinationInput, setDestinationInput] = useState('')
   const [selectedToken, setSelectedToken] = useState<BaseToken | undefined>()
-  const tokenPrices = useRecoilValueLoadable(tokenPriceState(selectedToken))
 
   useEffect(() => {
     if (!selectedToken && props.tokens.state === 'hasValue' && props.tokens.contents.length > 0) {
@@ -57,137 +51,29 @@ const DetailsForm = (props: {
   }, [props.tokens, selectedToken])
 
   return (
-    <div>
-      <div
-        css={{
-          display: 'grid',
-          gap: '18px',
-          borderBottom: props.sends.length > 0 ? '1px solid var(--color-backgroundLight)' : '0',
-          padding: props.sends.length > 0 ? '40px 0' : '0',
-          maxHeight: '200px',
-          overflow: 'scroll',
-        }}
-      >
-        {props.sends.map((send, index) => {
-          return (
-            <div css={{ display: 'flex', gap: '8px' }} key={JSON.stringify({ send, index })}>
-              <p>Send</p>
-              <Send size={18} css={{ marginTop: '2px' }} />
-              <AddressPill address={send.address} chain={selectedMultisig.chain} />
-              <div css={{ display: 'flex', gap: '8px', marginLeft: 'auto' }}>
-                <p>{Number(send.amount).toFixed(4)}</p>
-                <img src={send.token.logo} alt={send.token.symbol} css={{ height: '18px' }} />
-                <p>{send.token.symbol}</p>
-                {tokenPrices.state === 'hasValue' && (
-                  <p>({(tokenPrices.contents.current * parseFloat(send.amount)).toFixed(2)} USD)</p>
-                )}
-                <Trash
-                  css={{ cursor: 'pointer' }}
-                  onClick={() => {
-                    props.setSends(props.sends.filter((_, i) => i !== index))
-                  }}
-                  size={18}
-                />
-              </div>
-            </div>
-          )
-        })}
-      </div>
-      <div
-        className={css`
-          margin-top: 32px;
-          width: 490px;
-          height: 56px;
-          color: var(--color-offWhite);
-        `}
-      >
-        <AmountFlexibleInput
-          tokens={props.tokens.state === 'hasValue' ? props.tokens.contents : []}
-          selectedToken={selectedToken}
-          setSelectedToken={setSelectedToken}
-          amount={amount}
-          setAmount={setAmount}
-        />
-      </div>
-      <div
-        className={css`
-          margin-top: 64px;
-          width: 490px;
-          height: 56px;
-          color: var(--color-offWhite);
-        `}
-      >
-        <TextInput
-          className={css`
-            font-size: 18px !important;
-          `}
-          leadingLabel={'Recipient'}
-          placeholder="14JVAWDg9h2iMqZgmiRpvZd8aeJ3TvANMCv6V5Te4N4Vkbg5"
-          value={destinationInput}
-          onChange={event => {
-            setDestinationInput(event.target.value)
-          }}
-        />
-      </div>
+    <div
+      className={css`
+        max-width: 490px;
+        padding-top: 40px;
+        width: 100%;
+      `}
+    >
+      <TokensSelect
+        tokens={props.tokens.contents ?? []}
+        selectedToken={selectedToken}
+        onChange={token => setSelectedToken(token)}
+      />
       <div
         className={css`
           display: grid;
-          grid-template-rows: 1fr 1fr;
           grid-template-columns: 1fr 1fr;
           gap: 16px;
           margin-top: 38px;
-          width: 490px;
           button {
             height: 56px;
           }
         `}
       >
-        <Button
-          variant="secondary"
-          css={{
-            gridColumn: '1 / 3',
-            width: 'auto',
-            height: '40px !important',
-            marginBottom: '16px',
-            borderRadius: '24px',
-            justifySelf: 'center',
-            backgroundColor: 'var(--color-backgroundLight)',
-            color: 'var(--color-offWhite)',
-            display: 'flex',
-            alignItems: 'center',
-          }}
-          onClick={() => {
-            const address = Address.fromSs58(destinationInput)
-            if (!selectedToken || !address) return
-            props.setSends([...props.sends, { address, amount, token: selectedToken }])
-            setAmount('')
-            setDestinationInput('')
-          }}
-          disabled={
-            Address.fromSs58(destinationInput) === false ||
-            isNaN(parseFloat(amount)) ||
-            amount.endsWith('.') ||
-            !selectedToken
-          }
-          children={
-            <div
-              className={css`
-                display: flex;
-                align-items: center;
-                gap: 4px;
-                margin-top: 5px;
-                svg {
-                  color: var(--color-primary);
-                }
-              `}
-            >
-              <div>
-                <Plus />
-              </div>
-              <h3>{`Add${props.sends.length > 0 ? ' another' : ''}`}</h3>
-            </div>
-          }
-        />
         <Button onClick={props.onBack} children={<h3>Back</h3>} variant="outlined" />
         <Button disabled={props.sends.length === 0} onClick={props.onNext} children={<h3>Next</h3>} />
       </div>

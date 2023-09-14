@@ -15,7 +15,7 @@ export enum Action {
   MultiSend,
 }
 
-const actionsMetadata: Record<Action, { name: string; icon: React.ReactElement }> = {
+const actionsMetadata: Record<Action, { name: string; icon: React.ReactNode }> = {
   [Action.Send]: {
     name: 'Send',
     icon: <Send size={20} />,
