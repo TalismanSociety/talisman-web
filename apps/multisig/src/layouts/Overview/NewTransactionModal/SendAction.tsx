@@ -195,7 +195,7 @@ const SendAction = (props: { onCancel: () => void }) => {
       className={css`
         display: grid;
         justify-items: center;
-        padding: 32px;
+        margin-top: 18px;
         height: 100%;
       `}
     >
