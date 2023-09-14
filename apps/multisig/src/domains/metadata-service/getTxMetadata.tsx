@@ -32,7 +32,7 @@ interface TxMetadataByPkResponseRaw {
 
 // store nulls in a transient cache to avoid hitting the metadata service multiple times in the
 // same session for the same key it doesn't have
-const cache = new Map<string, Promise<TxOffchainMetadata | null>>()
+const cache = new Map<string, TxOffchainMetadata | null>()
 
 export async function getTxMetadataByPk(
   transactionID: string,
@@ -46,57 +46,60 @@ export async function getTxMetadataByPk(
   }
   if (cache.has(transactionID)) return cache.get(transactionID)!
 
-  cache.set(
-    transactionID,
-    new Promise(async (resolve, reject) => {
-      try {
-        const query = gql`
-          query TxMetadataByPk($timepoint_height: Int!, $timepoint_index: Int!, $multisig: String!, $chain: String!) {
-            tx_metadata_by_pk(
-              multisig: $multisig
-              timepoint_height: $timepoint_height
-              timepoint_index: $timepoint_index
-              chain: $chain
-            ) {
-              call_data
-              description
-              change_config_details
-            }
+  const valueFromMetadataService = await new Promise<TxOffchainMetadata | null>(async (resolve, reject) => {
+    try {
+      const query = gql`
+        query TxMetadataByPk($timepoint_height: Int!, $timepoint_index: Int!, $multisig: String!, $chain: String!) {
+          tx_metadata_by_pk(
+            multisig: $multisig
+            timepoint_height: $timepoint_height
+            timepoint_index: $timepoint_index
+            chain: $chain
+          ) {
+            call_data
+            description
+            change_config_details
           }
-        `
-
-        const res = (await request(
-          METADATA_SERVICE_URL,
-          query,
-          variables as Record<string, any>
-        )) as TxMetadataByPkResponseRaw
-        if (res.tx_metadata_by_pk === null) {
-          console.warn(`Metadata service has no value for ${transactionID}`)
-          resolve(null)
-          return
         }
+      `
 
-        const changeConfigDetails: ChangeConfigDetails | undefined = res.tx_metadata_by_pk.change_config_details
-          ? {
-              newThreshold: res.tx_metadata_by_pk.change_config_details.newThreshold,
-              newMembers: res.tx_metadata_by_pk.change_config_details.newMembers.map(m => {
-                const address = Address.fromSs58(m)
-                if (!address) throw new Error(`Invalid address returned from tx_metadata!`)
-                return address
-              }),
-            }
-          : undefined
-
-        resolve({
-          callData: res.tx_metadata_by_pk.call_data as `0x${string}`,
-          description: res.tx_metadata_by_pk.description,
-          changeConfigDetails,
-        })
-      } catch (error) {
-        console.error(error)
-        reject("Couldn't fetch metadata")
+      const res = (await request(
+        METADATA_SERVICE_URL,
+        query,
+        variables as Record<string, any>
+      )) as TxMetadataByPkResponseRaw
+      if (res.tx_metadata_by_pk === null) {
+        console.warn(`Metadata service has no value for ${transactionID}`)
+        resolve(null)
+        return
       }
-    })
-  )
+
+      const changeConfigDetails: ChangeConfigDetails | undefined = res.tx_metadata_by_pk.change_config_details
+        ? {
+            newThreshold: res.tx_metadata_by_pk.change_config_details.newThreshold,
+            newMembers: res.tx_metadata_by_pk.change_config_details.newMembers.map(m => {
+              const address = Address.fromSs58(m)
+              if (!address) throw new Error(`Invalid address returned from tx_metadata!`)
+              return address
+            }),
+          }
+        : undefined
+
+      resolve({
+        callData: res.tx_metadata_by_pk.call_data as `0x${string}`,
+        description: res.tx_metadata_by_pk.description,
+        changeConfigDetails,
+      })
+    } catch (error) {
+      console.error(error)
+      reject("Couldn't fetch metadata")
+    }
+  })
+
+  // metadata not yet stored to metadata service
+  if (!valueFromMetadataService) return null
+
+  // only set to cache if there is a value
+  cache.set(transactionID, valueFromMetadataService)
   return cache.get(transactionID)!
 }
