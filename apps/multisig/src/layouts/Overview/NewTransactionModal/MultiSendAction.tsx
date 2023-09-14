@@ -65,7 +65,7 @@ const DetailsForm = (props: {
           borderBottom: props.sends.length > 0 ? '1px solid var(--color-backgroundLight)' : '0',
           padding: props.sends.length > 0 ? '40px 0' : '0',
           maxHeight: '200px',
-          overflow: 'scroll',
+          overflow: 'auto',
         }}
       >
         {props.sends.map((send, index) => {

@@ -40,7 +40,7 @@ const MagicLink = ({
         max-width: 500px;
       `}
     >
-      <p css={{ display: 'flex', flex: '1', overflow: 'scroll', whiteSpace: 'nowrap' }}>{url}</p>
+      <p css={{ display: 'flex', flex: '1', overflow: 'auto', whiteSpace: 'nowrap' }}>{url}</p>
       <IconButton
         contentColor={`rgb(${theme.primary})`}
         onClick={() => copyToClipboard(url, 'Magic link copied to clipboard ✨')}
