@@ -1,5 +1,3 @@
-import { toast } from 'react-hot-toast'
-
 const RETRY_INTERVAL_SEC = 5
 
 async function fetchGraphQL(text: string, variables: any, graph: 'chaindata' | 'tx-history') {
@@ -25,7 +23,7 @@ async function fetchGraphQL(text: string, variables: any, graph: 'chaindata' | '
     const msg = `Error fetching ${graph} from Subsquid API: ${JSON.stringify(
       json.errors[0].message
     )}. Retrying in ${RETRY_INTERVAL_SEC}s...`
-    toast.error(msg, { duration: RETRY_INTERVAL_SEC * 1000 })
+    console.error(msg)
     return new Promise(r => {
       setTimeout(() => r(fetchGraphQL(text, variables, graph)), RETRY_INTERVAL_SEC * 1000)
     })
