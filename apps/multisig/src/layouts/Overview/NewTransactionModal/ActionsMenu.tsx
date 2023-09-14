@@ -1,7 +1,7 @@
 import { css } from '@emotion/css'
 import { useTheme } from '@emotion/react'
 import { List, Send, Share2, Zap } from '@talismn/icons'
-import { IconButton, Tooltip } from '@talismn/ui'
+import { IconButton } from '@talismn/ui'
 import { ReactNode } from 'react'
 
 import { Action } from '.'
@@ -87,16 +87,12 @@ const ActionsMenu = (props: { onActionClick: (action: Action) => void }) => {
             icon={<Share2 size={33} />}
             onClick={() => props.onActionClick(Action.MultiSend)}
           />
-          <Tooltip content={'Stake action coming soon'}>
-            <div css={{ display: 'inline' }}>
-              <ActionButton
-                name="Stake"
-                description="Stake your vaults assets"
-                icon={<Zap size={33} />}
-                disabled={true}
-              />
-            </div>
-          </Tooltip>
+          <ActionButton
+            name="Vote"
+            description="Vote on Proposals"
+            icon={<Zap size={33} />}
+            onClick={() => props.onActionClick(Action.Vote)}
+          />
         </div>
       </div>
     </div>

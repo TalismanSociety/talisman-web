@@ -9,7 +9,7 @@ import {
   toConfirmedTxUrl,
 } from '@domains/multisig'
 import { css } from '@emotion/css'
-import { ArrowUp, List, Settings, Share2, Unknown } from '@talismn/icons'
+import { ArrowUp, List, Settings, Share2, Unknown, Zap } from '@talismn/icons'
 import { Skeleton } from '@talismn/ui'
 import { balanceToFloat, formatUsd } from '@util/numbers'
 import { useMemo } from 'react'
@@ -50,6 +50,8 @@ const TransactionSummaryRow = ({
     <Share2 />
   ) : t.decoded.type === TransactionType.ChangeConfig ? (
     <Settings />
+  ) : t.decoded.type === TransactionType.Vote ? (
+    <Zap />
   ) : (
     <List />
   )
