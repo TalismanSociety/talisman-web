@@ -1,5 +1,5 @@
-import { useState, useMemo, useEffect } from 'react'
-import CodeMirror from '@uiw/react-codemirror'
+import { useState, useMemo, useEffect, useRef } from 'react'
+import CodeMirror, { ReactCodeMirrorRef } from '@uiw/react-codemirror'
 import { createTheme } from '@uiw/codemirror-themes'
 import { tags } from '@lezer/highlight'
 import { css } from '@emotion/css'
@@ -11,6 +11,7 @@ import { MultiSendSend } from './multisend.types'
 import { useRecoilValueLoadable } from 'recoil'
 import AmountUnitSelector, { AmountUnit } from '@components/AmountUnitSelector'
 import BN from 'bn.js'
+import { useOnClickOutside } from '../../../../domains/common/useOnClickOutside'
 
 type Props = {
   label?: string
@@ -57,7 +58,7 @@ const findAddressAndAmount = (
   const trimmedAmount = amount.trim()
 
   const parsedAddress = Address.fromSs58(trimmedAddress)
-  if (parsedAddress === false || isNaN(parseFloat(amount))) return undefined
+  if (parsedAddress === false || trimmedAmount === '' || isNaN(+trimmedAmount)) return undefined
 
   return {
     address: parsedAddress,
@@ -77,8 +78,12 @@ const MultiLineTransferInput: React.FC<Props> = ({
   const [value, setValue] = useState('')
   const [amountUnit, setAmountUnit] = useState<AmountUnit>(AmountUnit.Token)
   const tokenPrices = useRecoilValueLoadable(tokenPriceState(token))
+  // the native onBlur/onFocus of CodeMiror is a bit buggy, so we use this custom hook to detect blur
+  const codeMirrorRef = useRef<ReactCodeMirrorRef>(null)
+  useOnClickOutside(codeMirrorRef.current?.editor, () => setEditing(false))
 
-  const transferRows = useMemo(
+  /* A list of rows that are formatted and validated. */
+  const formattedRows = useMemo(
     () =>
       value.split('\n').map(row => ({
         input: row,
@@ -109,15 +114,21 @@ const MultiLineTransferInput: React.FC<Props> = ({
     [amountUnit, token, tokenPrices, value]
   )
 
+  /**
+   * A formatted string that is displayed in the CodeMirror editor.
+   * Shows formatted address and amount if user is not editing
+   */
   const augmentedValue = useMemo(() => {
-    // format the input when user is not editing
     return editing
       ? value
-      : transferRows
+      : formattedRows
           .map(({ validRow, input }) => {
             // for invalid rows, we allow empty line for grouping, otherwise we warn user of invalid row
-            if (!validRow) return input === '' ? '' : '!! invalid format'
-            let formattedString = `${truncateMiddle(validRow.addressString, 6, 6, '...')}`
+            if (!validRow) return input === '' ? '' : `!! invalid format: ${input}`
+            const addressToFormat = token ? validRow.address.toSs58(token.chain) : validRow.addressString
+            let formattedString = `${truncateMiddle(addressToFormat, 6, 6, '...')}`
+
+            // figure out the right token / usd amount to display
             if (amountUnit !== AmountUnit.Token) {
               formattedString += `, ${validRow.amount} USD`
               if (token)
@@ -128,21 +139,19 @@ const MultiLineTransferInput: React.FC<Props> = ({
             return formattedString
           })
           .join('\n')
-  }, [editing, value, transferRows, amountUnit, token])
+  }, [editing, value, formattedRows, amountUnit, token])
 
   const invalidRows = useMemo(() => {
-    let indexes = []
-
-    for (let i = 0; i < transferRows.length; i++) {
-      if (!transferRows[i]?.validRow && transferRows[i]?.input !== '') indexes.push(i)
-    }
+    const indexes: number[] = []
+    formattedRows.forEach(({ validRow, input }, i) => {
+      if (!validRow && input !== '') indexes.push(i + 1)
+    })
     return indexes
-  }, [transferRows])
+  }, [formattedRows])
 
   const validRows = useMemo(() => {
     if (!token) return undefined
-
-    return transferRows
+    return formattedRows
       .filter(r => !!r.validRow)
       .map(
         ({ validRow }) =>
@@ -152,7 +161,7 @@ const MultiLineTransferInput: React.FC<Props> = ({
             token,
           }!)
       )
-  }, [token, transferRows])
+  }, [token, formattedRows])
 
   useEffect(() => {
     if (!validRows) return
@@ -189,9 +198,10 @@ const MultiLineTransferInput: React.FC<Props> = ({
         `}
       >
         <CodeMirror
-          onBlur={() => setEditing(false)}
-          onChange={v => setValue(v)}
-          onFocus={() => setEditing(true)}
+          ref={codeMirrorRef}
+          onChange={editing ? setValue : undefined}
+          onClick={() => setEditing(true)}
+          editable={editing}
           placeholder="14JVAW...Vkbg5, 10.42856"
           theme={theme}
           value={augmentedValue}
@@ -216,6 +226,19 @@ const MultiLineTransferInput: React.FC<Props> = ({
           'EMA input is not avaliable for this token'
         )}
       </div>
+      {invalidRows.length > 0 && (
+        <p
+          css={{
+            color: 'var(--color-status-error)',
+            marginTop: 16,
+            textAlign: 'center',
+          }}
+        >
+          {invalidRows.length > 6
+            ? 'Many lines have invalid format.'
+            : `Invalid format at line ${invalidRows.join(', ')}`}
+        </p>
+      )}
     </div>
   )
 }

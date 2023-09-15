@@ -61,14 +61,10 @@ const MultiSendExpandedDetails = ({ t }: { t: Transaction }) => {
               display: 'grid',
               gap: '16px',
               borderBottom: `${last ? '0px' : '1px'} solid rgb(${theme.backgroundLighter})`,
-              padding: `${last ? '24px 0 0 0' : '24px 0'}`,
+              padding: `${last ? '8px 0 0 0' : '8px 0'}`,
             }}
           >
             <div css={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <span css={{ color: 'var(--color-offWhite)' }}>Send</span>
-              <IconButton contentColor={`rgb(${theme.primary})`} size={'20px'}>
-                <Send size={'16px'} />
-              </IconButton>
               <div
                 className={css`
                   display: flex;
@@ -86,13 +82,10 @@ const MultiSendExpandedDetails = ({ t }: { t: Transaction }) => {
                   {i + 1} of {recipients.length}
                 </span>
               </div>
+              <AddressPill address={address} chain={t.multisig.chain} />
               <div css={{ marginLeft: 'auto' }}>
                 <AmountRow balance={balance} />
               </div>
-            </div>
-            <div css={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              Destination
-              <AddressPill address={address} chain={t.multisig.chain} />
             </div>
           </div>
         )
