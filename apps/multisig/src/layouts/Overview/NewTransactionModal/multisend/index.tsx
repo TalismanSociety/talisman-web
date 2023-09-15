@@ -1,4 +1,5 @@
-import { BaseToken, buildTransferExtrinsic, useApproveAsMulti } from '@domains/chains'
+import { buildTransferExtrinsic, useApproveAsMulti } from '@domains/chains'
+
 import { pjsApiSelector } from '@domains/chains/pjs-api'
 import {
   Transaction,
@@ -8,85 +9,24 @@ import {
   selectedMultisigState,
   useNextTransactionSigner,
 } from '@domains/multisig'
+import { parseUnits } from '@util/numbers'
 import { css } from '@emotion/css'
 import { SubmittableExtrinsic } from '@polkadot/api/types'
-import { Button, SideSheet } from '@talismn/ui'
-import { Address } from '@util/addresses'
-import BN from 'bn.js'
-import Decimal from 'decimal.js'
+import { SideSheet } from '@talismn/ui'
 import { useEffect, useMemo, useState } from 'react'
 import toast from 'react-hot-toast'
 import { useNavigate } from 'react-router-dom'
-import { Loadable, useRecoilValue, useRecoilValueLoadable } from 'recoil'
+import { useRecoilValue, useRecoilValueLoadable } from 'recoil'
 
-import { FullScreenDialogContents, FullScreenDialogTitle } from '../Transactions/FullScreenSummary'
-import { NameTransaction } from './generic-steps'
-import TokensSelect from '../../../components/TokensSelect'
+import { FullScreenDialogContents, FullScreenDialogTitle } from '../../Transactions/FullScreenSummary'
+import { NameTransaction } from '../generic-steps'
+import { MultiSendSend } from '../multisend/multisend.types'
+import MultiSendForm from '../multisend/MultiSendForm'
 
 enum Step {
   Name,
   Details,
   Review,
-}
-
-interface MultiSendSend {
-  token: BaseToken
-  address: Address
-  amount: string
-}
-
-const DetailsForm = (props: {
-  tokens: Loadable<BaseToken[]>
-  sends: MultiSendSend[]
-  setSends: (s: MultiSendSend[]) => void
-  onBack: () => void
-  onNext: () => void
-}) => {
-  const [selectedToken, setSelectedToken] = useState<BaseToken | undefined>()
-
-  useEffect(() => {
-    if (!selectedToken && props.tokens.state === 'hasValue' && props.tokens.contents.length > 0) {
-      setSelectedToken(props.tokens.contents[0])
-    }
-  }, [props.tokens, selectedToken])
-
-  return (
-    <div
-      className={css`
-        max-width: 490px;
-        padding-top: 40px;
-        width: 100%;
-      `}
-    >
-      <TokensSelect
-        tokens={props.tokens.contents ?? []}
-        selectedToken={selectedToken}
-        onChange={token => setSelectedToken(token)}
-      />
-      <div
-        className={css`
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 16px;
-          margin-top: 38px;
-          button {
-            height: 56px;
-          }
-        `}
-      >
-        <Button onClick={props.onBack} children={<h3>Back</h3>} variant="outlined" />
-        <Button disabled={props.sends.length === 0} onClick={props.onNext} children={<h3>Next</h3>} />
-      </div>
-    </div>
-  )
-}
-
-const toBn = (amount: string, decimals: number) => {
-  let stringValueRounded = new Decimal(amount)
-    .mul(Decimal.pow(10, decimals))
-    .toDecimalPlaces(0) // to round it
-    .toFixed() // convert it back to string
-  return new BN(stringValueRounded)
 }
 
 const MultiSendAction = (props: { onCancel: () => void }) => {
@@ -110,7 +50,7 @@ const MultiSendAction = (props: { onCancel: () => void }) => {
       }
       try {
         const sendExtrinsics = sends.map(send => {
-          const amountBn = toBn(send.amount, send.token.decimals)
+          const amountBn = parseUnits(send.amount, send.token.decimals)
           const balance = {
             amount: amountBn,
             token: send.token,
@@ -145,7 +85,7 @@ const MultiSendAction = (props: { onCancel: () => void }) => {
           // recipients: [{ address: destination, balance: { amount: amountBn || new BN(0), token: selectedToken } }],
           recipients: sends.map(send => ({
             address: send.address,
-            balance: { amount: toBn(send.amount, send.token.decimals), token: send.token },
+            balance: { amount: parseUnits(send.amount, send.token.decimals), token: send.token },
           })),
           yaml: '',
         },
@@ -182,7 +122,7 @@ const MultiSendAction = (props: { onCancel: () => void }) => {
       ) : step === Step.Details || step === Step.Review ? (
         <>
           <h1>{name}</h1>
-          <DetailsForm
+          <MultiSendForm
             tokens={tokens}
             onBack={() => setStep(Step.Name)}
             onNext={() => setStep(Step.Review)}
