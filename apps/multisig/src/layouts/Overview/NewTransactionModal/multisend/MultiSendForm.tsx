@@ -6,6 +6,7 @@ import TokensSelect from '@components/TokensSelect'
 import { BaseToken } from '@domains/chains'
 import { MultiSendSend } from './multisend.types'
 import MultiLineTransferInput from './MultiLineTransferInput'
+import { isEqual } from 'lodash'
 
 const MultiSendForm = (props: {
   tokens: Loadable<BaseToken[]>
@@ -15,6 +16,7 @@ const MultiSendForm = (props: {
   onNext: () => void
 }) => {
   const [selectedToken, setSelectedToken] = useState<BaseToken | undefined>()
+  const [invalidRows, setInvalidRows] = useState<number[]>([])
 
   useEffect(() => {
     if (!selectedToken && props.tokens.state === 'hasValue' && props.tokens.contents.length > 0) {
@@ -40,9 +42,12 @@ const MultiSendForm = (props: {
       />
 
       <MultiLineTransferInput
+        sends={props.sends}
         token={selectedToken}
-        onChange={rows => {
-          console.log(rows)
+        onChange={(sends, invalid) => {
+          // prevent unnecessary re-render if sends are the same
+          if (!isEqual(sends, props.sends)) props.setSends(sends)
+          setInvalidRows(invalid)
         }}
       />
       <div
@@ -56,7 +61,11 @@ const MultiSendForm = (props: {
         `}
       >
         <Button onClick={props.onBack} children={<h3>Back</h3>} variant="outlined" />
-        <Button disabled={props.sends.length === 0} onClick={props.onNext} children={<h3>Next</h3>} />
+        <Button
+          disabled={props.sends.length === 0 || invalidRows.length > 0}
+          onClick={props.onNext}
+          children={<h3>Next</h3>}
+        />
       </div>
     </div>
   )

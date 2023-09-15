@@ -3,13 +3,7 @@ import { css } from '@emotion/css'
 import { Select, TextInput } from '@talismn/ui'
 import { useEffect, useMemo, useState } from 'react'
 import { useRecoilValueLoadable } from 'recoil'
-
-enum AmountUnit {
-  Token,
-  UsdMarket,
-  Usd7DayEma,
-  Usd30DayEma,
-}
+import AmountUnitSelector, { AmountUnit } from '../AmountUnitSelector'
 
 export const AmountFlexibleInput = (props: {
   tokens: BaseToken[]
@@ -88,47 +82,7 @@ export const AmountFlexibleInput = (props: {
             ) : tokenPrices.state === 'loading' ? (
               'Loading...'
             ) : tokenPrices.state === 'hasValue' && tokenPrices.contents.averages ? (
-              <div
-                className={css`
-                  display: flex;
-                  align-items: center;
-                  justify-content: center;
-                  p {
-                    font-size: 11px;
-                    cursor: pointer;
-                  }
-                `}
-              >
-                <div>Unit:</div>
-                <div>&nbsp;</div>
-                <p
-                  onClick={() => setAmountUnit(AmountUnit.Token)}
-                  css={{ fontWeight: amountUnit === AmountUnit.Token ? 'bold' : 'normal' }}
-                >
-                  Tokens
-                </p>
-                <div>&nbsp;{'|'}&nbsp;</div>
-                <p
-                  onClick={() => setAmountUnit(AmountUnit.UsdMarket)}
-                  css={{ fontWeight: amountUnit === AmountUnit.UsdMarket ? 'bold' : 'normal' }}
-                >
-                  Market (USD)
-                </p>
-                <div>&nbsp;{'|'}&nbsp;</div>
-                <p
-                  onClick={() => setAmountUnit(AmountUnit.Usd7DayEma)}
-                  css={{ fontWeight: amountUnit === AmountUnit.Usd7DayEma ? 'bold' : 'normal' }}
-                >
-                  7D EMA (USD)
-                </p>
-                <div>&nbsp;{'|'}&nbsp;</div>
-                <p
-                  onClick={() => setAmountUnit(AmountUnit.Usd30DayEma)}
-                  css={{ fontWeight: amountUnit === AmountUnit.Usd30DayEma ? 'bold' : 'normal' }}
-                >
-                  30D EMA (USD)
-                </p>
-              </div>
+              <AmountUnitSelector value={amountUnit} onChange={setAmountUnit} />
             ) : (
               'EMA input is not avaliable for this token'
             )

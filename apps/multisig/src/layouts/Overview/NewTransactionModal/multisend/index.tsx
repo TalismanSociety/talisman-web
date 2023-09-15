@@ -9,7 +9,6 @@ import {
   selectedMultisigState,
   useNextTransactionSigner,
 } from '@domains/multisig'
-import { parseUnits } from '@util/numbers'
 import { css } from '@emotion/css'
 import { SubmittableExtrinsic } from '@polkadot/api/types'
 import { SideSheet } from '@talismn/ui'
@@ -50,9 +49,8 @@ const MultiSendAction = (props: { onCancel: () => void }) => {
       }
       try {
         const sendExtrinsics = sends.map(send => {
-          const amountBn = parseUnits(send.amount, send.token.decimals)
           const balance = {
-            amount: amountBn,
+            amount: send.amountBn,
             token: send.token,
           }
           return buildTransferExtrinsic(apiLoadable.contents, send.address, balance)
@@ -85,7 +83,7 @@ const MultiSendAction = (props: { onCancel: () => void }) => {
           // recipients: [{ address: destination, balance: { amount: amountBn || new BN(0), token: selectedToken } }],
           recipients: sends.map(send => ({
             address: send.address,
-            balance: { amount: parseUnits(send.amount, send.token.decimals), token: send.token },
+            balance: { amount: send.amountBn, token: send.token },
           })),
           yaml: '',
         },
