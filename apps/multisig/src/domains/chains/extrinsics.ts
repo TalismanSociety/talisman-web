@@ -14,6 +14,7 @@ import { web3FromAddress } from '@polkadot/extension-dapp'
 import type { Call, ExtrinsicPayload, Timepoint } from '@polkadot/types/interfaces'
 import { assert, compactToU8a, u8aConcat, u8aEq } from '@polkadot/util'
 import { Address } from '@util/addresses'
+import { makeTransactionID } from '@util/misc'
 import BN from 'bn.js'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useRecoilState, useRecoilValue, useRecoilValueLoadable, useSetRecoilState } from 'recoil'
@@ -435,7 +436,7 @@ export const useApproveAsMulti = (
                     // @ts-ignore
                     const timepoint_height = result.blockNumber.toNumber() as number
                     const timepoint_index = result.txIndex as number
-                    const transactionID = `${timepoint_height}-${timepoint_index}`
+                    const transactionID = makeTransactionID(multisig.chain, timepoint_height, timepoint_index)
 
                     // Disable this line to test the metadata service
                     setMetadataCache({

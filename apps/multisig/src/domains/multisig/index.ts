@@ -14,6 +14,7 @@ import { accountsState } from '@domains/extension'
 import { getTxMetadataByPk } from '@domains/metadata-service'
 import { SubmittableExtrinsic } from '@polkadot/api/types'
 import { Address, toMultisigAddress } from '@util/addresses'
+import { makeTransactionID } from '@util/misc'
 import BN from 'bn.js'
 import queryString from 'query-string'
 import { useCallback, useEffect, useState } from 'react'
@@ -524,7 +525,7 @@ export const usePendingTransactions = () => {
         allRawPending.contents.map(async rawPending => {
           const timepoint_height = rawPending.onChainMultisig.when.height.toNumber()
           const timepoint_index = rawPending.onChainMultisig.when.index.toNumber()
-          const transactionID = `${timepoint_height}-${timepoint_index}`
+          const transactionID = makeTransactionID(rawPending.multisig.chain, timepoint_height, timepoint_index)
 
           let metadata = metadataCache[transactionID]
 
