@@ -113,7 +113,7 @@ const VoteAction: React.FC<Props> = ({ onCancel }) => {
       className={css`
         display: grid;
         justify-items: center;
-        padding: 32px;
+        margin-top: 18px;
       `}
     >
       <VotingForm

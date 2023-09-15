@@ -1,5 +1,5 @@
 import Modal from '@components/Modal'
-import { List, Send, Share2, X } from '@talismn/icons'
+import { List, Send, Share2, X, Zap } from '@talismn/icons'
 import { IconButton } from '@talismn/ui'
 import { useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
@@ -29,6 +29,10 @@ const actionsMetadata: Record<Action, { name: string; icon: React.ReactNode }> =
   [Action.MultiSend]: {
     name: 'Multi-send',
     icon: <Share2 size={20} />,
+  },
+  [Action.Vote]: {
+    name: 'Vote',
+    icon: <Zap size={20} />,
   },
 }
 
