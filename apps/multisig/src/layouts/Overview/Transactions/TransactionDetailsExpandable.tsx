@@ -56,7 +56,7 @@ const MultiSendExpandedDetails = ({ t }: { t: Transaction }) => {
         const last = i === recipients.length - 1
         return (
           <div
-            key={`${address}-${JSON.stringify(balance.amount)}`}
+            key={`${address.toSs58(t.multisig.chain)}-${JSON.stringify(balance.amount)}`}
             css={{
               display: 'grid',
               gap: '16px',
