@@ -46,7 +46,7 @@ export const useAugmentedBalances = () => {
         logo: b.token.logo,
         type: b.token.type,
       }
-      return [...acc, { details: token, balance: { avaliable, unavaliable }, price: b.rates?.usd || 0 }]
+      return [...acc, { details: token, balance: { avaliable, unavaliable }, price: b.rates?.usd || 0, id: b.id }]
     }, [])
   }, [balances])
 }

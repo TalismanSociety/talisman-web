@@ -11,6 +11,7 @@ export const supportedChains: Chain[] = [
       id: 'polkadot-substrate-native-dot',
     },
     subscanUrl: 'https://polkadot.subscan.io/',
+    polkaAssemblyUrl: 'https://polkadot.polkassembly.io',
     rpcs: [
       {
         url: 'wss://rpc.polkadot.io',
@@ -58,6 +59,7 @@ export const supportedChains: Chain[] = [
       id: 'kusama-substrate-native-ksm',
     },
     subscanUrl: 'https://kusama.subscan.io/',
+    polkaAssemblyUrl: 'https://kusama.polkassembly.io',
     rpcs: [
       {
         url: 'wss://kusama-rpc.polkadot.io',

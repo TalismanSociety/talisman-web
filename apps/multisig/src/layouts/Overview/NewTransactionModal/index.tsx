@@ -8,11 +8,13 @@ import ActionsMenu from './ActionsMenu'
 import AdvancedAction from './AdvancedAction'
 import MultiSendAction from './MultiSendAction'
 import SendAction from './SendAction'
+import VoteAction from './vote'
 
 export enum Action {
   Send,
   Advanced,
   MultiSend,
+  Vote,
 }
 
 const actionsMetadata: Record<Action, { name: string; icon: React.ReactNode }> = {
@@ -72,6 +74,8 @@ const NewTransactionModal = () => {
           <AdvancedAction onCancel={() => setAction(undefined)} />
         ) : action === Action.MultiSend ? (
           <MultiSendAction onCancel={() => setAction(undefined)} />
+        ) : action === Action.Vote ? (
+          <VoteAction onCancel={() => setAction(undefined)} />
         ) : null}
       </div>
     </Modal>

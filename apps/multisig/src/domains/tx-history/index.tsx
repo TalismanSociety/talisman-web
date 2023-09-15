@@ -12,6 +12,7 @@ import {
   txOffchainMetadataState,
 } from '@domains/multisig'
 import { Address } from '@util/addresses'
+import { makeTransactionID } from '@util/misc'
 import { gql } from 'graphql-request'
 import { useCallback, useEffect, useState } from 'react'
 import { atom, selector, selectorFamily, useRecoilState, useRecoilValue, useRecoilValueLoadable } from 'recoil'
@@ -159,7 +160,7 @@ export const useConfirmedTransactions = () => {
             const hash = decodedExt.registry.hash(decodedExt.method.toU8a()).toHex()
             const timepoint_height = parseInt(timepoint.height.replace(/,/g, ''))
             const timepoint_index = parseInt(timepoint.index)
-            const transactionID = `${timepoint_height}-${timepoint_index}`
+            const transactionID = makeTransactionID(curMultisig.chain, timepoint_height, timepoint_index)
 
             // try to get metadata
             let metadata = metadataCache[transactionID]

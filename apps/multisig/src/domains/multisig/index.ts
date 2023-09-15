@@ -14,12 +14,14 @@ import { accountsState } from '@domains/extension'
 import { getTxMetadataByPk } from '@domains/metadata-service'
 import { SubmittableExtrinsic } from '@polkadot/api/types'
 import { Address, toMultisigAddress } from '@util/addresses'
+import { makeTransactionID } from '@util/misc'
 import BN from 'bn.js'
 import queryString from 'query-string'
 import { useCallback, useEffect, useState } from 'react'
 import { atom, selector, useRecoilState, useRecoilValue, useRecoilValueLoadable } from 'recoil'
 
 import persistAtom from '../persist'
+import { VoteDetails, mapConvictionToIndex } from '../referenda'
 
 // create a new atom for deciding whether to show all balances and txns or just for the selected
 // multisig
@@ -94,6 +96,7 @@ export enum TransactionType {
   Transfer,
   ChangeConfig,
   Advanced,
+  Vote,
 }
 
 export interface ChangeConfigDetails {
@@ -149,6 +152,7 @@ export interface TransactionDecoded {
     signers: Address[]
     threshold: number
   }
+  voteDetails?: VoteDetails & { token: BaseToken }
 }
 
 export interface Transaction {
@@ -448,6 +452,43 @@ export const extrinsicToDecoded = (
         }
       }
     }
+
+    // Check if it's a Vote type
+    for (const arg of args) {
+      const obj: any = arg.toHuman()
+      if (obj?.section === 'convictionVoting' && obj?.method === 'vote') {
+        const { poll_index, vote } = obj.args
+        let voteDetails: VoteDetails | undefined
+
+        if (vote.Standard) {
+          voteDetails = {
+            referendumId: poll_index,
+            details: {
+              Standard: {
+                balance: new BN(vote.Standard.balance.replaceAll(',', '')),
+                vote: {
+                  aye: vote.Standard.vote.vote === 'Aye',
+                  conviction: mapConvictionToIndex(vote.Standard.vote.conviction),
+                },
+              },
+            },
+          }
+        }
+
+        if (voteDetails) {
+          const token = chainTokens.find(t => t.type === 'substrate-native')
+          if (!token) throw Error(`Chain does not have a native token!`)
+          return {
+            type: TransactionType.Vote,
+            recipients: [],
+            voteDetails: {
+              ...voteDetails,
+              token,
+            },
+          }
+        }
+      }
+    }
   } catch (error) {
     console.error(`Error decoding extrinsic ${JSON.stringify(extrinsic.method.toHuman(), null, 2)}: `, error)
   }
@@ -484,7 +525,7 @@ export const usePendingTransactions = () => {
         allRawPending.contents.map(async rawPending => {
           const timepoint_height = rawPending.onChainMultisig.when.height.toNumber()
           const timepoint_index = rawPending.onChainMultisig.when.index.toNumber()
-          const transactionID = `${timepoint_height}-${timepoint_index}`
+          const transactionID = makeTransactionID(rawPending.multisig.chain, timepoint_height, timepoint_index)
 
           let metadata = metadataCache[transactionID]
 
