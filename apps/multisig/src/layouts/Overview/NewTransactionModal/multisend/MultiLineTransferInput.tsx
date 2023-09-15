@@ -1,5 +1,6 @@
 import { useState, useMemo, useEffect, useRef, useCallback } from 'react'
 import CodeMirror, { ReactCodeMirrorRef } from '@uiw/react-codemirror'
+import { motion } from 'framer-motion'
 import { createTheme } from '@uiw/codemirror-themes'
 import { tags } from '@lezer/highlight'
 import { css } from '@emotion/css'
@@ -7,13 +8,14 @@ import truncateMiddle from 'truncate-middle'
 import { Address } from '@util/addresses'
 import { formatUnits, parseUnits } from '@util/numbers'
 import { BaseToken, tokenPriceState } from '@domains/chains'
+import { useOnClickOutside } from '@domains/common/useOnClickOutside'
 import { MultiSendSend } from './multisend.types'
 import { useRecoilValueLoadable } from 'recoil'
 import AmountUnitSelector, { AmountUnit } from '@components/AmountUnitSelector'
+import FileUploadButton from '@components/FileUploadButton'
 import BN from 'bn.js'
-import { useOnClickOutside } from '../../../../domains/common/useOnClickOutside'
-import FileUploadButton from '../../../../components/FileUploadButton'
-import { toast } from 'react-hot-toast'
+import { Button, Tooltip } from '@talismn/ui'
+import { Info } from '@talismn/icons'
 
 type Props = {
   label?: string
@@ -37,6 +39,7 @@ const theme = createTheme({
   styles: [{ tag: tags.content, color: 'var(--color-offWhite)' }],
 })
 
+/* try to find an address and amount from given string and perform required formatting */
 const findAddressAndAmount = (
   row: string,
   parseAmount: (amount: string) => BN
@@ -54,7 +57,7 @@ const findAddressAndAmount = (
     ;[address, amount] = row.split('  ')
   }
 
-  // try format "address[tab]amount"
+  // try format "address[tab]amount", common for imported CSV
   if (!address || !amount) {
     ;[address, amount] = row.split('\t')
   }
@@ -75,15 +78,6 @@ const findAddressAndAmount = (
   }
 }
 
-const findIndexFromCsvRow = (row: string[], keywords: string[]): number => {
-  let index = -1
-  for (let i = 0; i < keywords.length; i++) {
-    index = row.indexOf(keywords[i] as string)
-    if (index !== -1) break
-  }
-  return index
-}
-
 const MultiLineTransferInput: React.FC<Props> = ({
   label = 'Enter one address and amount on each line.',
   onChange,
@@ -93,7 +87,10 @@ const MultiLineTransferInput: React.FC<Props> = ({
   const [editing, setEditing] = useState(false)
   const [value, setValue] = useState('')
   const [amountUnit, setAmountUnit] = useState<AmountUnit>(AmountUnit.Token)
+  const [error, setError] = useState<string | undefined>()
   const tokenPrices = useRecoilValueLoadable(tokenPriceState(token))
+  const [importedFromCsv, setImportedFromCsv] = useState(false)
+
   // the native onBlur/onFocus of CodeMiror is a bit buggy, so we use this custom hook to detect blur
   const codeMirrorRef = useRef<ReactCodeMirrorRef>(null)
   useOnClickOutside(codeMirrorRef.current?.editor, () => setEditing(false))
@@ -187,40 +184,23 @@ const MultiLineTransferInput: React.FC<Props> = ({
   const handleCsvUpload = async (files: File[]) => {
     const file = files[0]
     if (!file || !token) return
+    setError(undefined)
     const textValue = await file.text()
-
     const rows = textValue.split('\n')
-    const headerLine = rows[0]?.toLowerCase().split(',')
-    if (!headerLine) return toast.error('The uploaded file does not have a header row.', { duration: 5000 })
-
-    // try to find the token address and amount columns.
-    // to be adjusted as we learn more about common CSV formats
-    const addressIndex = findIndexFromCsvRow(headerLine, ['address', 'to', 'recipient', 'receiver'])
-    const amountIndex = findIndexFromCsvRow(headerLine, [token.symbol.toLowerCase(), 'token amount', 'amount', 'value'])
-
-    if (addressIndex === -1)
-      return toast.error('Address column not found. Make sure the column for recipient is "Address".', {
-        duration: 5000,
-      })
-    if (amountIndex === -1)
-      return toast.error(`Amount column not found. Make sure the column for amount is ${token.symbol} or "Amount".`, {
-        duration: 5000,
-      })
-
     const values: string[] = []
-    rows.forEach((row, i) => {
-      if (i === 0) return
+
+    rows.forEach(row => {
       const rowValues = row.split(',')
-      const addressString = rowValues[addressIndex]
-      const amountString = rowValues[amountIndex]
+      const [addressString, amountString] = rowValues
 
       // skip rows that don't have address or amount
       if (!addressString || !amountString) return
-
-      values.push(`${addressString}, ${amountString}`)
+      const validRow = findAddressAndAmount(`${addressString}, ${amountString}`, parseAmount)
+      if (validRow) values.push(`${validRow.addressString}, ${validRow.amount}`)
     })
 
-    if (values.length === 0) return toast.error('The uploaded file does not have any valid rows.', { duration: 5000 })
+    if (values.length === 0) setError('The uploaded CSV file does not have a valid row.')
+    setImportedFromCsv(values.length > 0)
     setValue(values.join('\n'))
   }
 
@@ -241,7 +221,22 @@ const MultiLineTransferInput: React.FC<Props> = ({
         }}
       >
         <p>{label}</p>
-        <FileUploadButton label="Import CSV" accept="text/csv" multiple={false} onFiles={handleCsvUpload} />
+        <div css={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+          <Tooltip
+            content={
+              <div css={{ padding: 8, fontSize: 14 }}>
+                <p css={{ fontSize: 14 }}>Format of CSV file:</p>
+                <ul css={{ margin: 4, paddingLeft: 4 }}>
+                  <li>First column should be address of recipients.</li>
+                  <li>Second column should be amounts for each recipient.</li>
+                </ul>
+              </div>
+            }
+          >
+            <Info size={16} />
+          </Tooltip>
+          <FileUploadButton label="Import CSV" accept="text/csv" multiple={false} onFiles={handleCsvUpload} />
+        </div>
       </div>
       <div
         className={css`
@@ -261,9 +256,13 @@ const MultiLineTransferInput: React.FC<Props> = ({
       >
         <CodeMirror
           ref={codeMirrorRef}
-          onChange={editing ? setValue : undefined}
+          onChange={val => {
+            if (!editing) return
+            setError(undefined)
+            setValue(val)
+          }}
           onClick={() => setEditing(true)}
-          editable={editing}
+          editable={editing && !importedFromCsv}
           placeholder="14JVAW...Vkbg5, 10.42856"
           theme={theme}
           value={augmentedValue}
@@ -273,33 +272,55 @@ const MultiLineTransferInput: React.FC<Props> = ({
         css={{
           display: 'flex',
           alignItems: 'center',
-          justifyContent: 'flex-start',
-          marginTop: 8,
+          justifyContent: 'space-between',
+          padding: 8,
           fontSize: 11,
+          height: 38,
         }}
       >
-        {tokenPrices.state === 'hasError' ? (
-          'Error fetching EMA price info'
-        ) : tokenPrices.state === 'loading' ? (
-          'Loading...'
-        ) : tokenPrices.state === 'hasValue' && tokenPrices.contents.averages ? (
-          <AmountUnitSelector value={amountUnit} onChange={setAmountUnit} />
-        ) : (
-          'EMA input is not avaliable for this token'
+        <AmountUnitSelector tokenPrices={tokenPrices} value={amountUnit} onChange={setAmountUnit} />
+        {importedFromCsv && (
+          <Button
+            className={css`
+              background: var(--color-backgroundLight) !important;
+              border-radius: 16px;
+              cursor: pointer;
+              font-size: 14px;
+              padding: 4px 8px !important;
+              line-height: 1;
+            `}
+            variant="secondary"
+            onClick={() => {
+              setValue('')
+              setError(undefined)
+              setImportedFromCsv(false)
+            }}
+          >
+            Clear
+          </Button>
         )}
       </div>
-      {invalidRows.length > 0 && (
-        <p
-          css={{
-            color: 'var(--color-status-error)',
-            marginTop: 16,
-            textAlign: 'center',
-          }}
+      {(invalidRows.length > 0 || error) && (
+        <motion.div
+          key={error ?? invalidRows.join(', ')}
+          initial={{ y: -10, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          exit={{ y: 10, opacity: 0 }}
+          transition={{ duration: 0.2 }}
         >
-          {invalidRows.length > 6
-            ? 'Many lines have invalid format.'
-            : `Invalid format at line ${invalidRows.join(', ')}`}
-        </p>
+          <p
+            css={{
+              color: 'var(--color-status-error)',
+              marginTop: 16,
+              textAlign: 'center',
+            }}
+          >
+            {error ??
+              (invalidRows.length > 6
+                ? 'Many lines have invalid format.'
+                : `Invalid format at line ${invalidRows.join(', ')}`)}
+          </p>
+        </motion.div>
       )}
     </div>
   )

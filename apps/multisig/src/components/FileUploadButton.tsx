@@ -24,12 +24,18 @@ const FileUploadButton: React.FC<Props> = ({ accept, label, multiple, onFiles })
   return (
     <>
       <input
+        id="file-input"
         ref={inputRef}
         accept={accept}
         type="file"
         css={{ visibility: 'hidden', height: 0, width: 0, opacity: 0 }}
         multiple={multiple}
         onChange={handleFileChange}
+        // clear the input value so that the same file can be uploaded again
+        onClick={e => {
+          // @ts-ignore
+          e.target.value = null
+        }}
       />
       <Button
         css={{

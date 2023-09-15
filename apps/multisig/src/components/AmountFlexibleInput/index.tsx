@@ -77,15 +77,7 @@ export const AmountFlexibleInput = (props: {
               : ''
           }
           leadingSupportingText={
-            tokenPrices.state === 'hasError' ? (
-              'Error fetching EMA price info'
-            ) : tokenPrices.state === 'loading' ? (
-              'Loading...'
-            ) : tokenPrices.state === 'hasValue' && tokenPrices.contents.averages ? (
-              <AmountUnitSelector value={amountUnit} onChange={setAmountUnit} />
-            ) : (
-              'EMA input is not avaliable for this token'
-            )
+            <AmountUnitSelector value={amountUnit} onChange={setAmountUnit} tokenPrices={tokenPrices} />
           }
           value={input}
           onChange={event => {
