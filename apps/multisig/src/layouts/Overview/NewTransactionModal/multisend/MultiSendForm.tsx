@@ -5,7 +5,7 @@ import { Button } from '@talismn/ui'
 import TokensSelect from '@components/TokensSelect'
 import { BaseToken } from '@domains/chains'
 import { MultiSendSend } from './multisend.types'
-import MultiLineTransferInput from './MultiLineTransferInput'
+import MultiLineTransferInput from './MultiLineSendInput'
 import { isEqual } from 'lodash'
 
 const MultiSendForm = (props: {
@@ -16,7 +16,7 @@ const MultiSendForm = (props: {
   onNext: () => void
 }) => {
   const [selectedToken, setSelectedToken] = useState<BaseToken | undefined>()
-  const [invalidRows, setInvalidRows] = useState<number[]>([])
+  const [hasInvalidRow, setHasInvalidRow] = useState(false)
 
   useEffect(() => {
     if (!selectedToken && props.tokens.state === 'hasValue' && props.tokens.contents.length > 0) {
@@ -30,7 +30,7 @@ const MultiSendForm = (props: {
         display: flex;
         flex-direction: column;
         gap: 32px;
-        max-width: 623px;
+        max-width: 620px;
         padding-top: 40px;
         width: 100%;
       `}
@@ -40,14 +40,13 @@ const MultiSendForm = (props: {
         selectedToken={selectedToken}
         onChange={token => setSelectedToken(token)}
       />
-
       <MultiLineTransferInput
         sends={props.sends}
         token={selectedToken}
-        onChange={(sends, invalid) => {
+        onChange={(sends, invalidRows) => {
           // prevent unnecessary re-render if sends are the same
           if (!isEqual(sends, props.sends)) props.setSends(sends)
-          setInvalidRows(invalid)
+          setHasInvalidRow(invalidRows.length > 0)
         }}
       />
       <div
@@ -61,11 +60,7 @@ const MultiSendForm = (props: {
         `}
       >
         <Button onClick={props.onBack} children={<h3>Back</h3>} variant="outlined" />
-        <Button
-          disabled={props.sends.length === 0 || invalidRows.length > 0}
-          onClick={props.onNext}
-          children={<h3>Next</h3>}
-        />
+        <Button disabled={props.sends.length === 0 || hasInvalidRow} onClick={props.onNext} children={<h3>Next</h3>} />
       </div>
     </div>
   )

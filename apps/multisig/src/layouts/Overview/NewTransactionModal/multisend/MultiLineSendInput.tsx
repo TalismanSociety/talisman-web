@@ -78,18 +78,18 @@ const findAddressAndAmount = (
   }
 }
 
-const MultiLineTransferInput: React.FC<Props> = ({
+const MultiLineSendInput: React.FC<Props> = ({
   label = 'Enter one address and amount on each line.',
   onChange,
   token,
   sends,
 }) => {
-  const [editing, setEditing] = useState(false)
-  const [value, setValue] = useState('')
   const [amountUnit, setAmountUnit] = useState<AmountUnit>(AmountUnit.Token)
+  const [editing, setEditing] = useState(false)
   const [error, setError] = useState<string | undefined>()
-  const tokenPrices = useRecoilValueLoadable(tokenPriceState(token))
   const [importedFromCsv, setImportedFromCsv] = useState(false)
+  const [value, setValue] = useState('')
+  const tokenPrices = useRecoilValueLoadable(tokenPriceState(token))
 
   // the native onBlur/onFocus of CodeMiror is a bit buggy, so we use this custom hook to detect blur
   const codeMirrorRef = useRef<ReactCodeMirrorRef>(null)
@@ -122,7 +122,7 @@ const MultiLineTransferInput: React.FC<Props> = ({
     [amountUnit, token, tokenPrices]
   )
 
-  /* A list of rows that are formatted and validated. */
+  /* pre-process every row for validations later */
   const formattedRows = useMemo(
     () =>
       value.split('\n').map(row => ({
@@ -137,26 +137,25 @@ const MultiLineTransferInput: React.FC<Props> = ({
    * Shows formatted address and amount if user is not editing
    */
   const augmentedValue = useMemo(() => {
-    return editing
-      ? value
-      : formattedRows
-          .map(({ validRow, input }) => {
-            // for invalid rows, we allow empty line for grouping, otherwise we warn user of invalid row
-            if (!validRow) return input === '' ? '' : `!! invalid format: ${input}`
-            const addressToFormat = token ? validRow.address.toSs58(token.chain) : validRow.addressString
-            let formattedString = `${truncateMiddle(addressToFormat, 6, 6, '...')}`
+    if (editing) return value
+    return formattedRows
+      .map(({ validRow, input }) => {
+        // for invalid rows, we allow empty line for grouping, otherwise we warn user of invalid row
+        if (!validRow) return input === '' ? '' : `!! invalid format: ${input}`
+        const addressToFormat = token ? validRow.address.toSs58(token.chain) : validRow.addressString
+        let formattedString = `${truncateMiddle(addressToFormat, 6, 6, '...')}`
 
-            // figure out the right token / usd amount to display
-            if (amountUnit !== AmountUnit.Token) {
-              formattedString += `, ${validRow.amount} USD`
-              if (token)
-                formattedString += ` (${(+formatUnits(validRow.amountBn, token.decimals)).toFixed(4)} ${token.symbol})`
-            } else {
-              formattedString += `, ${validRow.amount} ${token?.symbol}`
-            }
-            return formattedString
-          })
-          .join('\n')
+        // display the right token / usd amount
+        if (amountUnit !== AmountUnit.Token) {
+          formattedString += `, ${validRow.amount} USD`
+          if (token)
+            formattedString += ` (${(+formatUnits(validRow.amountBn, token.decimals)).toFixed(4)} ${token.symbol})`
+        } else {
+          formattedString += `, ${validRow.amount} ${token?.symbol}`
+        }
+        return formattedString
+      })
+      .join('\n')
   }, [editing, value, formattedRows, amountUnit, token])
 
   const invalidRows = useMemo(() => {
@@ -205,26 +204,24 @@ const MultiLineTransferInput: React.FC<Props> = ({
   }
 
   useEffect(() => {
-    if (!validRows) return
-    onChange(validRows, invalidRows)
-  }, [invalidRows, onChange, sends, token, validRows])
+    if (validRows) onChange(validRows, invalidRows)
+  }, [invalidRows, onChange, validRows])
 
   return (
-    <div style={{ width: '100%' }}>
+    <div>
       <div
         css={{
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
           marginBottom: '16px',
-          width: '100%',
         }}
       >
         <p>{label}</p>
         <div css={{ display: 'flex', alignItems: 'center', gap: 4 }}>
           <Tooltip
             content={
-              <div css={{ padding: 8, fontSize: 14 }}>
+              <div css={{ fontSize: 14, padding: 8 }}>
                 <p css={{ fontSize: 14 }}>Format of CSV file:</p>
                 <ul css={{ margin: 4, paddingLeft: 4 }}>
                   <li>First column should be address of recipients.</li>
@@ -263,7 +260,7 @@ const MultiLineTransferInput: React.FC<Props> = ({
           }}
           onClick={() => setEditing(true)}
           editable={editing && !importedFromCsv}
-          placeholder="14JVAW...Vkbg5, 10.42856"
+          placeholder="14JVAW...Vkbg5, 10.23456"
           theme={theme}
           value={augmentedValue}
         />
@@ -274,7 +271,6 @@ const MultiLineTransferInput: React.FC<Props> = ({
           alignItems: 'center',
           justifyContent: 'space-between',
           padding: 8,
-          fontSize: 11,
           height: 38,
         }}
       >
@@ -326,4 +322,4 @@ const MultiLineTransferInput: React.FC<Props> = ({
   )
 }
 
-export default MultiLineTransferInput
+export default MultiLineSendInput

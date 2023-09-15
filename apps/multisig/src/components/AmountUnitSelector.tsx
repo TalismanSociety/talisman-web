@@ -69,11 +69,7 @@ const AmountUnitSelector: React.FC<Props> = ({ onChange, value: selectedAmountUn
     )
 
   return (
-    <p
-      css={{
-        fontSize: 12,
-      }}
-    >
+    <p css={{ fontSize: 12 }}>
       {tokenPrices.state === 'loading'
         ? 'Loading...'
         : tokenPrices.state === 'hasError'
