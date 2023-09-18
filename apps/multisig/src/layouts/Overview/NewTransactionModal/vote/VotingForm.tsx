@@ -28,7 +28,8 @@ const VotingForm: React.FC<Props> = ({ onCancel, onChange, onNext, token, voteDe
       className={css`
         display: grid;
         justify-items: center;
-        width: 490px;
+        max-width: 490px;
+        width: 100%;
       `}
     >
       <h1 style={{ marginBottom: '32px' }}>Vote Details</h1>

@@ -17,7 +17,7 @@ const AmountRow = ({ balance }: { balance: Balance }) => {
         color: var(--color-foreground);
       `}
     >
-      <p css={{ fontSize: '18px', marginTop: '4px' }}>{balanceFloat}</p>
+      <p css={{ fontSize: '18px', marginTop: '4px' }}>{balanceFloat.toFixed(4)}</p>
       <img css={{ height: '20px' }} src={balance.token.logo} alt="token logo" />
       <p css={{ fontSize: '18px', marginTop: '4px' }}>{balance.token.symbol}</p>
       {price.state === 'hasValue' ? (

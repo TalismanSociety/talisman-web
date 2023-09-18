@@ -1,27 +1,26 @@
-import 'ace-builds/src-noconflict/ace'
-import 'ace-builds/src-noconflict/mode-json'
-import 'ace-builds/src-noconflict/theme-twilight'
-import 'ace-builds/src-noconflict/ext-language_tools'
+import { buildTransferExtrinsic, useApproveAsMulti } from '@domains/chains'
 
-import { CallDataPasteForm } from '@components/CallDataPasteForm'
-import { useApproveAsMulti } from '@domains/chains'
+import { pjsApiSelector } from '@domains/chains/pjs-api'
 import {
   Transaction,
   TransactionApprovals,
   TransactionType,
+  selectedMultisigChainTokensState,
   selectedMultisigState,
   useNextTransactionSigner,
 } from '@domains/multisig'
 import { css } from '@emotion/css'
 import { SubmittableExtrinsic } from '@polkadot/api/types'
-import { Button, SideSheet } from '@talismn/ui'
-import { useMemo, useState } from 'react'
+import { SideSheet } from '@talismn/ui'
+import { useEffect, useMemo, useState } from 'react'
 import toast from 'react-hot-toast'
 import { useNavigate } from 'react-router-dom'
-import { useRecoilValue } from 'recoil'
+import { useRecoilValue, useRecoilValueLoadable } from 'recoil'
 
-import { FullScreenDialogContents, FullScreenDialogTitle } from '../Transactions/FullScreenSummary'
-import { NameTransaction } from './generic-steps'
+import { FullScreenDialogContents, FullScreenDialogTitle } from '../../Transactions/FullScreenSummary'
+import { NameTransaction } from '../generic-steps'
+import { MultiSendSend } from '../multisend/multisend.types'
+import MultiSendForm from '../multisend/MultiSendForm'
 
 enum Step {
   Name,
@@ -29,79 +28,76 @@ enum Step {
   Review,
 }
 
-const DetailsForm = (props: {
-  extrinsic: SubmittableExtrinsic<'promise'> | undefined
-  setExtrinsic: (s: SubmittableExtrinsic<'promise'> | undefined) => void
-  onBack: () => void
-  onNext: () => void
-}) => {
-  return (
-    <div
-      className={css`
-        max-width: 623px;
-        display: grid;
-        justify-items: center;
-        text-align: center;
-      `}
-    >
-      <h1 css={{ marginBottom: '32px' }}>Transaction details</h1>
-      <div css={{ marginBottom: '24px' }}>
-        Create your extrinsic using Polkadot.js or any other app, and simply paste the calldata below to execute your
-        transaction.
-      </div>
-      <CallDataPasteForm extrinsic={props.extrinsic} setExtrinsic={props.setExtrinsic} />
-      <div
-        className={css`
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 16px;
-          margin-top: 48px;
-          width: 100%;
-          button {
-            height: 56px;
-          }
-        `}
-      >
-        <Button onClick={props.onBack} children={<h3>Back</h3>} variant="outlined" />
-        <Button disabled={props.extrinsic === undefined} onClick={props.onNext} children={<h3>Next</h3>} />
-      </div>
-    </div>
-  )
-}
-
-const AdvancedAction = (props: { onCancel: () => void }) => {
+const MultiSendAction = (props: { onCancel: () => void }) => {
   const [step, setStep] = useState(Step.Name)
   const [name, setName] = useState('')
+  const tokens = useRecoilValueLoadable(selectedMultisigChainTokensState)
   const [extrinsic, setExtrinsic] = useState<SubmittableExtrinsic<'promise'> | undefined>()
+  const [sends, setSends] = useState<MultiSendSend[]>([])
   const multisig = useRecoilValue(selectedMultisigState)
+  const apiLoadable = useRecoilValueLoadable(pjsApiSelector(multisig.chain.rpcs))
   const navigate = useNavigate()
 
-  const hash = extrinsic?.registry.hash(extrinsic.method.toU8a()).toHex()
+  useEffect(() => {
+    if (sends.length > 0 && apiLoadable.state === 'hasValue') {
+      if (
+        !apiLoadable.contents.tx.balances?.transferKeepAlive ||
+        !apiLoadable.contents.tx.proxy?.proxy ||
+        !apiLoadable.contents.tx.utility?.batchAll
+      ) {
+        throw Error('chain missing required pallet/s for multisend')
+      }
+      try {
+        const sendExtrinsics = sends.map(send => {
+          const balance = {
+            amount: send.amountBn,
+            token: send.token,
+          }
+          return buildTransferExtrinsic(apiLoadable.contents, send.address, balance)
+        })
+
+        const batchAllExtrinsic = apiLoadable.contents.tx.utility.batchAll(sendExtrinsics)
+        const extrinsic = apiLoadable.contents.tx.proxy.proxy(multisig.proxyAddress.bytes, null, batchAllExtrinsic)
+        setExtrinsic(extrinsic)
+      } catch (error) {
+        console.error(error)
+      }
+    }
+  }, [sends, apiLoadable, multisig.proxyAddress])
+
   const t: Transaction | undefined = useMemo(() => {
     if (extrinsic) {
+      const hash = extrinsic.registry.hash(extrinsic.method.toU8a()).toHex()
       return {
         date: new Date(),
-        hash: hash || '0x',
+        hash,
         description: name,
+        chain: multisig.chain,
         multisig,
         approvals: multisig.signers.reduce((acc, key) => {
           acc[key.toPubKey()] = false
           return acc
         }, {} as TransactionApprovals),
         decoded: {
-          type: TransactionType.Advanced,
-          recipients: [],
+          type: TransactionType.MultiSend,
+          // recipients: [{ address: destination, balance: { amount: amountBn || new BN(0), token: selectedToken } }],
+          recipients: sends.map(send => ({
+            address: send.address,
+            balance: { amount: send.amountBn, token: send.token },
+          })),
+          yaml: '',
         },
         callData: extrinsic.method.toHex(),
       }
     }
-  }, [multisig, name, extrinsic, hash])
+  }, [extrinsic, multisig, sends, name])
   const signer = useNextTransactionSigner(t?.approvals)
+  const hash = extrinsic?.registry.hash(extrinsic.method.toU8a()).toHex()
   const {
     approveAsMulti,
     estimatedFee,
     ready: approveAsMultiReady,
-  } = useApproveAsMulti(signer?.address, hash, null, multisig)
+  } = useApproveAsMulti(signer?.address, hash, null, t?.multisig)
 
   return (
     <div
@@ -122,12 +118,16 @@ const AdvancedAction = (props: { onCancel: () => void }) => {
           }}
         />
       ) : step === Step.Details || step === Step.Review ? (
-        <DetailsForm
-          onBack={() => setStep(Step.Name)}
-          onNext={() => setStep(Step.Review)}
-          extrinsic={extrinsic}
-          setExtrinsic={setExtrinsic}
-        />
+        <>
+          <h1>{name}</h1>
+          <MultiSendForm
+            tokens={tokens}
+            onBack={() => setStep(Step.Name)}
+            onNext={() => setStep(Step.Review)}
+            sends={sends}
+            setSends={setSends}
+          />
+        </>
       ) : null}
       <SideSheet
         onRequestDismiss={() => {
@@ -151,10 +151,10 @@ const AdvancedAction = (props: { onCancel: () => void }) => {
         open={step === Step.Review}
       >
         <FullScreenDialogContents
+          t={t}
+          fee={approveAsMultiReady ? estimatedFee : undefined}
           canCancel={true}
           cancelButtonTextOverride="Back"
-          fee={approveAsMultiReady ? estimatedFee : undefined}
-          t={t}
           onApprove={() =>
             new Promise((resolve, reject) => {
               if (!hash || !extrinsic) {
@@ -168,17 +168,11 @@ const AdvancedAction = (props: { onCancel: () => void }) => {
                 },
                 onSuccess: () => {
                   navigate('/overview')
-                  toast.success(
-                    "Transaction sent! It will appear in your 'Pending' transactions as soon as it lands in a finalized block.",
-                    { duration: 5000, position: 'bottom-right' }
-                  )
-                  if (!hash || !extrinsic) {
-                    console.error("Couldn't get hash or extrinsic")
-                    return
-                  }
+                  toast.success('Transaction successful!', { duration: 5000, position: 'bottom-right' })
                   resolve()
                 },
                 onFailure: e => {
+                  navigate('/overview')
                   toast.error('Transaction failed')
                   console.error(e)
                   reject()
@@ -196,4 +190,4 @@ const AdvancedAction = (props: { onCancel: () => void }) => {
   )
 }
 
-export default AdvancedAction
+export default MultiSendAction
