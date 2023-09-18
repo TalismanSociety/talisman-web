@@ -7,6 +7,8 @@ import { BaseToken } from '@domains/chains'
 import { MultiSendSend } from './multisend.types'
 import MultiLineTransferInput from './MultiLineSendInput'
 import { isEqual } from 'lodash'
+import AmountRow from '@components/AmountRow'
+import BN from 'bn.js'
 
 const MultiSendForm = (props: {
   tokens: Loadable<BaseToken[]>
@@ -49,17 +51,52 @@ const MultiSendForm = (props: {
         }}
       />
       <div
-        className={css`
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 16px;
-          button {
-            height: 56px;
-          }
-        `}
+        css={{
+          'display': 'flex',
+          'flexDirection': 'column',
+          '> div': {
+            display: 'flex',
+            justifyContent: 'space-between',
+            gap: 16,
+            p: { fontSize: 16 },
+          },
+        }}
       >
-        <Button onClick={props.onBack} children={<h3>Back</h3>} variant="outlined" />
-        <Button disabled={props.sends.length === 0 || hasInvalidRow} onClick={props.onNext} children={<h3>Next</h3>} />
+        {props.sends.length > 0 && selectedToken && !hasInvalidRow && (
+          <>
+            <div>
+              <p>Total Sends</p>
+              <p>{props.sends.length}</p>
+            </div>
+            <div>
+              <p>Total Amount</p>
+              <AmountRow
+                hideIcon
+                balance={{
+                  token: selectedToken,
+                  amount: props.sends.reduce((acc, send) => acc.add(send.amountBn), new BN(0)),
+                }}
+              />
+            </div>
+          </>
+        )}
+
+        <div
+          className={css`
+            margin-top: 8px;
+            button {
+              height: 56px;
+            }
+          `}
+        >
+          <Button css={{ width: '100%' }} onClick={props.onBack} children={<h3>Back</h3>} variant="outlined" />
+          <Button
+            css={{ width: '100%' }}
+            disabled={props.sends.length === 0 || hasInvalidRow}
+            onClick={props.onNext}
+            children={<h3>Next</h3>}
+          />
+        </div>
       </div>
     </div>
   )

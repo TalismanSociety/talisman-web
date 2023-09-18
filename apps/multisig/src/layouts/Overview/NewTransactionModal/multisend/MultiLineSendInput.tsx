@@ -15,7 +15,7 @@ import AmountUnitSelector, { AmountUnit } from '@components/AmountUnitSelector'
 import FileUploadButton from '@components/FileUploadButton'
 import BN from 'bn.js'
 import { Button, Tooltip } from '@talismn/ui'
-import { Info } from '@talismn/icons'
+import { Info, ToggleLeft, ToggleRight } from '@talismn/icons'
 
 type Props = {
   label?: string
@@ -61,6 +61,11 @@ const findAddressAndAmount = (
     ;[address, amount] = row.split('\t')
   }
 
+  // try format "address=amount", common for imported CSV
+  if (!address || !amount) {
+    ;[address, amount] = row.split('=')
+  }
+
   if (!address || !amount) return { error: 'Invalid Row' }
 
   const trimmedAddress = address.trim()
@@ -82,6 +87,8 @@ const findAddressAndAmount = (
   }
 }
 
+const exampleAddress = Address.fromSs58('5DFMVCaWNPcSdPVmK7d6g81ZV58vw5jkKbQk8vR4FSxyhJBD') as Address
+
 const MultiLineSendInput: React.FC<Props> = ({
   label = 'Enter one address and amount on each line.',
   onChange,
@@ -89,7 +96,7 @@ const MultiLineSendInput: React.FC<Props> = ({
 }) => {
   const [amountUnit, setAmountUnit] = useState<AmountUnit>(AmountUnit.Token)
   const [editing, setEditing] = useState(false)
-  const [viewOriginal, setViewOriginal] = useState(true)
+  const [isReviewMode, setIsReviewMode] = useState(true)
   const [error, setError] = useState<string | undefined>()
   const [importedFromCsv, setImportedFromCsv] = useState(false)
   const [value, setValue] = useState('')
@@ -141,9 +148,8 @@ const MultiLineSendInput: React.FC<Props> = ({
    * Shows formatted address and amount if user is not editing
    */
   const augmentedValue = useMemo(() => {
-    // if importing from CSV, whether user is editing should not affect what the input shows
-    const showOriginal = importedFromCsv ? viewOriginal : editing || viewOriginal
-    if (showOriginal) return value
+    // when not in review mode, user wants to see the full original input
+    if (!isReviewMode) return value
     return formattedRows
       .map(({ validRow: { data, error }, input }) => {
         // for invalid rows, we allow empty line for grouping, otherwise we warn user of invalid row
@@ -165,7 +171,7 @@ const MultiLineSendInput: React.FC<Props> = ({
         return formattedString
       })
       .join('\n')
-  }, [importedFromCsv, viewOriginal, editing, value, formattedRows, token, amountUnit])
+  }, [isReviewMode, value, formattedRows, token, amountUnit])
 
   const invalidRows = useMemo(() => {
     const indexes: number[] = []
@@ -209,7 +215,7 @@ const MultiLineSendInput: React.FC<Props> = ({
     if (values.length === 0) setError('The uploaded CSV file does not have a valid row.')
     setImportedFromCsv(values.length > 0)
     setValue(values.join('\n'))
-    setViewOriginal(true)
+    setIsReviewMode(false)
   }
 
   useEffect(() => {
@@ -226,7 +232,10 @@ const MultiLineSendInput: React.FC<Props> = ({
           marginBottom: '16px',
         }}
       >
-        <p>{label}</p>
+        <div>
+          <p>{label}</p>
+          {token && <p css={{ fontSize: 12, opacity: 0.8 }}>e.g. {exampleAddress.toSs58(token.chain)}, 55.56</p>}
+        </div>
         <div css={{ display: 'flex', alignItems: 'center', gap: 4 }}>
           <Tooltip
             content={
@@ -236,6 +245,8 @@ const MultiLineSendInput: React.FC<Props> = ({
                   <li>First column should be address of recipients.</li>
                   <li>Second column should be amounts for each recipient.</li>
                 </ul>
+                <br />
+                <p>You can also just copy / paste the table.</p>
               </div>
             }
           >
@@ -282,13 +293,16 @@ const MultiLineSendInput: React.FC<Props> = ({
         <CodeMirror
           ref={codeMirrorRef}
           onChange={val => {
-            if (!editing) return
+            if (isReviewMode) return
             setError(undefined)
             setValue(val)
           }}
-          onClick={() => setEditing(true)}
-          editable={editing && !importedFromCsv}
-          placeholder="14JVAW...Vkbg5, 10.23456"
+          onClick={() => {
+            setIsReviewMode(false)
+            setEditing(true)
+          }}
+          editable={!importedFromCsv && !isReviewMode}
+          placeholder={`14JVAW...Vkbg5, 10.23456\n14JVAW...Vkbg5 0.23456\n14JVAW...Vkbg5=2.23456`}
           theme={theme}
           value={augmentedValue}
         />
@@ -302,7 +316,14 @@ const MultiLineSendInput: React.FC<Props> = ({
           height: 38,
         }}
       >
-        <AmountUnitSelector tokenPrices={tokenPrices} value={amountUnit} onChange={setAmountUnit} />
+        <AmountUnitSelector
+          tokenPrices={tokenPrices}
+          value={amountUnit}
+          onChange={unit => {
+            setIsReviewMode(true)
+            setAmountUnit(unit)
+          }}
+        />
         <div css={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           {importedFromCsv && (
             <Button
@@ -324,20 +345,26 @@ const MultiLineSendInput: React.FC<Props> = ({
               Clear
             </Button>
           )}
-          <Button
-            className={css`
-              background: var(--color-backgroundLight) !important;
-              border-radius: 16px;
-              cursor: pointer;
-              font-size: 14px;
-              padding: 4px 8px !important;
-              line-height: 1;
-            `}
-            variant="secondary"
-            onClick={() => setViewOriginal(!viewOriginal)}
-          >
-            View {viewOriginal ? 'formatted' : 'original'}
-          </Button>
+          {value.length > 0 && (
+            <div
+              css={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 8,
+                svg: { color: isReviewMode ? 'var(--color-primary)' : undefined },
+                p: { fontSize: 12, marginTop: 4, lineHeight: 1 },
+                cursor: 'pointer',
+              }}
+              onClick={() => setIsReviewMode(!isReviewMode)}
+            >
+              {isReviewMode ? <ToggleRight size={24} /> : <ToggleLeft size={24} />}
+              <p>
+                Review
+                <br />
+                Mode
+              </p>
+            </div>
+          )}
         </div>
       </div>
       {(invalidRows.length > 0 || error) && (

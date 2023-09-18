@@ -5,7 +5,7 @@ import { balanceToFloat, formatUsd } from '../util/numbers'
 import { css } from '@emotion/css'
 import { Skeleton } from '@talismn/ui'
 
-const AmountRow = ({ balance }: { balance: Balance }) => {
+const AmountRow = ({ balance, hideIcon }: { balance: Balance; hideIcon?: boolean }) => {
   const price = useRecoilValueLoadable(tokenPriceState(balance.token))
   const balanceFloat = balanceToFloat(balance)
   return (
@@ -18,7 +18,7 @@ const AmountRow = ({ balance }: { balance: Balance }) => {
       `}
     >
       <p css={{ fontSize: '18px', marginTop: '4px' }}>{balanceFloat.toFixed(4)}</p>
-      <img css={{ height: '20px' }} src={balance.token.logo} alt="token logo" />
+      {!hideIcon && <img css={{ height: '20px' }} src={balance.token.logo} alt="token logo" />}
       <p css={{ fontSize: '18px', marginTop: '4px' }}>{balance.token.symbol}</p>
       {price.state === 'hasValue' ? (
         <p css={{ fontSize: '18px', marginTop: '4px' }}>{`(${formatUsd(balanceFloat * price.contents.current)})`}</p>
