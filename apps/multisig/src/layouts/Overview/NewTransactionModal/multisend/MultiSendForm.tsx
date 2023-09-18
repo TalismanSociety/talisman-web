@@ -41,7 +41,6 @@ const MultiSendForm = (props: {
         onChange={token => setSelectedToken(token)}
       />
       <MultiLineTransferInput
-        sends={props.sends}
         token={selectedToken}
         onChange={(sends, invalidRows) => {
           // prevent unnecessary re-render if sends are the same

@@ -20,7 +20,6 @@ import { Info } from '@talismn/icons'
 type Props = {
   label?: string
   token?: BaseToken
-  sends: MultiSendSend[]
   onChange: (rows: MultiSendSend[], invalidRows: number[]) => void
 }
 
@@ -29,7 +28,7 @@ const theme = createTheme({
   settings: {
     background: 'var(--color-grey800)',
     foreground: 'var(--color-grey800)',
-    selection: 'var(--color-backgroundLight)',
+    selection: 'var(--color-backgroundLighter)',
     gutterBackground: 'var(--color-grey800)',
     selectionMatch: 'var(--color-backgroundLight)',
     gutterActiveForeground: 'var(--color-offWhite)',
@@ -43,7 +42,7 @@ const theme = createTheme({
 const findAddressAndAmount = (
   row: string,
   parseAmount: (amount: string) => BN
-): { address: Address; addressString: string; amount: string; amountBn: BN } | undefined => {
+): { data?: { address: Address; addressString: string; amount: string; amountBn: BN }; error?: string } => {
   // try format "address, amount"
   let [address, amount] = row.split(',')
 
@@ -62,19 +61,24 @@ const findAddressAndAmount = (
     ;[address, amount] = row.split('\t')
   }
 
-  if (!address || !amount) return undefined
+  if (!address || !amount) return { error: 'Invalid Row' }
 
   const trimmedAddress = address.trim()
   const trimmedAmount = amount.trim()
 
   const parsedAddress = Address.fromSs58(trimmedAddress)
-  if (parsedAddress === false || trimmedAmount === '' || isNaN(+trimmedAmount)) return undefined
+  const invalidAmount = trimmedAmount === '' || isNaN(+trimmedAmount)
+  if (!parsedAddress && invalidAmount) return { error: 'Invalid Row' }
+  if (!parsedAddress) return { error: 'Invalid Address' }
+  if (invalidAmount) return { error: 'Invalid Amount' }
 
   return {
-    address: parsedAddress,
-    addressString: trimmedAddress,
-    amount: trimmedAmount,
-    amountBn: parseAmount(trimmedAmount),
+    data: {
+      address: parsedAddress,
+      addressString: trimmedAddress,
+      amount: trimmedAmount,
+      amountBn: parseAmount(trimmedAmount),
+    },
   }
 }
 
@@ -82,10 +86,10 @@ const MultiLineSendInput: React.FC<Props> = ({
   label = 'Enter one address and amount on each line.',
   onChange,
   token,
-  sends,
 }) => {
   const [amountUnit, setAmountUnit] = useState<AmountUnit>(AmountUnit.Token)
   const [editing, setEditing] = useState(false)
+  const [viewOriginal, setViewOriginal] = useState(true)
   const [error, setError] = useState<string | undefined>()
   const [importedFromCsv, setImportedFromCsv] = useState(false)
   const [value, setValue] = useState('')
@@ -137,31 +141,36 @@ const MultiLineSendInput: React.FC<Props> = ({
    * Shows formatted address and amount if user is not editing
    */
   const augmentedValue = useMemo(() => {
-    if (editing) return value
+    // if importing from CSV, whether user is editing should not affect what the input shows
+    const showOriginal = importedFromCsv ? viewOriginal : editing || viewOriginal
+    if (showOriginal) return value
     return formattedRows
-      .map(({ validRow, input }) => {
+      .map(({ validRow: { data, error }, input }) => {
         // for invalid rows, we allow empty line for grouping, otherwise we warn user of invalid row
-        if (!validRow) return input === '' ? '' : `!! invalid format: ${input}`
-        const addressToFormat = token ? validRow.address.toSs58(token.chain) : validRow.addressString
-        let formattedString = `${truncateMiddle(addressToFormat, 6, 6, '...')}`
+        if (error || !data) return input === '' ? '' : `${error ?? 'Invalid Row'}: ${input}`
+        const addressToFormat = token ? data.address.toSs58(token.chain) : data.addressString
+        let formattedString = truncateMiddle(addressToFormat, 6, 6, '...')
+
+        if (!token) return `${formattedString}, ${data.amount}`
 
         // display the right token / usd amount
-        if (amountUnit !== AmountUnit.Token) {
-          formattedString += `, ${validRow.amount} USD`
-          if (token)
-            formattedString += ` (${(+formatUnits(validRow.amountBn, token.decimals)).toFixed(4)} ${token.symbol})`
+        const tokenAmount = (+formatUnits(data.amountBn, token.decimals)).toFixed(4)
+        const tokenFullString = `${tokenAmount} ${token.symbol}`
+        if (amountUnit === AmountUnit.Token) {
+          formattedString += `, ${tokenFullString}`
         } else {
-          formattedString += `, ${validRow.amount} ${token?.symbol}`
+          formattedString += `, ${data.amount} USD (${tokenFullString})`
         }
+
         return formattedString
       })
       .join('\n')
-  }, [editing, value, formattedRows, amountUnit, token])
+  }, [importedFromCsv, viewOriginal, editing, value, formattedRows, token, amountUnit])
 
   const invalidRows = useMemo(() => {
     const indexes: number[] = []
-    formattedRows.forEach(({ validRow, input }, i) => {
-      if (!validRow && input !== '') indexes.push(i + 1)
+    formattedRows.forEach(({ validRow: { data, error }, input }, i) => {
+      if ((!data || error) && input !== '') indexes.push(i + 1)
     })
     return indexes
   }, [formattedRows])
@@ -169,19 +178,19 @@ const MultiLineSendInput: React.FC<Props> = ({
   const validRows = useMemo(() => {
     if (!token) return undefined
     return formattedRows
-      .filter(r => !!r.validRow)
+      .filter(r => !!r.validRow.data)
       .map(
-        ({ validRow }) =>
+        ({ validRow: { data } }) =>
           ({
-            address: validRow!.address,
-            amountBn: validRow!.amountBn,
+            address: data!.address,
+            amountBn: data!.amountBn,
             token,
           }!)
       )
   }, [token, formattedRows])
 
   const handleCsvUpload = async (files: File[]) => {
-    const file = files[0]
+    const [file] = files
     if (!file || !token) return
     setError(undefined)
     const textValue = await file.text()
@@ -190,17 +199,17 @@ const MultiLineSendInput: React.FC<Props> = ({
 
     rows.forEach(row => {
       const rowValues = row.split(',')
-      const [addressString, amountString] = rowValues
+      const [addressCol, amountCol] = rowValues
 
       // skip rows that don't have address or amount
-      if (!addressString || !amountString) return
-      const validRow = findAddressAndAmount(`${addressString}, ${amountString}`, parseAmount)
-      if (validRow) values.push(`${validRow.addressString}, ${validRow.amount}`)
+      const { data } = findAddressAndAmount(`${addressCol}, ${amountCol}`, parseAmount)
+      values.push(`${data?.addressString ?? addressCol}, ${data?.amount ?? amountCol}`)
     })
 
     if (values.length === 0) setError('The uploaded CSV file does not have a valid row.')
     setImportedFromCsv(values.length > 0)
     setValue(values.join('\n'))
+    setViewOriginal(true)
   }
 
   useEffect(() => {
@@ -221,8 +230,8 @@ const MultiLineSendInput: React.FC<Props> = ({
         <div css={{ display: 'flex', alignItems: 'center', gap: 4 }}>
           <Tooltip
             content={
-              <div css={{ fontSize: 14, padding: 8 }}>
-                <p css={{ fontSize: 14 }}>Format of CSV file:</p>
+              <div css={{ fontSize: 14, padding: 8, p: { fontSize: 14 } }}>
+                <p>Format of CSV file:</p>
                 <ul css={{ margin: 4, paddingLeft: 4 }}>
                   <li>First column should be address of recipients.</li>
                   <li>Second column should be amounts for each recipient.</li>
@@ -240,6 +249,7 @@ const MultiLineSendInput: React.FC<Props> = ({
           background: var(--color-grey800);
           border-radius: 12px;
           padding: 12px 4px;
+          position: relative;
           height: 200px;
           overflow: auto;
           width: 100%;
@@ -251,6 +261,24 @@ const MultiLineSendInput: React.FC<Props> = ({
           }
         `}
       >
+        {/** Provide hint on why they cant change the input if they're importing from CSV */}
+        {importedFromCsv && editing && (
+          <Tooltip
+            placement="top"
+            content="To prevent accidental changes, please update the CSV file to modify imported data."
+          >
+            <div
+              css={{
+                position: 'absolute',
+                width: '100%',
+                height: '100%',
+                top: 0,
+                left: 0,
+                zIndex: 1,
+              }}
+            />
+          </Tooltip>
+        )}
         <CodeMirror
           ref={codeMirrorRef}
           onChange={val => {
@@ -275,7 +303,27 @@ const MultiLineSendInput: React.FC<Props> = ({
         }}
       >
         <AmountUnitSelector tokenPrices={tokenPrices} value={amountUnit} onChange={setAmountUnit} />
-        {importedFromCsv && (
+        <div css={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          {importedFromCsv && (
+            <Button
+              className={css`
+                background: var(--color-backgroundLight) !important;
+                border-radius: 16px;
+                cursor: pointer;
+                font-size: 14px;
+                padding: 4px 8px !important;
+                line-height: 1;
+              `}
+              variant="secondary"
+              onClick={() => {
+                setValue('')
+                setError(undefined)
+                setImportedFromCsv(false)
+              }}
+            >
+              Clear
+            </Button>
+          )}
           <Button
             className={css`
               background: var(--color-backgroundLight) !important;
@@ -286,15 +334,11 @@ const MultiLineSendInput: React.FC<Props> = ({
               line-height: 1;
             `}
             variant="secondary"
-            onClick={() => {
-              setValue('')
-              setError(undefined)
-              setImportedFromCsv(false)
-            }}
+            onClick={() => setViewOriginal(!viewOriginal)}
           >
-            Clear
+            View {viewOriginal ? 'formatted' : 'original'}
           </Button>
-        )}
+        </div>
       </div>
       {(invalidRows.length > 0 || error) && (
         <motion.div
