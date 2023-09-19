@@ -26,7 +26,7 @@ const Confirmation = (props: {
   onAlreadyHaveAnyProxy: () => void
   selectedSigner: InjectedAccount | undefined
   setSelectedSigner: (signer: InjectedAccount) => void
-  augmentedAccounts: AugmentedAccount[]
+  selectedAccounts: AugmentedAccount[]
   threshold: number
   name: string
   chain: Chain
@@ -141,7 +141,7 @@ const Confirmation = (props: {
               font-size: 24px;
               color: var(--color-offWhite);
             `}
-          >{`${props.threshold}/${props.augmentedAccounts.length}`}</p>
+          >{`${props.threshold}/${props.selectedAccounts.length}`}</p>
         </div>
       </div>
       <div
@@ -162,9 +162,9 @@ const Confirmation = (props: {
         >
           Members
         </h2>
-        {props.augmentedAccounts.map(account => {
-          return <MemberRow key={account.address.toPubKey()} member={account} truncate={true} chain={chain} />
-        })}
+        {props.selectedAccounts.map(account => (
+          <MemberRow key={account.address.toPubKey()} member={account} truncate={true} chain={chain} />
+        ))}
       </div>
       <div
         className={css`
@@ -211,11 +211,11 @@ const Confirmation = (props: {
               if (!value) return
               const a = Address.fromPubKey(value)
               if (!a) return
-              props.setSelectedSigner(props.augmentedAccounts.find(_a => _a.address.isEqual(a)) as AugmentedAccount)
+              props.setSelectedSigner(props.selectedAccounts.find(_a => _a.address.isEqual(a)) as AugmentedAccount)
             }}
             {...props}
           >
-            {props.augmentedAccounts.map(account => (
+            {props.selectedAccounts.map(account => (
               <Select.Item
                 key={account.address.toPubKey()}
                 leadingIcon={<Identicon value={account.address.toSs58(chain)} />}
@@ -278,7 +278,7 @@ const Confirmation = (props: {
           <Button
             css={{ width: '100%' }}
             disabled={
-              tokenWithPrice.state !== 'hasValue' || props.augmentedAccounts.length < 2 || !props.extrinsicsReady
+              tokenWithPrice.state !== 'hasValue' || props.selectedAccounts.length < 2 || !props.extrinsicsReady
             }
             onClick={props.onCreateVault}
             children={<h3>Create Vault</h3>}

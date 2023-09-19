@@ -12,6 +12,7 @@ import { toast } from 'react-hot-toast'
 const AddMembers = (props: {
   onBack: () => void
   onNext: () => void
+  setExcludeExtensionAccounts: React.Dispatch<React.SetStateAction<Record<string, boolean>>>
   setExternalAccounts: React.Dispatch<React.SetStateAction<Address[]>>
   augmentedAccounts: AugmentedAccount[]
   externalAccounts: Address[]
@@ -45,19 +46,25 @@ const AddMembers = (props: {
           margin-top: 48px;
         `}
       >
-        {props.augmentedAccounts.map(account => {
-          return (
-            <MemberRow
-              key={account.address.toPubKey()}
-              chain={props.chain}
-              truncate={true}
-              member={account}
-              onDelete={() => {
+        {props.augmentedAccounts.map(account => (
+          <MemberRow
+            key={account.address.toPubKey()}
+            chain={props.chain}
+            truncate={true}
+            member={account}
+            onDelete={() => {
+              if (account.you) {
+                const pubKey = account.address.toPubKey()
+                props.setExcludeExtensionAccounts(prev => ({
+                  ...prev,
+                  [pubKey]: !prev[pubKey],
+                }))
+              } else {
                 props.setExternalAccounts(props.externalAccounts.filter(a => !a.isEqual(account.address)))
-              }}
-            />
-          )
-        })}
+              }
+            }}
+          />
+        ))}
       </div>
       <AddressInput
         additionalValidation={(str: string) => {
@@ -103,7 +110,11 @@ const AddMembers = (props: {
         `}
       >
         <Button onClick={props.onBack} children={<h3>Back</h3>} variant="outlined" />
-        <Button disabled={props.augmentedAccounts.length < 2} onClick={props.onNext} children={<h3>Next</h3>} />
+        <Button
+          disabled={props.augmentedAccounts.filter(a => !a.excluded).length < 2}
+          onClick={props.onNext}
+          children={<h3>Next</h3>}
+        />
       </div>
     </div>
   )

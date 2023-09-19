@@ -1,89 +1,65 @@
 import { Chain } from '@domains/chains'
 import { AugmentedAccount } from '@domains/multisig'
 import { css } from '@emotion/css'
-import { useTheme } from '@emotion/react'
 import { ExternalLink, Trash } from '@talismn/icons'
-import { IconButton, Identicon } from '@talismn/ui'
+import { Identicon } from '@talismn/ui'
 import truncateMiddle from 'truncate-middle'
+import Checkbox from '../Checkbox'
 
 const MemberRow = (props: { member: AugmentedAccount; chain: Chain; onDelete?: () => void; truncate?: boolean }) => {
-  const theme = useTheme()
   return (
     <div
       className={css`
-        display: grid;
-        grid-template-columns: 24px 1fr 16px 16px;
-        gap: 8px;
-        justify-items: flex-start;
         align-items: center;
+        display: flex;
+        justify-content: space-between;
         > p {
           font-size: 16px !important;
-          color: var(--color-offWhite) !important;
+        }
+        > div {
+          align-items: center;
+          display: flex;
         }
       `}
     >
-      <Identicon
-        className={css`
-          width: 24px;
-          height: auto;
-        `}
-        value={props.member.address.toSs58(props.chain)}
-      />
-      {props.member.you ? (
-        <>
-          <div
-            className={css`
-              display: flex;
-            `}
-          >
-            <p>{props.member.nickname}</p>
-            &nbsp;
-            <p
-              className={css`
-                color: var(--color-offWhite);
-              `}
-            >
-              (You)
-            </p>
-          </div>
-          <div></div>
-        </>
-      ) : (
-        <>
+      <div css={{ gap: 8 }}>
+        <Identicon css={{ width: 24, height: 'auto' }} value={props.member.address.toSs58(props.chain)} />
+        {props.member.you ? (
           <p>
+            {props.member.nickname} <span css={({ color }) => ({ color: color.offWhite })}>(You)</span>
+          </p>
+        ) : (
+          <p css={({ color }) => ({ color: color.offWhite })}>
             {props.truncate
-              ? truncateMiddle(props.member.address.toSs58(props.chain), 19, 19, '...')
+              ? truncateMiddle(props.member.address.toSs58(props.chain), 12, 12, '...')
               : props.member.address.toSs58(props.chain)}
           </p>
-          {props.onDelete ? (
-            <IconButton
+        )}
+      </div>
+      <div css={{ gap: 16 }}>
+        {props.onDelete ? (
+          props.member.you ? (
+            <Checkbox checked={!props.member.excluded} onChange={() => props.onDelete?.()} size={18} />
+          ) : (
+            <div
               onClick={props.onDelete}
-              className={css`
-                cursor: pointer;
-              `}
-              as="button"
-              size="16px"
-              contentColor={`rgb(${theme.foreground})`}
+              css={({ foreground }) => ({ color: `rgb(${foreground})`, cursor: 'pointer' })}
             >
               <Trash size={16} />
-            </IconButton>
-          ) : (
-            <div></div>
-          )}
-        </>
-      )}
-      <a href={props.member.address.toSubscanUrl(props.chain)} target="_blank" rel="noreferrer">
-        <IconButton
-          className={css`
-            cursor: pointer;
-          `}
-          as="button"
-          size="16px"
-          contentColor={`rgb(${theme.foreground})`}
+            </div>
+          )
+        ) : (
+          <div />
+        )}
+        <a
+          css={{ lineHeight: 1, height: 16 }}
+          href={props.member.address.toSubscanUrl(props.chain)}
+          target="_blank"
+          rel="noreferrer"
         >
           <ExternalLink size="16px" />
-        </IconButton>
-      </a>
+        </a>
+      </div>
     </div>
   )
 }

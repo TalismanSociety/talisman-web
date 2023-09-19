@@ -91,6 +91,7 @@ const CreateMultisig = () => {
   const setSelectedMultisig = useSetRecoilState(selectedMultisigState)
   const [extensionAccounts] = useRecoilState(accountsState)
   const [selectedSigner, setSelectedSigner] = useSelectedSigner()
+  const [excludedExtensionAccounts, setExcludedExtensionAccounts] = useState<Record<string, boolean>>({})
   const { createProxy, ready: createProxyIsReady, estimatedFee } = useCreateProxy(chain, selectedSigner?.address)
   const { transferProxyToMultisig, ready: transferProxyToMultisigIsReady } = useTransferProxyToMultisig(chain)
   const [threshold, setThreshold] = useState<number>(2)
@@ -133,17 +134,30 @@ const CreateMultisig = () => {
     setIsVisible(true)
   }, [])
 
-  const augmentedAccounts: AugmentedAccount[] = useMemo(() => {
-    // TODO allow 'deselecting' extension accounts in the creation phase
-    return [
+  const augmentedAccounts: AugmentedAccount[] = useMemo(
+    () => [
       ...extensionAccounts.map(a => ({
         address: a.address,
         nickname: a.name,
         you: true,
+        excluded: excludedExtensionAccounts[a.address.toPubKey()],
       })),
       ...externalAccounts.map(a => ({ address: a })),
-    ]
-  }, [extensionAccounts, externalAccounts])
+    ],
+    [excludedExtensionAccounts, extensionAccounts, externalAccounts]
+  )
+
+  const includedAccounts = useMemo(() => augmentedAccounts.filter(a => !a.excluded), [augmentedAccounts])
+
+  // Address as a byte array.
+  const multisigAddress = useMemo(
+    () =>
+      toMultisigAddress(
+        includedAccounts.map(a => a.address),
+        threshold
+      ),
+    [includedAccounts, threshold]
+  )
 
   useEffect(() => {
     if (step === Step.Transactions && createTransctionStatus === CreateTransactionsStatus.NotStarted) {
@@ -151,18 +165,13 @@ const CreateMultisig = () => {
         onSuccess: proxyAddress => {
           setProxyAddress(proxyAddress)
           setCreateTransactionsStatus(CreateTransactionsStatus.TransferringProxy)
-          // Address as a byte array.
-          const multiAddress = toMultisigAddress(
-            augmentedAccounts.map(a => a.address),
-            threshold
-          )
           transferProxyToMultisig(
             selectedSigner?.address,
             proxyAddress,
-            multiAddress,
+            multisigAddress,
             existentialDepositLoadable.contents,
             async _ => {
-              const { isProxyDelegatee } = await addressIsProxyDelegatee(proxyAddress, multiAddress)
+              const { isProxyDelegatee } = await addressIsProxyDelegatee(proxyAddress, multisigAddress)
 
               if (!isProxyDelegatee) {
                 const msg =
@@ -177,9 +186,9 @@ const CreateMultisig = () => {
               const multisig: Multisig = {
                 name,
                 chain,
-                multisigAddress: multiAddress,
+                multisigAddress,
                 proxyAddress,
-                signers: augmentedAccounts.map(a => a.address),
+                signers: includedAccounts.map(a => a.address),
                 threshold,
               }
               setMultisigs([...multisigs, multisig])
@@ -204,19 +213,20 @@ const CreateMultisig = () => {
       setCreateTransactionsStatus(CreateTransactionsStatus.CreatingProxy)
     }
   }, [
-    name,
-    setSelectedMultisig,
-    setMultisigs,
-    multisigs,
     addressIsProxyDelegatee,
-    existentialDepositLoadable.contents,
-    createTransctionStatus,
-    step,
-    selectedSigner?.address,
     chain,
-    augmentedAccounts,
-    threshold,
     createProxy,
+    createTransctionStatus,
+    existentialDepositLoadable.contents,
+    includedAccounts,
+    multisigAddress,
+    multisigs,
+    name,
+    selectedSigner?.address,
+    setMultisigs,
+    setSelectedMultisig,
+    step,
+    threshold,
     transferProxyToMultisig,
   ])
 
@@ -278,6 +288,7 @@ const CreateMultisig = () => {
             onBack={() => setStep(Step.NameVault)}
             onNext={() => setStep(Step.SelectThreshold)}
             setExternalAccounts={setExternalAccounts}
+            setExcludeExtensionAccounts={setExcludedExtensionAccounts}
             augmentedAccounts={augmentedAccounts}
             externalAccounts={externalAccounts}
             chain={chain}
@@ -288,7 +299,7 @@ const CreateMultisig = () => {
             onNext={() => setStep(Step.SelectFirstChain)}
             setThreshold={setThreshold}
             threshold={threshold}
-            max={augmentedAccounts.length}
+            max={includedAccounts.length}
           />
         ) : step === Step.SelectFirstChain ? (
           <SelectFirstChain
@@ -314,10 +325,6 @@ const CreateMultisig = () => {
               }
 
               // check if the multisig controls the proxy
-              const multisigAddress = toMultisigAddress(
-                augmentedAccounts.map(a => a.address),
-                threshold
-              )
               const res = await addressIsProxyDelegatee(proxyAddress, multisigAddress)
               if (!res.isProxyDelegatee) {
                 toast.error("This multisig configuration is not an 'Any' delegatee for the entered address.")
@@ -327,7 +334,7 @@ const CreateMultisig = () => {
               // we're good! import
               const path = createImportPath(
                 name,
-                augmentedAccounts.map(a => a.address),
+                includedAccounts.map(a => a.address),
                 threshold,
                 proxyAddress,
                 chain
@@ -336,7 +343,7 @@ const CreateMultisig = () => {
             }}
             selectedSigner={selectedSigner}
             setSelectedSigner={setSelectedSigner}
-            augmentedAccounts={augmentedAccounts}
+            selectedAccounts={includedAccounts}
             threshold={threshold}
             name={name}
             chain={chain}
@@ -354,7 +361,7 @@ const CreateMultisig = () => {
             proxy={proxyAddress as Address}
             name={name}
             threshold={threshold}
-            signers={augmentedAccounts.map(a => a.address)}
+            signers={includedAccounts.map(a => a.address)}
             chain={chain}
           />
         ) : null}
