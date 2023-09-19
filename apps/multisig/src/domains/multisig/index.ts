@@ -114,6 +114,7 @@ export interface AugmentedAccount {
   address: Address
   you?: boolean
   nickname?: string
+  excluded?: boolean
 }
 
 export interface Multisig {

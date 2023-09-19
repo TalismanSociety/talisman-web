@@ -14,6 +14,7 @@ const AddressInput = (
 ) => {
   const theme = useTheme()
   const [addressInput, setAddressInput] = useState('')
+  const isInputValid = !!Address.fromSs58(addressInput)
   return (
     <div className={props.className}>
       <div css={{ display: 'grid', gridTemplateColumns: '1fr', gap: '24px' }}>
@@ -48,18 +49,20 @@ const AddressInput = (
           `}
         >
           <div
-            className={css`
-              display: flex;
-              gap: 8px;
-              height: 40px;
-              display: flex !important;
-              align-items: center !important;
-              justify-content: center !important;
-              transition: backdrop-filter 0.1s ease-in-out;
-              :hover {
-                backdrop-filter: brightness(1.15);
-              }
-            `}
+            css={{
+              display: 'flex',
+              gap: 8,
+              height: 40,
+              alignItems: 'center',
+              justifyContent: 'center',
+              transition: 'backdrop-filter 0.1s ease-in-out',
+              ...(isInputValid
+                ? {
+                    'cursor': 'pointer',
+                    ':hover': { backdropFilter: 'brightness(1.15)' },
+                  }
+                : { opacity: 0.5 }),
+            }}
           >
             <IconButton as="button" size="24px" contentColor={`rgb(${theme.primary})`}>
               <Plus size={24} />
