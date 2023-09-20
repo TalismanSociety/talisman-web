@@ -445,7 +445,7 @@ export const useApproveAsMulti = (
                     })
 
                     insertTxMetadata({
-                      multisig: multisig.multisigAddress,
+                      multisig: multisig.proxyAddress,
                       chain: multisig.chain,
                       call_data: metadata.callData,
                       description: metadata.description,

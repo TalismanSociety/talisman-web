@@ -533,7 +533,7 @@ export const usePendingTransactions = () => {
           if (!metadata) {
             try {
               const metadataValues = await getTxMetadataByPk(transactionID, {
-                multisig: rawPending.multisig.multisigAddress,
+                multisig: rawPending.multisig.proxyAddress,
                 chain: rawPending.multisig.chain,
                 timepoint_height,
                 timepoint_index,

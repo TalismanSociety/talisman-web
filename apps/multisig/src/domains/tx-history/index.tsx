@@ -1,6 +1,7 @@
 import { allChainTokensSelector, decodeCallData } from '@domains/chains'
 import { allPjsApisSelector } from '@domains/chains/pjs-api'
 import { getTxMetadataByPk } from '@domains/metadata-service'
+import { SignedBlock } from '@polkadot/types/interfaces'
 import {
   ExecutedAt,
   Multisig,
@@ -101,7 +102,7 @@ export const allRawConfirmedTransactionsSelector = selector({
   },
 })
 
-const blockCache = new Map<string, any>()
+const blockCache = new Map<string, SignedBlock>()
 
 // fetches the raw txs from squid
 export const useConfirmedTransactions = () => {
@@ -145,7 +146,7 @@ export const useConfirmedTransactions = () => {
           const innerExt = ext.method.args[3]
           // @ts-ignore
           if (innerExt?.toHuman()?.method !== 'proxy' || innerExt?.toHuman()?.section !== 'proxy') return null
-          let callData = innerExt?.toHex()
+          const callData = innerExt?.toHex()
           if (callData) {
             // pull the timepoint and timepoint index out of the original ext
             const timepoint = ext.method.args[2]?.toHuman() as { height: string; index: string } | null
@@ -167,7 +168,7 @@ export const useConfirmedTransactions = () => {
             if (!metadata) {
               try {
                 const metadataValues = await getTxMetadataByPk(transactionID, {
-                  multisig: curMultisig.multisigAddress,
+                  multisig: curMultisig.proxyAddress,
                   chain: curMultisig.chain,
                   timepoint_height,
                   timepoint_index,
