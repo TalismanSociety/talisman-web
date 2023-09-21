@@ -19,7 +19,9 @@
       "@layout": ["./layout"],
       "@layout/*": ["./layout/*"],
       "@domains": ["./domains"],
-      "@domains/*": ["./domains/*"]
+      "@domains/*": ["./domains/*"],
+      "@hooks": ["./hooks"],
+      "@hooks/*": ["./hooks/*"]
     }
   }
 }
