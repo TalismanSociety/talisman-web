@@ -21,7 +21,7 @@
     "@emotion/styled": "^11.11.0",
     "@polkadot/api": "^10.9.1",
     "@polkadot/extension-dapp": "^0.46.5",
-    "@polkawallet/bridge": "^0.1.5-14",
+    "@polkawallet/bridge": "^0.1.5-16",
     "@recoiljs/refine": "^0.1.1",
     "@sentry/react": "^7.37.2",
     "@sentry/tracing": "^7.37.2",
