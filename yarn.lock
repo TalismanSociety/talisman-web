@@ -5808,9 +5808,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@polkawallet/bridge@npm:^0.1.5-14":
-  version: 0.1.5-14
-  resolution: "@polkawallet/bridge@npm:0.1.5-14"
+"@polkawallet/bridge@npm:^0.1.5-16":
+  version: 0.1.5-16
+  resolution: "@polkawallet/bridge@npm:0.1.5-16"
   dependencies:
     "@acala-network/api": ^5
     "@acala-network/sdk": ^4.1.9-7
@@ -5825,7 +5825,7 @@ __metadata:
     "@acala-network/api": ^5
     "@polkadot/api": ^10
     ethers: ^5
-  checksum: 922a9c4fa5bff9ef598eb3dbe2ac4e6bb268ab6b7b56ef3bed6bc92d01b3f8bf73d93f5b42fe4ad79ac2e998dc82443d26e080075f97c2c83816002958f1df5c
+  checksum: a3237909d8ce8c30528eedc4d6477e77242c9acb0578e3764cd788709d8fa50b08b40735892c1c0d34471b2cb6211540720dd3bc36bd1e6826b79309417b08d7
   languageName: node
   linkType: hard
 
@@ -7922,7 +7922,7 @@ __metadata:
     "@playwright/test": ^1.31.2
     "@polkadot/api": ^10.9.1
     "@polkadot/extension-dapp": ^0.46.5
-    "@polkawallet/bridge": ^0.1.5-14
+    "@polkawallet/bridge": ^0.1.5-16
     "@recoiljs/refine": ^0.1.1
     "@sentry/react": ^7.37.2
     "@sentry/tracing": ^7.37.2
