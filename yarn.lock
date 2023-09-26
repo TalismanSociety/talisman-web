@@ -7779,7 +7779,7 @@ __metadata:
     "@acala-network/types": ^5.1.1
     "@graphql-codegen/cli": ^3.2.2
     "@polkadot/api": ^10.9.1
-    graphql: ^16.6.0
+    graphql: ^16.8.1
     graphql-request: ^5.2.0
     multiformats: ^11.0.2
     prettier: ^2.8.8
@@ -7969,7 +7969,7 @@ __metadata:
     eslint-config-prettier: ^8.6.0
     eslint-plugin-storybook: ^0.6.10
     framer-motion: ^10.16.4
-    graphql: ^16.6.0
+    graphql: ^16.8.1
     graphql-request: ^5.1.0
     i18next: ^21.10.0
     i18next-browser-languagedetector: ^6.1.8
@@ -15649,7 +15649,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"graphql@npm:^16.3.0, graphql@npm:^16.6.0":
+"graphql@npm:^16.3.0":
   version: 16.6.0
   resolution: "graphql@npm:16.6.0"
   checksum: bf1d9e3c1938ce3c1a81e909bd3ead1ae4707c577f91cff1ca2eca474bfbc7873d5d7b942e1e9777ff5a8304421dba57a4b76d7a29eb19de8711cb70e3c2415e
@@ -15660,6 +15660,13 @@ __metadata:
   version: 16.7.1
   resolution: "graphql@npm:16.7.1"
   checksum: c924d8428daf0e96a5ea43e9bc3cd1b6802899907d284478ac8f705c8fd233a0a51eef915f7569fb5de8acb2e85b802ccc6c85c2b157ad805c1e9adba5a299bd
+  languageName: node
+  linkType: hard
+
+"graphql@npm:^16.8.1":
+  version: 16.8.1
+  resolution: "graphql@npm:16.8.1"
+  checksum: 8d304b7b6f708c8c5cc164b06e92467dfe36aff6d4f2cf31dd19c4c2905a0e7b89edac4b7e225871131fd24e21460836b369de0c06532644d15b461d55b1ccc0
   languageName: node
   linkType: hard
 
