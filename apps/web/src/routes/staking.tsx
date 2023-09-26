@@ -242,13 +242,21 @@ const NoStake = (props: { account?: Account }) => {
 }
 
 const StakeDetails = (props: { account: Account }) => {
+  const chain = useContext(ChainContext)
   const pool = usePoolStakes(props.account)
 
   if (pool === undefined) {
     return <NoStake account={props.account} />
   }
 
-  return <StakeDetailsActive account={props.account} pool={pool} />
+  return (
+    <StakeDetailsActive
+      // Force re-mount component & reset loading state on chain or account changes
+      key={chain.genesisHash + props.account.address}
+      account={props.account}
+      pool={pool}
+    />
+  )
 }
 
 const Staking = () => {
