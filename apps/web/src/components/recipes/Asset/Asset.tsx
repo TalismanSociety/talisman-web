@@ -1,3 +1,4 @@
+import type { PortfolioToken } from '@archetypes/Portfolio/Assets'
 import AnimatedFiatNumber from '@components/widgets/AnimatedFiatNumber'
 import RedactableBalance from '@components/widgets/RedactableBalance'
 import { keyframes, useTheme } from '@emotion/react'
@@ -62,7 +63,7 @@ export const AssetBalance = ({ locked, planck, fiat, symbol }: AssetBalanceProps
 
 export type AssetProps = {
   className?: string
-  token: any
+  token: PortfolioToken
   balances: Balances | undefined
   lockedAsset?: boolean
 }
@@ -201,15 +202,15 @@ const Asset = Object.assign((props: AssetProps) => {
         animation: `${slideDown} 0.3s ease-in-out`,
       }}
       onClick={() => {
-        navigate('/portfolio/assets/' + ((token?.tokenDetails?.symbol as string | undefined) ?? ''))
+        navigate('/portfolio/assets/' + (token.tokenDetails.symbol ?? ''))
       }}
     >
       <td valign="top">
         {/* First Column */}
         <div css={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-          <Tooltip content={startCase(token?.tokenDetails?.chain?.id ?? token?.tokenDetails?.coingeckoId)}>
+          <Tooltip content={startCase(token.tokenDetails.chain?.id ?? token.tokenDetails.coingeckoId)}>
             <img
-              src={token?.tokenDetails?.logo}
+              src={token.tokenDetails.logo}
               css={{
                 width: '2em',
                 height: '2em',
@@ -221,7 +222,7 @@ const Asset = Object.assign((props: AssetProps) => {
           </Tooltip>
           <div css={{ display: 'flex', flexDirection: 'column', gap: '0.4em' }}>
             <Text.Body css={{ fontWeight: 600, fontSize: '16px', color: theme.color.onSurface }}>
-              {token?.tokenDetails?.symbol}
+              {token.tokenDetails.symbol}
             </Text.Body>
             <div
               css={{
@@ -234,27 +235,27 @@ const Asset = Object.assign((props: AssetProps) => {
               }}
             >
               <div css={{ width: '1em', height: '1em' }}>
-                <Tooltip content={startCase(token?.tokenDetails?.chain?.id ?? token?.tokenDetails?.coingeckoId)}>
+                <Tooltip content={startCase(token.tokenDetails.chain?.id ?? token.tokenDetails.coingeckoId)}>
                   <img
-                    src={token?.tokenDetails?.logo}
+                    src={token.tokenDetails.logo}
                     css={{ width: '100%', height: '100%', borderRadius: '50%' }}
-                    alt={(token?.tokenDetails?.name as string | undefined) ?? '' + ' logo'}
+                    alt={token.tokenDetails.tokenDisplayName ?? '' + ' logo'}
                   />
                 </Tooltip>
               </div>
-              {token?.ormlTokens?.map((token: any, index: number) => (
+              {token.nonNativeTokens.map((token, index: number) => (
                 <div key={index} css={{ width: '1em', height: '1em' }}>
-                  <Tooltip content={startCase(token?.tokenDetails?.chain?.id ?? token?.tokenDetails?.coingeckoId)}>
+                  <Tooltip content={startCase(token.tokenDetails.chain?.id ?? token.tokenDetails.coingeckoId)}>
                     <img
                       src={
-                        token?.tokenDetails?.evmNetwork
-                          ? token?.tokenDetails?.logo
+                        token.tokenDetails.evmNetwork
+                          ? token.tokenDetails.logo
                           : `https://raw.githubusercontent.com/TalismanSociety/chaindata/v3/assets/chains/${
-                              token?.tokenDetails?.chain?.id as string
+                              token.tokenDetails.chain?.id as string
                             }.svg`
                       }
                       css={{ width: '100%', height: '100%', borderRadius: '50%' }}
-                      alt={(token?.tokenDetails?.name as string | undefined) ?? '' + ' logo'}
+                      alt={token.tokenDetails.tokenDisplayName ?? '' + ' logo'}
                     />
                   </Tooltip>
                 </div>
@@ -273,12 +274,12 @@ const Asset = Object.assign((props: AssetProps) => {
           },
         }}
       >
-        {token?.locked && (
+        {token.locked && (
           <AssetBalance
-            fiat={token?.overallLockedFiatAmount}
-            planck={token?.overallLockedAmount}
-            locked={token?.locked}
-            symbol={token?.tokenDetails?.symbol}
+            fiat={token.overallLockedFiatAmount}
+            planck={token.overallLockedAmount}
+            locked={token.locked}
+            symbol={token.tokenDetails.symbol}
           />
         )}
       </td>
@@ -292,9 +293,9 @@ const Asset = Object.assign((props: AssetProps) => {
         }}
       >
         <AssetBalance
-          fiat={lockedAsset ? token?.overallLockedFiatAmount : token?.overallFiatAmount}
-          planck={lockedAsset ? token?.overallLockedAmount : token?.overallTokenAmount}
-          symbol={token?.tokenDetails?.symbol}
+          fiat={lockedAsset ? token.overallLockedFiatAmount : token.overallFiatAmount}
+          planck={lockedAsset ? token.overallLockedAmount : token.overallTokenAmount}
+          symbol={token.tokenDetails.symbol}
         />
       </td>
     </tr>
@@ -425,7 +426,7 @@ export const AssetsList = (props: AssetsListProps) => {
           </tr>
         </thead>
         <tbody>
-          {/* if is loading and no children, show an array of 8 assetskeleton. if not loading and no children show empty div, else map children */}
+          {/* if is loading and no children, show an array of 8 asset skeleton. if not loading and no children show empty div, else map children */}
           {isLoading && isEmpty(props.children)
             ? Array(8)
                 .fill(0)
