@@ -2,7 +2,7 @@ import { legacySelectedAccountState } from '@domains/accounts/recoils'
 import { selectedCurrencyState } from '@domains/balances'
 import { useLegacyBalances } from '@domains/balances/hooks'
 import { BalanceFormatter } from '@talismn/balances'
-import { useChains, useEvmNetworks, useTokens } from '@talismn/balances-react'
+import { useChains, useEvmNetworks, useTokenRates, useTokens } from '@talismn/balances-react'
 import { formatDecimals } from '@talismn/util'
 import { compact, groupBy, isEmpty, isNil, startCase } from 'lodash'
 import { useMemo } from 'react'
@@ -85,6 +85,7 @@ const useAssets = (customAddress?: string) => {
     customAddress ?? address
   )
   const currency = useRecoilValue(selectedCurrencyState)
+  const rates = useTokenRates()
 
   if (!assetBalances)
     return {
@@ -144,6 +145,7 @@ const useAssets = (customAddress?: string) => {
       lockedFiatAmountFormatted,
       unformattedPlancAmount: planckAmount,
       amount: planckAmountFormatted,
+      rate: rates[token.id]?.[currency] ?? undefined,
       fiatAmount,
       fiatAmountFormatted,
       tokenDetails: {

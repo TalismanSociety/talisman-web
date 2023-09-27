@@ -220,47 +220,54 @@ const Asset = Object.assign((props: AssetProps) => {
               alt="logo"
             />
           </Tooltip>
-          <div css={{ display: 'flex', flexDirection: 'column', gap: '0.4em' }}>
-            <Text.Body css={{ fontWeight: 600, fontSize: '16px', color: theme.color.onSurface }}>
-              {token.tokenDetails.symbol}
-            </Text.Body>
-            <div
-              css={{
-                'display': 'flex',
-                'flexDirection': 'row',
-                // if not first child margin negative left
-                '& > :not(:first-child)': {
-                  marginLeft: '-0.2em',
-                },
-              }}
-            >
-              <div css={{ width: '1em', height: '1em' }}>
-                <Tooltip content={startCase(token.tokenDetails.chain?.id ?? token.tokenDetails.coingeckoId)}>
-                  <img
-                    src={token.tokenDetails.logo}
-                    css={{ width: '100%', height: '100%', borderRadius: '50%' }}
-                    alt={token.tokenDetails.tokenDisplayName ?? '' + ' logo'}
-                  />
-                </Tooltip>
-              </div>
-              {token.nonNativeTokens.map((token, index: number) => (
-                <div key={index} css={{ width: '1em', height: '1em' }}>
+          <div>
+            <div css={{ display: 'flex', alignItems: 'center', gap: '0.4em' }}>
+              <Text.Body css={{ fontWeight: 600, fontSize: '16px', color: theme.color.onSurface }}>
+                {token.tokenDetails.symbol}
+              </Text.Body>
+              <div
+                css={{
+                  'display': 'flex',
+                  'flexDirection': 'row',
+                  // if not first child margin negative left
+                  '& > :not(:first-child)': {
+                    marginLeft: '-0.2em',
+                  },
+                }}
+              >
+                <div css={{ width: '1em', height: '1em' }}>
                   <Tooltip content={startCase(token.tokenDetails.chain?.id ?? token.tokenDetails.coingeckoId)}>
                     <img
-                      src={
-                        token.tokenDetails.evmNetwork
-                          ? token.tokenDetails.logo
-                          : `https://raw.githubusercontent.com/TalismanSociety/chaindata/v3/assets/chains/${
-                              token.tokenDetails.chain?.id as string
-                            }.svg`
-                      }
+                      src={token.tokenDetails.logo}
                       css={{ width: '100%', height: '100%', borderRadius: '50%' }}
                       alt={token.tokenDetails.tokenDisplayName ?? '' + ' logo'}
                     />
                   </Tooltip>
                 </div>
-              ))}
+                {token.nonNativeTokens.map((token, index: number) => (
+                  <div key={index} css={{ width: '1em', height: '1em' }}>
+                    <Tooltip content={startCase(token.tokenDetails.chain?.id ?? token.tokenDetails.coingeckoId)}>
+                      <img
+                        src={
+                          token.tokenDetails.evmNetwork
+                            ? token.tokenDetails.logo
+                            : `https://raw.githubusercontent.com/TalismanSociety/chaindata/v3/assets/chains/${
+                                token.tokenDetails.chain?.id as string
+                              }.svg`
+                        }
+                        css={{ width: '100%', height: '100%', borderRadius: '50%' }}
+                        alt={token.tokenDetails.tokenDisplayName ?? '' + ' logo'}
+                      />
+                    </Tooltip>
+                  </div>
+                ))}
+              </div>
             </div>
+            {token.rate !== undefined && (
+              <Text.Body>
+                <AnimatedFiatNumber end={token.rate} />
+              </Text.Body>
+            )}
           </div>
         </div>
       </td>
