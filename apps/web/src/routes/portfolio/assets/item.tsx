@@ -71,6 +71,33 @@ const AssetItem = () => {
               }}
             >
               <InfoCard
+                headlineText="Token"
+                text={
+                  <div
+                    css={{
+                      display: 'flex',
+                      flexDirection: 'row',
+                      gap: '0.25em',
+                      alignItems: 'center',
+                    }}
+                  >
+                    <Tooltip content={startCase(token.tokenDetails.chain?.id ?? token.tokenDetails.coingeckoId)}>
+                      <img
+                        src={token.tokenDetails.logo}
+                        css={{
+                          width: '1em',
+                          height: '1em',
+                        }}
+                        alt={token.tokenDetails.chain?.id ?? (token.tokenDetails.coingeckoId ?? '') + ' logo'}
+                      />
+                    </Tooltip>
+                    <Text.Body alpha="high">{token.tokenDetails.tokenDisplayName}</Text.Body>
+                    <Text.Body>{`(${token.tokenDetails.symbol ?? ''})`}</Text.Body>
+                  </div>
+                }
+                supportingText={token.rate !== undefined && <AnimatedFiatNumber end={token.rate} />}
+              />
+              <InfoCard
                 headlineText={
                   <div
                     css={{
@@ -80,32 +107,7 @@ const AssetItem = () => {
                       alignItems: 'center',
                     }}
                   >
-                    <Tooltip content={startCase(token.tokenDetails.chain?.id ?? token.tokenDetails.coingeckoId)}>
-                      <img
-                        src={token.tokenDetails.logo}
-                        css={{
-                          width: '2em',
-                          height: '2em',
-                        }}
-                        alt={token.tokenDetails.chain?.id ?? (token.tokenDetails.coingeckoId ?? '') + ' logo'}
-                      />
-                    </Tooltip>
-                    <Text.Body
-                      css={{
-                        fontSize: '2rem',
-                        color: 'var(--color-text)',
-                      }}
-                    >
-                      {token.tokenDetails.tokenDisplayName}
-                    </Text.Body>
-                    <Text.Body
-                      css={{
-                        fontSize: '2rem',
-                        color: 'var(--color-dim)',
-                      }}
-                    >
-                      {`(${token.tokenDetails.symbol ?? ''})`}
-                    </Text.Body>
+                    <span>Total asset value</span>
                   </div>
                 }
                 text={
