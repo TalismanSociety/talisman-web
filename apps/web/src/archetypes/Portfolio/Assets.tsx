@@ -29,7 +29,7 @@ const useFetchAssets = (address: string | undefined) => {
       ? balances?.find({ address }).sum.fiat(currency).locked ?? 0
       : balances?.sum.fiat(currency).locked ?? 0
 
-  const value = balances?.find({ address })?.sum?.fiat(currency).transferable
+  const value = balances?.find({ address }).sum.fiat(currency).transferable
 
   const assetBalances = useMemo(
     () =>
@@ -95,7 +95,7 @@ const useAssets = (customAddress?: string) => {
       value: undefined,
     }
 
-  const tokens = assetBalances?.map(token => {
+  const tokens = assetBalances.map(token => {
     const tokenBalances =
       address !== undefined ? balances?.find([{ address, tokenId: token.id }]) : balances?.find({ tokenId: token.id })
     if (!tokenBalances) return undefined
@@ -111,16 +111,16 @@ const useAssets = (customAddress?: string) => {
 
     const fiatAmount =
       address !== undefined
-        ? balances?.find([{ address, tokenId: token.id }])?.sum.fiat(currency).transferable ?? 0
+        ? balances?.find([{ address, tokenId: token.id }]).sum.fiat(currency).transferable ?? 0
         : address === undefined
-        ? balances?.find({ tokenId: token.id })?.sum.fiat(currency).transferable ?? 0
+        ? balances?.find({ tokenId: token.id }).sum.fiat(currency).transferable ?? 0
         : 0
 
     const fiatAmountFormatted = getFiatString(fiatAmount, currency)
 
     const lockedAmount = tokenBalances.sorted.reduce((sum, balance) => sum + balance.locked.planck, 0n)
     const lockedAmountFormatted = formatDecimals(new BalanceFormatter(lockedAmount, token.decimals).tokens)
-    const lockedFiatAmount = balances?.find({ tokenId: token.id })?.sum.fiat(currency).locked ?? 0
+    const lockedFiatAmount = balances?.find({ tokenId: token.id }).sum.fiat(currency).locked ?? 0
     const lockedFiatAmountFormatted = getFiatString(lockedFiatAmount, currency)
 
     if (tokenBalances.sorted[0] === undefined) {
@@ -130,11 +130,11 @@ const useAssets = (customAddress?: string) => {
     const locked = lockedAmount > 0n
 
     const tokenDisplayName =
-      token?.type === 'evm-erc20'
+      token.type === 'evm-erc20'
         ? 'Ethereum'
-        : token?.chain?.id
-        ? startCase(token?.chain?.id)
-        : startCase(token?.coingeckoId)
+        : token.chain?.id
+        ? startCase(token.chain?.id)
+        : startCase(token.coingeckoId)
 
     return {
       locked,
@@ -150,8 +150,8 @@ const useAssets = (customAddress?: string) => {
         ...token,
         tokenDisplayName,
       },
-      // if the token is substrate-native then make ormlTokens an array else make it undefined
-      ormlTokens: [],
+      // if the token is substrate-native then make it an array else make it undefined
+      nonNativeTokens: [],
     }
   })
 
@@ -160,67 +160,73 @@ const useAssets = (customAddress?: string) => {
   // for each compressed token
   // find the tokens with the same symbol in token details
   // group them together, in the new group, find the token that is substrate native
-  // if there is a substrate native token, then add the other tokens to the ormlTokens array
+  // if there is a substrate native token, then add the other tokens to the nonNativeTokens array
 
   const groupedTokens = groupBy(compressedTokens, 'tokenDetails.symbol')
   const groupedTokensArray = Object.values(groupedTokens)
 
   // for each group of tokens look through the chains using the tokendetails.chain.id as the key and find if the chain nativeToken.id is the same as the tokenDetails.id
-  // if it is the same then make that the substrateNativeToken add the other tokens to the ormlTokens array
+  // if it is the same then make that the substrateNativeToken add the other tokens to the nonNativeTokens array
 
-  const groupedTokensWithOrmlTokens = groupedTokensArray.map(group => {
-    const substrateNativeToken = group.find(token => {
-      const chain = token.tokenDetails?.chain?.id ? chains[token.tokenDetails?.chain?.id] : undefined
-      if (!chain) {
-        const evmNetwork = token.tokenDetails?.evmNetwork?.id
-          ? evmNetworks[token.tokenDetails?.evmNetwork?.id]
-          : undefined
-        if (!evmNetwork) return token
-        return evmNetwork?.nativeToken?.id === token.tokenDetails.id
+  const groupedTokensWithNonNativeTokens = groupedTokensArray
+    .map(group => {
+      const substrateNativeToken = group.find(token => {
+        const chain = token.tokenDetails.chain?.id ? chains[token.tokenDetails.chain?.id] : undefined
+        if (!chain) {
+          const evmNetwork = token.tokenDetails.evmNetwork?.id
+            ? evmNetworks[token.tokenDetails.evmNetwork?.id]
+            : undefined
+          if (!evmNetwork) return token
+          return evmNetwork.nativeToken?.id === token.tokenDetails.id
+        }
+        return chain.nativeToken?.id === token.tokenDetails.id
+      })
+
+      if (substrateNativeToken) {
+        const nonNativeTokens = group.filter(token => token.tokenDetails.id !== substrateNativeToken.tokenDetails.id)
+        return {
+          ...substrateNativeToken,
+          nonNativeTokens,
+        }
       }
-      return chain?.nativeToken?.id === token.tokenDetails.id
+
+      // if there is no substrate native token, then make the first token in the group the substrate native token
+      // and add the other tokens to the nonNativeTokens array
+
+      const nonNativeTokens = group.filter(token => token.tokenDetails.id !== group[0]?.tokenDetails.id)
+
+      if (group[0]) {
+        return {
+          ...group[0],
+          nonNativeTokens,
+        }
+      }
+
+      return null
     })
+    .filter((x): x is Exclude<typeof x, null> => x !== null)
 
-    if (substrateNativeToken) {
-      const ormlTokens = group.filter(token => token.tokenDetails.id !== substrateNativeToken.tokenDetails.id)
-      return {
-        ...substrateNativeToken,
-        ormlTokens,
-      }
-    }
-
-    // if there is no substrate native token, then make the first token in the group the substrate native token
-    // and add the other tokens to the ormlTokens array
-
-    const ormlTokens = group?.filter(token => token.tokenDetails.id !== group[0]?.tokenDetails.id)
-
-    if (group[0]) {
-      return {
-        ...group[0],
-        ormlTokens,
-      }
-    }
-
-    return null
-  })
-
-  const balancesWithOrmlTokens = groupedTokensWithOrmlTokens.map(token => {
-    if (token && token.ormlTokens.length > 0) {
-      const ormlLockedAmount = token.ormlTokens.reduce((sum, token) => sum + token.unformattedLockedAmount, 0n)
-      const ormlPlanckAmount = token.ormlTokens.reduce((sum, token) => sum + token.unformattedPlancAmount, 0n)
+  const balancesWithNonNativeTokens = groupedTokensWithNonNativeTokens.map(token => {
+    if (token && token.nonNativeTokens.length > 0) {
+      const nonNativeLockedAmount = token.nonNativeTokens.reduce(
+        (sum, token) => sum + token.unformattedLockedAmount,
+        0n
+      )
+      const nonNativePlanckAmount = token.nonNativeTokens.reduce((sum, token) => sum + token.unformattedPlancAmount, 0n)
 
       const overallTokenAmount = formatDecimals(
-        new BalanceFormatter(token.unformattedPlancAmount + ormlPlanckAmount, token?.tokenDetails?.decimals).tokens
+        new BalanceFormatter(token.unformattedPlancAmount + nonNativePlanckAmount, token.tokenDetails.decimals).tokens
       )
       const overallLockedAmount = formatDecimals(
-        new BalanceFormatter(token.unformattedLockedAmount + ormlLockedAmount, token?.tokenDetails?.decimals).tokens
+        new BalanceFormatter(token.unformattedLockedAmount + nonNativeLockedAmount, token.tokenDetails.decimals).tokens
       )
 
       const overallLockedFiatAmount =
-        token.lockedFiatAmount + token.ormlTokens.reduce((sum, token) => sum + token.lockedFiatAmount, 0)
-      const overallFiatAmount = token.fiatAmount + token.ormlTokens.reduce((sum, token) => sum + token.fiatAmount, 0)
+        token.lockedFiatAmount + token.nonNativeTokens.reduce((sum, token) => sum + token.lockedFiatAmount, 0)
+      const overallFiatAmount =
+        token.fiatAmount + token.nonNativeTokens.reduce((sum, token) => sum + token.fiatAmount, 0)
 
-      const locked = token.locked || token.ormlTokens.some(token => token.locked)
+      const locked = token.locked || token.nonNativeTokens.some(token => token.locked)
 
       return {
         ...token,
@@ -234,15 +240,15 @@ const useAssets = (customAddress?: string) => {
 
     return {
       ...token,
-      overallTokenAmount: token?.amount,
-      overallFiatAmount: token?.fiatAmount,
-      overallLockedAmount: token?.lockedAmount,
-      overallLockedFiatAmount: token?.lockedFiatAmount,
+      overallTokenAmount: token.amount,
+      overallFiatAmount: token.fiatAmount,
+      overallLockedAmount: token.lockedAmount,
+      overallLockedFiatAmount: token.lockedFiatAmount,
     }
   })
 
   return {
-    tokens: balancesWithOrmlTokens,
+    tokens: balancesWithNonNativeTokens,
     fiatTotal,
     lockedTotal,
     balances,
@@ -250,6 +256,8 @@ const useAssets = (customAddress?: string) => {
     isLoading,
   }
 }
+
+export type PortfolioToken = ReturnType<typeof useAssets>['tokens'][number]
 
 type useSingleAssetProps = {
   symbol?: string
@@ -267,7 +275,7 @@ export const useSingleAsset = ({ symbol }: useSingleAssetProps) => {
 
   if (!symbol) return tokenNotFound
 
-  const token = tokens.find(token => token?.tokenDetails?.symbol?.toLowerCase() === symbol?.toLowerCase())
+  const token = tokens.find(token => token.tokenDetails.symbol?.toLowerCase() === symbol?.toLowerCase())
 
   if (!token && !isLoading) return tokenNotFound
 
@@ -291,19 +299,26 @@ export const useAssetsFiltered = ({ size, search, address }: Filter) => {
     if (search === '') return tokens
     return tokens.filter(token => {
       if (token === null) return false
-      if (search !== undefined && token?.tokenDetails?.symbol?.toLowerCase().includes(search.toLowerCase())) return true
-      if (search !== undefined && token?.tokenDetails?.chain?.id?.toLowerCase().includes(search.toLowerCase()))
-        return true
-      if (search !== undefined && token?.tokenDetails?.coingeckoId?.toLowerCase().includes(search.toLowerCase()))
+      if (search !== undefined && token.tokenDetails.symbol.toLowerCase().includes(search.toLowerCase())) return true
+      if (search !== undefined && token.tokenDetails.chain?.id.toLowerCase().includes(search.toLowerCase())) return true
+      if (search !== undefined && token.tokenDetails.coingeckoId?.toLowerCase().includes(search.toLowerCase()))
         return true
 
-      // check if the search term is in the orml tokens
+      // check if the search term is in the non-native tokens
       if (
-        token?.ormlTokens &&
-        token?.ormlTokens?.some((ormlToken: any) => {
-          if (ormlToken?.tokenDetails.symbol?.toLowerCase().includes(search?.toLowerCase())) return true
-          if (ormlToken?.tokenDetails?.chain?.id?.toLowerCase().includes(search?.toLowerCase())) return true
-          if (ormlToken?.tokenDetails?.coingeckoId?.toLowerCase().includes(search?.toLowerCase())) return true
+        token.nonNativeTokens.some(nonNativeToken => {
+          if (search !== undefined && nonNativeToken.tokenDetails.symbol.toLowerCase().includes(search.toLowerCase()))
+            return true
+          if (
+            search !== undefined &&
+            nonNativeToken.tokenDetails.chain?.id.toLowerCase().includes(search.toLowerCase())
+          )
+            return true
+          if (
+            search !== undefined &&
+            nonNativeToken.tokenDetails.coingeckoId?.toLowerCase().includes(search.toLowerCase())
+          )
+            return true
           return false
         })
       )

@@ -80,14 +80,14 @@ const AssetItem = () => {
                       alignItems: 'center',
                     }}
                   >
-                    <Tooltip content={startCase(token?.tokenDetails?.chain?.id ?? token?.tokenDetails?.coingeckoId)}>
+                    <Tooltip content={startCase(token.tokenDetails.chain?.id ?? token.tokenDetails.coingeckoId)}>
                       <img
-                        src={token?.tokenDetails?.logo}
+                        src={token.tokenDetails.logo}
                         css={{
                           width: '2em',
                           height: '2em',
                         }}
-                        alt={token?.tokenDetails?.chain?.id ?? (token?.tokenDetails?.coingeckoId ?? '') + ' logo'}
+                        alt={token.tokenDetails.chain?.id ?? (token.tokenDetails.coingeckoId ?? '') + ' logo'}
                       />
                     </Tooltip>
                     <Text.Body
@@ -96,7 +96,7 @@ const AssetItem = () => {
                         color: 'var(--color-text)',
                       }}
                     >
-                      {token?.tokenDetails?.tokenDisplayName}
+                      {token.tokenDetails.tokenDisplayName}
                     </Text.Body>
                     <Text.Body
                       css={{
@@ -104,16 +104,16 @@ const AssetItem = () => {
                         color: 'var(--color-dim)',
                       }}
                     >
-                      {`(${token?.tokenDetails?.symbol ?? ''})`}
+                      {`(${token.tokenDetails.symbol ?? ''})`}
                     </Text.Body>
                   </div>
                 }
                 text={
                   <RedactableBalance>
-                    {token?.overallTokenAmount ?? ''} {token?.tokenDetails?.symbol ?? ''}
+                    {token.overallTokenAmount ?? ''} {token.tokenDetails.symbol ?? ''}
                   </RedactableBalance>
                 }
-                supportingText={<AnimatedFiatNumber end={token?.overallFiatAmount ?? 0} />}
+                supportingText={<AnimatedFiatNumber end={token.overallFiatAmount ?? 0} />}
               />
               <InfoCard
                 headlineText={
@@ -130,10 +130,10 @@ const AssetItem = () => {
                 }
                 text={
                   <RedactableBalance>
-                    {token?.overallLockedAmount ?? ''} {token?.tokenDetails?.symbol ?? ''}
+                    {token.overallLockedAmount ?? ''} {token.tokenDetails.symbol ?? ''}
                   </RedactableBalance>
                 }
-                supportingText={<AnimatedFiatNumber end={token?.overallLockedFiatAmount ?? 0} />}
+                supportingText={<AnimatedFiatNumber end={token.overallLockedFiatAmount ?? 0} />}
               />
               <InfoCard
                 headlineText={
@@ -150,10 +150,10 @@ const AssetItem = () => {
                 }
                 text={
                   <RedactableBalance>
-                    {token?.amount ?? ''} {token?.tokenDetails?.symbol ?? ''}
+                    {token.amount ?? ''} {token.tokenDetails.symbol ?? ''}
                   </RedactableBalance>
                 }
-                supportingText={<AnimatedFiatNumber end={token?.fiatAmount ?? 0} />}
+                supportingText={<AnimatedFiatNumber end={token.fiatAmount ?? 0} />}
               />
             </div>
 
@@ -164,12 +164,11 @@ const AssetItem = () => {
             <AssetBreakdownList token={token} isLoading={isLoading} balances={balances} />
 
             {/* Then if any, the ORML tokens */}
-            {token?.ormlTokens &&
-              token?.ormlTokens?.map((ormlToken, index) => {
-                return (
-                  <AssetBreakdownList key={index} token={ormlToken} isLoading={isLoading} balances={balances} isOrml />
-                )
-              })}
+            {token.nonNativeTokens.map((ormlToken, index) => {
+              return (
+                <AssetBreakdownList key={index} token={ormlToken} isLoading={isLoading} balances={balances} isOrml />
+              )
+            })}
           </div>
         ) : (
           // !token and !isLoading - No Token Found, display Empty Token
