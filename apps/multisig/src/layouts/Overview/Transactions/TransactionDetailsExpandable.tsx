@@ -9,14 +9,14 @@ import AmountRow from '@components/AmountRow'
 import MemberRow from '@components/MemberRow'
 import { Rpc, decodeCallData } from '@domains/chains'
 import { pjsApiSelector } from '@domains/chains/pjs-api'
-import { copyToClipboard } from '@domains/common'
 import { Balance, Transaction, TransactionType, calcSumOutgoing, txOffchainMetadataState } from '@domains/multisig'
+import useCopied from '@hooks/useCopied'
 import { css } from '@emotion/css'
 import { useTheme } from '@emotion/react'
 import { Check, ChevronRight, Copy, List, Send, Settings, Share2, Unknown, Users } from '@talismn/icons'
 import { IconButton } from '@talismn/ui'
 import { Address } from '@util/addresses'
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import AceEditor from 'react-ace'
 import { Collapse } from 'react-collapse'
 import { useRecoilState, useRecoilValueLoadable } from 'recoil'
@@ -147,24 +147,8 @@ const TransactionDetailsExpandable = ({ t }: { t: Transaction }) => {
   const [expanded, setExpanded] = useState(t.decoded?.type !== TransactionType.Transfer)
   const [metadata, setMetadata] = useRecoilState(txOffchainMetadataState)
   const sumOutgoing: Balance[] = useMemo(() => calcSumOutgoing(t), [t])
-  const [copiedCallData, setCopiedCallData] = useState(false)
-  const [copiedCallHash, setCopiedCallHash] = useState(false)
-
-  useEffect(() => {
-    if (copiedCallHash) {
-      setTimeout(() => {
-        setCopiedCallHash(false)
-      }, 1000)
-    }
-  }, [copiedCallHash, setCopiedCallHash])
-
-  useEffect(() => {
-    if (copiedCallData) {
-      setTimeout(() => {
-        setCopiedCallData(false)
-      }, 1000)
-    }
-  }, [copiedCallData, setCopiedCallData])
+  const { copied: copiedCallData, copy: copyCallData } = useCopied()
+  const { copied: copiedCallHash, copy: copyCallHash } = useCopied()
 
   const recipients = t.decoded?.recipients || []
   return (
@@ -358,10 +342,7 @@ const TransactionDetailsExpandable = ({ t }: { t: Transaction }) => {
                   <IconButton
                     contentColor={copiedCallData ? `rgb(${theme.primary})` : `rgb(${theme.offWhite})`}
                     css={{ cursor: 'pointer', pointerEvents: copiedCallData ? 'none' : 'auto' }}
-                    onClick={() => {
-                      setCopiedCallData(true)
-                      copyToClipboard(t.callData as string, 'Call data copied to clipboard.')
-                    }}
+                    onClick={() => copyCallData(t.callData as string, 'Call data copied to clipboard.')}
                   >
                     {copiedCallData ? <Check /> : <Copy />}
                   </IconButton>
@@ -374,10 +355,7 @@ const TransactionDetailsExpandable = ({ t }: { t: Transaction }) => {
                   <IconButton
                     contentColor={copiedCallHash ? `rgb(${theme.primary})` : `rgb(${theme.offWhite})`}
                     css={{ cursor: 'pointer', pointerEvents: copiedCallHash ? 'none' : 'auto' }}
-                    onClick={() => {
-                      setCopiedCallHash(true)
-                      copyToClipboard(t.hash as string, 'Call hash copied to clipboard.')
-                    }}
+                    onClick={() => copyCallHash(t.hash as string, 'Call hash copied to clipboard.')}
                   >
                     {copiedCallHash ? <Check /> : <Copy />}
                   </IconButton>

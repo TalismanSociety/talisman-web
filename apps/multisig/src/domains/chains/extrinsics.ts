@@ -21,6 +21,7 @@ import { useRecoilState, useRecoilValue, useRecoilValueLoadable, useSetRecoilSta
 
 import { allRawPendingTransactionsSelector, rawPendingTransactionsDependency } from './storage-getters'
 import { Chain, isSubstrateAssetsToken, isSubstrateNativeToken, isSubstrateTokensToken, tokenByIdQuery } from './tokens'
+import toast from 'react-hot-toast'
 
 export const buildTransferExtrinsic = (api: ApiPromise, to: Address, balance: Balance) => {
   if (isSubstrateNativeToken(balance.token)) {
@@ -44,8 +45,10 @@ export const buildTransferExtrinsic = (api: ApiPromise, to: Address, balance: Ba
   }
 }
 
-// Sorry, not my code. Copied from p.js apps. it's not exported in any public packages.
-// https://github.com/polkadot-js/apps/blob/b6923ea003e1b043f22d3beaa685847c2bc54c24/packages/page-extrinsics/src/Decoder.tsx#L55
+// Copied from p.js apps because it's not exported in any public packages.
+// Full credit to the p.js team.
+// Original code: https://github.com/polkadot-js/apps/blob/b6923ea003e1b043f22d3beaa685847c2bc54c24/packages/page-extrinsics/src/Decoder.tsx#L55
+// Inherits Apache-2.0 license.
 export const decodeCallData = (api: ApiPromise, callData: string) => {
   try {
     let extrinsicCall: Call
@@ -445,9 +448,11 @@ export const useApproveAsMulti = (
                     })
 
                     insertTxMetadata({
-                      multisig: multisig.proxyAddress,
+                      multisig_address: multisig.multisigAddress,
+                      proxy_address: multisig.proxyAddress,
                       chain: multisig.chain,
                       call_data: metadata.callData,
+                      call_hash: hash,
                       description: metadata.description,
                       timepoint_height,
                       timepoint_index,
@@ -458,6 +463,7 @@ export const useApproveAsMulti = (
                       })
                       .catch(e => {
                         console.error('Failed to POST tx metadata sharing service: ', e)
+                        toast.error('Failed to POST tx metadata sharing service. See console for more info.')
                       })
                   }
                   setRawPendingTransactionDependency(new Date())

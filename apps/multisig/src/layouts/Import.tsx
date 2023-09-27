@@ -36,7 +36,8 @@ const Import = () => {
       if (!ready || valid === false) return
 
       // Basic query param validation
-      if (typeof proxy !== 'string' || Address.fromSs58(proxy) === false) {
+      const proxyAddress = typeof proxy === 'string' ? Address.fromSs58(proxy) : false
+      if (!proxyAddress) {
         toast.error('Invalid or missing proxy')
         setValid(false)
         return
@@ -54,13 +55,16 @@ const Import = () => {
         return
       }
 
-      if (
-        !Array.isArray(signersArray) ||
-        !signersArray.every(signer => typeof signer === 'string' && Address.fromSs58(signer) !== false)
-      ) {
-        toast.error('Invalid or missing signers')
-        setValid(false)
-        return
+      // check that every signer is valid address
+      const signers: Address[] = []
+      for (const addrString of signersArray) {
+        const signer = typeof addrString === 'string' ? Address.fromSs58(addrString) : false
+        if (!signer) {
+          toast.error('Invalid or missing signer')
+          setValid(false)
+          return
+        }
+        signers.push(signer)
       }
 
       if (isNaN(thresholdNumber)) {
@@ -70,12 +74,9 @@ const Import = () => {
       }
 
       // We validated above that all signers are valid, so we can cast them here.
-      const signerAddressesArray = signersArray.map(signer => Address.fromSs58(signer as string)) as Address[]
-      const multisigAddress = toMultisigAddress(signerAddressesArray, thresholdNumber)
+      const multisigAddress = toMultisigAddress(signers, thresholdNumber)
 
       // Get the actual on-chain address that controls the proxy, make sure it matches the multisig address
-      const proxyAddress = Address.fromSs58(proxy)
-      if (!proxyAddress) throw Error('Somehow proxy address is false when it was checked earlier.')
       const res = await addressIsProxyDelegatee(proxyAddress, multisigAddress)
       if (!res.isProxyDelegatee) {
         toast.error('Invalid multisig/proxy configuration. This link may be outdated, please ask for a new one.')
@@ -86,7 +87,7 @@ const Import = () => {
 
       // Check for overlap between the multisig signers and the connected wallet
       const overlap = arrayIntersection<string>(
-        signerAddressesArray.map(a => a.toPubKey()),
+        signers.map(a => a.toPubKey()),
         extensionAccounts.map(a => a.address.toPubKey())
       )
       if (overlap.length > 0) {
@@ -101,7 +102,7 @@ const Import = () => {
           chain,
           multisigAddress,
           proxyAddress,
-          signers: signerAddressesArray,
+          signers,
           threshold: thresholdNumber,
         }
         setMultisigs([...multisigs, multisig])
