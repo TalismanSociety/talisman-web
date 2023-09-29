@@ -1,10 +1,12 @@
 import SectionHeader from '@components/molecules/SectionHeader'
 import StakeItem from '@components/recipes/StakeItem'
 import { ChainProvider, chainsState } from '@domains/chains'
+import { useSubstrateFiatTotalStaked } from '@domains/staking'
 import { Button, HiddenDetails, Text } from '@talismn/ui'
 import { Suspense, useId } from 'react'
 import { Link } from 'react-router-dom'
 import { useRecoilValue } from 'recoil'
+import AnimatedFiatNumber from '../AnimatedFiatNumber'
 import ErrorBoundary from '../ErrorBoundary'
 import PoolStakes from './PoolStakes'
 import ValidatorStakes from './ValidatorStakes'
@@ -38,13 +40,30 @@ const NoStakePrompt = (props: { className?: string }) => (
   </div>
 )
 
+const StakeTotal = () => <AnimatedFiatNumber end={useSubstrateFiatTotalStaked().fiatTotal} />
+
+const StakeHeader = () => {
+  return (
+    <SectionHeader
+      headlineText="Staking"
+      supportingText={
+        <ErrorBoundary fallback={<></>}>
+          <Suspense>
+            <StakeTotal />
+          </Suspense>
+        </ErrorBoundary>
+      }
+    />
+  )
+}
+
 const Stakes = () => {
   const chains = useRecoilValue(chainsState)
   const skeletonId = useId()
 
   return (
     <div id="staking">
-      <SectionHeader headlineText="Staking" />
+      <StakeHeader />
       <div
         css={{
           display: 'flex',
