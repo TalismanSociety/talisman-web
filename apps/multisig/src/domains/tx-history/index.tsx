@@ -168,7 +168,7 @@ export const useConfirmedTransactions = () => {
             if (!metadata) {
               try {
                 const metadataValues = await getTxMetadataByPk(transactionID, {
-                  multisig: curMultisig.proxyAddress,
+                  proxy_address: curMultisig.proxyAddress,
                   chain: curMultisig.chain,
                   timepoint_height,
                   timepoint_index,

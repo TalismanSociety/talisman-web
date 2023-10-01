@@ -9,8 +9,10 @@ interface InsertTxMetadataArgs {
   timepoint_height: number
   timepoint_index: number
   call_data: string
+  call_hash: string
   chain: Chain
-  multisig: Address
+  multisig_address: Address
+  proxy_address: Address
   description: string
   change_config_details?: ChangeConfigDetails
 }
@@ -19,8 +21,10 @@ interface InsertTxMetadataGqlVariables {
   timepoint_height: number
   timepoint_index: number
   call_data: string
+  call_hash: string
   chain: string
-  multisig: string
+  multisig_address: string
+  proxy_address: string
   description: string
   change_config_details?: {
     newThreshold: number
@@ -42,8 +46,10 @@ export async function insertTxMetadata(args: InsertTxMetadataArgs): Promise<Inse
     timepoint_height: args.timepoint_height,
     timepoint_index: args.timepoint_index,
     call_data: args.call_data,
+    call_hash: args.call_hash,
     chain: args.chain.squidIds.chainData,
-    multisig: args.multisig.toSs58(args.chain),
+    multisig_address: args.multisig_address.toSs58(args.chain),
+    proxy_address: args.proxy_address.toSs58(args.chain),
     description: args.description,
     change_config_details: args.change_config_details
       ? {
@@ -54,30 +60,30 @@ export async function insertTxMetadata(args: InsertTxMetadataArgs): Promise<Inse
   }
 
   const mutation = gql`
-    mutation InsertTxMetadata(
+    mutation InsertTxMetadataValidated(
       $timepoint_height: Int!
       $timepoint_index: Int!
       $call_data: String!
+      $call_hash: String!
       $chain: String!
-      $multisig: String!
+      $multisig_address: String!
+      $proxy_address: String!
       $description: String!
       $change_config_details: json
     ) {
-      insert_tx_metadata(
-        objects: {
-          timepoint_height: $timepoint_height
-          timepoint_index: $timepoint_index
-          call_data: $call_data
-          chain: $chain
-          multisig: $multisig
-          description: $description
-          change_config_details: $change_config_details
-        }
+      InsertTxMetadataValidated(
+        timepoint_height: $timepoint_height
+        timepoint_index: $timepoint_index
+        call_data: $call_data
+        call_hash: $call_hash
+        chain: $chain
+        multisig_address: $multisig_address
+        proxy_address: $proxy_address
+        description: $description
+        change_config_details: $change_config_details
       ) {
-        affected_rows
-        returning {
-          created
-        }
+        success
+        timestamp
       }
     }
   `

@@ -8,14 +8,14 @@ import { METADATA_SERVICE_URL } from '.'
 interface TxMetadataByPkArgs {
   timepoint_height: number
   timepoint_index: number
-  multisig: Address
+  proxy_address: Address
   chain: Chain
 }
 
 interface TxMetadataByPkVariables {
   timepoint_height: number
   timepoint_index: number
-  multisig: string
+  proxy_address: string
   chain: string
 }
 
@@ -41,7 +41,7 @@ export async function getTxMetadataByPk(
   const variables: TxMetadataByPkVariables = {
     timepoint_height: args.timepoint_height,
     timepoint_index: args.timepoint_index,
-    multisig: args.multisig.toSs58(args.chain),
+    proxy_address: args.proxy_address.toSs58(args.chain),
     chain: args.chain.squidIds.chainData,
   }
   if (cache.has(transactionID)) return cache.get(transactionID)!
@@ -49,9 +49,14 @@ export async function getTxMetadataByPk(
   const valueFromMetadataService = await new Promise<TxOffchainMetadata | null>(async (resolve, reject) => {
     try {
       const query = gql`
-        query TxMetadataByPk($timepoint_height: Int!, $timepoint_index: Int!, $multisig: String!, $chain: String!) {
+        query TxMetadataByPk(
+          $timepoint_height: Int!
+          $timepoint_index: Int!
+          $proxy_address: String!
+          $chain: String!
+        ) {
           tx_metadata_by_pk(
-            multisig: $multisig
+            proxy_address: $proxy_address
             timepoint_height: $timepoint_height
             timepoint_index: $timepoint_index
             chain: $chain
