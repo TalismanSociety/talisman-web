@@ -102,31 +102,11 @@ const CreateMultisig = () => {
   const { addressIsProxyDelegatee } = useAddressIsProxyDelegatee(chain)
 
   const navigate = useNavigate()
-  const [step, setStep] = useState<Step>(Step.NoVault)
-  const skipNoVault = window.location.href.includes('skipNoVault')
 
-  // Redirect to landing if user disconnects all accounts
-  useEffect(() => {
-    if (extensionAccounts.length === 0) {
-      navigate('/')
-    }
-  })
+  const hasVault = multisigs.length > 0
+  const [step, setStep] = useState<Step>(hasVault ? Step.NameVault : Step.NoVault)
 
   const activeMultisigs = useRecoilValue(activeMultisigsState)
-  useEffect(() => {
-    if (step === Step.NoVault) {
-      // If there is skipNoVault in the url, skip the NoVault page
-      if (skipNoVault) {
-        setStep(Step.NameVault)
-        return
-      }
-
-      // If user connects an active multisig, redirect to overview
-      if (activeMultisigs.length > 0) {
-        navigate('/overview')
-      }
-    }
-  }, [activeMultisigs, navigate, step, skipNoVault])
 
   // Fade-in effect
   const [isVisible, setIsVisible] = useState(false)
@@ -272,13 +252,13 @@ const CreateMultisig = () => {
           <NoVault onCreate={() => setStep(Step.NameVault)} />
         ) : step === Step.NameVault ? (
           <NameVault
-            onBack={
-              activeMultisigs.length === 0 && !skipNoVault
-                ? () => setStep(Step.NoVault)
-                : () => {
-                    navigate('/overview')
-                  }
-            }
+            onBack={() => {
+              if (activeMultisigs.length > 0 && !hasVault) {
+                setStep(Step.NoVault)
+              } else {
+                navigate('/overview')
+              }
+            }}
             onNext={() => setStep(Step.AddMembers)}
             setName={setName}
             name={name}

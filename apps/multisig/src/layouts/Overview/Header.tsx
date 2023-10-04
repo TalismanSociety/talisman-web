@@ -119,9 +119,7 @@ const Header = () => {
                   },
                   'cursor': 'pointer',
                 }}
-                onClick={() => {
-                  navigate('/create?skipNoVault')
-                }}
+                onClick={() => navigate('/create')}
               >
                 <IconButton size={'40px'} contentColor={theme.color.primary}>
                   <PlusCircle size="40px" />
