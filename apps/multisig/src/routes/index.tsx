@@ -5,6 +5,7 @@ import Import from '../layouts/Import'
 import Landing from '../layouts/Landing'
 import Overview from '../layouts/Overview'
 import Settings from '../layouts/Settings'
+import RequireExtension from '../layouts/Auth/RequireExtension'
 
 const router = createBrowserRouter([
   {
@@ -13,15 +14,27 @@ const router = createBrowserRouter([
   },
   {
     path: '/create',
-    element: <CreateMultisig />,
+    element: (
+      <RequireExtension>
+        <CreateMultisig />
+      </RequireExtension>
+    ),
   },
   {
     path: '/overview/*',
-    element: <Overview />,
+    element: (
+      <RequireExtension requireMultisig>
+        <Overview />
+      </RequireExtension>
+    ),
   },
   {
     path: '/settings/*',
-    element: <Settings />,
+    element: (
+      <RequireExtension requireMultisig>
+        <Settings />
+      </RequireExtension>
+    ),
   },
   {
     path: '/import',

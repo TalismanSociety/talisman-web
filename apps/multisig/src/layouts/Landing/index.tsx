@@ -6,8 +6,7 @@ import { keyframes } from '@emotion/react'
 import { Loader } from '@talismn/icons'
 import { Button } from '@talismn/ui'
 import { device } from '@util/breakpoints'
-import { useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Navigate } from 'react-router-dom'
 import { useRecoilState, useRecoilValue } from 'recoil'
 
 import Features from './Features'
@@ -28,22 +27,15 @@ const containerStyles = css`
   height: 100%;
 `
 
-const Landing = () => {
+const Landing: React.FC<{ disableRedirect?: boolean }> = ({ disableRedirect }) => {
   const [extensionAccounts] = useRecoilState(accountsState)
   const [extensionLoading] = useRecoilState(extensionLoadingState)
   const [extensionAllowed, setExtensionAllowed] = useRecoilState(extensionAllowedState)
   const activeMultisigs = useRecoilValue(activeMultisigsState)
-  const navigate = useNavigate()
 
-  // Handle redirecting once account/s are connected
-  useEffect(() => {
-    if (!extensionAllowed || extensionLoading || extensionAccounts.length === 0) return
-    if (activeMultisigs.length > 0) {
-      navigate('/overview')
-    } else {
-      navigate('/create')
-    }
-  }, [extensionAccounts, activeMultisigs, navigate, extensionLoading, extensionAllowed])
+  if (!disableRedirect && extensionAccounts.length > 0) {
+    return <Navigate to={activeMultisigs.length > 0 ? '/overview' : '/create'} />
+  }
 
   return (
     <div className={containerStyles}>

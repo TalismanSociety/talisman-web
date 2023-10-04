@@ -1,7 +1,7 @@
 import { useAugmentedBalances } from '@domains/balances'
 import { useAddressIsProxyDelegatee } from '@domains/chains/storage-getters'
 import { getAllChangeAttempts } from '@domains/metadata-service/getAllChangeAttempts'
-import { activeMultisigsState, multisigsState, selectedMultisigState } from '@domains/multisig'
+import { multisigsState, selectedMultisigState } from '@domains/multisig'
 import { css } from '@emotion/css'
 import { Eye, Settings } from '@talismn/icons'
 import { toMultisigAddress } from '@util/addresses'
@@ -9,7 +9,7 @@ import { device } from '@util/breakpoints'
 import { useEffect } from 'react'
 import toast from 'react-hot-toast'
 import { useNavigate } from 'react-router-dom'
-import { useRecoilState, useRecoilValue } from 'recoil'
+import { useRecoilState } from 'recoil'
 
 import Assets, { TokenAugmented } from './Assets'
 import BetaNotice from './BetaNotice'
@@ -81,20 +81,11 @@ const Overview = () => {
   }, [
     addressIsProxyDelegatee,
     addressIsProxyDelegateeReady,
-    navigate,
     selectedMultisig,
     setMultisigs,
     multisigs,
     setSelectedMultisig,
   ])
-
-  // Redirect to landing if no connected accounts have multisig
-  const activeMultisigs = useRecoilValue(activeMultisigsState)
-  useEffect(() => {
-    if (activeMultisigs.length === 0) {
-      navigate('/')
-    }
-  }, [activeMultisigs, navigate])
 
   const augmentedTokens: TokenAugmented[] = useAugmentedBalances()
   return (
@@ -143,9 +134,7 @@ const Overview = () => {
           {
             name: 'Settings',
             icon: <Settings />,
-            onClick: () => {
-              navigate('/settings')
-            },
+            onClick: () => navigate('/settings'),
           },
         ]}
       />
