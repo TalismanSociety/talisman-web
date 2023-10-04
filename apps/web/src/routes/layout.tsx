@@ -172,7 +172,7 @@ const Layout = () => {
           <Link to="/crowdloans">
             <NavigationRail.Item label="Crowdloans" icon={<Star />} />
           </Link>
-          <Link to="https://talisman.banxa.com/" target="_blank">
+          <Link to="https://checkout.banxa.com/" target="_blank">
             <NavigationRail.Item label="Buy" icon={<CreditCard />} />
           </Link>
           <Link to="/history">
@@ -237,7 +237,7 @@ const Layout = () => {
           <Link to="/explore">
             <NavigationDrawer.Item label="Explore" icon={<Compass />} />
           </Link>
-          <Link to="https://talisman.banxa.com/" target="_blank">
+          <Link to="https://checkout.banxa.com/" target="_blank">
             <NavigationDrawer.Item label="Buy crypto" icon={<CreditCard />} />
           </Link>
           <Link to="/history" target="_blank">
