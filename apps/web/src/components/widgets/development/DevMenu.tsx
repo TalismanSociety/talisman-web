@@ -1,13 +1,12 @@
 import 'winbox/dist/css/themes/modern.min.css'
 import 'winbox/dist/css/winbox.min.css'
 
+import { enableTestnetsState } from '@domains/chains'
 import { useTheme } from '@emotion/react'
 import { useCallback } from 'react'
 import { useSessionStorage } from 'react-use'
 import WinBox, { type WinBoxPropType } from 'react-winbox'
 import { useRecoilState } from 'recoil'
-import { enableTestnetsState } from '@domains/chains'
-import { includeDisabledRoutesState } from '@domains/bridge'
 import { debugErrorBoundaryState } from '../ErrorBoundary'
 
 const DevMenu = () => {
@@ -19,7 +18,6 @@ const DevMenu = () => {
   const [hidden, setHidden] = useSessionStorage('dev-menu-hidden', false)
 
   const [enableTestnets, setEnableTestnets] = useRecoilState(enableTestnetsState)
-  const [includeDisabledRoute, setIncludeDisabledRoute] = useRecoilState(includeDisabledRoutesState)
   const [debugErrorBoundary, setDebugErrorBoundary] = useRecoilState(debugErrorBoundaryState)
 
   return (
@@ -45,10 +43,6 @@ const DevMenu = () => {
       <form css={{ 'label': { display: 'block' }, 'label + label': { marginTop: '1.6rem' } }}>
         <label>
           <input type="checkbox" checked={enableTestnets} onChange={() => setEnableTestnets(x => !x)} /> Enable testnets
-        </label>
-        <label>
-          <input type="checkbox" checked={includeDisabledRoute} onChange={() => setIncludeDisabledRoute(x => !x)} />{' '}
-          Enable all XCM routes
         </label>
         <label>
           <input type="checkbox" checked={debugErrorBoundary} onChange={() => setDebugErrorBoundary(x => !x)} /> Debug

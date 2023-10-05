@@ -9,12 +9,14 @@ import {
   TextInput,
   type ButtonProps,
   CircularProgressIndicator,
+  Text,
 } from '@talismn/ui'
 import { LayoutGroup, motion } from 'framer-motion'
 import { useId, useState, type ReactNode } from 'react'
 
 export type TransportFormProps = {
   accountSelector: ReactNode
+  destAccountSelector: ReactNode
   fromChains: Array<{ name: string; logoSrc: string }>
   selectedFromChainInitializing?: boolean
   selectedFromChainIndex: number
@@ -172,6 +174,10 @@ const TransportForm = Object.assign(
             </motion.div>
           </LayoutGroup>
         </div>
+        <Text.BodySmall as="label">
+          <div css={{ padding: '0 1.6rem 0.8rem 1.6rem' }}>Destination address</div>
+          {props.destAccountSelector}
+        </Text.BodySmall>
       </div>
     )
   },
