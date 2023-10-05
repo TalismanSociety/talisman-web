@@ -5,7 +5,7 @@ import Import from '../layouts/Import'
 import Landing from '../layouts/Landing'
 import Overview from '../layouts/Overview'
 import Settings from '../layouts/Settings'
-import RequireExtension from '../layouts/Auth/RequireExtension'
+import RequireAuth from '../layouts/Auth/RequireAuth'
 
 const router = createBrowserRouter([
   {
@@ -15,25 +15,25 @@ const router = createBrowserRouter([
   {
     path: '/create',
     element: (
-      <RequireExtension>
+      <RequireAuth requireSignIn>
         <CreateMultisig />
-      </RequireExtension>
+      </RequireAuth>
     ),
   },
   {
     path: '/overview/*',
     element: (
-      <RequireExtension requireMultisig>
+      <RequireAuth requireMultisig requireSignIn>
         <Overview />
-      </RequireExtension>
+      </RequireAuth>
     ),
   },
   {
     path: '/settings/*',
     element: (
-      <RequireExtension requireMultisig>
+      <RequireAuth requireMultisig requireSignIn>
         <Settings />
-      </RequireExtension>
+      </RequireAuth>
     ),
   },
   {

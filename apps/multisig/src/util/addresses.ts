@@ -37,8 +37,9 @@ export class Address {
     return this.bytes.every((byte, index) => byte === other.bytes[index])
   }
 
-  toSs58(chain: Chain): string {
-    return encodeAddress(this.bytes, chain.ss58Prefix)
+  /* to generic address if chain is not provided */
+  toSs58(chain?: Chain): string {
+    return encodeAddress(this.bytes, chain?.ss58Prefix)
   }
 
   toPubKey(): string {
