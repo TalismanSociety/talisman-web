@@ -209,9 +209,11 @@ const Confirmation = (props: {
             `}
             onChange={value => {
               if (!value) return
-              const a = Address.fromPubKey(value)
-              if (!a) return
-              props.setSelectedSigner(props.selectedAccounts.find(_a => _a.address.isEqual(a)) as AugmentedAccount)
+              const address = Address.fromPubKey(value)
+              if (!address) return
+              const selectedSigner = props.selectedAccounts.find(acc => acc.address.isEqual(address) && acc.injected)
+              if (!selectedSigner?.injected) return
+              props.setSelectedSigner(selectedSigner.injected)
             }}
             {...props}
           >

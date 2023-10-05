@@ -100,13 +100,18 @@ const CreateMultisig = () => {
   const existentialDepositLoadable = useRecoilValueLoadable(existentialDepositSelector(chain.squidIds.chainData))
   const proxyDepositTotalLoadable = useRecoilValueLoadable(proxyDepositTotalSelector(chain.squidIds.chainData))
   const { addressIsProxyDelegatee } = useAddressIsProxyDelegatee(chain)
+  const activeMultisigs = useRecoilValue(activeMultisigsState)
 
   const navigate = useNavigate()
 
-  const hasVault = multisigs.length > 0
+  const hasVault = activeMultisigs.length > 0
   const [step, setStep] = useState<Step>(hasVault ? Step.NameVault : Step.NoVault)
 
-  const activeMultisigs = useRecoilValue(activeMultisigsState)
+  useEffect(() => {
+    if (step === Step.NoVault && hasVault) {
+      navigate('/overview')
+    }
+  }, [step, hasVault, navigate])
 
   // Fade-in effect
   const [isVisible, setIsVisible] = useState(false)
@@ -118,9 +123,10 @@ const CreateMultisig = () => {
     () => [
       ...extensionAccounts.map(a => ({
         address: a.address,
-        nickname: a.name,
+        nickname: a.meta.name,
         you: true,
         excluded: excludedExtensionAccounts[a.address.toPubKey()],
+        injected: a,
       })),
       ...externalAccounts.map(a => ({ address: a })),
     ],

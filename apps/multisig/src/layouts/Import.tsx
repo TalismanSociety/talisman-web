@@ -80,6 +80,7 @@ const Import = () => {
       const res = await addressIsProxyDelegatee(proxyAddress, multisigAddress)
       if (!res.isProxyDelegatee) {
         toast.error('Invalid multisig/proxy configuration. This link may be outdated, please ask for a new one.')
+        setValid(false)
         return
       }
 
@@ -161,9 +162,7 @@ const Import = () => {
               children={
                 !extensionAllowed ? <h3>Connect</h3> : extensionLoading ? <Loader /> : <h3>No Accounts Connected</h3>
               }
-              onClick={() => {
-                setExtensionAllowed(true)
-              }}
+              onClick={() => setExtensionAllowed(true)}
               disabled={extensionAllowed && !extensionLoading && extensionAccounts.length === 0}
             />
           )}

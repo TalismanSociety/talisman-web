@@ -10,7 +10,7 @@ import {
 } from '@domains/chains'
 import { allPjsApisSelector } from '@domains/chains/pjs-api'
 import { RawPendingTransaction, allRawPendingTransactionsSelector } from '@domains/chains/storage-getters'
-import { accountsState } from '@domains/extension'
+import { InjectedAccount, accountsState } from '@domains/extension'
 import { getTxMetadataByPk } from '@domains/metadata-service'
 import { SubmittableExtrinsic } from '@polkadot/api/types'
 import { Address, toMultisigAddress } from '@util/addresses'
@@ -115,6 +115,7 @@ export interface AugmentedAccount {
   you?: boolean
   nickname?: string
   excluded?: boolean
+  injected?: InjectedAccount
 }
 
 export interface Multisig {
