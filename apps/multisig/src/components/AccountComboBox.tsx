@@ -1,5 +1,5 @@
 import { InjectedAccount } from '@domains/extension'
-import { Identicon } from '@talismn/ui'
+import { CircularProgressIndicator, Identicon } from '@talismn/ui'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import truncateMiddle from 'truncate-middle'
 import { ChevronVertical, Search } from '@talismn/icons'
@@ -12,10 +12,31 @@ type Props = {
   onSelect?: (account: InjectedAccount) => void
 }
 
-const AccountRow = ({ account }: { account: InjectedAccount }) => {
+const AccountRow = ({
+  account,
+  onSelect,
+}: {
+  account: InjectedAccount
+  onSelect: (account: InjectedAccount) => void
+}) => {
   const addressString = account.address.toSs58()
   return (
-    <div css={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+    <div
+      onClick={() => onSelect?.(account)}
+      css={({ color }) => ({
+        'display': 'flex',
+        'alignItems': 'center',
+        'gap': 8,
+        'padding': '8px 12px',
+        'cursor': 'pointer',
+        'width': '100%',
+        'backgroundColor': color.surface,
+        ':hover': {
+          filter: 'brightness(1.2)',
+          div: { p: { color: color.offWhite } },
+        },
+      })}
+    >
       <Identicon size={24} value={addressString} />
       <p css={({ color }) => ({ marginTop: 4, color: color.lightGrey })}>
         <span css={{ width: '100%' }}>{account.meta.name}</span>{' '}
@@ -27,11 +48,14 @@ const AccountRow = ({ account }: { account: InjectedAccount }) => {
 
 const AccountComboBox: React.FC<Props> = ({ accounts, onSelect, selectedAccount }) => {
   const [expanded, setExpanded] = useState(false)
-  const { signIn, signingIn } = useSignIn()
+  const { signIn } = useSignIn()
   const ref = useRef(null)
   const [query, setQuery] = useState('')
   const [accountToSignIn, setAccountToSignIn] = useState<InjectedAccount>()
   useOnClickOutside(ref.current, () => setExpanded(false))
+
+  // cannot close if signing in
+  const actualExpanded = expanded || accountToSignIn
 
   const filteredAccounts = useMemo(() => {
     return accounts.filter(acc => {
@@ -43,8 +67,20 @@ const AccountComboBox: React.FC<Props> = ({ accounts, onSelect, selectedAccount 
   }, [query, accounts, selectedAccount])
 
   useEffect(() => {
-    if (!expanded && query.length > 0) setQuery('')
-  }, [expanded, query.length])
+    if (!actualExpanded && query.length > 0) setQuery('')
+  }, [actualExpanded, query.length])
+
+  const handleSelectAccount = async (account: InjectedAccount) => {
+    setQuery('')
+    setAccountToSignIn(account)
+    try {
+      await signIn(account)
+    } catch (e) {
+    } finally {
+      setAccountToSignIn(undefined)
+      setExpanded(false)
+    }
+  }
 
   if (!selectedAccount) return null
 
@@ -52,33 +88,49 @@ const AccountComboBox: React.FC<Props> = ({ accounts, onSelect, selectedAccount 
     <div ref={ref} css={{ position: 'relative', width: '100%' }}>
       <div
         css={({ color }) => ({
-          alignItems: 'center',
-          display: 'flex',
-          justifyContent: 'space-between',
-          background: color.surface,
-          borderRadius: 8,
-          border: `solid 1px ${expanded ? color.border : 'rgba(0,0,0,0)'}`,
-          borderBottom: 'none',
-          width: '100%',
-          padding: '16px 24px',
-          ...(accounts.length > 1
-            ? {
-                'cursor': 'pointer',
-                ':hover': {
-                  div: { color: color.offWhite },
-                },
-              }
-            : {}),
+          'alignItems': 'center',
+          'display': 'flex',
+          'justifyContent': 'space-between',
+          'background': color.surface,
+          'borderRadius': 8,
+          'border': `solid 1px ${actualExpanded ? color.border : 'rgba(0,0,0,0)'}`,
+          'borderBottom': 'none',
+          'width': '100%',
+          'padding': '8px 12px',
+          'cursor': 'pointer',
+          ':hover': {
+            div: { color: color.offWhite },
+          },
         })}
         onClick={() => setExpanded(!expanded)}
       >
-        <AccountRow account={selectedAccount} />
+        <div css={{ display: 'flex', alignItems: 'center', gap: 8, marginRight: 8 }}>
+          <Identicon size={40} value={selectedAccount.address.toSs58()} />
+          <div css={{ width: 160, p: { lineHeight: 1 } }}>
+            <p
+              css={({ color }) => ({
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                color: color.offWhite,
+                marginBottom: 4,
+                marginTop: 2,
+              })}
+            >
+              {selectedAccount.meta.name ?? truncateMiddle(selectedAccount.address.toSs58(), 4, 6, '...')}
+            </p>
+            {selectedAccount.meta.name !== undefined && (
+              <p css={({ color }) => ({ color: color.lightGrey })}>
+                {truncateMiddle(selectedAccount.address.toSs58(), 4, 6, '...')}
+              </p>
+            )}
+          </div>
+        </div>
         <div
           css={({ color }) => ({
             height: 'max-content',
             lineHeight: 1,
-            visibility: accounts.length > 1 ? 'visible' : 'hidden',
-            color: expanded ? color.offWhite : color.lightGrey,
+            color: actualExpanded ? color.offWhite : color.lightGrey,
           })}
         >
           <ChevronVertical size={24} />
@@ -94,56 +146,66 @@ const AccountComboBox: React.FC<Props> = ({ accounts, onSelect, selectedAccount 
           left: 0,
           backgroundColor: color.surface,
           borderRadius: '0px 0px 4px 4px',
-          border: `solid 1px ${expanded ? color.border : 'rgba(0,0,0,0)'}`,
-          visibility: expanded ? 'visible' : 'hidden',
+          border: `solid 1px ${actualExpanded ? color.border : 'rgba(0,0,0,0)'}`,
+          visibility: actualExpanded ? 'visible' : 'hidden',
           borderTop: 'none',
-          padding: '0 24px',
           width: '100%',
           zIndex: 1,
-          height: 'min-content',
-          maxHeight: expanded ? 400 : 0,
+          display: 'flex',
+          flexDirection: 'column',
+          flex: 1,
+          // height is fixed when actualExpanded to leave enough space for loading indicator
+          height: actualExpanded ? 188 : 0,
           overflow: 'hidden',
           transition: '0.2s ease-in-out',
         })}
       >
-        <div
-          css={({ foreground }) => ({
-            display: 'flex',
-            gap: 8,
-            alignItems: 'center',
-            borderBottom: `rgba(${foreground}, 0.1) solid 1px`,
-            paddingTop: 8,
-          })}
-        >
-          <Search />
-          <input
-            css={{ border: 'none', backgroundColor: 'transparent', width: '100%', padding: '16px 0px' }}
-            placeholder="Search Account..."
-            value={query}
-            onChange={e => setQuery(e.target.value)}
-          />
-        </div>
-        <div css={{ maxHeight: 150, overflowY: 'auto', padding: '8px 0' }}>
-          {filteredAccounts.map(acc => (
-            <div
-              css={({ color }) => ({
-                'borderRadius': 8,
-                'padding': '8px 0',
-                'cursor': 'pointer',
-                'width': '100%',
-                ':hover': {
-                  div: { p: { color: color.offWhite } },
-                },
-              })}
-              key={acc.address.toSs58()}
-              onClick={() => {
-                onSelect?.(acc)
-              }}
-            >
-              <AccountRow account={acc} />
+        {accountToSignIn ? (
+          <div
+            css={{
+              height: '100%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexDirection: 'column',
+              textAlign: 'center',
+            }}
+          >
+            <div css={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 24 }}>
+              <CircularProgressIndicator />
+              <p css={({ color }) => ({ color: color.offWhite })}>Signing In</p>
             </div>
-          ))}
-        </div>
+            <Identicon size={40} value={accountToSignIn.address.toSs58()} />
+            <p css={({ color }) => ({ color: color.offWhite, marginTop: 8 })}>{accountToSignIn.meta.name}</p>
+            <p>{truncateMiddle(accountToSignIn.address.toSs58(), 4, 6, '...')}</p>
+          </div>
+        ) : (
+          <>
+            <div
+              css={({ foreground }) => ({
+                display: 'flex',
+                gap: 8,
+                alignItems: 'center',
+                borderBottom: `rgba(${foreground}, 0.1) solid 1px`,
+                padding: '0 12px',
+                paddingTop: 8,
+              })}
+            >
+              <Search />
+              <input
+                css={{ border: 'none', backgroundColor: 'transparent', width: '100%', padding: '16px 0px' }}
+                placeholder="Search Account..."
+                value={query}
+                onChange={e => setQuery(e.target.value)}
+              />
+            </div>
+            <div css={{ display: 'flex', flexDirection: 'column', flex: 1, overflowY: 'auto' }}>
+              {filteredAccounts.map(acc => (
+                <AccountRow key={acc.address.toSs58()} account={acc} onSelect={handleSelectAccount} />
+              ))}
+            </div>
+          </>
+        )}
       </div>
     </div>
   )
