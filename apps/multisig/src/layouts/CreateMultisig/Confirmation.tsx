@@ -211,6 +211,7 @@ const Confirmation = (props: {
               if (!value) return
               const address = Address.fromPubKey(value)
               if (!address) return
+              // can only be selected as signer if account is injected
               const selectedSigner = props.selectedAccounts.find(acc => acc.address.isEqual(address) && acc.injected)
               if (!selectedSigner?.injected) return
               props.setSelectedSigner(selectedSigner.injected)

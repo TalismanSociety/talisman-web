@@ -108,6 +108,8 @@ const CreateMultisig = () => {
   const [step, setStep] = useState<Step>(hasVault ? Step.NameVault : Step.NoVault)
 
   useEffect(() => {
+    // user was redirected here because they deselected and reselected an account that has vault
+    // bring them back to overview would be most natural
     if (step === Step.NoVault && hasVault) {
       navigate('/overview')
     }

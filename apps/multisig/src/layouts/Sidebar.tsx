@@ -5,13 +5,13 @@ import { device, size } from '@util/breakpoints'
 import { ReactNode } from 'react'
 import { useWindowSize } from 'react-use'
 
-const Sidebar = (props: { options: { name: string; icon: ReactNode; onClick?: () => void }[]; selected: string }) => {
+const Sidebar = (props: { options: { name: string; icon: ReactNode; onClick?: () => void }[]; selected?: string }) => {
   const theme = useTheme()
   const width = useWindowSize().width
+
   return (
     <section
       className={css`
-        grid-area: sidebar;
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -19,11 +19,14 @@ const Sidebar = (props: { options: { name: string; icon: ReactNode; onClick?: ()
         border-radius: 16px;
         padding: 16px 11px;
         gap: 12px;
+        width: 70px;
         @media ${device.md} {
           padding: 16px 5px;
+          width: 177px;
         }
         @media ${device.lg} {
           padding: 16px;
+          width: 248px;
         }
       `}
     >

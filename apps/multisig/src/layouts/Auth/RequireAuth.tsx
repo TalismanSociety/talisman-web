@@ -3,7 +3,7 @@ import { accountsState } from '@domains/extension'
 import Landing from '../Landing'
 import { activeMultisigsState } from '@domains/multisig'
 import { Navigate } from 'react-router-dom'
-import { SelectedAccountState } from '@domains/auth'
+import { selectedAccountState } from '@domains/auth'
 import SignInPage from './SignInPage'
 
 type Props = {
@@ -18,7 +18,7 @@ type Props = {
 const RequireAuth: React.FC<React.PropsWithChildren & Props> = ({ children, requireMultisig, requireSignIn }) => {
   const [extensionAccounts] = useRecoilState(accountsState)
   const activeMultisigs = useRecoilValue(activeMultisigsState)
-  const signedInAccount = useRecoilValue(SelectedAccountState)
+  const signedInAccount = useRecoilValue(selectedAccountState)
 
   // show landing page for connection if not accounts connected
   if (extensionAccounts.length === 0) {

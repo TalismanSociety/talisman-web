@@ -20,6 +20,7 @@ import ThemeProvider from './App.Theme'
 import RelayEnvironment, { chainDataSquidEnvKey } from './graphql/relay-environment'
 import router from './routes'
 import { supportedChains } from '@domains/chains'
+import { AccountWatcher } from './domains/auth'
 
 const Loader = () => {
   return (
@@ -51,6 +52,7 @@ const App: React.FC = () => (
           <Suspense fallback={<Loader />}>
             <BalancesWatcher />
             <ExtensionWatcher />
+            <AccountWatcher />
             <RouterProvider router={router} />
             <Toaster position="top-right" containerStyle={{ top: '6.4rem' }}>
               {t => <ToastBar toast={t} />}

@@ -3,8 +3,7 @@ import { Identicon } from '@talismn/ui'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import truncateMiddle from 'truncate-middle'
 import { ChevronVertical, Search } from '@talismn/icons'
-import { useOnClickOutside } from '../domains/common/useOnClickOutside'
-import { useSignIn } from '../domains/auth'
+import { useOnClickOutside } from '../../domains/common/useOnClickOutside'
 
 type Props = {
   accounts: InjectedAccount[]
@@ -27,10 +26,8 @@ const AccountRow = ({ account }: { account: InjectedAccount }) => {
 
 const AccountComboBox: React.FC<Props> = ({ accounts, onSelect, selectedAccount }) => {
   const [expanded, setExpanded] = useState(false)
-  const { signIn, signingIn } = useSignIn()
   const ref = useRef(null)
   const [query, setQuery] = useState('')
-  const [accountToSignIn, setAccountToSignIn] = useState<InjectedAccount>()
   useOnClickOutside(ref.current, () => setExpanded(false))
 
   const filteredAccounts = useMemo(() => {
@@ -46,6 +43,15 @@ const AccountComboBox: React.FC<Props> = ({ accounts, onSelect, selectedAccount 
     if (!expanded && query.length > 0) setQuery('')
   }, [expanded, query.length])
 
+  useEffect(() => {
+    if (!selectedAccount) return
+
+    // selected account is disconnected from extension
+    if (!accounts.find(acc => acc.address.isEqual(selectedAccount?.address)) && accounts[0]) {
+      onSelect?.(accounts[0])
+    }
+  }, [accounts, onSelect, selectedAccount])
+
   if (!selectedAccount) return null
 
   return (
@@ -55,7 +61,7 @@ const AccountComboBox: React.FC<Props> = ({ accounts, onSelect, selectedAccount 
           alignItems: 'center',
           display: 'flex',
           justifyContent: 'space-between',
-          background: color.surface,
+          background: color.foreground,
           borderRadius: 8,
           border: `solid 1px ${expanded ? color.border : 'rgba(0,0,0,0)'}`,
           borderBottom: 'none',
@@ -84,67 +90,70 @@ const AccountComboBox: React.FC<Props> = ({ accounts, onSelect, selectedAccount 
           <ChevronVertical size={24} />
         </div>
       </div>
-      <div
-        css={({ color }) => ({
-          position: 'absolute',
-          top: '100%',
-          // to cover the transition of bottom border radius
-          marginTop: -8,
-          paddingTop: 8,
-          left: 0,
-          backgroundColor: color.surface,
-          borderRadius: '0px 0px 4px 4px',
-          border: `solid 1px ${expanded ? color.border : 'rgba(0,0,0,0)'}`,
-          visibility: expanded ? 'visible' : 'hidden',
-          borderTop: 'none',
-          padding: '0 24px',
-          width: '100%',
-          zIndex: 1,
-          height: 'min-content',
-          maxHeight: expanded ? 400 : 0,
-          overflow: 'hidden',
-          transition: '0.2s ease-in-out',
-        })}
-      >
+      {accounts.length > 1 && (
         <div
-          css={({ foreground }) => ({
-            display: 'flex',
-            gap: 8,
-            alignItems: 'center',
-            borderBottom: `rgba(${foreground}, 0.1) solid 1px`,
+          css={({ color }) => ({
+            position: 'absolute',
+            top: '100%',
+            // to cover the transition of bottom border radius
+            marginTop: -8,
             paddingTop: 8,
+            left: 0,
+            backgroundColor: color.foreground,
+            borderRadius: '0px 0px 4px 4px',
+            border: `solid 1px ${expanded ? color.border : 'rgba(0,0,0,0)'}`,
+            visibility: expanded ? 'visible' : 'hidden',
+            borderTop: 'none',
+            padding: '0 24px',
+            width: '100%',
+            zIndex: 1,
+            height: 'min-content',
+            maxHeight: expanded ? 400 : 0,
+            overflow: 'hidden',
+            transition: '0.2s ease-in-out',
           })}
         >
-          <Search />
-          <input
-            css={{ border: 'none', backgroundColor: 'transparent', width: '100%', padding: '16px 0px' }}
-            placeholder="Search Account..."
-            value={query}
-            onChange={e => setQuery(e.target.value)}
-          />
+          <div
+            css={({ foreground }) => ({
+              display: 'flex',
+              gap: 8,
+              alignItems: 'center',
+              borderBottom: `rgba(${foreground}, 0.1) solid 1px`,
+              paddingTop: 8,
+            })}
+          >
+            <Search />
+            <input
+              css={{ border: 'none', backgroundColor: 'transparent', width: '100%', padding: '16px 0px' }}
+              placeholder="Search Account..."
+              value={query}
+              onChange={e => setQuery(e.target.value)}
+            />
+          </div>
+          <div css={{ maxHeight: 150, overflowY: 'auto', padding: '8px 0' }}>
+            {filteredAccounts.map(acc => (
+              <div
+                css={({ color }) => ({
+                  'borderRadius': 8,
+                  'padding': '8px 0',
+                  'cursor': 'pointer',
+                  'width': '100%',
+                  ':hover': {
+                    div: { p: { color: color.offWhite } },
+                  },
+                })}
+                key={acc.address.toSs58()}
+                onClick={() => {
+                  setExpanded(false)
+                  onSelect?.(acc)
+                }}
+              >
+                <AccountRow account={acc} />
+              </div>
+            ))}
+          </div>
         </div>
-        <div css={{ maxHeight: 150, overflowY: 'auto', padding: '8px 0' }}>
-          {filteredAccounts.map(acc => (
-            <div
-              css={({ color }) => ({
-                'borderRadius': 8,
-                'padding': '8px 0',
-                'cursor': 'pointer',
-                'width': '100%',
-                ':hover': {
-                  div: { p: { color: color.offWhite } },
-                },
-              })}
-              key={acc.address.toSs58()}
-              onClick={() => {
-                onSelect?.(acc)
-              }}
-            >
-              <AccountRow account={acc} />
-            </div>
-          ))}
-        </div>
-      </div>
+      )}
     </div>
   )
 }
