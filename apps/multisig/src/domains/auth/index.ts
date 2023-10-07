@@ -68,52 +68,55 @@ export const useSignIn = () => {
       if (signingIn) return
       setSigningIn(true)
 
+      const ss58Address = account.address.toSs58()
+      let token = authTokenBook[ss58Address]
       try {
-        // to be able to retrieve the signer interface from this account
-        // we can use web3FromSource which will return an InjectedExtension type
-        const injector = await web3FromSource(account.meta.source)
+        if (!token) {
+          // to be able to retrieve the signer interface from this account
+          // we can use web3FromSource which will return an InjectedExtension type
+          const injector = await web3FromSource(account.meta.source)
 
-        if (!injector.signer.signRaw) return toast.error('Wallet does not support signing message.')
+          if (!injector.signer.signRaw) return toast.error('Wallet does not support signing message.')
 
-        // generate nonce from server
-        const res = await fetch('http://localhost:8080/api/rest/siws-nonce', {
-          method: 'post',
-          credentials: 'include',
-          headers: { 'Content-Type': 'application/json' },
-        })
-        const nonceData = await res.json()
+          // generate nonce from server
+          const res = await fetch('http://localhost:8080/api/rest/siws-nonce', {
+            method: 'post',
+            credentials: 'include',
+            headers: { 'Content-Type': 'application/json' },
+          })
+          const nonceData = await res.json()
 
-        // error string captured by Hasura (e.g. invalid hasura query)
-        if (nonceData.error) return toast.error(nonceData.error)
+          // error string captured by Hasura (e.g. invalid hasura query)
+          if (nonceData.error) return toast.error(nonceData.error)
 
-        const nonce = nonceData?.siwsNonce?.nonce
+          const nonce = nonceData?.siwsNonce?.nonce
 
-        // should've been captured by `nonceData.error`, but adding this check just to be sure
-        if (!nonce) return toast.error('Failed to request for nonce.')
+          // should've been captured by `nonceData.error`, but adding this check just to be sure
+          if (!nonce) return toast.error('Failed to request for nonce.')
 
-        // constuct payload with nonce
-        // TODO: make a library to construct payload so frontend and backend will always have same structure + properties like expiry
-        const ss58Address = account.address.toSs58()
-        const data = JSON.stringify({ address: ss58Address, nonce }, undefined, 2)
+          // constuct payload with nonce
+          // TODO: make a library to construct payload so frontend and backend will always have same structure + properties like expiry
+          const data = JSON.stringify({ address: ss58Address, nonce }, undefined, 2)
 
-        // sign payload for backend verification
-        const { signature } = await injector.signer.signRaw({
-          address: ss58Address,
-          data,
-          type: 'payload',
-        })
+          // sign payload for backend verification
+          const { signature } = await injector.signer.signRaw({
+            address: ss58Address,
+            data,
+            type: 'payload',
+          })
 
-        // exchange JWT token from server
-        const verifyRes = await fetch('http://localhost:8080/api/rest/siws-verify', {
-          method: 'post',
-          body: JSON.stringify({ address: ss58Address, signedMessage: signature }),
-          headers: { 'Content-Type': 'application/json' },
-          credentials: 'include',
-        })
+          // exchange JWT token from server
+          const verifyRes = await fetch('http://localhost:8080/api/rest/siws-verify', {
+            method: 'post',
+            body: JSON.stringify({ address: ss58Address, signedMessage: signature }),
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+          })
 
-        const verifyData = await verifyRes.json()
+          const verifyData = await verifyRes.json()
 
-        const token = verifyData?.siwsVerify?.accessToken
+          token = verifyData?.siwsVerify?.accessToken
+        }
         setSelectedAccount(ss58Address)
         setAuthTokenBook({ ...authTokenBook, [ss58Address]: token })
       } catch (e) {

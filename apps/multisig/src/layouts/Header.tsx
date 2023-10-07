@@ -60,15 +60,7 @@ const Header = () => {
         </Button>
       </div>
 
-      <div
-        css={{
-          'width': '100%',
-          'maxWidth': '300px',
-          '> div > div': {
-            padding: '8px 12px',
-          },
-        }}
-      >
+      <div>
         <AccountComboBox selectedAccount={selectedAccount?.injected} accounts={extensionAccounts} />
       </div>
     </header>
