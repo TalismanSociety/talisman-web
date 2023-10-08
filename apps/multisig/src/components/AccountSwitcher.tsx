@@ -5,6 +5,8 @@ import truncateMiddle from 'truncate-middle'
 import { ChevronVertical, Search } from '@talismn/icons'
 import { useOnClickOutside } from '../domains/common/useOnClickOutside'
 import { useSignIn } from '../domains/auth'
+import { css } from '@emotion/css'
+import { device } from '../util/breakpoints'
 
 type Props = {
   accounts: InjectedAccount[]
@@ -115,7 +117,18 @@ const AccountSwitcher: React.FC<Props> = ({ accounts, onSelect, selectedAccount 
       >
         <div css={{ display: 'flex', alignItems: 'center', gap: 8, marginRight: 8 }}>
           <Identicon size={40} value={selectedAccount.address.toSs58()} />
-          <div css={{ width: 160, p: { lineHeight: 1, paddingTop: 2 } }}>
+          <div
+            className={css`
+              width: 120px;
+              @media ${device.md} {
+                width: 160px;
+              }
+              p {
+                line-height: 1;
+                padding-top: 2px;
+              }
+            `}
+          >
             <p
               css={({ color }) => ({
                 whiteSpace: 'nowrap',

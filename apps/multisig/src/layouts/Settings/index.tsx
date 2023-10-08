@@ -29,7 +29,7 @@ export const BackButton = () => {
 }
 
 const Settings = () => (
-  <Layout selected="Settings">
+  <Layout selected="Settings" requiresMultisig>
     <div css={{ gridArea: 'settings' }}>
       <Routes>
         <Route path="/" element={<SettingsList />} />

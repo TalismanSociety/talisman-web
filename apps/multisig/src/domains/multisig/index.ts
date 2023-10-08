@@ -22,6 +22,7 @@ import { atom, selector, useRecoilState, useRecoilValue, useRecoilValueLoadable 
 
 import persistAtom from '../persist'
 import { VoteDetails, mapConvictionToIndex } from '../referenda'
+import { selectedAccountState } from '../auth'
 
 // create a new atom for deciding whether to show all balances and txns or just for the selected
 // multisig
@@ -65,10 +66,11 @@ export const activeMultisigsState = selector({
   key: 'ActiveMultisigs',
   get: ({ get }) => {
     const multisigs = get(multisigsState)
-    const accounts = get(accountsState)
+    const selectedAccount = get(selectedAccountState)
 
+    if (!selectedAccount) return []
     return multisigs.filter(multisig => {
-      return multisig.signers.some(signer => accounts.some(account => account.address.isEqual(signer)))
+      return multisig.signers.some(signer => selectedAccount.injected.address.isEqual(signer))
     })
   },
 })

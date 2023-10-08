@@ -3,6 +3,7 @@ import { useAddressIsProxyDelegatee } from '@domains/chains/storage-getters'
 import { getAllChangeAttempts } from '@domains/metadata-service/getAllChangeAttempts'
 import { multisigsState, selectedMultisigState } from '@domains/multisig'
 import { toMultisigAddress } from '@util/addresses'
+import { device } from '@util/breakpoints'
 import { useEffect } from 'react'
 import toast from 'react-hot-toast'
 import { useRecoilState } from 'recoil'
@@ -11,7 +12,7 @@ import Assets, { TokenAugmented } from './Assets'
 import Transactions from './Transactions'
 import { Layout } from '../Layout'
 import { css } from '@emotion/css'
-import { device } from '../../util/breakpoints'
+import BetaNotice from './BetaNotice'
 
 const Overview = () => {
   const [selectedMultisig, setSelectedMultisig] = useRecoilState(selectedMultisigState)
@@ -82,7 +83,7 @@ const Overview = () => {
 
   const augmentedTokens: TokenAugmented[] = useAugmentedBalances()
   return (
-    <Layout selected="Overview">
+    <Layout selected="Overview" requiresMultisig>
       <div
         className={css`
           display: grid;
@@ -104,6 +105,7 @@ const Overview = () => {
         <Assets augmentedTokens={augmentedTokens} />
         <Transactions />
       </div>
+      <BetaNotice />
     </Layout>
   )
 }

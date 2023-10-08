@@ -1,4 +1,3 @@
-import Logo from '@components/Logo'
 import {
   Chain,
   existentialDepositSelector,
@@ -9,30 +8,23 @@ import {
 import { useCreateProxy, useTransferProxyToMultisig } from '@domains/chains/extrinsics'
 import { useAddressIsProxyDelegatee } from '@domains/chains/storage-getters'
 import { InjectedAccount, accountsState } from '@domains/extension'
-import {
-  AugmentedAccount,
-  Multisig,
-  activeMultisigsState,
-  createImportPath,
-  multisigsState,
-  selectedMultisigState,
-} from '@domains/multisig'
+import { AugmentedAccount, Multisig, createImportPath, multisigsState, selectedMultisigState } from '@domains/multisig'
 import { css } from '@emotion/css'
 import { Address, toMultisigAddress } from '@util/addresses'
 import { device } from '@util/breakpoints'
 import { useEffect, useMemo, useState } from 'react'
 import { toast } from 'react-hot-toast'
 import { useNavigate } from 'react-router-dom'
-import { useRecoilState, useRecoilValue, useRecoilValueLoadable, useSetRecoilState } from 'recoil'
+import { useRecoilState, useRecoilValueLoadable, useSetRecoilState } from 'recoil'
 
 import AddMembers from './AddMembers'
 import Confirmation from './Confirmation'
 import NameVault from './NameVault'
-import NoVault from './NoVault'
 import SelectFirstChain from './SelectFirstChain'
 import SelectThreshold from './SelectThreshold'
 import SignTransactions from './SignTransactions'
 import VaultCreated from './VaultCreated'
+import { Layout } from '../Layout'
 
 const useSelectedSigner = () => {
   const [extensionAccounts] = useRecoilState(accountsState)
@@ -57,7 +49,6 @@ export enum CreateTransactionsStatus {
 }
 
 export enum Step {
-  NoVault,
   NameVault,
   AddMembers,
   SelectThreshold,
@@ -68,7 +59,6 @@ export enum Step {
 }
 
 function calcContentHeight(step: Step, nAccounts: number): { md: string; lg: string } {
-  if (step === Step.NoVault) return { md: '557px', lg: '601px' }
   if (step === Step.SelectThreshold) return { md: '518px', lg: '518px' }
   if (step === Step.NameVault) return { md: '429px', lg: '461px' }
   if (step === Step.SelectFirstChain) return { md: '400px', lg: '461px' }
@@ -100,20 +90,10 @@ const CreateMultisig = () => {
   const existentialDepositLoadable = useRecoilValueLoadable(existentialDepositSelector(chain.squidIds.chainData))
   const proxyDepositTotalLoadable = useRecoilValueLoadable(proxyDepositTotalSelector(chain.squidIds.chainData))
   const { addressIsProxyDelegatee } = useAddressIsProxyDelegatee(chain)
-  const activeMultisigs = useRecoilValue(activeMultisigsState)
 
   const navigate = useNavigate()
 
-  const hasVault = activeMultisigs.length > 0
-  const [step, setStep] = useState<Step>(hasVault ? Step.NameVault : Step.NoVault)
-
-  useEffect(() => {
-    // user was redirected here because they deselected and reselected an account that has vault
-    // bring them back to overview would be most natural
-    if (step === Step.NoVault && hasVault) {
-      navigate('/overview')
-    }
-  }, [step, hasVault, navigate])
+  const [step, setStep] = useState(Step.NameVault)
 
   // Fade-in effect
   const [isVisible, setIsVisible] = useState(false)
@@ -218,32 +198,15 @@ const CreateMultisig = () => {
     transferProxyToMultisig,
   ])
 
-  // TODO: if wallet has vaults already skip the no_vault and display an 'x'
-
   const contentHeight = calcContentHeight(step, augmentedAccounts.length)
   return (
-    <div
-      className={css`
-        display: grid;
-        justify-items: center;
-        min-height: 100vh;
-      `}
-    >
-      <header>
-        <Logo
-          className={css`
-            display: ${step === Step.Confirmation ? 'none' : 'block'};
-            margin-top: 25px;
-            width: 133px;
-          `}
-        />
-      </header>
+    <Layout hideSideBar>
       <div
         className={css`
           display: grid;
           justify-items: center;
           align-content: center;
-          margin: 50px 0;
+          margin: 50px auto;
           height: ${contentHeight.md};
           width: 586px;
           background: var(--color-backgroundSecondary);
@@ -256,17 +219,9 @@ const CreateMultisig = () => {
           }
         `}
       >
-        {step === Step.NoVault ? (
-          <NoVault onCreate={() => setStep(Step.NameVault)} />
-        ) : step === Step.NameVault ? (
+        {step === Step.NameVault ? (
           <NameVault
-            onBack={() => {
-              if (activeMultisigs.length > 0 && !hasVault) {
-                setStep(Step.NoVault)
-              } else {
-                navigate('/overview')
-              }
-            }}
+            onBack={() => navigate('/overview')}
             onNext={() => setStep(Step.AddMembers)}
             setName={setName}
             name={name}
@@ -354,7 +309,7 @@ const CreateMultisig = () => {
           />
         ) : null}
       </div>
-    </div>
+    </Layout>
   )
 }
 

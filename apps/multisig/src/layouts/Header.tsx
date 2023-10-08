@@ -46,18 +46,22 @@ const Header = () => {
         }}
       >
         <Logo css={{ width: 106, marginRight: 16 }} />
-        <MultisigSelect
-          multisigs={activeMultisigs}
-          selectedMultisig={selectedMultisig}
-          onChange={setSelectedMultisig}
-        />
-        <Button
-          variant="secondary"
-          css={{ height: 56, width: 'max-content' }}
-          onClick={() => setCombinedView(!combinedView)}
-        >
-          <div>{combinedView ? 'Combined' : 'Selected'} Vault View</div>
-        </Button>
+        {activeMultisigs.length === 0 ? null : (
+          <>
+            <MultisigSelect
+              multisigs={activeMultisigs}
+              selectedMultisig={selectedMultisig}
+              onChange={setSelectedMultisig}
+            />
+            <Button
+              variant="secondary"
+              css={{ height: 56, width: 'max-content' }}
+              onClick={() => setCombinedView(!combinedView)}
+            >
+              <div>{combinedView ? 'Combined' : 'Selected'} Vault View</div>
+            </Button>
+          </>
+        )}
       </div>
 
       <div>

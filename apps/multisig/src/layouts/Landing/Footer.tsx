@@ -89,10 +89,9 @@ const Footer = () => {
       className={css`
         display: grid;
         background-color: var(--color-backgroundSecondary);
-        width: 100vw;
+        width: 100%;
         justify-content: center;
         @media ${device.sm} {
-          height: 246px;
           height: 246px;
         }
         @media ${device.md} {
