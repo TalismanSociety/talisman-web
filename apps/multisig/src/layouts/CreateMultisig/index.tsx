@@ -7,7 +7,7 @@ import {
 } from '@domains/chains'
 import { useCreateProxy, useTransferProxyToMultisig } from '@domains/chains/extrinsics'
 import { useAddressIsProxyDelegatee } from '@domains/chains/storage-getters'
-import { InjectedAccount, accountsState } from '@domains/extension'
+import { accountsState } from '@domains/extension'
 import { AugmentedAccount, Multisig, createImportPath, multisigsState, selectedMultisigState } from '@domains/multisig'
 import { css } from '@emotion/css'
 import { Address, toMultisigAddress } from '@util/addresses'
@@ -15,7 +15,7 @@ import { device } from '@util/breakpoints'
 import { useEffect, useMemo, useState } from 'react'
 import { toast } from 'react-hot-toast'
 import { useNavigate } from 'react-router-dom'
-import { useRecoilState, useRecoilValueLoadable, useSetRecoilState } from 'recoil'
+import { useRecoilState, useRecoilValue, useRecoilValueLoadable, useSetRecoilState } from 'recoil'
 
 import AddMembers from './AddMembers'
 import Confirmation from './Confirmation'
@@ -25,22 +25,7 @@ import SelectThreshold from './SelectThreshold'
 import SignTransactions from './SignTransactions'
 import VaultCreated from './VaultCreated'
 import { Layout } from '../Layout'
-
-const useSelectedSigner = () => {
-  const [extensionAccounts] = useRecoilState(accountsState)
-  const [selectedSigner, setSelectedSigner] = useState<InjectedAccount | undefined>(extensionAccounts[0])
-
-  // Ensure selected signer gets set if it is disconnected
-  useEffect(() => {
-    if (
-      !extensionAccounts.map(a => a.address).some(a => selectedSigner?.address && a.isEqual(selectedSigner.address))
-    ) {
-      setSelectedSigner(extensionAccounts[0])
-    }
-  }, [selectedSigner, extensionAccounts])
-
-  return [selectedSigner, setSelectedSigner] as const
-}
+import { selectedAccountState } from '@domains/auth'
 
 export enum CreateTransactionsStatus {
   NotStarted,
@@ -80,9 +65,13 @@ const CreateMultisig = () => {
   const [multisigs, setMultisigs] = useRecoilState(multisigsState)
   const setSelectedMultisig = useSetRecoilState(selectedMultisigState)
   const [extensionAccounts] = useRecoilState(accountsState)
-  const [selectedSigner, setSelectedSigner] = useSelectedSigner()
+  const selectedSigner = useRecoilValue(selectedAccountState)
   const [excludedExtensionAccounts, setExcludedExtensionAccounts] = useState<Record<string, boolean>>({})
-  const { createProxy, ready: createProxyIsReady, estimatedFee } = useCreateProxy(chain, selectedSigner?.address)
+  const {
+    createProxy,
+    ready: createProxyIsReady,
+    estimatedFee,
+  } = useCreateProxy(chain, selectedSigner?.injected.address)
   const { transferProxyToMultisig, ready: transferProxyToMultisigIsReady } = useTransferProxyToMultisig(chain)
   const [threshold, setThreshold] = useState<number>(2)
   const tokenWithPrice = useRecoilValueLoadable(tokenByIdWithPrice(chain.nativeToken.id))
@@ -134,7 +123,7 @@ const CreateMultisig = () => {
           setProxyAddress(proxyAddress)
           setCreateTransactionsStatus(CreateTransactionsStatus.TransferringProxy)
           transferProxyToMultisig(
-            selectedSigner?.address,
+            selectedSigner?.injected.address,
             proxyAddress,
             multisigAddress,
             existentialDepositLoadable.contents,
@@ -190,7 +179,7 @@ const CreateMultisig = () => {
     multisigAddress,
     multisigs,
     name,
-    selectedSigner?.address,
+    selectedSigner?.injected.address,
     setMultisigs,
     setSelectedMultisig,
     step,
@@ -284,8 +273,6 @@ const CreateMultisig = () => {
               )
               navigate(`/${path}`)
             }}
-            selectedSigner={selectedSigner}
-            setSelectedSigner={setSelectedSigner}
             selectedAccounts={includedAccounts}
             threshold={threshold}
             name={name}
