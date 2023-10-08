@@ -8,7 +8,7 @@ import { MultisigSelect } from '../components/MultisigSelect'
 
 import { selectedAccountState } from '../domains/auth'
 import { accountsState } from '../domains/extension'
-import AccountComboBox from '../components/AccountComboBox'
+import AccountSwitcher from '../components/AccountSwitcher'
 
 const Header = () => {
   // Manage switching to active multisig if the selected one becomes inactive
@@ -61,7 +61,7 @@ const Header = () => {
       </div>
 
       <div>
-        <AccountComboBox selectedAccount={selectedAccount?.injected} accounts={extensionAccounts} />
+        <AccountSwitcher selectedAccount={selectedAccount?.injected} accounts={extensionAccounts} />
       </div>
     </header>
   )

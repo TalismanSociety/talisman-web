@@ -22,7 +22,7 @@ const Sidebar = (props: { options: { name: string; icon: ReactNode; onClick?: ()
         width: 70px;
         @media ${device.md} {
           padding: 16px 5px;
-          width: 177px;
+          width: 200px;
         }
         @media ${device.lg} {
           padding: 16px;

@@ -37,16 +37,25 @@ const AccountRow = ({
         },
       })}
     >
-      <Identicon size={24} value={addressString} />
-      <p css={({ color }) => ({ marginTop: 4, color: color.lightGrey })}>
-        <span css={{ width: '100%' }}>{account.meta.name}</span>{' '}
-        <span css={({ color }) => ({ color: color.offWhite })}>({truncateMiddle(addressString, 4, 5, '...')})</span>
-      </p>
+      <Identicon size={24} css={{ width: 24, height: 24 }} value={addressString} />
+      <div css={({ color }) => ({ display: 'flex', gap: 4, marginTop: 4, whiteSpace: 'nowrap' })}>
+        <p
+          css={({ color }) => ({
+            maxWidth: 80,
+            color: color.lightGrey,
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+          })}
+        >
+          {account.meta.name}
+        </p>{' '}
+        <p css={({ color }) => ({ color: color.offWhite })}>({truncateMiddle(addressString, 4, 5, '...')})</p>
+      </div>
     </div>
   )
 }
 
-const AccountComboBox: React.FC<Props> = ({ accounts, onSelect, selectedAccount }) => {
+const AccountSwitcher: React.FC<Props> = ({ accounts, onSelect, selectedAccount }) => {
   const [expanded, setExpanded] = useState(false)
   const { signIn } = useSignIn()
   const ref = useRef(null)
@@ -106,15 +115,14 @@ const AccountComboBox: React.FC<Props> = ({ accounts, onSelect, selectedAccount 
       >
         <div css={{ display: 'flex', alignItems: 'center', gap: 8, marginRight: 8 }}>
           <Identicon size={40} value={selectedAccount.address.toSs58()} />
-          <div css={{ width: 160, p: { lineHeight: 1 } }}>
+          <div css={{ width: 160, p: { lineHeight: 1, paddingTop: 2 } }}>
             <p
               css={({ color }) => ({
                 whiteSpace: 'nowrap',
-                overflow: 'hidden',
+                overflowX: 'hidden',
                 textOverflow: 'ellipsis',
                 color: color.offWhite,
                 marginBottom: 4,
-                marginTop: 2,
               })}
             >
               {selectedAccount.meta.name ?? truncateMiddle(selectedAccount.address.toSs58(), 4, 6, '...')}
@@ -211,4 +219,4 @@ const AccountComboBox: React.FC<Props> = ({ accounts, onSelect, selectedAccount 
   )
 }
 
-export default AccountComboBox
+export default AccountSwitcher
