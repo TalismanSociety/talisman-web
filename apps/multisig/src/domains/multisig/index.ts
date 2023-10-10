@@ -99,6 +99,7 @@ export const selectedMultisigChainTokensState = selector<BaseToken[]>({
   key: 'SelectedMultisigChainTokens',
   get: ({ get }) => {
     const multisig = get(selectedMultisigState)
+    if (!multisig) return []
     const tokens = get(chainTokensByIdQuery(multisig.chain.squidIds.chainData))
     return tokens
   },
