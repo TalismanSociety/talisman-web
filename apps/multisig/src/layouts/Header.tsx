@@ -40,7 +40,7 @@ const Header = () => {
             <MultisigSelect
               multisigs={activeMultisigs}
               selectedMultisig={selectedMultisig}
-              onChange={({ id }) => setSelectedMultisigId(id)}
+              onChange={setSelectedMultisig}
             />
             <Button
               variant="secondary"

@@ -60,7 +60,7 @@ export const activeTeamsState = selector({
   },
 })
 
-export const activeMultisigTeamsState = selector({
+export const activeTeamsState = selector({
   key: 'activeTeams',
   get: ({ get }) => {
     const selectedAccount = get(selectedAccountState)
