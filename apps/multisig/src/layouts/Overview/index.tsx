@@ -25,6 +25,10 @@ const Overview = () => {
   useEffect(() => {
     const interval = setInterval(async () => {
       if (!addressIsProxyDelegateeReady) return
+
+      // DUMMY MULTISIG, dont need to detect or check for changes
+      if (selectedMultisig.signers.length === 0 && selectedMultisig.threshold === 0) return
+
       const { isProxyDelegatee, proxyDelegatees } = await addressIsProxyDelegatee(
         selectedMultisig.proxyAddress,
         selectedMultisig.multisigAddress

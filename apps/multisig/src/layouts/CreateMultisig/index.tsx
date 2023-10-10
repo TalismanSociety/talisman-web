@@ -8,14 +8,14 @@ import {
 import { useCreateProxy, useTransferProxyToMultisig } from '@domains/chains/extrinsics'
 import { useAddressIsProxyDelegatee } from '@domains/chains/storage-getters'
 import { accountsState } from '@domains/extension'
-import { AugmentedAccount, Multisig, createImportPath, multisigsState, selectedMultisigState } from '@domains/multisig'
+import { AugmentedAccount } from '@domains/multisig'
 import { css } from '@emotion/css'
 import { Address, toMultisigAddress } from '@util/addresses'
 import { device } from '@util/breakpoints'
 import { useEffect, useMemo, useState } from 'react'
 import { toast } from 'react-hot-toast'
 import { useNavigate } from 'react-router-dom'
-import { useRecoilState, useRecoilValue, useRecoilValueLoadable, useSetRecoilState } from 'recoil'
+import { useRecoilState, useRecoilValue, useRecoilValueLoadable } from 'recoil'
 
 import AddMembers from './AddMembers'
 import Confirmation from './Confirmation'
@@ -23,9 +23,9 @@ import NameVault from './NameVault'
 import SelectFirstChain from './SelectFirstChain'
 import SelectThreshold from './SelectThreshold'
 import SignTransactions from './SignTransactions'
-import VaultCreated from './VaultCreated'
 import { Layout } from '../Layout'
 import { selectedAccountState } from '@domains/auth'
+import { useCreateTeamOnHasura } from '../../domains/offchain-data'
 
 export enum CreateTransactionsStatus {
   NotStarted,
@@ -62,8 +62,6 @@ const CreateMultisig = () => {
   const [name, setName] = useState<string>('')
   const [chain, setChain] = useState<Chain>(firstChain)
   const [externalAccounts, setExternalAccounts] = useState<Address[]>([])
-  const [multisigs, setMultisigs] = useRecoilState(multisigsState)
-  const setSelectedMultisig = useSetRecoilState(selectedMultisigState)
   const [extensionAccounts] = useRecoilState(accountsState)
   const selectedSigner = useRecoilValue(selectedAccountState)
   const [excludedExtensionAccounts, setExcludedExtensionAccounts] = useState<Record<string, boolean>>({})
@@ -75,10 +73,10 @@ const CreateMultisig = () => {
   const { transferProxyToMultisig, ready: transferProxyToMultisigIsReady } = useTransferProxyToMultisig(chain)
   const [threshold, setThreshold] = useState<number>(2)
   const tokenWithPrice = useRecoilValueLoadable(tokenByIdWithPrice(chain.nativeToken.id))
-  const [proxyAddress, setProxyAddress] = useState<Address | undefined>()
   const existentialDepositLoadable = useRecoilValueLoadable(existentialDepositSelector(chain.squidIds.chainData))
   const proxyDepositTotalLoadable = useRecoilValueLoadable(proxyDepositTotalSelector(chain.squidIds.chainData))
   const { addressIsProxyDelegatee } = useAddressIsProxyDelegatee(chain)
+  const { createTeam } = useCreateTeamOnHasura()
 
   const navigate = useNavigate()
 
@@ -116,76 +114,58 @@ const CreateMultisig = () => {
     [includedAccounts, threshold]
   )
 
-  useEffect(() => {
-    if (step === Step.Transactions && createTransctionStatus === CreateTransactionsStatus.NotStarted) {
-      createProxy({
-        onSuccess: proxyAddress => {
-          setProxyAddress(proxyAddress)
-          setCreateTransactionsStatus(CreateTransactionsStatus.TransferringProxy)
-          transferProxyToMultisig(
-            selectedSigner?.injected.address,
-            proxyAddress,
-            multisigAddress,
-            existentialDepositLoadable.contents,
-            async _ => {
-              const { isProxyDelegatee } = await addressIsProxyDelegatee(proxyAddress, multisigAddress)
+  const handleCreateVault = () => {
+    setStep(Step.Transactions)
+    setCreateTransactionsStatus(CreateTransactionsStatus.CreatingProxy)
+    createProxy({
+      onSuccess: proxyAddress => {
+        setCreateTransactionsStatus(CreateTransactionsStatus.TransferringProxy)
+        transferProxyToMultisig(
+          selectedSigner?.injected.address,
+          proxyAddress,
+          multisigAddress,
+          existentialDepositLoadable.contents,
+          async _ => {
+            const { isProxyDelegatee } = await addressIsProxyDelegatee(proxyAddress, multisigAddress)
 
-              if (!isProxyDelegatee) {
-                const msg =
-                  'There was an issue configuring your proxy. Please submit a bug report with your signer address and any relevant transaction hashes.'
-                console.error(msg)
-                toast.error(msg)
-                setStep(Step.Confirmation)
-                return
-              }
-
-              // Woohoo!
-              const multisig: Multisig = {
-                name,
-                chain,
-                multisigAddress,
-                proxyAddress,
-                signers: includedAccounts.map(a => a.address),
-                threshold,
-              }
-              setMultisigs([...multisigs, multisig])
-              setSelectedMultisig(multisig)
-              setStep(Step.VaultCreated)
-            },
-            e => {
-              console.error(e)
-              toast.error(e)
+            if (!isProxyDelegatee) {
+              const msg =
+                'There was an issue configuring your proxy. Please submit a bug report with your signer address and any relevant transaction hashes.'
+              console.error(msg)
+              toast.error(msg)
               setStep(Step.Confirmation)
-              setCreateTransactionsStatus(CreateTransactionsStatus.NotStarted)
+              return
             }
-          )
-        },
-        onFailure: e => {
-          console.error(e)
-          toast.error(e)
-          setStep(Step.Confirmation)
-          setCreateTransactionsStatus(CreateTransactionsStatus.NotStarted)
-        },
-      })
-      setCreateTransactionsStatus(CreateTransactionsStatus.CreatingProxy)
-    }
-  }, [
-    addressIsProxyDelegatee,
-    chain,
-    createProxy,
-    createTransctionStatus,
-    existentialDepositLoadable.contents,
-    includedAccounts,
-    multisigAddress,
-    multisigs,
-    name,
-    selectedSigner?.injected.address,
-    setMultisigs,
-    setSelectedMultisig,
-    step,
-    threshold,
-    transferProxyToMultisig,
-  ])
+
+            const { team, error } = await createTeam({
+              name,
+              chain: chain.squidIds.chainData,
+              multisigConfig: { signers: includedAccounts.map(a => a.address.toSs58()), threshold },
+              delegateeAddress: multisigAddress.toSs58(),
+              proxiedAddress: proxyAddress.toSs58(),
+            })
+
+            if (!team || error) throw Error(error)
+            // vault created! `createTeam` will handle adding the team to the cache
+            // go to overview to check the newly created vault
+            navigate('/overview')
+          },
+          e => {
+            console.error(e)
+            toast.error(e)
+            setStep(Step.Confirmation)
+            setCreateTransactionsStatus(CreateTransactionsStatus.NotStarted)
+          }
+        )
+      },
+      onFailure: e => {
+        console.error(e)
+        toast.error(e)
+        setStep(Step.Confirmation)
+        setCreateTransactionsStatus(CreateTransactionsStatus.NotStarted)
+      },
+    })
+  }
 
   const contentHeight = calcContentHeight(step, augmentedAccounts.length)
   return (
@@ -244,7 +224,7 @@ const CreateMultisig = () => {
         ) : step === Step.Confirmation ? (
           <Confirmation
             onBack={() => setStep(Step.SelectFirstChain)}
-            onCreateVault={() => setStep(Step.Transactions)}
+            onCreateVault={handleCreateVault}
             onAlreadyHaveAnyProxy={async () => {
               const proxyAddressInput = prompt('Enter proxy address')
               if (!proxyAddressInput) return
@@ -263,15 +243,19 @@ const CreateMultisig = () => {
                 return
               }
 
-              // we're good! import
-              const path = createImportPath(
+              const { team, error } = await createTeam({
                 name,
-                includedAccounts.map(a => a.address),
-                threshold,
-                proxyAddress,
-                chain
-              )
-              navigate(`/${path}`)
+                chain: chain.squidIds.chainData,
+                multisigConfig: { signers: includedAccounts.map(a => a.address.toSs58()), threshold },
+                delegateeAddress: multisigAddress.toSs58(),
+                proxiedAddress: proxyAddress.toSs58(),
+              })
+
+              if (!team || error) {
+                toast.error(error ?? 'Failed to import vault, please try again later.')
+                return
+              }
+              navigate(`/overview`)
             }}
             selectedAccounts={includedAccounts}
             threshold={threshold}
@@ -285,15 +269,6 @@ const CreateMultisig = () => {
           />
         ) : step === Step.Transactions ? (
           <SignTransactions status={createTransctionStatus} />
-        ) : step === Step.VaultCreated ? (
-          <VaultCreated
-            goToVault={() => navigate('/overview')}
-            proxy={proxyAddress as Address}
-            name={name}
-            threshold={threshold}
-            signers={includedAccounts.map(a => a.address)}
-            chain={chain}
-          />
         ) : null}
       </div>
     </Layout>

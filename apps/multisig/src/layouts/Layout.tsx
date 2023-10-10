@@ -4,14 +4,14 @@ import Header from './Header'
 import Sidebar from './Sidebar'
 import Footer from './Footer'
 import NewTransactionModal from './Overview/NewTransactionModal'
-import { useRecoilValue } from 'recoil'
-import { activeMultisigsState } from '../domains/multisig'
 import NoVault from './CreateMultisig/NoVault'
+import { useTeamsBySigner } from '@domains/offchain-data'
+import { EyeOfSauronProgressIndicator } from '@talismn/ui'
 
 export const Layout: React.FC<
   React.PropsWithChildren & { selected?: string; requiresMultisig?: boolean; hideSideBar?: boolean }
 > = ({ children, selected, requiresMultisig, hideSideBar }) => {
-  const activeMultisigs = useRecoilValue(activeMultisigsState)
+  const teams = useTeamsBySigner()
   const navigate = useNavigate()
 
   return (
@@ -28,10 +28,17 @@ export const Layout: React.FC<
     >
       <Header />
       <div css={{ display: 'flex', flex: 1, gap: 16 }}>
-        {requiresMultisig && activeMultisigs.length === 0 ? (
-          <div css={{ display: 'flex', justifyContent: 'center', alignItems: 'flex-start', width: '100%' }}>
-            <NoVault />
-          </div>
+        {requiresMultisig && (!teams || teams.length === 0) ? (
+          // loading teams from backend
+          !teams ? (
+            <div css={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%' }}>
+              <EyeOfSauronProgressIndicator />
+            </div>
+          ) : (
+            <div css={{ display: 'flex', justifyContent: 'center', alignItems: 'flex-start', width: '100%' }}>
+              <NoVault />
+            </div>
+          )
         ) : (
           <>
             {!hideSideBar && (

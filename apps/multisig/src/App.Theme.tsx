@@ -268,6 +268,28 @@ export const globalStyle = (theme: Theme) => {
       font-size: 0.8em;
       opacity: 0.4;
     }
+
+    /* width */
+    ::-webkit-scrollbar {
+      width: 6px;
+      padding: 2px;
+    }
+
+    /* Track */
+    ::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0);
+    }
+
+    /* Handle */
+    ::-webkit-scrollbar-thumb {
+      background: rgba(${theme?.foreground}, 0.2);
+      border-radius: 4px;
+    }
+
+    /* Handle on hover */
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(${theme?.foreground}, 0.4);
+    }
   `
 }
 

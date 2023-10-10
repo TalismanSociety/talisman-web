@@ -10,7 +10,7 @@ const HASURA_ENDPOINT = process.env.REACT_APP_HASURA_ENDPOINT ?? ''
 // keyed by ss58 address, value is the auth token
 type AuthTokenBook = Record<string, string | undefined>
 
-type SignedInAccount = {
+export type SignedInAccount = {
   jwtToken: string
   injected: InjectedAccount
 }

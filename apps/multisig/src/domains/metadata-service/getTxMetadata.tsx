@@ -74,7 +74,6 @@ export async function getTxMetadataByPk(
         variables as Record<string, any>
       )) as TxMetadataByPkResponseRaw
       if (res.tx_metadata_by_pk === null) {
-        console.warn(`Metadata service has no value for ${transactionID}`)
         resolve(null)
         return
       }
