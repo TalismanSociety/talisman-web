@@ -5,14 +5,7 @@
 // TODO: use pjs types instead of force casting
 
 import { pjsApiSelector } from '@domains/chains/pjs-api'
-import {
-  Multisig,
-  TransactionApprovals,
-  activeMultisigsState,
-  combinedViewState,
-  multisigsState,
-  selectedMultisigState,
-} from '@domains/multisig'
+import { Multisig, TransactionApprovals, activeMultisigsState, aggregatedMultisigsState } from '@domains/multisig'
 import { StorageKey } from '@polkadot/types'
 import { Option } from '@polkadot/types-codec'
 import { BlockHash, BlockNumber, Multisig as OnChainMultisig, ProxyDefinition } from '@polkadot/types/interfaces'
@@ -89,19 +82,22 @@ export const rawPendingTransactionsSelector = selectorFamily({
       // This dependency allows effectively clearing the cache of this selector
       get(rawPendingTransactionsDependency)
 
-      const multisigs = get(multisigsState)
+      const multisigs = get(activeMultisigsState)
       const multisig = multisigs.find(
         m => m.multisigAddress.toPubKey() === multisigAddressPubKey && m.proxyAddress.toPubKey() === proxyAddressPubKey
       )
-      if (!multisig) throw Error('multisig must exist')
+
+      if (!multisig) return []
 
       const api = get(pjsApiSelector(multisig.chain.rpcs))
       await api.isReady
       const nativeToken = get(tokenByIdQuery(multisig.chain.nativeToken.id))
 
       if (!api.query.multisig?.multisigs) {
-        throw Error('multisig.multisigs must exist on api')
+        console.error(`multisig.multisigs pallet not found on ${multisig.chain.chainName} chain`)
+        return []
       }
+
       const keys = (await api.query.multisig.multisigs.keys(multisig.multisigAddress.bytes)) as unknown as StorageKey[]
       const pendingTransactions = (
         await Promise.all(
@@ -157,10 +153,7 @@ export const allRawPendingTransactionsSelector = selector({
   key: 'allRawMultisigPendingTransactionsSelector',
   get: async ({ get }): Promise<RawPendingTransaction[]> => {
     try {
-      const combinedView = get(combinedViewState)
-      const selectedMultisig = get(selectedMultisigState)
-      const activeMultisigs = get(activeMultisigsState)
-      const multisigs = combinedView ? activeMultisigs : [selectedMultisig]
+      const multisigs = get(aggregatedMultisigsState)
 
       const pendingTransactions = multisigs.map(curMultisig =>
         get(

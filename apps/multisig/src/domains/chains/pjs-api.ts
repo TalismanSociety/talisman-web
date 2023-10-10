@@ -1,9 +1,9 @@
-import { activeMultisigsState } from '@domains/multisig'
 import { ApiPromise, WsProvider } from '@polkadot/api'
 import toast from 'react-hot-toast'
 import { selector, selectorFamily } from 'recoil'
 
 import { Rpc } from './tokens'
+import { activeMultisigsState } from '../multisig'
 
 // Grab the pjs api from a selector. The selector caches the result based on the given rpc, so an
 // api will will only be created once per rpc.

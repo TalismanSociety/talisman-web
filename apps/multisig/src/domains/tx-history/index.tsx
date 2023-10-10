@@ -6,7 +6,7 @@ import {
   ExecutedAt,
   Multisig,
   Transaction,
-  activeMultisigsState,
+  aggregatedMultisigsState,
   combinedViewState,
   extrinsicToDecoded,
   selectedMultisigState,
@@ -83,11 +83,7 @@ export const rawConfirmedTransactionsSelector = selectorFamily({
 export const allRawConfirmedTransactionsSelector = selector({
   key: 'AllRawConfirmedTransactionsSelector',
   get: async ({ get }): Promise<[RawResponse, Multisig][]> => {
-    const selectedMultisig = get(selectedMultisigState)
-    const activeMultisigs = get(activeMultisigsState)
-    const combinedView = get(combinedViewState)
-
-    const multisigs = combinedView ? activeMultisigs : [selectedMultisig]
+    const multisigs = get(aggregatedMultisigsState)
     const rawResponses = multisigs.map(multisig => {
       const responses = get(
         rawConfirmedTransactionsSelector({

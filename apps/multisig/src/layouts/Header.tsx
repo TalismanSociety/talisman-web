@@ -1,9 +1,13 @@
 import Logo from '@components/Logo'
-import { activeMultisigsState, combinedViewState, selectedMultisigState } from '@domains/multisig'
+import {
+  activeMultisigsState,
+  combinedViewState,
+  selectedMultisigIdState,
+  selectedMultisigState,
+} from '@domains/multisig'
 import { css } from '@emotion/css'
 import { Button } from '@talismn/ui'
-import { useEffect } from 'react'
-import { useRecoilState, useRecoilValue } from 'recoil'
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil'
 import { MultisigSelect } from '../components/MultisigSelect'
 
 import { selectedAccountState } from '../domains/auth'
@@ -11,21 +15,12 @@ import { accountsState } from '../domains/extension'
 import AccountSwitcher from '../components/AccountSwitcher'
 
 const Header = () => {
-  // Manage switching to active multisig if the selected one becomes inactive
-  const [selectedMultisig, setSelectedMultisig] = useRecoilState(selectedMultisigState)
+  const selectedMultisig = useRecoilValue(selectedMultisigState)
+  const setSelectedMultisigId = useSetRecoilState(selectedMultisigIdState)
   const activeMultisigs = useRecoilValue(activeMultisigsState)
   const [combinedView, setCombinedView] = useRecoilState(combinedViewState)
   const selectedAccount = useRecoilValue(selectedAccountState)
   const extensionAccounts = useRecoilValue(accountsState)
-
-  useEffect(() => {
-    if (
-      activeMultisigs[0] &&
-      !activeMultisigs.find(multisig => multisig.proxyAddress.isEqual(selectedMultisig?.proxyAddress))
-    ) {
-      setSelectedMultisig(activeMultisigs[0])
-    }
-  })
 
   return (
     <header
@@ -51,7 +46,7 @@ const Header = () => {
             <MultisigSelect
               multisigs={activeMultisigs}
               selectedMultisig={selectedMultisig}
-              onChange={setSelectedMultisig}
+              onChange={({ id }) => setSelectedMultisigId(id)}
             />
             <Button
               variant="secondary"

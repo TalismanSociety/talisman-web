@@ -4,6 +4,7 @@ import { rawPendingTransactionsDependency, useAddressIsProxyDelegatee } from '@d
 import {
   Transaction,
   multisigsState,
+  selectedMultisigIdState,
   selectedMultisigState,
   useNextTransactionSigner,
   usePendingTransactions,
@@ -16,7 +17,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { useEffect, useMemo, useState } from 'react'
 import { toast } from 'react-hot-toast'
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom'
-import { useRecoilState, useRecoilValueLoadable, useSetRecoilState } from 'recoil'
+import { useRecoilState, useRecoilValue, useRecoilValueLoadable, useSetRecoilState } from 'recoil'
 
 import { FullScreenDialogContents, FullScreenDialogTitle } from './FullScreenSummary'
 import TransactionSummaryRow from './TransactionSummaryRow'
@@ -42,7 +43,8 @@ const TransactionsList = ({ transactions }: { transactions: Transaction[] }) => 
   const groupedTransactions = useMemo(() => {
     return groupTransactionsByDay(transactions)
   }, [transactions])
-  const [_selectedMultisig, setSelectedMultisig] = useRecoilState(selectedMultisigState)
+  const setSelectedMultisigId = useSetRecoilState(selectedMultisigIdState)
+  const _selectedMultisig = useRecoilValue(selectedMultisigState)
   const openTransaction = useMemo(
     () => transactions.find(t => t.hash === extractHash(location)),
     [transactions, location]
@@ -159,6 +161,13 @@ const TransactionsList = ({ transactions }: { transactions: Transaction[] }) => 
                               multisig.proxyAddress,
                               expectedNewMultisigAddress
                             )
+                            // rather than doing this in the backend, each team has a 'resync' function
+                            // 1. that makes a backend call
+                            // 2. backend call will find the latest config change
+                            // 3. compute the new multisig address
+                            // 4. backend test if the multisig address is proxy of the proxied account
+                            // 5. if it is, update the multisig config and delagatee addres
+                            // 6. else mark this as a bad team (maybe show a page where they can correct it)
                             if (isProxyDelegatee) {
                               const otherMultisigs = multisigs.filter(
                                 m => !m.multisigAddress.isEqual(multisig.multisigAddress)
@@ -171,7 +180,7 @@ const TransactionsList = ({ transactions }: { transactions: Transaction[] }) => 
                               }
                               // Disable these to test that updating from the metadata service works
                               setMultisigs([...otherMultisigs, newMultisig])
-                              setSelectedMultisig(newMultisig)
+                              setSelectedMultisigId(newMultisig.id)
                             } else {
                               toast.error(
                                 'It appears there was an issue updating your multisig configuration. Please check the transaction output.'

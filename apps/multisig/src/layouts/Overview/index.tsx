@@ -1,7 +1,7 @@
 import { useAugmentedBalances } from '@domains/balances'
 import { useAddressIsProxyDelegatee } from '@domains/chains/storage-getters'
 import { getAllChangeAttempts } from '@domains/metadata-service/getAllChangeAttempts'
-import { multisigsState, selectedMultisigState } from '@domains/multisig'
+import { multisigsState, useSelectedMultisig } from '@domains/multisig'
 import { toMultisigAddress } from '@util/addresses'
 import { device } from '@util/breakpoints'
 import { useEffect } from 'react'
@@ -15,7 +15,7 @@ import { css } from '@emotion/css'
 import BetaNotice from './BetaNotice'
 
 const Overview = () => {
-  const [selectedMultisig, setSelectedMultisig] = useRecoilState(selectedMultisigState)
+  const [selectedMultisig, setSelectedMultisig] = useSelectedMultisig()
   const [multisigs, setMultisigs] = useRecoilState(multisigsState)
   const { addressIsProxyDelegatee, ready: addressIsProxyDelegateeReady } = useAddressIsProxyDelegatee(
     selectedMultisig.chain

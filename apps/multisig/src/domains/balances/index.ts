@@ -1,5 +1,5 @@
 import { BaseToken, supportedChains } from '@domains/chains'
-import { activeMultisigsState, combinedViewState, selectedMultisigState } from '@domains/multisig'
+import { aggregatedMultisigsState, selectedMultisigState } from '@domains/multisig'
 import { Balances } from '@talismn/balances'
 import { useAllAddresses, useBalances, useTokens } from '@talismn/balances-react'
 import { groupBy } from 'lodash'
@@ -53,16 +53,11 @@ export const useAugmentedBalances = () => {
 
 export const BalancesWatcher = () => {
   const tokens = useTokens(true)
-  const combinedView = useRecoilValue(combinedViewState)
+  const multisigs = useRecoilValue(aggregatedMultisigsState)
   const selectedMultisig = useRecoilValue(selectedMultisigState)
-  const activeMultisigs = useRecoilValue(activeMultisigsState)
   const setBalances = useSetRecoilState(balancesState)
   const [, setAllAddresses] = useAllAddresses()
 
-  const multisigs = useMemo(
-    () => (combinedView ? activeMultisigs : [selectedMultisig]),
-    [combinedView, activeMultisigs, selectedMultisig]
-  )
   const addresses = useMemo(() => multisigs.map(({ proxyAddress }) => proxyAddress), [multisigs])
 
   useEffect(() => {
@@ -81,7 +76,7 @@ export const BalancesWatcher = () => {
           return [[token.id, multisigs.map(({ proxyAddress }) => proxyAddress.toSs58(selectedMultisig.chain))]]
         })
       ),
-    [multisigsByChain, tokens, selectedMultisig]
+    [multisigsByChain, selectedMultisig.chain, tokens]
   )
 
   const balances = useBalances(addressesByToken)

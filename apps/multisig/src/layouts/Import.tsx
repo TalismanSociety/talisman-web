@@ -2,7 +2,7 @@ import { Member } from '@components/Member'
 import { Chain, supportedChains } from '@domains/chains'
 import { useAddressIsProxyDelegatee } from '@domains/chains/storage-getters'
 import { accountsState, extensionAllowedState, extensionLoadingState } from '@domains/extension'
-import { Multisig, multisigsState, selectedMultisigState } from '@domains/multisig'
+import { Multisig, multisigsState, selectedMultisigIdState } from '@domains/multisig'
 import { css } from '@emotion/css'
 import { Loader } from '@talismn/icons'
 import { Button, EyeOfSauronProgressIndicator } from '@talismn/ui'
@@ -14,11 +14,12 @@ import toast from 'react-hot-toast'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useRecoilState, useSetRecoilState } from 'recoil'
 
+/** @deprecated since the intro of a backend, vaults are automatically imported and you don't have to import via link */
 const Import = () => {
   const navigate = useNavigate()
   const location = useLocation()
   const [multisigs, setMultisigs] = useRecoilState(multisigsState)
-  const setSelectedMultisig = useSetRecoilState(selectedMultisigState)
+  const setSelectedMultisigId = useSetRecoilState(selectedMultisigIdState)
   const [extensionAccounts] = useRecoilState(accountsState)
   const [extensionLoading] = useRecoilState(extensionLoadingState)
   const [extensionAllowed, setExtensionAllowed] = useRecoilState(extensionAllowedState)
@@ -99,6 +100,7 @@ const Import = () => {
         }
 
         const multisig: Multisig = {
+          id: `${multisigAddress.toSs58()}-${proxyAddress.toSs58()}-${chain.squidIds.chainData}`,
           name,
           chain,
           multisigAddress,
@@ -107,7 +109,7 @@ const Import = () => {
           threshold: thresholdNumber,
         }
         setMultisigs([...multisigs, multisig])
-        setSelectedMultisig(multisig)
+        setSelectedMultisigId(multisig.id)
         navigate('/overview')
         toast.success('Multisig imported successfully! 🥳', { duration: 5000 })
       }

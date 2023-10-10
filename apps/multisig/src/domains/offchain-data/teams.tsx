@@ -1,12 +1,12 @@
 import { gql } from 'graphql-request'
-import { atom, useRecoilValue, useSetRecoilState } from 'recoil'
+import { atom, selector, useRecoilValue, useSetRecoilState } from 'recoil'
 import { SignedInAccount, selectedAccountState } from '../auth'
 import { useCallback, useEffect, useState } from 'react'
 import { requestSignetBackend } from './hasura'
 import { Address } from '@util/addresses'
 import { Chain, supportedChains } from '../chains'
 import toast from 'react-hot-toast'
-import persistAtom from '../persist'
+import { Multisig, selectedMultisigIdState } from '../multisig'
 
 type RawTeam = {
   id: string
@@ -17,33 +17,47 @@ type RawTeam = {
   chain: string
 }
 
-// In the future, a Team can represent a few different setups:
-// - multisig -> pure proxy: requires chain, multisigConfig, proxiedAddress and delegateeAddress to be defined
-// - pure proxy -> pure proxy: leave out multisigConfig, check proxiedAddress and delegateeAddress on chain
-// - just multisig -> leave out proxiedAddress
-// - and etc
-// For now, we only support multisig -> pure proxy
-export type Team = {
-  id: string
-  name: string
-  multisigConfig: {
-    threshold: number
-    signers: Address[]
-  }
-  chain: Chain
-  proxiedAddress: Address
-  delegateeAddress: Address
-}
+export class Team {
+  constructor(
+    public id: string,
+    public name: string,
+    public multisigConfig: {
+      threshold: number
+      signers: Address[]
+    },
+    public chain: Chain,
+    public proxiedAddress: Address,
+    public delegateeAddress: Address
+  ) {}
 
-export const selectedTeamIdState = atom<string | undefined>({
-  key: 'selectedTeamId',
-  default: undefined,
-  effects_UNSTABLE: [persistAtom],
-})
+  toMultisig(): Multisig {
+    return {
+      id: this.id,
+      name: this.name,
+      multisigAddress: this.delegateeAddress,
+      proxyAddress: this.proxiedAddress,
+      signers: this.multisigConfig.signers,
+      threshold: this.multisigConfig.threshold,
+      chain: this.chain,
+    }
+  }
+}
 
 export const teamsBySignerState = atom<Record<string, Team[]>>({
   key: 'teamsBySigner',
   default: {},
+})
+
+export const activeMultisigTeamsState = selector({
+  key: 'activeTeams',
+  get: ({ get }) => {
+    const selectedAccount = get(selectedAccountState)
+    const teamsBySigner = get(teamsBySignerState)
+
+    if (!selectedAccount) return []
+
+    return teamsBySigner[selectedAccount.injected.address.toSs58()]
+  },
 })
 
 const TEAM_BY_SIGNER_QUERY = gql`
@@ -93,17 +107,17 @@ const parseTeam = (rawTeam: RawTeam): { team?: Team; error?: string } => {
       return { error: `Invalid Multisig Config: Invalid threshold in ${rawTeam.id}` }
     }
     return {
-      team: {
-        id: rawTeam.id,
-        name: rawTeam.name,
-        multisigConfig: {
+      team: new Team(
+        rawTeam.id,
+        rawTeam.name,
+        {
           threshold: rawTeam.multisig_config.threshold,
           signers,
         },
         chain,
-        delegateeAddress,
         proxiedAddress,
-      },
+        delegateeAddress
+      ),
     }
   } catch (e) {
     console.error(e)
@@ -161,28 +175,11 @@ export const TeamsWatcher: React.FC = () => {
   return null
 }
 
-export const useTeamsBySigner = (): Team[] | undefined => {
-  const selectedAccount = useRecoilValue(selectedAccountState)
-  const teamsBySigner = useRecoilValue(teamsBySignerState)
-
-  if (!selectedAccount) return []
-
-  return teamsBySigner[selectedAccount.injected.address.toSs58()]
-}
-
-export const useSelectedTeam = (): Team | undefined => {
-  const teams = useTeamsBySigner()
-  const selectedTeamId = useRecoilValue(selectedTeamIdState)
-  const selectedTeam = teams?.find(team => team.id === selectedTeamId)
-
-  return selectedTeam ?? teams?.[0]
-}
-
 export const useCreateTeamOnHasura = () => {
   const signer = useRecoilValue(selectedAccountState)
   const [creatingTeam, setCreatingTeam] = useState(false)
   const setTeamsBySigner = useSetRecoilState(teamsBySignerState)
-  const setSelectedTeamId = useSetRecoilState(selectedTeamIdState)
+  const setSelectedMultisigId = useSetRecoilState(selectedMultisigIdState)
 
   const createTeam = useCallback(
     async (teamInput: {
@@ -228,20 +225,20 @@ export const useCreateTeamOnHasura = () => {
           signer
         )
 
-        const createdTeam = res.data?.insertMultisigproxy?.team
+        const createdTeam = res.data?.insertMultisigProxy?.team
         const { team, error } = parseTeam(createdTeam)
         if (!team || error) return { error: error ?? 'Failed to store team data.' }
 
         setTeamsBySigner(teamsBySigner => {
           const newTeamsBySigner = { ...teamsBySigner }
           // update team for every signed in accounts
-          createdTeam.multisigConfig.signers.forEach((signer: string) => {
-            const teams = newTeamsBySigner[signer]
-            if (teams) newTeamsBySigner[signer] = [...teams, createdTeam]
+          team.multisigConfig.signers.forEach(signer => {
+            const teams = newTeamsBySigner[signer.toSs58()]
+            if (teams) newTeamsBySigner[signer.toSs58()] = [...teams, team]
           })
           return newTeamsBySigner
         })
-        setSelectedTeamId(team.id)
+        setSelectedMultisigId(team.id)
         return { team }
       } catch (e: any) {
         console.error(e)
@@ -250,7 +247,7 @@ export const useCreateTeamOnHasura = () => {
         setCreatingTeam(false)
       }
     },
-    [creatingTeam, setSelectedTeamId, setTeamsBySigner, signer]
+    [creatingTeam, setSelectedMultisigId, setTeamsBySigner, signer]
   )
 
   return { createTeam, creatingTeam }

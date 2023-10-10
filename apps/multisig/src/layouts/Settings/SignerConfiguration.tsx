@@ -17,13 +17,13 @@ import { Address, toMultisigAddress } from '@util/addresses'
 import { useEffect, useMemo, useState } from 'react'
 import toast from 'react-hot-toast'
 import { useNavigate } from 'react-router-dom'
-import { useRecoilState, useRecoilValueLoadable } from 'recoil'
+import { useRecoilValue, useRecoilValueLoadable } from 'recoil'
 
 import { FullScreenDialogContents, FullScreenDialogTitle } from '../../layouts/Overview/Transactions/FullScreenSummary'
 import { BackButton } from '.'
 
 const ManageSignerConfiguration = () => {
-  const [selectedMultisig] = useRecoilState(selectedMultisigState)
+  const selectedMultisig = useRecoilValue(selectedMultisigState)
   const [newMembers, setNewMembers] = useState(selectedMultisig.signers)
   const [newThreshold, setNewThreshold] = useState(selectedMultisig.threshold)
   const apiLoadable = useRecoilValueLoadable(pjsApiSelector(selectedMultisig.chain.rpcs))

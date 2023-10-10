@@ -1,4 +1,4 @@
-export const METADATA_SERVICE_URL = 'https://signet-metadata.talisman.xyz/v1/graphql'
+export const METADATA_SERVICE_URL = `${process.env.REACT_APP_HASURA_ENDPOINT}/v1/graphql`
 
 export * from './insertTxMetadata'
 export * from './getTxMetadata'

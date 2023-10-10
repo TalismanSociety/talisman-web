@@ -18,7 +18,7 @@ import { makeTransactionID } from '@util/misc'
 import BN from 'bn.js'
 import queryString from 'query-string'
 import { useCallback, useEffect, useState } from 'react'
-import { atom, selector, useRecoilState, useRecoilValue, useRecoilValueLoadable } from 'recoil'
+import { atom, selector, useRecoilState, useRecoilValue, useRecoilValueLoadable, useSetRecoilState } from 'recoil'
 
 import persistAtom from '../persist'
 import { VoteDetails, mapConvictionToIndex } from '../referenda'
@@ -33,6 +33,7 @@ export const combinedViewState = atom<boolean>({
 })
 
 const DUMMY_MULTISIG: Multisig = {
+  id: 'DUMMY_MULTISIG',
   name: 'DUMMY_MULTISIG',
   chain: supportedChains[0] as Chain,
   signers: [],
@@ -55,10 +56,9 @@ export const txOffchainMetadataState = atom<{ [key: string]: [TxOffchainMetadata
   effects_UNSTABLE: [persistAtom],
 })
 
-// Selecting one of these happens in the Overview Header.
-export const selectedMultisigState = atom<Multisig>({
-  key: 'SelectedMultisig',
-  default: DUMMY_MULTISIG,
+export const selectedMultisigIdState = atom<string | undefined>({
+  key: 'SelectedMultisigId',
+  default: undefined,
   effects_UNSTABLE: [persistAtom],
 })
 
@@ -75,14 +75,48 @@ export const activeMultisigsState = selector({
   },
 })
 
+export const selectedMultisigState = selector({
+  key: 'SelectedMultisig',
+  get: ({ get }) => {
+    const multisigs = get(activeMultisigsState)
+    const selectedMultisigId = get(selectedMultisigIdState)
+    return multisigs.find(multisig => multisig.id === selectedMultisigId) ?? multisigs[0] ?? DUMMY_MULTISIG
+  },
+})
+
+export const aggregatedMultisigsState = selector({
+  key: 'aggregatedMultisigs',
+  get: ({ get }) => {
+    const combinedView = get(combinedViewState)
+    const selectedMultisig = get(selectedMultisigState)
+    const activeMultisigs = get(activeMultisigsState)
+    return combinedView ? activeMultisigs ?? [] : selectedMultisig ? [selectedMultisig] : []
+  },
+})
+
 export const selectedMultisigChainTokensState = selector<BaseToken[]>({
   key: 'SelectedMultisigChainTokens',
   get: ({ get }) => {
     const multisig = get(selectedMultisigState)
+    if (!multisig) return []
     const tokens = get(chainTokensByIdQuery(multisig.chain.squidIds.chainData))
     return tokens
   },
 })
+
+export const useSelectedMultisig = (): [Multisig, (multisig: Multisig) => void] => {
+  const selectedMultisig = useRecoilValue(selectedMultisigState)
+  const setSelectedMultisigId = useSetRecoilState(selectedMultisigIdState)
+
+  const setSelectedMultisig = useCallback(
+    (multisig: Multisig) => {
+      setSelectedMultisigId(multisig.id)
+    },
+    [setSelectedMultisigId]
+  )
+
+  return [selectedMultisig, setSelectedMultisig]
+}
 
 // Returns the next connected signer that needs to sign the transaction,
 // or undefined if there are none that can sign
@@ -121,6 +155,7 @@ export interface AugmentedAccount {
 }
 
 export interface Multisig {
+  id: string
   name: string
   chain: Chain
   multisigAddress: Address
@@ -515,7 +550,7 @@ export const usePendingTransactions = () => {
 
   useEffect(() => {
     setLoading(true)
-  }, [selectedMultisig.multisigAddress, combinedView])
+  }, [selectedMultisig?.multisigAddress, combinedView])
 
   const ready =
     allRawPending.state === 'hasValue' &&
