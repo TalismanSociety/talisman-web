@@ -118,6 +118,27 @@ export const useSelectedMultisig = (): [Multisig, (multisig: Multisig) => void] 
   return [selectedMultisig, setSelectedMultisig]
 }
 
+export const useUpsertMultisig = () => {
+  const setMultisigs = useSetRecoilState(multisigsState)
+  const upsertMultisig = useCallback(
+    (multisig: Multisig) => {
+      setMultisigs(multisigs => {
+        const newMultisigs = [...multisigs]
+        const multisigIndex = multisigs.findIndex(m => m.id === multisig.id)
+        if (multisigIndex === -1) {
+          newMultisigs.push(multisig)
+        } else {
+          newMultisigs[multisigIndex] = multisig
+        }
+        return newMultisigs
+      })
+    },
+    [setMultisigs]
+  )
+
+  return upsertMultisig
+}
+
 // Returns the next connected signer that needs to sign the transaction,
 // or undefined if there are none that can sign
 export const useNextTransactionSigner = (approvals: TransactionApprovals | undefined) => {

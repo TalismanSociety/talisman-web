@@ -6,7 +6,7 @@ import { requestSignetBackend } from './hasura'
 import { Address } from '@util/addresses'
 import { Chain, supportedChains } from '../chains'
 import toast from 'react-hot-toast'
-import { Multisig, selectedMultisigIdState } from '../multisig'
+import { Multisig, selectedMultisigIdState, useUpsertMultisig } from '../multisig'
 
 type RawTeam = {
   id: string
@@ -48,7 +48,7 @@ export const teamsBySignerState = atom<Record<string, Team[]>>({
   default: {},
 })
 
-export const activeMultisigTeamsState = selector({
+export const activeTeamsState = selector({
   key: 'activeTeams',
   get: ({ get }) => {
     const selectedAccount = get(selectedAccountState)
@@ -128,6 +128,7 @@ const parseTeam = (rawTeam: RawTeam): { team?: Team; error?: string } => {
 export const TeamsWatcher: React.FC = () => {
   const selectedAccount = useRecoilValue(selectedAccountState)
   const setTeamsBySigner = useSetRecoilState(teamsBySignerState)
+  const upsertMultisig = useUpsertMultisig()
 
   const fetchTeams = useCallback(
     async (account: SignedInAccount) => {
@@ -143,6 +144,9 @@ export const TeamsWatcher: React.FC = () => {
             continue
           }
           validTeams.push(team)
+
+          // sync teams from backend to multisigs list
+          upsertMultisig(team.toMultisig())
         }
 
         setTeamsBySigner(teamsBySigner => {
@@ -155,7 +159,7 @@ export const TeamsWatcher: React.FC = () => {
         toast.error(error?.message || `Failed to fetch teams for ${account.injected.address.toSs58()}`)
       }
     },
-    [setTeamsBySigner]
+    [setTeamsBySigner, upsertMultisig]
   )
 
   useEffect(() => {
@@ -179,6 +183,7 @@ export const useCreateTeamOnHasura = () => {
   const signer = useRecoilValue(selectedAccountState)
   const [creatingTeam, setCreatingTeam] = useState(false)
   const setTeamsBySigner = useSetRecoilState(teamsBySignerState)
+  const upsertMultisig = useUpsertMultisig()
   const setSelectedMultisigId = useSetRecoilState(selectedMultisigIdState)
 
   const createTeam = useCallback(
@@ -229,6 +234,7 @@ export const useCreateTeamOnHasura = () => {
         const { team, error } = parseTeam(createdTeam)
         if (!team || error) return { error: error ?? 'Failed to store team data.' }
 
+        upsertMultisig(team.toMultisig())
         setTeamsBySigner(teamsBySigner => {
           const newTeamsBySigner = { ...teamsBySigner }
           // update team for every signed in accounts
@@ -247,7 +253,7 @@ export const useCreateTeamOnHasura = () => {
         setCreatingTeam(false)
       }
     },
-    [creatingTeam, setSelectedMultisigId, setTeamsBySigner, signer]
+    [creatingTeam, setSelectedMultisigId, setTeamsBySigner, signer, upsertMultisig]
   )
 
   return { createTeam, creatingTeam }

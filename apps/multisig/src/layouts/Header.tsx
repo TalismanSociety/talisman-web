@@ -1,13 +1,8 @@
 import Logo from '@components/Logo'
-import {
-  activeMultisigsState,
-  combinedViewState,
-  selectedMultisigIdState,
-  selectedMultisigState,
-} from '@domains/multisig'
+import { activeMultisigsState, combinedViewState, useSelectedMultisig } from '@domains/multisig'
 import { css } from '@emotion/css'
 import { Button } from '@talismn/ui'
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil'
+import { useRecoilState, useRecoilValue } from 'recoil'
 import { MultisigSelect } from '../components/MultisigSelect'
 
 import { selectedAccountState } from '../domains/auth'
@@ -15,8 +10,7 @@ import { accountsState } from '../domains/extension'
 import AccountSwitcher from '../components/AccountSwitcher'
 
 const Header = () => {
-  const selectedMultisig = useRecoilValue(selectedMultisigState)
-  const setSelectedMultisigId = useSetRecoilState(selectedMultisigIdState)
+  const [selectedMultisig, setSelectedMultisig] = useSelectedMultisig()
   const activeMultisigs = useRecoilValue(activeMultisigsState)
   const [combinedView, setCombinedView] = useRecoilState(combinedViewState)
   const selectedAccount = useRecoilValue(selectedAccountState)
@@ -46,7 +40,7 @@ const Header = () => {
             <MultisigSelect
               multisigs={activeMultisigs}
               selectedMultisig={selectedMultisig}
-              onChange={({ id }) => setSelectedMultisigId(id)}
+              onChange={setSelectedMultisig}
             />
             <Button
               variant="secondary"

@@ -8,11 +8,13 @@ import NoVault from './CreateMultisig/NoVault'
 import { EyeOfSauronProgressIndicator } from '@talismn/ui'
 import { useRecoilValue } from 'recoil'
 import { activeMultisigsState } from '@domains/multisig'
+import { activeTeamsState } from '../domains/offchain-data'
 
 export const Layout: React.FC<
   React.PropsWithChildren & { selected?: string; requiresMultisig?: boolean; hideSideBar?: boolean }
 > = ({ children, selected, requiresMultisig, hideSideBar }) => {
   const multisigs = useRecoilValue(activeMultisigsState)
+  const activeTeams = useRecoilValue(activeTeamsState)
   const navigate = useNavigate()
 
   return (
@@ -29,9 +31,9 @@ export const Layout: React.FC<
     >
       <Header />
       <div css={{ display: 'flex', flex: 1, gap: 16 }}>
-        {requiresMultisig && (!multisigs || multisigs.length === 0) ? (
+        {requiresMultisig && (!activeTeams || multisigs.length === 0) ? (
           // loading multisigs from backend
-          !multisigs ? (
+          !activeTeams ? (
             <div css={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%' }}>
               <EyeOfSauronProgressIndicator />
             </div>

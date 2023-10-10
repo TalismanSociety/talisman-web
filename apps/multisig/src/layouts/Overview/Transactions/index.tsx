@@ -4,10 +4,9 @@ import { rawPendingTransactionsDependency, useAddressIsProxyDelegatee } from '@d
 import {
   Transaction,
   multisigsState,
-  selectedMultisigIdState,
-  selectedMultisigState,
   useNextTransactionSigner,
   usePendingTransactions,
+  useSelectedMultisig,
 } from '@domains/multisig'
 import { rawConfirmedTransactionsDependency, useConfirmedTransactions } from '@domains/tx-history'
 import { css } from '@emotion/css'
@@ -17,7 +16,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { useEffect, useMemo, useState } from 'react'
 import { toast } from 'react-hot-toast'
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom'
-import { useRecoilState, useRecoilValue, useRecoilValueLoadable, useSetRecoilState } from 'recoil'
+import { useRecoilState, useRecoilValueLoadable, useSetRecoilState } from 'recoil'
 
 import { FullScreenDialogContents, FullScreenDialogTitle } from './FullScreenSummary'
 import TransactionSummaryRow from './TransactionSummaryRow'
@@ -43,8 +42,7 @@ const TransactionsList = ({ transactions }: { transactions: Transaction[] }) => 
   const groupedTransactions = useMemo(() => {
     return groupTransactionsByDay(transactions)
   }, [transactions])
-  const setSelectedMultisigId = useSetRecoilState(selectedMultisigIdState)
-  const _selectedMultisig = useRecoilValue(selectedMultisigState)
+  const [_selectedMultisig, setSelectedMultisig] = useSelectedMultisig()
   const openTransaction = useMemo(
     () => transactions.find(t => t.hash === extractHash(location)),
     [transactions, location]
@@ -180,7 +178,7 @@ const TransactionsList = ({ transactions }: { transactions: Transaction[] }) => 
                               }
                               // Disable these to test that updating from the metadata service works
                               setMultisigs([...otherMultisigs, newMultisig])
-                              setSelectedMultisigId(newMultisig.id)
+                              setSelectedMultisig(newMultisig)
                             } else {
                               toast.error(
                                 'It appears there was an issue updating your multisig configuration. Please check the transaction output.'
