@@ -2,13 +2,12 @@ import { ApiPromise, WsProvider } from '@polkadot/api'
 import { atomFamily } from 'recoil'
 
 import { useSubstrateApiEndpoint } from '..'
-import { customDerives } from '../utils/customDerives'
 
 export const substrateApiState = atomFamily<ApiPromise, string | undefined>({
   key: 'SubstrateApiState',
   effects: endpoint => [
     ({ setSelf }) => {
-      const apiPromise = ApiPromise.create({ derives: customDerives, provider: new WsProvider(endpoint) })
+      const apiPromise = ApiPromise.create({ provider: new WsProvider(endpoint) })
 
       setSelf(apiPromise)
 

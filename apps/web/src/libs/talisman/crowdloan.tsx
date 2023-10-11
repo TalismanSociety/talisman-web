@@ -172,12 +172,6 @@ export const Provider = ({ children }: PropsWithChildren) => {
         .map(async ({ api, chain }) => {
           const bestNumber = await api.derive.chain.bestNumber()
 
-          // const funds = await (
-          //   await api.at(chain.crowdloanContributionBatches![0]!.blockHash)
-          // ).query.crowdloan.funds.entries()
-          // const paraIds = await (await api.at(chain.crowdloanContributionBatches![0]!.blockHash)).query.crowdloan.funds
-          //   .keys()
-          //   .then(fund => fund.map(y => y.args[0]))
           const funds = await api.query.crowdloan.funds.entries()
           const paraIds = await api.query.crowdloan.funds.keys().then(fund => fund.map(y => y.args[0]))
           const leases = await api.query.slots.leases.multi(paraIds)
