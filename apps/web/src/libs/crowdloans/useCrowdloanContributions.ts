@@ -1,7 +1,7 @@
 import { selectedSubstrateAccountsState } from '@domains/accounts'
-import { chains } from '@domains/chains'
 import { substrateApiState } from '@domains/common'
 import { SupportedRelaychains } from '@libs/talisman/util/_config'
+import type { Balance as PjsBalance } from '@polkadot/types/interfaces'
 import { u8aToHex } from '@polkadot/util'
 import { decodeAddress } from '@polkadot/util-crypto'
 import { Maybe } from '@util/monads'
@@ -30,7 +30,7 @@ export function useCrowdloanContributions({
 } {
   // TODO: clean me or kill me
   const apisLoadable = useRecoilValueLoadable(
-    waitForAll([substrateApiState(chains[0].rpc), substrateApiState(chains[1].rpc)])
+    waitForAll(Object.values(SupportedRelaychains).map(relayChain => substrateApiState(relayChain.rpc)))
   )
 
   const allAccounts = useRecoilValue(selectedSubstrateAccountsState)
@@ -42,9 +42,10 @@ export function useCrowdloanContributions({
       void (async () => {
         setHydrated(false)
         const results = await Promise.all(
-          Object.values(SupportedRelaychains).map(async relayChain => {
+          Object.values(SupportedRelaychains).map(async (relayChain, index) => {
             const apis = await apisLoadable.toPromise()
-            const api = relayChain.id === 0 ? apis[0] : apis[1]
+            const api = apis[index]
+            if (!api) return []
 
             const paraIds =
               crowdloans?.map(x => Maybe.of(x.split('-')[1]).mapOr(0, x => parseInt(x))) ??
@@ -54,7 +55,32 @@ export function useCrowdloanContributions({
             const accountsHex = (accounts ?? allAccounts.map(x => x.address)).map(a => u8aToHex(decodeAddress(a))) ?? []
 
             const contributions = await Promise.all(
-              paraIds.map(async id => await api.derive.crowdloan.ownContributions(id, accountsHex))
+              paraIds.map(async paraId => {
+                // a map which will contain all contributions - old deleted contribuions as well as the latest ones
+                const contributions = new Map<string, PjsBalance>()
+
+                // get old contributions which have since been deleted
+                for (const { blockHash } of relayChain.crowdloanContributionBatches
+                  ?.slice()
+                  .sort((a, b) => a.blockHeight - b.blockHeight) ?? []) {
+                  Object.entries(
+                    await api.derive.crowdloanAtBlock.ownContributions(blockHash, paraId, accountsHex)
+                  ).forEach(([account, contributed]) => {
+                    if (contributed.toString() === '0') return
+                    contributions.set(account, contributed)
+                  })
+                }
+
+                // get latest contributions
+                Object.entries(await api.derive.crowdloan.ownContributions(paraId, accountsHex)).forEach(
+                  ([account, contributed]) => {
+                    if (contributed.toString() === '0') return
+                    contributions.set(account, contributed)
+                  }
+                )
+
+                return Object.fromEntries(contributions.entries())
+              })
             )
 
             // TODO: axe everything this is only to support legacy UI

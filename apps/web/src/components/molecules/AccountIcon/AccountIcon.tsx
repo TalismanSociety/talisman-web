@@ -3,7 +3,7 @@ import { useTheme } from '@emotion/react'
 import { Eye } from '@talismn/icons'
 import { Badge, BadgedBox, Identicon, useSurfaceColorAtElevation, type IdenticonProps, Tooltip } from '@talismn/ui'
 
-export type AccountIconProps = Omit<IdenticonProps, 'value'> & { account: Account }
+export type AccountIconProps = Omit<IdenticonProps, 'value'> & { account: Pick<Account, 'readonly' | 'address'> }
 
 const AccountIcon = ({ account, ...props }: AccountIconProps) => {
   const theme = useTheme()

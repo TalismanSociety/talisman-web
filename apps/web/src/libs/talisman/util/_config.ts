@@ -17,6 +17,27 @@ export type Relaychain = {
   tokenSymbol: string
   coingeckoId: string
   blockPeriod: number
+  /**
+   * When we query the user's contributions on-chain, we are only given the active contributions
+   * i.e. those which haven't been refunded or withdrawn yet.
+   *
+   * This is a problem because in the Portal UI we want to keep showing the user their crowdloans
+   * which have been recently returned to them, so that we can prompt them to stake their
+   * recently unlocked DOT/KSM.
+   *
+   * As a workaround, we can fetch the active contributions from the current block, and then
+   * supplement that list with more contributions fetched at a set of blocks in the past.
+   *
+   * By merging the all of the results from oldest to newest, we will get a list of contributions
+   * which includes some historical ones too.
+   *
+   * Once it has been long enough that a batch of contributions have all been returned, we can
+   * stop fetching the batch by removing it from the list, because none of the results will be
+   * shown in the UI anymore.
+   *
+   * MUST be ordered from oldest to newest block.
+   */
+  crowdloanContributionBatches?: Array<{ batch: number; blockHeight: number; blockHash: string }>
 }
 
 // https://wiki.polkadot.network/docs/build-ss58-registry
@@ -24,24 +45,46 @@ export const SupportedRelaychains: Record<number | string, Relaychain> = {
   0: {
     id: 0,
     name: 'Polkadot',
-    rpc: chains[0].rpc,
+    rpc:
+      chains.find(chain => chain.genesisHash === '0x91b171bb158e2d3848fa23a9f1c25182fb8e20313b2c1eb49219da7a70ce90c3')
+        ?.rpc ?? '',
     genesisHash: '0x91b171bb158e2d3848fa23a9f1c25182fb8e20313b2c1eb49219da7a70ce90c3',
     subscanUrl: 'https://polkadot.subscan.io',
     tokenDecimals: 10,
     tokenSymbol: 'DOT',
     coingeckoId: 'polkadot',
     blockPeriod: 6,
+    crowdloanContributionBatches: [
+      {
+        // for crowdloans unlocking in Oct 2023
+        // block is from 8th Oct 2023
+        batch: 1,
+        blockHeight: 17_629_140,
+        blockHash: '0x6d1684e57de0a1ea4bb52e2635c5570f964799ba9c29a51d262e8e4251807188',
+      },
+    ],
   },
   2: {
     id: 2,
     name: 'Kusama',
-    rpc: chains[1].rpc,
+    rpc:
+      chains.find(chain => chain.genesisHash === '0xb0a8d493285c2df73290dfb7e61f870f17b41801197a149ca93654499ea3dafe')
+        ?.rpc ?? '',
     genesisHash: '0xb0a8d493285c2df73290dfb7e61f870f17b41801197a149ca93654499ea3dafe',
     subscanUrl: 'https://kusama.subscan.io',
     tokenDecimals: 12,
     tokenSymbol: 'KSM',
     coingeckoId: 'kusama',
     blockPeriod: 6,
+    crowdloanContributionBatches: [
+      {
+        // for crowdloans unlocking in Oct 2023
+        // block is from 8th Oct 2023
+        batch: 1,
+        blockHeight: 20_018_120,
+        blockHash: '0xd9eea05850dc777ae5a4685d32f5161cb4736a2777c44f43948793a1f4fcac10',
+      },
+    ],
   },
 }
 

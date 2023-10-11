@@ -6,81 +6,54 @@
 // Copyright 2017-2023 @polkadot/api-derive authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { Observable } from 'rxjs'
+import type { DeriveApi, DeriveContributions } from '@polkadot/api-derive/types'
 import type { StorageKey } from '@polkadot/types'
 import type { BN } from '@polkadot/util'
-import type { DeriveApi, DeriveContributions } from '@polkadot/api-derive/types'
+import type { Observable } from 'rxjs'
 
 import { BehaviorSubject, combineLatest, EMPTY, map, of, startWith, switchMap, tap, toArray } from 'rxjs'
 
-import { arrayFlatten, isFunction, nextTick } from '@polkadot/util'
+import { arrayFlatten, isFunction, nextTick, u8aToHex } from '@polkadot/util'
 
 import { memo } from '@polkadot/api-derive/util'
-import { extractContributed } from './util'
-
-// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
-interface Changes {
-  added: string[]
-  blockHash: string
-  removed: string[]
-}
 
 const PAGE_SIZE_K = 1000 // limit aligned with the 1k on the node (trie lookups are heavy)
 
-function _getUpdates(api: DeriveApi, paraId: string | number | BN): Observable<Changes> {
-  let added: string[] = []
-  let removed: string[] = []
+function _eventTriggerAll(
+  blockHash: string | Uint8Array,
+  api: DeriveApi,
+  paraId: string | number | BN
+): Observable<string> {
+  return api.queryAt(blockHash).pipe(
+    switchMap(apiAt =>
+      apiAt.system.events().pipe(
+        switchMap((events): Observable<string> => {
+          const items = events.filter(
+            ({
+              event: {
+                data: [eventParaId],
+                method,
+                section,
+              },
+            }) =>
+              section === 'crowdloan' &&
+              ['AllRefunded', 'Dissolved', 'PartiallyRefunded'].includes(method) &&
+              eventParaId!.eq(paraId)
+          )
 
-  return api.query.system.events().pipe(
-    switchMap((events): Observable<Changes> => {
-      const changes = extractContributed(paraId, events)
-
-      if (changes.added.length || changes.removed.length) {
-        added = added.concat(...changes.added)
-        removed = removed.concat(...changes.removed)
-
-        return of({
-          added,
-          addedDelta: changes.added,
-          blockHash: events.createdAtHash?.toHex() || '-',
-          removed,
-          removedDelta: changes.removed,
-        })
-      }
-
-      return EMPTY
-    }),
-    startWith({ added, addedDelta: [], blockHash: '-', removed, removedDelta: [] })
-  )
-}
-
-function _eventTriggerAll(api: DeriveApi, paraId: string | number | BN): Observable<string> {
-  return api.query.system.events().pipe(
-    switchMap((events): Observable<string> => {
-      const items = events.filter(
-        ({
-          event: {
-            data: [eventParaId],
-            method,
-            section,
-          },
-        }) =>
-          section === 'crowdloan' &&
-          ['AllRefunded', 'Dissolved', 'PartiallyRefunded'].includes(method) &&
-          eventParaId!.eq(paraId)
+          return items.length ? of(events.createdAtHash?.toHex() || '-') : EMPTY
+        }),
+        startWith('-')
       )
-
-      return items.length ? of(events.createdAtHash?.toHex() || '-') : EMPTY
-    }),
-    startWith('-')
+    )
   )
 }
 
-function _getKeysPaged(api: DeriveApi, childKey: string): Observable<StorageKey[]> {
+function _getKeysPaged(blockHash: string | Uint8Array, api: DeriveApi, childKey: string): Observable<StorageKey[]> {
   const subject = new BehaviorSubject<string | undefined>(undefined)
 
   return subject.pipe(
-    switchMap(startKey => api.rpc.childstate.getKeysPaged(childKey, '0x', PAGE_SIZE_K, startKey)),
+    switchMap(startKey => api.rpc.childstate.getKeysPaged(childKey, '0x', PAGE_SIZE_K, startKey, blockHash)),
     tap((keys): void => {
       nextTick((): void => {
         keys.length === PAGE_SIZE_K ? subject.next(keys[PAGE_SIZE_K - 1]!.toHex()) : subject.complete()
@@ -91,40 +64,38 @@ function _getKeysPaged(api: DeriveApi, childKey: string): Observable<StorageKey[
   )
 }
 
-function _getAll(api: DeriveApi, paraId: string | number | BN, childKey: string): Observable<string[]> {
-  return _eventTriggerAll(api, paraId).pipe(
+function _getAll(
+  blockHash: string | Uint8Array,
+  api: DeriveApi,
+  paraId: string | number | BN,
+  childKey: string
+): Observable<string[]> {
+  return _eventTriggerAll(blockHash, api, paraId).pipe(
     switchMap(() =>
       isFunction(api.rpc.childstate.getKeysPaged)
-        ? _getKeysPaged(api, childKey)
-        : api.rpc.childstate.getKeys(childKey, '0x')
+        ? _getKeysPaged(blockHash, api, childKey)
+        : api.rpc.childstate.getKeys(childKey, '0x', blockHash)
     ),
     map(keys => keys.map(k => k.toHex()))
   )
 }
 
 function _contributions(
+  blockHash: string | Uint8Array,
   api: DeriveApi,
   paraId: string | number | BN,
   childKey: string
 ): Observable<DeriveContributions> {
-  return combineLatest([_getAll(api, paraId, childKey), _getUpdates(api, paraId)]).pipe(
-    map(([keys, { added, blockHash, removed }]): DeriveContributions => {
+  return combineLatest([_getAll(blockHash, api, paraId, childKey)]).pipe(
+    map(([keys]): DeriveContributions => {
       const contributorsMap: Record<string, boolean> = {}
 
       keys.forEach((k): void => {
         contributorsMap[k] = true
       })
 
-      added.forEach((k): void => {
-        contributorsMap[k] = true
-      })
-
-      removed.forEach((k): void => {
-        delete contributorsMap[k]
-      })
-
       return {
-        blockHash,
+        blockHash: typeof blockHash === 'string' ? blockHash : u8aToHex(blockHash),
         contributorsHex: Object.keys(contributorsMap),
       }
     })
@@ -134,15 +105,15 @@ function _contributions(
 export function contributions(
   instanceId: string,
   api: DeriveApi
-): (paraId: string | number | BN) => Observable<DeriveContributions> {
+): (blockHash: string | Uint8Array, paraId: string | number | BN) => Observable<DeriveContributions> {
   return memo(
     instanceId,
-    (paraId: string | number | BN): Observable<DeriveContributions> =>
-      api.derive.crowdloan
-        .childKey(paraId)
+    (blockHash: string | Uint8Array, paraId: string | number | BN): Observable<DeriveContributions> =>
+      api.derive.crowdloanAtBlock
+        .childKey(blockHash, paraId)
         .pipe(
           switchMap(childKey =>
-            childKey ? _contributions(api, paraId, childKey) : of({ blockHash: '-', contributorsHex: [] })
+            childKey ? _contributions(blockHash, api, paraId, childKey) : of({ blockHash: '-', contributorsHex: [] })
           )
         )
   )

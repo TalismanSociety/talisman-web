@@ -15,7 +15,6 @@ type Story = StoryObj<typeof AccountIcon>
 export const Default: Story = {
   args: {
     account: {
-      name: 'Foo',
       address: 'bar',
     },
   },
@@ -24,10 +23,8 @@ export const Default: Story = {
 export const Readonly: Story = {
   args: {
     account: {
-      name: 'Foo',
       address: 'bar',
       readonly: true,
-      partOfPortfolio: false,
     },
   },
 }
