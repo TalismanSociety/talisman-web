@@ -1,13 +1,16 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { atom, useRecoilState, useRecoilValue } from 'recoil'
 import { aggregatedMultisigsState, pendingTransactionsState } from '../multisig'
-import { activeTeamsState } from './teams'
+import { activeTeamsState, teamsBySignerState } from './teams'
 import { gql } from 'graphql-request'
 import { requestSignetBackend } from './hasura'
 import { SignedInAccount, selectedAccountState } from '../auth'
 import { makeTransactionID } from '../../util/misc'
 import { supportedChains } from '../chains'
 import { isEqual } from 'lodash'
+import { insertTxMetadata } from '../metadata-service'
+import { Multisig } from '../multisig/index'
+import toast from 'react-hot-toast'
 
 // TODO: should handle pagination
 const TX_METADATA_QUERY = gql`
@@ -172,4 +175,72 @@ export const TxMetadataWatcher = () => {
   }, [fetchMetadata, loading, nextFetch])
 
   return null
+}
+
+// handles inserting tx metadata to db, as well as fast insert into cache
+export const useInsertTxMetadata = () => {
+  const [txMetadataByTeamId, setTxMetadataByTeamId] = useRecoilState(txMetadataByTeamIdState)
+  const teamsBySigner = useRecoilValue(teamsBySignerState)
+
+  const insertMetadata = useCallback(
+    async (
+      signedInAccount: SignedInAccount,
+      multisig: Multisig,
+      other: Pick<
+        TxMetadata,
+        'callData' | 'changeConfigDetails' | 'description' | 'timepointHeight' | 'timepointIndex'
+      > & { hash: string; extrinsicId: string }
+    ) => {
+      const activeTeams = teamsBySigner[signedInAccount.injected.address.toSs58()]
+      // make sure multisig is stored in db
+      if (!activeTeams || !activeTeams.find(team => team.id === multisig.id)) return
+
+      const newTxMetadataByTeamId: TxMetadataByTeamId = {}
+      Object.entries(txMetadataByTeamId).forEach(([teamId, txMetadata]) => {
+        newTxMetadataByTeamId[teamId] = txMetadata
+      })
+
+      const txMetadata: TxMetadata = {
+        extrinsicId: other.extrinsicId,
+        teamId: multisig.id,
+        timepointHeight: other.timepointHeight,
+        timepointIndex: other.timepointIndex,
+        chain: multisig.chain.squidIds.chainData,
+        callData: other.callData,
+        changeConfigDetails: other.changeConfigDetails,
+        created: new Date(),
+        description: other.description,
+      }
+
+      if (!newTxMetadataByTeamId[multisig.id]) newTxMetadataByTeamId[multisig.id] = { data: {} }
+
+      newTxMetadataByTeamId[multisig.id]!.data[other.extrinsicId] = txMetadata
+
+      setTxMetadataByTeamId(newTxMetadataByTeamId)
+
+      // store metadata to db
+      insertTxMetadata({
+        multisig_address: multisig.multisigAddress,
+        proxy_address: multisig.proxyAddress,
+        chain: multisig.chain,
+        call_data: other.callData,
+        call_hash: other.hash,
+        description: other.description,
+        timepoint_height: other.timepointHeight,
+        timepoint_index: other.timepointIndex,
+        change_config_details: other.changeConfigDetails,
+        team_id: multisig.id,
+      })
+        .then(() => {
+          console.log(`Successfully POSTed metadata for ${other.extrinsicId} to metadata service`)
+        })
+        .catch(e => {
+          console.error('Failed to POST tx metadata sharing service: ', e)
+          toast.error('Failed to POST tx metadata sharing service. See console for more info.')
+        })
+    },
+    [setTxMetadataByTeamId, teamsBySigner, txMetadataByTeamId]
+  )
+
+  return insertMetadata
 }
