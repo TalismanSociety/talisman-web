@@ -23,6 +23,7 @@ import persistAtom from '../persist'
 import { VoteDetails, mapConvictionToIndex } from '../referenda'
 import { selectedAccountState } from '../auth'
 import { txMetadataByTeamIdState } from '../offchain-data/metadata'
+import { isEqual } from 'lodash'
 
 // create a new atom for deciding whether to show all balances and txns or just for the selected
 // multisig
@@ -90,7 +91,7 @@ export const aggregatedMultisigsState = selector({
     const combinedView = get(combinedViewState)
     const selectedMultisig = get(selectedMultisigState)
     const activeMultisigs = get(activeMultisigsState)
-    return combinedView ? activeMultisigs ?? [] : selectedMultisig ? [selectedMultisig] : []
+    return combinedView ? activeMultisigs ?? [] : [selectedMultisig]
   },
 })
 
@@ -98,7 +99,6 @@ export const selectedMultisigChainTokensState = selector<BaseToken[]>({
   key: 'SelectedMultisigChainTokens',
   get: ({ get }) => {
     const multisig = get(selectedMultisigState)
-    if (!multisig) return []
     const tokens = get(chainTokensByIdQuery(multisig.chain.squidIds.chainData))
     return tokens
   },
@@ -119,21 +119,20 @@ export const useSelectedMultisig = (): [Multisig, (multisig: Multisig) => void] 
 }
 
 export const useUpsertMultisig = () => {
-  const setMultisigs = useSetRecoilState(multisigsState)
+  const [multisigs, setMultisigs] = useRecoilState(multisigsState)
   const upsertMultisig = useCallback(
     (multisig: Multisig) => {
-      setMultisigs(multisigs => {
-        const newMultisigs = [...multisigs]
-        const multisigIndex = multisigs.findIndex(m => m.id === multisig.id)
-        if (multisigIndex === -1) {
-          newMultisigs.push(multisig)
-        } else {
-          newMultisigs[multisigIndex] = multisig
-        }
-        return newMultisigs
-      })
+      const newMultisigs = [...multisigs]
+      const multisigIndex = multisigs.findIndex(m => m.id === multisig.id)
+      if (multisigIndex === -1) {
+        newMultisigs.push(multisig)
+      } else {
+        if (isEqual(multisigs[multisigIndex], multisig)) return
+        newMultisigs[multisigIndex] = multisig
+      }
+      setMultisigs(newMultisigs)
     },
-    [setMultisigs]
+    [multisigs, setMultisigs]
   )
 
   return upsertMultisig

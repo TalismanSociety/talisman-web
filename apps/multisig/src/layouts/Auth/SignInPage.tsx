@@ -13,7 +13,6 @@ const SignInPage: React.FC<Props> = ({ accounts }) => {
   const [accountToSignIn, setAccountToSignIn] = useState(accounts[0] as InjectedAccount)
   const { signIn, signingIn } = useSignIn()
 
-  // make sign in a hook that handles updating recoil state and we can just do const signIn = useSignIn(selectedAccount)
   const handleSignIn = (e: React.FormEvent) => {
     e.preventDefault()
     signIn(accountToSignIn)

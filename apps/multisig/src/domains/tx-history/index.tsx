@@ -177,8 +177,8 @@ export const useConfirmedTransactions = () => {
               }
             }
 
-            let description = metadata?.description ?? null
-            let changeConfigDetails = metadata?.changeConfigDetails ?? null
+            const description = metadata?.description ?? null
+            const changeConfigDetails = metadata?.changeConfigDetails ?? null
 
             const decodedTx = extrinsicToDecoded(curMultisig, decodedExt, curChainTokens, changeConfigDetails)
             if (decodedTx === 'not_ours') return null

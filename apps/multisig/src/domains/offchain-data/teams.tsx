@@ -149,12 +149,10 @@ export const TeamsWatcher: React.FC = () => {
           upsertMultisig(team.toMultisig())
         }
 
-        setTeamsBySigner(teamsBySigner => {
-          return {
-            ...teamsBySigner,
-            [account.injected.address.toSs58()]: validTeams,
-          }
-        })
+        setTeamsBySigner(teamsBySigner => ({
+          ...teamsBySigner,
+          [account.injected.address.toSs58()]: validTeams,
+        }))
       } else {
         toast.error(error?.message || `Failed to fetch teams for ${account.injected.address.toSs58()}`)
       }
@@ -164,16 +162,15 @@ export const TeamsWatcher: React.FC = () => {
 
   useEffect(() => {
     if (!selectedAccount) return
-
+    // fetch teams for selected account for the first time
     fetchTeams(selectedAccount)
+
     // refresh every 15secs to update vaults in "real-time"
     const interval = setInterval(() => {
       fetchTeams(selectedAccount)
     }, 15_000)
 
-    return () => {
-      clearInterval(interval)
-    }
+    return () => clearInterval(interval)
   }, [fetchTeams, selectedAccount])
 
   return null
@@ -196,9 +193,7 @@ export const useCreateTeamOnHasura = () => {
     }): Promise<{ team?: Team; error?: string }> => {
       if (creatingTeam) return {}
 
-      if (!signer) {
-        return { error: 'Not signed in yet.' }
-      }
+      if (!signer) return { error: 'Not signed in yet.' }
 
       try {
         const res = await requestSignetBackend(
@@ -230,6 +225,8 @@ export const useCreateTeamOnHasura = () => {
           signer
         )
 
+        console.log(res)
+        if (res.data?.insertMultisigProxy?.error) return { error: res.data?.insertMultisigProxy?.error }
         const createdTeam = res.data?.insertMultisigProxy?.team
         const { team, error } = parseTeam(createdTeam)
         if (!team || error) return { error: error ?? 'Failed to store team data.' }
