@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { atom, useRecoilState, useRecoilValue } from 'recoil'
-import { aggregatedMultisigsState, pendingTransactionsState } from '../multisig'
+import { ChangeConfigDetails, aggregatedMultisigsState, pendingTransactionsState } from '../multisig'
 import { activeTeamsState, teamsBySignerState } from './teams'
 import { gql } from 'graphql-request'
 import { requestSignetBackend } from './hasura'
@@ -11,6 +11,7 @@ import { isEqual } from 'lodash'
 import { insertTxMetadata } from '../metadata-service'
 import { Multisig } from '../multisig/index'
 import toast from 'react-hot-toast'
+import { Address } from '../../util/addresses'
 
 // TODO: should handle pagination
 const TX_METADATA_QUERY = gql`
@@ -70,6 +71,23 @@ const parseTxMetadata = (rawTxMetadata: RawTxMetadata): TxMetadata => {
   const chain = supportedChains.find(c => c.squidIds.chainData === rawTxMetadata.chain)
   if (!chain) throw Error(`Chain ${rawTxMetadata.chain} not found`)
 
+  let changeConfigDetails: ChangeConfigDetails | undefined = undefined
+  if (rawTxMetadata.change_config_details) {
+    let newMembers: Address[] | undefined = undefined
+    let newThreshold: number | undefined
+    if (rawTxMetadata.change_config_details.newMembers) {
+      newMembers = rawTxMetadata.change_config_details.newMembers.map((s: string) => Address.fromSs58(s))
+    }
+    if (rawTxMetadata.change_config_details.newThreshold) {
+      newThreshold = rawTxMetadata.change_config_details.newThreshold
+    }
+    if (typeof newThreshold !== 'number' || !newMembers || newThreshold > newMembers.length) {
+      console.error(`Invalid change config details: ${rawTxMetadata.change_config_details}`)
+    } else {
+      changeConfigDetails = { newMembers, newThreshold }
+    }
+  }
+
   return {
     extrinsicId: makeTransactionID(chain, rawTxMetadata.timepoint_height, rawTxMetadata.timepoint_index),
     teamId: rawTxMetadata.team_id,
@@ -77,7 +95,7 @@ const parseTxMetadata = (rawTxMetadata: RawTxMetadata): TxMetadata => {
     timepointIndex: rawTxMetadata.timepoint_index,
     chain: rawTxMetadata.chain,
     callData: rawTxMetadata.call_data,
-    changeConfigDetails: rawTxMetadata.change_config_details,
+    changeConfigDetails,
     created: new Date(rawTxMetadata.created),
     description: rawTxMetadata.description,
   }
