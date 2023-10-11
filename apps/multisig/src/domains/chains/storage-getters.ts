@@ -6,7 +6,6 @@
 
 import { pjsApiSelector } from '@domains/chains/pjs-api'
 import { Multisig, TransactionApprovals, activeMultisigsState, aggregatedMultisigsState } from '@domains/multisig'
-import { StorageKey } from '@polkadot/types'
 import { Option } from '@polkadot/types-codec'
 import { BlockHash, BlockNumber, Multisig as OnChainMultisig, ProxyDefinition } from '@polkadot/types/interfaces'
 import { Address } from '@util/addresses'
@@ -98,7 +97,7 @@ export const rawPendingTransactionsSelector = selectorFamily({
         return []
       }
 
-      const keys = (await api.query.multisig.multisigs.keys(multisig.multisigAddress.bytes)) as unknown as StorageKey[]
+      const keys = await api.query.multisig.multisigs.keys(multisig.multisigAddress.bytes)
       const pendingTransactions = (
         await Promise.all(
           keys.map(async key => {

@@ -457,6 +457,7 @@ export const useApproveAsMulti = (
                       timepoint_height,
                       timepoint_index,
                       change_config_details: metadata.changeConfigDetails,
+                      team_id: multisig.id,
                     })
                       .then(() => {
                         console.log(`Successfully POSTed metadata for ${transactionID} to metadata service`)

@@ -1,7 +1,8 @@
 import { useAugmentedBalances } from '@domains/balances'
 import { useAddressIsProxyDelegatee } from '@domains/chains/storage-getters'
 import { getAllChangeAttempts } from '@domains/metadata-service/getAllChangeAttempts'
-import { multisigsState, useSelectedMultisig } from '@domains/multisig'
+import { PendingTransactionsWatcher, multisigsState, useSelectedMultisig } from '@domains/multisig'
+import { TxMetadataWatcher } from '@domains/offchain-data/metadata'
 import { toMultisigAddress } from '@util/addresses'
 import { device } from '@util/breakpoints'
 import { useEffect } from 'react'
@@ -110,6 +111,8 @@ const Overview = () => {
         <Transactions />
       </div>
       <BetaNotice />
+      <PendingTransactionsWatcher />
+      <TxMetadataWatcher />
     </Layout>
   )
 }
