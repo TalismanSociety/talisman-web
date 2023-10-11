@@ -8,6 +8,8 @@ import { Address } from '@util/addresses'
 import { device } from '@util/breakpoints'
 import { useState } from 'react'
 import { toast } from 'react-hot-toast'
+import { selectedAccountState } from '../../domains/auth/index'
+import { useRecoilValue } from 'recoil'
 
 const AddMembers = (props: {
   onBack: () => void
@@ -19,6 +21,12 @@ const AddMembers = (props: {
   chain: Chain
 }) => {
   const [newAddress, setNewAddress] = useState('')
+  const selectedAccount = useRecoilValue(selectedAccountState)
+
+  const selectedAugmentedAccount = selectedAccount
+    ? props.augmentedAccounts.find(a => a.address.isEqual(selectedAccount.injected.address))
+    : undefined
+
   return (
     <div
       className={css`
@@ -46,25 +54,30 @@ const AddMembers = (props: {
           margin-top: 48px;
         `}
       >
-        {props.augmentedAccounts.map(account => (
-          <MemberRow
-            key={account.address.toPubKey()}
-            chain={props.chain}
-            truncate={true}
-            member={account}
-            onDelete={() => {
-              if (account.you) {
-                const pubKey = account.address.toPubKey()
-                props.setExcludeExtensionAccounts(prev => ({
-                  ...prev,
-                  [pubKey]: !prev[pubKey],
-                }))
-              } else {
-                props.setExternalAccounts(props.externalAccounts.filter(a => !a.isEqual(account.address)))
-              }
-            }}
-          />
-        ))}
+        {selectedAugmentedAccount && (
+          <MemberRow chain={props.chain} truncate={true} member={selectedAugmentedAccount} />
+        )}
+        {props.augmentedAccounts
+          .filter(acc => !selectedAugmentedAccount || !acc.address.isEqual(selectedAugmentedAccount.address))
+          .map(account => (
+            <MemberRow
+              key={account.address.toPubKey()}
+              chain={props.chain}
+              truncate={true}
+              member={account}
+              onDelete={() => {
+                if (account.you) {
+                  const pubKey = account.address.toPubKey()
+                  props.setExcludeExtensionAccounts(prev => ({
+                    ...prev,
+                    [pubKey]: !prev[pubKey],
+                  }))
+                } else {
+                  props.setExternalAccounts(props.externalAccounts.filter(a => !a.isEqual(account.address)))
+                }
+              }}
+            />
+          ))}
       </div>
       <AddressInput
         additionalValidation={(str: string) => {

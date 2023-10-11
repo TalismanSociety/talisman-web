@@ -114,6 +114,21 @@ const CreateMultisig = () => {
     [includedAccounts, threshold]
   )
 
+  useEffect(() => {
+    if (!selectedSigner) return
+
+    const selectedAugmentedAccount = selectedSigner
+      ? augmentedAccounts.find(a => a.address.isEqual(selectedSigner.injected.address))
+      : undefined
+
+    if (selectedAugmentedAccount?.excluded) {
+      setExcludedExtensionAccounts(prev => ({
+        ...prev,
+        [selectedSigner.injected.address.toPubKey()]: false,
+      }))
+    }
+  }, [augmentedAccounts, selectedSigner])
+
   const handleCreateVault = () => {
     setStep(Step.Transactions)
     setCreateTransactionsStatus(CreateTransactionsStatus.CreatingProxy)
