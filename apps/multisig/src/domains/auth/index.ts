@@ -110,7 +110,7 @@ export const useSignIn = () => {
           // exchange JWT token from server
           const verifyRes = await fetch(`${SIWS_ENDPOINT}/verify`, {
             method: 'post',
-            body: JSON.stringify({ address: ss58Address, signedMessage: signature }),
+            body: JSON.stringify({ address: ss58Address, signedMessage: signature, nonce }),
             headers: { 'Content-Type': 'application/json' },
             credentials: 'include',
           })
