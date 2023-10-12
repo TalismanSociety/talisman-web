@@ -29,7 +29,7 @@ import {
   useInflation,
   usePoolStakes,
   type DerivedPool,
-} from '@domains/nominationPools'
+} from '@domains/staking/substrateNominationPools'
 import { encodeAddress } from '@polkadot/util-crypto'
 import { useQueryState } from '@talismn/react-polkadot-api'
 import { subDays } from 'date-fns'

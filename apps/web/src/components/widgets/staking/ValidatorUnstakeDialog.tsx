@@ -1,6 +1,6 @@
 import BaseUnstakeDialog from '@components/recipes/UnstakeDialog'
-import { useLocalizedLockDuration } from '@domains/nominationPools/hooks/useLockDuration'
-import { useValidatorUnstakeForm } from '@domains/staking/hooks'
+import { useLocalizedLockDuration } from '@domains/staking/substrateNominationPools/hooks/useLockDuration'
+import { useValidatorUnstakeForm } from '@domains/staking/substrateValidator/hooks'
 import { useCallback, useEffect } from 'react'
 
 const ValidatorUnstakeDialog = (props: { accountAddress: string; open: boolean; onRequestDismiss: () => unknown }) => {

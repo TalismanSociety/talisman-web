@@ -5,7 +5,7 @@ import { useNativeTokenDecimalState, useNativeTokenPriceState } from '@domains/c
 import { useSubstrateApiState } from '@domains/common'
 import { useExtrinsic, useTokenAmountFromPlanck } from '@domains/common/hooks'
 import { useEraEtaFormatter } from '@domains/common/hooks/useEraEta'
-import { useLocalizedLockDuration } from '@domains/nominationPools'
+import { useLocalizedLockDuration } from '@domains/staking/substrateNominationPools'
 import { type DeriveStakingAccount } from '@polkadot/api-derive/types'
 import { useDeriveState } from '@talismn/react-polkadot-api'
 import { CircularProgressIndicator } from '@talismn/ui'

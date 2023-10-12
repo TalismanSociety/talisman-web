@@ -1,7 +1,7 @@
 import StakeDialogComponent from '@components/recipes/StakeDialog'
 import { chainsState } from '@domains/chains/recoils'
 import { useEraEtaFormatter } from '@domains/common/hooks'
-import { useInflation } from '@domains/nominationPools/hooks'
+import { useInflation } from '@domains/staking/substrateNominationPools/hooks'
 import { CircularProgressIndicator } from '@talismn/ui'
 import BN from 'bn.js'
 import { Suspense, useState, useTransition } from 'react'
