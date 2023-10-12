@@ -142,8 +142,14 @@ export const useUpsertMultisig = () => {
 // or undefined if there are none that can sign
 export const useNextTransactionSigner = (approvals: TransactionApprovals | undefined) => {
   const [extensionAccounts] = useRecoilState(accountsState)
+  const selectedAccount = useRecoilValue(selectedAccountState)
 
   if (!approvals) return
+
+  if (selectedAccount?.injected && approvals[selectedAccount.injected.address.toPubKey()] === false) {
+    return selectedAccount.injected
+  }
+
   return extensionAccounts.find(account => approvals[account.address.toPubKey()] === false)
 }
 
