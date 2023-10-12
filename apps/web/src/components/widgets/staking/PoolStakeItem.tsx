@@ -5,7 +5,7 @@ import { useRecoilValue, waitForAll } from 'recoil'
 
 import { type Account } from '@domains/accounts'
 import { useNativeTokenDecimalState, useNativeTokenPriceState } from '@domains/chains'
-import { type usePoolStakes } from '@domains/nominationPools'
+import { type usePoolStakes } from '@domains/staking/substrateNominationPools'
 import AnimatedFiatNumber from '../AnimatedFiatNumber'
 import RedactableBalance from '../RedactableBalance'
 import AddStakeDialog from './AddStakeDialog'

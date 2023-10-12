@@ -1,7 +1,7 @@
 import SectionHeader from '@components/molecules/SectionHeader'
 import StakeItem from '@components/recipes/StakeItem'
 import { ChainProvider, chainsState } from '@domains/chains'
-import { useSubstrateFiatTotalStaked } from '@domains/staking'
+import { useSubstrateFiatTotalStaked } from '@domains/staking/substrateValidator'
 import { Button, HiddenDetails, Text } from '@talismn/ui'
 import { Suspense, useId } from 'react'
 import { Link } from 'react-router-dom'

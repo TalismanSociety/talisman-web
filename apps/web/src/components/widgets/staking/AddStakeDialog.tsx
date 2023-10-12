@@ -1,6 +1,6 @@
 import BaseAddStakeDialog from '@components/recipes/AddStakeDialog'
 import { useExtrinsic } from '@domains/common'
-import { usePoolAddForm } from '@domains/nominationPools/hooks'
+import { usePoolAddForm } from '@domains/staking/substrateNominationPools/hooks'
 import { useEffect } from 'react'
 
 const AddStakeDialog = (props: { account?: string; onDismiss: () => unknown }) => {
