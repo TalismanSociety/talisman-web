@@ -1,5 +1,4 @@
 import { selectedSubstrateAccountsState } from '@domains/accounts'
-import { chains } from '@domains/chains'
 import { substrateApiState } from '@domains/common'
 import { SupportedRelaychains } from '@libs/talisman/util/_config'
 import { u8aToHex } from '@polkadot/util'
@@ -30,7 +29,7 @@ export function useCrowdloanContributions({
 } {
   // TODO: clean me or kill me
   const apisLoadable = useRecoilValueLoadable(
-    waitForAll([substrateApiState(chains[0].rpc), substrateApiState(chains[1].rpc)])
+    waitForAll(Object.values(SupportedRelaychains).map(relayChain => substrateApiState(relayChain.rpc)))
   )
 
   const allAccounts = useRecoilValue(selectedSubstrateAccountsState)
@@ -42,9 +41,10 @@ export function useCrowdloanContributions({
       void (async () => {
         setHydrated(false)
         const results = await Promise.all(
-          Object.values(SupportedRelaychains).map(async relayChain => {
+          Object.values(SupportedRelaychains).map(async (relayChain, index) => {
             const apis = await apisLoadable.toPromise()
-            const api = relayChain.id === 0 ? apis[0] : apis[1]
+            const api = apis[index]
+            if (!api) return []
 
             const paraIds =
               crowdloans?.map(x => Maybe.of(x.split('-')[1]).mapOr(0, x => parseInt(x))) ??

@@ -5,6 +5,7 @@ import styled from '@emotion/styled'
 import { useCrowdloanContributions } from '@libs/crowdloans'
 import { device } from '@util/breakpoints'
 import { useTranslation } from 'react-i18next'
+import { RootNav } from './RootNav'
 
 const FilterBar = styled(
   ({
@@ -90,6 +91,8 @@ const Index = styled(({ withFilter, className }: { withFilter: boolean; classNam
 
   return (
     <div className={`crowdloan-index ${className ?? ''}`}>
+      <RootNav />
+
       {/* TODO: Remove for now as no Learn more link yet. */}
       {/* <UnlockTalismanBanner /> */}
       {withFilter && <FilterBar {...filterProps} count={count} />}

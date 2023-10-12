@@ -3,7 +3,7 @@ import { atomFamily } from 'recoil'
 
 import { useSubstrateApiEndpoint } from '..'
 
-export const substrateApiState = atomFamily<ApiPromise, string>({
+export const substrateApiState = atomFamily<ApiPromise, string | undefined>({
   key: 'SubstrateApiState',
   effects: endpoint => [
     ({ setSelf }) => {

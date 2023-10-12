@@ -1,0 +1,4 @@
+{
+  "eslint.workingDirectories": [{ "mode": "auto" }],
+  "search.exclude": { ".yarn/**": true }
+}

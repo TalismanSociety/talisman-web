@@ -7,7 +7,7 @@ import { Button } from '@talismn/ui'
 import { useTranslation } from 'react-i18next'
 import { useParams } from 'react-router-dom'
 
-const CrowdloanDetail = styled(({ className }: { className?: string }) => {
+export const CrowdloanDetail = styled(({ className }: { className?: string }) => {
   const { t } = useTranslation()
   const { slug } = useParams<{ slug: string }>()
 
@@ -195,5 +195,3 @@ const CrowdloanDetail = styled(({ className }: { className?: string }) => {
     }
   }
 `
-
-export default CrowdloanDetail

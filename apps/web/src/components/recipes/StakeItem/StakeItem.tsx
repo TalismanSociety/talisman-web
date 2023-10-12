@@ -2,7 +2,7 @@ import { useTheme } from '@emotion/react'
 import { Clock, Lock, Rocket } from '@talismn/icons'
 
 import { Chip, CircularProgressIndicator, Hr, ListItem, Text, Tooltip, type ChipProps } from '@talismn/ui'
-import { type ReactNode } from 'react'
+import { Fragment, type ReactNode } from 'react'
 import { StakeStatusIndicator, type StakeStatus } from '../StakeStatusIndicator'
 import StakeItemSkeleton from './StakeItemSkeleton'
 import type { Account } from '@domains/accounts'
@@ -61,13 +61,13 @@ export const UnstakingStatus = (props: {
     content={
       <div>
         {props.unlocks.map((x, index, array) => (
-          <>
+          <Fragment key={index}>
             <Text.Body as="div" alpha="high">
               {x.amount}
             </Text.Body>
             <Text.Body as="div">{x.eta}</Text.Body>
             {index < array.length - 1 && <Hr />}
-          </>
+          </Fragment>
         ))}
       </div>
     }
