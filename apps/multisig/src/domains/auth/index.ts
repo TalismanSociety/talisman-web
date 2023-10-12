@@ -81,7 +81,7 @@ export const useSignIn = () => {
           if (!injector.signer.signRaw) return toast.error('Wallet does not support signing message.')
 
           // generate nonce from server
-          const res = await fetch(`${HASURA_ENDPOINT}/api/rest/siws-nonce`, {
+          const res = await fetch(`${HASURA_ENDPOINT}/siws/nonce`, {
             method: 'post',
             credentials: 'include',
             headers: { 'Content-Type': 'application/json' },
@@ -91,7 +91,7 @@ export const useSignIn = () => {
           // error string captured by Hasura (e.g. invalid hasura query)
           if (nonceData.error) return toast.error(nonceData.error)
 
-          const nonce = nonceData?.siwsNonce?.nonce
+          const nonce = nonceData?.nonce
 
           // should've been captured by `nonceData.error`, but adding this check just to be sure
           if (!nonce) return toast.error('Failed to request for nonce.')
@@ -108,19 +108,24 @@ export const useSignIn = () => {
           })
 
           // exchange JWT token from server
-          const verifyRes = await fetch(`${HASURA_ENDPOINT}/api/rest/siws-verify`, {
+          const verifyRes = await fetch(`${HASURA_ENDPOINT}/siws/verify`, {
             method: 'post',
-            body: JSON.stringify({ address: ss58Address, signedMessage: signature }),
+            body: JSON.stringify({ address: ss58Address, signedMessage: signature, nonce }),
             headers: { 'Content-Type': 'application/json' },
             credentials: 'include',
           })
 
           const verifyData = await verifyRes.json()
 
-          token = verifyData?.siwsVerify?.accessToken
+          token = verifyData?.accessToken
         }
-        setSelectedAccount(ss58Address)
-        setAuthTokenBook({ ...authTokenBook, [ss58Address]: token })
+
+        if (token) {
+          setSelectedAccount(ss58Address)
+          setAuthTokenBook({ ...authTokenBook, [ss58Address]: token })
+        } else {
+          toast.error('Failed to sign in.')
+        }
       } catch (e) {
         console.error(e)
         toast.error(typeof e === 'string' ? e : (e as any).message ?? 'Failed to sign in.')
