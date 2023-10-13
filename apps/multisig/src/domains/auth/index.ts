@@ -5,7 +5,7 @@ import { InjectedAccount, accountsState } from '../extension'
 import persistAtom from '../persist'
 import toast from 'react-hot-toast'
 
-const HASURA_ENDPOINT = process.env.REACT_APP_HASURA_ENDPOINT ?? ''
+const SIWS_ENDPOINT = process.env.REACT_APP_SIWS_ENDPOINT ?? ''
 
 // keyed by ss58 address, value is the auth token
 type AuthTokenBook = Record<string, string | undefined>
@@ -81,7 +81,7 @@ export const useSignIn = () => {
           if (!injector.signer.signRaw) return toast.error('Wallet does not support signing message.')
 
           // generate nonce from server
-          const res = await fetch(`${HASURA_ENDPOINT}/siws/nonce`, {
+          const res = await fetch(`${SIWS_ENDPOINT}/nonce`, {
             method: 'post',
             credentials: 'include',
             headers: { 'Content-Type': 'application/json' },
@@ -108,7 +108,7 @@ export const useSignIn = () => {
           })
 
           // exchange JWT token from server
-          const verifyRes = await fetch(`${HASURA_ENDPOINT}/siws/verify`, {
+          const verifyRes = await fetch(`${SIWS_ENDPOINT}/verify`, {
             method: 'post',
             body: JSON.stringify({ address: ss58Address, signedMessage: signature, nonce }),
             headers: { 'Content-Type': 'application/json' },
