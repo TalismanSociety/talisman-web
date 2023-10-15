@@ -1,4 +1,4 @@
-import { substrateAccountsState } from '@domains/accounts/recoils'
+import { selectedSubstrateAccountsState } from '@domains/accounts/recoils'
 import { chains } from '@domains/chains'
 import { nativeTokenPriceState } from '@domains/chains/recoils'
 import { chainQueryState, substrateApiState } from '@domains/common'
@@ -7,7 +7,7 @@ import { useMemo } from 'react'
 import { useRecoilValue, waitForAll, waitForAny } from 'recoil'
 
 export const useSubstrateFiatTotalStaked = () => {
-  const accounts = useRecoilValue(substrateAccountsState)
+  const accounts = useRecoilValue(selectedSubstrateAccountsState)
   const addresses = useMemo(() => accounts.map(x => x.address), [accounts])
   const nativeTokenPrices = useRecoilValue(waitForAll(chains.map(chain => nativeTokenPriceState({ chain }))))
 
