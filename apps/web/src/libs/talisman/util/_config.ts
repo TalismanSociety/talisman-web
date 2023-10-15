@@ -108,7 +108,7 @@ export const parachainDetails: ParachainDetails[] = [
     },
   },
   {
-    id: '0-2004',
+    id: '0-3342',
     name: 'Moonbeam',
     slug: 'moonbeam',
     token: 'GLMR',
