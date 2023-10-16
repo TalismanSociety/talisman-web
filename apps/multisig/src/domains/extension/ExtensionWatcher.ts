@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useRecoilState, useSetRecoilState } from 'recoil'
-import { accountsState, extensionAllowedState, extensionLoadingState } from './index'
+import { accountsState, extensionAllowedState, extensionInitiatedState, extensionLoadingState } from './index'
 import { web3AccountsSubscribe, web3Enable } from '@polkadot/extension-dapp'
 import toast from 'react-hot-toast'
 import { uniqBy } from 'lodash'
@@ -14,6 +14,8 @@ export const ExtensionWatcher = () => {
   const [extensionsDetected, setExtensionsDetected] = useState(false)
   const [extensionAllowed, setExtensionAllowed] = useRecoilState(extensionAllowedState)
   const [extensionLoading, setExtensionLoading] = useRecoilState(extensionLoadingState)
+  const [detectedExtensions, setDetectedExtensions] = useState<string[]>([])
+  const [extensionInitiated, setExtensionInitiated] = useRecoilState(extensionInitiatedState)
   const [subscribed, setSubscribed] = useState(false)
   const setAccounts = useSetRecoilState(accountsState)
 
@@ -31,9 +33,11 @@ export const ExtensionWatcher = () => {
       // trigger web3AccountSubscribe only if some accounts are detected
       // otherwise we'll have a subscription error bug
       setExtensionsDetected(extensions.length > 0)
+      setDetectedExtensions(extensions.map(extension => extension.name))
     } catch (e) {
       console.error(e)
       setExtensionsDetected(false)
+      setDetectedExtensions([])
     } finally {
       setExtensionLoading(false)
     }
@@ -59,6 +63,17 @@ export const ExtensionWatcher = () => {
 
       setAccounts(uniqueAccounts)
 
+      // initial connections made
+      const connectedExtensions = uniqBy(accounts, account => account.meta.source).map(account => account.meta.source)
+
+      // browsers like Arc will inject each extensions synchronously
+      // AccountWatcher requires all extensions to be injected to hydrate UI properly
+      if (!extensionInitiated) {
+        if (detectedExtensions.every(extension => connectedExtensions.includes(extension))) {
+          setExtensionInitiated(true)
+        }
+      }
+
       // if all accounts disconnected, set extensionAllowed to false
       // so connect wallet buttons will be clickable again
       setExtensionAllowed(accounts.length > 0)
@@ -67,7 +82,15 @@ export const ExtensionWatcher = () => {
       console.error(e)
       setSubscribed(false)
     })
-  }, [extensionsDetected, setAccounts, setExtensionAllowed, subscribed])
+  }, [
+    detectedExtensions,
+    extensionInitiated,
+    extensionsDetected,
+    setAccounts,
+    setExtensionAllowed,
+    setExtensionInitiated,
+    subscribed,
+  ])
 
   return null
 }

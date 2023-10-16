@@ -1,11 +1,12 @@
 import { useRecoilState, useRecoilValue } from 'recoil'
 import { authTokenBookState, selectedAddressState } from '.'
-import { accountsState, extensionAllowedState } from '../extension'
+import { accountsState, extensionAllowedState, extensionInitiatedState } from '../extension'
 import { useCallback, useEffect } from 'react'
 
 export const AccountWatcher: React.FC = () => {
   const [authTokenBook, setAuthTokenBook] = useRecoilState(authTokenBookState)
   const [selectedAccount, setSelectedAccount] = useRecoilState(selectedAddressState)
+  const extensionInitiated = useRecoilValue(extensionInitiatedState)
 
   const extensionAllowed = useRecoilValue(extensionAllowedState)
   const extensionAccounts = useRecoilValue(accountsState)
@@ -30,7 +31,7 @@ export const AccountWatcher: React.FC = () => {
     // clean up JWT token if user removed account from extension
     // since extensionAllowed is true, if extensionAccounts list is empty,
     // we're in the process of connecting wallet and should not do any clean up yet
-    if (extensionAccounts.length > 0) {
+    if (extensionInitiated && extensionAccounts.length > 0) {
       Object.keys(authTokenBook).forEach(address => {
         const account = extensionAccounts.find(account => account.address.toSs58() === address)
         if (!account && authTokenBook[address]) {
@@ -51,6 +52,7 @@ export const AccountWatcher: React.FC = () => {
     authTokenBook,
     extensionAccounts,
     extensionAllowed,
+    extensionInitiated,
     findNextSignedInAccount,
     selectedAccount,
     setAuthTokenBook,

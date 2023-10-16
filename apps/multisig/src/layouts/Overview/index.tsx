@@ -7,17 +7,19 @@ import { toMultisigAddress } from '@util/addresses'
 import { device } from '@util/breakpoints'
 import { useEffect } from 'react'
 import toast from 'react-hot-toast'
-import { useRecoilState } from 'recoil'
+import { useRecoilState, useRecoilValue } from 'recoil'
 
 import Assets, { TokenAugmented } from './Assets'
 import Transactions from './Transactions'
 import { Layout } from '../Layout'
 import { css } from '@emotion/css'
 import BetaNotice from './BetaNotice'
+import { changingMultisigConfigState } from '../../domains/offchain-data'
 
 const Overview = () => {
   const [selectedMultisig, setSelectedMultisig] = useSelectedMultisig()
   const [multisigs, setMultisigs] = useRecoilState(multisigsState)
+  const changingMultisigConfig = useRecoilValue(changingMultisigConfigState)
   const { addressIsProxyDelegatee, ready: addressIsProxyDelegateeReady } = useAddressIsProxyDelegatee(
     selectedMultisig.chain
   )
@@ -25,7 +27,9 @@ const Overview = () => {
   // Check multisig configuration has not changed
   useEffect(() => {
     const interval = setInterval(async () => {
-      if (!addressIsProxyDelegateeReady) return
+      // dont need to check when changing multisig config since there will be a brief period where
+      // the config doesn't match what's confirmed on chain
+      if (!addressIsProxyDelegateeReady || changingMultisigConfig) return
 
       // DUMMY MULTISIG, dont need to detect or check for changes
       if (selectedMultisig.signers.length === 0 && selectedMultisig.threshold === 0) return
@@ -73,8 +77,10 @@ const Overview = () => {
         `Multisig configuration for "${selectedMultisig.name}" was changed and signet was unable to automatically determine the new details. Please re-import the multisig using an updated link.`,
         { duration: 30_000 }
       )
-      setMultisigs(multisigs => multisigs.filter(m => !m.multisigAddress.isEqual(selectedMultisig.multisigAddress)))
-    }, 10_000)
+
+      // TODO: show an error / settings page if config doesn't match on chain nor any past change attempts
+      // so users can manually resolve the change (e.g. if config was changed outside of Signet)
+    }, 15_000)
 
     return () => clearInterval(interval)
   }, [
@@ -84,6 +90,7 @@ const Overview = () => {
     setMultisigs,
     multisigs,
     setSelectedMultisig,
+    changingMultisigConfig,
   ])
 
   const augmentedTokens: TokenAugmented[] = useAugmentedBalances()

@@ -156,7 +156,6 @@ const CreateMultisig = () => {
               name,
               chain: chain.squidIds.chainData,
               multisigConfig: { signers: includedAccounts.map(a => a.address.toSs58()), threshold },
-              delegateeAddress: multisigAddress.toSs58(),
               proxiedAddress: proxyAddress.toSs58(),
             })
 
@@ -262,7 +261,6 @@ const CreateMultisig = () => {
                 name,
                 chain: chain.squidIds.chainData,
                 multisigConfig: { signers: includedAccounts.map(a => a.address.toSs58()), threshold },
-                delegateeAddress: multisigAddress.toSs58(),
                 proxiedAddress: proxyAddress.toSs58(),
               })
 

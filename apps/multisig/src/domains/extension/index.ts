@@ -24,4 +24,9 @@ export const extensionLoadingState = atom<boolean>({
   default: false,
 })
 
+export const extensionInitiatedState = atom<boolean>({
+  key: 'ExtensionInitiated',
+  default: false,
+})
+
 export { ExtensionWatcher } from './ExtensionWatcher'

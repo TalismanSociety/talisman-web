@@ -3,7 +3,7 @@ import { atom, selector, useRecoilValue, useSetRecoilState } from 'recoil'
 import { SignedInAccount, selectedAccountState } from '../auth'
 import { useCallback, useEffect, useState } from 'react'
 import { requestSignetBackend } from './hasura'
-import { Address } from '@util/addresses'
+import { Address, toMultisigAddress } from '@util/addresses'
 import { Chain, supportedChains } from '../chains'
 import toast from 'react-hot-toast'
 import { Multisig, selectedMultisigIdState, useUpsertMultisig } from '../multisig'
@@ -13,7 +13,6 @@ type RawTeam = {
   name: string
   multisig_config: any
   proxied_address: string
-  delegatee_address: string
   chain: string
 }
 
@@ -34,7 +33,7 @@ export class Team {
     return {
       id: this.id,
       name: this.name,
-      multisigAddress: this.delegateeAddress,
+      multisigAddress: toMultisigAddress(this.multisigConfig.signers, this.multisigConfig.threshold),
       proxyAddress: this.proxiedAddress,
       signers: this.multisigConfig.signers,
       threshold: this.multisigConfig.threshold,
@@ -46,6 +45,7 @@ export class Team {
 export const teamsBySignerState = atom<Record<string, Team[]>>({
   key: 'teamsBySigner',
   default: {},
+  dangerouslyAllowMutability: true,
 })
 
 export const activeTeamsState = selector({
@@ -68,7 +68,6 @@ const TEAM_BY_SIGNER_QUERY = gql`
       chain
       multisig_config
       proxied_address
-      delegatee_address
     }
   }
 `
@@ -81,31 +80,42 @@ const parseTeam = (rawTeam: RawTeam): { team?: Team; error?: string } => {
       return { error: `Invalid chain: ${rawTeam.chain} not supported in ${rawTeam.id}` }
     }
 
-    // make sure delegatee address is valid address
-    const delegateeAddress = Address.fromSs58(rawTeam.delegatee_address)
-    if (!delegateeAddress) {
-      return { error: `Invalid delegatee address: ${rawTeam.delegatee_address} in ${rawTeam.id}` }
-    }
-
     // make sure proxied address is valid address
     const proxiedAddress = Address.fromSs58(rawTeam.proxied_address)
     if (!proxiedAddress) {
       return { error: `Invalid proxied address: ${rawTeam.proxied_address} in ${rawTeam.id}` }
     }
 
+    const rawSigners = rawTeam.multisig_config.signers
+    const rawThreshold = rawTeam.multisig_config.threshold
+
     const signers: Address[] = []
-    // make sure all signers from multisig are valid addresses
-    for (const signer of rawTeam.multisig_config.signers) {
-      const signerAddress = Address.fromSs58(signer)
-      if (!signerAddress) {
-        return { error: `Invalid  Multisig Config: ${signer} in ${rawTeam.id}` }
+    let delegateeAddress: Address | undefined
+    let threshold = 0
+
+    // find the delegatee address (i.e. multisig)
+    if (rawSigners && rawSigners.length > 0 && rawThreshold) {
+      // validate all signers from multisig config
+      for (const signer of rawTeam.multisig_config.signers) {
+        const signerAddress = Address.fromSs58(signer)
+        if (!signerAddress) {
+          return { error: `Invalid  Multisig Config: ${signer} in ${rawTeam.id}` }
+        }
+        signers.push(signerAddress)
       }
-      signers.push(signerAddress)
+      // validate threshold value
+      if (typeof rawThreshold !== 'number' || rawThreshold > signers.length) {
+        return { error: `Invalid Multisig Config: Invalid threshold in ${rawTeam.id}` }
+      }
+      threshold = rawTeam.multisig_config.threshold
+
+      // derive delegatee address from multisig config
+      delegateeAddress = toMultisigAddress(signers, threshold)
     }
-    // make sure threshold is valid number
-    if (typeof rawTeam.multisig_config.threshold !== 'number') {
-      return { error: `Invalid Multisig Config: Invalid threshold in ${rawTeam.id}` }
-    }
+
+    // not a valid vault if no delegateeAddress, a signet vault consists of 1 multisig that is proxy to another acc
+    if (!delegateeAddress) return { error: `Missing multisig config / delegatee address in ${rawTeam.id}` }
+
     return {
       team: new Team(
         rawTeam.id,
@@ -189,7 +199,6 @@ export const useCreateTeamOnHasura = () => {
       chain: string
       multisigConfig: { signers: string[]; threshold: number }
       proxiedAddress: string
-      delegateeAddress: string
     }): Promise<{ team?: Team; error?: string }> => {
       if (creatingTeam) return {}
 
@@ -206,7 +215,6 @@ export const useCreateTeamOnHasura = () => {
                   name
                   multisig_config
                   proxied_address
-                  delegatee_address
                   chain
                 }
                 error
@@ -219,13 +227,11 @@ export const useCreateTeamOnHasura = () => {
               chain: teamInput.chain,
               multisig_config: teamInput.multisigConfig,
               proxied_address: teamInput.proxiedAddress,
-              delegatee_address: teamInput.delegateeAddress,
             },
           },
           signer
         )
 
-        console.log(res)
         if (res.data?.insertMultisigProxy?.error) return { error: res.data?.insertMultisigProxy?.error }
         const createdTeam = res.data?.insertMultisigProxy?.team
         const { team, error } = parseTeam(createdTeam)
@@ -254,4 +260,56 @@ export const useCreateTeamOnHasura = () => {
   )
 
   return { createTeam, creatingTeam }
+}
+
+export const changingMultisigConfigState = atom<boolean>({
+  key: 'changingMultisigConfig',
+  default: false,
+})
+
+export const useUpdateMultisigConfig = () => {
+  const upsertMultisig = useUpsertMultisig()
+
+  const udpateMultisigConfig = useCallback(
+    async (newMultisig: Multisig, signedInAs: SignedInAccount | null) => {
+      if (signedInAs) {
+        try {
+          const res = await requestSignetBackend(
+            gql`
+              mutation UpdateMultisigConfig($teamId: String!, $changeConfigDetails: ChangeConfigDetailsInput!) {
+                updateMultisigConfig(teamId: $teamId, changeConfigDetails: $changeConfigDetails) {
+                  success
+                  team {
+                    id
+                    name
+                    multisig_config
+                    proxied_address
+                    chain
+                  }
+                  error
+                }
+              }
+            `,
+            {
+              teamId: newMultisig.id,
+              changeConfigDetails: {
+                signers: newMultisig.signers.map(signer => signer.toSs58()),
+                threshold: newMultisig.threshold,
+              },
+            },
+            signedInAs
+          )
+
+          if (res.error) throw new Error(res.error)
+        } catch (e) {
+          console.error(e)
+          toast.error('Failed to save multisig config change.')
+        }
+      }
+      upsertMultisig(newMultisig)
+    },
+    [upsertMultisig]
+  )
+
+  return { udpateMultisigConfig }
 }
