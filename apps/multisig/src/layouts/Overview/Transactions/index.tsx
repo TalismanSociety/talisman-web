@@ -163,13 +163,6 @@ const TransactionsList = ({ transactions }: { transactions: Transaction[] }) => 
                               multisig.proxyAddress,
                               expectedNewMultisigAddress
                             )
-                            // rather than doing this in the backend, each team has a 'resync' function
-                            // 1. that makes a backend call
-                            // 2. backend call will find the latest config change
-                            // 3. compute the new multisig address
-                            // 4. backend test if the multisig address is proxy of the proxied account
-                            // 5. if it is, update the multisig config and delagatee addres
-                            // 6. else mark this as a bad team (maybe show a page where they can correct it)
                             if (isProxyDelegatee) {
                               const newMultisig = {
                                 ...multisig,

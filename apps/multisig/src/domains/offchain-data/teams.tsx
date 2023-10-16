@@ -60,18 +60,6 @@ export const activeTeamsState = selector({
   },
 })
 
-export const activeTeamsState = selector({
-  key: 'activeTeams',
-  get: ({ get }) => {
-    const selectedAccount = get(selectedAccountState)
-    const teamsBySigner = get(teamsBySignerState)
-
-    if (!selectedAccount) return []
-
-    return teamsBySigner[selectedAccount.injected.address.toSs58()]
-  },
-})
-
 const TEAM_BY_SIGNER_QUERY = gql`
   query TeamBySigner {
     team {
