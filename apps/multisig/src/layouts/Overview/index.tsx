@@ -1,8 +1,7 @@
 import { useAugmentedBalances } from '@domains/balances'
 import { useAddressIsProxyDelegatee } from '@domains/chains/storage-getters'
-import { getAllChangeAttempts } from '@domains/metadata-service/getAllChangeAttempts'
 import { PendingTransactionsWatcher, multisigsState, useSelectedMultisig } from '@domains/multisig'
-import { TxMetadataWatcher } from '@domains/offchain-data/metadata'
+import { TxMetadataWatcher, getAllChangeAttempts } from '@domains/offchain-data/metadata'
 import { toMultisigAddress } from '@util/addresses'
 import { device } from '@util/breakpoints'
 import { useEffect } from 'react'
@@ -14,12 +13,15 @@ import Transactions from './Transactions'
 import { Layout } from '../Layout'
 import { css } from '@emotion/css'
 import BetaNotice from './BetaNotice'
-import { changingMultisigConfigState } from '../../domains/offchain-data'
+import { changingMultisigConfigState, useUpdateMultisigConfig } from '../../domains/offchain-data'
+import { selectedAccountState } from '../../domains/auth'
 
 const Overview = () => {
   const [selectedMultisig, setSelectedMultisig] = useSelectedMultisig()
+  const signedInAccount = useRecoilValue(selectedAccountState)
   const [multisigs, setMultisigs] = useRecoilState(multisigsState)
   const changingMultisigConfig = useRecoilValue(changingMultisigConfigState)
+  const { updateMultisigConfig } = useUpdateMultisigConfig()
   const { addressIsProxyDelegatee, ready: addressIsProxyDelegateeReady } = useAddressIsProxyDelegatee(
     selectedMultisig.chain
   )
@@ -48,24 +50,37 @@ const Overview = () => {
         )}, current delegatees: ${proxyDelegatees.map(d => d.toSs58(selectedMultisig.chain))}`
       )
 
+      // TODO: the change detection logic below is unsafe and unreliable in 2 scenarios:
+      // - it will only work if the multisig config was changed using Signet
+      // - if a signer was added and then removed, but added to another multisig that is also delegatee of the proxy
+      //   the logic below may save the outdated change of the signer being added as the new multisig config
+      //   more detailed example:
+      //   1. Vault A = stash + multisig A, which has signers [1, 2, 3]
+      //   2. Vault B = stash + multisig B, which has signers [1, 2, 3, 4]
+      //   3. both multisigs are delegatees of a stash (different department of an org)
+      //   4. signer 4 is removed from multisig B and added to multisig A
+      //   5. multisig B adds signer 5 as new signer, but change did not get save
+      //   6. the logic below will pick up signers [1, 2, 3, 4] as the new multisig config for Vault B
+      //   7. which is incorrect, the new multisig config should be [1, 2, 3, 5]
+      // Solution should be to show users a settings page where they can manually resolve the change
+
       // Try to find the new multisig details in the metadata service.
       try {
-        const allChangeAttempts = await getAllChangeAttempts(selectedMultisig.multisigAddress, selectedMultisig.chain)
+        const allChangeAttempts = await getAllChangeAttempts(selectedMultisig, signedInAccount)
         for (const changeAttempt of allChangeAttempts) {
           const changeMultisigAddress = toMultisigAddress(changeAttempt.newMembers, changeAttempt.newThreshold)
           if (proxyDelegatees.some(delegatee => delegatee.isEqual(changeMultisigAddress))) {
-            toast.success('Multisig signer configuration update detected and automatically applied.', {
-              duration: 5000,
-            })
-            const otherMultisigs = multisigs.filter(m => !m.multisigAddress.isEqual(selectedMultisig.multisigAddress))
             const newMultisig = {
               ...selectedMultisig,
               multisigAddress: changeMultisigAddress,
               threshold: changeAttempt.newThreshold,
               signers: changeAttempt.newMembers,
             }
-            setMultisigs([...otherMultisigs, newMultisig])
-            setSelectedMultisig(newMultisig)
+
+            await updateMultisigConfig(newMultisig, signedInAccount)
+            toast.success('Multisig signer configuration update detected and automatically applied.', {
+              duration: 5000,
+            })
             return
           }
         }
@@ -74,12 +89,9 @@ const Overview = () => {
       }
 
       toast(
-        `Multisig configuration for "${selectedMultisig.name}" was changed and signet was unable to automatically determine the new details. Please re-import the multisig using an updated link.`,
+        `Multisig configuration for "${selectedMultisig.name}" was changed and signet was unable to automatically determine the new details.`,
         { duration: 30_000 }
       )
-
-      // TODO: show an error / settings page if config doesn't match on chain nor any past change attempts
-      // so users can manually resolve the change (e.g. if config was changed outside of Signet)
     }, 15_000)
 
     return () => clearInterval(interval)
@@ -91,6 +103,8 @@ const Overview = () => {
     multisigs,
     setSelectedMultisig,
     changingMultisigConfig,
+    signedInAccount,
+    updateMultisigConfig,
   ])
 
   const augmentedTokens: TokenAugmented[] = useAugmentedBalances()

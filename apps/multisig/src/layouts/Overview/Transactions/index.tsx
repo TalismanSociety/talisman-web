@@ -68,7 +68,7 @@ const TransactionsList = ({ transactions }: { transactions: Transaction[] }) => 
   const { cancelAsMulti, canCancel } = useCancelAsMulti(openTransaction)
   const setRawPendingTransactionDependency = useSetRecoilState(rawPendingTransactionsDependency)
   const setRawConfirmedTransactionDependency = useSetRecoilState(rawConfirmedTransactionsDependency)
-  const { udpateMultisigConfig } = useUpdateMultisigConfig()
+  const { updateMultisigConfig } = useUpdateMultisigConfig()
   const setChangingMultisigConfig = useSetRecoilState(changingMultisigConfigState)
 
   useEffect(() => {
@@ -170,7 +170,7 @@ const TransactionsList = ({ transactions }: { transactions: Transaction[] }) => 
                                 threshold: openTransaction.decoded.changeConfigDetails.threshold,
                                 signers: openTransaction.decoded.changeConfigDetails.signers,
                               }
-                              await udpateMultisigConfig(newMultisig, signedInAs)
+                              await updateMultisigConfig(newMultisig, signedInAs)
                               toast.success('Multisig settings updated.', { duration: 5000 })
                             } else {
                               toast.error(

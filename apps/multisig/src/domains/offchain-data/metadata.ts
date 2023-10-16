@@ -262,3 +262,55 @@ export const useInsertTxMetadata = () => {
 
   return insertMetadata
 }
+
+interface TxMetadataByPkResponseRaw {
+  tx_metadata: {
+    change_config_details: {
+      newThreshold: number
+      newMembers: string[]
+    }
+  }[]
+}
+
+export async function getAllChangeAttempts(
+  multisig: Multisig,
+  acc?: SignedInAccount | null
+): Promise<ChangeConfigDetails[]> {
+  if (!acc) return []
+
+  const variables = {
+    teamId: multisig.id,
+    multisigAddress: multisig.multisigAddress.toSs58(multisig.chain),
+    chain: multisig.chain.squidIds.chainData,
+  }
+
+  const query = gql`
+    query AllChangeConfigAttempts($teamId: uuid!, $multisigAddress: String!, $chain: String!) {
+      tx_metadata(
+        where: {
+          team_id: { _eq: $teamId }
+          multisig_address: { _eq: $multisigAddress }
+          chain: { _eq: $chain }
+          change_config_details: { _is_null: false }
+        }
+      ) {
+        change_config_details
+      }
+    }
+  `
+
+  const res = await requestSignetBackend<TxMetadataByPkResponseRaw>(query, variables, acc)
+
+  return (
+    res.data?.tx_metadata.map(tx => {
+      return {
+        newThreshold: tx.change_config_details.newThreshold,
+        newMembers: tx.change_config_details.newMembers.map(m => {
+          const address = Address.fromSs58(m)
+          if (!address) throw new Error(`Invalid address returned from tx_metadata!`)
+          return address
+        }),
+      }
+    }) ?? []
+  )
+}

@@ -270,7 +270,7 @@ export const changingMultisigConfigState = atom<boolean>({
 export const useUpdateMultisigConfig = () => {
   const upsertMultisig = useUpsertMultisig()
 
-  const udpateMultisigConfig = useCallback(
+  const updateMultisigConfig = useCallback(
     async (newMultisig: Multisig, signedInAs: SignedInAccount | null) => {
       if (signedInAs) {
         try {
@@ -311,5 +311,5 @@ export const useUpdateMultisigConfig = () => {
     [upsertMultisig]
   )
 
-  return { udpateMultisigConfig }
+  return { updateMultisigConfig }
 }
