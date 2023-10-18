@@ -43,20 +43,13 @@ const NewTransactionModal = () => {
   const isOpen = location.startsWith('/overview/new-transaction')
   const close = () => {
     navigate('/overview')
+    setAction(undefined)
   }
 
   const selectedActionMetadata = action !== undefined ? actionsMetadata[action] : undefined
   return (
-    <Modal
-      isOpen={isOpen}
-      onAfterOpen={() => {}}
-      onRequestClose={close}
-      onAfterClose={() => {
-        setAction(undefined)
-      }}
-      contentLabel="New Transaction Modal"
-    >
-      <div css={{ padding: '32px 32px 80px', position: 'relative' }}>
+    <Modal isOpen={isOpen} onRequestClose={close} borderRadius={32} width="100%" contentLabel="New Transaction Modal">
+      <div css={{ padding: '8px 8px 48px' }}>
         {selectedActionMetadata !== undefined && (
           <div css={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginTop: '8px' }}>
             <p css={{ fontSize: '18px', marginTop: '4px' }}>{selectedActionMetadata.name}</p>

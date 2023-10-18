@@ -21,7 +21,7 @@ import RelayEnvironment, { chainDataSquidEnvKey } from './graphql/relay-environm
 import router from './routes'
 import { supportedChains } from '@domains/chains'
 import { AccountWatcher } from '@domains/auth'
-import { TeamsWatcher } from '@domains/offchain-data'
+import { AddressBookWatcher, TeamsWatcher } from '@domains/offchain-data'
 
 const Loader = () => {
   return (
@@ -55,6 +55,7 @@ const App: React.FC = () => (
             <ExtensionWatcher />
             <AccountWatcher />
             <TeamsWatcher />
+            <AddressBookWatcher />
             <RouterProvider router={router} />
             <Toaster position="top-right" containerStyle={{ top: '6.4rem' }}>
               {t => <ToastBar toast={t} />}

@@ -5,6 +5,7 @@ import Landing from '../layouts/Landing'
 import Overview from '../layouts/Overview'
 import Settings from '../layouts/Settings'
 import RequireAuth from '../layouts/Auth/RequireAuth'
+import { AddressBook } from '../layouts/AddressBook'
 
 const router = createBrowserRouter([
   {
@@ -24,6 +25,14 @@ const router = createBrowserRouter([
     element: (
       <RequireAuth requireMultisig requireSignIn>
         <Overview />
+      </RequireAuth>
+    ),
+  },
+  {
+    path: '/address-book',
+    element: (
+      <RequireAuth requireMultisig requireSignIn>
+        <AddressBook />
       </RequireAuth>
     ),
   },
