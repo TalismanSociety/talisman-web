@@ -25,6 +25,7 @@ import { selectedAccountState } from '../auth'
 import { txMetadataByTeamIdState } from '../offchain-data/metadata'
 import { isEqual } from 'lodash'
 
+export const DUMMY_MULTISIG_ID = 'DUMMY_MULTISIG'
 // create a new atom for deciding whether to show all balances and txns or just for the selected
 // multisig
 export const combinedViewState = atom<boolean>({
@@ -34,7 +35,7 @@ export const combinedViewState = atom<boolean>({
 })
 
 const DUMMY_MULTISIG: Multisig = {
-  id: 'DUMMY_MULTISIG',
+  id: DUMMY_MULTISIG_ID,
   name: 'DUMMY_MULTISIG',
   chain: supportedChains[0] as Chain,
   signers: [],
