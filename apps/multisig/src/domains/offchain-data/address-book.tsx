@@ -107,7 +107,7 @@ export const useCreateContact = () => {
         const conflict = addresses.find(contact => contact.address.isEqual(address))
         toast.success(`Contact created for ${name}`)
 
-        // dont need to update cache
+        // dont need to update cache if there's a conflict since no update will be made in backend
         if (!conflict) {
           addresses = [...addresses, { id, name, teamId, address }]
           setAddressBookByTeamId({ ...addressBookByTeamId, [teamId]: addresses })
@@ -165,7 +165,7 @@ export const useDeleteContact = () => {
           setAddressBookByTeamId({ ...addressBookByTeamId, [teamId]: addresses })
         }
 
-        // inform caller that contact was created
+        // inform caller that contact was deleted
         return true
       } catch (e) {
         console.error(e)
@@ -191,19 +191,8 @@ export const AddressBookWatcher = () => {
     try {
       setLoading(true)
       const { data } = await requestSignetBackend<{
-        address: {
-          address: string
-          id: string
-          team_id: string
-          name: string
-        }[]
-      }>(
-        ADDRESSES_QUERY,
-        {
-          teamId: selectedMultisig.id,
-        },
-        selectedAccount
-      )
+        address: { address: string; id: string; team_id: string; name: string }[]
+      }>(ADDRESSES_QUERY, { teamId: selectedMultisig.id }, selectedAccount)
 
       if (data?.address) {
         const newAddressBookByTeamId = { ...addressBookByTeamId }
@@ -238,10 +227,10 @@ export const AddressBookWatcher = () => {
 
   useEffect(() => {
     if (!selectedAccount) return
-    // fetch teams for selected account for the first time
+    // fetch address book for the first time
     fetchAddressBook()
 
-    // refresh every 15secs to update vaults in "real-time"
+    // refresh every 15secs to update address books in "real-time"
     const interval = setInterval(() => {
       fetchAddressBook()
     }, 15_000)

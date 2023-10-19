@@ -122,11 +122,7 @@ const ManageSignerConfiguration = () => {
                       you: contact?.extensionName !== undefined,
                     }}
                     onDelete={
-                      newMembers.length > 2
-                        ? () => {
-                            setNewMembers(newMembers.filter(nm => !nm.isEqual(m)))
-                          }
-                        : undefined
+                      newMembers.length > 2 ? () => setNewMembers(newMembers.filter(nm => !nm.isEqual(m))) : undefined
                     }
                   />
                 )
