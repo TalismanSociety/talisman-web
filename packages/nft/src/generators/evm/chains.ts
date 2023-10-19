@@ -39,6 +39,8 @@ export default [
       athosNFT: '0xcf82ddcca84d0e419bccd7a540e807c114250ded',
       moonPets: '0x2159762693C629C5A44Fc9baFD484f8B96713467',
       moonbeamBAYC: '0x15380599b39a020378146c0714d628f14731f0a6',
+      evrlootCharacters: '0x9d1454e198f4b601bfc0069003045b0cbc0e6749',
+      evrlootItems: '0x2931b4e6e75293f8e94e893ce7bdfab5521f3fcd',
     },
   },
   {
