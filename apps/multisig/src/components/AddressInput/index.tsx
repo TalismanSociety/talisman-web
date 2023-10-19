@@ -24,6 +24,10 @@ type Props = {
   leadingLabel?: string
 }
 
+/**
+ * Handles validating address input as well as displaying a list of addresses to select from.
+ * Supports both controlled and uncontrolled usage input.
+ */
 const AddressInput: React.FC<Props> = ({ onChange, value, addresses = [], chain, leadingLabel }) => {
   const [input, setInput] = useState(value ?? '')
   const [expanded, setExpanded] = useState(false)

@@ -23,8 +23,8 @@ import { useRecoilValue, useRecoilValueLoadable } from 'recoil'
 
 import { FullScreenDialogContents, FullScreenDialogTitle } from '../Transactions/FullScreenSummary'
 import { NameTransaction } from './generic-steps'
-import AddressInput from '../../../components/AddressInput'
-import { useKnownAddresses } from '../../../hooks/useKnownAddresses'
+import AddressInput from '@components/AddressInput'
+import { useKnownAddresses } from '@hooks/useKnownAddresses'
 
 enum Step {
   Name,
