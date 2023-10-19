@@ -8,17 +8,17 @@ import { toast } from 'react-hot-toast'
 import { selectedAccountState } from '../../domains/auth/index'
 import { useRecoilValue } from 'recoil'
 import { AddMemberInput } from '../../components/AddMemberInput'
+import { useKnownAddresses } from '@hooks/useKnownAddresses'
 
 const AddMembers = (props: {
   onBack: () => void
   onNext: () => void
-  setExcludeExtensionAccounts: React.Dispatch<React.SetStateAction<Record<string, boolean>>>
-  setExternalAccounts: React.Dispatch<React.SetStateAction<Address[]>>
+  setAddedAccounts: React.Dispatch<React.SetStateAction<Address[]>>
   augmentedAccounts: AugmentedAccount[]
-  externalAccounts: Address[]
   chain: Chain
 }) => {
   const selectedAccount = useRecoilValue(selectedAccountState)
+  const knownAddresses = useKnownAddresses()
 
   const selectedAugmentedAccount = selectedAccount
     ? props.augmentedAccounts.find(a => a.address.isEqual(selectedAccount.injected.address))
@@ -63,17 +63,9 @@ const AddMembers = (props: {
               chain={props.chain}
               truncate={true}
               member={account}
-              onDelete={() => {
-                if (account.you) {
-                  const pubKey = account.address.toPubKey()
-                  props.setExcludeExtensionAccounts(prev => ({
-                    ...prev,
-                    [pubKey]: !prev[pubKey],
-                  }))
-                } else {
-                  props.setExternalAccounts(props.externalAccounts.filter(a => !a.isEqual(account.address)))
-                }
-              }}
+              onDelete={() =>
+                props.setAddedAccounts(addedAccounts => addedAccounts.filter(a => !a.isEqual(account.address)))
+              }
             />
           ))}
       </div>
@@ -83,7 +75,8 @@ const AddMembers = (props: {
           if (conflict) toast.error('Duplicate address')
           return !conflict
         }}
-        onNewAddress={address => props.setExternalAccounts([...props.externalAccounts, address])}
+        onNewAddress={address => props.setAddedAccounts(addedAccounts => [...addedAccounts, address])}
+        addresses={knownAddresses}
       />
       <div
         className={css`

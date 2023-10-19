@@ -4,7 +4,6 @@ import { css } from '@emotion/css'
 import { ExternalLink, Trash } from '@talismn/icons'
 import { Identicon } from '@talismn/ui'
 import truncateMiddle from 'truncate-middle'
-import Checkbox from '../Checkbox'
 
 const MemberRow = (props: { member: AugmentedAccount; chain: Chain; onDelete?: () => void; truncate?: boolean }) => {
   return (
@@ -38,16 +37,12 @@ const MemberRow = (props: { member: AugmentedAccount; chain: Chain; onDelete?: (
       </div>
       <div css={{ gap: 16 }}>
         {props.onDelete ? (
-          props.member.you ? (
-            <Checkbox checked={!props.member.excluded} onChange={() => props.onDelete?.()} size={18} />
-          ) : (
-            <div
-              onClick={props.onDelete}
-              css={({ foreground }) => ({ color: `rgb(${foreground})`, cursor: 'pointer' })}
-            >
-              <Trash size={16} />
-            </div>
-          )
+          <div
+            onClick={props.onDelete}
+            css={({ foreground }) => ({ color: `rgb(${foreground})`, cursor: 'pointer', height: 16 })}
+          >
+            <Trash size={16} />
+          </div>
         ) : (
           <div />
         )}
