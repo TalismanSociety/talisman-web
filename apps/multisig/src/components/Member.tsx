@@ -15,7 +15,7 @@ export const Member = ({ m, chain, onDelete }: { m: AugmentedAccount; onDelete?:
       className={css`
         display: flex;
         align-items: center;
-        background: ${m.you ? '0' : 'var(--color-backgroundSecondary)'};
+        background: var(--color-backgroundSecondary);
         border: 1px solid var(--color-backgroundSecondary);
         border-radius: 8px;
         padding: 16px;
@@ -24,15 +24,15 @@ export const Member = ({ m, chain, onDelete }: { m: AugmentedAccount; onDelete?:
     >
       <Identicon value={ss58Address} size={32} />
       <div css={{ display: 'grid', alignItems: 'center' }}>
-        <div css={{ display: 'flex' }}>
+        <p css={{ display: 'flex', marginTop: 4 }}>
           {m.nickname ? (
-            <span>{m.nickname}</span>
+            <span css={({ color }) => ({ color: color.offWhite })}>{m.nickname}</span>
           ) : (
-            <span css={{ color: 'var(--color-offWhite)' }}>{truncateMiddle(ss58Address, 12, 13, '...')}</span>
+            <span css={{ color: 'var(--color-offWhite)' }}>{truncateMiddle(ss58Address, 10, 10, '...')}</span>
           )}
           &nbsp;
-          {m.you && <span css={{ color: 'var(--color-offWhite)' }}>(You)</span>}
-        </div>
+          {m.you && <span>(You)</span>}
+        </p>
         {m.nickname ? <span css={{ fontSize: '12px' }}>{truncateMiddle(ss58Address, 4, 5, '...')}</span> : null}
       </div>
       <div css={{ display: 'flex', alignItems: 'center', marginLeft: 'auto', gap: '8px' }}>
