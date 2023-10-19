@@ -61,10 +61,9 @@ const CreateMultisig = () => {
   )
   const [name, setName] = useState<string>('')
   const [chain, setChain] = useState<Chain>(firstChain)
-  const [externalAccounts, setExternalAccounts] = useState<Address[]>([])
+  const [addedAccounts, setAddedAccounts] = useState<Address[]>([])
   const [extensionAccounts] = useRecoilState(accountsState)
   const selectedSigner = useRecoilValue(selectedAccountState)
-  const [excludedExtensionAccounts, setExcludedExtensionAccounts] = useState<Record<string, boolean>>({})
   const {
     createProxy,
     ready: createProxyIsReady,
@@ -88,19 +87,30 @@ const CreateMultisig = () => {
     setIsVisible(true)
   }, [])
 
-  const augmentedAccounts: AugmentedAccount[] = useMemo(
-    () => [
-      ...extensionAccounts.map(a => ({
-        address: a.address,
-        nickname: a.meta.name,
+  const augmentedAccounts: AugmentedAccount[] = useMemo(() => {
+    const augmentedAddedAccounts = addedAccounts.map(a => {
+      const extensionAccount = extensionAccounts.find(ea => ea.address.isEqual(a))
+      if (!extensionAccount) return { address: a }
+      return {
+        address: a,
+        nickname: extensionAccount.meta.name,
         you: true,
-        excluded: excludedExtensionAccounts[a.address.toPubKey()],
-        injected: a,
-      })),
-      ...externalAccounts.map(a => ({ address: a })),
-    ],
-    [excludedExtensionAccounts, extensionAccounts, externalAccounts]
-  )
+        injected: extensionAccount,
+      }
+    })
+
+    return selectedSigner
+      ? [
+          {
+            address: selectedSigner.injected.address,
+            nickname: selectedSigner.injected.meta.name,
+            you: true,
+            injected: selectedSigner.injected,
+          },
+          ...augmentedAddedAccounts,
+        ]
+      : augmentedAddedAccounts
+  }, [addedAccounts, extensionAccounts, selectedSigner])
 
   const includedAccounts = useMemo(() => augmentedAccounts.filter(a => !a.excluded), [augmentedAccounts])
 
@@ -114,20 +124,19 @@ const CreateMultisig = () => {
     [includedAccounts, threshold]
   )
 
+  // remove selected signer from addedAcounts list to prevent duplicate
   useEffect(() => {
     if (!selectedSigner) return
 
-    const selectedAugmentedAccount = selectedSigner
-      ? augmentedAccounts.find(a => a.address.isEqual(selectedSigner.injected.address))
-      : undefined
+    const selectedSignerIndex = addedAccounts.findIndex(a => a.isEqual(selectedSigner.injected.address))
+    if (selectedSignerIndex === -1) return
 
-    if (selectedAugmentedAccount?.excluded) {
-      setExcludedExtensionAccounts(prev => ({
-        ...prev,
-        [selectedSigner.injected.address.toPubKey()]: false,
-      }))
-    }
-  }, [augmentedAccounts, selectedSigner])
+    setAddedAccounts(addedAccounts => {
+      const newAddedAccounts = [...addedAccounts]
+      newAddedAccounts.splice(selectedSignerIndex, 1)
+      return newAddedAccounts
+    })
+  }, [addedAccounts, augmentedAccounts, selectedSigner])
 
   const handleCreateVault = () => {
     setStep(Step.Transactions)
@@ -213,10 +222,8 @@ const CreateMultisig = () => {
           <AddMembers
             onBack={() => setStep(Step.NameVault)}
             onNext={() => setStep(Step.SelectThreshold)}
-            setExternalAccounts={setExternalAccounts}
-            setExcludeExtensionAccounts={setExcludedExtensionAccounts}
+            setAddedAccounts={setAddedAccounts}
             augmentedAccounts={augmentedAccounts}
-            externalAccounts={externalAccounts}
             chain={chain}
           />
         ) : step === Step.SelectThreshold ? (

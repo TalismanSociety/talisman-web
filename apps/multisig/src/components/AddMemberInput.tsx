@@ -1,5 +1,5 @@
 import toast from 'react-hot-toast'
-import AddressInput from './AddressInput'
+import AddressInput, { AddressWithName } from './AddressInput'
 import { Address } from '../util/addresses'
 import { useState } from 'react'
 import { css } from '@emotion/css'
@@ -10,9 +10,10 @@ import { Plus } from '@talismn/icons'
 type Props = {
   onNewAddress: (a: Address) => void
   validateAddress?: (a: Address) => boolean
+  addresses?: AddressWithName[]
 }
 
-export const AddMemberInput: React.FC<Props> = ({ validateAddress, onNewAddress }) => {
+export const AddMemberInput: React.FC<Props> = ({ validateAddress, onNewAddress, addresses }) => {
   const theme = useTheme()
   const [addressInput, setAddressInput] = useState('')
   const [address, setAddress] = useState<Address | undefined>()
@@ -20,6 +21,7 @@ export const AddMemberInput: React.FC<Props> = ({ validateAddress, onNewAddress 
   return (
     <div css={{ display: 'flex', alignItems: 'center', flexDirection: 'column', gap: 24, width: '100%' }}>
       <AddressInput
+        addresses={addresses}
         value={addressInput}
         onChange={(address, input) => {
           setAddressInput(input)
@@ -35,6 +37,7 @@ export const AddMemberInput: React.FC<Props> = ({ validateAddress, onNewAddress 
             if (!isValid) return
             onNewAddress(address)
             setAddressInput('')
+            setAddress(undefined)
           }
         }}
         className={css`
