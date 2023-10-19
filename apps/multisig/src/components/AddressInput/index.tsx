@@ -21,9 +21,10 @@ type Props = {
   onChange: (address: Address | undefined, input: string) => void
   addresses?: AddressWithName[]
   chain?: Chain
+  leadingLabel?: string
 }
 
-const AddressInput: React.FC<Props> = ({ onChange, value, addresses = [], chain }) => {
+const AddressInput: React.FC<Props> = ({ onChange, value, addresses = [], chain, leadingLabel }) => {
   const [input, setInput] = useState(value ?? '')
   const [expanded, setExpanded] = useState(false)
   const [querying, setQuerying] = useState(false)
@@ -86,6 +87,7 @@ const AddressInput: React.FC<Props> = ({ onChange, value, addresses = [], chain 
   return (
     <div css={{ width: '100%', position: 'relative' }} ref={containerRef}>
       <TextInput
+        leadingLabel={leadingLabel}
         className={css`
           width: 100% !important;
           font-size: 18px !important;
@@ -173,7 +175,9 @@ const AddressInput: React.FC<Props> = ({ onChange, value, addresses = [], chain 
                     </p>
                   </div>
                 </div>
-                <p css={{ fontSize: 14, fontWeight: 700, textAlign: 'right' }}>{type}</p>
+                <p css={({ color }) => ({ fontSize: 14, fontWeight: 700, textAlign: 'right', color: color.lightGrey })}>
+                  {type}
+                </p>
               </div>
             ))
           ) : !querying && address ? (

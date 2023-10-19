@@ -65,6 +65,8 @@ const ChangeConfigExpandedDetails = ({ t }: { t: Transaction }) => {
 const MultiSendExpandedDetails = ({ t }: { t: Transaction }) => {
   const theme = useTheme()
   const recipients = t.decoded?.recipients || []
+  const { contactByAddress } = useKnownAddresses(t.multisig.id)
+
   return (
     <div css={{ paddingBottom: '8px' }}>
       {t.decoded?.recipients.map((r, i) => {
@@ -98,7 +100,7 @@ const MultiSendExpandedDetails = ({ t }: { t: Transaction }) => {
                   {i + 1} of {recipients.length}
                 </span>
               </div>
-              <AddressPill address={address} chain={t.multisig.chain} />
+              <AddressPill name={contactByAddress[address.toSs58()]?.name} address={address} chain={t.multisig.chain} />
               <div css={{ marginLeft: 'auto' }}>
                 <AmountRow balance={balance} />
               </div>
@@ -165,6 +167,7 @@ const TransactionDetailsExpandable = ({ t }: { t: Transaction }) => {
   const sumOutgoing: Balance[] = useMemo(() => calcSumOutgoing(t), [t])
   const { copied: copiedCallData, copy: copyCallData } = useCopied()
   const { copied: copiedCallHash, copy: copyCallHash } = useCopied()
+  const { contactByAddress } = useKnownAddresses(t.multisig.id)
 
   const recipients = t.decoded?.recipients || []
   return (
@@ -261,7 +264,11 @@ const TransactionDetailsExpandable = ({ t }: { t: Transaction }) => {
               margin-left: auto;
             `}
           >
-            <AddressPill address={recipients[0]?.address as Address} chain={t.multisig.chain} />
+            <AddressPill
+              name={contactByAddress[recipients[0]!.address.toSs58()]?.name}
+              address={recipients[0]?.address as Address}
+              chain={t.multisig.chain}
+            />
           </div>
         ) : null}
         {/* Show the token amounts being sent in this transaction */}
