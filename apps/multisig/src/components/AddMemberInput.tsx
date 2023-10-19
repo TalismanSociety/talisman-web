@@ -18,7 +18,7 @@ export const AddMemberInput: React.FC<Props> = ({ validateAddress, onNewAddress 
   const [address, setAddress] = useState<Address | undefined>()
 
   return (
-    <div css={{ display: 'flex', alignItems: 'center', flexDirection: 'column', gap: 24 }}>
+    <div css={{ display: 'flex', alignItems: 'center', flexDirection: 'column', gap: 24, width: '100%' }}>
       <AddressInput
         value={addressInput}
         onChange={(address, input) => {

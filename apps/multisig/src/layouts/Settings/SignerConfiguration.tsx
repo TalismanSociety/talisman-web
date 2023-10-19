@@ -20,7 +20,7 @@ import { useRecoilValue, useRecoilValueLoadable } from 'recoil'
 
 import { FullScreenDialogContents, FullScreenDialogTitle } from '../../layouts/Overview/Transactions/FullScreenSummary'
 import { BackButton } from '.'
-import { AddMemberInput } from '../../components/AddMemberInput'
+import { AddMemberInput } from '@components/AddMemberInput'
 
 const ManageSignerConfiguration = () => {
   const selectedMultisig = useRecoilValue(selectedMultisigState)

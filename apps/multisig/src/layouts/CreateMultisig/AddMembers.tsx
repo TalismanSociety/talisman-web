@@ -49,6 +49,7 @@ const AddMembers = (props: {
           flex-direction: column;
           gap: 16px;
           margin-top: 48px;
+          margin-bottom: 24px;
         `}
       >
         {selectedAugmentedAccount && (
