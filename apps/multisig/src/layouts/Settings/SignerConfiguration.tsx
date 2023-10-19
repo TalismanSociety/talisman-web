@@ -1,4 +1,3 @@
-import AddressInput from '@components/AddressInput'
 import { Member } from '@components/Member'
 import Slider from '@components/Slider'
 import { useApproveAsMulti } from '@domains/chains'
@@ -21,6 +20,7 @@ import { useRecoilValue, useRecoilValueLoadable } from 'recoil'
 
 import { FullScreenDialogContents, FullScreenDialogTitle } from '../../layouts/Overview/Transactions/FullScreenSummary'
 import { BackButton } from '.'
+import { AddMemberInput } from '../../components/AddMemberInput'
 
 const ManageSignerConfiguration = () => {
   const selectedMultisig = useRecoilValue(selectedMultisigState)
@@ -101,7 +101,7 @@ const ManageSignerConfiguration = () => {
             flex: 1;
           `}
         >
-          <div css={{ display: 'grid', gap: '16px' }}>
+          <div css={{ display: 'grid', gap: '16px', marginBottom: 24 }}>
             <h2 css={{ color: 'var(--color-offWhite)' }}>Vault Members</h2>
             <div css={{ display: 'flex' }}>
               <span>Members of</span>&nbsp;<span css={{ color: 'var(--color-primary)' }}>{selectedMultisig.name}</span>
@@ -123,11 +123,15 @@ const ManageSignerConfiguration = () => {
               ))}
             </div>
           </div>
-          <AddressInput
-            css={{ marginTop: '24px' }}
+          <AddMemberInput
             onNewAddress={(a: Address) => {
               if (newMembers.some(m => m.isEqual(a))) return
               setNewMembers([...newMembers, a])
+            }}
+            validateAddress={address => {
+              const conflict = newMembers.some(a => a.isEqual(address))
+              if (conflict) toast.error('Duplicate address')
+              return !conflict
             }}
           />
         </div>
