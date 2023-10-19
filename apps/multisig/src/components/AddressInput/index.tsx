@@ -11,6 +11,9 @@ export type AddressWithName = {
   name: string
   type: string
   chain?: Chain
+
+  extensionName?: string
+  addressBookName?: string
 }
 
 type Props = {
@@ -165,12 +168,12 @@ const AddressInput: React.FC<Props> = ({ onChange, value, addresses = [], chain 
                     >
                       {name}
                     </p>
-                    <p css={({ color }) => ({ color: color.lightGrey })}>
+                    <p css={({ color }) => ({ color: color.lightGrey, fontSize: 14 })}>
                       {truncateMiddle(address.toSs58(chain), 5, 5, '...')}
                     </p>
                   </div>
                 </div>
-                <p css={{ fontSize: 14, fontWeight: 700 }}>{type}</p>
+                <p css={{ fontSize: 14, fontWeight: 700, textAlign: 'right' }}>{type}</p>
               </div>
             ))
           ) : !querying && address ? (

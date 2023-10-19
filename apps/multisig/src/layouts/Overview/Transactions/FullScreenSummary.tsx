@@ -12,6 +12,7 @@ import { useRecoilValue, useRecoilValueLoadable } from 'recoil'
 
 import TransactionDetailsExpandable from './TransactionDetailsExpandable'
 import TransactionSummaryRow from './TransactionSummaryRow'
+import { useKnownAddresses } from '@hooks/useKnownAddresses'
 
 enum PillType {
   Pending,
@@ -39,6 +40,7 @@ const Pill = ({ children, type }: { children: React.ReactNode; type: PillType })
 }
 
 const Approvals = ({ t }: { t: Transaction }) => {
+  const { contactByAddress } = useKnownAddresses(t.multisig.id)
   return (
     <div css={{ display: 'grid', gap: '14px' }}>
       {Object.entries(t.approvals).map(([encodedAddress, approval]) => {
@@ -47,10 +49,14 @@ const Approvals = ({ t }: { t: Transaction }) => {
           console.error(`Could not decode address in t.approvals!`)
           return null
         }
+        const contact = contactByAddress[decodedAddress.toSs58()]
         return (
           <div key={encodedAddress} css={{ display: 'flex', width: '100%', justifyContent: 'space-between' }}>
             <div css={{ width: '100%' }}>
-              <MemberRow member={{ address: decodedAddress }} chain={t.multisig.chain} />
+              <MemberRow
+                member={{ address: decodedAddress, nickname: contact?.name, you: contact?.extensionName !== undefined }}
+                chain={t.multisig.chain}
+              />
             </div>
             <div
               className={css`

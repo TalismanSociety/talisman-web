@@ -22,24 +22,40 @@ import { Collapse } from 'react-collapse'
 import { useRecoilState, useRecoilValueLoadable } from 'recoil'
 import truncateMiddle from 'truncate-middle'
 import { VoteExpandedDetails, VoteTransactionHeader } from './VoteTransactionDetails'
+import { useKnownAddresses } from '@hooks/useKnownAddresses'
 
 const ChangeConfigExpandedDetails = ({ t }: { t: Transaction }) => {
+  const { contactByAddress } = useKnownAddresses(t.multisig.id)
   return (
     <div>
-      <div css={{ display: 'grid', gap: '8px', marginTop: '8px' }}>
+      <div css={{ display: 'grid', gap: 12, marginTop: '8px' }}>
         {!t.executedAt && (
           <>
             <p css={{ fontWeight: 'bold' }}>Current Signers</p>
-            {t.multisig.signers.map(s => (
-              <MemberRow key={s.toPubKey()} member={{ address: s }} chain={t.multisig.chain} />
-            ))}
+            {t.multisig.signers.map(s => {
+              const contact = contactByAddress[s.toSs58()]
+              return (
+                <MemberRow
+                  key={s.toPubKey()}
+                  member={{ address: s, nickname: contact?.name, you: contact?.extensionName !== undefined }}
+                  chain={t.multisig.chain}
+                />
+              )
+            })}
             <p>Threshold: {t.multisig.threshold}</p>
           </>
         )}
         <p css={{ fontWeight: 'bold', marginTop: '8px' }}>{!t.executedAt ? 'Proposed ' : ''}New Signers</p>
-        {t.decoded?.changeConfigDetails?.signers.map(s => (
-          <MemberRow key={s.toPubKey()} member={{ address: s }} chain={t.multisig.chain} />
-        ))}
+        {t.decoded?.changeConfigDetails?.signers.map(s => {
+          const contact = contactByAddress[s.toSs58()]
+          return (
+            <MemberRow
+              key={s.toPubKey()}
+              member={{ address: s, nickname: contact?.name, you: contact?.extensionName !== undefined }}
+              chain={t.multisig.chain}
+            />
+          )
+        })}
         <p>Threshold: {t.decoded?.changeConfigDetails?.threshold}</p>
       </div>
     </div>

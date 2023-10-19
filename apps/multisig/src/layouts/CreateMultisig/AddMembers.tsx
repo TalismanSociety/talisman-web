@@ -18,7 +18,7 @@ const AddMembers = (props: {
   chain: Chain
 }) => {
   const selectedAccount = useRecoilValue(selectedAccountState)
-  const knownAddresses = useKnownAddresses()
+  const { addresses: knownAddresses } = useKnownAddresses()
 
   const selectedAugmentedAccount = selectedAccount
     ? props.augmentedAccounts.find(a => a.address.isEqual(selectedAccount.injected.address))
