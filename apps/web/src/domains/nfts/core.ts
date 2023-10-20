@@ -59,6 +59,11 @@ const _nftsState = atomFamily<BaseNft[], string>({
                   id: 'nfts-fetching-error',
                 })
               }
+
+              errors.forEach(error => {
+                console.error(error)
+                Sentry.captureException(error)
+              })
             })
           )
           .subscribe({
