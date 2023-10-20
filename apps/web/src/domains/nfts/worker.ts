@@ -25,7 +25,11 @@ const subscribeNfts = (address: string, options: { batchSize: number }) =>
     ).map(async createNftAsyncGenerator => {
       try {
         for await (const nft of createNftAsyncGenerator(address, { batchSize: options.batchSize })) {
-          observer.next(nft)
+          if (nft instanceof Error) {
+            observer.next({ error: nft })
+          } else {
+            observer.next(nft)
+          }
         }
       } catch (error: unknown) {
         observer.next({ error })

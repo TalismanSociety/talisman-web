@@ -19,7 +19,7 @@ export type Nft<TType extends string, TChain extends string> = {
 }
 
 export type CreateNftAsyncGenerator<T extends Nft<any, any>> = {
-  (address: string, options: { batchSize: number }): AsyncGenerator<T>
+  (address: string, options: { batchSize: number }): AsyncGenerator<T | Error>
 }
 
 export type IpfsMetadata = {
