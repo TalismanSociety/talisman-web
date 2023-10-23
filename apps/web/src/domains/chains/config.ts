@@ -54,7 +54,7 @@ export const chains = [
      * https://github.com/paritytech/polkadot-staking-dashboard/blob/8c136141141e6a74ddd838aa20df48a20a35749e/src/config/networks.ts
      */
     parameters: { ...defaultParams, stakeTarget: 0.75 },
-    priorityPool: undefined,
+    priorityPool: 16,
   },
   {
     id: 'kusama',
