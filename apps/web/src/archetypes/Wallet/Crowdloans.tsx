@@ -89,8 +89,8 @@ const GqlCrowdloanItem = styled(
     const goToStaking = useCallback(() => {
       const relayChainId = chains.find(({ genesisHash }) => genesisHash === relayChain?.genesisHash)?.id
       if (relayChainId && account?.address)
-        navigate(`/staking?action=stake&chain=${relayChainId}&account=${account.address}`)
-    }, [account?.address, navigate, relayChain?.genesisHash])
+        navigate(`/staking?action=stake&chain=${relayChainId}&account=${account.address}&amount=${contributedTokens}`)
+    }, [account?.address, contributedTokens, navigate, relayChain?.genesisHash])
 
     // hide returned contributions which were unlocked more than 30 days ago
     const oldAndReturned = contribution.returned && lockedSeconds < -60 * 60 * 24 * 30

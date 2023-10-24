@@ -4,6 +4,7 @@ import { BN } from '@polkadot/util'
 import { useDeriveState, useQueryMultiState } from '@talismn/react-polkadot-api'
 import usePrevious from '@util/usePrevious'
 import { useEffect, useMemo } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { constSelector, useRecoilValue, useRecoilValueLoadable } from 'recoil'
 
 const ESTIMATED_FEE_MARGIN_OF_ERROR = 0.25
@@ -109,11 +110,14 @@ export const usePoolAddForm = (action: 'bondExtra' | 'join', account?: string) =
     minimum.decimalAmount,
   ])
 
+  const [searchParams] = useSearchParams()
+  const defaultAmount = useMemo(() => searchParams.get('amount'), [searchParams])
+
   useEffect(() => {
     if (account !== prevAccount) {
-      setAmount('')
+      setAmount(defaultAmount ?? '')
     }
-  }, [account, prevAccount, setAmount])
+  }, [account, defaultAmount, prevAccount, setAmount])
 
   return {
     input,
