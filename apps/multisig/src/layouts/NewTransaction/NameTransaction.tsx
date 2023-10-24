@@ -1,8 +1,9 @@
 import { css } from '@emotion/css'
 import { Button, TextInput } from '@talismn/ui'
+import { NewTransactionHeader } from './NewTransactionHeader'
 
 export const NameTransaction = (props: {
-  onCancel: () => void
+  onCancel?: () => void
   name: string
   setName: (s: string) => void
   onNext: () => void
@@ -12,14 +13,13 @@ export const NameTransaction = (props: {
       css={{
         display: 'flex',
         flexDirection: 'column',
-        gap: 48,
-        maxWidth: 490,
+        gap: 32,
         width: '100%',
       }}
     >
-      <div css={{ textAlign: 'center' }}>
-        <h1>What's this transaction for?</h1>
-        <p css={{ marginTop: 16 }}>Give your transaction a description</p>
+      <div>
+        <NewTransactionHeader>What's this transaction for?</NewTransactionHeader>
+        <p css={{ marginTop: 4 }}>Give your transaction a description</p>
       </div>
       <div
         className={css`
@@ -38,15 +38,13 @@ export const NameTransaction = (props: {
       </div>
       <div
         className={css`
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 16px;
+          width: 100%;
           button {
             height: 56px;
+            width: 100%;
           }
         `}
       >
-        <Button onClick={props.onCancel} children={<h3>Cancel</h3>} variant="outlined" />
         <Button disabled={props.name.length === 0} onClick={props.onNext} children={<h3>Next</h3>} />
       </div>
     </div>

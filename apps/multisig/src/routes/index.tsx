@@ -6,6 +6,7 @@ import Overview from '../layouts/Overview'
 import Settings from '../layouts/Settings'
 import RequireAuth from '../layouts/Auth/RequireAuth'
 import { AddressBook } from '../layouts/AddressBook'
+import Send from '../layouts/NewTransaction/Send'
 
 const router = createBrowserRouter([
   {
@@ -25,6 +26,14 @@ const router = createBrowserRouter([
     element: (
       <RequireAuth requireMultisig requireSignIn>
         <Overview />
+      </RequireAuth>
+    ),
+  },
+  {
+    path: '/send',
+    element: (
+      <RequireAuth requireMultisig requireSignIn>
+        <Send />
       </RequireAuth>
     ),
   },

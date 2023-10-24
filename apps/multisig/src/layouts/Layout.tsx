@@ -1,4 +1,4 @@
-import { Eye, PlusCircle, Settings, Users } from '@talismn/icons'
+import { Eye, List, Send, Settings, Share2, Users, Zap } from '@talismn/icons'
 import { useNavigate } from 'react-router-dom'
 import Header from './Header'
 import Sidebar from './Sidebar'
@@ -54,9 +54,24 @@ export const Layout: React.FC<
                     onClick: () => navigate('/overview'),
                   },
                   {
-                    name: 'Transaction',
-                    icon: <PlusCircle />,
-                    onClick: () => navigate('/overview/new-transaction'),
+                    name: 'Send',
+                    icon: <Send />,
+                    onClick: () => navigate('/send'),
+                  },
+                  {
+                    name: 'Multi-send',
+                    icon: <Share2 />,
+                    onClick: () => navigate('/multisend'),
+                  },
+                  {
+                    name: 'Voting',
+                    icon: <Zap />,
+                    onClick: () => navigate('/voting'),
+                  },
+                  {
+                    name: 'Advanced',
+                    icon: <List />,
+                    onClick: () => navigate('/advanced'),
                   },
                   {
                     name: 'Address Book',

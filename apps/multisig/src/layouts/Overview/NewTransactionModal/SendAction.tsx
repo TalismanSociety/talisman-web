@@ -22,7 +22,7 @@ import { useNavigate } from 'react-router-dom'
 import { useRecoilValue, useRecoilValueLoadable } from 'recoil'
 
 import { FullScreenDialogContents, FullScreenDialogTitle } from '../Transactions/FullScreenSummary'
-import { NameTransaction } from './generic-steps'
+import { NameTransaction } from '../../NewTransaction/NameTransaction'
 import AddressInput from '@components/AddressInput'
 import { useKnownAddresses } from '@hooks/useKnownAddresses'
 

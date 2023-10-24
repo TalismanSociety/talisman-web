@@ -7,8 +7,8 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import ActionsMenu from './ActionsMenu'
 import AdvancedAction from './AdvancedAction'
 import SendAction from './SendAction'
-import MultiSendAction from './multisend'
 import VoteAction from './vote'
+import MultiSendAction from './multisend'
 
 export enum Action {
   Send,

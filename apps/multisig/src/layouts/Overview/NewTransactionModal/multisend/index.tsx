@@ -18,9 +18,10 @@ import { useNavigate } from 'react-router-dom'
 import { useRecoilValue, useRecoilValueLoadable } from 'recoil'
 
 import { FullScreenDialogContents, FullScreenDialogTitle } from '../../Transactions/FullScreenSummary'
-import { NameTransaction } from '../generic-steps'
+
 import { MultiSendSend } from '../multisend/multisend.types'
 import MultiSendForm from '../multisend/MultiSendForm'
+import { NameTransaction } from '../../../NewTransaction/NameTransaction'
 
 enum Step {
   Name,

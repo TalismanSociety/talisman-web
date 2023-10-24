@@ -21,7 +21,7 @@ import { useNavigate } from 'react-router-dom'
 import { useRecoilValue } from 'recoil'
 
 import { FullScreenDialogContents, FullScreenDialogTitle } from '../Transactions/FullScreenSummary'
-import { NameTransaction } from './generic-steps'
+import { NameTransaction } from '../../NewTransaction/NameTransaction'
 
 enum Step {
   Name,
