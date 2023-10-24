@@ -83,7 +83,7 @@ const GqlCrowdloanItem = styled(
     const isLocked = (lockedSeconds ?? 0) > 0
     const isUnlockingSoon = (lockedSeconds ?? 0) <= 60 * 60 * 72 // 72 hours
 
-    const isFundsReturned = contribution.returned
+    const isFundsReturned = contribution.returned || contribution.crowdloan.dissolved
 
     const navigate = useNavigate()
     const goToStaking = useCallback(() => {
@@ -93,7 +93,7 @@ const GqlCrowdloanItem = styled(
     }, [account?.address, contributedTokens, navigate, relayChain?.genesisHash])
 
     // hide returned contributions which were unlocked more than 30 days ago
-    const oldAndReturned = contribution.returned && lockedSeconds < -60 * 60 * 24 * 30
+    const oldAndReturned = isFundsReturned && lockedSeconds < -60 * 60 * 24 * 30
     if (oldAndReturned) return null
 
     const actions = isLocked ? null : (
