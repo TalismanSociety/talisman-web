@@ -13,7 +13,7 @@ export const useKnownAddresses = (
   const extensionContacts: AddressWithName[] = extensionAccounts.map(({ address, meta }) => ({
     address,
     name: meta.name ?? '',
-    type: 'You',
+    type: 'Extension',
     extensionName: meta.name,
   }))
 
@@ -25,7 +25,7 @@ export const useKnownAddresses = (
     return addresses.map(({ address, name }) => ({
       address,
       name,
-      type: 'Added',
+      type: 'Contacts',
     }))
   }, [addressBookByTeamId, teamId])
 
@@ -34,14 +34,27 @@ export const useKnownAddresses = (
 
     addressBookContacts.forEach(contact => {
       const extensionIndex = list.findIndex(item => item.address.isEqual(contact.address))
+
       if (extensionIndex > -1) {
-        list[extensionIndex]!.addressBookName = contact.name
+        // address is in address book, but is also user's extension account
+        // we will show the address book name, but keep track of the extension name
+        const extensionName = list[extensionIndex]!.extensionName
+        list[extensionIndex] = contact
+        list[extensionIndex]!.extensionName = extensionName
       } else {
         list.push(contact)
       }
     })
 
-    return list
+    return list.sort((a, b) => {
+      // list extension accounts without address book name first
+      if (a.type === 'Extension' && b.type === 'Extension') return a.name.localeCompare(b.name)
+      if (a.type === 'Extension') return -1
+      if (b.type === 'Extension') return 1
+
+      // sort the rest by name
+      return a.name.localeCompare(b.name)
+    })
   }, [addressBookContacts, extensionContacts])
 
   const contactByAddress = useMemo(() => {

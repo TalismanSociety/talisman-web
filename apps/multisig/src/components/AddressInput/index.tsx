@@ -3,8 +3,9 @@ import { Identicon, TextInput } from '@talismn/ui'
 import { Address } from '@util/addresses'
 import { useMemo, useRef, useState } from 'react'
 import { Chain } from '@domains/chains'
-import truncateMiddle from 'truncate-middle'
-import { useOnClickOutside } from '../../domains/common/useOnClickOutside'
+import { useOnClickOutside } from '@domains/common/useOnClickOutside'
+import { SelectedAddress } from './SelectedAddressPill'
+import { NameAndAddress } from './NameAndAddress'
 
 export type AddressWithName = {
   address: Address
@@ -32,6 +33,8 @@ const AddressInput: React.FC<Props> = ({ onChange, value, addresses = [], chain,
   const [input, setInput] = useState(value ?? '')
   const [expanded, setExpanded] = useState(false)
   const [querying, setQuerying] = useState(false)
+  const [address, setAddress] = useState(value ? Address.fromSs58(value) || undefined : undefined)
+  const [contact, setContact] = useState<AddressWithName | undefined>(undefined)
   const containerRef = useRef<HTMLDivElement>(null)
 
   const blur = () => {
@@ -43,17 +46,10 @@ const AddressInput: React.FC<Props> = ({ onChange, value, addresses = [], chain,
 
   const query = value ?? input
 
-  const address = useMemo(() => {
-    try {
-      const parsedAddress = Address.fromSs58(query)
-      if (!parsedAddress) throw new Error('Invalid address')
-      return parsedAddress
-    } catch (e) {
-      return undefined
-    }
-  }, [query])
+  // input displays a non editable pill that shows selected contact's name, address and identicon
+  const controlledSelectedInput = address && addresses.length > 0
 
-  const handleAddressChange = (addressString: string) => {
+  const handleQueryChange = (addressString: string) => {
     let address: Address | undefined
     try {
       const parsedAddress = Address.fromSs58(addressString)
@@ -66,6 +62,23 @@ const AddressInput: React.FC<Props> = ({ onChange, value, addresses = [], chain,
     if (value === undefined) setInput(addressString)
     onChange(address, addressString)
     return address !== undefined
+  }
+
+  const handleSelectFromList = (address: Address, contact?: AddressWithName) => {
+    handleQueryChange(address.toSs58(chain))
+    setAddress(address)
+    setContact(contact)
+    blur()
+  }
+
+  const handleClearInput = () => {
+    setExpanded(addresses.length > 0)
+
+    // clear states
+    handleQueryChange('')
+    setContact(undefined)
+    setAddress(undefined)
+    setQuerying(false)
   }
 
   const filteredAddresses = useMemo(() => {
@@ -88,32 +101,38 @@ const AddressInput: React.FC<Props> = ({ onChange, value, addresses = [], chain,
     })
   }, [addresses, chain, query])
 
+  const validRawInputAddress = useMemo(() => {
+    try {
+      const parsedInputAddress = Address.fromSs58(query)
+      if (parsedInputAddress) return parsedInputAddress
+    } catch (e) {}
+
+    return undefined
+  }, [query])
+
   return (
     <div css={{ width: '100%', position: 'relative' }} ref={containerRef}>
+      {controlledSelectedInput && (
+        <SelectedAddress address={address} chain={chain} name={contact?.name} onClear={handleClearInput} />
+      )}
       <TextInput
         leadingLabel={leadingLabel}
         className={css`
-          width: 100% !important;
           font-size: 18px !important;
+          cursor: ${address ? 'pointer' : 'text'};
         `}
-        placeholder="e.g. 13DgtSygjb8UeF41B5H25khiczEw2sHXeuWUgzVWrFjfwcUH"
-        value={query}
+        placeholder={
+          controlledSelectedInput ? '' : addresses.length > 0 ? 'Search or paste address...' : 'Enter address...'
+        }
+        value={address && addresses.length > 0 ? '' : query}
         onChange={e => {
           setQuerying(true)
-          const validInput = handleAddressChange(e.target.value)
+          const validInput = handleQueryChange(e.target.value)
 
-          // user pasted a valid address, so they're not searching for a contact
+          // user pasted a valid address, so they're no longer querying
           if (validInput) setQuerying(false)
         }}
-        onFocus={() => {
-          setExpanded(addresses.length > 0)
-
-          // clean up input if is valid address, since it's likely that user is trying to change another address input
-          if (address) {
-            handleAddressChange('')
-            setQuerying(false)
-          }
-        }}
+        onFocus={() => setExpanded(addresses.length > 0)}
       />
       <div
         css={({ color }) => ({
@@ -135,72 +154,48 @@ const AddressInput: React.FC<Props> = ({ onChange, value, addresses = [], chain,
       >
         <div css={{ padding: '8px 0px' }}>
           {filteredAddresses.length > 0 ? (
-            filteredAddresses.map(({ address, name, type }) => (
+            filteredAddresses.map(contact => (
               <div
-                key={address.toSs58(chain)}
-                onClick={() => {
-                  handleAddressChange(address.toSs58(chain))
-                  blur()
-                }}
+                key={contact.address.toSs58(chain)}
+                onClick={() => handleSelectFromList(contact.address, contact)}
                 css={{
                   'display': 'flex',
                   'alignItems': 'center',
                   'justifyContent': 'space-between',
                   'padding': '8px 12px',
                   'cursor': 'pointer',
-                  ':hover': {
-                    filter: 'brightness(1.2)',
-                  },
+                  ':hover': { filter: 'brightness(1.2)' },
                 }}
               >
-                <div
-                  css={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 12,
-                  }}
-                >
-                  <Identicon size={24} value={address.toSs58(chain)} />
-                  <div css={{ display: 'flex', gap: 8, alignItems: 'center', marginTop: 4 }}>
-                    <p
-                      css={({ color }) => ({
-                        color: color.offWhite,
-                        whiteSpace: 'nowrap',
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-                        maxWidth: 120,
-                        width: '100%',
-                      })}
-                    >
-                      {name}
-                    </p>
-                    <p css={({ color }) => ({ color: color.lightGrey, fontSize: 14 })}>
-                      {truncateMiddle(address.toSs58(chain), 5, 5, '...')}
-                    </p>
-                  </div>
+                <div css={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                  <Identicon size={24} value={contact.address.toSs58(chain)} />
+                  <NameAndAddress address={contact.address} chain={chain} name={contact.name} />
                 </div>
                 <p css={({ color }) => ({ fontSize: 14, fontWeight: 700, textAlign: 'right', color: color.lightGrey })}>
-                  {type}
+                  {contact.type}
                 </p>
               </div>
             ))
-          ) : !querying && address ? (
+          ) : !querying && validRawInputAddress ? (
+            // user pasted an unknown but valid address, show identicon and formatted address to indicate the address is valid
             <div
               css={{
                 'display': 'flex',
                 'alignItems': 'center',
                 'padding': '8px 12px',
                 'cursor': 'pointer',
+                'gap': 12,
+                'p': {
+                  marginTop: 8,
+                },
                 ':hover': {
                   filter: 'brightness(1.2)',
                 },
               }}
-              onClick={blur}
+              onClick={() => handleSelectFromList(validRawInputAddress)}
             >
-              <Identicon size={24} value={address?.toSs58(chain) ?? ''} />
-              <p css={({ color }) => ({ color: color.offWhite, marginLeft: 8 })}>
-                {truncateMiddle(address?.toSs58(chain) ?? '', 5, 5, '...')}
-              </p>
+              <Identicon size={24} value={validRawInputAddress?.toSs58(chain) ?? ''} />
+              <NameAndAddress address={validRawInputAddress} chain={chain} />
             </div>
           ) : (
             <p css={{ textAlign: 'center', padding: 12 }}>No result found.</p>
