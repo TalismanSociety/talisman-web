@@ -1,5 +1,6 @@
 import { selectedSubstrateAccountsState } from '@domains/accounts'
 import { substrateApiState } from '@domains/common'
+import { request } from 'graphql-request'
 import { SupportedRelaychains } from '@libs/talisman/util/_config'
 import { u8aToHex } from '@polkadot/util'
 import { decodeAddress } from '@polkadot/util-crypto'
@@ -7,6 +8,9 @@ import { Maybe } from '@util/monads'
 import BigNumber from 'bignumber.js'
 import { useEffect, useState } from 'react'
 import { useRecoilValue, useRecoilValueLoadable, waitForAll } from 'recoil'
+import { graphql } from '../../../generated/gql/crowdloan/gql'
+import type { ContributionsQuery } from '../../../generated/gql/crowdloan/gql/graphql'
+import { encodeAnyAddress } from '@talismn/util'
 
 export type CrowdloanContribution = {
   id: string
@@ -20,11 +24,14 @@ export type CrowdloanContribution = {
   fund: { id: string }
 }
 
+export type GqlContribution = ContributionsQuery['contributions'][0] & { relay: { genesisHash: string } }
+
 export function useCrowdloanContributions({
   accounts,
   crowdloans,
 }: { accounts?: string[]; crowdloans?: string[] } = {}): {
   contributions: CrowdloanContribution[]
+  gqlContributions: GqlContribution[]
   hydrated: boolean
 } {
   // TODO: clean me or kill me
@@ -36,10 +43,90 @@ export function useCrowdloanContributions({
   const [contributions, setContributions] = useState<CrowdloanContribution[]>([])
   const [hydrated, setHydrated] = useState(false)
 
+  const [gqlContributions, setGqlContributions] = useState<GqlContribution[]>([])
+  useEffect(() => {
+    let cancelled = false
+
+    const promise = request(
+      import.meta.env.REACT_APP_DOT_CROWDLOAN_INDEXER,
+      graphql(`
+        query contributions($addresses: [String!]!) {
+          contributions(where: { account: { id_in: $addresses } }, orderBy: id_ASC) {
+            id
+            crowdloan {
+              id
+              fundIndex
+              fundAccount
+              paraId
+
+              depositor
+              end
+              cap
+              firstPeriod
+              lastPeriod
+              lastBlock
+
+              createdBlockNumber
+              createdTimestamp
+
+              dissolved
+              dissolvedBlockNumber
+              dissolvedTimestamp
+            }
+            account {
+              id
+            }
+            amount
+            returned
+            blockNumber
+            timestamp
+          }
+        }
+      `),
+      {
+        addresses: (accounts ?? allAccounts.map(account => account.address)).map(address =>
+          encodeAnyAddress(address, 0)
+        ),
+      }
+    )
+
+    promise
+      .then(contributions => {
+        if (cancelled) return
+
+        const gqlContributions = contributions.contributions.map(contribution => ({
+          ...contribution,
+          relay: { genesisHash: '0x91b171bb158e2d3848fa23a9f1c25182fb8e20313b2c1eb49219da7a70ce90c3' },
+        }))
+        const byAccountFundIndex = new Map<string, GqlContribution>()
+        gqlContributions.forEach(contribution => {
+          const accountFundIndex = `${contribution.account.id}-${contribution.crowdloan.fundIndex}`
+          const additionalAmount = BigInt(byAccountFundIndex.get(accountFundIndex)?.amount ?? '0')
+
+          byAccountFundIndex.set(accountFundIndex, {
+            ...contribution,
+            amount: (BigInt(contribution.amount) + additionalAmount).toString(),
+            crowdloan: {
+              ...contribution.crowdloan,
+              lastBlock: contribution.crowdloan.dissolvedBlockNumber ?? contribution.crowdloan.lastBlock,
+            },
+          })
+        })
+        setGqlContributions(Array.from(byAccountFundIndex.values()))
+        setHydrated(true)
+      })
+      .catch(error => {
+        console.error('Failed to fetch contributions', error)
+      })
+
+    return () => {
+      cancelled = true
+    }
+  }, [accounts, allAccounts])
+
   useEffect(
     () => {
       void (async () => {
-        setHydrated(false)
         const results = await Promise.all(
           Object.values(SupportedRelaychains).map(async (relayChain, index) => {
             const apis = await apisLoadable.toPromise()
@@ -87,6 +174,7 @@ export function useCrowdloanContributions({
 
   return {
     contributions,
+    gqlContributions,
     hydrated,
   }
 }
