@@ -6,11 +6,12 @@ import { u8aToHex } from '@polkadot/util'
 import { decodeAddress } from '@polkadot/util-crypto'
 import { Maybe } from '@util/monads'
 import BigNumber from 'bignumber.js'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useRecoilValue, useRecoilValueLoadable, waitForAll } from 'recoil'
 import { graphql } from '../../../generated/gql/crowdloan/gql'
 import type { ContributionsQuery } from '../../../generated/gql/crowdloan/gql/graphql'
 import { encodeAnyAddress } from '@talismn/util'
+import { useInterval } from 'react-use'
 
 export type CrowdloanContribution = {
   id: string
@@ -44,7 +45,7 @@ export function useCrowdloanContributions({
   const [hydrated, setHydrated] = useState(false)
 
   const [gqlContributions, setGqlContributions] = useState<GqlContribution[]>([])
-  useEffect(() => {
+  const fetchGqlContributions = useCallback(() => {
     let cancelled = false
 
     const promise = request(
@@ -123,6 +124,11 @@ export function useCrowdloanContributions({
       cancelled = true
     }
   }, [accounts, allAccounts])
+  useEffect(() => {
+    const cancel = fetchGqlContributions()
+    return cancel
+  }, [fetchGqlContributions])
+  useInterval(fetchGqlContributions, 120_000) // re-fetch every 2 minutes
 
   useEffect(
     () => {
