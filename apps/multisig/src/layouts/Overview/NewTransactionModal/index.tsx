@@ -6,7 +6,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 
 import ActionsMenu from './ActionsMenu'
 import AdvancedAction from './AdvancedAction'
-import VoteAction from './vote'
+import VoteAction from '../../NewTransaction/Vote'
 
 export enum Action {
   Send,
@@ -66,7 +66,7 @@ const NewTransactionModal = () => {
         ) : action === Action.Advanced ? (
           <AdvancedAction onCancel={() => setAction(undefined)} />
         ) : action === Action.Vote ? (
-          <VoteAction onCancel={() => setAction(undefined)} />
+          <VoteAction />
         ) : null}
       </div>
     </Modal>

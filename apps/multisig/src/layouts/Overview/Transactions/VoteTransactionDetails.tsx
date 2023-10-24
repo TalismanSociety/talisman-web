@@ -2,7 +2,7 @@ import { Transaction, TransactionType } from '@domains/multisig'
 import { css } from '@emotion/css'
 import { ExternalLink, Zap } from '@talismn/icons'
 import AmountRow from '@components/AmountRow'
-import { createConvictionsOpts } from '../NewTransactionModal/vote/ConvictionsDropdown'
+import { createConvictionsOpts } from '../../NewTransaction/Vote/ConvictionsDropdown'
 import { VoteDetails } from '../../../domains/referenda'
 
 type Props = {

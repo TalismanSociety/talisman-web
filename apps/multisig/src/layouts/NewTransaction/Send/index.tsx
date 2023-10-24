@@ -110,7 +110,7 @@ const SendAction = () => {
 
   return (
     <Layout selected="Send" requiresMultisig>
-      <div css={{ display: 'flex', flex: 1, flexDirection: 'column', padding: '32px 8%' }}>
+      <div css={{ display: 'flex', flex: 1, flexDirection: 'column', padding: '32px 8%', alignItems: 'center' }}>
         <div css={{ width: '100%', maxWidth: 490 }}>
           {step === Step.Name ? (
             <NameTransaction

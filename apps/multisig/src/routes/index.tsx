@@ -8,6 +8,7 @@ import RequireAuth from '../layouts/Auth/RequireAuth'
 import { AddressBook } from '../layouts/AddressBook'
 import Send from '../layouts/NewTransaction/Send'
 import MultiSend from '../layouts/NewTransaction/Multisend'
+import Vote from '../layouts/NewTransaction/Vote'
 
 const router = createBrowserRouter([
   {
@@ -43,6 +44,14 @@ const router = createBrowserRouter([
     element: (
       <RequireAuth requireMultisig requireSignIn>
         <MultiSend />
+      </RequireAuth>
+    ),
+  },
+  {
+    path: '/voting',
+    element: (
+      <RequireAuth requireMultisig requireSignIn>
+        <Vote />
       </RequireAuth>
     ),
   },
