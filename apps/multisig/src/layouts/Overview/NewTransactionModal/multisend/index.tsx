@@ -9,6 +9,7 @@ import {
   useNextTransactionSigner,
   useSelectedMultisig,
 } from '@domains/multisig'
+import { hasPermission } from '@domains/proxy/util'
 import { css } from '@emotion/css'
 import { SubmittableExtrinsic } from '@polkadot/api/types'
 import { SideSheet } from '@talismn/ui'
@@ -18,10 +19,10 @@ import { useNavigate } from 'react-router-dom'
 import { useRecoilValueLoadable } from 'recoil'
 
 import { FullScreenDialogContents, FullScreenDialogTitle } from '../../Transactions/FullScreenSummary'
-import { NameTransaction } from '../generic-steps'
+
 import { MultiSendSend } from '../multisend/multisend.types'
 import MultiSendForm from '../multisend/MultiSendForm'
-import { hasPermission } from '../../../../domains/proxy/util'
+import { NameTransaction } from '../../../NewTransaction/NameTransaction'
 
 enum Step {
   Name,

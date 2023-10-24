@@ -4,6 +4,7 @@ import Landing from '../layouts/Landing'
 import Overview from '../layouts/Overview'
 import Settings from '../layouts/Settings'
 import RequireAuth from '../layouts/Auth/RequireAuth'
+import Send from '../layouts/NewTransaction/Send'
 import { AddressBook } from '../layouts/AddressBook'
 import { AddVault } from '../layouts/AddVault'
 
@@ -25,6 +26,14 @@ const router = createBrowserRouter([
     element: (
       <RequireAuth requireSignIn>
         <Overview />
+      </RequireAuth>
+    ),
+  },
+  {
+    path: '/send',
+    element: (
+      <RequireAuth requireSignIn>
+        <Send />
       </RequireAuth>
     ),
   },
