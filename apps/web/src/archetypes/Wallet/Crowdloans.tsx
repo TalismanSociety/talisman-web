@@ -458,7 +458,7 @@ const SuspendableCrowdloans = ({ className }: { className?: string }) => {
   const accounts = useRecoilValue(selectedSubstrateAccountsState)
   // TODO: Get from squid (on-chain contributions are deleted once they've been refunded)
   const {
-    contributions,
+    contributions: onChainContributions,
     gqlContributions,
     hydrated: contributionsHydrated,
   } = useCrowdloanContributions({
@@ -467,15 +467,15 @@ const SuspendableCrowdloans = ({ className }: { className?: string }) => {
   const crowdloansUsd = useTotalCrowdloanTotalFiatAmount()
 
   const { crowdloans } = useCrowdloans()
-  const sortedContributions = useMemo<CrowdloanContribution[]>(() => {
+  const sortedOnChainContributions = useMemo<CrowdloanContribution[]>(() => {
     const crowdloanByParaId = new Map(crowdloans.map(crowdloan => [crowdloan.parachain.paraId, crowdloan]))
-    return contributions.slice().sort((a, b) => {
+    return onChainContributions.slice().sort((a, b) => {
       return (
         (crowdloanByParaId.get(a.parachain.paraId)?.lockedSeconds ?? Number.MAX_SAFE_INTEGER) -
         (crowdloanByParaId.get(b.parachain.paraId)?.lockedSeconds ?? Number.MAX_SAFE_INTEGER)
       )
     })
-  }, [contributions, crowdloans])
+  }, [crowdloans, onChainContributions])
 
   const sortedGqlContributions = useMemo(() => {
     return gqlContributions.slice().sort((a, b) => {
@@ -503,7 +503,7 @@ const SuspendableCrowdloans = ({ className }: { className?: string }) => {
 
     return [
       ...sortedGqlContributions.map(c => ({ type: 'gql-contribution' as const, contribution: c })),
-      ...sortedContributions
+      ...sortedOnChainContributions
         // only include kusama onchain contributions, polkadot we fetch from a squid
         .filter(c => c.parachain.paraId.startsWith('2-'))
         .map(c => ({ type: 'onchain-contribution' as const, contribution: c })),
@@ -521,10 +521,10 @@ const SuspendableCrowdloans = ({ className }: { className?: string }) => {
 
       return aEnd - bEnd
     })
-  }, [crowdloans, sortedContributions, sortedGqlContributions])
+  }, [crowdloans, sortedGqlContributions, sortedOnChainContributions])
 
   // Temporary disable crowdloan skeleton
-  if (!contributionsHydrated || contributions.length === 0) {
+  if (!contributionsHydrated || mergedContributions.length === 0) {
     return null
   }
 
@@ -536,8 +536,8 @@ const SuspendableCrowdloans = ({ className }: { className?: string }) => {
           <div>{t('Summoning Crowdloan Contributions...')}</div>
           <Pendor />
         </PanelSection>
-      ) : contributions.length < 1 ? (
-        <PanelSection comingSoon>{t('You have not contributed to any Crowdloans')}</PanelSection>
+      ) : mergedContributions.length < 1 ? (
+        <PanelSection comingSoon>{t('You have not contributed to any recent Crowdloans')}</PanelSection>
       ) : (
         <ExtensionStatusGate unavailable={<ExtensionUnavailable />}>
           <div css={{ display: 'flex', flexDirection: 'column', gap: '1.6rem' }}>

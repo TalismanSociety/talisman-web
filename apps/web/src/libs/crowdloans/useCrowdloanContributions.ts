@@ -113,6 +113,7 @@ export function useCrowdloanContributions({
           })
         })
         setGqlContributions(Array.from(byAccountFundIndex.values()))
+        setHydrated(true)
       })
       .catch(error => {
         console.error('Failed to fetch contributions', error)
@@ -126,7 +127,6 @@ export function useCrowdloanContributions({
   useEffect(
     () => {
       void (async () => {
-        setHydrated(false)
         const results = await Promise.all(
           Object.values(SupportedRelaychains).map(async (relayChain, index) => {
             const apis = await apisLoadable.toPromise()
