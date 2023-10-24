@@ -123,7 +123,7 @@ const TransactionsList = ({ transactions }: { transactions: Transaction[] }) => 
               onClose={() => {
                 navigate('/overview')
               }}
-              title={<FullScreenDialogTitle t={openTransaction} />}
+              title={<FullScreenDialogTitle t={openTransaction} showPill />}
               css={{
                 header: {
                   margin: '32px 48px',
