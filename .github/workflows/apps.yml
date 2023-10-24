@@ -50,6 +50,8 @@ jobs:
         SENTRY_DSN,
         POSTHOG_AUTH_TOKEN,
         EX_HISTORY_INDEXER,
+        DOT_CROWDLOAN_INDEXER,
+        KSM_CROWDLOAN_INDEXER,
         BASEROW_EXPLORE_AUTH,
         BASEROW_CROWDLOANS_AUTH
       environmentVariableVariables: >-
