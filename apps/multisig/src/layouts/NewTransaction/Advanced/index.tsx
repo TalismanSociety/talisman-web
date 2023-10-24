@@ -1,29 +1,27 @@
-import { buildTransferExtrinsic, useApproveAsMulti } from '@domains/chains'
+import 'ace-builds/src-noconflict/ace'
+import 'ace-builds/src-noconflict/mode-json'
+import 'ace-builds/src-noconflict/theme-twilight'
+import 'ace-builds/src-noconflict/ext-language_tools'
 
-import { pjsApiSelector } from '@domains/chains/pjs-api'
+import { useApproveAsMulti } from '@domains/chains'
 import {
   Transaction,
   TransactionApprovals,
   TransactionType,
-  selectedMultisigChainTokensState,
+  selectedMultisigState,
   useNextTransactionSigner,
-  useSelectedMultisig,
 } from '@domains/multisig'
-import { hasPermission } from '@domains/proxy/util'
 import { SubmittableExtrinsic } from '@polkadot/api/types'
 import { SideSheet } from '@talismn/ui'
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import toast from 'react-hot-toast'
 import { useNavigate } from 'react-router-dom'
-import { useRecoilValueLoadable } from 'recoil'
+import { useRecoilValue } from 'recoil'
 
 import { FullScreenDialogContents, FullScreenDialogTitle } from '../../Overview/Transactions/FullScreenSummary'
-
-import { MultiSendSend } from './multisend.types'
-import MultiSendForm from './MultiSendForm'
 import { NameTransaction } from '../NameTransaction'
+import { DetailsForm } from './DetailsForm'
 import { Layout } from '../../Layout'
-import { NewTransactionHeader } from '../NewTransactionHeader'
 
 enum Step {
   Name,
@@ -31,81 +29,42 @@ enum Step {
   Review,
 }
 
-const MultiSend = () => {
+const AdvancedAction = () => {
   const [step, setStep] = useState(Step.Name)
   const [name, setName] = useState('')
-  const tokens = useRecoilValueLoadable(selectedMultisigChainTokensState)
   const [extrinsic, setExtrinsic] = useState<SubmittableExtrinsic<'promise'> | undefined>()
-  const [sends, setSends] = useState<MultiSendSend[]>([])
-  const [multisig] = useSelectedMultisig()
-  const apiLoadable = useRecoilValueLoadable(pjsApiSelector(multisig.chain.rpcs))
+  const multisig = useRecoilValue(selectedMultisigState)
   const navigate = useNavigate()
 
-  const permissions = hasPermission(multisig, 'transfer')
-
-  useEffect(() => {
-    if (sends.length > 0 && apiLoadable.state === 'hasValue') {
-      if (
-        !apiLoadable.contents.tx.balances?.transferKeepAlive ||
-        !apiLoadable.contents.tx.proxy?.proxy ||
-        !apiLoadable.contents.tx.utility?.batchAll
-      ) {
-        throw Error('chain missing required pallet/s for multisend')
-      }
-      try {
-        const sendExtrinsics = sends.map(send => {
-          const balance = {
-            amount: send.amountBn,
-            token: send.token,
-          }
-          return buildTransferExtrinsic(apiLoadable.contents, send.address, balance)
-        })
-
-        const batchAllExtrinsic = apiLoadable.contents.tx.utility.batchAll(sendExtrinsics)
-        const extrinsic = apiLoadable.contents.tx.proxy.proxy(multisig.proxyAddress.bytes, null, batchAllExtrinsic)
-        setExtrinsic(extrinsic)
-      } catch (error) {
-        console.error(error)
-      }
-    }
-  }, [sends, apiLoadable, multisig.proxyAddress])
-
+  const hash = extrinsic?.registry.hash(extrinsic.method.toU8a()).toHex()
   const t: Transaction | undefined = useMemo(() => {
     if (extrinsic) {
-      const hash = extrinsic.registry.hash(extrinsic.method.toU8a()).toHex()
       return {
         date: new Date(),
-        hash,
+        hash: hash || '0x',
         description: name,
-        chain: multisig.chain,
         multisig,
         approvals: multisig.signers.reduce((acc, key) => {
           acc[key.toPubKey()] = false
           return acc
         }, {} as TransactionApprovals),
         decoded: {
-          type: TransactionType.MultiSend,
-          // recipients: [{ address: destination, balance: { amount: amountBn || new BN(0), token: selectedToken } }],
-          recipients: sends.map(send => ({
-            address: send.address,
-            balance: { amount: send.amountBn, token: send.token },
-          })),
-          yaml: '',
+          type: TransactionType.Advanced,
+          recipients: [],
         },
         callData: extrinsic.method.toHex(),
       }
     }
-  }, [extrinsic, multisig, sends, name])
+  }, [multisig, name, extrinsic, hash])
   const signer = useNextTransactionSigner(t?.approvals)
-  const hash = extrinsic?.registry.hash(extrinsic.method.toU8a()).toHex()
   const {
     approveAsMulti,
     estimatedFee,
     ready: approveAsMultiReady,
-  } = useApproveAsMulti(signer?.address, hash, null, t?.multisig)
+  } = useApproveAsMulti(signer?.address, hash, null, multisig)
 
   return (
-    <Layout selected="Multi-send" requiresMultisig>
+    <Layout selected="Advanced" requiresMultisig>
       <div css={{ display: 'flex', flex: 1, flexDirection: 'column', padding: '32px 8%' }}>
         {step === Step.Name ? (
           <div css={{ width: '100%', maxWidth: 490 }}>
@@ -118,17 +77,12 @@ const MultiSend = () => {
             />
           </div>
         ) : step === Step.Details || step === Step.Review ? (
-          <div css={{ width: '100%', maxWidth: 620 }}>
-            <NewTransactionHeader>{name}</NewTransactionHeader>
-            <MultiSendForm
-              {...permissions}
-              tokens={tokens}
-              onBack={() => setStep(Step.Name)}
-              onNext={() => setStep(Step.Review)}
-              sends={sends}
-              setSends={setSends}
-            />
-          </div>
+          <DetailsForm
+            onBack={() => setStep(Step.Name)}
+            onNext={() => setStep(Step.Review)}
+            extrinsic={extrinsic}
+            setExtrinsic={setExtrinsic}
+          />
         ) : null}
         <SideSheet
           onRequestDismiss={() => {
@@ -152,10 +106,10 @@ const MultiSend = () => {
           open={step === Step.Review}
         >
           <FullScreenDialogContents
-            t={t}
-            fee={approveAsMultiReady ? estimatedFee : undefined}
             canCancel={true}
             cancelButtonTextOverride="Back"
+            fee={approveAsMultiReady ? estimatedFee : undefined}
+            t={t}
             onApprove={() =>
               new Promise((resolve, reject) => {
                 if (!hash || !extrinsic) {
@@ -169,11 +123,17 @@ const MultiSend = () => {
                   },
                   onSuccess: () => {
                     navigate('/overview')
-                    toast.success('Transaction successful!', { duration: 5000, position: 'bottom-right' })
+                    toast.success(
+                      "Transaction sent! It will appear in your 'Pending' transactions as soon as it lands in a finalized block.",
+                      { duration: 5000, position: 'bottom-right' }
+                    )
+                    if (!hash || !extrinsic) {
+                      console.error("Couldn't get hash or extrinsic")
+                      return
+                    }
                     resolve()
                   },
                   onFailure: e => {
-                    navigate('/overview')
                     toast.error('Transaction failed')
                     console.error(e)
                     reject()
@@ -192,4 +152,4 @@ const MultiSend = () => {
   )
 }
 
-export default MultiSend
+export default AdvancedAction

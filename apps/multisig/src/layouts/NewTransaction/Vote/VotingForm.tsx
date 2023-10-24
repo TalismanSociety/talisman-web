@@ -1,7 +1,7 @@
 import { Button } from '@talismn/ui'
 import { css } from '@emotion/css'
 import { BaseToken } from '@domains/chains'
-import { selectedMultisigState, useSelectedMultisig } from '@domains/multisig'
+import { useSelectedMultisig } from '@domains/multisig'
 import { VoteDetails, isVoteDetailsComplete } from '@domains/referenda'
 import VoteOptions from './VoteOptions'
 import VoteStandard from './mode/VoteStandard'
@@ -9,7 +9,6 @@ import { ProposalsDropdown } from './ProposalsDropdown'
 import { hasPermission } from '@domains/proxy/util'
 import { Alert } from '@components/Alert'
 import { NewTransactionHeader } from '../NewTransactionHeader'
-import { useRecoilValue } from 'recoil'
 
 type Props = {
   token: BaseToken
@@ -19,7 +18,7 @@ type Props = {
 }
 
 const VotingForm: React.FC<Props> = ({ onChange, onNext, token, voteDetails }) => {
-  const multisig = useRecoilValue(selectedMultisigState)
+  const [multisig] = useSelectedMultisig()
 
   const { hasDelayedPermission, hasNonDelayedPermission } = hasPermission(multisig, 'governance')
 

@@ -9,6 +9,7 @@ import { AddressBook } from '../layouts/AddressBook'
 import { AddVault } from '../layouts/AddVault'
 import MultiSend from '../layouts/NewTransaction/Multisend'
 import Vote from '../layouts/NewTransaction/Vote'
+import Advanced from '../layouts/NewTransaction/Advanced'
 
 const router = createBrowserRouter([
   {
@@ -52,6 +53,14 @@ const router = createBrowserRouter([
     element: (
       <RequireAuth requireSignIn>
         <Vote />
+      </RequireAuth>
+    ),
+  },
+  {
+    path: '/advanced',
+    element: (
+      <RequireAuth requireMultisig requireSignIn>
+        <Advanced />
       </RequireAuth>
     ),
   },

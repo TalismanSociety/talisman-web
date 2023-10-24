@@ -106,7 +106,7 @@ const VoteAction: React.FC = () => {
 
   return (
     <Layout selected="Voting" requiresMultisig>
-      <div css={{ display: 'flex', flex: 1, flexDirection: 'column', padding: '32px 8%', alignItems: 'center' }}>
+      <div css={{ display: 'flex', flex: 1, flexDirection: 'column', padding: '32px 8%' }}>
         <div css={{ width: '100%', maxWidth: 490 }}>
           <VotingForm
             voteDetails={voteDetails}
