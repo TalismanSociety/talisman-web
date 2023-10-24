@@ -7,6 +7,8 @@ import { useKnownAddresses } from '@hooks/useKnownAddresses'
 import { Address } from '@util/addresses'
 import { Button } from '@talismn/ui'
 import { NewTransactionHeader } from '../NewTransactionHeader'
+import { hasPermission } from '@domains/proxy/util'
+import { Alert } from '@components/Alert'
 
 export const DetailsForm = (props: {
   destinationAddress?: Address
@@ -21,6 +23,8 @@ export const DetailsForm = (props: {
 }) => {
   const [multisig] = useSelectedMultisig()
   const { addresses } = useKnownAddresses(multisig.id)
+  const { hasDelayedPermission, hasNonDelayedPermission } = hasPermission(multisig, 'transfer')
+
   return (
     <>
       <NewTransactionHeader>Transaction details</NewTransactionHeader>
@@ -60,6 +64,18 @@ export const DetailsForm = (props: {
           children={<h3>Next</h3>}
         />
       </div>
+      {hasNonDelayedPermission === false &&
+        (hasDelayedPermission ? (
+          <Alert>
+            <p>Time delayed proxies are not supported yet.</p>
+          </Alert>
+        ) : (
+          <Alert>
+            <p>
+              Your Vault does not have the proxy permission required to send token on behalf of the proxied account.
+            </p>
+          </Alert>
+        ))}
     </>
   )
 }

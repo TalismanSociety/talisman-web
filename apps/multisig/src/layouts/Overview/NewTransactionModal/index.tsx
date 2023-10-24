@@ -6,9 +6,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 
 import ActionsMenu from './ActionsMenu'
 import AdvancedAction from './AdvancedAction'
-import SendAction from './SendAction'
 import VoteAction from './vote'
-import MultiSendAction from './multisend'
 
 export enum Action {
   Send,
@@ -65,12 +63,8 @@ const NewTransactionModal = () => {
               setAction(a)
             }}
           />
-        ) : action === Action.Send ? (
-          <SendAction onCancel={() => setAction(undefined)} />
         ) : action === Action.Advanced ? (
           <AdvancedAction onCancel={() => setAction(undefined)} />
-        ) : action === Action.MultiSend ? (
-          <MultiSendAction onCancel={() => setAction(undefined)} />
         ) : action === Action.Vote ? (
           <VoteAction onCancel={() => setAction(undefined)} />
         ) : null}

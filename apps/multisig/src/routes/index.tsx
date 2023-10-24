@@ -7,6 +7,7 @@ import RequireAuth from '../layouts/Auth/RequireAuth'
 import Send from '../layouts/NewTransaction/Send'
 import { AddressBook } from '../layouts/AddressBook'
 import { AddVault } from '../layouts/AddVault'
+import MultiSend from '../layouts/NewTransaction/Multisend'
 
 const router = createBrowserRouter([
   {
@@ -34,6 +35,14 @@ const router = createBrowserRouter([
     element: (
       <RequireAuth requireSignIn>
         <Send />
+      </RequireAuth>
+    ),
+  },
+  {
+    path: '/multisend',
+    element: (
+      <RequireAuth requireSignIn>
+        <MultiSend />
       </RequireAuth>
     ),
   },
