@@ -5,10 +5,10 @@ import { Button } from '@talismn/ui'
 import TokensSelect from '@components/TokensSelect'
 import { BaseToken } from '@domains/chains'
 import { MultiSendSend } from './multisend.types'
-import MultiLineTransferInput from './MultiLineSendInput'
 import { isEqual } from 'lodash'
 import AmountRow from '@components/AmountRow'
 import BN from 'bn.js'
+import { MultiLineSendInput } from './MultiLineSendInput'
 
 const MultiSendForm = (props: {
   tokens: Loadable<BaseToken[]>
@@ -33,7 +33,7 @@ const MultiSendForm = (props: {
         flex-direction: column;
         gap: 32px;
         max-width: 620px;
-        padding-top: 40px;
+        padding-top: 32px;
         width: 100%;
       `}
     >
@@ -42,7 +42,7 @@ const MultiSendForm = (props: {
         selectedToken={selectedToken}
         onChange={token => setSelectedToken(token)}
       />
-      <MultiLineTransferInput
+      <MultiLineSendInput
         token={selectedToken}
         onChange={(sends, invalidRows) => {
           // prevent unnecessary re-render if sends are the same

@@ -113,12 +113,12 @@ const Overview = () => {
       <div
         className={css`
           display: grid;
+          flex: 1;
           gap: 16px;
           grid-template-columns: 1fr;
           grid-template-areas:
             'transactions'
             'assets';
-          width: 100%;
           @media ${device.md} {
             grid-template-columns: 45fr 55fr;
             grid-template-areas: 'assets transactions';
