@@ -43,8 +43,6 @@ export const WithdrawCrowdloanWidget = ({
 
   const onRequestWithdraw = useCallback(async () => account && (await tx?.signAndSend(account.address)), [account, tx])
 
-  console.log('contents', tx?.contents)
-
   useEffect(() => {
     if (tx?.state === 'loading') {
       if (tx?.contents === undefined) return

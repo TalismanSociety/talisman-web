@@ -1,4 +1,4 @@
-import { type CrowdloanContribution } from '@libs/crowdloans'
+import { type CrowdloanContribution, type GqlContribution } from '@libs/crowdloans'
 import type { BalanceWithTokensWithPrice } from '@talismn/api-react-hooks'
 import { groupBalancesByAddress } from '@talismn/api-react-hooks'
 import { encodeAnyAddress, planckToTokens } from '@talismn/util'
@@ -50,6 +50,31 @@ export function calculateCrowdloanPortfolioAmounts(
     if (!byAddress[encodeAnyAddress(contribution.account, 42)])
       byAddress[encodeAnyAddress(contribution.account, 42)] = []
     byAddress[encodeAnyAddress(contribution.account, 42)]?.push(contribution)
+  })
+
+  Object.entries(byAddress).forEach(([address, contributions]) => {
+    const tags: Tag[] = ['USD', 'Crowdloans', { Address: address }]
+    contributions.forEach(contribution => {
+      const contributionTokens = planckToTokens(contribution.amount, tokenDecimals)
+      const contributionUsd = new BigNumber(contributionTokens ?? 0).times(tokenPrice ?? 0).toString()
+      amounts.push({ tags, amount: contributionUsd })
+    })
+  })
+
+  return amounts
+}
+export function calculateGqlCrowdloanPortfolioAmounts(
+  contributions: GqlContribution[],
+  tokenDecimals?: number,
+  tokenPrice?: string
+): Array<{ tags: Tag[]; amount: string | undefined }> {
+  const amounts: Array<{ tags: Tag[]; amount: string | undefined }> = []
+
+  const byAddress: Record<string, GqlContribution[]> = {}
+  contributions.forEach(contribution => {
+    if (!byAddress[encodeAnyAddress(contribution.account.id, 42)])
+      byAddress[encodeAnyAddress(contribution.account.id, 42)] = []
+    byAddress[encodeAnyAddress(contribution.account.id, 42)]?.push(contribution)
   })
 
   Object.entries(byAddress).forEach(([address, contributions]) => {
