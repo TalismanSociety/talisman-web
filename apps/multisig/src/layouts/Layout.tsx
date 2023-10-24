@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom'
 import Header from './Header'
 import Sidebar from './Sidebar'
 import Footer from './Footer'
-import NewTransactionModal from './Overview/NewTransactionModal'
 import NoVault from './CreateMultisig/NoVault'
 import { EyeOfSauronProgressIndicator } from '@talismn/ui'
 import { useRecoilValue } from 'recoil'
@@ -91,7 +90,6 @@ export const Layout: React.FC<
         )}
       </div>
       <Footer />
-      <NewTransactionModal />
     </div>
   )
 }
