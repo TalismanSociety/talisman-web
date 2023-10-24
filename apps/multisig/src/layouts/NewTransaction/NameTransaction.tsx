@@ -17,7 +17,7 @@ export const NameTransaction = (props: {
         width: '100%',
       }}
     >
-      <div>
+      <div css={{ textAlign: 'center' }}>
         <NewTransactionHeader>What's this transaction for?</NewTransactionHeader>
         <p css={{ marginTop: 4 }}>Give your transaction a description</p>
       </div>

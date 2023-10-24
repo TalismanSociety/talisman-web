@@ -106,89 +106,87 @@ const MultiSend = () => {
 
   return (
     <Layout selected="Multi-send" requiresMultisig>
-      <div css={{ display: 'flex', flex: 1, flexDirection: 'column', padding: '32px 8%' }}>
-        <div css={{ width: '100%', maxWidth: 620 }}>
-          {step === Step.Name ? (
-            <div css={{ width: '100%', maxWidth: 490 }}>
-              <NameTransaction
-                name={name}
-                setName={setName}
-                onNext={() => {
-                  setStep(Step.Details)
-                }}
-              />
-            </div>
-          ) : step === Step.Details || step === Step.Review ? (
-            <>
-              <NewTransactionHeader>{name}</NewTransactionHeader>
-              <MultiSendForm
-                {...permissions}
-                tokens={tokens}
-                onBack={() => setStep(Step.Name)}
-                onNext={() => setStep(Step.Review)}
-                sends={sends}
-                setSends={setSends}
-              />
-            </>
-          ) : null}
-          <SideSheet
-            onRequestDismiss={() => {
-              setStep(Step.Details)
-            }}
-            onClose={() => {
-              setStep(Step.Details)
-            }}
-            title={<FullScreenDialogTitle t={t} />}
-            css={{
-              header: {
-                margin: '32px 48px',
-              },
-              height: '100vh',
-              background: 'var(--color-grey800)',
-              maxWidth: '781px',
-              minWidth: '700px',
-              width: '100%',
-              padding: '0 !important',
-            }}
-            open={step === Step.Review}
-          >
-            <FullScreenDialogContents
-              t={t}
-              fee={approveAsMultiReady ? estimatedFee : undefined}
-              canCancel={true}
-              cancelButtonTextOverride="Back"
-              onApprove={() =>
-                new Promise((resolve, reject) => {
-                  if (!hash || !extrinsic) {
-                    toast.error("Couldn't get hash or extrinsic")
-                    return
-                  }
-                  approveAsMulti({
-                    metadata: {
-                      description: name,
-                      callData: extrinsic.method.toHex(),
-                    },
-                    onSuccess: () => {
-                      navigate('/overview')
-                      toast.success('Transaction successful!', { duration: 5000, position: 'bottom-right' })
-                      resolve()
-                    },
-                    onFailure: e => {
-                      navigate('/overview')
-                      toast.error('Transaction failed')
-                      console.error(e)
-                      reject()
-                    },
-                  })
-                })
-              }
-              onCancel={() => {
+      <div css={{ display: 'flex', flex: 1, flexDirection: 'column', padding: '32px 8%', alignItems: 'center' }}>
+        {step === Step.Name ? (
+          <div css={{ width: '100%', maxWidth: 490 }}>
+            <NameTransaction
+              name={name}
+              setName={setName}
+              onNext={() => {
                 setStep(Step.Details)
-                return Promise.resolve()
               }}
             />
-          </SideSheet>
-        </div>
+          </div>
+        ) : step === Step.Details || step === Step.Review ? (
+          <div css={{ width: '100%', maxWidth: 620 }}>
+            <NewTransactionHeader>{name}</NewTransactionHeader>
+            <MultiSendForm
+              {...permissions}
+              tokens={tokens}
+              onBack={() => setStep(Step.Name)}
+              onNext={() => setStep(Step.Review)}
+              sends={sends}
+              setSends={setSends}
+            />
+          </div>
+        ) : null}
+        <SideSheet
+          onRequestDismiss={() => {
+            setStep(Step.Details)
+          }}
+          onClose={() => {
+            setStep(Step.Details)
+          }}
+          title={<FullScreenDialogTitle t={t} />}
+          css={{
+            header: {
+              margin: '32px 48px',
+            },
+            height: '100vh',
+            background: 'var(--color-grey800)',
+            maxWidth: '781px',
+            minWidth: '700px',
+            width: '100%',
+            padding: '0 !important',
+          }}
+          open={step === Step.Review}
+        >
+          <FullScreenDialogContents
+            t={t}
+            fee={approveAsMultiReady ? estimatedFee : undefined}
+            canCancel={true}
+            cancelButtonTextOverride="Back"
+            onApprove={() =>
+              new Promise((resolve, reject) => {
+                if (!hash || !extrinsic) {
+                  toast.error("Couldn't get hash or extrinsic")
+                  return
+                }
+                approveAsMulti({
+                  metadata: {
+                    description: name,
+                    callData: extrinsic.method.toHex(),
+                  },
+                  onSuccess: () => {
+                    navigate('/overview')
+                    toast.success('Transaction successful!', { duration: 5000, position: 'bottom-right' })
+                    resolve()
+                  },
+                  onFailure: e => {
+                    navigate('/overview')
+                    toast.error('Transaction failed')
+                    console.error(e)
+                    reject()
+                  },
+                })
+              })
+            }
+            onCancel={() => {
+              setStep(Step.Details)
+              return Promise.resolve()
+            }}
+          />
+        </SideSheet>
       </div>
     </Layout>
   )
