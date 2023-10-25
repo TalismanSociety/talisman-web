@@ -8,7 +8,7 @@
 
 3. Create `.env` and copy values from `.env.example`
 
-4. Note that the prod url SIWS service will only work with https. This dev server will be running on localhost over `http`, so you will have to run a local instance of the backend, then replace the values below:
+4. Note that the prod url SIWS service will only work with `https`. This dev server will be running on localhost over `http`, so you will have to run a local instance of the backend, then replace the values below:
    `REACT_APP_HASURA_ENDPOINT`: http://localhost:8080
    `REACT_APP_SIWS_ENDPOINT`: http://localhost:3031
 
