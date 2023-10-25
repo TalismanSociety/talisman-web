@@ -5,9 +5,10 @@ import {
   IconButton,
   Identicon,
   TextInput,
+  Tooltip,
 } from '@talismn/ui'
 import { Layout } from '../Layout'
-import { Copy, Plus, Trash } from '@talismn/icons'
+import { Copy, Database, Plus, Trash } from '@talismn/icons'
 import { Contact, useAddressBook, useDeleteContact } from '@domains/offchain-data'
 import { AddContactModal } from './AddContactModal'
 import { useState, useMemo } from 'react'
@@ -15,16 +16,43 @@ import truncateMiddle from 'truncate-middle'
 import { copyToClipboard } from '@domains/common'
 import { useInput } from '@hooks/useInput'
 import { Multisig, useSelectedMultisig } from '@domains/multisig'
+import Logomark from '../../components/Logomark'
 
-const Header: React.FC<{ onAddContact: () => void }> = ({ onAddContact }) => (
-  <div css={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
-    <h2 css={({ color }) => ({ color: color.offWhite, marginTop: 4 })}>Address Book</h2>
-    <Button variant="outlined" css={{ borderRadius: 12, padding: '8px 12px' }} onClick={onAddContact}>
-      <div css={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-        <Plus size={16} />
-        <p css={{ marginTop: 4, fontSize: 14 }}>Add Contact</p>
+const Header: React.FC<{ onAddContact: () => void; vaultName: string }> = ({ onAddContact, vaultName }) => (
+  <div css={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
+    <div>
+      <div css={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+        <h2 css={({ color }) => ({ color: color.offWhite, marginTop: 4 })}>Address Book</h2>
+        <Tooltip
+          content={
+            <p css={{ maxWidth: 350 }}>
+              Your Address Book is currently hosted securely with Signet's Database. To find out more about Self
+              Hosting, contact us at {process.env.REACT_APP_CONTACT_EMAIL}
+            </p>
+          }
+        >
+          <div css={{ position: 'relative' }}>
+            <Database size={20} />
+            <Logomark css={{ position: 'absolute', top: 0, right: '-60%' }} size={12} />
+          </div>
+        </Tooltip>
       </div>
-    </Button>
+      <p css={({ color }) => ({ color: color.primary, span: { color: color.offWhite } })}>
+        Store shared contacts securely for <span>{vaultName}</span>
+      </p>
+    </div>
+    <div css={{ display: 'flex', flex: 1, alignItems: 'flex-end', marginTop: 21 }}>
+      <div css={{ display: 'flex', flex: 1, flexDirection: 'column' }}>
+        <p css={({ color }) => ({ color: color.offWhite })}>Contacts</p>
+        <p>Manage contacts to share and edit with other Multisig members</p>
+      </div>
+      <Button variant="outlined" css={{ borderRadius: 12, padding: '8px 12px' }} onClick={onAddContact}>
+        <div css={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+          <Plus size={16} />
+          <p css={{ marginTop: 4, fontSize: 14 }}>Add Contact</p>
+        </div>
+      </Button>
+    </div>
   </div>
 )
 
@@ -90,8 +118,8 @@ export const AddressBook: React.FC = () => {
   return (
     <Layout selected="Address Book" requiresMultisig>
       <div css={{ display: 'flex', flex: 1, padding: '32px 8%' }}>
-        <div css={{ display: 'flex', flexDirection: 'column', gap: 32, width: '100%', maxWidth: 520 }}>
-          <Header onAddContact={() => setIsModalOpen(true)} />
+        <div css={{ display: 'flex', flexDirection: 'column', gap: 16, width: '100%', maxWidth: 520 }}>
+          <Header onAddContact={() => setIsModalOpen(true)} vaultName={selectedMultisig.name} />
           {contacts === undefined ? (
             <EyeOfSauronProgressIndicator />
           ) : contacts.length === 0 ? (
