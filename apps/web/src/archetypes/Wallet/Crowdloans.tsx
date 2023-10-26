@@ -9,7 +9,7 @@ import { accountsState, selectedSubstrateAccountsState } from '@domains/accounts
 import { chains } from '@domains/chains'
 import { tokenPriceState } from '@domains/chains/recoils'
 import { useTotalCrowdloanTotalFiatAmount } from '@domains/crowdloans/hooks'
-import { useTheme } from '@emotion/react'
+import { css, useTheme } from '@emotion/react'
 import styled from '@emotion/styled'
 import crowdloanDataState from '@libs/@talisman-crowdloans/provider'
 import { useCrowdloanContributions, type CrowdloanContribution, type GqlContribution } from '@libs/crowdloans'
@@ -21,7 +21,7 @@ import {
 import { useChainmetaValue, useCrowdloanById, useParachainDetailsById } from '@libs/talisman'
 import { useCrowdloanReturns, useCrowdloans } from '@libs/talisman/crowdloan'
 import { SupportedRelaychains } from '@libs/talisman/util/_config'
-import { Clock, Lock } from '@talismn/icons'
+import { Clock, Eye, Lock } from '@talismn/icons'
 import { Chip, ListItem, Text } from '@talismn/ui'
 import { encodeAnyAddress, planckToTokens } from '@talismn/util'
 import { formatCommas, truncateAddress } from '@util/helpers'
@@ -94,11 +94,31 @@ const GqlCrowdloanItem = styled(
 
     // hide returned contributions which were unlocked more than 30 days ago
     const oldAndReturned = isFundsReturned && lockedSeconds < -60 * 60 * 24 * 30
-    if (oldAndReturned) return null
+    if (blockNumber === null || oldAndReturned) return null
 
-    const actions = isLocked ? null : (
-      <>
-        {isFundsReturned ? (
+    const actions = (() => {
+      if (isLocked) return null
+      if (account?.readonly)
+        return (
+          <>
+            <div
+              css={css`
+                display: flex;
+                align-items: center;
+                gap: 0.5em;
+                color: color-mix(in srgb, #fafafa, transparent 30%);
+              `}
+            >
+              <Eye size="1em" />
+              <div>{t('Followed account')}</div>
+            </div>
+            <div css={{ flexGrow: '1' }} />
+            {isFundsReturned && <div css={{ color: 'rgb(90, 90, 90)' }}>{t('Withdrawn')}</div>}
+          </>
+        )
+
+      if (isFundsReturned)
+        return (
           <>
             <Chip
               containerColor={`color-mix(in srgb, ${theme.color.primary}, transparent 88%)`}
@@ -110,42 +130,43 @@ const GqlCrowdloanItem = styled(
             <div css={{ flexGrow: '1' }} />
             <div css={{ color: 'rgb(90, 90, 90)' }}>{t('Withdrawn')}</div>
           </>
-        ) : (
-          <>
-            <WithdrawCrowdloanWidget
-              stakeAfterWithdrawn
-              {...{
-                account,
-                paraId: paraId.toString(),
-                relayChain,
-                goToStaking,
-                amount: contributedTokens,
-              }}
-            >
-              {({ onToggleOpen }) => (
-                <Chip
-                  containerColor={`color-mix(in srgb, ${theme.color.primary}, transparent 88%)`}
-                  contentColor={theme.color.primary}
-                  onClick={onToggleOpen}
-                >
-                  {t('Withdraw & Stake')}
-                </Chip>
-              )}
-            </WithdrawCrowdloanWidget>
-            <WithdrawCrowdloanWidget
-              {...{
-                account,
-                paraId: paraId.toString(),
-                relayChain,
-                amount: contributedTokens,
-              }}
-            >
-              {({ onToggleOpen }) => <Chip onClick={onToggleOpen}>{t('Withdraw')}</Chip>}
-            </WithdrawCrowdloanWidget>
-          </>
-        )}
-      </>
-    )
+        )
+
+      return (
+        <>
+          <WithdrawCrowdloanWidget
+            stakeAfterWithdrawn
+            {...{
+              account,
+              paraId: paraId.toString(),
+              relayChain,
+              goToStaking,
+              amount: contributedTokens,
+            }}
+          >
+            {({ onToggleOpen }) => (
+              <Chip
+                containerColor={`color-mix(in srgb, ${theme.color.primary}, transparent 88%)`}
+                contentColor={theme.color.primary}
+                onClick={onToggleOpen}
+              >
+                {t('Withdraw & Stake')}
+              </Chip>
+            )}
+          </WithdrawCrowdloanWidget>
+          <WithdrawCrowdloanWidget
+            {...{
+              account,
+              paraId: paraId.toString(),
+              relayChain,
+              amount: contributedTokens,
+            }}
+          >
+            {({ onToggleOpen }) => <Chip onClick={onToggleOpen}>{t('Withdraw')}</Chip>}
+          </WithdrawCrowdloanWidget>
+        </>
+      )
+    })()
 
     return (
       <article className={className} css={{ borderRadius: '0.8rem', overflow: 'hidden' }}>
