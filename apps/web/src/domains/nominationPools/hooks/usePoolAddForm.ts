@@ -118,6 +118,21 @@ export const usePoolAddForm = (action: 'bondExtra' | 'join', account?: string) =
       setAmount(defaultAmount ?? '')
     }
   }, [account, defaultAmount, prevAccount, setAmount])
+  useEffect(() => {
+    //
+    // When an `amount` is prefilled via the querystring variable `amount`, we should
+    // use either the qs `amount` or the user's `available` amount, whichever is smaller
+    //
+    const amount = input.amount
+    const amountDec = input.decimalAmount?.toNumber()
+    const available = availableBalance.decimalAmount?.toNumber()
+
+    if (amountDec === undefined || available === undefined) return
+    if (amount !== defaultAmount) return
+    if (available >= amountDec) return
+
+    setAmount(available.toString())
+  }, [availableBalance.decimalAmount, defaultAmount, input.amount, input.decimalAmount, setAmount])
 
   return {
     input,

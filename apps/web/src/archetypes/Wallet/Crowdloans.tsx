@@ -9,7 +9,7 @@ import { accountsState, selectedSubstrateAccountsState } from '@domains/accounts
 import { chains } from '@domains/chains'
 import { tokenPriceState } from '@domains/chains/recoils'
 import { useTotalCrowdloanTotalFiatAmount } from '@domains/crowdloans/hooks'
-import { useTheme } from '@emotion/react'
+import { css, useTheme } from '@emotion/react'
 import styled from '@emotion/styled'
 import crowdloanDataState from '@libs/@talisman-crowdloans/provider'
 import { useCrowdloanContributions, type CrowdloanContribution, type GqlContribution } from '@libs/crowdloans'
@@ -21,13 +21,13 @@ import {
 import { useChainmetaValue, useCrowdloanById, useParachainDetailsById } from '@libs/talisman'
 import { useCrowdloanReturns, useCrowdloans } from '@libs/talisman/crowdloan'
 import { SupportedRelaychains } from '@libs/talisman/util/_config'
-import { Clock, Lock } from '@talismn/icons'
+import { Clock, Eye, Lock } from '@talismn/icons'
 import { Chip, ListItem, Text } from '@talismn/ui'
 import { encodeAnyAddress, planckToTokens } from '@talismn/util'
 import { formatCommas, truncateAddress } from '@util/helpers'
 import { Maybe } from '@util/monads'
 import BigNumber from 'bignumber.js'
-import { Suspense, useCallback, useMemo } from 'react'
+import { Suspense, useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, useNavigate } from 'react-router-dom'
 import { useRecoilValue, useRecoilValueLoadable } from 'recoil'
@@ -94,11 +94,31 @@ const GqlCrowdloanItem = styled(
 
     // hide returned contributions which were unlocked more than 30 days ago
     const oldAndReturned = isFundsReturned && lockedSeconds < -60 * 60 * 24 * 30
-    if (oldAndReturned) return null
+    if (blockNumber === null || oldAndReturned) return null
 
-    const actions = isLocked ? null : (
-      <>
-        {isFundsReturned ? (
+    const actions = (() => {
+      if (isLocked) return null
+      if (account?.readonly)
+        return (
+          <>
+            <div
+              css={css`
+                display: flex;
+                align-items: center;
+                gap: 0.5em;
+                color: color-mix(in srgb, #fafafa, transparent 30%);
+              `}
+            >
+              <Eye size="1em" />
+              <div>{t('Followed account')}</div>
+            </div>
+            <div css={{ flexGrow: '1' }} />
+            {isFundsReturned && <div css={{ color: 'rgb(90, 90, 90)' }}>{t('Withdrawn')}</div>}
+          </>
+        )
+
+      if (isFundsReturned)
+        return (
           <>
             <Chip
               containerColor={`color-mix(in srgb, ${theme.color.primary}, transparent 88%)`}
@@ -110,42 +130,43 @@ const GqlCrowdloanItem = styled(
             <div css={{ flexGrow: '1' }} />
             <div css={{ color: 'rgb(90, 90, 90)' }}>{t('Withdrawn')}</div>
           </>
-        ) : (
-          <>
-            <WithdrawCrowdloanWidget
-              stakeAfterWithdrawn
-              {...{
-                account,
-                paraId: paraId.toString(),
-                relayChain,
-                goToStaking,
-                amount: contributedTokens,
-              }}
-            >
-              {({ onToggleOpen }) => (
-                <Chip
-                  containerColor={`color-mix(in srgb, ${theme.color.primary}, transparent 88%)`}
-                  contentColor={theme.color.primary}
-                  onClick={onToggleOpen}
-                >
-                  {t('Withdraw & Stake')}
-                </Chip>
-              )}
-            </WithdrawCrowdloanWidget>
-            <WithdrawCrowdloanWidget
-              {...{
-                account,
-                paraId: paraId.toString(),
-                relayChain,
-                amount: contributedTokens,
-              }}
-            >
-              {({ onToggleOpen }) => <Chip onClick={onToggleOpen}>{t('Withdraw')}</Chip>}
-            </WithdrawCrowdloanWidget>
-          </>
-        )}
-      </>
-    )
+        )
+
+      return (
+        <>
+          <WithdrawCrowdloanWidget
+            stakeAfterWithdrawn
+            {...{
+              account,
+              paraId: paraId.toString(),
+              relayChain,
+              goToStaking,
+              amount: contributedTokens,
+            }}
+          >
+            {({ onToggleOpen }) => (
+              <Chip
+                containerColor={`color-mix(in srgb, ${theme.color.primary}, transparent 88%)`}
+                contentColor={theme.color.primary}
+                onClick={onToggleOpen}
+              >
+                {t('Withdraw & Stake')}
+              </Chip>
+            )}
+          </WithdrawCrowdloanWidget>
+          <WithdrawCrowdloanWidget
+            {...{
+              account,
+              paraId: paraId.toString(),
+              relayChain,
+              amount: contributedTokens,
+            }}
+          >
+            {({ onToggleOpen }) => <Chip onClick={onToggleOpen}>{t('Withdraw')}</Chip>}
+          </WithdrawCrowdloanWidget>
+        </>
+      )
+    })()
 
     return (
       <article className={className} css={{ borderRadius: '0.8rem', overflow: 'hidden' }}>
@@ -160,7 +181,10 @@ const GqlCrowdloanItem = styled(
                 <Text.Body css={{ display: 'flex', alignItems: 'center', gap: '0.25em' }}>
                   {account && <AccountIcon account={account} size="1em" />}
                   <Text.Body css={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                    <div>{account?.name ?? truncateAddress(encodeAnyAddress(contribution.account.id))}</div>
+                    <div>
+                      {account?.name ??
+                        truncateAddress(encodeAnyAddress(contribution.account.id, relayChain?.accountPrefix ?? 42))}
+                    </div>
                   </Text.Body>
                 </Text.Body>
               </>
@@ -275,8 +299,13 @@ const CrowdloanItem = styled(
     const { parachainDetails } = useParachainDetailsById(parachainId)
     const linkToCrowdloan = parachainDetails?.slug ? `/crowdloans/${parachainDetails?.slug}` : `/crowdloans`
 
-    const isLocked = (crowdloan?.lockedSeconds ?? 0) > 0
-    const isUnlockingSoon = (crowdloan?.lockedSeconds ?? 0) <= 60 * 60 * 72 // 72 hours
+    const blockNumber = useChainmetaValue(relayChain?.id ?? NaN, 'blockNumber')
+    const blockPeriod = useChainmetaValue(relayChain?.id ?? NaN, 'blockPeriod')
+
+    const lockedSeconds = ((crowdloan?.fundLeaseEndBlock ?? 0) - (blockNumber ?? 0)) * (blockPeriod ?? 6)
+
+    const isLocked = (lockedSeconds ?? 0) > 0
+    const isUnlockingSoon = (lockedSeconds ?? 0) <= 60 * 60 * 72 // 72 hours
 
     // TODO: Get from squid (can be included in contributions squid ezpz)
     const isFundsReturned = returns.some(r => r.crowdloanAccount === crowdloan?.stash)
@@ -288,9 +317,33 @@ const CrowdloanItem = styled(
         navigate(`/staking?action=stake&chain=${relayChainId}&account=${account.address}`)
     }, [account?.address, navigate, relayChain?.genesisHash])
 
-    const actions = isLocked ? null : (
-      <>
-        {isFundsReturned ? (
+    // hide returned contributions which were unlocked more than 30 days ago
+    const oldAndReturned = isFundsReturned && lockedSeconds < -60 * 60 * 24 * 30
+    if (blockNumber === null || oldAndReturned) return null
+
+    const actions = (() => {
+      if (isLocked) return null
+      if (account?.readonly)
+        return (
+          <>
+            <div
+              css={css`
+                display: flex;
+                align-items: center;
+                gap: 0.5em;
+                color: color-mix(in srgb, #fafafa, transparent 30%);
+              `}
+            >
+              <Eye size="1em" />
+              <div>{t('Followed account')}</div>
+            </div>
+            <div css={{ flexGrow: '1' }} />
+            {isFundsReturned && <div css={{ color: 'rgb(90, 90, 90)' }}>{t('Withdrawn')}</div>}
+          </>
+        )
+
+      if (isFundsReturned)
+        return (
           <>
             <Chip
               containerColor={`color-mix(in srgb, ${theme.color.primary}, transparent 88%)`}
@@ -302,42 +355,43 @@ const CrowdloanItem = styled(
             <div css={{ flexGrow: '1' }} />
             <div css={{ color: 'rgb(90, 90, 90)' }}>{t('Withdrawn')}</div>
           </>
-        ) : (
-          <>
-            <WithdrawCrowdloanWidget
-              stakeAfterWithdrawn
-              {...{
-                account,
-                paraId,
-                relayChain,
-                goToStaking,
-                amount: contributedTokens,
-              }}
-            >
-              {({ onToggleOpen }) => (
-                <Chip
-                  containerColor={`color-mix(in srgb, ${theme.color.primary}, transparent 88%)`}
-                  contentColor={theme.color.primary}
-                  onClick={onToggleOpen}
-                >
-                  {t('Withdraw & Stake')}
-                </Chip>
-              )}
-            </WithdrawCrowdloanWidget>
-            <WithdrawCrowdloanWidget
-              {...{
-                account,
-                paraId,
-                relayChain,
-                amount: contributedTokens,
-              }}
-            >
-              {({ onToggleOpen }) => <Chip onClick={onToggleOpen}>{t('Withdraw')}</Chip>}
-            </WithdrawCrowdloanWidget>
-          </>
-        )}
-      </>
-    )
+        )
+
+      return (
+        <>
+          <WithdrawCrowdloanWidget
+            stakeAfterWithdrawn
+            {...{
+              account,
+              paraId,
+              relayChain,
+              goToStaking,
+              amount: contributedTokens,
+            }}
+          >
+            {({ onToggleOpen }) => (
+              <Chip
+                containerColor={`color-mix(in srgb, ${theme.color.primary}, transparent 88%)`}
+                contentColor={theme.color.primary}
+                onClick={onToggleOpen}
+              >
+                {t('Withdraw & Stake')}
+              </Chip>
+            )}
+          </WithdrawCrowdloanWidget>
+          <WithdrawCrowdloanWidget
+            {...{
+              account,
+              paraId,
+              relayChain,
+              amount: contributedTokens,
+            }}
+          >
+            {({ onToggleOpen }) => <Chip onClick={onToggleOpen}>{t('Withdraw')}</Chip>}
+          </WithdrawCrowdloanWidget>
+        </>
+      )
+    })()
 
     return (
       <article className={className} css={{ borderRadius: '0.8rem', overflow: 'hidden' }}>
@@ -352,7 +406,8 @@ const CrowdloanItem = styled(
                 <Text.Body css={{ display: 'flex', alignItems: 'center', gap: '0.25em' }}>
                   {account && <AccountIcon account={account} size="1em" />}
                   <Text.Body css={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                    {account?.name ?? truncateAddress(encodeAnyAddress(contribution.account))}
+                    {account?.name ??
+                      truncateAddress(encodeAnyAddress(contribution.account, relayChain?.accountPrefix ?? 42))}
                   </Text.Body>
                 </Text.Body>
               </>
@@ -375,10 +430,7 @@ const CrowdloanItem = styled(
                       }}
                     >
                       <Clock css={{ width: '1em', height: '1em' }} />{' '}
-                      <Countdown
-                        seconds={crowdloan?.lockedSeconds ?? 0}
-                        showSeconds={(crowdloan?.lockedSeconds ?? 0) < 60}
-                      />
+                      <Countdown seconds={lockedSeconds ?? 0} showSeconds={(lockedSeconds ?? 0) < 60} />
                     </div>
                   </div>
                 )}
@@ -471,8 +523,8 @@ const SuspendableCrowdloans = ({ className }: { className?: string }) => {
     const crowdloanByParaId = new Map(crowdloans.map(crowdloan => [crowdloan.parachain.paraId, crowdloan]))
     return onChainContributions.slice().sort((a, b) => {
       return (
-        (crowdloanByParaId.get(a.parachain.paraId)?.lockedSeconds ?? Number.MAX_SAFE_INTEGER) -
-        (crowdloanByParaId.get(b.parachain.paraId)?.lockedSeconds ?? Number.MAX_SAFE_INTEGER)
+        (crowdloanByParaId.get(a.parachain.paraId)?.fundLeaseEndBlock ?? Number.MAX_SAFE_INTEGER) -
+        (crowdloanByParaId.get(b.parachain.paraId)?.fundLeaseEndBlock ?? Number.MAX_SAFE_INTEGER)
       )
     })
   }, [crowdloans, onChainContributions])
@@ -498,6 +550,15 @@ const SuspendableCrowdloans = ({ className }: { className?: string }) => {
     })
   }, [accounts, gqlContributions])
 
+  const latestDotBlock = useChainmetaValue(0, 'blockNumber')
+  const latestKsmBlock = useChainmetaValue(2, 'blockNumber')
+  const [recentDotBlock, setRecentDotBlock] = useState<number | null>(latestDotBlock)
+  const [recentKsmBlock, setRecentKsmBlock] = useState<number | null>(latestKsmBlock)
+  useEffect(() => {
+    setRecentDotBlock(dotBlock => (dotBlock !== null ? dotBlock : latestDotBlock))
+    setRecentKsmBlock(ksmBlock => (ksmBlock !== null ? ksmBlock : latestKsmBlock))
+  }, [latestDotBlock, latestKsmBlock])
+
   const mergedContributions = useMemo(() => {
     const crowdloanByParaId = new Map(crowdloans.map(crowdloan => [crowdloan.parachain.paraId, crowdloan]))
 
@@ -510,18 +571,24 @@ const SuspendableCrowdloans = ({ className }: { className?: string }) => {
     ].sort((a, b) => {
       if (a.type === b.type) return 0
 
-      const aEnd = (() => {
-        if (a.type === 'gql-contribution') return a.contribution.crowdloan.lastBlock ?? Number.MAX_SAFE_INTEGER
-        return crowdloanByParaId.get(a.contribution.parachain.paraId)?.fundLeaseEndBlock ?? Number.MAX_SAFE_INTEGER
-      })()
-      const bEnd = (() => {
-        if (b.type === 'gql-contribution') return b.contribution.crowdloan.lastBlock ?? Number.MAX_SAFE_INTEGER
-        return crowdloanByParaId.get(b.contribution.parachain.paraId)?.fundLeaseEndBlock ?? Number.MAX_SAFE_INTEGER
-      })()
+      const getEnd = (c: typeof a) => {
+        const endBlock =
+          c.type === 'gql-contribution'
+            ? c.contribution.crowdloan.lastBlock ?? Number.MAX_SAFE_INTEGER
+            : crowdloanByParaId.get(c.contribution.parachain.paraId)?.fundLeaseEndBlock ?? Number.MAX_SAFE_INTEGER
+        const relayId =
+          c.type === 'gql-contribution'
+            ? Object.values(SupportedRelaychains).find(chain => chain.genesisHash === c.contribution.relay.genesisHash)
+                ?.id
+            : crowdloanByParaId.get(c.contribution.parachain.paraId)?.relayChainId
+        const relayBlock = relayId === 2 ? recentKsmBlock : recentDotBlock
 
-      return aEnd - bEnd
+        return endBlock - (relayBlock ?? 0)
+      }
+
+      return getEnd(a) - getEnd(b)
     })
-  }, [crowdloans, sortedGqlContributions, sortedOnChainContributions])
+  }, [crowdloans, recentDotBlock, recentKsmBlock, sortedGqlContributions, sortedOnChainContributions])
 
   // Temporary disable crowdloan skeleton
   if (!contributionsHydrated || mergedContributions.length === 0) {

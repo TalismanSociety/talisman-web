@@ -141,7 +141,7 @@ const Layout = () => {
           <Link to="/transfer">
             <NavigationBar.Item label="Transfer" icon={<RefreshCcw />} />
           </Link>
-          <Link to="/crowdloans">
+          <Link to="/crowdloans/participated">
             <NavigationBar.Item label="Crowdloans" icon={<Star />} />
           </Link>
           <Link to="/history">
@@ -169,7 +169,7 @@ const Layout = () => {
           <Link to="/explore">
             <NavigationRail.Item label="Explore" icon={<Compass />} />
           </Link>
-          <Link to="/crowdloans">
+          <Link to="/crowdloans/participated">
             <NavigationRail.Item label="Crowdloans" icon={<Star />} />
           </Link>
           <Link to="https://checkout.banxa.com/" target="_blank">
@@ -231,7 +231,7 @@ const Layout = () => {
           <Link to="/transfer">
             <NavigationDrawer.Item label="Transfer" icon={<RefreshCcw />} />
           </Link>
-          <Link to="/crowdloans">
+          <Link to="/crowdloans/participated">
             <NavigationDrawer.Item label="Crowdloans" icon={<Star />} />
           </Link>
           <Link to="/explore">
