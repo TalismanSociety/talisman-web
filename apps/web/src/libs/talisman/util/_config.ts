@@ -10,6 +10,7 @@ export const statusOptions = {
 export type Relaychain = {
   id: number
   name: string
+  accountPrefix: number
   rpc: string
   genesisHash: string
   subscanUrl: string
@@ -24,6 +25,7 @@ export const SupportedRelaychains: Record<number | string, Relaychain> = {
   0: {
     id: 0,
     name: 'Polkadot',
+    accountPrefix: 0,
     rpc:
       chains.find(chain => chain.genesisHash === '0x91b171bb158e2d3848fa23a9f1c25182fb8e20313b2c1eb49219da7a70ce90c3')
         ?.rpc ?? '',
@@ -37,6 +39,7 @@ export const SupportedRelaychains: Record<number | string, Relaychain> = {
   2: {
     id: 2,
     name: 'Kusama',
+    accountPrefix: 2,
     rpc:
       chains.find(chain => chain.genesisHash === '0xb0a8d493285c2df73290dfb7e61f870f17b41801197a149ca93654499ea3dafe')
         ?.rpc ?? '',
