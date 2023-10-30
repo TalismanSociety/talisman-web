@@ -5,8 +5,7 @@
 
 import { pjsApiSelector } from '@domains/chains/pjs-api'
 import { accountsState } from '@domains/extension'
-import { insertTxMetadata } from '@domains/metadata-service'
-import { Balance, Multisig, Transaction, TxOffchainMetadata, txOffchainMetadataState } from '@domains/multisig'
+import { Balance, Multisig, Transaction, TxOffchainMetadata } from '@domains/multisig'
 import { rawConfirmedTransactionsDependency } from '@domains/tx-history'
 import { ApiPromise, SubmittableResult } from '@polkadot/api'
 import type { SubmittableExtrinsic } from '@polkadot/api/types'
@@ -17,11 +16,12 @@ import { Address } from '@util/addresses'
 import { makeTransactionID } from '@util/misc'
 import BN from 'bn.js'
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { useRecoilState, useRecoilValue, useRecoilValueLoadable, useSetRecoilState } from 'recoil'
+import { useRecoilValue, useRecoilValueLoadable, useSetRecoilState } from 'recoil'
 
 import { allRawPendingTransactionsSelector, rawPendingTransactionsDependency } from './storage-getters'
 import { Chain, isSubstrateAssetsToken, isSubstrateNativeToken, isSubstrateTokensToken, tokenByIdQuery } from './tokens'
-import toast from 'react-hot-toast'
+import { useInsertTxMetadata } from '../offchain-data/metadata'
+import { selectedAccountState } from '../auth'
 
 export const buildTransferExtrinsic = (api: ApiPromise, to: Address, balance: Balance) => {
   if (isSubstrateNativeToken(balance.token)) {
@@ -346,11 +346,12 @@ export const useApproveAsMulti = (
   timepoint: Timepoint | null | undefined,
   multisig: Multisig | undefined
 ) => {
+  const signedInAccount = useRecoilValue(selectedAccountState)
   const apiLoadable = useRecoilValueLoadable(pjsApiSelector(multisig?.chain.rpcs || []))
   const nativeToken = useRecoilValueLoadable(tokenByIdQuery(multisig?.chain.nativeToken.id || null))
   const setRawPendingTransactionDependency = useSetRecoilState(rawPendingTransactionsDependency)
   const setRawConfirmedTransactionDependency = useSetRecoilState(rawConfirmedTransactionsDependency)
-  const [metadataCache, setMetadataCache] = useRecoilState(txOffchainMetadataState)
+  const insertTxMetadata = useInsertTxMetadata()
   const [estimatedFee, setEstimatedFee] = useState<Balance | undefined>()
 
   const ready =
@@ -410,6 +411,9 @@ export const useApproveAsMulti = (
       onFailure: (message: string) => void
       metadata?: TxOffchainMetadata
     }) => {
+      // cache selected account when tx was approved
+      const signedInAs = signedInAccount
+
       const extrinsic = await createExtrinsic()
       if (!extrinsic || !extensionAddress || !hash || !multisig) {
         console.error('tried to call approveAsMulti before it was ready')
@@ -437,34 +441,21 @@ export const useApproveAsMulti = (
                   // if there's a description, it means we want to post to the metadata service
                   if (metadata) {
                     // @ts-ignore
-                    const timepoint_height = result.blockNumber.toNumber() as number
-                    const timepoint_index = result.txIndex as number
-                    const transactionID = makeTransactionID(multisig.chain, timepoint_height, timepoint_index)
+                    const timepointHeight = result.blockNumber.toNumber() as number
+                    const timepointIndex = result.txIndex as number
+                    const extrinsicId = makeTransactionID(multisig.chain, timepointHeight, timepointIndex)
 
-                    // Disable this line to test the metadata service
-                    setMetadataCache({
-                      ...metadataCache,
-                      [transactionID]: [metadata, new Date()],
-                    })
-
-                    insertTxMetadata({
-                      multisig_address: multisig.multisigAddress,
-                      proxy_address: multisig.proxyAddress,
-                      chain: multisig.chain,
-                      call_data: metadata.callData,
-                      call_hash: hash,
-                      description: metadata.description,
-                      timepoint_height,
-                      timepoint_index,
-                      change_config_details: metadata.changeConfigDetails,
-                    })
-                      .then(() => {
-                        console.log(`Successfully POSTed metadata for ${transactionID} to metadata service`)
+                    if (signedInAs) {
+                      insertTxMetadata(signedInAs, multisig, {
+                        callData: metadata.callData,
+                        description: metadata.description,
+                        hash,
+                        timepointHeight,
+                        timepointIndex,
+                        changeConfigDetails: metadata.changeConfigDetails,
+                        extrinsicId,
                       })
-                      .catch(e => {
-                        console.error('Failed to POST tx metadata sharing service: ', e)
-                        toast.error('Failed to POST tx metadata sharing service. See console for more info.')
-                      })
+                    }
                   }
                   setRawPendingTransactionDependency(new Date())
                   setRawConfirmedTransactionDependency(new Date())
@@ -481,14 +472,14 @@ export const useApproveAsMulti = (
         })
     },
     [
-      extensionAddress,
+      signedInAccount,
       createExtrinsic,
+      extensionAddress,
+      hash,
+      multisig,
       setRawPendingTransactionDependency,
       setRawConfirmedTransactionDependency,
-      metadataCache,
-      setMetadataCache,
-      multisig,
-      hash,
+      insertTxMetadata,
     ]
   )
 

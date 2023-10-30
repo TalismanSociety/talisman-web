@@ -1,16 +1,12 @@
 import MemberRow from '@components/MemberRow'
 import { BaseToken, Chain, Price, getInitialProxyBalance } from '@domains/chains'
-import { InjectedAccount } from '@domains/extension'
 import { AugmentedAccount, Balance } from '@domains/multisig'
 import { css } from '@emotion/css'
 import { Info } from '@talismn/icons'
-import { Button, IconButton, Identicon, Select } from '@talismn/ui'
+import { Button, IconButton } from '@talismn/ui'
 import { Skeleton } from '@talismn/ui'
-import { Address } from '@util/addresses'
-import { device } from '@util/breakpoints'
 import { balanceToFloat, formatUsd } from '@util/numbers'
 import { Loadable } from 'recoil'
-import truncateMiddle from 'truncate-middle'
 
 const Cost = (props: { amount: Balance; symbol: string; price: number }) => {
   return (
@@ -24,8 +20,6 @@ const Confirmation = (props: {
   onBack: () => void
   onCreateVault: () => void
   onAlreadyHaveAnyProxy: () => void
-  selectedSigner: InjectedAccount | undefined
-  setSelectedSigner: (signer: InjectedAccount) => void
   selectedAccounts: AugmentedAccount[]
   threshold: number
   name: string
@@ -168,78 +162,23 @@ const Confirmation = (props: {
       </div>
       <div
         className={css`
-          display: grid;
-          grid-template-rows: auto auto;
+          display: flex;
+          align-items: center;
           background: var(--color-controlBackground);
           border-radius: 16px;
           padding: 16px;
           margin-top: 24px;
           width: 100%;
-          gap: 8px;
-          div {
-            gap: 16px;
-          }
+          gap: 16px;
         `}
       >
-        <div
-          className={css`
-            button {
-              padding: 6px 0px;
-              @media ${device.lg} {
-                padding: 6px 6px;
-              }
-            }
-          `}
-        >
-          <h2
-            className={css`
-              font-size: 20px;
-              margin-bottom: 8px;
-            `}
-          >
-            Depositor
-          </h2>
-          <Select
-            placeholder="Select account"
-            value={props?.selectedSigner?.address.toPubKey()}
-            className={css`
-              button {
-                background: var(--color-grey800);
-              }
-            `}
-            onChange={value => {
-              if (!value) return
-              const a = Address.fromPubKey(value)
-              if (!a) return
-              props.setSelectedSigner(props.selectedAccounts.find(_a => _a.address.isEqual(a)) as AugmentedAccount)
-            }}
-            {...props}
-          >
-            {props.selectedAccounts.map(account => (
-              <Select.Item
-                key={account.address.toPubKey()}
-                leadingIcon={<Identicon value={account.address.toSs58(chain)} />}
-                value={account.address.toPubKey()}
-                headlineText={account.nickname}
-                supportingText={truncateMiddle(account.address.toSs58(chain), 5, 4, '...')}
-              />
-            ))}
-          </Select>
-        </div>
-        <div
-          className={css`
-            display: flex;
-            align-items: center;
-          `}
-        >
-          <IconButton size="54px" contentColor={'#d5ff5c'}>
-            <Info size={54} />
-          </IconButton>
-          <p>
-            To operate your vault {chain.chainName} requires some funds to be reserved as a deposit. This will be fully
-            refunded when you wind down your vault.
-          </p>
-        </div>
+        <IconButton size="54px" contentColor={'#d5ff5c'}>
+          <Info size={54} />
+        </IconButton>
+        <p>
+          To operate your vault {chain.chainName} requires some funds to be reserved as a deposit. This will be fully
+          refunded when you wind down your vault.
+        </p>
       </div>
       <div
         className={css`

@@ -1,24 +1,23 @@
 import { allChainTokensSelector, decodeCallData } from '@domains/chains'
 import { allPjsApisSelector } from '@domains/chains/pjs-api'
-import { getTxMetadataByPk } from '@domains/metadata-service'
 import { SignedBlock } from '@polkadot/types/interfaces'
 import {
   ExecutedAt,
   Multisig,
   Transaction,
-  activeMultisigsState,
+  aggregatedMultisigsState,
   combinedViewState,
   extrinsicToDecoded,
   selectedMultisigState,
-  txOffchainMetadataState,
 } from '@domains/multisig'
 import { Address } from '@util/addresses'
 import { makeTransactionID } from '@util/misc'
 import { gql } from 'graphql-request'
 import { useCallback, useEffect, useState } from 'react'
-import { atom, selector, selectorFamily, useRecoilState, useRecoilValue, useRecoilValueLoadable } from 'recoil'
+import { atom, selector, selectorFamily, useRecoilValue, useRecoilValueLoadable } from 'recoil'
 
 import fetchGraphQL from '../../graphql/fetch-graphql'
+import { txMetadataByTeamIdState } from '../offchain-data/metadata'
 
 interface RawResponse {
   data: {
@@ -83,11 +82,7 @@ export const rawConfirmedTransactionsSelector = selectorFamily({
 export const allRawConfirmedTransactionsSelector = selector({
   key: 'AllRawConfirmedTransactionsSelector',
   get: async ({ get }): Promise<[RawResponse, Multisig][]> => {
-    const selectedMultisig = get(selectedMultisigState)
-    const activeMultisigs = get(activeMultisigsState)
-    const combinedView = get(combinedViewState)
-
-    const multisigs = combinedView ? activeMultisigs : [selectedMultisig]
+    const multisigs = get(aggregatedMultisigsState)
     const rawResponses = multisigs.map(multisig => {
       const responses = get(
         rawConfirmedTransactionsSelector({
@@ -109,11 +104,11 @@ export const useConfirmedTransactions = () => {
   const selectedMultisig = useRecoilValue(selectedMultisigState)
   const allApisLoadable = useRecoilValueLoadable(allPjsApisSelector)
   const allActiveChainTokens = useRecoilValueLoadable(allChainTokensSelector)
-  const [metadataCache, setMetadataCache] = useRecoilState(txOffchainMetadataState)
   const [transactions, setTransactions] = useState<Transaction[]>([])
   const rawConfirmedTransactionsResponses = useRecoilValueLoadable(allRawConfirmedTransactionsSelector)
   const combinedView = useRecoilValue(combinedViewState)
   const [loading, setLoading] = useState(true)
+  const txMetadataByTeamId = useRecoilValue(txMetadataByTeamIdState)
 
   useEffect(() => {
     setLoading(true)
@@ -164,50 +159,27 @@ export const useConfirmedTransactions = () => {
             const transactionID = makeTransactionID(curMultisig.chain, timepoint_height, timepoint_index)
 
             // try to get metadata
-            let metadata = metadataCache[transactionID]
-            if (!metadata) {
-              try {
-                const metadataValues = await getTxMetadataByPk(transactionID, {
-                  proxy_address: curMultisig.proxyAddress,
-                  chain: curMultisig.chain,
-                  timepoint_height,
-                  timepoint_index,
-                })
-
-                if (metadataValues) {
-                  const extrinsicDerivedFromMetadataService = decodeCallData(api, metadataValues.callData)
-                  if (!extrinsicDerivedFromMetadataService) {
-                    throw new Error(
-                      `Failed to create extrinsic from callData recieved from metadata sharing service for transactionID ${transactionID}`
-                    )
-                  }
-                  const derivedHash = extrinsicDerivedFromMetadataService.registry
-                    .hash(extrinsicDerivedFromMetadataService.method.toU8a())
-                    .toHex()
-                  if (derivedHash !== hash) {
-                    throw new Error(
-                      `CallData from metadata sharing service for transactionID ${transactionID} does not match hash from chain. Expected ${hash}, got ${derivedHash}`
-                    )
-                  }
-                  console.log(`Loaded metadata for transactionID ${transactionID} from sharing service`)
-                  metadata = [metadataValues, new Date()]
-                  setMetadataCache({
-                    ...metadataCache,
-                    [transactionID]: metadata,
-                  })
-                }
-              } catch (error) {
-                console.error(`Failed to fetch callData for transactionID ${transactionID}:`, error)
+            const metadata = txMetadataByTeamId[curMultisig.id]?.data[transactionID]
+            if (metadata) {
+              const extrinsicDerivedFromMetadataService = decodeCallData(api, metadata.callData)
+              if (!extrinsicDerivedFromMetadataService) {
+                throw new Error(
+                  `Failed to create extrinsic from callData recieved from metadata sharing service for transactionID ${transactionID}`
+                )
+              }
+              const derivedHash = extrinsicDerivedFromMetadataService.registry
+                .hash(extrinsicDerivedFromMetadataService.method.toU8a())
+                .toHex()
+              if (derivedHash !== hash) {
+                throw new Error(
+                  `CallData from metadata sharing service for transactionID ${transactionID} does not match hash from chain. Expected ${hash}, got ${derivedHash}`
+                )
               }
             }
 
-            // decorate it if we have additional metadata
-            let description = null
-            let changeConfigDetails = null
-            if (metadata) {
-              description = metadata[0].description
-              changeConfigDetails = metadata[0].changeConfigDetails || null
-            }
+            const description = metadata?.description ?? null
+            const changeConfigDetails = metadata?.changeConfigDetails ?? null
+
             const decodedTx = extrinsicToDecoded(curMultisig, decodedExt, curChainTokens, changeConfigDetails)
             if (decodedTx === 'not_ours') return null
 
@@ -244,11 +216,10 @@ export const useConfirmedTransactions = () => {
     setTransactions(transactions)
   }, [
     ready,
-    allApisLoadable,
-    metadataCache,
     rawConfirmedTransactionsResponses.contents,
-    setMetadataCache,
     allActiveChainTokens.contents,
+    allApisLoadable.contents,
+    txMetadataByTeamId,
   ])
 
   useEffect(() => {

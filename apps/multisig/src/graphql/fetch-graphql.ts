@@ -1,4 +1,4 @@
-const RETRY_INTERVAL_SEC = 5
+const RETRY_INTERVAL_SEC = 10
 
 async function fetchGraphQL(text: string, variables: any, graph: 'chaindata' | 'tx-history') {
   const url =

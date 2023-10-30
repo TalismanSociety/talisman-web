@@ -1,13 +1,7 @@
 import { decodeCallData, useApproveAsMulti, useAsMulti, useCancelAsMulti } from '@domains/chains'
 import { pjsApiSelector } from '@domains/chains/pjs-api'
 import { rawPendingTransactionsDependency, useAddressIsProxyDelegatee } from '@domains/chains/storage-getters'
-import {
-  Transaction,
-  multisigsState,
-  selectedMultisigState,
-  useNextTransactionSigner,
-  usePendingTransactions,
-} from '@domains/multisig'
+import { Transaction, selectedMultisigState, useNextTransactionSigner, usePendingTransactions } from '@domains/multisig'
 import { rawConfirmedTransactionsDependency, useConfirmedTransactions } from '@domains/tx-history'
 import { css } from '@emotion/css'
 import { EyeOfSauronProgressIndicator, SideSheet } from '@talismn/ui'
@@ -16,11 +10,13 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { useEffect, useMemo, useState } from 'react'
 import { toast } from 'react-hot-toast'
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom'
-import { useRecoilState, useRecoilValueLoadable, useSetRecoilState } from 'recoil'
+import { useRecoilValue, useRecoilValueLoadable, useSetRecoilState } from 'recoil'
 
 import { FullScreenDialogContents, FullScreenDialogTitle } from './FullScreenSummary'
 import TransactionSummaryRow from './TransactionSummaryRow'
 import { groupTransactionsByDay } from './utils'
+import { changingMultisigConfigState, useUpdateMultisigConfig } from '../../../domains/offchain-data/teams'
+import { selectedAccountState } from '../../../domains/auth/index'
 
 enum Mode {
   Pending,
@@ -42,12 +38,12 @@ const TransactionsList = ({ transactions }: { transactions: Transaction[] }) => 
   const groupedTransactions = useMemo(() => {
     return groupTransactionsByDay(transactions)
   }, [transactions])
-  const [_selectedMultisig, setSelectedMultisig] = useRecoilState(selectedMultisigState)
+  const selectedAccount = useRecoilValue(selectedAccountState)
+  const _selectedMultisig = useRecoilValue(selectedMultisigState)
   const openTransaction = useMemo(
     () => transactions.find(t => t.hash === extractHash(location)),
     [transactions, location]
   )
-  const [multisigs, setMultisigs] = useRecoilState(multisigsState)
   const multisig = openTransaction?.multisig || _selectedMultisig
   const nextSigner = useNextTransactionSigner(openTransaction?.approvals)
   const { approveAsMulti, estimatedFee: approveAsMultiEstimatedFee } = useApproveAsMulti(
@@ -72,6 +68,8 @@ const TransactionsList = ({ transactions }: { transactions: Transaction[] }) => 
   const { cancelAsMulti, canCancel } = useCancelAsMulti(openTransaction)
   const setRawPendingTransactionDependency = useSetRecoilState(rawPendingTransactionsDependency)
   const setRawConfirmedTransactionDependency = useSetRecoilState(rawConfirmedTransactionsDependency)
+  const { updateMultisigConfig } = useUpdateMultisigConfig()
+  const setChangingMultisigConfig = useSetRecoilState(changingMultisigConfigState)
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -147,6 +145,12 @@ const TransactionsList = ({ transactions }: { transactions: Transaction[] }) => 
                 onApprove={() =>
                   new Promise((resolve, reject) => {
                     if (readyToExecute) {
+                      // cache selected account in case it changes while executing
+                      const signedInAs = selectedAccount
+
+                      // pause config change detection while updating
+                      if (openTransaction?.decoded?.changeConfigDetails) setChangingMultisigConfig(true)
+
                       asMulti({
                         onSuccess: async () => {
                           // Handle execution of the multisig configuration change
@@ -160,18 +164,14 @@ const TransactionsList = ({ transactions }: { transactions: Transaction[] }) => 
                               expectedNewMultisigAddress
                             )
                             if (isProxyDelegatee) {
-                              const otherMultisigs = multisigs.filter(
-                                m => !m.multisigAddress.isEqual(multisig.multisigAddress)
-                              )
                               const newMultisig = {
                                 ...multisig,
                                 multisigAddress: expectedNewMultisigAddress,
                                 threshold: openTransaction.decoded.changeConfigDetails.threshold,
                                 signers: openTransaction.decoded.changeConfigDetails.signers,
                               }
-                              // Disable these to test that updating from the metadata service works
-                              setMultisigs([...otherMultisigs, newMultisig])
-                              setSelectedMultisig(newMultisig)
+                              await updateMultisigConfig(newMultisig, signedInAs)
+                              toast.success('Multisig settings updated.', { duration: 5000 })
                             } else {
                               toast.error(
                                 'It appears there was an issue updating your multisig configuration. Please check the transaction output.'
@@ -180,6 +180,7 @@ const TransactionsList = ({ transactions }: { transactions: Transaction[] }) => 
                           } else {
                             toast.success('Transaction executed.', { duration: 5000, position: 'bottom-right' })
                           }
+                          setChangingMultisigConfig(false)
                           navigate('/overview')
                           resolve()
                         },
@@ -187,6 +188,7 @@ const TransactionsList = ({ transactions }: { transactions: Transaction[] }) => 
                           navigate('/overview')
                           toast.error(`Failed to execute transaction: ${JSON.stringify(e)}`)
                           console.error(e)
+                          setChangingMultisigConfig(false)
                           reject()
                         },
                       })

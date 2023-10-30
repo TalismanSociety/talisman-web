@@ -1,13 +1,12 @@
 import Logo from '@components/Logo'
 import { accountsState, extensionAllowedState, extensionLoadingState } from '@domains/extension'
-import { activeMultisigsState } from '@domains/multisig'
 import { css } from '@emotion/css'
 import { keyframes } from '@emotion/react'
 import { Loader } from '@talismn/icons'
 import { Button } from '@talismn/ui'
 import { device } from '@util/breakpoints'
 import { Navigate } from 'react-router-dom'
-import { useRecoilState, useRecoilValue } from 'recoil'
+import { useRecoilState } from 'recoil'
 
 import Features from './Features'
 import Footer from './Footer'
@@ -31,10 +30,9 @@ const Landing: React.FC<{ disableRedirect?: boolean }> = ({ disableRedirect }) =
   const [extensionAccounts] = useRecoilState(accountsState)
   const [extensionLoading] = useRecoilState(extensionLoadingState)
   const [extensionAllowed, setExtensionAllowed] = useRecoilState(extensionAllowedState)
-  const activeMultisigs = useRecoilValue(activeMultisigsState)
 
   if (!disableRedirect && extensionAccounts.length > 0) {
-    return <Navigate to={activeMultisigs.length > 0 ? '/overview' : '/create'} />
+    return <Navigate to="/overview" />
   }
 
   return (
@@ -140,6 +138,7 @@ const Landing: React.FC<{ disableRedirect?: boolean }> = ({ disableRedirect }) =
           padding-top: 160px;
           margin-top: auto;
           align-self: end;
+          width: 100%;
           @media ${device.lg} {
             padding-top: 176px;
           }

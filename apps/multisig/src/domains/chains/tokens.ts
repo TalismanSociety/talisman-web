@@ -1,4 +1,4 @@
-import { multisigsState } from '@domains/multisig'
+import { activeMultisigsState } from '@domains/multisig'
 import { selector, selectorFamily } from 'recoil'
 import { graphQLSelectorFamily } from 'recoil-relay'
 import { graphql } from 'relay-runtime'
@@ -253,7 +253,8 @@ export const chainTokensByIdQuery = graphQLSelectorFamily({
 export const allChainTokensSelector = selector({
   key: 'AllChainTokens',
   get: async ({ get }): Promise<Map<string, BaseToken[]>> => {
-    const multisigs = get(multisigsState)
+    const multisigs = get(activeMultisigsState)
+
     const entries: [string, BaseToken[]][] = await Promise.all(
       multisigs.map(({ chain }) => [chain.squidIds.chainData, get(chainTokensByIdQuery(chain.squidIds.chainData))])
     )

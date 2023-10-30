@@ -1,12 +1,11 @@
 import { copyToClipboard } from '@domains/common'
-import { createImportPath, multisigsState, selectedMultisigState } from '@domains/multisig'
+import { createImportPath, selectedMultisigState } from '@domains/multisig'
 import { css } from '@emotion/css'
 import { Users } from '@talismn/icons'
 import { Button, IconButton } from '@talismn/ui'
 import { ReactElement } from 'react'
-import toast from 'react-hot-toast'
 import { useNavigate } from 'react-router-dom'
-import { useRecoilState, useRecoilValue } from 'recoil'
+import { useRecoilValue } from 'recoil'
 
 const SettingOption = ({
   icon,
@@ -58,7 +57,6 @@ const SettingOption = ({
 const SettingsList = () => {
   const navigate = useNavigate()
   const multisig = useRecoilValue(selectedMultisigState)
-  const [multisigState, setMultisigState] = useRecoilState(multisigsState)
   return (
     <div
       className={css`
@@ -97,6 +95,8 @@ const SettingsList = () => {
       >
         Copy Vault Import Link 💫
       </Button>
+      {/* 
+      Forget button is temporarily removed until we figure the right access control for who can remove a vault
       <Button
         variant="noop"
         onClick={() => {
@@ -112,7 +112,7 @@ const SettingsList = () => {
         }}
       >
         Forget Vault
-      </Button>
+      </Button> */}
     </div>
   )
 }

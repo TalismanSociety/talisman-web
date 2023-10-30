@@ -15,6 +15,7 @@ interface InsertTxMetadataArgs {
   proxy_address: Address
   description: string
   change_config_details?: ChangeConfigDetails
+  team_id: string
 }
 
 interface InsertTxMetadataGqlVariables {
@@ -30,6 +31,7 @@ interface InsertTxMetadataGqlVariables {
     newThreshold: number
     newMembers: string[]
   }
+  team_id: string
 }
 
 interface InsertTxMetadataResponse {
@@ -57,6 +59,7 @@ export async function insertTxMetadata(args: InsertTxMetadataArgs): Promise<Inse
           newMembers: args.change_config_details.newMembers.map(address => address.toSs58(args.chain)),
         }
       : undefined,
+    team_id: args.team_id,
   }
 
   const mutation = gql`
@@ -70,6 +73,7 @@ export async function insertTxMetadata(args: InsertTxMetadataArgs): Promise<Inse
       $proxy_address: String!
       $description: String!
       $change_config_details: json
+      $team_id: String!
     ) {
       InsertTxMetadataValidated(
         timepoint_height: $timepoint_height
@@ -81,6 +85,7 @@ export async function insertTxMetadata(args: InsertTxMetadataArgs): Promise<Inse
         proxy_address: $proxy_address
         description: $description
         change_config_details: $change_config_details
+        team_id: $team_id
       ) {
         success
         timestamp

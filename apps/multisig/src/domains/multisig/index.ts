@@ -10,18 +10,20 @@ import {
 } from '@domains/chains'
 import { allPjsApisSelector } from '@domains/chains/pjs-api'
 import { RawPendingTransaction, allRawPendingTransactionsSelector } from '@domains/chains/storage-getters'
-import { accountsState } from '@domains/extension'
-import { getTxMetadataByPk } from '@domains/metadata-service'
+import { InjectedAccount, accountsState } from '@domains/extension'
 import { SubmittableExtrinsic } from '@polkadot/api/types'
 import { Address, toMultisigAddress } from '@util/addresses'
 import { makeTransactionID } from '@util/misc'
 import BN from 'bn.js'
 import queryString from 'query-string'
-import { useCallback, useEffect, useState } from 'react'
-import { atom, selector, useRecoilState, useRecoilValue, useRecoilValueLoadable } from 'recoil'
+import { useCallback, useEffect, useMemo } from 'react'
+import { atom, selector, useRecoilState, useRecoilValue, useRecoilValueLoadable, useSetRecoilState } from 'recoil'
 
 import persistAtom from '../persist'
 import { VoteDetails, mapConvictionToIndex } from '../referenda'
+import { selectedAccountState } from '../auth'
+import { txMetadataByTeamIdState } from '../offchain-data/metadata'
+import { isEqual } from 'lodash'
 
 // create a new atom for deciding whether to show all balances and txns or just for the selected
 // multisig
@@ -32,6 +34,7 @@ export const combinedViewState = atom<boolean>({
 })
 
 const DUMMY_MULTISIG: Multisig = {
+  id: 'DUMMY_MULTISIG',
   name: 'DUMMY_MULTISIG',
   chain: supportedChains[0] as Chain,
   signers: [],
@@ -54,10 +57,9 @@ export const txOffchainMetadataState = atom<{ [key: string]: [TxOffchainMetadata
   effects_UNSTABLE: [persistAtom],
 })
 
-// Selecting one of these happens in the Overview Header.
-export const selectedMultisigState = atom<Multisig>({
-  key: 'SelectedMultisig',
-  default: DUMMY_MULTISIG,
+export const selectedMultisigIdState = atom<string | undefined>({
+  key: 'SelectedMultisigId',
+  default: undefined,
   effects_UNSTABLE: [persistAtom],
 })
 
@@ -65,11 +67,31 @@ export const activeMultisigsState = selector({
   key: 'ActiveMultisigs',
   get: ({ get }) => {
     const multisigs = get(multisigsState)
-    const accounts = get(accountsState)
+    const selectedAccount = get(selectedAccountState)
 
+    if (!selectedAccount) return []
     return multisigs.filter(multisig => {
-      return multisig.signers.some(signer => accounts.some(account => account.address.isEqual(signer)))
+      return multisig.signers.some(signer => selectedAccount.injected.address.isEqual(signer))
     })
+  },
+})
+
+export const selectedMultisigState = selector({
+  key: 'SelectedMultisig',
+  get: ({ get }) => {
+    const multisigs = get(activeMultisigsState)
+    const selectedMultisigId = get(selectedMultisigIdState)
+    return multisigs.find(multisig => multisig.id === selectedMultisigId) ?? multisigs[0] ?? DUMMY_MULTISIG
+  },
+})
+
+export const aggregatedMultisigsState = selector({
+  key: 'aggregatedMultisigs',
+  get: ({ get }) => {
+    const combinedView = get(combinedViewState)
+    const selectedMultisig = get(selectedMultisigState)
+    const activeMultisigs = get(activeMultisigsState)
+    return combinedView ? activeMultisigs ?? [] : [selectedMultisig]
   },
 })
 
@@ -82,12 +104,52 @@ export const selectedMultisigChainTokensState = selector<BaseToken[]>({
   },
 })
 
+export const useSelectedMultisig = (): [Multisig, (multisig: Multisig) => void] => {
+  const selectedMultisig = useRecoilValue(selectedMultisigState)
+  const setSelectedMultisigId = useSetRecoilState(selectedMultisigIdState)
+
+  const setSelectedMultisig = useCallback(
+    (multisig: Multisig) => {
+      setSelectedMultisigId(multisig.id)
+    },
+    [setSelectedMultisigId]
+  )
+
+  return [selectedMultisig, setSelectedMultisig]
+}
+
+export const useUpsertMultisig = () => {
+  const [multisigs, setMultisigs] = useRecoilState(multisigsState)
+  const upsertMultisig = useCallback(
+    (multisig: Multisig) => {
+      const newMultisigs = [...multisigs]
+      const multisigIndex = multisigs.findIndex(m => m.id === multisig.id)
+      if (multisigIndex === -1) {
+        newMultisigs.push(multisig)
+      } else {
+        if (isEqual(multisigs[multisigIndex], multisig)) return
+        newMultisigs[multisigIndex] = multisig
+      }
+      setMultisigs(newMultisigs)
+    },
+    [multisigs, setMultisigs]
+  )
+
+  return upsertMultisig
+}
+
 // Returns the next connected signer that needs to sign the transaction,
 // or undefined if there are none that can sign
 export const useNextTransactionSigner = (approvals: TransactionApprovals | undefined) => {
   const [extensionAccounts] = useRecoilState(accountsState)
+  const selectedAccount = useRecoilValue(selectedAccountState)
 
   if (!approvals) return
+
+  if (selectedAccount?.injected && approvals[selectedAccount.injected.address.toPubKey()] === false) {
+    return selectedAccount.injected
+  }
+
   return extensionAccounts.find(account => approvals[account.address.toPubKey()] === false)
 }
 
@@ -115,9 +177,11 @@ export interface AugmentedAccount {
   you?: boolean
   nickname?: string
   excluded?: boolean
+  injected?: InjectedAccount
 }
 
 export interface Multisig {
+  id: string
   name: string
   chain: Chain
   multisigAddress: Address
@@ -499,126 +563,139 @@ export const extrinsicToDecoded = (
   }
 }
 
+export const pendingTransactionsState = atom<Transaction[]>({
+  key: 'PendingTransactions',
+  default: [],
+  dangerouslyAllowMutability: true, // fixes an issue with pjs mutating itself
+})
+
+export const pendingTransactionsLoadingState = atom<boolean>({
+  key: 'PendingTransactionsLoading',
+  default: true,
+})
+
 // transforms raw transaction from the chain into a full Transaction
-export const usePendingTransactions = () => {
+export const PendingTransactionsWatcher = () => {
   const selectedMultisig = useRecoilValue(selectedMultisigState)
   const combinedView = useRecoilValue(combinedViewState)
   const allRawPending = useRecoilValueLoadable(allRawPendingTransactionsSelector)
   const allApisLoadable = useRecoilValueLoadable(allPjsApisSelector)
   const allActiveChainTokens = useRecoilValueLoadable(allChainTokensSelector)
-  const [loading, setLoading] = useState(true)
-  const [metadataCache, setMetadataCache] = useRecoilState(txOffchainMetadataState)
-  const [transactions, setTransactions] = useState<Transaction[]>([])
+  const setLoading = useSetRecoilState(pendingTransactionsLoadingState)
+  const setPendingTransactions = useSetRecoilState(pendingTransactionsState)
+  const txMetadataByTeamId = useRecoilValue(txMetadataByTeamIdState)
 
+  const watchingAddress = useMemo(
+    () => selectedMultisig.multisigAddress.toSs58(selectedMultisig.chain),
+    [selectedMultisig.chain, selectedMultisig.multisigAddress]
+  )
+
+  // show loading indicator when view / selected multisig is changed
   useEffect(() => {
     setLoading(true)
-  }, [selectedMultisig.multisigAddress, combinedView])
+  }, [watchingAddress, combinedView, setLoading])
 
   const ready =
     allRawPending.state === 'hasValue' &&
     allApisLoadable.state === 'hasValue' &&
     allActiveChainTokens.state === 'hasValue'
+
   const loadTransactions = useCallback(async () => {
     if (!ready) return
 
-    const transactions = (
-      await Promise.all(
-        allRawPending.contents.map(async rawPending => {
-          const timepoint_height = rawPending.onChainMultisig.when.height.toNumber()
-          const timepoint_index = rawPending.onChainMultisig.when.index.toNumber()
-          const transactionID = makeTransactionID(rawPending.multisig.chain, timepoint_height, timepoint_index)
+    const parsedTransactions = allRawPending.contents.map(rawPending => {
+      const timepoint_height = rawPending.onChainMultisig.when.height.toNumber()
+      const timepoint_index = rawPending.onChainMultisig.when.index.toNumber()
+      const transactionID = makeTransactionID(rawPending.multisig.chain, timepoint_height, timepoint_index)
 
-          let metadata = metadataCache[transactionID]
+      const metadata = txMetadataByTeamId[rawPending.multisig.id]?.data[transactionID]
 
-          if (!metadata) {
-            try {
-              const metadataValues = await getTxMetadataByPk(transactionID, {
-                proxy_address: rawPending.multisig.proxyAddress,
-                chain: rawPending.multisig.chain,
-                timepoint_height,
-                timepoint_index,
-              })
+      if (metadata) {
+        try {
+          // Validate calldata from the metadata service matches the hash from the chain
+          const pjsApi = allApisLoadable.contents.get(rawPending.multisig.chain.squidIds.chainData)
+          if (!pjsApi) throw Error(`pjsApi found for rpc ${rawPending.multisig.chain.squidIds.chainData}!`)
 
-              if (metadataValues) {
-                // Validate calldata from the metadata service matches the hash from the chain
-                const pjsApi = allApisLoadable.contents.get(rawPending.multisig.chain.squidIds.chainData)
-                if (!pjsApi) throw Error(`pjsApi found for rpc ${rawPending.multisig.chain.squidIds.chainData}!`)
-
-                const extrinsic = decodeCallData(pjsApi, metadataValues.callData)
-                if (!extrinsic) {
-                  throw new Error(
-                    `Failed to create extrinsic from callData recieved from metadata sharing service for transactionID ${transactionID}`
-                  )
-                }
-
-                const derivedHash = extrinsic.registry.hash(extrinsic.method.toU8a()).toHex()
-                if (derivedHash !== rawPending.callHash) {
-                  throw new Error(
-                    `CallData from metadata sharing service for transactionID ${transactionID} does not match hash from chain. Expected ${rawPending.callHash}, got ${derivedHash}`
-                  )
-                }
-
-                console.log(`Loaded metadata for transactionID ${transactionID} from sharing service`)
-                metadata = [metadataValues, new Date()]
-                setMetadataCache({
-                  ...metadataCache,
-                  [transactionID]: metadata,
-                })
-              } else {
-                console.warn(`allRawPending: Metadata service has no value for transactionID ${transactionID}`)
-              }
-            } catch (error) {
-              console.error(`Failed to fetch callData for transactionID ${transactionID}:`, error)
-            }
+          // create extrinsic from callData
+          const extrinsic = decodeCallData(pjsApi, metadata.callData)
+          if (!extrinsic) {
+            throw new Error(
+              `Failed to create extrinsic from callData recieved from metadata sharing service for transactionID ${transactionID}`
+            )
           }
 
-          if (metadata) {
-            // got calldata!
-            const pjsApi = allApisLoadable.contents.get(rawPending.multisig.chain.squidIds.chainData)
-            if (!pjsApi) throw Error('Failed to load pjsApi for rpc!')
-            const chainTokens = allActiveChainTokens.contents.get(rawPending.multisig.chain.squidIds.chainData)
-            if (!chainTokens) throw Error('Failed to load chainTokens for chain!')
-            const extrinsic = decodeCallData(pjsApi, metadata[0].callData)
-            const decoded = extrinsic
-              ? extrinsicToDecoded(rawPending.multisig, extrinsic, chainTokens, metadata[0].changeConfigDetails || null)
-              : undefined
-
-            // If decoded returns none, it means the transaction was for a different proxy.
-            if (decoded === 'not_ours') return null
-            return {
-              date: rawPending.date,
-              description: metadata[0].description,
-              callData: metadata[0].callData,
-              hash: rawPending.callHash,
-              decoded,
-              rawPending: rawPending,
-              multisig: rawPending.multisig,
-              approvals: rawPending.approvals,
-              id: transactionID,
-            }
-          } else {
-            // still no calldata. return unknown transaction
-            return {
-              date: rawPending.date,
-              description: `Transaction ${transactionID}`,
-              hash: rawPending.callHash,
-              rawPending: rawPending,
-              multisig: rawPending.multisig,
-              approvals: rawPending.approvals,
-              id: transactionID,
-            }
+          // validate hash of extrinsic matches hash from chain
+          const derivedHash = extrinsic.registry.hash(extrinsic.method.toU8a()).toHex()
+          if (derivedHash !== rawPending.callHash) {
+            throw new Error(
+              `CallData from metadata sharing service for transactionID ${transactionID} does not match hash from chain. Expected ${rawPending.callHash}, got ${derivedHash}`
+            )
           }
-        })
-      )
-    ).filter(tx => tx !== null)
 
-    setTransactions(transactions as Transaction[])
+          // get chain tokens
+          const chainTokens = allActiveChainTokens.contents.get(rawPending.multisig.chain.squidIds.chainData)
+          if (!chainTokens) throw Error('Failed to load chainTokens for chain!')
+
+          const decoded = extrinsicToDecoded(
+            rawPending.multisig,
+            extrinsic,
+            chainTokens,
+            metadata.changeConfigDetails || null
+          )
+          if (decoded === 'not_ours') return null
+
+          return {
+            date: rawPending.date,
+            description: metadata.description,
+            callData: metadata.callData,
+            hash: rawPending.callHash,
+            decoded,
+            rawPending: rawPending,
+            multisig: rawPending.multisig,
+            approvals: rawPending.approvals,
+            id: transactionID,
+          }
+        } catch (error) {
+          console.error(`Invalid metadata for for transactionID ${transactionID}:`, error)
+        }
+      }
+
+      // no calldata. return unknown transaction
+      return {
+        date: rawPending.date,
+        description: `Transaction ${transactionID}`,
+        hash: rawPending.callHash,
+        rawPending: rawPending,
+        multisig: rawPending.multisig,
+        approvals: rawPending.approvals,
+        id: transactionID,
+      }
+    })
+
+    const transactions = parsedTransactions.filter(tx => tx !== null)
+
+    setPendingTransactions(transactions as Transaction[])
     setLoading(false)
-  }, [allRawPending, metadataCache, setMetadataCache, ready, allApisLoadable.contents, allActiveChainTokens])
+  }, [
+    ready,
+    allRawPending.contents,
+    setPendingTransactions,
+    setLoading,
+    txMetadataByTeamId,
+    allApisLoadable.contents,
+    allActiveChainTokens.contents,
+  ])
 
   useEffect(() => {
     loadTransactions()
   }, [loadTransactions])
+
+  return null
+}
+
+export const usePendingTransactions = () => {
+  const loading = useRecoilValue(pendingTransactionsLoadingState)
+  const transactions = useRecoilValue(pendingTransactionsState)
 
   return { loading, transactions }
 }
