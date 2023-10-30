@@ -8,10 +8,11 @@ import {
   selectedMultisigChainTokensState,
   selectedMultisigState,
   useNextTransactionSigner,
+  useSelectedMultisig,
 } from '@domains/multisig'
 import { css } from '@emotion/css'
 import { SubmittableExtrinsic } from '@polkadot/api/types'
-import { Button, SideSheet, TextInput } from '@talismn/ui'
+import { Button, SideSheet } from '@talismn/ui'
 import { Address } from '@util/addresses'
 import BN from 'bn.js'
 import Decimal from 'decimal.js'
@@ -22,6 +23,8 @@ import { useRecoilValue, useRecoilValueLoadable } from 'recoil'
 
 import { FullScreenDialogContents, FullScreenDialogTitle } from '../Transactions/FullScreenSummary'
 import { NameTransaction } from './generic-steps'
+import AddressInput from '@components/AddressInput'
+import { useKnownAddresses } from '@hooks/useKnownAddresses'
 
 enum Step {
   Name,
@@ -30,16 +33,18 @@ enum Step {
 }
 
 const DetailsForm = (props: {
-  destinationInput: string
+  destinationAddress?: Address
   amount: string
   selectedToken: BaseToken | undefined
   setSelectedToken: (t: BaseToken) => void
   tokens: BaseToken[]
-  setDestinationInput: (d: string) => void
+  setDestinationAddress: (address?: Address) => void
   setAmount: (a: string) => void
   onBack: () => void
   onNext: () => void
 }) => {
+  const [multisig] = useSelectedMultisig()
+  const { addresses } = useKnownAddresses(multisig.id)
   return (
     <>
       <h1>Transaction details</h1>
@@ -67,17 +72,7 @@ const DetailsForm = (props: {
           color: var(--color-offWhite);
         `}
       >
-        <TextInput
-          className={css`
-            font-size: 18px !important;
-          `}
-          leadingLabel={'Recipient'}
-          placeholder="14JVAWDg9h2iMqZgmiRpvZd8aeJ3TvANMCv6V5Te4N4Vkbg5"
-          value={props.destinationInput}
-          onChange={event => {
-            props.setDestinationInput(event.target.value)
-          }}
-        />
+        <AddressInput onChange={props.setDestinationAddress} addresses={addresses} leadingLabel="Recipient" />
       </div>
       <div
         className={css`
@@ -94,7 +89,7 @@ const DetailsForm = (props: {
         <Button onClick={props.onBack} children={<h3>Back</h3>} variant="outlined" />
         <Button
           disabled={
-            Address.fromSs58(props.destinationInput) === false ||
+            !props.destinationAddress ||
             isNaN(parseFloat(props.amount)) ||
             props.amount.endsWith('.') ||
             !props.selectedToken
@@ -110,7 +105,7 @@ const DetailsForm = (props: {
 const SendAction = (props: { onCancel: () => void }) => {
   const [step, setStep] = useState(Step.Name)
   const [name, setName] = useState('')
-  const [destinationInput, setDestinationInput] = useState('')
+  const [destinationAddress, setDestinationAddress] = useState<Address | undefined>()
   const [extrinsic, setExtrinsic] = useState<SubmittableExtrinsic<'promise'> | undefined>()
   const tokens = useRecoilValueLoadable(selectedMultisigChainTokensState)
   const [selectedToken, setSelectedToken] = useState<BaseToken | undefined>()
@@ -124,10 +119,6 @@ const SendAction = (props: { onCancel: () => void }) => {
       setSelectedToken(tokens.contents[0])
     }
   }, [tokens, selectedToken])
-
-  const destinationAddress = useMemo(() => {
-    return Address.fromSs58(destinationInput)
-  }, [destinationInput])
 
   const amountBn: BN | undefined = useMemo(() => {
     if (!selectedToken || isNaN(parseFloat(amountInput))) return
@@ -214,9 +205,9 @@ const SendAction = (props: { onCancel: () => void }) => {
           onNext={() => setStep(Step.Review)}
           selectedToken={selectedToken}
           tokens={tokens.state === 'hasValue' ? tokens.contents : []}
-          destinationInput={destinationInput}
+          destinationAddress={destinationAddress}
           amount={amountInput}
-          setDestinationInput={setDestinationInput}
+          setDestinationAddress={setDestinationAddress}
           setAmount={setAmountInput}
           setSelectedToken={setSelectedToken}
         />

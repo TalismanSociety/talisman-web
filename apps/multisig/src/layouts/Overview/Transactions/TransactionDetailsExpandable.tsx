@@ -22,24 +22,40 @@ import { Collapse } from 'react-collapse'
 import { useRecoilState, useRecoilValueLoadable } from 'recoil'
 import truncateMiddle from 'truncate-middle'
 import { VoteExpandedDetails, VoteTransactionHeader } from './VoteTransactionDetails'
+import { useKnownAddresses } from '@hooks/useKnownAddresses'
 
 const ChangeConfigExpandedDetails = ({ t }: { t: Transaction }) => {
+  const { contactByAddress } = useKnownAddresses(t.multisig.id)
   return (
     <div>
-      <div css={{ display: 'grid', gap: '8px', marginTop: '8px' }}>
+      <div css={{ display: 'grid', gap: 12, marginTop: '8px' }}>
         {!t.executedAt && (
           <>
             <p css={{ fontWeight: 'bold' }}>Current Signers</p>
-            {t.multisig.signers.map(s => (
-              <MemberRow key={s.toPubKey()} member={{ address: s }} chain={t.multisig.chain} />
-            ))}
+            {t.multisig.signers.map(s => {
+              const contact = contactByAddress[s.toSs58()]
+              return (
+                <MemberRow
+                  key={s.toPubKey()}
+                  member={{ address: s, nickname: contact?.name, you: contact?.extensionName !== undefined }}
+                  chain={t.multisig.chain}
+                />
+              )
+            })}
             <p>Threshold: {t.multisig.threshold}</p>
           </>
         )}
         <p css={{ fontWeight: 'bold', marginTop: '8px' }}>{!t.executedAt ? 'Proposed ' : ''}New Signers</p>
-        {t.decoded?.changeConfigDetails?.signers.map(s => (
-          <MemberRow key={s.toPubKey()} member={{ address: s }} chain={t.multisig.chain} />
-        ))}
+        {t.decoded?.changeConfigDetails?.signers.map(s => {
+          const contact = contactByAddress[s.toSs58()]
+          return (
+            <MemberRow
+              key={s.toPubKey()}
+              member={{ address: s, nickname: contact?.name, you: contact?.extensionName !== undefined }}
+              chain={t.multisig.chain}
+            />
+          )
+        })}
         <p>Threshold: {t.decoded?.changeConfigDetails?.threshold}</p>
       </div>
     </div>
@@ -49,6 +65,8 @@ const ChangeConfigExpandedDetails = ({ t }: { t: Transaction }) => {
 const MultiSendExpandedDetails = ({ t }: { t: Transaction }) => {
   const theme = useTheme()
   const recipients = t.decoded?.recipients || []
+  const { contactByAddress } = useKnownAddresses(t.multisig.id)
+
   return (
     <div css={{ paddingBottom: '8px' }}>
       {t.decoded?.recipients.map((r, i) => {
@@ -82,7 +100,7 @@ const MultiSendExpandedDetails = ({ t }: { t: Transaction }) => {
                   {i + 1} of {recipients.length}
                 </span>
               </div>
-              <AddressPill address={address} chain={t.multisig.chain} />
+              <AddressPill name={contactByAddress[address.toSs58()]?.name} address={address} chain={t.multisig.chain} />
               <div css={{ marginLeft: 'auto' }}>
                 <AmountRow balance={balance} />
               </div>
@@ -149,6 +167,7 @@ const TransactionDetailsExpandable = ({ t }: { t: Transaction }) => {
   const sumOutgoing: Balance[] = useMemo(() => calcSumOutgoing(t), [t])
   const { copied: copiedCallData, copy: copyCallData } = useCopied()
   const { copied: copiedCallHash, copy: copyCallHash } = useCopied()
+  const { contactByAddress } = useKnownAddresses(t.multisig.id)
 
   const recipients = t.decoded?.recipients || []
   return (
@@ -245,7 +264,11 @@ const TransactionDetailsExpandable = ({ t }: { t: Transaction }) => {
               margin-left: auto;
             `}
           >
-            <AddressPill address={recipients[0]?.address as Address} chain={t.multisig.chain} />
+            <AddressPill
+              name={contactByAddress[recipients[0]!.address.toSs58()]?.name}
+              address={recipients[0]?.address as Address}
+              chain={t.multisig.chain}
+            />
           </div>
         ) : null}
         {/* Show the token amounts being sent in this transaction */}

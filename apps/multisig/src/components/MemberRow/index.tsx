@@ -4,9 +4,9 @@ import { css } from '@emotion/css'
 import { ExternalLink, Trash } from '@talismn/icons'
 import { Identicon } from '@talismn/ui'
 import truncateMiddle from 'truncate-middle'
-import Checkbox from '../Checkbox'
 
 const MemberRow = (props: { member: AugmentedAccount; chain: Chain; onDelete?: () => void; truncate?: boolean }) => {
+  const address = props.member.address.toSs58(props.chain)
   return (
     <div
       className={css`
@@ -23,31 +23,25 @@ const MemberRow = (props: { member: AugmentedAccount; chain: Chain; onDelete?: (
       `}
     >
       <div css={{ gap: 8 }}>
-        <Identicon css={{ width: 24, height: 'auto' }} value={props.member.address.toSs58(props.chain)} />
-        {props.member.you ? (
-          <p>
-            {props.member.nickname} <span css={({ color }) => ({ color: color.offWhite })}>(You)</span>
+        <Identicon css={{ width: 24, height: 'auto' }} value={address} />
+        {props.member.nickname ? (
+          <p css={({ color }) => ({ color: color.offWhite })}>
+            {props.member.nickname}{' '}
+            <span css={({ color }) => ({ color: color.lightGrey })}>{truncateMiddle(address, 5, 5, '...')}</span>
+            {props.member.you ? <span> (You)</span> : ''}
           </p>
         ) : (
-          <p css={({ color }) => ({ color: color.offWhite })}>
-            {props.truncate
-              ? truncateMiddle(props.member.address.toSs58(props.chain), 12, 12, '...')
-              : props.member.address.toSs58(props.chain)}
-          </p>
+          <p css={({ color }) => ({ color: color.offWhite })}>{truncateMiddle(address, 8, 8, '...')}</p>
         )}
       </div>
       <div css={{ gap: 16 }}>
         {props.onDelete ? (
-          props.member.you ? (
-            <Checkbox checked={!props.member.excluded} onChange={() => props.onDelete?.()} size={18} />
-          ) : (
-            <div
-              onClick={props.onDelete}
-              css={({ foreground }) => ({ color: `rgb(${foreground})`, cursor: 'pointer' })}
-            >
-              <Trash size={16} />
-            </div>
-          )
+          <div
+            onClick={props.onDelete}
+            css={({ foreground }) => ({ color: `rgb(${foreground})`, cursor: 'pointer', height: 16 })}
+          >
+            <Trash size={16} />
+          </div>
         ) : (
           <div />
         )}

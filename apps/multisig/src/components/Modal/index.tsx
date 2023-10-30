@@ -1,23 +1,15 @@
 import { ReactNode } from 'react'
 import ReactModal, { Props as ReactModalProps } from 'react-modal'
-import { animated, useSpring } from 'react-spring'
-import { useMeasure } from 'react-use'
 
 interface Props extends ReactModalProps {
   children: ReactNode
-  width?: string
+  width?: string | number
+  maxWidth?: string | number
+  maxHeight?: string | number
+  borderRadius?: number
 }
 
 const Modal = (props: Props) => {
-  // get ref for the content div and the height from useMeasure
-  const [contentRef, { height }] = useMeasure<HTMLDivElement>()
-
-  const springStyle = useSpring({
-    height,
-    overflow: 'auto',
-    config: { tension: 170, friction: 26 }, // these values are recommended for height transition
-  })
-
   ReactModal.setAppElement('#root')
   return (
     <ReactModal
@@ -33,9 +25,10 @@ const Modal = (props: Props) => {
           bottom: 0,
           backgroundColor: 'rgba(0, 0, 0, 0.75)',
           backdropFilter: 'blur(5px)',
+          padding: 12,
         },
         content: {
-          position: 'absolute',
+          position: 'relative',
           top: 'auto',
           left: 'auto',
           right: 'auto',
@@ -44,20 +37,19 @@ const Modal = (props: Props) => {
           background: 'var(--color-background)',
           overflow: 'auto',
           WebkitOverflowScrolling: 'touch',
-          borderRadius: '32px',
+          borderRadius: props.borderRadius ?? 16,
           outline: 'none',
-          padding: '0',
-          width: props.width || 'calc(100% - 24px)',
-          maxWidth: '1024px',
+          padding: '24px 24px 32px',
+          width: props.width ?? 'auto',
+          maxWidth: props.maxWidth ?? 1024,
+          maxHeight: props.maxHeight ?? 'calc(100vh - 48px)',
+          minHeight: 120,
         },
       }}
       closeTimeoutMS={150}
-      onAfterOpen={() => {}}
       {...props}
     >
-      <animated.div style={springStyle}>
-        <div ref={contentRef}>{props.children}</div>
-      </animated.div>
+      <div>{props.children}</div>
     </ReactModal>
   )
 }

@@ -1,4 +1,4 @@
-import { Eye, PlusCircle, Settings } from '@talismn/icons'
+import { Eye, PlusCircle, Settings, Users } from '@talismn/icons'
 import { useNavigate } from 'react-router-dom'
 import Header from './Header'
 import Sidebar from './Sidebar'
@@ -57,6 +57,11 @@ export const Layout: React.FC<
                     name: 'Transaction',
                     icon: <PlusCircle />,
                     onClick: () => navigate('/overview/new-transaction'),
+                  },
+                  {
+                    name: 'Address Book',
+                    icon: <Users />,
+                    onClick: () => navigate('/address-book'),
                   },
                   {
                     name: 'Settings',

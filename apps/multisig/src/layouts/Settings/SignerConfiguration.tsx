@@ -1,4 +1,3 @@
-import AddressInput from '@components/AddressInput'
 import { Member } from '@components/Member'
 import Slider from '@components/Slider'
 import { useApproveAsMulti } from '@domains/chains'
@@ -21,6 +20,8 @@ import { useRecoilValue, useRecoilValueLoadable } from 'recoil'
 
 import { FullScreenDialogContents, FullScreenDialogTitle } from '../../layouts/Overview/Transactions/FullScreenSummary'
 import { BackButton } from '.'
+import { AddMemberInput } from '@components/AddMemberInput'
+import { useKnownAddresses } from '@hooks/useKnownAddresses'
 
 const ManageSignerConfiguration = () => {
   const selectedMultisig = useRecoilValue(selectedMultisigState)
@@ -83,6 +84,7 @@ const ManageSignerConfiguration = () => {
   const thresholdDiffExists = newThreshold !== selectedMultisig.threshold
   const diffExists = membersDiffExists || thresholdDiffExists
   const [confirmationDialogOpen, setConfirmationDialogOpen] = useState(false)
+  const { addresses: knownAddresses, contactByAddress } = useKnownAddresses(selectedMultisig.id)
 
   return (
     <div css={{ margin: '32px' }}>
@@ -101,34 +103,43 @@ const ManageSignerConfiguration = () => {
             flex: 1;
           `}
         >
-          <div css={{ display: 'grid', gap: '16px' }}>
+          <div css={{ display: 'grid', gap: '16px', marginBottom: 24, width: '100%', minWidth: 400 }}>
             <h2 css={{ color: 'var(--color-offWhite)' }}>Vault Members</h2>
             <div css={{ display: 'flex' }}>
               <span>Members of</span>&nbsp;<span css={{ color: 'var(--color-primary)' }}>{selectedMultisig.name}</span>
             </div>
             <div css={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '40px' }}>
-              {newMembers.map(m => (
-                <Member
-                  chain={selectedMultisig.chain}
-                  key={m.toPubKey()}
-                  m={{ address: m }}
-                  onDelete={
-                    newMembers.length > 2
-                      ? () => {
-                          setNewMembers(newMembers.filter(nm => !nm.isEqual(m)))
-                        }
-                      : undefined
-                  }
-                />
-              ))}
+              {newMembers.map(m => {
+                const addressString = m.toSs58()
+                const contact = contactByAddress[addressString]
+                return (
+                  <Member
+                    chain={selectedMultisig.chain}
+                    key={addressString}
+                    m={{
+                      address: m,
+                      nickname: contact?.name,
+                      you: contact?.extensionName !== undefined,
+                    }}
+                    onDelete={
+                      newMembers.length > 2 ? () => setNewMembers(newMembers.filter(nm => !nm.isEqual(m))) : undefined
+                    }
+                  />
+                )
+              })}
             </div>
           </div>
-          <AddressInput
-            css={{ marginTop: '24px' }}
+          <AddMemberInput
             onNewAddress={(a: Address) => {
               if (newMembers.some(m => m.isEqual(a))) return
               setNewMembers([...newMembers, a])
             }}
+            validateAddress={address => {
+              const conflict = newMembers.some(a => a.isEqual(address))
+              if (conflict) toast.error('Duplicate address')
+              return !conflict
+            }}
+            addresses={knownAddresses}
           />
         </div>
         <div

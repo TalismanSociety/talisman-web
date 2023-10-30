@@ -4,7 +4,7 @@ import { Identicon } from '@talismn/ui'
 import { Address } from '@util/addresses'
 import truncateMiddle from 'truncate-middle'
 
-const AddressPill = ({ address, chain }: { address: Address; chain: Chain }) => {
+const AddressPill = ({ address, chain, name }: { address: Address; chain: Chain; name?: string }) => {
   const ss52Address = address.toSs58(chain)
   return (
     <a
@@ -12,19 +12,33 @@ const AddressPill = ({ address, chain }: { address: Address; chain: Chain }) => 
         display: flex;
         align-items: center;
         height: 25px;
-        width: 138px;
+        max-width: 160px;
         border-radius: 100px;
         background-color: var(--color-backgroundLighter);
-        padding-left: 8px;
+        padding: 0px 8px;
         font-size: 14px;
         gap: 4px;
+        white-space: nowrap;
       `}
       href={address.toSubscanUrl(chain)}
       target="_blank"
       rel="noreferrer"
     >
-      <Identicon value={ss52Address} size={'16px'} />
-      <span css={{ marginTop: '3px' }}>{truncateMiddle(ss52Address, 5, 5, '...')}</span>
+      <div css={{ height: 16, width: 16 }}>
+        <Identicon value={ss52Address} size={16} />
+      </div>
+      <p
+        css={({ color }) => ({
+          color: name ? color.offWhite : color.lightGrey,
+          marginTop: 4,
+          fontSize: 14,
+          width: '100%',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+        })}
+      >
+        {name ?? truncateMiddle(ss52Address, 5, 5, '...')}
+      </p>
     </a>
   )
 }

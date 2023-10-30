@@ -25,7 +25,7 @@ const BetaNotice = () => {
       contentLabel="Beta Notice"
       shouldCloseOnOverlayClick={false}
       shouldCloseOnEsc={false}
-      width={'auto'}
+      borderRadius={32}
     >
       <div
         css={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '32px', textAlign: 'center' }}

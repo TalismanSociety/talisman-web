@@ -1,27 +1,24 @@
-import AddressInput from '@components/AddressInput'
 import MemberRow from '@components/MemberRow'
 import { Chain } from '@domains/chains'
 import { AugmentedAccount } from '@domains/multisig'
 import { css } from '@emotion/css'
-import { Button, TextInput } from '@talismn/ui'
+import { Button } from '@talismn/ui'
 import { Address } from '@util/addresses'
-import { device } from '@util/breakpoints'
-import { useState } from 'react'
 import { toast } from 'react-hot-toast'
 import { selectedAccountState } from '../../domains/auth/index'
 import { useRecoilValue } from 'recoil'
+import { AddMemberInput } from '../../components/AddMemberInput'
+import { useKnownAddresses } from '@hooks/useKnownAddresses'
 
 const AddMembers = (props: {
   onBack: () => void
   onNext: () => void
-  setExcludeExtensionAccounts: React.Dispatch<React.SetStateAction<Record<string, boolean>>>
-  setExternalAccounts: React.Dispatch<React.SetStateAction<Address[]>>
+  setAddedAccounts: React.Dispatch<React.SetStateAction<Address[]>>
   augmentedAccounts: AugmentedAccount[]
-  externalAccounts: Address[]
   chain: Chain
 }) => {
-  const [newAddress, setNewAddress] = useState('')
   const selectedAccount = useRecoilValue(selectedAccountState)
+  const { addresses: knownAddresses } = useKnownAddresses()
 
   const selectedAugmentedAccount = selectedAccount
     ? props.augmentedAccounts.find(a => a.address.isEqual(selectedAccount.injected.address))
@@ -52,6 +49,7 @@ const AddMembers = (props: {
           flex-direction: column;
           gap: 16px;
           margin-top: 48px;
+          margin-bottom: 24px;
         `}
       >
         {selectedAugmentedAccount && (
@@ -65,51 +63,21 @@ const AddMembers = (props: {
               chain={props.chain}
               truncate={true}
               member={account}
-              onDelete={() => {
-                if (account.you) {
-                  const pubKey = account.address.toPubKey()
-                  props.setExcludeExtensionAccounts(prev => ({
-                    ...prev,
-                    [pubKey]: !prev[pubKey],
-                  }))
-                } else {
-                  props.setExternalAccounts(props.externalAccounts.filter(a => !a.isEqual(account.address)))
-                }
-              }}
+              onDelete={() =>
+                props.setAddedAccounts(addedAccounts => addedAccounts.filter(a => !a.isEqual(account.address)))
+              }
             />
           ))}
       </div>
-      <AddressInput
-        additionalValidation={(str: string) => {
-          const a = Address.fromSs58(str)
-          if (a === false) return false
-          if (props.augmentedAccounts.some(_a => _a.address.isEqual(a))) {
-            toast.error('Duplicate address')
-            return false
-          }
-          return true
+      <AddMemberInput
+        validateAddress={address => {
+          const conflict = props.augmentedAccounts.some(a => a.address.isEqual(address))
+          if (conflict) toast.error('Duplicate address')
+          return !conflict
         }}
-        onNewAddress={(a: Address) => {
-          props.setExternalAccounts([...props.externalAccounts, a])
-        }}
-        className={css`
-          margin-top: 48px;
-          width: 490px;
-          color: var(--color-offWhite);
-          @media ${device.lg} {
-            width: 623px;
-          }
-        `}
-      >
-        <TextInput
-          className={css`
-            font-size: 18px !important;
-          `}
-          placeholder="e.g. 13DgtSygjb8UeF41B5H25khiczEw2sHXeuWUgzVWrFjfwcUH"
-          value={newAddress}
-          onChange={event => setNewAddress(event.target.value)}
-        />
-      </AddressInput>
+        onNewAddress={address => props.setAddedAccounts(addedAccounts => [...addedAccounts, address])}
+        addresses={knownAddresses}
+      />
       <div
         className={css`
           display: grid;
