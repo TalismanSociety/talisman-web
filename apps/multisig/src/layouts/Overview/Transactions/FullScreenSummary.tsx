@@ -77,7 +77,7 @@ const Approvals = ({ t }: { t: Transaction }) => {
   )
 }
 
-export const FullScreenDialogTitle = ({ t }: { t?: Transaction }) => {
+export const FullScreenDialogTitle = ({ t, showPill }: { t?: Transaction; showPill?: boolean }) => {
   if (!t) return null
 
   const pillType =
@@ -98,9 +98,11 @@ export const FullScreenDialogTitle = ({ t }: { t?: Transaction }) => {
       `}
     >
       <h2>Transaction Summary</h2>
-      <Pill type={pillType}>
-        <p css={{ fontSize: '12px', marginTop: '3px' }}>{pillType === PillType.Executed ? 'Executed' : 'Pending'}</p>
-      </Pill>
+      {showPill && (
+        <Pill type={pillType}>
+          <p css={{ fontSize: '12px', marginTop: '3px' }}>{pillType === PillType.Executed ? 'Executed' : 'Pending'}</p>
+        </Pill>
+      )}
     </div>
   )
 }
