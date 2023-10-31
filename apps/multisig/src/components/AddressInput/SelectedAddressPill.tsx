@@ -1,8 +1,7 @@
-import { Identicon } from '@talismn/ui'
 import { Chain } from '@domains/chains'
 import { Address } from '@util/addresses'
-import { NameAndAddress } from './NameAndAddress'
 import { X } from '@talismn/icons'
+import { AccountDetails } from './AccountDetails'
 
 export const SelectedAddress = ({
   address,
@@ -43,12 +42,7 @@ export const SelectedAddress = ({
           backgroundColor: color.surface,
         })}
       >
-        <div css={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-          <Identicon size={24} value={address.toSs58(chain)} />
-          <div>
-            <NameAndAddress address={address} chain={chain} name={name} />
-          </div>
-        </div>
+        <AccountDetails address={address} chain={chain} name={name} disableCopy />
       </div>
       <div className="close-icon" css={{ opacity: 0.6, height: 20, paddingRight: 8 }}>
         <X size={20} />

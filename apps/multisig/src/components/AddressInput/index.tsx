@@ -1,11 +1,11 @@
 import { css } from '@emotion/css'
-import { Identicon, TextInput } from '@talismn/ui'
+import { TextInput } from '@talismn/ui'
 import { Address } from '@util/addresses'
 import { useMemo, useRef, useState } from 'react'
 import { Chain } from '@domains/chains'
 import { useOnClickOutside } from '@domains/common/useOnClickOutside'
 import { SelectedAddress } from './SelectedAddressPill'
-import { NameAndAddress } from './NameAndAddress'
+import { AccountDetails } from './AccountDetails'
 
 export type AddressWithName = {
   address: Address
@@ -167,10 +167,7 @@ const AddressInput: React.FC<Props> = ({ onChange, value, addresses = [], chain,
                   ':hover': { filter: 'brightness(1.2)' },
                 }}
               >
-                <div css={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                  <Identicon size={24} value={contact.address.toSs58(chain)} />
-                  <NameAndAddress address={contact.address} chain={chain} name={contact.name} />
-                </div>
+                <AccountDetails name={contact.name} chain={chain} address={contact.address} disableCopy />
                 <p css={({ color }) => ({ fontSize: 14, fontWeight: 700, textAlign: 'right', color: color.lightGrey })}>
                   {contact.type}
                 </p>
@@ -180,22 +177,15 @@ const AddressInput: React.FC<Props> = ({ onChange, value, addresses = [], chain,
             // user pasted an unknown but valid address, show identicon and formatted address to indicate the address is valid
             <div
               css={{
-                'display': 'flex',
-                'alignItems': 'center',
                 'padding': '8px 12px',
                 'cursor': 'pointer',
-                'gap': 12,
-                'p': {
-                  marginTop: 8,
-                },
                 ':hover': {
                   filter: 'brightness(1.2)',
                 },
               }}
               onClick={() => handleSelectFromList(validRawInputAddress)}
             >
-              <Identicon size={24} value={validRawInputAddress?.toSs58(chain) ?? ''} />
-              <NameAndAddress address={validRawInputAddress} chain={chain} />
+              <AccountDetails address={validRawInputAddress} chain={chain} disableCopy />
             </div>
           ) : (
             <p css={{ textAlign: 'center', padding: 12 }}>No result found.</p>

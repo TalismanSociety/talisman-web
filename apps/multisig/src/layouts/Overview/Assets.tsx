@@ -78,12 +78,12 @@ const Assets = ({ augmentedTokens }: { augmentedTokens: TokenAugmented[] }) => {
   return (
     <section
       className={css`
-        grid-area: assets;
         background-color: var(--color-grey800);
         border-radius: 16px;
         display: flex;
         flex-direction: column;
         gap: 16px;
+        height: 100%;
         padding: 24px;
       `}
     >
