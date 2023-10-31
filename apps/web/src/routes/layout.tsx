@@ -7,7 +7,7 @@ import { ModalProvider } from '@components'
 import AccountValueInfo from '@components/recipes/AccountValueInfo'
 import { useShouldShowAccountConnectionGuard } from '@components/widgets/AccountConnectionGuard'
 import AccountsManagementMenu from '@components/widgets/AccountsManagementMenu'
-import StakeDialog from '@components/widgets/staking/StakeDialog'
+import StakeDialog from '@components/widgets/staking/substrate/StakeDialog'
 import { selectedAccountsState } from '@domains/accounts/recoils'
 import { currencyConfig, selectedCurrencyState } from '@domains/balances'
 import { Compass, CreditCard, Eye, FileText, MoreHorizontal, RefreshCcw, Star, TalismanHand, Zap } from '@talismn/icons'
@@ -24,7 +24,7 @@ import {
 } from '@talismn/ui'
 import { usePostHog } from 'posthog-js/react'
 import { useCallback, useEffect, useState } from 'react'
-import { Link, Outlet, useLocation, useMatches } from 'react-router-dom'
+import { Link, Outlet, useLocation } from 'react-router-dom'
 import { useRecoilState, useRecoilValue } from 'recoil'
 
 const CurrencySelect = () => {
@@ -47,13 +47,7 @@ const Header = () => {
   const shouldShowAccountConnectionGuard = useShouldShowAccountConnectionGuard()
   const accounts = useRecoilValue(selectedAccountsState)
 
-  const matches = useMatches()
-
   if (shouldShowAccountConnectionGuard) {
-    return null
-  }
-
-  if (matches.some(x => x.pathname.endsWith('staking'))) {
     return null
   }
 

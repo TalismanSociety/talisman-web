@@ -11,7 +11,7 @@ import { useRecoilValue } from 'recoil'
 import StakeForm from '@components/recipes/StakeForm/StakeForm'
 import { type Chain, ChainProvider } from '@domains/chains'
 import { AssetSelect, ControlledStakeForm } from './StakeForm'
-import ErrorBoundary from '../ErrorBoundary'
+import ErrorBoundary from '../../ErrorBoundary'
 
 const Rewards = () => {
   const { stakedReturn } = useInflation()

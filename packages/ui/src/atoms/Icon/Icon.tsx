@@ -1,6 +1,7 @@
 import { useTheme } from '@emotion/react'
 import { IconContext } from '@talismn/icons/utils'
 import { type ComponentPropsWithoutRef, type ElementType } from 'react'
+import { useSurfaceColor } from '..'
 
 export type IconElementType = Extract<ElementType, 'button' | 'a' | 'figure'> | ElementType<any>
 
@@ -51,6 +52,23 @@ const Icon = <T extends IconElementType = 'button'>({
       <IconContext.Provider value={{ size: `calc(${size} * 0.6)` }}>{props['children']}</IconContext.Provider>
     </Component>
   )
+}
+
+export const TonalIcon = <T extends IconElementType>(props: IconProps<T>) => {
+  const theme = useTheme()
+  const contentColor = props.contentColor ?? theme.color.primary
+  const containerColor = props.containerColor ?? `color-mix(in srgb, ${contentColor}, transparent 90%)`
+
+  return <Icon {...props} containerColor={containerColor} contentColor={contentColor} />
+}
+
+export const SurfaceIcon = <T extends IconElementType>(props: IconProps<T>) => {
+  const theme = useTheme()
+  const surfaceColor = useSurfaceColor()
+  const contentColor = props.contentColor ?? theme.color.onSurface
+  const containerColor = props.containerColor ?? surfaceColor
+
+  return <Icon {...props} containerColor={containerColor} contentColor={contentColor} />
 }
 
 export default Icon

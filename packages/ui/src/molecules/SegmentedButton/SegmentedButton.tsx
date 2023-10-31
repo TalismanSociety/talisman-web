@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion'
 import { createContext, type PropsWithChildren } from 'react'
-import { Clickable, Text, type ClickableProps } from '../../atoms'
+import { Clickable, Text, type ClickableProps, Surface } from '../../atoms'
 
 const SegmentedButtonContext = createContext<{
   value: string | number | undefined
@@ -53,12 +53,13 @@ const SegmentedButton = Object.assign(
         onChange: props.onChange,
       }}
     >
-      <section
+      <Surface
+        as="section"
         className={props.className}
-        css={theme => ({ borderRadius: '1.4rem', padding: '0.4rem', backgroundColor: theme.color.surface })}
+        css={{ display: 'inline-block', borderRadius: '1.4rem', padding: '0.4rem' }}
       >
         {props.children}
-      </section>
+      </Surface>
     </SegmentedButtonContext.Provider>
   ),
   { ButtonSegment }

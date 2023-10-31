@@ -6,7 +6,10 @@ import { Button, Dialog, Surface, Text, type DialogProps } from '../../atoms'
 
 export type AlertDialogProps = Omit<DialogProps, 'title'> & {
   title?: ReactNode
-  content: ReactNode
+  /**
+   * @deprecated use `children` instead
+   */
+  content?: ReactNode
   confirmButton?: ReactNode
   dismissButton?: ReactNode
   onRequestDismiss: () => unknown
@@ -35,6 +38,7 @@ const backdropKeyframes = keyframes`
 
 const AlertDialog = ({
   title,
+  children,
   content,
   confirmButton,
   dismissButton,
@@ -80,7 +84,7 @@ const AlertDialog = ({
             <X size="1.6rem" />
           </Button>
         </header>
-        {content}
+        {children ?? content}
         {(dismissButton || confirmButton) && (
           <div
             css={{

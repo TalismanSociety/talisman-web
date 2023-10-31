@@ -2,7 +2,7 @@ import { selectedSubstrateAccountsState } from '@domains/accounts'
 import { usePoolStakes } from '@domains/staking/substrateNominationPools/hooks'
 import { useRecoilValue } from 'recoil'
 import PoolStakeItem from './PoolStakeItem'
-import ErrorBoundary from '../ErrorBoundary'
+import ErrorBoundary from '../../ErrorBoundary'
 
 const PoolStakes = () => {
   const pools = usePoolStakes(useRecoilValue(selectedSubstrateAccountsState))

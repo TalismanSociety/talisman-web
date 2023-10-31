@@ -2,15 +2,16 @@ import { useTheme } from '@emotion/react'
 import { ChevronRight, Clock, Info } from '@talismn/icons'
 import {
   Button,
-  Chip,
   DescriptionList,
   Hr,
+  Surface,
+  SurfaceChip,
   Text,
   TextInput,
+  TonalChip,
   Tooltip,
   type ButtonProps,
   type ChipProps,
-  Surface,
 } from '@talismn/ui'
 import { isNilOrWhitespace } from '@util/nil'
 import { LayoutGroup, motion } from 'framer-motion'
@@ -43,7 +44,7 @@ const AmountInput = (props: AmountInputProps) => (
     leadingSupportingText={
       isNilOrWhitespace(props.error) ? props.fiatAmount : <TextInput.ErrorLabel>{props.error}</TextInput.ErrorLabel>
     }
-    trailingSupportingText={<Chip onClick={props.onRequestMaxAmount}>Max</Chip>}
+    trailingSupportingText={<SurfaceChip onClick={props.onRequestMaxAmount}>Max</SurfaceChip>}
     css={{ fontSize: '3rem' }}
   />
 )
@@ -264,19 +265,8 @@ const ExistingPool = Object.assign(
     </div>
   ),
   {
-    ClaimChip: (props: ChipProps) => {
-      const theme = useTheme()
-      return (
-        <Chip
-          {...props}
-          containerColor={`color-mix(in srgb, ${theme.color.primary}, transparent 88%)`}
-          contentColor={theme.color.primary}
-        >
-          Claim
-        </Chip>
-      )
-    },
-    WithdrawChip: (props: ChipProps) => <Chip {...props}>Withdraw</Chip>,
+    ClaimChip: (props: ChipProps) => <TonalChip {...props}>Claim</TonalChip>,
+    WithdrawChip: (props: ChipProps) => <SurfaceChip {...props}>Withdraw</SurfaceChip>,
     AddButton: (props: ButtonProps) => (
       <Button variant="outlined" {...props} css={{ flex: 1 }}>
         Add
