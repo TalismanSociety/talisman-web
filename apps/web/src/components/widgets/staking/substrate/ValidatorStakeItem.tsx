@@ -1,7 +1,7 @@
 import FastUnstakeDialog from '@components/recipes/FastUnstakeDialog'
 import { ValidatorStakeItem as ValidatorStakeItemComponent } from '@components/recipes/StakeItem'
 import { type Account } from '@domains/accounts/recoils'
-import { useNativeTokenDecimalState, useNativeTokenPriceState } from '@domains/chains'
+import { ChainContext, useNativeTokenDecimalState, useNativeTokenPriceState } from '@domains/chains'
 import { useSubstrateApiState } from '@domains/common'
 import { useExtrinsic, useTokenAmountFromPlanck } from '@domains/common/hooks'
 import { useEraEtaFormatter } from '@domains/common/hooks/useEraEta'
@@ -10,11 +10,12 @@ import { type DeriveStakingAccount } from '@polkadot/api-derive/types'
 import { useDeriveState } from '@talismn/react-polkadot-api'
 import { CircularProgressIndicator } from '@talismn/ui'
 import BN from 'bn.js'
-import { useMemo, useState } from 'react'
+import { useContext, useMemo, useState } from 'react'
 import { useRecoilValue, waitForAll } from 'recoil'
-import AnimatedFiatNumber from '../AnimatedFiatNumber'
-import RedactableBalance from '../RedactableBalance'
+import AnimatedFiatNumber from '../../AnimatedFiatNumber'
+import RedactableBalance from '../../RedactableBalance'
 import ValidatorUnstakeDialog from './ValidatorUnstakeDialog'
+import StakePosition from '@components/recipes/StakePosition'
 
 const ValidatorStakeItem = (props: {
   account: Account
@@ -78,27 +79,25 @@ const ValidatorStakeItem = (props: {
     }
   }
 
+  const chain = useContext(ChainContext)
+
   return (
     <>
-      <ValidatorStakeItemComponent
+      <StakePosition
+        chain={chain.name}
+        symbol={chain.nativeToken.symbol}
+        provider="Validator staking"
         stakeStatus={
           props.reward === undefined ? undefined : props.reward === 0n ? 'not_earning_rewards' : 'earning_rewards'
         }
         readonly={props.account.readonly}
         account={props.account}
-        stakingAmount={<RedactableBalance>{active.toHuman()}</RedactableBalance>}
-        stakingFiatAmount={<AnimatedFiatNumber end={active.toNumber() * nativeTokenPrice} />}
-        unstakeChip={
-          props.stake.stakingLedger.active.unwrap().isZero() ? undefined : props.eligibleForFastUnstake ? (
-            !props.inFastUnstakeHead &&
-            !props.inFastUnstakeQueue && <ValidatorStakeItemComponent.FastUnstakeChip onClick={onRequestUnstake} />
-          ) : (
-            <ValidatorStakeItemComponent.UnstakeChip onClick={onRequestUnstake} />
-          )
-        }
-        withdrawChip={
+        balance={<RedactableBalance>{active.toHuman()}</RedactableBalance>}
+        fiatBalance={<AnimatedFiatNumber end={active.toNumber() * nativeTokenPrice} />}
+        unstakeButton={<StakePosition.UnstakeButton onClick={onRequestUnstake} />}
+        withdrawButton={
           props.stake.redeemable?.isZero() === false && (
-            <ValidatorStakeItemComponent.WithdrawChip
+            <StakePosition.WithdrawButton
               amount={<RedactableBalance>{decimal.fromPlanck(props.stake.redeemable).toHuman()}</RedactableBalance>}
               onClick={() => {
                 void withdrawExtrinsic.signAndSend(props.stake.controllerId ?? '', props.slashingSpan)

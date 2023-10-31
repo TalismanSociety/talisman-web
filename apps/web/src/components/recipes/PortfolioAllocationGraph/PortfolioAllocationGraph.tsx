@@ -1,5 +1,5 @@
 import { useTheme } from '@emotion/react'
-import { Chip, type ChipProps, Skeleton, Text } from '@talismn/ui'
+import { Skeleton, SurfaceChip, Text, type ChipProps } from '@talismn/ui'
 import { type ReactNode } from 'react'
 import { VictoryPie, VictoryTooltip } from 'victory'
 
@@ -19,9 +19,9 @@ const Legend = (props: Data) => (
   </span>
 )
 
-const AssetChip = (props: ChipProps) => <Chip {...props}>Asset</Chip>
+const AssetChip = (props: ChipProps) => <SurfaceChip {...props}>Asset</SurfaceChip>
 
-const StateChip = (props: ChipProps) => <Chip {...props}>State</Chip>
+const StateChip = (props: ChipProps) => <SurfaceChip {...props}>State</SurfaceChip>
 
 const PortfolioAllocationGraphSkeleton = () => (
   <Skeleton.Surface

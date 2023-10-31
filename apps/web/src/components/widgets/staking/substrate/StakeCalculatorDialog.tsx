@@ -5,7 +5,7 @@ import { useInflation } from '@domains/staking/substrateNominationPools'
 import { Suspense, useContext, useDeferredValue, useMemo, useState, useTransition } from 'react'
 import { useRecoilValue } from 'recoil'
 import { AssetSelect } from './StakeForm'
-import ErrorBoundary from '../ErrorBoundary'
+import ErrorBoundary from '../../ErrorBoundary'
 
 type StakeCalculatorDialogProps = { open?: boolean; onRequestDismiss: () => unknown }
 

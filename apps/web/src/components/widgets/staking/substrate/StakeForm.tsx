@@ -33,7 +33,7 @@ import {
 } from 'react'
 import { useLocation } from 'react-use'
 import { constSelector, useRecoilValue, useRecoilValueLoadable, waitForAll } from 'recoil'
-import { useAccountSelector } from '../AccountSelector'
+import { useAccountSelector } from '../../AccountSelector'
 import AddStakeDialog from './AddStakeDialog'
 import UnstakeDialog from './UnstakeDialog'
 import ClaimStakeDialog from './ClaimStakeDialog'

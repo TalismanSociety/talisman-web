@@ -1,24 +1,19 @@
-import { PoolStakeItem as PoolStakeItemComponent, WithdrawChip } from '@components/recipes/StakeItem'
+import StakePosition from '@components/recipes/StakePosition'
 import { useEraEtaFormatter, useExtrinsic, useSubmittableResultLoadableState } from '@domains/common'
-import { useCallback, useState } from 'react'
+import { useCallback, useContext, useState } from 'react'
 import { useRecoilValue, waitForAll } from 'recoil'
 
 import { type Account } from '@domains/accounts'
-import { useNativeTokenDecimalState, useNativeTokenPriceState } from '@domains/chains'
+import { ChainContext, useNativeTokenDecimalState, useNativeTokenPriceState } from '@domains/chains'
 import { type usePoolStakes } from '@domains/staking/substrateNominationPools'
-import AnimatedFiatNumber from '../AnimatedFiatNumber'
-import RedactableBalance from '../RedactableBalance'
+import AnimatedFiatNumber from '../../AnimatedFiatNumber'
+import RedactableBalance from '../../RedactableBalance'
 import AddStakeDialog from './AddStakeDialog'
 import ClaimStakeDialog from './ClaimStakeDialog'
+import NominationPoolsStatisticsSideSheet from './NominationPoolsStatisticsSideSheet'
 import UnstakeDialog from './UnstakeDialog'
 
-const PoolStakeItem = ({
-  item,
-  hideIdenticon,
-}: {
-  hideIdenticon?: boolean
-  item: ReturnType<typeof usePoolStakes<Account[]>>[number]
-}) => {
+const PoolStakeItem = ({ item }: { item: ReturnType<typeof usePoolStakes<Account[]>>[number] }) => {
   const [decimal, nativeTokenPrice] = useRecoilValue(
     waitForAll([useNativeTokenDecimalState(), useNativeTokenPriceState()])
   )
@@ -38,42 +33,45 @@ const PoolStakeItem = ({
     eta: eraEtaFormatter(x.erasTilWithdrawable),
   }))
 
+  const chain = useContext(ChainContext)
+
+  const [statsDialogOpen, setStatsDialogOpen] = useState(false)
+
   return (
     <>
-      <PoolStakeItemComponent
+      <StakePosition
+        chain={chain.name}
+        symbol={chain.nativeToken.symbol}
         readonly={item.account?.readonly}
-        hideIdenticon={hideIdenticon}
         stakeStatus={item.status}
         account={item.account}
-        stakingAmount={<RedactableBalance>{decimal.fromPlanck(item.poolMember.points).toHuman()}</RedactableBalance>}
-        stakingFiatAmount={
+        balance={<RedactableBalance>{decimal.fromPlanck(item.poolMember.points).toHuman()}</RedactableBalance>}
+        fiatBalance={
           <AnimatedFiatNumber end={decimal.fromPlanck(item.poolMember.points).toNumber() * nativeTokenPrice} />
         }
-        poolName={item.poolName ?? ''}
-        claimChip={
+        provider={item.poolName ?? ''}
+        claimButton={
           item.pendingRewards?.isZero() === false && (
-            <PoolStakeItemComponent.ClaimChip
+            <StakePosition.ClaimButton
               amount={<RedactableBalance>{decimal.fromPlanck(item.pendingRewards).toHuman()}</RedactableBalance>}
               onClick={() => setClaimDialogOpen(true)}
               loading={claimPayoutLoadable.state === 'loading' || restakeLoadable.state === 'loading'}
             />
           )
         }
-        unstakeChip={
+        unstakeButton={
+          // Fully unbonding pool can't be interacted with
+          !item.poolMember.points.isZero() && <StakePosition.UnstakeButton onClick={() => setIsUnstaking(true)} />
+        }
+        increaseStakeButton={
           // Fully unbonding pool can't be interacted with
           !item.poolMember.points.isZero() && (
-            <PoolStakeItemComponent.UnstakeChip onClick={() => setIsUnstaking(true)} />
+            <StakePosition.IncreaseStakeButton onClick={() => setIsAddingStake(true)} />
           )
         }
-        increaseStakeChip={
-          // Fully unbonding pool can't be interacted with
-          !item.poolMember.points.isZero() && (
-            <PoolStakeItemComponent.IncreaseStakeChip onClick={() => setIsAddingStake(true)} />
-          )
-        }
-        withdrawChip={
+        withdrawButton={
           item.withdrawable > 0n && (
-            <WithdrawChip
+            <StakePosition.WithdrawButton
               amount={<RedactableBalance>{decimal.fromPlanck(item.withdrawable).toHuman()}</RedactableBalance>}
               onClick={() => {
                 void withdrawExtrinsic.signAndSend(
@@ -86,9 +84,10 @@ const PoolStakeItem = ({
             />
           )
         }
+        statisticsButton={<StakePosition.StatisticsButton onClick={() => setStatsDialogOpen(true)} />}
         status={
           item.totalUnlocking > 0n && (
-            <PoolStakeItemComponent.UnstakingStatus
+            <StakePosition.UnstakingStatus
               amount={<RedactableBalance>{decimal.fromPlanck(item.totalUnlocking).toHuman()}</RedactableBalance>}
               unlocks={unlocks ?? []}
             />
@@ -110,6 +109,9 @@ const PoolStakeItem = ({
         onChangeClaimPayoutLoadable={setClaimPayoutLoadable}
         onChangeRestakeLoadable={setRestakeLoadable}
       />
+      {statsDialogOpen && (
+        <NominationPoolsStatisticsSideSheet account={item.account} onRequestDismiss={() => setStatsDialogOpen(false)} />
+      )}
     </>
   )
 }
