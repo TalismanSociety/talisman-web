@@ -3,9 +3,16 @@ import { useSelectedMultisig } from '@domains/multisig'
 import { useProxies } from '@domains/proxy/useProxies'
 import { Eye, EyeOff } from '@talismn/icons'
 import { Button, CircularProgressIndicator } from '@talismn/ui'
-import { useState } from 'react'
-import { useKnownAddresses } from '../../hooks/useKnownAddresses'
-import { ChainPill } from '../../components/ChainPill'
+import { useKnownAddresses } from '@hooks/useKnownAddresses'
+import { ChainPill } from '@components/ChainPill'
+import { atom, useRecoilState } from 'recoil'
+import persist from '@domains/persist'
+
+const showMemberState = atom<boolean>({
+  key: 'dashboardShowMemberState',
+  default: false,
+  effects_UNSTABLE: [persist],
+})
 
 const secondsToDuration = (ms: number) => {
   const seconds = Math.floor(ms / 1000)
@@ -17,7 +24,7 @@ const secondsToDuration = (ms: number) => {
 
 export const VaultOverview: React.FC = () => {
   const [selectedMultisig] = useSelectedMultisig()
-  const [showMembers, setShowMembers] = useState(false)
+  const [showMembers, setShowMembers] = useRecoilState(showMemberState)
   const { contactByAddress } = useKnownAddresses(selectedMultisig.id)
   const { proxies } = useProxies(selectedMultisig.proxyAddress, selectedMultisig.chain, {
     delegateeAddress: selectedMultisig.multisigAddress,
