@@ -2,9 +2,7 @@ import toast from 'react-hot-toast'
 import AddressInput, { AddressWithName } from './AddressInput'
 import { Address } from '../util/addresses'
 import { useState } from 'react'
-import { css } from '@emotion/css'
-import { IconButton } from '@talismn/ui'
-import { useTheme } from '@emotion/react'
+import { Button } from '@talismn/ui'
 import { Plus } from '@talismn/icons'
 
 type Props = {
@@ -14,12 +12,37 @@ type Props = {
 }
 
 export const AddMemberInput: React.FC<Props> = ({ validateAddress, onNewAddress, addresses }) => {
-  const theme = useTheme()
   const [addressInput, setAddressInput] = useState('')
   const [address, setAddress] = useState<Address | undefined>()
 
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!address) {
+      toast.error('Invalid SS58 address')
+    } else {
+      const isValid = validateAddress ? validateAddress(address) : true
+      if (!isValid) return
+      onNewAddress(address)
+      setAddressInput('')
+      setAddress(undefined)
+    }
+  }
+
   return (
-    <div css={{ display: 'flex', alignItems: 'center', flexDirection: 'column', gap: 24, width: '100%' }}>
+    <form
+      onSubmit={handleSubmit}
+      css={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: 12,
+        width: '100%',
+        button: {
+          height: 54,
+          padding: '12px 32px',
+          gap: 12,
+        },
+      }}
+    >
       <AddressInput
         addresses={addresses}
         value={addressInput}
@@ -28,51 +51,9 @@ export const AddMemberInput: React.FC<Props> = ({ validateAddress, onNewAddress,
           setAddress(address)
         }}
       />
-      <div
-        onClick={() => {
-          if (!address) {
-            toast.error('Invalid SS58 address')
-          } else {
-            const isValid = validateAddress ? validateAddress(address) : true
-            if (!isValid) return
-            onNewAddress(address)
-            setAddressInput('')
-            setAddress(undefined)
-          }
-        }}
-        className={css`
-          background: var(--color-backgroundLight) !important;
-          color: var(--color-offWhite) !important;
-          border-radius: 24px !important;
-          width: 176px;
-          justify-self: center;
-          height: 40px;
-          padding: 0 !important;
-          cursor: pointer;
-        `}
-      >
-        <div
-          css={{
-            display: 'flex',
-            gap: 8,
-            height: 40,
-            alignItems: 'center',
-            justifyContent: 'center',
-            transition: 'backdrop-filter 0.1s ease-in-out',
-            ...(address
-              ? {
-                  'cursor': 'pointer',
-                  ':hover': { backdropFilter: 'brightness(1.15)' },
-                }
-              : { opacity: 0.5 }),
-          }}
-        >
-          <IconButton as="button" size="24px" contentColor={`rgb(${theme.primary})`}>
-            <Plus size={24} />
-          </IconButton>
-          <span>Add member</span>
-        </div>
-      </div>
-    </div>
+      <Button disabled={!address} variant="surface" leadingIcon={<Plus size={24} />} type="submit">
+        <p css={{ marginTop: 4, marginLeft: 8 }}>Add</p>
+      </Button>
+    </form>
   )
 }
