@@ -1,6 +1,5 @@
-import { useTheme } from '@emotion/react'
 import { Zap } from '@talismn/icons'
-import { Button, Surface, Text, useSurfaceColorAtElevation, type ButtonProps } from '@talismn/ui'
+import { Button, LinearProgressIndicator, Surface, Text, type ButtonProps } from '@talismn/ui'
 import type { ReactNode } from 'react'
 
 export type StakeableAssetProps = {
@@ -22,7 +21,6 @@ const StakeButton = (props: Omit<ButtonProps, 'children'>) => (
 
 const StakeableAsset = Object.assign(
   (props: StakeableAssetProps) => {
-    const theme = useTheme()
     return (
       <div css={{ containerType: 'inline-size' }}>
         <Surface
@@ -87,30 +85,7 @@ const StakeableAsset = Object.assign(
             <Text.BodySmall as="div" alpha="high" css={{ textAlign: 'end', marginBottom: '0.6rem' }}>
               {props.stakePercentage.toLocaleString(undefined, { style: 'percent' })}
             </Text.BodySmall>
-            <div
-              css={{
-                position: 'relative',
-                backgroundColor: useSurfaceColorAtElevation(x => x + 1),
-                height: 6,
-                borderRadius: 3,
-              }}
-            >
-              <div
-                css={{
-                  position: 'absolute',
-                  inset: 0,
-                  width: `${props.stakePercentage * 100}%`,
-                  backgroundColor:
-                    props.stakePercentage > 0.7
-                      ? '#38D448'
-                      : props.stakePercentage > 0.5
-                      ? '#F48F45'
-                      : theme.color.error,
-                  height: 6,
-                  borderRadius: 3,
-                }}
-              />
-            </div>
+            <LinearProgressIndicator value={props.stakePercentage} optimum={0.7} least={0.5} />
           </div>
           <Surface
             css={{
