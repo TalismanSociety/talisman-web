@@ -9,9 +9,10 @@ type Props = {
   onNewAddress: (a: Address) => void
   validateAddress?: (a: Address) => boolean
   addresses?: AddressWithName[]
+  compactInput?: boolean
 }
 
-export const AddMemberInput: React.FC<Props> = ({ validateAddress, onNewAddress, addresses }) => {
+export const AddMemberInput: React.FC<Props> = ({ validateAddress, onNewAddress, addresses, compactInput }) => {
   const [addressInput, setAddressInput] = useState('')
   const [address, setAddress] = useState<Address | undefined>()
 
@@ -34,11 +35,10 @@ export const AddMemberInput: React.FC<Props> = ({ validateAddress, onNewAddress,
       css={{
         display: 'flex',
         alignItems: 'center',
-        gap: 12,
+        gap: 8,
         width: '100%',
         button: {
           height: 54,
-          padding: '12px 32px',
           gap: 12,
         },
       }}
@@ -46,12 +46,13 @@ export const AddMemberInput: React.FC<Props> = ({ validateAddress, onNewAddress,
       <AddressInput
         addresses={addresses}
         value={addressInput}
+        compact={compactInput}
         onChange={(address, input) => {
           setAddressInput(input)
           setAddress(address)
         }}
       />
-      <Button disabled={!address} variant="surface" leadingIcon={<Plus size={24} />} type="submit">
+      <Button disabled={!address} variant="outlined" leadingIcon={<Plus size={24} />} type="submit">
         <p css={{ marginTop: 4, marginLeft: 8 }}>Add</p>
       </Button>
     </form>
