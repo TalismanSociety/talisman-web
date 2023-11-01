@@ -116,47 +116,27 @@ export const MultisigSelect: React.FC<Props> = ({ multisigs, onChange, selectedM
       }}
       placeholderPointerEvents={true}
       afterOptionsNode={
-        <div
+        <button
           css={{
-            borderTop: `1px solid ${theme.color.border}`,
-            button: {
-              'border': 'none',
-              'display': 'flex',
-              'alignItems': 'center',
-              'gap': 8,
-              'padding': '8px 12.5px',
-              'backgroundColor': theme.color.surface,
-              ':hover': {
-                filter: 'brightness(1.2)',
-                svg: { color: theme.color.primary },
-              },
-              'cursor': 'pointer',
-              'width': '100%',
+            'border': 'none',
+            'display': 'flex',
+            'alignItems': 'center',
+            'gap': 8,
+            'padding': '8px 12.5px',
+            'marginBottom': 8,
+            'backgroundColor': theme.color.surface,
+            ':hover': {
+              filter: 'brightness(1.2)',
             },
-            padding: '8px 0',
+            'cursor': 'pointer',
+            'width': '100%',
+            'svg': { color: theme.color.primary },
           }}
+          onClick={() => navigate('/create')}
         >
-          <button onClick={() => navigate('/create')}>
-            <PlusCircle size={20} />
-            <p css={{ marginTop: 2, fontSize: 14, textAlign: 'left' }}>Create Vault</p>
-          </button>
-          {/* 
-          TODO: uncomment this when import flow is implemented.
-          <Tooltip
-            disabled
-            content={
-              <p css={{ fontSize: 12 }}>
-                Import a Vault from an existing Proxy Account and Multisig Configuration, support Multisig control via
-                All Proxy types
-              </p>
-            }
-          >
-            <button>
-              <Download size={20} />
-              <p css={{ marginTop: 2, fontSize: 14 }}>Import Vault</p>
-            </button>
-          </Tooltip> */}
-        </div>
+          <PlusCircle size={32} />
+          <p css={{ marginTop: 4, fontSize: 16, textAlign: 'left' }}>Add Vault</p>
+        </button>
       }
       placeholder={<VaultDetails multisig={selectedMultisig} />}
       value={selectedMultisig.proxyAddress.toPubKey()}
