@@ -1,5 +1,4 @@
 import { css } from '@emotion/css'
-import { useTheme } from '@emotion/react'
 import { Copy, PlusCircle } from '@talismn/icons'
 import { Select } from '@talismn/ui'
 import { useNavigate } from 'react-router-dom'
@@ -105,45 +104,43 @@ const VaultDetails: React.FC<{ multisig: Multisig; disableCopy?: boolean }> = ({
   </div>
 )
 
-export const MultisigSelect: React.FC<Props> = ({ multisigs, onChange, selectedMultisig }) => {
-  const theme = useTheme()
+const AddVaultButton: React.FC = () => {
   const navigate = useNavigate()
-
+  return (
+    <button
+      css={({ color }) => ({
+        'border': 'none',
+        'display': 'flex',
+        'alignItems': 'center',
+        'gap': 8,
+        'padding': '8px 16px',
+        'marginBottom': 8,
+        'backgroundColor': color.surface,
+        ':hover': { filter: 'brightness(1.2)' },
+        'cursor': 'pointer',
+        'width': '100%',
+        'svg': { color: color.primary },
+      })}
+      onClick={() => navigate('/create')}
+    >
+      <PlusCircle size={32} />
+      <p css={{ marginTop: 4, fontSize: 16, textAlign: 'left' }}>Add Vault</p>
+    </button>
+  )
+}
+export const MultisigSelect: React.FC<Props> = ({ multisigs, onChange, selectedMultisig }) => {
+  const handleChange = (value: string) => {
+    const newMultisig = multisigs.find(m => m.proxyAddress.toPubKey() === value)
+    if (newMultisig) onChange(newMultisig)
+  }
   return (
     <Select
-      css={{
-        button: { gap: 12 },
-      }}
-      placeholderPointerEvents={true}
-      afterOptionsNode={
-        <button
-          css={{
-            'border': 'none',
-            'display': 'flex',
-            'alignItems': 'center',
-            'gap': 8,
-            'padding': '8px 12.5px',
-            'marginBottom': 8,
-            'backgroundColor': theme.color.surface,
-            ':hover': {
-              filter: 'brightness(1.2)',
-            },
-            'cursor': 'pointer',
-            'width': '100%',
-            'svg': { color: theme.color.primary },
-          }}
-          onClick={() => navigate('/create')}
-        >
-          <PlusCircle size={32} />
-          <p css={{ marginTop: 4, fontSize: 16, textAlign: 'left' }}>Add Vault</p>
-        </button>
-      }
+      afterOptionsNode={<AddVaultButton />}
+      css={{ button: { gap: 12 } }}
+      onChange={handleChange}
       placeholder={<VaultDetails multisig={selectedMultisig} />}
+      placeholderPointerEvents
       value={selectedMultisig.proxyAddress.toPubKey()}
-      onChange={value => {
-        const newMultisig = multisigs.find(m => m.proxyAddress.toPubKey() === value)
-        if (newMultisig) onChange(newMultisig)
-      }}
     >
       {multisigs.reduce((accumulator, multisig) => {
         if (selectedMultisig.proxyAddress.isEqual(multisig.proxyAddress)) return accumulator
