@@ -126,17 +126,21 @@ const StakePosition = Object.assign(
             '@container (min-width: 100rem)': {
               alignItems: 'center',
               gridTemplateAreas: `'account asset balance actions quick-actions'`,
-              gridTemplateColumns: 'repeat(3, 25rem) 1fr min-content',
+              gridTemplateColumns: '25rem 10rem 20rem 1fr min-content',
             },
           }}
         >
           <div css={{ gridArea: 'account', display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
             <AccountIcon account={props.account} size="3.5rem" />
-            <div>
+            <div css={{ overflow: 'hidden' }}>
               <Text.Body alpha="high">{props.account.name ?? shortenAddress(props.account.address)}</Text.Body>
               <div css={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                 <StakeStatusIndicator status={props.stakeStatus} />
-                <Text.BodySmall>{props.provider}</Text.BodySmall>
+                <Tooltip content={props.provider}>
+                  <Text.BodySmall css={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {props.provider}
+                  </Text.BodySmall>
+                </Tooltip>
               </div>
             </div>
           </div>
