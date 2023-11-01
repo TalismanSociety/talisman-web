@@ -1,92 +1,91 @@
 import { css } from '@emotion/css'
 import { useTheme } from '@emotion/react'
-import { Copy, PlusCircle, TalismanHand } from '@talismn/icons'
-import { IconButton, Identicon, Select } from '@talismn/ui'
+import { Copy, PlusCircle } from '@talismn/icons'
+import { Select } from '@talismn/ui'
 import { useNavigate } from 'react-router-dom'
 import truncateMiddle from 'truncate-middle'
-import { Multisig } from '../domains/multisig'
-import { copyToClipboard } from '../domains/common'
+import { Multisig } from '@domains/multisig'
+import { copyToClipboard } from '@domains/common'
 
 type Props = {
   multisigs: Multisig[]
   selectedMultisig: Multisig
   onChange: (multisig: Multisig) => void
 }
-export const MultisigSelect: React.FC<Props> = ({ multisigs, onChange, selectedMultisig }) => {
-  const theme = useTheme()
-  const navigate = useNavigate()
 
-  return (
-    <Select
-      placeholderPointerEvents={true}
-      afterOptionsNode={
-        <div
-          css={{
-            'display': 'flex',
-            'alignItems': 'center',
-            'fontWeight': 'bold',
-            'padding': '15px 12.5px',
-            'gap': 8,
-            'backgroundColor': theme.color.surface,
-            ':hover': {
-              filter: 'brightness(1.2)',
-            },
-            'cursor': 'pointer',
-          }}
-          onClick={() => navigate('/create')}
-        >
-          <IconButton size={'40px'} contentColor={theme.color.primary}>
-            <PlusCircle size="40px" />
-          </IconButton>
-          New Vault
-        </div>
-      }
-      beforeOptionsNode={
-        <div
-          css={{
-            fontWeight: 'bold',
-            color: 'var(--color-dim)',
-            padding: '8px 16px',
-            display: 'flex',
-            alignItems: 'center',
-            gap: 8,
-          }}
-        >
-          <TalismanHand size={16} />
-          Connected Vaults
-        </div>
-      }
-      placeholder={
-        <div
-          className={css`
-            width: max-content;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-          `}
-        >
-          <Identicon size={40} value={selectedMultisig.proxyAddress.toSs58(selectedMultisig.chain)} />
-          <div
-            className={css`
-              color: var(--color-offWhite) !important;
-              pointer-events: none;
-              user-select: none;
-            `}
-          >
-            <div css={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-              <p>{truncateMiddle(selectedMultisig.name, 24, 0, '...')}</p>
-              <img
-                css={{ marginBottom: '2px' }}
-                height={16}
-                src={selectedMultisig.chain.logo}
-                alt={selectedMultisig.chain.chainName}
-              />
-            </div>
-          </div>
+const VaultDetails: React.FC<{ multisig: Multisig; disableCopy?: boolean }> = ({ multisig, disableCopy }) => (
+  <div
+    css={{
+      width: 'max-content',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: 12,
+      userSelect: 'none',
+    }}
+  >
+    {/** Threshold + chain logo circle */}
+    <div
+      css={{
+        position: 'relative',
+        height: 40,
+        width: 40,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
+      <div
+        css={({ color }) => ({
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          background: color.primaryContainer,
+          borderRadius: '50%',
+        })}
+      />
+      <img
+        css={{ top: -2, right: -2, position: 'absolute' }}
+        height={14}
+        src={multisig.chain.logo}
+        alt={multisig.chain.chainName}
+      />
+      <p
+        css={({ color }) => ({
+          color: color.primary,
+          fontWeight: 700,
+          fontSize: 12,
+          marginTop: 4,
+        })}
+      >
+        {multisig.threshold}/{multisig.signers.length}
+      </p>
+    </div>
+
+    {/** Name + Address and copy icon */}
+    <div css={{ display: 'flex', gap: 2, flexDirection: 'column' }}>
+      <p
+        css={({ color }) => ({
+          color: color.offWhite,
+          width: 96,
+          whiteSpace: 'nowrap',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+        })}
+      >
+        {truncateMiddle(multisig.name, 24, 0, '...')}
+      </p>
+      <div css={{ display: 'flex', gap: 4 }}>
+        <p css={{ fontSize: 12, marginTop: 2 }}>
+          {truncateMiddle(multisig.proxyAddress.toSs58(multisig.chain), 4, 4, '...')}
+        </p>
+        {!disableCopy && (
           <Copy
             className={css`
-              height: 18px;
+              height: 14px;
+              width: 14px;
               transition: 100ms ease-in-out;
               :hover {
                 color: #d4d4d4;
@@ -94,14 +93,72 @@ export const MultisigSelect: React.FC<Props> = ({ multisigs, onChange, selectedM
             `}
             onClick={e => {
               copyToClipboard(
-                selectedMultisig.proxyAddress.toSs58(selectedMultisig.chain),
-                'Proxy address copied to clipboard'
+                multisig.proxyAddress.toSs58(multisig.chain),
+                'Vault address (proxied address) copied to clipboard'
               )
               e.stopPropagation()
             }}
           />
+        )}
+      </div>
+    </div>
+  </div>
+)
+
+export const MultisigSelect: React.FC<Props> = ({ multisigs, onChange, selectedMultisig }) => {
+  const theme = useTheme()
+  const navigate = useNavigate()
+
+  return (
+    <Select
+      css={{
+        button: { gap: 12 },
+      }}
+      placeholderPointerEvents={true}
+      afterOptionsNode={
+        <div
+          css={{
+            borderTop: `1px solid ${theme.color.border}`,
+            button: {
+              'border': 'none',
+              'display': 'flex',
+              'alignItems': 'center',
+              'gap': 8,
+              'padding': '8px 12.5px',
+              'backgroundColor': theme.color.surface,
+              ':hover': {
+                filter: 'brightness(1.2)',
+                svg: { color: theme.color.primary },
+              },
+              'cursor': 'pointer',
+              'width': '100%',
+            },
+            padding: '8px 0',
+          }}
+        >
+          <button onClick={() => navigate('/create')}>
+            <PlusCircle size={20} />
+            <p css={{ marginTop: 2, fontSize: 14, textAlign: 'left' }}>Create Vault</p>
+          </button>
+          {/* 
+          TODO: uncomment this when import flow is implemented.
+          <Tooltip
+            disabled
+            content={
+              <p css={{ fontSize: 12 }}>
+                Import a Vault from an existing Proxy Account and Multisig Configuration, support Multisig control via
+                All Proxy types
+              </p>
+            }
+          >
+            <button>
+              <Download size={20} />
+              <p css={{ marginTop: 2, fontSize: 14 }}>Import Vault</p>
+            </button>
+          </Tooltip> */}
         </div>
       }
+      placeholder={<VaultDetails multisig={selectedMultisig} />}
       value={selectedMultisig.proxyAddress.toPubKey()}
       onChange={value => {
         const newMultisig = multisigs.find(m => m.proxyAddress.toPubKey() === value)
@@ -112,30 +169,11 @@ export const MultisigSelect: React.FC<Props> = ({ multisigs, onChange, selectedM
         if (selectedMultisig.proxyAddress.isEqual(multisig.proxyAddress)) return accumulator
 
         return accumulator.concat(
-          <Select.Item
+          <Select.Option
             key={multisig.proxyAddress.toPubKey()}
-            leadingIcon={<Identicon size={40} value={multisig.proxyAddress.toSs58(selectedMultisig.chain)} />}
             value={multisig.proxyAddress.toPubKey()}
-            headlineText={
-              <div
-                css={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 8,
-                  fontSize: 14,
-                  color: 'var(--color-foreground)',
-                  width: '100%',
-                }}
-              >
-                <p css={({ color }) => ({ color: color.offWhite })}>{truncateMiddle(multisig.name, 12, 0, '...')}</p>
-                <img css={{ marginBottom: 4 }} height={16} src={multisig.chain.logo} alt={multisig.chain.chainName} />
-              </div>
-            }
-            supportingText={
-              <p css={{ fontSize: 12, color: 'var(--color-foreground)', marginTop: '3px' }}>
-                {truncateMiddle(multisig.proxyAddress.toSs58(multisig.chain), 4, 6, '...')}
-              </p>
-            }
+            leadingIcon={<VaultDetails multisig={multisig} />}
+            headlineText={null}
           />
         )
       }, [] as any)}

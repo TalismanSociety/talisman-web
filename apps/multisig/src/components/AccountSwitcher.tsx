@@ -39,19 +39,21 @@ const AccountRow = ({
         },
       })}
     >
-      <Identicon size={24} css={{ width: 24, height: 24 }} value={addressString} />
-      <div css={({ color }) => ({ display: 'flex', gap: 4, marginTop: 4, whiteSpace: 'nowrap' })}>
+      <Identicon size={32} css={{ width: 32, height: 32 }} value={addressString} />
+      <div css={{ display: 'flex', flexDirection: 'column', gap: 2, marginTop: 4, whiteSpace: 'nowrap' }}>
         <p
           css={({ color }) => ({
             maxWidth: 80,
-            color: color.lightGrey,
+            color: color.offWhite,
             overflow: 'hidden',
             textOverflow: 'ellipsis',
           })}
         >
           {account.meta.name}
         </p>{' '}
-        <p css={({ color }) => ({ color: color.offWhite })}>({truncateMiddle(addressString, 4, 5, '...')})</p>
+        <p css={({ color }) => ({ color: color.lightGrey, fontSize: 12 })}>
+          {truncateMiddle(addressString, 4, 5, '...')}
+        </p>
       </div>
     </div>
   )
@@ -121,7 +123,7 @@ const AccountSwitcher: React.FC<Props> = ({ accounts, onSelect, selectedAccount 
             className={css`
               width: 120px;
               @media ${device.md} {
-                width: 160px;
+                width: 120px;
               }
               p {
                 line-height: 1;
@@ -141,7 +143,7 @@ const AccountSwitcher: React.FC<Props> = ({ accounts, onSelect, selectedAccount 
               {selectedAccount.meta.name ?? truncateMiddle(selectedAccount.address.toSs58(), 4, 6, '...')}
             </p>
             {selectedAccount.meta.name !== undefined && (
-              <p css={({ color }) => ({ color: color.lightGrey })}>
+              <p css={({ color }) => ({ color: color.lightGrey, fontSize: 12 })}>
                 {truncateMiddle(selectedAccount.address.toSs58(), 4, 6, '...')}
               </p>
             )}
@@ -176,7 +178,7 @@ const AccountSwitcher: React.FC<Props> = ({ accounts, onSelect, selectedAccount 
           flexDirection: 'column',
           flex: 1,
           // height is fixed when actualExpanded to leave enough space for loading indicator
-          height: actualExpanded ? 188 : 0,
+          height: actualExpanded ? 210 : 0,
           overflow: 'hidden',
           transition: '0.2s ease-in-out',
         })}
@@ -198,7 +200,7 @@ const AccountSwitcher: React.FC<Props> = ({ accounts, onSelect, selectedAccount 
             </div>
             <Identicon size={40} value={accountToSignIn.address.toSs58()} />
             <p css={({ color }) => ({ color: color.offWhite, marginTop: 8 })}>{accountToSignIn.meta.name}</p>
-            <p>{truncateMiddle(accountToSignIn.address.toSs58(), 4, 6, '...')}</p>
+            <p css={{ fontSize: 12, marginTop: 4 }}>{truncateMiddle(accountToSignIn.address.toSs58(), 4, 6, '...')}</p>
           </div>
         ) : (
           <>
@@ -221,9 +223,15 @@ const AccountSwitcher: React.FC<Props> = ({ accounts, onSelect, selectedAccount 
               />
             </div>
             <div css={{ display: 'flex', flexDirection: 'column', flex: 1, overflowY: 'auto' }}>
-              {filteredAccounts.map(acc => (
-                <AccountRow key={acc.address.toSs58()} account={acc} onSelect={handleSelectAccount} />
-              ))}
+              {filteredAccounts.length > 0 ? (
+                filteredAccounts.map(acc => (
+                  <AccountRow key={acc.address.toSs58()} account={acc} onSelect={handleSelectAccount} />
+                ))
+              ) : (
+                <div css={{ height: '100%', display: 'flex', alignItems: 'center', width: '100%', padding: 16 }}>
+                  <p css={{ textAlign: 'center', fontSize: 14, width: '100%' }}>No accounts available to switch to.</p>
+                </div>
+              )}
             </div>
           </>
         )}
