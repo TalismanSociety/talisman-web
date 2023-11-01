@@ -15,6 +15,7 @@ import { css } from '@emotion/css'
 import BetaNotice from './BetaNotice'
 import { changingMultisigConfigState, useUpdateMultisigConfig } from '../../domains/offchain-data'
 import { selectedAccountState } from '../../domains/auth'
+import VaultOverview from './VaultOverview'
 
 const Overview = () => {
   const [selectedMultisig, setSelectedMultisig] = useSelectedMultisig()
@@ -117,18 +118,21 @@ const Overview = () => {
           grid-template-columns: 1fr;
           grid-template-areas:
             'transactions'
-            'assets';
-          width: 100%;
+            'overvew-assets';
+          flex: 1;
           @media ${device.md} {
             grid-template-columns: 45fr 55fr;
-            grid-template-areas: 'assets transactions';
+            grid-template-areas: 'overvew-assets transactions';
           }
           @media ${device.lg} {
             grid-template-columns: 38fr 62fr;
           }
         `}
       >
-        <Assets augmentedTokens={augmentedTokens} />
+        <div css={{ gridArea: 'overvew-assets', display: 'flex', flexDirection: 'column', gap: 16, height: '100%' }}>
+          <VaultOverview />
+          <Assets augmentedTokens={augmentedTokens} />
+        </div>
         <Transactions />
       </div>
       <BetaNotice />
