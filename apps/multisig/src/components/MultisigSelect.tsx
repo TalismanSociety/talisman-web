@@ -12,7 +12,11 @@ type Props = {
   onChange: (multisig: Multisig) => void
 }
 
-const VaultDetails: React.FC<{ multisig: Multisig; disableCopy?: boolean }> = ({ multisig, disableCopy }) => (
+const VaultDetails: React.FC<{ multisig: Multisig; disableCopy?: boolean; selected?: boolean }> = ({
+  multisig,
+  disableCopy,
+  selected,
+}) => (
   <div
     css={{
       width: 'max-content',
@@ -43,6 +47,7 @@ const VaultDetails: React.FC<{ multisig: Multisig; disableCopy?: boolean }> = ({
           height: '100%',
           background: color.primaryContainer,
           borderRadius: '50%',
+          opacity: selected ? 1 : 0.4,
         })}
       />
       <img
@@ -57,6 +62,7 @@ const VaultDetails: React.FC<{ multisig: Multisig; disableCopy?: boolean }> = ({
           fontWeight: 700,
           fontSize: 12,
           marginTop: 4,
+          opacity: selected ? 1 : 0.6,
         })}
       >
         {multisig.threshold}/{multisig.signers.length}
@@ -136,7 +142,7 @@ export const MultisigSelect: React.FC<Props> = ({ multisigs, onChange, selectedM
       afterOptionsNode={<AddVaultButton />}
       css={{ button: { gap: 12 } }}
       onChange={handleChange}
-      placeholder={<VaultDetails multisig={selectedMultisig} />}
+      placeholder={<VaultDetails multisig={selectedMultisig} selected />}
       placeholderPointerEvents
       value={selectedMultisig.proxyAddress.toPubKey()}
     >
