@@ -45,7 +45,7 @@ export const ProxiesSettings: React.FC<Props> = ({ proxies }) => (
     ) : proxies.length === 0 ? (
       <p css={({ color }) => ({ color: color.offWhite })}>No proxy relationship found.</p>
     ) : (
-      <div css={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, alignItems: 'flex-start' }}>
+      <div css={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px 16px', alignItems: 'flex-start' }}>
         {proxies.map(({ proxyType, delay, duration }, i) => (
           <Fragment key={i}>
             <Pill value={proxyType} />
