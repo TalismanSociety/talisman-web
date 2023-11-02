@@ -1,26 +1,9 @@
-import { Address } from '@util/addresses'
-import { Multisig } from './types'
+import { Multisig, MultisigWithExtraData, ProxyDefinition } from './types'
 import { atom, useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil'
 import { DUMMY_MULTISIG_ID, selectedMultisigIdState, selectedMultisigState } from '.'
 import { useCallback, useEffect, useMemo } from 'react'
 import { useProxies } from '../proxy/useProxies'
 import { isEqual } from 'lodash'
-
-type ProxyDefinition = {
-  delegate: Address
-  proxyType: string
-  delay: number
-  duration: number
-}
-
-/**
- * @property proxies - list of proxies that `proxyAccount` delegated to `multisigAddress`
- * @property allProxies - list of all proxies that `proxyAccount` has delegated to
- */
-type MultisigWithExtraData = {
-  proxies?: ProxyDefinition[]
-  allProxies?: ProxyDefinition[]
-} & Multisig
 
 const proxiesState = atom<Record<string, ProxyDefinition[] | undefined>>({
   key: 'proxies',

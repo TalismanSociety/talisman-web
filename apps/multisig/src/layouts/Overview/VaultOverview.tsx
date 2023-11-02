@@ -7,20 +7,13 @@ import { ChainPill } from '@components/ChainPill'
 import { atom, useRecoilState } from 'recoil'
 import persist from '@domains/persist'
 import { Fragment } from 'react'
+import { secondsToDuration } from '@util/misc'
 
 const showMemberState = atom<boolean>({
   key: 'dashboardShowMemberState',
   default: false,
   effects_UNSTABLE: [persist],
 })
-
-const secondsToDuration = (ms: number) => {
-  const seconds = Math.floor(ms / 1000)
-  if (seconds < 60) return `${seconds}secs`
-  if (seconds < 3600) return `${Math.floor(seconds / 60)}mins`
-  if (seconds < 86400) return `${Math.floor(seconds / 3600)}hrs`
-  return `${Math.floor(seconds / 86400)}days`
-}
 
 export const VaultOverview: React.FC = () => {
   const [selectedMultisig] = useSelectedMultisig()
