@@ -23,7 +23,7 @@ const router = createBrowserRouter([
   {
     path: '/overview/*',
     element: (
-      <RequireAuth requireMultisig requireSignIn>
+      <RequireAuth requireSignIn>
         <Overview />
       </RequireAuth>
     ),
@@ -31,7 +31,7 @@ const router = createBrowserRouter([
   {
     path: '/address-book',
     element: (
-      <RequireAuth requireMultisig requireSignIn>
+      <RequireAuth requireSignIn>
         <AddressBook />
       </RequireAuth>
     ),
@@ -39,7 +39,7 @@ const router = createBrowserRouter([
   {
     path: '/settings/*',
     element: (
-      <RequireAuth requireMultisig requireSignIn>
+      <RequireAuth requireSignIn>
         <Settings />
       </RequireAuth>
     ),

@@ -5,7 +5,6 @@ import { selectedAccountState } from '@domains/auth'
 import SignInPage from './SignInPage'
 
 type Props = {
-  requireMultisig?: boolean
   requireSignIn?: boolean
 }
 
