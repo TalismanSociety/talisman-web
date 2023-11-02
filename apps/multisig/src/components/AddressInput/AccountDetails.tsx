@@ -13,6 +13,7 @@ type Props = {
   nameOrAddressOnly?: boolean
   withAddressTooltip?: boolean
   identiconSize?: number
+  breakLine?: boolean
 }
 
 export const AccountDetails: React.FC<Props> = ({
@@ -23,11 +24,18 @@ export const AccountDetails: React.FC<Props> = ({
   nameOrAddressOnly,
   identiconSize = 24,
   withAddressTooltip,
+  breakLine,
 }) => {
   const accountDetailsUI = (
     <div css={{ display: 'flex', alignItems: 'center', gap: 8 }}>
       <Identicon size={identiconSize} value={address.toSs58(chain)} />
-      <NameAndAddress address={address} chain={chain} name={name} nameOrAddressOnly={nameOrAddressOnly} />
+      <NameAndAddress
+        address={address}
+        chain={chain}
+        name={name}
+        nameOrAddressOnly={nameOrAddressOnly}
+        breakLine={breakLine}
+      />
       {!disableCopy && (
         <div
           css={({ color }) => ({ color: color.lightGrey, height: 16, cursor: 'pointer' })}

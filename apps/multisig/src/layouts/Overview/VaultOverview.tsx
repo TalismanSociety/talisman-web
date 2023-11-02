@@ -7,6 +7,7 @@ import { useKnownAddresses } from '@hooks/useKnownAddresses'
 import { ChainPill } from '@components/ChainPill'
 import { atom, useRecoilState } from 'recoil'
 import persist from '@domains/persist'
+import { Fragment } from 'react'
 
 const showMemberState = atom<boolean>({
   key: 'dashboardShowMemberState',
@@ -65,13 +66,13 @@ export const VaultOverview: React.FC = () => {
         <p css={({ color }) => ({ color: color.lightGrey, marginBottom: 4, fontSize: 14 })}>Time Delay</p>
         {proxies ? (
           proxies.map(proxy => (
-            <>
+            <Fragment key={`${proxy.proxyType}_${proxy.delay}`}>
               <p css={({ color }) => ({ color: color.offWhite })}>{proxy.proxyType} transactions</p>
               <p css={({ color }) => ({ color: color.offWhite })}>
                 {proxy.delay} blocks{' '}
                 <span css={({ color }) => ({ color: color.lightGrey })}>≈{secondsToDuration(proxy.duration)}</span>
               </p>
-            </>
+            </Fragment>
           ))
         ) : (
           <CircularProgressIndicator size={22.4} />
