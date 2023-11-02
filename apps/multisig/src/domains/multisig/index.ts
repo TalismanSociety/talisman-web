@@ -18,12 +18,15 @@ import BN from 'bn.js'
 import queryString from 'query-string'
 import { useCallback, useEffect, useMemo } from 'react'
 import { atom, selector, useRecoilState, useRecoilValue, useRecoilValueLoadable, useSetRecoilState } from 'recoil'
-
 import persistAtom from '../persist'
 import { VoteDetails, mapConvictionToIndex } from '../referenda'
 import { selectedAccountState } from '../auth'
 import { txMetadataByTeamIdState } from '../offchain-data/metadata'
 import { isEqual } from 'lodash'
+import { Multisig } from './types'
+
+export * from './types.d'
+export * from './useSelectedMultisig'
 
 export const DUMMY_MULTISIG_ID = 'DUMMY_MULTISIG'
 // create a new atom for deciding whether to show all balances and txns or just for the selected
@@ -105,20 +108,6 @@ export const selectedMultisigChainTokensState = selector<BaseToken[]>({
   },
 })
 
-export const useSelectedMultisig = (): [Multisig, (multisig: Multisig) => void] => {
-  const selectedMultisig = useRecoilValue(selectedMultisigState)
-  const setSelectedMultisigId = useSetRecoilState(selectedMultisigIdState)
-
-  const setSelectedMultisig = useCallback(
-    (multisig: Multisig) => {
-      setSelectedMultisigId(multisig.id)
-    },
-    [setSelectedMultisigId]
-  )
-
-  return [selectedMultisig, setSelectedMultisig]
-}
-
 export const useUpsertMultisig = () => {
   const [multisigs, setMultisigs] = useRecoilState(multisigsState)
   const upsertMultisig = useCallback(
@@ -179,16 +168,6 @@ export interface AugmentedAccount {
   nickname?: string
   excluded?: boolean
   injected?: InjectedAccount
-}
-
-export interface Multisig {
-  id: string
-  name: string
-  chain: Chain
-  multisigAddress: Address
-  proxyAddress: Address
-  signers: Address[]
-  threshold: number
 }
 
 export interface Balance {

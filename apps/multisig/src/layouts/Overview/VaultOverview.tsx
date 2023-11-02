@@ -1,6 +1,5 @@
 import { AccountDetails } from '@components/AddressInput/AccountDetails'
 import { useSelectedMultisig } from '@domains/multisig'
-import { useProxies } from '@domains/proxy/useProxies'
 import { Eye, EyeOff } from '@talismn/icons'
 import { Button, CircularProgressIndicator } from '@talismn/ui'
 import { useKnownAddresses } from '@hooks/useKnownAddresses'
@@ -27,9 +26,6 @@ export const VaultOverview: React.FC = () => {
   const [selectedMultisig] = useSelectedMultisig()
   const [showMembers, setShowMembers] = useRecoilState(showMemberState)
   const { contactByAddress } = useKnownAddresses(selectedMultisig.id)
-  const { proxies } = useProxies(selectedMultisig.proxyAddress, selectedMultisig.chain, {
-    delegateeAddress: selectedMultisig.multisigAddress,
-  })
 
   return (
     <section
@@ -64,8 +60,8 @@ export const VaultOverview: React.FC = () => {
       >
         <p css={({ color }) => ({ color: color.lightGrey, marginBottom: 4, fontSize: 14 })}>Multisig controls</p>
         <p css={({ color }) => ({ color: color.lightGrey, marginBottom: 4, fontSize: 14 })}>Time Delay</p>
-        {proxies ? (
-          proxies.map(proxy => (
+        {selectedMultisig.proxies ? (
+          selectedMultisig.proxies.map(proxy => (
             <Fragment key={`${proxy.proxyType}_${proxy.delay}`}>
               <p css={({ color }) => ({ color: color.offWhite })}>{proxy.proxyType} transactions</p>
               <p css={({ color }) => ({ color: color.offWhite })}>
