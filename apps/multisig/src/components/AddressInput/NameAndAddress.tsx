@@ -1,4 +1,3 @@
-import truncateMiddle from 'truncate-middle'
 import { Chain } from '@domains/chains'
 import { Address } from '@util/addresses'
 
@@ -7,16 +6,20 @@ export const NameAndAddress: React.FC<{
   name?: string
   chain?: Chain
   nameOrAddressOnly?: boolean
-}> = ({ address, name, chain, nameOrAddressOnly }) => {
-  if (!name)
-    return (
-      <p css={({ color }) => ({ color: color.offWhite, marginTop: 4 })}>
-        {truncateMiddle(address?.toSs58(chain) ?? '', 5, 5, '...')}
-      </p>
-    )
+  breakLine?: boolean
+}> = ({ address, name, chain, nameOrAddressOnly, breakLine }) => {
+  if (!name) return <p css={({ color }) => ({ color: color.offWhite, marginTop: 6 })}>{address?.toShortSs58(chain)}</p>
 
   return (
-    <div css={{ display: 'flex', gap: 8, alignItems: 'center', marginTop: 4 }}>
+    <div
+      css={{
+        display: 'flex',
+        gap: breakLine ? 0 : 8,
+        flexDirection: breakLine ? 'column' : 'row',
+        alignItems: breakLine ? 'flex-start' : 'center',
+        marginTop: breakLine ? 0 : 4,
+      }}
+    >
       <p
         css={({ color }) => ({
           color: color.offWhite,
@@ -30,9 +33,7 @@ export const NameAndAddress: React.FC<{
         {name}
       </p>
       {!nameOrAddressOnly && (
-        <p css={({ color }) => ({ color: color.lightGrey, fontSize: 14 })}>
-          {truncateMiddle(address.toSs58(chain), 5, 5, '...')}
-        </p>
+        <p css={({ color }) => ({ color: color.lightGrey, fontSize: 12 })}>{address.toShortSs58(chain)}</p>
       )}
     </div>
   )

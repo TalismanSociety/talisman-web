@@ -1,7 +1,6 @@
 import { InjectedAccount } from '@domains/extension'
 import { Identicon } from '@talismn/ui'
 import { useEffect, useMemo, useRef, useState } from 'react'
-import truncateMiddle from 'truncate-middle'
 import { ChevronVertical, Search } from '@talismn/icons'
 import { useOnClickOutside } from '../../domains/common/useOnClickOutside'
 
@@ -18,7 +17,7 @@ const AccountRow = ({ account }: { account: InjectedAccount }) => {
       <Identicon size={24} value={addressString} />
       <p css={({ color }) => ({ marginTop: 4, color: color.lightGrey })}>
         <span css={{ width: '100%' }}>{account.meta.name}</span>{' '}
-        <span css={({ color }) => ({ color: color.offWhite })}>({truncateMiddle(addressString, 4, 5, '...')})</span>
+        <span css={({ color }) => ({ color: color.offWhite })}>({account.address.toShortSs58()})</span>
       </p>
     </div>
   )

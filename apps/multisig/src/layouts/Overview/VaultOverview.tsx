@@ -1,12 +1,13 @@
 import { AccountDetails } from '@components/AddressInput/AccountDetails'
 import { useSelectedMultisig } from '@domains/multisig'
-import { useProxies } from '@domains/proxy/useProxies'
 import { Eye, EyeOff } from '@talismn/icons'
 import { Button, CircularProgressIndicator } from '@talismn/ui'
 import { useKnownAddresses } from '@hooks/useKnownAddresses'
 import { ChainPill } from '@components/ChainPill'
 import { atom, useRecoilState } from 'recoil'
 import persist from '@domains/persist'
+import { Fragment } from 'react'
+import { secondsToDuration } from '@util/misc'
 
 const showMemberState = atom<boolean>({
   key: 'dashboardShowMemberState',
@@ -14,21 +15,10 @@ const showMemberState = atom<boolean>({
   effects_UNSTABLE: [persist],
 })
 
-const secondsToDuration = (ms: number) => {
-  const seconds = Math.floor(ms / 1000)
-  if (seconds < 60) return `${seconds}secs`
-  if (seconds < 3600) return `${Math.floor(seconds / 60)}mins`
-  if (seconds < 86400) return `${Math.floor(seconds / 3600)}hrs`
-  return `${Math.floor(seconds / 86400)}days`
-}
-
 export const VaultOverview: React.FC = () => {
   const [selectedMultisig] = useSelectedMultisig()
   const [showMembers, setShowMembers] = useRecoilState(showMemberState)
   const { contactByAddress } = useKnownAddresses(selectedMultisig.id)
-  const { proxies } = useProxies(selectedMultisig.proxyAddress, selectedMultisig.chain, {
-    delegateeAddress: selectedMultisig.multisigAddress,
-  })
 
   return (
     <section
@@ -63,15 +53,15 @@ export const VaultOverview: React.FC = () => {
       >
         <p css={({ color }) => ({ color: color.lightGrey, marginBottom: 4, fontSize: 14 })}>Multisig controls</p>
         <p css={({ color }) => ({ color: color.lightGrey, marginBottom: 4, fontSize: 14 })}>Time Delay</p>
-        {proxies ? (
-          proxies.map(proxy => (
-            <>
+        {selectedMultisig.proxies ? (
+          selectedMultisig.proxies.map(proxy => (
+            <Fragment key={`${proxy.proxyType}_${proxy.delay}`}>
               <p css={({ color }) => ({ color: color.offWhite })}>{proxy.proxyType} transactions</p>
               <p css={({ color }) => ({ color: color.offWhite })}>
                 {proxy.delay} blocks{' '}
                 <span css={({ color }) => ({ color: color.lightGrey })}>≈{secondsToDuration(proxy.duration)}</span>
               </p>
-            </>
+            </Fragment>
           ))
         ) : (
           <CircularProgressIndicator size={22.4} />

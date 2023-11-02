@@ -2,7 +2,6 @@ import { Chain } from '@domains/chains'
 import { css } from '@emotion/css'
 import { Identicon } from '@talismn/ui'
 import { Address } from '@util/addresses'
-import truncateMiddle from 'truncate-middle'
 
 const AddressPill = ({ address, chain, name }: { address: Address; chain: Chain; name?: string }) => {
   const ss52Address = address.toSs58(chain)
@@ -37,7 +36,7 @@ const AddressPill = ({ address, chain, name }: { address: Address; chain: Chain;
           textOverflow: 'ellipsis',
         })}
       >
-        {name ?? truncateMiddle(ss52Address, 5, 5, '...')}
+        {name ?? address.toShortSs58(chain)}
       </p>
     </a>
   )

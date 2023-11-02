@@ -1,7 +1,7 @@
 import { css } from '@emotion/css'
 import { TextInput } from '@talismn/ui'
 import { Address } from '@util/addresses'
-import { useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Chain } from '@domains/chains'
 import { useOnClickOutside } from '@domains/common/useOnClickOutside'
 import { SelectedAddress } from './SelectedAddressPill'
@@ -23,19 +23,24 @@ type Props = {
   addresses?: AddressWithName[]
   chain?: Chain
   leadingLabel?: string
+  compact?: boolean
 }
 
 /**
  * Handles validating address input as well as displaying a list of addresses to select from.
  * Supports both controlled and uncontrolled usage input.
  */
-const AddressInput: React.FC<Props> = ({ onChange, value, addresses = [], chain, leadingLabel }) => {
+const AddressInput: React.FC<Props> = ({ onChange, value, addresses = [], chain, leadingLabel, compact }) => {
   const [input, setInput] = useState(value ?? '')
   const [expanded, setExpanded] = useState(false)
   const [querying, setQuerying] = useState(false)
   const [address, setAddress] = useState(value ? Address.fromSs58(value) || undefined : undefined)
   const [contact, setContact] = useState<AddressWithName | undefined>(undefined)
   const containerRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (value !== undefined && value === '') setAddress(undefined)
+  }, [value])
 
   const blur = () => {
     setExpanded(false)
@@ -167,7 +172,14 @@ const AddressInput: React.FC<Props> = ({ onChange, value, addresses = [], chain,
                   ':hover': { filter: 'brightness(1.2)' },
                 }}
               >
-                <AccountDetails name={contact.name} chain={chain} address={contact.address} disableCopy />
+                <AccountDetails
+                  name={contact.name}
+                  chain={chain}
+                  address={contact.address}
+                  disableCopy
+                  breakLine={compact}
+                  identiconSize={compact ? 32 : 24}
+                />
                 <p css={({ color }) => ({ fontSize: 14, fontWeight: 700, textAlign: 'right', color: color.lightGrey })}>
                   {contact.type}
                 </p>
@@ -185,7 +197,13 @@ const AddressInput: React.FC<Props> = ({ onChange, value, addresses = [], chain,
               }}
               onClick={() => handleSelectFromList(validRawInputAddress)}
             >
-              <AccountDetails address={validRawInputAddress} chain={chain} disableCopy />
+              <AccountDetails
+                address={validRawInputAddress}
+                chain={chain}
+                disableCopy
+                breakLine={compact}
+                identiconSize={compact ? 32 : 24}
+              />
             </div>
           ) : (
             <p css={{ textAlign: 'center', padding: 12 }}>No result found.</p>

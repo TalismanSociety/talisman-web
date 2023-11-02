@@ -12,7 +12,6 @@ import { Copy, Database, Plus, Trash } from '@talismn/icons'
 import { Contact, useAddressBook, useDeleteContact } from '@domains/offchain-data'
 import { AddContactModal } from './AddContactModal'
 import { useState, useMemo } from 'react'
-import truncateMiddle from 'truncate-middle'
 import { copyToClipboard } from '@domains/common'
 import { useInput } from '@hooks/useInput'
 import { Multisig, useSelectedMultisig } from '@domains/multisig'
@@ -74,7 +73,7 @@ const ContactRow: React.FC<{ contact: Contact; multisig: Multisig }> = ({ contac
         <Identicon value={address} size={32} />
         <div>
           <p css={({ color }) => ({ color: color.offWhite, marginTop: 4 })}>{contact.name}</p>
-          <p css={{ fontSize: 12 }}>{truncateMiddle(address, 5, 5, '...')}</p>
+          <p css={{ fontSize: 12 }}>{contact.address.toShortSs58(multisig.chain)}</p>
         </div>
       </div>
       <div

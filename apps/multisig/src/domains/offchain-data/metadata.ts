@@ -133,7 +133,7 @@ export const TxMetadataWatcher = () => {
   const teams = useRecoilValue(activeTeamsState)
   const [txMetadataByTeamId, setTxMetadataByTeamId] = useRecoilState(txMetadataByTeamIdState)
   const [initiated, setInitiated] = useState(false)
-  const [nextFetch, setNextFetch] = useState<Date>(new Date())
+  const [lastFetched, setLastFetched] = useState<Date>(new Date())
   const pendingTransactions = useRecoilValue(pendingTransactionsState)
   const [loading, setLoading] = useState(false)
 
@@ -171,26 +171,34 @@ export const TxMetadataWatcher = () => {
       } finally {
         setLoading(false)
         setInitiated(true)
+        setLastFetched(new Date())
       }
     }
   }, [initiated, multisigs, setTxMetadataByTeamId, shouldFetchData, signedInAccount, teams, txMetadataByTeamId])
 
   const multisigsId = useMemo(() => multisigs?.map(t => t.id).join(' ') ?? '', [multisigs])
 
+  // instantly trigger call if multisigs are changed
   useEffect(() => {
     setInitiated(false)
-    setNextFetch(new Date())
+    setLoading(false)
+  }, [multisigsId])
+
+  // first initial call before interval gets triggered
+  useEffect(() => {
+    if (initiated || loading) return
+    fetchMetadata()
+  }, [fetchMetadata, initiated, loading])
+
+  // refresh data every 5 seconds
+  useEffect(() => {
     const interval = setInterval(() => {
-      setNextFetch(new Date())
+      if (new Date().getTime() < lastFetched.getTime() + 5_000 || loading) return
+      fetchMetadata()
     }, 5_000)
     return () => clearInterval(interval)
     // trigger refetch if the multisigs being watched is changed
-  }, [multisigsId])
-
-  useEffect(() => {
-    if (new Date().getTime() < nextFetch.getTime() || loading) return
-    fetchMetadata()
-  }, [fetchMetadata, loading, nextFetch])
+  }, [fetchMetadata, lastFetched, loading, multisigsId])
 
   return null
 }
@@ -210,6 +218,8 @@ export const useInsertTxMetadata = () => {
       > & { hash: string; extrinsicId: string }
     ) => {
       const activeTeams = teamsBySigner[signedInAccount.injected.address.toSs58()]
+      console.log('activeTeams', activeTeams)
+      console.log('multisig', multisig)
       // make sure multisig is stored in db
       if (!activeTeams || !activeTeams.find(team => team.id === multisig.id)) return
 
