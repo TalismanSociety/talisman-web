@@ -1,21 +1,22 @@
 import { useTheme } from '@emotion/react'
-import { ChevronLeft } from '@talismn/icons'
+import { ChevronLeft, ExternalLink } from '@talismn/icons'
 import { Button, IconButton } from '@talismn/ui'
 import { useNavigate } from 'react-router-dom'
 
 import { Layout } from '../Layout'
 import { SettingsInfoRow } from './InfoRow'
-import { AccountDetails } from '../../components/AddressInput/AccountDetails'
-import { useSelectedMultisig } from '../../domains/multisig'
-import { ChainPill } from '../../components/ChainPill'
+import { AccountDetails } from '@components/AddressInput/AccountDetails'
+import { useSelectedMultisig } from '@domains/multisig'
+import { ChainPill } from '@components/ChainPill'
 import { SignersSettings } from './SignersSettings'
 import { useEffect, useMemo, useState } from 'react'
 import { ThresholdSettings } from './ThresholdSettings'
-import { pjsApiSelector } from '../../domains/chains/pjs-api'
+import { pjsApiSelector } from '@domains/chains/pjs-api'
 import { useRecoilValueLoadable } from 'recoil'
-import { toMultisigAddress } from '../../util/addresses'
+import { toMultisigAddress } from '@util/addresses'
 import { SubmittableExtrinsic } from '@polkadot/api/types'
 import { SettingsSideSheet } from './SettingsSideSheet'
+import { ProxiesSettings } from './ProxiesSettings'
 
 export const BackButton = () => {
   const theme = useTheme()
@@ -46,6 +47,7 @@ const Settings = () => {
   const [extrinsic, setExtrinsic] = useState<SubmittableExtrinsic<'promise'> | undefined>()
 
   const newMultisigAddress = toMultisigAddress(newMembers, newThreshold)
+  const hasAny = multisig.allProxies?.find(p => p.proxyType === 'Any') !== undefined
 
   const changed = useMemo(() => {
     return !newMultisigAddress.isEqual(multisig.multisigAddress)
@@ -88,7 +90,10 @@ const Settings = () => {
           <div />
 
           {/** second row: Proxied Account | Chain */}
-          <SettingsInfoRow label="Proxied Account" tooltip="This is the address that stores your funds">
+          <SettingsInfoRow
+            label="Proxied Account"
+            tooltip="This is the account the Multisig controls, typically where funds are stored"
+          >
             <AccountDetails address={multisig.proxyAddress} chain={multisig.chain} />
           </SettingsInfoRow>
           <SettingsInfoRow label="Chain">
@@ -105,33 +110,62 @@ const Settings = () => {
           <div />
 
           {/** forth row: Signers settings | other settings */}
-          <SignersSettings members={newMembers} onChange={setNewMembers} multisig={multisig} editable />
-          <div>
-            <ThresholdSettings membersCount={newMembers.length} threshold={newThreshold} onChange={setNewThreshold} />
+          <SignersSettings members={newMembers} onChange={setNewMembers} multisig={multisig} editable={hasAny} />
+          <div css={{ display: 'flex', gap: 24, flexDirection: 'column' }}>
+            <ThresholdSettings
+              membersCount={newMembers.length}
+              threshold={newThreshold}
+              onChange={setNewThreshold}
+              disabled={!hasAny}
+            />
+            <ProxiesSettings proxies={multisig.proxies} />
           </div>
         </div>
-        <div
-          css={{
-            width: '100%',
-            display: 'flex',
-            gap: 24,
-            alignItems: 'center',
-            justifyContent: 'center',
-            marginTop: 32,
-            button: { height: 56 },
-          }}
-        >
-          <Button disabled={!changed} variant="secondary" onClick={handleReset}>
-            Reset
-          </Button>
-          <Button
-            disabled={!changed || apiLoadable.state !== 'hasValue'}
-            loading={changed && apiLoadable.state === 'loading'}
-            onClick={handleApplyChanges}
+        {hasAny || !multisig.allProxies ? (
+          <div
+            css={{
+              width: '100%',
+              display: 'flex',
+              gap: 24,
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginTop: 32,
+              button: { height: 56 },
+            }}
           >
-            Apply Changes
-          </Button>
-        </div>
+            <Button disabled={!changed} variant="secondary" onClick={handleReset}>
+              Reset
+            </Button>
+            <Button
+              disabled={!changed || apiLoadable.state !== 'hasValue'}
+              loading={changed && apiLoadable.state === 'loading'}
+              onClick={handleApplyChanges}
+            >
+              Apply Changes
+            </Button>
+          </div>
+        ) : (
+          <div
+            css={({ color }) => ({
+              backgroundColor: color.surface,
+              color: color.offWhite,
+              padding: 16,
+              borderRadius: 12,
+              span: {
+                fontWeight: 800,
+              },
+              a: { color: color.primary },
+            })}
+          >
+            <p>
+              On-chain configurations cannot be changed because <span>{multisig.name}</span> does not have{' '}
+              <span>Any proxy type</span> to the proxied account.{' '}
+              <a href="https://wiki.polkadot.network/docs/learn-proxies" target="_blank" rel="noreferrer">
+                Learn More <ExternalLink size={16} />
+              </a>
+            </p>
+          </div>
+        )}
       </div>
       <SettingsSideSheet
         members={newMembers}

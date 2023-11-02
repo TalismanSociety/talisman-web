@@ -21,11 +21,28 @@ export const ThresholdSettings: React.FC<Props> = ({ disabled, membersCount, onC
       <div
         css={({ color }) => ({ display: 'flex', gap: 8, alignItems: 'center', color: color.offWhite, marginTop: 8 })}
       >
-        <Select placeholder={<p>{threshold}</p>} onChange={onChange}>
-          {Array.from({ length: membersCount - 1 }, (_, i) => i + 2).map(i => (
-            <Select.Option key={i} headlineText={i} value={i} />
-          ))}
-        </Select>
+        {disabled ? (
+          <div
+            css={({ color }) => ({
+              backgroundColor: color.surface,
+              padding: '8px 12px',
+              color: color.lightGrey,
+              borderRadius: 12,
+              height: 40,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            })}
+          >
+            {threshold}
+          </div>
+        ) : (
+          <Select placeholder={<p>{threshold}</p>} onChange={onChange}>
+            {Array.from({ length: membersCount - 1 }, (_, i) => i + 2).map(i => (
+              <Select.Option key={i} headlineText={i} value={i} />
+            ))}
+          </Select>
+        )}
         <p>out of {membersCount} Members</p>
       </div>
     </div>

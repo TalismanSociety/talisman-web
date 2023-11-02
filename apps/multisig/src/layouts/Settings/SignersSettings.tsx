@@ -1,11 +1,9 @@
 import { Member } from '@components/Member'
 import { Multisig } from '@domains/multisig'
-import { Address } from '../../util/addresses'
-import { useKnownAddresses } from '../../hooks/useKnownAddresses'
-import { AddMemberInput } from '../../components/AddMemberInput'
+import { Address } from '@util/addresses'
+import { useKnownAddresses } from '@hooks/useKnownAddresses'
+import { AddMemberInput } from '@components/AddMemberInput'
 import toast from 'react-hot-toast'
-import { Tooltip } from '@talismn/ui'
-import { Info } from '@talismn/icons'
 
 type Props = {
   editable?: boolean
@@ -35,20 +33,7 @@ export const SignersSettings: React.FC<Props> = ({ editable, members, multisig, 
         gap: 8,
       }}
     >
-      <div css={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-        <p css={({ color }) => ({ color: color.offWhite, fontSize: 14, marginTop: 2 })}>Members</p>
-        <Tooltip
-          content={
-            <p css={{ fontSize: 12 }}>
-              Members of the multisig can vote on decisions relevant to your vault.
-              <br />
-              Changing members of your multisig will also change the multisig address.
-            </p>
-          }
-        >
-          <Info size={16} />
-        </Tooltip>
-      </div>
+      <p css={({ color }) => ({ color: color.offWhite, fontSize: 14, marginTop: 2 })}>Members</p>
       {members.map(m => {
         const addressString = m.toSs58()
         const contact = contactByAddress[addressString]
