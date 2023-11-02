@@ -77,9 +77,7 @@ const VaultDetails: React.FC<{ multisig: Multisig; disableCopy?: boolean }> = ({
         {truncateMiddle(multisig.name, 24, 0, '...')}
       </p>
       <div css={{ display: 'flex', gap: 4 }}>
-        <p css={{ fontSize: 12, marginTop: 2 }}>
-          {truncateMiddle(multisig.proxyAddress.toSs58(multisig.chain), 4, 4, '...')}
-        </p>
+        <p css={{ fontSize: 12, marginTop: 2 }}>{multisig.proxyAddress.toShortSs58(multisig.chain)}</p>
         {!disableCopy && (
           <Copy
             className={css`

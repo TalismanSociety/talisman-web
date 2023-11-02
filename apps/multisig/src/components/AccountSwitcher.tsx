@@ -1,12 +1,14 @@
 import { InjectedAccount } from '@domains/extension'
 import { CircularProgressIndicator, Identicon } from '@talismn/ui'
 import { useEffect, useMemo, useRef, useState } from 'react'
-import truncateMiddle from 'truncate-middle'
 import { ChevronVertical, Search } from '@talismn/icons'
 import { useOnClickOutside } from '../domains/common/useOnClickOutside'
 import { useSignIn } from '../domains/auth'
 import { css } from '@emotion/css'
 import { device } from '../util/breakpoints'
+import { useSelectedMultisig } from '../domains/multisig'
+import { Address } from '../util/addresses'
+import { Chain } from '../domains/chains'
 
 type Props = {
   accounts: InjectedAccount[]
@@ -17,51 +19,49 @@ type Props = {
 const AccountRow = ({
   account,
   onSelect,
+  chain,
 }: {
   account: InjectedAccount
   onSelect: (account: InjectedAccount) => void
-}) => {
-  const addressString = account.address.toSs58()
-  return (
-    <div
-      onClick={() => onSelect?.(account)}
-      css={({ color }) => ({
-        'display': 'flex',
-        'alignItems': 'center',
-        'gap': 8,
-        'padding': '8px 12px',
-        'cursor': 'pointer',
-        'width': '100%',
-        'backgroundColor': color.surface,
-        ':hover': {
-          filter: 'brightness(1.2)',
-          div: { p: { color: color.offWhite } },
-        },
-      })}
-    >
-      <Identicon size={32} css={{ width: 32, height: 32 }} value={addressString} />
-      <div css={{ display: 'flex', flexDirection: 'column', gap: 2, marginTop: 4, whiteSpace: 'nowrap' }}>
-        <p
-          css={({ color }) => ({
-            maxWidth: 80,
-            color: color.offWhite,
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-          })}
-        >
-          {account.meta.name}
-        </p>{' '}
-        <p css={({ color }) => ({ color: color.lightGrey, fontSize: 12 })}>
-          {truncateMiddle(addressString, 4, 5, '...')}
-        </p>
-      </div>
+  chain?: Chain
+}) => (
+  <div
+    onClick={() => onSelect?.(account)}
+    css={({ color }) => ({
+      'display': 'flex',
+      'alignItems': 'center',
+      'gap': 8,
+      'padding': '8px 12px',
+      'cursor': 'pointer',
+      'width': '100%',
+      'backgroundColor': color.surface,
+      ':hover': {
+        filter: 'brightness(1.2)',
+        div: { p: { color: color.offWhite } },
+      },
+    })}
+  >
+    <Identicon size={32} css={{ width: 32, height: 32 }} value={account.address.toSs58(chain)} />
+    <div css={{ display: 'flex', flexDirection: 'column', gap: 2, marginTop: 4, whiteSpace: 'nowrap' }}>
+      <p
+        css={({ color }) => ({
+          maxWidth: 80,
+          color: color.offWhite,
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+        })}
+      >
+        {account.meta.name}
+      </p>{' '}
+      <p css={({ color }) => ({ color: color.lightGrey, fontSize: 12 })}>{account.address.toShortSs58(chain)}</p>
     </div>
-  )
-}
+  </div>
+)
 
 const AccountSwitcher: React.FC<Props> = ({ accounts, onSelect, selectedAccount }) => {
   const [expanded, setExpanded] = useState(false)
   const { signIn } = useSignIn()
+  const [multisig] = useSelectedMultisig()
   const ref = useRef(null)
   const [query, setQuery] = useState('')
   const [accountToSignIn, setAccountToSignIn] = useState<InjectedAccount>()
@@ -73,6 +73,15 @@ const AccountSwitcher: React.FC<Props> = ({ accounts, onSelect, selectedAccount 
   const filteredAccounts = useMemo(() => {
     return accounts.filter(acc => {
       const isSelectedAccount = selectedAccount?.address.isEqual(acc.address)
+
+      let queryAddress: Address | false = false
+      try {
+        queryAddress = Address.fromSs58(query)
+      } catch (e) {}
+
+      // query by pasting address
+      if (queryAddress) return !isSelectedAccount && queryAddress.isEqual(acc.address)
+
       const isQueryMatch =
         !query || `${acc.meta.name} ${acc.address.toSs58()}`.toLowerCase().includes(query.toLowerCase())
       return !isSelectedAccount && isQueryMatch
@@ -97,6 +106,7 @@ const AccountSwitcher: React.FC<Props> = ({ accounts, onSelect, selectedAccount 
 
   if (!selectedAccount) return null
 
+  const shortSelectedAddress = selectedAccount.address.toShortSs58(multisig.chain)
   return (
     <div ref={ref} css={{ position: 'relative', width: '100%' }}>
       <div
@@ -118,7 +128,7 @@ const AccountSwitcher: React.FC<Props> = ({ accounts, onSelect, selectedAccount 
         onClick={() => setExpanded(!expanded)}
       >
         <div css={{ display: 'flex', alignItems: 'center', gap: 8, marginRight: 8 }}>
-          <Identicon size={40} value={selectedAccount.address.toSs58()} />
+          <Identicon size={40} value={selectedAccount.address.toSs58(multisig.chain)} />
           <div
             className={css`
               width: 120px;
@@ -140,12 +150,10 @@ const AccountSwitcher: React.FC<Props> = ({ accounts, onSelect, selectedAccount 
                 marginBottom: 4,
               })}
             >
-              {selectedAccount.meta.name ?? truncateMiddle(selectedAccount.address.toSs58(), 4, 6, '...')}
+              {selectedAccount.meta.name ?? shortSelectedAddress}
             </p>
             {selectedAccount.meta.name !== undefined && (
-              <p css={({ color }) => ({ color: color.lightGrey, fontSize: 12 })}>
-                {truncateMiddle(selectedAccount.address.toSs58(), 4, 6, '...')}
-              </p>
+              <p css={({ color }) => ({ color: color.lightGrey, fontSize: 12 })}>{shortSelectedAddress}</p>
             )}
           </div>
         </div>
@@ -198,9 +206,9 @@ const AccountSwitcher: React.FC<Props> = ({ accounts, onSelect, selectedAccount 
               <CircularProgressIndicator />
               <p css={({ color }) => ({ color: color.offWhite })}>Signing In</p>
             </div>
-            <Identicon size={40} value={accountToSignIn.address.toSs58()} />
+            <Identicon size={40} value={accountToSignIn.address.toSs58(multisig.chain)} />
             <p css={({ color }) => ({ color: color.offWhite, marginTop: 8 })}>{accountToSignIn.meta.name}</p>
-            <p css={{ fontSize: 12, marginTop: 4 }}>{truncateMiddle(accountToSignIn.address.toSs58(), 4, 6, '...')}</p>
+            <p css={{ fontSize: 12, marginTop: 4 }}>{accountToSignIn.address.toShortSs58(multisig.chain)}</p>
           </div>
         ) : (
           <>
@@ -225,7 +233,12 @@ const AccountSwitcher: React.FC<Props> = ({ accounts, onSelect, selectedAccount 
             <div css={{ display: 'flex', flexDirection: 'column', flex: 1, overflowY: 'auto' }}>
               {filteredAccounts.length > 0 ? (
                 filteredAccounts.map(acc => (
-                  <AccountRow key={acc.address.toSs58()} account={acc} onSelect={handleSelectAccount} />
+                  <AccountRow
+                    key={acc.address.toSs58()}
+                    account={acc}
+                    onSelect={handleSelectAccount}
+                    chain={multisig.chain}
+                  />
                 ))
               ) : (
                 <div css={{ height: '100%', display: 'flex', alignItems: 'center', width: '100%', padding: 16 }}>

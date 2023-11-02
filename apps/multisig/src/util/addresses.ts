@@ -1,5 +1,6 @@
 import { Chain } from '@domains/chains'
 import { createKeyMulti, decodeAddress, encodeAddress, sortAddresses } from '@polkadot/util-crypto'
+import truncateMiddle from 'truncate-middle'
 const { hexToU8a, isHex, u8aToHex } = require('@polkadot/util')
 
 // Represent addresses as bytes except for when we need to display them to the user.
@@ -42,6 +43,10 @@ export class Address {
     return encodeAddress(this.bytes, chain?.ss58Prefix)
   }
 
+  toShortSs58(chain?: Chain): string {
+    return shortenAddress(this.toSs58(chain))
+  }
+
   toPubKey(): string {
     return u8aToHex(this.bytes)
   }
@@ -55,4 +60,9 @@ export const toMultisigAddress = (signers: Address[], threshold: number): Addres
   // Derive the multisig address
   const multiAddressBytes = createKeyMulti(sortAddresses(signers.map(s => s.bytes)), threshold)
   return new Address(multiAddressBytes)
+}
+
+export const shortenAddress = (address: string, size: 'long' | 'short' = 'short'): string => {
+  const length = size === 'long' ? 8 : 5
+  return truncateMiddle(address, length, length, '...')
 }
