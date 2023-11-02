@@ -11,7 +11,7 @@ export const SettingsInfoRow: React.FC<React.PropsWithChildren<Props>> = ({ labe
     <div css={({ color }) => ({ display: 'flex', gap: 8, color: color.lightGrey, alignItems: 'center' })}>
       <p css={{ fontSize: 14, marginTop: 2 }}>{label}</p>
       {tooltip && (
-        <Tooltip content={tooltip}>
+        <Tooltip content={<p css={{ fontSize: 12 }}>{tooltip}</p>}>
           <Info size={16} />
         </Tooltip>
       )}
