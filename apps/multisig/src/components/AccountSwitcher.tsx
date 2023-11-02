@@ -4,11 +4,10 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { ChevronVertical, Search } from '@talismn/icons'
 import { useOnClickOutside } from '../domains/common/useOnClickOutside'
 import { useSignIn } from '../domains/auth'
-import { css } from '@emotion/css'
-import { device } from '../util/breakpoints'
 import { useSelectedMultisig } from '../domains/multisig'
 import { Address } from '../util/addresses'
 import { Chain } from '../domains/chains'
+import { AccountDetails } from './AddressInput/AccountDetails'
 
 type Props = {
   accounts: InjectedAccount[]
@@ -41,20 +40,7 @@ const AccountRow = ({
       },
     })}
   >
-    <Identicon size={32} css={{ width: 32, height: 32 }} value={account.address.toSs58(chain)} />
-    <div css={{ display: 'flex', flexDirection: 'column', gap: 2, marginTop: 4, whiteSpace: 'nowrap' }}>
-      <p
-        css={({ color }) => ({
-          maxWidth: 80,
-          color: color.offWhite,
-          overflow: 'hidden',
-          textOverflow: 'ellipsis',
-        })}
-      >
-        {account.meta.name}
-      </p>{' '}
-      <p css={({ color }) => ({ color: color.lightGrey, fontSize: 12 })}>{account.address.toShortSs58(chain)}</p>
-    </div>
+    <AccountDetails identiconSize={32} address={account.address} name={account.meta.name} breakLine disableCopy />
   </div>
 )
 
@@ -106,7 +92,6 @@ const AccountSwitcher: React.FC<Props> = ({ accounts, onSelect, selectedAccount 
 
   if (!selectedAccount) return null
 
-  const shortSelectedAddress = selectedAccount.address.toShortSs58(multisig.chain)
   return (
     <div ref={ref} css={{ position: 'relative', width: '100%' }}>
       <div
@@ -127,35 +112,14 @@ const AccountSwitcher: React.FC<Props> = ({ accounts, onSelect, selectedAccount 
         })}
         onClick={() => setExpanded(!expanded)}
       >
-        <div css={{ display: 'flex', alignItems: 'center', gap: 8, marginRight: 8 }}>
-          <Identicon size={40} value={selectedAccount.address.toSs58(multisig.chain)} />
-          <div
-            className={css`
-              width: 120px;
-              @media ${device.md} {
-                width: 120px;
-              }
-              p {
-                line-height: 1;
-                padding-top: 2px;
-              }
-            `}
-          >
-            <p
-              css={({ color }) => ({
-                whiteSpace: 'nowrap',
-                overflowX: 'hidden',
-                textOverflow: 'ellipsis',
-                color: color.offWhite,
-                marginBottom: 4,
-              })}
-            >
-              {selectedAccount.meta.name ?? shortSelectedAddress}
-            </p>
-            {selectedAccount.meta.name !== undefined && (
-              <p css={({ color }) => ({ color: color.lightGrey, fontSize: 12 })}>{shortSelectedAddress}</p>
-            )}
-          </div>
+        <div css={{ display: 'flex', alignItems: 'center', gap: 8, marginRight: 8, width: 154 }}>
+          <AccountDetails
+            identiconSize={32}
+            address={selectedAccount.address}
+            name={selectedAccount.meta.name}
+            breakLine
+            disableCopy
+          />
         </div>
         <div
           css={({ color }) => ({
