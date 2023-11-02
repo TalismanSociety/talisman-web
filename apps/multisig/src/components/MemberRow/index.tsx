@@ -3,10 +3,11 @@ import { AugmentedAccount } from '@domains/multisig'
 import { css } from '@emotion/css'
 import { ExternalLink, Trash } from '@talismn/icons'
 import { Identicon } from '@talismn/ui'
-import truncateMiddle from 'truncate-middle'
+import { shortenAddress } from '../../util/addresses'
 
 const MemberRow = (props: { member: AugmentedAccount; chain: Chain; onDelete?: () => void; truncate?: boolean }) => {
   const address = props.member.address.toSs58(props.chain)
+  const shortAddress = props.member.address.toShortSs58(props.chain)
   return (
     <div
       className={css`
@@ -26,12 +27,11 @@ const MemberRow = (props: { member: AugmentedAccount; chain: Chain; onDelete?: (
         <Identicon css={{ width: 24, height: 'auto' }} value={address} />
         {props.member.nickname ? (
           <p css={({ color }) => ({ color: color.offWhite })}>
-            {props.member.nickname}{' '}
-            <span css={({ color }) => ({ color: color.lightGrey })}>{truncateMiddle(address, 5, 5, '...')}</span>
+            {props.member.nickname} <span css={({ color }) => ({ color: color.lightGrey })}>{shortAddress}</span>
             {props.member.you ? <span> (You)</span> : ''}
           </p>
         ) : (
-          <p css={({ color }) => ({ color: color.offWhite })}>{truncateMiddle(address, 8, 8, '...')}</p>
+          <p css={({ color }) => ({ color: color.offWhite })}>{shortenAddress(address, 'long')}</p>
         )}
       </div>
       <div css={{ gap: 16 }}>

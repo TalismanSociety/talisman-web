@@ -4,8 +4,7 @@ import { motion } from 'framer-motion'
 import { createTheme } from '@uiw/codemirror-themes'
 import { tags } from '@lezer/highlight'
 import { css } from '@emotion/css'
-import truncateMiddle from 'truncate-middle'
-import { Address } from '@util/addresses'
+import { Address, shortenAddress } from '@util/addresses'
 import { formatUnits, parseUnits } from '@util/numbers'
 import { BaseToken, tokenPriceState } from '@domains/chains'
 import { useOnClickOutside } from '@domains/common/useOnClickOutside'
@@ -155,7 +154,7 @@ const MultiLineSendInput: React.FC<Props> = ({
         // for invalid rows, we allow empty line for grouping, otherwise we warn user of invalid row
         if (error || !data) return input === '' ? '' : `${error ?? 'Invalid Row'}: ${input}`
         const addressToFormat = token ? data.address.toSs58(token.chain) : data.addressString
-        let formattedString = truncateMiddle(addressToFormat, 6, 6, '...')
+        let formattedString = shortenAddress(addressToFormat, 'short')
 
         if (!token) return `${formattedString}, ${data.amount}`
 
