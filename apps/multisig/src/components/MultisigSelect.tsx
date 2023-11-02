@@ -1,10 +1,10 @@
 import { css } from '@emotion/css'
 import { Copy, PlusCircle } from '@talismn/icons'
 import { Select } from '@talismn/ui'
-import { useNavigate } from 'react-router-dom'
 import truncateMiddle from 'truncate-middle'
 import { Multisig } from '@domains/multisig'
 import { copyToClipboard } from '@domains/common'
+import { Link } from 'react-router-dom'
 
 type Props = {
   multisigs: Multisig[]
@@ -108,10 +108,9 @@ const VaultDetails: React.FC<{ multisig: Multisig; disableCopy?: boolean; select
   </div>
 )
 
-const AddVaultButton: React.FC = () => {
-  const navigate = useNavigate()
-  return (
-    <button
+const AddVaultButton: React.FC = () => (
+  <Link to="/add-vault">
+    <div
       css={({ color }) => ({
         'border': 'none',
         'display': 'flex',
@@ -125,13 +124,13 @@ const AddVaultButton: React.FC = () => {
         'width': '100%',
         'svg': { color: color.primary },
       })}
-      onClick={() => navigate('/create')}
     >
       <PlusCircle size={32} />
       <p css={{ marginTop: 4, fontSize: 16, textAlign: 'left' }}>Add Vault</p>
-    </button>
-  )
-}
+    </div>
+  </Link>
+)
+
 export const MultisigSelect: React.FC<Props> = ({ multisigs, onChange, selectedMultisig }) => {
   const handleChange = (value: string) => {
     const newMultisig = multisigs.find(m => m.proxyAddress.toPubKey() === value)

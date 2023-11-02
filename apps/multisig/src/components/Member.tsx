@@ -18,7 +18,7 @@ export const Member = ({ m, chain, onDelete }: { m: AugmentedAccount; onDelete?:
         background: var(--color-backgroundSecondary);
         border: 1px solid var(--color-backgroundSecondary);
         border-radius: 12px;
-        padding: 16px;
+        padding: 8px 16px;
         gap: 8px;
       `}
     >

@@ -1,8 +1,9 @@
 import { Chain } from '@domains/chains'
 import { css } from '@emotion/css'
-import { Button, Select } from '@talismn/ui'
+import { Select } from '@talismn/ui'
+import { CancleOrNext } from './CancelOrNext'
 
-const SelectFirstChain = (props: {
+const SelectChain = (props: {
   onNext: () => void
   onBack: () => void
   setChain: React.Dispatch<React.SetStateAction<Chain>>
@@ -13,21 +14,17 @@ const SelectFirstChain = (props: {
     <div
       className={css`
         display: grid;
-        grid-template-rows: 1fr;
         justify-items: center;
         align-content: center;
-        text-align: center;
-        padding: 48px;
+        gap: 48px;
+        width: 100%;
+        max-width: 540px;
       `}
     >
-      <h1>Select a chain</h1>
-      <p
-        className={css`
-          margin: 16px 0;
-        `}
-      >
-        Choose the first chain to deploy your vault. You can always add more chains later.
-      </p>
+      <div>
+        <h1>Select a chain</h1>
+        <p css={{ marginTop: 16, textAlign: 'center' }}>Select the chain for your Vault</p>
+      </div>
       <Select
         placeholder="Select account"
         value={props.chain.squidIds.chainData}
@@ -54,23 +51,18 @@ const SelectFirstChain = (props: {
           />
         ))}
       </Select>
-      <div
-        className={css`
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 16px;
-          margin-top: 48px;
-          width: 100%;
-          button {
-            height: 56px;
-          }
-        `}
-      >
-        <Button onClick={props.onBack} children={<h3>Back</h3>} variant="outlined" />
-        <Button onClick={props.onNext} children={<h3>Next</h3>} />
-      </div>
+      <CancleOrNext
+        block
+        cancel={{
+          onClick: props.onBack,
+          children: 'Back',
+        }}
+        next={{
+          onClick: props.onNext,
+        }}
+      />
     </div>
   )
 }
 
-export default SelectFirstChain
+export default SelectChain

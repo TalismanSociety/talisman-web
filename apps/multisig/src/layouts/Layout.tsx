@@ -8,7 +8,7 @@ import { EyeOfSauronProgressIndicator } from '@talismn/ui'
 import { useRecoilValue } from 'recoil'
 import { activeMultisigsState } from '@domains/multisig'
 import { activeTeamsState } from '../domains/offchain-data'
-import { AddVault } from './AddVault'
+import { Navigate } from 'react-router-dom'
 
 export const Layout: React.FC<
   React.PropsWithChildren & { selected?: string; requiresMultisig?: boolean; hideSideBar?: boolean }
@@ -38,9 +38,7 @@ export const Layout: React.FC<
               <EyeOfSauronProgressIndicator />
             </div>
           ) : (
-            <div css={{ display: 'flex', justifyContent: 'center', alignItems: 'flex-start', width: '100%' }}>
-              <AddVault />
-            </div>
+            <Navigate to="/add-vault" />
           )
         ) : (
           <>
