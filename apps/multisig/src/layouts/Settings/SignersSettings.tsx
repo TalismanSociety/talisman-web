@@ -1,8 +1,8 @@
 import { Member } from '@components/Member'
 import { Multisig } from '@domains/multisig'
-import { Address } from '../../util/addresses'
-import { useKnownAddresses } from '../../hooks/useKnownAddresses'
-import { AddMemberInput } from '../../components/AddMemberInput'
+import { Address } from '@util/addresses'
+import { useKnownAddresses } from '@hooks/useKnownAddresses'
+import { AddMemberInput } from '@components/AddMemberInput'
 import toast from 'react-hot-toast'
 
 type Props = {
