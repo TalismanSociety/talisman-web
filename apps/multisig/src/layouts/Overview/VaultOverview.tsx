@@ -54,15 +54,19 @@ export const VaultOverview: React.FC = () => {
         <p css={({ color }) => ({ color: color.lightGrey, marginBottom: 4, fontSize: 14 })}>Multisig controls</p>
         <p css={({ color }) => ({ color: color.lightGrey, marginBottom: 4, fontSize: 14 })}>Time Delay</p>
         {selectedMultisig.proxies ? (
-          selectedMultisig.proxies.map(proxy => (
-            <Fragment key={`${proxy.proxyType}_${proxy.delay}`}>
-              <p css={({ color }) => ({ color: color.offWhite })}>{proxy.proxyType} transactions</p>
-              <p css={({ color }) => ({ color: color.offWhite })}>
-                {proxy.delay} blocks{' '}
-                <span css={({ color }) => ({ color: color.lightGrey })}>≈{secondsToDuration(proxy.duration)}</span>
-              </p>
-            </Fragment>
-          ))
+          selectedMultisig.proxies.length > 0 ? (
+            selectedMultisig.proxies.map(proxy => (
+              <Fragment key={`${proxy.proxyType}_${proxy.delay}`}>
+                <p css={({ color }) => ({ color: color.offWhite })}>{proxy.proxyType} transactions</p>
+                <p css={({ color }) => ({ color: color.offWhite })}>
+                  {proxy.delay} blocks{' '}
+                  <span css={({ color }) => ({ color: color.lightGrey })}>≈{secondsToDuration(proxy.duration)}</span>
+                </p>
+              </Fragment>
+            ))
+          ) : (
+            <p css={({ color }) => ({ color: color.offWhite })}>No proxy relationship found.</p>
+          )
         ) : (
           <CircularProgressIndicator size={22.4} />
         )}

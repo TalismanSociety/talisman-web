@@ -31,6 +31,7 @@ export type SelectProps<TValue extends string | number, TClear extends boolean =
   children?: ReactNode
   onChange?: (value: TClear extends false ? TValue : TValue | undefined) => unknown
   clearRequired?: TClear
+  backgroundColor?: string
 }
 
 type SelectItemProps = {
@@ -62,6 +63,7 @@ const Select = Object.assign(
     children,
     renderSelected,
     clearRequired: _clearRequired,
+    backgroundColor,
     ...props
   }: SelectProps<TValue, TClear>) => {
     const theme = useTheme()
@@ -234,11 +236,11 @@ const Select = Object.assign(
               'padding': 0,
               'borderBottomLeftRadius': '0.5rem',
               'borderBottomRightRadius': '0.5rem',
-              'backgroundColor': surfaceColor,
+              'backgroundColor': backgroundColor ?? surfaceColor,
               'listStyle': 'none',
               'li': {
                 'padding': '1.5rem 1.25rem',
-                'backgroundColor': surfaceColor,
+                'backgroundColor': backgroundColor ?? surfaceColor,
                 ':hover': {
                   filter: 'brightness(1.2)',
                 },
@@ -256,7 +258,7 @@ const Select = Object.assign(
                 position: 'sticky',
                 top: 0,
                 height: OVERLAP,
-                backgroundColor: surfaceColor,
+                backgroundColor: backgroundColor ?? surfaceColor,
               },
             }}
             {...getFloatingProps({
