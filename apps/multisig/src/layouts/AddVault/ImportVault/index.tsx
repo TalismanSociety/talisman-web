@@ -1,18 +1,17 @@
-import { useCallback, useMemo, useState } from 'react'
-import { Address } from '../../../util/addresses'
-import { Chain, supportedChains } from '../../../domains/chains'
-import { useRecoilState, useRecoilValue } from 'recoil'
-import { selectedAccountState } from '../../../domains/auth'
-import { accountsState } from '../../../domains/extension'
-import { useNavigate } from 'react-router-dom'
+import { useCallback, useState } from 'react'
 import toast from 'react-hot-toast'
-import { useCreateTeamOnHasura } from '../../../domains/offchain-data'
-import { AugmentedAccount } from '../../../domains/multisig'
+import { useNavigate } from 'react-router-dom'
+
+import { Address } from '@util/addresses'
+import { Chain, supportedChains } from '@domains/chains'
+import { useCreateTeamOnHasura } from '@domains/offchain-data'
+
 import NameVault from '../common/NameVault'
 import SelectChain from '../common/SelectChain'
 import { MultisigConfig } from '../MultisigConfig'
 import Confirmation from '../common/Confirmation'
 import { ProxiedAccountSettings } from './ProxiedAccountSettings'
+import { useAugmentedAccounts } from '../common/useAugmentedAccounts'
 
 export enum Step {
   NameVault,
@@ -29,61 +28,39 @@ export const ImportVault: React.FC = () => {
 
   const navigate = useNavigate()
   const [step, setStep] = useState(Step.NameVault)
-
   const [name, setName] = useState<string>('')
   const [chain, setChain] = useState<Chain>(firstChain)
-  const [addedAccounts, setAddedAccounts] = useState<Address[]>([])
   const [threshold, setThreshold] = useState<number>(2)
   const [proxiedAddress, setProxiedAddress] = useState<Address | undefined>()
+  const [importing, setImporting] = useState(false)
 
-  const [extensionAccounts] = useRecoilState(accountsState)
-  const selectedSigner = useRecoilValue(selectedAccountState)
-
+  const { augmentedAccounts, setAddedAccounts } = useAugmentedAccounts()
   const { createTeam } = useCreateTeamOnHasura()
-
-  // TODO: refactor this to a hook
-  const augmentedAccounts: AugmentedAccount[] = useMemo(() => {
-    const augmentedAddedAccounts = addedAccounts.map(a => {
-      const extensionAccount = extensionAccounts.find(ea => ea.address.isEqual(a))
-      if (!extensionAccount) return { address: a }
-      return {
-        address: a,
-        nickname: extensionAccount.meta.name,
-        you: true,
-        injected: extensionAccount,
-      }
-    })
-
-    return selectedSigner
-      ? [
-          {
-            address: selectedSigner.injected.address,
-            nickname: selectedSigner.injected.meta.name,
-            you: true,
-            injected: selectedSigner.injected,
-          },
-          ...augmentedAddedAccounts,
-        ]
-      : augmentedAddedAccounts
-  }, [addedAccounts, extensionAccounts, selectedSigner])
 
   const handleImport = useCallback(async () => {
     if (!proxiedAddress) return
+    setImporting(true)
+    try {
+      const { team, error } = await createTeam({
+        name,
+        chain: chain.squidIds.chainData,
+        multisigConfig: { signers: augmentedAccounts.map(a => a.address.toSs58()), threshold },
+        proxiedAddress: proxiedAddress.toSs58(),
+      })
 
-    // TODO: make sure multisig controls proxied account
+      if (!team || error) {
+        toast.error(error ?? 'Failed to import vault, please try again later.')
+        return
+      }
 
-    const { team, error } = await createTeam({
-      name,
-      chain: chain.squidIds.chainData,
-      multisigConfig: { signers: augmentedAccounts.map(a => a.address.toSs58()), threshold },
-      proxiedAddress: proxiedAddress.toSs58(),
-    })
-
-    if (!team || error) {
-      toast.error(error ?? 'Failed to import vault, please try again later.')
-      return
+      toast.success('Vault imported successfully!')
+      navigate(`/overview`)
+    } catch (e) {
+      console.error(e)
+      toast.error('Failed to import vault, please try again later.')
+    } finally {
+      setImporting(false)
     }
-    navigate(`/overview`)
   }, [augmentedAccounts, chain.squidIds.chainData, createTeam, name, navigate, proxiedAddress, threshold])
 
   return (
@@ -130,6 +107,7 @@ export const ImportVault: React.FC = () => {
           threshold={threshold}
           name={name}
           chain={chain}
+          importing={importing}
         />
       ) : null}
     </>

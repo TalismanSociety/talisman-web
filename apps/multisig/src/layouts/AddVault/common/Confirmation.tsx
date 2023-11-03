@@ -2,7 +2,7 @@ import { BaseToken, Chain, Price, getInitialProxyBalance } from '@domains/chains
 import { AugmentedAccount, Balance, ProxyDefinition } from '@domains/multisig'
 import { css } from '@emotion/css'
 import { Info } from '@talismn/icons'
-import { IconButton } from '@talismn/ui'
+import { CircularProgressIndicator, IconButton } from '@talismn/ui'
 import { Skeleton } from '@talismn/ui'
 import { balanceToFloat, formatUsd } from '@util/numbers'
 import { Loadable } from 'recoil'
@@ -10,9 +10,11 @@ import { Address, toMultisigAddress } from '../../../util/addresses'
 import { AccountDetails } from '../../../components/AddressInput/AccountDetails'
 import { ChainPill } from '../../../components/ChainPill'
 import { Member } from '../../../components/Member'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { secondsToDuration } from '../../../util/misc'
 import { CancleOrNext } from './CancelOrNext'
+import { useProxies } from '../../../domains/proxy/useProxies'
+import { isEqual } from 'lodash'
 
 const NameAndSummary: React.FC<{ name: string; chain: Chain; proxiedAccount?: Address }> = ({
   name,
@@ -44,7 +46,7 @@ const NameAndSummary: React.FC<{ name: string; chain: Chain; proxiedAccount?: Ad
             borderRadius: 8,
           })}
         >
-          <AccountDetails identiconSize={20} address={proxiedAccount} />
+          <AccountDetails identiconSize={20} address={proxiedAccount} chain={chain} />
         </div>
       </div>
     ) : (
@@ -75,26 +77,68 @@ const Threshold: React.FC<{ threshold: number; membersCount: number }> = ({ thre
   </div>
 )
 
-const ProxyTypes: React.FC<{ proxies: ProxyDefinition[] }> = ({ proxies }) => (
-  <div css={{ display: 'grid', gap: 12 }}>
+const ProxyTypes: React.FC<{ proxies?: ProxyDefinition[] }> = ({ proxies }) => (
+  <div>
     <p>Proxy Types</p>
-    <div css={{ display: 'grid', gap: 8 }}>
-      {proxies.map(proxy => (
-        <p key={`${proxy.proxyType}_${proxy.delay}`} css={({ color }) => ({ color: color.offWhite })}>
-          {proxy.proxyType}, {proxy.delay} blocks ≈{secondsToDuration(proxy.duration)}
-        </p>
-      ))}
+    <div css={({ color }) => ({ p: { color: color.offWhite, span: { color: color.lightGrey } }, marginTop: 12 })}>
+      {proxies ? (
+        proxies.length === 0 ? (
+          <p>The multisig is not a proxy of the imported proxied address.</p>
+        ) : (
+          <div css={{ display: 'grid', gap: 8 }}>
+            {proxies.map(proxy => (
+              <p key={`${proxy.proxyType}_${proxy.delay}`}>
+                {proxy.proxyType}, {proxy.delay} blocks <span>≈{secondsToDuration(proxy.duration)}</span>
+              </p>
+            ))}
+          </div>
+        )
+      ) : (
+        <CircularProgressIndicator size={16} />
+      )}
     </div>
   </div>
 )
 
-const Cost = (props: { amount: Balance; symbol: string; price: number }) => {
-  return (
-    <p>
-      {balanceToFloat(props.amount)} {props.symbol} ({formatUsd(balanceToFloat(props.amount) * props.price)})
-    </p>
-  )
+export const ImportedProxiesTypes: React.FC<{
+  chain: Chain
+  multisigAddress: Address
+  proxiedAddress: Address
+  onProxies: (proxies?: ProxyDefinition[]) => void
+}> = ({ chain, multisigAddress, proxiedAddress, onProxies }) => {
+  const { proxies } = useProxies(proxiedAddress, chain)
+
+  const filteredProxies = proxies?.filter(({ delegate }) => delegate.isEqual(multisigAddress))
+
+  useEffect(() => {
+    onProxies(filteredProxies)
+  }, [filteredProxies, onProxies])
+
+  return <ProxyTypes proxies={filteredProxies} />
 }
+
+const Cost = ({
+  amount,
+  symbol,
+  price,
+  label,
+}: {
+  amount?: Balance
+  symbol?: string
+  price?: number
+  label: string
+}) => (
+  <div css={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+    <p>{label}</p>
+    {amount !== undefined && symbol !== undefined && price !== undefined ? (
+      <p>
+        {balanceToFloat(amount)} {symbol} ({formatUsd(balanceToFloat(amount) * price)})
+      </p>
+    ) : (
+      <Skeleton.Surface css={{ height: 14, minWidth: 125 }} />
+    )}
+  </div>
+)
 
 const Confirmation = (props: {
   onBack: () => void
@@ -109,6 +153,7 @@ const Confirmation = (props: {
   existentialDeposit?: Loadable<Balance>
   estimatedFee?: Balance | undefined
   extrinsicsReady?: boolean
+  importing?: boolean
 }) => {
   const { tokenWithPrice, reserveAmount, estimatedFee, chain, existentialDeposit } = props
 
@@ -117,42 +162,15 @@ const Confirmation = (props: {
     props.threshold
   )
 
-  const existentialDepositComponent = tokenWithPrice ? (
-    tokenWithPrice?.state === 'hasValue' && existentialDeposit?.state === 'hasValue' ? (
-      <Cost
-        amount={getInitialProxyBalance(existentialDeposit.contents)}
-        symbol={tokenWithPrice.contents.token.symbol}
-        price={tokenWithPrice.contents.price.current}
-      />
-    ) : (
-      <Skeleton.Surface css={{ height: '14px', minWidth: '125px' }} />
-    )
-  ) : null
-
-  const reserveAmountComponent =
-    tokenWithPrice && reserveAmount ? (
-      tokenWithPrice.state === 'hasValue' && reserveAmount.state === 'hasValue' ? (
-        <Cost
-          amount={reserveAmount.contents}
-          symbol={tokenWithPrice.contents.token.symbol}
-          price={tokenWithPrice.contents.price.current}
-        />
-      ) : (
-        <Skeleton.Surface css={{ height: '14px', minWidth: '125px' }} />
-      )
-    ) : null
-
-  const feeAmountComponent = tokenWithPrice ? (
-    tokenWithPrice.state === 'hasValue' && estimatedFee ? (
-      <Cost
-        amount={estimatedFee}
-        symbol={tokenWithPrice.contents.token.symbol}
-        price={tokenWithPrice.contents.price.current}
-      />
-    ) : (
-      <Skeleton.Surface css={{ height: '14px', minWidth: '125px' }} />
-    )
-  ) : null
+  // Note: this is only updated in import vault flow
+  const [proxies, setProxies] = React.useState<ProxyDefinition[] | undefined>([
+    {
+      proxyType: 'Any',
+      delay: 0,
+      duration: 0,
+      delegate: multisigAddress,
+    },
+  ])
 
   return (
     <div
@@ -170,6 +188,8 @@ const Confirmation = (props: {
         <p css={{ textAlign: 'center', marginTop: 16 }}>Please review and confirm details before proceeding.</p>
       </div>
       <NameAndSummary name={props.name} chain={chain} proxiedAccount={props.proxiedAccount} />
+
+      {/** Vault config summary */}
       <div
         css={{
           display: 'grid',
@@ -186,76 +206,106 @@ const Confirmation = (props: {
           <div css={{ display: 'grid', gap: 32 }}>
             <Threshold threshold={props.threshold} membersCount={props.selectedAccounts.length} />
 
-            {/** TODO: create a component to load proxies with useProxies */}
-            <ProxyTypes
-              proxies={[
-                {
-                  proxyType: 'Any',
-                  delay: 0,
-                  duration: 0,
-                  delegate: multisigAddress,
-                },
-              ]}
-            />
+            {props.proxiedAccount ? (
+              <ImportedProxiesTypes
+                chain={props.chain}
+                multisigAddress={multisigAddress}
+                proxiedAddress={props.proxiedAccount}
+                onProxies={newProxies => {
+                  console.log(newProxies)
+                  if (isEqual(newProxies, proxies)) return
+                  setProxies(newProxies)
+                }}
+              />
+            ) : (
+              <ProxyTypes proxies={proxies} />
+            )}
           </div>
         </div>
       </div>
-      <div
-        className={css`
-          display: flex;
-          align-items: center;
-          background: var(--color-controlBackground);
-          border-radius: 16px;
-          padding: 16px;
-          width: 100%;
-          gap: 16px;
-        `}
-      >
-        <IconButton size="54px" contentColor={'#d5ff5c'}>
-          <Info size={54} />
-        </IconButton>
-        <p>
-          To operate your vault {chain.chainName} requires some funds to be reserved as a deposit. This will be fully
-          refunded when you wind down your vault.
-        </p>
-      </div>
+
+      {/** Information for create vault flow */}
       {!props.proxiedAccount && (
         <div
           className={css`
-            display: grid;
-            grid-template-columns: 1fr auto;
-            grid-template-rows: 1fr 1fr;
-            justify-content: space-between;
+            display: flex;
+            align-items: center;
+            background: var(--color-controlBackground);
+            border-radius: 16px;
+            padding: 16px;
             width: 100%;
-            p:nth-child(even) {
-              margin-left: auto;
-            }
+            gap: 16px;
           `}
         >
-          <p>Deposit Amount (Reserved)</p>
-          {reserveAmountComponent}
-          <p>Estimated Transaction Fee</p>
-          {feeAmountComponent}
-          <p>Initial Vault Funds</p>
-          {existentialDepositComponent}
+          <IconButton size="54px" contentColor={'#d5ff5c'}>
+            <Info size={54} />
+          </IconButton>
+          <p>
+            To operate your vault {chain.chainName} requires some funds to be reserved as a deposit. This will be fully
+            refunded when you wind down your vault.
+          </p>
         </div>
       )}
-      <CancleOrNext
-        block
-        cancel={{
-          onClick: props.onBack,
-          children: 'Back',
-        }}
-        next={{
-          children: props.proxiedAccount ? 'Import Vault' : 'Create Vault',
-          onClick: props.onCreateVault,
-          // TODO: disable with error message if same multisig + proxied account exists with the same name
-          disabled:
-            (tokenWithPrice && tokenWithPrice.state !== 'hasValue') ||
-            props.selectedAccounts.length < 2 ||
-            props.extrinsicsReady === false,
-        }}
-      />
+
+      {/** Importing vault off-chain, dont need gas fee/reserved amounts */}
+      {!props.proxiedAccount && (
+        <div css={{ width: '100%' }}>
+          <Cost
+            label="Deposit Amount (Reserved)"
+            amount={reserveAmount?.contents}
+            symbol={tokenWithPrice?.contents.token.symbol}
+            price={tokenWithPrice?.contents.price.current}
+          />
+          <Cost
+            label="Estimated Transaction Fee"
+            amount={estimatedFee}
+            symbol={tokenWithPrice?.contents.token.symbol}
+            price={tokenWithPrice?.contents.price.current}
+          />
+          <Cost
+            label="Initial Vault Funds"
+            amount={existentialDeposit?.contents ? getInitialProxyBalance(existentialDeposit.contents) : undefined}
+            symbol={tokenWithPrice?.contents.token.symbol}
+            price={tokenWithPrice?.contents.price.current}
+          />
+        </div>
+      )}
+
+      <div css={{ width: '100%' }}>
+        <CancleOrNext
+          block
+          cancel={{
+            onClick: props.onBack,
+            children: 'Back',
+          }}
+          next={{
+            children: props.proxiedAccount ? 'Import Vault' : 'Create Vault',
+            onClick: props.onCreateVault,
+            // TODO: disable with error message if same multisig + proxied account exists with the same name
+            disabled:
+              (tokenWithPrice && tokenWithPrice.state !== 'hasValue') ||
+              props.selectedAccounts.length < 2 ||
+              props.extrinsicsReady === false ||
+              !proxies ||
+              proxies?.length === 0,
+            loading: props.importing,
+          }}
+        />
+
+        {/** Trying to import a vault unit that does not have any proxy relationship */}
+        {proxies?.length === 0 && props.proxiedAccount !== undefined && (
+          <p
+            css={({ color }) => ({
+              textAlign: 'center',
+              fontSize: 14,
+              color: color.error,
+              marginTop: 16,
+            })}
+          >
+            Please make sure your multisig is a proxy of the imported proxied address.
+          </p>
+        )}
+      </div>
     </div>
   )
 }
