@@ -6,8 +6,8 @@ import {
   TransactionApprovals,
   TransactionType,
   selectedMultisigChainTokensState,
-  selectedMultisigState,
   useNextTransactionSigner,
+  useSelectedMultisig,
 } from '@domains/multisig'
 import { css } from '@emotion/css'
 import { SubmittableExtrinsic } from '@polkadot/api/types'
@@ -15,12 +15,13 @@ import { SideSheet } from '@talismn/ui'
 import { useEffect, useMemo, useState } from 'react'
 import toast from 'react-hot-toast'
 import { useNavigate } from 'react-router-dom'
-import { useRecoilValue, useRecoilValueLoadable } from 'recoil'
+import { useRecoilValueLoadable } from 'recoil'
 
 import { FullScreenDialogContents, FullScreenDialogTitle } from '../../Transactions/FullScreenSummary'
 import { NameTransaction } from '../generic-steps'
 import { MultiSendSend } from '../multisend/multisend.types'
 import MultiSendForm from '../multisend/MultiSendForm'
+import { hasPermission } from '../../../../domains/proxy/util'
 
 enum Step {
   Name,
@@ -34,9 +35,11 @@ const MultiSendAction = (props: { onCancel: () => void }) => {
   const tokens = useRecoilValueLoadable(selectedMultisigChainTokensState)
   const [extrinsic, setExtrinsic] = useState<SubmittableExtrinsic<'promise'> | undefined>()
   const [sends, setSends] = useState<MultiSendSend[]>([])
-  const multisig = useRecoilValue(selectedMultisigState)
+  const [multisig] = useSelectedMultisig()
   const apiLoadable = useRecoilValueLoadable(pjsApiSelector(multisig.chain.rpcs))
   const navigate = useNavigate()
+
+  const canSend = hasPermission(multisig, 'transfer')
 
   useEffect(() => {
     if (sends.length > 0 && apiLoadable.state === 'hasValue') {
@@ -121,6 +124,7 @@ const MultiSendAction = (props: { onCancel: () => void }) => {
         <>
           <h1>{name}</h1>
           <MultiSendForm
+            canSend={canSend}
             tokens={tokens}
             onBack={() => setStep(Step.Name)}
             onNext={() => setStep(Step.Review)}

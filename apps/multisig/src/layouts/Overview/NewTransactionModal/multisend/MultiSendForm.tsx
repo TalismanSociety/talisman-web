@@ -9,6 +9,7 @@ import MultiLineTransferInput from './MultiLineSendInput'
 import { isEqual } from 'lodash'
 import AmountRow from '@components/AmountRow'
 import BN from 'bn.js'
+import { AlertCircle } from '@talismn/icons'
 
 const MultiSendForm = (props: {
   tokens: Loadable<BaseToken[]>
@@ -16,6 +17,7 @@ const MultiSendForm = (props: {
   setSends: (s: MultiSendSend[]) => void
   onBack: () => void
   onNext: () => void
+  canSend?: boolean
 }) => {
   const [selectedToken, setSelectedToken] = useState<BaseToken | undefined>()
   const [hasInvalidRow, setHasInvalidRow] = useState(false)
@@ -31,7 +33,7 @@ const MultiSendForm = (props: {
       className={css`
         display: flex;
         flex-direction: column;
-        gap: 32px;
+        gap: 24px;
         max-width: 620px;
         padding-top: 40px;
         width: 100%;
@@ -81,22 +83,47 @@ const MultiSendForm = (props: {
           </>
         )}
 
-        <div
-          className={css`
-            margin-top: 8px;
-            button {
-              height: 56px;
-            }
-          `}
-        >
-          <Button css={{ width: '100%' }} onClick={props.onBack} children={<h3>Back</h3>} variant="outlined" />
-          <Button
-            css={{ width: '100%' }}
-            disabled={props.sends.length === 0 || hasInvalidRow}
-            onClick={props.onNext}
-            children={<h3>Next</h3>}
-          />
+        <div css={{ width: '100%', marginTop: 8 }}>
+          <div
+            className={css`
+              display: grid;
+              grid-template-columns: 1fr 1fr;
+              gap: 16px;
+              width: 100%;
+              button {
+                height: 56px;
+              }
+            `}
+          >
+            <Button css={{ width: '100%' }} onClick={props.onBack} children={<h3>Back</h3>} variant="outlined" />
+            <Button
+              css={{ width: '100%' }}
+              disabled={props.sends.length === 0 || hasInvalidRow || !props.canSend}
+              onClick={props.onNext}
+              children={<h3>Next</h3>}
+            />
+          </div>
         </div>
+        {props.canSend === false && (
+          <div
+            css={({ color }) => ({
+              display: 'flex',
+              gap: 12,
+              backgroundColor: color.surface,
+              marginTop: 24,
+              color: color.lightGrey,
+              padding: 16,
+              borderRadius: 12,
+              width: '100%',
+              p: { fontSize: 14 },
+            })}
+          >
+            <AlertCircle size={32} />
+            <p>
+              Your Vault does not have the proxy permission required to send token on behalf of the proxied account.
+            </p>
+          </div>
+        )}
       </div>
     </div>
   )

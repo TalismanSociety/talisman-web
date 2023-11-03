@@ -25,6 +25,8 @@ import { FullScreenDialogContents, FullScreenDialogTitle } from '../Transactions
 import { NameTransaction } from './generic-steps'
 import AddressInput from '@components/AddressInput'
 import { useKnownAddresses } from '@hooks/useKnownAddresses'
+import { hasPermission } from '../../../domains/proxy/util'
+import { AlertCircle } from '@talismn/icons'
 
 enum Step {
   Name,
@@ -45,6 +47,8 @@ const DetailsForm = (props: {
 }) => {
   const [multisig] = useSelectedMultisig()
   const { addresses } = useKnownAddresses(multisig.id)
+  const canSend = hasPermission(multisig, 'transfer')
+
   return (
     <>
       <h1>Transaction details</h1>
@@ -89,6 +93,7 @@ const DetailsForm = (props: {
         <Button onClick={props.onBack} children={<h3>Back</h3>} variant="outlined" />
         <Button
           disabled={
+            !canSend ||
             !props.destinationAddress ||
             isNaN(parseFloat(props.amount)) ||
             props.amount.endsWith('.') ||
@@ -98,6 +103,24 @@ const DetailsForm = (props: {
           children={<h3>Next</h3>}
         />
       </div>
+      {canSend === false && (
+        <div
+          css={({ color }) => ({
+            display: 'flex',
+            gap: 12,
+            backgroundColor: color.surface,
+            marginTop: 24,
+            color: color.lightGrey,
+            padding: 16,
+            maxWidth: 490,
+            borderRadius: 12,
+            p: { fontSize: 14 },
+          })}
+        >
+          <AlertCircle size={32} />
+          <p>Your Vault does not have the proxy permission required to send token on behalf of the proxied account.</p>
+        </div>
+      )}
     </>
   )
 }
