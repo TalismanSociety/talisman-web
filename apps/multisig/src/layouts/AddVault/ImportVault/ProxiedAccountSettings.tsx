@@ -1,8 +1,8 @@
 import { css } from '@emotion/css'
-import { Chain } from '../../../domains/chains'
-import { Address } from '../../../util/addresses'
+import { Chain } from '@domains/chains'
+import { Address } from '@util/addresses'
+import AddressInput from '@components/AddressInput'
 import { CancleOrNext } from '../common/CancelOrNext'
-import AddressInput from '../../../components/AddressInput'
 
 type Props = {
   address?: Address

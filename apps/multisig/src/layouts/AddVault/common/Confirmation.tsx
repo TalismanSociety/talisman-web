@@ -1,3 +1,12 @@
+import { Loadable, useRecoilValue } from 'recoil'
+import React, { useEffect, useMemo } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { css } from '@emotion/css'
+import { isEqual } from 'lodash'
+
+import { AccountDetails } from '@components/AddressInput/AccountDetails'
+import { ChainPill } from '@components/ChainPill'
+import { Member } from '@components/Member'
 import { BaseToken, Chain, Price, getInitialProxyBalance } from '@domains/chains'
 import {
   AugmentedAccount,
@@ -6,22 +15,15 @@ import {
   activeMultisigsState,
   useSelectedMultisig,
 } from '@domains/multisig'
-import { css } from '@emotion/css'
+import { useProxies } from '@domains/proxy/useProxies'
+import { Address, toMultisigAddress } from '@util/addresses'
+import { balanceToFloat, formatUsd } from '@util/numbers'
+import { secondsToDuration } from '@util/misc'
+
 import { Info } from '@talismn/icons'
 import { CircularProgressIndicator, IconButton } from '@talismn/ui'
 import { Skeleton } from '@talismn/ui'
-import { balanceToFloat, formatUsd } from '@util/numbers'
-import { Loadable, useRecoilValue } from 'recoil'
-import { Address, toMultisigAddress } from '../../../util/addresses'
-import { AccountDetails } from '../../../components/AddressInput/AccountDetails'
-import { ChainPill } from '../../../components/ChainPill'
-import { Member } from '../../../components/Member'
-import React, { useEffect, useMemo } from 'react'
-import { secondsToDuration } from '../../../util/misc'
 import { CancleOrNext } from './CancelOrNext'
-import { useProxies } from '../../../domains/proxy/useProxies'
-import { isEqual } from 'lodash'
-import { useNavigate } from 'react-router-dom'
 
 const NameAndSummary: React.FC<{ name: string; chain: Chain; proxiedAccount?: Address }> = ({
   name,
