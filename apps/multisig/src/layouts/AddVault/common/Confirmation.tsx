@@ -1,20 +1,27 @@
 import { BaseToken, Chain, Price, getInitialProxyBalance } from '@domains/chains'
-import { AugmentedAccount, Balance, ProxyDefinition } from '@domains/multisig'
+import {
+  AugmentedAccount,
+  Balance,
+  ProxyDefinition,
+  activeMultisigsState,
+  useSelectedMultisig,
+} from '@domains/multisig'
 import { css } from '@emotion/css'
 import { Info } from '@talismn/icons'
 import { CircularProgressIndicator, IconButton } from '@talismn/ui'
 import { Skeleton } from '@talismn/ui'
 import { balanceToFloat, formatUsd } from '@util/numbers'
-import { Loadable } from 'recoil'
+import { Loadable, useRecoilValue } from 'recoil'
 import { Address, toMultisigAddress } from '../../../util/addresses'
 import { AccountDetails } from '../../../components/AddressInput/AccountDetails'
 import { ChainPill } from '../../../components/ChainPill'
 import { Member } from '../../../components/Member'
-import React, { useEffect } from 'react'
+import React, { useEffect, useMemo } from 'react'
 import { secondsToDuration } from '../../../util/misc'
 import { CancleOrNext } from './CancelOrNext'
 import { useProxies } from '../../../domains/proxy/useProxies'
 import { isEqual } from 'lodash'
+import { useNavigate } from 'react-router-dom'
 
 const NameAndSummary: React.FC<{ name: string; chain: Chain; proxiedAccount?: Address }> = ({
   name,
@@ -155,7 +162,11 @@ const Confirmation = (props: {
   extrinsicsReady?: boolean
   importing?: boolean
 }) => {
+  const navigate = useNavigate()
+
   const { tokenWithPrice, reserveAmount, estimatedFee, chain, existentialDeposit } = props
+  const activeMultisigs = useRecoilValue(activeMultisigsState)
+  const [_, setSelectedMultisig] = useSelectedMultisig()
 
   const multisigAddress = toMultisigAddress(
     props.selectedAccounts.map(a => a.address),
@@ -171,6 +182,19 @@ const Confirmation = (props: {
       delegate: multisigAddress,
     },
   ])
+  const vaultExists = useMemo(() => {
+    if (!props.proxiedAccount) return undefined
+
+    for (const multisig of activeMultisigs) {
+      if (
+        multisig.proxyAddress?.isEqual(props.proxiedAccount) &&
+        multisig.multisigAddress.isEqual(multisigAddress) &&
+        multisig.chain.chainName === props.chain.chainName
+      )
+        return multisig
+    }
+    return undefined
+  }, [activeMultisigs, multisigAddress, props.chain.chainName, props.proxiedAccount])
 
   return (
     <div
@@ -272,6 +296,48 @@ const Confirmation = (props: {
       )}
 
       <div css={{ width: '100%' }}>
+        {props.proxiedAccount && vaultExists && (
+          <p
+            css={({ color }) => ({
+              textAlign: 'center',
+              fontSize: 14,
+              color: color.lightGrey,
+              marginBottom: 16,
+              span: {
+                'fontWeight': 700,
+                'color': color.offWhite,
+                'cursor': 'pointer',
+                ':hover': {
+                  opacity: 0.7,
+                },
+              },
+            })}
+          >
+            The Vault has already been created as{' '}
+            <span
+              onClick={() => {
+                setSelectedMultisig(vaultExists)
+                navigate('/overview')
+              }}
+            >
+              {vaultExists.name}
+            </span>
+          </p>
+        )}
+        {/** Trying to import a vault unit that does not have any proxy relationship */}
+        {proxies?.length === 0 && props.proxiedAccount !== undefined && (
+          <p
+            css={({ color }) => ({
+              textAlign: 'center',
+              fontSize: 14,
+              color: color.lightGrey,
+              marginBottom: 16,
+            })}
+          >
+            Please make sure your multisig is a proxy of the imported proxied address.
+          </p>
+        )}
+
         <CancleOrNext
           block
           cancel={{
@@ -287,24 +353,11 @@ const Confirmation = (props: {
               props.selectedAccounts.length < 2 ||
               props.extrinsicsReady === false ||
               !proxies ||
-              proxies?.length === 0,
+              proxies?.length === 0 ||
+              !!vaultExists,
             loading: props.importing,
           }}
         />
-
-        {/** Trying to import a vault unit that does not have any proxy relationship */}
-        {proxies?.length === 0 && props.proxiedAccount !== undefined && (
-          <p
-            css={({ color }) => ({
-              textAlign: 'center',
-              fontSize: 14,
-              color: color.error,
-              marginTop: 16,
-            })}
-          >
-            Please make sure your multisig is a proxy of the imported proxied address.
-          </p>
-        )}
       </div>
     </div>
   )
