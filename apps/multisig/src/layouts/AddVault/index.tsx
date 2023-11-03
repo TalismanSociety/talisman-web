@@ -6,6 +6,7 @@ import { Outlet, Route, Routes, useNavigate } from 'react-router-dom'
 import { Layout } from '../Layout'
 import { CancleOrNext } from './common/CancelOrNext'
 import CreateMultisig from './CreateVault'
+import { ImportVault } from './ImportVault'
 
 const Option: React.FC<{ title: string; description: string; selected: boolean; onClick: () => void }> = ({
   title,
@@ -126,7 +127,7 @@ export const AddVault: React.FC = () => {
           />
 
           <Route path="create" element={<CreateMultisig />} />
-          <Route path="import" element={<p>Import</p>} />
+          <Route path="import" element={<ImportVault />} />
         </Route>
       </Routes>
     </Layout>

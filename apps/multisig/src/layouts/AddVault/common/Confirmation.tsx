@@ -99,16 +99,16 @@ const Cost = (props: { amount: Balance; symbol: string; price: number }) => {
 const Confirmation = (props: {
   onBack: () => void
   onCreateVault: () => void
-  onAlreadyHaveAnyProxy: () => void
   selectedAccounts: AugmentedAccount[]
+  proxiedAccount?: Address
   threshold: number
   name: string
   chain: Chain
-  tokenWithPrice: Loadable<{ token: BaseToken; price: Price }>
-  reserveAmount: Loadable<Balance>
-  existentialDeposit: Loadable<Balance>
-  estimatedFee: Balance | undefined
-  extrinsicsReady: boolean
+  tokenWithPrice?: Loadable<{ token: BaseToken; price: Price }>
+  reserveAmount?: Loadable<Balance>
+  existentialDeposit?: Loadable<Balance>
+  estimatedFee?: Balance | undefined
+  extrinsicsReady?: boolean
 }) => {
   const { tokenWithPrice, reserveAmount, estimatedFee, chain, existentialDeposit } = props
 
@@ -117,8 +117,8 @@ const Confirmation = (props: {
     props.threshold
   )
 
-  const existentialDepositComponent =
-    tokenWithPrice.state === 'hasValue' && existentialDeposit.state === 'hasValue' ? (
+  const existentialDepositComponent = tokenWithPrice ? (
+    tokenWithPrice?.state === 'hasValue' && existentialDeposit?.state === 'hasValue' ? (
       <Cost
         amount={getInitialProxyBalance(existentialDeposit.contents)}
         symbol={tokenWithPrice.contents.token.symbol}
@@ -127,19 +127,22 @@ const Confirmation = (props: {
     ) : (
       <Skeleton.Surface css={{ height: '14px', minWidth: '125px' }} />
     )
+  ) : null
 
   const reserveAmountComponent =
-    tokenWithPrice.state === 'hasValue' && reserveAmount.state === 'hasValue' ? (
-      <Cost
-        amount={reserveAmount.contents}
-        symbol={tokenWithPrice.contents.token.symbol}
-        price={tokenWithPrice.contents.price.current}
-      />
-    ) : (
-      <Skeleton.Surface css={{ height: '14px', minWidth: '125px' }} />
-    )
+    tokenWithPrice && reserveAmount ? (
+      tokenWithPrice.state === 'hasValue' && reserveAmount.state === 'hasValue' ? (
+        <Cost
+          amount={reserveAmount.contents}
+          symbol={tokenWithPrice.contents.token.symbol}
+          price={tokenWithPrice.contents.price.current}
+        />
+      ) : (
+        <Skeleton.Surface css={{ height: '14px', minWidth: '125px' }} />
+      )
+    ) : null
 
-  const feeAmountComponent =
+  const feeAmountComponent = tokenWithPrice ? (
     tokenWithPrice.state === 'hasValue' && estimatedFee ? (
       <Cost
         amount={estimatedFee}
@@ -149,6 +152,7 @@ const Confirmation = (props: {
     ) : (
       <Skeleton.Surface css={{ height: '14px', minWidth: '125px' }} />
     )
+  ) : null
 
   return (
     <div
@@ -165,7 +169,7 @@ const Confirmation = (props: {
         <h1>Confirmation</h1>
         <p css={{ textAlign: 'center', marginTop: 16 }}>Please review and confirm details before proceeding.</p>
       </div>
-      <NameAndSummary name={props.name} chain={chain} />
+      <NameAndSummary name={props.name} chain={chain} proxiedAccount={props.proxiedAccount} />
       <div
         css={{
           display: 'grid',
@@ -181,6 +185,8 @@ const Confirmation = (props: {
           <Members members={props.selectedAccounts} chain={props.chain} />
           <div css={{ display: 'grid', gap: 32 }}>
             <Threshold threshold={props.threshold} membersCount={props.selectedAccounts.length} />
+
+            {/** TODO: create a component to load proxies with useProxies */}
             <ProxyTypes
               proxies={[
                 {
@@ -213,25 +219,27 @@ const Confirmation = (props: {
           refunded when you wind down your vault.
         </p>
       </div>
-      <div
-        className={css`
-          display: grid;
-          grid-template-columns: 1fr auto;
-          grid-template-rows: 1fr 1fr;
-          justify-content: space-between;
-          width: 100%;
-          p:nth-child(even) {
-            margin-left: auto;
-          }
-        `}
-      >
-        <p>Deposit Amount (Reserved)</p>
-        {reserveAmountComponent}
-        <p>Estimated Transaction Fee</p>
-        {feeAmountComponent}
-        <p>Initial Vault Funds</p>
-        {existentialDepositComponent}
-      </div>
+      {!props.proxiedAccount && (
+        <div
+          className={css`
+            display: grid;
+            grid-template-columns: 1fr auto;
+            grid-template-rows: 1fr 1fr;
+            justify-content: space-between;
+            width: 100%;
+            p:nth-child(even) {
+              margin-left: auto;
+            }
+          `}
+        >
+          <p>Deposit Amount (Reserved)</p>
+          {reserveAmountComponent}
+          <p>Estimated Transaction Fee</p>
+          {feeAmountComponent}
+          <p>Initial Vault Funds</p>
+          {existentialDepositComponent}
+        </div>
+      )}
       <CancleOrNext
         block
         cancel={{
@@ -239,9 +247,13 @@ const Confirmation = (props: {
           children: 'Back',
         }}
         next={{
-          children: 'Create Vault',
+          children: props.proxiedAccount ? 'Import Vault' : 'Create Vault',
           onClick: props.onCreateVault,
-          disabled: tokenWithPrice.state !== 'hasValue' || props.selectedAccounts.length < 2 || !props.extrinsicsReady,
+          // TODO: disable with error message if same multisig + proxied account exists with the same name
+          disabled:
+            (tokenWithPrice && tokenWithPrice.state !== 'hasValue') ||
+            props.selectedAccounts.length < 2 ||
+            props.extrinsicsReady === false,
         }}
       />
     </div>
