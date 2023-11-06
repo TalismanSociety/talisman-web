@@ -2,9 +2,10 @@ import { Chain } from '@domains/chains'
 import { AugmentedAccount } from '@domains/multisig'
 import { css } from '@emotion/css'
 import { useTheme } from '@emotion/react'
-import { ExternalLink, Trash } from '@talismn/icons'
+import { Copy, Trash } from '@talismn/icons'
 import { IconButton, Identicon } from '@talismn/ui'
 import { shortenAddress } from '../util/addresses'
+import { copyToClipboard } from '../domains/common'
 
 export const Member = ({ m, chain, onDelete }: { m: AugmentedAccount; onDelete?: () => void; chain: Chain }) => {
   const theme = useTheme()
@@ -41,11 +42,14 @@ export const Member = ({ m, chain, onDelete }: { m: AugmentedAccount; onDelete?:
             <Trash size={16} />
           </IconButton>
         )}
-        <a href={m.address.toSubscanUrl(chain)} target="_blank" rel="noreferrer">
-          <IconButton size={16} contentColor={`rgb(${theme.foreground})`} css={{ cursor: 'pointer' }}>
-            <ExternalLink size={16} />
-          </IconButton>
-        </a>
+        <IconButton
+          size={16}
+          contentColor={`rgb(${theme.foreground})`}
+          css={{ cursor: 'pointer' }}
+          onClick={() => copyToClipboard(ss58Address, `${shortenAddress(ss58Address)} copied to clipboard.`)}
+        >
+          <Copy size={16} />
+        </IconButton>
       </div>
     </div>
   )
