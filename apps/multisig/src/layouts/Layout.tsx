@@ -4,11 +4,11 @@ import Header from './Header'
 import Sidebar from './Sidebar'
 import Footer from './Footer'
 import NewTransactionModal from './Overview/NewTransactionModal'
-import NoVault from './CreateMultisig/NoVault'
 import { EyeOfSauronProgressIndicator } from '@talismn/ui'
 import { useRecoilValue } from 'recoil'
 import { activeMultisigsState } from '@domains/multisig'
 import { activeTeamsState } from '../domains/offchain-data'
+import { Navigate } from 'react-router-dom'
 
 export const Layout: React.FC<
   React.PropsWithChildren & { selected?: string; requiresMultisig?: boolean; hideSideBar?: boolean }
@@ -38,9 +38,7 @@ export const Layout: React.FC<
               <EyeOfSauronProgressIndicator />
             </div>
           ) : (
-            <div css={{ display: 'flex', justifyContent: 'center', alignItems: 'flex-start', width: '100%' }}>
-              <NoVault />
-            </div>
+            <Navigate to="/add-vault" />
           )
         ) : (
           <>

@@ -1,11 +1,11 @@
 import { createBrowserRouter } from 'react-router-dom'
 
-import CreateMultisig from '../layouts/CreateMultisig'
 import Landing from '../layouts/Landing'
 import Overview from '../layouts/Overview'
 import Settings from '../layouts/Settings'
 import RequireAuth from '../layouts/Auth/RequireAuth'
 import { AddressBook } from '../layouts/AddressBook'
+import { AddVault } from '../layouts/AddVault'
 
 const router = createBrowserRouter([
   {
@@ -13,17 +13,17 @@ const router = createBrowserRouter([
     element: <Landing />,
   },
   {
-    path: '/create',
+    path: '/add-vault/*',
     element: (
       <RequireAuth requireSignIn>
-        <CreateMultisig />
+        <AddVault />
       </RequireAuth>
     ),
   },
   {
     path: '/overview/*',
     element: (
-      <RequireAuth requireMultisig requireSignIn>
+      <RequireAuth requireSignIn>
         <Overview />
       </RequireAuth>
     ),
@@ -31,7 +31,7 @@ const router = createBrowserRouter([
   {
     path: '/address-book',
     element: (
-      <RequireAuth requireMultisig requireSignIn>
+      <RequireAuth requireSignIn>
         <AddressBook />
       </RequireAuth>
     ),
@@ -39,7 +39,7 @@ const router = createBrowserRouter([
   {
     path: '/settings/*',
     element: (
-      <RequireAuth requireMultisig requireSignIn>
+      <RequireAuth requireSignIn>
         <Settings />
       </RequireAuth>
     ),

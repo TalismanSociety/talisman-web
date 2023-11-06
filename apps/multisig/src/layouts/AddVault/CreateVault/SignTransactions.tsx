@@ -1,7 +1,6 @@
 import { css } from '@emotion/css'
 import { Check, Send } from '@talismn/icons'
 import { CircularProgressIndicator, IconButton } from '@talismn/ui'
-import { device } from '@util/breakpoints'
 
 import { CreateTransactionsStatus } from '.'
 
@@ -74,20 +73,19 @@ const SignTransactions = (props: { status: CreateTransactionsStatus }) => {
     props.status === CreateTransactionsStatus.TransferringProxy ? StepStatus.InProgress : StepStatus.NotStarted
   return (
     <div
-      className={css`
-        display: grid;
-        padding: 48px;
-        @media ${device.lg} {
-          padding: 80px 120px;
-        }
-        text-align: center;
-        gap: 32px;
-      `}
+      css={{
+        display: 'grid',
+        gap: 32,
+        width: '100%',
+        maxWidth: 700,
+      }}
     >
-      <h1>Create vault</h1>
-      <p>
-        Last step, you'll need to sign a couple transactions with your wallet to complete the creation of your Vault.
-      </p>
+      <div css={{ width: '100%', textAlign: 'center' }}>
+        <h1>Create vault</h1>
+        <p css={{ marginTop: 16 }}>
+          Last step, you'll need to sign a couple transactions with your wallet to complete the creation of your Vault.
+        </p>
+      </div>
       <Step name="Create proxy" description="Create a pure proxy for your Vault." status={createProxyStatus} />
       <Step name="Transfer proxy" description="Assign the proxy to your Vault." status={transferProxyStatus} />
     </div>

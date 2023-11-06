@@ -34,7 +34,7 @@ export const DUMMY_MULTISIG_ID = 'DUMMY_MULTISIG'
 export const combinedViewState = atom<boolean>({
   key: 'CombinedViewState',
   default: false,
-  effects_UNSTABLE: [persistAtom],
+  // effects_UNSTABLE: [persistAtom],
 })
 
 const DUMMY_MULTISIG: Multisig = {

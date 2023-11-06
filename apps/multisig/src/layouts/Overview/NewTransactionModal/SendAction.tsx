@@ -25,6 +25,8 @@ import { FullScreenDialogContents, FullScreenDialogTitle } from '../Transactions
 import { NameTransaction } from './generic-steps'
 import AddressInput from '@components/AddressInput'
 import { useKnownAddresses } from '@hooks/useKnownAddresses'
+import { hasPermission } from '@domains/proxy/util'
+import { Alert } from '@components/Alert'
 
 enum Step {
   Name,
@@ -45,6 +47,8 @@ const DetailsForm = (props: {
 }) => {
   const [multisig] = useSelectedMultisig()
   const { addresses } = useKnownAddresses(multisig.id)
+  const { hasDelayedPermission, hasNonDelayedPermission } = hasPermission(multisig, 'transfer')
+
   return (
     <>
       <h1>Transaction details</h1>
@@ -89,6 +93,7 @@ const DetailsForm = (props: {
         <Button onClick={props.onBack} children={<h3>Back</h3>} variant="outlined" />
         <Button
           disabled={
+            !hasNonDelayedPermission ||
             !props.destinationAddress ||
             isNaN(parseFloat(props.amount)) ||
             props.amount.endsWith('.') ||
@@ -98,6 +103,18 @@ const DetailsForm = (props: {
           children={<h3>Next</h3>}
         />
       </div>
+      {hasNonDelayedPermission === false &&
+        (hasDelayedPermission ? (
+          <Alert>
+            <p>Time delayed proxies are not supported yet.</p>
+          </Alert>
+        ) : (
+          <Alert>
+            <p>
+              Your Vault does not have the proxy permission required to send token on behalf of the proxied account.
+            </p>
+          </Alert>
+        ))}
     </>
   )
 }

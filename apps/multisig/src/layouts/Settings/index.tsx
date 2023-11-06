@@ -47,7 +47,7 @@ const Settings = () => {
   const [extrinsic, setExtrinsic] = useState<SubmittableExtrinsic<'promise'> | undefined>()
 
   const newMultisigAddress = toMultisigAddress(newMembers, newThreshold)
-  const hasAny = multisig.allProxies?.find(p => p.proxyType === 'Any') !== undefined
+  const hasAny = multisig.proxies?.find(p => p.proxyType === 'Any') !== undefined
 
   const changed = useMemo(() => {
     return !newMultisigAddress.isEqual(multisig.multisigAddress)

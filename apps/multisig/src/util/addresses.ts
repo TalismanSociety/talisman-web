@@ -63,6 +63,6 @@ export const toMultisigAddress = (signers: Address[], threshold: number): Addres
 }
 
 export const shortenAddress = (address: string, size: 'long' | 'short' = 'short'): string => {
-  const length = size === 'long' ? 8 : 5
+  const length = size === 'long' ? 7 : 5
   return truncateMiddle(address, length, length, '...')
 }

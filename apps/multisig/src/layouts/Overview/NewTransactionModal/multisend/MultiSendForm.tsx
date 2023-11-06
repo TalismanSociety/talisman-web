@@ -9,6 +9,7 @@ import MultiLineTransferInput from './MultiLineSendInput'
 import { isEqual } from 'lodash'
 import AmountRow from '@components/AmountRow'
 import BN from 'bn.js'
+import { Alert } from '@components/Alert'
 
 const MultiSendForm = (props: {
   tokens: Loadable<BaseToken[]>
@@ -16,6 +17,8 @@ const MultiSendForm = (props: {
   setSends: (s: MultiSendSend[]) => void
   onBack: () => void
   onNext: () => void
+  hasNonDelayedPermission?: boolean
+  hasDelayedPermission?: boolean
 }) => {
   const [selectedToken, setSelectedToken] = useState<BaseToken | undefined>()
   const [hasInvalidRow, setHasInvalidRow] = useState(false)
@@ -31,7 +34,7 @@ const MultiSendForm = (props: {
       className={css`
         display: flex;
         flex-direction: column;
-        gap: 32px;
+        gap: 24px;
         max-width: 620px;
         padding-top: 40px;
         width: 100%;
@@ -81,22 +84,39 @@ const MultiSendForm = (props: {
           </>
         )}
 
-        <div
-          className={css`
-            margin-top: 8px;
-            button {
-              height: 56px;
-            }
-          `}
-        >
-          <Button css={{ width: '100%' }} onClick={props.onBack} children={<h3>Back</h3>} variant="outlined" />
-          <Button
-            css={{ width: '100%' }}
-            disabled={props.sends.length === 0 || hasInvalidRow}
-            onClick={props.onNext}
-            children={<h3>Next</h3>}
-          />
+        <div css={{ width: '100%', marginTop: 8 }}>
+          <div
+            className={css`
+              display: grid;
+              grid-template-columns: 1fr 1fr;
+              gap: 16px;
+              width: 100%;
+              button {
+                height: 56px;
+              }
+            `}
+          >
+            <Button css={{ width: '100%' }} onClick={props.onBack} children={<h3>Back</h3>} variant="outlined" />
+            <Button
+              css={{ width: '100%' }}
+              disabled={props.sends.length === 0 || hasInvalidRow || !props.hasNonDelayedPermission}
+              onClick={props.onNext}
+              children={<h3>Next</h3>}
+            />
+          </div>
         </div>
+        {props.hasNonDelayedPermission === false &&
+          (props.hasDelayedPermission ? (
+            <Alert>
+              <p>Time delayed proxies are not supported yet.</p>
+            </Alert>
+          ) : (
+            <Alert>
+              <p>
+                Your Vault does not have the proxy permission required to send token on behalf of the proxied account.
+              </p>
+            </Alert>
+          ))}
       </div>
     </div>
   )
