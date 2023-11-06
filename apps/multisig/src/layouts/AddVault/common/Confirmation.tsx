@@ -24,6 +24,7 @@ import { Info } from '@talismn/icons'
 import { CircularProgressIndicator, IconButton } from '@talismn/ui'
 import { Skeleton } from '@talismn/ui'
 import { CancleOrNext } from './CancelOrNext'
+import { device } from '@util/breakpoints'
 
 const NameAndSummary: React.FC<{ name: string; chain: Chain; proxiedAccount?: Address }> = ({
   name,
@@ -233,7 +234,18 @@ const Confirmation = (props: {
         }}
       >
         <h2 css={({ color }) => ({ color: color.offWhite, fontSize: 16 })}>Vault Config</h2>
-        <div css={{ display: 'grid', gap: 24, gridTemplateColumns: '1fr 1fr', alignItems: 'flex-start' }}>
+        <div
+          className={css`
+            display: grid;
+            gap: 32px;
+            grid-template-columns: 1fr;
+            align-items: flex-start;
+            @media ${device.md} {
+              gap: 24px;
+              grid-template-columns: 1fr 1fr;
+            }
+          `}
+        >
           <Members members={props.selectedAccounts} chain={props.chain} />
           <div css={{ display: 'grid', gap: 32 }}>
             <Threshold threshold={props.threshold} membersCount={props.selectedAccounts.length} />
@@ -315,6 +327,7 @@ const Confirmation = (props: {
                 'fontWeight': 700,
                 'color': color.offWhite,
                 'cursor': 'pointer',
+                'whiteSpace': 'nowrap',
                 ':hover': {
                   opacity: 0.7,
                 },
