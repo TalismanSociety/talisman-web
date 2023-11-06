@@ -82,8 +82,8 @@ export const VaultOverview: React.FC = () => {
           marginTop: 24,
         }}
       >
-        <div css={{ fontSize: 14 }}>
-          <p css={({ color }) => ({ color: color.lightGrey, marginBottom: 4 })}>Approval Threshold</p>
+        <div>
+          <p css={({ color }) => ({ color: color.lightGrey, marginBottom: 4, fontSize: 14 })}>Approval Threshold</p>
           <p css={({ color }) => ({ color: color.offWhite })}>
             {selectedMultisig.threshold} of {selectedMultisig.signers.length} members
           </p>
@@ -118,7 +118,7 @@ export const VaultOverview: React.FC = () => {
           }}
         >
           <div>
-            <p css={({ color }) => ({ color: color.lightGrey, marginBottom: 8 })}>Signers</p>
+            <p css={({ color }) => ({ color: color.lightGrey, marginBottom: 8, fontSize: 14 })}>Signers</p>
             <div css={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
               {selectedMultisig.signers.map(signer => (
                 <AccountDetails
@@ -134,7 +134,7 @@ export const VaultOverview: React.FC = () => {
             </div>
           </div>
           <div>
-            <p css={({ color }) => ({ color: color.lightGrey, marginBottom: 8 })}>Multisig Address</p>
+            <p css={({ color }) => ({ color: color.lightGrey, marginBottom: 8, fontSize: 14 })}>Multisig Address</p>
             <AccountDetails
               chain={selectedMultisig.chain}
               address={selectedMultisig.multisigAddress}
