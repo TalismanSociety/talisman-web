@@ -117,6 +117,7 @@ const AccountSwitcher: React.FC<Props> = ({ accounts, onSelect, selectedAccount 
             identiconSize={32}
             address={selectedAccount.address}
             name={selectedAccount.meta.name}
+            chain={multisig.chain}
             breakLine
             disableCopy
           />
