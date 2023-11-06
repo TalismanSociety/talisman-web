@@ -198,6 +198,12 @@ const Confirmation = (props: {
     return undefined
   }, [activeMultisigs, multisigAddress, props.chain.chainName, props.proxiedAccount])
 
+  const goToExistingVault = () => {
+    if (!vaultExists) return
+    setSelectedMultisig(vaultExists)
+    navigate('/overview')
+  }
+
   return (
     <div
       css={{
@@ -315,15 +321,7 @@ const Confirmation = (props: {
               },
             })}
           >
-            The Vault has already been created as{' '}
-            <span
-              onClick={() => {
-                setSelectedMultisig(vaultExists)
-                navigate('/overview')
-              }}
-            >
-              {vaultExists.name}
-            </span>
+            The Vault has already been created as <span onClick={goToExistingVault}>{vaultExists.name}</span>
           </p>
         )}
         {/** Trying to import a vault unit that does not have any proxy relationship */}
@@ -332,7 +330,7 @@ const Confirmation = (props: {
             css={({ color }) => ({
               textAlign: 'center',
               fontSize: 14,
-              color: color.lightGrey,
+              color: color.error,
               marginBottom: 16,
             })}
           >
@@ -347,16 +345,14 @@ const Confirmation = (props: {
             children: 'Back',
           }}
           next={{
-            children: props.proxiedAccount ? 'Import Vault' : 'Create Vault',
-            onClick: props.onCreateVault,
-            // TODO: disable with error message if same multisig + proxied account exists with the same name
+            children: props.proxiedAccount ? (vaultExists ? 'Go to Vault' : 'Import Vault') : 'Create Vault',
+            onClick: vaultExists ? goToExistingVault : props.onCreateVault,
             disabled:
               (tokenWithPrice && tokenWithPrice.state !== 'hasValue') ||
               props.selectedAccounts.length < 2 ||
               props.extrinsicsReady === false ||
               !proxies ||
-              proxies?.length === 0 ||
-              !!vaultExists,
+              proxies?.length === 0,
             loading: props.importing,
           }}
         />
