@@ -89,7 +89,10 @@ const Threshold: React.FC<{ threshold: number; membersCount: number }> = ({ thre
 
 const ProxyTypes: React.FC<{ proxies?: ProxyDefinition[] }> = ({ proxies }) => (
   <div>
-    <p>Proxy Types</p>
+    <div css={{ display: 'flex', alignItems: 'center', p: { width: '100%' } }}>
+      <p>Proxy Types</p>
+      <p>Time Delay</p>
+    </div>
     <div css={({ color }) => ({ p: { color: color.offWhite, span: { color: color.lightGrey } }, marginTop: 12 })}>
       {proxies ? (
         proxies.length === 0 ? (
@@ -97,9 +100,12 @@ const ProxyTypes: React.FC<{ proxies?: ProxyDefinition[] }> = ({ proxies }) => (
         ) : (
           <div css={{ display: 'grid', gap: 8 }}>
             {proxies.map(proxy => (
-              <p key={`${proxy.proxyType}_${proxy.delay}`}>
-                {proxy.proxyType}, {proxy.delay} blocks <span>≈{secondsToDuration(proxy.duration)}</span>
-              </p>
+              <div key={`${proxy.proxyType}_${proxy.delay}`} css={{ display: 'flex', p: { width: '100%' } }}>
+                <p>{proxy.proxyType}</p>
+                <p>
+                  {proxy.delay} blocks <span>≈{secondsToDuration(proxy.duration)}</span>
+                </p>
+              </div>
             ))}
           </div>
         )

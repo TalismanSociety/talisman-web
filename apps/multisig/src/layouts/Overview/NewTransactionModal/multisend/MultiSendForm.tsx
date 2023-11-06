@@ -9,7 +9,7 @@ import MultiLineTransferInput from './MultiLineSendInput'
 import { isEqual } from 'lodash'
 import AmountRow from '@components/AmountRow'
 import BN from 'bn.js'
-import { AlertCircle } from '@talismn/icons'
+import { Alert } from '@components/Alert'
 
 const MultiSendForm = (props: {
   tokens: Loadable<BaseToken[]>
@@ -17,7 +17,8 @@ const MultiSendForm = (props: {
   setSends: (s: MultiSendSend[]) => void
   onBack: () => void
   onNext: () => void
-  canSend?: boolean
+  hasNonDelayedPermission?: boolean
+  hasDelayedPermission?: boolean
 }) => {
   const [selectedToken, setSelectedToken] = useState<BaseToken | undefined>()
   const [hasInvalidRow, setHasInvalidRow] = useState(false)
@@ -98,32 +99,24 @@ const MultiSendForm = (props: {
             <Button css={{ width: '100%' }} onClick={props.onBack} children={<h3>Back</h3>} variant="outlined" />
             <Button
               css={{ width: '100%' }}
-              disabled={props.sends.length === 0 || hasInvalidRow || !props.canSend}
+              disabled={props.sends.length === 0 || hasInvalidRow || !props.hasNonDelayedPermission}
               onClick={props.onNext}
               children={<h3>Next</h3>}
             />
           </div>
         </div>
-        {props.canSend === false && (
-          <div
-            css={({ color }) => ({
-              display: 'flex',
-              gap: 12,
-              backgroundColor: color.surface,
-              marginTop: 24,
-              color: color.lightGrey,
-              padding: 16,
-              borderRadius: 12,
-              width: '100%',
-              p: { fontSize: 14 },
-            })}
-          >
-            <AlertCircle size={32} />
-            <p>
-              Your Vault does not have the proxy permission required to send token on behalf of the proxied account.
-            </p>
-          </div>
-        )}
+        {props.hasNonDelayedPermission === false &&
+          (props.hasDelayedPermission ? (
+            <Alert>
+              <p>Time delayed proxies are not supported yet.</p>
+            </Alert>
+          ) : (
+            <Alert>
+              <p>
+                Your Vault does not have the proxy permission required to send token on behalf of the proxied account.
+              </p>
+            </Alert>
+          ))}
       </div>
     </div>
   )

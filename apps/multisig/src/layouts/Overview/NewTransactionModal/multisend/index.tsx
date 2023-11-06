@@ -39,7 +39,7 @@ const MultiSendAction = (props: { onCancel: () => void }) => {
   const apiLoadable = useRecoilValueLoadable(pjsApiSelector(multisig.chain.rpcs))
   const navigate = useNavigate()
 
-  const canSend = hasPermission(multisig, 'transfer')
+  const permissions = hasPermission(multisig, 'transfer')
 
   useEffect(() => {
     if (sends.length > 0 && apiLoadable.state === 'hasValue') {
@@ -124,7 +124,7 @@ const MultiSendAction = (props: { onCancel: () => void }) => {
         <>
           <h1>{name}</h1>
           <MultiSendForm
-            canSend={canSend}
+            {...permissions}
             tokens={tokens}
             onBack={() => setStep(Step.Name)}
             onNext={() => setStep(Step.Review)}

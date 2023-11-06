@@ -5,14 +5,16 @@ const PERMISSIONS_BY_PROXY_TYPE = {
   governance: ['Any', 'Governance', 'NonTransfer'],
 }
 
-export const hasPermission = (
-  multisig: MultisigWithExtraData,
-  permission: keyof typeof PERMISSIONS_BY_PROXY_TYPE,
-  allowDelay = false
-) => {
+export const hasPermission = (multisig: MultisigWithExtraData, permission: keyof typeof PERMISSIONS_BY_PROXY_TYPE) => {
   const permissions = PERMISSIONS_BY_PROXY_TYPE[permission]
 
-  return multisig.proxies?.some(
-    ({ proxyType, delay }) => permissions.includes(proxyType) && (allowDelay || delay === 0)
-  )
+  return {
+    hasNonDelayedPermission: multisig.proxies?.some(
+      ({ proxyType, delay }) => permissions.includes(proxyType) && delay === 0
+    ),
+
+    hasDelayedPermission: multisig.proxies?.some(
+      ({ proxyType, delay }) => permissions.includes(proxyType) && delay > 0
+    ),
+  }
 }

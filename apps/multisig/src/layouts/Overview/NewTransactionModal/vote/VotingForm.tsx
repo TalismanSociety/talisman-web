@@ -6,8 +6,8 @@ import { VoteDetails, isVoteDetailsComplete } from '@domains/referenda'
 import VoteOptions from './VoteOptions'
 import VoteStandard from './mode/VoteStandard'
 import { ProposalsDropdown } from './ProposalsDropdown'
-import { hasPermission } from '../../../../domains/proxy/util'
-import { AlertCircle } from '@talismn/icons'
+import { hasPermission } from '@domains/proxy/util'
+import { Alert } from '@components/Alert'
 
 type Props = {
   token: BaseToken
@@ -20,7 +20,7 @@ type Props = {
 const VotingForm: React.FC<Props> = ({ onCancel, onChange, onNext, token, voteDetails }) => {
   const [multisig] = useSelectedMultisig()
 
-  const canVote = hasPermission(multisig, 'governance')
+  const { hasDelayedPermission, hasNonDelayedPermission } = hasPermission(multisig, 'governance')
 
   const handleDetailsChange = (details: VoteDetails['details']) => {
     onChange({ referendumId: voteDetails.referendumId, details })
@@ -67,28 +67,20 @@ const VotingForm: React.FC<Props> = ({ onCancel, onChange, onNext, token, voteDe
           <Button onClick={onCancel} variant="outlined">
             <h3>Cancel</h3>
           </Button>
-          <Button onClick={onNext} disabled={!isVoteDetailsComplete(voteDetails) || canVote === false}>
+          <Button onClick={onNext} disabled={!isVoteDetailsComplete(voteDetails) || !hasNonDelayedPermission}>
             <h3>Next</h3>
           </Button>
         </div>
-        {canVote === false && (
-          <div
-            css={({ color }) => ({
-              display: 'flex',
-              gap: 12,
-              backgroundColor: color.surface,
-              marginTop: 24,
-              color: color.lightGrey,
-              padding: 16,
-              maxWidth: 490,
-              borderRadius: 12,
-              p: { fontSize: 14 },
-            })}
-          >
-            <AlertCircle size={32} />
-            <p>Your Vault does not have the proxy permission required to vote on behalf of the proxied account.</p>
-          </div>
-        )}
+        {hasNonDelayedPermission === false &&
+          (hasDelayedPermission ? (
+            <Alert>
+              <p>Time delayed proxies are not supported yet.</p>
+            </Alert>
+          ) : (
+            <Alert>
+              <p>Your Vault does not have the proxy permission required to vote on behalf of the proxied account.</p>
+            </Alert>
+          ))}
       </div>
     </div>
   )
