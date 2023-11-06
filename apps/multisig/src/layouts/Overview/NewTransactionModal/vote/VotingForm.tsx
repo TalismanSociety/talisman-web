@@ -1,12 +1,13 @@
 import { Button } from '@talismn/ui'
 import { css } from '@emotion/css'
 import { BaseToken } from '@domains/chains'
-import { selectedMultisigState } from '@domains/multisig'
+import { useSelectedMultisig } from '@domains/multisig'
 import { VoteDetails, isVoteDetailsComplete } from '@domains/referenda'
-import { useRecoilValue } from 'recoil'
 import VoteOptions from './VoteOptions'
 import VoteStandard from './mode/VoteStandard'
 import { ProposalsDropdown } from './ProposalsDropdown'
+import { hasPermission } from '@domains/proxy/util'
+import { Alert } from '@components/Alert'
 
 type Props = {
   token: BaseToken
@@ -17,7 +18,9 @@ type Props = {
 }
 
 const VotingForm: React.FC<Props> = ({ onCancel, onChange, onNext, token, voteDetails }) => {
-  const multisig = useRecoilValue(selectedMultisigState)
+  const [multisig] = useSelectedMultisig()
+
+  const { hasDelayedPermission, hasNonDelayedPermission } = hasPermission(multisig, 'governance')
 
   const handleDetailsChange = (details: VoteDetails['details']) => {
     onChange({ referendumId: voteDetails.referendumId, details })
@@ -64,10 +67,20 @@ const VotingForm: React.FC<Props> = ({ onCancel, onChange, onNext, token, voteDe
           <Button onClick={onCancel} variant="outlined">
             <h3>Cancel</h3>
           </Button>
-          <Button onClick={onNext} disabled={!isVoteDetailsComplete(voteDetails)}>
+          <Button onClick={onNext} disabled={!isVoteDetailsComplete(voteDetails) || !hasNonDelayedPermission}>
             <h3>Next</h3>
           </Button>
         </div>
+        {hasNonDelayedPermission === false &&
+          (hasDelayedPermission ? (
+            <Alert>
+              <p>Time delayed proxies are not supported yet.</p>
+            </Alert>
+          ) : (
+            <Alert>
+              <p>Your Vault does not have the proxy permission required to vote on behalf of the proxied account.</p>
+            </Alert>
+          ))}
       </div>
     </div>
   )

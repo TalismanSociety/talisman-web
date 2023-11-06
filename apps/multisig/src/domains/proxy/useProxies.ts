@@ -50,11 +50,12 @@ export const useProxies = (proxiedAddress: Address, chain: Chain, filter: Filter
         result[0].forEach(proxy => {
           const delegate = Address.fromSs58(proxy.delegate.toString())
           if (!delegate) return
+          const delay = proxy.delay.toNumber()
           proxiesList.push({
             delegate,
             proxyType: proxy.proxyType.toString(),
-            delay: proxy.delay.toNumber(),
-            duration: proxy.delay.toNumber() * expectedBlockTimeSec,
+            delay,
+            duration: delay * expectedBlockTimeSec,
           })
         })
         setProxies(proxiesList)

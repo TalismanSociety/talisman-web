@@ -18,6 +18,7 @@ export type AddressWithName = {
 }
 
 type Props = {
+  defaultAddress?: Address
   value?: string
   onChange: (address: Address | undefined, input: string) => void
   addresses?: AddressWithName[]
@@ -30,11 +31,19 @@ type Props = {
  * Handles validating address input as well as displaying a list of addresses to select from.
  * Supports both controlled and uncontrolled usage input.
  */
-const AddressInput: React.FC<Props> = ({ onChange, value, addresses = [], chain, leadingLabel, compact }) => {
+const AddressInput: React.FC<Props> = ({
+  onChange,
+  value,
+  defaultAddress,
+  addresses = [],
+  chain,
+  leadingLabel,
+  compact,
+}) => {
   const [input, setInput] = useState(value ?? '')
   const [expanded, setExpanded] = useState(false)
   const [querying, setQuerying] = useState(false)
-  const [address, setAddress] = useState(value ? Address.fromSs58(value) || undefined : undefined)
+  const [address, setAddress] = useState(defaultAddress ?? (value ? Address.fromSs58(value) || undefined : undefined))
   const [contact, setContact] = useState<AddressWithName | undefined>(undefined)
   const containerRef = useRef<HTMLDivElement>(null)
 
@@ -52,7 +61,7 @@ const AddressInput: React.FC<Props> = ({ onChange, value, addresses = [], chain,
   const query = value ?? input
 
   // input displays a non editable pill that shows selected contact's name, address and identicon
-  const controlledSelectedInput = address && addresses.length > 0
+  const controlledSelectedInput = address !== undefined
 
   const handleQueryChange = (addressString: string) => {
     let address: Address | undefined
@@ -129,15 +138,18 @@ const AddressInput: React.FC<Props> = ({ onChange, value, addresses = [], chain,
         placeholder={
           controlledSelectedInput ? '' : addresses.length > 0 ? 'Search or paste address...' : 'Enter address...'
         }
-        value={address && addresses.length > 0 ? '' : query}
+        value={address ? '' : query}
         onChange={e => {
           setQuerying(true)
           const validInput = handleQueryChange(e.target.value)
 
           // user pasted a valid address, so they're no longer querying
-          if (validInput) setQuerying(false)
+          if (validInput) {
+            setQuerying(false)
+            setExpanded(true)
+          }
         }}
-        onFocus={() => setExpanded(addresses.length > 0)}
+        onFocus={() => setExpanded(addresses.length > 0 || validRawInputAddress !== undefined)}
       />
       <div
         css={({ color }) => ({

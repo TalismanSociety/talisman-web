@@ -1,18 +1,18 @@
 import Logo from '@components/Logo'
-import { activeMultisigsState, combinedViewState, useSelectedMultisig } from '@domains/multisig'
+import { activeMultisigsState, useSelectedMultisig } from '@domains/multisig'
 import { css } from '@emotion/css'
-import { Button } from '@talismn/ui'
-import { useRecoilState, useRecoilValue } from 'recoil'
+import { useRecoilValue } from 'recoil'
 import { MultisigSelect } from '../components/MultisigSelect'
 
 import { selectedAccountState } from '../domains/auth'
 import { accountsState } from '../domains/extension'
 import AccountSwitcher from '../components/AccountSwitcher'
+import { useNavigate } from 'react-router-dom'
 
 const Header = () => {
+  const navigate = useNavigate()
   const [selectedMultisig, setSelectedMultisig] = useSelectedMultisig()
   const activeMultisigs = useRecoilValue(activeMultisigsState)
-  const [combinedView, setCombinedView] = useRecoilState(combinedViewState)
   const selectedAccount = useRecoilValue(selectedAccountState)
   const extensionAccounts = useRecoilValue(accountsState)
 
@@ -34,7 +34,7 @@ const Header = () => {
           gap: 12,
         }}
       >
-        <Logo css={{ width: 106, marginRight: 16 }} />
+        <Logo css={{ cursor: 'pointer', width: 106, marginRight: 16 }} onClick={() => navigate('/')} />
         {activeMultisigs.length === 0 ? null : (
           <>
             <MultisigSelect
@@ -42,13 +42,13 @@ const Header = () => {
               selectedMultisig={selectedMultisig}
               onChange={setSelectedMultisig}
             />
-            <Button
+            {/* <Button
               variant="secondary"
               css={{ height: 56, width: 'max-content' }}
               onClick={() => setCombinedView(!combinedView)}
             >
               <div>{combinedView ? 'Combined' : 'Selected'} Vault View</div>
-            </Button>
+            </Button> */}
           </>
         )}
       </div>

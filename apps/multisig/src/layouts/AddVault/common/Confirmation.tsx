@@ -1,18 +1,30 @@
-import { BaseToken, Chain, Price, getInitialProxyBalance } from '@domains/chains'
-import { AugmentedAccount, Balance, ProxyDefinition } from '@domains/multisig'
+import { Loadable, useRecoilValue } from 'recoil'
+import React, { useEffect, useMemo } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { css } from '@emotion/css'
-import { Info } from '@talismn/icons'
-import { IconButton } from '@talismn/ui'
-import { Skeleton } from '@talismn/ui'
+import { isEqual } from 'lodash'
+
+import { AccountDetails } from '@components/AddressInput/AccountDetails'
+import { ChainPill } from '@components/ChainPill'
+import { Member } from '@components/Member'
+import { BaseToken, Chain, Price, getInitialProxyBalance } from '@domains/chains'
+import {
+  AugmentedAccount,
+  Balance,
+  ProxyDefinition,
+  activeMultisigsState,
+  useSelectedMultisig,
+} from '@domains/multisig'
+import { useProxies } from '@domains/proxy/useProxies'
+import { Address, toMultisigAddress } from '@util/addresses'
 import { balanceToFloat, formatUsd } from '@util/numbers'
-import { Loadable } from 'recoil'
-import { Address, toMultisigAddress } from '../../../util/addresses'
-import { AccountDetails } from '../../../components/AddressInput/AccountDetails'
-import { ChainPill } from '../../../components/ChainPill'
-import { Member } from '../../../components/Member'
-import React from 'react'
-import { secondsToDuration } from '../../../util/misc'
+import { secondsToDuration } from '@util/misc'
+
+import { Info } from '@talismn/icons'
+import { CircularProgressIndicator, IconButton } from '@talismn/ui'
+import { Skeleton } from '@talismn/ui'
 import { CancleOrNext } from './CancelOrNext'
+import { device } from '@util/breakpoints'
 
 const NameAndSummary: React.FC<{ name: string; chain: Chain; proxiedAccount?: Address }> = ({
   name,
@@ -44,7 +56,7 @@ const NameAndSummary: React.FC<{ name: string; chain: Chain; proxiedAccount?: Ad
             borderRadius: 8,
           })}
         >
-          <AccountDetails identiconSize={20} address={proxiedAccount} />
+          <AccountDetails identiconSize={20} address={proxiedAccount} chain={chain} />
         </div>
       </div>
     ) : (
@@ -75,80 +87,129 @@ const Threshold: React.FC<{ threshold: number; membersCount: number }> = ({ thre
   </div>
 )
 
-const ProxyTypes: React.FC<{ proxies: ProxyDefinition[] }> = ({ proxies }) => (
-  <div css={{ display: 'grid', gap: 12 }}>
-    <p>Proxy Types</p>
-    <div css={{ display: 'grid', gap: 8 }}>
-      {proxies.map(proxy => (
-        <p key={`${proxy.proxyType}_${proxy.delay}`} css={({ color }) => ({ color: color.offWhite })}>
-          {proxy.proxyType}, {proxy.delay} blocks ≈{secondsToDuration(proxy.duration)}
-        </p>
-      ))}
+const ProxyTypes: React.FC<{ proxies?: ProxyDefinition[] }> = ({ proxies }) => (
+  <div>
+    <div css={{ display: 'flex', alignItems: 'center', p: { width: '100%' } }}>
+      <p>Proxy Types</p>
+      <p>Time Delay</p>
+    </div>
+    <div css={({ color }) => ({ p: { color: color.offWhite, span: { color: color.lightGrey } }, marginTop: 12 })}>
+      {proxies ? (
+        proxies.length === 0 ? (
+          <p>The multisig is not a proxy of the imported proxied address.</p>
+        ) : (
+          <div css={{ display: 'grid', gap: 8 }}>
+            {proxies.map(proxy => (
+              <div key={`${proxy.proxyType}_${proxy.delay}`} css={{ display: 'flex', p: { width: '100%' } }}>
+                <p>{proxy.proxyType}</p>
+                <p>
+                  {proxy.delay} blocks <span>≈{secondsToDuration(proxy.duration)}</span>
+                </p>
+              </div>
+            ))}
+          </div>
+        )
+      ) : (
+        <CircularProgressIndicator size={16} />
+      )}
     </div>
   </div>
 )
 
-const Cost = (props: { amount: Balance; symbol: string; price: number }) => {
-  return (
-    <p>
-      {balanceToFloat(props.amount)} {props.symbol} ({formatUsd(balanceToFloat(props.amount) * props.price)})
-    </p>
-  )
+export const ImportedProxiesTypes: React.FC<{
+  chain: Chain
+  multisigAddress: Address
+  proxiedAddress: Address
+  onProxies: (proxies?: ProxyDefinition[]) => void
+}> = ({ chain, multisigAddress, proxiedAddress, onProxies }) => {
+  const { proxies } = useProxies(proxiedAddress, chain)
+
+  const filteredProxies = proxies?.filter(({ delegate }) => delegate.isEqual(multisigAddress))
+
+  useEffect(() => {
+    onProxies(filteredProxies)
+  }, [filteredProxies, onProxies])
+
+  return <ProxyTypes proxies={filteredProxies} />
 }
+
+const Cost = ({
+  amount,
+  symbol,
+  price,
+  label,
+}: {
+  amount?: Balance
+  symbol?: string
+  price?: number
+  label: string
+}) => (
+  <div css={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+    <p>{label}</p>
+    {amount !== undefined && symbol !== undefined && price !== undefined ? (
+      <p>
+        {balanceToFloat(amount)} {symbol} ({formatUsd(balanceToFloat(amount) * price)})
+      </p>
+    ) : (
+      <Skeleton.Surface css={{ height: 14, minWidth: 125 }} />
+    )}
+  </div>
+)
 
 const Confirmation = (props: {
   onBack: () => void
   onCreateVault: () => void
-  onAlreadyHaveAnyProxy: () => void
   selectedAccounts: AugmentedAccount[]
+  proxiedAccount?: Address
   threshold: number
   name: string
   chain: Chain
-  tokenWithPrice: Loadable<{ token: BaseToken; price: Price }>
-  reserveAmount: Loadable<Balance>
-  existentialDeposit: Loadable<Balance>
-  estimatedFee: Balance | undefined
-  extrinsicsReady: boolean
+  tokenWithPrice?: Loadable<{ token: BaseToken; price: Price }>
+  reserveAmount?: Loadable<Balance>
+  existentialDeposit?: Loadable<Balance>
+  estimatedFee?: Balance | undefined
+  extrinsicsReady?: boolean
+  importing?: boolean
 }) => {
+  const navigate = useNavigate()
+
   const { tokenWithPrice, reserveAmount, estimatedFee, chain, existentialDeposit } = props
+  const activeMultisigs = useRecoilValue(activeMultisigsState)
+  const [_, setSelectedMultisig] = useSelectedMultisig()
 
   const multisigAddress = toMultisigAddress(
     props.selectedAccounts.map(a => a.address),
     props.threshold
   )
 
-  const existentialDepositComponent =
-    tokenWithPrice.state === 'hasValue' && existentialDeposit.state === 'hasValue' ? (
-      <Cost
-        amount={getInitialProxyBalance(existentialDeposit.contents)}
-        symbol={tokenWithPrice.contents.token.symbol}
-        price={tokenWithPrice.contents.price.current}
-      />
-    ) : (
-      <Skeleton.Surface css={{ height: '14px', minWidth: '125px' }} />
-    )
+  // Note: this is only updated in import vault flow
+  const [proxies, setProxies] = React.useState<ProxyDefinition[] | undefined>([
+    {
+      proxyType: 'Any',
+      delay: 0,
+      duration: 0,
+      delegate: multisigAddress,
+    },
+  ])
+  const vaultExists = useMemo(() => {
+    if (!props.proxiedAccount) return undefined
 
-  const reserveAmountComponent =
-    tokenWithPrice.state === 'hasValue' && reserveAmount.state === 'hasValue' ? (
-      <Cost
-        amount={reserveAmount.contents}
-        symbol={tokenWithPrice.contents.token.symbol}
-        price={tokenWithPrice.contents.price.current}
-      />
-    ) : (
-      <Skeleton.Surface css={{ height: '14px', minWidth: '125px' }} />
-    )
+    for (const multisig of activeMultisigs) {
+      if (
+        multisig.proxyAddress?.isEqual(props.proxiedAccount) &&
+        multisig.multisigAddress.isEqual(multisigAddress) &&
+        multisig.chain.chainName === props.chain.chainName
+      )
+        return multisig
+    }
+    return undefined
+  }, [activeMultisigs, multisigAddress, props.chain.chainName, props.proxiedAccount])
 
-  const feeAmountComponent =
-    tokenWithPrice.state === 'hasValue' && estimatedFee ? (
-      <Cost
-        amount={estimatedFee}
-        symbol={tokenWithPrice.contents.token.symbol}
-        price={tokenWithPrice.contents.price.current}
-      />
-    ) : (
-      <Skeleton.Surface css={{ height: '14px', minWidth: '125px' }} />
-    )
+  const goToExistingVault = () => {
+    if (!vaultExists) return
+    setSelectedMultisig(vaultExists)
+    navigate('/overview')
+  }
 
   return (
     <div
@@ -165,7 +226,9 @@ const Confirmation = (props: {
         <h1>Confirmation</h1>
         <p css={{ textAlign: 'center', marginTop: 16 }}>Please review and confirm details before proceeding.</p>
       </div>
-      <NameAndSummary name={props.name} chain={chain} />
+      <NameAndSummary name={props.name} chain={chain} proxiedAccount={props.proxiedAccount} />
+
+      {/** Vault config summary */}
       <div
         css={{
           display: 'grid',
@@ -177,73 +240,142 @@ const Confirmation = (props: {
         }}
       >
         <h2 css={({ color }) => ({ color: color.offWhite, fontSize: 16 })}>Vault Config</h2>
-        <div css={{ display: 'grid', gap: 24, gridTemplateColumns: '1fr 1fr', alignItems: 'flex-start' }}>
+        <div
+          className={css`
+            display: grid;
+            gap: 32px;
+            grid-template-columns: 1fr;
+            align-items: flex-start;
+            @media ${device.md} {
+              gap: 24px;
+              grid-template-columns: 1fr 1fr;
+            }
+          `}
+        >
           <Members members={props.selectedAccounts} chain={props.chain} />
           <div css={{ display: 'grid', gap: 32 }}>
             <Threshold threshold={props.threshold} membersCount={props.selectedAccounts.length} />
-            <ProxyTypes
-              proxies={[
-                {
-                  proxyType: 'Any',
-                  delay: 0,
-                  duration: 0,
-                  delegate: multisigAddress,
-                },
-              ]}
-            />
+
+            {props.proxiedAccount ? (
+              <ImportedProxiesTypes
+                chain={props.chain}
+                multisigAddress={multisigAddress}
+                proxiedAddress={props.proxiedAccount}
+                onProxies={newProxies => {
+                  console.log(newProxies)
+                  if (isEqual(newProxies, proxies)) return
+                  setProxies(newProxies)
+                }}
+              />
+            ) : (
+              <ProxyTypes proxies={proxies} />
+            )}
           </div>
         </div>
       </div>
-      <div
-        className={css`
-          display: flex;
-          align-items: center;
-          background: var(--color-controlBackground);
-          border-radius: 16px;
-          padding: 16px;
-          width: 100%;
-          gap: 16px;
-        `}
-      >
-        <IconButton size="54px" contentColor={'#d5ff5c'}>
-          <Info size={54} />
-        </IconButton>
-        <p>
-          To operate your vault {chain.chainName} requires some funds to be reserved as a deposit. This will be fully
-          refunded when you wind down your vault.
-        </p>
+
+      {/** Information for create vault flow */}
+      {!props.proxiedAccount && (
+        <div
+          className={css`
+            display: flex;
+            align-items: center;
+            background: var(--color-controlBackground);
+            border-radius: 16px;
+            padding: 16px;
+            width: 100%;
+            gap: 16px;
+          `}
+        >
+          <IconButton size="54px" contentColor={'#d5ff5c'}>
+            <Info size={54} />
+          </IconButton>
+          <p>
+            To operate your vault {chain.chainName} requires some funds to be reserved as a deposit. This will be fully
+            refunded when you wind down your vault.
+          </p>
+        </div>
+      )}
+
+      {/** Importing vault off-chain, dont need gas fee/reserved amounts */}
+      {!props.proxiedAccount && (
+        <div css={{ width: '100%' }}>
+          <Cost
+            label="Deposit Amount (Reserved)"
+            amount={reserveAmount?.contents}
+            symbol={tokenWithPrice?.contents.token.symbol}
+            price={tokenWithPrice?.contents.price.current}
+          />
+          <Cost
+            label="Estimated Transaction Fee"
+            amount={estimatedFee}
+            symbol={tokenWithPrice?.contents.token.symbol}
+            price={tokenWithPrice?.contents.price.current}
+          />
+          <Cost
+            label="Initial Vault Funds"
+            amount={existentialDeposit?.contents ? getInitialProxyBalance(existentialDeposit.contents) : undefined}
+            symbol={tokenWithPrice?.contents.token.symbol}
+            price={tokenWithPrice?.contents.price.current}
+          />
+        </div>
+      )}
+
+      <div css={{ width: '100%' }}>
+        {props.proxiedAccount && vaultExists && (
+          <p
+            css={({ color }) => ({
+              textAlign: 'center',
+              fontSize: 14,
+              color: color.lightGrey,
+              marginBottom: 16,
+              span: {
+                'fontWeight': 700,
+                'color': color.offWhite,
+                'cursor': 'pointer',
+                'whiteSpace': 'nowrap',
+                ':hover': {
+                  opacity: 0.7,
+                },
+              },
+            })}
+          >
+            The Vault has already been created as <span onClick={goToExistingVault}>{vaultExists.name}</span>
+          </p>
+        )}
+        {/** Trying to import a vault unit that does not have any proxy relationship */}
+        {proxies?.length === 0 && props.proxiedAccount !== undefined && (
+          <p
+            css={({ color }) => ({
+              textAlign: 'center',
+              fontSize: 14,
+              color: color.error,
+              marginBottom: 16,
+            })}
+          >
+            Please make sure your multisig is a proxy of the imported proxied address.
+          </p>
+        )}
+
+        <CancleOrNext
+          block
+          cancel={{
+            onClick: props.onBack,
+            children: 'Back',
+          }}
+          next={{
+            children: props.proxiedAccount ? (vaultExists ? 'Go to Vault' : 'Import Vault') : 'Create Vault',
+            onClick: vaultExists ? goToExistingVault : props.onCreateVault,
+            disabled:
+              (tokenWithPrice && tokenWithPrice.state !== 'hasValue') ||
+              props.selectedAccounts.length < 2 ||
+              props.extrinsicsReady === false ||
+              !proxies ||
+              proxies?.length === 0,
+            loading: props.importing,
+          }}
+        />
       </div>
-      <div
-        className={css`
-          display: grid;
-          grid-template-columns: 1fr auto;
-          grid-template-rows: 1fr 1fr;
-          justify-content: space-between;
-          width: 100%;
-          p:nth-child(even) {
-            margin-left: auto;
-          }
-        `}
-      >
-        <p>Deposit Amount (Reserved)</p>
-        {reserveAmountComponent}
-        <p>Estimated Transaction Fee</p>
-        {feeAmountComponent}
-        <p>Initial Vault Funds</p>
-        {existentialDepositComponent}
-      </div>
-      <CancleOrNext
-        block
-        cancel={{
-          onClick: props.onBack,
-          children: 'Back',
-        }}
-        next={{
-          children: 'Create Vault',
-          onClick: props.onCreateVault,
-          disabled: tokenWithPrice.state !== 'hasValue' || props.selectedAccounts.length < 2 || !props.extrinsicsReady,
-        }}
-      />
     </div>
   )
 }
