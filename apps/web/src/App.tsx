@@ -18,6 +18,7 @@ import ThemeProvider from './App.Theme'
 import { PolkadotApiProvider } from '@talismn/react-polkadot-api'
 import { chainDeriveState, chainQueryMultiState, chainQueryState } from '@domains/common/recoils/query'
 import { TalismanExtensionSynchronizer } from '@domains/extension'
+import { WagmiProvider } from '@domains/extension/wagmi'
 
 const Loader = () => {
   return (
@@ -48,22 +49,24 @@ const App = () => (
         )}
       >
         <Suspense fallback={<Loader />}>
-          <PolkadotApiProvider
-            queryState={chainQueryState}
-            deriveState={chainDeriveState}
-            queryMultiState={chainQueryMultiState}
-          >
-            <Portfolio.Provider>
-              <TalismanProvider>
-                <ExtensionWatcher />
-                <TalismanExtensionSynchronizer />
-                <LegacyBalancesWatcher />
-                <Development />
-                <RouterProvider router={router} />
-                <FairyBreadBanner />
-              </TalismanProvider>
-            </Portfolio.Provider>
-          </PolkadotApiProvider>
+          <WagmiProvider>
+            <PolkadotApiProvider
+              queryState={chainQueryState}
+              deriveState={chainDeriveState}
+              queryMultiState={chainQueryMultiState}
+            >
+              <Portfolio.Provider>
+                <TalismanProvider>
+                  <ExtensionWatcher />
+                  <TalismanExtensionSynchronizer />
+                  <LegacyBalancesWatcher />
+                  <Development />
+                  <RouterProvider router={router} />
+                  <FairyBreadBanner />
+                </TalismanProvider>
+              </Portfolio.Provider>
+            </PolkadotApiProvider>
+          </WagmiProvider>
         </Suspense>
       </ErrorBoundary>
     </RecoilRoot>

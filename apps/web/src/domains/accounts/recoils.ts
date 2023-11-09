@@ -83,6 +83,11 @@ export const writeableSubstrateAccountsState = selector({
   get: ({ get }) => get(writeableAccountsState).filter(x => x.type !== 'ethereum'),
 })
 
+export const writeableEvmAccountsState = selector({
+  key: 'WriteableEvmAccounts',
+  get: ({ get }) => get(writeableAccountsState).filter(x => x.type === 'ethereum'),
+})
+
 export const substrateAccountsState = selector({
   key: 'SubstrateAccounts',
   get: ({ get }) => {
@@ -92,16 +97,11 @@ export const substrateAccountsState = selector({
 })
 
 export const evmAccountsState = selector({
-  key: 'EvmAccounts',
+  key: 'EVMAccountsState',
   get: ({ get }) => {
     const accounts = get(accountsState)
     return accounts.filter(x => x.type === 'ethereum')
   },
-})
-
-export const writeableEvmAccountsState = selector({
-  key: '"WriteableEvmAccounts',
-  get: ({ get }) => get(evmAccountsState).filter(x => !x.readonly),
 })
 
 export const selectedAccountAddressesState = atom<string[] | undefined>({

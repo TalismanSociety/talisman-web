@@ -1,4 +1,4 @@
-import BaseUnstakeDialog from '@components/recipes/UnstakeDialog'
+import { NominationPoolsUnstakeDialog } from '@components/recipes/UnstakeDialog'
 import { usePoolUnstakeForm } from '@domains/staking/substrateNominationPools/hooks'
 import { useLocalizedLockDuration } from '@domains/staking/substrateNominationPools/hooks/useLockDuration'
 import { useCallback, useEffect } from 'react'
@@ -28,7 +28,7 @@ const UnstakeDialog = (props: { account?: string; onDismiss: () => unknown }) =>
   )
 
   return (
-    <BaseUnstakeDialog
+    <NominationPoolsUnstakeDialog
       isError={inputError !== undefined}
       open={props.account !== undefined}
       availableAmount={available.decimalAmount?.toHuman() ?? '...'}

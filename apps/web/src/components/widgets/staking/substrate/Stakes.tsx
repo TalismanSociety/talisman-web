@@ -3,13 +3,14 @@ import StakeItem from '@components/recipes/StakeItem'
 import { ChainProvider, chainsState } from '@domains/chains'
 import { useSubstrateFiatTotalStaked } from '@domains/staking/substrateValidator'
 import { Button, HiddenDetails, Text } from '@talismn/ui'
-import { Suspense, useId } from 'react'
+import { Fragment, Suspense, useId } from 'react'
 import { Link } from 'react-router-dom'
 import { useRecoilValue } from 'recoil'
 import AnimatedFiatNumber from '../../AnimatedFiatNumber'
 import ErrorBoundary from '../../ErrorBoundary'
 import PoolStakes from './PoolStakes'
 import ValidatorStakes from './ValidatorStakes'
+import SlpxStakes from '@components/widgets/staking/slpx/Stakes'
 
 const NoStakePrompt = (props: { className?: string }) => (
   <div className={props.className}>
@@ -57,13 +58,13 @@ const StakeHeader = () => {
   )
 }
 
-const Stakes = () => {
+const Stakes = (props: { hideHeader?: boolean }) => {
   const chains = useRecoilValue(chainsState)
   const skeletonId = useId()
 
   return (
     <div id="staking">
-      <StakeHeader />
+      {!props.hideHeader && <StakeHeader />}
       <div
         css={{
           display: 'flex',
@@ -72,21 +73,25 @@ const Stakes = () => {
           [`[class~="${skeletonId}"]:first-of-type`]: { display: 'revert' },
         }}
       >
-        {chains.map((chain, index) => (
-          <Suspense
-            key={index}
-            fallback={<StakeItem.Skeleton className={skeletonId} css={{ order: 1, display: 'none' }} />}
-          >
-            <ChainProvider chain={chain}>
-              <ErrorBoundary orientation="horizontal">
-                <PoolStakes />
-              </ErrorBoundary>
-              <ErrorBoundary orientation="horizontal">
-                <ValidatorStakes />
-              </ErrorBoundary>
-            </ChainProvider>
-          </Suspense>
-        ))}
+        <Suspense fallback={<StakeItem.Skeleton className={skeletonId} css={{ order: 1, display: 'none' }} />}>
+          {chains.map((chain, index) => (
+            <Fragment key={index}>
+              <ChainProvider chain={chain}>
+                <ErrorBoundary orientation="horizontal">
+                  <PoolStakes />
+                </ErrorBoundary>
+                <ErrorBoundary orientation="horizontal">
+                  <ValidatorStakes />
+                </ErrorBoundary>
+              </ChainProvider>
+            </Fragment>
+          ))}
+          <ErrorBoundary orientation="horizontal">
+            <Suspense>
+              <SlpxStakes />
+            </Suspense>
+          </ErrorBoundary>
+        </Suspense>
         <NoStakePrompt css={{ 'display': 'none', ':only-child': { display: 'revert' } }} />
       </div>
     </div>
