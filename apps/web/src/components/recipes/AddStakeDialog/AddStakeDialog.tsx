@@ -1,15 +1,19 @@
 import { AlertDialog, Button, Text, TextInput } from '@talismn/ui'
+import type { ReactNode } from 'react'
 
 export type AddStakeDialogProps = {
+  message: ReactNode
   open: boolean
   onDismiss: () => unknown
   onConfirm: () => unknown
+  accountSelector?: ReactNode
   confirmState?: 'pending' | 'disabled'
   availableToStake: string
   amount: string
+  rate?: string
   fiatAmount: string
   newAmount: string
-  newFiatAmount: string
+  newFiatAmount: ReactNode
   onRequestMaxAmount: () => unknown
   onChangeAmount: (amount: string) => unknown
   isError?: boolean
@@ -24,8 +28,9 @@ const AddStakeDialog = (props: AddStakeDialogProps) => (
     content={
       <>
         <Text.Body as="p" css={{ marginBottom: '2.6rem' }}>
-          Increase your stake below. Talisman will automatically stake this in the same nomination pool for you.
+          {props.message}
         </Text.Body>
+        {props.accountSelector && <div css={{ marginBottom: '2.6rem' }}>{props.accountSelector}</div>}
         <TextInput
           type="number"
           inputMode="decimal"
@@ -51,6 +56,14 @@ const AddStakeDialog = (props: AddStakeDialogProps) => (
             <Text.Body as="div">{props.newFiatAmount}</Text.Body>
           </div>
         </div>
+        {props.rate && (
+          <div css={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '1.6rem' }}>
+            <Text.Body alpha="high">Rate</Text.Body>
+            <Text.Body as="div" alpha="high">
+              {props.rate}
+            </Text.Body>
+          </div>
+        )}
       </>
     }
     confirmButton={
@@ -63,6 +76,27 @@ const AddStakeDialog = (props: AddStakeDialogProps) => (
       </Button>
     }
     onRequestDismiss={props.onDismiss}
+  />
+)
+
+export type NominationPoolsAddStakeDialogProps = Omit<AddStakeDialogProps, 'message' | 'rate' | 'buttonText'>
+
+export const NominationPoolsAddStakeDialog = (props: NominationPoolsAddStakeDialogProps) => (
+  <AddStakeDialog
+    {...props}
+    message="Increase your stake below. Talisman will automatically stake this in the same nomination pool for you."
+  />
+)
+
+export type SlpxAddStakeDialogProps = Omit<AddStakeDialogProps, 'message' | 'buttonText'> & {
+  rate: string
+  approvalNeed?: boolean
+}
+
+export const SlpxAddStakeDialog = (props: SlpxAddStakeDialogProps) => (
+  <AddStakeDialog
+    {...props}
+    message="Increase your stake below. Talisman will automatically stake this using Bifrost liquid staking for you."
   />
 )
 

@@ -5,6 +5,7 @@ import type { InjectedWindow } from '@polkadot/extension-inject/types'
 import { usePostHog } from 'posthog-js/react'
 import { useEffect } from 'react'
 import { atom, useRecoilState, useSetRecoilState } from 'recoil'
+import { wagmiInjectedConnector } from './wagmi'
 
 export const allowExtensionConnectionState = atom<boolean | null>({
   key: 'allow-extension-connection',
@@ -19,8 +20,50 @@ export const ExtensionWatcher = () => {
 
   useEffect(() => {
     if (!allowExtensionConnection) {
+      void wagmiInjectedConnector.disconnect()
       return setAccounts([])
     }
+
+    void Promise.allSettled([
+      web3Enable(import.meta.env.REACT_APP_APPLICATION_NAME ?? 'Talisman'),
+      wagmiInjectedConnector.connect(),
+    ]).then(([substrateExtensionsResult, evmExtensionResult]) => {
+      const evmAccount =
+        evmExtensionResult.status === 'rejected'
+          ? undefined
+          : { address: evmExtensionResult.value.account, type: 'ethereum' as const }
+
+      if (substrateExtensionsResult.status === 'fulfilled') {
+        posthog?.capture('Substrate extensions connected', {
+          $set: { substrateExtensions: substrateExtensionsResult.value.map(x => x.name) },
+        })
+
+        return substrateExtensionsResult.value.map(extension =>
+          extension.accounts.subscribe(accounts => {
+            const substrateExtensionAccounts = accounts.map(account => ({
+              ...account,
+              // @ts-expect-error
+              readonly: Boolean(account.readonly),
+              // @ts-expect-error
+              partOfPortfolio: Boolean(account.partOfPortfolio),
+            }))
+
+            if (substrateExtensionAccounts.some(x => x.address === evmAccount?.address) || evmAccount === undefined) {
+              setAccounts(substrateExtensionAccounts)
+            } else {
+              setAccounts([evmAccount, ...substrateExtensionAccounts])
+            }
+          })
+        )
+      }
+
+      if (evmExtensionResult.status === 'fulfilled' && evmAccount !== undefined) {
+        setAccounts([evmAccount])
+        return []
+      }
+
+      return []
+    })
 
     const unsubscribesPromise = web3Enable(import.meta.env.REACT_APP_APPLICATION_NAME ?? 'Talisman').then(
       async extensions => {

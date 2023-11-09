@@ -137,7 +137,15 @@ const StakePosition = Object.assign(
               <div css={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                 <StakeStatusIndicator status={props.stakeStatus} />
                 <Tooltip content={props.provider}>
-                  <Text.BodySmall css={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  <Text.BodySmall
+                    css={{
+                      'overflow': 'hidden',
+                      'textOverflow': 'ellipsis',
+                      '@container (min-width: 100rem)': {
+                        whiteSpace: 'nowrap',
+                      },
+                    }}
+                  >
                     {props.provider}
                   </Text.BodySmall>
                 </Tooltip>
@@ -160,9 +168,9 @@ const StakePosition = Object.assign(
           <div
             css={{ 'gridArea': 'asset', 'display': 'none', '@container (min-width: 100rem)': { display: 'revert' } }}
           >
-            <Text.BodySmall as="div">DOT</Text.BodySmall>
+            <Text.BodySmall as="div">{props.symbol}</Text.BodySmall>
             <Text.Body as="div" alpha="high">
-              Polkadot
+              {props.chain}
             </Text.Body>
           </div>
           <Surface

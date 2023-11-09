@@ -1,4 +1,4 @@
-import BaseAddStakeDialog from '@components/recipes/AddStakeDialog'
+import { NominationPoolsAddStakeDialog } from '@components/recipes/AddStakeDialog'
 import { useExtrinsic } from '@domains/common'
 import { usePoolAddForm } from '@domains/staking/substrateNominationPools/hooks'
 import { useEffect } from 'react'
@@ -30,7 +30,7 @@ const AddStakeDialog = (props: { account?: string; onDismiss: () => unknown }) =
   )
 
   return (
-    <BaseAddStakeDialog
+    <NominationPoolsAddStakeDialog
       isError={inputError !== undefined}
       open={props.account !== undefined}
       availableToStake={availableBalance.decimalAmount?.toHuman() ?? '...'}

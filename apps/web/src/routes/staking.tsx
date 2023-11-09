@@ -25,7 +25,9 @@ const StakeableAssetItem = ({
       return 0
     }
 
-    return BigNumber(token.sum.planck.locked.toString()).dividedBy(token.sum.planck.total.toString()).toNumber()
+    return BigNumber((token.sum.planck.locked + token.sum.planck.reserved).toString())
+      .dividedBy(token.sum.planck.total.toString())
+      .toNumber()
   }, [asset.symbol, balances])
 
   return (
@@ -34,7 +36,7 @@ const StakeableAssetItem = ({
       logo={asset.logo}
       chain={asset.chain}
       apr={asset.apr}
-      type={asset.providers.length === 1 ? asset.providers[0].name : 'Multiple'}
+      type={asset.providers.length === 1 ? asset.providers[0].type : 'Multiple'}
       provider={asset.chain}
       stakePercentage={stakePercentage}
       stakeButton={<StakeableAsset.StakeButton onClick={onClick} />}
@@ -70,9 +72,12 @@ const StakeableAssets = () => {
           {selectedStakableAsset.providers.map((provider, index) => (
             <StakeProviderDialog.Option
               key={index}
-              name={provider.name}
+              name={provider.type}
               description={provider.description}
-              onSelect={() => navigate(provider.url)}
+              onSelect={() => {
+                setSelectedStakeableAssetIndex(undefined)
+                navigate(provider.url)
+              }}
             />
           ))}
         </StakeProviderDialog>
@@ -81,7 +86,7 @@ const StakeableAssets = () => {
   )
 }
 
-const Foo = () => {
+const Staking = () => {
   const sections = ['stakeable-assets', 'positions'] as const
   const [selectedSection, setSelectedSection] = useState<(typeof sections)[number]>('stakeable-assets')
   return (
@@ -90,9 +95,9 @@ const Foo = () => {
         <SegmentedButton.ButtonSegment value="stakeable-assets">Stake</SegmentedButton.ButtonSegment>
         <SegmentedButton.ButtonSegment value="positions">My positions</SegmentedButton.ButtonSegment>
       </SegmentedButton>
-      {selectedSection === 'positions' ? <Stakes /> : <StakeableAssets />}
+      {selectedSection === 'positions' ? <Stakes hideHeader /> : <StakeableAssets />}
     </Surface>
   )
 }
 
-export default Foo
+export default Staking

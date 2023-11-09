@@ -25,7 +25,7 @@ const EraEta = () => {
 const InnerStakeDialog = () => {
   const [searchParams, setSearchParams] = useSearchParams()
 
-  const open = searchParams.get('action') === 'stake'
+  const open = searchParams.get('action') === 'stake' && searchParams.get('type') === 'nomination-pools'
   const initialChain = searchParams.get('chain')
   const account = searchParams.get('account') ?? undefined
 
@@ -96,7 +96,7 @@ const InnerStakeDialog = () => {
 // TODO: Clean this up
 // we use a wrapper component to reset the dialog state on close
 // this is right now the safest change
-const StakeDialog = () => {
+const NominationPoolsStakeSideSheet = () => {
   const [searchParams] = useSearchParams()
   const open = searchParams.get('action') === 'stake'
 
@@ -107,4 +107,4 @@ const StakeDialog = () => {
   return <InnerStakeDialog />
 }
 
-export default StakeDialog
+export default NominationPoolsStakeSideSheet
