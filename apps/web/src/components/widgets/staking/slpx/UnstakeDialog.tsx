@@ -18,7 +18,7 @@ const UnstakeDialog = (props: UnstakeDialogProps) => {
   const {
     input: { amount, localizedFiatAmount },
     setAmount,
-    newAmount,
+    newOriginTokenAmount: newAmount,
     available,
     approve,
     approveTransaction,
@@ -56,6 +56,7 @@ const UnstakeDialog = (props: UnstakeDialogProps) => {
         '...',
         rate => `1 ${props.slpxPair.vToken.symbol} = ${rate.toLocaleString()} ${props.slpxPair.nativeToken.symbol}`
       )}
+      approvalNeeded={approvalNeeded}
       onConfirm={() => {
         switchNetwork.switchNetwork?.(props.slpxPair.chainId)
         if (approvalNeeded) {
