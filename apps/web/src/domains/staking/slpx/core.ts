@@ -79,7 +79,16 @@ export const useSlpxSwapForm = (
     [balance.data, originToken?.decimals, originToken?.symbol]
   )
 
-  const existingAmount = useContractRead({
+  const existingOriginTokenAmount = useContractRead({
+    chainId,
+    address: originToken?.address,
+    abi: erc20ABI,
+    functionName: 'balanceOf',
+    args: [account?.address ?? '0x'],
+    enabled: account?.address !== undefined,
+  })
+
+  const existingDestTokenAmount = useContractRead({
     chainId,
     address: destToken?.address,
     abi: erc20ABI,
@@ -106,17 +115,41 @@ export const useSlpxSwapForm = (
     )
   }, [decimalAmount, destToken?.decimals, destToken?.symbol, rateLoadable.contents, rateLoadable.state])
 
-  const newAmount = useMemo(() => {
-    if (!existingAmount.isFetched || receivingAmount === undefined) {
+  const newOriginTokenAmount = useMemo(() => {
+    if (!existingOriginTokenAmount.isFetched || decimalAmount === undefined) {
       return undefined
     }
 
     return Decimal.fromPlanck(
-      (existingAmount.data ?? 0n) + BigInt(receivingAmount?.planck.toString() ?? 0),
+      (existingOriginTokenAmount.data ?? 0n) - BigInt(decimalAmount.planck.toString()),
+      originToken?.decimals ?? 0,
+      originToken?.symbol
+    )
+  }, [
+    decimalAmount,
+    existingOriginTokenAmount.data,
+    existingOriginTokenAmount.isFetched,
+    originToken?.decimals,
+    originToken?.symbol,
+  ])
+
+  const newDestTokenAmount = useMemo(() => {
+    if (!existingDestTokenAmount.isFetched || receivingAmount === undefined) {
+      return undefined
+    }
+
+    return Decimal.fromPlanck(
+      (existingDestTokenAmount.data ?? 0n) + BigInt(receivingAmount?.planck.toString() ?? 0),
       destToken?.decimals ?? 0,
       destToken?.symbol
     )
-  }, [destToken?.decimals, destToken?.symbol, existingAmount.data, existingAmount.isFetched, receivingAmount])
+  }, [
+    destToken?.decimals,
+    destToken?.symbol,
+    existingDestTokenAmount.data,
+    existingDestTokenAmount.isFetched,
+    receivingAmount,
+  ])
 
   const assetInfo = useContractRead({
     chainId,
@@ -152,10 +185,17 @@ export const useSlpxSwapForm = (
       error === undefined &&
       decimalAmount !== undefined &&
       balance.isFetched &&
-      existingAmount.isFetched &&
+      existingDestTokenAmount.isFetched &&
       rateLoadable.state === 'hasValue' &&
       assetInfo.isFetched,
-    [assetInfo.isFetched, balance.isFetched, decimalAmount, error, existingAmount.isFetched, rateLoadable.state]
+    [
+      assetInfo.isFetched,
+      balance.isFetched,
+      decimalAmount,
+      error,
+      existingDestTokenAmount.isFetched,
+      rateLoadable.state,
+    ]
   )
 
   return {
@@ -163,7 +203,8 @@ export const useSlpxSwapForm = (
     setAmount,
     rate: rateLoadable.valueMaybe(),
     receivingAmount,
-    newAmount,
+    newOriginTokenAmount,
+    newDestTokenAmount,
     available,
     ready,
     error,
@@ -201,7 +242,7 @@ export const useRedeemForm = (account: Account | undefined, slpxPair: SlpxPair) 
 
   const approve = useContractWrite({
     chainId: slpxPair.chainId,
-    address: slpxPair.splx,
+    address: slpxPair.vToken.address,
     abi: erc20ABI,
     functionName: 'approve',
     args: [slpxPair.splx, planckAmount ?? 0n],
@@ -247,7 +288,7 @@ export const useMintForm = (account: Account | undefined, slpxPair: SlpxPair) =>
     address: slpxPair.splx,
     abi: slpx,
     functionName: 'mintVNativeAsset',
-    args: [account?.address ?? '0x', ''],
+    args: [account?.address ?? '0x', import.meta.env.REACT_APP_APPLICATION_NAME ?? 'Talisman'],
     value: planckAmount ?? 0n,
   })
 

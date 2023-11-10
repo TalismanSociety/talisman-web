@@ -25,7 +25,7 @@ const AddStakeDialog = (props: AddStakeDialogProps) => {
   const {
     input: { amount, localizedFiatAmount },
     setAmount,
-    newAmount,
+    newDestTokenAmount: newAmount,
     available,
     mint,
     rate,
