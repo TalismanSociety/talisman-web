@@ -262,7 +262,6 @@ const Confirmation = (props: {
                 multisigAddress={multisigAddress}
                 proxiedAddress={props.proxiedAccount}
                 onProxies={newProxies => {
-                  console.log(newProxies)
                   if (isEqual(newProxies, proxies)) return
                   setProxies(newProxies)
                 }}

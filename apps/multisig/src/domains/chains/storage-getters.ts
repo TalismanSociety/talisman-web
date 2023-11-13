@@ -76,15 +76,13 @@ export interface RawPendingTransaction {
 export const rawPendingTransactionsSelector = selectorFamily({
   key: 'rawMultisigPendingTransactionsSelector',
   get:
-    ({ multisigAddressPubKey, proxyAddressPubKey }: { multisigAddressPubKey: string; proxyAddressPubKey: string }) =>
+    (id: string) =>
     async ({ get }): Promise<RawPendingTransaction[]> => {
       // This dependency allows effectively clearing the cache of this selector
       get(rawPendingTransactionsDependency)
 
       const multisigs = get(activeMultisigsState)
-      const multisig = multisigs.find(
-        m => m.multisigAddress.toPubKey() === multisigAddressPubKey && m.proxyAddress.toPubKey() === proxyAddressPubKey
-      )
+      const multisig = multisigs.find(m => m.id === id)
 
       if (!multisig) return []
 
@@ -154,14 +152,8 @@ export const allRawPendingTransactionsSelector = selector({
     try {
       const multisigs = get(aggregatedMultisigsState)
 
-      const pendingTransactions = multisigs.map(curMultisig =>
-        get(
-          rawPendingTransactionsSelector({
-            multisigAddressPubKey: curMultisig.multisigAddress.toPubKey(),
-            proxyAddressPubKey: curMultisig.proxyAddress.toPubKey(),
-          })
-        )
-      )
+      // query pending transactions of each multisig by ID
+      const pendingTransactions = multisigs.map(({ id }) => get(rawPendingTransactionsSelector(id)))
       return pendingTransactions.flat()
     } catch (error) {
       if (error instanceof Error) {
