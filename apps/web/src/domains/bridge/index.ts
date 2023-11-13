@@ -23,6 +23,32 @@ export const bridgeState = selector({
             // TODO: re-enable once we have custom recipient address, to target EVM addresses
             { to: 'moonbeam' },
             { to: 'moonriver' },
+
+            // temportatily disable Kusama routes
+            // example of issue: https://kusama.subscan.io/xcm_message/kusama-98082ccbd5ae3e416b17276a0aaaeadd85aecb7a
+            { from: 'altair' },
+            { from: 'kusama' },
+            { from: 'basilisk' },
+            { from: 'bifrost' },
+            { from: 'calamari' },
+            { from: 'crab' },
+            { from: 'khala' },
+            { from: 'kintsugi' },
+            { from: 'shiden' },
+            { from: 'shadow' },
+            { from: 'turing' },
+            { from: 'heiko' },
+            { from: 'integritee' },
+            { from: 'kico' },
+            { from: 'tinkernet' },
+            { from: 'listen' },
+            { from: 'pichiu' },
+            { from: 'quartz' },
+            { from: 'moonriver' },
+            { from: 'karura' },
+            { from: 'robonomics' },
+            { from: 'tinkernet' },
+            { from: 'statemine' },
           ],
     })
     await bridge.isReady
