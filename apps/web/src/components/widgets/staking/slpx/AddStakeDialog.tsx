@@ -20,7 +20,7 @@ const AddStakeDialog = (props: AddStakeDialogProps) => {
     accounts => accounts?.find(account => account.address === props.account?.address) ?? accounts?.at(0)
   )
 
-  const switchNetwork = useSwitchNetwork()
+  const { switchNetworkAsync } = useSwitchNetwork()
 
   const {
     input: { amount, localizedFiatAmount },
@@ -56,7 +56,7 @@ const AddStakeDialog = (props: AddStakeDialogProps) => {
         rate => `1 ${props.slpxPair.nativeToken.symbol} = ${rate.toLocaleString()} ${props.slpxPair.vToken.symbol}`
       )}
       onConfirm={async () => {
-        switchNetwork.switchNetwork?.(props.slpxPair.chainId)
+        await switchNetworkAsync?.(props.slpxPair.chainId)
         await mint.writeAsync()
       }}
       onRequestMaxAmount={() => {

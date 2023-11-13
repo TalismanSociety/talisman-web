@@ -14,7 +14,7 @@ type UnstakeDialogProps = {
 }
 
 const UnstakeDialog = (props: UnstakeDialogProps) => {
-  const switchNetwork = useSwitchNetwork()
+  const { switchNetworkAsync } = useSwitchNetwork()
 
   const {
     input: { amount, localizedFiatAmount },
@@ -62,7 +62,7 @@ const UnstakeDialog = (props: UnstakeDialogProps) => {
       )}
       approvalNeeded={approvalNeeded}
       onConfirm={async () => {
-        switchNetwork.switchNetwork?.(props.slpxPair.chainId)
+        await switchNetworkAsync?.(props.slpxPair.chainId)
         if (approvalNeeded) {
           await approve.writeAsync()
         } else {
