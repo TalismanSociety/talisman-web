@@ -45,6 +45,7 @@
     "@talismn/connect-wallets": "^1.1.3",
     "@talismn/dot-pool-selector": "snapshot",
     "@talismn/icons": "workspace:^",
+    "@talismn/siws": "^0.0.4",
     "@talismn/ui": "workspace:^",
     "@talismn/util": "^0.2.0",
     "@uiw/codemirror-themes": "^4.21.13",

@@ -1,6 +1,7 @@
 import { useCallback, useState } from 'react'
 import { atom, selector, useRecoilState, useSetRecoilState } from 'recoil'
 import { web3FromSource } from '@polkadot/extension-dapp'
+import { SiwsMessage } from '@talismn/siws'
 import { InjectedAccount, accountsState } from '../extension'
 import persistAtom from '../persist'
 import toast from 'react-hot-toast'
@@ -96,21 +97,23 @@ export const useSignIn = () => {
           // should've been captured by `nonceData.error`, but adding this check just to be sure
           if (!nonce) return toast.error('Failed to request for nonce.')
 
-          // constuct payload with nonce
-          // TODO: make a library to construct payload so frontend and backend will always have same structure + properties like expiry
-          const data = JSON.stringify({ address: ss58Address, nonce }, undefined, 2)
+          // construct siws message
+          const siws = new SiwsMessage({
+            address: ss58Address,
+            domain: 'signet.talisman.xyz',
+            nonce,
+            uri: window.location.origin,
+            statement: 'Welcome to Signet! Please sign in to continue.',
+            chainName: 'Substrate',
+          })
 
           // sign payload for backend verification
-          const { signature } = await injector.signer.signRaw({
-            address: ss58Address,
-            data,
-            type: 'payload',
-          })
+          const signed = await siws.sign(injector)
 
           // exchange JWT token from server
           const verifyRes = await fetch(`${SIWS_ENDPOINT}/verify`, {
             method: 'post',
-            body: JSON.stringify({ address: ss58Address, signedMessage: signature }),
+            body: JSON.stringify({ ...signed, address: ss58Address }),
             headers: { 'Content-Type': 'application/json' },
             credentials: 'include',
           })

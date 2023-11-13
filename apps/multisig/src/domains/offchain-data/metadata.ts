@@ -218,8 +218,7 @@ export const useInsertTxMetadata = () => {
       > & { hash: string; extrinsicId: string }
     ) => {
       const activeTeams = teamsBySigner[signedInAccount.injected.address.toSs58()]
-      console.log('activeTeams', activeTeams)
-      console.log('multisig', multisig)
+
       // make sure multisig is stored in db
       if (!activeTeams || !activeTeams.find(team => team.id === multisig.id)) return
 
