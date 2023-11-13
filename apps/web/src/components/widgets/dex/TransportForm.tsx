@@ -46,14 +46,20 @@ const TransportForm = () => {
     }
   }, [])
 
-  const [sender, senderSelector] = useAccountSelector(useRecoilValue(getAccountsState(fromChain)), 0)
-  const [recipient, recipientSelector] = useAccountSelector(
+  const [[sender], senderSelector] = useAccountSelector(useRecoilValue(getAccountsState(fromChain)), 0)
+  const [[recipient, setRecipient], recipientSelector] = useAccountSelector(
     useRecoilValue(getAccountsState(toChain)),
     useCallback(
       (x: Account[] | undefined) => (toEvm ? x?.at(0) : x?.find(y => y.address === sender?.address)),
       [sender?.address, toEvm]
     )
   )
+
+  useEffect(() => {
+    if (sender !== undefined) {
+      setRecipient(sender)
+    }
+  }, [sender, setRecipient])
 
   const filterParams = <T extends Record<string, unknown>>(object: T) => {
     const params = Object.fromEntries(Object.entries(object).filter(([_, value]) => value !== undefined))
