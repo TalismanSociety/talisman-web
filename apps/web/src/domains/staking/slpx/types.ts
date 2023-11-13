@@ -11,4 +11,5 @@ export type SlpxPair = {
   splx: `0x${string}`
   nativeToken: SlpxToken
   vToken: SlpxToken
+  etherscanUrl: string
 }

@@ -90,13 +90,15 @@ const Staking = () => {
   const sections = ['stakeable-assets', 'positions'] as const
   const [selectedSection, setSelectedSection] = useState<(typeof sections)[number]>('stakeable-assets')
   return (
-    <Surface css={{ borderRadius: '1.6rem', padding: '1.6rem' }}>
-      <SegmentedButton value={selectedSection} onChange={setSelectedSection} css={{ marginBottom: '2.4rem' }}>
-        <SegmentedButton.ButtonSegment value="stakeable-assets">Stake</SegmentedButton.ButtonSegment>
-        <SegmentedButton.ButtonSegment value="positions">My positions</SegmentedButton.ButtonSegment>
-      </SegmentedButton>
-      {selectedSection === 'positions' ? <Stakes hideHeader /> : <StakeableAssets />}
-    </Surface>
+    <div css={{ paddingTop: '2.4rem' }}>
+      <Surface css={{ borderRadius: '1.6rem', padding: '1.6rem' }}>
+        <SegmentedButton value={selectedSection} onChange={setSelectedSection} css={{ marginBottom: '2.4rem' }}>
+          <SegmentedButton.ButtonSegment value="stakeable-assets">Stake</SegmentedButton.ButtonSegment>
+          <SegmentedButton.ButtonSegment value="positions">My positions</SegmentedButton.ButtonSegment>
+        </SegmentedButton>
+        {selectedSection === 'positions' ? <Stakes hideHeader /> : <StakeableAssets />}
+      </Surface>
+    </div>
   )
 }
 
