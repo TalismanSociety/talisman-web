@@ -1,6 +1,6 @@
 import { Zap } from '@talismn/icons'
 import { Button, LinearProgressIndicator, Surface, Text, type ButtonProps } from '@talismn/ui'
-import type { ReactNode } from 'react'
+import type { PropsWithChildren, ReactNode } from 'react'
 
 export type StakeableAssetProps = {
   logo: string
@@ -19,12 +19,34 @@ const StakeButton = (props: Omit<ButtonProps, 'children'>) => (
   </Button>
 )
 
+const Grid = (props: PropsWithChildren<{ className?: string }>) => (
+  <Surface
+    as="article"
+    css={{
+      'borderRadius': '0.8rem',
+      'padding': '1.6rem',
+      'display': 'grid',
+      'gridTemplateAreas': `
+        'asset   action'
+        'divider divider'
+        'apr     type'
+      `,
+      'gap': '0.6rem',
+      '@container (min-width: 100rem)': {
+        alignItems: 'center',
+        gridTemplateAreas: `'asset apr type provider stake-percentage action'`,
+        gridTemplateColumns: 'repeat(6, minmax(0, 1fr))',
+      },
+    }}
+    {...props}
+  />
+)
+
 const StakeableAsset = Object.assign(
   (props: StakeableAssetProps) => {
     return (
       <div css={{ containerType: 'inline-size' }}>
-        <Surface
-          as="article"
+        <Grid
           css={{
             'borderRadius': '0.8rem',
             'padding': '1.6rem',
@@ -62,7 +84,9 @@ const StakeableAsset = Object.assign(
             {props.stakeButton}
           </div>
           <div css={{ gridArea: 'type' }}>
-            <Text.BodySmall as="div">Type</Text.BodySmall>
+            <Text.BodySmall as="div" css={{ '@container (min-width: 100rem)': { display: 'none' } }}>
+              Type
+            </Text.BodySmall>
             <Text.Body as="div" alpha="high">
               {props.type}
             </Text.Body>
@@ -70,7 +94,9 @@ const StakeableAsset = Object.assign(
           <div
             css={{ 'gridArea': 'provider', 'display': 'none', '@container (min-width: 100rem)': { display: 'revert' } }}
           >
-            <Text.BodySmall as="div">Provider</Text.BodySmall>
+            <Text.BodySmall as="div" css={{ '@container (min-width: 100rem)': { display: 'none' } }}>
+              Provider
+            </Text.BodySmall>
             <Text.Body as="div" alpha="high">
               {props.provider}
             </Text.Body>
@@ -95,16 +121,40 @@ const StakeableAsset = Object.assign(
             }}
           />
           <div css={{ gridArea: 'apr' }}>
-            <Text.BodySmall as="div">APR</Text.BodySmall>
+            <Text.BodySmall as="div" css={{ '@container (min-width: 100rem)': { display: 'none' } }}>
+              APR
+            </Text.BodySmall>
             <Text.Body as="div" alpha="high">
               {props.apr}
             </Text.Body>
           </div>
-        </Surface>
+        </Grid>
       </div>
     )
   },
   { StakeButton }
+)
+
+export const StakeableAssetList = (props: PropsWithChildren<{ className?: string }>) => (
+  <section css={{ display: 'flex', flexDirection: 'column', gap: '1.6rem' }} {...props}>
+    <div css={{ containerType: 'inline-size' }}>
+      <header
+        css={{
+          'display': 'none',
+          '@container (min-width: 100rem)': { display: 'revert' },
+        }}
+      >
+        <Grid css={{ backgroundColor: 'transparent', paddingTop: 0, paddingBottom: 0 }}>
+          <Text.BodySmall css={{ gridArea: 'asset' }}>Asset</Text.BodySmall>
+          <Text.BodySmall css={{ gridArea: 'apr' }}>APR</Text.BodySmall>
+          <Text.BodySmall css={{ gridArea: 'type' }}>Type</Text.BodySmall>
+          <Text.BodySmall css={{ gridArea: 'provider' }}>Provider</Text.BodySmall>
+          <Text.BodySmall css={{ gridArea: 'stake-percentage' }}>Percent utilized</Text.BodySmall>
+        </Grid>
+      </header>
+    </div>
+    {props.children}
+  </section>
 )
 
 export default StakeableAsset

@@ -1,4 +1,4 @@
-import StakeableAsset from '@components/recipes/StakableAsset'
+import StakeableAsset, { StakeableAssetList } from '@components/recipes/StakableAsset'
 import StakeProviderDialog from '@components/recipes/StakeProvidersDialog/StakeProviderDialog'
 import AccountConnectionGuard from '@components/widgets/AccountConnectionGuard'
 import Stakes from '@components/widgets/staking/substrate/Stakes'
@@ -55,13 +55,7 @@ const StakeableAssets = () => {
   )
 
   return (
-    <div
-      css={{
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '1.6rem',
-      }}
-    >
+    <StakeableAssetList>
       {stakeableAssets.map((asset, index) => (
         <StakeableAssetItem key={index} asset={asset} onClick={() => setSelectedStakeableAssetIndex(index)} />
       ))}
@@ -83,7 +77,7 @@ const StakeableAssets = () => {
           ))}
         </StakeProviderDialog>
       )}
-    </div>
+    </StakeableAssetList>
   )
 }
 
