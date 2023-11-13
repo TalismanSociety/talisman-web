@@ -15,8 +15,9 @@ import {
   type ChipProps,
 } from '@talismn/ui'
 import { shortenAddress } from '@util/format'
-import type { ReactNode } from 'react'
+import type { PropsWithChildren, ReactNode } from 'react'
 import { StakeStatusIndicator, type StakeStatus } from '../StakeStatusIndicator'
+import StakePositionSkeleton from './StakePosition.skeleton'
 
 export type StakePositionProps = {
   readonly?: boolean
@@ -107,29 +108,34 @@ export const FastUnstakingStatus = (props: { amount: ReactNode; status: 'in-head
   </div>
 )
 
+const Grid = (props: PropsWithChildren<{ className?: string }>) => (
+  <Surface
+    as="article"
+    css={{
+      'borderRadius': '0.8rem',
+      'padding': '0.8rem 1.2rem',
+      'display': 'grid',
+      'gridTemplateAreas': `
+        'account account quick-actions'
+        'divider divider divider'
+        'balance actions actions'
+      `,
+      'gap': '0.6rem',
+      '@container (min-width: 100rem)': {
+        alignItems: 'center',
+        gridTemplateAreas: `'account asset balance actions quick-actions'`,
+        gridTemplateColumns: '25rem 10rem 20rem 1fr min-content',
+      },
+    }}
+    {...props}
+  />
+)
+
 const StakePosition = Object.assign(
   (props: StakePositionProps) => {
     return (
       <div css={{ containerType: 'inline-size' }}>
-        <Surface
-          as="article"
-          css={{
-            'borderRadius': '0.8rem',
-            'padding': '0.8rem 1.2rem',
-            'display': 'grid',
-            'gridTemplateAreas': `
-            'account account quick-actions'
-            'divider divider divider'
-            'balance actions actions'
-          `,
-            'gap': '0.6rem',
-            '@container (min-width: 100rem)': {
-              alignItems: 'center',
-              gridTemplateAreas: `'account asset balance actions quick-actions'`,
-              gridTemplateColumns: '25rem 10rem 20rem 1fr min-content',
-            },
-          }}
-        >
+        <Grid>
           <div css={{ gridArea: 'account', display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
             <AccountIcon account={props.account} size="3.5rem" />
             <div css={{ overflow: 'hidden' }}>
@@ -181,10 +187,18 @@ const StakePosition = Object.assign(
             }}
           />
           <div css={{ gridArea: 'balance' }}>
-            <Text.BodySmall as="div">Total staked</Text.BodySmall>
+            <Text.BodySmall as="div" css={{ '@container (min-width: 100rem)': { display: 'none' } }}>
+              Total staked
+            </Text.BodySmall>
             <Text.Body as="div" alpha="high">
               {props.balance}
             </Text.Body>
+            <Text.BodySmall
+              as="div"
+              css={{ 'display': 'none', '@container (min-width: 100rem)': { display: 'revert' } }}
+            >
+              {props.fiatBalance}
+            </Text.BodySmall>
           </div>
           <div
             css={{
@@ -200,7 +214,7 @@ const StakePosition = Object.assign(
             {!props.readonly && props.claimButton}
             {!props.readonly && props.withdrawButton}
           </div>
-        </Surface>
+        </Grid>
       </div>
     )
   },
@@ -212,7 +226,28 @@ const StakePosition = Object.assign(
     WithdrawButton,
     UnstakingStatus,
     FastUnstakingStatus,
+    Skeleton: StakePositionSkeleton,
   }
+)
+
+export const StakePositionList = (props: PropsWithChildren<{ className?: string }>) => (
+  <section css={{ display: 'flex', flexDirection: 'column', gap: '1.6rem' }} {...props}>
+    <div css={{ containerType: 'inline-size' }}>
+      <header
+        css={{
+          'display': 'none',
+          '@container (min-width: 100rem)': { display: 'revert' },
+        }}
+      >
+        <Grid css={{ backgroundColor: 'transparent', paddingTop: 0, paddingBottom: 0 }}>
+          <Text.BodySmall css={{ gridArea: 'account' }}>Account</Text.BodySmall>
+          <Text.BodySmall css={{ gridArea: 'asset' }}>Asset</Text.BodySmall>
+          <Text.BodySmall css={{ gridArea: 'balance' }}>Balance</Text.BodySmall>
+        </Grid>
+      </header>
+    </div>
+    {props.children}
+  </section>
 )
 
 export default StakePosition
