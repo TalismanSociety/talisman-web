@@ -99,10 +99,7 @@ export default class Decimal {
 
     const stringWithoutUnit = raw.includes('.') ? raw.replace(/0+$/, '') : raw
 
-    return (
-      stringWithoutUnit.replace(/\.0*$/, '') +
-      (options.withUnit && this.unit !== undefined ? ` ${this.unit?.toUpperCase()}` : '')
-    )
+    return stringWithoutUnit.replace(/\.0*$/, '') + (options.withUnit && this.unit !== undefined ? ` ${this.unit}` : '')
   }
 
   static #verifyDecimals(fractionalDigits: number): void {

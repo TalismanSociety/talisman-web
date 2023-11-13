@@ -1,18 +1,36 @@
 import '@bifrost-finance/types/augment/api'
 import type { Account } from '@domains/accounts'
+import { selectedCurrencyState } from '@domains/balances'
+import { tokenPriceState } from '@domains/chains'
+import { expectedBlockTime, useSubstrateApiState, useWagmiContractWrite } from '@domains/common'
+import { evmToAddress } from '@polkadot/util-crypto'
 import { Decimal } from '@talismn/math'
-import { useQueryMultiState, useQueryState } from '@talismn/react-polkadot-api'
+import { useDeriveState, useQueryMultiState, useQueryState } from '@talismn/react-polkadot-api'
 import { Maybe } from '@util/monads'
 import BigNumber from 'bignumber.js'
+import type BN from 'bn.js'
 import { useMemo, useState } from 'react'
-import { useRecoilValue, useRecoilValueLoadable } from 'recoil'
+import { useRecoilValue, useRecoilValueLoadable, waitForAll } from 'recoil'
 import { isAddress } from 'viem'
-import { erc20ABI, useContractRead, useContractReads, useContractWrite, useToken, useWaitForTransaction } from 'wagmi'
+import { erc20ABI, useContractRead, useContractReads, useToken, useWaitForTransaction } from 'wagmi'
 import slpx from './abi'
-import { evmToAddress } from '@polkadot/util-crypto'
 import type { SlpxPair, SlpxToken } from './types'
-import { tokenPriceState } from '@domains/chains'
-import { selectedCurrencyState } from '@domains/balances'
+
+export const useVTokenUnlockDuration = (tokenId: any) => {
+  const [api, eraLength, unlockDuration] = useRecoilValue(
+    waitForAll([
+      useSubstrateApiState(),
+      useDeriveState('session', 'eraLength', []),
+      useQueryState('vtokenMinting', 'unlockDuration', [tokenId]),
+    ])
+  )
+
+  return useMemo(() => {
+    const blockTime = expectedBlockTime(api)
+    const eras: BN = unlockDuration.unwrapOrDefault().asEra.unwrap()
+    return eras.mul(eraLength).mul(blockTime).toNumber()
+  }, [api, eraLength, unlockDuration])
+}
 
 const useSwapRateLoadable = (tokenId: any, vTokenId: any, reverse?: boolean) => {
   const loadable = useRecoilValueLoadable(
@@ -232,20 +250,22 @@ export const useRedeemForm = (account: Account | undefined, slpxPair: SlpxPair) 
     enabled: account?.address !== undefined,
   })
 
-  const redeem = useContractWrite({
+  const redeem = useWagmiContractWrite({
     chainId: slpxPair.chainId,
     address: slpxPair.splx,
     abi: slpx,
     functionName: 'redeemAsset',
     args: [slpxPair.vToken.address, planckAmount ?? 0n, account?.address ?? '0x'],
+    etherscanUrl: slpxPair.etherscanUrl,
   })
 
-  const approve = useContractWrite({
+  const approve = useWagmiContractWrite({
     chainId: slpxPair.chainId,
     address: slpxPair.vToken.address,
     abi: erc20ABI,
     functionName: 'approve',
     args: [slpxPair.splx, planckAmount ?? 0n],
+    etherscanUrl: slpxPair.etherscanUrl,
   })
 
   const approveTransaction = useWaitForTransaction({
@@ -283,13 +303,14 @@ export const useMintForm = (account: Account | undefined, slpxPair: SlpxPair) =>
     [base.input.decimalAmount?.planck]
   )
 
-  const mint = useContractWrite({
+  const mint = useWagmiContractWrite({
     chainId: slpxPair.chainId,
     address: slpxPair.splx,
     abi: slpx,
     functionName: 'mintVNativeAsset',
     args: [account?.address ?? '0x', import.meta.env.REACT_APP_APPLICATION_NAME ?? 'Talisman'],
     value: planckAmount ?? 0n,
+    etherscanUrl: slpxPair.etherscanUrl,
   })
 
   return {

@@ -1,9 +1,10 @@
 import { SlpxUnstakeDialog } from '@components/recipes/UnstakeDialog'
 import { type Account } from '@domains/accounts'
-import { useRedeemForm } from '@domains/staking/slpx/core'
+import { useRedeemForm, useVTokenUnlockDuration } from '@domains/staking/slpx/core'
 import type { SlpxPair } from '@domains/staking/slpx/types'
 import { Maybe } from '@util/monads'
-import { useEffect } from 'react'
+import { formatDistance } from 'date-fns'
+import { useEffect, useMemo } from 'react'
 import { useSwitchNetwork } from 'wagmi'
 
 type UnstakeDialogProps = {
@@ -29,6 +30,8 @@ const UnstakeDialog = (props: UnstakeDialogProps) => {
     error,
   } = useRedeemForm(props.account, props.slpxPair)
 
+  const unlockDuration = useVTokenUnlockDuration(props.slpxPair.vToken.tokenId)
+
   useEffect(() => {
     if (redeem.status === 'success' || redeem.status === 'error') {
       props.onRequestDismiss()
@@ -52,17 +55,18 @@ const UnstakeDialog = (props: UnstakeDialogProps) => {
       newFiatAmount={null}
       onChangeAmount={setAmount}
       availableAmount={available?.toHuman() ?? '...'}
+      lockDuration={useMemo(() => formatDistance(0, unlockDuration), [unlockDuration])}
       rate={Maybe.of(rate).mapOr(
         '...',
         rate => `1 ${props.slpxPair.vToken.symbol} = ${rate.toLocaleString()} ${props.slpxPair.nativeToken.symbol}`
       )}
       approvalNeeded={approvalNeeded}
-      onConfirm={() => {
+      onConfirm={async () => {
         switchNetwork.switchNetwork?.(props.slpxPair.chainId)
         if (approvalNeeded) {
-          approve.write()
+          await approve.writeAsync()
         } else {
-          redeem.write()
+          await redeem.writeAsync()
         }
       }}
       onRequestMaxAmount={() => {

@@ -14,7 +14,7 @@ export type UnstakeDialogProps = {
   rate?: string
   onRequestMaxAmount: () => unknown
   onChangeAmount: (amount: string) => unknown
-  lockDuration?: string
+  lockDuration?: ReactNode
   isError?: boolean
   inputSupportingText?: string
   buttonText?: ReactNode
@@ -97,7 +97,7 @@ export const NominationPoolsUnstakeDialog = (props: NominationPoolsUnstakeDialog
   <UnstakeDialog {...props} buttonText={props.isLeaving ? 'Leave pool' : undefined} />
 )
 
-type SlpxUnstakeDialogProps = Omit<UnstakeDialogProps, 'lockDuration'> & { approvalNeeded?: boolean }
+type SlpxUnstakeDialogProps = UnstakeDialogProps & { approvalNeeded?: boolean }
 
 export const SlpxUnstakeDialog = (props: SlpxUnstakeDialogProps) => (
   <UnstakeDialog {...props} buttonText={props.approvalNeeded ? 'Approve' : undefined} />
