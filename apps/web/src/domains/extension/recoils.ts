@@ -6,6 +6,8 @@ import { usePostHog } from 'posthog-js/react'
 import { useEffect } from 'react'
 import { atom, useRecoilState, useSetRecoilState } from 'recoil'
 import { wagmiInjectedConnector } from './wagmi'
+import { connect as wagmiConnect } from '@wagmi/core'
+import { Maybe } from '@util/monads'
 
 export const allowExtensionConnectionState = atom<boolean | null>({
   key: 'allow-extension-connection',
@@ -24,21 +26,21 @@ export const ExtensionWatcher = () => {
       return setAccounts([])
     }
 
-    const unsubscribesPromise = Promise.allSettled([
-      web3Enable(import.meta.env.REACT_APP_APPLICATION_NAME ?? 'Talisman'),
-      wagmiInjectedConnector.connect(),
-    ]).then(([substrateExtensionsResult, evmExtensionResult]) => {
-      const evmAccount =
-        evmExtensionResult.status === 'rejected'
-          ? undefined
-          : { address: evmExtensionResult.value.account, type: 'ethereum' as const }
+    const subscribeToExtensions = async () => {
+      const substrateExtensions = await web3Enable(import.meta.env.REACT_APP_APPLICATION_NAME ?? 'Talisman').catch(
+        () => undefined
+      )
 
-      if (substrateExtensionsResult.status === 'fulfilled') {
+      const evmAccount = Maybe.of(
+        await wagmiConnect({ connector: wagmiInjectedConnector }).catch(() => undefined)
+      ).mapOrUndefined(x => ({ address: x.account, type: 'ethereum' as const }))
+
+      if (substrateExtensions !== undefined) {
         posthog?.capture('Substrate extensions connected', {
-          $set: { substrateExtensions: substrateExtensionsResult.value.map(x => x.name) },
+          $set: { substrateExtensions: substrateExtensions.map(x => x.name) },
         })
 
-        return substrateExtensionsResult.value.map(extension =>
+        return substrateExtensions.map(extension =>
           extension.accounts.subscribe(accounts => {
             const substrateExtensionAccounts = accounts.map(account => ({
               ...account,
@@ -57,13 +59,15 @@ export const ExtensionWatcher = () => {
         )
       }
 
-      if (evmExtensionResult.status === 'fulfilled' && evmAccount !== undefined) {
+      if (evmAccount !== undefined) {
         setAccounts([evmAccount])
         return []
       }
 
       return []
-    })
+    }
+
+    const unsubscribesPromise = subscribeToExtensions()
 
     return () => {
       void unsubscribesPromise.then(unsubscribes => unsubscribes.map(unsubscribe => unsubscribe()))
