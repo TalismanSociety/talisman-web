@@ -336,25 +336,32 @@ export const useStakes = (accounts: Account[], slpxPair: SlpxPair) => {
     suspense: true,
   })
 
-  const userUnlockLedgers = useRecoilValue(
-    useQueryState(
-      'vtokenMinting',
-      'userUnlockLedger.multi',
-      filteredAccounts.map(x => [evmToAddress(x.address), slpxPair.vToken.tokenId] as const)
-    )
+  const [tokenPrice, userUnlockLedgers] = useRecoilValue(
+    waitForAll([
+      tokenPriceState({ coingeckoId: slpxPair.vToken.coingeckoId }),
+      useQueryState(
+        'vtokenMinting',
+        'userUnlockLedger.multi',
+        filteredAccounts.map(x => [evmToAddress(x.address), slpxPair.vToken.tokenId] as const)
+      ),
+    ])
   )
 
   return filteredAccounts
-    .map((account, index) => ({
-      account,
-      balance: Decimal.fromPlanck(
+    .map((account, index) => {
+      const balance = Decimal.fromPlanck(
         (balances.data?.[index]?.result as bigint) ?? 0n,
         vToken.data?.decimals ?? 0,
         vToken.data?.symbol
-      ),
-      unlocking: Maybe.of(userUnlockLedgers[index]?.unwrapOrDefault()).mapOrUndefined(x =>
-        Decimal.fromPlanck(x[0], vToken.data?.decimals ?? 0, vToken.data?.symbol)
-      ),
-    }))
+      )
+      return {
+        account,
+        balance,
+        fiatBalance: balance.toNumber() * tokenPrice,
+        unlocking: Maybe.of(userUnlockLedgers[index]?.unwrapOrDefault()).mapOrUndefined(x =>
+          Decimal.fromPlanck(x[0], vToken.data?.decimals ?? 0, vToken.data?.symbol)
+        ),
+      }
+    })
     .filter(x => !x.balance.planck.isZero() || !x.unlocking?.planck.isZero())
 }

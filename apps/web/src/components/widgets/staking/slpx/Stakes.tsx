@@ -11,6 +11,8 @@ import { useRecoilValue } from 'recoil'
 import { moonriver } from 'wagmi/chains'
 import AddStakeDialog from './AddStakeDialog'
 import UnstakeDialog from './UnstakeDialog'
+import AnimatedFiatNumber from '@components/widgets/AnimatedFiatNumber'
+import RedactableBalance from '@components/widgets/RedactableBalance'
 
 const Stake = (props: { slpxPair: SlpxPair; position: ReturnType<typeof useStakes>[number] }) => {
   const [increaseStakeDialogOpen, setIncreaseStakeDialogOpen] = useState(false)
@@ -22,8 +24,8 @@ const Stake = (props: { slpxPair: SlpxPair; position: ReturnType<typeof useStake
         account={props.position.account}
         provider="Bifrost liquid staking"
         stakeStatus={props.position.balance.planck.gtn(0) ? 'earning_rewards' : 'not_earning_rewards'}
-        balance={props.position.balance.toHuman()}
-        fiatBalance=""
+        balance={<RedactableBalance>{props.position.balance.toHuman()}</RedactableBalance>}
+        fiatBalance={<AnimatedFiatNumber end={props.position.fiatBalance} />}
         chain={moonriver.name}
         symbol={props.position.balance.unit}
         increaseStakeButton={<StakePosition.IncreaseStakeButton onClick={() => setIncreaseStakeDialogOpen(true)} />}
