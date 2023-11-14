@@ -1,6 +1,6 @@
 import StakePosition from '@components/recipes/StakePosition'
 import ErrorBoundary from '@components/widgets/ErrorBoundary'
-import { evmAccountsState } from '@domains/accounts'
+import { selectedEvmAccountsState } from '@domains/accounts'
 import { useStakes } from '@domains/staking/slpx/core'
 import { PolkadotApiIdProvider } from '@talismn/react-polkadot-api'
 import { useState } from 'react'
@@ -57,7 +57,7 @@ const Stake = (props: { slpxPair: SlpxPair; position: ReturnType<typeof useStake
 }
 
 const Stakes = () => {
-  const stakes = useStakes(useRecoilValue(evmAccountsState), glmrSlpxPair)
+  const stakes = useStakes(useRecoilValue(selectedEvmAccountsState), glmrSlpxPair)
 
   return (
     <>

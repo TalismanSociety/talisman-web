@@ -97,7 +97,7 @@ export const substrateAccountsState = selector({
 })
 
 export const evmAccountsState = selector({
-  key: 'EVMAccountsState',
+  key: 'EvmAccountsState',
   get: ({ get }) => {
     const accounts = get(accountsState)
     return accounts.filter(x => x.type === 'ethereum')
@@ -149,5 +149,13 @@ export const selectedSubstrateAccountsState = selector({
   key: 'SelectedSubstrateAccounts',
   get: ({ get }) => {
     return get(selectedAccountsState).filter(x => x.type !== 'ethereum')
+  },
+})
+
+export const selectedEvmAccountsState = selector({
+  key: 'SelectedEvmAccountsState',
+  get: ({ get }) => {
+    const accounts = get(selectedAccountsState)
+    return accounts.filter(x => x.type === 'ethereum')
   },
 })
