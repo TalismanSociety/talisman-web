@@ -1,7 +1,7 @@
 import StakeableAsset, { StakeableAssetList } from '@components/recipes/StakableAsset'
 import StakeProviderDialog from '@components/recipes/StakeProvidersDialog/StakeProviderDialog'
 import AccountConnectionGuard from '@components/widgets/AccountConnectionGuard'
-import Stakes from '@components/widgets/staking/substrate/Stakes'
+import Stakes from '@components/widgets/staking/Stakes'
 import { selectedBalancesState } from '@domains/balances'
 import { stakeableAssets } from '@domains/staking'
 import { SegmentedButton, Surface } from '@talismn/ui'
