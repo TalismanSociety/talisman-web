@@ -9,10 +9,10 @@ import { glmrSlpxPair } from '@domains/staking/slpx/config'
 import type { SlpxPair } from '@domains/staking/slpx/types'
 import { useRecoilValue } from 'recoil'
 import { moonriver } from 'wagmi/chains'
-import AddStakeDialog from './AddStakeDialog'
 import UnstakeDialog from './UnstakeDialog'
 import AnimatedFiatNumber from '@components/widgets/AnimatedFiatNumber'
 import RedactableBalance from '@components/widgets/RedactableBalance'
+import AddStakeDialog from './AddStakeDialog'
 
 const Stake = (props: { slpxPair: SlpxPair; position: ReturnType<typeof useStakes>[number] }) => {
   const [increaseStakeDialogOpen, setIncreaseStakeDialogOpen] = useState(false)

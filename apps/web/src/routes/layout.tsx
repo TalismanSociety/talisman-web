@@ -26,7 +26,7 @@ import { usePostHog } from 'posthog-js/react'
 import { useCallback, useEffect, useState } from 'react'
 import { Link, Outlet, useLocation } from 'react-router-dom'
 import { useRecoilState, useRecoilValue } from 'recoil'
-import SlpxStakeDialog from '@components/widgets/staking/slpx/StakeDialog'
+import SlpxStakeSideSheet from '@components/widgets/staking/slpx/StakeSideSheet'
 
 const CurrencySelect = () => {
   const [currency, setCurrency] = useRecoilState(selectedCurrencyState)
@@ -284,7 +284,7 @@ const Layout = () => {
         <Header />
         <Outlet />
         <NominationPoolsStakeSideSheet />
-        <SlpxStakeDialog />
+        <SlpxStakeSideSheet />
       </ModalProvider>
     </Scaffold>
   )

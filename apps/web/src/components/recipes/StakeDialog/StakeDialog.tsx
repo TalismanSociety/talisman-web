@@ -29,8 +29,8 @@ const StakeDialog = Object.assign(
         },
       }}
     >
-      {stats}
       {stakeInput}
+      {stats}
       <Text.Body as="p" css={{ marginTop: '4.8rem' }}>
         Nomination pools allow participants to permissionlessly pool funds together to stake as a group. Benefits of
         contributing your stake to a nomination pool include no staking minimum, no need for a stash and controller
@@ -42,7 +42,7 @@ const StakeDialog = Object.assign(
     LearnMore,
     Stats: Object.assign(
       (props: PropsWithChildren) => (
-        <section {...props} css={{ display: 'flex', alignItems: 'center', gap: '1.6rem', marginBottom: '3.2rem' }} />
+        <section {...props} css={{ display: 'flex', alignItems: 'center', gap: '1.6rem', marginTop: '1.6rem' }} />
       ),
       { Item: (props: InfoCardProps) => <InfoCard {...props} css={{ flex: 1 }} /> }
     ),
