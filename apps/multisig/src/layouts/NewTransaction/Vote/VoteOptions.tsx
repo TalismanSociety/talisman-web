@@ -41,6 +41,7 @@ const VoteOptions: React.FC<Props> = ({ value, onChange }) => {
             Standard: standardVoteDetails,
           })
         }}
+        css={({ color }) => ({ backgroundColor: value.Standard?.vote.aye === false ? '#f46161' : undefined })}
         variant={value.Standard?.vote.aye === false ? undefined : 'secondary'}
       >
         Nay

@@ -9,6 +9,7 @@ import { ProposalsDropdown } from './ProposalsDropdown'
 import { hasPermission } from '@domains/proxy/util'
 import { Alert } from '@components/Alert'
 import { NewTransactionHeader } from '../NewTransactionHeader'
+import { Zap } from '@talismn/icons'
 
 type Props = {
   token: BaseToken
@@ -28,7 +29,7 @@ const VotingForm: React.FC<Props> = ({ onChange, onNext, token, voteDetails }) =
 
   return (
     <>
-      <NewTransactionHeader>Vote Details</NewTransactionHeader>
+      <NewTransactionHeader icon={<Zap />}>Vote</NewTransactionHeader>
       <div
         className={css`
           display: grid;
@@ -47,21 +48,9 @@ const VotingForm: React.FC<Props> = ({ onChange, onNext, token, voteDetails }) =
           <VoteStandard onChange={handleDetailsChange} token={token} params={voteDetails.details.Standard} />
         ) : // TODO: add UI for Abstain and Split votes
         null}
-        <div
-          className={css`
-            width: 100%;
-            button {
-              height: 56px;
-              width: 100%;
-            }
-          `}
-        >
-          <Button onClick={onNext} disabled={!isVoteDetailsComplete(voteDetails) || !hasNonDelayedPermission}>
-            <h3>Next</h3>
-          </Button>
-        </div>
-        {hasNonDelayedPermission === false &&
-          (hasDelayedPermission ? (
+
+        {hasNonDelayedPermission !== false ? (
+          hasDelayedPermission ? (
             <Alert>
               <p>Time delayed proxies are not supported yet.</p>
             </Alert>
@@ -69,7 +58,24 @@ const VotingForm: React.FC<Props> = ({ onChange, onNext, token, voteDetails }) =
             <Alert>
               <p>Your Vault does not have the proxy permission required to vote on behalf of the proxied account.</p>
             </Alert>
-          ))}
+          )
+        ) : (
+          <div
+            className={css`
+              display: grid;
+              grid-template-columns: 1fr 1fr;
+              width: 100%;
+              button {
+                height: 56px;
+                width: 100%;
+              }
+            `}
+          >
+            <Button onClick={onNext} disabled={!isVoteDetailsComplete(voteDetails) || !hasNonDelayedPermission}>
+              <h3>Review</h3>
+            </Button>
+          </div>
+        )}
       </div>
     </>
   )

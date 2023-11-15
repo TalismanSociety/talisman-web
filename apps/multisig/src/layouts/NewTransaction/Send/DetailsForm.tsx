@@ -42,7 +42,7 @@ export const DetailsForm = (props: {
       <div css={({ color }) => ({ color: color.offWhite, marginTop: 24 })}>
         <AddressInput onChange={props.setDestinationAddress} addresses={addresses} leadingLabel="Recipient" />
       </div>
-      <div css={({ color }) => ({ color: color.offWhite, marginTop: 24 })}>
+      <div css={({ color }) => ({ color: color.offWhite, marginTop: 24, marginBottom: 24 })}>
         <TextInput
           leadingLabel="Transaction Description"
           css={{ fontSize: '18px !important' }}

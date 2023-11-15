@@ -44,12 +44,14 @@ const VoteAction: React.FC = () => {
       apiLoadable.state !== 'hasValue' ||
       !isPalletSupported ||
       voteDetails.referendumId === undefined ||
+      !apiLoadable.contents.tx ||
+      !apiLoadable.contents.tx?.convictionVoting ||
       !nativeToken ||
       !isVoteDetailsComplete(voteDetails)
     )
       return
     try {
-      const voteExtrinsic = apiLoadable.contents.tx.convictionVoting.vote(
+      const voteExtrinsic = apiLoadable.contents.tx?.convictionVoting.vote(
         voteDetails.referendumId,
         voteDetails.details as
           | { Standard: StandardVoteParams }
@@ -61,8 +63,7 @@ const VoteAction: React.FC = () => {
       console.error(e)
     }
   }, [
-    apiLoadable.contents.tx.convictionVoting,
-    apiLoadable.contents.tx.proxy,
+    apiLoadable.contents.tx,
     apiLoadable.state,
     isPalletSupported,
     multisig.proxyAddress.bytes,
