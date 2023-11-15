@@ -44,7 +44,7 @@ const MultiSendForm = (props: {
       <TextInput
         leadingLabel="Transaction Description"
         css={{ fontSize: '18px !important' }}
-        placeholder='e.g. "Reimburse transaction fees"'
+        placeholder={`e.g. "Contract Payments June 2023"`}
         value={props.name}
         onChange={e => props.setName(e.target.value)}
       />

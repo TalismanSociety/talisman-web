@@ -34,8 +34,7 @@ export const DetailsForm = (props: {
         <p
           css={({ color }) => ({ color: color.lightGrey, opacity: 0.8, fontSize: 12, marginTop: 8, marginBottom: 16 })}
         >
-          Create your extrinsic using Polkadot.js or any other app, and simply paste the calldata below to execute your
-          transaction.
+          Create your extrinsic and paste the calldata below to execute your transaction.
         </p>
 
         <CallDataPasteForm extrinsic={props.extrinsic} setExtrinsic={props.setExtrinsic} />
