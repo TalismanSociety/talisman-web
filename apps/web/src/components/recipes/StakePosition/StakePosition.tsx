@@ -231,11 +231,12 @@ const StakePosition = Object.assign(
 )
 
 export const StakePositionList = (props: PropsWithChildren<{ className?: string }>) => (
-  <section css={{ display: 'flex', flexDirection: 'column', gap: '1.6rem' }} {...props}>
+  <section css={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }} {...props}>
     <div css={{ containerType: 'inline-size' }}>
       <header
         css={{
           'display': 'none',
+          'marginBottom': '0.2rem',
           '@container (min-width: 100rem)': { display: 'revert' },
         }}
       >

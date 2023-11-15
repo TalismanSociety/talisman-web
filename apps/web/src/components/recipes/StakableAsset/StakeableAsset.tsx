@@ -141,6 +141,7 @@ export const StakeableAssetList = (props: PropsWithChildren<{ className?: string
       <header
         css={{
           'display': 'none',
+          'marginBottom': '0.2rem',
           '@container (min-width: 100rem)': { display: 'revert' },
         }}
       >
