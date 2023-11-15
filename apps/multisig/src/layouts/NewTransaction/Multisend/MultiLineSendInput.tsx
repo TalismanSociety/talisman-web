@@ -233,7 +233,9 @@ export const MultiLineSendInput: React.FC<Props> = ({
       >
         <div>
           <p>{label}</p>
-          {token && <p css={{ fontSize: 12, opacity: 0.8 }}>e.g. {exampleAddress.toSs58(token.chain)}, 55.56</p>}
+          {token && (
+            <p css={{ fontSize: 12, opacity: 0.8 }}>e.g. {shortenAddress(exampleAddress.toSs58(token.chain))}, 55.56</p>
+          )}
         </div>
         <div css={{ display: 'flex', alignItems: 'center', gap: 4 }}>
           <Tooltip

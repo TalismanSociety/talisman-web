@@ -21,18 +21,17 @@ import { FullScreenDialogContents, FullScreenDialogTitle } from '../../Overview/
 
 import { MultiSendSend } from './multisend.types'
 import MultiSendForm from './MultiSendForm'
-import { NameTransaction } from '../NameTransaction'
 import { Layout } from '../../Layout'
 import { NewTransactionHeader } from '../NewTransactionHeader'
+import { Share2 } from '@talismn/icons'
 
 enum Step {
-  Name,
   Details,
   Review,
 }
 
 const MultiSend = () => {
-  const [step, setStep] = useState(Step.Name)
+  const [step, setStep] = useState(Step.Details)
   const [name, setName] = useState('')
   const tokens = useRecoilValueLoadable(selectedMultisigChainTokensState)
   const [extrinsic, setExtrinsic] = useState<SubmittableExtrinsic<'promise'> | undefined>()
@@ -107,29 +106,18 @@ const MultiSend = () => {
   return (
     <Layout selected="Multi-send" requiresMultisig>
       <div css={{ display: 'flex', flex: 1, flexDirection: 'column', padding: '32px 8%' }}>
-        {step === Step.Name ? (
-          <div css={{ width: '100%', maxWidth: 490 }}>
-            <NameTransaction
-              name={name}
-              setName={setName}
-              onNext={() => {
-                setStep(Step.Details)
-              }}
-            />
-          </div>
-        ) : step === Step.Details || step === Step.Review ? (
-          <div css={{ width: '100%', maxWidth: 620 }}>
-            <NewTransactionHeader>{name}</NewTransactionHeader>
-            <MultiSendForm
-              {...permissions}
-              tokens={tokens}
-              onBack={() => setStep(Step.Name)}
-              onNext={() => setStep(Step.Review)}
-              sends={sends}
-              setSends={setSends}
-            />
-          </div>
-        ) : null}
+        <div css={{ width: '100%', maxWidth: 620 }}>
+          <NewTransactionHeader icon={<Share2 />}>Multi-send</NewTransactionHeader>
+          <MultiSendForm
+            {...permissions}
+            name={name}
+            setName={setName}
+            tokens={tokens}
+            onNext={() => setStep(Step.Review)}
+            sends={sends}
+            setSends={setSends}
+          />
+        </div>
         <SideSheet
           onRequestDismiss={() => {
             setStep(Step.Details)

@@ -51,32 +51,8 @@ export const DetailsForm = (props: {
           onChange={e => props.setName(e.target.value)}
         />
       </div>
-      <div
-        className={css`
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 16px;
-          margin-top: 32px;
-          width: 100%;
-          button {
-            height: 56px;
-          }
-        `}
-      >
-        <Button
-          disabled={
-            !props.destinationAddress ||
-            isNaN(parseFloat(props.amount)) ||
-            props.amount.endsWith('.') ||
-            !props.selectedToken ||
-            !hasNonDelayedPermission
-          }
-          onClick={props.onNext}
-          children={<h3>Review</h3>}
-        />
-      </div>
-      {hasNonDelayedPermission === false &&
-        (hasDelayedPermission ? (
+      {hasNonDelayedPermission === false ? (
+        hasDelayedPermission ? (
           <Alert>
             <p>Time delayed proxies are not supported yet.</p>
           </Alert>
@@ -86,7 +62,33 @@ export const DetailsForm = (props: {
               Your Vault does not have the proxy permission required to send token on behalf of the proxied account.
             </p>
           </Alert>
-        ))}
+        )
+      ) : (
+        <div
+          className={css`
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-top: 32px;
+            width: 100%;
+            button {
+              height: 56px;
+            }
+          `}
+        >
+          <Button
+            disabled={
+              !props.destinationAddress ||
+              isNaN(parseFloat(props.amount)) ||
+              props.amount.endsWith('.') ||
+              !props.selectedToken ||
+              !hasNonDelayedPermission
+            }
+            onClick={props.onNext}
+            children={<h3>Review</h3>}
+          />
+        </div>
+      )}
     </>
   )
 }

@@ -9,8 +9,8 @@ export const Alert: React.FC<React.PropsWithChildren> = ({ children }) => (
       marginTop: 24,
       color: color.lightGrey,
       padding: 16,
-      maxWidth: 490,
       borderRadius: 12,
+      fontSize: 14,
       p: { fontSize: 14 },
       svg: { color: color.primary },
     })}
