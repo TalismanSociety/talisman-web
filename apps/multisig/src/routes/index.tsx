@@ -59,7 +59,7 @@ const router = createBrowserRouter([
   {
     path: '/advanced',
     element: (
-      <RequireAuth requireMultisig requireSignIn>
+      <RequireAuth requireSignIn>
         <Advanced />
       </RequireAuth>
     ),

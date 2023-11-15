@@ -19,18 +19,16 @@ import { useNavigate } from 'react-router-dom'
 import { useRecoilValue, useRecoilValueLoadable } from 'recoil'
 
 import { FullScreenDialogContents, FullScreenDialogTitle } from '../../Overview/Transactions/FullScreenSummary'
-import { NameTransaction } from '../NameTransaction'
 import { Layout } from '../../Layout'
 import { DetailsForm } from './DetailsForm'
 
 enum Step {
-  Name,
   Details,
   Review,
 }
 
 const SendAction = () => {
-  const [step, setStep] = useState(Step.Name)
+  const [step, setStep] = useState(Step.Details)
   const [name, setName] = useState('')
   const [destinationAddress, setDestinationAddress] = useState<Address | undefined>()
   const [extrinsic, setExtrinsic] = useState<SubmittableExtrinsic<'promise'> | undefined>()
@@ -40,6 +38,8 @@ const SendAction = () => {
   const multisig = useRecoilValue(selectedMultisigState)
   const apiLoadable = useRecoilValueLoadable(pjsApiSelector(multisig.chain.rpcs))
   const navigate = useNavigate()
+
+  const defaultName = name || `Send ${selectedToken?.symbol || 'Token'}`
 
   useEffect(() => {
     if (!selectedToken && tokens.state === 'hasValue' && tokens.contents.length > 0) {
@@ -82,7 +82,7 @@ const SendAction = () => {
       return {
         date: new Date(),
         hash,
-        description: name,
+        description: defaultName,
         chain: multisig.chain,
         multisig,
         approvals: multisig.signers.reduce((acc, key) => {
@@ -99,7 +99,7 @@ const SendAction = () => {
         callData: extrinsic.method.toHex(),
       }
     }
-  }, [amountBn, destinationAddress, multisig, name, selectedToken, extrinsic])
+  }, [selectedToken, extrinsic, destinationAddress, defaultName, multisig, amountBn])
   const signer = useNextTransactionSigner(t?.approvals)
   const hash = extrinsic?.registry.hash(extrinsic.method.toU8a()).toHex()
   const {
@@ -112,27 +112,19 @@ const SendAction = () => {
     <Layout selected="Send" requiresMultisig>
       <div css={{ display: 'flex', flex: 1, flexDirection: 'column', padding: '32px 8%' }}>
         <div css={{ width: '100%', maxWidth: 490 }}>
-          {step === Step.Name ? (
-            <NameTransaction
-              name={name}
-              setName={setName}
-              onNext={() => {
-                setStep(Step.Details)
-              }}
-            />
-          ) : step === Step.Details || step === Step.Review ? (
-            <DetailsForm
-              onBack={() => setStep(Step.Name)}
-              onNext={() => setStep(Step.Review)}
-              selectedToken={selectedToken}
-              tokens={tokens.state === 'hasValue' ? tokens.contents : []}
-              destinationAddress={destinationAddress}
-              amount={amountInput}
-              setDestinationAddress={setDestinationAddress}
-              setAmount={setAmountInput}
-              setSelectedToken={setSelectedToken}
-            />
-          ) : null}
+          <DetailsForm
+            onNext={() => setStep(Step.Review)}
+            selectedToken={selectedToken}
+            tokens={tokens.state === 'hasValue' ? tokens.contents : []}
+            destinationAddress={destinationAddress}
+            amount={amountInput}
+            setDestinationAddress={setDestinationAddress}
+            setAmount={setAmountInput}
+            setSelectedToken={setSelectedToken}
+            name={name}
+            setName={setName}
+          />
+
           <SideSheet
             onRequestDismiss={() => {
               setStep(Step.Details)
@@ -167,7 +159,7 @@ const SendAction = () => {
                   }
                   approveAsMulti({
                     metadata: {
-                      description: name,
+                      description: defaultName,
                       callData: extrinsic.method.toHex(),
                     },
                     onSuccess: () => {

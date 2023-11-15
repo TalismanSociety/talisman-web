@@ -5,20 +5,22 @@ import { BaseToken } from '@domains/chains'
 import { useSelectedMultisig } from '@domains/multisig'
 import { useKnownAddresses } from '@hooks/useKnownAddresses'
 import { Address } from '@util/addresses'
-import { Button } from '@talismn/ui'
+import { Button, TextInput } from '@talismn/ui'
 import { NewTransactionHeader } from '../NewTransactionHeader'
 import { hasPermission } from '@domains/proxy/util'
 import { Alert } from '@components/Alert'
+import { Send } from '@talismn/icons'
 
 export const DetailsForm = (props: {
   destinationAddress?: Address
   amount: string
+  name: string
+  setName: (n: string) => void
   selectedToken: BaseToken | undefined
   setSelectedToken: (t: BaseToken) => void
   tokens: BaseToken[]
   setDestinationAddress: (address?: Address) => void
   setAmount: (a: string) => void
-  onBack: () => void
   onNext: () => void
 }) => {
   const [multisig] = useSelectedMultisig()
@@ -27,7 +29,7 @@ export const DetailsForm = (props: {
 
   return (
     <>
-      <NewTransactionHeader>Transaction details</NewTransactionHeader>
+      <NewTransactionHeader icon={<Send />}>Send</NewTransactionHeader>
       <div css={({ color }) => ({ color: color.offWhite, marginTop: 32, width: '100%' })}>
         <AmountFlexibleInput
           tokens={props.tokens}
@@ -39,6 +41,15 @@ export const DetailsForm = (props: {
       </div>
       <div css={({ color }) => ({ color: color.offWhite, marginTop: 24 })}>
         <AddressInput onChange={props.setDestinationAddress} addresses={addresses} leadingLabel="Recipient" />
+      </div>
+      <div css={({ color }) => ({ color: color.offWhite, marginTop: 24 })}>
+        <TextInput
+          leadingLabel="Transaction Description"
+          css={{ fontSize: '18px !important' }}
+          placeholder='e.g. "Reimburse transaction fees"'
+          value={props.name}
+          onChange={e => props.setName(e.target.value)}
+        />
       </div>
       <div
         className={css`
@@ -52,16 +63,16 @@ export const DetailsForm = (props: {
           }
         `}
       >
-        <Button onClick={props.onBack} children={<h3>Back</h3>} variant="outlined" />
         <Button
           disabled={
             !props.destinationAddress ||
             isNaN(parseFloat(props.amount)) ||
             props.amount.endsWith('.') ||
-            !props.selectedToken
+            !props.selectedToken ||
+            !hasNonDelayedPermission
           }
           onClick={props.onNext}
-          children={<h3>Next</h3>}
+          children={<h3>Review</h3>}
         />
       </div>
       {hasNonDelayedPermission === false &&
