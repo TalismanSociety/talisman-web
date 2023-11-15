@@ -1,21 +1,22 @@
 import { useEffect, useState } from 'react'
 import { Loadable } from 'recoil'
 import { css } from '@emotion/css'
-import { Button } from '@talismn/ui'
+import { Button, TextInput } from '@talismn/ui'
 import TokensSelect from '@components/TokensSelect'
 import { BaseToken } from '@domains/chains'
 import { MultiSendSend } from './multisend.types'
-import MultiLineTransferInput from './MultiLineSendInput'
 import { isEqual } from 'lodash'
 import AmountRow from '@components/AmountRow'
 import BN from 'bn.js'
 import { Alert } from '@components/Alert'
+import { MultiLineSendInput } from './MultiLineSendInput'
 
 const MultiSendForm = (props: {
+  name: string
   tokens: Loadable<BaseToken[]>
   sends: MultiSendSend[]
+  setName: (n: string) => void
   setSends: (s: MultiSendSend[]) => void
-  onBack: () => void
   onNext: () => void
   hasNonDelayedPermission?: boolean
   hasDelayedPermission?: boolean
@@ -36,16 +37,24 @@ const MultiSendForm = (props: {
         flex-direction: column;
         gap: 24px;
         max-width: 620px;
-        padding-top: 40px;
+        padding-top: 32px;
         width: 100%;
       `}
     >
+      <TextInput
+        leadingLabel="Transaction Description"
+        css={{ fontSize: '18px !important' }}
+        placeholder='e.g. "Reimburse transaction fees"'
+        value={props.name}
+        onChange={e => props.setName(e.target.value)}
+      />
       <TokensSelect
+        leadingLabel="Token"
         tokens={props.tokens.contents ?? []}
         selectedToken={selectedToken}
         onChange={token => setSelectedToken(token)}
       />
-      <MultiLineTransferInput
+      <MultiLineSendInput
         token={selectedToken}
         onChange={(sends, invalidRows) => {
           // prevent unnecessary re-render if sends are the same
@@ -83,40 +92,29 @@ const MultiSendForm = (props: {
             </div>
           </>
         )}
-
-        <div css={{ width: '100%', marginTop: 8 }}>
-          <div
-            className={css`
-              display: grid;
-              grid-template-columns: 1fr 1fr;
-              gap: 16px;
-              width: 100%;
-              button {
-                height: 56px;
-              }
-            `}
-          >
-            <Button css={{ width: '100%' }} onClick={props.onBack} children={<h3>Back</h3>} variant="outlined" />
+        {props.hasNonDelayedPermission === false ? (
+          <div css={{ '> div': { p: { fontSize: 14 } } }}>
+            {props.hasDelayedPermission ? (
+              <Alert>
+                <p>Time delayed proxies are not supported yet.</p>
+              </Alert>
+            ) : (
+              <Alert>
+                <p>
+                  Your Vault does not have the proxy permission required to send token on behalf of the proxied account.
+                </p>
+              </Alert>
+            )}
+          </div>
+        ) : (
+          <div css={{ button: { height: 56, padding: '0 32px' } }}>
             <Button
-              css={{ width: '100%' }}
-              disabled={props.sends.length === 0 || hasInvalidRow || !props.hasNonDelayedPermission}
+              disabled={props.sends.length === 0 || hasInvalidRow || !props.hasNonDelayedPermission || !props.name}
               onClick={props.onNext}
-              children={<h3>Next</h3>}
+              children="Review"
             />
           </div>
-        </div>
-        {props.hasNonDelayedPermission === false &&
-          (props.hasDelayedPermission ? (
-            <Alert>
-              <p>Time delayed proxies are not supported yet.</p>
-            </Alert>
-          ) : (
-            <Alert>
-              <p>
-                Your Vault does not have the proxy permission required to send token on behalf of the proxied account.
-              </p>
-            </Alert>
-          ))}
+        )}
       </div>
     </div>
   )

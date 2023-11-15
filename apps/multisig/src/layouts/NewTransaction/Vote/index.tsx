@@ -1,4 +1,3 @@
-import { css } from '@emotion/css'
 import { useMemo, useState } from 'react'
 import {
   SplitAbstainVoteParams,
@@ -21,15 +20,12 @@ import {
 import { SplitVoteParams } from '@domains/referenda'
 import { useApproveAsMulti } from '@domains/chains'
 import { pjsApiSelector } from '@domains/chains/pjs-api'
-import TransactionSummarySideSheet from '../../Transactions/TransactionSummarySideSheet'
+import TransactionSummarySideSheet from '../../Overview/Transactions/TransactionSummarySideSheet'
 import { toast } from 'react-hot-toast'
 import { useNavigate } from 'react-router-dom'
+import { Layout } from '../../Layout'
 
-type Props = {
-  onCancel: () => void
-}
-
-const VoteAction: React.FC<Props> = ({ onCancel }) => {
+const VoteAction: React.FC = () => {
   const multisig = useRecoilValue(selectedMultisigState)
   const apiLoadable = useRecoilValueLoadable(pjsApiSelector(multisig.chain.rpcs))
   const tokens = useRecoilValueLoadable(selectedMultisigChainTokensState)
@@ -48,12 +44,14 @@ const VoteAction: React.FC<Props> = ({ onCancel }) => {
       apiLoadable.state !== 'hasValue' ||
       !isPalletSupported ||
       voteDetails.referendumId === undefined ||
+      !apiLoadable.contents.tx ||
+      !apiLoadable.contents.tx?.convictionVoting ||
       !nativeToken ||
       !isVoteDetailsComplete(voteDetails)
     )
       return
     try {
-      const voteExtrinsic = apiLoadable.contents.tx.convictionVoting.vote(
+      const voteExtrinsic = apiLoadable.contents.tx?.convictionVoting.vote(
         voteDetails.referendumId,
         voteDetails.details as
           | { Standard: StandardVoteParams }
@@ -65,8 +63,7 @@ const VoteAction: React.FC<Props> = ({ onCancel }) => {
       console.error(e)
     }
   }, [
-    apiLoadable.contents.tx.convictionVoting,
-    apiLoadable.contents.tx.proxy,
+    apiLoadable.contents.tx,
     apiLoadable.state,
     isPalletSupported,
     multisig.proxyAddress.bytes,
@@ -109,58 +106,55 @@ const VoteAction: React.FC<Props> = ({ onCancel }) => {
   const { approveAsMulti, estimatedFee, ready } = useApproveAsMulti(signer?.address, hash, null, t?.multisig)
 
   return (
-    <div
-      className={css`
-        display: grid;
-        justify-items: center;
-        margin-top: 18px;
-      `}
-    >
-      <VotingForm
-        voteDetails={voteDetails}
-        token={nativeToken}
-        onChange={setVoteDetails}
-        onCancel={onCancel}
-        onNext={() => setReviewing(true)}
-      />
-      <TransactionSummarySideSheet
-        open={reviewing && !!isPalletSupported}
-        onClose={() => setReviewing(false)}
-        t={t}
-        canCancel
-        fee={ready ? estimatedFee : undefined}
-        cancelButtonTextOverride="Back"
-        onApprove={() =>
-          new Promise((resolve, reject) => {
-            if (!extrinsic) {
-              toast.error("Couldn't get hash or extrinsic")
-              return
+    <Layout selected="Voting" requiresMultisig>
+      <div css={{ display: 'flex', flex: 1, flexDirection: 'column', padding: '32px 8%' }}>
+        <div css={{ width: '100%', maxWidth: 490 }}>
+          <VotingForm
+            voteDetails={voteDetails}
+            token={nativeToken}
+            onChange={setVoteDetails}
+            onNext={() => setReviewing(true)}
+          />
+          <TransactionSummarySideSheet
+            open={reviewing && !!isPalletSupported}
+            onClose={() => setReviewing(false)}
+            t={t}
+            canCancel
+            fee={ready ? estimatedFee : undefined}
+            cancelButtonTextOverride="Back"
+            onApprove={() =>
+              new Promise((resolve, reject) => {
+                if (!extrinsic) {
+                  toast.error("Couldn't get hash or extrinsic")
+                  return
+                }
+                approveAsMulti({
+                  metadata: {
+                    description: transactionName,
+                    callData: extrinsic.method.toHex(),
+                  },
+                  onSuccess: () => {
+                    navigate('/overview')
+                    toast.success('Transaction successful!', { duration: 5000, position: 'bottom-right' })
+                    resolve()
+                  },
+                  onFailure: e => {
+                    navigate('/overview')
+                    toast.error('Transaction failed')
+                    console.error(e)
+                    reject()
+                  },
+                })
+              })
             }
-            approveAsMulti({
-              metadata: {
-                description: transactionName,
-                callData: extrinsic.method.toHex(),
-              },
-              onSuccess: () => {
-                navigate('/overview')
-                toast.success('Transaction successful!', { duration: 5000, position: 'bottom-right' })
-                resolve()
-              },
-              onFailure: e => {
-                navigate('/overview')
-                toast.error('Transaction failed')
-                console.error(e)
-                reject()
-              },
-            })
-          })
-        }
-        onCancel={() => {
-          setReviewing(false)
-          return Promise.resolve()
-        }}
-      />
-    </div>
+            onCancel={() => {
+              setReviewing(false)
+              return Promise.resolve()
+            }}
+          />
+        </div>
+      </div>
+    </Layout>
   )
 }
 

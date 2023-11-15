@@ -8,16 +8,17 @@ import VoteStandard from './mode/VoteStandard'
 import { ProposalsDropdown } from './ProposalsDropdown'
 import { hasPermission } from '@domains/proxy/util'
 import { Alert } from '@components/Alert'
+import { NewTransactionHeader } from '../NewTransactionHeader'
+import { Zap } from '@talismn/icons'
 
 type Props = {
   token: BaseToken
   voteDetails: VoteDetails
-  onCancel: () => void
   onChange: (v: VoteDetails) => void
   onNext: () => void
 }
 
-const VotingForm: React.FC<Props> = ({ onCancel, onChange, onNext, token, voteDetails }) => {
+const VotingForm: React.FC<Props> = ({ onChange, onNext, token, voteDetails }) => {
   const [multisig] = useSelectedMultisig()
 
   const { hasDelayedPermission, hasNonDelayedPermission } = hasPermission(multisig, 'governance')
@@ -27,19 +28,13 @@ const VotingForm: React.FC<Props> = ({ onCancel, onChange, onNext, token, voteDe
   }
 
   return (
-    <div
-      className={css`
-        display: grid;
-        justify-items: center;
-        max-width: 490px;
-        width: 100%;
-      `}
-    >
-      <h1 style={{ marginBottom: '32px' }}>Vote Details</h1>
+    <>
+      <NewTransactionHeader icon={<Zap />}>Vote</NewTransactionHeader>
       <div
         className={css`
           display: grid;
           gap: 32px;
+          margin-top: 32px;
           width: 100%;
         `}
       >
@@ -53,26 +48,9 @@ const VotingForm: React.FC<Props> = ({ onCancel, onChange, onNext, token, voteDe
           <VoteStandard onChange={handleDetailsChange} token={token} params={voteDetails.details.Standard} />
         ) : // TODO: add UI for Abstain and Split votes
         null}
-        <div
-          className={css`
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
-            width: 100%;
-            button {
-              height: 56px;
-            }
-          `}
-        >
-          <Button onClick={onCancel} variant="outlined">
-            <h3>Cancel</h3>
-          </Button>
-          <Button onClick={onNext} disabled={!isVoteDetailsComplete(voteDetails) || !hasNonDelayedPermission}>
-            <h3>Next</h3>
-          </Button>
-        </div>
-        {hasNonDelayedPermission === false &&
-          (hasDelayedPermission ? (
+
+        {hasNonDelayedPermission === false ? (
+          hasDelayedPermission ? (
             <Alert>
               <p>Time delayed proxies are not supported yet.</p>
             </Alert>
@@ -80,9 +58,16 @@ const VotingForm: React.FC<Props> = ({ onCancel, onChange, onNext, token, voteDe
             <Alert>
               <p>Your Vault does not have the proxy permission required to vote on behalf of the proxied account.</p>
             </Alert>
-          ))}
+          )
+        ) : (
+          <div css={{ button: { height: 56, padding: '0 32px' } }}>
+            <Button onClick={onNext} disabled={!isVoteDetailsComplete(voteDetails) || !hasNonDelayedPermission}>
+              Review
+            </Button>
+          </div>
+        )}
       </div>
-    </div>
+    </>
   )
 }
 

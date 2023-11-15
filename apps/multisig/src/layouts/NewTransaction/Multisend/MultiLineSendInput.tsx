@@ -88,7 +88,7 @@ const findAddressAndAmount = (
 
 const exampleAddress = Address.fromSs58('5DFMVCaWNPcSdPVmK7d6g81ZV58vw5jkKbQk8vR4FSxyhJBD') as Address
 
-const MultiLineSendInput: React.FC<Props> = ({
+export const MultiLineSendInput: React.FC<Props> = ({
   label = 'Enter one address and amount on each line.',
   onChange,
   token,
@@ -233,7 +233,9 @@ const MultiLineSendInput: React.FC<Props> = ({
       >
         <div>
           <p>{label}</p>
-          {token && <p css={{ fontSize: 12, opacity: 0.8 }}>e.g. {exampleAddress.toSs58(token.chain)}, 55.56</p>}
+          {token && (
+            <p css={{ fontSize: 12, opacity: 0.8 }}>e.g. {shortenAddress(exampleAddress.toSs58(token.chain))}, 55.56</p>
+          )}
         </div>
         <div css={{ display: 'flex', alignItems: 'center', gap: 4 }}>
           <Tooltip
@@ -391,5 +393,3 @@ const MultiLineSendInput: React.FC<Props> = ({
     </div>
   )
 }
-
-export default MultiLineSendInput

@@ -85,22 +85,23 @@ const Overview = () => {
       <div
         className={css`
           display: grid;
+          flex: 1;
           gap: 16px;
           grid-template-columns: 1fr;
           grid-template-areas:
             'transactions'
-            'overvew-assets';
+            'overview-assets';
           flex: 1;
           @media ${device.md} {
             grid-template-columns: 45fr 55fr;
-            grid-template-areas: 'overvew-assets transactions';
+            grid-template-areas: 'overview-assets transactions';
           }
           @media ${device.lg} {
             grid-template-columns: 38fr 62fr;
           }
         `}
       >
-        <div css={{ gridArea: 'overvew-assets', display: 'flex', flexDirection: 'column', gap: 16, height: '100%' }}>
+        <div css={{ gridArea: 'overview-assets', display: 'flex', flexDirection: 'column', gap: 16, height: '100%' }}>
           <VaultOverview />
           <Assets augmentedTokens={augmentedTokens} />
         </div>

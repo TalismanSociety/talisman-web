@@ -11,3 +11,7 @@
 .ReactModal__Overlay--before-close {
   opacity: 0;
 }
+
+label {
+  font-size: 14px !important;
+}
