@@ -33,7 +33,7 @@ const TokensSelect: React.FC<Props> = ({ leadingLabel, onChange, selectedToken, 
         },
       }}
     >
-      {tokens.map(token => (
+      {tokens.map?.(token => (
         <Select.Option
           key={token.id}
           value={token.id}

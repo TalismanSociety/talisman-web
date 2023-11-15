@@ -1,4 +1,3 @@
-import { css } from '@emotion/css'
 import AddressInput from '@components/AddressInput'
 import { AmountFlexibleInput } from '@components/AmountFlexibleInput'
 import { BaseToken } from '@domains/chains'
@@ -64,28 +63,18 @@ export const DetailsForm = (props: {
           </Alert>
         )
       ) : (
-        <div
-          className={css`
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
-            margin-top: 32px;
-            width: 100%;
-            button {
-              height: 56px;
-            }
-          `}
-        >
+        <div css={{ button: { height: 56, padding: '0 32px' } }}>
           <Button
             disabled={
               !props.destinationAddress ||
               isNaN(parseFloat(props.amount)) ||
               props.amount.endsWith('.') ||
               !props.selectedToken ||
+              !props.name ||
               !hasNonDelayedPermission
             }
             onClick={props.onNext}
-            children={<h3>Review</h3>}
+            children="Review"
           />
         </div>
       )}

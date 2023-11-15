@@ -19,18 +19,16 @@ import { useNavigate } from 'react-router-dom'
 import { useRecoilValue } from 'recoil'
 
 import { FullScreenDialogContents, FullScreenDialogTitle } from '../../Overview/Transactions/FullScreenSummary'
-import { NameTransaction } from '../NameTransaction'
 import { DetailsForm } from './DetailsForm'
 import { Layout } from '../../Layout'
 
 enum Step {
-  Name,
   Details,
   Review,
 }
 
 const AdvancedAction = () => {
-  const [step, setStep] = useState(Step.Name)
+  const [step, setStep] = useState(Step.Details)
   const [name, setName] = useState('')
   const [extrinsic, setExtrinsic] = useState<SubmittableExtrinsic<'promise'> | undefined>()
   const multisig = useRecoilValue(selectedMultisigState)
@@ -66,19 +64,10 @@ const AdvancedAction = () => {
   return (
     <Layout selected="Advanced" requiresMultisig>
       <div css={{ display: 'flex', flex: 1, flexDirection: 'column', padding: '32px 8%' }}>
-        {step === Step.Name ? (
-          <div css={{ width: '100%', maxWidth: 490 }}>
-            <NameTransaction
-              name={name}
-              setName={setName}
-              onNext={() => {
-                setStep(Step.Details)
-              }}
-            />
-          </div>
-        ) : step === Step.Details || step === Step.Review ? (
+        {step === Step.Details || step === Step.Review ? (
           <DetailsForm
-            onBack={() => setStep(Step.Name)}
+            name={name}
+            setName={setName}
             onNext={() => setStep(Step.Review)}
             extrinsic={extrinsic}
             setExtrinsic={setExtrinsic}

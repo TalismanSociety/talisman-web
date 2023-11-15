@@ -107,22 +107,11 @@ const MultiSendForm = (props: {
             )}
           </div>
         ) : (
-          <div
-            className={css`
-              display: grid !important;
-              grid-template-columns: 1fr 1fr;
-              gap: 16px;
-              margin-top: 8px;
-              button {
-                height: 56px;
-              }
-            `}
-          >
+          <div css={{ button: { height: 56, padding: '0 32px' } }}>
             <Button
-              css={{ width: '100%' }}
               disabled={props.sends.length === 0 || hasInvalidRow || !props.hasNonDelayedPermission || !props.name}
               onClick={props.onNext}
-              children={<h3>Review</h3>}
+              children="Review"
             />
           </div>
         )}

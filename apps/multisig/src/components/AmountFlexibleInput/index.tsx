@@ -111,13 +111,12 @@ export const AmountFlexibleInput = (props: {
       <div
         className={css`
           display: flex;
-          height: 100%;
-          min-width: 100px;
           align-items: center;
           justify-content: center;
-          height: 95.5px;
+          height: max-content;
+          margin-top: 25px;
           button {
-            height: 51.5px;
+            height: 53.5px;
             gap: 8px;
             > div {
               display: flex;

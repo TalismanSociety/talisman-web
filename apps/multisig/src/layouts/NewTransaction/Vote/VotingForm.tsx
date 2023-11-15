@@ -49,7 +49,7 @@ const VotingForm: React.FC<Props> = ({ onChange, onNext, token, voteDetails }) =
         ) : // TODO: add UI for Abstain and Split votes
         null}
 
-        {hasNonDelayedPermission !== false ? (
+        {hasNonDelayedPermission === false ? (
           hasDelayedPermission ? (
             <Alert>
               <p>Time delayed proxies are not supported yet.</p>
@@ -60,19 +60,9 @@ const VotingForm: React.FC<Props> = ({ onChange, onNext, token, voteDetails }) =
             </Alert>
           )
         ) : (
-          <div
-            className={css`
-              display: grid;
-              grid-template-columns: 1fr 1fr;
-              width: 100%;
-              button {
-                height: 56px;
-                width: 100%;
-              }
-            `}
-          >
+          <div css={{ button: { height: 56, padding: '0 32px' } }}>
             <Button onClick={onNext} disabled={!isVoteDetailsComplete(voteDetails) || !hasNonDelayedPermission}>
-              <h3>Review</h3>
+              Review
             </Button>
           </div>
         )}
