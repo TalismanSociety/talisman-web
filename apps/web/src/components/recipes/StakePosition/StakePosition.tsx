@@ -1,6 +1,6 @@
 import AccountIcon from '@components/molecules/AccountIcon'
 import type { Account } from '@domains/accounts'
-import { BarChart, Clock, Zap, ZapOff } from '@talismn/icons'
+import { BarChart2, Clock, Zap, ZapOff } from '@talismn/icons'
 import {
   Chip,
   CircularProgressIndicator,
@@ -57,7 +57,7 @@ const UnstakeButton = (props: Omit<ButtonProps, 'children'>) => (
 const StatisticsButton = (props: Omit<ButtonProps, 'children'>) => (
   <Tooltip content="Statistics">
     <SurfaceIconButton {...props}>
-      <BarChart />
+      <BarChart2 />
     </SurfaceIconButton>
   </Tooltip>
 )
