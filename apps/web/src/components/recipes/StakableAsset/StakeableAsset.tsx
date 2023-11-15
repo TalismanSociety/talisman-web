@@ -136,7 +136,7 @@ const StakeableAsset = Object.assign(
 )
 
 export const StakeableAssetList = (props: PropsWithChildren<{ className?: string }>) => (
-  <section css={{ display: 'flex', flexDirection: 'column', gap: '1.6rem' }} {...props}>
+  <section css={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }} {...props}>
     <div css={{ containerType: 'inline-size' }}>
       <header
         css={{
