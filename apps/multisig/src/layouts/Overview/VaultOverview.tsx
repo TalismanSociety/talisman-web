@@ -28,6 +28,7 @@ export const VaultOverview: React.FC = () => {
         display: 'flex',
         flexDirection: 'column',
         padding: 24,
+        width: '100%',
       }}
     >
       <div css={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>

@@ -1,4 +1,5 @@
 import Modal from '@components/Modal'
+import { css } from '@emotion/css'
 import { Button } from '@talismn/ui'
 import { useCallback } from 'react'
 import { atom, useRecoilState } from 'recoil'
@@ -17,6 +18,7 @@ const BetaNotice = () => {
 
   return (
     <Modal
+      css={{ zIndex: 1000 }}
       isOpen={isOpen}
       onAfterOpen={() => {}}
       onRequestClose={() => {
@@ -26,6 +28,9 @@ const BetaNotice = () => {
       shouldCloseOnOverlayClick={false}
       shouldCloseOnEsc={false}
       borderRadius={32}
+      overlayClassName={css`
+        z-index: 1000;
+      `}
     >
       <div
         css={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '32px', textAlign: 'center' }}

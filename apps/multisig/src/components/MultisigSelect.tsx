@@ -139,11 +139,14 @@ export const MultisigSelect: React.FC<Props> = ({ multisigs, onChange, selectedM
   return (
     <Select
       afterOptionsNode={<AddVaultButton />}
-      css={{ button: { gap: 12 } }}
+      css={{ width: '100%', button: { gap: 12 }, ul: { zIndex: 4 } }}
       onChange={handleChange}
       placeholder={<VaultDetails multisig={selectedMultisig} selected />}
       placeholderPointerEvents
       value={selectedMultisig.id}
+      className={css`
+        z-index: 4;
+      `}
     >
       {multisigs.reduce((accumulator, multisig) => {
         if (selectedMultisig.id === multisig.id) return accumulator

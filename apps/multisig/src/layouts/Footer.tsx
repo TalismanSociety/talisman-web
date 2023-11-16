@@ -9,6 +9,7 @@ const Footer = () => {
         display: flex;
         justify-content: center;
         align-items: center;
+        flex-direction: column;
         height: 100%;
         gap: 18px;
         padding: 0 40px;
@@ -20,7 +21,8 @@ const Footer = () => {
           color: var(--color-offWhite);
           font-size: 14px;
         }
-        @media ${device.lg} {
+        @media ${device.sm} {
+          flex-direction: row;
           padding: 0 96px;
           padding-bottom: 16px;
         }

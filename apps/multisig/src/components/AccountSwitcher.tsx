@@ -8,6 +8,7 @@ import { useSelectedMultisig } from '../domains/multisig'
 import { Address } from '../util/addresses'
 import { Chain } from '../domains/chains'
 import { AccountDetails } from './AddressInput/AccountDetails'
+import { device } from '../util/breakpoints'
 
 type Props = {
   accounts: InjectedAccount[]
@@ -30,13 +31,16 @@ const AccountRow = ({
       'display': 'flex',
       'alignItems': 'center',
       'gap': 8,
-      'padding': '8px 12px',
+      'padding': 4,
       'cursor': 'pointer',
       'width': '100%',
       'backgroundColor': color.surface,
       ':hover': {
         filter: 'brightness(1.2)',
         div: { p: { color: color.offWhite } },
+      },
+      [`@media(${device.sm})`]: {
+        padding: '8px 12px',
       },
     })}
   >
@@ -104,10 +108,13 @@ const AccountSwitcher: React.FC<Props> = ({ accounts, onSelect, selectedAccount 
           'border': `solid 1px ${actualExpanded ? color.border : 'rgba(0,0,0,0)'}`,
           'borderBottom': 'none',
           'width': '100%',
-          'padding': '8px 12px',
+          'padding': 4,
           'cursor': 'pointer',
           ':hover': {
             div: { color: color.offWhite },
+          },
+          [`@media(${device.sm})`]: {
+            padding: '8px 12px',
           },
         })}
         onClick={() => setExpanded(!expanded)}

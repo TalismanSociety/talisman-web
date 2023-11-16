@@ -8,6 +8,7 @@ import { useRecoilValue } from 'recoil'
 import { activeMultisigsState } from '@domains/multisig'
 import { activeTeamsState } from '../domains/offchain-data'
 import { Navigate } from 'react-router-dom'
+import { device } from '../util/breakpoints'
 
 export const Layout: React.FC<
   React.PropsWithChildren & { selected?: string; requiresMultisig?: boolean; hideSideBar?: boolean }
@@ -24,8 +25,11 @@ export const Layout: React.FC<
         width: '100%',
         minHeight: '100vh',
         gap: 16,
-        padding: 24,
+        padding: 16,
         flex: 1,
+        [`@media(${device.sm})`]: {
+          padding: 24,
+        },
       }}
     >
       <Header />

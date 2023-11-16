@@ -92,6 +92,7 @@ const Overview = () => {
             'transactions'
             'overview-assets';
           flex: 1;
+          width: 100%;
           @media ${device.md} {
             grid-template-columns: 45fr 55fr;
             grid-template-areas: 'overview-assets transactions';
@@ -101,7 +102,16 @@ const Overview = () => {
           }
         `}
       >
-        <div css={{ gridArea: 'overview-assets', display: 'flex', flexDirection: 'column', gap: 16, height: '100%' }}>
+        <div
+          css={{
+            gridArea: 'overview-assets',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 16,
+            height: '100%',
+            width: '100%',
+          }}
+        >
           <VaultOverview />
           <Assets augmentedTokens={augmentedTokens} />
         </div>
