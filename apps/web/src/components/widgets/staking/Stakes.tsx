@@ -1,7 +1,7 @@
 import SectionHeader from '@components/molecules/SectionHeader'
 import StakeItem from '@components/recipes/StakeItem'
 import StakePosition, { StakePositionList } from '@components/recipes/StakePosition'
-import SlpxStakes from '@components/widgets/staking/slpx/Stakes'
+import SlpxStakes from './slpx/Stakes'
 import { ChainProvider, chainsState } from '@domains/chains'
 import { useSubstrateFiatTotalStaked } from '@domains/staking/substrateValidator'
 import { Button, HiddenDetails, Text } from '@talismn/ui'
@@ -12,6 +12,7 @@ import AnimatedFiatNumber from '../AnimatedFiatNumber'
 import ErrorBoundary from '../ErrorBoundary'
 import PoolStakes from './substrate/PoolStakes'
 import ValidatorStakes from './substrate/ValidatorStakes'
+import LidoStakes from './lido/Stakes'
 
 const NoStakePrompt = (props: { className?: string }) => (
   <div className={props.className}>
@@ -95,6 +96,11 @@ const Stakes = (props: { hideHeader?: boolean }) => {
         <ErrorBoundary orientation="horizontal">
           <SuspenseSkeleton>
             <SlpxStakes />
+          </SuspenseSkeleton>
+        </ErrorBoundary>
+        <ErrorBoundary orientation="horizontal">
+          <SuspenseSkeleton>
+            <LidoStakes />
           </SuspenseSkeleton>
         </ErrorBoundary>
         <NoStakePrompt css={{ 'display': 'none', ':only-child': { display: 'revert' } }} />

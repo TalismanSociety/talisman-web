@@ -7,6 +7,8 @@ import { ModalProvider } from '@components'
 import AccountValueInfo from '@components/recipes/AccountValueInfo'
 import { useShouldShowAccountConnectionGuard } from '@components/widgets/AccountConnectionGuard'
 import AccountsManagementMenu from '@components/widgets/AccountsManagementMenu'
+import LidoStakeSideSheet from '@components/widgets/staking/lido/StakeSideSheet'
+import SlpxStakeSideSheet from '@components/widgets/staking/slpx/StakeSideSheet'
 import NominationPoolsStakeSideSheet from '@components/widgets/staking/substrate/NominationPoolsStakeSideSheet'
 import { selectedAccountsState } from '@domains/accounts/recoils'
 import { currencyConfig, selectedCurrencyState } from '@domains/balances'
@@ -26,7 +28,6 @@ import { usePostHog } from 'posthog-js/react'
 import { useCallback, useEffect, useState } from 'react'
 import { Link, Outlet, useLocation } from 'react-router-dom'
 import { useRecoilState, useRecoilValue } from 'recoil'
-import SlpxStakeSideSheet from '@components/widgets/staking/slpx/StakeSideSheet'
 
 const CurrencySelect = () => {
   const [currency, setCurrency] = useRecoilState(selectedCurrencyState)
@@ -285,6 +286,7 @@ const Layout = () => {
         <Outlet />
         <NominationPoolsStakeSideSheet />
         <SlpxStakeSideSheet />
+        <LidoStakeSideSheet />
       </ModalProvider>
     </Scaffold>
   )
