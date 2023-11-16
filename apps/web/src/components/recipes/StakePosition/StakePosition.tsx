@@ -243,7 +243,7 @@ export const StakePositionList = (props: PropsWithChildren<{ className?: string 
         <Grid css={{ backgroundColor: 'transparent', paddingTop: 0, paddingBottom: 0 }}>
           <Text.BodySmall css={{ gridArea: 'account' }}>Account</Text.BodySmall>
           <Text.BodySmall css={{ gridArea: 'asset' }}>Asset</Text.BodySmall>
-          <Text.BodySmall css={{ gridArea: 'balance' }}>Balance</Text.BodySmall>
+          <Text.BodySmall css={{ gridArea: 'balance' }}>Staked balance</Text.BodySmall>
         </Grid>
       </header>
     </div>
