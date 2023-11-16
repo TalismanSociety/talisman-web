@@ -26,7 +26,7 @@ const IncreaseStakeSideSheet = (props: { onRequestDismiss: () => unknown; lidoSu
       }}
     >
       <iframe
-        src="https://stake.lido.fi/withdrawals/request?ref=0xAb5801a7D398351b8bE11C439e05C5B3259aeC9B"
+        src="https://stake.lido.fi?ref=0xAb5801a7D398351b8bE11C439e05C5B3259aeC9B"
         title="Lido Staking App"
         css={{ flex: 1, border: 'none', width: '100%', [SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR]: { width: '55rem' } }}
       />
@@ -53,7 +53,7 @@ const UnstakeSideSheet = (props: { onRequestDismiss: () => unknown; lidoSuite: L
       }}
     >
       <iframe
-        src="https://stake.lido.fi?ref=0xAb5801a7D398351b8bE11C439e05C5B3259aeC9B"
+        src="https://stake.lido.fi/withdrawals/request?ref=0xAb5801a7D398351b8bE11C439e05C5B3259aeC9B"
         title="Lido Staking App"
         css={{ flex: 1, border: 'none', width: '100%', [SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR]: { width: '55rem' } }}
       />
