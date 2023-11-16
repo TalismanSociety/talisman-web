@@ -69,4 +69,22 @@ export const stakeableAssets = [
       },
     ],
   },
+  {
+    symbol: 'ETH',
+    logo: githubChainLogoUrl('ethereum'),
+    chain: 'Ethereum',
+    apr: '~5%',
+    providers: [
+      {
+        type: 'Lido liquid staking',
+        description: 'Lido liquid staking',
+        url: (() => {
+          const url = new URL('staking', document.location.href)
+          url.searchParams.set('action', 'stake')
+          url.searchParams.set('type', 'lido')
+          return url.toString().slice(url.origin.length)
+        })(),
+      },
+    ],
+  },
 ] as const satisfies readonly Asset[]
