@@ -5,6 +5,7 @@ import Stakes from '@components/widgets/staking/Stakes'
 import { selectedBalancesState } from '@domains/balances'
 import { stakeableAssets } from '@domains/staking'
 import { Layers, Zap } from '@talismn/icons'
+import { Decimal } from '@talismn/math'
 import { SegmentedButton, Surface, Text } from '@talismn/ui'
 import BigNumber from 'bignumber.js'
 import { useMemo, useState } from 'react'
@@ -20,17 +21,23 @@ const StakeableAssetItem = ({
 }) => {
   const balances = useRecoilValue(selectedBalancesState)
 
-  const stakePercentage = useMemo(() => {
-    const token = balances.find(x => x.token?.symbol.toLowerCase() === asset.symbol.toLowerCase())
+  const token = useMemo(
+    () => balances.find(x => x.token?.symbol.toLowerCase() === asset.symbol.toLowerCase()),
+    [asset.symbol, balances]
+  )
 
-    if (token.sum.planck.total === 0n) {
-      return 0
-    }
+  const avaiableBalance = useMemo(
+    () => Decimal.fromPlanck(token.sum.planck.transferable, token.each.at(0)?.decimals ?? 0, asset.symbol),
+    [asset.symbol, token.each, token.sum.planck.transferable]
+  )
 
-    return BigNumber((token.sum.planck.locked + token.sum.planck.reserved).toString())
-      .dividedBy(token.sum.planck.total.toString())
-      .toNumber()
-  }, [asset.symbol, balances])
+  const availablePercentage = useMemo(
+    () =>
+      new BigNumber(token.sum.planck.transferable.toString())
+        .div(new BigNumber(token.sum.planck.total.toString()))
+        .toNumber(),
+    [token.sum.planck.total, token.sum.planck.transferable]
+  )
 
   return (
     <StakeableAsset
@@ -44,7 +51,8 @@ const StakeableAssetItem = ({
         </div>
       }
       provider={asset.chain}
-      stakePercentage={stakePercentage}
+      availableBalance={avaiableBalance.toHuman()}
+      availablePercentage={availablePercentage}
       stakeButton={<StakeableAsset.StakeButton onClick={onClick} />}
     />
   )

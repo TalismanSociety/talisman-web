@@ -9,7 +9,8 @@ export type StakeableAssetProps = {
   apr: ReactNode
   type: ReactNode
   provider: ReactNode
-  stakePercentage: number
+  availableBalance: ReactNode
+  availablePercentage: number
   stakeButton: ReactNode
 }
 
@@ -35,7 +36,7 @@ const Grid = (props: PropsWithChildren<{ className?: string }>) => (
       '@container (min-width: 100rem)': {
         alignItems: 'center',
         gridTemplateAreas: `'asset apr type provider stake-percentage action'`,
-        gridTemplateColumns: 'repeat(6, minmax(0, 1fr))',
+        gridTemplateColumns: 'repeat(4, minmax(0, 1fr)) minmax(0, 0.75fr) minmax(0, 1fr)',
       },
     }}
     {...props}
@@ -46,24 +47,7 @@ const StakeableAsset = Object.assign(
   (props: StakeableAssetProps) => {
     return (
       <div css={{ containerType: 'inline-size' }}>
-        <Grid
-          css={{
-            'borderRadius': '0.8rem',
-            'padding': '1.6rem',
-            'display': 'grid',
-            'gridTemplateAreas': `
-            'asset   action'
-            'divider divider'
-            'apr     type'
-          `,
-            'gap': '0.6rem',
-            '@container (min-width: 100rem)': {
-              alignItems: 'center',
-              gridTemplateAreas: `'asset apr type provider stake-percentage action'`,
-              gridTemplateColumns: 'repeat(6, minmax(0, 1fr))',
-            },
-          }}
-        >
+        <Grid>
           <div css={{ gridArea: 'asset', display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
             <img
               src={props.logo}
@@ -108,10 +92,17 @@ const StakeableAsset = Object.assign(
               '@container (min-width: 100rem)': { display: 'revert' },
             }}
           >
-            <Text.BodySmall as="div" alpha="high" css={{ textAlign: 'end', marginBottom: '0.6rem' }}>
-              {props.stakePercentage.toLocaleString(undefined, { style: 'percent' })}
-            </Text.BodySmall>
-            <LinearProgressIndicator value={props.stakePercentage} optimum={0.7} least={0.5} />
+            <Text.Body as="div" alpha="high" css={{ textAlign: 'end', marginBottom: '0.6rem' }}>
+              {props.availableBalance}
+            </Text.Body>
+            <div css={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
+              <div css={{ flex: 1 }}>
+                <LinearProgressIndicator value={props.availablePercentage} />
+              </div>
+              <Text.BodySmall as="div" alpha="high" color="#38D448" css={{ textAlign: 'end' }}>
+                {props.availablePercentage.toLocaleString(undefined, { style: 'percent' })}
+              </Text.BodySmall>
+            </div>
           </div>
           <Surface
             css={{
@@ -150,7 +141,7 @@ export const StakeableAssetList = (props: PropsWithChildren<{ className?: string
           <Text.BodySmall css={{ gridArea: 'apr' }}>Estimated APR (%)</Text.BodySmall>
           <Text.BodySmall css={{ gridArea: 'type' }}>Type</Text.BodySmall>
           <Text.BodySmall css={{ gridArea: 'provider' }}>Provider</Text.BodySmall>
-          <Text.BodySmall css={{ gridArea: 'stake-percentage' }}>Percent utilized</Text.BodySmall>
+          <Text.BodySmall css={{ gridArea: 'stake-percentage' }}>Available balance</Text.BodySmall>
         </Grid>
       </header>
     </div>

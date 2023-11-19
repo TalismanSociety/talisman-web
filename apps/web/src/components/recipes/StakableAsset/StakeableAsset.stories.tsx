@@ -15,7 +15,8 @@ export const Default: Story = {
     type: 'Nomination pools',
     provider: 'Polkadot',
     apr: '5.5 - 5.6',
-    stakePercentage: 0.55,
+    availableBalance: '10 DOT',
+    availablePercentage: 0.55,
     stakeButton: <StakeableAsset.StakeButton />,
   },
 }
