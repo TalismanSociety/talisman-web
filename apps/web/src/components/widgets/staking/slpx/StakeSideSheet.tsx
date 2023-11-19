@@ -46,7 +46,7 @@ const AddStakeSideSheet = (props: AddStakeSideSheetProps) => {
       <div
         css={{ 'display': 'flex', 'gap': '1.6rem', 'marginBottom': '1.6rem', 'flexWrap': 'wrap', '> *': { flex: 1 } }}
       >
-        <InfoCard headlineText="Rewards" text="4%" />
+        <InfoCard headlineText="Rewards" text="6.65%" />
         <InfoCard
           headlineText="Unbonding period"
           text={
