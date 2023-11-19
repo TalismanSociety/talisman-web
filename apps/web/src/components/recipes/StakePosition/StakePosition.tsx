@@ -174,10 +174,10 @@ const StakePosition = Object.assign(
           <div
             css={{ 'gridArea': 'asset', 'display': 'none', '@container (min-width: 100rem)': { display: 'revert' } }}
           >
-            <Text.BodySmall as="div">{props.symbol}</Text.BodySmall>
-            <Text.Body as="div" alpha="high">
-              {props.chain}
-            </Text.Body>
+            <Text.BodySmall as="div" alpha="high">
+              {props.symbol}
+            </Text.BodySmall>
+            <Text.Body as="div">{props.chain}</Text.Body>
           </div>
           <Surface
             css={{
@@ -186,7 +186,7 @@ const StakePosition = Object.assign(
               '@container (min-width: 100rem)': { display: 'none' },
             }}
           />
-          <div css={{ gridArea: 'balance' }}>
+          <div css={{ 'gridArea': 'balance', '@container (min-width: 100rem)': { textAlign: 'end' } }}>
             <Text.BodySmall as="div" css={{ '@container (min-width: 100rem)': { display: 'none' } }}>
               Total staked
             </Text.BodySmall>
@@ -243,7 +243,7 @@ export const StakePositionList = (props: PropsWithChildren<{ className?: string 
         <Grid css={{ backgroundColor: 'transparent', paddingTop: 0, paddingBottom: 0 }}>
           <Text.BodySmall css={{ gridArea: 'account' }}>Account</Text.BodySmall>
           <Text.BodySmall css={{ gridArea: 'asset' }}>Asset</Text.BodySmall>
-          <Text.BodySmall css={{ gridArea: 'balance' }}>Staked balance</Text.BodySmall>
+          <Text.BodySmall css={{ gridArea: 'balance', textAlign: 'end' }}>Staking balance</Text.BodySmall>
         </Grid>
       </header>
     </div>

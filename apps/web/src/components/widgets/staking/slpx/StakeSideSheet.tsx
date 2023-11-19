@@ -43,6 +43,19 @@ const AddStakeSideSheet = (props: AddStakeSideSheetProps) => {
       onRequestDismiss={props.onRequestDismiss}
       css={{ [SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR]: { width: '48rem' } }}
     >
+      <div
+        css={{ 'display': 'flex', 'gap': '1.6rem', 'marginBottom': '1.6rem', 'flexWrap': 'wrap', '> *': { flex: 1 } }}
+      >
+        <InfoCard headlineText="Rewards" text="4%" />
+        <InfoCard
+          headlineText="Unbonding period"
+          text={
+            <Suspense fallback="...">
+              <UnlockDuration slpxPair={props.slpxPair} />
+            </Suspense>
+          }
+        />
+      </div>
       <Surface css={{ padding: '1.6rem', borderRadius: '1.6rem' }}>
         <SlpxAddStakeForm
           confirmState={!ready ? 'disabled' : mint.isLoading ? 'pending' : undefined}
@@ -70,17 +83,6 @@ const AddStakeSideSheet = (props: AddStakeSideSheetProps) => {
           inputSupportingText={error?.message}
         />
       </Surface>
-      <div css={{ 'display': 'flex', 'gap': '1.6rem', 'marginTop': '1.6rem', 'flexWrap': 'wrap', '> *': { flex: 1 } }}>
-        <InfoCard headlineText="Rewards" text="4%" />
-        <InfoCard
-          headlineText="Unbonding period"
-          text={
-            <Suspense fallback="...">
-              <UnlockDuration slpxPair={props.slpxPair} />
-            </Suspense>
-          }
-        />
-      </div>
       <Text.Body as="p" css={{ marginTop: '4.8rem' }}>
         vGLMR (voucher GLMR) is a liquid staking token of GLMR, with fully underlying GLMR reserve and yield-bearing
         feature of GLMR staking reward.

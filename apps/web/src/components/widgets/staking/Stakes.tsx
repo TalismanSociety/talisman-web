@@ -1,18 +1,16 @@
 import SectionHeader from '@components/molecules/SectionHeader'
 import StakeItem from '@components/recipes/StakeItem'
 import StakePosition, { StakePositionList } from '@components/recipes/StakePosition'
-import SlpxStakes from './slpx/Stakes'
 import { ChainProvider, chainsState } from '@domains/chains'
-import { useSubstrateFiatTotalStaked } from '@domains/staking/substrate/validator'
 import { Button, HiddenDetails, Text } from '@talismn/ui'
 import { Fragment, Suspense, type PropsWithChildren } from 'react'
 import { Link } from 'react-router-dom'
 import { useRecoilValue } from 'recoil'
-import AnimatedFiatNumber from '../AnimatedFiatNumber'
 import ErrorBoundary from '../ErrorBoundary'
+import LidoStakes from './lido/Stakes'
+import SlpxStakes from './slpx/Stakes'
 import PoolStakes from './substrate/PoolStakes'
 import ValidatorStakes from './substrate/ValidatorStakes'
-import LidoStakes from './lido/Stakes'
 
 const NoStakePrompt = (props: { className?: string }) => (
   <div className={props.className}>
@@ -43,19 +41,20 @@ const NoStakePrompt = (props: { className?: string }) => (
   </div>
 )
 
-const StakeTotal = () => <AnimatedFiatNumber end={useSubstrateFiatTotalStaked().fiatTotal} />
+// TODO: new approach to calculate total staked amount across multiple providers
+// const StakeTotal = () => <AnimatedFiatNumber end={useSubstrateFiatTotalStaked().fiatTotal} />
 
 const StakeHeader = () => {
   return (
     <SectionHeader
       headlineText="Staking"
-      supportingText={
-        <ErrorBoundary fallback={<></>}>
-          <Suspense>
-            <StakeTotal />
-          </Suspense>
-        </ErrorBoundary>
-      }
+      // supportingText={
+      //   <ErrorBoundary fallback={<></>}>
+      //     <Suspense>
+      //       <StakeTotal />
+      //     </Suspense>
+      //   </ErrorBoundary>
+      // }
     />
   )
 }
