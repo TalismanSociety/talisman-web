@@ -55,7 +55,7 @@ export const stakeableAssets = [
     symbol: 'GLMR',
     logo: githubChainLogoUrl('moonbeam'),
     chain: 'Moonbeam',
-    apr: '~4%',
+    apr: '~6%',
     providers: [
       {
         type: 'Bifrost liquid staking',
@@ -71,13 +71,14 @@ export const stakeableAssets = [
   },
   {
     symbol: 'ETH',
-    logo: githubChainLogoUrl('ethereum'),
+    logo: githubChainLogoUrl('1'),
     chain: 'Ethereum',
     apr: '~5%',
     providers: [
       {
         type: 'Lido liquid staking',
-        description: 'Lido liquid staking',
+        description:
+          'Stake any amount of ETH, get daily staking rewards and use your stETH across the DeFi ecosystem and L2.',
         url: (() => {
           const url = new URL('staking', document.location.href)
           url.searchParams.set('action', 'stake')

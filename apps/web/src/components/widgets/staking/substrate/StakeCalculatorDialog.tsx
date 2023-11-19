@@ -1,7 +1,7 @@
 import StakeCalculatorDialogComponent from '@components/recipes/StakeCalculatorDialog'
 import { chainsState, type Chain, ChainProvider, ChainContext } from '@domains/chains'
 import { useTokenAmount, useTokenAmountFromPlanck } from '@domains/common'
-import { useInflation } from '@domains/staking/substrateNominationPools'
+import { useInflation } from '@domains/staking/substrate/nominationPools'
 import { Suspense, useContext, useDeferredValue, useMemo, useState, useTransition } from 'react'
 import { useRecoilValue } from 'recoil'
 import { AssetSelect } from './StakeForm'

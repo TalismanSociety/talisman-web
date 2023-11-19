@@ -160,7 +160,7 @@ const StyledExploreGrid = styled(ExploreGrid)`
 
 const Explore = styled(({ className }: { className?: string }) => (
   <section className={className}>
-    <h1>Explore</h1>
+    <Text.H2>Explore</Text.H2>
     <StyledExploreGrid />
   </section>
 ))`

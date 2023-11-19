@@ -14,7 +14,7 @@ export type StakeableAssetProps = {
 }
 
 const StakeButton = (props: Omit<ButtonProps, 'children'>) => (
-  <Button {...props} leadingIcon={<Zap />}>
+  <Button {...props} variant="surface" leadingIcon={<Zap />} css={theme => ({ color: theme.color.primary })}>
     Stake
   </Button>
 )

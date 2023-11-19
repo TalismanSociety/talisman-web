@@ -11,7 +11,7 @@ import {
   useInflation,
   usePoolStakes,
   type DerivedPool,
-} from '@domains/staking/substrateNominationPools'
+} from '@domains/staking/substrate/nominationPools'
 import { useTheme } from '@emotion/react'
 import { encodeAddress } from '@polkadot/util-crypto'
 import { BarChart, Clock, Earn, ExternalLink, Percent, Zap } from '@talismn/icons'
