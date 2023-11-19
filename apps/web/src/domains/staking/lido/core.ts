@@ -3,6 +3,8 @@ import { Decimal } from '@talismn/math'
 import { useContractRead, useContractReads, useToken } from 'wagmi'
 import { lidoTokenAbi, withdrawalQueueAbi } from './abi'
 import type { LidoSuite } from './types'
+import { useRecoilValue } from 'recoil'
+import { tokenPriceState } from '@domains/chains'
 
 export const useStakes = (accounts: Account[], lidoSuite: LidoSuite) => {
   const filteredAccounts = accounts.filter(x => x.type === 'ethereum')
@@ -83,9 +85,19 @@ export const useStakes = (accounts: Account[], lidoSuite: LidoSuite) => {
     claimable: claimables?.at(index),
   }))
 
+  const tokenPrice = useRecoilValue(tokenPriceState({ coingeckoId: lidoSuite.token.coingeckoId }))
+
   return filteredAccounts
     .map((account, index) => {
-      const unlockings = withdrawals?.filter(x => x.status?.owner === account.address && !x.status.isClaimed)
+      const balance = Decimal.fromPlanck(
+        (balances.data?.at(index)?.result as bigint) ?? 0n,
+        token?.decimals ?? 0,
+        token?.symbol
+      )
+
+      const accountWithdrawals = withdrawals?.filter(x => x.status?.owner === account.address)
+      const unlockings = accountWithdrawals?.filter(x => !x.status?.isClaimed && !x.status?.isFinalized)
+
       return {
         account,
         balance: Decimal.fromPlanck(
@@ -93,6 +105,7 @@ export const useStakes = (accounts: Account[], lidoSuite: LidoSuite) => {
           token?.decimals ?? 0,
           token?.symbol
         ),
+        fiatBalance: balance.toNumber() * tokenPrice,
         totalUnlocking: Decimal.fromPlanck(
           unlockings?.reduce((prev, curr) => prev + (curr.status?.amountOfStETH ?? 0n), 0n),
           token?.decimals ?? 0,
@@ -102,7 +115,7 @@ export const useStakes = (accounts: Account[], lidoSuite: LidoSuite) => {
           amount: Decimal.fromPlanck(unlock.status?.amountOfStETH ?? 0n, token?.decimals ?? 0, token?.symbol),
         })),
         claimable: Decimal.fromPlanck(
-          withdrawals?.reduce((prev, curr) => prev + (curr.claimable ?? 0n), 0n),
+          accountWithdrawals?.reduce((prev, curr) => prev + (curr.claimable ?? 0n), 0n),
           token?.decimals ?? 0,
           token?.symbol
         ),
