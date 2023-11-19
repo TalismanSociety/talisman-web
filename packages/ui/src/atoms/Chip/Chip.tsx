@@ -56,6 +56,11 @@ const Chip = ({ size = 'md', containerColor, contentColor, leadingContent, loadi
           ':hover': { opacity: 0.8 },
         },
         loading && { cursor: 'progress' },
+        props.disabled && {
+          'opacity': theme.contentAlpha.disabled,
+          'cursor': 'not-allowed',
+          ':hover': { opacity: theme.contentAlpha.disabled },
+        },
       ]}
     >
       <IconContext.Provider value={{ size: '1em' }}>

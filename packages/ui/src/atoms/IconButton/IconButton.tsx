@@ -1,6 +1,7 @@
 import { type ElementType } from 'react'
 import type { IconProps } from '../Icon'
 import Icon, { SurfaceIcon, TonalIcon } from '../Icon'
+import { useTheme } from '@emotion/react'
 
 type IconButtonElementType = Extract<ElementType, 'button' | 'a' | 'figure'> | ElementType<any>
 
@@ -11,8 +12,10 @@ export type IconButtonProps<T extends IconButtonElementType = 'button'> = IconPr
 
 const BaseIconButtonFactory =
   (Element: any) =>
-  <T extends IconButtonElementType = 'button'>(props: IconButtonProps<T>) =>
-    (
+  <T extends IconButtonElementType = 'button'>(props: IconButtonProps<T>) => {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const theme = useTheme()
+    return (
       <Element
         {...props}
         css={[
@@ -23,6 +26,7 @@ const BaseIconButtonFactory =
             },
           },
           props.disabled && {
+            opacity: theme.contentAlpha.disabled,
             color: props.disabledContentColor,
             backgroundColor: props.disabledContainerColor,
             cursor: 'not-allowed',
@@ -30,6 +34,7 @@ const BaseIconButtonFactory =
         ]}
       />
     )
+  }
 
 const IconButton = BaseIconButtonFactory(Icon)
 

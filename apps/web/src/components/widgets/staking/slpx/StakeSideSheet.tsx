@@ -1,6 +1,6 @@
 import { SlpxAddStakeForm } from '@components/recipes/AddStakeDialog'
 import { useAccountSelector } from '@components/widgets/AccountSelector'
-import { writeableEvmAccountsState } from '@domains/accounts'
+import { evmSignableAccountsState } from '@domains/accounts'
 import { glmrSlpxPair, useMintForm, type SlpxPair } from '@domains/staking/slpx'
 import { Zap } from '@talismn/icons'
 import { PolkadotApiIdProvider } from '@talismn/react-polkadot-api'
@@ -18,7 +18,7 @@ type AddStakeSideSheetProps = {
 }
 
 const AddStakeSideSheet = (props: AddStakeSideSheetProps) => {
-  const [account, accountSelector] = useAccountSelector(useRecoilValue(writeableEvmAccountsState), 0)
+  const [account, accountSelector] = useAccountSelector(useRecoilValue(evmSignableAccountsState), 0)
 
   const { switchNetworkAsync } = useSwitchNetwork()
 
