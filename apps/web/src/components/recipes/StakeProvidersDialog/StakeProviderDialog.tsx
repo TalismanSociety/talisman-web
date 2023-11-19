@@ -1,5 +1,5 @@
 import { Zap } from '@talismn/icons'
-import { AlertDialog, Button, Surface, Text } from '@talismn/ui'
+import { AlertDialog, Button, Hr, Surface, Text } from '@talismn/ui'
 import type { PropsWithChildren, ReactNode } from 'react'
 
 export type StakeProviderOptionProps = {
@@ -14,11 +14,12 @@ const StakeProviderOption = (props: StakeProviderOptionProps) => (
       <Text.BodyLarge as="div" alpha="high">
         {props.name}
       </Text.BodyLarge>
-      <Button leadingIcon={<Zap />} onClick={props.onSelect}>
+      <Button leadingIcon={<Zap />} onClick={props.onSelect} css={{ paddingTop: '0.8rem', paddingBottom: '0.8rem' }}>
         Stake
       </Button>
     </div>
-    <Text.Body as="div">{props.description}</Text.Body>
+    <Hr />
+    <Text.BodySmall as="div">{props.description}</Text.BodySmall>
   </Surface>
 )
 

@@ -4,7 +4,8 @@ import AccountConnectionGuard from '@components/widgets/AccountConnectionGuard'
 import Stakes from '@components/widgets/staking/Stakes'
 import { selectedBalancesState } from '@domains/balances'
 import { stakeableAssets } from '@domains/staking'
-import { SegmentedButton, Surface } from '@talismn/ui'
+import { Layers, Zap } from '@talismn/icons'
+import { SegmentedButton, Surface, Text } from '@talismn/ui'
 import BigNumber from 'bignumber.js'
 import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -37,7 +38,11 @@ const StakeableAssetItem = ({
       logo={asset.logo}
       chain={asset.chain}
       apr={asset.apr}
-      type={asset.providers.length === 1 ? asset.providers[0].type : 'Multiple'}
+      type={
+        <div css={{ display: 'contents', textTransform: 'capitalize' }}>
+          {asset.providers.length === 1 ? asset.providers[0].type : 'Multiple'}
+        </div>
+      }
       provider={asset.chain}
       stakePercentage={stakePercentage}
       stakeButton={<StakeableAsset.StakeButton onClick={onClick} />}
@@ -86,11 +91,18 @@ const Staking = () => {
   const [selectedSection, setSelectedSection] = useState<(typeof sections)[number]>('stakeable-assets')
   return (
     <AccountConnectionGuard>
-      <div css={{ paddingTop: '2.4rem' }}>
+      <div>
+        <header>
+          <Text.H2>Staking</Text.H2>
+        </header>
         <Surface css={{ borderRadius: '1.6rem', padding: '1.6rem' }}>
           <SegmentedButton value={selectedSection} onChange={setSelectedSection} css={{ marginBottom: '2.4rem' }}>
-            <SegmentedButton.ButtonSegment value="stakeable-assets">Stake</SegmentedButton.ButtonSegment>
-            <SegmentedButton.ButtonSegment value="positions">My positions</SegmentedButton.ButtonSegment>
+            <SegmentedButton.ButtonSegment value="stakeable-assets" leadingIcon={<Zap />}>
+              Stake
+            </SegmentedButton.ButtonSegment>
+            <SegmentedButton.ButtonSegment value="positions" leadingIcon={<Layers />}>
+              My positions
+            </SegmentedButton.ButtonSegment>
           </SegmentedButton>
           {selectedSection === 'positions' ? <Stakes hideHeader /> : <StakeableAssets />}
         </Surface>

@@ -12,9 +12,9 @@ import {
   useSubstrateApiState,
   useTokenAmountFromPlanck,
 } from '@domains/common'
-import { useInflation, usePoolAddForm, usePoolStakes } from '@domains/staking/substrateNominationPools/hooks'
-import { eraStakersState, useRecommendedPoolsState } from '@domains/staking/substrateNominationPools/recoils'
-import { createAccounts } from '@domains/staking/substrateNominationPools/utils'
+import { useInflation, usePoolAddForm, usePoolStakes } from '@domains/staking/substrate/nominationPools/hooks'
+import { eraStakersState, useRecommendedPoolsState } from '@domains/staking/substrate/nominationPools/recoils'
+import { createAccounts } from '@domains/staking/substrate/nominationPools/utils'
 import { type Decimal } from '@talismn/math'
 import { CircularProgressIndicator, Select } from '@talismn/ui'
 import { Maybe } from '@util/monads'
