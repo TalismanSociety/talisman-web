@@ -15,7 +15,7 @@ import {
   type ChipProps,
 } from '@talismn/ui'
 import { shortenAddress } from '@util/format'
-import type { PropsWithChildren, ReactNode } from 'react'
+import { createContext, type PropsWithChildren, type ReactNode } from 'react'
 import { StakeStatusIndicator, type StakeStatus } from '../StakeStatusIndicator'
 import StakePositionSkeleton from './StakePosition.skeleton'
 
@@ -38,20 +38,30 @@ export type StakePositionProps = {
   withdrawButton?: ReactNode
 }
 
+const StakePositionContext = createContext({ readonly: false })
+
 const IncreaseStakeButton = (props: Omit<ButtonProps, 'children'>) => (
-  <Tooltip content="Increase stake">
-    <TonalIconButton {...props}>
-      <Zap />
-    </TonalIconButton>
-  </Tooltip>
+  <StakePositionContext.Consumer>
+    {({ readonly }) => (
+      <Tooltip content={readonly ? 'Account is readonly' : 'Increase stake'}>
+        <TonalIconButton {...props} disabled={readonly}>
+          <Zap />
+        </TonalIconButton>
+      </Tooltip>
+    )}
+  </StakePositionContext.Consumer>
 )
 
 const UnstakeButton = (props: Omit<ButtonProps, 'children'>) => (
-  <Tooltip content="Unstake">
-    <SurfaceIconButton {...props}>
-      <ZapOff />
-    </SurfaceIconButton>
-  </Tooltip>
+  <StakePositionContext.Consumer>
+    {({ readonly }) => (
+      <Tooltip content={readonly ? 'Account is readonly' : 'Unstake'}>
+        <SurfaceIconButton {...props} disabled={readonly}>
+          <ZapOff />
+        </SurfaceIconButton>
+      </Tooltip>
+    )}
+  </StakePositionContext.Consumer>
 )
 
 const StatisticsButton = (props: Omit<ButtonProps, 'children'>) => (
@@ -63,15 +73,27 @@ const StatisticsButton = (props: Omit<ButtonProps, 'children'>) => (
 )
 
 const ClaimButton = (props: Omit<ChipProps, 'children'> & { amount: ReactNode }) => (
-  <Chip {...props} css={{ '@container (min-width: 100rem)': { height: '4rem' } }}>
-    Claim {props.amount}
-  </Chip>
+  <StakePositionContext.Consumer>
+    {({ readonly }) => (
+      <Tooltip content="Account is readonly" disabled={!readonly}>
+        <Chip {...props} disabled={readonly} css={{ '@container (min-width: 100rem)': { height: '4rem' } }}>
+          Claim {props.amount}
+        </Chip>
+      </Tooltip>
+    )}
+  </StakePositionContext.Consumer>
 )
 
 const WithdrawButton = (props: Omit<ChipProps, 'children'> & { amount: ReactNode }) => (
-  <SurfaceChip {...props} css={{ '@container (min-width: 100rem)': { height: '4rem' } }}>
-    Withdraw {props.amount}
-  </SurfaceChip>
+  <StakePositionContext.Consumer>
+    {({ readonly }) => (
+      <Tooltip content="Account is readonly" disabled={!readonly}>
+        <SurfaceChip {...props} disabled={readonly} css={{ '@container (min-width: 100rem)': { height: '4rem' } }}>
+          Withdraw {props.amount}
+        </SurfaceChip>
+      </Tooltip>
+    )}
+  </StakePositionContext.Consumer>
 )
 
 export const UnstakingStatus = (props: {
@@ -134,88 +156,90 @@ const Grid = (props: PropsWithChildren<{ className?: string }>) => (
 const StakePosition = Object.assign(
   (props: StakePositionProps) => {
     return (
-      <div css={{ containerType: 'inline-size' }}>
-        <Grid>
-          <div css={{ gridArea: 'account', display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-            <AccountIcon account={props.account} size="3.5rem" />
-            <div css={{ overflow: 'hidden' }}>
-              <Text.Body alpha="high">{props.account.name ?? shortenAddress(props.account.address)}</Text.Body>
-              <div css={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                <StakeStatusIndicator status={props.stakeStatus} />
-                <Tooltip content={props.provider}>
-                  <Text.BodySmall
-                    css={{
-                      'overflow': 'hidden',
-                      'textOverflow': 'ellipsis',
-                      '@container (min-width: 100rem)': {
-                        whiteSpace: 'nowrap',
-                      },
-                    }}
-                  >
-                    {props.provider}
-                  </Text.BodySmall>
-                </Tooltip>
+      <StakePositionContext.Provider value={{ readonly: props.readonly ?? false }}>
+        <div css={{ containerType: 'inline-size' }}>
+          <Grid>
+            <div css={{ gridArea: 'account', display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+              <AccountIcon account={props.account} size="3.5rem" />
+              <div css={{ overflow: 'hidden' }}>
+                <Text.Body alpha="high">{props.account.name ?? shortenAddress(props.account.address)}</Text.Body>
+                <div css={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                  <StakeStatusIndicator status={props.stakeStatus} />
+                  <Tooltip content={props.provider}>
+                    <Text.BodySmall
+                      css={{
+                        'overflow': 'hidden',
+                        'textOverflow': 'ellipsis',
+                        '@container (min-width: 100rem)': {
+                          whiteSpace: 'nowrap',
+                        },
+                      }}
+                    >
+                      {props.provider}
+                    </Text.BodySmall>
+                  </Tooltip>
+                </div>
               </div>
             </div>
-          </div>
-          <div
-            css={{
-              gridArea: 'quick-actions',
-              justifySelf: 'end',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.8rem',
-            }}
-          >
-            {!props.readonly && props.increaseStakeButton}
-            {!props.readonly && props.unstakeButton}
-            {props.statisticsButton}
-          </div>
-          <div
-            css={{ 'gridArea': 'asset', 'display': 'none', '@container (min-width: 100rem)': { display: 'revert' } }}
-          >
-            <Text.BodySmall as="div" alpha="high">
-              {props.symbol}
-            </Text.BodySmall>
-            <Text.Body as="div">{props.chain}</Text.Body>
-          </div>
-          <Surface
-            css={{
-              'gridArea': 'divider',
-              'height': 1,
-              '@container (min-width: 100rem)': { display: 'none' },
-            }}
-          />
-          <div css={{ 'gridArea': 'balance', '@container (min-width: 100rem)': { textAlign: 'end' } }}>
-            <Text.BodySmall as="div" css={{ '@container (min-width: 100rem)': { display: 'none' } }}>
-              Total staked
-            </Text.BodySmall>
-            <Text.Body as="div" alpha="high">
-              {props.balance}
-            </Text.Body>
-            <Text.BodySmall
-              as="div"
-              css={{ 'display': 'none', '@container (min-width: 100rem)': { display: 'revert' } }}
+            <div
+              css={{
+                gridArea: 'quick-actions',
+                justifySelf: 'end',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.8rem',
+              }}
             >
-              {props.fiatBalance}
-            </Text.BodySmall>
-          </div>
-          <div
-            css={{
-              gridArea: 'actions',
-              display: 'flex',
-              justifyContent: 'flex-end',
-              alignItems: 'center',
-              gap: '0.8rem',
-              flexWrap: 'wrap',
-            }}
-          >
-            {props.status}
-            {!props.readonly && props.claimButton}
-            {!props.readonly && props.withdrawButton}
-          </div>
-        </Grid>
-      </div>
+              {props.increaseStakeButton}
+              {props.unstakeButton}
+              {props.statisticsButton}
+            </div>
+            <div
+              css={{ 'gridArea': 'asset', 'display': 'none', '@container (min-width: 100rem)': { display: 'revert' } }}
+            >
+              <Text.BodySmall as="div" alpha="high">
+                {props.symbol}
+              </Text.BodySmall>
+              <Text.Body as="div">{props.chain}</Text.Body>
+            </div>
+            <Surface
+              css={{
+                'gridArea': 'divider',
+                'height': 1,
+                '@container (min-width: 100rem)': { display: 'none' },
+              }}
+            />
+            <div css={{ 'gridArea': 'balance', '@container (min-width: 100rem)': { textAlign: 'end' } }}>
+              <Text.BodySmall as="div" css={{ '@container (min-width: 100rem)': { display: 'none' } }}>
+                Total staked
+              </Text.BodySmall>
+              <Text.Body as="div" alpha="high">
+                {props.balance}
+              </Text.Body>
+              <Text.BodySmall
+                as="div"
+                css={{ 'display': 'none', '@container (min-width: 100rem)': { display: 'revert' } }}
+              >
+                {props.fiatBalance}
+              </Text.BodySmall>
+            </div>
+            <div
+              css={{
+                gridArea: 'actions',
+                display: 'flex',
+                justifyContent: 'flex-end',
+                alignItems: 'center',
+                gap: '0.8rem',
+                flexWrap: 'wrap',
+              }}
+            >
+              {props.status}
+              {props.claimButton}
+              {props.withdrawButton}
+            </div>
+          </Grid>
+        </div>
+      </StakePositionContext.Provider>
     )
   },
   {

@@ -2,7 +2,7 @@
 
 import {
   accountsState,
-  injectedAccountsState,
+  substrateInjectedAccountsState,
   portfolioAccountsState,
   selectedAccountsState,
 } from '@domains/accounts/recoils'
@@ -45,7 +45,7 @@ export const balancesState = atom<Balances>({
 export const injectedBalancesState = selector({
   key: 'InjectedBalances',
   get: ({ get }) => {
-    const injectedAddresses = get(injectedAccountsState).map(x => x.address)
+    const injectedAddresses = get(substrateInjectedAccountsState).map(x => x.address)
     return new Balances(get(balancesState).each.filter(x => injectedAddresses.includes(x.address)))
   },
   dangerouslyAllowMutability: true,

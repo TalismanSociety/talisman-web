@@ -10,19 +10,19 @@ type AccountWithOrigin = InjectedAccount & { origin?: 'injected' | 'local' }
 
 type AccountWithReadonlyInfo = InjectedAccount & ({ readonly?: false } | { readonly: true; partOfPortfolio: boolean })
 
-export type Account = AccountWithOrigin & AccountWithReadonlyInfo
+export type Account = AccountWithOrigin & AccountWithReadonlyInfo & { canSignEvm?: boolean }
 
 export type ReadonlyAccount = Pick<Account, 'address' | 'name'>
 
-const _injectedAccountsState = atom<AccountWithReadonlyInfo[]>({
-  key: '_InjectedAccounts',
+const _substrateInjectedAccountsState = atom<AccountWithReadonlyInfo[]>({
+  key: '_SubstrateInjectedAccounts',
   default: [],
 })
 
-export const injectedAccountsState = selector<Account[]>({
-  key: 'InjectedAccounts',
-  get: ({ get }) => get(_injectedAccountsState).map(x => ({ ...x, origin: 'injected' })),
-  set: ({ set }, newValue) => set(_injectedAccountsState, newValue),
+export const substrateInjectedAccountsState = selector<Account[]>({
+  key: 'SubstrateInjectedAccounts',
+  get: ({ get }) => get(_substrateInjectedAccountsState).map(x => ({ ...x, origin: 'injected' })),
+  set: ({ set }, newValue) => set(_substrateInjectedAccountsState, newValue),
 })
 
 const _readonlyAccountsState = atom<ReadonlyAccount[]>({
@@ -45,7 +45,7 @@ const _readonlyAccountsState = atom<ReadonlyAccount[]>({
 export const readOnlyAccountsState = selector<Account[]>({
   key: 'ReadonlyAccounts',
   get: ({ get }) => {
-    const injectedAccounts = get(injectedAccountsState)
+    const injectedAccounts = get(substrateInjectedAccountsState)
     const injectedAddresses = injectedAccounts.map(x => x.address)
     return [
       ...injectedAccounts.filter(x => x.readonly && !x.partOfPortfolio),
@@ -63,9 +63,23 @@ export const readOnlyAccountsState = selector<Account[]>({
   set: ({ set }, newValue) => set(_readonlyAccountsState, newValue),
 })
 
+export const wagmiAccountsState = atom<Account[]>({
+  key: 'WagmiAccounts',
+  default: [],
+})
+
 export const accountsState = selector({
   key: 'Accounts',
-  get: ({ get }) => uniqBy([...get(injectedAccountsState), ...get(readOnlyAccountsState)], x => x.address),
+  get: ({ get }) => {
+    const substrateInjecteds = get(substrateInjectedAccountsState)
+    // Hack to retrieve name from that is only available from substrate injected accounts
+    const wagmiInjected = get(wagmiAccountsState).map(x => ({
+      ...x,
+      name: substrateInjecteds.find(y => y.address === x.address)?.name,
+    }))
+
+    return uniqBy([...wagmiInjected, ...substrateInjecteds, ...get(readOnlyAccountsState)], x => x.address)
+  },
 })
 
 export const portfolioAccountsState = selector({
@@ -86,6 +100,11 @@ export const writeableSubstrateAccountsState = selector({
 export const writeableEvmAccountsState = selector({
   key: 'WriteableEvmAccounts',
   get: ({ get }) => get(writeableAccountsState).filter(x => x.type === 'ethereum'),
+})
+
+export const evmSignableAccountsState = selector({
+  key: 'EvmSignableAccounts',
+  get: ({ get }) => get(writeableAccountsState).filter(x => x.type === 'ethereum' && x.canSignEvm),
 })
 
 export const substrateAccountsState = selector({

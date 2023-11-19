@@ -1,25 +1,18 @@
 import { SlpxAddStakeDialog } from '@components/recipes/AddStakeDialog'
-import { useAccountSelector } from '@components/widgets/AccountSelector'
-import { writeableEvmAccountsState, type Account } from '@domains/accounts'
+import { type Account } from '@domains/accounts'
 import { useMintForm } from '@domains/staking/slpx/core'
 import type { SlpxPair } from '@domains/staking/slpx/types'
 import { Maybe } from '@util/monads'
 import { useEffect } from 'react'
-import { useRecoilValue } from 'recoil'
 import { useSwitchNetwork } from 'wagmi'
 
 type AddStakeDialogProps = {
-  account?: Account
+  account: Account
   slpxPair: SlpxPair
   onRequestDismiss: () => unknown
 }
 
 const AddStakeDialog = (props: AddStakeDialogProps) => {
-  const [account, accountSelector] = useAccountSelector(
-    useRecoilValue(writeableEvmAccountsState),
-    accounts => accounts?.find(account => account.address === props.account?.address) ?? accounts?.at(0)
-  )
-
   const { switchNetworkAsync } = useSwitchNetwork()
 
   const {
@@ -31,7 +24,7 @@ const AddStakeDialog = (props: AddStakeDialogProps) => {
     rate,
     ready,
     error,
-  } = useMintForm(account, props.slpxPair)
+  } = useMintForm(props.account, props.slpxPair)
 
   useEffect(() => {
     if (mint.status === 'success' || mint.status === 'error') {
@@ -44,7 +37,6 @@ const AddStakeDialog = (props: AddStakeDialogProps) => {
       confirmState={!ready ? 'disabled' : mint.isLoading ? 'pending' : undefined}
       open
       onDismiss={props.onRequestDismiss}
-      accountSelector={props.account === undefined && accountSelector}
       amount={amount}
       fiatAmount={localizedFiatAmount ?? '...'}
       newAmount={newAmount?.toHuman() ?? '...'}

@@ -1,7 +1,7 @@
 import StakePosition from '@components/recipes/StakePosition'
 import AnimatedFiatNumber from '@components/widgets/AnimatedFiatNumber'
 import RedactableBalance from '@components/widgets/RedactableBalance'
-import { evmAccountsState } from '@domains/accounts'
+import { selectedEvmAccountsState } from '@domains/accounts'
 import { lidoMainnet, useStakes, type LidoSuite } from '@domains/staking/lido'
 import { useState } from 'react'
 import { useRecoilValue } from 'recoil'
@@ -36,13 +36,15 @@ const Stakes = () => {
   const [unstakeSideSheetOpen, setUnstakeSideSheetOpen] = useState(false)
   const [claimSideSheetOpen, setClaimSideSheetOpen] = useState(false)
 
-  const stakes = useStakes(useRecoilValue(evmAccountsState), lidoMainnet)
+  const stakes = useStakes(useRecoilValue(selectedEvmAccountsState), lidoMainnet)
 
   return (
     <>
       {stakes.map((stake, index) => (
         <StakePosition
           key={index}
+          // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
+          readonly={stake.account.readonly || !stake.account.canSignEvm}
           account={stake.account}
           provider="Lido finance"
           stakeStatus={stake.balance.planck.gtn(0) ? 'earning_rewards' : 'not_earning_rewards'}
