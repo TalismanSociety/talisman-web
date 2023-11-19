@@ -115,6 +115,7 @@ export const UnstakingStatus = (props: {
         ))}
       </div>
     }
+    disabled={props.unlocks.length === 0}
   >
     <div css={{ display: 'flex', alignItems: 'center', gap: '0.5em' }}>
       <Clock size="1em" />
