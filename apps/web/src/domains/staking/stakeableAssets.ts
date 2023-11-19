@@ -59,7 +59,8 @@ export const stakeableAssets = [
     providers: [
       {
         type: 'Bifrost liquid staking',
-        description: 'Bifrost liquid staking',
+        description:
+          'vGLMR (voucher GLMR) is a liquid staking token of GLMR, with fully underlying GLMR reserve and yield-bearing feature of GLMR staking reward.',
         url: (() => {
           const url = new URL('staking', document.location.href)
           url.searchParams.set('action', 'stake')
