@@ -31,13 +31,15 @@ const StakeableAssetItem = ({
     [asset.symbol, token.each, token.sum.planck.transferable]
   )
 
-  const availablePercentage = useMemo(
-    () =>
-      new BigNumber(token.sum.planck.transferable.toString())
-        .div(new BigNumber(token.sum.planck.total.toString()))
-        .toNumber(),
-    [token.sum.planck.total, token.sum.planck.transferable]
-  )
+  const availablePercentage = useMemo(() => {
+    const transferable = token.sum.planck.transferable
+
+    if (transferable === 0n) {
+      return 0
+    }
+
+    return new BigNumber(transferable.toString()).div(new BigNumber(token.sum.planck.total.toString())).toNumber()
+  }, [token.sum.planck.total, token.sum.planck.transferable])
 
   return (
     <StakeableAsset
