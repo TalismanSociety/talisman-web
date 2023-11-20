@@ -50,7 +50,7 @@ const Staking = () => {
   }, 0)
 
   return (
-    <Layout selected="Settings" requiresMultisig>
+    <Layout selected="Staking" requiresMultisig>
       <div css={{ display: 'flex', flex: 1, padding: '32px 8%', flexDirection: 'column', gap: 32 }}>
         <h2 css={({ color }) => ({ color: color.offWhite, marginTop: 4 })}>Staking Overview</h2>
         <div css={{ display: 'flex', gap: 32, width: '100%' }}>
