@@ -62,38 +62,32 @@ const TokenSelectorDialog = Object.assign(
   (props: TokenSelectorDialogProps) => {
     const [query, setQuery] = useState('')
     return (
-      <AlertDialog
-        {...props}
-        width="42.2rem"
-        title="Select a token"
-        css={{ paddingBottom: 0 }}
-        content={
-          <div>
-            <TextInput
-              placeholder="🔍 Search by network"
-              value={query}
-              onChange={useCallback<ChangeEventHandler<HTMLInputElement>>(event => setQuery(event.target.value), [])}
-            />
-            <div css={{ marginLeft: `-${ALERT_DIALOG_PADDING}`, marginRight: `-${ALERT_DIALOG_PADDING}` }}>
-              <Hr css={{ marginBottom: 0 }} />
-              <ul
-                css={{
-                  'margin': 0,
-                  'padding': 0,
-                  '@media (min-width: 768px)': {
-                    maxHeight: '35vh',
-                    overflow: 'auto',
-                  },
-                }}
-              >
-                {React.Children.toArray(props.children).filter((x: any) =>
-                  x.props.name.toLowerCase().includes(query.toLowerCase())
-                )}
-              </ul>
-            </div>
+      <AlertDialog {...props} width="42.2rem" title="Select a token" css={{ paddingBottom: 0 }}>
+        <div>
+          <TextInput
+            placeholder="🔍 Search by network"
+            value={query}
+            onChange={useCallback<ChangeEventHandler<HTMLInputElement>>(event => setQuery(event.target.value), [])}
+          />
+          <div css={{ marginLeft: `-${ALERT_DIALOG_PADDING}`, marginRight: `-${ALERT_DIALOG_PADDING}` }}>
+            <Hr css={{ marginBottom: 0 }} />
+            <ul
+              css={{
+                'margin': 0,
+                'padding': 0,
+                '@media (min-width: 768px)': {
+                  maxHeight: '35vh',
+                  overflow: 'auto',
+                },
+              }}
+            >
+              {React.Children.toArray(props.children).filter((x: any) =>
+                x.props.name.toLowerCase().includes(query.toLowerCase())
+              )}
+            </ul>
           </div>
-        }
-      />
+        </div>
+      </AlertDialog>
     )
   },
   {
