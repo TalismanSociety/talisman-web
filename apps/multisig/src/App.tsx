@@ -24,6 +24,7 @@ import { AccountWatcher } from '@domains/auth'
 import { AddressBookWatcher, TeamsWatcher } from '@domains/offchain-data'
 import { ActiveMultisigWatcher } from './domains/multisig'
 import { NomPoolsWatcher } from './domains/staking'
+import { ValidatorsWatcher } from './domains/staking/ValidatorsWatcher'
 
 const Loader = () => {
   return (
@@ -59,6 +60,7 @@ const App: React.FC = () => (
             <TeamsWatcher />
             <AddressBookWatcher />
             <NomPoolsWatcher />
+            <ValidatorsWatcher />
             <ActiveMultisigWatcher />
             <RouterProvider router={router} />
             <Toaster position="top-right" containerStyle={{ top: '6.4rem' }}>

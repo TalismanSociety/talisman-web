@@ -2,7 +2,8 @@ import { Balance } from '@polkadot/types/interfaces/runtime'
 import { Address } from '@util/addresses'
 import { Chain } from '../chains'
 import { useApi } from '../chains/pjs-api'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { VoidFn } from '@polkadot/api/types'
 
 type PoolMembership = {
   id: number
@@ -12,6 +13,7 @@ type PoolMembership = {
 export const usePoolMembership = (address: Address, chain: Chain) => {
   const { api } = useApi(chain.rpcs)
   const [membership, setMembership] = useState<PoolMembership | undefined | null>()
+  const unsub = useRef<VoidFn | null>(null)
 
   const subscribePoolMembership = useCallback(async () => {
     if (!api || !api.query) return
@@ -22,7 +24,7 @@ export const usePoolMembership = (address: Address, chain: Chain) => {
       return
     }
 
-    api.query.nominationPools.poolMembers(address.toSs58(chain), async membershipRaw => {
+    const u = await api.query.nominationPools.poolMembers(address.toSs58(chain), async membershipRaw => {
       const balance = await api.call.nominationPoolsApi.pointsToBalance(
         membershipRaw.value.poolId,
         membershipRaw.value.points
@@ -37,6 +39,8 @@ export const usePoolMembership = (address: Address, chain: Chain) => {
         setMembership(null)
       }
     })
+
+    unsub.current = u
   }, [address, api, chain])
 
   useEffect(() => {
@@ -47,6 +51,10 @@ export const usePoolMembership = (address: Address, chain: Chain) => {
 
   // cleanup if address / chain changed
   useEffect(() => {
+    if (unsub.current) {
+      unsub.current()
+      unsub.current = null
+    }
     setMembership(undefined)
   }, [address, chain])
 

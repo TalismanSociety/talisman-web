@@ -3,10 +3,11 @@ import { SettingsInfoRow } from '../Settings/InfoRow'
 import { BondedPool } from '../../domains/staking'
 import { useNomPoolOf } from '../../domains/staking/useNomPool'
 import { useMemo } from 'react'
-import { Identicon, Skeleton } from '@talismn/ui'
+import { Button, Identicon, Skeleton } from '@talismn/ui'
 import { useNativeToken } from '../../domains/chains'
 import { formatUnits } from '../../util/numbers'
 import { useApi } from '../../domains/chains/pjs-api'
+import { useNominations } from '../../domains/staking/useNominations'
 
 const Text: React.FC<React.PropsWithChildren<{ loading?: boolean }>> = ({ children, loading }) =>
   loading ? (
@@ -23,8 +24,10 @@ const NominationPoolOverview: React.FC = () => {
   const nomPool = useNomPoolOf(multisig.proxyAddress)
   const { nativeToken } = useNativeToken(multisig.chain.nativeToken.id)
   const { api, loading: apiLoading } = useApi(multisig.chain.rpcs)
-
+  const { nominations } = useNominations(multisig.chain, nomPool?.pool.stash.toSs58(multisig.chain))
   const nomPoolPalletSupported = api ? Boolean(api.query?.nominationPools) : undefined
+
+  const loading = nomPoolPalletSupported === undefined || !nomPool || !nativeToken
 
   const statementUI = useMemo(() => {
     if (!api && !apiLoading) return <p>Nomination Pool pallet not supported on this network.</p>
@@ -34,23 +37,40 @@ const NominationPoolOverview: React.FC = () => {
     return <p>This vault can nominate on behalf of the Nomination Pool</p>
   }, [api, apiLoading, nomPool])
 
-  const loading = nomPoolPalletSupported === undefined || !nomPool || !nativeToken
-
   return (
     <div css={{ display: 'flex', gap: 32, width: '100%' }}>
       <div css={{ width: '100%', p: { fontSize: 14 } }}>
         <h2 css={({ color }) => ({ color: color.offWhite, fontSize: 20 })}>Nomination Pool</h2>
         {statementUI}
         {!!nomPool && (
-          <div css={{ display: 'flex', alignItems: 'center', gap: 8, margin: '24px 0' }}>
-            <Identicon size={32} value={nomPool.pool.stash.toSs58(multisig.chain)} />
-            <div>
-              <p css={({ color }) => ({ color: color.offWhite, fontSize: '16px !important' })}>
-                Pool #{nomPool.pool.id}
-              </p>
-              <p>{nomPool.pool.metadata ?? nomPool.pool.stash.toShortSs58(multisig.chain)}</p>
+          <>
+            <div css={{ display: 'flex', alignItems: 'center', gap: 8, margin: '24px 0' }}>
+              <Identicon size={32} value={nomPool.pool.stash.toSs58(multisig.chain)} />
+              <div>
+                <p css={({ color }) => ({ color: color.offWhite, fontSize: '16px !important' })}>
+                  Pool #{nomPool.pool.id}
+                </p>
+                <p>{nomPool.pool.metadata ?? nomPool.pool.stash.toShortSs58(multisig.chain)}</p>
+              </div>
             </div>
-          </div>
+            <div>
+              {nominations === undefined ? (
+                <Skeleton.Surface css={{ height: 20, width: 120 }} />
+              ) : nominations.length === 0 ? (
+                <p>No validators nominated.</p>
+              ) : (
+                <p>
+                  <span css={({ color }) => ({ color: color.offWhite })}>{nominations.length} validators</span>{' '}
+                  nominated.
+                </p>
+              )}
+              {(nomPool.role === 'root' || nomPool.role === 'nominator') && (
+                <Button css={{ marginTop: 16, fontSize: 14, padding: '8px 16px' }} disabled>
+                  Nominate Validators
+                </Button>
+              )}
+            </div>
+          </>
         )}
       </div>
       {nomPool === null ? null : (
