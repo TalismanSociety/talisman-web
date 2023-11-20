@@ -9,7 +9,7 @@ import { ProposalsDropdown } from './ProposalsDropdown'
 import { hasPermission } from '@domains/proxy/util'
 import { Alert } from '@components/Alert'
 import { NewTransactionHeader } from '../NewTransactionHeader'
-import { Zap } from '@talismn/icons'
+import { Vote } from '@talismn/icons'
 
 type Props = {
   token: BaseToken
@@ -29,7 +29,7 @@ const VotingForm: React.FC<Props> = ({ onChange, onNext, token, voteDetails }) =
 
   return (
     <>
-      <NewTransactionHeader icon={<Zap />}>Vote</NewTransactionHeader>
+      <NewTransactionHeader icon={<Vote />}>Vote</NewTransactionHeader>
       <div
         className={css`
           display: grid;

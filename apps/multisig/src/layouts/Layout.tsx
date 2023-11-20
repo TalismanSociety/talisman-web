@@ -1,4 +1,4 @@
-import { Eye, List, Send, Settings, Share2, Users, Zap } from '@talismn/icons'
+import { Eye, List, Send, Settings, Share2, Users, Vote, Zap } from '@talismn/icons'
 import { useNavigate } from 'react-router-dom'
 import Header from './Header'
 import Sidebar from './Sidebar'
@@ -62,7 +62,7 @@ export const Layout: React.FC<
                   },
                   {
                     name: 'Voting',
-                    icon: <Zap />,
+                    icon: <Vote />,
                     onClick: () => navigate('/voting'),
                   },
                   {

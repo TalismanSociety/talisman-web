@@ -1,6 +1,6 @@
 import { Transaction, TransactionType } from '@domains/multisig'
 import { css } from '@emotion/css'
-import { ExternalLink, Zap } from '@talismn/icons'
+import { ExternalLink, Vote } from '@talismn/icons'
 import AmountRow from '@components/AmountRow'
 import { createConvictionsOpts } from '../../NewTransaction/Vote/ConvictionsDropdown'
 import { VoteDetails } from '../../../domains/referenda'
@@ -44,7 +44,7 @@ export const VoteTransactionHeader: React.FC<Props> = ({ t }) => {
   return (
     <>
       <p css={{ marginTop: '4px' }}>Vote</p>
-      <Zap css={{ marginRight: 'auto' }} />
+      <Vote css={{ marginRight: 'auto' }} />
       <div css={{ marginRight: '8px' }}>
         <VotePill details={details} />
       </div>
