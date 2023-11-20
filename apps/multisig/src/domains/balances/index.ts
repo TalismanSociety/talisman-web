@@ -16,7 +16,6 @@ export const balancesState = atom<Balances | undefined>({
 
 export const useAugmentedBalances = () => {
   const balances = useRecoilValue(balancesState)
-
   return useMemo(() => {
     if (!balances) return []
     return balances.filterNonZero('total').sorted.reduce((acc: TokenAugmented[], b) => {
@@ -46,7 +45,10 @@ export const useAugmentedBalances = () => {
         logo: b.token.logo,
         type: b.token.type,
       }
-      return [...acc, { details: token, balance: { avaliable, unavaliable }, price: b.rates?.usd || 0, id: b.id }]
+      return [
+        ...acc,
+        { details: token, balance: { avaliable, unavaliable }, price: b.rates?.usd || 0, id: b.id, balanceDetails: b },
+      ]
     }, [])
   }, [balances])
 }

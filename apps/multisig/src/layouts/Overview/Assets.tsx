@@ -1,5 +1,6 @@
 import { BaseToken } from '@domains/chains'
 import { css } from '@emotion/css'
+import { Balance } from '@talismn/balances'
 import { Lock } from '@talismn/icons'
 import { AnimatedNumber } from '@talismn/ui'
 import { formatDecimals } from '@talismn/util'
@@ -14,6 +15,7 @@ export interface TokenAugmented {
     avaliable: number
     unavaliable: number
   }
+  balanceDetails: Balance
   price: number
 }
 

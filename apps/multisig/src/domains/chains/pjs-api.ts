@@ -1,7 +1,7 @@
 import { activeMultisigsState } from '@domains/multisig'
 import { ApiPromise, WsProvider } from '@polkadot/api'
 import toast from 'react-hot-toast'
-import { selector, selectorFamily } from 'recoil'
+import { selector, selectorFamily, useRecoilValueLoadable } from 'recoil'
 
 import { Rpc } from './tokens'
 
@@ -72,3 +72,14 @@ export const allPjsApisSelector = selector({
   },
   dangerouslyAllowMutability: true, // pjs wsprovider mutates itself to track connection msg stats
 })
+
+export const useApi = (rpcs: Rpc[]) => {
+  const apiLoadable = useRecoilValueLoadable(pjsApiSelector(rpcs))
+
+  return {
+    api: apiLoadable.state === 'hasValue' ? apiLoadable.contents : undefined,
+    loading: apiLoadable.state === 'loading',
+    isReady: apiLoadable.contents?.isReady,
+    isConnected: apiLoadable.contents?.isConnected,
+  }
+}

@@ -10,6 +10,7 @@ import { AddVault } from '../layouts/AddVault'
 import MultiSend from '../layouts/NewTransaction/Multisend'
 import Vote from '../layouts/NewTransaction/Vote'
 import Advanced from '../layouts/NewTransaction/Advanced'
+import Staking from '../layouts/Staking'
 
 const router = createBrowserRouter([
   {
@@ -53,6 +54,14 @@ const router = createBrowserRouter([
     element: (
       <RequireAuth requireSignIn>
         <Vote />
+      </RequireAuth>
+    ),
+  },
+  {
+    path: '/staking',
+    element: (
+      <RequireAuth requireSignIn>
+        <Staking />
       </RequireAuth>
     ),
   },

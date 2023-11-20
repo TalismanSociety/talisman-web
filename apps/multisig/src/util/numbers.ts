@@ -23,6 +23,6 @@ export const parseUnits = (amount: string | number, decimals: number): BN => {
   )
 }
 
-export const formatUnits = (amountBN: BN, decimals: number): string => {
+export const formatUnits = (amountBN: BN | bigint, decimals: number): string => {
   return new Decimal(amountBN.toString()).div(new Decimal(10).pow(decimals)).toFixed()
 }

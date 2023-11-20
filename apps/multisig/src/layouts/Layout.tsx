@@ -66,6 +66,11 @@ export const Layout: React.FC<
                     onClick: () => navigate('/voting'),
                   },
                   {
+                    name: 'Staking',
+                    icon: <Zap />,
+                    onClick: () => navigate('/staking'),
+                  },
+                  {
                     name: 'Advanced',
                     icon: <List />,
                     onClick: () => navigate('/advanced'),
