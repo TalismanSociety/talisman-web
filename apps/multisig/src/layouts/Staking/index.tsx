@@ -11,6 +11,7 @@ import { BalanceCard } from './BalanceCard'
 import NominationPoolOverview from './NominationPoolOverview'
 import { useAugmentedBalances } from '../../domains/balances'
 import { useNativeToken } from '../../domains/chains'
+import { usePoolMembership } from '../../domains/staking/usePoolMembership'
 
 export const BackButton = () => {
   const theme = useTheme()
@@ -36,6 +37,8 @@ export const BackButton = () => {
 const Staking = () => {
   const [multisig] = useSelectedMultisig()
   const { nativeToken } = useNativeToken(multisig.chain.nativeToken.id)
+  const { membership } = usePoolMembership(multisig.proxyAddress, multisig.chain)
+
   const augmentedTokens = useAugmentedBalances()
   const balance = augmentedTokens.find(({ details }) => details.id === multisig.chain.nativeToken.id)
 
@@ -44,10 +47,7 @@ const Staking = () => {
   const stakingAmount = balance === undefined ? undefined : +(locksStaking?.amount.tokens ?? 0)
 
   // total funds in pool
-  const pooledAmount = balance?.balanceDetails.reserves.reduce((acc, { label, amount }) => {
-    if (label === 'nompools-staking' || label === 'nompools-unbonding') acc += +amount.tokens
-    return acc
-  }, 0)
+  const pooledAmount = membership?.balance.toHuman().split(' ')[0]
 
   return (
     <Layout selected="Staking" requiresMultisig>
@@ -68,7 +68,12 @@ const Staking = () => {
               label="Available"
             />
             <BalanceCard symbol={nativeToken?.symbol} amount={stakingAmount} price={balance?.price} label="Staked" />
-            <BalanceCard symbol={nativeToken?.symbol} amount={pooledAmount} price={balance?.price} label="In Pool" />
+            <BalanceCard
+              symbol={nativeToken?.symbol}
+              amount={membership === undefined ? undefined : +(pooledAmount ?? '0')}
+              price={balance?.price}
+              label="In Pool"
+            />
           </div>
           <div />
         </div>
