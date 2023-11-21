@@ -1,13 +1,13 @@
-import { useSelectedMultisig } from '../../domains/multisig'
-import { SettingsInfoRow } from '../Settings/InfoRow'
-import { BondedPool } from '../../domains/staking'
-import { useNomPoolOf } from '../../domains/staking/useNomPool'
 import { useMemo } from 'react'
+import { BondedPool } from '@domains/staking'
+import { useNomPoolOf } from '@domains/staking/useNomPool'
 import { Button, Identicon, Skeleton } from '@talismn/ui'
-import { useNativeToken } from '../../domains/chains'
-import { formatUnits } from '../../util/numbers'
-import { useApi } from '../../domains/chains/pjs-api'
-import { useNominations } from '../../domains/staking/useNominations'
+import { Chain, useNativeToken } from '@domains/chains'
+import { formatUnits } from '@util/numbers'
+import { useApi } from '@domains/chains/pjs-api'
+import { Nomination, useNominations } from '@domains/staking/useNominations'
+import { Address } from '@util/addresses'
+import { SettingsInfoRow } from '../Settings/InfoRow'
 
 const Text: React.FC<React.PropsWithChildren<{ loading?: boolean }>> = ({ children, loading }) =>
   loading ? (
@@ -19,14 +19,19 @@ const Text: React.FC<React.PropsWithChildren<{ loading?: boolean }>> = ({ childr
 const isManager = (role: keyof BondedPool['roles']): boolean => {
   return role === 'root' || role === 'nominator'
 }
-const NominationPoolOverview: React.FC = () => {
-  const [multisig] = useSelectedMultisig()
-  const nomPool = useNomPoolOf(multisig.proxyAddress)
-  const { nativeToken } = useNativeToken(multisig.chain.nativeToken.id)
-  const { api, loading: apiLoading } = useApi(multisig.chain.rpcs)
-  const { nominations } = useNominations(multisig.chain, nomPool?.pool.stash.toSs58(multisig.chain))
-  const nomPoolPalletSupported = api ? Boolean(api.query?.nominationPools) : undefined
 
+const NominationPoolOverview: React.FC<{
+  address: Address
+  chain: Chain
+  onEdit: (bondedPool: BondedPool, nominations: Nomination[]) => void
+}> = ({ address, chain, onEdit }) => {
+  const { api, loading: apiLoading } = useApi(chain.rpcs)
+  const { nativeToken } = useNativeToken(chain.nativeToken.id)
+
+  const nomPool = useNomPoolOf(address)
+  const { nominations, isReady } = useNominations(chain, nomPool?.pool.stash.toSs58(chain))
+
+  const nomPoolPalletSupported = api ? Boolean(api.query?.nominationPools) : undefined
   const loading = nomPoolPalletSupported === undefined || !nomPool || !nativeToken
 
   const statementUI = useMemo(() => {
@@ -45,12 +50,12 @@ const NominationPoolOverview: React.FC = () => {
         {!!nomPool && (
           <>
             <div css={{ display: 'flex', alignItems: 'center', gap: 8, margin: '24px 0' }}>
-              <Identicon size={32} value={nomPool.pool.stash.toSs58(multisig.chain)} />
+              <Identicon size={32} value={nomPool.pool.stash.toSs58(chain)} />
               <div>
                 <p css={({ color }) => ({ color: color.offWhite, fontSize: '16px !important' })}>
                   Pool #{nomPool.pool.id}
                 </p>
-                <p>{nomPool.pool.metadata ?? nomPool.pool.stash.toShortSs58(multisig.chain)}</p>
+                <p>{nomPool.pool.metadata ?? nomPool.pool.stash.toShortSs58(chain)}</p>
               </div>
             </div>
             <div>
@@ -65,7 +70,14 @@ const NominationPoolOverview: React.FC = () => {
                 </p>
               )}
               {(nomPool.role === 'root' || nomPool.role === 'nominator') && (
-                <Button css={{ marginTop: 16, fontSize: 14, padding: '8px 16px' }} disabled>
+                <Button
+                  css={{ marginTop: 16, fontSize: 14, padding: '8px 16px' }}
+                  disabled={!isReady}
+                  loading={!isReady}
+                  onClick={() => {
+                    if (nominations) onEdit(nomPool.pool, nominations)
+                  }}
+                >
                   Nominate Validators
                 </Button>
               )}

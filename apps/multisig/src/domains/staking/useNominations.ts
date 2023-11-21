@@ -6,7 +6,16 @@ import { VoidFn } from '@polkadot/api/types'
 import { useRecoilValue } from 'recoil'
 import { validatorsState } from './ValidatorsWatcher'
 
-export const useNominations = (chain: Chain, address?: string) => {
+export type Nomination = {
+  address: string
+  name?: string
+  subName?: string
+}
+
+export const useNominations = (
+  chain: Chain,
+  address?: string
+): { nominations: Nomination[] | undefined; isReady: boolean } => {
   const [multisig] = useSelectedMultisig()
   const { api } = useApi(multisig.chain.rpcs)
   const [nominations, setNominations] = useState<string[] | undefined>()
@@ -46,6 +55,7 @@ export const useNominations = (chain: Chain, address?: string) => {
       // dont need to parse to Address class because we don't need to convert this address between chains
       address: addressString,
       name: validators?.validators[addressString]?.name,
+      subName: validators?.validators[addressString]?.subName,
     })),
     isReady: validators !== undefined && nominations !== undefined,
   }
