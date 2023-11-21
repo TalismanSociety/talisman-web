@@ -51,8 +51,7 @@ const VaultDetails: React.FC<{ multisig: Multisig; disableCopy?: boolean; select
         })}
       />
       <img
-        css={{ top: -2, right: -2, position: 'absolute' }}
-        height={14}
+        css={{ top: -2, right: -2, position: 'absolute', height: 14 }}
         src={multisig.chain.logo}
         alt={multisig.chain.chainName}
       />

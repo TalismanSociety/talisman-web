@@ -1,13 +1,12 @@
 import { useCallback, useEffect } from 'react'
 import { atom, useRecoilState } from 'recoil'
-import { Address } from '@util/addresses'
 import { u8aToString, u8aUnwrapBytes } from '@polkadot/util'
 import { useApi } from '../chains/pjs-api'
 import { useSelectedMultisig } from '../multisig'
 import { ApiPromise } from '@polkadot/api'
 
 type Validator = {
-  address: Address
+  address: string
   name?: string
   subName?: string
   commission: number
@@ -87,14 +86,11 @@ export const ValidatorsWatcher: React.FC = () => {
     const validatorsMap: Record<string, Validator> = {}
 
     validatorsRaw.forEach(([key, value]) => {
-      const addressString = key.toHuman()!.toString()
+      const address = key.toHuman()!.toString()
       const commission = value.commission.toNumber()
-      const address = Address.fromSs58(addressString) as Address
-      if (address) {
-        validatorsMap[addressString] = {
-          address,
-          commission,
-        }
+      validatorsMap[address] = {
+        address,
+        commission,
       }
     })
 

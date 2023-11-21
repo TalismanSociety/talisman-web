@@ -2,6 +2,7 @@ import '@polkadot/api-augment/polkadot'
 import '@polkadot/api-augment/substrate'
 import 'react-loading-skeleton/dist/skeleton.css'
 
+import './styles/styles.css'
 import './index.css'
 
 import { BalancesWatcher } from '@domains/balances'
