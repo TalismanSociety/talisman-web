@@ -44,7 +44,7 @@ export const usePoolMembership = (address: Address, chain: Chain) => {
   }, [address, api, chain])
 
   useEffect(() => {
-    if (membership) return
+    if (membership !== undefined) return
 
     subscribePoolMembership()
   }, [membership, subscribePoolMembership])

@@ -1,10 +1,15 @@
 import { Button, Identicon } from '@talismn/ui'
-import { Address, shortenAddress } from '../../util/addresses'
-import { BondedPool } from './NomPoolsWatcher'
-import { Nomination } from './useNominations'
+import { Address, shortenAddress } from '@util/addresses'
+import { BondedPool } from '@domains/staking/NomPoolsWatcher'
+import { Nomination } from '@domains/staking/useNominations'
 import { ChevronLeft, Trash2, X } from '@talismn/icons'
-import { useSelectedMultisig } from '../multisig'
+import { useSelectedMultisig } from '@domains/multisig'
 import { useMemo, useState } from 'react'
+import { Combobox } from '@components/ui/combobox'
+import { useRecoilValue } from 'recoil'
+import { validatorsState } from '@domains/staking/ValidatorsWatcher'
+import { useConsts } from '@domains/chains/ConstsWatcher'
+import { useToast } from '@components/ui/use-toast'
 
 const NominationCard: React.FC<Nomination & { onClick: () => void; disabled?: boolean; icon?: React.ReactNode }> = ({
   address,
@@ -22,7 +27,7 @@ const NominationCard: React.FC<Nomination & { onClick: () => void; disabled?: bo
       borderRadius: 12,
       display: 'flex',
       gap: 8,
-      padding: 8,
+      padding: '12px 8px',
       svg: { minWidth: 24, width: 24 },
       overflow: 'hidden',
       width: '100%',
@@ -76,16 +81,34 @@ export const ValidatorsRotation: React.FC<{
 }> = ({ address, nominations, onBack, pool }) => {
   const [multisig] = useSelectedMultisig()
   const [deleted, setDeleted] = useState<Record<string, boolean>>({})
+  const [added, setAdded] = useState<string[]>([])
+  const validators = useRecoilValue(validatorsState)
+  const { consts } = useConsts(multisig.chain)
+  const { toast } = useToast()
 
   const deletedNominations = useMemo(() => {
     const deletedAddresses = Object.entries(deleted).filter(([, d]) => d)
     return deletedAddresses.map(([address]) => nominations.find(n => n.address === address)!)
   }, [deleted, nominations])
 
+  const addedNominations = useMemo(() => {
+    return added.map(address => validators?.validators[address]!).filter(validator => !!validator)
+  }, [added, validators?.validators])
+
+  const selectedValidatorsMap = useMemo(() => {
+    return Object.fromEntries([
+      ...nominations.map(({ address }) => [address, true]),
+      ...added.map(address => [address, true]),
+    ])
+  }, [added, nominations])
+
   const nothingChanged = deletedNominations.length === 0
+
+  const selectedValidatorsCount = nominations.length + addedNominations.length - deletedNominations.length
 
   const handleReset = () => {
     setDeleted({})
+    setAdded([])
   }
 
   return (
@@ -144,7 +167,7 @@ export const ValidatorsRotation: React.FC<{
               whiteSpace: 'nowrap',
             })}
           >
-            {nominations.length - deletedNominations.length} Validators Selected
+            {selectedValidatorsCount} Validators Selected
           </div>
         </div>
 
@@ -165,10 +188,43 @@ export const ValidatorsRotation: React.FC<{
         <h4 css={({ color }) => ({ color: color.offWhite, fontSize: 20, margin: 0 })}>Changes</h4>
         <div css={{ display: 'flex', gap: 32, marginTop: 16 }}>
           <div css={{ width: '100%' }}>
-            <p css={({ color }) => ({ color: color.offWhite })}>Added Validators</p>
-          </div>
-          <div css={{ width: '100%' }}>
-            <p css={({ color }) => ({ color: color.offWhite })}>Removed Validators</p>
+            <p className="text-offWhite mb-3">Added Validators</p>
+            <Combobox
+              maxResult={100}
+              placeholder="Select validator to add"
+              options={Object.entries(validators?.validators ?? {})
+                .filter(([address]) => !selectedValidatorsMap[address])
+                .map(([address, { name, subName }]) => ({
+                  value: address,
+                  label: (
+                    <div className="flex items-center gap-4 p-3">
+                      <Identicon value={address} size={24} />
+                      <div>
+                        <p className="text-[14px] whitespace-nowrap overflow-hidden text-ellipsis">
+                          {name ?? shortenAddress(address)}
+                          {subName !== undefined && subName.length > 0 && (
+                            <span className="text-gray-200"> / {subName}</span>
+                          )}
+                        </p>
+                      </div>
+                    </div>
+                  ),
+                  keywords: [address, name ?? '', subName ?? '', `${name} / ${subName}`],
+                }))}
+              searchPlaceholder="Search by address or name..."
+              noResultMessage="No validator found."
+              onSelect={address => {
+                if (added.includes(address) || selectedValidatorsMap[address] || !consts) return
+
+                if (selectedValidatorsCount >= consts.maxNominations) {
+                  return toast({
+                    title: `Max nominations ${consts.maxNominations} reached`,
+                    description: `Try removing some existing validators.`,
+                  })
+                }
+                setAdded([...added, address])
+              }}
+            />
             <div
               css={({ color }) => ({
                 display: 'flex',
@@ -178,6 +234,25 @@ export const ValidatorsRotation: React.FC<{
                 div: { backgroundColor: color.foreground },
               })}
             >
+              {addedNominations.length === 0 ? (
+                <p css={{ marginTop: 8 }}>No validator added.</p>
+              ) : (
+                addedNominations.map(nomination => (
+                  <NominationCard
+                    key={nomination.address}
+                    {...nomination}
+                    onClick={() => {
+                      setAdded(added.filter(a => a !== nomination.address))
+                    }}
+                    icon={<X size={16} />}
+                  />
+                ))
+              )}
+            </div>
+          </div>
+          <div css={{ width: '100%' }}>
+            <p css={({ color }) => ({ color: color.offWhite })}>Removed Validators</p>
+            <div className="flex flex-col gap-[8px] mt-[8px] [&>div]:bg-gray-800">
               {deletedNominations.length === 0 ? (
                 <p css={{ marginTop: 8 }}>No validator removed.</p>
               ) : (
@@ -185,7 +260,16 @@ export const ValidatorsRotation: React.FC<{
                   <NominationCard
                     key={nomination.address}
                     {...nomination}
-                    onClick={() => setDeleted({ ...deleted, [nomination.address]: false })}
+                    onClick={() => {
+                      if (!consts) return
+                      if (selectedValidatorsCount >= consts.maxNominations) {
+                        return toast({
+                          title: `Max nominations ${consts.maxNominations} reached`,
+                          description: `Try de-selecting some added validators.`,
+                        })
+                      }
+                      setDeleted({ ...deleted, [nomination.address]: false })
+                    }}
                     icon={<X size={16} />}
                   />
                 ))

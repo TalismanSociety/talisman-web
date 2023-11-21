@@ -104,7 +104,7 @@ const TransactionSummaryRow = ({
         <p>{t.description}</p>
         {combinedView ? (
           <div css={{ display: 'flex', alignItems: 'center' }}>
-            <img height={16} src={t.multisig.chain.logo} alt={t.multisig.chain.chainName} />
+            <img css={{ height: 16 }} src={t.multisig.chain.logo} alt={t.multisig.chain.chainName} />
             <p css={{ marginLeft: '4px', fontSize: '12px', color: 'var(--color-foreground)' }}>
               {truncateMiddle(t.multisig.name, 24, 0, '...')}
             </p>
