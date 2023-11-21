@@ -26,6 +26,8 @@ import { AddressBookWatcher, TeamsWatcher } from '@domains/offchain-data'
 import { ActiveMultisigWatcher } from './domains/multisig'
 import { NomPoolsWatcher } from './domains/staking'
 import { ValidatorsWatcher } from './domains/staking/ValidatorsWatcher'
+import ConstsWatcher from './domains/chains/ConstsWatcher'
+import { Toaster as NewToaster } from '@components/ui/toaster'
 
 const Loader = () => {
   return (
@@ -63,10 +65,12 @@ const App: React.FC = () => (
             <NomPoolsWatcher />
             <ValidatorsWatcher />
             <ActiveMultisigWatcher />
+            <ConstsWatcher />
             <RouterProvider router={router} />
             <Toaster position="top-right" containerStyle={{ top: '6.4rem' }}>
               {t => <ToastBar toast={t} />}
             </Toaster>
+            <NewToaster />
           </Suspense>
         </BalancesProvider>
       </RecoilRelayEnvironmentProvider>

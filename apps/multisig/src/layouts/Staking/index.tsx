@@ -16,7 +16,7 @@ import { useState } from 'react'
 import { BondedPool } from '@domains/staking'
 import { Nomination } from '@domains/staking/useNominations'
 import { Address } from '@util/addresses'
-import { ValidatorsRotation } from '@domains/staking/ValidatorsRotation'
+import { ValidatorsRotation } from './ValidatorsRotation'
 
 export const BackButton = () => {
   const theme = useTheme()
@@ -65,8 +65,8 @@ const Staking = () => {
   const locksStaking = balance?.balanceDetails.locks.find(({ label }) => label === 'staking')
   const stakingAmount = balance === undefined ? undefined : +(locksStaking?.amount.tokens ?? 0)
 
-  // total funds in pool
-  const pooledAmount = membership?.balance.toHuman().split(' ')[0]
+  // total funds in pool, pallet is not supported when membership = null
+  const pooledAmount = membership === null ? 0 : membership?.balance.toHuman().split(' ')[0]
 
   const handleEditNomPool = (pool: BondedPool, nominations: Nomination[]) => {
     setEditing({ address: pool.stash, nominations, pool })

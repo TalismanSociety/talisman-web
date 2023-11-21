@@ -25,7 +25,7 @@ const NominationPoolOverview: React.FC<{
   chain: Chain
   onEdit: (bondedPool: BondedPool, nominations: Nomination[]) => void
 }> = ({ address, chain, onEdit }) => {
-  const { api, loading: apiLoading } = useApi(chain.rpcs)
+  const { api } = useApi(chain.rpcs)
   const { nativeToken } = useNativeToken(chain.nativeToken.id)
 
   const nomPool = useNomPoolOf(address)
@@ -35,12 +35,12 @@ const NominationPoolOverview: React.FC<{
   const loading = nomPoolPalletSupported === undefined || !nomPool || !nativeToken
 
   const statementUI = useMemo(() => {
-    if (!api && !apiLoading) return <p>Nomination Pool pallet not supported on this network.</p>
-    if (nomPool === undefined) return <Skeleton.Surface css={{ height: 22.9, width: 120 }} />
+    if (api && !api.query.nominationPools) return <p>Nomination Pool pallet not supported on this network.</p>
+    if (!api || nomPool === undefined) return <Skeleton.Surface css={{ height: 22.9, width: 120 }} />
     if (nomPool === null || !isManager(nomPool.role)) return <p>This vault does not control any nomination pool.</p>
 
     return <p>This vault can nominate on behalf of the Nomination Pool</p>
-  }, [api, apiLoading, nomPool])
+  }, [api, nomPool])
 
   return (
     <div css={{ display: 'flex', gap: 32, width: '100%' }}>

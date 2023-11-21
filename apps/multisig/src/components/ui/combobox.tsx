@@ -54,7 +54,12 @@ export const Combobox: React.FC<Props> = ({
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button variant="secondary" role="combobox" aria-expanded={open} className="w-full justify-between px-[24px]">
+        <Button
+          variant="secondary"
+          role="combobox"
+          aria-expanded={open}
+          className="w-full justify-between px-[16px] h-[48px] [&>p]:text-[14px]"
+        >
           {value ? (
             options.find(option => option.value === value)?.label
           ) : (
@@ -63,7 +68,7 @@ export const Combobox: React.FC<Props> = ({
           <ChevronVertical size={16} />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className=" p-0">
+      <PopoverContent className="p-0">
         <Command shouldFilter={false}>
           <CommandInput placeholder={searchPlaceholder} onValueChange={setQuery} />
           <CommandEmpty>{noResultMessage}</CommandEmpty>
