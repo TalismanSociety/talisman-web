@@ -124,7 +124,14 @@ export const queryAtomFamily = (options: Options) => {
         ? Head[]
         : Array<Readonly<Leading<Parameters<TMethod>>>>
       : never
-  ) => _state([apiId, 'derive', moduleName, sectionName, params])
+  ) =>
+    _state([apiId, 'derive', moduleName, sectionName, params]) as RecoilState<
+      TMethod extends PromiseResult<(...args: any) => Observable<infer Result>>
+        ? TAugmentedSection extends TSection
+          ? Result
+          : Result[]
+        : never
+    >
 
   return {
     queryState: Object.assign(queryState, { [garbageCollectionKey]: options.key }),

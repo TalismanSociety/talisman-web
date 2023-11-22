@@ -1,3 +1,5 @@
+import type { Chain } from 'wagmi'
+
 export type SlpxToken = {
   type: 'token' | 'vToken'
   address: `0x${string}`
@@ -7,7 +9,7 @@ export type SlpxToken = {
 }
 
 export type SlpxPair = {
-  chainId: number
+  chain: Chain
   splx: `0x${string}`
   nativeToken: SlpxToken
   vToken: SlpxToken

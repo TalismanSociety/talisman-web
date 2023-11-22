@@ -1,8 +1,15 @@
 import { Zap } from '@talismn/icons'
-import { Button, LinearProgressIndicator, Surface, Text, type ButtonProps } from '@talismn/ui'
-import type { PropsWithChildren, ReactNode } from 'react'
+import {
+  Button,
+  LinearProgressIndicator,
+  Surface,
+  Text,
+  type ButtonProps,
+  CircularProgressIndicator,
+} from '@talismn/ui'
+import type { ElementType, PropsWithChildren, ReactNode } from 'react'
 
-export type StakeableAssetProps = {
+export type StakeProviderProps = {
   logo: string
   symbol: ReactNode
   chain: ReactNode
@@ -10,14 +17,34 @@ export type StakeableAssetProps = {
   type: ReactNode
   provider: ReactNode
   availableBalance: ReactNode
-  availablePercentage: number
+  stakePercentage: ReactNode
   stakeButton: ReactNode
 }
 
-const StakeButton = (props: Omit<ButtonProps, 'children'>) => (
+const StakeButton = <T extends ElementType>(props: Omit<ButtonProps<T>, 'children'>) => (
+  // @ts-expect-error
   <Button {...props} variant="surface" leadingIcon={<Zap />} css={theme => ({ color: theme.color.primary })}>
     Stake
   </Button>
+)
+
+type StakePercentageProps =
+  | {
+      loading: true
+    }
+  | { loading?: false; percentage: number }
+
+const StakePercentage = (props: StakePercentageProps) => (
+  <>
+    <Text.BodySmall as="div" alpha="high" css={{ textAlign: 'end', marginBottom: '0.6rem' }}>
+      {props.loading ? (
+        <CircularProgressIndicator size="1em" />
+      ) : (
+        props.percentage.toLocaleString(undefined, { style: 'percent' })
+      )}
+    </Text.BodySmall>
+    <LinearProgressIndicator value={props.loading ? 0 : props.percentage} />
+  </>
 )
 
 const Grid = (props: PropsWithChildren<{ className?: string }>) => (
@@ -35,16 +62,16 @@ const Grid = (props: PropsWithChildren<{ className?: string }>) => (
       'gap': '0.6rem',
       '@container (min-width: 100rem)': {
         alignItems: 'center',
-        gridTemplateAreas: `'asset apr type provider stake-percentage action'`,
-        gridTemplateColumns: 'repeat(4, minmax(0, 1fr)) minmax(0, 0.75fr) minmax(0, 1fr)',
+        gridTemplateAreas: `'asset apr type provider available-balance stake-percentage action'`,
+        gridTemplateColumns: 'repeat(5, minmax(0, 1fr)) minmax(0, 0.5fr) minmax(0, 1fr)',
       },
     }}
     {...props}
   />
 )
 
-const StakeableAsset = Object.assign(
-  (props: StakeableAssetProps) => {
+const StakeProvider = Object.assign(
+  (props: StakeProviderProps) => {
     return (
       <div css={{ containerType: 'inline-size' }}>
         <Grid>
@@ -87,22 +114,23 @@ const StakeableAsset = Object.assign(
           </div>
           <div
             css={{
+              'gridArea': 'available-balance',
+              'display': 'none',
+              '@container (min-width: 100rem)': { display: 'revert' },
+            }}
+          >
+            <Text.Body as="div" alpha="high">
+              {props.availableBalance}
+            </Text.Body>
+          </div>
+          <div
+            css={{
               'gridArea': 'stake-percentage',
               'display': 'none',
               '@container (min-width: 100rem)': { display: 'revert' },
             }}
           >
-            <Text.Body as="div" alpha="high" css={{ textAlign: 'end', marginBottom: '0.6rem' }}>
-              {props.availableBalance}
-            </Text.Body>
-            <div css={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
-              <div css={{ flex: 1 }}>
-                <LinearProgressIndicator value={props.availablePercentage} />
-              </div>
-              <Text.BodySmall as="div" alpha="high" color="#38D448" css={{ textAlign: 'end' }}>
-                {props.availablePercentage.toLocaleString(undefined, { style: 'percent' })}
-              </Text.BodySmall>
-            </div>
+            {props.stakePercentage}
           </div>
           <Surface
             css={{
@@ -123,10 +151,10 @@ const StakeableAsset = Object.assign(
       </div>
     )
   },
-  { StakeButton }
+  { StakeButton, StakePercentage }
 )
 
-export const StakeableAssetList = (props: PropsWithChildren<{ className?: string }>) => (
+export const StakeProviderList = (props: PropsWithChildren<{ className?: string }>) => (
   <section css={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }} {...props}>
     <div css={{ containerType: 'inline-size' }}>
       <header
@@ -141,7 +169,8 @@ export const StakeableAssetList = (props: PropsWithChildren<{ className?: string
           <Text.BodySmall css={{ gridArea: 'apr' }}>Estimated APR (%)</Text.BodySmall>
           <Text.BodySmall css={{ gridArea: 'type' }}>Type</Text.BodySmall>
           <Text.BodySmall css={{ gridArea: 'provider' }}>Provider</Text.BodySmall>
-          <Text.BodySmall css={{ gridArea: 'stake-percentage' }}>Available balance</Text.BodySmall>
+          <Text.BodySmall css={{ gridArea: 'available-balance' }}>Available balance</Text.BodySmall>
+          <Text.BodySmall css={{ gridArea: 'stake-percentage', textAlign: 'end' }}>Staked (%)</Text.BodySmall>
         </Grid>
       </header>
     </div>
@@ -149,4 +178,4 @@ export const StakeableAssetList = (props: PropsWithChildren<{ className?: string
   </section>
 )
 
-export default StakeableAsset
+export default StakeProvider

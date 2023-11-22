@@ -1,12 +1,12 @@
 import { type Meta, type StoryObj } from '@storybook/react'
-import StakeableAsset from './StakeableAsset'
+import StakeProvider from './StakeProvider'
 
 export default {
-  title: 'Recipes/StakeableAsset',
-  component: StakeableAsset,
-} satisfies Meta<typeof StakeableAsset>
+  title: 'Recipes/StakeProvider',
+  component: StakeProvider,
+} satisfies Meta<typeof StakeProvider>
 
-type Story = StoryObj<typeof StakeableAsset>
+type Story = StoryObj<typeof StakeProvider>
 
 export const Default: Story = {
   args: {
@@ -16,7 +16,7 @@ export const Default: Story = {
     provider: 'Polkadot',
     apr: '5.5 - 5.6',
     availableBalance: '10 DOT',
-    availablePercentage: 0.55,
-    stakeButton: <StakeableAsset.StakeButton />,
+    stakePercentage: 0.55,
+    stakeButton: <StakeProvider.StakeButton />,
   },
 }

@@ -2,7 +2,7 @@ import { moonbeam } from 'wagmi/chains'
 import type { SlpxPair } from './types'
 
 export const glmrSlpxPair = {
-  chainId: moonbeam.id,
+  chain: moonbeam,
   splx: '0xF1d4797E51a4640a76769A50b57abE7479ADd3d8',
   etherscanUrl: moonbeam.blockExplorers.etherscan.url,
   nativeToken: {

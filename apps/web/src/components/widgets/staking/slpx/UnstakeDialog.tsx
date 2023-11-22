@@ -63,7 +63,7 @@ const UnstakeDialog = (props: UnstakeDialogProps) => {
       )}
       approvalNeeded={approvalNeeded}
       onConfirm={async () => {
-        await switchNetworkAsync?.(props.slpxPair.chainId)
+        await switchNetworkAsync?.(props.slpxPair.chain.id)
         if (approvalNeeded) {
           await approve.writeAsync()
         } else {
