@@ -24,6 +24,7 @@ import TransactionSummarySideSheet from '../../Overview/Transactions/Transaction
 import { toast } from 'react-hot-toast'
 import { useNavigate } from 'react-router-dom'
 import { Layout } from '../../Layout'
+import TransactionDetailsExpandable from '../../Overview/Transactions/TransactionDetailsExpandable'
 
 const VoteAction: React.FC = () => {
   const multisig = useRecoilValue(selectedMultisigState)
@@ -122,6 +123,7 @@ const VoteAction: React.FC = () => {
             canCancel
             fee={ready ? estimatedFee : undefined}
             cancelButtonTextOverride="Back"
+            transactionDetails={t ? <TransactionDetailsExpandable t={t} /> : null}
             onApprove={() =>
               new Promise((resolve, reject) => {
                 if (!extrinsic) {

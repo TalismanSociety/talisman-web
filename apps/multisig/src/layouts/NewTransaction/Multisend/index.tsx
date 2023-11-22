@@ -24,6 +24,7 @@ import MultiSendForm from './MultiSendForm'
 import { Layout } from '../../Layout'
 import { NewTransactionHeader } from '../NewTransactionHeader'
 import { Share2 } from '@talismn/icons'
+import TransactionDetailsExpandable from '../../Overview/Transactions/TransactionDetailsExpandable'
 
 enum Step {
   Details,
@@ -173,6 +174,7 @@ const MultiSend = () => {
               setStep(Step.Details)
               return Promise.resolve()
             }}
+            transactionDetails={t ? <TransactionDetailsExpandable t={t} /> : null}
           />
         </SideSheet>
       </div>

@@ -17,6 +17,7 @@ import TransactionSummaryRow from './TransactionSummaryRow'
 import { groupTransactionsByDay } from './utils'
 import { changingMultisigConfigState, useUpdateMultisigConfig } from '../../../domains/offchain-data/teams'
 import { selectedAccountState } from '../../../domains/auth/index'
+import TransactionDetailsExpandable from './TransactionDetailsExpandable'
 
 enum Mode {
   Pending,
@@ -142,6 +143,7 @@ const TransactionsList = ({ transactions }: { transactions: Transaction[] }) => 
                 readyToExecute={readyToExecute}
                 fee={readyToExecute ? asMultiEstimatedFee : approveAsMultiEstimatedFee}
                 t={openTransaction}
+                transactionDetails={openTransaction ? <TransactionDetailsExpandable t={openTransaction} /> : null}
                 onApprove={() =>
                   new Promise((resolve, reject) => {
                     if (readyToExecute) {

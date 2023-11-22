@@ -21,6 +21,7 @@ import { useRecoilValue } from 'recoil'
 import { FullScreenDialogContents, FullScreenDialogTitle } from '../../Overview/Transactions/FullScreenSummary'
 import { DetailsForm } from './DetailsForm'
 import { Layout } from '../../Layout'
+import TransactionDetailsExpandable from '../../Overview/Transactions/TransactionDetailsExpandable'
 
 enum Step {
   Details,
@@ -130,6 +131,7 @@ const AdvancedAction = () => {
                 })
               })
             }
+            transactionDetails={t ? <TransactionDetailsExpandable t={t} /> : null}
             onCancel={() => {
               setStep(Step.Details)
               return Promise.resolve()

@@ -10,6 +10,8 @@ import { useRecoilValue } from 'recoil'
 import { validatorsState } from '@domains/staking/ValidatorsWatcher'
 import { useConsts } from '@domains/chains/ConstsWatcher'
 import { useToast } from '@components/ui/use-toast'
+import { useNominateTransaction } from '../../domains/staking/useNominateTransaction'
+import TransactionSummarySideSheet from '../Overview/Transactions/TransactionSummarySideSheet'
 
 const NominationCard: React.FC<Nomination & { onClick: () => void; disabled?: boolean; icon?: React.ReactNode }> = ({
   address,
@@ -64,10 +66,12 @@ const NominationCard: React.FC<Nomination & { onClick: () => void; disabled?: bo
         })}
       >
         {name ?? shortenAddress(address)}
-        {!!subName && subName.length > 0 && (
-          <span css={({ color }) => ({ color: color.lightGrey, fontSize: 12 })}> / {subName}</span>
-        )}
       </p>
+      {!!subName && subName.length > 0 && (
+        <p className="text-gray-200 text-[12px] mt-[4px] whitespace-nowrap overflow-hidden text-ellipsis">
+          / {subName}
+        </p>
+      )}
     </div>
     {icon !== undefined && <div css={{ marginLeft: 'auto' }}>{icon}</div>}
   </div>
@@ -82,6 +86,7 @@ export const ValidatorsRotation: React.FC<{
   const [multisig] = useSelectedMultisig()
   const [deleted, setDeleted] = useState<Record<string, boolean>>({})
   const [added, setAdded] = useState<string[]>([])
+  const [reviewing, setReviewing] = useState(false)
   const validators = useRecoilValue(validatorsState)
   const { consts } = useConsts(multisig.chain)
   const { toast } = useToast()
@@ -102,7 +107,28 @@ export const ValidatorsRotation: React.FC<{
     ])
   }, [added, nominations])
 
-  const nothingChanged = deletedNominations.length === 0
+  const newValidators = useMemo(() => {
+    if (!validators) return []
+    let validatorsAddresses = Object.keys(validators.validators)
+
+    Object.entries(deleted)
+      .filter(([, isDeleted]) => isDeleted)
+      .forEach(([toDelete]) => {
+        const removeIndex = validatorsAddresses.findIndex(existing => existing === toDelete)
+        if (removeIndex > -1) validatorsAddresses.splice(removeIndex, 1)
+      })
+
+    return validatorsAddresses.concat(added)
+  }, [added, deleted, validators])
+
+  const { transaction, estimatedFee, ready } = useNominateTransaction(
+    address,
+    `Nominate Validators from Pool #${pool?.id}`,
+    newValidators,
+    pool
+  )
+
+  const nothingChanged = deletedNominations.length === 0 && added.length === 0
 
   const selectedValidatorsCount = nominations.length + addedNominations.length - deletedNominations.length
 
@@ -283,8 +309,21 @@ export const ValidatorsRotation: React.FC<{
         <Button disabled={nothingChanged} variant="outlined" onClick={handleReset}>
           Reset
         </Button>
-        <Button disabled={nothingChanged}>Review</Button>
+        <Button disabled={nothingChanged} onClick={() => setReviewing(true)}>
+          Review
+        </Button>
       </div>
+      <TransactionSummarySideSheet
+        canCancel
+        cancelButtonTextOverride="Back"
+        onApprove={async () => {}}
+        onCancel={async () => setReviewing(false)}
+        onClose={() => setReviewing(false)}
+        open={reviewing}
+        fee={ready ? estimatedFee : undefined}
+        t={transaction}
+        transactionDetails={null}
+      />
     </>
   )
 }

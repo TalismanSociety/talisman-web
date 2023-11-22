@@ -12,7 +12,7 @@ import NominationPoolOverview from './NominationPoolOverview'
 import { useAugmentedBalances } from '@domains/balances'
 import { useNativeToken } from '@domains/chains'
 import { usePoolMembership } from '@domains/staking/usePoolMembership'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { BondedPool } from '@domains/staking'
 import { Nomination } from '@domains/staking/useNominations'
 import { Address } from '@util/addresses'
@@ -71,6 +71,10 @@ const Staking = () => {
   const handleEditNomPool = (pool: BondedPool, nominations: Nomination[]) => {
     setEditing({ address: pool.stash, nominations, pool })
   }
+
+  useEffect(() => {
+    setEditing(undefined)
+  }, [multisig])
 
   if (editing) {
     return (

@@ -38,6 +38,7 @@ export type BondedPool = {
 export const bondedPoolsState = atom<
   | {
       pools: BondedPool[]
+      poolsMap: Record<number, BondedPool>
       chain: string
     }
   | undefined
@@ -71,6 +72,7 @@ export const NomPoolsWatcher: React.FC = () => {
     if (!api.query.nominationPools) {
       setBondedPools({
         pools: [],
+        poolsMap: {},
         chain: multisig.chain.chainName,
       })
       return
@@ -81,6 +83,7 @@ export const NomPoolsWatcher: React.FC = () => {
       pools.map(([key]) => getPoolId(key))
     )
 
+    const poolsMap: Record<number, BondedPool> = {}
     const bondedPools = pools.map(([key, value]): BondedPool | null => {
       const id = getPoolId(key)
 
@@ -99,7 +102,7 @@ export const NomPoolsWatcher: React.FC = () => {
 
       const metadata = metadataMulti[id]
 
-      return {
+      const pool = {
         id,
         memberCounter: +bondedPoolRaw.memberCounter,
         points: BigInt(bondedPoolRaw.points.replaceAll(',', '')),
@@ -114,10 +117,13 @@ export const NomPoolsWatcher: React.FC = () => {
         state: bondedPoolRaw.state,
         metadata: metadata === '' ? undefined : metadata,
       }
+      poolsMap[id] = pool
+      return pool
     })
 
     setBondedPools({
       pools: bondedPools.filter(p => p !== null) as BondedPool[],
+      poolsMap,
       chain: multisig.chain.chainName,
     })
   }, [api, createAccounts, fetchMetadataMulti, multisig.chain.chainName, setBondedPools])

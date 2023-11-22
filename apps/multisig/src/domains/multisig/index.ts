@@ -149,6 +149,8 @@ export enum TransactionType {
   ChangeConfig,
   Advanced,
   Vote,
+  NominateFromNomPool,
+  NominateFromStaking,
 }
 
 export interface ChangeConfigDetails {
