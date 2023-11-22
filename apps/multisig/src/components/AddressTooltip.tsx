@@ -6,17 +6,16 @@ import { useToast } from './ui/use-toast'
 import { useEffect, useState } from 'react'
 import { cn } from '../util/tailwindcss'
 
-export const AddressTooltip: React.FC<React.PropsWithChildren & { address: Address; chain: Chain; name?: string }> = ({
-  children,
-  address,
-  chain,
-  name,
-}) => {
+export const AddressTooltip: React.FC<
+  React.PropsWithChildren & { address: Address | string; chain: Chain; name?: string }
+> = ({ children, address: _address, chain, name }) => {
+  const address = typeof _address === 'string' ? (Address.fromSs58(_address) as Address) : _address
   const ss58Address = address.toSs58(chain)
   const { toast } = useToast()
   const [copied, setCopied] = useState(false)
 
-  const handleCopy = () => {
+  const handleCopy = (e: React.MouseEvent) => {
+    e.stopPropagation()
     navigator.clipboard.writeText(ss58Address)
     if (copied) return
     setCopied(true)
@@ -33,10 +32,11 @@ export const AddressTooltip: React.FC<React.PropsWithChildren & { address: Addre
       }, 2_000)
     }
   }, [copied])
+
   return (
     <Tooltip
       content={
-        <div className="p-3">
+        <div className="p-3 cursor-default" onClick={e => e.stopPropagation()}>
           <div className="flex items-center gap-[8px] mb-2">
             <p className="text-gray-100 text-[14px] mt-2">{name ?? 'Unknown Address'}</p>
             <a

@@ -31,6 +31,7 @@
     "@lezer/highlight": "^1.1.6",
     "@polkadot/api": "10.9.1",
     "@polkadot/extension-dapp": "0.46.5",
+    "@radix-ui/react-accordion": "^1.1.2",
     "@radix-ui/react-dialog": "^1.0.5",
     "@radix-ui/react-popover": "^1.0.7",
     "@radix-ui/react-slot": "^1.0.2",

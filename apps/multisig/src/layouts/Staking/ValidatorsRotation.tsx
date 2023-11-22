@@ -12,6 +12,7 @@ import { useConsts } from '@domains/chains/ConstsWatcher'
 import { useToast } from '@components/ui/use-toast'
 import { useNominateTransaction } from '../../domains/staking/useNominateTransaction'
 import TransactionSummarySideSheet from '../Overview/Transactions/TransactionSummarySideSheet'
+import { ValidatorsRotationSummaryDetails } from './ValidatorsRotationSummaryDetails'
 
 const NominationCard: React.FC<Nomination & { onClick: () => void; disabled?: boolean; icon?: React.ReactNode }> = ({
   address,
@@ -107,24 +108,23 @@ export const ValidatorsRotation: React.FC<{
     ])
   }, [added, nominations])
 
-  const newValidators = useMemo(() => {
-    if (!validators) return []
-    let validatorsAddresses = Object.keys(validators.validators)
+  const newNominations = useMemo(() => {
+    let newNominationsAddresses = nominations.map(({ address }) => address)
 
     Object.entries(deleted)
       .filter(([, isDeleted]) => isDeleted)
       .forEach(([toDelete]) => {
-        const removeIndex = validatorsAddresses.findIndex(existing => existing === toDelete)
-        if (removeIndex > -1) validatorsAddresses.splice(removeIndex, 1)
+        const removeIndex = newNominationsAddresses.findIndex(address => address === toDelete)
+        if (removeIndex > -1) newNominationsAddresses.splice(removeIndex, 1)
       })
 
-    return validatorsAddresses.concat(added)
-  }, [added, deleted, validators])
+    return newNominationsAddresses.concat(added)
+  }, [added, deleted, nominations])
 
   const { transaction, estimatedFee, ready } = useNominateTransaction(
     address,
     `Nominate Validators from Pool #${pool?.id}`,
-    newValidators,
+    newNominations,
     pool
   )
 
@@ -322,7 +322,14 @@ export const ValidatorsRotation: React.FC<{
         open={reviewing}
         fee={ready ? estimatedFee : undefined}
         t={transaction}
-        transactionDetails={null}
+        transactionDetails={
+          <ValidatorsRotationSummaryDetails
+            chain={multisig.chain}
+            currentNominations={nominations.map(({ address }) => address)}
+            newNominations={newNominations}
+            poolId={pool?.id}
+          />
+        }
       />
     </>
   )
