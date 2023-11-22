@@ -234,7 +234,7 @@ export const useRedeemForm = (account: Account | undefined, slpxPair: SlpxPair) 
     throw new Error(`Invalid EVM address ${account.address}`)
   }
 
-  const base = useSlpxSwapForm(account, slpxPair.chainId, slpxPair.splx, slpxPair.vToken, slpxPair.nativeToken)
+  const base = useSlpxSwapForm(account, slpxPair.chain.id, slpxPair.splx, slpxPair.vToken, slpxPair.nativeToken)
 
   const planckAmount = useMemo(
     () => Maybe.of(base.input.decimalAmount?.planck).mapOrUndefined(x => BigInt(x.toString())),
@@ -242,7 +242,7 @@ export const useRedeemForm = (account: Account | undefined, slpxPair: SlpxPair) 
   )
 
   const allowance = useContractRead({
-    chainId: slpxPair.chainId,
+    chainId: slpxPair.chain.id,
     address: slpxPair.vToken.address,
     abi: erc20ABI,
     functionName: 'allowance',
@@ -251,7 +251,7 @@ export const useRedeemForm = (account: Account | undefined, slpxPair: SlpxPair) 
   })
 
   const redeem = useWagmiContractWrite({
-    chainId: slpxPair.chainId,
+    chainId: slpxPair.chain.id,
     address: slpxPair.splx,
     abi: slpx,
     functionName: 'redeemAsset',
@@ -260,7 +260,7 @@ export const useRedeemForm = (account: Account | undefined, slpxPair: SlpxPair) 
   })
 
   const approve = useWagmiContractWrite({
-    chainId: slpxPair.chainId,
+    chainId: slpxPair.chain.id,
     address: slpxPair.vToken.address,
     abi: erc20ABI,
     functionName: 'approve',
@@ -269,7 +269,7 @@ export const useRedeemForm = (account: Account | undefined, slpxPair: SlpxPair) 
   })
 
   const approveTransaction = useWaitForTransaction({
-    chainId: slpxPair.chainId,
+    chainId: slpxPair.chain.id,
     hash: approve.data?.hash,
     onSettled: () => {
       void allowance.refetch()
@@ -296,7 +296,7 @@ export const useMintForm = (account: Account | undefined, slpxPair: SlpxPair) =>
     throw new Error(`Invalid EVM address ${account.address}`)
   }
 
-  const base = useSlpxSwapForm(account, slpxPair.chainId, slpxPair.splx, slpxPair.nativeToken, slpxPair.vToken)
+  const base = useSlpxSwapForm(account, slpxPair.chain.id, slpxPair.splx, slpxPair.nativeToken, slpxPair.vToken)
 
   const planckAmount = useMemo(
     () => Maybe.of(base.input.decimalAmount?.planck).mapOrUndefined(x => BigInt(x.toString())),
@@ -304,7 +304,7 @@ export const useMintForm = (account: Account | undefined, slpxPair: SlpxPair) =>
   )
 
   const mint = useWagmiContractWrite({
-    chainId: slpxPair.chainId,
+    chainId: slpxPair.chain.id,
     address: slpxPair.splx,
     abi: slpx,
     functionName: 'mintVNativeAsset',
@@ -322,11 +322,11 @@ export const useMintForm = (account: Account | undefined, slpxPair: SlpxPair) =>
 export const useStakes = (accounts: Account[], slpxPair: SlpxPair) => {
   const filteredAccounts = useMemo(() => accounts.filter(x => x.type === 'ethereum'), [accounts])
 
-  const vToken = useToken({ chainId: slpxPair.chainId, address: slpxPair.vToken.address, suspense: true })
+  const vToken = useToken({ chainId: slpxPair.chain.id, address: slpxPair.vToken.address, suspense: true })
 
   const balances = useContractReads({
     contracts: filteredAccounts.map(x => ({
-      chainId: slpxPair.chainId,
+      chainId: slpxPair.chain.id,
       address: slpxPair.vToken.address,
       abi: erc20ABI,
       functionName: 'balanceOf',

@@ -48,7 +48,7 @@ const AddStakeDialog = (props: AddStakeDialogProps) => {
         rate => `1 ${props.slpxPair.nativeToken.symbol} = ${rate.toLocaleString()} ${props.slpxPair.vToken.symbol}`
       )}
       onConfirm={async () => {
-        await switchNetworkAsync?.(props.slpxPair.chainId)
+        await switchNetworkAsync?.(props.slpxPair.chain.id)
         await mint.writeAsync()
       }}
       onRequestMaxAmount={() => {
