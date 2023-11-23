@@ -13,6 +13,7 @@ import { useToast } from '@components/ui/use-toast'
 import { useNominateTransaction } from '../../domains/staking/useNominateTransaction'
 import TransactionSummarySideSheet from '../Overview/Transactions/TransactionSummarySideSheet'
 import { ValidatorsRotationSummaryDetails } from './ValidatorsRotationSummaryDetails'
+import { useNavigate } from 'react-router-dom'
 
 const NominationCard: React.FC<Nomination & { onClick: () => void; disabled?: boolean; icon?: React.ReactNode }> = ({
   address,
@@ -84,10 +85,12 @@ export const ValidatorsRotation: React.FC<{
   pool?: BondedPool
   onBack: () => void
 }> = ({ address, nominations, onBack, pool }) => {
+  const navigate = useNavigate()
   const [multisig] = useSelectedMultisig()
   const [deleted, setDeleted] = useState<Record<string, boolean>>({})
   const [added, setAdded] = useState<string[]>([])
   const [reviewing, setReviewing] = useState(false)
+
   const validators = useRecoilValue(validatorsState)
   const { consts } = useConsts(multisig.chain)
   const { toast } = useToast()
@@ -121,9 +124,10 @@ export const ValidatorsRotation: React.FC<{
     return newNominationsAddresses.concat(added)
   }, [added, deleted, nominations])
 
-  const { transaction, estimatedFee, ready } = useNominateTransaction(
+  const description = `Nominate Validators from Pool #${pool?.id}`
+  const { approveAsMulti, transaction, estimatedFee, ready } = useNominateTransaction(
     address,
-    `Nominate Validators from Pool #${pool?.id}`,
+    description,
     newNominations,
     pool
   )
@@ -197,17 +201,21 @@ export const ValidatorsRotation: React.FC<{
           </div>
         </div>
 
-        <div css={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8, marginTop: 24 }}>
-          {nominations.map(nomination => (
-            <NominationCard
-              key={nomination.address}
-              {...nomination}
-              disabled={deleted[nomination.address]}
-              onClick={() => setDeleted({ ...deleted, [nomination.address]: true })}
-              icon={<Trash2 size={16} />}
-            />
-          ))}
-        </div>
+        {nominations.length > 0 ? (
+          <div css={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8, marginTop: 24 }}>
+            {nominations.map(nomination => (
+              <NominationCard
+                key={nomination.address}
+                {...nomination}
+                disabled={deleted[nomination.address]}
+                onClick={() => setDeleted({ ...deleted, [nomination.address]: true })}
+                icon={<Trash2 size={16} />}
+              />
+            ))}
+          </div>
+        ) : (
+          <p className="mt-[24px] text-[14px]">No nominations yet.</p>
+        )}
       </div>
 
       <div>
@@ -261,7 +269,7 @@ export const ValidatorsRotation: React.FC<{
               })}
             >
               {addedNominations.length === 0 ? (
-                <p css={{ marginTop: 8 }}>No validator added.</p>
+                <p css={{ marginTop: 8, fontSize: 14 }}>No validator added.</p>
               ) : (
                 addedNominations.map(nomination => (
                   <NominationCard
@@ -280,7 +288,7 @@ export const ValidatorsRotation: React.FC<{
             <p css={({ color }) => ({ color: color.offWhite })}>Removed Validators</p>
             <div className="flex flex-col gap-[8px] mt-[8px] [&>div]:bg-gray-800">
               {deletedNominations.length === 0 ? (
-                <p css={{ marginTop: 8 }}>No validator removed.</p>
+                <p css={{ marginTop: 8, fontSize: 14 }}>No validator removed.</p>
               ) : (
                 deletedNominations.map(nomination => (
                   <NominationCard
@@ -316,7 +324,32 @@ export const ValidatorsRotation: React.FC<{
       <TransactionSummarySideSheet
         canCancel
         cancelButtonTextOverride="Back"
-        onApprove={async () => {}}
+        onApprove={() =>
+          new Promise(async (resolve, reject) => {
+            if (!transaction) return
+
+            approveAsMulti({
+              onSuccess: () => {
+                toast({
+                  title: 'Transaction Successful!',
+                  description: 'Your transaction has been sent and is waiting for approvals from multisig.',
+                })
+                navigate('/overview')
+                resolve()
+              },
+              onFailure: e => {
+                setReviewing(false)
+                toast({ title: 'Transaction failed', description: 'Please try again.', variant: 'destructive' })
+                console.error(e)
+                reject()
+              },
+              metadata: {
+                callData: transaction?.calldata,
+                description,
+              },
+            })
+          })
+        }
         onCancel={async () => setReviewing(false)}
         onClose={() => setReviewing(false)}
         open={reviewing}

@@ -1,13 +1,20 @@
 import { decodeCallData, useApproveAsMulti, useAsMulti, useCancelAsMulti } from '@domains/chains'
 import { pjsApiSelector } from '@domains/chains/pjs-api'
 import { rawPendingTransactionsDependency, useAddressIsProxyDelegatee } from '@domains/chains/storage-getters'
-import { Transaction, selectedMultisigState, useNextTransactionSigner, usePendingTransactions } from '@domains/multisig'
+import {
+  Transaction,
+  TransactionType,
+  selectedMultisigState,
+  useNextTransactionSigner,
+  usePendingTransactions,
+  useSelectedMultisig,
+} from '@domains/multisig'
 import { rawConfirmedTransactionsDependency, useConfirmedTransactions } from '@domains/tx-history'
 import { css } from '@emotion/css'
 import { EyeOfSauronProgressIndicator, SideSheet } from '@talismn/ui'
 import { toMultisigAddress } from '@util/addresses'
 import { AnimatePresence, motion } from 'framer-motion'
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { toast } from 'react-hot-toast'
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom'
 import { useRecoilValue, useRecoilValueLoadable, useSetRecoilState } from 'recoil'
@@ -15,9 +22,12 @@ import { useRecoilValue, useRecoilValueLoadable, useSetRecoilState } from 'recoi
 import { FullScreenDialogContents, FullScreenDialogTitle } from './FullScreenSummary'
 import TransactionSummaryRow from './TransactionSummaryRow'
 import { groupTransactionsByDay } from './utils'
-import { changingMultisigConfigState, useUpdateMultisigConfig } from '../../../domains/offchain-data/teams'
-import { selectedAccountState } from '../../../domains/auth/index'
+import { changingMultisigConfigState, useUpdateMultisigConfig } from '@domains/offchain-data/teams'
+import { selectedAccountState } from '@domains/auth/index'
 import TransactionDetailsExpandable from './TransactionDetailsExpandable'
+import { useNominations } from '@domains/staking/useNominations'
+import { useNomPoolOf } from '@domains/staking/useNomPool'
+import { ValidatorsRotationSummaryDetails } from '../../Staking/ValidatorsRotationSummaryDetails'
 
 enum Mode {
   Pending,
@@ -33,7 +43,7 @@ function extractHash(url: string) {
   return parts[txIndex + 1]
 }
 
-const TransactionsList = ({ transactions }: { transactions: Transaction[] }) => {
+const TransactionsList = ({ nominations, transactions }: { nominations?: string[]; transactions: Transaction[] }) => {
   let location = useLocation().pathname
   const navigate = useNavigate()
   const groupedTransactions = useMemo(() => {
@@ -93,6 +103,33 @@ const TransactionsList = ({ transactions }: { transactions: Transaction[] }) => 
     return nApprovals >= threshold - 1
   }, [openTransaction, multisig.threshold])
 
+  const detailsSelector = useCallback(
+    (transaction?: Transaction) => {
+      if (!transaction) return null
+      if (transaction.decoded) {
+        // find the component for the relevant transaction type
+        switch (transaction.decoded.type) {
+          case TransactionType.NominateFromNomPool:
+            return (
+              <ValidatorsRotationSummaryDetails
+                currentNominations={nominations ?? []}
+                newNominations={transaction.decoded.nominate?.validators ?? []}
+                chain={transaction.multisig.chain}
+                hash={transaction.hash}
+                callData={transaction.callData}
+                poolId={transaction.decoded.nominate?.poolId}
+              />
+            )
+          default:
+            ;<TransactionDetailsExpandable t={transaction} />
+        }
+      }
+
+      return <TransactionDetailsExpandable t={transaction} />
+    },
+    [nominations]
+  )
+
   return (
     <div
       className={css`
@@ -143,7 +180,7 @@ const TransactionsList = ({ transactions }: { transactions: Transaction[] }) => 
                 readyToExecute={readyToExecute}
                 fee={readyToExecute ? asMultiEstimatedFee : approveAsMultiEstimatedFee}
                 t={openTransaction}
-                transactionDetails={openTransaction ? <TransactionDetailsExpandable t={openTransaction} /> : null}
+                transactionDetails={detailsSelector(openTransaction)}
                 onApprove={() =>
                   new Promise((resolve, reject) => {
                     if (readyToExecute) {
@@ -240,6 +277,9 @@ const TransactionsList = ({ transactions }: { transactions: Transaction[] }) => 
 const Transactions = () => {
   const { transactions: pendingTransactions, loading: pendingLoading } = usePendingTransactions()
   const { transactions: confirmedTransactions, loading: confirmedLoading } = useConfirmedTransactions()
+  const [multisig] = useSelectedMultisig()
+  const pool = useNomPoolOf(multisig.proxyAddress)
+  const { nominations: nomPoolNominations } = useNominations(multisig.chain, pool?.pool.stash.toSs58(multisig.chain))
 
   const [mode, setMode] = useState(Mode.Pending)
   return (
@@ -290,7 +330,10 @@ const Transactions = () => {
               <EyeOfSauronProgressIndicator />
             </div>
           ) : (
-            <TransactionsList transactions={mode === Mode.Pending ? pendingTransactions : confirmedTransactions} />
+            <TransactionsList
+              nominations={nomPoolNominations?.map(({ address }) => address)}
+              transactions={mode === Mode.Pending ? pendingTransactions : confirmedTransactions}
+            />
           )}
         </motion.div>
       </AnimatePresence>

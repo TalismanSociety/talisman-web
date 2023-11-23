@@ -1,6 +1,6 @@
 import { Zap } from 'lucide-react'
 import { bondedPoolsState } from '@domains/staking'
-import { useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useRecoilValue } from 'recoil'
 import { Identicon, Skeleton } from '@talismn/ui'
 import AddressTooltip from '@components/AddressTooltip'
@@ -10,7 +10,7 @@ import { shortenAddress } from '@util/addresses'
 import { TransactionDetailsAccordion } from '../Overview/Transactions/TransactionDetailsAccordion'
 
 type Props = {
-  currentNominations: string[]
+  currentNominations?: string[]
   newNominations: string[]
   poolId?: number
   chain: Chain
@@ -60,6 +60,7 @@ export const ValidatorsRotationSummaryDetails: React.FC<Props> = ({
 }) => {
   const bondedPools = useRecoilValue(bondedPoolsState)
   const validators = useRecoilValue(validatorsState)
+  const [cachedNominations, setCachedNominations] = useState(currentNominations)
 
   const pool = useMemo(() => {
     if (poolId === undefined) return null
@@ -70,18 +71,25 @@ export const ValidatorsRotationSummaryDetails: React.FC<Props> = ({
   const addedNominations = useMemo(() => {
     const added: string[] = []
     newNominations.forEach(addedAddress => {
-      if (!currentNominations.includes(addedAddress)) added.push(addedAddress)
+      if (!cachedNominations?.includes(addedAddress)) added.push(addedAddress)
     })
     return added
-  }, [currentNominations, newNominations])
+  }, [cachedNominations, newNominations])
 
   const removedNominations = useMemo(() => {
     const removed: string[] = []
-    currentNominations.forEach(removedAddress => {
+    cachedNominations?.forEach(removedAddress => {
       if (!newNominations.includes(removedAddress)) removed.push(removedAddress)
     })
     return removed
-  }, [currentNominations, newNominations])
+  }, [cachedNominations, newNominations])
+
+  const changed = addedNominations.length > 0 || removedNominations.length > 0
+
+  useEffect(() => {
+    if (cachedNominations !== undefined) return
+    setCachedNominations(currentNominations)
+  }, [cachedNominations, currentNominations])
 
   return (
     <TransactionDetailsAccordion
@@ -105,7 +113,7 @@ export const ValidatorsRotationSummaryDetails: React.FC<Props> = ({
           <p>
             {addedNominations.length > 0 && <span className="text-green-500">+ {addedNominations.length}</span>}{' '}
             {removedNominations.length > 0 && <span className="text-red-400">- {removedNominations.length}</span>}{' '}
-            {(addedNominations.length > 0 || removedNominations.length > 0) && <span>Validators</span>}
+            {changed && <span>Validators</span>}
           </p>
         </div>
       }
@@ -113,7 +121,7 @@ export const ValidatorsRotationSummaryDetails: React.FC<Props> = ({
       <div className="grid gap-[16px]">
         <div>
           <div className="flex items-center justify-between">
-            <p className="text-gray-200 text-[16px]">New Nominated Validators</p>
+            <p className="text-gray-200 text-[16px]">{changed && 'New '}Nominated Validators</p>
             <div className="text-primary bg-primary/20 text-[14px] py-[4px] px-[8px] rounded-[6px]">
               {newNominations.length} Validators
             </div>

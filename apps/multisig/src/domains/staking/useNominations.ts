@@ -54,6 +54,8 @@ export const useNominations = (
     setNominations(undefined)
   }, [address, chain])
 
+  useEffect(() => () => unsub.current?.(), [])
+
   return {
     nominations: nominations?.map(addressString => ({
       // dont need to parse to Address class because we don't need to convert this address between chains
