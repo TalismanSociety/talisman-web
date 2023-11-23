@@ -11,12 +11,13 @@ type Props = {
   noResultMessage?: string
   options: { value: string; label: React.ReactNode; keywords?: string[] }[]
   maxResult?: number
-
+  closeOnSelect?: boolean
   value?: string
   onSelect?: (value: string) => void
 }
 
 export const Combobox: React.FC<Props> = ({
+  closeOnSelect,
   options,
   placeholder,
   searchPlaceholder,
@@ -79,7 +80,7 @@ export const Combobox: React.FC<Props> = ({
                 value={option.value}
                 onSelect={() => {
                   onSelect?.(option.value)
-                  setOpen(false)
+                  if (closeOnSelect) setOpen(false)
                 }}
               >
                 {option.label}

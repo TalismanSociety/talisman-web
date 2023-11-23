@@ -10,6 +10,10 @@ import { useRecoilValue } from 'recoil'
 import { validatorsState } from '@domains/staking/ValidatorsWatcher'
 import { useConsts } from '@domains/chains/ConstsWatcher'
 import { useToast } from '@components/ui/use-toast'
+import { useNominateTransaction } from '../../domains/staking/useNominateTransaction'
+import TransactionSummarySideSheet from '../Overview/Transactions/TransactionSummarySideSheet'
+import { ValidatorsRotationSummaryDetails } from './ValidatorsRotationSummaryDetails'
+import { useNavigate } from 'react-router-dom'
 
 const NominationCard: React.FC<Nomination & { onClick: () => void; disabled?: boolean; icon?: React.ReactNode }> = ({
   address,
@@ -64,10 +68,12 @@ const NominationCard: React.FC<Nomination & { onClick: () => void; disabled?: bo
         })}
       >
         {name ?? shortenAddress(address)}
-        {!!subName && subName.length > 0 && (
-          <span css={({ color }) => ({ color: color.lightGrey, fontSize: 12 })}> / {subName}</span>
-        )}
       </p>
+      {!!subName && subName.length > 0 && (
+        <p className="text-gray-200 text-[12px] mt-[4px] whitespace-nowrap overflow-hidden text-ellipsis">
+          / {subName}
+        </p>
+      )}
     </div>
     {icon !== undefined && <div css={{ marginLeft: 'auto' }}>{icon}</div>}
   </div>
@@ -79,9 +85,12 @@ export const ValidatorsRotation: React.FC<{
   pool?: BondedPool
   onBack: () => void
 }> = ({ address, nominations, onBack, pool }) => {
+  const navigate = useNavigate()
   const [multisig] = useSelectedMultisig()
   const [deleted, setDeleted] = useState<Record<string, boolean>>({})
   const [added, setAdded] = useState<string[]>([])
+  const [reviewing, setReviewing] = useState(false)
+
   const validators = useRecoilValue(validatorsState)
   const { consts } = useConsts(multisig.chain)
   const { toast } = useToast()
@@ -102,7 +111,28 @@ export const ValidatorsRotation: React.FC<{
     ])
   }, [added, nominations])
 
-  const nothingChanged = deletedNominations.length === 0
+  const newNominations = useMemo(() => {
+    let newNominationsAddresses = nominations.map(({ address }) => address)
+
+    Object.entries(deleted)
+      .filter(([, isDeleted]) => isDeleted)
+      .forEach(([toDelete]) => {
+        const removeIndex = newNominationsAddresses.findIndex(address => address === toDelete)
+        if (removeIndex > -1) newNominationsAddresses.splice(removeIndex, 1)
+      })
+
+    return newNominationsAddresses.concat(added)
+  }, [added, deleted, nominations])
+
+  const description = `Nominate Validators from Pool #${pool?.id}`
+  const { approveAsMulti, transaction, estimatedFee, ready } = useNominateTransaction(
+    address,
+    description,
+    newNominations,
+    pool
+  )
+
+  const nothingChanged = deletedNominations.length === 0 && added.length === 0
 
   const selectedValidatorsCount = nominations.length + addedNominations.length - deletedNominations.length
 
@@ -171,17 +201,21 @@ export const ValidatorsRotation: React.FC<{
           </div>
         </div>
 
-        <div css={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8, marginTop: 24 }}>
-          {nominations.map(nomination => (
-            <NominationCard
-              key={nomination.address}
-              {...nomination}
-              disabled={deleted[nomination.address]}
-              onClick={() => setDeleted({ ...deleted, [nomination.address]: true })}
-              icon={<Trash2 size={16} />}
-            />
-          ))}
-        </div>
+        {nominations.length > 0 ? (
+          <div css={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8, marginTop: 24 }}>
+            {nominations.map(nomination => (
+              <NominationCard
+                key={nomination.address}
+                {...nomination}
+                disabled={deleted[nomination.address]}
+                onClick={() => setDeleted({ ...deleted, [nomination.address]: true })}
+                icon={<Trash2 size={16} />}
+              />
+            ))}
+          </div>
+        ) : (
+          <p className="mt-[24px] text-[14px]">No nominations yet.</p>
+        )}
       </div>
 
       <div>
@@ -235,7 +269,7 @@ export const ValidatorsRotation: React.FC<{
               })}
             >
               {addedNominations.length === 0 ? (
-                <p css={{ marginTop: 8 }}>No validator added.</p>
+                <p css={{ marginTop: 8, fontSize: 14 }}>No validator added.</p>
               ) : (
                 addedNominations.map(nomination => (
                   <NominationCard
@@ -254,7 +288,7 @@ export const ValidatorsRotation: React.FC<{
             <p css={({ color }) => ({ color: color.offWhite })}>Removed Validators</p>
             <div className="flex flex-col gap-[8px] mt-[8px] [&>div]:bg-gray-800">
               {deletedNominations.length === 0 ? (
-                <p css={{ marginTop: 8 }}>No validator removed.</p>
+                <p css={{ marginTop: 8, fontSize: 14 }}>No validator removed.</p>
               ) : (
                 deletedNominations.map(nomination => (
                   <NominationCard
@@ -283,8 +317,55 @@ export const ValidatorsRotation: React.FC<{
         <Button disabled={nothingChanged} variant="outlined" onClick={handleReset}>
           Reset
         </Button>
-        <Button disabled={nothingChanged}>Review</Button>
+        <Button disabled={nothingChanged} onClick={() => setReviewing(true)}>
+          Review
+        </Button>
       </div>
+      <TransactionSummarySideSheet
+        canCancel
+        cancelButtonTextOverride="Back"
+        onApprove={() =>
+          new Promise(async (resolve, reject) => {
+            if (!transaction) return
+
+            approveAsMulti({
+              onSuccess: () => {
+                toast({
+                  title: 'Transaction Successful!',
+                  description: 'Your transaction has been sent and is waiting for approvals from multisig.',
+                })
+                navigate('/overview')
+                resolve()
+              },
+              onFailure: e => {
+                setReviewing(false)
+                toast({ title: 'Transaction failed', description: 'Please try again.', variant: 'destructive' })
+                console.error(e)
+                reject()
+              },
+              metadata: {
+                callData: transaction?.calldata,
+                description,
+              },
+            })
+          })
+        }
+        onCancel={async () => setReviewing(false)}
+        onClose={() => setReviewing(false)}
+        open={reviewing}
+        fee={ready ? estimatedFee : undefined}
+        t={transaction}
+        transactionDetails={
+          <ValidatorsRotationSummaryDetails
+            chain={multisig.chain}
+            currentNominations={nominations.map(({ address }) => address)}
+            newNominations={newNominations}
+            poolId={pool?.id}
+            hash={transaction?.hash}
+            callData={transaction?.calldata}
+          />
+        }
+      />
     </>
   )
 }

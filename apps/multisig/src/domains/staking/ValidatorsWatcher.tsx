@@ -5,7 +5,7 @@ import { useApi } from '../chains/pjs-api'
 import { useSelectedMultisig } from '../multisig'
 import { ApiPromise } from '@polkadot/api'
 
-type Validator = {
+export type Validator = {
   address: string
   name?: string
   subName?: string

@@ -31,7 +31,11 @@ export const useNominations = (
     }
 
     const u = await api.query.staking.nominators(address, nominationsRaw => {
-      setNominations(nominationsRaw.value.targets.toHuman() as string[])
+      if (nominationsRaw.value.isEmpty) {
+        setNominations([])
+      } else {
+        setNominations(nominationsRaw.value.targets.toHuman() as string[])
+      }
     })
 
     unsub.current = u
@@ -49,6 +53,8 @@ export const useNominations = (
     }
     setNominations(undefined)
   }, [address, chain])
+
+  useEffect(() => () => unsub.current?.(), [])
 
   return {
     nominations: nominations?.map(addressString => ({

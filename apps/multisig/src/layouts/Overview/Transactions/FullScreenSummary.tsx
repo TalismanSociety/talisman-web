@@ -10,7 +10,6 @@ import { balanceToFloat, formatUsd } from '@util/numbers'
 import { useMemo, useState } from 'react'
 import { useRecoilValue, useRecoilValueLoadable } from 'recoil'
 
-import TransactionDetailsExpandable from './TransactionDetailsExpandable'
 import TransactionSummaryRow from './TransactionSummaryRow'
 import { useKnownAddresses } from '@hooks/useKnownAddresses'
 
@@ -115,6 +114,7 @@ export type FullScreenDialogContentsProps = {
   fee: Balance | undefined
   onCancel: () => Promise<void>
   onApprove: () => Promise<void>
+  transactionDetails: React.ReactNode
 }
 
 export const FullScreenDialogContents = ({
@@ -125,6 +125,7 @@ export const FullScreenDialogContents = ({
   fee,
   onCancel,
   onApprove,
+  transactionDetails,
 }: FullScreenDialogContentsProps) => {
   const [cancelInFlight, setCancelInFlight] = useState(false)
   const [approveInFlight, setApproveInFlight] = useState(false)
@@ -191,6 +192,7 @@ export const FullScreenDialogContents = ({
         display: grid;
         align-items: start;
         height: calc(100% - 40px * 3);
+        width: 100%;
       `}
     >
       <div
@@ -200,7 +202,7 @@ export const FullScreenDialogContents = ({
           gap: 32px;
           padding: 0 42px 24px 42px;
           height: 100%;
-          overflow-x: visible;
+          width: 100%;
           overflow-y: auto;
         `}
       >
@@ -208,7 +210,7 @@ export const FullScreenDialogContents = ({
         <div css={{ display: 'grid', gap: '32px', alignItems: 'start' }}>
           <div css={{ display: 'grid', gap: '13px' }}>
             <h3>Details</h3>
-            <TransactionDetailsExpandable t={t} />
+            {transactionDetails}
           </div>
           {!t.executedAt ? (
             <div css={{ display: 'grid', gap: '13px' }}>

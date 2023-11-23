@@ -149,6 +149,8 @@ export enum TransactionType {
   ChangeConfig,
   Advanced,
   Vote,
+  NominateFromNomPool,
+  NominateFromStaking,
 }
 
 export interface ChangeConfigDetails {
@@ -196,6 +198,10 @@ export interface TransactionDecoded {
   changeConfigDetails?: {
     signers: Address[]
     threshold: number
+  }
+  nominate?: {
+    poolId?: number
+    validators: string[]
   }
   voteDetails?: VoteDetails & { token: BaseToken }
 }
@@ -531,6 +537,22 @@ export const extrinsicToDecoded = (
               token,
             },
           }
+        }
+      }
+    }
+
+    // Check if it's a NominateFromNomPool type
+    for (const arg of args) {
+      const obj: any = arg.toHuman()
+      if (obj?.section === 'nominationPools' && obj?.method === 'nominate') {
+        const { pool_id, validators } = obj.args
+        return {
+          type: TransactionType.NominateFromNomPool,
+          recipients: [],
+          nominate: {
+            poolId: +pool_id,
+            validators,
+          },
         }
       }
     }

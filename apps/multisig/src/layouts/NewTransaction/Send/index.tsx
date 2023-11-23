@@ -21,6 +21,7 @@ import { useRecoilValue, useRecoilValueLoadable } from 'recoil'
 import { FullScreenDialogContents, FullScreenDialogTitle } from '../../Overview/Transactions/FullScreenSummary'
 import { Layout } from '../../Layout'
 import { DetailsForm } from './DetailsForm'
+import TransactionDetailsExpandable from '../../Overview/Transactions/TransactionDetailsExpandable'
 
 enum Step {
   Details,
@@ -180,6 +181,7 @@ const SendAction = () => {
                 setStep(Step.Details)
                 return Promise.resolve()
               }}
+              transactionDetails={t ? <TransactionDetailsExpandable t={t} /> : null}
             />
           </SideSheet>
         </div>

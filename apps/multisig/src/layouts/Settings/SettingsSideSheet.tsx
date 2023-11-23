@@ -9,6 +9,7 @@ import { useApproveAsMulti } from '../../domains/chains'
 import { SubmittableExtrinsic } from '@polkadot/api/types'
 import toast from 'react-hot-toast'
 import { useNavigate } from 'react-router-dom'
+import TransactionDetailsExpandable from '../Overview/Transactions/TransactionDetailsExpandable'
 
 type Props = {
   open: boolean
@@ -111,6 +112,7 @@ export const SettingsSideSheet: React.FC<Props> = ({ extrinsic, open, onClose, m
           onClose()
           return Promise.resolve()
         }}
+        transactionDetails={t ? <TransactionDetailsExpandable t={t} /> : null}
       />
     </SideSheet>
   )

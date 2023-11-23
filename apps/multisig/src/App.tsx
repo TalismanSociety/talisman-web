@@ -23,7 +23,7 @@ import router from './routes'
 import { supportedChains } from '@domains/chains'
 import { AccountWatcher } from '@domains/auth'
 import { AddressBookWatcher, TeamsWatcher } from '@domains/offchain-data'
-import { ActiveMultisigWatcher } from './domains/multisig'
+import { ActiveMultisigWatcher, PendingTransactionsWatcher } from './domains/multisig'
 import { NomPoolsWatcher } from './domains/staking'
 import { ValidatorsWatcher } from './domains/staking/ValidatorsWatcher'
 import ConstsWatcher from './domains/chains/ConstsWatcher'
@@ -57,6 +57,7 @@ const App: React.FC = () => (
           enabledChains={supportedChains.map(chain => chain.genesisHash)}
         >
           <Suspense fallback={<Loader />}>
+            <PendingTransactionsWatcher />
             <BalancesWatcher />
             <ExtensionWatcher />
             <AccountWatcher />
