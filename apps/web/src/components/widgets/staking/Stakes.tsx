@@ -11,6 +11,8 @@ import LidoStakes from './lido/Stakes'
 import SlpxStakes from './slpx/Stakes'
 import PoolStakes from './substrate/PoolStakes'
 import ValidatorStakes from './substrate/ValidatorStakes'
+import AnimatedFiatNumber from '../AnimatedFiatNumber'
+import { useTotalStaked } from '@domains/staking'
 
 const NoStakePrompt = (props: { className?: string }) => (
   <div className={props.className}>
@@ -41,20 +43,19 @@ const NoStakePrompt = (props: { className?: string }) => (
   </div>
 )
 
-// TODO: new approach to calculate total staked amount across multiple providers
-// const StakeTotal = () => <AnimatedFiatNumber end={useSubstrateFiatTotalStaked().fiatTotal} />
+const StakeTotal = () => <AnimatedFiatNumber end={useTotalStaked()} />
 
 const StakeHeader = () => {
   return (
     <SectionHeader
       headlineText="Staking"
-      // supportingText={
-      //   <ErrorBoundary fallback={<></>}>
-      //     <Suspense>
-      //       <StakeTotal />
-      //     </Suspense>
-      //   </ErrorBoundary>
-      // }
+      supportingText={
+        <ErrorBoundary fallback={<></>}>
+          <Suspense>
+            <StakeTotal />
+          </Suspense>
+        </ErrorBoundary>
+      }
     />
   )
 }

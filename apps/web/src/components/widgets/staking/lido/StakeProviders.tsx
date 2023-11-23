@@ -1,6 +1,7 @@
 import StakeProvider from '@components/recipes/StakeProvider'
 import { selectedBalancesState } from '@domains/balances'
-import { lidoMainnet, type LidoSuite } from '@domains/staking/lido'
+import { type LidoSuite } from '@domains/staking/lido'
+import { lidoSuitesState } from '@domains/staking/lido/recoils'
 import { githubChainLogoUrl } from '@talismn/chaindata-provider'
 import { Decimal } from '@talismn/math'
 import { CircularProgressIndicator } from '@talismn/ui'
@@ -61,26 +62,37 @@ const StakePercentage = (props: { lidoSuite: LidoSuite }) => {
 }
 
 const StakeProviders = () => {
+  const lidoSuites = useRecoilValue(lidoSuitesState)
   return (
-    <StakeProvider
-      symbol={lidoMainnet.chain.nativeCurrency.symbol}
-      logo={githubChainLogoUrl('1')}
-      chain={lidoMainnet.chain.name}
-      apr="3.7%"
-      type="Liquid staking"
-      provider="Lido"
-      availableBalance={
-        <Suspense fallback={<CircularProgressIndicator size="1em" />}>
-          <AvailableBalance lidoSuite={lidoMainnet} />
-        </Suspense>
-      }
-      stakePercentage={
-        <Suspense fallback={<StakeProvider.StakePercentage loading />}>
-          <StakePercentage lidoSuite={lidoMainnet} />
-        </Suspense>
-      }
-      stakeButton={<StakeProvider.StakeButton as={Link} to="?action=stake&type=lido" />}
-    />
+    <>
+      {lidoSuites.map((lidoSuite, index) => (
+        <StakeProvider
+          key={index}
+          symbol={lidoSuite.chain.nativeCurrency.symbol}
+          logo={githubChainLogoUrl('1')}
+          chain={lidoSuite.chain.name}
+          apr="3.7%"
+          type="Liquid staking"
+          provider="Lido"
+          availableBalance={
+            <Suspense fallback={<CircularProgressIndicator size="1em" />}>
+              <AvailableBalance lidoSuite={lidoSuite} />
+            </Suspense>
+          }
+          stakePercentage={
+            <Suspense fallback={<StakeProvider.StakePercentage loading />}>
+              <StakePercentage lidoSuite={lidoSuite} />
+            </Suspense>
+          }
+          stakeButton={
+            <StakeProvider.StakeButton
+              as={Link}
+              to={`?action=stake&type=lido&token-address=${lidoSuite.token.address}`}
+            />
+          }
+        />
+      ))}
+    </>
   )
 }
 

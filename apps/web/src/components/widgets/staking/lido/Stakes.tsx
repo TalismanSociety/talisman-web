@@ -2,10 +2,11 @@ import StakePosition from '@components/recipes/StakePosition'
 import AnimatedFiatNumber from '@components/widgets/AnimatedFiatNumber'
 import RedactableBalance from '@components/widgets/RedactableBalance'
 import { selectedEvmAccountsState } from '@domains/accounts'
-import { lidoMainnet, useStakes, type LidoSuite } from '@domains/staking/lido'
+import { useStakes, type LidoSuite } from '@domains/staking/lido'
 import { useState } from 'react'
 import { useRecoilValue } from 'recoil'
 import LidoWidgetSideSheet from './LidoWidgetSideSheet'
+import { lidoSuitesState } from '@domains/staking/lido/recoils'
 
 const IncreaseStakeSideSheet = (props: { onRequestDismiss: () => unknown; lidoSuite: LidoSuite }) => (
   <LidoWidgetSideSheet
@@ -31,12 +32,12 @@ const ClaimSideSheet = (props: { onRequestDismiss: () => unknown; lidoSuite: Lid
   />
 )
 
-const Stakes = () => {
+const LidoStakes = (props: { lidoSuite: LidoSuite }) => {
   const [increaseStakeSideSheetOpen, setIncreaseStakeSideSheetOpen] = useState(false)
   const [unstakeSideSheetOpen, setUnstakeSideSheetOpen] = useState(false)
   const [claimSideSheetOpen, setClaimSideSheetOpen] = useState(false)
 
-  const stakes = useStakes(useRecoilValue(selectedEvmAccountsState), lidoMainnet)
+  const stakes = useStakes(useRecoilValue(selectedEvmAccountsState), props.lidoSuite)
 
   return (
     <>
@@ -50,7 +51,7 @@ const Stakes = () => {
           stakeStatus={stake.balance.planck.gtn(0) ? 'earning_rewards' : 'not_earning_rewards'}
           balance={<RedactableBalance>{stake.balance.toHuman()}</RedactableBalance>}
           fiatBalance={<AnimatedFiatNumber end={stake.fiatBalance} />}
-          chain={lidoMainnet.chain.name}
+          chain={props.lidoSuite.chain.name}
           symbol={stake.balance.unit}
           claimButton={
             stake.claimable.planck.gtn(0) && (
@@ -74,14 +75,29 @@ const Stakes = () => {
         />
       ))}
       {increaseStakeSideSheetOpen && (
-        <IncreaseStakeSideSheet onRequestDismiss={() => setIncreaseStakeSideSheetOpen(false)} lidoSuite={lidoMainnet} />
+        <IncreaseStakeSideSheet
+          onRequestDismiss={() => setIncreaseStakeSideSheetOpen(false)}
+          lidoSuite={props.lidoSuite}
+        />
       )}
       {unstakeSideSheetOpen && (
-        <UnstakeSideSheet onRequestDismiss={() => setUnstakeSideSheetOpen(false)} lidoSuite={lidoMainnet} />
+        <UnstakeSideSheet onRequestDismiss={() => setUnstakeSideSheetOpen(false)} lidoSuite={props.lidoSuite} />
       )}
       {claimSideSheetOpen && (
-        <ClaimSideSheet onRequestDismiss={() => setClaimSideSheetOpen(false)} lidoSuite={lidoMainnet} />
+        <ClaimSideSheet onRequestDismiss={() => setClaimSideSheetOpen(false)} lidoSuite={props.lidoSuite} />
       )}
+    </>
+  )
+}
+
+const Stakes = () => {
+  const lidoSuites = useRecoilValue(lidoSuitesState)
+
+  return (
+    <>
+      {lidoSuites.map((lidoSuite, index) => (
+        <LidoStakes key={index} lidoSuite={lidoSuite} />
+      ))}
     </>
   )
 }

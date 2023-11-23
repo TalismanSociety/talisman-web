@@ -1,12 +1,12 @@
 import { SlpxAddStakeForm } from '@components/recipes/AddStakeDialog'
 import { useAccountSelector } from '@components/widgets/AccountSelector'
 import { evmSignableAccountsState } from '@domains/accounts'
-import { glmrSlpxPair, useMintForm, type SlpxPair } from '@domains/staking/slpx'
+import { slpxPairsState, useMintForm, type SlpxPair } from '@domains/staking/slpx'
 import { Zap } from '@talismn/icons'
 import { PolkadotApiIdProvider } from '@talismn/react-polkadot-api'
 import { InfoCard, SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR, SideSheet, Surface, Text } from '@talismn/ui'
 import { Maybe } from '@util/monads'
-import { Suspense } from 'react'
+import { Suspense, useMemo } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useRecoilValue } from 'recoil'
 import { useSwitchNetwork } from 'wagmi'
@@ -92,17 +92,27 @@ const AddStakeSideSheet = (props: AddStakeSideSheetProps) => {
 }
 
 export default () => {
+  const slpxPairs = useRecoilValue(slpxPairsState)
   const [searchParams, setSearchParams] = useSearchParams()
   const open = searchParams.get('action') === 'stake' && searchParams.get('type') === 'slpx'
+
+  const slpxPair = useMemo(
+    () => slpxPairs.find(x => x.splx === searchParams.get('contract-address')),
+    [searchParams, slpxPairs]
+  )
 
   if (!open) {
     return null
   }
 
+  if (slpxPair === undefined) {
+    throw new Error(`No SLPX contract with address: ${searchParams.get('contract-address') ?? ''}`)
+  }
+
   return (
     <PolkadotApiIdProvider id="wss://hk.p.bifrost-rpc.liebi.com/ws">
       <AddStakeSideSheet
-        slpxPair={glmrSlpxPair}
+        slpxPair={slpxPair}
         onRequestDismiss={() =>
           setSearchParams(sp => {
             sp.delete('action')
