@@ -52,9 +52,11 @@ const StakePercentage = (props: { lidoSuite: LidoSuite }) => {
     <StakeProvider.StakePercentage
       percentage={useMemo(
         () =>
-          new BigNumber(liquidBalance.sum.planck.total.toString())
-            .div((nativeBalance.sum.planck.total + liquidBalance.sum.planck.total).toString())
-            .toNumber(),
+          liquidBalance.sum.planck.total === 0n
+            ? 0
+            : new BigNumber(liquidBalance.sum.planck.total.toString())
+                .div((nativeBalance.sum.planck.total + liquidBalance.sum.planck.total).toString())
+                .toNumber(),
         [liquidBalance.sum.planck.total, nativeBalance.sum.planck.total]
       )}
     />
