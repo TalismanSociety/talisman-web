@@ -69,9 +69,12 @@ const Header = () => {
         <div id="page-title" />
         <CurrencySelect />
       </div>
-      <AccountsManagementMenu
-        button={<AccountValueInfo account={accounts.length === 1 ? accounts[0] : undefined} balance={<Total />} />}
-      />
+      <div css={{ display: 'flex', gap: '2.4rem', flexWrap: 'wrap' }}>
+        <AccountsManagementMenu
+          button={<AccountValueInfo account={accounts.length === 1 ? accounts[0] : undefined} balance={<Total />} />}
+        />
+        <div id="header-widget" />
+      </div>
     </div>
   )
 }
@@ -80,6 +83,10 @@ export const TitlePortal = (props: PropsWithChildren) => (
   <FloatingPortal id="page-title">
     <Text.H2 css={{ marginBottom: 0 }}>{props.children}</Text.H2>
   </FloatingPortal>
+)
+
+export const HeaderWidgetPortal = (props: PropsWithChildren) => (
+  <FloatingPortal id="header-widget">{props.children}</FloatingPortal>
 )
 
 const Layout = () => {
