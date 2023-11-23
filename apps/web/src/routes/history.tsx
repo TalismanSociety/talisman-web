@@ -21,6 +21,7 @@ import { selector, useRecoilValue } from 'recoil'
 import { isHex } from 'viem'
 import { graphql } from '../../generated/gql/extrinsicHistory/gql'
 import { ExtrinsicOrderByInput, type ExtrinsicsQuery } from '../../generated/gql/extrinsicHistory/gql/graphql'
+import { TitlePortal } from './layout'
 
 const filtersState = selector({
   key: 'History/Filters',
@@ -385,18 +386,15 @@ const History = () => {
 
   return (
     <section>
+      <TitlePortal>Transaction history</TitlePortal>
       <div css={{ marginBottom: '1.6rem' }}>
         <header
           css={{
             display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            flexWrap: 'wrap',
-            gap: '0.8rem',
+            justifyContent: 'flex-end',
             marginBottom: '2.4rem',
           }}
         >
-          <Text.H2 css={{ marginBottom: 0 }}>Transaction history</Text.H2>
           <ExportTxHistoryWidget>
             {({ onToggleOpen }) => (
               <Button variant="surface" onClick={onToggleOpen}>

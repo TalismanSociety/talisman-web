@@ -25,9 +25,10 @@ import {
   TopAppBar,
 } from '@talismn/ui'
 import { usePostHog } from 'posthog-js/react'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState, type PropsWithChildren } from 'react'
 import { Link, Outlet, useLocation } from 'react-router-dom'
 import { useRecoilState, useRecoilValue } from 'recoil'
+import { FloatingPortal } from '@floating-ui/react'
 
 const CurrencySelect = () => {
   const [currency, setCurrency] = useRecoilState(selectedCurrencyState)
@@ -54,22 +55,32 @@ const Header = () => {
   }
 
   return (
-    <div
-      css={{
-        display: 'flex',
-        justifyContent: 'space-between',
-        flexWrap: 'wrap-reverse',
-        gap: '0.8rem',
-        [SCAFFOLD_WIDE_VIEW_MEDIA_SELECTOR]: { marginTop: '4rem' },
-      }}
-    >
+    <div css={{ marginBottom: '0.8rem' }}>
+      <div
+        css={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          flexWrap: 'wrap-reverse',
+          gap: '0.8rem',
+          marginBottom: '0.8rem',
+          [SCAFFOLD_WIDE_VIEW_MEDIA_SELECTOR]: { marginTop: '4rem' },
+        }}
+      >
+        <div id="page-title" />
+        <CurrencySelect />
+      </div>
       <AccountsManagementMenu
         button={<AccountValueInfo account={accounts.length === 1 ? accounts[0] : undefined} balance={<Total />} />}
       />
-      <CurrencySelect />
     </div>
   )
 }
+
+export const TitlePortal = (props: PropsWithChildren) => (
+  <FloatingPortal id="page-title">
+    <Text.H2 css={{ marginBottom: 0 }}>{props.children}</Text.H2>
+  </FloatingPortal>
+)
 
 const Layout = () => {
   const posthog = usePostHog()

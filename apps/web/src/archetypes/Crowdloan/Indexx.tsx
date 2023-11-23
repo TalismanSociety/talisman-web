@@ -6,6 +6,7 @@ import { useCrowdloanContributions } from '@libs/crowdloans'
 import { device } from '@util/breakpoints'
 import { useTranslation } from 'react-i18next'
 import { RootNav } from './RootNav'
+import { TitlePortal } from '@routes/layout'
 
 const FilterBar = styled(
   ({
@@ -91,6 +92,7 @@ const Index = styled(({ withFilter, className }: { withFilter: boolean; classNam
 
   return (
     <div className={`crowdloan-index ${className ?? ''}`}>
+      <TitlePortal>Crowdloans</TitlePortal>
       <RootNav />
 
       {/* TODO: Remove for now as no Learn more link yet. */}
