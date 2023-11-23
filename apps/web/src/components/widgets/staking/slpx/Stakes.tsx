@@ -5,7 +5,6 @@ import { useStakes } from '@domains/staking/slpx/core'
 import { PolkadotApiIdProvider } from '@talismn/react-polkadot-api'
 import { useState } from 'react'
 
-import { glmrSlpxPair } from '@domains/staking/slpx/config'
 import type { SlpxPair } from '@domains/staking/slpx/types'
 import { useRecoilValue } from 'recoil'
 import { moonriver } from 'wagmi/chains'
@@ -13,6 +12,7 @@ import UnstakeDialog from './UnstakeDialog'
 import AnimatedFiatNumber from '@components/widgets/AnimatedFiatNumber'
 import RedactableBalance from '@components/widgets/RedactableBalance'
 import AddStakeDialog from './AddStakeDialog'
+import { slpxPairsState } from '@domains/staking/slpx'
 
 const Stake = (props: { slpxPair: SlpxPair; position: ReturnType<typeof useStakes>[number] }) => {
   const [increaseStakeDialogOpen, setIncreaseStakeDialogOpen] = useState(false)
@@ -60,15 +60,27 @@ const Stake = (props: { slpxPair: SlpxPair; position: ReturnType<typeof useStake
   )
 }
 
-const Stakes = () => {
-  const stakes = useStakes(useRecoilValue(selectedEvmAccountsState), glmrSlpxPair)
+const SlpxStakes = (props: { slpxPair: SlpxPair }) => {
+  const stakes = useStakes(useRecoilValue(selectedEvmAccountsState), props.slpxPair)
 
   return (
     <>
       {stakes.map((x, index) => (
         <ErrorBoundary key={index} orientation="horizontal">
-          <Stake key={index} slpxPair={glmrSlpxPair} position={x} />
+          <Stake key={index} slpxPair={props.slpxPair} position={x} />
         </ErrorBoundary>
+      ))}
+    </>
+  )
+}
+
+const Stakes = () => {
+  const slpxPairs = useRecoilValue(slpxPairsState)
+
+  return (
+    <>
+      {slpxPairs.map((slpxPair, index) => (
+        <SlpxStakes key={index} slpxPair={slpxPair} />
       ))}
     </>
   )

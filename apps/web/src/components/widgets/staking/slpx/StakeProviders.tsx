@@ -1,6 +1,6 @@
 import StakeProvider from '@components/recipes/StakeProvider'
 import { selectedBalancesState } from '@domains/balances'
-import { glmrSlpxPair, type SlpxPair } from '@domains/staking/slpx'
+import { slpxPairsState, type SlpxPair } from '@domains/staking/slpx'
 import { githubChainLogoUrl } from '@talismn/chaindata-provider'
 import { Decimal } from '@talismn/math'
 import { CircularProgressIndicator } from '@talismn/ui'
@@ -60,26 +60,35 @@ const StakePercentage = (props: { slpxPair: SlpxPair }) => {
 }
 
 const StakeProviders = () => {
+  const slpxPairs = useRecoilValue(slpxPairsState)
+
   return (
-    <StakeProvider
-      symbol={glmrSlpxPair.nativeToken.symbol}
-      logo={githubChainLogoUrl('moonbeam')}
-      chain={glmrSlpxPair.chain.name}
-      apr="6.6%"
-      type="Liquid staking"
-      provider="Bifrost SLPX"
-      availableBalance={
-        <Suspense fallback={<CircularProgressIndicator size="1em" />}>
-          <AvailableBalance slpxPair={glmrSlpxPair} />
-        </Suspense>
-      }
-      stakePercentage={
-        <Suspense fallback={<StakeProvider.StakePercentage loading />}>
-          <StakePercentage slpxPair={glmrSlpxPair} />
-        </Suspense>
-      }
-      stakeButton={<StakeProvider.StakeButton as={Link} to="?action=stake&type=slpx" />}
-    />
+    <>
+      {slpxPairs.map((slpxPair, index) => (
+        <StakeProvider
+          key={index}
+          symbol={slpxPair.nativeToken.symbol}
+          logo={githubChainLogoUrl('moonbeam')}
+          chain={slpxPair.chain.name}
+          apr="6.6%"
+          type="Liquid staking"
+          provider="Bifrost SLPX"
+          availableBalance={
+            <Suspense fallback={<CircularProgressIndicator size="1em" />}>
+              <AvailableBalance slpxPair={slpxPair} />
+            </Suspense>
+          }
+          stakePercentage={
+            <Suspense fallback={<StakeProvider.StakePercentage loading />}>
+              <StakePercentage slpxPair={slpxPair} />
+            </Suspense>
+          }
+          stakeButton={
+            <StakeProvider.StakeButton as={Link} to={`?action=stake&type=slpx&contract-address=${slpxPair.splx}`} />
+          }
+        />
+      ))}
+    </>
   )
 }
 
