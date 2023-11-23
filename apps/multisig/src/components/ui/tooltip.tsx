@@ -29,7 +29,7 @@ const Tooltip: React.FC<React.PropsWithChildren & { content?: React.ReactNode }>
   return (
     <TooltipProvider>
       <TooltipRoot delayDuration={0}>
-        <TooltipTrigger>{children}</TooltipTrigger>
+        <TooltipTrigger asChild>{children}</TooltipTrigger>
         <TooltipContent>{content}</TooltipContent>
       </TooltipRoot>
     </TooltipProvider>

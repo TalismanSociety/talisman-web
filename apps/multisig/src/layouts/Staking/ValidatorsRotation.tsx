@@ -328,6 +328,8 @@ export const ValidatorsRotation: React.FC<{
             currentNominations={nominations.map(({ address }) => address)}
             newNominations={newNominations}
             poolId={pool?.id}
+            hash={transaction?.hash}
+            callData={transaction?.calldata}
           />
         }
       />

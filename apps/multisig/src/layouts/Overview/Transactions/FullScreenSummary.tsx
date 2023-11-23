@@ -192,6 +192,7 @@ export const FullScreenDialogContents = ({
         display: grid;
         align-items: start;
         height: calc(100% - 40px * 3);
+        width: 100%;
       `}
     >
       <div
@@ -201,7 +202,7 @@ export const FullScreenDialogContents = ({
           gap: 32px;
           padding: 0 42px 24px 42px;
           height: 100%;
-          overflow-x: visible;
+          width: 100%;
           overflow-y: auto;
         `}
       >
