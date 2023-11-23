@@ -36,26 +36,6 @@ const AvailableBalance = () => {
   return <>{availableBalance.toHuman()}</>
 }
 
-// const useStakePercentage = () => {
-//   const apiId = usePolkadotApiId()
-//   const accounts = useRecoilValue(selectedSubstrateAccountsState)
-//   const addresses = useMemo(() => accounts.map(x => x.address), [accounts])
-//   const balances = useRecoilValue(
-//     waitForAll(addresses.map(address => chainDeriveState(apiId, 'balances', 'all', [address])))
-//   )
-//   const total = useMemo(
-//     () => balances.reduce((prev, curr) => prev + curr.freeBalance.toBigInt() + curr.reservedBalance.toBigInt(), 0n),
-//     [balances]
-//   )
-//   const poolMembers = useRecoilValue(useQueryState('nominationPools', 'poolMembers.multi', addresses))
-//   const staked = useMemo(
-//     () => poolMembers.reduce((prev, curr) => prev + curr.unwrapOrDefault().points.toBigInt(), 0n),
-//     [poolMembers]
-//   )
-
-//   return useMemo(() => new BigNumber(staked.toString()).div(total.toString()).toNumber(), [staked, total])
-// }
-
 const StakePercentage = () => {
   const apiId = usePolkadotApiId()
   const accounts = useRecoilValue(selectedSubstrateAccountsState)
@@ -76,7 +56,7 @@ const StakePercentage = () => {
   return (
     <StakeProvider.StakePercentage
       percentage={useMemo(
-        () => new BigNumber(staked.toString()).div((total + staked).toString()).toNumber(),
+        () => (staked === 0n ? 0 : new BigNumber(staked.toString()).div((total + staked).toString()).toNumber()),
         [staked, total]
       )}
     />
