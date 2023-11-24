@@ -1,5 +1,7 @@
 import StakeProvider from '@components/recipes/StakeProvider'
-import { selectedBalancesState } from '@domains/balances'
+import AnimatedFiatNumber from '@components/widgets/AnimatedFiatNumber'
+import RedactableBalance from '@components/widgets/RedactableBalance'
+import { selectedBalancesState, selectedCurrencyState } from '@domains/balances'
 import { type LidoSuite } from '@domains/staking/lido'
 import { lidoSuitesState } from '@domains/staking/lido/recoils'
 import { githubChainLogoUrl } from '@talismn/chaindata-provider'
@@ -8,28 +10,34 @@ import { CircularProgressIndicator } from '@talismn/ui'
 import BigNumber from 'bignumber.js'
 import { Suspense, useMemo } from 'react'
 import { Link } from 'react-router-dom'
-import { useRecoilValue } from 'recoil'
+import { useRecoilValue, waitForAll } from 'recoil'
 import { useToken } from 'wagmi'
 
-const AvailableBalance = (props: { lidoSuite: LidoSuite }) => {
-  const balances = useRecoilValue(selectedBalancesState)
+const useAvailableBalance = (lidoSuite: LidoSuite) => {
+  const [balances, currency] = useRecoilValue(waitForAll([selectedBalancesState, selectedCurrencyState]))
   const nativeBalance = balances.find(
-    x => x.token?.symbol.toLowerCase() === props.lidoSuite.chain.nativeCurrency.symbol.toLowerCase()
+    x => x.token?.symbol.toLowerCase() === lidoSuite.chain.nativeCurrency.symbol.toLowerCase()
   )
-  return (
-    <>
-      {useMemo(
-        () =>
-          Decimal.fromPlanck(
-            nativeBalance.sum.planck.transferable ?? 0n,
-            nativeBalance.each.at(0)?.decimals ?? 0,
-            props.lidoSuite.chain.nativeCurrency.symbol
-          ).toHuman(),
-        [nativeBalance.each, nativeBalance.sum.planck.transferable, props.lidoSuite.chain.nativeCurrency.symbol]
-      )}
-    </>
+  return useMemo(
+    () => ({
+      amount: Decimal.fromPlanck(
+        nativeBalance.sum.planck.transferable ?? 0n,
+        nativeBalance.each.at(0)?.decimals ?? 0,
+        lidoSuite.chain.nativeCurrency.symbol
+      ).toHuman(),
+      fiatAmount: nativeBalance.sum.fiat(currency).total,
+    }),
+    [currency, lidoSuite.chain.nativeCurrency.symbol, nativeBalance.each, nativeBalance.sum]
   )
 }
+
+const AvailableBalance = (props: { lidoSuite: LidoSuite }) => (
+  <RedactableBalance>{useAvailableBalance(props.lidoSuite).amount}</RedactableBalance>
+)
+
+const AvailableFiatBalance = (props: { lidoSuite: LidoSuite }) => (
+  <AnimatedFiatNumber end={useAvailableBalance(props.lidoSuite).fiatAmount} />
+)
 
 const StakePercentage = (props: { lidoSuite: LidoSuite }) => {
   const balances = useRecoilValue(selectedBalancesState)
@@ -79,6 +87,11 @@ const StakeProviders = () => {
           availableBalance={
             <Suspense fallback={<CircularProgressIndicator size="1em" />}>
               <AvailableBalance lidoSuite={lidoSuite} />
+            </Suspense>
+          }
+          availableFiatBalance={
+            <Suspense>
+              <AvailableFiatBalance lidoSuite={lidoSuite} />
             </Suspense>
           }
           stakePercentage={

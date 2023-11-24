@@ -17,6 +17,7 @@ export type StakeProviderProps = {
   type: ReactNode
   provider: ReactNode
   availableBalance: ReactNode
+  availableFiatBalance: ReactNode
   stakePercentage: ReactNode
   stakeButton: ReactNode
 }
@@ -122,6 +123,12 @@ const StakeProvider = Object.assign(
             <Text.Body as="div" alpha="high">
               {props.availableBalance}
             </Text.Body>
+            <Text.BodySmall
+              as="div"
+              css={{ 'display': 'none', '@container (min-width: 100rem)': { display: 'revert' } }}
+            >
+              {props.availableFiatBalance}
+            </Text.BodySmall>
           </div>
           <div
             css={{
@@ -166,7 +173,7 @@ export const StakeProviderList = (props: PropsWithChildren<{ className?: string 
       >
         <Grid css={{ backgroundColor: 'transparent', paddingTop: 0, paddingBottom: 0 }}>
           <Text.BodySmall css={{ gridArea: 'asset' }}>Asset</Text.BodySmall>
-          <Text.BodySmall css={{ gridArea: 'apr' }}>Estimated APR (%)</Text.BodySmall>
+          <Text.BodySmall css={{ gridArea: 'apr' }}>Est. APR</Text.BodySmall>
           <Text.BodySmall css={{ gridArea: 'type' }}>Type</Text.BodySmall>
           <Text.BodySmall css={{ gridArea: 'provider' }}>Provider</Text.BodySmall>
           <Text.BodySmall css={{ gridArea: 'available-balance' }}>Available balance</Text.BodySmall>

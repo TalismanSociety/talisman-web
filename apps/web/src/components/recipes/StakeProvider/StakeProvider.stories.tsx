@@ -16,6 +16,7 @@ export const Default: Story = {
     provider: 'Polkadot',
     apr: '5.5 - 5.6',
     availableBalance: '10 DOT',
+    availableFiatBalance: '$50',
     stakePercentage: 0.55,
     stakeButton: <StakeProvider.StakeButton />,
   },

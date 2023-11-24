@@ -1,7 +1,9 @@
 import StakeProvider from '@components/recipes/StakeProvider'
+import AnimatedFiatNumber from '@components/widgets/AnimatedFiatNumber'
+import RedactableBalance from '@components/widgets/RedactableBalance'
 import { selectedSubstrateAccountsState } from '@domains/accounts'
 import { ChainContext, ChainProvider, chainsState } from '@domains/chains'
-import { chainDeriveState, substrateApiState } from '@domains/common'
+import { chainDeriveState, substrateApiState, useTokenAmountFromPlanck } from '@domains/common'
 import { useInflation } from '@domains/staking/substrate/nominationPools'
 import { Decimal } from '@talismn/math'
 import { usePolkadotApiId, useQueryState } from '@talismn/react-polkadot-api'
@@ -15,7 +17,7 @@ const Apr = () => {
   return <>{useInflation().stakedReturn.toLocaleString(undefined, { style: 'percent' })}</>
 }
 
-const AvailableBalance = () => {
+const useAvailableBalance = () => {
   const apiId = usePolkadotApiId()
   const api = useRecoilValue(substrateApiState(apiId as any))
   const accounts = useRecoilValue(selectedSubstrateAccountsState)
@@ -33,8 +35,15 @@ const AvailableBalance = () => {
       ),
     [api.registry.chainDecimals, api.registry.chainTokens, balances]
   )
-  return <>{availableBalance.toHuman()}</>
+
+  return availableBalance
 }
+
+const AvailableBalance = () => <RedactableBalance>{useAvailableBalance().toHuman()}</RedactableBalance>
+
+const AvailableFiatBalance = () => (
+  <AnimatedFiatNumber end={useTokenAmountFromPlanck(useAvailableBalance().planck).fiatAmount} />
+)
 
 const StakePercentage = () => {
   const apiId = usePolkadotApiId()
@@ -80,6 +89,11 @@ const StakeProviderItem = () => {
       availableBalance={
         <Suspense fallback={<CircularProgressIndicator size="1em" />}>
           <AvailableBalance />
+        </Suspense>
+      }
+      availableFiatBalance={
+        <Suspense>
+          <AvailableFiatBalance />
         </Suspense>
       }
       stakePercentage={
