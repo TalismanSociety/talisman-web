@@ -14,6 +14,7 @@ export const Default: Story = {
     chain: 'Polkadot',
     type: 'Nomination pools',
     provider: 'Polkadot',
+    unbondingPeriod: '10 days',
     apr: '5.5 - 5.6',
     availableBalance: '10 DOT',
     availableFiatBalance: '$50',

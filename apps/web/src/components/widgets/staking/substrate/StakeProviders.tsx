@@ -4,7 +4,7 @@ import RedactableBalance from '@components/widgets/RedactableBalance'
 import { selectedSubstrateAccountsState } from '@domains/accounts'
 import { ChainContext, ChainProvider, chainsState } from '@domains/chains'
 import { chainDeriveState, substrateApiState, useTokenAmountFromPlanck } from '@domains/common'
-import { useInflation } from '@domains/staking/substrate/nominationPools'
+import { useInflation, useLocalizedLockDuration } from '@domains/staking/substrate/nominationPools'
 import { Decimal } from '@talismn/math'
 import { usePolkadotApiId, useQueryState } from '@talismn/react-polkadot-api'
 import { CircularProgressIndicator } from '@talismn/ui'
@@ -44,6 +44,8 @@ const AvailableBalance = () => <RedactableBalance>{useAvailableBalance().toHuman
 const AvailableFiatBalance = () => (
   <AnimatedFiatNumber end={useTokenAmountFromPlanck(useAvailableBalance().planck).fiatAmount} />
 )
+
+const UnlockDuration = () => <>{useLocalizedLockDuration()}</>
 
 const StakePercentage = () => {
   const apiId = usePolkadotApiId()
@@ -86,6 +88,11 @@ const StakeProviderItem = () => {
       }
       type="Nomination pools"
       provider={chain.name}
+      unbondingPeriod={
+        <Suspense fallback={<CircularProgressIndicator size="1em" />}>
+          <UnlockDuration />
+        </Suspense>
+      }
       availableBalance={
         <Suspense fallback={<CircularProgressIndicator size="1em" />}>
           <AvailableBalance />
