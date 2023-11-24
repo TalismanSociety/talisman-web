@@ -1,5 +1,7 @@
 import StakeProvider from '@components/recipes/StakeProvider'
-import { selectedBalancesState } from '@domains/balances'
+import AnimatedFiatNumber from '@components/widgets/AnimatedFiatNumber'
+import RedactableBalance from '@components/widgets/RedactableBalance'
+import { selectedBalancesState, selectedCurrencyState } from '@domains/balances'
 import { slpxPairsState, type SlpxPair } from '@domains/staking/slpx'
 import { githubChainLogoUrl } from '@talismn/chaindata-provider'
 import { Decimal } from '@talismn/math'
@@ -7,28 +9,33 @@ import { CircularProgressIndicator } from '@talismn/ui'
 import BigNumber from 'bignumber.js'
 import { Suspense, useMemo } from 'react'
 import { Link } from 'react-router-dom'
-import { useRecoilValue } from 'recoil'
+import { useRecoilValue, waitForAll } from 'recoil'
 import { useToken } from 'wagmi'
 
-const AvailableBalance = (props: { slpxPair: SlpxPair }) => {
-  const balances = useRecoilValue(selectedBalancesState)
-  const nativeBalance = balances.find(
-    x => x.token?.symbol.toLowerCase() === props.slpxPair.nativeToken.symbol.toLowerCase()
-  )
-  return (
-    <>
-      {useMemo(
-        () =>
-          Decimal.fromPlanck(
-            nativeBalance.sum.planck.transferable ?? 0n,
-            nativeBalance.each.at(0)?.decimals ?? 0,
-            props.slpxPair.nativeToken.symbol
-          ).toHuman(),
-        [nativeBalance.each, nativeBalance.sum.planck.transferable, props.slpxPair.nativeToken.symbol]
-      )}
-    </>
+const useAvailableBalance = (slpxPair: SlpxPair) => {
+  const [balances, currency] = useRecoilValue(waitForAll([selectedBalancesState, selectedCurrencyState]))
+  const nativeBalance = balances.find(x => x.token?.symbol.toLowerCase() === slpxPair.nativeToken.symbol.toLowerCase())
+
+  return useMemo(
+    () => ({
+      amount: Decimal.fromPlanck(
+        nativeBalance.sum.planck.transferable ?? 0n,
+        nativeBalance.each.at(0)?.decimals ?? 0,
+        slpxPair.nativeToken.symbol
+      ).toHuman(),
+      fiatAmount: nativeBalance.sum.fiat(currency).total,
+    }),
+    [currency, nativeBalance.each, nativeBalance.sum, slpxPair.nativeToken.symbol]
   )
 }
+
+const AvailableBalance = (props: { slpxPair: SlpxPair }) => (
+  <RedactableBalance>{useAvailableBalance(props.slpxPair).amount}</RedactableBalance>
+)
+
+const AvailableFiatBalance = (props: { slpxPair: SlpxPair }) => (
+  <AnimatedFiatNumber end={useAvailableBalance(props.slpxPair).fiatAmount} />
+)
 
 const StakePercentage = (props: { slpxPair: SlpxPair }) => {
   const balances = useRecoilValue(selectedBalancesState)
@@ -78,6 +85,11 @@ const StakeProviders = () => {
           availableBalance={
             <Suspense fallback={<CircularProgressIndicator size="1em" />}>
               <AvailableBalance slpxPair={slpxPair} />
+            </Suspense>
+          }
+          availableFiatBalance={
+            <Suspense>
+              <AvailableFiatBalance slpxPair={slpxPair} />
             </Suspense>
           }
           stakePercentage={
