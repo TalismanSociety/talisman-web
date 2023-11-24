@@ -110,7 +110,7 @@ export default () => {
   }
 
   return (
-    <PolkadotApiIdProvider id="wss://hk.p.bifrost-rpc.liebi.com/ws">
+    <PolkadotApiIdProvider id={slpxPair.substrateEndpoint}>
       <AddStakeSideSheet
         slpxPair={slpxPair}
         onRequestDismiss={() =>

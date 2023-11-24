@@ -80,14 +80,12 @@ const Stakes = () => {
   return (
     <>
       {slpxPairs.map((slpxPair, index) => (
-        <SlpxStakes key={index} slpxPair={slpxPair} />
+        <PolkadotApiIdProvider key={index} id={slpxPair.substrateEndpoint}>
+          <SlpxStakes slpxPair={slpxPair} />
+        </PolkadotApiIdProvider>
       ))}
     </>
   )
 }
 
-export default () => (
-  <PolkadotApiIdProvider id="wss://hk.p.bifrost-rpc.liebi.com/ws">
-    <Stakes />
-  </PolkadotApiIdProvider>
-)
+export default Stakes

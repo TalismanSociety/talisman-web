@@ -11,6 +11,8 @@ import { Suspense, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { useRecoilValue, waitForAll } from 'recoil'
 import { useToken } from 'wagmi'
+import UnlockDuration from './UnlockDuration'
+import { PolkadotApiIdProvider } from '@talismn/react-polkadot-api'
 
 const useAvailableBalance = (slpxPair: SlpxPair) => {
   const [balances, currency] = useRecoilValue(waitForAll([selectedBalancesState, selectedCurrencyState]))
@@ -74,33 +76,39 @@ const StakeProviders = () => {
   return (
     <>
       {slpxPairs.map((slpxPair, index) => (
-        <StakeProvider
-          key={index}
-          symbol={slpxPair.nativeToken.symbol}
-          logo={githubChainLogoUrl('moonbeam')}
-          chain={slpxPair.chain.name}
-          apr="6.6%"
-          type="Liquid staking"
-          provider="Bifrost SLPX"
-          availableBalance={
-            <Suspense fallback={<CircularProgressIndicator size="1em" />}>
-              <AvailableBalance slpxPair={slpxPair} />
-            </Suspense>
-          }
-          availableFiatBalance={
-            <Suspense>
-              <AvailableFiatBalance slpxPair={slpxPair} />
-            </Suspense>
-          }
-          stakePercentage={
-            <Suspense fallback={<StakeProvider.StakePercentage loading />}>
-              <StakePercentage slpxPair={slpxPair} />
-            </Suspense>
-          }
-          stakeButton={
-            <StakeProvider.StakeButton as={Link} to={`?action=stake&type=slpx&contract-address=${slpxPair.splx}`} />
-          }
-        />
+        <PolkadotApiIdProvider key={index} id={slpxPair.substrateEndpoint}>
+          <StakeProvider
+            symbol={slpxPair.nativeToken.symbol}
+            logo={githubChainLogoUrl('moonbeam')}
+            chain={slpxPair.chain.name}
+            apr="6.6%"
+            type="Liquid staking"
+            provider="Bifrost SLPX"
+            unbondingPeriod={
+              <Suspense fallback={<CircularProgressIndicator size="1em" />}>
+                <UnlockDuration slpxPair={slpxPair} />
+              </Suspense>
+            }
+            availableBalance={
+              <Suspense fallback={<CircularProgressIndicator size="1em" />}>
+                <AvailableBalance slpxPair={slpxPair} />
+              </Suspense>
+            }
+            availableFiatBalance={
+              <Suspense>
+                <AvailableFiatBalance slpxPair={slpxPair} />
+              </Suspense>
+            }
+            stakePercentage={
+              <Suspense fallback={<StakeProvider.StakePercentage loading />}>
+                <StakePercentage slpxPair={slpxPair} />
+              </Suspense>
+            }
+            stakeButton={
+              <StakeProvider.StakeButton as={Link} to={`?action=stake&type=slpx&contract-address=${slpxPair.splx}`} />
+            }
+          />
+        </PolkadotApiIdProvider>
       ))}
     </>
   )

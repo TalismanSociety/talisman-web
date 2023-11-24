@@ -16,6 +16,7 @@ export type StakeProviderProps = {
   apr: ReactNode
   type: ReactNode
   provider: ReactNode
+  unbondingPeriod: ReactNode
   availableBalance: ReactNode
   availableFiatBalance: ReactNode
   stakePercentage: ReactNode
@@ -63,8 +64,9 @@ const Grid = (props: PropsWithChildren<{ className?: string }>) => (
       'gap': '0.6rem',
       '@container (min-width: 100rem)': {
         alignItems: 'center',
-        gridTemplateAreas: `'asset apr type provider available-balance stake-percentage action'`,
-        gridTemplateColumns: 'repeat(5, minmax(0, 1fr)) minmax(0, 0.5fr) minmax(0, 1fr)',
+        gridTemplateAreas: `'asset apr type provider unbonding-period available-balance stake-percentage action'`,
+        gridTemplateColumns:
+          'minmax(0, 1fr) minmax(0, 0.75fr) repeat(4, minmax(0, 1fr)) minmax(0, 0.5fr) minmax(0, 1fr)',
       },
     }}
     {...props}
@@ -111,6 +113,20 @@ const StakeProvider = Object.assign(
             </Text.BodySmall>
             <Text.Body as="div" alpha="high">
               {props.provider}
+            </Text.Body>
+          </div>
+          <div
+            css={{
+              'gridArea': 'unbonding-period',
+              'display': 'none',
+              '@container (min-width: 100rem)': { display: 'revert' },
+            }}
+          >
+            <Text.BodySmall as="div" css={{ '@container (min-width: 100rem)': { display: 'none' } }}>
+              Unbonding period
+            </Text.BodySmall>
+            <Text.Body as="div" alpha="high">
+              {props.unbondingPeriod}
             </Text.Body>
           </div>
           <div
@@ -176,6 +192,7 @@ export const StakeProviderList = (props: PropsWithChildren<{ className?: string 
           <Text.BodySmall css={{ gridArea: 'apr' }}>Est. APR</Text.BodySmall>
           <Text.BodySmall css={{ gridArea: 'type' }}>Type</Text.BodySmall>
           <Text.BodySmall css={{ gridArea: 'provider' }}>Provider</Text.BodySmall>
+          <Text.BodySmall css={{ gridArea: 'unbonding-period' }}>Unbonding period</Text.BodySmall>
           <Text.BodySmall css={{ gridArea: 'available-balance' }}>Available balance</Text.BodySmall>
           <Text.BodySmall css={{ gridArea: 'stake-percentage', textAlign: 'end' }}>Staked (%)</Text.BodySmall>
         </Grid>

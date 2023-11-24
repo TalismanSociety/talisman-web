@@ -84,6 +84,7 @@ const StakeProviders = () => {
           apr="3.7%"
           type="Liquid staking"
           provider="Lido"
+          unbondingPeriod="1-5 day(s)"
           availableBalance={
             <Suspense fallback={<CircularProgressIndicator size="1em" />}>
               <AvailableBalance lidoSuite={lidoSuite} />
