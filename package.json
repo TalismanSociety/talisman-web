@@ -16,7 +16,8 @@
     "check-types": "echo \"skipping until fixed\"",
     "e2e": "yarn turbo run e2e",
     "storybook": "yarn turbo run storybook",
-    "build-storybook": "yarn turbo run storybook"
+    "build-storybook": "yarn turbo run storybook",
+    "build-signet:docker": "docker build -t signet-fe -f apps/multisig/Dockerfile ."
   },
   "devDependencies": {
     "@commitlint/cli": "^17.4.2",

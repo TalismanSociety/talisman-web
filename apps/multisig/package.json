@@ -14,7 +14,8 @@
     "storybook": "start-storybook -p 6006 -s public",
     "build-storybook": "build-storybook -s public",
     "relay": "yarn run relay-compiler",
-    "postinstall": "yarn run relay"
+    "postinstall": "yarn run relay",
+    "docker:build": "cd ../../ && docker build -t signet-fe -f apps/multisig/Dockerfile ."
   },
   "relay": {
     "src": "./src",
