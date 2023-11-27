@@ -28,7 +28,7 @@ const StakeSideSheet = () => {
 
   return (
     <LidoWidgetSideSheet
-      url="https://stake.lido.fi/?ref=0xAb5801a7D398351b8bE11C439e05C5B3259aeC9B"
+      url={`https://stake.lido.fi/?ref=${import.meta.env.REACT_APP_LIDO_REWARDS_ADDRESS}`}
       lidoSuite={lidoSuite}
       onRequestDismiss={() =>
         setSearchParams(sp => {
