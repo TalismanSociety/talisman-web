@@ -49,7 +49,7 @@ const Icon = <T extends IconElementType = 'button'>({
         transition: '.25s',
       }}
     >
-      <IconContext.Provider value={{ size: `calc(${size} * 0.6)` }}>{props['children']}</IconContext.Provider>
+      <IconContext.Provider value={{ size: `calc(${size} * 0.5)` }}>{props['children']}</IconContext.Provider>
     </Component>
   )
 }
