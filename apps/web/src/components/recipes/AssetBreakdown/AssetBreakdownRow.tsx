@@ -36,13 +36,7 @@ export const AssetBreakdownRowHeader = ({ token, isOrml }: { token: any; isOrml?
         >
           <Tooltip content={startCase(token?.tokenDetails?.chain?.id ?? token?.tokenDetails?.coingeckoId)}>
             <img
-              src={
-                token?.tokenDetails?.evmNetwork
-                  ? token?.tokenDetails?.logo
-                  : `https://raw.githubusercontent.com/TalismanSociety/chaindata/v3/assets/chains/${
-                      token?.tokenDetails?.chain?.id as string
-                    }.svg`
-              }
+              src={token.tokenDetails.chain?.logo ?? undefined}
               alt={token?.name}
               css={{
                 width: '2em',
