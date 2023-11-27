@@ -3343,29 +3343,29 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@floating-ui/react-dom@npm:^2.0.1":
-  version: 2.0.2
-  resolution: "@floating-ui/react-dom@npm:2.0.2"
+"@floating-ui/react-dom@npm:^2.0.3":
+  version: 2.0.4
+  resolution: "@floating-ui/react-dom@npm:2.0.4"
   dependencies:
     "@floating-ui/dom": ^1.5.1
   peerDependencies:
     react: ">=16.8.0"
     react-dom: ">=16.8.0"
-  checksum: 4797e1f7a19c1e531ed0d578ccdcbe58970743e5a480ba30424857fc953063f36d481f8c5d69248a8f1d521b739e94bf5e1ffb35506400dea3d914f166ed2f7f
+  checksum: 91b2369e25f84888486e48c1656117468248906034ed482d411bb9ed1061b908dd32435b4ca3d0cd0ca6083291510a98ce74d76c671d5cc25b0c41e5fa824bae
   languageName: node
   linkType: hard
 
-"@floating-ui/react@npm:^0.25.2":
-  version: 0.25.2
-  resolution: "@floating-ui/react@npm:0.25.2"
+"@floating-ui/react@npm:^0.26.3":
+  version: 0.26.3
+  resolution: "@floating-ui/react@npm:0.26.3"
   dependencies:
-    "@floating-ui/react-dom": ^2.0.1
-    "@floating-ui/utils": ^0.1.1
+    "@floating-ui/react-dom": ^2.0.3
+    "@floating-ui/utils": ^0.1.5
     tabbable: ^6.0.1
   peerDependencies:
     react: ">=16.8.0"
     react-dom: ">=16.8.0"
-  checksum: 851aedc2e327f7a82553270669ce613d1b03fbb5ea8a7137f959cf7db95ecdab05d4402320d613ad2b662f6920f2fac366fdfd82d273d83d3070de532ecb0728
+  checksum: d15fbe68a727f6ff6c9ed1f795fcfb49b5bfd1eb732ecfff1a7525a616d938e663e6ee497256aedb59cc8b38f084352a5d78c01a89dfb2f66d18119e80bcd786
   languageName: node
   linkType: hard
 
@@ -3373,6 +3373,13 @@ __metadata:
   version: 0.1.1
   resolution: "@floating-ui/utils@npm:0.1.1"
   checksum: 548acdda7902f45b0afbe34e2e7f4cbff0696b95bad8c039f80936519de24ef2ec20e79902825b7815294b37f51a7c52ee86288b0688869a57cc229a164d86b4
+  languageName: node
+  linkType: hard
+
+"@floating-ui/utils@npm:^0.1.5":
+  version: 0.1.6
+  resolution: "@floating-ui/utils@npm:0.1.6"
+  checksum: b34d4b5470869727f52e312e08272edef985ba5a450a76de0917ba0a9c6f5df2bdbeb99448e2c60f39b177fb8981c772ff1831424e75123471a27ebd5b52c1eb
   languageName: node
   linkType: hard
 
@@ -7575,7 +7582,7 @@ __metadata:
   resolution: "@talismn/ui@workspace:packages/ui"
   dependencies:
     "@babel/core": ^7.21.0
-    "@floating-ui/react": ^0.25.2
+    "@floating-ui/react": ^0.26.3
     "@google/model-viewer": ^3.1.1
     "@lottiefiles/react-lottie-player": ^3.5.2
     "@mdx-js/react": ^1.6.22
@@ -7598,7 +7605,7 @@ __metadata:
     colorjs.io: ^0.4.4-patch.1
     eslint: ^8.37.0
     eslint-plugin-storybook: ^0.6.12
-    framer-motion: ^10.16.4
+    framer-motion: ^10.16.5
     mime: ^3.0.0
     mime-db: ^1.52.0
     prop-types: ^15.8.1
@@ -7710,7 +7717,7 @@ __metadata:
     eslint: ^8.33.0
     eslint-config-prettier: ^8.6.0
     eslint-plugin-storybook: ^0.6.10
-    framer-motion: ^10.16.4
+    framer-motion: ^10.16.5
     graphql: ^16.8.1
     graphql-request: ^5.1.0
     i18next: ^21.10.0
@@ -14763,9 +14770,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"framer-motion@npm:^10.16.4":
-  version: 10.16.4
-  resolution: "framer-motion@npm:10.16.4"
+"framer-motion@npm:^10.16.5":
+  version: 10.16.5
+  resolution: "framer-motion@npm:10.16.5"
   dependencies:
     "@emotion/is-prop-valid": ^0.8.2
     tslib: ^2.4.0
@@ -14780,7 +14787,7 @@ __metadata:
       optional: true
     react-dom:
       optional: true
-  checksum: 57eb252f25a2c4ee14b024295c6a1162a53a05e0321bdb9c8a22ec266fbe777832823eaa0309e42854170fcde16c42915c6c5d0208b628fd000d6fab013c501f
+  checksum: 189e26745c860390d9320586c11248c81c63edf093cda33f95cc6f5e5a31fdf09ed64319c8303923692c36beb5cf56a1a40a32c70520d55df37b7d77a690aeb0
   languageName: node
   linkType: hard
 
