@@ -246,11 +246,11 @@ const Asset = Object.assign((props: AssetProps) => {
                 </div>
                 {token.nonNativeTokens.map((token, index: number) => (
                   <div key={index} css={{ width: '1em', height: '1em' }}>
-                    <Tooltip content={startCase(token.tokenDetails.chain?.id ?? token.tokenDetails.coingeckoId)}>
+                    <Tooltip content={token.tokenDetails.chain?.name}>
                       <img
                         src={token.tokenDetails.chain?.logo ?? undefined}
                         css={{ width: '100%', height: '100%', borderRadius: '50%' }}
-                        alt={token.tokenDetails.tokenDisplayName ?? '' + ' logo'}
+                        alt={token.tokenDetails.chain?.name ?? 'logo'}
                       />
                     </Tooltip>
                   </div>

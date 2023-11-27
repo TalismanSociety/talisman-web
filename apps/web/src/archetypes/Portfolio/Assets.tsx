@@ -130,12 +130,7 @@ const useAssets = (customAddress?: string) => {
 
     const locked = lockedAmount > 0n
 
-    const tokenDisplayName =
-      token.type === 'evm-erc20'
-        ? 'Ethereum'
-        : token.chain?.id
-        ? startCase(token.chain?.id)
-        : startCase(token.coingeckoId)
+    const tokenDisplayName = startCase(token.coingeckoId)
 
     return {
       locked,
@@ -150,7 +145,7 @@ const useAssets = (customAddress?: string) => {
       fiatAmountFormatted,
       tokenDetails: {
         ...token,
-        chain: token.chain ? chains[token.chain.id] : undefined,
+        chain: token.chain ? chains[token.chain.id] : token.evmNetwork ? evmNetworks[token.evmNetwork.id] : undefined,
         tokenDisplayName,
       },
       // if the token is substrate-native then make it an array else make it undefined
