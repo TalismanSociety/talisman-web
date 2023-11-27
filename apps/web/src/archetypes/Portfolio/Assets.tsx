@@ -150,6 +150,7 @@ const useAssets = (customAddress?: string) => {
       fiatAmountFormatted,
       tokenDetails: {
         ...token,
+        chain: token.chain ? chains[token.chain.id] : undefined,
         tokenDisplayName,
       },
       // if the token is substrate-native then make it an array else make it undefined

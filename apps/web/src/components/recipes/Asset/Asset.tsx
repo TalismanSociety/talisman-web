@@ -248,13 +248,7 @@ const Asset = Object.assign((props: AssetProps) => {
                   <div key={index} css={{ width: '1em', height: '1em' }}>
                     <Tooltip content={startCase(token.tokenDetails.chain?.id ?? token.tokenDetails.coingeckoId)}>
                       <img
-                        src={
-                          token.tokenDetails.evmNetwork
-                            ? token.tokenDetails.logo
-                            : `https://raw.githubusercontent.com/TalismanSociety/chaindata/v3/assets/chains/${
-                                token.tokenDetails.chain?.id as string
-                              }.svg`
-                        }
+                        src={token.tokenDetails.chain?.logo ?? undefined}
                         css={{ width: '100%', height: '100%', borderRadius: '50%' }}
                         alt={token.tokenDetails.tokenDisplayName ?? '' + ' logo'}
                       />
