@@ -10,7 +10,7 @@ import { lidoSuitesState } from '@domains/staking/lido/recoils'
 
 const IncreaseStakeSideSheet = (props: { onRequestDismiss: () => unknown; lidoSuite: LidoSuite }) => (
   <LidoWidgetSideSheet
-    url="https://stake.lido.fi?ref=0xAb5801a7D398351b8bE11C439e05C5B3259aeC9B"
+    url={`https://stake.lido.fi?ref=${import.meta.env.REACT_APP_LIDO_REWARDS_ADDRESS}`}
     lidoSuite={props.lidoSuite}
     onRequestDismiss={props.onRequestDismiss}
   />
@@ -18,7 +18,7 @@ const IncreaseStakeSideSheet = (props: { onRequestDismiss: () => unknown; lidoSu
 
 const UnstakeSideSheet = (props: { onRequestDismiss: () => unknown; lidoSuite: LidoSuite }) => (
   <LidoWidgetSideSheet
-    url="https://stake.lido.fi/withdrawals/request?ref=0xAb5801a7D398351b8bE11C439e05C5B3259aeC9B"
+    url={`https://stake.lido.fi/withdrawals/request?ref=${import.meta.env.REACT_APP_LIDO_REWARDS_ADDRESS}`}
     lidoSuite={props.lidoSuite}
     onRequestDismiss={props.onRequestDismiss}
   />
@@ -26,7 +26,7 @@ const UnstakeSideSheet = (props: { onRequestDismiss: () => unknown; lidoSuite: L
 
 const ClaimSideSheet = (props: { onRequestDismiss: () => unknown; lidoSuite: LidoSuite }) => (
   <LidoWidgetSideSheet
-    url="https://stake.lido.fi/withdrawals/claim?ref=0xAb5801a7D398351b8bE11C439e05C5B3259aeC9B"
+    url={`https://stake.lido.fi/withdrawals/claim?ref=${import.meta.env.REACT_APP_LIDO_REWARDS_ADDRESS}`}
     lidoSuite={props.lidoSuite}
     onRequestDismiss={props.onRequestDismiss}
   />
