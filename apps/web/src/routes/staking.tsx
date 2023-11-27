@@ -1,19 +1,14 @@
 import AccountConnectionGuard from '@components/widgets/AccountConnectionGuard'
+import AnimatedFiatNumber from '@components/widgets/AnimatedFiatNumber'
 import StakeProviders from '@components/widgets/staking/StakeProviders'
 import Stakes from '@components/widgets/staking/Stakes'
+import { useTotalStaked } from '@domains/staking'
 import { Layers, Zap } from '@talismn/icons'
 import { CircularProgressIndicator, SegmentedButton, Surface, Text } from '@talismn/ui'
 import { Suspense, useState } from 'react'
 import { HeaderWidgetPortal, TitlePortal } from './layout'
-import { useTotalStaked } from '@domains/staking'
-import { useRecoilValue } from 'recoil'
-import { selectedCurrencyState } from '@domains/balances'
 
-const TotalStaked = () => (
-  <>
-    {useTotalStaked().toLocaleString(undefined, { style: 'currency', currency: useRecoilValue(selectedCurrencyState) })}
-  </>
-)
+const TotalStaked = () => <AnimatedFiatNumber end={useTotalStaked()} />
 
 const Staking = () => {
   const sections = ['stakeable-assets', 'positions'] as const
