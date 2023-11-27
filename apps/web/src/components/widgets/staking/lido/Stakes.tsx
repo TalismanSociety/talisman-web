@@ -53,9 +53,9 @@ const LidoStakes = (props: { lidoSuite: LidoSuite }) => {
           fiatBalance={<AnimatedFiatNumber end={stake.fiatBalance} />}
           chain={props.lidoSuite.chain.name}
           symbol={stake.balance.unit}
-          claimButton={
+          withdrawButton={
             stake.claimable.planck.gtn(0) && (
-              <StakePosition.ClaimButton
+              <StakePosition.WithdrawButton
                 amount={<RedactableBalance>{stake.claimable.toHuman()}</RedactableBalance>}
                 onClick={() => setClaimSideSheetOpen(true)}
               />
