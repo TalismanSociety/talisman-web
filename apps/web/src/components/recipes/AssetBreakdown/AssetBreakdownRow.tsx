@@ -34,10 +34,10 @@ export const AssetBreakdownRowHeader = ({ token, isOrml }: { token: any; isOrml?
             gap: '1.6rem',
           }}
         >
-          <Tooltip content={startCase(token?.tokenDetails?.chain?.id ?? token?.tokenDetails?.coingeckoId)}>
+          <Tooltip content={token.tokenDetails.chain?.name}>
             <img
               src={token.tokenDetails.chain?.logo ?? undefined}
-              alt={token?.name}
+              alt={token.tokenDetails.chain?.name}
               css={{
                 width: '2em',
                 height: '2em',
@@ -60,7 +60,7 @@ export const AssetBreakdownRowHeader = ({ token, isOrml }: { token: any; isOrml?
                 fontWeight: 'bold',
               }}
             >
-              {token?.tokenDetails?.tokenDisplayName}
+              {token.tokenDetails.chain?.name}
             </Text.Body>
           </div>
         </td>
