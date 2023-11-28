@@ -9,7 +9,6 @@ import { Maybe } from '@util/monads'
 import { Suspense, useMemo } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useRecoilValue } from 'recoil'
-import { useSwitchNetwork } from 'wagmi'
 import UnlockDuration from './UnlockDuration'
 
 type AddStakeSideSheetProps = {
@@ -19,8 +18,6 @@ type AddStakeSideSheetProps = {
 
 const AddStakeSideSheet = (props: AddStakeSideSheetProps) => {
   const [account, accountSelector] = useAccountSelector(useRecoilValue(evmSignableAccountsState), 0)
-
-  const { switchNetworkAsync } = useSwitchNetwork()
 
   const {
     input: { amount, localizedFiatAmount },
@@ -71,7 +68,6 @@ const AddStakeSideSheet = (props: AddStakeSideSheetProps) => {
             rate => `1 ${props.slpxPair.nativeToken.symbol} = ${rate.toLocaleString()} ${props.slpxPair.vToken.symbol}`
           )}
           onConfirm={async () => {
-            await switchNetworkAsync?.(props.slpxPair.chain.id)
             await mint.writeAsync()
           }}
           onRequestMaxAmount={() => {

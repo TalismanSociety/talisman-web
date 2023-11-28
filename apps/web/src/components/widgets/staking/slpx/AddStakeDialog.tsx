@@ -4,7 +4,6 @@ import { useMintForm } from '@domains/staking/slpx/core'
 import type { SlpxPair } from '@domains/staking/slpx/types'
 import { Maybe } from '@util/monads'
 import { useEffect } from 'react'
-import { useSwitchNetwork } from 'wagmi'
 
 type AddStakeDialogProps = {
   account: Account
@@ -13,8 +12,6 @@ type AddStakeDialogProps = {
 }
 
 const AddStakeDialog = (props: AddStakeDialogProps) => {
-  const { switchNetworkAsync } = useSwitchNetwork()
-
   const {
     input: { amount, localizedFiatAmount },
     setAmount,
@@ -48,7 +45,6 @@ const AddStakeDialog = (props: AddStakeDialogProps) => {
         rate => `1 ${props.slpxPair.nativeToken.symbol} = ${rate.toLocaleString()} ${props.slpxPair.vToken.symbol}`
       )}
       onConfirm={async () => {
-        await switchNetworkAsync?.(props.slpxPair.chain.id)
         await mint.writeAsync()
       }}
       onRequestMaxAmount={() => {

@@ -1,4 +1,4 @@
-import { useContractWrite, type UseContractWriteConfig } from 'wagmi'
+import { useContractWrite, useNetwork, type UseContractWriteConfig, useSwitchNetwork } from 'wagmi'
 import { type Abi } from 'abitype'
 import { type WriteContractMode } from '@wagmi/core'
 import { Text, toast } from '@talismn/ui'
@@ -16,12 +16,20 @@ export const useWagmiContractWrite = <
   etherscanUrl: string
 }) => {
   const posthog = usePostHog()
+
+  const { switchNetworkAsync } = useSwitchNetwork()
+  const { chain } = useNetwork()
+
   // @ts-expect-error
   const { write: _, ...base } = useContractWrite(config)
 
   return {
     ...base,
     writeAsync: Maybe.of(base.writeAsync).mapOrUndefined(writeAsync => async (...args: any[]) => {
+      if (config.chainId !== undefined && chain?.id !== config.chainId) {
+        await switchNetworkAsync?.(config.chainId)
+      }
+
       const promise = writeAsync(...args)
       void toast.promise(promise, {
         loading: (

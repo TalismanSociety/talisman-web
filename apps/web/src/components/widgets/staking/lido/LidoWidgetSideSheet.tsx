@@ -2,7 +2,7 @@ import type { LidoSuite } from '@domains/staking/lido'
 import { ClassNames } from '@emotion/react'
 import { SideSheet, SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR } from '@talismn/ui'
 import { useEffect } from 'react'
-import { useSwitchNetwork } from 'wagmi'
+import { useNetwork, useSwitchNetwork } from 'wagmi'
 
 export type LidoWidgetSideSheetProps = {
   url: string
@@ -11,11 +11,14 @@ export type LidoWidgetSideSheetProps = {
 }
 
 const LidoWidgetSideSheet = (props: LidoWidgetSideSheetProps) => {
+  const { chain } = useNetwork()
   const { switchNetwork } = useSwitchNetwork()
 
   useEffect(() => {
-    switchNetwork?.(props.lidoSuite.chain.id)
-  }, [props.lidoSuite.chain.id, switchNetwork])
+    if (chain?.id !== props.lidoSuite.chain.id) {
+      switchNetwork?.(props.lidoSuite.chain.id)
+    }
+  }, [chain?.id, props.lidoSuite.chain.id, switchNetwork])
 
   return (
     <ClassNames>
