@@ -263,7 +263,7 @@ export const ControlledStakeForm = (props: { assetSelector: ReactNode; account?:
   const [selectedPoolId, setSelectedPoolId] = useState(initialPoolId)
   const [showPoolSelector, setShowPoolSelector] = useState(false)
 
-  const [selectedAccount, accountSelector] = useAccountSelector(
+  const [[selectedAccount], accountSelector] = useAccountSelector(
     useRecoilValue(writeableSubstrateAccountsState),
     accounts =>
       props.account !== undefined

@@ -19,6 +19,11 @@ Default.args = {
       <Select.Option headlineText="foo" />
     </Select>
   ),
+  destAccountSelector: (
+    <Select css={{ width: '100%' }} placeholder="Select account">
+      <Select.Option headlineText="foo" />
+    </Select>
+  ),
   fromChains: [
     { name: 'Polkadot', logoSrc: '' },
     { name: 'Kusama', logoSrc: '' },

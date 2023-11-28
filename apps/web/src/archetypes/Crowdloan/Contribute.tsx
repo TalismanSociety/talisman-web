@@ -127,7 +127,7 @@ const ContributeTo = styled(
 
     const [chainHasTerms, termsAgreed, onTermsCheckboxClick] = useTerms(relayChainId, parachainId)
 
-    const [account, accountSelector] = useAccountSelector(useRecoilValue(writeableSubstrateAccountsState), 0)
+    const [[account], accountSelector] = useAccountSelector(useRecoilValue(writeableSubstrateAccountsState), 0)
 
     useEffect(() => {
       dispatch(ContributeEvent.setAccount(account?.address))

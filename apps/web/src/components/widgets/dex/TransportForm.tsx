@@ -1,6 +1,11 @@
 import { FixedPointNumber } from '@acala-network/sdk-core'
 import DexForm from '@components/recipes/DexForm/DexForm'
-import { writeableSubstrateAccountsState } from '@domains/accounts'
+import {
+  writeableAccountsState,
+  writeableEvmAccountsState,
+  writeableSubstrateAccountsState,
+  type Account,
+} from '@domains/accounts'
 import { bridgeAdapterState, bridgeState } from '@domains/bridge'
 import { useExtrinsic } from '@domains/common'
 import { type SubmittableExtrinsic } from '@polkadot/api/types'
@@ -11,7 +16,7 @@ import { Decimal } from '@talismn/math'
 import { CircularProgressIndicator, toast } from '@talismn/ui'
 import { Maybe } from '@util/monads'
 import { isEmpty, uniqBy } from 'lodash'
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { RecoilLoadable, constSelector, useRecoilValue, useRecoilValueLoadable, type Loadable } from 'recoil'
 import { Observable } from 'rxjs'
 import { useAccountSelector } from '../AccountSelector'
@@ -21,11 +26,40 @@ const TransportForm = () => {
   const bridge = useRecoilValue(bridgeState)
 
   const [amount, setAmount] = useState('')
-  const [sender, senderSelector] = useAccountSelector(useRecoilValue(writeableSubstrateAccountsState), 0)
 
   const [fromChain, setFromChain] = useState<Chain>()
   const [toChain, setToChain] = useState<Chain>()
   const [token, setToken] = useState<string>()
+
+  const fromEvm = useMemo(() => fromChain?.id === 'moonbeam' || fromChain?.id === 'moonriver', [fromChain?.id])
+  const toEvm = useMemo(() => toChain?.id === 'moonbeam' || toChain?.id === 'moonriver', [toChain?.id])
+
+  const getAccountsState = useCallback((chain: Chain | undefined) => {
+    switch (chain?.id) {
+      case 'moonbeam':
+      case 'moonriver':
+        return writeableEvmAccountsState
+      case undefined:
+        return writeableAccountsState
+      default:
+        return writeableSubstrateAccountsState
+    }
+  }, [])
+
+  const [[sender], senderSelector] = useAccountSelector(useRecoilValue(getAccountsState(fromChain)), 0)
+  const [[recipient, setRecipient], recipientSelector] = useAccountSelector(
+    useRecoilValue(getAccountsState(toChain)),
+    useCallback(
+      (x: Account[] | undefined) => (toEvm ? x?.at(0) : x?.find(y => y.address === sender?.address)),
+      [sender?.address, toEvm]
+    )
+  )
+
+  useEffect(() => {
+    if (sender !== undefined) {
+      setRecipient(sender)
+    }
+  }, [sender, setRecipient])
 
   const filterParams = <T extends Record<string, unknown>>(object: T) => {
     const params = Object.fromEntries(Object.entries(object).filter(([_, value]) => value !== undefined))
@@ -121,13 +155,21 @@ const TransportForm = () => {
 
     const adapter = adapterLoadable.valueMaybe()
 
-    if (adapter !== undefined && sender !== undefined && toChain !== undefined && token !== undefined) {
+    if (
+      !(fromEvm && sender?.type !== 'ethereum') &&
+      !(toEvm && recipient?.type !== 'ethereum') &&
+      adapter !== undefined &&
+      sender !== undefined &&
+      recipient !== undefined &&
+      toChain !== undefined &&
+      token !== undefined
+    ) {
       setInputConfigLoadable(RecoilLoadable.loading())
 
       const subscription = new Observable<InputConfig>(observer =>
         adapter
           .subscribeInputConfig({
-            address: sender.address,
+            address: recipient.address,
             signer: sender.address,
             to: toChain.id,
             token,
@@ -142,7 +184,18 @@ const TransportForm = () => {
     }
 
     return undefined
-  }, [adapterLoadable, sender, toChain, token])
+  }, [
+    adapterLoadable,
+    fromChain,
+    fromEvm,
+    recipient,
+    recipient?.address,
+    recipient?.type,
+    sender,
+    toChain,
+    toEvm,
+    token,
+  ])
 
   const tokenInfo = useMemo(
     () => Maybe.of(token).mapOrUndefined(x => adapterLoadable.valueMaybe()?.getToken(x)),
@@ -204,11 +257,13 @@ const TransportForm = () => {
       const adapter = adapterLoadable.valueMaybe()
 
       if (
+        (fromEvm && sender?.type !== 'ethereum') ||
+        (toEvm && recipient?.type !== 'ethereum') ||
         adapter === undefined ||
         token === undefined ||
         decimalAmount === undefined ||
         toChain === undefined ||
-        sender === undefined
+        recipient === undefined
       ) {
         return
       }
@@ -217,9 +272,9 @@ const TransportForm = () => {
         amount: FixedPointNumber.fromInner(decimalAmount.planck.toString(), decimalAmount?.decimals),
         to: toChain.id,
         token,
-        address: sender.address,
+        address: recipient.address,
       }) as SubmittableExtrinsic<'promise', ISubmittableResult> | undefined
-    }, [adapterLoadable, decimalAmount, sender, toChain, token])
+    }, [adapterLoadable, decimalAmount, fromEvm, recipient, sender?.type, toChain, toEvm, token])
   )
 
   return (
@@ -231,6 +286,7 @@ const TransportForm = () => {
       form={
         <DexForm.Transport
           accountSelector={senderSelector}
+          destAccountSelector={recipientSelector}
           transferableAmount={
             parsedInputConfigLoadable?.state === 'loading' ? (
               <CircularProgressIndicator size="1em" />

@@ -266,7 +266,7 @@ const Staking = () => {
   const [chain, setChain] = useState<Chain>(chains[0])
 
   const accounts = useRecoilValue(substrateAccountsState)
-  const [account, accountSelector] = useAccountSelector(accounts, 0)
+  const [[account], accountSelector] = useAccountSelector(accounts, 0)
 
   return (
     <StakeDashboard
