@@ -189,7 +189,7 @@ export const StakeProviderList = (props: PropsWithChildren<{ className?: string 
       >
         <Grid css={{ backgroundColor: 'transparent', paddingTop: 0, paddingBottom: 0 }}>
           <Text.BodySmall css={{ gridArea: 'asset' }}>Asset</Text.BodySmall>
-          <Text.BodySmall css={{ gridArea: 'apr' }}>Est. APR</Text.BodySmall>
+          <Text.BodySmall css={{ gridArea: 'apr' }}>Est. Return</Text.BodySmall>
           <Text.BodySmall css={{ gridArea: 'type' }}>Type</Text.BodySmall>
           <Text.BodySmall css={{ gridArea: 'provider' }}>Provider</Text.BodySmall>
           <Text.BodySmall css={{ gridArea: 'unbonding-period' }}>Unbonding period</Text.BodySmall>
