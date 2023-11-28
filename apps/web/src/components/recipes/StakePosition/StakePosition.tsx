@@ -1,6 +1,6 @@
 import AccountIcon from '@components/molecules/AccountIcon'
 import type { Account } from '@domains/accounts'
-import { BarChart2, Clock, Zap, ZapOff } from '@talismn/icons'
+import { BarChart2, Clock, ZapOff, ZapPlus } from '@talismn/icons'
 import {
   Chip,
   CircularProgressIndicator,
@@ -45,7 +45,7 @@ const IncreaseStakeButton = (props: Omit<ButtonProps, 'children'>) => (
     {({ readonly }) => (
       <Tooltip content={readonly ? 'Account is readonly' : 'Increase stake'}>
         <TonalIconButton {...props} disabled={readonly}>
-          <Zap />
+          <ZapPlus />
         </TonalIconButton>
       </Tooltip>
     )}
