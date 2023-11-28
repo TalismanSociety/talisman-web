@@ -8,7 +8,7 @@ import Explore from './explore'
 import History from './history'
 import Layout from './layout'
 import portfolioRoutes from './portfolio'
-import Staking from './staking'
+import stakingRoutes from './staking'
 
 export default Sentry.wrapCreateBrowserRouter(createBrowserRouter)([
   {
@@ -36,7 +36,7 @@ export default Sentry.wrapCreateBrowserRouter(createBrowserRouter)([
         ),
       },
       { path: 'nfts', element: <Navigate to="/portfolio/collectibles" /> },
-      { path: 'staking', element: <Staking /> },
+      { path: 'staking', ...stakingRoutes },
       // TODO: remove once link on extension side is updated
       { path: '/portfolio/history', element: <Navigate to="/history" /> },
     ],
