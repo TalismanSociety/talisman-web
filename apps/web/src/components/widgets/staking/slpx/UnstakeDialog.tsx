@@ -3,7 +3,6 @@ import { type Account } from '@domains/accounts'
 import { useRedeemForm, type SlpxPair } from '@domains/staking/slpx'
 import { Maybe } from '@util/monads'
 import { Suspense, useEffect } from 'react'
-import { useSwitchNetwork } from 'wagmi'
 import UnlockDuration from './UnlockDuration'
 
 type UnstakeDialogProps = {
@@ -13,8 +12,6 @@ type UnstakeDialogProps = {
 }
 
 const UnstakeDialog = (props: UnstakeDialogProps) => {
-  const { switchNetworkAsync } = useSwitchNetwork()
-
   const {
     input: { amount, localizedFiatAmount },
     setAmount,
@@ -63,7 +60,6 @@ const UnstakeDialog = (props: UnstakeDialogProps) => {
       )}
       approvalNeeded={approvalNeeded}
       onConfirm={async () => {
-        await switchNetworkAsync?.(props.slpxPair.chain.id)
         if (approvalNeeded) {
           await approve.writeAsync()
         } else {
