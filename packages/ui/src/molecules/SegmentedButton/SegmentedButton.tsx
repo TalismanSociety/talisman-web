@@ -6,7 +6,7 @@ import { Clickable, Surface, Text, type ClickableProps } from '../../atoms'
 
 const SegmentedButtonContext = createContext<{
   value: string | number | undefined
-  onChange: (value: string | number) => unknown
+  onChange?: (value: string | number) => unknown
 }>({ value: undefined, onChange: () => {} })
 
 type ButtonSegmentProps = Omit<ClickableProps, 'value'> & {
@@ -27,7 +27,7 @@ const ButtonSegment = (props: ButtonSegmentProps) => {
             position: 'relative',
             padding: '1rem 1.2rem',
           }}
-          onClick={() => onChange(props.value)}
+          onClick={() => onChange?.(props.value)}
         >
           {selectedValue === props.value && (
             <motion.div
@@ -57,7 +57,7 @@ const ButtonSegment = (props: ButtonSegmentProps) => {
 export type SegmentedButtonProps<T extends string | number> = PropsWithChildren<{
   className?: string
   value: T | undefined
-  onChange: (value: T) => unknown
+  onChange?: (value: T) => unknown
 }>
 
 const SegmentedButton = Object.assign(
