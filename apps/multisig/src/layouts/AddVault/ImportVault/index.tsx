@@ -3,7 +3,7 @@ import toast from 'react-hot-toast'
 import { useNavigate } from 'react-router-dom'
 
 import { Address } from '@util/addresses'
-import { Chain, supportedChains } from '@domains/chains'
+import { Chain, filteredSupportedChains } from '@domains/chains'
 import { useCreateTeamOnHasura } from '@domains/offchain-data'
 
 import NameVault from '../common/NameVault'
@@ -23,7 +23,7 @@ export enum Step {
 }
 
 export const ImportVault: React.FC = () => {
-  let firstChain = supportedChains[0]
+  let firstChain = filteredSupportedChains[0]
   if (!firstChain) throw Error('no supported chains')
 
   const navigate = useNavigate()
@@ -78,7 +78,7 @@ export const ImportVault: React.FC = () => {
           onNext={() => setStep(Step.ProxiedAccountAddress)}
           setChain={setChain}
           chain={chain}
-          chains={supportedChains}
+          chains={filteredSupportedChains}
         />
       ) : step === Step.ProxiedAccountAddress || !proxiedAddress ? (
         <ProxiedAccountSettings

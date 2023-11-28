@@ -7,8 +7,8 @@ import { selectedAccountState } from '@domains/auth'
 import {
   Chain,
   existentialDepositSelector,
+  filteredSupportedChains,
   proxyDepositTotalSelector,
-  supportedChains,
   tokenByIdWithPrice,
 } from '@domains/chains'
 import { useCreateProxy, useTransferProxyToMultisig } from '@domains/chains/extrinsics'
@@ -38,7 +38,7 @@ export enum Step {
 }
 
 const CreateMultisig = () => {
-  let firstChain = supportedChains[0]
+  let firstChain = filteredSupportedChains[0]
   if (!firstChain) throw Error('no supported chains')
 
   const navigate = useNavigate()
@@ -140,7 +140,7 @@ const CreateMultisig = () => {
           onNext={() => setStep(Step.MultisigConfig)}
           setChain={setChain}
           chain={chain}
-          chains={supportedChains}
+          chains={filteredSupportedChains}
         />
       ) : step === Step.MultisigConfig ? (
         <MultisigConfig

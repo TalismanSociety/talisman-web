@@ -7,6 +7,7 @@ import { Layout } from '../Layout'
 import { CancleOrNext } from './common/CancelOrNext'
 import CreateMultisig from './CreateVault'
 import { ImportVault } from './ImportVault'
+import { cn } from '@util/tailwindcss'
 
 const Option: React.FC<{ title: string; description: string; selected: boolean; onClick: () => void }> = ({
   title,
@@ -14,21 +15,12 @@ const Option: React.FC<{ title: string; description: string; selected: boolean; 
   selected,
   onClick,
 }) => (
-  <div
-    onClick={onClick}
-    css={({ color }) => ({
-      'display': 'flex',
-      'alignItems': 'flex-start',
-      'gap': 24,
-      'cursor': 'pointer',
-      ':hover': {
-        '> div:first-child': {
-          div: { backgroundColor: color.primary },
-        },
-      },
-    })}
-  >
+  <div onClick={onClick} className="flex items-start gap-24 cursor-pointer group">
     <div
+      className={cn(
+        'p-[4ox] rounded-full transition-colors duration-150',
+        selected ? 'bg-primary/20' : 'bg-primary/0 group-hover:bg-gray-500/50'
+      )}
       css={({ color }) => ({
         padding: 4,
         backgroundColor: selected ? color.primaryContainer : 'rgba(0,0,0,0)',
@@ -37,13 +29,10 @@ const Option: React.FC<{ title: string; description: string; selected: boolean; 
       })}
     >
       <div
-        css={({ color }) => ({
-          width: 12,
-          height: 12,
-          backgroundColor: selected ? color.primary : 'var(--color-backgroundLighter)',
-          borderRadius: '100%',
-          transition: 'background-color 0.1s',
-        })}
+        className={cn(
+          'w-[12px] h-[12px] rounded-full transition-colors duration-150',
+          selected ? 'bg-primary' : 'bg-gray-500 group-hover:bg-primary/50'
+        )}
       />
     </div>
     <div css={{ display: 'grid', gap: 8 }}>

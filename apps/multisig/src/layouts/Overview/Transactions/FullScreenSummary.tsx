@@ -1,6 +1,6 @@
 import MemberRow from '@components/MemberRow'
 import StatusCircle, { StatusCircleType } from '@components/StatusCircle'
-import { Chain, multisigDepositTotalSelector, supportedChains, tokenPriceState } from '@domains/chains'
+import { Chain, filteredSupportedChains, multisigDepositTotalSelector, tokenPriceState } from '@domains/chains'
 import { accountsState } from '@domains/extension'
 import { Balance, Transaction, TransactionType, usePendingTransactions } from '@domains/multisig'
 import { css } from '@emotion/css'
@@ -131,7 +131,7 @@ export const FullScreenDialogContents = ({
   const [approveInFlight, setApproveInFlight] = useState(false)
   const extensionAccounts = useRecoilValue(accountsState)
   const feeTokenPrice = useRecoilValueLoadable(tokenPriceState(fee?.token))
-  const defaultChain = supportedChains[0] as Chain
+  const defaultChain = filteredSupportedChains[0] as Chain
   const multisigDepositTotal = useRecoilValueLoadable(
     multisigDepositTotalSelector({
       chain_id: t?.multisig.chain.squidIds.chainData || defaultChain.squidIds.chainData,

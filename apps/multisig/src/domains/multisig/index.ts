@@ -4,6 +4,7 @@ import {
   allChainTokensSelector,
   chainTokensByIdQuery,
   decodeCallData,
+  filteredSupportedChains,
   isSubstrateAssetsToken,
   isSubstrateTokensToken,
   supportedChains,
@@ -40,7 +41,7 @@ export const combinedViewState = atom<boolean>({
 const DUMMY_MULTISIG: Multisig = {
   id: DUMMY_MULTISIG_ID,
   name: 'DUMMY_MULTISIG',
-  chain: supportedChains[0] as Chain,
+  chain: filteredSupportedChains[0] as Chain,
   signers: [],
   threshold: 0,
   multisigAddress: new Address(new Uint8Array(32)),
