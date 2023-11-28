@@ -2,4 +2,4 @@
 **/build
 apps/web
 
-**/.env
+apps/**/.env

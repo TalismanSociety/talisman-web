@@ -1,0 +1,12 @@
+version: '3.6'
+services:
+  signet-fe:
+    build:
+      context: ./
+      dockerfile: ./apps/multisig/Dockerfile
+      args:
+        HASURA_ENDPOINT: ${HASURA_ENDPOINT}
+        SIWS_ENDPOINT: ${SIWS_ENDPOINT}
+    ports:
+      - '3000:80'
+    restart: always
