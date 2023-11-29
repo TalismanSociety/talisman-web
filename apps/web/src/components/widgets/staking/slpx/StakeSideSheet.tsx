@@ -17,7 +17,7 @@ type AddStakeSideSheetProps = {
 }
 
 const AddStakeSideSheet = (props: AddStakeSideSheetProps) => {
-  const [account, accountSelector] = useAccountSelector(useRecoilValue(evmSignableAccountsState), 0)
+  const [[account], accountSelector] = useAccountSelector(useRecoilValue(evmSignableAccountsState), 0)
 
   const {
     input: { amount, localizedFiatAmount },
