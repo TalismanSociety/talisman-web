@@ -83,7 +83,7 @@ const StakeProviders = () => {
             chain={slpxPair.chain.name}
             apr="6.6%"
             type="Liquid staking"
-            provider="Bifrost SLPX"
+            provider="Bifrost SLPx"
             unbondingPeriod={
               <Suspense fallback={<CircularProgressIndicator size="1em" />}>
                 <UnlockDuration slpxPair={slpxPair} />

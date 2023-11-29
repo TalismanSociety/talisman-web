@@ -23,6 +23,7 @@ const StakeDialog = Object.assign(
           <Zap /> Stake
         </div>
       }
+      subtitle="Nomination pools staking"
       css={{
         [`${SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR}`]: {
           minWidth: '51.2rem',
