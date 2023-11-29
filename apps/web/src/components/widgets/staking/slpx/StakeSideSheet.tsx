@@ -80,8 +80,16 @@ const AddStakeSideSheet = (props: AddStakeSideSheetProps) => {
         />
       </Surface>
       <Text.Body as="p" css={{ marginTop: '4.8rem' }}>
-        vGLMR (voucher GLMR) is a liquid staking token of GLMR, with fully underlying GLMR reserve and yield-bearing
-        feature of GLMR staking reward.
+        Talisman has integrated the liquid staking protocol by Bifrost, which allows users to easily stake GLMR, without
+        the need for complex staking processes. After staking, users receive vGLMR (voucher GLMR), a liquid staking
+        token of GLMR, which has fully underlying GLMR reserve and is directly yield bearing from GLMR rewards.{' '}
+        <Text.Noop.A
+          target="blank"
+          href="https://bifrost.finance/news/bifrost-announces-the-official-launch-of-the-first-parachain-derivatives-v-glmr-and-v-movr"
+        >
+          Learn more
+        </Text.Noop.A>
+        .
       </Text.Body>
     </SideSheet>
   )
