@@ -1,3 +1,2 @@
-export * from './hooks'
-export * from './recoils'
+export * from './core'
 export { default as TalismanExtensionSynchronizer } from './TalismanExtensionSynchronizer'

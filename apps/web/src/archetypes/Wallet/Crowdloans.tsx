@@ -1,5 +1,5 @@
 import { Parachain } from '@archetypes'
-import { Countdown, ExtensionStatusGate, PanelSection, Pendor } from '@components'
+import { Countdown, PanelSection, Pendor } from '@components'
 import AccountIcon from '@components/molecules/AccountIcon'
 import SectionHeader from '@components/molecules/SectionHeader'
 import AnimatedFiatNumber from '@components/widgets/AnimatedFiatNumber'
@@ -476,35 +476,6 @@ const CrowdloanItem = styled(
   }
 )``
 
-const ExtensionUnavailable = styled((props: any) => {
-  const { t } = useTranslation()
-  return (
-    <PanelSection comingSoon {...props}>
-      <p>{t('extensionUnavailable.subtitle')}</p>
-      <p>{t('extensionUnavailable.text')}</p>
-    </PanelSection>
-  )
-})`
-  text-align: center;
-
-  > *:not(:last-child) {
-    margin-bottom: 2rem;
-  }
-  > *:last-child {
-    margin-bottom: 0;
-  }
-
-  > h2 {
-    color: var(--color-text);
-    font-weight: 600;
-    font-size: 1.8rem;
-  }
-  p {
-    color: #999;
-    font-size: 1.6rem;
-  }
-`
-
 const SuspendableCrowdloans = ({ className }: { className?: string }) => {
   const { t } = useTranslation()
   const accounts = useRecoilValue(selectedSubstrateAccountsState)
@@ -606,17 +577,15 @@ const SuspendableCrowdloans = ({ className }: { className?: string }) => {
       ) : mergedContributions.length < 1 ? (
         <PanelSection comingSoon>{t('You have not contributed to any recent Crowdloans')}</PanelSection>
       ) : (
-        <ExtensionStatusGate unavailable={<ExtensionUnavailable />}>
-          <div css={{ display: 'flex', flexDirection: 'column', gap: '1.6rem' }}>
-            {mergedContributions.map(({ type, contribution }) =>
-              type === 'gql-contribution' ? (
-                <GqlCrowdloanItem key={`${contribution.id}`} contribution={contribution} />
-              ) : (
-                <CrowdloanItem key={`${contribution.id}${contribution.account}`} contribution={contribution} />
-              )
-            )}
-          </div>
-        </ExtensionStatusGate>
+        <div css={{ display: 'flex', flexDirection: 'column', gap: '1.6rem' }}>
+          {mergedContributions.map(({ type, contribution }) =>
+            type === 'gql-contribution' ? (
+              <GqlCrowdloanItem key={`${contribution.id}`} contribution={contribution} />
+            ) : (
+              <CrowdloanItem key={`${contribution.id}${contribution.account}`} contribution={contribution} />
+            )
+          )}
+        </div>
       )}
     </section>
   )

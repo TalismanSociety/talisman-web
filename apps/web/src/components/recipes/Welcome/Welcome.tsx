@@ -21,12 +21,9 @@ export type WelcomeProps = {
   popularAccounts: ReactNode
 }
 
-const WalletButton = <T extends 'a' | 'button'>({
-  variant,
-  ...props
-}: Omit<ButtonProps<T>, 'variant' | 'children'> & { variant: 'install' | 'connect' }) => (
+const WalletButton = <T extends 'a' | 'button'>({ ...props }: Omit<ButtonProps<T>, 'variant' | 'children'>) => (
   <Button {...props} css={{ padding: '2rem 5.6rem' }}>
-    {variant === 'connect' ? 'Connect wallet' : 'Install wallet'}
+    Connect wallet
   </Button>
 )
 

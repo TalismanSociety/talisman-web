@@ -9,7 +9,7 @@ export const storageEffect =
   ): AtomEffect<TValue> =>
   ({ node, setSelf, onSet }) => {
     const storageKey = options?.key ?? node.key
-    const savedValue = storage.getItem(node.key)
+    const savedValue = storage.getItem(storageKey)
 
     if (savedValue !== null) {
       if (options?.parser !== undefined) {

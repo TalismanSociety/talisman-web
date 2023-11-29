@@ -126,6 +126,7 @@ const Button = <T extends ButtonElementType = 'button'>({
       {...(props as any)}
       disabled={disabled}
       css={[
+        theme.typography.body,
         {
           textAlign: 'center',
           display: 'inline-block',

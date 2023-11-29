@@ -1,11 +1,11 @@
 import Welcome from '@components/recipes/Welcome'
 import { useAddReadonlyAccountForm, useSetReadonlyAccounts } from '@domains/accounts/hooks'
-import { type ReadonlyAccount, readOnlyAccountsState } from '@domains/accounts/recoils'
-import { useIsWeb3Injected } from '@domains/extension/hooks'
-import { allowExtensionConnectionState } from '@domains/extension/recoils'
+import { readOnlyAccountsState, type ReadonlyAccount } from '@domains/accounts/recoils'
+import { useHadPreviouslyConnectedWallet } from '@domains/extension'
 import { shortenAddress } from '@util/format'
-import { type PropsWithChildren, useCallback } from 'react'
+import { type PropsWithChildren } from 'react'
 import { useRecoilValue, useSetRecoilState } from 'recoil'
+import { walletConnectionSideSheetOpenState } from './WalletConnectionSideSheet'
 
 export type AccountConnectionGuardProps = PropsWithChildren
 
@@ -19,16 +19,15 @@ const POPULAR_ACCOUNTS: Array<ReadonlyAccount & { description?: string }> = [
 ]
 
 export const useShouldShowAccountConnectionGuard = () => {
-  const allowExtensionConnection = useRecoilValue(allowExtensionConnectionState)
+  const hadPreviouslyConnectedWallet = useHadPreviouslyConnectedWallet()
   const readonlyAccounts = useRecoilValue(readOnlyAccountsState)
 
-  return !allowExtensionConnection && readonlyAccounts.length === 0
+  return !hadPreviouslyConnectedWallet && readonlyAccounts.length === 0
 }
 
 const AccountConnectionGuard = (props: AccountConnectionGuardProps) => {
-  const setAllowExtensionConnection = useSetRecoilState(allowExtensionConnectionState)
   const shouldShowGuard = useShouldShowAccountConnectionGuard()
-  const isWeb3Injected = useIsWeb3Injected()
+  const setWalletConnectionSideSheetOpen = useSetRecoilState(walletConnectionSideSheetOpenState)
 
   const { add } = useSetReadonlyAccounts()
 
@@ -38,8 +37,6 @@ const AccountConnectionGuard = (props: AccountConnectionGuardProps) => {
     submit,
   } = useAddReadonlyAccountForm()
 
-  const connect = useCallback(() => setAllowExtensionConnection(true), [setAllowExtensionConnection])
-
   if (!shouldShowGuard) {
     return <>{props.children}</>
   }
@@ -47,13 +44,7 @@ const AccountConnectionGuard = (props: AccountConnectionGuardProps) => {
   return (
     <div css={{ display: 'flex', width: '100%', height: '100%', alignItems: 'center' }}>
       <Welcome
-        walletButton={
-          isWeb3Injected ? (
-            <Welcome.WalletButton variant="connect" onClick={connect} />
-          ) : (
-            <Welcome.WalletButton as="a" variant="install" href="https://talisman.xyz/download" />
-          )
-        }
+        walletButton={<Welcome.WalletButton onClick={() => setWalletConnectionSideSheetOpen(true)} />}
         addressInput={<Welcome.AddressInput value={address} onChange={event => setAddress(event.target.value)} />}
         addressInputConfirmButton={
           <Welcome.AddressInputConfirmButton disabled={confirmState === 'disabled'} onClick={submit} />

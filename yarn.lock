@@ -154,6 +154,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@adraffy/ens-normalize@npm:1.10.0":
+  version: 1.10.0
+  resolution: "@adraffy/ens-normalize@npm:1.10.0"
+  checksum: af0540f963a2632da2bbc37e36ea6593dcfc607b937857133791781e246d47f870d5e3d21fa70d5cfe94e772c284588c81ea3f5b7f4ea8fbb824369444e4dbcb
+  languageName: node
+  linkType: hard
+
 "@adraffy/ens-normalize@npm:1.9.0":
   version: 1.9.0
   resolution: "@adraffy/ens-normalize@npm:1.9.0"
@@ -5195,6 +5202,23 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@polkadot-onboard/core@npm:1.1.0, @polkadot-onboard/core@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "@polkadot-onboard/core@npm:1.1.0"
+  checksum: eea90119a6b2a765173d0781480a0d90fb19744ce52e286447ab98b17f36895739da562e497560c75ed0d63fa715f487caf8e8dab283d6c2c1b6cf0d3b4741ea
+  languageName: node
+  linkType: hard
+
+"@polkadot-onboard/injected-wallets@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "@polkadot-onboard/injected-wallets@npm:1.1.0"
+  dependencies:
+    "@polkadot-onboard/core": 1.1.0
+    "@polkadot/extension-inject": 0.46.5
+  checksum: 7230e6c0941b4d36fdc1f84bf57a302b235802c3091e4067ba956da96f0c3501b8527da10db5a9fee78189f9fd85cadd45cd385aba190907c85c555e024d2c0e
+  languageName: node
+  linkType: hard
+
 "@polkadot/api-augment@npm:10.9.1":
   version: 10.9.1
   resolution: "@polkadot/api-augment@npm:10.9.1"
@@ -8117,6 +8141,8 @@ __metadata:
     "@graphql-codegen/cli": 5.0.0
     "@graphql-codegen/client-preset": 4.1.0
     "@playwright/test": ^1.31.2
+    "@polkadot-onboard/core": ^1.1.0
+    "@polkadot-onboard/injected-wallets": ^1.1.0
     "@polkadot/api": ^10.9.1
     "@polkadot/extension-dapp": ^0.46.5
     "@polkawallet/bridge": ^0.1.5-16
@@ -8173,6 +8199,7 @@ __metadata:
     i18next-http-backend: ^1.4.5
     lodash: ^4.17.21
     md5: ^2.3.0
+    mipd: ^0.0.5
     posthog-js: ^1.68.2
     prop-types: ^15.8.1
     react: ^18.2.0
@@ -19680,6 +19707,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"mipd@npm:^0.0.5":
+  version: 0.0.5
+  resolution: "mipd@npm:0.0.5"
+  dependencies:
+    viem: ^1.1.4
+  peerDependencies:
+    typescript: ">=5.0.4"
+  peerDependenciesMeta:
+    typescript:
+      optional: true
+  checksum: 920b3afb3a92daeb66685adb746211ac4268ff805392a2f6e1da2703c43aa5835e5ad7be9d0312582a348d4c764ae3c81ab39362b66607ba0d54032def0038f1
+  languageName: node
+  linkType: hard
+
 "mitt@npm:^2.1.0":
   version: 2.1.0
   resolution: "mitt@npm:2.1.0"
@@ -26364,6 +26405,27 @@ __metadata:
     typescript:
       optional: true
   checksum: 99adf4eae6aaf371589d3c966b5eeda76b3c780d83f8cf21b345d050b5d65d2a66b0470a22cb0c8bea39bfdbd2b90c764eb49e1cffcdf3174ccd2e88e9065180
+  languageName: node
+  linkType: hard
+
+"viem@npm:^1.1.4":
+  version: 1.19.9
+  resolution: "viem@npm:1.19.9"
+  dependencies:
+    "@adraffy/ens-normalize": 1.10.0
+    "@noble/curves": 1.2.0
+    "@noble/hashes": 1.3.2
+    "@scure/bip32": 1.3.2
+    "@scure/bip39": 1.2.1
+    abitype: 0.9.8
+    isows: 1.0.3
+    ws: 8.13.0
+  peerDependencies:
+    typescript: ">=5.0.4"
+  peerDependenciesMeta:
+    typescript:
+      optional: true
+  checksum: a18633f42f8075b16819b6914f5236c726875407e8e3741b1434af48193ac5a7c12cbe1e1522b0e13df7af4dd4c5daeea2371a21f9338f27c271700a7f6d1595
   languageName: node
   linkType: hard
 

@@ -1,13 +1,9 @@
 import AccountIcon from '@components/molecules/AccountIcon/AccountIcon'
 import { type Account } from '@domains/accounts/recoils'
-import { useIsWeb3Injected } from '@domains/extension/hooks'
-import { allowExtensionConnectionState } from '@domains/extension/recoils'
-import { Download } from '@talismn/icons'
-import { Button, CircularProgressIndicator, Select } from '@talismn/ui'
+import { CircularProgressIndicator, Select } from '@talismn/ui'
 import { shortenAddress } from '@util/format'
 import { useCallback, useEffect, useMemo, useState, useTransition } from 'react'
 import { usePrevious } from 'react-use'
-import { useRecoilState } from 'recoil'
 
 export type AccountSelectorProps = {
   width?: number | string
@@ -23,29 +19,19 @@ const AccountSelector = (props: AccountSelectorProps) => {
     [props]
   )
 
-  const [allowExtensionConnection, setAllowExtensionConnection] = useRecoilState(allowExtensionConnectionState)
-
-  if (!useIsWeb3Injected()) {
-    return (
-      <Button
-        as="a"
-        href="https://talisman.xyz/download"
-        target="_blank"
-        trailingIcon={<Download />}
-        css={{ width: 'auto' }}
-      >
-        Install wallet
-      </Button>
-    )
-  }
-
-  if (!allowExtensionConnection) {
-    return (
-      <Button onClick={() => setAllowExtensionConnection(true)} css={{ width: 'auto' }}>
-        Connect wallet
-      </Button>
-    )
-  }
+  // if (!useIsWeb3Injected()) {
+  //   return (
+  //     <Button
+  //       as="a"
+  //       href="https://talisman.xyz/download"
+  //       target="_blank"
+  //       trailingIcon={<Download />}
+  //       css={{ width: 'auto' }}
+  //     >
+  //       Install wallet
+  //     </Button>
+  //   )
+  // }
 
   const selectedValue =
     typeof props.selectedAccount === 'string' ? props.selectedAccount : props.selectedAccount?.address
@@ -101,7 +87,7 @@ export const useAccountSelector = (
     [initialAccount]
   )
 
-  const [account, setAccount] = useState(getInitialAccount(accounts))
+  const [account, setAccount] = useState<Account | undefined>(getInitialAccount(accounts))
 
   const previousAccounts = usePrevious(accounts)
   const accountsUpdated = useMemo(

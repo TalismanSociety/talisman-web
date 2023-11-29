@@ -1,7 +1,7 @@
 import { ChainContext } from '@domains/chains'
+import { useConnectedSubstrateWallet } from '@domains/extension'
 import { type ApiPromise } from '@polkadot/api'
 import { type AddressOrPair } from '@polkadot/api/types'
-import { web3FromAddress } from '@polkadot/extension-dapp'
 import { type ISubmittableResult } from '@polkadot/types/types'
 import { useCallback, useContext, useState } from 'react'
 import { useRecoilCallback } from 'recoil'
@@ -34,6 +34,7 @@ export const useExtrinsicBatch = <
 ) => {
   const chain = useContext(ChainContext)
   const apiEndpoint = useSubstrateApiEndpoint()
+  const wallet = useConnectedSubstrateWallet()
 
   const [loadable, setLoadable] = useState<
     | { state: 'idle'; contents: undefined }
@@ -49,11 +50,7 @@ export const useExtrinsicBatch = <
       const { snapshot } = callbackInterface
 
       const promiseFunc = async () => {
-        const [api, extension] = await Promise.all([
-          snapshot.getPromise(substrateApiState(apiEndpoint)),
-          // eslint-disable-next-line @typescript-eslint/no-base-to-string
-          web3FromAddress(account.toString()),
-        ])
+        const [api] = await Promise.all([snapshot.getPromise(substrateApiState(apiEndpoint))])
 
         let resolve = (_value: ISubmittableResult) => {}
         let reject = (_value: unknown) => {}
@@ -76,7 +73,7 @@ export const useExtrinsicBatch = <
           )
           const unsubscribe = await api.tx.utility
             .batchAll(extrinsics)
-            .signAndSend(account, { signer: extension?.signer }, result => {
+            .signAndSend(account, { signer: wallet?.signer }, result => {
               extrinsics.forEach(extrinsic => extrinsicMiddleware(chain.id, extrinsic, result, callbackInterface))
 
               if (result.isError) {

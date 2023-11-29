@@ -1,11 +1,11 @@
 import { type ApiPromise } from '@polkadot/api'
 import { type AddressOrPair, type SubmittableExtrinsic } from '@polkadot/api/types'
-import { web3FromAddress } from '@polkadot/extension-dapp'
 import { type ISubmittableResult } from '@polkadot/types/types'
 import { useContext, useMemo, useState } from 'react'
 import { useRecoilCallback } from 'recoil'
 
 import { ChainContext } from '@domains/chains'
+import { useConnectedSubstrateWallet } from '@domains/extension'
 import { substrateApiState, useSubstrateApiEndpoint } from '..'
 import { skipErrorReporting } from '../consts'
 import { extrinsicMiddleware } from '../extrinsicMiddleware'
@@ -55,6 +55,7 @@ export function useExtrinsic(
 ): ExtrinsicLoadable | undefined {
   const chain = useContext(ChainContext)
   const endpoint = useSubstrateApiEndpoint()
+  const wallet = useConnectedSubstrateWallet()
 
   const [loadable, setLoadable] = useSubmittableResultLoadableState()
 
@@ -79,9 +80,6 @@ export function useExtrinsic(
         })()
 
         const promiseFunc = async () => {
-          // eslint-disable-next-line @typescript-eslint/no-base-to-string
-          const web3 = await web3FromAddress(account.toString())
-
           let resolve = (_value: ISubmittableResult) => {}
           let reject = (_value: unknown) => {}
 
@@ -91,7 +89,7 @@ export function useExtrinsic(
           })
 
           try {
-            const unsubscribe = await submittable?.signAndSend(account, { signer: web3?.signer }, result => {
+            const unsubscribe = await submittable?.signAndSend(account, { signer: wallet?.signer }, result => {
               extrinsicMiddleware(chain.id, submittable, result, callbackInterface)
 
               if (result.isError) {

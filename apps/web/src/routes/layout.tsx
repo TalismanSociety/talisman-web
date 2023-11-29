@@ -7,13 +7,18 @@ import { ModalProvider } from '@components'
 import AccountValueInfo from '@components/recipes/AccountValueInfo'
 import { useShouldShowAccountConnectionGuard } from '@components/widgets/AccountConnectionGuard'
 import AccountsManagementMenu from '@components/widgets/AccountsManagementMenu'
+import WalletConnectionSideSheet, {
+  walletConnectionSideSheetOpenState,
+} from '@components/widgets/WalletConnectionSideSheet'
 import LidoStakeSideSheet from '@components/widgets/staking/lido/StakeSideSheet'
 import SlpxStakeSideSheet from '@components/widgets/staking/slpx/StakeSideSheet'
 import NominationPoolsStakeSideSheet from '@components/widgets/staking/substrate/NominationPoolsStakeSideSheet'
 import { selectedAccountsState } from '@domains/accounts/recoils'
 import { currencyConfig, selectedCurrencyState } from '@domains/balances'
+import { FloatingPortal } from '@floating-ui/react'
 import { Compass, CreditCard, Eye, FileText, MoreHorizontal, RefreshCcw, Star, TalismanHand, Zap } from '@talismn/icons'
 import {
+  Button,
   IconButton,
   NavigationBar,
   NavigationDrawer,
@@ -27,8 +32,7 @@ import {
 import { usePostHog } from 'posthog-js/react'
 import { useCallback, useEffect, useState, type PropsWithChildren } from 'react'
 import { Link, Outlet, useLocation } from 'react-router-dom'
-import { useRecoilState, useRecoilValue } from 'recoil'
-import { FloatingPortal } from '@floating-ui/react'
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil'
 
 const CurrencySelect = () => {
   const [currency, setCurrency] = useRecoilState(selectedCurrencyState)
@@ -43,6 +47,33 @@ const CurrencySelect = () => {
         />
       ))}
     </Select>
+  )
+}
+
+const WalletConnectionButton = () => {
+  const setOpen = useSetRecoilState(walletConnectionSideSheetOpenState)
+  const connectionColor = '#38D448'
+
+  return (
+    <Button
+      variant="surface"
+      leadingIcon={
+        <div
+          css={{
+            position: 'relative',
+            width: '1.4rem',
+            height: '1.4rem',
+            border: `0.2rem solid color-mix(in srgb, ${connectionColor}, transparent 70%)`,
+            borderRadius: '0.7rem',
+          }}
+        >
+          <div css={{ position: 'absolute', inset: '0.2rem', borderRadius: '50%', backgroundColor: connectionColor }} />
+        </div>
+      }
+      onClick={() => setOpen(true)}
+    >
+      Connected
+    </Button>
   )
 }
 
@@ -67,7 +98,10 @@ const Header = () => {
         }}
       >
         <div id="page-title" />
-        <CurrencySelect />
+        <div css={{ display: 'flex', gap: '0.8rem' }}>
+          <CurrencySelect />
+          <WalletConnectionButton />
+        </div>
       </div>
       <div css={{ display: 'flex', gap: '2.4rem', flexWrap: 'wrap' }}>
         <AccountsManagementMenu
@@ -305,6 +339,7 @@ const Layout = () => {
         <NominationPoolsStakeSideSheet />
         <SlpxStakeSideSheet />
         <LidoStakeSideSheet />
+        <WalletConnectionSideSheet />
       </ModalProvider>
     </Scaffold>
   )
