@@ -5,14 +5,13 @@ import { useStakes } from '@domains/staking/slpx/core'
 import { PolkadotApiIdProvider } from '@talismn/react-polkadot-api'
 import { useState } from 'react'
 
-import type { SlpxPair } from '@domains/staking/slpx/types'
-import { useRecoilValue } from 'recoil'
-import { moonriver } from 'wagmi/chains'
-import UnstakeDialog from './UnstakeDialog'
 import AnimatedFiatNumber from '@components/widgets/AnimatedFiatNumber'
 import RedactableBalance from '@components/widgets/RedactableBalance'
-import AddStakeDialog from './AddStakeDialog'
 import { slpxPairsState } from '@domains/staking/slpx'
+import type { SlpxPair } from '@domains/staking/slpx/types'
+import { useRecoilValue } from 'recoil'
+import AddStakeDialog from './AddStakeDialog'
+import UnstakeDialog from './UnstakeDialog'
 
 const Stake = (props: { slpxPair: SlpxPair; position: ReturnType<typeof useStakes>[number] }) => {
   const [increaseStakeDialogOpen, setIncreaseStakeDialogOpen] = useState(false)
