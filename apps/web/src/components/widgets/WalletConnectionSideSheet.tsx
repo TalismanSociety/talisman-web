@@ -19,7 +19,8 @@ type ConnectionButtonProps = DetailedHTMLProps<ButtonHTMLAttributes<HTMLButtonEl
 
 const ConnectionButton = (props: ConnectionButtonProps) => {
   const theme = useTheme()
-  const connectionColor = props.hovered ? theme.color.error : props.connected ? '#38D448' : theme.color.onSurface
+  const toDisconnect = props.hovered && props.connected
+  const connectionColor = toDisconnect ? theme.color.error : props.connected ? '#38D448' : theme.color.onSurface
   return (
     <Chip
       {...props}
@@ -44,8 +45,46 @@ const ConnectionButton = (props: ConnectionButtonProps) => {
         </div>
       }
     >
-      <Text.BodyLarge alpha="high">{props.connected ? 'Connected' : 'Connect'}</Text.BodyLarge>
+      <Text.BodyLarge alpha="high">
+        {toDisconnect ? 'Disconnect' : props.connected ? 'Connected' : 'Connect'}
+      </Text.BodyLarge>
     </Chip>
+  )
+}
+
+type WalletConnectionProps = {
+  name: string
+  iconUrl?: string
+  connected?: boolean
+  onConnectRequest: () => unknown
+  onDisconnectRequest: () => unknown
+}
+
+const WalletConnection = (props: WalletConnectionProps) => {
+  const theme = useTheme()
+  const [hovered, setHovered] = useState(false)
+  return (
+    <Surface
+      as={ListItem}
+      leadingContent={
+        props.iconUrl ? (
+          <img src={props.iconUrl} alt={props.name} css={{ width: '2.4rem', aspectRatio: '1 / 1' }} />
+        ) : (
+          <Wallet size="2.4rem" />
+        )
+      }
+      headlineText={<Text.BodyLarge alpha="high">{props.name}</Text.BodyLarge>}
+      trailingContent={<ConnectionButton connected={props.connected} hovered={hovered} />}
+      onClick={props.connected ? props.onDisconnectRequest : props.onConnectRequest}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      css={{
+        'borderRadius': '1.2rem',
+        'cursor': 'pointer',
+        ':hover': { opacity: theme.contentAlpha.medium },
+        [SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR]: { minWidth: '40rem' },
+      }}
+    />
   )
 }
 
@@ -58,30 +97,16 @@ const SubstrateWalletConnection = () => {
     <section>
       <Text.H4 css={{}}>Substrate wallets</Text.H4>
       <div css={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
-        {wallets.map((x, index) => {
-          const connected = x.metadata.id === connectedWallet?.metadata.id
-          return (
-            <Surface key={index} css={{ borderRadius: '1.2rem' }}>
-              <ListItem
-                leadingContent={
-                  x.metadata.iconUrl ? (
-                    <img
-                      src={x.metadata.iconUrl}
-                      alt={x.metadata.title}
-                      css={{ width: '2.4rem', aspectRatio: '1 / 1' }}
-                    />
-                  ) : (
-                    <Wallet size="2.4rem" />
-                  )
-                }
-                headlineText={<Text.BodyLarge alpha="high">{x.metadata.title}</Text.BodyLarge>}
-                trailingContent={<ConnectionButton connected={connected} />}
-                onClick={() => (connected ? disconnect() : connect(x))}
-                css={{ [SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR]: { minWidth: '40rem' } }}
-              />
-            </Surface>
-          )
-        })}
+        {wallets.map((x, index) => (
+          <WalletConnection
+            key={index}
+            name={x.metadata.title}
+            iconUrl={x.metadata.iconUrl}
+            connected={x.metadata.id === connectedWallet?.metadata.id}
+            onConnectRequest={() => connect(x)}
+            onDisconnectRequest={() => disconnect()}
+          />
+        ))}
       </div>
     </section>
   )
@@ -108,22 +133,16 @@ const EvmWalletConnections = () => {
     <section>
       <Text.H4 css={{}}>Ethereum wallets</Text.H4>
       <div css={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
-        {providers.map(x => {
-          const connected = connectedProvider === x.provider
-          return (
-            <Surface key={x.info.uuid} css={{ borderRadius: '1.2rem' }}>
-              <ListItem
-                leadingContent={
-                  <img src={x.info.icon} alt={x.info.name} css={{ width: '2.4rem', aspectRatio: '1 / 1' }} />
-                }
-                headlineText={<Text.BodyLarge alpha="high">{x.info.name}</Text.BodyLarge>}
-                trailingContent={<ConnectionButton connected={connected} />}
-                onClick={() => (connected ? disconnect() : connect(x))}
-                css={{ [SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR]: { minWidth: '40rem' } }}
-              />
-            </Surface>
-          )
-        })}
+        {providers.map(x => (
+          <WalletConnection
+            key={x.info.uuid}
+            name={x.info.name}
+            iconUrl={x.info.icon}
+            connected={connectedProvider === x.provider}
+            onConnectRequest={() => connect(x)}
+            onDisconnectRequest={() => disconnect()}
+          />
+        ))}
       </div>
     </section>
   )
