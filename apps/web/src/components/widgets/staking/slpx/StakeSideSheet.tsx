@@ -37,6 +37,7 @@ const AddStakeSideSheet = (props: AddStakeSideSheetProps) => {
           <Zap /> Stake
         </div>
       }
+      subtitle="SLPx liquid staking"
       onRequestDismiss={props.onRequestDismiss}
       css={{ [SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR]: { width: '48rem' } }}
     >
@@ -110,7 +111,7 @@ export default () => {
   }
 
   if (slpxPair === undefined) {
-    throw new Error(`No SLPX contract with address: ${searchParams.get('contract-address') ?? ''}`)
+    throw new Error(`No SLPx contract with address: ${searchParams.get('contract-address') ?? ''}`)
   }
 
   return (

@@ -7,6 +7,7 @@ import { useMediaQuery } from '../../utils'
 
 export type SideSheetProps = Omit<DialogProps, 'title'> & {
   title: ReactNode
+  subtitle?: ReactNode
   onRequestDismiss: () => unknown
   headerClassName?: string
   contentContainerClassName?: string
@@ -74,10 +75,6 @@ const SideSheet = ({ title, children, ...props }: SideSheetProps) => {
       <header
         className={props.headerClassName}
         css={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          gap: '1rem',
           marginBottom: '5.2rem',
           padding: '2.4rem 2.4rem 0 2.4rem',
           [`${SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR}`]: {
@@ -86,10 +83,19 @@ const SideSheet = ({ title, children, ...props }: SideSheetProps) => {
           },
         }}
       >
-        <Text.H2 css={{ margin: 0 }}>{title}</Text.H2>
-        <IconButton onClick={props.onRequestDismiss}>
-          <X />
-        </IconButton>
+        <div>
+          <div css={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '1rem' }}>
+            <Text.H2 css={{ margin: 0 }}>{title}</Text.H2>
+            <IconButton onClick={props.onRequestDismiss}>
+              <X />
+            </IconButton>
+          </div>
+          {props.subtitle && (
+            <Text.BodyLarge as="div" css={{ marginTop: '1.6rem' }}>
+              {props.subtitle}
+            </Text.BodyLarge>
+          )}
+        </div>
       </header>
       <div
         className={props.contentContainerClassName}

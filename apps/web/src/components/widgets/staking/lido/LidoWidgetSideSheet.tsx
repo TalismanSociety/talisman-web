@@ -1,5 +1,6 @@
 import type { LidoSuite } from '@domains/staking/lido'
 import { ClassNames } from '@emotion/react'
+import { Zap } from '@talismn/icons'
 import { SideSheet, SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR } from '@talismn/ui'
 import { useEffect } from 'react'
 import { useNetwork, useSwitchNetwork } from 'wagmi'
@@ -24,7 +25,11 @@ const LidoWidgetSideSheet = (props: LidoWidgetSideSheetProps) => {
     <ClassNames>
       {({ css }) => (
         <SideSheet
-          title="Lido staking"
+          title={
+            <div>
+              <Zap /> Lido staking
+            </div>
+          }
           onRequestDismiss={props.onRequestDismiss}
           css={{
             display: 'flex',
