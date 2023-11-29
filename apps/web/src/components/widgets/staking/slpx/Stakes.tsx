@@ -28,7 +28,7 @@ const Stake = (props: { slpxPair: SlpxPair; position: ReturnType<typeof useStake
         stakeStatus={props.position.balance.planck.gtn(0) ? 'earning_rewards' : 'not_earning_rewards'}
         balance={<RedactableBalance>{props.position.balance.toHuman()}</RedactableBalance>}
         fiatBalance={<AnimatedFiatNumber end={props.position.fiatBalance} />}
-        chain={moonriver.name}
+        chain={props.slpxPair.chain.name}
         symbol={props.position.balance.unit}
         increaseStakeButton={<StakePosition.IncreaseStakeButton onClick={() => setIncreaseStakeDialogOpen(true)} />}
         unstakeButton={
