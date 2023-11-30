@@ -1,16 +1,19 @@
 import {
+  talismanWalletLogo,
   useConnectEip6963,
   useConnectedSubstrateWallet,
   useEip6963Providers,
   useInstalledSubstrateWallets,
   useSubstrateWalletConnect,
 } from '@domains/extension'
-import { ClassNames, useTheme } from '@emotion/react'
+import { ClassNames, useTheme, type Theme } from '@emotion/react'
 import { Wallet } from '@talismn/icons'
 import { Chip, ListItem, SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR, SideSheet, Surface, Text } from '@talismn/ui'
-import { useEffect, useState, type ButtonHTMLAttributes, type DetailedHTMLProps, Suspense } from 'react'
+import { Suspense, useEffect, useState, type ButtonHTMLAttributes, type DetailedHTMLProps } from 'react'
 import { atom, useRecoilState } from 'recoil'
 import { useAccount } from 'wagmi'
+
+const talismanInstalled = 'talismanEth' in globalThis
 
 type ConnectionButtonProps = DetailedHTMLProps<ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement> & {
   connected?: boolean
@@ -60,8 +63,14 @@ type WalletConnectionProps = {
   onDisconnectRequest: () => unknown
 }
 
+const itemStyle = (theme: Theme) => ({
+  'borderRadius': '1.2rem',
+  'cursor': 'pointer',
+  ':hover': { opacity: theme.contentAlpha.medium },
+  [SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR]: { minWidth: '40rem' },
+})
+
 const WalletConnection = (props: WalletConnectionProps) => {
-  const theme = useTheme()
   const [hovered, setHovered] = useState(false)
   return (
     <Surface
@@ -78,13 +87,38 @@ const WalletConnection = (props: WalletConnectionProps) => {
       onClick={props.connected ? props.onDisconnectRequest : props.onConnectRequest}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      css={{
-        'borderRadius': '1.2rem',
-        'cursor': 'pointer',
-        ':hover': { opacity: theme.contentAlpha.medium },
-        [SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR]: { minWidth: '40rem' },
-      }}
+      css={itemStyle}
     />
+  )
+}
+
+const InstallTalisman = () => {
+  if (talismanInstalled) {
+    return null
+  }
+
+  return (
+    // eslint-disable-next-line react/jsx-no-target-blank
+    <a href="https://talisman.xyz/download" target="_blank" css={{ display: 'contents' }}>
+      <Surface
+        as={ListItem}
+        headlineText={<Text.BodyLarge alpha="high">Talisman</Text.BodyLarge>}
+        leadingContent={<img src={talismanWalletLogo} alt="Talisman" css={{ width: '2.4rem', aspectRatio: '1 / 1' }} />}
+        trailingContent={
+          <Chip
+            size="lg"
+            css={{
+              border: `1px solid transparent`,
+              borderRadius: '2rem',
+              padding: '0.6rem 0.8rem',
+            }}
+          >
+            Install wallet
+          </Chip>
+        }
+        css={itemStyle}
+      />
+    </a>
   )
 }
 
@@ -95,8 +129,9 @@ const SubstrateWalletConnection = () => {
 
   return (
     <section>
-      <Text.H4 css={{}}>Substrate wallets</Text.H4>
+      <Text.H4 css={{ marginBottom: '1.6rem' }}>Substrate wallets</Text.H4>
       <div css={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+        <InstallTalisman />
         {wallets.map((x, index) => (
           <WalletConnection
             key={index}
@@ -131,8 +166,9 @@ const EvmWalletConnections = () => {
 
   return (
     <section>
-      <Text.H4 css={{}}>Ethereum wallets</Text.H4>
+      <Text.H4 css={{ marginBottom: '1.6rem' }}>Ethereum wallets</Text.H4>
       <div css={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+        <InstallTalisman />
         {providers.map(x => (
           <WalletConnection
             key={x.info.uuid}
