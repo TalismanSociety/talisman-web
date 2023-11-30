@@ -164,8 +164,9 @@ const useSubstrateExtensionEffect = () => {
   useEffect(() => {
     if (connectedWalletId === undefined) {
       setConnectedWallet(undefined)
+      setInjectedAccounts([])
     }
-  }, [connectedWalletId, setConnectedWallet])
+  }, [connectedWalletId, setConnectedWallet, setInjectedAccounts])
 
   useEffect(() => {
     void (async () => {

@@ -21,7 +21,7 @@ type ConnectionButtonProps = DetailedHTMLProps<ButtonHTMLAttributes<HTMLButtonEl
   hovered?: boolean
 }
 
-const ConnectionButton = (props: ConnectionButtonProps) => {
+const ConnectionChip = (props: ConnectionButtonProps) => {
   const theme = useTheme()
   const toDisconnect = props.hovered && props.connected
   const connectionColor = toDisconnect ? theme.color.error : props.connected ? '#38D448' : theme.color.onSurface
@@ -34,6 +34,7 @@ const ConnectionButton = (props: ConnectionButtonProps) => {
         borderRadius: '2rem',
         background: 'transparent',
         padding: '0.6rem 0.8rem',
+        pointerEvents: 'none',
       }}
       leadingContent={
         <div
@@ -84,7 +85,7 @@ const WalletConnection = (props: WalletConnectionProps) => {
         )
       }
       headlineText={<Text.BodyLarge alpha="high">{props.name}</Text.BodyLarge>}
-      trailingContent={<ConnectionButton connected={props.connected} hovered={hovered} />}
+      trailingContent={<ConnectionChip connected={props.connected} hovered={hovered} />}
       onClick={props.connected ? props.onDisconnectRequest : props.onConnectRequest}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
@@ -207,7 +208,7 @@ export const WalletConnectionSideSheetComponent = (props: WalletConnectionSideSh
               <EvmWalletConnections />
             </Suspense>
             <div>
-              <Hr css={{ marginTop: '1.6rem', marginBottom: '1.6rem' }}>Don't want to connected a wallet</Hr>
+              <Hr css={{ marginTop: '1.6rem', marginBottom: '1.6rem' }}>Don't want to connected a wallet?</Hr>
               <AddReadOnlyAccountDialog>
                 {({ onToggleOpen }) => (
                   <button css={{ display: 'contents', cursor: 'pointer' }} onClick={onToggleOpen}>
