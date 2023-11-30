@@ -108,7 +108,7 @@ const StakeProviderItem = () => {
           <StakePercentage />
         </Suspense>
       }
-      stakeButton={<StakeProvider.StakeButton as={Link} to="?action=stake&type=nomination-pools" />}
+      stakeButton={<StakeProvider.StakeButton as={Link} to={`?action=stake&type=nomination-pools&chain=${chain.id}`} />}
     />
   )
 }
