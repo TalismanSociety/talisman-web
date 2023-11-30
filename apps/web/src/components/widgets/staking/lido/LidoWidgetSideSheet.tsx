@@ -26,9 +26,9 @@ const LidoWidgetSideSheet = (props: LidoWidgetSideSheetProps) => {
       {({ css }) => (
         <SideSheet
           title={
-            <div>
-              <Zap /> Lido staking
-            </div>
+            <>
+              <Zap /> Stake
+            </>
           }
           onRequestDismiss={props.onRequestDismiss}
           css={{
