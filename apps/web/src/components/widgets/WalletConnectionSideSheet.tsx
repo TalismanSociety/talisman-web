@@ -7,11 +7,12 @@ import {
   useSubstrateWalletConnect,
 } from '@domains/extension'
 import { ClassNames, useTheme, type Theme } from '@emotion/react'
-import { Wallet } from '@talismn/icons'
-import { Chip, ListItem, SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR, SideSheet, Surface, Text } from '@talismn/ui'
+import { Eye, Wallet } from '@talismn/icons'
+import { Chip, Hr, ListItem, SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR, SideSheet, Surface, Text } from '@talismn/ui'
 import { Suspense, useEffect, useState, type ButtonHTMLAttributes, type DetailedHTMLProps } from 'react'
 import { atom, useRecoilState } from 'recoil'
 import { useAccount } from 'wagmi'
+import AddReadOnlyAccountDialog from './AddReadOnlyAccountDialog'
 
 const talismanInstalled = 'talismanEth' in globalThis
 
@@ -205,6 +206,18 @@ export const WalletConnectionSideSheetComponent = (props: WalletConnectionSideSh
               <SubstrateWalletConnection />
               <EvmWalletConnections />
             </Suspense>
+            <div>
+              <Hr css={{ marginTop: '1.6rem', marginBottom: '1.6rem' }}>Lookup any address</Hr>
+              <AddReadOnlyAccountDialog>
+                {({ onToggleOpen }) => (
+                  <button css={{ display: 'contents', cursor: 'pointer' }} onClick={onToggleOpen}>
+                    <Text.BodyLarge as="div" alpha="high" css={{ textAlign: 'center' }}>
+                      <Eye size="2rem" css={{ verticalAlign: 'text-top' }} /> Add watched account
+                    </Text.BodyLarge>
+                  </button>
+                )}
+              </AddReadOnlyAccountDialog>
+            </div>
           </div>
         </SideSheet>
       )}
