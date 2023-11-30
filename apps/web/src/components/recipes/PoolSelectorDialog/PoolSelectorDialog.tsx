@@ -32,7 +32,9 @@ const PoolSelectorDialog = Object.assign(
         width="83rem"
         content={
           <div>
-            <Text.Body as="h3">Current pool</Text.Body>
+            <Text.Body as="h3" css={{ marginBottom: '0.6rem' }}>
+              Current pool
+            </Text.Body>
             <div
               css={{
                 'display': 'grid',
@@ -48,7 +50,7 @@ const PoolSelectorDialog = Object.assign(
               {selectedItems[0]}
             </div>
             <div css={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <Text.Body as="h3" css={{ marginTop: '1.6rem' }}>
+              <Text.Body as="h3" css={{ marginTop: '1.6rem', marginBottom: '0.6rem' }}>
                 New pool
               </Text.Body>
               <div css={{ display: 'flex' }}>
