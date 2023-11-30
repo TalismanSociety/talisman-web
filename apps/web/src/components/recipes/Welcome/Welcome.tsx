@@ -59,6 +59,7 @@ const Welcome = Object.assign(
           css={{
             'fontSize': '3.6rem',
             'textAlign': 'center',
+            'marginBottom': '2.4rem',
             '@media (min-width: 1024px)': {
               fontSize: '4.6rem',
             },
