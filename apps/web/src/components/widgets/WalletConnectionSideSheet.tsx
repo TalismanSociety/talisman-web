@@ -8,7 +8,7 @@ import {
 import { ClassNames, useTheme } from '@emotion/react'
 import { Wallet } from '@talismn/icons'
 import { Chip, ListItem, SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR, SideSheet, Surface, Text } from '@talismn/ui'
-import { useEffect, useState, type ButtonHTMLAttributes, type DetailedHTMLProps } from 'react'
+import { useEffect, useState, type ButtonHTMLAttributes, type DetailedHTMLProps, Suspense } from 'react'
 import { atom, useRecoilState } from 'recoil'
 import { useAccount } from 'wagmi'
 
@@ -165,8 +165,10 @@ export const WalletConnectionSideSheetComponent = (props: WalletConnectionSideSh
             Select the wallet to connect to Talisman Portal
           </Text.Body>
           <div css={{ display: 'flex', flexDirection: 'column', gap: '2.4rem' }}>
-            <SubstrateWalletConnection />
-            <EvmWalletConnections />
+            <Suspense fallback={<div css={{ [SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR]: { minWidth: '40rem' } }} />}>
+              <SubstrateWalletConnection />
+              <EvmWalletConnections />
+            </Suspense>
           </div>
         </SideSheet>
       )}
