@@ -106,7 +106,9 @@ const Header = () => {
         <div id="page-title" />
         <div css={{ display: 'flex', gap: '0.8rem' }}>
           <CurrencySelect />
-          <WalletConnectionButton />
+          <div css={{ display: 'none', [SCAFFOLD_WIDE_VIEW_MEDIA_SELECTOR]: { display: 'contents' } }}>
+            <WalletConnectionButton />
+          </div>
         </div>
       </div>
       <div css={{ display: 'flex', gap: '2.4rem', flexWrap: 'wrap' }}>
@@ -174,9 +176,9 @@ const Layout = () => {
               <TalismanHand />
             </IconButton>
           }
+          title={<WalletConnectionButton />}
           actions={
             <TopAppBar.Actions>
-              <AccountsManagementMenu button={<AccountsManagementMenu.IconButton />} />
               <IconButton onClick={useCallback(() => setDrawerOpen(true), [])}>
                 <MoreHorizontal />
               </IconButton>

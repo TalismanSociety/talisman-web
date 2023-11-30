@@ -5,6 +5,7 @@ import { Button, IconButton, Text } from '../../atoms'
 
 export type TopAppBarProps = {
   navigationIcon?: ReactNode
+  title?: ReactNode
   actions?: ReactNode
 }
 
@@ -40,6 +41,7 @@ const TopAppBar = Object.assign(
         }}
       >
         {props.navigationIcon}
+        {props.title && <Text.H3 as="h1">{props.title}</Text.H3>}
         {props.actions}
       </section>
     )
