@@ -207,7 +207,7 @@ export const WalletConnectionSideSheetComponent = (props: WalletConnectionSideSh
               <EvmWalletConnections />
             </Suspense>
             <div>
-              <Hr css={{ marginTop: '1.6rem', marginBottom: '1.6rem' }}>Lookup any address</Hr>
+              <Hr css={{ marginTop: '1.6rem', marginBottom: '1.6rem' }}>Don't want to connected a wallet</Hr>
               <AddReadOnlyAccountDialog>
                 {({ onToggleOpen }) => (
                   <button css={{ display: 'contents', cursor: 'pointer' }} onClick={onToggleOpen}>
