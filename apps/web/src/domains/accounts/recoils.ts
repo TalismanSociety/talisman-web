@@ -113,14 +113,14 @@ export const selectedAccountAddressesState = atom<string[] | undefined>({
 export const selectedAccountsState = selector({
   key: 'SelectedAccounts',
   get: ({ get }) => {
-    const [accounts, injectedAccounts, readOnlyAccounts, selectedAddresses] = get(
-      waitForAll([accountsState, injectedAccountsState, readOnlyAccountsState, selectedAccountAddressesState])
+    const [accounts, portfolioAccounts, readOnlyAccounts, selectedAddresses] = get(
+      waitForAll([accountsState, portfolioAccountsState, readOnlyAccountsState, selectedAccountAddressesState])
     )
 
-    const onlyHasReadonlyAccounts = injectedAccounts.length === 0 && readOnlyAccounts.length > 0
+    const onlyHasReadonlyAccounts = portfolioAccounts.length === 0 && readOnlyAccounts.length > 0
     const defaultDisplayedAccounts = onlyHasReadonlyAccounts
       ? Maybe.of(readOnlyAccounts[0]).mapOr([], x => [x])
-      : injectedAccounts
+      : portfolioAccounts
 
     if (selectedAddresses === undefined) {
       return defaultDisplayedAccounts
