@@ -2,6 +2,7 @@ import { substrateInjectedAccountsState, wagmiAccountsState } from '@domains/acc
 import { storageEffect } from '@domains/common/effects'
 import { WalletAggregator, type BaseWallet } from '@polkadot-onboard/core'
 import { InjectedWalletProvider } from '@polkadot-onboard/injected-wallets'
+import type { InjectedWindow } from '@polkadot/extension-inject/types'
 import { jsonParser, string } from '@recoiljs/refine'
 import { connect as wagmiConnect, disconnect as wagmiDisconnect, watchAccount as watchWagmiAccount } from '@wagmi/core'
 import { createStore, type EIP6963ProviderDetail } from 'mipd'
@@ -181,6 +182,20 @@ const useSubstrateExtensionEffect = () => {
       }
     })()
   }, [connectedWalletId, setConnectedWallet])
+
+  const setConnectedWalletId = useSetRecoilState(connectedSubstrateWalletIdState)
+
+  // Auto connect on launch if Talisman extension is installed
+  // and user has not explicitly disable wallet connection
+  useEffect(
+    () => {
+      if ((globalThis as InjectedWindow).injectedWeb3?.['talisman'] !== undefined && connectedWalletId === undefined) {
+        setConnectedWalletId('talisman')
+      }
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
+  )
 }
 
 export const ExtensionWatcher = () => {
@@ -194,4 +209,9 @@ export const useHadPreviouslyConnectedWallet = () => {
   return useRecoilValue(waitForAll([connectedSubstrateWalletIdState, connectedEip6963RdnsState])).some(
     x => x !== undefined
   )
+}
+
+export const useHasActiveWalletConnection = () => {
+  const evmConnected = useWagmiAccount().isConnected
+  return useRecoilValue(connectedSubstrateWalletState) !== undefined || evmConnected
 }

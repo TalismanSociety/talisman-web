@@ -15,6 +15,8 @@ import SlpxStakeSideSheet from '@components/widgets/staking/slpx/StakeSideSheet'
 import NominationPoolsStakeSideSheet from '@components/widgets/staking/substrate/NominationPoolsStakeSideSheet'
 import { selectedAccountsState } from '@domains/accounts/recoils'
 import { currencyConfig, selectedCurrencyState } from '@domains/balances'
+import { useHasActiveWalletConnection } from '@domains/extension'
+import { useTheme } from '@emotion/react'
 import { FloatingPortal } from '@floating-ui/react'
 import { Compass, CreditCard, Eye, FileText, MoreHorizontal, RefreshCcw, Star, TalismanHand, Zap } from '@talismn/icons'
 import {
@@ -51,8 +53,12 @@ const CurrencySelect = () => {
 }
 
 const WalletConnectionButton = () => {
+  const theme = useTheme()
   const setOpen = useSetRecoilState(walletConnectionSideSheetOpenState)
-  const connectionColor = '#38D448'
+
+  const hasActiveConnection = useHasActiveWalletConnection()
+
+  const connectionColor = hasActiveConnection ? '#38D448' : theme.color.onSurface
 
   return (
     <Button
@@ -72,7 +78,7 @@ const WalletConnectionButton = () => {
       }
       onClick={() => setOpen(true)}
     >
-      Connected
+      {hasActiveConnection ? 'Connected' : 'Connect wallet'}
     </Button>
   )
 }
