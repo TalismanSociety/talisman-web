@@ -6,7 +6,7 @@ import {
   useInstalledSubstrateWallets,
   useSubstrateWalletConnect,
 } from '@domains/extension'
-import { ClassNames, useTheme, type Theme } from '@emotion/react'
+import { ClassNames, useTheme } from '@emotion/react'
 import { Eye, Wallet } from '@talismn/icons'
 import { Chip, Hr, ListItem, SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR, SideSheet, Surface, Text } from '@talismn/ui'
 import { Suspense, useEffect, useState, type ButtonHTMLAttributes, type DetailedHTMLProps } from 'react'
@@ -65,10 +65,10 @@ type WalletConnectionProps = {
   onDisconnectRequest: () => unknown
 }
 
-const itemStyle = (theme: Theme) => ({
+const itemStyle = () => ({
   'borderRadius': '1.2rem',
   'cursor': 'pointer',
-  ':hover': { opacity: theme.contentAlpha.medium },
+  ':hover': { filter: 'brightness(1.2)' },
   [SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR]: { minWidth: '40rem' },
 })
 
