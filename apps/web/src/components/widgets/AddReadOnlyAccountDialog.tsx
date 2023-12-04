@@ -1,4 +1,5 @@
 import AddReadOnlyAccountDialogComponent from '@components/recipes/AddReadOnlyAccountDialog'
+import { popularAccounts } from '@domains/accounts'
 import { useAddReadonlyAccountForm } from '@domains/accounts/hooks'
 import { isNilOrWhitespace } from '@util/nil'
 import { type ReactNode, useCallback, useState } from 'react'
@@ -40,6 +41,14 @@ const AddReadOnlyAccountDialog = (props: AddReadOnlyAccountDialogProps) => {
           submit()
           setOpen(false)
         }, [resultingAddress, submit])}
+        popularAccounts={popularAccounts.map(x => (
+          <AddReadOnlyAccountDialogComponent.PopularAccount
+            key={x.address}
+            address={x.address}
+            name={x.name ?? ''}
+            description={x.description}
+          />
+        ))}
       />
     </>
   )
