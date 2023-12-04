@@ -19,6 +19,7 @@ import {
   Tooltip,
   useSurfaceColor,
   type IconButtonProps,
+  Chip,
 } from '@talismn/ui'
 import { shortenAddress } from '@util/format'
 import { Maybe } from '@util/monads'
@@ -27,6 +28,30 @@ import { useRecoilValue, useRecoilValueLoadable, useSetRecoilState } from 'recoi
 import AddReadOnlyAccountDialog from './AddReadOnlyAccountDialog'
 import AnimatedFiatNumber from './AnimatedFiatNumber'
 import RemoveWatchedAccountConfirmationDialog from './RemoveWatchedAccountConfirmationDialog'
+
+const EvmChip = () => {
+  const theme = useTheme()
+  return (
+    <Tooltip content="This is the active account from your EVM wallet">
+      <Chip
+        containerColor="linear-gradient(98deg, rgba(178, 190, 255, 0.30) -17.17%, rgba(86, 103, 233, 0.30) 141.82%)"
+        contentColor={theme.color.onSurface}
+      >
+        <svg width="8" height="12" viewBox="0 0 8 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <g id="Group">
+            <path id="Vector" d="M0 6.15563L3.59813 8.37938L7.19626 6.15563L3.59813 0L0 6.15563Z" fill="#FAFAFA" />
+            <path
+              id="Vector_2"
+              d="M0 6.85303L3.59813 9.09365L7.19626 6.85303L3.59813 11.9999L0 6.85303Z"
+              fill="#FAFAFA"
+            />
+          </g>
+        </svg>{' '}
+        EVM
+      </Chip>
+    </Tooltip>
+  )
+}
 
 // TODO: probably have this as part of the UI lib
 const SurfaceIconButton = <T extends Extract<ElementType, 'button' | 'a' | 'figure'> | ElementType<any>>(
@@ -122,7 +147,21 @@ const AccountsManagementMenu = (props: { button: ReactNode }) => {
                         <AnimatedFiatNumber end={balances[x.address] ?? 0} />
                       )
                     )}
-                    overlineText={x.name ?? shortenAddress(x.address)}
+                    overlineText={
+                      <div
+                        css={
+                          x.canSignEvm && {
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '0.8rem',
+                            marginBottom: '0.25rem',
+                          }
+                        }
+                      >
+                        {x.name ?? shortenAddress(x.address)}
+                        {x.canSignEvm && <EvmChip />}
+                      </div>
+                    }
                     leadingContent={<AccountIcon account={x} size="4rem" />}
                     revealTrailingContentOnHover
                     trailingContent={

@@ -37,6 +37,7 @@ const Chip = ({ size = 'md', containerColor, contentColor, leadingContent, loadi
     <Container
       as="button"
       color={contentColor}
+      alpha="high"
       {...props}
       disabled={functionallyDisabled}
       css={[
@@ -48,7 +49,7 @@ const Chip = ({ size = 'md', containerColor, contentColor, leadingContent, loadi
           border: 'none',
           borderRadius: '2em',
           padding: '0.2em 0.8em',
-          backgroundColor: containerColor,
+          background: containerColor,
         },
         props.onClick && {
           'cursor': 'pointer',
