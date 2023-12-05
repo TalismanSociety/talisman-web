@@ -37,12 +37,9 @@ export const toastExtrinsic = (
     promise,
     {
       loading: (
-        <>
-          <Text.Body as="div" alpha="high">
-            Your transaction is pending...
-          </Text.Body>
-          <Text.Body as="div">Please approve this in your wallet</Text.Body>
-        </>
+        <Text.Body as="div" alpha="high">
+          Your transaction is pending...
+        </Text.Body>
       ),
       success: data => (
         <>
