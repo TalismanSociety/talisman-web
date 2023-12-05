@@ -89,6 +89,20 @@ export const chains = [
     priorityPool: 47,
   },
   {
+    id: 'vara',
+    genesisHash: '0xfe1b4c55fd4d668101126434206571a7838a8b6b93a6d1b95d607e78e6c53763',
+    isTestnet: false,
+    rpc: 'wss://rpc.vara-network.io',
+    nativeToken: {
+      symbol: 'VARA',
+      coingeckoId: 'vara-network',
+      logo: githubChainLogoUrl('vara'),
+    },
+    subscanUrl: 'https://vara.subscan.io/',
+    parameters: defaultParams,
+    priorityPool: 8,
+  },
+  {
     id: 'westend-testnet',
     genesisHash: '0xe143f23803ac50e8f6f8e62695d1ce9e4e1d68aa36c1cd2cfd15340213f3423e',
     isTestnet: true,
