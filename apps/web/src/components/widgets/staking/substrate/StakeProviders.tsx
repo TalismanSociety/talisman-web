@@ -86,7 +86,7 @@ const StakeProviderItem = () => {
           <Apr />
         </Suspense>
       }
-      type="Nomination pools"
+      type="Nomination pool"
       provider={chain.name}
       unbondingPeriod={
         <Suspense fallback={<CircularProgressIndicator size="1em" />}>
