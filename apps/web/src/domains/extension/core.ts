@@ -7,7 +7,7 @@ import { jsonParser, string } from '@recoiljs/refine'
 import { connect as wagmiConnect, disconnect as wagmiDisconnect, watchAccount as watchWagmiAccount } from '@wagmi/core'
 import { createStore, type EIP6963ProviderDetail } from 'mipd'
 import { useEffect, useSyncExternalStore } from 'react'
-import { atom, selector, useRecoilValue, useSetRecoilState, waitForAll } from 'recoil'
+import { atom, selector, useRecoilState, useRecoilValue, useSetRecoilState, waitForAll } from 'recoil'
 import { useAccount as useWagmiAccount } from 'wagmi'
 import { InjectedConnector } from 'wagmi/connectors/injected'
 import { talismanWalletLogo } from '.'
@@ -34,7 +34,7 @@ export const useConnectEip6963 = () => {
 }
 
 const useEvmExtensionEffect = () => {
-  const connectedEip6963Rdns = useRecoilValue(connectedEip6963RdnsState)
+  const [connectedEip6963Rdns, setConnectedEip6963Rdns] = useRecoilState(connectedEip6963RdnsState)
 
   const eip6963Providers = useEip6963Providers()
 
@@ -51,19 +51,23 @@ const useEvmExtensionEffect = () => {
         await wagmiDisconnect()
 
         if (providerToConnect !== undefined) {
-          await wagmiConnect({
-            connector: new InjectedConnector({
-              options: {
-                // @ts-expect-error
-                getProvider: () => providerToConnect.provider,
-                shimDisconnect: true,
-              },
-            }),
-          })
+          try {
+            await wagmiConnect({
+              connector: new InjectedConnector({
+                options: {
+                  // @ts-expect-error
+                  getProvider: () => providerToConnect.provider,
+                  shimDisconnect: true,
+                },
+              }),
+            })
+          } catch {
+            setConnectedEip6963Rdns(undefined)
+          }
         }
       })()
     }
-  }, [connectedEip6963Rdns, eip6963Providers])
+  }, [connectedEip6963Rdns, eip6963Providers, setConnectedEip6963Rdns])
 
   const { address } = useWagmiAccount()
   const setWagmiAccounts = useSetRecoilState(wagmiAccountsState)
@@ -158,7 +162,7 @@ const useSubstrateExtensionEffect = () => {
     }
   }, [connectedWallet, setInjectedAccounts])
 
-  const connectedWalletId = useRecoilValue(connectedSubstrateWalletIdState)
+  const [connectedWalletId, setConnectedWalletId] = useRecoilState(connectedSubstrateWalletIdState)
   const setConnectedWallet = useSetRecoilState(connectedSubstrateWalletState)
 
   useEffect(() => {
@@ -177,14 +181,16 @@ const useSubstrateExtensionEffect = () => {
         const walletToConnect = wallets.find(x => x.metadata.id === connectedWalletId)
 
         if (walletToConnect !== undefined) {
-          await walletToConnect.connect()
-          setConnectedWallet(walletToConnect)
+          try {
+            await walletToConnect.connect()
+            setConnectedWallet(walletToConnect)
+          } catch {
+            setConnectedWalletId(undefined)
+          }
         }
       }
     })()
-  }, [connectedWalletId, setConnectedWallet])
-
-  const setConnectedWalletId = useSetRecoilState(connectedSubstrateWalletIdState)
+  }, [connectedWalletId, setConnectedWallet, setConnectedWalletId])
 
   // Auto connect on launch if Talisman extension is installed
   // and user has not explicitly disable wallet connection
