@@ -7,7 +7,10 @@ import { useMediaQuery } from '../../utils'
 
 export type SideSheetProps = Omit<DialogProps, 'title'> & {
   title: ReactNode
+  subtitle?: ReactNode
   onRequestDismiss: () => unknown
+  headerClassName?: string
+  contentContainerClassName?: string
 }
 
 const slideInRight = keyframes`
@@ -50,7 +53,7 @@ const SideSheet = ({ title, children, ...props }: SideSheetProps) => {
         'maxWidth': '100%',
         'height': '100%',
         'maxHeight': '100%',
-        'padding': '2.4rem',
+        'padding': 0,
         '&[open]': {
           'animation': `${slideUp} .5s`,
           '::backdrop': {
@@ -63,7 +66,6 @@ const SideSheet = ({ title, children, ...props }: SideSheetProps) => {
           'width': 'min-content',
           'marginLeft': 'auto',
           'marginRight': 0,
-          'padding': '4.8rem',
           '&[open]': {
             animation: `${slideInRight} .5s`,
           },
@@ -71,23 +73,41 @@ const SideSheet = ({ title, children, ...props }: SideSheetProps) => {
       }}
     >
       <header
+        className={props.headerClassName}
         css={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          gap: '1rem',
           marginBottom: '5.2rem',
+          padding: '2.4rem 2.4rem 0 2.4rem',
           [`${SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR}`]: {
-            marginBottom: '4.8rem',
+            padding: '4.8rem 4.8rem 0 4.8rem',
+            marginBottom: '4.8rem 4.8rem 0 4.8rem',
           },
         }}
       >
-        <Text.H2 css={{ margin: 0 }}>{title}</Text.H2>
-        <IconButton onClick={props.onRequestDismiss}>
-          <X />
-        </IconButton>
+        <div>
+          <div css={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '1rem' }}>
+            <Text.H2 css={{ margin: 0 }}>{title}</Text.H2>
+            <IconButton onClick={props.onRequestDismiss}>
+              <X />
+            </IconButton>
+          </div>
+          {props.subtitle && (
+            <Text.BodyLarge as="div" css={{ marginTop: '1.6rem' }}>
+              {props.subtitle}
+            </Text.BodyLarge>
+          )}
+        </div>
       </header>
-      {children}
+      <div
+        className={props.contentContainerClassName}
+        css={{
+          padding: '0 2.4rem 2.4rem 2.4rem',
+          [`${SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR}`]: {
+            padding: '0 4.8rem 4.8rem 4.8rem',
+          },
+        }}
+      >
+        {children}
+      </div>
       <Toaster position={useMediaQuery(SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR) ? 'bottom-right' : 'bottom-center'} />
     </Dialog>
   )

@@ -23,6 +23,7 @@ const StakeDialog = Object.assign(
           <Zap /> Stake
         </div>
       }
+      subtitle="Nomination pool staking"
       css={{
         [`${SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR}`]: {
           minWidth: '51.2rem',
@@ -42,7 +43,7 @@ const StakeDialog = Object.assign(
     LearnMore,
     Stats: Object.assign(
       (props: PropsWithChildren) => (
-        <section {...props} css={{ display: 'flex', alignItems: 'center', gap: '1.6rem', marginBottom: '3.2rem' }} />
+        <section {...props} css={{ display: 'flex', alignItems: 'center', gap: '1.6rem', marginBottom: '1.6rem' }} />
       ),
       { Item: (props: InfoCardProps) => <InfoCard {...props} css={{ flex: 1 }} /> }
     ),

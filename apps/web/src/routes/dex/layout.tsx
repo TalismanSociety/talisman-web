@@ -1,4 +1,5 @@
 import ErrorBoundary from '@components/widgets/ErrorBoundary'
+import { TitlePortal } from '@routes/layout'
 import type { ReactNode } from 'react'
 import { Outlet } from 'react-router-dom'
 
@@ -28,6 +29,7 @@ export const FaqLayout = (props: FaqLayoutProps) => (
       },
     }}
   >
+    <TitlePortal>Transport</TitlePortal>
     <section css={{ flex: 1 }}>
       <ErrorBoundary>{props.content}</ErrorBoundary>
     </section>

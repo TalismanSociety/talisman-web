@@ -1,15 +1,18 @@
 import SectionHeader from '@components/molecules/SectionHeader'
 import StakeItem from '@components/recipes/StakeItem'
+import StakePosition, { StakePositionList } from '@components/recipes/StakePosition'
 import { ChainProvider, chainsState } from '@domains/chains'
-import { useSubstrateFiatTotalStaked } from '@domains/staking'
 import { Button, HiddenDetails, Text } from '@talismn/ui'
-import { Suspense, useId } from 'react'
+import { Fragment, Suspense, type PropsWithChildren } from 'react'
 import { Link } from 'react-router-dom'
 import { useRecoilValue } from 'recoil'
-import AnimatedFiatNumber from '../AnimatedFiatNumber'
 import ErrorBoundary from '../ErrorBoundary'
-import PoolStakes from './PoolStakes'
-import ValidatorStakes from './ValidatorStakes'
+import LidoStakes from './lido/Stakes'
+import SlpxStakes from './slpx/Stakes'
+import PoolStakes from './substrate/PoolStakes'
+import ValidatorStakes from './substrate/ValidatorStakes'
+import AnimatedFiatNumber from '../AnimatedFiatNumber'
+import { useTotalStaked } from '@domains/staking'
 
 const NoStakePrompt = (props: { className?: string }) => (
   <div className={props.className}>
@@ -40,7 +43,7 @@ const NoStakePrompt = (props: { className?: string }) => (
   </div>
 )
 
-const StakeTotal = () => <AnimatedFiatNumber end={useSubstrateFiatTotalStaked().fiatTotal} />
+const StakeTotal = () => <AnimatedFiatNumber end={useTotalStaked()} />
 
 const StakeHeader = () => {
   return (
@@ -57,38 +60,51 @@ const StakeHeader = () => {
   )
 }
 
-const Stakes = () => {
+const skellyClassName = 'staking-skeleton'
+
+const SuspenseSkeleton = (props: PropsWithChildren) => (
+  <Suspense fallback={<StakePosition.Skeleton className={skellyClassName} css={{ order: 1 }} />} {...props} />
+)
+
+const Stakes = (props: { hideHeader?: boolean }) => {
   const chains = useRecoilValue(chainsState)
-  const skeletonId = useId()
 
   return (
     <div id="staking">
-      <StakeHeader />
-      <div
+      {!props.hideHeader && <StakeHeader />}
+      <StakePositionList
         css={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '1.6rem',
-          [`[class~="${skeletonId}"]:first-of-type`]: { display: 'revert' },
+          [`[class~=${skellyClassName}]:not(:nth-last-child(1 of [class~=${skellyClassName}]))`]: { display: 'none' },
         }}
       >
         {chains.map((chain, index) => (
-          <Suspense
-            key={index}
-            fallback={<StakeItem.Skeleton className={skeletonId} css={{ order: 1, display: 'none' }} />}
-          >
+          <Fragment key={index}>
             <ChainProvider chain={chain}>
               <ErrorBoundary orientation="horizontal">
-                <PoolStakes />
+                <SuspenseSkeleton>
+                  <PoolStakes />
+                </SuspenseSkeleton>
               </ErrorBoundary>
               <ErrorBoundary orientation="horizontal">
-                <ValidatorStakes />
+                <SuspenseSkeleton>
+                  <ValidatorStakes />
+                </SuspenseSkeleton>
               </ErrorBoundary>
             </ChainProvider>
-          </Suspense>
+          </Fragment>
         ))}
+        <ErrorBoundary orientation="horizontal">
+          <SuspenseSkeleton>
+            <SlpxStakes />
+          </SuspenseSkeleton>
+        </ErrorBoundary>
+        <ErrorBoundary orientation="horizontal">
+          <SuspenseSkeleton>
+            <LidoStakes />
+          </SuspenseSkeleton>
+        </ErrorBoundary>
         <NoStakePrompt css={{ 'display': 'none', ':only-child': { display: 'revert' } }} />
-      </div>
+      </StakePositionList>
     </div>
   )
 }

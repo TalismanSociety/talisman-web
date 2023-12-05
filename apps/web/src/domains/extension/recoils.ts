@@ -1,10 +1,12 @@
-import { injectedAccountsState } from '@domains/accounts/recoils'
+import { substrateInjectedAccountsState, wagmiAccountsState } from '@domains/accounts/recoils'
 import { storageEffect } from '@domains/common/effects'
 import { web3Enable } from '@polkadot/extension-dapp'
 import type { InjectedWindow } from '@polkadot/extension-inject/types'
+import { connect as wagmiConnect, watchAccount as watchWagmiAccount, getAccount as getWagmiAccount } from '@wagmi/core'
 import { usePostHog } from 'posthog-js/react'
 import { useEffect } from 'react'
 import { atom, useRecoilState, useSetRecoilState } from 'recoil'
+import { wagmiInjectedConnector } from './wagmi'
 
 export const allowExtensionConnectionState = atom<boolean | null>({
   key: 'allow-extension-connection',
@@ -15,11 +17,11 @@ export const allowExtensionConnectionState = atom<boolean | null>({
 export const ExtensionWatcher = () => {
   const posthog = usePostHog()
   const [allowExtensionConnection, setAllowExtensionConnection] = useRecoilState(allowExtensionConnectionState)
-  const setAccounts = useSetRecoilState(injectedAccountsState)
+  const setInjectedAccounts = useSetRecoilState(substrateInjectedAccountsState)
 
   useEffect(() => {
     if (!allowExtensionConnection) {
-      return setAccounts([])
+      return setInjectedAccounts([])
     }
 
     const unsubscribesPromise = web3Enable(import.meta.env.REACT_APP_APPLICATION_NAME ?? 'Talisman').then(
@@ -30,7 +32,7 @@ export const ExtensionWatcher = () => {
 
         return extensions.map(extension =>
           extension.accounts.subscribe(accounts =>
-            setAccounts(
+            setInjectedAccounts(
               accounts.map(account => ({
                 ...account,
                 // @ts-expect-error
@@ -47,7 +49,37 @@ export const ExtensionWatcher = () => {
     return () => {
       void unsubscribesPromise.then(unsubscribes => unsubscribes.map(unsubscribe => unsubscribe()))
     }
-  }, [allowExtensionConnection, posthog, setAccounts])
+  }, [allowExtensionConnection, posthog, setInjectedAccounts])
+
+  const setWagmiAccounts = useSetRecoilState(wagmiAccountsState)
+
+  useEffect(() => {
+    if (!allowExtensionConnection) {
+      setWagmiAccounts([])
+      void wagmiInjectedConnector.disconnect()
+    }
+
+    if (allowExtensionConnection) {
+      void wagmiConnect({ connector: wagmiInjectedConnector })
+    }
+
+    const existingAccount = getWagmiAccount()
+    if (existingAccount.address !== undefined) {
+      setWagmiAccounts([{ address: existingAccount.address, type: 'ethereum', canSignEvm: true }])
+    }
+
+    const unwatch = watchWagmiAccount(account => {
+      if (account.address === undefined) {
+        setWagmiAccounts([])
+      }
+
+      if (account.isConnected && account.address !== undefined) {
+        setWagmiAccounts([{ address: account.address, type: 'ethereum', canSignEvm: true }])
+      }
+    })
+
+    return () => unwatch()
+  }, [allowExtensionConnection, setWagmiAccounts])
 
   // Auto connect on launch if Talisman extension is installed
   // and user has not explicitly disable wallet connection

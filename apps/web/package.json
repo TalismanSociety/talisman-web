@@ -67,10 +67,11 @@
     "threads": "^1.7.0",
     "uuid": "^9.0.0",
     "victory": "^36.6.8",
-    "viem": "^0.3.30"
+    "wagmi": "^1.4.7"
   },
   "devDependencies": {
     "@acala-network/types": "^5.1.1",
+    "@bifrost-finance/types": "^1.8.4",
     "@graphql-codegen/cli": "5.0.0",
     "@graphql-codegen/client-preset": "4.1.0",
     "@playwright/test": "^1.31.2",

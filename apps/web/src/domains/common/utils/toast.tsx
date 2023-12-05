@@ -41,7 +41,7 @@ export const toastExtrinsic = (
           <Text.Body as="div" alpha="high">
             Your transaction is pending...
           </Text.Body>
-          <Text.Body as="div">Your transaction has been confirmed</Text.Body>
+          <Text.Body as="div">Please approve this in your wallet</Text.Body>
         </>
       ),
       success: data => (

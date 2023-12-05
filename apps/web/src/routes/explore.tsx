@@ -6,6 +6,7 @@ import { HiddenDetails, Text } from '@talismn/ui'
 import { device } from '@util/breakpoints'
 import { useState } from 'react'
 import { useDebounce } from 'react-use'
+import { TitlePortal } from './layout'
 
 const ExploreGrid = ({ className }: { className?: string }) => {
   const [searchQuery, setSearchQuery] = useState('')
@@ -160,7 +161,7 @@ const StyledExploreGrid = styled(ExploreGrid)`
 
 const Explore = styled(({ className }: { className?: string }) => (
   <section className={className}>
-    <h1>Explore</h1>
+    <TitlePortal>Explore</TitlePortal>
     <StyledExploreGrid />
   </section>
 ))`

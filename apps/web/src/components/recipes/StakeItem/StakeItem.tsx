@@ -1,13 +1,22 @@
 import { useTheme } from '@emotion/react'
 import { Clock, Lock, Rocket } from '@talismn/icons'
 
-import { Chip, CircularProgressIndicator, Hr, ListItem, Text, Tooltip, type ChipProps } from '@talismn/ui'
+import AccountIcon from '@components/molecules/AccountIcon'
+import type { Account } from '@domains/accounts'
+import {
+  CircularProgressIndicator,
+  Hr,
+  ListItem,
+  SurfaceChip,
+  Text,
+  TonalChip,
+  Tooltip,
+  type ChipProps,
+} from '@talismn/ui'
+import { shortenAddress } from '@util/format'
 import { Fragment, type ReactNode } from 'react'
 import { StakeStatusIndicator, type StakeStatus } from '../StakeStatusIndicator'
 import StakeItemSkeleton from './StakeItemSkeleton'
-import type { Account } from '@domains/accounts'
-import { shortenAddress } from '@util/format'
-import AccountIcon from '@components/molecules/AccountIcon'
 
 export type StakeItemProps = {
   account: Account
@@ -18,38 +27,28 @@ export type StakeItemProps = {
   actions?: ReactNode
   status?: ReactNode
   readonly?: boolean
-  hideIdenticon?: boolean
 }
 
 export const IncreaseStakeChip = (props: Omit<ChipProps, 'children'>) => (
-  <Chip {...props} css={{ textTransform: 'capitalize' }}>
+  <SurfaceChip {...props} css={{ textTransform: 'capitalize' }}>
     <span css={{ '@media(max-width: 425px)': { display: 'none' } }}>Increase </span>stake
-  </Chip>
+  </SurfaceChip>
 )
 
-export const UnstakeChip = (props: Omit<ChipProps, 'children'>) => <Chip {...props}>Unstake</Chip>
+export const UnstakeChip = (props: Omit<ChipProps, 'children'>) => <SurfaceChip {...props}>Unstake</SurfaceChip>
 
-export const ClaimChip = ({ amount, ...props }: Omit<ChipProps, 'children'> & { amount: ReactNode }) => {
-  const theme = useTheme()
-  return (
-    <Chip
-      {...props}
-      containerColor={`color-mix(in srgb, ${theme.color.primary}, transparent 88%)`}
-      contentColor={theme.color.primary}
-    >
-      Claim {amount}
-    </Chip>
-  )
-}
+export const ClaimChip = ({ amount, ...props }: Omit<ChipProps, 'children'> & { amount: ReactNode }) => (
+  <TonalChip {...props}>Claim {amount}</TonalChip>
+)
 
 export const WithdrawChip = ({ amount, ...props }: Omit<ChipProps, 'children'> & { amount: ReactNode }) => (
-  <Chip {...props}>Withdraw {amount}</Chip>
+  <SurfaceChip {...props}>Withdraw {amount}</SurfaceChip>
 )
 
 export const FastUnstakeChip = (props: Omit<ChipProps, 'children'>) => (
-  <Chip {...props} leadingContent={<Rocket size="1em" />}>
+  <SurfaceChip {...props} leadingContent={<Rocket size="1em" />}>
     Fast unstake
-  </Chip>
+  </SurfaceChip>
 )
 
 export const UnstakingStatus = (props: {
@@ -93,7 +92,7 @@ const StakeItem = Object.assign(
     return (
       <article css={{ borderRadius: '0.8rem', overflow: 'hidden' }}>
         <ListItem
-          leadingContent={!props.hideIdenticon && <AccountIcon account={props.account} size="4rem" />}
+          leadingContent={<AccountIcon account={props.account} size="4rem" />}
           headlineText={props.account.name ?? shortenAddress(props.account.address)}
           supportingText={
             <Text.Body css={{ display: 'flex', alignItems: 'center', gap: '0.25em' }}>

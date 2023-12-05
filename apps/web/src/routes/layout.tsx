@@ -7,7 +7,9 @@ import { ModalProvider } from '@components'
 import AccountValueInfo from '@components/recipes/AccountValueInfo'
 import { useShouldShowAccountConnectionGuard } from '@components/widgets/AccountConnectionGuard'
 import AccountsManagementMenu from '@components/widgets/AccountsManagementMenu'
-import StakeDialog from '@components/widgets/staking/StakeDialog'
+import LidoStakeSideSheet from '@components/widgets/staking/lido/StakeSideSheet'
+import SlpxStakeSideSheet from '@components/widgets/staking/slpx/StakeSideSheet'
+import NominationPoolsStakeSideSheet from '@components/widgets/staking/substrate/NominationPoolsStakeSideSheet'
 import { selectedAccountsState } from '@domains/accounts/recoils'
 import { currencyConfig, selectedCurrencyState } from '@domains/balances'
 import { Compass, CreditCard, Eye, FileText, MoreHorizontal, RefreshCcw, Star, TalismanHand, Zap } from '@talismn/icons'
@@ -23,9 +25,10 @@ import {
   TopAppBar,
 } from '@talismn/ui'
 import { usePostHog } from 'posthog-js/react'
-import { useCallback, useEffect, useState } from 'react'
-import { Link, Outlet, useLocation, useMatches } from 'react-router-dom'
+import { useCallback, useEffect, useState, type PropsWithChildren } from 'react'
+import { Link, Outlet, useLocation } from 'react-router-dom'
 import { useRecoilState, useRecoilValue } from 'recoil'
+import { FloatingPortal } from '@floating-ui/react'
 
 const CurrencySelect = () => {
   const [currency, setCurrency] = useRecoilState(selectedCurrencyState)
@@ -47,33 +50,44 @@ const Header = () => {
   const shouldShowAccountConnectionGuard = useShouldShowAccountConnectionGuard()
   const accounts = useRecoilValue(selectedAccountsState)
 
-  const matches = useMatches()
-
   if (shouldShowAccountConnectionGuard) {
     return null
   }
 
-  if (matches.some(x => x.pathname.endsWith('staking'))) {
-    return null
-  }
-
   return (
-    <div
-      css={{
-        display: 'flex',
-        justifyContent: 'space-between',
-        flexWrap: 'wrap-reverse',
-        gap: '0.8rem',
-        [SCAFFOLD_WIDE_VIEW_MEDIA_SELECTOR]: { marginTop: '4rem' },
-      }}
-    >
-      <AccountsManagementMenu
-        button={<AccountValueInfo account={accounts.length === 1 ? accounts[0] : undefined} balance={<Total />} />}
-      />
-      <CurrencySelect />
+    <div css={{ marginBottom: '0.8rem' }}>
+      <div
+        css={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          flexWrap: 'wrap-reverse',
+          gap: '0.8rem',
+          marginBottom: '0.8rem',
+          [SCAFFOLD_WIDE_VIEW_MEDIA_SELECTOR]: { marginTop: '4rem' },
+        }}
+      >
+        <div id="page-title" />
+        <CurrencySelect />
+      </div>
+      <div css={{ display: 'flex', gap: '2.4rem', flexWrap: 'wrap' }}>
+        <AccountsManagementMenu
+          button={<AccountValueInfo account={accounts.length === 1 ? accounts[0] : undefined} balance={<Total />} />}
+        />
+        <div id="header-widget" />
+      </div>
     </div>
   )
 }
+
+export const TitlePortal = (props: PropsWithChildren) => (
+  <FloatingPortal id="page-title">
+    <Text.H2 css={{ marginBottom: 0 }}>{props.children}</Text.H2>
+  </FloatingPortal>
+)
+
+export const HeaderWidgetPortal = (props: PropsWithChildren) => (
+  <FloatingPortal id="header-widget">{props.children}</FloatingPortal>
+)
 
 const Layout = () => {
   const posthog = usePostHog()
@@ -288,7 +302,9 @@ const Layout = () => {
       <ModalProvider>
         <Header />
         <Outlet />
-        <StakeDialog />
+        <NominationPoolsStakeSideSheet />
+        <SlpxStakeSideSheet />
+        <LidoStakeSideSheet />
       </ModalProvider>
     </Scaffold>
   )

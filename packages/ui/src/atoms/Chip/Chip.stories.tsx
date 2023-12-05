@@ -1,7 +1,7 @@
 import { type ComponentMeta, type Story } from '@storybook/react'
 import { Union } from '@talismn/icons'
 
-import Chip, { type ChipProps } from './Chip'
+import Chip, { SurfaceChip, TonalChip, type ChipProps } from './Chip'
 
 export default {
   title: 'Atoms/Chip',
@@ -23,3 +23,7 @@ Assist.args = {
   leadingContent: <Union />,
   children: 'Talisman',
 }
+
+export const Tonal: Story<ChipProps> = args => <TonalChip {...args} />
+
+export const Surface: Story<ChipProps> = args => <SurfaceChip {...args} />

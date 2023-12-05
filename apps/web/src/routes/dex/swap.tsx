@@ -1,11 +1,9 @@
 import SectionHeader from '@components/molecules/SectionHeader'
 import SwapForm from '@components/widgets/dex/SwapForm'
-import { useTheme } from '@emotion/react'
-import { Chip, OrderedDetailsList, Details, Text } from '@talismn/ui'
+import { Chip, Details, OrderedDetailsList, Text } from '@talismn/ui'
 import { FaqLayout } from './layout'
 
 const Swap = () => {
-  const theme = useTheme()
   return (
     <FaqLayout
       content={<SwapForm />}
@@ -17,8 +15,6 @@ const Swap = () => {
                 About Cross-Chain Swaps{' '}
                 <Chip
                   size="lg"
-                  containerColor={theme.color.primaryContainer}
-                  contentColor={theme.color.onPrimaryContainer}
                   css={{
                     display: 'inline-block',
                     paddingInlineStart: '1.6rem',

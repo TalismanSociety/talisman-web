@@ -1,4 +1,5 @@
 import { AlertDialog, Button, Text, TextInput } from '@talismn/ui'
+import type { ReactNode } from 'react'
 
 export type UnstakeDialogProps = {
   open: boolean
@@ -7,15 +8,16 @@ export type UnstakeDialogProps = {
   confirmState?: 'pending' | 'disabled'
   availableAmount: string
   amount: string
-  isLeaving?: boolean
   fiatAmount: string
   newAmount: string
-  newFiatAmount: string
+  newFiatAmount: ReactNode
+  rate?: string
   onRequestMaxAmount: () => unknown
   onChangeAmount: (amount: string) => unknown
-  lockDuration: string
+  lockDuration?: ReactNode
   isError?: boolean
   inputSupportingText?: string
+  buttonText?: ReactNode
 }
 
 const UnstakeDialog = (props: UnstakeDialogProps) => (
@@ -53,14 +55,24 @@ const UnstakeDialog = (props: UnstakeDialogProps) => (
             <Text.Body as="div">{props.newFiatAmount}</Text.Body>
           </div>
         </div>
-        <div css={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '1.6rem' }}>
-          <Text.Body alpha="high">Unbonding period</Text.Body>
-          <div css={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
+        {props.rate && (
+          <div css={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '1.6rem' }}>
+            <Text.Body alpha="high">Rate</Text.Body>
             <Text.Body as="div" alpha="high">
-              {props.lockDuration}
+              {props.rate}
             </Text.Body>
           </div>
-        </div>
+        )}
+        {props.lockDuration && (
+          <div css={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '1.6rem' }}>
+            <Text.Body alpha="high">Unbonding period</Text.Body>
+            <div css={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
+              <Text.Body as="div" alpha="high">
+                {props.lockDuration}
+              </Text.Body>
+            </div>
+          </div>
+        )}
       </>
     }
     confirmButton={
@@ -69,11 +81,26 @@ const UnstakeDialog = (props: UnstakeDialogProps) => (
         disabled={props.confirmState === 'disabled'}
         loading={props.confirmState === 'pending'}
       >
-        {props.isLeaving ? 'Leave pool' : 'Unstake'}
+        {props.buttonText ?? 'Unstake'}
       </Button>
     }
     onRequestDismiss={props.onDismiss}
   />
+)
+
+type NominationPoolsUnstakeDialogProps = Omit<UnstakeDialogProps, 'rate'> & {
+  isLeaving?: boolean
+  lockDuration: string
+}
+
+export const NominationPoolsUnstakeDialog = (props: NominationPoolsUnstakeDialogProps) => (
+  <UnstakeDialog {...props} buttonText={props.isLeaving ? 'Leave pool' : undefined} />
+)
+
+type SlpxUnstakeDialogProps = UnstakeDialogProps & { approvalNeeded?: boolean }
+
+export const SlpxUnstakeDialog = (props: SlpxUnstakeDialogProps) => (
+  <UnstakeDialog {...props} buttonText={props.approvalNeeded ? 'Approve' : undefined} />
 )
 
 export default UnstakeDialog

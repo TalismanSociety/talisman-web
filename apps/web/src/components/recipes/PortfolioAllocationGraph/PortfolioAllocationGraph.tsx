@@ -1,5 +1,5 @@
 import { useTheme } from '@emotion/react'
-import { Chip, type ChipProps, Skeleton, Text } from '@talismn/ui'
+import { Skeleton, SurfaceChip, Text, type ChipProps, Surface } from '@talismn/ui'
 import { type ReactNode } from 'react'
 import { VictoryPie, VictoryTooltip } from 'victory'
 
@@ -19,9 +19,9 @@ const Legend = (props: Data) => (
   </span>
 )
 
-const AssetChip = (props: ChipProps) => <Chip {...props}>Asset</Chip>
+const AssetChip = (props: ChipProps) => <SurfaceChip {...props}>Asset</SurfaceChip>
 
-const StateChip = (props: ChipProps) => <Chip {...props}>State</Chip>
+const StateChip = (props: ChipProps) => <SurfaceChip {...props}>State</SurfaceChip>
 
 const PortfolioAllocationGraphSkeleton = () => (
   <Skeleton.Surface
@@ -72,14 +72,14 @@ const PortfolioAllocationGraph = Object.assign(
     const theme = useTheme()
 
     return (
-      <article
+      <Surface
+        as="article"
         css={{
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'flex-start',
           borderRadius: '2.4rem',
           padding: '2.4rem',
-          backgroundColor: theme.color.surface,
         }}
       >
         <div
@@ -131,7 +131,7 @@ const PortfolioAllocationGraph = Object.assign(
             data={props.data.map(x => ({ x: x.label, y: x.value, color: x.color }))}
           />
         </div>
-      </article>
+      </Surface>
     )
   },
   { AssetChip, StateChip, Skeleton: PortfolioAllocationGraphSkeleton }
