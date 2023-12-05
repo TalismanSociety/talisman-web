@@ -178,12 +178,12 @@ const StakeProvider = Object.assign(
 )
 
 export const StakeProviderList = (props: PropsWithChildren<{ className?: string }>) => (
-  <section css={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }} {...props}>
+  <section {...props}>
     <div css={{ containerType: 'inline-size' }}>
       <header
         css={{
           'display': 'none',
-          'marginBottom': '0.2rem',
+          'marginBottom': '1.2rem',
           '@container (min-width: 100rem)': { display: 'revert' },
         }}
       >
@@ -198,7 +198,7 @@ export const StakeProviderList = (props: PropsWithChildren<{ className?: string 
         </Grid>
       </header>
     </div>
-    {props.children}
+    <div css={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>{props.children}</div>
   </section>
 )
 
