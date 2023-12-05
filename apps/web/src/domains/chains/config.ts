@@ -94,6 +94,7 @@ export const chains = [
   },
   {
     id: 'vara',
+    name: 'Vara',
     genesisHash: '0xfe1b4c55fd4d668101126434206571a7838a8b6b93a6d1b95d607e78e6c53763',
     isTestnet: false,
     rpc: 'wss://rpc.vara-network.io',
