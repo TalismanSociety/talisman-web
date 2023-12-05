@@ -100,7 +100,7 @@ export const chains = [
     },
     subscanUrl: 'https://vara.subscan.io/',
     parameters: defaultParams,
-    priorityPool: 1,
+    priorityPool: 8,
   },
   {
     id: 'westend-testnet',
