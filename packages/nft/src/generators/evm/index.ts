@@ -106,7 +106,7 @@ export const createEvmNftAsyncGenerator: CreateNftAsyncGenerator<Nft<'erc721', s
                     ? undefined
                     : Object.fromEntries(metadata.attributes?.map(x => [x.trait_type, x.value])),
                   externalLinks:
-                    'etherscan' in config.chain.blockExplorers
+                    config.chain.blockExplorers?.etherscan !== undefined
                       ? [
                           {
                             name: config.chain.blockExplorers.etherscan.name,
