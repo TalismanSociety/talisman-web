@@ -163,8 +163,10 @@ const StakePosition = Object.assign(
             <div css={{ gridArea: 'account', display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
               <AccountIcon account={props.account} size="3.5rem" />
               <div css={{ overflow: 'hidden' }}>
-                <Text.Body alpha="high">{props.account.name ?? shortenAddress(props.account.address)}</Text.Body>
-                <div css={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                <Text.Body alpha="high" css={{ paddingRight: '1.6rem' }}>
+                  {props.account.name ?? shortenAddress(props.account.address)}
+                </Text.Body>
+                <div css={{ display: 'flex', alignItems: 'center', gap: '0.4rem', paddingRight: '1.6rem' }}>
                   <StakeStatusIndicator status={props.stakeStatus} />
                   <Tooltip content={props.provider}>
                     <Text.BodySmall
@@ -256,12 +258,12 @@ const StakePosition = Object.assign(
 )
 
 export const StakePositionList = (props: PropsWithChildren<{ className?: string }>) => (
-  <section css={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }} {...props}>
+  <section {...props}>
     <div css={{ containerType: 'inline-size' }}>
       <header
         css={{
           'display': 'none',
-          'marginBottom': '0.2rem',
+          'marginBottom': '1.2rem',
           '@container (min-width: 100rem)': { display: 'revert' },
         }}
       >
@@ -272,7 +274,7 @@ export const StakePositionList = (props: PropsWithChildren<{ className?: string 
         </Grid>
       </header>
     </div>
-    {props.children}
+    <div css={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>{props.children}</div>
   </section>
 )
 
