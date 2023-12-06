@@ -1,3 +1,4 @@
+import { toast } from '@talismn/ui'
 import { tryParseSubstrateOrEthereumAddress } from '@util/addressValidation'
 import { isNilOrWhitespace } from '@util/nil'
 import { useCallback, useMemo, useState } from 'react'
@@ -15,6 +16,7 @@ export const useSetReadonlyAccounts = () => {
           ...accounts.filter(x => x.address !== account.address),
           { ...account, name: isNilOrWhitespace(account.name) ? undefined : account.name },
         ])
+        toast.success('Watched account added successfully')
       },
       [setReadonlyAccounts]
     ),
