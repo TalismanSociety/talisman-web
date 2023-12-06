@@ -316,7 +316,9 @@ const TransportForm = () => {
             setFromChain(toChain)
             setToChain(fromChain)
           }}
-          tokenSelector={<TokenSelectorButton tokens={tokens} selectedToken={token} onChangeToken={onChangeToken} />}
+          tokenSelector={
+            <TokenSelectorButton account={sender} tokens={tokens} selectedToken={token} onChangeToken={onChangeToken} />
+          }
           amount={amount}
           onChangeAmount={setAmount}
           originFee={Maybe.of(parsedInputConfigLoadable?.valueMaybe()).mapOrUndefined(

@@ -1,5 +1,6 @@
 import Cryptoticon from '@components/recipes/Cryptoticon/Cryptoticon'
 import TokenSelectorDialog from '@components/recipes/TokenSelectorDialog'
+import type { Account } from '@domains/accounts'
 import { selectedBalancesState, selectedCurrencyState } from '@domains/balances'
 import type { IToken } from '@talismn/chaindata-provider'
 import { Decimal } from '@talismn/math'
@@ -8,6 +9,7 @@ import { useMemo, useState } from 'react'
 import { useRecoilValue, waitForAll } from 'recoil'
 
 export type TokenSelectorProps<T extends IToken | string> = {
+  account?: Account
   tokens: T[]
   selectedToken: T | undefined
   onChangeToken: (token: T) => unknown
@@ -17,10 +19,15 @@ const TokenSelectorButton = <T extends IToken | string>(props: TokenSelectorProp
   const [tokenSelectorDialogOpen, setTokenSelectorDialogOpen] = useState(false)
   const [balances, currency] = useRecoilValue(waitForAll([selectedBalancesState, selectedCurrencyState]))
 
+  const filteredBalances = useMemo(
+    () => (props.account === undefined ? balances : balances.find({ address: props.account.address })),
+    [balances, props.account]
+  )
+
   const tokensWithBalance = useMemo(
     () =>
       props.tokens.map(x => {
-        const balance = balances.find(
+        const balance = filteredBalances.find(
           typeof x === 'string' ? y => y.token?.symbol.toLowerCase() === x.toLowerCase() : { id: x.id }
         )
         const free = Decimal.fromPlanck(balance.sum.planck.free, balance.each.at(0)?.decimals ?? 9)
@@ -35,15 +42,16 @@ const TokenSelectorButton = <T extends IToken | string>(props: TokenSelectorProp
           freeFiat: balance.sum.fiat(currency).free,
         }
       }),
-    [balances, currency, props.tokens]
+    [filteredBalances, currency, props.tokens]
   )
   const selectedToken = useMemo<{ symbol: string; logo?: string }>(
     () =>
       typeof props.selectedToken === 'string'
-        ? balances.find(x => x.token?.symbol.toLowerCase() === props.selectedToken?.toString().toLowerCase()).each.at(0)
-            ?.token ?? { symbol: props.selectedToken, logo: undefined }
+        ? filteredBalances
+            .find(x => x.token?.symbol.toLowerCase() === props.selectedToken?.toString().toLowerCase())
+            .each.at(0)?.token ?? { symbol: props.selectedToken, logo: undefined }
         : (props.selectedToken as IToken),
-    [balances, props.selectedToken]
+    [filteredBalances, props.selectedToken]
   )
 
   return (
