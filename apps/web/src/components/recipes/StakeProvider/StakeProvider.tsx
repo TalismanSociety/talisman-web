@@ -45,7 +45,7 @@ const StakePercentage = (props: StakePercentageProps) => (
         props.percentage.toLocaleString(undefined, { style: 'percent' })
       )}
     </Text.BodySmall>
-    <LinearProgressIndicator value={props.loading ? 0 : props.percentage} />
+    <LinearProgressIndicator value={props.loading ? 0 : props.percentage} least={0.25} optimum={0.5} />
   </>
 )
 
