@@ -68,7 +68,7 @@
     "threads": "^1.7.0",
     "uuid": "^9.0.0",
     "victory": "^36.6.8",
-    "wagmi": "^1.4.7"
+    "wagmi": "^1.4.8"
   },
   "devDependencies": {
     "@acala-network/types": "^5.1.1",

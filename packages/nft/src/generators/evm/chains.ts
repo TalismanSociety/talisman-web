@@ -1,12 +1,11 @@
-import { type Chain } from 'viem'
-import { moonbeam, moonriver, polygon } from 'viem/chains'
+import { astar, moonbeam, moonriver, polygon, type Chain } from 'viem/chains'
 
 type NftChain = {
   chain: Chain
   erc721ContractAddress: Record<string, `0x${string}`>
 }
 
-export default [
+const chains: NftChain[] = [
   {
     chain: moonriver,
     erc721ContractAddress: {
@@ -48,27 +47,7 @@ export default [
     },
   },
   {
-    chain: {
-      id: 592,
-      name: 'Astar',
-      network: 'astar',
-      nativeCurrency: {
-        decimals: 18,
-        name: 'Astar',
-        symbol: 'ASTR',
-      },
-      rpcUrls: {
-        public: { http: ['https://astar.api.onfinality.io/public', 'https://astar-rpc.dwellir.com'] },
-        default: { http: ['https://astar.api.onfinality.io/public', 'https://astar-rpc.dwellir.com'] },
-      },
-      blockExplorers: {
-        blockscout: { name: 'BlockScout', url: 'https://blockscout.com/astar/' },
-        default: { name: 'BlockScout', url: 'https://blockscout.com/astar/' },
-      },
-      contracts: {
-        multicall3: { address: '0xcA11bde05977b3631167028862bE2a173976CA11', blockCreated: 761794 },
-      },
-    },
+    chain: astar,
     erc721ContractAddress: {
       astarGhost: '0xb4bd85893d6f66869d7766ace1b1eb4d867d963e',
       astarPunks: '0x1b57C69838cDbC59c8236DDa73287a4780B4831F',
@@ -78,4 +57,6 @@ export default [
       astarSignWitch: '0x7b2152E51130439374672AF463b735a59a47ea85',
     },
   },
-] as const satisfies readonly NftChain[]
+]
+
+export default chains
