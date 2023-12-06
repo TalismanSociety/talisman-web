@@ -84,7 +84,14 @@ const TransportForm = Object.assign(
           onChange={event => props.onChangeAmount(event.target.value)}
           leadingIcon={props.tokenSelector}
           hasSupportingText
-          trailingSupportingText={props.transferableAmount && <>Transferable: {props.transferableAmount}</>}
+          trailingSupportingText={
+            props.transferableAmount && (
+              <>
+                <Text.BodySmall alpha="disabled">Balance:</Text.BodySmall>{' '}
+                <Text.BodySmall alpha="medium">{props.transferableAmount}</Text.BodySmall>
+              </>
+            )
+          }
           leadingSupportingText={props.inputError && <TextInput.ErrorLabel>{props.inputError}</TextInput.ErrorLabel>}
           trailingIcon={<TextInput.LabelButton onClick={props.onRequestMaxAmount}>MAX</TextInput.LabelButton>}
           css={{ fontSize: '3rem', textAlign: 'end' }}
