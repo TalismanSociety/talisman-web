@@ -183,10 +183,10 @@ const StakePosition = Object.assign(
                         props.provider
                       ) : (
                         <>
-                          <div css={{ 'display': 'none', '@container (min-width: 40rem)': { display: 'revert' } }}>
+                          <div css={{ 'display': 'none', '@container (min-width: 40rem)': { display: 'contents' } }}>
                             {props.provider}
                           </div>
-                          <div css={{ '@container (min-width: 40rem)': { display: 'none' } }}>
+                          <div css={{ 'display': 'contents', '@container (min-width: 40rem)': { display: 'none' } }}>
                             {props.shortProvider}
                           </div>
                         </>
