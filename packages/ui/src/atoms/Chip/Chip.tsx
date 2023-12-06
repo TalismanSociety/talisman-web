@@ -33,6 +33,8 @@ const Chip = ({ size = 'md', containerColor, contentColor, leadingContent, loadi
 
   const functionallyDisabled = Boolean(props.disabled) || Boolean(loading)
 
+  const hasLeadingContent = Boolean(loading) || Boolean(leadingContent)
+
   return (
     <Container
       as="button"
@@ -61,6 +63,9 @@ const Chip = ({ size = 'md', containerColor, contentColor, leadingContent, loadi
           'opacity': theme.contentAlpha.disabled,
           'cursor': 'not-allowed',
           ':hover': { opacity: theme.contentAlpha.disabled },
+        },
+        hasLeadingContent && {
+          paddingLeft: '0.7em',
         },
       ]}
     >

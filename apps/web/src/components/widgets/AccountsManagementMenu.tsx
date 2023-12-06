@@ -8,7 +8,7 @@ import {
 import { fiatBalancesState, totalPortfolioFiatBalance } from '@domains/balances'
 import { copyAddressToClipboard } from '@domains/common/utils'
 import { useTheme } from '@emotion/react'
-import { Copy, Eye, EyePlus, TalismanHand, Trash2, Users, X } from '@talismn/icons'
+import { Copy, Ethereum, Eye, EyePlus, TalismanHand, Trash2, Users, X } from '@talismn/icons'
 import {
   CircularProgressIndicator,
   Hr,
@@ -34,19 +34,10 @@ const EvmChip = () => {
   return (
     <Tooltip content="This is the active account from your EVM wallet">
       <Chip
+        leadingContent={<Ethereum />}
         containerColor="linear-gradient(98deg, rgba(178, 190, 255, 0.30) -17.17%, rgba(86, 103, 233, 0.30) 141.82%)"
         contentColor={theme.color.onSurface}
       >
-        <svg width="8" height="12" viewBox="0 0 8 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <g id="Group">
-            <path id="Vector" d="M0 6.15563L3.59813 8.37938L7.19626 6.15563L3.59813 0L0 6.15563Z" fill="#FAFAFA" />
-            <path
-              id="Vector_2"
-              d="M0 6.85303L3.59813 9.09365L7.19626 6.85303L3.59813 11.9999L0 6.85303Z"
-              fill="#FAFAFA"
-            />
-          </g>
-        </svg>{' '}
         EVM
       </Chip>
     </Tooltip>

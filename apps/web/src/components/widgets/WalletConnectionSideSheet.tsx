@@ -7,7 +7,7 @@ import {
   useSubstrateWalletConnect,
 } from '@domains/extension'
 import { ClassNames, useTheme } from '@emotion/react'
-import { Eye, Wallet } from '@talismn/icons'
+import { Ethereum, Eye, Polkadot, Wallet } from '@talismn/icons'
 import { Chip, Hr, ListItem, SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR, SideSheet, Surface, Text } from '@talismn/ui'
 import { Suspense, useEffect, useState, type ButtonHTMLAttributes, type DetailedHTMLProps } from 'react'
 import { atom, useRecoilState } from 'recoil'
@@ -131,7 +131,9 @@ const SubstrateWalletConnection = () => {
 
   return (
     <section>
-      <Text.H4 css={{ marginBottom: '1.6rem' }}>Substrate wallets</Text.H4>
+      <Text.H4 css={{ marginBottom: '1.6rem' }}>
+        <Polkadot size="1.6rem" css={{ marginRight: '1.2rem' }} /> Substrate wallets
+      </Text.H4>
       <div css={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
         <InstallTalisman />
         {wallets.map((x, index) => (
@@ -168,7 +170,9 @@ const EvmWalletConnections = () => {
 
   return (
     <section>
-      <Text.H4 css={{ marginBottom: '1.6rem' }}>Ethereum wallets</Text.H4>
+      <Text.H4 css={{ marginBottom: '1.6rem' }}>
+        <Ethereum size="1.6rem" css={{ marginRight: '1.2rem' }} /> Ethereum wallets
+      </Text.H4>
       <div css={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
         <InstallTalisman />
         {providers.map(x => (
