@@ -59,6 +59,7 @@
     "react-dom": "^18.2.0",
     "react-i18next": "^11.18.6",
     "react-infinite-scroller": "^1.2.6",
+    "react-object-view": "^0.3.4",
     "react-router-dom": "^6.12.0",
     "react-use": "^17.4.0",
     "react-winbox": "^1.5.0",

@@ -18,9 +18,6 @@
     "storybook": "yarn turbo run storybook",
     "build-storybook": "yarn turbo run storybook"
   },
-  "dependencies": {
-    "react-object-view": "^0.3.4"
-  },
   "devDependencies": {
     "@commitlint/cli": "^17.4.2",
     "@commitlint/config-conventional": "^17.4.2",
