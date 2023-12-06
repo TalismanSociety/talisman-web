@@ -23,6 +23,7 @@ export type StakePositionProps = {
   readonly?: boolean
   account: Account
   provider: ReactNode
+  shortProvider?: ReactNode
   stakeStatus: StakeStatus
   symbol: ReactNode
   chain: ReactNode
@@ -178,7 +179,18 @@ const StakePosition = Object.assign(
                         },
                       }}
                     >
-                      {props.provider}
+                      {props.shortProvider === undefined ? (
+                        props.provider
+                      ) : (
+                        <>
+                          <div css={{ 'display': 'none', '@container (min-width: 40rem)': { display: 'revert' } }}>
+                            {props.provider}
+                          </div>
+                          <div css={{ '@container (min-width: 40rem)': { display: 'none' } }}>
+                            {props.shortProvider}
+                          </div>
+                        </>
+                      )}
                     </Text.BodySmall>
                   </Tooltip>
                 </div>
