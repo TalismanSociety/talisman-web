@@ -59,30 +59,48 @@ export const toastExtrinsic = (
           )}
         </>
       ),
-      error: error => (
-        <>
-          <Text.Body as="div" alpha="high">
-            Your transaction failed
+      error: error => {
+        const rawErrorMsg = (error as RpcError)?.data ?? (error as Error)?.message
+        const errorMsg = rawErrorMsg.startsWith('Inability to pay some fees') ? (
+          <Text.Body>
+            Unable to pay some fees (e.g. low account balance
+            <br />
+            or approaching polkadot existential deposit limit, read{' '}
+            <Text.Noop.A
+              href="https://docs.talisman.xyz/talisman/navigating-the-paraverse/substrate-features/existential-deposit"
+              target="_blank"
+            >
+              more
+            </Text.Noop.A>
+            )
           </Text.Body>
-          {/* Can't do instanceof RpcError for some reason */}
-          {('data' in error || 'message' in error) && (
-            <Text.Body as="div">{(error as RpcError)?.data ?? (error as Error)?.message}</Text.Body>
-          )}
-          {subscanUrl && error?.txHash !== undefined && (
-            <Text.Body as="div">
-              View details on{' '}
-              <Text.Body
-                as="a"
-                alpha="high"
-                href={subscanUrl + 'extrinsic/' + ((error?.txHash?.toString() as string | undefined) ?? '')}
-                target="_blank"
-              >
-                Subscan <ExternalLink size="1.2rem" />
-              </Text.Body>
+        ) : (
+          rawErrorMsg
+        )
+
+        return (
+          <>
+            <Text.Body as="div" alpha="high">
+              Your transaction failed
             </Text.Body>
-          )}
-        </>
-      ),
+            {/* Can't do instanceof RpcError for some reason */}
+            {('data' in error || 'message' in error) && <Text.Body as="div">{errorMsg}</Text.Body>}
+            {subscanUrl && error?.txHash !== undefined && (
+              <Text.Body as="div">
+                View details on{' '}
+                <Text.Body
+                  as="a"
+                  alpha="high"
+                  href={subscanUrl + 'extrinsic/' + ((error?.txHash?.toString() as string | undefined) ?? '')}
+                  target="_blank"
+                >
+                  Subscan <ExternalLink size="1.2rem" />
+                </Text.Body>
+              </Text.Body>
+            )}
+          </>
+        )
+      },
     },
     {
       success: { duration: 6000 },
