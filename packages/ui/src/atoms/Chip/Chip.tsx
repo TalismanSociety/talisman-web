@@ -1,15 +1,17 @@
 import { useTheme } from '@emotion/react'
 import { IconContext } from '@talismn/icons/utils'
-import { type ButtonHTMLAttributes, type DetailedHTMLProps, type ReactNode, useMemo } from 'react'
+import { useMemo, type ButtonHTMLAttributes, type DetailedHTMLProps, type ReactNode } from 'react'
 
+import { useSurfaceColor } from '..'
+import type { ContentAlpha } from '../..'
 import CircularProgressIndicator from '../CircularProgressIndicator'
 import Text from '../Text'
-import { useSurfaceColor } from '..'
 
 export type ChipProps = DetailedHTMLProps<ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement> & {
   size?: 'sm' | 'md' | 'lg'
   containerColor?: string
   contentColor?: string
+  contentAlpha?: ContentAlpha
   leadingContent?: ReactNode
   loading?: boolean
 }
@@ -39,7 +41,7 @@ const Chip = ({ size = 'md', containerColor, contentColor, leadingContent, loadi
     <Container
       as="button"
       color={contentColor}
-      alpha="high"
+      alpha={props.contentAlpha}
       {...props}
       disabled={functionallyDisabled}
       css={[

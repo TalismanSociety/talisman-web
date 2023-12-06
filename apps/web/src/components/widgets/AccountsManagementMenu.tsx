@@ -10,6 +10,7 @@ import { copyAddressToClipboard } from '@domains/common/utils'
 import { useTheme } from '@emotion/react'
 import { Copy, Ethereum, Eye, EyePlus, TalismanHand, Trash2, Users, X } from '@talismn/icons'
 import {
+  Chip,
   CircularProgressIndicator,
   Hr,
   IconButton,
@@ -19,7 +20,6 @@ import {
   Tooltip,
   useSurfaceColor,
   type IconButtonProps,
-  Chip,
 } from '@talismn/ui'
 import { shortenAddress } from '@util/format'
 import { Maybe } from '@util/monads'
@@ -37,6 +37,7 @@ const EvmChip = () => {
         leadingContent={<Ethereum />}
         containerColor="linear-gradient(98deg, rgba(178, 190, 255, 0.30) -17.17%, rgba(86, 103, 233, 0.30) 141.82%)"
         contentColor={theme.color.onSurface}
+        contentAlpha="high"
       >
         EVM
       </Chip>
