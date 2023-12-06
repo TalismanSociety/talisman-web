@@ -236,11 +236,11 @@ const TransportForm = () => {
       return
     }
 
-    if (decimalAmount.planck.gte(parsedInputConfigLoadable.contents.maxInput.planck)) {
+    if (decimalAmount.planck.gt(parsedInputConfigLoadable.contents.maxInput.planck)) {
       return `Insufficient balance`
     }
 
-    if (decimalAmount.planck.lte(parsedInputConfigLoadable.contents.minInput.planck)) {
+    if (decimalAmount.planck.lt(parsedInputConfigLoadable.contents.minInput.planck)) {
       return `Minimum ${parsedInputConfigLoadable.contents.minInput.toHuman()}`
     }
 
@@ -319,6 +319,7 @@ const TransportForm = () => {
           tokenSelector={<TokenSelectorButton tokens={tokens} selectedToken={token} onChangeToken={onChangeToken} />}
           amount={amount}
           onChangeAmount={setAmount}
+          onRequestMaxAmount={() => setAmount(parsedInputConfigLoadable?.valueMaybe()?.maxInput.toString() ?? '')}
           originFee={Maybe.of(parsedInputConfigLoadable?.valueMaybe()).mapOrUndefined(
             fee => `~${fee.estimateFee.toHuman()}`
           )}

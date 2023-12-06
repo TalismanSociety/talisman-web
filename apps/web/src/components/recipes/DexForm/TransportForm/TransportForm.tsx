@@ -1,16 +1,7 @@
 import Cryptoticon from '@components/recipes/Cryptoticon'
 import { useTheme } from '@emotion/react'
 import { ArrowDown, Repeat } from '@talismn/icons'
-import {
-  Button,
-  ContainedTextInput,
-  IconButton,
-  Select,
-  TextInput,
-  type ButtonProps,
-  CircularProgressIndicator,
-  Text,
-} from '@talismn/ui'
+import { Button, CircularProgressIndicator, IconButton, Select, Text, TextInput, type ButtonProps } from '@talismn/ui'
 import { LayoutGroup, motion } from 'framer-motion'
 import { useId, useState, type ReactNode } from 'react'
 
@@ -30,6 +21,7 @@ export type TransportFormProps = {
   transferableAmount?: ReactNode
   amount: string
   onChangeAmount: (amount: string) => unknown
+  onRequestMaxAmount: () => unknown
   originFee?: ReactNode
   destinationFee?: ReactNode
   inputError?: string
@@ -83,7 +75,7 @@ const TransportForm = Object.assign(
         }}
       >
         {props.accountSelector}
-        <ContainedTextInput
+        <TextInput
           width="100%"
           type="number"
           inputMode="decimal"
@@ -94,7 +86,8 @@ const TransportForm = Object.assign(
           hasSupportingText
           trailingSupportingText={props.transferableAmount && <>Transferable: {props.transferableAmount}</>}
           leadingSupportingText={props.inputError && <TextInput.ErrorLabel>{props.inputError}</TextInput.ErrorLabel>}
-          css={{ fontSize: '3rem' }}
+          trailingIcon={<TextInput.LabelButton onClick={props.onRequestMaxAmount}>MAX</TextInput.LabelButton>}
+          css={{ fontSize: '3rem', textAlign: 'end' }}
         />
         <div
           css={[

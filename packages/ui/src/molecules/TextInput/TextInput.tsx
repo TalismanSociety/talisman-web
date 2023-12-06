@@ -5,8 +5,10 @@ import { Text, Surface } from '../../atoms'
 export type TextInputProps = React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement> & {
   type?: 'text' | 'number'
   leadingLabel?: ReactNode
+  leadingIcon?: ReactNode
   trailingLabel?: ReactNode
   trailingIcon?: ReactNode
+  hasSupportingText?: boolean
   trailingSupportingText?: ReactNode
   leadingSupportingText?: ReactNode
   containerClassName?: string
@@ -17,8 +19,10 @@ export type TextInputProps = React.DetailedHTMLProps<React.InputHTMLAttributes<H
 const TextInput = Object.assign(
   ({
     leadingLabel,
+    leadingIcon,
     trailingLabel,
     trailingIcon,
+    hasSupportingText,
     trailingSupportingText,
     leadingSupportingText,
     containerClassName,
@@ -55,6 +59,7 @@ const TextInput = Object.assign(
             borderRadius: '1.25rem',
           }}
         >
+          {leadingIcon}
           <Text.Body
             {...props}
             as="input"
@@ -73,7 +78,7 @@ const TextInput = Object.assign(
           />
           {trailingIcon}
         </Surface>
-        {(leadingSupportingText || trailingSupportingText) && (
+        {(hasSupportingText || leadingSupportingText || trailingSupportingText) && (
           <div
             css={{
               'display': 'flex',
