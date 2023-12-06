@@ -32,7 +32,7 @@ const AccountSelector = (props: AccountSelectorProps) => {
         href="https://talisman.xyz/download"
         target="_blank"
         trailingIcon={<Download />}
-        css={{ width: 'auto' }}
+        css={{ width: '100%' }}
       >
         Install wallet
       </Button>
@@ -41,7 +41,7 @@ const AccountSelector = (props: AccountSelectorProps) => {
 
   if (!allowExtensionConnection) {
     return (
-      <Button onClick={() => setAllowExtensionConnection(true)} css={{ width: 'auto' }}>
+      <Button onClick={() => setAllowExtensionConnection(true)} css={{ width: '100%' }}>
         Connect wallet
       </Button>
     )
