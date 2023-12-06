@@ -53,6 +53,8 @@ export const useWagmiContractWrite = <
             functionName: config.functionName,
             // @ts-expect-error
             args: config.args,
+            // @ts-expect-error
+            value: config.value,
           })
           const url = new URL('/tx/' + result.hash, etherscanUrl)
           return (
