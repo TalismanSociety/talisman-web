@@ -21,6 +21,9 @@ import { RecoilLoadable, constSelector, useRecoilValue, useRecoilValueLoadable, 
 import { Observable } from 'rxjs'
 import { useAccountSelector } from '../AccountSelector'
 import TokenSelectorButton from '../TokenSelectorButton'
+import { tokenPriceState } from '@domains/chains'
+import { useTokens as useBalancesLibTokens } from '@talismn/balances-react'
+import AnimatedFiatNumber from '../AnimatedFiatNumber'
 
 const TransportForm = () => {
   const bridge = useRecoilValue(bridgeState)
@@ -29,7 +32,18 @@ const TransportForm = () => {
 
   const [fromChain, setFromChain] = useState<Chain>()
   const [toChain, setToChain] = useState<Chain>()
+
+  const balancesLibTokens = useBalancesLibTokens()
   const [token, setToken] = useState<string>()
+  const tokenConfig = useMemo(
+    () => Object.values(balancesLibTokens).find(x => x.symbol.toLowerCase() === token?.toLowerCase()),
+    [balancesLibTokens, token]
+  )
+  const tokenPriceLoadable = useRecoilValueLoadable(
+    tokenConfig?.coingeckoId === undefined
+      ? constSelector(undefined)
+      : tokenPriceState({ coingeckoId: tokenConfig?.coingeckoId })
+  )
 
   const fromEvm = useMemo(() => fromChain?.id === 'moonbeam' || fromChain?.id === 'moonriver', [fromChain?.id])
   const toEvm = useMemo(() => toChain?.id === 'moonbeam' || toChain?.id === 'moonriver', [toChain?.id])
@@ -201,10 +215,17 @@ const TransportForm = () => {
     () => Maybe.of(token).mapOrUndefined(x => adapterLoadable.valueMaybe()?.getToken(x)),
     [adapterLoadable, token]
   )
+
   const decimalAmount = useMemo(
     () => Maybe.of(tokenInfo).mapOrUndefined(token => Decimal.fromUserInput(amount, token.decimals)),
     [amount, tokenInfo]
   )
+
+  const fiatAmount = useMemo(() => {
+    const price = tokenPriceLoadable.valueMaybe()
+
+    return price === undefined || decimalAmount === undefined ? undefined : price * decimalAmount.toNumber()
+  }, [decimalAmount, tokenPriceLoadable])
 
   const fixedPointNumberToDecimal = (fn: FixedPointNumber, symbol?: string) =>
     Decimal.fromPlanck(fn._getInner().integerValue().toString(), fn.getPrecision(), symbol)
@@ -236,11 +257,11 @@ const TransportForm = () => {
       return
     }
 
-    if (decimalAmount.planck.gte(parsedInputConfigLoadable.contents.maxInput.planck)) {
+    if (decimalAmount.planck.gt(parsedInputConfigLoadable.contents.maxInput.planck)) {
       return `Insufficient balance`
     }
 
-    if (decimalAmount.planck.lte(parsedInputConfigLoadable.contents.minInput.planck)) {
+    if (decimalAmount.planck.lt(parsedInputConfigLoadable.contents.minInput.planck)) {
       return `Minimum ${parsedInputConfigLoadable.contents.minInput.toHuman()}`
     }
 
@@ -294,6 +315,7 @@ const TransportForm = () => {
               parsedInputConfigLoadable?.contents?.maxInput.toHuman()
             ) : undefined
           }
+          transferableFiatAmount={fiatAmount !== undefined && <AnimatedFiatNumber end={fiatAmount} />}
           fromChains={originChains.map(x => ({ name: x.id, logoSrc: x.icon }))}
           selectedFromChainInitializing={adapterLoadable.state === 'loading'}
           selectedFromChainIndex={useMemo(
@@ -321,6 +343,7 @@ const TransportForm = () => {
           }
           amount={amount}
           onChangeAmount={setAmount}
+          onRequestMaxAmount={() => setAmount(parsedInputConfigLoadable?.valueMaybe()?.maxInput.toString() ?? '')}
           originFee={Maybe.of(parsedInputConfigLoadable?.valueMaybe()).mapOrUndefined(
             fee => `~${fee.estimateFee.toHuman()}`
           )}

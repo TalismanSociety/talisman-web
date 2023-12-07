@@ -37,7 +37,7 @@ const AddStakeForm = (props: AddStakeFormProps) => (
       trailingLabel={props.availableToStake}
       leadingSupportingText={props.fiatAmount}
       trailingSupportingText={props.inputSupportingText}
-      trailingIcon={<TextInput.LabelButton onClick={props.onRequestMaxAmount}>MAX</TextInput.LabelButton>}
+      trailingIcon={<TextInput.LabelButton onClick={props.onRequestMaxAmount}>Max</TextInput.LabelButton>}
       value={props.amount}
       onChange={event => props.onChangeAmount(event.target.value)}
       css={{ fontSize: '3rem' }}

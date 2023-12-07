@@ -1,18 +1,17 @@
 import { useTheme, type Theme } from '@emotion/react'
 import type React from 'react'
-
-export type TextAlpha = 'disabled' | 'medium' | 'high'
+import { type ContentAlpha } from '../..'
 
 type PolymorphicTextProps<T extends React.ElementType> = {
   as?: T
   color?: string | ((theme: Theme) => string)
-  alpha?: TextAlpha | ((props: { hover: boolean }) => TextAlpha)
+  alpha?: ContentAlpha | ((props: { hover: boolean }) => ContentAlpha)
 }
 
 export type TextProps<T extends React.ElementType> = PolymorphicTextProps<T> &
   Omit<React.ComponentPropsWithoutRef<T>, keyof PolymorphicTextProps<T>>
 
-const useAlpha = (color: string | ((theme: Theme) => string), alpha: TextAlpha) => {
+const useAlpha = (color: string | ((theme: Theme) => string), alpha: ContentAlpha) => {
   const theme = useTheme()
 
   const parsedColor = typeof color === 'string' ? color : color(theme)
