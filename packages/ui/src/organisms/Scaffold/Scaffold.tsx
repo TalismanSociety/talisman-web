@@ -2,6 +2,7 @@ import { css } from '@emotion/react'
 import { type PropsWithChildren, type ReactNode } from 'react'
 import { Toaster } from '..'
 import { useMediaQuery } from '../../utils'
+import { createPortal } from '../../utils/portal'
 
 type Breakpoint = 'narrow' | 'wide' | undefined
 
@@ -11,6 +12,7 @@ export type ScaffoldProps = PropsWithChildren<{
   sideBar?: ReactNode
   drawer?: ReactNode
   footer?: ReactNode
+  floatingActionButton?: ReactNode
   breakpoints?: {
     topBar?: Breakpoint
     bottomBar?: Breakpoint
@@ -29,6 +31,8 @@ const breakpointToCss = (breakpoint: Breakpoint) =>
       display: breakpoint === 'wide' ? 'revert' : breakpoint === 'narrow' ? 'none' : undefined,
     },
   })
+
+const [FabPortalProvider, FabPortal, FabPortalElement] = createPortal()
 
 const Scaffold = (props: ScaffoldProps) => (
   <div
@@ -77,11 +81,30 @@ const Scaffold = (props: ScaffoldProps) => (
     <main
       css={{
         gridArea: 'main',
+        position: 'relative',
         padding: '2.4rem 2.4rem 10rem 2.4rem',
         [SCAFFOLD_WIDE_VIEW_MEDIA_SELECTOR]: { paddingBottom: 0, paddingLeft: 0 },
       }}
     >
-      {props.children}
+      <FabPortalProvider>
+        {props.children}
+        <div
+          css={{
+            'position': 'sticky',
+            // Take into account fixed bottom bar
+            'bottom': 'calc(2.4rem + 8rem)',
+            'width': 'max-content',
+            'marginLeft': 'auto',
+            [SCAFFOLD_WIDE_VIEW_MEDIA_SELECTOR]: {
+              bottom: '2.4rem',
+            },
+            ':empty': { display: 'none' },
+          }}
+        >
+          {/* eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing */}
+          {props.floatingActionButton || <FabPortalElement />}
+        </div>
+      </FabPortalProvider>
     </main>
     <div css={[{ position: 'fixed', right: 0, bottom: 0, left: 0 }, breakpointToCss(props.breakpoints?.bottomBar)]}>
       {props.bottomBar}
@@ -104,5 +127,7 @@ const Scaffold = (props: ScaffoldProps) => (
     />
   </div>
 )
+
+export const FloatingActionButtonPortal = FabPortal
 
 export default Scaffold
