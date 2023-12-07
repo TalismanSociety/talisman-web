@@ -3,7 +3,7 @@ import { type Account } from '@domains/accounts/recoils'
 import { useIsWeb3Injected } from '@domains/extension/hooks'
 import { allowExtensionConnectionState } from '@domains/extension/recoils'
 import { Download } from '@talismn/icons'
-import { Button, CircularProgressIndicator, Select } from '@talismn/ui'
+import { Button, CircularProgressIndicator, Identicon, Select } from '@talismn/ui'
 import { shortenAddress } from '@util/format'
 import { useCallback, useEffect, useMemo, useState, useTransition } from 'react'
 import { usePrevious } from 'react-use'
@@ -53,7 +53,14 @@ const AccountSelector = (props: AccountSelectorProps) => {
   return (
     <Select
       css={{ width: '100%' }}
-      placeholder="Select an account"
+      placeholder={
+        <Select.Option
+          leadingIcon={
+            <Identicon value="placeholder" size="4em" css={{ visibility: 'hidden', pointerEvents: 'none' }} />
+          }
+          headlineText="Select an account"
+        />
+      }
       value={selectedValue}
       onChange={onChange}
       renderSelected={
