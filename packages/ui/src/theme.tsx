@@ -91,6 +91,4 @@ const greenDark: TalismanTheme = {
   },
 }
 
-export type ContentAlpha = keyof TalismanTheme['contentAlpha']
-
 export const theme = { greenDark }

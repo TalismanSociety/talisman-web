@@ -1,15 +1,12 @@
 import { useTheme } from '@emotion/react'
 import { useId, type ButtonHTMLAttributes, type DetailedHTMLProps, type PropsWithChildren, type ReactNode } from 'react'
-import { Clickable, Surface, Text, useSurfaceColorAtElevation } from '../../atoms'
+import { Text, Surface } from '../../atoms'
 
 export type TextInputProps = React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement> & {
   type?: 'text' | 'number'
-  hasLabel?: ReactNode
   leadingLabel?: ReactNode
-  leadingIcon?: ReactNode
   trailingLabel?: ReactNode
   trailingIcon?: ReactNode
-  hasSupportingText?: boolean
   trailingSupportingText?: ReactNode
   leadingSupportingText?: ReactNode
   containerClassName?: string
@@ -19,12 +16,9 @@ export type TextInputProps = React.DetailedHTMLProps<React.InputHTMLAttributes<H
 
 const TextInput = Object.assign(
   ({
-    hasLabel,
     leadingLabel,
-    leadingIcon,
     trailingLabel,
     trailingIcon,
-    hasSupportingText,
     trailingSupportingText,
     leadingSupportingText,
     containerClassName,
@@ -36,16 +30,13 @@ const TextInput = Object.assign(
 
     return (
       <div className={containerClassName}>
-        {(hasLabel || leadingLabel || trailingLabel) && (
+        {(leadingLabel || trailingLabel) && (
           <div
             css={{
-              'display': 'flex',
-              'justifyContent': 'space-between',
-              'alignItems': 'center',
-              'marginBottom': '0.8rem',
-              '> *:empty::after': {
-                content: `"\u200B"`,
-              },
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              marginBottom: '0.8rem',
             }}
           >
             <Text.BodySmall as="label" htmlFor={inputId}>
@@ -62,10 +53,8 @@ const TextInput = Object.assign(
             alignItems: 'center',
             padding: '1.5rem',
             borderRadius: '1.25rem',
-            gap: '1rem',
           }}
         >
-          {leadingIcon}
           <Text.Body
             {...props}
             as="input"
@@ -84,7 +73,7 @@ const TextInput = Object.assign(
           />
           {trailingIcon}
         </Surface>
-        {(hasSupportingText || leadingSupportingText || trailingSupportingText) && (
+        {(leadingSupportingText || trailingSupportingText) && (
           <div
             css={{
               'display': 'flex',
@@ -111,22 +100,24 @@ const TextInput = Object.assign(
     ErrorLabel: (props: PropsWithChildren) => (
       <Text.BodySmall color={theme => theme.color.onErrorContainer} {...props} />
     ),
-    LabelButton: (props: DetailedHTMLProps<ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement>) => (
-      <Clickable.WithFeedback
-        {...props}
-        css={{
-          'padding': '0.6rem 1.6rem',
-          'border': `1px solid ${useSurfaceColorAtElevation(x => x + 8)}`,
-          'borderRadius': '20rem',
-          'cursor': 'pointer',
-          ':hover': {
-            filter: 'brightness(1.4)',
-          },
-        }}
-      >
-        <Text.BodyLarge css={{ display: 'contents' }}>{props.children}</Text.BodyLarge>
-      </Clickable.WithFeedback>
-    ),
+    LabelButton: (props: DetailedHTMLProps<ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement>) => {
+      const theme = useTheme()
+      return (
+        <button
+          {...props}
+          css={{
+            'padding': '0.5rem',
+            'border': 'none',
+            'borderRadius': '1rem',
+            'background': theme.color.foregroundVariant,
+            'cursor': 'pointer',
+            ':hover': {
+              filter: 'brightness(1.4)',
+            },
+          }}
+        />
+      )
+    },
   }
 )
 
