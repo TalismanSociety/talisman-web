@@ -1,17 +1,20 @@
 import { TalismanHandLoader } from '@components/TalismanHandLoader'
+import ExportHistoryAlertDialog from '@components/recipes/ExportHistoryAlertDialog'
 import {
   ExtrinsicDetailsSideSheet,
   type ExtrinsicDetailsSideSheetProps,
 } from '@components/recipes/ExtrinsicDetailsSideSheet'
 import TransactionLineItem, { TransactionList } from '@components/recipes/TransactionLineItem'
 import ErrorBoundary from '@components/widgets/ErrorBoundary'
-import ExportTxHistoryWidget from '@components/widgets/ExportTxHistoryWidget'
-import { accountsState, selectedAccountsState, type Account } from '@domains/accounts'
+import { selectedAccountsState, type Account } from '@domains/accounts'
+import * as Sentry from '@sentry/react'
 import { ArrowDown, ArrowUp } from '@talismn/icons'
-import { Button, CircularProgressIndicator, DateInput, IconButton, Select, Text, TextInput } from '@talismn/ui'
+import { Button, CircularProgressIndicator, DateInput, IconButton, Select, Text, TextInput, toast } from '@talismn/ui'
 import { encodeAnyAddress } from '@talismn/util'
 import { tryParseSubstrateOrEthereumAddress } from '@util/addressValidation'
 import { Maybe } from '@util/monads'
+import BigNumber from 'bignumber.js'
+import { stringify as stringifyCsv } from 'csv-stringify/browser/esm'
 import { endOfDay, startOfDay } from 'date-fns'
 import request from 'graphql-request'
 import { isNil } from 'lodash'
@@ -22,6 +25,8 @@ import { isHex } from 'viem'
 import { graphql } from '../../generated/gql/extrinsicHistory/gql'
 import { ExtrinsicOrderByInput, type ExtrinsicsQuery } from '../../generated/gql/extrinsicHistory/gql/graphql'
 import { TitlePortal } from './layout'
+
+type ExtrinsicNode = ExtrinsicsQuery['extrinsics']['edges'][number]['node']
 
 const filtersState = selector({
   key: 'History/Filters',
@@ -41,6 +46,128 @@ const filtersState = selector({
     ),
 })
 
+const getExtrinsicTotalAmount = (extrinsic: ExtrinsicNode, accounts: Account[]) => {
+  const encodedAddresses = accounts.map(x => encodeAnyAddress(x.address)) ?? []
+  return [...extrinsic.transfers.edges, ...extrinsic.rewards.edges]
+    .map(x => x.node)
+    .filter(
+      x =>
+        encodedAddresses.includes(encodeAnyAddress(x.debit)) ||
+        (x.credit !== 'reserve' && encodedAddresses.includes(encodeAnyAddress(x.credit)))
+    )
+    .reduce((prev, curr) => prev.plus(curr.amount.value), new BigNumber(0))
+}
+
+const getExtrinsicBalanceChangeAmount = (extrinsic: ExtrinsicNode, accounts: Account[]) => {
+  const encodedAddresses = accounts.map(x => encodeAnyAddress(x.address)) ?? []
+  return [...extrinsic.transfers.edges, ...extrinsic.rewards.edges]
+    .map(x => x.node)
+    .reduce(
+      (prev, curr) =>
+        encodedAddresses.includes(encodeAnyAddress(curr.debit))
+          ? prev.plus(curr.amount.value)
+          : encodedAddresses.includes(encodeAnyAddress(curr.credit))
+          ? prev.minus(curr.amount.value)
+          : prev,
+      new BigNumber(0)
+    )
+}
+
+type ExportHistoryButtonProps = {
+  accounts: Account[]
+  extrinsics: ExtrinsicNode[]
+}
+
+const ExportHistoryButton = (props: ExportHistoryButtonProps) => {
+  const [open, setOpen] = useState(false)
+
+  const encodedAddresses = useMemo(() => props.accounts?.map(x => encodeAnyAddress(x.address)) ?? [], [props.accounts])
+
+  if (props.extrinsics.length === 0) {
+    return null
+  }
+
+  return (
+    <>
+      <Button
+        css={theme => ({ position: 'fixed', right: '2.4rem', bottom: '4rem', background: theme.color.background })}
+        variant="outlined"
+        onClick={() => setOpen(true)}
+      >
+        Export {props.extrinsics.length} records
+      </Button>
+      {open && (
+        <ExportHistoryAlertDialog
+          onRequestDismiss={() => setOpen(false)}
+          onConfirm={() => {
+            const records = [
+              [
+                'type',
+                'timestamp',
+                'chain',
+                'module',
+                'call',
+                'hash',
+                'amount',
+                'changeInBalance',
+                'symbol',
+                'subscanUrl',
+              ],
+              ...props.extrinsics.map(extrinsic => {
+                const selfSigned = !extrinsic.signer
+                  ? false
+                  : encodedAddresses.includes(encodeAnyAddress(extrinsic.signer))
+
+                const totalAmountOfInterest = getExtrinsicTotalAmount(extrinsic, props.accounts)
+                const balanceChangeAmount = getExtrinsicBalanceChangeAmount(extrinsic, props.accounts)
+                const [module, call] = extrinsic.call.name.split('.')
+
+                return [
+                  selfSigned ? 'outgoing' : 'incoming',
+                  extrinsic.block.timestamp,
+                  extrinsic.chain.name,
+                  module,
+                  call,
+                  extrinsic.hash,
+                  totalAmountOfInterest.toString(),
+                  balanceChangeAmount.toString(),
+                  extrinsic.transfers.edges.at(0)?.node.amount.symbol ??
+                    extrinsic.rewards.edges.at(0)?.node.amount.symbol,
+                  extrinsic.subscanLink?.url,
+                ]
+              }),
+            ]
+
+            const promise = new Promise<void>((resolve, reject) =>
+              stringifyCsv(records, (error, output) => {
+                if (error !== undefined) {
+                  reject(error)
+                } else {
+                  const csv = 'data:text/csv;charset=utf-8,' + output
+                  window.open(encodeURI(csv))
+                  resolve()
+                }
+              })
+            ).catch(error => {
+              Sentry.captureException(error)
+              throw new Error('An error has occurred while generating CSV')
+            })
+
+            void toast.promise(promise, {
+              loading: 'Generating CSV',
+              error: error => error.message,
+              success: 'Successfully generated CSV',
+            })
+
+            setOpen(false)
+          }}
+          recordCount={props.extrinsics.length}
+        />
+      )}
+    </>
+  )
+}
+
 type HistoryResultProps = {
   accounts?: Account[]
   hash?: string
@@ -53,9 +180,7 @@ type HistoryResultProps = {
 
 // TODO: lots of repetitive account look up using `encodeAnyAddress`
 const HistoryResult = (props: HistoryResultProps) => {
-  type ExtrinsicNode = ExtrinsicsQuery['extrinsics']['edges'][number]['node']
-
-  const accounts = useRecoilValue(accountsState)
+  const accounts = useRecoilValue(selectedAccountsState)
 
   const [items, setItems] = useState<ExtrinsicNode[]>([])
   const [viewingItem, setViewingItem] = useState<Omit<ExtrinsicDetailsSideSheetProps, 'onRequestDismiss'>>()
@@ -192,6 +317,8 @@ const HistoryResult = (props: HistoryResultProps) => {
     }
   }, [generator])
 
+  const encodedAddresses = useMemo(() => props.accounts?.map(x => encodeAnyAddress(x.address)) ?? [], [props.accounts])
+
   if (!hasNextPage && items.length === 0) {
     return (
       <div css={{ textAlign: 'center', marginTop: '5.6rem' }}>
@@ -237,15 +364,7 @@ const HistoryResult = (props: HistoryResultProps) => {
           data={items}
           renderItem={extrinsic => {
             const [module, call] = extrinsic.call.name.split('.')
-            const encodedAddresses = props.accounts?.map(x => encodeAnyAddress(x.address)) ?? []
-            const totalAmountOfInterest = [...extrinsic.transfers.edges, ...extrinsic.rewards.edges]
-              .map(x => x.node)
-              .filter(
-                x =>
-                  encodedAddresses.includes(encodeAnyAddress(x.debit)) ||
-                  (x.credit !== 'reserve' && encodedAddresses.includes(encodeAnyAddress(x.credit)))
-              )
-              .reduce((prev, curr) => prev + parseFloat(curr.amount.value), 0)
+            const totalAmountOfInterest = getExtrinsicTotalAmount(extrinsic, props.accounts ?? []).toNumber()
 
             const signer = Maybe.of(extrinsic.signer).mapOrUndefined(signer => ({
               address: signer,
@@ -331,6 +450,7 @@ const HistoryResult = (props: HistoryResultProps) => {
         />
       </InfiniteScroll>
       {viewingItem && <ExtrinsicDetailsSideSheet {...viewingItem} onRequestDismiss={() => setViewingItem(undefined)} />}
+      <ExportHistoryButton extrinsics={items} accounts={props.accounts ?? []} />
     </div>
   )
 }
@@ -394,15 +514,7 @@ const History = () => {
             justifyContent: 'flex-end',
             marginBottom: '2.4rem',
           }}
-        >
-          <ExportTxHistoryWidget>
-            {({ onToggleOpen }) => (
-              <Button variant="surface" onClick={onToggleOpen}>
-                Export
-              </Button>
-            )}
-          </ExportTxHistoryWidget>
-        </header>
+        ></header>
         <div
           css={{
             display: 'flex',
