@@ -9,9 +9,9 @@ import {
   usePendingTransactions,
   useSelectedMultisig,
 } from '@domains/multisig'
-import { rawConfirmedTransactionsDependency, useConfirmedTransactions } from '@domains/tx-history'
+import { unknownConfirmedTransactionsState, useConfirmedTransactions } from '@domains/tx-history'
 import { css } from '@emotion/css'
-import { EyeOfSauronProgressIndicator, SideSheet } from '@talismn/ui'
+import { CircularProgressIndicator, EyeOfSauronProgressIndicator, SideSheet } from '@talismn/ui'
 import { toMultisigAddress } from '@util/addresses'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useCallback, useEffect, useMemo, useState } from 'react'
@@ -28,6 +28,7 @@ import TransactionDetailsExpandable from './TransactionDetailsExpandable'
 import { useNominations } from '@domains/staking/useNominations'
 import { useNomPoolOf } from '@domains/staking/useNomPool'
 import { ValidatorsRotationSummaryDetails } from '../../Staking/ValidatorsRotationSummaryDetails'
+import { makeTransactionID } from '@util/misc'
 
 enum Mode {
   Pending,
@@ -78,14 +79,13 @@ const TransactionsList = ({ nominations, transactions }: { nominations?: string[
   )
   const { cancelAsMulti, canCancel } = useCancelAsMulti(openTransaction)
   const setRawPendingTransactionDependency = useSetRecoilState(rawPendingTransactionsDependency)
-  const setRawConfirmedTransactionDependency = useSetRecoilState(rawConfirmedTransactionsDependency)
   const { updateMultisigConfig } = useUpdateMultisigConfig()
   const setChangingMultisigConfig = useSetRecoilState(changingMultisigConfigState)
+  const setUnknownTransactions = useSetRecoilState(unknownConfirmedTransactionsState)
 
   useEffect(() => {
     const interval = setInterval(() => {
       setRawPendingTransactionDependency(new Date())
-      setRawConfirmedTransactionDependency(new Date())
     }, 5000)
     return () => clearInterval(interval)
   })
@@ -191,7 +191,7 @@ const TransactionsList = ({ nominations, transactions }: { nominations?: string[
                       if (openTransaction?.decoded?.changeConfigDetails) setChangingMultisigConfig(true)
 
                       asMulti({
-                        onSuccess: async () => {
+                        onSuccess: async r => {
                           // Handle execution of the multisig configuration change
                           if (openTransaction?.decoded?.changeConfigDetails) {
                             const expectedNewMultisigAddress = toMultisigAddress(
@@ -220,6 +220,10 @@ const TransactionsList = ({ nominations, transactions }: { nominations?: string[
                             toast.success('Transaction executed.', { duration: 5000, position: 'bottom-right' })
                           }
                           setChangingMultisigConfig(false)
+                          setUnknownTransactions(prev => [
+                            ...prev,
+                            makeTransactionID(multisig.chain, r.blockNumber?.toNumber() ?? 0, r.txIndex ?? 0),
+                          ])
                           navigate('/overview')
                           resolve()
                         },
@@ -277,6 +281,7 @@ const TransactionsList = ({ nominations, transactions }: { nominations?: string[
 const Transactions = () => {
   const { transactions: pendingTransactions, loading: pendingLoading } = usePendingTransactions()
   const { transactions: confirmedTransactions, loading: confirmedLoading } = useConfirmedTransactions()
+  const unknownConfirmedTransactions = useRecoilValue(unknownConfirmedTransactionsState)
   const [multisig] = useSelectedMultisig()
   const pool = useNomPoolOf(multisig.proxyAddress)
   const { nominations: nomPoolNominations } = useNominations(multisig.chain, pool?.pool.stash.toSs58(multisig.chain))
@@ -325,7 +330,16 @@ const Transactions = () => {
           exit={{ y: 10, opacity: 0 }}
           transition={{ duration: 0.2 }}
         >
-          {(mode === Mode.Pending && pendingLoading) || (mode === Mode.History && confirmedLoading) ? (
+          {mode === Mode.History && unknownConfirmedTransactions.length > 0 && (
+            <div className="flex items-center mb-[16px] gap-[8px]">
+              <CircularProgressIndicator />
+              <p className=" text-gray-100 mt-[3px]">
+                Indexing {unknownConfirmedTransactions.length} new transactions...
+              </p>
+            </div>
+          )}
+          {(mode === Mode.Pending && pendingLoading && pendingTransactions.length === 0) ||
+          (mode === Mode.History && confirmedLoading && confirmedTransactions.length === 0) ? (
             <div css={{ margin: '24px 0' }}>
               <EyeOfSauronProgressIndicator />
             </div>

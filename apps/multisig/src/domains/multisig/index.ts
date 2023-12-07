@@ -22,7 +22,7 @@ import { atom, selector, useRecoilState, useRecoilValue, useRecoilValueLoadable,
 import persistAtom from '../persist'
 import { VoteDetails, mapConvictionToIndex } from '../referenda'
 import { selectedAccountState } from '../auth'
-import { txMetadataByTeamIdState } from '../offchain-data/metadata'
+import { TxMetadata, txMetadataByTeamIdState } from '../offchain-data/metadata'
 import { isEqual } from 'lodash'
 import { Multisig } from './types'
 
@@ -428,14 +428,18 @@ export const extrinsicToDecoded = (
   multisig: Multisig,
   extrinsic: SubmittableExtrinsic<'promise'>,
   chainTokens: BaseToken[],
-  changeConfigDetails: ChangeConfigDetails | null
-): TransactionDecoded | 'not_ours' => {
+  metadata?: TxMetadata | null,
+  defaultName?: string
+): { decoded: TransactionDecoded; description: string } | 'not_ours' => {
   try {
     // If it's not a proxy call, just return advanced
     if (!isProxyCall(extrinsic.method)) {
       return {
-        type: TransactionType.Advanced,
-        recipients: [],
+        decoded: {
+          type: TransactionType.Advanced,
+          recipients: [],
+        },
+        description: defaultName ?? `${extrinsic.method.section}.${extrinsic.method.method}`,
       }
     }
 
@@ -457,8 +461,12 @@ export const extrinsicToDecoded = (
     }
     if (recipients.length === 1) {
       return {
-        type: TransactionType.Transfer,
-        recipients,
+        decoded: {
+          type: TransactionType.Transfer,
+          recipients,
+        },
+        description:
+          metadata?.description ?? defaultName ?? `Send to ${recipients[0]!.address.toShortSs58(multisig.chain)}`,
       }
     }
 
@@ -471,8 +479,11 @@ export const extrinsicToDecoded = (
         )
         if (!recipients.includes(null) && recipients.length > 1) {
           return {
-            type: TransactionType.MultiSend,
-            recipients: recipients as TransactionRecipient[],
+            decoded: {
+              type: TransactionType.MultiSend,
+              recipients: recipients as TransactionRecipient[],
+            },
+            description: metadata?.description ?? defaultName ?? `Send to ${recipients.length} recipients`,
           }
         }
       }
@@ -481,7 +492,8 @@ export const extrinsicToDecoded = (
     // Check if it's a ChangeConfig type
     for (const arg of args) {
       const obj: any = arg.toHuman()
-      if (changeConfigDetails && isChangeConfigCall(obj)) {
+      if (metadata?.changeConfigDetails && isChangeConfigCall(obj)) {
+        const { changeConfigDetails } = metadata
         // Validate that the metadata 'new configuration' info matches the
         // actual multisig that is being set on chain.
         const derivedNewMultisigAddress = toMultisigAddress(
@@ -495,12 +507,15 @@ export const extrinsicToDecoded = (
         }
 
         return {
-          type: TransactionType.ChangeConfig,
-          recipients: [],
-          changeConfigDetails: {
-            signers: changeConfigDetails.newMembers,
-            threshold: changeConfigDetails.newThreshold,
+          decoded: {
+            type: TransactionType.ChangeConfig,
+            recipients: [],
+            changeConfigDetails: {
+              signers: changeConfigDetails.newMembers,
+              threshold: changeConfigDetails.newThreshold,
+            },
           },
+          description: metadata?.description ?? defaultName ?? 'Change multisig config',
         }
       }
     }
@@ -531,12 +546,15 @@ export const extrinsicToDecoded = (
           const token = chainTokens.find(t => t.type === 'substrate-native')
           if (!token) throw Error(`Chain does not have a native token!`)
           return {
-            type: TransactionType.Vote,
-            recipients: [],
-            voteDetails: {
-              ...voteDetails,
-              token,
+            decoded: {
+              type: TransactionType.Vote,
+              recipients: [],
+              voteDetails: {
+                ...voteDetails,
+                token,
+              },
             },
+            description: metadata?.description ?? defaultName ?? `Vote on referendum #${poll_index}`,
           }
         }
       }
@@ -548,12 +566,15 @@ export const extrinsicToDecoded = (
       if (obj?.section === 'nominationPools' && obj?.method === 'nominate') {
         const { pool_id, validators } = obj.args
         return {
-          type: TransactionType.NominateFromNomPool,
-          recipients: [],
-          nominate: {
-            poolId: +pool_id,
-            validators,
+          decoded: {
+            type: TransactionType.NominateFromNomPool,
+            recipients: [],
+            nominate: {
+              poolId: +pool_id,
+              validators,
+            },
           },
+          description: metadata?.description ?? defaultName ?? `Nominations for Pool #${pool_id}`,
         }
       }
     }
@@ -561,8 +582,11 @@ export const extrinsicToDecoded = (
     console.error(`Error decoding extrinsic ${JSON.stringify(extrinsic.method.toHuman(), null, 2)}: `, error)
   }
   return {
-    type: TransactionType.Advanced,
-    recipients: [],
+    decoded: {
+      type: TransactionType.Advanced,
+      recipients: [],
+    },
+    description: defaultName ?? `${extrinsic.method.section}.${extrinsic.method.method}`,
   }
 }
 
@@ -639,24 +663,18 @@ export const PendingTransactionsWatcher = () => {
           const chainTokens = allActiveChainTokens.contents.get(rawPending.multisig.chain.squidIds.chainData)
           if (!chainTokens) throw Error('Failed to load chainTokens for chain!')
 
-          const decoded = extrinsicToDecoded(
-            rawPending.multisig,
-            extrinsic,
-            chainTokens,
-            metadata.changeConfigDetails || null
-          )
+          const decoded = extrinsicToDecoded(rawPending.multisig, extrinsic, chainTokens, metadata)
           if (decoded === 'not_ours') return null
 
           return {
             date: rawPending.date,
-            description: metadata.description,
             callData: metadata.callData,
             hash: rawPending.callHash,
-            decoded,
             rawPending: rawPending,
             multisig: rawPending.multisig,
             approvals: rawPending.approvals,
             id: transactionID,
+            ...decoded,
           }
         } catch (error) {
           console.error(`Invalid metadata for for transactionID ${transactionID}:`, error)

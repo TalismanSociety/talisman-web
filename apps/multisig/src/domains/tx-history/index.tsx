@@ -1,230 +1,390 @@
-import { allChainTokensSelector, decodeCallData } from '@domains/chains'
-import { allPjsApisSelector } from '@domains/chains/pjs-api'
-import { SignedBlock } from '@polkadot/types/interfaces'
-import {
-  ExecutedAt,
-  Multisig,
-  Transaction,
-  aggregatedMultisigsState,
-  combinedViewState,
-  extrinsicToDecoded,
-  selectedMultisigState,
-} from '@domains/multisig'
-import { Address } from '@util/addresses'
-import { makeTransactionID } from '@util/misc'
+import { DUMMY_MULTISIG_ID, Transaction, extrinsicToDecoded, useSelectedMultisig } from '@domains/multisig'
+import { Vec, GenericExtrinsic } from '@polkadot/types'
+import { AnyTuple } from '@polkadot/types-codec/types'
 import { gql } from 'graphql-request'
-import { useCallback, useEffect, useState } from 'react'
-import { atom, selector, selectorFamily, useRecoilValue, useRecoilValueLoadable } from 'recoil'
-
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { atom, useRecoilState, useRecoilValue, useRecoilValueLoadable } from 'recoil'
 import fetchGraphQL from '../../graphql/fetch-graphql'
+import { Address } from '../../util/addresses'
+import { useApi } from '../chains/pjs-api'
 import { txMetadataByTeamIdState } from '../offchain-data/metadata'
+import { makeTransactionID } from '../../util/misc'
+import { allChainTokensSelector, decodeCallData } from '../chains'
 
 interface RawResponse {
   data: {
     extrinsics: {
-      fee: string
-      indexInBlock: number
-      block: {
-        timestamp: string
-        blockHash: string
+      edges: {
+        node: {
+          success: boolean
+          error: string | null
+          block: {
+            hash: string
+            height: number
+            timestamp: string
+          }
+          call: {
+            name: string
+            args: any
+          }
+
+          /** {blockHeight}-{extrinsicHeight}-{somethingElse} */
+          subsquidId: string
+          signature: { address: { value: string } }
+        }
+      }[]
+      pageInfo: {
+        hasNextPage: boolean
+        startCursor: string
+        endCursor: string
       }
-    }[]
+    }
   }
 }
 
-// Change this value to the current date to trigger a reload of confirmed txs
-export const rawConfirmedTransactionsDependency = atom<Date>({
-  key: 'RawConfirmedTransactionsDependency',
-  default: new Date(),
+type ParsedTransaction = {
+  block: {
+    hash: string
+    height: number
+    timestamp: string
+  }
+  call: {
+    name: string
+    args: any
+  }
+  indexInBlock: number
+  success: boolean
+  error?: string
+  signer: string
+}
+
+export const rawConfirmedTransactionsState = atom<
+  Record<
+    string,
+    {
+      endCursor: string
+      transactions: ParsedTransaction[]
+    }
+  >
+>({
+  key: 'confirmedTransactionsState',
+  default: {},
+})
+
+// set this to true after a tx is made
+export const unknownConfirmedTransactionsState = atom<string[]>({
+  key: 'unknownConfirmedTransactionsState',
+  default: [],
 })
 
 type Variables = {
-  signer_in: string[]
-  chain_id: string
+  vaultAddress: string[]
+  chainGenesisHash: string
+  cursor?: string
 }
 
-export const rawConfirmedTransactionsSelector = selectorFamily({
-  key: 'rawConfirmedTransactionsSelector',
-  get:
-    ({ chain_id, signer_in }: Variables) =>
-    async ({ get }): Promise<RawResponse> => {
-      // This dependency allows effectively clearing the cache of this selector
-      get(rawConfirmedTransactionsDependency)
-
-      const query = gql`
-        query ConfirmedTransactions($signer_in: [String!], $chain_id: String!) {
-          extrinsics(
-            where: {
-              call: { data_jsonContains: "{\\"name\\":\\"Multisig.as_multi\\"}", block: { chainId_eq: $chain_id } }
-              signer_in: $signer_in
-            }
-          ) {
-            signer
-            fee
-            block {
-              timestamp
-              blockHash
-            }
-            indexInBlock
+const exHistoryV3ExtrinsicsQuery = gql`
+  query ConfirmedTransactions($vaultAddress: [String!]!, $chainGenesisHash: String!, $cursor: String) {
+    extrinsics(where: { addressIn: $vaultAddress, chainEq: $chainGenesisHash }, orderBy: timestampAsc, after: $cursor) {
+      edges {
+        node {
+          success
+          error
+          block {
+            hash
+            height
+            timestamp
           }
+          call {
+            name
+            args
+          }
+          subsquidId
+          signature
         }
-      `
-
-      const variables = {
-        signer_in,
-        chain_id,
       }
+      pageInfo {
+        hasNextPage
+        startCursor
+        endCursor
+      }
+    }
+  }
+`
 
-      return fetchGraphQL(query, variables, 'tx-history') as Promise<RawResponse>
-    },
-})
+const fetchRaw = async (vaultAddress: string, chainGenesisHash: string, _cursor?: string | null) => {
+  const extrinsics: ParsedTransaction[] = []
 
-export const allRawConfirmedTransactionsSelector = selector({
-  key: 'AllRawConfirmedTransactionsSelector',
-  get: async ({ get }): Promise<[RawResponse, Multisig][]> => {
-    const multisigs = get(aggregatedMultisigsState)
-    const rawResponses = multisigs.map(multisig => {
-      const responses = get(
-        rawConfirmedTransactionsSelector({
-          signer_in: multisig.signers.map(s => s.toPubKey()),
-          chain_id: multisig.chain.squidIds.txHistory,
-        })
-      )
-      return [responses, multisig] as [RawResponse, Multisig]
+  const variables: Variables = {
+    vaultAddress: [vaultAddress],
+    chainGenesisHash,
+  }
+
+  let hasNextPage = true
+  let cursor = _cursor
+  while (hasNextPage) {
+    if (cursor) variables.cursor = cursor
+
+    const res = (await fetchGraphQL(exHistoryV3ExtrinsicsQuery, variables, 'tx-history')) as RawResponse
+
+    res.data.extrinsics.edges.forEach(edge => {
+      const [, extIndexString] = edge.node.subsquidId.split('-')
+      extrinsics.push({
+        block: edge.node.block,
+        indexInBlock: parseInt(extIndexString as string),
+        success: edge.node.success,
+        error: edge.node.error ?? undefined,
+        call: edge.node.call,
+        signer: edge.node.signature.address.value,
+      })
     })
 
-    return rawResponses
-  },
+    cursor = res.data.extrinsics.pageInfo.endCursor
+    if (!res.data.extrinsics.pageInfo.hasNextPage) hasNextPage = false
+  }
+
+  return { data: { extrinsics, endCursor: cursor } }
+}
+
+const blockCacheState = atom<Record<string, Vec<GenericExtrinsic<AnyTuple>>>>({
+  key: 'blockCacheState',
+  default: {},
+  dangerouslyAllowMutability: true,
 })
 
-const blockCache = new Map<string, SignedBlock>()
-
-// fetches the raw txs from squid
-export const useConfirmedTransactions = () => {
-  const selectedMultisig = useRecoilValue(selectedMultisigState)
-  const allApisLoadable = useRecoilValueLoadable(allPjsApisSelector)
-  const allActiveChainTokens = useRecoilValueLoadable(allChainTokensSelector)
-  const [transactions, setTransactions] = useState<Transaction[]>([])
-  const rawConfirmedTransactionsResponses = useRecoilValueLoadable(allRawConfirmedTransactionsSelector)
-  const combinedView = useRecoilValue(combinedViewState)
-  const [loading, setLoading] = useState(true)
+export const useConfirmedTransactions = (): { loading: boolean; transactions: Transaction[] } => {
+  const [loading, setLoading] = useState(false)
+  const [selectedMultisig] = useSelectedMultisig()
+  const [target, setTarget] = useState(selectedMultisig)
+  const { api } = useApi(selectedMultisig.chain.rpcs)
+  const [confirmedTransactions, setConfirmedTransactions] = useRecoilState(rawConfirmedTransactionsState)
+  const [unknownTxs, setUnknownTxs] = useRecoilState(unknownConfirmedTransactionsState)
   const txMetadataByTeamId = useRecoilValue(txMetadataByTeamIdState)
+  const [autoRefresh, setAutoRefresh] = useState(true)
+  const nextFetchRef = useRef(new Date())
+  const [blockCache, setBlockCache] = useRecoilState(blockCacheState)
+  const allActiveChainTokens = useRecoilValueLoadable(allChainTokensSelector)
 
+  // this will make sure changing vault only triggers 1 reload
   useEffect(() => {
-    setLoading(true)
-  }, [selectedMultisig.multisigAddress, combinedView])
+    if (target.id === selectedMultisig.id) return
+    setTarget(selectedMultisig)
+    nextFetchRef.current = new Date()
+  }, [selectedMultisig, target.id])
 
-  const ready =
-    allApisLoadable.state === 'hasValue' &&
-    rawConfirmedTransactionsResponses.state === 'hasValue' &&
-    allActiveChainTokens.state === 'hasValue'
+  // fetch if we have new unknown tx
+  useEffect(() => {
+    if (unknownTxs.length > 0) nextFetchRef.current = new Date()
+  }, [unknownTxs.length])
 
-  const loadTransactions = useCallback(async () => {
-    if (!ready) return
-    const promises = rawConfirmedTransactionsResponses.contents
-      .map(([rawResponse, curMultisig]) => {
-        const curChainTokens = allActiveChainTokens.contents.get(curMultisig.chain.squidIds.chainData)
-        if (!curChainTokens)
-          throw Error(`tokens not found in allActiveChainTokens for chain ${JSON.stringify(curMultisig.chain)}!`)
+  // setup auto refresh to execute when next fetch is due
+  useEffect(() => {
+    let interval = setInterval(() => {
+      if (new Date().getTime() > nextFetchRef.current.getTime()) setAutoRefresh(true)
+    }, 1_000)
+    return () => {
+      clearInterval(interval)
+    }
+  }, [])
 
-        const api = allApisLoadable.contents.get(curMultisig.chain.squidIds.chainData)
-        if (!api) throw Error(`api not found in allApisLoadable for rpc ${curMultisig.chain.squidIds.chainData}!`)
+  const getBlocks = useCallback(
+    async (hashes: string[]) => {
+      if (!api) return []
 
-        return rawResponse.data.extrinsics.map(async r => {
-          const block = blockCache.get(r.block.blockHash) || (await api.rpc.chain.getBlock(r.block.blockHash))
-          blockCache.set(r.block.blockHash, block)
-          const timestamp = r.block.timestamp
-          // fetch the outer ext
-          const ext = block.block.extrinsics[r.indexInBlock]
-          if (!ext) throw Error("couldn't find extrinsic in block")
-          // inner ext is 3rd arg
-          const innerExt = ext.method.args[3]
-          // @ts-ignore
-          if (innerExt?.toHuman()?.method !== 'proxy' || innerExt?.toHuman()?.section !== 'proxy') return null
-          const callData = innerExt?.toHex()
-          if (callData) {
-            // pull the timepoint and timepoint index out of the original ext
-            const timepoint = ext.method.args[2]?.toHuman() as { height: string; index: string } | null
-            // no timepoint means this was not an execution
-            if (!timepoint) return null
+      try {
+        const newBlocks = await Promise.all(
+          hashes.filter(hash => !blockCache[hash]).map(hash => api.rpc.chain.getBlock(hash))
+        )
 
-            const decodedExt = decodeCallData(api, callData)
-            if (!decodedExt) throw Error('failed to decode extrinsic from chain!')
-            // dont waste time proceeding if it's not ours.
-            if (extrinsicToDecoded(curMultisig, decodedExt, curChainTokens, null) === 'not_ours') return null
+        const newBlocksMap = newBlocks.reduce((acc, block) => {
+          acc[block.block.header.hash.toString()] = block.block.extrinsics
+          return acc
+        }, {} as Record<string, Vec<GenericExtrinsic<AnyTuple>>>)
 
-            const hash = decodedExt.registry.hash(decodedExt.method.toU8a()).toHex()
-            const timepoint_height = parseInt(timepoint.height.replace(/,/g, ''))
-            const timepoint_index = parseInt(timepoint.index)
-            const transactionID = makeTransactionID(curMultisig.chain, timepoint_height, timepoint_index)
+        setBlockCache(old => ({ ...old, ...newBlocksMap }))
+      } catch (e) {
+        console.error(e)
+      }
+    },
+    [api, blockCache, setBlockCache]
+  )
 
-            // try to get metadata
-            const metadata = txMetadataByTeamId[curMultisig.id]?.data[transactionID]
-            if (metadata) {
-              const extrinsicDerivedFromMetadataService = decodeCallData(api, metadata.callData)
-              if (!extrinsicDerivedFromMetadataService) {
-                throw new Error(
-                  `Failed to create extrinsic from callData recieved from metadata sharing service for transactionID ${transactionID}`
-                )
-              }
-              const derivedHash = extrinsicDerivedFromMetadataService.registry
-                .hash(extrinsicDerivedFromMetadataService.method.toU8a())
-                .toHex()
-              if (derivedHash !== hash) {
-                throw new Error(
-                  `CallData from metadata sharing service for transactionID ${transactionID} does not match hash from chain. Expected ${hash}, got ${derivedHash}`
-                )
-              }
+  const processedTransactions = useMemo(() => {
+    try {
+      if (allActiveChainTokens.state !== 'hasValue') return { decodedTransactions: [] }
+      const txs = confirmedTransactions[selectedMultisig.id]?.transactions ?? []
+      const decodedTransactions: Transaction[] = []
+      const curChainTokens = allActiveChainTokens.contents.get(selectedMultisig.chain.squidIds.chainData)
+
+      txs.forEach(tx => {
+        const extrinsics = blockCache[tx.block.hash]
+        if (!extrinsics || !api || !curChainTokens) return
+        if (tx.call.name === 'Multisig.as_multi') {
+          const multisigArgs = tx.call.args as {
+            call: {
+              /** pallet name */
+              __kind: string
+              value: any
             }
-
-            const description = metadata?.description ?? null
-            const changeConfigDetails = metadata?.changeConfigDetails ?? null
-
-            const decodedTx = extrinsicToDecoded(curMultisig, decodedExt, curChainTokens, changeConfigDetails)
-            if (decodedTx === 'not_ours') return null
-
-            const signer = Address.fromSs58(ext.signer.toString())
-            if (!signer) throw Error('chain returned invalid ss58 address!')
-            const executedAt: ExecutedAt = {
-              block: block.block.header.number.toNumber(),
-              index: r.indexInBlock,
-              by: signer,
-            }
-            const transaction: Transaction = {
-              hash,
-              approvals: {},
-              executedAt: executedAt,
-              multisig: curMultisig,
-              date: new Date(timestamp),
-              callData,
-              description: description || decodedExt.method.meta.name.toString(),
-              decoded: decodedTx,
-              id: transactionID,
-            }
-            return transaction
-          } else {
-            console.error('error decoding extrinsic!')
-            return null
+            maybeTimepoint: { height: number; index: number }
+            otherSignatories: string[]
+            threshold: number
           }
-        })
+
+          const signer = Address.fromPubKey(tx.signer)
+          // impossible unless squid is broken
+          if (!signer) return console.error(`Invalid signer from subsquid at ${tx.block.height}-${tx.indexInBlock}`)
+          const otherSigners: Address[] = []
+          for (const otherSigner of multisigArgs.otherSignatories) {
+            const address = Address.fromPubKey(otherSigner)
+            if (!address) throw Error('squid returned invalid pubkey!')
+            otherSigners.push(address)
+          }
+
+          // TODO: get team's change log. Then check if there's any point in time where this multisig was the controller of the proxied account
+          // const multisigAddress = toMultisigAddress([signer, ...otherSigners], multisigArgs.threshold)
+
+          // transaction made from multisig + proxy vault via Multisig.asMulti -> Proxy.proxy call
+          if (multisigArgs.call.__kind === 'Proxy' && multisigArgs.call.value?.__kind === 'proxy') {
+            const innerProxyCall = multisigArgs.call.value as {
+              /** pub key of proxied address */
+              real: { value: string }
+              call: {
+                /** pallet name */
+                __kind: string
+                value: {
+                  /** call method */
+                  __kind: string
+                }
+              }
+            }
+
+            // make sure this tx is for us
+            const realAddress = Address.fromPubKey(innerProxyCall.real.value)
+            if (!realAddress)
+              return console.error(`Invalid realAddress from subsquid at ${tx.block.height}-${tx.indexInBlock}`)
+            if (!realAddress.isEqual(selectedMultisig.proxyAddress)) return // not ours
+
+            // get tx metadata from backend
+            const txMetadata =
+              txMetadataByTeamId[selectedMultisig.id]?.data[
+                makeTransactionID(
+                  selectedMultisig.chain,
+                  multisigArgs.maybeTimepoint.height,
+                  multisigArgs.maybeTimepoint.index
+                )
+              ]
+
+            // get the extrinsic from block to decode
+            const ext = extrinsics[tx.indexInBlock]
+            if (!ext) return
+            const innerExt = ext.method.args[3]! // proxy ext is 3rd arg
+            const callData = innerExt.toHex()
+
+            // decode call data
+            const decodedExt = decodeCallData(api, callData as string)
+            const defaultName = `${innerProxyCall.call.__kind}.${innerProxyCall.call.value.__kind}`
+            const decoded = extrinsicToDecoded(selectedMultisig, decodedExt, curChainTokens, txMetadata, defaultName)
+            if (decoded === 'not_ours') return
+
+            // insert tx to top of list
+            decodedTransactions.unshift({
+              hash: tx.block.hash as `0x${string}`,
+              approvals: {},
+              executedAt: {
+                block: tx.block.height,
+                index: tx.indexInBlock,
+                by: signer,
+              },
+              multisig: selectedMultisig,
+              date: new Date(tx.block.timestamp),
+              callData,
+              id: `${tx.block.height}-${tx.indexInBlock}`,
+              ...decoded,
+            })
+            // txs is sorted by timestamp asc, we need to push to top of decodedTransactions to make it desc
+          }
+        }
       })
-      .flat()
 
-    const transactions = (await Promise.all(promises)).filter(r => r !== null) as Transaction[]
-
-    setLoading(false)
-    setTransactions(transactions)
+      return { decodedTransactions }
+    } catch (e) {
+      console.error(e)
+      return { decodedTransactions: [] }
+    }
   }, [
-    ready,
-    rawConfirmedTransactionsResponses.contents,
     allActiveChainTokens.contents,
-    allApisLoadable.contents,
+    allActiveChainTokens.state,
+    api,
+    blockCache,
+    confirmedTransactions,
+    selectedMultisig,
     txMetadataByTeamId,
   ])
 
-  useEffect(() => {
-    loadTransactions()
-  }, [loadTransactions])
+  const load = useCallback(async () => {
+    // make sure we dont spam squid
+    if (target.id === DUMMY_MULTISIG_ID || new Date().getTime() < nextFetchRef.current.getTime() || !api) return
 
-  return { loading, transactions }
+    // cache the target in case it gets changed while we're fetching
+    const fetchingFor = target
+    setLoading(true)
+
+    // refresh every 15 seconds by default. If a new tx is confirmed, refresh in 3 seconds
+    nextFetchRef.current = new Date(Date.now() + (unknownTxs.length > 0 ? 3_000 : 15_000))
+
+    try {
+      const lastFetchedData = confirmedTransactions[fetchingFor.id]
+
+      let cursor = lastFetchedData?.endCursor ?? null
+
+      // get all raw transactions from last cursor
+      const {
+        data: { endCursor, extrinsics },
+      } = await fetchRaw(fetchingFor.proxyAddress.toSs58(fetchingFor.chain), fetchingFor.chain.genesisHash, cursor)
+
+      if (endCursor && extrinsics.length > 0) {
+        setConfirmedTransactions(old => ({
+          ...old,
+          [fetchingFor.id]: {
+            endCursor,
+            transactions: [...(lastFetchedData?.transactions ?? []), ...extrinsics],
+          },
+        }))
+      }
+
+      // get the blocks and store in cache for use later
+      await getBlocks(extrinsics.map(ext => ext.block.hash))
+
+      setUnknownTxs(prev =>
+        prev.filter(
+          id =>
+            extrinsics.find(ext => makeTransactionID(fetchingFor.chain, ext.block.height, ext.indexInBlock) === id) ===
+            undefined
+        )
+      )
+    } catch (e) {
+      console.error('Failed to fetch squid', e)
+    } finally {
+      setLoading(false)
+      setAutoRefresh(false)
+
+      // no immediate refresh needed while we were fetching, and we have the latest result
+      // so push next fetch time back
+      if (new Date().getTime() < nextFetchRef.current.getTime())
+        nextFetchRef.current = new Date(Date.now() + (unknownTxs.length > 0 ? 3_000 : 15_000))
+    }
+  }, [api, confirmedTransactions, getBlocks, setConfirmedTransactions, setUnknownTxs, target, unknownTxs.length])
+
+  /**
+   * Triggered when:
+   * 1. selectedMultisig changes
+   * 2. autoRefresh is true (when nextFetch is due, 15 seconds by default, 2 seconds when we are expecting new txs)
+   * 3. hasUnknown is true (instant refresh when new tx is made)
+   */
+  useEffect(() => {
+    load()
+  }, [load, autoRefresh])
+
+  return { loading: loading || !api, transactions: processedTransactions.decodedTransactions }
 }
