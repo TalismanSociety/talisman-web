@@ -1,101 +1,14 @@
-import { substrateInjectedAccountsState, wagmiAccountsState } from '@domains/accounts/recoils'
+import { substrateInjectedAccountsState } from '@domains/accounts/recoils'
 import { storageEffect } from '@domains/common/effects'
 import { WalletAggregator, type BaseWallet } from '@polkadot-onboard/core'
 import { InjectedWalletProvider } from '@polkadot-onboard/injected-wallets'
 import type { InjectedWindow } from '@polkadot/extension-inject/types'
 import { jsonParser, string } from '@recoiljs/refine'
-import { connect as wagmiConnect, disconnect as wagmiDisconnect, watchAccount as watchWagmiAccount } from '@wagmi/core'
-import { createStore, type EIP6963ProviderDetail } from 'mipd'
-import { useEffect, useSyncExternalStore } from 'react'
-import { atom, selector, useRecoilState, useRecoilValue, useSetRecoilState, waitForAll } from 'recoil'
-import { useAccount as useWagmiAccount } from 'wagmi'
-import { InjectedConnector } from 'wagmi/connectors/injected'
+import { useEffect } from 'react'
+import { atom, selector, useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil'
 import { talismanWalletLogo } from '.'
 
-const connectedEip6963RdnsState = atom<string | undefined>({
-  key: 'ConnectedEip6963Rdns',
-  default: undefined,
-  effects: [storageEffect(localStorage, { key: 'connected-eip-6963-provider', parser: jsonParser(string()) })],
-})
-
-const eip6963Store = createStore()
-
-export const useEip6963Providers = () => useSyncExternalStore(eip6963Store.subscribe, eip6963Store.getProviders)
-
-export const useConnectEip6963 = () => {
-  const setConnectedProvider = useSetRecoilState(connectedEip6963RdnsState)
-
-  return {
-    connect: (provider: EIP6963ProviderDetail) => {
-      setConnectedProvider(provider.info.rdns)
-    },
-    disconnect: () => setConnectedProvider(undefined),
-  }
-}
-
-const useEvmExtensionEffect = () => {
-  const [connectedEip6963Rdns, setConnectedEip6963Rdns] = useRecoilState(connectedEip6963RdnsState)
-
-  const eip6963Providers = useEip6963Providers()
-
-  useEffect(() => {
-    if (connectedEip6963Rdns === undefined) {
-      void wagmiDisconnect()
-    }
-  }, [connectedEip6963Rdns])
-
-  useEffect(() => {
-    if (connectedEip6963Rdns !== undefined) {
-      void (async () => {
-        const providerToConnect = eip6963Providers.find(x => x.info.rdns === connectedEip6963Rdns)
-        await wagmiDisconnect()
-
-        if (providerToConnect !== undefined) {
-          try {
-            await wagmiConnect({
-              connector: new InjectedConnector({
-                options: {
-                  // @ts-expect-error
-                  getProvider: () => providerToConnect.provider,
-                  shimDisconnect: true,
-                },
-              }),
-            })
-          } catch {
-            setConnectedEip6963Rdns(undefined)
-          }
-        }
-      })()
-    }
-  }, [connectedEip6963Rdns, eip6963Providers, setConnectedEip6963Rdns])
-
-  const { address } = useWagmiAccount()
-  const setWagmiAccounts = useSetRecoilState(wagmiAccountsState)
-
-  useEffect(() => {
-    if (address === undefined) {
-      setWagmiAccounts([])
-    }
-
-    if (address !== undefined) {
-      setWagmiAccounts([{ address, type: 'ethereum', canSignEvm: true }])
-    }
-
-    const unwatch = watchWagmiAccount(account => {
-      if (account.address === undefined) {
-        setWagmiAccounts([])
-      }
-
-      if (account.isConnected && account.address !== undefined) {
-        setWagmiAccounts([{ address: account.address, type: 'ethereum', canSignEvm: true }])
-      }
-    })
-
-    return () => unwatch()
-  }, [address, setWagmiAccounts])
-}
-
-const substrateWalletAggregator = new WalletAggregator([
+const walletAggregator = new WalletAggregator([
   new InjectedWalletProvider(
     {
       supported: [
@@ -118,10 +31,10 @@ const substrateWalletAggregator = new WalletAggregator([
 
 const installedSubstrateWalletsState = selector({
   key: 'InstalledSubstrateWallets',
-  get: async () => await substrateWalletAggregator.getWallets(),
+  get: async () => await walletAggregator.getWallets(),
 })
 
-const connectedSubstrateWalletIdState = atom<string | undefined>({
+export const connectedSubstrateWalletIdState = atom<string | undefined>({
   key: 'ConnectedSubstrateSubstrateWalletId',
   default: undefined,
   effects: [
@@ -132,7 +45,7 @@ const connectedSubstrateWalletIdState = atom<string | undefined>({
   ],
 })
 
-const connectedSubstrateWalletState = atom<BaseWallet | undefined>({
+export const connectedSubstrateWalletState = atom<BaseWallet | undefined>({
   key: 'ConnectedSubstrateWallets',
   default: undefined,
 })
@@ -150,7 +63,7 @@ export const useSubstrateWalletConnect = () => {
   }
 }
 
-const useSubstrateExtensionEffect = () => {
+export const useSubstrateExtensionEffect = () => {
   const connectedWallet = useRecoilValue(connectedSubstrateWalletState)
   const setInjectedAccounts = useSetRecoilState(substrateInjectedAccountsState)
 
@@ -174,7 +87,7 @@ const useSubstrateExtensionEffect = () => {
 
   useEffect(() => {
     void (async () => {
-      const wallets = await substrateWalletAggregator.getWallets()
+      const wallets = await walletAggregator.getWallets()
       await Promise.all(wallets.map(async x => await x.disconnect()))
 
       if (connectedWalletId !== undefined) {
@@ -203,22 +116,4 @@ const useSubstrateExtensionEffect = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     []
   )
-}
-
-export const ExtensionWatcher = () => {
-  useSubstrateExtensionEffect()
-  useEvmExtensionEffect()
-
-  return null
-}
-
-export const useHadPreviouslyConnectedWallet = () => {
-  return useRecoilValue(waitForAll([connectedSubstrateWalletIdState, connectedEip6963RdnsState])).some(
-    x => x !== undefined
-  )
-}
-
-export const useHasActiveWalletConnection = () => {
-  const evmConnected = useWagmiAccount().isConnected
-  return useRecoilValue(connectedSubstrateWalletState) !== undefined || evmConnected
 }
