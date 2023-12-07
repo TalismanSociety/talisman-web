@@ -1,27 +1,32 @@
 import { TalismanHandLoader } from '@components/TalismanHandLoader'
+import ExportHistoryAlertDialog from '@components/recipes/ExportHistoryAlertDialog'
 import {
   ExtrinsicDetailsSideSheet,
   type ExtrinsicDetailsSideSheetProps,
 } from '@components/recipes/ExtrinsicDetailsSideSheet'
 import TransactionLineItem, { TransactionList } from '@components/recipes/TransactionLineItem'
 import ErrorBoundary from '@components/widgets/ErrorBoundary'
-import ExportTxHistoryWidget from '@components/widgets/ExportTxHistoryWidget'
-import { accountsState, selectedAccountsState, type Account } from '@domains/accounts'
-import { ArrowDown, ArrowUp } from '@talismn/icons'
-import { Button, CircularProgressIndicator, DateInput, IconButton, Select, Text, TextInput } from '@talismn/ui'
+import { selectedAccountsState, type Account } from '@domains/accounts'
+import * as Sentry from '@sentry/react'
+import { Codepen, Globe } from '@talismn/icons'
+import { Button, CircularProgressIndicator, DateInput, Select, Text, TextInput, toast } from '@talismn/ui'
 import { encodeAnyAddress } from '@talismn/util'
 import { tryParseSubstrateOrEthereumAddress } from '@util/addressValidation'
 import { Maybe } from '@util/monads'
+import BigNumber from 'bignumber.js'
+import { stringify as stringifyCsv } from 'csv-stringify/browser/esm'
 import { endOfDay, startOfDay } from 'date-fns'
 import request from 'graphql-request'
 import { isNil } from 'lodash'
-import { Suspense, useCallback, useMemo, useState } from 'react'
+import { Suspense, useCallback, useMemo, useState, type PropsWithChildren, type ReactNode } from 'react'
 import InfiniteScroll from 'react-infinite-scroller'
 import { selector, useRecoilValue } from 'recoil'
 import { isHex } from 'viem'
 import { graphql } from '../../generated/gql/extrinsicHistory/gql'
 import { ExtrinsicOrderByInput, type ExtrinsicsQuery } from '../../generated/gql/extrinsicHistory/gql/graphql'
 import { TitlePortal } from './layout'
+
+type ExtrinsicNode = ExtrinsicsQuery['extrinsics']['edges'][number]['node']
 
 const filtersState = selector({
   key: 'History/Filters',
@@ -41,6 +46,135 @@ const filtersState = selector({
     ),
 })
 
+const getExtrinsicTotalAmount = (extrinsic: ExtrinsicNode, accounts: Account[]) => {
+  const encodedAddresses = accounts.map(x => encodeAnyAddress(x.address)) ?? []
+  return [...extrinsic.transfers.edges, ...extrinsic.rewards.edges]
+    .map(x => x.node)
+    .filter(
+      x =>
+        encodedAddresses.includes(encodeAnyAddress(x.debit)) ||
+        (x.credit !== 'reserve' && encodedAddresses.includes(encodeAnyAddress(x.credit)))
+    )
+    .reduce((prev, curr) => prev.plus(curr.amount.value), new BigNumber(0))
+}
+
+const getExtrinsicBalanceChangeAmount = (extrinsic: ExtrinsicNode, accounts: Account[]) => {
+  const encodedAddresses = accounts.map(x => encodeAnyAddress(x.address)) ?? []
+  return [...extrinsic.transfers.edges, ...extrinsic.rewards.edges]
+    .map(x => x.node)
+    .reduce(
+      (prev, curr) =>
+        encodedAddresses.includes(encodeAnyAddress(curr.debit))
+          ? prev.plus(curr.amount.value)
+          : encodedAddresses.includes(encodeAnyAddress(curr.credit))
+          ? prev.minus(curr.amount.value)
+          : prev,
+      new BigNumber(0)
+    )
+}
+
+const LabelledInput = (props: PropsWithChildren & { label?: ReactNode }) => (
+  <Text.BodySmall as="label" css={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
+    <div>{props.label ?? <wbr />}</div>
+    {props.children}
+  </Text.BodySmall>
+)
+
+type ExportHistoryButtonProps = {
+  accounts: Account[]
+  extrinsics: ExtrinsicNode[]
+}
+
+const ExportHistoryButton = (props: ExportHistoryButtonProps) => {
+  const [open, setOpen] = useState(false)
+
+  const encodedAddresses = useMemo(() => props.accounts?.map(x => encodeAnyAddress(x.address)) ?? [], [props.accounts])
+
+  if (props.extrinsics.length === 0) {
+    return null
+  }
+
+  return (
+    <>
+      <Button
+        css={theme => ({ position: 'fixed', right: '2.4rem', bottom: '4rem', background: theme.color.background })}
+        variant="outlined"
+        onClick={() => setOpen(true)}
+      >
+        Export {props.extrinsics.length} records
+      </Button>
+      {open && (
+        <ExportHistoryAlertDialog
+          onRequestDismiss={() => setOpen(false)}
+          onConfirm={() => {
+            const records = [
+              [
+                'type',
+                'timestamp',
+                'chain',
+                'module',
+                'call',
+                'hash',
+                'amount',
+                'changeInBalance',
+                'symbol',
+                'subscanUrl',
+              ],
+              ...props.extrinsics.map(extrinsic => {
+                const selfSigned = !extrinsic.signer
+                  ? false
+                  : encodedAddresses.includes(encodeAnyAddress(extrinsic.signer))
+
+                const totalAmountOfInterest = getExtrinsicTotalAmount(extrinsic, props.accounts)
+                const balanceChangeAmount = getExtrinsicBalanceChangeAmount(extrinsic, props.accounts)
+                const [module, call] = extrinsic.call.name.split('.')
+
+                return [
+                  selfSigned ? 'outgoing' : 'incoming',
+                  extrinsic.block.timestamp,
+                  extrinsic.chain.name,
+                  module,
+                  call,
+                  extrinsic.hash,
+                  totalAmountOfInterest.toString(),
+                  balanceChangeAmount.toString(),
+                  extrinsic.transfers.edges.at(0)?.node.amount.symbol ??
+                    extrinsic.rewards.edges.at(0)?.node.amount.symbol,
+                  extrinsic.subscanLink?.url,
+                ]
+              }),
+            ]
+
+            const promise = new Promise<void>((resolve, reject) =>
+              stringifyCsv(records, (error, output) => {
+                if (error !== undefined) {
+                  reject(error)
+                } else {
+                  const csv = 'data:text/csv;charset=utf-8,' + output
+                  window.open(encodeURI(csv))
+                  resolve()
+                }
+              })
+            ).catch(error => {
+              Sentry.captureException(error)
+              throw new Error('An error has occurred while generating CSV')
+            })
+
+            void toast.promise(promise, {
+              loading: 'Generating CSV',
+              error: error => error.message,
+              success: 'Successfully generated CSV',
+            })
+
+            setOpen(false)
+          }}
+          recordCount={props.extrinsics.length}
+        />
+      )}
+    </>
+  )
+}
+
 type HistoryResultProps = {
   accounts?: Account[]
   hash?: string
@@ -53,9 +187,7 @@ type HistoryResultProps = {
 
 // TODO: lots of repetitive account look up using `encodeAnyAddress`
 const HistoryResult = (props: HistoryResultProps) => {
-  type ExtrinsicNode = ExtrinsicsQuery['extrinsics']['edges'][number]['node']
-
-  const accounts = useRecoilValue(accountsState)
+  const accounts = useRecoilValue(selectedAccountsState)
 
   const [items, setItems] = useState<ExtrinsicNode[]>([])
   const [viewingItem, setViewingItem] = useState<Omit<ExtrinsicDetailsSideSheetProps, 'onRequestDismiss'>>()
@@ -192,6 +324,8 @@ const HistoryResult = (props: HistoryResultProps) => {
     }
   }, [generator])
 
+  const encodedAddresses = useMemo(() => props.accounts?.map(x => encodeAnyAddress(x.address)) ?? [], [props.accounts])
+
   if (!hasNextPage && items.length === 0) {
     return (
       <div css={{ textAlign: 'center', marginTop: '5.6rem' }}>
@@ -237,15 +371,7 @@ const HistoryResult = (props: HistoryResultProps) => {
           data={items}
           renderItem={extrinsic => {
             const [module, call] = extrinsic.call.name.split('.')
-            const encodedAddresses = props.accounts?.map(x => encodeAnyAddress(x.address)) ?? []
-            const totalAmountOfInterest = [...extrinsic.transfers.edges, ...extrinsic.rewards.edges]
-              .map(x => x.node)
-              .filter(
-                x =>
-                  encodedAddresses.includes(encodeAnyAddress(x.debit)) ||
-                  (x.credit !== 'reserve' && encodedAddresses.includes(encodeAnyAddress(x.credit)))
-              )
-              .reduce((prev, curr) => prev + parseFloat(curr.amount.value), 0)
+            const totalAmountOfInterest = getExtrinsicTotalAmount(extrinsic, props.accounts ?? []).toNumber()
 
             const signer = Maybe.of(extrinsic.signer).mapOrUndefined(signer => ({
               address: signer,
@@ -331,6 +457,7 @@ const HistoryResult = (props: HistoryResultProps) => {
         />
       </InfiniteScroll>
       {viewingItem && <ExtrinsicDetailsSideSheet {...viewingItem} onRequestDismiss={() => setViewingItem(undefined)} />}
+      <ExportHistoryButton extrinsics={items} accounts={props.accounts ?? []} />
     </div>
   )
 }
@@ -394,15 +521,7 @@ const History = () => {
             justifyContent: 'flex-end',
             marginBottom: '2.4rem',
           }}
-        >
-          <ExportTxHistoryWidget>
-            {({ onToggleOpen }) => (
-              <Button variant="surface" onClick={onToggleOpen}>
-                Export
-              </Button>
-            )}
-          </ExportTxHistoryWidget>
-        </header>
+        ></header>
         <div
           css={{
             display: 'flex',
@@ -412,50 +531,85 @@ const History = () => {
             gap: '0.8rem',
           }}
         >
-          <TextInput
-            placeholder="Search for TX hash or account address"
-            value={search}
-            onChange={event => setSearch(event.target.value)}
-            leadingSupportingText={<TextInput.ErrorLabel>{searchValidationError}</TextInput.ErrorLabel>}
-          />
+          <LabelledInput>
+            <TextInput
+              placeholder="Search for TX hash or account address"
+              value={search}
+              onChange={event => setSearch(event.target.value)}
+              leadingSupportingText={<TextInput.ErrorLabel>{searchValidationError}</TextInput.ErrorLabel>}
+            />
+          </LabelledInput>
           <div css={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '0.8rem' }}>
-            <Select placeholder="Chain" value={chain} onChange={setChain} clearRequired detached>
-              {chains.map(x => (
-                <Select.Option
-                  key={x.genesisHash}
-                  value={x.genesisHash}
-                  leadingIcon={
-                    <img
-                      alt={x.name ?? undefined}
-                      src={x.logo ?? undefined}
-                      css={{ width: '1.6rem', height: '1.6rem' }}
-                    />
-                  }
-                  headlineText={x.name}
+            <LabelledInput label="Chain">
+              <Select
+                placeholder={
+                  <>
+                    <Globe size="1em" css={{ verticalAlign: '-0.1em' }} /> Chain
+                  </>
+                }
+                value={chain}
+                onChange={setChain}
+                clearRequired
+                detached
+              >
+                {chains.map(x => (
+                  <Select.Option
+                    key={x.genesisHash}
+                    value={x.genesisHash}
+                    leadingIcon={
+                      <img
+                        alt={x.name ?? undefined}
+                        src={x.logo ?? undefined}
+                        css={{ width: '1.6rem', height: '1.6rem' }}
+                      />
+                    }
+                    headlineText={x.name}
+                  />
+                ))}
+              </Select>
+            </LabelledInput>
+            <LabelledInput label="Module">
+              <Select
+                placeholder={
+                  <>
+                    <Codepen size="1em" css={{ verticalAlign: '-0.1em' }} /> Module
+                  </>
+                }
+                value={module}
+                onChange={setModule}
+                clearRequired
+                detached
+              >
+                {modules.map(x => (
+                  <Select.Option key={x} value={x} headlineText={x} />
+                ))}
+              </Select>
+            </LabelledInput>
+            <div css={{ display: 'flex', alignItems: 'center', gap: '0.8rem', flexWrap: 'wrap' }}>
+              <LabelledInput label="From date">
+                <DateInput
+                  value={fromDate}
+                  max={toDate ?? today}
+                  onChangeDate={x => setFromDate(Maybe.of(x).mapOrUndefined(startOfDay))}
+                  css={{ padding: '1.1rem' }}
                 />
-              ))}
-            </Select>
-            <Select placeholder="Module" value={module} onChange={setModule} clearRequired detached>
-              {modules.map(x => (
-                <Select.Option key={x} value={x} headlineText={x} />
-              ))}
-            </Select>
-            <div css={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
-              <DateInput
-                value={fromDate}
-                max={toDate ?? today}
-                onChangeDate={x => setFromDate(Maybe.of(x).mapOrUndefined(startOfDay))}
-                css={{ padding: '1.1rem' }}
-              />
-              <DateInput
-                value={toDate}
-                max={today}
-                onChangeDate={x => setToDate(Maybe.of(x).mapOrUndefined(endOfDay))}
-                css={{ padding: '1.1rem' }}
-              />
-              <IconButton onClick={() => setDateOrder(x => (x === 'asc' ? 'desc' : 'asc'))}>
-                {dateOrder === 'desc' ? <ArrowDown /> : <ArrowUp />}
-              </IconButton>
+              </LabelledInput>
+              <LabelledInput label="To date">
+                <DateInput
+                  value={toDate}
+                  max={today}
+                  onChangeDate={x => setToDate(Maybe.of(x).mapOrUndefined(endOfDay))}
+                  css={{ padding: '1.1rem' }}
+                />
+              </LabelledInput>
+            </div>
+            <div>
+              <LabelledInput label="Order by">
+                <Select value={dateOrder} onChange={setDateOrder}>
+                  <Select.Option value="desc" headlineText="Newest" />
+                  <Select.Option value="asc" headlineText="Oldest" />
+                </Select>
+              </LabelledInput>
             </div>
           </div>
         </div>

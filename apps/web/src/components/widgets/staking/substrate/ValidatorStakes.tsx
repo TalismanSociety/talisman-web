@@ -81,7 +81,7 @@ const BaseValidatorStakes = () => {
     <>
       {stakes.map((props, index) => (
         <ErrorBoundary key={index} orientation="horizontal">
-          <ValidatorStakeItem {...props} />
+          <ValidatorStakeItem {...props} eligibleForFastUnstake={false} />
         </ErrorBoundary>
       ))}
     </>

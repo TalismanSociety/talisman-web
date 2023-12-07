@@ -1,9 +1,12 @@
 import AccountIcon from '@components/molecules/AccountIcon/AccountIcon'
 import { type Account } from '@domains/accounts/recoils'
-import { CircularProgressIndicator, Select } from '@talismn/ui'
+import { useHasActiveWalletConnection } from '@domains/extension'
+import { Button, CircularProgressIndicator, Identicon, Select } from '@talismn/ui'
 import { shortenAddress } from '@util/format'
 import { useCallback, useEffect, useMemo, useState, useTransition } from 'react'
 import { usePrevious } from 'react-use'
+import { useSetRecoilState } from 'recoil'
+import { walletConnectionSideSheetOpenState } from './WalletConnectionSideSheet'
 
 export type AccountSelectorProps = {
   width?: number | string
@@ -14,24 +17,21 @@ export type AccountSelectorProps = {
 }
 
 const AccountSelector = (props: AccountSelectorProps) => {
-  const onChange = useCallback(
+  const setWalletConnectionSideSheetOpen = useSetRecoilState(walletConnectionSideSheetOpenState)
+  const hasActiveWalletConnection = useHasActiveWalletConnection()
+
+  const onChangeAccount = useCallback(
     (address: string | undefined) => props.onChangeSelectedAccount(props.accounts.find(x => x.address === address)),
     [props]
   )
 
-  // if (!useIsWeb3Injected()) {
-  //   return (
-  //     <Button
-  //       as="a"
-  //       href="https://talisman.xyz/download"
-  //       target="_blank"
-  //       trailingIcon={<Download />}
-  //       css={{ width: 'auto' }}
-  //     >
-  //       Install wallet
-  //     </Button>
-  //   )
-  // }
+  if (!hasActiveWalletConnection) {
+    return (
+      <Button onClick={() => setWalletConnectionSideSheetOpen(true)} css={{ width: '100%' }}>
+        Connect wallet
+      </Button>
+    )
+  }
 
   const selectedValue =
     typeof props.selectedAccount === 'string' ? props.selectedAccount : props.selectedAccount?.address
@@ -39,9 +39,16 @@ const AccountSelector = (props: AccountSelectorProps) => {
   return (
     <Select
       css={{ width: '100%' }}
-      placeholder="Select an account"
+      placeholder={
+        <Select.Option
+          leadingIcon={
+            <Identicon value="placeholder" size="4em" css={{ visibility: 'hidden', pointerEvents: 'none' }} />
+          }
+          headlineText="Select an account"
+        />
+      }
       value={selectedValue}
-      onChange={onChange}
+      onChange={onChangeAccount}
       renderSelected={
         props.inTransition
           ? address => {

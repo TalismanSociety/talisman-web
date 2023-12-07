@@ -192,7 +192,7 @@ export const TransactionList = <T,>(props: TransactionListProps<T>) => {
         <Grid css={{ display: 'none', [WIDE_CONTAINER_QUERY]: { display: 'grid' } }}>
           <div css={{ gridArea: 'origin', width: '1.5rem' }} />
           <Identicon value="spacer" css={{ gridArea: 'identicon', visibility: 'hidden' }} />
-          <Text.BodyLarge css={{ gridArea: 'account' }}>Signer</Text.BodyLarge>
+          <Text.BodyLarge css={{ gridArea: '1 / 2 / 2 / 4' }}>Signer</Text.BodyLarge>
           <Text.BodyLarge css={{ gridArea: 'type' }}>Module</Text.BodyLarge>
           <Text.BodyLarge css={{ gridArea: 'amount' }}>Amount</Text.BodyLarge>
           <Text.BodyLarge css={{ gridArea: 'fee' }}>Fee</Text.BodyLarge>

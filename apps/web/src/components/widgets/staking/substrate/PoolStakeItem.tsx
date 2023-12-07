@@ -50,6 +50,7 @@ const PoolStakeItem = ({ item }: { item: ReturnType<typeof usePoolStakes<Account
           <AnimatedFiatNumber end={decimal.fromPlanck(item.poolMember.points).toNumber() * nativeTokenPrice} />
         }
         provider={item.poolName ?? ''}
+        shortProvider="Nomination pool"
         claimButton={
           item.pendingRewards?.isZero() === false && (
             <StakePosition.ClaimButton
