@@ -1,5 +1,5 @@
 import { useEffect, useState, type DetailedHTMLProps, type InputHTMLAttributes, useMemo } from 'react'
-import { Surface } from '../../atoms'
+import { Surface, Text } from '../../atoms'
 
 const parseDate = (date: Date | string | undefined) => {
   if (date instanceof Date) {
@@ -59,26 +59,28 @@ const DateInput = (props: DateInputProps) => {
   )
 
   return (
-    // @ts-expect-error
-    <Surface
-      as="input"
-      {...props}
-      value={dateString}
-      min={parseDate(props.min)}
-      max={parseDate(props.max)}
-      type="date"
-      onChange={event => {
-        props.onChange?.(event)
-        setDateString(event.target.value)
-      }}
-      css={{
-        outline: 'none',
-        border: 'none',
-        padding: '1.6rem',
-        borderRadius: '0.8rem',
-        colorScheme: 'dark',
-      }}
-    />
+    <Text.Body css={{ display: 'contents' }}>
+      {/* @ts-expect-error */}
+      <Surface
+        as="input"
+        {...props}
+        value={dateString}
+        min={parseDate(props.min)}
+        max={parseDate(props.max)}
+        type="date"
+        onChange={event => {
+          props.onChange?.(event)
+          setDateString(event.target.value)
+        }}
+        css={{
+          outline: 'none',
+          border: 'none',
+          padding: '1.6rem',
+          borderRadius: '0.8rem',
+          colorScheme: 'dark',
+        }}
+      />
+    </Text.Body>
   )
 }
 
