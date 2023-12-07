@@ -8,8 +8,8 @@ import TransactionLineItem, { TransactionList } from '@components/recipes/Transa
 import ErrorBoundary from '@components/widgets/ErrorBoundary'
 import { selectedAccountsState, type Account } from '@domains/accounts'
 import * as Sentry from '@sentry/react'
-import { ArrowDown, ArrowUp } from '@talismn/icons'
-import { Button, CircularProgressIndicator, DateInput, IconButton, Select, Text, TextInput, toast } from '@talismn/ui'
+import { Codepen, Globe } from '@talismn/icons'
+import { Button, CircularProgressIndicator, DateInput, Select, Text, TextInput, toast } from '@talismn/ui'
 import { encodeAnyAddress } from '@talismn/util'
 import { tryParseSubstrateOrEthereumAddress } from '@util/addressValidation'
 import { Maybe } from '@util/monads'
@@ -18,7 +18,7 @@ import { stringify as stringifyCsv } from 'csv-stringify/browser/esm'
 import { endOfDay, startOfDay } from 'date-fns'
 import request from 'graphql-request'
 import { isNil } from 'lodash'
-import { Suspense, useCallback, useMemo, useState } from 'react'
+import { Suspense, useCallback, useMemo, useState, type PropsWithChildren, type ReactNode } from 'react'
 import InfiniteScroll from 'react-infinite-scroller'
 import { selector, useRecoilValue } from 'recoil'
 import { isHex } from 'viem'
@@ -72,6 +72,13 @@ const getExtrinsicBalanceChangeAmount = (extrinsic: ExtrinsicNode, accounts: Acc
       new BigNumber(0)
     )
 }
+
+const LabelledInput = (props: PropsWithChildren & { label?: ReactNode }) => (
+  <Text.BodySmall as="label" css={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
+    <div>{props.label ?? <wbr />}</div>
+    {props.children}
+  </Text.BodySmall>
+)
 
 type ExportHistoryButtonProps = {
   accounts: Account[]
@@ -524,50 +531,85 @@ const History = () => {
             gap: '0.8rem',
           }}
         >
-          <TextInput
-            placeholder="Search for TX hash or account address"
-            value={search}
-            onChange={event => setSearch(event.target.value)}
-            leadingSupportingText={<TextInput.ErrorLabel>{searchValidationError}</TextInput.ErrorLabel>}
-          />
+          <LabelledInput>
+            <TextInput
+              placeholder="Search for TX hash or account address"
+              value={search}
+              onChange={event => setSearch(event.target.value)}
+              leadingSupportingText={<TextInput.ErrorLabel>{searchValidationError}</TextInput.ErrorLabel>}
+            />
+          </LabelledInput>
           <div css={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '0.8rem' }}>
-            <Select placeholder="Chain" value={chain} onChange={setChain} clearRequired detached>
-              {chains.map(x => (
-                <Select.Option
-                  key={x.genesisHash}
-                  value={x.genesisHash}
-                  leadingIcon={
-                    <img
-                      alt={x.name ?? undefined}
-                      src={x.logo ?? undefined}
-                      css={{ width: '1.6rem', height: '1.6rem' }}
-                    />
-                  }
-                  headlineText={x.name}
+            <LabelledInput label="Chain">
+              <Select
+                placeholder={
+                  <>
+                    <Globe size="1em" css={{ verticalAlign: '-0.1em' }} /> Chain
+                  </>
+                }
+                value={chain}
+                onChange={setChain}
+                clearRequired
+                detached
+              >
+                {chains.map(x => (
+                  <Select.Option
+                    key={x.genesisHash}
+                    value={x.genesisHash}
+                    leadingIcon={
+                      <img
+                        alt={x.name ?? undefined}
+                        src={x.logo ?? undefined}
+                        css={{ width: '1.6rem', height: '1.6rem' }}
+                      />
+                    }
+                    headlineText={x.name}
+                  />
+                ))}
+              </Select>
+            </LabelledInput>
+            <LabelledInput label="Module">
+              <Select
+                placeholder={
+                  <>
+                    <Codepen size="1em" css={{ verticalAlign: '-0.1em' }} /> Module
+                  </>
+                }
+                value={module}
+                onChange={setModule}
+                clearRequired
+                detached
+              >
+                {modules.map(x => (
+                  <Select.Option key={x} value={x} headlineText={x} />
+                ))}
+              </Select>
+            </LabelledInput>
+            <div css={{ display: 'flex', alignItems: 'center', gap: '0.8rem', flexWrap: 'wrap' }}>
+              <LabelledInput label="From date">
+                <DateInput
+                  value={fromDate}
+                  max={toDate ?? today}
+                  onChangeDate={x => setFromDate(Maybe.of(x).mapOrUndefined(startOfDay))}
+                  css={{ padding: '1.1rem' }}
                 />
-              ))}
-            </Select>
-            <Select placeholder="Module" value={module} onChange={setModule} clearRequired detached>
-              {modules.map(x => (
-                <Select.Option key={x} value={x} headlineText={x} />
-              ))}
-            </Select>
-            <div css={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
-              <DateInput
-                value={fromDate}
-                max={toDate ?? today}
-                onChangeDate={x => setFromDate(Maybe.of(x).mapOrUndefined(startOfDay))}
-                css={{ padding: '1.1rem' }}
-              />
-              <DateInput
-                value={toDate}
-                max={today}
-                onChangeDate={x => setToDate(Maybe.of(x).mapOrUndefined(endOfDay))}
-                css={{ padding: '1.1rem' }}
-              />
-              <IconButton onClick={() => setDateOrder(x => (x === 'asc' ? 'desc' : 'asc'))}>
-                {dateOrder === 'desc' ? <ArrowDown /> : <ArrowUp />}
-              </IconButton>
+              </LabelledInput>
+              <LabelledInput label="To date">
+                <DateInput
+                  value={toDate}
+                  max={today}
+                  onChangeDate={x => setToDate(Maybe.of(x).mapOrUndefined(endOfDay))}
+                  css={{ padding: '1.1rem' }}
+                />
+              </LabelledInput>
+            </div>
+            <div>
+              <LabelledInput label="Order by">
+                <Select value={dateOrder} onChange={setDateOrder}>
+                  <Select.Option value="desc" headlineText="Newest" />
+                  <Select.Option value="asc" headlineText="Oldest" />
+                </Select>
+              </LabelledInput>
             </div>
           </div>
         </div>
