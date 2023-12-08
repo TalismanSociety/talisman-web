@@ -7,6 +7,7 @@ export type ChainParameters = {
   maxInflation: number
   minInflation: number
   stakeTarget: number
+  yearlyInflationInTokens?: number
 }
 
 /**
@@ -89,7 +90,11 @@ export const chains = [
       logo: githubChainLogoUrl('aleph'),
     },
     subscanUrl: 'https://alephzero.subscan.io/',
-    parameters: defaultParams,
+    parameters: {
+      ...defaultParams,
+      stakeTarget: 0.5,
+      yearlyInflationInTokens: 30_000_000,
+    },
     priorityPool: 47,
   },
   {
@@ -104,7 +109,7 @@ export const chains = [
       logo: githubChainLogoUrl('vara'),
     },
     subscanUrl: 'https://vara.subscan.io/',
-    parameters: defaultParams,
+    parameters: { ...defaultParams, stakeTarget: 0.8 },
     priorityPool: 8,
   },
   {
