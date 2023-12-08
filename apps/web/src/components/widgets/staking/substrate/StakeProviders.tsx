@@ -14,7 +14,7 @@ import { Link } from 'react-router-dom'
 import { useRecoilValue, waitForAll } from 'recoil'
 
 const Apr = () => {
-  return <>{useInflation().stakedReturn.toLocaleString(undefined, { style: 'percent' })}</>
+  return <>{useInflation().stakedReturn.toLocaleString(undefined, { style: 'percent', maximumFractionDigits: 2 })}</>
 }
 
 const useAvailableBalance = () => {

@@ -24,4 +24,5 @@ export const glmrSlpxPair = {
       VToken2: 1,
     },
   },
+  apiEndpoint: 'https://api.bifrost.app/',
 } as const satisfies SlpxPair

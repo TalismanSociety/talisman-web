@@ -4,11 +4,19 @@ import { evmSignableAccountsState } from '@domains/accounts'
 import { slpxPairsState, useMintForm, type SlpxPair } from '@domains/staking/slpx'
 import { Zap } from '@talismn/icons'
 import { PolkadotApiIdProvider } from '@talismn/react-polkadot-api'
-import { InfoCard, SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR, SideSheet, Surface, Text } from '@talismn/ui'
+import {
+  CircularProgressIndicator,
+  InfoCard,
+  SIDE_SHEET_WIDE_BREAK_POINT_SELECTOR,
+  SideSheet,
+  Surface,
+  Text,
+} from '@talismn/ui'
 import { Maybe } from '@util/monads'
 import { Suspense, useMemo } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useRecoilValue } from 'recoil'
+import Apr from './Apr'
 import UnlockDuration from './UnlockDuration'
 
 type AddStakeSideSheetProps = {
@@ -44,11 +52,18 @@ const AddStakeSideSheet = (props: AddStakeSideSheetProps) => {
       <div
         css={{ 'display': 'flex', 'gap': '1.6rem', 'marginBottom': '1.6rem', 'flexWrap': 'wrap', '> *': { flex: 1 } }}
       >
-        <InfoCard headlineText="Rewards" text="6.65%" />
+        <InfoCard
+          headlineText="Rewards"
+          text={
+            <Suspense fallback={<CircularProgressIndicator size="1em" />}>
+              <Apr slpxPair={props.slpxPair} />
+            </Suspense>
+          }
+        />
         <InfoCard
           headlineText="Unbonding period"
           text={
-            <Suspense fallback="...">
+            <Suspense fallback={<CircularProgressIndicator size="1em" />}>
               <UnlockDuration slpxPair={props.slpxPair} />
             </Suspense>
           }
