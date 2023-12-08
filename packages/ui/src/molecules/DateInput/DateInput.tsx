@@ -1,5 +1,13 @@
-import { useEffect, useState, type DetailedHTMLProps, type InputHTMLAttributes, useMemo } from 'react'
-import { Surface, Text } from '../../atoms'
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  type ChangeEventHandler,
+  type DetailedHTMLProps,
+  type InputHTMLAttributes,
+} from 'react'
+import { Text, useSurfaceColor } from '../../atoms'
 
 const parseDate = (date: Date | string | undefined) => {
   if (date instanceof Date) {
@@ -59,28 +67,29 @@ const DateInput = (props: DateInputProps) => {
   )
 
   return (
-    <Text.Body css={{ display: 'contents' }}>
-      {/* @ts-expect-error */}
-      <Surface
-        as="input"
-        {...props}
-        value={dateString}
-        min={parseDate(props.min)}
-        max={parseDate(props.max)}
-        type="date"
-        onChange={event => {
+    <Text.Body
+      as="input"
+      {...props}
+      value={dateString}
+      min={parseDate(props.min)}
+      max={parseDate(props.max)}
+      type="date"
+      onChange={useCallback<ChangeEventHandler<HTMLInputElement>>(
+        event => {
           props.onChange?.(event)
           setDateString(event.target.value)
-        }}
-        css={{
-          outline: 'none',
-          border: 'none',
-          padding: '1.6rem',
-          borderRadius: '0.8rem',
-          colorScheme: 'dark',
-        }}
-      />
-    </Text.Body>
+        },
+        [props]
+      )}
+      css={{
+        background: useSurfaceColor(),
+        outline: 'none',
+        border: 'none',
+        padding: '1.6rem',
+        borderRadius: '0.8rem',
+        colorScheme: 'dark',
+      }}
+    />
   )
 }
 
