@@ -1,8 +1,8 @@
 import { ChainContext } from '@domains/chains'
 import { chainQueryState, useSubstrateApiEndpoint, useSubstrateApiState } from '@domains/common'
-
 import { BN } from '@polkadot/util'
 import { useQueryMultiState, useQueryState } from '@talismn/react-polkadot-api'
+import BigNumber from 'bignumber.js'
 import { useContext, useMemo } from 'react'
 import { constSelector, useRecoilValue } from 'recoil'
 
@@ -26,7 +26,8 @@ export const useInflation = () => {
   )
 
   return useMemo(() => {
-    const { auctionAdjust, auctionMax, falloff, maxInflation, minInflation, stakeTarget } = chain.parameters
+    const { auctionAdjust, auctionMax, falloff, maxInflation, minInflation, stakeTarget, yearlyInflationInTokens } =
+      chain.parameters
     const BN_MILLION = new BN(1_000_000)
 
     const stakedFraction =
@@ -35,11 +36,19 @@ export const useInflation = () => {
         : lastTotalStake.mul(BN_MILLION).div(totalIssuance).toNumber() / BN_MILLION.toNumber()
     const idealStake = stakeTarget - Math.min(auctionMax, auctionCounter?.toNumber() ?? 0) * auctionAdjust
     const idealInterest = maxInflation / idealStake
+
     const inflation =
-      minInflation +
-      (stakedFraction <= idealStake
-        ? stakedFraction * (idealInterest - minInflation / idealStake)
-        : (idealInterest * idealStake - minInflation) * 2 ** ((idealStake - stakedFraction) / falloff))
+      yearlyInflationInTokens !== undefined
+        ? totalIssuance.isZero()
+          ? 0
+          : new BigNumber(yearlyInflationInTokens.toString())
+              .div(totalIssuance.toString())
+              .shiftedBy(api.registry.chainDecimals.at(0) ?? 0)
+              .toNumber()
+        : minInflation +
+          (stakedFraction <= idealStake
+            ? stakedFraction * (idealInterest - minInflation / idealStake)
+            : (idealInterest * idealStake - minInflation) * 2 ** ((idealStake - stakedFraction) / falloff))
 
     return {
       idealInterest,
@@ -48,5 +57,5 @@ export const useInflation = () => {
       stakedFraction,
       stakedReturn: stakedFraction ? inflation / stakedFraction : 0,
     }
-  }, [auctionCounter, chain.parameters, lastTotalStake, totalIssuance])
+  }, [api.registry.chainDecimals, auctionCounter, chain.parameters, lastTotalStake, totalIssuance])
 }

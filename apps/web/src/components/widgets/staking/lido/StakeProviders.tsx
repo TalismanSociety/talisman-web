@@ -3,7 +3,7 @@ import AnimatedFiatNumber from '@components/widgets/AnimatedFiatNumber'
 import RedactableBalance from '@components/widgets/RedactableBalance'
 import { selectedBalancesState, selectedCurrencyState } from '@domains/balances'
 import { type LidoSuite } from '@domains/staking/lido'
-import { lidoSuitesState } from '@domains/staking/lido/recoils'
+import { lidoAprState, lidoSuitesState } from '@domains/staking/lido/recoils'
 import { githubChainLogoUrl } from '@talismn/chaindata-provider'
 import { Decimal } from '@talismn/math'
 import { CircularProgressIndicator } from '@talismn/ui'
@@ -12,6 +12,15 @@ import { Suspense, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { useRecoilValue, waitForAll } from 'recoil'
 import { useToken } from 'wagmi'
+
+const Apr = (props: { lidoSuite: LidoSuite }) => (
+  <>
+    {useRecoilValue(lidoAprState(props.lidoSuite.apiEndpoint)).toLocaleString(undefined, {
+      style: 'percent',
+      maximumFractionDigits: 2,
+    })}
+  </>
+)
 
 const useAvailableBalance = (lidoSuite: LidoSuite) => {
   const [balances, currency] = useRecoilValue(waitForAll([selectedBalancesState, selectedCurrencyState]))
@@ -81,7 +90,11 @@ const StakeProviders = () => {
           symbol={lidoSuite.chain.nativeCurrency.symbol}
           logo={githubChainLogoUrl('1')}
           chain={lidoSuite.chain.name}
-          apr="3.7%"
+          apr={
+            <Suspense fallback={<CircularProgressIndicator size="1em" />}>
+              <Apr lidoSuite={lidoSuite} />
+            </Suspense>
+          }
           type="Liquid staking"
           provider="Lido"
           unbondingPeriod="1-5 day(s)"

@@ -5,14 +5,15 @@ import { selectedBalancesState, selectedCurrencyState } from '@domains/balances'
 import { slpxPairsState, type SlpxPair } from '@domains/staking/slpx'
 import { githubChainLogoUrl } from '@talismn/chaindata-provider'
 import { Decimal } from '@talismn/math'
+import { PolkadotApiIdProvider } from '@talismn/react-polkadot-api'
 import { CircularProgressIndicator } from '@talismn/ui'
 import BigNumber from 'bignumber.js'
 import { Suspense, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { useRecoilValue, waitForAll } from 'recoil'
 import { useToken } from 'wagmi'
+import Apr from './Apr'
 import UnlockDuration from './UnlockDuration'
-import { PolkadotApiIdProvider } from '@talismn/react-polkadot-api'
 
 const useAvailableBalance = (slpxPair: SlpxPair) => {
   const [balances, currency] = useRecoilValue(waitForAll([selectedBalancesState, selectedCurrencyState]))
@@ -81,7 +82,11 @@ const StakeProviders = () => {
             symbol={slpxPair.nativeToken.symbol}
             logo={githubChainLogoUrl('moonbeam')}
             chain={slpxPair.chain.name}
-            apr="6.6%"
+            apr={
+              <Suspense fallback={<CircularProgressIndicator size="1em" />}>
+                <Apr slpxPair={slpxPair} />
+              </Suspense>
+            }
             type="Liquid staking"
             provider="Bifrost SLPx"
             unbondingPeriod={

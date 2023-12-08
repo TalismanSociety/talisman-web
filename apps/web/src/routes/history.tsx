@@ -9,7 +9,16 @@ import ErrorBoundary from '@components/widgets/ErrorBoundary'
 import { selectedAccountsState, type Account } from '@domains/accounts'
 import * as Sentry from '@sentry/react'
 import { Codepen, Globe } from '@talismn/icons'
-import { Button, CircularProgressIndicator, DateInput, Select, Text, TextInput, toast } from '@talismn/ui'
+import {
+  Button,
+  CircularProgressIndicator,
+  DateInput,
+  FloatingActionButtonPortal,
+  Select,
+  Text,
+  TextInput,
+  toast,
+} from '@talismn/ui'
 import { encodeAnyAddress } from '@talismn/util'
 import { tryParseSubstrateOrEthereumAddress } from '@util/addressValidation'
 import { Maybe } from '@util/monads'
@@ -96,13 +105,15 @@ const ExportHistoryButton = (props: ExportHistoryButtonProps) => {
 
   return (
     <>
-      <Button
-        css={theme => ({ position: 'fixed', right: '2.4rem', bottom: '4rem', background: theme.color.background })}
-        variant="outlined"
-        onClick={() => setOpen(true)}
-      >
-        Export {props.extrinsics.length} records
-      </Button>
+      <FloatingActionButtonPortal>
+        <Button
+          css={theme => ({ background: theme.color.background })}
+          variant="outlined"
+          onClick={() => setOpen(true)}
+        >
+          Export {props.extrinsics.length} records
+        </Button>
+      </FloatingActionButtonPortal>
       {open && (
         <ExportHistoryAlertDialog
           onRequestDismiss={() => setOpen(false)}

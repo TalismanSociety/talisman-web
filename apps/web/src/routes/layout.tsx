@@ -17,7 +17,6 @@ import { selectedAccountsState } from '@domains/accounts/recoils'
 import { currencyConfig, selectedCurrencyState } from '@domains/balances'
 import { useHasActiveWalletConnection } from '@domains/extension'
 import { useTheme } from '@emotion/react'
-import { FloatingPortal } from '@floating-ui/react'
 import { Compass, CreditCard, Eye, FileText, MoreHorizontal, RefreshCcw, Star, TalismanHand, Zap } from '@talismn/icons'
 import {
   Button,
@@ -30,9 +29,10 @@ import {
   Select,
   Text,
   TopAppBar,
+  createPortal,
 } from '@talismn/ui'
 import { usePostHog } from 'posthog-js/react'
-import { useCallback, useEffect, useState, type PropsWithChildren } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Link, Outlet, useLocation } from 'react-router-dom'
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil'
 
@@ -82,6 +82,11 @@ const WalletConnectionButton = () => {
     </Button>
   )
 }
+const [TitlePortalProvider, TitlePortal, TitlePortalElement] = createPortal()
+export { TitlePortal }
+
+const [HeaderWidgetPortalProvider, HeaderWidgetPortal, HeaderWidgetPortalElement] = createPortal()
+export { HeaderWidgetPortal }
 
 const Header = () => {
   const shouldShowAccountConnectionGuard = useShouldShowAccountConnectionGuard()
@@ -103,7 +108,9 @@ const Header = () => {
           [SCAFFOLD_WIDE_VIEW_MEDIA_SELECTOR]: { marginTop: '4rem' },
         }}
       >
-        <div id="page-title" />
+        <Text.H2 css={{ marginBottom: 0 }}>
+          <TitlePortalElement />
+        </Text.H2>
         <div css={{ display: 'flex', gap: '0.8rem' }}>
           <CurrencySelect />
           <div css={{ display: 'none', [SCAFFOLD_WIDE_VIEW_MEDIA_SELECTOR]: { display: 'contents' } }}>
@@ -115,21 +122,11 @@ const Header = () => {
         <AccountsManagementMenu
           button={<AccountValueInfo account={accounts.length === 1 ? accounts[0] : undefined} balance={<Total />} />}
         />
-        <div id="header-widget" />
+        <HeaderWidgetPortalElement />
       </div>
     </div>
   )
 }
-
-export const TitlePortal = (props: PropsWithChildren) => (
-  <FloatingPortal id="page-title">
-    <Text.H2 css={{ marginBottom: 0 }}>{props.children}</Text.H2>
-  </FloatingPortal>
-)
-
-export const HeaderWidgetPortal = (props: PropsWithChildren) => (
-  <FloatingPortal id="header-widget">{props.children}</FloatingPortal>
-)
 
 const Layout = () => {
   const posthog = usePostHog()
@@ -342,12 +339,16 @@ const Layout = () => {
     >
       {/* TODO: remove legacy imperative modals */}
       <ModalProvider>
-        <Header />
-        <Outlet />
-        <NominationPoolsStakeSideSheet />
-        <SlpxStakeSideSheet />
-        <LidoStakeSideSheet />
-        <WalletConnectionSideSheet />
+        <TitlePortalProvider>
+          <HeaderWidgetPortalProvider>
+            <Header />
+            <Outlet />
+            <NominationPoolsStakeSideSheet />
+            <SlpxStakeSideSheet />
+            <LidoStakeSideSheet />
+            <WalletConnectionSideSheet />
+          </HeaderWidgetPortalProvider>
+        </TitlePortalProvider>
       </ModalProvider>
     </Scaffold>
   )
