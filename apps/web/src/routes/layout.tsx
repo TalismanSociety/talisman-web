@@ -23,12 +23,12 @@ import {
   Select,
   Text,
   TopAppBar,
+  createPortal,
 } from '@talismn/ui'
 import { usePostHog } from 'posthog-js/react'
-import { useCallback, useEffect, useState, type PropsWithChildren } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Link, Outlet, useLocation } from 'react-router-dom'
 import { useRecoilState, useRecoilValue } from 'recoil'
-import { FloatingPortal } from '@floating-ui/react'
 
 const CurrencySelect = () => {
   const [currency, setCurrency] = useRecoilState(selectedCurrencyState)
@@ -45,6 +45,12 @@ const CurrencySelect = () => {
     </Select>
   )
 }
+
+const [TitlePortalProvider, TitlePortal, TitlePortalElement] = createPortal()
+export { TitlePortal }
+
+const [HeaderWidgetPortalProvider, HeaderWidgetPortal, HeaderWidgetPortalElement] = createPortal()
+export { HeaderWidgetPortal }
 
 const Header = () => {
   const shouldShowAccountConnectionGuard = useShouldShowAccountConnectionGuard()
@@ -66,28 +72,20 @@ const Header = () => {
           [SCAFFOLD_WIDE_VIEW_MEDIA_SELECTOR]: { marginTop: '4rem' },
         }}
       >
-        <div id="page-title" />
+        <Text.H2 css={{ marginBottom: 0 }}>
+          <TitlePortalElement />
+        </Text.H2>
         <CurrencySelect />
       </div>
       <div css={{ display: 'flex', gap: '2.4rem', flexWrap: 'wrap' }}>
         <AccountsManagementMenu
           button={<AccountValueInfo account={accounts.length === 1 ? accounts[0] : undefined} balance={<Total />} />}
         />
-        <div id="header-widget" />
+        <HeaderWidgetPortalElement />
       </div>
     </div>
   )
 }
-
-export const TitlePortal = (props: PropsWithChildren) => (
-  <FloatingPortal id="page-title">
-    <Text.H2 css={{ marginBottom: 0 }}>{props.children}</Text.H2>
-  </FloatingPortal>
-)
-
-export const HeaderWidgetPortal = (props: PropsWithChildren) => (
-  <FloatingPortal id="header-widget">{props.children}</FloatingPortal>
-)
 
 const Layout = () => {
   const posthog = usePostHog()
@@ -300,11 +298,15 @@ const Layout = () => {
     >
       {/* TODO: remove legacy imperative modals */}
       <ModalProvider>
-        <Header />
-        <Outlet />
-        <NominationPoolsStakeSideSheet />
-        <SlpxStakeSideSheet />
-        <LidoStakeSideSheet />
+        <TitlePortalProvider>
+          <HeaderWidgetPortalProvider>
+            <Header />
+            <Outlet />
+            <NominationPoolsStakeSideSheet />
+            <SlpxStakeSideSheet />
+            <LidoStakeSideSheet />
+          </HeaderWidgetPortalProvider>
+        </TitlePortalProvider>
       </ModalProvider>
     </Scaffold>
   )
