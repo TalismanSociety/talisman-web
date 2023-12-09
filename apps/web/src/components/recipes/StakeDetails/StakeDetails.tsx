@@ -141,7 +141,7 @@ const StakeDetails = Object.assign(
                   <Percent />
                 </TonalIcon>
               }
-              overlineText="APR"
+              overlineText="Est. return"
               headlineText={props.apr}
             />
             <ListItem
