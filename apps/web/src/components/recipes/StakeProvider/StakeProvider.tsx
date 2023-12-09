@@ -164,7 +164,7 @@ const StakeProvider = Object.assign(
           />
           <div css={{ gridArea: 'apr' }}>
             <Text.BodySmall as="div" css={{ '@container (min-width: 100rem)': { display: 'none' } }}>
-              APR (%)
+              Est. return
             </Text.BodySmall>
             <Text.Body as="div" alpha="high">
               {props.apr}
@@ -189,7 +189,7 @@ export const StakeProviderList = (props: PropsWithChildren<{ className?: string 
       >
         <Grid css={{ backgroundColor: 'transparent', paddingTop: 0, paddingBottom: 0 }}>
           <Text.BodySmall css={{ gridArea: 'asset' }}>Asset</Text.BodySmall>
-          <Text.BodySmall css={{ gridArea: 'apr' }}>Est. Return</Text.BodySmall>
+          <Text.BodySmall css={{ gridArea: 'apr' }}>Est. return</Text.BodySmall>
           <Text.BodySmall css={{ gridArea: 'type' }}>Type</Text.BodySmall>
           <Text.BodySmall css={{ gridArea: 'provider' }}>Provider</Text.BodySmall>
           <Text.BodySmall css={{ gridArea: 'unbonding-period' }}>Unbonding period</Text.BodySmall>
