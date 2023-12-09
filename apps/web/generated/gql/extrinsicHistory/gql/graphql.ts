@@ -1,5 +1,5 @@
 /* eslint-disable */
-import { type TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/core'
+import type { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/core'
 export type Maybe<T> = T | null
 export type InputMaybe<T> = Maybe<T>
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] }
@@ -175,14 +175,6 @@ export type ExtrinsicCsvQueryVariables = Exact<{
 
 export type ExtrinsicCsvQuery = { __typename?: 'Query'; extrinsicCsv: Array<Array<string>> }
 
-export type FiltersQueryVariables = Exact<{ [key: string]: never }>
-
-export type FiltersQuery = {
-  __typename?: 'Query'
-  modules: Array<string>
-  chains: Array<{ __typename?: 'Chain'; genesisHash: string; name?: string | null; logo?: string | null }>
-}
-
 export type ExtrinsicsQueryVariables = Exact<{
   after?: InputMaybe<Scalars['String']['input']>
   first: Scalars['Int']['input']
@@ -240,6 +232,14 @@ export type ExtrinsicsQuery = {
     }>
     pageInfo: { __typename?: 'PageInfo'; hasNextPage: boolean; endCursor?: string | null }
   }
+}
+
+export type FiltersQueryVariables = Exact<{ [key: string]: never }>
+
+export type FiltersQuery = {
+  __typename?: 'Query'
+  modules: Array<string>
+  chains: Array<{ __typename?: 'Chain'; genesisHash: string; name?: string | null; logo?: string | null }>
 }
 
 export const ExtrinsicCsvDocument = {
@@ -307,34 +307,6 @@ export const ExtrinsicCsvDocument = {
     },
   ],
 } as unknown as DocumentNode<ExtrinsicCsvQuery, ExtrinsicCsvQueryVariables>
-export const FiltersDocument = {
-  kind: 'Document',
-  definitions: [
-    {
-      kind: 'OperationDefinition',
-      operation: 'query',
-      name: { kind: 'Name', value: 'filters' },
-      selectionSet: {
-        kind: 'SelectionSet',
-        selections: [
-          { kind: 'Field', name: { kind: 'Name', value: 'modules' } },
-          {
-            kind: 'Field',
-            name: { kind: 'Name', value: 'chains' },
-            selectionSet: {
-              kind: 'SelectionSet',
-              selections: [
-                { kind: 'Field', name: { kind: 'Name', value: 'genesisHash' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'name' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'logo' } },
-              ],
-            },
-          },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<FiltersQuery, FiltersQueryVariables>
 export const ExtrinsicsDocument = {
   kind: 'Document',
   definitions: [
@@ -572,3 +544,31 @@ export const ExtrinsicsDocument = {
     },
   ],
 } as unknown as DocumentNode<ExtrinsicsQuery, ExtrinsicsQueryVariables>
+export const FiltersDocument = {
+  kind: 'Document',
+  definitions: [
+    {
+      kind: 'OperationDefinition',
+      operation: 'query',
+      name: { kind: 'Name', value: 'filters' },
+      selectionSet: {
+        kind: 'SelectionSet',
+        selections: [
+          { kind: 'Field', name: { kind: 'Name', value: 'modules' } },
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'chains' },
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [
+                { kind: 'Field', name: { kind: 'Name', value: 'genesisHash' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'name' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'logo' } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<FiltersQuery, FiltersQueryVariables>

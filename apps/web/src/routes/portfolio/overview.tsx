@@ -6,6 +6,7 @@ import Asset, { AssetsList, AssetsListLocked } from '@components/recipes/Asset'
 import AnimatedFiatNumber from '@components/widgets/AnimatedFiatNumber'
 import ErrorBoundary from '@components/widgets/ErrorBoundary'
 import PortfolioAllocationGraph from '@components/widgets/PortfolioAllocationGraph'
+import History from '@components/widgets/history/History'
 import Stakes from '@components/widgets/staking/Stakes'
 import { Eye, EyeOff } from '@talismn/icons'
 import { Button, IconButton } from '@talismn/ui'
@@ -109,47 +110,82 @@ const AssetsOverview = () => {
   )
 }
 
+const HistoryOverview = () => (
+  <div css>
+    <SectionHeader headlineText="History" />
+    <History maxCount={8} />
+    <div css={{ display: 'flex' }}>
+      <Button variant="secondary" as={Link} to="history" css={{ marginTop: '1.8rem', marginLeft: 'auto' }}>
+        View all history
+      </Button>
+    </div>
+  </div>
+)
+
 const Overview = () => (
   <div
     css={{
       'display': 'grid',
       'gap': '4.8rem 2.3rem',
-      'gridAutoColumns': `minmax(0, 1fr)`,
-      'gridTemplateAreas': `
-        'allocation'
-        'assets'
-        'staking'
-        'crowdloans'
-      `,
+      'gridTemplateRows': 'auto',
       '@media(min-width: 1024px)': {
         gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1fr)',
         gridTemplateAreas: `
-          'assets allocation'
-          'assets staking'
-          'assets crowdloans'
+          'left right'
+          'left right'
+          'left right'
         `,
       },
     }}
   >
-    <div css={{ gridArea: 'allocation' }}>
-      <ErrorBoundary>
-        <PortfolioAllocationGraph />
-      </ErrorBoundary>
+    <div
+      css={{
+        'display': 'contents',
+        'gridArea': 'left',
+        '@media(min-width: 1024px)': {
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '4.8rem',
+        },
+      }}
+    >
+      <div css={{ order: 1 }}>
+        <ErrorBoundary>
+          <AssetsOverview />
+        </ErrorBoundary>
+      </div>
+      <div css={{ order: 4 }}>
+        <ErrorBoundary>
+          <HistoryOverview />
+        </ErrorBoundary>
+      </div>
     </div>
-    <div css={{ gridArea: 'assets' }}>
-      <ErrorBoundary>
-        <AssetsOverview />
-      </ErrorBoundary>
-    </div>
-    <div css={{ gridArea: 'staking' }}>
-      <ErrorBoundary>
-        <Stakes />
-      </ErrorBoundary>
-    </div>
-    <div css={{ 'gridArea': 'crowdloans', ':empty': { display: 'none' } }}>
-      <ErrorBoundary>
-        <Crowdloans />
-      </ErrorBoundary>
+    <div
+      css={{
+        'display': 'contents',
+        'gridArea': 'right',
+        '@media(min-width: 1024px)': {
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '4.8rem',
+        },
+      }}
+    >
+      <div css={{ order: 0 }}>
+        <ErrorBoundary>
+          <PortfolioAllocationGraph />
+        </ErrorBoundary>
+      </div>
+      <div css={{ order: 2 }}>
+        <ErrorBoundary>
+          <Stakes />
+        </ErrorBoundary>
+      </div>
+      <div css={{ 'order': 3, ':empty': { display: 'none' } }}>
+        <ErrorBoundary>
+          <Crowdloans />
+        </ErrorBoundary>
+      </div>
     </div>
   </div>
 )

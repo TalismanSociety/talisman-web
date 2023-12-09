@@ -7,7 +7,7 @@ import { differenceInYears, subMonths } from 'date-fns'
 import { request } from 'graphql-request'
 import { useCallback, useMemo, useState, type ReactNode } from 'react'
 import { useRecoilValue } from 'recoil'
-import { graphql } from '../../../generated/gql/extrinsicHistory/gql'
+import { graphql } from '../../../../generated/gql/extrinsicHistory/gql'
 
 export type ExportTxHistoryWidgetProps = {
   children: (props: { onToggleOpen: () => unknown }) => ReactNode
