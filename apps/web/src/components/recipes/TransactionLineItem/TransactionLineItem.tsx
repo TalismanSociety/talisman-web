@@ -28,7 +28,7 @@ export type TransactionLineItemProps = {
   onClick?: () => unknown
 }
 
-const WIDE_CONTAINER_QUERY = '@container(min-width: 70rem)'
+const WIDE_CONTAINER_QUERY = '@container(min-width: 90rem)'
 
 const Grid = (props: PropsWithChildren<{ className?: string }>) => (
   <div
