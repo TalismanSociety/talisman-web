@@ -30,7 +30,7 @@ const TokenSelectorButton = <T extends IToken | string>(props: TokenSelectorProp
         const balance = filteredBalances.find(
           typeof x === 'string' ? y => y.token?.symbol.toLowerCase() === x.toLowerCase() : { id: x.id }
         )
-        const free = Decimal.fromPlanck(balance.sum.planck.free, balance.each.at(0)?.decimals ?? 9)
+        const transferable = Decimal.fromPlanck(balance.sum.planck.transferable, balance.each.at(0)?.decimals ?? 9)
         const symbol = typeof x === 'string' ? x : x.symbol
 
         return {
@@ -38,8 +38,8 @@ const TokenSelectorButton = <T extends IToken | string>(props: TokenSelectorProp
           symbol,
           logo:
             balance.each.at(0)?.token?.logo ?? `https://token-resources.vercel.app/tokens/${symbol.toUpperCase()}.png`,
-          free,
-          freeFiat: balance.sum.fiat(currency).free,
+          transferable,
+          fiatTransferable: balance.sum.fiat(currency).transferable,
         }
       }),
     [filteredBalances, currency, props.tokens]
@@ -72,14 +72,14 @@ const TokenSelectorButton = <T extends IToken | string>(props: TokenSelectorProp
       {tokenSelectorDialogOpen && (
         <TokenSelectorDialog onRequestDismiss={() => setTokenSelectorDialogOpen(false)}>
           {tokensWithBalance
-            .sort((a, b) => b.freeFiat - a.freeFiat || b.free.planck.cmp(a.free.planck))
+            .sort((a, b) => b.fiatTransferable - a.fiatTransferable || b.transferable.planck.cmp(a.transferable.planck))
             .map((x, index) => (
               <TokenSelectorDialog.Item
                 key={index}
                 logoSrc={x.logo}
                 name={x.symbol}
-                amount={x.free.toHuman()}
-                fiatAmount={x.freeFiat.toLocaleString(undefined, {
+                amount={x.transferable.toHuman()}
+                fiatAmount={x.fiatTransferable.toLocaleString(undefined, {
                   style: 'currency',
                   currency,
                   compactDisplay: 'short',
