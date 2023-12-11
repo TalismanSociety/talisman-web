@@ -31,7 +31,7 @@ export const createAcalaNftAsyncGenerator = createOrmlNftAsyncGenerator({
 
 export const createBitCountryNftAsyncGenerator = createOrmlNftAsyncGenerator({
   chain: 'bit-country',
-  provider: new WsProvider('wss://pioneer.api.onfinality.io/public-ws'),
+  provider: new WsProvider('wss://alphanet-rpc-gcp.bit.country'),
   getMetadata: async (classId, tokenId, metadata) => {
     const ipfsCid = parseCid(metadata)
 
