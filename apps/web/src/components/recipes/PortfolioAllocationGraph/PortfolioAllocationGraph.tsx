@@ -43,7 +43,7 @@ const PortfolioAllocationGraphSkeleton = () => (
       }}
     >
       <div>
-        <header>
+        <header css={{ marginBottom: '0.75em' }}>
           <Text.H4>Portfolio allocation</Text.H4>
         </header>
       </div>
@@ -93,7 +93,7 @@ const PortfolioAllocationGraph = Object.assign(
         >
           <div>
             <header>
-              <Text.H4>Portfolio allocation</Text.H4>
+              <Text.H4 css={{ marginBottom: '0.75em' }}>Portfolio allocation</Text.H4>
             </header>
             <div css={{ display: 'flex', gap: '0.8rem' }}>
               {props.assetChip}
