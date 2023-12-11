@@ -65,7 +65,7 @@ const TokenSelectorDialog = Object.assign(
       <AlertDialog {...props} width="42.2rem" title="Select a token" css={{ paddingBottom: 0 }}>
         <div>
           <TextInput
-            placeholder="🔍 Search by network"
+            placeholder="🔍 Search by token"
             value={query}
             onChange={useCallback<ChangeEventHandler<HTMLInputElement>>(event => setQuery(event.target.value), [])}
           />
