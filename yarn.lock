@@ -5338,6 +5338,23 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@polkadot-onboard/core@npm:1.1.0, @polkadot-onboard/core@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "@polkadot-onboard/core@npm:1.1.0"
+  checksum: eea90119a6b2a765173d0781480a0d90fb19744ce52e286447ab98b17f36895739da562e497560c75ed0d63fa715f487caf8e8dab283d6c2c1b6cf0d3b4741ea
+  languageName: node
+  linkType: hard
+
+"@polkadot-onboard/injected-wallets@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "@polkadot-onboard/injected-wallets@npm:1.1.0"
+  dependencies:
+    "@polkadot-onboard/core": 1.1.0
+    "@polkadot/extension-inject": 0.46.5
+  checksum: 7230e6c0941b4d36fdc1f84bf57a302b235802c3091e4067ba956da96f0c3501b8527da10db5a9fee78189f9fd85cadd45cd385aba190907c85c555e024d2c0e
+  languageName: node
+  linkType: hard
+
 "@polkadot/api-augment@npm:10.9.1":
   version: 10.9.1
   resolution: "@polkadot/api-augment@npm:10.9.1"
@@ -8257,6 +8274,8 @@ __metadata:
     "@graphql-codegen/cli": 5.0.0
     "@graphql-codegen/client-preset": 4.1.0
     "@playwright/test": ^1.31.2
+    "@polkadot-onboard/core": ^1.1.0
+    "@polkadot-onboard/injected-wallets": ^1.1.0
     "@polkadot/api": ^10.9.1
     "@polkadot/extension-dapp": ^0.46.5
     "@polkawallet/bridge": ^0.1.5-16
@@ -8313,6 +8332,7 @@ __metadata:
     i18next-http-backend: ^1.4.5
     lodash: ^4.17.21
     md5: ^2.3.0
+    mipd: ^0.0.5
     posthog-js: ^1.93.6
     prop-types: ^15.8.1
     react: ^18.2.0
@@ -8334,7 +8354,7 @@ __metadata:
     vite: ^4.3.7
     vite-plugin-svgr: ^3.2.0
     vite-tsconfig-paths: ^4.2.0
-    wagmi: ^1.4.8
+    wagmi: ^1.4.10
   languageName: unknown
   linkType: soft
 
@@ -10021,9 +10041,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wagmi/connectors@npm:3.1.6":
-  version: 3.1.6
-  resolution: "@wagmi/connectors@npm:3.1.6"
+"@wagmi/connectors@npm:3.1.8":
+  version: 3.1.8
+  resolution: "@wagmi/connectors@npm:3.1.8"
   dependencies:
     "@coinbase/wallet-sdk": ^3.6.6
     "@ledgerhq/connect-kit-loader": ^1.1.0
@@ -10041,15 +10061,15 @@ __metadata:
   peerDependenciesMeta:
     typescript:
       optional: true
-  checksum: de16578c6f13a81a5e75d2b1ffc7d2ca0bf391fc7e3cec3e6ba45645059b5b414b142c162c39ca3e255c0e97bdb0c0eae00f11442e51c1bce63e546c0bf71089
+  checksum: 527caabf54d33ef4d19aedf03c629089d419ef589958f9b31788ddfcda78c0bf30162c1024875a00e57d28cd96d8845fffc3572f52847ca5502a669cb467fc97
   languageName: node
   linkType: hard
 
-"@wagmi/core@npm:1.4.8":
-  version: 1.4.8
-  resolution: "@wagmi/core@npm:1.4.8"
+"@wagmi/core@npm:1.4.10":
+  version: 1.4.10
+  resolution: "@wagmi/core@npm:1.4.10"
   dependencies:
-    "@wagmi/connectors": 3.1.6
+    "@wagmi/connectors": 3.1.8
     abitype: 0.8.7
     eventemitter3: ^4.0.7
     zustand: ^4.3.1
@@ -10059,7 +10079,7 @@ __metadata:
   peerDependenciesMeta:
     typescript:
       optional: true
-  checksum: 2113b45664ce3027c3f0b840d52499c3f855826071596e8df9da1700fefb3769d65bc91d516286acd2f61da6acbcb560fcfb0db5847aaea2e47a25baff287e27
+  checksum: b2bde48d38cf8cd31b1361c313901844b7bec010613423e72364103f77bbc6db5741f17f2ddcbf9e40d3c8347dc202b949bdeee5dee779d82de13563078bbf86
   languageName: node
   linkType: hard
 
@@ -20056,6 +20076,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"mipd@npm:^0.0.5":
+  version: 0.0.5
+  resolution: "mipd@npm:0.0.5"
+  dependencies:
+    viem: ^1.1.4
+  peerDependencies:
+    typescript: ">=5.0.4"
+  peerDependenciesMeta:
+    typescript:
+      optional: true
+  checksum: 920b3afb3a92daeb66685adb746211ac4268ff805392a2f6e1da2703c43aa5835e5ad7be9d0312582a348d4c764ae3c81ab39362b66607ba0d54032def0038f1
+  languageName: node
+  linkType: hard
+
 "mitt@npm:^2.1.0":
   version: 2.1.0
   resolution: "mitt@npm:2.1.0"
@@ -26937,6 +26971,27 @@ __metadata:
   languageName: node
   linkType: hard
 
+"viem@npm:^1.1.4":
+  version: 1.19.9
+  resolution: "viem@npm:1.19.9"
+  dependencies:
+    "@adraffy/ens-normalize": 1.10.0
+    "@noble/curves": 1.2.0
+    "@noble/hashes": 1.3.2
+    "@scure/bip32": 1.3.2
+    "@scure/bip39": 1.2.1
+    abitype: 0.9.8
+    isows: 1.0.3
+    ws: 8.13.0
+  peerDependencies:
+    typescript: ">=5.0.4"
+  peerDependenciesMeta:
+    typescript:
+      optional: true
+  checksum: a18633f42f8075b16819b6914f5236c726875407e8e3741b1434af48193ac5a7c12cbe1e1522b0e13df7af4dd4c5daeea2371a21f9338f27c271700a7f6d1595
+  languageName: node
+  linkType: hard
+
 "viem@npm:^1.19.11":
   version: 1.19.11
   resolution: "viem@npm:1.19.11"
@@ -27031,14 +27086,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"wagmi@npm:^1.4.8":
-  version: 1.4.8
-  resolution: "wagmi@npm:1.4.8"
+"wagmi@npm:^1.4.10":
+  version: 1.4.10
+  resolution: "wagmi@npm:1.4.10"
   dependencies:
     "@tanstack/query-sync-storage-persister": ^4.27.1
     "@tanstack/react-query": ^4.28.0
     "@tanstack/react-query-persist-client": ^4.28.0
-    "@wagmi/core": 1.4.8
+    "@wagmi/core": 1.4.10
     abitype: 0.8.7
     use-sync-external-store: ^1.2.0
   peerDependencies:
@@ -27048,7 +27103,7 @@ __metadata:
   peerDependenciesMeta:
     typescript:
       optional: true
-  checksum: 409cdc9f8f75f6c46d1687299ba6198886f30f0ee046b479c90476592f115bfffac99d57e44f75e2e53e4dd7f791b8dee8dd1fd5efb3dfae136e3c014eda9cee
+  checksum: 8ac20e2bded1b77fc29cdd67c043897da87f4b5f7bc1bb12ae73177c61fd00ea99f19c9b91b826dbe4e15b5fd47d883e592f780151b17c934846afc5785e0582
   languageName: node
   linkType: hard
 

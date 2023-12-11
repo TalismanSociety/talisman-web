@@ -3,10 +3,10 @@ import AnimatedFiatNumber from '@components/widgets/AnimatedFiatNumber'
 import RedactableBalance from '@components/widgets/RedactableBalance'
 import { selectedEvmAccountsState } from '@domains/accounts'
 import { useStakes, type LidoSuite } from '@domains/staking/lido'
+import { lidoSuitesState } from '@domains/staking/lido/recoils'
 import { useState } from 'react'
 import { useRecoilValue } from 'recoil'
 import LidoWidgetSideSheet from './LidoWidgetSideSheet'
-import { lidoSuitesState } from '@domains/staking/lido/recoils'
 
 const IncreaseStakeSideSheet = (props: { onRequestDismiss: () => unknown; lidoSuite: LidoSuite }) => (
   <LidoWidgetSideSheet

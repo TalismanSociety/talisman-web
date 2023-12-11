@@ -21,12 +21,9 @@ export type WelcomeProps = {
   popularAccounts: ReactNode
 }
 
-const WalletButton = <T extends 'a' | 'button'>({
-  variant,
-  ...props
-}: Omit<ButtonProps<T>, 'variant' | 'children'> & { variant: 'install' | 'connect' }) => (
+const WalletButton = <T extends 'a' | 'button'>({ ...props }: Omit<ButtonProps<T>, 'variant' | 'children'>) => (
   <Button {...props} css={{ padding: '2rem 5.6rem' }}>
-    {variant === 'connect' ? 'Connect wallet' : 'Install wallet'}
+    Connect wallet
   </Button>
 )
 
@@ -62,6 +59,7 @@ const Welcome = Object.assign(
           css={{
             'fontSize': '3.6rem',
             'textAlign': 'center',
+            'marginBottom': '2.4rem',
             '@media (min-width: 1024px)': {
               fontSize: '4.6rem',
             },

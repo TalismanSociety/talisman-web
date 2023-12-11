@@ -20,6 +20,8 @@
   "dependencies": {
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
+    "@polkadot-onboard/core": "^1.1.0",
+    "@polkadot-onboard/injected-wallets": "^1.1.0",
     "@polkadot/api": "^10.9.1",
     "@polkadot/extension-dapp": "^0.46.5",
     "@polkawallet/bridge": "^0.1.5-16",
@@ -53,6 +55,7 @@
     "i18next-http-backend": "^1.4.5",
     "lodash": "^4.17.21",
     "md5": "^2.3.0",
+    "mipd": "^0.0.5",
     "posthog-js": "^1.93.6",
     "react": "^18.2.0",
     "react-countup": "^6.4.2",
@@ -68,7 +71,7 @@
     "threads": "^1.7.0",
     "uuid": "^9.0.0",
     "victory": "^36.6.8",
-    "wagmi": "^1.4.8"
+    "wagmi": "^1.4.10"
   },
   "devDependencies": {
     "@acala-network/types": "^5.1.1",

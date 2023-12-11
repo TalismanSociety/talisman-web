@@ -165,37 +165,6 @@ export const globalStyle = (theme: Theme) => css`
     font-size: var(--font-size-normal);
   }
 
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  p {
-    line-height: 1.2em;
-    margin: 0 0 0.75em;
-    font-weight: var(--font-weight-regular);
-
-    &.-muted {
-      opacity: 0.7;
-    }
-  }
-
-  h1 {
-    font-size: var(--font-size-xxlarge);
-    font-weight: var(--font-weight-bold);
-    font-family: 'SurtExpanded', sans-serif;
-  }
-
-  h2 {
-    font-size: var(--font-size-xlarge);
-  }
-
-  h3,
-  h4,
-  h5 {
-    font-size: var(--font-size-large);
-  }
-
   p {
     font-size: var(--font-size-normal);
     line-height: 1.6em;

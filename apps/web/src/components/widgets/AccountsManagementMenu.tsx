@@ -7,11 +7,10 @@ import {
 } from '@domains/accounts/recoils'
 import { fiatBalancesState, totalPortfolioFiatBalance } from '@domains/balances'
 import { copyAddressToClipboard } from '@domains/common/utils'
-import { useIsWeb3Injected } from '@domains/extension/hooks'
-import { allowExtensionConnectionState } from '@domains/extension/recoils'
 import { useTheme } from '@emotion/react'
-import { Copy, Download, Eye, EyePlus, Link, PlusCircle, Power, TalismanHand, Trash2, Users, X } from '@talismn/icons'
+import { Copy, Ethereum, Eye, EyePlus, TalismanHand, Trash2, Users, X } from '@talismn/icons'
 import {
+  Chip,
   CircularProgressIndicator,
   Hr,
   IconButton,
@@ -25,10 +24,26 @@ import {
 import { shortenAddress } from '@util/format'
 import { Maybe } from '@util/monads'
 import { useMemo, type ElementType, type ReactNode } from 'react'
-import { useRecoilState, useRecoilValue, useRecoilValueLoadable, useSetRecoilState } from 'recoil'
+import { useRecoilValue, useRecoilValueLoadable, useSetRecoilState } from 'recoil'
 import AddReadOnlyAccountDialog from './AddReadOnlyAccountDialog'
 import AnimatedFiatNumber from './AnimatedFiatNumber'
 import RemoveWatchedAccountConfirmationDialog from './RemoveWatchedAccountConfirmationDialog'
+
+const EvmChip = () => {
+  const theme = useTheme()
+  return (
+    <Tooltip content="This is the active account from your EVM wallet">
+      <Chip
+        leadingContent={<Ethereum />}
+        containerColor="linear-gradient(98deg, rgba(178, 190, 255, 0.30) -17.17%, rgba(86, 103, 233, 0.30) 141.82%)"
+        contentColor={theme.color.onSurface}
+        contentAlpha="high"
+      >
+        EVM
+      </Chip>
+    </Tooltip>
+  )
+}
 
 // TODO: probably have this as part of the UI lib
 const SurfaceIconButton = <T extends Extract<ElementType, 'button' | 'a' | 'figure'> | ElementType<any>>(
@@ -37,24 +52,7 @@ const SurfaceIconButton = <T extends Extract<ElementType, 'button' | 'a' | 'figu
 
 const AccountsManagementSurfaceIconButton = (props: { size?: number | string }) => {
   const theme = useTheme()
-  const allowExtensionConnection = useRecoilValue(allowExtensionConnectionState)
   const selectedAccounts = useRecoilValue(selectedAccountsState)
-  const readonlyAccounts = useRecoilValue(readOnlyAccountsState)
-  const isWeb3Injected = useIsWeb3Injected()
-
-  if ((!isWeb3Injected || !allowExtensionConnection) && readonlyAccounts.length === 0) {
-    return (
-      <SurfaceIconButton
-        as="figure"
-        size={props.size}
-        containerColor={theme.color.foreground}
-        contentColor={theme.color.primary}
-        css={{ cursor: 'pointer' }}
-      >
-        <Link />
-      </SurfaceIconButton>
-    )
-  }
 
   if (selectedAccounts.length === 1) {
     return (
@@ -87,46 +85,7 @@ const AccountsManagementMenu = (props: { button: ReactNode }) => {
 
   const fiatBalances = useRecoilValueLoadable(fiatBalancesState)
 
-  const [allowExtensionConnection, setAllowExtensionConnection] = useRecoilState(allowExtensionConnectionState)
-  const isWeb3Injected = useIsWeb3Injected()
-
   const leadingMenuItem = useMemo(() => {
-    if (!isWeb3Injected) {
-      return (
-        <Menu.Item>
-          <a href="https://talisman.xyz/download" target="_blank" rel="noreferrer">
-            <ListItem
-              leadingContent={
-                <SurfaceIconButton
-                  as="figure"
-                  containerColor={theme.color.foreground}
-                  contentColor={theme.color.primary}
-                >
-                  <Download />
-                </SurfaceIconButton>
-              }
-              headlineText="Install wallet"
-            />
-          </a>
-        </Menu.Item>
-      )
-    }
-
-    if (!allowExtensionConnection) {
-      return (
-        <Menu.Item onClick={() => setAllowExtensionConnection(true)}>
-          <ListItem
-            leadingContent={
-              <SurfaceIconButton as="figure" containerColor={theme.color.foreground} contentColor={theme.color.primary}>
-                <PlusCircle />
-              </SurfaceIconButton>
-            }
-            headlineText="Connect wallet"
-          />
-        </Menu.Item>
-      )
-    }
-
     return (
       <Menu.Item onClick={() => setSelectedAccountAddresses(undefined)}>
         <ListItem
@@ -142,34 +101,7 @@ const AccountsManagementMenu = (props: { button: ReactNode }) => {
         />
       </Menu.Item>
     )
-  }, [
-    allowExtensionConnection,
-    isWeb3Injected,
-    setAllowExtensionConnection,
-    setSelectedAccountAddresses,
-    theme.color.foreground,
-    theme.color.primary,
-    totalBalance,
-  ])
-
-  const disconnectButton = useMemo(() => {
-    if (!allowExtensionConnection) {
-      return null
-    }
-
-    return (
-      <Menu.Item onClick={() => setAllowExtensionConnection(false)}>
-        <ListItem
-          leadingContent={
-            <SurfaceIconButton containerColor={theme.color.foreground}>
-              <Power />
-            </SurfaceIconButton>
-          }
-          headlineText="Disconnect wallet"
-        />
-      </Menu.Item>
-    )
-  }, [allowExtensionConnection, setAllowExtensionConnection, theme.color.foreground])
+  }, [setSelectedAccountAddresses, theme.color.foreground, theme.color.primary, totalBalance])
 
   return (
     <Menu>
@@ -207,7 +139,21 @@ const AccountsManagementMenu = (props: { button: ReactNode }) => {
                         <AnimatedFiatNumber end={balances[x.address] ?? 0} />
                       )
                     )}
-                    overlineText={x.name ?? shortenAddress(x.address)}
+                    overlineText={
+                      <div
+                        css={
+                          x.canSignEvm && {
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '0.8rem',
+                            marginBottom: '0.25rem',
+                          }
+                        }
+                      >
+                        {x.name ?? shortenAddress(x.address)}
+                        {x.canSignEvm && <EvmChip />}
+                      </div>
+                    }
                     leadingContent={<AccountIcon account={x} size="4rem" />}
                     revealTrailingContentOnHover
                     trailingContent={
@@ -226,7 +172,6 @@ const AccountsManagementMenu = (props: { button: ReactNode }) => {
                   />
                 </Menu.Item>
               ))}
-              {disconnectButton}
             </section>
             <Hr />
             <section>

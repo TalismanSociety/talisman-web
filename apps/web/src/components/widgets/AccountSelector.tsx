@@ -1,13 +1,12 @@
 import AccountIcon from '@components/molecules/AccountIcon/AccountIcon'
 import { type Account } from '@domains/accounts/recoils'
-import { useIsWeb3Injected } from '@domains/extension/hooks'
-import { allowExtensionConnectionState } from '@domains/extension/recoils'
-import { Download } from '@talismn/icons'
+import { useHasActiveWalletConnection } from '@domains/extension'
 import { Button, CircularProgressIndicator, Identicon, Select } from '@talismn/ui'
 import { shortenAddress } from '@util/format'
 import { useCallback, useEffect, useMemo, useState, useTransition } from 'react'
 import { usePrevious } from 'react-use'
-import { useRecoilState } from 'recoil'
+import { useSetRecoilState } from 'recoil'
+import { walletConnectionSideSheetOpenState } from './WalletConnectionSideSheet'
 
 export type AccountSelectorProps = {
   width?: number | string
@@ -18,30 +17,17 @@ export type AccountSelectorProps = {
 }
 
 const AccountSelector = (props: AccountSelectorProps) => {
-  const onChange = useCallback(
+  const setWalletConnectionSideSheetOpen = useSetRecoilState(walletConnectionSideSheetOpenState)
+  const hasActiveWalletConnection = useHasActiveWalletConnection()
+
+  const onChangeAccount = useCallback(
     (address: string | undefined) => props.onChangeSelectedAccount(props.accounts.find(x => x.address === address)),
     [props]
   )
 
-  const [allowExtensionConnection, setAllowExtensionConnection] = useRecoilState(allowExtensionConnectionState)
-
-  if (!useIsWeb3Injected()) {
+  if (!hasActiveWalletConnection) {
     return (
-      <Button
-        as="a"
-        href="https://talisman.xyz/download"
-        target="_blank"
-        trailingIcon={<Download />}
-        css={{ width: '100%' }}
-      >
-        Install wallet
-      </Button>
-    )
-  }
-
-  if (!allowExtensionConnection) {
-    return (
-      <Button onClick={() => setAllowExtensionConnection(true)} css={{ width: '100%' }}>
+      <Button onClick={() => setWalletConnectionSideSheetOpen(true)} css={{ width: '100%' }}>
         Connect wallet
       </Button>
     )
@@ -62,7 +48,7 @@ const AccountSelector = (props: AccountSelectorProps) => {
         />
       }
       value={selectedValue}
-      onChange={onChange}
+      onChange={onChangeAccount}
       renderSelected={
         props.inTransition
           ? address => {
@@ -108,7 +94,7 @@ export const useAccountSelector = (
     [initialAccount]
   )
 
-  const [account, setAccount] = useState(getInitialAccount(accounts))
+  const [account, setAccount] = useState<Account | undefined>(getInitialAccount(accounts))
 
   const previousAccounts = usePrevious(accounts)
   const accountsUpdated = useMemo(

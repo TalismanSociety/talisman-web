@@ -52,6 +52,7 @@ const AlertDialog = ({
     <>
       <Surface
         as={Dialog}
+        elevation={0}
         {...props}
         title={undefined}
         onClickBackdrop={onRequestDismiss}

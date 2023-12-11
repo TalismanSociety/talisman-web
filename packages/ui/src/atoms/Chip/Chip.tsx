@@ -1,15 +1,17 @@
 import { useTheme } from '@emotion/react'
 import { IconContext } from '@talismn/icons/utils'
-import { type ButtonHTMLAttributes, type DetailedHTMLProps, type ReactNode, useMemo } from 'react'
+import { useMemo, type ButtonHTMLAttributes, type DetailedHTMLProps, type ReactNode } from 'react'
 
+import { useSurfaceColor } from '..'
+import type { ContentAlpha } from '../..'
 import CircularProgressIndicator from '../CircularProgressIndicator'
 import Text from '../Text'
-import { useSurfaceColor } from '..'
 
 export type ChipProps = DetailedHTMLProps<ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement> & {
   size?: 'sm' | 'md' | 'lg'
   containerColor?: string
   contentColor?: string
+  contentAlpha?: ContentAlpha
   leadingContent?: ReactNode
   loading?: boolean
 }
@@ -33,10 +35,13 @@ const Chip = ({ size = 'md', containerColor, contentColor, leadingContent, loadi
 
   const functionallyDisabled = Boolean(props.disabled) || Boolean(loading)
 
+  const hasLeadingContent = Boolean(loading) || Boolean(leadingContent)
+
   return (
     <Container
       as="button"
       color={contentColor}
+      alpha={props.contentAlpha}
       {...props}
       disabled={functionallyDisabled}
       css={[
@@ -48,7 +53,7 @@ const Chip = ({ size = 'md', containerColor, contentColor, leadingContent, loadi
           border: 'none',
           borderRadius: '2em',
           padding: '0.2em 0.8em',
-          backgroundColor: containerColor,
+          background: containerColor,
         },
         props.onClick && {
           'cursor': 'pointer',
@@ -60,6 +65,9 @@ const Chip = ({ size = 'md', containerColor, contentColor, leadingContent, loadi
           'opacity': theme.contentAlpha.disabled,
           'cursor': 'not-allowed',
           ':hover': { opacity: theme.contentAlpha.disabled },
+        },
+        hasLeadingContent && {
+          paddingLeft: '0.7em',
         },
       ]}
     >

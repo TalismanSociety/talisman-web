@@ -6,19 +6,17 @@ import { TalismanHandLoader } from '@components/TalismanHandLoader'
 import ErrorBoundary from '@components/widgets/ErrorBoundary'
 import Development from '@components/widgets/development'
 import { LegacyBalancesWatcher } from '@domains/balances'
-import { ExtensionWatcher } from '@domains/extension/recoils'
+import { chainDeriveState, chainQueryMultiState, chainQueryState } from '@domains/common/recoils/query'
+import { ExtensionWatcher, TalismanExtensionSynchronizer } from '@domains/extension'
+import { WagmiProvider } from '@domains/extension/wagmi'
 import * as Portfolio from '@libs/portfolio'
 import TalismanProvider from '@libs/talisman'
 import router from '@routes'
+import { PolkadotApiProvider } from '@talismn/react-polkadot-api'
 import { Suspense } from 'react'
 import { RouterProvider } from 'react-router-dom'
 import { RecoilRoot } from 'recoil'
-
 import ThemeProvider from './App.Theme'
-import { PolkadotApiProvider } from '@talismn/react-polkadot-api'
-import { chainDeriveState, chainQueryMultiState, chainQueryState } from '@domains/common/recoils/query'
-import { TalismanExtensionSynchronizer } from '@domains/extension'
-import { WagmiProvider } from '@domains/extension/wagmi'
 
 const Loader = () => {
   return (

@@ -1,7 +1,9 @@
+import { toast } from '@talismn/ui'
 import { tryParseSubstrateOrEthereumAddress } from '@util/addressValidation'
 import { isNilOrWhitespace } from '@util/nil'
 import { useCallback, useMemo, useState } from 'react'
 import { useRecoilValue, useSetRecoilState } from 'recoil'
+import { useEnsAddress } from 'wagmi'
 import { readOnlyAccountsState, type ReadonlyAccount } from './recoils'
 
 export const useSetReadonlyAccounts = () => {
@@ -14,6 +16,7 @@ export const useSetReadonlyAccounts = () => {
           ...accounts.filter(x => x.address !== account.address),
           { ...account, name: isNilOrWhitespace(account.name) ? undefined : account.name },
         ])
+        toast.success('Watched account added successfully')
       },
       [setReadonlyAccounts]
     ),
@@ -32,7 +35,10 @@ export const useAddReadonlyAccountForm = () => {
   const [address, setAddress] = useState('')
   const [name, setName] = useState('')
 
-  const resultingAddress = useMemo(() => tryParseSubstrateOrEthereumAddress(address), [address])
+  const { data: addressFromEns } = useEnsAddress({ name: address })
+
+  const parsedAddress = useMemo(() => tryParseSubstrateOrEthereumAddress(address), [address])
+  const resultingAddress = addressFromEns ?? parsedAddress
 
   const hasExistingAccount = useMemo(
     () =>

@@ -6,6 +6,7 @@ module.exports = {
   replaceAttrValues: {
     '#000': 'currentcolor',
     '#121212': 'currentcolor',
+    'black': 'currentcolor',
   },
   template: require('./template'),
   svgProps: {

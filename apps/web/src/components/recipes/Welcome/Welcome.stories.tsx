@@ -11,7 +11,7 @@ export default {
 export const Default: Story<WelcomeProps> = args => <Welcome {...args} />
 
 Default.args = {
-  walletButton: <Welcome.WalletButton variant="connect" />,
+  walletButton: <Welcome.WalletButton />,
   addressInput: <AccountConnectionDialog.AddressInput />,
   addressInputConfirmButton: <AccountConnectionDialog.AddressInputConfirmButton />,
   popularAccounts: (
