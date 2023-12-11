@@ -1,5 +1,5 @@
+import talismanWalletLogo from '@assets/talisman-wallet.svg'
 import {
-  talismanWalletLogo,
   useConnectEip6963,
   useConnectedSubstrateWallet,
   useEip6963Providers,
