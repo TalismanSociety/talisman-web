@@ -6,6 +6,7 @@ import { WalletAggregator, type BaseWallet } from '@polkadot-onboard/core'
 import { InjectedWalletProvider } from '@polkadot-onboard/injected-wallets'
 import type { InjectedWindow } from '@polkadot/extension-inject/types'
 import { jsonParser, string } from '@recoiljs/refine'
+import { usePostHog } from 'posthog-js/react'
 import { useEffect } from 'react'
 import { atom, selector, useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil'
 
@@ -85,6 +86,8 @@ export const useSubstrateExtensionEffect = () => {
     }
   }, [connectedWalletId, setConnectedWallet, setInjectedAccounts])
 
+  const posthog = usePostHog()
+
   useEffect(() => {
     void (async () => {
       const wallets = await walletAggregator.getWallets()
@@ -97,13 +100,16 @@ export const useSubstrateExtensionEffect = () => {
           try {
             await walletToConnect.connect()
             setConnectedWallet(walletToConnect)
+            posthog.capture('Substrate extensions connected', {
+              $set: { substrateExtensions: [walletToConnect.metadata.id] },
+            })
           } catch {
             setConnectedWalletId(undefined)
           }
         }
       }
     })()
-  }, [connectedWalletId, setConnectedWallet, setConnectedWalletId])
+  }, [connectedWalletId, posthog, setConnectedWallet, setConnectedWalletId])
 
   // Auto connect on launch if Talisman extension is installed
   // and user has not explicitly disable wallet connection

@@ -3,6 +3,7 @@ import { storageEffect } from '@domains/common/effects'
 import { jsonParser, string } from '@recoiljs/refine'
 import { connect as wagmiConnect, disconnect as wagmiDisconnect, watchAccount as watchWagmiAccount } from '@wagmi/core'
 import { createStore, type EIP6963ProviderDetail } from 'mipd'
+import { usePostHog } from 'posthog-js/react'
 import { useEffect, useSyncExternalStore } from 'react'
 import { atom, useRecoilState, useSetRecoilState } from 'recoil'
 import { useAccount as useWagmiAccount } from 'wagmi'
@@ -40,6 +41,8 @@ export const useEvmExtensionEffect = () => {
     }
   }, [connectedEip6963Rdns])
 
+  const posthog = usePostHog()
+
   useEffect(() => {
     if (connectedEip6963Rdns !== undefined) {
       void (async () => {
@@ -57,13 +60,14 @@ export const useEvmExtensionEffect = () => {
                 },
               }),
             })
+            posthog.capture('EVM extensions connected', { $set: { evmExtensions: [providerToConnect.info.rdns] } })
           } catch {
             setConnectedEip6963Rdns(undefined)
           }
         }
       })()
     }
-  }, [connectedEip6963Rdns, eip6963Providers, setConnectedEip6963Rdns])
+  }, [connectedEip6963Rdns, eip6963Providers, posthog, setConnectedEip6963Rdns])
 
   const { address } = useWagmiAccount()
   const setWagmiAccounts = useSetRecoilState(wagmiAccountsState)
