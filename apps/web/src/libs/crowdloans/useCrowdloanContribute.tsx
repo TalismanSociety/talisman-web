@@ -2,18 +2,18 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
 import { SupportedRelaychains, parachainDetails } from '@libs/talisman/util/_config'
-import { ApiPromise, type SubmittableResult, WsProvider } from '@polkadot/api'
+import { ApiPromise, WsProvider, type SubmittableResult } from '@polkadot/api'
 import { type SubmittableExtrinsic } from '@polkadot/api/submittable/types'
-import { web3FromAddress } from '@polkadot/extension-dapp'
 import { isEthereumChecksum } from '@polkadot/util-crypto'
 import { encodeAnyAddress, planckToTokens, tokensToPlanck } from '@talismn/util'
 import customRpcs from '@util/customRpcs'
 import { Maybe } from '@util/monads'
 import BigNumber from 'bignumber.js'
 import { useCallback, useEffect, useState } from 'react'
-import { type MemberType, makeTaggedUnion, none } from 'safety-match'
+import { makeTaggedUnion, none, type MemberType } from 'safety-match'
 import { v4 as uuidv4 } from 'uuid'
 
+import { useConnectedSubstrateWallet } from '@domains/extension'
 import { Acala, Astar, Moonbeam, Zeitgeist } from './crowdloanOverrides'
 import { submitTermsAndConditions } from './moonbeam/remarkFlow'
 import { useCrowdloanContributions } from './useCrowdloanContributions'
@@ -790,6 +790,7 @@ function useMoonbeamRegisterUserThunk(state: ContributeState, dispatch: Dispatch
   })
   const { api, ...jsonCmpStateDeps } = stateDeps || {}
 
+  const signer = useConnectedSubstrateWallet()?.signer
   useEffect(() => {
     if (!stateDeps) return
 
@@ -811,6 +812,7 @@ function useMoonbeamRegisterUserThunk(state: ContributeState, dispatch: Dispatch
       submissionRequested,
     } = stateDeps
 
+    if (signer === undefined) return
     if (!api) return
     if (!submissionRequested) return
     if (!account)
@@ -835,7 +837,7 @@ function useMoonbeamRegisterUserThunk(state: ContributeState, dispatch: Dispatch
         })
       )
     void (async () => {
-      const verified = await submitTermsAndConditions(api, encodeAnyAddress(account, relayChainId))
+      const verified = await submitTermsAndConditions(api, encodeAnyAddress(account, relayChainId), signer)
       if (!verified) throw new Error('Failed to verify user registration')
       dispatch(
         ContributeEvent._userRegistered({
@@ -1020,7 +1022,9 @@ function useSignAndSendContributionThunk(state: ContributeState, dispatch: Dispa
     }),
     _: () => false as false,
   })
+
   const { api, ...jsonCmpStateDeps } = stateDeps || {}
+  const signer = useConnectedSubstrateWallet()?.signer
 
   useEffect(() => {
     let cancelled = false
@@ -1051,8 +1055,6 @@ function useSignAndSendContributionThunk(state: ContributeState, dispatch: Dispa
       if (!api) return
       const contributionPlanck = tokensToPlanck(contributionAmount, relayTokenDecimals)
 
-      const injector = await web3FromAddress(account)
-
       if (cancelled) return
 
       let tx
@@ -1076,7 +1078,7 @@ function useSignAndSendContributionThunk(state: ContributeState, dispatch: Dispa
 
       let txSigned
       try {
-        txSigned = await tx.signAsync(account, { signer: injector.signer })
+        txSigned = await tx.signAsync(account, { signer })
       } catch (error: any) {
         dispatch(ContributeEvent._setValidationError({ i18nCode: error?.message || error.toString() }))
         return

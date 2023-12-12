@@ -2,22 +2,19 @@ import * as crypto from 'crypto'
 
 import { type ApiPromise } from '@polkadot/api'
 import { type Signer } from '@polkadot/api/types'
-import { web3FromAddress } from '@polkadot/extension-dapp'
 
 import { Moonbeam } from '../crowdloanOverrides'
 import moonbeamStatement from './moonbeamStatement'
 
-export async function submitTermsAndConditions(api: ApiPromise, address: string) {
-  const injector = await web3FromAddress(address)
-
-  if (!injector?.signer?.signRaw) throw new Error('Extension does not support signing messages')
+export async function submitTermsAndConditions(api: ApiPromise, address: string, signer: Signer) {
+  if (!signer?.signRaw) throw new Error('Extension does not support signing messages')
 
   const hash = crypto.createHash('sha256').update(moonbeamStatement).digest('hex')
-  const signature = (await injector.signer.signRaw({ address, data: hash, type: 'bytes' })).signature
+  const signature = (await signer.signRaw({ address, data: hash, type: 'bytes' }))?.signature
 
   const remark = await agreeRemark(address, signature)
   if (!remark) throw new Error('No remark')
-  const [extrinsicHash, blockHash] = await sendRemark(api, injector.signer, address, remark)
+  const [extrinsicHash, blockHash] = await sendRemark(api, signer, address, remark)
   if (!extrinsicHash || !blockHash) throw new Error('No tx info')
   const verified = await verifyRemark(address, extrinsicHash, blockHash)
 
