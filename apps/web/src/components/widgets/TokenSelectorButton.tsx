@@ -2,6 +2,7 @@ import Cryptoticon from '@components/recipes/Cryptoticon/Cryptoticon'
 import TokenSelectorDialog from '@components/recipes/TokenSelectorDialog'
 import type { Account } from '@domains/accounts'
 import { selectedBalancesState, selectedCurrencyState } from '@domains/balances'
+import { useTokens } from '@talismn/balances-react'
 import type { IToken } from '@talismn/chaindata-provider'
 import { Decimal } from '@talismn/math'
 import { Button } from '@talismn/ui'
@@ -16,6 +17,7 @@ export type TokenSelectorProps<T extends IToken | string> = {
 }
 
 const TokenSelectorButton = <T extends IToken | string>(props: TokenSelectorProps<T>) => {
+  const tokens = useTokens()
   const [tokenSelectorDialogOpen, setTokenSelectorDialogOpen] = useState(false)
   const [balances, currency] = useRecoilValue(waitForAll([selectedBalancesState, selectedCurrencyState]))
 
@@ -44,14 +46,13 @@ const TokenSelectorButton = <T extends IToken | string>(props: TokenSelectorProp
       }),
     [filteredBalances, currency, props.tokens]
   )
-  const selectedToken = useMemo<{ symbol: string; logo?: string }>(
+
+  const selectedToken = useMemo<IToken | undefined>(
     () =>
       typeof props.selectedToken === 'string'
-        ? filteredBalances
-            .find(x => x.token?.symbol.toLowerCase() === props.selectedToken?.toString().toLowerCase())
-            .each.at(0)?.token ?? { symbol: props.selectedToken, logo: undefined }
-        : (props.selectedToken as IToken),
-    [filteredBalances, props.selectedToken]
+        ? Object.values(tokens).find(x => x.symbol.toLowerCase() === (props.selectedToken as string).toLowerCase())
+        : props.selectedToken,
+    [props.selectedToken, tokens]
   )
 
   return (
