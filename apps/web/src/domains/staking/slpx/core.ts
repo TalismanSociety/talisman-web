@@ -2,10 +2,10 @@ import '@bifrost-finance/types/augment/api'
 import type { Account } from '@domains/accounts'
 import { selectedCurrencyState } from '@domains/balances'
 import { tokenPriceState } from '@domains/chains'
-import { expectedBlockTime, useSubstrateApiState, useWagmiContractWrite } from '@domains/common'
+import { useWagmiContractWrite } from '@domains/common'
 import { evmToAddress } from '@polkadot/util-crypto'
 import { Decimal } from '@talismn/math'
-import { useDeriveState, useQueryMultiState, useQueryState } from '@talismn/react-polkadot-api'
+import { useQueryMultiState, useQueryState } from '@talismn/react-polkadot-api'
 import { Maybe } from '@util/monads'
 import BigNumber from 'bignumber.js'
 import type BN from 'bn.js'
@@ -16,20 +16,15 @@ import { erc20ABI, useContractRead, useContractReads, useToken, useWaitForTransa
 import slpx from './abi'
 import type { SlpxPair, SlpxToken } from './types'
 
-export const useVTokenUnlockDuration = (tokenId: any) => {
-  const [api, eraLength, unlockDuration] = useRecoilValue(
-    waitForAll([
-      useSubstrateApiState(),
-      useDeriveState('session', 'eraLength', []),
-      useQueryState('vtokenMinting', 'unlockDuration', [tokenId]),
-    ])
+export const useVTokenUnlockDuration = (slpxPair: SlpxPair) => {
+  const unlockDuration = useRecoilValue(
+    useQueryState('vtokenMinting', 'unlockDuration', [slpxPair.nativeToken.tokenId])
   )
 
   return useMemo(() => {
-    const blockTime = expectedBlockTime(api)
-    const eras: BN = unlockDuration.unwrapOrDefault().asEra.unwrap()
-    return eras.mul(eraLength).mul(blockTime).toNumber()
-  }, [api, eraLength, unlockDuration])
+    const rounds: BN = unlockDuration.unwrapOrDefault().asRound.unwrap()
+    return rounds.muln(slpxPair.estimatedRoundDuration).toNumber()
+  }, [slpxPair.estimatedRoundDuration, unlockDuration])
 }
 
 const useSwapRateLoadable = (tokenId: any, vTokenId: any, reverse?: boolean) => {

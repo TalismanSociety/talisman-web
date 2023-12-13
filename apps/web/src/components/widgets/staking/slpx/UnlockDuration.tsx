@@ -5,7 +5,7 @@ import { useMemo } from 'react'
 export type UnlockDurationProps = { slpxPair: SlpxPair }
 
 const UnlockDuration = (props: UnlockDurationProps) => {
-  const unlockDuration = useVTokenUnlockDuration(props.slpxPair.vToken.tokenId)
+  const unlockDuration = useVTokenUnlockDuration(props.slpxPair)
   return <>{useMemo(() => formatDistance(0, unlockDuration), [unlockDuration])}</>
 }
 
