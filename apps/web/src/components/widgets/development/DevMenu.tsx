@@ -2,14 +2,16 @@ import 'winbox/dist/css/themes/modern.min.css'
 import 'winbox/dist/css/winbox.min.css'
 
 import { enableTestnetsState } from '@domains/chains'
-import RpcError from '@polkadot/rpc-provider/coder/error'
+import { toastExtrinsic, useWagmiContractWrite } from '@domains/common'
 import { useTheme } from '@emotion/react'
+import RpcError from '@polkadot/rpc-provider/coder/error'
 import { useCallback } from 'react'
 import { useSessionStorage } from 'react-use'
 import WinBox, { type WinBoxPropType } from 'react-winbox'
 import { useRecoilState } from 'recoil'
+import { sepolia } from 'wagmi'
 import { debugErrorBoundaryState } from '../ErrorBoundary'
-import { toastExtrinsic } from '@domains/common'
+import { counterAbi } from './counterAbi'
 
 const InsufficientFeeToast = () => {
   return (
@@ -22,6 +24,26 @@ const InsufficientFeeToast = () => {
       }
     >
       Insufficient balance
+    </button>
+  )
+}
+
+const SignEvmTransaction = () => {
+  const { writeAsync } = useWagmiContractWrite({
+    chainId: sepolia.id,
+    address: '0x87F762e318e8a54215b2e2FDcE28C136e176e14C',
+    abi: counterAbi,
+    functionName: 'increment',
+    etherscanUrl: sepolia.blockExplorers.etherscan.url,
+  })
+
+  return (
+    <button
+      onClick={() => {
+        void writeAsync()
+      }}
+    >
+      Sign EVM transaction
     </button>
   )
 }
@@ -73,6 +95,13 @@ const DevMenu = () => {
           Toasts
           <div>
             <InsufficientFeeToast />
+          </div>
+        </legend>
+        <hr />
+        <legend>
+          EVM
+          <div>
+            <SignEvmTransaction />
           </div>
         </legend>
       </form>
