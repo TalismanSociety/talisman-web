@@ -1,4 +1,3 @@
-import SectionHeader from '@components/molecules/SectionHeader'
 import DexForm from '@components/recipes/DexForm/DexForm'
 import { Details, OrderedDetailsList, Text } from '@talismn/ui'
 import React, { Suspense } from 'react'
@@ -19,7 +18,6 @@ const Transport = () => {
       }
       faq={
         <>
-          <SectionHeader headlineText="About Cross-Chain Transport" />
           <picture>
             <source srcSet={illustrationAvif} />
             <source srcSet={illustrationWebp} />
