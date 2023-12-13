@@ -1,6 +1,5 @@
 import { initSentry } from '@domains/common/sentry'
 import * as Sentry from '@sentry/react'
-import { PostHogProvider } from 'posthog-js/react'
 import React from 'react'
 import { createRoot } from 'react-dom/client'
 import App from './App'
@@ -17,8 +16,6 @@ const root = createRoot(container!)
 
 root.render(
   <React.StrictMode>
-    <PostHogProvider apiKey={import.meta.env.REACT_APP_POSTHOG_AUTH_TOKEN} options={{ debug: import.meta.env.DEV }}>
-      <ProfiledApp />
-    </PostHogProvider>
+    <ProfiledApp />
   </React.StrictMode>
 )

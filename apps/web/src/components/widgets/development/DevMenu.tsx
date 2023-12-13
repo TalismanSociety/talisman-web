@@ -2,14 +2,17 @@ import 'winbox/dist/css/themes/modern.min.css'
 import 'winbox/dist/css/winbox.min.css'
 
 import { enableTestnetsState } from '@domains/chains'
-import RpcError from '@polkadot/rpc-provider/coder/error'
+import { toastExtrinsic, useWagmiContractWrite } from '@domains/common'
 import { useTheme } from '@emotion/react'
-import { useCallback } from 'react'
+import RpcError from '@polkadot/rpc-provider/coder/error'
+import { usePostHog } from 'posthog-js/react'
+import { useCallback, useEffect, useState } from 'react'
 import { useSessionStorage } from 'react-use'
 import WinBox, { type WinBoxPropType } from 'react-winbox'
 import { useRecoilState } from 'recoil'
+import { sepolia } from 'wagmi'
 import { debugErrorBoundaryState } from '../ErrorBoundary'
-import { toastExtrinsic } from '@domains/common'
+import { counterAbi } from './counterAbi'
 
 const InsufficientFeeToast = () => {
   return (
@@ -23,6 +26,42 @@ const InsufficientFeeToast = () => {
     >
       Insufficient balance
     </button>
+  )
+}
+
+const SignEvmTransaction = () => {
+  const { writeAsync } = useWagmiContractWrite({
+    chainId: sepolia.id,
+    address: '0x87F762e318e8a54215b2e2FDcE28C136e176e14C',
+    abi: counterAbi,
+    functionName: 'increment',
+    etherscanUrl: sepolia.blockExplorers.etherscan.url,
+  })
+
+  return (
+    <button
+      onClick={() => {
+        void writeAsync()
+      }}
+    >
+      Sign EVM transaction
+    </button>
+  )
+}
+
+const Analytics = () => {
+  const [debug, setDebug] = useState(false)
+
+  const postHog = usePostHog()
+
+  useEffect(() => {
+    postHog.debug(debug)
+  }, [debug, postHog])
+
+  return (
+    <label>
+      <input type="checkbox" checked={debug} onChange={() => setDebug(x => !x)} /> Debug PostHog
+    </label>
   )
 }
 
@@ -68,6 +107,7 @@ const DevMenu = () => {
           <input type="checkbox" checked={debugErrorBoundary} onChange={() => setDebugErrorBoundary(x => !x)} /> Debug
           error boundary (right click to trigger error)
         </label>
+        <Analytics />
         <hr />
         <legend>
           Toasts
@@ -75,6 +115,14 @@ const DevMenu = () => {
             <InsufficientFeeToast />
           </div>
         </legend>
+        <hr />
+        <legend>
+          EVM
+          <div>
+            <SignEvmTransaction />
+          </div>
+        </legend>
+        <hr />
       </form>
     </WinBox>
   )

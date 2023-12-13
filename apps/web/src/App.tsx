@@ -13,6 +13,7 @@ import * as Portfolio from '@libs/portfolio'
 import TalismanProvider from '@libs/talisman'
 import router from '@routes'
 import { PolkadotApiProvider } from '@talismn/react-polkadot-api'
+import { PostHogProvider } from 'posthog-js/react'
 import { Suspense } from 'react'
 import { RouterProvider } from 'react-router-dom'
 import { RecoilRoot } from 'recoil'
@@ -47,24 +48,26 @@ const App = () => (
         )}
       >
         <Suspense fallback={<Loader />}>
-          <WagmiProvider>
-            <PolkadotApiProvider
-              queryState={chainQueryState}
-              deriveState={chainDeriveState}
-              queryMultiState={chainQueryMultiState}
-            >
-              <Portfolio.Provider>
-                <TalismanProvider>
-                  <ExtensionWatcher />
-                  <TalismanExtensionSynchronizer />
-                  <LegacyBalancesWatcher />
-                  <Development />
-                  <RouterProvider router={router} />
-                  <FairyBreadBanner />
-                </TalismanProvider>
-              </Portfolio.Provider>
-            </PolkadotApiProvider>
-          </WagmiProvider>
+          <PostHogProvider apiKey={import.meta.env.REACT_APP_POSTHOG_AUTH_TOKEN}>
+            <WagmiProvider>
+              <PolkadotApiProvider
+                queryState={chainQueryState}
+                deriveState={chainDeriveState}
+                queryMultiState={chainQueryMultiState}
+              >
+                <Portfolio.Provider>
+                  <TalismanProvider>
+                    <ExtensionWatcher />
+                    <TalismanExtensionSynchronizer />
+                    <LegacyBalancesWatcher />
+                    <RouterProvider router={router} />
+                    <FairyBreadBanner />
+                    <Development />
+                  </TalismanProvider>
+                </Portfolio.Provider>
+              </PolkadotApiProvider>
+            </WagmiProvider>
+          </PostHogProvider>
         </Suspense>
       </ErrorBoundary>
     </RecoilRoot>
