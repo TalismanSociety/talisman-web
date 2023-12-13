@@ -1,5 +1,6 @@
 import { type ApiPromise } from '@polkadot/api'
 import BN from 'bn.js'
+import { minutesToMilliseconds } from 'date-fns'
 
 // Some chains incorrectly use these, i.e. it is set to values such as 0 or even 2
 // Use a low minimum validity threshold to check these against
@@ -22,3 +23,13 @@ export const expectedBlockTime = (api: ApiPromise) =>
       DEFAULT_TIME.muln(2)
     : // default guess for others
       DEFAULT_TIME)
+
+export const expectedSessionTime = (api: ApiPromise) => {
+  switch (api.genesisHash.toString()) {
+    // Aleph Zero
+    case '0x70255b4d28de0fc4e1a193d7e175ad1ccef431598211c55538f1018651a0344e':
+      return minutesToMilliseconds(15)
+    default:
+      return undefined
+  }
+}
