@@ -5,7 +5,8 @@ import { enableTestnetsState } from '@domains/chains'
 import { toastExtrinsic, useWagmiContractWrite } from '@domains/common'
 import { useTheme } from '@emotion/react'
 import RpcError from '@polkadot/rpc-provider/coder/error'
-import { useCallback } from 'react'
+import { usePostHog } from 'posthog-js/react'
+import { useCallback, useEffect, useState } from 'react'
 import { useSessionStorage } from 'react-use'
 import WinBox, { type WinBoxPropType } from 'react-winbox'
 import { useRecoilState } from 'recoil'
@@ -45,6 +46,22 @@ const SignEvmTransaction = () => {
     >
       Sign EVM transaction
     </button>
+  )
+}
+
+const Analytics = () => {
+  const [debug, setDebug] = useState(false)
+
+  const postHog = usePostHog()
+
+  useEffect(() => {
+    postHog.debug(debug)
+  }, [debug, postHog])
+
+  return (
+    <label>
+      <input type="checkbox" checked={debug} onChange={() => setDebug(x => !x)} /> Debug PostHog
+    </label>
   )
 }
 
@@ -90,6 +107,7 @@ const DevMenu = () => {
           <input type="checkbox" checked={debugErrorBoundary} onChange={() => setDebugErrorBoundary(x => !x)} /> Debug
           error boundary (right click to trigger error)
         </label>
+        <Analytics />
         <hr />
         <legend>
           Toasts
@@ -104,6 +122,7 @@ const DevMenu = () => {
             <SignEvmTransaction />
           </div>
         </legend>
+        <hr />
       </form>
     </WinBox>
   )

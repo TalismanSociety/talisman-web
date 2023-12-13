@@ -5,6 +5,7 @@ import { connectedSubstrateWalletState } from '@domains/extension'
 import { substrateApiState } from '..'
 
 export * from './api'
+export * from './development'
 export * from './query'
 
 export const paymentInfoState = selectorFamily({
