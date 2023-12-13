@@ -16,4 +16,5 @@ export type SlpxPair = {
   vToken: SlpxToken
   etherscanUrl: string
   apiEndpoint: string
+  estimatedRoundDuration: number
 }

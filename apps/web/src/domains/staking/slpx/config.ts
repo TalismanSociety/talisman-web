@@ -25,4 +25,5 @@ export const glmrSlpxPair = {
     },
   },
   apiEndpoint: 'https://api.bifrost.app/',
+  estimatedRoundDuration: 21_600_000,
 } as const satisfies SlpxPair
