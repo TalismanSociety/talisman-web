@@ -2,7 +2,7 @@ import '@bifrost-finance/types/augment/api'
 import type { Account } from '@domains/accounts'
 import { selectedCurrencyState } from '@domains/balances'
 import { tokenPriceState } from '@domains/chains'
-import { useWagmiContractWrite } from '@domains/common'
+import { useSubstrateApiState, useWagmiContractWrite } from '@domains/common'
 import { evmToAddress } from '@polkadot/util-crypto'
 import { Decimal } from '@talismn/math'
 import { useQueryMultiState, useQueryState } from '@talismn/react-polkadot-api'
@@ -331,13 +331,16 @@ export const useStakes = (accounts: Account[], slpxPair: SlpxPair) => {
     suspense: true,
   })
 
+  const api = useRecoilValue(useSubstrateApiState())
   const [tokenPrice, userUnlockLedgers] = useRecoilValue(
     waitForAll([
       tokenPriceState({ coingeckoId: slpxPair.vToken.coingeckoId }),
       useQueryState(
         'vtokenMinting',
         'userUnlockLedger.multi',
-        filteredAccounts.map(x => [evmToAddress(x.address), slpxPair.vToken.tokenId] as const)
+        filteredAccounts.map(
+          x => [evmToAddress(x.address, api.registry.chainSS58), slpxPair.nativeToken.tokenId] as const
+        )
       ),
     ])
   )
