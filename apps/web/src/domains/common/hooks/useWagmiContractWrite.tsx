@@ -1,9 +1,9 @@
-import { useContractWrite, useNetwork, type UseContractWriteConfig, useSwitchNetwork } from 'wagmi'
-import { type Abi } from 'abitype'
-import { type WriteContractMode } from '@wagmi/core'
 import { Text, toast } from '@talismn/ui'
 import { Maybe } from '@util/monads'
+import { type WriteContractMode } from '@wagmi/core'
+import { type Abi } from 'abitype'
 import { usePostHog } from 'posthog-js/react'
+import { useContractWrite, useNetwork, useSwitchNetwork, type UseContractWriteConfig } from 'wagmi'
 
 export const useWagmiContractWrite = <
   TAbi extends Abi | readonly unknown[],
@@ -16,7 +16,6 @@ export const useWagmiContractWrite = <
   etherscanUrl: string
 }) => {
   const posthog = usePostHog()
-
   const { switchNetworkAsync } = useSwitchNetwork()
   const { chain } = useNetwork()
 
@@ -46,16 +45,6 @@ export const useWagmiContractWrite = <
           </Text.Body>
         ),
         success: result => {
-          posthog?.capture('Write to EVM contract', {
-            chainId: config.chainId,
-            hash: result.hash,
-            contractAddress: config.address,
-            functionName: config.functionName,
-            // @ts-expect-error
-            args: config.args,
-            // @ts-expect-error
-            value: config.value,
-          })
           const url = new URL('/tx/' + result.hash, etherscanUrl)
           return (
             <>
@@ -74,6 +63,20 @@ export const useWagmiContractWrite = <
           )
         },
       })
+
+      void promise.then(result =>
+        posthog.capture('Write to EVM contract', {
+          chainId: config.chainId,
+          hash: result.hash,
+          contractAddress: config.address,
+          functionName: config.functionName,
+          // @ts-expect-error
+          args: config.args,
+          // @ts-expect-error
+          value: config.value,
+        })
+      )
+
       return await promise
     }) as (typeof base)['writeAsync'],
   }
