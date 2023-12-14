@@ -182,7 +182,7 @@ const InnerHistory = (props: HistoryProps) => {
       <div css={{ textAlign: 'center', marginTop: '5.6rem' }}>
         <Text.H3>No results found.</Text.H3>
         <Text.Body>
-          We were not able to find a match.
+          Connect a valid address to load it's transaction history.
           <br />
           For help and support please visit our{' '}
           <Text.Noop.A href="https://discord.gg/talisman" target="_blank">
