@@ -32,7 +32,6 @@ type HistoryProps = {
 // TODO: lots of repetitive account look up using `encodeAnyAddress`
 const InnerHistory = (props: HistoryProps) => {
   const allAccounts = useRecoilValue(accountsState)
-  const accountsToSearch = props.accounts
 
   const [items, setItems] = useState<ExtrinsicNode[]>([])
   const [viewingItem, setViewingItem] = useState<Omit<ExtrinsicDetailsSideSheetProps, 'onRequestDismiss'>>()
@@ -42,6 +41,11 @@ const InnerHistory = (props: HistoryProps) => {
   const generator = useMemo(
     () =>
       (async function* generate() {
+        if ((props.accounts?.length ?? 0) === 0 && props.hash === undefined) {
+          yield []
+          return
+        }
+
         let after: string | undefined
         let hasNextPage = true
 
@@ -122,7 +126,7 @@ const InnerHistory = (props: HistoryProps) => {
               after,
               first: props.maxCount ?? 25,
               where: {
-                addressIn: accountsToSearch?.map(x => x.address),
+                addressIn: props.accounts?.map(x => x.address),
                 chainEq: props.chain,
                 hashEq: props.hash,
                 moduleEq: props.module,
@@ -150,7 +154,7 @@ const InnerHistory = (props: HistoryProps) => {
         }
       })(),
     [
-      accountsToSearch,
+      props.accounts,
       props.chain,
       props.hash,
       props.maxCount,
@@ -171,10 +175,7 @@ const InnerHistory = (props: HistoryProps) => {
     }
   }, [generator])
 
-  const encodedAddresses = useMemo(
-    () => accountsToSearch?.map(x => encodeAnyAddress(x.address)) ?? [],
-    [accountsToSearch]
-  )
+  const encodedAddresses = useMemo(() => props.accounts?.map(x => encodeAnyAddress(x.address)) ?? [], [props.accounts])
 
   if (!hasNextPage && items.length === 0) {
     return (
@@ -221,7 +222,7 @@ const InnerHistory = (props: HistoryProps) => {
           data={items}
           renderItem={extrinsic => {
             const [module, call] = extrinsic.call.name.split('.')
-            const totalAmountOfInterest = getExtrinsicTotalAmount(extrinsic, accountsToSearch ?? []).toNumber()
+            const totalAmountOfInterest = getExtrinsicTotalAmount(extrinsic, props.accounts ?? []).toNumber()
 
             const signer = Maybe.of(extrinsic.signer).mapOrUndefined(signer => ({
               address: signer,
