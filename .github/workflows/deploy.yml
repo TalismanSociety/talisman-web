@@ -55,6 +55,8 @@ jobs:
 
       - uses: cloudflare/pages-action@v1
         with:
+          # Explicit branch name needed because of: https://github.com/cloudflare/pages-action/issues/97
+          branch: ${{ github.head_ref || github.ref_name }}
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           projectName: ${{ inputs.projectName }}
