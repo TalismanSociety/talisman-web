@@ -42,7 +42,15 @@ const InnerStakeDialog = () => {
     <ChainProvider chain={chain}>
       <StakeDialogComponent
         open={open}
-        onRequestDismiss={() => setSearchParams(new URLSearchParams())}
+        onRequestDismiss={() =>
+          setSearchParams(sp => {
+            sp.delete('action')
+            sp.delete('type')
+            sp.delete('chain')
+            sp.delete('account')
+            return sp
+          })
+        }
         stats={
           <ErrorBoundary>
             <StakeDialogComponent.Stats>

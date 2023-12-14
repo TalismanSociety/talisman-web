@@ -137,6 +137,7 @@ export default () => {
           setSearchParams(sp => {
             sp.delete('action')
             sp.delete('type')
+            sp.delete('contract-address')
             return sp
           })
         }
