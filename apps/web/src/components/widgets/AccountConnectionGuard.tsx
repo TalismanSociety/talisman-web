@@ -1,5 +1,10 @@
 import Welcome from '@components/recipes/Welcome'
-import { popularAccounts, useAddReadonlyAccountForm, useSetReadonlyAccounts } from '@domains/accounts'
+import {
+  lookupAccountAddressState,
+  popularAccounts,
+  useAddReadonlyAccountForm,
+  useSetReadonlyAccounts,
+} from '@domains/accounts'
 import { readOnlyAccountsState } from '@domains/accounts/recoils'
 import { useHadPreviouslyConnectedWallet } from '@domains/extension'
 import { shortenAddress } from '@util/format'
@@ -12,8 +17,9 @@ export type AccountConnectionGuardProps = PropsWithChildren
 export const useShouldShowAccountConnectionGuard = () => {
   const hadPreviouslyConnectedWallet = useHadPreviouslyConnectedWallet()
   const readonlyAccounts = useRecoilValue(readOnlyAccountsState)
+  const lookupAccount = useRecoilValue(lookupAccountAddressState)
 
-  return !hadPreviouslyConnectedWallet && readonlyAccounts.length === 0
+  return !hadPreviouslyConnectedWallet && readonlyAccounts.length === 0 && lookupAccount === undefined
 }
 
 const AccountConnectionGuard = (props: AccountConnectionGuardProps) => {

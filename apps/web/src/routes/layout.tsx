@@ -13,7 +13,7 @@ import WalletConnectionSideSheet, {
 import LidoStakeSideSheet from '@components/widgets/staking/lido/StakeSideSheet'
 import SlpxStakeSideSheet from '@components/widgets/staking/slpx/StakeSideSheet'
 import NominationPoolsStakeSideSheet from '@components/widgets/staking/substrate/NominationPoolsStakeSideSheet'
-import { selectedAccountsState } from '@domains/accounts/recoils'
+import { lookupAccountAddressState, selectedAccountsState } from '@domains/accounts'
 import { currencyConfig, selectedCurrencyState } from '@domains/balances'
 import { useHasActiveWalletConnection } from '@domains/extension'
 import { useTheme } from '@emotion/react'
@@ -28,6 +28,7 @@ import {
   Scaffold,
   Select,
   Text,
+  TextInput,
   TopAppBar,
   createPortal,
 } from '@talismn/ui'
@@ -82,6 +83,23 @@ const WalletConnectionButton = () => {
     </Button>
   )
 }
+
+const AddressSearch = () => {
+  const [address, setAddress] = useRecoilState(lookupAccountAddressState)
+
+  return (
+    <div css={{ display: 'flex', justifyContent: 'center' }}>
+      <div css={{ flex: 1, [SCAFFOLD_WIDE_VIEW_MEDIA_SELECTOR]: { maxWidth: '45rem' } }}>
+        <TextInput
+          placeholder="Search by account"
+          value={address ?? ''}
+          onChange={event => setAddress(event.target.value)}
+        />
+      </div>
+    </div>
+  )
+}
+
 const [TitlePortalProvider, TitlePortal, TitlePortalElement] = createPortal()
 export { TitlePortal }
 
@@ -98,14 +116,15 @@ const Header = () => {
 
   return (
     <div css={{ marginBottom: '0.8rem' }}>
+      <AddressSearch />
       <div
         css={{
           display: 'flex',
           justifyContent: 'space-between',
           flexWrap: 'wrap-reverse',
           gap: '0.8rem',
+          marginTop: '2.4rem',
           marginBottom: '0.8rem',
-          [SCAFFOLD_WIDE_VIEW_MEDIA_SELECTOR]: { marginTop: '4rem' },
         }}
       >
         <Text.H2 css={{ marginBottom: 0 }}>

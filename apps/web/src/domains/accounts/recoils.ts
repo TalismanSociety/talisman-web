@@ -1,10 +1,13 @@
 import { storageEffect } from '@domains/common/effects'
 import type { InjectedAccount } from '@polkadot/extension-inject/types'
 import { array, jsonParser, object, optional, string } from '@recoiljs/refine'
+import { tryParseSubstrateOrEthereumAddress } from '@util/addressValidation'
 import { Maybe } from '@util/monads'
 import { uniqBy } from 'lodash'
-import { atom, selector, waitForAll } from 'recoil'
+import { useUpdateEffect } from 'react-use'
+import { atom, selector, useRecoilValue, useSetRecoilState, waitForAll } from 'recoil'
 import { isAddress as isEvmAddress } from 'viem'
+import router from '../../routes'
 
 type AccountWithOrigin = InjectedAccount & { origin?: 'injected' | 'local' }
 
@@ -13,6 +16,44 @@ type AccountWithReadonlyInfo = InjectedAccount & ({ readonly?: false } | { reado
 export type Account = AccountWithOrigin & AccountWithReadonlyInfo & { canSignEvm?: boolean }
 
 export type ReadonlyAccount = Pick<Account, 'address' | 'name'>
+
+const lookupAddressSearchKey = 'lookup-address'
+
+export const lookupAccountAddressState = atom<string | undefined>({
+  key: 'LookupAccountAddress',
+  default: new URLSearchParams(globalThis.location.search).get(lookupAddressSearchKey) ?? undefined,
+  effects: [
+    // Add lookup address to search params on change
+    ({ onSet }) =>
+      onSet(newValue => {
+        const searchParams = new URLSearchParams(globalThis.location.search)
+
+        if (newValue === undefined || newValue.trim() === '') {
+          searchParams.delete(lookupAddressSearchKey)
+        } else {
+          searchParams.set(lookupAddressSearchKey, newValue)
+        }
+
+        void router.navigate('?' + searchParams.toString(), { replace: true })
+      }),
+  ],
+})
+
+export const lookupAccountState = selector<Account | undefined>({
+  key: 'LookupAccount',
+  get: ({ get }) =>
+    Maybe.of(get(lookupAccountAddressState)).mapOrUndefined(address => {
+      const resultingAddress = tryParseSubstrateOrEthereumAddress(address)
+
+      return resultingAddress === undefined
+        ? undefined
+        : {
+            address: resultingAddress,
+            readonly: true,
+            partOfPortfolio: false,
+          }
+    }),
+})
 
 const _substrateInjectedAccountsState = atom<AccountWithReadonlyInfo[]>({
   key: '_SubstrateInjectedAccounts',
@@ -77,8 +118,17 @@ export const accountsState = selector({
       ...x,
       name: substrateInjecteds.find(y => y.address === x.address)?.name,
     }))
+    const lookupAccount = get(lookupAccountState)
 
-    return uniqBy([...wagmiInjected, ...substrateInjecteds, ...get(readOnlyAccountsState)], x => x.address)
+    return uniqBy(
+      [
+        ...wagmiInjected,
+        ...substrateInjecteds,
+        ...get(readOnlyAccountsState),
+        ...(lookupAccount === undefined ? [] : [lookupAccount]),
+      ],
+      x => x.address
+    )
   },
 })
 
@@ -132,9 +182,19 @@ export const selectedAccountAddressesState = atom<string[] | undefined>({
 export const selectedAccountsState = selector({
   key: 'SelectedAccounts',
   get: ({ get }) => {
-    const [accounts, portfolioAccounts, readOnlyAccounts, selectedAddresses] = get(
-      waitForAll([accountsState, portfolioAccountsState, readOnlyAccountsState, selectedAccountAddressesState])
+    const [accounts, portfolioAccounts, readOnlyAccounts, selectedAddresses, lookupAccount] = get(
+      waitForAll([
+        accountsState,
+        portfolioAccountsState,
+        readOnlyAccountsState,
+        selectedAccountAddressesState,
+        lookupAccountState,
+      ])
     )
+
+    if (lookupAccount !== undefined) {
+      return [lookupAccount]
+    }
 
     const onlyHasReadonlyAccounts = portfolioAccounts.length === 0 && readOnlyAccounts.length > 0
     const defaultDisplayedAccounts = onlyHasReadonlyAccounts
@@ -178,3 +238,14 @@ export const selectedEvmAccountsState = selector({
     return accounts.filter(x => x.type === 'ethereum')
   },
 })
+
+export const AccountWatcher = () => {
+  const selectedAddresses = useRecoilValue(selectedAccountAddressesState)
+  const setLookupAccountAddress = useSetRecoilState(lookupAccountAddressState)
+
+  useUpdateEffect(() => {
+    setLookupAccountAddress(undefined)
+  }, [selectedAddresses])
+
+  return null
+}
