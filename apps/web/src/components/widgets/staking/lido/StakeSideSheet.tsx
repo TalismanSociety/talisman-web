@@ -34,6 +34,7 @@ const StakeSideSheet = () => {
         setSearchParams(sp => {
           sp.delete('action')
           sp.delete('type')
+          sp.delete('token-address')
           return sp
         })
       }
