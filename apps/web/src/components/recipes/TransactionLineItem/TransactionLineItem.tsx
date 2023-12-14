@@ -1,11 +1,12 @@
+import AccountIcon from '@components/molecules/AccountIcon/AccountIcon'
 import type { Account } from '@domains/accounts'
-import { useTheme } from '@emotion/react'
+import { keyframes, useTheme } from '@emotion/react'
 import { ArrowDown, ArrowUp, ChevronRight } from '@talismn/icons'
 import { Identicon, Surface, Text, TonalIcon, Tooltip, useSurfaceColorAtElevation } from '@talismn/ui'
 import { shortenAddress } from '@util/format'
-import React, { useMemo, type PropsWithChildren, type ReactElement } from 'react'
+import type React from 'react'
+import { Fragment, useMemo, type PropsWithChildren, type ReactElement } from 'react'
 import { getSubstrateModuleColor } from '../extrinsicColor'
-import AccountIcon from '@components/molecules/AccountIcon/AccountIcon'
 
 type TokenAmount = {
   amount: string
@@ -27,7 +28,7 @@ export type TransactionLineItemProps = {
   onClick?: () => unknown
 }
 
-const WIDE_CONTAINER_QUERY = '@container(min-width: 70rem)'
+const WIDE_CONTAINER_QUERY = '@container(min-width: 90rem)'
 
 const Grid = (props: PropsWithChildren<{ className?: string }>) => (
   <div
@@ -179,6 +180,17 @@ export type TransactionListProps<T> = {
   renderItem: (data: T) => ReactElement
 }
 
+const slideDown = keyframes`
+  0% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+`
+
 export const TransactionList = <T,>(props: TransactionListProps<T>) => {
   const borderColor = useSurfaceColorAtElevation(x => x + 1)
 
@@ -205,15 +217,14 @@ export const TransactionList = <T,>(props: TransactionListProps<T>) => {
         css={{
           'borderRadius': '1.2rem',
           'overflow': 'hidden',
+          '> *': { animation: `${slideDown} 0.3s ease-in-out` },
           '> *:hover': { backdropFilter: 'brightness(1.2)' },
-          '> *:not(:last-child)': {
-            borderBottom: `1px solid ${borderColor}`,
-          },
+          '> *:not(:last-child)': { borderBottom: `1px solid ${borderColor}` },
         }}
       >
-        {props.data.map((data, index) =>
-          React.cloneElement(props.renderItem(data), { key: props.keyExtractor(data, index) })
-        )}
+        {props.data.map((data, index) => (
+          <Fragment key={props.keyExtractor(data, index)}>{props.renderItem(data)}</Fragment>
+        ))}
       </Surface>
     </section>
   )
