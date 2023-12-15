@@ -160,12 +160,12 @@ export const bridgeConfig = {
   },
   statemine: {
     adapter: new StatemineAdapter(),
-    rpc: 'wss://statemine-rpc.polkadot.io',
+    rpc: 'wss://statemine-rpc.dwellir.com',
     subscanUrl: 'https://statemine.subscan.io/',
   },
   statemint: {
     adapter: new StatemintAdapter(),
-    rpc: 'wss://statemint-rpc.polkadot.io',
+    rpc: 'wss://statemint-rpc.dwellir.com',
     subscanUrl: 'https://statemint.subscan.io/',
   },
   tinkernet: {
