@@ -45,7 +45,11 @@ export const createBitCountryNftAsyncGenerator = (options: { rpc: string }) =>
 
       return fetch(new URL(ipfsCid.toString(), 'https://ipfs-cdn.bit.country'))
         .then(res => res.json())
-        .then(x => ({ ...x, image: x.image_url ? `https://ipfs-cdn.bit.country/${x.image_url}` : undefined }))
+        .then(x => ({
+          ...x,
+          image: x.image_url ? `https://ipfs-cdn.bit.country/${x.image_url}` : undefined,
+          mimeType: x.asset_type === 'Model' ? 'model/gltf+json' : undefined,
+        }))
     },
     getExternalLinks: (classId, __) => [
       { name: 'Pioneer', url: `https://pioneer.bit.country/marketplace/browse?collection=${classId}` },

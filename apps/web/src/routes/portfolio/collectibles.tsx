@@ -115,6 +115,7 @@ const NftCard = ({ nft }: { nft: Nft }) => {
               toIpfsCompatibleUrl(x, { imgWidth: NFT_CARD_WIDTH }),
               toIpfsCompatibleUrl(x),
             ])}
+            type={nft.mediaMimeType?.split('/').at(0) as any}
             fetchMime
           />
         }
@@ -159,7 +160,12 @@ const NftCard = ({ nft }: { nft: Nft }) => {
         onRequestDismiss={() => setDialogOpen(false)}
         title={nft.name}
         overline={nft.collection?.name}
-        media={<MediaDialog.Player src={Maybe.of(nft.media).mapOrUndefined(toIpfsCompatibleUrl)} />}
+        media={
+          <MediaDialog.Player
+            src={Maybe.of(nft.media).mapOrUndefined(toIpfsCompatibleUrl)}
+            type={nft.mediaMimeType?.split('/').at(0) as any}
+          />
+        }
         content={
           <div>
             <Text.Body as="p" css={{ whiteSpace: 'pre-wrap' }}>
